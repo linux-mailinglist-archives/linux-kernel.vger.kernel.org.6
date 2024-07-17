@@ -1,129 +1,153 @@
-Return-Path: <linux-kernel+bounces-255215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C5C933D8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:21:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 874A6933D93
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:24:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCEF51F24FE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:21:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11EDE1F2336D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FDEF1802CB;
-	Wed, 17 Jul 2024 13:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCEE1802DD;
+	Wed, 17 Jul 2024 13:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m5sWHC8I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OF9re99w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7AD717F385
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB0517F378;
+	Wed, 17 Jul 2024 13:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721222507; cv=none; b=Y/63ljNMv9HSI98EMR6DszefimuTybRYE8FVgOCtUdViVz5vh/JF6xuLB/u6GQcf5bN4cXRAKCZnGc1Lal6sP0HClqrLdVnUlDQxG1kBbVYsxyxj+mEdXt9GOzdBCMr8HS/HxITerrbFYlhpHuPKu1AMLh0EfmDX6WhPRPyF9iI=
+	t=1721222673; cv=none; b=LY0C8gxvy5URTKIbkVqYKkmGM2E2LmSwJs5HgVEZUZpScTl+2T9mTpRYBTXOqJzHWvgNhbXAr+46+zL1fS+Y9V8IjiPPcPzASvGZbLpdNXB3HVenwUFeWFz8kRdhAjORMjeE9tjipzIAb0huRzpO1HkLA0+Gg8MKIxrw4SK5KQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721222507; c=relaxed/simple;
-	bh=OHVri6oZjBTrYRG/gliZ619AbBRKNl0B4ap97beOBEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A+2zfH+IaxnEELR5palCxJWRHCbSGL5ecUr84bDR7okNttz7C3oNWeD2z3QRD8ecfEmE29pb3IKqYLsXNTFR638StDnvuSyG/Qrq/lL6TXekfty76g6g6BxZZXiKE4yA9TcXx+nXSx84cc8bfOyIGdtdxMiFMBtU7iYiO/zuXGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m5sWHC8I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1211C32782;
-	Wed, 17 Jul 2024 13:21:46 +0000 (UTC)
+	s=arc-20240116; t=1721222673; c=relaxed/simple;
+	bh=awsX018WuUujQeOEm3Z0hqNPdmA1KngMJ8aTaMF/BtM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JL+IU0YE14vRBS3/8KNWuu7Mw5RpsxpXpAWBAOSegXuJ+eickGCsRa/gdp8+aXnQ5FM34rd+YC7bT4CDtlXI2kBjHJbWI2dY3EhB/L2LtmnEZs6S6gCN+ADiMNv/GnFCfyDwqquuztfHv1t4QPY2uUTZjn2ajMjw6+SpOGTV/W4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OF9re99w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36526C32782;
+	Wed, 17 Jul 2024 13:24:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721222507;
-	bh=OHVri6oZjBTrYRG/gliZ619AbBRKNl0B4ap97beOBEo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m5sWHC8IWX/GBIYBAtYkJ6E05oiOzhRNnjC3HpDKVRpxJhx7BWzc1wRhu1pxIefns
-	 9NQQ3zgCrqtrJVg9O97YQtJYhFuAesaPJWTEZSC22OSB7zpDWJ0uMvIRQJn6JzFKe5
-	 zWFx+aG5GeBeekkpSLKC351Ak+b29LFIrpxKWWeeO6scxixkBd4s6l4mLsQLlIengs
-	 JrGZRVtGggH5ma2cs9sZvjEohsJXVDMWzoGx2sTiA9xWSBe7HAfdc3n6YWqjt+T6Ti
-	 h99P6zb44BcjzQOpywrp49eKE9zVXcgGJQwTovJz5xqZQNEl7b0bx1GoAFasUqeAaA
-	 y8LseKEallT6g==
-Date: Wed, 17 Jul 2024 15:21:44 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Michal Hocko <mhocko@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [RFC PATCH 6/6] mm: Drain LRUs upon resume to userspace on
- nohz_full CPUs
-Message-ID: <ZpfFaElo1wwTOpNm@localhost.localdomain>
-References: <20240625135244.20227-1-frederic@kernel.org>
- <20240625135244.20227-7-frederic@kernel.org>
- <ZnrSEf1xuFxKxj1D@tiehlicka>
- <ZoVJhXcR26paUNhX@localhost.localdomain>
- <ZoaffMfFdEgs2N7o@tiehlicka>
+	s=k20201202; t=1721222673;
+	bh=awsX018WuUujQeOEm3Z0hqNPdmA1KngMJ8aTaMF/BtM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OF9re99wLZ2KerKG4UXyvFtS7OE4z9whOMuD5/HXof5iCI+9vZxcy1Mf7VoGHkdM0
+	 wvvdJwIbKvc5HQl8tNsLv4+YCDbj4opTbMZt+yzp5SluBZBq3ye1kNSnAJqoC4eebb
+	 A5aX0n753lRxqFCy6nhmpTug9vo1cNOlsdDXwjzCDbnTyl0A4N3IzYPyYUp5Wr5HuF
+	 iQSeP8mAt7B1rIJuHPt6eedXWF/llyS8/EofJhH6cgx4pj2qnt7JhPGlvvI2X6DDtm
+	 7bajqZY/efq29hrXrHWvQVBhwh9XjMpWLVQg6xHrmjk+L17EeeeVCEqE9y4GFxWjKr
+	 XCJnuwEq/rhNQ==
+Message-ID: <3be44176-07b5-4bac-81a9-b1bb4f0b1a1e@kernel.org>
+Date: Wed, 17 Jul 2024 15:24:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZoaffMfFdEgs2N7o@tiehlicka>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] media: dt-bindings: add MT8188 AIE
+To: 20220614094956 created <yelian.wang@mediatek.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com, yaya.chang@mediatek.com,
+ teddy.chen@mediatek.com, hidenorik@chromium.org
+References: <20240717125426.32660-1-yelian.wang@mediatek.com>
+ <20240717125426.32660-2-yelian.wang@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240717125426.32660-2-yelian.wang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Le Thu, Jul 04, 2024 at 03:11:24PM +0200, Michal Hocko a écrit :
-> On Wed 03-07-24 14:52:21, Frederic Weisbecker wrote:
-> > Le Tue, Jun 25, 2024 at 04:20:01PM +0200, Michal Hocko a écrit :
-> > > On Tue 25-06-24 15:52:44, Frederic Weisbecker wrote:
-> > > > LRUs can be drained through several ways. One of them may add disturbances
-> > > > to isolated workloads while queuing a work at any time to any target,
-> > > > whether running in nohz_full mode or not.
-> > > > 
-> > > > Prevent from that on isolated tasks with draining LRUs upon resuming to
-> > > > userspace using the isolated task work framework.
-> > > > 
-> > > > It's worth noting that this is inherently racy against
-> > > > lru_add_drain_all() remotely queueing the per CPU drain work and
-> > > > therefore it prevents from the undesired disturbance only
-> > > > *most of the time*.
-> > > 
-> > > Can we simply not schedule flushing on remote CPUs and leave that to the
-> > > "return to the userspace" path?
-> > 
-> > Do you mean I should add a call on return to the userspace path or can
-> > I expect it to be drained at some point already?
+On 17/07/2024 14:41, 20220614094956 created wrote:
+> From: Yelian Wang <yelian.wang@mediatek.com>
 > 
-> I would make the particular per cpu cache to be drained on return to the
-> userspace.
-
-And then we need the patchset from Valentin that defers work to kernel entry?
-
+> Add YAML device tree binding for MT8188 AIE.
 > 
-> > The other limitation with that task work thing is that if the task
-> > queueing the work actually goes to sleep and another task go on the CPU
-> > and does isolated work in userspace, the drain doesn't happen. Now whether
-> > that is a real problem or not, I have no idea.
+> Signed-off-by: Yelian Wang <yelian.wang@mediatek.com>
+> ---
+>  .../bindings/media/mediatek-aie.yaml          | 99 +++++++++++++++++++
+>  1 file changed, 99 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/mediatek-aie.yaml
 > 
-> Theoretically there is a problem because pages sitting on pcp LRU caches
-> cannot be migrated and some other operations will fail as well. But
-> practically speaking those pages should be mostly of interest to the
-> process allocating them most of the time. Page sharing between isolated
-> workloads sounds like a terrible idea to me. Maybe reality hits us in
-> this regards but we can deal with that when we learn about those
-> workloads.
-> 
-> So I wouldn't lose too much sleep over that. We are dealing with those
-> isolated workloads being broken by simple things like fork now because
-> that apparently adds pages on the pcp LRU cache and draining will happen
-> sooner or later (very often when the task is already running in the
-> userspace).
+> diff --git a/Documentation/devicetree/bindings/media/mediatek-aie.yaml b/Documentation/devicetree/bindings/media/mediatek-aie.yaml
+> new file mode 100644
+> index 000000000000..300aef43e02b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/mediatek-aie.yaml
+> @@ -0,0 +1,99 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/mediatek-aie.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: The AIE Unit of MediaTek Camera System
+> +
+> +maintainers:
+> +  - Yelian Wang <yelian.wang@mediatek.com>
+> +
+> +description:
+> +  MediaTek AIE is the ISP unit in MediaTek SoC.
+> +
 
-That sounds good!
+BTW, most likely you miss here ports, although with such poor hardware
+description as above, it's tricky to guess what this is and what it does.
 
-Thanks.
+Best regards,
+Krzysztof
 
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
 
