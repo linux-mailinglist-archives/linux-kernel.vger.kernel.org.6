@@ -1,122 +1,177 @@
-Return-Path: <linux-kernel+bounces-255562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE1D2934246
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:29:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C1A99341CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:05:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F072E1C21219
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:29:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA6A01F2283C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C3618410C;
-	Wed, 17 Jul 2024 18:29:04 +0000 (UTC)
-Received: from bues.ch (bues.ch [80.190.117.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5045183079;
+	Wed, 17 Jul 2024 18:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AluEkjKR"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B061822D7;
-	Wed, 17 Jul 2024 18:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.190.117.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8861822E1
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 18:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721240943; cv=none; b=dgVpPWAreeY7SBKoksoCa7Dy4t5c2PNEJCGRDxXdSxc8fOkc4QyoQgIWillyLG+KGpWqW8sxxCx9uLHNTW7fdSpejMuq39y4BwZgcWm4csEhfleBLWmuP34abKY6FYMsWG4GEeCKORfOFJmE34KFZW35CrqQfQnDoPoZRpr2m/0=
+	t=1721239549; cv=none; b=k/sxAEq0bFSTyqDtH17koifvgk1G6SYXvoEMwgS04aJLXLy/K09P0Uewb5rLa0ORwdsMqq9ofYWim+HQYTqr8bpL2V929rHsRr6AuXWIiY6i+1tY+AyaYQM14NHAxRypOebprjOwkBwfLyO0FH7PeNv/ippsUiIiTttXMWtGyPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721240943; c=relaxed/simple;
-	bh=f82nsMSv9TQtJVIdFkG6Ne5dWtX+2ztlfDLZSmEpaCM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O/zB5d4Uk6Qb4g/FxfdzK7oaLGaZNnr2PKyfjdg6I8SLoYy5OU1/K+dArh6jaie9AJy67YO8opZ4DHZJbYS0oHTXL6fxzD2D2LfxUZn3ALnpHOVAIo7wBfUFkH2bj5aAT9l3cCgYvNuYRo4NJvyxlZT28Qa3igPUtlF4gZXHUzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bues.ch; spf=pass smtp.mailfrom=bues.ch; arc=none smtp.client-ip=80.190.117.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bues.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bues.ch
-Received: by bues.ch with esmtpsa (Exim 4.96)
-	(envelope-from <m@bues.ch>)
-	id 1sU8um-0007OE-25;
-	Wed, 17 Jul 2024 19:58:06 +0200
-Date: Wed, 17 Jul 2024 19:57:43 +0200
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Kalle Valo <kvalo@kernel.org>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org,
- b43-dev@lists.infradead.org
-Subject: Re: [PATCH] wifi: b43: Constify struct lpphy_tx_gain_table_entry
-Message-ID: <20240717195743.31bdb01d@barney>
-In-Reply-To: <38528f48c8069187823b774a6b2a53088f6c9599.1721161231.git.christophe.jaillet@wanadoo.fr>
-References: <38528f48c8069187823b774a6b2a53088f6c9599.1721161231.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721239549; c=relaxed/simple;
+	bh=EcbaqaLncNt5/+ldvNun3H3cqM4FhEED9qsUEKX0xf8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jfbEZZtD1NA1EWEqhZcblk+iJjjNb3LBUAbYy7wEe5Dg7FXXiM0Q2S/9NTD/D7143Bo3NQM0fgq3EOf45lOZFx6avPxYcLDeN1ET/DDxVBG3zzF84bMPziEjbQgyc4LPIt+ZDHY7zlkFWgJ2IakNP2dm3uWl3EtbaT19F37aNhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AluEkjKR; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2eea8ea8bb0so1229601fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:05:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721239545; x=1721844345; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EcbaqaLncNt5/+ldvNun3H3cqM4FhEED9qsUEKX0xf8=;
+        b=AluEkjKRyBp9OBpRnAu7adluTpuIbylOMPvcHsJALuXuJou0MfT3Dls7+xg1yTJIrZ
+         +j4suVjjMdNeLFIFNbFCDNz4Yt337buSfpbA3a4alLFZXEqKsV/CIl/0B7RcuWv6qdg6
+         76K9Z93c76YoX318syjkwcgrwg3bICRtk7Lw2gtkakbdwEax0eD/GHxiWWI4PJ+arquH
+         nvAl2qYhSAC+WvFwUcmMKJpupna/GLIuufIdrBTP3aTND8XWd6cl+Gbc1Ign0zbwXdtq
+         9apdkQ7/ZMi5TN+DL5hhU+V2am2B9GqL/K1eDl3IlXH7Vmq+lWalc0u1jk+H9HbG5BCi
+         PC3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721239545; x=1721844345;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EcbaqaLncNt5/+ldvNun3H3cqM4FhEED9qsUEKX0xf8=;
+        b=OgoM8gxinZLzmAmAOIJOsFTOZXbUAJ4wVzr7jxmkCuLjJGqYuxooGo9GSvgk9qZi2X
+         w2iI7zu8YqVMrz9i+vIqeFrAT35CN7ia0EbjqAynIMU88DWaQhfA/WtutI2hlwO1ZNoH
+         GkDf9HQHPEuC8eNvnnCklA+y3PIadNAfTSvHEdLY0tIsNFP7WQG9A1mYkgyIMH375pnK
+         OKdV7M1pB4RlpcY78toMcUiZdymEi5B24ur3AdUxLY4rE/PLlOP4RwQ6vpONcKIgrly8
+         5w+mnI+H7w5LNTgtHIJVY1cp9VS93nt9lT8vNaJWfyZYww+rycDdtE2EgVKpX/NltvXw
+         M9/A==
+X-Forwarded-Encrypted: i=1; AJvYcCXlVlcIQullz/RoXViK2Vaf0RM0Y42Mi1Rl0YNen2IfYrxtWh/GY5rXjwi0YTyER8JNUNfx4fFOBX0e+NbNLzVzTy+jf3CZLf/OJK/n
+X-Gm-Message-State: AOJu0Yyq6qlnLD7xrAy8IGEhC3FxB4taXPRAKXf1k1DlauUCfXMFwoAx
+	+k+El+l3XQOMyA+CgV/2QgoJEUddHzWgT4lgpYVWOUGNdiyEUlsNZuaV561t0X9nxsJp8jWb2jw
+	n8cizpffjhy5igAwB37y6VnKJeYgIscZKLBlA
+X-Google-Smtp-Source: AGHT+IHmEPpkW9BMRf7R+mnkbP964r6rm53YMQ2kLWJrWHw4ELd3YcPcVXt2ZFtW89ezovDBD1g4Tm5CJK5P3Fnz80o=
+X-Received: by 2002:a2e:9a87:0:b0:2ee:8566:32cb with SMTP id
+ 38308e7fff4ca-2ef05c73758mr1514341fa.16.1721239544904; Wed, 17 Jul 2024
+ 11:05:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/_1L7b6zKYTmbBsNJwFixW/C";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-
---Sig_/_1L7b6zKYTmbBsNJwFixW/C
-Content-Type: text/plain; charset=UTF-8
+References: <20240706022523.1104080-1-flintglass@gmail.com>
+ <CAKEwX=NL1gOe9k5+JB8Q-UAoZ4ie8SBGg7XTjaqM7j4-hiHv=A@mail.gmail.com>
+ <CAPpoddefXD1RAjyW2+X_ankGYNpQgY0Y0+xd1yOFgCc_egaX8A@mail.gmail.com>
+ <CAJD7tkYnBw-QiGXTb4BPScuS1VePBkuRx1qG8p92zN9TeD+gKg@mail.gmail.com> <CAKEwX=OPDkwnSno-8r9AsOpmzkZ90SzeX02xz0eDTqbL2_QL2g@mail.gmail.com>
+In-Reply-To: <CAKEwX=OPDkwnSno-8r9AsOpmzkZ90SzeX02xz0eDTqbL2_QL2g@mail.gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Wed, 17 Jul 2024 11:05:06 -0700
+Message-ID: <CAJD7tkapE+qSmjFXnLBNamMvn3Lxbx=yvDF3gXW_qba45WU1tA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] mm: zswap: global shrinker fix and proactive shrink
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: Takero Funaki <flintglass@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 16 Jul 2024 22:21:13 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+On Wed, Jul 17, 2024 at 10:49=E2=80=AFAM Nhat Pham <nphamcs@gmail.com> wrot=
+e:
+>
+> On Tue, Jul 16, 2024 at 7:53=E2=80=AFPM Yosry Ahmed <yosryahmed@google.co=
+m> wrote:
+> >
+> > [..]
+> > >
+> > > > My concern is that we are knowingly (and perhaps unnecessarily)
+> > > > creating an LRU inversion here - preferring swapping out the reject=
+ed
+> > > > pages over the colder pages in the zswap pool. Shouldn't it be the
+> > > > other way around? For instance, can we spiral into the following
+> > > > scenario:
+> > > >
+> > > > 1. zswap pool becomes full.
+> > > > 2. Memory is still tight, so anonymous memory will be reclaimed. zs=
+wap
+> > > > keeps rejecting incoming pages, and putting a hold on the global
+> > > > shrinker.
+> > > > 3. The pages that are swapped out are warmer than the ones stored i=
+n
+> > > > the zswap pool, so they will be more likely to be swapped in (which=
+,
+> > > > IIUC, will also further delay the global shrinker).
+> > > >
+> > > > and the cycle keeps going on and on?
+> > >
+> > > I agree this does not follow LRU, but I think the LRU priority
+> > > inversion is unavoidable once the pool limit is hit.
+> > > The accept_thr_percent should be lowered to reduce the probability of
+> > > LRU inversion if it matters. (it is why I implemented proactive
+> > > shrinker.)
+> >
+> > Why?
+> >
+> > Let's take a step back. You are suggesting that we throttle zswap
+> > writeback to allow reclaim to swapout warmer pages to swap device. As
+> > Nhat said, we are proliferating LRU inversion instead of fixing it.
+> >
+> > I think I had a similar discussion with Johannes about this before,
+> > and we discussed that if zswap becomes full, we should instead
+> > throttle reclaim and allow zswap writeback to proceed (i.e. the
+> > opposite of what this series is doing). This would be similar to how
+> > we throttle reclaim today to wait for dirty pages to be written back.
+> >
+>
+> I completely agree with this analysis and proposal - it's somewhat
+> similar to what I have in mind, but more fleshed out :)
+>
+> > This should reduce/fix the LRU inversion instead of proliferating it,
+> > and it should reduce the total amout of IO as colder pages should go
+> > to disk while warmer pages go to zswap. I am wondering if we can reuse
+> > the reclaim_throttle() mechanism here.
+> >
+> > One concern I have is that we will also throttle file pages if we use
+> > reclaim_throttle(), since I don't see per-type throttling there. This
+> > could be fine, since we similarly throttle zswap reclaim if there are
+> > too many dirty file pages. I am not super familiar with reclaim
+> > throttling, so maybe I missed something obvious or there is a better
+> > way, but I believe that from a high level this should be the right way
+> > to go.
+>
+> I don't think we have any infrastructure for anon-only throttling in
+> vmscan logic, but it sounds trivial to implement if necessary :)
+>
+> >
+> > I actually think if we do this properly, and throttle reclaim when
+> > zswap becomes full, we may be able to drop the acceptance hysteresis
+> > and rely on the throttling mechanism to make sure we stop reclaim
+> > until we free up enough space in zswap to avoid consistently hitting
+> > the limit, but this could be a future extension.
+>
+> Agree - this hysteresis heuristics needs to die.
+>
+> IMHO, I think we should still have the proactive global shrinking
+> action that Takero is proposing in patch 3. The throttling is nice,
+> but it'd be even nicer if we can get ahead of that :)
 
->  static void lpphy_rev0_1_write_gain_table(struct b43_wldev *dev, int off=
-set,
-> -				struct lpphy_tx_gain_table_entry data)
-> +				const struct lpphy_tx_gain_table_entry data)
->  {
->  	u32 tmp;
-> =20
-> @@ -2356,7 +2356,7 @@ static void lpphy_rev0_1_write_gain_table(struct b4=
-3_wldev *dev, int offset,
->  }
-> =20
->  static void lpphy_rev2plus_write_gain_table(struct b43_wldev *dev, int o=
-ffset,
-> -				struct lpphy_tx_gain_table_entry data)
-> +				const struct lpphy_tx_gain_table_entry data)
->  {
->  	u32 tmp;
-> =20
-> @@ -2383,7 +2383,7 @@ static void lpphy_rev2plus_write_gain_table(struct =
-b43_wldev *dev, int offset,
->  }
-> =20
->  void lpphy_write_gain_table(struct b43_wldev *dev, int offset,
-> -			    struct lpphy_tx_gain_table_entry data)
-> +			    const struct lpphy_tx_gain_table_entry data)
->  {
->  	if (dev->phy.rev >=3D 2)
->  		lpphy_rev2plus_write_gain_table(dev, offset, data);
-> @@ -2392,7 +2392,7 @@ void lpphy_write_gain_table(struct b43_wldev *dev, =
-int offset,
->  }
+I have always thought that the shrinker should play this role in one
+way or another. Instead of an arbitrary watermark and asynchronous
+work, it incrementally pushes the zswap LRU toward disk as reclaim
+activity increases.
 
-These three changes look like they are not necessary.
-
---=20
-Michael B=C3=BCsch
-https://bues.ch/
-
---Sig_/_1L7b6zKYTmbBsNJwFixW/C
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmaYBhcACgkQ9TK+HZCN
-iw5bBxAArMV5z7DK4ihRk2DaDq4XdBhLERO3rXRBSQthMrWcbAq7Iqzyd/dPLKzF
-NkDVf5Ids2daRDsmZIczjXb8L6IrGnkfrEvZ8x/No4OchgV9osiellRq1yVOOZCx
-z7wvlylhgupjCkJ2tT4dZS4uKWlqRj6kh7eo+p48xgH4sxfHXpAWSTd9PtJIbJe0
-I2a8QGgwLXzxKePsnpdt+OeH/UoFblhKtPvBYoBqzc4wl3FCQ4stZS+o0gumRakw
-bZNP06PapMtVW/+fjby+iD8/21XQIEQoSCmeGizKYkiKhO6eXK9DxO7ETeVEO/y/
-1lrvKf0dRh1MzgMq53LP1/XpLc3Cd71et7z8xwYCDI/mZuCfU7bhVEGRVNll2Y3V
-Y7XQaz4WqdNeVQc9fctLr09rwB2o5Y3XNi/7pZ8phVTmKEUBgTH/Uaj83hoTDHwd
-2c1OGKXhrMXMre4GFjyxREA7PhWovAkJmSxGmeaQk98yOZTuKGkFW8glq2l/6wYs
-avXU/aGcAtF/+7/a56Hu3M1SSau7S1NlKiWM88wX/guHfzmY6bQE9YsjVOkkyoao
-h/gADABg2SZsXoYXyvxV0KVGaXj5dXiLXhZ9agLBYKMG/yCE4NyvNgbE1VMjT89p
-VKFSAFnXj/kzSfgi+2wLt2kZKZVa011PxsFerUVhFNGnUdFrEe8=
-=J7sR
------END PGP SIGNATURE-----
-
---Sig_/_1L7b6zKYTmbBsNJwFixW/C--
+Is the point behind proactive shrinking is to reduce the latency in
+the reclaim path?
 
