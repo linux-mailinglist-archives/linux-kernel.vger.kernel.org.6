@@ -1,315 +1,141 @@
-Return-Path: <linux-kernel+bounces-254801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D21199337B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:19:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C1DD9337B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:19:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 280CB1F242D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:19:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C8EA284F70
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546A61BF3A;
-	Wed, 17 Jul 2024 07:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512B01BC39;
+	Wed, 17 Jul 2024 07:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="lM5UPU7h";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dcqK+/Vp"
-Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PxRs7jWb"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4217810A19;
-	Wed, 17 Jul 2024 07:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6676A1CF90
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721200740; cv=none; b=PrLBmvNAUPYB8JPyzQcy9VvHDbmeC+8uIYSXykGYCatbjWpCbCuGKVugK+1j1Y1OqQRkWZMUm5IJfmda9NYWZIcxs3ikfu+A4rK2/4ECCL1lYExWAUuOVUWoG/ZsciLO4D4Eid4krtATCdbS41XdHvwKUPnugy+6wnOpyMKfmDs=
+	t=1721200757; cv=none; b=DMwWBtn1D+kdjWDuKGeqo86U4pAUaHx9ywSVuIRsDyMlNBPZO5az7XRxbrLEWHsJynAMCxdje290GqUDEjqFdlANrWnPw3p8THg6KjljdQZpkPrw9mGlS2ijGz26/cHb7P/GcxPif8IKc09aqKJ3DonT4cjtnfy2R2dCTmyILCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721200740; c=relaxed/simple;
-	bh=7PaaGe8nbz1zISpPoYX/H9K+UT7ygtmRKsOFHz497zk=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=IIKTG2+urqVOcdYSiJK+sniVUQ/N03Uw3g3EAVWAfgFJZ7E0GXwUpJo1NUYKj/D3isYJPq5LsbIr4ChU1BX8FATMETJ3+pzIdzdA6WoF4RI87WeTqbnKE7UvJ2MyqqXyjngyeQF+q1IDCrLh5gyNz79pBj5PzJf4Wezk4BG6vqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=lM5UPU7h; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dcqK+/Vp; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 5F2341380363;
-	Wed, 17 Jul 2024 03:18:56 -0400 (EDT)
-Received: from wimap26 ([10.202.2.86])
-  by compute6.internal (MEProxy); Wed, 17 Jul 2024 03:18:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1721200736; x=1721287136; bh=dVPCdXoCdl
-	fuyxQFCO6tR60KWH2cIVkXd2rdl5L6JqE=; b=lM5UPU7h2Gq1rDOJG6qFaYML4f
-	WUGnNEzzA+AYF8qAHUk85HSVSwDB1RzWoxMCLbYobLM5URqk0zFWW8X++y+v/f9U
-	hkdgH7E8AoHUc7CvidcNMcTykk8kGgXrpkpX37TcNTmIRRyaV5AEtPW7f770Qt1k
-	BF3z602UqV2IYxHY4STREyKbOx8ADlXK2GCy7P7+VpQpUZ9UCkj9spKsMBOoy65X
-	0X5GvUN5OC7Tqk8By3EojwaJoVTG8nD6y4Kr9q/VOqiRJ9SHE4btUE96UHkezzFS
-	D75znMHiptX6Wf6evkVzTNS5DFQ5SunudahqQZkefdwbgxB5mUT+oNmd3UwA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1721200736; x=1721287136; bh=dVPCdXoCdlfuyxQFCO6tR60KWH2c
-	IVkXd2rdl5L6JqE=; b=dcqK+/VpvAT5m8FFZ9SAjVK2TWAvP5Gmhhf4aBWHlZuR
-	g4NxLayfnuwlG9N9dRGexf+qvsQ746FlSfoeyWVJDB1xNBepXehBJIKlIXer4Tl6
-	G8A3doOYJLmzbAzTf806hgrRiEp3fFY1IKBCa62ybQlwTvNS2ZcamzEgf91c5gfD
-	dO5aMTqitBINe53zPn5AdBvlBuKtS6evhiK4Lnzv3o2jFZvzGQyZHkpCsFBNiiy+
-	zNgbmQQZZVX4nfXU3T1j2gVkdosYyJgMGTndHA/QUdBMllHVzTydeJNhJ1L8+SqD
-	IX9BcxNgED7E/fFP2+5/0hylgld7OhAx2pQlMlEUOA==
-X-ME-Sender: <xms:X3CXZnkS4MySrDCNJmdRSbgJyYIiXKvq7vTVgK1SiDA3QTfmf0c2sA>
-    <xme:X3CXZq2vgskOCgv-9iBuU9y29xVihAmW1Fda2e0ObVvE8bZh3H0AkYthBE8ABQrch
-    g28sGCeeHNJS2dVOD4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgeehgdduvddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:X3CXZtqSVif7SXVane0MA2st5Alch9esIxtR04_W7jQ6Z5-CfqJ8Rw>
-    <xmx:X3CXZvnOpznvZfVxzrvuH0-Iw9XfPBLiKzQDuTLBs0MGK4aI2fuL-A>
-    <xmx:X3CXZl2aNkhPgdY4Yh0rjLq3shhuUxaQlFFYEcfEmZ6nemGgSGK1GA>
-    <xmx:X3CXZuvjkUJuFk4zxEkx21K4CdLiPeJWSjfA17bC8ZgVrAHBI3gnmw>
-    <xmx:YHCXZvyfIjmJ1IWmNAQLtesNHzDXM32lg7kvkZ5JoEyfkXqInb12K5Qn>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 01FBD19C005F; Wed, 17 Jul 2024 03:18:55 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
+	s=arc-20240116; t=1721200757; c=relaxed/simple;
+	bh=14a3EXAYx3n2AP13QV1T3S3XN5vJQPlb//kGSBxKTV8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sw1KsXZQAUdibKZ7DlxEqGc32ekK5bij34qEiVQ9Wu6S5Nb5xjB87YnObWPxFWE9IC1EibMd+1luOMkGomVI3Ld5hAz8J3EZUIT95UzYf/PzpyTFaUmoopfuj44NY/Hx+3JK9bsi0NONZlUQNo4IVol4A2MRXshZdqWBR59Xcp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PxRs7jWb; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6fd513f18bso673310566b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 00:19:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1721200754; x=1721805554; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ArgSkToA2nsjWvuTjSuyJoQaI0tJr7zvtfDgU/aUVoY=;
+        b=PxRs7jWbnOBywrRY+e752krtFT84TzIs8w/QBRfO6YgqtDgPU4b15aE2iiMWFvsiWr
+         1gLk2Er1i8zHDPqbR1G/l+bkez7d4+VXFhX/EAU5zH2IozG8j7EguTun8KJkQP2j2cHh
+         Qc4+Hdled9Oyv7V06h3nIdPC07suwas7zEybMupm27XlLUKJ4Z4DcGLCW07+JD2UdxUs
+         p0zjN4JtqZFyiaW2yaLGOVfuR2KSTlozROS3T10VhYeC4vBNBr2583jowAOHbo+Ohesh
+         DHNI4aUKfMPYy9mSU9FVMXvT6TUAPNL7L3yFL7p7Dsg0X/7AGMAofdGESZ9dxlDlXjrL
+         UU2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721200754; x=1721805554;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ArgSkToA2nsjWvuTjSuyJoQaI0tJr7zvtfDgU/aUVoY=;
+        b=pWERzmMOjeYI9eTc/M43SSP9+JtRpwxkKdpmc+1lxVXbrRnTE+jzIQz7SKg651VgPy
+         VkG59Es6Zr1snBfiFpHDt3yVqEmDTRQe5e2yGSSjzJiJijIXUwXIh3Ft/LltgVcD05ks
+         5iGjOVcNSpK7YJ1/8zEhH4jYz+OMEevNfRw/hz0hfbLKvPdtr4gH9hgJoAcqSZhwXJ+O
+         JeuDXbB+JQxDBoHa14XYJf5EOQ1C1SLgmyx0DQiLJH2yYJkKyx15sbPAfVtSVZGc2Exg
+         jN2yGUU+HOageYvUflcDM1wLtGIX2cCQxvqQtDyQyVt10zv+GgPTlrpvRPyRPQOAXtVs
+         EXvg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0P/jac8rZWsSpzIYHhE6JWYPNl+LxtH680kpCR/j+JD/BMKQ4zOjbO4DbgWziHOetSy3sQWfNFcdl4xVOicmCXiOnxXp4DKo086aE
+X-Gm-Message-State: AOJu0Yz7kjk9qZtcUgFSGvdazEK2rJlPkNm99IIiUoePric5q9I0jlkP
+	/pjSE1tcDNihj9IIXM6B9tP3A39Gc+2OCINXPjYQp4CATPn7IRSuRnV3/mophZU=
+X-Google-Smtp-Source: AGHT+IEFiz1UoJ1wRFUr8yrOzP0AGE8hgSRnejnhyVKNJBJmgOedBuq6BWNoanv2GWM0dmVqE7bphw==
+X-Received: by 2002:a17:906:2b4b:b0:a77:cca9:b21c with SMTP id a640c23a62f3a-a7a011a1220mr45969466b.34.1721200753714;
+        Wed, 17 Jul 2024 00:19:13 -0700 (PDT)
+Received: from localhost (109-81-86-75.rct.o2.cz. [109.81.86.75])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7f1e04sm413330566b.127.2024.07.17.00.19.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jul 2024 00:19:13 -0700 (PDT)
+Date: Wed, 17 Jul 2024 09:19:12 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Jianxiong Gao <jxgao@google.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] mm: Fix endless reclaim on machines with unaccepted
+ memory.
+Message-ID: <ZpdwcOv9WiILZNvz@tiehlicka>
+References: <20240716130013.1997325-1-kirill.shutemov@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <dfa20cd0-03d4-4178-a343-6387dd884e72@app.fastmail.com>
-In-Reply-To: 
- <CAHk-=wjqr_ahprUjddSBdQfSXUtg3Y2dCxHre=-Wa4VGdi7wuw@mail.gmail.com>
-References: <a662962e-e650-4d99-bed2-aa45f0b2cf19@app.fastmail.com>
- <CAHk-=wibB7SvXnUftBgAt+4-3vEKRpvEgBeDEH=i=j2GvDitoA@mail.gmail.com>
- <d7d6854b-e10d-473f-90c8-5e67cc5d540a@app.fastmail.com>
- <CAHk-=wir5og_Pd6MBSDFS+dL-bxoBix03QyGheySeeWPX82SDw@mail.gmail.com>
- <CAHk-=wjqr_ahprUjddSBdQfSXUtg3Y2dCxHre=-Wa4VGdi7wuw@mail.gmail.com>
-Date: Wed, 17 Jul 2024 09:18:33 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: "Masahiro Yamada" <masahiroy@kernel.org>, linux-kernel@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>,
- linux-arm-kernel@lists.infradead.org,
- "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
- linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
- "linux-openrisc@vger.kernel.org" <linux-openrisc@vger.kernel.org>,
- linux-snps-arc@lists.infradead.org
-Subject: Re: [GIT PULL] asm-generic updates for 6.11
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240716130013.1997325-1-kirill.shutemov@linux.intel.com>
 
-On Wed, Jul 17, 2024, at 07:08, Linus Torvalds wrote:
-> On Tue, 16 Jul 2024 at 21:57, Linus Torvalds <torvalds@linux-foundation.org> wrote:
->
->   ./arch/arm64/include/generated/uapi/asm/unistd_64.h
->   ./arch/arm64/include/generated/asm/syscall_table_32.h
->   ./arch/arm64/include/generated/asm/syscall_table_64.h
->   ./arch/arm64/include/generated/asm/unistd_32.h
->   ./arch/arm64/include/generated/asm/unistd_compat_32.h
->   ./include/generated/autoconf.h
->   ./usr/include/asm/unistd_64.h
->
+On Tue 16-07-24 16:00:13, Kirill A. Shutemov wrote:
+> Unaccepted memory is considered unusable free memory, which is not
+> counted as free on the zone watermark check. This causes
+> get_page_from_freelist() to accept more memory to hit the high
+> watermark, but it creates problems in the reclaim path.
+> 
+> The reclaim path encounters a failed zone watermark check and attempts
+> to reclaim memory. This is usually successful, but if there is little or
+> no reclaimable memory, it can result in endless reclaim with little to
+> no progress. This can occur early in the boot process, just after start
+> of the init process when the only reclaimable memory is the page cache
+> of the init executable and its libraries.
 
-I've tried to come up with a patch that avoids including
-asm/unistd.h in most files, which would give some relief
-and hopefully let you get through the merge window in 
-case we can't figure out my Makefile bug quickly.
+How does this happen when try_to_accept_memory is the first thing to do
+when wmark check fails in the allocation path?
 
-It's only a small drop in the ocean of excessive header
-inclusions, but it's still a step in the right direction
-I think. I'll do some more testing on other architectures
-with this patch so I can send you something that works.
+Could you describe what was the initial configuration of the system? How
+much of the unaccepted memory was there to trigger this?
 
-You can also just revert the three arm64 commits for now
+> To address this issue, teach shrink_node() and shrink_zones() to accept
+> memory before attempting to reclaim.
+> 
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Reported-by: Jianxiong Gao <jxgao@google.com>
+> Fixes: dcdfdd40fa82 ("mm: Add support for unaccepted memory")
+> Cc: stable@vger.kernel.org # v6.5+
+[...]
+>  static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+>  {
+>  	unsigned long nr_reclaimed, nr_scanned, nr_node_reclaimed;
+>  	struct lruvec *target_lruvec;
+>  	bool reclaimable = false;
+>  
+> +	/* Try to accept memory before going for reclaim */
+> +	if (node_try_to_accept_memory(pgdat, sc)) {
+> +		if (!should_continue_reclaim(pgdat, 0, sc))
+> +			return;
+> +	}
+> +
 
-d2a4a07190f4 arm64: rework compat syscall macros
-e632bca07c8e arm64: generate 64-bit syscall.tbl
-7fe33e9f662c arm64: convert unistd_32.h to syscall.tbl format
+This would need an exemption from the memcg reclaim.
 
-since the patch to remove uapi/asm-generic/unistd.h
-wasn't part of the 6.11 series yet and nothing else
-depends on the arm64 conversion.
+>  	if (lru_gen_enabled() && root_reclaim(sc)) {
+>  		lru_gen_shrink_node(pgdat, sc);
+>  		return;
 
-      Arnd
-
- extern const unsigned long sys_call_table[];
-diff --git a/arch/arm64/kernel/sys.c b/arch/arm64/kernel/sys.c
-index f08408b6e826..274b67f02f3e 100644
---- a/arch/arm64/kernel/sys.c
-+++ b/arch/arm64/kernel/sys.c
-@@ -13,7 +13,7 @@
- #include <linux/export.h>
- #include <linux/sched.h>
- #include <linux/slab.h>
--#include <linux/syscalls.h>
-+#include <linux/syscalls_api.h>
- 
- #include <asm/cpufeature.h>
- #include <asm/syscall.h>
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 72a1acd03675..9a535916dc03 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -92,6 +92,7 @@
- #include <linux/sched/coredump.h>
- #include <linux/sched/debug.h>
- #include <linux/sched/stat.h>
-+#include <linux/syscalls_api.h>
- #include <linux/posix-timers.h>
- #include <linux/time_namespace.h>
- #include <linux/resctrl.h>
-diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-index e6c00e860951..5144b80027be 100644
---- a/include/linux/binfmts.h
-+++ b/include/linux/binfmts.h
-@@ -3,7 +3,6 @@
- #define _LINUX_BINFMTS_H
- 
- #include <linux/sched.h>
--#include <linux/unistd.h>
- #include <asm/exec.h>
- #include <uapi/linux/binfmts.h>
- 
-diff --git a/include/linux/compat.h b/include/linux/compat.h
-index 56cebaff0c91..89c307da6e5d 100644
---- a/include/linux/compat.h
-+++ b/include/linux/compat.h
-@@ -17,7 +17,6 @@
- #include <linux/fs.h>
- #include <linux/aio_abi.h>	/* for aio_context_t */
- #include <linux/uaccess.h>
--#include <linux/unistd.h>
- 
- #include <asm/compat.h>
- #include <asm/siginfo.h>
-diff --git a/include/linux/ptrace.h b/include/linux/ptrace.h
-index 90507d4afcd6..f1ddc1eb9290 100644
---- a/include/linux/ptrace.h
-+++ b/include/linux/ptrace.h
-@@ -9,13 +9,6 @@
- #include <linux/bug.h>			/* For BUG_ON.  */
- #include <linux/pid_namespace.h>	/* For task_active_pid_ns.  */
- #include <uapi/linux/ptrace.h>
--#include <linux/seccomp.h>
--
--/* Add sp to seccomp_data, as seccomp is user API, we don't want to modify it */
--struct syscall_info {
--	__u64			sp;
--	struct seccomp_data	data;
--};
- 
- extern int ptrace_access_vm(struct task_struct *tsk, unsigned long addr,
- 			    void *buf, int len, unsigned int gup_flags);
-@@ -397,8 +390,6 @@ static inline void user_single_step_report(struct pt_regs *regs)
- #define exception_ip(x) instruction_pointer(x)
- #endif
- 
--extern int task_current_syscall(struct task_struct *target, struct syscall_info *info);
--
- extern void sigaction_compat_abi(struct k_sigaction *act, struct k_sigaction *oact);
- 
- /*
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index fff820c3e93e..2613b8f264bb 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -86,7 +86,6 @@ struct mnt_id_req;
- #include <linux/bug.h>
- #include <linux/sem.h>
- #include <asm/siginfo.h>
--#include <linux/unistd.h>
- #include <linux/quota.h>
- #include <linux/key.h>
- #include <linux/personality.h>
-diff --git a/include/linux/syscalls_api.h b/include/linux/syscalls_api.h
-index 23e012b04db4..bf997576453f 100644
---- a/include/linux/syscalls_api.h
-+++ b/include/linux/syscalls_api.h
-@@ -1 +1,17 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#ifndef _LINUX_SYSCALLS_API_H
-+#define _LINUX_SYSCALLS_API_H
-+
- #include <linux/syscalls.h>
-+#include <linux/seccomp.h>
-+#include <asm/syscall.h>
-+
-+/* Add sp to seccomp_data, as seccomp is user API, we don't want to modify it */
-+struct syscall_info {
-+	__u64			sp;
-+	struct seccomp_data	data;
-+};
-+
-+extern int task_current_syscall(struct task_struct *target, struct syscall_info *info);
-+
-+#endif
-diff --git a/include/trace/syscall.h b/include/trace/syscall.h
-index 8e193f3a33b3..0dfe926e70df 100644
---- a/include/trace/syscall.h
-+++ b/include/trace/syscall.h
-@@ -3,7 +3,6 @@
- #define _TRACE_SYSCALL_H
- 
- #include <linux/tracepoint.h>
--#include <linux/unistd.h>
- #include <linux/trace_events.h>
- #include <linux/thread_info.h>
- 
-diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
-index 33d8c9f4aa6b..523a53f12d4f 100644
---- a/include/uapi/linux/lsm.h
-+++ b/include/uapi/linux/lsm.h
-@@ -11,7 +11,6 @@
- 
- #include <linux/stddef.h>
- #include <linux/types.h>
--#include <linux/unistd.h>
- 
- /**
-  * struct lsm_ctx - LSM context information
-diff --git a/kernel/exit.c b/kernel/exit.c
-index be81342caf1b..a78a6e97615a 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -13,6 +13,7 @@
- #include <linux/sched/task.h>
- #include <linux/sched/task_stack.h>
- #include <linux/sched/cputime.h>
-+#include <linux/seccomp.h>
- #include <linux/interrupt.h>
- #include <linux/module.h>
- #include <linux/capability.h>
-diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-index d5f89f9ef29f..1067da7a8409 100644
---- a/kernel/ptrace.c
-+++ b/kernel/ptrace.c
-@@ -14,6 +14,7 @@
- #include <linux/sched/mm.h>
- #include <linux/sched/coredump.h>
- #include <linux/sched/task.h>
-+#include <linux/seccomp.h>
- #include <linux/errno.h>
- #include <linux/mm.h>
- #include <linux/highmem.h>
-diff --git a/lib/syscall.c b/lib/syscall.c
-index 006e256d2264..5fb67b3699b9 100644
---- a/lib/syscall.c
-+++ b/lib/syscall.c
-@@ -3,7 +3,7 @@
- #include <linux/sched.h>
- #include <linux/sched/task_stack.h>
- #include <linux/export.h>
--#include <asm/syscall.h>
-+#include <linux/syscalls_api.h>
- 
- static int collect_syscall(struct task_struct *target, struct syscall_info *info)
- {
+-- 
+Michal Hocko
+SUSE Labs
 
