@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-254979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 939D9933A1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:38:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37C26933A1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:38:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FAAA1F246B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:38:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2A801F243BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C584D8BC;
-	Wed, 17 Jul 2024 09:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D7B53E22;
+	Wed, 17 Jul 2024 09:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DGMPjDAh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dT7QjkcL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DEDC4D8B8;
-	Wed, 17 Jul 2024 09:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C066E5589B;
+	Wed, 17 Jul 2024 09:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721209097; cv=none; b=ufV0CI/nl90YUVNthImhsGNQnffOJWz3hkncKzSFiqFwqcEAIWRfZQFHf4xQwnsLaKCf2t+Y4zV1Nl7Lxz5cxvL/YODoDFDw+mZs2q3NjOrmUkj4ehmARHonf0t5V1OPWWT0BaBwdssJbdMW9+t6r4Rl9PK7qCEsegahoykEwZ0=
+	t=1721209102; cv=none; b=DbbC48wU7QWsa0WogD+zD0+K9nxpBPUwYnDs9oWbvCSvzG1tNLqIY6BdEtUgHIi/0jDf10WSwALPFofyNxKa/Mnx3m6fnohDq3EczKCp0g7W8qrv6VXQvDLOWIvJqfTmWWO0OvdpttPWry9n3u6PC8KA2UcMKagA/x2cic05zF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721209097; c=relaxed/simple;
-	bh=msJRc4jOmo8X3ZitZ0CBdwvlEyzT87CXS+Smk6niWEc=;
+	s=arc-20240116; t=1721209102; c=relaxed/simple;
+	bh=kvAvf3K13By68WYYkU8J/NSbxi+QzftdA8TmLyuxtq0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JHMZLbJbAiTvuP09w3Y+nccjCwrksAnjFi/cJ19ymSvTl10bYaPhe0J4jRFDy06j97XMA2+ziIPC7yqUF0Imhnwgt3aitTBTERK+tpuxkmJ9A8FeUgT8f+40Ya41GXVA/zVl+rbS12162mElBQRU0PNIOHSqXq3QMyGmSUBVC6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DGMPjDAh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F781C4AF0F;
-	Wed, 17 Jul 2024 09:38:13 +0000 (UTC)
+	 MIME-Version; b=SaDoEyuJrvphAm2YIpTmYcdqo4aa8rJt4Zyf2pmfKbbuhTFcAh44TbLhrQuHgxdyRaIbMEJoDpx526tb2/d3OA8lizZbFFFcUpXDXVgK6uWS/C7ysN/qNihF8qjRTpiUv3sEbcc94Cuivhnu/9IdrCdXJDxAs4NUYcpCmsWb4Gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dT7QjkcL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0460BC4AF09;
+	Wed, 17 Jul 2024 09:38:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721209097;
-	bh=msJRc4jOmo8X3ZitZ0CBdwvlEyzT87CXS+Smk6niWEc=;
+	s=k20201202; t=1721209102;
+	bh=kvAvf3K13By68WYYkU8J/NSbxi+QzftdA8TmLyuxtq0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DGMPjDAhwadBEbuN1mY54jiFyNyTGNOKIcIsivKjlt5jKe9SA6a1p0+7Zk2/uVumK
-	 EVVgvo28/usYXekHiR9vBjMe/75Il6heV/pmpGmqHd5dndy/739v0+6NoISlhHufjm
-	 gORW0nn4LF6T/VUMvKT8KCbCyxf5BIxqKNDRKWMLl3sHdZB9letDBFzFYLJ8hCePCY
-	 gnVBbY1B9SP0cia3yE4fmyXr7JuAsmW4KxconnvDoeVtmQRigkK+og+kqiGdJEkjD9
-	 hMWaDBsbIZJQ7OheKC6LMA84FCigkBXGaqiKl4zAzmoBlhUfXKvFpg2D7FiYJT/nDk
-	 h3Sk7FSID22KA==
+	b=dT7QjkcLSQyTYW+upkHxZPkqByBL2o8ELkc8voWPr2JPTBJVqWgrjKDUy0zA7f1M5
+	 LpmBztk1tru1WTy6CVfQGaBkZQVzjTQ17LwFXYhoKWGKFcDbXAjMCQjx6hpGTfCTUj
+	 hHecFyKnDZup/UZ8X5qXvrGrdP2hQLRJNP30XMzpuvpJfbZF55q9axNy1k9xeNcFGc
+	 yuZ6XPb3mQyHZW4KNzsW4RDRx6XB4J9FuP9LotQgiCP7asnQhiBF3oLKYbKTy21Vhw
+	 0DDU3dG7m+2f/sSAYQsF3vfghyLn3jScF379FhG5+D4PhifvoYUK2k3Yl5P0liblNy
+	 Kb4rypoeHK6ig==
 From: Conor Dooley <conor@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: conor@kernel.org,
@@ -60,9 +60,9 @@ Cc: conor@kernel.org,
 	linux-rockchip@lists.infradead.org,
 	imx@lists.linux.dev,
 	loongarch@lists.linux.dev
-Subject: [PATCH v1 2/4] ARM: dts: rockchip: remove unlikly-to-exist DAC from elgin-r1
-Date: Wed, 17 Jul 2024 10:37:54 +0100
-Message-ID: <20240717-parrot-malt-83cc04bf6b36@spud>
+Subject: [PATCH v1 3/4] loongarch: dts: remove non-existent DAC from 2k1000-ref
+Date: Wed, 17 Jul 2024 10:37:55 +0100
+Message-ID: <20240717-preacher-sandal-2aeffa322b9f@spud>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240717-anvil-ashy-544e80a1317c@spud>
 References: <20240717-anvil-ashy-544e80a1317c@spud>
@@ -72,48 +72,39 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1373; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=MSCoCs+nCZ6kB0uJ7jdevDa476eowpEIcz88i8dEKdE=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGnTJ3ys8n7Utfzn6f1/W+KE5jBkd/BffrFwSfWlrIkLJ 1k8WvmpsaOUhUGMg0FWTJEl8XZfi9T6Py47nHvewsxhZQIZwsDFKQATWSXL8JvVfIPtJKdH0j+r 7Y3ZZmcYrG9kfm1hdPNH/2qL10cnrK5n+F/dwZipV8nuu6Zpppjo6/3fdh4z7etMy41sMco9cdB GnQUA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=958; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=jfLYO8PFemfCqGXNrh1eFKx07e6y8OVxxug9hg0F1C0=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGnTJ3wU+s7fvKRHVGz+tenHhQ6u+vrlkYLe4hNn2rVXF HV2LHmf1FHKwiDGwSArpsiSeLuvRWr9H5cdzj1vYeawMoEMYeDiFICJJJcx/PdJF2lX6+VKeudx xv6ec7hVzOGt+8qki78ErNwe8JdfKZyRYVF6v9Uj3+6GPcdYu8PPVBh1pk+61dXt/W3ajAMVs9I 0GAA=
 X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
 
 From: Conor Dooley <conor.dooley@microchip.com>
 
-The Rohm dh2228fv (really the bh2228fv, the compatible in the kernel has
-a typo) does not support frequencies above 10 MHz, nor per the
-datasheet appear to use either CPOL or CPHA. I suspect that this
-devicetree is abusing the compatible in order to bind the spidev driver
-in Linux. Pretending to have devices on a board for this purpose is not
-acceptable, so remove it.
+The 2k1000 reference boards do not have a Rohm DAC on them as far as I
+can tell, and they certainly do not have a dh2228fv, as this device does
+not actually exist! Remove the dac nodes from the devicetrees as it is
+not acceptable to pretend to have a device on a board in order to bind
+the spidev driver in Linux.
 
 Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 ---
-I could not find any documentation for this board online, and it does
-not blatantly say that the device is a "spidev" like other [ab]users, so
-it is possible there's actually a DAC here - but I doubt it is a
-bh2228fv given the other incompatibilities.
----
- arch/arm/boot/dts/rockchip/rv1108-elgin-r1.dts | 8 --------
- 1 file changed, 8 deletions(-)
+ arch/loongarch/boot/dts/loongson-2k1000-ref.dts | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/arch/arm/boot/dts/rockchip/rv1108-elgin-r1.dts b/arch/arm/boot/dts/rockchip/rv1108-elgin-r1.dts
-index 2d9994379eb2..9df1cef406c5 100644
---- a/arch/arm/boot/dts/rockchip/rv1108-elgin-r1.dts
-+++ b/arch/arm/boot/dts/rockchip/rv1108-elgin-r1.dts
-@@ -167,14 +167,6 @@ &spi {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&spim1_clk &spim1_cs0 &spim1_tx &spim1_rx>;
- 	status = "okay";
--
--	dh2228fv: dac@0 {
+diff --git a/arch/loongarch/boot/dts/loongson-2k1000-ref.dts b/arch/loongarch/boot/dts/loongson-2k1000-ref.dts
+index 23cf26cc3e5f..3514ea78f525 100644
+--- a/arch/loongarch/boot/dts/loongson-2k1000-ref.dts
++++ b/arch/loongarch/boot/dts/loongson-2k1000-ref.dts
+@@ -90,11 +90,6 @@ &spi0 {
+ 
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
+-	spidev@0 {
 -		compatible = "rohm,dh2228fv";
+-		spi-max-frequency = <100000000>;
 -		reg = <0>;
--		spi-max-frequency = <24000000>;
--		spi-cpha;
--		spi-cpol;
 -	};
  };
  
- &u2phy {
+ &ehci0 {
 -- 
 2.43.0
 
