@@ -1,143 +1,210 @@
-Return-Path: <linux-kernel+bounces-254689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9AF5933664
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:26:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5C64933666
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:30:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6457C1F23D2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 05:26:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ACE2282740
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 05:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB45200DB;
-	Wed, 17 Jul 2024 05:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D209510A3D;
+	Wed, 17 Jul 2024 05:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k0DNpzQR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jBmoe2K4"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB0F11720
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 05:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0488D803;
+	Wed, 17 Jul 2024 05:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721193886; cv=none; b=NZbGDNcWz27dYV1mD9EUTt6GZxmjo/FH6EkcZoRUwC3NlswDemRb86vpbmlyBfzbWYE9DTw7tz9chCzoEYbhvmNHjHJDQtZcNQQdpMlUKAHnjo34aj6D4sqlDEjomaZm7p4DzDvFeOuDoO/nLT9vplWoj+tpYeDSMEqnujYME2w=
+	t=1721194242; cv=none; b=nY2J7EitCeAfhjLfTRa86eW6yU5eeiNM4TfbWJjo7MQd0T5Miuq1AybnikPvtvRK0C+tS6zdZD7R6tV4b189LXw2uidoly4b/fkuKJy5C9KQgK7CjIiYupbEL2rA7NhtyYKSDfj6RGTrAbsAhgL+Upm/giJuuOCh2VoBq9+HM6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721193886; c=relaxed/simple;
-	bh=fyYXOHu9fHp+yDLi4tjopWasn0OOj6F3xVVYEta73ZQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=b4XpeuygFiFmxbDWU10rN+fInbIH71EeUKMEOwxKYK5/uS+O79vPg1fwOGQ4dVVJKcCPmXQxWcWAfj4M7D228bT8FyB05FiCT1Ejkt+UfzuKFpNOe9r08JrjlZabwDykbZIMkk4Utsfz/r+n9sWWX2Z+yP2lGaJ9JsdFgFzZiV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k0DNpzQR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 51F5BC4AF13;
-	Wed, 17 Jul 2024 05:24:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721193886;
-	bh=fyYXOHu9fHp+yDLi4tjopWasn0OOj6F3xVVYEta73ZQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=k0DNpzQRDPx8LLqKG59JC5qmy1YOqQNEs5bmabn55M8xUFp+wSFVRridT70TnduvY
-	 7aa/RKNIbJ7RtRBsnY2HBr2yq4y6HFjTg6SeJXr68oIgO7FPb1sL0EXGut/TsIxEgE
-	 DHQ7288/sYeqZHYstp0FX65EGpscS1NudXr15mRw7mrmpWRCtgd62xDoTR/jMO040k
-	 E1+Q1pG126js6wtx+0kgZLlxl0tj3vCgnZIi2ef/x4iHNcrEh+uSLwpplvqbcX42mp
-	 yK7o5nCZeiV/rsy+2uKV7dMv6UfRu8txklj8S/8c4Rn0QLhTk2/DzBZRWDvEMQaeDs
-	 d11yircN7bVlg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4638FC3DA42;
-	Wed, 17 Jul 2024 05:24:46 +0000 (UTC)
-From: Hsiao Chien Sung via B4 Relay <devnull+shawn.sung.mediatek.com@kernel.org>
-Date: Wed, 17 Jul 2024 13:24:45 +0800
-Subject: [PATCH v4 5/5] drm/mediatek: Support alpha blending in display
- driver
+	s=arc-20240116; t=1721194242; c=relaxed/simple;
+	bh=1cD91AiF+ofn2qy+LURerTe+cUZh3kPu9C/4LdVxYso=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U0FUGhXwZZxUV+PAqMVyyWTP1YIXTDqYzIZxGGrwOyPI39ojnDBxiUZFz0TmBwyWmDthx8HcmBt6GHrGe6uCSb5zqWIpWAuQu50FSJFbGdkH7/AnKA4wTRlgSH49pD5JOz5Gox+k7TuznmrfyyHa29On21vDOdVn1UXd/2i7I24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jBmoe2K4; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46H5RhXP001713;
+	Wed, 17 Jul 2024 05:30:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:content-transfer-encoding:in-reply-to; s=pp1; bh=w
+	9v1uqSc7I6EDoQLYfTVG+EkjaoRO64Tk2h9wU4fO3k=; b=jBmoe2K4oBwAIEak7
+	jYG8d2YddF859QvszM1XG7vRZ+ON42Fpa2ziGB3Ebg/tINzhfSJkoqh5uFhwXmDR
+	SMszQDjgrOVF6OXgXLt4c5sCslWJcF6cMIPeZFA5LTtPoqWHjCnY/IoOY/rB0Bls
+	aJ4ahspMnLrwt2+RwkP6aIlUkwMmJXvgU1dM8DT3re5eKzz8m+UryuOjoIdyVHcM
+	adob+WJh+lwGbVGzz71c6pRKj89vR2hzLjeF5fGrYUlUVZ2M5bl5xIPTLiymTkq5
+	QjXecrlTKDI2I7lYGlNNoPj+RER6ZxcTsUFo9LY5MdzF12vE63VkmGmHt+/YYlrb
+	fP9fg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40dwnd9cx3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 05:30:07 +0000 (GMT)
+Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46H5U6pk004680;
+	Wed, 17 Jul 2024 05:30:06 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40dwnd9cx1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 05:30:06 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46H12ikj009586;
+	Wed, 17 Jul 2024 05:30:05 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 40dwkmjmr6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 05:30:05 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46H5U1Ko54460850
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 17 Jul 2024 05:30:04 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D51052004E;
+	Wed, 17 Jul 2024 05:30:01 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A8FB220040;
+	Wed, 17 Jul 2024 05:29:59 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.195.47.122])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 17 Jul 2024 05:29:59 +0000 (GMT)
+Date: Wed, 17 Jul 2024 10:59:57 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Baokun Li <libaokun@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+        jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
+        yi.zhang@huawei.com, yangerkun@huawei.com,
+        Baokun Li <libaokun1@huawei.com>,
+        zhanchengbin <zhanchengbin1@huawei.com>
+Subject: Re: [PATCH 02/20] ext4: prevent partial update of the extents path
+Message-ID: <ZpdR4pN8IJajB9xc@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-3-libaokun@huaweicloud.com>
+ <ZpPx3kuO36lp9/Um@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+ <9fd554c7-dc0c-4969-9f2a-1c99356fccce@huaweicloud.com>
+ <d33cfec3-4d72-41dc-b020-f17f726ba719@huaweicloud.com>
+ <ZpZDSMFbziWq5xOK@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+ <9ef38162-2eeb-4cf6-aee4-02d6a5952757@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240717-alpha-blending-v4-5-4b1c806c0749@mediatek.com>
-References: <20240717-alpha-blending-v4-0-4b1c806c0749@mediatek.com>
-In-Reply-To: <20240717-alpha-blending-v4-0-4b1c806c0749@mediatek.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
- Daniel Vetter <daniel@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Hsiao Chien Sung <shawn.sung@mediatek.corp-partner.google.com>, 
- CK Hu <ck.hu@mediatek.com>, Hsiao Chien Sung <shawn.sung@mediatek.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1721193884; l=2210;
- i=shawn.sung@mediatek.com; s=20240710; h=from:subject:message-id;
- bh=NXMVY+5up48Xsv5+9pKY3kYmUYHXnlx5rItB6cJy0f4=;
- b=qPLQi6C96RpE78tAkBytO4OSi0fwdJOcpP6FcHQkDdR6SkrD9IfkRhPs4zgCjQBF2Ay17XZG8
- NldT43LQNpXDF1jgUO2PAxdkGHLEeBuiGP2EyvG/Km0DHDHnxYI8UgX
-X-Developer-Key: i=shawn.sung@mediatek.com; a=ed25519;
- pk=VRlGZ3diQkQtpDd8fCL9/mx+TpZStm08pg8UPaG1NGc=
-X-Endpoint-Received: by B4 Relay for shawn.sung@mediatek.com/20240710 with
- auth_id=184
-X-Original-From: Hsiao Chien Sung <shawn.sung@mediatek.com>
-Reply-To: shawn.sung@mediatek.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9ef38162-2eeb-4cf6-aee4-02d6a5952757@huaweicloud.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: JiCbRVXGX1A1s-AVfFQDc6iao96CCMUa
+X-Proofpoint-ORIG-GUID: MEAS-Y7ghFlj_ThbARp2C9rpbpOQ_9Bx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-17_02,2024-07-16_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 clxscore=1015
+ suspectscore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0
+ malwarescore=0 mlxlogscore=598 spamscore=0 bulkscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2407170038
 
-From: Hsiao Chien Sung <shawn.sung@mediatek.com>
+On Tue, Jul 16, 2024 at 07:54:43PM +0800, Baokun Li wrote:
+> Hi Ojaswin,
+> 
+> On 2024/7/16 17:54, Ojaswin Mujoo wrote:
+> > > > But the journal will ensure the consistency of the extents path after
+> > > > this patch.
+> > > > 
+> > > > When ext4_ext_get_access() or ext4_ext_dirty() returns an error in
+> > > > ext4_ext_rm_idx() and ext4_ext_correct_indexes(), this may cause
+> > > > the extents tree to be inconsistent. But the inconsistency just
+> > > > exists in memory and doesn't land on disk.
+> > > > 
+> > > > For ext4_ext_get_access(), the handle must have been aborted
+> > > > when it returned an error, as follows:
+> > > ext4_ext_get_access
+> > >   ext4_journal_get_write_access
+> > >    __ext4_journal_get_write_access
+> > >     err = jbd2_journal_get_write_access
+> > >     if (err)
+> > >       ext4_journal_abort_handle
+> > > > For ext4_ext_dirty(), since path->p_bh must not be null and handle
+> > > > must be valid, handle is aborted anyway when an error is returned:
+> > > ext4_ext_dirty
+> > >   __ext4_ext_dirty
+> > >    if (path->p_bh)
+> > >      __ext4_handle_dirty_metadata
+> > >       if (ext4_handle_valid(handle))
+> > >         err = jbd2_journal_dirty_metadata
+> > >          if (!is_handle_aborted(handle) && WARN_ON_ONCE(err))
+> > >            ext4_journal_abort_handle
+> > > > Thus the extents tree will only be inconsistent in memory, so only
+> > > > the verified bit of the modified buffer needs to be cleared to avoid
+> > > > these inconsistent data being used in memory.
+> > > > 
+> > > Regards,
+> > > Baokun
+> > Thanks for the explanation Baokun, so basically we only have the
+> > inconsitency in the memory.
+> > 
+> > I do have a followup questions:
+> > 
+> > So in the above example, after we have the error, we'll have the buffer
+> > for depth=0 marked as valid but pointing to the wrong ei_block.
+> It looks wrong here. When there is an error, the ei_block of the
+> unmodified buffer with depth=0 is the correct one, it is indeed
+> 'valid' and it is consistent with the disk. Only buffers that were
 
-Support "Pre-multiplied" and "None" blend mode on MediaTek's chips by
-adding correct blend mode property when the planes init.
-Before this patch, only the "Coverage" mode (default) is supported.
+Hey Baokun,
 
-For more information, there are three pixel blend modes in DRM driver:
-"None", "Pre-multiplied", and "Coverage".
+Ahh I see now, I was looking at it the wrong way. So basically since
+depth 1 to 4 is inconsistent to the disk we mark then non verified so
+then subsequent lookups can act accordingly.
 
-To understand the difference between these modes, let's take a look at
-the following two approaches to do alpha blending:
+Thanks for the explanation! I am in the middle of testing this patchset
+with xfstests on a POWERPC system with 64k page size. I'll let you know
+how that goes!
 
-1. Straight:
-dst.RGB = src.RGB * src.A + dst.RGB * (1 - src.A)
-This is straightforward and easy to understand, when the source layer is
-compositing with the destination layer, it's alpha will affect the
-result. This is also known as "post-multiplied", or "Coverage" mode.
+Regards,
+Ojaswin
+> modified during the error process need to be checked.
+> 
+> Regards,
+> Baokun
 
-2. Pre-multiplied:
-dst.RGB = src.RGB + dst.RGB * (1 - src.A)
-Since the source RGB have already multiplied its alpha, only destination
-RGB need to multiply it. This is the "Pre-multiplied" mode in DRM.
-
-For the "None" blend mode in DRM, it means the pixel alpha is ignored
-when compositing the layers, only the constant alpha for the composited
-layer will take effects.
-
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_plane.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/gpu/drm/mediatek/mtk_plane.c b/drivers/gpu/drm/mediatek/mtk_plane.c
-index 1723d4333f37..5bf757a3ef20 100644
---- a/drivers/gpu/drm/mediatek/mtk_plane.c
-+++ b/drivers/gpu/drm/mediatek/mtk_plane.c
-@@ -346,6 +346,17 @@ int mtk_plane_init(struct drm_device *dev, struct drm_plane *plane,
- 			DRM_INFO("Create rotation property failed\n");
- 	}
- 
-+	err = drm_plane_create_alpha_property(plane);
-+	if (err)
-+		DRM_ERROR("failed to create property: alpha\n");
-+
-+	err = drm_plane_create_blend_mode_property(plane,
-+						   BIT(DRM_MODE_BLEND_PREMULTI) |
-+						   BIT(DRM_MODE_BLEND_COVERAGE) |
-+						   BIT(DRM_MODE_BLEND_PIXEL_NONE));
-+	if (err)
-+		DRM_ERROR("failed to create property: blend_mode\n");
-+
- 	drm_plane_helper_add(plane, &mtk_plane_helper_funcs);
- 
- 	return 0;
-
--- 
-2.43.0
-
-
+> > 
+> > In this case, can we have something like below:
+> > 
+> > -----------------
+> > ext4_ext_remove_space
+> >    err = ext4_ext_rm_idx (error, path[0].p_bh inconsistent but verified)
+> >    /*
+> >     * we release buffers of the path but path[0].p_bh is not cleaned up
+> >     * due to other references to it (possible?)
+> >     */
+> > 
+> > ... at a later point...:
+> > 
+> > ext4_find_extent
+> >    bh = read_extent_tree_block()
+> >      /*
+> >       * we get the bh that was left inconsistent previously
+> >       * since its verified, we dont check it again corrupting
+> >       * the lookup
+> >       */
+> > 
+> > -----------------
+> > 
+> > Is the above scenario possible? Or would the path[0].p_bh that was
+> > corrupted previously always be reread during the subsequent
+> > ext4_find_extent() lookup?
+> > 
+> > Thanks again,
+> > Ojaswin
+> 
 
