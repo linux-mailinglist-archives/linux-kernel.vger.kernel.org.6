@@ -1,140 +1,182 @@
-Return-Path: <linux-kernel+bounces-254716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F7459336C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:20:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5406F9336F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:25:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE44A1F23BE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:20:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9B271F23E88
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78DF12B7D;
-	Wed, 17 Jul 2024 06:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3173114A96;
+	Wed, 17 Jul 2024 06:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EnkJrJUL"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Z8u7SVU+"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77D117997;
-	Wed, 17 Jul 2024 06:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BAD125DE
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 06:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721197201; cv=none; b=eOmdRuvcQKJIieAAD64nK0PO7TXUmQwEJ1Y2khxHSUWIna1IYsa14uSCyTaN0Os8w+5ScQhlR0qM2Ug580TAAwGsdCU6WKcybUHr7FA9swc33hS7luv162obZegQYEIo5kp/eAENkAisQpPJuH2Y0s3Eqwvza9qXDlEK/PCLzrg=
+	t=1721197510; cv=none; b=o9Dq/L5fbo+5XYtSi510AqGIbV9j4/pPCP2OkJcCJi5kqKJNQ10F8Opv89eW6sh9SxU1dCIfnolzFxqjIDs7xVUNgcyK3cPRr7RNA/1dAJXCrV6/MtZAeAWqtWY8A9LsABs1SYdV031uab/Fgdj5oxj8KKNXBaaUVNs+qb5QXkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721197201; c=relaxed/simple;
-	bh=Zv7me/dhmNwVa0EWGTIEKotNgKNQUhTpmUPyej9vY1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lb1R2i8npbw8ADLOvzpZpQHAB2c3KV2m6UvSM9y+H+XiUuuhHKPcgjqR54fyNlLcWGFusHvcNJ3MFF82q2S9I4DYQjj6xi7lCTA36dtP7FeocFil+1Dut1Fb8ELBayF7stZk23JCbQqzq2WFVKU3ntiEc+oAhLbspJYnjUgm14o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=EnkJrJUL; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1721197195;
-	bh=M3tSIjcmh7g/IM3TEvPm5kACdNWJvZr4ZQQWw4tj0Kc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EnkJrJUL9vmI/Mc6mL/mCdoxbDEa0dZ8/wSKZ+s6o3v2oV7qgyMan4wj5Z/tNClxA
-	 IitYMAXzZCsN6W8QRy6k1f6Pe3+uNwhCp+wlZeLqgesrYtcDfDb4AE5le0Xt4+kFLv
-	 bQxGfExNQa0A4zUVCBi+xW5iPw18CklRvLxH5NBotonFNLQwl7ReBTwxG4LjURn/HJ
-	 Afzjw7BY+krT9PEPA/tBveZNkqZvUwQSAUo6glfnjDkRuyk44Fe66pMSzHQaV+pUz0
-	 j64awjKIfa6aQUPTcdVBfVHe6oo4QaXeAE8lCvlpyr6Y15tH0Rw42vgk9zoHE1/kXk
-	 9WeDXDVm2d/Wg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WP5Q32hyyz4w2S;
-	Wed, 17 Jul 2024 16:19:54 +1000 (AEST)
-Date: Wed, 17 Jul 2024 16:19:51 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Huacai Chen <chenhuacai@loongson.cn>, Arnd Bergmann <arnd@arndb.de>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the loongarch tree with the
- asm-generic tree
-Message-ID: <20240717161951.01e4737d@canb.auug.org.au>
-In-Reply-To: <20240709100154.0b4b1372@canb.auug.org.au>
-References: <20240709100154.0b4b1372@canb.auug.org.au>
+	s=arc-20240116; t=1721197510; c=relaxed/simple;
+	bh=3zBJRLkrzJHSNuZAH1F+78p9BTEz4I4epc4BJVRS110=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Y28/YP4h+v4r9kjKFofVfe8bVslGdWSnsFkaHrRoli8C9Gd37hrEkJZ3OzOUaTq0CaNduTAUCUuXhm8CRJX49c34dyjnWrfOyDpxs6TAGqE0yamiq0FkLPTu/eBQKuxzLpliGrquC4LETsO1751buHU7fU4QrfnU3wu4+Qq0VDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Z8u7SVU+; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42660b8dd27so43722035e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 23:25:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721197506; x=1721802306; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xQbGd0qu6ssbesu7Zjwn0myIi2A+oWSgEr0KZDNP1pQ=;
+        b=Z8u7SVU+9/ifkGY9+pBpuJd2k664kK38R+eCRwtf6S/rd+EPbFXqEBedrvmhJp5qra
+         n5o05/9r3FuV64FAW4Byt/h4o1BlK5gM1mk0aC/OkNwbVJxiSdBP7bQwF690a/TegAOQ
+         KVkuBRVPSat0xrc0f/4uRpsggwcfpvhetqds7GtGu90gzexZMOfpT2Fs5GchfFb2Z6RE
+         CnwBqMGYmCPizMz5PR6VZGsIcrmsWri38usivn2PRriBnRPhEhmYSP7b0b0Ttz2PkOdR
+         Iy6NGVm2E4Claushy76Q6NvyR9LtDR9gzIkuZmJ0t/2O3giWlcxJ/INUbh+tYMq1yVS7
+         s1zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721197506; x=1721802306;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xQbGd0qu6ssbesu7Zjwn0myIi2A+oWSgEr0KZDNP1pQ=;
+        b=Ad7j4d0nkiUci096JJZgcXTOq/LuSBKIiCYjyX+ae8Aqt9HVKGQ8lIV8/cLiRv9XEt
+         yOYtcLapleYlZijWx+75aFiiIP05qSfCAqrIvosscjXB3xIPqjAYXt2CIj8Jt7CJAG9N
+         TKeYgRviD7bPWg+CuzxeUzWfmS/wI3yXsLKc403eKAJmwzYWshpFwZxqmM/1DQ9Nzg0g
+         PIukAaX1NRjkW86EvCKBpxMfY1Vw1NnZfxfXxcw+bVIhwuq2CHLP4jycQou9wTP4aSKF
+         JZaJV54yUOTkwAP/s9eOREAQHteSl1bSA3ememAy1fEGncxtt9ltC5xsQCsFH4iKnpXW
+         9LGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYCJC0Pyg0IT73WSTf2gXej4g019KSJj85A3CNweYHh3UkNEK4sL6tCFwcyoArvNwAG/vRs6cD9rw0U+8ZmWtu498UouiWsyZk/Duy
+X-Gm-Message-State: AOJu0YxOUChmUS3HxCaGAl89QjmRDHh9ZbXeiyUZlzjcw94wmg1b9Pwg
+	x7QVLgeqiqzgpKddCBoFOISZWnwlutGpS7wfZJj18yVP9Bz+GiXOfhYZ+YX09ow=
+X-Google-Smtp-Source: AGHT+IEFDv6V5tFWhauDPHJiZCgq6FMlgRvbm1hC+8pd4MPLkSbI6qpbIzPF0VaZZ69mfVtEYemITg==
+X-Received: by 2002:a05:600c:4eca:b0:426:549c:294c with SMTP id 5b1f17b1804b1-427c2d06e43mr5639015e9.35.1721197506505;
+        Tue, 16 Jul 2024 23:25:06 -0700 (PDT)
+Received: from alex-rivos.home (amontpellier-656-1-456-62.w92-145.abo.wanadoo.fr. [92.145.124.62])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5ef4617sm155918965e9.41.2024.07.16.23.25.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 23:25:06 -0700 (PDT)
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Leonardo Bras <leobras@redhat.com>,
+	Guo Ren <guoren@kernel.org>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-arch@vger.kernel.org
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>
+Subject: [PATCH v3 05/11] riscv: Implement arch_cmpxchg128() using Zacas
+Date: Wed, 17 Jul 2024 08:19:51 +0200
+Message-Id: <20240717061957.140712-6-alexghiti@rivosinc.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240717061957.140712-1-alexghiti@rivosinc.com>
+References: <20240717061957.140712-1-alexghiti@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/gHwLOmNioCdigJhn9+oy0YW";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/gHwLOmNioCdigJhn9+oy0YW
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Now that Zacas is supported in the kernel, let's use the double word
+atomic version of amocas to improve the SLUB allocator.
 
-Hi all,
+Note that we have to select fixed registers, otherwise gcc fails to pick
+even registers and then produces a reserved encoding which fails to
+assemble.
 
-On Tue, 9 Jul 2024 10:01:54 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Today's linux-next merge of the loongarch tree got a conflict in:
->=20
->   arch/loongarch/include/uapi/asm/unistd.h
->=20
-> between commits:
->=20
->   13aa27ce8de0 ("clone3: drop __ARCH_WANT_SYS_CLONE3 macro")
->   1d7b98ec5d78 ("loongarch: convert to generic syscall table")
->=20
-> from the asm-generic tree and commit:
->=20
->   a5d43e6d87c0 ("LoongArch: Define __ARCH_WANT_NEW_STAT in unistd.h")
->=20
-> from the loongarch tree.
->=20
-> I fixed it up (I think - see below) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc arch/loongarch/include/uapi/asm/unistd.h
-> index 1f01980f9c94,b344b1f91715..000000000000
-> --- a/arch/loongarch/include/uapi/asm/unistd.h
-> +++ b/arch/loongarch/include/uapi/asm/unistd.h
-> @@@ -1,3 -1,6 +1,4 @@@
->   /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> + #define __ARCH_WANT_NEW_STAT
->  -#define __ARCH_WANT_SYS_CLONE
->  -#define __ARCH_WANT_SYS_CLONE3
->  =20
->  -#include <asm-generic/unistd.h>
->  +#include <asm/unistd_64.h>
+Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+---
+ arch/riscv/Kconfig               |  1 +
+ arch/riscv/include/asm/cmpxchg.h | 39 ++++++++++++++++++++++++++++++++
+ 2 files changed, 40 insertions(+)
 
-This is now a conflict between the loongarch tree and Linus' tree.
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index d3b0f92f92da..0bbaec0444d0 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -104,6 +104,7 @@ config RISCV
+ 	select GENERIC_VDSO_TIME_NS if HAVE_GENERIC_VDSO
+ 	select HARDIRQS_SW_RESEND
+ 	select HAS_IOPORT if MMU
++	select HAVE_ALIGNED_STRUCT_PAGE
+ 	select HAVE_ARCH_AUDITSYSCALL
+ 	select HAVE_ARCH_HUGE_VMALLOC if HAVE_ARCH_HUGE_VMAP
+ 	select HAVE_ARCH_HUGE_VMAP if MMU && 64BIT
+diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cmpxchg.h
+index 97b24da38897..608d98522557 100644
+--- a/arch/riscv/include/asm/cmpxchg.h
++++ b/arch/riscv/include/asm/cmpxchg.h
+@@ -289,4 +289,43 @@ end:;									\
+ 	arch_cmpxchg_release((ptr), (o), (n));				\
+ })
+ 
++#ifdef CONFIG_RISCV_ISA_ZACAS
++
++#define system_has_cmpxchg128()						\
++			riscv_has_extension_unlikely(RISCV_ISA_EXT_ZACAS)
++
++union __u128_halves {
++	u128 full;
++	struct {
++		u64 low, high;
++	};
++};
++
++#define __arch_cmpxchg128(p, o, n, cas_sfx)					\
++({										\
++	__typeof__(*(p)) __o = (o);						\
++	union __u128_halves __hn = { .full = (n) };				\
++	union __u128_halves __ho = { .full = (__o) };				\
++	register unsigned long x6 asm ("x6") = __hn.low;			\
++	register unsigned long x7 asm ("x7") = __hn.high;			\
++	register unsigned long x28 asm ("x28") = __ho.low;			\
++	register unsigned long x29 asm ("x29") = __ho.high;			\
++										\
++	__asm__ __volatile__ (							\
++		"	amocas.q" cas_sfx " %0, %z3, %2"			\
++		: "+&r" (x28), "+&r" (x29), "+A" (*(p))				\
++		: "rJ" (x6), "rJ" (x7)						\
++		: "memory");							\
++										\
++	((u128)x29 << 64) | x28;						\
++})
++
++#define arch_cmpxchg128(ptr, o, n)						\
++	__arch_cmpxchg128((ptr), (o), (n), ".aqrl")
++
++#define arch_cmpxchg128_local(ptr, o, n)					\
++	__arch_cmpxchg128((ptr), (o), (n), "")
++
++#endif /* CONFIG_RISCV_ISA_ZACAS */
++
+ #endif /* _ASM_RISCV_CMPXCHG_H */
+-- 
+2.39.2
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/gHwLOmNioCdigJhn9+oy0YW
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaXYocACgkQAVBC80lX
-0GybIggAg2UbraYP86Rp21D68x6f1xsAy98VJOrKTPRfLmZz+z0r2QxOjphLLgH+
-u5sdha9rDGAok5jPFvRS5Ncd7wkR8kKoC4IQe1vyXSUqT2+hZYZDFnMcwqErwuqT
-pnOEiA6alCJ/Ti+4b4rITy+ErOsnxYoqBsxMSvIIIQdtY5CzacRiAJcdAS4ecZ2L
-T3wLx91TXfZ2Kjc8F3rDU3ar1745oO+Hhf5H1N5yxz1IcucfG8huOLrsjbKrFdJw
-HdlAH1S11EPX3PX3NJFIJBibapRtkSx/pQrunW/kdkSPoEaXXfCKbKuQn95aFhDT
-qxALREGe/tqHpgtMxTQLes5wKOrcZw==
-=53GI
------END PGP SIGNATURE-----
-
---Sig_/gHwLOmNioCdigJhn9+oy0YW--
 
