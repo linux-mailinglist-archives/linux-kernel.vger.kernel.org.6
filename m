@@ -1,89 +1,118 @@
-Return-Path: <linux-kernel+bounces-254608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9907933566
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 04:23:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6CB9933569
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 04:25:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C53511F2204F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 02:23:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BA531C21629
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 02:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B964C99;
-	Wed, 17 Jul 2024 02:23:14 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE056FB6;
+	Wed, 17 Jul 2024 02:25:15 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A55B28EA
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 02:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A58442F;
+	Wed, 17 Jul 2024 02:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721182993; cv=none; b=uzt2P+PXWY6Lrdo/L62vg9ZJz0yDScrmC17fFDOz/SMaG8Tze29p6y5OJ/G6A0zIlEJ/f3rcx+CgmSLlz9mYYPjLyrXTUyFX9HkPiv3379bFW2TBEVcLcuDfq+9oZf5R+i4GCLCWkr6pKJs+HCA8nmqTK9EKeP+7AHVy4wMUISI=
+	t=1721183115; cv=none; b=uGvdrUuAV0yfcmoGRlz7iNfhqPV6MsKSLDiRO0M5HKI8j5BB5nfy7jStYViKsmpl7sW97rgyUenx4Rv9tbM/JoVAPU8alXl/o3SHgaTrR04v/3CfLd8k6/Rj9D8DK+OZRRXou1Ns8xkm11QDLFsR5qEJntE7lCgWDelmuy96AiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721182993; c=relaxed/simple;
-	bh=KVxVDa2sLtsQZ1BUHM4panynfvlVr/pW1Z0Zwxh9ofI=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=rVrk2LQu+7h+TpcC6dcBKqT5uqO9xNN/MsKVukFIzAArxsLa05WT4q5dXD8O5eauC1nQjMQlV0v1Q/J2deMCWpopZgvI0cqUORfAJ84+UxpjuRr+1B3LKJ1DFKuswdCw00PeRS+QLsHgcI7VCj1vRkR8FpiaGNviwZvcTSeoNEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WP05t4b8Yz1HFLL;
-	Wed, 17 Jul 2024 10:20:34 +0800 (CST)
-Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
-	by mail.maildlp.com (Postfix) with ESMTPS id B4E7918002B;
-	Wed, 17 Jul 2024 10:23:07 +0800 (CST)
-Received: from [10.173.127.72] (10.173.127.72) by
- kwepemd200019.china.huawei.com (7.221.188.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 17 Jul 2024 10:23:07 +0800
-Subject: Re: [PATCH v2] mm/hwpoison: reset hwpoison filter parameters in
- pfn_inject_exit()
-To: Michal Hocko <mhocko@suse.com>
-CC: <akpm@linux-foundation.org>, <nao.horiguchi@gmail.com>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-References: <20240716033516.606582-1-linmiaohe@huawei.com>
- <ZpYxkH1EFB65tEzt@tiehlicka>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <c81031da-2722-dea4-0118-9f4911035cae@huawei.com>
-Date: Wed, 17 Jul 2024 10:23:06 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1721183115; c=relaxed/simple;
+	bh=hTsCtKMMwpYJJaYHd+VYy/lZb1GbRWgDEPKlTd/+vwc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XVFxNCA3YiQlIEsxzBb1TXGJgrFUwPblqfJMQatR7KBHs8Yg1sqUeWW2crLjd5YJhm1pCyi+jw7JVxL8ye3HlboFUZXtRQdTAkqi432XoVMBF6oj/Ovf/XA4fO4xg5ARq2ejQXU5sJzD7lDwmWUwvMOlz7++RoSf5if8Zg7MAxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.97.1)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sTuLk-000000006Cr-1FJG;
+	Wed, 17 Jul 2024 02:25:00 +0000
+Date: Wed, 17 Jul 2024 03:24:55 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Diederik de Haas <didi.debian@cknow.org>
+Cc: Chen-Yu Tsai <wens@kernel.org>, linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Martin Kaiser <martin@kaiser.cx>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@debian.org>,
+	devicetree@vger.kernel.org, linux-crypto@vger.kernel.org,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Olivia Mackall <olivia@selenic.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Aurelien Jarno <aurelien@aurel32.net>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH v7 0/3] hwrng: add hwrng support for Rockchip RK3568
+Message-ID: <ZpcrdwZBNFu-YlZt@makrotopia.org>
+References: <cover.1720969799.git.daniel@makrotopia.org>
+ <CAGb2v67zxs03xScN8OfWXR1gf8tddJciXrjw3FQZcL7pR3ocxA@mail.gmail.com>
+ <3190961.CRkYR5qTbq@bagend>
+ <3220752.Q7WYUMVHaa@bagend>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZpYxkH1EFB65tEzt@tiehlicka>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd200019.china.huawei.com (7.221.188.193)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <3220752.Q7WYUMVHaa@bagend>
 
-On 2024/7/16 16:38, Michal Hocko wrote:
-> On Tue 16-07-24 11:35:16, Miaohe Lin wrote:
->> When hwpoison_inject module is removed, hwpoison_filter_* parameters
->> should be reset. Otherwise these parameters will have non-default values
->> at next insmod time.
-> 
-> There is a clear layering broken here. We have mm/memory-failure.c using
-> values and mm/hwpoison-inject.c defining the values. Both with a
-> potentially different life time. Shouldn't that be fix instead?
+On Tue, Jul 16, 2024 at 07:19:35PM +0200, Diederik de Haas wrote:
+> On Tuesday, 16 July 2024 18:53:43 CEST Diederik de Haas wrote:
+> > rngtest: FIPS 140-2(2001-10-10) Long run: 0
+>=20
+> I don't know if it means something, but I noticed that I have
+> ``Long run: 0`` with all my poor results,
+> while Chen-Yu had ``Long run: 1``.
+>=20
+> Different SoC (RK3399), but Anand had ``Long run: 0`` too on their
+> very poor result (100% failure):
+> https://lore.kernel.org/linux-rockchip/CANAwSgTTzZOwBaR9zjJ5VMpxm5BydtW6r=
+B2S7jg+dnoX8hAoWg@mail.gmail.com/
 
-In fact, we have mm/memory-failure.c defining and using these values while they can
-only be modified through mm/hwpoison-inject.c from userspace. The common usecase should be:
+The conclusions I draw from that rather ugly situation are:
+ - The hwrng should not be enabled by default, but it should by done
+   for each board on which it is known to work well.
+ - RK_RNG_SAMPLE_CNT as well as the assumed rng quality should be
+   defined in DT for each board:
+   * introduce new 'rochchip,rng-sample-count' property
+   * read 'quality' property already used for timeriomem_rng
 
-1. User set hwpoison filter parameters first through mm/hwpoison-inject.c.
-2. Then doing memory hwpoison test through mm/hwpoison-inject.c.
+I will prepare a follow-up patch taking those conclusions into account.
 
-hwpoison_filter_* parameters are only used for test from userspace. From this perspective,
-this potentially different life time doesn't break anything. Or am I miss something?
+Just for completeness, here my test result on the NanoPi R5C:
+root@OpenWrt:~# cat /dev/hwrng | rngtest -c 1000
+rngtest 6.15
+Copyright (c) 2004 by Henrique de Moraes Holschuh
+This is free software; see the source for copying conditions.  There is NO =
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-Thanks.
-.
-
-
+rngtest: starting FIPS tests...
+rngtest: bits received from input: 20000032
+rngtest: FIPS 140-2 successes: 875
+rngtest: FIPS 140-2 failures: 125
+rngtest: FIPS 140-2(2001-10-10) Monobit: 123
+rngtest: FIPS 140-2(2001-10-10) Poker: 5
+rngtest: FIPS 140-2(2001-10-10) Runs: 4
+rngtest: FIPS 140-2(2001-10-10) Long run: 0
+rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+rngtest: input channel speed: (min=3D85.171; avg=3D141.102; max=3D4882812.5=
+00)Kibits/s
+rngtest: FIPS tests speed: (min=3D17.809; avg=3D19.494; max=3D60.169)Mibits=
+/s
+rngtest: Program run time: 139628605 microseconds
 
