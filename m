@@ -1,59 +1,82 @@
-Return-Path: <linux-kernel+bounces-255740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 895C4934498
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:11:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DEEA93449C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C016D2826EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:11:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4975328455D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9DC46426;
-	Wed, 17 Jul 2024 22:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC154437C;
+	Wed, 17 Jul 2024 22:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sYZ2OIRd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UuxXmvNr"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8323E2BCF7;
-	Wed, 17 Jul 2024 22:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43DA5588E
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 22:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721254276; cv=none; b=eB5lPIVsi/GOdWWCbdiCinWNU81yxOosoCppkoz/W/jhOTd0hWYYV4kTL/Wo328ODKRWtmATWJQjlp7pgjNunGKk/y2L5A4mSAEHtDs+IVg7cUF8aBWgIjagE0nnyIzO4Y31ghsyaNFpM5jBNTkIl0rioLE+J++FDA+8KGr0sbQ=
+	t=1721254293; cv=none; b=ueNe8Kttr0hRdXSa4sqnTazcBogesRhOHb9hmmd0E4Ld2R05EHeBWxSPM72ZgpzDsggXQaryH5LCGaVgQ/tgAXK2ck7vhRe8M5KvYP0fKeRa5HZjgIPMqj8jzmS5nYWFWdISP6z4qWf5OQr6IYv6h8mO1/fqSGYImFskLl1I9Cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721254276; c=relaxed/simple;
-	bh=fKhM1tyNRfbmKB/nD4xsxgWIOHKRVRmfo3oa/afGcfI=;
+	s=arc-20240116; t=1721254293; c=relaxed/simple;
+	bh=mN46T/B5S0+VZbxv+QTvO7CnblMS2+dX0N0FDtySNaI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qHsdV0j4OfkCsWvC8DfdLWAk10ZlGs6+pfuzc5w4u5NARLDAcHTYvkksATUso1r8fD6ARIU4RM2pU/fuL0QDMH02qy51b6dmnopwfxr1zObqmnGaGoVybanATfaL1QeimPAD1vKRm6T98QAWAOcAeNkshuSULCpN9XDUtZ01peE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sYZ2OIRd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0659CC2BD10;
-	Wed, 17 Jul 2024 22:11:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721254276;
-	bh=fKhM1tyNRfbmKB/nD4xsxgWIOHKRVRmfo3oa/afGcfI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sYZ2OIRdO+cd71ru2Pl62zWKakK7gTtrPSbyI1E2Cn7pLf1KQQeJZs4Jf1iubAvUq
-	 flrhASNVB//X+1AXITe9g3ZYb6a1IzsCH2v+hTFdPZ4F6R1CRp0Og0YV0tWmBpnWKT
-	 WwEcWADArRQ4nmNxkAC3ppbRqy+L5xtzH9eQRm5j8NEswWGgj3LMSYneOJ57ReGrzy
-	 mQtLMczX+YwvIulN703WmxmDS5dRpcGWdq1lu5ySjCR+XsBSkxHm9xEky53OhleSXA
-	 3hZYdQZ6zMZ1qbW1eeB2yiWnKlCjhVXczC7AkhpCHgOwOt3Dm0SDt+5BoXLUt6uM2R
-	 FzuIaWwObiFpw==
-Date: Wed, 17 Jul 2024 15:11:15 -0700
-From: Kees Cook <kees@kernel.org>
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: David Gow <davidgow@google.com>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	Rae Moar <rmoar@google.com>, Jonathan Corbet <corbet@lwn.net>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] Documentation: KUnit: Update filename best practices
-Message-ID: <202407171510.88EECF3857@keescook>
-References: <20240717210047.work.412-kees@kernel.org>
- <a5005f1e-5bbc-49f2-bd1f-4c4878b98d26@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=E1rrgk3Ebz6Bbi1PZTswNzCyX2xJbv7aUmRjRmlWXWfNbkHu3B/0aiwl2E49U35yNivW6d/czNbfj0Af3munC25xvFb7KAm6Ks6qhZRar0N1K/HLulmsJOHn7pjtcj3K9l/XCHT7J/3KxllFrnmHhmq8u0KAOo8NvLrK0k5KJqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UuxXmvNr; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2eeb1051360so2532541fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 15:11:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721254289; x=1721859089; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+YdknVgUnt+O5pCK+EMdo/Gub1e64a/mmcVnpk3pt8s=;
+        b=UuxXmvNrvkxiKsqOLkrF01r+DRzTBr7CtcU1mU0l7kplkA3w3KN4VbjhQIbfRHCnjA
+         CZti63WNCQodUOUiZ2WMOfyep9LyU6ul1edba/UJwWAf+ueR28r7l5vBa1T5dBWWdzXP
+         kHvuqn8SEqUVf7oE4Q/t2xseGnvW3ZznH4IyQJOguSn9z06BUKlrd66DI3OCI6em9Vf/
+         Bw3tltn0ArpjhCYd6bWVhvqlsC0W5Dguo7BK0o6OLLTB2ZG1SOUDTKKGvc4oG8XL44Kw
+         AdRo3HbUlvcJFJZ9NqcOPRCk2DGzCe+LP5dT4s81oU/e8RD5TWY/LlvhGtdv+WIaKWAr
+         tGbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721254289; x=1721859089;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+YdknVgUnt+O5pCK+EMdo/Gub1e64a/mmcVnpk3pt8s=;
+        b=YFO8xHjgEk3+X/ijavP3U5MO13LsN2TYznVM1262GVI/ckJkz2eekdPkdCvCuoAEYc
+         esGZ3hnS3xb5CuIDhYxaIg1+n9KfWoymAWXrrFqyxemu0s6lfMqiJEHLqHhbDOq8TpM9
+         wpkMhq0E+z5wWioiy8+WLciI+4JyiNHhr4Tw2St8dhshwQst8KFSOWDvY9SCybGVTRmr
+         JtS2RhyNzEgaEdy3jjyOAnjfuR7gGNpgSbQxydCA7NLtFw5QIs9i6ZScQy4RQMnKnjmT
+         l9R0+RmPa9QJa1SpC/ZdLEp0PtrQOvgNiCAm6GGY15A16Le5A3VM5prWk3raX5edKMHp
+         R59A==
+X-Forwarded-Encrypted: i=1; AJvYcCXz9gOhcJuqymWZyYomgcMjoK2gs5S0y60d353wBXbrbxS0ZmoKJBYY1cvRQfP34OulyEJ3EoGVCifV3nNklEDi7OkRBZdUYLuvZqJB
+X-Gm-Message-State: AOJu0YzSite97AkF1tWLkRIyy/SidRziQWd3FnBK3svUGe+u7s+cDcEl
+	pF0ErA30Gsy7d+293ZC06sZcSh+0ALcLs7cAfHylTMhl9Be3qBR+elqZQ5i1F44=
+X-Google-Smtp-Source: AGHT+IFqxbDhjqt1SFKpp0mp6NjBvSH2RuOSJ/cJ9Xo8lyQSMxmjHBeRbrP7BDO0diRgPwW3eRF5UA==
+X-Received: by 2002:a05:651c:235:b0:2ee:8c8d:d9dd with SMTP id 38308e7fff4ca-2ef05d24f2dmr3860471fa.36.1721254288711;
+        Wed, 17 Jul 2024 15:11:28 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ef05dbb5ccsm700231fa.121.2024.07.17.15.11.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jul 2024 15:11:28 -0700 (PDT)
+Date: Thu, 18 Jul 2024 01:11:26 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Rob Clark <robdclark@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	Rob Clark <robdclark@chromium.org>, Douglas Anderson <dianders@chromium.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] drm/panel/simple-edp: Add Samsung ATNA45DC02
+Message-ID: <d23yw632nypm3erlx2tdxgyyiysmg4wl6en6q5daupc3yeczxe@pqzibea7ya6w>
+References: <20240717215847.5310-1-robdclark@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,69 +85,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a5005f1e-5bbc-49f2-bd1f-4c4878b98d26@nvidia.com>
+In-Reply-To: <20240717215847.5310-1-robdclark@gmail.com>
 
-On Wed, Jul 17, 2024 at 02:16:30PM -0700, John Hubbard wrote:
-> On 7/17/24 2:00 PM, Kees Cook wrote:
-> > Based on feedback from Linus[1], change the suggested file naming for
-> > KUnit tests.
-> > 
-> > Link: https://lore.kernel.org/lkml/CAHk-=wgim6pNiGTBMhP8Kd3tsB7_JTAuvNJ=XYd3wPvvk=OHog@mail.gmail.com/ [1]
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> > ---
-> > Cc: David Gow <davidgow@google.com>
-> > Cc: Brendan Higgins <brendan.higgins@linux.dev>
-> > Cc: Rae Moar <rmoar@google.com>
-> > Cc: Jonathan Corbet <corbet@lwn.net>
-> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> > Cc: linux-kselftest@vger.kernel.org
-> > Cc: kunit-dev@googlegroups.com
-> > Cc: linux-doc@vger.kernel.org
-> > ---
-> >   Documentation/dev-tools/kunit/style.rst | 21 +++++++++++++--------
-> >   1 file changed, 13 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/Documentation/dev-tools/kunit/style.rst b/Documentation/dev-tools/kunit/style.rst
-> > index b6d0d7359f00..761dee3f89ca 100644
-> > --- a/Documentation/dev-tools/kunit/style.rst
-> > +++ b/Documentation/dev-tools/kunit/style.rst
-> > @@ -188,15 +188,20 @@ For example, a Kconfig entry might look like:
-> >   Test File and Module Names
-> >   ==========================
-> > -KUnit tests can often be compiled as a module. These modules should be named
-> > -after the test suite, followed by ``_test``. If this is likely to conflict with
-> > -non-KUnit tests, the suffix ``_kunit`` can also be used.
-> > -
-> > -The easiest way of achieving this is to name the file containing the test suite
-> > -``<suite>_test.c`` (or, as above, ``<suite>_kunit.c``). This file should be
-> > -placed next to the code under test.
-> > +Whether a KUnit test is compiled as a separate module or via an
-> > +``#include`` in a core kernel source file, the files should be named
-> > +after the test suite, followed by ``_test``, and live in a ``tests``
+On Wed, Jul 17, 2024 at 02:58:46PM GMT, Rob Clark wrote:
+> From: Rob Clark <robdclark@chromium.org>
 > 
-> I read the previous discussion in the other thread and thought about it.
-> And ran some kunit tests on baremetal. Delightful! I love this approach.
+> Just a guess on the panel timings, but they appear to work.
 > 
-> However! It is rather distinct and not just any old test module. Kunit
-> has clear conventions and behavior.
-> 
-> As such, I have quickly become convinced that distinct naming is
-> required here. So I'd like to suggest going with the the suffix:
-> 
->     _kunit
-> 
-> ...unconditionally. After all, sometimes you'll end up with that
-> anyway, so clearly, the _test suffix isn't strictly required.
-> 
-> And given that we are putting these in tests/ , a _test suffix is
-> redundant.
-> 
-> Yes?
+> Signed-off-by: Rob Clark <robdclark@chromium.org>
+> ---
+> This adds the panel I have on my lenovo yoga slim 7x laptop.  I couldn't
+> find any datasheet so timings is just a guess.  But AFAICT everything
+> works fine.
 
-I would agree. David, what do you think? I realize drm already does
-tests/*_test.c, but it does seem like better information density to use
-the tests/*_kunit.c pattern by default?
+Could you please add EDID to the commit message?
+
+> 
+>  drivers/gpu/drm/panel/panel-edp.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
+> index 38e5178f55ac..411b7218af55 100644
+> --- a/drivers/gpu/drm/panel/panel-edp.c
+> +++ b/drivers/gpu/drm/panel/panel-edp.c
+> @@ -1966,6 +1966,8 @@ static const struct edp_panel_entry edp_panels[] = {
+>  	EDP_PANEL_ENTRY('S', 'H', 'P', 0x153a, &delay_200_500_e50, "LQ140T1JH01"),
+>  	EDP_PANEL_ENTRY('S', 'H', 'P', 0x154c, &delay_200_500_p2e100, "LQ116M1JW10"),
+>  
+> +	EDP_PANEL_ENTRY('S', 'D', 'C', 0x4189, &delay_100_500_e200, "ATNA45DC02-0"),
+> +
+>  	EDP_PANEL_ENTRY('S', 'T', 'A', 0x0100, &delay_100_500_e200, "2081116HHD028001-51D"),
+>  
+>  	{ /* sentinal */ }
+> -- 
+> 2.45.2
+> 
 
 -- 
-Kees Cook
+With best wishes
+Dmitry
 
