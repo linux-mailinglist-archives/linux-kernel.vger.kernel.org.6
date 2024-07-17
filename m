@@ -1,151 +1,97 @@
-Return-Path: <linux-kernel+bounces-255558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D65693423C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:25:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC5EB93423D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40D5E1F22FB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:25:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E793283FA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A581849CF;
-	Wed, 17 Jul 2024 18:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8540D183083;
+	Wed, 17 Jul 2024 18:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hIqOSzqm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="QS+SfFse"
+Received: from mail-4319.protonmail.ch (mail-4319.protonmail.ch [185.70.43.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE461836C4;
-	Wed, 17 Jul 2024 18:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2F41822DD;
+	Wed, 17 Jul 2024 18:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721240693; cv=none; b=Ztxl+yVvo/knW4+i9t6fqQR7Rkp4dEhKM+RM2F7HTRBfhmOQzIemqSl1QwDTNo4FF66eHJ4JCCCenP/t9URWuNgFgSHJh+vV6XQwnRby5a9biG9MGUK8CH+gk0wOLnxPQxAxKpQi3cWJJgreoflcJqY+EbLEvIS8LlPbuh04E3g=
+	t=1721240855; cv=none; b=ZPb0mP1jd2Q51U4dbiNYdRfKGb5sGHuFicaFjihsi86lg9DnfQhb3Wr/wm+5EVJ0UmGa0cJTDcUwQeu3s+hI0GkT+CMxHRll38PCI52/I8ZkgAndL1R0Kqg+IGWCw5r2E7mtECc6sYK4mKqddkDdqIs9nIKtQ+Y8dKpuF3iY2lQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721240693; c=relaxed/simple;
-	bh=C++kSOLhIP5PSq6tF2bjAs5Xhpug33YPSaVFZ8do+YU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JJELVKY4kwgg/DeZm92+/s73PUX8kcfejyF1qZJoeyD1I6hYkgu2FHIyFtWbjZ0t7VM6j2TB2wpyotgX2PyUK/w3x5Bz3KmgJ3EXJj9DAjjSU34GphgtgItbFLzk7cCCaeUr2V3/Yo87BlDyM/2ZiyCDfvSm/t4RLzGb2Yzqw1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hIqOSzqm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6429EC4AF0B;
-	Wed, 17 Jul 2024 18:24:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721240692;
-	bh=C++kSOLhIP5PSq6tF2bjAs5Xhpug33YPSaVFZ8do+YU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hIqOSzqmR44B1nzxPCPJH2o6GTxE2nt2Hhe9ArYOEprmgc8xLjQAmduIF9Bs6Vdew
-	 EUnltYNEoe7YcYxEGpDsK8jwk6A9LBGIp69e3oGFwox9uG8tS7BX2tOhpc2oK/qRU1
-	 aGIJaQG5x1UA3E3heOVTQ7diXTF5eS4mVIXluetMD8a34yUe6t6BN+AbptVTBUKBq2
-	 zkdEZmSiYnUDy4vBmofSpsz9l1vuYAptvR7N1jLZ4rZGKpGPFj1ReJOo3LnT2FigrR
-	 Mlz4in3o8Lv6qZyXaOc/Fmg4PCWgRwIk7zo4UNx/xwZVoiHTN/V6K1Qkjt9y/OtrWP
-	 VAL7rD1O6AC4Q==
-Date: Wed, 17 Jul 2024 20:24:46 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: tj@kernel.org, dlemoal@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	festevam@gmail.com, linux-ide@vger.kernel.org,
-	stable@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, kernel@pengutronix.de
-Subject: Re: [PATCH v3 2/4] ata: ahci_imx: Clean up code by using i.MX8Q HSIO
- PHY driver
-Message-ID: <ZpgMbvuSpgGoISN1@ryzen.lan>
-References: <1721099895-26098-1-git-send-email-hongxing.zhu@nxp.com>
- <1721099895-26098-3-git-send-email-hongxing.zhu@nxp.com>
+	s=arc-20240116; t=1721240855; c=relaxed/simple;
+	bh=Q8d+wqQV3Y1mwGV2wmGPBJlfpY/dnACslmNjMxRU13A=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H/CQuGLlBQokF6zYlXoWEXQfj/KyJfcxyRtdDM1B6H2Ks0cpbWKcUqrVNqoCEk+waurLGO6CgpcbKJYj9xwh+CIeOCSS8DliVic9MrdnkjEVCPsxhS79sCp2dSdGokUA5l+zWgGoP4SQzBhkBYpkwTr69BbKDBZhib3GrMcBBDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=QS+SfFse; arc=none smtp.client-ip=185.70.43.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1721240844; x=1721500044;
+	bh=Q8d+wqQV3Y1mwGV2wmGPBJlfpY/dnACslmNjMxRU13A=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=QS+SfFsegZdUVMzsy7uTyixQRDJb9hxqb6+h6L8erLjn2+xbsDcOps+BEBeyy4xQw
+	 rM9MxyNWD7NTEjbsBCtE0K3qm2BdQewDAXnrNSyODyTvleJU/qoSpL4krVnlbCFbmG
+	 3eO9Tt/nyA0tf3vj1oXf7HXQxVwherkiWQxvdJiMBmnl+Fmfk/cUPjwoDF877srCBj
+	 yQVTp4CThu20w6KJZ/Y+vL5oPGm4xNFWOxEWVHYgKR24mSg7UFOuDIrrA5FSuj1VQR
+	 vB0alPkD3SDEGZT1QFgFcmfgTbQxAAOziaIvnHz3EU1faLpfTe5e7e8TpOYL7fAOXV
+	 PnuMLJTjtJ1ng==
+Date: Wed, 17 Jul 2024 18:27:17 +0000
+To: Aditya Garg <gargaditya08@live.com>
+From: Sharpened Blade <sharpenedblade@proton.me>
+Cc: Ard Biesheuvel <ardb@kernel.org>, "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Lukas Wunner <lukas@wunner.de>, Kerem Karabay <kekrby@gmail.com>, Orlando Chamberlain <orlandoch.dev@gmail.com>
+Subject: Re: [PATCH v3 0/2] efi/x86: Call set_os() protocol on dual GPU Macs
+Message-ID: <pqPZcYgBsBnpSd8MTxyDtnXAeWgjlIhAgUK_nGg-s4IbXPl311zGwY6saehL0ODtShMvUpTEo-K6PlJw5DivrdeHolVNUVM5MJii0K4Lq48=@proton.me>
+In-Reply-To: <MA0P287MB02171286CB1BF5CD506FCE55B8A32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+References: <20240701140940.2340297-4-ardb+git@google.com> <MA0P287MB0217C0F7E0B9F6FE8CA47BE8B8D32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM> <MA0P287MB0217E3B4810704C504F13F2CB8A32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM> <CAMj1kXEGsnd5S3-nnCUNYJ5tVr2LU2BOkNp513OfU6A=jgVX2A@mail.gmail.com> <MA0P287MB02171286CB1BF5CD506FCE55B8A32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+Feedback-ID: 49108975:user:proton
+X-Pm-Message-ID: 2d7a6afc3dcb3d4e5106d45c9c24941436e33608
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1721099895-26098-3-git-send-email-hongxing.zhu@nxp.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 16, 2024 at 11:18:13AM +0800, Richard Zhu wrote:
-> Clean up code by using PHY interface.
-> 
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> ---
->  drivers/ata/ahci_imx.c | 396 ++++++++++-------------------------------
->  1 file changed, 98 insertions(+), 298 deletions(-)
-> 
-> diff --git a/drivers/ata/ahci_imx.c b/drivers/ata/ahci_imx.c
-> index cb768f66f0a70..e94c0fdea2260 100644
-> --- a/drivers/ata/ahci_imx.c
-> +++ b/drivers/ata/ahci_imx.c
-> @@ -986,65 +827,22 @@ static const struct scsi_host_template ahci_platform_sht = {
->  
->  static int imx8_sata_probe(struct device *dev, struct imx_ahci_priv *imxpriv)
->  {
-> -	struct resource *phy_res;
-> -	struct platform_device *pdev = imxpriv->ahci_pdev;
-> -	struct device_node *np = dev->of_node;
-> -
-> -	if (of_property_read_u32(np, "fsl,phy-imp", &imxpriv->imped_ratio))
-> -		imxpriv->imped_ratio = IMX8QM_SATA_PHY_IMPED_RATIO_85OHM;
-> -	phy_res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "phy");
-> -	if (phy_res) {
-> -		imxpriv->phy_base = devm_ioremap(dev, phy_res->start,
-> -					resource_size(phy_res));
-> -		if (!imxpriv->phy_base) {
-> -			dev_err(dev, "error with ioremap\n");
-> -			return -ENOMEM;
-> -		}
-> -	} else {
-> -		dev_err(dev, "missing *phy* reg region.\n");
-> -		return -ENOMEM;
-> -	}
-> -	imxpriv->gpr =
-> -		 syscon_regmap_lookup_by_phandle(np, "hsio");
-> -	if (IS_ERR(imxpriv->gpr)) {
-> -		dev_err(dev, "unable to find gpr registers\n");
-> -		return PTR_ERR(imxpriv->gpr);
-> -	}
-> -
-> -	imxpriv->epcs_tx_clk = devm_clk_get(dev, "epcs_tx");
-> -	if (IS_ERR(imxpriv->epcs_tx_clk)) {
-> -		dev_err(dev, "can't get epcs_tx_clk clock.\n");
-> -		return PTR_ERR(imxpriv->epcs_tx_clk);
-> -	}
-> -	imxpriv->epcs_rx_clk = devm_clk_get(dev, "epcs_rx");
-> -	if (IS_ERR(imxpriv->epcs_rx_clk)) {
-> -		dev_err(dev, "can't get epcs_rx_clk clock.\n");
-> -		return PTR_ERR(imxpriv->epcs_rx_clk);
-> -	}
-> -	imxpriv->phy_pclk0 = devm_clk_get(dev, "phy_pclk0");
-> -	if (IS_ERR(imxpriv->phy_pclk0)) {
-> -		dev_err(dev, "can't get phy_pclk0 clock.\n");
-> -		return PTR_ERR(imxpriv->phy_pclk0);
-> -	}
-> -	imxpriv->phy_pclk1 = devm_clk_get(dev, "phy_pclk1");
-> -	if (IS_ERR(imxpriv->phy_pclk1)) {
-> -		dev_err(dev, "can't get phy_pclk1 clock.\n");
-> -		return PTR_ERR(imxpriv->phy_pclk1);
-> -	}
-> -	imxpriv->phy_apbclk = devm_clk_get(dev, "phy_apbclk");
-> -	if (IS_ERR(imxpriv->phy_apbclk)) {
-> -		dev_err(dev, "can't get phy_apbclk clock.\n");
-> -		return PTR_ERR(imxpriv->phy_apbclk);
-> -	}
-> -
-> -	/* Fetch GPIO, then enable the external OSC */
-> -	imxpriv->clkreq_gpiod = devm_gpiod_get_optional(dev, "clkreq",
-> -				GPIOD_OUT_LOW | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
-> -	if (IS_ERR(imxpriv->clkreq_gpiod))
-> -		return PTR_ERR(imxpriv->clkreq_gpiod);
-> -	if (imxpriv->clkreq_gpiod)
-> -		gpiod_set_consumer_name(imxpriv->clkreq_gpiod, "SATA CLKREQ");
-> -
-> +	if (!(dev->bus_dma_limit))
-> +		dev->bus_dma_limit = DMA_BIT_MASK(32);
+> Hi Ard
+>=20
+> > Hi,
+> >=20
+> > Is this a theoretical concern? Or are you aware of any user that is
+> > actually affected by this?
+>=20
+>=20
+> We had a Mac Mini user who wasn't able to use hybrid graphics
+> on his Mac after using the eGPU. So no, it's not a theoretical concern
+>=20
+> > In any case, given the niche nature, enabling this more widely by
+> > default does not seem like a great approach, as the risk for
+> > regressions outweighs the benefit.
+> >=20
+> > I could imagine the use of a EFI variable to opt into this, would that
+> > work? It would have to be set only once from user space (using
+> > efivarfs)
+>=20
+>=20
+> I'm not really sure about efivars here, but am ready to test. As long as
+> it doesn't break booting of macOS or Windows, I don't find it an issue.
+> macOS may also reset the variable, again have to verify by testing the sa=
+me.
 
-These two lines look like a unrelated change, should be in a separate commit
-with a proper commit message.
+On my mac, macOS does not reset EFI variables that it does not use. It shou=
+ld be the same for other models and firmware versions.
 
+> I guess it will also get reset if a users resets their NVRAM.
 
-Kind regards,
-Niklas
+Users have to manually reset their nvram so this will not happen during nor=
+mal usage. This is actually a good thing since users can easily disable the=
+ eGPU if it is misbehaving and they dont have graphical output.
 
