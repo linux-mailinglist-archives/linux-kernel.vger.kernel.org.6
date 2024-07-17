@@ -1,309 +1,112 @@
-Return-Path: <linux-kernel+bounces-255314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 586E9933EDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:51:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1F2E933EDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BC0A1C21411
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:51:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E6A2283A0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63717181B85;
-	Wed, 17 Jul 2024 14:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e0OfsMRU"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D05181B87;
+	Wed, 17 Jul 2024 14:53:04 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED544180A6A;
-	Wed, 17 Jul 2024 14:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62360180A6A;
+	Wed, 17 Jul 2024 14:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721227891; cv=none; b=Wqm6KZbE3oCLHNZAmswpl09nYGjYHeBM/DQcsgBNEdtnGHOABJq5FZxlYnnxWVMSQ7KNlH1EgPKJKyB8Zu3Y4PzR/wu+SWIZrzz7tkSVLZgpTeSuQVCA8oMpBWloY+AI/cA7bzzQPYLEDfuv5VI+ljakT7aPOC/sYMhX4M9KFKE=
+	t=1721227984; cv=none; b=MV9yNNkfBWIeq86+/72TSMd6DUfaIxMMHJLnjkk6mqsOfdQuYns852TU3wMK4dBsoW+L8YKd6FMt0iV0wHz2RA9waL6Z1RTwGalqRgRFkH2c1ueb7invl3sCjV3eXJnixiss2X3lOdCuj29IoDEwPxaQjdiRAteql0G02ZRHG9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721227891; c=relaxed/simple;
-	bh=5aElQ6NQm8on75otjRbfNAUFj5rE/Qw80X7CWZBYbq4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FRrkOKqTyjSnCzX59ktuh9a4M521tPHv+6HmFY+KEBAU3gAkCdq1YNa8LWjKcCTsRPfftLCTNStRR6U/FltwTfQPYBkB2y2UiJRW5zMCIu9t85WbA82l4Atp137plN65FWLY9LiVCz5A9CAnjoVRnrHJH9GnYTkfrr71X83Y2iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e0OfsMRU; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-8036ce66134so40137139f.3;
-        Wed, 17 Jul 2024 07:51:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721227889; x=1721832689; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z9rCufypQzQi3mGViVF+O5wWbjvU3WJ3Ong0x55wGhc=;
-        b=e0OfsMRURD/DvZxUckYEpz3jwo9fAsWNKu9Kk9IkrD3nV0WbhN5lv/zETHjjnLjMhg
-         QooX4B45zJHfpck4td+uA5xwGMO/9KHaZF1ohTu5Qj2MJhGgRk7W0NmmeCWXsFryh6sA
-         FrUsnEaeorXmMHEZxfgYojNxgDpD8fQ+UfCFRr5OGXLWnPp+eRKBDjUHaViBVPjk6yq1
-         xOONmI+43k6IDc7ODqcev9dPyx3sgGvSQNxRnnnNoyXEmfZs8VW/29roJD/mEpuBejjo
-         TvCuoBHOw53+1Gb/1+X+IsqlZuNd60JPAZ5nON1CyqiQEYowqi+XZTh1jqgBPnAkrvre
-         5OvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721227889; x=1721832689;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Z9rCufypQzQi3mGViVF+O5wWbjvU3WJ3Ong0x55wGhc=;
-        b=OTvJmSStuOhC/Y1hkMefW8ll/lJOIGRGDTbR8pAeXyJYZkhyJx2oVIq1jbaKaFh1Lc
-         c7XOkQ5AFkUCJ03rjok3nXCoyu2UqBa5iel5Y/aE3a2CTPYudbxyMbcvCflGsJirPOsZ
-         tLh5ZM/k17Mz8yg6IjA6Mmgh/KXZ80mSMz5kkRd6pVoF0cR0fzqTgY9EDhsuKiUWcBRl
-         ftx2cAyE1zThPw4ri6O0I4vocdD7aCj4yZof8rgXMqFw0y7JMhWy/vOIaKMhBcmzXw1g
-         kXCbsj53/yw8RIXIbs86Wvkd21mlKoKD0dLMaHVAvSHBRa2J1527rcb5lETJEs0bemKV
-         GxyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWP0btQ6mSbJH8hGMB80gtjACt0ntIV5UjquGfckNcPfO0lgigArBz5sOOboEnYLUDo3CcLPr5ZhNCGBtS4Ln8j3kn0Ba213OwSgFC5soZV1uB36MWjKGFcLGtfeyY5sYwD
-X-Gm-Message-State: AOJu0Yz6D5NGVMTRd7M0wmYv7Tu2JJr64blWKJWTTwtO6THo77kIDSwQ
-	kcNOPjsqJL11WqoGaIQkBFYxGb5opioBsRBdTq8xVKUUEgmQeuFVmjrmGg==
-X-Google-Smtp-Source: AGHT+IFVagRdXtnzk/L3PmRIBcMIpFdQG9XkHPXrLVFeHo0Ylo4l09OknxL2+81GV1a88g5IbZFXFg==
-X-Received: by 2002:a5d:8610:0:b0:7fb:86c:321 with SMTP id ca18e2360f4ac-81710040e4dmr228123839f.1.1721227888654;
-        Wed, 17 Jul 2024 07:51:28 -0700 (PDT)
-Received: from [192.168.0.107] ([117.147.31.23])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7eb9c974sm8501524b3a.10.2024.07.17.07.51.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 07:51:28 -0700 (PDT)
-Message-ID: <ae8d45ac-b39d-46b5-8010-2cfe3cceff27@gmail.com>
-Date: Wed, 17 Jul 2024 22:51:21 +0800
+	s=arc-20240116; t=1721227984; c=relaxed/simple;
+	bh=BQu8Xb+iJ8oHoZnOrFTXzZJSBfjBKhTJEwYVf9DXSxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pYYWbaIuT14fSfIT/lUk5GQNjObrkDKFdtq/8YEGMVwFQfOu1zq66Ixk2qNF7AUDg5vo4hpI4X892w3WlMZe1Na63LSkhoZbGvdtlTl37flP3IXzyCfQEJAVKqnG/Jovn9z7fKYcWGYIVmWOB6gZBxX7mpUK5c713SaEn3ac6Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1570BC2BD10;
+	Wed, 17 Jul 2024 14:52:37 +0000 (UTC)
+Date: Wed, 17 Jul 2024 10:52:33 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Vineeth Remanan Pillai
+ <vineeth@bitbyteword.org>, Ben Segall <bsegall@google.com>, Borislav Petkov
+ <bp@alien8.de>, Daniel Bristot de Oliveira <bristot@redhat.com>, Dave
+ Hansen <dave.hansen@linux.intel.com>, Dietmar Eggemann
+ <dietmar.eggemann@arm.com>, "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar
+ <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Mel Gorman
+ <mgorman@suse.de>, Paolo Bonzini <pbonzini@redhat.com>, Andy Lutomirski
+ <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, Vincent
+ Guittot <vincent.guittot@linaro.org>, Vitaly Kuznetsov
+ <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, Suleiman Souhlal
+ <suleiman@google.com>, Masami Hiramatsu <mhiramat@kernel.org>,
+ himadrics@inria.fr, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ x86@kernel.org, graf@amazon.com, drjunior.org@gmail.com
+Subject: Re: [RFC PATCH v2 0/5] Paravirt Scheduling (Dynamic vcpu priority
+ management)
+Message-ID: <20240717105233.07b4ec00@rorschach.local.home>
+In-Reply-To: <20240717103647.735563af@rorschach.local.home>
+References: <ZjJf27yn-vkdB32X@google.com>
+ <CAO7JXPgbtFJO6fMdGv3jf=DfiCNzcfi4Hgfn3hfotWH=FuD3zQ@mail.gmail.com>
+ <CAO7JXPhMfibNsX6Nx902PRo7_A2b4Rnc3UP=bpKYeOuQnHvtrw@mail.gmail.com>
+ <66912820.050a0220.15d64.10f5@mx.google.com>
+ <19ecf8c8-d5ac-4cfb-a650-cf072ced81ce@efficios.com>
+ <20240712122408.3f434cc5@rorschach.local.home>
+ <ZpFdYFNfWcnq5yJM@google.com>
+ <20240712131232.6d77947b@rorschach.local.home>
+ <ZpcFxd_oyInfggXJ@google.com>
+ <CAEXW_YS+8VKjUZ8cnkZxCfEcjcW=z52uGYzrfYj+peLfgHL75Q@mail.gmail.com>
+ <ZpfR49IcXNLS9qbu@google.com>
+ <20240717103647.735563af@rorschach.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH bpf-next 1/3] bpftool: add net attach/detach command
- to tcx prog
-To: Quentin Monnet <qmo@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>
-Cc: Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240715113704.1279881-1-chen.dylane@gmail.com>
- <20240715113704.1279881-2-chen.dylane@gmail.com>
- <0284ae6e-0187-4a72-a855-ba1afeb9af2e@kernel.org>
-From: Tao Chen <chen.dylane@gmail.com>
-In-Reply-To: <0284ae6e-0187-4a72-a855-ba1afeb9af2e@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-在 2024/7/17 01:23, Quentin Monnet 写道:
-> 2024-07-15 12:37 UTC+0100 ~ Tao Chen <chen.dylane@gmail.com>
->> Now, attach/detach tcx prog supported in libbpf, so we can add new
->> command 'bpftool attach/detach tcx' to attach tcx prog with bpftool
->> for user.
->>
->>   # bpftool prog load tc_prog.bpf.o /sys/fs/bpf/tc_prog
->>   # bpftool prog show
->> 	...
->> 	192: sched_cls  name tc_prog  tag 187aeb611ad00cfc  gpl
->> 	loaded_at 2024-07-11T15:58:16+0800  uid 0
->> 	xlated 152B  jited 97B  memlock 4096B  map_ids 100,99,97
->> 	btf_id 260
->>   # bpftool net attach tcxingress name tc_prog dev lo
->>   # bpftool net
->> 	...
->> 	tc:
->> 	lo(1) tcx/ingress tc_prog prog_id 29
->>
->>   # bpftool net detach tcxingress dev lo
->>   # bpftool net
->> 	...
->> 	tc:
->>   # bpftool net attach tcxingress name tc_prog dev lo
->>   # bpftool net
->> 	tc:
->> 	lo(1) tcx/ingress tc_prog prog_id 29
->>
->> Test environment: ubuntu_22_04, 6.7.0-060700-generic
->>
->> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
->> ---
->>   tools/bpf/bpftool/net.c | 52 ++++++++++++++++++++++++++++++++++++++++-
->>   1 file changed, 51 insertions(+), 1 deletion(-)
->>
->> diff --git a/tools/bpf/bpftool/net.c b/tools/bpf/bpftool/net.c
->> index 968714b4c3d4..be7fd76202f1 100644
->> --- a/tools/bpf/bpftool/net.c
->> +++ b/tools/bpf/bpftool/net.c
->> @@ -67,6 +67,8 @@ enum net_attach_type {
->>   	NET_ATTACH_TYPE_XDP_GENERIC,
->>   	NET_ATTACH_TYPE_XDP_DRIVER,
->>   	NET_ATTACH_TYPE_XDP_OFFLOAD,
->> +	NET_ATTACH_TYPE_TCX_INGRESS,
->> +	NET_ATTACH_TYPE_TCX_EGRESS,
->>   };
->>   
->>   static const char * const attach_type_strings[] = {
->> @@ -74,6 +76,8 @@ static const char * const attach_type_strings[] = {
->>   	[NET_ATTACH_TYPE_XDP_GENERIC]	= "xdpgeneric",
->>   	[NET_ATTACH_TYPE_XDP_DRIVER]	= "xdpdrv",
->>   	[NET_ATTACH_TYPE_XDP_OFFLOAD]	= "xdpoffload",
->> +	[NET_ATTACH_TYPE_TCX_INGRESS]	= "tcxingress",
->> +	[NET_ATTACH_TYPE_TCX_EGRESS]	= "tcxegress",
-> 
-> 
-> Hi, thanks for this work!
-> 
-> I wonder whether "tcx_ingress" and "tcx_egress" might be more readable?
-> I know we don't have underscores for XDP types but I'd be tempted to add
-> it for the tcx types, what do you think?
-> 
-> 
-Hi，Quentin，thanks for your reply!
-You are right, tcx_* looks more readable, i will change it in v2.
->>   };
->>   
->>   static const char * const attach_loc_strings[] = {
->> @@ -647,6 +651,32 @@ static int do_attach_detach_xdp(int progfd, enum net_attach_type attach_type,
->>   	return bpf_xdp_attach(ifindex, progfd, flags, NULL);
->>   }
->>   
->> +static int get_tcx_type(enum net_attach_type attach_type)
->> +{
->> +	int type = 0;
->> +
->> +	if (attach_type == NET_ATTACH_TYPE_TCX_INGRESS)
->> +		type |= BPF_TCX_INGRESS;
->> +	else if (attach_type == NET_ATTACH_TYPE_TCX_EGRESS)
->> +		type |= BPF_TCX_EGRESS;
-> 
-> 
-> Why the logical OR in this function? This seems to be copied from the
-> XDP code, where we need to set flags. Here we just need the type, if I
-> remember correctly, so we could have:
-> 
-> 	switch (attach_type) {
-> 	case (NET_ATTACH_TYPE_TCX_INGRESS):
-> 		return BPF_TXC_INGRESS;
-> 	case (NET_ATTACH_TYPE_TCX_EGRESS):
-> 		return BPF_TCX_EGRESS;
-> 	}
-> 
-> (or if/else, works as well) which would be easier to understand in my
-> opinion.
-> 
-It seems more reasonable, i will change it in v2.
->> +
->> +	return type;
->> +}
->> +
->> +static int do_attach_tcx(int progfd, enum net_attach_type attach_type, int ifindex)
->> +{
->> +	int type = get_tcx_type(attach_type);
->> +
->> +	return bpf_prog_attach(progfd, ifindex, type, 0);
->> +}
->> +
->> +static int do_detach_tcx(int targetfd, enum net_attach_type attach_type)
->> +{
->> +	int type = get_tcx_type(attach_type);
->> +
->> +	return bpf_prog_detach(targetfd, type);
->> +}
->> +
->>   static int do_attach(int argc, char **argv)
->>   {
->>   	enum net_attach_type attach_type;
->> @@ -694,6 +724,15 @@ static int do_attach(int argc, char **argv)
->>   		goto cleanup;
->>   	}
->>   
->> +	/* attach tcx prog */
->> +	if (is_prefix("tcx", attach_type_strings[attach_type]))
->> +		err = do_attach_tcx(progfd, attach_type, ifindex);
->> +	if (err) {
->> +		p_err("interface %s attach failed: %s",
->> +		      attach_type_strings[attach_type], strerror(-err));
->> +		goto cleanup;
->> +	}
-> 
-> 
-> This introduces a second check on "err" in the function: if we attach an
-> XDP program we'll try to attach then check "err" twice. Same for a TCX
-> program, we'll check "err" before even trying to attach.
-> 
-> I understand this replicates what we do for XDP, but I'm not sure the
-> sequential calls to 'is_prefix("...")' is the cleanest approach. We
-> should probably change the XDP case a bit and integrate with TCX better.
-> Expanding the different attach types is more verbose, but remains the
-> most straightforward way in my opinion.
-> 
-> 	switch (attach_type) {
-> 	case NET_ATTACH_TYPE_XDP:
-> 	case NET_ATTACH_TYPE_XDP_GENERIC:
-> 	case NET_ATTACH_TYPE_XDP_DRIVER:
-> 	case NET_ATTACH_TYPE_XDP_OFFLOAD:
-> 		err = do_attach_xdp(...);
-> 		break;
-> 	case NET_ATTACH_TYPE_TCX_INGRESS:
-> 	case NET_ATTACH_TYPE_TCX_EGRESS:
-> 		err = do_attach_tcx(...);
-> 		break;
-> 	}
-> 
-> 	// Single check on "err" for both XDP and TCX here;
-> 	// Or moving it to the switch statement if checks/error messages
-> 	// needed to be different, but that's not the case in your patch
-> 	if (err) {
-> 		p_err(...);
-> 		goto cleanup;
-> 	}
-> 
-> 
-My bad, i will add another patch to refactor this as you say.
->> +
->>   	if (json_output)
->>   		jsonw_null(json_wtr);
->>   cleanup:
->> @@ -732,6 +771,16 @@ static int do_detach(int argc, char **argv)
->>   		return err;
->>   	}
->>   
->> +	/* detach tcx prog */
->> +	if (is_prefix("tcx", attach_type_strings[attach_type]))
->> +		err = do_detach_tcx(ifindex, attach_type);
->> +
->> +	if (err < 0) {
->> +		p_err("interface %s detach failed: %s",
->> +		      attach_type_strings[attach_type], strerror(-err));
->> +		return err;
->> +	}
-> 
-> 
-> Same here.
-> 
-> Got it.
->> +
->>   	if (json_output)
->>   		jsonw_null(json_wtr);
->>   
->> @@ -928,7 +977,8 @@ static int do_help(int argc, char **argv)
->>   		"       %1$s %2$s help\n"
->>   		"\n"
->>   		"       " HELP_SPEC_PROGRAM "\n"
->> -		"       ATTACH_TYPE := { xdp | xdpgeneric | xdpdrv | xdpoffload }\n"
->> +		"       ATTACH_TYPE := { xdp | xdpgeneric | xdpdrv | xdpoffload | tcxingress\n"
->> +		"			| tcxegress}\n"
-> 
-> 
-> Please use spaces only for indent inside of the string, and add a space
-> before the ending '}'.
-> 
-> 
-ok, i will fix this.
->>   		"       " HELP_SPEC_OPTIONS " }\n"
->>   		"\n"
->>   		"Note: Only xdp, tcx, tc, netkit, flow_dissector and netfilter attachments\n"
-> 
+On Wed, 17 Jul 2024 10:36:47 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
--- 
-Best Regards
-Dylane Chen
+> The problem with that is the only use case for such a feature is for
+> vCPUS. There's no use case for a single thread to up and down its
+> priority. I work a lot in RT applications (well, not as much anymore,
+> but my career was heavy into it). And I can't see any use case where a
+> single thread would bounce its priority around. In fact, if I did see
+> that, I would complain that it was a poorly designed system.
+> 
+> Now for a guest kernel, that's very different. It has to handle things
+> like priority inheritance and such, where bouncing a threads (or its
+> own vCPU thread) priority most definitely makes sense.
+> 
+> So you are requesting that we add a bad user space interface to allow
+> lazy priority management from a thread so that we can use it in the
+> proper use case of a vCPU?
 
+Now I stated the above thinking you wanted to add a generic interface
+for all user space. But perhaps there is a way to get this to be done
+by the scheduler itself. But its use case is still only for VMs.
+
+We could possibly add a new sched class that has a dynamic priority.
+That is, it can switch between other sched classes. A vCPU thread could
+be assigned to this class from inside the kernel (via a virtio device)
+where this is not exposed to user space at all. Then the virtio device
+would control the mapping of a page between the vCPU thread and the
+host kernel. When this task gets scheduled, it can call into the code
+that handles the dynamic priority. This will require buy-in from the
+scheduler folks.
+
+This could also handle the case of a vCPU being woken up by an
+interrupt, as the hooks could be there on the wakeup side as well.
+
+Thoughts?
+
+-- Steve
 
