@@ -1,106 +1,115 @@
-Return-Path: <linux-kernel+bounces-255369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A559933FC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:35:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA6BD933FCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E94E51F2400E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:35:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52B5EB22A1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91FF3181CE0;
-	Wed, 17 Jul 2024 15:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24027181CE4;
+	Wed, 17 Jul 2024 15:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R+BIZjQS"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yHgLi2mP"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939F6181310;
-	Wed, 17 Jul 2024 15:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198E2181B9F
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 15:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721230544; cv=none; b=X9Il2vEO/oEPUrpfpTG3TjWlytL6dVVXh2ux6bUTEuzLKKfDz5J2EjsKV8p/pMeep/kVdgCpADUM9NW0Ellr7H0p7eNG6VKVTwWFQnHgo6Kb57ewYJOIpfcL1jEem/EglZbVMoVnFggx8o8mtyyt7LDG5MP3kOIFooemcTgU1qY=
+	t=1721230587; cv=none; b=CMU7oxXzjRWf5TzhdsHvHvhshQp/o+DVhjDB/hFHwcESxgCdygiBatakPNecV09puhwcQyilWClsxLE0xEmx31c/91CZkkV+F2Ztt/DQjjr/3xlcVKu7oIuv8moLmk5rbibs3RtzQto1vJIImm04sPumzmHZwSbanTsnbV+BpzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721230544; c=relaxed/simple;
-	bh=igKSkhh6A1mnqf1e706OFohGjxcTqllM85CooIxAVwE=;
+	s=arc-20240116; t=1721230587; c=relaxed/simple;
+	bh=U4lOBq92/A5nbA68C1/X8MmurvsWYYfhY8kYgF78L2s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i1WLpqNRtFvVWYUtcGHjtffrSv7Bj7kF1WE9RDU7I+7a5T284c6oSBOnSHyRztswPMFbKlFvyxdBW/iHRRvztnwWfYmw8wDSsJbi+Immy+jI5Tv0rUMgw6eMm3j/3Zu8Ve6OxwrNf09SFUXlBJyXsD0raDBkr38TP8/3bfU0yos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R+BIZjQS; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e01a6e5da1fso833208276.0;
-        Wed, 17 Jul 2024 08:35:43 -0700 (PDT)
+	 To:Cc:Content-Type; b=rakA0eLeGr5T8bsSr2Y19VWdyxGQNz5Xw9vaE+4HXaDj6LCHb183Ait7gXsG8sHgDJYYclak/VwLEDWpTw6drCUQMsbe2arLgJv0o0MYPBKR3cH6DEqbDRCn7wNxmBp3JnvgeTiMfjRG06bJwyoEEXl8qETqk9XUIoukkEolQG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yHgLi2mP; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-44a8b140a1bso373521cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 08:36:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721230542; x=1721835342; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1721230585; x=1721835385; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=igKSkhh6A1mnqf1e706OFohGjxcTqllM85CooIxAVwE=;
-        b=R+BIZjQSFW4EfFtrZdLzkvkJXLRERx9q1YTHmg4OJGcGmlB61G0s8aSyuBCOJhW26i
-         4K4VwHikf7KUVxXqN6niF/o+PiOcYtqX1Ra4hwN8hJsbW1Lc+Mb5pe9nylmRoJlLmlbD
-         EFHGMSiMGKilCiYWwlh+mrT8uF6yq09YOdlE8JeyBtcKXpRku9JbolSKKJky5ThmKcin
-         WBOmxriEN/nJkF96Vqq6dEQgrsF8JzwYZIQNkhYH7KQi4np7fi8TM2DJWwzDIDPAFYT4
-         i9yptDtegAKTeRQthCt+JhLFyZMyHEvKY/wUdIwZyg3ExXLRlYNJ6oeX3e87ytCa2QRo
-         lJ6Q==
+        bh=U4lOBq92/A5nbA68C1/X8MmurvsWYYfhY8kYgF78L2s=;
+        b=yHgLi2mPxZXkIvn3MwA0IV+mHz8zopb7BFS0q581PIsmTQ0AFSaxCMbhuXVQ2moSN2
+         2HLNQwwkCTNMaK8AuAQKvJR6GN45dlSfMdVFaRdgBQxu/COisYdpOu6u4nvNFvMYTnRl
+         Ln2NTQ/It66UT4zOLkh4N43WwoAoEDOH6XD2nWOwg6AU+D+vT6AMi2yacH3xTGZ71yPn
+         PWJsMr21Vc/zgjpMeAy0n9lG8fm9Umvm3pqOqQqctM0deJwDVkZ9HftGYbULk3lRauLd
+         dyyUn2zc7iZHE47t6135AVR1JlMqZ705JjKeHViEJ0WSnMZW+iOJ9KNHShkd0y78lYMf
+         r4JA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721230542; x=1721835342;
+        d=1e100.net; s=20230601; t=1721230585; x=1721835385;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=igKSkhh6A1mnqf1e706OFohGjxcTqllM85CooIxAVwE=;
-        b=OdhzzT0AaCpWXqzzuAoFMieGwSpQy47vkVXjKE5Dgfn0AnU60TLK/aSUUoWV6prjEZ
-         dW9OIV17euBrUjFXEGlsyMi4+/5hunQNT/JLi2VCZgkRkCCndUJ6MzLXex0ieAZNr2FL
-         Zs6uyJ9iE0MMBKF6wsZsdplHjlqgvcm54/1dB6ERO2J7wH/ii9DTAW15tusmHwmzJ5Se
-         V6AJK2tzR836EPTec9tsTTWuSQ/BDnjTkN3z3izzStLV3JoaGWrAm9xue0reP03nxf3r
-         lcI2LSkBVN/U/rYvObyDnFt3d2S/O+vvxJ8RgCnvsVuk4t8DGA+zIYqUPTr/nj7YOlxr
-         2O7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUIhSK4wIYbvfA0L5iQvBkEKIXKZSWpEPXTbn06YjGotpFhaaZ/7kTwJcgpsUQ+9HkfzM7szqcoHmBP@vger.kernel.org, AJvYcCUhYc+9cZzNfxKSadd5z9jjKCDPfBYHy4vUnKcJt4MdpWpQJyuptVEbdlBFZRcYz39qqXeGphJgCVUL0A==@vger.kernel.org, AJvYcCVamoGR2gsgfrZfm8XEz8LMVyjKLvwzu29Od2+/SqqhndNP8ZhP4gSrhTJglV2JAAMJpiot1QY0iJ4j@vger.kernel.org, AJvYcCWfVew/XBxCwr/EKJhX9aFjpcVeh+cLRutcZHkAqhmHOjgFHGYt53YnHkmSHuFLDdqrRnXpoA86B2fezgOg@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHZRPHzz3VtKrNmpvpXBCDTJ3KWkco7IY/p3p3RoYcf3xVvWCa
-	0QlXbPHO4KO/owJ4gpj7ta2Fny7HtTlJwY908v5t5xZuANCw8H7S2xbrHIz3kuKEq8/RvQbXjny
-	T3gQ8+Q/rA6TNK5l1OFMix/wfIAQ=
-X-Google-Smtp-Source: AGHT+IHe8OrFLg3ciltrH9UGah27A80WUE2vi6fq7nZNul7uqH2m67h9SsuJFdyNWxvxpLOezUdSHmc4pDBlQVlAl3w=
-X-Received: by 2002:a25:d34b:0:b0:e05:e16f:e8a5 with SMTP id
- 3f1490d57ef6-e05ed7a649dmr1163650276.7.1721230542549; Wed, 17 Jul 2024
- 08:35:42 -0700 (PDT)
+        bh=U4lOBq92/A5nbA68C1/X8MmurvsWYYfhY8kYgF78L2s=;
+        b=VGjq9MKV+UR0/08N7TuSRZybHA+2Mr+P7NyJsVTHhdNTjwR2IyoJxg5rpbwA8vpiVq
+         iQukg66n3tXoOT2BYY1jaSiwy4f8Iapsy8Ph+p2RscDnIq17pUWKW3Qe3rVkAQDSQRKx
+         W7jVpjoAyxf1L8XA3P98PjefS29r/C1QWqGpZ8GdHalY8QrmcnT4fUBmbtLqKff1spZo
+         shnKsICuHYxJWGjjKQNosI8NvsFVTxlMz0nA5zDzxIVUCjXz0vf1IB7gzU2NHh0x5LGj
+         tiVSUg6WelyEyD/HWKtCiwdOopcqwzDei3x+6VYIWDv9hyWOUzmRs9yiCUpBPW2z+baE
+         4FmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWQb3kM9cFVuhjzZR8P5yTk2DdPe7mJTQmI/ekcPWq0cKdf+0So0o2Mk96Fo+wa0OM3vuUnu7fHgVKm/iPy9d3xAtLSo/aDdVSrXMlw
+X-Gm-Message-State: AOJu0YycONwRW0/CxxMZUt2iodaC7lAc9DBwTBObjgGDmdV0U0RCvFqG
+	+bBHQAqmbs8//qTIEBYAWDweDinI0ObQg7jg4UGcrVZR8kpq6N7CWC5xQnEnRtwrxhdGwCLZSjO
+	vTRnj2OtbfKzoxYFM7vxEwyhd000853WZdmK/
+X-Google-Smtp-Source: AGHT+IEalDvuhLDexLMZf/xCnrcvDmSl+qwkU4w3Z8mWew0Oue5zbO8Ev8APAN6BenQiPOpjM3focVcnEXdW9CpFBeA=
+X-Received: by 2002:a05:622a:2515:b0:447:dbac:facd with SMTP id
+ d75a77b69052e-44f83a73376mr3929431cf.24.1721230584789; Wed, 17 Jul 2024
+ 08:36:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240716-adi-v1-0-79c0122986e7@nxp.com> <20240716-adi-v1-4-79c0122986e7@nxp.com>
- <u7xii4lfvjk6gbpmq7qtqckoznddiyno7xsaa74ufuxwdob532@wxuawwiwjpgm> <ZpfVNHQQaJvdnB+B@lizhi-Precision-Tower-5810>
-In-Reply-To: <ZpfVNHQQaJvdnB+B@lizhi-Precision-Tower-5810>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Wed, 17 Jul 2024 12:35:29 -0300
-Message-ID: <CAOMZO5CGqMXmcUg=J0OOtsq4ZpnVD7GnpxzEQQQ1Cq_dR45Hwg@mail.gmail.com>
-Subject: Re: [PATCH 4/6] pwm: adp5585: add adp5585 PWM support
-To: Frank Li <Frank.li@nxp.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, Clark Wang <xiaoning.wang@nxp.com>, 
-	Haibo Chen <haibo.chen@nxp.com>, Jindong Yue <jindong.yue@nxp.com>
+References: <20240711102436.4432-1-Dhananjay.Ugwekar@amd.com>
+ <CAP-5=fXXuWchzUK0n5KTH8kamr=DQoEni+bUoo8f-4j8Y+eMBg@mail.gmail.com>
+ <05e96873-12a9-4b1f-b1b3-1db7647211ce@amd.com> <CAP-5=fVXi3Pdtjaw++oRkYgubh-MDkRYf=2k7dNqE8s+jyQ+Ew@mail.gmail.com>
+ <2e7064c2-c769-41bb-a536-c6e75e8e5800@amd.com> <CAP-5=fXBYVH=qBJPm1d0-QEp8+HP3WtTLuukfF0g-2WU3gTofQ@mail.gmail.com>
+ <a1603596-aa36-4bb9-8c66-295b1872a2fe@amd.com>
+In-Reply-To: <a1603596-aa36-4bb9-8c66-295b1872a2fe@amd.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 17 Jul 2024 08:36:13 -0700
+Message-ID: <CAP-5=fVZvprNLZiO0baQ0cBgJE1qXjqqHRZvWz9YvU3FHUJHiQ@mail.gmail.com>
+Subject: Re: [PATCH v4 00/11] Add per-core RAPL energy counter support for AMD CPUs
+To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
+	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
+	tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	kees@kernel.org, gustavoars@kernel.org, rui.zhang@intel.com, 
+	oleksandr@natalenko.name, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	ananth.narayan@amd.com, gautham.shenoy@amd.com, kprateek.nayak@amd.com, 
+	ravi.bangoria@amd.com, sandipan.das@amd.com, linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 17, 2024 at 11:29=E2=80=AFAM Frank Li <Frank.li@nxp.com> wrote:
+On Wed, Jul 17, 2024 at 1:05=E2=80=AFAM Dhananjay Ugwekar
+<Dhananjay.Ugwekar@amd.com> wrote:
+...
+> Sounds great!, I'll be happy to refactor the RAPL code to use the event.c=
+pumask
+> feature to add the per-core energy counter. Also, please let me know if y=
+ou need
+> any help from me on the perf tool side as well.
 
-> Thank you for you review. I just found someone already submit similar pat=
-ch
->
-> https://lore.kernel.org/linux-gpio/20240608141633.2562-5-laurent.pinchart=
-@ideasonboard.com/
->
-> Let's wait for laurent. If he is busy, I can rework base on the above one=
-.
+I hope to send out some patches soon. One thought I have is that
+"event.cpumask" is probably less intention revealing the "event.cpus"
+as a name, so I'm going to code assuming the suffix is ".cpus" but
+obviously we can change it to ".cpumask". To me the "mask" makes it
+sound like we "and" the values with something, hence wanting to avoid
+the confusion. There's much confusion in the area already, such as the
+term "cpu map" that does not implement some kind of map.
 
-Adding Laurent.
+Thanks,
+Ian
 
