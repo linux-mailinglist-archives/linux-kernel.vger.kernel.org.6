@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-254570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FF4C9334D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 02:51:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C8309334D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 02:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F7D61C2262F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:51:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3749D283E7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4D26AAD;
-	Wed, 17 Jul 2024 00:51:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F453C00;
+	Wed, 17 Jul 2024 00:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b3Iz29rY"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uyEn5/QS"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D94D3C00
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 00:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269B18493
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 00:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721177485; cv=none; b=BSYG4wv/n9G4I43spm6P/mcsp/6PtWDNDQoKoP5uWi5VsDuh3XURoLfYQeFZH67bRH6RaExr7JAFOpyYcT6L9CgF7Zlnyn9JGfIdcf9GI4U7bi28wxrrX2gn2QxuPlxMRgWaS1iUDHEOWOn+emKeiRDa3vs7J+dZ5MYkj1gnw5U=
+	t=1721177489; cv=none; b=eHW7O26DzswqLq7ykqo7bS+QCGm3JdaT4CTDVZ3agfABwTtBh8QgQXPh9ciqVhyk23qRwrPhXLQTua2EeEArl5nb8kgakpcB68tWpQ1xXUXEFWtyg5np6M59T2X77IxWSJrCdeE6PrHWNVYpQqOlKCZn5EuMLQnoE9BiAOkTL5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721177485; c=relaxed/simple;
-	bh=rtFrRQ4rFy9iHSqIJgEhQebrOvlDgtJBnPfjcOkYxIU=;
+	s=arc-20240116; t=1721177489; c=relaxed/simple;
+	bh=imrdTBKFl9/ler02ONXWrJRcIjmutDnfzz+XiKEiY3w=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=dPDLjS+wXWTbmumQ6hhYNXVYfk4yHtaLhycu/WbkPnsyPdjhawfYer2eVTYYGMqFrdDvAOn+IFOkvk85bfhqH048jDrvaSGiQczPRQFG+Ei5kqpyL7aDWAcW6dqR+rd7jHMk7jeIuNR5CGYHYEt2M1x0COi7F3Q4u6hzEGiWm8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b3Iz29rY; arc=none smtp.client-ip=209.85.219.202
+	 To:Cc:Content-Type; b=HqEJrO05+t0tSWV3akTbGPXehMobyr1MPdxOkHLvRFMOJVsUKGDNrrdRcO/UDNy+iGGP88+caiVkYEQekhdfL6HHOvUKROkqf7n9e7BFIJ2yjjS8j59qqIUFtacTcrjkPOxM9kLf3JkG4DFagA3Gyqiz47uTNDv9QC2tJlizsC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uyEn5/QS; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e036150efc6so10734820276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 17:51:24 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-650fccfd1dfso113671767b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 17:51:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721177483; x=1721782283; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1721177487; x=1721782287; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lZfO2IpnB7bc3YW/PTDqptNxNpOawD6JRjU0h2mR8Jg=;
-        b=b3Iz29rYEG1T3ucw5yrRRO3ZZ9BlbBwUaCzS50QP2Ff2OTwc/ljrJShW+bvIPyF5+v
-         Xjz8koT9uQ6VBJzA5zLw/YNQ9GYGT5yStvWrBlu2SQb6xFJPntPTVi8eaOTPgUac5/AC
-         N7p20o3EycGCoYYuGTchdzFBMuzdIV4dldsg+Ib9GFdJuY6VmqiwXN0ABTFmIJ6efpjm
-         PU6ijdOz326eaPNCRbvp2ZVxD58KhQ+1y22N2vod89gr0jrtLuopx/pBM+gzD2Xg/ulF
-         P44wXEz7KYY1NB3KUzkBn9G+HNKDH2Wm0uhH43qWDu/R4Bqyb6A0BydwzyBCpOjD8Bxv
-         BGUA==
+        bh=ssDYc+w2ZBOTZEW4SaOXob+zs6JJwedZnb8idSmatOU=;
+        b=uyEn5/QS8n3nHDLDaN/Do694H85t8KqwVDP0WL9KiSf7eUfr8HuGb8GzasWKojQD56
+         wqIu2tshIeHy5U9x+ass+kgnv2vhwOTbqGxNlUSggrOBi7P+2YmOgLkxU+8nEty/INg/
+         hZ7rz5G8amu7n4axw51bI6EkslGvSQRHBmlSEO+FlBw0qyBok+nfNTyNZ8NCI1f37IXe
+         qSuJ4b7+GkNCn5FWqgAbGZVBLmSTA62bmFmrdtfr5RSylYInMIrxISoHiGt2JL/+S5pT
+         iey4mQWEFGXWxKnjBaAAxjNJlWfAkGpx0Cyt78cgb2TDleUCVUYXgmOLfciQna+Z6n51
+         PmNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721177483; x=1721782283;
+        d=1e100.net; s=20230601; t=1721177487; x=1721782287;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lZfO2IpnB7bc3YW/PTDqptNxNpOawD6JRjU0h2mR8Jg=;
-        b=U+8Q5t9RRWboDOJt65CmNdA6ZLUmLZJwKNWBgLC1UI8HW9OIC9lEhRlLQcXBW+DljV
-         8ZWVFwu+uxhZ0JHaERVKe+NaR9/EE5kKfMxpJ7DQPWf2AUcdSvc1/cOZQsistt0HxZnN
-         UOAdupopkLc3YTVDRBoBjU9Ba40TOh2NHkSUuS++wI4XQPBj4bjA63w4XBxWwRrhYXtu
-         HeCwTalQv7Mr136dRkIFyV7yJq9/NSOGiStb3QOfGxgfe4Y0CqNr62uCWhUPeWzTrFuG
-         7asIEQy0gZK6F+Fdn9hiQdIi3QaIfYEj8p4ff5ypl5sE/tB+Zr0ZSGk8L4o3TNY4WWKc
-         Q17g==
-X-Forwarded-Encrypted: i=1; AJvYcCVb/vdLoAm/0gSf6DHstIw0wMvDeamR+LRaH6To7mEwBi9LRZ9mJtNg8hCJe1D5bwZcwJt43xNTWJsmBuKx7ZuIzWcUXWEG+TruFSnd
-X-Gm-Message-State: AOJu0YzwRIPvL5Wz2vC0lr55AQNCItbj3jiGsdhnRz11pDa+hakadcbA
-	MNbNE5niwgNWQgcInSNhnsIshg/Ic0wFRYtf1WXcI5ypZ4g4Inb+kKO0/d68rWZ1pQm8q1YWElx
-	qEw==
-X-Google-Smtp-Source: AGHT+IHn69xVfaZrAZa13CCuMoUt0BnnEiwyRbQOQS68ztFEUUQVny+N76Q4ts71rDSaIim5mgpGHu6Hias=
+        bh=ssDYc+w2ZBOTZEW4SaOXob+zs6JJwedZnb8idSmatOU=;
+        b=tQOaNLrFLTok+lpKY402Ot+iU0VrL7DmIV2D2dm06d6QgXxfpEb2sB7n0VzLw56J21
+         j4qHIvwV6xU2u1PTIyAmqxUk5tALSDPyhBPEXPiL96FDh4m5IzXz5YPzxG+S2xiBWGli
+         F7L5VU4a9EdQhCyK1ZBO+Tifb4GNKVRNwRun9it3aXDudIP5437gosdJTHzOmyu0YPYB
+         6//PMwNT2zeCxvNJg9cUyE3RQGBYxB75iErvTEP/koElW/hCt3sI/m8b7LzUvl4TsxB2
+         YRdDC7Mv/Io/nd5WDOuo9asJJy9xnstcr225D9mxj5mpYrCBawOQqquk6gXt9QROpbWs
+         HuWA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvVfbmjrRaEGPVGcuJ9U3Cx0/N2U6/czAWW9piRVmaDvIUiuuLWTlqYgit6giOVnW9AbNrN9hJmjhMvLJX3ZDJ4bI4mCPVm4Oy374B
+X-Gm-Message-State: AOJu0Yxcq0XMEb4fQLI7dna5c4zG0ZpQF+2ghukwFq0bN3xsMs2rmP1J
+	wMMNnkzUDQhiuUlBiGxscVrNNKNZQ8CgOtIsH7xvPBnousn7v8W4RHA8ChGQxsy3wulu1aKiXKi
+	Qhg==
+X-Google-Smtp-Source: AGHT+IGfziVk8mk/t5qqLgrjh2nAuQB6H4AHqRgQ9isrB7miUbLCHuZyYh4XWKyG4GLGSr/PpOKF+I1vupI=
 X-Received: from jthies.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:23db])
- (user=jthies job=sendgmr) by 2002:a05:6902:140a:b0:e03:5312:c053 with SMTP id
- 3f1490d57ef6-e05ed6fdc1bmr322276.7.1721177483369; Tue, 16 Jul 2024 17:51:23
+ (user=jthies job=sendgmr) by 2002:a05:690c:660f:b0:62a:2a39:ccd9 with SMTP id
+ 00721157ae682-66500955504mr5567b3.6.1721177487061; Tue, 16 Jul 2024 17:51:27
  -0700 (PDT)
-Date: Wed, 17 Jul 2024 00:49:46 +0000
+Date: Wed, 17 Jul 2024 00:49:47 +0000
 In-Reply-To: <20240717004949.3638557-1-jthies@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240717004949.3638557-1-jthies@google.com>
 X-Mailer: git-send-email 2.45.2.1089.g2a221341d9-goog
-Message-ID: <20240717004949.3638557-2-jthies@google.com>
-Subject: [PATCH v1 1/4] usb: typec: ucsi: Add status to UCSI power supply driver
+Message-ID: <20240717004949.3638557-3-jthies@google.com>
+Subject: [PATCH v1 2/4] usb: typec: ucsi: Add USB PD DRP to USB type
 From: Jameson Thies <jthies@google.com>
 To: heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org
 Cc: jthies@google.com, bleung@google.com, abhishekpandit@chromium.org, 
@@ -84,56 +84,42 @@ Cc: jthies@google.com, bleung@google.com, abhishekpandit@chromium.org,
 	saranya.gopal@intel.com, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Add status to UCSI power supply driver properties based on the port's
-connection and power direction states.
+Add POWER_SUPPLY_USB_TYPE_PD_DRP as a USB type in the UCSI power supply
+driver. The DRP type is set when the partner supports USB PD and offers
+both source and sink PDOs.
 
 Signed-off-by: Jameson Thies <jthies@google.com>
 ---
- drivers/usb/typec/ucsi/psy.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/usb/typec/ucsi/psy.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/usb/typec/ucsi/psy.c b/drivers/usb/typec/ucsi/psy.c
-index e623d80e177c..d0b52cee41d2 100644
+index d0b52cee41d2..45113e013696 100644
 --- a/drivers/usb/typec/ucsi/psy.c
 +++ b/drivers/usb/typec/ucsi/psy.c
-@@ -29,6 +29,7 @@ static enum power_supply_property ucsi_psy_props[] = {
- 	POWER_SUPPLY_PROP_CURRENT_MAX,
- 	POWER_SUPPLY_PROP_CURRENT_NOW,
- 	POWER_SUPPLY_PROP_SCOPE,
-+	POWER_SUPPLY_PROP_STATUS,
- };
+@@ -204,8 +204,12 @@ static int ucsi_psy_get_usb_type(struct ucsi_connector *con,
  
- static int ucsi_psy_get_scope(struct ucsi_connector *con,
-@@ -51,6 +52,20 @@ static int ucsi_psy_get_scope(struct ucsi_connector *con,
+ 	val->intval = POWER_SUPPLY_USB_TYPE_C;
+ 	if (flags & UCSI_CONSTAT_CONNECTED &&
+-	    UCSI_CONSTAT_PWR_OPMODE(flags) == UCSI_CONSTAT_PWR_OPMODE_PD)
+-		val->intval = POWER_SUPPLY_USB_TYPE_PD;
++	    UCSI_CONSTAT_PWR_OPMODE(flags) == UCSI_CONSTAT_PWR_OPMODE_PD) {
++		if (!con->partner_source_caps || !con->partner_sink_caps)
++			val->intval = POWER_SUPPLY_USB_TYPE_PD;
++		else
++			val->intval = POWER_SUPPLY_USB_TYPE_PD_DRP;
++	}
+ 
  	return 0;
  }
+@@ -275,6 +279,7 @@ static enum power_supply_usb_type ucsi_psy_usb_types[] = {
+ 	POWER_SUPPLY_USB_TYPE_C,
+ 	POWER_SUPPLY_USB_TYPE_PD,
+ 	POWER_SUPPLY_USB_TYPE_PD_PPS,
++	POWER_SUPPLY_USB_TYPE_PD_DRP,
+ };
  
-+static int ucsi_psy_get_status(struct ucsi_connector *con,
-+			       union power_supply_propval *val)
-+{
-+	val->intval = POWER_SUPPLY_STATUS_NOT_CHARGING;
-+	if (con->status.flags & UCSI_CONSTAT_CONNECTED) {
-+		if ((con->status.flags & UCSI_CONSTAT_PWR_DIR) == TYPEC_SINK)
-+			val->intval = POWER_SUPPLY_STATUS_CHARGING;
-+		else
-+			val->intval = POWER_SUPPLY_STATUS_DISCHARGING;
-+	}
-+
-+	return 0;
-+}
-+
- static int ucsi_psy_get_online(struct ucsi_connector *con,
- 			       union power_supply_propval *val)
- {
-@@ -249,6 +264,8 @@ static int ucsi_psy_get_prop(struct power_supply *psy,
- 		return ucsi_psy_get_current_now(con, val);
- 	case POWER_SUPPLY_PROP_SCOPE:
- 		return ucsi_psy_get_scope(con, val);
-+	case POWER_SUPPLY_PROP_STATUS:
-+		return ucsi_psy_get_status(con, val);
- 	default:
- 		return -EINVAL;
- 	}
+ int ucsi_register_port_psy(struct ucsi_connector *con)
 -- 
 2.45.2.1089.g2a221341d9-goog
 
