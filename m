@@ -1,143 +1,115 @@
-Return-Path: <linux-kernel+bounces-255258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD299933E16
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:57:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC7B3933E18
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:57:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E7711F22C1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:57:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEC661C22561
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1022E180A8D;
-	Wed, 17 Jul 2024 13:57:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B4C180A72;
+	Wed, 17 Jul 2024 13:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rHSiBx0O"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KE9N9A5A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1406566A
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82AD566A;
+	Wed, 17 Jul 2024 13:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721224654; cv=none; b=E/YLexyZSfWQA2QKrr7HKa+BT1TlNjJ50EM3qy1v3xbuSaLW2oQ2kpgqMAoiZ3Q85lZIGjAO9uOOdu/dPzE/Ryrd8dgxc5UkGOY9ENInty5Kd64bIYDeDb43ibkr5rsY2e794Irvc/6mPO8PFCvmNDR5onF+UI+WduKErtzTxYE=
+	t=1721224669; cv=none; b=Eb1Ni0PKx6YjIJW0xF8RMVelkEvZAEHyDnkKG5LZmrJhtLE78hg+zsClWhUtyV9GW7ou6oDlyxdTB3w/pWf7jd+Dez5Itq2ODz5pS8qb2Yq8Fp6AkOCmWGEslftVZTpo7I453S+vhvheQ/hQywZJFON7xbdKVA2XprtF3yvW0dQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721224654; c=relaxed/simple;
-	bh=mj9lyALcWaNJFJX7S4WRviV1aZ7NNgMIecZZbWmCzDE=;
+	s=arc-20240116; t=1721224669; c=relaxed/simple;
+	bh=WTDYTC4j9QxgDS55lJZ6UHk83ICcMmBkNZj6P0bitLA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NhAJMn2pznmlunmaNltkGx9qDwSjb2a4CnfETxlSscaV8/CL8yatV3073vkxEpTchTre4mbuDg8VeOMlaoxM8+7QYjMgP9W/bXte5fGI2Xgy9kpDTJLl3q3i/OnrRPyt70be5u71icIYQHXiddkeCt569UIIgBr6PgIZeti70CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rHSiBx0O; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ebe3fb5d4dso8604611fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 06:57:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721224650; x=1721829450; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mHJbV+bzx4RI8mDOQI+N5X7vHq/DAFW5fyNCzOVzMjI=;
-        b=rHSiBx0OIORI/pywKENisnriB3hhEZiqmkqnvH4KBDvI6WF1I1gVvE8GyHLgBuGPMo
-         TcaoMKFQwULywOYZi5MyxVrkSQMkiRk2tDvQb1ZJT3Klkna7HgIH7yw1HHfCCytqdPje
-         2xQTuLtsOWXd+859ZVNRpfdmcN7GRrSv/6f4iIWubpW8QFM0rbQFfCqxOHg1sG937CXv
-         uDNCOSmllQ+I7gXTiUwolLedTqcUNcuiuOyLGheh5NB4xshbtKR+S1fW65kJfaXJipZ8
-         GsIed3neHP4A2e5mCU3+m2srBL5xxLAzi+fnxDKSYmEfjdggMuTawJLLWa7E9268bmS1
-         pN0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721224650; x=1721829450;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mHJbV+bzx4RI8mDOQI+N5X7vHq/DAFW5fyNCzOVzMjI=;
-        b=owocRPbu2fejFc1DCfwcPlAMkMb6LpWJHSC5xWy9PXtZzKcBcQZ1ZkO6an3vkvT3ls
-         +ZitHLEa25Fit+ybu5BpJluA/OhN7vWlXjTe6F2cFUZ/AJcoer7hVArmzMC7Uq0BTxdK
-         7Lj4xC3+53B8xb9jbgKS+drc/RzmaEBY8AljUKybjLi8lPTPSjiD2epYKU7+3pLjf4xT
-         wjDZTSAjpXSvUTpQ2MCRhc42WFvrPcH6nmk6kTw4sIsUHSidTHIKbTTTn5xCCwupJlIM
-         PLD5PnIoSPUPI9NxzJFIrLBJWp1VQzWXFCqE4+7HY4jBzvDRbZCtMnK3FZvyTg6dBy0S
-         GRfA==
-X-Forwarded-Encrypted: i=1; AJvYcCXpWiQXlJH2dLLsTDVVtM3BpbMr228XRbBypoHvU8+SuMThOhFF3no145DOs9eAThT7qDARMeuKbTchda4efhCc6GEjH/MBFWAhoP3O
-X-Gm-Message-State: AOJu0YyakrGHoicEH1eOJ2BnjzhOmpA/7QyiQbGmdcZl/oyX6gX+58Su
-	bSTPDIxIi20brKvUmFLKlT/IfnfHHxNkLlIO64yJe3zDFWT0uxneOCI9T/cbuKg=
-X-Google-Smtp-Source: AGHT+IG7iDrtCuBBKWvQaoQQbv/0kaeeUtziuz9N7l7vX5y+JvpROqU3u5NL1wFj8j7PpznoM4x7Ww==
-X-Received: by 2002:a05:651c:2213:b0:2ec:1df4:589b with SMTP id 38308e7fff4ca-2eefcd61dd7mr7308201fa.1.1721224648985;
-        Wed, 17 Jul 2024 06:57:28 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2eee19148adsm14501371fa.100.2024.07.17.06.57.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 06:57:28 -0700 (PDT)
-Date: Wed, 17 Jul 2024 16:57:26 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
-	Edmund Dea <edmund.j.dea@intel.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Jyri Sarha <jyri.sarha@iki.fi>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, dri-devel@lists.freedesktop.org, igt-dev@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 2/5] drm/drm_property: require DRM_MODE_PROP_IMMUTABLE
- for single-value props
-Message-ID: <gbcunf7zmafn5z76mrlgldmsy74s7e6jacv53mgpym2l75uq6h@talxrisbufsw>
-References: <20240715-drm-bridge-connector-fix-hdmi-reset-v4-0-61e6417cfd99@linaro.org>
- <20240715-drm-bridge-connector-fix-hdmi-reset-v4-2-61e6417cfd99@linaro.org>
- <20240717-bouncy-horned-mamba-5691b8@houat>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iIoGkqSCkTEechZHtKi8Ua6t/uuxdYwrDkCT1vZDE6QQWqiLAV/WE2k0RzI3QIDJl3Fbrt3lGcq+7aDMPbA8mJMdOpgGKSNcw7HDzoMGPg8GJdW++sZKOXIjN9kgfcLuRgRsmgnmZOh/3OdU7EazBxoo92fpW2dF/wR1q8G3280=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KE9N9A5A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF203C2BD10;
+	Wed, 17 Jul 2024 13:57:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721224669;
+	bh=WTDYTC4j9QxgDS55lJZ6UHk83ICcMmBkNZj6P0bitLA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KE9N9A5AZ96hBtGFEGL4RSQZCg7pqn5VXRR/yS3ahvW4Xc3YrO7xa3Yz9uwv9xQfP
+	 T10f7yqFEr+jGsgdOQ29JS49ShRohTCwlZCWZxH9JVLob2hjTzuTAo5Eijg38YmKY8
+	 U+4xU2LxhJt3n0JDjJ4wTeBA9IPy56KLd8oQf2Rb6f8XTpziqWm0gz438QcKyoIqwW
+	 U9qaoKkmbKY2BoQI2wPHcR4MlZG5FVadP/Jky4VkGyjssgAasJMSdTm/nM2ff2zsoB
+	 4kWPL7DMUsz1zu0KJ+G21utz6kBPjtGXdn4+sRf4LWIcpGkess5MU5tETOqfCjh9iv
+	 nO3dXhoat10iA==
+Date: Wed, 17 Jul 2024 06:57:47 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	"Jan Alexander Steffens (heftig)" <heftig@archlinux.org>,
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v6] kbuild: add script and target to generate pacman
+ package
+Message-ID: <20240717135747.GC24892@thelio-3990X>
+References: <20240716-kbuild-pacman-pkg-v6-1-d3a04e308013@weissschuh.net>
+ <20240717011515.GA1230090@thelio-3990X>
+ <CAK7LNARYNqjcMkdnaY2oAkxttFTtTEgJ9VuOZOn0i4AuXp-How@mail.gmail.com>
+ <CAK7LNARGWu8q5dAW5tYzfiSKKtZ9t8Dm9FzRoaoZhU4d-TWswQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240717-bouncy-horned-mamba-5691b8@houat>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNARGWu8q5dAW5tYzfiSKKtZ9t8Dm9FzRoaoZhU4d-TWswQ@mail.gmail.com>
 
-On Wed, Jul 17, 2024 at 03:42:46PM GMT, Maxime Ripard wrote:
-> Hi,
+On Wed, Jul 17, 2024 at 05:51:21PM +0900, Masahiro Yamada wrote:
+...
+> > > > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> > > > new file mode 100644
+> > > > index 000000000000..eb3957fad915
+> > > > --- /dev/null
+> > > > +++ b/scripts/package/PKGBUILD
+> > > > @@ -0,0 +1,99 @@
+> > > > +# SPDX-License-Identifier: GPL-2.0-only
+> > > > +# Maintainer: Thomas Weiﬂschuh <linux@weissschuh.net>
+> > > > +# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+> > > > +
+> > > > +pkgbase=linux-upstream
+...
+> Perhaps, this may make sense.
 > 
-> On Mon, Jul 15, 2024 at 09:33:02AM GMT, Dmitry Baryshkov wrote:
-> > Document that DRM_MODE_PROP_IMMUTABLE must be set for the properties
-> > that are immutable by definition - e.g. ranges with min == max or enums
-> > with a single value. This matches the behaviour of the IGT tests, see
-> > kms_properties.c / validate_range_prop(), validate_enum_prop(),
-> > validate_bitmask_prop().
-> > 
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Currently,
+> pkgname=("${pkgbase}" "${pkgbase}-headers" "${pkgbase}-api-headers")
+> is hard-coded.
 > 
-> We had a discussion yesterday about it on IRC with Sima, Simon and
-> Xaver.
+> I do not think linux-upstream-headers make sense
+> when CONFIG_MODULE is disabled.
 > 
-> https://oftc.irclog.whitequark.org/dri-devel/2024-07-16#33374622;
-> 
-> The conclusion was that it would create an inconsistency between drivers
-> on whether a given property is immutable or not, which will lead to more
-> troubles for userspace.
-> 
-> It's not clear why Ville added that check in the first place, so the
-> best course of action is to remove the IGT test and get the discussion
-> started there.
+> scripts/package/mkspec turns off with_devel
+> when CONFIG_MODULE is disabled.
 
-Ack, I'll work on removing those tests later today.
+Yes, I think that is a reasonable change to make. In the face of that
+potential change, would it make sense to slightly adjust the
+makedepends? pahole is only needed when CONFIG_DEBUG_INFO_BTF is enabled
+but I guess no other package building infrastructure makes dependencies
+conditional in that manner.
 
--- 
-With best wishes
-Dmitry
+Another thing I wonder about would be allowing the user to customize the
+value of pkgbase, like
+
+  pkgbase=${PACMAN_PKGBASE:-linux-upstream}
+
+because unlike Debian and Fedora, multiple versions of the same kernel
+package cannot be installed at once. If I wanted to build a package
+against mainline and -next and install them side by side, I could only
+do so if they are named differently. This would allow one to provide
+PACMAN_PKGBASE=linux-mainline and PACMAN_PKGBASE=linux-next to
+accomplish that. Might be a hyper specific use case though, so I am not
+opposed to disregarding it.
+
+Cheers,
+Nathan
 
