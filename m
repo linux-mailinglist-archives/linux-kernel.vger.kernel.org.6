@@ -1,184 +1,214 @@
-Return-Path: <linux-kernel+bounces-255260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F479933E1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:00:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6645D933E24
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:05:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3D901C2277C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:00:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D31C11F22943
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048D6180A8E;
-	Wed, 17 Jul 2024 14:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB88180A9E;
+	Wed, 17 Jul 2024 14:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TUiKmoNY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="KM10pLYQ"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA1057CBE;
-	Wed, 17 Jul 2024 14:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532BD1802A3;
+	Wed, 17 Jul 2024 14:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721224840; cv=none; b=NV/INcrzsDuKVnEKce/7C6K7HZeUrWmVsLAp/AuB2mZ5FJz6w4PKrQpOFpLezBp1zdNip0HmKBnuhbrmzJsY7+I6T2/Z/qfzC28C98m/wNyLUHnI745UL3xZk5/NM5zHElqlpW4F2SVWOk/uEaDaukG2H9CMdX2qY1RXV3ODxYo=
+	t=1721225094; cv=none; b=YFdMS0+4M1Rz6QM9OcTAs4OTBYaCPZgs1/1TjFgsL0tZWtsvhJgZjDSBZ+0k8Oaj+QJXkcx0NTBUvln9P0f3CeT0Qd723QLFJSJrDcdYdMI/Lo58bklmA6i0WWxkVBW01qhCtXULVjgyfk1sqLCnTA7x2bmRLoZRnlvk5ykxLpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721224840; c=relaxed/simple;
-	bh=E+FhYuxmNkP3RZDL/N0m140+nk3hN68k0YFGrWbX+s8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EoA3KrV6jATlw/cvrAUUe3BaVA+Y9d38I1lJJTNCeJjwxjzYBUrFDP+akqrK0AS2YIyCtTY3t4+MaaU9QQVhU/Y2xhgqXQATEOfuy047qpHAq7Yo9nrjNjd5j7nkCZNQMqdAjbpHWcVMAgZSMZrsTtKHFdndjPgKYK6YHAHHivU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TUiKmoNY; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721224838; x=1752760838;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=E+FhYuxmNkP3RZDL/N0m140+nk3hN68k0YFGrWbX+s8=;
-  b=TUiKmoNY0bAlr9jXNK7AUOBtMyBEy+LcwlkAMAKqI/KpojIXGeriZUMH
-   LAqXNAEqFae/jjsN1mXu7L2GDGtZHG+MA9ZBnugtC0UDOEe4UTPI1ZAYZ
-   Os9VvQ3ds8uxc4kLXwcOevHlIMCyMSmg+kJooU+4r+XBY6JFMim62EJH9
-   r6P0DSdrSO1YIzMlWdN1fNW/aDAr1Z081q1wXc4fl6r77Nuzv4A6zgQP5
-   zSOoEw1T0tqCnurcm6qMlrb+r/OQZJ2a4LpNXA6k+RS+YYfTdtVmu9/GL
-   rLLjnM7YeAUxWH6C3Yyk0uw2fdCFv/rXZIlrZs4N5rt6UfWItOQNqY0q6
-   w==;
-X-CSE-ConnectionGUID: Q0seOagRStSJsxWXpobwaQ==
-X-CSE-MsgGUID: Ydyt0NseSEiVsY+ddQZSrA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="18541819"
-X-IronPort-AV: E=Sophos;i="6.09,214,1716274800"; 
-   d="scan'208";a="18541819"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 07:00:38 -0700
-X-CSE-ConnectionGUID: 26aK0OAyTY+G8/R+yIbgdw==
-X-CSE-MsgGUID: sUrvdMyPSAu1kwoM8ZXrdA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,214,1716274800"; 
-   d="scan'208";a="50189660"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.125.247.52]) ([10.125.247.52])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 07:00:34 -0700
-Message-ID: <bd0006c9-2386-4d81-9147-f262262d70ce@intel.com>
-Date: Wed, 17 Jul 2024 22:00:31 +0800
+	s=arc-20240116; t=1721225094; c=relaxed/simple;
+	bh=UZYCS86EJeax8Fo8uvo2+rpYlepn1M3UFz4n4r+qc/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G6WZV4hRGg5Sz+MCqBkzzm4mPWheovabbxoRltXp7tAK7GtMWap2MNiyH7EZ/jTDHolIJC8czUDeZlOQHpKW4xOrU19VwUt5d8A9vzH3lchL1tpeGLzhbed9c7BFmsFh0MILxuaIywaMU2TucqaBxMNGiuyWWYTFKEb5JmZYtiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=KM10pLYQ; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 97CEB667;
+	Wed, 17 Jul 2024 16:04:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1721225052;
+	bh=UZYCS86EJeax8Fo8uvo2+rpYlepn1M3UFz4n4r+qc/Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KM10pLYQIgJ8RgIk+OT6Fy8bOHIut/FNAc7+Uo4ESbpCaY9x0lOOIg1gHSSLY0fm6
+	 ojx1YljWuSmo4hQyvdgvC3HRRckdEusWP0roUU0xcIffg4mOvH0adr9Aps/uUb813n
+	 rhedv1OiUPmVs8fHviS9VkDvIBrZ/6AfhT1EyiZM=
+Date: Wed, 17 Jul 2024 16:04:47 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, mchehab@kernel.org, 
+	ezequiel@vanguardiasur.com.ar, hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v4 1/2] media: videodev2: Add flags to unconditionnaly
+ enumerate pixels formats
+Message-ID: <ok2a4ubzka6rhzyj2c5op73ij7pw35g6e75whc2jjget62fatx@zka2ewyt3kfv>
+References: <20240717131430.159727-1-benjamin.gaignard@collabora.com>
+ <20240717131430.159727-2-benjamin.gaignard@collabora.com>
+ <2kbxr3hkjbcnaqescxmlcerziixg72icqpug6wa25eeggy2pnj@vqmxe4ojcwml>
+ <dfc292f8-0014-4bf4-9429-31f729a176cd@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 23/49] KVM: x86: Handle kernel- and KVM-defined CPUID
- words in a single helper
-To: Sean Christopherson <seanjc@google.com>,
- Maxim Levitsky <mlevitsk@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
- Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>,
- Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>,
- Binbin Wu <binbin.wu@linux.intel.com>,
- Yang Weijiang <weijiang.yang@intel.com>,
- Robert Hoo <robert.hoo.linux@gmail.com>
-References: <20240517173926.965351-1-seanjc@google.com>
- <20240517173926.965351-24-seanjc@google.com>
- <7bf9838f2df676398f7b22f793b3478addde6ff0.camel@redhat.com>
- <ZoxXur7da11tP3aO@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <ZoxXur7da11tP3aO@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dfc292f8-0014-4bf4-9429-31f729a176cd@collabora.com>
 
-On 7/9/2024 5:18 AM, Sean Christopherson wrote:
-> On Thu, Jul 04, 2024, Maxim Levitsky wrote:
->> On Fri, 2024-05-17 at 10:39 -0700, Sean Christopherson wrote:
->>> Merge kvm_cpu_cap_init() and kvm_cpu_cap_init_kvm_defined() into a single
->>> helper.  The only advantage of separating the two was to make it somewhat
->>> obvious that KVM directly initializes the KVM-defined words, whereas using
->>> a common helper will allow for hardening both kernel- and KVM-defined
->>> CPUID words without needing copy+paste.
->>>
->>> No functional change intended.
->>>
->>> Signed-off-by: Sean Christopherson <seanjc@google.com>
+Hi Benjamin
 
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+On Wed, Jul 17, 2024 at 03:44:24PM GMT, Benjamin Gaignard wrote:
+>
+> Le 17/07/2024 à 15:20, Jacopo Mondi a écrit :
+> > Hi Benjamin
+> >
+> > On Wed, Jul 17, 2024 at 03:14:29PM GMT, Benjamin Gaignard wrote:
+> > > Add new flags to enumerate all pixels formats when calling VIDIOC_ENUM_FMT ioctl.
+> > > When this V4L2_FMT_FLAG_ENUM_ALL_FORMATS flag is set drivers must
+> > > ignore the configuration and return the hardware supported pixel
+> > > formats for the specified queue.
+> > > To distinguish this particular enumeration case V4L2_FMT_FLAG_ALL_FORMATS
+> > > flag must be set by the drivers to highlight support of this feature
+> > > to user space applications.
+> > > This will permit to discover which pixel formats are supported
+> > > without setting codec-specific information so userland can more easily
+> > > know if the driver suits its needs well.
+> > > The main target are stateless decoders so update the documentation
+> > > about how to use this flag.
+> > >
+> > > Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+> > > ---
+> > > changes in version 4:
+> > > - Explicitly document that the new flags are targeting mem2mem devices.
+> > >
+> > >   .../userspace-api/media/v4l/dev-stateless-decoder.rst |  6 ++++++
+> > >   .../userspace-api/media/v4l/vidioc-enum-fmt.rst       | 11 +++++++++++
+> > >   .../userspace-api/media/videodev2.h.rst.exceptions    |  2 ++
+> > >   drivers/media/v4l2-core/v4l2-ioctl.c                  |  3 +++
+> > >   include/uapi/linux/videodev2.h                        |  2 ++
+> > >   5 files changed, 24 insertions(+)
+> > >
+> > > diff --git a/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst b/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst
+> > > index 35ed05f2695e..b0b657de910d 100644
+> > > --- a/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst
+> > > +++ b/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst
+> > > @@ -58,6 +58,12 @@ Querying capabilities
+> > >        default values for these controls being used, and a returned set of formats
+> > >        that may not be usable for the media the client is trying to decode.
+> > >
+> > > +   * If the ``V4L2_FMT_FLAG_ENUM_ALL_FORMATS`` flag is set the driver must enumerate
+> > > +     all the supported formats without taking care of codec-dependent controls
+> > > +     set on the ``OUTPUT`` queue. To indicate that the driver has take care of this
+> > > +     flag it must set ``V4L2_FMT_FLAG_ALL_FORMATS`` flag for each format while
+> > > +     enumerating.
+> > > +
+> > >   3. The client may use :c:func:`VIDIOC_ENUM_FRAMESIZES` to detect supported
+> > >      resolutions for a given format, passing desired pixel format in
+> > >      :c:type:`v4l2_frmsizeenum`'s ``pixel_format``.
+> > > diff --git a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
+> > > index 3adb3d205531..15bc2f59c05a 100644
+> > > --- a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
+> > > +++ b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
+> > > @@ -234,6 +234,17 @@ the ``mbus_code`` field is handled differently:
+> > >   	valid. The buffer consists of ``height`` lines, each having ``width``
+> > >   	Data Units of data and the offset (in bytes) between the beginning of
+> > >   	each two consecutive lines is ``bytesperline``.
+> > > +    * - ``V4L2_FMT_FLAG_ENUM_ALL_FORMATS``
+> > > +      - 0x0400
+> > > +      - Set by userland applications to enumerate all possible pixel formats
+> > > +        without taking care of any OUTPUT or CAPTURE queue configuration.
+> > > +        This flag is relevant only for mem2mem devices.
+> > > +    * - ``V4L2_FMT_FLAG_ALL_FORMATS``
+> > > +      - 0x0800
+> > > +      - Set by the driver to indicated that format have been enumerated because
+> > > +        :ref:`V4L2_FMT_FLAG_ENUM_ALL_FORMATS <v4l2-pix-fmt-flag-set-csc>` has
+> > > +        been set by the userland application.
+> > > +        This flag is relevant only for mem2mem devices.
+> > Thanks, however I think this can be wrapper on the previous line
+>
+> ok
+>
+> >
+> > >   Return Value
+> > >   ============
+> > > diff --git a/Documentation/userspace-api/media/videodev2.h.rst.exceptions b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
+> > > index bdc628e8c1d6..7a3a1e9dc055 100644
+> > > --- a/Documentation/userspace-api/media/videodev2.h.rst.exceptions
+> > > +++ b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
+> > > @@ -216,6 +216,8 @@ replace define V4L2_FMT_FLAG_CSC_YCBCR_ENC fmtdesc-flags
+> > >   replace define V4L2_FMT_FLAG_CSC_HSV_ENC fmtdesc-flags
+> > >   replace define V4L2_FMT_FLAG_CSC_QUANTIZATION fmtdesc-flags
+> > >   replace define V4L2_FMT_FLAG_META_LINE_BASED fmtdesc-flags
+> > > +replace define V4L2_FMT_FLAG_ENUM_ALL_FORMATS fmtdesc-flags
+> > > +replace define V4L2_FMT_FLAG_ALL_FORMATS fmtdesc-flags
+> > >
+> > >   # V4L2 timecode types
+> > >   replace define V4L2_TC_TYPE_24FPS timecode-type
+> > > diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+> > > index 4c76d17b4629..5785a98b6ba2 100644
+> > > --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> > > +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> > > @@ -1569,6 +1569,7 @@ static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
+> > >   	int ret = check_fmt(file, p->type);
+> > >   	u32 mbus_code;
+> > >   	u32 cap_mask;
+> > > +	u32 flags;
+> > >
+> > >   	if (ret)
+> > >   		return ret;
+> > > @@ -1578,8 +1579,10 @@ static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
+> > >   		p->mbus_code = 0;
+> > >
+> > >   	mbus_code = p->mbus_code;
+> > > +	flags = p->flags & V4L2_FMT_FLAG_ENUM_ALL_FORMATS;
+> > >   	memset_after(p, 0, type);
+> > >   	p->mbus_code = mbus_code;
+> > > +	p->flags = flags;
+> > Won't this set V4L2_FMT_FLAG_ENUM_ALL_FORMATS (if present) in the
+> > flags returned to userspace ? Shouldn't be drivers to set
+> > V4L2_FMT_FLAG_ALL_FORMATS instead ?
+>
+> memset_after zeroed flags field so we need this to send V4L2_FMT_FLAG_ENUM_ALL_FORMATS
+> flag to drivers. Return it to userspace is a side effect but I don't that is problem
+> since it set it anyway.
+>
 
->>> ---
->>>   arch/x86/kvm/cpuid.c | 44 +++++++++++++++-----------------------------
->>>   1 file changed, 15 insertions(+), 29 deletions(-)
->>>
->>> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
->>> index f2bd2f5c4ea3..8efffd48cdf1 100644
->>> --- a/arch/x86/kvm/cpuid.c
->>> +++ b/arch/x86/kvm/cpuid.c
->>> @@ -622,37 +622,23 @@ static __always_inline u32 raw_cpuid_get(struct cpuid_reg cpuid)
->>>   	return *__cpuid_entry_get_reg(&entry, cpuid.reg);
->>>   }
->>>   
->>> -/* Mask kvm_cpu_caps for @leaf with the raw CPUID capabilities of this CPU. */
->>> -static __always_inline void __kvm_cpu_cap_mask(unsigned int leaf)
->>> +static __always_inline void kvm_cpu_cap_init(u32 leaf, u32 mask)
->>>   {
->>>   	const struct cpuid_reg cpuid = x86_feature_cpuid(leaf * 32);
->>>   
->>> -	reverse_cpuid_check(leaf);
->>> +	/*
->>> +	 * For kernel-defined leafs, mask the boot CPU's pre-populated value.
->>> +	 * For KVM-defined leafs, explicitly set the leaf, as KVM is the one
->>> +	 * and only authority.
->>> +	 */
->>> +	if (leaf < NCAPINTS)
->>> +		kvm_cpu_caps[leaf] &= mask;
->>> +	else
->>> +		kvm_cpu_caps[leaf] = mask;
->>
->> Hi,
->>
->> I have an idea, how about we just initialize the kvm only leafs to 0xFFFFFFFF
->> and then treat them exactly in the same way as kernel regular leafs?
->>
->> Then the user won't have to figure out (assuming that the user doesn't read
->> the comment, who does?) why we use mask as init value.
->>
->> But if you prefer to leave it this way, I won't object either.
-> 
-> Huh, hadn't thought of that.  It's a small code change, but I'm leaning towards
-> keeping the current code as we'd still need a comment to explain why KVM sets
-> all bits by default.  
+Ok, if the expectation is that the flag is preserved through the ioctl
+call, this is fine with me
 
-> And in the unlikely case that we royally screw up and fail
-> to call kvm_cpu_cap_init() on a word, starting with 0xff would result in all
-> features in the uninitialized word being treated as supported.
+Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 
-+1
-
-> For posterity...
-> 
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 18ded0e682f2..6fcfb0fa4bd6 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -762,11 +762,7 @@ do {                                                                       \
->          u32 kvm_cpu_cap_emulated = 0;                                   \
->          u32 kvm_cpu_cap_synthesized = 0;                                \
->                                                                          \
-> -       if (leaf < NCAPINTS)                                            \
-> -               kvm_cpu_caps[leaf] &= (mask);                           \
-> -       else                                                            \
-> -               kvm_cpu_caps[leaf] = (mask);                            \
-> -                                                                       \
-> +       kvm_cpu_caps[leaf] &= (mask);                                   \
->          kvm_cpu_caps[leaf] &= (raw_cpuid_get(cpuid) |                   \
->                                 kvm_cpu_cap_synthesized);                \
->          kvm_cpu_caps[leaf] |= kvm_cpu_cap_emulated;                     \
-> @@ -780,7 +776,7 @@ do {                                                                        \
->   
->   void kvm_set_cpu_caps(void)
->   {
-> -       memset(kvm_cpu_caps, 0, sizeof(kvm_cpu_caps));
-> +       memset(kvm_cpu_caps, 0xff, sizeof(kvm_cpu_caps));
->   
->          BUILD_BUG_ON(sizeof(kvm_cpu_caps) - (NKVMCAPINTS * sizeof(*kvm_cpu_caps)) >
->                       sizeof(boot_cpu_data.x86_capability));
-> 
-
+> >
+> > >   	switch (p->type) {
+> > >   	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
+> > > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> > > index fe6b67e83751..b6a5da79ba21 100644
+> > > --- a/include/uapi/linux/videodev2.h
+> > > +++ b/include/uapi/linux/videodev2.h
+> > > @@ -886,6 +886,8 @@ struct v4l2_fmtdesc {
+> > >   #define V4L2_FMT_FLAG_CSC_HSV_ENC		V4L2_FMT_FLAG_CSC_YCBCR_ENC
+> > >   #define V4L2_FMT_FLAG_CSC_QUANTIZATION		0x0100
+> > >   #define V4L2_FMT_FLAG_META_LINE_BASED		0x0200
+> > > +#define V4L2_FMT_FLAG_ENUM_ALL_FORMATS		0x0400
+> > > +#define V4L2_FMT_FLAG_ALL_FORMATS		0x0800
+> > >
+> > >   	/* Frame Size and frame rate enumeration */
+> > >   /*
+> > > --
+> > > 2.43.0
+> > >
+> > >
+> > _______________________________________________
+> > Kernel mailing list -- kernel@mailman.collabora.com
+> > To unsubscribe send an email to kernel-leave@mailman.collabora.com
+> > This list is managed by https://mailman.collabora.com
 
