@@ -1,152 +1,135 @@
-Return-Path: <linux-kernel+bounces-255175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12281933D1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:43:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CD32933D22
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0913284C44
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:43:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAB591F24A7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB45817FAD8;
-	Wed, 17 Jul 2024 12:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649F2180058;
+	Wed, 17 Jul 2024 12:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XQLsAH+F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="qiqOQV/Z";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lYhGR3c6"
+Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F74741C63
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 12:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20C81173F;
+	Wed, 17 Jul 2024 12:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721220195; cv=none; b=AQS7F2LMprHxV9KbL6F64+j/uycUq5KdlzkQuULtDSx2ob5UCyen8nMtfDL0xn0J9CM0wMqO+NDrByE04zTO52jyEgAhCTdeNkZXefZtzB02m15CAScf81Zq91DeALSnAeg92btfFSRbNXlRljn4Ziu3hn147fsvoOMIXIStO/I=
+	t=1721220379; cv=none; b=EyTJLVrmIMqLAUvS/uvMJ1Rfwt0EJE2X5M4Aa26DbD62LxvaBYVhrXkhX7mMd3yq384OevrjQQ/hpuazIBorAASUKjbRpS+BOpmIXoGG0IDeT3O8c9N5/bQ4Di6T8A25z68+pGPIDbWSVq/5YwgzmyMK/z/MKl2SbiJATA5zY2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721220195; c=relaxed/simple;
-	bh=o8L/1xWvvMqYhwIVZeAmc5Si5NeHaEu+RWc4qcM9T60=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XTjTbL0X6Bbr/FcSwLi0pHcM2v5CYfQRDUnN5qm9ugy0ZU+xsy0igyIXhxmEBAalsxYIqV+2qNW5EOUvEK7IZhyz5obIWpzfAxHOnQHF0VlC+npzRmPqZk1466tyWM36gB5rWmioemAMJiOJNbBDNK8D5FPvHCvv9WANbxA1EyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XQLsAH+F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71C45C32782;
-	Wed, 17 Jul 2024 12:43:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721220194;
-	bh=o8L/1xWvvMqYhwIVZeAmc5Si5NeHaEu+RWc4qcM9T60=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XQLsAH+F7TI4KWqV18Ro9auCg3owA3fv1+BKhqGEUi3MLpBWNzYAsXAlAGjIJcI+0
-	 Nw55t19kP6Yy7KtLF3IsJ27P5ppkwTx0W3CNCmUMeRETt0X6ee6okjTeRCbPayE/jD
-	 ntnqVuP6nGl6mnWDvywqJzy5AJgPFxuTylxzJsnnyoBuBLcP0UYCuce1QCLLTMlMkQ
-	 WNfTo0nUbH2Wg6/OKE8/3mdIAmhfokzp2Gw4BpMyvsBnhgkvs8n4X4Dh0UGYq0wVvM
-	 UWWtXtxwjociB63ylyOXKYjtd+wgG4+5a8EnOCifYSNSB4wVxXit3QHIGZKftzmzJF
-	 IugLKiBDRcLlA==
-Date: Wed, 17 Jul 2024 13:43:09 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH RFC] riscv: Allow to build only with LLVM >= 17.0.0
-Message-ID: <20240717-catsup-corny-def9db822c4e@spud>
-References: <20240717111716.157149-1-alexghiti@rivosinc.com>
- <20240717-synapse-decade-a0d41bd7afce@spud>
- <203e8784-54f2-43ea-a442-833d7e4a06c8@ghiti.fr>
+	s=arc-20240116; t=1721220379; c=relaxed/simple;
+	bh=GuFkuwgqT80GRWXZvm7LRcX0ZMXSO6k1+urf/KtMogI=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=EoH5999evv2KLFfT2BwDudy0psR8KUx1fEvvwI/J1I94k3lkpEppGo88OQcTzZO/q4CDZf16tvRyFbg2fvWQgwpA/qY91yf5UTB6o583Zw2B3apxcCCtc189bpE6ly3+SAqWTYXnCJSept8AXpnqBd+qFSIq4cB7eCtrCMCAiPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=qiqOQV/Z; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lYhGR3c6; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute9.internal (compute9.nyi.internal [10.202.2.228])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id D13FC1140186;
+	Wed, 17 Jul 2024 08:46:16 -0400 (EDT)
+Received: from wimap26 ([10.202.2.86])
+  by compute9.internal (MEProxy); Wed, 17 Jul 2024 08:46:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1721220376; x=1721306776; bh=/CApYD6wKY
+	nJBVN4NbL8zaH4ZDUgadgUBuZp5+ecVs4=; b=qiqOQV/ZBHOGp+WRExDp4NzLdj
+	ziUl9xIHaUXYnBshQBoAxGk/gVS9rKLhRK3WBuRgdNEnDrwmn0Lz+anGbh4newhE
+	qiATIwmRv/uj2g97g8OM9RmpergkSLw+X7W4kUIR3qD0+Sl3oiyBhFE7eqVdaNTI
+	hC5+8KqqGeDfYXzIGk8dMxUi5mEwdWN2Hc6IAtoq5iGyL4pQpuMcTcRNKOKP2de3
+	6zNHPaNDFteBrktsnqiWXnXbafZ0NsOCqMvmUv1OmeMZMyfrbORXxOjHXJeMxP2+
+	4q3LewaZnF+cG+ZYcI2RbDUOX+kfrd+vAJCTLl/90fgj2rZLmCRi4UlvyZMg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1721220376; x=1721306776; bh=/CApYD6wKYnJBVN4NbL8zaH4ZDUg
+	adgUBuZp5+ecVs4=; b=lYhGR3c6zUvtgFpfRszwIHAm42Q0BxFUb415+QYJFeWc
+	xgsRAJPATdNRpoNNiS9aXLKn0WxLdP682FIdPO46JBZmfMGQhly4a8i6oFGthfZz
+	MhFlY26GuQSbriMBkK+V96uPCGjdex4OQ1xbetOET4QNa3VNWCeBc5hNFUyTNl+L
+	rHmQwOmCnsr3GcrnNgqz27e439an53N8EqFLy9tRPFumSP+Sq2OIEBy1i91XrbA1
+	KPpacdbigM/viaWRTAxU/POrsaT3X1zfv7DLwIDNeU0MIYbgtFpSqjy6mpU5h2Cg
+	3FlnIjvjSEGDizXvce20/14W1hOI1EbikHnEsxZt6Q==
+X-ME-Sender: <xms:FL2XZgu54zRo188ytbgokKLG-eM4_oct46qUF3zL2lA9v_10Y08z2A>
+    <xme:FL2XZtfHT4Wi8X98SWGHqJjKULUVb3Lv8BrlqYk6a31KbWqIe6kozNUkhdKJoFqki
+    AP5eR3FC6wazrKMIKk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgeeigdehhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeevhfffledtgeehfeffhfdtgedvheejtdfgkeeuvefgudffteettdekkeeufeeh
+    udenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:FL2XZryYFxReCHxYg1QjiiH7dcsKpiwNjFrFgvo9GdtpbStBQBAuag>
+    <xmx:Fb2XZjNceNt8fkAK1H8grmE9yW5ioXtEGgCiD38SIQUspwW20NYIWQ>
+    <xmx:Fb2XZg_YXApV0zJUjelNBs_wv_CkV8Vm_zjLElkOJ-FFFFFcNOuA0g>
+    <xmx:Fb2XZrUUYISPVoAHWqmqGi54AAfe6u4d7cGemq7uUnXOcqRDtpbcow>
+    <xmx:GL2XZh2MdXKDq-J1IfFLVUWchvHx5FvMcBTDJmK2Ej4vcoG0Bdlci1mt>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 1A54C19C0062; Wed, 17 Jul 2024 08:46:12 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="QHQw7inv+90Ljupu"
-Content-Disposition: inline
-In-Reply-To: <203e8784-54f2-43ea-a442-833d7e4a06c8@ghiti.fr>
+Message-Id: <f92d9393-779d-408a-b3f0-906658fef3cd@app.fastmail.com>
+In-Reply-To: <91b10591-1554-4860-8843-01c6cfd7de13@app.fastmail.com>
+References: <a662962e-e650-4d99-bed2-aa45f0b2cf19@app.fastmail.com>
+ <CAHk-=wibB7SvXnUftBgAt+4-3vEKRpvEgBeDEH=i=j2GvDitoA@mail.gmail.com>
+ <d7d6854b-e10d-473f-90c8-5e67cc5d540a@app.fastmail.com>
+ <CAHk-=wir5og_Pd6MBSDFS+dL-bxoBix03QyGheySeeWPX82SDw@mail.gmail.com>
+ <CAHk-=wjqr_ahprUjddSBdQfSXUtg3Y2dCxHre=-Wa4VGdi7wuw@mail.gmail.com>
+ <2b6336d1-34e0-48dd-b901-7b5208045597@app.fastmail.com>
+ <ZpdnhhaQum_epcGp@hovoldconsulting.com>
+ <be80d8f6-2a1b-4f63-a43e-652fa5328d11@app.fastmail.com>
+ <Zpd-Bx3VwrYWVeTs@hovoldconsulting.com>
+ <4d471a38-f86f-429d-a1a3-b882439ef7ba@app.fastmail.com>
+ <91b10591-1554-4860-8843-01c6cfd7de13@app.fastmail.com>
+Date: Wed, 17 Jul 2024 14:45:46 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Johan Hovold" <johan@kernel.org>
+Cc: "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Masahiro Yamada" <masahiroy@kernel.org>, linux-kernel@vger.kernel.org,
+ Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org,
+ "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+ linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
+ "linux-openrisc@vger.kernel.org" <linux-openrisc@vger.kernel.org>,
+ linux-snps-arc@lists.infradead.org
+Subject: Re: [GIT PULL] asm-generic updates for 6.11
+Content-Type: text/plain
 
+On Wed, Jul 17, 2024, at 12:54, Arnd Bergmann wrote:
+> 
+> -$(obj)/syscall_table_%.h: $(syscalltbl) $(systbl) FORCE
+> +$(obj)/syscall_table_%.h: $(syscalltbl) $(systbl)
+>         $(call if_changed,systbl)
+> 
+>  # Create output directory. Skip it if at least one old header exists
+>
+> Masahiro, does that make sense to you? I assume you can
+> explain this properly, but I'll already send a patch with
+> this version.
 
---QHQw7inv+90Ljupu
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This was not quite right either, but I sent a patch now
+that works with both old and new versions of make and
+has appears to have the intended behavior for incremental
+builds with or without changes to syscall.tbl:
 
-On Wed, Jul 17, 2024 at 01:41:23PM +0200, Alexandre Ghiti wrote:
+https://lore.kernel.org/lkml/20240717124253.2275084-1-arnd@kernel.org/T/
 
-> > > Link: https://github.com/ClangBuiltLinux/linux/issues/1886#issuecomme=
-nt-1645979992 [1]
-> > > Reported-by: kernel test robot <lkp@intel.com>
-> > > Closes: https://lore.kernel.org/oe-kbuild-all/202407041157.odTZAYZ6-l=
-kp@intel.com/
-> > > Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> > If Nathan wrote the patch, you need to set him as the author of the
-> > patch :)
->=20
->=20
-> I thought I did, how should I do that then?
-
-$ shazam 20240717-synapse-decade-a0d41bd7afce@spud
-Grabbing thread from lore.kernel.org/all/20240717-synapse-decade-a0d41bd7af=
-ce@spud/t.mbox.gz
-Checking for newer revisions
-Grabbing search results from lore.kernel.org
-Analyzing 4 messages in the thread
-Looking for additional code-review trailers on lore.kernel.org
-Checking attestation on all messages, may take a moment...
----
-  =E2=9C=93 [PATCH RFC] riscv: Allow to build only with LLVM >=3D 17.0.0
-    + Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-  ---
-  =E2=9C=93 Signed: DKIM/rivosinc-com.20230601.gappssmtp.com (From: alexghi=
-ti@rivosinc.com)
----
-Total patches: 1
----
-Applying: riscv: Allow to build only with LLVM >=3D 17.0.0
-$ git show
-commit f64f8420ca518b5dde35224cfff7ccfd14e5b496 (HEAD)
-Author: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date:   Wed Jul 17 13:17:16 2024 +0200
-
-    riscv: Allow to build only with LLVM >=3D 17.0.0
-   =20
-    The following build failure happens when using LLVM < 17.0.0:
-   =20
-    kernel/sched/core.c:11873:7: error: cannot jump from this asm goto stat=
-ement to one of its possible targets
-   =20
-    This is a known issue [1] so let's upgrade the minimal requirement for
-    LLVM to the version 17.0.0, which is the first version to contain the
-    fix.
-   =20
-    Link: https://github.com/ClangBuiltLinux/linux/issues/1886#issuecomment=
--1645979992 [1]
-    Reported-by: kernel test robot <lkp@intel.com>
-    Closes: https://lore.kernel.org/oe-kbuild-all/202407041157.odTZAYZ6-lkp=
-@intel.com/
-    Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-    Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-    Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-
-
-When you commited it, you needed to set --author. Just adding his
-signoff is not sufficient.
-
-Cheers,
-Conor.
-
---QHQw7inv+90Ljupu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpe8XQAKCRB4tDGHoIJi
-0hl7AQDHfW37RGUzqroCvREuQMRJha3XF9ktK9M72+YjcNoGHgD/apWw+RC/zTmt
-Lk8+0u1e05REJLDm6x45cI++lSGY9gU=
-=OrOa
------END PGP SIGNATURE-----
-
---QHQw7inv+90Ljupu--
+    Arnd
 
