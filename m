@@ -1,370 +1,345 @@
-Return-Path: <linux-kernel+bounces-254929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 422E5933968
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:50:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6A4293396A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89691B20FBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:50:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF4881C21F53
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98D13A29A;
-	Wed, 17 Jul 2024 08:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E0A39FF2;
+	Wed, 17 Jul 2024 08:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vCZyIbdi"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2071.outbound.protection.outlook.com [40.107.93.71])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uL48xhZq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A30125DE;
-	Wed, 17 Jul 2024 08:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721206229; cv=fail; b=I3S4FVnBAh4HoyNxAolueBwtRNwC3N81ULlVWG2JCniE5RyT94v4npTfXgll2uI3GlwVkHai2HVXSIN5695kfFipv1PBb3uIYhN+fQrXvuzvv+0GYC4fjXGQxH9/F7/O2sEnEtRBADkNByGh5zEp9/EwMcbowRBTFdmA7+m5n/Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721206229; c=relaxed/simple;
-	bh=1Ylq/r2ykdKCVhb8w1vzknUu+HWJcMpEujrTRIZtbi4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=sbC0fpM+VM4SWawW5sroZdDUlDvHH9RXrxGiyUzh1iv1/6UTLyd28czj3S83xUjX+se3LbKB0PbgYziusCrXm6qBL+iWxe0JfS64OCXwdH0Luru+Q8YKhoY9O/qUGrMh2FGjPzdJHxytx+aO62dA3lgU99uNYJmKjEFa/bcRhdo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vCZyIbdi; arc=fail smtp.client-ip=40.107.93.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dSoL5IdOZrPXRM71HV0jTTIfrx8k291C8AkqHuWgeawuKFbxSNs266jiSkCWD0PkCHVAyaQ/BC2dr+Nx3ttYdG6VRkEXtOMSuo5FjQ7FL+Q45uoBI0hNvDCBoEbClHaQr161zXukOR1WTATn3m3F/lwEHIt0Kuo3u0iQFQN/uBMzM+6x+c7XCWWDC94uIRgNbZM2pbmwC1f+mV+PPt++U5qlT2xZEVS2Mm4KgtZzLsVQEurbJ7slhtntnJ+JOw3zGENErFgVhQVlEhlCkg97KYx0mvGIBuk24N/7cjsb9rAHl44mdeTrH7hQl+I3FHz+75WsDmmFR7hL1w0VwzdODg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1Ylq/r2ykdKCVhb8w1vzknUu+HWJcMpEujrTRIZtbi4=;
- b=Pm6czd7G2QMHwLyokiOdid1i9GE1qyjivafzwkjKge4knfckKBO02QDkVR4LVh4HhAp5jA0Y3K7/JsfmmRGdVOmthtpyxRpDj3J15ux2xkplxFpMpR3vwLLr1x4gvIxlQ95Sjazrvu2p8VMvwWoMUwlbGsdyM0oef7Rsi7u1x61GG9JAz7zmST3FML+bZVlQv7sq4iFY09LKlFF1Y3ufhjMnwn3DMeLTswqlBqqlPsTxrtj4T5m8Yv58QC2lpdkrpoRWlfcfqfDvClkHOpukveGI5SViT108zVoFMNi6zrROqH3bsdq+4xCJssuxO3ttZd57DvyLPqWoOTbrfcAOuw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1Ylq/r2ykdKCVhb8w1vzknUu+HWJcMpEujrTRIZtbi4=;
- b=vCZyIbdiuw/p6t6f1T0hUHQQjUyQhLW6JlVKpJBt9CvR5hnIxSxEuljjrgQWIj1SdR9yBC6DEfgd1hDEHHfzRcdyakfKJfaJ5WzJDuytirCdeeNaLsnuLwSVPXQyCQR19U9sImhDvdsa6ljHocc0YfPoopFZnZ8mw5XXaWEoCoY=
-Received: from DM6PR12MB4217.namprd12.prod.outlook.com (2603:10b6:5:219::24)
- by LV8PR12MB9206.namprd12.prod.outlook.com (2603:10b6:408:186::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Wed, 17 Jul
- 2024 08:50:24 +0000
-Received: from DM6PR12MB4217.namprd12.prod.outlook.com
- ([fe80::14fe:2396:ca84:a49b]) by DM6PR12MB4217.namprd12.prod.outlook.com
- ([fe80::14fe:2396:ca84:a49b%4]) with mapi id 15.20.7784.016; Wed, 17 Jul 2024
- 08:50:24 +0000
-From: "O'Griofa, Conall" <conall.ogriofa@amd.com>
-To: Sean Anderson <sean.anderson@linux.dev>, Anand Ashok Dumbre
-	<anand.ashok.dumbre@xilinx.com>, "linux-iio@vger.kernel.org"
-	<linux-iio@vger.kernel.org>
-CC: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
-	"Simek, Michal" <michal.simek@amd.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH] iio: xilinx-ams: Add labels
-Thread-Topic: [PATCH] iio: xilinx-ams: Add labels
-Thread-Index: AQHaxfySvdNtD0AQ90GLP+X30QrxNrH5nvgQ
-Date: Wed, 17 Jul 2024 08:50:24 +0000
-Message-ID:
- <DM6PR12MB42176109D9F16D1B56E0AE278BA32@DM6PR12MB4217.namprd12.prod.outlook.com>
-References: <20240620204842.817237-1-sean.anderson@linux.dev>
-In-Reply-To: <20240620204842.817237-1-sean.anderson@linux.dev>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=c2125276-2bc5-49f9-bed0-937292a3665a;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2024-07-16T15:33:13Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM6PR12MB4217:EE_|LV8PR12MB9206:EE_
-x-ms-office365-filtering-correlation-id: ba04a21e-066a-4cb6-f4cb-08dca63d7f77
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?MGoya3Y4bzd4N1BxS0JocW1hV2ppSnlzZ3VPcWVBZXh6ZzJRQ3FueFd4R1dO?=
- =?utf-8?B?K2dOT21xRTRDWDBoWmhvOVRNMEhvS1kyS1JUVjlZVC9hMDE1MVBsSVRWc3Br?=
- =?utf-8?B?N2hseDFHSUZobmJyaElndmtqRkdLVGN5UWhJMTFkRmkzQUZMRGZnQm5POG9Z?=
- =?utf-8?B?Vk1GWU42UXlSOXRhMy9INnVlWGpGd2pjQS9HU29uUDNQdGdObEFJSldVWWU3?=
- =?utf-8?B?RUdtdEFoeDlLVVJTNlJrSkdMOWMvTWY5U0p3b2N5R3dOb0VWU3hlcFZZRzJY?=
- =?utf-8?B?dlltY3BKWGVQdzljV1phcVZOOEQwem91bS8vV2QwNXdPTURiYlBxYlpJemo3?=
- =?utf-8?B?Tzdsck5IdUlJZm8xQnMvZE9KV1hSVVc4bmN4N2xXS0dZRnhCazNXbmlqL2lL?=
- =?utf-8?B?UzdxNmgxUzBvd283RVlOL1hVaDZ5QjBTNzl4eGIyUmJrU0JWMStZZkJVL0ds?=
- =?utf-8?B?RlRubnR1NFBvbGJURTh6dHJJTlZrekdZWlkycmNBSjIzYjNObXlLaFNsTytv?=
- =?utf-8?B?Yi94UnR5NGhpNkg2MlRPZndHajd1TnR6MWFBQko0T00rbmZSdUIwaFBBMjl4?=
- =?utf-8?B?dVh0bzN0Y2tlbUlXRkR4YWZpR2dFcS85cVMvZ2V6emp2WHZMUFBtOFVMWHc0?=
- =?utf-8?B?eDdOVlA0WXd6Q0dZblZIUGk0NWdvb0t1WnllM08zV3BES0J0THlFbWxYOXpa?=
- =?utf-8?B?T2pKN3dad005eDQrczl4bnBuK0JpZi9hUlBLR2lyR3ByMUNzYUp2VmY1dnpS?=
- =?utf-8?B?bm5kVkVWTTRGRTlKNG0xWkRnaFlIYzI5TXRwV0lWc3ljSTJSN3pzamJaNlIx?=
- =?utf-8?B?WEJJL0tPdm41aFdkbFV3YjJkSnp3NHJoTG91UUtKL2ZnRFF5djBTcVBDVkdR?=
- =?utf-8?B?YTJCZEVwZU9oZHFuVDdUaXQzcmtxNGRlV1BGdTJOL2tBR1d4dVVGWjN5RnR3?=
- =?utf-8?B?L0FxN3pRREtJQ0QwYmpGMXlrcERRNndXUnRHanZVV05aV3VPSnMyQ2hSeFNt?=
- =?utf-8?B?eGVka0NJMzFrKzgwS2VOZnhUaUt3bitnTUJ0WWdEVVU4WlBvTTV2SDVockpL?=
- =?utf-8?B?VlE4TTh3Qjc0cjFCaGdHaXdQT0ZTWitTNUlRUStDNDFXMjVJSjNGSHhFT2dH?=
- =?utf-8?B?M0RPTmhGcmh0dkwzZFhwU2x4SGc2TC9qajhjN3lmL0ZHaGU4T3N1SjRPV2cz?=
- =?utf-8?B?YWFBVzJZcEQ1c0V2MEJ5S09qZ1BVdDJLc05KOVJ4MldpZW1TdXFCemg5Y0ta?=
- =?utf-8?B?cXdnK0h6U2tTcmhxa3dZKzhHMjJabkd4ZUUrR3ZFMHBCQW1iOVkrYlNrUmtk?=
- =?utf-8?B?ZWU4S2ZlSEJIaDlSb1FxWUs4RDQ3Z25UQkZhWlU3TVNiSkhPK3RVajBGMFg3?=
- =?utf-8?B?ckNsemwrNXBhK3pMbnhBVmZTdmlZU1cwdTh4dkQraTZoMUhyaE5kNFh3eUI3?=
- =?utf-8?B?WHZmQjNSd0gvSWplWTl3dzdIK2tYWFhZcG9nSE5CeDg5eXdtaW1PSFdvdnVK?=
- =?utf-8?B?Z1UzaW52UHpTR1FESXdjS3RQa2htK0V2U1Mva01XWGZRY3dxUDlvREdKVE1H?=
- =?utf-8?B?L2JUZkR3M3YyNEdnRk9tYTBKWnVDZTJ5U3BBNmNzWVIzRUlEcnZCb3JXSGRD?=
- =?utf-8?B?S0tZajJYQnEvNzltYlFSN0FPcGdWMUFVRityWmJ6UVlENUp0dUUwSU9ER1R2?=
- =?utf-8?B?QkYxdHA5SmY5bVU3RFdmcUZNTGVxV0lKanJtOXdvZmNTSmVsNGFaem5lUjQ4?=
- =?utf-8?B?dGI1bmxZZit5THNRVFJ3YkdyUWd1NWdTaWF4bVB1b0k3WU5LVWNhL2Q4em9J?=
- =?utf-8?B?YzhOZDg5M1hEVUZZbUI2MUZGT2xKTk9JUTFvT1JQeVA4cVFYOW5UbVJnTXF2?=
- =?utf-8?B?UDVidm42cTF6RU03cHQ4ZWVxU0orelBWTUMvRlJlOVVpaWc9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4217.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?d0kvbWo4bVVSLzh2Qk1qY09ENmlIVnpLNHB1amtzOXpDVmVlL1Qva2dpSnUx?=
- =?utf-8?B?OUVLVXgrY0M1cXRMYkJKbU5ReVJEanRaODlncTVUZitNdDE0SGpVZ1JxOEYv?=
- =?utf-8?B?QVBERkxKaXJhUDkzU3dRS3ZaNlFNTWVXYnFSYlhUWjlPa3hVQ2NmVW1za1cz?=
- =?utf-8?B?eG9iZ1BwRmVqMGo4T0tiSHdQdUJUNGxkczVxTUExaklIY0ZwRTJJVHUvblMv?=
- =?utf-8?B?V1VreGNaaHB4aTkva1RMK3VRdzgxY2lEcmZNL3hVS3hKbWtTTmNSM2ZHcHlo?=
- =?utf-8?B?cnovWVdveVFpM2tzclc2WGx0L1pMSGVXemlxaTlEaDRuV29aUlNYZEpDVmJX?=
- =?utf-8?B?ODIyVDdlL1Z1YlMrMnN2SGxmRkdVSE05ZndobmQ3a1BUUyt4eVNmNFdEZWt6?=
- =?utf-8?B?Wld4MFNMSEtlcG5EdWIrY0JiZjhaZ3A5Z01GVk1rWDVGZU5WdU9leXBIL0hl?=
- =?utf-8?B?WjJ3VENaMEpDNzVoU1oyWVpoSUpYK3dwN2J5bEs2a1ZOWllFNlZGaWpCd2ha?=
- =?utf-8?B?ays2Tk4rSFFDZWZhd2g2S0ljeS9VUVJIVDBrbzFoL2plRkpRL3oyWG1MR0M3?=
- =?utf-8?B?TFFDNmZTMUM0RkxxblVBbWpXMHdVUVh1c3RRVG1qeG9KUnVoN3R0U1RVSTdX?=
- =?utf-8?B?QlI2V0d0Lzg4eWk4bkZHRmFsMGVKYzFFTHFuQUFRcjJIOEFmTWhodWxHUFZN?=
- =?utf-8?B?Uy90dm9LT0JJdWovKzdtcTBxL0pDdGtPT0dsVnRPTWJML1JLWmpyQm80VU1P?=
- =?utf-8?B?dE01M2JuTFVSai9tbVQ2QzNwdzR0b1pBbWhxVVVCdjFjZUJOeVlzakpWN0tj?=
- =?utf-8?B?ZFpJVm5ZbDUwRGxzQlp0ZEdqbEZUY3ZBMkhQRENXenpkdFdiUXdrdDNHVVov?=
- =?utf-8?B?OWJvNHg0dk14c0tKT0R3VlVhdUZmbXk3UHVBTzRyaTE5NXNjTXZIWkpUbFBU?=
- =?utf-8?B?ZDdjTWkrVmQ2NUNyZlM1bTZYeE9KZ0lVaTJWQ1k2UEJUa1BrU3dBb2dBa1lD?=
- =?utf-8?B?eU4rb1M3VFFzSmdDRGp1aldyOUladWxMU2JXL3lBODRqeEZEMTM5NDFBWVpp?=
- =?utf-8?B?T3lSRWZuSHpGS2lxOHpRTSt6WnFKYXI3TTYwYjNITE96RmJPMEI1aThKU0Zu?=
- =?utf-8?B?V1Zuc2o1QTVCZ0R2T0QreHR3bWJEKzQyeFhSZ1F2aldDQjFCSURINGoyUnhD?=
- =?utf-8?B?bER0TTQ3aFpsN1FHQU9sSk42YTZzQXhjVmthRGNQU1VxSUdBZ24vMDA3YXBN?=
- =?utf-8?B?NWpCT01TRGdLRG5KdEE5blBCamNtNjlsYm5iS05GMWxoZUpsODBaZEZOWWU0?=
- =?utf-8?B?UmN0SEMwWHVsemUvWEw3LytRb2VSQm5EbFRQbXBTNW52SUFPY3F5cGM4UVlL?=
- =?utf-8?B?akpaaitzbEJaS01UQTVqM3Y1bWozY01raHlhYUg0L0dCY2pMeTJVdXNjTmNi?=
- =?utf-8?B?ck1wSG9tKzBkb1hMYUtycy9tVDY3YjVSelhWK3h6Szc2YW9ka1pEQk1mZGtx?=
- =?utf-8?B?MVBqeERvS3RDVEs3ekFkeVBlSVNOMUlxNnFFRE93OEp4c0V0NExyOHJHNEtY?=
- =?utf-8?B?OHF3V2tSVnBtQmw4cEtDVWFrVkRKTE1yTGdNMFF4eHgreVJMa211ZlIxZ1J6?=
- =?utf-8?B?emxaUVhiTVZ1REI2amtKU3cxMVhGNEJjbVhROFEzQmtBQ0RWWk1ackN4UTRH?=
- =?utf-8?B?bXlsTHUydkxWQkFydHkzR0k0SFMxNXN1Uk9Ca0E5ZUptR25IUk1LZ014dXFu?=
- =?utf-8?B?ODdldFl4bGN1Y2tvMEdiRkpROUNKYS9ET2hnM3djOElaTHNra01QbjUvOWZR?=
- =?utf-8?B?cUZubmtFMmlsMXZqek94blJFaFNweEFJYUNFTURDaE0zT2RVZkcyclIzd1dw?=
- =?utf-8?B?VWRvcThLVitGSHo4RWJUWFNBbjh0MWVRcS8rTTI5Y25DTTcxRjhLMW9sU1lV?=
- =?utf-8?B?eGJpZmJxbE4zempLQ2VhbHFxekEvcG8xQy91U01iUGpsUDNuYWZjK2wxME12?=
- =?utf-8?B?QjA3OStON2FBV1RiTDhvSXpBWlRmVXFwcUtpaGJ5UnJNY3pzWWcrRTZVZFhs?=
- =?utf-8?B?bUMvaE13WHNMUWU1dkNCQTA2MTZGdFNHT0hrNElONzRCZnJSK3l4V0pJUGxQ?=
- =?utf-8?Q?/r+8=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C325C125DE;
+	Wed, 17 Jul 2024 08:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721206321; cv=none; b=di9/jfUDBRJRx5A99FIIK7qWr19pEQMAhcCcKPkAzha68w92+muE7leW4obqIbmWu1in0Unizb3aqa9UbNWenyZrorh5CR7c7pAMishS6mC4INa0NFmlYCC+YmNdyumYA0t2qfpd2jXT3JjoRQiayDtw+W8yiPrl50y6IcXPAKA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721206321; c=relaxed/simple;
+	bh=dEZJKl/ROKUgxw9n0ZHNrvq6XCICiBt0aSZ4pVfFQ0Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=deJzpgQmn8bT+5kYWuFRPqf4d0E+BAyv78/tUpymfYl+K3ANuIAvrSasYA3QJPloR1e1xvm+a2phs91E81nhEboRpzkVEXh/y/kZEkMpGiiwfaPD2N7Kg5uGfLpNupKWxaxVsI69hshZVJysTQxFDcf3WeUNsfk6d7V25SLNgVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uL48xhZq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DB71C4AF09;
+	Wed, 17 Jul 2024 08:52:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721206321;
+	bh=dEZJKl/ROKUgxw9n0ZHNrvq6XCICiBt0aSZ4pVfFQ0Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uL48xhZqCL0LGyF5pAQE3aSq3fg0HICke09gqR7x891cBaXLcjb17820RooKi4SHK
+	 ESYx2E4tGNHPWrkPWyMAQmeIRNo3fhrsQa6dENQrXWywXZZNabtjt9Yg81EM5x3iQj
+	 piTmMp+rv57IwPtBGo2A8IqCk7FzXbZM/Amoy9LlweH42GTXg4AnLrdaG4vEekM8mT
+	 4esaS6EkdPe7wSVn+dFUkWDJ6vYwLSIkeoxLGOgQkDHJY2z+Xfxv5kL1b3P1slO+fq
+	 rcec0YjjbO88x6FvthYpNUgXj4BUPK1dwPsnFtrDWoCn+EG29JJumKNK/L5ySldwZi
+	 LuPpGm6RHlwCg==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2eefeab807dso3801251fa.3;
+        Wed, 17 Jul 2024 01:52:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW0fTzS7iyZTmBPi2BclSjRkeAeNMPTmQne3kGTVT2ijESNlkmQWOe5tZL9vx8r0fI0+Oac7bT7A99UlSbwM8s6skbAQW8BGItqWcefVycyvlEMhtcB17+cpy5JrQ2SBmt+DIQSJzyuWvVl
+X-Gm-Message-State: AOJu0YxJFWl6vLxG1Q1N+cF3YdQm0StEYQGy0LTfryyBYKNzOp2TSfOc
+	M+oCaWtNGSfdVSbv8qWfsAu6F+TbGuPbpJkHJ3Qr/0q7rJPDPXqPSMfVLCR2Jr6O2WDwTgBDfiM
+	wkEyVa5TQg2hdEzFkJ0PItOrinQ4=
+X-Google-Smtp-Source: AGHT+IFJb9o+gl78zkWDPyK1fPnjwn+r/FykxsrDzRC/gOB+QuevM9T/Oxsq7090qv2+k5krYpdKHGufqKnOSRnTlyU=
+X-Received: by 2002:a05:651c:1a06:b0:2ee:896d:2408 with SMTP id
+ 38308e7fff4ca-2eefd14395cmr8102681fa.37.1721206319869; Wed, 17 Jul 2024
+ 01:51:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4217.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ba04a21e-066a-4cb6-f4cb-08dca63d7f77
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jul 2024 08:50:24.1348
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ExkzPyRooN1QdOh8JPp+AOaUGXlRTNWdOWGgCF4y304gNQ4df6X/622FproIy4gb
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9206
+References: <20240716-kbuild-pacman-pkg-v6-1-d3a04e308013@weissschuh.net>
+ <20240717011515.GA1230090@thelio-3990X> <CAK7LNARYNqjcMkdnaY2oAkxttFTtTEgJ9VuOZOn0i4AuXp-How@mail.gmail.com>
+In-Reply-To: <CAK7LNARYNqjcMkdnaY2oAkxttFTtTEgJ9VuOZOn0i4AuXp-How@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 17 Jul 2024 17:51:21 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARGWu8q5dAW5tYzfiSKKtZ9t8Dm9FzRoaoZhU4d-TWswQ@mail.gmail.com>
+Message-ID: <CAK7LNARGWu8q5dAW5tYzfiSKKtZ9t8Dm9FzRoaoZhU4d-TWswQ@mail.gmail.com>
+Subject: Re: [PATCH v6] kbuild: add script and target to generate pacman package
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Nicolas Schier <nicolas@fjasle.eu>, 
+	"Jan Alexander Steffens (heftig)" <heftig@archlinux.org>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-W0FNRCBPZmZpY2lhbCBVc2UgT25seSAtIEFNRCBJbnRlcm5hbCBEaXN0cmlidXRpb24gT25seV0N
-Cg0KQWNrZWQtYnk6IE8nR3Jpb2ZhLCBDb25hbGwgPGNvbmFsbC5vZ3Jpb2ZhQGFtZC5jb20+DQpU
-ZXN0ZWQtYnk6IE8nR3Jpb2ZhLCBDb25hbGwgPGNvbmFsbC5vZ3Jpb2ZhQGFtZC5jb20+DQoNCk5p
-Y2UgcGF0Y2gsIHRoYW5rIHlvdSBmb3IgdGFraW5nIHRoZSB0aW1lIHRvIHN1Ym1pdC4NCg0KPiAt
-LS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTZWFuIEFuZGVyc29uIDxzZWFuLmFu
-ZGVyc29uQGxpbnV4LmRldj4NCj4gU2VudDogVGh1cnNkYXksIEp1bmUgMjAsIDIwMjQgOTo0OSBQ
-TQ0KPiBUbzogQW5hbmQgQXNob2sgRHVtYnJlIDxhbmFuZC5hc2hvay5kdW1icmVAeGlsaW54LmNv
-bT47IGxpbnV4LQ0KPiBpaW9Admdlci5rZXJuZWwub3JnDQo+IENjOiBKb25hdGhhbiBDYW1lcm9u
-IDxqaWMyM0BrZXJuZWwub3JnPjsgTGFycy1QZXRlciBDbGF1c2VuDQo+IDxsYXJzQG1ldGFmb28u
-ZGU+OyBTaW1laywgTWljaGFsIDxtaWNoYWwuc2ltZWtAYW1kLmNvbT47IGxpbnV4LQ0KPiBrZXJu
-ZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7
-IFNlYW4NCj4gQW5kZXJzb24gPHNlYW4uYW5kZXJzb25AbGludXguZGV2Pg0KPiBTdWJqZWN0OiBb
-UEFUQ0hdIGlpbzogeGlsaW54LWFtczogQWRkIGxhYmVscw0KPg0KPiBMYWJlbCBhbGwgdGhlIGNo
-YW5uZWxzIHVzaW5nIG5hbWVzIGZyb20gdGhlIHJlZmVyZW5jZSBtYW51YWwuIFNvbWUgb2YNCj4g
-dGhlICJjb250cm9sIiBjaGFubmVscyBhcmUgZHVwbGljYXRlcyBvZiBvdGhlciBjaGFubmVscy4g
-VGhlIHJlZmVyZW5jZQ0KPiBtYW51YWwgZGVzY3JpYmVzIGl0IGxpa2U6DQo+DQo+ID4gVGhlIEFN
-UyByZWdpc3RlciBzZXQgaW5jbHVkZXMgc2V2ZXJhbCBtZWFzdXJlbWVudCByZWdpc3RlcnMgdGhh
-dCBhcmUNCj4gPiB3cml0dGVuIHRvIGJ5IHRoZSBQUyBTWVNNT04gdW5pdCB1c2luZyB0aGUgc2lu
-Z2xlLWNoYW5uZWwgbW9kZQ0KPiA+IChzZXF1ZW5jZXIgb2ZmKS4gVGhlc2Ugdm9sdGFnZSBtZWFz
-dXJlbWVudHMgYXJlIHBlcmZvcm1lZCB1c2luZyB0aGUNCj4gPiB1bmlwb2xhciBzYW1wbGluZyBj
-aXJjdWl0IHdpdGggYSAwIHRvIDNWIHJhbmdlIGFuZCBkbyBub3QgaGF2ZSBhbGFybXMNCj4gPiBv
-ciBtaW5pbXVtL21heGltdW0gcmVnaXN0ZXJzLg0KPg0KPiBTbyBJIHRoaW5rIHRoZXNlIHJlYWxs
-eSBhcmUgbWVhc3VyaW5nIHRoZSBzYW1lIHZvbHRhZ2VzIGJ1dCBpbiBhDQo+IGRpZmZlcmVudCBs
-b2NhdGlvbi4gSW4gd2hpY2ggY2FzZSwgc2hhcmluZyBsYWJlbHMgbWFrZXMgc2Vuc2UgdG8gbWUu
-DQo+DQo+IFNpZ25lZC1vZmYtYnk6IFNlYW4gQW5kZXJzb24gPHNlYW4uYW5kZXJzb25AbGludXgu
-ZGV2Pg0KPiAtLS0NCj4NCj4gIGRyaXZlcnMvaWlvL2FkYy94aWxpbngtYW1zLmMgfCAxMDcgKysr
-KysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCA1OSBp
-bnNlcnRpb25zKCspLCA0OCBkZWxldGlvbnMoLSkNCj4NCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-aWlvL2FkYy94aWxpbngtYW1zLmMgYi9kcml2ZXJzL2lpby9hZGMveGlsaW54LWFtcy5jDQo+IGlu
-ZGV4IGFhMDVmMjQ5MzFmOS4uZjA1MTM1OGQ2YjUwIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2lp
-by9hZGMveGlsaW54LWFtcy5jDQo+ICsrKyBiL2RyaXZlcnMvaWlvL2FkYy94aWxpbngtYW1zLmMN
-Cj4gQEAgLTIyMiw3ICsyMjIsNyBAQCBlbnVtIGFtc19wc19wbF9zZXEgew0KPiAgI2RlZmluZSBQ
-TF9TRVEoeCkgICAgICAgICAgICAoQU1TX1BTX1NFUV9NQVggKyAoeCkpDQo+ICAjZGVmaW5lIEFN
-U19DVFJMX1NFUV9CQVNFICAgIChBTVNfUFNfU0VRX01BWCAqIDMpDQo+DQo+IC0jZGVmaW5lIEFN
-U19DSEFOX1RFTVAoX3NjYW5faW5kZXgsIF9hZGRyKSB7IFwNCj4gKyNkZWZpbmUgQU1TX0NIQU5f
-VEVNUChfc2Nhbl9pbmRleCwgX2FkZHIsIF9uYW1lKSB7IFwNCj4gICAgICAgLnR5cGUgPSBJSU9f
-VEVNUCwgXA0KPiAgICAgICAuaW5kZXhlZCA9IDEsIFwNCj4gICAgICAgLmFkZHJlc3MgPSAoX2Fk
-ZHIpLCBcDQo+IEBAIC0yMzIsOSArMjMyLDEwIEBAIGVudW0gYW1zX3BzX3BsX3NlcSB7DQo+ICAg
-ICAgIC5ldmVudF9zcGVjID0gYW1zX3RlbXBfZXZlbnRzLCBcDQo+ICAgICAgIC5zY2FuX2luZGV4
-ID0gX3NjYW5faW5kZXgsIFwNCj4gICAgICAgLm51bV9ldmVudF9zcGVjcyA9IEFSUkFZX1NJWkUo
-YW1zX3RlbXBfZXZlbnRzKSwgXA0KPiArICAgICAuZGF0YXNoZWV0X25hbWUgPSBfbmFtZSwgXA0K
-PiAgfQ0KPg0KPiAtI2RlZmluZSBBTVNfQ0hBTl9WT0xUQUdFKF9zY2FuX2luZGV4LCBfYWRkciwg
-X2FsYXJtKSB7IFwNCj4gKyNkZWZpbmUgQU1TX0NIQU5fVk9MVEFHRShfc2Nhbl9pbmRleCwgX2Fk
-ZHIsIF9hbGFybSwgX25hbWUpIHsgXA0KPiAgICAgICAudHlwZSA9IElJT19WT0xUQUdFLCBcDQo+
-ICAgICAgIC5pbmRleGVkID0gMSwgXA0KPiAgICAgICAuYWRkcmVzcyA9IChfYWRkciksIFwNCj4g
-QEAgLTI0MywyMSArMjQ0LDI0IEBAIGVudW0gYW1zX3BzX3BsX3NlcSB7DQo+ICAgICAgIC5ldmVu
-dF9zcGVjID0gKF9hbGFybSkgPyBhbXNfdm9sdGFnZV9ldmVudHMgOiBOVUxMLCBcDQo+ICAgICAg
-IC5zY2FuX2luZGV4ID0gX3NjYW5faW5kZXgsIFwNCj4gICAgICAgLm51bV9ldmVudF9zcGVjcyA9
-IChfYWxhcm0pID8gQVJSQVlfU0laRShhbXNfdm9sdGFnZV9ldmVudHMpIDogMCwNCj4gXA0KPiAr
-ICAgICAuZGF0YXNoZWV0X25hbWUgPSBfbmFtZSwgXA0KPiAgfQ0KPg0KPiAtI2RlZmluZSBBTVNf
-UFNfQ0hBTl9URU1QKF9zY2FuX2luZGV4LCBfYWRkcikgXA0KPiAtICAgICBBTVNfQ0hBTl9URU1Q
-KFBTX1NFUShfc2Nhbl9pbmRleCksIF9hZGRyKQ0KPiAtI2RlZmluZSBBTVNfUFNfQ0hBTl9WT0xU
-QUdFKF9zY2FuX2luZGV4LCBfYWRkcikgXA0KPiAtICAgICBBTVNfQ0hBTl9WT0xUQUdFKFBTX1NF
-UShfc2Nhbl9pbmRleCksIF9hZGRyLCB0cnVlKQ0KPiArI2RlZmluZSBBTVNfUFNfQ0hBTl9URU1Q
-KF9zY2FuX2luZGV4LCBfYWRkciwgX25hbWUpIFwNCj4gKyAgICAgQU1TX0NIQU5fVEVNUChQU19T
-RVEoX3NjYW5faW5kZXgpLCBfYWRkciwgX25hbWUpDQo+ICsjZGVmaW5lIEFNU19QU19DSEFOX1ZP
-TFRBR0UoX3NjYW5faW5kZXgsIF9hZGRyLCBfbmFtZSkgXA0KPiArICAgICBBTVNfQ0hBTl9WT0xU
-QUdFKFBTX1NFUShfc2Nhbl9pbmRleCksIF9hZGRyLCB0cnVlLCBfbmFtZSkNCj4NCj4gLSNkZWZp
-bmUgQU1TX1BMX0NIQU5fVEVNUChfc2Nhbl9pbmRleCwgX2FkZHIpIFwNCj4gLSAgICAgQU1TX0NI
-QU5fVEVNUChQTF9TRVEoX3NjYW5faW5kZXgpLCBfYWRkcikNCj4gLSNkZWZpbmUgQU1TX1BMX0NI
-QU5fVk9MVEFHRShfc2Nhbl9pbmRleCwgX2FkZHIsIF9hbGFybSkgXA0KPiAtICAgICBBTVNfQ0hB
-Tl9WT0xUQUdFKFBMX1NFUShfc2Nhbl9pbmRleCksIF9hZGRyLCBfYWxhcm0pDQo+ICsjZGVmaW5l
-IEFNU19QTF9DSEFOX1RFTVAoX3NjYW5faW5kZXgsIF9hZGRyLCBfbmFtZSkgXA0KPiArICAgICBB
-TVNfQ0hBTl9URU1QKFBMX1NFUShfc2Nhbl9pbmRleCksIF9hZGRyLCBfbmFtZSkNCj4gKyNkZWZp
-bmUgQU1TX1BMX0NIQU5fVk9MVEFHRShfc2Nhbl9pbmRleCwgX2FkZHIsIF9hbGFybSwgX25hbWUp
-IFwNCj4gKyAgICAgQU1TX0NIQU5fVk9MVEFHRShQTF9TRVEoX3NjYW5faW5kZXgpLCBfYWRkciwg
-X2FsYXJtLCBfbmFtZSkNCj4gICNkZWZpbmUgQU1TX1BMX0FVWF9DSEFOX1ZPTFRBR0UoX2F1eG5v
-KSBcDQo+IC0gICAgIEFNU19DSEFOX1ZPTFRBR0UoUExfU0VRKEFNU19TRVEoX2F1eG5vKSksDQo+
-IEFNU19SRUdfVkFVWChfYXV4bm8pLCBmYWxzZSkNCj4gLSNkZWZpbmUgQU1TX0NUUkxfQ0hBTl9W
-T0xUQUdFKF9zY2FuX2luZGV4LCBfYWRkcikgXA0KPiAtICAgICBBTVNfQ0hBTl9WT0xUQUdFKFBM
-X1NFUShBTVNfU0VRKEFNU19TRVEoX3NjYW5faW5kZXgpKSksDQo+IF9hZGRyLCBmYWxzZSkNCj4g
-KyAgICAgQU1TX0NIQU5fVk9MVEFHRShQTF9TRVEoQU1TX1NFUShfYXV4bm8pKSwNCj4gQU1TX1JF
-R19WQVVYKF9hdXhubyksIGZhbHNlLCBcDQo+ICsgICAgICAgICAgICAgICAgICAgICAgIlZBVVgi
-ICNfYXV4bm8pDQo+ICsjZGVmaW5lIEFNU19DVFJMX0NIQU5fVk9MVEFHRShfc2Nhbl9pbmRleCwg
-X2FkZHIsIF9uYW1lKSBcDQo+ICsgICAgIEFNU19DSEFOX1ZPTFRBR0UoUExfU0VRKEFNU19TRVEo
-QU1TX1NFUShfc2Nhbl9pbmRleCkpKSwNCj4gX2FkZHIsIGZhbHNlLCBcDQo+ICsgICAgICAgICAg
-ICAgICAgICAgICAgX25hbWUpDQo+DQo+ICAvKioNCj4gICAqIHN0cnVjdCBhbXMgLSBUaGlzIHN0
-cnVjdHVyZSBjb250YWlucyBuZWNlc3Nhcnkgc3RhdGUgZm9yIHhpbGlueC1hbXMgdG8NCj4gb3Bl
-cmF0ZQ0KPiBAQCAtNTA1LDYgKzUwOSwxMiBAQCBzdGF0aWMgaW50IGFtc19pbml0X2RldmljZShz
-dHJ1Y3QgYW1zICphbXMpDQo+ICAgICAgIHJldHVybiAwOw0KPiAgfQ0KPg0KPiArc3RhdGljIGlu
-dCBhbXNfcmVhZF9sYWJlbChzdHJ1Y3QgaWlvX2RldiAqaW5kaW9fZGV2LA0KPiArICAgICAgICAg
-ICAgICAgICAgICAgICBzdHJ1Y3QgaWlvX2NoYW5fc3BlYyBjb25zdCAqY2hhbiwgY2hhciAqbGFi
-ZWwpDQo+ICt7DQo+ICsgICAgIHJldHVybiBzeXNmc19lbWl0KGxhYmVsLCAiJXNcbiIsIGNoYW4t
-PmRhdGFzaGVldF9uYW1lKTsNCj4gK30NCj4gKw0KPiAgc3RhdGljIGludCBhbXNfZW5hYmxlX3Np
-bmdsZV9jaGFubmVsKHN0cnVjdCBhbXMgKmFtcywgdW5zaWduZWQgaW50IG9mZnNldCkNCj4gIHsN
-Cj4gICAgICAgdTggY2hhbm5lbF9udW07DQo+IEBAIC0xMTE2LDM3ICsxMTI2LDM3IEBAIHN0YXRp
-YyBjb25zdCBzdHJ1Y3QgaWlvX2V2ZW50X3NwZWMNCj4gYW1zX3ZvbHRhZ2VfZXZlbnRzW10gPSB7
-DQo+ICB9Ow0KPg0KPiAgc3RhdGljIGNvbnN0IHN0cnVjdCBpaW9fY2hhbl9zcGVjIGFtc19wc19j
-aGFubmVsc1tdID0gew0KPiAtICAgICBBTVNfUFNfQ0hBTl9URU1QKEFNU19TRVFfVEVNUCwgQU1T
-X1RFTVApLA0KPiAtICAgICBBTVNfUFNfQ0hBTl9URU1QKEFNU19TRVFfVEVNUF9SRU1PVEUsDQo+
-IEFNU19URU1QX1JFTU9URSksDQo+IC0gICAgIEFNU19QU19DSEFOX1ZPTFRBR0UoQU1TX1NFUV9T
-VVBQTFkxLCBBTVNfU1VQUExZMSksDQo+IC0gICAgIEFNU19QU19DSEFOX1ZPTFRBR0UoQU1TX1NF
-UV9TVVBQTFkyLCBBTVNfU1VQUExZMiksDQo+IC0gICAgIEFNU19QU19DSEFOX1ZPTFRBR0UoQU1T
-X1NFUV9TVVBQTFkzLCBBTVNfU1VQUExZMyksDQo+IC0gICAgIEFNU19QU19DSEFOX1ZPTFRBR0Uo
-QU1TX1NFUV9TVVBQTFk0LCBBTVNfU1VQUExZNCksDQo+IC0gICAgIEFNU19QU19DSEFOX1ZPTFRB
-R0UoQU1TX1NFUV9TVVBQTFk1LCBBTVNfU1VQUExZNSksDQo+IC0gICAgIEFNU19QU19DSEFOX1ZP
-TFRBR0UoQU1TX1NFUV9TVVBQTFk2LCBBTVNfU1VQUExZNiksDQo+IC0gICAgIEFNU19QU19DSEFO
-X1ZPTFRBR0UoQU1TX1NFUV9TVVBQTFk3LCBBTVNfU1VQUExZNyksDQo+IC0gICAgIEFNU19QU19D
-SEFOX1ZPTFRBR0UoQU1TX1NFUV9TVVBQTFk4LCBBTVNfU1VQUExZOCksDQo+IC0gICAgIEFNU19Q
-U19DSEFOX1ZPTFRBR0UoQU1TX1NFUV9TVVBQTFk5LCBBTVNfU1VQUExZOSksDQo+IC0gICAgIEFN
-U19QU19DSEFOX1ZPTFRBR0UoQU1TX1NFUV9TVVBQTFkxMCwgQU1TX1NVUFBMWTEwKSwNCj4gLSAg
-ICAgQU1TX1BTX0NIQU5fVk9MVEFHRShBTVNfU0VRX1ZDQ0FNUywgQU1TX1ZDQ0FNUyksDQo+ICsg
-ICAgIEFNU19QU19DSEFOX1RFTVAoQU1TX1NFUV9URU1QLCBBTVNfVEVNUCwgIlRlbXBfTFBEIiks
-DQo+ICsgICAgIEFNU19QU19DSEFOX1RFTVAoQU1TX1NFUV9URU1QX1JFTU9URSwNCj4gQU1TX1RF
-TVBfUkVNT1RFLCAiVGVtcF9GUEQiKSwNCj4gKyAgICAgQU1TX1BTX0NIQU5fVk9MVEFHRShBTVNf
-U0VRX1NVUFBMWTEsIEFNU19TVVBQTFkxLA0KPiAiVkNDX1BTSU5UTFAiKSwNCj4gKyAgICAgQU1T
-X1BTX0NIQU5fVk9MVEFHRShBTVNfU0VRX1NVUFBMWTIsIEFNU19TVVBQTFkyLA0KPiAiVkNDX1BT
-SU5URlAiKSwNCj4gKyAgICAgQU1TX1BTX0NIQU5fVk9MVEFHRShBTVNfU0VRX1NVUFBMWTMsIEFN
-U19TVVBQTFkzLA0KPiAiVkNDX1BTQVVYIiksDQo+ICsgICAgIEFNU19QU19DSEFOX1ZPTFRBR0Uo
-QU1TX1NFUV9TVVBQTFk0LCBBTVNfU1VQUExZNCwNCj4gIlZDQ19QU0REUiIpLA0KPiArICAgICBB
-TVNfUFNfQ0hBTl9WT0xUQUdFKEFNU19TRVFfU1VQUExZNSwgQU1TX1NVUFBMWTUsDQo+ICJWQ0Nf
-UFNJTzMiKSwNCj4gKyAgICAgQU1TX1BTX0NIQU5fVk9MVEFHRShBTVNfU0VRX1NVUFBMWTYsIEFN
-U19TVVBQTFk2LA0KPiAiVkNDX1BTSU8wIiksDQo+ICsgICAgIEFNU19QU19DSEFOX1ZPTFRBR0Uo
-QU1TX1NFUV9TVVBQTFk3LCBBTVNfU1VQUExZNywNCj4gIlZDQ19QU0lPMSIpLA0KPiArICAgICBB
-TVNfUFNfQ0hBTl9WT0xUQUdFKEFNU19TRVFfU1VQUExZOCwgQU1TX1NVUFBMWTgsDQo+ICJWQ0Nf
-UFNJTzIiKSwNCj4gKyAgICAgQU1TX1BTX0NIQU5fVk9MVEFHRShBTVNfU0VRX1NVUFBMWTksIEFN
-U19TVVBQTFk5LA0KPiAiUFNfTUdUUkFWQ0MiKSwNCj4gKyAgICAgQU1TX1BTX0NIQU5fVk9MVEFH
-RShBTVNfU0VRX1NVUFBMWTEwLCBBTVNfU1VQUExZMTAsDQo+ICJQU19NR1RSQVZUVCIpLA0KPiAr
-ICAgICBBTVNfUFNfQ0hBTl9WT0xUQUdFKEFNU19TRVFfVkNDQU1TLCBBTVNfVkNDQU1TLA0KPiAi
-VkNDX1BTQURDIiksDQo+ICB9Ow0KPg0KPiAgc3RhdGljIGNvbnN0IHN0cnVjdCBpaW9fY2hhbl9z
-cGVjIGFtc19wbF9jaGFubmVsc1tdID0gew0KPiAtICAgICBBTVNfUExfQ0hBTl9URU1QKEFNU19T
-RVFfVEVNUCwgQU1TX1RFTVApLA0KPiAtICAgICBBTVNfUExfQ0hBTl9WT0xUQUdFKEFNU19TRVFf
-U1VQUExZMSwgQU1TX1NVUFBMWTEsIHRydWUpLA0KPiAtICAgICBBTVNfUExfQ0hBTl9WT0xUQUdF
-KEFNU19TRVFfU1VQUExZMiwgQU1TX1NVUFBMWTIsIHRydWUpLA0KPiAtICAgICBBTVNfUExfQ0hB
-Tl9WT0xUQUdFKEFNU19TRVFfVlJFRlAsIEFNU19WUkVGUCwgZmFsc2UpLA0KPiAtICAgICBBTVNf
-UExfQ0hBTl9WT0xUQUdFKEFNU19TRVFfVlJFRk4sIEFNU19WUkVGTiwgZmFsc2UpLA0KPiAtICAg
-ICBBTVNfUExfQ0hBTl9WT0xUQUdFKEFNU19TRVFfU1VQUExZMywgQU1TX1NVUFBMWTMsIHRydWUp
-LA0KPiAtICAgICBBTVNfUExfQ0hBTl9WT0xUQUdFKEFNU19TRVFfU1VQUExZNCwgQU1TX1NVUFBM
-WTQsIHRydWUpLA0KPiAtICAgICBBTVNfUExfQ0hBTl9WT0xUQUdFKEFNU19TRVFfU1VQUExZNSwg
-QU1TX1NVUFBMWTUsIHRydWUpLA0KPiAtICAgICBBTVNfUExfQ0hBTl9WT0xUQUdFKEFNU19TRVFf
-U1VQUExZNiwgQU1TX1NVUFBMWTYsIHRydWUpLA0KPiAtICAgICBBTVNfUExfQ0hBTl9WT0xUQUdF
-KEFNU19TRVFfVkNDQU1TLCBBTVNfVkNDQU1TLCB0cnVlKSwNCj4gLSAgICAgQU1TX1BMX0NIQU5f
-Vk9MVEFHRShBTVNfU0VRX1ZQX1ZOLCBBTVNfVlBfVk4sIGZhbHNlKSwNCj4gLSAgICAgQU1TX1BM
-X0NIQU5fVk9MVEFHRShBTVNfU0VRX1NVUFBMWTcsIEFNU19TVVBQTFk3LCB0cnVlKSwNCj4gLSAg
-ICAgQU1TX1BMX0NIQU5fVk9MVEFHRShBTVNfU0VRX1NVUFBMWTgsIEFNU19TVVBQTFk4LCB0cnVl
-KSwNCj4gLSAgICAgQU1TX1BMX0NIQU5fVk9MVEFHRShBTVNfU0VRX1NVUFBMWTksIEFNU19TVVBQ
-TFk5LCB0cnVlKSwNCj4gLSAgICAgQU1TX1BMX0NIQU5fVk9MVEFHRShBTVNfU0VRX1NVUFBMWTEw
-LCBBTVNfU1VQUExZMTAsDQo+IHRydWUpLA0KPiArICAgICBBTVNfUExfQ0hBTl9URU1QKEFNU19T
-RVFfVEVNUCwgQU1TX1RFTVAsICJUZW1wX1BMIiksDQo+ICsgICAgIEFNU19QTF9DSEFOX1ZPTFRB
-R0UoQU1TX1NFUV9TVVBQTFkxLCBBTVNfU1VQUExZMSwgdHJ1ZSwNCj4gIlZDQ0lOVCIpLA0KPiAr
-ICAgICBBTVNfUExfQ0hBTl9WT0xUQUdFKEFNU19TRVFfU1VQUExZMiwgQU1TX1NVUFBMWTIsIHRy
-dWUsDQo+ICJWQ0NBVVgiKSwNCj4gKyAgICAgQU1TX1BMX0NIQU5fVk9MVEFHRShBTVNfU0VRX1ZS
-RUZQLCBBTVNfVlJFRlAsIGZhbHNlLA0KPiAiVlJFRlAiKSwNCj4gKyAgICAgQU1TX1BMX0NIQU5f
-Vk9MVEFHRShBTVNfU0VRX1ZSRUZOLCBBTVNfVlJFRk4sIGZhbHNlLA0KPiAiVlJFRk4iKSwNCj4g
-KyAgICAgQU1TX1BMX0NIQU5fVk9MVEFHRShBTVNfU0VRX1NVUFBMWTMsIEFNU19TVVBQTFkzLCB0
-cnVlLA0KPiAiVkNDQlJBTSIpLA0KPiArICAgICBBTVNfUExfQ0hBTl9WT0xUQUdFKEFNU19TRVFf
-U1VQUExZNCwgQU1TX1NVUFBMWTQsIHRydWUsDQo+ICJWQ0NfUFNJTlRMUCIpLA0KPiArICAgICBB
-TVNfUExfQ0hBTl9WT0xUQUdFKEFNU19TRVFfU1VQUExZNSwgQU1TX1NVUFBMWTUsIHRydWUsDQo+
-ICJWQ0NfUFNJTlRGUCIpLA0KPiArICAgICBBTVNfUExfQ0hBTl9WT0xUQUdFKEFNU19TRVFfU1VQ
-UExZNiwgQU1TX1NVUFBMWTYsIHRydWUsDQo+ICJWQ0NfUFNBVVgiKSwNCj4gKyAgICAgQU1TX1BM
-X0NIQU5fVk9MVEFHRShBTVNfU0VRX1ZDQ0FNUywgQU1TX1ZDQ0FNUywgdHJ1ZSwNCj4gIlZDQ0FN
-UyIpLA0KPiArICAgICBBTVNfUExfQ0hBTl9WT0xUQUdFKEFNU19TRVFfVlBfVk4sIEFNU19WUF9W
-TiwgZmFsc2UsDQo+ICJWUF9WTiIpLA0KPiArICAgICBBTVNfUExfQ0hBTl9WT0xUQUdFKEFNU19T
-RVFfU1VQUExZNywgQU1TX1NVUFBMWTcsIHRydWUsDQo+ICJWVXNlcjAiKSwNCj4gKyAgICAgQU1T
-X1BMX0NIQU5fVk9MVEFHRShBTVNfU0VRX1NVUFBMWTgsIEFNU19TVVBQTFk4LCB0cnVlLA0KPiAi
-VlVzZXIxIiksDQo+ICsgICAgIEFNU19QTF9DSEFOX1ZPTFRBR0UoQU1TX1NFUV9TVVBQTFk5LCBB
-TVNfU1VQUExZOSwgdHJ1ZSwNCj4gIlZVc2VyMiIpLA0KPiArICAgICBBTVNfUExfQ0hBTl9WT0xU
-QUdFKEFNU19TRVFfU1VQUExZMTAsIEFNU19TVVBQTFkxMCwgdHJ1ZSwNCj4gIlZVc2VyMyIpLA0K
-PiAgICAgICBBTVNfUExfQVVYX0NIQU5fVk9MVEFHRSgwKSwNCj4gICAgICAgQU1TX1BMX0FVWF9D
-SEFOX1ZPTFRBR0UoMSksDQo+ICAgICAgIEFNU19QTF9BVVhfQ0hBTl9WT0xUQUdFKDIpLA0KPiBA
-QCAtMTE2NiwxMyArMTE3NiwxMyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGlpb19jaGFuX3NwZWMN
-Cj4gYW1zX3BsX2NoYW5uZWxzW10gPSB7DQo+ICB9Ow0KPg0KPiAgc3RhdGljIGNvbnN0IHN0cnVj
-dCBpaW9fY2hhbl9zcGVjIGFtc19jdHJsX2NoYW5uZWxzW10gPSB7DQo+IC0gICAgIEFNU19DVFJM
-X0NIQU5fVk9MVEFHRShBTVNfU0VRX1ZDQ19QU1BMTCwNCj4gQU1TX1ZDQ19QU1BMTDApLA0KPiAt
-ICAgICBBTVNfQ1RSTF9DSEFOX1ZPTFRBR0UoQU1TX1NFUV9WQ0NfUFNCQVRULA0KPiBBTVNfVkND
-X1BTUExMMyksDQo+IC0gICAgIEFNU19DVFJMX0NIQU5fVk9MVEFHRShBTVNfU0VRX1ZDQ0lOVCwg
-QU1TX1ZDQ0lOVCksDQo+IC0gICAgIEFNU19DVFJMX0NIQU5fVk9MVEFHRShBTVNfU0VRX1ZDQ0JS
-QU0sIEFNU19WQ0NCUkFNKSwNCj4gLSAgICAgQU1TX0NUUkxfQ0hBTl9WT0xUQUdFKEFNU19TRVFf
-VkNDQVVYLCBBTVNfVkNDQVVYKSwNCj4gLSAgICAgQU1TX0NUUkxfQ0hBTl9WT0xUQUdFKEFNU19T
-RVFfUFNERFJQTEwsIEFNU19QU0REUlBMTCksDQo+IC0gICAgIEFNU19DVFJMX0NIQU5fVk9MVEFH
-RShBTVNfU0VRX0lOVEREUiwgQU1TX1BTSU5URlBERFIpLA0KPiArICAgICBBTVNfQ1RSTF9DSEFO
-X1ZPTFRBR0UoQU1TX1NFUV9WQ0NfUFNQTEwsIEFNU19WQ0NfUFNQTEwwLA0KPiAiVkNDX1BTUExM
-IiksDQo+ICsgICAgIEFNU19DVFJMX0NIQU5fVk9MVEFHRShBTVNfU0VRX1ZDQ19QU0JBVFQsDQo+
-IEFNU19WQ0NfUFNQTEwzLCAiVkNDX1BTQkFUVCIpLA0KPiArICAgICBBTVNfQ1RSTF9DSEFOX1ZP
-TFRBR0UoQU1TX1NFUV9WQ0NJTlQsIEFNU19WQ0NJTlQsDQo+ICJWQ0NJTlQiKSwNCj4gKyAgICAg
-QU1TX0NUUkxfQ0hBTl9WT0xUQUdFKEFNU19TRVFfVkNDQlJBTSwgQU1TX1ZDQ0JSQU0sDQo+ICJW
-Q0NCUkFNIiksDQo+ICsgICAgIEFNU19DVFJMX0NIQU5fVk9MVEFHRShBTVNfU0VRX1ZDQ0FVWCwg
-QU1TX1ZDQ0FVWCwNCj4gIlZDQ0FVWCIpLA0KPiArICAgICBBTVNfQ1RSTF9DSEFOX1ZPTFRBR0Uo
-QU1TX1NFUV9QU0REUlBMTCwgQU1TX1BTRERSUExMLA0KPiAiVkNDX1BTRERSX1BMTCIpLA0KPiAr
-ICAgICBBTVNfQ1RSTF9DSEFOX1ZPTFRBR0UoQU1TX1NFUV9JTlRERFIsIEFNU19QU0lOVEZQRERS
-LA0KPiAiVkNDX1BTSU5URlBfRERSIiksDQo+ICB9Ow0KPg0KPiAgc3RhdGljIGludCBhbXNfZ2V0
-X2V4dF9jaGFuKHN0cnVjdCBmd25vZGVfaGFuZGxlICpjaGFuX25vZGUsDQo+IEBAIC0xMzM2LDYg
-KzEzNDYsNyBAQCBzdGF0aWMgaW50IGFtc19wYXJzZV9maXJtd2FyZShzdHJ1Y3QgaWlvX2Rldg0K
-PiAqaW5kaW9fZGV2KQ0KPiAgfQ0KPg0KPiAgc3RhdGljIGNvbnN0IHN0cnVjdCBpaW9faW5mbyBp
-aW9fYW1zX2luZm8gPSB7DQo+ICsgICAgIC5yZWFkX2xhYmVsID0gYW1zX3JlYWRfbGFiZWwsDQo+
-ICAgICAgIC5yZWFkX3JhdyA9ICZhbXNfcmVhZF9yYXcsDQo+ICAgICAgIC5yZWFkX2V2ZW50X2Nv
-bmZpZyA9ICZhbXNfcmVhZF9ldmVudF9jb25maWcsDQo+ICAgICAgIC53cml0ZV9ldmVudF9jb25m
-aWcgPSAmYW1zX3dyaXRlX2V2ZW50X2NvbmZpZywNCj4gLS0NCj4gMi4zNS4xLjEzMjAuZ2M0NTI2
-OTUzODcuZGlydHkNCg0K
+On Wed, Jul 17, 2024 at 5:34=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
+>
+> On Wed, Jul 17, 2024 at 10:15=E2=80=AFAM Nathan Chancellor <nathan@kernel=
+.org> wrote:
+> >
+> > Hi Thomas,
+> >
+> > On Tue, Jul 16, 2024 at 07:52:14PM +0200, Thomas Wei=C3=9Fschuh wrote:
+> > > pacman is the package manager used by Arch Linux and its derivates.
+> > > Creating native packages from the kernel tree has multiple advantages=
+:
+> > >
+> > > * The package triggers the correct hooks for initramfs generation and
+> > >   bootloader configuration
+> > > * Uninstallation is complete and also invokes the relevant hooks
+> > > * New UAPI headers can be installed without any manual bookkeeping
+> > >
+> > > The PKGBUILD file is a simplified version of the one used for the
+> > > downstream Arch Linux "linux" package.
+> > > Extra steps that should not be necessary for a development kernel hav=
+e
+> > > been removed and an UAPI header package has been added.
+> > >
+> > > Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> > > Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+> > > Tested-by: Nathan Chancellor <nathan@kernel.org>
+> > > Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
+> > > ---
+> > > Changes in v6:
+> > > - Drop reference to srctree/Makefile
+> > > - Drop $(realpath $(srctree))
+> > > - Make use of the fact that $(objtree) is always "."
+> > > - Align coding style to kernel and drop vim config line
+> > > - Drop indirection through `$MAKE run-command`
+> > > - Unify shell variable syntax to "${var}"
+> > > - Add explanations to custom variables
+> > > - Add makedepends
+> > > - Link to v5: https://lore.kernel.org/r/20240714-kbuild-pacman-pkg-v5=
+-1-0598460bc918@weissschuh.net
+> > >
+> > > Changes in v5:
+> > > - Rebase onto kbuild/for-next
+> > > - Use new path to build-version script (from kbuild/for-next)
+> > > - Ensure submake jobserver delegation works
+> > > - Simplify $modulesdir/pkgbase file creation
+> > > - Add Reviewed-by from Nicolas
+> > > - Link to v4: https://lore.kernel.org/r/20240710-kbuild-pacman-pkg-v4=
+-1-507bb5b79b2a@weissschuh.net
+> > >
+> > > Changes in v4:
+> > > - Update MRPROPER_FILES
+> > > - Unify shell variable syntax
+> > > - Link to v3: https://lore.kernel.org/r/20240708-kbuild-pacman-pkg-v3=
+-1-885df3cbc740@weissschuh.net
+> > >
+> > > Changes in v3:
+> > > - Enforce matching architectures for installation
+> > > - Add Reviewed-by and Tested-by from Nathan
+> > > - Link to v2: https://lore.kernel.org/r/20240706-kbuild-pacman-pkg-v2=
+-1-613422a03a7a@weissschuh.net
+> > >
+> > > Changes in v2:
+> > > - Replace ${MAKE} with $MAKE for consistency with other variables
+> > > - Use $MAKE for "-s image_name"
+> > > - Avoid permission warnings from build directory
+> > > - Clarify reason for /build symlink removal
+> > > - Install System.map and config
+> > > - Install dtbs where available
+> > > - Allow cross-build through arch=3Dany
+> > > - Sort Contributor/Maintainer chronologically
+> > > - Disable some unneeded makepkg options
+> > > - Use DEPMOD=3Dtrue for consistency with rpm-package
+> > > - Link to v1: https://lore.kernel.org/r/20240704-kbuild-pacman-pkg-v1=
+-1-ac2f63f5fa7b@weissschuh.net
+> > > ---
+> > >  .gitignore               |  6 +++
+> > >  Makefile                 |  2 +-
+> > >  scripts/Makefile.package | 14 +++++++
+> > >  scripts/package/PKGBUILD | 99 ++++++++++++++++++++++++++++++++++++++=
+++++++++++
+> > >  4 files changed, 120 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/.gitignore b/.gitignore
+> > > index c59dc60ba62e..7902adf4f7f1 100644
+> > > --- a/.gitignore
+> > > +++ b/.gitignore
+> > > @@ -92,6 +92,12 @@ modules.order
+> > >  #
+> > >  /tar-install/
+> > >
+> > > +#
+> > > +# pacman files (make pacman-pkg)
+> > > +#
+> > > +/PKGBUILD
+> > > +/pacman/
+> > > +
+> > >  #
+> > >  # We don't want to ignore the following even if they are dot-files
+> > >  #
+> > > diff --git a/Makefile b/Makefile
+> > > index 7372ea45ed3f..768d3dc107f8 100644
+> > > --- a/Makefile
+> > > +++ b/Makefile
+> > > @@ -1481,7 +1481,7 @@ CLEAN_FILES +=3D vmlinux.symvers modules-only.s=
+ymvers \
+> > >  # Directories & files removed with 'make mrproper'
+> > >  MRPROPER_FILES +=3D include/config include/generated          \
+> > >                 arch/$(SRCARCH)/include/generated .objdiff \
+> > > -               debian snap tar-install \
+> > > +               debian snap tar-install PKGBUILD pacman \
+> > >                 .config .config.old .version \
+> > >                 Module.symvers \
+> > >                 certs/signing_key.pem \
+> > > diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+> > > index bf016af8bf8a..0aaa0832279c 100644
+> > > --- a/scripts/Makefile.package
+> > > +++ b/scripts/Makefile.package
+> > > @@ -141,6 +141,19 @@ snap-pkg:
+> > >       cd $(objtree)/snap && \
+> > >       snapcraft --target-arch=3D$(UTS_MACHINE)
+> > >
+> > > +# pacman-pkg
+> > > +# ------------------------------------------------------------------=
+---------
+> > > +
+> > > +PHONY +=3D pacman-pkg
+> > > +pacman-pkg:
+> > > +     @ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUIL=
+D
+> > > +     +objtree=3D"$(realpath $(objtree))" \
+> > > +             BUILDDIR=3Dpacman \
+> > > +             CARCH=3D"$(UTS_MACHINE)" \
+> > > +             KBUILD_MAKEFLAGS=3D"$(MAKEFLAGS)" \
+> > > +             KBUILD_REVISION=3D"$(shell $(srctree)/scripts/build-ver=
+sion)" \
+> > > +             makepkg
+> > > +
+> > >  # dir-pkg tar*-pkg - tarball targets
+> > >  # ------------------------------------------------------------------=
+---------
+> > >
+> > > @@ -221,6 +234,7 @@ help:
+> > >       @echo '  bindeb-pkg          - Build only the binary kernel deb=
+ package'
+> > >       @echo '  snap-pkg            - Build only the binary kernel sna=
+p package'
+> > >       @echo '                        (will connect to external hosts)=
+'
+> > > +     @echo '  pacman-pkg          - Build only the binary kernel pac=
+man package'
+> > >       @echo '  dir-pkg             - Build the kernel as a plain dire=
+ctory structure'
+> > >       @echo '  tar-pkg             - Build the kernel as an uncompres=
+sed tarball'
+> > >       @echo '  targz-pkg           - Build the kernel as a gzip compr=
+essed tarball'
+> > > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> > > new file mode 100644
+> > > index 000000000000..eb3957fad915
+> > > --- /dev/null
+> > > +++ b/scripts/package/PKGBUILD
+> > > @@ -0,0 +1,99 @@
+> > > +# SPDX-License-Identifier: GPL-2.0-only
+> > > +# Maintainer: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> > > +# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org=
+>
+> > > +
+> > > +pkgbase=3Dlinux-upstream
+> > > +pkgname=3D("${pkgbase}" "${pkgbase}-headers" "${pkgbase}-api-headers=
+")
+> > > +pkgver=3D"${KERNELRELEASE//-/_}"
+> > > +# The PKGBUILD is evaluated multiple times.
+> > > +# Running scripts/build-version from here would introduce inconsiste=
+ncies.
+> > > +pkgrel=3D"${KBUILD_REVISION}"
+> > > +pkgdesc=3D'Linux'
+> > > +url=3D'https://www.kernel.org/'
+> > > +# Enable flexible cross-compilation
+> > > +arch=3D(${CARCH})
+> > > +license=3D(GPL-2.0-only)
+> > > +makedepends=3D(
+> > > +     base-devel
+> > > +     bc
+> > > +     cpio
+> > > +     gettext
+> > > +     libelf
+> > > +     openssl
+> > > +     pahole
+> > > +     perl
+> > > +     python
+> > > +     rsync
+> > > +     tar
+> > > +)
+> > > +options=3D(!debug !strip !buildflags !makeflags)
+> > > +
+> > > +build() {
+> > > +     # MAKEFLAGS from makepkg.conf override the ones inherited from =
+kbuild.
+> > > +     # Bypass this override with a custom variable.
+> > > +     export MAKEFLAGS=3D"${KBUILD_MAKEFLAGS}"
+> > > +     cd "${objtree}"
+> > > +
+> > > +     # makepkg does a "chmod a-srw", triggering warnings during kbui=
+ld
+> > > +     chmod 0755 "${pkgdirbase}" || true
+> > > +
+> > > +     ${MAKE}
+> > > +}
+> > > +
+> > > +package_linux-upstream() {
+> > > +     pkgdesc=3D"The ${pkgdesc} kernel and modules"
+> > > +
+> > > +     export MAKEFLAGS=3D"${KBUILD_MAKEFLAGS}"
+> > > +     cd "${objtree}"
+> > > +     local modulesdir=3D"${pkgdir}/usr/${MODLIB}"
+> > > +
+> > > +     echo "Installing boot image..."
+> > > +     # systemd expects to find the kernel here to allow hibernation
+> > > +     # https://github.com/systemd/systemd/commit/edda44605f06a41fb86=
+b7ab8128dcf99161d2344
+> > > +     install -Dm644 "$(${MAKE} -s image_name)" "${modulesdir}/vmlinu=
+z"
+> > > +
+> > > +     # Used by mkinitcpio to name the kernel
+> > > +     echo "${pkgbase}" > "${modulesdir}/pkgbase"
+> > > +
+> > > +     echo "Installing modules..."
+> > > +     ${MAKE} INSTALL_MOD_PATH=3D"${pkgdir}/usr" INSTALL_MOD_STRIP=3D=
+1 \
+> > > +             DEPMOD=3Dtrue modules_install
+> > > +
+> > > +     if [ -d "${srctree}/arch/${SRCARCH}/boot/dts" ]; then
+> >
+> > Does this reference to srctree...
+>
+>
+> 'srctree' is exported by the top Makefile.
+>
+>
+> This is based on the assumption that we always run
+> 'make pacman-pkg', and we never do 'makepkg' directly.
+>
+>
+> Do you mean PKGBUILD should be self-contained
+> so that 'makepkg' works from the command line?
+>
+
+
+Perhaps, this may make sense.
+
+Currently,
+pkgname=3D("${pkgbase}" "${pkgbase}-headers" "${pkgbase}-api-headers")
+is hard-coded.
+
+I do not think linux-upstream-headers make sense
+when CONFIG_MODULE is disabled.
+
+
+
+scripts/package/mkspec turns off with_devel
+when CONFIG_MODULE is disabled.
+
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
