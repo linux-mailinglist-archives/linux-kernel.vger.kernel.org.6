@@ -1,319 +1,138 @@
-Return-Path: <linux-kernel+bounces-255285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56467933E5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:25:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27985933E61
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EFD0B2166C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:25:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5913F1C21293
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5DE181B8F;
-	Wed, 17 Jul 2024 14:25:06 +0000 (UTC)
-Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.77.159])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7673718131A;
+	Wed, 17 Jul 2024 14:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FsjgTS7J"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1EB311CA1
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 14:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.77.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D6E3D0AD
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 14:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721226305; cv=none; b=UbFfCZ6z+4HxlmTQHMI1gztvr7WyDDfQXnQtYQS19dmcbiIOczfNG89ZYNUv+4faIg85wztw7a99hc79lOYWHLy0Ro6oxh0tkKUTRZVA7LNQh38HYMFyfibVBPvxduyBAuzvZxQ2gDiaweSkWxrb/XLKJNBV4Vko6iYCddIzmkA=
+	t=1721226424; cv=none; b=fPy7sgwr/WH4LE5LPWe4FRXjjel/Tlbk48SmD5De0YrP2y1djWPS9iS5uvT6QAtCYG1egmb3/4PNfpJhkNsx8R0G8pu3nD2qyivEktVkEqhHLJbFI0k4nwY3LzBg3KCfJKsRpr5pY5JvfxQlej8I6fyKMLukZG5Q1ngQ+xbx8UQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721226305; c=relaxed/simple;
-	bh=qVCD4BOjZ2ggFbga1e3T+nLxBhh00ylVbOr9hSJTCTY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tfcwbQJFgq5gpL4/Y78Cb7DGZ+3vAfYEhiR20EPW6hjr1AX/AdrKICBj84iAbJE14oDsv9dKyMpcPiadP/q84FgwkUfdEkP3uV32hKOozWIw3078f/dM2IGa/o030eT2G0jQ4qaExZpDTPy+2IcFwN5c69gChwYhR8DaE/K5EW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nucleisys.com; spf=pass smtp.mailfrom=nucleisys.com; arc=none smtp.client-ip=114.132.77.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nucleisys.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nucleisys.com
-X-QQ-mid: bizesmtpsz3t1721226233tv74wd6
-X-QQ-Originating-IP: leSrENF/kum9dENlar8FdmkYiAt0bnQFVWdzdCqwwgY=
-Received: from [192.168.0.105] ( [58.19.101.85])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 17 Jul 2024 22:23:51 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 2284768939598414446
-Message-ID: <ECE62011D10B286A+e1417154-789a-4f46-acdb-81d9a1e7be9c@nucleisys.com>
-Date: Wed, 17 Jul 2024 22:23:51 +0800
+	s=arc-20240116; t=1721226424; c=relaxed/simple;
+	bh=0i6fn924b1sQyq3LyxwRWcGfMfN2caTpNiccz8aCfgQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SJZDF/AVaxWb5jLrTLyUCxK04+EruOuUNXzSnYjsjSVO0HrTEqXKrVzt93oErwoxsWsxKuzPn5ndnDJhZn7OFNmMHCLK2EDHpgYOhS4+7yCBCQibkBE+MME/1rkFnobUwMco93OrF5zNwhD5H/gYQ5cLozfT+3zw5TcrZII3yfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FsjgTS7J; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721226422;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=03pe0yiUKP1H7BUwfos0BSDGWIzjAknzzyfMZUSQG+U=;
+	b=FsjgTS7JVAqRikJoAr5hYrXjd5Rvhgml00mMLgHwLx8JOhSOgeQrhOiSGCFxgL+iw/OyGG
+	iRlSF4Ml1TGpEQEDfqnVBvOz4p1Xx/3rD0AOD83Yijl3kPXt3Do8NXEPrCoViBDeXRm7MX
+	UsWfxl3RBiyCcRbFZnXxLc1pDAHmlX4=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-16-rYjpjYsQNXmcYKerrJqy_g-1; Wed,
+ 17 Jul 2024 10:26:56 -0400
+X-MC-Unique: rYjpjYsQNXmcYKerrJqy_g-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9AC071955D50;
+	Wed, 17 Jul 2024 14:26:53 +0000 (UTC)
+Received: from hydra.redhat.com (unknown [10.39.194.18])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 309AC1955D42;
+	Wed, 17 Jul 2024 14:26:47 +0000 (UTC)
+From: Jocelyn Falempe <jfalempe@redhat.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	"Bjorn Roy Baron" <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	rust-for-linux@vger.kernel.org,
+	Danilo Krummrich <dakr@redhat.com>
+Cc: Jocelyn Falempe <jfalempe@redhat.com>
+Subject: [PATCH v4 0/4] drm/panic: Add a QR code panic screen
+Date: Wed, 17 Jul 2024 16:24:47 +0200
+Message-ID: <20240717142644.1106060-1-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: Only flush the mm icache when setting an exec pte
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: aou <aou@eecs.berkeley.edu>, linux-kernel <linux-kernel@vger.kernel.org>,
- linux-riscv <linux-riscv@lists.infradead.org>, palmer <palmer@dabbelt.com>,
- "paul.walmsley" <paul.walmsley@sifive.com>, =?UTF-8?B?5pa55Y2O5ZCv?=
- <hqfang@nucleisys.com>
-References: <tencent_7721F6B72F58AA6154DFBDFF@qq.com>
- <CAHVXubhkrDv3Fx1KH-jjjWjo-LGKBMabvafAPsDZeSpGMEt-gg@mail.gmail.com>
- <592DAA3973EEA52F+9b62c73a-cc43-498c-8afb-da2d43e56b5c@nucleisys.com>
- <CAHVXubhy6tfAEfTF=fsZ90UDc+_vnWurWpK4xDqciwptzuvg6A@mail.gmail.com>
- <C3FA50DD88E41384+a8e54b7c-d4ec-45c3-9fea-bedc44a4a6f6@nucleisys.com>
- <CAHVXubjRMSDuu3b2idnf1Gnt-cxqPeY-x4tSuyZu7z7ROUd7+w@mail.gmail.com>
-From: guibing <guibing@nucleisys.com>
-In-Reply-To: <CAHVXubjRMSDuu3b2idnf1Gnt-cxqPeY-x4tSuyZu7z7ROUd7+w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:nucleisys.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-> Which is immediately followed by: "To make a store to instruction
-> memory visible to all RISC-V harts, the writing hart also has to
-> execute a data FENCE before requesting that all remote RISC-V harts
-> execute a FENCE.I.".
->
-> Maybe you're just lacking a data fence on core0?
+This series adds a new panic screen, with the kmsg data embedded in a QR code.
 
-First,
+The main advantage of QR code, is that you can copy/paste the debug data to a bug report.
 
-The Riscv spec does not specify how to implement fence instruction 
-specifically.
+The QR code encoder is written in rust, and is very specific to drm panic.
+The reason is that it is called in a panic handler, and thus can't allocate memory, or use locking.
+The rust code uses a few rust core API, and provides only two C entry points.
+There is no particular reason to do it in rust, I just wanted to learn rust, and see if it can work in the kernel.
 
-Fence is just memory barrier in our hardware platform.
+If you want to see what it looks like, I've put a few screenshots here:
+https://github.com/kdj0c/panic_report/issues/1
 
-linux source code also take fence instruction as barrier.
+v2:
+ * Rewrite the rust comments with Markdown (Alice Ryhl)
+ * Mark drm_panic_qr_generate() as unsafe (Alice Ryhl)
+ * Use CStr directly, and remove the call to as_str_unchecked()
+   (Alice Ryhl)
+ * Add a check for data_len <= data_size (Greg KH)
 
-https://github.com/riscv/riscv-isa-manual/issues/341#issuecomment-465474896 
-, from this issue, Aswaterman also thinks so.
+v3:
+ * Fix all rust comments (typo, punctuation) (Miguel Ojeda)
+ * Change the wording of safety comments (Alice Ryhl)
+ * Add a link to the javascript decoder in the Kconfig (Greg KH)
+ * Fix data_size and tmp_size check in drm_panic_qr_generate()
+ 
+ v4:
+ * Fix the logic to find next line and skip the '\n' (Alice Ryhl)
+ * Remove __LOG_PREFIX as it's not used (Alice Ryhl)
 
-Second,
+Jocelyn Falempe (4):
+  drm/panic: Add integer scaling to blit()
+  drm/rect: Add drm_rect_overlap()
+  drm/panic: Simplify logo handling
+  drm/panic: Add a QR code panic screen
 
-core0 reads data from the sd card, but from linux source code, no 
-drivers perform core cache sync operations(by fence.i) after core 
-reading the data.
+ drivers/gpu/drm/Kconfig         |   31 +
+ drivers/gpu/drm/Makefile        |    1 +
+ drivers/gpu/drm/drm_drv.c       |    3 +
+ drivers/gpu/drm/drm_panic.c     |  340 +++++++++--
+ drivers/gpu/drm/drm_panic_qr.rs | 1003 +++++++++++++++++++++++++++++++
+ include/drm/drm_panic.h         |    4 +
+ include/drm/drm_rect.h          |   15 +
+ 7 files changed, 1358 insertions(+), 39 deletions(-)
+ create mode 100644 drivers/gpu/drm/drm_panic_qr.rs
 
-whereas the core1/2/3 perform cache operation after paging fault. 
-set_ptes function may call flush_icache_pte to sync cache in linux 
-source code.
 
-Finally,
+base-commit: e1a261ba599eec97e1c5c7760d5c3698fc24e6a6
+-- 
+2.45.2
 
-Riscv spec describe the fence.i instruction as following:
-
-> The FENCE.I instruction is used to synchronize the instruction and 
-> data streams.
->
-> RISC-V does not guarantee that stores to instruction memory will be 
-> made visible to instruction fetches on a RISC-V hart until that hart 
-> executes a FENCE.I instruction. A FENCE.I instruction ensures that a 
-> subsequent instruction fetch on a RISC-V hart will see any previous 
-> data stores already visible to the same RISC-V hart. FENCE.I does not 
-> ensure that other RISC-V harts' instruction fetches will observe the 
-> local hart’s stores in a multiprocessor system.
->
- From this description, fence.i instruction only applies to local 
-core,making instruction fetch can see any previous data stores on the 
-same core.
-
-> To make a store to instruction memory visible to all RISC-V harts, the 
-> writing hart also has to execute a data FENCE before requesting that 
-> all remote RISC-V harts execute a FENCE.I."
- From this point of view, core0 should execute data fence then send 
-remote fence.i to other harts, but linux source code is not implemented 
-in accordance with riscv spec.
-
- From a more general perspective, i think that flush_icache_pte function 
-should call flush_icache_all not flush_icache_mm.
-
-+void flush_icache_pte(struct mm_struct *mm, pte_t pte)
-    {
-    struct folio *folio = page_folio(pte_page(pte));
-
-    if (!test_bit(PG_dcache_clean, &folio->flags)) {
--           flush_icache_all();
-+           flush_icache_mm(mm, false);
-    set_bit(PG_dcache_clean, &folio->flags);
-    }
-    }
-
-thanks for your reply.
-
-在 2024/7/17 17:20, Alexandre Ghiti 写道:
-> Hi Guibing,
->
-> On Tue, Jul 16, 2024 at 4:31 PM guibing <guibing@nucleisys.com> wrote:
->> Hi Alex，
->>
->>   From RISC-V Unprivileged ISA Spec，or zifencei.adoc :
->>
->> FENCE.I does not ensure that other RISC-V harts’ instruction fetches
->> will observe the local hart’s stores in a multiprocessor system.
-> Which is immediately followed by: "To make a store to instruction
-> memory visible to all RISC-V harts, the writing hart also has to
-> execute a data FENCE before requesting that all remote RISC-V harts
-> execute a FENCE.I.".
->
-> Maybe you're just lacking a data fence on core0?
->
->
->> thanks.
->>
->> 在 2024/7/16 20:51, Alexandre Ghiti 写道:
->>> Hi Guibing,
->>>
->>> First, sorry for the delay, I was out last week.
->>>
->>> On Wed, Jun 26, 2024 at 5:59 AM guibing <guibing@nucleisys.com> wrote:
->>>> Hi Alex,
->>>>
->>>> Sorry, yesterday I clicked the mouse by mistake to sent an empty email.
->>>>
->>>>> Is it a multithreaded application? You mean that if the application
->>>>> always runs on core1/2/3, you get an illegal instruction, but that
->>>>> does not happen when run on core0?
->>>> test_printf is not a multithread application, just output "hello world"
->>>> strings.
->>>>
->>>> #include <stdio.h>
->>>>
->>>> int main()
->>>> {
->>>>            printf("hello world!\n");
->>>>            return 0;
->>>> }
->>>>
->>>>    From testing results, illegal instruction always occur on core1/2/3, no
->>>> core0.
->>>>
->>>>> Did you check if the instruction in badaddr is different from the
->>>>> expected instruction? The image you provided is not available here,
->>>>> but it indicated 0xf486 which corresponds to "c.sdsp  ra, 104(sp)", is
->>>>> that correct?
->>>> this badaddr is same with the expected instruction, but i meet the
->>>> different.
->>>>
->>>> /mnt # ./test_printf
->>>> [   76.393222] test_printf[130]: unhandled signal 4 code 0x1 at
->>>> 0x0000000000019c82 in test_printf[10000+68000]
->>>> [   76.400427] CPU: 1 PID: 130 Comm: test_printf Not tainted 6.1.15 #6
->>>> [   76.406797] Hardware name: asrmicro,xlcpu-evb (DT)
->>>> [   76.411665] epc : 0000000000019c82 ra : 000000000001ca36 sp :
->>>> 0000003fc5969b00
->>>> [   76.418941]  gp : 000000000007e508 tp : 0000003f8faec780 t0 :
->>>> 000000000000003d
->>>> [   76.426244]  t1 : 0000002abe28cecc t2 : 0000002abe369d63 s0 :
->>>> 0000003fc5969d98
->>>> [   76.433524]  s1 : 0000000000082ab8 a0 : 0000003fc5969b00 a1 :
->>>> 0000000000000000
->>>> [   76.440835]  a2 : 00000000000001a0 a3 : 0000000001010101 a4 :
->>>> 0101010101010101
->>>> [   76.448108]  a5 : 0000003fc5969b00 a6 : 0000000000000040 a7 :
->>>> 00000000000000dd
->>>> [   76.455432]  s2 : 0000000000000001 s3 : 0000003fc5969d38 s4 :
->>>> 0000000000082a70
->>>> [   76.462695]  s5 : 0000000000000000 s6 : 0000000000010758 s7 :
->>>> 0000002abe371648
->>>> [   76.469995]  s8 : 0000000000000000 s9 : 0000000000000000 s10:
->>>> 0000002abe371670
->>>> [   76.477275]  s11: 0000000000000001 t3 : 0000003f8fb954cc t4 :
->>>> 0000000000000000
->>>> [   76.484576]  t5 : 00000000000003ff t6 : 0000000000000040
->>>> [   76.489948] status: 0000000200004020 badaddr: 00000000ffffffff cause:
->>>> 0000000000000002
->>>> Illegal instruction
->>>>
->>>>> No no, we try to introduce icache flushes whenever it is needed for such uarch.
->>>>>
->>>> core0 is responsible for reading data from sd cards to dcache and ddr.
->>>>
->>>> before core1/2/3 continue to execute the application, it only execute
->>>> fence.i instruction.
->>>>
->>>> in our riscv hardware , fence.i just flush dcache and invalidate icache
->>>> for local core.
->>>>
->>>> in this case, how core1/2/3 can get application instruction data from
->>>> the core0 dcache ?
->>> I don't understand this point ^: you mean that core1/2/3 can't access
->>> the data in the core0 dcache? And they go straight to main memory? To
->>> me, the cores dcaches should be coherent and then a fence.i on any
->>> core would sync the icache with the content of any dcache and that
->>> should not happen.
->>>
->>> To me, the patch is correct, but maybe I did not fully understand your
->>> issue. Don't hesitate to give more details.
->>>
->>> Thanks,
->>>
->>> Alex
->>>
->>>> i try to send remote fence.i to core0, iilegal instruction cannot
->>>> reproduced, it can work well.
->>>>
->>>> @@ -66,8 +66,11 @@ void flush_icache_mm(struct mm_struct *mm, bool local)
->>>>                     * messages are sent we still need to order this hart's
->>>> writes
->>>>                     * with flush_icache_deferred().
->>>>                     */
->>>> +              sbi_remote_fence_i(cpumask_of(0));
->>>>                    smp_mb();
->>>>            } else if (IS_ENABLED(CONFIG_RISCV_SBI)) {
->>>>                    sbi_remote_fence_i(&others);
->>>>            } else {
->>>>
->>>>
->>>> thank you for your reply! ：）
->>>>
->>>>
->>>> 在 2024/6/25 19:45, Alexandre Ghiti 写道:
->>>>> Hi Guibing,
->>>>>
->>>>> You sent your email in html, so it got rejected by the ML, make sure
->>>>> you reply in plain text mode :)
->>>>>
->>>>> On Tue, Jun 25, 2024 at 10:45 AM 桂兵 <guibing@nucleisys.com> wrote:
->>>>>> Hi alex，
->>>>>>
->>>>>> We have encountered a problem related to this patch and would like to ask for your advice, thank you in advance!
->>>>>>
->>>>>> Problem description:
->>>>>> When we use the v6.9 kernel, there is an illegal instruction problem when executing a statically linked application on an SD card, and this problem is not reproduced in v6.6/v6.1 kernel.
->>>>>> SD card driver uses PIO mode, and the SD card interrupt is bound to core0. If the system schedule the apllication to execute on core1, core2, or core3, it will report an illegal instruction, and if scheduled to execute on core0, it will be executed successfully.
->>>>> Is it a multithreaded application? You mean that if the application
->>>>> always runs on core1/2/3, you get an illegal instruction, but that
->>>>> does not happen when run on core0?
->>>>>
->>>>>> We track the source code, flush_icache_pte function patch leads to this issue on our riscv hardware.
->>>>>> If you merge this patch into the v6.1 kernel, the same problem can be reproduced in v6.1 kernel.
->>>>>> If using flush_icache_all() not flush_icache_mm in v6.9 kernel ; this issue can not be reproduced in v6.9 kernel.
->>>>>>
->>>>>> +void flush_icache_pte(struct mm_struct *mm, pte_t pte)
->>>>>>     {
->>>>>>     struct folio *folio = page_folio(pte_page(pte));
->>>>>>
->>>>>>     if (!test_bit(PG_dcache_clean, &folio->flags)) {
->>>>>> -           flush_icache_all();
->>>>>> +           flush_icache_mm(mm, false);
->>>>>>     set_bit(PG_dcache_clean, &folio->flags);
->>>>>>     }
->>>>>>     }
->>>>> Did you check if the instruction in badaddr is different from the
->>>>> expected instruction? The image you provided is not available here,
->>>>> but it indicated 0xf486 which corresponds to "c.sdsp  ra, 104(sp)", is
->>>>> that correct?
->>>>>
->>>>>> Our riscv cpu IP supports multi-core L1 dcache synchronization, but does not support multi-core L1 icache synchronization. iCache synchronization requires software maintenance.
->>>>>> Does the RISCV architecture kernel in future have mandatory requirements for multi-core iCache hardware consistency?
->>>>> No no, we try to introduce icache flushes whenever it is needed for such uarch.
->>>>>
->>>>>> Thank you for your reply!
->>>>>>
->>>>>>
->>>>>> Link：[PATCH] riscv: Only flush the mm icache when setting an exec pte - Alexandre Ghiti (kernel.org)
->>>>>>
->>>>>> ________________________________
->>>>>> 发自我的企业微信
->>>>>>
->>>>>>
->>>>> Thanks for the report,
->>>>>
->>>>> Alex
->>>>>
 
