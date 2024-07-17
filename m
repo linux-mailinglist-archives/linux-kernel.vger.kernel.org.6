@@ -1,155 +1,257 @@
-Return-Path: <linux-kernel+bounces-255777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D86AB9344ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:51:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C02879344F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:57:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07B9C1C215D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:51:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 758DC283774
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000D3558B7;
-	Wed, 17 Jul 2024 22:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27E455E58;
+	Wed, 17 Jul 2024 22:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="VlXhuPV2"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2066.outbound.protection.outlook.com [40.107.237.66])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Pp84YKtV"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C664963A;
-	Wed, 17 Jul 2024 22:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721256657; cv=fail; b=CVMSAcb7rh4IlFncTBaJFsPibQ3l1VkZ8R/JAI+2RpUyuch9vg9Gw6WZTgJlCSs16r49sd5cPMNjCLEv4YC4egatZca6UtNswg55NUM37SWHPv0qVpoK35pY0q3UA+VXNhuTqbIB3y6321gXxmZKy7G8eirx4432JCctmGSxl4o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721256657; c=relaxed/simple;
-	bh=UuuiZGNXnRT+OW8g7D5TYL9P8XgVY1uFcve/x4KIb/k=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mhY/vl4fRKTrfuUIoyveoG1NqYhc/z/JPFeHWOaxLiNxLohOhuzD0d6aJ3Z4W2PF64Tl1qu+4q0Uk+2CxBT9qFGU3awu/T1HuGEB4MopbPE7eqE0Zb8VehgN5nR06fjXAVbsY/W+IIFWm4i9U6IH+1crDTo3I/SxhgccBXBKlTU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=VlXhuPV2; arc=fail smtp.client-ip=40.107.237.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JKhxhzgiXHGVNvdy6xd22UOyNLMu13QXP0YHoeFc5QAf5LJyuVBdGuQezt9PNE0FlL2ovJa5OKnEk0s2Mmab13n3iAkk0lwZaCli/ki5LHwk4Di8WJyT1/QhGkozbhypb1vqfIVa5IDww3MeE8QVTmIGljjfAiXHw1nqreIKQg5Fdz9hiOfjlprG9LSdliMMvlQamGjOIPIw/8lvYc8p89+LDFHcNvK3xgmXzi1tU09GLauZAC2YqQYDI+qgGZ6O6CbdVWL5ABiSJYeHqmM3FIOPFALL1hVupyGDBw7AWPmuotAIipB4/3wY2cAWeO3qj4vR4Sa1XHpgjAK2El10Qw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m9TEyQIzKe2emYJfc4P1xd6QJsTbf844C2myIUhUDNg=;
- b=RjpMlTjeJfOLnPR03U2jHNPQ7yrZ5jLr8/5sbZpYuMhN1/lx+yzP6KHvfUsnUwZfyBJWZRYOeB8Vk2UkH7WhqNWDpSVleu/2ENXJEcSG+exlTnJIEufQ6bIGv21W9147p9ciwRkIMg/vs/g0d140AB7Xhe7ZFoJNNhW3H1wvIDuZqCAYyPGbVkcahy/gbI1tl8HDQGfzXKDnH5AE5rcMbmxFuFHpZdCYSfjiGKEUsoV8ENXMU8Vx8C7QlW5D14Sjwer9r8eZMN4PQUzNmphiffPUmNypkEOmCNDb5CpfuAdANdxtv1NVKjwsvVI5O4uEfVc15QFS4SmzHG2wW/hfLQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m9TEyQIzKe2emYJfc4P1xd6QJsTbf844C2myIUhUDNg=;
- b=VlXhuPV2/xADkxzxcqV6x4q896TCXUGiWcMzTdTfMVTY8Ba8uchT+HRSIg93nhRLk8dZHpKZXuf8OgFyOsx4R0A/XzmkIDebpJQW+Fgh/2rfAI0XpdkFwh6E0zX5E9BKrz/LA9pe/CV906Rvmb89I31FB0ocvFU0s70LCphf63c=
-Received: from SJ0PR13CA0067.namprd13.prod.outlook.com (2603:10b6:a03:2c4::12)
- by DM6PR12MB4185.namprd12.prod.outlook.com (2603:10b6:5:216::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14; Wed, 17 Jul
- 2024 22:50:53 +0000
-Received: from MWH0EPF000989E8.namprd02.prod.outlook.com
- (2603:10b6:a03:2c4:cafe::e3) by SJ0PR13CA0067.outlook.office365.com
- (2603:10b6:a03:2c4::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14 via Frontend
- Transport; Wed, 17 Jul 2024 22:50:52 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- MWH0EPF000989E8.mail.protection.outlook.com (10.167.241.135) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7784.11 via Frontend Transport; Wed, 17 Jul 2024 22:50:52 +0000
-Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 17 Jul
- 2024 17:50:51 -0500
-Date: Wed, 17 Jul 2024 17:49:45 -0500
-From: Michael Roth <michael.roth@amd.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-CC: <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, <seanjc@google.com>
-Subject: Re: [PATCH 12/12] KVM: guest_memfd: let kvm_gmem_populate() operate
- only on private gfns
-Message-ID: <20240717224945.pg2hegox6si4cqrm@amd.com>
-References: <20240711222755.57476-1-pbonzini@redhat.com>
- <20240711222755.57476-13-pbonzini@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F49A249F9;
+	Wed, 17 Jul 2024 22:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721257050; cv=none; b=PcSKFFzziTbvT7KmDhyx+F3TF/87Kjz6HHdrLhPl043EpvpZ3EHhjFsxN4B3ntO0CVfLXK3i5iD1JR/bwQkWNNY4ObCwJ14aI5BT7upDHiohXOtoRD8LD8Fv7G1wAUqTmunicz5gYJa6QGjAqnmpWuR2xfPUqVP6Ikk59xZRBEg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721257050; c=relaxed/simple;
+	bh=oWqldk9LByF0/aKR32qLZJ52KR4BYCWgM6KVmobRav4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jcBzMm/NwvrgYGPQ/tgpVS00MSHTJz+GspHv6pzGU7PIPLtYC4SC5P0wRDB8UntVBZzuvMLuvM4XmIX1W17DHtDukTw24ga59kWQyJQboRPDN2EYuuCTTsUspU3SgQa6kpX+x0lpsB+b2mIkqrclI6q4NJxE9asN4ztRTFtND6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Pp84YKtV; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46HFebZi008133;
+	Wed, 17 Jul 2024 22:57:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ATszFPG0tx6MSwF9g1jqXbljCZlzXPfIFDwZXXQ64BI=; b=Pp84YKtV4QOVG07Q
+	mhFCGfY91LCoilE0EgH7XPWVkbvmFZxA+NH+9awUh2pcylajQiU5nNzPB+c1Oalk
+	N4TMLbM1z7IahKFe4VdOyyfAUkXTqpEr+9ripzr5B+GnW1NkNUVHIKH6lXWuD5XT
+	+7LVKVC0CMOlcrgrVm3Fd9jWN2ZXsDpvWKi4bTZrXI0GU/CPX7a0vaIwDkLM32L4
+	5jqNmgp7xpz0X7CVMQ4Nz+/pqqmbq0xTvP3zfr8axX/LFCVstGjVVC9kuMEllPRL
+	QuU7XtV6r4TwLlABXH22n8mAiXGA+0VXkTWgkrtKS2+KL6v5hrwMRB93zUajYktS
+	Chgleg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfxbu58-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 22:57:13 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46HMvDVJ011127
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 22:57:13 GMT
+Received: from [10.110.77.168] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 17 Jul
+ 2024 15:57:12 -0700
+Message-ID: <02b94a07-fcd6-4a48-bead-530b81c8a27e@quicinc.com>
+Date: Wed, 17 Jul 2024 15:57:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240711222755.57476-13-pbonzini@redhat.com>
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000989E8:EE_|DM6PR12MB4185:EE_
-X-MS-Office365-Filtering-Correlation-Id: f35d5640-cffb-4d25-b7ac-08dca6b2e940
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?OGSaGsG/T+UgqYsG6xHz2BRc1YfovZdkQULH5I0vJuwksBZPV74hrr6YXh4u?=
- =?us-ascii?Q?a5tedXsxA6GTgMTseOqosR96r5t5zcr6Lpo+rgSxFF9Q+ZkZPYS0WwuriEHU?=
- =?us-ascii?Q?Q/ZHXNGEtme0vr/+3Mtcsak4IKwXw9ukywwkqklG2aIVtuRPqGmyuc58EFK5?=
- =?us-ascii?Q?8FyNVJN+Om1ufyDlSPPa/5NXegPwM0KH4Ke7RcMlv4jmmSApcZWrcmQZGmnB?=
- =?us-ascii?Q?XgUwtIdwcLd0mp6v00rRKB2bppj0YUJqFXgNsv2eMqv/buiXag2MJYMMmiXL?=
- =?us-ascii?Q?uCmCTT2aNDLnBwLKo+NocmzRAP2cNuX7b2lDRfXYq6EQAoQVr0sA3MpyYr1p?=
- =?us-ascii?Q?mx+g6S1Jvr7D0IdNBLz1bLFUGD9hnq+PedezenoFJ7bvPI0wzt1OTh9d5z/t?=
- =?us-ascii?Q?6wZ+9XCjvPhoP70bXWuvS78VIy20dMNN53RydwJPS4Uj+T84Wbqr3AWhn64D?=
- =?us-ascii?Q?fniT1wtDvxPTur0lgYlRR+5Kt4KNGJXP+3NgyKMq/hqS/RFIE/b2i0T/7Cu0?=
- =?us-ascii?Q?M5WjUm8RU4MNrQvQwU1qa5kBbqHyn526CI9TScUVM2LNRmYCvmnackZwkMKF?=
- =?us-ascii?Q?Kn3hhIgOukXMWKE3RBVlsIgnvCZYk2qFdJC9cfC04vCQKfyDcD16btlmpOJB?=
- =?us-ascii?Q?WjEXestQs6blH2Ngl2dMzvIr4Rp13VfGrMFiJ6JcCbVzhpdOFXmz3eMcYVZA?=
- =?us-ascii?Q?MNdIFlCAsZrjDmNEiDtowVD+ct7CzxFl1syPeWKHnfIFU+vQDYHR4lOjqTEj?=
- =?us-ascii?Q?Y8CtVjOpGeR2L1qRKLeSv1hINmN3aFgR5raKZZ1SfarcJegyAfp58FLQuTmQ?=
- =?us-ascii?Q?lWe8ncSYhcZEE0BEZDC+CBzW3xtKC+O6FVXqXQZylHGZI1C5MzhPEhm1fwZN?=
- =?us-ascii?Q?AOCOdhEk8RR9hWHt7PLUuyzpHtHJU1vCYnHXG/81VGRvsTKchdW56C/aU9QV?=
- =?us-ascii?Q?tqoHDxUGwSEsXhUUWhinKv0uaLn2BC6VWR1UNQbZGn4OnN2XbsvnCHgUt0Jx?=
- =?us-ascii?Q?QA6wDdzosd62Dh40/hNGOZexxB+rHufqJw9Cq16PTBFDoPTyi6jwRlR5hOjC?=
- =?us-ascii?Q?U2T++yQy6CJvGNe2lpu7R8u7IQ/yb9NAGDkfePS1org2Mvvs1bu+dCDAj84L?=
- =?us-ascii?Q?JHcnBvj1QxLZ0dRIctNWBD//Fv5lIu/oW03BTPRCx/w+ROFDUzaQTy++WUT/?=
- =?us-ascii?Q?TftoTJi4snthXomhOdyWKYur3lfCswljbca/WoYrMI63SD/R3eOXkCoQZts7?=
- =?us-ascii?Q?+IdPLyHSUwR1qLvNFdErvc2smSw4GUiB4LICDwWSNw1h7TQuT/S1YP3nGNSt?=
- =?us-ascii?Q?Y2+9alqiO/vt+xWAGMPmDeBZehKFrVH/duIDrhfXLh3JRIgsU2Fsn95y0DOx?=
- =?us-ascii?Q?xXgFJakjKQEosa3gQSjb/GAD0s8hbaWPtutei/SW4+RSY0KP3yWsmfMJZG/Q?=
- =?us-ascii?Q?YwdHEpYyfE6Mz2FaUbGuUz7SoRT58J8A?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2024 22:50:52.5614
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f35d5640-cffb-4d25-b7ac-08dca6b2e940
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000989E8.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4185
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 12/13] PCI: qcom: Simulate PCIe hotplug using 'global'
+ interrupt
+To: <manivannan.sadhasivam@linaro.org>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+	<kw@linux.com>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas
+	<bhelgaas@google.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Bjorn
+ Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+CC: <linux-pci@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20240717-pci-qcom-hotplug-v2-0-71d304b817f8@linaro.org>
+ <20240717-pci-qcom-hotplug-v2-12-71d304b817f8@linaro.org>
+Content-Language: en-US
+From: Mayank Rana <quic_mrana@quicinc.com>
+In-Reply-To: <20240717-pci-qcom-hotplug-v2-12-71d304b817f8@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Uj7XKNBaXILXy-Ak2ZwL3u-nrbAHM7OT
+X-Proofpoint-GUID: Uj7XKNBaXILXy-Ak2ZwL3u-nrbAHM7OT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-17_17,2024-07-17_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=999 bulkscore=0 adultscore=0
+ spamscore=0 clxscore=1011 mlxscore=0 phishscore=0 priorityscore=1501
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407170174
 
-On Thu, Jul 11, 2024 at 06:27:55PM -0400, Paolo Bonzini wrote:
-> This check is currently performed by sev_gmem_post_populate(), but it
-> applies to all callers of kvm_gmem_populate(): the point of the function
-> is that the memory is being encrypted and some work has to be done
-> on all the gfns in order to encrypt them.
-> 
-> Therefore, check the KVM_MEMORY_ATTRIBUTE_PRIVATE attribute prior
-> to invoking the callback, and stop the operation if a shared page
-> is encountered.  Because CONFIG_KVM_PRIVATE_MEM in principle does
-> not require attributes, this makes kvm_gmem_populate() depend on
-> CONFIG_KVM_GENERIC_PRIVATE_MEM (which does require them).
-> 
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Hi Mani
 
-Reviewed-by: Michael Roth <michael.roth@amd.com>
+I don't think we can suggest that usage of link up event with Global IRQ 
+as simulate PCIe hotplug. hotplug is referring to allow handling of both
+add or remove of endpoint device whereas here you are using global IRQ 
+as last step to rescan bus if endpoint is power up later after link 
+training is initiated.
+
+Will this work if you remove endpoint device and add it back again ?
+
+Regards,
+Mayank
+On 7/17/2024 10:03 AM, Manivannan Sadhasivam via B4 Relay wrote:
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> Historically, Qcom PCIe RC controllers lack standard hotplug support. So
+> when an endpoint is attached to the SoC, users have to rescan the bus
+> manually to enumerate the device. But this can be avoided by simulating the
+> PCIe hotplug using Qcom specific way.
+> 
+> Qcom PCIe RC controllers are capable of generating the 'global' SPI
+> interrupt to the host CPUs. The device driver can use this event to
+> identify events such as PCIe link specific events, safety events etc...
+> 
+> One such event is the PCIe Link up event generated when an endpoint is
+> detected on the bus and the Link is 'up'. This event can be used to
+> simulate the PCIe hotplug in the Qcom SoCs.
+> 
+> So add support for capturing the PCIe Link up event using the 'global'
+> interrupt in the driver. Once the Link up event is received, the bus
+> underneath the host bridge is scanned to enumerate PCIe endpoint devices,
+> thus simulating hotplug.
+> 
+> All of the Qcom SoCs have only one rootport per controller instance. So
+> only a single 'Link up' event is generated for the PCIe controller.
+> 
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>   drivers/pci/controller/dwc/pcie-qcom.c | 55 +++++++++++++++++++++++++++++++++-
+>   1 file changed, 54 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 0180edf3310e..a1d678fe7fa5 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -50,6 +50,9 @@
+>   #define PARF_AXI_MSTR_WR_ADDR_HALT_V2		0x1a8
+>   #define PARF_Q2A_FLUSH				0x1ac
+>   #define PARF_LTSSM				0x1b0
+> +#define PARF_INT_ALL_STATUS			0x224
+> +#define PARF_INT_ALL_CLEAR			0x228
+> +#define PARF_INT_ALL_MASK			0x22c
+>   #define PARF_SID_OFFSET				0x234
+>   #define PARF_BDF_TRANSLATE_CFG			0x24c
+>   #define PARF_SLV_ADDR_SPACE_SIZE		0x358
+> @@ -121,6 +124,9 @@
+>   /* PARF_LTSSM register fields */
+>   #define LTSSM_EN				BIT(8)
+>   
+> +/* PARF_INT_ALL_{STATUS/CLEAR/MASK} register fields */
+> +#define PARF_INT_ALL_LINK_UP			BIT(13)
+> +
+>   /* PARF_NO_SNOOP_OVERIDE register fields */
+>   #define WR_NO_SNOOP_OVERIDE_EN			BIT(1)
+>   #define RD_NO_SNOOP_OVERIDE_EN			BIT(3)
+> @@ -1488,6 +1494,29 @@ static void qcom_pcie_init_debugfs(struct qcom_pcie *pcie)
+>   				    qcom_pcie_link_transition_count);
+>   }
+>   
+> +static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
+> +{
+> +	struct qcom_pcie *pcie = data;
+> +	struct dw_pcie_rp *pp = &pcie->pci->pp;
+> +	struct device *dev = pcie->pci->dev;
+> +	u32 status = readl_relaxed(pcie->parf + PARF_INT_ALL_STATUS);
+> +
+> +	writel_relaxed(status, pcie->parf + PARF_INT_ALL_CLEAR);
+> +
+> +	if (FIELD_GET(PARF_INT_ALL_LINK_UP, status)) {
+> +		dev_dbg(dev, "Received Link up event. Starting enumeration!\n");
+> +		/* Rescan the bus to enumerate endpoint devices */
+> +		pci_lock_rescan_remove();
+> +		pci_rescan_bus(pp->bridge->bus);
+> +		pci_unlock_rescan_remove();
+How do you handle case where endpoint is already enumerated, and seeing 
+link up event in parallel or later ? will it go ahead to rescan bus 
+again here ?
+
+Also can you consider doing this outside hardirq context ?
+
+> +	} else {
+> +		dev_WARN_ONCE(dev, 1, "Received unknown event. INT_STATUS: 0x%08x\n",
+> +			      status);
+> +	}
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+>   static int qcom_pcie_probe(struct platform_device *pdev)
+>   {
+>   	const struct qcom_pcie_cfg *pcie_cfg;
+> @@ -1498,7 +1527,8 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>   	struct dw_pcie_rp *pp;
+>   	struct resource *res;
+>   	struct dw_pcie *pci;
+> -	int ret;
+> +	int ret, irq;
+> +	char *name;
+>   
+>   	pcie_cfg = of_device_get_match_data(dev);
+>   	if (!pcie_cfg || !pcie_cfg->ops) {
+> @@ -1617,6 +1647,27 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>   		goto err_phy_exit;
+>   	}
+>   
+> +	name = devm_kasprintf(dev, GFP_KERNEL, "qcom_pcie_global_irq%d",
+> +			      pci_domain_nr(pp->bridge->bus));
+> +	if (!name) {
+> +		ret = -ENOMEM;
+> +		goto err_host_deinit;
+> +	}
+> +
+> +	irq = platform_get_irq_byname_optional(pdev, "global");
+> +	if (irq > 0) {
+> +		ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
+> +						qcom_pcie_global_irq_thread,
+> +						IRQF_ONESHOT, name, pcie);
+> +		if (ret) {
+> +			dev_err_probe(&pdev->dev, ret,
+> +				      "Failed to request Global IRQ\n");
+> +			goto err_host_deinit;
+> +		}
+> +
+> +		writel_relaxed(PARF_INT_ALL_LINK_UP, pcie->parf + PARF_INT_ALL_MASK);
+> +	}
+> +
+>   	qcom_pcie_icc_opp_update(pcie);
+>   
+>   	if (pcie->mhi)
+> @@ -1624,6 +1675,8 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>   
+>   	return 0;
+>   
+> +err_host_deinit:
+> +	dw_pcie_host_deinit(pp);
+>   err_phy_exit:
+>   	phy_exit(pcie->phy);
+>   err_pm_runtime_put:
+> 
 
