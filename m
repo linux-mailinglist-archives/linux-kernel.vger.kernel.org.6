@@ -1,105 +1,192 @@
-Return-Path: <linux-kernel+bounces-255610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 285309342E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:02:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 516FD9342EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:05:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C601A1F21052
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:02:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D28B91F223AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88611836F3;
-	Wed, 17 Jul 2024 20:02:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2D21850A3;
+	Wed, 17 Jul 2024 20:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HZsLq11Z"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GSJGP6w0"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834A51CF90;
-	Wed, 17 Jul 2024 20:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D97B18508B
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 20:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721246555; cv=none; b=WURubKe/1xygIO4C4fv0unbOeZ4I5b3rg+23OxFKAsVdb7zAsPZ+RC1pYAEqxXR3QfZ8CpKxuraL4DFnaqs5Pxv4QJ62tdsOKzjTfMxM4s2yjHoKyS1Vok+Gvi5E66adJMUGchmIQOUf5sesOlNZD/iOU7qTvT7jwOJ+6GIimqQ=
+	t=1721246713; cv=none; b=mGgBwymYupn2inPrb+9YWS2yHlpRF3hDRVFB0lSitZXNaq+HDkFMI8qX+UXuLzC0qHCT+bbL5IsckZ5cKhG0C5nkgzZMw9JHeXbKEcONw/2UoHL6HToHb2tHwKS99fZA9PGpQWjuoaXq1Az+Mhrc+kQqNKEpHaOIekspXA1b8F4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721246555; c=relaxed/simple;
-	bh=IKZ60C2VE228hnXPBngEx2ONPoazuy9XS+om018+pRE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h0x4SyMzkGXZ734x32Refdb44mWB7JChDLh8Ppybx0GyAdmrgUSR8331jN3VMADNyki3+colGGNKcvtC9etpAERtAVHnJ9u66xR/NwYLODV7WKaUXzXR0HnSokESTF5B6nX8nYXc0QsRiGPY+4B99J+DOJEqZ33JOfmzDF9tyRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HZsLq11Z; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a77c9c5d68bso2463466b.2;
-        Wed, 17 Jul 2024 13:02:33 -0700 (PDT)
+	s=arc-20240116; t=1721246713; c=relaxed/simple;
+	bh=yfvmwqlbiIjdjODB3ox0PyvzL/p7umxnR4a6f4bphT8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QJus57VA+ZRUksIEfEkKt4y5D8g4nmDf89mLwiAoMcYaU0prl/KVuvOSzZs26H+PFCF/e1uQbNYomaiFQVq6dEvckjRX1SxsgjT9NXqEWFewXvkpcLguH+Ai8DYvde7aCd/i4Qnwq0pQnAPpg8yupaPuSWKKv80AflXE8npa14A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GSJGP6w0; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-664b4589b1aso1427707b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:05:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721246552; x=1721851352; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l3VwJWSOS22OLw1Rd95XcEdcYfDTK1SmF5DPuo6J8kI=;
-        b=HZsLq11ZQmlJfNGhh5ywnzyPPHKbxq+mtKao9DB+A1NQF4pV3iuxD2SBFitUcP7D/P
-         6zFRAvtnAbf80fL6L+Eax+1XF5Xwt8tOpvP5J+nWAuubfleC3kGDnIdFN//izGhG/FLC
-         9shSndzkibNM/a1xpw0+KVm4lgdxmmfppXZML8fYhuz9Yi8qWbBat6KLyci++3+v1pp1
-         ppSSIyTsI86XHivSqlJWzNAIgfDfLJJrXQfBCOqjQDsSiWIt9ar1g9JAvXiINAh/vR4e
-         UEDOBERIap22C7BGV8D4dzPr2wiTm5Fy87xckhkZLsnauv+ZBy4FQeKULpSOzwBTbmWx
-         HRpQ==
+        d=google.com; s=20230601; t=1721246711; x=1721851511; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VBSP3e5vSaJAGM6EZi3idFKFcaAopFgZHFBzjK3LCT0=;
+        b=GSJGP6w0Fv4lwLqaPGJiEwdJdv/cAZwvViRQkxQS/axVeVjqcJfMj01/RkCeM6Y3YV
+         65Ks1eJNAEdtb0fXWVpEmx0jtXrhniFx6+bwbnih97FYcX8DTQoafNmATfTjC5EGzKzN
+         rvbcc62eZdLq79hUChL48Ad9RI6+N8pwOhCRTtx54JomexriZsJs9ch+W/m3LsT+j/MF
+         tBtiOshAOYXrxt3F+ITEYw3tbDCc+bjdgEerG4GaskOa7Fr/0t0llej3rI1dAYYYBZOK
+         LXUyH96KJAPU6yF76L1OzaLRrO2GFbEGC4eHjjAyF4P//2bK6ffWpohi3UlAec/hG86z
+         mxQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721246552; x=1721851352;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l3VwJWSOS22OLw1Rd95XcEdcYfDTK1SmF5DPuo6J8kI=;
-        b=OnQ3xuNSASifsA0LYFkY/oaDlqKiSX8PLClQxAAgmvCPT1w9betjdM3R7MZwZz57u8
-         CyA9MI3ORmXBJIZINFEuwFiQqBHesDSjUIJBkt4yYly5kB6s9UX5BSRYq2/E4IMCcPeW
-         +oV/JhjiMmHs7Re6b+vY4xL1sEk92L6iCYAYkTQ7mcU0tbq7zAWOSN2JCFtN6CTVHm/p
-         XeRuNQ3/QM6cyHIU7h2JZzkzjwW5F1terGGZOx+AWtcCfKiD6L6/95rLP5ejkTT0SpBg
-         Glo0JFam5ppIOY7Bttrq/2AY+FLeHsjuyyCgeqi5TX1IFfT5YuaNkhj/WQeZQEp+HIuW
-         Eiow==
-X-Forwarded-Encrypted: i=1; AJvYcCWMDFthQXP4LfQVZoMTfxqj5ED2PEHw6cT0KH4kxFQsON4dcdW37ET5aNghNA+MTjJA557LlxLAyR1zM4W/xDw8IOUDbq0r4kM7FWas/90TrQgL57PI/34LQVYPLc2s3wdgffZsi27fhA==
-X-Gm-Message-State: AOJu0YzWHsaCDTxWxhKYj6SmgWnoV55E/RktDE3diUkOs2gwRSHR3nf2
-	I39qJ+qlGtnl2Lc4ggNSSWz1QLnEJDfH4zgugu8PAM2jShEp4gr5
-X-Google-Smtp-Source: AGHT+IGUxr7sog/F/OdrZRM8MY0OeurMFSB1lRz0s4H55+eJy+SVONsy8cQSsORza+1w87I8ieOqmQ==
-X-Received: by 2002:a17:906:5f8b:b0:a77:f2c5:84a9 with SMTP id a640c23a62f3a-a7a0114a5d1mr167150566b.18.1721246551584;
-        Wed, 17 Jul 2024 13:02:31 -0700 (PDT)
-Received: from [192.168.50.244] (83.25.184.148.ipv4.supernova.orange.pl. [83.25.184.148])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7ff6aesm474959466b.153.2024.07.17.13.02.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 13:02:31 -0700 (PDT)
-Message-ID: <1296ff07-61bd-438e-bae8-568485866119@gmail.com>
-Date: Wed, 17 Jul 2024 22:02:29 +0200
+        d=1e100.net; s=20230601; t=1721246711; x=1721851511;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VBSP3e5vSaJAGM6EZi3idFKFcaAopFgZHFBzjK3LCT0=;
+        b=LlzHPTVivF74MSXFWIljmaFPkS8RIiAB4mgDqkazYPXQnYB6LVFAOVoY4Bcz83spKZ
+         /sEj6Bcq768oCA/K6aaloEBKE2c2eqnVvGvt/13ssZHF6AX8AWDy0asSlNTKUjLqUckp
+         XVK2oHUP5PuDRAsmolt51WeMC7QNvcENCSzWWyXETkSqf/Hhx0slAvXnoFR4SnZYArwQ
+         nEVFfdp5OQGS3EnNzmsTbK57kaDD+uxQVOBmlgAsiIcao/4yQwoaK6zbiJKWZFCAseaZ
+         rat+aZ47pBK0fw/VwmSOhcma6QhFPGWjkwv4gJoZBHtTbmZfEYFGYgkFLxDTOxstWa+4
+         7i7g==
+X-Forwarded-Encrypted: i=1; AJvYcCWLilu3+x9gToH25YigU1q93LWe3cLVIpe6HhWBVqU1xG2CAG5dkWSkB/3uMMzEM2JHctriL4Zz1VohhG8tDNP6Z6a1Tk5KmV/m/Jn4
+X-Gm-Message-State: AOJu0YzMsqKUwdnh1Cj5m9UFX+8l06KD+JXbf+Jlh06/I/iwf1VuvLdQ
+	GINiFKl4Q6BzPcJydsv0Ld0l0BXVxjLlKgqGrs7prgIFJx2bQzSbja8ygao+lpq9feeh7lTxhws
+	Cx+FTZO1B0+T3ZjvW9tdUKG946vdcS+aPXQWs
+X-Google-Smtp-Source: AGHT+IHfPPMLVKhQIYQq+vH52LgiwBYqk+yx7jrNs0qArCy52u19+nLsf/wyM3sJ2QtC6hJrAh85tZ10Z5PJLiozSvU=
+X-Received: by 2002:a05:690c:827:b0:651:4b29:403c with SMTP id
+ 00721157ae682-66607a46eadmr3959767b3.2.1721246710658; Wed, 17 Jul 2024
+ 13:05:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] ARM: dts: bcm-mobile: Split out nodes used by both
- BCM21664 and BCM23550
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>
-Cc: Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Stanislav Jakubek <stano.jakubek@gmail.com>,
- ~postmarketos/upstreaming@lists.sr.ht, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240717-bcm21664-common-v2-0-e9bd6cf435e4@gmail.com>
-Content-Language: en-US
-From: Artur Weber <aweber.kernel@gmail.com>
-In-Reply-To: <20240717-bcm21664-common-v2-0-e9bd6cf435e4@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240717181239.2510054-1-surenb@google.com> <20240717181239.2510054-2-surenb@google.com>
+ <16286915-1350-4e6b-a0f6-deec02b7fa92@suse.cz>
+In-Reply-To: <16286915-1350-4e6b-a0f6-deec02b7fa92@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 17 Jul 2024 13:04:57 -0700
+Message-ID: <CAJuCfpG2uNicytRYhfqAKrfkxJoNLUUK_o066D=yKggsoc3wKQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] alloc_tag: outline and export free_reserved_page()
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, hch@infradead.org, 
+	pasha.tatashin@soleen.com, souravpanda@google.com, keescook@chromium.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 17.07.2024 17:27, Artur Weber wrote:
-> To make development for both platforms easier, split out the common
-> nodes into a separate DTSI, bcm21664-common.dtsi. 
+On Wed, Jul 17, 2024 at 12:36=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> w=
+rote:
+>
+> On 7/17/24 8:12 PM, Suren Baghdasaryan wrote:
+> > Outline and export free_reserved_page() because modules use it and it
+> > in turn uses page_ext_{get|put} which should not be exported. The same
+> > result could be obtained by outlining {get|put}_page_tag_ref() but that
+> > would have higher performance impact as these functions are used in
+> > more performance critical paths.
+> >
+> > Fixes: dcfe378c81f7 ("lib: introduce support for page allocation taggin=
+g")
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202407080044.DWMC9N9I-lkp=
+@intel.com/
+> > Suggested-by: Christoph Hellwig <hch@infradead.org>
+> > Suggested-by: Vlastimil Babka <vbabka@suse.cz>
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+>
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+>
+> Are these two patches now stable@ material as 6.10 build is broken on ppc=
+64
+> with alloc taging enabled?
 
-My bad, forgot to update the cover letter; the common DTSI is called
-bcm2166x-common.dtsi now.
+I tested them with that specific configuration mentioned in the bug
+report and with several usual ones I use.
+Yeah, I guess from now on all such fixes should have
 
-Best regards
-Artur
+Cc: stable@vger.kernel.org # v6.10
+
+>
+> > ---
+> > Changes since v1 [1]
+> > - Outlined and exported free_reserved_page() in place of {get|put}_page=
+_tag_ref,
+> > per Vlastimil Babka
+> >
+> > [1] https://lore.kernel.org/all/20240717011631.2150066-2-surenb@google.=
+com/
+> >
+> >  include/linux/mm.h | 16 +---------------
+> >  mm/page_alloc.c    | 17 +++++++++++++++++
+> >  2 files changed, 18 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index eb7c96d24ac0..b58bad248eef 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -3177,21 +3177,7 @@ extern void reserve_bootmem_region(phys_addr_t s=
+tart,
+> >                                  phys_addr_t end, int nid);
+> >
+> >  /* Free the reserved page into the buddy system, so it gets managed. *=
+/
+> > -static inline void free_reserved_page(struct page *page)
+> > -{
+> > -     if (mem_alloc_profiling_enabled()) {
+> > -             union codetag_ref *ref =3D get_page_tag_ref(page);
+> > -
+> > -             if (ref) {
+> > -                     set_codetag_empty(ref);
+> > -                     put_page_tag_ref(ref);
+> > -             }
+> > -     }
+> > -     ClearPageReserved(page);
+> > -     init_page_count(page);
+> > -     __free_page(page);
+> > -     adjust_managed_page_count(page, 1);
+> > -}
+> > +void free_reserved_page(struct page *page);
+> >  #define free_highmem_page(page) free_reserved_page(page)
+> >
+> >  static inline void mark_page_reserved(struct page *page)
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index 9ecf99190ea2..7d2fa9f5e750 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -5805,6 +5805,23 @@ unsigned long free_reserved_area(void *start, vo=
+id *end, int poison, const char
+> >       return pages;
+> >  }
+> >
+> > +void free_reserved_page(struct page *page)
+> > +{
+> > +     if (mem_alloc_profiling_enabled()) {
+> > +             union codetag_ref *ref =3D get_page_tag_ref(page);
+> > +
+> > +             if (ref) {
+> > +                     set_codetag_empty(ref);
+> > +                     put_page_tag_ref(ref);
+> > +             }
+> > +     }
+> > +     ClearPageReserved(page);
+> > +     init_page_count(page);
+> > +     __free_page(page);
+> > +     adjust_managed_page_count(page, 1);
+> > +}
+> > +EXPORT_SYMBOL(free_reserved_page);
+> > +
+> >  static int page_alloc_cpu_dead(unsigned int cpu)
+> >  {
+> >       struct zone *zone;
+>
 
