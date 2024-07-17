@@ -1,123 +1,171 @@
-Return-Path: <linux-kernel+bounces-254931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16E993396B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:52:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42EE893396F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:55:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C5042835D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:52:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3141283540
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5374A43155;
-	Wed, 17 Jul 2024 08:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D033FB83;
+	Wed, 17 Jul 2024 08:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bF9hiSgl"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pK+fggm7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02AA53D3BF;
-	Wed, 17 Jul 2024 08:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47C23D38E
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 08:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721206336; cv=none; b=e5uAl3LSKCtc4GmYXkpILN0HoLXQW+1MFwMa1cQi2cCymjFoS/F9ahuGYv6GfrVusRXLO7UeBVbqIM544EGbi1rMEHr559k6eSf6HebJNBfgT2So65LOHnAB0oWgPTJ5tzw2eiyhXXyadiYdZSmRmmqDEVovhgvKulCQM0EVQRQ=
+	t=1721206520; cv=none; b=CZ7ddgBsG9Ta+RKOnR5F8kr+M2OhWeK8j9A/KgWNgKBKfsLlcWr2lIPytrvgmvmddBvJ+qqQ8P+JeIOl6vq2AJlMSLuhHrVLlHLETNrv88PA6uLkurmfncuRWcdBQFYqOPWDAaABOTwtySdiGa2hF6IZPVbZJwQOM6HHl1drT2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721206336; c=relaxed/simple;
-	bh=DhT2MVW6V/NGu+EkOUuOHwSOeb8p+64GEUOYF7DLdf4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oJEiPVbIAGqwKqKaVfDw/fpYH6Ix0dssZLhD/n6vjabvnDC8ZpTB20xmox03wbjO15Rt05n+ThIGgicvyjvuRsYlMEKgKDpWLtYhF4gGdK76Ho7rUmJCwjNJruFjsds3whc/zfp8Gd8sk4IVZAR/AO1uIRmtHXwkdBBV/tyJhq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bF9hiSgl; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-795d2aa4ba4so1267547a12.3;
-        Wed, 17 Jul 2024 01:52:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721206334; x=1721811134; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CfExU3AoDWpSz6bhW/C38P2ws0pP6aVCMH89wjyqRZc=;
-        b=bF9hiSglhNZ9SDWBpkXk+gvtz0Lq2L+CDcB5QKLTJl275oer1VWpmLAXrq0hkJII+S
-         1BbOQxGNTj1SJbSho4C9lPFytx7EHCyavFiDXGOfwZz2nMm0AGStDcMUAIuA1nUk+Fdf
-         1Jy94j2qob0Z79YFrpZyGHTSD+hj8voJ5EiWGqEe9wzlmVuEGkNm5wJZseL/4kIl5toJ
-         O+dQDiEmWCdrQBs6f/MAM1+aCh424UZvOBu2fo6vXom5TugqwYfWpglK9NSWgFGoVzyD
-         qsVgTvwWKduMMAyaUSyNwJ39l0z+d4SuwZRTSXgRiv7na132T/trix6XWZvu+NZrGYXs
-         cJsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721206334; x=1721811134;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CfExU3AoDWpSz6bhW/C38P2ws0pP6aVCMH89wjyqRZc=;
-        b=F3O3v4Risr+Z1J7+/qVSf5fQm4HiteemRO9yvY7+HNcHTmIfmcRPDnooOoiWlqpJC0
-         pCerhD67yn6hF+VL0nhbrYmHo7xnH0DDc+pcWSrGON5UMx3pOx6juLb/3Il9X3LMdon3
-         /m130i96IQwa5a42bc6J6d5Ul715SBEU7g3P7NZPZPZg2ig8qew3tc0/QbLm+uH+E02W
-         64UxlJ3MZuf2VBj0IIVtVnsfULIlgenahwEbyFDqaiPs8LpKLCqIHOJEZNkdkqP2Cj0S
-         iIw+wYFhSkm5qvozmniCV3vIIrT9JTGWVnC5/3IZn9R/NqgTDNXONiZ7iCR4QRh6p9Yg
-         8/Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCXu6q7byKpGTpyB6Na5LvyngE26l4HJ2MAgP9P5jyldlaCU/zHL1WhNJ+6bPHU6C2xW3FbpJzW02u16NhRk2Z/yefLjp8qSR6rZ4fRPkcN6w9hNnuIyhnO5mwsV4oHtz0r25Cf2m4Y6Bquz78Y=
-X-Gm-Message-State: AOJu0Yy+aa5i7wctkNAnesdePDMMM1nGojj9WO24U9IQKZDptF5PynI5
-	ortBZrpNwDrTEuS+cstbp8XSWQqlJaEWxwYlzB1bBOUWUJ5vKbqt5YlomHmtFd+0iDH4tex6dH0
-	1ioS7Qb1vmCgXor1Jl5RjCP6jClyHZTwS
-X-Google-Smtp-Source: AGHT+IFJycnzEM2+SeKpBRzOLBXMWZqQ4DXLGye2aBQccdmWkkaEhULFCP7ytIFJJWtNIiuEF0qy0nVMMoeoejupyJU=
-X-Received: by 2002:a05:6300:4041:b0:1c2:9969:60e3 with SMTP id
- adf61e73a8af0-1c3fdd545c4mr918165637.55.1721206334147; Wed, 17 Jul 2024
- 01:52:14 -0700 (PDT)
+	s=arc-20240116; t=1721206520; c=relaxed/simple;
+	bh=DHZSdFj12CNoCuzszmzk1V86rPvtnt1xB5Fb8oSp9OA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AKJ7C0skew4StyzbTZd3IjwM27NOxRWarXVNhw4aHQigDrWjsmU/vHl3tia4csm7bVo1RnyRMap06i109/IC2gH77c9//Nndm81J6G4dJO0UwGKPj5MfFRBxKFgQ7RBKRYdxnJUYsOdxqY3269aC/RVidyCzCt4K1FFD4TfqWhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pK+fggm7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C068C4AF09;
+	Wed, 17 Jul 2024 08:55:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721206519;
+	bh=DHZSdFj12CNoCuzszmzk1V86rPvtnt1xB5Fb8oSp9OA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pK+fggm7RCbX+rv3w9xGhY2LhgtENb6q3oqIU5XVw4tliZBtLUuTnPBN/CoPdoGqF
+	 fOaDZK/Wh/YvCA/UXLxZUww66bZq+nl9wculpRitIHnEirnxhXGUjV+0Raf3mqfxx+
+	 InYhHB8AOD7ionSDaWwlxXyVn3SGhu2D7WtTAz3hrOqzMfux4jyXD//5wcQ5LqpiOP
+	 kwXyDXijHb823bNlaY0mNT9ih6ij07uXa2M+C1FCO4UVYdUNQr0ADYZ+kscylUdDBW
+	 vwrCVzR18f9fJgSOQGcYYQ1ek4nrT0bhAHcMkU3Rda3OH7AF8QA+OyMNXrEeLI6DAI
+	 dAixryMtZdRzw==
+From: Conor Dooley <conor@kernel.org>
+To: linux-riscv@lists.infradead.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] RISC-V: hwprobe: sort EXT_KEY()s in hwprobe_isa_ext0() alphabetically
+Date: Wed, 17 Jul 2024 09:54:38 +0100
+Message-ID: <20240717-dedicate-squeamish-7e4ab54df58f@spud>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717034801.262343-1-alexmantel93@mailbox.org>
-In-Reply-To: <20240717034801.262343-1-alexmantel93@mailbox.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 17 Jul 2024 10:52:02 +0200
-Message-ID: <CANiq72mwTq4m-u0QO2tdF5Z8++xnepgtG_dALwq7ar5JOkwuVg@mail.gmail.com>
-Subject: Re: My first patch: Implement InPlaceInit for Arc
-To: alexmantel93@mailbox.org
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2674; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=6NJp1/sgFysXap5wH5veGRgn0KXcr6TsXGlfdh3O0z4=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGnT285Z1jQIrRT62hcml2eZ/f/zCt1M3oP1hy/w56WFO GoUmVt1lLIwiHEwyIopsiTe7muRWv/HZYdzz1uYOaxMIEMYuDgFYCJeyYwM92brNDZ1/7qgcPrs TP9pu76wl9kExC0XZf+d6hPf0WIRwvBXfMqEOfmyVyqmdq58OKu+9ur3O/GbD4jvrJt6z+iYX9U VbgA=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 17, 2024 at 5:48=E2=80=AFAM <alexmantel93@mailbox.org> wrote:
->
-> This is my very first patch for Linux. I have lifted my arms up, placed m=
-y hands on my head, and tensed my non-existent abs. Punch as hard as you ca=
-n! =F0=9F=99=82 I am happy to receive any feedback or critique, especially =
-regarding whether these are the correct mailing lists for the patch.
->
-> Over the past few weeks, I have read a lot of the kernel documentation. H=
-owever, if I missed any crucial parts, please just point me to the chapters=
- I need to read, particularly concerning the mailing list part.
+From: Conor Dooley <conor.dooley@microchip.com>
 
-They are the correct mailing lists :)
+Currently the entries appear to be in a random order (although according
+to Palmer he has tried to sort them by key value) which makes it harder
+to find entries in a growing list, and more likely to have conflicts as
+all patches are adding to the end of the list. Sort them alphabetically
+instead.
 
-A few notes and nits:
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+CC: Paul Walmsley <paul.walmsley@sifive.com>
+CC: Palmer Dabbelt <palmer@dabbelt.com>
+CC: linux-riscv@lists.infradead.org
+CC: linux-kernel@vger.kernel.org
+---
+ arch/riscv/kernel/sys_hwprobe.c | 43 ++++++++++++++++-----------------
+ 1 file changed, 21 insertions(+), 22 deletions(-)
 
-  - I think this email you sent is intended to be the cover letter of
-    the other patch. Typically, you would generate your cover letter with
-    `git format-patch`, which follows some conventions, and then fill it.
+diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwprobe.c
+index 685594769535..8a1c9ce170e8 100644
+--- a/arch/riscv/kernel/sys_hwprobe.c
++++ b/arch/riscv/kernel/sys_hwprobe.c
+@@ -93,44 +93,45 @@ static void hwprobe_isa_ext0(struct riscv_hwprobe *pair,
+ 		 * regardless of the kernel's configuration, as no other checks, besides
+ 		 * presence in the hart_isa bitmap, are made.
+ 		 */
++		EXT_KEY(ZACAS);
++		EXT_KEY(ZAWRS);
+ 		EXT_KEY(ZBA);
+ 		EXT_KEY(ZBB);
+-		EXT_KEY(ZBS);
+-		EXT_KEY(ZICBOZ);
+ 		EXT_KEY(ZBC);
+-
+ 		EXT_KEY(ZBKB);
+ 		EXT_KEY(ZBKC);
+ 		EXT_KEY(ZBKX);
++		EXT_KEY(ZBS);
++		EXT_KEY(ZCA);
++		EXT_KEY(ZCB);
++		EXT_KEY(ZCMOP);
++		EXT_KEY(ZICBOZ);
++		EXT_KEY(ZICOND);
++		EXT_KEY(ZIHINTNTL);
++		EXT_KEY(ZIHINTPAUSE);
++		EXT_KEY(ZIMOP);
+ 		EXT_KEY(ZKND);
+ 		EXT_KEY(ZKNE);
+ 		EXT_KEY(ZKNH);
+ 		EXT_KEY(ZKSED);
+ 		EXT_KEY(ZKSH);
+ 		EXT_KEY(ZKT);
+-		EXT_KEY(ZIHINTNTL);
+ 		EXT_KEY(ZTSO);
+-		EXT_KEY(ZACAS);
+-		EXT_KEY(ZICOND);
+-		EXT_KEY(ZIHINTPAUSE);
+-		EXT_KEY(ZIMOP);
+-		EXT_KEY(ZCA);
+-		EXT_KEY(ZCB);
+-		EXT_KEY(ZCMOP);
+-		EXT_KEY(ZAWRS);
+ 
+ 		/*
+ 		 * All the following extensions must depend on the kernel
+ 		 * support of V.
+ 		 */
+ 		if (has_vector()) {
+-			EXT_KEY(ZVE32X);
+-			EXT_KEY(ZVE32F);
+-			EXT_KEY(ZVE64X);
+-			EXT_KEY(ZVE64F);
+-			EXT_KEY(ZVE64D);
+ 			EXT_KEY(ZVBB);
+ 			EXT_KEY(ZVBC);
++			EXT_KEY(ZVE32F);
++			EXT_KEY(ZVE32X);
++			EXT_KEY(ZVE64D);
++			EXT_KEY(ZVE64F);
++			EXT_KEY(ZVE64X);
++			EXT_KEY(ZVFH);
++			EXT_KEY(ZVFHMIN);
+ 			EXT_KEY(ZVKB);
+ 			EXT_KEY(ZVKG);
+ 			EXT_KEY(ZVKNED);
+@@ -139,16 +140,14 @@ static void hwprobe_isa_ext0(struct riscv_hwprobe *pair,
+ 			EXT_KEY(ZVKSED);
+ 			EXT_KEY(ZVKSH);
+ 			EXT_KEY(ZVKT);
+-			EXT_KEY(ZVFH);
+-			EXT_KEY(ZVFHMIN);
+ 		}
+ 
+ 		if (has_fpu()) {
+-			EXT_KEY(ZFH);
+-			EXT_KEY(ZFHMIN);
+-			EXT_KEY(ZFA);
+ 			EXT_KEY(ZCD);
+ 			EXT_KEY(ZCF);
++			EXT_KEY(ZFA);
++			EXT_KEY(ZFH);
++			EXT_KEY(ZFHMIN);
+ 		}
+ #undef EXT_KEY
+ 	}
+-- 
+2.43.0
 
-    However, for a single patch, you can just put this text below the
-    `---` line (i.e. before the diffstat), and that will not get committed
-    into the repository.
-
-  - Your email's From does not have your name, which is why Git decided
-    to add From to the body.
-
-  - Commits are prefixed with the subsystem/area/... You can take a
-    look at other changes in the vicinity to get a feeling for what to
-    write.
-
-  - No need for an empty line between Link and Signed-off-by.
-
-I hope that helps, thanks for the patch, and welcome!
-
-Cheers,
-Miguel
 
