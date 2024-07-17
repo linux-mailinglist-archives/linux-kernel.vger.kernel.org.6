@@ -1,170 +1,376 @@
-Return-Path: <linux-kernel+bounces-255548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F17AB93421C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:17:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 301A393421E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:17:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AC02B22B14
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:17:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2B611F23F7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97073183083;
-	Wed, 17 Jul 2024 18:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C79183071;
+	Wed, 17 Jul 2024 18:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MR+XM/1O"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="szdAXjv5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20551E492
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 18:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A2E12E75;
+	Wed, 17 Jul 2024 18:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721240238; cv=none; b=tnNQpQSFS8ZblnsTtKvWGwKfdqY9j5TNy6p4MMPbuClENOK/7zu/HuFDsP6f6uuKb/qk0Zt+Z9ACrlx7diJdIfpmRhQj3xFTNhtyy2ioX/DLkN7Ee63pdhiyqbqYTb42zxnUOmTwAWWjlBdJ5Io2BuY6lv97IpsqA2rg1osCksw=
+	t=1721240248; cv=none; b=J24ugkzAc+KZOcR95AXl77FJQU6/H6Eo5O16twceWTGZQtiBnJ1W5dXD9GxWi40T8DEvML+s/+BzNvDJYiHJu2V8E3MpFh/O/F8Z8euIf07goJztzNo4y7ps87UvB0WXnzzlwnvJjGwmUIo3+0EdV0iPVOQi9WFzy0QrgVVV5QY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721240238; c=relaxed/simple;
-	bh=plI9VQ8PNkZ0Z7s2DW8Xc/jOMVJgY+/ameGpL8Yn5Yw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qWc19JPUVmdm8/EAbDkkkiYwFCmDZRZpWGif8pvjfjevGn4lfUOHMF6z9SjqMxXQkGVLIPH9IIf2HH+wEeHy0A4qMNg10ByOX9663p+ogfZ/kRs9qGe2LHppxjXjysZXUKwopbM1lsX8jnqa9H+I7nXjhFlJmnB7bWj4tJMTchw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MR+XM/1O; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52ea5dc3c79so10069085e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:17:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1721240235; x=1721845035; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bgdx7vvSTCDmReVymeTt0yzw+JJTtSiE4bn5RhejZQg=;
-        b=MR+XM/1OxMPaRC/1I3fZLBRPkdiifZdy8HXEgMF0KZlDuyDzsG+Hm82OVPXSO2oOwE
-         zqemZI686jTJWmV7FRMZ/lRPcWLmKOe9uALgD3XasSTluTc2OjuZMvW9jsztgZe+aMYg
-         gBFnSxeqi+i4TVGiDV79t+DWqiijHGi3HbOZg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721240235; x=1721845035;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bgdx7vvSTCDmReVymeTt0yzw+JJTtSiE4bn5RhejZQg=;
-        b=w8X2pQ4fqLT9LnO8VaczWvad0EY8SUHcIq+Fx1mdZuY400tTjwqeFvsCwPEBA8PxuW
-         VhK0zzlUTosFaP7v8192vO+RcbaTvYiKVs1OR16XbLpkQCGnBgJcRKm84pTk8KqXnZLb
-         hFsjsjD1cwnz27DN/ZcKM8ypj+RBSSz6N0U1m8A4ZdPzk5ZOXGiFQ10FVftIa8gSiO6k
-         R9YV7/aCdWEu/1rVUCCK0ynpWdJBagMU5qDUm0koVQ2xyEtd2ArRiHTgDTCrpATROtkm
-         UVhqSjlPQmK/NMXAmbrv0ab9O//qp25DK1WVmsT306+4ePvfJXwtyO+QPTvOoivUCrdT
-         wcCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJeJr99CMbQgERT543UkgbU0O+/z/z249kiVg0BmEyD5/VyLvvs5YfYn4FKraDxnRskRFk7i6x+t57UIEWJLgxXdggMBYQ7xJ+pkJG
-X-Gm-Message-State: AOJu0Yyo4/1ApBnzPKX4OLlkBCD70HKHDsMj6ESf81ITh753s/6Zbu08
-	xIAhpVA2ErdzO5kmhOyMtQ3QvaF72srJl3Q6s4IN5dIhNN39+Gq0SEUAturaExmHQ+dX9opROAv
-	Hm5PFYQ==
-X-Google-Smtp-Source: AGHT+IFr+6AaB4dDWBVqGW8rzGJ/ZbBfTRPj9OYdavJ9xAfq4dnAgHuHHqeqZLPnwH5iq3ZwaVi04A==
-X-Received: by 2002:a05:6512:682:b0:52c:deae:b8fa with SMTP id 2adb3069b0e04-52ee53a5949mr1941062e87.3.1721240234892;
-        Wed, 17 Jul 2024 11:17:14 -0700 (PDT)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ed24f387fsm1560401e87.73.2024.07.17.11.17.13
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 11:17:13 -0700 (PDT)
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2eec7e43229so47351fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:17:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWwoxO+K1g1UdVL3F/leP+q6ImY1YrqAavmgdoVX2zqR44MlpeshIDchBOzRotSR6CJYjVBrl+V9YMGYxAACQptJe0RBo9MpC2oMccs
-X-Received: by 2002:a2e:9b12:0:b0:2ee:7b7d:66ed with SMTP id
- 38308e7fff4ca-2ef05c52bbamr1815371fa.10.1721240232921; Wed, 17 Jul 2024
- 11:17:12 -0700 (PDT)
+	s=arc-20240116; t=1721240248; c=relaxed/simple;
+	bh=ZTFSFHVa74Qpc7Lg00HJshhlsORnGgG76Sgsi+XBF78=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AYZFYpX1RnzV+lVmBk3qyx7RkKEbvbs2TAjdnO6QXVvbL8rPivOrsO387HD/sI7vOaxwnPnzhjdrGuXLh1ecfBf8mWMH1qZ/CWCK6h/EqJ2QLbaWy4rHJvCHZGTSjtZ/Lv/BnZl7lfpcFGxq89vsPOLLOsk7visV1p/JFHl6NCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=szdAXjv5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5196C2BD10;
+	Wed, 17 Jul 2024 18:17:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721240247;
+	bh=ZTFSFHVa74Qpc7Lg00HJshhlsORnGgG76Sgsi+XBF78=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=szdAXjv5fi/i4DOHqlamwvDCUeeYqWNv2lr0erw8xN1ES+6O7+BY4Jy312QA9wC8M
+	 rS/cHl2Iankb2bEA3PoMV1pw3Y50rQx+xY3vShXy1MXMzf7HWWa/Jk7lRxo/kHUqu9
+	 YXJ4BZ5ib7alkGQOkAy3tJ8MM0RT7/XuFgn1RD9fzJw4W5LHZdyUjp46gxEqakDB6X
+	 1BO9QuSC/pBg6Jj/rZCAVyjp2dFQylOmfmbR3dqQ7AGoDS6Rg2Squrjfbi97ibdRYJ
+	 Yzb9aOt4wYitqBxXM5HW5VyDyfcmYu+i//yVTHnrFbGkBhX+NA9UhByxliqkMtAXLr
+	 YmiocExl4N7UA==
+Message-ID: <de05ebf2-2baa-493e-a6a8-acf43702824b@kernel.org>
+Date: Wed, 17 Jul 2024 20:17:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717111358.415712-1-adrian.ratiu@collabora.com> <202407171017.A0930117@keescook>
-In-Reply-To: <202407171017.A0930117@keescook>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 17 Jul 2024 11:16:56 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi3m98GCv-kXJqRvsjOa+DCFqQux7pcmJW9WR8_n=QPqg@mail.gmail.com>
-Message-ID: <CAHk-=wi3m98GCv-kXJqRvsjOa+DCFqQux7pcmJW9WR8_n=QPqg@mail.gmail.com>
-Subject: Re: [PATCH] proc: add config to block FOLL_FORCE in mem writes
-To: Kees Cook <kees@kernel.org>
-Cc: Adrian Ratiu <adrian.ratiu@collabora.com>, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, kernel@collabora.com, gbiv@google.com, 
-	inglorion@google.com, ajordanr@google.com, 
-	Doug Anderson <dianders@chromium.org>, Jeff Xu <jeffxu@google.com>, Jann Horn <jannh@google.com>, 
-	Christian Brauner <brauner@kernel.org>
-Content-Type: multipart/mixed; boundary="000000000000a8f0be061d757832"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V7 1/2] cgroup/rstat: Avoid thundering herd problem by
+ kswapd across NUMA nodes
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: tj@kernel.org, cgroups@vger.kernel.org, shakeel.butt@linux.dev,
+ hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com,
+ kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <172070450139.2992819.13210624094367257881.stgit@firesoul>
+ <CAJD7tkYFwz_=kxCk-Tp4QfwKgK0C26+QzZQvbVxkAx8m9CLSFg@mail.gmail.com>
+ <8c123882-a5c5-409a-938b-cb5aec9b9ab5@kernel.org>
+ <CAJD7tkbFPt-eTHkqtLxuOoV59eaqauodz008btEECT--x3VcBA@mail.gmail.com>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <CAJD7tkbFPt-eTHkqtLxuOoV59eaqauodz008btEECT--x3VcBA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---000000000000a8f0be061d757832
-Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 17 Jul 2024 at 10:23, Kees Cook <kees@kernel.org> wrote:
->
-> For this to be available for general distros, I still want to have a
-> bootparam to control this, otherwise this mitigation will never see much
-> testing as most kernel deployments don't build their own kernels. A
-> simple __ro_after_init variable can be used.
 
-Oh, btw, I looked at the FOLL_FORCE back in 2017 when we did this:
+On 17/07/2024 18.31, Yosry Ahmed wrote:
+> [..]
+>>
+>> I agree that description should be updated as patch have evolved, and
+>> you suggestions make sense, thanks.
+>>
+>> But I'm not sure we are finished evolving this patch, because the scheme
+>> of allowing all sub-cgroups to become the ongoing flusher (and only
+>> avoiding lock-spinning when cgroup_is_descendant), is causing issues in
+>> production.
+> 
+> Sure, I just wanted to point out the the commit log should be updated
+> going forward, not implying that we are done here :)
+> 
+>>
+>> We are using cadvisor in production for collecting metrics, which walks
+>> all the cgroups reading stat files e.g. io.stat, cpu.stat , memory.stat
+>> (doing 3 flushes of same cgroup in short timespan), but individual
+>> cgroups don't overlap much to benefit from ongoing_flusher scheme.
+>>
+>> Below is (1 sec) production data, where cadvisor and kswapd collide:
+>>
+>>   > 02:01:33 @ongoing_flusher_cnt[kworker/u395:14]: 1
+>>   > @ongoing_flusher_cnt[kswapd5]: 3
+>>   > @ongoing_flusher_cnt[kswapd7]: 4
+>>   > @ongoing_flusher_cnt[kswapd6]: 4
+>>   > @ongoing_flusher_cnt[kswapd8]: 4
+>>   > @ongoing_flusher_cnt[kswapd9]: 5
+>>   > @ongoing_flusher_cnt[kswapd2]: 5
+>>   > @ongoing_flusher_cnt[kswapd10]: 5
+>>   > @ongoing_flusher_cnt[kswapd3]: 5
+>>   > @ongoing_flusher_cnt[kswapd11]: 5
+>>   > @ongoing_flusher_cnt[kswapd0]: 5
+>>   > @ongoing_flusher_cnt[kswapd4]: 6
+>>   > @ongoing_flusher_cnt[kswapd1]: 7
+>>   > @ongoing_flusher_cnt[cadvisor]: 9
+>>
+>> For cadvisor ongoing_flusher only helps 9 times to avoid flush.
+>>
+>>   > @ongoing_flusher_cnt[handled_race]: 18
+>>   > @ongoing_flusher_cnt[all]: 61
+>>
+>> Our ongoing_flusher scheme detects overlap and avoid 61 out of 462 flushes.
+>>
+>>   > @cnt[tracepoint:cgroup:cgroup_ongoing_flusher_wait]: 61
+>>   > @cnt[kfunc:vmlinux:cgroup_rstat_flush_locked]: 462
+>>   > @cnt[tracepoint:cgroup:cgroup_rstat_lock_contended]: 9032
+>>
+>> This is bad: Lock is contended 9032 time within this 1 sec period.
+>> Below, lock_contended cases is captured in more detail.
+>>
+>>   > @cnt[tracepoint:cgroup:cgroup_rstat_locked]: 9435
+>>   > @lock_contended[normal, 4]: 1
+>>   > @lock_contended[normal, 1]: 2
+>>   > @lock_contended[normal, 3]: 6
+>>   > @lock_contended[normal, 2]: 15
+>>   > @lock_contended[yield, 4]: 49
+>>   > @lock_contended[after_obtaining_lock, 4]: 49
+>>   > @lock_contended[normal, 0]: 59
+>>
+>> The "normal" lock_contended for level 0,
+>> meaning the cgroup root is contended 59 times within this 1 sec period.
+>>
+>>   > @lock_contended[after_obtaining_lock, 1]: 117
+>>   > @lock_contended[yield, 1]: 118
+>>   > @lock_contended[yield, 3]: 258
+>>   > @lock_contended[after_obtaining_lock, 3]: 258
+>>   > @lock_contended[after_obtaining_lock, 2]: 946
+>>   > @lock_contended[yield, 2]: 946
+>>
+>> Lock contention for 'yielded' case for level 2.
+>> Goes crazy with 946/sec.
+>>
+>>   > @lock_contended[yield, 0]: 7579
+>>
+>> Lock contention for 'yielded' case for level 0, the root.
+>> Is really crazy with 7579/sec lock spin cases.
+>>
+>>   > @lock_contended[after_obtaining_lock, 0]: 7579
+>>
+>>
+>> IMHO this shows that, due to lock yielding, the scheme of
+>> ongoing_flusher for sub-trees only cause issues.
+> 
+> Just to make sure I understand correctly, allowing non-root to become
+> ongoing_flushers is problematic because we only support a single
+> ongoing_flusher, so if we have a subsequent root flush, it won't be
+> the ongoing_flusher and we won't benefit from skipping other flushes.
+> Correct?
+> 
 
-    8ee74a91ac30 ("proc: try to remove use of FOLL_FORCE entirely")
+Yes, basically... keep in mind, what will happen is that subsequent root
+flush will busy-wait/spin on getting lock, which in case of a yield from
+ongoing-flusher, will result in multiple flushers being active, despite
+our efforts to have a single ongoing-flusher.
 
-and then we had to undo that with
 
-    f511c0b17b08 (""Yes, people use FOLL_FORCE ;)"")
+> I honestly think the problem here is not that we support
+> ongoing_flusher for subtrees, which imo is nice to have at a low
+> additional cost, and does have its benefits (see below). I think the
+> problem is that lock yielding means that we can have multiple ongoing
+> flushers, while the current scheme only records one.
+> 
 
-but at the time I also had an experimental patch that worked for me,
-but I seem to have only sent that out in private to the people
-involved with the original issue.
+Yes, the yielding is causing multiple flushers to be active the same time.
 
-And then that whole discussion petered out, and nothing happened.
 
-But maybe we can try again.
+> What I think we should be doing is either supporting multiple
+> ongoing_flushers (by replacing the global variable with a per-cgroup
+> flag, perhaps), or biting the bullet and start using a mutex to drop
+> lock yielding. If there aren't any concerns beyond priority inversion
+> (raised by Shakeel), maybe adding a mutex_lock_timeout() variant as I
+> suggested could fix this issue (and also put a bound on the flushing
+> latency in general)?
+> 
 
-In particular, while people piped up about other uses (see the quotes
-in that commit f511c0b17b08) they were fairly rare and specialized.
+The mutex_lock_timeout is an interesting idea, but not a primitive we
+have available today, right?
 
-The one *common* use was gdb.
+p.s. I have 5 prod machines running with mutex change, and I've not
+gotten any SRE complaints.
 
-But my old diff from years ago mostly still applies, so I resurrected it.
 
-It basically restricts FOLL_FORCE to just ptracers.
+> (I suppose the latter is preferrable)
+> 
+>>
+>> IMHO we should go back to only doing ongoing_flusher for root-cgroup.
+>> There is really low chance of sub-trees flushes being concurrent enough
+>> to benefit from this, and it cause issues and needs (ugly) race handling.
+>>
+>> Further more sub-tree flushing doesn't take as long time as level 0
+>> flushing, which further lower the chance of concurrent flushes.
+> 
+> I agree that the race handling is not pretty, and we can try to
+> improve the implementation or handle the race in other ways. However,
+> I think that skipping flushes for subtrees is valuable. I am not sure
+> about the cgroup arrangement in your use case, but we do have cgroups
+> with a lot of tasks in them (and/or child cgroups). If there is memory
+> pressure (or hit the cgroup limit), they all may go into direct
+> reclaim concurrently, so skipping flushes could really be beneficial.
+> 
+> Of course, if the difference in complexity is not justified, we can go
+> back to only supporting root cgroups for ongoing_flusher for now. But
+> as I mentioned in the v4 email thread, some of the complexity may
+> still remain anyway as we have multiple root cgroups in v1.
+> 
 
-That's *not* good for some of the people that piped up back when (eg
-Julia JIT), but it might be a more palatable halfway state.
+Having an incremental step with "only supporting root cgroups for
+ongoing_flusher for now" is a good step forward IMHO.
+As you could see in grafana plot, this would be a significant production
+improvement on its own, as it avoids wasting CPU resources spinning on
+the lock.
 
-In particular, this patch would make it easy to make that
-SECURITY_PROC_MEM_RESTRICT_FOLL_FORCE config option be a "choice"
-where you pick "never, ptrace, always" by just changing the rules in
-proc_is_ptracing().
+Being able to have multiple root cgroups, due to in v1, does pose an
+implementation problem.  Only having a single root, would allow to have 
+a race-free cmpxchg scheme.
+Would it be reasonable to only support v2?
+If so, how can I match on this?
 
-I guess that function should be renamed too, I only did a minimal
-"forward-port an old patch" thing.
+>>
+>> Let's get some quick data on flush times from production, to support my
+>> claim:
+> 
+> Thanks for the data. I agree that in general root flushes will be a
+> lot more expensive than subtree flushes, but keep in mind that the
+> data may look really different depends on the cgroup setup. As I
+> mentioned, I think we should still support subtree flushes unless the
+> difference in complexity is not justified.
+> 
 
-               Linus
+It would be really valuable if you could provide production data on the 
+lock-hold times, just like I did with below bpftrace script...
+Is that possible, please?
 
---000000000000a8f0be061d757832
-Content-Type: text/x-patch; charset="US-ASCII"; name="foll_force.patch"
-Content-Disposition: attachment; filename="foll_force.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lyq5yyfz0>
-X-Attachment-Id: f_lyq5yyfz0
-
-IGZzL3Byb2MvYmFzZS5jIHwgMTYgKysrKysrKysrKysrKysrLQogMSBmaWxlIGNoYW5nZWQsIDE1
-IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9mcy9wcm9jL2Jhc2Uu
-YyBiL2ZzL3Byb2MvYmFzZS5jCmluZGV4IDcyYTFhY2QwMzY3NS4uMWI2NDZjYjk2NTA5IDEwMDY0
-NAotLS0gYS9mcy9wcm9jL2Jhc2UuYworKysgYi9mcy9wcm9jL2Jhc2UuYwpAQCAtODM1LDYgKzgz
-NSwxOCBAQCBzdGF0aWMgaW50IG1lbV9vcGVuKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBm
-aWxlICpmaWxlKQogCXJldHVybiByZXQ7CiB9CiAKK3N0YXRpYyBib29sIHByb2NfaXNfcHRyYWNp
-bmcoc3RydWN0IGZpbGUgKmZpbGUsIHN0cnVjdCBtbV9zdHJ1Y3QgKm1tKQoreworCWJvb2wgcHRy
-YWNlX2FjdGl2ZSA9IGZhbHNlOworCXN0cnVjdCB0YXNrX3N0cnVjdCAqdGFzayA9IGdldF9wcm9j
-X3Rhc2soZmlsZV9pbm9kZShmaWxlKSk7CisKKwlpZiAodGFzaykgeworCQlwdHJhY2VfYWN0aXZl
-ID0gdGFzay0+cHRyYWNlICYmIHRhc2stPm1tID09IG1tICYmIHRhc2stPnBhcmVudCA9PSBjdXJy
-ZW50OworCQlwdXRfdGFza19zdHJ1Y3QodGFzayk7CisJfQorCXJldHVybiBwdHJhY2VfYWN0aXZl
-OworfQorCiBzdGF0aWMgc3NpemVfdCBtZW1fcncoc3RydWN0IGZpbGUgKmZpbGUsIGNoYXIgX191
-c2VyICpidWYsCiAJCQlzaXplX3QgY291bnQsIGxvZmZfdCAqcHBvcywgaW50IHdyaXRlKQogewpA
-QCAtODU1LDcgKzg2Nyw5IEBAIHN0YXRpYyBzc2l6ZV90IG1lbV9ydyhzdHJ1Y3QgZmlsZSAqZmls
-ZSwgY2hhciBfX3VzZXIgKmJ1ZiwKIAlpZiAoIW1tZ2V0X25vdF96ZXJvKG1tKSkKIAkJZ290byBm
-cmVlOwogCi0JZmxhZ3MgPSBGT0xMX0ZPUkNFIHwgKHdyaXRlID8gRk9MTF9XUklURSA6IDApOwor
-CWZsYWdzID0gd3JpdGUgPyBGT0xMX1dSSVRFIDogMDsKKwlpZiAocHJvY19pc19wdHJhY2luZyhm
-aWxlLCBtbSkpCisJCWZsYWdzIHw9IEZPTExfRk9SQ0U7CiAKIAl3aGlsZSAoY291bnQgPiAwKSB7
-CiAJCXNpemVfdCB0aGlzX2xlbiA9IG1pbl90KHNpemVfdCwgY291bnQsIFBBR0VfU0laRSk7Cg==
---000000000000a8f0be061d757832--
+>>
+>> The bpftrace onliner:
+>>    sudo bpftrace -e '
+>>     tracepoint:cgroup:cgroup_rstat_locked {
+>>      if (args->cpu == -1) { @start[tid]=nsecs; }
+>>      @cnt[probe]=count();
+>>      if (args->contended) {
+>>        @lock_contended["after_obtaining_lock", args->level]=count();
+>>      }}
+>>     tracepoint:cgroup:cgroup_rstat_unlock {
+>>      if (args->cpu == -1) {
+>>       $now=nsecs; $start=@start[tid]; $diff=$now-$start;
+>>       @locked_time_level[args->level]=hist($diff);
+>>      }
+>>      @cnt[probe]=count()}
+>>     kfunc:cgroup_rstat_flush_locked {@cnt[probe]=count()}
+>>     interval:s:1 {time("%H:%M:%S ");
+>>      print(@cnt);
+>>      print(@lock_contended);
+>>      print(@locked_time_level);
+>>      clear (@cnt);
+>>      clear (@lock_contended); }
+>>     END {clear(@start)}'
+>>
+>> Time below is in nanosec.
+>>
+>> @locked_time_level[0]:
+>> [4M, 8M)             623 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+>>        |
+>> [8M, 16M)            860
+>> |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+>> [16M, 32M)           295 |@@@@@@@@@@@@@@@@@
+>>        |
+>> [32M, 64M)           275 |@@@@@@@@@@@@@@@@
+>>        |
+>>
+>>
+>> @locked_time_level[1]:
+>> [4K, 8K)               6 |@@@@
+>>        |
+>> [8K, 16K)             65
+>> |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+>> [16K, 32K)            52 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+>>        |
+>> [32K, 64K)            23 |@@@@@@@@@@@@@@@@@@
+>>        |
+>> [64K, 128K)           15 |@@@@@@@@@@@@
+>>        |
+>> [128K, 256K)          10 |@@@@@@@@
+>>        |
+>> [256K, 512K)           6 |@@@@
+>>        |
+>> [512K, 1M)            15 |@@@@@@@@@@@@
+>>        |
+>> [1M, 2M)               2 |@
+>>        |
+>> [2M, 4M)              14 |@@@@@@@@@@@
+>>        |
+>> [4M, 8M)               6 |@@@@
+>>        |
+>> [8M, 16M)              7 |@@@@@
+>>        |
+>> [16M, 32M)             1 |
+>>        |
+>>
+>>
+>> @locked_time_level[2]:
+>> [2K, 4K)               1 |
+>>        |
+>> [4K, 8K)             160 |@@@@@@@@@
+>>        |
+>> [8K, 16K)            733 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+>>        |
+>> [16K, 32K)           901
+>> |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+>> [32K, 64K)           191 |@@@@@@@@@@@
+>>        |
+>> [64K, 128K)          115 |@@@@@@
+>>        |
+>> [128K, 256K)          61 |@@@
+>>        |
+>> [256K, 512K)          70 |@@@@
+>>        |
+>> [512K, 1M)            59 |@@@
+>>        |
+>> [1M, 2M)              27 |@
+>>        |
+>> [2M, 4M)               9 |
+>>        |
+>>
+>>
+>> @locked_time_level[3]:
+>> [1K, 2K)               3 |
+>>        |
+>> [2K, 4K)               2 |
+>>        |
+>> [4K, 8K)               5 |
+>>        |
+>> [8K, 16K)            147 |@@@@@@
+>>        |
+>> [16K, 32K)          1222
+>> |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+>> [32K, 64K)           266 |@@@@@@@@@@@
+>>        |
+>> [64K, 128K)          199 |@@@@@@@@
+>>        |
+>> [128K, 256K)         146 |@@@@@@
+>>        |
+>> [256K, 512K)         124 |@@@@@
+>>        |
+>> [512K, 1M)            17 |
+>>        |
+>> [1M, 2M)               0 |
+>>        |
+>> [2M, 4M)               0 |
+>>        |
+>> [4M, 8M)               1 |
+>>        |
+>>
+>>
+>> @locked_time_level[4]:
+>> [4K, 8K)               2 |@@
+>>        |
+>> [8K, 16K)             17 |@@@@@@@@@@@@@@@@@@@@@@
+>>        |
+>> [16K, 32K)            40
+>> |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+>> [32K, 64K)             4 |@@@@@
+>>        |
+>>
+>> --Jesper
+>>
 
