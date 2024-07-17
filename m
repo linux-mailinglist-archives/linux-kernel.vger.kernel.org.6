@@ -1,132 +1,106 @@
-Return-Path: <linux-kernel+bounces-254996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3B35933A43
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:49:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EDBC933A4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:50:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 619642817CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:49:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0BCD1C2221A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE58917DE29;
-	Wed, 17 Jul 2024 09:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F49917E8EC;
+	Wed, 17 Jul 2024 09:49:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VSPdeGXt"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DbQVqDTp"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12B3178CC5
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 09:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2794A210EC;
+	Wed, 17 Jul 2024 09:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721209754; cv=none; b=FL0gXpXW12CVMg3V0J/oQpIKEHd5t0LVi/BPbGG9L63gZO+ThY5F7z3u5uP7iuvZ4GmgjLe9yBbaidmRZt6YywWx5Egh/P/81VfzZ9DVA9ih2c9A52GpjyEY3VQQX0tF6TakwyeB8+f/tr1ho5RYfRTTkdFt8Rf0LqK+j7NJMgo=
+	t=1721209784; cv=none; b=gfG3Cu8MUzQehtN9il3WgpKu1BjQ/SZa3bal/n4T+pvnLyzqqvzv6BNW4rtsmA4XfK0d+InVKTt05wiM4NVQ3cuTy+OusFbKwMR5wvN8X8ksrCQGWu+lDkz+99Wg+uIc/tApDHKS/YE2FJJc5K+Sv21KxpvVKc4B5hrEFO/Ord8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721209754; c=relaxed/simple;
-	bh=drdFYOrEjEZZrQPn6blYFIY9QhufSQCcwyTzafmSIHc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=elPYDlMDkINHX4DAY3OCvmOSHmcTr0GTtGks2iM8E1xJ0dkb/Ov4CxS+WAEcJQBcn3IzKOCaqZTaHCt3dDniwMizNQYqlFe5TtVzN3cDwxKonTJ1z/4D0u2Cz5cUebQIWpra/CRiXS2+Rn3eVi51iRVSnS0fbpkURGjwriQIecE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VSPdeGXt; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-65fc94099a6so38858397b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 02:49:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721209752; x=1721814552; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=LL2uY9ouT8695FraeZM3uIpWSuZKwhAInrpmi+yLgbM=;
-        b=VSPdeGXtUq3LDXlfUm7MAyQINhPS8/mPB4tkgq9Sv4NRPo6Q1p/K5Q4+KrkMMvlHgL
-         B9+JKZtAphoCYnkYbn4WC+46OOJG8Ud15V42lf5/XIoGPgcrV8tVICgKjp2V9nvgRLQK
-         uB2xVYELCSqie4GgOKH9h+GlTkRsvhvNjv+TPmskCIcu2x4GzGzQ6PZMqWGVBxtYYW7E
-         vt6zD9Rn9S8rubzWVxKLE4rEMCL1f1zL2hiTXDadGrpyAanpb/oxtVahwLcxruVEN9/s
-         hlqNs0RUro5gYOO0u7m1NiXDuAeOJihYT4C/xUQPNMZxWdRrwtTDGZZ2h8PoPClSarzq
-         7udQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721209752; x=1721814552;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LL2uY9ouT8695FraeZM3uIpWSuZKwhAInrpmi+yLgbM=;
-        b=FCVOgYJPxiZCWpw1DsqxnWvluWYjGye7oo9MoFDsR0DYVFaGUkHb7muK1nYqpXcIRn
-         nMmUGJwAg708NSJi8YeaDAL4MwnU7aNiZiuJkFlV/hzt2zpH+FQQ23mAHr4LQ3ZIWWWQ
-         XUk6K3u9dHC6soYw+OiecxMY+bkS+t6Kkq3IEUPveVxYHYRoXQE6K5OfubslyI2F1CBX
-         +IFCeDp4gR2YpuWIXIdsGceHe36G9iapmxBhYn3J1wKCyda6oGCCjKb5h4LGD0BcZniv
-         bFfTdcd+U/DJ1SI+IwANS9Sjg7jGd1UndaxNZXyt+N+n4864oMO6HFocaRQXotplfzwe
-         UWtg==
-X-Forwarded-Encrypted: i=1; AJvYcCUu9JvO++V+LqYrzgIn3VTVz5CVd9bI+UMjcAndf7s/HlsqxgLlVoN5xYfLPOJmGNyq3/RL7DUz8mcqCC57867uB874uHBneXBHcLnN
-X-Gm-Message-State: AOJu0Yywlta/SeZh0eE1Giz3WKJZqhDqjcixSfzuZ5z0utc9A1Fokl1V
-	5GruQjBiKYC70Xdmo7j/xA9WW5Pssa8q8+WJHxM1bHQPYdO9Gq+P+4z6cobyMQstLtQLOLHSZkN
-	Gn5w6EA+/7o+GPPWG8ai4UmB46uySO6yBtYefEQ==
-X-Google-Smtp-Source: AGHT+IHjmMFD6c3evR25tinvxOr2rkpD+ML4O2P6BsHhDsyGohpJopMXy1cyYtbnmZhlLNx7godvFt8mE4znoTGHtng=
-X-Received: by 2002:a81:77d5:0:b0:664:4b9c:3ec with SMTP id
- 00721157ae682-664fd78f3bamr16513537b3.10.1721209751656; Wed, 17 Jul 2024
- 02:49:11 -0700 (PDT)
+	s=arc-20240116; t=1721209784; c=relaxed/simple;
+	bh=M3SgeIYU3cLDNvzNl/r/KSBmjP/DUuhRZJB9w9wk5t4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fN6kByrXzkpC4TW3CyNQP0KBg+nypo406NUM0rbmhDT4qZAItfx7wb26AQgyfBYFRhM6PiZNcZZTPXk8ch0MAc5nd+6HcLSo+2z75+No36pXQ3FTK7xVunpOeePyfE8uCYDOytpYHJ8/C0L5DSgC2FooAU4rSgwEGfg4kO8iNgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DbQVqDTp; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8B1F540E01A2;
+	Wed, 17 Jul 2024 09:49:31 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id iazDfRnirfCM; Wed, 17 Jul 2024 09:49:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1721209766; bh=T8SnuMCaKdsLxP8ZJvjEI/aaWXRDOi4dmWKtPvrU7iI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DbQVqDTpoihRNOhUeWAVOW/lXkI5+q4UktIqInwF3tC/U7ibZYgnL9aEGRZvqzhz2
+	 1eMA4zcFkysAUQWTFtRHcBHzT7IREbXz8yX0JimEVnG0D5mFPO1A9wHnk0Gu3IyAWk
+	 jNzFp35W982Olau8fJpSBCm5sGfWTeoSgbR7G6tMnIWySi9Msr0KCHqAdLBK8ix1Zq
+	 SyHB6lIyO3ziV3k2FDQP72W+OI985DkzDHy3wthUnOlOApXMK/83w+KrJvtp4gG7Ta
+	 QDmSLgARJDnjktoAy7OOnQzfCQYlhjvA3mjEmSXuWGaNbh/vutV74qQ295HU2Qdwd/
+	 qBuD35M2nssNL8j1vznuRz/emOh9pxjehIkuPV+ATKbwn4w60FSTGqsexk3u+IuzH2
+	 RAamUkXcPExlRpO+/Go1ak0v+QimTFHTIVxCaVmFgVc4V4z2YnJljZ0TgolAHQoHG+
+	 6rXNVQeum7bI9c0EBXTuVAITmRLb52gO2qxjML5ZlbJaRgHHo2WQyluOPQu5ZglprG
+	 HFVy+8/GHAqO6ZBQK8+MWn+CVxm+kwJYOUAGCse79MPPN34x63iB+7JNxJaVTdC6wH
+	 t+yaHRzHAST/iL4x2VKu/mpjITRg9Lq+gBjEq1vZ9gVbvSgJHDYqxM9Q85wcYqGZE9
+	 /Wn7m46rcqcOwqUt7JWeNdm0=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 90BF240E01B3;
+	Wed, 17 Jul 2024 09:49:13 +0000 (UTC)
+Date: Wed, 17 Jul 2024 11:49:07 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Xiaojian Du <Xiaojian.Du@amd.com>
+Subject: Re: linux-next: manual merge of the tip tree with the pm tree
+Message-ID: <20240717094907.GAZpeTk403VSYORXOH@fat_crate.local>
+References: <20240702141555.3494c5a6@canb.auug.org.au>
+ <20240717114155.1a3d4c07@canb.auug.org.au>
+ <38ff1530e63a1659f35c3a0ff315b17b65f2dbd5.camel@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717-dispcc-sm8550-fixes-v1-0-efb4d927dc9a@linaro.org>
- <20240717-dispcc-sm8550-fixes-v1-1-efb4d927dc9a@linaro.org> <d60cd97b-a1da-4dbd-910d-92cd62762afd@linaro.org>
-In-Reply-To: <d60cd97b-a1da-4dbd-910d-92cd62762afd@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 17 Jul 2024 12:49:00 +0300
-Message-ID: <CAA8EJprvS-bM47BTmgtA=9NunW1Lpy-9dLdYmSy9RuL6JyQENw@mail.gmail.com>
-Subject: Re: [PATCH 1/7] clk: qcom: dispcc-sm8550: fix several supposed typos
-To: neil.armstrong@linaro.org
-Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <38ff1530e63a1659f35c3a0ff315b17b65f2dbd5.camel@linux.intel.com>
 
-On Wed, 17 Jul 2024 at 11:08, Neil Armstrong <neil.armstrong@linaro.org> wrote:
->
-> Hi,
->
-> On 16/07/2024 23:13, Dmitry Baryshkov wrote:
-> > Fix seveal odd-looking places in SM8550's dispcc driver:
-> >
-> > - duplicate entries in disp_cc_parent_map_4 and disp_cc_parent_map_5
-> > - using &disp_cc_mdss_dptx0_link_div_clk_src as a source for
-> >    disp_cc_mdss_dptx1_usb_router_link_intf_clk
-> >
-> > The SM8650 driver has been used as a reference.
-> >
-> > Fixes: 90114ca11476 ("clk: qcom: add SM8550 DISPCC driver")
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >   drivers/clk/qcom/dispcc-sm8550.c | 6 +++---
-> >   1 file changed, 3 insertions(+), 3 deletions(-)
-> >
+On Tue, Jul 16, 2024 at 07:33:12PM -0700, srinivas pandruvada wrote:
+> linux-next branch of linux-pm tree needs to be rebased to Linus's tree.
 
+Why?
 
-> > @@ -1146,7 +1146,7 @@ static struct clk_branch disp_cc_mdss_dptx1_usb_router_link_intf_clk = {
-> >               .hw.init = &(struct clk_init_data) {
-> >                       .name = "disp_cc_mdss_dptx1_usb_router_link_intf_clk",
-> >                       .parent_hws = (const struct clk_hw*[]) {
-> > -                             &disp_cc_mdss_dptx0_link_div_clk_src.clkr.hw,
-> > +                             &disp_cc_mdss_dptx1_link_div_clk_src.clkr.hw,
-> >                       },
-> >                       .num_parents = 1,
-> >                       .flags = CLK_SET_RATE_PARENT,
-> >
->
-> This one is NAK, I checked and on SM8550 the parent of disp_cc_mdss_dptx1_usb_router_link_intf_clk is really disp_cc_mdss_dptx0_link_div_clk_src
->
-> I checked on the SM8650 side, and disp_cc_mdss_dptx1_link_div_clk_src is the parent of disp_cc_mdss_dptx1_usb_router_link_intf_clk,
-> so it's different on both platforms.
+You resolve the merge conflict and show Linus the resolution when sending the
+pull request.
 
-Interesting. On sm8450 disp_cc_mdss_dptx1_usb_router_link_intf_clk is
-also sourced from disp_cc_mdss_dptx0_link_div_clk_src (at least
-judging from the driver file). I'll drop this chunk and update the
-clock from the sm8650 branch.
+Rebasing is a no-no.
 
 -- 
-With best wishes
-Dmitry
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
