@@ -1,91 +1,64 @@
-Return-Path: <linux-kernel+bounces-255409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64265934070
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:29:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA65F934071
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:30:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A435283C0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:29:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87F74B21686
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEA2181D07;
-	Wed, 17 Jul 2024 16:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4E6181D0C;
+	Wed, 17 Jul 2024 16:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a3+eLu9U"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZQw2Yf47"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8EF5181CE4;
-	Wed, 17 Jul 2024 16:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD085B05E;
+	Wed, 17 Jul 2024 16:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721233756; cv=none; b=ds8hfIczJLZ1hEQjEUc17w+WNi6Id3juZ8qDirIYCF7MT7fC1X/b+CVCnu4dizT4+ecfuOnspuvsJOTz9AvaD5J31ZKbqQ9c2wahwRUWJUxTW7YqH1zusWKmbY2UDM/jtug90ovHM4oQjn7+++8Km4RNPH4JoxbrHjvanmrCLtE=
+	t=1721233801; cv=none; b=N/zGOhsIilCJdP51hArvyvfqIMGodzXNcNoFKEoDYN/S21E1NQeXQcpS8aM8NgRQY746vZLvjO4XAMcT6wrZFXJYS1VGQdGknho2kNsCB5s8VfsO0LCN8enliwZIkn4SbjQCDPng2sred3sDdg3pMPsx9xDYNFGqeaP35veXLK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721233756; c=relaxed/simple;
-	bh=5/vFyYizuwP+jcx5JB7tkayCrYU7UvfJKjKsa4tu/gk=;
+	s=arc-20240116; t=1721233801; c=relaxed/simple;
+	bh=G4C7zJdDwQfHvRTHcH043Nse5RmNU65ddUTUDmBR80Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pv3JdpJ8MN7zMmIkTHdteywiSHQjw6OQtAx1BvujbMnQ4Rqq9xmKmb6W9wfPP2J7eVbkPCmBxdtAG525Ef8gHmQ2MrmcoGz4N+SCqQG3eYmcVzXHVYPK6rKWy41adYYHVcwaPMUkWevQYVQ9hnBzT4kQbl0tsd8IvIeYsMCCaB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a3+eLu9U; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-58b966b41fbso8507693a12.1;
-        Wed, 17 Jul 2024 09:29:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721233753; x=1721838553; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pnyhXHGX9J34to8BXWeIBkKgNznQFH+294/77VN85Ck=;
-        b=a3+eLu9UldsRRmjfwh+VHnvrdar4q5iNRGm+xul+MqtVQ/oGLQOfeBv3OGCmsbYkcu
-         8bfmve9jA39QSkz0gZ2J+uAuzI76jx/JSFIkUpiLSSqEc9Zfn88wcaI/nsE+FhkxElTu
-         uNtUPN3iX3enSoleJhDu5vLGWdMDs6Ttzg2n4ApDNvkzdopzmU/2/Z0bcfVD1vk6AI2J
-         5tLe/wMWCKqQcApjyBUgx+U4jjTqbLKEIQtN0UjeNUp0Dnk2/2//2XHaGX9E5XTK1h8E
-         MitiFu5HIOFK6CUS4LEs0vzxFDKBXhWJq0S02r2kdyKHgn97xsb0z4KZEmAquHrkPVFz
-         dcjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721233753; x=1721838553;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pnyhXHGX9J34to8BXWeIBkKgNznQFH+294/77VN85Ck=;
-        b=t1DGYPxEzR5T34q7iceDqxvCtAde6USm89Syr/JKxy5oKDb7QTP+dcmPLlGc/uD6OZ
-         Xu2tqi3GKK6/bdP2I/AFYUepQjwXdaMl8S7xm3jpKkxc/S7emVI3h8eoEvf2hUOOxtjH
-         TYWqPUJWXVJslXO/zJlf9Mg+H21MlHJw7uuq8SNwfaoc6SnCsDjbjWALr8ZykvQmzdmN
-         7YJ+HWjm470ufpDBprrAJc8/j2FqI5MQnBbwOf29qXvytzD7pII1b0CZDLGt1mLG9P72
-         fAuejyAIVLWY2jC6F328rIBDc0Kg9voDmUBgRN8y9bMTRfvfZiyH9PPllLATriYt9tbW
-         ahNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFwNNq88FAq3baofCi8P5ncCSKvZ8EiG29FVbpwS6uIw16kV2G7uKAxlCXb9Pl1Sev3Ns4gBDP1iYj0mSRhbVp4UT1iQw3OCwb8i/1Zumi0UaWZNB27ViIPVA8e8gQCPQw7Lz7nNg/ZuyIpeWt9t5t3exd+otCpUMtL1/SqBbRSnxAwg==
-X-Gm-Message-State: AOJu0YzqwrbyryovsimVDUeD8j6ge945gYNdEsS2+x/1RqCXuZrJLZ1J
-	2puLAMDEoFHWGNDxocUxOcORuFMCOUvqychqB5L5L4vqUi9neaSp
-X-Google-Smtp-Source: AGHT+IEiGOScEB11q2BazGjrBsyNU9lXDX/xWG9npgJidiQaGTVMjkHKOuzXX42R4QAigL+Etd3Dew==
-X-Received: by 2002:a50:d593:0:b0:58c:6edf:d5d2 with SMTP id 4fb4d7f45d1cf-5a05bad527fmr1578661a12.15.1721233752500;
-        Wed, 17 Jul 2024 09:29:12 -0700 (PDT)
-Received: from andrea ([84.242.162.60])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b255253absm7201108a12.42.2024.07.17.09.29.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 09:29:10 -0700 (PDT)
-Date: Wed, 17 Jul 2024 18:29:06 +0200
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
-	Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-arch@vger.kernel.org
-Subject: Re: [PATCH v3 11/11] riscv: Add qspinlock support
-Message-ID: <ZpfxUvIx+0ClOqCc@andrea>
-References: <20240717061957.140712-1-alexghiti@rivosinc.com>
- <20240717061957.140712-12-alexghiti@rivosinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NTVmq0blziRLLIraWACh/ppS6JWM878Li7ZUQc4XwyA4R3mZh6YKVJz8yZqvl43/2blNIozJk567gUAcMl0tjsQe50OhTqQoNjhAwBTlcSzwFVhjp1jnuQ4UsynRMz3qJLKkfC9cq+OytKGnwFG8tAL/faQ4W8itiKrQVM0oyqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZQw2Yf47; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=w8eQajHoKAwFnMWecxFYJF8m0SV9pIZvxXPgSFXMqWU=; b=ZQw2Yf47jXRMk6yvzw8zZ4LJO7
+	jZre9UUzYVRzuhbYpsztSnPdahd+w5SFL6eXMpwaZ3fAaa2xv0He9c/36/GIoPsvx05FNQTyh14hh
+	9U1mlNlKbc8kmcLPDo8RqQvxLHguwNNzydvZewJt5dUnAKhH8/p3W0Tj9yLaDQ0cmx/D+9WW8pZG2
+	sJxHV7ye7U6gKwIfYzBn3v6fEG+M4mk2X90V0bW9TAnXmGYHyyyv5TlBYxLi9z6ciiUML0lFoHLoN
+	w5a0k0PmVwJuXsQltfvzjDPuo0i4KYzzI6ErCeDDPTVjlNPTN8IboLYS2vXv9ipzaWZ6hSzOpC76V
+	9ztYO88w==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sU7XQ-00000002MSz-3eHO;
+	Wed, 17 Jul 2024 16:29:57 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7EEBA300362; Wed, 17 Jul 2024 18:29:56 +0200 (CEST)
+Date: Wed, 17 Jul 2024 18:29:56 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Zhenyu Wang <zhenyuw@linux.intel.com>
+Cc: kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, x86@kernel.org,
+	Rui Zhang <rui.zhang@intel.com>,
+	Artem Bityutskiy <artem.bityutskiy@intel.com>,
+	Wendy Wang <wendy.wang@intel.com>
+Subject: Re: [PATCH tip rebase] perf/x86/intel/cstate: Add pkg C2 residency
+ counter for Sierra Forest
+Message-ID: <20240717162956.GI26750@noisy.programming.kicks-ass.net>
+References: <20240612080835.306254-1-zhenyuw@linux.intel.com>
+ <20240717031609.74513-1-zhenyuw@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,138 +67,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240717061957.140712-12-alexghiti@rivosinc.com>
+In-Reply-To: <20240717031609.74513-1-zhenyuw@linux.intel.com>
 
-> +config RISCV_QUEUED_SPINLOCKS
+On Wed, Jul 17, 2024 at 11:16:09AM +0800, Zhenyu Wang wrote:
+> Package C2 residency counter is also available on Sierra Forest.
+> So add it support in srf_cstates.
+> 
+> Cc: Rui Zhang <rui.zhang@intel.com>
+> Cc: Artem Bityutskiy <artem.bityutskiy@intel.com>
+> Cc: Wendy Wang <wendy.wang@intel.com>
+> Tested-by: Wendy Wang <wendy.wang@intel.com>
+> Fixes: 3877d55a0db2 ("perf/x86/intel/cstate: Add Sierra Forest support")
+> Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+> ---
+> 
+> Hi, Peter
+> 
+> This refresh resolved conflicts in comment against current tip tree.
+> Please help to apply.
 
-I'm seeing the following warnings with CONFIG_RISCV_QUEUED_SPINLOCKS=y:
+Ok, I have it now. I'll try and stick it into perf/urgent once -rc1
+rolls around.
 
-In file included from ./arch/riscv/include/generated/asm/qspinlock.h:1,
-                 from kernel/locking/qspinlock.c:24:
-./include/asm-generic/qspinlock.h:144:9: warning: "arch_spin_is_locked" redefined
-  144 | #define arch_spin_is_locked(l)          queued_spin_is_locked(l)
-      |         ^~~~~~~~~~~~~~~~~~~
-In file included from ./arch/riscv/include/generated/asm/ticket_spinlock.h:1,
-                 from ./arch/riscv/include/asm/spinlock.h:33,
-                 from ./include/linux/spinlock.h:95,
-                 from ./include/linux/sched.h:2142,
-                 from ./include/linux/percpu.h:13,
-                 from kernel/locking/qspinlock.c:19:
-./include/asm-generic/ticket_spinlock.h:97:9: note: this is the location of the previous definition
-   97 | #define arch_spin_is_locked(l)          ticket_spin_is_locked(l)
-      |         ^~~~~~~~~~~~~~~~~~~
-./include/asm-generic/qspinlock.h:145:9: warning: "arch_spin_is_contended" redefined
-  145 | #define arch_spin_is_contended(l)       queued_spin_is_contended(l)
-      |         ^~~~~~~~~~~~~~~~~~~~~~
-./include/asm-generic/ticket_spinlock.h:98:9: note: this is the location of the previous definition
-   98 | #define arch_spin_is_contended(l)       ticket_spin_is_contended(l)
-      |         ^~~~~~~~~~~~~~~~~~~~~~
-./include/asm-generic/qspinlock.h:146:9: warning: "arch_spin_value_unlocked" redefined
-  146 | #define arch_spin_value_unlocked(l)     queued_spin_value_unlocked(l)
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~
-./include/asm-generic/ticket_spinlock.h:99:9: note: this is the location of the previous definition
-   99 | #define arch_spin_value_unlocked(l)     ticket_spin_value_unlocked(l)
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~
-./include/asm-generic/qspinlock.h:147:9: warning: "arch_spin_lock" redefined
-  147 | #define arch_spin_lock(l)               queued_spin_lock(l)
-      |         ^~~~~~~~~~~~~~
-./include/asm-generic/ticket_spinlock.h:100:9: note: this is the location of the previous definition
-  100 | #define arch_spin_lock(l)               ticket_spin_lock(l)
-      |         ^~~~~~~~~~~~~~
-./include/asm-generic/qspinlock.h:148:9: warning: "arch_spin_trylock" redefined
-  148 | #define arch_spin_trylock(l)            queued_spin_trylock(l)
-      |         ^~~~~~~~~~~~~~~~~
-./include/asm-generic/ticket_spinlock.h:101:9: note: this is the location of the previous definition
-  101 | #define arch_spin_trylock(l)            ticket_spin_trylock(l)
-      |         ^~~~~~~~~~~~~~~~~
-./include/asm-generic/qspinlock.h:149:9: warning: "arch_spin_unlock" redefined
-  149 | #define arch_spin_unlock(l)             queued_spin_unlock(l)
-      |         ^~~~~~~~~~~~~~~~
-./include/asm-generic/ticket_spinlock.h:102:9: note: this is the location of the previous definition
-  102 | #define arch_spin_unlock(l)             ticket_spin_unlock(l)
-
-
-The following diff resolves them for me (please double check):
-
-diff --git a/arch/riscv/include/asm/spinlock.h b/arch/riscv/include/asm/spinlock.h
-index 4856d50006f28..2d59f56a9e2d1 100644
---- a/arch/riscv/include/asm/spinlock.h
-+++ b/arch/riscv/include/asm/spinlock.h
-@@ -30,7 +30,11 @@ SPINLOCK_BASE_DECLARE(value_unlocked, int, arch_spinlock_t)
- 
- #else
- 
-+#if defined(CONFIG_RISCV_TICKET_SPINLOCKS)
- #include <asm/ticket_spinlock.h>
-+#elif defined(CONFIG_RISCV_QUEUED_SPINLOCKS)
-+#include <asm/qspinlock.h>
-+#endif
- 
- #endif
-
-
-> +DEFINE_STATIC_KEY_TRUE(qspinlock_key);
-> +EXPORT_SYMBOL(qspinlock_key);
-> +
-> +static void __init riscv_spinlock_init(void)
-> +{
-> +	char *using_ext;
-> +
-> +	if (IS_ENABLED(CONFIG_RISCV_ISA_ZACAS) &&
-> +	    IS_ENABLED(CONFIG_RISCV_ISA_ZABHA)) {
-> +		using_ext = "using Zabha";
-> +
-> +		asm goto(ALTERNATIVE("j %[no_zacas]", "nop", 0, RISCV_ISA_EXT_ZACAS, 1)
-> +			 : : : : no_zacas);
-> +		asm goto(ALTERNATIVE("nop", "j %[qspinlock]", 0, RISCV_ISA_EXT_ZABHA, 1)
-> +			 : : : : qspinlock);
-> +	}
-> +
-> +no_zacas:
-> +	using_ext = "using Ziccrse";
-> +	asm goto(ALTERNATIVE("nop", "j %[qspinlock]", 0,
-> +			     RISCV_ISA_EXT_ZICCRSE, 1)
-> +		 : : : : qspinlock);
-> +
-> +	static_branch_disable(&qspinlock_key);
-> +	pr_info("Ticket spinlock: enabled\n");
-> +
-> +	return;
-> +
-> +qspinlock:
-> +	pr_info("Queued spinlock %s: enabled\n", using_ext);
-> +}
-> +
-
-Your commit message suggests that riscv_spinlock_init() doesn't need to
-do anything if CONFIG_RISCV_COMBO_SPINLOCKS=n:
-
-diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
-index d7c31c9b8ead2..b2be1b0b700d2 100644
---- a/arch/riscv/kernel/setup.c
-+++ b/arch/riscv/kernel/setup.c
-@@ -244,6 +244,7 @@ static void __init parse_dtb(void)
- #endif
- }
- 
-+#if defined(CONFIG_RISCV_COMBO_SPINLOCKS)
- DEFINE_STATIC_KEY_TRUE(qspinlock_key);
- EXPORT_SYMBOL(qspinlock_key);
- 
-@@ -275,6 +276,11 @@ static void __init riscv_spinlock_init(void)
- qspinlock:
- 	pr_info("Queued spinlock %s: enabled\n", using_ext);
- }
-+#else
-+static void __init riscv_spinlock_init(void)
-+{
-+}
-+#endif
- 
- extern void __init init_rt_signal_env(void);
-
-
-Makes sense?  What am I missing?
-
-  Andrea
+> 
+>  arch/x86/events/intel/cstate.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
+> index be58cfb012dd..9f116dfc4728 100644
+> --- a/arch/x86/events/intel/cstate.c
+> +++ b/arch/x86/events/intel/cstate.c
+> @@ -64,7 +64,7 @@
+>   *			       perf code: 0x00
+>   *			       Available model: SNB,IVB,HSW,BDW,SKL,KNL,GLM,CNL,
+>   *						KBL,CML,ICL,ICX,TGL,TNT,RKL,ADL,
+> - *						RPL,SPR,MTL,ARL,LNL
+> + *						RPL,SPR,MTL,ARL,LNL,SRF
+>   *			       Scope: Package (physical package)
+>   *	MSR_PKG_C3_RESIDENCY:  Package C3 Residency Counter.
+>   *			       perf code: 0x01
+> @@ -693,7 +693,8 @@ static const struct cstate_model srf_cstates __initconst = {
+>  	.core_events		= BIT(PERF_CSTATE_CORE_C1_RES) |
+>  				  BIT(PERF_CSTATE_CORE_C6_RES),
+>  
+> -	.pkg_events		= BIT(PERF_CSTATE_PKG_C6_RES),
+> +	.pkg_events		= BIT(PERF_CSTATE_PKG_C2_RES) |
+> +				  BIT(PERF_CSTATE_PKG_C6_RES),
+>  
+>  	.module_events		= BIT(PERF_CSTATE_MODULE_C6_RES),
+>  };
+> -- 
+> 2.45.2
+> 
 
