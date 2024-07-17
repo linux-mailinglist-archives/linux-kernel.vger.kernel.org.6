@@ -1,149 +1,130 @@
-Return-Path: <linux-kernel+bounces-254627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEEBD93359A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 05:15:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3D58933593
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 05:06:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BAE5B22A9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 03:15:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A98FD1C22805
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 03:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433E6DDC7;
-	Wed, 17 Jul 2024 03:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F28C7470;
+	Wed, 17 Jul 2024 03:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="m3KqP9U7"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c7Zo21CV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BDE6FC7;
-	Wed, 17 Jul 2024 03:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9693FC2;
+	Wed, 17 Jul 2024 03:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721186122; cv=none; b=QfYmq6XCPGrvAD6eGbNmIGMIHBYFsSCkcj0+DtMJD+uT61uSltn+HRLY6tzePhlWbuCjYrS75cV7UVpqwzw1/Axlys5KCHfB0HMiUxm3LAr9Rk3lt5hUdRFdQACvwGnv9N4o+YLS9agMb6QQ4C14j9qQhtsJShF0V+u4KZZaGiU=
+	t=1721185555; cv=none; b=n0hmbUYXXVjqx1DftvYpccmea+K3cYulT2L9xsZnzOYmoz/qpovImcT6CSybU6glsYlZUloGRanvBH+4neH8SPBCLXn+6lh4TGcpwlbFy/fG0W50GXkWe/ikwBSJelB7U64tNlw++9FNSKTWKXj1iMaRJZQlPGH0RmMz24yd6+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721186122; c=relaxed/simple;
-	bh=0XXAFXG/mhKhZLx8Pv4AZgz7Len+bOQYJP+Is+WaBVY=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=b69sdfF8bFgKp3oYb5jBFscQKHkKizzoU4it1XNIYePZ5sdVN2o5XR9azfR9QjZBF1miaNEkrZRjaZCfMyWWNPHbR0HMxBrBEl565SFAuRr/lzj63Vt2/Xs6f5XW11GVwlSBgaODpy21YDE1RNymongPj2aaah3KcdkxKDY0nn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=m3KqP9U7; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1721185555; c=relaxed/simple;
+	bh=9NoW33mh+d8YaC8dEoxI4Vym0hFzmHwnGm1KaKrF700=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kGYe+tW0uk1nod/4urtcOTUjQ78kmfTHKzfCY9ROz9M8oaHttL/JYvxtJ7Avvbz/ybstcnWGO/92NkOQ8KWmYC1wzF32CCm/kC9zUPtPGDkZIabg9RSoMQiIzkhMa8/RNOVzHoalYzHguxSmfm1R6NbeYPrBTZeTJ6mlc7Fz6uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c7Zo21CV; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721185552; x=1752721552;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=9NoW33mh+d8YaC8dEoxI4Vym0hFzmHwnGm1KaKrF700=;
+  b=c7Zo21CVxyhPPNOfhIAxQ8RZOS6KGVQhtfelaYs9O32uY/sJZ6nNjfko
+   Sk/dzqmpTwQmaXB7Zgp5dMyVSZGs4PREn5lJXiHWTeJMWgyu4ozXjsm0B
+   Kc8k24SuDwG008ifoNUSplaKXsTkbLtr4I5kPM52KZiEkKuHMPKccmXg/
+   Jxe8wZbtrd8L0v+8oJKZj9Y4Y2huLuC5uD/RXb1LaKRLFH+oY/C66xG+b
+   EVgViBECeJJWDWfgkFxlWyPAlZ4kNJdRvl33vEmdG41CQGCv7+vttgGLL
+   fiQLGRahoDhgNQcGw+XcEz5dYY1ZfkxmjhrbHAYie71APZ82+Cgo6k/ED
+   w==;
+X-CSE-ConnectionGUID: QojCVdjjRHKsccbaEw0cbQ==
+X-CSE-MsgGUID: lspDJ41PT5mW1Npm8wcdQg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11135"; a="18799487"
+X-IronPort-AV: E=Sophos;i="6.09,213,1716274800"; 
+   d="scan'208";a="18799487"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 20:05:51 -0700
+X-CSE-ConnectionGUID: aFLDhRiAT52TgN5JrHPEaQ==
+X-CSE-MsgGUID: I09aUZLrTsCRcks5sjldHA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,213,1716274800"; 
+   d="scan'208";a="81279698"
+Received: from zwan2-desk1.sh.intel.com ([10.239.160.154])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 20:05:51 -0700
+From: Zhenyu Wang <zhenyuw@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: kan.liang@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	x86@kernel.org,
+	Rui Zhang <rui.zhang@intel.com>,
+	Artem Bityutskiy <artem.bityutskiy@intel.com>,
+	Wendy Wang <wendy.wang@intel.com>
+Subject: [PATCH tip rebase] perf/x86/intel/cstate: Add pkg C2 residency counter for Sierra Forest
+Date: Wed, 17 Jul 2024 11:16:09 +0800
+Message-ID: <20240717031609.74513-1-zhenyuw@linux.intel.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240612080835.306254-1-zhenyuw@linux.intel.com>
+References: <20240612080835.306254-1-zhenyuw@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1721186116;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wx9wftMefKQGgxd4tgye4KZ94L9HNLNj4qERF5WWHdU=;
-	b=m3KqP9U7ME7JQrwhR69D0rTanEjTBHOGgHUQNTwM+bth7qXiLW2WNT2fjKncXPMKnuYUk9
-	bkMpRl4db/D8PL/PRoAv4Jqhr/t3E3cgBAeMBFgOpVf+rr1PwGN9cV59G1LSvPUBEYVoNK
-	d/05KWxnJzVl4YQb3ftPjF99qSBtrnaTR0jUWzY3Iy+ZW1Q4UajL3qKGQ/KG+MSLW9QGvV
-	W0ITpQfA2ujelg9r2MfhfWoC5TAVsYgYlcQ8pC/OaY0Nlq7q8ThqiCW55hLegIkcEkDQQH
-	JW/LSu6xHcoEaWam2yHKNjyQ+650b7qgl5j0OqiX+s4BGRUCkhQNzwzR+nkcLg==
-Date: Wed, 17 Jul 2024 05:14:22 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Diederik de Haas <didi.debian@cknow.org>, Chen-Yu Tsai
- <wens@kernel.org>, linux-rockchip@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, Herbert Xu
- <herbert@gondor.apana.org.au>, Martin Kaiser <martin@kaiser.cx>, Sascha
- Hauer <s.hauer@pengutronix.de>, Sebastian Reichel
- <sebastian.reichel@collabora.com>, Ard Biesheuvel <ardb@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@debian.org>,
- devicetree@vger.kernel.org, linux-crypto@vger.kernel.org, Philipp Zabel
- <p.zabel@pengutronix.de>, Olivia Mackall <olivia@selenic.com>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Aurelien Jarno <aurelien@aurel32.net>, Heiko
- Stuebner <heiko@sntech.de>, Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH v7 0/3] hwrng: add hwrng support for Rockchip RK3568
-In-Reply-To: <ZpcrdwZBNFu-YlZt@makrotopia.org>
-References: <cover.1720969799.git.daniel@makrotopia.org>
- <CAGb2v67zxs03xScN8OfWXR1gf8tddJciXrjw3FQZcL7pR3ocxA@mail.gmail.com>
- <3190961.CRkYR5qTbq@bagend> <3220752.Q7WYUMVHaa@bagend>
- <ZpcrdwZBNFu-YlZt@makrotopia.org>
-Message-ID: <ff7e706b7d4f7924c8a3e0d9c6418d4e@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Transfer-Encoding: 8bit
 
-Hello Daniel,
+Package C2 residency counter is also available on Sierra Forest.
+So add it support in srf_cstates.
 
-On 2024-07-17 04:24, Daniel Golle wrote:
-> On Tue, Jul 16, 2024 at 07:19:35PM +0200, Diederik de Haas wrote:
->> On Tuesday, 16 July 2024 18:53:43 CEST Diederik de Haas wrote:
->> > rngtest: FIPS 140-2(2001-10-10) Long run: 0
->> 
->> I don't know if it means something, but I noticed that I have
->> ``Long run: 0`` with all my poor results,
->> while Chen-Yu had ``Long run: 1``.
->> 
->> Different SoC (RK3399), but Anand had ``Long run: 0`` too on their
->> very poor result (100% failure):
->> https://lore.kernel.org/linux-rockchip/CANAwSgTTzZOwBaR9zjJ5VMpxm5BydtW6rB2S7jg+dnoX8hAoWg@mail.gmail.com/
-> 
-> The conclusions I draw from that rather ugly situation are:
->  - The hwrng should not be enabled by default, but it should by done
->    for each board on which it is known to work well.
->  - RK_RNG_SAMPLE_CNT as well as the assumed rng quality should be
->    defined in DT for each board:
->    * introduce new 'rochchip,rng-sample-count' property
->    * read 'quality' property already used for timeriomem_rng
-> 
-> I will prepare a follow-up patch taking those conclusions into account.
+Cc: Rui Zhang <rui.zhang@intel.com>
+Cc: Artem Bityutskiy <artem.bityutskiy@intel.com>
+Cc: Wendy Wang <wendy.wang@intel.com>
+Tested-by: Wendy Wang <wendy.wang@intel.com>
+Fixes: 3877d55a0db2 ("perf/x86/intel/cstate: Add Sierra Forest support")
+Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+---
 
-Please note that Chen-Yu ran the tests on a board based on the RK3568,
-while Diederik ran the tests on boards based on the RK3566.  The 
-observed
-difference in the test results suggests that something differs betwen
-these two SoC variants, instead of having the actual boards contributing
-something to the whole thing.
+Hi, Peter
 
-In other words, I think that enabling the HWRNG on per-board basis isn't
-the right thing to do, but it should be enabled on per-SoC basis, after
-enough testing is performed on the particular SoC.  The same applies to
-defining any HWRNG properties in the DT.
+This refresh resolved conflicts in comment against current tip tree.
+Please help to apply.
 
-If we really had to enable the HWRNG on per-board basis, that would mean
-that some issues exist for certain SoC batches, affecting some boards.
-AFAIK, the actual board design can't affect the operation of the HWRNG,
-so any HWRNG issues associated with some boards can have their SoCs as
-the only root cause.  Consequently, if any board experiences issues,
-we should discard its SoC as having unreliable HWRNG, because another
-sample of the same board, or a sample of some other board based on the
-same SoC, may or may not experience the same issues.
+Thanks!
 
-I hope all this makes sense.
+ arch/x86/events/intel/cstate.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-> Just for completeness, here my test result on the NanoPi R5C:
-> root@OpenWrt:~# cat /dev/hwrng | rngtest -c 1000
-> rngtest 6.15
-> Copyright (c) 2004 by Henrique de Moraes Holschuh
-> This is free software; see the source for copying conditions.  There
-> is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
-> PARTICULAR PURPOSE.
-> 
-> rngtest: starting FIPS tests...
-> rngtest: bits received from input: 20000032
-> rngtest: FIPS 140-2 successes: 875
-> rngtest: FIPS 140-2 failures: 125
-> rngtest: FIPS 140-2(2001-10-10) Monobit: 123
-> rngtest: FIPS 140-2(2001-10-10) Poker: 5
-> rngtest: FIPS 140-2(2001-10-10) Runs: 4
-> rngtest: FIPS 140-2(2001-10-10) Long run: 0
-> rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
-> rngtest: input channel speed: (min=85.171; avg=141.102; 
-> max=4882812.500)Kibits/s
-> rngtest: FIPS tests speed: (min=17.809; avg=19.494; max=60.169)Mibits/s
-> rngtest: Program run time: 139628605 microseconds
+diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
+index be58cfb012dd..9f116dfc4728 100644
+--- a/arch/x86/events/intel/cstate.c
++++ b/arch/x86/events/intel/cstate.c
+@@ -64,7 +64,7 @@
+  *			       perf code: 0x00
+  *			       Available model: SNB,IVB,HSW,BDW,SKL,KNL,GLM,CNL,
+  *						KBL,CML,ICL,ICX,TGL,TNT,RKL,ADL,
+- *						RPL,SPR,MTL,ARL,LNL
++ *						RPL,SPR,MTL,ARL,LNL,SRF
+  *			       Scope: Package (physical package)
+  *	MSR_PKG_C3_RESIDENCY:  Package C3 Residency Counter.
+  *			       perf code: 0x01
+@@ -693,7 +693,8 @@ static const struct cstate_model srf_cstates __initconst = {
+ 	.core_events		= BIT(PERF_CSTATE_CORE_C1_RES) |
+ 				  BIT(PERF_CSTATE_CORE_C6_RES),
+ 
+-	.pkg_events		= BIT(PERF_CSTATE_PKG_C6_RES),
++	.pkg_events		= BIT(PERF_CSTATE_PKG_C2_RES) |
++				  BIT(PERF_CSTATE_PKG_C6_RES),
+ 
+ 	.module_events		= BIT(PERF_CSTATE_MODULE_C6_RES),
+ };
+-- 
+2.45.2
+
 
