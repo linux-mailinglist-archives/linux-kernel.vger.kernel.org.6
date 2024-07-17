@@ -1,107 +1,120 @@
-Return-Path: <linux-kernel+bounces-255767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50E279344E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:46:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D9F29344E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:47:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2B4B1F224B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:46:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA0031F2244C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B2D537E9;
-	Wed, 17 Jul 2024 22:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46A05381B;
+	Wed, 17 Jul 2024 22:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="OCBwfmDT"
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qlu7UvmG"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB8A41C6A
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 22:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6262947E
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 22:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721256398; cv=none; b=btjyU+rJxzJL0X9yVzvY7yyUZ4dAWjVgkn/+VhPU1RfQwwKozD6cqDqhs+D1WSiX/wXtVK66AhbzmcdI9Y0xzVl+Tjqyo/SOq/Nijkwyd0W+ym2qth4w+l8z9NgAE8YMmp1yEKgnEKtle0c1JagUz+h5qSR3vdZDIOzLyX8wnQY=
+	t=1721256459; cv=none; b=tzIo7YApqEvTDL4iLPSdrExpdGM+QNfXJJfCdPIzwwR5+kjqa+Ort/ZjWaTiGpXnWlMHtpoH0CxQiofSuCxGkU/ocCaMYDNTJ5HyOLPxQXwVIt3/iNMDamJYjDFc7jXLkAfZ+lBgvfvA6DNE9Qo2VB5j7/fgWeQmeAv/5KNlFJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721256398; c=relaxed/simple;
-	bh=/5ssnIaPhhILazQ6ejiFbTxxbY7WdW6Y/GEgqLzcgb8=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XkHGnA/u5CcIBSbqpq4LHhFoFoQeXctVL8ac5JFRZfVfkq1e97tDYL/pbVqPAMuHh6GOMvBCowXUdtdt/ZT4TVHPVeS1RxdiHhqqm9utGm/btb8lxuYPhpLQiTFLy7tIylEUxDpHoDgodTbI3t6dzJ1lkCaL8WoBBGM2S/aeaE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=OCBwfmDT; arc=none smtp.client-ip=209.85.161.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5c694d5c5adso57640eaf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 15:46:37 -0700 (PDT)
+	s=arc-20240116; t=1721256459; c=relaxed/simple;
+	bh=JrW8D/ojxXf0j/SIRVu/keJZ05s+oq/LzWd9Sm9U59I=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=U611kWRc+4cYxXoqBw1W0aopPB8Pcf03Bs4kJgDV6M0aq9bX5b58iGGuRrFvJl6THpt2mIZ1Fiu2hbGDgjOpvQWrsEmDTU4iyItdPlI7vulOHUWQ4fPGtTnXEYuY4W74m+1HV8UbwHASsFB8P1JCwRypR3P04Sjwzod7kvyggPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qlu7UvmG; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-65eb8845bc6so4105027b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 15:47:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1721256396; x=1721861196; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:to:from:date:from:to:cc:subject
+        d=google.com; s=20230601; t=1721256456; x=1721861256; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=wJ3y/2dvs1WFSHKfrAXY++/8u2h23DIsv3lh273sEkU=;
-        b=OCBwfmDTwi0PWA2eDm/XrG5SGmB88/+eqA83T0XLw6m5L/AF2cQGBYlMolv19g7INJ
-         ExC5Hxrk0Uit3Z42eu8vQe8k838BdQjSX+hVQtvoNHpOzpxA1IYBtp0xflaww4+RLeRr
-         F3xRnxgVVW4J6Zvzmnd4afPJXtNfJqmwDiEtQ=
+        bh=pR5ziDZUrbtvXuAxnnNXi/ECVNOOFYw5IhaL3PqW3bc=;
+        b=qlu7UvmG+I2JuCEESbZEI8zikdsD1J2fuy+tATTOfkQWEK9styyxhHGc80mhd28hGF
+         qaaAifhozibOkGhNKXQrDUpqZTLgK5pWfDDI/HivJ6aRrzfoycKkfx2YYqaN5BEi7WUT
+         dkoeyp7ZGiFZSRJmrTHfry7Vi6TFR0azEjHWOLlPHI5pc4xllVNP9Bz6jEbNeoC563lM
+         m1rHp7MgdoEAqcUxTTihUG9HcXtXrp7nYrFmSHvKHz6nEGXOfpJ9P17iSh1U2p2V5qOy
+         0umSSDRfmQz6gR90jmQhxQPe2OgV3Fl7eVmzMUChwDIeiQio11DVUorKhNdojO6H4v7y
+         L7hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721256396; x=1721861196;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:to:from:date:x-gm-message-state
+        d=1e100.net; s=20230601; t=1721256456; x=1721861256;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=wJ3y/2dvs1WFSHKfrAXY++/8u2h23DIsv3lh273sEkU=;
-        b=H7hsc4a+p+mNcQz2DR8+pdSVKSwNjXlok729QJqw71U6HetnBZeYQeOcoi+Xfb1El+
-         U+9/dlHRqDwUU+7ROQzSOUIUe/H7drOoI8QLQs1bMqmmUyeqfiPGq6jOEFecJbbhY2Ee
-         EA42I03YF0lCPjieaRabQuRaBtAYqXdmXsWEe5ZHyA885SBdra8tLrQQ68/cmjSfOibH
-         CUGBYkBeg3KWwk0V4RfqNVwT7g2YEuc7EUB5LJJ7X+Cvg3PkckPypKa8pvJpyBrKgrtF
-         DZbEi+fHddLUINyDf50kYstVB04fID+ZHGGehWbrgrb0ar652wrbksjoX2yRzMYdAXNV
-         rfoA==
-X-Forwarded-Encrypted: i=1; AJvYcCUf7NbPGEgAGJE9hx/h3oWfVD3nZaufnYDmmVzxEi6zhfWbGNleDHq+o5MhkIjHAgWLrDYkWqCFI2BRLGvDFQGF2TbdbNEAXZODU87d
-X-Gm-Message-State: AOJu0Yyy1tPfMNeIwaqTRJyCBFc6jShQflJcZaIZ9GjZaa/Pvstsc3xY
-	0RvjlUb6b9mV9ev1HGHJ+iSW58FJa9Mo9+i+f2D90vGLHiGkviV8e+iO7btUmoalNoOe5JgPwSG
-	Moac=
-X-Google-Smtp-Source: AGHT+IG2DOt6NJzNqx7F1J1cFMJNFMREcICId1xOoafataWoglSDZZOlhy/M0m/iwMJKLN51mtVjrQ==
-X-Received: by 2002:a05:6820:2918:b0:5c4:4787:1cd with SMTP id 006d021491bc7-5d41d88bc8cmr4055721eaf.7.1721256396434;
-        Wed, 17 Jul 2024 15:46:36 -0700 (PDT)
-Received: from LQ3V64L9R2 ([2600:381:d627:95eb:19b4:6e7a:6e37:ba63])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5d3cc6b4fedsm404829eaf.39.2024.07.17.15.46.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 15:46:36 -0700 (PDT)
-Date: Wed, 17 Jul 2024 15:46:33 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: James Tucker <jftucker@gmail.com>, Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: uapi: add TCPI_OPT_NODELAY to tcp_info
-Message-ID: <ZphJyabJV2wDrKzi@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	James Tucker <jftucker@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-References: <20240717-nagle-tcpinfo-v1-1-83e149ef9953@gmail.com>
- <ZphI8Z89iLe3ksVP@LQ3V64L9R2>
+        bh=pR5ziDZUrbtvXuAxnnNXi/ECVNOOFYw5IhaL3PqW3bc=;
+        b=nH9SIWFOiewdvmFOEu7SFhPW2o8OD6XE58Sdd5iHKimjXH6+7nJ6W1tZHOWWgOxLM4
+         wCmXX62b7LKVB4adnx5hgLY/q3syG9opNpSRtS85aDn/3l+wkEojjk+fI9Lnp18yOBWq
+         +/xQZoc9dyxLNRX3PBRrU9o2pli+0DlwnNN8r1SdHZuPfY3aC5EXNUEPIGid0pAzqZNt
+         pW2wpnGw8Y/18MhNv47qThjFj6+3IMKkWoHAhCkLhhUQyl3huVjwUsJ4NS8cGtMdmoiA
+         gnz+LOzpfJz/85T/ekglC1ubMKvSyikV0beWbLG2u0Sf3EgDnAfqeM0UwF1eCFFWxPaj
+         5/9g==
+X-Forwarded-Encrypted: i=1; AJvYcCXIhBn0W20zZ4Znbn+CuCm4ZKotBTGQyAN6yLauFxAoDGAVEWTKqVb04QBWMdsiDaS98lAb7cqliw8Wt5GKcWaedmDgIqzTkcbIAZQ3
+X-Gm-Message-State: AOJu0Yzj+n7B0P3GcAP4JbDyM8+xDj8A0nNh49YwnuptbU9E9GTqwUZz
+	qzunvWxz7XZL2DrhuaUJTWGzbzMj+5vT2eNS4b7vvRERL3it2g/hGo/7LzV3PynqHxncaOaZA29
+	tIv1OPg==
+X-Google-Smtp-Source: AGHT+IFLybgLrLOsOM0ierUBa3tUykoM2MDdu9F5Fmoe0eKzh6IXK2QnVCT/xdZ4Oztpr3BmZVt4vE6ZnMQK
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:940b:9044:fa83:4060])
+ (user=irogers job=sendgmr) by 2002:a05:690c:39b:b0:62d:a29:537e with SMTP id
+ 00721157ae682-666037ff9bcmr772777b3.4.1721256455917; Wed, 17 Jul 2024
+ 15:47:35 -0700 (PDT)
+Date: Wed, 17 Jul 2024 15:47:26 -0700
+Message-Id: <20240717224732.1465438-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZphI8Z89iLe3ksVP@LQ3V64L9R2>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.1089.g2a221341d9-goog
+Subject: [PATCH v1 0/6] Add support for sysfs event.cpus and cpu event term
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, James Clark <james.clark@arm.com>, 
+	Ravi Bangoria <ravi.bangoria@amd.com>, Dominique Martinet <asmadeus@codewreck.org>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, ananth.narayan@amd.com, gautham.shenoy@amd.com, 
+	kprateek.nayak@amd.com, sandipan.das@amd.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 17, 2024 at 03:42:57PM -0700, Joe Damato wrote:
-> Hi:
-> 
-> FYI new features should be sent with net-next in the subject line
-> (e.g. [PATCH net-next])
+The need for a sysfs event.cpus file is discussed here:
+https://lore.kernel.org/lkml/CAP-5=fXXuWchzUK0n5KTH8kamr=DQoEni+bUoo8f-4j8Y+eMBg@mail.gmail.com/
+following Dhananjay Ugwekar's work on the RAPL /sys/devices/power PMU.
+These changes add support for the event.cpus file in sysfs and also a
+cpu event term allowing events to have differing CPUs. This was adding
+in order to test the parsing and map propagation for the sysfs case.
 
-Sorry, I should have also mentioned that net-next is currently
-closed for a 2 week merge window. So, you'd need to wait until it
-re-opens to send patches for new features.
+Ian Rogers (6):
+  perf pmu: Merge boolean sysfs event option parsing
+  perf parse-events: Pass cpu_list as a perf_cpu_map in __add_event
+  perf pmu: Add support for event.cpus files in sysfs
+  libperf cpumap: Add ability to create CPU from a single CPU number
+  perf parse-events: Set is_pmu_core for legacy hardware events
+  perf parse-events: Add "cpu" term to set the CPU an event is recorded
+    on
 
-Thanks,
-Joe
+ .../sysfs-bus-event_source-devices-events     |  14 ++
+ tools/lib/perf/cpumap.c                       |  10 ++
+ tools/lib/perf/include/perf/cpumap.h          |   2 +
+ tools/perf/Documentation/perf-list.txt        |   7 +
+ tools/perf/util/evsel_config.h                |   1 +
+ tools/perf/util/parse-events.c                | 156 ++++++++++++------
+ tools/perf/util/parse-events.h                |   3 +-
+ tools/perf/util/parse-events.l                |   1 +
+ tools/perf/util/pmu.c                         |  92 ++++++++---
+ tools/perf/util/pmu.h                         |   1 +
+ 10 files changed, 213 insertions(+), 74 deletions(-)
+
+-- 
+2.45.2.1089.g2a221341d9-goog
+
 
