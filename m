@@ -1,149 +1,123 @@
-Return-Path: <linux-kernel+bounces-254683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98FC5933656
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:19:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 454B493365E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:25:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC9851C2279B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 05:19:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9785283DF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 05:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062BC10953;
-	Wed, 17 Jul 2024 05:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F94134C4;
+	Wed, 17 Jul 2024 05:24:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="URTJwbDM"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01olkn2014.outbound.protection.outlook.com [40.92.52.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cT+EVE30"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05AACAD59;
-	Wed, 17 Jul 2024 05:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.52.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721193563; cv=fail; b=phQt8JQTzQe6rmbc+Unkb/ofHYeoSzyS20RuqfO0oTwwPuYLi+BRVyrz4LN4E5PYGCpoyhNO2VWlctCEg0ZtOdwQaqSkxY4o4irTuC1StYxFuYggBMEJaZmAmmRwv2mLlu756Tl5X4VjCh7cpWByUIqYVLEcW5nA7I9dn0C0aZM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721193563; c=relaxed/simple;
-	bh=qUrcqaEPM0hQQK3ab1qf5aW7PUgC2iGTXNY75mvSZCc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=OhRilwvK+GSoLGhfJxhB5Sth1OiOl2Nw1cBNQfYbQ3hKNUvLVt1jDTNHasVlpDg7VnedUH1qlO/GOVZavzNV3/ku69KMxj1Qd/3HwwAJKiWx4IPMQb0itDE5UrOue0ZfMY8u2CadxsS4O+ANQbTsLck+zkjaw3+yo78sXyurnoE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=URTJwbDM; arc=fail smtp.client-ip=40.92.52.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IYfP/VqoUnLeEfcfqSY3eisecP8QIUPqcqzebAcbKcGQ7nkusMLYkKW/dEJ/ocNzJ1TeB3L4XfLQw5HIEOm7Oh9ftQSsmXccwOHizQRN2NjsycIL3Aapb38ItthZA3z/EW7g7L4YW06lUrEu5Fji0qZ/bD6JNnWOSkbngCuH3pD9hImlxSyEOxxQRvUwDt5EuUcmWm6n5vGj06ZnGXtAtRQrjTESae0fx0t+h0PXMQam0gJyzc6/zxdJFGiENCSSBXsQw8sh+GvsBTWaY/lM4U777bLA7l9jvZXT6nv1Du6IX/pdH72DwJ3ZLxXLjj3x+fsJ8xK6iLmfRusTt6B9sw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=O3QV7V8g6AXJYlfpox87pgSIG865YhRVnRyi2+IZurs=;
- b=B+NtnAnTNxPz+2fG86bq64nzCDGT7iJWYqNnPznzfNz54eiAkKqvD8iT6dYq3paXRrelfjN9nGo74+fAKXry/GwOyT8y1udPJe8DkbFjKyXWiNc6pblhNEHw8U28c371x/OOvBDbPUp4NYCtGIF+UnmIDWjGSkU/52yyRLcsAptxjrhpobnbRk2leHW9ewc5ubJorX69V9yC4/78duN50dFfr3zaLgqLyAngtPylWew0LifLz9pbPsn+i0mvXCSld8wGyr0lkaIObk2FM+1udEDF/cnJAhvk4Q1TjzDeCOZ0TPTTPnlUnJebJ+zz9JYM8Xjf9TfvMDdFbUZsV4NW0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O3QV7V8g6AXJYlfpox87pgSIG865YhRVnRyi2+IZurs=;
- b=URTJwbDMVWW633yp/VrGkNUQlPn1rOH9UNdVMgA/2sy0YJPaLzzGWOngvVIXtPEDXJO+xET8rf1rlnkNpXFVE7DEMZhYNUXRMzDLN//j8riZPJUU5DFk8gsSbxXwYtl0v3iA79JUVSWTDVfBV1WrLNWVzcDY1g8eYPCTtMJN0wFw7CQE1Ab8/2LTIB7M1CtsWFHsZAOQZ2UJvkEy+1/cn6wKQKtsvxQm9JMlD8pz/sIhIkCy5lepJ5OMtju5DhTJqwbyxIfZofTSEb6zXVuo+mm1gy4uvCaG5sdKlTjSUJgXSPPg2bIXvvpVWipfAxyljgeTEgwlF0vj8RhYf7JrmA==
-Received: from SEYPR01MB4221.apcprd01.prod.exchangelabs.com
- (2603:1096:101:56::12) by PUZPR01MB5434.apcprd01.prod.exchangelabs.com
- (2603:1096:301:dc::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Wed, 17 Jul
- 2024 05:19:15 +0000
-Received: from SEYPR01MB4221.apcprd01.prod.exchangelabs.com
- ([fe80::b674:8f70:6e29:3756]) by SEYPR01MB4221.apcprd01.prod.exchangelabs.com
- ([fe80::b674:8f70:6e29:3756%5]) with mapi id 15.20.7762.027; Wed, 17 Jul 2024
- 05:19:15 +0000
-Date: Wed, 17 Jul 2024 05:19:07 +0000
-From: Haylen Chu <heylenay@outlook.com>
-To: Chen Wang <unicorn_wang@outlook.com>, Conor Dooley <conor@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v4 1/3] dt-bindings: thermal: sophgo,cv1800-thermal: Add
- Sophgo CV1800 thermal
-Message-ID:
- <SEYPR01MB4221940059E23BCD8BA75125D7A32@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
-References: <SEYPR01MB422158B2766DA03728AD90CBD7A22@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
- <SEYPR01MB4221281561CCE511A5094D28D7A22@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
- <MA0P287MB2822445DD34485B94D22E7FFFEA22@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
- <20240716-cloning-canopy-a6799dc7f3b9@spud>
- <MA0P287MB28228BA5CC8B6F61A4C237E9FEA32@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MA0P287MB28228BA5CC8B6F61A4C237E9FEA32@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-X-TMN: [fzj2PElkyNR6GTGcaTwlm50mb24HytX/]
-X-ClientProxiedBy: SGXP274CA0020.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::32)
- To SEYPR01MB4221.apcprd01.prod.exchangelabs.com (2603:1096:101:56::12)
-X-Microsoft-Original-Message-ID: <ZpdUS5G0HArAMuN0@ketchup>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAD8E57E
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 05:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721193886; cv=none; b=Gf3thak+1So3RU4jygky/13Jinp+LOQGvBHKdTMhZmNtDFdTU4/y7CISSpU8zOezkgo7Y2kRnYnPCv353wN4Ux6LG54gviw20IVZJX0jkqWpf4lSpICaGZbrJxATVIahGOfRg4XMjIhXk8EbLCKKKZebgOZZVWgdHxPBOK1mIX8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721193886; c=relaxed/simple;
+	bh=Vp7p44aMYOx+W/3oDa9KRPvAbAMMO3I7LRS7pOl1nxQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tztuY2bT9gL6DHCQ01gAh0KHYlicrgQm39mxDCzQk8txa6E2/CLxZ7pAbGhavt8OocL41OGLSimx+D7NfUsjYbDlzogXRrbiGttHqQt8proOzIuz1RBYOTI/5OhEwBN5k6IOSlvO6l8n293huRYwDHs6hMvukifUdxBWOP7pqJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cT+EVE30; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 10677C32782;
+	Wed, 17 Jul 2024 05:24:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721193886;
+	bh=Vp7p44aMYOx+W/3oDa9KRPvAbAMMO3I7LRS7pOl1nxQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=cT+EVE30qqDOPx77JlU6a1Rc6BS16f7s8CdRdhMoTqSNwhvY7VCV4u3JSxrT6wqdt
+	 CfPSe/EcjaFA6c9jU7sA8YFLz1toAnOM3jxfKxuQXnXZuMm9Mu0pXPQ8OW638zusZ2
+	 8xt4QwwvjwFYiRNCiUUoO7JCOeKKvc7U3uVt7gBVRw4LAn0XQ5fr9njx8nfuyXiMA5
+	 1duOE+R/RqxmePhI/I5zKlDVSEc/xar5fhCaW6Kk7Dm/OItA7LbK7QowStJ0CwwLd/
+	 DLR+hr3jz0KjbOSWLai8q+xeodfSN3lRvyBhx/jcrxfO/6TsLKYA3FjYu1P4+C8YPa
+	 KlpoH69Hlbh+w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE29C3DA4B;
+	Wed, 17 Jul 2024 05:24:45 +0000 (UTC)
+From: Hsiao Chien Sung via B4 Relay <devnull+shawn.sung.mediatek.com@kernel.org>
+Subject: [PATCH v4 0/5] Support alpha blending in MTK display driver
+Date: Wed, 17 Jul 2024 13:24:40 +0800
+Message-Id: <20240717-alpha-blending-v4-0-4b1c806c0749@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEYPR01MB4221:EE_|PUZPR01MB5434:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7cfdf592-164d-4a31-38bd-08dca620001a
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|8060799006|19110799003|461199028|440099028|3412199025;
-X-Microsoft-Antispam-Message-Info:
-	r4b+dSQim10E5dv7/6Y2W1oj4f1EKV5OXXhcdEg9vXfkSgqMOH+SimwaSzWrsRMUX+crKabjacofk74oEb5K/nnnK3OmSbVmd6kVby0oc15moW4zCNMvr9sXMnmEoaZNIgd85H25IFagim+vkLxWhV3t/XVK7V9PNkRibgrweHyH/CVxrVSfg8ztngcDpvANPY5WrYmwqiQuQlVifGvzIO5FOKcZpEUgOnv2VbEOIITu9Gd7dI8xPe3Nelh9qbYv/4YrZQeCw71vLSVipeB5mQTfmCSB3SSYFVP50wY6Yf1XBQB2W3vMLnvPRf8U80R9rDmLrFrKW2QZrVdnoB8TfLiQkzAGQ53AOKCyG98UU6SPiDyPHsIjsdI0ZwWhbLADhGWuaKRfle0GSuE29fP0zMd1IJG4JtiRW1kArJdivGQEO/DxPed1I1z2Lwk9qeWeAWfkEcKnVnDRIrqF0o9CGummVhwWLsyKfQaemj3KhmPlwHpacd4KkfEZl7Ymc3Ur4Af66jjIOO3YoruraUSdZxTj2Dn3vzyt7SShGmn93TaicX3UFuXiYfdXq0FuhJm+r36JMt4Ts2Np8QP6uDW7KUoIdq8fgBql45nYkuzwy+QDQZqksy3cB/ziT+v/xppuTenXxMM33mtydKH7XT2sBA==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?3fn41E9Sc9VJp0FgPgpbSOQ6u7jrEnfJBGzdnlzkh3V4xtvAzToCDTr8Hpqj?=
- =?us-ascii?Q?C1Er1W7C7I+T1hU5SwvvRkVPVZ75WmwDZ69x7R3k7SeL6ejgPt5QaZcenwWK?=
- =?us-ascii?Q?u6NpSdogPqnyA+BYy5CH3xH0TV9f9jXUcQm8ScL6XS35i0dCwCcNCVxcHt8g?=
- =?us-ascii?Q?+NA6wH6WMhJekQUcH+O60GK2x/8G1faMGDqsiaoCfLM4omX5742CQWoa0u09?=
- =?us-ascii?Q?bbBx88wau1HWs7OIQs7+y2xoesaLDz5HYbO2Yo3w2avW9JfqynSOF2zYnyww?=
- =?us-ascii?Q?AqpVSkMpFWZJmz9u4b/ucTqzlfV3z9Hrtsm7BmAs8FZx5isvzzJDjF+jEhro?=
- =?us-ascii?Q?lDrQGuRXKCiQDukeM/jDlWNR3Zd4/UDx2O/bDUls1XzJoaogYO0VpaUeMLSC?=
- =?us-ascii?Q?8FbfWTMWIxZ8LDXwY/wkBwxk/YrZ8ymhixCsiJsKhIxlEywpub5Rn3iCu4Ni?=
- =?us-ascii?Q?5HzjVcTk7YiyiNp4cEbJNs2xNlMMotjHFp7r04Q4/Cqn09cEASZKdM+zr+Zy?=
- =?us-ascii?Q?vej2CC8L95ucQbs93oDaN3kO5dyRNXtOZgO7MKoONODmZkXKy1VuEhAKF8eM?=
- =?us-ascii?Q?sRlQ7DdGJf5h+fdu7eupxGqUpuSZE4yTHRiwHL4d+WTZRowwV0ZEJNMbr74t?=
- =?us-ascii?Q?8tfQvTJWbT1tO+6k/D7pB+MeZuyAprj7f8pGAOlv96asIdt1WDehffGblWuB?=
- =?us-ascii?Q?vtpRr9VavudqSPUt14ZOfpYrFbuV65Fc583qByPwb7NAFicGCtsBSFdmQxL7?=
- =?us-ascii?Q?CVKucOJRUwGcqwnumAv32qIhudkqFhEQmRg40Kw9GFNI2sR0/ghUIwjDQv7u?=
- =?us-ascii?Q?ImGdHoJkmCx5I5VtoL1aqRcWOpEF3IdZBjgbm2tweMJoOaYBXxQhpbvex6Kq?=
- =?us-ascii?Q?BrU27scHBquea40eGgr3s+BAB32mGB4ePLztMeyM5OZVdQ13uojBXgKvi+qr?=
- =?us-ascii?Q?uhWFL79MPbAgxdWS2GCPBQGu7W2bDCYACle4GrgAHMj8k5IMnLDdMKHBO9yU?=
- =?us-ascii?Q?E4l2RgfCj8UD58YCbtCvGv2GKALuAnb0ZIUi0AvJKkIV9jPMqN77sf3KK/f9?=
- =?us-ascii?Q?+IFx5NGuLWrjlfY1C6YlWFeQvOxpLi/wOpfvA0zShFt1DXUWtxfQ592GVwVi?=
- =?us-ascii?Q?+GfOL+5xy6DR5UGeDZn8dO/wJTI25sAWvqV2r1n0aKZAp2kawSWOPzwx2JFt?=
- =?us-ascii?Q?3et2XuC9Hixiqj9h8E6zvi92ral/iW7CL3JmUqkIXiLTwspyA5ePfS8yocI?=
- =?us-ascii?Q?=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7cfdf592-164d-4a31-38bd-08dca620001a
-X-MS-Exchange-CrossTenant-AuthSource: SEYPR01MB4221.apcprd01.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2024 05:19:15.3364
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR01MB5434
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJhVl2YC/33OQQ6CMBAF0KuYrq0ZBmjBlfcwLkoZoBELabHRG
+ O5uhYWJIS7/JP/9eTFPzpBnx92LOQrGm8HGkO13THfKtsRNHTNDwAxkAlz1Y6d41ZOtjW05CIl
+ lnksoRMpiqVKeeOWU1V2s2Xvfx+PoqDGPZeV8ibkzfhrccxkNyee6+gJhlXlIOHCJQgJI1Arhd
+ KPaqImuBz3c2AcJ+C1uPBYwCnVW5ZCTKAtQG0L6X0ijgEWpk0I2pRbNjzDP8xsk0D81PwEAAA=
+ =
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
+ Daniel Vetter <daniel@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ Hsiao Chien Sung <shawn.sung@mediatek.corp-partner.google.com>, 
+ CK Hu <ck.hu@mediatek.com>, Hsiao Chien Sung <shawn.sung@mediatek.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1721193884; l=1512;
+ i=shawn.sung@mediatek.com; s=20240710; h=from:subject:message-id;
+ bh=Vp7p44aMYOx+W/3oDa9KRPvAbAMMO3I7LRS7pOl1nxQ=;
+ b=+A8fttIjotYhj8wUeKovyfjjqKhR+tv2ri5BcloeuhTVq31xjLyG3wh3H8ppI9q8gkU+M8u50
+ U6OUuROaJmgAEsuPzXOHDTTy2Z54rv7ObsgnLk9nciTQ6u+5Db778DJ
+X-Developer-Key: i=shawn.sung@mediatek.com; a=ed25519;
+ pk=VRlGZ3diQkQtpDd8fCL9/mx+TpZStm08pg8UPaG1NGc=
+X-Endpoint-Received: by B4 Relay for shawn.sung@mediatek.com/20240710 with
+ auth_id=184
+X-Original-From: Hsiao Chien Sung <shawn.sung@mediatek.com>
+Reply-To: shawn.sung@mediatek.com
 
-On Wed, Jul 17, 2024 at 08:05:10AM +0800, Chen Wang wrote:
-> Haylen, so you want a compatible that matches an actual SoC and use it
-> everywhere?
-> 
-> Or we can add ones for each SoC and have a fallback to cv1800.
+Support "Pre-multiplied" and "None" blend mode on MediaTek's chips by
+adding correct blend mode property when the planes init.
+Before this patch, only the "Coverage" mode (default) is supported.
 
-I would prefer "sophgo,cv1800-thermal" and use it everywhere. I don't
-see any difference on thermal sensors between cv18xx-series SoCs.
+Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.corp-partner.google.com>
+---
+Changes in v4:
+- Add more information to the commit message
+- Link to v3: https://lore.kernel.org/r/20240710-alpha-blending-v3-0-289c187f9c6f@mediatek.com
+
+Changes in v3:
+- Remove the Change-Id
+- Link to v2: https://lore.kernel.org/r/20240710-alpha-blending-v2-0-d4b505e6980a@mediatek.com
+
+Changes in v2:
+- Remove unnecessary codes
+- Add more information to the commit message
+- Link to v1: https://lore.kernel.org/r/20240620-blend-v1-0-72670072ca20@mediatek.com
+
+---
+Hsiao Chien Sung (5):
+      drm/mediatek: Support "None" blending in OVL
+      drm/mediatek: Support "None" blending in Mixer
+      drm/mediatek: Support "Pre-multiplied" blending in OVL
+      drm/mediatek: Support "Pre-multiplied" blending in Mixer
+      drm/mediatek: Support alpha blending in display driver
+
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 36 +++++++++++++++++++++++++--------
+ drivers/gpu/drm/mediatek/mtk_ethdr.c    | 13 +++++++++---
+ drivers/gpu/drm/mediatek/mtk_plane.c    | 11 ++++++++++
+ 3 files changed, 49 insertions(+), 11 deletions(-)
+---
+base-commit: 8ad49a92cff4bab13eb2f2725243f5f31eff3f3b
+change-id: 20240710-alpha-blending-067295570863
 
 Best regards,
-Haylen
+-- 
+Hsiao Chien Sung <shawn.sung@mediatek.com>
+
+
 
