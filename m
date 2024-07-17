@@ -1,145 +1,142 @@
-Return-Path: <linux-kernel+bounces-254694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC7B0933672
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:36:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DDA3B933673
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:38:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 965881F23084
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 05:36:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BC011F22FDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 05:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DED125DE;
-	Wed, 17 Jul 2024 05:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E1C10A1C;
+	Wed, 17 Jul 2024 05:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SXMwFMxY"
-Received: from mail-pg1-f193.google.com (mail-pg1-f193.google.com [209.85.215.193])
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="Nd7t96X2"
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC18D304;
-	Wed, 17 Jul 2024 05:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0EB1878
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 05:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721194552; cv=none; b=ljh1te1U1bbohGnptxTYVOBIL3lVTUE/K4qAX46j3sLj3DugCIuTWRlyKxhWHHF5WKrueGhwR1543DzZWyhl/uv/h+hKjwQd99gJMPDOWF4KLJCMJhReZb1CUMSm8GBgO9VA0OwbM5CsudxDrOVOkQowdMtW34B/C8vB9x4xy0U=
+	t=1721194721; cv=none; b=f4oSgxRgywfTu78B1WO1T/UZgzEijKp04MArKL21NGwOOlnkitXiriHf62qF35lB9h3eJko/1QMvCghDloXiF/ZlHgYyU4RQ+G1SjVyP1tm0AMM92Jmw+RHZSqiO3MUOeU+rKVPZXvGdfTcvXi5d+6U66AY+96KiPr7mFGcdPdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721194552; c=relaxed/simple;
-	bh=JdlWSKlUZcf/O3X+mP9Ak6MuTf6FmrnmQ6Kg5GRRH8w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kzyphLkXJVXIONS//QBtTQPTnp/TueSoXcfch78cOYfKR1/+qdgrnajPBS3GY689opMlloqooaeMk63U69GNZxm9+sT4gKStYbFMrr87ST2ilnQxk+XyEJZWr9w917RY6D650sHoxtBAHuDX8w8h1XzFNNy75PciYN9WzTL6SAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SXMwFMxY; arc=none smtp.client-ip=209.85.215.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f193.google.com with SMTP id 41be03b00d2f7-75c3acf90f0so4366129a12.2;
-        Tue, 16 Jul 2024 22:35:50 -0700 (PDT)
+	s=arc-20240116; t=1721194721; c=relaxed/simple;
+	bh=35NV8D5AgC2A3IpahQlvijpejzH/WFyKdyFKLkkvxgQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kBAof+o57EWU8J8jxCHAIkKBScLNKSe7tm3yJ3O0JlIT0CPhO0hjVEP5AO3wzgEVmqxdHGBnIRXp9ft2dzTXk/5F3ckrI6RDoP1gTBJx1PrRonq/UmHEpCnYyLycR+nvLpQVBTcLw7W/cibf8S4mDwH/myyI/YyaozECbfKXRJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=Nd7t96X2; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-7fe8d029fbeso23253839f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 22:38:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721194550; x=1721799350; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1721194719; x=1721799519; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TMXnWY9HVVFA+WTMwKlErlT8MSINlsWptZs/Y45C1Vo=;
-        b=SXMwFMxYJ/T4sUk8MIYThshlOIfsxHAatxyTtY1Nj5D6cs6tzUCBpzlEcI1/EJSutj
-         u2nTcsxcIu0VF75ck0MjQKuU5NlSuPom3tS6J6kESJnyf7oFPPQjRcq0YZ6BcQMMmKUk
-         0TIYzRggwTz9tlvPZIDwrf/Mbz/fH3v4Z4akANrH7Q1xmDHowy8UW6r25dydk2VV7NLO
-         yIAdojF0YuiprDJkaVyzRk2VKTkVRYKOzmDaSnhbNsFbu5o38HSMfvWP4GGABifwyzBA
-         aR1nKnFincGX9R3QMQmYUGiamnmQYtqNVvqkMAP7gEvIF8IfucgV4L2REXnlviBIaXE+
-         AL3w==
+        bh=b1d1s8x6mwhXq96evpThZCuzx5ViT58+IxOGUpFwTDk=;
+        b=Nd7t96X2g944ju1IO1IRt2xyGLJzr39DnhpnedLHyY/SDaiiTib6UoQTwDiwZ4vcoi
+         nhzNGRfbPvMuWnMXv6H6SNuSpkvPiU6wook5OSalA291ydU21GBlVhIOPEBSXuuBzNur
+         jqqeb+zG0Q5tYToVfXJZloPlVgQXH10zwVYXnll0GO8WoqQStzmmNEsT9a+kcxvLzKHD
+         +fhbUT4ulVZn3s3E89eoDtdeQPCJjnRAo6XQSwP4H4wI39WAZuz2ojpxNC+9rYRuvqxL
+         +Mz8GSMUdcRuWLwfEaTYZG8nR/TJdoGVKWClzJqaAL5r0nm/YOeX7/3hY6OXkQYUB6fM
+         IHHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721194550; x=1721799350;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1721194719; x=1721799519;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TMXnWY9HVVFA+WTMwKlErlT8MSINlsWptZs/Y45C1Vo=;
-        b=ufFc0Y3oQb5hzOFWSFCBOFa4GbUd64+BLZMzCqoolpzAnIbDboSFvGbOTBLw4iOrbK
-         w18to6buwI/8ZyLuKJxGX+HX/vEv2cbF+WZg/Cdb1qAfdmZCfjs5mbt7pIHVqTirO8vk
-         5HUNDJ0+KpcGyWk4XIN5KTnbwrlX4eSNtNAzfuNXgip3POOsqTi6ySGizKKbvqNYwz/s
-         iz4LY+XPWAy++/uMqkhu4LeQCxjmjx1Sl00V5+PvczNQ/nPiUs7gH9qSGCczedNVYj05
-         43+vtXKGzXolOTHh+SIQLmjjPFbntYzUpzgIiK3oOazTcxYhcnIT44Z/yTHDsJmF91zs
-         fHTA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3SLcGHCmBbz1K4+gQm4l4xbewoOZMQtIblZPFKYMoBYIMiuHuBe8lHOk4jYv28ABgT9iq7lU8OETPfpMMCtMfWxId6GprLuNAb+d41ysyyhsxGmjeeAaoe9OrO10eXYCxIA9b
-X-Gm-Message-State: AOJu0YxrCG/i4CSnZFw2HUy09fb94HHVhqhTIEO5cqNRbcVLAyuou8An
-	PKidKV4WDUPjwiP+2xcMQ1g5oZQgM0xHxdXVQAq1aVLBN7zpeZ04
-X-Google-Smtp-Source: AGHT+IGuwLTo6i0e1lP9M7fxkpUztlByON3nEWR85eFnZ2JdQrNR8fNKWb9M1P9kyYD1RQTO/z7k3A==
-X-Received: by 2002:a05:6a21:33a6:b0:1c2:5fa8:2dee with SMTP id adf61e73a8af0-1c3fdc51804mr854951637.12.1721194550231;
-        Tue, 16 Jul 2024 22:35:50 -0700 (PDT)
-Received: from localhost.localdomain ([240e:604:203:6020:29bd:4b19:171:4fc5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2caedcac0ddsm7209140a91.52.2024.07.16.22.35.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 22:35:49 -0700 (PDT)
-From: Fred Li <dracodingfly@gmail.com>
-To: pabeni@redhat.com,
-	willemdebruijn.kernel@gmail.com,
-	herbert@gondor.apana.org.au
-Cc: bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	Fred Li <dracodingfly@gmail.com>
-Subject: [PATCH v3] net: linearizing skb when downgrade gso_size
-Date: Wed, 17 Jul 2024 13:35:40 +0800
-Message-Id: <20240717053540.2438-1-dracodingfly@gmail.com>
-X-Mailer: git-send-email 2.32.1 (Apple Git-133)
-In-Reply-To: <6689541517901_12869e29412@willemb.c.googlers.com.notmuch>
-References: <6689541517901_12869e29412@willemb.c.googlers.com.notmuch>
+        bh=b1d1s8x6mwhXq96evpThZCuzx5ViT58+IxOGUpFwTDk=;
+        b=v3BJmZmANdHWfHXk36dt90WlsAa77QYgCTbHPIxyKUegAe8obmTkKUIpjlJ/4BBowS
+         LqP2E3h7oyVfyBkWxCTTzLwthmfANPBfx9x3YA5R8a4VyKPrmnfF7QGHxhP0BAWtlZcj
+         HKFoiuOg/MAb4J90BZTBlaKHqm8bcytcRQQH7+xN9pHozb9RJ7GqOh5wCTC78JGa8mEW
+         pZcPxkW2B6m5591MTsnNbZwx9FP/StXBCbVKb6CrNTTpmtB5LUDWRwH3rvTZcyCEwthz
+         TBxU+3Iu/XHhi24rEen23bUn8fnh2kiTrQdZfXFbNks72k+qSG1waXTKbXYhsPtLi3MV
+         zWyg==
+X-Forwarded-Encrypted: i=1; AJvYcCWB3FMdstI+7GHmigFbfOGDwO0DlzkksHTlZ46VyT8BOa51H8jjfetIExoj7+vpHyyvmiL3yUoVfuzd7vDnSA0kIVCSyZgJL42SovXv
+X-Gm-Message-State: AOJu0YxlRYkKJQbBmeXK0T9nhcPaogFMGud87sEdx5NsSRy1nyOpveD+
+	hDZCsX59aTkRWEaWYVspY2v13d1PRJPEA7KbGL/dP/RdNcwlR46OU9RZwC1YM6J4aA2wJV+I9NV
+	Nq4YoY/7x2Lm9T+yAFbHZ0/JZWlx4AxgGW9x3dw==
+X-Google-Smtp-Source: AGHT+IFar2Tx72l8Cv59EhI8FVwMpDSti1Ksk+Y6IAcwQVvN0Ug2DKjNu+xQ6dXlAHjN7eOD53sNRQW8pQa/oQb1+Ls=
+X-Received: by 2002:a05:6e02:1384:b0:377:1611:1b49 with SMTP id
+ e9e14a558f8ab-3955760f797mr9351435ab.25.1721194718728; Tue, 16 Jul 2024
+ 22:38:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240717031714.1946036-1-nick.hu@sifive.com>
+In-Reply-To: <20240717031714.1946036-1-nick.hu@sifive.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Wed, 17 Jul 2024 11:08:26 +0530
+Message-ID: <CAAhSdy2W3gCdx_EtqVaTLqk8nVOnc59T2ub3KhdCuS20qHWBSg@mail.gmail.com>
+Subject: Re: [PATCH v2] RISC-V: Enable the IPI before workqueue_online_cpu()
+To: Nick Hu <nick.hu@sifive.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	tglx@linutronix.de, peterz@infradead.org, samuel.holland@sifive.com, 
+	tj@kernel.org, alexghiti@rivosinc.com, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, greentime.hu@sifive.com, zong.li@sifive.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Linearizing skb when downgrade gso_size because it may
-trigger the BUG_ON when segment skb as described in [1].
+On Wed, Jul 17, 2024 at 8:47=E2=80=AFAM Nick Hu <nick.hu@sifive.com> wrote:
+>
+> Sometimes the hotplug cpu stalls at the arch_cpu_idle() for a while after
+> workqueue_online_cpu(). When cpu stalls at the idle loop, the reschedule
+> IPI is pending. However the enable bit is not enabled yet so the cpu stal=
+ls
+> at WFI until watchdog timeout. Therefore enable the IPI before the
+> workqueue_online_cpu() to fix the issue.
+>
+> Fixes: 63c5484e7495 ("workqueue: Add multiple affinity scopes and interfa=
+ce to select them")
+> Signed-off-by: Nick Hu <nick.hu@sifive.com>
 
-v3 changes:
-  linearize skb if having frag_list as Willem de Bruijn suggested[2].
+LGTM.
 
-[1] https://lore.kernel.org/all/20240626065555.35460-2-dracodingfly@gmail.com/
-[2] https://lore.kernel.org/all/668d5cf1ec330_1c18c32947@willemb.c.googlers.com.notmuch/
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
-Signed-off-by: Fred Li <dracodingfly@gmail.com>
----
- net/core/filter.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+Regards,
+Anup
 
-diff --git a/net/core/filter.c b/net/core/filter.c
-index df4578219e82..70919b532d68 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -3525,13 +3525,21 @@ static int bpf_skb_net_grow(struct sk_buff *skb, u32 off, u32 len_diff,
- 	if (skb_is_gso(skb)) {
- 		struct skb_shared_info *shinfo = skb_shinfo(skb);
- 
--		/* Due to header grow, MSS needs to be downgraded. */
--		if (!(flags & BPF_F_ADJ_ROOM_FIXED_GSO))
--			skb_decrease_gso_size(shinfo, len_diff);
--
- 		/* Header must be checked, and gso_segs recomputed. */
- 		shinfo->gso_type |= gso_type;
- 		shinfo->gso_segs = 0;
-+
-+		/* Due to header grow, MSS needs to be downgraded.
-+		 * There is BUG_ON When segment the frag_list with
-+		 * head_frag true so linearize skb after downgrade
-+		 * the MSS.
-+		 */
-+		if (!(flags & BPF_F_ADJ_ROOM_FIXED_GSO)) {
-+			skb_decrease_gso_size(shinfo, len_diff);
-+			if (shinfo->frag_list)
-+				return skb_linearize(skb);
-+		}
-+
- 	}
- 
- 	return 0;
--- 
-2.33.0
-
+> ---
+> Changes in v2: Rename the cpuhp_state of sbi ipi
+>
+>  arch/riscv/kernel/sbi-ipi.c | 2 +-
+>  include/linux/cpuhotplug.h  | 1 +
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/kernel/sbi-ipi.c b/arch/riscv/kernel/sbi-ipi.c
+> index 1026e22955cc..0cc5559c08d8 100644
+> --- a/arch/riscv/kernel/sbi-ipi.c
+> +++ b/arch/riscv/kernel/sbi-ipi.c
+> @@ -71,7 +71,7 @@ void __init sbi_ipi_init(void)
+>          * the masking/unmasking of virtual IPIs is done
+>          * via generic IPI-Mux
+>          */
+> -       cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
+> +       cpuhp_setup_state(CPUHP_AP_IRQ_RISCV_SBI_IPI_STARTING,
+>                           "irqchip/sbi-ipi:starting",
+>                           sbi_ipi_starting_cpu, NULL);
+>
+> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+> index 7a5785f405b6..0a8fd4a3d04c 100644
+> --- a/include/linux/cpuhotplug.h
+> +++ b/include/linux/cpuhotplug.h
+> @@ -147,6 +147,7 @@ enum cpuhp_state {
+>         CPUHP_AP_IRQ_LOONGARCH_STARTING,
+>         CPUHP_AP_IRQ_SIFIVE_PLIC_STARTING,
+>         CPUHP_AP_IRQ_RISCV_IMSIC_STARTING,
+> +       CPUHP_AP_IRQ_RISCV_SBI_IPI_STARTING,
+>         CPUHP_AP_ARM_MVEBU_COHERENCY,
+>         CPUHP_AP_PERF_X86_AMD_UNCORE_STARTING,
+>         CPUHP_AP_PERF_X86_STARTING,
+> --
+> 2.34.1
+>
 
