@@ -1,113 +1,123 @@
-Return-Path: <linux-kernel+bounces-255674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58FB7934396
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 23:01:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1AEA93439A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 23:01:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 022EC1F22512
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 21:01:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 786E5286A42
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 21:01:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B03180A63;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B520718733D;
 	Wed, 17 Jul 2024 21:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CLMbumAv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEAB1CD2B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7D43A8CB;
 	Wed, 17 Jul 2024 21:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721250053; cv=none; b=DVofZEss51TeUtHYNMAddzyB7YOIHt4jFpc3zgkykNlTBlvy9r0BkrTpro75fz0VjQSDAxqDh8AA1XfiXtvCQ8EIEyip3W3DBt3Gxac2T+UKh6v0z9OiJLT27ifgEnVqE1xG6xHwcPxz6MHtemS8rYHW4qG/Tfkp9lXw4ISkUH0=
+	t=1721250054; cv=none; b=LWC4DSRUQ5LeguFEaq8v7kqfp/PSofnALIH0+x4I/zFwt3PdQscYbHAhuFcrk79RmWkL/e6EFNr1HWCQuyzAKnKIoEGW+HWn+ytvOMnCs1XllOo93cVKS0JFkJVoOTGKzwTVjLqoUwcT6MpYsMvNDgWTKj+TxHPr9HwF1Vi9IVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721250053; c=relaxed/simple;
-	bh=sd17yyCSogEJ+geKjLkRzNk0EkzA6aa7NHHO4q+ztWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jq6rQVt9Tb2VUaRIzuNko0xc7YeO++Szu/Wvz54U22Puo5/+Fm8CabHK5a9l0HUaz8DYR4rIau77BMUVa9sgM8x64QwX+0vH/qkgW2fUI9CUbMrHYbIyi1N9uBQhsF/DxpcfJx1Afth75H/z3sMZ1YF+n0oVczJzWU3HAMgRklw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2DF3C2BD10;
-	Wed, 17 Jul 2024 21:00:49 +0000 (UTC)
-Date: Wed, 17 Jul 2024 17:00:47 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Joel Fernandes <joel@joelfernandes.org>
-Cc: Sean Christopherson <seanjc@google.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Vineeth Remanan Pillai
- <vineeth@bitbyteword.org>, Ben Segall <bsegall@google.com>, Borislav Petkov
- <bp@alien8.de>, Daniel Bristot de Oliveira <bristot@redhat.com>, Dave
- Hansen <dave.hansen@linux.intel.com>, Dietmar Eggemann
- <dietmar.eggemann@arm.com>, "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar
- <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Mel Gorman
- <mgorman@suse.de>, Paolo Bonzini <pbonzini@redhat.com>, Andy Lutomirski
- <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner
- <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, Vincent
- Guittot <vincent.guittot@linaro.org>, Vitaly Kuznetsov
- <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, Suleiman Souhlal
- <suleiman@google.com>, Masami Hiramatsu <mhiramat@kernel.org>,
- himadrics@inria.fr, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- x86@kernel.org, graf@amazon.com, drjunior.org@gmail.com
-Subject: Re: [RFC PATCH v2 0/5] Paravirt Scheduling (Dynamic vcpu priority
- management)
-Message-ID: <20240717170047.5e1094f0@rorschach.local.home>
-In-Reply-To: <CAEXW_YSpaKJg_7eHf4MeEFMASR_rJ9JoRfDPogsB4_66YA2abA@mail.gmail.com>
-References: <ZjJf27yn-vkdB32X@google.com>
-	<CAO7JXPgbtFJO6fMdGv3jf=DfiCNzcfi4Hgfn3hfotWH=FuD3zQ@mail.gmail.com>
-	<CAO7JXPhMfibNsX6Nx902PRo7_A2b4Rnc3UP=bpKYeOuQnHvtrw@mail.gmail.com>
-	<66912820.050a0220.15d64.10f5@mx.google.com>
-	<19ecf8c8-d5ac-4cfb-a650-cf072ced81ce@efficios.com>
-	<20240712122408.3f434cc5@rorschach.local.home>
-	<ZpFdYFNfWcnq5yJM@google.com>
-	<20240712131232.6d77947b@rorschach.local.home>
-	<ZpcFxd_oyInfggXJ@google.com>
-	<CAEXW_YS+8VKjUZ8cnkZxCfEcjcW=z52uGYzrfYj+peLfgHL75Q@mail.gmail.com>
-	<ZpfR49IcXNLS9qbu@google.com>
-	<20240717103647.735563af@rorschach.local.home>
-	<20240717105233.07b4ec00@rorschach.local.home>
-	<20240717112000.63136c12@rorschach.local.home>
-	<CAEXW_YSpaKJg_7eHf4MeEFMASR_rJ9JoRfDPogsB4_66YA2abA@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721250054; c=relaxed/simple;
+	bh=hx0QDwgtkl7XPPPboI5Y5+whl1JJAdaP0kiIHNpUrFM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ff47tPCJgBSjssOmzkWBd33wNVVp//2x3LnKgZ0v0Baixbd+DruHLGFj1AEs9YAu2rhgQFP3cUDaA0CGRNYjTQZBMNz2FAT/dHvB2kvydXu5ED9PmeKHRVldMaPSkOhfKJVJBsIoRrMU3UFqRKmEqhsr2pl0v/Kt5ivkpsvLtpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CLMbumAv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C60B8C2BD10;
+	Wed, 17 Jul 2024 21:00:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721250053;
+	bh=hx0QDwgtkl7XPPPboI5Y5+whl1JJAdaP0kiIHNpUrFM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CLMbumAvH706svVyKqCqd2AS2KDtzWf6R9wl6kFPjPMaWffWQfNdIroZWzLwAelZj
+	 5UWwtLACy2VHBokwoK0rXL/YGAJIqHr5qMy9pXgmFROKZ/1QmZOcaDK3nYZZmFk+QQ
+	 4sN5/Nmdy7P9YoY8Nc8AZJYfmLIDwsBkFBLk8kRgRQ2Tm1XbaszyQGxACIDttP7tm1
+	 b5ZmqDOaWRTftKoFQKAJ91uiENGRofMGnhPNGO95woBifKOnfnWS37/O6ncKGpFcDM
+	 sLyPUwLfWveD+XiXSjbtLUwHh11WS5JWyEYfwQxnbFwbhFNcMSyN22+MiC6hZ0Xlya
+	 ZTLK7pWdSx04Q==
+From: Kees Cook <kees@kernel.org>
+To: David Gow <davidgow@google.com>
+Cc: Kees Cook <kees@kernel.org>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	Rae Moar <rmoar@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] Documentation: KUnit: Update filename best practices
+Date: Wed, 17 Jul 2024 14:00:51 -0700
+Message-Id: <20240717210047.work.412-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2536; i=kees@kernel.org; h=from:subject:message-id; bh=hx0QDwgtkl7XPPPboI5Y5+whl1JJAdaP0kiIHNpUrFM=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmmDEDs+QbXewuQGR1tbdvh9esJtQOJRD/O3tua 64PBN3SwouJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZpgxAwAKCRCJcvTf3G3A JkAsD/9q2jXtZWkpZFiNft5vxU/PHm//mD+0lzWW+7WLTyr7XmF9o9O/QA4pVpQKttRpb/J9nvI FazHC9c3CgYi1splpIjPfdfNcVr8wTOtQbSOjJpgI8ppmDPzL0Z4HVLL3MeH1yUnjcD91stXBPv lHckhC6nRn+oeYa7gFtS+kTp0yCuqHjUCGDTxBmdilLwpRDUh4oLakhdzqqfhq3nxEAz08dKmUN 4P2gxUeo0IgwOa6ciO+pPTiiDgV/1ko1V44CjOw2h6pXEZdkhW+Pk8Oi6Jhn0Ec7t7q85D6Tz2R PO8i1BHGYSX93CKQSdoJub6u4SGnyCyma8GTdFz71HpdfM8XAOztcWJMI4YMnnxKqyexjW6gOOM yeZ41vK1cFlK6/jupmp5BkbsJgpB3t7WnaLPRWxp3oLubAL+651cFO0rSsgZj+5dq+9Rzr/GTGw GphdIflMOZ+Ji6SH19zx2Um7yAU7xUTVHsFm67JXvSOTRECLhQq1J1zKxU/vbH1D/A9LWUQhBPD k//jo3ZyMamL9+Vvibk0AcI0BYu6rbGVAHcTeJgQ1lVdNJ475wHT2ppPchH4hnSnxTnl9ILm65V ScI8oFoOJqd4Y5pfNqeS+R2MPSHa2FOuq4s1Pw/aJRNzByevR8oQOg6vK4e9k/9gIX7250i7Abu XDwp+bvDplrC4
+ eA==
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Wed, 17 Jul 2024 16:57:43 -0400
-Joel Fernandes <joel@joelfernandes.org> wrote:
+Based on feedback from Linus[1], change the suggested file naming for
+KUnit tests.
 
-> On Wed, Jul 17, 2024 at 11:20=E2=80=AFAM Steven Rostedt <rostedt@goodmis.=
-org> wrote:
-> >
-> > On Wed, 17 Jul 2024 10:52:33 -0400
-> > Steven Rostedt <rostedt@goodmis.org> wrote:
-> > =20
-> > > We could possibly add a new sched class that has a dynamic priority. =
-=20
-> >
-> > It wouldn't need to be a new sched class. This could work with just a
-> > task_struct flag.
-> >
-> > It would only need to be checked in pick_next_task() and
-> > try_to_wake_up(). It would require that the shared memory has to be
-> > allocated by the host kernel and always present (unlike rseq). But this
-> > coming from a virtio device driver, that shouldn't be a problem. =20
->=20
-> Problem is its not only about preemption, if we set the vCPU boosted
-> to RT class, and another RT task is already running on the same CPU,
+Link: https://lore.kernel.org/lkml/CAHk-=wgim6pNiGTBMhP8Kd3tsB7_JTAuvNJ=XYd3wPvvk=OHog@mail.gmail.com/ [1]
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: David Gow <davidgow@google.com>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>
+Cc: Rae Moar <rmoar@google.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kselftest@vger.kernel.org
+Cc: kunit-dev@googlegroups.com
+Cc: linux-doc@vger.kernel.org
+---
+ Documentation/dev-tools/kunit/style.rst | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-That can only happen on wakeup (interrupt). As the point of lazy
-priority changing, it is only done when the vCPU is running.
-
--- Steve
-
-
-> then the vCPU thread should get migrated to different CPU. We can't do
-> that I think if we just did it without doing a proper
-> sched_setscheduler() / sched_setattr() and let the scheduler handle
-> things.  Vineeth's patches was doing that in VMEXIT..
-
+diff --git a/Documentation/dev-tools/kunit/style.rst b/Documentation/dev-tools/kunit/style.rst
+index b6d0d7359f00..761dee3f89ca 100644
+--- a/Documentation/dev-tools/kunit/style.rst
++++ b/Documentation/dev-tools/kunit/style.rst
+@@ -188,15 +188,20 @@ For example, a Kconfig entry might look like:
+ Test File and Module Names
+ ==========================
+ 
+-KUnit tests can often be compiled as a module. These modules should be named
+-after the test suite, followed by ``_test``. If this is likely to conflict with
+-non-KUnit tests, the suffix ``_kunit`` can also be used.
+-
+-The easiest way of achieving this is to name the file containing the test suite
+-``<suite>_test.c`` (or, as above, ``<suite>_kunit.c``). This file should be
+-placed next to the code under test.
++Whether a KUnit test is compiled as a separate module or via an
++``#include`` in a core kernel source file, the files should be named
++after the test suite, followed by ``_test``, and live in a ``tests``
++subdirectory to avoid conflicting with regular modules or the core kernel
++source file names (e.g. for tab-completion). If this would conflict with
++non-KUnit tests, the suffix ``_kunit`` can be used instead.
++
++So for the common case, name the file containing the test suite
++``tests/<suite>_test.c`` (or, if needed, ``tests/<suite>_kunit.c``). The
++``tests`` directory should be placed at the same level as the
++code under test. For example, tests for ``lib/string.c`` live in
++``lib/tests/string_test.c``.
+ 
+ If the suite name contains some or all of the name of the test's parent
+ directory, it may make sense to modify the source filename to reduce redundancy.
+-For example, a ``foo_firmware`` suite could be in the ``foo/firmware_test.c``
++For example, a ``foo_firmware`` suite could be in the ``tests/foo/firmware_test.c``
+ file.
+-- 
+2.34.1
 
 
