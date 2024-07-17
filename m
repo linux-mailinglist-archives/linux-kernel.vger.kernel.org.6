@@ -1,106 +1,113 @@
-Return-Path: <linux-kernel+bounces-255657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 825DF934357
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:44:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A4A293435B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:46:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB8D4281CB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:44:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32EB02826AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5731849C4;
-	Wed, 17 Jul 2024 20:43:55 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4EF1849C2;
+	Wed, 17 Jul 2024 20:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KhSQ80c6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FB51CAA6
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 20:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4AF1836C2
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 20:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721249035; cv=none; b=ROF5mb4cThndhn64gw+driEYvRe/PF0ESCoas2scwYMD8ihGRVBcM2jmmmGs3fMmG4Da0mvkuHSGylXkXsmpHsGxr6Sr2VLMqL+XQ24EaFV4qohXF1lCVeoIUEiUKg+WPdVxAYeVWd+/BP62mYs8HxmASc05FJqY29rsnvPCe7A=
+	t=1721249204; cv=none; b=LFrR0kDOlk25H6su1JDlOlC1xZNCdfD8GBlkCC10kCQO7Oum4+HDXzKiuEjQU3/HfUaPc5ObbkA01mTYOOx6kvCPL3VGWAsV6dZO9gecq09mt4Uon5I8g4Pu4iVV71jxIDhHs1tNnslgm1o2oBsbGx26dDYlhSTgL0xYJKBguCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721249035; c=relaxed/simple;
-	bh=iVXmB6YrVENZMLXDuu5cPYEF8gKKsjFQMakRGFE6dGc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=tU1TJaOr5irRS/iVJqm1YSKQ2v73NA4G5uco9H3BZ8gQ9DI6cCxmQlxBdZW4ku/PK93UP30RF8fCUekWI5bv9mFt3EgrnSDS5MKEMDX8bFiv5BXoO2xgdU7AdpgTfvMFBWaU5I75bWJr3RIgkws63y+FVGDO4ESuRoYsMh7G/RY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-37715eaa486so545105ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:43:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721249033; x=1721853833;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DbJ2EIQT4oikVjfi6q2SJ3LCIyOpSABsdATxXFzpenw=;
-        b=puG1H/5hGzAy8tit+Je7gRe56U6JYjbihkUxeS9Q/pdabA479sX5npnUC2CVo8/EQj
-         c4oPwDZbpHjD/vd6y8JXPWYKX8awZdnt6l3iScwrWBu4mA/MaZz2qL+hRoeu3bKDkjJ2
-         40OQHwuqxEZOXo2q9cc2aDSBUXA+IE40WRrteHZ/KZEmHj36WqQOLExJpyKm/OA3B3sz
-         YgXX/w01U3V+eGW1Xm2FX2/BiBjmGKdH2TtY4qygHj6Ud6w8ksifQQ4MqBFfkbjhP1k1
-         iNKbCjKAV2XX2V5LAkcNlAdLl3ryoVAtkEywNeLH97gV5SK/FMCCv1Lk89S1aQXndFOH
-         9ykw==
-X-Gm-Message-State: AOJu0YwFPVzO/3O9hADxEdrO9gtaxIunk6yszqaq4nh0BBcmE4UyVz7v
-	n7DflLE8k4iaf2oihrNTtbThjHz1W54pTwJbgIoNA3ALgKyTl09cJ6WHX7EVFJspjOYZrtYCqoh
-	Auw2L2eXqpux7i1uljqMHR6Erwb9PA3HpX5FlmDYc3pF00pcL+c0uowA=
-X-Google-Smtp-Source: AGHT+IHotuBshogsd8ztEwEwb8/0gTWedzByZnk14Wluz9tAOd6w3JOrp5UOSB39eCfW0BUj8XVp6KaPnd1vlmopQouA3o2635w0
+	s=arc-20240116; t=1721249204; c=relaxed/simple;
+	bh=VJ0bOKhZM7go/h0ruYNFa7O/uh7behoUmySjHl6SPiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S/yZmkC/Jyl70t2YUdHN5opitaJtnEP3uhIhNjz4+dAM5L732oUPel6QKf46+59vrzWxdlUtnWTJJl6CiS8AtkPQkpaRQuoO6ND81edZpgz9YiigmknoaRTc+FgMsW3xdKoMoUZirs7NJ25rYYN7XxeHkRLTL5H1XGeUtxegu+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KhSQ80c6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABB2CC2BD10;
+	Wed, 17 Jul 2024 20:46:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721249203;
+	bh=VJ0bOKhZM7go/h0ruYNFa7O/uh7behoUmySjHl6SPiY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KhSQ80c6IYLEZr6FPzVHoaQwjvvAR/uWkoFBpYHwjDhUAyWBN/X2qAjkfcFxATtE6
+	 Fau9pC2UpQiFVyyGPcZTxs8se1jPbilLwrIXpBNSHDnMvZ2IWKhC6H30WFjUNQXksN
+	 fVbJ7Z4iKoEsWts9peAcL3ge7GxMYE5YJpy26V++pmaMlbvvRI73YlA9nJ5nDtm+zG
+	 a/yVPYZ7v7ciRUYIZBt1ymHQbbWrYNsf2L+iZvdqJOqnsRn/gQupdvysj1wizMdTXN
+	 IRmztqmH5q7xDnjl9AZb1FYIDMiDxMwHMDhEMdiUFSsNI5eass1hvRIbYemQC45Che
+	 mIznswJl0tW3Q==
+Date: Wed, 17 Jul 2024 14:46:39 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Stuart Hayes <stuart.w.hayes@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	linux-nvme@lists.infradead.org, Hannes Reinecke <hare@suse.de>,
+	Martin Wilck <martin.wilck@suse.com>,
+	Ayush Siddarath <ayush.siddarath@dell.com>
+Subject: Re: [PATCH v4] nvme_core: scan namespaces asynchronously
+Message-ID: <Zpgtr33uqbMogK7c@kbusch-mbp.dhcp.thefacebook.com>
+References: <20240717185550.22102-1-stuart.w.hayes@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d8a:b0:36c:5c1b:2051 with SMTP id
- e9e14a558f8ab-39558956168mr2414115ab.6.1721249032856; Wed, 17 Jul 2024
- 13:43:52 -0700 (PDT)
-Date: Wed, 17 Jul 2024 13:43:52 -0700
-In-Reply-To: <000000000000e4d9eb061d719657@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002c7ba5061d7785a7@google.com>
-Subject: Re: [syzbot] [PATCH] Fix general protection fault in bch2_checksum
-From: syzbot <syzbot+dd3d9835055dacb66f35@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240717185550.22102-1-stuart.w.hayes@gmail.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Wed, Jul 17, 2024 at 01:55:50PM -0500, Stuart Hayes wrote:
 
-***
+Looks good to me. Just one minor comment below.
 
-Subject: [PATCH] Fix general protection fault in bch2_checksum
-Author: cam.alvarez.i@gmail.com
+> @@ -3978,11 +4008,15 @@ static int nvme_scan_ns_list(struct nvme_ctrl *ctrl)
+>  	__le32 *ns_list;
+>  	u32 prev = 0;
+>  	int ret = 0, i;
+> +	ASYNC_DOMAIN(domain);
+> +	struct async_scan_info scan_info;
+>  
+>  	ns_list = kzalloc(NVME_IDENTIFY_DATA_SIZE, GFP_KERNEL);
+>  	if (!ns_list)
+>  		return -ENOMEM;
+>  
+> +	scan_info.ctrl = ctrl;
+> +	scan_info.ns_list = ns_list;
+>  	for (;;) {
+>  		struct nvme_command cmd = {
+>  			.identify.opcode	= nvme_admin_identify,
+> @@ -3998,19 +4032,23 @@ static int nvme_scan_ns_list(struct nvme_ctrl *ctrl)
+>  			goto free;
+>  		}
+>  
+> +		atomic_set(&scan_info.next_nsid, 0);
+>  		for (i = 0; i < nr_entries; i++) {
+>  			u32 nsid = le32_to_cpu(ns_list[i]);
+>  
+>  			if (!nsid)	/* end of the list? */
+>  				goto out;
+> -			nvme_scan_ns(ctrl, nsid);
+> +			async_schedule_domain(nvme_scan_ns_async, &scan_info,
+> +						&domain);
+>  			while (++prev < nsid)
+>  				nvme_ns_remove_by_nsid(ctrl, prev);
+>  		}
+> +		async_synchronize_full_domain(&domain);
+>  	}
+>   out:
+>  	nvme_remove_invalid_namespaces(ctrl, prev);
+>   free:
+> +	async_synchronize_full_domain(&domain);
 
-#syz test 
-Checksum for types BCH_CSUM_chacha20_poly1305_80 and
-BCH_CSUM_chacha20_poly1305_128 are only computed when c is not NULL
-because they require the chacha20 cypher stored in c
+A goto this "free" label appears to mean the async domain has nothing
+scheduled, so synchronizing won't be necessary. This should be moved up
+tharmlesso the "out" label, I think.
 
-Signed-off-by: Camila Alvarez <cam.alvarez.i@gmail.com>
----
- fs/bcachefs/checksum.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/fs/bcachefs/checksum.c b/fs/bcachefs/checksum.c
-index 3bd3aba90d8f..77b29c73d7a0 100644
---- a/fs/bcachefs/checksum.c
-+++ b/fs/bcachefs/checksum.c
-@@ -220,10 +220,11 @@ struct bch_csum bch2_checksum(struct bch_fs *c, unsigned type,
- 
- 	case BCH_CSUM_chacha20_poly1305_80:
- 	case BCH_CSUM_chacha20_poly1305_128: {
-+		struct bch_csum ret = { 0 };
-+		if (!c)
-+			return ret;
- 		SHASH_DESC_ON_STACK(desc, c->poly1305);
- 		u8 digest[POLY1305_DIGEST_SIZE];
--		struct bch_csum ret = { 0 };
--
- 		gen_poly_key(c, desc, nonce);
- 
- 		crypto_shash_update(desc, data, len);
--- 
-2.34.1
-
+I can change that up when applying; just wanted to mention it in case
+I'm missing something.
 
