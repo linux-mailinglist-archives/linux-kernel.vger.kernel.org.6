@@ -1,95 +1,135 @@
-Return-Path: <linux-kernel+bounces-255238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE69D933DD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:43:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BE08933DDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:43:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12C491C22B64
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:43:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC4102847BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BA4180A70;
-	Wed, 17 Jul 2024 13:43:04 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263BD180A7D;
+	Wed, 17 Jul 2024 13:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="s2WEjZpK"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F8413AF2;
-	Wed, 17 Jul 2024 13:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA0113AF2;
+	Wed, 17 Jul 2024 13:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721223784; cv=none; b=u2tckDSFTxwTtibHXDq8iUl9Y+1PO0Pk+2l4TamJBAbuQFLyAEnUHhmk3/EDMNkGwjyQlckVV4c0144MlGlA3JRTcs6Udb/asSaBkQWinTDgprE3y8DBo8jLnYZih+H3HHiiDOFdDhE2Gl9ROzOzljmVEm1+KWsKb0y6Bb7qREY=
+	t=1721223798; cv=none; b=YuYnrQnHeNLpte4+m+Dodt8pwIwXQ/8FHLTn79bLsml5fG/+QQysBAPC3ZbafQWgs5bv9AbysHvzhj76jLgIFdWRlCwIiY6mOTSk8zc6H1bvRCWWQKzQ/ec+rlGUySu+55ZlgOQnHQs1RQkFrz+24PGWzrX3ZKGem0ooLT492Us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721223784; c=relaxed/simple;
-	bh=ixCL8xzaE2ZxtRi1fPUh2QkbJpm7j8F/r5sUTI8caL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FhP2R1W2/+kNqvWosWv3A5Y591ksd56CLJhphyGEkfuzD7YZlxLrcQhrvmcqVvYU1619/Q2yGICi1p5DYgsMaGPRVA5a8z+qORmXHq8/M49Rnp1CPGpHihSWTc4EuRKlWYY0r2JLR9thUCDAqWQabp2FVjRjbAv8HEQSCCIkqYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 165B61C0099; Wed, 17 Jul 2024 15:43:01 +0200 (CEST)
-Date: Wed, 17 Jul 2024 15:43:00 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 4.19 00/66] 4.19.318-rc3 review
-Message-ID: <ZpfKZLGpunPDxLz9@duo.ucw.cz>
-References: <20240717101028.579732070@linuxfoundation.org>
+	s=arc-20240116; t=1721223798; c=relaxed/simple;
+	bh=XsjKcz7wJDMS9Op0lhw4ugrW9oIsyEt2rhrcKG9Ughc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p4KuB18WF78OUr+W2Jd9W5AeuOBUT5h5cE2bfX9IQK4s2Fw6POkvfJAFReGtw9/KYPx8IJGMjoCDSKnO+wSPqZq1z1rrsXYbu5Cz1Mhq5sc/0FOZUO/Z7ELZsCA9tTaoslYAIPbR9T10TLOwmJfDTm5o/voRYzI07OrPJGj+/9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=s2WEjZpK; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721223795;
+	bh=XsjKcz7wJDMS9Op0lhw4ugrW9oIsyEt2rhrcKG9Ughc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=s2WEjZpKxVj3VSYPwqNLEjn0TVGfUKwUf1Vlos1NKJftWd1xo0ziwwFYTjZwz8c6P
+	 py5vi7V/pO3fnPdMue9/A3KfPb0XHvHIF/1XiyzfoB6D7EAVfByBWER1lB3OTKHnhS
+	 Aq5T3ln8TCg0N64d8/mIjUKaw+Gr98xOe/+w/3xo8ci/z8vFSukSnyEcHlORMXY6Kj
+	 KK8tW7UCKSL5f0gVuK2gzUHyn4dnY5xNsGUAk+gj0TurFe7Fcc5PhiWbRWtP/mIs9s
+	 Kn0WLUtMlsKZmwPsRYqgMfwEhnnioASeQEbB6SoUKHok+Mz+H/nyHsSJAh5dGPf4ao
+	 BLiDWutrW38bQ==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 31A3837805D6;
+	Wed, 17 Jul 2024 13:43:14 +0000 (UTC)
+Message-ID: <d90ef170-6c4c-4db2-9757-8e3f1cf46ec7@collabora.com>
+Date: Wed, 17 Jul 2024 15:43:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="eXfPdIR6E+OdLT5h"
-Content-Disposition: inline
-In-Reply-To: <20240717101028.579732070@linuxfoundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] media: mediatek: Add support MT8188 AIE
+To: 20220614094956 created <yelian.wang@mediatek.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com, yaya.chang@mediatek.com,
+ teddy.chen@mediatek.com, hidenorik@chromium.org
+References: <20240717125426.32660-1-yelian.wang@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240717125426.32660-1-yelian.wang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Il 17/07/24 14:41, 20220614094956 created ha scritto:
+> From: Yelian Wang <yelian.wang@mediatek.com>
+> 
+> *** BLURB HERE ***
+> 
+> This patch series add YAML DT binding and V4L2 sub-device driver
+> for mediatek MT8188 AIE. AIE is the ISP unit in the SoC，it's used
+> to detect faces on an image stored in dram. Mainly used for the
+> camera's Face Detection function of MT8188.
+> 
 
---eXfPdIR6E+OdLT5h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Leaving the fact that this driver is *far* from being upstream quality, there's
+something missing that is essential for reviewers to even try to help you here.
 
-Hi!
+What does this hardware do, in depth?
 
-> This is the start of the stable review cycle for the 4.19.318 release.
-> There are 66 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+I get it, it's giving out "face detection" functionality, okay, but what are we
+supposed to feed to it? An image? A stream? Encoded? Decoded? Size limitations?
 
-CIP testing did not find any problems here:
+What is it supposed to output?
+An image? A stream? Polygons? With or without text?
 
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-4.19.y
+....too many questions, and I'm afraid that this should not even be a V4L2 driver,
+or a generous part of it should not, anyway... maybe.
 
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+With such a huge driver, you should at least provide an extensive overview of what
+you are trying to implement and how the user(/kernel)-facing part is supposed to
+work.
 
-Best regards,
-                                                                Pavel
+Regards,
+Angelo
 
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+> This series is based on linux-next, tag: next-20240716
+> 
+> Yelian Wang (3):
+>    media: dt-bindings: add MT8188 AIE
+>    uapi: linux: add MT8188 AIE
+>    media: mediatek: add MT8188 AIE driver
+> 
+>   .../bindings/media/mediatek-aie.yaml          |   99 +
+>   drivers/media/platform/mediatek/Kconfig       |    1 +
+>   drivers/media/platform/mediatek/Makefile      |    1 +
+>   drivers/media/platform/mediatek/aie/Kconfig   |   13 +
+>   drivers/media/platform/mediatek/aie/Makefile  |    5 +
+>   drivers/media/platform/mediatek/aie/mtk_aie.h | 1012 +++++
+>   .../media/platform/mediatek/aie/mtk_aie_53.c  | 2031 +++++++++
+>   .../media/platform/mediatek/aie/mtk_aie_drv.c | 3613 +++++++++++++++++
+>   include/uapi/linux/mtk_aie_v4l2_controls.h    |  130 +
+>   include/uapi/linux/videodev2.h                |    6 +
+>   10 files changed, 6911 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/media/mediatek-aie.yaml
+>   create mode 100644 drivers/media/platform/mediatek/aie/Kconfig
+>   create mode 100644 drivers/media/platform/mediatek/aie/Makefile
+>   create mode 100644 drivers/media/platform/mediatek/aie/mtk_aie.h
+>   create mode 100644 drivers/media/platform/mediatek/aie/mtk_aie_53.c
+>   create mode 100644 drivers/media/platform/mediatek/aie/mtk_aie_drv.c
+>   create mode 100644 include/uapi/linux/mtk_aie_v4l2_controls.h
+> 
 
---eXfPdIR6E+OdLT5h
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZpfKZAAKCRAw5/Bqldv6
-8tbDAJ9gptSQeDQUaBuDtsqzkKncayCqMACgjKSzDsM4KSsNDjxGotPR2bWRvfc=
-=p+R5
------END PGP SIGNATURE-----
-
---eXfPdIR6E+OdLT5h--
 
