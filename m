@@ -1,257 +1,194 @@
-Return-Path: <linux-kernel+bounces-254908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84569933924
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:36:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61ADD933936
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E6F42825EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:36:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 063E11F21F85
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CFB438DD3;
-	Wed, 17 Jul 2024 08:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99963BBE9;
+	Wed, 17 Jul 2024 08:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="boTGgg0K";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="aSgdXuRK";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="boTGgg0K";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="aSgdXuRK"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HJ4W7Pj2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC1C10953
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 08:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7C43A8D8;
+	Wed, 17 Jul 2024 08:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721205382; cv=none; b=iWCXFaP5YQzW273MUOwIqGEt91ZLXGDTG7hFVTzD5JhM8BjlEXt9SZoy91FzHywdyD9ao9ZcKx28DPMnnyH76QF369iOnhc7qFhLPZmNj1lCIlveyFwS3jBMJRik3ySm1zeT66YrUFIFFwxfHcgbf/Y2xoQ3h8cnI9jfGAnRl2U=
+	t=1721205536; cv=none; b=no5dWiT8vA+UTmgG+gXsEDbHkWGDCmbnDH8RElxmwFTYoquvc6r8fXqY8Kn41mUi/OWuxz6nf5glnvFyHE/8eI+UaeUZ52Ft8AbFyRWyc9mI7ysS/UkGb+Yb4Mnh5uC0u32bKbS+Wj2A4x41pDnaOCdoNgIRMJ3SXzfzIlwTrbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721205382; c=relaxed/simple;
-	bh=rU8hrnUMFC5mTjGXwT69mTGZCmwGdQmcdTJONifb6RA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P7fbuyrV0uPGPPwjUASrxttFlRfzjCWSfaHPQloVS+JTI32loIilNVdfUFfqZO3SH/azahSbxRyyQR4uc9eG1ChHJStTk76sG2q2yUxFk6E+8+Ikdrix6BGM5qUleWSDauNTH1NXkJOYN6HBvfYOKUYwn+kbLiKYbBq43NUfSRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=boTGgg0K; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=aSgdXuRK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=boTGgg0K; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=aSgdXuRK; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9829221B85;
-	Wed, 17 Jul 2024 08:36:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721205378; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WKgkHUOShYpcIArnsFP6wIH0whExRvHJmj2Dadz/tkA=;
-	b=boTGgg0KSt6MO5Fa6epB7oYdSqc5p5DEanPLyaVB8xtpPnXnpllmronLtStuWEuyS7CbpD
-	kz6xYCAhms+JRk1dgXenuRW6a0geeGiIyPn8reV9rgmz/m71DqDXJiUDbguflafDVVovi+
-	RzwcH0YJvYCasQIX4LYEJ657P9BbGKM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721205378;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WKgkHUOShYpcIArnsFP6wIH0whExRvHJmj2Dadz/tkA=;
-	b=aSgdXuRKdDmVT4ll2RhzQWpJ6yLKzDewOOGjdw19mqhhGpH5CNh60/1Z0VupI16+1Syy8h
-	5k66ejFhhBmPaSBw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=boTGgg0K;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=aSgdXuRK
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721205378; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WKgkHUOShYpcIArnsFP6wIH0whExRvHJmj2Dadz/tkA=;
-	b=boTGgg0KSt6MO5Fa6epB7oYdSqc5p5DEanPLyaVB8xtpPnXnpllmronLtStuWEuyS7CbpD
-	kz6xYCAhms+JRk1dgXenuRW6a0geeGiIyPn8reV9rgmz/m71DqDXJiUDbguflafDVVovi+
-	RzwcH0YJvYCasQIX4LYEJ657P9BbGKM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721205378;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WKgkHUOShYpcIArnsFP6wIH0whExRvHJmj2Dadz/tkA=;
-	b=aSgdXuRKdDmVT4ll2RhzQWpJ6yLKzDewOOGjdw19mqhhGpH5CNh60/1Z0VupI16+1Syy8h
-	5k66ejFhhBmPaSBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 512691368F;
-	Wed, 17 Jul 2024 08:36:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CMyOEoKCl2acFQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 17 Jul 2024 08:36:18 +0000
-Date: Wed, 17 Jul 2024 10:36:51 +0200
-Message-ID: <87zfqgxvmk.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: wangdicheng <wangdich9700@163.com>
-Cc: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org,
-	wangdicheng <wangdicheng@kylinos.cn>
-Subject: Re: [PATCH] ALSA: usb-audio: Fix microphone sound on HD webcam.
-In-Reply-To: <20240717075149.6915-1-wangdich9700@163.com>
-References: <20240717075149.6915-1-wangdich9700@163.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1721205536; c=relaxed/simple;
+	bh=//VhoJmBRXereTEafCipN5TRxv7+uitmznbzZSgGUu0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rNk6NKzpyeLZuvHDfTHs+yubK5OkfLKLa+5e9drulYLflTB8AaJmjbEAzVs1UIEqKCc9hjHSoJFoTiqzMveOL85S4OiQEtdDu8KJdp2lcqSlSxD2GV815R/3YCiibOyq/Akhck/8ihYxgOMCr/HytByAwJ3Vvhl9XGACZz+9d6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HJ4W7Pj2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83A9AC4AF12;
+	Wed, 17 Jul 2024 08:38:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721205535;
+	bh=//VhoJmBRXereTEafCipN5TRxv7+uitmznbzZSgGUu0=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=HJ4W7Pj2XMkvDazsjdRJl7yYjY2VPHC2gR5kKLwVIEkcahMuIENlnxkrjZJ0m195l
+	 mx+MOrc1xPQB6cf6fzjj1t+TuUccwK/T/5BhBEZtV/TCbevxPrQZPxGwmuWZbb4pKK
+	 xI9p1dFuCQEkRSrlpEnirHfIoCjrpnBK1XjhRTjYFx8/ySU7HSnvK4P9pWXglOMk80
+	 reZ7hkw6gGTt1fBUMlqGUisKQx4WsJ83fg9EZQ0ZrQ5UI9npWmwmrpl4NDmQljnA96
+	 fmKiFXNStmfmr8ayex0swnCfJJkoRWfrIXYM5HQq1RJiUNAgg0uqTQGLKtZ8kRa2Jk
+	 YJkRRQ3+r9swA==
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ebed33cb65so84641421fa.2;
+        Wed, 17 Jul 2024 01:38:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVP1TthzR6KRwvC5c8ZQ264/tRk8Yx1i8VFaUODJNp9l9kuUxJH7wov0/OV0WCDN4+Hhz+TKNO0WzAGIu79vYwvv8pPXO1SHN5rI+5IPy2Zel8LjTMgf3uqOWFS8kGfj4vEpTodZOlyVQLrnXsLfQEQQjxxm0d2V/SRmSlmNxXivNGOGw/Svg==
+X-Gm-Message-State: AOJu0YxiUipVfsuuYX8/Kl5eiW0Xd0XVFwlqe65n1Uc3TdFaC8uWPXFk
+	p00aoT6AAMQ91J2y05TsmolzxiCisxWPCcic5zy6ro+PYLfpDM7V7AUT8FS8xQOLWp+zfuftEMC
+	KRO6yg4c5pdJ/M1yXyxXyfZ4BN5A=
+X-Google-Smtp-Source: AGHT+IFyCom2uSVQC8OGjrwqFp3CJD+Hy+n9usyiPhTcFaUGFgcAkPR+nxjKE/oaopQzVIh5whJj6h5GPI+vuF8O6kQ=
+X-Received: by 2002:a2e:6a09:0:b0:2ee:4a63:e927 with SMTP id
+ 38308e7fff4ca-2eefd14c9c0mr6925311fa.39.1721205533799; Wed, 17 Jul 2024
+ 01:38:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[163.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,kernel.org,perex.cz,suse.com,vger.kernel.org,alsa-project.org,lists.infradead.org,kylinos.cn];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Flag: NO
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.51
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 9829221B85
+MIME-Version: 1.0
+References: <cover.1720969799.git.daniel@makrotopia.org> <ZpcrdwZBNFu-YlZt@makrotopia.org>
+ <CAGb2v65Mm5s96asU7iaAC_sJnUk=Yuh+zMJJBbmSgETWrPLoFA@mail.gmail.com> <2451882.5D0I8gZW9r@bagend>
+In-Reply-To: <2451882.5D0I8gZW9r@bagend>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Wed, 17 Jul 2024 16:38:40 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65BaN3rDGA+9D4mAoz4+7C4CfSqhEhd81ev-BViy0tEbw@mail.gmail.com>
+Message-ID: <CAGb2v65BaN3rDGA+9D4mAoz4+7C4CfSqhEhd81ev-BViy0tEbw@mail.gmail.com>
+Subject: Re: [PATCH v7 0/3] hwrng: add hwrng support for Rockchip RK3568
+To: Diederik de Haas <didi.debian@cknow.org>
+Cc: Daniel Golle <daniel@makrotopia.org>, linux-rockchip@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Martin Kaiser <martin@kaiser.cx>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>, Ard Biesheuvel <ardb@kernel.org>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@debian.org>, 
+	devicetree@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Olivia Mackall <olivia@selenic.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Dragan Simic <dsimic@manjaro.org>, 
+	Aurelien Jarno <aurelien@aurel32.net>, Heiko Stuebner <heiko@sntech.de>, 
+	Anand Moon <linux.amoon@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 17 Jul 2024 09:51:49 +0200,
-wangdicheng wrote:
-> 
-> From: wangdicheng <wangdicheng@kylinos.cn>
-> 
-> I own an external usb Webcam, HD webcam, which had low mic volume and
-> inconsistent sound quality. Video works as expected.
-> 
-> (snip)
-> [   95.473820][ 1] [   T73] usb 5-2.2: new high-speed USB device number 7 using xhci_hcd
-> [   95.773974][ 1] [   T73] usb 5-2.2: New USB device found, idVendor=1bcf, idProduct=2281, bcdDevice= 0.05
-> [   95.783445][ 1] [   T73] usb 5-2.2: New USB device strings: Mfr=1, Product=2, SerialNumber=3
-> [   95.791872][ 1] [   T73] usb 5-2.2: Product: HD webcam
-> [   95.797001][ 1] [   T73] usb 5-2.2: Manufacturer: Sunplus IT Co
-> [   95.802996][ 1] [   T73] usb 5-2.2: SerialNumber: 20200513
-> [   96.092610][ 2] [ T3680] usb 5-2.2: Warning! Unlikely big volume range (=4096), cval->res is probably wrong.
-> [   96.102436][ 2] [ T3680] usb 5-2.2: [5] FU [Mic Capture Volume] ch = 1, val = 0/4096/1
-> 
-> Set up quirk cval->res to 16 for 256 levels,
-> Set GET_SAMPLE_RATE quirk flag to stop trying to get the sample rate.
-> Confirmed that happened anyway later due to the backoff mechanism,
-> After 3 failures.
-> 
-> All audio stream on device interfaces share the same values,
-> apart from wMaxPacketSize and tSamFreq :
-> 
->       bLength                 9
->       bDescriptorType         4
->       bInterfaceNumber        3
->       bAlternateSetting       4
->       bNumEndpoints           1
->       bInterfaceClass         1 Audio
-> 
-> Interface Descriptor:
->   bLength                 9
->   bDescriptorType         4
->   bInterfaceNumber        3
->   bAlternateSetting       4
->   bNumEndpoints           1
->   bInterfaceClass         1 Audio
->   bInterfaceSubClass      2 Streaming
->   bInterfaceProtocol      0
->   iInterface              0
->   AudioStreaming Interface Descriptor:
->     bLength                 7
->     bDescriptorType        36
->     bDescriptorSubtype      1 (AS_GENERAL)
->     bTerminalLink           3
->     bDelay                  1 frames
->     wFormatTag         0x0001 PCM
->   AudioStreaming Interface Descriptor:
->     bLength                11
->     bDescriptorType        36
->     bDescriptorSubtype      2 (FORMAT_TYPE)
->     bFormatType             1 (FORMAT_TYPE_I)
->     bNrChannels             1
->     bSubframeSize           2
->     bBitResolution         16
->     bSamFreqType            1 Discrete
->     tSamFreq[ 0]        48000
->   Endpoint Descriptor:
->     bLength                 9
->     bDescriptorType         5
->     bEndpointAddress     0x86  EP 6 IN
->     bmAttributes            5
->       Transfer Type            Isochronous
->       Synch Type               Asynchronous
->       Usage Type               Data
->     wMaxPacketSize     0x0064  1x 100 bytes
->     bInterval               4
->     bRefresh                0
->     bSynchAddress           0
->     AudioStreaming Endpoint Descriptor:
->       bLength                 7
->       bDescriptorType        37
->       bDescriptorSubtype      1 (EP_GENERAL)
->       bmAttributes         0x01
->         Sampling Frequency
->       bLockDelayUnits         0 Undefined
->       wLockDelay         0x0000
-> (snip)
-> 
-> Testing patch provides consistent good sound recording quality and volume range.
-> 
-> (snip)
-> [   95.473820][ 1] [   T73] usb 5-2.2: new high-speed USB device number 7 using xhci_hcd
-> [   95.773974][ 1] [   T73] usb 5-2.2: New USB device found, idVendor=1bcf, idProduct=2281, bcdDevice= 0.05
-> [   95.783445][ 1] [   T73] usb 5-2.2: New USB device strings: Mfr=1, Product=2, SerialNumber=3
-> [   95.791872][ 1] [   T73] usb 5-2.2: Product: HD webcam
-> [   95.797001][ 1] [   T73] usb 5-2.2: Manufacturer: Sunplus IT Co
-> [   95.802996][ 1] [   T73] usb 5-2.2: SerialNumber: 20200513
-> [   96.110630][ 3] [ T3680] usbcore: registered new interface driver snd-usb-audio
-> [   96.114329][ 7] [ T3677] usb 5-2.2: Found UVC 1.00 device HD webcam (1bcf:2281)
-> [   96.167555][ 7] [ T3677] usbcore: registered new interface driver uvcvideo
-> 
-> Signed-off-by: wangdicheng <wangdicheng@kylinos.cn>
+On Wed, Jul 17, 2024 at 4:22=E2=80=AFPM Diederik de Haas <didi.debian@cknow=
+.org> wrote:
+>
+> On Wednesday, 17 July 2024 04:58:51 CEST Chen-Yu Tsai wrote:
+> > On Wed, Jul 17, 2024 at 10:25=E2=80=AFAM Daniel Golle <daniel@makrotopi=
+a.org> wrote:
+> > > On Tue, Jul 16, 2024 at 07:19:35PM +0200, Diederik de Haas wrote:
+> > > > On Tuesday, 16 July 2024 18:53:43 CEST Diederik de Haas wrote:
+> > > > > rngtest: FIPS 140-2(2001-10-10) Long run: 0
+> > > >
+> > > > I don't know if it means something, but I noticed that I have
+> > > > ``Long run: 0`` with all my poor results,
+> > > > while Chen-Yu had ``Long run: 1``.
+> > > >
+> > > > Different SoC (RK3399), but Anand had ``Long run: 0`` too on their
+> > > > very poor result (100% failure):
+> > > > https://lore.kernel.org/linux-rockchip/CANAwSgTTzZOwBaR9zjJ5VMpxm5B=
+ydtW6
+> > > > rB2S7jg+dnoX8hAoWg@mail.gmail.com/>
+> > > The conclusions I draw from that rather ugly situation are:
+> > >  - The hwrng should not be enabled by default, but it should by done
+> > >
+> > >    for each board on which it is known to work well.
+> > >
+> > >  - RK_RNG_SAMPLE_CNT as well as the assumed rng quality should be
+> > >
+> > >    defined in DT for each board:
+> > >    * introduce new 'rochchip,rng-sample-count' property
+> > >    * read 'quality' property already used for timeriomem_rng
+> > >
+> > > I will prepare a follow-up patch taking those conclusions into accoun=
+t.
+> > >
+> > > Just for completeness, here my test result on the NanoPi R5C:
+> > > root@OpenWrt:~# cat /dev/hwrng | rngtest -c 1000
+> > > rngtest 6.15
+> > > Copyright (c) 2004 by Henrique de Moraes Holschuh
+> > > This is free software; see the source for copying conditions.  There =
+is NO
+> > > warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR
+> > > PURPOSE.
+> > >
+> > > rngtest: starting FIPS tests...
+> > > rngtest: bits received from input: 20000032
+> > > rngtest: FIPS 140-2 successes: 875
+> > > rngtest: FIPS 140-2 failures: 125
+> > > rngtest: FIPS 140-2(2001-10-10) Monobit: 123
+> > > rngtest: FIPS 140-2(2001-10-10) Poker: 5
+> > > rngtest: FIPS 140-2(2001-10-10) Runs: 4
+> > > rngtest: FIPS 140-2(2001-10-10) Long run: 0
+> > > rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+> > > rngtest: input channel speed: (min=3D85.171; avg=3D141.102;
+> > > max=3D4882812.500)Kibits/s rngtest: FIPS tests speed: (min=3D17.809;
+> > > avg=3D19.494; max=3D60.169)Mibits/s rngtest: Program run time: 139628=
+605
+> > > microseconds
+> >
+> > I doubt this is per-board. The RNG is inside the SoC, so it could be a =
+chip
+> > quality thing.
+>
+> I agree with ChenYu (and others) that this is isn't a per-board level thi=
+ng.
+> I'd even go further: 's/I doubt/It can't be that/' (for the same reason
+> though; this is inside the SoC).
+>
+> Before I saw these latest emails, I was going to suggest:
+> 1. Enable it only on RK3568 for now. I would be fine if this would be acc=
+epted
+> by the maintainer
+>
+> 2. Ask that you make a special version (for me) where I could play with t=
+he
+> params without having to compile a new kernel for each variant (it genera=
+lly
+> takes me more then 24h on my Q64-A). Either through kernel module propert=
+ies
+> or properties defined in the DeviceTree is fine with me.
+>
+> 3. Based on the results make  a choice to not enable it on rk3566 at all =
+or
+> (indeed) introduce DT properties to configure it differently per SoC.
+>
+> 4. Hope/Ask for more test results
+>
+> > On the RK3399 we also saw wildly varying results.
+>
+> On my Rock64('s) (RK3328) it doesn't work at all:
+>
+> ```
+> root@cs21:~# cat /dev/hwrng | rngtest -c 1000
+> rngtest 5
+> ...
+> rngtest: starting FIPS tests...
+> cat: /dev/hwrng: No such device
+> rngtest: entropy source drained
+> ```
 
-The patch can't be applied cleanly to the latest tree, as the table
-has been sorted.  Could you rebase and resubmit?  Also a nitpicking:
+RK3399 and RK3328 are covered by a different driver:
 
-> --- a/sound/usb/quirks.c
-> +++ b/sound/usb/quirks.c
-> @@ -2179,6 +2179,8 @@ static const struct usb_audio_quirk_flags_table quirk_flags_table[] = {
->  		   QUIRK_FLAG_FIXED_RATE),
->  	DEVICE_FLG(0x1bcf, 0x2283, /* NexiGo N930AF FHD Webcam */
->  		   QUIRK_FLAG_GET_SAMPLE_RATE),
-> +	DEVICE_FLG(0x1bcf, 0x2281, /* FHD Webcam */
-> +			QUIRK_FLAG_GET_SAMPLE_RATE),
+https://lore.kernel.org/all/20230707115242.3411259-1-clabbe@baylibre.com/
 
-Please try to align the space.
+And that patch says the TRNG on the RK3328 is utterly broken.
 
 
-thanks,
+ChenYu
 
-Takashi
+
+> Cheers,
+>   Diederik
 
