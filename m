@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-255146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AB78933CC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:04:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD823933CC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D91BC1F247A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:04:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFC0E1C22980
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:04:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A4717FAA9;
-	Wed, 17 Jul 2024 12:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7719180038;
+	Wed, 17 Jul 2024 12:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dp3yB7X4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P/TN3bt5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D156433B9;
-	Wed, 17 Jul 2024 12:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A4D17F4FD;
+	Wed, 17 Jul 2024 12:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721217872; cv=none; b=nalHz5hjVawOyt49me2nO2ym4+rnG5ZdIZ+1v3EwQ3RLV/oRAaj+Bz8JCa7LAjID1ix3O2kBq18NEH5kJR3N8/n+Hl02mjkR2gJ6VFZXJ+pzXBiFdRL2HnPmc8N0+jaiZXS4yvvEBYtrxzbejR7KsO6yOwBYTsc/4ZXA/68ufJs=
+	t=1721217881; cv=none; b=o6D4O7bnkOJaKaA/an236OJFdQIrvjI71lTPuO+0HlLJ6xcU34vTOrI2AUjFt7voaM1CL8bJA5dbDdkdrH/FK2r+AQKZY9sgWy02uy/suofxg1Js754gRN1Z+6XZz3aC9eu0rBALmDOrs96fUADTMWdQIinV2P+MbKWkefjgeNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721217872; c=relaxed/simple;
-	bh=vk+H0hoJn4+tPP4KZNA7bIkiuq7tilGJ770kNIjL/4w=;
+	s=arc-20240116; t=1721217881; c=relaxed/simple;
+	bh=0UsurCWC37/vPF/S47s23Egqb3NYKAVgcUWW5RitYiM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dv0Bsu8my+wCrMMUz4QWwbUorC7KAdheP639AfD4z09aAjfUO2asGGlEbwRzLVuceZVu4EVwjklPVvlAMCfLvMrLFCCZKttnVzS03U7Vnm/phgpIdNNKkan8jlTl+0WQRxvOIQJy8F7L36dGd0gnv2E9zgOt+Q2s0j+EfSoi+1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dp3yB7X4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 886B2C32782;
-	Wed, 17 Jul 2024 12:04:26 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=is3uzhy1xe5N64TCFlhyfr/wnyX211Wdn+OaiSf5m1dkgxYWVwWbD/KjNrvAZVsv1iQ3BbJDYkgIZ8yU2tRqb/pLaj3fyrvdGQAP9OQ9EeVXiNgsBm69FircdHkl9c62HtqoqUG8du6ijIJDjwdbyQGOCsa2cy8FaT5CPY0xQ8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P/TN3bt5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FAC5C32782;
+	Wed, 17 Jul 2024 12:04:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721217871;
-	bh=vk+H0hoJn4+tPP4KZNA7bIkiuq7tilGJ770kNIjL/4w=;
+	s=k20201202; t=1721217880;
+	bh=0UsurCWC37/vPF/S47s23Egqb3NYKAVgcUWW5RitYiM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dp3yB7X4t6SAkC7Xh9CwPf04BTt0oPlN4946g4aM9KN0sUx2W1EtrEVRQv/58vWES
-	 imCKU0w3w7QWMah9x+n0g03QJdh9F38kkmsRZ2RcCWSaxTet+wQZ8FAKiO71ofOkQB
-	 piGxApnMgSfnazAFpVPaksjigUeFKymvN63Etb+4GCwZkQ3ra1VlPBV3vYdz5fcCX1
-	 tq3FTOQ/buVO1mpmoM8lUx1n3bX5HRUkaKChRpq682NiAn3NaxdF5TMwRDHCvxyaLt
-	 J5SZElSCT2moWUbEy9z/3U8IWW/cOWaEqPT8sVCOALYUKwHtC4cJJO5rR4bPLnXNy9
-	 gvEwrW2Fbhtag==
-Message-ID: <44ce546d-c043-44ad-9e2c-eaf052e5531b@kernel.org>
-Date: Wed, 17 Jul 2024 14:04:24 +0200
+	b=P/TN3bt5zqPl4Ver7cNMAMsDz/+jWOSAdS0JUo5xbuFa5SWd4CXRE6kEyJmnqcLyt
+	 9IdUOmUJ8+ovDGmAm/pgYUlCG8WdOHWtHRDsMhpPiiKVVS3XVaO1LIr5OV3oMC0Zi4
+	 hA+PLviDR59AvA4os9LaxTvflzK/agHglCDzk3lHUlNm3TrufLaHHJX2r/LVfgTw5/
+	 18Fp+0ccamTp2bk42HanewkP+tESle1OVH7ObVErE1dhzwJhR0PfA20IVjONV2tTi4
+	 wNA8rGYS3LsTRymWrvtv0qQJFTK54ZHh6lsCS42fBBK6Xz6BnHufnMizowllx+VZqV
+	 nePTpkim/Spzw==
+Message-ID: <98423f21-c661-4d59-bc69-9958a69b2dd8@kernel.org>
+Date: Wed, 17 Jul 2024 21:04:38 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,95 +49,145 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 2/4] arm: dts: marvell: armada-38x: add description
- for usb phys
-To: Josua Mayer <josua@solid-run.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
- Gregory Clement <gregory.clement@bootlin.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Yazan Shhady <yazan.shhady@solid-run.com>, linux-phy@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org
-References: <20240716-a38x-utmi-phy-v2-0-dae3a9c6ca3e@solid-run.com>
- <20240716-a38x-utmi-phy-v2-2-dae3a9c6ca3e@solid-run.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] Revert "scsi: sd: Do not repeat the starting disk
+ message"
+To: Johan Hovold <johan@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Bart Van Assche <bvanassche@acm.org>, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20240716161101.30692-1-johan+linaro@kernel.org>
+ <39143ca8-68e4-44eb-8619-0b935aa81603@kernel.org>
+ <ZpeIOsEbBIho9P_1@hovoldconsulting.com>
+ <bb277462-579b-4dc3-b63c-bf5768dd1ce4@kernel.org>
+ <ZpeqNohYoQI5HQP-@hovoldconsulting.com>
+From: Damien Le Moal <dlemoal@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240716-a38x-utmi-phy-v2-2-dae3a9c6ca3e@solid-run.com>
+Organization: Western Digital Research
+In-Reply-To: <ZpeqNohYoQI5HQP-@hovoldconsulting.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 16/07/2024 22:52, Josua Mayer wrote:
-> Armada 38x has 3x USB-2.0 utmi phys. They are almost identical to the 2x
-> utmi phys on armada 8k.
+On 7/17/24 20:25, Johan Hovold wrote:
+> On Wed, Jul 17, 2024 at 07:46:14PM +0900, Damien Le Moal wrote:
+>> On 7/17/24 18:00, Johan Hovold wrote:
+>>> On Wed, Jul 17, 2024 at 07:48:26AM +0900, Damien Le Moal wrote:
+>>>> On 7/17/24 01:11, Johan Hovold wrote:
+>>>>> This reverts commit 7a6bbc2829d4ab592c7e440a6f6f5deb3cd95db4.
+>>>>>
+>>>>> The offending commit tried to suppress a double "Starting disk" message
+>>>>> for some drivers, but instead started spamming the log with bogus
+>>>>> messages every five seconds:
+>>>>>
+>>>>> 	[  311.798956] sd 0:0:0:0: [sda] Starting disk
+>>>>> 	[  316.919103] sd 0:0:0:0: [sda] Starting disk
+>>>>> 	[  322.040775] sd 0:0:0:0: [sda] Starting disk
+>>>>> 	[  327.161140] sd 0:0:0:0: [sda] Starting disk
+>>>>> 	[  332.281352] sd 0:0:0:0: [sda] Starting disk
+>>>>> 	[  337.401878] sd 0:0:0:0: [sda] Starting disk
+>>>>> 	[  342.521527] sd 0:0:0:0: [sda] Starting disk
+>>>>> 	[  345.850401] sd 0:0:0:0: [sda] Starting disk
+>>>>> 	[  350.967132] sd 0:0:0:0: [sda] Starting disk
+>>>>> 	[  356.090454] sd 0:0:0:0: [sda] Starting disk
+>>>>> 	...
+>>>>>
+>>>>> on machines that do not actually stop the disk on runtime suspend (e.g.
+>>>>> the Qualcomm sc8280xp CRD with UFS).
+>>>>
+>>>> This is odd. If the disk is not being being suspended, why does the platform
+>>>> even enable runtime PM for it ? 
+>>>
+>>> This is clearly intended to be supported as sd_do_start_stop() returns
+>>> false and that prevents sd_start_stop_device() from being called on
+>>> resume (and similarly on suspend which is why there are no matching
+>>> stopping disk messages above):
+>>>
+>>> 	[   32.822189] sd 0:0:0:0: sd_resume_common - runtime = 1, sd_do_start_stop = 0, manage_runtime_start_stop = 0
+>>
+>> Yes, so we can suppress the "Starting disk" message for runtime resume, to match
+>> the runtime suspend not having the message.
 > 
-> Add descriptions for all 3 phy ports.
+> No, the point is that the stopping disk message is also suppressed when
+> sd_do_start_stop() returns false (i.e. when sd_start_stop_device() is
+> never called). See sd_suspend_common().
 > 
-> Signed-off-by: Josua Mayer <josua@solid-run.com>
-> ---
->  arch/arm/boot/dts/marvell/armada-38x.dtsi | 29 +++++++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
+>>>> Are you sure about this ? Or is it simply that
+>>>> the runtime pm timer is set to a very low interval ?
+>>>
+>>> I haven't tried to determine why runtime pm is used this way, but your
+>>> patch is clearly broken as it prints a message about starting the disk
+>>> even when sd_do_start_stop() returns false.
+>>
+>> The patch is not *that* broken, because sd_do_start_stop() returning false mean
+>> only that the disk will *not* be started using a START STOP UNIT command. But
+>> the underlying LLD must start the drive. So the message is not wrong, even
+>> though it is probably best to suppress it for the runtime case.
 > 
-> diff --git a/arch/arm/boot/dts/marvell/armada-38x.dtsi b/arch/arm/boot/dts/marvell/armada-38x.dtsi
-> index 446861b6b17b..701a1c0c19ad 100644
-> --- a/arch/arm/boot/dts/marvell/armada-38x.dtsi
-> +++ b/arch/arm/boot/dts/marvell/armada-38x.dtsi
-> @@ -392,6 +392,11 @@ comphy5: phy@5 {
->  				};
->  			};
+> From a quick look at the code I interpret the (original) intention to be
+> to only print these messages in cases were sd_start_stop_device() is
+> actually called.
 >  
-> +			syscon0: system-controller@18400 {
-> +				compatible = "syscon", "simple-mfd";
+>> The point here is that sd_runtime_resume() should NOT be called every 5s unless
+>> there is also a runtime suspend in between the calls. As mentioned, this can
+>> happen if the autosuspend timer is set to a very low timeout to aggressively
+>> suspend the disk after a short idle time. That of course makes absolutely no
+>> sense for HDDs given the spinup time needed, but I guess that is a possiblity
+>> for UFS drives.
+> 
+> I don't see anything obviously wrong with this for things like UFS.
+> 
+> Here's what some printk reveal for the Qualcomm platform in question:
+> 
+> [   50.659451] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_resume
+> [   50.669756] sd 0:0:0:0: sd_resume_runtime
+> [   52.911603] sd 0:0:0:0: sd_suspend_runtime
+> [   52.921707] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_suspend
+> [   53.472894] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_resume
+> [   53.481464] sd 0:0:0:0: sd_resume_runtime
+> [   55.550493] sd 0:0:0:0: sd_suspend_runtime
+> [   55.559697] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_suspend
+> [   58.595554] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_resume
+> [   58.607868] sd 0:0:0:0: sd_resume_runtime
+> [   60.667330] sd 0:0:0:0: sd_suspend_runtime
+> [   60.677623] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_suspend
+> [   63.714149] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_resume
+> [   63.724498] sd 0:0:0:0: sd_resume_runtime
+> [   65.772893] sd 0:0:0:0: sd_suspend_runtime
+> [   65.784696] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_suspend
+> [   68.836015] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_resume
+> [   68.849576] sd 0:0:0:0: sd_resume_runtime
+> [   71.359102] sd 0:0:0:0: sd_suspend_runtime
+> [   71.368928] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_suspend
+> [   73.955031] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_resume
+> [   73.963040] sd 0:0:0:0: sd_resume_runtime
+> [   76.032153] sd 0:0:0:0: sd_suspend_runtime
+> [   76.042100] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_suspend
+> 
+> Looks like a 2-second autosuspend timeout somewhere, and the controller
+> stays suspended for 1-3 seconds in between.
 
-That's not a valid pair. They cannot be alone.
+OK. So all good and nothing suspicious with this. That is only very aggressive
+autosuspend. As I said, let's revert and I will rework the start/stop messages.
 
+> 
+>>>> It almost sound like what we need to do here is suppress this message for the
+>>>> runtime resume case, so something like:
+>>>
+>>> No, that would only make things worse as I assume you'd have a stopped
+>>> disk message without a matching start message for driver that do end up
+>>> stopping the disk here.
+>>
+>> OK. so let's revert this patch and I will rework that message to be displayed
+>> only on device removal, system suspend and system shutdown.
+> 
+> Sounds good.
+> 
+> Johan
+> 
 
-
-Best regards,
-Krzysztof
+-- 
+Damien Le Moal
+Western Digital Research
 
 
