@@ -1,124 +1,177 @@
-Return-Path: <linux-kernel+bounces-254836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF16933859
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:53:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43704933863
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:57:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA9BFB21EE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:53:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 739B51C21F23
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93B42033A;
-	Wed, 17 Jul 2024 07:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AADD1CF8A;
+	Wed, 17 Jul 2024 07:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CvxTVdSP"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="O4X4irp9"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81661CAB1
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BC21CD06
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721202776; cv=none; b=OQV/4VxD3YSaaOMKA8BrbU21y2gbSNiwA6pgNrsPJsXprHwVrAYkngNsEp/SEsrBzoH1chDXuEf8yCkZ9BCG+A+6zQB6ZLL0l/hExEsSV1GmRNhyygWYD4/ju0JfaAZWEZR2pOwBuzn6VaLqMQHvxGDZ8VB0VtWWe4SBNVZqSzY=
+	t=1721203065; cv=none; b=ovMeiLx+ufEJfWS6ADDbOv4FhTR9QfCfHgGVnje9ecj1hKM6AMD69yUB+gb57baax+hd9bt9vSFCMlAPpkcWPUT3aJh4wnevXynN4zIUDCof36O7rJr4ngnW1Xm9KPtLWFBpdc4RPqQ9Bd92NcmJDPziY8OElKJLZ4nBSxwqwTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721202776; c=relaxed/simple;
-	bh=tmn7dZaZf/63VEF8gNjawg4siNTUl1KUDSGXNI8Zuqo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rRsCaHpx9r4QMDBA6+nSC58EzPB63++MkKrFEWNA6vfjoQUn6zVceGEHVGnfpPTI/XWCC+UEhhaqzF8WYyBy4mRyXTQI4Edd6oztOteL6UQJk7TyOFnNQxqdWdW0lEpGwRzv2fHBggDh/IZLiYlazsgnLd7nCqRMHn5AUSNJ8mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CvxTVdSP; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4277a5ed48bso48244215e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 00:52:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1721202772; x=1721807572; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=q7JxP1X9anMugApULpKE/NNH8t1wNvqt4dSmpMOS7bM=;
-        b=CvxTVdSPg81xHQ++BLKV3G/no2sn8ynpkd1R4m6I4nf/z6TlSlLGu8lqIiEKdANfgq
-         bUMrf7mOqShBWpFeQE04pYfQwqVQ6qsydKjkiqKcbGDfggmfFcL7V2fEQ+B4uGqHWO0Y
-         lbIT8RwIWcsZ8U0RtriyknzZhTudiA3+kSVyeU8CH9+OTpcC1kHLJi8kOpiv8ia1jP2O
-         P79JQtjlB9XKCCF+eVQKxLDrLEmQllwCypUMBv1BH7m8uC0i/3qBWIbPPLo/Rs0fBL7f
-         6MKC2BT6Jtpo0kn90HA2Zyqu7XsN6fUHy1frN5+ypQu8odbADkIXIB7knP5sI/O1uYHY
-         8Fzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721202772; x=1721807572;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q7JxP1X9anMugApULpKE/NNH8t1wNvqt4dSmpMOS7bM=;
-        b=OK7uuOkQU1Rze70O+Tr6Pb1qqk6GaXA1Q1CfUN+6rfQeXPYf+/TuKA/l4QYBlluIzD
-         LWcEEwUTQwq7Cs+p2pavKAL2YFNl3WTr9vm5ZfFNAsgHX0aJYhbb56CX3GNyTxSUM6bO
-         u14jlmt9E7aXdEK0WmH83GAiwiHNbMRDZT4UEykXrDKl9pj0XbfEr6nq2O6dndcHF/+I
-         wlu4u0/FJ/pboRJt9S8QcpuW0WFw0QzMNqfpiz5JDkkPwayNclF3XbxROIT7pE2Ndd3d
-         /iYJyekkKrdVJjiyvtPlsKAzrtxTq+efTlycJdpsj/6752LeeQB5aM6OIgVgmnB5nX2Z
-         sTuA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/icwgOtaZClYhZu/8+QRzpmUAjrZ+X5saTByvJkNfpThNvOxP+eFAJhy+oudEB4f+2kgU/XjYxibiXYlyHvZGybXqn8GDiPaFtWDF
-X-Gm-Message-State: AOJu0Yyq6hqMnEq8hCe0vBqA9mE7xOYU1ugE4odOA8QaZg7aTPdVFDUh
-	DWMxRyPENboF/MgayCzJqkS2/YNl3WcotTje/IJqJh2BNNxrNokKop3LrDj1lU8=
-X-Google-Smtp-Source: AGHT+IFTDDbi5O+/Lw8G4Rbx40psRglcjVnjshWdv+9mQbxcPrfb0y6tuYnBZuD00ssqlWOSynokpA==
-X-Received: by 2002:a5d:45d2:0:b0:367:83e9:b4a5 with SMTP id ffacd0b85a97d-368316fad85mr507737f8f.49.1721202771882;
-        Wed, 17 Jul 2024 00:52:51 -0700 (PDT)
-Received: from ?IPV6:2001:a61:137b:5001:be5a:c750:b487:ff1b? ([2001:a61:137b:5001:be5a:c750:b487:ff1b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680db038dbsm10862882f8f.95.2024.07.17.00.52.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 00:52:51 -0700 (PDT)
-Message-ID: <991f7feb-a5bf-4eb4-9623-a13534a02b98@suse.com>
-Date: Wed, 17 Jul 2024 09:52:50 +0200
+	s=arc-20240116; t=1721203065; c=relaxed/simple;
+	bh=iic8ojSP+0t4ll27e93zCMgo6+t0CvX/Y9jGf966pns=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FG/p2VElzJW5GunhNf60h2bbtZ8p3cjgP1vBH9WeGkGekhyslQhCJIfTNGaGiqLiQX33nQtdhsjCVgRfeD5/TBml0MZrFeBr5oDA67L6vWvKjFagUfcWSNpshmKm8gsJCPz0woX6IxHcqglRP3kQ6I5hcp1oA/oJPgrBvKsOgaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=O4X4irp9; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46H7pZ11003490;
+	Wed, 17 Jul 2024 07:57:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	kg3X/gQZ+64/knLBvK9Em5RKJ2OZYom21tihi25c4A0=; b=O4X4irp9af7WIYF0
+	SHKDVNM/+EwFgA6uChKrVSrZiumY9F8lV9Trfg7dqxAJtrBq6/AdaDgra18Rtnix
+	bLYUL8wuKcHn9IbXPJ8wwYAQ0uDYTsI6MU4wQbaK3+JjjIF5S6OH+uoI9ou6qYKk
+	8BjNM4th7oXcBqcxNH5f0SnyebL77lutHlUY12aHVldBGZ4geDtePDC1lBlAVFjH
+	3pZqXrHdwEirnWiRN0kpAtIUKgpdcfpT/uReskqwN8VziQxlwHepLS795uyFpA71
+	iycdtWkZhmYRsB3CWvjgQ6IOdd0z22YIlqSAalGRF3XnMbVt36APf+rlM1/HXRp5
+	D6PRjA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40e9kp01q3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 07:57:19 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46H7vJqs009999;
+	Wed, 17 Jul 2024 07:57:19 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40e9kp01py-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 07:57:19 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46H5VOlx009173;
+	Wed, 17 Jul 2024 07:52:58 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 40dwkmk4sd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 07:52:58 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46H7qq4W27001466
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 17 Jul 2024 07:52:54 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AE23B2004B;
+	Wed, 17 Jul 2024 07:52:52 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9FE1820040;
+	Wed, 17 Jul 2024 07:52:51 +0000 (GMT)
+Received: from [9.171.6.148] (unknown [9.171.6.148])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 17 Jul 2024 07:52:51 +0000 (GMT)
+Message-ID: <3acefad9-96e5-4681-8014-827d6be71c7a@linux.ibm.com>
+Date: Wed, 17 Jul 2024 09:52:51 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linux-next:master] [mm/hugetlb_vmemmap] 875fa64577:
+ vm-scalability.throughput -34.3% regression
+To: Yu Zhao <yuzhao@google.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Muchun Song <muchun.song@linux.dev>,
+        David Hildenbrand <david@redhat.com>,
+        Frank van der Linden <fvdl@google.com>,
+        Matthew Wilcox
+ <willy@infradead.org>, Peter Xu <peterx@redhat.com>,
+        Yang Shi <yang@os.amperecomputing.com>, linux-kernel@vger.kernel.org,
+        ying.huang@intel.com, feng.tang@intel.com, fengwei.yin@intel.com,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        Marc Hartmayer <mhartmay@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>
+References: <202407091001.1250ad4a-oliver.sang@intel.com>
+Content-Language: en-US
+From: Janosch Frank <frankja@linux.ibm.com>
+Autocrypt: addr=frankja@linux.ibm.com; keydata=
+ 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
+In-Reply-To: <202407091001.1250ad4a-oliver.sang@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: WpRHZNUOp-d1yiemm_h1X64chn01kdDW
+X-Proofpoint-GUID: F44QKF79l9BXAn0yGTHmj6MWJPGMRfYe
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] usb: usbfs: Add reset_resume for usbfs
-To: Hongyu Xie <xy521521@gmail.com>, stern@rowland.harvard.edu,
- oneukum@suse.com
-Cc: gregkh@linuxfoundation.org, brauner@kernel.org, jlayton@kernel.org,
- jack@suse.cz, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- xiehongyu1@kylinos.cn
-References: <20240711084321.44916-1-xiehongyu1@kylinos.cn>
- <527927b8-9475-47da-bf2b-7a5d9e81e470@suse.com>
- <9ef72886-13b8-46cf-a0aa-54dad36102e9@rowland.harvard.edu>
- <2a80d11d-029f-4e7e-9a8e-3abae1034add@suse.com>
- <429eb27a-578a-4208-8ce1-89434b8d739f@rowland.harvard.edu>
- <3073c8ce-1923-4816-a442-41b4cc333af9@suse.com>
- <6419a4e9-e084-4eb6-8376-9202930ea8be@kylinos.cn>
- <ee0a5160-233a-485c-a34b-99d4a1e046c5@rowland.harvard.edu>
- <45b87923-d256-4c5e-8167-8ef764add1e9@kylinos.cn>
-Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <45b87923-d256-4c5e-8167-8ef764add1e9@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-17_04,2024-07-16_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 phishscore=0 mlxscore=0 bulkscore=0 adultscore=0
+ lowpriorityscore=0 suspectscore=0 clxscore=1011 malwarescore=0
+ mlxlogscore=569 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2407170059
 
-On 17.07.24 05:13, Hongyu Xie wrote:
-> From: Hongyu Xie <xiehongyu1@kylinos.cn>
-
-> But I still think that there's no need to rebind for a USB device that was using usbfs.
-
-Technically you are correct. From a conceptual view point the only
-hard requirement we have is that the first operation after reset_resume()
-has to fail with an error code user space can interpret.
-
-> Because rebinding doesn't fix settings lost. And it looks strange from user-space's perspective.
-> What do you think?
-
-Only user space can reapply the settings. The kernel, however, must notify
-user space of the need to do so and avoiding a race condition is tricky.
-However, it is the same race that also applies to a disconnected device and that
-problem is solved.
-
-ENODEV clearly is an error that makes clear to user space that settings have
-been lost. User space has to be able to deal with a device being disconnected
-at any time, as we are talking about USB.
-Hence, where is the need to add a special case for reset_resume()?
-
-	HTH
-		Oliver
-
+On 7/9/24 07:11, kernel test robot wrote:
+> Hello,
+> 
+> kernel test robot noticed a -34.3% regression of vm-scalability.throughput on:
+> 
+> 
+> commit: 875fa64577da9bc8e9963ee14fef8433f20653e7 ("mm/hugetlb_vmemmap: fix race with speculative PFN walkers")
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> 
+> [still regression on linux-next/master 0b58e108042b0ed28a71cd7edf5175999955b233]
+>
+This has hit s390 huge page backed KVM guests as well.
+Our simple start/stop test case went from ~5 to over 50 seconds of runtime.
 
