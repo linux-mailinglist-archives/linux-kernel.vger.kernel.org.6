@@ -1,235 +1,211 @@
-Return-Path: <linux-kernel+bounces-255221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D3C6933D9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:28:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 506D0933D9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:29:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB4EFB2415F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:28:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B6F32854A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BDD1802D3;
-	Wed, 17 Jul 2024 13:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB891802CE;
+	Wed, 17 Jul 2024 13:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="exeJu63z"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+97cxOm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7FE1802B2
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661EC17E8FA;
+	Wed, 17 Jul 2024 13:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721222917; cv=none; b=ZuseyHMLPNO4CtTsz7YG70mpSDNJxkPCBjBJEGyeP6S8lWULhuL5qjYTq+MqkEZucRkBqO/BqY/F/6pvgICcEKds9qoFYRawh9jTp5AO3xzJ93m3xSUjn8qtqg63jsb3jRsb4lzGZDOLE58zl8pBCuOzMX8luhkBGioG6eAGg2M=
+	t=1721222975; cv=none; b=AxIF3vqjY8sX9zHa3ovtuyWk8HHf2/ahYmwzzSOhjx9/nRn1UlxcIpmtJnacdx0kuebFGvUTOSuU40EhDSJJari9mMHJeWkJp6ZthEYJ5I7z3n0RQK8x3FIAebEIFseEKmQ4kv9TphALg3lCjsOhQp6RiRv84z7r6/ycZERBIoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721222917; c=relaxed/simple;
-	bh=k4Lsi9TzISpSKVirxInoxjrE0QFIe83GF7y1SyUaTRs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ENwkq0OYhnPaHESqgn7PMA/7uWzysP5uAoE8PD8IS2A1GDxZGd9OKWmJ1chzBxMNNei7mt+yUKI+aY1HflP/WM77++tP8TDBydhUDo0GosR7bpbGrbhmmBwXScXjIg+w1oy6fVXE/bjBC9HWbB+1Sov1OTCGhbnaJB290j0gCzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=exeJu63z; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721222914;
-	bh=k4Lsi9TzISpSKVirxInoxjrE0QFIe83GF7y1SyUaTRs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=exeJu63zcIjjr4WkG5mWgtT8xc/4/b3WRzy+dkUe6luE1hm4Qsz+YLGUhUWVnXGvk
-	 Qt6OCTdYE9UC0NV3aQKYsTjVuCiV8n1urSEnbVEzbu/EDyaS+ocyfi0AtMYbj0vm2t
-	 pJOL4kSs4oDw5lsYpWSVkaTi7hGrLNcjs69UAhY9j5kzjo3phmRmezPkmkohcU6DTi
-	 WVGBWhU/Kvgd2xllxW9OS+TDTQESbXNujEhPunxAN8Ofpq+csAX+oy0HmNZ9n575bV
-	 5bXmwbgXYXXiEHoR4+LRUC3nNRy+MuTSr00w6BrMWKVob0XP/zSFAYPWWSmSDbii0I
-	 TLRD+oUFBl3jg==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 63A7D37805D6;
-	Wed, 17 Jul 2024 13:28:33 +0000 (UTC)
-Message-ID: <aa1cfc45-b271-43fa-85fc-264ea16574d9@collabora.com>
-Date: Wed, 17 Jul 2024 15:28:32 +0200
+	s=arc-20240116; t=1721222975; c=relaxed/simple;
+	bh=YQ6l5cI7YXYE0o/kYF2+JwI6tetVX1FjRrXMMaCr4Es=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iAtbA58NmZwOznFblCgRsQmfG3oHXPt1gLZKGdPfc3HIanrSTdkkQPcBkQOVh3wBMlE/KdI6XdriklaWxhqfDDWMJ/ReYjXdwXTVQDcCBvc968DBBMY/YD7ld85ZJCEOVE83VlnnfaBSnQLmGnnMfvA213mJW88ExwC0x5L4pdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W+97cxOm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9CA3C32782;
+	Wed, 17 Jul 2024 13:29:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721222975;
+	bh=YQ6l5cI7YXYE0o/kYF2+JwI6tetVX1FjRrXMMaCr4Es=;
+	h=From:To:Cc:Subject:Date:From;
+	b=W+97cxOmuKI9hdL9xkKNeVX31I3x/EYwg5GZW1Bjm/nrA7+LCA8d4B9GQBajn/gm3
+	 LPTDWi2kZdwxeUaa1PdHiiPPD8vlaIm+GfRC183XHbFSUI/d0jhLgInuTGhWiVyEau
+	 ph2qNorzT+21ln+XMPl9sD1L8x/FC+i6bScA672ujqVC4t3i6lIsxF9nqKeeqAcrWJ
+	 aCOghHARZbKCn2GwlokCWXdQCzPd5sqqnTSNAoWr3O9P0FvTs6K52cge4ljWIaaBoe
+	 E4sk9dJJqmPHsv5LMbS6waPYChe1vqkTbBjFdxak0Oy6t+0SUoL4C6nlKJDWAkRuwf
+	 cJ059Z6JSmMhw==
+From: Conor Dooley <conor@kernel.org>
+To: linux-riscv@lists.infradead.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] RISC-V: run savedefconfig for defconfig
+Date: Wed, 17 Jul 2024 14:29:24 +0100
+Message-ID: <20240717-shrubs-concise-51600886babf@spud>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mailbox: mtk-cmdq: Add unregister mailbox controller in
- cmdq_remove()
-To: =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>,
- "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
- "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
-Cc: "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- =?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- =?UTF-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>
-References: <20240613150626.25280-1-jason-jh.lin@mediatek.com>
- <8ef254cb-ac65-405d-bcee-d0990536fb32@collabora.com>
- <44f6308379a8b6c834df6ff0604c652bf1f7a4b7.camel@mediatek.com>
- <47f1c2c79ad03094ebf411e13516cca47054c962.camel@mediatek.com>
- <a681e496-4979-4f4a-9f79-9636d9496fa3@collabora.com>
- <470f96fc0dd48ad0ad6bedb235a2e510c808e3e7.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <470f96fc0dd48ad0ad6bedb235a2e510c808e3e7.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3914; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=jCFQHxaVV64m1uEzxmaK5W8JzwULgV2ZW1IVTbFyuYA=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGnTj5v8Fd8WySamaB7wnFPwpdyUTbutPifrT9B/75nx9 4eO5ivBjlIWBjEOBlkxRZbE230tUuv/uOxw7nkLM4eVCWQIAxenAEzkGxMjw8MNa288yNa9Yyd3 84Qk/xThB2VFDHUGaX3PZIX+9b2bOI+RYVakpBDX9kYWTd3Lx3buvRmmlih/ZuqeuiNplZ+yzu2 bwwEA
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
 
-Il 17/07/24 05:44, Jason-JH Lin (林睿祥) ha scritto:
-> On Tue, 2024-06-18 at 13:47 +0200, AngeloGioacchino Del Regno wrote:
->> Il 18/06/24 05:28, Jason-JH Lin (林睿祥) ha scritto:
->>> Hi Angelo,
->>>
->>> On Fri, 2024-06-14 at 00:52 +0800, Jason-JH.Lin wrote:
->>>> Hi Angelo,
->>>>
->>>> On Thu, 2024-06-13 at 17:10 +0200, AngeloGioacchino Del Regno
->>>> wrote:
->>>>> Il 13/06/24 17:06, Jason-JH.Lin ha scritto:
->>>>>> Add unregister mailbox controller in cmdq_remove to fix cmdq
->>>>>> unbind
->>>>>> WARN_ON message from pm_runtime_get_sync() in
->>>>>> cmdq_mbox_shutdown().
->>>>>>
->>>>>> Fixes: 623a6143a845 ("mailbox: mediatek: Add Mediatek CMDQ
->>>>>> driver")
->>>>>> Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
->>>>>
->>>>> Hello,
->>>>>
->>>>> I think you forgot about...
->>>>>
->>>>>
->>>>
->>>>
->>>
->>>
-> https://lore.kernel.org/all/6fcd48b14e865c25e6db7559fe6b946537bfa0ce.camel@mediatek.com/
->>>>>
->>>>
->>>> I'll send this series next week after testing it.
->>>>
->>>>
->>>>> ...as that would also resolve this one without any hacks.
->>>>
->>>> I thought it was another problem, so I sent this patch.
->>>>
->>>> After looking to the kerneldoc of
->>>> devm_mbox_controller_unregister(),
->>>> I
->>>> found that it's not necessary to call this anywhere.
->>>>
->>>> I'll drop this patch. Thanks for the review.
->>>
->>> I found that the series of "Move pm_runimte_get and put to
->>> mbox_chan_ops API" can not fix this unbind crash issue.
->>>
->>> It seems they are 2 different issues.
->>>
->>> So I think calling devm_mbox_controller_unregister() in
->>> cmdq_remove()
->>> can ensure the CMDQ device is not removed and be paired to
->>> cmdq_probe().
->>>
->>
->> Can you please paste the stack trace of that warning that you're
->> seeing when
->> calling cmdq_remove()?
->>
->> I'm not convinced that this is the best solution - it might be, but I
->> have
->> a hunch that there might be a better way to address this issue.
->>
-> 
-> After tracing the stack trace again, I found this call trace warning is
-> caused in WARN_ON(pm_runtime_get_sync(cmdq->mbox.dev) < 0). The return
-> value of pm_runtime_get_sync() is -13(-EACCESS) that's caused by
-> calling pm_runtime_disable() before calling pm_runtime_get_sync().
-> 
-> CMDQ driver uses devm_mbox_controller_register() in cmdq_probe() to
-> bind the cmdq device to the mbox_controller, so
-> devm_mbox_controller_unregister() will automatically unregister the
-> device bound to the mailbox controller when the device-managed resource
-> is removed. That means devm_mbox_controller_unregister() and
-> cmdq_mbox_shoutdown() will be called after cmdq_remove().
-> 
-> CMDQ driver also uses devm_pm_runtime_enable() in cmdq_probe() after
-> devm_mbox_controller_register(), so that devm_pm_runtime_disable() will
-> be called after cmdq_remove(), but before
-> devm_mbox_controller_unregister().
-> 
-> 
-> To fix this problem, we need to make devm_pm_runtime_disable() be
-> called after devm_mbox_controller_unregister().
-> 
-> I've tried 2 ways can fix this problem:
-> - Swap the sequence of devm_mbox_controller_register() and
-> devm_pm_runtime_enable() in cmdq_probe()
-> - Change to use mbox_controller_register() in cmdq_probe() and use
-> mbox_controller_unregister() in cmdq_probe()
-> 
+From: Conor Dooley <conor.dooley@microchip.com>
 
-Hey.
+It's been a while since this was run, and there's a few things that have
+changed. Firstly, almost all of the Renesas stuff vanishes because the
+config for the RZ/Five is gated behind NONPORTABLE. Several options
+(like CONFIG_PM) are removed as they are the default values.
 
-That's a nice conclusion here!
-If the first one has no issues, go for the first one: that's just about
-moving a call upwards, noiseless and pretty.
+To retain DEFVFREQ_THERMAL and BLK_DEV_THROTTLING, add PM_DEVFREQ and
+BLK_CGROUP respectively.
 
-Cheers!
-Angelo
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+CC: Paul Walmsley <paul.walmsley@sifive.com>
+CC: Palmer Dabbelt <palmer@dabbelt.com>
+CC: Albert Ou <aou@eecs.berkeley.edu>
+CC: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>
+CC: linux-renesas-soc@vger.kernel.org
+CC: linux-riscv@lists.infradead.org
+CC: linux-kernel@vger.kernel.org
+---
+ arch/riscv/configs/defconfig | 26 ++++++++------------------
+ 1 file changed, 8 insertions(+), 18 deletions(-)
 
-> Which one do you think is better?
-> 
-> Regards,
-> Jason-JH.Lin
-> 
->> Thanks!
->> Angelo
->>
->>> Regards,
->>> Jason-JH.Lin
->>>
->>>>
->>>> Regards,
->>>> Jason-JH.Lin
->>>>
->>>>>
->>>>> Cheers,
->>>>> Angelo
->>>>>
->>>>>> ---
->>>>>>     drivers/mailbox/mtk-cmdq-mailbox.c | 2 ++
->>>>>>     1 file changed, 2 insertions(+)
->>>>>>
->>>>>> diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c
->>>>>> b/drivers/mailbox/mtk-cmdq-mailbox.c
->>>>>> index 4aa394e91109..1399e18a39a4 100644
->>>>>> --- a/drivers/mailbox/mtk-cmdq-mailbox.c
->>>>>> +++ b/drivers/mailbox/mtk-cmdq-mailbox.c
->>>>>> @@ -371,6 +371,8 @@ static void cmdq_remove(struct
->>>>>> platform_device
->>>>>> *pdev)
->>>>>>     {
->>>>>>     	struct cmdq *cmdq = platform_get_drvdata(pdev);
->>>>>>     
->>>>>> +	devm_mbox_controller_unregister(&pdev->dev, &cmdq-
->>>>>>> mbox);
->>>>>> +
->>>>>>     	if (cmdq->pdata->sw_ddr_en)
->>>>>>     		cmdq_sw_ddr_enable(cmdq, false);
->>>>>>     
->>>>>
->>>>>
->>
->>
-
-
+diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+index 3f1f055866af..0d678325444f 100644
+--- a/arch/riscv/configs/defconfig
++++ b/arch/riscv/configs/defconfig
+@@ -7,6 +7,7 @@ CONFIG_IKCONFIG=y
+ CONFIG_IKCONFIG_PROC=y
+ CONFIG_CGROUPS=y
+ CONFIG_MEMCG=y
++CONFIG_BLK_CGROUP=y
+ CONFIG_CGROUP_SCHED=y
+ CONFIG_CFS_BANDWIDTH=y
+ CONFIG_RT_GROUP_SCHED=y
+@@ -35,9 +36,6 @@ CONFIG_ARCH_THEAD=y
+ CONFIG_ARCH_VIRT=y
+ CONFIG_ARCH_CANAAN=y
+ CONFIG_SMP=y
+-CONFIG_HOTPLUG_CPU=y
+-CONFIG_PM=y
+-CONFIG_CPU_IDLE=y
+ CONFIG_CPU_FREQ=y
+ CONFIG_CPU_FREQ_STAT=y
+ CONFIG_CPU_FREQ_GOV_POWERSAVE=m
+@@ -52,13 +50,11 @@ CONFIG_ACPI=y
+ CONFIG_JUMP_LABEL=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+-CONFIG_SPARSEMEM_MANUAL=y
+ CONFIG_BLK_DEV_THROTTLING=y
++CONFIG_SPARSEMEM_MANUAL=y
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+-CONFIG_UNIX=y
+ CONFIG_XFRM_USER=m
+-CONFIG_INET=y
+ CONFIG_IP_MULTICAST=y
+ CONFIG_IP_ADVANCED_ROUTER=y
+ CONFIG_IP_PNP=y
+@@ -102,9 +98,9 @@ CONFIG_NET_SCHED=y
+ CONFIG_NET_CLS_CGROUP=m
+ CONFIG_NETLINK_DIAG=y
+ CONFIG_CGROUP_NET_PRIO=y
++CONFIG_CAN=m
+ CONFIG_NET_9P=y
+ CONFIG_NET_9P_VIRTIO=y
+-CONFIG_CAN=m
+ CONFIG_PCI=y
+ CONFIG_PCIEPORTBUS=y
+ CONFIG_PCI_HOST_GENERIC=y
+@@ -153,8 +149,8 @@ CONFIG_SERIAL_8250=y
+ CONFIG_SERIAL_8250_CONSOLE=y
+ CONFIG_SERIAL_8250_DW=y
+ CONFIG_SERIAL_OF_PLATFORM=y
+-CONFIG_SERIAL_SH_SCI=y
+ CONFIG_SERIAL_EARLYCON_RISCV_SBI=y
++CONFIG_SERIAL_SH_SCI=y
+ CONFIG_VIRTIO_CONSOLE=y
+ CONFIG_HW_RANDOM=y
+ CONFIG_HW_RANDOM_VIRTIO=y
+@@ -179,7 +175,6 @@ CONFIG_DEVFREQ_THERMAL=y
+ CONFIG_RZG2L_THERMAL=y
+ CONFIG_WATCHDOG=y
+ CONFIG_SUNXI_WATCHDOG=y
+-CONFIG_RENESAS_RZG2LWDT=y
+ CONFIG_MFD_AXP20X_I2C=y
+ CONFIG_REGULATOR=y
+ CONFIG_REGULATOR_FIXED_VOLTAGE=y
+@@ -193,11 +188,9 @@ CONFIG_DRM_NOUVEAU=m
+ CONFIG_DRM_SUN4I=m
+ CONFIG_DRM_VIRTIO_GPU=m
+ CONFIG_FB=y
+-CONFIG_FRAMEBUFFER_CONSOLE=y
+ CONFIG_SOUND=y
+ CONFIG_SND=y
+ CONFIG_SND_SOC=y
+-CONFIG_SND_SOC_RZ=m
+ CONFIG_SND_DESIGNWARE_I2S=m
+ CONFIG_SND_SOC_STARFIVE=m
+ CONFIG_SND_SOC_JH7110_PWMDAC=m
+@@ -239,34 +232,31 @@ CONFIG_USB_CONFIGFS_F_FS=y
+ CONFIG_MMC=y
+ CONFIG_MMC_SDHCI=y
+ CONFIG_MMC_SDHCI_PLTFM=y
+-CONFIG_MMC_SDHCI_CADENCE=y
+ CONFIG_MMC_SDHCI_OF_DWCMSHC=y
++CONFIG_MMC_SDHCI_CADENCE=y
+ CONFIG_MMC_SPI=y
++CONFIG_MMC_SDHI=y
+ CONFIG_MMC_DW=y
+ CONFIG_MMC_DW_STARFIVE=y
+-CONFIG_MMC_SDHI=y
+ CONFIG_MMC_SUNXI=y
+ CONFIG_RTC_CLASS=y
+ CONFIG_RTC_DRV_SUN6I=y
+ CONFIG_DMADEVICES=y
+ CONFIG_DMA_SUN6I=m
+ CONFIG_DW_AXI_DMAC=y
+-CONFIG_RZ_DMAC=y
+ CONFIG_VIRTIO_PCI=y
+ CONFIG_VIRTIO_BALLOON=y
+ CONFIG_VIRTIO_INPUT=y
+ CONFIG_VIRTIO_MMIO=y
+-CONFIG_RENESAS_OSTM=y
+ CONFIG_CLK_SOPHGO_CV1800=y
+ CONFIG_SUN8I_DE2_CCU=m
++CONFIG_RENESAS_OSTM=y
+ CONFIG_SUN50I_IOMMU=y
+ CONFIG_RPMSG_CHAR=y
+ CONFIG_RPMSG_CTRL=y
+ CONFIG_RPMSG_VIRTIO=y
+-CONFIG_ARCH_R9A07G043=y
++CONFIG_PM_DEVFREQ=y
+ CONFIG_IIO=y
+-CONFIG_RZG2L_ADC=m
+-CONFIG_RESET_RZG2L_USBPHY_CTRL=y
+ CONFIG_PHY_SUN4I_USB=m
+ CONFIG_PHY_RCAR_GEN3_USB2=y
+ CONFIG_PHY_STARFIVE_JH7110_DPHY_RX=m
+-- 
+2.43.0
 
 
