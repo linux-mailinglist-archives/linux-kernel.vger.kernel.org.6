@@ -1,141 +1,250 @@
-Return-Path: <linux-kernel+bounces-255753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BCA99344B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:19:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF2FC9344B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2788628534F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:19:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04D72B21C7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9280B4AEF7;
-	Wed, 17 Jul 2024 22:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VG00w2g7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319DF48CDD;
+	Wed, 17 Jul 2024 22:19:57 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84A0374F6;
-	Wed, 17 Jul 2024 22:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A60F44C76
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 22:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721254746; cv=none; b=M//MFIxw2/hxZYgBORbKaaQSGye8wGAcBuhhcX+A5EmO642zub1Q/IcxDjnMXbPJQaOeQqUfBz0ljDuATJ13USb16o7XUvhyfosGe1a2CfwXxqSQqS0vLhhjtwwUPUIZ5IJVnYioMRQrwcH/Iefl6LrfabD+q6wrvMpCfEaqrBg=
+	t=1721254796; cv=none; b=RKeJ9UuaDg+Axa6nA8ZBPO75l0bG8eBMRWN1Q7My7eowdkHjMyUCpAPVrHjRZCQgNs9/x8EeBNLH8Qa4XZDCOhV+AeqgE7Ij/5+brLlC8lU9D0NdfQ6e16WzL1SwqgX6VTqiZPkednKjEIVDzAI3fnQ6t329sNkjLz3hsDUh2H4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721254746; c=relaxed/simple;
-	bh=xc24c4DCXp9DmXRuS+gGjrGQINabT9K3W2WonlbSMP0=;
+	s=arc-20240116; t=1721254796; c=relaxed/simple;
+	bh=yOxsQHgwafEikNBdrNkr52FtTFRITb4wFVGgylZvN2Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YQ3cl4o+8LcKePjAIHOiE2728VgQa63qC7fnzJbH5szPFMlbFJP3UVmn1x1qUDCf++xJXyb9yDlrstzHxdkSifkIMShTPOxpyP5NQFlq4w+PDFscZLJnElSFg5rX0JLCW0FxnAjNAiUQ83WtJNWs5uFMVlggWNo4BLuh7cJ0MTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VG00w2g7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F86BC2BD10;
-	Wed, 17 Jul 2024 22:19:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721254746;
-	bh=xc24c4DCXp9DmXRuS+gGjrGQINabT9K3W2WonlbSMP0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VG00w2g7RKks1WqUv1BSAmpIy/Cx1npWfI4ZccNod8IrQWGhWOoCzAKp4ROsnOtC/
-	 GKII1BI8AwS6hDYiQr1zTR4suyLH+Qje+f9x0/bNYnfFeZfYVq4xiAqR62/qcFrY+8
-	 6yopV/i+rGFPsMAA1V4edFpgzQaWzX9xrCCVgJC+3MXO5fc/7F2LjZYifC/nGjNu4d
-	 4M79UY/H1d+KWPiLgtbN1EBdMbgo6qcbukiIWVHfKsE7Rf3XlpXwHhSQ953ENY6RSR
-	 jS+s0SsC58DbdZ6o1gqp+RJlvcXvocBuMkayMkSLpKjsWqW5iXjSgM4YkotO7ghlk8
-	 fzTusG+7EOqeg==
-Date: Wed, 17 Jul 2024 15:19:05 -0700
-From: Kees Cook <kees@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: kernel test robot <lkp@intel.com>, linux-hardening@vger.kernel.org,
-	oe-kbuild-all@lists.linux.dev, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] fortify: use if_changed_dep to record header
- dependency in *.cmd files
-Message-ID: <202407171517.EC9EE07@keescook>
-References: <20240715144529.101634-2-masahiroy@kernel.org>
- <202407170104.dCe5MKsA-lkp@intel.com>
- <CAK7LNARmJcyyzL-jVJfBPi3W684LTDmuhMf1koF0TXoCpKTmcw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FwqBtdTtwP1t5Uf4vhgGzxrW/mYbf1UrWpG8PXAfRJD9oRurpMx+iPFTBHbcfXKHbUGDISu1f2KAbB3iPE7b9iqjqhvMPZ9HbWa4D/chFa7GTf92zg9uzYu7aERfyFFIN2k/vOIaYM0NWQ/DEyzgjjSOM6eh6k88ya+KQQd1txM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1sUCzz-00022C-II; Thu, 18 Jul 2024 00:19:47 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1sUCzy-000JCs-V8; Thu, 18 Jul 2024 00:19:46 +0200
+Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1sUCzy-002FbJ-2l;
+	Thu, 18 Jul 2024 00:19:46 +0200
+Date: Thu, 18 Jul 2024 00:19:46 +0200
+From: Michael Grzeschik <mgr@pengutronix.de>
+To: Avichal Rakesh <arakesh@google.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Daniel Scally <dan.scally@ideasonboard.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] usb: gadget: uvc: set req_size and n_requests
+ based on the frame interval
+Message-ID: <ZphDghvKXEV54GuU@pengutronix.de>
+References: <20240403-uvc_request_length_by_interval-v2-0-12690f7a2eff@pengutronix.de>
+ <20240403-uvc_request_length_by_interval-v2-3-12690f7a2eff@pengutronix.de>
+ <80f15515-9050-480c-bbeb-f2b8369326eb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zcSkiPONBCu3XBa2"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNARmJcyyzL-jVJfBPi3W684LTDmuhMf1koF0TXoCpKTmcw@mail.gmail.com>
+In-Reply-To: <80f15515-9050-480c-bbeb-f2b8369326eb@google.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mgr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Jul 17, 2024 at 01:46:32PM +0900, Masahiro Yamada wrote:
-> On Wed, Jul 17, 2024 at 2:51 AM kernel test robot <lkp@intel.com> wrote:
-> >
-> > Hi Masahiro,
-> >
-> > kernel test robot noticed the following build errors:
-> >
-> > [auto build test ERROR on linus/master]
-> > [also build test ERROR on v6.10 next-20240716]
-> > [cannot apply to akpm-mm/mm-nonmm-unstable kees/for-next/hardening kees/for-next/pstore kees/for-next/kspp]
-> > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > And when submitting patch, we suggest to use '--base' as documented in
-> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> >
-> > url:    https://github.com/intel-lab-lkp/linux/commits/Masahiro-Yamada/fortify-use-if_changed_dep-to-record-header-dependency-in-cmd-files/20240715-224820
-> > base:   linus/master
-> > patch link:    https://lore.kernel.org/r/20240715144529.101634-2-masahiroy%40kernel.org
-> > patch subject: [PATCH 1/3] fortify: use if_changed_dep to record header dependency in *.cmd files
-> > config: i386-randconfig-004-20240716 (https://download.01.org/0day-ci/archive/20240717/202407170104.dCe5MKsA-lkp@intel.com/config)
-> > compiler: gcc-7 (Ubuntu 7.5.0-6ubuntu2) 7.5.0
-> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240717/202407170104.dCe5MKsA-lkp@intel.com/reproduce)
-> >
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202407170104.dCe5MKsA-lkp@intel.com/
-> >
-> > All errors (new ones prefixed by >>):
-> >
-> > >> fixdep: error opening file: lib/test_fortify/.write_overflow-memcpy.log.d: No such file or directory
-> > --
-> > >> fixdep: error opening file: lib/test_fortify/.read_overflow2-memcmp.log.d: No such file or directory
-> > --
-> > >> fixdep: error opening file: lib/test_fortify/.read_overflow-memchr.log.d: No such file or directory
-> > --
-> > >> fixdep: error opening file: lib/test_fortify/.write_overflow-strcpy-lit.log.d: No such file or directory
-> > --
-> > >> fixdep: error opening file: lib/test_fortify/.read_overflow2-memmove.log.d: No such file or directory
-> > --
-> > >> fixdep: error opening file: lib/test_fortify/.write_overflow-strncpy-src.log.d: No such file or directory
-> > --
-> > >> fixdep: error opening file: lib/test_fortify/.read_overflow-memcmp.log.d: No such file or directory
-> > --
-> > >> fixdep: error opening file: lib/test_fortify/.read_overflow-memscan.log.d: No such file or directory
-> > --
-> > >> fixdep: error opening file: lib/test_fortify/.write_overflow-strcpy.log.d: No such file or directory
-> > --
-> > >> fixdep: error opening file: lib/test_fortify/.write_overflow-memmove.log.d: No such file or directory
-> > --
-> > >> fixdep: error opening file: lib/test_fortify/.write_overflow-memset.log.d: No such file or directory
-> > ..
-> 
-> 
-> 
-> This issue seems to occur with GCC <=7
-> 
-> 
-> $ echo 'void b(void) __attribute__((__error__(""))); void a(void) {
-> b(); }' | gcc -Wp,-MMD,test.d -c -o /dev/null -x c -
-> 
-> 
-> did not create *.d with GCC <= 7.
-> 
-> I do not see the issue with GCC >= 8 or Clang.
 
-Any idea why this happens here and not for other sources in the tree?
+--zcSkiPONBCu3XBa2
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> One quick solution is to skip the test for GCC <= 7.
+Hi Avichal,
 
-I'd be fine with that -- it is designed to catch regressions/misbehaviours
-in newly release compilers so I don't mind dropping checks against older
-versions.
+On Wed, Jun 26, 2024 at 11:57:42AM -0700, Avichal Rakesh wrote:
+>
+>
+>On 6/22/24 4:48 PM, Michael Grzeschik wrote:
+>> With the information of the interval frame length it is now possible to
+>> calculate the number of usb requests by the frame duration. Based on the
+>> request size and the imagesize we calculate the actual size per request.
+>> This has calculation has the benefit that the frame data is equally
+>> distributed over all allocated requests.
+>>
+>> We keep the current req_size calculation as a fallback, if the interval
+>> callbacks did not set the interval property.
+>>
+>> Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+>>
+>> ---
+>> v1 -> v2: - add headersize per request into calculation
+>> ---
+>>  drivers/usb/gadget/function/uvc_queue.c | 30 +++++++++++++++++++++++---=
+----
+>>  drivers/usb/gadget/function/uvc_video.c |  2 +-
+>>  2 files changed, 24 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/usb/gadget/function/uvc_queue.c b/drivers/usb/gadge=
+t/function/uvc_queue.c
+>> index ce51643fc4639..141e52e34c610 100644
+>> --- a/drivers/usb/gadget/function/uvc_queue.c
+>> +++ b/drivers/usb/gadget/function/uvc_queue.c
+>> @@ -44,7 +44,7 @@ static int uvc_queue_setup(struct vb2_queue *vq,
+>>  {
+>>  	struct uvc_video_queue *queue =3D vb2_get_drv_priv(vq);
+>>  	struct uvc_video *video =3D container_of(queue, struct uvc_video, queu=
+e);
+>> -	unsigned int req_size;
+>> +	unsigned int req_size, max_req_size, header_size;
+>>  	unsigned int nreq;
+>>
+>>  	if (*nbuffers > UVC_MAX_VIDEO_BUFFERS)
+>> @@ -54,15 +54,31 @@ static int uvc_queue_setup(struct vb2_queue *vq,
+>>
+>>  	sizes[0] =3D video->imagesize;
+>>
+>> -	req_size =3D video->ep->maxpacket
+>> +	nreq =3D DIV_ROUND_UP(video->interval, video->ep->desc->bInterval * 12=
+50);
+>
+>This seems problematic? I am not very well versed in the different USB spe=
+eds,
+>but IIRC fullspeed and highspeed enpoints have different bus intervals, and
+>treat bInterval in different units (in frames for fs and in microframes fo=
+r hs).
+>
+>We likely need some speed specific logic when calculating nreq.
 
--- 
-Kees Cook
+Fair point! I did not think about that yet and will fix it in v3.
+
+>Assuming this logic is for >=3D hs, this allocates the exact number of
+>usb_requests needed to stream a frame over to the host in one video
+>frame interval. With the zero length backpressure still in place, this
+>would mean that the actual video frame is sent over a period longer than
+>on video frame interval. I will try these patches locally, but if you
+>haven't already, please do check if you run into the problem you
+>brought up in https://lore.kernel.org/all/ZiWga5Kqno1ICv97@pengutronix.de/.
+>My guess is that the problem will show up here as well.
+
+Yes. With this current patchset there is not enough requests to keep
+enqueueing requests fast enough since the interrupt handler will have to
+wait for ready requests to show up while it uses the finishing requests
+to fill zero length requests instead of giving them back to the free
+pool. So just having the exact amount of requests for one frame interval
+available is way to less.
+
+I fixed that by creating at least four times the amount of available
+requests. Just the way you already suggested in an earlier mail :) .
+
+I also added an threshold that will only enqueue zero length requests
+if the currently enqueued amount of requests is undercut.
+
+However this is not enough to fulfill the requirements for the dwc3
+gadget driver. We also have to ensure that the interrupt handler is not
+running too long. To solve this I made additional changes. I sort them
+this week and send a next version of it.
+
+I hope you could review and test them soon.
+
+Regards,
+Michael
+
+>> +
+>> +	header_size =3D nreq * UVCG_REQUEST_HEADER_LEN;
+>> +
+>> +	req_size =3D DIV_ROUND_UP(video->imagesize + header_size, nreq);
+>> +
+>> +	max_req_size =3D video->ep->maxpacket
+>>  		 * max_t(unsigned int, video->ep->maxburst, 1)
+>>  		 * (video->ep->mult);
+>>
+>> -	/* We divide by two, to increase the chance to run
+>> -	 * into fewer requests for smaller framesizes.
+>> -	 */
+>> -	nreq =3D DIV_ROUND_UP(DIV_ROUND_UP(sizes[0], 2), req_size);
+>> -	nreq =3D clamp(nreq, 4U, 64U);
+>> +	if (!req_size) {
+>> +		req_size =3D max_req_size;
+>> +
+>> +		/* We divide by two, to increase the chance to run
+>> +		 * into fewer requests for smaller framesizes.
+>> +		 */
+>> +		nreq =3D DIV_ROUND_UP(DIV_ROUND_UP(sizes[0], 2), req_size);
+>> +		nreq =3D clamp(nreq, 4U, 64U);
+>> +	} else if (req_size > max_req_size) {
+>> +		/* The prepared interval length and expected buffer size
+>> +		 * is not possible to stream with the currently configured
+>> +		 * isoc bandwidth
+>> +		 */
+>> +		return -EINVAL;
+>> +	}
+>>
+>>  	video->req_size =3D req_size;
+>>  	video->uvc_num_requests =3D nreq;
+>> diff --git a/drivers/usb/gadget/function/uvc_video.c b/drivers/usb/gadge=
+t/function/uvc_video.c
+>> index 95bb64e16f3da..d197c46e93fb4 100644
+>> --- a/drivers/usb/gadget/function/uvc_video.c
+>> +++ b/drivers/usb/gadget/function/uvc_video.c
+>> @@ -304,7 +304,7 @@ static int uvcg_video_usb_req_queue(struct uvc_video=
+ *video,
+>>  		 */
+>>  		if (list_empty(&video->req_free) || ureq->last_buf ||
+>>  			!(video->req_int_count %
+>> -			DIV_ROUND_UP(video->uvc_num_requests, 4))) {
+>> +			clamp(DIV_ROUND_UP(video->uvc_num_requests, 4), 4U, 16U))) {
+>>  			video->req_int_count =3D 0;
+>>  			req->no_interrupt =3D 0;
+>>  		} else {
+>>
+>
+
+--=20
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--zcSkiPONBCu3XBa2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmaYQ30ACgkQC+njFXoe
+LGQpFQ//YNtIBqRoa235xKP87B1urjzuUQnvs0tzoJoyzisy7wFJDZ2GiPFYJgLx
+XsRhSDqMRUu1pcTTcwu25MQNnjYu9h/lWkNOfg7TpoPJN6A2MHYNHXB0xRqODl9D
+aJaoZhaeBTdXYpPT/dkgu43hdEXz99BEm9lzoqRtr3yZat1VVkmJ+RyllFuKGQza
+6tpuXWpaJ1CIA9hu+//KN2YE5VFLVbbYNyvkfpwmuLQLfm8CquImuxap5AD7A/+T
+yNbYaU23sLJGTBD9gL7rjGIlq/cFy/wWY2JW7a6m50Q08JBgcAoKNP8DgMBAoep7
+KuERJ4x6teHFgeGc7DjLtc6xJ+d/CaKXrk8FO+GNFHWNY5L4h8jLz/C65ftiJmy+
+DVHqd7bRfG5iTJgRkdsl0aEs6I0xurIWfdat0bJgjv+dovqL88vxbdnLmn+HZNM1
+JbEk1ct5xIXUokCRofRHdFaoVciKoFmWetzGeixFJVjpVCx2I3JqzUDXWLFs64fX
+43tTbOTCn6O+5vaaO2InsU32WKMbE9AOsaJVDS2CuD3LWtd/QvX2yC0Qq0wzxwF/
+ZPICsFss5we7coep+XLulSDv6aRP0Q3X2g/InMNvaJwTe97ALOumZUJ2sTbo/hIF
+oDmHUuOVDvO+SHvOmHA19VJddAsLKqE+1JErFYy6VV4GE0xFDPc=
+=lJ6C
+-----END PGP SIGNATURE-----
+
+--zcSkiPONBCu3XBa2--
 
