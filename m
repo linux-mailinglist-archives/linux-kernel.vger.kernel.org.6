@@ -1,134 +1,95 @@
-Return-Path: <linux-kernel+bounces-255090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33621933BA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:04:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5079E933BAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:04:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1E712814C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:04:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B97328304C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87C417F39C;
-	Wed, 17 Jul 2024 11:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E5617F4E8;
+	Wed, 17 Jul 2024 11:04:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="vutvKP5m"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PJUgA8zR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C743FB83
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DB514A61B;
+	Wed, 17 Jul 2024 11:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721214244; cv=none; b=GKWJJe0VWyug2ZFtHc4iLfmrvDcOzyw2pYf0bjFLMivy+fwwlewUYOHA1rhsKdd6wUODLWsk/7YHO+9b0wx98WFDmjdXEXXd8DnGRnkteCaSnQy1i60Nt3+IKA+tWtNAG+RSxs9/y9eupoWwen/U8oYxF8RKdWW1AlBjc/XO5ls=
+	t=1721214273; cv=none; b=ehuuLIaDDkggFFo7IaURIs+w8oPsbn5q6nU8bHZUaTkglXzDScI3Hmyg5PSRtjUbFq+JhNTpzG9QM8eEXcLLT7YIKLjDjbA4x5Guvhtz9WkeQCcLP1pOo6T5a2dvIXZLIPayqWvJw6QBzujc6EzleNMUUEaisL9d6lyU0jhB3wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721214244; c=relaxed/simple;
-	bh=BISw6QaYo5XGw4g9kcYQi/vCvP2PYYCiF3MeCq2fVFI=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=qKTLU7WiDiKuLRQ56s7+bxLIFHWKdX4z0FBZBy2IxZYWI8FHbcI63KjG5i6mcn7U7lghS2DJJQrylAiw2GVLvSIxSdy/bYt4AZsiiNK7m8IqyFV6f8ZBIKtm8hg+r1N2G2pQ5kzgpzn5ofPqFClPfvuNFLjQNgjHjDIXHYLgIvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=vutvKP5m; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4266182a9d7so43375465e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 04:04:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sigma-star.at; s=google; t=1721214239; x=1721819039; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BISw6QaYo5XGw4g9kcYQi/vCvP2PYYCiF3MeCq2fVFI=;
-        b=vutvKP5mO5yJZfgL6NY0i5pe/9u1TdeOWI4SnjXNCpFyX3FGaZnZ6wtRslmBeXODYu
-         2CIY+fs2XJMbPPlIe9nAimchkDJIz5uf8DNirxMtxVGzB9+YaHjXWEwxG8VHrXH3m97u
-         kkAD0/SCz0afSe8iaYVdfd+UDFx0938xefudscIsQTfb6hFiXkHGiUN6YPCtoanqICbp
-         FytCooA4kVIy10XrywJ8kdMoyTp20tlUWXXZlqpWGjWscwyzCFu2UtZzp2hixFrCRc8l
-         Sb+SfZqsDEN3LeQs0GEjo/MDL6GBus6Om+JWAAtuaO33Io3ZexA4w4NLDolcnNE3gZtG
-         StRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721214239; x=1721819039;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BISw6QaYo5XGw4g9kcYQi/vCvP2PYYCiF3MeCq2fVFI=;
-        b=ZYehlF2tw+s9XLZcx4CWgkei7bdxLohcdUIFlHa+b2ZfGSy3W+0d8EqhP4vTd6Nx6f
-         RNWU2QarQsiHd9RSanAFqbKTcD+JdeNVCCj8u3zR75Rd+4mIWtGt9NjHCoOuCgVoS23K
-         OOKk/x30ycwVqJ2NaIAA5q3qCkbDd8dV3V4HO8ZZtXd2ZOmwpagZSWrrjzg18fu/3kP4
-         y73DlpqdLWjdQj5fD7LBMwPICSRdTTCU0kbdOduLWg0KXpVk+XRKYrpXl2Nh2xDf8QdV
-         ra/bw0xbsq0v8srUAPRvaqE7CXrCKf8vkdAJbIAEujEXNbG1niDKWuLqErSy2MwXnxkc
-         3hMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgeWZQIHdxoXLBfEtN8P2yax9GTZKcVhrOD1q1UjC7rrxWy7z3Wrki9wPLtjtv1+WH0DyBQYM6pthxDQZgj1tvyi8sAGBJtsjnkyPD
-X-Gm-Message-State: AOJu0YzQrcHFR6zrFlRi39vmzBI5b0XtrHb7ypReYttQpPlaeaObGYF5
-	TleDYeqnTkEJKqtPLe4DeH2Dpawxn7SCHh3Q5umPZC+owmFdANJzOSVnQC50MREjgQGCzdUIsE9
-	z
-X-Google-Smtp-Source: AGHT+IEDplGH0IVfvijmWw8u0JGSe1acucXgpm0GKMtZZyBCxjNkFTfli8WiN3/+52j395E7jXaZoA==
-X-Received: by 2002:a05:600c:4510:b0:426:6f31:5f5c with SMTP id 5b1f17b1804b1-427c2cbcbffmr9472755e9.17.1721214238878;
-        Wed, 17 Jul 2024 04:03:58 -0700 (PDT)
-Received: from smtpclient.apple ([82.150.214.1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5edb525sm164901895e9.34.2024.07.17.04.03.57
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Jul 2024 04:03:58 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1721214273; c=relaxed/simple;
+	bh=b7LvGuAMDgLWRLN0jDRswesp0GHvGFFR+0W1/+lWb4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Opw9eMpBk2LxLkw0aNw8mieFw0EKWAK/l1e74low1OA8vfrAQluz9uTAVoEbmd+iXBNCJd5IfeEZZfsDLZibqam3Y9B4nXzyZkHNIV2o04+T4oMkd018RniisWyogorn1PhNFpq58BEcbfXdLE9o9BNdSpNsxZn+PHoWmO3MQFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PJUgA8zR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 273F6C32782;
+	Wed, 17 Jul 2024 11:04:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721214273;
+	bh=b7LvGuAMDgLWRLN0jDRswesp0GHvGFFR+0W1/+lWb4M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PJUgA8zRlJ+M3frjrkEac7/suB52KHAsJR6ANkYtUeVH1ftg5kQo6eYqoOHaYRl2l
+	 XGjTTYG9kZhq+6jjwYW0MG32qZqJQWuzWVN0EwBY5Cw68c9Ru2l2wj9Qt5vy2KCq7O
+	 cVJn6TdQCduegz3MHwB8sEvE0MVdLcC9sGI4ogOLdSToawmXA6SAdpPLof8nG98mYM
+	 QQozqJzZ+w+7e/qlJfW6g3pdKsfIrEES8NIkdsC2G2cXd95vcZ5Peyb9hH5eIYUJqL
+	 wnjFd3C1etmBw/JfXNOIZsw/5TszyiR65EDJc8SA3J7Iv+F7E6UCQJ9K3VTxIEFOAB
+	 bbZWeQmIhB71g==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sU2SY-000000004xL-2tym;
+	Wed, 17 Jul 2024 13:04:34 +0200
+Date: Wed, 17 Jul 2024 13:04:34 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hansverk@cisco.com>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Milen Mitkov <quic_mmitkov@quicinc.com>,
+	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+	Johan Hovold <johan+linaro@kernel.org>, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] media: qcom: camss: Remove use_count guard in
+ stop_streaming
+Message-ID: <ZpelQj6HufZTe52d@hovoldconsulting.com>
+References: <20240716-linux-next-24-07-13-camss-fixes-v2-0-e60c9f6742f2@linaro.org>
+ <20240716-linux-next-24-07-13-camss-fixes-v2-1-e60c9f6742f2@linaro.org>
+ <ZpeJmWTfZGUXsc7K@hovoldconsulting.com>
+ <2d8ac288-da60-490a-a6ac-ebe524e3fc21@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [PATCH 1/2] KEYS: trusted: fix DCP blob payload length assignment
-From: David Gstir <david@sigma-star.at>
-In-Reply-To: <D2RQC1H7N1JI.1W4JT8FI0R8L4@kernel.org>
-Date: Wed, 17 Jul 2024 13:03:47 +0200
-Cc: sigma star Kernel Team <upstream+dcp@sigma-star.at>,
- James Bottomley <James.Bottomley@HansenPartnership.com>,
- Mimi Zohar <zohar@linux.ibm.com>,
- David Howells <dhowells@redhat.com>,
- Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- David Oberhollenzer <david.oberhollenzer@sigma-star.at>,
- Richard Weinberger <richard@nod.at>,
- "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
- "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
- "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- kernel test robot <lkp@intel.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <CE5319C4-F81F-4C70-AF74-B0B32DC60CCE@sigma-star.at>
-References: <20240703125353.46115-1-david@sigma-star.at>
- <D2RQC1H7N1JI.1W4JT8FI0R8L4@kernel.org>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-X-Mailer: Apple Mail (2.3774.600.62)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2d8ac288-da60-490a-a6ac-ebe524e3fc21@linaro.org>
 
-Jarkko,
+On Wed, Jul 17, 2024 at 11:43:02AM +0100, Bryan O'Donoghue wrote:
+> On 17/07/2024 10:06, Johan Hovold wrote:
+> >> The use of use_count like this is a bit hacky and right now breaks regular
+> >> usage of CAMSS for a single stream case. As an example the "qcam"
+> >> application in libcamera will fail with an -EBUSY result on stream stop and
+> >> cannot then subsequently be restarted.
+> > No, stopping qcam results in the splat below, and then it cannot be
+> > started again and any attempts to do so fails with -EBUSY.
+> 
+> I thought that's what I said.
 
-> On 17.07.2024, at 12:07, Jarkko Sakkinen <jarkko@kernel.org> wrote:
->=20
-> On Wed Jul 3, 2024 at 3:53 PM EEST, David Gstir wrote:
->> The DCP trusted key type uses the wrong helper function to store
->> the blob's payload length which can lead to the wrong byte order
->> being used in case this would ever run on big endian architectures.
->>=20
->> Fix by using correct helper function.
->>=20
->> Signed-off-by: David Gstir <david@sigma-star.at>
->> Suggested-by: Richard Weinberger <richard@nod.at>
->=20
-> You cannot suggest a change that you author yourself.
->=20
->> Reported-by: kernel test robot <lkp@intel.com>
->> Closes: =
-https://lore.kernel.org/oe-kbuild-all/202405240610.fj53EK0q-lkp@intel.com/=
+I read the above as if stopping the stream fails with -EBUSY, when it's
+really restarting the stream that fails that way after the first stop.
 
->> Fixes: 2e8a0f40a39c ("KEYS: trusted: Introduce NXP DCP-backed trusted =
-keys")
->=20
-> Tags are in wrong order. For next round:
+> Let me reword the commit log with your sentence included directly :)
 
-here=E2=80=99s me relying on checkpatch.pl to tell me this, but it did =
-not. :-/
-Anyways, thanks for reviewing! I=E2=80=99ll fix the tags and send v2.
+Sounds good.
 
-BR, David
-
+Johan
 
