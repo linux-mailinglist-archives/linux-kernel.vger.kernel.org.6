@@ -1,243 +1,136 @@
-Return-Path: <linux-kernel+bounces-254720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A2CA9336D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:21:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 660959336D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:21:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A7D41C20C87
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:21:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E61F4B20B8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C401803A;
-	Wed, 17 Jul 2024 06:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777D512E48;
+	Wed, 17 Jul 2024 06:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oFCH7Wf5"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0QZ40utq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97DD14F6C;
-	Wed, 17 Jul 2024 06:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3A51BF2A;
+	Wed, 17 Jul 2024 06:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721197269; cv=none; b=qrAoAxwNA520o+VmUzzzg8xjDCAdrmOGnoEgqhCrxnBCu09f7YEx6E5wtZzAOvzEfmSoiGfDJpdVu2COeISVUZRJBhdLnW9Q8KBcXRnUU0bpA6ULg2IzA7V7GqRP/B3fxuRvHo6UJMJ08WFDZpGJbDFabraDr6nPOAkfw3Zt6FU=
+	t=1721197295; cv=none; b=QVGhg9w/2kQhSqQFBu/tvY0hdqNAJxujLUP+399BP44mE1cNpShgx+7vBszI1pYYmbWgt7PFPtVeTEwaT5jAFP7kdVTuBCq6cwsFUkpUVXnkm6U/hriha5zra5/kByAeJZiK2zo/KFRwJKDMKtdGGL2VZZ5kg+lqUydikORtSyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721197269; c=relaxed/simple;
-	bh=fp9pWdN7nQ259Pbax33SgaIQltaM0tNJnOcdOMyAuGk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=gmqu2BhatiYEGO8jWJWlzBQuR84m6I+d3Ol6laUZuNxRStufrf5ObWL/0TERPwkLjCLxZY/JfdlJduQV7jWyb4v/1Cu3T2Jz5njvDQ62mx3okxj56LE9CUIFt02SawPax7rv7FoJd2Quuv4Ujp2uoUOhJvQTduZ18xV623bbZD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oFCH7Wf5; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46GHfFF3024207;
-	Wed, 17 Jul 2024 06:20:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	TiwUCxXHB26DbZ2DFDb9MYBu/nLfDOIAzQSLSUM0J8c=; b=oFCH7Wf5HZADgzBZ
-	8hE3S+XsOO7/m8Kp3UBtbFq7Vut4TrVFcJyxEflzPemsd7zfv4vKhYZgczxZ3Vvn
-	fAi5s9zwbDGPAVFmRCo0EAAq0Gy73SJKy+wQmvInnjoFi6bG0iRbuDEBt/yvm/A2
-	1us1M/+1SSx9X6ttsZNZHpol9bQ/kfMnDpKV8V6TxtK8UljhUEvYEBd1XqTzLL6N
-	sj4v2JB3YGLJlojcLrUttFZI1th10ldT4+CEXT3IkKlJwZeS85CCllaK/aHiwv+L
-	pXEmQNxy7S3nU0+QUUqhERMntaq2i4VVqG3ICqZrAEU9oJuFyClA/S2+WmQw32U+
-	fpedpw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfu1a1t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 06:20:50 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46H6Knjn002662
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 06:20:49 GMT
-Received: from [10.239.132.150] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 16 Jul
- 2024 23:20:42 -0700
-Message-ID: <f773f3e2-dace-427e-b9e3-e211d9cf6574@quicinc.com>
-Date: Wed, 17 Jul 2024 14:20:40 +0800
+	s=arc-20240116; t=1721197295; c=relaxed/simple;
+	bh=q9jAcsYVi0AP0LirS0bHameGExzxLo0sKr0m8WEbpeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uSWNlm6ZoV9A6G6sWy5WTR1qkS2i/46WrgoOqrH/o64jwZDJRjDvTN1/IEpVMnqR3JcOr5ay9f1NAXpGONmGgEj+O9BUirrdPeENU6dfT94PDf8oTxUSkjZVxuD0Kp5aa5QRSuN6ZhjeD4g5CQmp5n33SzdfEOkqXmkXHmTmowg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0QZ40utq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EF5DC32782;
+	Wed, 17 Jul 2024 06:21:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1721197295;
+	bh=q9jAcsYVi0AP0LirS0bHameGExzxLo0sKr0m8WEbpeM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0QZ40utqOlyBTrWKNK36csYxkYhjqhq3qfwDw3mDB0jxVUx7e2U8WF9PFKDujzVcn
+	 ebc9+ZCVNDI+TErsaoIY4WIPwM2XGqe4ZMWv2dgKg6ink+551yRZhyOYaUpJNccjMl
+	 o2BTnRWTWSeSufaCfyygOHXg4AIqaqSLFGRRjnBE=
+Date: Wed, 17 Jul 2024 08:21:32 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: Re: [PATCH 5.15 000/144] 5.15.163-rc1 review
+Message-ID: <2024071705-fable-implosive-5e34@gregkh>
+References: <20240716152752.524497140@linuxfoundation.org>
+ <CA+G9fYvVaSX9Ot2vekBOkLjUqCx=SbQqW4vWhypCnGwwBmX4xg@mail.gmail.com>
+ <c7beb899-91dc-4fcd-816e-fa7ba6f956e4@suswa.mountain>
+ <2024071743-anyhow-legroom-1d54@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: "Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>
-Subject: Re: [PATCH v2] dt-bindings: phy: qcom,usb-snps-femto-v2: Add bindings
- for QCS9100
-To: Rob Herring <robh@kernel.org>
-CC: Trilok Soni <quic_tsoni@quicinc.com>,
-        Tengfei Fan
-	<quic_tengfan@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
-        "Kishon Vijay
- Abraham I" <kishon@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Wesley Cheng <quic_wcheng@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>
-References: <20240709-document_qcs9100_usb_hs_phy_compatible-v2-1-c84fbbafa9d6@quicinc.com>
- <20240710162745.GA3212156-robh@kernel.org>
- <3b8684f0-c89d-1a76-6bc5-93ced59dc51c@quicinc.com>
- <51302de0-5e4c-4e2a-85a0-e22549baa13c@quicinc.com>
- <20240711200354.GA2482879-robh@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20240711200354.GA2482879-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: cKBbtlWO0T6JKU0hJqEyLEFxBrrss12I
-X-Proofpoint-ORIG-GUID: cKBbtlWO0T6JKU0hJqEyLEFxBrrss12I
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-17_02,2024-07-16_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 phishscore=0
- spamscore=0 suspectscore=0 adultscore=0 clxscore=1015 mlxscore=0
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407170046
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024071743-anyhow-legroom-1d54@gregkh>
 
-
-
-On 7/12/2024 4:03 AM, Rob Herring wrote:
-> On Thu, Jul 11, 2024 at 06:05:57PM +0800, Aiqun Yu (Maria) wrote:
->>
->>
->> On 7/11/2024 12:45 AM, Trilok Soni wrote:
->>> On 7/10/2024 9:27 AM, Rob Herring wrote:
->>>> On Tue, Jul 09, 2024 at 08:46:19PM +0800, Tengfei Fan wrote:
->>>>> Document the compatible string for USB phy found in Qualcomm QCS9100
->>>>> SoC.
->>>>> QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
->>>>> platform use non-SCMI resource. In the future, the SA8775p platform will
->>>>> move to use SCMI resources and it will have new sa8775p-related device
->>>>> tree. Consequently, introduce "qcom,qcs9100-usb-hs-phy" to describe
->>>>> non-SCMI based USB phy.
->>>>>
->>>>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
->>>>> ---
->>>>> Introduce support for the QCS9100 SoC device tree (DTSI) and the
->>>>> QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
->>>>> While the QCS9100 platform is still in the early design stage, the
->>>>> QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
->>>>> mounts the QCS9100 SoC instead of the SA8775p SoC.
->>>>>
->>>>> The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
->>>>> all the compatible strings will be updated from "SA8775p" to "QCS9100".
->>>>> The QCS9100 device tree patches will be pushed after all the device tree
->>>>> bindings and device driver patches are reviewed.
->>>>
->>>> I'm not convinced this is not just pointless churn. Aren't we going to 
->>>> end up with 2 compatible strings for everything? SCMI should just change 
->>>> the providers, but otherwise the consumers are the same. I suppose if 
->>>> clocks are abstracted into power-domains (an abuse IMO) then the 
->>>> bindings change.
->>>>
->>>> Why do we need to support both SCMI and not-SCMI for the same chip?
->>>
->>> IOT SKU of this SOC is using the non-SCMI solution and Auto SKU
->>> of this SOC is using the SCMI based solution due to additional
->>> safety requirements. 
->>
->> More add-on information, IOT SKU which have qcs9100 soc mounted will
->> have firmware releases which support non-scmi solution.
->> And AUTO SKU which mounted with SA8775p will have different firmware
->> releases which support SCMI solution.
+On Wed, Jul 17, 2024 at 08:15:08AM +0200, Greg Kroah-Hartman wrote:
+> On Tue, Jul 16, 2024 at 03:45:33PM -0500, Dan Carpenter wrote:
+> > On Wed, Jul 17, 2024 at 01:49:12AM +0530, Naresh Kamboju wrote:
+> > > On Tue, 16 Jul 2024 at 21:37, Greg Kroah-Hartman
+> > > <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > This is the start of the stable review cycle for the 5.15.163 release.
+> > > > There are 144 patches in this series, all will be posted as a response
+> > > > to this one.  If anyone has any issues with these being applied, please
+> > > > let me know.
+> > > >
+> > > > Responses should be made by Thu, 18 Jul 2024 15:27:21 +0000.
+> > > > Anything received after that time might be too late.
+> > > >
+> > > > The whole patch series can be found in one patch at:
+> > > >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.163-rc1.gz
+> > > > or in the git tree and branch at:
+> > > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> > > > and the diffstat can be found below.
+> > > >
+> > > > thanks,
+> > > >
+> > > > greg k-h
+> > > 
+> > > The s390 builds failed on stable-rc 5.15.163-rc1 review due to following build
+> > > warnings / errors.
+> > > 
+> > > First time seen on stable-rc 5.15 branch.
+> > > 
+> > >   GOOD: ba1631e1a5cc ("Linux 5.15.162-rc1")
+> > >   BAD:  b9a293390e62 ("Linux 5.15.163-rc1")
+> > > 
+> > > * s390, build
+> > >   - clang-18-allnoconfig
+> > >   - clang-18-defconfig
+> > >   - clang-18-tinyconfig
+> > >   - clang-nightly-allnoconfig
+> > >   - clang-nightly-defconfig
+> > >   - clang-nightly-tinyconfig
+> > >   - gcc-12-allnoconfig
+> > >   - gcc-12-defconfig
+> > >   - gcc-12-tinyconfig
+> > >   - gcc-8-allnoconfig
+> > >   - gcc-8-defconfig-fe40093d
+> > >   - gcc-8-tinyconfig
+> > > 
+> > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > > 
+> > > Build regressions:
+> > > --------
+> > > arch/s390/include/asm/processor.h:253:11: error: expected ';' at end
+> > > of declaration
+> > >   253 |         psw_t psw __uninitialized;
+> > >       |                  ^
+> > >       |                  ;
+> > > 1 error generated.
+> > 
+> > Need to cherry-pick commit fd7eea27a3ae ("Compiler Attributes: Add __uninitialized macro")
 > 
-> Yes, I understand the difference. My question is why should upstream 
-> support that? Normally, I wouldn't notice or care, but the churn of 
-> renaming everything makes me notice. Why do the maintainers need to 
-> review all these extra changes because QCom couldn't figure out their 
-> plans?
+> Thanks, as this keeps coming back, I'll go add this commit now to all
+> branches and push out -rc2 releases in a few hours.
 
-Upstreaming prematurely, prior to finalizing all solutions, will have a
-significant pain point like this. I recognize the extra workload
-involved in reviewing these changes, but our aim is to minimize future
-maintenance efforts. SA8775p with non-SCMI resource solutions is going
-to be deprecated.
+Nope, not doing this for 4.19.y, that's going to turn into too much of a
+mess there.  I'll just drop the offending commit from that branch for
+now, thanks.
 
-The SA8775p is currently undergoing active development, with Qualcomm
-firmware updates altering essential resources such as clocks,
-regulators, etc. designs, to align with safety requirements.
-> 
-> So after you duplicate all the compatible strings, what's next? Changing 
-> all the SA8775p bindings which is an ABI break? Presumably, some 
-
-Yes, ABI is going to break/evolve as sa8775p moves to scmi based
-infrastructure. Auto product line intends to subsequently submit
-corresponding changes for sa8775p while derived part qcs9100 support,
-continue evolve in conventional manner.
-> bindings may not change at all? In that case, you don't need any rename.> I have no visibility into what's coming next, so please educate me.
-
-
-For instance, in this binding, ‘clk’, ‘resets’, and other elements are
-mandatory if ‘compatible’ includes qcs9100. However, after the SCMI
-resource solution is checked in, for ‘compatible’ containing sa8775p, it
-may only require ‘power-domains’ and ‘power-domain-names’.”
-
-A reference to one SCMI resource solution RFC, which will definitely
-require some changes, can be found here[1]:
-[1]
-https://lore.kernel.org/lkml/1709657858-8563-4-git-send-email-quic_sriramd@quicinc.com/
-
-The proposed solution(with compatible differentiation) will exhibit the
-following differences in addition to the current RFC.[1] :
-
-1. Both have SCMI and non-SCMI support in the same driver.
-The binding documentation will specify that ‘qcs9100’ compatibility
-requires properties such as ‘clk’, ‘reset’, ‘vdd’, etc., while ‘SA8775p’
-compatibility necessitates properties like ‘power-domains’,
-‘power-domain-names’, etc., as mandatory.
-
-2. having a /delete-property/ becomes unnecessary.
-The proposed solution will introduce a completely new SA8775p.dtsi from
-the outset. The current qcs9100.dtsi will not be included into this new
-SA8775p.dtsi.
-
-3. Driver C files will not eliminate calls to ‘clk’, ‘vreg’, etc.
-Instead, they will differentiate with a ‘qcs9100’ compatibility to
-include operation with legacy "clk", "vreg" calls, while ‘sa8775p’ will
-incorporate operations calls for ‘power-domains’, and so on.
-
-4. "hsphy,fw-managed" property to indicate SCMI resources is not necessary.
-Current patch have been using a DT property " hsphy,fw-managed;" to
-figure if it is SCMI based vs non-scmi. While it is going to be
-suggested to be designed to use "sa8775p" compatible.
-
-Further more:
-LinaroConnect presentation on qcom SCMI approach here[2]:
-[2]https://resources.linaro.org/en/resource/wfnfEwBhRjLV1PEAJoDDte
-
-> 
-> The minimal amount of changes here is you are stuck with the existing 
-> identifiers for the non-SCMI SKU. Then you can add a "new SoC" for the 
-> SCMI SKU. You might not like the names now, but you picked them and are 
-> kind of stuck with them.
-
-SA8775P is already announced Auto SOC for our OEMs. We can't ask for
-creating new Auto SKU to show the solution w/ SCMI like "SA8775P<XYZ>".
-
-Since the current code of SA8775P is matching w/ what is required for
-the purpose of QCS9100 s/w architecture the clear rename was proposed.
-It will also look odd to IOT customers to see their SOC DT file starting
-w/ the SA8775P.
-
-For the current Qualcomm device trees in upstream, we still use ‘soc’
-naming in the base soc device tree, which is consistent with our current
-hardware SOC naming convention. The basic <soc_name>.dtsi is, by
-default, aligned with the current market name of the SOC.
-
-Welcome comments and suggestions on the information we have proposed above.
-> 
-> Rob
-
--- 
-Thx and BRs,
-Aiqun(Maria) Yu
+greg k-h
 
