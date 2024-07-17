@@ -1,177 +1,198 @@
-Return-Path: <linux-kernel+bounces-255529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C1A99341CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:05:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E6FC9341D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:07:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA6A01F2283C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:05:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08EDF1C217E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5045183079;
-	Wed, 17 Jul 2024 18:05:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A61183088;
+	Wed, 17 Jul 2024 18:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AluEkjKR"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iHMWdR4Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8861822E1
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 18:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E61180A9E;
+	Wed, 17 Jul 2024 18:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721239549; cv=none; b=k/sxAEq0bFSTyqDtH17koifvgk1G6SYXvoEMwgS04aJLXLy/K09P0Uewb5rLa0ORwdsMqq9ofYWim+HQYTqr8bpL2V929rHsRr6AuXWIiY6i+1tY+AyaYQM14NHAxRypOebprjOwkBwfLyO0FH7PeNv/ippsUiIiTttXMWtGyPc=
+	t=1721239639; cv=none; b=kqX7gvkPuTeiY4d2aaxiOiQMVwZxMx4KxLBTgnJlK3SiaFQX+L8OY3d/X89JeHleMjfbuXh3fFQLLKkm6kXikQFyY9dywdaQKLnZHLdoxa2JjJWomUGLLV/Rkxkle/JdLrwBCbKnoHiP/Pi5JPKrCWkR4ppTDfdjxV/JWtXyOU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721239549; c=relaxed/simple;
-	bh=EcbaqaLncNt5/+ldvNun3H3cqM4FhEED9qsUEKX0xf8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jfbEZZtD1NA1EWEqhZcblk+iJjjNb3LBUAbYy7wEe5Dg7FXXiM0Q2S/9NTD/D7143Bo3NQM0fgq3EOf45lOZFx6avPxYcLDeN1ET/DDxVBG3zzF84bMPziEjbQgyc4LPIt+ZDHY7zlkFWgJ2IakNP2dm3uWl3EtbaT19F37aNhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AluEkjKR; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2eea8ea8bb0so1229601fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:05:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721239545; x=1721844345; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EcbaqaLncNt5/+ldvNun3H3cqM4FhEED9qsUEKX0xf8=;
-        b=AluEkjKRyBp9OBpRnAu7adluTpuIbylOMPvcHsJALuXuJou0MfT3Dls7+xg1yTJIrZ
-         +j4suVjjMdNeLFIFNbFCDNz4Yt337buSfpbA3a4alLFZXEqKsV/CIl/0B7RcuWv6qdg6
-         76K9Z93c76YoX318syjkwcgrwg3bICRtk7Lw2gtkakbdwEax0eD/GHxiWWI4PJ+arquH
-         nvAl2qYhSAC+WvFwUcmMKJpupna/GLIuufIdrBTP3aTND8XWd6cl+Gbc1Ign0zbwXdtq
-         9apdkQ7/ZMi5TN+DL5hhU+V2am2B9GqL/K1eDl3IlXH7Vmq+lWalc0u1jk+H9HbG5BCi
-         PC3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721239545; x=1721844345;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EcbaqaLncNt5/+ldvNun3H3cqM4FhEED9qsUEKX0xf8=;
-        b=OgoM8gxinZLzmAmAOIJOsFTOZXbUAJ4wVzr7jxmkCuLjJGqYuxooGo9GSvgk9qZi2X
-         w2iI7zu8YqVMrz9i+vIqeFrAT35CN7ia0EbjqAynIMU88DWaQhfA/WtutI2hlwO1ZNoH
-         GkDf9HQHPEuC8eNvnnCklA+y3PIadNAfTSvHEdLY0tIsNFP7WQG9A1mYkgyIMH375pnK
-         OKdV7M1pB4RlpcY78toMcUiZdymEi5B24ur3AdUxLY4rE/PLlOP4RwQ6vpONcKIgrly8
-         5w+mnI+H7w5LNTgtHIJVY1cp9VS93nt9lT8vNaJWfyZYww+rycDdtE2EgVKpX/NltvXw
-         M9/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXlVlcIQullz/RoXViK2Vaf0RM0Y42Mi1Rl0YNen2IfYrxtWh/GY5rXjwi0YTyER8JNUNfx4fFOBX0e+NbNLzVzTy+jf3CZLf/OJK/n
-X-Gm-Message-State: AOJu0Yyq6qlnLD7xrAy8IGEhC3FxB4taXPRAKXf1k1DlauUCfXMFwoAx
-	+k+El+l3XQOMyA+CgV/2QgoJEUddHzWgT4lgpYVWOUGNdiyEUlsNZuaV561t0X9nxsJp8jWb2jw
-	n8cizpffjhy5igAwB37y6VnKJeYgIscZKLBlA
-X-Google-Smtp-Source: AGHT+IHmEPpkW9BMRf7R+mnkbP964r6rm53YMQ2kLWJrWHw4ELd3YcPcVXt2ZFtW89ezovDBD1g4Tm5CJK5P3Fnz80o=
-X-Received: by 2002:a2e:9a87:0:b0:2ee:8566:32cb with SMTP id
- 38308e7fff4ca-2ef05c73758mr1514341fa.16.1721239544904; Wed, 17 Jul 2024
- 11:05:44 -0700 (PDT)
+	s=arc-20240116; t=1721239639; c=relaxed/simple;
+	bh=jlQGj+y5xWjWBac1NDIXq5sTb3PhV8K7u2hVU+hdMbQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CKaaD+jAUUtu4oY14iapivYZ1RiW+MHvKBecZW5l1nfQmilNgozFE1GyTfzgD0zuE5fd4v7rCKiZA8MVarSkDQZk64xt/CfcRxg7bfxzmzoDgqlw+AFzX9M0ZL0llvOXqysR6TByl6ied8x1pvQYMSdhJqnryfSDIig+rOpwZQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iHMWdR4Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5437FC2BD10;
+	Wed, 17 Jul 2024 18:07:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721239639;
+	bh=jlQGj+y5xWjWBac1NDIXq5sTb3PhV8K7u2hVU+hdMbQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iHMWdR4QtDHjNb6qgyX5cSH0r8cdiH4JIcMRiOab4qdxMLQTj2x72M0L2NJcri1bW
+	 BdE8DN/dSAGnaAk+lhisCcnYW2c/i/ZACZp/D5TcAQQb7iLZDM6DC25k4Z2PNDea0M
+	 5wFEVDGuaLNZ7qnxns4D4K9P1yGM27AzEkDzQTgS+fPP9mUIcN06iyTLXhYKPsoQkS
+	 Xfz4GgZs+zvmJb8Isdt31wmEddpwt1syyrtwPf5RCNRtHTrxeC/4F1n7d3i4n45jHk
+	 17vKjtS/WUXXwHr4NjsrQRYqF1HXb73CrmvVcPR375CDPfeywpegjK1oy+vumUYqPG
+	 8tImRDDHkUuaA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sU93c-00DDwI-F9;
+	Wed, 17 Jul 2024 19:07:16 +0100
+Date: Wed, 17 Jul 2024 19:07:15 +0100
+Message-ID: <86le1z3nak.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org,
+	anna-maria@linutronix.de,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	festevam@gmail.com,
+	bhelgaas@google.com,
+	rdunlap@infradead.org,
+	vidyas@nvidia.com,
+	ilpo.jarvinen@linux.intel.com,
+	apatel@ventanamicro.com,
+	kevin.tian@intel.com,
+	nipun.gupta@amd.com,
+	den@valinux.co.jp,
+	andrew@lunn.ch,
+	gregory.clement@bootlin.com,
+	sebastian.hesselbarth@gmail.com,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	alex.williamson@redhat.com,
+	will@kernel.org,
+	lorenzo.pieralisi@arm.com,
+	jgg@mellanox.com,
+	ammarfaizi2@gnuweeb.org,
+	robin.murphy@arm.com,
+	lpieralisi@kernel.org,
+	nm@ti.com,
+	kristo@kernel.org,
+	vkoul@kernel.org,
+	okaya@kernel.org,
+	agross@kernel.org,
+	andersson@kernel.org,
+	mark.rutland@arm.com,
+	shameerali.kolothum.thodi@huawei.com,
+	yuzenghui@huawei.com
+Subject: Re: [patch V4 00/21] genirq, irqchip: Convert ARM MSI handling to per device MSI domains
+In-Reply-To: <ZpfJc80IInRLbRs5@hovoldconsulting.com>
+References: <20240623142137.448898081@linutronix.de>
+	<ZpUFl4uMCT8YwkUE@hovoldconsulting.com>
+	<878qy26cd6.wl-maz@kernel.org>
+	<ZpUtuS65AQTJ0kPO@hovoldconsulting.com>
+	<86r0bt39zm.wl-maz@kernel.org>
+	<ZpaJaM1G721FdLFn@hovoldconsulting.com>
+	<86plrd2o5o.wl-maz@kernel.org>
+	<Zpdxe4ce-XwDEods@hovoldconsulting.com>
+	<86msmg2n73.wl-maz@kernel.org>
+	<ZpfJc80IInRLbRs5@hovoldconsulting.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240706022523.1104080-1-flintglass@gmail.com>
- <CAKEwX=NL1gOe9k5+JB8Q-UAoZ4ie8SBGg7XTjaqM7j4-hiHv=A@mail.gmail.com>
- <CAPpoddefXD1RAjyW2+X_ankGYNpQgY0Y0+xd1yOFgCc_egaX8A@mail.gmail.com>
- <CAJD7tkYnBw-QiGXTb4BPScuS1VePBkuRx1qG8p92zN9TeD+gKg@mail.gmail.com> <CAKEwX=OPDkwnSno-8r9AsOpmzkZ90SzeX02xz0eDTqbL2_QL2g@mail.gmail.com>
-In-Reply-To: <CAKEwX=OPDkwnSno-8r9AsOpmzkZ90SzeX02xz0eDTqbL2_QL2g@mail.gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Wed, 17 Jul 2024 11:05:06 -0700
-Message-ID: <CAJD7tkapE+qSmjFXnLBNamMvn3Lxbx=yvDF3gXW_qba45WU1tA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] mm: zswap: global shrinker fix and proactive shrink
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: Takero Funaki <flintglass@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: johan@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com, rdunlap@infradead.org, vidyas@nvidia.com, ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com, kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp, andrew@lunn.ch, gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org, rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org, lorenzo.pieralisi@arm.com, jgg@mellanox.com, ammarfaizi2@gnuweeb.org, robin.murphy@arm.com, lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org, vkoul@kernel.org, okaya@kernel.org, agross@kernel.org, andersson@kernel.org, mark.rutland@arm.com, shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, Jul 17, 2024 at 10:49=E2=80=AFAM Nhat Pham <nphamcs@gmail.com> wrot=
-e:
->
-> On Tue, Jul 16, 2024 at 7:53=E2=80=AFPM Yosry Ahmed <yosryahmed@google.co=
-m> wrote:
-> >
-> > [..]
-> > >
-> > > > My concern is that we are knowingly (and perhaps unnecessarily)
-> > > > creating an LRU inversion here - preferring swapping out the reject=
-ed
-> > > > pages over the colder pages in the zswap pool. Shouldn't it be the
-> > > > other way around? For instance, can we spiral into the following
-> > > > scenario:
-> > > >
-> > > > 1. zswap pool becomes full.
-> > > > 2. Memory is still tight, so anonymous memory will be reclaimed. zs=
-wap
-> > > > keeps rejecting incoming pages, and putting a hold on the global
-> > > > shrinker.
-> > > > 3. The pages that are swapped out are warmer than the ones stored i=
-n
-> > > > the zswap pool, so they will be more likely to be swapped in (which=
-,
-> > > > IIUC, will also further delay the global shrinker).
-> > > >
-> > > > and the cycle keeps going on and on?
-> > >
-> > > I agree this does not follow LRU, but I think the LRU priority
-> > > inversion is unavoidable once the pool limit is hit.
-> > > The accept_thr_percent should be lowered to reduce the probability of
-> > > LRU inversion if it matters. (it is why I implemented proactive
-> > > shrinker.)
-> >
-> > Why?
-> >
-> > Let's take a step back. You are suggesting that we throttle zswap
-> > writeback to allow reclaim to swapout warmer pages to swap device. As
-> > Nhat said, we are proliferating LRU inversion instead of fixing it.
-> >
-> > I think I had a similar discussion with Johannes about this before,
-> > and we discussed that if zswap becomes full, we should instead
-> > throttle reclaim and allow zswap writeback to proceed (i.e. the
-> > opposite of what this series is doing). This would be similar to how
-> > we throttle reclaim today to wait for dirty pages to be written back.
-> >
->
-> I completely agree with this analysis and proposal - it's somewhat
-> similar to what I have in mind, but more fleshed out :)
->
-> > This should reduce/fix the LRU inversion instead of proliferating it,
-> > and it should reduce the total amout of IO as colder pages should go
-> > to disk while warmer pages go to zswap. I am wondering if we can reuse
-> > the reclaim_throttle() mechanism here.
-> >
-> > One concern I have is that we will also throttle file pages if we use
-> > reclaim_throttle(), since I don't see per-type throttling there. This
-> > could be fine, since we similarly throttle zswap reclaim if there are
-> > too many dirty file pages. I am not super familiar with reclaim
-> > throttling, so maybe I missed something obvious or there is a better
-> > way, but I believe that from a high level this should be the right way
-> > to go.
->
-> I don't think we have any infrastructure for anon-only throttling in
-> vmscan logic, but it sounds trivial to implement if necessary :)
->
-> >
-> > I actually think if we do this properly, and throttle reclaim when
-> > zswap becomes full, we may be able to drop the acceptance hysteresis
-> > and rely on the throttling mechanism to make sure we stop reclaim
-> > until we free up enough space in zswap to avoid consistently hitting
-> > the limit, but this could be a future extension.
->
-> Agree - this hysteresis heuristics needs to die.
->
-> IMHO, I think we should still have the proactive global shrinking
-> action that Takero is proposing in patch 3. The throttling is nice,
-> but it'd be even nicer if we can get ahead of that :)
+On Wed, 17 Jul 2024 14:38:59 +0100,
+Johan Hovold <johan@kernel.org> wrote:
+> 
+> On Wed, Jul 17, 2024 at 01:54:40PM +0100, Marc Zyngier wrote:
+> > On Wed, 17 Jul 2024 08:23:39 +0100,
+> > Johan Hovold <johan@kernel.org> wrote:
+> 
+> > > I believe there is a kernel parameter for this (e.g.
+> > > module.async_probe), but I just disable async probing for the Qualcomm
+> > > PCIe driver I'm using:
+> > 
+> > I had tried this module parameter, but it didn't change anything on my
+> > end.
+> 
+> > I'll have a look whether the TX1 PCIe driver uses this. It's
+> > positively ancient, so I wouldn't bet that it has been touched
+> > significantly in the past 5 years.
+> 
+> Perhaps async probing just changes the symptoms, the NVMe and wifi
+> doesn't work in either case.
 
-I have always thought that the shrinker should play this role in one
-way or another. Instead of an arbitrary watermark and asynchronous
-work, it incrementally pushes the zswap LRU toward disk as reclaim
-activity increases.
+Yeah, my impression is that this changes the order in which LPIs get
+allocated, but the core symptom is the same.
 
-Is the point behind proactive shrinking is to reduce the latency in
-the reclaim path?
+> 
+> > > [    8.692011] Reusing ITT for devID 0
+> > > [    8.693668] Reusing ITT for devID 0
+> > 
+> > This is really odd. It indicates that you have several devices sharing
+> > the same DeviceID, which I seriously doubt it is the case in a
+> > laptop. Do you have any non-transparent bridge here? lspci would help.
+> 
+> Yeah, and these messages do not show up without the series (see log
+> below). They are there in the previous synchronous log however.
+> 
+> 0002:00:00.0 PCI bridge: Qualcomm Technologies, Inc SC8280XP PCI Express Root Port
+> 0002:01:00.0 Non-Volatile memory controller: KIOXIA Corporation NVMe SSD Controller BG4 (DRAM-less)
+> 0004:00:00.0 PCI bridge: Qualcomm Technologies, Inc SC8280XP PCI Express Root Port
+> 0004:01:00.0 Unassigned class [ff00]: Qualcomm Technologies, Inc SDX55 [Snapdragon X55 5G]
+> 0006:00:00.0 PCI bridge: Qualcomm Technologies, Inc SC8280XP PCI Express Root Port
+> 0006:01:00.0 Network controller: Qualcomm Technologies, Inc QCNFA765 Wireless Network Adapter (rev 01)
+
+Right, this is a very straightforward setup, Design-crap-ware-style.
+Nothing that would alias any device.
+
+>
+> > I'm starting to suspect that the new code doesn't carry all the
+> > required bits for the DevID, and that we end-up trying to allocated
+> > interrupts from the pool allocated to another device, which can never
+> > be a good thing, and would explain why everything dies a painful
+> > death.
+> > 
+> > Can you run the same trace with the whole thing reverted? I think
+> > we're on something here.
+> 
+> See below, using normal asynchronous probing like the previous log.
+
+And as expected, no aliasing showing up in this log. Somehow, we're
+not able to distinguish between the different PCI domains anymore,
+leading to all sorts of funnies.
+
+For the record, I've added some extra debug in the its driver and ran
+the result on TX1, old and new kernels.
+
+Before this series:
+
+[   10.139806] nvme nvme0: pci function 0006:58:00.0
+[   10.158599] nvme 0006:58:00.0: devid = 35800
+
+
+With this series:
+
+[   10.143729] nvme nvme0: pci function 0006:58:00.0
+[   10.181775] nvme 0006:58:00.0: devid = 5800
+
+Clearly, we've lost something in the battle. I'll keep digging.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
