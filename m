@@ -1,57 +1,60 @@
-Return-Path: <linux-kernel+bounces-254712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 538669336BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:12:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 548D09336BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:15:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A2DE1F243AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:12:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EECA282B48
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E311400A;
-	Wed, 17 Jul 2024 06:12:31 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C4312E48;
+	Wed, 17 Jul 2024 06:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0FdJMI3d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD9F12E7F
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 06:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DE1E57E;
+	Wed, 17 Jul 2024 06:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721196751; cv=none; b=H4TJ7qYVf+gyL16MDSsgzYtgK1Nu7oK5YH7oKaxxaOxALfrJdNkthKi/DDseVA2zldAj6o+h0CcFrnllBmABEFxeki0Mhxj5leUIJMOSkJDVOLXHNE6mEFE7LF3tKb7WOVora+8bExMw1k9LrDktWftUbKsf5UTpcWbJsKvleRo=
+	t=1721196912; cv=none; b=H7bFQlADVoDNnMWHiNvevnvMM2+/7aFiLYsNLBSfV4lBmGo7EpaIgMnMLTS3LoP86uaCOqTBvEgzMSWZTRH55Pjm89WZAMmUt2K76tfSKOZ9BN4mmgglRsbqdpMITR/J19gpBrK68o6s86VXxQMWvlNSAx1tBo78Q3AwW4RXOGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721196751; c=relaxed/simple;
-	bh=4f3fcVvU4gRFuVFMBNoTOgdn8pYdktibC9FrBSuVlg4=;
+	s=arc-20240116; t=1721196912; c=relaxed/simple;
+	bh=ZBhtMLdcoezBuG6oHqDon5iO2naEp1wK1o9CII1PmnQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jUR6TeWYGs69m8rhR/b2I5P7ARmFSI52zGEFarbPLTLlkN4LAKKQKBSEmcid1rBpu2eCT3SJi/DksnWowTGAVg0VAzb5+BRtdXjo3OToKgNjwG5v2TAjIC9LBX0vmZPdg4/USxsEiSoZdNp4aqvG38GaL731LrR9woP+6sxfBWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sTxth-0003EI-Rs; Wed, 17 Jul 2024 08:12:17 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sTxtg-0009Jr-Vl; Wed, 17 Jul 2024 08:12:17 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sTxtg-001s4c-2l;
-	Wed, 17 Jul 2024 08:12:16 +0200
-Date: Wed, 17 Jul 2024 08:12:16 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Brian Norris <briannorris@chromium.org>, Kalle Valo <kvalo@kernel.org>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] wifi: mwifiex: add support for WPA-PSK-SHA256
-Message-ID: <ZpdgwCyoYPAFLBJI@pengutronix.de>
-References: <20240716-mwifiex-wpa-psk-sha256-v1-0-05ae70f37bb3@pengutronix.de>
- <20240716-mwifiex-wpa-psk-sha256-v1-2-05ae70f37bb3@pengutronix.de>
- <20240716195731.GB85916@francesco-nb>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q0SV6jV/xx9w16y/X0zJK9em9xhG6OySrjzF/rV27e5SijQQqFf6DPEsqEqN1mJlASfciE7sy+Ti89hJwfZipoS2R8opKRFgxC7p8iiD+0JBS7FXS3oZcoZKOzK1nuNPIPX6thtX1lFvu+boNDbDaaxmqr5v7IPFgWLsSuzOV6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0FdJMI3d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24B9AC4AF09;
+	Wed, 17 Jul 2024 06:15:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1721196911;
+	bh=ZBhtMLdcoezBuG6oHqDon5iO2naEp1wK1o9CII1PmnQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0FdJMI3dg7ljgzoaZMCKGN2WzhhYdNqFX1452++txg2ZvzjS1Lau/IGtuLor5s0E9
+	 PzxFu5s82OgOT+BNNldAN4wwa9QfTYlrRkkLXy/8ZdDTQnA6qLbGEAe0X7uPC6HULQ
+	 zsYU5hBruqtTkTnGIBDGJOkK76IJawut8U3I+Doo=
+Date: Wed, 17 Jul 2024 08:15:08 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: Re: [PATCH 5.15 000/144] 5.15.163-rc1 review
+Message-ID: <2024071743-anyhow-legroom-1d54@gregkh>
+References: <20240716152752.524497140@linuxfoundation.org>
+ <CA+G9fYvVaSX9Ot2vekBOkLjUqCx=SbQqW4vWhypCnGwwBmX4xg@mail.gmail.com>
+ <c7beb899-91dc-4fcd-816e-fa7ba6f956e4@suswa.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,40 +63,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240716195731.GB85916@francesco-nb>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <c7beb899-91dc-4fcd-816e-fa7ba6f956e4@suswa.mountain>
 
-Hi Francesco,
-
-On Tue, Jul 16, 2024 at 09:57:31PM +0200, Francesco Dolcini wrote:
-> Hello Sascha,
+On Tue, Jul 16, 2024 at 03:45:33PM -0500, Dan Carpenter wrote:
+> On Wed, Jul 17, 2024 at 01:49:12AM +0530, Naresh Kamboju wrote:
+> > On Tue, 16 Jul 2024 at 21:37, Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > This is the start of the stable review cycle for the 5.15.163 release.
+> > > There are 144 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > >
+> > > Responses should be made by Thu, 18 Jul 2024 15:27:21 +0000.
+> > > Anything received after that time might be too late.
+> > >
+> > > The whole patch series can be found in one patch at:
+> > >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.163-rc1.gz
+> > > or in the git tree and branch at:
+> > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> > > and the diffstat can be found below.
+> > >
+> > > thanks,
+> > >
+> > > greg k-h
+> > 
+> > The s390 builds failed on stable-rc 5.15.163-rc1 review due to following build
+> > warnings / errors.
+> > 
+> > First time seen on stable-rc 5.15 branch.
+> > 
+> >   GOOD: ba1631e1a5cc ("Linux 5.15.162-rc1")
+> >   BAD:  b9a293390e62 ("Linux 5.15.163-rc1")
+> > 
+> > * s390, build
+> >   - clang-18-allnoconfig
+> >   - clang-18-defconfig
+> >   - clang-18-tinyconfig
+> >   - clang-nightly-allnoconfig
+> >   - clang-nightly-defconfig
+> >   - clang-nightly-tinyconfig
+> >   - gcc-12-allnoconfig
+> >   - gcc-12-defconfig
+> >   - gcc-12-tinyconfig
+> >   - gcc-8-allnoconfig
+> >   - gcc-8-defconfig-fe40093d
+> >   - gcc-8-tinyconfig
+> > 
+> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > 
+> > Build regressions:
+> > --------
+> > arch/s390/include/asm/processor.h:253:11: error: expected ';' at end
+> > of declaration
+> >   253 |         psw_t psw __uninitialized;
+> >       |                  ^
+> >       |                  ;
+> > 1 error generated.
 > 
-> On Tue, Jul 16, 2024 at 01:33:28PM +0200, Sascha Hauer wrote:
-> > This adds support for the WPA-PSK AKM suite with SHA256 as hashing
-> > method (WPA-PSK-SHA256). Tested with a wpa_supplicant provided AP
-> > using key_mgmt=WPA-PSK-SHA256.
-> 
-> Do you have any more details on which chip/firmware you tested?
-> The change looks good, I am just wondering if there are reasons this
-> might create issue on some specific chip/firmware combination.
+> Need to cherry-pick commit fd7eea27a3ae ("Compiler Attributes: Add __uninitialized macro")
 
-I have a IW416 with firmware 16.92.21.p119. The change itself is derived
-from the downstream driver. The downstream driver also sets the
-KEY_MGMT_PSK_SHA256 bit unconditionally for all chip/firmware
-combinations so I think this change should be ok.
+Thanks, as this keeps coming back, I'll go add this commit now to all
+branches and push out -rc2 releases in a few hours.
 
-Sascha
+thanks,
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+greg k-h
 
