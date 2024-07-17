@@ -1,141 +1,156 @@
-Return-Path: <linux-kernel+bounces-254802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C1DD9337B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:19:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6202D9337B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:21:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C8EA284F70
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:19:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 175AB1F25182
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512B01BC39;
-	Wed, 17 Jul 2024 07:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PxRs7jWb"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987731BF37;
+	Wed, 17 Jul 2024 07:21:37 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6676A1CF90
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51B81B948
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721200757; cv=none; b=DMwWBtn1D+kdjWDuKGeqo86U4pAUaHx9ywSVuIRsDyMlNBPZO5az7XRxbrLEWHsJynAMCxdje290GqUDEjqFdlANrWnPw3p8THg6KjljdQZpkPrw9mGlS2ijGz26/cHb7P/GcxPif8IKc09aqKJ3DonT4cjtnfy2R2dCTmyILCI=
+	t=1721200897; cv=none; b=E5FI1/1sK1oTQfRDNy5lDkVc0Rm23cG3pZLOELyNrarbSvjY6xtiqeYrgmLkg53oC4JM0o3T7ycJNgypD8uogX/lqYqOMuv5OG8WUeuHmRb/PSGiAk6wJtkZYZ8fyu5zHDc3aAHNbFfwYA3AoRcqIkNW8fMk7Ueq7UmPq2wEHwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721200757; c=relaxed/simple;
-	bh=14a3EXAYx3n2AP13QV1T3S3XN5vJQPlb//kGSBxKTV8=;
+	s=arc-20240116; t=1721200897; c=relaxed/simple;
+	bh=7dyhTQjy+22B7GIQfMe+2jE4/DTU5dL5I/JauqWJc+Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sw1KsXZQAUdibKZ7DlxEqGc32ekK5bij34qEiVQ9Wu6S5Nb5xjB87YnObWPxFWE9IC1EibMd+1luOMkGomVI3Ld5hAz8J3EZUIT95UzYf/PzpyTFaUmoopfuj44NY/Hx+3JK9bsi0NONZlUQNo4IVol4A2MRXshZdqWBR59Xcp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PxRs7jWb; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6fd513f18bso673310566b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 00:19:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1721200754; x=1721805554; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ArgSkToA2nsjWvuTjSuyJoQaI0tJr7zvtfDgU/aUVoY=;
-        b=PxRs7jWbnOBywrRY+e752krtFT84TzIs8w/QBRfO6YgqtDgPU4b15aE2iiMWFvsiWr
-         1gLk2Er1i8zHDPqbR1G/l+bkez7d4+VXFhX/EAU5zH2IozG8j7EguTun8KJkQP2j2cHh
-         Qc4+Hdled9Oyv7V06h3nIdPC07suwas7zEybMupm27XlLUKJ4Z4DcGLCW07+JD2UdxUs
-         p0zjN4JtqZFyiaW2yaLGOVfuR2KSTlozROS3T10VhYeC4vBNBr2583jowAOHbo+Ohesh
-         DHNI4aUKfMPYy9mSU9FVMXvT6TUAPNL7L3yFL7p7Dsg0X/7AGMAofdGESZ9dxlDlXjrL
-         UU2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721200754; x=1721805554;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ArgSkToA2nsjWvuTjSuyJoQaI0tJr7zvtfDgU/aUVoY=;
-        b=pWERzmMOjeYI9eTc/M43SSP9+JtRpwxkKdpmc+1lxVXbrRnTE+jzIQz7SKg651VgPy
-         VkG59Es6Zr1snBfiFpHDt3yVqEmDTRQe5e2yGSSjzJiJijIXUwXIh3Ft/LltgVcD05ks
-         5iGjOVcNSpK7YJ1/8zEhH4jYz+OMEevNfRw/hz0hfbLKvPdtr4gH9hgJoAcqSZhwXJ+O
-         JeuDXbB+JQxDBoHa14XYJf5EOQ1C1SLgmyx0DQiLJH2yYJkKyx15sbPAfVtSVZGc2Exg
-         jN2yGUU+HOageYvUflcDM1wLtGIX2cCQxvqQtDyQyVt10zv+GgPTlrpvRPyRPQOAXtVs
-         EXvg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0P/jac8rZWsSpzIYHhE6JWYPNl+LxtH680kpCR/j+JD/BMKQ4zOjbO4DbgWziHOetSy3sQWfNFcdl4xVOicmCXiOnxXp4DKo086aE
-X-Gm-Message-State: AOJu0Yz7kjk9qZtcUgFSGvdazEK2rJlPkNm99IIiUoePric5q9I0jlkP
-	/pjSE1tcDNihj9IIXM6B9tP3A39Gc+2OCINXPjYQp4CATPn7IRSuRnV3/mophZU=
-X-Google-Smtp-Source: AGHT+IEFiz1UoJ1wRFUr8yrOzP0AGE8hgSRnejnhyVKNJBJmgOedBuq6BWNoanv2GWM0dmVqE7bphw==
-X-Received: by 2002:a17:906:2b4b:b0:a77:cca9:b21c with SMTP id a640c23a62f3a-a7a011a1220mr45969466b.34.1721200753714;
-        Wed, 17 Jul 2024 00:19:13 -0700 (PDT)
-Received: from localhost (109-81-86-75.rct.o2.cz. [109.81.86.75])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7f1e04sm413330566b.127.2024.07.17.00.19.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 00:19:13 -0700 (PDT)
-Date: Wed, 17 Jul 2024 09:19:12 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Jianxiong Gao <jxgao@google.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] mm: Fix endless reclaim on machines with unaccepted
- memory.
-Message-ID: <ZpdwcOv9WiILZNvz@tiehlicka>
-References: <20240716130013.1997325-1-kirill.shutemov@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bbSA+Q6v0vUiE3TNAXYT+hUoEJ4MhlH2vgmWx8WUUvlIOsdTcPi6b6E8BFREx3tIH49mAccQ2SsHGNoTZbb59/Qo3Pf8yEr8JKho8ihCrVYweQFWoW5c8ZwqYqxXl1Ldqrv9cmsdY2J8Y2S5wBUPvn1Y0EvygS4LzMQ/dqTGOhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sTyyQ-0006wr-Ga; Wed, 17 Jul 2024 09:21:14 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sTyyO-000A17-Cx; Wed, 17 Jul 2024 09:21:12 +0200
+Received: from pengutronix.de (p5de45302.dip0.t-ipconnect.de [93.228.83.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 524B830595B;
+	Wed, 17 Jul 2024 07:20:46 +0000 (UTC)
+Date: Wed, 17 Jul 2024 09:20:45 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Bough Chen <haibo.chen@nxp.com>
+Cc: Frank Li <frank.li@nxp.com>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"imx@lists.linux.dev" <imx@lists.linux.dev>, Han Xu <han.xu@nxp.com>
+Subject: Re: RE: [PATCH v2 4/4] can: flexcan: add wakeup support for imx95
+Message-ID: <20240717-porpoise-of-imminent-inspiration-ef2fc6-mkl@pengutronix.de>
+References: <20240715-flexcan-v2-0-2873014c595a@nxp.com>
+ <20240715-flexcan-v2-4-2873014c595a@nxp.com>
+ <20240716-curious-scorpion-of-glory-8265aa-mkl@pengutronix.de>
+ <ZpaF4Wc70VuV4Cti@lizhi-Precision-Tower-5810>
+ <20240716-chowchow-of-massive-joviality-77e833-mkl@pengutronix.de>
+ <DU0PR04MB9496C653249E66016A43F97790A32@DU0PR04MB9496.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lyoxbz5qrcbtajuw"
 Content-Disposition: inline
-In-Reply-To: <20240716130013.1997325-1-kirill.shutemov@linux.intel.com>
+In-Reply-To: <DU0PR04MB9496C653249E66016A43F97790A32@DU0PR04MB9496.eurprd04.prod.outlook.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue 16-07-24 16:00:13, Kirill A. Shutemov wrote:
-> Unaccepted memory is considered unusable free memory, which is not
-> counted as free on the zone watermark check. This causes
-> get_page_from_freelist() to accept more memory to hit the high
-> watermark, but it creates problems in the reclaim path.
-> 
-> The reclaim path encounters a failed zone watermark check and attempts
-> to reclaim memory. This is usually successful, but if there is little or
-> no reclaimable memory, it can result in endless reclaim with little to
-> no progress. This can occur early in the boot process, just after start
-> of the init process when the only reclaimable memory is the page cache
-> of the init executable and its libraries.
 
-How does this happen when try_to_accept_memory is the first thing to do
-when wmark check fails in the allocation path?
+--lyoxbz5qrcbtajuw
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Could you describe what was the initial configuration of the system? How
-much of the unaccepted memory was there to trigger this?
+On 17.07.2024 02:03:35, Bough Chen wrote:
+> > On 16.07.2024 10:40:31, Frank Li wrote:
+> > > > > @@ -2330,9 +2366,12 @@ static int __maybe_unused
+> > flexcan_noirq_resume(struct device *device)
+> > > > >  	if (netif_running(dev)) {
+> > > > >  		int err;
+> > > > >
+> > > > > -		err =3D pm_runtime_force_resume(device);
+> > > > > -		if (err)
+> > > > > -			return err;
+> > > > > +		if (!(device_may_wakeup(device) &&
+> > > >                       ^^^^^^^^^^^^^^^^^^^^^^^^
+> > > >
+> > > > Where does this come from?
+> > >
+> > > include/linux/pm_wakeup.h
+> > >
+> > > static inline bool device_may_wakeup(struct device *dev)
+> > > {
+> > >         return dev->power.can_wakeup && !!dev->power.wakeup;
+> > > }
+> >=20
+> > Sorry for the confusion. I wanted to point out, that the original drive=
+r doesn't
+> > have the check to device_may_wakeup(). Why was this added?
+>=20
+> Here add this to make sure for CAN with flag
+> FLEXCAN_QUIRK_SETUP_STOP_MODE_SCMI and really used as wakeup source,
+> do not need to call pm_runtime_force_resume(), keep it align with what
+> we do in flexcan_noirq_suspend.
 
-> To address this issue, teach shrink_node() and shrink_zones() to accept
-> memory before attempting to reclaim.
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Reported-by: Jianxiong Gao <jxgao@google.com>
-> Fixes: dcdfdd40fa82 ("mm: Add support for unaccepted memory")
-> Cc: stable@vger.kernel.org # v6.5+
-[...]
->  static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
->  {
->  	unsigned long nr_reclaimed, nr_scanned, nr_node_reclaimed;
->  	struct lruvec *target_lruvec;
->  	bool reclaimable = false;
->  
-> +	/* Try to accept memory before going for reclaim */
-> +	if (node_try_to_accept_memory(pgdat, sc)) {
-> +		if (!should_continue_reclaim(pgdat, 0, sc))
-> +			return;
-> +	}
-> +
+> As the comment in flexcan_noirq_suspend, CAN with flag
+> FLEXCAN_QUIRK_SETUP_STOP_MODE_SCMI, when used as wakeup source, need
+> to keep CAN clock on when system suspend, let ATF part logic works,
+> detail steps please refer to this patch commit log. Whether gate off
+> the CAN clock or not depends on the Hardware design. So for this case,
+> in flexcan_noirq_suspend, directly return0, do not call the
+> pm_runtime_force_suspend(), then in flexcan_noirq_resume(), use the
+> same logic to skip the pm_runtime_force_resume().
 
-This would need an exemption from the memcg reclaim.
+Please change the control flow, so that flexcan_noirq_suspend() and
+flexcan_noirq_resume() look symmetrical.
 
->  	if (lru_gen_enabled() && root_reclaim(sc)) {
->  		lru_gen_shrink_node(pgdat, sc);
->  		return;
+regards,
+Marc
 
--- 
-Michal Hocko
-SUSE Labs
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--lyoxbz5qrcbtajuw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmaXcMoACgkQKDiiPnot
+vG+oPQf/YPWUrvcT++JZ07FcseBQUWKsH7dE6a2zvUJix3NiJbujU/7ZWRis8Bhl
+CGbvtpAmEkpcNuKWucYwTYt2eB8y4d0h3qCHeSi1B6Jsg+SGccThY+3/WxfCmwUu
+pMcw4nfvza024LNjyeZLBtys3O81K/GIg3iJ2NULzgQNeKfM8oalPvoEhrMVHEVn
+J+GyKB4zCaZAGfbndeG7OBQleiFSTQ4oi7OEq8rr8lsnjcCfPYDKDfLZQIpFZtqa
+VRiFq7hTayk/qYyVsZhRf8089C4wsp6zhLDoe9Dweu/J8sQ03klMIOUvpKuRD5jC
+FbL9ybQfk28QbWIANcLZnko0sBa6RA==
+=3SL7
+-----END PGP SIGNATURE-----
+
+--lyoxbz5qrcbtajuw--
 
