@@ -1,123 +1,208 @@
-Return-Path: <linux-kernel+bounces-255448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E95A9340D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:55:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E68DE9340D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:55:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF05E281B3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:55:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D5372841CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35C71822E1;
-	Wed, 17 Jul 2024 16:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408AE1822E6;
+	Wed, 17 Jul 2024 16:55:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OiOmQdhr"
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bPSgql4I"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBE91802AC;
-	Wed, 17 Jul 2024 16:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76A817F39B;
+	Wed, 17 Jul 2024 16:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721235335; cv=none; b=bzoFOxY2HMKe/iYV+ZLdDwNGdN/rNgcZzO4rSKC7G2s7aAX9APP4TaJCrS//3b5BGoPdYvqv+UV6cNIzB9K+MP04IE4sUeAs8RsYsjZpqRwjxjZ3Gs9agGzu7HfStK+/oqb5zniPoUL2xSVbXADzlSktHGMX65rtdSfcPfGNTUs=
+	t=1721235350; cv=none; b=nx1yXADfmdkH7PLsz7OhtQgCCwM+kqVjs7P5fe8fxQ/pfMFPmNJgOpqq4EOwgZl/70HgERs+RLEiZ4lYNsCw2AXeGiynRC5c6ZUb4OnOCgxgQyUSXwwCxAKt5tBlxpo6GH6e9lYx7tJ2wWGrQh3iND4faODsmcjOQjQ0tiJ2DaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721235335; c=relaxed/simple;
-	bh=S3YZm4fFsCz8OBqnREDrrtcn3/DzYpltO81VPMK17m0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TWqmyhcQzQKOUNwxZuP3XFcvRwx6joamoa5MV1hUbiQY+Lh5wRjNsxt23xuh8v7G3u9cYePPqMo0oWEwOeKwhnmzf5oz6OEY1U+75dP9u62HkOGIsFfSjsUw0TeblzlTqmuCvQPnqdloF8yDlG2sjLWY2BSU7cPVYdc4fe5Tlts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OiOmQdhr; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1721235350; c=relaxed/simple;
+	bh=OMKDrp/asr1LQFTLOo46Z1gdnD0fhU2xBx0AsoHdoM4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XUClbf/7xTvJ6Xz9wBGy4bOPQ5nBLt27mryzUad78Ou1fH9WCj7aqW3bzKPKimxL4dPofeiCdFAZ5LwftIc1Em4DQ2qA66t3wSIuRARbSFuBjxiLhdMF2fF1GOoR5h2JojNHQP20X5XUHRosqJ/2bzUYfvK5Z86cYtmRYCijlWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bPSgql4I; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-81061d00c0eso427863241.1;
-        Wed, 17 Jul 2024 09:55:33 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fc5549788eso5136165ad.1;
+        Wed, 17 Jul 2024 09:55:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721235332; x=1721840132; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5LVB3EhfKNUCqikqYOZ5hoCkrjTUi1n0+ZHXDefMGrk=;
-        b=OiOmQdhr5uN7CnnWwwGdAUfNnkKK8R7ip5pbspIpXS+3MQyC8/CTk4ZSQ0QNBcHx3C
-         I33N2wUX9zGOWPxHI1GGEb0EwB4EhOpAUGn072ReKvr6fHGle5tFySto6LpOds7fF54M
-         4nk7TOD/skD767nOa3S6e7fOIqfnfR5oNVzdObsM6EgQ40OzWSeJ2z4jQCdheWG2und1
-         datDCy38Mz5w4+dCoTRdl0LYQ/hzZ3kGgQgzVsDG5yLJDaDpacqJc3PCQ+Lya2HUayb5
-         WY8/TPsY1WwtAr6jFG1yNrSPxIZpMB1WNpZPULF6f8WKDO3aOM67TnifwTXGMCpiyPMZ
-         P0Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721235332; x=1721840132;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1721235348; x=1721840148; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5LVB3EhfKNUCqikqYOZ5hoCkrjTUi1n0+ZHXDefMGrk=;
-        b=ucZ7u7ZKK9VGI4+BzENXVKf7ctb9PRjDIQEIp7cm0rmdyHjnPZCSEiNF0NdC3QsGjm
-         6cg/Dz5vg3JfitKANfraL4wFc7U7fguJjygW8Ck5RE8YJdCZfwgpkOMxqTdD6jSJN9e4
-         eWPTUXAM9nofRpPz9XEPu1ZVINxKoaYyxQpttJa0ow82/rmt2PsYY8ZT+3Jr2rixdJRp
-         f+Ah6qzrk9yEVQBfxG1f//ot3DKtPjGaU41BIMNi1F1lCr+RxJUMoWgZXwkMLbsU6v/p
-         75A0XjKoyCkf7j0ex4SPFo8/15fqRi0egHswylweudfwhwwS9smSiHhkLIJp8VpY3Heu
-         q1bA==
-X-Forwarded-Encrypted: i=1; AJvYcCWi7QPqFoS+su15c6I/egKZuVSYkvS8pfxjn4zl7EqkOQjhD/86JBQSTlSQcbT5yzVeBak3b5rDpoe6fvJ11xamJ9+pzonOuNDDE4DmFibXVGPoNbU1WVIH1ZlHheBVMavH9zdQYzAYhc2fPDg3i6OHkMIo55KZsaIPyIPWcdeRZA==
-X-Gm-Message-State: AOJu0YwkH5SifJp1AWOgQkHZL4bTjS7iDEkDJrfttbL+L/lVVwdOt9gr
-	Hu0u9CCF1haWl2iqRq4mtlnPOd69VwP/mDqz8VBw7VKZdhi8hj7OYPAV8G8lkCDeeoGVQotIqok
-	igfS64kP9Wvnl7uRyw0GdZltUymY=
-X-Google-Smtp-Source: AGHT+IFCcnTnuk6QSJu3w6YuGurcmFhl6DCTxzWwNl1KKwaZ5buEX95b/nNoNzZ0WeorT54XRbot2nu/+27yPyecFbs=
-X-Received: by 2002:a05:6102:3351:b0:48f:2404:ea7d with SMTP id
- ada2fe7eead31-49159906eeamr2685898137.13.1721235332273; Wed, 17 Jul 2024
- 09:55:32 -0700 (PDT)
+        bh=68LWjL5/SKjz0tO65i0BltVGGa8T/WWLEoQAHGMQU/Q=;
+        b=bPSgql4IZhW9Didboyc9a1e3GYBVIkqHHy+eaMB/g8bARWNhlzw0BkBjpzVlbWuGAV
+         Q7JeW8D0Gl25YL56smDrIZ+UQs08kBVYpo2yqz4UIyymQVi1nCtTy2bi4+ONtQDl6+CL
+         NSLTNLyw0pjMDe+Vmke89Uq2k6/86asP3+HtO837ZUasVuAwo5zQQLwAFFf4X62zWm0o
+         au23U8aBqI1VOK31ySETNiHoXS7l5jY02ptYCdE97ZXYOELgJMI63NOfZdThOhH1i2Y2
+         /MrSJ39Pa0QIp7/Qhm0De+EjMhLx0bKQqM+TLEsbYFWRfq4MOidFVDa8NLJ0BFJRJFIa
+         CCcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721235348; x=1721840148;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=68LWjL5/SKjz0tO65i0BltVGGa8T/WWLEoQAHGMQU/Q=;
+        b=ubsRie6xYaOi7rSRP8MyALchnh2b9L/0NW/BytQrxjlGoffK0sj68VTbfMZilU8jWi
+         qbpNlfb3mudjHvCr+C1n5uduSg1po75la504O8wr8He0z/1UquKgld8wLe7coZ9ZpxIu
+         urzChe5Qj0tZhZHYuqY+LjcPHrJ8QCaVF97KBWerAaOjwEVJALoeEcmKdtict6bMcKBV
+         iH/kJFHr4kqOU8qlxq903sY36J6qXZfcpE20HbzrAozXYmvo5jaDR1cTZ8CCwK349Aic
+         0ycP46Vh3MJDDrFdJ0V1pgvVCz/ZFHIp0EQuLKCIhCBXXOdRn/k4pnSlKZKRrZKJ9ySR
+         WhrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMS5l0NlUd0QicuPamQjjFgElAiyrtIYzxGcLq7Z8IDkFQYvXobhPUR7rmv47nhjrE1srXfPjb1ALmJA3rlLbzMOXxRNq+QvcthgrNz8Na50CgmMoQp0/4gQsi4d7JH19/cIueMej2IrqMWO2TeltGIsloCXZs7dz0OHDh7E39lm2f
+X-Gm-Message-State: AOJu0YzEsL+dELT5UUFvrRFOy5aK7Y9DJMdbIvAoJ2hyLzdLIH3LwIQ+
+	0Mto00B8GSqN58Wgy1JmRA/2g1zFUqw8s2Efot5/gVlQkomJLbAuV95BRQ==
+X-Google-Smtp-Source: AGHT+IEh/cgX/fwSr/Qf+rkCnE+FwhUG7QRMVZIlEKOXguTlAFPyDJHm9nWwN1jNvQkd90th0Ikb6Q==
+X-Received: by 2002:a17:903:234d:b0:1fb:67ee:6de7 with SMTP id d9443c01a7336-1fc4e131d9fmr23895775ad.23.1721235348035;
+        Wed, 17 Jul 2024 09:55:48 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc384ecsm77469445ad.208.2024.07.17.09.55.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jul 2024 09:55:47 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Wed, 17 Jul 2024 06:55:46 -1000
+From: "tj@kernel.org" <tj@kernel.org>
+To: Boy Wu =?utf-8?B?KOWQs+WLg+iqvCk=?= <Boy.Wu@mediatek.com>
+Cc: "boris@bur.io" <boris@bur.io>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"axboe@kernel.dk" <axboe@kernel.dk>,
+	Iverlin Wang =?utf-8?B?KOeOi+iLs+mclik=?= <Iverlin.Wang@mediatek.com>,
+	"josef@toxicpanda.com" <josef@toxicpanda.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v3] blk-cgroup: Replace u64 sync with spinlock for iostat
+ update
+Message-ID: <Zpf3ks2drDZ7ULTa@slm.duckdns.org>
+References: <20240716075206.23121-1-boy.wu@mediatek.com>
+ <Zpbify32lel9J-5I@slm.duckdns.org>
+ <c5bcbcbaeacdb805adc75c26f92ec69f26ad7706.camel@mediatek.com>
+ <5560c690cc6de67139a9b2e45c7a11938b70fc58.camel@mediatek.com>
+ <1b19b68adb34410bf6dc8fd3f50e4b82c1a014e4.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240621050525.3720069-1-allen.lkml@gmail.com>
- <20240621050525.3720069-14-allen.lkml@gmail.com> <ba3b8f5907c071e40be68758f2a11662008713e8.camel@redhat.com>
- <CAOMdWSKKyqaJB2Psgcy9piUv3LTDBHhbo_g404fSmqQrVSyr7Q@mail.gmail.com>
- <7348f2c9f594dd494732c481c0e35638ae064988.camel@redhat.com>
- <CAOMdWSKU_Ezk-15whDnNQKK_is2UtBOY59_4fPfKZE0-K+cB6w@mail.gmail.com> <489bff95-5b5a-447f-82c0-9d724bc9d1b1@redhat.com>
-In-Reply-To: <489bff95-5b5a-447f-82c0-9d724bc9d1b1@redhat.com>
-From: Allen <allen.lkml@gmail.com>
-Date: Wed, 17 Jul 2024 09:55:21 -0700
-Message-ID: <CAOMdWSK2M72g_4O+ofUr3foaEc3ZGCnVFu7jZEA41NXck8Xsxw@mail.gmail.com>
-Subject: Re: [PATCH 13/15] net: jme: Convert tasklet API to new bottom half
- workqueue mechanism
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: kuba@kernel.org, Guo-Fu Tseng <cooldavid@cooldavid.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, jes@trained-monkey.org, 
-	kda@linux-powerpc.org, cai.huoqing@linux.dev, dougmill@linux.ibm.com, 
-	npiggin@gmail.com, christophe.leroy@csgroup.eu, aneesh.kumar@kernel.org, 
-	naveen.n.rao@linux.ibm.com, nnac123@linux.ibm.com, tlfalcon@linux.ibm.com, 
-	marcin.s.wojtas@gmail.com, mlindner@marvell.com, stephen@networkplumber.org, 
-	nbd@nbd.name, sean.wang@mediatek.com, Mark-MC.Lee@mediatek.com, 
-	lorenzo@kernel.org, matthias.bgg@gmail.com, 
-	angelogioacchino.delregno@collabora.com, borisp@nvidia.com, 
-	bryan.whitehead@microchip.com, UNGLinuxDriver@microchip.com, 
-	louis.peens@corigine.com, richardcochran@gmail.com, 
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-acenic@sunsite.dk, linux-net-drivers@amd.com, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1b19b68adb34410bf6dc8fd3f50e4b82c1a014e4.camel@mediatek.com>
 
-> > Thank you very much. Will send out v3 later today with these changes.
-> > Note, it will be as follows, enable_work() does not have workqueue type.
-> >
-> > +  if (jme->rxempty_bh_work_queued)
-> > +                 enable_and_queue_work(system_bh_wq, &jme->rxempty_bh_work);
-> > +         else
-> > -                 enable_work(system_bh_wq, &jme->rxempty_bh_work);
-> > +                enable_work(&jme->rxempty_bh_work);
->
-> Yup, sorry I was very hasty.
->
-> More important topic: net-next is currently closed for the merge window,
-> You will have to wait to post the new revision of this series until we
-> re-open net-next in ~2w.
->
+Hello,
 
-Noted. And Thank you for the heads up.
-Meanwhile, I will prepare the second series which can go out for review in
-two weeks.
+Does something like the following work for you?
 
 Thanks.
 
-
-       - Allen
+diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+index 37e6cc91d576..ec1d191f5c83 100644
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -329,7 +329,6 @@ static struct blkcg_gq *blkg_alloc(struct blkcg *blkcg, struct gendisk *disk,
+ 	INIT_WORK(&blkg->async_bio_work, blkg_async_bio_workfn);
+ #endif
+ 
+-	u64_stats_init(&blkg->iostat.sync);
+ 	for_each_possible_cpu(cpu) {
+ 		u64_stats_init(&per_cpu_ptr(blkg->iostat_cpu, cpu)->sync);
+ 		per_cpu_ptr(blkg->iostat_cpu, cpu)->blkg = blkg;
+@@ -632,24 +631,26 @@ static void blkg_iostat_set(struct blkg_iostat *dst, struct blkg_iostat *src)
+ static void __blkg_clear_stat(struct blkg_iostat_set *bis)
+ {
+ 	struct blkg_iostat cur = {0};
+-	unsigned long flags;
+ 
+-	flags = u64_stats_update_begin_irqsave(&bis->sync);
+ 	blkg_iostat_set(&bis->cur, &cur);
+ 	blkg_iostat_set(&bis->last, &cur);
+-	u64_stats_update_end_irqrestore(&bis->sync, flags);
+ }
+ 
+ static void blkg_clear_stat(struct blkcg_gq *blkg)
+ {
++	unsigned long flags;
+ 	int cpu;
+ 
++	raw_spin_lock_irqsave(&blkg_stat_lock, flags);
++
+ 	for_each_possible_cpu(cpu) {
+ 		struct blkg_iostat_set *s = per_cpu_ptr(blkg->iostat_cpu, cpu);
+ 
+ 		__blkg_clear_stat(s);
+ 	}
+ 	__blkg_clear_stat(&blkg->iostat);
++
++	raw_spin_unlock_irqrestore(&blkg_stat_lock, flags);
+ }
+ 
+ static int blkcg_reset_stats(struct cgroup_subsys_state *css,
+@@ -998,12 +999,10 @@ static void blkcg_iostat_update(struct blkcg_gq *blkg, struct blkg_iostat *cur,
+ 	unsigned long flags;
+ 
+ 	/* propagate percpu delta to global */
+-	flags = u64_stats_update_begin_irqsave(&blkg->iostat.sync);
+ 	blkg_iostat_set(&delta, cur);
+ 	blkg_iostat_sub(&delta, last);
+ 	blkg_iostat_add(&blkg->iostat.cur, &delta);
+ 	blkg_iostat_add(last, &delta);
+-	u64_stats_update_end_irqrestore(&blkg->iostat.sync, flags);
+ }
+ 
+ static void __blkcg_rstat_flush(struct blkcg *blkcg, int cpu)
+@@ -1134,9 +1133,9 @@ static void blkcg_fill_root_iostats(void)
+ 				cpu_dkstats->sectors[STAT_DISCARD] << 9;
+ 		}
+ 
+-		flags = u64_stats_update_begin_irqsave(&blkg->iostat.sync);
++		raw_spin_lock_irqsave(&blkg_stat_lock, flags);
+ 		blkg_iostat_set(&blkg->iostat.cur, &tmp);
+-		u64_stats_update_end_irqrestore(&blkg->iostat.sync, flags);
++		raw_spin_unlock_irqrestore(&blkg_stat_lock, flags);
+ 	}
+ }
+ 
+@@ -1145,7 +1144,6 @@ static void blkcg_print_one_stat(struct blkcg_gq *blkg, struct seq_file *s)
+ 	struct blkg_iostat_set *bis = &blkg->iostat;
+ 	u64 rbytes, wbytes, rios, wios, dbytes, dios;
+ 	const char *dname;
+-	unsigned seq;
+ 	int i;
+ 
+ 	if (!blkg->online)
+@@ -1157,16 +1155,14 @@ static void blkcg_print_one_stat(struct blkcg_gq *blkg, struct seq_file *s)
+ 
+ 	seq_printf(s, "%s ", dname);
+ 
+-	do {
+-		seq = u64_stats_fetch_begin(&bis->sync);
+-
+-		rbytes = bis->cur.bytes[BLKG_IOSTAT_READ];
+-		wbytes = bis->cur.bytes[BLKG_IOSTAT_WRITE];
+-		dbytes = bis->cur.bytes[BLKG_IOSTAT_DISCARD];
+-		rios = bis->cur.ios[BLKG_IOSTAT_READ];
+-		wios = bis->cur.ios[BLKG_IOSTAT_WRITE];
+-		dios = bis->cur.ios[BLKG_IOSTAT_DISCARD];
+-	} while (u64_stats_fetch_retry(&bis->sync, seq));
++	raw_spin_lock_irq(&blkg_stat_lock);
++	rbytes = bis->cur.bytes[BLKG_IOSTAT_READ];
++	wbytes = bis->cur.bytes[BLKG_IOSTAT_WRITE];
++	dbytes = bis->cur.bytes[BLKG_IOSTAT_DISCARD];
++	rios = bis->cur.ios[BLKG_IOSTAT_READ];
++	wios = bis->cur.ios[BLKG_IOSTAT_WRITE];
++	dios = bis->cur.ios[BLKG_IOSTAT_DISCARD];
++	raw_spin_unlock_irq(&blkg_stat_lock, flags);
+ 
+ 	if (rbytes || wbytes || rios || wios) {
+ 		seq_printf(s, "rbytes=%llu wbytes=%llu rios=%llu wios=%llu dbytes=%llu dios=%llu",
 
