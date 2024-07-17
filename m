@@ -1,82 +1,79 @@
-Return-Path: <linux-kernel+bounces-255283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DB5D933E5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:25:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D58B7933ED8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:51:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B022B21752
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:25:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 905EB28376F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F14E181CE8;
-	Wed, 17 Jul 2024 14:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5683F18132F;
+	Wed, 17 Jul 2024 14:51:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kOo5jTEk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i1MPIB6x"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF04181BB5;
-	Wed, 17 Jul 2024 14:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D80180A6A
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 14:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721226271; cv=none; b=tejT1pUmqQSWbStRLv/WffV+a7O0v+uSdQm4d7svL0CfPxoQ+v6xZI6uHgMzTdaTzGPgByecFo2LaaZb/5ZyspnuLw8Ymr4c2+HILUVvjzgolV9sUpoKGJVD7UjpdeDSJBxg+AG0jRCuLqe3KVBfkr68GG6V8LkUfBo/QKRMtm0=
+	t=1721227882; cv=none; b=ObJVvCXVmSZHApBp+Htf46meSJSfhfPgL9AESUDd3FzIjnabwIUiFJVMUAeGQd2CkskvmChrGvZWXsv53mBdAhuTC5vlJuDAh9N++4guDqXY9Nfn39UVnEunq2JyJ+7KYl9ZD1C00U87P4+jX15p/FETWm0mso2l+EIMCWT0NM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721226271; c=relaxed/simple;
-	bh=TR9wDqpaITrEN63de3ORwuMv6UCzobFiwu1pNhvmIH8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ejwh6Khl4TCDFnc2T1OJ3VvZaO7rTi9aNuzdUXMxY9F40ddDOYNQUHKicBvKD7iJLqkyhgQOKMOZMONFFcvtTRdNAwerkRKK7lQBuds8ImozhRU2Dera6vT02kcU+okvmI9cP0V2BhDz+4+UlkQ9JxWV8HMnTTfpQJXK7D6njnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kOo5jTEk; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721226270; x=1752762270;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=TR9wDqpaITrEN63de3ORwuMv6UCzobFiwu1pNhvmIH8=;
-  b=kOo5jTEkDndahHaQuPu/myMUDDITiakP+CQPxXOB8yOE+/3fR0Qb1Wlb
-   7Y+bjgdCWnoHdxh75nT9DPvDNM/rOqlrCCWvqd14z3m2cdiqJ4EgebDDK
-   jZjXwOW6BV47lWcei/o9WwWWKBpJlI4VGAL3B+ceh49OPlKe+8iSXXrGo
-   UFv3WsEx786YyEt9g6oz/ek79pSPVmlWygb16msWXbUFhUG27bYOmu5sg
-   7NxtoWHlT10Y5kSCIggmFR30wzxr6EUPk4W10Lxf7gYh1t3MpaIJ7KPQe
-   wybwoP2HBjOSDdXIyf6PP1j7M5fmOoCDBQLHZ4PvIqfiUwHFGZDrG18N4
-   g==;
-X-CSE-ConnectionGUID: LlNYvW49TtOsVPs8Zy0k8A==
-X-CSE-MsgGUID: lwl3qL3VSGGP8gkSeNJy6w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="29313624"
-X-IronPort-AV: E=Sophos;i="6.09,214,1716274800"; 
-   d="scan'208";a="29313624"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 07:24:30 -0700
-X-CSE-ConnectionGUID: jKjpkE64RcWgbvztYQJWZA==
-X-CSE-MsgGUID: Rz9R95s5QwWZRtGtSSAW5Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,214,1716274800"; 
-   d="scan'208";a="54596639"
-Received: from linux-pnp-server-16.sh.intel.com ([10.239.177.152])
-  by fmviesa003.fm.intel.com with ESMTP; 17 Jul 2024 07:24:27 -0700
-From: Yu Ma <yu.ma@intel.com>
-To: brauner@kernel.org,
-	jack@suse.cz,
-	mjguzik@gmail.com,
-	edumazet@google.com
-Cc: yu.ma@intel.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	pan.deng@intel.com,
-	tianyou.li@intel.com,
-	tim.c.chen@intel.com,
-	tim.c.chen@linux.intel.com,
-	viro@zeniv.linux.org.uk
-Subject: [PATCH v5 3/3] fs/file.c: add fast path in find_next_fd()
-Date: Wed, 17 Jul 2024 10:50:18 -0400
-Message-ID: <20240717145018.3972922-4-yu.ma@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240717145018.3972922-1-yu.ma@intel.com>
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240717145018.3972922-1-yu.ma@intel.com>
+	s=arc-20240116; t=1721227882; c=relaxed/simple;
+	bh=XRYe6k301hVMrjUu3bWA/ITB1UE99EqwDnjHlWIAJ5k=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=flSdFCp2wSToeC1k380AJ2nm94Vh1R/C92r37flMHCWjgGCRX6ZT1nfCcaLyrIk516HX8XCXKKjZQ3pP2upD3mY+43tS64BGV/SarwPcQJdHkRpzP0M8zrBFL07LSIDxcOgF0K1LtdZaFscCUR2x0CA7pFClreKVE/1BZOsNj4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i1MPIB6x; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2cb4b75a150so635540a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:51:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721227881; x=1721832681; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XRYe6k301hVMrjUu3bWA/ITB1UE99EqwDnjHlWIAJ5k=;
+        b=i1MPIB6x/XudVHm5ksxOrn8oP/aeIM3MGiCnPojyWpHdQzoYKBpa0Pvr8/kW/55LYZ
+         BvWjJ5T8EgXFnq2XFPd/VPnh5ZRJWha35tD9X47L6u1omiXhL1gi9zXIrEPsFrgYyyYi
+         1KphVffBjKEAvWDrIcjn/LjwXjzzqyMzRNax4LCY53JWJIV6mZvwsxwbNRdzUmw/dGPl
+         ydLFkMfTj9M7Nrg9cBp65y8aCHWkTGAYIzhgGfZZ7p3eJH0u4dkNtL5FyrtjGG5wF3X1
+         CIMJZcDdwm7ovlRImzi9cnBk7cnAcs7ppY25HlwsWxzt2M5JyXB8WR+c1qDYurGfdL90
+         k5rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721227881; x=1721832681;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XRYe6k301hVMrjUu3bWA/ITB1UE99EqwDnjHlWIAJ5k=;
+        b=KL6EPl2XHRZgvzBV6ijHfFbTidRBX+PC5ZZiQq68jDVPzVjNVhgYSRedfh2gaN5rQA
+         em3/tN7+V2M9jCtz9hX1g6bv8TM4b7LsjyXSrQhUC0LMRXdOv0P8IUnxz2h3P3w0b9pi
+         i2RkDg/VwYVSgHg4lGmbSR2JLIseaXlJ41u1XKAn0n7UY4U0p5IqSZH3jvgm9KVVV/sF
+         ASs3UvAqSdCTk7LnvyN4QxT1CRS1f6/Tstd7kNJbA3m9HBAI9gkWDX7iizRjSQG37u/u
+         2CalmY5wgXUrIZ+DxxEbSQQfmJcNVQCw+krLCB3q1iZVxgt+ypMyeP/m3wMgUyGCmgep
+         D+hw==
+X-Gm-Message-State: AOJu0Yxlm4Kt1WA4jidjjASwaC9i/pWMVMTI430eAnko+8DaEjjsWZKt
+	3iAP3FK8k9tYgHA70NlU9WLXVrXDSBi1ECBGBOJB2qnzHv4qyIsg
+X-Google-Smtp-Source: AGHT+IFzBQApJfDtVZSjHvWylGDQrFtwfnApHHiZeaH5cGIbrnS1T9c2rr2gcgJjRWoSldlTvJUrVA==
+X-Received: by 2002:a17:90a:c28d:b0:2c7:8a94:215d with SMTP id 98e67ed59e1d1-2cb5268fff4mr1447884a91.12.1721227880645;
+        Wed, 17 Jul 2024 07:51:20 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cb600f9db0sm22082a91.14.2024.07.17.07.51.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jul 2024 07:51:20 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: syzbot+a81f2759d022496b40ab@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [syzbot] [net?] KMSAN: uninit-value in hsr_get_node (3)
+Date: Wed, 17 Jul 2024 23:51:15 +0900
+Message-Id: <20240717145115.9515-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <0000000000004a86bf0616571fc7@google.com>
+References: <0000000000004a86bf0616571fc7@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,48 +82,5 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Skip 2-levels searching via find_next_zero_bit() when there is free slot in the
-word contains next_fd, as:
-(1) next_fd indicates the lower bound for the first free fd.
-(2) There is fast path inside of find_next_zero_bit() when size<=64 to speed up
-searching.
-(3) After fdt is expanded (the bitmap size doubled for each time of expansion),
-it would never be shrunk. The search size increases but there are few open fds
-available here.
-
-This fast path is proposed by Mateusz Guzik <mjguzik@gmail.com>, and agreed by
-Jan Kara <jack@suse.cz>, which is more generic and scalable than previous
-versions. And on top of patch 1 and 2, it improves pts/blogbench-1.1.0 read by
-8% and write by 4% on Intel ICX 160 cores configuration with v6.10-rc7.
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-Signed-off-by: Yu Ma <yu.ma@intel.com>
----
- fs/file.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/fs/file.c b/fs/file.c
-index 1be2a5bcc7c4..729c07a4fc28 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -491,6 +491,15 @@ static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start)
- 	unsigned int maxfd = fdt->max_fds; /* always multiple of BITS_PER_LONG */
- 	unsigned int maxbit = maxfd / BITS_PER_LONG;
- 	unsigned int bitbit = start / BITS_PER_LONG;
-+	unsigned int bit;
-+
-+	/*
-+	 * Try to avoid looking at the second level bitmap
-+	 */
-+	bit = find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_LONG,
-+				 start & (BITS_PER_LONG - 1));
-+	if (bit < BITS_PER_LONG)
-+		return bit + bitbit * BITS_PER_LONG;
- 
- 	bitbit = find_next_zero_bit(fdt->full_fds_bits, maxbit, bitbit) * BITS_PER_LONG;
- 	if (bitbit >= maxfd)
--- 
-2.43.0
-
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
