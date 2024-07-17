@@ -1,169 +1,293 @@
-Return-Path: <linux-kernel+bounces-255517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 135F19341AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 19:50:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B82A29341B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 19:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 369781C22FCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:50:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74761283BF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6171181D07;
-	Wed, 17 Jul 2024 17:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2BC718308A;
+	Wed, 17 Jul 2024 17:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SDZmri4L"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="TU4LIztg"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA341181B9A
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 17:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CE2183081
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 17:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721238602; cv=none; b=UqRnR9hrh13hnX3JBT3DfK75xOAQs/lWyr564Pn2s9MoFl5ePX+pb02b5KgT8/vDWqtUQNSo+h89X4xroXYzfhwwgwwuAw3HpnolbCioR98gv3aBGsuuR+Ze1onG2z8oKnM5xvCrG4yd0ELyj47Bvc6Uz7PbR+JQXPS/GwveVtY=
+	t=1721238607; cv=none; b=BxdSJhlJEmJTnQHBlKjQWcHmtc54lr/Rt/EVIshceCqXax+6z6c8tiCBfWIxxsUoJWltLg3hxDYPWxEuHKvWM5Sr5n74oOc7w+L8kUS+hkMOfQfOmYEu+sXLRB9xnzkhqQtshRPbSYmMRzW6bkeemAeJ02rrTM4EAV/IWeOOnNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721238602; c=relaxed/simple;
-	bh=5Sc7SWPhiTVoDUs92LlD0b7Mdip3KsjSSt5cmhbSlRk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MWvD+q+Vc6mZaTiBME+hTt7oKdmxaCBCramHIZB41GnMB7VuK6FccrUpXoym0yW4oFnoJWwgc/60e33LTBLiwlHqfkJJLgALF4mG/ARlT6kFgkzj42fc2H/rwykZcvQzbR3H0XppxMPnONVrb12PtivRhK26ZGy3EeYsJo/E+EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SDZmri4L; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fc491f9b55so10523515ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 10:50:00 -0700 (PDT)
+	s=arc-20240116; t=1721238607; c=relaxed/simple;
+	bh=/s6XMzqpGd9ftYxjnOIQ/2Q/7UT5lai3haBTDFdi7TY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=OGqxBQu+JO5KewlhMVpcuSw0L9nmxzmT6+mP7t0MUUINQzbZ2ereyPp7AHcrQyqzTdgf+Y2W8fvDGxIHvPJpItUq/zadoaTtrSLLXmy+DBD1TDSTIX/y+2HrM3UTZ7WFuVfueHQESKlFYeLgm9FRJxU5KlybX7XXqQssxduZmDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=TU4LIztg; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-44caaf77c7eso36380551cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 10:50:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721238600; x=1721843400; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Yv2W2PsgVycJ4qJVjXgYbXxGqQRou0OAMxJ2krhSKXI=;
-        b=SDZmri4LTULxj4Lt+3kU/O45tttaM81m8Xc9TW/FgZE4vN4cH8bmjYA09PsWrvH8rG
-         22g25TX3MCk5X9gvJdESss4cuWeosOXB0TCTtrD9+aRRqum/iwgWb2k2r5QZUgzlFjwA
-         Xbqf4VYUU8jUvEf8Iy2YAASI5d6riZGANugRCEC5HbLp15FBcwetomenO5ioRW3itHGx
-         UhO8+adzFURRIghBEoEitvAkuwdvrn+7wHT+Vk8mQDWW5Ni9tczB/+vsrPjaTmnhSWqm
-         X7vNcQXRHSJbjrGgts+hh7nQV/SJU4OoH1U5/K/QTFtX3u/rkAqxoQFuX7E+rO5djZGL
-         mFuw==
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1721238604; x=1721843404; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dvAbFoA1HdmfmF/eRf5+KvV8rS9lCxREHi50gOT2zaw=;
+        b=TU4LIztgFQwZgGiPifyiRwlmQ3WLGDknmKLnDeu6oglws45k3Cf42KJ1irY/9axIV7
+         NqNjOG5HfRYui9wwbgBvtK5qHODaunw/q3ytKVBRU2lO4ezgZYRnJHJMggDfafo7CEl9
+         TSJllUnCQj8wGNpPx+zZom5CZ1ZZfe+KbdskroIxJTul57vkKZppTEesbstGgnNWoA4Y
+         cIZhakuMV4kEtmTI5jDR+OuNjEOlckBR9YO0rgARqeTn++vXFuv4TuN0fW5M90k6SylO
+         854dsC9R68OPpu6oGETjBrW1jhbIed3QwgdY1DNKFTRBDi31fAdII1IQAV3Z62BCQ+7q
+         I8Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721238600; x=1721843400;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yv2W2PsgVycJ4qJVjXgYbXxGqQRou0OAMxJ2krhSKXI=;
-        b=gVgN3NaFVE8oWzu4rYIy+7RNDwY8XmcdO8rhj850iB97/MdPVCNQpyUAyBK6xXfQit
-         uAPPGKWPvDUROaLLuDmYZEyIqhFC+DIzG2cYjCVavTapxN1uZNtrajX0bstA3DN3cKxS
-         3059DL8L9DE6y8c6C27JHdUb2XXvDIfLQGInDeM3jxfMbdT1d1F9yY6DqZ9MZsBWHQyP
-         xvE4r7+FHlvN/1H/XhFE5M466L99DMFc9sUrG66yLPV+WanW5PgcvYidcar8C1tOg4gh
-         PauE6tTLtwcgNMINbJx//0M98bhBwd/wP37iiEs3ips004ZQxkqLrB+OgLNL7d5r7VSX
-         Zglg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLx0By8R4E6pNJnbwSzvC1i6PZyzi6zHOaOwKHLgxX083M6lO6e+8wJhn+ZN79J4ur3+4mIK9CpJGLrvnjtPpHk83gMsQpB0sLEjEu
-X-Gm-Message-State: AOJu0Yyxc9mKzKmo7TwoK2eNaqXfAIci103zhjw36Gh6oNAVZv1zdtZT
-	lIsqRX9SXibkDWqShKJiYf2e85oEpPxjehPEptoLqntpb0Aab78xkvdnvw==
-X-Google-Smtp-Source: AGHT+IH+6X0aKtA5vUJlEhakPU2VynopJMbJp9b8iOXbRkSa9dZyI2XioGqLe1pLpLsxwpRlNRkF5Q==
-X-Received: by 2002:a17:902:f68d:b0:1fc:4b33:2d24 with SMTP id d9443c01a7336-1fc4e68a8cdmr20765765ad.52.1721238599879;
-        Wed, 17 Jul 2024 10:49:59 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc382dbsm77840155ad.197.2024.07.17.10.49.59
+        d=1e100.net; s=20230601; t=1721238604; x=1721843404;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dvAbFoA1HdmfmF/eRf5+KvV8rS9lCxREHi50gOT2zaw=;
+        b=unkQM2H4hAszRgWU63SIBjpr+TVkTcuJV0TVW/2jb+5QYzi6Ri6yVEOhsXW9FytX81
+         1dq4pbtDMsAmVFZy9lY+v5/eYwPS75xFB8ZJtmQDR9RxzqWe8To50KuiRu84rvdvnFOo
+         qlcyrEb0rL3sWWQZDDRQ0tVrZM3zXw1wWbXL7Cqx/sMeULAq4buJR3ZFtGuKyIXV4Jc4
+         oSdeY3KiOMwCHxF13PyzDBbDoK3iyLmPLoCkXk0p1jlYrfU/1xggZ2GGJCRrWwNSyR87
+         auhQHx3nP1OGNX9gM59+bYPTFLYWhypuAJcyC6fa74XJc9N3bJodbg/6xJAk/TxteROl
+         7Cdw==
+X-Forwarded-Encrypted: i=1; AJvYcCWm7vWOciYRIz2cPWo+kHJLpTQYY5CZ+Grfl/OgO/wCHRD2kmlSQtgAwcwzuMNLt4IDXpYsT8e3DRE7T8qlBHtsE5nwXZZ+1isJXznW
+X-Gm-Message-State: AOJu0YyJd+Yae53nOXio5JroCiPvNrIUqFDEy+yV8fy3EfFS+L3GdW5i
+	hEqd4TbktigKyS+o88oNUgtlXJ1AN9l7nTRP2TZkC0Ykn0AATwriufiHHk6Rt7k=
+X-Google-Smtp-Source: AGHT+IEfOIRv5HYoKQsceLcUZprEY8WHpJblW/JHP3NJBcp+Gf7Sr+8BNF2h+qxfTOulzVNJCm016g==
+X-Received: by 2002:ac8:590b:0:b0:447:e375:1ca6 with SMTP id d75a77b69052e-44f86754699mr32833561cf.52.1721238604247;
+        Wed, 17 Jul 2024 10:50:04 -0700 (PDT)
+Received: from nicolas-tpx395.lan ([2606:6d00:15:6720::7a9])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44f5b83eccesm50462681cf.87.2024.07.17.10.50.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 10:49:59 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Wed, 17 Jul 2024 07:49:58 -1000
-From: Tejun Heo <tj@kernel.org>
-To: "Zhangqiao (2012 lab)" <zhangqiao22@huawei.com>
-Cc: void@manifault.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH sched_ext/for-6.11] sched_ext: Reverting @p->sched_class
- if @p->disallow is set
-Message-ID: <ZpgERphu--gPn235@slm.duckdns.org>
-References: <20240711110720.1285-1-zhangqiao22@huawei.com>
- <ZpArK0qxZZI-0ykt@slm.duckdns.org>
- <ba2702f9-f66e-498b-853c-d23f1f9191bc@huawei.com>
- <ZpbclgFjf_q6PSd1@slm.duckdns.org>
- <cd3fa16d-5a70-4c85-a591-fa4fa481f50b@huawei.com>
+        Wed, 17 Jul 2024 10:50:03 -0700 (PDT)
+Message-ID: <c8358d79bd51a9bfa5116b33ae5e7766b95d344d.camel@ndufresne.ca>
+Subject: Re: [PATCH v4 1/2] media: videodev2: Add flags to unconditionnaly
+ enumerate pixels formats
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Benjamin Gaignard
+	 <benjamin.gaignard@collabora.com>
+Cc: mchehab@kernel.org, ezequiel@vanguardiasur.com.ar,
+ hverkuil-cisco@xs4all.nl,  linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-rockchip@lists.infradead.org,
+ kernel@collabora.com
+Date: Wed, 17 Jul 2024 13:50:03 -0400
+In-Reply-To: <ok2a4ubzka6rhzyj2c5op73ij7pw35g6e75whc2jjget62fatx@zka2ewyt3kfv>
+References: <20240717131430.159727-1-benjamin.gaignard@collabora.com>
+	 <20240717131430.159727-2-benjamin.gaignard@collabora.com>
+	 <2kbxr3hkjbcnaqescxmlcerziixg72icqpug6wa25eeggy2pnj@vqmxe4ojcwml>
+	 <dfc292f8-0014-4bf4-9429-31f729a176cd@collabora.com>
+	 <ok2a4ubzka6rhzyj2c5op73ij7pw35g6e75whc2jjget62fatx@zka2ewyt3kfv>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cd3fa16d-5a70-4c85-a591-fa4fa481f50b@huawei.com>
 
-On Wed, Jul 17, 2024 at 10:01:13AM +0800, Zhangqiao (2012 lab) wrote:
-> > Ah, I see what you mean. I was referring to the classs switching operations
-> > in scx_ops_enable(). You're looking at the fork path. I don't think we can
-> 
-> Yes, i was referring to the fork path.
-> 
-> > switch sched_class at that point and the .disallow mechanism is there to
-> > allow the scheduler to filter out tasks on scheduler start. I'll update the
-> > code so that .disallow is only allowed during the initial attach.
+Hi
 
-So, something like this.
+Le mercredi 17 juillet 2024 =C3=A0 16:04 +0200, Jacopo Mondi a =C3=A9crit=
+=C2=A0:
+> Hi Benjamin
+>=20
+> On Wed, Jul 17, 2024 at 03:44:24PM GMT, Benjamin Gaignard wrote:
+> >=20
+> > Le 17/07/2024 =C3=A0 15:20, Jacopo Mondi a =C3=A9crit=C2=A0:
+> > > Hi Benjamin
+> > >=20
+> > > On Wed, Jul 17, 2024 at 03:14:29PM GMT, Benjamin Gaignard wrote:
+> > > > Add new flags to enumerate all pixels formats when calling VIDIOC_E=
+NUM_FMT ioctl.
+> > > > When this V4L2_FMT_FLAG_ENUM_ALL_FORMATS flag is set drivers must
+> > > > ignore the configuration and return the hardware supported pixel
+> > > > formats for the specified queue.
+> > > > To distinguish this particular enumeration case V4L2_FMT_FLAG_ALL_F=
+ORMATS
+> > > > flag must be set by the drivers to highlight support of this featur=
+e
+> > > > to user space applications.
+> > > > This will permit to discover which pixel formats are supported
+> > > > without setting codec-specific information so userland can more eas=
+ily
+> > > > know if the driver suits its needs well.
+> > > > The main target are stateless decoders so update the documentation
+> > > > about how to use this flag.
+> > > >=20
+> > > > Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+> > > > ---
+> > > > changes in version 4:
+> > > > - Explicitly document that the new flags are targeting mem2mem devi=
+ces.
+> > > >=20
+> > > >   .../userspace-api/media/v4l/dev-stateless-decoder.rst |  6 ++++++
+> > > >   .../userspace-api/media/v4l/vidioc-enum-fmt.rst       | 11 ++++++=
++++++
+> > > >   .../userspace-api/media/videodev2.h.rst.exceptions    |  2 ++
+> > > >   drivers/media/v4l2-core/v4l2-ioctl.c                  |  3 +++
+> > > >   include/uapi/linux/videodev2.h                        |  2 ++
+> > > >   5 files changed, 24 insertions(+)
+> > > >=20
+> > > > diff --git a/Documentation/userspace-api/media/v4l/dev-stateless-de=
+coder.rst b/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst
+> > > > index 35ed05f2695e..b0b657de910d 100644
+> > > > --- a/Documentation/userspace-api/media/v4l/dev-stateless-decoder.r=
+st
+> > > > +++ b/Documentation/userspace-api/media/v4l/dev-stateless-decoder.r=
+st
+> > > > @@ -58,6 +58,12 @@ Querying capabilities
+> > > >        default values for these controls being used, and a returned=
+ set of formats
+> > > >        that may not be usable for the media the client is trying to=
+ decode.
+> > > >=20
+> > > > +   * If the ``V4L2_FMT_FLAG_ENUM_ALL_FORMATS`` flag is set the dri=
+ver must enumerate
+> > > > +     all the supported formats without taking care of codec-depend=
+ent controls
+> > > > +     set on the ``OUTPUT`` queue. To indicate that the driver has =
+take care of this
+> > > > +     flag it must set ``V4L2_FMT_FLAG_ALL_FORMATS`` flag for each =
+format while
+> > > > +     enumerating.
+> > > > +
+> > > >   3. The client may use :c:func:`VIDIOC_ENUM_FRAMESIZES` to detect =
+supported
+> > > >      resolutions for a given format, passing desired pixel format i=
+n
+> > > >      :c:type:`v4l2_frmsizeenum`'s ``pixel_format``.
+> > > > diff --git a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.=
+rst b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
+> > > > index 3adb3d205531..15bc2f59c05a 100644
+> > > > --- a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
+> > > > +++ b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
+> > > > @@ -234,6 +234,17 @@ the ``mbus_code`` field is handled differently=
+:
+> > > >   	valid. The buffer consists of ``height`` lines, each having ``wi=
+dth``
+> > > >   	Data Units of data and the offset (in bytes) between the beginni=
+ng of
+> > > >   	each two consecutive lines is ``bytesperline``.
+> > > > +    * - ``V4L2_FMT_FLAG_ENUM_ALL_FORMATS``
+> > > > +      - 0x0400
+> > > > +      - Set by userland applications to enumerate all possible pix=
+el formats
+> > > > +        without taking care of any OUTPUT or CAPTURE queue configu=
+ration.
+> > > > +        This flag is relevant only for mem2mem devices.
+> > > > +    * - ``V4L2_FMT_FLAG_ALL_FORMATS``
+> > > > +      - 0x0800
+> > > > +      - Set by the driver to indicated that format have been enume=
+rated because
+> > > > +        :ref:`V4L2_FMT_FLAG_ENUM_ALL_FORMATS <v4l2-pix-fmt-flag-se=
+t-csc>` has
+> > > > +        been set by the userland application.
+> > > > +        This flag is relevant only for mem2mem devices.
+> > > Thanks, however I think this can be wrapper on the previous line
+> >=20
+> > ok
+> >=20
+> > >=20
+> > > >   Return Value
+> > > >   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > diff --git a/Documentation/userspace-api/media/videodev2.h.rst.exce=
+ptions b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
+> > > > index bdc628e8c1d6..7a3a1e9dc055 100644
+> > > > --- a/Documentation/userspace-api/media/videodev2.h.rst.exceptions
+> > > > +++ b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
+> > > > @@ -216,6 +216,8 @@ replace define V4L2_FMT_FLAG_CSC_YCBCR_ENC fmtd=
+esc-flags
+> > > >   replace define V4L2_FMT_FLAG_CSC_HSV_ENC fmtdesc-flags
+> > > >   replace define V4L2_FMT_FLAG_CSC_QUANTIZATION fmtdesc-flags
+> > > >   replace define V4L2_FMT_FLAG_META_LINE_BASED fmtdesc-flags
+> > > > +replace define V4L2_FMT_FLAG_ENUM_ALL_FORMATS fmtdesc-flags
+> > > > +replace define V4L2_FMT_FLAG_ALL_FORMATS fmtdesc-flags
+> > > >=20
+> > > >   # V4L2 timecode types
+> > > >   replace define V4L2_TC_TYPE_24FPS timecode-type
+> > > > diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v=
+4l2-core/v4l2-ioctl.c
+> > > > index 4c76d17b4629..5785a98b6ba2 100644
+> > > > --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> > > > +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> > > > @@ -1569,6 +1569,7 @@ static int v4l_enum_fmt(const struct v4l2_ioc=
+tl_ops *ops,
+> > > >   	int ret =3D check_fmt(file, p->type);
+> > > >   	u32 mbus_code;
+> > > >   	u32 cap_mask;
+> > > > +	u32 flags;
+> > > >=20
+> > > >   	if (ret)
+> > > >   		return ret;
+> > > > @@ -1578,8 +1579,10 @@ static int v4l_enum_fmt(const struct v4l2_io=
+ctl_ops *ops,
+> > > >   		p->mbus_code =3D 0;
+> > > >=20
+> > > >   	mbus_code =3D p->mbus_code;
+> > > > +	flags =3D p->flags & V4L2_FMT_FLAG_ENUM_ALL_FORMATS;
+> > > >   	memset_after(p, 0, type);
+> > > >   	p->mbus_code =3D mbus_code;
+> > > > +	p->flags =3D flags;
+> > > Won't this set V4L2_FMT_FLAG_ENUM_ALL_FORMATS (if present) in the
+> > > flags returned to userspace ? Shouldn't be drivers to set
+> > > V4L2_FMT_FLAG_ALL_FORMATS instead ?
+> >=20
+> > memset_after zeroed flags field so we need this to send V4L2_FMT_FLAG_E=
+NUM_ALL_FORMATS
+> > flag to drivers. Return it to userspace is a side effect but I don't th=
+at is problem
+> > since it set it anyway.
+> >=20
+>=20
+> Ok, if the expectation is that the flag is preserved through the ioctl
+> call, this is fine with me
 
-Thanks.
+I might be missing something other similar features are explicitly advertis=
+ed by
+drivers. This way, the generic layer can keep or clear the flag based of if=
+ its
+supported. The fact the flag persist the ioctl() or not endup having a usef=
+ul
+semantic.
 
-diff --git a/include/linux/sched/ext.h b/include/linux/sched/ext.h
-index 593d2f4909dd..a4aa516cee7d 100644
---- a/include/linux/sched/ext.h
-+++ b/include/linux/sched/ext.h
-@@ -181,11 +181,12 @@ struct sched_ext_entity {
- 	 * If set, reject future sched_setscheduler(2) calls updating the policy
- 	 * to %SCHED_EXT with -%EACCES.
- 	 *
--	 * If set from ops.init_task() and the task's policy is already
--	 * %SCHED_EXT, which can happen while the BPF scheduler is being loaded
--	 * or by inhering the parent's policy during fork, the task's policy is
--	 * rejected and forcefully reverted to %SCHED_NORMAL. The number of
--	 * such events are reported through /sys/kernel/debug/sched_ext::nr_rejected.
-+	 * Can be set from ops.init_task() while the BPF scheduler is being
-+	 * loaded (!scx_init_task_args->fork). If set and the task's policy is
-+	 * already %SCHED_EXT, the task's policy is rejected and forcefully
-+	 * reverted to %SCHED_NORMAL. The number of such events are reported
-+	 * through /sys/kernel/debug/sched_ext::nr_rejected. Setting this flag
-+	 * during fork is not allowed.
- 	 */
- 	bool			disallow;	/* reject switching into SCX */
- 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index da9cac6b6cc2..cf60474efa75 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -3399,18 +3399,17 @@ static int scx_ops_init_task(struct task_struct *p, struct task_group *tg, bool
- 
- 	scx_set_task_state(p, SCX_TASK_INIT);
- 
--	if (p->scx.disallow) {
-+	if (!fork && p->scx.disallow) {
- 		struct rq *rq;
- 		struct rq_flags rf;
- 
- 		rq = task_rq_lock(p, &rf);
- 
- 		/*
--		 * We're either in fork or load path and @p->policy will be
--		 * applied right after. Reverting @p->policy here and rejecting
--		 * %SCHED_EXT transitions from scx_check_setscheduler()
--		 * guarantees that if ops.init_task() sets @p->disallow, @p can
--		 * never be in SCX.
-+		 * We're in the load path and @p->policy will be applied right
-+		 * after. Reverting @p->policy here and rejecting %SCHED_EXT
-+		 * transitions from scx_check_setscheduler() guarantees that if
-+		 * ops.init_task() sets @p->disallow, @p can never be in SCX.
- 		 */
- 		if (p->policy == SCHED_EXT) {
- 			p->policy = SCHED_NORMAL;
-@@ -3418,6 +3417,9 @@ static int scx_ops_init_task(struct task_struct *p, struct task_group *tg, bool
- 		}
- 
- 		task_rq_unlock(rq, p, &rf);
-+	} else if (p->scx.disallow) {
-+		scx_ops_error("ops.init_task() set task->scx.disallow for %s[%d] during fork",
-+			      p->comm, p->pid);
- 	}
- 
- 	p->scx.flags |= SCX_TASK_RESET_RUNNABLE_AT;
+Could we do the same?
 
--- 
-tejun
+>=20
+> Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+>=20
+> > >=20
+> > > >   	switch (p->type) {
+> > > >   	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
+> > > > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/vi=
+deodev2.h
+> > > > index fe6b67e83751..b6a5da79ba21 100644
+> > > > --- a/include/uapi/linux/videodev2.h
+> > > > +++ b/include/uapi/linux/videodev2.h
+> > > > @@ -886,6 +886,8 @@ struct v4l2_fmtdesc {
+> > > >   #define V4L2_FMT_FLAG_CSC_HSV_ENC		V4L2_FMT_FLAG_CSC_YCBCR_ENC
+> > > >   #define V4L2_FMT_FLAG_CSC_QUANTIZATION		0x0100
+> > > >   #define V4L2_FMT_FLAG_META_LINE_BASED		0x0200
+> > > > +#define V4L2_FMT_FLAG_ENUM_ALL_FORMATS		0x0400
+> > > > +#define V4L2_FMT_FLAG_ALL_FORMATS		0x0800
+> > > >=20
+> > > >   	/* Frame Size and frame rate enumeration */
+> > > >   /*
+> > > > --
+> > > > 2.43.0
+> > > >=20
+> > > >=20
+> > > _______________________________________________
+> > > Kernel mailing list -- kernel@mailman.collabora.com
+> > > To unsubscribe send an email to kernel-leave@mailman.collabora.com
+> > > This list is managed by https://mailman.collabora.com
+>=20
+
 
