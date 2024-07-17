@@ -1,117 +1,203 @@
-Return-Path: <linux-kernel+bounces-255384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2339934014
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:58:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34CE1934020
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BD90B21EFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:58:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8592DB220BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E92718133B;
-	Wed, 17 Jul 2024 15:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2760A181BA2;
+	Wed, 17 Jul 2024 16:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JMKb9+E4"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UU5SZjmq"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC0D17F393
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 15:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A241A1D69E
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 16:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721231879; cv=none; b=DKl6LMYARuK88Nsm2ojlt3Slj+ONRtuoVNs3l/laoWnGMJKxb6cuo61tUGNG9mIDS3LTpgowiY1eQt0hc0UVRtkjg70BJ74A8jevYheggxKAetQ0aBzgvwop/xvcn4tzrYgCsUlYKJyXCuFgSL0V58slkluhZ2oQYO3PtbAvchI=
+	t=1721232293; cv=none; b=bzC0/ajWanvs1MESUzzJGth3+4Q2/MZg+scwHmQE1Cwq6MHG5vO6domwfFZYLVbOvKi+Ikc4oQ7ZsL/oqiILVoOscg7Iyed5CayrmVzKcFOd/8GqTgIUm4VN7NBE/nUm/793jp+xaEtFL/10kDjjJ/CHf39H7JFIu+BQAAeQnJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721231879; c=relaxed/simple;
-	bh=yEDShaU33yVXfWVbkz3WINqO2ujZDBlOOhoSKKzNAfU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lXWNIXFpc+P/8ij8GWE54EreiLTIM4UnoVpipSoUsuCs2vFzXU/DfqGflEVSt5CqCLtvJexDu3I7RST1uTNVXNEawAO4/ShIBGrCHVeB/Dh5UwZhMMq0JdmymkkHpcNAvxIh2zkAkzW/vwPvaDryGHc+/lK8vCJtkz3fWgBoZX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JMKb9+E4; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-389dca7bcacso610715ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 08:57:56 -0700 (PDT)
+	s=arc-20240116; t=1721232293; c=relaxed/simple;
+	bh=AoAZcZDBufYR6+8XmPD3d85dxJzmXDI3rW9IHEM0hhM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CQdQz3hHtMemnGR2ZYUUzEM6igi9xdryVX6PvMU9soqeSbX5JHf056kHXeKY0Vm6JpwyQW0lVLEQ9OMhuwB1BPuu1DPBh8u7wcyOYmF9KuTG8AlffTOBAgJiQhoBgefkElSn+ADbxm4lL1W8+lXa7VQO0+0iLcQVXZsDf5LZF0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UU5SZjmq; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a77baa87743so749573266b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 09:04:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1721231875; x=1721836675; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hUZhzpQoP/EpenvVywEbKuumx0D3/HwN7bh1DfuNzEQ=;
-        b=JMKb9+E4+jdp6+aAfYFPivNAL+mawodPwr1qEXwPi0OXX7aELQUqFtEcItOChqwkNz
-         FTTu+ZjERe6kJP02vhx2V6YbNEh4A4q6NmZXEmt8i0VWzWuj76P52t04ii9+4VNLluVj
-         uV45xsBSbIv7TzZEdDKzoWVEysyvVPzH4c3gQ=
+        d=google.com; s=20230601; t=1721232289; x=1721837089; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XKIjwSAQrkgMVgtHKV1uhwl6zysvp7/fR9dohyVGsJc=;
+        b=UU5SZjmqxuGffg/iAIvKWIXjPjv2y9wIbhoGB/OgJtOvWL0aVeMdYDV2DUkM4iLQPq
+         4dYEVMVlRKPS69a80aZP3O/Xef450tZrcyUq7w/ZPsvRzU1VH5gJqCsB+scDoHAqimdS
+         7ZlF0ZqY3G7Ge/esPnWGxHlGnkOmGFrc1FU9RwmEAGNU41mJhvSJAATjsWcRntIEUqkj
+         A3hAfVxkRdj8oIvLitGYthwfyIgd48Zk97nJUNfursU8yhliLMRiBzhdK2uih0y+CQIQ
+         aNFOa/Qmy1Rpi7kCFKC3unZsTl4BFGUuwUvig5dNv9xDv3WRyDxUBdPj/bd6LTreNOJ8
+         +/HQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721231875; x=1721836675;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hUZhzpQoP/EpenvVywEbKuumx0D3/HwN7bh1DfuNzEQ=;
-        b=PRTaUSauaERXMHq6XkkH+LmpgnN6IzGcIKcPhDjmz6Ob26zp0RuvoKdt3gReJkQxX6
-         HG85wMcxLzNTVpW3hoD3xutgXmv0xg7A/UkHktloq/fQwWDcKokZsV97FeduRNwCGP/r
-         KnILIU6btshr8ZtUNQt90xxrUSAO6g0YIpU9hMYxXIhuGsRAlfnuN8kVHQzAoLfQUWU8
-         grYlHfbwGI/kvwtkl6nx3faCZS0yU6iZwrbaZtM91F2HUtdN1yRH8ompVM+5hPiKr6Di
-         s78GbWrpb+nPBF7Qy+z93qpTySGHL8k1N+vbtiEF2Y84Lk6pW5a3ninR96RVHMw+0qtv
-         deJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXDe1Dok0kO+pfeGFULSFiA8WOyrkJOCJ3AyQlV/6miVFikzQwnFtW3gU2RESFoobzmiP1w3XDCuphN2MxkKt+iJyN6m2fxqS7+T+Ad
-X-Gm-Message-State: AOJu0YzRVI8fzXSVrDYv7RinwPyQa8riXSDdnqZOyQ6ugkd3Fgu6G9Gv
-	tLjOSLAELPI2oP86b+YJpLthM2tZqKszIiDtEPQIJVdi2vvLQ1Gs9LySSgWxc9A=
-X-Google-Smtp-Source: AGHT+IGfKcUu7NqZz/2YIoRFXDETVLn01TPyAgMyhSeV+4aYuxcyraE1hyGbvp3rovCi+c5AXMIfcw==
-X-Received: by 2002:a6b:6302:0:b0:7f9:3fd9:cbb with SMTP id ca18e2360f4ac-8171022db8fmr142626739f.1.1721231875485;
-        Wed, 17 Jul 2024 08:57:55 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c210c2db85sm766984173.38.2024.07.17.08.57.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 08:57:54 -0700 (PDT)
-Message-ID: <67db8d9c-c7a6-46ba-996f-5fc06888fd05@linuxfoundation.org>
-Date: Wed, 17 Jul 2024 09:57:53 -0600
+        d=1e100.net; s=20230601; t=1721232289; x=1721837089;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XKIjwSAQrkgMVgtHKV1uhwl6zysvp7/fR9dohyVGsJc=;
+        b=YgWrOOlRucobrSScKmudTeMooW4bDVXNrTso9LF1V97qhrhCLCEx0BW6JRDk9adtPF
+         dSWxjkwm3cqHk0QT282Iy78hVij8/LKtNDW7TSTPYlK0cz9nApz8neJuFJUqHTJZV2Dy
+         67g5KCrrWVjiAeZjNcG+dPNJP6UDVqbatUz6n5QWJ35i1lMog9/ozgHuqr0Q34HIjPIo
+         n8IUh6Qz3js+sQegK7Zta+qkPXHiny19+0EUYixevwxT6zMY1TTQ4GcjZLJwj0m5Zj1a
+         j7gFNq4O925B1SlKqf3K/ShO71A1FSQ/fgWv+3qSCtFebTkumD1arWfMrlgYNLFf/Uhr
+         36BA==
+X-Forwarded-Encrypted: i=1; AJvYcCWHAIxXNpCc8wJ4rQ6v51deMmsf035wDBP/eTplD83d9ANW/b1xl4nWfs54bX0CnTUGfxvqBEfZ9zMmQ/fZA54nhHa0giJ/LHzuboQS
+X-Gm-Message-State: AOJu0YzzUC1DD22K9Fnd3oMMkzugLKR6Ki6Nn+xii6BpO0cdEvuNEdMG
+	QZsyYIJ7NX/ipm+fkto+OoZWpsHO54JTDsLlELTqjgdhG9WjcC2HVAihpY/KTufURCzYmUuzx9Q
+	lMQ2sQ2k7lHo3aIcXfMcHY8Twe1dJNroDlFb6
+X-Google-Smtp-Source: AGHT+IE+KGZPn8v42uAvYqn/WiCl5jZpR4/bzecrp0HAsD5IbBc4tqOnEKm34cqpnXBi+3JZQ/CJ/A4sgAhzyL14cIU=
+X-Received: by 2002:a17:906:718:b0:a6f:b885:2042 with SMTP id
+ a640c23a62f3a-a7a011e5186mr164953166b.18.1721232288273; Wed, 17 Jul 2024
+ 09:04:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4.19 00/66] 4.19.318-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240716152738.161055634@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240716152738.161055634@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <171952310959.1810550.17003659816794335660.stgit@firesoul>
+ <171952312320.1810550.13209360603489797077.stgit@firesoul>
+ <4n3qu75efpznkomxytm7irwfiq44hhi4hb5igjbd55ooxgmvwa@tbgmwvcqsy75>
+ <7ecdd625-37a0-49f1-92fc-eef9791fbe5b@kernel.org> <9a7930b9-dec0-418c-8475-5a7e18b3ec68@kernel.org>
+ <CAJD7tkYX9OaAyWg=L_5v7GaKtKmptPpMGJh7Org5tcY4D-YnCw@mail.gmail.com> <e656b89a-1dcd-4fcc-811a-a7222232acc7@kernel.org>
+In-Reply-To: <e656b89a-1dcd-4fcc-811a-a7222232acc7@kernel.org>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Wed, 17 Jul 2024 09:04:07 -0700
+Message-ID: <CAJD7tkZg4N9k7dUnTSJ06fjPdB9Ei=6JDjHW5UU_J91euyboSw@mail.gmail.com>
+Subject: Re: [PATCH V4 2/2] cgroup/rstat: Avoid thundering herd problem by
+ kswapd across NUMA nodes
+To: Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, tj@kernel.org, cgroups@vger.kernel.org, 
+	hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com, 
+	kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/16/24 09:30, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.318 release.
-> There are 66 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 18 Jul 2024 15:27:21 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.318-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+On Wed, Jul 17, 2024 at 12:46=E2=80=AFAM Jesper Dangaard Brouer <hawk@kerne=
+l.org> wrote:
+>
+>
+>
+> On 16/07/2024 23.54, Yosry Ahmed wrote:
+> > On Mon, Jul 8, 2024 at 8:26=E2=80=AFAM Jesper Dangaard Brouer <hawk@ker=
+nel.org> wrote:
+> >>
+> >>
+> >> On 28/06/2024 11.39, Jesper Dangaard Brouer wrote:
+> >>>
+> >>>
+> >>> On 28/06/2024 01.34, Shakeel Butt wrote:
+> >>>> On Thu, Jun 27, 2024 at 11:18:56PM GMT, Jesper Dangaard Brouer wrote=
+:
+> >>>>> Avoid lock contention on the global cgroup rstat lock caused by ksw=
+apd
+> >>>>> starting on all NUMA nodes simultaneously. At Cloudflare, we observ=
+ed
+> >>>>> massive issues due to kswapd and the specific mem_cgroup_flush_stat=
+s()
+> >>>>> call inlined in shrink_node, which takes the rstat lock.
+> >>>>>
+> >> [...]
+> >>>>>    static void cgroup_base_stat_flush(struct cgroup *cgrp, int cpu)=
+;
+> >>>>> @@ -312,6 +315,45 @@ static inline void __cgroup_rstat_unlock(struc=
+t
+> >>>>> cgroup *cgrp, int cpu_in_loop)
+> >>>>>        spin_unlock_irq(&cgroup_rstat_lock);
+> >>>>>    }
+> >>>>> +#define MAX_WAIT    msecs_to_jiffies(100)
+> >>>>> +/* Trylock helper that also checks for on ongoing flusher */
+> >>>>> +static bool cgroup_rstat_trylock_flusher(struct cgroup *cgrp)
+> >>>>> +{
+> >>>>> +    bool locked =3D __cgroup_rstat_trylock(cgrp, -1);
+> >>>>> +    if (!locked) {
+> >>>>> +        struct cgroup *cgrp_ongoing;
+> >>>>> +
+> >>>>> +        /* Lock is contended, lets check if ongoing flusher is alr=
+eady
+> >>>>> +         * taking care of this, if we are a descendant.
+> >>>>> +         */
+> >>>>> +        cgrp_ongoing =3D READ_ONCE(cgrp_rstat_ongoing_flusher);
+> >>>>> +        if (cgrp_ongoing && cgroup_is_descendant(cgrp, cgrp_ongoin=
+g)) {
+> >>>>
+> >>>> I wonder if READ_ONCE() and cgroup_is_descendant() needs to happen
+> >>>> within in rcu section. On a preemptable kernel, let's say we got
+> >>>> preempted in between them, the flusher was unrelated and got freed
+> >>>> before we get the CPU. In that case we are accessing freed memory.
+> >>>>
+> >>>
+> >>> I have to think about this some more.
+> >>>
+> >>
+> >> I don't think this is necessary. We are now waiting (for completion) a=
+nd
+> >> not skipping flush, because as part of take down function
+> >> cgroup_rstat_exit() is called, which will call cgroup_rstat_flush().
+> >>
+> >>
+> >>    void cgroup_rstat_exit(struct cgroup *cgrp)
+> >>    {
+> >>          int cpu;
+> >>          cgroup_rstat_flush(cgrp);
+> >>
+> >>
+> >
+> > Sorry for the late response, I was traveling for a bit. I will take a
+> > look at your most recent version shortly. But I do have a comment
+> > here.
+> >
+> > I don't see how this addresses Shakeel's concern. IIUC, if the cgroup
+> > was freed after READ_ONCE() (and cgroup_rstat_flush() was called),
+> > then cgroup_is_descendant() will access freed memory. We are not
+> > holding the lock here so we are not preventing cgroup_rstat_flush()
+> > from being called for the freed cgroup, right?
+>
+> If we go back to only allowing root-cgroup to be ongoing-flusher, then
+> we could do a cgroup_rstat_flush(root) in cgroup_rstat_exit() to be sure
+> nothing is left waiting for completion scheme. Right?
 
-Compiled and booted on my test system. No dmesg regressions.
+I am still not sure I understand how this helps.
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+We still need to call cgroup_is_descendant() because in cgroup v1 we
+may have multiple root cgroups, right?
 
-thanks,
--- Shuah
+So it is still possible that the cgroup is freed after READ_ONCE() and
+cgroup_is_descendant() accesses freed memory. Unless of course we have
+other guarantees that the root cgroups will not go away.
+
+Since at this point we are not holding the rstat lock, or actually
+waiting for the ongoing flush (yet), I don't see how any
+cgroup_rstat_flush() calls in the cgroup exit paths will help.
+
+I actually think RCU may not help either for non-root cgroups, because
+we call cgroup_rstat_flush() in cgroup_rstat_exit(), which is called
+*after* the RCU grace period, and the cgroup is freed right away after
+that. We may need to replace kfree(cgrp) with kfree_rcu(cgrp) in
+css_free_rwork_fn().
+
+>
+> IMHO the code is getting too complicated with sub-cgroup's as ongoing
+> flushers which also required having 'completion' queues per cgroup.
+> We should go back to only doing this for the root-cgroup.
+
+Because of multiple root cgroups in cgroup v1, we may still need that
+anyway, right?
+
+Please let me know if I am missing something.
 
