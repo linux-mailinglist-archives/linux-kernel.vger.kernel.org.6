@@ -1,118 +1,87 @@
-Return-Path: <linux-kernel+bounces-255659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0930893435D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:49:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36CD7934362
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B80D1281D9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:49:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E42162828A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81E71849C4;
-	Wed, 17 Jul 2024 20:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21777185E62;
+	Wed, 17 Jul 2024 20:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N4d9T+cZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lalYT496"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BDA1836D8
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 20:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0D524205;
+	Wed, 17 Jul 2024 20:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721249370; cv=none; b=lmuPXWg7FKcLKom7CJ3FezSTcFuKKRs8OELTDgF7DwbPcm2dkPDwNMVDRMxnWuzhR+sa8PSZhtvk1KsDomwKYJ+DUBEeJETIRum3c1EvBMlB6A+6AwSBB1gUmfP1+dRNHt8UgH57dvRjjaFB+09uqy2rVwKaRWi1+GqXIGV0uQg=
+	t=1721249618; cv=none; b=ATTPoUODCMv3fJk2GjbcEkJgPHLdkqsGEKEppEPY5UigAHqD99RctFJZJugT3RO2SPRKb5AxtvXhmg60qUnI0vleItdCQdbyB0O59/oxM4p3npl5p96JuNkkmDF296a3i+/hX75IN9JSPoRJbzfBFYnPlOIpSZvq8Gwk3eBV/hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721249370; c=relaxed/simple;
-	bh=JDSn0grBwzh6kdZ/RuAvNWsRAenmUTQXGIPExKe6FHY=;
+	s=arc-20240116; t=1721249618; c=relaxed/simple;
+	bh=PAC0XAD5h5KSIY92fLN5w0D6dZqt0PDGf1vPOyQgb9E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=md6xAUAqiu0bpAsQyeWCGNrxtuZ33osop1vYYjBBtnO3OJ499r0zd74I9Rkn4uKhEqCeKXENSmyPh9mM3dm5q92Zh3jjeEZoAlqFtQezR1QbOr/DEfan7/CMPevWFDnvGEShzmZX1A7Hrsg5542ZLEVLraZHPEyonXZtQ12al10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N4d9T+cZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721249367;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6yqyiCjDiuWKnAEK2Ubaa9MJxWCaEI2x5X587Eb8o3o=;
-	b=N4d9T+cZJVgDAhRuqiXXMKDbLuOKF/IZfoVCLmHp7mNq7VC7vBtYrByx4IdAgRiirmq6YX
-	YMKdMfF9x9SMXocOSHViYgE+lvRHYK3sQI2fP8bi/L7s3M/JGXtjVS3uiCqwh2gHBTYEQa
-	1scY4C+bT+5Kzekv9+IK9BF/FRHDDYk=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-284-pWoSPyGpNri66HfSZunQJQ-1; Wed, 17 Jul 2024 16:49:26 -0400
-X-MC-Unique: pWoSPyGpNri66HfSZunQJQ-1
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6b5e21026fcso2240946d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:49:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721249365; x=1721854165;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6yqyiCjDiuWKnAEK2Ubaa9MJxWCaEI2x5X587Eb8o3o=;
-        b=Fy1BpK0Enc/Niekmsjq66nnOALZ9BQ3ybEIe1xP0I3m7A1br3ST9N002oyNUdiNP2j
-         GTAzSkV4XjufPajeR5M7NV2sQSTEMJ5FR7utUOj/O5n/GOV3CgVzY+aWtsdBTWCwT/v0
-         F4TLT3zXj13hN5QikkTg3vAWUHboPwzfxDO6Z7BSG57pmnbwUMBOyzfDYkPoG15GCpJ/
-         V3seEXuSF71lFIdhBYcTq46VfvVG2cXJLBGJDRGAEg8R3ORWRnXWc5nb8DSvX2rXcF68
-         XwB2nZSzOo9Gh3Iw52vJDb9KXtmokjI11kvGatPHImjpN8u+7HlNKq9puWyUO3Xd019c
-         T62g==
-X-Forwarded-Encrypted: i=1; AJvYcCXf07qLceNy7h4YfgAb8x+t8oLt2DrCswnbL9EYlD/9aTMCxvFXEnssrHuENFnpjhOb8Xb3Ao+sPRXrlkd9Dlnl9+qPmuxLO8D4ZvF1
-X-Gm-Message-State: AOJu0YywEZHzhV4uW736/qOokaqt2meewmiA27g32Gs8p8+v11PWOA8u
-	kc1uWA43xDMmFcLkvOI9659nFjMxgot5HQ9Torjd77u+WtStnwssXJ5IiwRFGcgrzQTmNsB7OuH
-	9WKDUqt8RqsLiqCw/ANdIXP0wN9HCK7pxml+kK8jOGJVE/GZGZM1Jwe6sALxk3w==
-X-Received: by 2002:a05:6214:410b:b0:6b5:52da:46f2 with SMTP id 6a1803df08f44-6b78ca51491mr39583386d6.6.1721249365306;
-        Wed, 17 Jul 2024 13:49:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHrgnTXq3RE542WMQqUS6NsqxtYgjyO5aJFGtpdKnMMZJpgkLH9LrtqDYAPHBU104WjJ87ISg==
-X-Received: by 2002:a05:6214:410b:b0:6b5:52da:46f2 with SMTP id 6a1803df08f44-6b78ca51491mr39583286d6.6.1721249364980;
-        Wed, 17 Jul 2024 13:49:24 -0700 (PDT)
-Received: from optiplex-fbsd (c-174-169-122-120.hsd1.nh.comcast.net. [174.169.122.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b79c60dd19sm2078766d6.78.2024.07.17.13.49.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 13:49:24 -0700 (PDT)
-Date: Wed, 17 Jul 2024 16:49:21 -0400
-From: Rafael Aquini <aquini@redhat.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Subject: Re: [PATCH v4 2/2] kbuild: rpm-pkg: introduce a simple changelog
- section for kernel.spec
-Message-ID: <ZpguUYXVno5OUVIJ@optiplex-fbsd>
-References: <CAK7LNAT_b6hmN4W94D_7o5XZAc7jYhBi5rp=GUE=y+_BHjccGQ@mail.gmail.com>
- <20240716122505.3425582-1-aquini@redhat.com>
- <CAK7LNAS9FfGmB9aPL0+b+dUUH0v0Gf7tho1tE293szEQ3x5u+A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=d2qQBzM3Sk9M5Nvpwb6+crxa9QIiUMmkalPs8TPPH01hHVaRurByBt6remkvEuwBtUO3jw22M/FI8ZpmfyJ7imnxKZ13biDBa911VW9vyfNXNDd2gXFm986Cov1/nPql3ABPXA1rS3gC7o1AEKkDBJ5XlXdSWFdXADN7kVqBEVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lalYT496; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66360C2BD10;
+	Wed, 17 Jul 2024 20:53:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721249617;
+	bh=PAC0XAD5h5KSIY92fLN5w0D6dZqt0PDGf1vPOyQgb9E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lalYT496H46aL/ZFWsjDkM+ZkEBRQYvIlIb6Av/4wLvntPc3PirnRvy3I5eLhwtPa
+	 T2RxBUmJCt+HaqCOHLzWT8GxdECpqaLrPsp75MIuutp/gQpriluHxmp+UydLtEIDCw
+	 WQJkZ2rNFV/ds5MWCOxPLfoE1WtQ2Qaa4DITyi5zH7vpODpC3q8K7YU5uxsZ6zQmLw
+	 9nVqxBXs/3wSt+mw9yz/PQd5QXD3YpFkoHkCCvElS3Z0cCdluZQVPwox0eMpl0RCdc
+	 /yuF9vSOvW2Ee6A78To5TGNJnr02xiA7oq5O/d3923wiBoqH7N4iRQD5vQUmKsPFds
+	 FPB/IN8abQoWQ==
+Date: Wed, 17 Jul 2024 13:53:35 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Adrian Ratiu <adrian.ratiu@collabora.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	kernel@collabora.com, gbiv@google.com, inglorion@google.com,
+	ajordanr@google.com, Doug Anderson <dianders@chromium.org>,
+	Jeff Xu <jeffxu@google.com>, Jann Horn <jannh@google.com>,
+	Kees Cook <kees@kernel.org>, Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] proc: add config to block FOLL_FORCE in mem writes
+Message-ID: <20240717205335.GA3632@sol.localdomain>
+References: <20240717111358.415712-1-adrian.ratiu@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNAS9FfGmB9aPL0+b+dUUH0v0Gf7tho1tE293szEQ3x5u+A@mail.gmail.com>
+In-Reply-To: <20240717111358.415712-1-adrian.ratiu@collabora.com>
 
-On Thu, Jul 18, 2024 at 02:10:13AM +0900, Masahiro Yamada wrote:
-> On Tue, Jul 16, 2024 at 9:25 PM Rafael Aquini <aquini@redhat.com> wrote:
-> >
-> > Fix the following rpmbuild warning:
-> >
-> >   $ make srcrpm-pkg
-> >   ...
-> >   RPM build warnings:
-> >       source_date_epoch_from_changelog set but %changelog is missing
-> >
-> > Signed-off-by: Rafael Aquini <aquini@redhat.com>
-> > ---
-> 
-> Applied to linux-kbuild.
-> Thanks!
-> 
->
+On Wed, Jul 17, 2024 at 02:13:58PM +0300, Adrian Ratiu wrote:
+> +config SECURITY_PROC_MEM_RESTRICT_FOLL_FORCE
+> +	bool "Remove FOLL_FORCE usage from /proc/pid/mem writes"
+> +	default n
+> +	help
+> +	  This restricts FOLL_FORCE flag usage in procfs mem write calls
+> +	  because it bypasses memory permission checks and can be used by
+> +	  attackers to manipulate process memory contents that would be
+> +	  otherwise protected.
+> +
+> +	  Enabling this will break GDB, gdbserver and other debuggers
+> +	  which require FOLL_FORCE for basic functionalities.
+> +
+> +	  If you are unsure how to answer this question, answer N.
 
-Thank you.
+FOLL_FORCE is an internal flag, and people who aren't kernel developers aren't
+going to know what it is.  Could this option be named and documented in a way
+that would be more understandable to people who aren't kernel developers?  What
+is the effect on how /proc/pid/mem behaves?
 
+- Eric
 
