@@ -1,283 +1,170 @@
-Return-Path: <linux-kernel+bounces-254789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 164DC93379C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:10:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA06E93379E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 399231C20A90
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:10:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F21D5B22223
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF841864C;
-	Wed, 17 Jul 2024 07:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CFC61BDD0;
+	Wed, 17 Jul 2024 07:11:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ldKfg3wN"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="n2HfgC7Y"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58CE14267;
-	Wed, 17 Jul 2024 07:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AA418EB1;
+	Wed, 17 Jul 2024 07:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721200235; cv=none; b=KOpiUiAgAUTRwNLXDpAgre9eEE/lKEA2jNn3KRQY+Yrl7ToXtVECRb+u7HBexSMWrAPFNq3Wf+m0+iyCqpT4Nn+jkgMD5rlojPycwzgbpqqRZDS2FD9UrwiXoVAfMywEodm2PVShx8RLjh6pynViTZr9CM1/7fohFboSGGjLxKw=
+	t=1721200293; cv=none; b=pBnBjds/LDNTiXaJHfnGC7e1JySheaTms8yPAaiQ6Q1Xwyc2POD9amS8R8V/YB4nAPYkoJtihmoOjGKBV5x1XhJnPzipIVD/yuGC9SKwh+se/f+M5Fxd2aAxjPXXJLfdONW965D5ZQQllAXyUwQ+gb5CPf+SAPZnMElrfV8OabY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721200235; c=relaxed/simple;
-	bh=pbB84E+DJFZ7Rqz4bRF7r+sShLSkf9DDLjHCtgiQTlQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gUywVupsCK0cCln3QIxo3r3j//hnIc3bgZr/gNm8ca6PJzwxp8yoi22E1EPtrsPcsUV0hgi+AcqGKPZ2ibUn3lgkbJsA8kWWSY6MYx/Gu/IE54zqQaGc3DB2LN3USlOMPto90XLwBsxxrzlUJybfu8aHAloVrGle+OqZPW/s+IY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ldKfg3wN; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3c9cc681e4fso3554042b6e.0;
-        Wed, 17 Jul 2024 00:10:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721200233; x=1721805033; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LzFXhN/4zexpSGV6jXmNmwyuYw2EujDfcH8DxGXktmk=;
-        b=ldKfg3wN63owKo/iyntPxxflZ/gNfgLcvPocK4EhquJX21Bcw5ziX97OS2uyiGHJEO
-         L0NFFVK92iLpCFBJx3vTxSmLaGnpkznwW8H9j4rY14EO94fj2y0qlDPbclwH9rJn3qpI
-         QbDEYZoXL2Rm1ArG5X2ko4pdIXXfcq9rmV11zAfgI2ENXG8dGoKrl7EqmxBZUAS7t2Na
-         M6lQZMBR5oYIl7ZMgEKSV7sLZT/dg6XhpU33STtFk99LWUSr75QNZeC2sdYSmoNyamll
-         7wq7OTPEogdNDFNK7c0fFYdeS/vqMtee9sJRwgACKUsKdcdc92MT2rdjayo7LQ0Lpewc
-         t5KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721200233; x=1721805033;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LzFXhN/4zexpSGV6jXmNmwyuYw2EujDfcH8DxGXktmk=;
-        b=l8ZfuV8QwaBTR/FlnDHEauIcmXLXxXIhQ4bRCbib80g7XGBKg4rvR+yUa1TgCtiw3V
-         RgV70+y8/iZzWZRARMY/QS9CE9SWwXuGypg0pELtNFlcf/XIuUsvbsrgUa54N1BFZXJ1
-         dI1GgPHCTxGRDTiAdX+SOD1q7UVqcNHTVm+1Di5IiBzKmxD9VHXwmH1ZEqAp3Oe6HAoC
-         2vL7F3J5ypNfUvPhnQxwioxvjw0ZXtnEjh2NoFQrgh87j+GBG//SwvVSOSJjxup3cLp+
-         mI6RG2Y8AEbqkcEhTD4AfpTd9RmKG9lfIs9Y5CEopr7yJsFt/nuEssW/3Ty2sFKofkIA
-         AhvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJPkubyE7A4X6/rPm7ru5TyxKpq23nSZjIIIaTqT1OfQjYobCeuMw6e0YSQGPFWermMDUznVcFW8sTX/U0tgdtUXed1Y2lKOtsMWY+taSUSZUyWDjrhWag4g8byf2GjYVT4fyj87OVRttJo5YnsaPZBsC0mqM12/X16qb3CxNBJmvmwYa4
-X-Gm-Message-State: AOJu0YyhP97hpxHYVqlGG3qQ0CJyeJLizr/PgbgbDzdM32DpLagWoVYT
-	o16BEaqpHLjzeAZ8+jeDDLVhrQwgAQmIgLXInlTBoDrKR/rx2qPE
-X-Google-Smtp-Source: AGHT+IHYHLNiQMYFfPuy8h3AbJt+F+ROLpfldNCC0RiWPWi7h5zs8pqh7AbWsxlPdKaSWx4l2J3quA==
-X-Received: by 2002:a05:6871:5228:b0:259:cdf1:b8af with SMTP id 586e51a60fabf-260d9504d67mr653256fac.46.1721200232596;
-        Wed, 17 Jul 2024 00:10:32 -0700 (PDT)
-Received: from fedora.. ([2409:40f4:a8:bf06:b8b7:aa61:3ed2:c8f4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7eb9c856sm7520236b3a.4.2024.07.17.00.10.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 00:10:32 -0700 (PDT)
-From: Animesh Agarwal <animeshagarwal28@gmail.com>
-To: 
-Cc: Animesh Agarwal <animeshagarwal28@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: dt-bindings: ti,pcm512x: Convert to dtschema
-Date: Wed, 17 Jul 2024 12:40:08 +0530
-Message-ID: <20240717071012.114786-1-animeshagarwal28@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1721200293; c=relaxed/simple;
+	bh=tR3wJwyFdhNyJtUUxi/dkYFY2aD/hwTtjtR3hBxRKEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=je6yvUger/tpzjtj7TsCB4t7rIIku314kLl1hPa7rIkT9x/0guJnVd3Uqmvqfto62UBE8rmiawOwdCDHuZXlxLyoipm70+Oshnhf/QZGus3NlQcer4VGgXcRX81z4HKIN8CKv2qBzmFwNbc97Duu/KU1KwvyRVqBl+X9fpPB99A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=n2HfgC7Y; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BB5E266F;
+	Wed, 17 Jul 2024 09:10:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1721200250;
+	bh=tR3wJwyFdhNyJtUUxi/dkYFY2aD/hwTtjtR3hBxRKEE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n2HfgC7Y4fwNtJyT/IiqZsDz3S/k2BwvnKR6aacF5WcqGEGBRjptTNMQdTcjUpCAQ
+	 uMdNbFv5q9tea4aZnExV2xsSHGTU0bVg9MDLCPctu278buxzKNql2tQ1HLNfr8hRSB
+	 oSbC3clkxq5wITD5rvznvOk04RmQU7ewTV1krYgU=
+Date: Wed, 17 Jul 2024 09:11:25 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Mingjia Zhang <mingjia.zhang@mediatek.com>, Jack Zhu <jack.zhu@starfivetech.com>, 
+	Keith Zhao <keith.zhao@starfivetech.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>
+Subject: Re: =?utf-8?B?5Zue5aSNOiDlm57lpI06IFtQQVRDSCB2NSAwMi8xNF0gbWVk?=
+ =?utf-8?Q?ia=3A_Documentation?= =?utf-8?Q?=3A?= Add description for StarFive
+ ISP metadata formats
+Message-ID: <vnxhxicsdke2jxtkexgpudjvuv2xzugsw4xjfmihrs4pa3yply@tva7yle3g2hb>
+References: <20240709083824.430473-1-changhuang.liang@starfivetech.com>
+ <20240709083824.430473-3-changhuang.liang@starfivetech.com>
+ <dncfjg7e7a2i6xin7kuwnxifcjpdjxcwkfcudxnqczi4lhwac7@u7jjunr7zqc6>
+ <ZQ0PR01MB1302CB1DB67D3A36022B94B5F2A22@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+ <v7eqp5opis3q327xgjvda37zrba32jyyfo2ny6u6i2ixq3ks2n@bp725fbn6gka>
+ <ZQ0PR01MB1302B4A728A02184C65AEF2EF2A32@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZQ0PR01MB1302B4A728A02184C65AEF2EF2A32@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
 
-Convert the PCM512x and TAS575x audio CODECs/amplifiers bindings to DT
-schema format. Add missing sound-dai-cells property.
+Hi Changhuang
 
-Cc: Daniel Baluta <daniel.baluta@nxp.com>
-Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
----
- .../devicetree/bindings/sound/pcm512x.txt     |  53 ---------
- .../devicetree/bindings/sound/ti,pcm512x.yaml | 112 ++++++++++++++++++
- 2 files changed, 112 insertions(+), 53 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/sound/pcm512x.txt
- create mode 100644 Documentation/devicetree/bindings/sound/ti,pcm512x.yaml
+On Wed, Jul 17, 2024 at 02:37:00AM GMT, Changhuang Liang wrote:
+> Hi, Jacopo
+>
+> >
+> > Hi Changhuang
+> >
+> > On Tue, Jul 16, 2024 at 12:31:31PM GMT, Changhuang Liang wrote:
+> > > Hi, Jacopo
+> > >
+> > > >
+> > > > Hi Changhuang
+> > > >
+> > > > On Tue, Jul 09, 2024 at 01:38:12AM GMT, Changhuang Liang wrote:
+> > > > > Add description for V4L2_META_FMT_STF_ISP_PARAMS and
+> > > > > V4L2_META_FMT_STF_ISP_STAT_3A meta data formats.
+> > > > >
+> > > > > Signed-off-by: Changhuang Liang
+> > > > > <changhuang.liang@starfivetech.com>
+> > > >
+> > > > I get this warnings when compiling documentation
+> > > >
+> > >
+> > > Can you share the steps about compiling documentation?
+> > >
+> >
+> > From `make help`
+> >
+> > -------------------------------------------------------------------------------
+> > Documentation targets:
+> >  Linux kernel internal documentation in different formats from ReST:
+> >   htmldocs        - HTML
+> >   texinfodocs     - Texinfo
+> >   infodocs        - Info
+> >   latexdocs       - LaTeX
+> >   pdfdocs         - PDF
+> >   epubdocs        - EPUB
+> >   xmldocs         - XML
+> >   linkcheckdocs   - check for broken external links
+> >                     (will connect to external hosts)
+> >   refcheckdocs    - check for references to non-existing files under
+> >                     Documentation
+> >   cleandocs       - clean all generated files
+> >
+> >   make SPHINXDIRS="s1 s2" [target] Generate only docs of folder s1, s2
+> >   valid values for SPHINXDIRS are: PCI RCU accel accounting admin-guide
+> > arch block bpf cdrom core-api cpu-freq crypto dev-tools devicetree doc-guide
+> > driver-api fault-injection fb filesystems firmware-guide fpga gpu hid hwmon
+> > i2c iio infiniband input isdn kbuild kernel-hacking leds livepatch locking
+> > maintainer mhi misc-devices mm netlabel networking pcmcia peci power
+> > powerpc process riscv rust scheduler scsi security sound spi staging target tee
+> > timers tools trace translations usb userspace-api virt w1 watchdog wmi
+> > -------------------------------------------------------------------------------
+> >
+> > To compile, in example, the userspace documentation in html:
+> >
+> > `make $your-usual-args-here SPHINXDIRS="userspace-api" htmldocs`
+> >
+>
+> What should $your-usual-args-here fill? Can you share your specific commands?
 
-diff --git a/Documentation/devicetree/bindings/sound/pcm512x.txt b/Documentation/devicetree/bindings/sound/pcm512x.txt
-deleted file mode 100644
-index 47878a6df608..000000000000
---- a/Documentation/devicetree/bindings/sound/pcm512x.txt
-+++ /dev/null
-@@ -1,53 +0,0 @@
--PCM512x and TAS575x audio CODECs/amplifiers
--
--These devices support both I2C and SPI (configured with pin strapping
--on the board). The TAS575x devices only support I2C.
--
--Required properties:
--
--  - compatible : One of "ti,pcm5121", "ti,pcm5122", "ti,pcm5141",
--                 "ti,pcm5142", "ti,pcm5242", "ti,tas5754" or "ti,tas5756"
--
--  - reg : the I2C address of the device for I2C, the chip select
--          number for SPI.
--
--  - AVDD-supply, DVDD-supply, and CPVDD-supply : power supplies for the
--    device, as covered in bindings/regulator/regulator.txt
--
--Optional properties:
--
--  - clocks : A clock specifier for the clock connected as SCLK.  If this
--    is absent the device will be configured to clock from BCLK.  If pll-in
--    and pll-out are specified in addition to a clock, the device is
--    configured to accept clock input on a specified gpio pin.
--
--  - pll-in, pll-out : gpio pins used to connect the pll using <1>
--    through <6>.  The device will be configured for clock input on the
--    given pll-in pin and PLL output on the given pll-out pin.  An
--    external connection from the pll-out pin to the SCLK pin is assumed.
--    Caution: the TAS-desvices only support gpios 1,2 and 3
--
--Examples:
--
--	pcm5122: pcm5122@4c {
--		compatible = "ti,pcm5122";
--		reg = <0x4c>;
--
--		AVDD-supply = <&reg_3v3_analog>;
--		DVDD-supply = <&reg_1v8>;
--		CPVDD-supply = <&reg_3v3>;
--	};
--
--
--	pcm5142: pcm5142@4c {
--		compatible = "ti,pcm5142";
--		reg = <0x4c>;
--
--		AVDD-supply = <&reg_3v3_analog>;
--		DVDD-supply = <&reg_1v8>;
--		CPVDD-supply = <&reg_3v3>;
--
--		clocks = <&sck>;
--		pll-in = <3>;
--		pll-out = <6>;
--	};
-diff --git a/Documentation/devicetree/bindings/sound/ti,pcm512x.yaml b/Documentation/devicetree/bindings/sound/ti,pcm512x.yaml
-new file mode 100644
-index 000000000000..a8635477d23e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/ti,pcm512x.yaml
-@@ -0,0 +1,112 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/ti,pcm512x.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: PCM512x and TAS575x audio CODECs/amplifiers
-+
-+maintainers:
-+  - Animesh Agarwal <animeshagarwal28@gmail.com>
-+
-+allOf:
-+  - $ref: dai-common.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,pcm5121
-+      - ti,pcm5122
-+      - ti,pcm5141
-+      - ti,pcm5142
-+      - ti,pcm5242
-+      - ti,tas5754
-+      - ti,tas5756
-+
-+  reg:
-+    maxItems: 1
-+
-+  AVDD-supply: true
-+
-+  DVDD-supply: true
-+
-+  CPVDD-supply: true
-+
-+  clocks:
-+    maxItems: 1
-+    description: A clock specifier for the clock connected as SCLK. If this is
-+      absent the device will be configured to clock from BCLK. If pll-in and
-+      pll-out are specified in addition to a clock, the device is configured to
-+      accept clock input on a specified gpio pin.
-+
-+  '#sound-dai-cells':
-+    const: 0
-+
-+required:
-+  - compatible
-+  - reg
-+  - AVDD-supply
-+  - DVDD-supply
-+  - CPVDD-supply
-+
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        enum:
-+          - ti,tas5754
-+          - ti,tas5756
-+
-+then:
-+  properties:
-+    pll-in:
-+      description: GPIO pin used to connect the pll using <1> through <3>. The
-+        device will be configured for clock input on the given pll-in pin.
-+      $ref: /schemas/types.yaml#/definitions/uint32
-+      minimum: 1
-+      maximum: 3
-+
-+    pll-out:
-+      description: GPIO pin used to connect the pll using <1> through <3>. The
-+        device will be configured for PLL output on the given pll-out pin.  An
-+        external connection from the pll-out pin to the SCLK pin is assumed.
-+      $ref: /schemas/types.yaml#/definitions/uint32
-+      minimum: 1
-+      maximum: 3
-+
-+else:
-+  properties:
-+    pll-in:
-+      description: GPIO pin used to connect the pll using <1> through <6>. The
-+      device will be configured for clock input on the given pll-in pin.
-+      $ref: /schemas/types.yaml#/definitions/uint32
-+      minimum: 1
-+      maximum: 6
-+
-+    pll-out:
-+      description: GPIO pin used to connect the pll using <1> through <6>. The
-+        device will be configured for PLL output on the given pll-out pin.  An
-+        external connection from the pll-out pin to the SCLK pin is assumed.
-+      $ref: /schemas/types.yaml#/definitions/uint32
-+      minimum: 1
-+      maximum: 6
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        codec@4c {
-+            compatible = "ti,pcm5142";
-+            reg = <0x4c>;
-+            AVDD-supply = <&reg_3v3_analog>;
-+            DVDD-supply = <&reg_1v8>;
-+            CPVDD-supply = <&reg_3v3>;
-+            #sound-dai-cells = <0>;
-+            clocks = <&sck>;
-+            pll-in = <3>;
-+            pll-out = <6>;
-+        };
-+    };
--- 
-2.45.2
+make -j24 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- O=./linux-build SPHINXDIRS="userspace-api" htmldocs
 
+Make sure to adapt it to your environment
+
+>
+> This is the result of my side run here:
+>
+> # make SPHINXDIRS="userspace-api" htmldocs
+> /home/huang/workspace/upstream/linux/tools/net/ynl/ynl-gen-rst.py -i /home/huang/workspace/upstream/linux/Documentation/netlink/specs/rt_link.yaml -o /home/huang/workspace/upstream/linux/Documentation/networking/netlink_spec/rt_link.rst
+> /home/huang/workspace/upstream/linux/tools/net/ynl/ynl-gen-rst.py -i /home/huang/workspace/upstream/linux/Documentation/netlink/specs/netdev.yaml -o /home/huang/workspace/upstream/linux/Documentation/networking/netlink_spec/netdev.rst
+> /home/huang/workspace/upstream/linux/tools/net/ynl/ynl-gen-rst.py -i /home/huang/workspace/upstream/linux/Documentation/netlink/specs/ovs_vport.yaml -o /home/huang/workspace/upstream/linux/Documentation/networking/netlink_spec/ovs_vport.rst
+> /home/huang/workspace/upstream/linux/tools/net/ynl/ynl-gen-rst.py -i /home/huang/workspace/upstream/linux/Documentation/netlink/specs/handshake.yaml -o /home/huang/workspace/upstream/linux/Documentation/networking/netlink_spec/handshake.rst
+> /home/huang/workspace/upstream/linux/tools/net/ynl/ynl-gen-rst.py -i /home/huang/workspace/upstream/linux/Documentation/netlink/specs/fou.yaml -o /home/huang/workspace/upstream/linux/Documentation/networking/netlink_spec/fou.rst
+> /home/huang/workspace/upstream/linux/tools/net/ynl/ynl-gen-rst.py -i /home/huang/workspace/upstream/linux/Documentation/netlink/specs/nftables.yaml -o /home/huang/workspace/upstream/linux/Documentation/networking/netlink_spec/nftables.rst
+> /home/huang/workspace/upstream/linux/tools/net/ynl/ynl-gen-rst.py -i /home/huang/workspace/upstream/linux/Documentation/netlink/specs/ovs_datapath.yaml -o /home/huang/workspace/upstream/linux/Documentation/networking/netlink_spec/ovs_datapath.rst
+> /home/huang/workspace/upstream/linux/tools/net/ynl/ynl-gen-rst.py -i /home/huang/workspace/upstream/linux/Documentation/netlink/specs/nfsd.yaml -o /home/huang/workspace/upstream/linux/Documentation/networking/netlink_spec/nfsd.rst
+> /home/huang/workspace/upstream/linux/tools/net/ynl/ynl-gen-rst.py -i /home/huang/workspace/upstream/linux/Documentation/netlink/specs/dpll.yaml -o /home/huang/workspace/upstream/linux/Documentation/networking/netlink_spec/dpll.rst
+> /home/huang/workspace/upstream/linux/tools/net/ynl/ynl-gen-rst.py -i /home/huang/workspace/upstream/linux/Documentation/netlink/specs/nlctrl.yaml -o /home/huang/workspace/upstream/linux/Documentation/networking/netlink_spec/nlctrl.rst
+> /home/huang/workspace/upstream/linux/tools/net/ynl/ynl-gen-rst.py -i /home/huang/workspace/upstream/linux/Documentation/netlink/specs/ethtool.yaml -o /home/huang/workspace/upstream/linux/Documentation/networking/netlink_spec/ethtool.rst
+> /home/huang/workspace/upstream/linux/tools/net/ynl/ynl-gen-rst.py -i /home/huang/workspace/upstream/linux/Documentation/netlink/specs/mptcp_pm.yaml -o /home/huang/workspace/upstream/linux/Documentation/networking/netlink_spec/mptcp_pm.rst
+> /home/huang/workspace/upstream/linux/tools/net/ynl/ynl-gen-rst.py -i /home/huang/workspace/upstream/linux/Documentation/netlink/specs/rt_route.yaml -o /home/huang/workspace/upstream/linux/Documentation/networking/netlink_spec/rt_route.rst
+> /home/huang/workspace/upstream/linux/tools/net/ynl/ynl-gen-rst.py -i /home/huang/workspace/upstream/linux/Documentation/netlink/specs/team.yaml -o /home/huang/workspace/upstream/linux/Documentation/networking/netlink_spec/team.rst
+> /home/huang/workspace/upstream/linux/tools/net/ynl/ynl-gen-rst.py -i /home/huang/workspace/upstream/linux/Documentation/netlink/specs/devlink.yaml -o /home/huang/workspace/upstream/linux/Documentation/networking/netlink_spec/devlink.rst
+> /home/huang/workspace/upstream/linux/tools/net/ynl/ynl-gen-rst.py -i /home/huang/workspace/upstream/linux/Documentation/netlink/specs/rt_addr.yaml -o /home/huang/workspace/upstream/linux/Documentation/networking/netlink_spec/rt_addr.rst
+> /home/huang/workspace/upstream/linux/tools/net/ynl/ynl-gen-rst.py -i /home/huang/workspace/upstream/linux/Documentation/netlink/specs/ovs_flow.yaml -o /home/huang/workspace/upstream/linux/Documentation/networking/netlink_spec/ovs_flow.rst
+> /home/huang/workspace/upstream/linux/tools/net/ynl/ynl-gen-rst.py -i /home/huang/workspace/upstream/linux/Documentation/netlink/specs/tc.yaml -o /home/huang/workspace/upstream/linux/Documentation/networking/netlink_spec/tc.rst
+> /home/huang/workspace/upstream/linux/tools/net/ynl/ynl-gen-rst.py -o /home/huang/workspace/upstream/linux/Documentation/networking/netlink_spec/index.rst -x
+> make: *** empty variable name.  Stop.
+> make: *** [Makefile:122: htmldocs] Error 2
+>
+> Is there any special environment configuration present?
+>
+> Regards,
+> Changhuang
 
