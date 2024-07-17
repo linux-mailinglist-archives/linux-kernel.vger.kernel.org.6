@@ -1,51 +1,87 @@
-Return-Path: <linux-kernel+bounces-254773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83612933771
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:55:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C176B93376D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A70431C22639
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:55:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBEB51C225CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6351BF3A;
-	Wed, 17 Jul 2024 06:55:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978BF1802E
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 06:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8E217C9E;
+	Wed, 17 Jul 2024 06:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OI5SdD0e"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC52171A1;
+	Wed, 17 Jul 2024 06:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721199326; cv=none; b=kacKZyq9SUxbHRFBwi+lU6Ke+bDvLAIoebc8FXmV5idacOnL7+e1rHXARxr9B8LFrb7McEpNyrfbX/GIGG52zmlUt5+SFEhKxVS6mYNGO1GcX/gsSuDCcuUeZaXKfgpMDmVeyBW64Y4xQxHfzaAYFd08b1srRCqfPbR+ZG0z1SE=
+	t=1721199320; cv=none; b=kSxfGMYuAVYtLu71ncF9R7UfwsSfURNmhpMQSzWxHbOX2pqwDqee5obFLUnc+s6++rPoZaftNna4/nw6mx0eV3G2tvsmqbaH5QtxFHofq3bRI8KDKlbc3A/CpcRefzqyh3P4oo/MsLVnWibTMYnwcc1t9AD4LE8EvRgeQVt4ydI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721199326; c=relaxed/simple;
-	bh=Sf8igZhAdC/C8+41b9Q9Clyrx0vbc6io3As6zl1+oJo=;
+	s=arc-20240116; t=1721199320; c=relaxed/simple;
+	bh=K+hLNDemm80k4LEEeo+oaEJZMtNlP6jZSX8TeTH3Ju8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vCI9kJA/QHqA0euHRox3JsIePJHnFT3W2CWjvLdipk94h0YWPwJt9DbLL6kIgletn9XGMRkPCn9wSOUpDm0axqbDrnIrnrDTt1kzF0kOECbkiTl2bSGm+LqxF1H1g6JaLWUnpY61P8ry1tD52lGY7gzO2edACqMoOkGvTRAs+Ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3CB1F1063;
-	Tue, 16 Jul 2024 23:55:42 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B83913F762;
-	Tue, 16 Jul 2024 23:55:13 -0700 (PDT)
-Date: Wed, 17 Jul 2024 08:54:58 +0200
-From: Beata Michalska <beata.michalska@arm.com>
-To: Vanshidhar Konda <vanshikonda@os.amperecomputing.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org,
-	catalin.marinas@arm.com, vincent.guittot@linaro.org,
-	sumitg@nvidia.com, yang@os.amperecomputing.com,
-	lihuisong@huawei.com, viresh.kumar@linaro.org, rafael@kernel.org
-Subject: Re: [PATCH v6 3/4] arm64: Provide an AMU-based version of
- arch_freq_get_on_cpu
-Message-ID: <ZpdqwhKrHWEU3g_P@arm.com>
-References: <20240603082154.3830591-1-beata.michalska@arm.com>
- <20240603082154.3830591-4-beata.michalska@arm.com>
- <aasc2rpfqtqis74hsrgv2nurrz5uumh3pgfuwbwbntlgvtavzh@egisja6opuuz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=moGoGB3sAgJGuyGtQuhzcj+Ldv2dzXq9Bjs/4TgvgUN+Z2pPLPQUjdXJf/OzS1b2J0BlzF50losHv74LxR3J8JDoUsjmiqwCoiAb4feRSSfhKkBGP7svlvY2t4q4E5coqY4VgqIzy+yQ1BTSkGwvXJ6XFXai1zzy8sOJfyWafAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OI5SdD0e; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4266fd395eeso44850625e9.3;
+        Tue, 16 Jul 2024 23:55:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721199317; x=1721804117; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JaLEjmgE7LCagP3kzs36OTaVSU25eNzSxkjwimGIqFg=;
+        b=OI5SdD0eouAP9HmjYjlcw00euDc/5vtenGl3hf8LETVGF+8HOPoqWmpmw19AaFqyR6
+         BI0eTJCzKZCwMo8VH2KuTHD6GB/pqdRps8CiuM1FQolw1Zejr1xFm9dVvW6EK1qO4aTY
+         AMYhPbW/L+Z0GzNvtUSb3aX2jZQDtcxMEsvi9Gi0XWWDNxuEvSMuylmOZAnCHVNHVSiR
+         sFg4v2I1CzsV4Xnv/ZDMETdkJpKCpaPUUduWgH2kiQdCRi0288j9UQfT9Xx2OKNs5C2o
+         FpEIgORDub/vjfG2gmDmT9hbb1fIT+YMlOnEHcpt9MxQ6w9eGWLTeRUmC1pzzCe/APog
+         tnrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721199317; x=1721804117;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JaLEjmgE7LCagP3kzs36OTaVSU25eNzSxkjwimGIqFg=;
+        b=ja9ktOVxl75SH6OvoLKw6esBak0xkn9U5Nh5NEgcsj2SmlOLX0FOvmE4aXyQ7e8I3J
+         Qiy/YqSfm0lgLaaMCFIRXuLEQMJcpFdz4TypfYOxDvfo1Dxyb083I+FDR/hogoRCCVEt
+         6meePm9P6Mnz0Ntz5J1uDNV/hA9yBWW9hnCOqsFyPaeJj5B5qmaBUOH4OWq+lDRQvbUh
+         QJHWiqHz7yUdISiD9EWRRZdp/jEDYzR4uu2zJTyqByaUFqPc3bWx8jfWe3FdmRSbulwo
+         tIVxzNkJDL8fjOk7K9m02P8zugV546MzhKYIO3FRdk/s9MUSC14Q/hwPzsvwagUnTHWL
+         pX8A==
+X-Forwarded-Encrypted: i=1; AJvYcCW5beFNWe5Q6gmY1x92QVJIz0Ea0g4dMkI85UM8Wy02lCgG4kV/z1bLcMbZKyfJu1bjGzrGhO8SKmRwxdVqZUnLta6AOHN2Aomxwrvu
+X-Gm-Message-State: AOJu0YwsFlVVop8w2D8RuCAJnwUCt66i7SS9AHJr8GAztW8832/N08Y0
+	G3Yi9puU4u1ezRjrIvt5H5S+qHlCXMSYzmh/LocGzWy+sXzjdIjS
+X-Google-Smtp-Source: AGHT+IGSzVb4t6Y3qX6HCv6CL1607Npb1NuvcbKci4r170WV36Pf9uVIDuBenF36XnCxsDebwDpfbQ==
+X-Received: by 2002:a05:600c:1390:b0:426:6ed5:fd5 with SMTP id 5b1f17b1804b1-427c2cadee4mr5398445e9.6.1721199316708;
+        Tue, 16 Jul 2024 23:55:16 -0700 (PDT)
+Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f23a000sm195600805e9.5.2024.07.16.23.55.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 23:55:16 -0700 (PDT)
+Date: Wed, 17 Jul 2024 08:55:14 +0200
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Baolin Wang <baolin.wang7@gmail.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Yanxin Huang <yanxin.huang@unisoc.com>,
+	huang yanxin <yanxin.huang07@gmail.com>,
+	Wenming Wu <wenming.wu@unisoc.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/2] dt-bindings: nvmem: sprd,ums312-efuse: convert to YAML
+Message-ID: <17ccb895a54d7754d3ddd6de633ad045a5271b4b.1721199034.git.stano.jakubek@gmail.com>
+References: <9fba73ce66f1f3b7b2a8f46e7c21f60cff5a85f0.1721199034.git.stano.jakubek@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,221 +90,138 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aasc2rpfqtqis74hsrgv2nurrz5uumh3pgfuwbwbntlgvtavzh@egisja6opuuz>
+In-Reply-To: <9fba73ce66f1f3b7b2a8f46e7c21f60cff5a85f0.1721199034.git.stano.jakubek@gmail.com>
 
-On Wed, Jul 10, 2024 at 10:44:41AM -0700, Vanshidhar Konda wrote:
-> I apologize for the late review. This series dropped off my radar. I will test
-> this on an AmpereOne system.
-> 
-> On Mon, Jun 03, 2024 at 09:21:53AM +0100, Beata Michalska wrote:
-> > With the Frequency Invariance Engine (FIE) being already wired up with
-> > sched tick and making use of relevant (core counter and constant
-> > counter) AMU counters, getting the current frequency for a given CPU,
-> > can be achieved by utilizing the frequency scale factor which reflects
-> > an average CPU frequency for the last tick period length.
-> > 
-> > The solution is partially based on APERF/MPERF implementation of
-> > arch_freq_get_on_cpu.
-> > 
-> > Suggested-by: Ionela Voinescu <ionela.voinescu@arm.com>
-> > Signed-off-by: Beata Michalska <beata.michalska@arm.com>
-> > ---
-> > arch/arm64/kernel/topology.c | 110 +++++++++++++++++++++++++++++++----
-> > 1 file changed, 100 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-> > index e475ec2705e1..2c002d2c3e0b 100644
-> > --- a/arch/arm64/kernel/topology.c
-> > +++ b/arch/arm64/kernel/topology.c
-> > @@ -17,6 +17,7 @@
-> > #include <linux/cpufreq.h>
-> > #include <linux/init.h>
-> > #include <linux/percpu.h>
-> > +#include <linux/sched/isolation.h>
-> > 
-> > #include <asm/cpu.h>
-> > #include <asm/cputype.h>
-> > @@ -88,18 +89,28 @@ int __init parse_acpi_topology(void)
-> >  * initialized.
-> >  */
-> > static DEFINE_PER_CPU_READ_MOSTLY(unsigned long, arch_max_freq_scale) =  1UL << (2 * SCHED_CAPACITY_SHIFT);
-> > -static DEFINE_PER_CPU(u64, arch_const_cycles_prev);
-> > -static DEFINE_PER_CPU(u64, arch_core_cycles_prev);
-> > static cpumask_var_t amu_fie_cpus;
-> > 
-> > +struct amu_cntr_sample {
-> > +	u64		arch_const_cycles_prev;
-> > +	u64		arch_core_cycles_prev;
-> > +	unsigned long	last_update;
-> > +};
-> > +
-> > +static DEFINE_PER_CPU_SHARED_ALIGNED(struct amu_cntr_sample, cpu_amu_samples);
-> > +
-> > void update_freq_counters_refs(void)
-> 
-> Could this be renamed to update_amu_cntr_sample() for more clarity?
-I guess it could though to be fair I'd be more inclined to rename the struct
-itself: this function updates the cached counter values that are being used
-as a most recent ones but also as reference when calculating the delta
-between the readings, so I'd say the naming here is pretty accurate.
-> 
-> > {
-> > -	this_cpu_write(arch_core_cycles_prev, read_corecnt());
-> > -	this_cpu_write(arch_const_cycles_prev, read_constcnt());
-> > +	struct amu_cntr_sample *amu_sample = this_cpu_ptr(&cpu_amu_samples);
-> > +
-> > +	amu_sample->arch_core_cycles_prev = read_corecnt();
-> > +	amu_sample->arch_const_cycles_prev = read_constcnt();
-> 
-> I think it would be better to update amp_sample->last_update here. update_freq_counters_refs
-> is the only way to update the amu_sample. So it should be safer to update the whole structure
-> in this method.
-Right, so the amu_sample->last_update is actually referring to updating the
-scale factor, not the counter values per-se, even though one cannot be updated
-without the other; so I'd rather keep those separated: the update time is being
-used to determine whether the last known freq scale is still somewhat relevant.
-If that would eliminate the confusion I can rename that filed.
-> 
-> > }
-> > 
-> > static inline bool freq_counters_valid(int cpu)
-> > {
-> > +	struct amu_cntr_sample *amu_sample = per_cpu_ptr(&cpu_amu_samples, cpu);
-> > +
-> > 	if ((cpu >= nr_cpu_ids) || !cpumask_test_cpu(cpu, cpu_present_mask))
-> > 		return false;
-> > 
-> > @@ -108,8 +119,8 @@ static inline bool freq_counters_valid(int cpu)
-> > 		return false;
-> > 	}
-> > 
-> > -	if (unlikely(!per_cpu(arch_const_cycles_prev, cpu) ||
-> > -		     !per_cpu(arch_core_cycles_prev, cpu))) {
-> > +	if (unlikely(!amu_sample->arch_const_cycles_prev ||
-> > +		     !amu_sample->arch_core_cycles_prev)) {
-> > 		pr_debug("CPU%d: cycle counters are not enabled.\n", cpu);
-> > 		return false;
-> > 	}
-> > @@ -152,17 +163,22 @@ void freq_inv_set_max_ratio(int cpu, u64 max_rate)
-> > 
-> > static void amu_scale_freq_tick(void)
-> > {
-> > +	struct amu_cntr_sample *amu_sample = this_cpu_ptr(&cpu_amu_samples);
-> > 	u64 prev_core_cnt, prev_const_cnt;
-> > 	u64 core_cnt, const_cnt, scale;
-> > 
-> > -	prev_const_cnt = this_cpu_read(arch_const_cycles_prev);
-> > -	prev_core_cnt = this_cpu_read(arch_core_cycles_prev);
-> > +	prev_const_cnt = amu_sample->arch_const_cycles_prev;
-> > +	prev_core_cnt = amu_sample->arch_core_cycles_prev;
-> > 
-> > 	update_freq_counters_refs();
-> > 
-> > -	const_cnt = this_cpu_read(arch_const_cycles_prev);
-> > -	core_cnt = this_cpu_read(arch_core_cycles_prev);
-> > +	const_cnt = amu_sample->arch_const_cycles_prev;
-> > +	core_cnt = amu_sample->arch_core_cycles_prev;
-> > 
-> > +	/*
-> > +	 * This should not happen unless the AMUs have been reset and the
-> > +	 * counter values have not been restored - unlikely
-> > +	 */
-> > 	if (unlikely(core_cnt <= prev_core_cnt ||
-> > 		     const_cnt <= prev_const_cnt))
-> > 		return;
-> > @@ -182,6 +198,8 @@ static void amu_scale_freq_tick(void)
-> > 
-> > 	scale = min_t(unsigned long, scale, SCHED_CAPACITY_SCALE);
-> > 	this_cpu_write(arch_freq_scale, (unsigned long)scale);
-> > +
-> > +	amu_sample->last_update = jiffies;
-> 
-> Please see the comment above. I think this line could be moved to
-> update_freq_counters_refs method.
-> 
-> > }
-> > 
-> > static struct scale_freq_data amu_sfd = {
-> > @@ -189,6 +207,78 @@ static struct scale_freq_data amu_sfd = {
-> > 	.set_freq_scale = amu_scale_freq_tick,
-> > };
-> > 
-> > +static __always_inline bool amu_fie_cpu_supported(unsigned int cpu)
-> > +{
-> > +	return cpumask_available(amu_fie_cpus) &&
-> > +		cpumask_test_cpu(cpu, amu_fie_cpus);
-> > +}
-> > +
-> > +#define AMU_SAMPLE_EXP_MS	20
-> > +
-> > +unsigned int arch_freq_get_on_cpu(int cpu)
-> > +{
-> > +	struct amu_cntr_sample *amu_sample;
-> > +	unsigned int start_cpu = cpu;
-> > +	unsigned long last_update;
-> > +	unsigned int freq = 0;
-> > +	u64 scale;
-> > +
-> > +	if (!amu_fie_cpu_supported(cpu) || !arch_scale_freq_ref(cpu))
-> > +		return 0;
-> > +
-> > +retry:
-> > +	amu_sample = per_cpu_ptr(&cpu_amu_samples, cpu);
-> > +
-> > +	last_update = amu_sample->last_update;
-> > +
-> > +	/*
-> > +	 * For those CPUs that are in full dynticks mode,
-> > +	 * and those that have not seen tick for a while
-> > +	 * try an alternative source for the counters (and thus freq scale),
-> > +	 * if available, for given policy:
-> > +	 * this boils down to identifying an active cpu within the same freq
-> > +	 * domain, if any.
-> > +	 */
-> > +	if (!housekeeping_cpu(cpu, HK_TYPE_TICK) ||
-> > +	    time_is_before_jiffies(last_update + msecs_to_jiffies(AMU_SAMPLE_EXP_MS))) {
-> > +		struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
-> > +		int ref_cpu = cpu;
-> > +
-> > +		if (!policy)
-> > +			goto leave;
-> > +
-> > +		if (!policy_is_shared(policy)) {
-> > +			cpufreq_cpu_put(policy);
-> > +			goto leave;
-> > +		}
-> > +
-> > +		do {
-> > +			ref_cpu = cpumask_next_wrap(ref_cpu, policy->cpus,
-> > +						    start_cpu, false);
-> > +
-> > +		} while (ref_cpu < nr_cpu_ids && idle_cpu(ref_cpu));
-> > +
-> > +		cpufreq_cpu_put(policy);
-> > +
-> > +		if (ref_cpu >= nr_cpu_ids)
-> > +			/* No alternative to pull info from */
-> > +			goto leave;
-> > +
-> > +		cpu = ref_cpu;
-> > +		goto retry;
-> > +	}
-> > +	/*
-> > +	 * Reversed computation to the one used to determine
-> > +	 * the arch_freq_scale value
-> > +	 * (see amu_scale_freq_tick for details)
-> > +	 */
-> > +	scale = arch_scale_freq_capacity(cpu);
-> > +	freq = scale * arch_scale_freq_ref(cpu);
-> > +	freq >>= SCHED_CAPACITY_SHIFT;
-> > +leave:
-> > +	return freq;
-> > +}
-> > +
-> > static void amu_fie_setup(const struct cpumask *cpus)
-> > {
-> > 	int cpu;
-> > -- 
-> > 2.25.1
-> > 
+Convert the Spreadtrum UMS312 eFuse bindings to DT schema.
+Adjust filename to match compatible.
+
+Note: the UMS312 clock bindings include doesn't seem to exist (yet?), so
+      the UMS512 one was used for the "CLK_EFUSE_EB" define.
+
+Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+---
+Changes in V2:
+  - new patch, split from the merged bindings in V1
+
+ .../bindings/nvmem/sprd,ums312-efuse.yaml     | 61 +++++++++++++++++++
+ .../devicetree/bindings/nvmem/sprd-efuse.txt  | 39 ------------
+ 2 files changed, 61 insertions(+), 39 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/nvmem/sprd,ums312-efuse.yaml
+ delete mode 100644 Documentation/devicetree/bindings/nvmem/sprd-efuse.txt
+
+diff --git a/Documentation/devicetree/bindings/nvmem/sprd,ums312-efuse.yaml b/Documentation/devicetree/bindings/nvmem/sprd,ums312-efuse.yaml
+new file mode 100644
+index 000000000000..00e0fd1353a3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/nvmem/sprd,ums312-efuse.yaml
+@@ -0,0 +1,61 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/nvmem/sprd,ums312-efuse.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Spreadtrum UMS312 eFuse
++
++maintainers:
++  - Orson Zhai <orsonzhai@gmail.com>
++  - Baolin Wang <baolin.wang7@gmail.com>
++  - Chunyan Zhang <zhang.lyra@gmail.com>
++
++properties:
++  compatible:
++    const: sprd,ums312-efuse
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    const: enable
++
++  hwlocks:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - hwlocks
++
++allOf:
++  - $ref: nvmem.yaml#
++  - $ref: nvmem-deprecated-cells.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/sprd,ums512-clk.h>
++
++    efuse@32240000 {
++      compatible = "sprd,ums312-efuse";
++      reg = <0x32240000 0x10000>;
++      clocks = <&aonapb_gate CLK_EFUSE_EB>;
++      clock-names = "enable";
++      hwlocks = <&hwlock 8>;
++      #address-cells = <1>;
++      #size-cells = <1>;
++
++      /* Data cells */
++      thermal_calib: calib@10 {
++        reg = <0x10 0x2>;
++      };
++    };
++...
+diff --git a/Documentation/devicetree/bindings/nvmem/sprd-efuse.txt b/Documentation/devicetree/bindings/nvmem/sprd-efuse.txt
+deleted file mode 100644
+index 96b6feec27f0..000000000000
+--- a/Documentation/devicetree/bindings/nvmem/sprd-efuse.txt
++++ /dev/null
+@@ -1,39 +0,0 @@
+-= Spreadtrum eFuse device tree bindings =
+-
+-Required properties:
+-- compatible: Should be "sprd,ums312-efuse".
+-- reg: Specify the address offset of efuse controller.
+-- clock-names: Should be "enable".
+-- clocks: The phandle and specifier referencing the controller's clock.
+-- hwlocks: Reference to a phandle of a hwlock provider node.
+-
+-= Data cells =
+-Are child nodes of eFuse, bindings of which as described in
+-bindings/nvmem/nvmem.txt
+-
+-Example:
+-
+-	ap_efuse: efuse@32240000 {
+-		compatible = "sprd,ums312-efuse";
+-		reg = <0 0x32240000 0 0x10000>;
+-		clock-names = "enable";
+-		hwlocks = <&hwlock 8>;
+-		clocks = <&aonapb_gate CLK_EFUSE_EB>;
+-
+-		/* Data cells */
+-		thermal_calib: calib@10 {
+-			reg = <0x10 0x2>;
+-		};
+-	};
+-
+-= Data consumers =
+-Are device nodes which consume nvmem data cells.
+-
+-Example:
+-
+-	thermal {
+-		...
+-
+-		nvmem-cells = <&thermal_calib>;
+-		nvmem-cell-names = "calibration";
+-	};
+-- 
+2.34.1
+
 
