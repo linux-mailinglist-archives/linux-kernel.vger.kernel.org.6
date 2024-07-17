@@ -1,41 +1,42 @@
-Return-Path: <linux-kernel+bounces-254838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EE4D93385B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:53:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18E9493385C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:54:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ACA3282FAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:53:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AF43B21E07
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F0321103;
-	Wed, 17 Jul 2024 07:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79CE249F9;
+	Wed, 17 Jul 2024 07:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="E00qJGiR"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="K25G2YbH"
 Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD272E644
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B371CA80
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721202815; cv=none; b=Ll2H1fatgTu4aF7jGu8q7J8JHgRZ58S/rNDlwwdpia2bkceJacvRTWwb4EB3PHweivd+pPSZM2hcnPiVN2C9/hdp676dQsuMp/HqChMkmnvz6+ZEqFH4J18Nv3Xw5DK4Pbqsz7JD7WbqvqqmClbOKMxeKmLXZgK1cp2WTFmk4BY=
+	t=1721202817; cv=none; b=h7+kcAJj4RtcGSaS2o5eM5guEEAm3HvIneKfrNJzH3YjfEL9k1iBCMRiGVjCS29ScOmR10pCFYJOLeD4QAdITDAq2Tl0Edve+Uj+sjAgRNyavanBmk7QRyM2lL8Mw7My4WY2RjJHQKhtScer8LH2n972EgAdYe6UI/qGk0E7eyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721202815; c=relaxed/simple;
-	bh=uJTaoRmglprtmgw++MqB+M+q+C56qX542mPheG/qdtA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IlQfmzsmq5/WgOF7jCEtovO2Dk8CiijYQAZg2pUq6VSu4Alurrvv5LUJqN+tvlDxLEF8ZnKslW/aNI8b4zTgMXcVxi2lkX6KcKvgskq8q2vlG0wB47yNsMsCX7MBNOPR+z6DlXXAodO+2siFOyPaXWsHZba9D+PammCf8RlHUGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=E00qJGiR; arc=none smtp.client-ip=45.254.50.219
+	s=arc-20240116; t=1721202817; c=relaxed/simple;
+	bh=8oyO9EzSTeS1mN1RBQpt2fmbrJfUKWkg3WXEAVWW8X8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cHhZHmuiD+t86jrCYmBfSZ5KuUdYTjwx7nIHtlyt0lh81/fz17uxujHvtpFfXIenEmJTHnXXy11L4L/fqcRut3xgE5UpkHvMbyiXgUx8JHlpGPokSpBXRGyC38bAPA6UQbkcHw+XZk1W/6LZHTBieKSKKwtb2jIpKIC1POH5Seo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=K25G2YbH; arc=none smtp.client-ip=45.254.50.219
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=WISCA
-	Ym5x4Ne2pkT2yciOq9HDZYc5vds8WQqUH95bt0=; b=E00qJGiR9bTqb7ouWngPC
-	5yOGXdj0quIZJZIzrS/L+VDkoik29RIiWy+uZS+PFdGERH0r0tSXIBwBvX2MSw4x
-	kkTrJKe5nVdd3KpFEVh5NajCkrYwgTAVA7e7zuDXsIaHtkYBLL5TexL20aDIwPus
-	Kxg/5nDoAD8/zAead8nJWc=
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=wQxVK
+	OZRWZH4KWipiQnJFFf46L7FDmYSv688Dpn970w=; b=K25G2YbHuJS9M3WyLTE0V
+	XJD8u0v6WMTYuT48wNm/EgbQqZMWYI2edYTZxtnbnEmC/M7asDbRhjjLciM4OGh9
+	AU6x81b1Eumfy+YWqn/aemAFebLikHU5SeRM8fmd6IFaHbg5Oh51/ollczPsqb4T
+	0Yxw2XAhJ8Hxi47UGZ+Kbw=
 Received: from localhost.localdomain (unknown [223.166.237.119])
-	by gzga-smtp-mta-g0-5 (Coremail) with SMTP id _____wD3f3ddeJdmTsbxAA--.36565S2;
-	Wed, 17 Jul 2024 15:53:02 +0800 (CST)
+	by gzga-smtp-mta-g0-5 (Coremail) with SMTP id _____wD3f3ddeJdmTsbxAA--.36565S3;
+	Wed, 17 Jul 2024 15:53:08 +0800 (CST)
 From: Ping Gan <jacky_gam_2001@163.com>
 To: hare@suse.de,
 	sagi@grimberg.me,
@@ -45,10 +46,12 @@ To: hare@suse.de,
 	linux-kernel@vger.kernel.org
 Cc: ping.gan@dell.com,
 	Ping Gan <jacky_gam_2001@163.com>
-Subject: [PATCH 0/2] nvmet: support unbound_wq for RDMA and TCP
-Date: Wed, 17 Jul 2024 15:52:06 +0800
-Message-Id: <20240717075208.87324-1-jacky_gam_2001@163.com>
+Subject: [PATCH 1/2] nvmet-tcp: add unbound_wq support for nvmet-tcp
+Date: Wed, 17 Jul 2024 15:52:07 +0800
+Message-Id: <20240717075208.87324-2-jacky_gam_2001@163.com>
 X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20240717075208.87324-1-jacky_gam_2001@163.com>
+References: <20240717075208.87324-1-jacky_gam_2001@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,32 +59,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3f3ddeJdmTsbxAA--.36565S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Xr4kCry8tw47Zw48Xw18Krg_yoWfXwc_C3
-	93urykG3WxuF4UtFZ2gF1FyryfKFs8X34kta18tF1DKryrZr1UCrsYkr95u348ZF48Aw1D
-	XwnxAw1Ik3sIvjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRi1xR7UUUUU==
-X-CM-SenderInfo: 5mdfy55bjdzsisqqiqqrwthudrp/1tbiSBgfKWXAmTHxfwABsk
+X-CM-TRANSID:_____wD3f3ddeJdmTsbxAA--.36565S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Cry3uw15urW8Ar1UJw1fJFb_yoW8Gry3pa
+	nxtF15Jr43J3yDKa1rCr4DXrWfCa17C3srua1xCw45Aw1FqFZ5AFyqqF1Y9r47ury8Zr12
+	kFyDZr1UWF1jy37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zinYFJUUUUU=
+X-CM-SenderInfo: 5mdfy55bjdzsisqqiqqrwthudrp/1tbiSBgfKWXAmTHxfwADsm
 
-hen running nvmf on SMP platform, current nvme target's RDMA and
-TCP use bounded workqueue to handle IO, but when there is other high
-workload on the system(eg: kubernetes), the competition between the 
-bounded kworker and other workload is very radical. To decrease the
-resource race of OS among them, this patchset will enable unbounded
-workqueue for nvmet-rdma and nvmet-tcp; besides that, it can also
-get some performance improvement. And this patchset bases on previous
-discussion from below session.
+To define a module parameter use_unbound_wq to enable unbound
+workqueue to handle TCP's IO.
 
-https://lore.kernel.org/lkml/20240717005318.109027-1-jacky_gam_2001@163.com/
+Signed-off-by: jackygam2001 <jacky_gam_2001@163.com>
+---
+ drivers/nvme/target/tcp.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-Ping Gan (2):
-  nvmet-tcp: add unbound_wq support for nvmet-tcp
-  nvmet-rdma:  add unbound_wq support for nvmet-rdma
-
- drivers/nvme/target/rdma.c | 10 +++++++++-
- drivers/nvme/target/tcp.c  | 12 ++++++++++--
- 2 files changed, 19 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/nvme/target/tcp.c b/drivers/nvme/target/tcp.c
+index 5bff0d5464d1..f71d56843e1a 100644
+--- a/drivers/nvme/target/tcp.c
++++ b/drivers/nvme/target/tcp.c
+@@ -73,6 +73,10 @@ device_param_cb(idle_poll_period_usecs, &set_param_ops,
+ MODULE_PARM_DESC(idle_poll_period_usecs,
+ 		"nvmet tcp io_work poll till idle time period in usecs: Default 0");
+ 
++static bool use_unbound_wq;
++module_param(use_unbound_wq, bool, 0444);
++MODULE_PARM_DESC(use_unbound_wq, "use unbound workqueue to handle IO request: Default false");
++
+ #ifdef CONFIG_NVME_TARGET_TCP_TLS
+ /*
+  * TLS handshake timeout
+@@ -2196,9 +2200,13 @@ static const struct nvmet_fabrics_ops nvmet_tcp_ops = {
+ static int __init nvmet_tcp_init(void)
+ {
+ 	int ret;
++	unsigned int flags;
++
++	flags = WQ_MEM_RECLAIM | WQ_HIGHPRI;
++	if (use_unbound_wq)
++		flags |= (WQ_UNBOUND | WQ_SYSFS);
+ 
+-	nvmet_tcp_wq = alloc_workqueue("nvmet_tcp_wq",
+-				WQ_MEM_RECLAIM | WQ_HIGHPRI, 0);
++	nvmet_tcp_wq = alloc_workqueue("nvmet_tcp_wq", flags, 0);
+ 	if (!nvmet_tcp_wq)
+ 		return -ENOMEM;
+ 
 -- 
 2.26.2
 
