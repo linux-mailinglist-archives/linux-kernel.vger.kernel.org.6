@@ -1,147 +1,138 @@
-Return-Path: <linux-kernel+bounces-255783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E7C993451A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:43:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3D4F93451D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1972D1F21879
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 23:43:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F9A0B209A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 23:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E9B59167;
-	Wed, 17 Jul 2024 23:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83E76BFB5;
+	Wed, 17 Jul 2024 23:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mZxRf+ku"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lWviJCHX"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FA948CCD;
-	Wed, 17 Jul 2024 23:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A012B9D2;
+	Wed, 17 Jul 2024 23:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721259801; cv=none; b=QidCxD26tq7FkcxyXPShDRBBpMX3QcaC18+teAbxRaKsQKlgUg/aQKTzrZt+J7IM6jImZckRNdSEDPqpkV47ruo+M9dypgkwCcJBCOlPtwvoU56nIsrKC858Pxknml6yuj61pCACKE6PqUMnLgb+Y8tDQY5B2IfFYTLl9vsReHc=
+	t=1721259956; cv=none; b=GdpLTeKHpkV/SGa5mNo6w2AeX/w5V5WTHyvPlG/4wwTVxilspTRSRkZg/9ES/QZodJkmzW1Gr6KpG2OPoQM6iycs6U8N7KTZ9tbtOYV+lT+MboHnFXJBGQv6W+qj7V71SOYG/btpeLIqT07D/EaAfO6ZQ9kGscL34nD/KAHkM/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721259801; c=relaxed/simple;
-	bh=0SzqE6acgChptScakbVHZAGE65kPCaxYYa36nc5MtF0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Iu7T/CbVIMRQhESD5GcCXqTLf9vSI/mD2Ng5kR37guxFnsLniEK+Q677mD3nb0pju9ERd1uRCCdkr/su45PVtbVi6yhf43wyn2kQc/XZP5VxhR/leGCdIl24/ECcmfNdg1qRswLhRZrZ60nhAirv009WS6AY9TiI+pTChCA29ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mZxRf+ku; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19B61C2BD10;
-	Wed, 17 Jul 2024 23:43:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721259800;
-	bh=0SzqE6acgChptScakbVHZAGE65kPCaxYYa36nc5MtF0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mZxRf+ku72/5+0Ss1CsbzU8f5+EnZcYo6kPyRsA/FGKPCLlWx1rTjlXcSORXsYDEU
-	 P/PUC94hPfK56AdsaJjpjrDaO4ZivMqyMadaOWjNJ8TzAIUO03AOT+br3Ouey1SmYm
-	 Pcvpz+lB1qA9sg2x/kS/Wa+cowo16YAiaXdrSxBL463HjEMsUETerp4GeLdnOjvh2x
-	 ensqj+AlNzia/H0EuHrW4/2xe/U4ZaS3zO97TIY5oS0fI4WsyjX09dYND8NhlXM6iA
-	 7hP3gXlCGsqiG7IA3nSkgLECVluZ26aci+26ic9oEu8byJUkfVDNxEZGj8IedDzp6n
-	 alTWHeegfaaNg==
-Message-ID: <daf86dec-9c35-49a5-ab81-ee667074f503@kernel.org>
-Date: Thu, 18 Jul 2024 08:43:16 +0900
+	s=arc-20240116; t=1721259956; c=relaxed/simple;
+	bh=bEE7jrhRvIhDs4BUi8JQGINZgPgShvPL6adGnRB8/pE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=imHFGzu6hm6xuvy7n4vZaVWzV7yhRfuG2O+BLKlOwRPbfNDE2H/ty3oA/mOERUObphxxdoewUSiGvT2pExcpBIZK/meRzrEA6Px7wcKGxTHKiUyeaTu+Ke5eBJCrrnxe4L0OOIt0Hbw2yMy+EHPow89cb6+xy4W9VPEn09Icea0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lWviJCHX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46HFnsJ6005577;
+	Wed, 17 Jul 2024 23:45:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=OXNvBF64Nz59ICjneZvIeP
+	MOzayqGkeJCmGYYUPvj2k=; b=lWviJCHX956Vr8aSyaAWe3iW+/tlnf+9FhHCPW
+	Of0yFUH7uAT872AYlxpcxhwZJS/8w960fZUX2+iobDE/A0aFZqsU0KIMhrggPr1A
+	DRYweSytAJb3sNSzoKO9az7HnAlr8eqxjFZS5/9HF87V2YJThsD8UyJEAKljYtca
+	1nruc5Ye3wA+y9N3KZnUxl1zJEPn/bhMsZWZcIOLqTNclPF8snvbVogFrsOrp6gV
+	q2P7H4j6tFxzoj9T/EHC/teCsBrRx2ksCrww8sPkWmghv0CwevWq31VQgScXCSJE
+	pMQ9kS8RD7u/tQoGxWdQYG8aD1EgHeDcssIk+P8tH7YOkDgw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfukvuv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 23:45:45 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46HNjihC008226
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 23:45:44 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 17 Jul
+ 2024 16:45:44 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Wed, 17 Jul 2024 16:45:36 -0700
+Subject: [PATCH] RDMA/rds: Remove duplicate MODULE_LICENSE() from ib.c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] ata: ahci_imx: Enlarge RX water mark for i.MX8QM
- SATA
-To: Niklas Cassel <cassel@kernel.org>, Richard Zhu <hongxing.zhu@nxp.com>
-Cc: tj@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
- linux-ide@vger.kernel.org, stable@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
- kernel@pengutronix.de
-References: <1721099895-26098-1-git-send-email-hongxing.zhu@nxp.com>
- <1721099895-26098-4-git-send-email-hongxing.zhu@nxp.com>
- <ZpgKxwziGXqNYLfc@ryzen.lan>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <ZpgKxwziGXqNYLfc@ryzen.lan>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20240717-ml-net-rds-rdma-v1-1-5cc471a5e20f@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAJ9XmGYC/x3MMQ7CMAyF4atUnrGUVkCAqyAGJzXUUhOQXVCkq
+ nfHMLzhG96/grEKG1y6FZQ/YvKsjn7XQZ6oPhhldMMQhn2IfcQyY+UFdTRfIaQcj+HEh3NOAfz
+ 1Ur5L+xevN3ciY0xKNU+/ziz13bzQFixkCyts2xcr0ePUhQAAAA==
+To: Allison Henderson <allison.henderson@oracle.com>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <rds-devel@oss.oracle.com>, <linux-kernel@vger.kernel.org>,
+        Jeff Johnson
+	<quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: gEtE7ZsbICbKLd3i4V3rys0uyPF3ufbq
+X-Proofpoint-ORIG-GUID: gEtE7ZsbICbKLd3i4V3rys0uyPF3ufbq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-17_18,2024-07-17_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=999
+ suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0
+ lowpriorityscore=0 clxscore=1011 mlxscore=0 malwarescore=0 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407170180
 
-On 7/18/24 3:17 AM, Niklas Cassel wrote:
-> Hello Richard,
-> 
-> On Tue, Jul 16, 2024 at 11:18:14AM +0800, Richard Zhu wrote:
->> The RXWM(RxWaterMark) sets the minimum number of free location within
->> the RX FIFO before the watermark is exceeded which in turn will cause
->> the Transport Layer to instruct the Link Layer to transmit HOLDS to
->> the transmitting end.
->>
->> Based on the default RXWM value 0x20, RX FIFO overflow might be
->> observed on i.MX8QM MEK board, when some Gen3 SATA disks are used.
->>
->> The FIFO overflow will result in CRC error, internal error and protocol
->> error, then the SATA link is not stable anymore.
->>
->> To fix this issue, enlarge RX water mark setting from 0x20 to 0x29.
->>
->> Fixes: 027fa4dee935 ("ahci: imx: add the imx8qm ahci sata support")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
->> ---
-> 
-> Looking at the title of this patch:
-> "ahci_imx: Enlarge RX water mark for i.MX8QM SATA"
-> 
-> This suggests that this fix is only needed for i.MX8QM.
-> 
-> Support for i.MX8QM was added to the device tree binding in patch 1/4 in
-> this series.
-> 
-> Doing a git grep in linux-next gives the following result:
-> 
-> $ git grep fsl,imx8qm-ahci linux-next/master
-> linux-next/master:drivers/ata/ahci_imx.c:       { .compatible = "fsl,imx8qm-ahci", .data = (void *)AHCI_IMX8QM },
-> 
-> 
-> This is interesting for two reasons:
-> 1) drivers/ata/ahci_imx.c already has support for this compatible string,
-> even though this compatible string does not exist in any DT binding
-> (in linux-next).
-> 
-> 2) There is not a single in-tree device tree (DTS) that uses this compatible
-> string ....and we do not care about out of tree device trees.
-> 
-> 
-> Considering 2) I do NOT think that we should have
-> Cc: stable@vger.kernel.org on this... we shouldn't just backport random driver
-> fixes is there are no in-tree users of this compatible string.
-> 
-> So I suggest that:
-> -Drop the CC: stable.
-> -I actually think that it is better that you drop the Fixes tag too, because if
-> you keep it, the stable bots will automatically select this for backporting,
-> and then we will need to reply and say that this should not be backported, so
-> better to avoid adding the Fixes tag in the first place.
-> (Since there are no users of this compatible string, there is nothing that is
-> broken, so there is nothing to fix.)
-> 
-> 
-> Damien, when applying this patch, I suggest that we apply it to for-6.12
-> together with the rest of the series (instead of applying it to
-> for-6.11-fixes).
+Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
+description is missing"), a module without a MODULE_DESCRIPTION() will
+result in a warning with make W=1. One strategy for identifying such
+modules is to search for files which have a MODULE_LICENSE() but which
+do not have a MODULE_DESCRIPTION(). net/rds/ib.c is one such file. And
+its product, ib.o, is a component of the rds_rdma module via:
 
-It was me who asked for the Fixes and Cc-stable tags, but I had not checked
-that the compatible is not being used in any DT. So good catch.
-I will apply everything to for-6.12.
+obj-$(CONFIG_RDS_RDMA) += rds_rdma.o
+rds_rdma-y :=	rdma_transport.o \
+			ib.o ib_cm.o ib_recv.o ib_ring.o ib_send.o ib_stats.o \
+			ib_sysctl.o ib_rdma.o ib_frmr.o
 
-> 
-> 
-> Kind regards,
-> Niklas
+Interestingly, when CONFIG_RDS_RDMA=m, the missing description warning
+is NOT emitted by modpost. This is because rdma_transport.c contains a
+MODULE_DESCRIPTION() that describes this module. And in addition,
+rdma_transport.c contains a MODULE_LICENSE() for this module.
 
--- 
-Damien Le Moal
-Western Digital Research
+Since rdma_transport.c already contains both the MODULE_LICENSE() and
+the MODULE_DESCRIPTION() for the rds_rdma module, remove the duplicate
+MODULE_LICENSE() from ib.c
+
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ net/rds/ib.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/net/rds/ib.c b/net/rds/ib.c
+index 9826fe7f9d00..4a33f911673b 100644
+--- a/net/rds/ib.c
++++ b/net/rds/ib.c
+@@ -603,5 +603,3 @@ int rds_ib_init(void)
+ out:
+ 	return ret;
+ }
+-
+-MODULE_LICENSE("GPL");
+
+---
+base-commit: 797012914d2d031430268fe512af0ccd7d8e46ef
+change-id: 20240717-ml-net-rds-rdma-ac7608e59cb0
 
 
