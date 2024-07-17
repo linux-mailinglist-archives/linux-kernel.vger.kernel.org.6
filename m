@@ -1,174 +1,166 @@
-Return-Path: <linux-kernel+bounces-255442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 938F79340C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:49:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5B509340C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F2F1281D1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:49:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCB091C21A54
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93AD5181D1F;
-	Wed, 17 Jul 2024 16:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gsmw6VHV"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34153181D16;
+	Wed, 17 Jul 2024 16:50:11 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD74C17E8FA;
-	Wed, 17 Jul 2024 16:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B50181CE9
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 16:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721234951; cv=none; b=kbdlpIOr9lg24IxZsilU15bg3R1rLPJbo2Wf5vMUVPdL6SOIpaxMrXttXO+/VaSt6R9N1B/rhiWo5z5azA6oBm0aPkJaX0CYa+RUaMfMF1qV2Nwhvgmxg6K5SoVE8qhjPrEDf2MQwuQThBnSnPQGTi1BbbMpNYR3Iqzg7EzneHk=
+	t=1721235010; cv=none; b=UjnJ4xx3SCCQk4sw5gIJxF3H/0/2yBZ1Bx3uujdLn2iKfEMDMSRLi3/bF8hnBwEQ/aJJEv4qIdAwnFnIkMC0vzdxRdoYIlvKDUfpaTM5FQ9Mhn9caZjy/m3/bAbmeiZfgjXFTCc2BkzVcA/WIlh/21i/iqOfqgAp/+K9t4JdNt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721234951; c=relaxed/simple;
-	bh=/GcYn2xIOIxtMHa2a538mtKlhzi2C+ABgdKiJAb2UUQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rRnyYCZnW9IKiMY7lbFzJ24xfN0t+3HL9LFFZ1IhfYiNFoUx1TSQRJrRyG5xUOJUHmo76BECBFG2j28WwzGjB1tgatw1U5Kjffm18uxHWbjGVTbTu7LZ/cd/EsT30N/02R3IYDkv0PkvAzkq7pc/gtKCOr5gxffkMiykoQtT58M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gsmw6VHV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53E9DC2BD10;
-	Wed, 17 Jul 2024 16:49:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721234951;
-	bh=/GcYn2xIOIxtMHa2a538mtKlhzi2C+ABgdKiJAb2UUQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gsmw6VHVyAfb9umtgvpXXnze76ZyOluV6/YdVo9a5bPgHdj20MuhLiOEQguZ1FcJG
-	 t+Hv3eqfsUEs3C2d0iC4oz9hUQJGxnPt3isA/QVfONZIwi3cnX+DMgLZxYd85dk9Gf
-	 fBc2vwOXGiFTkZNZefEVk6j2LFb4LH6HzELPjGo6viiZ9qWHKdsLZulY/uugu8b7Vl
-	 t6GiHFBjYotHSbRuJi7mPkHI/EgG3vtHt/Mii4I8rFmGmlWoxyyObZwnlxLO+lledq
-	 UQHXVD6MxVjNMDsVbyzMWPcDb9RCsFLn9pnz5gC3zpAjpOzP0ky0yk4h3z32bNa+JI
-	 eTNHHdwlbco+A==
-Date: Wed, 17 Jul 2024 09:49:10 -0700
-From: Kees Cook <kees@kernel.org>
-To: David Gow <davidgow@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Brendan Higgins <brendanhiggins@google.com>,
-	Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com
-Subject: Re: KUnit file naming conventions (was Re: [GIT PULL] execve updates
- for v6.11-rc1)
-Message-ID: <202407170944.FFC1A804@keescook>
-References: <202407150921.BD2B798C6A@keescook>
- <CAHk-=wgim6pNiGTBMhP8Kd3tsB7_JTAuvNJ=XYd3wPvvk=OHog@mail.gmail.com>
- <202407161505.A5AE57869@keescook>
- <CABVgOS=pUdWb6NDHszuwb1HYws4a1-b1UmN=i8U_ED7HbDT0mg@mail.gmail.com>
+	s=arc-20240116; t=1721235010; c=relaxed/simple;
+	bh=FOotqtbfuJ/4ufY4YyEJ8lg73RpNxOQMJdow8HqdcSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=X8o/azb+Lo3ybktYEkNn5nLa+QmGgEwr/LyDiq8t/j6WsevZmNRIyLz8Mal8D/BohhL01bsEVSQErTtyyr5P2GQgKmi5vJPnVIzv3ucnT6+6Fx4cwrrb0V0zNYHsbln5RsJdF/VqOrKv369da8s4BqvOerchvOthBFZ2edzrbSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBEC4C2BD10;
+	Wed, 17 Jul 2024 16:49:36 +0000 (UTC)
+Date: Wed, 17 Jul 2024 12:49:27 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Mark Rutland <mark.rutland@arm.com>, Clark Williams <williams@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Juri Lelli <juri.lelli@redhat.com>,
+ Kate Stewart <kstewart@linuxfoundation.org>, "Luis Claudio R. Goncalves"
+ <lclaudio@uudg.org>, John Kacur <jkacur@redhat.com>
+Subject: [GIT PULL] tracing: Update MAINTAINERS file
+Message-ID: <20240717124927.6b4c1bb1@rorschach.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABVgOS=pUdWb6NDHszuwb1HYws4a1-b1UmN=i8U_ED7HbDT0mg@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 17, 2024 at 02:28:15PM +0800, David Gow wrote:
-> On Wed, 17 Jul 2024 at 11:53, Kees Cook <kees@kernel.org> wrote:
-> >
-> > On Tue, Jul 16, 2024 at 01:10:41PM -0700, Linus Torvalds wrote:
-> > > On Mon, 15 Jul 2024 at 09:21, Kees Cook <kees@kernel.org> wrote:
-> > > >
-> > > >  fs/exec.c                                   |  49 ++++++++--
-> > > >  fs/exec_test.c                              | 141 ++++++++++++++++++++++++++++
-> > >
-> > > I've pulled this, but *PLEASE* don't do this.
-> > >
-> > > This screws up my workflow of just using tab-completion for filenames.
-> > > As a result, I absolutely abhor anybody who uses the same base-name
-> > > for different things.
-> > >
-> > > No, this is not the first time it happens, and it won't be the last.
-> > > And we had that same horrific pattern for fs/binfmt_elf_test.c from
-> > > before, and I didn't notice because it's not a core file to me, and I
-> > > seldom actually edit it.
-> > >
-> > > I would suggest that people use the patterns from lib/, which is
-> > > admittedly a bit schizophrenic in that you can either use
-> > > "lib/kunit/*.c" (probably preferred) or "lib/test_xyz.c".
-> > >
-> > > (Other subsystems use a "tests" subdirectory, so we do have a lot of
-> > > different ways to deal with this).
-> > >
-> > > Any of those models will keep the unit testing parts clearly separate,
-> > > and not mess up basic command line workflows.
-> > >
-> > > But do *not* use this "*_test.c" naming model. It's the worst of all
-> > > possible worlds.
-> > >
-> > > Please?
-> >
-> > Oh, sure, no problem! I have no attachment to this convention at all;
-> > I was trying to follow the Kunit docs:
-> > https://docs.kernel.org/dev-tools/kunit/style.html#test-file-and-module-names
-> >
-> > If I look at the existing naming, it's pretty scattered:
-> >
-> > $ git grep '^static struct kunit_suite\b' | cut -d: -f1 | sort -u
-> >
-> > /test/*          7
-> > /tests/*        47
-> > *-test.[ch]     27
-> > *_test.[ch]     27
-> > test-*.c         1
-> > test_*.c        10
-> > *-kunit.c        1
-> > *_kunit.c       17
-> > kunit-*.c        2
-> > kunit_*.c        1
-> >
-> > Should we go with "put it all under a 'tests' subdirectory" ?
-> 
-> I think that's probably best overall. I still think it isn't quite as
-> elegant as the suffix, but I'm happy to sacrifice theoretical elegance
-> for a practical reason like this.
 
-Okay, I will send a follow-up patch to rename things.
 
-> > So for fs/exec_test.c and fs/binfmt_elf_test.c, perhaps fs/tests/exec.c
-> > and fs/tests/binfmt_elf.c respectively?
-> 
-> We might want to use both the directory and the suffix, e.g.
-> fs/tests/exec_test.c, because:
-> - it makes sure the module name contains 'test', so it's obvious that
-> it's a test and it is less likely to conflict.
-> - this matches what drm is doing, and they've got the most tests thus far; and
-> - we won't be renaming the file, just moving it, so it's less likely
-> to cause friction with workflows, etc.
-> 
-> On the other hand, it has few disadvantages:
-> - we end up with the same prefix issue with module names (e.g., for
-> those who have tab completion for modprobe);
-> - the module name can be changed in the Makefile anyway; and
-> - it's ugly.
-> 
-> I'm leaning towards tolerating the ugliness and keeping _test suffixes
-> on the files, at least for existing tests, but could be persuaded
-> otherwise. I'd even grow to accept a test_ prefix if I had to, though
-> that'd make my tab completion terribly boring.
+Linus,
 
-I'd been using _test for #included files, and _kunit for kunit modules,
-but perhaps this isn't a needed distinction?
+tracing: Update of MAINTAINERS and CREDITS file
 
-> > And for the lib/*_kunit.c files, use lib/tests/*.c ?
-> 
-> Sounds good to me. I'd rather not put them in lib/kunit unless they're
-> actively testing KUnit itself (which, under this scheme, would want to
-> be in lib/kunit/tests).
+- Update Daniel Bristot de Oliveira's entry in MAINTAINERS with respect to
+  his tracing code.
 
-Right -- I didn't want to confuse things between kunit itself and kunit
-tests, so I too prefer the "tests" directory name.
+- Add more credits to him in CREDITS file and move his entry to be
+  alphabetical.
 
-> > Then we can update the docs, etc.
-> 
-> Even if we don't rename existing tests, we'll probably want to update
-> these just to avoid making the problem worse.
+This had a dependency on tip/sched tree, so I added it on top of the
+commit that it depended on, and waited until it made it into your tree
+before submitting this.
 
-Sounds good.
+Please pull the latest trace-v6.11-2 tree, which can be found at:
 
--- 
-Kees Cook
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace-v6.11-2
+
+Tag SHA1: 082c8d2e632f97408207ab5215a70e71269e9e86
+Head SHA1: 5f7c72df1ba6ba00ee163ba4049c785ac5930759
+
+
+Steven Rostedt (Google) (1):
+      tracing: Update MAINTAINERS file
+
+----
+ CREDITS     | 10 +++++++---
+ MAINTAINERS |  3 ---
+ 2 files changed, 7 insertions(+), 6 deletions(-)
+---------------------------
+commit 5f7c72df1ba6ba00ee163ba4049c785ac5930759
+Author: Steven Rostedt (Google) <rostedt@goodmis.org>
+Date:   Mon Jul 15 14:47:45 2024 -0400
+
+    tracing: Update MAINTAINERS file
+    
+    Gone but never forgotten.
+    
+    [ Also moved Daniel's name to be consistent with the alphabetical order ]
+    
+    Cc: Mark Rutland <mark.rutland@arm.com>
+    Cc: Ingo Molnar <mingo@kernel.org>
+    Cc: Peter Zijlstra <peterz@infradead.org>
+    Cc: Thomas Gleixner <tglx@linutronix.de>
+    Cc: Juri Lelli <juri.lelli@redhat.com>
+    Cc: Kate Stewart <kstewart@linuxfoundation.org>
+    Cc: Clark Williams <williams@redhat.com>
+    Cc: "Luis Claudio R. Goncalves" <lclaudio@uudg.org>
+    Cc: John Kacur <jkacur@redhat.com>
+    Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+    Link: https://lore.kernel.org/20240715144745.51d887a9@rorschach.local.home
+    Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+    Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+diff --git a/CREDITS b/CREDITS
+index 88c4c08cb613..d7798910e99f 100644
+--- a/CREDITS
++++ b/CREDITS
+@@ -271,9 +271,6 @@ D: Driver for WaveFront soundcards (Turtle Beach Maui, Tropez, Tropez+)
+ D: Various bugfixes and changes to sound drivers
+ S: USA
+ 
+-N: Daniel Bristot de Oliveira
+-D: Scheduler contributions, notably: SCHED_DEADLINE
+-
+ N: Carlos Henrique Bauer
+ E: chbauer@acm.org
+ E: bauer@atlas.unisinos.br
+@@ -534,6 +531,13 @@ S: Kopmansg 2
+ S: 411 13  Goteborg
+ S: Sweden
+ 
++N: Daniel Bristot de Oliveira
++D: Scheduler contributions, notably: SCHED_DEADLINE
++D: Real-time Linux Analysis
++D: Runtime Verification
++D: OS Noise and Latency Tracers
++S: Brazil and Italy
++
+ N: Paul Bristow
+ E: paul@paulbristow.net
+ W: https://paulbristow.net/linux/idefloppy.html
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2e1b8bbacb5e..0b7e4cd4ffd7 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -18895,7 +18895,6 @@ F:	include/uapi/linux/rtc.h
+ F:	tools/testing/selftests/rtc/
+ 
+ Real-time Linux Analysis (RTLA) tools
+-M:	Daniel Bristot de Oliveira <bristot@kernel.org>
+ M:	Steven Rostedt <rostedt@goodmis.org>
+ L:	linux-trace-kernel@vger.kernel.org
+ S:	Maintained
+@@ -19529,7 +19528,6 @@ S:	Maintained
+ F:	drivers/infiniband/ulp/rtrs/
+ 
+ RUNTIME VERIFICATION (RV)
+-M:	Daniel Bristot de Oliveira <bristot@kernel.org>
+ M:	Steven Rostedt <rostedt@goodmis.org>
+ L:	linux-trace-kernel@vger.kernel.org
+ S:	Maintained
+@@ -22806,7 +22804,6 @@ F:	kernel/trace/trace_mmiotrace.c
+ 
+ TRACING OS NOISE / LATENCY TRACERS
+ M:	Steven Rostedt <rostedt@goodmis.org>
+-M:	Daniel Bristot de Oliveira <bristot@kernel.org>
+ S:	Maintained
+ F:	Documentation/trace/hwlat_detector.rst
+ F:	Documentation/trace/osnoise-tracer.rst
 
