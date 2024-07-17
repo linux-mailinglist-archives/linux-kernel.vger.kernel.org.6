@@ -1,122 +1,177 @@
-Return-Path: <linux-kernel+bounces-254600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DA2F933542
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 04:04:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BB8A933546
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 04:05:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 212AB1F23395
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 02:04:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37D6C1F232B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 02:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60F24C8D;
-	Wed, 17 Jul 2024 02:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE37E63CB;
+	Wed, 17 Jul 2024 02:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZiAXh4Eg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AtNEV0IK"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E23F1878
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 02:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1E046BF
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 02:05:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721181843; cv=none; b=rvplEHZ0Mo8Qo5SgmKAKDPKFGywooLI3vPkGfF7M4ee0cLO3VbJweSPcD0kfYTbQG9zOKbqERZHg6MUTjrsGQhN1P15SfzeHQ1IxiD/Flz3Kp1aZYwzNm5sX9S08VuXi7gK+KkM9lZirvUQB1e6E8CszNnqfa4/NynxNyGi7DAY=
+	t=1721181910; cv=none; b=tsnwrHmx97Erkgu1+oWSdUA2fi7xDw5wt6Op7PW7JRBhVFWLktjBabfi7lc+SFeXGlOl8yRC5jRqpkQ12SVtaWOIpYuoeSwiorjB9RKkUG1w7lujmVckZeKfgBv0cnxM+dFWsvb5xZU+3m+X0cIOaTx4cy+Embae9RqVDs8o1WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721181843; c=relaxed/simple;
-	bh=J2TYSnXuMgmHXV55U2FUwOT5T3suOiC8VHXSd+3opFo=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=WCc/A7YDndImx4XeFhIudfIfaAxJlbGTtjOTQSog6XNkbQakRmqq+NUao50RJOwAv0lT8e9eTRUwtvibIpIUL0m7A8qGvBsIX5gx4NZLKaYzqPAcoXYXAYll6yQNlwP9Z+/iixAU8LB3B9Tcbrolm0BMa2AIcAbmxUA9w33Twt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZiAXh4Eg; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721181840;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J2TYSnXuMgmHXV55U2FUwOT5T3suOiC8VHXSd+3opFo=;
-	b=ZiAXh4EgUre8dlU3aNpPvHPvmihadVnMYmJJxYG7sY9FbCOAZlq5ccHEH2gTEeJaXsSUcl
-	9cTv5XBrVPBNGvfTcH+SlJlqfymHVHggaHOJ5oGeESympmG6yzRhbESGLu5cUwEiJbK9/g
-	4B4tefaRVZOlSnn2CbMz3FQovS6zhl0=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-620-M7QckEzPM8KKV7ckaBTMIw-1; Tue, 16 Jul 2024 22:03:59 -0400
-X-MC-Unique: M7QckEzPM8KKV7ckaBTMIw-1
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-79f1d37915dso65420385a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 19:03:59 -0700 (PDT)
+	s=arc-20240116; t=1721181910; c=relaxed/simple;
+	bh=2aijUZqRvbSMAZJItNF8/iGr6po/mjEBfQUPAwaBiSk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Vf6ElFuae0vRNzuL8TK16eNk+A7dQu6mxVSF0tXdSadZSi4YoBFgF4kMXwNjFoQyjyWjzTxWG/gvUOPCO3daZNPLUk7bdU4yN4cK9RNp6txy/tTrSnwX/dUZ8hzwCnyC1MPTcPe79ApWxAymj9f6k7Tz0XpURMClbjEaVwGNbUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AtNEV0IK; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fbfb8e5e0cso43494215ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 19:05:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721181908; x=1721786708; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=i8QRegxtd6+FgIkF6diGK9DWIR0YDnVslVz04u7ogUM=;
+        b=AtNEV0IKLNnfPx69+ffB+qmfk5Hu4GcwLj2b+r0/qr2Ivu1egHGr6BE7n3SPIleqT5
+         /Qo8y0qzPWNZJqMkhmPrVidF2ECqHCv+KVZXNnzJ6x3OsrWyKQ9hP8ys5BbiEFjbrVFi
+         xQzr4x+4XhE1STulSctGkDaM19KD57Fl8SoCgnySkijfy7+AZWISQYrcTykQI4Si6Bh9
+         CErAAFQBH8EuBe7KZqSqUsADk4gTW/Krp/G/+67K1wfUbZVFVL4zV5WtuXMR6rwYvUca
+         TtXI6GMJ6oyasb5HP6ETXN2BVsYIjgUgnxrzgrRS+z/yVOJvIrVSJB1tjgKRatQcUHYg
+         0PHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721181838; x=1721786638;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=J2TYSnXuMgmHXV55U2FUwOT5T3suOiC8VHXSd+3opFo=;
-        b=UXaWL7DstIF5TA0+l6VlAJTQakvSvs5fNZt9n8+KtSHl3GLSbNfyiOFCXg5cT+ELYh
-         83yWjYSljIIjdrVCSEc0DGsKkoKGTbwWAd6bSwhf8pZmtdDkhiZYdFx156LZkbPavE3d
-         mKbWBJOJiAWZh65WGME7QmGW3lEyURBUgDL8QFXB9jWv7PfsZqCBayAEzDaWoPQmfm73
-         Xofuu6SFEwq8P9cuQCNr/2K8EsQL7o3FOGaN93v4+STfT4K5/QjoBlmSRQq1QFIKVbsJ
-         vLD9jt9TCKEhwt56LwB3iGbs+XKiT1jYuUrukSRlhBxmWsqcjtj1s6FI5bX2BUC18wjA
-         uFAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXgUZrq6SYiO312/yBRZYDhsTNevgM+BaHUx3QGcIBUYgiiuE/0TtwuQ79/IlULmibzjHsCEnj7OVdWzUH+yWxUu3DU8aZuW1N3fphz
-X-Gm-Message-State: AOJu0YyO27tqk0S0tjxChaUSQ3Li73F/PJbnFTWN3rJsBpYsl6h7MIZP
-	mqKSltSkyvXooNP2H876vWktsBz/9XCDfDTlHr5P0cxY6y00ADBV067Iy1zZ2ZkdBxIjWic0UHU
-	KwoYqF9MfoOGYkqPb7PRQU2hR1gIO2ddbumOFfKNhjzQUuOgfai5qDZF3hVgPBg==
-X-Received: by 2002:a05:620a:294e:b0:79c:ad5:cd7d with SMTP id af79cd13be357-7a186eb6d93mr58859985a.23.1721181838620;
-        Tue, 16 Jul 2024 19:03:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGcZ13hx6uL+FJZ7QUBpqM6DgtsKq91qaLvPtXzJ6FXcTNBbI3o6TNmDVvqg9/yLg3dDIqZUw==
-X-Received: by 2002:a05:620a:294e:b0:79c:ad5:cd7d with SMTP id af79cd13be357-7a186eb6d93mr58856685a.23.1721181838333;
-        Tue, 16 Jul 2024 19:03:58 -0700 (PDT)
-Received: from localhost ([240d:1a:c0d:9f00:523b:c871:32d4:ccd0])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44f5b84715dsm41346281cf.91.2024.07.16.19.03.55
+        d=1e100.net; s=20230601; t=1721181908; x=1721786708;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i8QRegxtd6+FgIkF6diGK9DWIR0YDnVslVz04u7ogUM=;
+        b=eYUWw6PBDu8jLHYbPbVK7dpfYEiQVhuNvKSoMHLM/KJHucaATNqqJF3OmDE3bikpHP
+         frb/PxFBjvQbBP5FmnZTCmUuL8Rqa847Oziib79pfW1i7/Y/YxHDXI7VWCzy94B3cBSH
+         uFVknd0IuXmvReyBKcLrYCE7FdTloXiTI1jZe0Sihggy3dBXgGE0zPNLphWDK0Twj2yq
+         c2SJsH6n7Xj+dswZqnDYLvqQVTfXssqnNGRyLdHArDjt7Hrf5lbLnQK53Z4vPezuSCfS
+         OiwCtcT3PGlwXaNwYbdT5aSEZZaORCCeEXbl4B/i9RHMjJACU79LitnpXxmeA5aHO0SD
+         043Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXSW52BZJY2v6WwEPzo7LUOHUUQsxAflG/3yNNHBpY6syhgDY1GeFELKM4V4LiS3nCYiWwQEV7JuMSwiHRU6nfYwEUMFV4hQSdWDQ6y
+X-Gm-Message-State: AOJu0YzpBECtHlB/kuS4EOs6DLKSvxSgM5LOwKCkmRMraI0db3iY29yC
+	Nvw6xVzzyxx4jfQ3GuZKkGg31klB+DqJypVmwH/Lb3CVjGsVnFGyYmtIREqLL8A=
+X-Google-Smtp-Source: AGHT+IE2KzNPcTth+gMo267NV2Jd+oHot7f6l6m3xb5YAhTJAAFsLZacsEiGAChpR0B8dRp+Zw50zg==
+X-Received: by 2002:a05:6a21:710a:b0:1c2:8e3f:a49 with SMTP id adf61e73a8af0-1c3fdcc006fmr450858637.3.1721181907982;
+        Tue, 16 Jul 2024 19:05:07 -0700 (PDT)
+Received: from localhost ([2804:14d:7e39:8470:4ae3:bddc:48f7:36a0])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2caedbf733esm7067534a91.20.2024.07.16.19.05.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 19:03:57 -0700 (PDT)
-Date: Wed, 17 Jul 2024 11:03:53 +0900 (JST)
-Message-Id: <20240717.110353.1959442391771656779.syoshida@redhat.com>
-To: tung.q.nguyen@endava.com, pabeni@redhat.com
-Cc: jmaloy@redhat.com, ying.xue@windriver.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, netdev@vger.kernel.org,
- tipc-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] tipc: Return non-zero value from
- tipc_udp_addr2str() on error
-From: Shigeru Yoshida <syoshida@redhat.com>
-In-Reply-To: <AS5PR06MB8752EA2E98654061F6A24073DBA22@AS5PR06MB8752.eurprd06.prod.outlook.com>
-References: <AS5PR06MB875264DC53F4C10ACA87D227DBA22@AS5PR06MB8752.eurprd06.prod.outlook.com>
-	<c87f411c-ad0e-4c14-b437-8191db438531@redhat.com>
-	<AS5PR06MB8752EA2E98654061F6A24073DBA22@AS5PR06MB8752.eurprd06.prod.outlook.com>
-X-Mailer: Mew version 6.9 on Emacs 29.4
+        Tue, 16 Jul 2024 19:05:07 -0700 (PDT)
+From: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,  Will Deacon
+ <will@kernel.org>,  Jonathan Corbet <corbet@lwn.net>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Marc Zyngier <maz@kernel.org>,  Oliver Upton
+ <oliver.upton@linux.dev>,  James Morse <james.morse@arm.com>,  Suzuki K
+ Poulose <suzuki.poulose@arm.com>,  Arnd Bergmann <arnd@arndb.de>,  Oleg
+ Nesterov <oleg@redhat.com>,  Eric Biederman <ebiederm@xmission.com>,
+  Shuah Khan <shuah@kernel.org>,  "Rick P. Edgecombe"
+ <rick.p.edgecombe@intel.com>,  Deepak Gupta <debug@rivosinc.com>,  Ard
+ Biesheuvel <ardb@kernel.org>,  Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+  Kees Cook <kees@kernel.org>,  "H.J. Lu" <hjl.tools@gmail.com>,  Paul
+ Walmsley <paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>,
+  Albert Ou <aou@eecs.berkeley.edu>,  Florian Weimer <fweimer@redhat.com>,
+  Christian Brauner <brauner@kernel.org>,  Ross Burton
+ <ross.burton@arm.com>,  linux-arm-kernel@lists.infradead.org,
+  linux-doc@vger.kernel.org,  kvmarm@lists.linux.dev,
+  linux-fsdevel@vger.kernel.org,  linux-arch@vger.kernel.org,
+  linux-mm@kvack.org,  linux-kselftest@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v9 20/39] arm64/gcs: Ensure that new threads have a GCS
+In-Reply-To: <20240625-arm64-gcs-v9-20-0f634469b8f0@kernel.org> (Mark Brown's
+	message of "Tue, 25 Jun 2024 15:57:48 +0100")
+References: <20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org>
+	<20240625-arm64-gcs-v9-20-0f634469b8f0@kernel.org>
+Date: Tue, 16 Jul 2024 23:05:04 -0300
+Message-ID: <87bk2wu627.fsf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain
 
-Hi Tung, Paolo,
+Mark Brown <broonie@kernel.org> writes:
 
-On Tue, 16 Jul 2024 13:29:08 +0000, Tung Nguyen wrote:
->>If only this one returns a negative error, modification to the function pointer callsite will become prone to errors (and stable backports
->>more
->>fragiles)
->>
-> I really do not see any issue with returning a negative error which is the correct thing to do. The function pointer call returns 0 on success, non-zero on error as expected.
-> I do not see "prone-to-error" when it comes to backport.
-> As said, problem is returning 1 in infiniband and ethernet media that should be corrected.
+> diff --git a/arch/arm64/mm/gcs.c b/arch/arm64/mm/gcs.c
+> index b0a67efc522b..4a3ce8e3bdfb 100644
+> --- a/arch/arm64/mm/gcs.c
+> +++ b/arch/arm64/mm/gcs.c
+> @@ -8,6 +8,139 @@
+>  #include <asm/cpufeature.h>
+>  #include <asm/page.h>
+>  
+> +static unsigned long alloc_gcs(unsigned long addr, unsigned long size,
+> +			       unsigned long token_offset, bool set_res_tok)
 
-Thank you for your comments.
+The token_offset and set_res_tok arguments aren't used in this function,
+so they can be removed.
 
-I understand Tung's point. Returning 1 is not descriptive. But I think
-addr2str() functions need consistency for the return value,
-i.e. return 1 on error.
+> +{
+> +	int flags = MAP_ANONYMOUS | MAP_PRIVATE;
+> +	struct mm_struct *mm = current->mm;
+> +	unsigned long mapped_addr, unused;
+> +
+> +	if (addr)
+> +		flags |= MAP_FIXED_NOREPLACE;
+> +
+> +	mmap_write_lock(mm);
+> +	mapped_addr = do_mmap(NULL, addr, size, PROT_READ | PROT_WRITE, flags,
+> +			      VM_SHADOW_STACK, 0, &unused, NULL);
+> +	mmap_write_unlock(mm);
+> +
+> +	return mapped_addr;
+> +}
+> +
+> +static unsigned long gcs_size(unsigned long size)
+> +{
+> +	if (size)
+> +		return PAGE_ALIGN(size);
+> +
+> +	/* Allocate RLIMIT_STACK/2 with limits of PAGE_SIZE..2G */
+> +	size = PAGE_ALIGN(min_t(unsigned long long,
+> +				rlimit(RLIMIT_STACK) / 2, SZ_2G));
+> +	return max(PAGE_SIZE, size);
+> +}
+> +
+> +static bool gcs_consume_token(struct mm_struct *mm, unsigned long user_addr)
+> +{
+> +	u64 expected = GCS_CAP(user_addr);
+> +	u64 val;
+> +	int ret;
+> +
+> +	/* This should really be an atomic cpmxchg.  It is not. */
 
-How about merging this patch for bug fix and consistency, and then
-submitting a cleanup patch for returning -EINVAL on all addr2str()
-functions?
+s/cpmxchg/cmpxchg/
 
-Thanks,
-Shigeru
+The same typo is also in arch/x86/kernel/shstk.c, from the "fork:
+Support shadow stacks in clone3()" patch series.
 
+> +	ret = access_remote_vm(mm, user_addr, &val, sizeof(val),
+> +			       FOLL_FORCE);
+> +	if (ret != sizeof(val))
+> +		return false;
+> +
+> +	if (val != expected)
+> +		return false;
+> +
+> +	val = 0;
+> +	ret = access_remote_vm(mm, user_addr, &val, sizeof(val),
+> +			       FOLL_FORCE | FOLL_WRITE);
+> +	if (ret != sizeof(val))
+> +		return false;
+> +
+> +	return true;
+> +}
+
+-- 
+Thiago
 
