@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-255763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 222339344D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:26:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 714EE9344D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:26:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2EED283628
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:26:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27841284AD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3694455886;
-	Wed, 17 Jul 2024 22:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C705A6CDCC;
+	Wed, 17 Jul 2024 22:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mMdu6Px9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TU1wOqp3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F9A4D8BA;
-	Wed, 17 Jul 2024 22:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDCC664A98;
+	Wed, 17 Jul 2024 22:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721255126; cv=none; b=c4aYJ+kYajbCIaI+7zH2K/2/paqa8N4zJAVhZ9a+LMRI8/7JKGAXNJ7zcfgrN+pQM5e8hkx9bmNHK8L7GzF0aCedTBzK2QfPIcmu812kS7p8qmnlgY5DpZTi9Q3fFdXxu2c38Mas5Dz+HpANv/hZsRnJ4GDozvacFMnylTEnkJs=
+	t=1721255134; cv=none; b=Qoq6sYxtUU7GhmPkc7TkntUYTPUyXCo5a4J81FfF1sqYDhqJbCPFgsxwPFOLLGLNC3Or1MWcz1wuZq6vo0l4hf2xKQSL36KEXO1EwXbcOQnoZ2Nd1w0w70uW+Ww+LiE9g1ZJkA8Mn7MWDnDy9jbcTTeMgTieizpCk9TT0kzyQIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721255126; c=relaxed/simple;
-	bh=tXaAq6dQU0DYi9kqEOhCwnRJo8WINgtfsOO12DLQp/M=;
+	s=arc-20240116; t=1721255134; c=relaxed/simple;
+	bh=q6Wwch18E7w/rj6z/NtXtCgXxoq1cCuw2p/00HKzoug=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=f+si5m+IIj7v2bDJ++F8hp3UvDaL+uqJYgYvDcWoYqas5jHXjjPyO5vaIkxpdCascWYhhKEmuxcq4z+3FLKak1lGP2Q/orGz7RsXGOVTuP6f1jcIBlPfFxQq7zO0Eklizm6JqaJkziAnFu7PrO8ZiA0dlHabIw00mqoykjruaGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mMdu6Px9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDF41C2BD10;
-	Wed, 17 Jul 2024 22:25:21 +0000 (UTC)
+	 MIME-Version; b=WDT8ubF8rwlKGWvQldcNmNhs38yqhCSpLKgj8VvKj98AXb3I4yBiTOG9eDiMXB53RVCqtDJbofkaBltz1MGTdxiLfUuf2FZrug8JsaGVmm+gw1+3RDugAXSYTS0rIUW83zeNyWlmH6x1Pp/L97fm985UjDLLeiMfMZH+lzCb+aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TU1wOqp3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26296C2BD10;
+	Wed, 17 Jul 2024 22:25:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721255126;
-	bh=tXaAq6dQU0DYi9kqEOhCwnRJo8WINgtfsOO12DLQp/M=;
+	s=k20201202; t=1721255134;
+	bh=q6Wwch18E7w/rj6z/NtXtCgXxoq1cCuw2p/00HKzoug=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mMdu6Px9696h6a8IIIg+uuDYZ+vEQr1pGnPPwtF0lQLYRAYhTXlLJOoW0DYmJJvvN
-	 moaMm+DS2g/0CQ2kGqQ2NXanXuFNoEzPrdI76Xm71x/mBW14OxbdVJFcps8FNwPSCU
-	 zLovJ+77wkGbLSB7G+Myp51+g3b5DsDmngzwo2kIy8hI3xZlGlx7G3sac3A0yGz64x
-	 r+DvvOm6Jk/Q0azeEiCwfBil5E84SuVBqFI9/cVeDjvYBMCkqajYnzUH5GpqoHHNVX
-	 tIo7fYDQzBPnaE/KYK6mSQAvA8yqYx0pGFcsHg8U/xSFIvrrGTPBZpA6Qp4OsmB0qR
-	 RECBeGKGKEi5Q==
+	b=TU1wOqp3HqZeeURDJIDlL2o2KRjuK80l5lZxxJkdvvG3NwNrd7Bfoff7B0aGFzSUO
+	 E2PYgrbgVop0vwAH1xUIZSzOwQUQXuJcOkQ2e0qnGu880I6GQa2q0JK21PlRuHiMYA
+	 bOnJfK6tIytukZMFLd9eemS8pkTxH/B11b1tVA4VFj1q0VCg26IbJaXve/ZF+5gN/J
+	 8px0llDgAw7BQZa83S470IIiY4NJcGbTxJeTnDT8EqpKn0I7kxwUJZLihx5V5/z9ld
+	 ydzMi1RLJgJKO3gEZ4pE3ZbtysErMUiU0/ixJ7WnRr5VLOtJ1pXmrqn5bzaafI3LCe
+	 jlP/5Uc8Ghevg==
 From: Danilo Krummrich <dakr@kernel.org>
 To: cl@linux.com,
 	penberg@kernel.org,
@@ -62,9 +62,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	rust-for-linux@vger.kernel.org,
 	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH 1/2] mm: vmalloc: implement vrealloc()
-Date: Thu, 18 Jul 2024 00:24:01 +0200
-Message-ID: <20240717222427.2211-2-dakr@kernel.org>
+Subject: [PATCH 2/2] mm: kvmalloc: align kvrealloc() with krealloc()
+Date: Thu, 18 Jul 2024 00:24:02 +0200
+Message-ID: <20240717222427.2211-3-dakr@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240717222427.2211-1-dakr@kernel.org>
 References: <20240717222427.2211-1-dakr@kernel.org>
@@ -76,49 +76,186 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Implement vrealloc() analogous to krealloc().
+Besides the obvious (and desired) difference between krealloc() and
+kvrealloc(), there is some inconsistency in their function signatures
+and behavior:
 
-Currently, krealloc() requires the caller to pass the size of the
-previous memory allocation, which, instead, should be self-contained.
+ - krealloc() frees the memory when the requested size is zero, whereas
+   kvrealloc() simply returns a pointer to the existing allocation.
 
-We attempt to fix this in a subsequent patch which, in order to do so,
-requires vrealloc().
+ - krealloc() behaves like kmalloc() if a NULL pointer is passed, whereas
+   kvrealloc() does not accept a NULL pointer at all and, if passed,
+   would fault instead.
 
-Besides that, we need realloc() functions for kernel allocators in Rust
-too. With `Vec` or `KVec` respectively, potentially growing (and
-shrinking) data structures are rather common.
+ - krealloc() is self-contained, whereas kvrealloc() relies on the caller
+   to provide the size of the previous allocation.
+
+Inconsistent behavior throughout allocation APIs is error prone, hence make
+kvrealloc() behave like krealloc(), which seems superior in all mentioned
+aspects.
+
+Besides that, implementing kvrealloc() by making use of krealloc() and
+vrealloc() provides oppertunities to grow (and shrink) allocations more
+efficiently. For instance, vrealloc() could be optimized to extend the
+existing allocation if there is enough contiguous space left in the
+virtual address space at the end of the existing allocation.
 
 Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 ---
- include/linux/vmalloc.h |  4 +++
- mm/vmalloc.c            | 58 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 62 insertions(+)
+ arch/powerpc/platforms/pseries/papr-vpd.c |  5 +-
+ drivers/gpu/drm/drm_exec.c                |  3 +-
+ fs/xfs/xfs_log_recover.c                  |  2 +-
+ include/linux/slab.h                      |  3 +-
+ kernel/resource.c                         |  3 +-
+ lib/fortify_kunit.c                       |  3 +-
+ mm/util.c                                 | 72 ++++++++++++++++-------
+ 7 files changed, 56 insertions(+), 35 deletions(-)
 
-diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-index e4a631ec430b..9ff0a8e5c323 100644
---- a/include/linux/vmalloc.h
-+++ b/include/linux/vmalloc.h
-@@ -189,6 +189,10 @@ extern void *__vcalloc_noprof(size_t n, size_t size, gfp_t flags) __alloc_size(1
- extern void *vcalloc_noprof(size_t n, size_t size) __alloc_size(1, 2);
- #define vcalloc(...)		alloc_hooks(vcalloc_noprof(__VA_ARGS__))
+diff --git a/arch/powerpc/platforms/pseries/papr-vpd.c b/arch/powerpc/platforms/pseries/papr-vpd.c
+index c29e85db5f35..1574176e3ffc 100644
+--- a/arch/powerpc/platforms/pseries/papr-vpd.c
++++ b/arch/powerpc/platforms/pseries/papr-vpd.c
+@@ -156,10 +156,7 @@ static int vpd_blob_extend(struct vpd_blob *blob, const char *data, size_t len)
+ 	const char *old_ptr = blob->data;
+ 	char *new_ptr;
  
-+extern void * __must_check vrealloc_noprof(const void *p, size_t size,
-+					   gfp_t flags) __realloc_size(2);
-+#define vrealloc(...)		alloc_hooks(vrealloc_noprof(__VA_ARGS__))
-+
- extern void vfree(const void *addr);
- extern void vfree_atomic(const void *addr);
+-	new_ptr = old_ptr ?
+-		kvrealloc(old_ptr, old_len, new_len, GFP_KERNEL_ACCOUNT) :
+-		kvmalloc(len, GFP_KERNEL_ACCOUNT);
+-
++	new_ptr = kvrealloc(old_ptr, new_len, GFP_KERNEL_ACCOUNT);
+ 	if (!new_ptr)
+ 		return -ENOMEM;
  
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index e34ea860153f..4ec949ac9d9d 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -4036,6 +4036,64 @@ void *vzalloc_node_noprof(unsigned long size, int node)
+diff --git a/drivers/gpu/drm/drm_exec.c b/drivers/gpu/drm/drm_exec.c
+index 2da094bdf8a4..18e366cc4993 100644
+--- a/drivers/gpu/drm/drm_exec.c
++++ b/drivers/gpu/drm/drm_exec.c
+@@ -145,8 +145,7 @@ static int drm_exec_obj_locked(struct drm_exec *exec,
+ 		size_t size = exec->max_objects * sizeof(void *);
+ 		void *tmp;
+ 
+-		tmp = kvrealloc(exec->objects, size, size + PAGE_SIZE,
+-				GFP_KERNEL);
++		tmp = kvrealloc(exec->objects, size + PAGE_SIZE, GFP_KERNEL);
+ 		if (!tmp)
+ 			return -ENOMEM;
+ 
+diff --git a/fs/xfs/xfs_log_recover.c b/fs/xfs/xfs_log_recover.c
+index 4fe627991e86..bbe5ecb2345b 100644
+--- a/fs/xfs/xfs_log_recover.c
++++ b/fs/xfs/xfs_log_recover.c
+@@ -2132,7 +2132,7 @@ xlog_recover_add_to_cont_trans(
+ 	old_ptr = item->ri_buf[item->ri_cnt-1].i_addr;
+ 	old_len = item->ri_buf[item->ri_cnt-1].i_len;
+ 
+-	ptr = kvrealloc(old_ptr, old_len, len + old_len, GFP_KERNEL);
++	ptr = kvrealloc(old_ptr, len + old_len, GFP_KERNEL);
+ 	if (!ptr)
+ 		return -ENOMEM;
+ 	memcpy(&ptr[old_len], dp, len);
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index 7247e217e21b..41ede46d3bd2 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -808,8 +808,7 @@ kvmalloc_array_node_noprof(size_t n, size_t size, gfp_t flags, int node)
+ #define kvcalloc_node(...)			alloc_hooks(kvcalloc_node_noprof(__VA_ARGS__))
+ #define kvcalloc(...)				alloc_hooks(kvcalloc_noprof(__VA_ARGS__))
+ 
+-extern void *kvrealloc_noprof(const void *p, size_t oldsize, size_t newsize, gfp_t flags)
+-		      __realloc_size(3);
++extern void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags) __realloc_size(2);
+ #define kvrealloc(...)				alloc_hooks(kvrealloc_noprof(__VA_ARGS__))
+ 
+ extern void kvfree(const void *addr);
+diff --git a/kernel/resource.c b/kernel/resource.c
+index fcbca39dbc45..46e064c8dce2 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -458,8 +458,7 @@ int walk_system_ram_res_rev(u64 start, u64 end, void *arg,
+ 			/* re-alloc */
+ 			struct resource *rams_new;
+ 
+-			rams_new = kvrealloc(rams, rams_size * sizeof(struct resource),
+-					     (rams_size + 16) * sizeof(struct resource),
++			rams_new = kvrealloc(rams, (rams_size + 16) * sizeof(struct resource),
+ 					     GFP_KERNEL);
+ 			if (!rams_new)
+ 				goto out;
+diff --git a/lib/fortify_kunit.c b/lib/fortify_kunit.c
+index 27ea8bf0252c..acbdc7855100 100644
+--- a/lib/fortify_kunit.c
++++ b/lib/fortify_kunit.c
+@@ -308,8 +308,7 @@ DEFINE_ALLOC_SIZE_TEST_PAIR(vmalloc)
+ 	orig = kvmalloc(prev_size, gfp);				\
+ 	KUNIT_EXPECT_TRUE(test, orig != NULL);				\
+ 	checker(((expected_pages) * PAGE_SIZE) * 2,			\
+-		kvrealloc(orig, prev_size,				\
+-			  ((alloc_pages) * PAGE_SIZE) * 2, gfp),	\
++		kvrealloc(orig, ((alloc_pages) * PAGE_SIZE) * 2, gfp),	\
+ 		kvfree(p));						\
+ } while (0)
+ DEFINE_ALLOC_SIZE_TEST_PAIR(kvmalloc)
+diff --git a/mm/util.c b/mm/util.c
+index 983baf2bd675..6a4eb9c1d9b7 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -598,6 +598,21 @@ unsigned long vm_mmap(struct file *file, unsigned long addr,
  }
- EXPORT_SYMBOL(vzalloc_node_noprof);
+ EXPORT_SYMBOL(vm_mmap);
  
++static gfp_t to_kmalloc_flags(gfp_t flags, size_t size)
++{
++	if (size > PAGE_SIZE) {
++		flags |= __GFP_NOWARN;
++
++		if (!(flags & __GFP_RETRY_MAYFAIL))
++			flags |= __GFP_NORETRY;
++
++		/* nofail semantic is implemented by the vmalloc fallback */
++		flags &= ~__GFP_NOFAIL;
++	}
++
++	return flags;
++}
++
+ /**
+  * kvmalloc_node - attempt to allocate physically contiguous memory, but upon
+  * failure, fall back to non-contiguous (vmalloc) allocation.
+@@ -616,7 +631,6 @@ EXPORT_SYMBOL(vm_mmap);
+  */
+ void *kvmalloc_node_noprof(size_t size, gfp_t flags, int node)
+ {
+-	gfp_t kmalloc_flags = flags;
+ 	void *ret;
+ 
+ 	/*
+@@ -626,17 +640,7 @@ void *kvmalloc_node_noprof(size_t size, gfp_t flags, int node)
+ 	 * However make sure that larger requests are not too disruptive - no
+ 	 * OOM killer and no allocation failure warnings as we have a fallback.
+ 	 */
+-	if (size > PAGE_SIZE) {
+-		kmalloc_flags |= __GFP_NOWARN;
+-
+-		if (!(kmalloc_flags & __GFP_RETRY_MAYFAIL))
+-			kmalloc_flags |= __GFP_NORETRY;
+-
+-		/* nofail semantic is implemented by the vmalloc fallback */
+-		kmalloc_flags &= ~__GFP_NOFAIL;
+-	}
+-
+-	ret = kmalloc_node_noprof(size, kmalloc_flags, node);
++	ret = kmalloc_node_noprof(size, to_kmalloc_flags(flags, size), node);
+ 
+ 	/*
+ 	 * It doesn't really make sense to fallback to vmalloc for sub page
+@@ -704,18 +708,42 @@ void kvfree_sensitive(const void *addr, size_t len)
+ }
+ EXPORT_SYMBOL(kvfree_sensitive);
+ 
+-void *kvrealloc_noprof(const void *p, size_t oldsize, size_t newsize, gfp_t flags)
 +/**
-+ * vrealloc - reallocate virtually contiguous memory; contents remain unchanged
++ * kvrealloc - reallocate memory; contents remain unchanged
 + * @p: object to reallocate memory for
 + * @size: the size to reallocate
 + * @flags: the flags for the page level allocator
@@ -126,58 +263,45 @@ index e34ea860153f..4ec949ac9d9d 100644
 + * The contents of the object pointed to are preserved up to the lesser of the
 + * new and old size (__GFP_ZERO flag is effectively ignored).
 + *
-+ * If @p is %NULL, vrealloc() behaves exactly like vmalloc(). If @size is 0 and
-+ * @p is not a %NULL pointer, the object pointed to is freed.
++ * If @p is %NULL, kvrealloc() behaves exactly like kvmalloc(). If @size is 0
++ * and @p is not a %NULL pointer, the object pointed to is freed.
 + *
-+ * Return: pointer to the allocated memory; %NULL if @size is zero or in case of
-+ *         failure
++ * Return: pointer to the allocated memory or %NULL in case of error
 + */
-+void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
-+{
-+	size_t old_size = 0;
++void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
+ {
+-	void *newp;
 +	void *n;
 +
-+	if (!size) {
-+		vfree(p);
-+		return NULL;
-+	}
++	if (is_vmalloc_addr(p))
++		return vrealloc_noprof(p, size, flags);
 +
-+	if (p) {
-+		struct vm_struct *vm;
-+
-+		vm = find_vm_area(p);
-+		if (unlikely(!vm)) {
-+			WARN(1, "Trying to vrealloc() nonexistent vm area (%p)\n", p);
++	n = krealloc_noprof(p, size, to_kmalloc_flags(flags, size));
++	if (!n) {
++		/* We failed to krealloc(), fall back to kvmalloc(). */
++		n = kvmalloc_noprof(size, flags);
++		if (!n)
 +			return NULL;
++
++		if (p) {
++			/* We already know that `p` is not a vmalloc address. */
++			memcpy(n, p, ksize(p));
++			kfree(p);
 +		}
-+
-+		old_size = get_vm_area_size(vm);
 +	}
-+
-+	if (size <= old_size) {
-+		/* TODO: Can we optimize and shrink the allocation? What would
-+		 * be a good metric for when to shrink the vm_area?
-+		 */
-+		return (void *)p;
-+	}
-+
-+	/* TODO: Can we optimize and extend the existing allocation if we have
-+	 * enough contiguous space left in the virtual address space?
-+	 */
-+	n = __vmalloc_noprof(size, flags);
-+
-+	if (p) {
-+		memcpy(n, p, old_size);
-+		vfree(p);
-+	}
-+
+ 
+-	if (oldsize >= newsize)
+-		return (void *)p;
+-	newp = kvmalloc_noprof(newsize, flags);
+-	if (!newp)
+-		return NULL;
+-	memcpy(newp, p, oldsize);
+-	kvfree(p);
+-	return newp;
 +	return n;
-+}
-+EXPORT_SYMBOL(vrealloc_noprof);
-+
- #if defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA32)
- #define GFP_VMALLOC32 (GFP_DMA32 | GFP_KERNEL)
- #elif defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA)
+ }
+ EXPORT_SYMBOL(kvrealloc_noprof);
+ 
 -- 
 2.45.2
 
