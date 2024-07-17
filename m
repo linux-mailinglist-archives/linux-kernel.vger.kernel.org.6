@@ -1,147 +1,91 @@
-Return-Path: <linux-kernel+bounces-255524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BFE09341C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 19:56:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2929D9341C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 19:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 028952812D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:56:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4053B22D9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF7B18308A;
-	Wed, 17 Jul 2024 17:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j9sYsLqu"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A724183076;
+	Wed, 17 Jul 2024 17:58:03 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8CE183068;
-	Wed, 17 Jul 2024 17:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1A31E492;
+	Wed, 17 Jul 2024 17:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721238955; cv=none; b=DewEUpyeyDtYDvC5pp+vb4eRk6ZIa8/UTkGPvPX75mff7z+p22uD6pFPc5BzzD4MgnzH24kzX5g8lycpx6qZUD0kOgYNPGTUHCNp4ZNDnP1Bo5sSbm7FLc7L0p9R0/XiyI4mzABA92D96pTAUUFkil7Zi7y4otGw6SIkmIx9Ut4=
+	t=1721239082; cv=none; b=VeM+BMEdZwm8if3E2VpDWcOG5dvFB+dGdmPlsN4iqVs9RpQMQfh7Mv0QQOZwUm0/y5weL+vg/vmdX9DuiQpryoIQ822f1Emq4TWpO7K2Cmc/oCZ08ryofuB0ojyIMIb4jNgnaGSMskJwWerkmEoEs2XXwvv1WZa8PuUwW9swqLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721238955; c=relaxed/simple;
-	bh=nWpNdRmuS4vCP5i+Yp+KKH6GI8MxgME7esnrEhssBzU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=odN1C3TdeDd/qDeJGhp5oW50O4kB6KGKjezwZ8lJxdtwvpUaOykHRjGvhlDAdQDvZ87kvIW+K21acNsQrxAWCgwS99hUfwsrPaG5HEt9IA+C5p00DigQVkxcIFJxd+js5rMS7dcd+jNPJ4sMu8PETwHgOAhOZ4kJfTB6AAwpYzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j9sYsLqu; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fb05b0be01so49136385ad.2;
-        Wed, 17 Jul 2024 10:55:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721238953; x=1721843753; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KEbbdd9YNwTR1oy8pR+LUVTk58PGi94R+NS2hMzG6PE=;
-        b=j9sYsLqu4f94gyXcoa3wneDFr5wxN2KABUQUeK3pWaJb1OMadh0LQB443NHnjn5Hdp
-         jdt+75qO9cNH0zkpv6YCUlRtClvSxykjy/5gqryAY1ERgOIr6NqdsLhZzirkkY1X5NMG
-         Zx/te1DNH+o8lDykOYahbC0U62+zVP3To9meWEWbVVyYE6ixgEon786SW7eiqLono3gW
-         RZc4ad62JoqujmXt7wAhuyyYcJyhi+jYpek0p0VrlcLpCnGfYBLNJkdg5zvKAolM8PaK
-         ujGVDbh/RiEdcCqv/nyKhBHP9svLbge7jEZb0eAVbzK9qGhve8PVlhRjlIQ9tSaJKV7Y
-         x/Dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721238953; x=1721843753;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KEbbdd9YNwTR1oy8pR+LUVTk58PGi94R+NS2hMzG6PE=;
-        b=amT7rJi9cRGWif/bNrWIfExxyxKo1X+om2uBhMQ5JqKdu24YEP5nG0tgUJEby2/set
-         jQzVR98OCRV/ux1r6VG1gkuF7yfSeM8SpUrJScGHdohOKw1BQgUN0azyTQTrQc/oRvlZ
-         FbdB2zQWfrbN3yzgDdleFiEKOxh1FvlbpRNVnRJvVMyAhzPatUi8n9+/HiHJrr3Pcx3O
-         TSZ4vbhwMjoWG03Qe92nOzKkYzrynl10mVKlKQnnVidIhLl7pjfyfvJw/MzC00bhWyD2
-         g96LlO5xcF+CiZhqtp1achYKilPpdZu8/3Q59myfw8Cnk9TC7VeCU0l+FAM0fqy6krnm
-         vYpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXYe2pvgY04z/cgVKrM7n5ZZOW5pRbRGRuAK9/p4v99uPidadsZVq0D17p2gLvoceeYQ1D8oLTMyUfXqq01cTI6bjyPJaEsMjbE/Kys8goZHSTu5LHnSHxY59+O+aqhTm7T
-X-Gm-Message-State: AOJu0YyUiGe92vE1nWNvYdyzATdqRGaQ2diEbfqu0KOgytZPUSAtyoYA
-	oogb3sZtO4vlmQUcACVYYN87PTAYwzgyNUm5kM48RZ4Oi1shgEvt
-X-Google-Smtp-Source: AGHT+IEM1QTt/AmeIZwgPmUP7/OY4FU6pDZ3agAqoBTQuzmAYwJI4Tkl21VbmbbuJ/MVa9uKS8xm0w==
-X-Received: by 2002:a17:902:db07:b0:1f7:2293:1886 with SMTP id d9443c01a7336-1fc4e165dffmr22434765ad.12.1721238953366;
-        Wed, 17 Jul 2024 10:55:53 -0700 (PDT)
-Received: from localhost ([116.198.225.81])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc53fc6sm77926575ad.294.2024.07.17.10.55.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 10:55:53 -0700 (PDT)
-From: Tao Chen <chen.dylane@gmail.com>
-To: Quentin Monnet <qmo@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	chen.dylane@gmail.com
-Cc: Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [v2 PATCH bpf-next 4/4] bpftool: add document for net attach/detach on tcx subcommand
-Date: Thu, 18 Jul 2024 01:55:48 +0800
-Message-Id: <20240717175548.1512076-1-chen.dylane@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1721239082; c=relaxed/simple;
+	bh=9iYshVzl+nwJ4N5UqzKnL5ul2j0+NrwmL2O8HGF3jzY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sKhp9i1F2jAZHoYk9RSH1CSypVgLjCj4o49XJOMP/APWBFa61Q+C+O5e19/ym0cuWuC0e4dbVZqXQl1lYSfrJb4ZBFsZ86/HQMjooppfwygOt2os7haiWYMC3YEFZB+RbMcM6A9/pMUlT/Fxf7taxD5QHee1dusaRbi6vxdVCZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D0F4C2BD10;
+	Wed, 17 Jul 2024 17:58:00 +0000 (UTC)
+Date: Wed, 17 Jul 2024 13:57:59 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Guilherme Amadio <amadio@gentoo.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo
+ <acme@kernel.org>, Ian Rogers <irogers@google.com>, Thorsten Leemhuis
+ <linux@leemhuis.info>, Leo Yan <leo.yan@arm.com>,
+ linux-perf-users@vger.kernel.org, linux-trace-devel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/5] perf build: libtraceevent, libtracefs feature
+ check with pkg-config
+Message-ID: <20240717135759.37cf1bcf@rorschach.local.home>
+In-Reply-To: <20240717174739.186988-1-amadio@gentoo.org>
+References: <20240717123147.17169873@rorschach.local.home>
+	<20240717174739.186988-1-amadio@gentoo.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-This commit adds sample output for net attach/detach on
-tcx subcommand.
+On Wed, 17 Jul 2024 19:47:34 +0200
+Guilherme Amadio <amadio@gentoo.org> wrote:
 
-Signed-off-by: Tao Chen <chen.dylane@gmail.com>
----
- .../bpf/bpftool/Documentation/bpftool-net.rst | 22 ++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+> There is no change in this new submission relative to the last (which has been
+> tested by Thorsten to fix the build issue in Fedora). The only change has been
+> to add in CC Steven Rostedt and the list linux-trace-devel@vger.kernel.org.
 
-diff --git a/tools/bpf/bpftool/Documentation/bpftool-net.rst b/tools/bpf/bpftool/Documentation/bpftool-net.rst
-index 348812881297..4a8cb5e0d94b 100644
---- a/tools/bpf/bpftool/Documentation/bpftool-net.rst
-+++ b/tools/bpf/bpftool/Documentation/bpftool-net.rst
-@@ -29,7 +29,7 @@ NET COMMANDS
- | **bpftool** **net help**
- |
- | *PROG* := { **id** *PROG_ID* | **pinned** *FILE* | **tag** *PROG_TAG* | **name** *PROG_NAME* }
--| *ATTACH_TYPE* := { **xdp** | **xdpgeneric** | **xdpdrv** | **xdpoffload** }
-+| *ATTACH_TYPE* := { **xdp** | **xdpgeneric** | **xdpdrv** | **xdpoffload** | **tcx_ingress** | **tcx_egress** }
- 
- DESCRIPTION
- ===========
-@@ -69,6 +69,8 @@ bpftool net attach *ATTACH_TYPE* *PROG* dev *NAME* [ overwrite ]
-     **xdpgeneric** - Generic XDP. runs at generic XDP hook when packet already enters receive path as skb;
-     **xdpdrv** - Native XDP. runs earliest point in driver's receive path;
-     **xdpoffload** - Offload XDP. runs directly on NIC on each packet reception;
-+    **tcx_ingress** - Ingress TCX. runs on ingress net traffic;
-+    **tcx_egress** - Egress TCX. runs on egress net traffic;
- 
- bpftool net detach *ATTACH_TYPE* dev *NAME*
-     Detach bpf program attached to network interface *NAME* with type specified
-@@ -178,3 +180,21 @@ EXAMPLES
- ::
- 
-       xdp:
-+
-+|
-+| **# bpftool net attach tcx_ingress name tc_prog dev lo**
-+| **# bpftool net**
-+|
-+
-+::
-+      tc:
-+      lo(1) tcx/ingress tc_prog prog_id 29
-+
-+|
-+| **# bpftool net attach tcx_ingress name tc_prog dev lo**
-+| **# bpftool net detach tcx_ingress dev lo**
-+| **# bpftool net**
-+|
-+
-+::
-+      tc:
--- 
-2.34.1
+Thanks,
+
+For the whole series:
+
+Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+Feel free to take it through the perf tree.
+
+-- Steve
+
+> 
+> Best regards,
+> -Guilherme
+> 
+> Guilherme Amadio (5):
+>   perf build: Warn if libtracefs is not found
+>   tools: Make pkg-config dependency checks usable by other tools
+>   tools/verification: Use pkg-config in lib_setup of Makefile.config
+>   tools/rtla: Use pkg-config in lib_setup of Makefile.config
+>   tools/latency: Use pkg-config in lib_setup of Makefile.config
+> 
+>  tools/build/Makefile.feature          | 18 ++++++++++++++++++
+>  tools/perf/Makefile.config            | 13 +++++--------
+>  tools/tracing/latency/Makefile.config |  3 ++-
+>  tools/tracing/rtla/Makefile.config    |  3 ++-
+>  tools/verification/rv/Makefile.config |  3 ++-
+>  5 files changed, 29 insertions(+), 11 deletions(-)
+> 
 
 
