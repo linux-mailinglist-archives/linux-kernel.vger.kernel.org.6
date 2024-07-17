@@ -1,192 +1,123 @@
-Return-Path: <linux-kernel+bounces-254733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EDE29336F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:25:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A6F9336FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B30BD1C23191
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:25:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59E301F24060
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:26:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86527182DF;
-	Wed, 17 Jul 2024 06:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Y13qOaEQ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95406171A1;
+	Wed, 17 Jul 2024 06:26:32 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A9717C66;
-	Wed, 17 Jul 2024 06:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0515D1643A
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 06:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721197517; cv=none; b=a7b9DIGeFQ8h9PztsXULh8ROguEp8NsbOjpSQD6k1IKeQYEBmH30x4d/UJh4/e3J3ZpkiaP4iYVoQpTogli1AVY4mP0JJFeY2LYbXMsP+4mRpguoWyfefPaVCLIP6Dpw9Kfae3rQ+WwNsaEtJi1gp+ghWz8pGgIZ1QsVkl9qQgE=
+	t=1721197592; cv=none; b=Z7bBit8TAGlKVNZ8c1ijVF63P6aEHLzmwIa9Xs4oqY7C8xaBDEAsd43Kr7tIFC16i1dUfR7VmKlJiZgFoyzUsAC23l1IRipSRZJP9a2UbSVaSapZQ/XrolpbGUFZSU0eKQDcvM2TBvitU1z+VJUuBj5EtY9CimCb7ywXb45Be/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721197517; c=relaxed/simple;
-	bh=eu9NsqAnralX2IavkGqf6l5znlIUTAKCUEe9e3UaoSY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pjPqBQrmPH/+jOsvpdnNL9rW2E8H5+5rRcRrvvKJPqW2zOPxXTMR5VAvrK+iqr57p210NJKkm410GWlrtHbChfEBhwt4gwG/+/HuUBl13oiQVclkiYLefdqkPsa3jcf29Kj5nse4nTaNnpdhl7NfqdmO2HKCSxty4Ukk73mRPeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Y13qOaEQ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46GHev6H025096;
-	Wed, 17 Jul 2024 06:24:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qztvSWpQ0tlCk0IZsqrQ7t3x2QYlFLXOXSLk30UIYM4=; b=Y13qOaEQ+5XH0udd
-	A3WPZtUEQ0+ts+e3YzPewXFhBEuZ0/6I4q6xJAftDbzkc+jQZvQublXIqm4SKbCG
-	R+crtXZoB/S3wxjjw/8+6+96YziEmy9eBwnY9znZATX8XNKzEHjpteHIaHTMSOof
-	gH1AN0SWsn2eY7oHEUSCbE8o5Yhutr7+PnOg8kkAPNn/UD4BdCSDEqJrfZkvXqF6
-	GUy3s9hpAMQea+Xo7ajJrQ9EsuZxXu9RClvjgk+71A0h902yfjklIb4TkXge412S
-	eqlimT3DJE5HILj2rN9SQFcbB3UULlSh/4rz5SjxKc2DbM9t1yEmhP5yesK3YV4s
-	sdfOjg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfphavw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 06:24:43 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46H6Of3O006632
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 06:24:41 GMT
-Received: from [10.218.19.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 16 Jul
- 2024 23:24:36 -0700
-Message-ID: <0b84b689-8ab8-bcdf-f058-da2ead73786c@quicinc.com>
-Date: Wed, 17 Jul 2024 11:54:33 +0530
+	s=arc-20240116; t=1721197592; c=relaxed/simple;
+	bh=x0AKMoZUBDBo20leKTYdtGaRJKtvDiirN9eJUat42nc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B/pnMOEp96w6m7QH2nEUKcPUX0CJrfepC7eGZq4EieZ8gg8hmB1CjNIWLYzMwblWWjKpPoeyc0u4i8EubgCP6VAgYLOXWexcdRk51sYr5zZnnjOHIT4J5Bn/fS1+Obfcw0P96VOEextsnK8v7MTHBVe8mKTfi/3vqhvR4zVVAY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sTy7L-0003ns-Bc; Wed, 17 Jul 2024 08:26:23 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sTy7K-0009PE-T7; Wed, 17 Jul 2024 08:26:22 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sTy7K-001vf0-2Y;
+	Wed, 17 Jul 2024 08:26:22 +0200
+Date: Wed, 17 Jul 2024 08:26:22 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Brian Norris <briannorris@chromium.org>, Kalle Valo <kvalo@kernel.org>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] wifi: mwifiex: simplify WPA flags setting
+Message-ID: <ZpdkDqJK63_a0ncW@pengutronix.de>
+References: <20240716-mwifiex-wpa-psk-sha256-v1-0-05ae70f37bb3@pengutronix.de>
+ <20240716-mwifiex-wpa-psk-sha256-v1-1-05ae70f37bb3@pengutronix.de>
+ <20240716194826.GA85916@francesco-nb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v2 5/6] clk: qcom: Add camera clock controller driver for
- SM8150
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
-        "Imran
- Shaik" <quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
- <20240702-camcc-support-sm8150-v2-5-4baf54ec7333@quicinc.com>
- <xbe7kmaxhfwy26qzxrmwgiijaaiap4kdkruaxjs6ymihaw5taf@hvj57wyncfea>
- <cc1957af-17bc-cd71-e6da-013e3a740014@quicinc.com>
- <CAA8EJpqmJZJfd2famarx-FKFb1_+-nZM3N+FwK_hiOurG8n9=A@mail.gmail.com>
- <e235f19f-26b5-2cf7-ebb7-36e4dabe9b9b@quicinc.com>
- <CAA8EJpob5Qov78JfNN5BE+c1WyvnuBcQLYENHL0c1GTS+PPfSQ@mail.gmail.com>
- <503c8ba7-585d-4222-8e81-7f4c52f5f513@linaro.org>
-From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-In-Reply-To: <503c8ba7-585d-4222-8e81-7f4c52f5f513@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: TBawKkM9EiYE2AYGiOK4qwzdIS0sBxMt
-X-Proofpoint-GUID: TBawKkM9EiYE2AYGiOK4qwzdIS0sBxMt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-17_03,2024-07-16_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- phishscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0 impostorscore=0
- suspectscore=0 mlxlogscore=999 priorityscore=1501 bulkscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407170046
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240716194826.GA85916@francesco-nb>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+On Tue, Jul 16, 2024 at 09:48:26PM +0200, Francesco Dolcini wrote:
+> Hello Sasha,
+> thanks for your patch.
+> 
+> On Tue, Jul 16, 2024 at 01:33:27PM +0200, Sascha Hauer wrote:
+> > The WPA flags setting only depends on the wpa_versions bitfield and not
+> > on the AKM suite, so move it out of the switch/case to simplify the code
+> > a bit. No functional change intended.
+> > 
+> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> 
+> Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> 
+> > ---
+> >  drivers/net/wireless/marvell/mwifiex/uap_cmd.c | 27 +++++++-------------------
+> >  1 file changed, 7 insertions(+), 20 deletions(-)
+> > 
+> > diff --git a/drivers/net/wireless/marvell/mwifiex/uap_cmd.c b/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
+> > index 491e366119096..8d0cd84d27698 100644
+> > --- a/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
+> > +++ b/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
+> > @@ -46,31 +46,18 @@ int mwifiex_set_secure_params(struct mwifiex_private *priv,
+> >  
+> >  	bss_config->key_mgmt_operation |= KEY_MGMT_ON_HOST;
+> >  
+> > +	if (params->crypto.wpa_versions & NL80211_WPA_VERSION_1)
+> > +		bss_config->protocol = PROTOCOL_WPA;
+> > +	if (params->crypto.wpa_versions & NL80211_WPA_VERSION_2)
+> > +		bss_config->protocol |= PROTOCOL_WPA2;
+> > +
+> 
+> I am wondering what happens if NL80211_WPA_VERSION_1 is not set, no idea
+> what's the content of bss_config->protocol ...
+> 
+> in any case this is not something that you introduced, but maybe worth
+> having a look?
 
-On 7/15/2024 8:31 PM, Bryan O'Donoghue wrote:
-> On 15/07/2024 11:38, Dmitry Baryshkov wrote:
->>>> Does it apply to SM8150? For example, on SM8250 RCG2s are not parked.
->>>
->>> Yes, it applies to SM8150.
->> Should the same logic be applied to other chipsets supported upstream?
->> If this is the case, which chipsets?
->
-> If you are representing the "top" GDSC inside of the CCF instead of 
-> doing this
->
-> +    /* Keep the critical clock always-on */
-> +    qcom_branch_set_clk_en(regmap, 0xc1e4); /* cam_cc_gdsc_clk */
->
-> then the clock should be parked else you'll find the GDSC doesn't come 
-> out of reset.
->
-> and... as I look at it now we have a logical conflict in 
-> drivers/clk/qcom/camcc-sc8280xp.c
->
-> static struct clk_branch camcc_gdsc_clk = {
->         .halt_reg = 0xc1e4,
->         .halt_check = BRANCH_HALT,
->         .clkr = {
->                 .enable_reg = 0xc1e4,
->                 .enable_mask = BIT(0),
->                 .hw.init = &(struct clk_init_data){
->                         .name = "camcc_gdsc_clk",
->                         .parent_hws = (const struct clk_hw*[]){
->                                 &camcc_xo_clk_src.clkr.hw,
->                         },
->                         .num_parents = 1,
->                         .flags = CLK_SET_RATE_PARENT,
->                         .ops = &clk_branch2_ops,
->                 },
->         },
-> };
->
-> Patch sent.
->
-> https://lore.kernel.org/linux-arm-msm/20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-v1-1-fadb5d9445c1@linaro.org/T/#u 
->
->
+bss_config is kzalloced in the only caller of mwifiex_set_secure_params(),
+so bss_config->protocol is zero on entry.
 
-If the clock is modelled, it can get disabled during the late init call, 
-when the CCF disables the unused clocks. But, it is a PoR ON  clock and 
-expectation from design team is to keep it always-on for GDSC functionality.
+It might be worth setting it to zero explicitly here to make the code
+better understandable without having to look at the callers.
 
-So, we should not model this, instead just keep it always on from probe.
+Sascha
 
-
-> In the round I think we should avoid these horrific hard-coded 
-> always-on writes where possible.
->
-
-We have been suggested to make such clocks always ON from probe on 
-previous upstream discussions. This is also recently acknowledged by 
-maintainers, please see [1] and [2].
-
-
-[1] 
-https://lore.kernel.org/linux-clk/6286a410-6faa-4996-8a9e-dc334dd9421f@linaro.org/
-
-
-[2] 
-https://lore.kernel.org/linux-clk/664cca91-8615-d3f6-7525-15b9b6725cce@quicinc.com/
-
-
-> Personally I think parking is better than always-on specifically 
-> because you define the clock and "see" it in the clock tree.
->
-> ---
-> bod
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
