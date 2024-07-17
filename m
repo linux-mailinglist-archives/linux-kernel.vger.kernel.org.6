@@ -1,91 +1,137 @@
-Return-Path: <linux-kernel+bounces-254880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C625B9338DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:20:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 706429338DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53C3CB23181
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:20:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99B291C232E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B73838F97;
-	Wed, 17 Jul 2024 08:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742CE2E416;
+	Wed, 17 Jul 2024 08:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="jWuQpBb8"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Q8RMbd3X"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3317376E9
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 08:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5A91CAA4;
+	Wed, 17 Jul 2024 08:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721204409; cv=none; b=gHzyCypuWbplhnUux199wYK69HVec9xL/cxBV4qBCBjUSNeCAhfaCcpOXE7itgqBwgLdGBO8/a5zHknPgdGz7PrTYjnhS3HM/V/sORQutfcR8Y4wGY+OrxGa7pRjaR/J4UKKDLzefj2wEe1ekxDx/j1a0a0VoZ9Wqqo8DYpMN88=
+	t=1721204405; cv=none; b=KT0BigP3rZ8uuZ4gx/LQ3UeF+dasWLObD+t33igVRaH7gdUlu7wq0x0Aw+PFyVhRIdvUVdr9NcL7GPhoMe4mwnQiyc8ebwhgNKRXdqVUaIzhMgYWfl1QjMa47je0ubAEZLIDpMXY2u/fkX4IpcuAIMePQ6UsyTk2wJxxnMQhNwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721204409; c=relaxed/simple;
-	bh=e6u5DXYvWe9AfBIeunZ32rLwBUOnL07mqu6HnKz+Hd0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WAwmPGPAPdDLGki6Vn/vHiHUb3zQpkbcH/z+VPe2LqRvIX6cqVQ2vFzaUiTBiL0Ao+nUqslwSu4L3xCF3k61ip63DfsYSkG69DyOWUkWFCRWlpWYP2DrX3Dwz7DMK6cO1ssGLtt4Qe5Y+TboDKa14wm9QuVXXBHgjqQg5KH3J8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=jWuQpBb8; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46H5srGi013138;
-	Wed, 17 Jul 2024 03:19:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=PODMain02222019; bh=Vrysff8VaQmuw4qwsy
-	PYQ4a+6HDU2sFXDQK0pKW5lR0=; b=jWuQpBb8Y94BfXrHf2tkJZ6W8BKeZ78Ibw
-	XZ1EShFwUXuFJ8xEZwTiGdugylzG8ByB1q3lj2Pf3secic7AcB5WxjkdiWoHJuz5
-	r72CtC1ygzbXYJqUTI4zwmlNF3nd8rYeSD846D6qkOUubcTw8HuI0LKO9Rsc99ks
-	zKGgv0yJ9BEvIap6f0v3H0Dy8G72gOA4U7zgDWxfhJqYWl0LwzboVkHfP2ZUm+/c
-	XkQc0NRf8CQltwmtTynDv/xLPRxJoDgWHlcztrbYYwdR9NcHEQEfuFcfsuI/E4g/
-	wqWLWx3J6/Sz7SULXjQjKMJuksQpVaEtWJt4ko3N/SoMVvxL2iRA==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 40dwengkqw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 03:19:48 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 17 Jul
- 2024 09:19:46 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Wed, 17 Jul 2024 09:19:46 +0100
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 2B8F0820244;
-	Wed, 17 Jul 2024 08:19:46 +0000 (UTC)
-Date: Wed, 17 Jul 2024 09:19:45 +0100
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Chen Ni <nichen@iscas.ac.cn>
-CC: <lgirdwood@gmail.com>, <broonie@kernel.org>, <axel.lin@ingics.com>,
-        <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] regulator: wm831x-isink: Convert comma to semicolon
-Message-ID: <Zpd+oXtUsC0z08d6@opensource.cirrus.com>
-References: <20240716085115.1252817-1-nichen@iscas.ac.cn>
+	s=arc-20240116; t=1721204405; c=relaxed/simple;
+	bh=2CLtcxjWryy+ZrxMy3V6QLAyq9Tcxt0Pcwt6s+Wmc1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kBcSA844G4wn2Pa3dZeboTJKFdsOBmK0hfbggFabnGmDfv89VkY9rOQdLlnKedbdKJwmRiaWksLg5lHzgAsoAnYRATRpIOlFqjm1YtxUbAfnC+mILlhQMBoA53kGc2502CjVx7H/nn4mu0h25tSgWkB0PkLied8Cj5mD0LQWF94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Q8RMbd3X; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 255A8FF803;
+	Wed, 17 Jul 2024 08:19:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1721204394;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vYy4jlSppC2pcc6cg+3nF/8GvPZv6nmewlb2L7o9Nw8=;
+	b=Q8RMbd3XCm3mkOoSML4rikXKiJwOmxmdsX2NkXlZwRplYxuKqVu6DdyLJ7G/4YQS4TR3e0
+	tQ9HYyVU0QaJ7mJKdjZ58+NY03/Y4pQSR1nheyy9/gpjRgXyPcN/SYNbnfEvcXYx78cKK1
+	DspBdEnmtUUE2Vh7fB3axwb52s022qgb/fQK8B7JQxuL+DVdX8knHLZC7Oxu4B+r0HSgWa
+	t6AmHSpNSofRHkmWqrwexOh4wFUvNGOiGe2R2Gz1nk0z8FDgM9iuuAszfZbHO/r1L/BknS
+	0yhBDc0k6PoqJGn8/jBTZsc9id1S9XZ4jdCo9jE7HgZr9sw+Ct/c9wyvI/5QfA==
+Date: Wed, 17 Jul 2024 10:19:48 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Maxime Ripard <mripard@kernel.org>, Pratyush Yadav
+ <pratyush@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Richard
+ Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Arnd
+ Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Russell King <linux@armlinux.org.uk>,
+ Joel Stanley <joel@jms.id.au>, Andrew Jeffery
+ <andrew@codeconstruct.com.au>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>,
+ Andrew Lunn <andrew@lunn.ch>, Gregory Clement
+ <gregory.clement@bootlin.com>, Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>, Tony Lindgren <tony@atomide.com>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
+ <magnus.damm@gmail.com>, Dinh Nguyen <dinguyen@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Jonathan =?UTF-8?B?TmV1c2Now6RmZXI=?= <j.neuschaefer@gmx.net>, Michael
+ Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N. Rao"
+ <naveen.n.rao@linux.ibm.com>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, Huacai Chen <chenhuacai@kernel.org>, WANG
+ Xuerui <kernel@xen0n.name>, linux-mtd@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ imx@lists.linux.dev, linux-omap@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+ openbmc@lists.ozlabs.org, linuxppc-dev@lists.ozlabs.org,
+ linux-mips@vger.kernel.org, loongarch@lists.linux.dev
+Subject: Re: [PATCH 4/9] mtd: devices: add AT24 eeprom support
+Message-ID: <20240717101948.2e99f472@xps-13>
+In-Reply-To: <20240709103841.7x7n4hdtqrunyoc3@pengutronix.de>
+References: <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
+	<20240701-b4-v6-10-topic-usbc-tcpci-v1-4-3fd5f4a193cc@pengutronix.de>
+	<07b701a9-7b52-45b7-8dba-1c25d77cbf15@linaro.org>
+	<mafs0ikxnykpr.fsf@kernel.org>
+	<20240702-congenial-vigilant-boar-aeae44@houat>
+	<mafs0ed8byj5z.fsf@kernel.org>
+	<20240702-mighty-brilliant-eel-b0d9fa@houat>
+	<20240708084440.70186564@xps-13>
+	<20240709092214.omr7ccphdzdk7z7j@pengutronix.de>
+	<20240709114302.3c604ef3@xps-13>
+	<20240709103841.7x7n4hdtqrunyoc3@pengutronix.de>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240716085115.1252817-1-nichen@iscas.ac.cn>
-X-Proofpoint-ORIG-GUID: RElDV-OUkLaXNRkjyfe7xU6IOAlrxW1j
-X-Proofpoint-GUID: RElDV-OUkLaXNRkjyfe7xU6IOAlrxW1j
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Tue, Jul 16, 2024 at 04:51:15PM +0800, Chen Ni wrote:
-> Replace a comma between expression statements by a semicolon.
-> 
-> Fixes: d48acfd0377f ("regulator: wm831x-isink: Convert to use regulator_set/get_current_limit_regmap")
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
-> ---
+Hi Marco,
 
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> > > > Overall I think the idea of getting rid of these misc/ drivers is g=
+oes
+> > > > into the right direction, but registering directly into NVMEM makes
+> > > > more sense IMO.   =20
+> > >=20
+> > > So you propose to have two places for the partition handling (one for
+> > > MTD and one for NVMEM) instead of one and moving the code into NVMEM
+> > > directly? =20
+> >=20
+> > Why two places for the partitions handling? Just one, in NVMEM. Also =20
+>=20
+> Without checking the details I think that converting the MTD
+> partitioning code into NVMEM partitioning code is a bigger task. As you
+> said below there are many legacy code paths you need to consider so they
+> still work afterwards as well.
+>=20
+> > usually EEPROMs don't require very advanced partitioning schemes,
+> > unlike flashes (which are the most common MTD devices today). =20
+>=20
+> As said in my cover letter EEPROMs can become quite large and MTD
+> supports partitioning storage devices which is very handy for large
+> EEPROMs as well.
+
+Did you had a look at nvmem-layouts ? In particular the fixed-layout.
+
+Is there anything you would like to achieve already that is not
+possible with nvmem but is with mtd?
 
 Thanks,
-Charles
+Miqu=C3=A8l
 
