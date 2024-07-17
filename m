@@ -1,150 +1,113 @@
-Return-Path: <linux-kernel+bounces-255015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94851933A84
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:59:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC937933A89
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50959282BB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:59:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C0AC1F22ADF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F1317E90C;
-	Wed, 17 Jul 2024 09:59:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF2719A;
-	Wed, 17 Jul 2024 09:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132D017E90D;
+	Wed, 17 Jul 2024 09:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j5FDNrGJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D1519A;
+	Wed, 17 Jul 2024 09:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721210376; cv=none; b=GvP1hGsF/uz87FCm4Suu+4Q0bm4R+aYwwpHgXwzZUI3OufRT/DKWUVq+NcxtJtJ8i2Kll1Bo4CEtDNrDP8uN7tI7LaGpKD7JJk01t+FxPjCQbVHuu50HdUd7VHSqe2+cT23jTnRXt7k8vbIHznexPY+XeOKfsyVqfrifoj24RSA=
+	t=1721210397; cv=none; b=QyIZrG5IQkZmW6V9e02Su7F8/Z9xogPyxW8K8bWSQeEO5wSG1XjWrU6ceTzJ8TzLUrl86odBSf8IQsWls28P8K09A5yelGuJ5F6kakXBRqtn6YnUYuDx4/W/P4jllb5BpEu/7RUjF1PmCXv0tKj6Q4dtuvozAPEVE6YAXoH+1qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721210376; c=relaxed/simple;
-	bh=OMc0681OodzRyuBATwyzchVTnV9Bh1GaBTsOg5XlF1Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mTxvFFnFgM77dScHbmukQvkouIk56kPDJW9GbbF2iMkQ9WROlFqWJ+IOfyvxHx0OC60XPncqkMCuSfnVrvvEWKI6ZbabsiS3uSFV8g+fFg5Am+unb8SdMIutsa4oFKG6df7nDcNdPp0RJFVFxvCzfL8LnPjOSxOfSMRzX/pdV3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4301C1063;
-	Wed, 17 Jul 2024 02:59:59 -0700 (PDT)
-Received: from [10.57.77.222] (unknown [10.57.77.222])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D19213F73F;
-	Wed, 17 Jul 2024 02:59:29 -0700 (PDT)
-Message-ID: <61806152-3450-4a4f-b81f-acc6c6aeed29@arm.com>
-Date: Wed, 17 Jul 2024 10:59:27 +0100
+	s=arc-20240116; t=1721210397; c=relaxed/simple;
+	bh=he8VWgNCU7bzrhPOnD5ILCidOl9wz74EGBi7h5aUUVI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e3k+7aq9dMJluiIDEoIPLYdwMXxvJhOyMSGkqhcP2OI4HGghUuuOSXQy7EbYZ3eUs2SXSWXOTkV6t+oJWbpkW4AenhQyAoZDQFPkIHRiHqf1awvkVRD4cxR1ysEbDVpa4xoOkt0x7cs+cCv2I2DLV9csH3vp7GtmGR8VWKRSxpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j5FDNrGJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE52BC32782;
+	Wed, 17 Jul 2024 09:59:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721210396;
+	bh=he8VWgNCU7bzrhPOnD5ILCidOl9wz74EGBi7h5aUUVI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=j5FDNrGJFkKFbMFZzndQ7w/ViOHm42OKGAGKool9+monXimfoeWgrN3er6T8Glbzj
+	 l1rQlIzYd8GJR5yk+16H71qR4YJQQnyCsJjGofH65XyOLop8zwEUKBQElA9HafpXU8
+	 8xDwWpQDDVoGdNGT2mj6AEFIvU6Ot1EF5WKd2+fmJ9EfYNR3MQPCHQtPa5o6fxVI0g
+	 2xRgEx6oqukNNYe16Sh4zQK3T/dN/MWjDltqExW5jqphfZlHP60C+jWJLxFt+dIvjZ
+	 MiFbYSPoeGSyn2kzWXtdYe3Ya1FwJFe3N3BtT7YVrrZZjIAoTXKrPj1yoC0q9Is+FH
+	 q9+2qOWCZK21A==
+From: Conor Dooley <conor@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-spi@vger.kernel.org
+Subject: [PATCH v1 0/3] Fix incorrect bh2228fv compatible
+Date: Wed, 17 Jul 2024 10:59:47 +0100
+Message-ID: <20240717-impotence-zippy-254b86593069@spud>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 01/10] fs: Allow fine-grained control of folio sizes
-Content-Language: en-GB
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
- Matthew Wilcox <willy@infradead.org>
-Cc: david@fromorbit.com, chandan.babu@oracle.com, djwong@kernel.org,
- brauner@kernel.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
- yang@os.amperecomputing.com, linux-mm@kvack.org, john.g.garry@oracle.com,
- linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
- mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
- linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <ziy@nvidia.com>
-References: <20240715094457.452836-1-kernel@pankajraghav.com>
- <20240715094457.452836-2-kernel@pankajraghav.com>
- <ZpaRElX0HyikQ1ER@casper.infradead.org>
- <20240717094621.fdobfk7coyirg5e5@quentin>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240717094621.fdobfk7coyirg5e5@quentin>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1332; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=fLnuQZh3UkLE29exKILxLN0rP8lhx9J0NWCTV9wmm0c=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGnTpwnnzXIS7z3tlKa0j69Ne/Um6fBbYaxigXlnZV5v+ R0XZxTbUcrCIMbBICumyJJ4u69Fav0flx3OPW9h5rAygQxh4OIUgIksSmVk+GLqtmGBbOX1Fb3l D2xDKy12fdJb1GftGKI4qWDKpQme/YwMO7ee5PA5/njHXH3f9rV5SUs+fp307new7Hr/HUyHO1j O8QIA
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 
-On 17/07/2024 10:46, Pankaj Raghav (Samsung) wrote:
-> On Tue, Jul 16, 2024 at 04:26:10PM +0100, Matthew Wilcox wrote:
->> On Mon, Jul 15, 2024 at 11:44:48AM +0200, Pankaj Raghav (Samsung) wrote:
->>> +/*
->>> + * mapping_max_folio_size_supported() - Check the max folio size supported
->>> + *
->>> + * The filesystem should call this function at mount time if there is a
->>> + * requirement on the folio mapping size in the page cache.
->>> + */
->>> +static inline size_t mapping_max_folio_size_supported(void)
->>> +{
->>> +	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
->>> +		return 1U << (PAGE_SHIFT + MAX_PAGECACHE_ORDER);
->>> +	return PAGE_SIZE;
->>> +}
->>
->> There's no need for this to be part of this patch.  I've removed stuff
->> from this patch before that's not needed, please stop adding unnecessary
->> functions.  This would logically be part of patch 10.
-> 
-> That makes sense. I will move it to the last patch.
-> 
->>
->>> +static inline void mapping_set_folio_order_range(struct address_space *mapping,
->>> +						 unsigned int min,
->>> +						 unsigned int max)
->>> +{
->>> +	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
->>> +		return;
->>> +
->>> +	if (min > MAX_PAGECACHE_ORDER) {
->>> +		VM_WARN_ONCE(1,
->>> +	"min order > MAX_PAGECACHE_ORDER. Setting min_order to MAX_PAGECACHE_ORDER");
->>> +		min = MAX_PAGECACHE_ORDER;
->>> +	}
->>
->> This is really too much.  It's something that will never happen.  Just
->> delete the message.
->>
->>> +	if (max > MAX_PAGECACHE_ORDER) {
->>> +		VM_WARN_ONCE(1,
->>> +	"max order > MAX_PAGECACHE_ORDER. Setting max_order to MAX_PAGECACHE_ORDER");
->>> +		max = MAX_PAGECACHE_ORDER;
->>
->> Absolutely not.  If the filesystem declares it can support a block size
->> of 4TB, then good for it.  We just silently clamp it.
-> 
-> Hmm, but you raised the point about clamping in the previous patches[1]
-> after Ryan pointed out that we should not silently clamp the order.
-> 
-> ```
->> It seems strange to silently clamp these? Presumably for the bs>ps usecase,
->> whatever values are passed in are a hard requirement? So wouldn't want them to
->> be silently reduced. (Especially given the recent change to reduce the size of
->> MAX_PAGECACHE_ORDER to less then PMD size in some cases).
-> 
-> Hm, yes.  We should probably make this return an errno.  Including
-> returning an errno for !IS_ENABLED() and min > 0.
-> ```
-> 
-> It was not clear from the conversation in the previous patches that we
-> decided to just clamp the order (like it was done before).
-> 
-> So let's just stick with how it was done before where we clamp the
-> values if min and max > MAX_PAGECACHE_ORDER?
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/Zoa9rQbEUam467-q@casper.infradead.org/
+From: Conor Dooley <conor.dooley@microchip.com>
 
-The way I see it, there are 2 approaches we could take:
+Maxime made a typo when adding this device to the kernel all the way
+back in 2012, fix the spelling mistake.
 
-1. Implement mapping_max_folio_size_supported(), write a headerdoc for
-mapping_set_folio_order_range() that says min must be lte max, max must be lte
-mapping_max_folio_size_supported(). Then emit VM_WARN() in
-mapping_set_folio_order_range() if the constraints are violated, and clamp to
-make it safe (from page cache's perspective). The VM_WARN()s can just be inline
-in the if statements to keep them clean. The FS is responsible for checking
-mapping_max_folio_size_supported() and ensuring min and max meet requirements.
+Really this device should not be in trivial-devices.yaml, but I'm
+leaving the creation of a dedicated binding for when I get my hands on a
+device :smiling_imp:
 
-2. Return an error from mapping_set_folio_order_range() (and the other functions
-that set min/max). No need for warning. No state changed if error is returned.
-FS can emit warning on error if it wants.
+Cheers,
+Conor.
 
-Personally I prefer option 2, but 1 is definitely less churn.
+CC: Rob Herring <robh@kernel.org>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+CC: Conor Dooley <conor+dt@kernel.org>
+CC: Shawn Guo <shawnguo@kernel.org>
+CC: Sascha Hauer <s.hauer@pengutronix.de>
+CC: Pengutronix Kernel Team <kernel@pengutronix.de>
+CC: Fabio Estevam <festevam@gmail.com>
+CC: Mark Brown <broonie@kernel.org>
+CC: Maxime Ripard <mripard@kernel.org> (blamed_fixes:1/1=100%)
+CC: devicetree@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+CC: imx@lists.linux.dev
+CC: linux-arm-kernel@lists.infradead.org
+CC: linux-spi@vger.kernel.org
 
-Thanks,
-Ryan
+Conor Dooley (3):
+  dt-bindings: trivial-devices: fix Rohm BH2228FV compatible string
+  spi: spidev: add correct compatible for Rohm BH2228FV
+  ARM: dts: nxp: correct DAC compatible on Crystalfontz's CFA10049
+
+ Documentation/devicetree/bindings/trivial-devices.yaml | 4 +++-
+ arch/arm/boot/dts/nxp/mxs/imx28-cfa10049.dts           | 2 +-
+ drivers/spi/spidev.c                                   | 1 +
+ 3 files changed, 5 insertions(+), 2 deletions(-)
+
+-- 
+2.43.0
 
 
