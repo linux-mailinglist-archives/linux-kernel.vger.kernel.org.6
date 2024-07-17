@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-255223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 344A1933DA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:31:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAFDC933DA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:31:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94D81B210F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:30:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 842122844B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DB7180A65;
-	Wed, 17 Jul 2024 13:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5DB180A65;
+	Wed, 17 Jul 2024 13:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MyxaDqzQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I2pDIpxC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC63566A;
-	Wed, 17 Jul 2024 13:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC28B566A;
+	Wed, 17 Jul 2024 13:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721223047; cv=none; b=MKj8NYQEXRCqjbz50Ifa+It8lAYJbpR8XaNmsTdOtn8ZxqtdWEa+0JBjvAXIzy5BNxACZk6qaZfz8dOcYckte9vKHjHTlpFKo27whr2a78fVD6rPbxQ/iWnSe6w/8ewz60uapeh2JxxJ9tUAGXq2IGsN/t0D9v+HzGLx6V2Q54U=
+	t=1721223071; cv=none; b=KzGFFwogiaQunxAbFIKprnea4LxSrR4aEAVodY+vYo13edOzpRHZzjsFHPCfG314VBJj/aeE4sE5HmT5F+0p7hzqQASw48+DwTYJHVO0LpfJpUx6U8cNwKJYiEeq20b1p3DGa3ocG0lWq5cmVZ3nHWJB+F6wY6pLAGUPzrTBzyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721223047; c=relaxed/simple;
-	bh=EjnGtehLHIKPE9q1cLN8XdIbtNHm5pvem+IG50mZpqA=;
+	s=arc-20240116; t=1721223071; c=relaxed/simple;
+	bh=9/LX+FPC7nXVipMC+1Tbxx41tWTkMEJcT3a+DLYqWq0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IPX0l0tsQsQbXFKHMiVVvmljhqnY+WJCjxQ18Ep/xejdcQ1vNjM84vAVbZRiRn9zU84w25NmAJ8+HG5Jk2chAJZnmvycsPgMS4YrfetBQiqafS/3yCItA0MunJlL2+jcZDcdCQYW59UlkWreBo/fO8hc0n0T4fG9WW9bYxU2ziA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MyxaDqzQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1A0CC32782;
-	Wed, 17 Jul 2024 13:30:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721223047;
-	bh=EjnGtehLHIKPE9q1cLN8XdIbtNHm5pvem+IG50mZpqA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MyxaDqzQe01C+DLKfhrub218xtvehXwEJ/jjaDw1rOck7qXJ2xCdqL34iZtz4+zgS
-	 0zSvUClqP3k0OWal6okIcuQH5BBAy6PQLuCo9n/NxSYTfF7ZdHJ8/84hvLatGO2eQF
-	 ysUPgnFY70DY/J7bVIqSLjxYmXw1rxwHWvlUkXvvSVzNze1qdU8Fm96lpN1qYFOxUp
-	 9tjuaKqj21iI5pNlScumyJLJFw0da61JqXNqVAPD1Cumm534QHLoexXTXFXcRghVQT
-	 XWpVAEst3AYYmzQrIpmgCT4EpRJbqLDudYw/M5fCSHlhAwaWY/ZrZuNlkxM/ZXNI1r
-	 Z1BQRrIoCMeFw==
-Message-ID: <8e260164-cce2-4153-9f9c-0330c76408ef@kernel.org>
-Date: Wed, 17 Jul 2024 15:30:39 +0200
+	 In-Reply-To:Content-Type; b=FOc8cu8gHfGGYGYxVdFi5TLtOEY2bhTt3T8OA8cPPcpyIioKGecpNwwYDLcDvSOVScTtfo4NyjcdjvqZ5HJOIOUnJN8xse5si+tgvl0DIpeT7gAq7AfJ5fft7tnJZxyiJhukF/mYVJvUfXmGHgjxZhi2ec3ALQd47O2fNmQqxtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I2pDIpxC; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721223070; x=1752759070;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=9/LX+FPC7nXVipMC+1Tbxx41tWTkMEJcT3a+DLYqWq0=;
+  b=I2pDIpxC+Oe3tX49f1r1dfTW7TMq7cvkeS3gkR4y5+8aanzk57DcAYsa
+   8m7uAcFwa0Mspo4sWp4wmqoa6AayfWKBQYFbZpqXWyaMlqzSwWg2hhrdn
+   mbFXAxZ0ynJokNQLaztJzKkGLEHvYsLD8IhxsnbqcaU12Jhlttg+Fm9Hw
+   +zoD0Mcn7wmI2S+H+5/RJobXj8pFWfwUDs5nFsentBpoI3IehPdBE8GI1
+   tN8qFJFk0Gbv0wtKxuG+y6sbCFqHQFdnMdqFRa8mUVw7F8zx82pK/41LQ
+   y2jfb615xJcnH/RMwFCjRmfQ4tbfr5Ug1BFfeIy7l8jTnXuiGkDm9zdVE
+   Q==;
+X-CSE-ConnectionGUID: NiQp7ZP5TFORlfpUgnV7CQ==
+X-CSE-MsgGUID: Qxx9hkrQRC61rwtriiqOEg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="29394816"
+X-IronPort-AV: E=Sophos;i="6.09,214,1716274800"; 
+   d="scan'208";a="29394816"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 06:31:09 -0700
+X-CSE-ConnectionGUID: aeF2PvNdTgmFzVErDR5kvQ==
+X-CSE-MsgGUID: BneAubfwT9+zUrpvrlYoVA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,214,1716274800"; 
+   d="scan'208";a="50266393"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.125.247.52]) ([10.125.247.52])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 06:31:05 -0700
+Message-ID: <8c783615-1e79-471d-b853-d654696fb782@intel.com>
+Date: Wed, 17 Jul 2024 21:31:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,187 +66,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/12] dt-bindings: PCI: Cleanup of brcmstb YAML and
- add 7712 SoC
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
- bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-References: <20240716213131.6036-1-james.quinlan@broadcom.com>
- <20240716213131.6036-2-james.quinlan@broadcom.com>
- <d20be2d3-4fdd-48ca-b73e-80e8157bd5b2@kernel.org>
- <CA+-6iNwvShkUwgQ5iTqa53gX1RtOMcDACPOJtqKm6zWCXN6Rtg@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 21/49] KVM: x86: Add a macro to init CPUID features
+ that are 64-bit only
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Hou Wenlong <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Maxim Levitsky <mlevitsk@redhat.com>,
+ Binbin Wu <binbin.wu@linux.intel.com>,
+ Yang Weijiang <weijiang.yang@intel.com>,
+ Robert Hoo <robert.hoo.linux@gmail.com>
+References: <20240517173926.965351-1-seanjc@google.com>
+ <20240517173926.965351-22-seanjc@google.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CA+-6iNwvShkUwgQ5iTqa53gX1RtOMcDACPOJtqKm6zWCXN6Rtg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20240517173926.965351-22-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 17/07/2024 15:20, Jim Quinlan wrote:
-> On Wed, Jul 17, 2024 at 2:51 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 16/07/2024 23:31, Jim Quinlan wrote:
->>> o Change order of the compatible strings to be alphabetical
->>>
->>> o Describe resets/reset-names before using them in rules
->>>
->>
->> <form letter>
->> This is a friendly reminder during the review process.
->>
->> It seems my or other reviewer's previous comments were not fully
->> addressed. Maybe the feedback got lost between the quotes, maybe you
->> just forgot to apply it. Please go back to the previous discussion and
->> either implement all requested changes or keep discussing them.
->>
->> Thank you.
->> </form letter>
+On 5/18/2024 1:38 AM, Sean Christopherson wrote:
+> Add a macro to mask-in feature flags that are supported only on 64-bit
+> kernels/KVM.  In addition to reducing overall #ifdeffery, using a macro
+> will allow hardening the kvm_cpu_cap initialization sequences to assert
+> that the features being advertised are indeed included in the word being
+> initialized.  And arguably using *F() macros through is more readable.
 > 
-> I'm sorry Krzysztof, but AFAICT I paid attention to all of your comments and
-> tried to answer them as best as I could.  Please do not resort to a
-> form letter; if
-> you think I missed something(s) please oblige me and say what it is rather than
-> having  me search for something that you know and I do not.
-
-I do not see your response at all to my comments on patch #2.
-
+> No functional change intended.
 > 
->>
->>> o Add minItems/maxItems where needed.
->>>
->>> o Change maintainer: Nicolas has not been active for a while.  It also
->>>   makes sense for a Broadcom employee to be the maintainer as many of the
->>>   details are privy to Broadcom.
->>>
->>> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
->>> ---
->>>  .../bindings/pci/brcm,stb-pcie.yaml           | 26 ++++++++++++++-----
->>>  1 file changed, 19 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
->>> index 11f8ea33240c..692f7ed7c98e 100644
->>> --- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
->>> +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
->>> @@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
->>>  title: Brcmstb PCIe Host Controller
->>>
->>>  maintainers:
->>> -  - Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
->>> +  - Jim Quinlan <james.quinlan@broadcom.com>
->>>
->>>  properties:
->>>    compatible:
->>> @@ -16,11 +16,11 @@ properties:
->>>            - brcm,bcm2711-pcie # The Raspberry Pi 4
->>>            - brcm,bcm4908-pcie
->>>            - brcm,bcm7211-pcie # Broadcom STB version of RPi4
->>> -          - brcm,bcm7278-pcie # Broadcom 7278 Arm
->>>            - brcm,bcm7216-pcie # Broadcom 7216 Arm
->>> -          - brcm,bcm7445-pcie # Broadcom 7445 Arm
->>> +          - brcm,bcm7278-pcie # Broadcom 7278 Arm
->>>            - brcm,bcm7425-pcie # Broadcom 7425 MIPs
->>>            - brcm,bcm7435-pcie # Broadcom 7435 MIPs
->>> +          - brcm,bcm7445-pcie # Broadcom 7445 Arm
->>>
->>>    reg:
->>>      maxItems: 1
->>> @@ -95,6 +95,18 @@ properties:
->>>        minItems: 1
->>>        maxItems: 3
->>>
->>> +  resets:
->>> +    minItems: 1
->>> +    items:
->>> +      - description: reset for external PCIe PERST# signal # perst
->>> +      - description: reset for phy reset calibration       # rescal
->>> +
->>> +  reset-names:
->>> +    minItems: 1
->>> +    items:
->>> +      - const: perst
->>> +      - const: rescal
->>
->> There are no devices with two resets. Anyway, this does not match one of
->> your variants which have first element as rescal.
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+
+Very nice patch!
+
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+
+> ---
+>   arch/x86/kvm/cpuid.c | 22 ++++++++++------------
+>   1 file changed, 10 insertions(+), 12 deletions(-)
 > 
-> The 4908 chip exclusively uses the "perst" reset, and the  7216 chip
-> exclusively uses the "rescal" reset.   The rest of the chips use zero
-> resets.   All together, there are two resets.
-
-This is not enum, but a list. What you do mean overall two resets? You
-have a chip which is both 4908 and 7216 at the same time? How is this
-possible?
-
-> 
-> You are the one that wanted me to first list all resets at the top,
-> and refer to them by the conditional rules.
-
-No, I wanted widest constraints at the top.
-
-My comment at v2 was already saying this:
-
-"This does not match what you have in conditional, so just keep min and
-max Items here."
-
-and you have numerous examples in the code for this.
-
-Best regards,
-Krzysztof
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index 5a4d6138c4f1..5e3b97d06374 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -70,6 +70,12 @@ u32 xstate_required_size(u64 xstate_bv, bool compacted)
+>   	(boot_cpu_has(X86_FEATURE_##name) ? F(name) : 0);	\
+>   })
+>   
+> +/* Features that KVM supports only on 64-bit kernels. */
+> +#define X86_64_F(name)						\
+> +({								\
+> +	(IS_ENABLED(CONFIG_X86_64) ? F(name) : 0);		\
+> +})
+> +
+>   /*
+>    * Raw Feature - For features that KVM supports based purely on raw host CPUID,
+>    * i.e. that KVM virtualizes even if the host kernel doesn't use the feature.
+> @@ -639,15 +645,6 @@ static __always_inline void kvm_cpu_cap_init(enum cpuid_leafs leaf, u32 mask)
+>   
+>   void kvm_set_cpu_caps(void)
+>   {
+> -#ifdef CONFIG_X86_64
+> -	unsigned int f_gbpages = F(GBPAGES);
+> -	unsigned int f_lm = F(LM);
+> -	unsigned int f_xfd = F(XFD);
+> -#else
+> -	unsigned int f_gbpages = 0;
+> -	unsigned int f_lm = 0;
+> -	unsigned int f_xfd = 0;
+> -#endif
+>   	memset(kvm_cpu_caps, 0, sizeof(kvm_cpu_caps));
+>   
+>   	BUILD_BUG_ON(sizeof(kvm_cpu_caps) - (NKVMCAPINTS * sizeof(*kvm_cpu_caps)) >
+> @@ -744,7 +741,8 @@ void kvm_set_cpu_caps(void)
+>   	);
+>   
+>   	kvm_cpu_cap_init(CPUID_D_1_EAX,
+> -		F(XSAVEOPT) | F(XSAVEC) | F(XGETBV1) | F(XSAVES) | f_xfd
+> +		F(XSAVEOPT) | F(XSAVEC) | F(XGETBV1) | F(XSAVES) |
+> +		X86_64_F(XFD)
+>   	);
+>   
+>   	kvm_cpu_cap_init_kvm_defined(CPUID_12_EAX,
+> @@ -766,8 +764,8 @@ void kvm_set_cpu_caps(void)
+>   		F(MTRR) | F(PGE) | F(MCA) | F(CMOV) |
+>   		F(PAT) | F(PSE36) | 0 /* Reserved */ |
+>   		F(NX) | 0 /* Reserved */ | F(MMXEXT) | F(MMX) |
+> -		F(FXSR) | F(FXSR_OPT) | f_gbpages | F(RDTSCP) |
+> -		0 /* Reserved */ | f_lm | F(3DNOWEXT) | F(3DNOW)
+> +		F(FXSR) | F(FXSR_OPT) | X86_64_F(GBPAGES) | F(RDTSCP) |
+> +		0 /* Reserved */ | X86_64_F(LM) | F(3DNOWEXT) | F(3DNOW)
+>   	);
+>   
+>   	if (!tdp_enabled && IS_ENABLED(CONFIG_X86_64))
 
 
