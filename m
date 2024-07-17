@@ -1,108 +1,130 @@
-Return-Path: <linux-kernel+bounces-255741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4302C93449B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:11:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 895C4934498
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 750151C2191F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:11:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C016D2826EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19DD44D9FE;
-	Wed, 17 Jul 2024 22:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9DC46426;
+	Wed, 17 Jul 2024 22:11:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="aEAtQ7nv"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sYZ2OIRd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425DB2574B;
-	Wed, 17 Jul 2024 22:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8323E2BCF7;
+	Wed, 17 Jul 2024 22:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721254285; cv=none; b=Ja/+UsCu9GK2BgA4x9cBW34ckod3+j2x8kpPXuTG8HDpQqw4M1Z3eQ7503ifGcDOf345OPA+dAThynzPxyDFyT/wU5fZhcORi0s8RXpYweWTtAauprdgKPqrnmT/qVUoB7GYkMS+ugT3z/jm7uwwYUeZyFRG6KDawghfoYanElY=
+	t=1721254276; cv=none; b=eB5lPIVsi/GOdWWCbdiCinWNU81yxOosoCppkoz/W/jhOTd0hWYYV4kTL/Wo328ODKRWtmATWJQjlp7pgjNunGKk/y2L5A4mSAEHtDs+IVg7cUF8aBWgIjagE0nnyIzO4Y31ghsyaNFpM5jBNTkIl0rioLE+J++FDA+8KGr0sbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721254285; c=relaxed/simple;
-	bh=d/KsrOXTiNq8O9BZJ6297kEGo8MAO6zp/+m8WMyO3Vs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Bsp+db+m5Xk1Zff/3m6Ik2B5JMfnoocirhBMK4vn2hBFCs2smiIQS2J/Y7x5nscafPgOCZo9EJnxfZqfesQVZtcRJOHdN/jhsiqCPgjc7xSSLLRtBPNlYzjdTfvgwGe5kjxHD5JIxt8LcLzLd3frk8KWjKIc3sn0E275mfycGmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=aEAtQ7nv; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1721254273;
-	bh=41lAp/tKpCwyfsjZ2phjDi0prq5i7t+L5jODCqCMszk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=aEAtQ7nvP0N6rVvFsvfjBFTGZNPKTFIaNi5OpVqLq1C9cXUouHfdnbgZsyA1p5dO9
-	 XZT+90y4SHYgnKmOSs+X8k1Beh0DVPdUEXoP66v+Ug9VTnt2L6WvjQXnCoVwjo0zbG
-	 Z+fHiRuM+d4Zsqpl2x9/Q7sZEzG20T9OkX3b5y4qfRfNlvfnlhQFsE5xwmW3Z33ryD
-	 V4vM+qSC0lJtjzA5yQ2qkOpKdplC4yhFSOH6mze9q72rfOZJT+gw4WBPZXevGR6c9O
-	 Pf3TMBgBRhgh+Mn8Bb71Zf3mImf4Bzm3/rRNHpeJsWqIGSnfgo4RzWUaBNG85E2ARf
-	 JdfcWw3H52oQw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WPVWj36nmz4w2Q;
-	Thu, 18 Jul 2024 08:11:13 +1000 (AEST)
-Date: Thu, 18 Jul 2024 08:11:11 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the bcachefs tree
-Message-ID: <20240718081111.6130b3b1@canb.auug.org.au>
+	s=arc-20240116; t=1721254276; c=relaxed/simple;
+	bh=fKhM1tyNRfbmKB/nD4xsxgWIOHKRVRmfo3oa/afGcfI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qHsdV0j4OfkCsWvC8DfdLWAk10ZlGs6+pfuzc5w4u5NARLDAcHTYvkksATUso1r8fD6ARIU4RM2pU/fuL0QDMH02qy51b6dmnopwfxr1zObqmnGaGoVybanATfaL1QeimPAD1vKRm6T98QAWAOcAeNkshuSULCpN9XDUtZ01peE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sYZ2OIRd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0659CC2BD10;
+	Wed, 17 Jul 2024 22:11:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721254276;
+	bh=fKhM1tyNRfbmKB/nD4xsxgWIOHKRVRmfo3oa/afGcfI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sYZ2OIRdO+cd71ru2Pl62zWKakK7gTtrPSbyI1E2Cn7pLf1KQQeJZs4Jf1iubAvUq
+	 flrhASNVB//X+1AXITe9g3ZYb6a1IzsCH2v+hTFdPZ4F6R1CRp0Og0YV0tWmBpnWKT
+	 WwEcWADArRQ4nmNxkAC3ppbRqy+L5xtzH9eQRm5j8NEswWGgj3LMSYneOJ57ReGrzy
+	 mQtLMczX+YwvIulN703WmxmDS5dRpcGWdq1lu5ySjCR+XsBSkxHm9xEky53OhleSXA
+	 3hZYdQZ6zMZ1qbW1eeB2yiWnKlCjhVXczC7AkhpCHgOwOt3Dm0SDt+5BoXLUt6uM2R
+	 FzuIaWwObiFpw==
+Date: Wed, 17 Jul 2024 15:11:15 -0700
+From: Kees Cook <kees@kernel.org>
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: David Gow <davidgow@google.com>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	Rae Moar <rmoar@google.com>, Jonathan Corbet <corbet@lwn.net>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] Documentation: KUnit: Update filename best practices
+Message-ID: <202407171510.88EECF3857@keescook>
+References: <20240717210047.work.412-kees@kernel.org>
+ <a5005f1e-5bbc-49f2-bd1f-4c4878b98d26@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/YuZaO.O6siLmWU9YSaEg+by";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a5005f1e-5bbc-49f2-bd1f-4c4878b98d26@nvidia.com>
 
---Sig_/YuZaO.O6siLmWU9YSaEg+by
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jul 17, 2024 at 02:16:30PM -0700, John Hubbard wrote:
+> On 7/17/24 2:00 PM, Kees Cook wrote:
+> > Based on feedback from Linus[1], change the suggested file naming for
+> > KUnit tests.
+> > 
+> > Link: https://lore.kernel.org/lkml/CAHk-=wgim6pNiGTBMhP8Kd3tsB7_JTAuvNJ=XYd3wPvvk=OHog@mail.gmail.com/ [1]
+> > Signed-off-by: Kees Cook <kees@kernel.org>
+> > ---
+> > Cc: David Gow <davidgow@google.com>
+> > Cc: Brendan Higgins <brendan.higgins@linux.dev>
+> > Cc: Rae Moar <rmoar@google.com>
+> > Cc: Jonathan Corbet <corbet@lwn.net>
+> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> > Cc: linux-kselftest@vger.kernel.org
+> > Cc: kunit-dev@googlegroups.com
+> > Cc: linux-doc@vger.kernel.org
+> > ---
+> >   Documentation/dev-tools/kunit/style.rst | 21 +++++++++++++--------
+> >   1 file changed, 13 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/Documentation/dev-tools/kunit/style.rst b/Documentation/dev-tools/kunit/style.rst
+> > index b6d0d7359f00..761dee3f89ca 100644
+> > --- a/Documentation/dev-tools/kunit/style.rst
+> > +++ b/Documentation/dev-tools/kunit/style.rst
+> > @@ -188,15 +188,20 @@ For example, a Kconfig entry might look like:
+> >   Test File and Module Names
+> >   ==========================
+> > -KUnit tests can often be compiled as a module. These modules should be named
+> > -after the test suite, followed by ``_test``. If this is likely to conflict with
+> > -non-KUnit tests, the suffix ``_kunit`` can also be used.
+> > -
+> > -The easiest way of achieving this is to name the file containing the test suite
+> > -``<suite>_test.c`` (or, as above, ``<suite>_kunit.c``). This file should be
+> > -placed next to the code under test.
+> > +Whether a KUnit test is compiled as a separate module or via an
+> > +``#include`` in a core kernel source file, the files should be named
+> > +after the test suite, followed by ``_test``, and live in a ``tests``
+> 
+> I read the previous discussion in the other thread and thought about it.
+> And ran some kunit tests on baremetal. Delightful! I love this approach.
+> 
+> However! It is rather distinct and not just any old test module. Kunit
+> has clear conventions and behavior.
+> 
+> As such, I have quickly become convinced that distinct naming is
+> required here. So I'd like to suggest going with the the suffix:
+> 
+>     _kunit
+> 
+> ...unconditionally. After all, sometimes you'll end up with that
+> anyway, so clearly, the _test suffix isn't strictly required.
+> 
+> And given that we are putting these in tests/ , a _test suffix is
+> redundant.
+> 
+> Yes?
 
-Hi all,
+I would agree. David, what do you think? I realize drm already does
+tests/*_test.c, but it does seem like better information density to use
+the tests/*_kunit.c pattern by default?
 
-In commit
-
-  de73a2ee2004 ("bcachefs: Fix fsck warning about btree_trans not passed to=
- fsck error")
-
-Fixes tag
-
-  Fixes: ("bcachefs: fsck_err() may now take a btree_trans")
-
-has these problem(s):
-
-  - No SHA1 recognised
-
-I assume you meant
-
-Fixes: a850bde6498b ("bcachefs: fsck_err() may now take a btree_trans")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/YuZaO.O6siLmWU9YSaEg+by
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaYQX8ACgkQAVBC80lX
-0GxG/Qf8CE46hTdbIR5eDHnldd7R/htlN9kRtIoH8nJu6Y+ktMsL/Y5iczFHDNVd
-QF6tFr4JOUC8DbNbSptVgE8eseo8bU3nf6slAsbVHVnbUxZkIOv/Xf4PN2cJMceS
-a12eIyF8sJUvKmLglffAiAayJgdTHRXS7DE3xz6SBmIZrxrgRWqGbrAp+ieB2zd2
-zkr1q4j/59B3zqnkXgxsleBB07KJVuke1MIxoHKSyU1hCrKTBCbuKUPChX42W7ge
-65kvpgaJXhbqd6lYSmnAI6pjon4EG6jPqfq5WhM35zfGorcJOFKHgyE22sYDyJXE
-f3VFI3rlohLgDJicBYD6OtluddUD9w==
-=fr21
------END PGP SIGNATURE-----
-
---Sig_/YuZaO.O6siLmWU9YSaEg+by--
+-- 
+Kees Cook
 
