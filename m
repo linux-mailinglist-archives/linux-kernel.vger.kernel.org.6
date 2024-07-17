@@ -1,121 +1,133 @@
-Return-Path: <linux-kernel+bounces-255236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DE32933DD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:42:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6EB2933DD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:42:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDA49283DFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:42:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EABF284684
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:42:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AED180A6F;
-	Wed, 17 Jul 2024 13:42:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7E6180A81;
+	Wed, 17 Jul 2024 13:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BtviZWWc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pbvj/YA1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBA9180A60
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341ED180A60;
+	Wed, 17 Jul 2024 13:42:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721223755; cv=none; b=fp9Hi55inwH9Ru8tgfvTFF9WVli7++yXkHCDoVKlU121RVCx2K9uQuWjzeNKl6UtpYj7M/iO7yIMbXlzpx1kfquFx2CO39jDO52vQKYg/muinMqzXcLlkfHEiQAHUJFMXkoNmiD6edFcxcICUMp8OXZnI3dWWxMtvwM7NaQHx+E=
+	t=1721223769; cv=none; b=nH4Ds2aKv2Bdq37RH1XsB6PrB9ITLmkgBZkTIE4DY2dR2ydfzLIz7sI0cyHbK/1+bMbxCHfszckW928eCWSyOWwYniY5Sly7Fvxa4otvE2qvgtqcD15KGoYda1BiybtKDiUaRrR5q4iBM+dc2DyX2EWdkyIkna4zGpiEZbdQiM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721223755; c=relaxed/simple;
-	bh=OUqIMtjVeiKpTtaIAlYI6sa7gaYOLRReI4XGc/N5mfc=;
+	s=arc-20240116; t=1721223769; c=relaxed/simple;
+	bh=b6M2u0O/VcQWX4e8CRgM/0cmwdYjHB7jwSQO7Cq366U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qft10hn/dc7MHsFcwhKEVbDb4xuMrvs8NCJxaEhOmbL5enGjczI3A/JPtp2865WEk2yetXyr5By3IHB4e2w7m4Iscub4yPee5UiUvKo4qNnCokbxt7EYj5t719Gf6HtK74dQkK3ivvoPsczZUZD2wr5BFOZQdsKAEFa4HJymWn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BtviZWWc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA3F9C4AF0D;
-	Wed, 17 Jul 2024 13:42:32 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=mDtSeqXCDYSKoxsl3wUaGmGrFtH2MwvcaMHaTLDvFfowpBzIFXl6okcZd/N29AMq8SwpFunjKvvZaFH2U8GN5idcf6ae9ULbt7BEKBcsOwOQAi5SsciHT4wrlxkbNEs3mYcp4hRzxDjHs+Az+t/mV/aImYcBubjFuqjAG33ZYew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pbvj/YA1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87E96C32782;
+	Wed, 17 Jul 2024 13:42:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721223755;
-	bh=OUqIMtjVeiKpTtaIAlYI6sa7gaYOLRReI4XGc/N5mfc=;
+	s=k20201202; t=1721223769;
+	bh=b6M2u0O/VcQWX4e8CRgM/0cmwdYjHB7jwSQO7Cq366U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BtviZWWcIerFEJZYEp6y3kkaTE2RkITWziH5krmkHYqSRBdTk27RunKE+gxGlFyqO
-	 7ygIO9Dd1KeaBCCYcPtRPNngcTVXh6nGyw5aS5TJ/iTYbcFCXkeDm7CkG3j5zXHBCj
-	 99r1n6EX3zif8auA0YcEoAho6Yt5ymbpPxndSvIUFHadxP0gggQcOamfggCxirYifb
-	 AIdeCCjfbqbatvLB/C97rZCcElQwfBK+irz/Zw801Udjc3Gt0W4vz4LHyguE4lvkr/
-	 Fwa0d2CdAjfjsFF+bCfnVnk+VdgDP5I26D2dcIeH8jNbp0puwyn5+UQi0tcMjJYC1H
-	 ewkQDGvMYsAZw==
-Date: Wed, 17 Jul 2024 14:42:30 +0100
-From: Conor Dooley <conor@kernel.org>
-To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] RISC-V: hwprobe: sort EXT_KEY()s in
- hwprobe_isa_ext0() alphabetically
-Message-ID: <20240717-unluckily-collide-1aa35c97662c@spud>
-References: <20240717-dedicate-squeamish-7e4ab54df58f@spud>
- <cba0c880-a1b2-4bb8-bef0-d280d87ec308@rivosinc.com>
+	b=pbvj/YA1Gs/hjRDC0IXr3+tRYix4k2pKaNUcxopwUOt2F3ENxPAeCd7DoRcMp7O0B
+	 UtRs91T42G/Tgpa0EcWDxZUv+lc0rM4ypbkFy3zjVSDe8hbjRV8lOGcgAAws7/rWT2
+	 hMWfV99wFXGsid9gYH9JPJe+Gwp7nsq2+Ti798NJ4mv4beRMWBtHXM07O8c+D1ncb5
+	 3Na3BkeEPeVECGuoDdhPLJch/+W5um8v4lCcvbzDZnLj51nlSj0p8xOEqgfiFUbvG+
+	 3zkYm6sbagImtoDSlJXsv9/nR27VdgbTGY8ixgsZkEWeJB/1U5WF01yc3llYodPJSe
+	 LpWYqd26vKK/g==
+Date: Wed, 17 Jul 2024 15:42:46 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Paul Cercueil <paul@crapouillou.net>, Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
+	Edmund Dea <edmund.j.dea@intel.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
+	Andy Yan <andy.yan@rock-chips.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Jyri Sarha <jyri.sarha@iki.fi>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, dri-devel@lists.freedesktop.org, igt-dev@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v4 2/5] drm/drm_property: require DRM_MODE_PROP_IMMUTABLE
+ for single-value props
+Message-ID: <20240717-bouncy-horned-mamba-5691b8@houat>
+References: <20240715-drm-bridge-connector-fix-hdmi-reset-v4-0-61e6417cfd99@linaro.org>
+ <20240715-drm-bridge-connector-fix-hdmi-reset-v4-2-61e6417cfd99@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="QH2DqXGUy+ZdMcY/"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6ldj6ctz25xj6y7b"
 Content-Disposition: inline
-In-Reply-To: <cba0c880-a1b2-4bb8-bef0-d280d87ec308@rivosinc.com>
+In-Reply-To: <20240715-drm-bridge-connector-fix-hdmi-reset-v4-2-61e6417cfd99@linaro.org>
 
 
---QH2DqXGUy+ZdMcY/
-Content-Type: text/plain; charset=iso-8859-1
+--6ldj6ctz25xj6y7b
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 17, 2024 at 03:34:06PM +0200, Cl=E9ment L=E9ger wrote:
-> On 17/07/2024 10:54, Conor Dooley wrote:
-> > From: Conor Dooley <conor.dooley@microchip.com>
-> >=20
-> > Currently the entries appear to be in a random order (although according
-> > to Palmer he has tried to sort them by key value) which makes it harder
-> > to find entries in a growing list, and more likely to have conflicts as
-> > all patches are adding to the end of the list. Sort them alphabetically
-> > instead.
-> >=20
-> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> >  		if (has_fpu()) {
-> > -			EXT_KEY(ZFH);
-> > -			EXT_KEY(ZFHMIN);
-> > -			EXT_KEY(ZFA);
-> >  			EXT_KEY(ZCD);
-> >  			EXT_KEY(ZCF);
-> > +			EXT_KEY(ZFA);
-> > +			EXT_KEY(ZFH);
-> > +			EXT_KEY(ZFHMIN);
-> >  		}
-> >  #undef EXT_KEY
-> >  	}
+Hi,
+
+On Mon, Jul 15, 2024 at 09:33:02AM GMT, Dmitry Baryshkov wrote:
+> Document that DRM_MODE_PROP_IMMUTABLE must be set for the properties
+> that are immutable by definition - e.g. ranges with min =3D=3D max or enu=
+ms
+> with a single value. This matches the behaviour of the IGT tests, see
+> kms_properties.c / validate_range_prop(), validate_enum_prop(),
+> validate_bitmask_prop().
 >=20
-> I'd prefer that to be done after removing the "if
-> (has_vector()/has_fpu()) by using the .validate callback for ISA
-> extension. This way, you'll have only a single commit reordering everythi=
-ng.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Right, and I do have some WIP for that here
-https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/log/?h=3Dva=
-lidate_fpu_and_vector
-but won't be sending that until it's cleaned up after the merge window.
-I was intentionally sending this during it so that there would be no
-moving pieces for this to conflict with - because it will conflict with
-any other patch adding things to the list tails.
+We had a discussion yesterday about it on IRC with Sima, Simon and
+Xaver.
 
---QH2DqXGUy+ZdMcY/
+https://oftc.irclog.whitequark.org/dri-devel/2024-07-16#33374622;
+
+The conclusion was that it would create an inconsistency between drivers
+on whether a given property is immutable or not, which will lead to more
+troubles for userspace.
+
+It's not clear why Ville added that check in the first place, so the
+best course of action is to remove the IGT test and get the discussion
+started there.
+
+Maxime
+
+--6ldj6ctz25xj6y7b
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpfKRgAKCRB4tDGHoIJi
-0tuBAP4xR2iBKZLXlrM2beOQBYy76+eg35CePlufL/1bi/2akQD9GK3RQVgmlN4X
-6n7zSdmdkP7k0Z5bzLQoEOqkHa6ZHgY=
-=zp9K
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZpfKVgAKCRDj7w1vZxhR
+xYH7AQD8w8myEhco9CqAfjh20D1tXY/mlB+W4/bdaby3K0NuIQD/cGVo42JNkoo/
+jCNbgBRkiSwOXLi0a+whYQOE0kxTmwY=
+=bR0t
 -----END PGP SIGNATURE-----
 
---QH2DqXGUy+ZdMcY/--
+--6ldj6ctz25xj6y7b--
 
