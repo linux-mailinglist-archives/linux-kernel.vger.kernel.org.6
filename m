@@ -1,139 +1,117 @@
-Return-Path: <linux-kernel+bounces-255000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B2A6933A51
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:50:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C6F8933A57
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFE932843B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:50:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38BE81C21232
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2040117E917;
-	Wed, 17 Jul 2024 09:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A507F17E8F8;
+	Wed, 17 Jul 2024 09:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iyWj77tN"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Z1jB1Ceq"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E164317E913
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 09:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653AE17DA39;
+	Wed, 17 Jul 2024 09:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721209803; cv=none; b=K3oFIWCCoVumkTSbgVowyJycv/3xrOHse6jAlE74W1tnRJlHWVP0Y2ksm1C29+20TdMhfpXYMQXnan8ii3ZWdAx38FAOWYpQ3+n6z2RWeTBjOeWXoHcRwURlQhCbiGCZFA/kVkzCCkS4XZEIyBdD0GKc9OFEus2DGudD899HAJM=
+	t=1721209847; cv=none; b=Cwbh2Ae+Kbq/f0m8zf6xFZKLJBnLCxoI3bLa4IHWwfIZRuag13KZdh7LorXlEg9T9GXWFkTyf79M2vgZAdmHEPvxUQOXzotx8Q4dSnWo3RQwrmaDLDfepZ5wSapfDSEkYEY2zogemWmTlT15o0UlLviDeBeDYX/zKrcylaH029c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721209803; c=relaxed/simple;
-	bh=H5PoAttukPkaOiwXWePhqYK3ZaPP5UucflmTGihpw98=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=krlcYDjLTcu5iwvFccbgB2QliRcc4RTzImxhmGQlajZN8sxPXrQD41m2s/liPbBzVq1BUQx5OVOIJRibnROH/ORPGwA4g6ISMcSEFI5IMcYZoF7CyI8N4pdePAuB/6VjYqMkKdC/VJvGUykEV8u26AULLFAP3AD3R/EMhukOaqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iyWj77tN; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e05d48cf642so2062280276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 02:50:01 -0700 (PDT)
+	s=arc-20240116; t=1721209847; c=relaxed/simple;
+	bh=widKc8K6pYV76Mu2nvcrhjA5QONVBH9tGu2f247sgBg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lHek2HbtPUYEduUyo0DX91ZxFDPTWH5p80ns1MMR4WxLQjUySRzaFYU1XUj6itbz2mVvtElIdxcrwtwwfadIlg/QF2eWM4NZRiv8kTTS3CFu+WbOG7/1cRcS8MTAhECilizy52nJBUmgglzfVXx3gtIrELIIxasn2yAQ0Oh54Q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Z1jB1Ceq; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a77e392f59fso764449266b.1;
+        Wed, 17 Jul 2024 02:50:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721209799; x=1721814599; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=dfAvVWLrB3F7/a07jguYyX27pLY+S5GzkT3MriOJkc0=;
-        b=iyWj77tNSpn4+oDU5y3bsCZSrpd3zDl7mTugJlLNZghh4NHMRgHP+seaoDT+X6Zp50
-         a9WE2gfNg/fgsmpoChdh44cCB9HZKKllzj287Cg0/bw99mPAX4SmKdOLFEhXGc6DnNNn
-         lsqLcRXZgzUimky24JoYcovDd2Kjia/ICstpky8kBPVY/zGhvZzRluC24t3Ic9CfKAD/
-         /F3A7qd8dp8VfR/xfCXQ/jDiuntJlYZYpQyg2LLwwvehoWBa90r/fPeZQLbiW0HWGv6k
-         oxYc/mwJ9+B7hJNhxsAiZ8fDByyOT3NmizKPUzl7Q0Lpu0p/CKcrWUZPLBCD+JcTyGYo
-         /7JA==
+        d=googlemail.com; s=20230601; t=1721209844; x=1721814644; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dFYzt4+oRDf35DO6ym9OnuWNHVGbXwPsjErtYOtvDgY=;
+        b=Z1jB1CeqGYzSodFWs3aFmrA41h0JrMQPTX24vQrwVWUMBLvsD4iUTFEX2cp1N99Qwx
+         0TiU2d9G4b31a4AIHC3VIx9RPdCl2cd2ViZFh3tWT3PoimWAv/pC8/pagjYqKrB5cTsw
+         LhQ8oHPcjL9RTFOH6ah1XtpVf2Hx7SNDWiNLjQ6NAqqdUYyGNaGnffU68IIFfS42vYEH
+         XKtdJphYlqCQhAuWuhUj3A/dHWRvT1QTDBN0/aE7E0PZ7/BbesUacneggTMcVa7zjs/X
+         C0iDddmT5R/7yNJ3pIVevwMhM4qlCiZ9/7LqctW95R7MGF/sNClhIwAkx9qjn7zFo6Bn
+         u6rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721209799; x=1721814599;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dfAvVWLrB3F7/a07jguYyX27pLY+S5GzkT3MriOJkc0=;
-        b=bI3ggXPXJoQp7HxMMlX9nth98lLCuZDLJdnSZVmkAm1aTQ09Ma83S0JTZlEafdNm36
-         DOGYKCwyHVuwWNA9T+tvoV3GF+pSl1WJXj5GCCz8fMZUs4rrlxl0jVAdvASOud5aPJNH
-         cn9Q7oyh+6DazZGlvWwDxGmv2VUV4CpzIEjqmEDQF3TpgeaxKFAw1LDs1iH+1A/C2WSg
-         pQrGPLLGmGnCyFd//13tgh0ifEEylUOSnE+fTDH/kVX1bKaSSotcuc/jE3V3pDZXzVuV
-         XtAEnBeRz4H+jy9swD0DkbYdHT0KM+IohHZD0JKYOKOCYUwlKQ5L/jqpn7jHiZ06BiEg
-         jxZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXd1SSLzuG+fXaEPKSvr8cFMAINUTW4cFtWEXxqZDd2iyZOgv7Myt7C9+y6oIpSSjuyeOo1eCGVZEvDPSPwdnaXSYvGONgoN7yg65Ck
-X-Gm-Message-State: AOJu0Yy6xTHFWxogLxsqtGKKyhiSs4+NKSqqjK3jTjsZSbmxJJlmz/6G
-	8xAGX1yobf3DOxHxojwHZNx7nbSz/UYL689BBTJN2i+GyfpAVe3y7epT5ic/b68dQLo6eTXzW/h
-	OqvjO2b4sqZsMr1stW9nWLi0PBrAn0UoVHnMb9w==
-X-Google-Smtp-Source: AGHT+IF6nCzOpXaRWt9Ib3jOdlVzNTPk85lJ7twhcXVYMp8Nqyhe17ix7FKx2TyF92rD+HSwMWfOHwxPHQk1Q1iI7IA=
-X-Received: by 2002:a05:6902:1692:b0:e02:b9ac:1486 with SMTP id
- 3f1490d57ef6-e05ed82f82emr1265122276.57.1721209798862; Wed, 17 Jul 2024
- 02:49:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721209844; x=1721814644;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dFYzt4+oRDf35DO6ym9OnuWNHVGbXwPsjErtYOtvDgY=;
+        b=p3JporGbAj8te8gRLcp069La3wwxXf1WkEnm2jkOJQgndBo9FnCO0c4SAD/UBU7GH3
+         rIMMk5jsvwXBHE8+qcPRHvA1NhRYt+OSnrJNeqSrPoybGDaIME3aJ6h1Tfrp46c1BWXJ
+         jggFNZA2gPau6INM8SM78ZaZjVlJhONOAu7ujOhldtrUg39Nc3mGdOppDXXpo/v9bwrb
+         LYMv+vFo8GYgWRgpD1TIq77joHxHH9eRNj9lvz0meEce39Pef4bYaLJf06crWTZV0LxW
+         Md/1VKpsTJPhpeJgW0O/j9U0XCkkUe616B1OPlE8/cHSIo4AUzCTnnWuuQkQ1as0JYh2
+         b68Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX+mZ7uFKBMDflkJMk/FkafID5jFOireICuy7dS7Eqg53OEvJ8XQccGoRY0DkmW/9X4MLEytmjXeCMLeLSpKGAf5H+kyyEQh6XQ8yekXXVpSL7MEEhbFc3v2r2BiBeFs5ua1H5v
+X-Gm-Message-State: AOJu0YyF2SgfXNKN+fMXEkSu+DW6W3pmW7qoV+BxdLYStpunTej0IbFE
+	+6vy+/iqNnm7zQYKgWzSDoO2b+dtpOxrTUCVf5KUVvEIbsG7F1w=
+X-Google-Smtp-Source: AGHT+IEr2sHIgKgs6+p3oVsZSoFqhiljMqhuzHMlM+ZfQkRyh6AyJ7nsZ0R/NgzjCdmjRCHQJo3S3Q==
+X-Received: by 2002:a17:906:f291:b0:a77:cf9d:f496 with SMTP id a640c23a62f3a-a7a011af228mr77259366b.39.1721209843495;
+        Wed, 17 Jul 2024 02:50:43 -0700 (PDT)
+Received: from [192.168.1.3] (p5b0576fa.dip0.t-ipconnect.de. [91.5.118.250])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5b7e9esm427481966b.62.2024.07.17.02.50.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 02:50:42 -0700 (PDT)
+Message-ID: <655921dc-bc68-4408-b07a-efcbf8fdd712@googlemail.com>
+Date: Wed, 17 Jul 2024 11:50:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240716-topic-sm8650-upstream-fix-dispcc-v3-0-5bfd56c899da@linaro.org>
- <20240716-topic-sm8650-upstream-fix-dispcc-v3-2-5bfd56c899da@linaro.org>
- <dccttz5b44bl3lwmcaqz6wjx3n4sv3eq4yh6276vzwrtkcvqcw@qxhbo7bylnsg>
- <9ad10d92-d755-4fae-b206-6e8648be6d48@linaro.org> <CAA8EJpr9L+AKDhuHfQa=Nco7fvG9vLH3a+gxVhENrhz12b3n=Q@mail.gmail.com>
- <278354ec-532b-48de-8ee1-5477ddb4a285@linaro.org> <kxrhhb3vdojbnqfbwks2qmob55fwm3onleood73qfk6esl7g2c@q66kw5am4emc>
- <94e48e19-781e-4de3-a4e6-da8e923a1294@linaro.org>
-In-Reply-To: <94e48e19-781e-4de3-a4e6-da8e923a1294@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 17 Jul 2024 12:49:48 +0300
-Message-ID: <CAA8EJpomVKiVrRxSEJmjvNXLGGKVvcr2wGWtE129eUoUfgYC4g@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] clk: qcom: dispcc-sm8650: add missing
- CLK_SET_RATE_PARENT flag
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: neil.armstrong@linaro.org, Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.1 00/95] 6.1.100-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240717063758.086668888@linuxfoundation.org>
+Content-Language: de-DE
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20240717063758.086668888@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 17 Jul 2024 at 12:47, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->
-> On 16.07.2024 6:46 PM, Dmitry Baryshkov wrote:
-> > On Tue, Jul 16, 2024 at 03:46:24PM GMT, neil.armstrong@linaro.org wrote:
-> >> On 16/07/2024 15:44, Dmitry Baryshkov wrote:
-> >>> On Tue, 16 Jul 2024 at 15:32, Neil Armstrong <neil.armstrong@linaro.org> wrote:
-> >>>>
-> >>>> On 16/07/2024 13:20, Dmitry Baryshkov wrote:
-> >>>>> On Tue, Jul 16, 2024 at 11:05:22AM GMT, Neil Armstrong wrote:
-> >>>>>> Add the missing CLK_SET_RATE_PARENT for the byte0_div_clk_src
-> >>>>>> and byte1_div_clk_src, the clock rate should propagate to
-> >>>>>> the corresponding _clk_src.
-> >>>>>>
-> >>>>>> Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
-> >>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >>>>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> >>>>>> ---
-> >>>>>>    drivers/clk/qcom/dispcc-sm8650.c | 2 ++
-> >>>>>>    1 file changed, 2 insertions(+)
-> >>>>>
-> >>>>> This doesn't seem correct, the byte1_div_clk_src is a divisor, so the
-> >>>>> rate should not be propagated. Other platforms don't set this flag.
-> >>>>>
-> >>>>
-> >>>> Why not ? the disp_cc_mdss_byte1_clk_src has CLK_SET_RATE_PARENT and a div_table,
-> >>>> and we only pass DISP_CC_MDSS_BYTE1_CLK to the dsi controller.
-> >>>
-> >>> Yes, the driver sets byte_clk with the proper rate, then it sets
-> >>> byte_intf_clk, which results in a proper divisor.
-> >>> If we have CLK_SET_RATE_PARENT for byte1_div_clk_src, then setting
-> >>> byte_intf_clk rate will also result in a rate change for the byte_clk
-> >>> rate.
-> >>>
-> >>> Note, all other platforms don't set that flag for this reason (I think
-> >>> I had to remove it during sm8450 development for this reason).
-> >>>
-> >>
-> >> Ack, I think this deserves a comment explaining this, I'll add it.
-> >
-> > But where to place it? This applies to _all_ dispcc controllers.
->
-> Commit message
+Am 17.07.2024 um 08:39 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.1.100 release.
+> There are 95 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-It is already committed.
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
+
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+
+
+Beste Grüße,
+Peter Schneider
 
 -- 
-With best wishes
-Dmitry
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
