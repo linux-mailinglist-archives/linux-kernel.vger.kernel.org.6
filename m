@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-254824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F1093382F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:46:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF528933835
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C37EB214E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:46:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3676CB21251
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25EC81CD06;
-	Wed, 17 Jul 2024 07:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7F21CD0C;
+	Wed, 17 Jul 2024 07:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JV4U7TLN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="oswepofU"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6234E1109;
-	Wed, 17 Jul 2024 07:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BDA31CD00
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721202364; cv=none; b=gHNLEsxH0vTmDffOjrsITuI5y+eEAyxB3T0GTL7V/MEpbzP1sFgYgoyvLpZPzEVha570FDb6lDajyW6nCP5099S1csDTTT3npzTkQVAkJQ2oPMR6AdC3q6EkAGQGdDGJRtEeVLYmn2tYreBtJwB0w4xIm/H5/ZBcwhoI3r7sKuI=
+	t=1721202395; cv=none; b=FK5xRNNtExBovxP2uLfHQLcbrzCW19h8v/khJJoeKbsNzFIiOtcLDjeGYwtNRaT7Maq6piPO4pSRgjae3IBxnZAixEcwMPYzzdReXayDZa7wv36s2EG9qFLK1bmYm2E5WYARPnbc/IdIvFADwEg/NR5De34ioYN5NLVCnoc7af8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721202364; c=relaxed/simple;
-	bh=M1UAov2c9FIa5WR/+oBi3eCA5gwsOt1hDB+03zxYG4c=;
+	s=arc-20240116; t=1721202395; c=relaxed/simple;
+	bh=VjQxQBGSxrzOKfnVurw4YR8PgK6Ja3I4dp+Q7ZlwA5Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CaA0U1U2IXs6orzuU5cRUW1BANW2OAXcMbjXjS8mnE6qJkgNkTm5bo5wJkDUlt08WpGDIAZOFrt799SQu1hSWSdm79A9Gyzs1q+vPzEPzck3kQC0eJ4MQSBkQzFQdeZ00/frcygRr2Z62m4tL5P96TjjxE5MPVsmYEvJ5pN9Q1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JV4U7TLN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EACDC32782;
-	Wed, 17 Jul 2024 07:46:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721202363;
-	bh=M1UAov2c9FIa5WR/+oBi3eCA5gwsOt1hDB+03zxYG4c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JV4U7TLNV/x4Mchsr5JmvrBdpgbJCzl3+aSXz06WivcXQwzX1bcKyk1UYdoIaZWMB
-	 QnUzBT2MIuvW/oMsd77wnpZwiK0lpI+mPXdxTlD2bJicB7lhxU37+6AUG8HitUTNkl
-	 R5UVXf3EFnc5haC0C+n6/PQDGKBLLPF3w93pH+n1GWGrKSBL0wOfoEViLJAXJuBMGn
-	 VgNBGL2ZaJPXiz52bs8jyeZ5EDfeVchNK1O6xzvg3X7Z26yDBvDiTQ2q7lP8Br9B8K
-	 Jv9ftcXSOww9/JdlL3Wm4ei5CObiUkOi1dheMGmTZKbmkMwGkeldSVFMqO0vosvLus
-	 iCKL7TReGNdMw==
-Message-ID: <e656b89a-1dcd-4fcc-811a-a7222232acc7@kernel.org>
-Date: Wed, 17 Jul 2024 09:46:00 +0200
+	 In-Reply-To:Content-Type; b=LVRknnHuwoeEtC7aEwTJmdTXJZup1+8LuwtMyTo7sh4Cp80VVk76zSQTX6HPQL2YisHNmcWZycvN3us05EctPIzxRZlQA8tYZHxHF5sAT1XxLBgWe6PrWNJSmSyqOKTmIXE1la7i3vxMN6oRgHSL+tbT+VRaqriywUNpfBCj200=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=oswepofU; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52e99060b0dso6905611e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 00:46:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1721202391; x=1721807191; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hYmLVYWXk1bMWnCbE/bbshFQAVmL1hOp1kfOD1hykXU=;
+        b=oswepofUSVwWMKOA7U2Tv4EOWaSvEuKz1tRYaea2ahcZMTIyXaqv9Kn22GjeeJsn1c
+         UGDH8TUFcPjrUAxEJwDOhuOprpeeohcJEnsRCFHCqAU11kKWXuZJnaMRT8nJbJCYMUaQ
+         By9PiKf1FSAUMfTgSEkVCMVos5fa8Y5VsXm1SdebDJiBylM0/7LUg9DSr3ipmkcntGC6
+         ObgiOmLbmtf9uKrJMKdBCBnbZmV85DTtyWlIOg77DBEFWLm/rZTxq3MmJSGDklvwblxp
+         OxXnEswup9pIT6bm+UwA84sMEzOD8fxWICqBjpAdelnLr7BkZ5x/N+AGX7u88cs918N8
+         aWKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721202391; x=1721807191;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hYmLVYWXk1bMWnCbE/bbshFQAVmL1hOp1kfOD1hykXU=;
+        b=NXELfKCDHA1/t90KaOS7os8VNabl3oyyvBwinbwuSunE2OkxzXgXxZ2nIMF/GDHojl
+         pdghdPbA4c7P4NOq4BxOM5A+GQvFgOqeMcmtxkDBihnhhikWyO4+mowJ2YXBpUrUJXNj
+         b5MfTIZz7w/F1Wgu1vVySkLObQRB7Fz+wqsya7K0EW5PzaYBsdVW5TZZIl/xttg0mdSv
+         Ut43VVP9edyNQg1ZNlcJINeTZwo++dI1fTwGFuYo1eNVeZLN+UyvVZqknY+a9cRxpPH1
+         XzRJdqfNKann3hfDaBCQLAq5fQ18YaIgcfQYXVAi7oc587EcP+W+YAe/V4SrKHw9gQXz
+         l8fg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrT4L0xofeilWjCSH0s17XpslbUXKp5TM+WkwNTdiPsOXbaAd2oD7fJ0m435ak+ZVn+1t/yTI8J43gYCNN7XxI1M1Xs6vBclg1YoLw
+X-Gm-Message-State: AOJu0YybpqJNFFWl9Onugp8qwUiMbsSG1YjUSljYsI8K/0usn0intK5+
+	t3xN0cVdLQcblRzxlyJzn2KPyUmWVGDsZ5o4/VhiqyytimLmpyfzuZ0IEzpj0Z8=
+X-Google-Smtp-Source: AGHT+IGszrXHx0KHBmy0iQwD3ICpkbfColejw+97LZhBsXwp+xoAEe4EMP07eMeEcMWmReOlcLiFBg==
+X-Received: by 2002:a05:6512:3a87:b0:52e:7ef1:7c6e with SMTP id 2adb3069b0e04-52ee5429389mr555426e87.51.1721202390445;
+        Wed, 17 Jul 2024 00:46:30 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.171])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5e9a809sm160194035e9.28.2024.07.17.00.46.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 00:46:29 -0700 (PDT)
+Message-ID: <40d1bb5b-f8ff-4fdc-a2b3-b51ca8b11c10@tuxon.dev>
+Date: Wed, 17 Jul 2024 10:46:28 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,101 +75,192 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 2/2] cgroup/rstat: Avoid thundering herd problem by
- kswapd across NUMA nodes
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>, tj@kernel.org,
- cgroups@vger.kernel.org, hannes@cmpxchg.org, lizefan.x@bytedance.com,
- longman@redhat.com, kernel-team@cloudflare.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <171952310959.1810550.17003659816794335660.stgit@firesoul>
- <171952312320.1810550.13209360603489797077.stgit@firesoul>
- <4n3qu75efpznkomxytm7irwfiq44hhi4hb5igjbd55ooxgmvwa@tbgmwvcqsy75>
- <7ecdd625-37a0-49f1-92fc-eef9791fbe5b@kernel.org>
- <9a7930b9-dec0-418c-8475-5a7e18b3ec68@kernel.org>
- <CAJD7tkYX9OaAyWg=L_5v7GaKtKmptPpMGJh7Org5tcY4D-YnCw@mail.gmail.com>
+Subject: Re: [PATCH v2 02/11] mfd: renesas-vbattb: Add a MFD driver for the
+ Renesas VBATTB IP
 Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <CAJD7tkYX9OaAyWg=L_5v7GaKtKmptPpMGJh7Org5tcY4D-YnCw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To: Biju Das <biju.das.jz@bp.renesas.com>, "lee@kernel.org" <lee@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240716103025.1198495-3-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB11346E71D18A145DA70441CF786A22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB11346E71D18A145DA70441CF786A22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi, Biju,
 
+On 16.07.2024 14:07, Biju Das wrote:
+> Hi Claudiu,
+> 
+>> -----Original Message-----
+>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>> Sent: Tuesday, July 16, 2024 11:30 AM
+>> Subject: [PATCH v2 02/11] mfd: renesas-vbattb: Add a MFD driver for the Renesas VBATTB IP
+>>
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Renesas VBATTB IP has logic to control the RTC clock, tamper detection and a small 128B memory. Add a
+>> MFD driver to do the basic initialization of the VBATTB IP for the inner components to work.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>
+>> Changes in v2:
+>> - none; this driver is new
+>>
+>>  drivers/mfd/Kconfig          |  8 ++++
+>>  drivers/mfd/Makefile         |  1 +
+>>  drivers/mfd/renesas-vbattb.c | 78 ++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 87 insertions(+)
+>>  create mode 100644 drivers/mfd/renesas-vbattb.c
+>>
+>> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig index bc8be2e593b6..df93e8b05065 100644
+>> --- a/drivers/mfd/Kconfig
+>> +++ b/drivers/mfd/Kconfig
+>> @@ -1383,6 +1383,14 @@ config MFD_SC27XX_PMIC
+>>  	  This driver provides common support for accessing the SC27xx PMICs,
+>>  	  and it also adds the irq_chip parts for handling the PMIC chip events.
+>>
+>> +config MFD_RENESAS_VBATTB
+>> +	tristate "Renesas VBATTB driver"
+>> +	depends on (ARCH_RZG2L && OF) || COMPILE_TEST
+>> +	select MFD_CORE
+>> +	help
+>> +	  Select this option to enable Renesas RZ/G3S VBATTB driver which
+>> +	  provides support for the RTC clock, tamper detector and 128B SRAM.
+>> +
+>>  config RZ_MTU3
+>>  	tristate "Renesas RZ/G2L MTU3a core driver"
+>>  	depends on (ARCH_RZG2L && OF) || COMPILE_TEST diff --git a/drivers/mfd/Makefile
+>> b/drivers/mfd/Makefile index 02b651cd7535..cd2f27492df2 100644
+>> --- a/drivers/mfd/Makefile
+>> +++ b/drivers/mfd/Makefile
+>> @@ -186,6 +186,7 @@ pcf50633-objs			:= pcf50633-core.o pcf50633-irq.o
+>>  obj-$(CONFIG_MFD_PCF50633)	+= pcf50633.o
+>>  obj-$(CONFIG_PCF50633_ADC)	+= pcf50633-adc.o
+>>  obj-$(CONFIG_PCF50633_GPIO)	+= pcf50633-gpio.o
+>> +obj-$(CONFIG_MFD_RENESAS_VBATTB)	+= renesas-vbattb.o
+>>  obj-$(CONFIG_RZ_MTU3)		+= rz-mtu3.o
+>>  obj-$(CONFIG_ABX500_CORE)	+= abx500-core.o
+>>  obj-$(CONFIG_MFD_DB8500_PRCMU)	+= db8500-prcmu.o
+>> diff --git a/drivers/mfd/renesas-vbattb.c b/drivers/mfd/renesas-vbattb.c new file mode 100644 index
+>> 000000000000..5d71565b8cbf
+>> --- /dev/null
+>> +++ b/drivers/mfd/renesas-vbattb.c
+>> @@ -0,0 +1,78 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * VBATTB driver
+>> + *
+>> + * Copyright (C) 2024 Renesas Electronics Corp.
+>> + */
+>> +
+>> +#include <linux/mod_devicetable.h>
+>> +#include <linux/of_platform.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/pm_runtime.h>
+>> +#include <linux/reset.h>
+>> +
+>> +static int vbattb_probe(struct platform_device *pdev) {
+>> +	struct device *dev = &pdev->dev;
+>> +	struct reset_control *rstc;
+>> +	int ret;
+>> +
+>> +	rstc = devm_reset_control_array_get_exclusive(dev);
+>> +	if (IS_ERR(rstc))
+>> +		return PTR_ERR(rstc);
+>> +
+>> +	ret = devm_pm_runtime_enable(dev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = pm_runtime_resume_and_get(dev);
+>> +	if (ret)
+>> +		return ret;
+> 
+> Maybe as an optimization drop pm calls and use "devm_clk_get_enabled"
+> instead as it perfectly fits in this scenario??
 
-On 16/07/2024 23.54, Yosry Ahmed wrote:
-> On Mon, Jul 8, 2024 at 8:26 AM Jesper Dangaard Brouer <hawk@kernel.org> wrote:
->>
->>
->> On 28/06/2024 11.39, Jesper Dangaard Brouer wrote:
->>>
->>>
->>> On 28/06/2024 01.34, Shakeel Butt wrote:
->>>> On Thu, Jun 27, 2024 at 11:18:56PM GMT, Jesper Dangaard Brouer wrote:
->>>>> Avoid lock contention on the global cgroup rstat lock caused by kswapd
->>>>> starting on all NUMA nodes simultaneously. At Cloudflare, we observed
->>>>> massive issues due to kswapd and the specific mem_cgroup_flush_stats()
->>>>> call inlined in shrink_node, which takes the rstat lock.
->>>>>
->> [...]
->>>>>    static void cgroup_base_stat_flush(struct cgroup *cgrp, int cpu);
->>>>> @@ -312,6 +315,45 @@ static inline void __cgroup_rstat_unlock(struct
->>>>> cgroup *cgrp, int cpu_in_loop)
->>>>>        spin_unlock_irq(&cgroup_rstat_lock);
->>>>>    }
->>>>> +#define MAX_WAIT    msecs_to_jiffies(100)
->>>>> +/* Trylock helper that also checks for on ongoing flusher */
->>>>> +static bool cgroup_rstat_trylock_flusher(struct cgroup *cgrp)
->>>>> +{
->>>>> +    bool locked = __cgroup_rstat_trylock(cgrp, -1);
->>>>> +    if (!locked) {
->>>>> +        struct cgroup *cgrp_ongoing;
->>>>> +
->>>>> +        /* Lock is contended, lets check if ongoing flusher is already
->>>>> +         * taking care of this, if we are a descendant.
->>>>> +         */
->>>>> +        cgrp_ongoing = READ_ONCE(cgrp_rstat_ongoing_flusher);
->>>>> +        if (cgrp_ongoing && cgroup_is_descendant(cgrp, cgrp_ongoing)) {
->>>>
->>>> I wonder if READ_ONCE() and cgroup_is_descendant() needs to happen
->>>> within in rcu section. On a preemptable kernel, let's say we got
->>>> preempted in between them, the flusher was unrelated and got freed
->>>> before we get the CPU. In that case we are accessing freed memory.
->>>>
->>>
->>> I have to think about this some more.
->>>
->>
->> I don't think this is necessary. We are now waiting (for completion) and
->> not skipping flush, because as part of take down function
->> cgroup_rstat_exit() is called, which will call cgroup_rstat_flush().
->>
->>
->>    void cgroup_rstat_exit(struct cgroup *cgrp)
->>    {
->>          int cpu;
->>          cgroup_rstat_flush(cgrp);
->>
+VBATTB is still part of a PM domain. That needs to be enabled as well.
+pm_runtime_* APIs takes care of both clock enable and power domain on
+operations.
+
+One thing to notice is that on RZ/G3S the VBATTB clock is CRITICAL (thus
+enabled in the probe of the clock driver), the PM domain is always ON (and
+also enabled by clock driver). We can get rid of pm_runtime_* at all for
+RZ/G3S but I think it would be better to have it here as well for future
+platforms and to emphasize from driver that these resources are needed by
+the VBATTB. The same approach is used for  other RZ/G2 drivers that
+declares critical clocks/always-on domains (e.g. dma driver, IA55 driver).
+
+Thank you,
+Claudiu Beznea
+
+> 
+>> +
+>> +	ret = reset_control_deassert(rstc);
+>> +	if (ret)
+>> +		goto rpm_put;
+>> +
+>> +	platform_set_drvdata(pdev, rstc);
+>> +
+>> +	ret = devm_of_platform_populate(dev);
+>> +	if (ret)
+>> +		goto reset_assert;
+>> +
+>> +	return 0;
+>> +
+>> +reset_assert:
+>> +	reset_control_assert(rstc);
+>> +rpm_put:
+>> +	pm_runtime_put(dev);
+>> +	return ret;
+>> +}
+>> +
+>> +static void vbattb_remove(struct platform_device *pdev) {
+>> +	struct reset_control *rstc = platform_get_drvdata(pdev);
+>> +
+>> +	reset_control_assert(rstc);
+>> +	pm_runtime_put(&pdev->dev);
+>> +}
+>> +
+>> +static const struct of_device_id vbattb_match[] = {
+>> +	{ .compatible = "renesas,r9a08g045-vbattb" },
+>> +	{ /* sentinel */ },
+>> +};
+>> +MODULE_DEVICE_TABLE(of, vbattb_match);
+>> +
+>> +static struct platform_driver vbattb_driver = {
+>> +	.probe = vbattb_probe,
+>> +	.remove_new = vbattb_remove,
+>> +	.driver = {
+>> +		.name = "renesas-vbattb",
+>> +		.of_match_table = vbattb_match,
+>> +	},
+>> +};
+>> +module_platform_driver(vbattb_driver);
+>> +
+>> +MODULE_ALIAS("platform:renesas-vbattb");
+>> +MODULE_AUTHOR("Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>");
+>> +MODULE_DESCRIPTION("Renesas VBATTB driver"); MODULE_LICENSE("GPL");
+>> --
+>> 2.39.2
 >>
 > 
-> Sorry for the late response, I was traveling for a bit. I will take a
-> look at your most recent version shortly. But I do have a comment
-> here.
-> 
-> I don't see how this addresses Shakeel's concern. IIUC, if the cgroup
-> was freed after READ_ONCE() (and cgroup_rstat_flush() was called),
-> then cgroup_is_descendant() will access freed memory. We are not
-> holding the lock here so we are not preventing cgroup_rstat_flush()
-> from being called for the freed cgroup, right?
-
-If we go back to only allowing root-cgroup to be ongoing-flusher, then
-we could do a cgroup_rstat_flush(root) in cgroup_rstat_exit() to be sure
-nothing is left waiting for completion scheme. Right?
-
-IMHO the code is getting too complicated with sub-cgroup's as ongoing
-flushers which also required having 'completion' queues per cgroup.
-We should go back to only doing this for the root-cgroup.
-
---Jesper
-
-
 
