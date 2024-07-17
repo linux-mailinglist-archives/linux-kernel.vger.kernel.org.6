@@ -1,110 +1,104 @@
-Return-Path: <linux-kernel+bounces-254573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAAE59334D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 02:52:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4E729334DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 02:55:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A2031F22CD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:52:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91506283788
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8854610A1C;
-	Wed, 17 Jul 2024 00:51:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719B86FB6;
+	Wed, 17 Jul 2024 00:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IQEtIZwq"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D91AD21
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 00:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TEq9CJB5"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D045661
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 00:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721177497; cv=none; b=S7qbdEusi/k2DmJIXlx1f9fi5g390I8+RnHR+b6lUWuhyDuKGzbxLQljVunb4GxDaxiRUja/GMOpNP7U5HBX6bJkjXOGRCq2qeCiyOjHMu7hSZkY9Ebmc6H9WMIC0FXPCmapUsBKZuxUkAKmptAtov2W83Gw/VgINkwXWR1pXW4=
+	t=1721177701; cv=none; b=fN4cz6FUX59ntsvDh7iOJquXRhnCmk/XLBHVsyU2HypQ+zec+MFbqLsqNcT5VGhwIvcBW/9xZeyEv/7cM7uysePpr/nNuxWaI/gKhJH0ra++VfasJ80EIW5NuLjObGcgTQw8nioZDopahiI0M2pPmm/IvWWnpMFAM436vAa+7XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721177497; c=relaxed/simple;
-	bh=TxBuHJK85vkREbw0WLP5ADupaB4b16I7uMojTYknRa8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=V9YJX2g8nYnrkcEp4+gIp1NqUzqG/VXfczfHuBAG9EL3MMv/IqnAN2edSLcvoR5heNYSuvqbu1Cb+2UqRTgFkKu3aVE+pldzcXLVMomqAfNc9ZYnhcM6q9dZNERPVSVb2omjQyQVbzyo+E7zceyRUJI3gioXyrJcGmWGGGnTuXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IQEtIZwq; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-664aa55c690so11263097b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 17:51:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721177495; x=1721782295; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HTO1tsJpanrsIXuREfXU+lZcoE2mxE9RW1fzcKxRuPY=;
-        b=IQEtIZwqThfL2tkpbppOAJIWrEBFeGp3JwQsUjLtFGvkKsUrCT2pEDg7MyBBoxyUGt
-         ZxUx4caN1wQfl7C4IqBbD0err8tciyYKAN+fRjlQ0V/0ez+9/DnETUu1YAOkrXOXH/jn
-         8Fg/+yy7AAraMqKS8laXtfRbjiMdBgWsZFn2+DHpJwlmnc74Uav7A8q5+WLs2m4RAkl3
-         88+Y5ECH4bCBGSqBtID+FiQsBaAyskBiKCFBst4Gxzw4Rds1vSrfTNk89/5aUCg0q0eR
-         EX4d0r7RJkPtjJH+KAZNbiq2sN/C6DjhZ1HCSjTmKSkzSlxirdTo/f/gihcOZOuDeMHf
-         M//w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721177495; x=1721782295;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HTO1tsJpanrsIXuREfXU+lZcoE2mxE9RW1fzcKxRuPY=;
-        b=dIlCFjD7eOF7m64RDDB4GnHRMtVMMNj30nZup3if/5NMb9cM/1qIn374q4kFScEY7G
-         mPxlVJVCzhYpNefYNH8Px4ZlygQ2eO4UU0YPV3P0J/X2koSzVkWBtUT9jYlLzlUO/d4c
-         3p5sx1bRM1PfTUbF+bazHFTMhrwemE7YVd2Bdow+QQMTPjHPR3HeR4p5ykczV01iRDpp
-         Hag3qs0vKZtFgPshUbpX+2q4X6cBu9Hvall5fiElblpNE6ohD81vkRjfQv9BAcn2yQxW
-         +y4maubpaXViKoWnRWVQYOuCvFSXM0TEQPeRjzuBGeOK0u1Req1L6n0XqAq4gxVaoCGo
-         c0rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsIOY0siUTyHvxseQVyjtzT9Im4ncDZ2Qc/wGDqucbSZPAEYkL3BGAy0kdXM2uNrwIocxtzJwc5c/1Wz6PLJQfZBxYOEgje55AgWRB
-X-Gm-Message-State: AOJu0Yyhi52z0SAy+5UiFWjSByKhTmQ37il81Jcdpr9wBggoRdXOaXzG
-	P03ULNC7XCxFcSMrJEwtcwnC2teQB/uWUGAr32snzb064Lg2hmlbrIhibpak4WbTKUbVDy43COj
-	NvQ==
-X-Google-Smtp-Source: AGHT+IGg09Ayrrw6aRkughQryryAOlXFSVSJLvjMGLhBlG76jIsoZGI0TJ101PkcfAxrh48DyXAxTN6wUSc=
-X-Received: from jthies.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:23db])
- (user=jthies job=sendgmr) by 2002:a05:690c:289:b0:65c:4528:d8ee with SMTP id
- 00721157ae682-664ff0079f7mr6537b3.4.1721177495402; Tue, 16 Jul 2024 17:51:35
- -0700 (PDT)
-Date: Wed, 17 Jul 2024 00:49:49 +0000
-In-Reply-To: <20240717004949.3638557-1-jthies@google.com>
+	s=arc-20240116; t=1721177701; c=relaxed/simple;
+	bh=ZKwq7LcRRZUvYPzTy3HqmC7u8/eRuHUR0dKL26uLKwI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=sWjEdbRlWAyJ1+TwHbxu0hmOkDlLHeDrjZ8wG6SI2kqdmAZERRFcFFxivSbFHwkwfxBqHGwHT4CMto+eDC/GPmgzfG63qiu4RySmP9/zdTZYQvF9D60aMb8mTCAGW80tBFUhhUSFSGgLV0anQEoQCPh5WaFImMYd4r5+bkakHZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=TEq9CJB5; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=t5/Ee
+	HzpNabXc5RVd46C/7TAlz4/G8RSGiM4PhgH1hs=; b=TEq9CJB5fJj2t7fvUc32R
+	HEhIeVy08Ot9HIC4g1MWp2IFRlAN+MutULMrOON5qyEylJMT2RuyDSvzBpyWvfEz
+	yklcpK3/Gp1gN3ry1XI6lYRt6uTlUCKgaWv1BhtJ1UEwH1ytdtIy45z0Vzy3b6U3
+	tljzXsmcuqkGfLG2lE/Yn8=
+Received: from localhost.localdomain (unknown [223.166.237.119])
+	by gzga-smtp-mta-g3-1 (Coremail) with SMTP id _____wD3X502FpdmwwpwBw--.43354S2;
+	Wed, 17 Jul 2024 08:54:15 +0800 (CST)
+From: Ping Gan <jacky_gam_2001@163.com>
+To: hare@suse.de,
+	sagi@grimberg.me,
+	hch@lst.de,
+	kch@nvidia.com,
+	linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: ping.gan@dell.com
+Subject: Re: [PATCH 0/2] nvmet: support polling task for RDMA and TCP 
+Date: Wed, 17 Jul 2024 08:53:17 +0800
+Message-Id: <20240717005318.109027-1-jacky_gam_2001@163.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <af243508-e5f3-4835-8d8e-c1bb741e22f3@suse.de>
+References: <af243508-e5f3-4835-8d8e-c1bb741e22f3@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240717004949.3638557-1-jthies@google.com>
-X-Mailer: git-send-email 2.45.2.1089.g2a221341d9-goog
-Message-ID: <20240717004949.3638557-5-jthies@google.com>
-Subject: [PATCH v1 4/4] usb: typec: ucsi: Fix SET_PDR typo in UCSI header file
-From: Jameson Thies <jthies@google.com>
-To: heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org
-Cc: jthies@google.com, bleung@google.com, abhishekpandit@chromium.org, 
-	andersson@kernel.org, dmitry.baryshkov@linaro.org, 
-	fabrice.gasnier@foss.st.com, gregkh@linuxfoundation.org, hdegoede@redhat.com, 
-	neil.armstrong@linaro.org, rajaram.regupathy@intel.com, 
-	saranya.gopal@intel.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3X502FpdmwwpwBw--.43354S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWruw1ruw4UZF48GrWxZF18Zrb_yoW8Jr15pF
+	yfJF1vyan7Kr1Fy3ZFkw42qF4Utw4rAFWqgF97trWrJr1Y9ry2y34xtF1rWFykGr4fWr1j
+	yayDX3yDua1jyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U6uWJUUUUU=
+X-CM-SenderInfo: 5mdfy55bjdzsisqqiqqrwthudrp/1tbiSBgfKWXAmTHxfwAAsl
 
-Fix SET_PDR typo in UCSI header file.
+> On 7/4/24 10:10, Ping Gan wrote:
+>>> On 02/07/2024 13:02, Ping Gan wrote:
+>
+>>>> And the bandwidth of a node is only 3100MB. While we used the patch
+>>>> and enable 6 polling task, the bandwidth can be 4000MB. It's a good
+>>>> improvement.
+>>>
+>>> I think you will see similar performance with unbound workqueue and
+>>> rps.
+>> 
+>> Yes, I remodified the nvmet-tcp/nvmet-rdma code for supporting
+>> unbound
+>> workqueue, and in same prerequisites of above to run test, and
+>> compared
+>> the result of unbound workqueue and polling mode task. And I got a
+>> good
+>> performance for unbound workqueue. For unbound workqueue TCP we got
+>> 3850M/node, it's almost equal to polling task. And also tested
+>> nvmet-rdma we get 5100M/node for unbound workqueue RDMA versus 5600M
+>> for
+>> polling task, seems the diff is very small. Anyway, your advice is
+>> good.
+>> Do you think we should submit the unbound workqueue patches for
+>> nvmet-tcp
+>> and nvmet-rdma to upstream nvmet?
+>
+> Please do. I have been using pretty much the same patch during
+> development of my nvme-tcp scalability patchset, and using WQ_UNBOUND
+> definitely improves the situation here.
 
-Signed-off-by: Jameson Thies <jthies@google.com>
----
- drivers/usb/typec/ucsi/ucsi.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for your confirm! Okay, will do that.
 
-diff --git a/drivers/usb/typec/ucsi/ucsi.h b/drivers/usb/typec/ucsi/ucsi.h
-index 57129f3c0814..375f1881c1e2 100644
---- a/drivers/usb/typec/ucsi/ucsi.h
-+++ b/drivers/usb/typec/ucsi/ucsi.h
-@@ -152,7 +152,7 @@ void ucsi_connector_change(struct ucsi *ucsi, u8 num);
- #define UCSI_SET_UOR_ROLE(_r_)		(((_r_) == TYPEC_HOST ? 1 : 2) << 23)
- #define UCSI_SET_UOR_ACCEPT_ROLE_SWAPS		BIT(25)
- 
--/* SET_PDF command bits */
-+/* SET_PDR command bits */
- #define UCSI_SET_PDR_ROLE(_r_)		(((_r_) == TYPEC_SOURCE ? 1 : 2) << 23)
- #define UCSI_SET_PDR_ACCEPT_ROLE_SWAPS		BIT(25)
- 
--- 
-2.45.2.1089.g2a221341d9-goog
+Regards,
+Ping
+
 
 
