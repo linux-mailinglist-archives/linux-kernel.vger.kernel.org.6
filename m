@@ -1,147 +1,169 @@
-Return-Path: <linux-kernel+bounces-254896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2FB09338F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:27:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B8109338F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:29:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3D842840FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:27:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD54F1C23143
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48362E620;
-	Wed, 17 Jul 2024 08:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u4O+tZbE"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDF7249F9
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 08:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC4D2E620;
+	Wed, 17 Jul 2024 08:29:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6AE2288BD
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 08:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721204871; cv=none; b=pjPbPH1jFSHYELWfbxfSKBLMqWgRQ6QiToyWe2GiOykMAp0HwLCjkk3SUo61ydxtZC0DvfIIsq8lVGYxOLp395iSaqV9rMA+hRBde4yulVkmQjUQ8pmiH/fW4N4b/n2XaBeVyAcYCwieCt2LMc7XxXOFHXnIQ0wqi2qsYDjWLfY=
+	t=1721204950; cv=none; b=AU7mM4CmqTgtyJKjakC/WFzMmWtzITmp7gnJw4lAoECFs25uLcUGVclUCFa290nqzVPh5+FoQ2Oj0HyGHdrppvaJJXEgjmb5YzW1lLxlxOwnsa0JgBIuo31Lbk46Kmq3S1EfAgn0EheLgUJ7WZ3QZdJn5AjZghXWyfctrhUs7SU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721204871; c=relaxed/simple;
-	bh=qDQ4FEVPF7vcFgu1Y6uKkJpnYCBh9uffPV51ueGJ6+g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Icc5hfi7KP8w41kmX5eb/OsVhn18n1hF4f0MOaExvb9H012VZ7gM+wJnXcwkKvRA2vLeRkxtJWAhjyW56EuZPF3J0gGEKoZisHFOoIhcAddFOWV9RgngJgk3mXNKbmJNdQLZR54UDkL2fOaPLR/5crUlbDHWllMkW5/UKu/i9hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u4O+tZbE; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70b0ebd1ef9so4279202b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 01:27:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721204869; x=1721809669; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6T1xNwM9hIsYKRdvOkLIyfbvJlh9uTBuXsM8E9jKuOc=;
-        b=u4O+tZbEufTMDov1t1yICCzs1YQLfuiZVev7hsEwLbpodssusSOJXhDtHS1wwlaic6
-         5HB4Gmxl3lOkv9SaaE4gcDCI6V6uKuL0LW1cl3+m1+cXchkUImj/gZik0E7BCAvjgFi0
-         K9/qzLlA/3SCXyxGUgWVswZA3QskjRRf0EexpmwHNXeXSpCk6G1oepLEQT4T7+7FiyWW
-         e47N2hiRsLUanSAfJcsX6zRaR8JPEdBZz0jAz9sjyhtbg3AmImyfLWUYzuwfHGN95rYU
-         7P4xoA4Z8eYNC6U7werwHn2cdUVhXp4lUt566Lhkhr4H6oXd9Vds+nszzR/j6sOkZLEM
-         n3Dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721204869; x=1721809669;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6T1xNwM9hIsYKRdvOkLIyfbvJlh9uTBuXsM8E9jKuOc=;
-        b=ciLEExpM6QTzNrZQY63s/cgO6xV81zTuRiJNh8g9iNAYixJ0WCB8czfgXiyujDhlBo
-         gD/pXC35aHsM+27L67aOSuG+UXSNw9/3AVRhrmQ2e6U1DnhBX9qTJZYeTryA6F6l45M/
-         dxZO0y5WxZtA+FUZieCPOGgopQNX5oKKfiMc0w0rLQ85aW8kQCzZXcWvqeVBZHtp5w3u
-         WRZOMYx8aOBlumqRcc5uloqosYolH/33v0BHjXKKWyIcEcQVIcbN/Awgai5DACWJKn7X
-         Cp6DKXe/RsGxS9bbqT2q3cpcTsJXJ7ZE2aHs7OCjFTtFZ1YVPqwS1pqdEsQJEqxw7RIY
-         OxpA==
-X-Forwarded-Encrypted: i=1; AJvYcCVscyL+GxsW5xFb3r5AZZY5TTrEBXQUGVwORl+qdwtKyDnfY1AkCyRFHS3gUHwygWiuz9JXRfQEKhMylnztWTRSRJNMTGdh7V7twpNc
-X-Gm-Message-State: AOJu0YzDOBKMWau+iCF5Pukec46+gosN3EktPF3IHM+Q0RPtkvhkXc/9
-	hXrufc1aLezlmXZcQF93hFOsz7Hfl7j9sfvIfJbg6Dp8MGQsQiLDpwZwIzsHVw==
-X-Google-Smtp-Source: AGHT+IFZMM/FiXimF5vI+0WtXUuOelgUJVNM5hkL9Myp0C9LDeDktLrxLZeuvuLQxdjLoo9D3K2J6Q==
-X-Received: by 2002:a05:6a00:1a88:b0:70b:1d77:7310 with SMTP id d2e1a72fcca58-70ce50ab2cbmr781505b3a.30.1721204868757;
-        Wed, 17 Jul 2024 01:27:48 -0700 (PDT)
-Received: from thinkpad ([220.158.156.207])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7ebc437asm7584384b3a.53.2024.07.17.01.27.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 01:27:47 -0700 (PDT)
-Date: Wed, 17 Jul 2024 13:57:41 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Mrinmay Sarkar <quic_msarkar@quicinc.com>
-Cc: fancer.lancer@gmail.com, vkoul@kernel.org, quic_shazhuss@quicinc.com,
-	quic_nitegupt@quicinc.com, quic_ramkri@quicinc.com,
-	quic_nayiluri@quicinc.com, quic_krichai@quicinc.com,
-	quic_vbadigan@quicinc.com, dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] dmaengine: dw-edma: Add fix to unmask the
- interrupt bit for HDMA
-Message-ID: <20240717082741.GB2574@thinkpad>
-References: <1720187733-5380-1-git-send-email-quic_msarkar@quicinc.com>
- <1720187733-5380-2-git-send-email-quic_msarkar@quicinc.com>
+	s=arc-20240116; t=1721204950; c=relaxed/simple;
+	bh=lML3QMhkv3oU06XSQ5bFQL3OJWab2cvUOjGlux9mSfQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YHU6PJH4Y3D8f5ET+SgP/b7RGccqQmLogqKiMHKYlM9jeUxWhmqtfGEmkq7z0T3iDZwi8C8wwAaItH4+6SeF/YL48uaqAzV4qanotpxlA0xECu3gZwaZsvAtrpG4s1xp2CaAX3Yxo4ir2j9Rl7J8kp3SBWvazoKac7AkQpgmIPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D6E7106F;
+	Wed, 17 Jul 2024 01:29:33 -0700 (PDT)
+Received: from [10.57.77.222] (unknown [10.57.77.222])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C12E03F762;
+	Wed, 17 Jul 2024 01:29:06 -0700 (PDT)
+Message-ID: <f84bd34d-ac64-4e2f-90c0-d637c00b5055@arm.com>
+Date: Wed, 17 Jul 2024 09:29:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] mm: mTHP stats for pagecache folio allocations
+Content-Language: en-GB
+To: David Hildenbrand <david@redhat.com>, Lance Yang <ioworker0@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
+ <hughd@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Barry Song <baohua@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20240711072929.3590000-1-ryan.roberts@arm.com>
+ <20240711072929.3590000-3-ryan.roberts@arm.com>
+ <9e0d84e5-2319-4425-9760-2c6bb23fc390@linux.alibaba.com>
+ <CAK1f24nCDZM8aa9z_ZtgLbdj695JJri01q2HJUJb9pJt2uqy=w@mail.gmail.com>
+ <756c359e-bb8f-481e-a33f-163c729afa31@redhat.com>
+ <8c32a2fc-252d-406b-9fec-ce5bab0829df@arm.com>
+ <a8441245-ae35-443f-9aea-325007492741@arm.com>
+ <5c58d9ea-8490-4ae6-b7bf-be816dab3356@redhat.com>
+ <f03deb7c-9a67-4096-9d33-32b357b52152@arm.com>
+ <9052f430-2c5a-4d9d-b54c-bd093b797702@redhat.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <9052f430-2c5a-4d9d-b54c-bd093b797702@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1720187733-5380-2-git-send-email-quic_msarkar@quicinc.com>
 
-On Fri, Jul 05, 2024 at 07:25:32PM +0530, Mrinmay Sarkar wrote:
-
-Subject should be,
-
-dmaengine: dw-edma: Fix unmasking STOP and ABORT interrupts for HDMA
-
-> The current logic is enabling both STOP_INT_MASK and ABORT_INT_MASK
-> bit. This is apparently masking those particular interrupt rather than
-
-s/interrupt/interrupts
-
-> unmasking the same.
+On 17/07/2024 09:02, David Hildenbrand wrote:
+>>> Sorry, busy with other stuff.
+>>>
+>>> Indicating only what really exists sounds cleaner. But I wonder how we would
+>>> want to handle in general orders that are effectively non-existant?
+>>
+>> I'm not following your distinction between orders that don't "really exist" and
+>> orders that are "effectively non-existant".
 > 
+> I'm questioning whether there should be a distinction at all. We should just
+> hide what is either non-existant (not implemented) or non-functional.
 
-Please add the implications of this issue. I guess if the interrupts are masked,
-they would never get triggered.
+Great we are on the same page.
 
-> This change will reset STOP_INT_MASK and ABORT_INT_MASK bit and unmask
-> these interrupts.
 > 
-
-How about,
-
-So fix the issue by unmasking the STOP and ABORT interrupts properly.
-
-> Signed-off-by: Mrinmay Sarkar <quic_msarkar@quicinc.com>
-
-Please add fixes tag and CC stable as this is a potential bug fix.
-
-> ---
->  drivers/dma/dw-edma/dw-hdma-v0-core.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
+>>
+>> I guess the real supported orders are:
+>>
+>>    anon:
+>>      min order: 2
+>>      max order: PMD_ORDER
+>>    anon-shmem:
+>>      min order: 1
+>>      max order: MAX_PAGECACHE_ORDER
+>>    tmpfs-shmem:
+>>      min order: PMD_ORDER <= 11 ? PMD_ORDER : NONE
+>>      max order: PMD_ORDER <= 11 ? PMD_ORDER : NONE
+>>    file:
+>>      min order: 1
+>>      max order: MAX_PAGECACHE_ORDER
 > 
-> diff --git a/drivers/dma/dw-edma/dw-hdma-v0-core.c b/drivers/dma/dw-edma/dw-hdma-v0-core.c
-> index 10e8f07..88bd652f 100644
-> --- a/drivers/dma/dw-edma/dw-hdma-v0-core.c
-> +++ b/drivers/dma/dw-edma/dw-hdma-v0-core.c
-> @@ -247,10 +247,11 @@ static void dw_hdma_v0_core_start(struct dw_edma_chunk *chunk, bool first)
->  	if (first) {
->  		/* Enable engine */
->  		SET_CH_32(dw, chan->dir, chan->id, ch_en, BIT(0));
-> -		/* Interrupt enable&unmask - done, abort */
-> -		tmp = GET_CH_32(dw, chan->dir, chan->id, int_setup) |
-> -		      HDMA_V0_STOP_INT_MASK | HDMA_V0_ABORT_INT_MASK |
-> -		      HDMA_V0_LOCAL_STOP_INT_EN | HDMA_V0_LOCAL_ABORT_INT_EN;
-> +		/* Interrupt unmask - done, abort */
+> That's my understanding. But not sure about anon-shmem really supporting
+> order-1, maybe we do.
 
-There is no done interrupt in HDMA, only STOP. So use STOP, ABORT here and
-below.
+Oh, I thought we only had the restriction for anon folios now (due to deferred
+split queue), so assumed it would just work. With Gavin's
+THP_ORDERS_ALL_FILE_DEFAULT change, that certainly implies that shmem must
+support order-1. If it doesn't then we we might want to tidy that further.
 
-- Mani
+Baolin, perhaps you can confirm either way?
 
--- 
-மணிவண்ணன் சதாசிவம்
+> 
+>>
+>> But today, controls and stats are exposed for:
+>>
+>>    anon:
+>>      min order: 2
+>>      max order: PMD_ORDER
+>>    anon-shmem:
+>>      min order: 2
+>>      max order: PMD_ORDER
+>>    tmpfs-shmem:
+>>      min order: PMD_ORDER
+>>      max order: PMD_ORDER
+>>    file:
+>>      min order: Nothing yet (this patch proposes 1)
+>>      max order: Nothing yet (this patch proposes MAX_PAGECACHE_ORDER)
+>>
+>> So I think there is definitely a bug for shmem where the minimum order control
+>> should be order-1 but its currently order-2.
+> 
+> Maybe, did not play with that yet. Likely order-1 will work. (although probably
+> of questionable use :) )
+
+You might have to expand on why its of "questionable use". I'd assume it has the
+same amount of value as using order-1 for regular page cache pages? i.e. half
+the number of objects to manage for the same amount of memory.
+
+> 
+>>
+>> I also wonder about PUD-order for DAX? We don't currently have a stat/control.
+>> If we wanted to add it in future, if we take the "expose all stats/controls for
+>> all orders" approach, we would end up extending all the way to PUD-order and all
+>> the orders between PMD and PUD would be dummy for all memory types. That really
+>> starts to feel odd, so I still favour only populating what's really supported.
+> 
+> I would go further and say that calling the fsdax thing a THP is borderline
+> wrong and we should not expose any new toggles for it that way.
+> 
+> It really behaves much more like hugetlb folios that can be PTE-mapped ... we
+> cannot split these things, and they are not allocated from the buddy. So I
+> wouldn't worry about fsdax for now.
+> 
+> fsdax support for compound pages (now large folios) probably never should have
+> been glued to any THP toggle.
+
+Yeah fair enough. I wasn't really arguing for adding any dax controls; I was
+just trying to think of examples as to why adding dummy controls might be a bad
+idea.
+
+> 
+>>
+>> I propose to fix shmem (extend down to 1, stop at MAX_PAGECACHE_ORDER) and
+>> continue with the approach of "indicating only what really exists" for v2.
+>>
+>> Shout if you disagree.
+> 
+> Makes sense.
+
+Excellent. I posted v2, which has these changes, yesterday afternoon. :)
+
 
