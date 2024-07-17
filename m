@@ -1,137 +1,190 @@
-Return-Path: <linux-kernel+bounces-254879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 706429338DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:20:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0464D9338DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99B291C232E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:20:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86C241F2364D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742CE2E416;
-	Wed, 17 Jul 2024 08:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A122C87A;
+	Wed, 17 Jul 2024 08:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Q8RMbd3X"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZK8i56rx";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1LQk6FTo";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZK8i56rx";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1LQk6FTo"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5A91CAA4;
-	Wed, 17 Jul 2024 08:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845E92557F
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 08:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721204405; cv=none; b=KT0BigP3rZ8uuZ4gx/LQ3UeF+dasWLObD+t33igVRaH7gdUlu7wq0x0Aw+PFyVhRIdvUVdr9NcL7GPhoMe4mwnQiyc8ebwhgNKRXdqVUaIzhMgYWfl1QjMa47je0ubAEZLIDpMXY2u/fkX4IpcuAIMePQ6UsyTk2wJxxnMQhNwo=
+	t=1721204429; cv=none; b=nfoDo6OwJn122io2DHz8L4sZMWhE6exMfGFol5g1WuJpYrBM1ffsOiTraR03kYk6zmXw4zNpesUH+wytdQ+NiGb7aZQ12gV9qL+JqhmBSlBg1/3TivqgSFdQtlJx9PoRL2LdJna0z9tpe6soAp2zS6q/FuUucp/NPxyn/pX9/jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721204405; c=relaxed/simple;
-	bh=2CLtcxjWryy+ZrxMy3V6QLAyq9Tcxt0Pcwt6s+Wmc1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kBcSA844G4wn2Pa3dZeboTJKFdsOBmK0hfbggFabnGmDfv89VkY9rOQdLlnKedbdKJwmRiaWksLg5lHzgAsoAnYRATRpIOlFqjm1YtxUbAfnC+mILlhQMBoA53kGc2502CjVx7H/nn4mu0h25tSgWkB0PkLied8Cj5mD0LQWF94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Q8RMbd3X; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 255A8FF803;
-	Wed, 17 Jul 2024 08:19:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1721204394;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1721204429; c=relaxed/simple;
+	bh=61oQWDE6zifuDyVrc10oogSvwNyhncgHTA/Wmvsokv0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RblP9dEIajWHi7PKr1Qkc2OjUd4sPvQ9Gd0lTwq5m+Y7M1s5mdKK/AlFBBEcOFnWQotwICHRoOf2aqI2RV9Ozvz3lagZ3WFYbu9I+NAkoDsbVWaHBTHss1hkGT2jI6EvEpp5bpc2uEKRPNXXbRYT0rLz/Z/46KqS6fde8LGVqzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZK8i56rx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1LQk6FTo; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZK8i56rx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1LQk6FTo; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C0EFC21B31;
+	Wed, 17 Jul 2024 08:20:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1721204424; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vYy4jlSppC2pcc6cg+3nF/8GvPZv6nmewlb2L7o9Nw8=;
-	b=Q8RMbd3XCm3mkOoSML4rikXKiJwOmxmdsX2NkXlZwRplYxuKqVu6DdyLJ7G/4YQS4TR3e0
-	tQ9HYyVU0QaJ7mJKdjZ58+NY03/Y4pQSR1nheyy9/gpjRgXyPcN/SYNbnfEvcXYx78cKK1
-	DspBdEnmtUUE2Vh7fB3axwb52s022qgb/fQK8B7JQxuL+DVdX8knHLZC7Oxu4B+r0HSgWa
-	t6AmHSpNSofRHkmWqrwexOh4wFUvNGOiGe2R2Gz1nk0z8FDgM9iuuAszfZbHO/r1L/BknS
-	0yhBDc0k6PoqJGn8/jBTZsc9id1S9XZ4jdCo9jE7HgZr9sw+Ct/c9wyvI/5QfA==
-Date: Wed, 17 Jul 2024 10:19:48 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: Maxime Ripard <mripard@kernel.org>, Pratyush Yadav
- <pratyush@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Richard
- Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Arnd
- Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Russell King <linux@armlinux.org.uk>,
- Joel Stanley <joel@jms.id.au>, Andrew Jeffery
- <andrew@codeconstruct.com.au>, Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
- <claudiu.beznea@tuxon.dev>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>,
- Andrew Lunn <andrew@lunn.ch>, Gregory Clement
- <gregory.clement@bootlin.com>, Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>, Tony Lindgren <tony@atomide.com>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
- <magnus.damm@gmail.com>, Dinh Nguyen <dinguyen@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Jonathan =?UTF-8?B?TmV1c2Now6RmZXI=?= <j.neuschaefer@gmx.net>, Michael
- Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N. Rao"
- <naveen.n.rao@linux.ibm.com>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, Huacai Chen <chenhuacai@kernel.org>, WANG
- Xuerui <kernel@xen0n.name>, linux-mtd@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- imx@lists.linux.dev, linux-omap@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
- openbmc@lists.ozlabs.org, linuxppc-dev@lists.ozlabs.org,
- linux-mips@vger.kernel.org, loongarch@lists.linux.dev
-Subject: Re: [PATCH 4/9] mtd: devices: add AT24 eeprom support
-Message-ID: <20240717101948.2e99f472@xps-13>
-In-Reply-To: <20240709103841.7x7n4hdtqrunyoc3@pengutronix.de>
-References: <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
-	<20240701-b4-v6-10-topic-usbc-tcpci-v1-4-3fd5f4a193cc@pengutronix.de>
-	<07b701a9-7b52-45b7-8dba-1c25d77cbf15@linaro.org>
-	<mafs0ikxnykpr.fsf@kernel.org>
-	<20240702-congenial-vigilant-boar-aeae44@houat>
-	<mafs0ed8byj5z.fsf@kernel.org>
-	<20240702-mighty-brilliant-eel-b0d9fa@houat>
-	<20240708084440.70186564@xps-13>
-	<20240709092214.omr7ccphdzdk7z7j@pengutronix.de>
-	<20240709114302.3c604ef3@xps-13>
-	<20240709103841.7x7n4hdtqrunyoc3@pengutronix.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	bh=ofViyxpL6E7msZWbqzROq9FMn11Nk20ZmNXXn1UgtsI=;
+	b=ZK8i56rxG9z+Jk+UFW8VuaLPpdEmXg+fiL3Jx90mvWYTxqUul2hVia8i4K/2dksMrEz0oD
+	uWpdonOQYuyO2cMK29A6gNF9C25gG0WdgGmItKSfWtfaE/GVm/Vsgg/vXsrzcL8L1b/SsB
+	bjan8orunFxebz/PGmQXyxir5gH9gm8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1721204424;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ofViyxpL6E7msZWbqzROq9FMn11Nk20ZmNXXn1UgtsI=;
+	b=1LQk6FToY4yiPdrCgvJVkLbvTDi4bcjv3RnvLfdA+J5ULOhBsS4HZNyPqV5uZy1gZflka8
+	/ywU4sQ2HRGPVcBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1721204424; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ofViyxpL6E7msZWbqzROq9FMn11Nk20ZmNXXn1UgtsI=;
+	b=ZK8i56rxG9z+Jk+UFW8VuaLPpdEmXg+fiL3Jx90mvWYTxqUul2hVia8i4K/2dksMrEz0oD
+	uWpdonOQYuyO2cMK29A6gNF9C25gG0WdgGmItKSfWtfaE/GVm/Vsgg/vXsrzcL8L1b/SsB
+	bjan8orunFxebz/PGmQXyxir5gH9gm8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1721204424;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ofViyxpL6E7msZWbqzROq9FMn11Nk20ZmNXXn1UgtsI=;
+	b=1LQk6FToY4yiPdrCgvJVkLbvTDi4bcjv3RnvLfdA+J5ULOhBsS4HZNyPqV5uZy1gZflka8
+	/ywU4sQ2HRGPVcBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 967F01368F;
+	Wed, 17 Jul 2024 08:20:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TPPUIsh+l2aKEAAAD6G6ig
+	(envelope-from <hare@suse.de>); Wed, 17 Jul 2024 08:20:24 +0000
+Message-ID: <0c4c4365-2c2b-4985-bbb1-5d58bf332671@suse.de>
+Date: Wed, 17 Jul 2024 10:20:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] nvmet-tcp: add unbound_wq support for nvmet-tcp
+To: Ping Gan <jacky_gam_2001@163.com>, sagi@grimberg.me, hch@lst.de,
+ kch@nvidia.com, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: ping.gan@dell.com
+References: <20240717075208.87324-1-jacky_gam_2001@163.com>
+ <20240717075208.87324-2-jacky_gam_2001@163.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20240717075208.87324-2-jacky_gam_2001@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -0.29
+X-Spamd-Result: default: False [-0.29 / 50.00];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[163.com];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[163.com,grimberg.me,lst.de,nvidia.com,lists.infradead.org,vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Level: 
 
-Hi Marco,
+On 7/17/24 09:52, Ping Gan wrote:
+> To define a module parameter use_unbound_wq to enable unbound
+> workqueue to handle TCP's IO.
+> 
+> Signed-off-by: jackygam2001 <jacky_gam_2001@163.com>
 
-> > > > Overall I think the idea of getting rid of these misc/ drivers is g=
-oes
-> > > > into the right direction, but registering directly into NVMEM makes
-> > > > more sense IMO.   =20
-> > >=20
-> > > So you propose to have two places for the partition handling (one for
-> > > MTD and one for NVMEM) instead of one and moving the code into NVMEM
-> > > directly? =20
-> >=20
-> > Why two places for the partitions handling? Just one, in NVMEM. Also =20
->=20
-> Without checking the details I think that converting the MTD
-> partitioning code into NVMEM partitioning code is a bigger task. As you
-> said below there are many legacy code paths you need to consider so they
-> still work afterwards as well.
->=20
-> > usually EEPROMs don't require very advanced partitioning schemes,
-> > unlike flashes (which are the most common MTD devices today). =20
->=20
-> As said in my cover letter EEPROMs can become quite large and MTD
-> supports partitioning storage devices which is very handy for large
-> EEPROMs as well.
+Please use your real name 'Ping Gan' as the author name, not the mail alias.
 
-Did you had a look at nvmem-layouts ? In particular the fixed-layout.
+> ---
+>   drivers/nvme/target/tcp.c | 12 ++++++++++--
+>   1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/nvme/target/tcp.c b/drivers/nvme/target/tcp.c
+> index 5bff0d5464d1..f71d56843e1a 100644
+> --- a/drivers/nvme/target/tcp.c
+> +++ b/drivers/nvme/target/tcp.c
+> @@ -73,6 +73,10 @@ device_param_cb(idle_poll_period_usecs, &set_param_ops,
+>   MODULE_PARM_DESC(idle_poll_period_usecs,
+>   		"nvmet tcp io_work poll till idle time period in usecs: Default 0");
+>   
+> +static bool use_unbound_wq;
+> +module_param(use_unbound_wq, bool, 0444);
+> +MODULE_PARM_DESC(use_unbound_wq, "use unbound workqueue to handle IO request: Default false");
+> +
+>   #ifdef CONFIG_NVME_TARGET_TCP_TLS
+>   /*
+>    * TLS handshake timeout
+> @@ -2196,9 +2200,13 @@ static const struct nvmet_fabrics_ops nvmet_tcp_ops = {
+>   static int __init nvmet_tcp_init(void)
+>   {
+>   	int ret;
+> +	unsigned int flags;
+> +
+> +	flags = WQ_MEM_RECLAIM | WQ_HIGHPRI;
+> +	if (use_unbound_wq)
+> +		flags |= (WQ_UNBOUND | WQ_SYSFS);
+>   
+> -	nvmet_tcp_wq = alloc_workqueue("nvmet_tcp_wq",
+> -				WQ_MEM_RECLAIM | WQ_HIGHPRI, 0);
+> +	nvmet_tcp_wq = alloc_workqueue("nvmet_tcp_wq", flags, 0);
+>   	if (!nvmet_tcp_wq)
+>   		return -ENOMEM;
+>   
+Otherwise looks good.
 
-Is there anything you would like to achieve already that is not
-possible with nvmem but is with mtd?
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-Thanks,
-Miqu=C3=A8l
+Cheers,
+
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+
 
