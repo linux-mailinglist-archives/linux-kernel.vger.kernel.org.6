@@ -1,48 +1,62 @@
-Return-Path: <linux-kernel+bounces-254937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC4A7933978
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:57:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A4F933980
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:00:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECD361C209FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:57:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB748B21283
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3EE13BBCE;
-	Wed, 17 Jul 2024 08:56:58 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9493BBC5;
+	Wed, 17 Jul 2024 09:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XEoOuZZh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67EA3B182
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 08:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4503A8493;
+	Wed, 17 Jul 2024 09:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721206618; cv=none; b=gC/P0UwI2WpIJXaA92iteYeMPR3tApehPHKpN+R2yTNr5k75Zp2WTFq+UA7kfNDKeYvlf6akPeBCeaU0PoifqfCGPSfL+H+4ZUyWC8NMrwaNFl09SHfQK3PNLeAYuMvScKQOnbQlRYkyBTg+9/pCKEj2/gK41TVY4O79x0KJkyM=
+	t=1721206842; cv=none; b=uQXioYOyBadcl4RIvUJNxeAGIq6XjaVtjfNzHdvinwKL4H0BRYYRE3yEQRYkKTaUikVwe3X0K90RFu0dusnZkSXmmaWhKUezIG+q7TnkW0VBpoP86Ex5mlcZba6tvnwziGAlpXHLd8M8J/ei7V/EdSOMwgPrT4QuAzWrmjh1vUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721206618; c=relaxed/simple;
-	bh=MaaBo1mrmVkU1gi3iFFVFtz5DF7AKw4Z7iO31MaW2tc=;
+	s=arc-20240116; t=1721206842; c=relaxed/simple;
+	bh=S+vNdNYt6/4XnOa6ae/hoTsv6eC/oZJVUbLX89ckCuE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s2Kn2Aflx6Jq1xUjNaeOCEZ0joYpCTwaJ8xn+ugadUwHqm1N+0NTT/2SWBiJNWal/8+h+mMRHASLuJov+ULOTwVGNenMFF/JPtFzO2Te5DM7Or/X6MQVSkXtnAgv0ngX0OQ44FKUUylPE6jRWCBajjdch1aLYKunVMxCrRcGMAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id B9C8368AA6; Wed, 17 Jul 2024 10:56:52 +0200 (CEST)
-Date: Wed, 17 Jul 2024 10:56:52 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Easwar Hariharan <eahariha@linux.microsoft.com>,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH v1 2/2] dma: Add IOMMU static calls with clear default
- ops
-Message-ID: <20240717085652.GA18554@lst.de>
-References: <cover.1721041611.git.leon@kernel.org> <7758cbe20bfd34506d943bb93097565b9c4dced4.1721041611.git.leon@kernel.org> <20240717082145.GA15484@lst.de> <20240717084713.GG5630@unreal>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dhfieQwkqYlp/CdFQrG/2WCaL7hE6cDv+B67go8L68YODZU2N9myuKPsmnPQkOGrEtZLzg/ygo9pEPvANqvqpJ+dT6zUDwkXlORaCU3hNti3ovomwaeSTnGV3o8WkFWEHla4fQ+KYNCC4rTH3W1ci4onj6QfT6OkonKnOJq7OAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XEoOuZZh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99EBDC4AF0F;
+	Wed, 17 Jul 2024 09:00:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721206841;
+	bh=S+vNdNYt6/4XnOa6ae/hoTsv6eC/oZJVUbLX89ckCuE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XEoOuZZhaG2Os231agiwz3/Oe3Kl8aV1/NiMSr8JgQd3ESRU/NSLMVeq6eStOGpII
+	 Dkb9drwVfpRMQziE3mJh8a0/wqJzyH5ZXGY2ZHlmigPU7F4WOojkjuJCQAomG6gp9w
+	 pCPfuJNRMD727N+o0fIaT8+vDdYouQRMX5Hb7RkRadbP4wka2fK9HGdHa+NWGB75us
+	 PSYuoV0z9uxIlZjG/1ndYCE2Rj/jWpx/IvPhkWhhYtjQll0W1LSQah6ziHv+LqpkJH
+	 Ri0bhbL95rITe6LYhgw3KSv3JbyDVPxmRAa/YfnKh2ekwpAvJqTBwoJlnfb0rH/FG0
+	 Dzzx3n8fvSkmA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sU0Wg-000000002Zs-1ziF;
+	Wed, 17 Jul 2024 11:00:43 +0200
+Date: Wed, 17 Jul 2024 11:00:42 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Damien Le Moal <dlemoal@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Bart Van Assche <bvanassche@acm.org>, linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] Revert "scsi: sd: Do not repeat the starting disk
+ message"
+Message-ID: <ZpeIOsEbBIho9P_1@hovoldconsulting.com>
+References: <20240716161101.30692-1-johan+linaro@kernel.org>
+ <39143ca8-68e4-44eb-8619-0b935aa81603@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,23 +65,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240717084713.GG5630@unreal>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <39143ca8-68e4-44eb-8619-0b935aa81603@kernel.org>
 
-On Wed, Jul 17, 2024 at 11:47:13AM +0300, Leon Romanovsky wrote:
-> It will cause to the situation where "struct device" memory footprint
-> will increase, while we still need to keep dma_ops for archs that don't
-> want to use default IOMMU.
+On Wed, Jul 17, 2024 at 07:48:26AM +0900, Damien Le Moal wrote:
+> On 7/17/24 01:11, Johan Hovold wrote:
+> > This reverts commit 7a6bbc2829d4ab592c7e440a6f6f5deb3cd95db4.
+> > 
+> > The offending commit tried to suppress a double "Starting disk" message
+> > for some drivers, but instead started spamming the log with bogus
+> > messages every five seconds:
+> > 
+> > 	[  311.798956] sd 0:0:0:0: [sda] Starting disk
+> > 	[  316.919103] sd 0:0:0:0: [sda] Starting disk
+> > 	[  322.040775] sd 0:0:0:0: [sda] Starting disk
+> > 	[  327.161140] sd 0:0:0:0: [sda] Starting disk
+> > 	[  332.281352] sd 0:0:0:0: [sda] Starting disk
+> > 	[  337.401878] sd 0:0:0:0: [sda] Starting disk
+> > 	[  342.521527] sd 0:0:0:0: [sda] Starting disk
+> > 	[  345.850401] sd 0:0:0:0: [sda] Starting disk
+> > 	[  350.967132] sd 0:0:0:0: [sda] Starting disk
+> > 	[  356.090454] sd 0:0:0:0: [sda] Starting disk
+> > 	...
+> > 
+> > on machines that do not actually stop the disk on runtime suspend (e.g.
+> > the Qualcomm sc8280xp CRD with UFS).
+> 
+> This is odd. If the disk is not being being suspended, why does the platform
+> even enable runtime PM for it ? 
 
-It won't.  Even with the new bit we still have 28 more spare bits next
-to it :)
+This is clearly intended to be supported as sd_do_start_stop() returns
+false and that prevents sd_start_stop_device() from being called on
+resume (and similarly on suspend which is why there are no matching
+stopping disk messages above):
 
-> Because dma_ops pointer exists anyway and has already specific flags. I
-> decided to take evolutive approach and add a new flag to it, instead of
-> revolutionary approach and add a new field to struct device.
+	[   32.822189] sd 0:0:0:0: sd_resume_common - runtime = 1, sd_do_start_stop = 0, manage_runtime_start_stop = 0
 
-The point is that with a little more work we can actually kill that
-for common configuration.  For non-Xen setups that basically just means
-removing the dummy ops, so it's a pretty big quick win.
+> Are you sure about this ? Or is it simply that
+> the runtime pm timer is set to a very low interval ?
 
+I haven't tried to determine why runtime pm is used this way, but your
+patch is clearly broken as it prints a message about starting the disk
+even when sd_do_start_stop() returns false.
+
+> It almost sound like what we need to do here is suppress this message for the
+> runtime resume case, so something like:
+
+No, that would only make things worse as I assume you'd have a stopped
+disk message without a matching start message for driver that do end up
+stopping the disk here.
+
+> However, I would like to make sure that this platform is not calling
+> sd_resume_runtime() for nothing every 5s. If that is the case, then there is a
+> more fundamental problem here and reverting this patch is only hiding that.
+
+This is with the Qualcomm UFS driver, but it seems it just relies on the
+generic ufshcd_pltfrm_init() implementation.
+
+Also not sure why anyone would want to see these messages on every
+runtime suspend (for drivers that end up taking this path), but that's a
+separate discussion.
+
+Johan
 
