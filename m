@@ -1,292 +1,182 @@
-Return-Path: <linux-kernel+bounces-254903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12F07933907
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:31:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11B7993390C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:31:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 372821C21BB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:31:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BB2D1F24FE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305631CD39;
-	Wed, 17 Jul 2024 08:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB3A3BBDE;
+	Wed, 17 Jul 2024 08:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="CRcqOjr+"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="MA0cPLpQ"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745F223A8
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 08:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A151739FEB;
+	Wed, 17 Jul 2024 08:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721205086; cv=none; b=pfmV5qgesCu2cs2kkfKaLVbXG22UGwoCljIB1ZDWft4+u9sUd8y6VbH8tas1AZVjOWz9P4az/bM43HzFs48kBOJbQ2fyL3e/zoOd3WhPRpxtu+DZ5YncJfmuRmeijpnk636oLR+rs8nw0Op9yiAVf7590RIVjl6S7RofJmj+Bkk=
+	t=1721205091; cv=none; b=ZthLeAK1EP1mk5cQINUWW4RJG85KGW0Nf9IgvKRCA/f3+/tGMNnIhekGDYMahxmQz89oroXi7iQHccTGaauhptJNQlpK9tH38zw5QzUYNhGhC/IVIzT633rZrtqGmBJyZQzgD/3p3r8HQ2ZaS3jyw4cYvBZS25S3EupAlBkgrvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721205086; c=relaxed/simple;
-	bh=WbzApNOLjNOdU1YCDYNMQErxOCTVZd8bojWaaykHLx4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nvz6b1j4FQX/Hi7KoYP0l+O4saEp4ZpDTYKEXxhBHkmB0FIXAA6+ui8JmDMr//5CXODHEACoyvci7UpcjzEWIUpSRO+1UD7wlFtLajbInYNeGh2v9mZDnioBnx7jspaAf+ocb1s059TT4Dcl/fZoO52WlMnO0bIxcCBC39eWel8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=CRcqOjr+; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4266f3e0df8so44117635e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 01:31:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1721205083; x=1721809883; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=odTbO9u7AyhS8xreJluNKyj0ekqxabepcpFkDx/pdXM=;
-        b=CRcqOjr+SXR7Qfot9mmHcCgFX83TQbFkUnfzYNGArIFhfSk/tcZgqK0jzpDMGnrVOa
-         0atK4aMPnr6evmf7A1AsmpwqgNA69PWkzoXM0PqvvRNEK/mJoNg/WfufNVPRcFw0/St7
-         CnlO4PheyqerrK8IsRQqgL0sbtqR6pY1kzrlx4voUmQKzJxHmR2UttFNx90yQwZjTJVY
-         ftbIrmNTvQIO+06OF+o/8N8BnR7vMpLY5zB6JtG0j6H2+IWVh0AGqWR3jN6Cv4E/4gU5
-         LZN57odQeUZ6oJLL0jjIZoXxsH0Q7l336aFZ9mRZSNvUhnnaUiItCsTdLks6/0dUuYFg
-         Zt6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721205083; x=1721809883;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=odTbO9u7AyhS8xreJluNKyj0ekqxabepcpFkDx/pdXM=;
-        b=LzL6Inedxf3LmvSuzN8fSwdnZqONjBljGs+gtAXIeGdUD5Hwhgs8SGzFrM9FFhMyZu
-         dZ/fA1xngn54z/MHh10CdAqckMmsz6WbJSEPQaOfOC5K/OsH7FUeti4e5oldOsz+RamA
-         twyA8D0wNi7f9wIqKR5ozT0SzSSN/88vwkJ6sJ80qqB1HvTX+z++NUOdGWz/TowYrFvi
-         I0/SVW8jpT1scS3l0KVzp6S6H42oDK9nxdi8+N/NGH3TJGUZEsin/SHsMAEB7j25gSmY
-         Sx0iGUAmZIle6HiQ2nXXe6njauFk1gE9oOf6R1wZPZpsu5wZzbKTszAZu/gC5LKW7fp4
-         OddA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9Fr57NFnJmq+z5OZSNifW1Icg3ArVMSUyKjDohGSN/0rTn8BJsHY+GJNlFyQQ8MVTSQhF17TkAmWsyJaW8ix3LBIdBVPyvhcqxVhh
-X-Gm-Message-State: AOJu0Yx/FUmF0OFLjip0oaQodyOjmGl6+XARhyb/+7oI5O/8nfAWsMlB
-	d9Bp+7KpQ+PWXxBoQ+zXzbqK3MvfTOC/jmg5e17m5deI4xGMhPep/Gyhkw0mo18=
-X-Google-Smtp-Source: AGHT+IFxAFyo8cL/V89UtkMiApuS4cDBAYaqIrX7GtE+oWaOkWacfHj+o5WDxnzLrAffsH1ZbEmYMw==
-X-Received: by 2002:a05:600c:1f0e:b0:426:60e4:c691 with SMTP id 5b1f17b1804b1-427c2cb36b1mr6643635e9.11.1721205082759;
-        Wed, 17 Jul 2024 01:31:22 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.171])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f27846bsm196825965e9.25.2024.07.17.01.31.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 01:31:22 -0700 (PDT)
-Message-ID: <e3103f07-ce8a-4c34-af5c-bb271c7ec99a@tuxon.dev>
-Date: Wed, 17 Jul 2024 11:31:20 +0300
+	s=arc-20240116; t=1721205091; c=relaxed/simple;
+	bh=e52W9gDmTSwXYqbXdTNHJh+IUg5OVm4eoYTt/66PdPs=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=hmkm+8Cy67hnoPozMOWT9B+kwcbRYXNxsbH7wbNUGhfqtZg9y9mknxbGY7ggBRF5UfKy8CXPL0UIK6CHCEQMZ0KCH2i3w3N9YSBaLDPErrUb+7ZED4IhwSyPu0pVauNPkPE08UODFfKUkVzhh33q3eXBoJtta4P1ZOxhl2DqNJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=MA0cPLpQ; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/11] clk: renesas: clk-vbattb: Add VBATTB clock
- driver
-Content-Language: en-US
-To: Stephen Boyd <sboyd@kernel.org>, alexandre.belloni@bootlin.com,
- conor+dt@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org,
- lee@kernel.org, magnus.damm@gmail.com, mturquette@baylibre.com,
- p.zabel@pengutronix.de, robh@kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com>
- <20240716103025.1198495-4-claudiu.beznea.uj@bp.renesas.com>
- <2abcd440664067d95b1ac0e765ad55a3.sboyd@kernel.org>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <2abcd440664067d95b1ac0e765ad55a3.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1721205086;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=djaTs/VXwkde5ykilmezCihZKxxTBjysv9dBh/bulSc=;
+	b=MA0cPLpQgynOCTGF3xZ7pX9SK2i58JLa7/0jsJS1Id8InlVCPmjxeW4Q/GMrMUNKN4gLNs
+	24eQupFiIzNlvEQqlN/q06ryLe6oOheQgQVibDHG5U4yBli8Gkm0dHFuJKYRpPMS7wDSwa
+	zHLA1eJW0jrfoGoYxa3QLdY0/QxlFNqpdiMXd3zfjlocyRgLt5i8RqY1h/6t/L/K7BLfvN
+	Ag7BNNYY/y56aqr9oeUqXxicfNvD6wZuXtawK0C2OKBlP9Z0mdLk4dAiud1T9ldnOf+htB
+	8G0p20FQgWUEuLsPDLYvCgJmcRbx2MD0B75xG9AaHOe0rvjns5PcLuLsCXM9MA==
+Date: Wed, 17 Jul 2024 10:31:22 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Diederik de Haas <didi.debian@cknow.org>
+Cc: Daniel Golle <daniel@makrotopia.org>, wens@kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-kernel@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
+ Martin Kaiser <martin@kaiser.cx>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>, Ard Biesheuvel
+ <ardb@kernel.org>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@debian.org>,
+ devicetree@vger.kernel.org, linux-crypto@vger.kernel.org, Philipp Zabel
+ <p.zabel@pengutronix.de>, Olivia Mackall <olivia@selenic.com>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Aurelien Jarno <aurelien@aurel32.net>, Heiko
+ Stuebner <heiko@sntech.de>, Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH v7 0/3] hwrng: add hwrng support for Rockchip RK3568
+In-Reply-To: <2451882.5D0I8gZW9r@bagend>
+References: <cover.1720969799.git.daniel@makrotopia.org>
+ <ZpcrdwZBNFu-YlZt@makrotopia.org>
+ <CAGb2v65Mm5s96asU7iaAC_sJnUk=Yuh+zMJJBbmSgETWrPLoFA@mail.gmail.com>
+ <2451882.5D0I8gZW9r@bagend>
+Message-ID: <8357f8b7a55f88186b8a222457ba5fcf@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Hi, Stephen,
+Hello Diederik,
 
-On 17.07.2024 01:28, Stephen Boyd wrote:
-> Quoting Claudiu (2024-07-16 03:30:17)
->> diff --git a/drivers/clk/renesas/clk-vbattb.c b/drivers/clk/renesas/clk-vbattb.c
->> new file mode 100644
->> index 000000000000..8effe141fc0b
->> --- /dev/null
->> +++ b/drivers/clk/renesas/clk-vbattb.c
->> @@ -0,0 +1,212 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * VBATTB clock driver
->> + *
->> + * Copyright (C) 2024 Renesas Electronics Corp.
->> + */
->> +
->> +#include <linux/cleanup.h>
->> +#include <linux/clk.h>
+On 2024-07-17 10:22, Diederik de Haas wrote:
+> On Wednesday, 17 July 2024 04:58:51 CEST Chen-Yu Tsai wrote:
+>> On Wed, Jul 17, 2024 at 10:25 AM Daniel Golle <daniel@makrotopia.org> 
+>> wrote:
+>> > On Tue, Jul 16, 2024 at 07:19:35PM +0200, Diederik de Haas wrote:
+>> > > On Tuesday, 16 July 2024 18:53:43 CEST Diederik de Haas wrote:
+>> > > > rngtest: FIPS 140-2(2001-10-10) Long run: 0
+>> > >
+>> > > I don't know if it means something, but I noticed that I have
+>> > > ``Long run: 0`` with all my poor results,
+>> > > while Chen-Yu had ``Long run: 1``.
+>> > >
+>> > > Different SoC (RK3399), but Anand had ``Long run: 0`` too on their
+>> > > very poor result (100% failure):
+>> > > https://lore.kernel.org/linux-rockchip/CANAwSgTTzZOwBaR9zjJ5VMpxm5BydtW6
+>> > > rB2S7jg+dnoX8hAoWg@mail.gmail.com/>
+>> > The conclusions I draw from that rather ugly situation are:
+>> >  - The hwrng should not be enabled by default, but it should by done
+>> >
+>> >    for each board on which it is known to work well.
+>> >
+>> >  - RK_RNG_SAMPLE_CNT as well as the assumed rng quality should be
+>> >
+>> >    defined in DT for each board:
+>> >    * introduce new 'rochchip,rng-sample-count' property
+>> >    * read 'quality' property already used for timeriomem_rng
+>> >
+>> > I will prepare a follow-up patch taking those conclusions into account.
+>> >
+>> > Just for completeness, here my test result on the NanoPi R5C:
+>> > root@OpenWrt:~# cat /dev/hwrng | rngtest -c 1000
+>> > rngtest 6.15
+>> > Copyright (c) 2004 by Henrique de Moraes Holschuh
+>> > This is free software; see the source for copying conditions.  There is NO
+>> > warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR
+>> > PURPOSE.
+>> >
+>> > rngtest: starting FIPS tests...
+>> > rngtest: bits received from input: 20000032
+>> > rngtest: FIPS 140-2 successes: 875
+>> > rngtest: FIPS 140-2 failures: 125
+>> > rngtest: FIPS 140-2(2001-10-10) Monobit: 123
+>> > rngtest: FIPS 140-2(2001-10-10) Poker: 5
+>> > rngtest: FIPS 140-2(2001-10-10) Runs: 4
+>> > rngtest: FIPS 140-2(2001-10-10) Long run: 0
+>> > rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+>> > rngtest: input channel speed: (min=85.171; avg=141.102;
+>> > max=4882812.500)Kibits/s rngtest: FIPS tests speed: (min=17.809;
+>> > avg=19.494; max=60.169)Mibits/s rngtest: Program run time: 139628605
+>> > microseconds
+>> 
+>> I doubt this is per-board. The RNG is inside the SoC, so it could be a 
+>> chip
+>> quality thing.
 > 
-> Prefer clk providers to not be clk consumers.
-
-I added it here to be able to use devm_clk_get_optional() as it was
-proposed to me in v1 to avoid adding a new binding for bypass and detect if
-it's needed by checking the input clock name.
-
-
+> I agree with ChenYu (and others) that this is isn't a per-board level 
+> thing.
+> I'd even go further: 's/I doubt/It can't be that/' (for the same reason
+> though; this is inside the SoC).
 > 
->> +#include <linux/clk-provider.h>
->> +#include <linux/device.h>
->> +#include <linux/io.h>
->> +#include <linux/of.h>
->> +#include <linux/of_platform.h>
+> Before I saw these latest emails, I was going to suggest:
+> 1. Enable it only on RK3568 for now. I would be fine if this would be 
+> accepted
+> by the maintainer
+
+I think we need more testing on more units of the RK3568 SoC, simply
+because the HWRNG may work badly on some units.  I know that it sucks,
+but we basically need just one "bad apple" to mark an SoC as having
+an unreliable HWRNG, which is IMHO the only right thing to do.
+
+Of course, unless we can prove that tweaking the HWRNG knobs makes such
+"bad apples" work well.
+
+> 2. Ask that you make a special version (for me) where I could play with 
+> the
+> params without having to compile a new kernel for each variant (it 
+> generally
+> takes me more then 24h on my Q64-A). Either through kernel module 
+> properties
+> or properties defined in the DeviceTree is fine with me.
 > 
-> Is of_platform.h used?
+> 3. Based on the results make  a choice to not enable it on rk3566 at 
+> all or
+> (indeed) introduce DT properties to configure it differently per SoC.
+
+See above; unfortunately, we already have some "bad RK3566 apples".
+
+> 4. Hope/Ask for more test results
 > 
-> Include mod_devicetable.h for of_device_id.
-
-Ok.
-
+>> On the RK3399 we also saw wildly varying results.
 > 
->> +#include <linux/platform_device.h>
->> +
->> +#define VBATTB_BKSCCR                  0x0
->> +#define VBATTB_BKSCCR_SOSEL            BIT(6)
->> +#define VBATTB_SOSCCR2                 0x8
->> +#define VBATTB_SOSCCR2_SOSTP2          BIT(0)
-> [..]
->> +
->> +static int vbattb_clk_probe(struct platform_device *pdev)
->> +{
->> +       struct device_node *np = pdev->dev.of_node;
->> +       struct clk_parent_data parent_data = {};
->> +       struct device *dev = &pdev->dev;
->> +       struct clk_init_data init = {};
->> +       struct vbattb_clk *vbclk;
->> +       u32 load_capacitance;
->> +       struct clk_hw *hw;
->> +       int ret, bypass;
->> +
->> +       vbclk = devm_kzalloc(dev, sizeof(*vbclk), GFP_KERNEL);
->> +       if (!vbclk)
->> +               return -ENOMEM;
->> +
->> +       vbclk->base = devm_platform_ioremap_resource(pdev, 0);
->> +       if (IS_ERR(vbclk->base))
->> +               return PTR_ERR(vbclk->base);
->> +
->> +       bypass = vbattb_clk_need_bypass(dev);
+> On my Rock64('s) (RK3328) it doesn't work at all:
 > 
-> This is a tri-state bool :(
-> 
->> +       if (bypass < 0) {
->> +               return bypass;
->> +       } else if (bypass) {
->> +               parent_data.fw_name = "clkin";
->> +               bypass = VBATTB_BKSCCR_SOSEL;
-> 
-> And now it is a mask value.
-> 
->> +       } else {
->> +               parent_data.fw_name = "xin";
->> +       }
->> +
->> +       ret = of_property_read_u32(np, "renesas,vbattb-load-nanofarads", &load_capacitance);
->> +       if (ret)
->> +               return ret;
->> +
->> +       ret = vbattb_clk_validate_load_capacitance(vbclk, load_capacitance);
->> +       if (ret)
->> +               return ret;
->> +
->> +       vbattb_clk_update_bits(vbclk->base, VBATTB_BKSCCR, VBATTB_BKSCCR_SOSEL, bypass);
-> 
-> Please don't overload 'bypass'. Use two variables or a conditional.
-
-OK.
-
-> 
-> I also wonder if this is really a mux, 
-
-It's a way to determine what type of clock (crystal oscillator or device
-clock) is connected to RTXIN/RTXOUT pins of the module
-(the module block diagram at [1]) based on the clock name. Depending on the
-type of the clock connected to RTXIN/RTXOUT we need to select the XC or
-XBYP as input for the mux at [1].
-
-[1] https://gcdnb.pbrd.co/images/QYsCvhfQlX6n.png
-
-
-> and either assigned-clock-parents should be used, 
-> or the clk_ops should have an init routine that looks at
-> which parent is present by determining the index and then use that to
-> set the mux. The framework can take care of failing to set the other
-> parent when it isn't present.
-
-
-On the board, at any moment, it will be only one clock as input to the
-VBATTB clock (either crystal oscillator or a clock device). If I'm getting
-you correctly, this will involve describing both clocks in some scenarios.
-
-E.g. if want to use crystal osc, I can use this DT description:
-
-vbattclk: clock-controller@1c {
-	compatible = "renesas,r9a08g045-vbattb-clk";
-	reg = <0 0x1c 0 0x10>;
-	clocks = <&vbattb_xtal>;
-	clock-names = "xin";
-	#clock-cells = <0>;
-	status = "disabled";
-};
-
-vbattb_xtal: vbattb-xtal {
-	compatible = "fixed-clock";
-	#clock-cells = <0>;
-	clock-frequency = <32768>;
-};
-
-If external clock device is to be used, I should describe a fake clock too:
-
-vbattclk: clock-controller@1c {
-	compatible = "renesas,r9a08g045-vbattb-clk";
-	reg = <0 0x1c 0 0x10>;
-	clocks = <&vbattb_xtal>, <&ext_clk>;
-	clock-names = "xin", "clkin";
-	#clock-cells = <0>;
-	status = "disabled";
-};
-
-vbattb_xtal: vbattb-xtal {
-	compatible = "fixed-clock";
-	#clock-cells = <0>;
-	clock-frequency = <0>;
-};
-
-ext_clk: ext-clk {
-	compatible = "fixed-clock";
-	#clock-cells = <0>;
-	clock-frequency = <32768>;
-};
-
-Is this what you are suggesting?
-
-
-> 
->> +
->> +       spin_lock_init(&vbclk->lock);
->> +
->> +       init.name = "vbattclk";
->> +       init.ops = &vbattb_clk_ops;
->> +       init.parent_data = &parent_data;
->> +       init.num_parents = 1;
->> +       init.flags = 0;
->> +
->> +       vbclk->hw.init = &init;
->> +       hw = &vbclk->hw;
->> +
->> +       ret = devm_clk_hw_register(dev, hw);
->> +       if (ret)
->> +               return ret;
->> +
->> +       return of_clk_add_hw_provider(np, of_clk_hw_simple_get, hw);
->> +}
->> +
->> +static const struct of_device_id vbattb_clk_match[] = {
->> +       { .compatible = "renesas,r9a08g045-vbattb-clk" },
->> +       { /* sentinel */ }
->> +};
-> 
-> Any MODULE_DEVICE_TABLE?
-
-I failed to added it.
-
-Thank you for your review,
-Claudiu Beznea
+> ```
+> root@cs21:~# cat /dev/hwrng | rngtest -c 1000
+> rngtest 5
+> ...
+> rngtest: starting FIPS tests...
+> cat: /dev/hwrng: No such device
+> rngtest: entropy source drained
+> ```
 
