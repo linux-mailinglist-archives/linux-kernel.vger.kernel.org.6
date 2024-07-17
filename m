@@ -1,119 +1,95 @@
-Return-Path: <linux-kernel+bounces-255582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B748934279
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:57:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EB5B93427D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BE0C1C216C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:57:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02E7CB21C36
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4D51836EC;
-	Wed, 17 Jul 2024 18:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LhC9osbf"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0663183083;
+	Wed, 17 Jul 2024 18:58:36 +0000 (UTC)
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6677470;
-	Wed, 17 Jul 2024 18:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8F01822CD;
+	Wed, 17 Jul 2024 18:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721242628; cv=none; b=d/9EgneJl0Tx7OFhRZUF6db19rHehcIvWrDnB4L5TjSNPEqQ72zhJg1UuOhXUTSnLkat1+rI/RIU7ghIHlIdcEzcq2Imb2NDHDHaoWRs0ETSDB5ovQnsQzebTJdPiDxMqtEq6DPrpKbMApo15iOcCOf0RJElWQtuzrWt8jsz2UY=
+	t=1721242716; cv=none; b=K/KAzd4x/r5cZhgI6SKEYw6s+ThZjsg8At9+pd+8q3mGevrMMWQJ1Aeb1YCHAMtp7zOQi5KZQPhdYD/uF6n5P7AvLjjPCI8sL45EEDhDJP7M/SsHcjXxKDA7vYE1rHLrWCJw2ivRvki8MRRqliDs2J4IsBJZsUa7G+bKHcSWK4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721242628; c=relaxed/simple;
-	bh=nlGu9ATzmRDZuQG1S8SgP+DAxKYsS8oizcEo/kGejXo=;
+	s=arc-20240116; t=1721242716; c=relaxed/simple;
+	bh=Eb5E0pYKJE9+uwiSuxE809tvfnZmZGYmfsvdHhErOzg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rWgiCKHiJ63ET40BkpHVEkOrG9ISusd3FU+yo+1GF9G5HsMcovVPoc7vJNrSGM0CZ8DE3xijwUBd2Wk2dSNUCMqowt396OBkvD+RcOlzJwupcgVW9Rkk3nWU0stTOAyXgLDlFIpxlkQ7TG6GMzMFWLSkwGYFpX2AVEW2Y+xEtB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LhC9osbf; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70b5117ae06so5138372b3a.2;
-        Wed, 17 Jul 2024 11:57:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721242626; x=1721847426; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JL/3fZ/KL80SbG0gxIevxprQw4yP8Zt7WBtlleXdZVg=;
-        b=LhC9osbfMAktn0MJ18LXAUTq6r6Yvi1Ed8t0xmSY0r9bDU72sk8K5T9NLRxMBqgQcg
-         DBeedfVv/ckMuhJa0VnepXzLDLoneuQ7zTiEuXqoo1UwFJmTU2Q3+UExUeBdDmcp7XQX
-         3KhjF9f+MlO+DCafbUE6oy8IYj5E+XaK+1PzdLs/i5457in+2HXSn1G5oh7dHWqiWLbo
-         o80MEeHm36ybpi7bjT1HNuZXRxiOdDuieSvI44FqF3BTZFH41V1bWTok3r56G2RLmfta
-         UP95K1+vFpDt/YqBoheyoqXvBBUxu20zq4cXjnnJkx7UYg1mhNYqgmgHKh5rI7uqip0M
-         ff5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721242626; x=1721847426;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JL/3fZ/KL80SbG0gxIevxprQw4yP8Zt7WBtlleXdZVg=;
-        b=FAl4f2IeDmZ0wiA6i5lpCsQwO7PdqiPNEVJ+sVS+NkCMNuzFaWgODs4OK5l3a9/QKh
-         TCyvQ4cTB1/L/H3rrsEPzgkQc8oXiL1P7ZDyoJoEIJaMXZt2wN6EYPQ68Q6VebmnupIQ
-         fffYG9zro0WAOzT6yeD/SmZ/O4xM7u7HWEhilU2vL8Ig1I1RI7JtED7hKqLCxhofNufg
-         caciX/yrL1+Rd3tFXlU6NvsYB9S3TZxHb1jHRpL3StePbLzq767JYfsP5AC23QvDItPq
-         jUlVQUHwL7eyy8MR4cJtPbFl+2EGwK54adlZ0Huw3Rfxxq91t+wBhFpS6yPvqTL8YT0G
-         KQAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUs+PoJZUMFclwwQB8WqseJzmyKFPkZ/s+bQaH7wgc6fUpMu7JkkhzuMc3L7doWD/ZVi4lYdB8yr0noSe01j8akehTkBHA4yq+D6qDr7EnEh6o9/4qfToTtpm3QFlCbIX44VVG9dSIzUhEaERHyaknwUItPKTVxPyGo8A7iwfivHciu
-X-Gm-Message-State: AOJu0YzQPAJemkU8gmDCKNc8pI+kf21ZZW6WgKSgYS26NLd6OuNDwWrU
-	AKMcTi+Sxwt3hIwA1TetnMEJQqbEjC3jcEeJzMOWYh0xxI6TBlWR
-X-Google-Smtp-Source: AGHT+IH3DCORNRV66+DX2G4j/+aDcK3/wP21M12HIrSoFR/73qsZi0G8Yd6O/P2L+EWP1V3eBSr4Mw==
-X-Received: by 2002:a05:6a21:9997:b0:1c2:1ed4:4f91 with SMTP id adf61e73a8af0-1c3fdd2bf9fmr3817008637.31.1721242626016;
-        Wed, 17 Jul 2024 11:57:06 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc52bbcsm78305985ad.291.2024.07.17.11.57.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 11:57:05 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Wed, 17 Jul 2024 08:57:04 -1000
-From: "tj@kernel.org" <tj@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Boy Wu =?utf-8?B?KOWQs+WLg+iqvCk=?= <Boy.Wu@mediatek.com>,
-	"boris@bur.io" <boris@bur.io>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=BA4IVF0BKIk2dl68diBek7yIYCVpGw+bj2PhxOhh5UXfi1u4xOlGAY8N/vOPFFpqX3WX1V9tyvXdI6CDx+HSofTo9bbEh8Uzl6ShuY2W93LTJAZ5KmH3E7NsmK/F9AmbgWB2vavw4rvoYQWBxddK1NOkvZTzYnTXpzDMkXXkHWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 4ADF92800B6CC;
+	Wed, 17 Jul 2024 20:58:30 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 3589931D14; Wed, 17 Jul 2024 20:58:30 +0200 (CEST)
+Date: Wed, 17 Jul 2024 20:58:30 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: Ard Biesheuvel <ardb+git@google.com>,
+	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"axboe@kernel.dk" <axboe@kernel.dk>,
-	Iverlin Wang =?utf-8?B?KOeOi+iLs+mclik=?= <Iverlin.Wang@mediatek.com>,
-	"josef@toxicpanda.com" <josef@toxicpanda.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v3] blk-cgroup: Replace u64 sync with spinlock for iostat
- update
-Message-ID: <ZpgUAJn-ypO-0JZg@slm.duckdns.org>
-References: <Zpbify32lel9J-5I@slm.duckdns.org>
- <c5bcbcbaeacdb805adc75c26f92ec69f26ad7706.camel@mediatek.com>
- <5560c690cc6de67139a9b2e45c7a11938b70fc58.camel@mediatek.com>
- <1b19b68adb34410bf6dc8fd3f50e4b82c1a014e4.camel@mediatek.com>
- <Zpf3ks2drDZ7ULTa@slm.duckdns.org>
- <f448f66b-7a91-4281-8f77-159541cbacff@redhat.com>
- <ZpgB9kCAxAAXAtSi@slm.duckdns.org>
- <134fc34c-10b8-4d00-aaca-8285efce9899@redhat.com>
- <ZpgMajKn2O521H2s@slm.duckdns.org>
- <48fa8bc9-9f8d-4406-9137-88a555883ea2@redhat.com>
+	Ard Biesheuvel <ardb@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Kerem Karabay <kekrby@gmail.com>,
+	Orlando Chamberlain <orlandoch.dev@gmail.com>,
+	"sharpenedblade@proton.me" <sharpenedblade@proton.me>
+Subject: Re: [PATCH v3 0/2] efi/x86: Call set_os() protocol on dual GPU Macs
+Message-ID: <ZpgUVjjj3naBGtfO@wunner.de>
+References: <20240701140940.2340297-4-ardb+git@google.com>
+ <MA0P287MB0217C0F7E0B9F6FE8CA47BE8B8D32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+ <MA0P287MB0217E3B4810704C504F13F2CB8A32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <48fa8bc9-9f8d-4406-9137-88a555883ea2@redhat.com>
+In-Reply-To: <MA0P287MB0217E3B4810704C504F13F2CB8A32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
 
-On Wed, Jul 17, 2024 at 02:55:37PM -0400, Waiman Long wrote:
-> I was wrong about __blkcg_rstat_flush(). Right, the main updater of
-> iostat_cpu is  blk_cgroup_bio_start(). We do need to drop down some comment
-> on what is protected by u64_sync and what is by blkg_stat_lock though. It
-> can be confusing.
+On Wed, Jul 17, 2024 at 04:35:15PM +0000, Aditya Garg wrote:
+> For the Macs having a single GPU, in case a person uses an eGPU,
+> they still need this apple-set-os quirk for hybrid graphics.
 
-Oh yeah, definitely. It is confusing.
+I don't quite follow.  You mean the integrated graphics are
+disabled by EFI firmware if an eGPU is attached?
 
--- 
-tejun
+This sounds like a bug on Apple's part:  The panel can be switched
+between integrated graphics and discrete graphics, but an external
+display can't be switched between eGPU and iGPU.  Is the person
+affected using the latest EFI firmware update from Apple?
+
+We need more information before we can devise a way to solve the
+issue:
+
+- Exact model name
+  (I'd be surprised if this affected pre-Haswell models)
+- Full dmesg output with command line option "dump_apple_properties"
+  (EFI drivers provide various properties for Thunderbolt-attached
+  devices and graphics cards, those could be queried to recognize
+  the situation causing the issue)
+- Full lspci output with and without eGPU attached
+
+Perhaps you can open a bug at bugzilla.kernel.org and attach the
+files there.
+
+Thanks,
+
+Lukas
 
