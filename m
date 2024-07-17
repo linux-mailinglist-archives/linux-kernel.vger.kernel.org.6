@@ -1,150 +1,152 @@
-Return-Path: <linux-kernel+bounces-255445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E0D39340C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:50:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF6B49340CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05575B21C05
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:50:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A3541F249F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6195A1822DD;
-	Wed, 17 Jul 2024 16:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7F411822F9;
+	Wed, 17 Jul 2024 16:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="eNKUtrpZ"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="JL0bxjDA"
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2053.outbound.protection.outlook.com [40.92.102.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBEC21822C9
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 16:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721235039; cv=none; b=K6YBYGL1qM+I1XvHj8tHjAmjTl8Iwdn8c8ziKaPYt28Y9esUKTpknrJgOIikP4C9bmtVZhLSYboQOGlXF4CGzKK24HAtNDU/4QSZWjZ6SSF4dW8mGzD6nPJ9dB+Cbp+6CoZNfUkhU2NATFUoTdGafhZZBU3l4CIEV/Ium4wGn6A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721235039; c=relaxed/simple;
-	bh=GRwsvdaZVXEcKOPI7Y0OJEITVG+ZtOtBwrLMsy/wr9Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S6k8BtQ3Z4v8yG5pPBDDxHPbOosLnaPBGnMjoWwKAjFJkm3svMYQ4VP2MKQcssZ+lkOV9yITM8tEgLL4Lm3OE2cc+qxTaR8jsgwDhZj2QqJ4p92oUfdu5Adm55Pl+7UTd5/tMuzHZMPnjQb6I+SVR7rOoTbdAkzvI/OUpAzyGjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=eNKUtrpZ; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-449f23df593so38395671cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 09:50:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1721235036; x=1721839836; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GRwsvdaZVXEcKOPI7Y0OJEITVG+ZtOtBwrLMsy/wr9Y=;
-        b=eNKUtrpZofNuOpCtbTAjHggJKwPG6lOcJlgcufCCJQzKWMaZZMhAQWIPOZKgXAWyC2
-         P6qmyEbXorOVlGUxruZ2dE7kaNiO2HYHbTs/JHfwKukEi3yz03gDJ+eOXBeiKVxztlSq
-         ggAkvIxSB1m+fMbQ5B/vePPvFyurvZLJvSx4kWWvUOoJWKOP5WIULz11DBlAZAFcp3Fr
-         SIpXaa9X7/hb3GPglE76suhAvET1+gl2dhfhu/QZVShDLKRGJ2NHc79ZFYnepvtnKNPJ
-         VobLrasxs6bohl56Y0e7zoDmTC3tZhwMyJGvlg8YS/FXSjNtFWiNt3xTPdYCJ5ipF0us
-         l/iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721235036; x=1721839836;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GRwsvdaZVXEcKOPI7Y0OJEITVG+ZtOtBwrLMsy/wr9Y=;
-        b=rRWUNB8TiwusJ+5xaIbpIGMqQEjovITj4G7TQSfM3Nq0BoOUY1rROZlNfrn1TaL3e/
-         dcyRSUwuMMOh3hLRJbIMhTR7Dr1t6wb2BbxmohJBpn8gyKfEVR2pakOujwwFVxHBDQeK
-         L8I77ycMS/8bn3VDWdoF0aVniycuOG+xS0nIKka6ZwK+9mO4jjKz7WEeGyT28BYH+vLL
-         fULQnk45j5Dj7N8MNYqyotxiriFtVXhj4cZ4EXxxIdJEpvC07EtfXvuhLvwZGJtriM1Q
-         1Gsqpj4fuSI+2P2IIZ1vRLHBUL/ovg+buLeqvSjsp76MDaSysZ/BSuUPZkln4PQaFPyY
-         03sg==
-X-Forwarded-Encrypted: i=1; AJvYcCXnke4fwSOgroqrz2BNaV5KdIWq2PfhnTz9hXXStHBzry/JcMOxgQgPmvDnNA4qe8xWF5igbvs/kDSH+UMVTjuNZcC5QGog4GQXEvIJ
-X-Gm-Message-State: AOJu0Yw21e6hnUTT/FlYxGxts3EvKDs+knrlClJ/AFWvrwzHOE4radvm
-	jW3wpk6+B0gYS0mvURH13SwCIfbrcg7+Lgb93HrPJrT5UWL8Oyb/WBcepapUd0vFIP7AU6bzFNx
-	17GW/6heGqtnYW18BQMnJWsXkkSZLY9d7p/VPGA==
-X-Google-Smtp-Source: AGHT+IFxQYPCDcrmSsyEadwMoGGdL1siJDY+QJ39nyNeIqqsU+jt5WPPcMEoRxymnj/mknxyDZShtnwVgxiWZDNF+7c=
-X-Received: by 2002:ac8:58cd:0:b0:447:df1a:d973 with SMTP id
- d75a77b69052e-44f865f56c7mr30031041cf.38.1721235036627; Wed, 17 Jul 2024
- 09:50:36 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC13B1822E6;
+	Wed, 17 Jul 2024 16:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721235178; cv=fail; b=abQxGvIxv4g1q87SetelT9izVGoBtENfMsM2QLrHghAL1nwIyqhbFPrEXwb30EncgM8TNb6QSORlZ/wuhyGVOBx8mCiW4K1yYWqTGwAtplSLey3mjDJMLdueVU7py+9FcSln3zDd3HweLL0hXKZkMMFEPqH/mUw03WHlLSDH83k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721235178; c=relaxed/simple;
+	bh=Sg7qGmG64hAPyS2lqxkhMbSyE0Fzl/txPmA3lv/n1R0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=IXbHrR6kz1+qocLN6fNSifS8tSA9EuHN7PkiXH31CQ2FsfqNfHqxUR7f3vdH/okJMejBv9vxtLZduOERcxNEZ7p6uXePm+tZd3RjSwv18rcE/E9xXjjMJ1xAjBhdt5jsXXj1BurSXVRiRg8ttJX09ei32PGWVR0h3O4GOsmVn8I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=JL0bxjDA; arc=fail smtp.client-ip=40.92.102.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XTglU3G3GfxcDie4hAPpbMoZs7p6GYXPFrXEGX+fte7ky+aVVcjvZgTk2+KNL7EjIgivM8f2LX0eUmqjwQsEb2bZYPZBW/iRV/bC2vNueRHXHxUPDeENOMD8Rdj+Si1aarbeNOIM6Feg5YKjQRmgtrMPOXzyE2k07RUHEeffXSfqw0dDB9umkm+68SZTJx7crC8WYiiRemvbCkss0dOdxMVpJIiGWx7hXk6uyubYlI42OJZS5W4HgokvscV/+mrSu7biHUydXCRCK9MlQS1L777oQOQiEjlfctz4JD7Ey82CfRkXd0gYjimexoBpOmRwGVp/0dYSizM9dJPgCT0S6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Sg7qGmG64hAPyS2lqxkhMbSyE0Fzl/txPmA3lv/n1R0=;
+ b=l/70KFRsAHmQGdnTtad2/KSTkIYYiS5lIraAQwi6jRhVjOqtAhOJ9NVQ/RDO9tNme00aHqDngxi3GjC7csQLAKTzrL112R+p9vRpW8P7DGOq+NaGZxbUw0DtGi5tthee8Q9uRfwP8KYBRilC+UIVnd2CJXBwOABHVveCQg7KBQlJRuDYYTARziRhIAnsEwS4Xl+N9OZ8oavan4unF5YwTGMOr+E3RW0u7PWj4FqtUGWJ7wtxdlQikNstjJSivntdP3G1suNVlI2GjqKii+1aBQrD67ZdsVmVgEXSg1J6mg1ZvveQ0g6SQKAlviJrnrp2W8CroXeVKT1kLDeqsy2w3w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Sg7qGmG64hAPyS2lqxkhMbSyE0Fzl/txPmA3lv/n1R0=;
+ b=JL0bxjDA5CkWv4S1JgLhcpOMnpQR5Av1sD39EG1MZzeucWzzSxXAEe01ROOgr4OtSXN1fbPlBb/l0WJ9GbM3qg6tk5e+DCYheOGPkdsbQGIH8x7CymgFSK/hwFCiJEfSINEAl8kdZqAt0YC4YiJ80baxOdXix5RXYY20VlTukcWanOdpnBrFjS6gFTTiQZk6nk/YypJbC7g3szOzTOi1FRXotTuTqmDhtFhmx9dslB5xMN/ZX2NWWcI16IBvdHLJ5bE1zi3IXIE7wEwVm1RfIhurKdBV0PtwBUMEMialIQKahCFfq+6d+wWHdRYSwMPp+N7086IUDX/nEhuaIoj8kg==
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
+ MA0P287MB0664.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:11b::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7784.18; Wed, 17 Jul 2024 16:52:51 +0000
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a%4]) with mapi id 15.20.7784.016; Wed, 17 Jul 2024
+ 16:52:51 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: Ard Biesheuvel <ardb@kernel.org>
+CC: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Hans de Goede
+	<hdegoede@redhat.com>, Lukas Wunner <lukas@wunner.de>, Kerem Karabay
+	<kekrby@gmail.com>, Orlando Chamberlain <orlandoch.dev@gmail.com>,
+	"sharpenedblade@proton.me" <sharpenedblade@proton.me>
+Subject: Re: [PATCH v3 0/2] efi/x86: Call set_os() protocol on dual GPU Macs
+Thread-Topic: [PATCH v3 0/2] efi/x86: Call set_os() protocol on dual GPU Macs
+Thread-Index: AQHay8BxbD/3780MxUWT4The9rzhebHiRiV0gBjw9fOAAAM9gIAAAa0C
+Date: Wed, 17 Jul 2024 16:52:51 +0000
+Message-ID:
+ <MA0P287MB02171286CB1BF5CD506FCE55B8A32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+References: <20240701140940.2340297-4-ardb+git@google.com>
+ <MA0P287MB0217C0F7E0B9F6FE8CA47BE8B8D32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+ <MA0P287MB0217E3B4810704C504F13F2CB8A32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+ <CAMj1kXEGsnd5S3-nnCUNYJ5tVr2LU2BOkNp513OfU6A=jgVX2A@mail.gmail.com>
+In-Reply-To:
+ <CAMj1kXEGsnd5S3-nnCUNYJ5tVr2LU2BOkNp513OfU6A=jgVX2A@mail.gmail.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-IN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn: [qFI8ItOogssk/eRT2VAFsn/2lBuskVKo]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MA0P287MB0217:EE_|MA0P287MB0664:EE_
+x-ms-office365-filtering-correlation-id: 41bade55-3975-463f-89a6-08dca680e541
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|8060799006|19110799003|461199028|3412199025|440099028|102099032;
+x-microsoft-antispam-message-info:
+ xLMV++Z4I6NxyDYpm1CzjzD8W5ieh1pRAx9oLqAQh3EhGhGwE+JmmO3+JMpQTSLS2oQSWyl9urpyKSWO1ydQncgSV/ohlb9CmZ+czHjEWOIKK32QOr8PX+4Vnxh8ZNi/HFv5+ynTqZ3ndPgnMNqC6EmSeNih0P7fKJICTb6OFwEOymWf1AA7eMFXjexMEMQKULnCL5jR5KP0zoGIfATx6d1j1bmkI2J+vCnhjA2py5oM2vlbW71TpYJN6JqVAu4Lzb4QYLiAGnuZsjCyXPfDWfla3X92cSTf78JnE+TSh3URKrk1waPrJRYWkdRo+IgnCgMmAAg8sSGuVeKJ3r8rU9oSrqlhmAIuHIm8cjEUUQnykDZHC9+vfL1NHMvEGLBZXHMqinp678yaOStU9sErKBFMRiy0EW5snA5O5UyNAx7XjTLcOlL4U/h7T4V+4KXXkr7Rr/1BCx0WTmKLdWNe54efzANR52QXpOz5vkyts7M/JlcGHUmMp3G9+Cz8r31vX6aDJlyglIsFqXwIfCyIoDDJthsRiz7DtnLQpd8E+7tfe/dUBxfsnCLABGegjfbgOoUkbEHlPhrk7YJoeQ7yFfr7NdObEg3O6/51B78/GhiT0kHcA5UTrW50gRZ7yl3UUkEpXSPdyveXCZ1BjMyS5Q==
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?yEwqXes5aATrbUsNBiwD3/y0Cg2sneOe9k1aAdtNFTQFWa7LSSZftIJOX2UX?=
+ =?us-ascii?Q?FlK6vshobleUMcUl+lGn/hgGTvNMfRgH4GrqhXtTrQXBMi+QmSSlcJHui4Po?=
+ =?us-ascii?Q?w4u1X1XuwlEU76r9ULvYRwVFxf1XSBIU98obqdQjcEPX/yzsI+19kWxqkhYN?=
+ =?us-ascii?Q?rmcSaG8f6dG56F+6ASbyBYgZsjr16p1a342tS27noZdBAUI6N/L9GHL/qPQ0?=
+ =?us-ascii?Q?ivzTWGaOLu1jVuf6jxnTrpMyfe23fo1WveFl4UZzYwvxz1A8ShUh2mAHh4bW?=
+ =?us-ascii?Q?wHQiNF/LZx3MnPSGJuWgpg1F2VFL+GvJKU5IeNar4UXh4Hhl02OUmQ+eWwif?=
+ =?us-ascii?Q?cweFf5YZJ8hAtWshCtVswoy2Gn6QRtX328t6H9UhzzPUUhGhpPMu6cwefyW3?=
+ =?us-ascii?Q?ShhRlb45OBavI0f8xnMUjdOYye4gnaK0EtFex8A1ItS7llTHgfxqaR7uahvD?=
+ =?us-ascii?Q?aV59hqIDu32lXkbtWSGqvhqHl457+23qeaMRHx1sp8kV/L6qCYhW9mZMaUwq?=
+ =?us-ascii?Q?RN1ENvjRsYOSkH63gSeKbMDTgkibLQfpBi5F7udnZqdJ2qblTGmsTi+/zW9e?=
+ =?us-ascii?Q?alojD3BFDBYXMc6jwW6b0bCNgC2enWpFd9zRF0ApI0xfq0315Lel2UKR9U0o?=
+ =?us-ascii?Q?mlTodLw79lx21KdCEkfc/EPuo39+MCIO2C0h9K8HkoxHAFasaL5t3slsu73y?=
+ =?us-ascii?Q?l0jgEEpXQPTisSHSyJ6SbF6tkNTMM6ofFF2e5AC5/Y1utRqK0PMOn01lzq8v?=
+ =?us-ascii?Q?MqE5Oy8y/uYjKESBBxjEz7/oC9LoMgaaDu3VuqK7zUlYnE3M+hFY/ddoNQM4?=
+ =?us-ascii?Q?CW4ymv0yKbGtmkPLushlmiyQeV6B0OjlPDKW+7tCRb5BoYVI3Kb3rHL/VYCB?=
+ =?us-ascii?Q?Uq2lCxfRCcpSJAlQ8ZOHgkYx2fPcfVCQOoge0PZ5iZysSi3Fy36D4FeGjiSX?=
+ =?us-ascii?Q?Ayu7H65v88s8TISsxxj/RSikvbTgAotXap6tUn403qiAKBabJzYPqQCOMFR4?=
+ =?us-ascii?Q?XwY3qF+OQkavoplw1O5vKcW4flVuWyaafG1Zeh0wyG1kvQQZ50lyvX0Tp1os?=
+ =?us-ascii?Q?08nSMurkznR0tBghc8RLslt71mwQP2JpZFm6uO0VDseNho8fPnHvIQnrURzR?=
+ =?us-ascii?Q?hn1EpdX0fjabwXggyl6Z05Hozww1+injvKBKpikfH5HesHv8R9FdHf/SyBkp?=
+ =?us-ascii?Q?ldaDhb9UuHbNsQjMUB3OCdEOQYrG+uCjaaolo93PIkvIMMsQom4LZLC46qg?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530170259.852088-1-pasha.tatashin@soleen.com>
- <cq7537bswpnbsmeiw3rh4ffrgqky4iufsaurukpk2flxts6jcu@6ctttkclvf3f>
- <CA+CK2bCuiDAv05Xu6OuKB=gqJ5NM20F_uUyJV8E=XH=r47ik=Q@mail.gmail.com>
- <i66bzhgnbql7bvuteqttpijml3ze3nngxapv32k7paqv25c5th@wd37oaastkvz> <usfcwyq76np42s5b2rpzgjrvvtdpwakaum7ayy4zumaa73ke3u@txbukb2464bl>
-In-Reply-To: <usfcwyq76np42s5b2rpzgjrvvtdpwakaum7ayy4zumaa73ke3u@txbukb2464bl>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Wed, 17 Jul 2024 12:50:00 -0400
-Message-ID: <CA+CK2bBm4COW+jZifyjFEyJNcW1cAXWYzCpuO81jL3YziKxfRw@mail.gmail.com>
-Subject: Re: [PATCH v3] vmstat: Kernel stack usage histogram
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: akpm@linux-foundation.org, jpoimboe@kernel.org, kent.overstreet@linux.dev, 
-	peterz@infradead.org, nphamcs@gmail.com, cerasuolodomenico@gmail.com, 
-	surenb@google.com, lizhijian@fujitsu.com, willy@infradead.org, vbabka@suse.cz, 
-	ziy@nvidia.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 41bade55-3975-463f-89a6-08dca680e541
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jul 2024 16:52:51.1747
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB0664
 
-On Wed, Jun 12, 2024 at 2:50=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
-v> wrote:
->
->
-> Hi Pasha, I think you might have missed the questions I had below. Your
-> response would really be appreciated.
+Hi Ard
 
-Hi Shakeel,
+> Hi,
+>=20
+> Is this a theoretical concern? Or are you aware of any user that is
+> actually affected by this?
 
-Sorry for the delayed reply. I was distracted by unrelated tasks and
-did not make any progress on this project. To answer your questions:
+We had a Mac Mini user who wasn't able to use hybrid graphics
+on his Mac after using the eGPU. So no, it's not a theoretical concern
+> In any case, given the niche nature, enabling this more widely by
+> default does not seem like a great approach, as the risk for
+> regressions outweighs the benefit.
+>=20
+> I could imagine the use of a EFI variable to opt into this, would that
+> work? It would have to be set only once from user space (using
+> efivarfs)
 
->
-> On Fri, May 31, 2024 at 03:42:34PM GMT, Shakeel Butt wrote:
-> > On Thu, May 30, 2024 at 08:14:17PM GMT, Pasha Tatashin wrote:
-> > > Hi Shakeel,
-> > >
-> > > > Couple of questions:
-> > > >
-> > > > 1. In future with your on-demand kstack allocation feature, will th=
-ese
-> > > > metrics still be useful? (I think so but I want to know your take)
-> > >
-> > > It depends on how on-demand allocation is implemented. On hardware
-> > > that supports faults on kernel stacks,
-> >
-> > Which hardware supports faults on kernel stacks and which do not?
-
-From my understanding, both ARM64 architecture is capable and also
-Intel FRED is capable of handling kernel faults within the kernel
-itself, other variants of x86-64 are not.
-
-However, my immediate goal is to provide a generic way to increase
-kernel thread memory on demand, specifically when needed. If certain
-architectures are capable of in-kernel fault handling, they could
-potentially leverage my framework to further enhance their dynamic
-stack fault handling support.
-
-> >
-> > > we will have other metrics that
-> > > show the total number of pages allocated for stacks.
-> >
-> > Don't we already have a metric for that i.e. KernelStack in meminfo
-> > which is in kB unit?
-
-If we had true dynamic kernel stack support, then the metric in
-meminfo would be enough to estimate the average stack size, it would
-still not show the histogram of how large stacks get.
-
-> >
-> > One more question: Is there any concern in making
-> > CONFIG_DEBUG_STACK_USAGE not a debug feature i.e. enable in default
-> > kernels instead of just debug kernels?
-
-We enabled it in Google ProdKernel. There is some overhead when
-threads are exiting, because we are looking for the first non-zero
-byte, but that is minimal. We haven't observed any performance impact
-on our fleet.
-
-Pasha
+I'm not really sure about efivars here, but am ready to test. As long as
+it doesn't break booting of macOS or Windows, I don't find it an issue.
+macOS may also reset the variable, again have to verify by testing the same=
+.
+I guess it will also get reset if a users resets their NVRAM.
 
