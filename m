@@ -1,86 +1,50 @@
-Return-Path: <linux-kernel+bounces-255511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 919679341A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 19:48:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3E559341A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 19:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 393D01F23BEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:48:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F324E1C2276C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204DF184130;
-	Wed, 17 Jul 2024 17:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P8+99ssZ"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C922F1836F3;
+	Wed, 17 Jul 2024 17:47:40 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1425C184F;
-	Wed, 17 Jul 2024 17:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232C4184F;
+	Wed, 17 Jul 2024 17:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721238464; cv=none; b=prGebNdTVWZzAGJJapA+Vo9qga5+lyCrS4IM+qvDbWvSlPGUsNrYib7Cnrr9OP8h08G3r4xJX03qL3v5jzmsQ5J19pm2s7k4bEQ1z6be8/9Mqle6QgnjyLqVeodLKTQsjq2nA5Z3bFS9Ln5jI//afXxxkeEjjEJVJ093U4RU48A=
+	t=1721238460; cv=none; b=jWfUxTIe2nrp/9+Sv6h38tcCUvzXjhfVdOFkq0KKH9rQuDUCW9J7jhOun4FGGFTSEcpaMm/W41oNi+uan0c3eJhaJg+j0TfiRK9A5nyU2XKtEwvY2QEb4MR8MUUNUIv5V9/i2ypIBjCS9JxJZ02OPgCeyTfwWbONA9vIKIF1e28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721238464; c=relaxed/simple;
-	bh=d3NJz4jUuX7oE3096k7n7iS0SLoh6rburN9DwWrzyO4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=s11d/NzdANz3m+xRz7CVP2qgxabZt3Wfp0qprHLpF7VXpll1Z8ozE6xEZ4tjBPGow2fkBQ5IFpuo9F3hTrMIEdaXIXLMkAF523PGE01Ogxm15TxyRebrGAOlSMlLflVnHDF14QnK9G93fWoObTtXKehU3LTVOz8A0+hTn0gL3tE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P8+99ssZ; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70af22a9c19so5235954b3a.2;
-        Wed, 17 Jul 2024 10:47:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721238462; x=1721843262; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1Hk1vOhEtpNT8o6McHb9O6PZJBmCTMgCBX1nWzjTxVE=;
-        b=P8+99ssZPr0lwoSKGltNyhqGE6BIEur33GPIRD0/Q58yQYqi2rVOZpgTtnIx26sLqv
-         8hizPdecfrnMSMoW72FE3xLPfrcG5ySTnNCuhKZ7EENfSaLQLQuBbt0wvHCeUgQvax8a
-         CbPvcT0PDA/G69oohapFOkZkqhe2zs6wo/c1TZoDu+6h1++ZJFNJJ0DbHYXrkf20DZRq
-         l4qO0D9JluouJuudQH83HadTIepfdWfRIy+8rJVQI406p0uAjcy9R11KIfzGKAIhLzGQ
-         x6uNSJaaAYJzt2x2mRaEFh8GVCVjFvx3iDkVo2QigO43+h7fkiOQeeyCH95qLgw/tQTi
-         Ek6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721238462; x=1721843262;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1Hk1vOhEtpNT8o6McHb9O6PZJBmCTMgCBX1nWzjTxVE=;
-        b=YkmeyXjKB/8Ec34rZ5Kjufe32xIdyQf/rfsOhwfONfQbWNKBVPNUv268opkfJRJHPu
-         sg795+hYef1xpT8H1Pkr8vGQCXFa3kCEJhZKRqPiKGovdRSa5nxbVGlIPL86C14DNsw2
-         mqNG/m/EVjHXcwNooDTJJxy4MZCMJ34cAjNaWLxLO7HD3CakuM9z5PWRboMtr3xzTnsW
-         QYcGLvSxhMxEkNcwMp++V0PIDNWPFmaqAFevrOJLbi6SEDcnz4v2NIDdL3txlRGgJ0gb
-         LYt6/SXrOLo7/8YS9kWRUJBvhYyCS+jzcBoKStm1ssPCrGDRBb4EVn9jHQZuZ/d6GVBe
-         914A==
-X-Forwarded-Encrypted: i=1; AJvYcCUqacUj1iPd79RxUrM9Yw54PuBR6w/x+0rWU2JKz8TZ9XMUZyogMwo/LF8oJdVUiv4W39MOfYcQBHwXh0n4ILJPfyrq9ss96WSTW2eWCnL7gnW0xdcmvMTwatvRzTIHtMeD
-X-Gm-Message-State: AOJu0YzYsi+ruZBffuvi8GVQ78X25Zc73xj397VBTOr9vinhCCwBF44i
-	cInorQAQviyWVqpDxxjIbCHrh7IG1Bu75KXawA8mwf1epFhdrOdG
-X-Google-Smtp-Source: AGHT+IG2v9n5WK0JXwdEu98eZ50zz69zNuje+Regv6AkbfgeTzXByBFuU/KN/LO9gbET4Y3CWmGEAg==
-X-Received: by 2002:a05:6a21:6d94:b0:1c3:b239:83e2 with SMTP id adf61e73a8af0-1c3fdcbffa5mr3387724637.12.1721238462032;
-        Wed, 17 Jul 2024 10:47:42 -0700 (PDT)
-Received: from localhost ([116.198.225.81])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7ec7e4bcsm8398596b3a.117.2024.07.17.10.47.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 10:47:41 -0700 (PDT)
-From: Tao Chen <chen.dylane@gmail.com>
-To: Quentin Monnet <qmo@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	chen.dylane@gmail.com
-Cc: Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	bpf@vger.kernel.org,
+	s=arc-20240116; t=1721238460; c=relaxed/simple;
+	bh=REOSf7/rugtH2yYk+s2F5MVinrpY3CBfXRrXHiL+0CU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=eFehMSHyIgi70czPizF0Tqsd2dV0USnweo6WszopPqUyD0puA0x1dRfHHeu89sIC0CSlJRZLo+0AZ+ZGpqKDV9eNjuhpqccwLy1ju0+bKFVdK0ef6MluhkM2Ge6ka0Esf0VSne3ZscZawTRY+71nzNR00Z9WuMMMaoQkZ7TZiMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+From: Guilherme Amadio <amadio@gentoo.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ian Rogers <irogers@google.com>,
+	Thorsten Leemhuis <linux@leemhuis.info>,
+	Leo Yan <leo.yan@arm.com>,
+	linux-perf-users@vger.kernel.org,
+	linux-trace-devel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [v2 PATCH bpf-next 1/4] bpftool: refactor xdp attach/detach type judgment
-Date: Thu, 18 Jul 2024 01:47:36 +0800
-Message-Id: <20240717174736.1511339-1-chen.dylane@gmail.com>
-X-Mailer: git-send-email 2.34.1
+Subject: [PATCH v3 2/5] tools: Make pkg-config dependency checks usable by other tools
+Date: Wed, 17 Jul 2024 19:47:36 +0200
+Message-Id: <20240717174739.186988-3-amadio@gentoo.org>
+X-Mailer: git-send-email 2.39.3
+In-Reply-To: <20240717174739.186988-1-amadio@gentoo.org>
+References: <20240717123147.17169873@rorschach.local.home>
+ <20240717174739.186988-1-amadio@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,63 +53,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This commit no logical changed, just increases code readability and
-facilitates TCX prog expansion, which will be implemented in the next
-patch.
+Other tools, in tools/verification and tools/tracing, make use of
+libtraceevent and libtracefs as dependencies. This allows setting
+up the feature check flags for them as well.
 
-Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+Signed-off-by: Guilherme Amadio <amadio@gentoo.org>
 ---
- tools/bpf/bpftool/net.c | 26 +++++++++++++++++++++-----
- 1 file changed, 21 insertions(+), 5 deletions(-)
+ tools/build/Makefile.feature | 18 ++++++++++++++++++
+ tools/perf/Makefile.config   | 11 +++--------
+ 2 files changed, 21 insertions(+), 8 deletions(-)
 
-diff --git a/tools/bpf/bpftool/net.c b/tools/bpf/bpftool/net.c
-index 968714b4c3d4..1b9f4225b394 100644
---- a/tools/bpf/bpftool/net.c
-+++ b/tools/bpf/bpftool/net.c
-@@ -684,10 +684,18 @@ static int do_attach(int argc, char **argv)
- 		}
- 	}
+diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
+index 1e2ab148d5db..e1900abd44f6 100644
+--- a/tools/build/Makefile.feature
++++ b/tools/build/Makefile.feature
+@@ -149,6 +149,24 @@ FEATURE_DISPLAY ?=              \
+ #
+ FEATURE_GROUP_MEMBERS-libbfd = libbfd-liberty libbfd-liberty-z
  
-+	switch (attach_type) {
- 	/* attach xdp prog */
--	if (is_prefix("xdp", attach_type_strings[attach_type]))
--		err = do_attach_detach_xdp(progfd, attach_type, ifindex,
--					   overwrite);
-+	case NET_ATTACH_TYPE_XDP:
-+	case NET_ATTACH_TYPE_XDP_GENERIC:
-+	case NET_ATTACH_TYPE_XDP_DRIVER:
-+	case NET_ATTACH_TYPE_XDP_OFFLOAD:
-+		err = do_attach_detach_xdp(progfd, attach_type, ifindex, overwrite);
-+		break;
-+	default:
-+		break;
-+	}
++#
++# Declare list of feature dependency packages that provide pkg-config files.
++#
++FEATURE_PKG_CONFIG ?=           \
++         libtraceevent          \
++         libtracefs
 +
- 	if (err) {
- 		p_err("interface %s attach failed: %s",
- 		      attach_type_strings[attach_type], strerror(-err));
-@@ -721,10 +729,18 @@ static int do_detach(int argc, char **argv)
- 	if (ifindex < 1)
- 		return -EINVAL;
++feature_pkg_config = $(eval $(feature_pkg_config_code))
++define feature_pkg_config_code
++  FEATURE_CHECK_CFLAGS-$(1) := $(shell $(PKG_CONFIG) --cflags $(1) 2>/dev/null)
++  FEATURE_CHECK_LDFLAGS-$(1) := $(shell $(PKG_CONFIG) --libs $(1) 2>/dev/null)
++endef
++
++# Set FEATURE_CHECK_(C|LD)FLAGS-$(package) for packages using pkg-config.
++ifneq ($(PKG_CONFIG),)
++  $(foreach package,$(FEATURE_PKG_CONFIG),$(call feature_pkg_config,$(package)))
++endif
++
+ # Set FEATURE_CHECK_(C|LD)FLAGS-all for all FEATURE_TESTS features.
+ # If in the future we need per-feature checks/flags for features not
+ # mentioned in this list we need to refactor this ;-).
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index 44f010b9f562..c896babf7a74 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -182,20 +182,15 @@ endif
+ FEATURE_CHECK_CFLAGS-libzstd := $(LIBZSTD_CFLAGS)
+ FEATURE_CHECK_LDFLAGS-libzstd := $(LIBZSTD_LDFLAGS)
  
-+	switch (attach_type) {
- 	/* detach xdp prog */
--	progfd = -1;
--	if (is_prefix("xdp", attach_type_strings[attach_type]))
-+	case NET_ATTACH_TYPE_XDP:
-+	case NET_ATTACH_TYPE_XDP_GENERIC:
-+	case NET_ATTACH_TYPE_XDP_DRIVER:
-+	case NET_ATTACH_TYPE_XDP_OFFLOAD:
-+		progfd = -1;
- 		err = do_attach_detach_xdp(progfd, attach_type, ifindex, NULL);
-+		break;
-+	default:
-+		break;
-+	}
++# for linking with debug library, run like:
++# make DEBUG=1 PKG_CONFIG_PATH=/opt/libtraceevent/(lib|lib64)/pkgconfig
++
+ ifneq ($(NO_LIBTRACEEVENT),1)
+   ifeq ($(call get-executable,$(PKG_CONFIG)),)
+     $(error Error: $(PKG_CONFIG) needed by libtraceevent is missing on this system, please install it)
+   endif
+ endif
  
- 	if (err < 0) {
- 		p_err("interface %s detach failed: %s",
+-# for linking with debug library, run like:
+-# make DEBUG=1 PKG_CONFIG_PATH=/opt/libtraceevent/(lib|lib64)/pkgconfig
+-FEATURE_CHECK_CFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --cflags libtraceevent 2>/dev/null)
+-FEATURE_CHECK_LDFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --libs libtraceevent 2>/dev/null)
+-
+-FEATURE_CHECK_CFLAGS-libtracefs := $(shell $(PKG_CONFIG) --cflags libtracefs 2>/dev/null)
+-FEATURE_CHECK_LDFLAGS-libtracefs := $(shell $(PKG_CONFIG) --libs libtracefs 2>/dev/null)
+-
+ FEATURE_CHECK_CFLAGS-bpf = -I. -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(SRCARCH)/include/uapi -I$(srctree)/tools/include/uapi
+ # include ARCH specific config
+ -include $(src-perf)/arch/$(SRCARCH)/Makefile
 -- 
-2.34.1
+2.39.3
 
 
