@@ -1,241 +1,225 @@
-Return-Path: <linux-kernel+bounces-255716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B0CF934410
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 23:44:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B675D93441C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 23:45:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7480B21A56
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 21:44:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CA5B284E08
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 21:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D0B188CDA;
-	Wed, 17 Jul 2024 21:44:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9259718C16D;
+	Wed, 17 Jul 2024 21:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=esdhannover.onmicrosoft.com header.i=@esdhannover.onmicrosoft.com header.b="HnmoEQ6b"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11023137.outbound.protection.outlook.com [52.101.67.137])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="E5gEKTl6"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2083.outbound.protection.outlook.com [40.107.237.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4689F4688;
-	Wed, 17 Jul 2024 21:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3CD18F2DD;
+	Wed, 17 Jul 2024 21:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.83
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721252657; cv=fail; b=p1HlGk8sP7LAjFKkuJyXJNKDfPW4P1qpm89f2k/6deOpcUutro1EFc80BPqbJku9MmY2M4n7yWfbl0fq2vdMAZV148p3XFLj99tt9lGOVr774zMltfy1t93EejnJ/606dEEcJCBJ+ddujOPp1i/7plKHYp4fSgdqxRJRKpZlc9s=
+	t=1721252682; cv=fail; b=j/9Oi1OE0iXGQ9bDRgeVyh/9W8bOWVuOqb9g8oAH0LyA0XJquwwAt++Hb4LxhyDCWZgBGCCfjSH/eiI1ZFT/JJbo5lDcYpW5n2WJroSFwE4hhyaf3w0dYs29HhVJiR0fuyLj/E3PJeD2cBbU26z3N7kh754YgZKp/6Q5brv+OSs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721252657; c=relaxed/simple;
-	bh=iBuU0KgkP5loNvI9ehGVm8Olu21jZYbjftYW2u+nLvM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XX+Ogj5E+sviZTOnzF4bqHo15wU/bVo4LVc3vTeGV4GuFVcHUtE2SGJ9Csvgn8ObvsPJQsBT7NjjE51/cqLxsygpHC3xgll8dpY5bSZs9fJdMSeXDYeMCZN6JGay0LaJukSXsnCLcOBXx8XB4Cb7lrcXEPGigZjSK9sx9k1q7rM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=esd.eu; spf=pass smtp.mailfrom=esd.eu; dkim=pass (1024-bit key) header.d=esdhannover.onmicrosoft.com header.i=@esdhannover.onmicrosoft.com header.b=HnmoEQ6b; arc=fail smtp.client-ip=52.101.67.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=esd.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=esd.eu
+	s=arc-20240116; t=1721252682; c=relaxed/simple;
+	bh=y3TI4OEzU2WQ62UQSspbzJuwEVkhusYiu1GN8Ws1boM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SpP1vcjGdEfa67X5llg/anAkc0tAqtGaj+ac7XuuHFBZorB+YMhf9+uz9fQi8uyApgnnBbbEX/T+ky0r46XpUxAFXEVlxCdLwIs4Q6VbNOaDHGIKBScKaaL0xuvtTRZyWOwfpotLqe2NwA9fFjEvjdixyVZMdnSxt5Jx96CtL5s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=E5gEKTl6; arc=fail smtp.client-ip=40.107.237.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W1nKm0aGduJvObZnGvyNKcMYj6XX/r79L863PsmrcZtiQuxIaioeodwdtSuWqGgQ51AJ+c5NXQ5xd6ShjDyKb6rSCm/EYjMl5KILa2OZyo8HuGAAtksEYgzl/hqB0wQNRg00PfPX5fhiy5o0mA5yVFf7cU41ElcrOW9Xz+PIL9cgTFzpAepxopP/zSvGCIA5UqeXBGk1gadl5D2U2csQKrAKTiF+2vaDOAVp7fa6mEgsIfKKZWlVKpZ2yXqikLvAOg8FVNrzbMXso7BiNJUoygA7qzSpqVILcHxnqpRp+g+BPVVvTDwvXx6LZfoBQKtx0Ta+E6yr7jqvzNubqQ7Jnw==
+ b=Tbmp1jpETIcfRtDuPPtSgSOE7Jl5LOS0NyJ7lzOaPEqkQYny3TTi3Bb4KdRrp+3gUx7cB6ivGPIS8yHBldLuNkO5fvHtiD6gus+2HdEZO5cXjNV3LT5WC+7GFYVKt+fD8WRtgjRSK72ePKf+LSpvjWAqN7NoPrYK9ZwHl1ieud4dDxnTYpbWsK0jxKTJtWYXu7g5MrLYXFgXE4Q0+pBMwFxslCo40jqw16sgcccNGVzsEtsLTccNqGqu6qil5aHOsuWeFc3D27D3hRsA0nckGUGnd22eDIR68RDpjK7zjsGyYOYrX6KqiALF5CDJG4U8MOhdgAEWnifpnhIHi1hHFw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hLB1l7TZKzTbV5W/Z74Yx3nlK05AboEEchJ6yWSO0m8=;
- b=i1PvgIoR4y/w5ChLzosRNXg2NDY4sL00maC3xRU0n/xO+ndiNenIOKQ7eNSVOzIc45eK9R5e2O1z5cmV4nxS5k+irR3xb2FrynXSJ4XXMLjqh2+GMY5o/6pOZQo3oRPR5sWSuyymb8/5oohGqLK5cJKZHJqHXcPgk9K5aXgxaZz9KO47YMA4ZtJjvQWeZZw4gEKApBsNQpqJM/VS8HhHzeVucx1U0L8kqSJ1GgHEvGtekf0pFriiAFPlsgXa6o9a4ONpjfbveM/HNxt+NV01uledVKNZfDjWDa83l8p51rTqcaqju5u8QSVfRwnLGJN9vf3mR1gWxBHdtIqNbEtiKw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
- is 80.151.164.27) smtp.rcpttodomain=davemloft.net smtp.mailfrom=esd.eu;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=esd.eu; dkim=none
- (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=esdhannover.onmicrosoft.com; s=selector1-esdhannover-onmicrosoft-com;
+ bh=y4hTQdtmX1b9JC/f9Onhh1BVoVF8W1Feq3PcSOgsUXA=;
+ b=MVWePSle9wr2NVv3aU0HQ8CrUIkS4Moqwj+M4WOaOCrhlbvcZyHHmrxngb4bbVEhy52tLosDTFQMBs8fMuRgueYGl6PuJ41CT84EI5b6vqCDsZzocP23jpJnBav73Gaa/47c9+7z+6g4auitXupPup4TU9+BOPoj4/m8Is8s3spf0/Kx22XGrHGRsdmI+8ooFkd9ZfTOvosqD0kIENFrQp0k/7MUfUT+Ijyd4pxcWz3BjUXta6dsWkogIONrzY9pifQ2+1PRT7ZpxL0Z3iwLEiAQd7bOZ93M8uu8DadqEoNWA61v4Ls6P0Qh17rX1mjP5+1+oN5z4RfrPDEiL4guqQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=collabora.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hLB1l7TZKzTbV5W/Z74Yx3nlK05AboEEchJ6yWSO0m8=;
- b=HnmoEQ6blubqwEFrZCsqLZDNA+qTV2XCnkyu86ZVtCUW1+NIeeXBFSjpFKMQqSlb9yN3BXvmq4bEAJ8dy5hcTexGd9YOZVg7ue5pQ03BhIZ0mXPMN+Aff97NedD+ykX4M8zoJZDn5DAjYlLG++wa9PCeEZT1t1Sx9h6ekbSPiSs=
-Received: from AS4P191CA0053.EURP191.PROD.OUTLOOK.COM (2603:10a6:20b:657::29)
- by DU2PR03MB10163.eurprd03.prod.outlook.com (2603:10a6:10:49d::10) with
+ bh=y4hTQdtmX1b9JC/f9Onhh1BVoVF8W1Feq3PcSOgsUXA=;
+ b=E5gEKTl6kwhF7u/LrV+fhGdiZpV7Dm8cr7x4a5K6JzHY3sTbMNq+mjv6IgJUWJvv2IciL0g0XELX01UgaqS27oovbgggxIxoGVkPI3V8/TqQTBuimfKQJvDnevSP24UeSA+o1rRWfqt9dLxWCnV+zvryl3SYo3BSzty5kuy3XeV+niLO17f0Fmqvas4vFdvZ5meZqaNQ80cwXBeOH5UIvAE3hIEMTUxEdo5/GJgP1zHqdECTmMPZxkHUD0Yf9t7MsIRN8h9Pn6nOh2Q2ivvA/dhISaq3N4Gizj7a/AZsqLqnfhy975RtYvfL0FCnU9ZAhVwDwfESF4Q7Zbm/p2cLgw==
+Received: from MW4PR03CA0078.namprd03.prod.outlook.com (2603:10b6:303:b6::23)
+ by SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Wed, 17 Jul
- 2024 21:44:10 +0000
-Received: from AMS0EPF00000193.eurprd05.prod.outlook.com
- (2603:10a6:20b:657:cafe::b3) by AS4P191CA0053.outlook.office365.com
- (2603:10a6:20b:657::29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16 via Frontend
- Transport; Wed, 17 Jul 2024 21:44:10 +0000
-X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is
- 80.151.164.27) smtp.mailfrom=esd.eu; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=esd.eu;
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning esd.eu
- discourages use of 80.151.164.27 as permitted sender)
-Received: from esd-s7.esd (80.151.164.27) by
- AMS0EPF00000193.mail.protection.outlook.com (10.167.16.212) with Microsoft
- SMTP Server id 15.20.7784.11 via Frontend Transport; Wed, 17 Jul 2024
- 21:44:09 +0000
-Received: from debby.esd.local (jenkins.esd [10.0.0.190])
-	by esd-s7.esd (Postfix) with ESMTPS id 8B2287C16CB;
-	Wed, 17 Jul 2024 23:44:09 +0200 (CEST)
-Received: by debby.esd.local (Postfix, from userid 2044)
-	id 7EEA52E0166; Wed, 17 Jul 2024 23:44:09 +0200 (CEST)
-From: =?UTF-8?q?Stefan=20M=C3=A4tje?= <stefan.maetje@esd.eu>
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	linux-can@vger.kernel.org
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wolfgang Grandegger <wg@grandegger.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH 2/2] can: esd_402_pci: Add support for one-shot mode
-Date: Wed, 17 Jul 2024 23:44:09 +0200
-Message-Id: <20240717214409.3934333-3-stefan.maetje@esd.eu>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240717214409.3934333-1-stefan.maetje@esd.eu>
-References: <20240717214409.3934333-1-stefan.maetje@esd.eu>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.17; Wed, 17 Jul
+ 2024 21:44:33 +0000
+Received: from SJ1PEPF000023DA.namprd21.prod.outlook.com
+ (2603:10b6:303:b6:cafe::e7) by MW4PR03CA0078.outlook.office365.com
+ (2603:10b6:303:b6::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28 via Frontend
+ Transport; Wed, 17 Jul 2024 21:44:33 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SJ1PEPF000023DA.mail.protection.outlook.com (10.167.244.75) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7784.5 via Frontend Transport; Wed, 17 Jul 2024 21:44:32 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 17 Jul
+ 2024 14:44:18 -0700
+Received: from [10.110.48.28] (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 17 Jul
+ 2024 14:44:17 -0700
+Message-ID: <5d31907f-1ba0-49ad-968d-52991d3268b3@nvidia.com>
+Date: Wed, 17 Jul 2024 14:44:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: Converting kselftest test modules to kunit
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>, David Gow
+	<davidgow@google.com>
+CC: Kees Cook <keescook@chromium.org>, Shuah Khan <shuah@kernel.org>, "open
+ list : KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, "open
+ list" <linux-kernel@vger.kernel.org>, <kunit-dev@googlegroups.com>,
+	"kernel@collabora.com" <kernel@collabora.com>
+References: <327831fb-47ab-4555-8f0b-19a8dbcaacd7@collabora.com>
+ <CABVgOSmD6j2OK1WXXcO+fTRN7PSpMFph8BT3Unko0c+Bv+3bjA@mail.gmail.com>
+ <2a5b0ce2-cb82-4a23-bca6-f402cc13627e@collabora.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <2a5b0ce2-cb82-4a23-bca6-f402cc13627e@collabora.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS0EPF00000193:EE_|DU2PR03MB10163:EE_
-X-MS-Office365-Filtering-Correlation-Id: bc644768-dd9b-4bfd-a9ee-08dca6a99761
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023DA:EE_|SJ2PR12MB9161:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2f720cd3-3ba8-47cd-7b4c-08dca6a9a525
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|82310400026;
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aEI4UFlDMXB6VDM4aFVBVEJnb2ZZdlBRbFlpNTVGdytvbHlMMGZSenlPanh3?=
- =?utf-8?B?UVpURXRvTStqZUJRVVc4a1ROS0xHTjRxN2E4NGJ1eGpnWjcyMUpienZQQXBH?=
- =?utf-8?B?N1ZyNmdOSmZINHE5a3VTR0ErdmZONVlzTUg1T1g2TWx3R3BNSjVVdEZTc0xG?=
- =?utf-8?B?SXpkNHJ5akxpYVR2TlJqNTY1WlU0RU4zQTVFZWg2OGZ1UVQ0Ym9FdUt3UXBO?=
- =?utf-8?B?TlFjZTBFRFZPYXZ6QjRhOHZZclF0UFBWSGU4bTF3OWVwY3owSWZCelFYQVls?=
- =?utf-8?B?RkU5RCtJY3ppblZDZ0xuYWRLMkxGNGF6K09KVEJBVXpJMzg2YWFyZ014bnJI?=
- =?utf-8?B?bmp6OTVJS0VHQkVCclB2M0k4cXVBNnFRUStnWUZkSktNVDJtanF4NDl5THpR?=
- =?utf-8?B?Wkw2eTZhR3Zxb01sSFNCenpPL2xWNC80Q1pNelNFV21CMDVyNXd5eEtvM2RG?=
- =?utf-8?B?STlaSE5RT2ZkUDcvOGpxWEQ3NnNzQ005ajhjRUsyL1RrdHpDR3dOUGpKRkND?=
- =?utf-8?B?YkdpL3ZINWZEcnJuMldTZXN6clhVbnRqYXVpTTZPNWFNRVBSblo1SGhJMDRD?=
- =?utf-8?B?RlIreFpuS2d0R2g0UWVhbER3TmxPVWI3aVlCbkNaa2xJR0RSb2hvU2VENzFD?=
- =?utf-8?B?TDUzUDh5d2c0R2lQbW1LcW1IdmtiUCs1VGpLbWJ6NjQxaVN2UWhobnd2V3J5?=
- =?utf-8?B?c1FRcHFXbm16a2lQcG91TU5FN1RaWEpwR0xvMCtCMi92VlBkZUVmMW1CK3VS?=
- =?utf-8?B?VEFSdXl3dnlqTTVjR0ZkSzFDSmlkTHZRUmhWeTY3TW14QjJmZ09FRFBKY2h6?=
- =?utf-8?B?b0JyMGJkSzRHcXFjV1hYZmxpZW94RFd0U2ZtdklFRnMyWTRSQXlTc2w3Yjdq?=
- =?utf-8?B?aVQzQTZacTVmallKOE5aQ3c3N1RqblhRMW9vdThwNXFPVnpPSlRzRGs4V0xk?=
- =?utf-8?B?bFJWWnBxT1U1Q0ZTWVlFM21lV0tyVjE1ZkhpeGQwZFhKdzRiamloaHI0Z3pG?=
- =?utf-8?B?aWdRc3R2OXRoQTdsWGl5U3JwMjVRSHJUTE1IR3pQVk5qd0YxVmVFdWk2NmNJ?=
- =?utf-8?B?QU55RGROYzBnVGpjcUJOZ0RMYU1qaEhKWDdIYjgvdkpZMGxaMzhhUEhjWkth?=
- =?utf-8?B?dGV0TVdQL29nZS9Ka0lkdEdjQVFtMER0aDk3cVlERjUvSTh4SjY4dnpybG9x?=
- =?utf-8?B?QW1rWTJPckg1emJqZTAyakxiN1g0cWdEMWxmNU9YV1c5L3VkTW5iaTBwVmtY?=
- =?utf-8?B?R2drQ0lBRHhDSlJSQ2RwV2lieFQySVptMVNCVjNIckpHNHFDcUZrQkVjamRl?=
- =?utf-8?B?WjZNekZrQnNMU3F1UU9vbTM2ckVtVWhOTy91WDR3c0pEa2dtTmcwaUlBRzN4?=
- =?utf-8?B?eHFBeUtQeHp0a0RlSTBRTWJzOXhpWHRJU1Z0d09VTWFzcEhlOEM0dEthV2V4?=
- =?utf-8?B?OFN0dzNWUUZzeWIvTE5EQ3YweWJEay9NbGkyYUcvTDgxR0pldkd4YjBMdFdy?=
- =?utf-8?B?RGF1RVMzazEybnlKV05PbmZYNU1pY2FSdCt1aUxzUTJ4MTJKa09WaHN2RFJB?=
- =?utf-8?B?cnJxT1J4akxQR2JVYmphS1ArZFdkdk9DNmZWYm5rZllaUlpVMHlVbjZ4WWFv?=
- =?utf-8?B?VS85TkYveHM1aDFFektzeGJDN0ZoZ3BwcjdncCs1a1c5bm9tYjFQdVQ4MmdH?=
- =?utf-8?B?b1dFN1BoSnlueWpVQU42MWtBVUIwUWxFYTNEWk1rTHJNVmNSalhQam5wZ0tF?=
- =?utf-8?B?MnpQMllidkhBV3M0bWhvWjV0dEtzeHFNZEowT2Z2UEl3N1owSXBMZHBXNGZX?=
- =?utf-8?B?dndxekFBd3IwTGhGUTlmL0ZvRHpkRkN1MmhJZ2l1Mm1ob3V5Q1BzZGw1YWZZ?=
- =?utf-8?B?UitqcGE4a1NWWGZwQjd6K0dFYWZhMThuSC9naEZmMVZ3N3NZZ0wvbnhvcHZn?=
- =?utf-8?Q?me4DzJCHosh9Pp0DaLVSsuTv4cwGf6yh?=
+	=?utf-8?B?ZmVOUGtpKzdjVDMyblA1aXlwUE8xSHZvSnRONk1QSWRURzZZSGpnSlFXM1Rh?=
+ =?utf-8?B?NmYyQnFtZ1p4UFBqME1EUkRqM2t4RnR2MHFVQUoxK3h5cmdpUWpqZTZjYlJQ?=
+ =?utf-8?B?RUJGMUM1SklCeDNwWlZBalJ1YVRNWmFOa2l0bUVEZmprYkQ3R0wwU0NNZ2Zm?=
+ =?utf-8?B?TzFFdW41Nm9VYloyRG1qM3kzUlBiTDFGbk01WUp4NHdiUlZhS2t2eXh1QlZk?=
+ =?utf-8?B?RnlFZytCVitUYkp1VE82TnVoSXBSYUZ2TjNoVko2MjJtL2ZyTnlJeGxNVzV4?=
+ =?utf-8?B?RUdhbU1VbnlqTDcxcVJXcU9uWSs4QVpqRGp5Wk8wUFczTEVHM2pKdGRsU3Rl?=
+ =?utf-8?B?a1dKcTNmaHl0TmJFRkZ5OEVIU2RxOHFvdmRXSUFnSUdNSDhsRTVnSHVhbFZP?=
+ =?utf-8?B?c3NVWTdJYk1UYzdxV2NIQU1zYWNRSmtTQlljUzNWVWlDYlo3SitRa08rNGYr?=
+ =?utf-8?B?elVwYUpMTDJ0TXluOXRtMVpUaUZxcmM2RGtWWGtGR2hoNHkwQWRDSGFqck9L?=
+ =?utf-8?B?dG5pNU1HSGZ2MGNBaXRkWnJxSldoUUtsc1QwV09qVTdmOHVIVDhIMExBbGZZ?=
+ =?utf-8?B?ZnFEVU5BZGtSejNydzNhTTZTaXdyRi9YNGU4VzhHdG0yZFlFWVFwS1V2SUFZ?=
+ =?utf-8?B?UXRHeXg4OTFqRmJpWlozSnNnVEdxaEJNOXAvY2l5QmN0bk1jbkN4WVJ1eU5Q?=
+ =?utf-8?B?Q0hGMHdyOEtESUFyd3ZvRUNJeGlaeDZRTnVwa1Y3M1RVa3U5Ym9zQkt3RDEv?=
+ =?utf-8?B?UGpRNHpPOGtQejUrcmxaS0tRN0k5UzhDQUtQUTNBZkVHUUkyRUNoQzVXd0Qw?=
+ =?utf-8?B?VkVrcGd4T0tIOUNxOEc1dXA2dkg4ZURiRFNXaFFRcTRuV3h0VWp4Z2lUakVX?=
+ =?utf-8?B?ek5SUUN4NzlJNnB0ZjJiMGdGTXlpdTBJTWliZHRiM3lQTjQ2WXdBYSswaVVB?=
+ =?utf-8?B?UmkwOHhLY1ZBL1BHVXFIeDNGOEdnSnByek9SSkN3MURKMU9UUFgzYkJEMTFL?=
+ =?utf-8?B?UWhnMmtqbTgyM285VVpkNVF5Wm1md0FlYVlldUFjakZ0YXN3bFV4TEtVdDBi?=
+ =?utf-8?B?UGtjWVl0a1YzUmhyZ3plYmRYR2MyVitPM0tyUEVjV1JuRythSlV4azFDVUx6?=
+ =?utf-8?B?VXRLUmNmQ09ERVZzMDhFYTB4YTdndTJjMXd5UVRpeDRwL3YweEhYcEkrNkND?=
+ =?utf-8?B?ZloxTUwzMTN0TDhKS2FNZmt2eUExWWtrc3JKU3cwbHp2QU9VM05oZGZkRTlM?=
+ =?utf-8?B?ZWlKR1ZLUlkyd2FranhwV0dWUGVLTVRha0cyQnhiM1Q0QnVGV05nSUkzRlIy?=
+ =?utf-8?B?d093SHJpZFV4dEhPRGtMQW9VRk5YWERSUDUzUjFsUTlnQ0k4SFFnOEZnNXZV?=
+ =?utf-8?B?UTdYSi95WWczaXhLbkgwZHIySjIvVGtnektwc3BZOHNubHhEYk4rZnJJdU1I?=
+ =?utf-8?B?MWVTS0FoTWFXQmNqNWpIbnZsTmFOdjVMWFNoVFMvNEdGS2pvVkx5L29MSFpo?=
+ =?utf-8?B?QzRNYTBDSlFVSDFYK0Y0cUxOMURkaEZzUDVybnhzSk1OWi9RUjR0R1NTWW5I?=
+ =?utf-8?B?a1pNZmluWmcraTdYVDRTT0YyOWJQUGF4U01aYUZhRHpHWXFpeHB2WGhHT2or?=
+ =?utf-8?B?QVE4bDAySEF2SzlZc0I5a01XakNYZXN3LzBybHgyY1NCNjR1bEtyS2tNYjIy?=
+ =?utf-8?B?b09Ia1l2UndwMG1HSkZwZzVzdlJ0dTZRUVhOdjI2YVdrQy80Mk1DZ3AzSUFv?=
+ =?utf-8?B?cDVKSGZyMjh5QmZlS2toem8wcW94MDYyaUNycHIvbmxYbXdIem45dkJsVlRO?=
+ =?utf-8?B?RHRyRVQ5VVdZRE1DVEtrTWZQelZDaUp3d3l3UVBDbllya213K01vdHJPUFpL?=
+ =?utf-8?B?Y0Z0RzQwSU9ROStKUTN0L0kwOHZMblEwMVREUldwNkh4UVN5M2NjSFJKUHJJ?=
+ =?utf-8?Q?2go6N6qkQPGbI4OIRExiWfKTOnwSDSls?=
 X-Forefront-Antispam-Report:
-	CIP:80.151.164.27;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:esd-s7.esd;PTR:p5097a41b.dip0.t-ipconnect.de;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1102;
-X-OriginatorOrg: esd.eu
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2024 21:44:09.8586
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2024 21:44:32.9836
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc644768-dd9b-4bfd-a9ee-08dca6a99761
-X-MS-Exchange-CrossTenant-Id: 5a9c3a1d-52db-4235-b74c-9fd851db2e6b
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5a9c3a1d-52db-4235-b74c-9fd851db2e6b;Ip=[80.151.164.27];Helo=[esd-s7.esd]
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f720cd3-3ba8-47cd-7b4c-08dca6a9a525
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	AMS0EPF00000193.eurprd05.prod.outlook.com
+	SJ1PEPF000023DA.namprd21.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR03MB10163
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9161
 
-This patch adds support for one-shot mode. In this mode there happens no
-automatic retransmission in the case of an arbitration lost error or on
-any bus error.
+On 7/17/24 3:47 AM, Muhammad Usama Anjum wrote:
+> Hi David,
+> 
+> On 7/16/24 12:33 PM, David Gow wrote:
+>> On Mon, 15 Jul 2024 at 18:09, Muhammad Usama Anjum
+>> <usama.anjum@collabora.com> wrote:
+>>>
+>>> Hi Kees and All,
+>>>
+>>> There are several tests in kselftest subsystem which load modules to tests
+>>> the internals of the kernel. Most of these test modules are just loaded by
+>>> the kselftest, their status isn't read and reported to the user logs. Hence
+>>> they don't provide benefit of executing those tests.
+>>>
+>>> I've found patches from Kees where he has been converting such kselftests
+>>> to kunit tests [1]. The probable motivation is to move tests output of
+>>> kselftest subsystem which only triggers tests without correctly reporting
+>>> the results. On the other hand, kunit is there to test the kernel's
+>>> internal functions which can't be done by userspace.
+>>>
+>>> Kselftest:      Test user facing APIs from userspace
+>>> Kunit:          Test kernel's internal functions from kernelspace
+>>
+>> Yes: this is how we'd like to split things up. There are still a few
 
-Signed-off-by: Stefan Mätje <stefan.maetje@esd.eu>
----
- drivers/net/can/esd/esd_402_pci-core.c | 5 +++--
- drivers/net/can/esd/esdacc.c           | 9 +++++++--
- drivers/net/can/esd/esdacc.h           | 1 +
- 3 files changed, 11 insertions(+), 4 deletions(-)
+Me too. It works.
 
-diff --git a/drivers/net/can/esd/esd_402_pci-core.c b/drivers/net/can/esd/esd_402_pci-core.c
-index b7cdcffd0e45..5d6d2828cd04 100644
---- a/drivers/net/can/esd/esd_402_pci-core.c
-+++ b/drivers/net/can/esd/esd_402_pci-core.c
-@@ -369,12 +369,13 @@ static int pci402_init_cores(struct pci_dev *pdev)
- 		SET_NETDEV_DEV(netdev, &pdev->dev);
- 
- 		priv = netdev_priv(netdev);
-+		priv->can.clock.freq = card->ov.core_frequency;
- 		priv->can.ctrlmode_supported = CAN_CTRLMODE_LOOPBACK |
- 			CAN_CTRLMODE_LISTENONLY |
- 			CAN_CTRLMODE_BERR_REPORTING |
- 			CAN_CTRLMODE_CC_LEN8_DLC;
--
--		priv->can.clock.freq = card->ov.core_frequency;
-+		if (card->ov.features & ACC_OV_REG_FEAT_MASK_DAR)
-+			priv->can.ctrlmode_supported |= CAN_CTRLMODE_ONE_SHOT;
- 		if (card->ov.features & ACC_OV_REG_FEAT_MASK_CANFD)
- 			priv->can.bittiming_const = &pci402_bittiming_const_canfd;
- 		else
-diff --git a/drivers/net/can/esd/esdacc.c b/drivers/net/can/esd/esdacc.c
-index ef33d2ccd220..c80032bc1a52 100644
---- a/drivers/net/can/esd/esdacc.c
-+++ b/drivers/net/can/esd/esdacc.c
-@@ -17,6 +17,9 @@
- /* esdACC DLC register layout */
- #define ACC_DLC_DLC_MASK GENMASK(3, 0)
- #define ACC_DLC_RTR_FLAG BIT(4)
-+#define ACC_DLC_SSTX_FLAG BIT(24)	/* Single Shot TX */
-+
-+/* esdACC DLC in struct acc_bmmsg_rxtxdone::acc_dlc.len only! */
- #define ACC_DLC_TXD_FLAG BIT(5)
- 
- /* ecc value of esdACC equals SJA1000's ECC register */
-@@ -59,7 +62,7 @@ static void acc_resetmode_leave(struct acc_core *core)
- 	acc_resetmode_entered(core);
- }
- 
--static void acc_txq_put(struct acc_core *core, u32 acc_id, u8 acc_dlc,
-+static void acc_txq_put(struct acc_core *core, u32 acc_id, u32 acc_dlc,
- 			const void *data)
- {
- 	acc_write32_noswap(core, ACC_CORE_OF_TXFIFO_DATA_1,
-@@ -249,7 +252,7 @@ netdev_tx_t acc_start_xmit(struct sk_buff *skb, struct net_device *netdev)
- 	u8 tx_fifo_head = core->tx_fifo_head;
- 	int fifo_usage;
- 	u32 acc_id;
--	u8 acc_dlc;
-+	u32 acc_dlc;
- 
- 	if (can_dropped_invalid_skb(netdev, skb))
- 		return NETDEV_TX_OK;
-@@ -274,6 +277,8 @@ netdev_tx_t acc_start_xmit(struct sk_buff *skb, struct net_device *netdev)
- 	acc_dlc = can_get_cc_dlc(cf, priv->can.ctrlmode);
- 	if (cf->can_id & CAN_RTR_FLAG)
- 		acc_dlc |= ACC_DLC_RTR_FLAG;
-+	if (priv->can.ctrlmode & CAN_CTRLMODE_ONE_SHOT)
-+		acc_dlc |= ACC_DLC_SSTX_FLAG;
- 
- 	if (cf->can_id & CAN_EFF_FLAG) {
- 		acc_id = cf->can_id & CAN_EFF_MASK;
-diff --git a/drivers/net/can/esd/esdacc.h b/drivers/net/can/esd/esdacc.h
-index d13dfa60703a..6b7ebd8c91b2 100644
---- a/drivers/net/can/esd/esdacc.h
-+++ b/drivers/net/can/esd/esdacc.h
-@@ -35,6 +35,7 @@
-  */
- #define ACC_OV_REG_FEAT_MASK_CANFD BIT(27 - 16)
- #define ACC_OV_REG_FEAT_MASK_NEW_PSC BIT(28 - 16)
-+#define ACC_OV_REG_FEAT_MASK_DAR BIT(30 - 16)
- 
- #define ACC_OV_REG_MODE_MASK_ENDIAN_LITTLE BIT(0)
- #define ACC_OV_REG_MODE_MASK_BM_ENABLE BIT(1)
+>> cases where you might want to use kselftest to test something other
+>> than a user-facing API (if you needed to set up some complicated
+>> userspace structures, etc), or cases where KUnit might be used to test
+>> something other than individual pieces of functionality, but that
+>> categorisation is a good start.
+> Yeah, makes sense. It is helpful to find out what others think. I'll be
+> back with changes.
+> 
+
+At some point we could connect up the two systems, without really
+changing any of the guidelines...much. One way to do that would
+be to add a tiny bit of kselftest support for easily launching
+a kunit baremetal testing, and then reading the results (which
+are right there in sysfs) back to user space.
+
+So it would look like a kselftest, but it could run any kernel-based
+tests it needs via kunit.
+
+And the two systems can still be used independently.
+
+>>
+>> The Documentation/dev-tools/testing-overview.rst page has a more
+>> detailed look at when to use which test framework (which basically
+>> just repeats those rules):
+>> https://docs.kernel.org/dev-tools/testing-overview.html
+
+Yes, a nice example of up-to-date documentation there. And it's
+very clear.
+
+>>
+>> Cheers,
+>> -- David
+> 
+
+thanks,
 -- 
-2.34.1
+John Hubbard
+NVIDIA
 
 
