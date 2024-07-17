@@ -1,138 +1,113 @@
-Return-Path: <linux-kernel+bounces-255244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A43933DEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:47:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E8F933DF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:48:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94A9D1F219C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:47:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEB8A285227
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDCC01802DA;
-	Wed, 17 Jul 2024 13:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="fLEsva+l"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05072180A6A;
+	Wed, 17 Jul 2024 13:48:27 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5D41802A5
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0341802A5
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721224058; cv=none; b=ccqjYGomHMvQQ6DJ6MB2kH9EnHmqoakYrWaijHtjnTamPSl2PFaWk+cqtPxayPbPCl16VJdATRBLtaJ/lY11NrvFmBLH+J8AV4bKR06ZTnZCjSb774geroU/aG8kBKD9dpyJPdt1CH7PtF8we7LbZQTTkXqda8v9mWR1JD65C24=
+	t=1721224106; cv=none; b=NWEQtgdTSfc29KFgsiUsCMXQjz54eU2z18HTYkrRDtDStyBYFBnf+pxtnGcSgnNPsxw/LVqF75fFvxC3XMtc42jmLQFbjwdoJIjHh1czVTaSb6IZ0TpJCr+CcTA+98hqqsd7nBQ1NgUWeDVLj2csYKAZqYCIs+ymd7XU0/Ya0fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721224058; c=relaxed/simple;
-	bh=3YXQ3Jp1Vw9VmoXeCe7hEucINqL8LN3lNkb2lR+5R+M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b1Wl5bbMaXS13+FrXohOJVEJ4MlCiGsfDbNvkIsMkHFBX/TrbfTTUZTozbvl9LqL81ATWbgIo/+Nmkuto3xsbnQY6HE8wphTUMrgHYfSsmSL6WGUoKFSJksXXxu/c1dnK11duywnduC67VABAacDa1QsID2L3LTehyZywqpLvBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=fLEsva+l; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70af02bbb89so343723b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 06:47:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721224055; x=1721828855; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nBpW59picKN4VaRpDNbT71+2koRZ3tbahdtbsssxVqY=;
-        b=fLEsva+lOzqgP4X3rM6nXQ8erbd2UD+vSOKhlXE2BEtTV9/z4+ao2wfTCimpE9OvYL
-         3Oi07jBV3NXeGlgfY8w8ubpgOdB806Iuwx6TYOGT2kmav54zFIK6UJ13UNnNRi0VeVyd
-         LMsrbApu2vXRVgyMoJjNB5AQJXn6X+/CHJ2KHwmZrOYLTEAoxP0v5lIHywj+IAXNePE/
-         4f4ExKvO9bhYlY+RW/SAX5eIpsG+CH3z1Y64ODzSge3yt0mfbChGBtqKfJfvEos81E+2
-         Lo7eAYbVOXsBdzwerTTQawkgTiN445izZbSTR1eECwhzHbLhxIPUTZR4QjHH5bh/vY18
-         napQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721224055; x=1721828855;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nBpW59picKN4VaRpDNbT71+2koRZ3tbahdtbsssxVqY=;
-        b=So0QhjuxOLUFJJFDchIY35TL0Zn+KI09i1yLlDA2yf1dnQrchuane437hj9PVnEZxt
-         obYAEAKAwV8BpzNLH9/qzKpCqGUgQcSxiDl06G60WloOGaAUdb69HSeGI5LllQDfjLVX
-         5jj5EHBUhL2DHbsPrD6f42QES8yZdo3Wblbf+bR9OyP4jW2GfLzNinU6JoIntLr9B1Zl
-         AuViT8lpl0r27ZJw6nAVwEBTEE1fiHq1fAQLvPHg1xHzc2L8lZZAAB1AU/0kKb8jUTOO
-         KCSWBucBLIzYbcZ40+sxaXC/unzAdMZdfDohWIbT9yokq+wItAn1giM7s/GYFWIfYjqC
-         yJwA==
-X-Forwarded-Encrypted: i=1; AJvYcCWSqcjBRlmA2K6WSqnBL90DOW26kcILQkx3MGsCy74z1k5UFTXF05vkFibBKRlD9wHFCwhnQa2trRedf6dHttmBCBXaSkqbCWTf6cPU
-X-Gm-Message-State: AOJu0YwuVJWtXbDrRYIMQnV5O1mAwUnTYtk1SDXUU+9uumEFTZQU3iwz
-	iF9+uCHtmA7gC2a1hvXP7MhmNMlE2hutW8BJvtA+j5WJynzJxszZORfCe58G/Kg=
-X-Google-Smtp-Source: AGHT+IHxw4bA3LWgtRU+YCa2X8Fc71AQA7LAYI4IkNfRbYCBvMwnBVW5kGHw/SElv4tOqos0SFFZEw==
-X-Received: by 2002:a05:6a00:2d9b:b0:70b:705f:43ba with SMTP id d2e1a72fcca58-70ce50316c6mr1087853b3a.4.1721224055153;
-        Wed, 17 Jul 2024 06:47:35 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7eca7865sm8104592b3a.158.2024.07.17.06.47.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 06:47:34 -0700 (PDT)
-Message-ID: <5b974edc-0029-48a1-b181-6beef36869e1@rivosinc.com>
-Date: Wed, 17 Jul 2024 15:47:26 +0200
+	s=arc-20240116; t=1721224106; c=relaxed/simple;
+	bh=WNXsZ/OA49D2wMn7rHbOLQ0vu8l6tOxdGmDc0yYy8RM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gROtuJ1A/iseH4R/Z4wZKsLV/kSaP9cZ09ZX1owviBs2Gqfvoh+IXzjbZjhPOjAB32E79M47atplZkUd7b1fDhFzKMoR383QjuimamnK9NxvUWE7FYuf/1/AkJvuc7gdhv9cq8WYBpKQz4zMzGcdDneZ8XSBh3YLCQdWwPPaeSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from [2601:18c:9101:a8b6:6e0b:84ff:fee2:98bb] (helo=imladris.surriel.com)
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1sU50W-000000008VQ-1VFX;
+	Wed, 17 Jul 2024 09:47:48 -0400
+Message-ID: <93155b2ccafa43ed4845ae450451c6b8e27509cc.camel@surriel.com>
+Subject: Re: [RFC PATCH] nmi,printk: fix ABBA deadlock between nmi_backtrace
+ and dump_stack_lvl
+From: Rik van Riel <riel@surriel.com>
+To: John Ogness <john.ogness@linutronix.de>, Andrew Morton
+	 <akpm@linux-foundation.org>
+Cc: Omar Sandoval <osandov@meta.com>, linux-kernel@vger.kernel.org, Petr
+ Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>, kernel-team <kernel-team@meta.com>
+Date: Wed, 17 Jul 2024 09:47:48 -0400
+In-Reply-To: <87plrcqyii.fsf@jogness.linutronix.de>
+References: <20240715232052.73eb7fb1@imladris.surriel.com>
+	 <87plrcqyii.fsf@jogness.linutronix.de>
+Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
+ keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33Aeo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdYdIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gUmllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986ogEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHVWjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE+BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTeg4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/j
+	ddPxKRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/NefO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0MmG1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tPokBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznnekoTE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44NcQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhIomYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0IpQrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkEc4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] RISC-V: hwprobe: sort EXT_KEY()s in hwprobe_isa_ext0()
- alphabetically
-To: Conor Dooley <conor@kernel.org>
-Cc: linux-riscv@lists.infradead.org, Conor Dooley
- <conor.dooley@microchip.com>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, linux-kernel@vger.kernel.org
-References: <20240717-dedicate-squeamish-7e4ab54df58f@spud>
- <cba0c880-a1b2-4bb8-bef0-d280d87ec308@rivosinc.com>
- <20240717-unluckily-collide-1aa35c97662c@spud>
-Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <20240717-unluckily-collide-1aa35c97662c@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Sender: riel@surriel.com
 
+On Wed, 2024-07-17 at 09:22 +0206, John Ogness wrote:
+>=20
+> The purpose of printk_cpu_sync_get_irqsave() is to avoid having the
+> different backtraces being interleaved in the _ringbuffer_. It really
+> isn't necessary that they are printed in that context. And indeed,
+> there
+> is no guarantee that they will be printed in that context anyway.
+>=20
+> Perhaps a simple solution would be for printk_cpu_sync_get_irqsave()
+> to
+> call printk_deferred_enter/_exit. Something like the below patch.
+>=20
 
+I think that would do the trick. The nmi_backtrace() printk is already
+deferred, because of the check for in_nmi() in vprintk(), and this
+change would put all the other users of printk_cpu_sync_get_irqsave()
+on the exact same footing as nmi_backtrace().
 
-On 17/07/2024 15:42, Conor Dooley wrote:
-> On Wed, Jul 17, 2024 at 03:34:06PM +0200, Clément Léger wrote:
->> On 17/07/2024 10:54, Conor Dooley wrote:
->>> From: Conor Dooley <conor.dooley@microchip.com>
->>>
->>> Currently the entries appear to be in a random order (although according
->>> to Palmer he has tried to sort them by key value) which makes it harder
->>> to find entries in a growing list, and more likely to have conflicts as
->>> all patches are adding to the end of the list. Sort them alphabetically
->>> instead.
->>>
->>> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
->>>  		if (has_fpu()) {
->>> -			EXT_KEY(ZFH);
->>> -			EXT_KEY(ZFHMIN);
->>> -			EXT_KEY(ZFA);
->>>  			EXT_KEY(ZCD);
->>>  			EXT_KEY(ZCF);
->>> +			EXT_KEY(ZFA);
->>> +			EXT_KEY(ZFH);
->>> +			EXT_KEY(ZFHMIN);
->>>  		}
->>>  #undef EXT_KEY
->>>  	}
->>
->> I'd prefer that to be done after removing the "if
->> (has_vector()/has_fpu()) by using the .validate callback for ISA
->> extension. This way, you'll have only a single commit reordering everything.
-> 
-> Right, and I do have some WIP for that here
-> https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/log/?h=validate_fpu_and_vector
-> but won't be sending that until it's cleaned up after the merge window.
-> I was intentionally sending this during it so that there would be no
-> moving pieces for this to conflict with - because it will conflict with
-> any other patch adding things to the list tails.
+Combing through the code a little, it looks like that would remove
+the potential for this deadlock to happen again.
+>=20
+>=20
+> diff --git a/include/linux/printk.h b/include/linux/printk.h
+> index 65c5184470f1..1a6f5aac28bf 100644
+> --- a/include/linux/printk.h
+> +++ b/include/linux/printk.h
+> @@ -315,8 +315,10 @@ extern void __printk_cpu_sync_put(void);
+> =C2=A0#define printk_cpu_sync_get_irqsave(flags)		\
+> =C2=A0	for (;;) {					\
+> =C2=A0		local_irq_save(flags);			\
+> +		printk_deferred_enter();		\
+> =C2=A0		if (__printk_cpu_sync_try_get())	\
+> =C2=A0			break;				\
+> +		printk_deferred_exit();			\
+> =C2=A0		local_irq_restore(flags);		\
+> =C2=A0		__printk_cpu_sync_wait();		\
+> =C2=A0	}
+> @@ -329,6 +331,7 @@ extern void __printk_cpu_sync_put(void);
+> =C2=A0#define printk_cpu_sync_put_irqrestore(flags)	\
+> =C2=A0	do {					\
+> =C2=A0		__printk_cpu_sync_put();	\
+> +		printk_deferred_exit();		\
+> =C2=A0		local_irq_restore(flags);	\
+> =C2=A0	} while (0)
+> =C2=A0
+>=20
 
-Makes sense. If you think it's worth it:
-
-Reviewed-by: Clément Léger <cleger@rivosinc.com>
-
-Thanks,
-
-Clément
+--=20
+All Rights Reversed.
 
