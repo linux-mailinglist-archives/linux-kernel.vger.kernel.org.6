@@ -1,78 +1,164 @@
-Return-Path: <linux-kernel+bounces-254629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F13793359E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 05:18:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87B8F9335A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 05:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75846B23945
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 03:18:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DB22B2161C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 03:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F218BEF;
-	Wed, 17 Jul 2024 03:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397016116;
+	Wed, 17 Jul 2024 03:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lYeqepLi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KzDfdgSE"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818997470;
-	Wed, 17 Jul 2024 03:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0301C20;
+	Wed, 17 Jul 2024 03:21:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721186305; cv=none; b=VkCx0cA6GzvOhljB9yuuLVpbtj9diaMY0cl7egcIInR662fXH6BG0lS/yTb7UbEQNUUomU0PmLRBwd5NIx7NfHy4tq64B2ee8N3L1HRnq0jFV5+TcvKb7/jRR6OjxPqTsfPwzz4RNynDm6hklIP9JxmOuCkOMa3lG1ZhWl+rOpQ=
+	t=1721186525; cv=none; b=EiwXSD8TCOLrOCUl41YiAMxSkGq6guWRImH6vjGJeVHIJ7beThsY8tOa5jrvLuQAOnYZjS5gUTLR8Q+HpmFVo2muiXG/0Ckj881dX2jHz+U/qXTGq7Fz+NNkAipw9uDWbZPpH/vqJFgYoFAueSYP8jtCuYV9Bg9mxJkLSHbyntE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721186305; c=relaxed/simple;
-	bh=I8CQ0U3NqahQXeHjkloDUQhgs39lVV2fDrovWgcivWI=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Eaq7nX4qqwu1dD+M+VeZe2lNCbwza2vQ/p/fWtDjyjdSPeh3P4ievOnW8d6gcWBNOIVpI6KkJTZWmIi3XpGkhPK0DD1z1EPH5B971PHgQdUti4jNmEhLg0z09NsTx1UYInpSwmn+6awBM/yIMPPIpnriZQVYaFdt71q7paywbOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lYeqepLi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5AF1EC116B1;
-	Wed, 17 Jul 2024 03:18:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721186305;
-	bh=I8CQ0U3NqahQXeHjkloDUQhgs39lVV2fDrovWgcivWI=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=lYeqepLiQCgNez8J/Hm2mNsNEmZEzQdzK+ztVNo/O0RLyf79ZLypTz+ZxhQC5s1jj
-	 YCIqL62ypgoeyZwOtFNh0bWYmrTbZMRJ4nj57XEZ3h6KNXvzOLhVx540EzEtLhF6jr
-	 xMv8a3QibC8ZJj7hBWFYB4gusdzVr/Qk0Q/1bGxuzjWWEGQ3QEtn91MHTPF8jEVjyv
-	 en6B5GBgv0CRw3jWE/OGBsw2veYvm60VujKtyEOFzZyW53Eawg01cdXv/lQ1lT2CzL
-	 GSLlz47Nmo8U/Xf409c4JIjI9+TVNl7qoRkWIdMztmVDtAQ2UXrbsaygfp79Z6cRnt
-	 YLTqy8QUjGVIg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5058BC43445;
-	Wed, 17 Jul 2024 03:18:25 +0000 (UTC)
-Subject: Re: [GIT PULL] Networking for v6.11
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240716152031.1288409-1-kuba@kernel.org>
-References: <20240716152031.1288409-1-kuba@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240716152031.1288409-1-kuba@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git tags/net-next-6.11
-X-PR-Tracked-Commit-Id: 77ae5e5b00720372af2860efdc4bc652ac682696
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 51835949dda3783d4639cfa74ce13a3c9829de00
-Message-Id: <172118630531.26472.14995872094367271844.pr-tracker-bot@kernel.org>
-Date: Wed, 17 Jul 2024 03:18:25 +0000
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com
+	s=arc-20240116; t=1721186525; c=relaxed/simple;
+	bh=Lkqp5EmVAhz/4kd2vi6wPYvfUx55U+pEKgIA0ejI9BA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=LK9HSfcLSmAKFw8JPnuAXE5VJ2PVXXcEt0fNlG74UI+xuqxwJ6+ibIWzDllEvX/TVagxwvyzpQQQBXUH2S/hRVwgaKF9h99TuQJpk+QJs19ebr5eZCOZQPJVIaEzvodjj3ozz/3ux0k2DYRHgAFoukRb5oV1Y02lOO4oQbIDkHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=KzDfdgSE; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1721186518;
+	bh=tNw4mW2cGpBsqPKedMxLYqg2C+khFbOaJmbGXw01mQs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=KzDfdgSE2l7okt0djrlle2Xq5A/2bQNYPu2QE+BUL98uBoEnrdvOrc7wVfZD4/lId
+	 BVMu9bj1DsZGeY90SQTZl9MHxn2IorIaSAsrjyKkty3DJTzFU+krjSLB97SZb6OcT3
+	 +XtrjztZE+7gUKrLV0XooaMg2Eeu/h1IHQhcv3+B694EKnKWPgpHXTCl6fZJcollum
+	 NFmXgwvBP6gHDgU/HKKdO6v43RF6IAMS4ss9xSd4EiZoodoC9KIaHE+jpTX8fmfR/A
+	 Lkp5xDljnF72tNbdAsLOONv0YFFhHlW7zVhxoNoZD97MbHP/gpPNYFu47OqXh9nEiE
+	 /o2pWgtGXYo/g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WP1Sj4b08z4w2Q;
+	Wed, 17 Jul 2024 13:21:56 +1000 (AEST)
+Date: Wed, 17 Jul 2024 13:21:55 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Christian Brauner <brauner@kernel.org>, Arnd
+ Bergmann <arnd@arndb.de>
+Cc: Christian =?UTF-8?B?R8O2dHRzY2hl?= <cgzones@googlemail.com>, Jiri Olsa
+ <jolsa@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the ftrace tree with the vfs-brauner
+ tree
+Message-ID: <20240717132155.6ca2ce47@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/eDhu.cip=TtyAGE.x+c=tuP";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-The pull request you sent on Tue, 16 Jul 2024 08:20:31 -0700:
+--Sig_/eDhu.cip=TtyAGE.x+c=tuP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git tags/net-next-6.11
+Hi all,
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/51835949dda3783d4639cfa74ce13a3c9829de00
+Today's linux-next merge of the ftrace tree got a conflict in:
 
-Thank you!
+  arch/x86/entry/syscalls/syscall_64.tbl
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+between commit:
+
+  e6873349f700 ("fs/xattr: add *at family syscalls")
+
+from the vfs-brauner tree and commits:
+
+  190fec72df4a ("uprobe: Wire up uretprobe system call")
+  63ded110979b ("uprobe: Change uretprobe syscall scope and number")
+
+from the ftrace tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+I also added this patch due to commit (no in Linus' tree)
+
+  4fe53bf2ba0a ("syscalls: add generic scripts/syscall.tbl")
+
+rom: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 17 Jul 2024 13:15:32 +1000
+Subject: [PATCH] fixup for "uprobe: Wire up uretprobe system call"
+
+and "uprobe: Change uretprobe syscall scope and number"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ scripts/syscall.tbl | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/scripts/syscall.tbl b/scripts/syscall.tbl
+index 86b53c7a815b..c792b08e594d 100644
+--- a/scripts/syscall.tbl
++++ b/scripts/syscall.tbl
+@@ -406,3 +406,4 @@
+ 464	common	getxattrat			sys_getxattrat
+ 465	common	listxattrat			sys_listxattrat
+ 466	common	removexattrat			sys_removexattrat
++467	common	uretprobe			sys_uretprobe
+--=20
+2.43.0
+
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/x86/entry/syscalls/syscall_64.tbl
+index 623d954f3afb,dabf1982de6d..000000000000
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@@ -385,10 -384,7 +385,11 @@@
+  460	common	lsm_set_self_attr	sys_lsm_set_self_attr
+  461	common	lsm_list_modules	sys_lsm_list_modules
+  462 	common  mseal			sys_mseal
+ +463	common	setxattrat		sys_setxattrat
+ +464	common	getxattrat		sys_getxattrat
+ +465	common	listxattrat		sys_listxattrat
+ +466	common	removexattrat		sys_removexattrat
++ 467	common	uretprobe		sys_uretprobe
+ =20
+  #
+  # Due to a historical design error, certain syscalls are numbered differe=
+ntly
+
+--Sig_/eDhu.cip=TtyAGE.x+c=tuP
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEyBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaXONMACgkQAVBC80lX
+0GyYdwf0CVa7vGZq1Eg7vdsnima76sRnvVQ4xHCiGu0hj7S7ejnwbXXdrXrb0PH6
+T87FAbo16TpzBZugHC0s7jaYb0PppQ9kaV+S6j5lmeAqv09QQvOD6dXDysQ2oVIw
+v4L8hCSapriOyiBML/0ENxsV+b+zbQz0FHUu1L/xWe4T7SppjZAVDtk9j3xDyG6H
+PcEE3xlw37VMH6dOY+u1PiBipaZLevTH3HXBLOi+5V3Qml8h0UBd+h+Mm7EDGeID
+m2iA3pU8rA1TSn+4fhykLKYWy8FBzB5Z015QbneVNzhexsqhiCbxesqa0/wDlcqu
+7PMPkB27YFo6JGEKeSX94YCayyNO
+=9u3m
+-----END PGP SIGNATURE-----
+
+--Sig_/eDhu.cip=TtyAGE.x+c=tuP--
 
