@@ -1,359 +1,127 @@
-Return-Path: <linux-kernel+bounces-255075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D87B6933B5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:45:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDAA2933B5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:46:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07BDC1C217EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:45:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 759351F2136D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A729F17F4EE;
-	Wed, 17 Jul 2024 10:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NXEoNWIr";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D2s2Mus8";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NXEoNWIr";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D2s2Mus8"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12FD1878;
-	Wed, 17 Jul 2024 10:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4CE717F369;
+	Wed, 17 Jul 2024 10:45:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA921878
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 10:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721213134; cv=none; b=pctoTmTPVWPMcViJrsGZmUH4ucf/rec3QNMB4XNoR6tr97L/T94cHRSQpW4canGAo/DeDTIhb/7jeMOo4OeJYjSNJIfYAOtNo+krO2G+3azfnIDY1VdoCXFTwlEdda7+cNg84iC7Fbs9mGWNCpGL4rdofPK66KjHkmKNDab9zkQ=
+	t=1721213154; cv=none; b=KbeVfR90/c4gScvj48lx2yTqVeKg/NnhtmXMNAsCjoG3s0+qoXRg2mg069I3MtU6MqKLbGSq5vtm2mE4I2E3874h9vsq1d1vdcIIx61/u+DHAJ2A8svp1ON7lB36zRjEgKnNpGSQbvM5RubhWak/dfLF0hL05ap4D450uDfz054=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721213134; c=relaxed/simple;
-	bh=uV+fDQn88X3vnR+XxSw6byf2vCKZ+uDB8ZwLx44BKVc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N5RkzyWDnaIIL2QrX3mGCnoGJ0jmNpNBPMWLcFX1CG970DDsQQxdtfrX8HMkBtoBsT09RBsoG+TvSa0yE408w66PjB0ULLfrF0lmGG2rVKFBaXN0V5pTYkZyE72Fz8hrWP16QbcofbjpkieTzMpAp4Njm3oiZkDWV+vsi8WK0WI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NXEoNWIr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D2s2Mus8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NXEoNWIr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D2s2Mus8; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BC95C21AD9;
-	Wed, 17 Jul 2024 10:45:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721213129; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Adt/6cBqLwRHyr8UQVS3UnG6hzRhRyNq17HOAaUZaBI=;
-	b=NXEoNWIr8RJn9ENN8tA+q+U4jDUQbtD6U5C8lZQAYPclxqaKnGMlAc43QDjZJOFBx3scJG
-	gtop9XeixSUysfF4x1FulabpRQQH/QKKDiGVaTxZe4EqZSBsLFnvW19kH+DGetWN0d0IIn
-	QPzPBgiT5mgwTp5q9CnlZXIblylU68c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721213129;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Adt/6cBqLwRHyr8UQVS3UnG6hzRhRyNq17HOAaUZaBI=;
-	b=D2s2Mus8uWJyer+c/zFjhkdFHl3yM3Ha3PQXE5bASzZExkNhY3xoZENUpRI0HFLblJJ0Wp
-	gfzhUTvYU5xoq8Aw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=NXEoNWIr;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=D2s2Mus8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721213129; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Adt/6cBqLwRHyr8UQVS3UnG6hzRhRyNq17HOAaUZaBI=;
-	b=NXEoNWIr8RJn9ENN8tA+q+U4jDUQbtD6U5C8lZQAYPclxqaKnGMlAc43QDjZJOFBx3scJG
-	gtop9XeixSUysfF4x1FulabpRQQH/QKKDiGVaTxZe4EqZSBsLFnvW19kH+DGetWN0d0IIn
-	QPzPBgiT5mgwTp5q9CnlZXIblylU68c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721213129;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Adt/6cBqLwRHyr8UQVS3UnG6hzRhRyNq17HOAaUZaBI=;
-	b=D2s2Mus8uWJyer+c/zFjhkdFHl3yM3Ha3PQXE5bASzZExkNhY3xoZENUpRI0HFLblJJ0Wp
-	gfzhUTvYU5xoq8Aw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AB2181368F;
-	Wed, 17 Jul 2024 10:45:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ZULCKcmgl2YdPgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 17 Jul 2024 10:45:29 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 091B0A0987; Wed, 17 Jul 2024 12:45:25 +0200 (CEST)
-Date: Wed, 17 Jul 2024 12:45:24 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Dave Chinner <david@fromorbit.com>, Andi Kleen <ak@linux.intel.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Arnd Bergmann <arnd@arndb.de>, Randy Dunlap <rdunlap@infradead.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-mm@kvack.org, linux-nfs@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v6 3/9] fs: add percpu counters for significant
- multigrain timestamp events
-Message-ID: <20240717104524.tqlz63tsrdfixmxh@quack3>
-References: <20240715-mgtime-v6-0-48e5d34bd2ba@kernel.org>
- <20240715-mgtime-v6-3-48e5d34bd2ba@kernel.org>
- <20240715183211.GD103014@frogsfrogsfrogs>
- <7bb897f31fded59aae8d62a6796dd21feebd0642.camel@kernel.org>
+	s=arc-20240116; t=1721213154; c=relaxed/simple;
+	bh=K2TiyeTbQ8jjRpZu8tjaXsaFV/Js7/uMUNOmXI67Pds=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HEMCMXHbYnjwCNM5hqTngMRzvYF0J5iox/uwlc6DlfKJcxqvwKoCLbd2bB7YCCy2YMG29SWxHxzRPyT3qLqjArnRjOhdasUb1wxwpRUatGYYK6f7qMSWyF30kNkBJnd/OgiIXGCx6hH3ccVp3L7B1eJK47UB1LkkT20Y4G5JeSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E32851063;
+	Wed, 17 Jul 2024 03:46:16 -0700 (PDT)
+Received: from [10.57.77.222] (unknown [10.57.77.222])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C557F3F73F;
+	Wed, 17 Jul 2024 03:45:49 -0700 (PDT)
+Message-ID: <99b33a29-e97a-4932-8d7a-85bc01885d18@arm.com>
+Date: Wed, 17 Jul 2024 11:45:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7bb897f31fded59aae8d62a6796dd21feebd0642.camel@kernel.org>
-X-Rspamd-Queue-Id: BC95C21AD9
-X-Spam-Flag: NO
-X-Spam-Score: -0.01
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-0.01 / 50.00];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[33];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,suse.cz,goodmis.org,efficios.com,oracle.com,mit.edu,dilger.ca,fb.com,toxicpanda.com,suse.com,google.com,linux-foundation.org,lwn.net,fromorbit.com,linux.intel.com,infradead.org,gmail.com,linux.dev,arndb.de,vger.kernel.org,kvack.org];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,toxicpanda.com:email,suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Level: 
-X-Spamd-Bar: /
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 0/4] Control folio sizes used for page cache memory
+Content-Language: en-GB
+To: David Hildenbrand <david@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Barry Song <baohua@kernel.org>, Lance Yang <ioworker0@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Gavin Shan <gshan@redhat.com>,
+ Pankaj Raghav <kernel@pankajraghav.com>, Daniel Gomez <da.gomez@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20240717071257.4141363-1-ryan.roberts@arm.com>
+ <eb2d8027-6347-4cc5-b1f6-6e79dc9a02ef@redhat.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <eb2d8027-6347-4cc5-b1f6-6e79dc9a02ef@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon 15-07-24 15:53:42, Jeff Layton wrote:
-> On Mon, 2024-07-15 at 11:32 -0700, Darrick J. Wong wrote:
-> > On Mon, Jul 15, 2024 at 08:48:54AM -0400, Jeff Layton wrote:
-> > > Four percpu counters for counting various stats around mgtimes, and
-> > > a
-> > > new debugfs file for displaying them:
-> > > 
-> > > - number of attempted ctime updates
-> > > - number of successful i_ctime_nsec swaps
-> > > - number of fine-grained timestamp fetches
-> > > - number of floor value swaps
-> > > 
-> > > Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > >  fs/inode.c | 70
-> > > +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
-> > >  1 file changed, 69 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/fs/inode.c b/fs/inode.c
-> > > index 869994285e87..fff844345c35 100644
-> > > --- a/fs/inode.c
-> > > +++ b/fs/inode.c
-> > > @@ -21,6 +21,8 @@
-> > >  #include <linux/list_lru.h>
-> > >  #include <linux/iversion.h>
-> > >  #include <linux/rw_hint.h>
-> > > +#include <linux/seq_file.h>
-> > > +#include <linux/debugfs.h>
-> > >  #include <trace/events/writeback.h>
-> > >  #define CREATE_TRACE_POINTS
-> > >  #include <trace/events/timestamp.h>
-> > > @@ -80,6 +82,10 @@ EXPORT_SYMBOL(empty_aops);
-> > >  
-> > >  static DEFINE_PER_CPU(unsigned long, nr_inodes);
-> > >  static DEFINE_PER_CPU(unsigned long, nr_unused);
-> > > +static DEFINE_PER_CPU(unsigned long, mg_ctime_updates);
-> > > +static DEFINE_PER_CPU(unsigned long, mg_fine_stamps);
-> > > +static DEFINE_PER_CPU(unsigned long, mg_floor_swaps);
-> > > +static DEFINE_PER_CPU(unsigned long, mg_ctime_swaps);
-> > 
-> > Should this all get switched off if CONFIG_DEBUG_FS=n?
-> > 
-> > --D
-> > 
+On 17/07/2024 11:31, David Hildenbrand wrote:
+> On 17.07.24 09:12, Ryan Roberts wrote:
+>> Hi All,
+>>
+>> This series is an RFC that adds sysfs and kernel cmdline controls to configure
+>> the set of allowed large folio sizes that can be used when allocating
+>> file-memory for the page cache. As part of the control mechanism, it provides
+>> for a special-case "preferred folio size for executable mappings" marker.
+>>
+>> I'm trying to solve 2 separate problems with this series:
+>>
+>> 1. Reduce pressure in iTLB and improve performance on arm64: This is a modified
+>> approach for the change at [1]. Instead of hardcoding the preferred executable
+>> folio size into the arch, user space can now select it. This decouples the arch
+>> code and also makes the mechanism more generic; it can be bypassed (the default)
+>> or any folio size can be set. For my use case, 64K is preferred, but I've also
+>> heard from Willy of a use case where putting all text into 2M PMD-sized folios
+>> is preferred. This approach avoids the need for synchonous MADV_COLLAPSE (and
+>> therefore faulting in all text ahead of time) to achieve that.
+>>
+>> 2. Reduce memory fragmentation in systems under high memory pressure (e.g.
+>> Android): The theory goes that if all folios are 64K, then failure to allocate a
+>> 64K folio should become unlikely. But if the page cache is allocating lots of
+>> different orders, with most allocations having an order below 64K (as is the
+>> case today) then ability to allocate 64K folios diminishes. By providing control
+>> over the allowed set of folio sizes, we can tune to avoid crucial 64K folio
+>> allocation failure. Additionally I've heard (second hand) of the need to disable
+>> large folios in the page cache entirely due to latency concerns in some
+>> settings. These controls allow all of this without kernel changes.
+>>
+>> The value of (1) is clear and the performance improvements are documented in
+>> patch 2. I don't yet have any data demonstrating the theory for (2) since I
+>> can't reproduce the setup that Barry had at [2]. But my view is that by adding
+>> these controls we will enable the community to explore further, in the same way
+>> that the anon mTHP controls helped harden the understanding for anonymous
+>> memory.
+>>
+>> ---
 > 
-> Sure, why not. That's simple enough to do.
+> How would this interact with other requirements we get from the filesystem (for
+> example, because of the device) [1].
 > 
-> I pushed an updated mgtime branch to my git tree. Here's the updated
-> patch that's the only difference:
-> 
->     https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git/commit/?h=mgtime&id=ee7fe6e9c0598754861c8620230f15f3de538ca5
-> 
-> Seems to build OK both with and without CONFIG_DEBUG_FS.
+> Assuming a device has a filesystem has a min order of X, but we disable anything
+>>= X, how would we combine that configuration/information?
 
-Looks good to me. Feel free to add:
+Currently order-0 is implicitly the "always-on" fallback order. My thinking was
+that with [1], the specified min order just becomes that "always-on" fallback order.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Today:
 
-								Honza
+  orders = file_orders_always() | BIT(0);
 
->  
-> > >  
-> > >  static struct kmem_cache *inode_cachep __ro_after_init;
-> > >  
-> > > @@ -101,6 +107,42 @@ static inline long get_nr_inodes_unused(void)
-> > >  	return sum < 0 ? 0 : sum;
-> > >  }
-> > >  
-> > > +static long get_mg_ctime_updates(void)
-> > > +{
-> > > +	int i;
-> > > +	long sum = 0;
-> > > +	for_each_possible_cpu(i)
-> > > +		sum += per_cpu(mg_ctime_updates, i);
-> > > +	return sum < 0 ? 0 : sum;
-> > > +}
-> > > +
-> > > +static long get_mg_fine_stamps(void)
-> > > +{
-> > > +	int i;
-> > > +	long sum = 0;
-> > > +	for_each_possible_cpu(i)
-> > > +		sum += per_cpu(mg_fine_stamps, i);
-> > > +	return sum < 0 ? 0 : sum;
-> > > +}
-> > > +
-> > > +static long get_mg_floor_swaps(void)
-> > > +{
-> > > +	int i;
-> > > +	long sum = 0;
-> > > +	for_each_possible_cpu(i)
-> > > +		sum += per_cpu(mg_floor_swaps, i);
-> > > +	return sum < 0 ? 0 : sum;
-> > > +}
-> > > +
-> > > +static long get_mg_ctime_swaps(void)
-> > > +{
-> > > +	int i;
-> > > +	long sum = 0;
-> > > +	for_each_possible_cpu(i)
-> > > +		sum += per_cpu(mg_ctime_swaps, i);
-> > > +	return sum < 0 ? 0 : sum;
-> > > +}
-> > > +
-> > >  long get_nr_dirty_inodes(void)
-> > >  {
-> > >  	/* not actually dirty inodes, but a wild approximation */
-> > > @@ -2655,6 +2697,7 @@ struct timespec64
-> > > inode_set_ctime_current(struct inode *inode)
-> > >  
-> > >  			/* Get a fine-grained time */
-> > >  			fine = ktime_get();
-> > > +			this_cpu_inc(mg_fine_stamps);
-> > >  
-> > >  			/*
-> > >  			 * If the cmpxchg works, we take the new
-> > > floor value. If
-> > > @@ -2663,11 +2706,14 @@ struct timespec64
-> > > inode_set_ctime_current(struct inode *inode)
-> > >  			 * as good, so keep it.
-> > >  			 */
-> > >  			old = floor;
-> > > -			if (!atomic64_try_cmpxchg(&ctime_floor,
-> > > &old, fine))
-> > > +			if (atomic64_try_cmpxchg(&ctime_floor,
-> > > &old, fine))
-> > > +				this_cpu_inc(mg_floor_swaps);
-> > > +			else
-> > >  				fine = old;
-> > >  			now = ktime_mono_to_real(fine);
-> > >  		}
-> > >  	}
-> > > +	this_cpu_inc(mg_ctime_updates);
-> > >  	now_ts = timestamp_truncate(ktime_to_timespec64(now),
-> > > inode);
-> > >  	cur = cns;
-> > >  
-> > > @@ -2682,6 +2728,7 @@ struct timespec64
-> > > inode_set_ctime_current(struct inode *inode)
-> > >  		/* If swap occurred, then we're (mostly) done */
-> > >  		inode->i_ctime_sec = now_ts.tv_sec;
-> > >  		trace_ctime_ns_xchg(inode, cns, now_ts.tv_nsec,
-> > > cur);
-> > > +		this_cpu_inc(mg_ctime_swaps);
-> > >  	} else {
-> > >  		/*
-> > >  		 * Was the change due to someone marking the old
-> > > ctime QUERIED?
-> > > @@ -2751,3 +2798,24 @@ umode_t mode_strip_sgid(struct mnt_idmap
-> > > *idmap,
-> > >  	return mode & ~S_ISGID;
-> > >  }
-> > >  EXPORT_SYMBOL(mode_strip_sgid);
-> > > +
-> > > +static int mgts_show(struct seq_file *s, void *p)
-> > > +{
-> > > +	long ctime_updates = get_mg_ctime_updates();
-> > > +	long ctime_swaps = get_mg_ctime_swaps();
-> > > +	long fine_stamps = get_mg_fine_stamps();
-> > > +	long floor_swaps = get_mg_floor_swaps();
-> > > +
-> > > +	seq_printf(s, "%lu %lu %lu %lu\n",
-> > > +		   ctime_updates, ctime_swaps, fine_stamps,
-> > > floor_swaps);
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +DEFINE_SHOW_ATTRIBUTE(mgts);
-> > > +
-> > > +static int __init mg_debugfs_init(void)
-> > > +{
-> > > +	debugfs_create_file("multigrain_timestamps", S_IFREG |
-> > > S_IRUGO, NULL, NULL, &mgts_fops);
-> > > +	return 0;
-> > > +}
-> > > +late_initcall(mg_debugfs_init);
-> > > 
-> > > -- 
-> > > 2.45.2
-> > > 
-> > > 
+Tomorrow:
+
+  orders = (file_orders_always() & ~(BIT(min_order) - 1)) | BIT(min_order);
+
+That does mean that in this case, a user-disabled order could still be used. So
+the controls are really hints rather than definitive commands.
+
+
 > 
-> -- 
-> Jeff Layton <jlayton@kernel.org>
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> [1]
+> https://lore.kernel.org/all/20240715094457.452836-2-kernel@pankajraghav.com/T/#u
+> 
+
 
