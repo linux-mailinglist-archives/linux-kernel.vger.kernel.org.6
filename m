@@ -1,121 +1,94 @@
-Return-Path: <linux-kernel+bounces-255234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92F38933DC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:41:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3F6A933DCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DD991F212D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:41:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 100C01C22BAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E37180A6E;
-	Wed, 17 Jul 2024 13:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jZFxwgq9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA13180A71;
+	Wed, 17 Jul 2024 13:42:16 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5522E651
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BB51802CD;
+	Wed, 17 Jul 2024 13:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721223698; cv=none; b=hpyOOB4Xg5F3gdJuYFTWjD23hLuTCmj7Iboa4RLVd5p5rFhlCdcvsSyRvu5vCqiUPyWLS/m/+nc9JPQ2KCnwHA5+Ia7z+WK6KfVbns+9OZRL0zdtpSObtEcSv8Q0gzdT2247x1zH5V7mj07gPgmhUWE85P6XTCfLdJTogp59MV4=
+	t=1721223735; cv=none; b=KFBn5aS+lqYXehnea80F2QJga+FULyjej/WuUv9uzfMx6yeqoE5eKt2zvOiG6ao/W+piyWVfVaWCkazlBkNhMvZr5NvDb8XFVhkIJj4//nyHljgbYU9un5fGuX+NIpN+HJJfpK8dySgro0lridMI1OU9kFq/8guSrWv0d8WoOT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721223698; c=relaxed/simple;
-	bh=DhFAFincECZnQ6N49VF4grcrX0gUzdPQUKGTG1ehRj4=;
+	s=arc-20240116; t=1721223735; c=relaxed/simple;
+	bh=ESBtCWTAZOX9RzBK7vBRxLtLCDUTy5DAseYw6edJOkc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L+2mi9d8Tjc+UzsA0SFb4AhKvKc6FCBwzCmiD1bpMmUGCTSMzsMNB+EaElnMz/sTrERmKRRqNIPCAtEaesafFj61nxXiyFtUNzFheXJDO9QS11rVd4agKUPfMPu43v9gDxpK/FYZkpN2d/N0+m/HDZKBB8yY45j/GXNd5QXr/L0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jZFxwgq9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87893C32782;
-	Wed, 17 Jul 2024 13:41:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721223697;
-	bh=DhFAFincECZnQ6N49VF4grcrX0gUzdPQUKGTG1ehRj4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jZFxwgq95Ibm8DxAIz0dpK6HySb7NzNCCqxllNt22nUm8ds/1y6iZxG+wriUrwTpd
-	 BrATBfTZcE3O7wwDjF7QORaBBVm2UXafuBtVNArSZRJaOm+L4wpeTW+KdQs1spCU6V
-	 boFFngYIvYS4fDNTY2IuXaFcqn6qrP0VRPK0iZcqIdVKtw2cXZXmHtpqD3nbG5WfPz
-	 omItYCB7ZfwdOEI8zASBWU1LBmL3qAKUrTQBmcEUMhS9ZWiEcLnw4Opak5aBSia7gP
-	 FZdZBHIorXa0v2gHnx4bUSWpopkSf8jNCQWsAHcpGc0YD43INl1qjm32y9uxwkVCuw
-	 +XAbtQQEp3q3Q==
-Date: Wed, 17 Jul 2024 06:41:35 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Vamsi Krishna Attunuru <vattunuru@marvell.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>
-Subject: Re: [EXTERNAL] Re: [PATCH] misc: mrvl-cn10k-dpi: resolve compilation
- issues on 32-bit ARM
-Message-ID: <20240717134135.GA24892@thelio-3990X>
-References: <20240717045225.138799-1-vattunuru@marvell.com>
- <2024071709-nephew-scooter-5c6b@gregkh>
- <MW4PR18MB5244DBBC231E986EDBEDD5BEA6A32@MW4PR18MB5244.namprd18.prod.outlook.com>
- <22bf9a24-b4db-4017-b5a9-1b03e6f20bff@app.fastmail.com>
- <SJ0PR18MB524672A30BAE8A7163FABECCA6A32@SJ0PR18MB5246.namprd18.prod.outlook.com>
- <024d85a1-6a4e-4552-a5dd-adebfb195be8@app.fastmail.com>
- <SJ0PR18MB52463B1A7393F36673548989A6A32@SJ0PR18MB5246.namprd18.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RJpvrcheYy00AOG8huXT5DBxv4aOO1ChYScFjwkBB9PegrHNYLI3hYQA/FMI8PYIQJffTdWa/SIikJ3g/0cGhxQ6dhwFBWvCb1jINfF5XkzGF5Ypl/Ntlt50N6T/fbD0R/R6y0abYO/fhj6E2PYkAm7hpTHMOBCjUnI9ERJJ6Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 723C21C0099; Wed, 17 Jul 2024 15:42:11 +0200 (CEST)
+Date: Wed, 17 Jul 2024 15:42:10 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 4.19 00/66] 4.19.318-rc3 review
+Message-ID: <ZpfKMlVYSMVohw4a@duo.ucw.cz>
+References: <20240717101028.579732070@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Jr9iQs9kQIv2xY+n"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <SJ0PR18MB52463B1A7393F36673548989A6A32@SJ0PR18MB5246.namprd18.prod.outlook.com>
+In-Reply-To: <20240717101028.579732070@linuxfoundation.org>
 
-On Wed, Jul 17, 2024 at 12:17:08PM +0000, Vamsi Krishna Attunuru wrote:
-> 
-> 
-> >-----Original Message-----
-> >From: Arnd Bergmann <arnd@arndb.de>
-> >Sent: Wednesday, July 17, 2024 5:20 PM
-> >To: Vamsi Krishna Attunuru <vattunuru@marvell.com>; Greg Kroah-Hartman
-> ><gregkh@linuxfoundation.org>
-> >Cc: linux-kernel@vger.kernel.org; Nathan Chancellor <nathan@kernel.org>;
-> >Jeff Johnson <quic_jjohnson@quicinc.com>
-> >Subject: Re: [EXTERNAL] Re: [PATCH] misc: mrvl-cn10k-dpi: resolve
-> >compilation issues on 32-bit ARM
-> >
-> >On Wed, Jul 17, 2024, at 13: 45, Vamsi Krishna Attunuru wrote: > > Neither of
-> >them worked in our case, HW folks also confirmed that only > 64bit access
-> >work correctly. > I will just include the header that address the compilation
-> >
-> >On Wed, Jul 17, 2024, at 13:45, Vamsi Krishna Attunuru wrote:
-> >>
-> >> Neither of them worked in our case, HW folks also confirmed that only
-> >> 64bit access work correctly.
-> >> I will just include the header that address the compilation errors
-> >> with ARCH=arm, anyways nobody will use this driver on 32-bit kernel.
-> >
-> >Please just use a Kconfig dependency then. If the device requires 64-bit
-> >register access, then the driver should not use the fallback.
-> 
-> Ack, since it needs to skip compilation on 32-bit platforms, can you please
-> confirm below change is suffice or not.
-> 
-> --- a/drivers/misc/Kconfig
-> +++ b/drivers/misc/Kconfig
-> @@ -588,7 +588,7 @@ config NSM
->  config MARVELL_CN10K_DPI
->         tristate "Octeon CN10K DPI driver"
->         depends on PCI
-> -       depends on ARCH_THUNDER || COMPILE_TEST
-> +       depends on (ARCH_THUNDER || COMPILE_TEST) && 64BIT
 
-I think it would be a little clearer written as
+--Jr9iQs9kQIv2xY+n
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  depends on ARCH_THUNDER || (COMPILE_TEST && 64BIT)
+Hi!
 
-because ARCH_THUNDER can only be defined when 64BIT is set. Regardless
-though, that should resolve the issue.
+> This is the start of the stable review cycle for the 4.19.318 release.
+> There are 66 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Tested-by: Nathan Chancellor <nathan@kernel.org>
+CIP testing did not find any problems here:
 
-Cheers,
-Nathan
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+4.19.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--Jr9iQs9kQIv2xY+n
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZpfKMgAKCRAw5/Bqldv6
+8lGUAKCeWW1Bo2geOK70VToYka/Ce21faACgriwUo4+IaKlWKxSHyASYu09YoQw=
+=pmLW
+-----END PGP SIGNATURE-----
+
+--Jr9iQs9kQIv2xY+n--
 
