@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-254955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 741989339BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:19:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E24309339C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1F2E1F2222D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:18:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 117F71C2179A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FDA335A7;
-	Wed, 17 Jul 2024 09:18:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51078335A7;
+	Wed, 17 Jul 2024 09:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="qTPyI98p"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774072745D
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 09:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="blmVA2wk"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFCBF9445
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 09:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721207932; cv=none; b=Vw+BrZbzixqGUO0biEK0tdcNDrlzrXA3FKrzPPAd3gMwLMVECyZLEP7aR4OfQRI4CUmFdn0IYtOU/fb3bLbehscgL1IaADfzkVP0qV8zRkYKal6eV3nfBcByYPMJ4A5/UtaiSsuCs+6SvaV7mM/6nwTzfiyNtvFalG/Fv7OOmEQ=
+	t=1721208040; cv=none; b=hd+VWkfaimnm7dtK1CDLI48lsyCp5aIt3SFkODYll4HQmQxJd0Tt+AdxUfRiPRZ8ZjfvL0OooO4PfTrZaxwp5aCdEkFinQaG+oqcIPF3gOPvU1k6+wJLcgg4olH9Dbktb9c/rkrxms4dZt9CjHEfFFZYBkHMIGsTpbT2Cq8Nu+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721207932; c=relaxed/simple;
+	s=arc-20240116; t=1721208040; c=relaxed/simple;
 	bh=IwiMKjEwvVSJ5IWaPDpoKynG7VWz5j2VPRipkRNYig0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=paQTkDyIyM0shTsJ4+o2zgxmirdBz+6XFmqB4Vo1jjZG2va7FWcrNrcJ6p32GLtGqmmZ8XzC4rlei1lL9eB6SCJBavkgrFaFHBx83qgQFzRgMMK4NxjYOpH6i8+J6RWbQZeku1nn83YPmjdn7nDzUVrQQXMAkVRl7ufUhBMm3ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=qTPyI98p; arc=none smtp.client-ip=220.197.31.2
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dmG20QKXzA09D/lXJXctyq7eRvIm6MJ1JMh2bawkSoAn9z5KLWfSctLeOFSiWl7tUZHxo/ObAML73zXK85D4OtaavdgiXmazacRsDXlnJWqZWH4B2K/SSkn9C3A+0Ib8rGmpGayp5nElrgA5VQ/8ocwDQlRqRbnJUi9RazVQZQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=blmVA2wk; arc=none smtp.client-ip=220.197.31.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
 	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=Qjyea
-	kzBF2BWOZaDoB0LRL0/M0/RkHgMvm4NPWSnyiA=; b=qTPyI98pD+ewUQtAbkijt
-	GvTJyaypJgXDkN6NVwiRnom2NvDvnHiViUem57KfBruJx8qebdEHTVMfbb+nKrYq
-	qzBQpQI/0NfWqu/x7DDhGMsOl87Wo1ObhVW1P12ZIahXH/7m4JRH56Hs4/RSJcmK
-	8IboobWNearK1W4sqR6vP0=
+	kzBF2BWOZaDoB0LRL0/M0/RkHgMvm4NPWSnyiA=; b=blmVA2wkoJmyMXmtUgW8F
+	JpytMMQ6oK51RGjN7Pupu2WUOgD4i/zgP0FNf+QhsX6vz7zxHiqzOn4tscA30Jxp
+	uylG7VThIt+zPcr1t6X8P7yHkEej1nv0WpFDyXMLsDUtcEcXCZcFRiCYS88DJNSq
+	YyhaUsESHq49T/Ge2gWjE8=
 Received: from localhost.localdomain (unknown [111.48.69.245])
-	by gzga-smtp-mta-g2-5 (Coremail) with SMTP id _____wD3PzoqjJdmqjNPAw--.34682S2;
-	Wed, 17 Jul 2024 17:17:32 +0800 (CST)
+	by gzga-smtp-mta-g2-3 (Coremail) with SMTP id _____wD3P1W5jJdm3DZbDA--.32086S2;
+	Wed, 17 Jul 2024 17:19:54 +0800 (CST)
 From: wangdicheng <wangdich9700@163.com>
 To: lgirdwood@gmail.com,
 	broonie@kernel.org,
@@ -46,8 +46,8 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	wangdicheng <wangdicheng@kylinos.cn>
 Subject: [PATCH] ALSA: usb-audio: Fix microphone sound on HD webcam.
-Date: Wed, 17 Jul 2024 17:17:28 +0800
-Message-Id: <20240717091728.11188-1-wangdich9700@163.com>
+Date: Wed, 17 Jul 2024 17:19:51 +0800
+Message-Id: <20240717091951.11344-1-wangdich9700@163.com>
 X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -56,12 +56,12 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3PzoqjJdmqjNPAw--.34682S2
+X-CM-TRANSID:_____wD3P1W5jJdm3DZbDA--.32086S2
 X-Coremail-Antispam: 1Uf129KBjvJXoWxXw43JFy5tFyrCF45Xw13urg_yoWrCFyxpr
 	1Iya97JryDJr17Xr4kGayUu34rXw4Iyws8Ca4qkwna9ryft34rta42y39rAayakrWrC342
 	qryjy3yqg3y5Gw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jYKZXUUUUU=
-X-CM-SenderInfo: pzdqwv5lfkmliqq6il2tof0z/1tbiNRQfT2V4IpLIMQACsn
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jYxRDUUUUU=
+X-CM-SenderInfo: pzdqwv5lfkmliqq6il2tof0z/1tbiJQwfT2VOCP76-AABsj
 
 From: wangdicheng <wangdicheng@kylinos.cn>
 
