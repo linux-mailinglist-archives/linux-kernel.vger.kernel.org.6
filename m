@@ -1,115 +1,128 @@
-Return-Path: <linux-kernel+bounces-255553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F78193422C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:19:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAC24934233
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CBB928428C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:19:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDFB3B22EE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5353183080;
-	Wed, 17 Jul 2024 18:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA5D1836CC;
+	Wed, 17 Jul 2024 18:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="OhFxAIc6"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB54812E75;
-	Wed, 17 Jul 2024 18:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="lRJ1uDXn"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1AA12E75;
+	Wed, 17 Jul 2024 18:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721240349; cv=none; b=nJnj85oQ1dR1BNyVrAeblrudYbqgcViyOsw1KrkIy8NNcJ+jD4qGz7YR/rP7raz/Ak/TwnOkndMt1/q4XQvphoEzsX4jLAggePcFaxBrtgsWsWjtXgXEoOPZLnQXdJ3dpxwGs1rlbkvrQ6zvhWV9O9hadkL0tlk29FY5pidDokg=
+	t=1721240399; cv=none; b=er1oHqyTzq3zVjVKB9o/JX+aUX95h0VK8MELLQs2g7CoVPdXDdC5TMTbj03PtL61+rHJIdtHUf5pFBV4wQ7xUUZ580CLL1jBvWIuN5GtPmgEBrlkSjK3j/yWBXssr6QBXZLIzDladEGU+o4PDZVC8BYxMVamuIfwb27OGVl+t68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721240349; c=relaxed/simple;
-	bh=b1aouR+Nif/3pJdFAc+mKgJd7ddCAcxvRCJD0JbS8jI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=bXc8wEq+fbTAPY+9hI04TR5XVYuIM4FJeSfDH6SU/WslPWGc3jaESjslfZYtk+Q4cixZesVLYDFrGAjLFCAguGijtHeywDpF0OWcCHvwRX9QOeyFpBGEITJIC+d1aOiQ7zhhAs2C3PS3UlqcLwRfV/oWAVkzNv86Cz12+YMwovw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=OhFxAIc6; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 8C91C20B7165;
-	Wed, 17 Jul 2024 11:19:06 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8C91C20B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1721240347;
-	bh=tJdPiTzkzL7kgsepa1RSwY8pS6OHdOQ3F2zaVjV9kCg=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=OhFxAIc677f8IqoXw8fkc7DEx9Q+cXUJi3G4rOZDYBneRlzPDrjR/CFTVzqwIbbm0
-	 HFEb5lGZUS8QYZIRkCfOC+BMbijncDDiglaGQAisAM2JNl8ST6zjFRhrGXClE1Dh67
-	 CFadODeFv2QGdIzToPUffWMbbhbsJOjiIRQfib3I=
-Message-ID: <c13f74fc-1c18-480e-84d4-55f11bcb1e98@linux.microsoft.com>
-Date: Wed, 17 Jul 2024 11:19:03 -0700
+	s=arc-20240116; t=1721240399; c=relaxed/simple;
+	bh=8icS3I5fyutbM346XBkOUW3AxYb3LWPuaYdcM7QeK5s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SmOTj9ZPDWNUD+B3FqKggMUdUjdICq64hetUJxnGthx25KbMqTWAimSIR/lBRoXOgZwp7T6D0D24uaJ2sx6VJ1GDaJ9Oc90OpPAWpKmGVQvtJ2sEHdScfpCi5hiBSqHBdUdFX5hJzoxJ5mRWWPEpp2XVqthJxIEyp8teFZ7GK60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=lRJ1uDXn; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=wZm6SNFUjdixQ8MFhwCOTFsWlwrJ2qo19PWx5tk7Qzs=; b=lR
+	J1uDXnY/gXzVm5H6rPK31AMEifEF9kNgBrRazajQJrliANeNtDEVlS6Zht2oMO9gfi6pYTk3X85ke
+	xv8lh0ocHxvPiAS66fIvxlGJgB85mL53FYPAAXqn9wt+7y+j1gD2EV8XhPONhBKG7lN4L7L2Sx6YF
+	HDkfRDuOZsLxqxs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sU9Fk-002jAB-Ec; Wed, 17 Jul 2024 20:19:48 +0200
+Date: Wed, 17 Jul 2024 20:19:48 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Rayyan Ansari <rayyan.ansari@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Timur Tabi <timur@kernel.org>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: net: qcom,emac: convert to dtschema
+Message-ID: <a6a0c244-f8da-4736-bb63-429a508d6993@lunn.ch>
+References: <20240717090931.13563-1-rayyan.ansari@linaro.org>
+ <cecaa6c3-adeb-489f-a9d2-0f43d089dd1d@lunn.ch>
+ <D2RXISKUMBWA.ZQDKI0F03EI0@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] printk: Add a short description string to kmsg_dump()
-To: Jocelyn Falempe <jfalempe@redhat.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- "K. Y. Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>, Petr Mladek
- <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
- John Ogness <john.ogness@linutronix.de>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Jani Nikula <jani.nikula@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Kefeng Wang <wangkefeng.wang@huawei.com>,
- Thomas Gleixner <tglx@linutronix.de>, Uros Bizjak <ubizjak@gmail.com>,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-hyperv@vger.kernel.org,
- linux-mtd@lists.infradead.org, linux-hardening@vger.kernel.org
-References: <20240702122639.248110-1-jfalempe@redhat.com>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <20240702122639.248110-1-jfalempe@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <D2RXISKUMBWA.ZQDKI0F03EI0@linaro.org>
 
-On 7/2/2024 5:26 AM, Jocelyn Falempe wrote:
-> kmsg_dump doesn't forward the panic reason string to the kmsg_dumper
-> callback.
-> This patch adds a new struct kmsg_dump_detail, that will hold the
-> reason and description, and pass it to the dump() callback.
+On Wed, Jul 17, 2024 at 04:45:55PM +0100, Rayyan Ansari wrote:
+> On Wed Jul 17, 2024 at 4:20 PM BST, Andrew Lunn wrote:
+> > On Wed, Jul 17, 2024 at 10:09:27AM +0100, Rayyan Ansari wrote:
+> > > Convert the bindings for the Qualcomm EMAC Ethernet Controller from the
+> > > old text format to yaml.
+> > > 
+> > > Also move the phy node of the controller to be within an mdio block so
+> > > we can use mdio.yaml.
+> >
+> > Does the MAC driver already support this?
+> >
+> > When i look at the emacs-phy.c there is
+> >
+> > 	struct device_node *np = pdev->dev.of_node;
+> >
+> >                 ret = of_mdiobus_register(mii_bus, np);
+> >
+> > I don't see anything looking for the mdio node in the tree.
+> >
+> > 	Andrew
 > 
-> To avoid updating all kmsg_dump() call, it adds a kmsg_dump_desc()
-> function and a macro for backward compatibility.
+> Hi Andrew,
 > 
-> I've written this for drm_panic, but it can be useful for other
-> kmsg_dumper.
-> It allows to see the panic reason, like "sysrq triggered crash"
-> or "VFS: Unable to mount root fs on xxxx" on the drm panic screen.
+> Yes, from my understanding an mdio node is not explicitly needed as it
+> just uses "phy-handle".
 > 
-> v2:
->  * Use a struct kmsg_dump_detail to hold the reason and description
->    pointer, for more flexibility if we want to add other parameters.
->    (Kees Cook)
->  * Fix powerpc/nvram_64 build, as I didn't update the forward
->    declaration of oops_to_nvram()
-> 
-> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
-> ---
->  arch/powerpc/kernel/nvram_64.c             |  8 ++++----
->  arch/powerpc/platforms/powernv/opal-kmsg.c |  4 ++--
->  arch/um/kernel/kmsg_dump.c                 |  2 +-
->  drivers/gpu/drm/drm_panic.c                |  4 ++--
->  drivers/hv/hv_common.c                     |  4 ++--
+> However, I think it makes more sense to place the phy within an mdio
+> node instead of directly under the controller node. This is based off
+> of 5ecd39d1bc4b ("dt-bindings: net: convert emac_rockchip.txt to YAML"),
+> in which the same decision was made ("Add mdio sub node"), also during a
+> text -> yaml conversion.
+ 
+Using an MDIO node is preferred, and is the modern way of doing
+it. Placing the PHY directly in the MAC node is valid, but it is the
+old way of doing it.
 
-Acked-by: Nuno Das Neves <nunodasneves@linux.microsoft.com> (hyperv)
+It is up to the driver to decide where it looks for the PHY nodes when
+it registers the MDIO bus. The np in of_mdiobus_register(mii_bus, np);
+points to the MAC node. So when you move the PHYs into the new MDIO
+node, they will not be found when the MDIO bus is probed.
 
-LGTM
+Take a look at:
+
+commit 2c60c4c008d4b05b9b65bf88f784556208029333
+Author: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Date:   Mon Mar 25 16:34:51 2024 +0100
+
+    ravb: Add support for an optional MDIO mode
+
+as an example where support for such an MDIO node was added to a
+driver.
+
+    Andrew
+
+---
+pw-bot: cr
 
