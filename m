@@ -1,101 +1,149 @@
-Return-Path: <linux-kernel+bounces-255139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC3D6933CA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:55:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7A13933CA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:55:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 736FA282680
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:55:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D90161C2321B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E0617F4FE;
-	Wed, 17 Jul 2024 11:54:59 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71B817F38D;
+	Wed, 17 Jul 2024 11:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vz8wPp57"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529CA1CF9B;
-	Wed, 17 Jul 2024 11:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268C145009;
+	Wed, 17 Jul 2024 11:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721217299; cv=none; b=PEfchA985G7zeNh85nm4NImoQpASEIz+WCI354mDcEMeE8EZCx+nu3G5R/Iv529tAWPCQSklFTfTsS1llE9KZLa6ZhOhOIcrR938fjjKkXUA5mpvrZ7AV2vKsTIcvqSDbxqjmMKgsc95JUWySofsPRcfiyVWhEI9XcKa4+2hqYk=
+	t=1721217315; cv=none; b=tvuEJhXfqVwLjPxY/jG8kV3gngeM2YI25RN65kKIXxWX2SaUVTCc1ATryY99gE0T37D1xEjt46Uef1hHP8eeLhCl9MVFco6amt5/svTLjw9cz6Niwi/qzwRqmVjvmgANFYUH2PAVhYeCXE3S9DkFCsIZc2xjlGoVX1Gr8InoAUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721217299; c=relaxed/simple;
-	bh=GhrKVFvjkxBu9aJJqZYGRyf6VFHevz6BZ/5J6cHdWEY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KImlxA1E7mLoKyUwHSPuqczIHVYz97oLibMxWy8CisH14FuyAG/OYVATZxKgrzhNIxMuF0KJ3z/qDhUgLfmUnLPaSRIkxrIRuT1iQBnG2DBAzw/C7ci05CVcPKbv+PMMrb+pGlM9BKye7ZzT9qWzcVIAzMVr25eFCQLoZAw6k6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-01 (Coremail) with SMTP id qwCowACHjsr+sJdma5veAw--.12207S2;
-	Wed, 17 Jul 2024 19:54:46 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: oder_chiou@realtek.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	derek.fang@realtek.com
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>
-Subject: [PATCH] ASoC: rt5682s: Return devm_of_clk_add_hw_provider to transfer the error
-Date: Wed, 17 Jul 2024 19:54:36 +0800
-Message-Id: <20240717115436.3449492-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1721217315; c=relaxed/simple;
+	bh=ryFplDwaF9LrfXi9LMq+5WiAnqCBtaCywkMwnwyBkjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fkHYNU/ZKMWxtIMsC//VgeChLqgWIyKhbx5iMrY0pLEZGDOXMbrVMI7+JBMLVRIwzJAhYeu9nB/BgTsPVTeWy/KKWarx8LHN+ttKSUBWvtg6RJJY7OGJGBhXoDAZQHRrMzjx3Zovw2E7g+EY6CGG5hpcz/mlsc5w7h1bHq8nVbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vz8wPp57; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721217313; x=1752753313;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ryFplDwaF9LrfXi9LMq+5WiAnqCBtaCywkMwnwyBkjs=;
+  b=Vz8wPp57WM/z7pMtJ8rUPkKyjivl09rR/RqQ2MNxtB7daqMSbQHmR/AS
+   Ucfn7dk9V43MYEU6nw/vAlfb+dvgc0838IGQ1COE96a6c1JNCveYOCHx+
+   04Ux2cwXInrDj8DZtofZsvpdI7dxL+jFlQSlLLRpbLs8ybhhRe+1TKtSx
+   0IYeCOAppQPuSqlQ73vzU1TqcvL1Vnuuc7ObMWb0k2iNfJjacBdd+WnB0
+   oXVgzw+vgG0yjjP3VfIuEseGuc/+67XJVDNReIXdvM9s9pwgSFVNL16WN
+   kuoWgESo7uK/BU//mrAy01J95+hvAOvb/GuKPSnmdd+5NWxHmq00+QtyJ
+   A==;
+X-CSE-ConnectionGUID: s1b6s4MyTe6TRpWMYtBBQg==
+X-CSE-MsgGUID: zRK0r//DRQGOQRWNCSg6TQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11135"; a="21618510"
+X-IronPort-AV: E=Sophos;i="6.09,214,1716274800"; 
+   d="scan'208";a="21618510"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 04:55:12 -0700
+X-CSE-ConnectionGUID: WW7YfiZtSPuV/FAYAVfibQ==
+X-CSE-MsgGUID: 50N4wCG+QvCBSVg7wTTQVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,214,1716274800"; 
+   d="scan'208";a="81407900"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa001.fm.intel.com with ESMTP; 17 Jul 2024 04:55:10 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id EB424161; Wed, 17 Jul 2024 14:55:08 +0300 (EEST)
+Date: Wed, 17 Jul 2024 14:55:08 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	"Borislav Petkov (AMD)" <bp@alien8.de>, Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Jianxiong Gao <jxgao@google.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] mm: Fix endless reclaim on machines with unaccepted
+ memory.
+Message-ID: <xtcmz6b66wayqxzfio4funmrja7ezgmp3mvudjodt5xfx64rot@s6whj735oimb>
+References: <20240716130013.1997325-1-kirill.shutemov@linux.intel.com>
+ <ZpdwcOv9WiILZNvz@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowACHjsr+sJdma5veAw--.12207S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JFWrGF4UGw45uFyDWw1kGrg_yoWDWrc_ua
-	y8uay0gry5Gr4Sk39rAa15A3Wvv3s7urW2qr1qgrsru34xXr43tF17JFW3u3Z8Xr4Iq3Z8
-	WF13trWFkrWSyjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb48FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
-	YxC7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y
-	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
-	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU1c4S5UUUU
-	U==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZpdwcOv9WiILZNvz@tiehlicka>
 
-Return devm_of_clk_add_hw_provider() in order to transfer the error, if it
-fails due to resource allocation failure or device tree clock provider
-registration failure.
+On Wed, Jul 17, 2024 at 09:19:12AM +0200, Michal Hocko wrote:
+> On Tue 16-07-24 16:00:13, Kirill A. Shutemov wrote:
+> > Unaccepted memory is considered unusable free memory, which is not
+> > counted as free on the zone watermark check. This causes
+> > get_page_from_freelist() to accept more memory to hit the high
+> > watermark, but it creates problems in the reclaim path.
+> > 
+> > The reclaim path encounters a failed zone watermark check and attempts
+> > to reclaim memory. This is usually successful, but if there is little or
+> > no reclaimable memory, it can result in endless reclaim with little to
+> > no progress. This can occur early in the boot process, just after start
+> > of the init process when the only reclaimable memory is the page cache
+> > of the init executable and its libraries.
+> 
+> How does this happen when try_to_accept_memory is the first thing to do
+> when wmark check fails in the allocation path?
 
-Fixes: bdd229ab26be ("ASoC: rt5682s: Add driver for ALC5682I-VS codec")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- sound/soc/codecs/rt5682s.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Good question.
 
-diff --git a/sound/soc/codecs/rt5682s.c b/sound/soc/codecs/rt5682s.c
-index f50f196d700d..ce2e88e066f3 100644
---- a/sound/soc/codecs/rt5682s.c
-+++ b/sound/soc/codecs/rt5682s.c
-@@ -2828,7 +2828,9 @@ static int rt5682s_register_dai_clks(struct snd_soc_component *component)
- 		}
- 
- 		if (dev->of_node) {
--			devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, dai_clk_hw);
-+			ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, dai_clk_hw);
-+			if (ret)
-+				return ret;
- 		} else {
- 			ret = devm_clk_hw_register_clkdev(dev, dai_clk_hw,
- 							  init.name, dev_name(dev));
+I've lost access to the test setup and cannot check it directly right now.
+
+Reading the code Looks like __alloc_pages_bulk() bypasses
+get_page_from_freelist() where we usually accept more pages and goes
+directly to __rmqueue_pcplist() -> rmqueue_bulk() -> __rmqueue().
+
+Will look more into it when I have access to the test setup.
+
+> Could you describe what was the initial configuration of the system? How
+> much of the unaccepted memory was there to trigger this?
+
+This is large TDX guest VM: 176 vCPUs and ~800GiB of memory.
+
+One thing that I noticed that the problem is only triggered when LRU_GEN
+enabled. But I failed to identify why.
+
+The system hang (or have very little progress) shortly after systemd
+starts.
+
+> > To address this issue, teach shrink_node() and shrink_zones() to accept
+> > memory before attempting to reclaim.
+> > 
+> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > Reported-by: Jianxiong Gao <jxgao@google.com>
+> > Fixes: dcdfdd40fa82 ("mm: Add support for unaccepted memory")
+> > Cc: stable@vger.kernel.org # v6.5+
+> [...]
+> >  static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+> >  {
+> >  	unsigned long nr_reclaimed, nr_scanned, nr_node_reclaimed;
+> >  	struct lruvec *target_lruvec;
+> >  	bool reclaimable = false;
+> >  
+> > +	/* Try to accept memory before going for reclaim */
+> > +	if (node_try_to_accept_memory(pgdat, sc)) {
+> > +		if (!should_continue_reclaim(pgdat, 0, sc))
+> > +			return;
+> > +	}
+> > +
+> 
+> This would need an exemption from the memcg reclaim.
+
+Hm. Could you elaborate why?
+
 -- 
-2.25.1
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
