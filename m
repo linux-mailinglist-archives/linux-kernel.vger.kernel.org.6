@@ -1,93 +1,95 @@
-Return-Path: <linux-kernel+bounces-254967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12D5B9339DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:31:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAD759339E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:32:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE1C51F22AFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:31:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 086071C21367
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 763F740848;
-	Wed, 17 Jul 2024 09:31:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE3E41C6A;
+	Wed, 17 Jul 2024 09:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WI/FSaLG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CCDE9461
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 09:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4408224FA;
+	Wed, 17 Jul 2024 09:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721208666; cv=none; b=WKtLrPHNDbLbmKZ0Tx8MbctxwDcfRJeqjSKt1PfdrOIrcvh9kD+abEJgoOWbJ8poOzO3+eP8S8/dE0bWoGxcO4fsB0TwES7vYTidY6x8XaLo/ykHywcv/AVZGhpoFb2ickpqJL1ORqMC6/80cl4cn3YAHhKdR5H5eKm8Pxm6UAc=
+	t=1721208715; cv=none; b=RJ0MS4f2az7ferCRXFTCeO5sRqKU7lfVKcSzgQ61hVVGmpidH1HbDbkF9ILH7s7ScsJ5UDAk3CZZ9wwA3ubfNbH20zWXpIjxpjM/00wUsJ6aMBIPrybIdH7EfpKh8+Sd73gbOV9ZTJIhT80sy8wyujFF2Il3YTEAsUE9RvV5mh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721208666; c=relaxed/simple;
-	bh=ogNnNgO0+GrLUD5WRf5Wbn+gekguxVpPFYVZDXgYLTk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=tZhDoWzTdKD7R30f/xw+R2DYIySzCc2RQfyzmtDUlP7qEwB5QL5L1nK/ogxSJ7Jgyw1PoToLSDQpEVigR1R8Fy8IHF0ObcbroQqZSVnVRlu+FfeyzY+6Czs7IH8BPbDsn3eg3k0uFevAZ2C3fhinIvT1+d80VKNmZZJXDRI4nVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-38437330bb9so11089895ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 02:31:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721208663; x=1721813463;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=egGL+kFdfG6SMmdJoiOJUagZhwUcoIBVT2MsQhZh308=;
-        b=Cfu+zVLPdqDk/hW8EO59rfG4yO/bn7ZcwBOroDCPsX6WhYx/O0TIhRmDfeBYl82MGI
-         fIdPgmV2GMj99/PeDc7nO0OX7zZDqyRHiqJYcM+crUhHDe3ycgD2IRO+C7AcPJ8HRigT
-         95C+lz+MCzJqO4lCdeGgwiYU07V9pv73EmVS8gEbRxwOmzPSuWpMQL8gQkf4RC4rQxFj
-         +tjFn1k9YXuggv+mTZct2T+JiJzLJf/XT7mYr5be043Mx0S7bFjJWmGabnQSNfdFjVGC
-         nR30EfjGDKt2WdR5ToZeMqAJP8QKQjU1cLH2kGKYoVxPwi7Gn4yzOhQbM+GAWQ1eMQeZ
-         ay8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWbDfL+StDVhiKOtx6FAOlcjXAkxhNZkQGU84Y3yvvyGWJXBQ7B+bne9idiWdcCvIoJDekCuH+mAw/XMzEmwTc14srVd53PiZ03E003
-X-Gm-Message-State: AOJu0YzQ1U4Q8i1YMKKCQyYfv8rPi3SIFyLHd1yXBIvSbXOxZbX7RT+F
-	uVoRrmaTzAJlrr0I4y6Vd7VcBlbc3gb4mc+nSgzg5Uze5fCBaTLpXVRqSw5DxnngTXyRvqpvWT6
-	BB6qC67vEXOghJVqn0T4yGnhYZ6OGSZibHXflMzIq3ZO41uH7EPIw5wU=
-X-Google-Smtp-Source: AGHT+IHcvDHKAnx32u0HTApFSP/vf6dakN1uAkgY0LTox0GOxxn/ZZOR9o9feOXEN1ZTJox4TBAiw6dWn8LCj/A35ubk1jahWfho
+	s=arc-20240116; t=1721208715; c=relaxed/simple;
+	bh=ETsBeuQ8VYOeEzZh29vlEPmitcCpXugfV/BZrYiqiBE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eIGkauKJr/VqHRfQA2TH5PEYbMDLgVOlZFN1/ZbGST0kjxq9NKjM+uua7aXhmAiSAch8+vZDvdvlAzqBp0VL5bftfN2QwoJFX8YLpaFrLMxjeVipfn6UH+BUIV08aAy8qDRzxqvx6KkICGkW1N6Br17KKNOwsnJk4UOiqWbDbtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WI/FSaLG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10151C32782;
+	Wed, 17 Jul 2024 09:31:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721208714;
+	bh=ETsBeuQ8VYOeEzZh29vlEPmitcCpXugfV/BZrYiqiBE=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=WI/FSaLGA709YP/WtFZvNd3GWbb2QRNaq/UBApnIGqD/Waefe8EGBpUUxi1yfm6MS
+	 kw3iXYCJ7VecvSAIGg4tVKitMSGN7J/G83B4TN5Gd2JKX9rJnvHyscKDWXGHlpn8tC
+	 wXH2Ny4njRRrXRkbiDDGtzi6DDUSGQdt1nrsZbqfIsTMJ2KUFSGHAKRWq7l6kEGwGZ
+	 fY8qJ/AqSxt522wk81ljWeft4tcP6mBnrF4c6O7lCcsTGlWPP6uFjtWiWMESwso3XG
+	 5hAxaTUuoH25krg8vAM+wIdL7I7UPU/DfHpufRPMAE4QfHHtJOQk03LqafgY02u3gf
+	 /NsTris5Jdzbw==
+Message-ID: <b601bec70e1e5ad403a469fd7f9757a2d8e93ea6.camel@kernel.org>
+Subject: Re: [PATCH v3] tpm: Relocate buf->handles to appropriate place
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>, 
+	linux-integrity@vger.kernel.org
+Cc: stable@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>, David Howells
+	 <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, James Morris
+	 <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Wed, 17 Jul 2024 12:31:50 +0300
+In-Reply-To: <527dce2173da6f65753109d674882979736c152e.camel@kernel.org>
+References: <20240716185225.873090-1-jarkko@kernel.org>
+	 <36ceafb1513fac502fdfce8fb330fc6e18db47ce.camel@HansenPartnership.com>
+	 <527dce2173da6f65753109d674882979736c152e.camel@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca46:0:b0:375:9cb9:9d04 with SMTP id
- e9e14a558f8ab-395574243f5mr1017815ab.3.1721208663718; Wed, 17 Jul 2024
- 02:31:03 -0700 (PDT)
-Date: Wed, 17 Jul 2024 02:31:03 -0700
-In-Reply-To: <087fb68c-7c33-4bbb-8b9d-281ea1dc1129@paragon-software.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fc6bc5061d6e1ee3@google.com>
-Subject: Re: [syzbot] [ntfs3?] possible deadlock in attr_data_get_block
-From: syzbot <syzbot+36bb70085ef6edc2ebb9@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Wed, 2024-07-17 at 12:27 +0300, Jarkko Sakkinen wrote:
+> On Tue, 2024-07-16 at 15:32 -0400, James Bottomley wrote:
+> > On Tue, 2024-07-16 at 21:52 +0300, Jarkko Sakkinen wrote:
+> > [...]
+> > > Further, 'handles' was incorrectly place to struct tpm_buf, as tpm-
+> > > buf.c does manage its state. It is easy to grep that only piece of
+> > > code that actually uses the field is tpm2-sessions.c.
+> > >=20
+> > > Address the issues by moving the variable to struct tpm_chip.
+> >=20
+> > That's really not a good idea, you should keep counts local to the
+> > structures they're counting, not elsewhere.
+> >=20
+> > tpm_buf->handles counts the number of handles present in the command
+> > encoded in a particular tpm_buf.=C2=A0 Right at the moment we only ever
+> > construct one tpm_buf per tpm (i.e. per tpm_chip) at any one time, so
+> > you can get away with moving handles into tpm_chip.=C2=A0 If we ever
+> > constructed more than one tpm_buf per chip, the handles count would
+> > become corrupted.
+>=20
+> It is not an idea. That count is in the wrong place. Buffer code
+> has no use for it.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-SYZFAIL: write(/proc/sys/fs/binfmt_misc/register) failed
+Also you are misleading here again. Depending on context tpm_buf
+stores different data, including handles.
 
-2024/07/17 09:30:00 parsed 1 programs
-2024/07/17 09:30:00 [FATAL] failed to run ["./syz-executor" "setup" "fault" "binfmt_misc" "usb" "802154" "swap"]: exit status 67
-mkdir(/syzcgroup) failed: 17
-mount(binfmt_misc) failed: 16
-write(/proc/sys/fs/binfmt_misc/register) failed: 17
-SYZFAIL: write(/proc/sys/fs/binfmt_misc/register) failed
- (errno 17: File exists)
-
-
-Tested on:
-
-commit:         d57431c6 fs/ntfs3: Do copy_to_user out of run_lock
-git tree:       https://github.com/Paragon-Software-Group/linux-ntfs3.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=168672e9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=47d282ddffae809f
-dashboard link: https://syzkaller.appspot.com/bug?extid=36bb70085ef6edc2ebb9
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
+BR, Jarkko
 
