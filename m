@@ -1,62 +1,46 @@
-Return-Path: <linux-kernel+bounces-255552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FEBD93422A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:19:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F78193422C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF2C1283FD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:19:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CBB928428C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1D2183083;
-	Wed, 17 Jul 2024 18:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5353183080;
+	Wed, 17 Jul 2024 18:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X2SvuwMT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467CF12E75
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 18:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="OhFxAIc6"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB54812E75;
+	Wed, 17 Jul 2024 18:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721240335; cv=none; b=lzFVAm0nPLVppl2QCIbb33jQK7LdKl9L/h8ik/dk073PESTcr6m+obiPD/izaZfG0UM0DCj6rI9XHFSfFtcv7LIIccKg9Aadr8pSICX6mqYjUBgX0UBE6GWNKGLHPV9xjQQCGZDO51ji+4GiLH0vtE/7KWJGwUJJx/XC48yZyHs=
+	t=1721240349; cv=none; b=nJnj85oQ1dR1BNyVrAeblrudYbqgcViyOsw1KrkIy8NNcJ+jD4qGz7YR/rP7raz/Ak/TwnOkndMt1/q4XQvphoEzsX4jLAggePcFaxBrtgsWsWjtXgXEoOPZLnQXdJ3dpxwGs1rlbkvrQ6zvhWV9O9hadkL0tlk29FY5pidDokg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721240335; c=relaxed/simple;
-	bh=XMcmwqQeqJJpmKPK58D7Uzbt7GSUvI4exaVwLSATFKA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sZpOk8QZMBKxKWzssnbJ2Smb5IZLKOqSbeJjTYjmTOJVAwtWTAfybmJzOTj8sw3guN/R5glw9wONkREYSBltvDgdrayvTu0lK0SdySmvfh6ZtDSxh0IDFMUTBR+uXzEHHT1gN6MmSsV4jewbiT79jFDsOEtjQN+JMs3YOuX4cTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X2SvuwMT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721240333;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XJ+DO1XFPA3kG5fZOCBOo8jUV2iAAVsZ3cSbK5/oCdI=;
-	b=X2SvuwMTKFIM8ucH/YiT8wp5yKh2JgFXaUjapnw0tRAtDbgr3Ro8GEFru+KWUT0T3yATCI
-	uhSLccxEKJ39bOlR4MLq13NA+y7bUFOxvyyGCTohatWkx19K4Vv+3MnOFI+xYOn0Ak2zgU
-	ykNAEOJd36vNuJgQMHvJclgrmeypdGc=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-348-Z9YBNzkfPSCEdpDdbWu1QA-1; Wed,
- 17 Jul 2024 14:18:46 -0400
-X-MC-Unique: Z9YBNzkfPSCEdpDdbWu1QA-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F2C871955D50;
-	Wed, 17 Jul 2024 18:18:43 +0000 (UTC)
-Received: from [10.22.16.209] (unknown [10.22.16.209])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BBECE1955D47;
-	Wed, 17 Jul 2024 18:18:40 +0000 (UTC)
-Message-ID: <134fc34c-10b8-4d00-aaca-8285efce9899@redhat.com>
-Date: Wed, 17 Jul 2024 14:18:39 -0400
+	s=arc-20240116; t=1721240349; c=relaxed/simple;
+	bh=b1aouR+Nif/3pJdFAc+mKgJd7ddCAcxvRCJD0JbS8jI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=bXc8wEq+fbTAPY+9hI04TR5XVYuIM4FJeSfDH6SU/WslPWGc3jaESjslfZYtk+Q4cixZesVLYDFrGAjLFCAguGijtHeywDpF0OWcCHvwRX9QOeyFpBGEITJIC+d1aOiQ7zhhAs2C3PS3UlqcLwRfV/oWAVkzNv86Cz12+YMwovw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=OhFxAIc6; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 8C91C20B7165;
+	Wed, 17 Jul 2024 11:19:06 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8C91C20B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1721240347;
+	bh=tJdPiTzkzL7kgsepa1RSwY8pS6OHdOQ3F2zaVjV9kCg=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=OhFxAIc677f8IqoXw8fkc7DEx9Q+cXUJi3G4rOZDYBneRlzPDrjR/CFTVzqwIbbm0
+	 HFEb5lGZUS8QYZIRkCfOC+BMbijncDDiglaGQAisAM2JNl8ST6zjFRhrGXClE1Dh67
+	 CFadODeFv2QGdIzToPUffWMbbhbsJOjiIRQfib3I=
+Message-ID: <c13f74fc-1c18-480e-84d4-55f11bcb1e98@linux.microsoft.com>
+Date: Wed, 17 Jul 2024 11:19:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,56 +48,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] blk-cgroup: Replace u64 sync with spinlock for iostat
- update
-To: "tj@kernel.org" <tj@kernel.org>
-Cc: =?UTF-8?B?Qm95IFd1ICjlkLPli4Poqrwp?= <Boy.Wu@mediatek.com>,
- "boris@bur.io" <boris@bur.io>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "axboe@kernel.dk" <axboe@kernel.dk>,
- =?UTF-8?B?SXZlcmxpbiBXYW5nICjnjovoi7PpnJYp?= <Iverlin.Wang@mediatek.com>,
- "josef@toxicpanda.com" <josef@toxicpanda.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "angelogioacchino.delregno@collabora.com"
- <angelogioacchino.delregno@collabora.com>
-References: <20240716075206.23121-1-boy.wu@mediatek.com>
- <Zpbify32lel9J-5I@slm.duckdns.org>
- <c5bcbcbaeacdb805adc75c26f92ec69f26ad7706.camel@mediatek.com>
- <5560c690cc6de67139a9b2e45c7a11938b70fc58.camel@mediatek.com>
- <1b19b68adb34410bf6dc8fd3f50e4b82c1a014e4.camel@mediatek.com>
- <Zpf3ks2drDZ7ULTa@slm.duckdns.org>
- <f448f66b-7a91-4281-8f77-159541cbacff@redhat.com>
- <ZpgB9kCAxAAXAtSi@slm.duckdns.org>
+Subject: Re: [PATCH v2] printk: Add a short description string to kmsg_dump()
+To: Jocelyn Falempe <jfalempe@redhat.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>, Petr Mladek
+ <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+ John Ogness <john.ogness@linutronix.de>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Jani Nikula <jani.nikula@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Uros Bizjak <ubizjak@gmail.com>,
+ linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-hyperv@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-hardening@vger.kernel.org
+References: <20240702122639.248110-1-jfalempe@redhat.com>
 Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <ZpgB9kCAxAAXAtSi@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <20240702122639.248110-1-jfalempe@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
+On 7/2/2024 5:26 AM, Jocelyn Falempe wrote:
+> kmsg_dump doesn't forward the panic reason string to the kmsg_dumper
+> callback.
+> This patch adds a new struct kmsg_dump_detail, that will hold the
+> reason and description, and pass it to the dump() callback.
+> 
+> To avoid updating all kmsg_dump() call, it adds a kmsg_dump_desc()
+> function and a macro for backward compatibility.
+> 
+> I've written this for drm_panic, but it can be useful for other
+> kmsg_dumper.
+> It allows to see the panic reason, like "sysrq triggered crash"
+> or "VFS: Unable to mount root fs on xxxx" on the drm panic screen.
+> 
+> v2:
+>  * Use a struct kmsg_dump_detail to hold the reason and description
+>    pointer, for more flexibility if we want to add other parameters.
+>    (Kees Cook)
+>  * Fix powerpc/nvram_64 build, as I didn't update the forward
+>    declaration of oops_to_nvram()
+> 
+> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+> ---
+>  arch/powerpc/kernel/nvram_64.c             |  8 ++++----
+>  arch/powerpc/platforms/powernv/opal-kmsg.c |  4 ++--
+>  arch/um/kernel/kmsg_dump.c                 |  2 +-
+>  drivers/gpu/drm/drm_panic.c                |  4 ++--
+>  drivers/hv/hv_common.c                     |  4 ++--
 
-On 7/17/24 13:40, tj@kernel.org wrote:
-> Hello, Waiman.
->
-> On Wed, Jul 17, 2024 at 01:37:56PM -0400, Waiman Long wrote:
->> bis->sync is still being used in blk_cgroup_bio_start(). Replacing it with a
->> global lock may kill performance. We may have to use a per-cpu lock if we
->> want to go this route of eliminating bis->sync.
-> So, the idea is to keep using u64_sync for blkg->iostat_cpu and use
-> blkg_stat_lock for blkg->iostat. The former is the only one which is updated
-> in hot path, right?
+Acked-by: Nuno Das Neves <nunodasneves@linux.microsoft.com> (hyperv)
 
-Well, it can be confusing whether we are dealing with blkg->iostat or 
-blkg->iostat_cpu. In many cases, we are dealing with iostat_cpu instead 
-of iostat like __blkcg_rstat_flush() and blkg_clear_stat(). So we can't 
-eliminate the use of u64_stats_update_begin_irqsave() in those cases.
-
-Cheers,
-Longman
-
+LGTM
 
