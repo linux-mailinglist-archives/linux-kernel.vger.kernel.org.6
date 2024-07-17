@@ -1,142 +1,147 @@
-Return-Path: <linux-kernel+bounces-254695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDA3B933673
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:38:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05715933674
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BC011F22FDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 05:38:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1656B1C20BE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 05:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E1C10A1C;
-	Wed, 17 Jul 2024 05:38:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCEB10A1C;
+	Wed, 17 Jul 2024 05:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="Nd7t96X2"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="k/XBLT58";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uXMzUvZk"
+Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0EB1878
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 05:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0701878
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 05:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721194721; cv=none; b=f4oSgxRgywfTu78B1WO1T/UZgzEijKp04MArKL21NGwOOlnkitXiriHf62qF35lB9h3eJko/1QMvCghDloXiF/ZlHgYyU4RQ+G1SjVyP1tm0AMM92Jmw+RHZSqiO3MUOeU+rKVPZXvGdfTcvXi5d+6U66AY+96KiPr7mFGcdPdg=
+	t=1721194822; cv=none; b=M40NCdnj8GnEshCFOx8nqb23FFAT8b3TqTN4+AvPmuucPA96lFFRagkL4jKR3ZzG7vboL39DkaMlvMBHhk/nUhT7X7CTU6+HtSHu3cPbA+W0ocjf798OZnnwqqyRheU0N/8zZqutxEflZYFHNiW8paeUcvpknV2mQOUXarGfiLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721194721; c=relaxed/simple;
-	bh=35NV8D5AgC2A3IpahQlvijpejzH/WFyKdyFKLkkvxgQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kBAof+o57EWU8J8jxCHAIkKBScLNKSe7tm3yJ3O0JlIT0CPhO0hjVEP5AO3wzgEVmqxdHGBnIRXp9ft2dzTXk/5F3ckrI6RDoP1gTBJx1PrRonq/UmHEpCnYyLycR+nvLpQVBTcLw7W/cibf8S4mDwH/myyI/YyaozECbfKXRJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=Nd7t96X2; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-7fe8d029fbeso23253839f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 22:38:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1721194719; x=1721799519; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b1d1s8x6mwhXq96evpThZCuzx5ViT58+IxOGUpFwTDk=;
-        b=Nd7t96X2g944ju1IO1IRt2xyGLJzr39DnhpnedLHyY/SDaiiTib6UoQTwDiwZ4vcoi
-         nhzNGRfbPvMuWnMXv6H6SNuSpkvPiU6wook5OSalA291ydU21GBlVhIOPEBSXuuBzNur
-         jqqeb+zG0Q5tYToVfXJZloPlVgQXH10zwVYXnll0GO8WoqQStzmmNEsT9a+kcxvLzKHD
-         +fhbUT4ulVZn3s3E89eoDtdeQPCJjnRAo6XQSwP4H4wI39WAZuz2ojpxNC+9rYRuvqxL
-         +Mz8GSMUdcRuWLwfEaTYZG8nR/TJdoGVKWClzJqaAL5r0nm/YOeX7/3hY6OXkQYUB6fM
-         IHHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721194719; x=1721799519;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b1d1s8x6mwhXq96evpThZCuzx5ViT58+IxOGUpFwTDk=;
-        b=v3BJmZmANdHWfHXk36dt90WlsAa77QYgCTbHPIxyKUegAe8obmTkKUIpjlJ/4BBowS
-         LqP2E3h7oyVfyBkWxCTTzLwthmfANPBfx9x3YA5R8a4VyKPrmnfF7QGHxhP0BAWtlZcj
-         HKFoiuOg/MAb4J90BZTBlaKHqm8bcytcRQQH7+xN9pHozb9RJ7GqOh5wCTC78JGa8mEW
-         pZcPxkW2B6m5591MTsnNbZwx9FP/StXBCbVKb6CrNTTpmtB5LUDWRwH3rvTZcyCEwthz
-         TBxU+3Iu/XHhi24rEen23bUn8fnh2kiTrQdZfXFbNks72k+qSG1waXTKbXYhsPtLi3MV
-         zWyg==
-X-Forwarded-Encrypted: i=1; AJvYcCWB3FMdstI+7GHmigFbfOGDwO0DlzkksHTlZ46VyT8BOa51H8jjfetIExoj7+vpHyyvmiL3yUoVfuzd7vDnSA0kIVCSyZgJL42SovXv
-X-Gm-Message-State: AOJu0YxlRYkKJQbBmeXK0T9nhcPaogFMGud87sEdx5NsSRy1nyOpveD+
-	hDZCsX59aTkRWEaWYVspY2v13d1PRJPEA7KbGL/dP/RdNcwlR46OU9RZwC1YM6J4aA2wJV+I9NV
-	Nq4YoY/7x2Lm9T+yAFbHZ0/JZWlx4AxgGW9x3dw==
-X-Google-Smtp-Source: AGHT+IFar2Tx72l8Cv59EhI8FVwMpDSti1Ksk+Y6IAcwQVvN0Ug2DKjNu+xQ6dXlAHjN7eOD53sNRQW8pQa/oQb1+Ls=
-X-Received: by 2002:a05:6e02:1384:b0:377:1611:1b49 with SMTP id
- e9e14a558f8ab-3955760f797mr9351435ab.25.1721194718728; Tue, 16 Jul 2024
- 22:38:38 -0700 (PDT)
+	s=arc-20240116; t=1721194822; c=relaxed/simple;
+	bh=UZQ3LPOMW6rlopp3XIosJrKAsIlcT2VdhUlmojIV/Po=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=kePT6vyQs1v6HKOA0u1gXJcH6fHFiC32QhSB9r9pz6xDicUzUWZF8z4z4qm/MTB2W8tSPDZHfC5yiRJjl57Kcta/zA4QJxF4M4LPAexEgYDCbVwrI1nbob4BEfj2gXWJXKGlOpZs1zfp5OfQ/gwVoPtKOwsbZHm6J7r6gT+P1lM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=k/XBLT58; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uXMzUvZk; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id E72E611401BF;
+	Wed, 17 Jul 2024 01:40:19 -0400 (EDT)
+Received: from wimap26 ([10.202.2.86])
+  by compute6.internal (MEProxy); Wed, 17 Jul 2024 01:40:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1721194819; x=1721281219; bh=dzHN4GZtuP
+	JB029ydV+RBdnF9quOADzKqz+UUHymSe4=; b=k/XBLT58EQJtuIr8u3zdFTyGoA
+	Nu11n/OQWiXh77y0bZsxJfd7ILufh+rLdV2McL99L9tL4ueCis71Nhb0JfYxAa0W
+	rL+vCmbGD46iGFsEMeWj3qaGm8/uAYUl1AG9Ft9rWy8cu0REXx4LeTa/Ly6wvF6v
+	qJpRFVnNcqWARlpY7tNDd7rEnF3PxbW9e+FP0TcvVaMtxRk8lQHfGxKELapJusz2
+	IkjQyMBpvMjX5MGGXZvh6uuXabnG9uCGb3nLevWs1ghk2qrYnllCEU4KpcXQ4Vyv
+	Uo/DRMkzigmyi390ZAn8xgdorXixIvWNb8OYt9fcFqo6PEaXknDrFxxzhg6w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1721194819; x=1721281219; bh=dzHN4GZtuPJB029ydV+RBdnF9quO
+	ADzKqz+UUHymSe4=; b=uXMzUvZkgLGDyEwwZ4fTUjL+ahcBQvjQ9s1Zl6GLVbQY
+	pZ07MAHICxTeEVOqDL81ABHdsQnufjxJMUFno4fMQa8ihXiilvcF8dXS6Y5jyigN
+	Jze3+9XRMJAa5wlTa6IhXWqpTBq8MKZ0iwnztitP/94WAEVFYefYqJKmZETuFNsT
+	695Vl5rmP1YlORO3H0ZLwjtNqJ9oCpv/cW3inXJ83pJK9blIYnLM7qkmEy+Y5vFD
+	QFmSWOLAlzGuWiceGDYRpq7ObycTvHT/5PCAMgyioOAa3GsFc8laTt9oKsuHr86X
+	yGyGSUXnLZDH9drsU8bNMi5oUVw8WQNruBoBxJEJtA==
+X-ME-Sender: <xms:QlmXZhIls2N-ErNmpRsvFmx-2xC05gjtqx4X4OMsE-BKfX9ghJLNew>
+    <xme:QlmXZtIQI3fSkDdQGWYeYPZ3U0Zd9ZOYBKUtWA_GytCDOCTwIdy-Lr0DqzyOrUNRT
+    k-mW2ZywgapQjarwdA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgeehgddutddtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:QlmXZpstA9Dm57-RNHO4E_1bT3yp5aVNl0EM2zv6E0dxuh3ef3-hYQ>
+    <xmx:QlmXZiYZGyb9qsFlNnNGpSgjep-3TnE9JddBi5LXSsXBFXsTbziJ2A>
+    <xmx:QlmXZoadbfEuMjERAwRCqQvUuWHs5ciaPnzNpT1Jh9P1FPb9e-5Iqw>
+    <xmx:QlmXZmASoTN9wPZQy6g3mEdekBd2DSdzdTn2LeQslCekqm911neBfg>
+    <xmx:Q1mXZvUZlB-HUyM5ThdVsRWJoYOoPGasmAvlsl664lWLdBXivBJyx_4L>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 9A28B19C005D; Wed, 17 Jul 2024 01:40:18 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717031714.1946036-1-nick.hu@sifive.com>
-In-Reply-To: <20240717031714.1946036-1-nick.hu@sifive.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Wed, 17 Jul 2024 11:08:26 +0530
-Message-ID: <CAAhSdy2W3gCdx_EtqVaTLqk8nVOnc59T2ub3KhdCuS20qHWBSg@mail.gmail.com>
-Subject: Re: [PATCH v2] RISC-V: Enable the IPI before workqueue_online_cpu()
-To: Nick Hu <nick.hu@sifive.com>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	tglx@linutronix.de, peterz@infradead.org, samuel.holland@sifive.com, 
-	tj@kernel.org, alexghiti@rivosinc.com, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, greentime.hu@sifive.com, zong.li@sifive.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-Id: <22bf9a24-b4db-4017-b5a9-1b03e6f20bff@app.fastmail.com>
+In-Reply-To: 
+ <MW4PR18MB5244DBBC231E986EDBEDD5BEA6A32@MW4PR18MB5244.namprd18.prod.outlook.com>
+References: <20240717045225.138799-1-vattunuru@marvell.com>
+ <2024071709-nephew-scooter-5c6b@gregkh>
+ <MW4PR18MB5244DBBC231E986EDBEDD5BEA6A32@MW4PR18MB5244.namprd18.prod.outlook.com>
+Date: Wed, 17 Jul 2024 07:39:57 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Vamsi Attunuru" <vattunuru@marvell.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "Nathan Chancellor" <nathan@kernel.org>,
+ "Jeff Johnson" <quic_jjohnson@quicinc.com>
+Subject: Re: [EXTERNAL] Re: [PATCH] misc: mrvl-cn10k-dpi: resolve compilation issues on
+ 32-bit ARM
+Content-Type: text/plain
 
-On Wed, Jul 17, 2024 at 8:47=E2=80=AFAM Nick Hu <nick.hu@sifive.com> wrote:
->
-> Sometimes the hotplug cpu stalls at the arch_cpu_idle() for a while after
-> workqueue_online_cpu(). When cpu stalls at the idle loop, the reschedule
-> IPI is pending. However the enable bit is not enabled yet so the cpu stal=
-ls
-> at WFI until watchdog timeout. Therefore enable the IPI before the
-> workqueue_online_cpu() to fix the issue.
->
-> Fixes: 63c5484e7495 ("workqueue: Add multiple affinity scopes and interfa=
-ce to select them")
-> Signed-off-by: Nick Hu <nick.hu@sifive.com>
+On Wed, Jul 17, 2024, at 07:35, Vamsi Krishna Attunuru wrote:
 
-LGTM.
+>>>  #include <uapi/misc/mrvl_cn10k_dpi.h>
+>>>
+>>> @@ -185,6 +188,8 @@ struct dpi_mbox_message {
+>>>  	uint64_t word_h;
+>>>  };
+>>>
+>>> +#ifdef CONFIG_64BIT
+>>> +
+>>>  static inline void dpi_reg_write(struct dpipf *dpi, u64 offset, u64
+>>> val)  {
+>>>  	writeq(val, dpi->reg_base + offset); @@ -195,6 +200,40 @@ static
+>>> inline u64 dpi_reg_read(struct dpipf *dpi, u64 offset)
+>>>  	return readq(dpi->reg_base + offset);  }
+>>>
+>>> +static inline void dpi_writeq(u64 val, void __iomem *addr) {
+>>> +	writeq(val, addr);
+>>> +}
+>>> +
+>>> +static inline u64 dpi_readq(const void __iomem *addr) {
+>>> +	return readq(addr);
+>>> +}
+>>> +
+>>> +#else
+>>
+>>Normally we do not like #ifdef in .c files, are you sure this is the correct way to
+>>handle this?
+>
+> Ok, came across the similar usage in some other drivers and presumed 
+> it's fine with small routines. I will move the #ifdef inside the 
+> routines than.
+>
+> Thank you, Greg, for the prompt feedback.
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
+You shouldn't need any #ifdef here, just call readq/writeq
+unconditionally after including the header.
 
-Regards,
-Anup
+Have you been able to confirm whether the device works
+correctly with the lo_hi ordering?
 
-> ---
-> Changes in v2: Rename the cpuhp_state of sbi ipi
->
->  arch/riscv/kernel/sbi-ipi.c | 2 +-
->  include/linux/cpuhotplug.h  | 1 +
->  2 files changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/kernel/sbi-ipi.c b/arch/riscv/kernel/sbi-ipi.c
-> index 1026e22955cc..0cc5559c08d8 100644
-> --- a/arch/riscv/kernel/sbi-ipi.c
-> +++ b/arch/riscv/kernel/sbi-ipi.c
-> @@ -71,7 +71,7 @@ void __init sbi_ipi_init(void)
->          * the masking/unmasking of virtual IPIs is done
->          * via generic IPI-Mux
->          */
-> -       cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
-> +       cpuhp_setup_state(CPUHP_AP_IRQ_RISCV_SBI_IPI_STARTING,
->                           "irqchip/sbi-ipi:starting",
->                           sbi_ipi_starting_cpu, NULL);
->
-> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-> index 7a5785f405b6..0a8fd4a3d04c 100644
-> --- a/include/linux/cpuhotplug.h
-> +++ b/include/linux/cpuhotplug.h
-> @@ -147,6 +147,7 @@ enum cpuhp_state {
->         CPUHP_AP_IRQ_LOONGARCH_STARTING,
->         CPUHP_AP_IRQ_SIFIVE_PLIC_STARTING,
->         CPUHP_AP_IRQ_RISCV_IMSIC_STARTING,
-> +       CPUHP_AP_IRQ_RISCV_SBI_IPI_STARTING,
->         CPUHP_AP_ARM_MVEBU_COHERENCY,
->         CPUHP_AP_PERF_X86_AMD_UNCORE_STARTING,
->         CPUHP_AP_PERF_X86_STARTING,
-> --
-> 2.34.1
->
+      Arnd
 
