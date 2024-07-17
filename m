@@ -1,236 +1,190 @@
-Return-Path: <linux-kernel+bounces-255328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFD9C933F38
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:05:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D443933F3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:05:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B4D21F21A64
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:05:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 761F2B2391C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70DD51822E6;
-	Wed, 17 Jul 2024 15:04:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2631E181CFE;
+	Wed, 17 Jul 2024 15:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vjjdpi3O"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="UA8DGrlt"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6AD181BAB
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 15:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8876181B90
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 15:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721228646; cv=none; b=cqbM+HoNyEJU9QNvGO5CSHvbiGgHh3zagb4dUSQnYa67p0I9f6eKUPXxQJDJFIqxi+O3/5QpF0nPujqqzy4VHnBYPx6YGdrZXPouqKDq0j3LyfKYZodPJiGB/LDX+ChfDGONkXCDr+BPZYTl4uTyDvpqVp7DHRXs1ffWYrr31uo=
+	t=1721228663; cv=none; b=ZlTtzneNHIOtALWNKnf0pNg07EPTogoPM5EQaKHzj5ZF4KrP1NwwKKhWGAvrLWFBy0TxnwMC28vYihjb7Fc133rvGomHPc5GHAG3v5XJsZEf3EsyXVMhXD7ErYercQ8lvU0bu6AWI/OS0UG+GiVZyC3du53LLZDBrb5/7bYTLyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721228646; c=relaxed/simple;
-	bh=ltAM7XGit+2Yma7oYeKus3MLrvcpkrawHqmDb0gqPoI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vkhqud4DKNmVl8ux4htJ3OxqitAsISPw0g+1gsbiCR0LtkvwTn2E4dtuFHchfQisWMitGhir0MdQX69W5coEjARMABel+3o/nXl0Ao+KZwRzk+SVIIX2brnSj5OYgVg1itJfpMsv6lp4Sx75jy6dG1Xn8uCoy0huIifQDXnBzPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vjjdpi3O; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70b7a528331so2904603b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 08:04:04 -0700 (PDT)
+	s=arc-20240116; t=1721228663; c=relaxed/simple;
+	bh=cEVK6GIdWYaMZGA/hOHwHVgRjYyYadpMzyQcAdayBwg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IEhq7zEjO9kY9dS4TxgwiwdgjQoMwCUfXOHEFPrDBaO2rFDoVosdLYAErN64f9IyAgMg9T8snEbOLEM5obeo042wjmhMYei/4ULgler+RPeBQ6yOsaIFNViGuDwHKx7yNQj2y2+XAwMhXryNr+eU9RTnS66jTZwIbO8sEcTu2jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=UA8DGrlt; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42673554402so7768825e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 08:04:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721228644; x=1721833444; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/ascaNctnq7uvd+OydTeIwlQPxoFxG0hR3xpxVorsGM=;
-        b=vjjdpi3Oe1ebIqs0KLTydPCGNAJDn0iDtYhZ6C/sjGezPBcdQ+hvph3ofTRGo1Oajd
-         mTbe9k7JoNi2Brkc7TcErJ1UzTZjj/4n6VnFdYVYWz2vQ9fe5vJ+ael8DoloXcdFscgB
-         Z+Uvf5mIySOMySPoBh8aEpaEPTn58v+pwzNG6iifaxjCzeUSt6znDxytxu0nF11ideEW
-         XCZ3ZDWr298H6jjUmYElT9t5VSFIWYJfw2x5GBDk+46op3AqBg+5jMuntqoQ4wGK/N1s
-         LtX6MebSwU0pvfI3si8WL7LcrzuwJzpexEUegg4V2HJ1tx3Ow+eSvgx3ibVQsaPdeI+n
-         kblQ==
+        d=ffwll.ch; s=google; t=1721228659; x=1721833459; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u5pjr/7PlGU0bno59J3w/W6V2Jp6tDpULmroTCCRYAE=;
+        b=UA8DGrlt4trcsuvR5a2AbRTmQiIbtgLVuqyHK0SRfN4/F4N41CYRLv8Jpyu8SZZ3yw
+         mj9vTPL1KmpnzKHNTkeRTBMRSQxBMz4rZsDGPfCgP5kUopfworoXIku4P6lQVfUnS9tx
+         8ZSLmmPHaLh7ERlBsK6NuloqkQch7ZjC5OE6o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721228644; x=1721833444;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/ascaNctnq7uvd+OydTeIwlQPxoFxG0hR3xpxVorsGM=;
-        b=LhaF2uTDbegt7ciGLK4M8U02xB5IbrHb7mTgd1pp6XfQO6k/L71xotLtc80X2utkdx
-         lm90mG1MUhUqav8tmBIsq2cbD3i0zIgmpbmPIiKO12GuLrijW4EjzlvkKXe0atPt/H2l
-         3HEeXKL7NClNFnO61x7wHVAp6NSHHwnblVCxYrOH30RYCcUJ2S3Lw/iBXQuXtxY8/u5M
-         0IVMai7qRnO4FNed2m3rqoJ3FoN1AxHl/rFUhk6TiTAVQzChla0/52dwn+Hx9l5/96jQ
-         jqtl/emGeSBlIPhveND9+Oev+eUz5wXKkdd7/dYovjmZquNCqOW45xBWL6tnkZ7+WGyT
-         Rnzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUfZKRncOKwWNJO7QmltCgzg5e+tnFjfp6deJW7iD5fbR4obi+bNl5a+8PkDkZDOq7Wkc1p1kWTuY23Bt9yR1NOy1PwiqHw9Hko4DD6
-X-Gm-Message-State: AOJu0YynDElF3hjuFEUaY9OpGPNhM2pMj8Hkh6sNcndXkIwLxxl8Hm3N
-	kWwZ5ra5V4QoLzQ/vL56oAgG/JZ0Y88jEgU7qGDXbu6Uhx7hYzH9A2tDXp6HDnK/CvhHZl1jEws
-	xQJZmUZN8sDBpR0qM93Og26dW/6QNgH/N/HhDMA==
-X-Google-Smtp-Source: AGHT+IExqnE+FNSc7zp9dv1O/rSOtgI13egN7BdykQVCwRmNspCW10dy60NGgyaFxzHfgFQfmkcW/qpcqpGqPq4k6Fs=
-X-Received: by 2002:a05:6300:668b:b0:1c3:ff89:1fc6 with SMTP id
- adf61e73a8af0-1c3ff89208amr1918330637.53.1721228644183; Wed, 17 Jul 2024
- 08:04:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721228659; x=1721833459;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u5pjr/7PlGU0bno59J3w/W6V2Jp6tDpULmroTCCRYAE=;
+        b=YlOXtBRtmq+iboaDPcE9xX4d2OPtty3vQLBUx1o3D+vTShk3nXsGoSkBw2rKxsIM6O
+         KtRC7i/Jxo22XBKbxY5bT/6xAIfKWnYDvvCPbS1S+T8ua/hhW5ZDqx/vcr8ru0BSiGoB
+         TlwtsjKu75D7MAIofd5hPpxKl+754MRBLGumsbdDgnkg68px2NQ7ZcA4fZv+1R3MiZ+S
+         OflJ8/zSI0Lk7g6uf9IjZeLumnwboRATywZktmkJ0QrF6M9we6Be1xSrXFueEbxqHxhG
+         ka5fzKuZ39WsLL+H8CUoD0/fqub5ZL+xR/ziYGdtJYnOt7VJIgtkAlBziyvs5GbkrUYJ
+         7obQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJEHjWgFqQpntI76be4wn+COhWM+oVwAcRmTIJlKWauV/+BUbe5vuii0yTzajrDi54h8lY8wKuA00OSnqwb/2NU5uCtiCxOL7QIWvB
+X-Gm-Message-State: AOJu0Yz2GNRCCgkToWL1tZSDaDen4Y4bA/Tys01PktGBM/szPfJSdvhE
+	ODXX498JWwVSK34Klox25kvyAKmkJxGfAavF7wDI2pqJqyBZ8Kn3jgu+nxHdefU=
+X-Google-Smtp-Source: AGHT+IGnQq5qn3XFcUVytJqVgSB3xoYK5wfjBzWyxNvSmCk4IGCgYkb1mLjSP+9pJg5W/Sm0P9gk8w==
+X-Received: by 2002:a05:600c:1c86:b0:424:ac9f:5c61 with SMTP id 5b1f17b1804b1-427c2d0c8eemr8946465e9.3.1721228659021;
+        Wed, 17 Jul 2024 08:04:19 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427c78076f7sm1074075e9.37.2024.07.17.08.04.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jul 2024 08:04:18 -0700 (PDT)
+Date: Wed, 17 Jul 2024 17:04:16 +0200
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+To: Jocelyn Falempe <jfalempe@redhat.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Helge Deller <deller@gmx.de>,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Samuel Thibault <samuel.thibault@ens-lyon.org>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH 2/3] fbcon: Add an option to disable fbcon in panic.
+Message-ID: <ZpfdcC2Es9rweHW_@phenom.ffwll.local>
+Mail-Followup-To: Jocelyn Falempe <jfalempe@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Helge Deller <deller@gmx.de>,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Samuel Thibault <samuel.thibault@ens-lyon.org>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-fbdev@vger.kernel.org
+References: <20240717090102.968152-1-jfalempe@redhat.com>
+ <20240717090102.968152-3-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240712102029.3697965-1-james.clark@linaro.org> <20240712102029.3697965-18-james.clark@linaro.org>
-In-Reply-To: <20240712102029.3697965-18-james.clark@linaro.org>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Wed, 17 Jul 2024 16:03:51 +0100
-Message-ID: <CAJ9a7Vg4YF-frWF2VNvhL-qyHp2wBaVD7TxzW=QG-LsUMKutHQ@mail.gmail.com>
-Subject: Re: [PATCH v5 17/17] coresight: Make trace ID map spinlock local to
- the map
-To: James Clark <james.clark@linaro.org>
-Cc: coresight@lists.linaro.org, suzuki.poulose@arm.com, 
-	gankulkarni@os.amperecomputing.com, leo.yan@linux.dev, 
-	anshuman.khandual@arm.com, James Clark <james.clark@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240717090102.968152-3-jfalempe@redhat.com>
+X-Operating-System: Linux phenom 6.9.7-amd64 
 
-Reviewed-by: Mike Leach <mike.leach@linaro.org>
-
-
-On Fri, 12 Jul 2024 at 11:23, James Clark <james.clark@linaro.org> wrote:
->
-> From: James Clark <james.clark@arm.com>
->
-> Reduce contention on the lock by replacing the global lock with one for
-> each map.
->
-> Signed-off-by: James Clark <james.clark@arm.com>
-> Signed-off-by: James Clark <james.clark@linaro.org>
+On Wed, Jul 17, 2024 at 10:48:40AM +0200, Jocelyn Falempe wrote:
+> This is required to avoid conflict between DRM_PANIC, and fbcon. If
+> a drm device already handle panic with drm_panic, it should set
+> the skip_panic field in fb_info, so that fbcon will stay quiet, and
+> not overwrite the panic_screen.
+> 
+> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
 > ---
->  drivers/hwtracing/coresight/coresight-core.c  |  1 +
->  .../hwtracing/coresight/coresight-trace-id.c  | 26 +++++++++----------
->  include/linux/coresight.h                     |  1 +
->  3 files changed, 14 insertions(+), 14 deletions(-)
->
-> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
-> index c427e9344a84..ea38ecf26fcb 100644
-> --- a/drivers/hwtracing/coresight/coresight-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-core.c
-> @@ -1164,6 +1164,7 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
->
->         if (csdev->type == CORESIGHT_DEV_TYPE_SINK ||
->             csdev->type == CORESIGHT_DEV_TYPE_LINKSINK) {
-> +               spin_lock_init(&csdev->perf_sink_id_map.lock);
->                 csdev->perf_sink_id_map.cpu_map = alloc_percpu(atomic_t);
->                 if (!csdev->perf_sink_id_map.cpu_map) {
->                         kfree(csdev);
-> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.c b/drivers/hwtracing/coresight/coresight-trace-id.c
-> index bddaed3e5cf8..d98e12cb30ec 100644
-> --- a/drivers/hwtracing/coresight/coresight-trace-id.c
-> +++ b/drivers/hwtracing/coresight/coresight-trace-id.c
-> @@ -15,12 +15,10 @@
->  /* Default trace ID map. Used in sysfs mode and for system sources */
->  static DEFINE_PER_CPU(atomic_t, id_map_default_cpu_ids) = ATOMIC_INIT(0);
->  static struct coresight_trace_id_map id_map_default = {
-> -       .cpu_map = &id_map_default_cpu_ids
-> +       .cpu_map = &id_map_default_cpu_ids,
-> +       .lock = __SPIN_LOCK_UNLOCKED(id_map_default.lock)
->  };
->
-> -/* lock to protect id_map and cpu data  */
-> -static DEFINE_SPINLOCK(id_map_lock);
-> -
->  /* #define TRACE_ID_DEBUG 1 */
->  #if defined(TRACE_ID_DEBUG) || defined(CONFIG_COMPILE_TEST)
->
-> @@ -123,11 +121,11 @@ static void coresight_trace_id_release_all(struct coresight_trace_id_map *id_map
->         unsigned long flags;
->         int cpu;
->
-> -       spin_lock_irqsave(&id_map_lock, flags);
-> +       spin_lock_irqsave(&id_map->lock, flags);
->         bitmap_zero(id_map->used_ids, CORESIGHT_TRACE_IDS_MAX);
->         for_each_possible_cpu(cpu)
->                 atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), 0);
-> -       spin_unlock_irqrestore(&id_map_lock, flags);
-> +       spin_unlock_irqrestore(&id_map->lock, flags);
->         DUMP_ID_MAP(id_map);
+>  drivers/gpu/drm/drm_fb_helper.c  | 2 ++
+>  drivers/video/fbdev/core/fbcon.c | 7 ++++++-
+>  include/linux/fb.h               | 1 +
+>  3 files changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+> index e2e19f49342e..3662d664d8f9 100644
+> --- a/drivers/gpu/drm/drm_fb_helper.c
+> +++ b/drivers/gpu/drm/drm_fb_helper.c
+> @@ -40,6 +40,7 @@
+>  #include <drm/drm_fourcc.h>
+>  #include <drm/drm_framebuffer.h>
+>  #include <drm/drm_modeset_helper_vtables.h>
+> +#include <drm/drm_panic.h>
+>  #include <drm/drm_print.h>
+>  #include <drm/drm_vblank.h>
+>  
+> @@ -524,6 +525,7 @@ struct fb_info *drm_fb_helper_alloc_info(struct drm_fb_helper *fb_helper)
+>  	fb_helper->info = info;
+>  	info->skip_vt_switch = true;
+>  
+> +	info->skip_panic = drm_panic_is_enabled(fb_helper->dev);
+>  	return info;
+>  
+>  err_release:
+
+Bit a bikeshed, but I'd split this patch out since it's for drm's fbdev
+emulation, not the fbcon core code. With that:
+
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+
+> diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
+> index 3f7333dca508..498d9c07df80 100644
+> --- a/drivers/video/fbdev/core/fbcon.c
+> +++ b/drivers/video/fbdev/core/fbcon.c
+> @@ -270,12 +270,17 @@ static int fbcon_get_rotate(struct fb_info *info)
+>  	return (ops) ? ops->rotate : 0;
 >  }
->
-> @@ -136,7 +134,7 @@ static int _coresight_trace_id_get_cpu_id(int cpu, struct coresight_trace_id_map
->         unsigned long flags;
->         int id;
->
-> -       spin_lock_irqsave(&id_map_lock, flags);
-> +       spin_lock_irqsave(&id_map->lock, flags);
->
->         /* check for existing allocation for this CPU */
->         id = _coresight_trace_id_read_cpu_id(cpu, id_map);
-> @@ -163,7 +161,7 @@ static int _coresight_trace_id_get_cpu_id(int cpu, struct coresight_trace_id_map
->         atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), id);
->
->  get_cpu_id_out_unlock:
-> -       spin_unlock_irqrestore(&id_map_lock, flags);
-> +       spin_unlock_irqrestore(&id_map->lock, flags);
->
->         DUMP_ID_CPU(cpu, id);
->         DUMP_ID_MAP(id_map);
-> @@ -180,12 +178,12 @@ static void _coresight_trace_id_put_cpu_id(int cpu, struct coresight_trace_id_ma
->         if (!id)
->                 return;
->
-> -       spin_lock_irqsave(&id_map_lock, flags);
-> +       spin_lock_irqsave(&id_map->lock, flags);
->
->         coresight_trace_id_free(id, id_map);
->         atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), 0);
->
-> -       spin_unlock_irqrestore(&id_map_lock, flags);
-> +       spin_unlock_irqrestore(&id_map->lock, flags);
->         DUMP_ID_CPU(cpu, id);
->         DUMP_ID_MAP(id_map);
->  }
-> @@ -195,10 +193,10 @@ static int coresight_trace_id_map_get_system_id(struct coresight_trace_id_map *i
->         unsigned long flags;
->         int id;
->
-> -       spin_lock_irqsave(&id_map_lock, flags);
-> +       spin_lock_irqsave(&id_map->lock, flags);
->         /* prefer odd IDs for system components to avoid legacy CPU IDS */
->         id = coresight_trace_id_alloc_new_id(id_map, 0, true);
-> -       spin_unlock_irqrestore(&id_map_lock, flags);
-> +       spin_unlock_irqrestore(&id_map->lock, flags);
->
->         DUMP_ID(id);
->         DUMP_ID_MAP(id_map);
-> @@ -209,9 +207,9 @@ static void coresight_trace_id_map_put_system_id(struct coresight_trace_id_map *
+>  
+> +static bool fbcon_skip_panic(struct fb_info *info)
+> +{
+> +	return (info->skip_panic && unlikely(atomic_read(&panic_cpu) != PANIC_CPU_INVALID));
+> +}
+> +
+>  static inline int fbcon_is_inactive(struct vc_data *vc, struct fb_info *info)
 >  {
->         unsigned long flags;
->
-> -       spin_lock_irqsave(&id_map_lock, flags);
-> +       spin_lock_irqsave(&id_map->lock, flags);
->         coresight_trace_id_free(id, id_map);
-> -       spin_unlock_irqrestore(&id_map_lock, flags);
-> +       spin_unlock_irqrestore(&id_map->lock, flags);
->
->         DUMP_ID(id);
->         DUMP_ID_MAP(id_map);
-> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-> index 197949fd2c35..c13342594278 100644
-> --- a/include/linux/coresight.h
-> +++ b/include/linux/coresight.h
-> @@ -233,6 +233,7 @@ struct coresight_trace_id_map {
->         DECLARE_BITMAP(used_ids, CORESIGHT_TRACE_IDS_MAX);
->         atomic_t __percpu *cpu_map;
->         atomic_t perf_cs_etm_session_active;
-> +       spinlock_t lock;
+>  	struct fbcon_ops *ops = info->fbcon_par;
+>  
+>  	return (info->state != FBINFO_STATE_RUNNING ||
+> -		vc->vc_mode != KD_TEXT || ops->graphics);
+> +		vc->vc_mode != KD_TEXT || ops->graphics || fbcon_skip_panic(info));
+>  }
+>  
+>  static int get_color(struct vc_data *vc, struct fb_info *info,
+> diff --git a/include/linux/fb.h b/include/linux/fb.h
+> index db7d97b10964..865dad03e73e 100644
+> --- a/include/linux/fb.h
+> +++ b/include/linux/fb.h
+> @@ -510,6 +510,7 @@ struct fb_info {
+>  	void *par;
+>  
+>  	bool skip_vt_switch; /* no VT switch on suspend/resume required */
+> +	bool skip_panic; /* Do not write to the fb after a panic */
 >  };
->
->  /**
-> --
-> 2.34.1
->
+>  
+>  /* This will go away
+> -- 
+> 2.45.2
+> 
 
-
---
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
