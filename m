@@ -1,117 +1,118 @@
-Return-Path: <linux-kernel+bounces-254586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A61879334F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 03:21:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C4FC9334F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 03:22:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D38691C21B13
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 01:21:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 123CA1F2335D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 01:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B0A469D;
-	Wed, 17 Jul 2024 01:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86B515A8;
+	Wed, 17 Jul 2024 01:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KNKh2AeQ"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1K8mNnwm"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5D8ED8
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 01:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1F3ED8
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 01:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721179298; cv=none; b=Nv9zcr/aR2nCntJirjMAHQC62zI7VCrddER2bzwhjxMUX5BOBXHjHa5o5OmL8FJDlw4D/sce2Ty99QbcfoAI5XWWXmOw/oYRuo3yomZGZ32HN0mLKvzZqLkZ8Z2X+3owEp/NIfTSr/I8cWbhsraWewBs59w5BDNpjsK28S+hv6c=
+	t=1721179346; cv=none; b=eiJII87U6qwIee/ZUH3Fmqx1F0R6taNA5vj6Ij/1yXGId+GohqRJEsUMSAwHIPa4GoTAqSLumATtHndRPjmS2/y3MymWfw1HRG3aDSpAQ7j1miCBc88YknLHYd56gsm/rmsH3Wg2wV94rvK63BGWa5Tf48cpp87yDwNJjRMxUTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721179298; c=relaxed/simple;
-	bh=lhXGzSMA/JZRKD/aeyepBh11njIMXYWpRmumnS6D6Rk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VL1C/d8nLJWz6EO1kk1E1p9/cKB+0+ldrc5pdjrk+ulmG7AVVZua5NDaJk5RgYbAKBBw0AGAp6p1NqDtgeRL0VHvxc2dbAt8j9RZIU0WqTq1Hk10UG8PkMEjYcNGhTw5MYSKuWT/rGQT7KEWY9uWF1gD9IAGPEwTgXB+Xcj+3t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KNKh2AeQ; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-380eb36f5ceso1858595ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 18:21:36 -0700 (PDT)
+	s=arc-20240116; t=1721179346; c=relaxed/simple;
+	bh=UZUI7FJG9zfLb/AEzcLaJN+U3HH2U+41STHrzAi6Mvk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=udQuBWkMrltKnY3gD8tFyT5IhUfGzZvecL7804QSbYwmKbjjhzaJUpFaHF5wPZywUhoL1I8M9+Uift3wygg8NOHOY+XYjta1ryCHcL473vI8gWLjcEIVbXwVAB/TpjoYvGH3zmH/r1t1BDl421eUe0We3EomQEmNNUvqk23+4+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1K8mNnwm; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e036d1ce4f7so305025276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 18:22:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721179296; x=1721784096; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HxSuTpzy0m4oHhnzHH3Vl/gMhNpkpWEzqeVsFcwdgKA=;
-        b=KNKh2AeQoO5RPXMW0exoIJniLzUvVSlvE87QnJDuAZbyudY2nGirqyZOgEJmVm40IP
-         Ql6OTXYZiVH5vbvxbCxr4lLlz/sStGcEygug3+xRtGKCys0xNZRt8c0jyI1Mx67UIxNn
-         Q7z04sTTFptgXu79goWkMATQDz1Za7GURr+82UpehA84qVIGSvbcOxdlUzwmx5O3DVnl
-         VwC2JDtUdI1UnUkEYqMeC2/VBGsk1jvMY2n1N64r50eVOkVixg7ybgqH5DEUz1F639EA
-         ui26sByFda3wF+JOWUbigX31tNLI3nMq7UzOytHIH6jaZK1oki1uKrSxN7UkZEDPWcLM
-         PfWw==
+        d=google.com; s=20230601; t=1721179344; x=1721784144; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UZUI7FJG9zfLb/AEzcLaJN+U3HH2U+41STHrzAi6Mvk=;
+        b=1K8mNnwmbkFvohaDyrXMpHA3XvOTteaZP0UkAhkJ3gOXLljpwbiBgIAq248PhWgrmb
+         E6ArUo6UFo0ih3yKZMY6ufdrjmwMs+tbY9a02ImW9L5+4LF1Z4FgJMAe5VVxa7BD78ze
+         FW3m5IywxB27Rk6051Xda64JFHWusC/2hp/2iu4yWq+2ZQQSBVWOVB87Ko3313Bes9sz
+         foFik7k88UWJTE8N23AWrix8k2EpqZAsHY+zkeEwJ6rtC2xFlHnb9ArqHTXSfymjAEi0
+         jj8UwlQ9n1rRjijQ6PMlj28Y6VNpu+zO4GCN5U/wJhQ/oyipXELyknhDczB63vZSa7mb
+         JaMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721179296; x=1721784096;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HxSuTpzy0m4oHhnzHH3Vl/gMhNpkpWEzqeVsFcwdgKA=;
-        b=Vnf2vdWqH87w2vq40afSTaXaOf7EYtLRuvCVPv/1pfB8OASp1W9rkFrZgn0kHhHM9W
-         jIKEoi5hqhj1Colqw6f1yGF3hg18qxgq+YTsmg+U6zOY05rWZpHfa8w7Y/66QO9THoUe
-         89x0qVTDHQQuGqNe12wpj3Eq6RbSBQ+spdK/ClynHYFjmLBGyu/AJbq6DsZCL67Hn77x
-         bFccnTYFnNU6NUpiiXpR5uzBNJRc5Jvzm2XbANLUOQcDp/pDlbQylDXWm3j5LfZPd4C7
-         fsXo6CBurDIB4p5Dh5jVDF6Q6+j5fHO3iREVRY0lbOf66xazgPKMnuyY0OHAZDL3/hus
-         Y7pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXa4BqZc6osgeFcHkFjuAYI/TIXcSRqRzSCWRA+zkkF+AgBCh+nKP6S1KqR6oKcfijBihs/So4KaM93yzaaeIU/gbouFEm64v0qwCJ8
-X-Gm-Message-State: AOJu0YxLTwO3wUZko9TFidaawXUKXG4ayFZGT7T1NhxBIqhn3t1NqjAR
-	np2SI4fktTDNd0qzX2nzec1hRk/i7DuQrm7xLCqqKFbn3z5poYxGc3Cf5Qs6mxA=
-X-Google-Smtp-Source: AGHT+IFRPVkYVOcZWv1UNdg1RTMru4FboqdZLxvXpxoWV2PdP22CoQ+3xARnx+an75M9dDo1WCR1/Q==
-X-Received: by 2002:a05:6e02:13a9:b0:381:3989:214a with SMTP id e9e14a558f8ab-395557ffecfmr5071635ab.10.1721179295925;
-        Tue, 16 Jul 2024 18:21:35 -0700 (PDT)
-Received: from localhost ([2804:14d:7e39:8470:4ae3:bddc:48f7:36a0])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7ec7c5ddsm7023267b3a.124.2024.07.16.18.21.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 18:21:35 -0700 (PDT)
-From: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,  Will Deacon
- <will@kernel.org>,  Jonathan Corbet <corbet@lwn.net>,  Andrew Morton
- <akpm@linux-foundation.org>,  Marc Zyngier <maz@kernel.org>,  Oliver Upton
- <oliver.upton@linux.dev>,  James Morse <james.morse@arm.com>,  Suzuki K
- Poulose <suzuki.poulose@arm.com>,  Arnd Bergmann <arnd@arndb.de>,  Oleg
- Nesterov <oleg@redhat.com>,  Eric Biederman <ebiederm@xmission.com>,
-  Shuah Khan <shuah@kernel.org>,  "Rick P. Edgecombe"
- <rick.p.edgecombe@intel.com>,  Deepak Gupta <debug@rivosinc.com>,  Ard
- Biesheuvel <ardb@kernel.org>,  Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-  Kees Cook <kees@kernel.org>,  "H.J. Lu" <hjl.tools@gmail.com>,  Paul
- Walmsley <paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>,
-  Albert Ou <aou@eecs.berkeley.edu>,  Florian Weimer <fweimer@redhat.com>,
-  Christian Brauner <brauner@kernel.org>,  Ross Burton
- <ross.burton@arm.com>,  linux-arm-kernel@lists.infradead.org,
-  linux-doc@vger.kernel.org,  kvmarm@lists.linux.dev,
-  linux-fsdevel@vger.kernel.org,  linux-arch@vger.kernel.org,
-  linux-mm@kvack.org,  linux-kselftest@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v9 05/39] arm64/gcs: Document the ABI for Guarded
- Control Stacks
-In-Reply-To: <20240625-arm64-gcs-v9-5-0f634469b8f0@kernel.org> (Mark Brown's
-	message of "Tue, 25 Jun 2024 15:57:33 +0100")
-References: <20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org>
-	<20240625-arm64-gcs-v9-5-0f634469b8f0@kernel.org>
-Date: Tue, 16 Jul 2024 22:21:33 -0300
-Message-ID: <87msmgu82q.fsf@linaro.org>
+        d=1e100.net; s=20230601; t=1721179344; x=1721784144;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UZUI7FJG9zfLb/AEzcLaJN+U3HH2U+41STHrzAi6Mvk=;
+        b=oiJnxWShtreL8K3poSoNDVekss1n2KFoj0K7gfeHSrJ5MCfMfaA5SbR+5WjlMK8WDv
+         Ymx4jZahf6ZSpIyAnpcSt3pr5Yqtpdwa5SPqv2Y/YZKGeasrhBlLtX7xJ+2X5ApNqqJo
+         fqPjBCyujJWKS+fbwFG3n6hJgQ10e1ElwLq8HrpwzpoInigkkKbNYt+f7kt73OrnRccU
+         1WqjYMJ+XHFSVMvQfH40k61gC3wkQOGg0epjKvbdV0JzQsdVWohCnxkUG6mvwJzOGvJG
+         CI3PWx4Rp333GPng4/Oil3B2aWDD2z+dvG/AUgaFS7+CuuDgKFtxFS/ln/Y3AYC7pSqY
+         SziQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIs7zLZdL5ZhOOPnC5i+OTCIrTYaikvitDR44ndrQRyGH2vCNoDqVT6ppmz2DQBgzCS0se8uROWddLZeoQuZigaC8PLvHOtz14fyHD
+X-Gm-Message-State: AOJu0YxuVNqeewpH2xc7GtX8PmgCLI6j05u+s3E9I8dsLznyt2gvSbI0
+	338GH4C4DLZGqULIBm4w42CMbUPdrKbKkS0bSyY9+NRk43GidrSMvjdR/BavKOW2JTA6Pm2jfPI
+	D+YWIdJeaHzlyp7/8ltmRXlFHqk64X4JxmBJ/
+X-Google-Smtp-Source: AGHT+IH7H0lu+6NNAxh1bFNPzp0/m26YBTmH4JeTpQTaooazXAIaLFqjmsBHamMvor1xI+mX4AJv81vFwtlasdSGI+k=
+X-Received: by 2002:a05:6902:c0b:b0:dff:2c27:c019 with SMTP id
+ 3f1490d57ef6-e05ed705177mr166528276.13.1721179343430; Tue, 16 Jul 2024
+ 18:22:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240711204626.1669138-1-surenb@google.com> <ZpCwPCAsN17ADt-R@infradead.org>
+ <CAJuCfpHX9SzPBTxQg2NjKPjbeD60HAotdK6DqnFmn3crvnGdvQ@mail.gmail.com>
+In-Reply-To: <CAJuCfpHX9SzPBTxQg2NjKPjbeD60HAotdK6DqnFmn3crvnGdvQ@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 16 Jul 2024 18:22:10 -0700
+Message-ID: <CAJuCfpFmfMH0=qOUz=Z_-QjgguhL4XKbZZ2ahx26HyYC23NGWg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] alloc_tag: Export memory allocation profiling symbols
+ used by modules
+To: Christoph Hellwig <hch@infradead.org>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, vbabka@suse.cz, 
+	pasha.tatashin@soleen.com, souravpanda@google.com, keescook@chromium.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Mark Brown <broonie@kernel.org> writes:
+On Fri, Jul 12, 2024 at 6:27=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> On Thu, Jul 11, 2024 at 9:25=E2=80=AFPM Christoph Hellwig <hch@infradead.=
+org> wrote:
+> >
+> > On Thu, Jul 11, 2024 at 01:46:26PM -0700, Suren Baghdasaryan wrote:
+> > > +EXPORT_SYMBOL(page_ext_get);
+> >
+> > > +EXPORT_SYMBOL(page_ext_put);
+> >
+> > These really have no business being exported, especially non-GPL.
+> > Please rework whatever interfaces need them to be be moved out of line.
+>
+> Ok, I can do that. Thanks for the feedback!
 
-> +3.  Allocation of Guarded Control Stacks
-> +----------------------------------------
-> +
-> +* When GCS is enabled for a thread a new Guarded Control Stack will be
-> +  allocated for it of size RLIMIT_STACK or 4 gigabytes, whichever is
+Replacement patches are posted at
+https://lore.kernel.org/all/20240717011631.2150066-1-surenb@google.com
 
-s/4 gigabytes/2 gigabytes/
+Andrew, could you please replace this older patch with the new
+patchset (2 patches now)? I can see the old patch in mm-unstable as
+ac5ca7954e4e ("alloc_tag: export memory allocation profiling symbols
+used by modules") and I think it's also in your mm-hotfixes-stable.
+Please replace it with new patches.
+Thanks,
+Suren.
 
-> +  smaller.
-
--- 
-Thiago
+>
+> >
 
