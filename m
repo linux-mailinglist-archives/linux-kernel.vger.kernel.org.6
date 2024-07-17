@@ -1,182 +1,169 @@
-Return-Path: <linux-kernel+bounces-255149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55389933CCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:06:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A75F933CCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:07:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B86C282275
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:06:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 950F11C22646
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753ED17FAA0;
-	Wed, 17 Jul 2024 12:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3D317FAA4;
+	Wed, 17 Jul 2024 12:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A7/dtYEd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AkL4UWH0"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84DB11CA1
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 12:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B324817FADC
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 12:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721218003; cv=none; b=b+kQw+t+l+iWxhp7NU18i4WrGpSj5zwNwewkMX3NXtcs3wGYKWgjiZHIFA52204fCN9/cnyTDsChsGHLatOy1J89J2kkVJERsLKhNaBJel6yGxSpB9ZhMIwGve97GDMQ0tRoWzI3ZIjxy8ZqHC1H3WmzFYXoN5TSGIdfzZgV8kM=
+	t=1721218011; cv=none; b=Vvgp5SC4AWBkTcAM7aZdKFE8AhQ/iNyqAS9dQvpqz3LYnSOZJZEGDhyFqtmjELisZ2HFp8IegW6FxTvn1CKucPNiQpYTPhFoVocjGydji1Ge/EwSTcMlhE7hYgb+QqauCylFjf/9QzFWVwcsh/efVXgAvvq0bH9KjfbGNbxMTYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721218003; c=relaxed/simple;
-	bh=nywpXi2h4zG79mMkSQKTimVu1LXY5R/z5vuogaMkbEA=;
+	s=arc-20240116; t=1721218011; c=relaxed/simple;
+	bh=yvH1bJuJPMDl0yHsKJUGXDy0li3oZEpOxlcFwqBzU0g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QfotmqzT4edtpzq8lmm1b+zomlA4DWXVe0nQso9btcizFRERyvBxqXbcwbkdiCWu3/PuuRkLdvod/mGGFXyhXsqE86JJWNS6Mr+jgmUjqL76P6si+ZdCeSARqdGde5J1J/6YbmPYvKkNHlQSptxh02FtDfnZ4rHyt9SaCGAP3jA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A7/dtYEd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6350EC32782;
-	Wed, 17 Jul 2024 12:06:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721218003;
-	bh=nywpXi2h4zG79mMkSQKTimVu1LXY5R/z5vuogaMkbEA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A7/dtYEd1+AotXXsTRKn/rlcwnr9eTZWcLvMN8EMhLeE+oun+q74YFw3ey/WQOmX7
-	 1Pb4jRXqoNp7rmeUYACVkjM/KVIB1gncqJ6ANNpP0IzXugjBAXu8Bk+X99+ZQSXXKB
-	 fqXUgy+AyVT8B2SFy1d2mfB8gtCN4jkM5A2XgCzxSJVFW8kGHr4Uo0vqObjwZ+glc7
-	 D0m6C+DWLOIRDKtWgmbAutHpqtZ3dMXEJKvhTQpfNa+uGz0HhD3Nt3qH9PbWqhTAsH
-	 GOUUs9TItY+iTD4yzPu0j+LmHDMag5iCO1cNm2mWdCrsQCW8CqPp5JPJzFqHcfRh2N
-	 PXUoFGPWCCc7Q==
-Date: Wed, 17 Jul 2024 13:06:39 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH RFC] riscv: Allow to build only with LLVM >= 17.0.0
-Message-ID: <20240717-theft-resample-19c248bb2a26@spud>
-References: <20240717111716.157149-1-alexghiti@rivosinc.com>
- <20240717-synapse-decade-a0d41bd7afce@spud>
- <203e8784-54f2-43ea-a442-833d7e4a06c8@ghiti.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gZ4oRTsD6eI+ntwOmz3xQeoKeB+o87/6tEr+ZwwMROz1MzyAtkS3qsemYmlt+i1w19+JaqjU4bYAVGZg52t+F/F/UzemYZ9DKX/adzywby9NnNvWGBw3wiCBxZOYPf7AviqT/daxx1GuDV8BMtLGVpcUj6i9Vbq3gfs0aBxLDDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AkL4UWH0; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-58b447c513aso7099432a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 05:06:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1721218008; x=1721822808; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1A+uhvZFWN0/aI6TtzrTAyQXjVBtroZMv7k34eBegwY=;
+        b=AkL4UWH0fjTo7/yr1I7J0TuJVaNgAI0ni3u0+qPBBRiwa2Ij2HWtnwnnDM3JEsJVBM
+         AcE81Vvhm40dS2FytehJdawA0P+MxrZeGAsvruEXemt56Nfta1bKKNsIMpewCXDjZVnO
+         7b//JTWbo9NXilIPE4RtKN/PLN3KFPokufLMlnGSbR0ru1ZKE2zvxzw3bjSI8QR2KufY
+         ZhXvocpbvRqNSt/xCCgkQetf5GnBESeMiJujUjRYesLLqNatPvCcGR8pghQZWzE5qOj1
+         6Mg6uQCOk6sKR4ZoIUtWuyVzE4L8u/bhIlCJH/RkS994CTRiIjn6ul4Uvz4F7tJ8Dqlr
+         XNVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721218008; x=1721822808;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1A+uhvZFWN0/aI6TtzrTAyQXjVBtroZMv7k34eBegwY=;
+        b=usc7qCmvhFp5CRyyGMfppaJe2E4QP1PUK/wVAytXKYGk8+blD2RP57qMxQIQoIWfxK
+         Fn4DMrrcDfTciLzZdlhY4RWAhShxe0Tw/ljjqCzUbrbyQklAxP3ThxoKKfPUkBlAR6xD
+         SQfqSFG+DjStxAwQyOW9txfiieiU5qEU4+qLf9pC/Ankp5P349MHZezmN6rmhw1LyvFP
+         lJGxlh3sNGN3gEaLsqdEgL76rEJlqGevAeNogvtxwdrCP+nGJpbnFWZKrtiluNUHLY+D
+         vPk2UO651MiqT6a9vXiru8kKPL2dpf0Bxlzfj3hmevRTv2kqQU53wK4rTWsHOKC+pV+A
+         Wvfg==
+X-Forwarded-Encrypted: i=1; AJvYcCWeK3spSOyut7/Ah4jtZT0PN7tjKxxyDuk9ynJjttykQhdOkKe5MfVOqL0i3WhOKsThoRUWx8ngePDcwy0NunazBUm+vPbd7PfzGdXO
+X-Gm-Message-State: AOJu0YxovyCAih7FcMLLVMq7i6n0YeV4NJuO5zh6vUpIVprv0tW+H+Se
+	g+ptkR2auASHnZVnXzlkcHAirJbrl1katx0XXZ7TY7ambbyfRSbA+5GRsFUQP5A=
+X-Google-Smtp-Source: AGHT+IFKEQnsVc87r2NlBgc3y7tiA0/99uSXp6CQ8sd9Ors0/3XF6WibUv9rRg2aDIdfojAjEABnDQ==
+X-Received: by 2002:a50:c30a:0:b0:59e:b95d:e748 with SMTP id 4fb4d7f45d1cf-5a05b416a9fmr1228473a12.8.1721218008012;
+        Wed, 17 Jul 2024 05:06:48 -0700 (PDT)
+Received: from localhost (109-81-86-75.rct.o2.cz. [109.81.86.75])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a0c2a750c0sm551431a12.60.2024.07.17.05.06.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jul 2024 05:06:47 -0700 (PDT)
+Date: Wed, 17 Jul 2024 14:06:46 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Jianxiong Gao <jxgao@google.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] mm: Fix endless reclaim on machines with unaccepted
+ memory.
+Message-ID: <Zpez1rkIQzVWxi7q@tiehlicka>
+References: <20240716130013.1997325-1-kirill.shutemov@linux.intel.com>
+ <ZpdwcOv9WiILZNvz@tiehlicka>
+ <xtcmz6b66wayqxzfio4funmrja7ezgmp3mvudjodt5xfx64rot@s6whj735oimb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="+0B+bzp0mRRL4CCI"
-Content-Disposition: inline
-In-Reply-To: <203e8784-54f2-43ea-a442-833d7e4a06c8@ghiti.fr>
-
-
---+0B+bzp0mRRL4CCI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <xtcmz6b66wayqxzfio4funmrja7ezgmp3mvudjodt5xfx64rot@s6whj735oimb>
 
-On Wed, Jul 17, 2024 at 01:41:23PM +0200, Alexandre Ghiti wrote:
-> Hi Conor,
->=20
-> On 17/07/2024 13:32, Conor Dooley wrote:
-> > On Wed, Jul 17, 2024 at 01:17:16PM +0200, Alexandre Ghiti wrote:
-> > > The following build failure happens when using LLVM < 17.0.0:
-> > >=20
-> > > kernel/sched/core.c:11873:7: error: cannot jump from this asm goto st=
-atement to one of its possible targets
-> > >=20
-> > > This is a known issue [1] so let's upgrade the minimal requirement for
-> > > LLVM to the version 17.0.0, which is the first version to contain the
-> > > fix.
-> > I think doing this unilaterally is kinda insane, LLVM 17 isn't even a
-> > year old. Debian testing doesn't have anything later than 16.
->=20
->=20
-> Debian will very likely select the qspinlocks when available anyway, so
-> they'll need llvm >=3D 17. And Debian won't ship a kernel >=3D 6.11 until=
- some
-> time right? So they'll probably update their infra to llvm >=3D 17 (and
-> they'll probably do to take advantages of the new extensions).
+On Wed 17-07-24 14:55:08, Kirill A. Shutemov wrote:
+> On Wed, Jul 17, 2024 at 09:19:12AM +0200, Michal Hocko wrote:
+> > On Tue 16-07-24 16:00:13, Kirill A. Shutemov wrote:
+> > > Unaccepted memory is considered unusable free memory, which is not
+> > > counted as free on the zone watermark check. This causes
+> > > get_page_from_freelist() to accept more memory to hit the high
+> > > watermark, but it creates problems in the reclaim path.
+> > > 
+> > > The reclaim path encounters a failed zone watermark check and attempts
+> > > to reclaim memory. This is usually successful, but if there is little or
+> > > no reclaimable memory, it can result in endless reclaim with little to
+> > > no progress. This can occur early in the boot process, just after start
+> > > of the init process when the only reclaimable memory is the page cache
+> > > of the init executable and its libraries.
+> > 
+> > How does this happen when try_to_accept_memory is the first thing to do
+> > when wmark check fails in the allocation path?
+> 
+> Good question.
+> 
+> I've lost access to the test setup and cannot check it directly right now.
+> 
+> Reading the code Looks like __alloc_pages_bulk() bypasses
+> get_page_from_freelist() where we usually accept more pages and goes
+> directly to __rmqueue_pcplist() -> rmqueue_bulk() -> __rmqueue().
+> 
+> Will look more into it when I have access to the test setup.
+> 
+> > Could you describe what was the initial configuration of the system? How
+> > much of the unaccepted memory was there to trigger this?
+> 
+> This is large TDX guest VM: 176 vCPUs and ~800GiB of memory.
+> 
+> One thing that I noticed that the problem is only triggered when LRU_GEN
+> enabled. But I failed to identify why.
+> 
+> The system hang (or have very little progress) shortly after systemd
+> starts.
 
-What I mean is that you are going to prevent people building the kernel
-with llvm on machines running anything but very recent rolling-release
-distros. Your patch would stop most developers, including those who don't
-care about your qspinlock stuff, even build testing with the version of
-LLVM that their distro provides. I'm not talking about distros building
-kernels in their build infrastructure.
+Please try to investigate this further. The patch as is looks rather
+questionable to me TBH. Spilling unaccepted memory into the reclaim
+seems like something we should avoid if possible as this is something
+page allocator should care about IMHO.
 
->=20
->=20
-> > Why does
-> > it need to be done unilaterally rather than just when the qspinlock
-> > stuff is built?
->=20
->=20
-> We can do that indeed, it may happen again and we can keep requiring llvm=
- 17
-> on a per-config basis.
->=20
->=20
-> > > Link: https://github.com/ClangBuiltLinux/linux/issues/1886#issuecomme=
-nt-1645979992 [1]
-> > > Reported-by: kernel test robot <lkp@intel.com>
-> > > Closes: https://lore.kernel.org/oe-kbuild-all/202407041157.odTZAYZ6-l=
-kp@intel.com/
-> > > Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> > If Nathan wrote the patch, you need to set him as the author of the
-> > patch :)
->=20
->=20
-> I thought I did, how should I do that then?
->=20
->=20
-> >=20
-> > > Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> > > ---
-> > >=20
-> > > This patch was done by Nathan, I'm just sending it as an RFC to get q=
-uicker
-> > > feedbacks.
-> > >=20
-> > > I tested it successfully.
-> > >=20
-> > > Note that the build failure happens on the not-yet merged qspinlock
-> > > patchset.
-> > >=20
-> > >   scripts/min-tool-version.sh | 2 ++
-> > >   1 file changed, 2 insertions(+)
-> > >=20
-> > > diff --git a/scripts/min-tool-version.sh b/scripts/min-tool-version.sh
-> > > index 91c91201212c..e81eb7ed257d 100755
-> > > --- a/scripts/min-tool-version.sh
-> > > +++ b/scripts/min-tool-version.sh
-> > > @@ -28,6 +28,8 @@ llvm)
-> > >   		echo 15.0.0
-> > >   	elif [ "$SRCARCH" =3D loongarch ]; then
-> > >   		echo 18.0.0
-> > > +	elif [ "$SRCARCH" =3D riscv ]; then
-> > > +		echo 17.0.0
-> > >   	else
-> > >   		echo 13.0.1
-> > >   	fi
-> > > --=20
-> > > 2.39.2
-> > >=20
-> > >=20
-> > >=20
-> > > _______________________________________________
-> > > linux-riscv mailing list
-> > > linux-riscv@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/linux-riscv
+> > > To address this issue, teach shrink_node() and shrink_zones() to accept
+> > > memory before attempting to reclaim.
+> > > 
+> > > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > > Reported-by: Jianxiong Gao <jxgao@google.com>
+> > > Fixes: dcdfdd40fa82 ("mm: Add support for unaccepted memory")
+> > > Cc: stable@vger.kernel.org # v6.5+
+> > [...]
+> > >  static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+> > >  {
+> > >  	unsigned long nr_reclaimed, nr_scanned, nr_node_reclaimed;
+> > >  	struct lruvec *target_lruvec;
+> > >  	bool reclaimable = false;
+> > >  
+> > > +	/* Try to accept memory before going for reclaim */
+> > > +	if (node_try_to_accept_memory(pgdat, sc)) {
+> > > +		if (!should_continue_reclaim(pgdat, 0, sc))
+> > > +			return;
+> > > +	}
+> > > +
+> > 
+> > This would need an exemption from the memcg reclaim.
+> 
+> Hm. Could you elaborate why?
 
---+0B+bzp0mRRL4CCI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpezzwAKCRB4tDGHoIJi
-0lAAAP4ukSsQNKH83VinYN4P6TvkUEYT19wBuJZQ39VnokQpRgD9F06sCd7yG2b1
-Su+5N0ApRQvIXvkTAxx1AMkl5cQNKQc=
-=N3ed
------END PGP SIGNATURE-----
-
---+0B+bzp0mRRL4CCI--
+Because memcg reclaim doesn't look for memory but rather frees charges
+to reclaim for the new use so unaccepted memory is not really relevant
+as it couldn't have been charged.
+-- 
+Michal Hocko
+SUSE Labs
 
