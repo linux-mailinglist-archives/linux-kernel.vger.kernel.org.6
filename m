@@ -1,198 +1,98 @@
-Return-Path: <linux-kernel+bounces-255062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37155933B26
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:31:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 142B0933B2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:32:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A477A1F2267B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:31:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45C3D1C21107
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E98417F370;
-	Wed, 17 Jul 2024 10:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F360217E91D;
+	Wed, 17 Jul 2024 10:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bDhE+5/Z"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HnvoZFM4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED1917E90D
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 10:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389A2D51A;
+	Wed, 17 Jul 2024 10:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721212296; cv=none; b=eOhg4a/k2cp7/isNyg9x0oKBW7qhmbees3ortRbfws+cFHXsFn+7hbvDHXPGPn0rnCOFJ0/Up7biQ6PxvXAbUNWtA8wWtuUW0tOnhOJEnZYNOkshgscvPmBQuYh3poCOp1BsjpXDr3bPvAo50iBJb1Et/zzt67E/lNhWReExgYI=
+	t=1721212367; cv=none; b=DklQpt5m6qCLc6fb2H4P/8WBQ83c1pMM5ZAuc69XVWjnMqnzOsiKid8AsOQiKnGREjRcA/3oztkLO4K3UHKuoJjsrETFcBw1FVyAF/qXjYZgDtyg9+CUUn6NC8g1PRkjYJRvxZrgVADecJ5BpCiQ88K9938cmBl3XExOa6FPido=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721212296; c=relaxed/simple;
-	bh=q3KKs82dAP1lUoNSvm7BsHKGjg55M6TOhC3NRAeKJWA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NpDodOjiNyIJ2FOuQp74AHisxcACg8D1fsG3r308+YV7GR0rsf2SrXGklw5xvX6/I6nCVzcVcJXGCp0125/8F6doPkDCXznPoK+rpJo/IFwD5tGCPIE6a5bfy7JLcdzDKEoLE4EaFKX/Ze5C8eqqjOm9kBHVEiS+PkACIcrEyNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bDhE+5/Z; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721212293;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=esTZlFTqaVllGuRaWUhNSy8tgOe+5N/2kd4nj8HtxMg=;
-	b=bDhE+5/ZmunSIgMJOogILy+LHrIZ7xajIhvj/SOUnAsUTmGuD5iM20jls/6TRZHuYwRnID
-	WilOWoVBRvZnICYaHNAq9jr2cSOnCG4xNPwrsnXwzRJiV1ZOLl87PGVjH6RD+slo1IaIo6
-	Mge8bEC6hemHq4ybtng/gMtvnm41hkg=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-657-7XvjWSfzMT-8-vmytWJ55w-1; Wed, 17 Jul 2024 06:31:31 -0400
-X-MC-Unique: 7XvjWSfzMT-8-vmytWJ55w-1
-Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-52e99257918so5895429e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 03:31:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721212290; x=1721817090;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=esTZlFTqaVllGuRaWUhNSy8tgOe+5N/2kd4nj8HtxMg=;
-        b=uXrZl5ILWh6gx5Ekfq7CZ9VUfgK4C0WE1BFpce/D42ixPrfEFw2eqkuBJ+Tyhb4svx
-         8WUDFk1/f9pYRIdDXqLvQi4Yi0JrK4O0mAnqpqFWafW6+3jN5PzdeFjEjUUBZ4O4d+d0
-         UkiOTbheHtrdFNh+vJqmcLDuU/zJrZDFQRv/RV5L3LM9lrDe6ZxlW0qEbPWcROd23OGr
-         a2o4tmErfJ73xF83blc0GfngjUnD02y/Ry5t+4FKhSH0Ba9C+1ytusFBuyxTxbfEKd+h
-         LQSeOZogPCincJfO1eSqDtGZdEldCXca4RCM4j5QY+oAG4PAh8l9asZ5NuLhcEbYH/hQ
-         8JYA==
-X-Gm-Message-State: AOJu0YwCJIo5XWrkB21rrC3rxcbyq+IxpNn96E9alXZrM/Dk/OrCqT4K
-	WIrL2IA8zwGHadEfn4XShmqWshGMUPZuwKKuD5wxPGmZ9UbVMJaFoXoUGjlsVYRpihnDrCEN/iB
-	X51Afk48gzGUWw42bQwxzNF+6DUokghIwF9wqeVtCXncR4TbxhaLFuZaX0/3TTg==
-X-Received: by 2002:a05:6512:238a:b0:52e:9dee:a6ee with SMTP id 2adb3069b0e04-52ee53b0ee9mr998232e87.26.1721212290297;
-        Wed, 17 Jul 2024 03:31:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH1ipIh2198uogqeIu3IhoJaDAc2ZAebuZOZeDW8ppG7bbya8NhelUlhVjd4I6ZR4yJigPrZw==
-X-Received: by 2002:a05:6512:238a:b0:52e:9dee:a6ee with SMTP id 2adb3069b0e04-52ee53b0ee9mr998212e87.26.1721212289833;
-        Wed, 17 Jul 2024 03:31:29 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c714:c00:b08b:a871:ce99:dfde? (p200300cbc7140c00b08ba871ce99dfde.dip0.t-ipconnect.de. [2003:cb:c714:c00:b08b:a871:ce99:dfde])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427ba20c8aasm30593025e9.0.2024.07.17.03.31.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 03:31:29 -0700 (PDT)
-Message-ID: <eb2d8027-6347-4cc5-b1f6-6e79dc9a02ef@redhat.com>
-Date: Wed, 17 Jul 2024 12:31:28 +0200
+	s=arc-20240116; t=1721212367; c=relaxed/simple;
+	bh=ksbpgJlPcu4WkNOsPOZmmLrwJX2KGiijIO4g8CrEULI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=qezSirbyZANmm5l8f9Ufu/pW1FVka3FpVWp274x9ym1m/YSdM5EtC7GGTrmswn3lLROP4UTieReV2OKeXGq1VF9XzU5sYiGJA0ykCOx+5qV68tQ6PmLxNJGVfhxPrNM2AIB122WnfkSo5bhocZeO770TIXp8bOr67gisX+LXwUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HnvoZFM4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF486C32782;
+	Wed, 17 Jul 2024 10:32:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721212366;
+	bh=ksbpgJlPcu4WkNOsPOZmmLrwJX2KGiijIO4g8CrEULI=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=HnvoZFM48vLviVoTBsf487LngTeLEHKAuAqfUg1FdFlKjvhKSaa0a4zlDvLGi+7FG
+	 7tBF5lV8lAeXBpo9a92KgApJtVibz2fo1lAaWg8yfIsIBGT8fDDzbok//UGPNC1p7f
+	 tNfTN6wcUrT7qhJoGOJTOXTPo4Gr0MjG3GF7UrObnqM3yyCoEypj+XNL9cUj8BOLmz
+	 WZ4/eEgxghNNAxrpiVQY56qT59fyK/ulXp6VTPlqGQ73cjYMGIggQtvgzKEXoxKqwW
+	 JFykTERYcTUBQb6xQCUxJ7weIzC7XS+0yDTuFGjHoLIfI53KSPeN7znCDzf6xwedVR
+	 AOBQN4uhZYDcA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 0/4] Control folio sizes used for page cache memory
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- Jonathan Corbet <corbet@lwn.net>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Barry Song <baohua@kernel.org>, Lance Yang <ioworker0@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Gavin Shan <gshan@redhat.com>,
- Pankaj Raghav <kernel@pankajraghav.com>, Daniel Gomez <da.gomez@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240717071257.4141363-1-ryan.roberts@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240717071257.4141363-1-ryan.roberts@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 17 Jul 2024 13:32:42 +0300
+Message-Id: <D2RQUZCAHOJY.1KTAFTZ818GJ6@kernel.org>
+Subject: Re: [PATCH 2/2] KEYS: trusted: dcp: fix leak of blob encryption key
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "David Gstir" <david@sigma-star.at>, "sigma star Kernel Team"
+ <upstream+dcp@sigma-star.at>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, "David Oberhollenzer"
+ <david.oberhollenzer@sigma-star.at>, "Richard Weinberger" <richard@nod.at>
+Cc: <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
+ <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240703125353.46115-1-david@sigma-star.at>
+ <20240703125353.46115-2-david@sigma-star.at>
+In-Reply-To: <20240703125353.46115-2-david@sigma-star.at>
 
-On 17.07.24 09:12, Ryan Roberts wrote:
-> Hi All,
-> 
-> This series is an RFC that adds sysfs and kernel cmdline controls to configure
-> the set of allowed large folio sizes that can be used when allocating
-> file-memory for the page cache. As part of the control mechanism, it provides
-> for a special-case "preferred folio size for executable mappings" marker.
-> 
-> I'm trying to solve 2 separate problems with this series:
-> 
-> 1. Reduce pressure in iTLB and improve performance on arm64: This is a modified
-> approach for the change at [1]. Instead of hardcoding the preferred executable
-> folio size into the arch, user space can now select it. This decouples the arch
-> code and also makes the mechanism more generic; it can be bypassed (the default)
-> or any folio size can be set. For my use case, 64K is preferred, but I've also
-> heard from Willy of a use case where putting all text into 2M PMD-sized folios
-> is preferred. This approach avoids the need for synchonous MADV_COLLAPSE (and
-> therefore faulting in all text ahead of time) to achieve that.
-> 
-> 2. Reduce memory fragmentation in systems under high memory pressure (e.g.
-> Android): The theory goes that if all folios are 64K, then failure to allocate a
-> 64K folio should become unlikely. But if the page cache is allocating lots of
-> different orders, with most allocations having an order below 64K (as is the
-> case today) then ability to allocate 64K folios diminishes. By providing control
-> over the allowed set of folio sizes, we can tune to avoid crucial 64K folio
-> allocation failure. Additionally I've heard (second hand) of the need to disable
-> large folios in the page cache entirely due to latency concerns in some
-> settings. These controls allow all of this without kernel changes.
-> 
-> The value of (1) is clear and the performance improvements are documented in
-> patch 2. I don't yet have any data demonstrating the theory for (2) since I
-> can't reproduce the setup that Barry had at [2]. But my view is that by adding
-> these controls we will enable the community to explore further, in the same way
-> that the anon mTHP controls helped harden the understanding for anonymous
-> memory.
-> 
-> ---
+On Wed Jul 3, 2024 at 3:53 PM EEST, David Gstir wrote:
+> Trusted keys unseal the key blob on load, but keep the sealed payload in
+> the blob field so that every subsequent read (export) will simply
+> convert this field to hex and send it to userspace.
+>
+> With DCP-based trusted keys, we decrypt the blob encryption key (BEK)
+> in the Kernel due hardware limitations and then decrypt the blob payload.
+> BEK decryption is done in-place which means that the trusted key blob
+> field is modified and it consequently holds the BEK in plain text.
+> Every subsequent read of that key thus send the plain text BEK instead
+> of the encrypted BEK to userspace.
+>
+> This issue only occurs when importing a trusted DCP-based key and
+> then exporting it again. This should rarely happen as the common use case=
+s
+> are to either create a new trusted key and export it, or import a key
+> blob and then just use it without exporting it again.
+>
+> Fix this by performing BEK decryption and encryption in a dedicated
+> buffer. Further always wipe the plain text BEK buffer to prevent leaking
+> the key via uninitialized memory.
+>
+> Signed-off-by: David Gstir <david@sigma-star.at>
+> Fixes: 2e8a0f40a39c ("KEYS: trusted: Introduce NXP DCP-backed trusted key=
+s")
 
-How would this interact with other requirements we get from the 
-filesystem (for example, because of the device) [1].
+Similar comments, fixes before sob etc and CC to stable with "# v6.10+"
 
-Assuming a device has a filesystem has a min order of X, but we disable 
-anything >= X, how would we combine that configuration/information?
-
-
-[1] 
-https://lore.kernel.org/all/20240715094457.452836-2-kernel@pankajraghav.com/T/#u
-
--- 
-Cheers,
-
-David / dhildenb
-
+BR, Jarkko
 
