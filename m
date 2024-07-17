@@ -1,188 +1,154 @@
-Return-Path: <linux-kernel+bounces-254710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C7A49336A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:07:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB4B9336AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FB8F1C22D07
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:07:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCB141C22C55
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C6A14A96;
-	Wed, 17 Jul 2024 06:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="gNB20wsy"
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E7212E75;
+	Wed, 17 Jul 2024 06:11:38 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5A511C83
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 06:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC2EBA4B;
+	Wed, 17 Jul 2024 06:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721196432; cv=none; b=VLG6dkK136qNW0clTPkRuOAFzuURMmQVSgW8gfbwYWW7eOm1FbRI4rqjmKtQ6oB+7383Y+B3nOPWLillWxmSLwTh8WRjv/a/rrKKx5DpJE2FMzhbbND/mwXJV2fQoUHavuo75QLLeC9+T2ckOB6tnSO/vi97FUUDp9EqqmH07ig=
+	t=1721196698; cv=none; b=dveKlGucfbjXiOGMDUfHzaubazs5ot2fk8O2NsbUUV032nrq9bOrIL3l7vJsZ7WM/Z1coKmsOoBfVO4Eewi623OEveOUehJIudGTm93UdOfWZznjsGD7aRk31oVoN7WY2LfJQToyxc7mIned6Nb+ZJYOSLq6B3CkX5tdfcrNv6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721196432; c=relaxed/simple;
-	bh=u9zrIbLNt6r+NLL75A/B9GGqKSc26Gfkc/E56cEIndM=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=uEYYk88N+SBwaj7MRn+pFF97YDXCpKr1BhOygNfCKb6+HNXzRJyc+u2RRxYOin9TeHnmn4PH6mMb7X+IhwwfBDXcli1qceFQVe3vjR4Axlz2r9EKk7+BeHLfpycnie8E33FEze68M/VDZnDQpQURLygSwit7VUbf51mJH69+YXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=gNB20wsy; arc=none smtp.client-ip=209.85.214.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-1fb8781ef1bso50710405ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 23:07:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1721196429; x=1721801229; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jgUrGmqmMWtCBhPSlUAoCHAQGr50bG3mluKGn6yRCac=;
-        b=gNB20wsy1m9PaTDDhKCi0mzHXHJuj6qfWfy2hudno/yp2NZP9WUKzqr1UMzDCZu0sH
-         oaoP4Gf6w4Gq07BahmBvXM+eF8YdlO+RVbq06NJHliANVjNx6GYOvM7/m46u6n71qNY5
-         cepQawwdqoSb9qM0dhvatlGme/tJX1sJpnREs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721196429; x=1721801229;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jgUrGmqmMWtCBhPSlUAoCHAQGr50bG3mluKGn6yRCac=;
-        b=TEwO6ElOxJWJO+6KXqvrvo97AmYZAhcxU9WIJTv9CQP+VHQgNd/qsTix195SdfsuVh
-         kUR208cdEWXlGTHraBwX7QvMiGd7aIhiD6plHhje4G4x0Z5HOjpTaCZ4iTwGQw309FKu
-         PqS3o2hy8aHKwU2IQxSnRvZwD+wQZPzsIcb6ifbRxt98Te4LzY7Y3Tutm6WJ/+deRO/h
-         sdYDxo70lT+wr33lfzsbyC4Oqsuk29DobY4x0PzvyISu3uEEJfWtpB8oEFtxQsF2rHuB
-         oFXEHXfARIH5iBtt+bIvb8UT0awnWPnaKkb+BmBBt8BNyD2zkI32JTI1qM2wv3iCKOUm
-         OKTw==
-X-Gm-Message-State: AOJu0Yyf+mBOlL7gekhHUueX31qlb+3NJwS1Ww6EueRm2HY7RfQyt3em
-	ajV2dZnSo/QXqA62XhGZWzRH7iJIxPh6QCkAuQ04iga6NQiTlrPQMxh5P5E58y0nDojtyLjNDcn
-	sYqdbj5wmXKgKLlw6Wp8/R9wIl5aTyaFrfYG6ej52eiLKKB79Rd6pTTm5IrWGm6PU8ifB36J1nK
-	jzhhfdIDDTIwMzkg5oibuvpsxIZ6RFZFS/4MG3ttFaVcnEbrefOPxGz1Xu
-X-Google-Smtp-Source: AGHT+IHGsBfXVa8Ok1WZsxnr1r3Yw1BDvsbj6UT2V0KW+QeJjtQtCrbGTkBd6Ej1yD/yJgDmZMhF7Q==
-X-Received: by 2002:a17:902:e5c8:b0:1fc:52d9:1047 with SMTP id d9443c01a7336-1fc52d9192amr2223855ad.42.1721196429287;
-        Tue, 16 Jul 2024 23:07:09 -0700 (PDT)
-Received: from kashwindayan-virtual-machine.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bba6f9asm67829645ad.86.2024.07.16.23.07.07
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Jul 2024 23:07:09 -0700 (PDT)
-From: Ashwin Kamat <ashwin.kamat@broadcom.com>
-To: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	john.fastabend@gmail.com,
-	jakub@cloudflare.com,
-	daniel@iogearbox.net,
-	ast@kernel.org,
-	netdev@vger.kernel.org,
-	bpf@vger.kernel.org,
-	ajay.kaher@broadcom.com,
-	vasavi.sirnapalli@broadcom.com,
-	tapas.kundu@broadcom.com,
-	ashwin.kamat@broadcom.com,
-	Jason Xing <kernelxing@tencent.com>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH v5.10] bpf, skmsg: Fix NULL pointer dereference in sk_psock_skb_ingress_enqueue
-Date: Wed, 17 Jul 2024 11:36:56 +0530
-Message-Id: <1721196416-13046-1-git-send-email-ashwin.kamat@broadcom.com>
-X-Mailer: git-send-email 2.7.4
+	s=arc-20240116; t=1721196698; c=relaxed/simple;
+	bh=2dcUv3tyf6mtFvGXAxBAoA9pa+e4PYCgHafzcH1Ps8o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AnQGK/VEGuwWSjsdlgcA/dL5LDfPWXeuQ1iEcIVCbjhAVlTDKsWIrPyMPZ2mNyzpvR9SoSKxdlTnTelNXkw76u5R50xSsjx9HO8mvlbVgpJDxi0vXEH5dvwIwl8uYpbSLAoG0Yy/0a25vdh2TZ3YvcrjgcMNXvPf7jQZMEmnS6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WP5DC6b8Sz4f3jYb;
+	Wed, 17 Jul 2024 14:11:23 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id E17251A0DD3;
+	Wed, 17 Jul 2024 14:11:31 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP4 (Coremail) with SMTP id gCh0CgDXuTePYJdmtHx0AQ--.45764S3;
+	Wed, 17 Jul 2024 14:11:31 +0800 (CST)
+Message-ID: <9fcb1d52-520f-425f-8b83-debeda423483@huaweicloud.com>
+Date: Wed, 17 Jul 2024 14:11:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/20] ext4: prevent partial update of the extents path
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, Baokun Li <libaokun1@huawei.com>,
+ zhanchengbin <zhanchengbin1@huawei.com>, Baokun Li <libaokun@huaweicloud.com>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-3-libaokun@huaweicloud.com>
+ <ZpPx3kuO36lp9/Um@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+ <9fd554c7-dc0c-4969-9f2a-1c99356fccce@huaweicloud.com>
+ <d33cfec3-4d72-41dc-b020-f17f726ba719@huaweicloud.com>
+ <ZpZDSMFbziWq5xOK@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+ <9ef38162-2eeb-4cf6-aee4-02d6a5952757@huaweicloud.com>
+ <ZpdR4pN8IJajB9xc@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+Content-Language: en-US
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <ZpdR4pN8IJajB9xc@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDXuTePYJdmtHx0AQ--.45764S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxWr1rArWDXrWUAw43KFyfZwb_yoW5Gr43pr
+	yvk3WqkrZ0krn5KFs2yF4jqFyjkw1fG3sFqrZ5CasrJ390vr1agryIqa1q9F9rArWkJa15
+	JrW8X3sxur1DtFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
+	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
+	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
+	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
+	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
+	evJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAgAHBWaWL5RQyAAAsT
 
-From: Jason Xing <kernelxing@tencent.com>
+On 2024/7/17 13:29, Ojaswin Mujoo wrote:
+> On Tue, Jul 16, 2024 at 07:54:43PM +0800, Baokun Li wrote:
+>> Hi Ojaswin,
+>>
+>> On 2024/7/16 17:54, Ojaswin Mujoo wrote:
+>>>>> But the journal will ensure the consistency of the extents path after
+>>>>> this patch.
+>>>>>
+>>>>> When ext4_ext_get_access() or ext4_ext_dirty() returns an error in
+>>>>> ext4_ext_rm_idx() and ext4_ext_correct_indexes(), this may cause
+>>>>> the extents tree to be inconsistent. But the inconsistency just
+>>>>> exists in memory and doesn't land on disk.
+>>>>>
+>>>>> For ext4_ext_get_access(), the handle must have been aborted
+>>>>> when it returned an error, as follows:
+>>>> ext4_ext_get_access
+>>>>    ext4_journal_get_write_access
+>>>>     __ext4_journal_get_write_access
+>>>>      err = jbd2_journal_get_write_access
+>>>>      if (err)
+>>>>        ext4_journal_abort_handle
+>>>>> For ext4_ext_dirty(), since path->p_bh must not be null and handle
+>>>>> must be valid, handle is aborted anyway when an error is returned:
+>>>> ext4_ext_dirty
+>>>>    __ext4_ext_dirty
+>>>>     if (path->p_bh)
+>>>>       __ext4_handle_dirty_metadata
+>>>>        if (ext4_handle_valid(handle))
+>>>>          err = jbd2_journal_dirty_metadata
+>>>>           if (!is_handle_aborted(handle) && WARN_ON_ONCE(err))
+>>>>             ext4_journal_abort_handle
+>>>>> Thus the extents tree will only be inconsistent in memory, so only
+>>>>> the verified bit of the modified buffer needs to be cleared to avoid
+>>>>> these inconsistent data being used in memory.
+>>>>>
+>>>> Regards,
+>>>> Baokun
+>>> Thanks for the explanation Baokun, so basically we only have the
+>>> inconsitency in the memory.
+>>>
+>>> I do have a followup questions:
+>>>
+>>> So in the above example, after we have the error, we'll have the buffer
+>>> for depth=0 marked as valid but pointing to the wrong ei_block.
+>> It looks wrong here. When there is an error, the ei_block of the
+>> unmodified buffer with depth=0 is the correct one, it is indeed
+>> 'valid' and it is consistent with the disk. Only buffers that were
+> Hey Baokun,
+>
+> Ahh I see now, I was looking at it the wrong way. So basically since
+> depth 1 to 4 is inconsistent to the disk we mark then non verified so
+> then subsequent lookups can act accordingly.
+>
+> Thanks for the explanation! I am in the middle of testing this patchset
+> with xfstests on a POWERPC system with 64k page size. I'll let you know
+> how that goes!
+>
+> Regards,
+> Ojaswin
 
-[ Upstream commit 6648e613226e18897231ab5e42ffc29e63fa3365 ]
+Hi Ojaswin,
 
-Fix NULL pointer data-races in sk_psock_skb_ingress_enqueue() which
-syzbot reported [1].
+Thank you for the test and feedback!
 
-[1]
-BUG: KCSAN: data-race in sk_psock_drop / sk_psock_skb_ingress_enqueue
-
-write to 0xffff88814b3278b8 of 8 bytes by task 10724 on cpu 1:
- sk_psock_stop_verdict net/core/skmsg.c:1257 [inline]
- sk_psock_drop+0x13e/0x1f0 net/core/skmsg.c:843
- sk_psock_put include/linux/skmsg.h:459 [inline]
- sock_map_close+0x1a7/0x260 net/core/sock_map.c:1648
- unix_release+0x4b/0x80 net/unix/af_unix.c:1048
- __sock_release net/socket.c:659 [inline]
- sock_close+0x68/0x150 net/socket.c:1421
- __fput+0x2c1/0x660 fs/file_table.c:422
- __fput_sync+0x44/0x60 fs/file_table.c:507
- __do_sys_close fs/open.c:1556 [inline]
- __se_sys_close+0x101/0x1b0 fs/open.c:1541
- __x64_sys_close+0x1f/0x30 fs/open.c:1541
- do_syscall_64+0xd3/0x1d0
- entry_SYSCALL_64_after_hwframe+0x6d/0x75
-
-read to 0xffff88814b3278b8 of 8 bytes by task 10713 on cpu 0:
- sk_psock_data_ready include/linux/skmsg.h:464 [inline]
- sk_psock_skb_ingress_enqueue+0x32d/0x390 net/core/skmsg.c:555
- sk_psock_skb_ingress_self+0x185/0x1e0 net/core/skmsg.c:606
- sk_psock_verdict_apply net/core/skmsg.c:1008 [inline]
- sk_psock_verdict_recv+0x3e4/0x4a0 net/core/skmsg.c:1202
- unix_read_skb net/unix/af_unix.c:2546 [inline]
- unix_stream_read_skb+0x9e/0xf0 net/unix/af_unix.c:2682
- sk_psock_verdict_data_ready+0x77/0x220 net/core/skmsg.c:1223
- unix_stream_sendmsg+0x527/0x860 net/unix/af_unix.c:2339
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x140/0x180 net/socket.c:745
- ____sys_sendmsg+0x312/0x410 net/socket.c:2584
- ___sys_sendmsg net/socket.c:2638 [inline]
- __sys_sendmsg+0x1e9/0x280 net/socket.c:2667
- __do_sys_sendmsg net/socket.c:2676 [inline]
- __se_sys_sendmsg net/socket.c:2674 [inline]
- __x64_sys_sendmsg+0x46/0x50 net/socket.c:2674
- do_syscall_64+0xd3/0x1d0
- entry_SYSCALL_64_after_hwframe+0x6d/0x75
-
-value changed: 0xffffffff83d7feb0 -> 0x0000000000000000
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 0 PID: 10713 Comm: syz-executor.4 Tainted: G        W          6.8.0-syzkaller-08951-gfe46a7dd189e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/29/2024
-
-Prior to this, commit 4cd12c6065df ("bpf, sockmap: Fix NULL pointer
-dereference in sk_psock_verdict_data_ready()") fixed one NULL pointer
-similarly due to no protection of saved_data_ready. Here is another
-different caller causing the same issue because of the same reason. So
-we should protect it with sk_callback_lock read lock because the writer
-side in the sk_psock_drop() uses "write_lock_bh(&sk->sk_callback_lock);".
-
-To avoid errors that could happen in future, I move those two pairs of
-lock into the sk_psock_data_ready(), which is suggested by John Fastabend.
-
-Fixes: 604326b41a6f ("bpf, sockmap: convert to generic sk_msg interface")
-Reported-by: syzbot+aa8c8ec2538929f18f2d@syzkaller.appspotmail.com
-Signed-off-by: Jason Xing <kernelxing@tencent.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Reviewed-by: John Fastabend <john.fastabend@gmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=aa8c8ec2538929f18f2d
-Link: https://lore.kernel.org/all/20240329134037.92124-1-kerneljasonxing@gmail.com
-Link: https://lore.kernel.org/bpf/20240404021001.94815-1-kerneljasonxing@gmail.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-[Ashwin: Regenerated the patch for v5.10]
-Signed-off-by: Ashwin Dayanand Kamat <ashwin.kamat@broadcom.com>
----
- include/linux/skmsg.h | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/include/linux/skmsg.h b/include/linux/skmsg.h
-index 1138dd3071db..a197c9a49e97 100644
---- a/include/linux/skmsg.h
-+++ b/include/linux/skmsg.h
-@@ -406,10 +406,12 @@ static inline void sk_psock_put(struct sock *sk, struct sk_psock *psock)
- 
- static inline void sk_psock_data_ready(struct sock *sk, struct sk_psock *psock)
- {
-+	read_lock_bh(&sk->sk_callback_lock);
- 	if (psock->parser.enabled)
- 		psock->parser.saved_data_ready(sk);
- 	else
- 		sk->sk_data_ready(sk);
-+	read_unlock_bh(&sk->sk_callback_lock);
- }
- 
- static inline void psock_set_prog(struct bpf_prog **pprog,
--- 
-2.45.1
+Cheers,
+Baokun
 
 
