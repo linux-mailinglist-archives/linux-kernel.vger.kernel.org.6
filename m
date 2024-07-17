@@ -1,207 +1,467 @@
-Return-Path: <linux-kernel+bounces-254940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82B33933983
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:01:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FDE3933994
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:05:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36688284608
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:01:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6176B212D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5463BB48;
-	Wed, 17 Jul 2024 09:01:24 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797703BBDE;
+	Wed, 17 Jul 2024 09:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="wOdKmyPb"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5271847F4D
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 09:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A796038F97
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 09:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721206884; cv=none; b=JEg1d0RHYZTGOQgELV04Wl45I/B+9bKvBnxQxGKdbqJD5uhhW6qYU5SfJIggynoTv+3tDBRwhK+6d788+rShre9l7IXSLRKcMimpysUO0LlpUctDrtuVV+216BnD5fo0F1wkwAC1GjzdgWtM4c4bN9kEKorzbMS46qgRLnETLbo=
+	t=1721207100; cv=none; b=IFx+4x4xsdpLooyzm++Ha22F5Flhpkdet0Vf3CJgVe/KB6pdEfxHgSPKY+X2Aoxphw0VmlQZ+ss5M8EfSQEOi9lMYLq5APcDy8nrrtjjjkLDPFUo3SlgBLj+EpKyQputfHOmTraHC3T7xVk43tYvxqaItD3fCaEZpnPX+iL42AA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721206884; c=relaxed/simple;
-	bh=g4OxjF0Szmh1AP5musfl+ur8U0TD0awbb66j4iWEBw8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=m6vBNWRP1f05YB8jN9dvfh7nL9N4eUE2ZSkLg9jWKsxOcTiCUAGLuqughPnJ0FJ0hXhVrcvdYVicQmFwvUUXI1tV8gp+qXMhm3rsyR/9zzV9Rb3/aJxqUpuseHtI9qulxWt/Vu7WA8rAUbBv3Hr+HYUKt1GrLS54RgmOXYbYjXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-375e4d55457so10821935ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 02:01:22 -0700 (PDT)
+	s=arc-20240116; t=1721207100; c=relaxed/simple;
+	bh=Y9eH/S3ugDQ2qJBXk0sZV6jyY+jTBizijLU8n6zxjuE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gaP/5okeM1QTbdrZmbIJZbBCQqPdu9RCy9/nss5vPf8FDwTEyY1r+0Ga71VSB0JAIz+Uvk//RfKSGUY/XP16YnyN1teqEBJO8/mRxfCj8ty6IWVTWAbcIyNQ4GdIXv2FCn0HpGSOKh0XtTIPZkpIHsJ6cmqpk8RZGxzbvMZwxpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=wOdKmyPb; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52ea5765e75so7787912e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 02:04:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721207094; x=1721811894; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+REiBdUt9fLTjTn3aZcwCqL9kZgI0FUrI3zxX22R/T0=;
+        b=wOdKmyPbx6f8MK8735gWzw0Xyrl0NoKmXlsQWySeu8IT+keUhrspWcOspTRYFiGO6R
+         +ncLjviuaVDVUdrkK9SFb2yRx+D/aLcvf9iq/5wYATJ7PC0yL4U5xIQl6sEsesovlrHD
+         N7Xjm3BjYZA2JfoMtfF0CH8SyTv+nNKLnomNNF+Dley43zk9OeKkB2UiIJbyKRaf25f+
+         B5ll2IqtVNmbwSj/rXMgoZWr3PF/fro2rwmj+9wgA4m3IRLKTMdd1CuTDwnahg727GPv
+         ARcq50IXC/6ifI28A7qwQ9N4O3tifqadkdNvhi/cHku/Cz/Kqmo1j93bgfY3Cvz8zbu8
+         whxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721206881; x=1721811681;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ResNza9C/nxlVRUj+92Udy6etCN+wVLhQeDlYGKHQEA=;
-        b=KJIu67OwlYDTKmKlsVCHNei3WYdxLYyS62A2UosNQ61VO9D2KIgAPmSNtmleXlNeWb
-         4+PewTY7NgoLqETeAD45wRv28g9TPSyZKQk2hMWTCQH6TI27SVk6oQ3j869XzHUQXcdg
-         8aOvDZYFI73nD+kdj3YMzFibtWHj94PCxxER2gGTbgA4D7mO0cu25SAG8NDkzGzOmbZO
-         ny3RtYejcc9jMKMOElYlGzE5rNGZg2MRNqwlPcEVGb/RxX8pybla39ckNvT1jlWhc8sS
-         U447q6kM+qH3oagOZKBxSoLmMDSanZjnVUcF6mooHQSxpisBoHVV3Rb7a5N/Wzjujp4L
-         uiTw==
-X-Gm-Message-State: AOJu0Yw8kZvLMjFrb1zO8gZrvtwNEZCIoY66xmv1xAJPIo3WGBRuQr6f
-	8rCk3Ro368o5jMgrmu5x4tqJx4JayIcBL/CVCTSfOYIVkYrznDOpxPVoWPjVqdChsZWvODPi6Sb
-	AKJxqCdszTR7lL1LFe5A51sin1Lmpo5EMwTQGOGlXn5s7cAL1iZXZQl0=
-X-Google-Smtp-Source: AGHT+IGQ+ILjExV//2w3oud7t93GgNbOe541n3jRaCn9vRRg/AJ0dvg1/YjgWjIKxjaG7sQhvQDbvt2/6vRQ3ARwrjWAnNFOU3up
+        d=1e100.net; s=20230601; t=1721207094; x=1721811894;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+REiBdUt9fLTjTn3aZcwCqL9kZgI0FUrI3zxX22R/T0=;
+        b=cNl8uYSOfb9RQKmkBZhlvNQdQ6iZjFV9Wyt01sMmsSMwc6+KlvLH1DC7E86pwqQxLl
+         7ALNka3V6bu3WeIb6CzWFkbEGhobFIOumq9Nc+HlBHQJj0bj5blGRUoGJCt6fDdr5Oxu
+         ueGWkQNZhn6qXW3/XEqSEVzzkrhlXdx6KjFC9EGROxyNBPYEQLOGddJIbGt7MqGyG8mr
+         XoGjB7ho1/YcdKpRRaWpr33hEvcmmcTl+I4rAqgM0RLVpN71PMjBF3yNjGpLMnWI/DP4
+         PqGlwmDbanimqQVDRPRyKh/kXISZqfG57OjVZQ/E82E33jzGEJAK4KcjWiUZhgwei/be
+         lqeg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZspuqfag3xz524modc5av5dmdFse+Pj2TfZHSvYx87lgpjETHEI+yStcUl+5kznL9XsIt6o8kk9bOXiSlsMzvH4nKwswlPzs47bXO
+X-Gm-Message-State: AOJu0Yw/CS0s9gCfMceWlAwMr5eLwcMlbgHfoTVYWU5dOSCv7IIT7u5+
+	R9635NvyPKzjRSUr82f1CWnLJ4Gy/3DGOK2QpvbnDeJML3dNUWNy0gBTggLoIcw=
+X-Google-Smtp-Source: AGHT+IE1MQcw5XqPWmhELteUJAGg6G/f7zdNsvsFs5aYx4eY3O1yvitQtH1A6wC9h6Vq5TO1tIGkHg==
+X-Received: by 2002:a05:6512:3f16:b0:52c:e01f:3665 with SMTP id 2adb3069b0e04-52ee53b15eemr833414e87.25.1721207093377;
+        Wed, 17 Jul 2024 02:04:53 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:36f3:9aff:fec2:7e46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5d202fsm421896666b.78.2024.07.17.02.04.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jul 2024 02:04:52 -0700 (PDT)
+Date: Wed, 17 Jul 2024 11:04:50 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	Clark Wang <xiaoning.wang@nxp.com>, Haibo Chen <haibo.chen@nxp.com>, 
+	Jindong Yue <jindong.yue@nxp.com>
+Subject: Re: [PATCH 4/6] pwm: adp5585: add adp5585 PWM support
+Message-ID: <u7xii4lfvjk6gbpmq7qtqckoznddiyno7xsaa74ufuxwdob532@wxuawwiwjpgm>
+References: <20240716-adi-v1-0-79c0122986e7@nxp.com>
+ <20240716-adi-v1-4-79c0122986e7@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c247:0:b0:381:a678:c55b with SMTP id
- e9e14a558f8ab-395526d9984mr1070185ab.0.1721206881596; Wed, 17 Jul 2024
- 02:01:21 -0700 (PDT)
-Date: Wed, 17 Jul 2024 02:01:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c34595061d6db440@google.com>
-Subject: [syzbot] [media?] KASAN: vmalloc-out-of-bounds Write in
- tpg_fill_plane_buffer (3)
-From: syzbot <syzbot+365005005522b70a36f2@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	mchehab@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    e091caf99f3a Merge tag 'arm-fixes-6.10-3' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1547d131980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b63b35269462a0e0
-dashboard link: https://syzkaller.appspot.com/bug?extid=365005005522b70a36f2
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/7fdef776dda5/disk-e091caf9.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/40515092c306/vmlinux-e091caf9.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/61ceae9ea0d8/bzImage-e091caf9.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+365005005522b70a36f2@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: vmalloc-out-of-bounds in tpg_fill_plane_buffer+0x1ad1/0x5af0 drivers/media/common/v4l2-tpg/v4l2-tpg-core.c:2702
-Write of size 1280 at addr ffffc90004e27b40 by task vivid-000-vid-c/30900
-
-CPU: 1 PID: 30900 Comm: vivid-000-vid-c Not tainted 6.10.0-rc7-syzkaller-00231-ge091caf99f3a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
- __asan_memcpy+0x40/0x70 mm/kasan/shadow.c:106
- tpg_fill_plane_buffer+0x1ad1/0x5af0 drivers/media/common/v4l2-tpg/v4l2-tpg-core.c:2702
- vivid_fillbuff drivers/media/test-drivers/vivid/vivid-kthread-cap.c:449 [inline]
- vivid_thread_vid_cap_tick+0x1c84/0x5bd0 drivers/media/test-drivers/vivid/vivid-kthread-cap.c:605
- vivid_thread_vid_cap+0x8aa/0xf30 drivers/media/test-drivers/vivid/vivid-kthread-cap.c:743
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-The buggy address belongs to the virtual mapping at
- [ffffc90004e25000, ffffc90004e29000) created by:
- vb2_vmalloc_alloc+0xf2/0x340 drivers/media/common/videobuf2/videobuf2-vmalloc.c:47
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x8 pfn:0x230e1
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 0000000000000000 dead000000000122 0000000000000000
-raw: 0000000000000008 0000000000000000 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x102dc2(GFP_HIGHUSER|__GFP_NOWARN|__GFP_ZERO), pid 30897, tgid 30893 (syz.0.5784), ts 1363420348526, free_ts 1363309065138
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1473
- prep_new_page mm/page_alloc.c:1481 [inline]
- get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3425
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4683
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- vm_area_alloc_pages mm/vmalloc.c:3583 [inline]
- __vmalloc_area_node mm/vmalloc.c:3659 [inline]
- __vmalloc_node_range_noprof+0x971/0x1460 mm/vmalloc.c:3840
- vmalloc_user_noprof+0x74/0x80 mm/vmalloc.c:3994
- vb2_vmalloc_alloc+0xf2/0x340 drivers/media/common/videobuf2/videobuf2-vmalloc.c:47
- __vb2_buf_mem_alloc drivers/media/common/videobuf2/videobuf2-core.c:243 [inline]
- __vb2_queue_alloc+0xa0f/0x16f0 drivers/media/common/videobuf2/videobuf2-core.c:510
- vb2_core_reqbufs+0xd2e/0x17c0 drivers/media/common/videobuf2/videobuf2-core.c:951
- __vb2_init_fileio+0x319/0xf90 drivers/media/common/videobuf2/videobuf2-core.c:2855
- vb2_core_poll+0x46c/0x7b0 drivers/media/common/videobuf2/videobuf2-core.c:2689
- vb2_poll drivers/media/common/videobuf2/videobuf2-v4l2.c:980 [inline]
- vb2_fop_poll+0x170/0x360 drivers/media/common/videobuf2/videobuf2-v4l2.c:1245
- v4l2_poll+0x143/0x2c0 drivers/media/v4l2-core/v4l2-dev.c:348
- vfs_poll include/linux/poll.h:84 [inline]
- do_select+0xec6/0x1900 fs/select.c:538
- core_sys_select+0x6f4/0x910 fs/select.c:681
- do_pselect fs/select.c:763 [inline]
- __do_sys_pselect6 fs/select.c:804 [inline]
- __se_sys_pselect6+0x319/0x3f0 fs/select.c:795
-page last free pid 30896 tgid 30896 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1093 [inline]
- free_unref_folios+0xf23/0x19e0 mm/page_alloc.c:2637
- folios_put_refs+0x93a/0xa60 mm/swap.c:1024
- free_pages_and_swap_cache+0x2ea/0x690 mm/swap_state.c:329
- __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
- tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
- tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
- tlb_flush_mmu+0x3a3/0x680 mm/mmu_gather.c:373
- tlb_finish_mmu+0xd4/0x200 mm/mmu_gather.c:465
- exit_mmap+0x44f/0xc80 mm/mmap.c:3354
- __mmput+0x115/0x3c0 kernel/fork.c:1346
- exec_mmap+0x680/0x710 fs/exec.c:1063
- begin_new_exec+0x125f/0x1f50 fs/exec.c:1329
- load_elf_binary+0x974/0x2620 fs/binfmt_elf.c:996
- search_binary_handler fs/exec.c:1797 [inline]
- exec_binprm fs/exec.c:1839 [inline]
- bprm_execve+0xaf8/0x17c0 fs/exec.c:1891
- do_execveat_common+0x553/0x700 fs/exec.c:1998
- do_execve fs/exec.c:2072 [inline]
- __do_sys_execve fs/exec.c:2148 [inline]
- __se_sys_execve fs/exec.c:2143 [inline]
- __x64_sys_execve+0x92/0xb0 fs/exec.c:2143
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffffc90004e27f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffffc90004e27f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffffc90004e28000: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
-                   ^
- ffffc90004e28080: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
- ffffc90004e28100: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
-==================================================================
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ehgbnkhnzwpb5gdt"
+Content-Disposition: inline
+In-Reply-To: <20240716-adi-v1-4-79c0122986e7@nxp.com>
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+--ehgbnkhnzwpb5gdt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Hello Clark,
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+On Tue, Jul 16, 2024 at 03:28:27PM -0400, Frank Li wrote:
+> From: Clark Wang <xiaoning.wang@nxp.com>
+>=20
+> Add PWM function support for MFD adp5585.
+>=20
+> Reviewed-by: Haibo Chen <haibo.chen@nxp.com>
+> Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
+> Signed-off-by: Jindong Yue <jindong.yue@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/pwm/Kconfig       |   8 ++
+>  drivers/pwm/Makefile      |   1 +
+>  drivers/pwm/pwm-adp5585.c | 215 ++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  3 files changed, 224 insertions(+)
+>=20
+> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+> index 3e53838990f5b..baaadf877b9c6 100644
+> --- a/drivers/pwm/Kconfig
+> +++ b/drivers/pwm/Kconfig
+> @@ -38,6 +38,14 @@ config PWM_DEBUG
+>  	  It is expected to introduce some runtime overhead and diagnostic
+>  	  output to the kernel log, so only enable while working on a driver.
+> =20
+> +config PWM_ADP5585
+> +	tristate "ADP5585 PWM support"
+> +	depends on MFD_ADP5585
+> +	help
+> +	  This option enables support for on-chip PWM found
+> +	  on Analog Devices ADP5585.
+> +
+> +
+>  config PWM_AB8500
+>  	tristate "AB8500 PWM support"
+>  	depends on AB8500_CORE && ARCH_U8500
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+alphabetic ordering (by config symbol) please.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+> index 0be4f3e6dd432..161131a261e94 100644
+> --- a/drivers/pwm/Makefile
+> +++ b/drivers/pwm/Makefile
+> @@ -2,6 +2,7 @@
+>  obj-$(CONFIG_PWM)		+=3D core.o
+>  obj-$(CONFIG_PWM_AB8500)	+=3D pwm-ab8500.o
+>  obj-$(CONFIG_PWM_APPLE)		+=3D pwm-apple.o
+> +obj-$(CONFIG_PWM_ADP5585)	+=3D pwm-adp5585.o
+>  obj-$(CONFIG_PWM_ATMEL)		+=3D pwm-atmel.o
+>  obj-$(CONFIG_PWM_ATMEL_HLCDC_PWM)	+=3D pwm-atmel-hlcdc.o
+>  obj-$(CONFIG_PWM_ATMEL_TCB)	+=3D pwm-atmel-tcb.o
 
-If you want to undo deduplication, reply with:
-#syz undup
+alphabetic ordering please.
+
+> diff --git a/drivers/pwm/pwm-adp5585.c b/drivers/pwm/pwm-adp5585.c
+> new file mode 100644
+> index 0000000000000..f578d24df5c74
+> --- /dev/null
+> +++ b/drivers/pwm/pwm-adp5585.c
+> @@ -0,0 +1,215 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * PWM driver for Analog Devices ADP5585 MFD
+> + *
+> + * Copyright 2024 NXP
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/mfd/adp5585.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pwm.h>
+> +#include <linux/slab.h>
+> +#include <linux/time.h>
+> +
+> +#define ADP5585_PWM_CHAN_NUM		1
+
+This is only used once. I'd prefer to pass the 1 verbatim to
+pwmchip_alloc.
+
+> +#define ADP5585_PWM_FASTEST_PERIOD_NS	2000
+> +#define ADP5585_PWM_SLOWEST_PERIOD_NS	131070000
+
+Funny number. I wonder where this comes from.
+
+> +struct adp5585_pwm_chip {
+> +	struct device *parent;
+> +	struct mutex lock;
+> +	u8 pin_config_val;
+> +};
+> +
+> +static inline struct adp5585_pwm_chip *
+> +to_adp5585_pwm_chip(struct pwm_chip *chip)
+> +{
+> +	return pwmchip_get_drvdata(chip);
+> +}
+> +
+> +static int adp5585_pwm_reg_read(struct adp5585_pwm_chip *adp5585_pwm, u8=
+ reg, u8 *val)
+> +{
+> +	struct adp5585_dev *adp5585  =3D dev_get_drvdata(adp5585_pwm->parent);
+
+s/  / /;
+ditto below in adp5585_pwm_reg_write().
+
+> +
+> +	return adp5585->read_reg(adp5585, reg, val);
+> +}
+> +
+> +static int adp5585_pwm_reg_write(struct adp5585_pwm_chip *adp5585_pwm, u=
+8 reg, u8 val)
+> +{
+> +	struct adp5585_dev *adp5585  =3D dev_get_drvdata(adp5585_pwm->parent);
+> +
+> +	return adp5585->write_reg(adp5585, reg, val);
+> +}
+> +
+> +static int pwm_adp5585_get_state(struct pwm_chip *chip, struct pwm_devic=
+e *pwm,
+> +				 struct pwm_state *state)
+> +{
+> +	struct adp5585_pwm_chip *adp5585_pwm =3D to_adp5585_pwm_chip(chip);
+> +	u32 on, off;
+> +	u8 temp;
+> +
+> +	/* get period */
+> +	adp5585_pwm_reg_read(adp5585_pwm, ADP5585_PWM_OFFT_LOW, &temp);
+> +	off =3D temp;
+> +	adp5585_pwm_reg_read(adp5585_pwm, ADP5585_PWM_OFFT_HIGH, &temp);
+> +	off |=3D temp << 8;
+> +	adp5585_pwm_reg_read(adp5585_pwm, ADP5585_PWM_ONT_LOW, &temp);
+> +	on =3D temp;
+> +	adp5585_pwm_reg_read(adp5585_pwm, ADP5585_PWM_ONT_HIGH, &temp);
+> +	on |=3D temp << 8;
+> +	state->period =3D (on + off) * NSEC_PER_USEC;
+> +
+> +	state->duty_cycle =3D on;
+> +	state->polarity =3D PWM_POLARITY_NORMAL;
+> +
+> +	/* get channel status */
+> +	adp5585_pwm_reg_read(adp5585_pwm, ADP5585_PWM_CFG, &temp);
+> +	state->enabled =3D temp & ADP5585_PWM_CFG_EN;
+> +
+> +	return 0;
+> +}
+> +
+> +static int pwm_adp5585_apply(struct pwm_chip *chip,
+> +			     struct pwm_device *pwm,
+> +			     const struct pwm_state *state)
+> +{
+> +	struct adp5585_pwm_chip *adp5585_pwm =3D to_adp5585_pwm_chip(chip);
+> +	u32 on, off;
+> +	u8 enabled;
+> +	int ret;
+> +
+> +	if (state->period > ADP5585_PWM_SLOWEST_PERIOD_NS ||
+> +	    state->period < ADP5585_PWM_FASTEST_PERIOD_NS)
+> +		return -EINVAL;
+> +
+> +	guard(mutex)(&adp5585_pwm->lock);
+
+What does this protect? You're allowed (and expected) to assume that the
+consumer serializes calls to .apply() for a single pwm_device. Given
+that you have npwm=3D1 I think this lock can be dropped.
+
+> +	/* set on/off cycle*/
+> +	on =3D DIV_ROUND_CLOSEST_ULL(state->duty_cycle, NSEC_PER_USEC);
+> +	off =3D DIV_ROUND_CLOSEST_ULL((state->period - state->duty_cycle), NSEC=
+_PER_USEC);
+
+Please enable PWM_DEBUG your tests and make sure it doesn't produce
+warnings. (Hint: round_closest is wrong)
+
+> +	ret =3D adp5585_pwm_reg_write(adp5585_pwm, ADP5585_PWM_OFFT_LOW, off & =
+ADP5585_REG_MASK);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D adp5585_pwm_reg_write(adp5585_pwm, ADP5585_PWM_OFFT_HIGH,
+> +				    (off >> 8) & ADP5585_REG_MASK);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D adp5585_pwm_reg_write(adp5585_pwm, ADP5585_PWM_ONT_LOW, on & AD=
+P5585_REG_MASK);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D adp5585_pwm_reg_write(adp5585_pwm, ADP5585_PWM_ONT_HIGH,
+> +				    (on >> 8) & ADP5585_REG_MASK);
+> +	if (ret)
+> +		return ret;
+
+How does the hardware behave in between these register writes? Can it
+happen that an intermediate state is visible on the output pin? (E.g.
+because off is already written but on is still the old value. Or even
+off is only partly written after the first byte write.)
+
+Please document this behaviour in a paragraph at the top of the driver
+in the same way as many other PWM drivers do it. The details should be
+extractable by
+
+	sed -rn '/Limitations:/,/\*\/?$/p' drivers/pwm/*.c
+
+> +
+> +	/* enable PWM and set to continuous PWM mode*/
+
+Missing space before comment ending delimiter
+
+> +	adp5585_pwm_reg_read(adp5585_pwm, ADP5585_PWM_CFG, &enabled);
+> +	if (state->enabled)
+> +		ret =3D adp5585_pwm_reg_write(adp5585_pwm, ADP5585_PWM_CFG, ADP5585_PW=
+M_CFG_EN);
+> +	else
+> +		ret =3D adp5585_pwm_reg_write(adp5585_pwm, ADP5585_PWM_CFG, 0);
+> +
+> +	return ret;
+> +}
+> +
+> +static int pwm_adp5585_request(struct pwm_chip *chip, struct pwm_device =
+*pwm)
+> +{
+> +	struct adp5585_pwm_chip *adp5585_pwm =3D to_adp5585_pwm_chip(chip);
+> +	u8 reg_cfg;
+> +	int ret;
+> +
+> +	guard(mutex)(&adp5585_pwm->lock);
+> +
+> +	adp5585_pwm_reg_read(adp5585_pwm, ADP5585_PIN_CONFIG_C, &adp5585_pwm->p=
+in_config_val);
+> +	reg_cfg =3D adp5585_pwm->pin_config_val & ~ADP5585_PIN_CONFIG_R3_MASK;
+> +	reg_cfg |=3D ADP5585_PIN_CONFIG_R3_PWM;
+> +	ret =3D adp5585_pwm_reg_write(adp5585_pwm, ADP5585_PIN_CONFIG_C, reg_cf=
+g);
+
+ret is only written to here, ditto for &adp5585_pwm->pin_config_val.
+
+> +
+> +	adp5585_pwm_reg_read(adp5585_pwm, ADP5585_GENERAL_CFG, &adp5585_pwm->pi=
+n_config_val);
+> +	reg_cfg |=3D ADP5585_GENERAL_CFG_OSC_EN;
+> +	ret =3D adp5585_pwm_reg_write(adp5585_pwm, ADP5585_GENERAL_CFG, reg_cfg=
+);
+
+Please add a comment about what is happening here. I assume this sets up
+pinmuxing and enabled the oscillator. I wonder if it is sensible to do
+the latter only in .apply() iff state->enabled =3D true.
+
+> +
+> +	return ret;
+> +}
+> +
+> +static void pwm_adp5585_free(struct pwm_chip *chip, struct pwm_device *p=
+wm)
+> +{
+> +	struct adp5585_pwm_chip *adp5585_pwm =3D to_adp5585_pwm_chip(chip);
+> +	u8 reg_cfg;
+> +
+> +	guard(mutex)(&adp5585_pwm->lock);
+> +
+> +	adp5585_pwm_reg_read(adp5585_pwm, ADP5585_PIN_CONFIG_C, &reg_cfg);
+> +	reg_cfg &=3D ~ADP5585_PIN_CONFIG_R3_MASK;
+> +	reg_cfg |=3D adp5585_pwm->pin_config_val & ADP5585_PIN_CONFIG_R3_MASK;
+> +	adp5585_pwm_reg_write(adp5585_pwm, ADP5585_PIN_CONFIG_C, reg_cfg);
+
+It would be consequent to clear ADP5585_GENERAL_CFG_OSC_EN in this
+function given that it's set in .request().
+
+> +}
+> +
+> +static const struct pwm_ops adp5585_pwm_ops =3D {
+> +	.request =3D pwm_adp5585_request,
+> +	.free =3D pwm_adp5585_free,
+> +	.get_state =3D pwm_adp5585_get_state,
+> +	.apply =3D pwm_adp5585_apply,
+> +};
+> +
+> +static int adp5585_pwm_probe(struct platform_device *pdev)
+> +{
+> +	struct adp5585_pwm_chip *adp5585_pwm;
+> +	struct pwm_chip *chip;
+> +	unsigned int npwm =3D ADP5585_PWM_CHAN_NUM;
+> +	int ret;
+> +
+> +	chip =3D devm_pwmchip_alloc(&pdev->dev, npwm, sizeof(*adp5585_pwm));
+> +	if (IS_ERR(chip))
+> +		return PTR_ERR(chip);
+
+Error message using dev_err_probe() please.
+
+> +
+> +	adp5585_pwm =3D to_adp5585_pwm_chip(chip);
+> +	adp5585_pwm->parent =3D pdev->dev.parent;
+> +
+> +	platform_set_drvdata(pdev, adp5585_pwm);
+> +
+> +	chip->ops =3D &adp5585_pwm_ops;
+> +	mutex_init(&adp5585_pwm->lock);
+> +
+> +	ret =3D devm_pwmchip_add(&pdev->dev, chip);
+> +	if (ret)
+> +		dev_err(&pdev->dev, "failed to add PWM chip: %d\n", ret);
+
+Please use dev_err_probe().
+
+> +
+> +	return ret;
+> +}
+> +
+> +static void adp5585_pwm_remove(struct platform_device *pdev)
+> +{
+> +	struct pwm_chip *chip =3D platform_get_drvdata(pdev);
+> +
+> +	pwmchip_remove(chip);
+
+Did you test this? I'd expect this to explode.
+
+> +}
+> +
+> +static const struct of_device_id adp5585_pwm_of_match[] =3D {
+> +	{.compatible =3D "adp5585-pwm", },
+
+Missing space after the opening brace.
+
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, adp5585_pwm_of_match);
+> +
+> +static struct platform_driver adp5585_pwm_driver =3D {
+> +	.driver	=3D {
+> +		.name	=3D "adp5585-pwm",
+> +		.of_match_table =3D adp5585_pwm_of_match,
+> +	},
+> +	.probe		=3D adp5585_pwm_probe,
+> +	.remove		=3D adp5585_pwm_remove,
+> +};
+> +module_platform_driver(adp5585_pwm_driver);
+> +
+> +MODULE_AUTHOR("Xiaoning Wang <xiaoning.wang@nxp.com>");
+
+The email address matches one of the S-o-b lines, the name however is
+different. Is this by mistake?
+
+> +MODULE_DESCRIPTION("ADP5585 PWM Driver");
+> +MODULE_LICENSE("GPL");
+
+--ehgbnkhnzwpb5gdt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaXiTAACgkQj4D7WH0S
+/k5w3AgAsGbCPSxLacT5kGp/37SXTEIYM5B0a0vkkzPr8XTV/jpgpjIX2TOYxfSO
+Oa5LktMECFBkveY1RovhPbMNlzhot3t2FhHymfpdGFhVM0ykmLS3v+QD13dslEDw
+ZyvBTDa+/7fi8WiF4YJ8cgyvLfTyJ/X7K2N8ki44p4REAYtTMQg6Npq+2ZTvC4iF
+iQ8KrOROIrKnR/FmHMAxrS3ykvEvdIbXjv13FoZVER2wS1z+XNJ+vwN3wlAq+rQM
+g7gu1SSBtA8fRVxG6UNzXuSwJBZNJGYL02st6IE/Z+0dX7KJMzOni8IMC+qO2EFI
+ZXIOW8DP4kpOp+30prNT/8xHBYWUIw==
+=IUGp
+-----END PGP SIGNATURE-----
+
+--ehgbnkhnzwpb5gdt--
 
