@@ -1,197 +1,121 @@
-Return-Path: <linux-kernel+bounces-256646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47ED8935175
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 20:03:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDCC9935174
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 20:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 667E31C22442
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:03:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B3291C22622
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B781459F0;
-	Thu, 18 Jul 2024 18:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UpuSmyE2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100D3145A08;
+	Thu, 18 Jul 2024 18:03:03 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4F61459E8;
-	Thu, 18 Jul 2024 18:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25311145356
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 18:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721325790; cv=none; b=DDU5GTmnXQgfbVjKZu2cYGt8dJy5n/kfuuBJlM80oE++Qb6L4Zy9tshhMMkKf/GEwdcKEuCmOfZzworWeGw80OlnE9BCPAIud/lNU0iT6+at7eP/ehWx7sWXiDq8OEQpAwLwBAZeWjgdPZ7wUL+JD1jsty/tJB9+WoY43mpJw1g=
+	t=1721325782; cv=none; b=aDklZQI5dn0pT56znJ0FVauuWCUzPICbyAF1nY5u7FO4RgIok+9ZiGBHFkTwXQPugDcctB4JbNvxiuArbpXcmogVMQqDkoGwVqfdKETPwr/tLdAEyoKjV8trTbQPL1o65DP6F/DRrIOBPHH69bLhNYtnxoFEbMKY50VnzqbcPqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721325790; c=relaxed/simple;
-	bh=K+/D8ITQUYmyYg/+lBxDVcGiVjdI665hHS7auH4ZLKk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=APTDR12glDqqf4R8z+mmHPFG5wbDdwP2eFV5ZWWBAoQsDMemO3NqU5eL0CCmxgS7fwAMENrJ3BJ4LCPVlpu0/bfTv63/ZIwd7UwHd7HEByjD+uauYAFQK01YsLSXuQMqCSuKszgxm5deY8C+8MFegz9vBkVY1etLuWHR6rMwA68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UpuSmyE2; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721325789; x=1752861789;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=K+/D8ITQUYmyYg/+lBxDVcGiVjdI665hHS7auH4ZLKk=;
-  b=UpuSmyE2RCNr/UUDrN05sKr0Ob2PpDU6s6hEM5E1ofPooZ6WJpzBxxUu
-   VmP149azrIW2CyP7nOgMZneMDwQbmYaOmGnfRkIUajedBE0O1Ti0g8LKR
-   uEKN7CDRqAqbepNUfvT5Xl51+cUpjz5VBnDrSd0tEpTI2mTlGV0YBBOoO
-   N1IivDyMf4QwncaYL1KxKpD/2DI+HweUOAJETTQNUqT8PAsbkIA5NxaZS
-   8hVufGWw9xbfIP1bPvEaaom5QiAAc0T/r0Oki7yn1IHS1zSuUmLIRft5Y
-   7bxh60eCRm9eB60Sz0R7Wti2kMI4RV5X6ih2DW6kWbFtVCRO4n86fKeyd
-   Q==;
-X-CSE-ConnectionGUID: RIOZx6h2RqOhi5Rhj6YZ9w==
-X-CSE-MsgGUID: izn2i6qtQ86NJdi/9Upo8w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11137"; a="29488996"
-X-IronPort-AV: E=Sophos;i="6.09,218,1716274800"; 
-   d="scan'208";a="29488996"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 11:03:04 -0700
-X-CSE-ConnectionGUID: Hz/Q4zT2RNK9u6N0cZut+w==
-X-CSE-MsgGUID: 7xcXBoFSR0mgyHRXGzC0iQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,218,1716274800"; 
-   d="scan'208";a="50915618"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 11:02:36 -0700
-Received: from [10.212.127.244] (kliang2-mobl1.ccr.corp.intel.com [10.212.127.244])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 0F42D20CFED5;
-	Thu, 18 Jul 2024 11:02:32 -0700 (PDT)
-Message-ID: <2e76dd74-b702-4401-ade1-fc1fd1ff40ce@linux.intel.com>
-Date: Thu, 18 Jul 2024 14:02:32 -0400
+	s=arc-20240116; t=1721325782; c=relaxed/simple;
+	bh=FHxbrmTw0dVAEXbFDVKzZm8aVaVDeImqbXiH++lXSSQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=WNRQRaE6u/fVxztsJGN6a2oPHGzXdEab15ClzZ3prWmdctdYR3XWTsORPFTn4uqLmoSas78Alypx42mZ6Ern3VRxe94+xjLP4G/MS62DCj5lnOdqQ0aFwhi+ZZe952ugzsnWR9+tVMV0qPgJbLho/BIoyWDER1lWoJ+W3rkg/Ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3835c6e5763so14131195ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 11:03:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721325780; x=1721930580;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+aHBRBgAFqp3cCvMwZ5U6Apip/zL0Qr94huepps+kHc=;
+        b=jDOKvSWhL5Y1/eXmiDGQZ9M0QLu5dzAmvmY8hxV/sztOjZAL1Dx3Ph5A3Wzb6853MH
+         JJU7S07iLQuhxinf0qt25ygJpci/qaWi8fo7MsQGXwDVaH5drDrktq7oN7d/AoRwTvGb
+         z9XNM2hGMdAusjDiHe023G+e0N7WnDlkfazRCnAyNAQg2o+yit4JMChf+yMZLYejLQMM
+         x7/bDfTdDKaU+8EJWLLdgsuZrsGITAzGswLgC8zlVfsT+S6RhYvW+VzIag8KsH+rfqSi
+         VrMdcjm8f1/j+64FnzraidxT5BssptP+qJDU1u9MUAHktDhEDz5hllk1uG3t2kXBe/FA
+         +oEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcoYs7Q3S8T/OhcJDDFboI9EcaqUD0oWZ4rs6JTGRoMr+WJSOaQokWD8jwgDepq1e4tu3SEnLFGOpwDMnEn0xphOZzeBqzTVgC0e7q
+X-Gm-Message-State: AOJu0Yx3DheHb3MZsETTPZL8LlEc+aYCdq0YlZKgutXlohVsqvGEcQ9m
+	odCk+PhevQ4wgZ4P0Bhi6aHa7OXMzgEQ2cQqf/ZBhpYjdtOCfH63hNxRO2pkIWERe55tdOr9zpJ
+	YfHU+wNsXbvcVPztd27L65UuTfhp911ST7K9m65t4hXJjJA0vOTKfatA=
+X-Google-Smtp-Source: AGHT+IExARHtw36AbOYPYSIsGgc5K0wOTD02RYbjVVAoQu8sLTtcwoYcCjxmXZrNkOohFZJqGBunDLc9teTF8O5IYgUpF3+yHLro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/6] perf parse-events: Add "cpu" term to set the CPU
- an event is recorded on
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>,
- James Clark <james.clark@arm.com>, Ravi Bangoria <ravi.bangoria@amd.com>,
- Dominique Martinet <asmadeus@codewreck.org>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org,
- Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, ananth.narayan@amd.com,
- gautham.shenoy@amd.com, kprateek.nayak@amd.com, sandipan.das@amd.com
-References: <20240718003025.1486232-1-irogers@google.com>
- <20240718003025.1486232-7-irogers@google.com>
- <febefab7-7351-4bd5-a6cc-a0116248484f@linux.intel.com>
- <CAP-5=fUUcehu-C=ytHVVixOpeCYoW4oJkkj6p6W=M0HtQ2wrRA@mail.gmail.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <CAP-5=fUUcehu-C=ytHVVixOpeCYoW4oJkkj6p6W=M0HtQ2wrRA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:b24:b0:381:c14:70cf with SMTP id
+ e9e14a558f8ab-3955523dd99mr5129945ab.1.1721325780368; Thu, 18 Jul 2024
+ 11:03:00 -0700 (PDT)
+Date: Thu, 18 Jul 2024 11:03:00 -0700
+In-Reply-To: <d848129a-ed5e-46f5-ac17-add37d7799fd@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ae9198061d896312@google.com>
+Subject: Re: [syzbot] [io-uring?] general protection fault in __io_remove_buffers
+From: syzbot <syzbot+2074b1a3d447915c6f1c@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com
+Cc: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+> On 7/18/24 02:20, syzbot wrote:
+>> Hello,
+>> 
+>> syzbot found the following issue on:
+>> 
+>> HEAD commit:    d67978318827 Merge tag 'x86_cpu_for_v6.11_rc1' of git://gi..
+>> git tree:       upstream
+>> console+strace: https://syzkaller.appspot.com/x/log.txt?x=1178e9e9980000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=e206d588252bd3ff
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=2074b1a3d447915c6f1c
+>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e07d9e980000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16adf045980000
+>> 
+>> Downloadable assets:
+>> disk image: https://storage.googleapis.com/syzbot-assets/f34b31760156/disk-d6797831.raw.xz
+>> vmlinux: https://storage.googleapis.com/syzbot-assets/a92e51d8d32e/vmlinux-d6797831.xz
+>> kernel image: https://storage.googleapis.com/syzbot-assets/000a6a162550/bzImage-d6797831.xz
+>> 
+>> The issue was bisected to:
+>> 
+>> commit 87585b05757dc70545efb434669708d276125559
+>> Author: Jens Axboe <axboe@kernel.dk>
+>> Date:   Wed Mar 13 02:24:21 2024 +0000
+>> 
+>>      io_uring/kbuf: use vm_insert_pages() for mmap'ed pbuf ring
+> Easily reproducible, the diff helps
+>
+> #syz test:
 
+want either no args or 2 args (repo, branch), got 4
 
-On 2024-07-18 11:12 a.m., Ian Rogers wrote:
-> On Thu, Jul 18, 2024 at 7:41 AM Liang, Kan <kan.liang@linux.intel.com> wrote:
->>
->>
->>
->> On 2024-07-17 8:30 p.m., Ian Rogers wrote:
->>> The -C option allows the CPUs for a list of events to be specified but
->>> its not possible to set the CPU for a single event. Add a term to
->>> allow this. The term isn't a general CPU list due to ',' already being
->>> a special character in event parsing instead multiple cpu= terms may
->>> be provided and they will be merged/unioned together.
->>>
->>> An example of mixing different types of events counted on different CPUs:
->>> ```
->>> $ perf stat -A -C 0,4-5,8 -e "instructions/cpu=0/,l1d-misses/cpu=4,cpu=5/,inst_retired.any/cpu=8/,cycles" -a sleep 0.1
->>>
->>>  Performance counter stats for 'system wide':
->>>
->>> CPU0              368,647      instructions/cpu=0/              #    0.26  insn per cycle
->>> CPU4        <not counted>      instructions/cpu=0/
->>> CPU5        <not counted>      instructions/cpu=0/
->>> CPU8        <not counted>      instructions/cpu=0/
->>> CPU0        <not counted>      l1d-misses [cpu]
->>> CPU4              203,377      l1d-misses [cpu]
->>> CPU5              138,231      l1d-misses [cpu]
->>> CPU8        <not counted>      l1d-misses [cpu]
->>> CPU0        <not counted>      cpu/cpu=8/
->>> CPU4        <not counted>      cpu/cpu=8/
->>> CPU5        <not counted>      cpu/cpu=8/
->>> CPU8              943,861      cpu/cpu=8/
->>> CPU0            1,412,071      cycles
->>> CPU4           20,362,900      cycles
->>> CPU5           10,172,725      cycles
->>> CPU8            2,406,081      cycles
->>>
->>>        0.102925309 seconds time elapsed
->>> ```
->>>
->>> Note, the event name of inst_retired.any is missing, reported as
->>> cpu/cpu=8/, as there are unmerged uniquify fixes:
->>> https://lore.kernel.org/lkml/20240510053705.2462258-3-irogers@google.com/
->>>
->>> An example of spreading uncore overhead across two CPUs:
->>> ```
->>> $ perf stat -A -e "data_read/cpu=0/,data_write/cpu=1/" -a sleep 0.1
->>>
->>>  Performance counter stats for 'system wide':
->>>
->>> CPU0               223.65 MiB  uncore_imc_free_running_0/cpu=0/
->>> CPU0               223.66 MiB  uncore_imc_free_running_1/cpu=0/
->>> CPU0        <not counted> MiB  uncore_imc_free_running_0/cpu=1/
->>> CPU1                 5.78 MiB  uncore_imc_free_running_0/cpu=1/
->>> CPU0        <not counted> MiB  uncore_imc_free_running_1/cpu=1/
->>> CPU1                 5.74 MiB  uncore_imc_free_running_1/cpu=1/
->>> ```
->>>
->>> Manually fixing the output it should be:
->>> ```
->>> CPU0               223.65 MiB  uncore_imc_free_running_0/data_read,cpu=0/
->>> CPU0               223.66 MiB  uncore_imc_free_running_1/data_read,cpu=0/
->>> CPU1                 5.78 MiB  uncore_imc_free_running_0/data_write,cpu=1/
->>> CPU1                 5.74 MiB  uncore_imc_free_running_1/data_write,cpu=1/
->>> ```
->>>
->>> That is data_read from 2 PMUs was counted on CPU0 and data_write was
->>> counted on CPU1.
->>
->> There was an effort to make the counter access from any CPU of the package.
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d6a2f9035bfc27d0e9d78b13635dda9fb017ac01
->>
->> But now it limits the access from specific CPUs. It sounds like a
->> regression.
-> 
-> Thanks Kan, I'm not sure I understand the comment. 
-
-The flag is also applied for the uncore and RAPL.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/arch/x86/events/intel/uncore.c?&id=e64cd6f73ff5a7eb4f8f759049ee24a3fe55e731
-
-So specifying a CPU to an uncore event doesn't make sense. If the
-current CPU is in the same package as the asked CPU. The kernel will
-always choose the current CPU.
-
-Thanks,
-Kan
-> The overhead I was
-> thinking of here is more along the lines of cgroup context switches
-> (although that isn't in my example). There may be a large number of
-> say memory controller events just by having 2 events for each PMU and
-> then there are 10s of PMUs. By putting half of the events on 1 CPU and
-> half on another, the context switch overhead is shared. That said, the
-> counters don't care what cgroup is accessing memory, and users doing
-> this are likely making some kind of error.
-> 
-> Thanks,
-> Ian
-> 
+>
+>
+> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+> index d2945c9c812b..c95dc1736dd9 100644
+> --- a/io_uring/kbuf.c
+> +++ b/io_uring/kbuf.c
+> @@ -657,8 +657,10 @@ static int io_alloc_pbuf_ring(struct io_ring_ctx *ctx,
+>   	ring_size = reg->ring_entries * sizeof(struct io_uring_buf_ring);
+>   
+>   	bl->buf_ring = io_pages_map(&bl->buf_pages, &bl->buf_nr_pages, ring_size);
+> -	if (!bl->buf_ring)
+> +	if (IS_ERR(bl->buf_ring)) {
+> +		bl->buf_ring = NULL;
+>   		return -ENOMEM;
+> +	}
+>   
+>   	bl->is_buf_ring = 1;
+>   	bl->is_mmap = 1;
+>
 
