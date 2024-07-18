@@ -1,147 +1,138 @@
-Return-Path: <linux-kernel+bounces-256251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D0FB934B6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:01:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11F87934B6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCF6F282161
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:01:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCAA01F24AA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FF912C474;
-	Thu, 18 Jul 2024 10:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85360839EB;
+	Thu, 18 Jul 2024 10:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="FJ/LcfCg"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EvvCop/Q"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADD4824AC
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 10:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003DE3A267
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 10:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721296864; cv=none; b=OcMOwtfop+3EsTcONNriCYzggt24yZavBA3+mF67BXQrhsPsdiP+Exnd7eMWFkA/4PLhr/DFUsIqzzqyw2M6ylVS8ty9lbdRv4rG4629PSspYWAEUwncIBhl4Or+y9+Ij97P5mKHa8nDDYdLK3KjirMi37l8BWhWa1f41/URmhU=
+	t=1721296942; cv=none; b=Jxnbji2bc+sosXBaHrdDdrHUOeQysrILRMm0k93zZTqLUkdvYPSYloijHw6frKUaJdt2tNCuCSbDIsTWWOCqNSx0A0XFsKc98HuBUhL6QNYa6+v8iVl5iZ2FjMsAH0MS1p7Xmv3ghv+jmakjWaAD4dWM0Mx8nyg1+ZxNzSvdcIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721296864; c=relaxed/simple;
-	bh=PVKzFBjUylgl+SFX+eVz4j3ekjHizvwoGKwdu26z3lw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dtCO3KayvvvRRqwWgNukosw1D6G+bois1l748TOxXjx78OocxzVwt3iPDflyBR+kpKbGOHEGpNEKxJSE6NUo+SAxbnJKEQOMtiZM1ZSPj7F6UCio+deCG5wKXpvQYOCn++fEHxhLESsXyQwpQj4j07Ax/9EhDRBYPr6VBDGRv28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=FJ/LcfCg; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ua1-f72.google.com (mail-ua1-f72.google.com [209.85.222.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 0B686400E8
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 10:00:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1721296855;
-	bh=8LsyU/bDvYfIu4r+7OnoQP5eYa7svy7lWN7+7+yiUFA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=FJ/LcfCgi4iWKrrBHyzpNoS1c6Ri3Jz+hQ7jxiJY51oXJj7MEQJTY8cy2pqk69GN1
-	 ieqBCyNPylQRRR1xTHlhp+kV3rEba67BGuvsF56fB2gYE7R53Sa82YbbCh8KTz6RBk
-	 djZG315KItSpWBxiD7COnjztt/zx9QUUnPMo2mC4+HDHlYzaPqoe8kNre/EVoDMhSi
-	 lho1Zi02wCfH24HXsG4TigPtOYMdkSM+tlTxkHNiFuJaToAvZARCDcZm1UYZ2Kb3RJ
-	 aDN2yCC23/rfgXbzFzCfDRWkZDYO4vD7utufHvYhMJc8ZOnzZsY5P8UHr0ykOa/+hj
-	 jTxnJcrUvKsXg==
-Received: by mail-ua1-f72.google.com with SMTP id a1e0cc1a2514c-821650bdbe4so238363241.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 03:00:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721296853; x=1721901653;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8LsyU/bDvYfIu4r+7OnoQP5eYa7svy7lWN7+7+yiUFA=;
-        b=uLAkiVNFDIK9o/jkzeZjkLDJAR+7TlKUh9cX1cK30HRJhX3faWxnFpsAvLsw2A3iWi
-         CbCQHzmQmR1LNt8W9QodZdAg+cDDqu3umyDG53nIzZb0ILEWndeEl2KiFGyUtIkmdRm/
-         /5XL92W/jDti3fFMmP0dVYJGz4zqhvwynGi0kUVqHThBaysTkXerff8377Afm17iSXrB
-         ThY2iuJXBq+5qfRoGMzDF9xu6TYNCGEXdg8k73LOSiEL4li3+uMOCVK9dDbzPNymx04h
-         JLzPHAXH+8zw5ywbTeaujgi/SHN+NH5TgI37PlOxwbByH/k+Zb8AvHVZsz5/kW0wlwBj
-         Ml/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXFSI8O7NM9hAOcgoXR+pfoLZdNy2JJY1W2s/bn8g9d4zTg9k1fAx92Ql2VV9/aUaihM7aYcRnHVh31uZQH5ztvcK4R3m2uWJFT94NO
-X-Gm-Message-State: AOJu0YzZNOOjkotq1e6Zt1yEaHnOtPjoewiYAcAJjwwelQ/O504UkAO3
-	T+dkkjOwrAhSWbofhWnwMiBK7FpaymvWffqF9HCGYjDj1mUJkt5RxpDv8dtMjd/zyLLB/Pq7B26
-	sGdBZ+CSV/8O8cZbb2bgocDImR/0scaQ+ovFox3c0mxh/6O0jTuMgYISSiBTLxd6ZlhQz0JGRCw
-	/+3HvQKoujNtGipaqEKxZHwDCib4Qub8kcwmx6YxaFK16bDaw2Z3+j
-X-Received: by 2002:a05:6102:5348:b0:48f:e68d:bdc6 with SMTP id ada2fe7eead31-49159a2eff7mr5727764137.33.1721296851013;
-        Thu, 18 Jul 2024 03:00:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFqJKCH3G3nyP+aVB8d0rCp17Ac0e3EmSJIvfmYYqEiGnQ4Po6sCBParIO6wIwVz03HPaymow75Y6ld3Wl9FUI=
-X-Received: by 2002:a05:6102:5348:b0:48f:e68d:bdc6 with SMTP id
- ada2fe7eead31-49159a2eff7mr5727736137.33.1721296850693; Thu, 18 Jul 2024
- 03:00:50 -0700 (PDT)
+	s=arc-20240116; t=1721296942; c=relaxed/simple;
+	bh=E4WObEXdg2x+zMuBUTWmGjfhILP+Bo+7aUXRUvh2dx0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=GaN9apxp9FXSvd7axj4flEOGNLmF8DUZoOvGHXPoa0rTxjHn1tl1G3c5Xv30xSaltoUSUdD7VNijVsTmikHsxyBXanacjcnHIYLosGF/xgafChSE2kWLwr71ZcFl4mmPgO7mPelL2lWqTA4R4A+CmWFigKpY+sAXYY+lO+uGoBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=EvvCop/Q; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240718100215epoutp0304ac0febbdb43487708f0d7fca8ad88e~jRnFemhAh0762207622epoutp03P
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 10:02:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240718100215epoutp0304ac0febbdb43487708f0d7fca8ad88e~jRnFemhAh0762207622epoutp03P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1721296935;
+	bh=E4WObEXdg2x+zMuBUTWmGjfhILP+Bo+7aUXRUvh2dx0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=EvvCop/QBEjNNCp4xE7TQLbSqNWPuqnwbHhQXoyQVAadfOl+r+seF3yZwRXcBUz6b
+	 Du0uL4MEp2oK66L3TewbpEYWaz/4B5p5N6SeV5edQkp0pL8gQJST2yCtwWg201ngWU
+	 O3V6ozhgTIvTWwKS9s2D9fhZqi5OAuIBV32Aps3I=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240718100215epcas5p2329a43fef460ce02ae36677320a3b115~jRnFOhtNU3088330883epcas5p21;
+	Thu, 18 Jul 2024 10:02:15 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4WPpJ534fRz4x9Pr; Thu, 18 Jul
+	2024 10:02:13 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	AC.37.06857.528E8966; Thu, 18 Jul 2024 19:02:13 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240718100113epcas5p255acf51a58cf410d5d0e8cffbca41994~jRmLhVOjY1158311583epcas5p2N;
+	Thu, 18 Jul 2024 10:01:13 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240718100113epsmtrp25e4ee2f08258ba8f315e77dd36a4900c~jRmLgc8mG1042010420epsmtrp24;
+	Thu, 18 Jul 2024 10:01:13 +0000 (GMT)
+X-AuditID: b6c32a4b-ae9fa70000021ac9-d5-6698e825e12e
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	74.7D.19057.8E7E8966; Thu, 18 Jul 2024 19:01:12 +0900 (KST)
+Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240718100112epsmtip2886cec36726a0e511aa6eee8b330094c~jRmKl736_0213902139epsmtip2C;
+	Thu, 18 Jul 2024 10:01:11 +0000 (GMT)
+From: hexue <xue01.he@samsung.com>
+To: axboe@kernel.dk
+Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V6] io_uring: releasing CPU resources when polling
+Date: Thu, 18 Jul 2024 18:01:07 +0800
+Message-Id: <20240718100107.1135964-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240709092944.3208051-1-xue01.he@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240105152129.196824-1-aleksandr.mikhalitsyn@canonical.com>
- <20240105152129.196824-3-aleksandr.mikhalitsyn@canonical.com> <CAJfpegsttFdeZnahAFQS=jG_uaw6XMHFfw7WKgAhujLaNszcsw@mail.gmail.com>
-In-Reply-To: <CAJfpegsttFdeZnahAFQS=jG_uaw6XMHFfw7WKgAhujLaNszcsw@mail.gmail.com>
-From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date: Thu, 18 Jul 2024 12:00:39 +0200
-Message-ID: <CAEivzxc4=p63Wgp_i+J7YVw=LrKTt_HfC5fAL=vGT9AXjUgqaw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/3] fuse: use GFP_KERNEL_ACCOUNT for allocations in fuse_dev_alloc
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: mszeredi@redhat.com, Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpik+LIzCtJLcpLzFFi42LZdlhTS1f1xYw0gz/N4hZzVm1jtFh9t5/N
+	4l3rORaLX913GS0u75rDZnF2wgdWBzaPnbPusntcPlvq0bdlFaPH501yASxR2TYZqYkpqUUK
+	qXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QLuVFMoSc0qBQgGJxcVK
+	+nY2RfmlJakKGfnFJbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZL78vYCn4wFTR
+	deYDawPjCqYuRk4OCQETiXkTW4BsLg4hgd2MEotXTWeHcD4xShzdtY4ZwvnGKLFxfhMjTEvz
+	+ZVQLXsZJS7v6mODcH4wSuy6fosdpIpNQEli/5YPYB0iAsIS+ztaWboYOTiYBUIkbp6JAAkL
+	C7hJXJh5ng0kzCKgKrFnSjyIyStgLfFruTjEKnmJm137mUFsTgEbiadHl7CC2LwCghInZz5h
+	AbGZgWqat84Gu1NC4BK7xOc1k5ghml0kTtx9yQJhC0u8Or6FHcKWkvj8bi8bhJ0vMfn7eqi/
+	aiTWbX4HVW8t8e/KHqiLNSXW79KHCMtKTD21jgliL59E7+8n0FDkldgxD8ZWklhyZAXUSAmJ
+	3xMWsULYHhIvLv0CGy8k0M8osaxBeQKjwiwk78xC8s4shM0LGJlXMUqmFhTnpqcWmxYY56WW
+	w6M4OT93EyM4MWp572B89OCD3iFGJg7GQ4wSHMxKIrwTGKelCfGmJFZWpRblxxeV5qQWH2I0
+	BYb2RGYp0eR8YGrOK4k3NLE0MDEzMzOxNDYzVBLnfd06N0VIID2xJDU7NbUgtQimj4mDU6qB
+	qXjHmfQ8F5MNlqv5L/w7y7/31Aq37Mp8n1860x4eX1eytzzWZt5+T9WnB2Wf3NC5tt5iq3nK
+	aYmC6vLjrVsm7gl7/oAvoL9A5nuvxCdFq3N1xYvK7jfZywle37v7XfjP45lXzb2KQiQe5KZ+
+	4Sref/yeTzDTNl7bXNepn3pD3r2rsZhb2HWubP7Og1PDJxioPgsx6oxNXb117eV0l/1z78sy
+	88Rm99wIn/W4IK34zq39a7dGlB3t/Sm9fEb18V/Hd+3zuOd95WnL3j0sUTPc78alGu7tN+y8
+	JW76gPO1uuuDirsnrv3rmjKfMeDr9W6hKK1IO/npHn135pw31J5RNyGMV/iNm05BCMN8KW5G
+	UyWW4oxEQy3mouJEAPXBjVwVBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFLMWRmVeSWpSXmKPExsWy7bCSvO6L5zPSDH7+s7GYs2obo8Xqu/1s
+	Fu9az7FY/Oq+y2hxedccNouzEz6wOrB57Jx1l93j8tlSj74tqxg9Pm+SC2CJ4rJJSc3JLEst
+	0rdL4Mp4+X0BS8EHpoquMx9YGxhXMHUxcnJICJhINJ9fCWRzcQgJ7GaUaPp9kQ0iISGx49Ef
+	VghbWGLlv+fsEEXfGCU+b9wLlmATUJLYv+UDI4gtAlS0v6OVBcRmFgiT6NpxBqxGWMBN4sLM
+	80BDOThYBFQl9kyJBzF5Bawlfi0XhxgvL3Gzaz8ziM0pYCPx9OgSsE4hoJKZS7+AxXkFBCVO
+	znwCNV1eonnrbOYJjAKzkKRmIUktYGRaxSiZWlCcm55bbFhglJdarlecmFtcmpeul5yfu4kR
+	HLxaWjsY96z6oHeIkYmD8RCjBAezkgjvBMZpaUK8KYmVValF+fFFpTmpxYcYpTlYlMR5v73u
+	TRESSE8sSc1OTS1ILYLJMnFwSjUwnY4One4SHFNUeL1m7Vs9V9cq1691Jww37LHc2HDpF+tU
+	Yb7Jpck+jK9cd5S/3yV+pb/pDdc/1dsNDqfKetNe5G+euGfDX+5lDaXieeXG274eXv3w37kS
+	Te6NXw/kiBa2l6d1n2Ot+jprOUsfv+L8Xb9+rBF7IDlrtunkNuPcl2ynJ8Vtec9ao7I3fbnu
+	WTUTUxWlVZMvv37EpxEazSTauWf3rb7dBt8sdjKtFAg+tmjl52kvrr+e+on9RtOKEzOUJ6zg
+	sT1QsouPQ9NY9CCThOeyNaVBfvwP3JqtO350nPmu/Sxys9wdVmF3+eBXKxj+26lEysXPO8g4
+	Z9VE+8VCH/g4Iusir7Fsr7/1RqRxmxJLcUaioRZzUXEiACQOB/bNAgAA
+X-CMS-MailID: 20240718100113epcas5p255acf51a58cf410d5d0e8cffbca41994
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240718100113epcas5p255acf51a58cf410d5d0e8cffbca41994
+References: <20240709092944.3208051-1-xue01.he@samsung.com>
+	<CGME20240718100113epcas5p255acf51a58cf410d5d0e8cffbca41994@epcas5p2.samsung.com>
 
-On Mon, Feb 26, 2024 at 12:01=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu>=
- wrote:
+On 09/07/24 9:29AM, hexue wrote:
+>io_uring use polling mode could improve the IO performence, but it will
+>spend 100% of CPU resources to do polling.
 >
-> On Fri, 5 Jan 2024 at 16:21, Alexander Mikhalitsyn
-> <aleksandr.mikhalitsyn@canonical.com> wrote:
-> >
-> > fuse_dev_alloc() is called from the process context and it makes
-> > sense to properly account allocated memory to the kmemcg as these
-> > allocations are for long living objects.
+>This set a signal "IORING_SETUP_HY_POLL" to application, aim to provide
+>a interface for user to enable a new hybrid polling at io_uring level.
 
-Hi Miklos,
-
-Sorry, this thread just got lost in my inbox. I was revisiting and
-rebasing fuse idmapped mounts support series and found this again.
-
->
-> Are the rules about when to use __GFP_ACCOUNT and when not documented som=
-ewhere?
-
-The only doc I found is this (memory-allocation.rst):
->Untrusted allocations triggered from userspace should be a subject
->of kmem accounting and must have ``__GFP_ACCOUNT`` bit set.
-
->
-> I notice that most filesystem objects are allocated with
-> __GFP_ACCOUNT, but struct super_block isn't.  Is there a reason for
-> that?
-
-I guess that it just wasn't yet covered with memcg accounting. I can
-send a patch to account struct super_block too.
-
-These days, it's pretty safe to use __GFP_ACCOUNT almost anywhere,
-because even if memcg is not
-determined in a current caller context then memcg charge will be
-skipped (look into __memcg_slab_post_alloc_hook() function).
-
-Let's ask what our friends who take care of mmcontrol.c think about this.
-+CC Johannes Weiner <hannes@cmpxchg.org>
-+CC Michal Hocko <mhocko@kernel.org>
-+CC Roman Gushchin <roman.gushchin@linux.dev>
-+CC Shakeel Butt <shakeel.butt@linux.dev>
-
-I have also added Christian because he might be interested in
-accounting for struct super_block.
-
-Kind regards,
-Alex
-
->
-> Thanks,
-> Miklos
+Hi, just a gentle ping. Any coments on this patch?
+--
+hexue
 
