@@ -1,140 +1,154 @@
-Return-Path: <linux-kernel+bounces-256575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 751E1935084
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:17:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C381893508B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:20:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DA74283FE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:17:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A4E6283FD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C3A144D22;
-	Thu, 18 Jul 2024 16:17:49 +0000 (UTC)
-Received: from h3cspam02-ex.h3c.com (smtp.h3c.com [60.191.123.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2525A144D23;
+	Thu, 18 Jul 2024 16:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="wJZYrC7E"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F352F139580
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 16:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.191.123.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29A04501A
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 16:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721319469; cv=none; b=JJ4P8WhpRf21EDnvLDsr4IXgxy46N2Z6VUX8GP12ico7ZRRFxyjzabstEHbJkjlqWGQ/bf7KOvbFHpeyxiFoL6R62BDH9liHHsnfj7GcAuJfolUK+lSD6PB9mnJX+Xl0mwjYPBQzhEV3rRtq4jmMh7Q9hK8yFVMhZucx03BEmNQ=
+	t=1721319630; cv=none; b=H2zJkgeAa/r14FbSX/vOZte+tLOg/p9JkXhw+jSBONhRzIuKvSperKb+vwVabGxbEpFdCAaQ94eSZ2Fu6uZZ33itTvzTwN5wdMORu9kJ3bErwFZcDqP/x67gjJvJCZnIOmhe71MqDj+Ke2kjSxNXRSe69Bgtj9zgH4n7gpZwvZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721319469; c=relaxed/simple;
-	bh=dqSd8wfLPnLEIbot77ROpng07zk/Fqu2JWeroHiHHvk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Fl4l7dmSx2WXO2fkPetp/XaAcYn+djJD1MNoIIOSpztjcXQLn9p3ci2DphWOkgnuwKlPn4/7W4KUcL4gm4AWegT20aXDoxKjaPIF9PgaSs6CxBvQuitoPcPQ7iEIM2i90NVocDzs8t9jG59lS5bP8r1tjrcKxSl52ngouWeeYmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com; spf=pass smtp.mailfrom=h3c.com; arc=none smtp.client-ip=60.191.123.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h3c.com
-Received: from mail.maildlp.com ([172.25.15.154])
-	by h3cspam02-ex.h3c.com with ESMTP id 46IGH1dk085127;
-	Fri, 19 Jul 2024 00:17:01 +0800 (GMT-8)
-	(envelope-from zhang.chunA@h3c.com)
-Received: from DAG6EX09-BJD.srv.huawei-3com.com (unknown [10.153.34.11])
-	by mail.maildlp.com (Postfix) with ESMTP id 9F4DB2004BAA;
-	Fri, 19 Jul 2024 00:21:30 +0800 (CST)
-Received: from localhost.localdomain.com (10.99.206.13) by
- DAG6EX09-BJD.srv.huawei-3com.com (10.153.34.11) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1258.27; Fri, 19 Jul 2024 00:17:05 +0800
-From: zhangchun <zhang.chuna@h3c.com>
-To: <akpm@linux-foundation.org>
-CC: <jiaoxupo@h3c.com>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <shaohaojize@126.com>, <zhang.chuna@h3c.com>,
-        <zhang.zhansheng@h3c.com>, <zhang.zhengming@h3c.com>
-Subject: [PATCH v2] =?UTF-8?q?mm:=20Give=20kmap=5Flock=20before=20call=20flus?= =?UTF-8?q?h=5Ftlb=5Fkernel=5Frang=EF=BC=8Cavoid=20kmap=5Fhigh=20deadlock.?=
-Date: Fri, 19 Jul 2024 00:18:32 +0800
-Message-ID: <1721319512-23585-1-git-send-email-zhang.chuna@h3c.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <20240710103611.809895ff809df9ed411bfaa8@linux-foundation.org>
-References: <20240710103611.809895ff809df9ed411bfaa8@linux-foundation.org>
+	s=arc-20240116; t=1721319630; c=relaxed/simple;
+	bh=hV/yjRqF09iUcs/e0H7EaoqxbBux+C8yA9yGsn7+gIM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XSp8WZM6tFHWlqetUPRkKzvgV0HVRNpsit0GcsgcU27/HYpSqHXJVxkft49PUi7dx05EuCc+SbJPgE0UGhNFNntE9f/ZNbFHfLe/rmS/DqeIssnMSpQWc4g5EL+t5Mj70R8c1z+lFgfnDdT0ytUIF74XEvmhYl5XUj+w2m+upq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=wJZYrC7E; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6265d3ba8fso87051466b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 09:20:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721319627; x=1721924427; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g7GxSN83wkZ2Gt6sREDponA0vNCLDJLytERV2W14H4I=;
+        b=wJZYrC7Enhxehy4aiAW/B2Xal1dfj95xgrcz4wNxRE5mqudVuBuYTsCBibCuvKFgjJ
+         1cggZdu66is6nSBVYj7yPhDnZSuFZFMthwdyVgDQbPUyM8TE/caj5YB6yUW9YwkU0Ife
+         0ho9DbiAnzWvtzaF1gphAAr1bYCaUtAx18EjET12bWjsi8qKkhvHquyRmsSVq7kpfHN/
+         K9Wo5xLTY+WIX+OfjBQNv+UQTdNfmlaEUUpZw0ovaU0ZaeY+s4guDoStImnPqIcXjKT6
+         B5bpuGcyIfnoq3nfkiKCuD+MO/Jh23fd0O7jwjI9gQxKH+XC4VNFkcOBQToMgOa6SrAj
+         DQ3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721319627; x=1721924427;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g7GxSN83wkZ2Gt6sREDponA0vNCLDJLytERV2W14H4I=;
+        b=NU+Jf8nFn/SaYhJtjz9w0o5TZ28jP8X0njJUP1wK0tiSCIZOph8/DdcmlOD48jgr3w
+         Z9hBFK7Y3zKqSPBKFLDzV6SFsPP+TQJWoSG3Ntm596Jo7dC1uBLyZ7Sf/Yf8M/52hO4+
+         Mew5ZSbgTvOjyKGmCTtvbFgVkB3oLcx91XPiMRJWjpeRysS6RccF43dfgPU7hrYzBaGp
+         GGhbaHmoiuWsbW/WA7t+AhALRW7hIxXP6bcNhIXvS36nzd/gYbugHEWkoZPScVYYqzen
+         DXd9zPdiM9kKk71wMg4R+UFl9vfL5RzbNeJ7k+UWlacF17cwFbqh17liGX7yiXWvhmvv
+         B3Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCUrQesxkZ44lpdSBGUD5IwAsLmApKr85I2+oyBtPxwuUhDsnFqP/MjO3qG7Z2SJiX41EM3Ijtexl1f+2ngI7ZvPzgir9N0Yge4Litd4
+X-Gm-Message-State: AOJu0YxFWyC4C4n6jjtCJ5cEojRL3imC9JuEKdbkVphqrGAHkLii7pKq
+	vMtG6W3ULTqCMcdD+hwu7fU7en/tToV33EP1kvNqxKFpZBP8npPkA4Yattc+S0vEgic/98fupPd
+	Zzempq4cuwh5B/U2Pm7kQX9Wf392iPedNPAamOg==
+X-Google-Smtp-Source: AGHT+IFWxHKkplzJKRLqT5zU4jO3082AA0xXCpFalTdhVnKTUbtkr/nNZqNjYbQOPoY/7FuHv/90dOwfuXx6JMhiz28=
+X-Received: by 2002:a17:906:6c4:b0:a77:d1ea:ab39 with SMTP id
+ a640c23a62f3a-a7a0115bfe2mr329353566b.16.1721319627120; Thu, 18 Jul 2024
+ 09:20:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240717061957.140712-1-alexghiti@rivosinc.com>
+ <20240717061957.140712-4-alexghiti@rivosinc.com> <20240717-e7104dac172d9f2cbc25d9c6@orel>
+ <fb03939b-502b-410a-85f5-2785b2bd0676@ghiti.fr> <20240718-d583846f09bc103b7eab6b4e@orel>
+In-Reply-To: <20240718-d583846f09bc103b7eab6b4e@orel>
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+Date: Thu, 18 Jul 2024 18:20:15 +0200
+Message-ID: <CAHVXubjQo9WaHu1FwEaJ496xpYtshrOkkw_HP9cP_3rWjnMxzw@mail.gmail.com>
+Subject: Re: [PATCH v3 03/11] riscv: Implement cmpxchg8/16() using Zabha
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: Alexandre Ghiti <alex@ghiti.fr>, Jonathan Corbet <corbet@lwn.net>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Andrea Parri <parri.andrea@gmail.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>, Guo Ren <guoren@kernel.org>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BJSMTP01-EX.srv.huawei-3com.com (10.63.20.132) To
- DAG6EX09-BJD.srv.huawei-3com.com (10.153.34.11)
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:h3cspam02-ex.h3c.com 46IGH1dk085127
+Content-Transfer-Encoding: quoted-printable
 
-Very sorry to disturb! Just a friendly ping to check in on the status of the 
-patch "Give kmap_lock before call flush_tlb_kernel_rang，avoid kmap_high deadlock.".  
-Please let me know if there is any additional information from my side.
-
-Sincerely look forward to your suggestions and guidance!
-
->>> >> --- a/mm/highmem.c
->>> >> +++ b/mm/highmem.c
->>> >> @@ -220,8 +220,11 @@ static void flush_all_zero_pkmaps(void)
->>> >>       set_page_address(page, NULL);
->>> >>       need_flush = 1;
->>> >>   }
->>> >> - if (need_flush)
->>> >> + if (need_flush) {
->>> >> +     unlock_kmap();
->>> >>       flush_tlb_kernel_range(PKMAP_ADDR(0), PKMAP_ADDR(LAST_PKMAP));
->>> >> +     lock_kmap();
->>> >> + }
->>> >>  }
->>> 
->>> >Why is dropping the lock like this safe?  What data is it protecting 
->>> >and why is it OK to leave that data unprotected here?
->>> 
->>> kmap_lock is used to protect pkmap_count, pkmap_page_table and last_pkmap_nr(static variable). 
->>> When call flush_tlb_kernel_range(PKMAP_ADDR(0), 
->>> PKMAP_ADDR(LAST_PKMAP)), flush_tlb_kernel_range will neither modify nor read these variables. Leave that data unprotected here is safe.
-
->>No, the risk here is that when the lock is dropped, other threads will modify the data.  And when this thread (the one running
->>flush_all_zero_pkmaps()) retakes the lock, that data may now be unexpectedly altered.
-
->map_new_virtual aims to find an usable entry pkmap_count[last_pkmap_nr]. When read and modify the pkmap_count[last_pkmap_nr], the kmap_lock is 
->not dropped. 
->"if (!pkmap_count[last_pkmap_nr])" determine pkmap_count[last_pkmap_nr] is usable or not. If unusable, try agin.
-
->Furthermore, the value of static variable last_pkmap_nr is stored in a local variable last_pkmap_nr, when kmap_lock is acquired, 
->this is thread-safe.
-
->In an extreme case, if Thread A and Thread B access the same last_pkmap_nr, Thread A calls function flush_tlb_kernel_range and release the 
->kmap_lock, and Thread B then acquires the kmap_lock and modifies the variable pkmap_count[last_pkmap_nr]. After Thread A completes 
->the execution of function flush_tlb_kernel_range, it will check the variable pkmap_count[last_pkmap_nr]. 
->If pkmap_count[last_pkmap_nr] != 0, Thread A continue to call get_next_pkmap_nr and get next last_pkmap_nr. 
-
->static inline unsigned long map_new_virtual(struct page *page)
->{
->        unsigned long vaddr;
->        int count;
->        unsigned int last_pkmap_nr; // local variable to store static variable last_pkmap_nr
->        unsigned int color = get_pkmap_color(page);
-
->start:
->        ...
->                        flush_all_zero_pkmaps();// release kmap_lock, then acquire it
->                        count = get_pkmap_entries_count(color);
->                } 
->                ...
->                if (!pkmap_count[last_pkmap_nr]) // pkmap_count[last_pkmap_nr] is used or not
->                        break;  /* Found a usable entry */
->                if (--count) 
->                        continue;
+On Thu, Jul 18, 2024 at 6:06=E2=80=AFPM Andrew Jones <ajones@ventanamicro.c=
+om> wrote:
 >
->               ...
->        vaddr = PKMAP_ADDR(last_pkmap_nr);
->        set_pte_at(&init_mm, vaddr,
->                   &(pkmap_page_table[last_pkmap_nr]), mk_pte(page, kmap_prot));
+> On Thu, Jul 18, 2024 at 02:50:28PM GMT, Alexandre Ghiti wrote:
+> ...
+> > > > +                                                                 \
+> > > > +         __asm__ __volatile__ (                                  \
+> > > > +                 prepend                                         \
+> > > > +                 "       amocas" cas_sfx " %0, %z2, %1\n"        \
+> > > > +                 append                                          \
+> > > > +                 : "+&r" (r), "+A" (*(p))                        \
+> > > > +                 : "rJ" (n)                                      \
+> > > > +                 : "memory");                                    \
+> > > > +         goto end;                                               \
+> > > > + }                                                               \
+> > > > +                                                                 \
+> > > > +no_zabha_zacas:;                                                 \
+> > > unnecessary ;
+> >
+> >
+> > Actually it is, it fixes a warning encountered on llvm:
+> > https://lore.kernel.org/linux-riscv/20240528193110.GA2196855@thelio-399=
+0X/
 >
->        pkmap_count[last_pkmap_nr] = 1;
->        ...
->        return vaddr;
->}
-   
--- 
-1.8.3.1
+> I'm not complaining about the 'end:' label. That one we need ';' because
+> there's no following statement and labels must be followed by a statement=
+.
+> But no_zabha_zacas always has following statements.
 
+My bad, that's another warning that is emitted by llvm and requires the ';'=
+:
+
+../include/linux/atomic/atomic-arch-fallback.h:2026:9: warning: label
+followed by a declaration is a C23 extension [-Wc23-extensions]
+ 2026 |         return raw_cmpxchg(&v->counter, old, new);
+      |                ^
+../include/linux/atomic/atomic-arch-fallback.h:55:21: note: expanded
+from macro 'raw_cmpxchg'
+   55 | #define raw_cmpxchg arch_cmpxchg
+      |                     ^
+../arch/riscv/include/asm/cmpxchg.h:310:2: note: expanded from macro
+'arch_cmpxchg'
+  310 |         _arch_cmpxchg((ptr), (o), (n), ".rl", ".aqrl",
+         \
+      |         ^
+../arch/riscv/include/asm/cmpxchg.h:269:3: note: expanded from macro
+'_arch_cmpxchg'
+  269 |                 __arch_cmpxchg_masked(sc_sfx, ".b" cas_sfx,
+         \
+      |                 ^
+../arch/riscv/include/asm/cmpxchg.h:178:2: note: expanded from macro
+'__arch_cmpxchg_masked'
+  178 |         u32 *__ptr32b =3D (u32 *)((ulong)(p) & ~0x3);
+         \
+      |         ^
+
+
+>
+> Thanks,
+> drew
 
