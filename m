@@ -1,287 +1,260 @@
-Return-Path: <linux-kernel+bounces-255905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56294934677
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 04:41:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7494493468F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 05:00:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBE0FB21BE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 02:41:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B6A5B21E39
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA91286A8;
-	Thu, 18 Jul 2024 02:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29B138F91;
+	Thu, 18 Jul 2024 02:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="YRAseztT"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="VesYkwbW";
+	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="tB4Xjot4"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81FD1C36;
-	Thu, 18 Jul 2024 02:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721270470; cv=none; b=X7ZhVGuzzEo3uDeSG4LqcixqnMTuYICShLPeUgh5HlsDtacmtZCbgLrIqf2o2nj8766UcSgqzRj1XPpekViNUfM2a3yctM5g2rMOFJw2bjYUFM3cDwU1hP8sXZ7LueoVdDLZq9dh+iSZhvGb8jCGuKc8FWl1GNYIeYMouAXwiBc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721270470; c=relaxed/simple;
-	bh=fpdKWuhv2x0owBblJKhkhLzUcvdVAsU3+vJrOJDggFk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=AP/h67iAUr6WdMtNYUpV8bH8woXX4qJNAU8LkJzf8Nyt286ZLsXaFqbM5KzHLznHh/inKDa9qjjxVbcEGUuQTMTtIN1FzemDW+dIy6Es/WgAUxYMzOC1LnmyulYqQAf03T0GR5MUADZmFQJQjG9PYp0/0HQWfc6Hi8BGddPAO14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=YRAseztT; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 8C3AA120003;
-	Thu, 18 Jul 2024 05:40:54 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 8C3AA120003
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1721270454;
-	bh=o4NAt6NnN8e0tZRdE85vpVhfDEoJPhl2Xlh3U/Xudgk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=YRAseztTHOKabpUHNngJbF/wafbY/LBqO3Lpgn514cnPZtNHQmxRlZbqTMsyRmG+M
-	 pw+29MdzUWSKIaOx6l30gGefyFFweAhwJ9ICUiiYdHmeclURB1Us75DlBFrdZvZhFA
-	 /Q+uRfVNy6c5h8Hb5oyukiqEROPDdUuGyKa8iP4h8mlxn0qA4EAWAPcF6iZ9bPvDoU
-	 e69pZCTsQkj6wYTH2MI5ja4TQH1Xl35iN3GpOkUyU2MPMm+800MYlOFPJ4DYUDnJkp
-	 J/fNzWGP2EypodS6S5907s+jlwFswoXzHvP5PkxjTDNZj12nFrAlaDsTIAHoqAEWyx
-	 OCvNQDoY5uIwg==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Thu, 18 Jul 2024 05:40:54 +0300 (MSK)
-Received: from [172.28.128.6] (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452EB20DE8;
+	Thu, 18 Jul 2024 02:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721271595; cv=fail; b=NNP1lAp25UiZdtoc7jmqa/suHjqmnMCeymmd2jX1b1QIEBkm7IR8U1Mij3HI5NJ1Evjds4r+tQNTVhZrbbtETP7ZP9mToeAUgQWnFDk1WncUtJ7pTvtAMT/vKtsZZViWC1hOmtitcDZmwWckS7FO14Qc3Pzbx7TOLMaZKpTu7nE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721271595; c=relaxed/simple;
+	bh=HaI+a6K12diQSftRArt3j1GDpX+RpFco8FYnRd+gEas=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=pW+eJVi73ujtH5YSWQEbvqU3l5YjHTr+spXfzu/Lr3VRVMVDpeswkkZaG6O/fLdY3/OolwghqDsh2sR/9H7q0OaEsBX5nEiG58iYRvpZJMzIeSVPGzPHQa36IzyWEqc2vewPuJOVmB8RZPjIIb7Py7BV1JxPvsH4tW9sjTvTOVc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=VesYkwbW; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=tB4Xjot4; arc=fail smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: ad9de88244af11efb5b96b43b535fdb4-20240718
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=HaI+a6K12diQSftRArt3j1GDpX+RpFco8FYnRd+gEas=;
+	b=VesYkwbW1pHVtjvz0yiF44ddE3t/bnr18F5OXDUmrFPAOcvTKV4ygYjAfcaUOucgSoUb2ChZpvQ5XjsadKMpQjuQGg0Wc0mkEI+/rgG6Ki8MCVuHgnfKGBnJMMcyCWe1XM15Uavq2YjQw0rMoHVciFUX4wOXKOTnCkyJyL1ldzg=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.40,REQID:a8014c8b-8e04-4c6b-be93-b6514141b403,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:ba885a6,CLOUDID:cfe8960d-46b0-425a-97d3-4623fe284021,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: ad9de88244af11efb5b96b43b535fdb4-20240718
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw01.mediatek.com
+	(envelope-from <ck.hu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1881231950; Thu, 18 Jul 2024 10:44:39 +0800
+Received: from mtkmbs10n1.mediatek.inc (172.21.101.34) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Thu, 18 Jul 2024 05:40:54 +0300
-Message-ID: <b12ac6b2-cb46-4410-9846-86ed4c3aea1f@salutedevices.com>
-Date: Thu, 18 Jul 2024 05:39:39 +0300
+ 15.2.1118.26; Thu, 18 Jul 2024 10:44:37 +0800
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (172.21.101.237)
+ by mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Thu, 18 Jul 2024 10:44:37 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NoofjjkOEN/bCKR9yp2ldNqgwe9iuVd94DTvjGxOM6vG9vITCn+9YFRr7495IpeE++8vrb6Xir8po0qdIlZ7t2wse/An/xzJiINIjetQSvXM2obMK5DUQs4QUIO8BQnFjE0aWWqqfjUcwsVCy78/KdK0B04jNaSxpZInA+ZJUxmqHSiI1E9Blfx0cxorY+Lb16WuEHhutfKP0AqGF0+NEFFv7dTRAcARUlwSo6e7NNQOnFHbkRMORiNOdUBawFn0j1PpasH0auOofNhdS3doEESO0u+zDhG4sJDL0SWm79Ge7DjWF+i5R9zpeEqP+wjbIgME0Jq0tI8rT1aWypHQjQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HaI+a6K12diQSftRArt3j1GDpX+RpFco8FYnRd+gEas=;
+ b=EG6LmtZHCVO7j7/3aJlUShiOX16sKX/b4NihML7Sasre4PbVf/pvdFRTAjzMZqv87qleHlM2ae7CeA458NCC/pYXQTK3yCPRgH8Bhn63gcYfTWdUsGqsf5OnRQzLKGQKtQQGwjWOKJ3MhsPsJFRy5IjKx1IC8vf9hW1k/l5LOwpAxlyxYyl1gJv+FVcouxaQrpPR9kPDnklEUUsrosTUwMy1kUJCn7R8UbJCmxQOGj/3hK5+VPFTCoYFV3njgwBJVScpeepTUGoTn3Kq/RmM4kN71Aw32s/YHfq/8FsZQ3Oi9t/C4QqPXa0lrckywbiEIzSG5y5k+5WfWNtv6KlWFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
+ dkim=pass header.d=mediatek.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HaI+a6K12diQSftRArt3j1GDpX+RpFco8FYnRd+gEas=;
+ b=tB4Xjot4ZBIsB3kGBN/Q/IM8sUJNCDAlW23pzL4dfFvmbdmaAOMWGL8oGxViFZtZTxp7puSD9Kf4cxnB3s2HM8eD0Zs2BFLc4Ehf8xAl3TNRxDZEOVq97d7//ANV+gp7Zlhf/pFwXVgoxtsVeFYS6pOzZqLm4wCjobHzZwPQUeQ=
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
+ by TYZPR03MB6528.apcprd03.prod.outlook.com (2603:1096:400:1f9::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14; Thu, 18 Jul
+ 2024 02:44:35 +0000
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54%4]) with mapi id 15.20.7762.027; Thu, 18 Jul 2024
+ 02:44:35 +0000
+From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
+To: "mchehab@kernel.org" <mchehab@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+	=?utf-8?B?QW5keSBIc2llaCAo6Kyd5pm655qTKQ==?= <Andy.Hsieh@mediatek.com>,
+	"jstephan@baylibre.com" <jstephan@baylibre.com>, "matthias.bgg@gmail.com"
+	<matthias.bgg@gmail.com>, "laurent.pinchart@ideasonboard.com"
+	<laurent.pinchart@ideasonboard.com>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "angelogioacchino.delregno@collabora.com"
+	<angelogioacchino.delregno@collabora.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	=?utf-8?B?TG91aXMgS3VvICjpg63lvrflr6cp?= <louis.kuo@mediatek.com>,
+	"fsylvestre@baylibre.com" <fsylvestre@baylibre.com>, "pnguyen@baylibre.com"
+	<pnguyen@baylibre.com>
+Subject: Re: [PATCH v5 3/5] media: platform: mediatek: isp_30: add mediatek
+ ISP3.0 sensor interface
+Thread-Topic: [PATCH v5 3/5] media: platform: mediatek: isp_30: add mediatek
+ ISP3.0 sensor interface
+Thread-Index: AQHazhd5l4rc57nWtkWApqQhVYkmorH73KkA
+Date: Thu, 18 Jul 2024 02:44:35 +0000
+Message-ID: <647738c5c776a9ec07615e67094c4141fdf051eb.camel@mediatek.com>
+References: <20240704-add-mtk-isp-3-0-support-v5-0-bfccccc5ec21@baylibre.com>
+	 <20240704-add-mtk-isp-3-0-support-v5-3-bfccccc5ec21@baylibre.com>
+In-Reply-To: <20240704-add-mtk-isp-3-0-support-v5-3-bfccccc5ec21@baylibre.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mediatek.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|TYZPR03MB6528:EE_
+x-ms-office365-filtering-correlation-id: 2ff87273-6d43-4fea-ad4b-08dca6d38f59
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?cHBLZW4vaGtBYkVCWDdxN1pLaWFCajR0a0dhbUFrcjk4RkNtYzVrb0ZzRlRG?=
+ =?utf-8?B?WFJ3NUJjT05pL0hLLytPQXlvendnTGl0STVNOWVxTktuazM3YmUvSHFwZkJn?=
+ =?utf-8?B?UzJoRmtpYWo1MEx4d1Z2aktWSTg4a05tTUJmaUxTRFQvQi9aSVgrbEV4VHZO?=
+ =?utf-8?B?TFV4TEJvT1pLZzBqT2pEekV4Rlh4dXhMVEI3cGUwbkdYT3lDTHZacWJBZ0Nn?=
+ =?utf-8?B?RjZiUDExaFFjK08wSEhrckZnZ0trL1AzYytrUHRpYmNhb3JleU9JNE5jcVNU?=
+ =?utf-8?B?VCtEYWJoOGI2T3JScVlaOGZ4OFdYNTg3dmcxdU5RTDBJOWVKNkZqVjlrWWY0?=
+ =?utf-8?B?eXJKSnB1QWlvYTNZQUpDQ2svR3pNdm9DUGFIZlp3dVBEMkJqWTlveFdwRUJx?=
+ =?utf-8?B?Q1R2SW5hNlJSbm1JMTVDcDB3dE95Z2FIUEFUNDhBUFBLMDhKcXBnWm42Rkhl?=
+ =?utf-8?B?dGVuRldTRzdkTWZRK3BjVkZKN2ZvRm82TVo2SWlnUWJ5alArc3d6K3FaNUFw?=
+ =?utf-8?B?VDJCcllOampFWnlZekJHak9CN3c3TUtqbS9pVjZmWWE4NXlRL1NZVkhYZEwz?=
+ =?utf-8?B?aWtmV2lZYUFrUnd0enFkTC9zSzF3eXB3QUdMM3lDd2pOV3RKYXNFeUVJSUhu?=
+ =?utf-8?B?RGJUNGljVEQzaGNJYXNKZ3J0VWRJVnVVdmdKeDdnU2hZN2JncHhsSW41ZjJX?=
+ =?utf-8?B?UWphaWFQamZLMDR5d1ZsSitKK2xUazJVR0pWOS9MTGV1YlF1Tjk5S3VZTDU5?=
+ =?utf-8?B?RktkZkR6aFVpN2RCZEs4Rjh6R2dDWG9aT0tPR2ZoRXhwOFljUEdmOXdreXFZ?=
+ =?utf-8?B?Skkxbm1aRkxSVzNLSGJuVW1ucmhVRjdyVWhPSnlsUXgxSEtmVjhJZkVpL1dn?=
+ =?utf-8?B?SENCWW50eUVvSFFOQ0NPVnRHREhJN3djSWVwWFYvL0ppR0o3TmltWGE1YlA4?=
+ =?utf-8?B?VG9iNHNwQndqcDVFZm40WDY3MjVVSTN0aWlpQi9jeUk5MWJRUDl0UUovZi9v?=
+ =?utf-8?B?cm9SVTFFa2dGUXJXdnMzTXp5blRvVGU2LytXOU5SRDN2eGgzRWJpL2g1b1VR?=
+ =?utf-8?B?dHZPZ2Rjdmw5RXhqcTdxd1ZOQ0p5UXlVZ3Nwc1dvZ3IxaWI0VjJIODlGS09K?=
+ =?utf-8?B?T1U1M1RPR0RoOEpMYnZubEppRkRrR2tJK3AybWxpUDVrRlRpTGFVSG1Zdkdl?=
+ =?utf-8?B?UmdRZW5tdkZiRXNObjZZanFlZnlpMnd2UTBwMjAyckNrWE1Wc1pOclZPZnM3?=
+ =?utf-8?B?VTFzSUtwbjlFejNCczZlVUYwZkVwYUFDYlU4TTE3czRvaVBWNmN0V3VXVDhk?=
+ =?utf-8?B?WTRxVWRnYnkxeWRvUm1KUmxyMWJUaWVXUlUxQlJod1dvT2xaUGwzNVcrUm4z?=
+ =?utf-8?B?MHNsYzUwMHVUS1lLU1owNGNGSEptVFVNdFZURkR2dHdaSnNoYlpNVEhpaE0x?=
+ =?utf-8?B?eEZsNFBqSEdCZ0duVVZzVitPdkpHN2o0SEYxSHZqdzVDaHRvdWpiSldWWm9X?=
+ =?utf-8?B?SWljWDRaVXNlOU9TVVRaOEJZcy9OL2Z2cmdWa2pOVWRrOGhZdTRYZ1J5RmdD?=
+ =?utf-8?B?Y2VmNTl3aS9DcWlsc1RkTjhRMG9oTUtaUm1PeVlucDJWWVBMM1VSVFFsc2dk?=
+ =?utf-8?B?SFN1MVQ0d0ozN05rQjFKOGxhZFdVVnYvZ1Q3SHJLMndrUFZIa2lKeFUzTEZD?=
+ =?utf-8?B?c2Q3aTFwcmZaZUxERERyT2NUaTFicXZRazJiUFFFNktiTkNvc3FMbnRnN2Ri?=
+ =?utf-8?B?R2VrQ1kyS0dUMit2NENhOHp1bHl0Rzk3OXU5M3A2SEN6N3Y0Yjdqc2N3aWR0?=
+ =?utf-8?B?cm41dithc1hxd2IzQU92M3RRYWNtNTJJemxrSzJOdzJGWG1TSFFEOFIyWTFN?=
+ =?utf-8?B?OHNIMVB0dEs5czFMR2RuQW9BZ3pDUlIyclo5SHdsOWxSL2c9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ZXB3UFBSRkE1c3c1WHY0N3FPRDRkd0M1NXhqcjgrT2RxMEMrdm5Penk2SzFz?=
+ =?utf-8?B?RG9yc0VrclF4ZlJ0RmRRNGJTZDlnMU5zdExXNTMrOEhFL3U0aFdaMkJyL0Jw?=
+ =?utf-8?B?R1dmNHVmQWEyY0FTOVVndFQrYncwZHVDNUR3VUdGaGJ4cjZJS2lBTVFPTVJW?=
+ =?utf-8?B?Y1g4bnBHWlhTNElmakd0UXB4MFQvc3pjS2VuUmFGZ3pPdXVmc3RGMVlVVWww?=
+ =?utf-8?B?Q3cwNFhwUGJQVXg2Z3BGaVZQcjZ6WHoyTUgvbzJOOVUzeHJLend6czJiUkNP?=
+ =?utf-8?B?djk5aGViYWFmeGlVYlR3ZWhGSWltc2liYm0rN1JYSzNlaklIU0JOdzNrSVNL?=
+ =?utf-8?B?aDJ0UThBUCtmMVJITUNFL01GV2l0YVdmMkU3WEJrUG0rUzQwYW9MSUd5ZVp5?=
+ =?utf-8?B?RzVpZS9BcFBoVHVYRTFzYXlYYnVjRFllYnhSN3V0RjNFMkJzTWNOcU83Vzhn?=
+ =?utf-8?B?WUI3d2RMMU00ejIvVUg3V20rM1Z5WldoaDZnTUhRUVdqVTE4UGxMMk8wMWtO?=
+ =?utf-8?B?Vmw1S3Uva3ptSFpWMEZzV3BzSDZRSXRzd3MxZFlKdDBndjY0QVRHY08vMGV4?=
+ =?utf-8?B?R2hreURFTjJRdTdFb1plUmV2b1dvTk1vcFhncTRkL1p6dUlRdjZBbGdKTDVp?=
+ =?utf-8?B?SU90UXJTWUpCcVNpWXB5Rkk1cWNIOU85SGR4bjVLVmwrU1ZzTGpZSTJJdi9C?=
+ =?utf-8?B?YXh1OUgyNjJ0M3ZtMEhuM3YvWWtmS2ppc2paVE5lV2s1UVBBUndDeVRyTDVx?=
+ =?utf-8?B?bHlObnJaSWFoWHkyVSsyeGhGMTlwY01wZk1ZMGJBNytrM2NpeHpDcm5tYU1R?=
+ =?utf-8?B?TFpiQTk0R0xIN3dWeFNjK05KTjBqYXJMZHVaUnNyU1Q4RVZ0TjR0UndNQ1lW?=
+ =?utf-8?B?R050M0xXOGo4clBmM290bnBPRytzTFZXdUxCeEJFQ3RxK2N3eU1kMUU4R21v?=
+ =?utf-8?B?bTF5MVUxeUlEWnlpOEEvR01jRGZydGNpR2RveE52UGhPcnNkWklmU01BUmxq?=
+ =?utf-8?B?SGRMWWdhQ0JtU2hsNzRYNWtkaWtOL1ZnQ0VwNWxOR1dEcy9TangrNDRZNy9E?=
+ =?utf-8?B?MExrSmsraXVmdkEvMmR2YjFBd0FhUUFVbDdDa21qUlJpTjdmOVpBTzdOZlg5?=
+ =?utf-8?B?eEd1Rjg1SjM5N0hLbmZ6ZVA3RXZnV0NuRU94OWhkeGpab25zNkFzVVJ0M3k4?=
+ =?utf-8?B?eEJaakFzODYwalJhL21KeWNlcFl3dW8xcXMyWk10SEkveUppTlNobDdpZU0v?=
+ =?utf-8?B?SFZVQmRLN0JHQXRPWUhqS29iNzBacG9CcGZzUDRZaDNQVjFHeUNITDZXNU9Q?=
+ =?utf-8?B?ZHlrb1RZMWc2Tk1pUWRaSWZjRldCR2cvM2JVU1FxWEdjVk9zVCtXaGd5aVhO?=
+ =?utf-8?B?TytoRUNIbllIVHV0eUdPRlhTaisvWkoxaDg5T1l1NUlTSVpOMXFDNk9rVnhk?=
+ =?utf-8?B?c3IyOGE1c2pRWnp1d2dvckJIazV0RGR3WTNXR2pVMTFRM0pnRUdVd2k4cy9p?=
+ =?utf-8?B?eDU4bWw4amQ5OVJZa2NyMnlZSm4ydDFPa21LdmtYK1lxbVNSRHBwS2UrK0Jl?=
+ =?utf-8?B?YVlHb1ZPSU03UWVkd3hTaHR1N1gwNjZsV3daK3YrT0NWZ2NjVjc4ZXczWU1H?=
+ =?utf-8?B?UWR0RzBMUWZGNnRvV0kxVzlGRGxrRFJxOWphVlBqRWhIRTNzT2VoYWFKNW0r?=
+ =?utf-8?B?NXFRdzU3RkEramFkZVFnN0kvM3piMWxER0lXK1JjNUg5dEo3L2ZYcHBzWEE0?=
+ =?utf-8?B?SWNOTllTd1VCampYWkIxNEhldUN6ZExVaHBKUDZNNDlqQWUwNm5CRDhteE0v?=
+ =?utf-8?B?UjFadjh6SEN5WFkvd0RRMGlsTEc5c1BjUjJHZUo0aEJ1bFBwK0ZyYjJ6dWgx?=
+ =?utf-8?B?WnFqM1BWMnlSNTVJcFlVcFpMbzFPN2pQTyt1WVNLQWdUZjdjYzdScnNSaWk2?=
+ =?utf-8?B?a2w3US8yS3l4TzZselRXMkhUSDJjYnNmSDVWS0tHc1FRc1ZGU0EySnBiZFJ1?=
+ =?utf-8?B?aTMzZjIwb0tXb2pKT2VSMThROHhzc2lLeGpDR2JTQkVkMG91Q0ptUkx5N20x?=
+ =?utf-8?B?ZEpINW1OanFPTUVqZ00zUGNEa1pLSEhEeFJYeXVuVUdZUHpVOXF5Um5oVWo2?=
+ =?utf-8?Q?g7RB+w1iOZ/eiypN3gE6QfePs?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E98126142014B847B2504E5325D6099B@apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] reset: amlogic: convert driver to regmap
-To: Jerome Brunet <jbrunet@baylibre.com>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>, Neil Armstrong
-	<neil.armstrong@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>
-References: <20240710162526.2341399-1-jbrunet@baylibre.com>
- <20240710162526.2341399-2-jbrunet@baylibre.com>
-Content-Language: en-US
-From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-In-Reply-To: <20240710162526.2341399-2-jbrunet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186569 [Jul 17 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_smtp_not_equal_from}, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:7.1.1,5.0.1;100.64.160.123:7.1.2;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;sberdevices.ru:7.1.1,5.0.1;salutedevices.com:7.1.1, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/18 01:08:00 #26058129
-X-KSMG-AntiVirus-Status: Clean, skipped
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2ff87273-6d43-4fea-ad4b-08dca6d38f59
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jul 2024 02:44:35.2909
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vlAF99QM7LC7AO38rl/V9sIPl1tN/Gxz4RO98Q3fkbUgnkfIBu9ZGN+YiE/Q1AfmShw0OqIiUKDbCYGXzFQ3MQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB6528
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--16.482000-8.000000
+X-TMASE-MatchedRID: O/y65JfDwwsOwH4pD14DsPHkpkyUphL9meN8m2FdGic3xO2R3boBWFbu
+	qIY+/skQkABPgKBt/0qbqzDH9G7eTD1LciJB3541oMfp2vHck9VUazBX+AUFScaQTVtPXXNM8ha
+	W4U9IrFpRUHsj/YINIGFuO67PYQBJDPIzF4wRfrDSBVVc2BozSpwhktVkBBrQjvEeq6gAkYarus
+	VRy4an8SAHAopEd76v04FSXArU9/F47oBIJy3ds5gB1VKJHq1mYGPJl9MPD9RA3HOpawBi8Q==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--16.482000-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	42C0B6C1B65AD072490629029547383A55F1BC1D9B77080A35FAAC715F43DD1B2000:8
 
-
-
-On 7/10/24 19:25, Jerome Brunet wrote:
-> To allow using the same driver for the main reset controller and the
-> auxiliary ones embedded in the clock controllers, convert the
-> the Amlogic reset driver to regmap.
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/reset/reset-meson.c | 80 ++++++++++++++++++++-----------------
->  1 file changed, 44 insertions(+), 36 deletions(-)
-> 
-> diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
-> index f78be97898bc..8f3d6e9df235 100644
-> --- a/drivers/reset/reset-meson.c
-> +++ b/drivers/reset/reset-meson.c
-> @@ -11,36 +11,44 @@
->  #include <linux/of.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
-> +#include <linux/regmap.h>
->  #include <linux/reset-controller.h>
->  #include <linux/slab.h>
->  #include <linux/types.h>
->  
-> -#define BITS_PER_REG	32
-> -
->  struct meson_reset_param {
->  	int reg_count;
->  	int level_offset;
->  };
->  
->  struct meson_reset {
-> -	void __iomem *reg_base;
->  	const struct meson_reset_param *param;
->  	struct reset_controller_dev rcdev;
-> -	spinlock_t lock;
-> +	struct regmap *map;
->  };
->  
-> +static void meson_reset_offset_and_bit(struct meson_reset *data,
-> +				       unsigned long id,
-> +				       unsigned int *offset,
-> +				       unsigned int *bit)
-> +{
-> +	unsigned int stride = regmap_get_reg_stride(data->map);
-> +
-> +	*offset = (id / (stride * BITS_PER_BYTE)) * stride;
-> +	*bit = id % (stride * BITS_PER_BYTE);
-> +}
-> +
->  static int meson_reset_reset(struct reset_controller_dev *rcdev,
-> -			      unsigned long id)
-> +			     unsigned long id)
->  {
->  	struct meson_reset *data =
->  		container_of(rcdev, struct meson_reset, rcdev);
-> -	unsigned int bank = id / BITS_PER_REG;
-> -	unsigned int offset = id % BITS_PER_REG;
-> -	void __iomem *reg_addr = data->reg_base + (bank << 2);
-> +	unsigned int offset, bit;
->  
-> -	writel(BIT(offset), reg_addr);
-> +	meson_reset_offset_and_bit(data, id, &offset, &bit);
->  
-> -	return 0;
-> +	return regmap_update_bits(data->map, offset,
-> +				  BIT(bit), BIT(bit));
-
-regmap_update_bits() is not equal to writel(), I suppose regmap_write()
-should be here.
-
-I'm still under testing, but I see unexpected behavior on A1 SoC:
-
-[    1.482446] Call trace:
-[    1.484860]  dump_backtrace+0x94/0xec
-[    1.488482]  show_stack+0x18/0x24
-[    1.491754]  dump_stack_lvl+0x78/0x90
-[    1.495377]  dump_stack+0x18/0x24
-[    1.498654]  __report_bad_irq+0x38/0xe4
-[    1.502453]  note_interrupt+0x324/0x374
-[    1.506244]  handle_irq_event+0x9c/0xac
-[    1.510039]  handle_fasteoi_irq+0xa4/0x238
-[    1.514093]  generic_handle_domain_irq+0x2c/0x44
-[    1.518664]  gic_handle_irq+0x40/0xc4
-[    1.522287]  call_on_irq_stack+0x24/0x4c
-[    1.526168]  do_interrupt_handler+0x80/0x84
-[    1.530308]  el1_interrupt+0x34/0x68
-[    1.533844]  el1h_64_irq_handler+0x18/0x24
-[    1.537898]  el1h_64_irq+0x64/0x68
-[    1.541262]  default_idle_call+0x28/0x3c
-[    1.545143]  do_idle+0x208/0x260
-[    1.548334]  cpu_startup_entry+0x38/0x3c
-[    1.552220]  kernel_init+0x0/0x1dc
-[    1.555579]  start_kernel+0x5ac/0x6f0
-[    1.559206]  __primary_switched+0x80/0x88
-
-
-and using of regmap_write() (apparently) fixes it.
-
->  }
->  
->  static int meson_reset_level(struct reset_controller_dev *rcdev,
-> @@ -48,25 +56,13 @@ static int meson_reset_level(struct reset_controller_dev *rcdev,
->  {
->  	struct meson_reset *data =
->  		container_of(rcdev, struct meson_reset, rcdev);
-> -	unsigned int bank = id / BITS_PER_REG;
-> -	unsigned int offset = id % BITS_PER_REG;
-> -	void __iomem *reg_addr;
-> -	unsigned long flags;
-> -	u32 reg;
-> +	unsigned int offset, bit;
->  
-> -	reg_addr = data->reg_base + data->param->level_offset + (bank << 2);
-> +	meson_reset_offset_and_bit(data, id, &offset, &bit);
-> +	offset += data->param->level_offset;
->  
-> -	spin_lock_irqsave(&data->lock, flags);
-> -
-> -	reg = readl(reg_addr);
-> -	if (assert)
-> -		writel(reg & ~BIT(offset), reg_addr);
-> -	else
-> -		writel(reg | BIT(offset), reg_addr);
-> -
-> -	spin_unlock_irqrestore(&data->lock, flags);
-> -
-> -	return 0;
-> +	return regmap_update_bits(data->map, offset,
-> +				  BIT(bit), assert ? 0 : BIT(bit));
->  }
->  
->  static int meson_reset_assert(struct reset_controller_dev *rcdev,
-> @@ -113,30 +109,42 @@ static const struct of_device_id meson_reset_dt_ids[] = {
->  };
->  MODULE_DEVICE_TABLE(of, meson_reset_dt_ids);
->  
-> +static const struct regmap_config regmap_config = {
-> +	.reg_bits   = 32,
-> +	.val_bits   = 32,
-> +	.reg_stride = 4,
-> +};
-> +
->  static int meson_reset_probe(struct platform_device *pdev)
->  {
-> +	struct device *dev = &pdev->dev;
->  	struct meson_reset *data;
-> +	void __iomem *base;
->  
-> -	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
->  	if (!data)
->  		return -ENOMEM;
->  
-> -	data->reg_base = devm_platform_ioremap_resource(pdev, 0);
-> -	if (IS_ERR(data->reg_base))
-> -		return PTR_ERR(data->reg_base);
-> +	base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
->  
-> -	data->param = of_device_get_match_data(&pdev->dev);
-> +	data->param = of_device_get_match_data(dev);
->  	if (!data->param)
->  		return -ENODEV;
->  
-> -	spin_lock_init(&data->lock);
-> +	data->map = devm_regmap_init_mmio(dev, base, &regmap_config);
-> +	if (IS_ERR(data->map))
-> +		return dev_err_probe(dev, PTR_ERR(data->map),
-> +				     "can't init regmap mmio region\n");
->  
->  	data->rcdev.owner = THIS_MODULE;
-> -	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_REG;
-> +	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_BYTE
-> +		* regmap_config.reg_stride;
->  	data->rcdev.ops = &meson_reset_ops;
-> -	data->rcdev.of_node = pdev->dev.of_node;
-> +	data->rcdev.of_node = dev->of_node;
->  
-> -	return devm_reset_controller_register(&pdev->dev, &data->rcdev);
-> +	return devm_reset_controller_register(dev, &data->rcdev);
->  }
->  
->  static struct platform_driver meson_reset_driver = {
-
--- 
-Best regards
-Jan Dakinevich
+SGksIEp1bGllbjoNCg0KT24gVGh1LCAyMDI0LTA3LTA0IGF0IDE1OjM2ICswMjAwLCBKdWxpZW4g
+U3RlcGhhbiB3cm90ZToNCj4gIAkgDQo+IEV4dGVybmFsIGVtYWlsIDogUGxlYXNlIGRvIG5vdCBj
+bGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVudGlsIHlvdSBoYXZlIHZlcmlmaWVkIHRo
+ZSBzZW5kZXIgb3IgdGhlIGNvbnRlbnQuDQo+ICBGcm9tOiBMb3VpcyBLdW8gPGxvdWlzLmt1b0Bt
+ZWRpYXRlay5jb20+DQo+IA0KPiBUaGlzIHdpbGwgYWRkIHRoZSBtZWRpYXRlayBJU1AzLjAgc2Vu
+aW5mIChzZW5zb3IgaW50ZXJmYWNlKSBkcml2ZXIgZm91bmQNCj4gb24gc2V2ZXJhbCBNZWRpYXRl
+ayBTb0NzIHN1Y2ggYXMgdGhlIG10ODM2NS4NCj4gDQo+IFRoZW4gc2VuaW5mIG1vZHVsZSBoYXMg
+NCBwaHlzaWNhbCBDU0ktMiBpbnB1dHMuIERlcGVuZGluZyBvbiB0aGUgc29jIHRoZXkNCj4gbWF5
+IG5vdCBiZSBhbGwgY29ubmVjdGVkLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogTG91aXMgS3VvIDxs
+b3Vpcy5rdW9AbWVkaWF0ZWsuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBQaGktYmFuZyBOZ3V5ZW4g
+PHBuZ3V5ZW5AYmF5bGlicmUuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBGbG9yaWFuIFN5bHZlc3Ry
+ZSA8ZnN5bHZlc3RyZUBiYXlsaWJyZS5jb20+DQo+IENvLWRldmVsb3BlZC1ieTogTGF1cmVudCBQ
+aW5jaGFydCA8bGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPg0KPiBTaWduZWQtb2Zm
+LWJ5OiBMYXVyZW50IFBpbmNoYXJ0IDxsYXVyZW50LnBpbmNoYXJ0QGlkZWFzb25ib2FyZC5jb20+
+DQo+IENvLWRldmVsb3BlZC1ieTogSnVsaWVuIFN0ZXBoYW4gPGpzdGVwaGFuQGJheWxpYnJlLmNv
+bT4NCj4gU2lnbmVkLW9mZi1ieTogSnVsaWVuIFN0ZXBoYW4gPGpzdGVwaGFuQGJheWxpYnJlLmNv
+bT4NCj4gLS0tDQoNCltzbmlwXQ0KDQo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IG10a19zZW5pbmZf
+Y29uZiBzZW5pbmZfODM2NV9jb25mID0gew0KPiArLm1vZGVsID0gIm10ay1jYW1zeXMtMy4wIiwN
+Cj4gKy5uYl9pbnB1dHMgPSA0LA0KPiArLm5iX211eGVzID0gNiwNCj4gKy5uYl9vdXRwdXRzID0g
+NCwNCj4gK307DQo+ICsNCg0KSSB0aGluayB5b3Ugc2hvdWxkIGRpcmVjdGx5IGRlZmluZSB0aGVz
+ZSB2YWx1ZSBhcyBzeW1ib2xzIGJlY2F1c2Ugbm93DQpvbmx5IHN1cHBvcnQgb25lIFNvQy4NCg0K
+I2RlZmluZSBNT0RFTCAgICAgIm10ay1jYW1zeXMtMy4wIg0KI2RlZmluZSBJTlBVVF9OUiAgNA0K
+I2RlZmluZSBNVVRFWF9OUiAgNg0KI2RlZmluZSBPVVRQVVRfTlIgNA0KDQpCZWNhdXNlIHdlIGRv
+bid0IGtub3cgd2hpY2ggU29DIHdvdWxkIGJlIHVwc3RyZWFtIGxhdGVyLCBtYXliZSB0aGUgbmV4
+dA0KU29DIHdvdWxkIGJlDQoNCnN0YXRpYyBjb25zdCBzdHJ1Y3QgbXRrX3NlbmluZl9jb25mIHNl
+bmluZl84M3h4X2NvbmYgPSB7DQogICAgICAgIC5tb2RlbCA9ICJtdGstY2Ftc3lzLTMuMCIsDQog
+ICAgICAgIC5uYl9pbnB1dHMgPSA0LA0KICAgICAgICAubmJfbXV4ZXMgPSA2LA0KICAgICAgICAu
+bmJfb3V0cHV0cyA9IDQsDQogICAgICAgIC5zdXBwb3J0X3h4eCA9IHRydWU7DQp9Ow0KDQp0aGVu
+IG1vZGVsLCBuYl9pbnB1dHMsIG5iX211eGVzLCBhbmQgbmJfb3V0cHV0cyBoYXMgbm8gZGlmZmVy
+ZW5jZSwgc28NCml0J3Mgbm90IG5lY2Vzc2FyeSB0byBkZWZpbmUgdGhlbSBhcyB2YXJpYWJsZS4g
+U28gZGVmaW5lIHRoZW0gYXMNCmNvbnN0YW50IG5vdywgYW5kIHdoZW4gbmV4dCBTb0MgdXBzdHJl
+YW0sIHRoZW4gd2Uga25vdyB3aGljaCBvbmUgd291bGQNCmJlIHZhcmlhYmxlLg0KDQpSZWdhcmRz
+LA0KQ0sNCg0KDQo=
 
