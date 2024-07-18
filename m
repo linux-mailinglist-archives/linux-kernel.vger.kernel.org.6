@@ -1,270 +1,134 @@
-Return-Path: <linux-kernel+bounces-255847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4C6C9345A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:10:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CD089345A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:09:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 346CF1F224EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:10:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF4851C20D36
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FA7286A6;
-	Thu, 18 Jul 2024 01:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D5E1C36;
+	Thu, 18 Jul 2024 01:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mHvQQSxJ"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WHNtXVNM"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909281DFFB
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 01:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904E7620;
+	Thu, 18 Jul 2024 01:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721265001; cv=none; b=OE/5XD65wyqd88AyBY4n9eqVQ6bOoTJ9vdV6Z7cZzp3AIc/rr7B2ljNFLOF/xdCzQjqFu2yB2og/0BK+rAA7rbHOhRjHgxNYLsGXmTJGWXIMRtRaazlj5na8uDlfaDByZnwvDuY9fuCMY0filxeKDih8+2zdx/FKigg5hH+uPeU=
+	t=1721264988; cv=none; b=aPIn+F373rFRo1KUh/3sYabIHEkLw58bh/bT3kPMPQmIS1V9TC+fwWsgy7oSNd91mmdym9YR+EGuuvlAIJwaqTOr9vWdquzm5c8Qxh/0A/BjU2WYYUcIsKtMd9XdcLmVRoyRlFgy5f53G4KXWNed/GV6Uda2yTRBDIa1WeXqTfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721265001; c=relaxed/simple;
-	bh=UeqdEqQ9qaqakkZP50KbE0lEAt7K9mATOftkyIAZ5no=;
+	s=arc-20240116; t=1721264988; c=relaxed/simple;
+	bh=MSIYf7rIVMhbod8tcCJbQKU94YpPrpB4YDyZcQYA3RE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cw+HXJO9Fs3vY8w6CkT8XfxS5zr72SojPK4fBGPiHxRPR4WHu7D/NVKUzg2kjb+bdrpUfYGW/CLJFLs05Me0D+7FABqz4GS7HP/Yuv/VUCZoy7hPUaithEnnfFR3o0velRLGh7G8Oma7ijqlOU/MFbGAEy4hiE1I8aLnsrdUPcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mHvQQSxJ; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-44a8b140a1bso151861cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 18:09:59 -0700 (PDT)
+	 To:Cc:Content-Type; b=t9sbotJGuU7Yy1Uo82WJiO4ssnuLn3z++50u8M16T7chYiZWDO4vKEppTWhP1vX+qsT5Z7edwBGaWVjWYEEdfT4ukwaAHGYpGrzGFyHUbIjR/j4pN5UX3LNiPkT5vSxI5jcMqIAz2ogKqqL3UXiqj+7pmW5idKXS+mVGlsPRHDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WHNtXVNM; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5a1c496335aso64305a12.1;
+        Wed, 17 Jul 2024 18:09:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721264998; x=1721869798; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1721264982; x=1721869782; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JMJuhChikF4wLeOBxp1PV2NNfAI2pBpeeewnSnEI4VI=;
-        b=mHvQQSxJvJCF0R5IblScC8QinYv6mb30jXdR/vtIkVqD3fWca4xopYcOJI/C3HmnOw
-         TkLxVLXpwLs/3sckbQTgimpcTWKQNg7Id/au5xbOTsXjbDTbsmX0ZlxKuXOql6NUX4NU
-         tGoZ0D360+GdfQepvTlvTDazgemRzpDyy1zqQldFhY1Xseua97637Cs5gtkfCUWhLJ03
-         NrhODM+ZW1v1Py4tLjwUyfwevHk6RiKLBEXpU9tph4qI59sOzL51YpV/8LcABwvBkteO
-         wMabcYzZShfJA6njWd0Y8qp3MT8Jzn9MLXEMjKjp9a9SnAmqc01oRhNDiwM2eUSP1SR8
-         3tkg==
+        bh=a24lA42kj1IKUpXd+h7uBNc53/x1IhEKAp0DRNXWxaA=;
+        b=WHNtXVNMQjtPc5u1ZIb2FKr6bMis2FoIN6A2Uhf0ENGCcL+vu7/WMTXSPi1rp32o/Q
+         q7NBG2aewVfMSmZXXATEcPdmN1Ix2V0ASx3f9G+ceySx90XS+0pLpAnGDyIzWuElSUie
+         BaFOeOn48tmIOdoWTFnHigllwgck0Z/R77mo2SFpcy/B4PO/esKD/KlB0bTTjE4k9Mkw
+         qA8jaj9Qh+i1W7u0J0UJ3Kcrf2r0yP3SLLoagEMeWM7GlyXkigAogBeoz+Zm54kudKLV
+         bKY312s3eqEug6eSu8qJKK5zNlIZL2Qn8lfABdEmOBzdvrWx65RpelAThH0ILcJU6khx
+         TPFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721264998; x=1721869798;
+        d=1e100.net; s=20230601; t=1721264982; x=1721869782;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JMJuhChikF4wLeOBxp1PV2NNfAI2pBpeeewnSnEI4VI=;
-        b=DoARSFARLX2QxdOb4F/Y6vQkJSU2bE3rV9Ewudmg5O6Sb6trtTS7I+N4dZ7UeO4WSS
-         0awFDy5Muk05kqth2CyODR8X/XXQycw23v8XR/qLo++l5lELy2hhTabQyMP2vcUFcWVo
-         cpRNtlmRaeaPk8zTDbK0yBSj7MSN/ulIHGosZws+CI+ysjhM+XdghSzykeNLbpvTt/yP
-         eeFhEgJSdaN0wMjqmll+Bl26xPwmMyzeAsMFX8Gs4a8UBxeFGqEW7nPDOy2qlNVyQobs
-         OLGaq2oetCZHlTwQL8tuoUvFPgWfFpEMIPjFUDqcEJDOiSyc7b2Us4DJ1tiuul6qwZSh
-         2RKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjFt3sL6ASouTWomB8c/GMD9FFcC0ShJe93az0BueYHeFw70nLrRM4NO00WEtCQe74N3GY6MCRw33VtcI5fsi5KD3EhnO8py5jy5Zd
-X-Gm-Message-State: AOJu0YwQzhqlFfsod+Hy344tFRI4auPMDM2AqQNbLNBOFX65Y5Bxunzu
-	Vb1xlq+hnqIuyNnenC8kWeW8jZUJTzlcXnBkinFXbu8MLYnvrgQr9bfPCjyPbogpFYOIdiYLmtW
-	TaSHm1vctyqelqOPYdwfVcW33H9Li3wnqeGKI
-X-Google-Smtp-Source: AGHT+IEZhvA4xdp3JDyHouO5xbLvgcqjQtJ68LnXmSiZSDoBs5IOa7uIURj+JfJnO87UzHFxvFPd5/pxTPCSC15wyGA=
-X-Received: by 2002:a05:622a:17ce:b0:447:e04d:51b1 with SMTP id
- d75a77b69052e-44f923eff22mr662261cf.11.1721264998174; Wed, 17 Jul 2024
- 18:09:58 -0700 (PDT)
+        bh=a24lA42kj1IKUpXd+h7uBNc53/x1IhEKAp0DRNXWxaA=;
+        b=mSn24CHw24t9mHt61PapjbjQwHmBzOGSIFzoCPMqNDm92zN2bTuYyrHunxvPT+WEiI
+         cgZyUh3kpmu1I/ZnDPU6t4ZAkMFFVy8BWxeixPGBWSrhg7U4u2kkjJi1IOzvXEcDiBNP
+         CInvN4fY1rlX2gG1bsipiNaccnA//2Qo6+HB8lphja4OMkVB+uSjvj9Cy7N8vzZBjbrj
+         5NRgmzDRYTA8zPr3W/cY3Dd+obPWFz336nT5jnDxbPdf7CesMMBWwNtEzjTODsh3pb44
+         ndpaQjwSa857t8cZbTElnqTNbVZPaLytsNWEE1jR4B24wsM9snzE+zZD47vhlGxlsXgV
+         Tp0w==
+X-Forwarded-Encrypted: i=1; AJvYcCXsKpYPCm/OwOvSutgLHGeUj6JzQdLNHed9c096JxMLrJUB+QL85QV8HBurXJMaR0Mc7SVRW2lGYqDFARIlomO3WCO/JzeyQitLhelqUxSenzuSOzyd4toVZjKfwlCPE7740OWekw4A1goaFw==
+X-Gm-Message-State: AOJu0YzlR+bYEXLOw6A2LnwL4kH6Z6WnTeOeFitNNT/2x8omTQUF6unS
+	Smp+RXTXnLnBUyV01WV7cml1a+7BBZrLK25qeCgRcEWsnk6hk/I1BvLNJusmzvuXB5BgC9x93ft
+	ylmb4cnRrUC/hPFfRS+PbB1+Pw+U=
+X-Google-Smtp-Source: AGHT+IEkQ1X1zBYds0LOtzFbshmU1UkroOPkGrUOvyXXeF3zQwEuX9vynegPp0P6goCLWVTcWk2q9FcIS4AwlVNjHmY=
+X-Received: by 2002:a05:6402:40c9:b0:57c:5f77:1136 with SMTP id
+ 4fb4d7f45d1cf-5a05bcc9a88mr3575667a12.24.1721264981722; Wed, 17 Jul 2024
+ 18:09:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710234222.2333120-1-jthoughton@google.com>
- <DS0PR11MB637397059B5DAE2AA7B819BCDCA12@DS0PR11MB6373.namprd11.prod.outlook.com>
- <CADrL8HUv+RvazbOyx+NJ1oNd8FdMGd_T61Kjtia1cqJsN=WiOA@mail.gmail.com> <DS0PR11MB63735DAF7F168405D120A5C6DCA32@DS0PR11MB6373.namprd11.prod.outlook.com>
-In-Reply-To: <DS0PR11MB63735DAF7F168405D120A5C6DCA32@DS0PR11MB6373.namprd11.prod.outlook.com>
-From: James Houghton <jthoughton@google.com>
-Date: Wed, 17 Jul 2024 18:09:21 -0700
-Message-ID: <CADrL8HWM-DX48GudKuc-N5KizZCqy-RvppejzktmtHS62VbaeA@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/18] KVM: Post-copy live migration for guest_memfd
-To: "Wang, Wei W" <wei.w.wang@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	Sean Christopherson <seanjc@google.com>, Shuah Khan <shuah@kernel.org>, 
-	Axel Rasmussen <axelrasmussen@google.com>, David Matlack <dmatlack@google.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, Peter Xu <peterx@redhat.com>
+References: <20240717215847.5310-1-robdclark@gmail.com> <CAD=FV=XCOKJHJ-yzENpvm_MD34tMR5LRy2m2jYdcWzZXP4pfXQ@mail.gmail.com>
+In-Reply-To: <CAD=FV=XCOKJHJ-yzENpvm_MD34tMR5LRy2m2jYdcWzZXP4pfXQ@mail.gmail.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Wed, 17 Jul 2024 18:09:29 -0700
+Message-ID: <CAF6AEGuBZqV4zg1asUNbMLvq0-i-iyFwfi37uKS3kWNuRSOU+g@mail.gmail.com>
+Subject: Re: [RFC] drm/panel/simple-edp: Add Samsung ATNA45DC02
+To: Doug Anderson <dianders@chromium.org>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	Rob Clark <robdclark@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 17, 2024 at 8:03=E2=80=AFAM Wang, Wei W <wei.w.wang@intel.com> =
-wrote:
+On Wed, Jul 17, 2024 at 5:19=E2=80=AFPM Doug Anderson <dianders@chromium.or=
+g> wrote:
 >
-> On Wednesday, July 17, 2024 1:10 AM, James Houghton wrote:
-> > You're right that, today, including support for guest-private memory
-> > *only* indeed simplifies things (no async userfaults). I think your str=
-ategy for
-> > implementing post-copy would work (so, shared->private conversion fault=
-s for
-> > vCPU accesses to private memory, and userfaultfd for everything else).
+> Hi,
 >
-> Yes, it works and has been used for our internal tests.
->
+> On Wed, Jul 17, 2024 at 2:58=E2=80=AFPM Rob Clark <robdclark@gmail.com> w=
+rote:
 > >
-> > I'm not 100% sure what should happen in the case of a non-vCPU access t=
-o
-> > should-be-private memory; today it seems like KVM just provides the sha=
-red
-> > version of the page, so conventional use of userfaultfd shouldn't break
-> > anything.
->
-> This seems to be the trusted IO usage (not aware of other usages, emulate=
-d device
-> backends, such as vhost, work with shared pages). Migration support for t=
-rusted device
-> passthrough doesn't seem to be architecturally ready yet. Especially for =
-postcopy,
-> AFAIK, even the legacy VM case lacks the support for device passthrough (=
-not sure if
-> you've made it internally). So it seems too early to discuss this in deta=
-il.
-
-We don't migrate VMs with passthrough devices.
-
-I still think the way KVM handles non-vCPU accesses to private memory
-is wrong: surely it is an error, yet we simply provide the shared
-version of the page. *shrug*
-
->
+> > From: Rob Clark <robdclark@chromium.org>
 > >
-> > But eventually guest_memfd itself will support "shared" memory,
->
-> OK, I thought of this. Not sure how feasible it would be to extend gmem f=
-or
-> shared memory. I think questions like below need to be investigated:
-
-An RFC for it got posted recently[1]. :)
-
-> #1 what are the tangible benefits of gmem based shared memory, compared t=
-o the
->      legacy shared memory that we have now?
-
-For [1], unmapping guest memory from the direct map.
-
-> #2 There would be some gaps to make gmem usable for shared pages. For
->       example, would it support userspace to map (without security concer=
-ns)?
-
-At least in [1], userspace would be able to mmap it, but KVM would
-still not be able to GUP it (instead going through the normal
-guest_memfd path).
-
-> #3 if gmem gets extended to be something like hugetlb (e.g. 1GB), would i=
-t result
->      in the same issue as hugetlb?
-
-Good question. At the end of the day, the problem is that GUP relies
-on host mm page table mappings, and HugeTLB can't map things with
-PAGE_SIZE PTEs.
-
-At least as of [1], given that KVM doesn't GUP guest_memfd memory, we
-don't rely on the host mm page table layout, so we don't have the same
-problem.
-
-For VMMs that want to catch userspace (or non-GUP kernel) accesses via
-a guest_memfd VMA, then it's possible it has the same issue. But for
-VMMs that don't care to catch these kinds of accesses (the kind of
-user that would use KVM Userfault to implement post-copy), it doesn't
-matter.
-
-[1]: https://lore.kernel.org/kvm/20240709132041.3625501-1-roypat@amazon.co.=
-uk/
-
->
-> The support of using gmem for shared memory isn't in place yet, and this =
-seems
-> to be a dependency for the support being added here.
-
-Perhaps I've been slightly preemptive. :) I still think there's useful
-discussion here.
-
-> > and
-> > (IIUC) it won't use VMAs, so userfaultfd won't be usable (without chang=
-es
-> > anyway). For a non-confidential VM, all memory will be "shared", so sha=
-red-
-> > >private conversions can't help us there either.
-> > Starting everything as private almost works (so using private->shared
-> > conversions as a notification mechanism), but if the first time KVM att=
-empts to
-> > use a page is not from a vCPU (and is from a place where we cannot easi=
-ly
-> > return to userspace), the need for "async userfaults"
-> > comes back.
->
-> Yeah, this needs to be resolved for KVM userfaults. If gmem is used for p=
-rivate
-> pages only, this wouldn't be an issue (it will be covered by userfaultfd)=
-.
-
-We're on the same page here.
-
->
->
+> > Just a guess on the panel timings, but they appear to work.
 > >
-> > For this use case, it seems cleaner to have a new interface. (And, as f=
-ar as I can
-> > tell, we would at least need some kind of "async userfault"-like mechan=
-ism.)
+> > Signed-off-by: Rob Clark <robdclark@chromium.org>
+> > ---
+> > This adds the panel I have on my lenovo yoga slim 7x laptop.  I couldn'=
+t
+> > find any datasheet so timings is just a guess.  But AFAICT everything
+> > works fine.
 > >
-> > Another reason why, today, KVM Userfault is helpful is that userfaultfd=
- has a
-> > couple drawbacks. Userfaultfd migration with HugeTLB-1G is basically
-> > unusable, as HugeTLB pages cannot be mapped at PAGE_SIZE. Some discussi=
-on
-> > here[1][2].
-> >
-> > Moving the implementation of post-copy to KVM means that, throughout
-> > post-copy, we can avoid changes to the main mm page tables, and we only
-> > need to modify the second stage page tables. This saves the memory need=
-ed
-> > to store the extra set of shattered page tables, and we save the perfor=
-mance
-> > overhead of the page table modifications and accounting that mm does.
+> >  drivers/gpu/drm/panel/panel-edp.c | 2 ++
+> >  1 file changed, 2 insertions(+)
 >
-> It would be nice to see some data for comparisons between kvm faults and =
-userfaultfd
-> e.g., end to end latency of handling a page fault via getting data from t=
-he source.
-> (I didn't find data from the link you shared. Please correct me if I miss=
-ed it)
-
-I don't have an A/B comparison for kernel end-to-end fault latency. :(
-But I can tell you that with 32us or so network latency, it's not a
-huge difference (assuming Anish's series[2]).
-
-The real performance issue comes when we are collapsing the page
-tables at the end. We basically have to do ~2x of everything (TLB
-flushes, etc.), plus additional accounting that HugeTLB/THP does
-(adjusting refcount/mapcount), etc. And one must optimize how the
-unmap MMU notifiers are called so as to not stall vCPUs unnecessarily.
-
-[2]: https://lore.kernel.org/kvm/20240215235405.368539-1-amoorthy@google.co=
-m/
-
+> Given that this is a Samsung ATNA<mumble>, is there any chance it's an
+> OLED panel? Should it be supported with the Samsung OLED panel driver
+> like this:
 >
->
-> > We don't necessarily need a way to go from no-fault -> fault for a page=
-, that's
-> > right[4]. But we do need a way for KVM to be able to allow the access t=
-o
-> > proceed (i.e., go from fault -> no-fault). IOW, if we get a fault and c=
-ome out to
-> > userspace, we need a way to tell KVM not to do that again.
-> > In the case of shared->private conversions, that mechanism is toggling =
-the memory
-> > attributes for a gfn.  For conventional userfaultfd, that's using
-> > UFFDIO_COPY/CONTINUE/POISON.
-> > Maybe I'm misunderstanding your question.
->
-> We can come back to this after the dependency discussion above is done. (=
-If gmem is only
-> used for private pages, the support for postcopy, including changes requi=
-red for VMMs, would
-> be simpler)
+> https://lore.kernel.org/r/20240715-x1e80100-crd-backlight-v2-0-31b7f2f658=
+a3@linaro.org
+
+it is an OLED panel, and I did see that patchset and thought that
+samsung panel driver would work.  But changing the compat string on
+the yoga dts only gave me a black screen (and I didn't see any of the
+other mentioned problems with bl control or dpms with panel-edp).  So
+:shrug:?  It could be I overlooked something else, but it _seems_ like
+panel-edp is fine for this panel. Plus, it would avoid awkwardness if
+it turned out there were other non-samsung 2nd sources, but so far
+with a sample size of two 100% of these laptops have the same panel
+;-)
+
+But that was the reason for posting this as an RFC.  I was hoping
+someone had some hint about where to find datasheets (my google'ing
+was not successful), etc.
+
+BR,
+-R
 
