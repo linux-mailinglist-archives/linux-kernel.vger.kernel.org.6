@@ -1,108 +1,178 @@
-Return-Path: <linux-kernel+bounces-256492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53A36934F45
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:43:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C83B7934F47
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:43:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84D9B1C21DA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:43:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 401071F22112
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9571F1422C5;
-	Thu, 18 Jul 2024 14:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15468142E88;
+	Thu, 18 Jul 2024 14:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CeftKm0I"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="iPcPg/tQ"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7967212F5A1
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 14:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E68F1428F3;
+	Thu, 18 Jul 2024 14:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721313794; cv=none; b=NgKGEGakoE1/3AayiDgMfx1K2bKfrLttajHrUqJ0S85U7guFh2ya+C+nSXdaOwOHjL4tKPsH3ioBtSpJCzNdc6ORFPzTAU5sPZPXpoQbiM3tLLk80te0qXwAMasxeX0O1Jaeec4Jvevk1Oy3xqjHC5rSCnGG/TkjNQnzfJFK6D0=
+	t=1721313813; cv=none; b=qMor+tep4cnvq6Xa8bhKdkzRSBjlBCennqi8vHT0pCz9WEPw3uT01HElpjtvgkjqg3TffkRA17WOQ6KnkITHEcac6K9EaLT/oL/Bq4iwFsZgF8aj7mm3ZSv5Ez+oMZ0aCv/F0BVXsU/DUlDnWXEI0EdfOqVOMc1wPwfXcoCIoUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721313794; c=relaxed/simple;
-	bh=fiuEXO+y1CkUzUqy875cO3o952AlVtjQ88C3mZeRhUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eICxVPhJS/UO5M+8p+q7WkY8V/QeH2KztQ/sd5u+bFxnwdBNs9fx0zrYNBpEAAXDsYj7BAP+UjqpGqACialj9Z53OZYdqjWwcce4Y9/tqK8GC8zp8MXe3EtJvlQ8sgq/BsdSu9oPsK+jb1GhoqzVRzC6MI8ui9eOPXuo2+sKDTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CeftKm0I; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721313792;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gJrnZFWbEYDfYCgkGw1MmmGbtaUVBD+dZ8bSRNzGKmo=;
-	b=CeftKm0ItfWk0QG2yRWRkLiPH6rmhU2NKY45AGzyqlboJE2SB//3Y9lDA4AdX8ox2hORrd
-	HmkK17uC2cKZvpxkNlN/Rec4aja4NZ565do8l9I4gHtXVD9nZPsC3nZiCyfrrA5yz6u6dq
-	cMU8tb2olfyRTUeEbCFoI3PMzJaYZbY=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-41-wwEfdrw0NfmVBBmg15EUHg-1; Thu,
- 18 Jul 2024 10:43:07 -0400
-X-MC-Unique: wwEfdrw0NfmVBBmg15EUHg-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	s=arc-20240116; t=1721313813; c=relaxed/simple;
+	bh=bIz6pGrabOkWqeOOLGp/7zatmKtlgXevjscXxYUc558=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DxKn2X1LUyQ96ALhm9S37pgIPSnca0q+rixNhrritROB3bMoeq/Wywo7Gfl/dWjRDBXXLYvwDhzaypjvNFVCHbq2wQYPGRKOVfRC8/s10KTy0bMv5zxfvczLqfo7luVLagaY6sEs8/0q5qCJJpNTLFpLHq5snqHf53b/QMM9IdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=iPcPg/tQ; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721313809;
+	bh=bIz6pGrabOkWqeOOLGp/7zatmKtlgXevjscXxYUc558=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iPcPg/tQUnEWa7RbgKJmKryGWhd2xYuzpU21/acce0c88+cjY8RKrPCAuO11NlBEo
+	 W1vHlpMjI9iq6pnFn8NXNwUKdNtkl/qTLgcwMPnLLeQgGUxbnyUZOvZhlDiEQuJI9F
+	 IXV1YcFsCtbt7tOLg1yRpOe5x6DMbsMvj+9vv3zyJHInNnIX7mJCtld73T4IcFzF3p
+	 e82XYcLNmHCCkBw6iDapviPylpMP0eEpGXkZaHkyLFE6ZvGEfn28ZDtCgVTrATksDP
+	 X3ST4Cft+EXMN7qpq1ISt19JrbVWCQgdvLKGAENb66kP2WENk+AwVQZGjPh2FhskAB
+	 0/2CFDIuoULWA==
+Received: from [100.93.89.217] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 553071954223;
-	Thu, 18 Jul 2024 14:42:58 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.39])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B42773000185;
-	Thu, 18 Jul 2024 14:42:53 +0000 (UTC)
-Date: Thu, 18 Jul 2024 22:42:42 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: linux@armlinux.org.uk, catalin.marinas@arm.com, will@kernel.org,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, hpa@zytor.com, vgoyal@redhat.com,
-	dyoung@redhat.com, arnd@arndb.de, afd@ti.com,
-	linus.walleij@linaro.org, akpm@linux-foundation.org,
-	eric.devolder@oracle.com, gregkh@linuxfoundation.org,
-	javierm@redhat.com, deller@gmx.de, robh@kernel.org,
-	hbathini@linux.ibm.com, thunder.leizhen@huawei.com,
-	chenjiahao16@huawei.com, linux-kernel@vger.kernel.org,
-	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v3 2/3] crash: Fix x86_32 crash memory reserve dead loop
- bug at high
-Message-ID: <Zpkp4iF7quCOq7k0@MiWiFi-R3L-srv>
-References: <20240718035444.2977105-1-ruanjinjie@huawei.com>
- <20240718035444.2977105-3-ruanjinjie@huawei.com>
- <Zpj4+G5OwTYBQGIA@MiWiFi-R3L-srv>
- <aca0795c-f1a8-20c1-3daf-7f39d2ebf1bc@huawei.com>
+	(Authenticated sender: benjamin.gaignard)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 6A7C83780029;
+	Thu, 18 Jul 2024 14:43:29 +0000 (UTC)
+Message-ID: <069a9e2b-f0bc-46a7-aaec-f30157e9be2d@collabora.com>
+Date: Thu, 18 Jul 2024 16:43:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aca0795c-f1a8-20c1-3daf-7f39d2ebf1bc@huawei.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] media: videodev2: Add flags to unconditionnaly
+ enumerate pixels formats
+To: Nicolas Dufresne <nicolas@ndufresne.ca>,
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: mchehab@kernel.org, ezequiel@vanguardiasur.com.ar,
+ hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ kernel@collabora.com
+References: <20240717131430.159727-1-benjamin.gaignard@collabora.com>
+ <20240717131430.159727-2-benjamin.gaignard@collabora.com>
+ <2kbxr3hkjbcnaqescxmlcerziixg72icqpug6wa25eeggy2pnj@vqmxe4ojcwml>
+ <dfc292f8-0014-4bf4-9429-31f729a176cd@collabora.com>
+ <ok2a4ubzka6rhzyj2c5op73ij7pw35g6e75whc2jjget62fatx@zka2ewyt3kfv>
+ <c8358d79bd51a9bfa5116b33ae5e7766b95d344d.camel@ndufresne.ca>
+ <1faa7098-b108-480e-ae4b-ed25e0020e51@collabora.com>
+ <7113029e2e192d43523a1ea5dae041fb53ae5948.camel@ndufresne.ca>
+ <b454d93d607047c63663b3f003b3d3c23f07bac7.camel@ndufresne.ca>
+Content-Language: en-US
+From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+In-Reply-To: <b454d93d607047c63663b3f003b3d3c23f07bac7.camel@ndufresne.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 07/18/24 at 08:10pm, Jinjie Ruan wrote:
-> 
-> 
-> On 2024/7/18 19:14, Baoquan He wrote:
-> > On 07/18/24 at 11:54am, Jinjie Ruan wrote:
-> > 
-> > I don't fully catch the subject, what does the 'dead loop bug at high'
-> > mean?
-> 
-> It means alloc at [CRASH_ADDR_LOW_MAX, CRASH_ADDR_HIGH_MAX] repeatedly
-> which corresponds to the crashkernel parameter of the "high".
 
-That may mislead people to think it's a crashkernel=,high setting and
-the corresponding issue.
+Le 18/07/2024 à 16:02, Nicolas Dufresne a écrit :
+> Le jeudi 18 juillet 2024 à 09:56 -0400, Nicolas Dufresne a écrit :
+>> Hi,
+>>
+>> Le jeudi 18 juillet 2024 à 09:04 +0200, Benjamin Gaignard a écrit :
+>>> Le 17/07/2024 à 19:50, Nicolas Dufresne a écrit :
+>> [...]
+>>
+>>>>>>>> @@ -1569,6 +1569,7 @@ static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
+>>>>>>>>     	int ret = check_fmt(file, p->type);
+>>>>>>>>     	u32 mbus_code;
+>>>>>>>>     	u32 cap_mask;
+>>>>>>>> +	u32 flags;
+>>>>>>>>
+>>>>>>>>     	if (ret)
+>>>>>>>>     		return ret;
+>>>>>>>> @@ -1578,8 +1579,10 @@ static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
+>>>>>>>>     		p->mbus_code = 0;
+>>>>>>>>
+>>>>>>>>     	mbus_code = p->mbus_code;
+>>>>>>>> +	flags = p->flags & V4L2_FMT_FLAG_ENUM_ALL_FORMATS;
+>>>>>>>>     	memset_after(p, 0, type);
+>>>>>>>>     	p->mbus_code = mbus_code;
+>>>>>>>> +	p->flags = flags;
+>>>>>>> Won't this set V4L2_FMT_FLAG_ENUM_ALL_FORMATS (if present) in the
+>>>>>>> flags returned to userspace ? Shouldn't be drivers to set
+>>>>>>> V4L2_FMT_FLAG_ALL_FORMATS instead ?
+>>>>>> memset_after zeroed flags field so we need this to send V4L2_FMT_FLAG_ENUM_ALL_FORMATS
+>>>>>> flag to drivers. Return it to userspace is a side effect but I don't that is problem
+>>>>>> since it set it anyway.
+>>>>>>
+>>>>> Ok, if the expectation is that the flag is preserved through the ioctl
+>>>>> call, this is fine with me
+>>>> I might be missing something other similar features are explicitly advertised by
+>>>> drivers. This way, the generic layer can keep or clear the flag based of if its
+>>>> supported. The fact the flag persist the ioctl() or not endup having a useful
+>>>> semantic.
+>>>>
+>>>> Could we do the same?
+>>> It is the only flag set by userspace when calling the ioctl(), all others
+>>> are set by the drivers.
+>>> I can clean it from the ioctl() structure after driver call but that won't change anything.
+>> This does not answer my question. In other similar feature, we have an
+>> **internal** flag set by drivers to tell the framework that such feature is
+>> abled. Using that, the framework can keep or remove that flag based on if its
+>> supported or not. This way, userspace have a clue if the driver do have this
+>> support or if the returned result (in that case) is just a subset matching the
+>> configuration. We don't seem to have done the same level of effort here.
+> For the reference, you actually use that semantic in GStreamer implementation,
+> but the kernel code seems broken.
+>
+> https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7078/diffs#eb90d5495df2f085f163996014c748a36f143f76_516_527
 
-Maybe "crash: Fix x86_32 crashkernel reservation dead loop" is good
-enough.
+device_caps u32 field is already almost fully used, only one 1 bit is free.
+I could use it but, for me, the capability to enumerate all the formats
+doesn't fit well in the existing list.
 
+Benjamin
+
+>
+>> Nicolas
+>>
+>>>>> Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+>>>>>
+>>>>>>>>     	switch (p->type) {
+>>>>>>>>     	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
+>>>>>>>> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+>>>>>>>> index fe6b67e83751..b6a5da79ba21 100644
+>>>>>>>> --- a/include/uapi/linux/videodev2.h
+>>>>>>>> +++ b/include/uapi/linux/videodev2.h
+>>>>>>>> @@ -886,6 +886,8 @@ struct v4l2_fmtdesc {
+>>>>>>>>     #define V4L2_FMT_FLAG_CSC_HSV_ENC		V4L2_FMT_FLAG_CSC_YCBCR_ENC
+>>>>>>>>     #define V4L2_FMT_FLAG_CSC_QUANTIZATION		0x0100
+>>>>>>>>     #define V4L2_FMT_FLAG_META_LINE_BASED		0x0200
+>>>>>>>> +#define V4L2_FMT_FLAG_ENUM_ALL_FORMATS		0x0400
+>>>>>>>> +#define V4L2_FMT_FLAG_ALL_FORMATS		0x0800
+>>>>>>>>
+>>>>>>>>     	/* Frame Size and frame rate enumeration */
+>>>>>>>>     /*
+>>>>>>>> --
+>>>>>>>> 2.43.0
+>>>>>>>>
+>>>>>>>>
+>>>>>>> _______________________________________________
+>>>>>>> Kernel mailing list -- kernel@mailman.collabora.com
+>>>>>>> To unsubscribe send an email to kernel-leave@mailman.collabora.com
+>>>>>>> This list is managed by https://mailman.collabora.com
+>>> _______________________________________________
+>>> Kernel mailing list -- kernel@mailman.collabora.com
+>>> To unsubscribe send an email to kernel-leave@mailman.collabora.com
+>>> This list is managed by https://mailman.collabora.com
+>> _______________________________________________
+>> Kernel mailing list -- kernel@mailman.collabora.com
+>> To unsubscribe send an email to kernel-leave@mailman.collabora.com
+>> This list is managed by https://mailman.collabora.com
 
