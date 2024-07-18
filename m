@@ -1,125 +1,87 @@
-Return-Path: <linux-kernel+bounces-256352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73257934CDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:58:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0303C934CDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:00:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A14ED1C223AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:58:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65DB1B22CD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4518613B2BC;
-	Thu, 18 Jul 2024 11:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="mWufwUOg"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F62513B7BE;
+	Thu, 18 Jul 2024 12:00:06 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8032139CEF
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 11:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFC012FB34
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 12:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721303913; cv=none; b=r4URG9MzN9RVHhnuJv2DWtQJnNqKVCNHlyRIbsZEDwnf/FqBSAjOr96QJWtkVuMRwwUlXPaCabK87eOzwLX3t77o4NAzS+WcHpmB1nUIDYxIrXQwrghHnZofR29paXZExmHnjtoQyC6NZz5r8kmkYiJ66To25z6Brsh+tH6aHfw=
+	t=1721304005; cv=none; b=oTHY9GmtUkdg4yiv/7xFT/qMwHTkH0fOgjNJeWT9l4ry0FlAUQ/kfxUTI1wCPLz+XfEzUX3AXdXrGHxqtHf5xCcC94YAhe78nT/63f5atRzFEuErQ/fnBqQRt2i4bSHst6t6e1t1ooHg4b7LhMVWP4s6HDj/YrHd8kltVp0gSuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721303913; c=relaxed/simple;
-	bh=FFrNdvWWjN63s42BKAKBM8xaz6ftXrgEKRS6jcbmJL8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RoLHkSkSYVuBOHHueNnVi/nEjb3on9XJwwvSrbazXt6d5lQbCfxo1H8VGqCsVBc08SAqmFhcKF8h3HdHpK3mQQrFMMA20ZtK4yscj3zryvQZkBMibBvu8NNpdU/w/TW0LaiY8JTJQFz2d6q3Zg7xXx8n8Fe2XwgyPLjHuLHJkFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=mWufwUOg; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so1575225e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 04:58:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1721303909; x=1721908709; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eT3/r8iq9vh5IHb+laarDBOv4FqNaSgzXd7Frm5ubA4=;
-        b=mWufwUOgGu9tdiTbF+wwaBViwZ/n4VkZG88CacADd3i1zoS9DkkZusfrOmHeK/jtli
-         Np/roYCnPe/6gkZWafuTul7lmwqWOct92+bai0+qHrEjtsqT/9krxKTRlxCe2zq2rYvv
-         ASYfWg4jaZMhWrVKMb9zOq5kI/rJQviCHWeK/o9qB7DB2ECMjFjn7SMvqlH8SLgGQGxz
-         CJplTKapwkiyg8sm6kBEKMrj68Iez0l3L60XL0SrUo5m82q3VKstqAULLMEROCSnuErU
-         pc71vIg7gz5X+z4zGwuqAeyodqQUmUyBvspOf974PiNE080Sr97Gn+/iH0N0vhRxCO7z
-         NxzA==
+	s=arc-20240116; t=1721304005; c=relaxed/simple;
+	bh=3gLBsscoSBFCxLmDvvnBKSsjHCec6Gpm0ks/pSurpTc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=dYNW6gEKoe1MQ7okzDICeQDxTKA9Aq+PowapsLw3Gn8U27uiffX8/WsGJ7Cy58wDeA0o8lqLnNvKFhipMiomQ/j0S+g+1THQLqZl12yhP6+Bk6NQU2pIbKs5CjvAkiybrOnub41LBWBuhlpdK3EihRbPcFgnj74ho9G5nUWvn3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8152f0c63c4so228519139f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 05:00:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721303909; x=1721908709;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eT3/r8iq9vh5IHb+laarDBOv4FqNaSgzXd7Frm5ubA4=;
-        b=nABCLLB2d9o5QQztxLF3uNjTlTJ5Wuy4BwVMyCH+yistbipB6/mMwi6qjIMUPIRMIn
-         nGT9ggFMIf8BrhewuzvPZGLkkSlYOarJY65HG+f2JGRo73NuWf3zRelJmG+yQyNOtj8x
-         mjhGZEZWnPev1l7AldTAJ5TNfttvy/3n3ZXuF4C6767e2ekFMRx18Ee1cCne0ciHC6pC
-         H3tb2SuPFPGddGm0KgZfHbox4q7St0pd96AGGxevVI41LC3u/FUw1MZEJVznsi5BoFwN
-         4tgRpOB2JIMMdtVqwznWUAyt5aA+H+42E4M4htdnOBT00VGzKuNLRLeWxvStzMAtuD0H
-         RHtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8HSRDWwTUnuhsfTE2FH8j3jbPG0Jz4r0b9NZGXEi3VSnnWPflPf2IsykMxO9ya8jahDwFfjQwQtD9L5H49KNcJWbMshE/jkEC428V
-X-Gm-Message-State: AOJu0YwgiiSN2pnHXFnblupJBF8OXCocJOwPQS+ozxo0bwZaJUAZygRc
-	JsUE9YM2dZ8lw708WpwdbVOdszsH3OmtIK9VQoozFxHDiFRHcpJrzlKEeMnpS34=
-X-Google-Smtp-Source: AGHT+IHpOFhVVOR50WDCPfi6DXrjDJkGmwaqmpgdsmAo5+FCsTxtL42b6u3Rfj/yngP1z/p7fq9EnA==
-X-Received: by 2002:a05:600c:4751:b0:426:5cc7:82f with SMTP id 5b1f17b1804b1-427d2b527demr5295885e9.13.1721303909431;
-        Thu, 18 Jul 2024 04:58:29 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:58d4:2f84:5fcd:8259])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-368467a34dcsm2258703f8f.109.2024.07.18.04.58.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 04:58:29 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Kalle Valo <kvalo@kernel.org>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	ath11k@lists.infradead.org,
-	ath12k@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2] Kconfig: reduce the amount of power sequencing noise
-Date: Thu, 18 Jul 2024 13:58:27 +0200
-Message-ID: <172130382340.64067.7765392027721457700.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240717142803.53248-1-brgl@bgdev.pl>
-References: <20240717142803.53248-1-brgl@bgdev.pl>
+        d=1e100.net; s=20230601; t=1721304003; x=1721908803;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0xRxDJxtAdMMpSSvxFYj6JkhxMKleL/Og5yP/fDMtos=;
+        b=uYFyUpSh9vMAwzINUBQhnarIv+H3EmzRSUAYBDjRJiyrVmz51FqwV2GG/30caF4lN3
+         MRRFv0NhuZl/k4OjNC1oYyBY/DbL+bo57RVWBM8mxrzxvx6pEm53H8eY1sFEXik4mQGP
+         ZEQAVlvgFWPvANiPNNhmavlKd19xW1Zj12Q73OdK5oeeA3vW36Xt+9DQfxQoPOaoCLoj
+         amHCYTTxEL9VPRnYpH7lrmFbAXWYHWJ15kcBVvTadgtEBVeHKppSmKFYJGLcR/Vlwqqo
+         ePMdIKlN+aW0sK4cmeYPsWK3Ww5QQj+zvyBnxsS8jGe2LGi9xnikEArqKqz5nyzdPeSd
+         n99A==
+X-Forwarded-Encrypted: i=1; AJvYcCW+tGtNOMeDPBTcp5XuVVZayT0QPXF7XzpeR/aprJjb4jn8xgVBZm1jadI01Wd28IdT3CwswbWjowrJglGIsTST9UWqgx8SMZqNK7Rs
+X-Gm-Message-State: AOJu0Yw0ylRbJaQGJ66YYkAFzCUZjtxBH8DTf5LUrouKCUUBIjrlIe7l
+	c3hfsTEJAKQ728wi8e1jtl8hqvQwKMhkGyzM6Re73N8tgHXiqSkjzCBfCNrnlaRsy6OwOIlH5pc
+	icd0G8OpahqlcqhxNTkQmQYJUu4hJoqAG0fHnUdzU2a/6AidFei2to6w=
+X-Google-Smtp-Source: AGHT+IFvi6Rj51UYqaujK4CcrHiK0jD+18oJowhra8vBynVABXLRhCQ+81bwUGz7WfaOl5fVNVVsi9mjGFDKF1yw6bSQauh5O7B7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:204d:b0:4c0:971d:36b1 with SMTP id
+ 8926c6da1cb9f-4c21fc95f5amr105399173.3.1721304003359; Thu, 18 Jul 2024
+ 05:00:03 -0700 (PDT)
+Date: Thu, 18 Jul 2024 05:00:03 -0700
+In-Reply-To: <20240718110318.1438-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000abc9fc061d8451a5@google.com>
+Subject: Re: [syzbot] [fs?] WARNING: lock held when returning to user space in ns_ioctl
+From: syzbot <syzbot+dd73570cf9918519e789@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hello,
 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On Wed, 17 Jul 2024 16:28:03 +0200, Bartosz Golaszewski wrote:
-> Kconfig will ask the user twice about power sequencing: once for the QCom
-> WCN power sequencing driver and then again for the PCI power control
-> driver using it.
-> 
-> Let's automate the selection of PCI_PWRCTL by introducing a new hidden
-> symbol: HAVE_PWRCTL which should be selected by all platforms that have
-> the need to include PCI power control code (right now: only ARCH_QCOM).
-> 
-> [...]
+Reported-by: syzbot+dd73570cf9918519e789@syzkaller.appspotmail.com
+Tested-by: syzbot+dd73570cf9918519e789@syzkaller.appspotmail.com
 
-I'm picking this up into my pwrseq/for-current branch. I'll be off next week
-so I want to give the autobuilders the chance to play with this and I'll send
-a PR to Linus with another pwrseq fix I have queued tomorrow evening.
+Tested on:
 
-Let me know if there are any objections.
+commit:         51835949 Merge tag 'net-next-6.11' of git://git.kernel..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=102d825e980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d3bdd09ea2371c89
+dashboard link: https://syzkaller.appspot.com/bug?extid=dd73570cf9918519e789
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1575825e980000
 
-[1/1] Kconfig: reduce the amount of power sequencing noise
-      commit: ed70aaac7c359540d3d8332827fa60b6a45e15f2
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Note: testing is done by a robot and is best-effort only.
 
