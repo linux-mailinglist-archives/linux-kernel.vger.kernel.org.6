@@ -1,291 +1,213 @@
-Return-Path: <linux-kernel+bounces-256356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4FA1934CE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:07:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F42934CE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:07:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 277FD1F2399A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:07:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B62321F23AEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1365313B295;
-	Thu, 18 Jul 2024 12:07:17 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D2FC12C473
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 12:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4042013B7A3;
+	Thu, 18 Jul 2024 12:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f3oWJDfr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875A012C473;
+	Thu, 18 Jul 2024 12:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721304436; cv=none; b=AZfUyM8cGXNMh4mQ1aAtyyH81nTR2KLrqSE0IzufjyIQLPaD2TpBPpHhkIYk6p/Ci6pyjJxtCv5tqC7ZzFq3gJwTSiSj1ye7wP5trLevs0W0QXg+smMckQL6AVbjMd5mKbZvGxPBBZqGfTbf40iATTN74+TbTMsP7yEbgnpRyCU=
+	t=1721304452; cv=none; b=G4oGTJXyUVcpYMgleQQ/pO3XA9EMYZaUtqIv4nDThJFDG1PV3pkOmuVayqJcvTElVmmV2Xpx2vyDq3tyTwe2P5tJmhBex9LoHabAKEE0j1uMBvIobCoOmz+djwzTtQTxi48PuBHENabxECN7tFrzZ6eadw3IXUR2403+uXb833g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721304436; c=relaxed/simple;
-	bh=DNBMocFKMlBc4naeA5BAkg+RIDCNP4lvbMF7Y2MTE/I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nUj/w6++eKdjLpU8yotpxTFSjs6xsyw5lNFxjfP4PaDFS5ADrd04JKjEcDj5q8g3zfyu08NNKSXAR7hTduCe37XlHsiYhddYvoMNlPaEsyDLsx5T96Wzmo9+jzD/UWQM7rAY16oNEMieeSKW6QDtpdmHCheHFkUS0zmj5q+GA9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D23331063;
-	Thu, 18 Jul 2024 05:07:31 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C2A0D3F766;
-	Thu, 18 Jul 2024 05:07:04 -0700 (PDT)
-From: Mark Rutland <mark.rutland@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: alex.coplan@arm.com,
-	catalin.marinas@arm.com,
-	jakub@gcc.gnu.org,
-	linux-arm-kernel@lists.infradead.org,
-	mark.rutland@arm.com,
-	peterz@infradead.org,
-	seanjc@google.com,
-	szabolcs.nagy@arm.com,
-	torvalds@linux-foundation.org,
-	will@kernel.org
-Subject: [PATCH] init/Kconfig: remove CONFIG_GCC_ASM_GOTO_OUTPUT_WORKAROUND
-Date: Thu, 18 Jul 2024 13:06:47 +0100
-Message-Id: <20240718120647.1115592-1-mark.rutland@arm.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1721304452; c=relaxed/simple;
+	bh=01nn3RyXxWlN75AcsNF/m8TgQhjzMhrIjCdTNAtMqUs=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=K6EqQ7j4rcysD8CaNNZTot4IHxUboecCsfnPxCq7XmrhDY1pTU+aOgBMemGEs+pwGuMPEofEfd5lhmAjoyMoH/xcCactk1dEWffk/a8Iu39hmwuEM2CeI45gtLkEzM0CTfO8Om0dFERA78K4DRhzDSjCksjn4NrX/3ImJNZvGtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f3oWJDfr; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721304451; x=1752840451;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=01nn3RyXxWlN75AcsNF/m8TgQhjzMhrIjCdTNAtMqUs=;
+  b=f3oWJDfrSvGdDTbzM0ziYo6l8QxXh96zHzFU3EJbfiUS97CWfpjrmf9r
+   OPidnDxOVnRMGFtxzzwl9mtRVUflfz6Aq+qUkShqitoKeU1Z/RYX1Vnhf
+   0SWkfHhjSgIwQJpe48yHQum/2wT3wRh2nTaa1PjFBGCBOKy35bR20Pvv0
+   lJrWhIsUx1Jy/ZMP7EYk2EiG/BwNLaK0XlBfQtj802XPGS2wViFGPsHFN
+   Ckdh9Ldg0L6OQqFd4+cN/XRqT516fci0h91yXhJiVIlHZSEoVQyP7S/sw
+   eeVRm/oYWHq7q95tTBNNcl8ztylrBuLG82Swri8XcAu9lxG0rdtdAYACQ
+   w==;
+X-CSE-ConnectionGUID: AoTDH4GHQCWPdRolQt7taA==
+X-CSE-MsgGUID: SFYl9nSER4OXPHIp2CT2Sw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="41385445"
+X-IronPort-AV: E=Sophos;i="6.09,217,1716274800"; 
+   d="scan'208";a="41385445"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 05:07:29 -0700
+X-CSE-ConnectionGUID: Lun8KLN+Q4aEJbUOb5ecQQ==
+X-CSE-MsgGUID: wmuz3NaZQnG42N/YPylLYw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,217,1716274800"; 
+   d="scan'208";a="88228670"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.144])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 05:07:11 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 18 Jul 2024 15:07:07 +0300 (EEST)
+To: Ferry Toth <ftoth@exalondelft.nl>
+cc: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    Thomas Gleixner <tglx@linutronix.de>, 
+    John Ogness <john.ogness@linutronix.de>, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    linux-serial <linux-serial@vger.kernel.org>, neil.armstrong@linaro.org, 
+    AlCooper <alcooperx@gmail.com>, AlexanderShiyan <shc_work@mail.ru>, 
+    AlexandreBelloni <alexandre.belloni@bootlin.com>, 
+    AlexandreTorgue <alexandre.torgue@foss.st.com>, 
+    AlimAkhtar <alim.akhtar@samsung.com>, 
+    AndrewMorton <akpm@linux-foundation.org>, 
+    "AneeshKumarK . V" <aneesh.kumar@kernel.org>, 
+    AngeloGioacchinoDelRegno <angelogioacchino.delregno@collabora.com>, 
+    BaolinWang <baolin.wang@linux.alibaba.com>, 
+    BaruchSiach <baruch@tkos.co.il>, BjornAndersson <andersson@kernel.org>, 
+    ClaudiuBeznea <claudiu.beznea@tuxon.dev>, 
+    "DavidS . Miller" <davem@davemloft.net>, FabioEstevam <festevam@gmail.com>, 
+    HammerHsieh <hammerh0314@gmail.com>, 
+    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
+    ChristopheLeroy <christophe.leroy@csgroup.eu>, 
+    ChunyanZhang <zhang.lyra@gmail.com>, JeromeBrunet <jbrunet@baylibre.com>, 
+    JonathanHunter <jonathanh@nvidia.com>, KevinHilman <khilman@baylibre.com>, 
+    KonradDybcio <konrad.dybcio@linaro.org>, 
+    KrzysztofKozlowski <krzysztof.kozlowski@linaro.org>, 
+    KumaravelThiagarajan <kumaravel.thiagarajan@microchip.com>, 
+    LaxmanDewangan <ldewangan@nvidia.com>, 
+    linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+    "MaciejW . Rozycki" <macro@orcam.me.uk>, 
+    ManivannanSadhasivam <manivannan.sadhasivam@linaro.org>, 
+    MartinBlumenstingl <martin.blumenstingl@googlemail.com>, 
+    MatthiasBrugger <matthias.bgg@gmail.com>, 
+    MaximeCoquelin <mcoquelin.stm32@gmail.com>, 
+    MichaelEllerman <mpe@ellerman.id.au>, MichalSimek <michal.simek@amd.com>, 
+    "NaveenN . Rao" <naveen.n.rao@linux.ibm.com>, 
+    NicolasFerre <nicolas.ferre@microchip.com>, 
+    NicholasPiggin <npiggin@gmail.com>, OrsonZhai <orsonzhai@gmail.com>, 
+    =?ISO-8859-15?Q?Pali_Roh=E1r?= <pali@kernel.org>, 
+    PatriceChotard <patrice.chotard@foss.st.com>, 
+    PeterKorsgaard <jacmet@sunsite.dk>, 
+    RichardGenoud <richard.genoud@gmail.com>, 
+    RussellKing <linux@armlinux.org.uk>, SaschaHauer <s.hauer@pengutronix.de>, 
+    ShawnGuo <shawnguo@kernel.org>, StefaniSeibold <stefani@seibold.net>, 
+    SumitSemwal <sumit.semwal@linaro.org>, 
+    TaichiSugaya <sugaya.taichi@socionext.com>, 
+    TakaoOrito <orito.takao@socionext.com>, 
+    TharunKumarP <tharunkumar.pasumarthi@microchip.com>, 
+    ThierryReding <thierry.reding@gmail.com>, TimurTabi <timur@kernel.org>, 
+    VineetGupta <vgupta@kernel.org>, 
+    MarekSzyprowski <m.szyprowski@samsung.com>, 
+    PhilEdworthy <phil.edworthy@renesas.com>
+Subject: Re: [PATCH v1 1/1] tty: serial: 8250_dma: use sgl with 2 nents to
+ take care of buffer wrap
+In-Reply-To: <20240716214055.102269-1-ftoth@exalondelft.nl>
+Message-ID: <b31d654f-07f5-7a4b-1dc2-97b30ec4dad5@linux.intel.com>
+References: <20240716214055.102269-1-ftoth@exalondelft.nl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323328-1792353095-1721304427=:1055"
 
-Several versions of GCC mis-compile asm goto with outputs. We try to
-workaround this, but our workaround is demonstrably incomplete and
-liable to result in subtle bugs, especially on arm64 where get_user()
-has recently been moved over to using asm goto with outputs.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-From discussion(s) with Linus at:
+--8323328-1792353095-1721304427=:1055
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-  https://lore.kernel.org/linux-arm-kernel/Zpfv2tnlQ-gOLGac@J2N7QTR9R3.cambridge.arm.com/
-  https://lore.kernel.org/linux-arm-kernel/ZpfxLrJAOF2YNqCk@J2N7QTR9R3.cambridge.arm.com/
+On Tue, 16 Jul 2024, Ferry Toth wrote:
 
-... it sounds like the best thing to do for now is to remove the workaround and
-make CC_HAS_ASM_GOTO_OUTPUT depend on working compiler versions.
+> Previously 8250_dma used a circular xmit->buf as DMA output buffer. This
+> causes messages that wrap around in the circular buffer to be
+> transmitted using 2 DMA transfers. Depending on baud rate and processor
+> load this can cause an interchar gap in the middle of the message. On
+> the receiving end the gap may cause a short receive timeout, possibly
+> long enough to terminate a DMA transfer, but too short to restart a
+> receive DMA transfer in time thus causing a receive buffer overrun.
+>=20
+> This is especially a problem for devices with high speed UARTs (HSU)
+> where even deep 64 byte FIFO's are not sufficient to handle interrupt
+> latency.
+>=20
+> The circular buffer has now been replaced by kfifo which requires a SG
+> list with a single entry, which still causes 2 dma transfers when a wrap
+> around occurs. Fix this by allowing up to 2 entries in the sgl.
+>=20
+> Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
+> Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+> ---
+>  drivers/tty/serial/8250/8250_dma.c | 19 ++++++++++---------
+>  1 file changed, 10 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/drivers/tty/serial/8250/8250_dma.c b/drivers/tty/serial/8250=
+/8250_dma.c
+> index 8a353e3cc3dd..d215c494ee24 100644
+> --- a/drivers/tty/serial/8250/8250_dma.c
+> +++ b/drivers/tty/serial/8250/8250_dma.c
+> @@ -89,7 +89,9 @@ int serial8250_tx_dma(struct uart_8250_port *p)
+>  =09struct tty_port=09=09=09*tport =3D &p->port.state->port;
+>  =09struct dma_async_tx_descriptor=09*desc;
+>  =09struct uart_port=09=09*up =3D &p->port;
+> -=09struct scatterlist sg;
+> +=09struct scatterlist=09=09*sg;
+> +=09struct scatterlist=09=09sgl[2];
+> +=09int i;
+>  =09int ret;
+> =20
+>  =09if (dma->tx_running) {
+> @@ -110,18 +112,17 @@ int serial8250_tx_dma(struct uart_8250_port *p)
+> =20
+>  =09serial8250_do_prepare_tx_dma(p);
+> =20
+> -=09sg_init_table(&sg, 1);
+> -=09/* kfifo can do more than one sg, we don't (quite yet) */
+> -=09ret =3D kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, &sg, 1,
+> +=09sg_init_table(sgl, ARRAY_SIZE(sgl));
+> +
+> +=09ret =3D kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, sgl, ARRAY_SI=
+ZE(sgl),
+>  =09=09=09=09=09   UART_XMIT_SIZE, dma->tx_addr);
+> =20
+> -=09/* we already checked empty fifo above, so there should be something =
+*/
+> -=09if (WARN_ON_ONCE(ret !=3D 1))
+> -=09=09return 0;
+> +=09dma->tx_size =3D 0;
+> =20
+> -=09dma->tx_size =3D sg_dma_len(&sg);
+> +=09for_each_sg(sgl, sg, ret, i)
+> +=09=09dma->tx_size +=3D sg_dma_len(sg);
+> =20
+> -=09desc =3D dmaengine_prep_slave_sg(dma->txchan, &sg, 1,
+> +=09desc =3D dmaengine_prep_slave_sg(dma->txchan, sgl, ret,
+>  =09=09=09=09       DMA_MEM_TO_DEV,
+>  =09=09=09=09       DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
+>  =09if (!desc) {
 
-The issue was originally reported to GCC by Sean Christopherson:
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
-  https://gcc.gnu.org/bugzilla/show_bug.cgi?id=113921
+I envision though that this would be part of serial core so that it's not=
+=20
+limited to 8250 DMA but that can be changed on top of this at a later=20
+time.
 
-... and Jakub Jelinek fixed this for GCC 14, with the fix backported to
-13.3.0, 12.4.0, and 11.5.0.
+--=20
+ i.
 
-In the kernel, we tried to workaround broken compilers in commits:
-
-  4356e9f841f7 ("work around gcc bugs with 'asm goto' with outputs")
-  68fb3ca0e408 ("update workarounds for gcc "asm goto" issue")
-
-... but the workaround of adding an empty asm("") after the asm volatile
-goto(...) demonstrably does not always avoid the problem, as can be seen
-in the following test case:
-
-| #define asm_goto_output(x...) \
-|         do { asm volatile goto(x); asm (""); } while (0)
-|
-| #define __good_or_bad(__val, __key)                                     \
-| do {                                                                    \
-|         __label__ __failed;                                             \
-|         unsigned long __tmp;                                            \
-|         asm_goto_output(                                                \
-|         "       cbnz    %[key], %l[__failed]\n"                         \
-|         "       mov     %[val], #0x900d\n"                              \
-|         : [val] "=r" (__tmp)                                            \
-|         : [key] "r" (__key)                                             \
-|         :                                                               \
-|         : __failed);                                                    \
-|         (__val) = __tmp;                                                \
-|         break;                                                          \
-| __failed:                                                               \
-|         (__val) = 0xbad;                                                \
-| } while (0)
-|
-| unsigned long get_val(unsigned long key);
-| unsigned long get_val(unsigned long key)
-| {
-|         unsigned long val = 0xbad;
-|
-|         __good_or_bad(val, key);
-|
-|         return val;
-| }
-
-GCC 13.2.0 (at -O2) compiles this to:
-
-| 	cbnz    x0, .Lfailed
-| 	mov     x0, #0x900d
-| .Lfailed:
-| 	ret
-
-GCC 14.1.0 (at -O2) compiles this to:
-
-| 	cbnz    x0, .Lfailed
-| 	mov     x0, #0x900d
-| 	ret
-| .Lfailed:
-| 	mov     x0, #0xbad
-| 	ret
-
-Note that GCC 13.2.0 erroneously omits the assignment to 'val' in the
-error path (even though this does not depend on an output of the asm
-goto). GCC 14.1.0 correctly retains the assignment.
-
-This problem can be seen within the kernel with the following test case:
-
-| #include <linux/uaccess.h>
-| #include <linux/types.h>
-|
-| noinline unsigned long test_unsafe_get_user(unsigned long __user *ptr);
-| noinline unsigned long test_unsafe_get_user(unsigned long __user *ptr)
-| {
-|         unsigned long val;
-|
-|         unsafe_get_user(val, ptr, Efault);
-|         return val;
-|
-| Efault:
-|         val = 0x900d;
-|         return val;
-| }
-
-GCC 13.2.0 (arm64 defconfig) compiles this to:
-
-|         and     x0, x0, #0xff7fffffffffffff
-|         ldtr    x0, [x0]
-| .Lextable_fixup:
-|         ret
-
-GCC 13.2.0 (x86_64 defconfig + MITIGATION_RETPOLINE=n) compiles this to:
-
-|         endbr64
-|         mov    (%rdi),%rax
-| .Lextable_fixup:
-|         ret
-
-... omitting the assignment to 'val' in the error path, and leaving
-garbage in the result register returned by the function (which happens
-to contain the faulting address in the generated code).
-
-GCC 14.1.0 (arm64 defconfig) compiles this to:
-
-|         and     x0, x0, #0xff7fffffffffffff
-|         ldtr    x0, [x0]
-|         ret
-| .Lextable_fixup:
-|         mov     x0, #0x900d                     // #36877
-|         ret
-
-GCC 14.1.0 (x86_64 defconfig + MITIGATION_RETPOLINE=n) compiles this to:
-
-|         endbr64
-|         mov    (%rdi),%rax
-|         ret
-| .Lextable_fixup:
-|         mov    $0x900d,%eax
-|         ret
-
-... retaining the expected assignment to 'val' in the error path.
-
-We don't have a complete and reasonable workaround. While placing empty
-asm("") blocks after each goto label *might* be sufficient, we don't
-know for certain, this is tedious and error-prone, and there doesn't
-seem to be a neat way to wrap this up (which is especially painful for
-cases with multiple goto labels).
-
-Avoid this issue by disabling CONFIG_CC_HAS_ASM_GOTO_OUTPUT for
-known-broken compiler versions and removing the workaround (along with
-the CONFIG_GCC_ASM_GOTO_OUTPUT_WORKAROUND config option).
-
-For the moment I've left the default implementation of asm_goto_output()
-unchanged. This should now be redundant since any compiler with the fix
-for the clobbering issue whould also have a fix for the (earlier)
-volatile issue, but it's far less churny to leave it around, which makes
-it easier to backport this patch if necessary.
-
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: Alex Coplan <alex.coplan@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Jakub Jelinek <jakub@gcc.gnu.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sean Christopherson <seanjc@google.com>
-Cc: Szabolcs Nagy <szabolcs.nagy@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- include/linux/compiler-gcc.h | 20 --------------------
- init/Kconfig                 | 14 +++++---------
- 2 files changed, 5 insertions(+), 29 deletions(-)
-
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index aff92b1d284fd..f805adaa316e9 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -64,26 +64,6 @@
- 		__builtin_unreachable();	\
- 	} while (0)
- 
--/*
-- * GCC 'asm goto' with outputs miscompiles certain code sequences:
-- *
-- *   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=113921
-- *
-- * Work around it via the same compiler barrier quirk that we used
-- * to use for the old 'asm goto' workaround.
-- *
-- * Also, always mark such 'asm goto' statements as volatile: all
-- * asm goto statements are supposed to be volatile as per the
-- * documentation, but some versions of gcc didn't actually do
-- * that for asms with outputs:
-- *
-- *    https://gcc.gnu.org/bugzilla/show_bug.cgi?id=98619
-- */
--#ifdef CONFIG_GCC_ASM_GOTO_OUTPUT_WORKAROUND
--#define asm_goto_output(x...) \
--	do { asm volatile goto(x); asm (""); } while (0)
--#endif
--
- #if defined(CONFIG_ARCH_USE_BUILTIN_BSWAP)
- #define __HAVE_BUILTIN_BSWAP32__
- #define __HAVE_BUILTIN_BSWAP64__
-diff --git a/init/Kconfig b/init/Kconfig
-index febdea2afc3be..e236498911870 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -82,6 +82,11 @@ config CC_CAN_LINK_STATIC
- 	default $(success,$(srctree)/scripts/cc-can-link.sh $(CC) $(CLANG_FLAGS) $(USERCFLAGS) $(USERLDFLAGS) $(m32-flag) -static)
- 
- config CC_HAS_ASM_GOTO_OUTPUT
-+	# Fixed in GCC 14, 13.3, 12.4 and 11.5
-+	# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=113921
-+	default n if CC_IS_GCC && GCC_VERSION < 110500
-+	default n if CC_IS_GCC && GCC_VERSION >= 120000 && GCC_VERSION < 120400
-+	default n if CC_IS_GCC && GCC_VERSION >= 130000 && GCC_VERSION < 130300
- 	def_bool $(success,echo 'int foo(int x) { asm goto ("": "=r"(x) ::: bar); return x; bar: return 0; }' | $(CC) -x c - -c -o /dev/null)
- 
- config CC_HAS_ASM_GOTO_TIED_OUTPUT
-@@ -89,15 +94,6 @@ config CC_HAS_ASM_GOTO_TIED_OUTPUT
- 	# Detect buggy gcc and clang, fixed in gcc-11 clang-14.
- 	def_bool $(success,echo 'int foo(int *x) { asm goto (".long (%l[bar]) - .": "+m"(*x) ::: bar); return *x; bar: return 0; }' | $CC -x c - -c -o /dev/null)
- 
--config GCC_ASM_GOTO_OUTPUT_WORKAROUND
--	bool
--	depends on CC_IS_GCC && CC_HAS_ASM_GOTO_OUTPUT
--	# Fixed in GCC 14, 13.3, 12.4 and 11.5
--	# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=113921
--	default y if GCC_VERSION < 110500
--	default y if GCC_VERSION >= 120000 && GCC_VERSION < 120400
--	default y if GCC_VERSION >= 130000 && GCC_VERSION < 130300
--
- config TOOLS_SUPPORT_RELR
- 	def_bool $(success,env "CC=$(CC)" "LD=$(LD)" "NM=$(NM)" "OBJCOPY=$(OBJCOPY)" $(srctree)/scripts/tools-support-relr.sh)
- 
--- 
-2.30.2
-
+--8323328-1792353095-1721304427=:1055--
 
