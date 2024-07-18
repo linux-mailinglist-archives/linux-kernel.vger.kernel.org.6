@@ -1,150 +1,298 @@
-Return-Path: <linux-kernel+bounces-256369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FB02934D1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:23:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC3FE934D1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F139B1F2374D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:23:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 800B9283760
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C1513C8EA;
-	Thu, 18 Jul 2024 12:23:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57AD013BC03;
+	Thu, 18 Jul 2024 12:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="gy83JArL"
-Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [45.157.188.15])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WRRo5522"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2062.outbound.protection.outlook.com [40.107.220.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B5213C660
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 12:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721305415; cv=none; b=q99OM47zIeKMTC28Af5f398jzIdwZBqlWMyzq46WpWmtk7l/cz5rPd5LIvBMJtZtZNZ+HTCYtE6iqxXSIPfY2b9Ovj+OgMkR3LRDiZ0j7amFRIu/utUwVk37/QLeGTvCqsBFXcBinlXxwNvqBMaXW3ZLrq/kuuybQHcRvuqcB6o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721305415; c=relaxed/simple;
-	bh=tCO23iD0368Et/1o4qT6WL+wA0X9IKDVICq61hs8H5w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NevnmYX0zLNmKpxd0KBunvH4Qc3XAtD/iMmDTKr8nckisNhtXiLpqr9/0jnSam6mg/AFsSlFsS3q/gcF/l6O0IbAvCNZ7DzFu0sr3SpyDDTdL23dC/SnhJ5+h0GoEwS/zJtOjAkCShxgclijPAmKcZ3Gk/fTnw7DdPYcQRj8R4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=gy83JArL; arc=none smtp.client-ip=45.157.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WPsQy5jNMzQ3K;
-	Thu, 18 Jul 2024 14:23:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721305402;
-	bh=2miiI/5j4wTJs9zVbOsNd+rOxv6jp8fs/L7lmo5Xt3s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gy83JArLMq864jKTREMY1Kn2Kfo3QT5j03SQkLmXwJryYVvObFoTAR0tvHMpGFGPN
-	 URCOIjHWu2cVo1uWWxNDPbO0VqEVGtxcbbezzRaNyXizzRIpp/q6ln8nyKGU/scq+u
-	 fBbAw+t6lcv38UVvqf0UWNtLJfRnqBjQr2qzl5lM=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WPsQx5DMZzp3w;
-	Thu, 18 Jul 2024 14:23:21 +0200 (CEST)
-Date: Thu, 18 Jul 2024 14:23:19 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jeff Xu <jeffxu@google.com>
-Cc: Steve Dower <steve.dower@python.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
-	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
-	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-Message-ID: <20240718.ahph4che5Shi@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-2-mic@digikod.net>
- <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
- <a0da7702-dabe-49e4-87f4-5d6111f023a8@python.org>
- <20240717.AGh2shahc9ee@digikod.net>
- <CALmYWFvxJSyi=BT5BKDiKCNanmbhLuZ6=iAMvv1ibnP24SC7fA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCF027448;
+	Thu, 18 Jul 2024 12:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721305410; cv=fail; b=F6Ky7MwSv8suGTQFnBFufrYdTdjeobK4sbvY4G20bu0XJrdOPRB2sblnGTAvsgZxN1hDuWBjPfZNFMp/HgKI0TtnTHHuVnetGBFxxkHayMDD6207AZLPQ2iRw10/tL7ounjM7ncmFJi31zk0FumBbayvAndpi/H17hiMBijGLhA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721305410; c=relaxed/simple;
+	bh=ljkIBnU3+B2jkGCgXAK3DrlplL9JfF0SPVxB7mTIKPM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=H60wqQM8OcS/6FCgecbOk5p0XOM4cVs9d+1ZRSMcIvC7t6UaxoTJjt1u0Q5awXB/YN5oRS34ypc/g7cpmAU9RUtL9jvhSQYoNlg9Ip/NI431tvsTmrO38nV/mWBBHBdHdz/eP1jv+bJEWMUpijmwjtCqgIY558yWkSKcr1YuCe0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WRRo5522; arc=fail smtp.client-ip=40.107.220.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FFYM2lcv8vEZjW5bNSU7xLeUDaeO2PIxZGBEfSZ9gxBPIXyiW61D4xABJQmR4CUlGu4Et2w4ky3l8TOsb2e1qbEv2Myz2+aWTDh3qQWTXldkgtHeSB3Va8kU6rAZQFvRnwidUurkaHORGuNp+AbVsKkm9khxecdBnsoXIyuWGdmqE32XwOEYaZs0ehR3aoyOg+ItCfjUY2nMjsnI5jItdWHGyMC6fE2OeNbj5GSO/1WKCw6ufFvfQZsDatb+c05WD55qDjocEeSwcHhfQOlTfhh2VoQm1EnTENBUg+8+MP9dDYj+iQI39wSu1O6Zd5gVQJpzRXudpah3Hb7s2ftSZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QjV96QruWOZdqPLMW5giSkQAZV2qWPg6CQ4LbH1KWQE=;
+ b=VA7FhLNW8QSv42lDgFym5KPVULarBdXR6qFNA3h/g4f3IPCp8cPAYxVRlrCNTAvFLJ17cnll+9yIV1MoD37da5jAOkEkBBseBGNoGU/HZb7QhPwPIACk4JyYpw7uAiLrJQcf4JplQPM8szN7jNOrfy/k0FkKMrPQW3I3ay8VOxXsqQEkXk6PZTySSrdUxSmbobp7TqfH44KTQwRXHeWYRcyRNNz88kNixmqpMDcLMde4QVHv6lDMKWSYLcscBFNrLyowLL1P6keGw3E3EKYZBOabw6omV+n44WCUy9fPdFT9+9a83enJND6vMEOAnt1gWXsMJiy+1yBfUS/uGM2XCg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QjV96QruWOZdqPLMW5giSkQAZV2qWPg6CQ4LbH1KWQE=;
+ b=WRRo55227siJMmZ7nKJG3ko4Gbo9Qn9fVHHWAHFWidJreVGysO2H47eFcmR7we5shQgqvUMhoMb3A/XT1CUK3Lvfff2O78c6PIUgunM5U1XKN0C14l1gOMuroQI4HufLy8lFDBxheFnN2Y8ARUaLlMAmDvD7BbQkpb16mvJghaK3jDPlSNqlMTLgLixgvO6MtRj6KkL9ZHQFEwiuLEg6l8dJLhowWTizu7R2ddU1LWbPDWDeuJYDvNZO6Utrwv/eD7HQh9v/JcAomREcSnzFaeliS/8HLf0je0elvXtj3OwpqiXiVquS4F5zgfBt0QW5qmwxzACWzVJ0BIqnNzXTsA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ CY8PR12MB7633.namprd12.prod.outlook.com (2603:10b6:930:9c::19) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7784.16; Thu, 18 Jul 2024 12:23:25 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::ae68:3461:c09b:e6e3]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::ae68:3461:c09b:e6e3%6]) with mapi id 15.20.7784.017; Thu, 18 Jul 2024
+ 12:23:25 +0000
+Message-ID: <7c0140be-4325-4005-9068-7e0fc5ff344d@nvidia.com>
+Date: Thu, 18 Jul 2024 13:23:19 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH net-next v3 3/4] net: phy: aquantia: wait for the
+ GLOBAL_CFG to start returning real values
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ Brad Griffis <bgriffis@nvidia.com>
+References: <20240708075023.14893-1-brgl@bgdev.pl>
+ <20240708075023.14893-4-brgl@bgdev.pl>
+Content-Language: en-US
+From: Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20240708075023.14893-4-brgl@bgdev.pl>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0668.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:316::14) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALmYWFvxJSyi=BT5BKDiKCNanmbhLuZ6=iAMvv1ibnP24SC7fA@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|CY8PR12MB7633:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0388d46f-cacc-4793-d63b-08dca7246bc3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?djBIK29kQ3VEUWozdkJSWHgvR2dBSGZDTzYrY3hqaHZROEp6UTYzMDRwR3JZ?=
+ =?utf-8?B?KzZ5OHliTHNXcTVhV1RtTGJaRm4zUzRFMURaMlZNRUVsbGJSSmR0TGppRUZq?=
+ =?utf-8?B?N1hSSXRJdytzakNZUGRZVUV0ajQwQVBOcnB3R3JYSlM4elVyUVFkOWR2aExF?=
+ =?utf-8?B?eTVxWGM5aDVwdWh0Mjg0THAyVnJMVW95WHg0VlhNQmtNVjh5ZDhLQVF0aWtt?=
+ =?utf-8?B?YkI4Z0ZUSXVPRGNBajlYTkd4RkRnb1BDYVNDalRQSnJOYStDQzJ6ZGRMTmtm?=
+ =?utf-8?B?U0xmUTZVaEFVYmhPUXBzVW15SU1EeVhaMm51dHFQN2pvNEdORlk0MytHTHVO?=
+ =?utf-8?B?MkpyeGtNMVRvVUlMTkkzVVZXU0RNQnRxdHRvTEpUcUVxQTNkMkN1UWdTaEpn?=
+ =?utf-8?B?VjFqOXE3RklpZVY3NjdqV05jTnFhaDJ6Y3lXM2VhaDBOTGhTWHljZ0JhMDVL?=
+ =?utf-8?B?TmtaNmhJUmR0YTNrak52czFPUXhvWGdlbHFzclBZQ1c5OGFIWU1EN3dpTzV1?=
+ =?utf-8?B?cTl2SUZMZkJoY2U5NVgwMWtRZ2FFcDBWcGtsWVo5RFRtbXlhQjVWSlF5YlRZ?=
+ =?utf-8?B?cDh0UlFXS2cwNXVxNUZveDB0aWRrWDQ1Qk9XaEpyWFp4cDNTZG5xTzBJTnNI?=
+ =?utf-8?B?U3FWYjVEUzRZTndzVEpnNUVlVms3WGc4akU2OVovRmVmNE9ENFcyK0d3dUNL?=
+ =?utf-8?B?RzZpejlZdXIva21tcUl3WHdXS01PL0kzbXZsSGZNZTF6TWV1aUhDV1Q3eEZs?=
+ =?utf-8?B?TUpsazdpd1diejZwNUViMEZpWEhNdW02WGtoaUMyRXc4UFpkMXdlSmNVN0cr?=
+ =?utf-8?B?QzQ5VmNNTEtPdUxYdEUwdzJSNlZOQUh6N1pTaTJkbFJiVUN1RFJrakYxbGZi?=
+ =?utf-8?B?TzhaTy9HSERYSzRITXcrRVpkNlVJeHozdDM4TEpnYm0zblhvZHlmakFVR3A5?=
+ =?utf-8?B?Y0ZTSlJ0OGFDQy8rMm9EN2k5eVJ2SHBNeWRvb2tpMVVMWndJbzRwZGRTVXdI?=
+ =?utf-8?B?M0lINm9YZXB6dTRNUEFhTU8vaHBFdi9OZGRjS2VBYlZwTHFNMnVINGNMM1Rx?=
+ =?utf-8?B?SkJ3YzFBeDgwYWJEa0VOTVYwYW0wTkMrYzRMVWlnZmIvOWFvMnoySDl3azZq?=
+ =?utf-8?B?VHVseXd0K0lCVGJmd1VTdmpLSjcyTDZEM0o5Zkh3Mk5DVGhWWXE3dktrWTIr?=
+ =?utf-8?B?MHg1UTlmR3Iyd24wa2s0L05jTzFCRHZUVFVsd3lxNkN1UmtaZ2ROc1gydTNM?=
+ =?utf-8?B?QlRmdzFsMmR5cG1PbEUvbG51bGlUOEZNRkllSUc0OUhxM011b2YwaHFaY05R?=
+ =?utf-8?B?L3VOQ3dSNnV5dExiaGVzeXpBV1FJY3h2UXFqbGc2OElDSnNVNHhCeVVvUWNG?=
+ =?utf-8?B?SENudTR1KzdUM0N4RGlzSHgwS0hCY1p5bnZ6emJOSnIrbFJNd3hNWnR1UVNl?=
+ =?utf-8?B?S1l6SWQ1clBBWFYyRTQzbHkxYktTQXdFK2M3ZW16RGgxby9RSXErYTVZMnZG?=
+ =?utf-8?B?SXlJN1J5UDhMZ29yYW8zYmNmQzg5eGN0OEkrS1NhWDRZeW9wMFFrZW4yY0Vi?=
+ =?utf-8?B?dmVWY3FJWm0rSTN5eFhpa0RuMEQ0QkdZbEdwRFJmMDY0Y3lLaE9HOER6MFdL?=
+ =?utf-8?B?KzgwTHJKbGhrR0pDQUs2dURRYUlubTRzVVNyWjZnUHBYdjNDNUptb2pJT0Js?=
+ =?utf-8?B?RmVJcFdzdkVZakF2eFNYSHhGdEZXL2loeWRNWkZNNXZERGlJTDRkWXZWK0tP?=
+ =?utf-8?B?REVLbXd6b2xZVlo3a1hKTGt3bDVOcWc2ODJ4aHMza1hsL0RaU0dTek9uY3pM?=
+ =?utf-8?B?WWdQYmVtaTNOdUg5dTFsdz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WnQ4emVOSEhJeGhSNnFzaUJyMlg4Vi8yU09lZkJMNGVTdCtEeG1UQkl5YXVv?=
+ =?utf-8?B?S0x6V3F5QWp5NzRvaTJoekFuY01yakprTzdCT1ZWTXhBUFdTOEQ4L2IydW92?=
+ =?utf-8?B?OVJVSGZoMWNGTGhjOHJDMnd6UHFRQ1hhb3I4K3J3c0hNZ2lsYUNCL0U5MXhw?=
+ =?utf-8?B?NHg2QmE4MEdwWUVDZlVpQlB5Tlh3MnhwdzB4VUFhc1lPYkhEaG5VSVdXV2tW?=
+ =?utf-8?B?UnhjdTNFQ3JpZE1UTGlOc3Vxb20zZFVkUFFxRlR5VzJ5ZFJHMlNjYVZEM0NY?=
+ =?utf-8?B?d3BIdlI1L0hDdDV4dnEwSlcyS0R4RjVMbWMvdVY5OXI4dkdNOTY2OEJIQjcr?=
+ =?utf-8?B?b2REdUxKdjA3b1c5WmkvTmtPUHZmMnk0QzZjZ3VEa09TcE9ObDBqSjdlUkY4?=
+ =?utf-8?B?WVVNclRXVmFYM1dJOWtNWmRGS2VxMitlS3NiSlNnRGVNNkV0aEVIYkVzTGpj?=
+ =?utf-8?B?TUdYd2dudFZsYkJKRGlRUnZlZG1iTEl6V3dsS3didVFud1dFLzFCdFczc0hT?=
+ =?utf-8?B?K1pLRHBaenhGNU5pcmZqSEVjcEptMlFnL1ptVGkzd3ZPa1Y1cDZiOHJHdXpl?=
+ =?utf-8?B?eUJJdERIM0RkaWV5eHpDV2RudnZqNHgyL3JZWnVUSTJvZUtLRHZrY3Z4RUFl?=
+ =?utf-8?B?UlBENXZLUHd2TndjK1NDMjN0L08wV0V2Smh5aUx2TlB6bFVNTHlHdm13NTBM?=
+ =?utf-8?B?V0lYaFN1UStMM0xJQ3pmZ3ZSUEpwc2VHNHZLWHFOOFc4K0padWYrVWpHU0s0?=
+ =?utf-8?B?dFVIcE5JRXJBN250T3FWK0V3UHVkWExGbUJmelo4ZEJod0hUUFV1SVpvVmZI?=
+ =?utf-8?B?WnFqbnVSRkd5QjBvRTZJUis1eHp6NjlOZllSM0t6ZlJ4TENRazJZRy84WUJN?=
+ =?utf-8?B?N2hnT2VuZG5BNTYvc2VqTERoWW43eFRTSkZGdW50VitGQ0Y3WElsN2FQT1FY?=
+ =?utf-8?B?V0M2S1JlaGFJRGlWOEh6OFVYSEs1b2FDNzk2ajQvc0VuamtUL1htOTZmZC9p?=
+ =?utf-8?B?V3Bla3pHQ3VOZVVBVjB5d2szWGlYeVN1QzVVYWxoSDZCRmM0Z1pnTmxiSzZp?=
+ =?utf-8?B?UU9UcElFcUpKQjNObHhubFBhM1FwQ2wyTHVCM0ViUWJTSVpCSXJpeW11amk5?=
+ =?utf-8?B?UjR2U05wVmhacE1sZHM3cnlNOTlMaTdSSkVrMXNjTHZ6U0NvVVNkbGt0bmEz?=
+ =?utf-8?B?U0JTR3c0SVpoUUFFWkN3NHBYQkNqRnR6VFlFaTZBRDJUdEpHNXF0dzF6WjRz?=
+ =?utf-8?B?ODRuNWFXdGwvYk5VRU5PT254WEV4enJxWVJSa3RKRzlMbGRMdjNDZzZGT0Mz?=
+ =?utf-8?B?OE9hQ1dKaTFIVDNVVGZlZVVxTGhzbnBYKzZtaGd0MFNwQkNzVFJpVEJkQXZY?=
+ =?utf-8?B?WlllRXE4REIrNUcyaTQvR1lqTDF2ZExENHB0a2hwYlF2MmdnN1lHMXFvdzBr?=
+ =?utf-8?B?WUh2ZlhQbkhJNk92N3BYZHMrbXVDVUVueDZTSGgyVVkwd2JqYmZZZWpyelFv?=
+ =?utf-8?B?eXlYUGNJNXNUbkFHbExYOXdzSHNldEx4ZFRSaWkxM1d4anZNdjlQRzRkUmxy?=
+ =?utf-8?B?UFF6Vy9mOGdNRDkycGRvdy9HTFdkdGkweUdsVEhIUjdpT3lyWDdwK0JsWmpK?=
+ =?utf-8?B?bUg3SU5jUFRVZUU2U1RUT0xCbVd4cnpVSmxoby9teWIra2FxZW9GdGlUUHBB?=
+ =?utf-8?B?UFhqTmFURlRHVUJ2MzRiNldNWXpVZmJmQlk1YzV4OUs3Q245eFh3OWVNQ3hz?=
+ =?utf-8?B?b2YxZ2R2eER3MC9JM2xXVGRIbUxLRmowUFFRNWZzRmg1NlJTVkJVU2lJa0k5?=
+ =?utf-8?B?aEpxTG9wNVo4bStWci9mK2lLTVI0aGFpcXJCbzVFaVRxUWUvWGVxc2sxZGsy?=
+ =?utf-8?B?M0pJRXY0ajJEKy9tZXhBTHJJMm1xUzYrSjlJdEtaYVBTMDQ4dml6MVNONjcw?=
+ =?utf-8?B?Qzc3R3ErNmdVTFRMY3gyL2x6Unh2SXIrc1NvUElGZi93OUpFTkk3NG91WC9E?=
+ =?utf-8?B?MG5BOGRvSTh1MjdlZXcyNmlpQ3BDZzMrZTFKUFpieElhcGtwTGk3eXVsU3N3?=
+ =?utf-8?B?Ulp3Zi9aRGl5dUczTjlOd2gvR0VjSjg0OWwrRjlCZTZ6TE9uS2dXR21ZdUc0?=
+ =?utf-8?Q?I1BObhObLOxdDS5ynN4yGmwET?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0388d46f-cacc-4793-d63b-08dca7246bc3
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2024 12:23:25.0815
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: K5bRZAZrmANugULwiUsdM9+wMWmzc69kIiRB61pIU53wYVD6CfTcEOYWUMfWVy/6wZJ8vxyEaCatb1MScCdSPw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7633
 
-On Wed, Jul 17, 2024 at 06:51:11PM -0700, Jeff Xu wrote:
-> On Wed, Jul 17, 2024 at 3:00 AM Mickaël Salaün <mic@digikod.net> wrote:
-> >
-> > On Wed, Jul 17, 2024 at 09:26:22AM +0100, Steve Dower wrote:
-> > > On 17/07/2024 07:33, Jeff Xu wrote:
-> > > > Consider those cases: I think:
-> > > > a> relying purely on userspace for enforcement does't seem to be
-> > > > effective,  e.g. it is trivial  to call open(), then mmap() it into
-> > > > executable memory.
-> > >
-> > > If there's a way to do this without running executable code that had to pass
-> > > a previous execveat() check, then yeah, it's not effective (e.g. a Python
-> > > interpreter that *doesn't* enforce execveat() is a trivial way to do it).
-> > >
-> > > Once arbitrary code is running, all bets are off. So long as all arbitrary
-> > > code is being checked itself, it's allowed to do things that would bypass
-> > > later checks (and it's up to whoever audited it in the first place to
-> > > prevent this by not giving it the special mark that allows it to pass the
-> > > check).
-> >
-> We will want to define what is considered as "arbitrary code is running"
+Hi Bartosz,
+
+On 08/07/2024 08:50, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> Using an example of ROP, attackers change the return address in stack,
-> e.g. direct the execution flow to a gauge to call "ld.so /tmp/a.out",
-> do you consider "arbitrary code is running" when stack is overwritten
-> ? or after execve() is called.
-
-Yes, ROP is arbitrary code execution (which can be mitigated with CFI).
-ROP could be enough to interpret custom commands and create a small
-interpreter/VM.
-
-> If it is later, this patch can prevent "ld.so /tmp/a.out".
+> When the PHY is first coming up (or resuming from suspend), it's
+> possible that although the FW status shows as running, we still see
+> zeroes in the GLOBAL_CFG set of registers and cannot determine available
+> modes. Since all models support 10M, add a poll and wait the config to
+> become available.
 > 
-> > Exactly.  As explained in the patches, one crucial prerequisite is that
-> > the executable code is trusted, and the system must provide integrity
-> > guarantees.  We cannot do anything without that.  This patches series is
-> > a building block to fix a blind spot on Linux systems to be able to
-> > fully control executability.
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>   drivers/net/phy/aquantia/aquantia_main.c | 8 +++++++-
+>   1 file changed, 7 insertions(+), 1 deletion(-)
 > 
-> Even trusted executable can have a bug.
+> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
+> index 974795bd0860..2c8ba2725a91 100644
+> --- a/drivers/net/phy/aquantia/aquantia_main.c
+> +++ b/drivers/net/phy/aquantia/aquantia_main.c
+> @@ -652,7 +652,13 @@ static int aqr107_fill_interface_modes(struct phy_device *phydev)
+>   	unsigned long *possible = phydev->possible_interfaces;
+>   	unsigned int serdes_mode, rate_adapt;
+>   	phy_interface_t interface;
+> -	int i, val;
+> +	int i, val, ret;
+> +
+> +	ret = phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
+> +					VEND1_GLOBAL_CFG_10M, val, val != 0,
+> +					1000, 100000, false);
+> +	if (ret)
+> +		return ret;
+>   
+>   	/* Walk the media-speed configuration registers to determine which
+>   	 * host-side serdes modes may be used by the PHY depending on the
 
-Definitely, but this patch series is dedicated to script execution
-control.
 
-> 
-> I'm thinking in the context of ChromeOS, where all its system services
-> are from trusted partitions, and legit code won't load .so from a
-> non-exec mount.  But we want to sandbox those services, so even under
-> some kind of ROP attack, the service still won't be able to load .so
-> from /tmp. Of course, if an attacker can already write arbitrary
-> length of data into the stack, it is probably already a game over.
-> 
+With the current -next and mainline we are seeing the following issue on
+our Tegra234 Jetson AGX Orin platform ...
 
-OK, you want to tie executable file permission to mmap.  That makes
-sense if you have a consistent execution model.  This can be enforced by
-LSMs.  Contrary to script interpretation which is a full user space
-implementation (and then controlled by user space), mmap restrictions
-should indeed be enforced by the kernel.
+  Aquantia AQR113C stmmac-0:00: aqr107_fill_interface_modes failed: -110
+  tegra-mgbe 6800000.ethernet eth0: __stmmac_open: Cannot attach to PHY (error: -110)
+
+
+We have tracked it down to this change and looks like our PHY does not
+support 10M ...
+
+$ ethtool eth0
+Settings for eth0:
+         Supported ports: [  ]
+         Supported link modes:   100baseT/Full
+                                 1000baseT/Full
+                                 10000baseT/Full
+                                 1000baseKX/Full
+                                 10000baseKX4/Full
+                                 10000baseKR/Full
+                                 2500baseT/Full
+                                 5000baseT/Full
+
+The following fixes this for this platform ...
+
+diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
+index d12e35374231..0b2db486d8bd 100644
+--- a/drivers/net/phy/aquantia/aquantia_main.c
++++ b/drivers/net/phy/aquantia/aquantia_main.c
+@@ -656,7 +656,7 @@ static int aqr107_fill_interface_modes(struct phy_device *phydev)
+         int i, val, ret;
+  
+         ret = phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
+-                                       VEND1_GLOBAL_CFG_10M, val, val != 0,
++                                       VEND1_GLOBAL_CFG_100M, val, val != 0,
+                                         1000, 100000, false);
+         if (ret)
+                 return ret;
+
+
+However, I am not sure if this is guaranteed to work for all?
+
+On a related note, we had also found an issue with this PHY where
+the PHY reset is not working quite correctly. What we see is that
+when polling for the firmware ID in aqr107_wait_reset_complete()
+is that value in the firware ID registers transitions from 0 to
+0xffff and then to the firmware ID. We have been testing the
+following change to fix this ...
+
+diff --git a/drivers/net/phy/aquantia/aquantia.h b/drivers/net/phy/aquantia/aquantia.h
+index 2465345081f8..278e3b167c58 100644
+--- a/drivers/net/phy/aquantia/aquantia.h
++++ b/drivers/net/phy/aquantia/aquantia.h
+@@ -20,6 +20,7 @@
+  #define VEND1_GLOBAL_FW_ID                     0x0020
+  #define VEND1_GLOBAL_FW_ID_MAJOR               GENMASK(15, 8)
+  #define VEND1_GLOBAL_FW_ID_MINOR               GENMASK(7, 0)
++#define VEND1_GLOBAL_FW_ID_MASK                        GENMASK(15, 0)
+  
+  #define VEND1_GLOBAL_MAILBOX_INTERFACE1                        0x0200
+  #define VEND1_GLOBAL_MAILBOX_INTERFACE1_EXECUTE                BIT(15)
+diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
+index 0b2db486d8bd..5023fd70050d 100644
+--- a/drivers/net/phy/aquantia/aquantia_main.c
++++ b/drivers/net/phy/aquantia/aquantia_main.c
+@@ -447,7 +447,9 @@ int aqr_wait_reset_complete(struct phy_device *phydev)
+         int val;
+  
+         return phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
+-                                        VEND1_GLOBAL_FW_ID, val, val != 0,
++                                        VEND1_GLOBAL_FW_ID, val,
++                                        ((val & VEND1_GLOBAL_FW_ID_MASK) != 0 &&
++                                        (val & VEND1_GLOBAL_FW_ID_MASK) != VEND1_GLOBAL_FW_ID_MASK),
+                                          20000, 2000000, false);
+  }
+
+I have not tried the resume use-case, but curious if this may
+also help here?
+
+Cheers
+Jon
+
+-- 
+nvpublic
 
