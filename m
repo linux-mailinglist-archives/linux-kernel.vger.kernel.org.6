@@ -1,206 +1,296 @@
-Return-Path: <linux-kernel+bounces-255985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E501934769
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:13:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7233E934770
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEC1E1F21DB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 05:13:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECF641F22A42
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 05:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBAE42058;
-	Thu, 18 Jul 2024 05:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75FF42058;
+	Thu, 18 Jul 2024 05:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cyUbn/tC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="geITYA5b"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3AF940861
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 05:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721279625; cv=fail; b=dyhVfUgzxJMjrOQ+6SPyBOnOPg3vWumRuKYlLADUNlHSim+tvmFFRgFXzeII3vHtM1zlS6RKH5yzCKeJHRC3kkwJRU0pRj75RPCGdfFy5fetqZ27+QRaVu1m6ukJSS1RA5pFwBjBqLR27YXih+3H1/Zc7mhaWq4d24gyEeRAoY8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721279625; c=relaxed/simple;
-	bh=6/Qiuj9nGU8uSyABgGtFeaZfBPaKexo2HMH8uf7IY2A=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=mbQyHd4jdj9ybffjl4tFaFx4F4/sMwBRA0+Q94sdi78O3CuvB9uJmjcbwOAnjiyXwMtr4wxC2BRy0YX6UM+B/mPM5N/9j0nUqPwLJz7ycnddemjNlX/00GNCTUSOsqksIznd8yVPyRTyILmA6PMLWsb+Mf6k8wmFju+acJcS3fY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cyUbn/tC; arc=fail smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721279623; x=1752815623;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=6/Qiuj9nGU8uSyABgGtFeaZfBPaKexo2HMH8uf7IY2A=;
-  b=cyUbn/tCIBkSW8PNglil4Mzs6ez0nwOFekbn5fZtwWKltpbPCCkCCgT8
-   YQ3Kn5M1BrSfXPLbff985S60HIsBf7HQFTtbm3Fkufcnj+cZZixPliqaH
-   PRvaYqa2BwS9ek+UDQO6MlLht+3e1vgJ42uUB4IWaK2bjVzjm3y7ZXHWt
-   ljcW9NFtFrm7HF6nRH9wH9kVpVrjJVkFbBDIYj/IojJjnx4XxbEsgy3jR
-   HDZS+bryLx8v8Lan4UTfumNo7OFBAA7Ddi5nAgU1VSjPAmR5Cyqj2TwMI
-   SdW2HDEzT5kXKBxWJ0W8leD/KMKSjcngPRHxmuEoJHzjpnUdY5s0YXPwn
-   Q==;
-X-CSE-ConnectionGUID: Zyjqqt7NS6CUIQ9fPhNqtw==
-X-CSE-MsgGUID: CXtRyQHKRsKMlxSdwjQjLw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="29976568"
-X-IronPort-AV: E=Sophos;i="6.09,216,1716274800"; 
-   d="scan'208";a="29976568"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 22:13:42 -0700
-X-CSE-ConnectionGUID: xtuQlDhcQIyqKPAFj+5ORQ==
-X-CSE-MsgGUID: TBIVteBLTWGi7qT4nD1QTw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,216,1716274800"; 
-   d="scan'208";a="55144794"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 17 Jul 2024 22:13:42 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 17 Jul 2024 22:13:41 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 17 Jul 2024 22:13:40 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 17 Jul 2024 22:13:40 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.168)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 17 Jul 2024 22:13:40 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tQo5NdFlUZ8EgZVKdHabROS0AuwwkRsIdUI0v/asz07X2anUKUcpwJf14hdmZaD7FQCXCj85C0jqvjiVvd19c89cuH2trwUbHuzRicZwO5DcbnwPVII/Y91o53n3MSyyyX7+n+6Ss6ukBPijFZNJObG6DfgYYECgSN9ZlrGh/Wd9jYwY05xzrCp5eLL83YIYfOsN5V2jyR7TFYHDs+DMSZrS035fy24Xu518JB4XTLW3Io+FkRInFHiHzGcVwjM01RPgkxMboWc6EYvEVl2JwcqHPZR/I/vB3HV/Iai2+5Vqcg9XbphMzaWJCbpUnNeUDAAZKhWSA1PLH4O3yqFkTQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6/Qiuj9nGU8uSyABgGtFeaZfBPaKexo2HMH8uf7IY2A=;
- b=VOQsZ7WZs0RF5aFFxf4OoXyFxf43uXiJwKzOlABQybqTZ/3IhGLqs/jZ2tg9lK4lP+sftRUnzXVE7MjvHimTOhfAUODGUuVGRiXVtP/BtIoUuQU9yPJG6CKwa452k8DkTGXsa466RWRpeGQiGSMBOu+Qixo1/9bwMFEKr8mGd1EkwbTMw4l0wM/xBRnf0hsnDJtOXRkpRZcxIr+cZxRIXHpXthmcRNbq8Dxwh8U/fbU4a9tGxxgbfzcx+tMIUnjBTsZZHLp3RRhTQE9FZY6ewMDDqgsGOAaywl7HI3l1s7smq60i34qjoR2bSGZe0gbYJWLYXh4Og68udb8dZZlEKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by PH8PR11MB6974.namprd11.prod.outlook.com (2603:10b6:510:225::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23; Thu, 18 Jul
- 2024 05:13:38 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%3]) with mapi id 15.20.7784.016; Thu, 18 Jul 2024
- 05:13:38 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Nicolin Chen <nicolinc@nvidia.com>, "jgg@nvidia.com" <jgg@nvidia.com>
-CC: "Liu, Yi L" <yi.l.liu@intel.com>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] iommufd/device: Fix hwpt at err_unresv in
- iommufd_device_do_replace()
-Thread-Topic: [PATCH] iommufd/device: Fix hwpt at err_unresv in
- iommufd_device_do_replace()
-Thread-Index: AQHa2M+miUCIdCHdc0WGrkCySv5zdrH78MTQ
-Date: Thu, 18 Jul 2024 05:13:38 +0000
-Message-ID: <BN9PR11MB5276718A6C5A02FC53D7E9C38CAC2@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <20240718050130.1956804-1-nicolinc@nvidia.com>
-In-Reply-To: <20240718050130.1956804-1-nicolinc@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|PH8PR11MB6974:EE_
-x-ms-office365-filtering-correlation-id: 3986791a-7a0d-41ca-6678-08dca6e861d1
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?Cekz97MJaB0szWhRDV4vd7NOJVXA27/ny4ylDrOx5La9VftqtLGntPh3E3m0?=
- =?us-ascii?Q?TrT1skPn+6SYxwXX526uBeOQvm3ruw50i0dGNHRgk6RK/ye+MOjK1sQsYnDY?=
- =?us-ascii?Q?UFI3Ax8cn1vLR9ixUvMaLxk8sUbfIKORpQ9LuLsKyHJ221IzVVAVWyxC6zup?=
- =?us-ascii?Q?14H3SOrz4k8GRRoT3zCrAyQfYiahG2dN2fmqu4enB/9++cwGUZg05v6a/4eE?=
- =?us-ascii?Q?PXXS7XqqGXor2d1vx7UpswudDHv+q78kFPSbsv2EqHqyyo10YEeQpaCJVCDF?=
- =?us-ascii?Q?d5+wTrFPcmAG1dHpMqEW+OHR0PE+9km3kMOP1/vdODtYdVsX12PoHgvRS9Oh?=
- =?us-ascii?Q?kUz6xDpHYUc74UfegTtKmgD0j3e+acZ85TdeUXMWCSqTLw8JFJG1WNFCl8eO?=
- =?us-ascii?Q?bCckC5B7NBQAVVtiKDwRpOBkQ1p3O8MjgPLNc3tbL87/6t43EfhVs2PSzNt4?=
- =?us-ascii?Q?AwFIusoPaE6tziBZ0G3Au2anp/3NhWXhoYutCDsI4wi3jEC4IvQcB0DBQIDS?=
- =?us-ascii?Q?02RZMvN4Qloi+uHfZsRVJlC+6h2mLset2QCiCjSrVgXe06PHCMG5pvIsCec0?=
- =?us-ascii?Q?L8Y9WrYguy9UTVVEsj6S1hLM7kRvKE50mQEtrelqKw5Yjby0DeMWqfbtu++p?=
- =?us-ascii?Q?eWJ8sxHEOrnCkvDRBBXhlyvlVyQURWWjz91NEVWZzY7rVE4G3VugWxeROsVu?=
- =?us-ascii?Q?8INl+UA2uz82I+9SFMFd7RrvJLOJmynvQ8xrbZFWvOS6kFHaU/HgI1Rb0daM?=
- =?us-ascii?Q?v1VKgBvzpsEaVNY2ZvrekBVUCcrF4KkA+bHSFaM9DKxmS0XigkK/Sf298eYv?=
- =?us-ascii?Q?cAs8byo02d6c60kKAA+Ojdoeurtm/fL46Z8jy7bWWIOF390nImLHU0VBbUqP?=
- =?us-ascii?Q?YNm8cQbVRGk2VLctnIaunI3jpHEhEKhuqMGuWiiH/pEOOAa0PHpFMFrWVi/+?=
- =?us-ascii?Q?jV0azLBBn54PfyOa94imHHXnd2RO5Z/nnjlzv0DRlzZhZ26SQns+jpwPf3Dn?=
- =?us-ascii?Q?yMv9hG/aVb3GUSgrQEEdD3pYkPQ3jJ8zKX0g3Z/1hloYc6BZ1kmr1N7L0dGu?=
- =?us-ascii?Q?81yYtF53L93l3UEUrhVi35v0Hpvh/UFkNcf3SvLO0MuggfNnaYYghIrkhuRM?=
- =?us-ascii?Q?/ePQShMa3wozg0IEfHHIEsAjQK3NJXhP0Gto946DzgoVs/RqF1qblluy+a82?=
- =?us-ascii?Q?45ZGY98bHemFfAYe8gaQFQngJ8ooR+rFJq5h2VsaB//6U5oDpybXWp7fV59M?=
- =?us-ascii?Q?QC6MLjKpDakvm891KfemdES7nEWuMoKFKuuZPd8MvkHdUePgjfcYjwaGxtju?=
- =?us-ascii?Q?gtb5iAkPMpEW2+7eJsrpU8X/fPs53vWeSTnn78XypuhfyLxpfYAUrHfthbUv?=
- =?us-ascii?Q?YS8zXcmAXWjHb/tfm4HbqgBoiDF+uWWrXRb3HRiDKI77hkrXEQ=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?N84V++UayD0TYdgZWYQyWNys2/fHfyFsBVE/0ChPZueYmF4+veGRsogJy56M?=
- =?us-ascii?Q?jKYT1gMGOy+Mqus6XaVqfC6gGmA7j7M8tqIKLC2jFpjl4h9j+ZEdhhK6KWSL?=
- =?us-ascii?Q?sLfd1w5Unb7yMBK7ldEUVJRjSuFdtMvNb5iU6MuwBWHKbCxmiky8nzVaXdUV?=
- =?us-ascii?Q?o/ZBNlVsQfYHoofPCy90oYCqU+Gh/feigt9qcafIqJTOeqxsumGgoCOxSY3W?=
- =?us-ascii?Q?eQwRO24KF+ZyTf0fWWZoRO8vh6xRrRJjYyRPE98JqtOrw/V1MS8toXxTNG4/?=
- =?us-ascii?Q?cyao7yRIOXsu1QevmT4abgTSR066XyB4OjDPkZgf+wDbFbWV4Uuhr6X6Ou7/?=
- =?us-ascii?Q?62E+JA2JwlI2x48GHmblFDiLlu8Ww6tAHeLPgDAFhA+3Hb3mKQREiL2Gc6dr?=
- =?us-ascii?Q?BilWDLAAHI2oGWemWOefWV7fObHwLo5Rl9M6/Z5AhN8vevv1nr0KLM85FpUn?=
- =?us-ascii?Q?2fuH97VPwB3mPByDBKvhngX8iqKKLRXAkC53uzZIwCgodycbUIURBmsU/qLh?=
- =?us-ascii?Q?D/sJ1vEzMm+e72HqfJ3ioNbPOid5slwsxp2i452CYLKa/pMmsp8j5bKRuuuB?=
- =?us-ascii?Q?5/B/H+Md8tc8bOR+Lh000iYZJqFkZVQAJZB0TLEggS7uyxSGiL0abxdUUbtp?=
- =?us-ascii?Q?gg3udyGVQobk/BFmlfjF/O6JNatgmNm1HIu9Sz8P0F4ssMIvyAvik4If0v4x?=
- =?us-ascii?Q?s+mV6bVnF8L6fAigyHujbs5OlX9lb4X0PtPywzVSZ4GQrcKDZFcp+nQhDTm1?=
- =?us-ascii?Q?j7s/bo0PWiX4ndFzriTxHJ7RyknRXHVioH4owQYKY7ziHrlIgFZhJstgk0to?=
- =?us-ascii?Q?26eyOyZxn2VclDVi+65X13CWcZK3Ia/6XcXJoKB20Au7w8w6s0QIM4GfZInB?=
- =?us-ascii?Q?S/Ry035hqX5tvWVAlpdOIumwefRFa6ab9qrg7Y+/T/6eemQX4bKCqnL0yn4x?=
- =?us-ascii?Q?5nK1LDKaqm/yWQfsm5w6o/9/22kTqujDgeKUo+C+auxh/tgRQsuJ8z9FS8/L?=
- =?us-ascii?Q?pTT+buuLX4ffr+ICS33vwaMSVz46vN6GOW/NcoEhAncF20ip1jFE+b3uZcC9?=
- =?us-ascii?Q?sdLbODWfEAhfJK6pMm0qF50ARi6TmYCZ6JkYXIbPp7H9EBq3MIyA24oyG0Ln?=
- =?us-ascii?Q?HWz0w10bvz9GLky8C6LQvHy/nBsmv5GYYhxCHpKMp21PkXVwox1/ioGFPYog?=
- =?us-ascii?Q?6vUK+UOh39fWL0CvBbS9ylO9MMOcSq3I+mFVDgPVFEN2XrAMjyQ7fpzxcYIb?=
- =?us-ascii?Q?36EUyZ4hC4MF5IoCcfVfrp84il2rYAKIbZLGuNg7XL8XedMlZUoPjhNkMXgI?=
- =?us-ascii?Q?JQCH7fSI2BA1tC2MGmH2GTCsE/IOlnuzFivtdxD3lXk3McEsUiDscAMFg06S?=
- =?us-ascii?Q?6BRLtX32liVmAya/xfS7MeoD4I05P4vo/re2SbJrgnAK9EOcrgBG1MBSNBvH?=
- =?us-ascii?Q?P8o2yN4veD2ID9CSe03iR0swzSbgZpjJoQctGF6V5fVw4nkyg1vBthDa698f?=
- =?us-ascii?Q?w/KH+oHakJfCLgCM6Yq86FA0CU8P6iy+vVp2WHNw389tz34KqnhXaVrC5Rif?=
- =?us-ascii?Q?uI2bTpLdMHwmfTQIty8Z+LIVCctFUqpkPcIs+TAQ?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADD7639
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 05:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721279723; cv=none; b=gt7XtSDGCizD4sjN7CJN0TgxkY3Vr8Pzhfezl06KGjHBMgjloBXFx3q3UHCceFYvK4LFYjmepN5F7Qxxx/YLjmvB++9wBka8WrCjvhhi4S94ty/9iuMXkprDDT2rk/kYVcKtnhbkrJKrXsDWfzv35aW76IAFlU4nfCsw81Pq3AU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721279723; c=relaxed/simple;
+	bh=L8R/3l9yexu6DQaBpf8oCX4Qo/jjv59pY7eU81mFU2U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cuLSJuSYlPx1QAINs3mN1G1y73wwfEKs/z235RWQAftOclRLQSPHGDHB2G4oL9Spum2E+1CI49u4xFe6NbssRNE0BiKBdo87To2F5Y/YYetqVd7P6tKiopB8LUo5N3o0BSx68R/WQdisN3An8UPC5Nbd92oFxBpnzN3Jg8fLNRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=geITYA5b; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721279720;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Z8BV6glPyzBnvyrYTqzm1cIHFq/JFvhDH2reEEqEVj0=;
+	b=geITYA5bkoMQkUYPaBDBJYNdFrgw9l0LgG9W2MrvL7+VYlL1XGEg8vFZdSyQ/FWLtwq0Vt
+	WwXbLtJrNYbzcNP6t8FPaxvG8KTOWyBrwnUai0kkU1WNLSiTsZMi2Q8SrjtyifwZU2FW5x
+	PBSxiOlHBVAYaBnht25cpMYHp+S1/vE=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-558-JZUhgt2wMMSH2yDXugGYYA-1; Thu, 18 Jul 2024 01:15:19 -0400
+X-MC-Unique: JZUhgt2wMMSH2yDXugGYYA-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4266d0183feso2986145e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 22:15:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721279718; x=1721884518;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Z8BV6glPyzBnvyrYTqzm1cIHFq/JFvhDH2reEEqEVj0=;
+        b=PtobeWoxOZm0kxSVBv3cVn37YIyQwJfR+o0R7PVwdPlcd8hyVJzwy0DsfGGKET5NT2
+         0FVJbJN1M61z69vXRLlsAIRk7p6Dl3HRUqRswkkR6E1EzbuEV3VEU0bthuSiBCP45yJK
+         KflS511Q/WDKeswnWI8dqtzddcVAqOXOvyMsW4dMbreCQ1JBjZS54CV8/VBvCQM3twQm
+         diEMfJtAiLzEMzPWqSTS+ytz70PD238QZc1axk8cy/Jv/ySuwuydjfadMtQZcx8g+SgV
+         Qcgl+jlgnijQ8e9kEFpvuzDrv5CdFWaydX5jUVrodyIhxA8XocGXO0UjLT7DL/x67k+7
+         Jv5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXWz0Tk8yaHnuQkfSU5Os7k5b+i0AVPwo0zRpvFj3nI3O/lu3GHZId0oFE7LDElvGiTc5nXB7fIZyNfDBmhgGvY7rJkgT340jL96Mbb
+X-Gm-Message-State: AOJu0Yxbz0jsDzgNDs3D7soJwZrzO03NElJLxDy4gKvLHa3V59aZU+DY
+	NjFdRRXtjPD14fr93RLxnqLFDBZk4V9YsZ0O2/odRd1m/EKtrxf0j3beOto5RJfnr6MOn4tn93M
+	JmPptP3tSL63pBQwgAsTQE4xf8fov4z/vQXNZ0OohxUFQBFh2aZM7AJtI7HpwwA==
+X-Received: by 2002:a05:600c:c12:b0:426:6ea0:d5b8 with SMTP id 5b1f17b1804b1-427c2cefebemr26324975e9.29.1721279717795;
+        Wed, 17 Jul 2024 22:15:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGBO9ppEohATWkgzmpXQeObSYcFU4YgmYBGGw3g6ekUjgOYzOjeQpVZnzouUadlSmlMNCVcuA==
+X-Received: by 2002:a05:600c:c12:b0:426:6ea0:d5b8 with SMTP id 5b1f17b1804b1-427c2cefebemr26324885e9.29.1721279717329;
+        Wed, 17 Jul 2024 22:15:17 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c71e:5600:ce68:1c28:4ec7:6e23? (p200300cbc71e5600ce681c284ec76e23.dip0.t-ipconnect.de. [2003:cb:c71e:5600:ce68:1c28:4ec7:6e23])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427c7840aa2sm20478255e9.37.2024.07.17.22.15.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 22:15:16 -0700 (PDT)
+Message-ID: <dded1b96-8ff3-489a-a92e-b206829feb85@redhat.com>
+Date: Thu, 18 Jul 2024 07:15:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3986791a-7a0d-41ca-6678-08dca6e861d1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jul 2024 05:13:38.3432
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CAsSZMcBwNoubyaA1IP9QogC4gf5xy9IXC31+UMiS1QTUnH7nPkkpXVpFPNjSWHfTwks6JSjsOmHPbydJFE+7g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6974
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/memory-failure: fix VM_BUG_ON_PAGE(PagePoisoned(page))
+ when unpoison memory
+To: Miaohe Lin <linmiaohe@huawei.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: nao.horiguchi@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20240712064249.3882707-1-linmiaohe@huawei.com>
+ <20240712140921.9aa90b18d22e67417d59dfc1@linux-foundation.org>
+ <8fe349f9-d3d3-65ab-6045-da0bd19249ea@huawei.com>
+ <00e18339-d911-4332-8732-e31bcecbf823@redhat.com>
+ <5f8107e2-2b37-d899-f7f2-5a6093d8b089@huawei.com>
+ <de73f251-08a0-4122-acfd-1d7fce7540ea@redhat.com>
+ <ec6ed1aa-0b6e-df66-1442-93786eabd1ef@huawei.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ec6ed1aa-0b6e-df66-1442-93786eabd1ef@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> From: Nicolin Chen <nicolinc@nvidia.com>
-> Sent: Thursday, July 18, 2024 1:02 PM
->=20
-> The rewind routine should remove the reserved iovas added to the new
-> hwpt.
->=20
-> Fixes: 89db31635c87 ("iommufd: Derive iommufd_hwpt_paging from
-> iommufd_hw_pagetable")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+On 18.07.24 05:04, Miaohe Lin wrote:
+> On 2024/7/17 17:01, David Hildenbrand wrote:
+>> On 16.07.24 04:34, Miaohe Lin wrote:
+>>> On 2024/7/16 0:16, David Hildenbrand wrote:
+>>>> On 15.07.24 08:23, Miaohe Lin wrote:
+>>>>> On 2024/7/13 5:09, Andrew Morton wrote:
+>>>>>> On Fri, 12 Jul 2024 14:42:49 +0800 Miaohe Lin <linmiaohe@huawei.com> wrote:
+>>>>>>
+>>>>>>> When I did memory failure tests recently, below panic occurs:
+>>>>>>>
+>>>>>>> page dumped because: VM_BUG_ON_PAGE(PagePoisoned(page))
+>>>>>>> kernel BUG at include/linux/page-flags.h:616!
+>>>>>>> Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+>>>>>>> CPU: 3 PID: 720 Comm: bash Not tainted 6.10.0-rc1-00195-g148743902568 #40
+>>>>>>> RIP: 0010:unpoison_memory+0x2f3/0x590
+>>>>>>> RSP: 0018:ffffa57fc8787d60 EFLAGS: 00000246
+>>>>>>> RAX: 0000000000000037 RBX: 0000000000000009 RCX: ffff9be25fcdc9c8
+>>>>>>> RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff9be25fcdc9c0
+>>>>>>> RBP: 0000000000300000 R08: ffffffffb4956f88 R09: 0000000000009ffb
+>>>>>>> R10: 0000000000000284 R11: ffffffffb4926fa0 R12: ffffe6b00c000000
+>>>>>>> R13: ffff9bdb453dfd00 R14: 0000000000000000 R15: fffffffffffffffe
+>>>>>>> FS:  00007f08f04e4740(0000) GS:ffff9be25fcc0000(0000) knlGS:0000000000000000
+>>>>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>>>> CR2: 0000564787a30410 CR3: 000000010d4e2000 CR4: 00000000000006f0
+>>>>>>> Call Trace:
+>>>>>>>     <TASK>
+>>>>>>>     unpoison_memory+0x2f3/0x590
+>>>>>>>     simple_attr_write_xsigned.constprop.0.isra.0+0xb3/0x110
+>>>>>>>     debugfs_attr_write+0x42/0x60
+>>>>>>>     full_proxy_write+0x5b/0x80
+>>>>>>>     vfs_write+0xd5/0x540
+>>>>>>>     ksys_write+0x64/0xe0
+>>>>>>>     do_syscall_64+0xb9/0x1d0
+>>>>>>>     entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>>>>>> RIP: 0033:0x7f08f0314887
+>>>>>>> RSP: 002b:00007ffece710078 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+>>>>>>> RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f08f0314887
+>>>>>>> RDX: 0000000000000009 RSI: 0000564787a30410 RDI: 0000000000000001
+>>>>>>> RBP: 0000564787a30410 R08: 000000000000fefe R09: 000000007fffffff
+>>>>>>> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000009
+>>>>>>> R13: 00007f08f041b780 R14: 00007f08f0417600 R15: 00007f08f0416a00
+>>>>>>>     </TASK>
+>>>>>>> Modules linked in: hwpoison_inject
+>>>>>>> ---[ end trace 0000000000000000 ]---
+>>>>>>> RIP: 0010:unpoison_memory+0x2f3/0x590
+>>>>>>> RSP: 0018:ffffa57fc8787d60 EFLAGS: 00000246
+>>>>>>> RAX: 0000000000000037 RBX: 0000000000000009 RCX: ffff9be25fcdc9c8
+>>>>>>> RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff9be25fcdc9c0
+>>>>>>> RBP: 0000000000300000 R08: ffffffffb4956f88 R09: 0000000000009ffb
+>>>>>>> R10: 0000000000000284 R11: ffffffffb4926fa0 R12: ffffe6b00c000000
+>>>>>>> R13: ffff9bdb453dfd00 R14: 0000000000000000 R15: fffffffffffffffe
+>>>>>>> FS:  00007f08f04e4740(0000) GS:ffff9be25fcc0000(0000) knlGS:0000000000000000
+>>>>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>>>> CR2: 0000564787a30410 CR3: 000000010d4e2000 CR4: 00000000000006f0
+>>>>>>> Kernel panic - not syncing: Fatal exception
+>>>>>>> Kernel Offset: 0x31c00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+>>>>>>> ---[ end Kernel panic - not syncing: Fatal exception ]---
+>>>>>>>
+>>>>>>> The root cause is that unpoison_memory() tries to check the PG_HWPoison
+>>>>>>> flags of an uninitialized page. So VM_BUG_ON_PAGE(PagePoisoned(page)) is
+>>>>>>> triggered.
+>>>>>>
+>>>>>> I'm not seeing the call path.  Is this BUG happening via
+>>>>>>
+>>>>>> static __always_inline void __ClearPage##uname(struct page *page)    \
+>>>>>> {                                    \
+>>>>>>       VM_BUG_ON_PAGE(!Page##uname(page), page);            \
+>>>>>>       page->page_type |= PG_##lname;                    \
+>>>>>> }
+>>>>>>
+>>>>>> ?
+>>>>>>
+>>>>>> If so, where's the callsite?
+>>>>>
+>>>>> It is BUG on PF_ANY():
+>>>>>
+>>>>> PAGEFLAG(HWPoison, hwpoison, PF_ANY)
+>>>>>
+>>>>> #define PF_ANY(page, enforce)    PF_POISONED_CHECK(page)
+>>>>>
+>>>>> #define PF_POISONED_CHECK(page) ({                    \
+>>>>>       VM_BUG_ON_PGFLAGS(PagePoisoned(page), page);        \
+>>>>>       page; })
+>>>>>
+>>>>> #define    PAGE_POISON_PATTERN    -1l
+>>>>> static inline int PagePoisoned(const struct page *page)
+>>>>> {
+>>>>>       return READ_ONCE(page->flags) == PAGE_POISON_PATTERN;
+>>>>> }
+>>>>>
+>>>>> The offlined pages will have page->flags set to PAGE_POISON_PATTERN while pfn is still valid:
+>>>>>
+>>>>> offline_pages
+>>>>>      remove_pfn_range_from_zone
+>>>>>        page_init_poison
+>>>>>          memset(page, PAGE_POISON_PATTERN, size);
+>>>>
+>>>> Worth noting that this happens after __offline_isolated_pages() marked the covering sections as offline.
+>>>>
+>>>> Are we missing a pfn_to_online_page() check somewhere, or are we racing with offlining code that marks the section offline?
+>>>
+>>> I was thinking about to use pfn_to_online_page() instead of pfn_to_page() in unpoison_memory() so we can get rid of offlined pages.
+>>> But there're ZONE_DEVICE pages. They're not-onlined too. And unpoison_memory() should work for them. So we can't simply use
+>>> pfn_to_online_page() in that. Or am I miss something?
+>>
+>> Right, pfn_to_online_page() does not detect ZONE_DEVICE. That has to be handled separately if pfn_to_online_page() would fail.
+>>
+>> ... which is what we do in memory_failure():
+>>
+>> p = pfn_to_online_page(pfn);
+>> if (!p) {
+>>      if (pfn_valid(pfn)) {
+>>          pgmap = get_dev_pagemap(pfn, NULL);
+>>          put_ref_page(pfn, flags);
+>>          if (pgmap) {
+>>              ...
+>>          }
+>>      }
+>>      ...
+>> }
+> 
+> Yup, this will be a good alternative. But will it be better to simply check PagePoisoned() instead?
 
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+The memmap of offline memory sections shall not be touched, so .... 
+don't touch it ;)
+
+Especially because that PagePoisoned() check is non-sensical without 
+poisoining-during-memmap-init. You would still work with memory in 
+offline sections.
+
+I think the code is even wrong in that regard: we allow for memory 
+offlining to work with HWPoisoned pages, see __offline_isolated_pages(). 
+Staring at unpoison_memory(), we might be putting these pages back to 
+the buddy? Which is completely wrong.
+
+
+... not to mention that a function called "unpoison_memory()" doing 
+nothing when it finds PagePoison() is completely confusing. Last but not 
+least, take a look at the number of users of PagePoison().
+
+Likely PagePoison() warrants a cleanup, but I am not sure yet what's the 
+right thing to do.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
