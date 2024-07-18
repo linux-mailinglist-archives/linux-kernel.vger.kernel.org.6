@@ -1,167 +1,194 @@
-Return-Path: <linux-kernel+bounces-255848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 555089345AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:20:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36C189345AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC8F8B21E88
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:20:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9756AB21D24
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C821F849C;
-	Thu, 18 Jul 2024 01:20:27 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192BC1B86E7;
+	Thu, 18 Jul 2024 01:20:28 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49941B86CB
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F201B86D7
 	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 01:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721265627; cv=none; b=JQUyWf8EG/mgnllc45NlWr4BLhqHv2SP5HKjsiVLKgVnOthOWTjRfrA5NoBcFpPhIY1LlyM3sypcbR8mvfGz4YP+Q+vypS9SMhqxUymrsc4R0gL48zZQnxVzvhLsZPuNHLfPAte6tQvs2NwQo1YRb1bd91pzMmdK087SH+ZPVV4=
+	t=1721265627; cv=none; b=a7V2dcVNUaR1xCvEK27W9LBgpQwScmjytibul7mHTfZYQ8Na5JsHybEII3LHHvNdq969O4ioZdsa3cn1A/aBDfTCBrEKUgG8yGhewpjeiYH7jJjIbPdx9Zev9SYjqtdx0kVbdYegDsXiMjZ9Ta6ifqNRGR2aJj3QWOcHxs0KAug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721265627; c=relaxed/simple;
-	bh=xbyOXpcyZ/7pT8s2/UyGXvPdeLwgsn9/dfDJe+UFmP4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=UcTecF+QxFg5PlfT9hM1tf+Jr1RgIr5ivziZR1OIDR2pOugNyhBSiz5eCTbd/ziSYwAp5RMtX7ttmul/4/MjevgtrAvjYUSORzqA9Okvnjhi8Atb3QCz11s+cTBfC8x2d4MDuuwhnDaGP3wY0AQke0LtNUqmGxDANe86HrmHzCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+	bh=BPdVVftX2d+U2W9kjO9IHLYag2yXtJxnTKw4LURjZLI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=eMsk+GdaqWBbDDwyIAhXT/OwDvP5oiaIdMHp3oVLvQOjVDUQr3A9sXKE3HnVG+Usi66XW4tQ/7wwKQyzcUSgKopp6DThqMqGZtlr/9TwcpBuotwFBMn6+64KxxVtq918xQmoMnp25VkPhbIbNqQBcB2d03dlOsGlC9JXtPfQJLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f682b4694aso38588039f.2
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-8152f0c4837so45359839f.0
         for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 18:20:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1721265625; x=1721870425;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=PxjsblxnH5iuA7NfAqwmspI+mx3z20tnA2XR1wlHmO8=;
-        b=ZmR2RQoeyjJ1ePK8wDImMDTDYxoF7SIPjA5I61K/61LfOYnZ5N2XAkWMJDcpy3Rebj
-         4+esfhbzl66pP4kNT5rJffeQgsQHS9d9AoAmLH98cxKwYezqyy4AGXpI5j8eWKF+HKvm
-         wB68MPh+DgLdwaeDN9DBoRMokcRSdiUjthCy13iK0yblKbPejQRbiEYpMXv4o6oAp54o
-         bAWfyKN/X9wdR8B4AnQSdwegrrZRpo7gzBKMpRmzVShoQGrMiUIAsLRJjRZWCjHkJAir
-         mY/HC2wmQG8VOQGYp83Pawche2pmP0HLkWUTbsukAJj2MztJ9qlzkMtMxN9+XxY7Shcg
-         SKgg==
-X-Forwarded-Encrypted: i=1; AJvYcCWGMDB9xVuRYPecCha+YuOtIsJx6XIG1wHiNTA4pcVSz/K4gl50fWFA/3YPexNjZC0qVrK5rAMJjZHDodKt7TizpuSaP+5KnaoKAkUI
-X-Gm-Message-State: AOJu0YxM9LGRvd2Y4gKc8e8Z9gO3KWGHY9HxyFz6FP2QzfNtTjhUDld4
-	51R4JPjffDc1l2KVvgyuw4hH2ylNTaKwcpWpuh8mmt8crgLwwybv88CMyu42NE7hucfDa+e1Fe6
-	UoQF8wk6myDXf7dnvm3uu4srHDgQus0hJoviRTzLMZ0rxoBrzTuoOUmA=
-X-Google-Smtp-Source: AGHT+IHvzSWERrgqmpHFd9R48m18q44H+dXyjzOcKvjljWu3+t9iCua050UU8igmgPyN0Aw9P+7aH3B2dz42plKypis44oN/8Grk
+        bh=rrd3jsK4XENa80T8R6an4XxbqLGWiU4eHi9rMPeCaYU=;
+        b=wg8ZqjJ1q0ryhAM9bCnTbeoWf9aWrpMomaqsHY9rDgWK759eF40hEd3hYFVL6/5K7u
+         TSq7M97ZTMR3K6oGklrhwwdPxvNQHR+Rp+3TKOMs7ywJ2sUL9y8wki6szKmFwFq1yWRp
+         8nG/QNkJ7tzvrCTdUeQOCRY7PzcNv5pu2uXUCl2cBW0uIe9zm4G2TLwnJjLlvrn7kWVe
+         pvLjmPkj3sNnJbANsbuZPE6RMG1mTmtd+H1EJ60o4aVH2UcLAB/GsJDgKoJW8QP9ONtB
+         2ciwJHCa0gFubdhuR4KLdW1v+Z1n8MniGebN2uPB6g1PP13ppdHCiaGwDD9eEdGt54qw
+         lpEw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1Sxp/OWfMq83FwrBfKOovjXJ6dxzx+oo9aZXGtEqK85trPDEN/DhHiR/9tfI63pkJAEaBcRWaq8izVcM65l5cSfeF424s83YOaqcz
+X-Gm-Message-State: AOJu0Yycq5N2ZZFn4dJgrI8ImvjQitEKHvz+fmn1Smm2y6UVNJg9iM2G
+	q6A5xXi2EQpkbF2XuSYVREJUMrAHj2R2yilzHoBZAsQLmNRkIGoYMgaWntK2Imx5+aIGZ9XOsgg
+	ZGr3VdgxOIymlGxmB6f/VLMOgOACJXkvKji7z+X9z0vwebNGgr72S8VA=
+X-Google-Smtp-Source: AGHT+IEfN1rOus52VUkOw0bQfMlodhEhP5lb5phHW4jlLUrJdH82HQr0VlHmMdGTcnbNu92JPTTyB2/6toevEsKYwaikmCwGHUGw
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:3015:b0:4b9:2092:c7c9 with SMTP id
- 8926c6da1cb9f-4c215ce0877mr171422173.5.1721265624823; Wed, 17 Jul 2024
- 18:20:24 -0700 (PDT)
-Date: Wed, 17 Jul 2024 18:20:24 -0700
+X-Received: by 2002:a05:6638:3796:b0:4c0:a8a5:81e7 with SMTP id
+ 8926c6da1cb9f-4c215c85b8fmr199883173.3.1721265625048; Wed, 17 Jul 2024
+ 18:20:25 -0700 (PDT)
+Date: Wed, 17 Jul 2024 18:20:25 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000021e299061d7b6219@google.com>
-Subject: [syzbot] [io-uring?] general protection fault in __io_remove_buffers
-From: syzbot <syzbot+2074b1a3d447915c6f1c@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <00000000000025321f061d7b62ff@google.com>
+Subject: [syzbot] [bcachefs?] BUG: unable to handle kernel paging request in bch2_dirent_to_text
+From: syzbot <syzbot+1a11884d9c9f1353942d@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    d67978318827 Merge tag 'x86_cpu_for_v6.11_rc1' of git://gi..
+HEAD commit:    0434dbe32053 Merge tag 'linux_kselftest-next-6.11-rc1' of ..
 git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1178e9e9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e206d588252bd3ff
-dashboard link: https://syzkaller.appspot.com/bug?extid=2074b1a3d447915c6f1c
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=10fdb731980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4b8bd5292e033239
+dashboard link: https://syzkaller.appspot.com/bug?extid=1a11884d9c9f1353942d
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e07d9e980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16adf045980000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=122c7efd980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14a7a5e9980000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f34b31760156/disk-d6797831.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a92e51d8d32e/vmlinux-d6797831.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/000a6a162550/bzImage-d6797831.xz
+disk image: https://storage.googleapis.com/syzbot-assets/3766752b5090/disk-0434dbe3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e3608abc3f91/vmlinux-0434dbe3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c133560ad498/bzImage-0434dbe3.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/2eb208d556bd/mount_0.gz
 
 The issue was bisected to:
 
-commit 87585b05757dc70545efb434669708d276125559
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Wed Mar 13 02:24:21 2024 +0000
+commit 03ef80b469d5d83530ce1ce15be78a40e5300f9b
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Sat Sep 23 22:41:51 2023 +0000
 
-    io_uring/kbuf: use vm_insert_pages() for mmap'ed pbuf ring
+    bcachefs: Ignore unknown mount options
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16458ba5980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=15458ba5980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=11458ba5980000
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=152480b1980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=172480b1980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=132480b1980000
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2074b1a3d447915c6f1c@syzkaller.appspotmail.com
-Fixes: 87585b05757d ("io_uring/kbuf: use vm_insert_pages() for mmap'ed pbuf ring")
+Reported-by: syzbot+1a11884d9c9f1353942d@syzkaller.appspotmail.com
+Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 1 PID: 35 Comm: kworker/u8:2 Not tainted 6.10.0-syzkaller-01155-gd67978318827 #0
+loop0: detected capacity change from 0 to 32768
+BUG: unable to handle page fault for address: ffffed110a6e4959
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD 23ffee067 P4D 23ffee067 PUD 0 
+Oops: Oops: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 PID: 5092 Comm: syz-executor341 Not tainted 6.10.0-syzkaller-02711-g0434dbe32053 #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Workqueue: iou_exit io_ring_exit_work
-RIP: 0010:__io_remove_buffers+0xac/0x700 io_uring/kbuf.c:341
-Code: 42 80 3c 28 00 74 08 48 89 df e8 5f 02 5b fd 4d 89 fe 48 89 6c 24 40 48 89 5c 24 18 48 8b 1b 48 83 c3 0e 48 89 d8 48 c1 e8 03 <42> 0f b6 04 28 84 c0 0f 85 3b 05 00 00 44 0f b7 3b 49 8d 7c 24 16
-RSP: 0018:ffffc90000ab7840 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000002 RCX: ffff888017a8da00
-RDX: ffff888017a8da00 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 1ffff110052be8e4 R08: ffffffff849ddaa4 R09: 1ffff110052be8e3
-R10: dffffc0000000000 R11: ffffed10052be8e4 R12: ffff8880295f4700
-R13: dffffc0000000000 R14: ffff8880295f4720 R15: ffff8880295f4720
-FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+RIP: 0010:bch2_dirent_name_bytes fs/bcachefs/dirent.c:23 [inline]
+RIP: 0010:bch2_dirent_get_name fs/bcachefs/dirent.c:37 [inline]
+RIP: 0010:bch2_dirent_to_text+0xba/0x2f0 fs/bcachefs/dirent.c:153
+Code: bf 09 00 00 00 48 89 de e8 03 ce 78 fd 48 83 fb 08 77 09 e8 18 c9 78 fd 31 d2 eb 53 8d 45 fa 49 8d 1c c4 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 e7 4e db fd c1 e5 03 48 8b 1b 31
+RSP: 0018:ffffc90002d3ed90 EFLAGS: 00010a06
+RAX: 1ffff1110a6e4959 RBX: ffff888853724ac8 RCX: ffff888026263c00
+RDX: 0000000000000000 RSI: ffffffffffffffd8 RDI: 0000000000000009
+RBP: 0000000000000000 R08: ffffffff841d92fd R09: 0000000000000020
+R10: dffffc0000000000 R11: ffffffff841d9260 R12: ffff888053724af8
+R13: dffffc0000000000 R14: ffffc90002d3f540 R15: ffff888053724ad2
+FS:  0000555572e1d380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555589c12650 CR3: 000000000e132000 CR4: 00000000003506f0
+CR2: ffffed110a6e4959 CR3: 00000000795e8000 CR4: 00000000003506f0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
  <TASK>
- io_put_bl io_uring/kbuf.c:378 [inline]
- io_destroy_buffers+0x14e/0x490 io_uring/kbuf.c:392
- io_ring_ctx_free+0xa00/0x1070 io_uring/io_uring.c:2613
- io_ring_exit_work+0x80f/0x8a0 io_uring/io_uring.c:2844
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ journal_entry_btree_keys_to_text+0x1d7/0x390 fs/bcachefs/journal_io.c:439
+ bch2_sb_clean_to_text+0x138/0x240 fs/bcachefs/sb-clean.c:313
+ bch2_sb_field_validate+0x201/0x2e0 fs/bcachefs/super-io.c:1229
+ bch2_sb_validate+0xa69/0xe00 fs/bcachefs/super-io.c:468
+ __bch2_read_super+0xc1b/0x1370 fs/bcachefs/super-io.c:823
+ bch2_fs_open+0x246/0xdf0 fs/bcachefs/super.c:2082
+ bch2_mount+0x6b0/0x13c0 fs/bcachefs/fs.c:1931
+ legacy_get_tree+0xee/0x190 fs/fs_context.c:662
+ vfs_get_tree+0x90/0x2a0 fs/super.c:1789
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3472
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f28ce8ed0aa
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe11d678d8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffe11d678f0 RCX: 00007f28ce8ed0aa
+RDX: 0000000020011a00 RSI: 0000000020000000 RDI: 00007ffe11d678f0
+RBP: 0000000000000004 R08: 00007ffe11d67930 R09: 00000000000119f7
+R10: 0000000001200014 R11: 0000000000000282 R12: 0000000001200014
+R13: 00007ffe11d67930 R14: 0000000000000003 R15: 0000000001000000
  </TASK>
 Modules linked in:
+CR2: ffffed110a6e4959
 ---[ end trace 0000000000000000 ]---
-RIP: 0010:__io_remove_buffers+0xac/0x700 io_uring/kbuf.c:341
-Code: 42 80 3c 28 00 74 08 48 89 df e8 5f 02 5b fd 4d 89 fe 48 89 6c 24 40 48 89 5c 24 18 48 8b 1b 48 83 c3 0e 48 89 d8 48 c1 e8 03 <42> 0f b6 04 28 84 c0 0f 85 3b 05 00 00 44 0f b7 3b 49 8d 7c 24 16
-RSP: 0018:ffffc90000ab7840 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000002 RCX: ffff888017a8da00
-RDX: ffff888017a8da00 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 1ffff110052be8e4 R08: ffffffff849ddaa4 R09: 1ffff110052be8e3
-R10: dffffc0000000000 R11: ffffed10052be8e4 R12: ffff8880295f4700
-R13: dffffc0000000000 R14: ffff8880295f4720 R15: ffff8880295f4720
-FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+RIP: 0010:bch2_dirent_name_bytes fs/bcachefs/dirent.c:23 [inline]
+RIP: 0010:bch2_dirent_get_name fs/bcachefs/dirent.c:37 [inline]
+RIP: 0010:bch2_dirent_to_text+0xba/0x2f0 fs/bcachefs/dirent.c:153
+Code: bf 09 00 00 00 48 89 de e8 03 ce 78 fd 48 83 fb 08 77 09 e8 18 c9 78 fd 31 d2 eb 53 8d 45 fa 49 8d 1c c4 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 e7 4e db fd c1 e5 03 48 8b 1b 31
+RSP: 0018:ffffc90002d3ed90 EFLAGS: 00010a06
+RAX: 1ffff1110a6e4959 RBX: ffff888853724ac8 RCX: ffff888026263c00
+RDX: 0000000000000000 RSI: ffffffffffffffd8 RDI: 0000000000000009
+RBP: 0000000000000000 R08: ffffffff841d92fd R09: 0000000000000020
+R10: dffffc0000000000 R11: ffffffff841d9260 R12: ffff888053724af8
+R13: dffffc0000000000 R14: ffffc90002d3f540 R15: ffff888053724ad2
+FS:  0000555572e1d380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555589c12650 CR3: 000000000e132000 CR4: 00000000003506f0
+CR2: ffffed110a6e4959 CR3: 00000000795e8000 CR4: 00000000003506f0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 ----------------
 Code disassembly (best guess):
-   0:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1)
-   5:	74 08                	je     0xf
-   7:	48 89 df             	mov    %rbx,%rdi
-   a:	e8 5f 02 5b fd       	call   0xfd5b026e
-   f:	4d 89 fe             	mov    %r15,%r14
-  12:	48 89 6c 24 40       	mov    %rbp,0x40(%rsp)
-  17:	48 89 5c 24 18       	mov    %rbx,0x18(%rsp)
-  1c:	48 8b 1b             	mov    (%rbx),%rbx
-  1f:	48 83 c3 0e          	add    $0xe,%rbx
+   0:	bf 09 00 00 00       	mov    $0x9,%edi
+   5:	48 89 de             	mov    %rbx,%rsi
+   8:	e8 03 ce 78 fd       	call   0xfd78ce10
+   d:	48 83 fb 08          	cmp    $0x8,%rbx
+  11:	77 09                	ja     0x1c
+  13:	e8 18 c9 78 fd       	call   0xfd78c930
+  18:	31 d2                	xor    %edx,%edx
+  1a:	eb 53                	jmp    0x6f
+  1c:	8d 45 fa             	lea    -0x6(%rbp),%eax
+  1f:	49 8d 1c c4          	lea    (%r12,%rax,8),%rbx
   23:	48 89 d8             	mov    %rbx,%rax
   26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 0f b6 04 28       	movzbl (%rax,%r13,1),%eax <-- trapping instruction
-  2f:	84 c0                	test   %al,%al
-  31:	0f 85 3b 05 00 00    	jne    0x572
-  37:	44 0f b7 3b          	movzwl (%rbx),%r15d
-  3b:	49 8d 7c 24 16       	lea    0x16(%r12),%rdi
+* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	48 89 df             	mov    %rbx,%rdi
+  34:	e8 e7 4e db fd       	call   0xfddb4f20
+  39:	c1 e5 03             	shl    $0x3,%ebp
+  3c:	48 8b 1b             	mov    (%rbx),%rbx
+  3f:	31                   	.byte 0x31
 
 
 ---
