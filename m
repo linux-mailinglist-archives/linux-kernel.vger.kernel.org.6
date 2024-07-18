@@ -1,36 +1,36 @@
-Return-Path: <linux-kernel+bounces-255944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82F3D9346EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 05:49:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0030B9346EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 05:49:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 343E31F20EC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:49:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF6E8280DAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A5F38F91;
-	Thu, 18 Jul 2024 03:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1FF3A267;
+	Thu, 18 Jul 2024 03:49:16 +0000 (UTC)
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBC939FFE
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 03:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F67729422
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 03:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721274545; cv=none; b=jp2kmCE2x0qB8CMQQ8b4Ii7+TvEGqU+lbJQt7wGdsE7/rksWaKi1XPdQCEN/TESlE6ft25iEFgW6Da4jpRHIc+cDSyQIMpSmljtLE7yUoT2xro9lUk07JhHJlPImyls8+BDpoIO38O2Hc8Po1Ch905bslTYtoo/r3BI0H9whCCo=
+	t=1721274556; cv=none; b=qw9hBLiYFWFtpn0xQEkj8Ue6ZaupR23ErgA/CtUkdF9bWONK+1pFUSLC4Zk0bpGrkXkGJR+IZkjfeDt1Wy1kcfweTDt1Q620cQXPKYAPBELcSukePuWo077U++ojdepKQqZhmVNFgo8Ub5AIrw8HS8yP+6X/bcA4RvpdXRUWDqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721274545; c=relaxed/simple;
-	bh=Tdxezc5XNOgn9ppSYX8AOYi8JFeWzTYe0VUchbryAek=;
+	s=arc-20240116; t=1721274556; c=relaxed/simple;
+	bh=ckbfWJjz+54NYPngTBO5HEX2BPlYpiYBXK60K41e/z4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XoD4tstXvroIic5cwA5sCYqwjYKos1nHzXgxGGKxfaRCKfhzHuCb0eLb6tN1bLOF4eAzgDmuqO8ihrCxnXaAmyxCGD1zPCf89vri8+8XUFVK5qPctZvTzQ4GWHxqhcsKEQZJswPnwasB5UrEnNDo17gQz+kt2o0edtcXllLhaPQ=
+	 Content-Type:Content-Disposition:In-Reply-To; b=rEisUsboQYvzn0JGB54sGMMAQVVkwgp0vFWl2MCJHt3w4EkMBHYhj3GYCB6L8xVkwUTZcOyZWjbi7PE6j/r0HFoqPfaoOH/D2Wz/AMZ2ksdHffLeRJuIHVe8r7DMhRItfaBAivELXQF5HIZeR6c3Z2A/vP2GMyPr74+JNejVtlg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
 Received: by verein.lst.de (Postfix, from userid 2407)
-	id A76FA68D07; Thu, 18 Jul 2024 05:48:55 +0200 (CEST)
-Date: Thu, 18 Jul 2024 05:48:54 +0200
+	id 4EAC368AA6; Thu, 18 Jul 2024 05:49:10 +0200 (CEST)
+Date: Thu, 18 Jul 2024 05:49:10 +0200
 From: Christoph Hellwig <hch@lst.de>
 To: Leon Romanovsky <leon@kernel.org>
 Cc: Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>,
@@ -40,10 +40,10 @@ Cc: Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>,
 	Easwar Hariharan <eahariha@linux.microsoft.com>,
 	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
 	Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH v2 2/2] dma: add IOMMU static calls with clear default
- ops
-Message-ID: <20240718034854.GA31912@lst.de>
-References: <cover.1721219730.git.leon@kernel.org> <dd34bf3ecef252b4910d70aa21ff5273b5e8b19b.1721219730.git.leon@kernel.org>
+Subject: Re: [PATCH v2 1/2] dma: call unconditionally to unmap_page and
+ unmap_sg callbacks
+Message-ID: <20240718034910.GB31912@lst.de>
+References: <cover.1721219730.git.leon@kernel.org> <f9f0e270c077c5a3225f114bf9f7df18a6f9693a.1721219730.git.leon@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,129 +52,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dd34bf3ecef252b4910d70aa21ff5273b5e8b19b.1721219730.git.leon@kernel.org>
+In-Reply-To: <f9f0e270c077c5a3225f114bf9f7df18a6f9693a.1721219730.git.leon@kernel.org>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Wed, Jul 17, 2024 at 03:37:11PM +0300, Leon Romanovsky wrote:
+On Wed, Jul 17, 2024 at 03:37:10PM +0300, Leon Romanovsky wrote:
 > From: Leon Romanovsky <leonro@nvidia.com>
 > 
-> Most of the arch DMA ops (which often, but not  always, involve
-> some sort of IOMMU) are using the same DMA operations. These DMA
-> operations are default ones implemented in drivers/iomem/dma-iommu.c.
+> Almost all users of ->map_page()/map_sg() callbacks implement
+> ->unmap_page()/unmap_sg() callbacks too. One user which doesn't do it,
+> is dummy DMA ops interface, and the use of this interface is to fail
+> the operation and in such case, there won't be any call to
+> ->unmap_page()/unmap_sg().
+> 
+> This patch removes the existence checks of ->unmap_page()/unmap_sg()
+> and calls to it directly to create symmetrical interface to
+> ->map_page()/map_sg().
 
-I'm not sure I agree with the exact wording.  There's tons of arch DMA
-ops not in any way tied to dma-iommu (or the iommu subsystem, but not
-dma-iommu like the arm32 ones), but for all modern platforms dma-iommu
-is what actually matters.
-
-> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> Signed-off-by: Leon Romanovsky <leon@kernel.org>
-
-A double-signoff for the same person is a bit weird, isn't it?
-
->  	struct iommu_domain *domain = iommu_get_domain_for_dev(dev);
-> @@ -1756,10 +1733,10 @@ void iommu_setup_dma_ops(struct device *dev)
->  	if (iommu_is_dma_domain(domain)) {
->  		if (iommu_dma_init_domain(domain, dev))
->  			goto out_err;
-> +		dev->dma_iommu = true;
-> +	} else if (dev->dma_iommu) {
->  		/* Clean up if we've switched *from* a DMA domain */
-> +		dev->dma_iommu = false;
->  	}
-
-Strictly speaking we can no remove the if part of the else if above.
-Or reword this a bit to:
-
-	dev->dma_iommu = iommu_is_dma_domain(domain);
-	if (dev->dma_iommu && iommu_dma_init_domain(domain, dev))
-		goto out_err;
-
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index ace039151cb8..7fa1e40b617a 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -822,6 +822,9 @@ struct device {
->  #ifdef CONFIG_DMA_NEED_SYNC
->  	bool			dma_skip_sync:1;
->  #endif
-> +#ifdef CONFIG_IOMMU_DMA
-> +	bool			dma_iommu : 1;
-> +#endif
-
-The kerneldoc above should be updated to describe this field.
-Please also add the maintainers of this file to the next round.
-
-> +static inline bool dma_is_default_iommu(struct device *dev)
-> +{
-> +#ifdef CONFIG_IOMMU_DMA
-> +	return dev->dma_iommu;
-> +#else
-> +	return false;
-> +#endif
-> +}
-
-The normal style would be to move the ifdefs outside the helper
-function.  Also maybe name this use_dma_iommu?
-
->  static bool dma_go_direct(struct device *dev, dma_addr_t mask,
->  		const struct dma_map_ops *ops)
->  {
-> +	WARN_ON_ONCE(ops && dma_is_default_iommu(dev));
-
-I'd prefer to keep this out of the fast path and only do it in
-say dma_set_mask.  And fail the call while we're at it.
-
-> +	if (likely(!ops) && !dma_is_default_iommu(dev))
-
-The likely should cover both conditions.
-
->  		return true;
-> +
->  #ifdef CONFIG_DMA_OPS_BYPASS
-> +	WARN_ON_ONCE(dev->dma_ops_bypass && dma_is_default_iommu(dev));
->  	if (dev->dma_ops_bypass)
-
-Let's skip this and think about it if we ever use the bypass for
-something that is not powerpc with it's own dma ops.
-
-> @@ -323,8 +346,12 @@ void dma_unmap_resource(struct device *dev, dma_addr_t addr, size_t size,
->  	const struct dma_map_ops *ops = get_dma_ops(dev);
->  
->  	BUG_ON(!valid_dma_direction(dir));
-> -	if (!dma_map_direct(dev, ops) && ops->unmap_resource)
-> -		ops->unmap_resource(dev, addr, size, dir, attrs);
-> +	if (!dma_map_direct(dev, ops)) {
-> +		if (dma_is_default_iommu(dev))
-> +			iommu_dma_unmap_resource(dev, addr, size, dir, attrs);
-> +		else if (ops->unmap_resource)
-> +			ops->unmap_resource(dev, addr, size, dir, attrs);
-> +	}
-
-I'd prefer to order this as:
-
-	if (dma_map_direct(dev, ops))
-		; /* nothing to do: uncached and no swiotlb */
-	else if (use_dma_iommu(dev))
-		iommu_dma_unmap_resource(dev, addr, size, dir, attrs);
-	else if (ops->unmap_resource)
-		ops->unmap_resource(dev, addr, size, dir, attrs);
-
-> +	return (!ops || dma_is_default_iommu(dev));
-
-dma_is_default_iommu implies !ops, so the second condition is
-redundant.
-
->  EXPORT_SYMBOL_GPL(dma_opt_mapping_size);
-> @@ -888,7 +943,12 @@ unsigned long dma_get_merge_boundary(struct device *dev)
->  {
->  	const struct dma_map_ops *ops = get_dma_ops(dev);
->  
-> +	if (!ops)
-> +		return 0;	/* can't merge */
-> +	if (dma_is_default_iommu(dev))
-> +		return iommu_dma_get_merge_boundary(dev);
-
-The second check needs to move up here.
+I don't think you even need this any more, do you?
 
 
