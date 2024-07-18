@@ -1,166 +1,240 @@
-Return-Path: <linux-kernel+bounces-256395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1CE2934DB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:03:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C3A934DC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C45B81C22701
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:03:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59E79283F0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1287E13CAAD;
-	Thu, 18 Jul 2024 13:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C8813B587;
+	Thu, 18 Jul 2024 13:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="EqxwmTOS";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="EqxwmTOS"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ZODvij7E"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1FA6F2F6;
-	Thu, 18 Jul 2024 13:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F257F84E11
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 13:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721307826; cv=none; b=g+LP58WqEOGScb3Vuy+kvYrAirgR/wnWPkqR2wxN2+fEanAbo8gYCXUB/A7CTTr7FrzKXK2rFf0JjX0C590DZikTPxO4AxQTyHCs83rj3F788v9BR51bauZtqnLYCf64ShETJiWpuitdGkXkKTJPq4SNekvjzW+q6tXy/73rKwY=
+	t=1721307856; cv=none; b=XgzXWevMNpVCp9ZEoUdVHSipT02mcGUtGH/naXH/SClvtvqHqfRn7+gdj6WSh9NnSZ2WNdLzMTe7TmGxII8e67Frib2M8Y1HOae3KEtru9gUjw2qcIh6qnbOf69E1c4iITGfugOXEHX2dMmHSoEamdQYJmKPNF1xEDpX7qFt6qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721307826; c=relaxed/simple;
-	bh=1NFy46Q+LfOG35rBQJkuAv005voWnmcHap9tVgP7KOQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=o52WLbAxXMlhGDvWFa3JV01tF2kUr8hhUes18nsWeU7vUEUL8+ZmRlk0iydEUxKxXT239qb5Ogs41Ecax9bMNEKaDRhxDQsjAG+5rubGl2lJfhzKLki9veHsAK/h6j6/Ax77j2tg7mr+U7486ELKtX6E5unoNX8/5/lxmnx5c/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=EqxwmTOS; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=EqxwmTOS; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1721307822;
-	bh=1NFy46Q+LfOG35rBQJkuAv005voWnmcHap9tVgP7KOQ=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=EqxwmTOSRNJtFtk5AwJ0Z5qBMyhy2NCOkOXeXW8HUVkR3ovqW8rbWtWaqwMtaIy/8
-	 lLuTY30entp2kvumD8WEYbMnX4y6lomypkHh1avo/Yt7vExEf+M4GpOdoC436vCVsL
-	 v+nmdCbT0+VAkA5gkP6x+DVwJgzlz3DaB4sxzXh4=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id BF7581286DB7;
-	Thu, 18 Jul 2024 09:03:42 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id 7Iv7-PTjjFw4; Thu, 18 Jul 2024 09:03:42 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1721307822;
-	bh=1NFy46Q+LfOG35rBQJkuAv005voWnmcHap9tVgP7KOQ=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=EqxwmTOSRNJtFtk5AwJ0Z5qBMyhy2NCOkOXeXW8HUVkR3ovqW8rbWtWaqwMtaIy/8
-	 lLuTY30entp2kvumD8WEYbMnX4y6lomypkHh1avo/Yt7vExEf+M4GpOdoC436vCVsL
-	 v+nmdCbT0+VAkA5gkP6x+DVwJgzlz3DaB4sxzXh4=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::db7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 810C812801E8;
-	Thu, 18 Jul 2024 09:03:38 -0400 (EDT)
-Message-ID: <544d08f5b55a0fbb1dc883bce6cf94c78cf46e42.camel@HansenPartnership.com>
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>, Jeff Xu
-	 <jeffxu@google.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>,  Kees Cook <keescook@chromium.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore
- Ts'o <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, Aleksa Sarai
- <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, Andy
- Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Casey
- Schaufler <casey@schaufler-ca.com>, Christian Heimes
- <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, Eric Biggers
- <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, Fan Wu
- <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>, Geert
- Uytterhoeven <geert@linux-m68k.org>, James Morris
- <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>,  Jann Horn
- <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams
- <ajordanr@google.com>,  Lakshmi Ramasubramanian
- <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, Luis
- Chamberlain <mcgrof@kernel.org>,  "Madhavan T . Venkataraman"
- <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
- Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox
- <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>,  Mimi Zohar
- <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
- Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, Stephen
- Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>,
- Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau
- <thibaut.sautereau@ssi.gouv.fr>,  Vincent Strubel
- <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, Yin
- Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
- linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
-Date: Thu, 18 Jul 2024 09:03:36 -0400
-In-Reply-To: <20240718.kaePhei9Ahm9@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
-	 <20240704190137.696169-2-mic@digikod.net>
-	 <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
-	 <20240717.neaB5Aiy2zah@digikod.net>
-	 <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
-	 <20240718.kaePhei9Ahm9@digikod.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1721307856; c=relaxed/simple;
+	bh=we2441mJ200UsbwMeH+W6qEctdwpO8gZRiXzNVf4FV4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bdr4P2xkb66EyTRU/LJDyvcsohwp25NaQULHOH0CfbbpSCGRcEHEI9FmeV4NdA0JejdjHLCmuuhx3v1xflrq+Ten1mjr1UUvvXzOyMl93rFQWYTxPfcd/5eJM+EjQoVy2XH1GdkDiuRolzwKDhn9F7dwZGs0TGuvcZvcy9bfiSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ZODvij7E; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2eecd2c6432so13058021fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 06:04:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1721307852; x=1721912652; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PaoSB/i75fBgDQfjxZ/xBZj8r8hOjb3uHVg3ton7t7o=;
+        b=ZODvij7E/PWDZRp8JxanPSE+4q0iUruBGtwg1nWQlDEP5GPQIf4KIroQydbRtQ15ZH
+         JWUQXBaddQaciHGn0rThwfoAUtsXmM2GoIPy8ksk+cb0IqX3uNYUd/EL1qK5cd66XfFK
+         vBW2PDF3arH28nPjPUcokCbDO86IWtBclsYkWHaFJTjN45apeI9l0EGuRAUfv3lCMI2U
+         vjSeuRTbljh6ogLPtfBmme+vETyO06lDSb4h9rk0euqk3Qf1+Z0zEgjPC6lFFo77sTQQ
+         QR3HdxjY8DuBL+BExYsqY3q1/1IrXJO+1L/QUfxtlEop3LILu7qPMf2o/59aRYAISD0B
+         Ot4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721307852; x=1721912652;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PaoSB/i75fBgDQfjxZ/xBZj8r8hOjb3uHVg3ton7t7o=;
+        b=SQeE4jFrECaxYYQtf5ukfUzlhfmcD3Htoxm+D2d3pTr1RbebT2pumj8X0O5/JpSkYz
+         l//G4fB7e0q6YVwy0CBIjuWLKcJrZhiCQRBdTgieut0kPeeTrBS4nyy9mqtDhogHiTvL
+         TXVUqGJY6WcK/NK40wUF02d1OtNpmBkttnuMhygRa3R+nguoOZiEx8vaZai8BWxo8g2/
+         R4mGK3eDS2diWiNoGBRx45ADcE7QVcsywYs7rLEWYAEhzzQm/H9bKp4FeX0wFBTI/ULP
+         BAtiFBoAme/CQjaMGd8JFbqH+A7a79t2U8oSEoSOLatLZeMxOLMI17KlEef+9IXxnyxc
+         VlJg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkJTrhPv60z198zYP/8325fJPJq0k6b9NxcC0T1Mn/qH4Ecx/bh78eAgT0bCGhexGI8fq5nwv659Nr7EXHZcfSi+2cqkqZNayF9LZ4
+X-Gm-Message-State: AOJu0YxYOmea5cXdryLFvfjd8qfONc8co5x92oXJbO0IFudkg8h+d+JQ
+	SidTzINLrrUoZPIth3jcJChC01Z8LWFyVczpnVbLChGPCMdZZ7LWFbFVZBcmyPXhuWiC5QjaWP+
+	4LmAg+8iI3jiqXFYBnZY00eYu8Jf1xCvp25/Xag==
+X-Google-Smtp-Source: AGHT+IFdeMEc5qNFLBDKGp+G046kUIHhNXX2IhpfOE33oX22Xj+JyHbPKQLwME12ysWlC6x7Y2Tkkh0PP0R+QhfKifQ=
+X-Received: by 2002:a2e:2c12:0:b0:2ee:8d9a:811a with SMTP id
+ 38308e7fff4ca-2ef05d288f9mr19213711fa.31.1721307851931; Thu, 18 Jul 2024
+ 06:04:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240708075023.14893-1-brgl@bgdev.pl> <20240708075023.14893-4-brgl@bgdev.pl>
+ <7c0140be-4325-4005-9068-7e0fc5ff344d@nvidia.com>
+In-Reply-To: <7c0140be-4325-4005-9068-7e0fc5ff344d@nvidia.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 18 Jul 2024 15:04:00 +0200
+Message-ID: <CAMRc=McF93F6YsQ+eT9oOe+c=2ZCQ3rBdj+-3Ruy8iO1B-syjw@mail.gmail.com>
+Subject: Re: [RESEND PATCH net-next v3 3/4] net: phy: aquantia: wait for the
+ GLOBAL_CFG to start returning real values
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, "David S . Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Brad Griffis <bgriffis@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2024-07-18 at 14:24 +0200, Mickaël Salaün wrote:
-> On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
-> > On Wed, Jul 17, 2024 at 3:01 AM Mickaël Salaün <mic@digikod.net>
-> > wrote:
-> > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
-[...]
-> > > > I'm still thinking  execveat(AT_CHECK) vs faccessat(AT_CHECK)
-> > > > in different use cases:
-> > > > 
-> > > > execveat clearly has less code change, but that also means: we
-> > > > can't add logic specific to exec (i.e. logic that can't be
-> > > > applied to config) for this part (from do_execveat_common to
-> > > > security_bprm_creds_for_exec) in future.  This would require
-> > > > some agreement/sign-off, I'm not sure from whom.
-> > > 
-> > > I'm not sure to follow. We could still add new flags, but for now
-> > > I don't see use cases.  This patch series is not meant to handle
-> > > all possible "trust checks", only executable code, which makes
-> > > sense for the kernel.
-> > > 
-> > I guess the "configfile" discussion is where I get confused, at one
-> > point, I think this would become a generic "trust checks" api for
-> > everything related to "generating executable code", e.g.
-> > javascript, java code, and more. We will want to clearly define the
-> > scope of execveat(AT_CHECK)
-> 
-> The line between data and code is blurry.  For instance, a
-> configuration file can impact the execution flow of a program.  So,
-> where to draw the line?
+On Thu, Jul 18, 2024 at 2:23=E2=80=AFPM Jon Hunter <jonathanh@nvidia.com> w=
+rote:
+>
+> Hi Bartosz,
+>
+> On 08/07/2024 08:50, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > When the PHY is first coming up (or resuming from suspend), it's
+> > possible that although the FW status shows as running, we still see
+> > zeroes in the GLOBAL_CFG set of registers and cannot determine availabl=
+e
+> > modes. Since all models support 10M, add a poll and wait the config to
+> > become available.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > ---
+> >   drivers/net/phy/aquantia/aquantia_main.c | 8 +++++++-
+> >   1 file changed, 7 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy=
+/aquantia/aquantia_main.c
+> > index 974795bd0860..2c8ba2725a91 100644
+> > --- a/drivers/net/phy/aquantia/aquantia_main.c
+> > +++ b/drivers/net/phy/aquantia/aquantia_main.c
+> > @@ -652,7 +652,13 @@ static int aqr107_fill_interface_modes(struct phy_=
+device *phydev)
+> >       unsigned long *possible =3D phydev->possible_interfaces;
+> >       unsigned int serdes_mode, rate_adapt;
+> >       phy_interface_t interface;
+> > -     int i, val;
+> > +     int i, val, ret;
+> > +
+> > +     ret =3D phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
+> > +                                     VEND1_GLOBAL_CFG_10M, val, val !=
+=3D 0,
+> > +                                     1000, 100000, false);
+> > +     if (ret)
+> > +             return ret;
+> >
+> >       /* Walk the media-speed configuration registers to determine whic=
+h
+> >        * host-side serdes modes may be used by the PHY depending on the
+>
+>
+> With the current -next and mainline we are seeing the following issue on
+> our Tegra234 Jetson AGX Orin platform ...
+>
+>   Aquantia AQR113C stmmac-0:00: aqr107_fill_interface_modes failed: -110
+>   tegra-mgbe 6800000.ethernet eth0: __stmmac_open: Cannot attach to PHY (=
+error: -110)
+>
+>
+> We have tracked it down to this change and looks like our PHY does not
+> support 10M ...
+>
+> $ ethtool eth0
+> Settings for eth0:
+>          Supported ports: [  ]
+>          Supported link modes:   100baseT/Full
+>                                  1000baseT/Full
+>                                  10000baseT/Full
+>                                  1000baseKX/Full
+>                                  10000baseKX4/Full
+>                                  10000baseKR/Full
+>                                  2500baseT/Full
+>                                  5000baseT/Full
+>
+> The following fixes this for this platform ...
+>
+> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/a=
+quantia/aquantia_main.c
+> index d12e35374231..0b2db486d8bd 100644
+> --- a/drivers/net/phy/aquantia/aquantia_main.c
+> +++ b/drivers/net/phy/aquantia/aquantia_main.c
+> @@ -656,7 +656,7 @@ static int aqr107_fill_interface_modes(struct phy_dev=
+ice *phydev)
+>          int i, val, ret;
+>
+>          ret =3D phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
+> -                                       VEND1_GLOBAL_CFG_10M, val, val !=
+=3D 0,
+> +                                       VEND1_GLOBAL_CFG_100M, val, val !=
+=3D 0,
+>                                          1000, 100000, false);
+>          if (ret)
+>                  return ret;
+>
+>
+> However, I am not sure if this is guaranteed to work for all?
 
-Having a way to have config files part of the trusted envelope, either
-by signing or measurement would be really useful.  The current standard
-distro IMA deployment is signed executables, but not signed config
-because it's hard to construct a policy that doesn't force the signing
-of too many extraneous files (and files which might change often).
+Ah cr*p. No, I don't think it is. We should take the first supported
+mode for a given PHY I think.
 
-> It might makes sense to follow the kernel and interpreter semantic:
-> if a file can be executed by the kernel (e.g. ELF binary, file
-> containing a shebang, or just configured with binfmt_misc), then this
-> should be considered as executable code.  This applies to Bash,
-> Python, Javascript, NodeJS, PE, PHP...  However, we can also make a
-> picture executable with binfmt_misc.  So, again, where to draw the
-> line?
+>
+> On a related note, we had also found an issue with this PHY where
+> the PHY reset is not working quite correctly. What we see is that
+> when polling for the firmware ID in aqr107_wait_reset_complete()
+> is that value in the firware ID registers transitions from 0 to
+> 0xffff and then to the firmware ID. We have been testing the
+> following change to fix this ...
+>
+> diff --git a/drivers/net/phy/aquantia/aquantia.h b/drivers/net/phy/aquant=
+ia/aquantia.h
+> index 2465345081f8..278e3b167c58 100644
+> --- a/drivers/net/phy/aquantia/aquantia.h
+> +++ b/drivers/net/phy/aquantia/aquantia.h
+> @@ -20,6 +20,7 @@
+>   #define VEND1_GLOBAL_FW_ID                     0x0020
+>   #define VEND1_GLOBAL_FW_ID_MAJOR               GENMASK(15, 8)
+>   #define VEND1_GLOBAL_FW_ID_MINOR               GENMASK(7, 0)
+> +#define VEND1_GLOBAL_FW_ID_MASK                        GENMASK(15, 0)
+>
+>   #define VEND1_GLOBAL_MAILBOX_INTERFACE1                        0x0200
+>   #define VEND1_GLOBAL_MAILBOX_INTERFACE1_EXECUTE                BIT(15)
+> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/a=
+quantia/aquantia_main.c
+> index 0b2db486d8bd..5023fd70050d 100644
+> --- a/drivers/net/phy/aquantia/aquantia_main.c
+> +++ b/drivers/net/phy/aquantia/aquantia_main.c
+> @@ -447,7 +447,9 @@ int aqr_wait_reset_complete(struct phy_device *phydev=
+)
+>          int val;
+>
+>          return phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
+> -                                        VEND1_GLOBAL_FW_ID, val, val !=
+=3D 0,
+> +                                        VEND1_GLOBAL_FW_ID, val,
+> +                                        ((val & VEND1_GLOBAL_FW_ID_MASK)=
+ !=3D 0 &&
+> +                                        (val & VEND1_GLOBAL_FW_ID_MASK) =
+!=3D VEND1_GLOBAL_FW_ID_MASK),
+>                                           20000, 2000000, false);
+>   }
+>
+> I have not tried the resume use-case, but curious if this may
+> also help here?
+>
 
-Possibly by making open for config an indication executables can give?
-I'm not advocating doing it in this patch, but if we had an open for
-config indication, the LSMs could do much finer grained policy,
-especially if they knew which executable was trying to open the config
-file.  It would allow things like an IMA policy saying if a signed
-executable is opening a config file, then that file must also be
-signed.
+Interesting. Unfortunately this doesn't help with the suspend/resume
+use-case if I revert my offending patch.
 
-James
+Bart
 
+> Cheers
+> Jon
+>
+> --
+> nvpublic
 
