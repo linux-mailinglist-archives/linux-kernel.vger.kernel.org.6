@@ -1,142 +1,78 @@
-Return-Path: <linux-kernel+bounces-256686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4BA59351EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 20:46:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A8B19351F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 20:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5071AB218D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:46:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 269BBB21034
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2581459FD;
-	Thu, 18 Jul 2024 18:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3C5145332;
+	Thu, 18 Jul 2024 18:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HiUnQttj"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3zuyns0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B57146A6B;
-	Thu, 18 Jul 2024 18:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8F545003;
+	Thu, 18 Jul 2024 18:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721328293; cv=none; b=WHer1vyH2b6hQHSobj3sH/7D20bIbplC2RvUlONcL9ugjBKn5UaitNHAJIfrY+iEtvsuAYufKCqmYR4eHIWS7X/5jh08IeFWsL0wq46Jlqv+CgyZyGkzGu6WxMd+uPQ2ZfIRfbLr61C1uz7kVI282YrpDttynNskSMaz2cfeUHM=
+	t=1721328756; cv=none; b=IZqfyBkTu9SqgQQL18577kK0Cm55yd51ufPx6pzG+XhvmkZWArYQCOrttrr/EW1fzFQeinLHt1NbZU5MJpT0u6yq/BP4VBylPVFGjVnOHEU/ublJNcHef7Gpv5Cs/lfIQDqhi8UkYlT6L6qJF8FTYl450qBSt6PDOPR+1JDNr+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721328293; c=relaxed/simple;
-	bh=9sBK5K4+cHOrE4uvr23RYpMqbNqYy4vqgDPWNqgM0f0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j5MqI3rBcmx25hJSqCKfOcxvknrBfmxWp2o50B/U0ZlfjNUGqKYNBhBjd2o/CfXodYqb7NJXFLaJ1I2AXFC49sX/N7dZwS4AfDfzDp2Ud6HwBsmAaByeIjLU4Rn9yRMyi383uwOp1TVhAEDLLwYhqENSA2zyf6XphQrPNnjjcUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HiUnQttj; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70b42250526so102241b3a.1;
-        Thu, 18 Jul 2024 11:44:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721328291; x=1721933091; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zvDl0DF23aI2GecrtsR94Ksljs15WLtxcCwOavCMIx8=;
-        b=HiUnQttjzG486SL8UACnXHGWuur0GBWhromoquGz9LdD/OikE23rd38NlZ0s0TDkTD
-         0bN02sb9bxgW5wsz/Tw/k06uFOisjc8tejZnBAeN8Xbayd9/nYd3utL5OVTEwkgMikle
-         01z+vUdaVBS6p8qV3prQyd1x7UiCmk1GoXzIa6KB1xOyYvnPwBS4tYu9SuolLw1H9gWJ
-         AyjXquDDIGxAvsw61bsfXWZyF4vYGOY9fiZFHfJ0BqBJGjIUG6HQ0wRonOr5keoGmGxF
-         YILhRpyZvEcSZwt97dg/8ZdZHijy+ARVP9B4jaNL+iu43QAxm9kpVxSxfhuWcIGLoVFk
-         4uTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721328291; x=1721933091;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zvDl0DF23aI2GecrtsR94Ksljs15WLtxcCwOavCMIx8=;
-        b=Mx5mvXsF5bMVyo/d0h87kOAekNuwsHLLtWrUxowvb6zJ8ItfzL+I7eM676U1WN6vx3
-         mIsYr6gISrC2sweX1Av0UgVOFbo7yJ19b3zD9/mQzCVGjO+41yMwlZtDGDK5DK8YL55S
-         FU/+5vIJe9m6gXdrAFZQb4G6AZJL4POC87haoKaHIUaKTHbSV2LbLcXBIZ6bAdY2c+Xt
-         BipYqhH4IqXkQUdi/Q09MY5iNLyITqO7gvEYsiftPrHU63ykKoGFOl5NV0s4DvIySrHB
-         zdwinnYfYAi28FKLUJ0p3QRLaRZ7mWB88YBXdpU05RRBel/ew00W8BqSYNNCdLkXw4kc
-         5BWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWxpq7w/6IR6g8i8GtCFWBcEkrVfiktf+I5+1YxOwe/lQv0EevIyxeTkClVgSWQAD34QhC2dXDz42obfqqGGZh/JLMEO3rMBf037aVzjpIJc2Pl4oojkuplE+NnoRBc1BDT0Y7USkUFqg==
-X-Gm-Message-State: AOJu0Ywu/eZnY9bAqnv/EIEbuWjQ2iqjjFdECl2agVtuRPLsJQvOQA1N
-	RLt61HMagHYC2weiU7d6DQkd52NDssQAkCIex3rnxtpHms+K9NgjZ0m99A==
-X-Google-Smtp-Source: AGHT+IGVCt3HDoliN6B65VoDbWa2i+0NWVOj7HIVlmx/hURkPU4govXcszxyEECDWMTBN6bK357ibg==
-X-Received: by 2002:a05:6a00:c92:b0:70a:f38c:74ba with SMTP id d2e1a72fcca58-70ce5069e69mr7990334b3a.22.1721328290542;
-        Thu, 18 Jul 2024 11:44:50 -0700 (PDT)
-Received: from localhost ([2a00:79e1:2e00:1301:3279:d3cd:5dde:c799])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70cfc72fbadsm150800b3a.90.2024.07.18.11.44.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 11:44:49 -0700 (PDT)
-From: Rob Clark <robdclark@gmail.com>
-To: linux-arm-msm@vger.kernel.org
-Cc: Doug Anderson <dianders@chromium.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Rob Clark <robdclark@chromium.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 3/3] arm64: dts: qcom: x1e80100-yoga: Update panel bindings
-Date: Thu, 18 Jul 2024 11:44:34 -0700
-Message-ID: <20240718184434.6307-3-robdclark@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240718184434.6307-1-robdclark@gmail.com>
-References: <20240718184434.6307-1-robdclark@gmail.com>
+	s=arc-20240116; t=1721328756; c=relaxed/simple;
+	bh=eLYytie5OavnSK9/S/M2BFFGHyOeAhdS3/+1va2/wAk=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=iqo0gcp7CVZEeTWCZu2cZzs94F3ECldHrjsyrByj/HJ8Ql3RLeG1DfHlF1clfLuZiCnJH64WDQS/l5LtwdMzpOnEKykaJGcxOvD/2gSJ9YEOwfXVHZpKp3zUMqAk+NUVEe0e7Rbx8MMXyf7Sf/NgkpvpuXfILbyY2ZjvD2ovTWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P3zuyns0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6F71EC116B1;
+	Thu, 18 Jul 2024 18:52:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721328756;
+	bh=eLYytie5OavnSK9/S/M2BFFGHyOeAhdS3/+1va2/wAk=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=P3zuyns0aDScdwrMYXul8/JmoujKRydt3d8TV3m8Vdiu7ZR8reeLcWo9ir66gOvGx
+	 XHez0vKztLoTPX5Bqoh1z5OCyjRXAEL9E2DrH9cFh5w5qH1DkYosVftXihbwNxhPrl
+	 jwHcE9aCXWYTRoU0vx4ok3b1ggsP5o+w4mCfDL7teNyt8qUba8X6U2HDFnZGDUz83o
+	 SorghyCRCHYhyQlQKosIWCLotINhNOJNqqDvMv4gL+r5qIgQm4Bi3lrr2PyeBf5B1o
+	 JHAo2jDsEKNbVy/CQlz5Oxqq5UKXN0LJbo3Icm96tdKU85XKpW4IOI6MBWKTpmEIOd
+	 gIYMtk3jprTkQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5A466C433E9;
+	Thu, 18 Jul 2024 18:52:36 +0000 (UTC)
+Subject: Re: [GIT PULL] fbdev fixes and cleanups for v6.11-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <Zpk7E3ZBlh2UdXy2@carbonx1>
+References: <Zpk7E3ZBlh2UdXy2@carbonx1>
+X-PR-Tracked-List-Id: <linux-fbdev.vger.kernel.org>
+X-PR-Tracked-Message-Id: <Zpk7E3ZBlh2UdXy2@carbonx1>
+X-PR-Tracked-Remote: http://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git tags/fbdev-for-6.11-rc1
+X-PR-Tracked-Commit-Id: 8b5ea9029b03efda74292c57e0377a98ed0b7434
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: cb273eb7c8390c70a484db6c79a797e377db09b5
+Message-Id: <172132875636.1632.11308126601806645460.pr-tracker-bot@kernel.org>
+Date: Thu, 18 Jul 2024 18:52:36 +0000
+To: Helge Deller <deller@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Rob Clark <robdclark@chromium.org>
+The pull request you sent on Thu, 18 Jul 2024 17:56:03 +0200:
 
-Use the correct panel compatible, and wire up enable-gpio.  It is wired
-up in the same way as the x1e80100-crd.
+> http://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git tags/fbdev-for-6.11-rc1
 
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
- .../boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts   | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/cb273eb7c8390c70a484db6c79a797e377db09b5
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-index f569f0fbd1fc..37ef05f8c7e0 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-@@ -592,9 +592,13 @@ &mdss_dp3 {
- 
- 	aux-bus {
- 		panel {
--			compatible = "edp-panel";
-+			compatible = "samsung,atna45dc02";
-+			enable-gpios = <&pmc8380_3_gpios 4 GPIO_ACTIVE_HIGH>;
- 			power-supply = <&vreg_edp_3p3>;
- 
-+			pinctrl-0 = <&edp_bl_en>;
-+			pinctrl-names = "default";
-+
- 			port {
- 				edp_panel_in: endpoint {
- 					remote-endpoint = <&mdss_dp3_out>;
-@@ -663,6 +667,13 @@ &pcie6a_phy {
- 	status = "okay";
- };
- 
-+&pmc8380_3_gpios {
-+	edp_bl_en: edp-bl-en-state {
-+		pins = "gpio4";
-+		function = "normal";
-+	};
-+};
-+
- &qupv3_0 {
- 	status = "okay";
- };
+Thank you!
+
 -- 
-2.45.2
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
