@@ -1,105 +1,137 @@
-Return-Path: <linux-kernel+bounces-256377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E9B4934D43
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:34:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E426D934D45
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D422BB2117F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:34:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20EBB1C21ED0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B854513B593;
-	Thu, 18 Jul 2024 12:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d0Ox3t3J"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6930313BC30;
+	Thu, 18 Jul 2024 12:34:35 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC19E78C93
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 12:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2501B839E4;
+	Thu, 18 Jul 2024 12:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721306049; cv=none; b=PgQJ0aYuSeR1UdltGh4XEYAI4vAxap9Yz4ZpZ3AfWQRbcX+IUOckJRmVVmhzJ3IUdNse1oD0rKslQx+46VhcUMFJpptchxbXLXKi3XIT/OARofpWVtHl6q+zVd7muTpMXOE9bjWc9p1ofWSjSSDzCWa+8CECz4N2h2E9CxEURmA=
+	t=1721306075; cv=none; b=bqoP2ESCvLLqoVIuRLGwU0sBOJ1y2V/1KNuLSDOpFlviFJVSe1ppKMkx+n5uMoTpvGJNkG19AX9y4p9b4z7X0SDYUsckY6uIkemmkB8andtpaCi3Z3UZGw4ORCb2MAub6lJTO8H7SyLHJZS/ksdwG5TDRNiX71vvIuxeDRfNnYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721306049; c=relaxed/simple;
-	bh=9/PRQnT6m7ZKE4E0lTCWt3wr0JNjTQcZeKQYDcLzk1I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HDD77CXed2sDHM64muTCESrgL90rvwCdQ0sNYhfpyNxm9+bbkvoiUiS8ybH11ASpRUnjKFVysImMnJm8tBM+6pPDWxTTQ5tJMyAIln3vbsoj2U5Xt9olA04CkP2CAVVRrM5DmqrDUL0NduVLqrHhGvlZPSQDRCpQA6YpIDN336I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d0Ox3t3J; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fc6a017abdso2577015ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 05:34:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721306047; x=1721910847; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A7RzpzbytVKsMSo/gRdZ+hmuL1xtdjhM/yZEN5JcVuc=;
-        b=d0Ox3t3JqoU17ZFg4MYF2zEn4baV7dXnBMu9H9TsrP+PSQupzYPtvalTTblw3UiBWx
-         dZh42MyppJPQJdlcR0H7vE9+Rm0ORZju5AqwfaN32oqIYqGS26TdGN5EnayP17q8kQNq
-         FnXr3Nb6rdJQGJj3pGzOcz/lwxeQkQL9lU2K0L4uCVWPzPpf9qrVI++mnluSU4GkxByL
-         Ggt5HNi2gZb/tKLX5M1zR6TkegEBPZN6WGxP0c4h95q7YvF/BQNGE3vLJfyPqViP5yg5
-         TNyLN4OfNjRljcog/hWQq0YvBsPbP2lJVFczizu2cAQwJdZwfmLjtIk4EWrTOl1ViFxX
-         4A0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721306047; x=1721910847;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A7RzpzbytVKsMSo/gRdZ+hmuL1xtdjhM/yZEN5JcVuc=;
-        b=tDZTq6Oesw7iWpWdovfMShXLApVyQgfIz/uiHq4ZF6cshsh5fGPa5cZftGShPe9Ut6
-         CV8ey+iWj2t/XyMsNHMV8WWZw+1wTpRD/CCr+b4wwRuF/Y7ESSkfAGT750+/LxW3Xr4j
-         AB+Gqvb4pb+9OPOPfsgskpVPtmNueQWANV8yMKm/de0cxpOkCwQTM8JqQpfg9rK46unB
-         2ApGSbm6tGndPEk2Fw2woaZXufoj7Tk7lMepV5SXoOEzoKtskP5HK13w6RTwLocGEt+U
-         mt6F0Z/nuWCsoaIufg9ZAtgC8gBi/9zOiE50wBRW58JIYUV+S8ViQSjhV8X68X4by+XU
-         nnIA==
-X-Gm-Message-State: AOJu0YyZpJCO+Y1VFSQAK91bNRVKi6X6qC41Pw5bywaGp7oqYfnvvibp
-	pKYiZOwkodCW0lAEEo5NpoAW750L4TEY54eBmNkIsWUbZngw3oKBulk/kL6j
-X-Google-Smtp-Source: AGHT+IF8iR7aWsEDsucKBTzizmCkqxlKKioHWhy2W0os2pqVjNGU3eBKQKB9Ckw6K/tgAIh1LRxIMg==
-X-Received: by 2002:a17:903:187:b0:1fb:83c5:cf93 with SMTP id d9443c01a7336-1fc4e1471bamr36631195ad.27.1721306046992;
-        Thu, 18 Jul 2024 05:34:06 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bb6fdc9sm92123275ad.52.2024.07.18.05.34.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 05:34:06 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: syzbot+a81f2759d022496b40ab@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [syzbot] [net?] KMSAN: uninit-value in hsr_get_node (3)
-Date: Thu, 18 Jul 2024 21:34:04 +0900
-Message-Id: <20240718123404.59833-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <0000000000004a86bf0616571fc7@google.com>
-References: <0000000000004a86bf0616571fc7@google.com>
+	s=arc-20240116; t=1721306075; c=relaxed/simple;
+	bh=6fyIP5W4v8tQ/4k7BHsFZtX4LIIGKOtkCQDYet7dKkc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RFqTDG0rJw9/mj4ugr90aokffj+YlSVhxM0QmNhbk8d6SOqBlOLkwfCxSXfA4k9MGzDaMgxg4m4V6Wp6P0obx+S5IFhn5vqP81sq7Kf2OHBpTN/92TD3fPlW4Q3+vck116UPLc+8PvV0+CiV8QPRWOrMPTmmIh2InoHVCuBng0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WPsZH1N67zyN4g;
+	Thu, 18 Jul 2024 20:29:43 +0800 (CST)
+Received: from kwepemg100016.china.huawei.com (unknown [7.202.181.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3CECD18005F;
+	Thu, 18 Jul 2024 20:34:27 +0800 (CST)
+Received: from [10.67.110.48] (10.67.110.48) by kwepemg100016.china.huawei.com
+ (7.202.181.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 18 Jul
+ 2024 20:34:26 +0800
+Message-ID: <0729db54-98cf-4006-91d0-0ebda4dbc251@huawei.com>
+Date: Thu, 18 Jul 2024 20:34:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH testsuite] tests/task_setscheduler: add cgroup v2 case for
+ moving proc to root cgroup
+To: Paul Moore <paul@paul-moore.com>
+CC: Ondrej Mosnacek <omosnace@redhat.com>, Stephen Smalley
+	<stephen.smalley.work@gmail.com>, <selinux@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Wang Weiyang <wangweiyang2@huawei.com>
+References: <20240702095401.16278-1-gongruiqi1@huawei.com>
+ <9473d6eb-3f56-4c73-8e61-69111837c07b@huawei.com>
+ <CAHC9VhR+tk4mwmaQ6u8SEnzg6zMF2krFHKVwxKx91GX1K=4A=g@mail.gmail.com>
+Content-Language: en-US
+From: Gong Ruiqi <gongruiqi1@huawei.com>
+In-Reply-To: <CAHC9VhR+tk4mwmaQ6u8SEnzg6zMF2krFHKVwxKx91GX1K=4A=g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemg100016.china.huawei.com (7.202.181.57)
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
----
- drivers/net/virtio_net.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2024/07/18 0:17, Paul Moore wrote:
+> On Tue, Jul 16, 2024 at 10:19 PM Gong Ruiqi <gongruiqi1@huawei.com> wrote:
+>>
+>> Ping.
+> 
+> Dropping the LSM mailing list to cut down on the noise as it isn't a
+> relevant mailing list.
+> 
+> Ondrej currently maintains the selinux-testsuite project so I'd prefer
+> to give him time to review/test/etc. the patch, but I see it has
+> already been a couple of weeks without response.  If Ondrej doesn't
+> get to this patch by the end of the Linux v6.11 merge window I'll take
+> a look then.
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index af474cc191d0..2088b566d10b 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -2895,7 +2895,7 @@ static int virtnet_open(struct net_device *dev)
- 	for (i = 0; i < vi->max_queue_pairs; i++) {
- 		if (i < vi->curr_queue_pairs)
- 			/* Make sure we have some buffers: if oom use wq. */
--			if (!try_fill_recv(vi, &vi->rq[i], GFP_KERNEL))
-+			if (!try_fill_recv(vi, &vi->rq[i], GFP_KERNEL | __GFP_ZERO))
- 				schedule_delayed_work(&vi->refill, 0);
- 
- 		err = virtnet_enable_queue_pair(vi, i);
---
+Thanks for your help!
+
+> 
+> Where (what distribution, version, etc.) did you see this problem?
+
+The problem occurred when I ran the testsuite on Fedora 40 with v6.6
+kernel, and it was the only failed testcase.
+
+> 
+> Thank you for sending this out :)
+> 
+>> On 2024/07/02 17:54, GONG, Ruiqi wrote:
+>>> Currently for systems that only enable cgroup v2, the test script would
+>>> fail to move the target process into the root cgroup since the cgroup v1
+>>> path is used, which therefore makes the testcase fail. Add cgroup v2
+>>> handling here so that no matter which cgroup version the CPU controller
+>>> is bound to, the target process can always be moved to the root CPU
+>>> cgroup.
+>>>
+>>> Signed-off-by: GONG, Ruiqi <gongruiqi1@huawei.com>
+>>> ---
+>>>  tests/task_setscheduler/test | 17 +++++++++++------
+>>>  1 file changed, 11 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/tests/task_setscheduler/test b/tests/task_setscheduler/test
+>>> index c2fe8c6..fa1efb1 100755
+>>> --- a/tests/task_setscheduler/test
+>>> +++ b/tests/task_setscheduler/test
+>>> @@ -20,12 +20,17 @@ vec( $rin, fileno($f), 1 ) = 1;
+>>>  select( $rin, undef, undef, 5 );
+>>>  close($f);
+>>>
+>>> -$cgroup_cpu = "/sys/fs/cgroup/cpu/tasks";
+>>> -if ( -w $cgroup_cpu ) {
+>>> -
+>>> -    # We can only set the scheduler policy fo SCHED_{RR,FIFO} in the root
+>>> -    # cgroup so move our target process to the root cgroup.
+>>> -    open( my $fd, ">>", $cgroup_cpu );
+>>> +# We can only set the scheduler policy fo SCHED_{RR,FIFO} in the root
+>>> +# cgroup so move our target process to the root cgroup.
+>>> +$cgroup_v1_cpu = "/sys/fs/cgroup/cpu/tasks";
+>>> +if ( -w $cgroup_v1_cpu ) {
+>>> +    open( my $fd, ">>", $cgroup_v1_cpu );
+>>> +    print $fd $pid;
+>>> +    close $fd;
+>>> +}
+>>> +$cgroup_v2 = "/sys/fs/cgroup/cgroup.procs";
+>>> +if ( -w $cgroup_v2 ) {
+>>> +    open( my $fd, ">>", $cgroup_v2 );
+>>>      print $fd $pid;
+>>>      close $fd;
+>>>  }
+>>
+> 
+> 
 
