@@ -1,445 +1,169 @@
-Return-Path: <linux-kernel+bounces-256490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D763934F40
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:42:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36178934F42
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50D991C21CBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:42:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B017FB23C30
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:42:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2B4142E80;
-	Thu, 18 Jul 2024 14:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fbkFfJ/F"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA55143C6D;
+	Thu, 18 Jul 2024 14:41:44 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D93F12F5A1;
-	Thu, 18 Jul 2024 14:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEC712C7FB;
+	Thu, 18 Jul 2024 14:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721313699; cv=none; b=bYMS/zuhaEDZNA2+cFfFdVbBMJQYZ3wTmrdkldJvwQ7Fkx5k6s0mfgYpAKqYJoJLGGihxjWXWXG6w729EiS6snF7TkNGOrwWf5ThfjAsY9v8ClcrtY+F02i78gcFbgrx+wtVOlwLFK6SbiWnkclb4hhSkT3qWasqwPxnxq1iBhk=
+	t=1721313704; cv=none; b=JZKZ5Gn6LCcgheuffTNv9cRrpMnb5nqT2dflzZ22rjBBh+zr+dGdu/eX1eG7AV8dY5eceijBpDqptoFwLOwryMj7mdKl7FrvveJvvonAgFOU1/FL8EBLtW6hBROOUzgI4YRl3q98521WzQEA394TSLL9URPp6ESozRE3tMuXBzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721313699; c=relaxed/simple;
-	bh=Z8/q5W40UjKPtp8xGXIy7XASUL0pCRYc8O0YvxZ356U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=VU7p7zwuOa3CDLzvS1uu2bV61cPT9uJ8UbUC5E8Vy885T3FEVSomDr77nCKkfEdViNeJ7dqSiu6+/XaILzXLrqjUzd185V+I1qYPudf1/ukvrKvamvVP4IsPCACy0FDm07gEaakjCgcPM24Umua4jI4vKn2lvgv1G853CpXRNlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fbkFfJ/F; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721313697; x=1752849697;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=Z8/q5W40UjKPtp8xGXIy7XASUL0pCRYc8O0YvxZ356U=;
-  b=fbkFfJ/FbwPhtswCVwWxPMf+cCmbfn0VcYIYCiiVdznv9S0VS0A1jZPk
-   4z4QQEDyVpcRXi4rkUaxHzf9Yo59KR4LdZzcF96I7Y1vTfQktJ06paQhS
-   Yc0zhfhLE/cOqSfjBLzje6uIB2crpCtIqEQ+6gD/ea7tTDGnQP7R87GYG
-   EawtP5ihBsJzuWb7yT1uMQf8jYYjkNisVl31Vdbxd1gXMztB8wNI4TaNp
-   F40fULvuT4T5P5h6ncJjj9CG89rlv3fsyVtlfWKyTVx9PYwPXeFyS4IK+
-   uX1WoT7UXNsravemdrzhITZV4q7EDZ7CCTupYmyxBlJJ9g3YVQYv3lS/U
-   A==;
-X-CSE-ConnectionGUID: uuokt91PSnqFVkgINjbL+A==
-X-CSE-MsgGUID: HJCrhnriQQ+6WW9a366gbA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11137"; a="18725746"
-X-IronPort-AV: E=Sophos;i="6.09,218,1716274800"; 
-   d="scan'208";a="18725746"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 07:41:36 -0700
-X-CSE-ConnectionGUID: dZ43LoM3Tm+MO4k73w/jCg==
-X-CSE-MsgGUID: TYLrFK2aRS6Uvpdl91XuYA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,218,1716274800"; 
-   d="scan'208";a="55626641"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 07:41:37 -0700
-Received: from [10.212.127.244] (kliang2-mobl1.ccr.corp.intel.com [10.212.127.244])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id E009720CFED5;
-	Thu, 18 Jul 2024 07:41:33 -0700 (PDT)
-Message-ID: <febefab7-7351-4bd5-a6cc-a0116248484f@linux.intel.com>
-Date: Thu, 18 Jul 2024 10:41:32 -0400
+	s=arc-20240116; t=1721313704; c=relaxed/simple;
+	bh=iXzyFsVsJ6bOJ/aYkV/P6u+K+L2f9NSjbK9pGavbBIM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=ucw4gNiH4re51MxeDQAOPWxGjMC1yPJVgTGcPNspJmJBVtl7hQRvTXXCv1j5ERYbBnQD3fvol9nuvFxyadRBfgdOfWQjID6shZiI9t1SEkzn67jQWbr3kmgP8HghjjPShoqcm+5nu3fQ3vU+tG3eKDoGp//HXdKAMQsMfafHI9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WPwPn1y2DzQlmF;
+	Thu, 18 Jul 2024 22:37:33 +0800 (CST)
+Received: from dggpemd200001.china.huawei.com (unknown [7.185.36.224])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1570F18009D;
+	Thu, 18 Jul 2024 22:41:38 +0800 (CST)
+Received: from [10.174.178.209] (10.174.178.209) by
+ dggpemd200001.china.huawei.com (7.185.36.224) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 18 Jul 2024 22:41:37 +0800
+Message-ID: <4457af52-01a2-be1b-9d13-486b6bd8e579@huawei.com>
+Date: Thu, 18 Jul 2024 22:41:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/6] perf parse-events: Add "cpu" term to set the CPU
- an event is recorded on
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>,
- James Clark <james.clark@arm.com>, Ravi Bangoria <ravi.bangoria@amd.com>,
- Dominique Martinet <asmadeus@codewreck.org>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org,
- Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, ananth.narayan@amd.com,
- gautham.shenoy@amd.com, kprateek.nayak@amd.com, sandipan.das@amd.com
-References: <20240718003025.1486232-1-irogers@google.com>
- <20240718003025.1486232-7-irogers@google.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240718003025.1486232-7-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: CVE-2024-41001: io_uring/sqpoll: work around a potential audit
+ memory leak
+From: Wang Zhaolong <wangzhaolong1@huawei.com>
+To: <cve@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-cve-announce@vger.kernel.org>, <axboe@kernel.dk>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<io-uring@vger.kernel.org>
+References: <2024071253-CVE-2024-41001-7879@gregkh>
+ <18634c7e-b234-ac02-20f8-4d5426733679@huawei.com>
+In-Reply-To: <18634c7e-b234-ac02-20f8-4d5426733679@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemd200001.china.huawei.com (7.185.36.224)
 
+Hello,
 
+I think a possible reason for the leak scenario is:
 
-On 2024-07-17 8:30 p.m., Ian Rogers wrote:
-> The -C option allows the CPUs for a list of events to be specified but
-> its not possible to set the CPU for a single event. Add a term to
-> allow this. The term isn't a general CPU list due to ',' already being
-> a special character in event parsing instead multiple cpu= terms may
-> be provided and they will be merged/unioned together.
-> 
-> An example of mixing different types of events counted on different CPUs:
-> ```
-> $ perf stat -A -C 0,4-5,8 -e "instructions/cpu=0/,l1d-misses/cpu=4,cpu=5/,inst_retired.any/cpu=8/,cycles" -a sleep 0.1
-> 
->  Performance counter stats for 'system wide':
-> 
-> CPU0              368,647      instructions/cpu=0/              #    0.26  insn per cycle
-> CPU4        <not counted>      instructions/cpu=0/
-> CPU5        <not counted>      instructions/cpu=0/
-> CPU8        <not counted>      instructions/cpu=0/
-> CPU0        <not counted>      l1d-misses [cpu]
-> CPU4              203,377      l1d-misses [cpu]
-> CPU5              138,231      l1d-misses [cpu]
-> CPU8        <not counted>      l1d-misses [cpu]
-> CPU0        <not counted>      cpu/cpu=8/
-> CPU4        <not counted>      cpu/cpu=8/
-> CPU5        <not counted>      cpu/cpu=8/
-> CPU8              943,861      cpu/cpu=8/
-> CPU0            1,412,071      cycles
-> CPU4           20,362,900      cycles
-> CPU5           10,172,725      cycles
-> CPU8            2,406,081      cycles
-> 
->        0.102925309 seconds time elapsed
-> ```
-> 
-> Note, the event name of inst_retired.any is missing, reported as
-> cpu/cpu=8/, as there are unmerged uniquify fixes:
-> https://lore.kernel.org/lkml/20240510053705.2462258-3-irogers@google.com/
-> 
-> An example of spreading uncore overhead across two CPUs:
-> ```
-> $ perf stat -A -e "data_read/cpu=0/,data_write/cpu=1/" -a sleep 0.1
-> 
->  Performance counter stats for 'system wide':
-> 
-> CPU0               223.65 MiB  uncore_imc_free_running_0/cpu=0/
-> CPU0               223.66 MiB  uncore_imc_free_running_1/cpu=0/
-> CPU0        <not counted> MiB  uncore_imc_free_running_0/cpu=1/
-> CPU1                 5.78 MiB  uncore_imc_free_running_0/cpu=1/
-> CPU0        <not counted> MiB  uncore_imc_free_running_1/cpu=1/
-> CPU1                 5.74 MiB  uncore_imc_free_running_1/cpu=1/
-> ```
-> 
-> Manually fixing the output it should be:
-> ```
-> CPU0               223.65 MiB  uncore_imc_free_running_0/data_read,cpu=0/
-> CPU0               223.66 MiB  uncore_imc_free_running_1/data_read,cpu=0/
-> CPU1                 5.78 MiB  uncore_imc_free_running_0/data_write,cpu=1/
-> CPU1                 5.74 MiB  uncore_imc_free_running_1/data_write,cpu=1/
-> ```
-> 
-> That is data_read from 2 PMUs was counted on CPU0 and data_write was
-> counted on CPU1.
+When `audit_context->dummy` is 0. __audit_sockaddr() allocates sockaddr.
 
-There was an effort to make the counter access from any CPU of the package.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d6a2f9035bfc27d0e9d78b13635dda9fb017ac01
+In the below process, audit_reset_context() return early. ctx->sockaddr
+is not released.
 
-But now it limits the access from specific CPUs. It sounds like a
-regression.
+   io_issue_sqe
+     audit_uring_entry
+       __audit_uring_entry
+         ctx->dummy -- set dummy as non-zero
+     def->issue()
+     audit_uring_exit
+       __audit_uring_exit
+         audit_reset_context
 
-Thanks,
-Kan
+static void audit_reset_context(struct audit_context *ctx)
+{
+     ......
+     /* if ctx is non-null, reset the "ctx->context" regardless */
+     ctx->context = AUDIT_CTX_UNUSED;
+     if (ctx->dummy)
+         return;
 
+     ......
+     kfree(ctx->sockaddr);
+     ......
+}
+
+The `audit_uring_entry(IORING_OP_NOP);` statement initializes the 'dummy' once at the
+beginning to ensure that ctx->sockaddr is allocated and deallocated in pairs later
+in the process.
+
+According to the above analysis, I think the fixes tag should be
+5bd2182d58e9 ("audit,io_uring,io-wq: add some basic audit support to io_uring")
+Is my understanding correct?
+
+I look forward to hearing back.
+
+Best regards,
+Wang Zhaolong
+
+> Hello,
 > 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/Documentation/perf-list.txt |  9 ++++
->  tools/perf/util/evsel_config.h         |  1 +
->  tools/perf/util/parse-events.c         | 73 ++++++++++++++++++++++----
->  tools/perf/util/parse-events.h         |  3 +-
->  tools/perf/util/parse-events.l         |  1 +
->  tools/perf/util/pmu.c                  |  1 +
->  6 files changed, 77 insertions(+), 11 deletions(-)
+> I was confused when reviewing the fix for CVE-2024-41001.
+> To better understand the issue and the proposed solution, I would
+> greatly appreciate your help in clarifying the following points:
 > 
-> diff --git a/tools/perf/Documentation/perf-list.txt b/tools/perf/Documentation/perf-list.txt
-> index 6bf2468f59d3..15511afe94a1 100644
-> --- a/tools/perf/Documentation/perf-list.txt
-> +++ b/tools/perf/Documentation/perf-list.txt
-> @@ -273,6 +273,15 @@ Sums up the event counts for all hardware threads in a core, e.g.:
->  
->    perf stat -e cpu/event=0,umask=0x3,percore=1/
->  
-> +cpu:
-> +
-> +Specifies the CPU to open the event upon. The value may be repeated to
-> +specify opening the event on multiple CPUs:
-> +
-> +
-> +  perf stat -e instructions/cpu=0,cpu=2/,cycles/cpu=1,cpu=2/ -a sleep 1
-> +  perf stat -e data_read/cpu=0/,data_write/cpu=1/ -a sleep 1
-> +
->  
->  EVENT GROUPS
->  ------------
-> diff --git a/tools/perf/util/evsel_config.h b/tools/perf/util/evsel_config.h
-> index aee6f808b512..9630c4a24721 100644
-> --- a/tools/perf/util/evsel_config.h
-> +++ b/tools/perf/util/evsel_config.h
-> @@ -47,6 +47,7 @@ struct evsel_config_term {
->  		u32	      aux_sample_size;
->  		u64	      cfg_chg;
->  		char	      *str;
-> +		int	      cpu;
->  	} val;
->  	bool weak;
->  };
-> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-> index 8c0c33361c5e..85faef85b8de 100644
-> --- a/tools/perf/util/parse-events.c
-> +++ b/tools/perf/util/parse-events.c
-> @@ -7,6 +7,7 @@
->  #include <errno.h>
->  #include <sys/ioctl.h>
->  #include <sys/param.h>
-> +#include "cpumap.h"
->  #include "term.h"
->  #include "evlist.h"
->  #include "evsel.h"
-> @@ -177,6 +178,26 @@ static char *get_config_name(const struct parse_events_terms *head_terms)
->  	return get_config_str(head_terms, PARSE_EVENTS__TERM_TYPE_NAME);
->  }
->  
-> +static struct perf_cpu_map *get_config_cpu(const struct parse_events_terms *head_terms)
-> +{
-> +	struct parse_events_term *term;
-> +	struct perf_cpu_map *cpus = NULL;
-> +
-> +	if (!head_terms)
-> +		return NULL;
-> +
-> +	list_for_each_entry(term, &head_terms->terms, list) {
-> +		if (term->type_term == PARSE_EVENTS__TERM_TYPE_CPU) {
-> +			struct perf_cpu_map *cpu = perf_cpu_map__new_int(term->val.num);
-> +
-> +			cpus = perf_cpu_map__merge(cpus, cpu);
-> +			perf_cpu_map__put(cpu);
-> +		}
-> +	}
-> +
-> +	return cpus;
-> +}
-> +
->  /**
->   * fix_raw - For each raw term see if there is an event (aka alias) in pmu that
->   *           matches the raw's string value. If the string value matches an
-> @@ -468,11 +489,12 @@ int parse_events_add_cache(struct list_head *list, int *idx, const char *name,
->  	bool found_supported = false;
->  	const char *config_name = get_config_name(parsed_terms);
->  	const char *metric_id = get_config_metric_id(parsed_terms);
-> +	struct perf_cpu_map *cpus = get_config_cpu(parsed_terms);
-> +	int ret = 0;
->  
->  	while ((pmu = perf_pmus__scan(pmu)) != NULL) {
->  		LIST_HEAD(config_terms);
->  		struct perf_event_attr attr;
-> -		int ret;
->  
->  		if (parse_events__filter_pmu(parse_state, pmu))
->  			continue;
-> @@ -486,7 +508,7 @@ int parse_events_add_cache(struct list_head *list, int *idx, const char *name,
->  						   parsed_terms,
->  						   perf_pmu__auto_merge_stats(pmu));
->  			if (ret)
-> -				return ret;
-> +				goto out_err;
->  			continue;
->  		}
->  
-> @@ -506,20 +528,27 @@ int parse_events_add_cache(struct list_head *list, int *idx, const char *name,
->  
->  		if (parsed_terms) {
->  			if (config_attr(&attr, parsed_terms, parse_state->error,
-> -					config_term_common))
-> -				return -EINVAL;
-> -
-> -			if (get_config_terms(parsed_terms, &config_terms))
-> -				return -ENOMEM;
-> +					config_term_common)) {
-> +				ret = -EINVAL;
-> +				goto out_err;
-> +			}
-> +			if (get_config_terms(parsed_terms, &config_terms)) {
-> +				ret = -ENOMEM;
-> +				goto out_err;
-> +			}
->  		}
->  
->  		if (__add_event(list, idx, &attr, /*init_attr*/true, config_name ?: name,
->  				metric_id, pmu, &config_terms, /*auto_merge_stats=*/false,
-> -				/*cpu_list=*/NULL) == NULL)
-> -			return -ENOMEM;
-> +				cpus) == NULL)
-> +			ret = -ENOMEM;
->  
->  		free_config_terms(&config_terms);
-> +		if (ret)
-> +			goto out_err;
->  	}
-> +out_err:
-> +	perf_cpu_map__put(cpus);
->  	return found_supported ? 0 : -EINVAL;
->  }
->  
-> @@ -814,6 +843,7 @@ static const char *config_term_name(enum parse_events__term_type term_type)
->  		[PARSE_EVENTS__TERM_TYPE_RAW]                   = "raw",
->  		[PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE]          = "legacy-cache",
->  		[PARSE_EVENTS__TERM_TYPE_HARDWARE]              = "hardware",
-> +		[PARSE_EVENTS__TERM_TYPE_CPU]			= "cpu",
->  	};
->  	if ((unsigned int)term_type >= __PARSE_EVENTS__TERM_TYPE_NR)
->  		return "unknown term";
-> @@ -843,6 +873,7 @@ config_term_avail(enum parse_events__term_type term_type, struct parse_events_er
->  	case PARSE_EVENTS__TERM_TYPE_METRIC_ID:
->  	case PARSE_EVENTS__TERM_TYPE_SAMPLE_PERIOD:
->  	case PARSE_EVENTS__TERM_TYPE_PERCORE:
-> +	case PARSE_EVENTS__TERM_TYPE_CPU:
->  		return true;
->  	case PARSE_EVENTS__TERM_TYPE_USER:
->  	case PARSE_EVENTS__TERM_TYPE_SAMPLE_FREQ:
-> @@ -986,6 +1017,15 @@ do {									   \
->  			return -EINVAL;
->  		}
->  		break;
-> +	case PARSE_EVENTS__TERM_TYPE_CPU:
-> +		CHECK_TYPE_VAL(NUM);
-> +		if (term->val.num >= (u64)cpu__max_present_cpu().cpu) {
-> +			parse_events_error__handle(err, term->err_val,
-> +						strdup("too big"),
-> +						NULL);
-> +			return -EINVAL;
-> +		}
-> +		break;
->  	case PARSE_EVENTS__TERM_TYPE_DRV_CFG:
->  	case PARSE_EVENTS__TERM_TYPE_USER:
->  	case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
-> @@ -1112,6 +1152,7 @@ static int config_term_tracepoint(struct perf_event_attr *attr,
->  	case PARSE_EVENTS__TERM_TYPE_RAW:
->  	case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
->  	case PARSE_EVENTS__TERM_TYPE_HARDWARE:
-> +	case PARSE_EVENTS__TERM_TYPE_CPU:
->  	default:
->  		if (err) {
->  			parse_events_error__handle(err, term->err_term,
-> @@ -1243,6 +1284,7 @@ do {								\
->  		case PARSE_EVENTS__TERM_TYPE_RAW:
->  		case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
->  		case PARSE_EVENTS__TERM_TYPE_HARDWARE:
-> +		case PARSE_EVENTS__TERM_TYPE_CPU:
->  		default:
->  			break;
->  		}
-> @@ -1296,6 +1338,7 @@ static int get_config_chgs(struct perf_pmu *pmu, struct parse_events_terms *head
->  		case PARSE_EVENTS__TERM_TYPE_RAW:
->  		case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
->  		case PARSE_EVENTS__TERM_TYPE_HARDWARE:
-> +		case PARSE_EVENTS__TERM_TYPE_CPU:
->  		default:
->  			break;
->  		}
-> @@ -1350,6 +1393,7 @@ static int __parse_events_add_numeric(struct parse_events_state *parse_state,
->  	struct perf_event_attr attr;
->  	LIST_HEAD(config_terms);
->  	const char *name, *metric_id;
-> +	struct perf_cpu_map *cpus;
->  	int ret;
->  
->  	memset(&attr, 0, sizeof(attr));
-> @@ -1371,9 +1415,11 @@ static int __parse_events_add_numeric(struct parse_events_state *parse_state,
->  
->  	name = get_config_name(head_config);
->  	metric_id = get_config_metric_id(head_config);
-> +	cpus = get_config_cpu(head_config);
->  	ret = __add_event(list, &parse_state->idx, &attr, /*init_attr*/true, name,
->  			metric_id, pmu, &config_terms, /*auto_merge_stats=*/false,
-> -			/*cpu_list=*/NULL) ? 0 : -ENOMEM;
-> +			cpus) ? 0 : -ENOMEM;
-> +	perf_cpu_map__put(cpus);
->  	free_config_terms(&config_terms);
->  	return ret;
->  }
-> @@ -1440,6 +1486,7 @@ static int parse_events_add_pmu(struct parse_events_state *parse_state,
->  	LIST_HEAD(config_terms);
->  	struct parse_events_terms parsed_terms;
->  	bool alias_rewrote_terms = false;
-> +	struct perf_cpu_map *term_cpu = NULL;
->  	int ret = 0;
->  
->  	if (verbose > 1) {
-> @@ -1531,6 +1578,12 @@ static int parse_events_add_pmu(struct parse_events_state *parse_state,
->  		goto out_err;
->  	}
->  
-> +	term_cpu = get_config_cpu(&parsed_terms);
-> +	if (!perf_cpu_map__is_empty(term_cpu)) {
-> +		perf_cpu_map__put(info.cpus);
-> +		info.cpus = term_cpu;
-> +		term_cpu = NULL;
-> +	}
->  	evsel = __add_event(list, &parse_state->idx, &attr, /*init_attr=*/true,
->  			    get_config_name(&parsed_terms),
->  			    get_config_metric_id(&parsed_terms), pmu,
-> diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-events.h
-> index e13de2c8b706..b03857499030 100644
-> --- a/tools/perf/util/parse-events.h
-> +++ b/tools/perf/util/parse-events.h
-> @@ -79,7 +79,8 @@ enum parse_events__term_type {
->  	PARSE_EVENTS__TERM_TYPE_RAW,
->  	PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE,
->  	PARSE_EVENTS__TERM_TYPE_HARDWARE,
-> -#define	__PARSE_EVENTS__TERM_TYPE_NR (PARSE_EVENTS__TERM_TYPE_HARDWARE + 1)
-> +	PARSE_EVENTS__TERM_TYPE_CPU,
-> +#define	__PARSE_EVENTS__TERM_TYPE_NR (PARSE_EVENTS__TERM_TYPE_CPU + 1)
->  };
->  
->  struct parse_events_term {
-> diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-events.l
-> index 16045c383ada..e06097a62796 100644
-> --- a/tools/perf/util/parse-events.l
-> +++ b/tools/perf/util/parse-events.l
-> @@ -330,6 +330,7 @@ percore			{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_PERCORE); }
->  aux-output		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_AUX_OUTPUT); }
->  aux-sample-size		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_AUX_SAMPLE_SIZE); }
->  metric-id		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_METRIC_ID); }
-> +cpu			{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_CPU); }
->  cpu-cycles|cycles				{ return hw_term(yyscanner, PERF_COUNT_HW_CPU_CYCLES); }
->  stalled-cycles-frontend|idle-cycles-frontend	{ return hw_term(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_FRONTEND); }
->  stalled-cycles-backend|idle-cycles-backend	{ return hw_term(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_BACKEND); }
-> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-> index 280b2499c861..27e2ff23799e 100644
-> --- a/tools/perf/util/pmu.c
-> +++ b/tools/perf/util/pmu.c
-> @@ -1767,6 +1767,7 @@ int perf_pmu__for_each_format(struct perf_pmu *pmu, void *state, pmu_format_call
->  		"percore",
->  		"aux-output",
->  		"aux-sample-size=number",
-> +		"cpu=number",
->  	};
->  	struct perf_pmu_format *format;
->  	int ret;
+> 1. What was the original patch that introduced this issue (any Fixes tag)?
+> 2. Is the leaking variable member the "context->sockaddr"?
+> 3. Could you shed some light on how the reference to the leaked memory is
+>     lost during the transition from the prep phase to the issue phase?
+> 4. The fix introduces a NOP operation "before the SQPOLL does anything."
+>     How does this addition of a NOP operation prevent the memory leak from
+>     occurring?
+> 
+> Thank you in advance for taking the time to address my questions. Your
+> insights will help me better understand this fix.
+> 
+> Best regards,
+> Wang Zhaolong
+> 
+>> Description
+>> ===========
+>>
+>> In the Linux kernel, the following vulnerability has been resolved:
+>>
+>> io_uring/sqpoll: work around a potential audit memory leak
+>>
+>> kmemleak complains that there's a memory leak related to connect
+>> handling:
+>>
+>> unreferenced object 0xffff0001093bdf00 (size 128):
+>> comm "iou-sqp-455", pid 457, jiffies 4294894164
+>> hex dump (first 32 bytes):
+>> 02 00 fa ea 7f 00 00 01 00 00 00 00 00 00 00 00  ................
+>> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>> backtrace (crc 2e481b1a):
+>> [<00000000c0a26af4>] kmemleak_alloc+0x30/0x38
+>> [<000000009c30bb45>] kmalloc_trace+0x228/0x358
+>> [<000000009da9d39f>] __audit_sockaddr+0xd0/0x138
+>> [<0000000089a93e34>] move_addr_to_kernel+0x1a0/0x1f8
+>> [<000000000b4e80e6>] io_connect_prep+0x1ec/0x2d4
+>> [<00000000abfbcd99>] io_submit_sqes+0x588/0x1e48
+>> [<00000000e7c25e07>] io_sq_thread+0x8a4/0x10e4
+>> [<00000000d999b491>] ret_from_fork+0x10/0x20
+>>
+>> which can can happen if:
+>>
+>> 1) The command type does something on the prep side that triggers an
+>>     audit call.
+>> 2) The thread hasn't done any operations before this that triggered
+>>     an audit call inside ->issue(), where we have audit_uring_entry()
+>>     and audit_uring_exit().
+>>
+>> Work around this by issuing a blanket NOP operation before the SQPOLL
+>> does anything.
+>>
+>> The Linux kernel CVE team has assigned CVE-2024-41001 to this issue.
+> 
+
 
