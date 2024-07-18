@@ -1,93 +1,191 @@
-Return-Path: <linux-kernel+bounces-256214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 368D4934AD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:25:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9E6A934AD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:25:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B94D0287911
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:25:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8578A2878C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A769823DD;
-	Thu, 18 Jul 2024 09:25:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B1F81AD7;
+	Thu, 18 Jul 2024 09:25:45 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F58E28DD1
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 09:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B7A28DD1;
+	Thu, 18 Jul 2024 09:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721294705; cv=none; b=Oi0kLhQm7RtQF3oo+jBusk0Z8kkAKaVfW6V0TBXSNh0IFJtqVUW1dlktEFV8ht7sNtobz74HVBg7ppBz1vp1n7PiExE5eT2ZeTUEKMH7WcaZskob7cSB5gnGqyDSSl81Uvw/EHB2MVpxvozAOV7iou1js2jctgGLFcnD/QyBpng=
+	t=1721294744; cv=none; b=px6y1VsNcdLv1dEI5WhC23hMc3z0Ag3WqljUd7a9EiqGguVe/gQgXAZdGcdYIfqUACsvIqZYAlJUGtyfc5DOv8QXHZX7cSCr6p7+6nUPyBYH8Kl2oZW7WAmnrIbvYgJYfMt5vkj4BxE3TtkOcLgHV92hRZyOEU5oKu+mEyc5vzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721294705; c=relaxed/simple;
-	bh=EAUinRQviMvDujUv3R7ipwJOCnMA9iLRBAFx+AvKvtg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=NKIF0GpxepEW111tI8VHp/2bSovxQWMZQpF56rwgBxVAA3VfBLWoxtURWWlkWeTEHDbW8ykneRfiOWa1Vfaq5k+dZ5jZHeLdKv7ldAG/Ctkh915mM7c/271I25qhS+rUsamXz5q3W0CpnjBIzjKrsjaqXM2Q6aYT68NwfXLAxJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-8152f0c4e1bso105205239f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 02:25:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721294703; x=1721899503;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5rGyXWRLrvwl7ym9gYBnNhfugsOfnDeqOLsViPL9q/g=;
-        b=VnaEX4dsbXFYBh0Smd6hwk1D2brECKvtilSGGben4s0qc2YMuV4ID+TEw/8Z/QBvSk
-         UdLqsUGrR0sPm4sXZ+yh8/0+OomQNvS9Oc2oKmfRl9Fc3o57FrLGHi5dMs07qE2xwm/a
-         FFlR81znjyD2IBeHkYQf/YpCPa+nmjMFIiFbdn2tPUXZjj4CvCWt/H0VjqPAsjwnb6A0
-         ff+/HvXJXJkvQURx2une61ORw5b0fT1h8ofUbnriNhyNpyAcM+8Nf9JUZUzqJykxv9nl
-         ammkyvbbzxgKOcEWG6DDMTDF0/objz6Ni5nrWv6pgoggvjUc7TJhAq0DXjowNnCGnp8s
-         2pwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPCTFvpAgH4M5dF9f65aIzBrrho8bYlEB7B86AC1GzHrvyd5neRjFZ2/TEQsLCiF7XE3j9uVbvSOxlQ+4vMwprcY2ROM4BMiPln3ez
-X-Gm-Message-State: AOJu0YziqekyHZ+t8CIs8G05E5cMhuihCvwKqgX5VpSzIcNw0xyYEZSB
-	vmSLCOFFSzUGY/9pqdafPLLetv0dthiKBOxCF/kcxcBFwWhJ7Iev+IvayTu5PX5BTAjHP95zVXr
-	X+Nh2o8BfP++a6emxBypjUkfhDFgXrh3oZ2FtoQcFvFTaHHFRqgvPNNo=
-X-Google-Smtp-Source: AGHT+IGz25YUIa6vXqL1eZi/FObkUR9B/7QK8k4uQaFLAqvDLyFpspVztyFv/qtJeUG6Z3FXvnmr+ma8VvHFLQjQ3qYbN6/6uMgQ
+	s=arc-20240116; t=1721294744; c=relaxed/simple;
+	bh=sBpRG87XTr+lD5LPwEAV/IC2h5JXbj8qV0PXvNTPR9c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J4FrZv3S9V7YRtAoUFLUWzqTumi7D36avutDKbZEpLaTv31MZRo18MyzLnQF2B4mKySzhBUNyCNhiOh94AkSNNSl3eMLEuLO+3i4MOa1sSZtF7lg+r05V6cH+sYSyaeedYG17mQEQuTEcuxc5ioDvCE0uB08lVruEykENMHJ0u4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i5e860d09.versanet.de ([94.134.13.9] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sUNOD-0003Jt-IN; Thu, 18 Jul 2024 11:25:29 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Conor Dooley <conor@kernel.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject:
+ Re: [PATCH v2 1/3] dt-bindings: clocks: add binding for
+ voltage-controlled-oscillators
+Date: Thu, 18 Jul 2024 11:25:28 +0200
+Message-ID: <3178118.zE8UqtGg2D@diego>
+In-Reply-To: <20240716-deceiving-saucy-851fb2303c1f@spud>
+References:
+ <20240715110251.261844-1-heiko@sntech.de>
+ <20240715110251.261844-2-heiko@sntech.de>
+ <20240716-deceiving-saucy-851fb2303c1f@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a46:b0:374:9a34:a0a with SMTP id
- e9e14a558f8ab-395594e4481mr3546915ab.6.1721294702813; Thu, 18 Jul 2024
- 02:25:02 -0700 (PDT)
-Date: Thu, 18 Jul 2024 02:25:02 -0700
-In-Reply-To: <000000000000233ab00613f17f99@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000050b78b061d822720@google.com>
-Subject: Re: [syzbot] [bpf?] [net?] possible deadlock in sock_map_delete_elem
-From: syzbot <syzbot+4ac2fe2b496abca8fa4b@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, davem@davemloft.net, edumazet@google.com, 
-	jakub@cloudflare.com, john.fastabend@gmail.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-syzbot suspects this issue was fixed by commit:
+Hi Conor,
 
-commit 98e948fb60d41447fd8d2d0c3b8637fc6b6dc26d
-Author: Jakub Sitnicki <jakub@cloudflare.com>
-Date:   Mon May 27 11:20:07 2024 +0000
+Am Dienstag, 16. Juli 2024, 18:15:08 CEST schrieb Conor Dooley:
+> On Mon, Jul 15, 2024 at 01:02:49PM +0200, Heiko Stuebner wrote:
+> > In contrast to fixed clocks that are described as ungateable, boards
+> > sometimes use additional oscillators for things like PCIe reference
+> > clocks, that need actual supplies to get enabled and enable-gpios to be
+> > toggled for them to work.
+> > 
+> > This adds a binding for such oscillators that are not configurable
+> > themself, but need to handle supplies for them to work.
+> > 
+> > In schematics they often can be seen as
+> > 
+> >          ----------------
+> > Enable - | 100MHz,3.3V, | - VDD
+> >          |    3225      |
+> >    GND - |              | - OUT
+> >          ----------------
+> > 
+> > or similar. The enable pin might be separate but can also just be tied
+> > to the vdd supply, hence it is optional in the binding.
+> > 
+> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > ---
+> >  .../bindings/clock/voltage-oscillator.yaml    | 49 +++++++++++++++++++
+> >  1 file changed, 49 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+> > new file mode 100644
+> > index 0000000000000..8bff6b0fd582e
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+> > @@ -0,0 +1,49 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/voltage-oscillator.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Voltage controlled oscillator
+> 
+> Voltage controlled oscillator? Really? That sounds far too similar to a
+> VCO to me, and the input voltage here (according to the description at
+> least) does not affect the frequency of oscillation.
 
-    bpf: Allow delete from sockmap/sockhash only if update is allowed
+That naming was suggested by Stephen in v1 [0] .
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15df62b5980000
-start commit:   4c639b6a7b9d selftests: net: move amt to socat for better ..
-git tree:       net
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6d14c12b661fb43
-dashboard link: https://syzkaller.appspot.com/bug?extid=4ac2fe2b496abca8fa4b
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=153e3f70980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=174ac5d4980000
+Of course the schematics for the board I have only describe it as
+"100MHz,3.3V,3225" , thumbing through some mouser parts matching that
+only mentions "supply voltage" in their datasheets but not a dependency
+between rate and voltage.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+[0] https://lore.kernel.org/linux-arm-kernel/b3c450a94bcb4ad0bc5b3c7ee8712cb8.sboyd@kernel.org/
 
-#syz fix: bpf: Allow delete from sockmap/sockhash only if update is allowed
+> Why the dedicated binding, rather than adding a supply and enable-gpio
+> to the existing "fixed-clock" binding? I suspect that a large portion of
+> "fixed-clock"s actually require a supply that is (effectively)
+> always-on.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+I guess there are three aspects:
+- I do remember discussions in the past about not extending generic
+  bindings with device-specific stuff. I think generic power-sequences
+  were the topic back then, though that might have changed over time?
+- There are places that describe "fixed-clock" as
+  "basic fixed-rate clock that cannot gate" [1]
+- Stephen also suggested a separate binding [2]
+
+With the fixed-clock being sort of the root for everything else on most
+systems, I opted to leave it alone. I guess if the consenus really is that
+this should go there, I can move it, but discussion in v1 
+
+Interestingly the fixed clock had a gpios property 10 years ago [3] :-) .
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/clk-fixed-rate.c#n18
+[2] https://lore.kernel.org/linux-arm-kernel/68f6dc44a8202fd83792e58aea137632.sboyd@kernel.org/
+[3] https://lore.kernel.org/linux-kernel//20140515064420.9521.47383@quantum/T/#t
+
+
+Heiko
+
+
+> > +
+> > +maintainers:
+> > +  - Heiko Stuebner <heiko@sntech.de>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: voltage-oscillator
+> > +
+> > +  "#clock-cells":
+> > +    const: 0
+> > +
+> > +  clock-frequency: true
+> > +
+> > +  clock-output-names:
+> > +    maxItems: 1
+> > +
+> > +  enable-gpios:
+> > +    description:
+> > +      Contains a single GPIO specifier for the GPIO that enables and disables
+> > +      the oscillator.
+> > +    maxItems: 1
+> > +
+> > +  vdd-supply:
+> > +    description: handle of the regulator that provides the supply voltage
+> > +
+> > +required:
+> > +  - compatible
+> > +  - "#clock-cells"
+> > +  - clock-frequency
+> > +  - vdd-supply
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    voltage-oscillator {
+> > +      compatible = "voltage-oscillator";
+> > +      #clock-cells = <0>;
+> > +      clock-frequency = <1000000000>;
+> > +      vdd-supply = <&reg_vdd>;
+> > +    };
+> > +...
+> 
+
+
+
+
 
