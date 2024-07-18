@@ -1,158 +1,223 @@
-Return-Path: <linux-kernel+bounces-256426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5A76934E66
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:38:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F6A1934E6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04C031C22BB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:38:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1729B211FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C2B13DDAB;
-	Thu, 18 Jul 2024 13:38:42 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D3F13E3F6;
+	Thu, 18 Jul 2024 13:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1wicsR8W";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2RAWIehl";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1wicsR8W";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2RAWIehl"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5364413D89D
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 13:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AAB78C7F;
+	Thu, 18 Jul 2024 13:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721309922; cv=none; b=HW21xYT0ySE1bZGCM/V09V3QNxtWIhyjhq0PZCxo0opW/89NBoDHKbkKXftcXWovtBiyqIBQK3wg/AYb0NkfOTrmhpZcbqDz4ihyFHVq+cxWYNa6Ej3oUeKW0VQ+LI/tJLnceP4f6iDL0/Hvc/hCRE9Z1u2FHi+TkOrme1VBj6o=
+	t=1721310036; cv=none; b=osorCo2RASeXAi0cPYxVTybDQWsV+VpzofQKLjiV/pfeaDqlKJq2TVoedkUcRlp0aKLbqAVJ/QhSY/e2e5cIGLv6+siNccxDgEitsr219RthNgjA2XH112qfdqpfNZfmqEUHcFwxuR4IHQvQ8l42rwTzhNHngE1AlhmEqCFV6vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721309922; c=relaxed/simple;
-	bh=+MOBinJhyFH9jlNjpQWWV3Sh3JRD66MJunjrU//bXk0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gShFhBhkpBH4sCY32cYSdaVCKM4i3+sVO3kTvL+GfFKuVkCra6wqMgqlP8TcUN8n0wjxxcCH8xTRobVSsjIo+qZTYSECUJBqD/b79S/ZDuLYwoq2NrFdnBZDV5qr0mkrZpUM0bWNhBniQIsPv7ZfJZ7hGIuohkdO6g1U+pCQinw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from [2601:18c:9101:a8b6:6e0b:84ff:fee2:98bb] (helo=imladris.surriel.com)
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1sURKs-000000000Jg-3Siz;
-	Thu, 18 Jul 2024 09:38:18 -0400
-Message-ID: <d18ff73a0ef7536f654b63854dc891984319093f.camel@surriel.com>
-Subject: Re: [RFC PATCH] nmi,printk: fix ABBA deadlock between nmi_backtrace
- and dump_stack_lvl
-From: Rik van Riel <riel@surriel.com>
-To: John Ogness <john.ogness@linutronix.de>, Andrew Morton
-	 <akpm@linux-foundation.org>
-Cc: Omar Sandoval <osandov@meta.com>, linux-kernel@vger.kernel.org, Petr
- Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Sergey
- Senozhatsky <senozhatsky@chromium.org>, kernel-team <kernel-team@meta.com>
-Date: Thu, 18 Jul 2024 09:38:18 -0400
-In-Reply-To: <87r0brkvqd.fsf@jogness.linutronix.de>
-References: <20240715232052.73eb7fb1@imladris.surriel.com>
-	 <87plrcqyii.fsf@jogness.linutronix.de>
-	 <93155b2ccafa43ed4845ae450451c6b8e27509cc.camel@surriel.com>
-	 <87r0brkvqd.fsf@jogness.linutronix.de>
-Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
- keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33Aeo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdYdIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gUmllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986ogEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHVWjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE+BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTeg4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/j
-	ddPxKRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/NefO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0MmG1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tPokBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznnekoTE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44NcQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhIomYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0IpQrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkEc4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1721310036; c=relaxed/simple;
+	bh=5SrKFl0bbsuY9g5vbRHMhHg5GcvC5hfwoQcUt3B50N4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X8jM3BE1IO/cOJx6xP00U8VA0IyIODNtXh/Gv37DK3IIotPG0OuE355UJzx9fj45UBnY8HG+BKlHW24PKzxZGowxfwMCrl+/wfrFgkfY72vy/ixZycfyAy9szwltOHbs5yEyhJO9UZmvqm86nn17y2Ow0VPabURJHbNHRIJ2euk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1wicsR8W; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2RAWIehl; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1wicsR8W; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2RAWIehl; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5D94721C26;
+	Thu, 18 Jul 2024 13:40:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721310032; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fHr41Dfa8NxLB4Op/U4h+N3DTR4Jz1LVWa1aI9bFijA=;
+	b=1wicsR8WcFWTA3Ee5gqqGVZoD0TgohY5g7Qi7DU0KiVnWOspCiYyBW6gmJDsTukGdkpBU+
+	a8nAhtzSrfjaQ9KHjTfJ6zMYudpA50JjZkqSweqm3Onr6aZejAqtjDIVo0DworpI9axvbV
+	qjtxJqawtYZD6v2m18kWhCdyqFLf21Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721310032;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fHr41Dfa8NxLB4Op/U4h+N3DTR4Jz1LVWa1aI9bFijA=;
+	b=2RAWIehlIP1hHLb0vIUwRy8RcRGHKYWYZ8HgQxAKROQGQgJ6YqgUvckAJq8IwRi0hU3qBR
+	mn0LjpdqXriZ9eAg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=1wicsR8W;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=2RAWIehl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721310032; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fHr41Dfa8NxLB4Op/U4h+N3DTR4Jz1LVWa1aI9bFijA=;
+	b=1wicsR8WcFWTA3Ee5gqqGVZoD0TgohY5g7Qi7DU0KiVnWOspCiYyBW6gmJDsTukGdkpBU+
+	a8nAhtzSrfjaQ9KHjTfJ6zMYudpA50JjZkqSweqm3Onr6aZejAqtjDIVo0DworpI9axvbV
+	qjtxJqawtYZD6v2m18kWhCdyqFLf21Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721310032;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fHr41Dfa8NxLB4Op/U4h+N3DTR4Jz1LVWa1aI9bFijA=;
+	b=2RAWIehlIP1hHLb0vIUwRy8RcRGHKYWYZ8HgQxAKROQGQgJ6YqgUvckAJq8IwRi0hU3qBR
+	mn0LjpdqXriZ9eAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4ACD41379D;
+	Thu, 18 Jul 2024 13:40:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id uGM+ElAbmWYECgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 18 Jul 2024 13:40:32 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 025F7A0987; Thu, 18 Jul 2024 15:40:31 +0200 (CEST)
+Date: Thu, 18 Jul 2024 15:40:31 +0200
+From: Jan Kara <jack@suse.cz>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Zhihao Cheng <chengzhihao@huaweicloud.com>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+	linux-mtd <linux-mtd@lists.infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	"zhangyi (F)" <yi.zhang@huawei.com>,
+	yangerkun <yangerkun@huawei.com>,
+	"wangzhaolong (A)" <wangzhaolong1@huawei.com>
+Subject: Re: [BUG REPORT] potential deadlock in inode evicting under the
+ inode lru traversing context on ext4 and ubifs
+Message-ID: <20240718134031.sxnwwzzj54jxl3e5@quack3>
+References: <37c29c42-7685-d1f0-067d-63582ffac405@huaweicloud.com>
+ <20240712143708.GA151742@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: riel@surriel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240712143708.GA151742@mit.edu>
+X-Rspamd-Queue-Id: 5D94721C26
+X-Spam-Flag: NO
+X-Spam-Score: -0.01
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-0.01 / 50.00];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MIME_TRACE(0.00)[0:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:dkim];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Level: 
+X-Spamd-Bar: /
 
-On Thu, 2024-07-18 at 09:31 +0206, John Ogness wrote:
-> On 2024-07-17, Rik van Riel <riel@surriel.com> wrote:
-> > I think that would do the trick. The nmi_backtrace() printk is
-> > already
-> > deferred, because of the check for in_nmi() in vprintk(), and this
-> > change would put all the other users of
-> > printk_cpu_sync_get_irqsave()
-> > on the exact same footing as nmi_backtrace().
-> >=20
-> > Combing through the code a little, it looks like that would remove
-> > the potential for this deadlock to happen again.
->=20
-> Let's see what Petr has to say. (He'll be back on Monday.) He might
-> prefer a solution that does not result in deferring printing for all
-> cases. i.e. allow the console_lock if it is available, but avoid the
-> spinning if it is not. Below is a patch that would achieve this.
->=20
-> John
->=20
-> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> index dddb15f48d59..36f40db0bf93 100644
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -1060,6 +1060,8 @@ static int __init log_buf_len_setup(char *str)
-> =C2=A0early_param("log_buf_len", log_buf_len_setup);
-> =C2=A0
-> =C2=A0#ifdef CONFIG_SMP
-> +static bool vprintk_emit_may_spin(void);
-> +
-> =C2=A0#define __LOG_CPU_MAX_BUF_LEN (1 << CONFIG_LOG_CPU_MAX_BUF_SHIFT)
-> =C2=A0
-> =C2=A0static void __init log_buf_add_cpu(void)
-> @@ -1090,6 +1092,7 @@ static void __init log_buf_add_cpu(void)
-> =C2=A0}
-> =C2=A0#else /* !CONFIG_SMP */
-> =C2=A0static inline void log_buf_add_cpu(void) {}
-> +static inline bool vprintk_emit_may_spin(void) { return true };
-> =C2=A0#endif /* CONFIG_SMP */
-> =C2=A0
-> =C2=A0static void __init set_percpu_data_ready(void)
-> @@ -2330,6 +2333,8 @@ asmlinkage int vprintk_emit(int facility, int
-> level,
-> =C2=A0
-> =C2=A0	/* If called from the scheduler, we can not call up(). */
-> =C2=A0	if (!in_sched) {
-> +		int ret;
-> +
-> =C2=A0		/*
-> =C2=A0		 * The caller may be holding system-critical or
-> =C2=A0		 * timing-sensitive locks. Disable preemption during
-> @@ -2344,7 +2349,11 @@ asmlinkage int vprintk_emit(int facility, int
-> level,
-> =C2=A0		 * spinning variant, this context tries to take over
-> the
-> =C2=A0		 * printing from another printing context.
-> =C2=A0		 */
-> -		if (console_trylock_spinning())
-> +		if (vprintk_emit_may_spin())
-> +			ret =3D console_trylock_spinning();
-> +		else
-> +			ret =3D console_trylock();
-> +		if (ret)
-> =C2=A0			console_unlock();
-> =C2=A0		preempt_enable();
-> =C2=A0	}
-> @@ -4321,6 +4330,15 @@ void console_replay_all(void)
-> =C2=A0static atomic_t printk_cpu_sync_owner =3D ATOMIC_INIT(-1);
-> =C2=A0static atomic_t printk_cpu_sync_nested =3D ATOMIC_INIT(0);
-> =C2=A0
-> +/*
-> + * As documented in printk_cpu_sync_get_irqsave(), a context holding
-> the
-> + * printk_cpu_sync must not spin waiting for another CPU.
-> + */
-> +static bool vprintk_emit_may_spin(void)
-> +{
-> +	return (atomic_read(&printk_cpu_sync_owner) !=3D
-> smp_processor_id());
-> +}
+On Fri 12-07-24 10:37:08, Theodore Ts'o wrote:
+> On Fri, Jul 12, 2024 at 02:27:20PM +0800, Zhihao Cheng wrote:
+> > Problem description
+> > ===================
+> > 
+> > The inode reclaiming process(See function prune_icache_sb) collects all
+> > reclaimable inodes and mark them with I_FREEING flag at first, at that
+> > time, other processes will be stuck if they try getting these inodes(See
+> > function find_inode_fast), then the reclaiming process destroy the
+> > inodes by function dispose_list().
+> > Some filesystems(eg. ext4 with ea_inode feature, ubifs with xattr) may
+> > do inode lookup in the inode evicting callback function, if the inode
+> > lookup is operated under the inode lru traversing context, deadlock
+> > problems may happen.
+> > 
+> > Case 1: In function ext4_evict_inode(), the ea inode lookup could happen
+> > if ea_inode feature is enabled, the lookup process will be stuck under
+> > the evicting context like this:
+> > 
+> >  1. File A has inode i_reg and an ea inode i_ea
+> >  2. getfattr(A, xattr_buf) // i_ea is added into lru // lru->i_ea
+> >  3. Then, following three processes running like this:
+> > 
+> >     PA                              PB
+> >  echo 2 > /proc/sys/vm/drop_caches
+> >   shrink_slab
+> >    prune_dcache_sb
+> >    // i_reg is added into lru, lru->i_ea->i_reg
+> >    prune_icache_sb
+> >     list_lru_walk_one
+> >      inode_lru_isolate
+> >       i_ea->i_state |= I_FREEING // set inode state
+> >       i_ea->i_state |= I_FREEING // set inode state
+> 
+> Um, I don't see how this can happen.  If the ea_inode is in use,
+> i_count will be greater than zero, and hence the inode will never be
+> go down the rest of the path in inode_lru_inode():
+> 
+> 	if (atomic_read(&inode->i_count) ||
+> 	    ...) {
+> 		list_lru_isolate(lru, &inode->i_lru);
+> 		spin_unlock(&inode->i_lock);
+> 		this_cpu_dec(nr_unused);
+> 		return LRU_REMOVED;
+> 	}
+> 
+> Do you have an actual reproduer which triggers this?  Or would this
+> happen be any chance something that was dreamed up with DEPT?
 
-I think the above would still deadlock, because the reported
-deadlock is an ABBA deadlock between two different CPUs.
+No, it looks like a real problem and I agree with the analysis. We don't
+hold ea_inode reference (i.e., ea_inode->i_count) from a normal inode. The
+normal inode just owns that that special on-disk xattr reference. Standard
+inode references are acquired and dropped as needed.
 
-I think what the code would have to do is only trylock, and never
-spin after taking the printk_cpu_sync_get_irqsave lock.
+And this is exactly the problem: ext4_xattr_inode_dec_ref_all() called from
+evict() needs to lookup the ea_inode and iget() it. So if we are processing
+a list of inodes to dispose, all inodes have I_FREEING bit already set and
+if ea_inode and its parent normal inode are both in the list, then the
+evict()->ext4_xattr_inode_dec_ref_all()->iget() will deadlock.
 
-Were you thinking of moving the=C2=A0 this_cpu_read(printk_context)
-check from vprintk() into  vprintk_emit() and use that to decide
-whether to spin for the lock, or to give up if the trylock fails?
+Normally we don't hit this path because LRU list walk is not handling
+inodes with 0 link count. But a race with unlink can make that happen with
+iput() from inode_lru_isolate().
 
---=20
-All Rights Reversed.
+I'm pondering about the best way to fix this. Maybe we could handle the
+need for inode pinning in inode_lru_isolate() in a similar way as in
+writeback code so that last iput() cannot happen from inode_lru_isolate().
+In writeback we use I_SYNC flag to pin the inode and evict() waits for this
+flag to clear. I'll probably sleep to it and if I won't find it too
+disgusting to live tomorrow, I can code it.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
