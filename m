@@ -1,191 +1,177 @@
-Return-Path: <linux-kernel+bounces-256694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB4E2935208
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 21:06:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85FB5935217
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 21:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE2E41C20E56
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:06:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 106EA1F22A49
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C8C1459FC;
-	Thu, 18 Jul 2024 19:05:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05CC145A03;
+	Thu, 18 Jul 2024 19:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="xY4Q+itR"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="PHm0brYC"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C300658AD0
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 19:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EEAE145332
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 19:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721329549; cv=none; b=Vn5ugaPessm6c8ja/NJ+nJ6/RuCDamQRFhRhGuVnJ9a9M4IFMFoHx1zYPk2XVDJMs+QbqTXaQrjjCk+KCGVcfg8YGMoct+y7VvhsFWdk5EY13/OljNTDRV7pwyIBQxZNl+cCQiT3ktDBxTMnvZrk23G/TBUhIX5IPOMT+Izqpa8=
+	t=1721330449; cv=none; b=EmoPADfWOiZ1yW1XDC67fF7VU3rxefSZvIY/6u6zGEUAzwAh4DFCYt4Us8gs8x0yDYyOCLA4a/Qd9zfvc15Q6m/Y+Agkghv7Ybio9x2rqoPp/mMg8znJJz9XIZ/bzFdOqWNGnZIk+rx9FlXP2tkZPCz2xWJbYU5C3lBuT8QaEUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721329549; c=relaxed/simple;
-	bh=LEpFXGHY09CKdjCqSNurpdIygGze9RqWT6Dpe3rXGqo=;
+	s=arc-20240116; t=1721330449; c=relaxed/simple;
+	bh=grBvaQOdED6hCAH14mGymT0GXVTYaOm4rP9U9pCbDUA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MFm/Sg6ehFg3+KzvXLkiJH081lQ5WBBqeFApijYO+Xb+Y3Q2Y2IGkLdTuEAr/DjydczVZNq/HTpc514ErpoJi8XTCHinBDizCcYlE8p0nWWrwP6E3gQ458W1G1Qi57Adaqh7/XJrFiqSEslshmHCiRGkVUUSPuY86D0MrnvUEeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=xY4Q+itR; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2eedebccfa4so13291441fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 12:05:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1721329546; x=1721934346; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=beieGnkYMyeR1aFjFu8NC1zTKlJgT0GM9SMQS29saYE=;
-        b=xY4Q+itRPJ6Gtn1KDIoObq2ba4QTDLs61ras+xiAKy2fNtESbBUvhh+SpyK0lZmfkZ
-         +axZ2c71hba8ISYSCWHfhduIbeduGZ4IuspcqjBgTg6HFDyADeCmuYDL07Kyhk71xHQ0
-         qT93JtXQ7S0ktjOnRY9U1kjnbbcteoD8QQ1MbIO7n5gSLg8B5e4N7dutxCFSldeVD3wj
-         f0id/6XZRsPdsAUvaS4WwCP/u1a/QcegRVJiICnfw9iWoUk/wQ6WJoSedpTbu/HMRaG+
-         3YVoTWBkSrLH7u8i8fuzHfR3lTn0LQUgkBEA+UxUGwE8Y6DnSPmQMS2g2vE1NiQpmw8d
-         SMoQ==
+	 To:Cc:Content-Type; b=gdTkwriz2ynfTnFOJVZUvrKh5ZjMioDafmHn2Li9X3Q5Oql85G55WsgAZgcLvnjwc7FIawJlLZM7TG2miv43t5ZxYbCmYYuH0ssKbkv6IWbRj8IA15VNX7/8pXjz/GxAVh8R0LS+6xj5MNtQnVjfHaygPk63NC0GH6Fwf3BhXHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=PHm0brYC; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com [209.85.210.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 92B6E451BE
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 19:12:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1721329939;
+	bh=grBvaQOdED6hCAH14mGymT0GXVTYaOm4rP9U9pCbDUA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=PHm0brYCYxN4QDIVLr5o1RilzZt6qjtKL0EnG+YmnCKCdnG9sTGvVeuVgBDm/cUov
+	 sLcnYNiW3cO1saHQ361zxU7Uq8eHF+CZYUmC4XX7jmDWYWVWgOItmPN6cvRjdyfAQx
+	 rShGBMZySG4vNjjWAS/1kl46lliLP28u3bpKnQGObCrrSgVUYpnex6LgM7/jWJIKRi
+	 wMmpMe5uZAipPkoTyNWRtFavILyYBx52H9RW4PRemR1Wex9mCXy+dmkprXQq38EP3r
+	 gZ3LZjlW0F3wQOLDKfEoFGXgCWVV/KjuuQCiNqWObhOIbHLRNaL1+UWnszaarbvOss
+	 yf0t/V+1aFL4g==
+Received: by mail-ot1-f71.google.com with SMTP id 46e09a7af769-70446b3d142so901346a34.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 12:12:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721329546; x=1721934346;
+        d=1e100.net; s=20230601; t=1721329938; x=1721934738;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=beieGnkYMyeR1aFjFu8NC1zTKlJgT0GM9SMQS29saYE=;
-        b=AdZu4wAIA26cQDGV5W8ZOe5Rzf7x4o+eYHr9oulBSm+kI0U3kqExwWP6jGGhcNRkfS
-         0N46JzUSlJzfppkNN3I+omHel5W57AZc46O9IdlYhnv55pdx1dOqp7fnQjDCR0sIwbiO
-         teT1HWyfTBOcNHmDltv4gJEYis7AYS7bt5d/VemJ0sh66fGPuusHrGCjey2hD1kx61rE
-         0L9IvnGH3dv2hJrhi8RDv5+djW4J/L7Zcd2obqyuJMtXFPt9kXeyvvkBKDyfPTXQO9nC
-         d5boVKmqbZTB16Nq9Io89MsSzfaTmZVqLLgb4EQZ583V43A+YcAAdu0nMTP2HnFQtbbr
-         0ZWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxOl8JFpmY+kt8ib2r8C+ymRvn1rJepLLNhy4FbVChlrH5lxe9dFsUjH8eFLr6sPaAsudihvBCG8HLgBsLfv7XWAqemdFZnWlySqQR
-X-Gm-Message-State: AOJu0Yxwi+1FHFuuq1JTHRXXeQanp91ChIGqaDnrar0n9pd9qbxGwo4T
-	UAugLVNVaTLXmsxeFhnuUwqoTxf+CsE6qq2oHyDpIuySeLfeypfvCNQHREwJf7WWTTQvn3StYhR
-	PM53+lh3eo2eWDb/og7dULO9xFv2cMV5nvcup0g==
-X-Google-Smtp-Source: AGHT+IGUVlI419Uq8uMTqzcmy7TKFkjT+FFh+z/2kkfsM1qDzqBSIRxHRwTuhYYGoQDDhRwTWQuYaw4MRfjnP3MtX7E=
-X-Received: by 2002:a2e:908b:0:b0:2ee:d96b:83a with SMTP id
- 38308e7fff4ca-2ef05c76889mr23211431fa.18.1721329545770; Thu, 18 Jul 2024
- 12:05:45 -0700 (PDT)
+        bh=grBvaQOdED6hCAH14mGymT0GXVTYaOm4rP9U9pCbDUA=;
+        b=hfYiRAVnb5roplOobwSThrBu10ZK2Z63cUYHtFktAvfWUklXT9Mc9FGrQYxaiwFtpm
+         JvjrQLIIR0CbgSsGIIHBEiLf+UUj+oRWQ0Car0SSAGBh44j0w26DtMvRxEpvzob+6MWB
+         FHt9z4+vZoUc6+dBzuqVbQmWIr1IeGrB+vJkN7BRDbQnfRr3mITDmHAftkUYJKpnftj2
+         Eiv1rY9abKBl6GV4bwD5vwWB0oX54Y7F6nWg8T/zzyZt6atHMgQoWaKhOTgRTxS2k2GN
+         rAKSLmd3EfV7FK52WqR+l7WBQ73soXPRMuqUkrrAuW/lAZdheUdGxR74i/qUbi4MFjXq
+         EfsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4Q4Bdd1BzHCCUeoDZUzd/NUdVCK3rqO8QwYOfj4F84/lmNyu/IU/ab/+SBfkdO8eySD1qtD1HJyn3WoidxH8YiSk4vRS2wisaS/3x
+X-Gm-Message-State: AOJu0YwxP2EE7zL2nrK6GwE/lF9U0QVP36eQK2YsaT98LeghuTE869LF
+	YNxkW0R5F39BbalUnRHnx3p4VjQQb3LdzskPAJRY4ZjdjMpA7ISY0VX8hB27qGDOshVcHDimdUI
+	7rGye71veP0FkxTqevKXuJEFAbOmUDKN6TZYbeSEWLMZIeUioAtKPcDzEqhWdq3PJqtrPInV0Nq
+	CQ04JQyPgKJoGK25f8BD7egBPlcW0CJZ2sh4xJE2LPEkCCDiqwBSU74V9y+pyPGv0=
+X-Received: by 2002:a05:6830:6606:b0:703:68c2:8356 with SMTP id 46e09a7af769-708ecde03e2mr3144858a34.17.1721329938212;
+        Thu, 18 Jul 2024 12:12:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFPpiUfyU6v+89c/NdcYUeKlInqIxF4T/X9TJ3w2fD6hXf3QUPktFwxty9MIyOzA1iEwcYvn+FsAMR2eLrf8FY=
+X-Received: by 2002:a05:6830:6606:b0:703:68c2:8356 with SMTP id
+ 46e09a7af769-708ecde03e2mr3144835a34.17.1721329937865; Thu, 18 Jul 2024
+ 12:12:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708075023.14893-1-brgl@bgdev.pl> <20240708075023.14893-4-brgl@bgdev.pl>
- <7c0140be-4325-4005-9068-7e0fc5ff344d@nvidia.com> <CAMRc=McF93F6YsQ+eT9oOe+c=2ZCQ3rBdj+-3Ruy8iO1B-syjw@mail.gmail.com>
- <CAMRc=Mc=8Sa76TOZujMMZcaF2Dc8OL_HKo=gXuj-YALaH4zKHg@mail.gmail.com>
- <6e12f5a5-8007-4ddc-a5ad-be556656af71@nvidia.com> <CAMRc=MdvsKeYEEvf2w3RxPiR=yLFXDwesiQ75JHTU-YEpkF-ZA@mail.gmail.com>
- <874f68e3-a5f4-4771-9d40-59d2efbf2693@nvidia.com> <CAMRc=MeKdg-MnO_kNkgpwbuSgL0mfAw8HveGFKFwUeNd6379bQ@mail.gmail.com>
- <5e432afa-5a00-46bd-b722-4bf8f875fc39@nvidia.com>
-In-Reply-To: <5e432afa-5a00-46bd-b722-4bf8f875fc39@nvidia.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 18 Jul 2024 21:05:34 +0200
-Message-ID: <CAMRc=McCa3qUL5Mjxn2TVUeJzqaBaDCx52z8i7hfO=tfYFGgWA@mail.gmail.com>
-Subject: Re: [RESEND PATCH net-next v3 3/4] net: phy: aquantia: wait for the
- GLOBAL_CFG to start returning real values
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, "David S . Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Brad Griffis <bgriffis@nvidia.com>
+References: <20240108120824.122178-1-aleksandr.mikhalitsyn@canonical.com>
+ <20240108120824.122178-3-aleksandr.mikhalitsyn@canonical.com> <CAJfpegtixg+NRv=hUhvkjxFaLqb_Vhb6DSxmRNxXD-GHAGiHGg@mail.gmail.com>
+In-Reply-To: <CAJfpegtixg+NRv=hUhvkjxFaLqb_Vhb6DSxmRNxXD-GHAGiHGg@mail.gmail.com>
+From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date: Thu, 18 Jul 2024 21:12:07 +0200
+Message-ID: <CAEivzxeva5ipjihSrMa4u=uk9sDm9DNg9cLoYg0O6=eU2jLNQQ@mail.gmail.com>
+Subject: Re: [PATCH v1 2/9] fs/fuse: add FUSE_OWNER_UID_GID_EXT extension
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: mszeredi@redhat.com, brauner@kernel.org, stgraber@stgraber.org, 
+	linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 18, 2024 at 7:42=E2=80=AFPM Jon Hunter <jonathanh@nvidia.com> w=
+On Tue, Mar 5, 2024 at 3:38=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> w=
 rote:
 >
->
-> On 18/07/2024 15:59, Bartosz Golaszewski wrote:
->
-> ...
->
-> >>>>> TBH I only observed the issue on AQR115C. I don't have any other mo=
-del
-> >>>>> to test with. Is it fine to fix it by implementing
-> >>>>> aqr115_fill_interface_modes() that would first wait for this regist=
-er
-> >>>>> to return non-0 and then call aqr107_fill_interface_modes()?
-> >>>>
-> >>>> I am doing a bit more testing. We have seen a few issues with this P=
-HY
-> >>>> driver and so I am wondering if we also need something similar for t=
-he
-> >>>> AQR113C variant too.
-> >>>>
-> >>>> Interestingly, the product brief for these PHYs [0] do show that bot=
-h
-> >>>> the AQR113C and AQR115C both support 10M. So I wonder if it is our
-> >>>> ethernet controller that is not supporting 10M? I will check on this=
- too.
-> >>>>
-> >>>
-> >>> Oh you have an 113c? I didn't get this. Yeah, weird, all docs say it
-> >>> should support 10M. In fact all AQR PHYs should hence my initial
-> >>> change.
-> >>
-> >>
-> >> Yes we have an AQR113C. I agree it should support this, but for whatev=
-er
-> >> reason this is not advertised. I do see that 10M is advertised as
-> >> supported by the network ...
-> >>
-> >>    Link partner advertised link modes:  10baseT/Half 10baseT/Full
-> >>                                         100baseT/Half 100baseT/Full
-> >>                                         1000baseT/Full
-> >>
-> >> My PC that is on the same network supports 10M, but just not this Tegr=
-a
-> >> device. I am checking to see if this is expected for this device.
-> >>
+> On Mon, 8 Jan 2024 at 13:10, Alexander Mikhalitsyn
+> <aleksandr.mikhalitsyn@canonical.com> wrote:
 > >
-> > I sent a patch for you to test. I think that even if it doesn't fully
-> > fix the issue you're observing, it's worth picking it up as it reduces
-> > the impact of the workaround I introduced.
+> > To properly support vfs idmappings we need to provide
+> > a fuse daemon with the correct owner uid/gid for
+> > inode creation requests like mkdir, mknod, atomic_open,
+> > symlink.
+> >
+> > Right now, fuse daemons use req->in.h.uid/req->in.h.gid
+> > to set inode owner. These fields contain fsuid/fsgid of the
+> > syscall's caller. And that's perfectly fine, because inode
+> > owner have to be set to these values. But, for idmapped mounts
+> > it's not the case and caller fsuid/fsgid !=3D inode owner, because
+> > idmapped mounts do nothing with the caller fsuid/fsgid, but
+> > affect inode owner uid/gid. It means that we can't apply vfsid
+> > mapping to caller fsuid/fsgid, but instead we have to introduce
+> > a new fields to store inode owner uid/gid which will be appropriately
+> > transformed.
+
+Hi Miklos,
+
 >
+> Does fsuid/fsgid have any meaning to the server?
+
+As far as I know, some servers use fsuid/fsgid values in server-side
+permission checks.
+
+Sometimes, for example in Glusterfs, even when "default_permissions"
+fuse mount option
+is enabled these values are still used for permission checks. And yes,
+this is a problem
+for idmapped mount support. That's why we need to have some fuse
+connection flag from
+the server side which means "yes, I'm aware of idmapped mounts and I
+really want it" (FUSE_ALLOW_IDMAP).
+
 >
-> Thanks! I will test this tonight.
->
-> > I'll be off next week so I'm sending it quickly with the hope it will b=
-e useful.
->
->
-> OK thanks for letting me know.
->
-> Another thought I had, which is also quite timely, is that I have
-> recently been testing a patch [0] as I found that this actually resolves
-> an issue where we occasionally see our device fail to get an IP address.
->
-> This was sent out over a year ago and sadly we failed to follow up :-(
->
-> Russell was concerned if this would make the function that was being
-> changed fail if it did not have the link (if I am understanding the
-> comments correctly). However, looking at the code now, I see that the
-> aqr107_read_status() function checks if '!phydev->link' before we poll
-> the TX ready status, and so I am wondering if this change is OK? From my
-> testing it does work. I would be interested to know if this may also
-> resolve your issue?
->
-> With this change [0] I have been able to do 500 boots on our board and
-> verify that the ethernet controller is able to get an IP address every
-> time. Without this change it would fail to get an IP address anywhere
-> from 1-100 boots typically.
->
-> I will test your patch in the same way, but I am wondering if both are
-> trying to address the same sort of issue?
+> Shouldn't this just set in.h.uid/in.h.gid to the mapped ids?
 >
 
-The patch you linked does not fix the suspend/resume either. :(
+It is a very good and tricky question ;-)
 
-Bartosz
+We had big debates like a year ago when Christian and I were working on idm=
+apped
+mounts support for cephfs [1].
 
-> Cheers
-> Jon
->
-> [0]
-> https://lore.kernel.org/linux-tegra/20230628124326.55732-3-ruppala@nvidia=
-.com/#t
->
-> --
-> nvpublic
+This was a first Christian's idea when he originally proposed a
+patchset for cephfs [2]. The problem with this
+approach is that we don't have an idmapping provided in all
+inode_operations, we only have it where it is supposed to be.
+To workaround that, Christian suggested applying a mapping only when
+we have mnt_idmap, but if not just leave uid/gid as it is.
+This, of course, leads to inconsistencies between different
+inode_operations, for example ->lookup (idmapping is not applied) and
+->symlink (idmapping is applied).
+This inconsistency, really, is not a big deal usually, but... what if
+a server does UID/GID-based permission checks? Then it is a problem,
+obviously.
+
+Xiubo Li (cephfs kernel driver maintainer) asked, why we don't just
+want to pass mnt_idmap everywhere, including ->lookup.
+Christian and I came up with arguments, why it's not the best idea to
+pass idmapping everywhere. [3], [4], [5]
+
+[1] https://lore.kernel.org/all/20230807132626.182101-1-aleksandr.mikhalits=
+yn@canonical.com/
+[2] https://lore.kernel.org/all/20220104140414.155198-3-brauner@kernel.org/
+[3] https://lore.kernel.org/lkml/20230609-alufolie-gezaubert-f18ef17cda12@b=
+rauner/
+[4] https://lore.kernel.org/lkml/20230614-westseite-urlaub-7a5afcf0577a@bra=
+uner/
+[5] https://lore.kernel.org/lkml/CAEivzxfw1fHO2TFA4dx3u23ZKK6Q+EThfzuibrhA3=
+RKM=3DZOYLg@mail.gmail.com/
+
+Kind regards,
+Alex
+
+> Thanks,
+> Miklos
 
