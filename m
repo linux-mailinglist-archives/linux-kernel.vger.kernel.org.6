@@ -1,279 +1,159 @@
-Return-Path: <linux-kernel+bounces-256841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DF3A93711F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 01:35:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68911937123
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 01:37:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D578F1F2204E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 23:35:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CC9F1F21FEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 23:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FD3146A9D;
-	Thu, 18 Jul 2024 23:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9787146A74;
+	Thu, 18 Jul 2024 23:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="NayyJj/1"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CNQqwMlE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564DD1DA3D
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 23:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9C78564A;
+	Thu, 18 Jul 2024 23:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721345726; cv=none; b=UCpfyZ7Fr6+w3NvHe/NeX+icqSasjsPKyP29tFVu97Z9o7Lu7CRQHnUucj7eb6P09ZXRwLOl3+jHA3mN7RJOmffIh6XWVzIVHe0xTQnufChpQ20nbuQEOWV5vxpennYsvahEH33CoVTCJXEAbNtuXCIjFWmYw3k7vVbqy8Hv9Uo=
+	t=1721345821; cv=none; b=Q8JOgnGmhk5VLGT0TiXGXcU96AmokiMafx4m7IDRBQqgalP77bwfI3FyjmxF3NB7lnjM0Gs725m+We115ael1nNJLdc+Q50a9SMoEa/9F4gcV3kzG8hdXB/UifondACjzTS8hoZ61QS3uwMrP7NsJHCpBU56OYkZi3oaef2V8pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721345726; c=relaxed/simple;
-	bh=7a67cXWeIY9vW6wOmBONnfQHWybmwpJcT73uF1nEFmE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mbBg7Z+/UHAO3HO8rl7qDHne0ZfzXlGsJqenfJKBSQm3ESbok2cjsI0rodmOFEFxp5NiFu7D59qIl0mDvyulmJZA0lccm3EB+wpSSwbSOLv7cSzRC4tvvhbwwVOu8AVvbwJ9/sFLBl4DfSydAPqS3+kLnYYfEwOf8d9GUMdvffA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=NayyJj/1; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-397a363cb13so1622585ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 16:35:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1721345722; x=1721950522; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2wuB824Hrye/65n89Susd5Qn8V22yeQN5eVpd+tL4OM=;
-        b=NayyJj/1pyOysprAsvX302Op/94XqR/W/7PaYHuFQEM80i4Lt36KiBdZ5KViErSZ7/
-         /cWMwQu1e7veEh1zHpf6xdZMjJpjtlaViOBoL2/HGiiFNYjgUt+0h26P+AdjTZf06hYK
-         7ycAK/kaO7MUt/Mv2pi7FGw2/n2szmvzLSHuEQnNeST8ja5Ill6Gd3dzEs0+PHwQhQYQ
-         14wNkUd8hJixn1CaFR2wPa0CyqcWPBhfRN4ZuXZ9GQ7SGUpPtttvTehRWr9MyZSmQF/K
-         zPHu83DtmeZvBQp31w285KZ5fnaQJ7/OZYEmFhtU6vGhsTJNqQXO9VF+dygrE6dT9MxU
-         sUOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721345722; x=1721950522;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2wuB824Hrye/65n89Susd5Qn8V22yeQN5eVpd+tL4OM=;
-        b=gRJEup774T4rXfqtxuee+onFCvIszOG+n06fF84pVfcLsWbgtEfJOx3WFXKKu785i/
-         uCHjlhK2V6Fj7K7nOAjjj3V/x13CC2xwc8KJaB7KOgJLS1b8SaXro4KsHTUcrh1t13CQ
-         HUcxxq55NhfcMu+ZGX8f1BJu4lesYJVlqq8Re7g3MY7eT6lN6YfKQ7tfQGtNABxqsl/0
-         RAWcV5/waL22tW1qB55BBcpAssqdHRM4p87bFZvutrjluC72zuX8MyINE283jcaGIJ5/
-         i4dY0domow0EyjHBnoeb6GL+OhGcpSK4A+nVoJg9pfcO/QJBJ0BTCP4P6jcGolHGinfF
-         ommw==
-X-Forwarded-Encrypted: i=1; AJvYcCWTg1b6emHlvzC4C+DfA1WtuKGaFVZUnqHQAli5akBs/uo84YZxsLCHpiuHnMGR1UKTERyVkt+tA/6iMa+kBOW30VyFps+yYH8EwLb/
-X-Gm-Message-State: AOJu0YwML/0JYBGQaoFMob3hFRjHViqSMCASCwbHV/o25DL5ttDEwLR0
-	lxwySDdmIQiE572/GwWOQ/3wzHdXxYBvBJ+Ym9OKXzatrLVtVUSFmeDLJz8JW3g=
-X-Google-Smtp-Source: AGHT+IFtVhVM9BDBi07vxZXR86hASuWPxepp8zLd6TCw6Ag6AJelMqPZkldzEt6k5/Z8Yqp4PAfVOw==
-X-Received: by 2002:a05:6e02:168a:b0:37a:a9f0:f263 with SMTP id e9e14a558f8ab-39556e4ff57mr82165945ab.20.1721345722320;
-        Thu, 18 Jul 2024 16:35:22 -0700 (PDT)
-Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-397f7efad1asm502335ab.76.2024.07.18.16.35.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jul 2024 16:35:21 -0700 (PDT)
-Message-ID: <c403de1d-cda8-45bc-a6a2-a92170ad8575@sifive.com>
-Date: Thu, 18 Jul 2024 18:35:19 -0500
+	s=arc-20240116; t=1721345821; c=relaxed/simple;
+	bh=smtS2+CWeRfe2e3JgEKaqC4HezPRhn7ty+Xynx0V4gM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jOo0jvDVHa6JoWjvhtYuwgaOOMCoK8bukGU+8nLKMOtWKYybhSufF52NntQdfHsqJS8I1hXQLbodFTbHWEQIfETs1lgx6tdtRTa4/reyDCxqzBu+a4uD/v6YK4AQP4SH9a1UMh/oHrI165rNUkOBWkrMRhBUOzH8TxYDAgQ5RWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CNQqwMlE; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721345820; x=1752881820;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=smtS2+CWeRfe2e3JgEKaqC4HezPRhn7ty+Xynx0V4gM=;
+  b=CNQqwMlEZ22SyXOXVnIZmy88eFOYVZFHkAnIe9vR1lK+k9jZx8gK9iA8
+   BwnfdoTrPJWQBmRFljFEwByr+P4cbFAjN1FfMQLLNlvJgdNxckBT93pXK
+   JPwp+mX6xsEZk0MYRqKP+atb7sX/doeAGT+myPjtEqHuXqa8HDFIyXuGs
+   WqXoOecSfVIltZuAcJSjKHjpdbYHlVsDWOorpStAppesGqruT16Ksd7Wt
+   QTbdZ/sI6e0m0uWNrS+JIj1HExq2XAGlG2jRMAlTkGuz5jCh7xjslFFKX
+   rrL2RS+Aa5VqvpH6oW+lYXF5y7KOt0avlOKHX6MeQ99LR8bbkOJWAPFnb
+   A==;
+X-CSE-ConnectionGUID: V0DBpDz/RVensmE5g2snaA==
+X-CSE-MsgGUID: ub4xldJGRHao+dhWr9+mRg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11137"; a="30362622"
+X-IronPort-AV: E=Sophos;i="6.09,219,1716274800"; 
+   d="scan'208";a="30362622"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 16:36:59 -0700
+X-CSE-ConnectionGUID: 4nF54jINR/WpSqgZUoeTsQ==
+X-CSE-MsgGUID: jolg39cRQDySgDn3xBO2LA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,219,1716274800"; 
+   d="scan'208";a="56083519"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 18 Jul 2024 16:36:56 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sUag9-000hfG-1F;
+	Thu, 18 Jul 2024 23:36:53 +0000
+Date: Fri, 19 Jul 2024 07:36:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Aleksa Sarai <cyphar@cyphar.com>, Ian Kent <raven@themaw.net>,
+	Bill O'Donnell <bodonnel@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
+	Eric Sandeen <sandeen@redhat.com>,
+	David Howells <dhowells@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, autofs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, codalist@coda.cs.cmu.edu,
+	Aleksa Sarai <cyphar@cyphar.com>
+Subject: Re: [PATCH 2/2] coda: support FSCONFIG_SET_FD for fd mount flag
+Message-ID: <202407190741.8fA9KJbt-lkp@intel.com>
+References: <20240719-fsconfig-fsparam_fd-fixes-v1-2-7ccd315c2ad4@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/4] RISC-V: Add Svade and Svadu Extensions Support
-To: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Cc: greentime.hu@sifive.com, vincent.chen@sifive.com,
- Jinyu Tang <tjytimi@163.com>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>,
- Conor Dooley <conor.dooley@microchip.com>,
- Mayuresh Chitale <mchitale@ventanamicro.com>,
- Atish Patra <atishp@rivosinc.com>, Samuel Ortiz <sameo@rivosinc.com>,
- Daniel Henrique Barboza <dbarboza@ventanamicro.com>,
- =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>,
- Evan Green <evan@rivosinc.com>, Xiao Wang <xiao.w.wang@intel.com>,
- Alexandre Ghiti <alexghiti@rivosinc.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Kemeng Shi <shikemeng@huaweicloud.com>, "Mike Rapoport (IBM)"
- <rppt@kernel.org>, Leonardo Bras <leobras@redhat.com>,
- Charlie Jenkins <charlie@rivosinc.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Jisheng Zhang <jszhang@kernel.org>, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org,
- kvm@vger.kernel.org
-References: <20240712083850.4242-1-yongxuan.wang@sifive.com>
- <20240712083850.4242-2-yongxuan.wang@sifive.com>
-From: Samuel Holland <samuel.holland@sifive.com>
-Content-Language: en-US
-In-Reply-To: <20240712083850.4242-2-yongxuan.wang@sifive.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240719-fsconfig-fsparam_fd-fixes-v1-2-7ccd315c2ad4@cyphar.com>
 
-Hi Yong-Xuan,
+Hi Aleksa,
 
-Two trivial comments below for if you send another version of the series.
+kernel test robot noticed the following build errors:
 
-On 2024-07-12 3:38 AM, Yong-Xuan Wang wrote:
-> Svade and Svadu extensions represent two schemes for managing the PTE A/D
-> bits. When the PTE A/D bits need to be set, Svade extension intdicates
-> that a related page fault will be raised. In contrast, the Svadu extension
-> supports hardware updating of PTE A/D bits. Since the Svade extension is
-> mandatory and the Svadu extension is optional in RVA23 profile, by default
-> the M-mode firmware will enable the Svadu extension in the menvcfg CSR
-> when only Svadu is present in DT.
-> 
-> This patch detects Svade and Svadu extensions from DT and adds
-> arch_has_hw_pte_young() to enable optimization in MGLRU and
-> __wp_page_copy_user() when we have the PTE A/D bits hardware updating
-> support.
-> 
-> Co-developed-by: Jinyu Tang <tjytimi@163.com>
-> Signed-off-by: Jinyu Tang <tjytimi@163.com>
-> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
-> ---
->  arch/riscv/Kconfig               |  1 +
->  arch/riscv/include/asm/csr.h     |  1 +
->  arch/riscv/include/asm/hwcap.h   |  2 ++
->  arch/riscv/include/asm/pgtable.h | 13 ++++++++++++-
->  arch/riscv/kernel/cpufeature.c   | 32 ++++++++++++++++++++++++++++++++
->  5 files changed, 48 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 0525ee2d63c7..3d705e28ff85 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -36,6 +36,7 @@ config RISCV
->  	select ARCH_HAS_PMEM_API
->  	select ARCH_HAS_PREPARE_SYNC_CORE_CMD
->  	select ARCH_HAS_PTE_SPECIAL
-> +	select ARCH_HAS_HW_PTE_YOUNG
+[auto build test ERROR on b80cc4df1124702c600fd43b784e423a30919204]
 
-These lines should be sorted alphabetically.
+url:    https://github.com/intel-lab-lkp/linux/commits/Aleksa-Sarai/autofs-fix-missing-fput-for-FSCONFIG_SET_FD/20240718-230056
+base:   b80cc4df1124702c600fd43b784e423a30919204
+patch link:    https://lore.kernel.org/r/20240719-fsconfig-fsparam_fd-fixes-v1-2-7ccd315c2ad4%40cyphar.com
+patch subject: [PATCH 2/2] coda: support FSCONFIG_SET_FD for fd mount flag
+config: arm-randconfig-003-20240719 (https://download.01.org/0day-ci/archive/20240719/202407190741.8fA9KJbt-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240719/202407190741.8fA9KJbt-lkp@intel.com/reproduce)
 
->  	select ARCH_HAS_SET_DIRECT_MAP if MMU
->  	select ARCH_HAS_SET_MEMORY if MMU
->  	select ARCH_HAS_STRICT_KERNEL_RWX if MMU && !XIP_KERNEL
-> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
-> index 25966995da04..524cd4131c71 100644
-> --- a/arch/riscv/include/asm/csr.h
-> +++ b/arch/riscv/include/asm/csr.h
-> @@ -195,6 +195,7 @@
->  /* xENVCFG flags */
->  #define ENVCFG_STCE			(_AC(1, ULL) << 63)
->  #define ENVCFG_PBMTE			(_AC(1, ULL) << 62)
-> +#define ENVCFG_ADUE			(_AC(1, ULL) << 61)
->  #define ENVCFG_CBZE			(_AC(1, UL) << 7)
->  #define ENVCFG_CBCFE			(_AC(1, UL) << 6)
->  #define ENVCFG_CBIE_SHIFT		4
-> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
-> index e17d0078a651..35d7aa49785d 100644
-> --- a/arch/riscv/include/asm/hwcap.h
-> +++ b/arch/riscv/include/asm/hwcap.h
-> @@ -81,6 +81,8 @@
->  #define RISCV_ISA_EXT_ZTSO		72
->  #define RISCV_ISA_EXT_ZACAS		73
->  #define RISCV_ISA_EXT_XANDESPMU		74
-> +#define RISCV_ISA_EXT_SVADE             75
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407190741.8fA9KJbt-lkp@intel.com/
 
-The number here should be aligned with tabs, like the surrounding lines.
+All errors (new ones prefixed by >>):
 
-Regards,
-Samuel
+   fs/coda/inode.c: In function 'coda_parse_fd':
+>> fs/coda/inode.c:129:13: error: 'param' undeclared (first use in this function); did you mean 'parameq'?
+     129 |         if (param->type == fs_value_is_file) {
+         |             ^~~~~
+         |             parameq
+   fs/coda/inode.c:129:13: note: each undeclared identifier is reported only once for each function it appears in
+>> fs/coda/inode.c:133:29: error: 'result' undeclared (first use in this function); did you mean 'mf_result'?
+     133 |                 file = fget(result->uint_32);
+         |                             ^~~~~~
+         |                             mf_result
 
-> +#define RISCV_ISA_EXT_SVADU		76
->  
->  #define RISCV_ISA_EXT_XLINUXENVCFG	127
->  
-> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-> index aad8b8ca51f1..ec0cdacd7da0 100644
-> --- a/arch/riscv/include/asm/pgtable.h
-> +++ b/arch/riscv/include/asm/pgtable.h
-> @@ -120,6 +120,7 @@
->  #include <asm/tlbflush.h>
->  #include <linux/mm_types.h>
->  #include <asm/compat.h>
-> +#include <asm/cpufeature.h>
->  
->  #define __page_val_to_pfn(_val)  (((_val) & _PAGE_PFN_MASK) >> _PAGE_PFN_SHIFT)
->  
-> @@ -288,7 +289,6 @@ static inline pte_t pud_pte(pud_t pud)
->  }
->  
->  #ifdef CONFIG_RISCV_ISA_SVNAPOT
-> -#include <asm/cpufeature.h>
->  
->  static __always_inline bool has_svnapot(void)
->  {
-> @@ -624,6 +624,17 @@ static inline pgprot_t pgprot_writecombine(pgprot_t _prot)
->  	return __pgprot(prot);
->  }
->  
-> +/*
-> + * Both Svade and Svadu control the hardware behavior when the PTE A/D bits need to be set. By
-> + * default the M-mode firmware enables the hardware updating scheme when only Svadu is present in
-> + * DT.
-> + */
-> +#define arch_has_hw_pte_young arch_has_hw_pte_young
-> +static inline bool arch_has_hw_pte_young(void)
-> +{
-> +	return riscv_has_extension_unlikely(RISCV_ISA_EXT_SVADU);
-> +}
-> +
->  /*
->   * THP functions
->   */
-> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-> index 5ef48cb20ee1..b2c3fe945e89 100644
-> --- a/arch/riscv/kernel/cpufeature.c
-> +++ b/arch/riscv/kernel/cpufeature.c
-> @@ -301,6 +301,8 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
->  	__RISCV_ISA_EXT_DATA(ssaia, RISCV_ISA_EXT_SSAIA),
->  	__RISCV_ISA_EXT_DATA(sscofpmf, RISCV_ISA_EXT_SSCOFPMF),
->  	__RISCV_ISA_EXT_DATA(sstc, RISCV_ISA_EXT_SSTC),
-> +	__RISCV_ISA_EXT_DATA(svade, RISCV_ISA_EXT_SVADE),
-> +	__RISCV_ISA_EXT_DATA(svadu, RISCV_ISA_EXT_SVADU),
->  	__RISCV_ISA_EXT_DATA(svinval, RISCV_ISA_EXT_SVINVAL),
->  	__RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
->  	__RISCV_ISA_EXT_DATA(svpbmt, RISCV_ISA_EXT_SVPBMT),
-> @@ -554,6 +556,21 @@ static void __init riscv_fill_hwcap_from_isa_string(unsigned long *isa2hwcap)
->  			clear_bit(RISCV_ISA_EXT_v, isainfo->isa);
->  		}
->  
-> +		/*
-> +		 * When neither Svade nor Svadu present in DT, it is technically
-> +		 * unknown whether the platform uses Svade or Svadu. Supervisor may
-> +		 * assume Svade to be present and enabled or it can discover based
-> +		 * on mvendorid, marchid, and mimpid. When both Svade and Svadu present
-> +		 * in DT, supervisor must assume Svadu turned-off at boot time. To use
-> +		 * Svadu, supervisor must explicitly enable it using the SBI FWFT extension.
-> +		 */
-> +		if (!test_bit(RISCV_ISA_EXT_SVADE, isainfo->isa) &&
-> +		    !test_bit(RISCV_ISA_EXT_SVADU, isainfo->isa))
-> +			set_bit(RISCV_ISA_EXT_SVADE, isainfo->isa);
-> +		else if (test_bit(RISCV_ISA_EXT_SVADE, isainfo->isa) &&
-> +			 test_bit(RISCV_ISA_EXT_SVADU, isainfo->isa))
-> +			clear_bit(RISCV_ISA_EXT_SVADU, isainfo->isa);
-> +
->  		/*
->  		 * All "okay" hart should have same isa. Set HWCAP based on
->  		 * common capabilities of every "okay" hart, in case they don't
-> @@ -619,6 +636,21 @@ static int __init riscv_fill_hwcap_from_ext_list(unsigned long *isa2hwcap)
->  
->  		of_node_put(cpu_node);
->  
-> +		/*
-> +		 * When neither Svade nor Svadu present in DT, it is technically
-> +		 * unknown whether the platform uses Svade or Svadu. Supervisor may
-> +		 * assume Svade to be present and enabled or it can discover based
-> +		 * on mvendorid, marchid, and mimpid. When both Svade and Svadu present
-> +		 * in DT, supervisor must assume Svadu turned-off at boot time. To use
-> +		 * Svadu, supervisor must explicitly enable it using the SBI FWFT extension.
-> +		 */
-> +		if (!test_bit(RISCV_ISA_EXT_SVADE, isainfo->isa) &&
-> +		    !test_bit(RISCV_ISA_EXT_SVADU, isainfo->isa))
-> +			set_bit(RISCV_ISA_EXT_SVADE, isainfo->isa);
-> +		else if (test_bit(RISCV_ISA_EXT_SVADE, isainfo->isa) &&
-> +			 test_bit(RISCV_ISA_EXT_SVADU, isainfo->isa))
-> +			clear_bit(RISCV_ISA_EXT_SVADU, isainfo->isa);
-> +
->  		/*
->  		 * All "okay" harts should have same isa. Set HWCAP based on
->  		 * common capabilities of every "okay" hart, in case they don't.
 
+vim +129 fs/coda/inode.c
+
+   121	
+   122	static int coda_parse_fd(struct fs_context *fc, int fd)
+   123	{
+   124		struct coda_fs_context *ctx = fc->fs_private;
+   125		struct file *file;
+   126		struct inode *inode;
+   127		int idx;
+   128	
+ > 129		if (param->type == fs_value_is_file) {
+   130			file = param->file;
+   131			param->file = NULL;
+   132		} else {
+ > 133			file = fget(result->uint_32);
+   134		}
+   135		if (!file)
+   136			return -EBADF;
+   137	
+   138		inode = file_inode(file);
+   139		if (!S_ISCHR(inode->i_mode) || imajor(inode) != CODA_PSDEV_MAJOR) {
+   140			fput(file);
+   141			return invalf(fc, "code: Not coda psdev");
+   142		}
+   143	
+   144		idx = iminor(inode);
+   145		fput(file);
+   146	
+   147		if (idx < 0 || idx >= MAX_CODADEVS)
+   148			return invalf(fc, "coda: Bad minor number");
+   149		ctx->idx = idx;
+   150		return 0;
+   151	}
+   152	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
