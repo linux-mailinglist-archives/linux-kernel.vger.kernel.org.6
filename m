@@ -1,126 +1,102 @@
-Return-Path: <linux-kernel+bounces-256125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA28A93496B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:55:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3D41934970
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 273C41C21ADD
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:55:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 991BC1F229B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF6A78C75;
-	Thu, 18 Jul 2024 07:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86FE770FD;
+	Thu, 18 Jul 2024 07:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Xa1VXlx4"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cPQKVilW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B89B757FC;
-	Thu, 18 Jul 2024 07:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFCD136B17
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 07:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721289339; cv=none; b=YkEuaoCRQOGbBtxEHVtaC7z4YDMWie0/DckAm1IRfmyfGObeZ+aKL68FJfH8yucm36EThf5OYunozNFHuL0hshoNw3wu5A/kHDD0cuxP4SKiVzTifOCmvW7vnowPhQe3mMPVR6k4hW5gZ4gAT2AqMaHZzg30GFC2ncPPbRWtyFI=
+	t=1721289494; cv=none; b=gVX9BWtlofSW/o/3efqlX03w3HoU364EE/iimAYCHue0J7iHrTnp7xtznyXaPHl/NfGkJtIlY+WVRrnC1xFyxbS0Qupgdpy5UBumYByJfpzoOIHRzEX8EpQjAHrWZh5cZVUgos04Pcl7Ovg1RipNfZNvPOg8q3m0cuhAX6yBpTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721289339; c=relaxed/simple;
-	bh=Q5oioVh3UZy7ot9pf9yHQZatcUKbqZQrtqRkxDheJFc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RwBpdtmXNBIjxt/W+cJ60OGlkgNHloxGYrtqaMRLuNSR4xB5YTXtfhCJA4EUaq/rcp369h/VAHBGRYEhvTQGqyittiyyVacULj1IqenRVADupGvZL4KwGd1ueUHXhRqDCmSfhjh0bPv/4z4Hx3xNe+gIrCNxOc5Z8nlYprMPfzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Xa1VXlx4; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46I5QnrS013065;
-	Thu, 18 Jul 2024 07:55:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=dB8zWxmD1jj9Mwtei8TWJs/C
-	2KOsAwy3fQTBBO86sco=; b=Xa1VXlx4hzzOvMP5LSU5Tw/Om+2FB2YOn88FvNMv
-	euLOX5cDokKY7q8FZHptyyAV4yyQI/+4Ya5NidlDr2Yz8BjH+bA2Xo813A0VHp24
-	d4PaTHxFvkx/bAOeVSqlG89FfAP2Nx84aYVz54QB3r57YtKTPRTUxgc8xV5ovSWj
-	GtBWPfms1Dh6i6a1xPD+y5B0anMEv8F8lgL2ATOGWMN4VV+KBmFVH4wKehDxnAlI
-	/yv2F109J6tYdF/ZHKNqLQdKmWecexBb0LvPDWje2K7tXX3JI6coXM1wITzMGEk8
-	R/w4yLDoFo1Va35xFrfHbenRJGbpmi4OMKXN0J9f8nO7YA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfwcp63-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Jul 2024 07:55:23 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46I7tMue009464
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Jul 2024 07:55:22 GMT
-Received: from hu-pkondeti-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 18 Jul 2024 00:55:17 -0700
-Date: Thu, 18 Jul 2024 13:25:14 +0530
-From: Pavan Kondeti <quic_pkondeti@quicinc.com>
-To: Caleb Connolly <caleb.connolly@linaro.org>
-CC: Pavan Kondeti <quic_pkondeti@quicinc.com>,
-        Maulik Shah
-	<quic_mkshah@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad
- Dybcio" <konrad.dybcio@linaro.org>, <stephan@gerhold.net>,
-        <swboyd@chromium.org>, <dianders@chromium.org>, <robdclark@gmail.com>,
-        <nikita@trvn.ru>, <quic_eberman@quicinc.com>, <quic_lsrao@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Volodymyr
- Babchuk" <Volodymyr_Babchuk@epam.com>,
-        <stable@vger.kernel.org>
-Subject: Re: [PATCH v2] soc: qcom: cmd-db: Map shared memory as WC, not WB
-Message-ID: <de7930b1-6f33-4ff5-911d-e5156a020585@quicinc.com>
-References: <20240718-cmd_db_uncached-v2-1-f6cf53164c90@quicinc.com>
- <a49113a2-d7f8-4b77-81c7-22855809cee8@quicinc.com>
- <1c5b3f7f-95b6-4efb-aa16-11571b87c6c6@linaro.org>
+	s=arc-20240116; t=1721289494; c=relaxed/simple;
+	bh=5Cr0TJvimg84EMVSwZmi3ZpTnXbIinN5xh5boa364W8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nSvVvrIrhjs3EZ7Sp5yoC5jhkEAIIVBzVDX4fAxSpGiAm0pPUPB4XLG3sbBsuYgIcPigrgfHz4HF3g06q+pT/t4WHZA8hkUAmurZnI/LFMuiY8nXQ1uLhZoet+FvYJMUeZp2noh6IdafuRcY++DTjfoLeUHD3GPC8hS64Dq07EE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cPQKVilW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 705B7C116B1;
+	Thu, 18 Jul 2024 07:58:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721289493;
+	bh=5Cr0TJvimg84EMVSwZmi3ZpTnXbIinN5xh5boa364W8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cPQKVilWWtIzpovXuqpfr0IGoziiRoRgIwXm2j14m49y+rRmCamZj2kT62viT0QK/
+	 jvBvM+0kbfY8KncCQZsDGjJsBsXNfYD7eSeB6dPQFUMbKSk2a9EP4qpa+kVLjfPVcq
+	 VblTVkLubw6tvPwRWWOBdnluZ3zepxI4QsxVU7Cv2yfTm9im1kv55gX9VTE8Uo1+UQ
+	 r3pPFnJyrXi7CX0BdEPOmCwwo/Jsq05xETsHZyEqDLnlDyAS8r0UJCOE2evZFhXlNi
+	 oCGUiDhuVlIVOx4DFyZJHjkQL8beYOpzFC2YJgRiDof4xaPvlu+ga1JOZiQzH939Px
+	 FpJhRBo78/Bqg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sUM1i-00DNHo-WE;
+	Thu, 18 Jul 2024 08:58:11 +0100
+From: Marc Zyngier <maz@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] irqchip/gic-v3-its: Correctly fish out the DID for platform MSI
+Date: Thu, 18 Jul 2024 08:58:04 +0100
+Message-Id: <20240718075804.2245733-1-maz@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1c5b3f7f-95b6-4efb-aa16-11571b87c6c6@linaro.org>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: qRmAnbxXpacTW9p5MtOB18hnM55rH-Wx
-X-Proofpoint-ORIG-GUID: qRmAnbxXpacTW9p5MtOB18hnM55rH-Wx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-18_04,2024-07-17_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- mlxscore=0 mlxlogscore=766 impostorscore=0 priorityscore=1501 bulkscore=0
- spamscore=0 clxscore=1015 malwarescore=0 lowpriorityscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2407180052
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tglx@linutronix.de
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, Jul 18, 2024 at 09:42:27AM +0200, Caleb Connolly wrote:
-> Hi Pavan,
-> 
-> > 
-> > Thanks Maulik for sharing the patch. It works as expected. Feel free to
-> > use
-> 
-> Can I ask how you're testing this?
-> 
-> Kind regards,
-> > 
-> > Tested-by: Pavankumar Kondeti <quic_pkondeti@quicinc.com>
-> > 
-> 
+Similarly to what we do for PCI where msi-map/msi-mask are used
+to compute the full RID (aka DID in ITS speak), we use msi-parent
+as the discovery mechanism, since there is no way a device can
+generally express its ID.
 
-The QCM6490 RB3 board boots from upstream kernel. As part of releases
-here [1] we plan to support booting Linux in EL2. Currently, I have an
-internal board/build with firmware allowing this already. I have boot tested
-Maulik's patch (and as well v1 patch). The targets gets reset early in
-the boot up w/o this patch and I could boot w/ this patch.
+However, since we switched to a per-device MSI domain model,
+the domain passed to its_pmsi_prepare() is the wrong one, and
+points to the device's instead of the ITS'. Bad.
 
-Thanks,
-Pavan
+Use the parent domain instead, which is the ITS domain.
 
-[1] https://github.com/quic-yocto/qcom-manifest
+Fixes: 80b63cc1cc146 ("irqchip/gic-v3-its: Switch platform MSI to MSI parent")
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+---
+ drivers/irqchip/irq-gic-v3-its-msi-parent.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/irqchip/irq-gic-v3-its-msi-parent.c b/drivers/irqchip/irq-gic-v3-its-msi-parent.c
+index 2f3fc597331ba..e150365fbe892 100644
+--- a/drivers/irqchip/irq-gic-v3-its-msi-parent.c
++++ b/drivers/irqchip/irq-gic-v3-its-msi-parent.c
+@@ -134,7 +134,7 @@ static int its_pmsi_prepare(struct irq_domain *domain, struct device *dev,
+ 	int ret;
+ 
+ 	if (dev->of_node)
+-		ret = of_pmsi_get_dev_id(domain, dev, &dev_id);
++		ret = of_pmsi_get_dev_id(domain->parent, dev, &dev_id);
+ 	else
+ 		ret = iort_pmsi_get_dev_id(dev, &dev_id);
+ 	if (ret)
+-- 
+2.39.2
+
 
