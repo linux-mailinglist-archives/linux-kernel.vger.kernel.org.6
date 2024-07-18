@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-256134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10AC793498C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:08:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C35B934990
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:08:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADFFB283CD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:08:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA528B22A5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4CF78C71;
-	Thu, 18 Jul 2024 08:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A767B3FE;
+	Thu, 18 Jul 2024 08:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b="e41d7O0M"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b="ZEb0Wvuw"
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE9F78C7A
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 08:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61CB78C7A
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 08:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721290104; cv=none; b=H33wjsfJHoppeYBDoZci1mO/GiuZ6ho86CDSrekRh9unh34XBio6sfG4wiJQj5lckzw9TqY3D2WCNOANz+C/SnYtRdtaZI09ze5hyVyxHQKcNteR3jE/RkgpcNeYXmBRkzkpx0HZJ2x+B70W0NgIr8o1ceV/inm8C865Z9KlgJk=
+	t=1721290111; cv=none; b=j3+0Wc6CjFdP8k0cySDtdOlhK0BngwWGicCitf+VJ0N9HAvycC8S+oDGeruDUD0kLIzTCbCsblvJi6WOzsqOUP7EWMwCl2VE26/5Wz1KIpaeOSxDRD9C9hQtQuOV6glJ9RXe566K6VuVFvVCypfTmUtCISEnmJ5xR5Cu96do8tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721290104; c=relaxed/simple;
-	bh=stIAApLHsv13L2+WlRqAXQuJPOPJT4+musbzWj6h73Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zn4QkD/38dA8d/qBN9ouWQUQ+sOQt3MsAEDAqdj8oMLYV6+UCYuok0laoKMvH4aQtMTkTjzNvjLotVWdV243Gi8NgfSnoYuEzbgViKV7O87CzW2bes/y1HQbFypCVWj/8DaPcFBp5gWj3kdq0EB6UHEo3eqUB85EjHZM60ebwhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com; spf=none smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b=e41d7O0M; arc=none smtp.client-ip=209.85.210.181
+	s=arc-20240116; t=1721290111; c=relaxed/simple;
+	bh=qLABD9T71TLKm1suUkJYcBMQCLNJkiu/KGSyf+3z+TA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pVdEc8on5YjEh4qN0RxEOSJmLWwadRI6QjdfN1NBFON903HvYF15Pfh56k0Abjzw+b9w7Ozk/C/g2GwRyS3hFgOj6gQ3CeTd92NkmVcRdVo2cL7ZgtjukIlzLxeeXoUglJHiWkH8R3Ur48fLbeMhI7TpXECHcEI2IOixJ3zYSB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com; spf=none smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b=ZEb0Wvuw; arc=none smtp.client-ip=209.85.167.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=smartx.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70b05260c39so405430b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 01:08:22 -0700 (PDT)
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3d94293f12fso318272b6e.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 01:08:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smartx-com.20230601.gappssmtp.com; s=20230601; t=1721290102; x=1721894902; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SL2KhlCSShY0ltqGwzoWJU5urIFwQY8SPKFX14sWSc0=;
-        b=e41d7O0MsDxQW+zruB0nEKBohm2SxO8sCUL/M5D/24/m2U/UatcqbBfSTpC4Fq7SJ/
-         lsTD1FlVaiVrYIekKMwoxssxmhnnLmm/uYusiW9r0jTnw5Iz+L2gl+N6+IouLrY0aA59
-         jgc8Q+RD5zgB6WeIS2w0Hz1irYvgteM9XaCgi+cdsaNzg/hmhH99S+No4LGsnIqv535a
-         b8QumOf7Qsun0Nnk8E7ZvguBLj72eOruIsF7zkdhAfg/21NNx2aYSiWri8zwvBqCzRO0
-         OWcjVLJiG0wqLjD7R2YwK78mU671PeX0+ImqB7jRyMMapIGUl0tnEnHgiAcwOWIpWZrd
-         ot+g==
+        d=smartx-com.20230601.gappssmtp.com; s=20230601; t=1721290109; x=1721894909; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IR8iierOPTZzBaSqo6PfOiKbzROZot6u1VYWUcPh8N8=;
+        b=ZEb0WvuwATX+5Q3DpIELbshQ2UC+dMxvm37Zfl4sGxkmjigyB73lUiJ+ti64mdfFiJ
+         bqmyNYXQF8HeYt4aYAFRGHTO09O1ae4+yQSUgOMa1uGqbYUACzXLqQAveaonEV2485tj
+         gqCAk8YdO+vPEngYt24p05scCPLNOfmH+XWiurDAWoRckvYCghwzr9v6LRKb2jUbYbYG
+         GP3BmVIDAq1sUDiem9QiRNOUqQsj46YQRZ6R+JvalltI1KjIvRLH5kUySB1hHa1iXsIQ
+         7GgAzxSzOQkKIm/gEO3bag0S6Ml/e31ZVQB+Bt2xoh6Ezrioa3EDNiP7TAD+9pCW0jwg
+         V5lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721290102; x=1721894902;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SL2KhlCSShY0ltqGwzoWJU5urIFwQY8SPKFX14sWSc0=;
-        b=QNM3p0B1WpXf/VwC6PRQW7og6MY645wQl3esNM+z8XkbHDSKkCEZjCu1MJzKCB0uqb
-         SGxWMur5uK5wv7sYs1aOyGoixlOb4L+BjiSTIUuvkN9fy0MuI+lEs74ektBNWhkjiDxf
-         cTW+GI5+nI8CVCnrGOEsxd/EiNAUK8oIjWsOUpN2DDaVePPgniye8U1JcuIKFY+kWHOv
-         Ldq6yNEDg8seD9pMUX1V6sL/UVhMBY7SYlRrbyMfqpx7GmtiX0UM8/0hom43XFAJ2VD6
-         E5TZQwiFt9eDw7KtA48So0UQJ8412m4D/tJZSnvLNX5009A0t3Hsx1dXdeNqP5UsTEmx
-         9Fiw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2EfgMCmt4fla+nXFRNV4+LUJbfo8b2MgbbVthfJ+NSEuKicKwpiaL+QmA76p3J9LhioG/YohS8CN/gSXdazuiqXRziLJdEA7AlgSg
-X-Gm-Message-State: AOJu0YzB5smlwGWzmBEGt4hgdY90plFccuptGAOL46oPyqVH3oEsW00A
-	rlOHXnx+owe9IpqlyIfq4dUNOSpBGLQNMnXnwbU/aTf6YivHV+EO/Kx075lxu4I=
-X-Google-Smtp-Source: AGHT+IGWp7a/4CKcmDOndp+K3rVQWgNFjYmK4qQZAtiVYwy6rZx/wzfXNJ0BvsLjioBoer7jFnyauQ==
-X-Received: by 2002:aa7:8887:0:b0:704:1c78:4f8a with SMTP id d2e1a72fcca58-70ce4f1fea2mr4813895b3a.21.1721290101544;
-        Thu, 18 Jul 2024 01:08:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721290109; x=1721894909;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IR8iierOPTZzBaSqo6PfOiKbzROZot6u1VYWUcPh8N8=;
+        b=xLZpXTwDtjSA8RfHbMCnGzNGVfe7/aRZHFtDLLNHsspKAR6YpTtVScAVMF1IJWbBcC
+         1c0NgSQ1meiSErsoIYsQGCsBDc2VmRrLdV6HaTyCTQcI6EbCC+baghETTN1jAYmNyhxY
+         1Pkuwvqut8vOjZ3ZXPrRO6U9lxvbEO8m8o9s1EBqJLpC+GoFHhc7LL8WcGDLG3lhdocR
+         QATbleJ9ZJNjp+KqHJ68zMkbyUMg/FlbzzhUUhQMs+uDVjn2durzBZzzYVQyRrP+fVhF
+         LGxVh1NhziTqhpFQTLUXAjIapX8eEsgwxy99uVkQLw6CSExl0gEVgec1Ap2CBc0aDSYl
+         RSXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGNvD9JiuFjNnsKI79S7M7jWnOlMPTF0Tsj5gmNn/v1F6q1fnb2+Ri6vUY9mc1RHjaPmltN5Vfg8CO1FYFSlYwbFuG9RLBFa1f9T+b
+X-Gm-Message-State: AOJu0YyjiN5pTHlQTIT9B6NtZkkNynfSaInUeEXFiGQJzSegjiXdnOxe
+	YjFKlsOOTab99dQeTeTpYqf4EM0dAjoN1Ip0sxogtKwlweYxejVIL1oWKXg5YYs=
+X-Google-Smtp-Source: AGHT+IFt/GDmyO6/5KiJNmP9PcE4OTbvejTawUJC8MDoIi9vUQcTBV/LIKuenQfb/Mg/W51y9Y9O/A==
+X-Received: by 2002:a05:6808:1a1b:b0:3d9:2b5a:4ac6 with SMTP id 5614622812f47-3dad76e96a4mr2141051b6e.6.1721290108310;
+        Thu, 18 Jul 2024 01:08:28 -0700 (PDT)
 Received: from localhost.localdomain.gitgo.cc (vps-bd302c4a.vps.ovh.ca. [15.235.142.94])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-78e34d2c4d3sm7385958a12.48.2024.07.18.01.08.15
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-78e34d2c4d3sm7385958a12.48.2024.07.18.01.08.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 01:08:21 -0700 (PDT)
+        Thu, 18 Jul 2024 01:08:27 -0700 (PDT)
 From: Li Feng <fengli@smartx.com>
 To: Jens Axboe <axboe@kernel.dk>,
 	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
@@ -71,11 +73,14 @@ To: Jens Axboe <axboe@kernel.dk>,
 	linux-scsi@vger.kernel.org (open list:SCSI SUBSYSTEM),
 	"Martin K. Petersen" <martin.petersen@oracle.com>
 Cc: Christoph Hellwig <hch@infradead.org>,
-	Damien Le Moal <dlemoal@kernel.org>
-Subject: [PATCH v3 0/2] scsi discard fix
-Date: Thu, 18 Jul 2024 16:07:21 +0800
-Message-ID: <20240718080751.313102-1-fengli@smartx.com>
+	Damien Le Moal <dlemoal@kernel.org>,
+	Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v3 1/2] scsi: sd: Keep the discard mode stable
+Date: Thu, 18 Jul 2024 16:07:22 +0800
+Message-ID: <20240718080751.313102-2-fengli@smartx.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240718080751.313102-1-fengli@smartx.com>
+References: <20240718080751.313102-1-fengli@smartx.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,30 +89,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi Jens,
+There is a scenario where a large number of discard commands
+are issued when the iscsi initiator connects to the target
+and then performs a session rescan operation. There is a time
+window, most of the commands are in UNMAP mode, and some
+discard commands become WRITE SAME with UNMAP.
 
-These two patches have been reviewed but have not been merged into
-linux-next. Can they be merged into 6.11?
+The discard mode has been negotiated during the SCSI probe. If
+the mode is temporarily changed from UNMAP to WRITE SAME with
+UNMAP, IO ERROR may occur because the target may not implement
+WRITE SAME with UNMAP. Keep the discard mode stable to fix this
+issue.
 
-Thanks,
+Signed-off-by: Li Feng <fengli@smartx.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+---
+ drivers/scsi/sd.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-v3:
-- rebased to the latest linux-next branch;
-- put the separate patch2 in this patchset;
-- add reviewed-by tag.
-
-v2:
-- rewrite the patch.
-
-Haoqian He (1):
-  scsi: sd: remove some redundant initialization code
-
-Li Feng (1):
-  scsi: sd: Keep the discard mode stable
-
- drivers/scsi/sd.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
-
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 8bb3a3611851..c180427e2c98 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -2711,8 +2711,6 @@ static int read_capacity_16(struct scsi_disk *sdkp, struct scsi_device *sdp,
+ 
+ 		if (buffer[14] & 0x40) /* LBPRZ */
+ 			sdkp->lbprz = 1;
+-
+-		sd_config_discard(sdkp, lim, SD_LBP_WS16);
+ 	}
+ 
+ 	sdkp->capacity = lba + 1;
+@@ -3365,8 +3363,6 @@ static void sd_read_block_limits(struct scsi_disk *sdkp,
+ 			sdkp->unmap_alignment =
+ 				get_unaligned_be32(&vpd->data[32]) & ~(1 << 31);
+ 
+-		sd_config_discard(sdkp, lim, sd_discard_mode(sdkp));
+-
+ config_atomic:
+ 		sdkp->max_atomic = get_unaligned_be32(&vpd->data[44]);
+ 		sdkp->atomic_alignment = get_unaligned_be32(&vpd->data[48]);
+@@ -3756,6 +3752,8 @@ static int sd_revalidate_disk(struct gendisk *disk)
+ 			sd_read_cpr(sdkp);
+ 		}
+ 
++		sd_config_discard(sdkp, &lim, sd_discard_mode(sdkp));
++
+ 		sd_print_capacity(sdkp, old_capacity);
+ 
+ 		sd_read_write_protect_flag(sdkp, buffer);
 -- 
 2.45.2
 
