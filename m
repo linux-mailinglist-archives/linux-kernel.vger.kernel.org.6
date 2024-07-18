@@ -1,233 +1,183 @@
-Return-Path: <linux-kernel+bounces-255874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C8959345E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:42:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2A129345E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24C032828EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:42:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E330F1C2196B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E736138;
-	Thu, 18 Jul 2024 01:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF3E18EBF;
+	Thu, 18 Jul 2024 01:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cw6cbdTj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="b1DGKJ+u"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43EA15C3;
-	Thu, 18 Jul 2024 01:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6830B19E;
+	Thu, 18 Jul 2024 01:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721266939; cv=none; b=IDJvlexrD4xaPlmrBvxcmzbxsAxFHA5YlOg7lG2+ymi9BaGYj6PgZir6NHo8UvYEuj6usavw4DxCA5gmEt1wCMPV4bSviELZvo82/5GKihmRBJjy3N36rMDU0VcBJRlJKzal+Hl91z6+R80WNqecLjfg3LnXyD5YLbEq7szQgW0=
+	t=1721267366; cv=none; b=tpiiyS95JTZhFsBDdtZg0hfub+jtHp1lIZUgKr2K5NfVEUykPKkdN5XgaGGiIL1mFC3nWuZl9RdCgw1Sp1RaRMhtDX7sXz8gqoMJExca/cJO2QRZMOHnVra6jnxuSlBnRzb9kCHSoEZnY+y67abB5FMqY9k9eyUusnHIYIv8/58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721266939; c=relaxed/simple;
-	bh=fYtsXOKoarU/BaH7mJyp7Q0as/Oahc5IxEnsQfZojes=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QE4ao53VhGJncKVM868IXzOzLiyjmezjDDnNZYNWLvrSjTbSJgv6QTnfLizBBt6ctK4gyeekBluHie3RPvbc/GO1FyNCJXSjgfx5XOzmp7WMnhbhXJcvQHjXBrFrcoW66Nd96MdpnIVHdeXRKipmv5IF6TAsdQ2N6EvW9gwZkEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cw6cbdTj; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721266937; x=1752802937;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=fYtsXOKoarU/BaH7mJyp7Q0as/Oahc5IxEnsQfZojes=;
-  b=Cw6cbdTjb24WhrQYsRfHiF/+13YzSfEfg106E5pdFwce8C2v44nGmxnZ
-   1vSIyZUoyquwuGaxbKGpScquIU4IoZ3U6bHQeNGzTUmQGTFw7HN9PGW6r
-   +Mpj2D4y3uEaQhFX4JfrEe5bKeLKY1weoUxJP4iAtSrGIMkwuXADMxTZ0
-   d0Sj6pshxY/WeLkxxRiXNiREJFwNBkXhQAaWrdawksRs3/REEyvxeNepY
-   ZP4d9rFRX3uYWEaNYcI+GAfSMQZ0bLrinqyzhRQJxZ1SFXXRo+t5kf0w/
-   ZfwMs4nTmJivhJ+zZIWDP3WML4l1zNiEcOgJ6yvnL2K3C1LX1pkSISD2h
-   Q==;
-X-CSE-ConnectionGUID: LoCrI9p9R4SE9Q+WlGhngg==
-X-CSE-MsgGUID: ES6zXrjFSsK/Zjd+B9IXOQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="36250883"
-X-IronPort-AV: E=Sophos;i="6.09,216,1716274800"; 
-   d="scan'208";a="36250883"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 18:42:16 -0700
-X-CSE-ConnectionGUID: Ea567sx6QYK0hJ4Sq/AGBQ==
-X-CSE-MsgGUID: 2tu23JPnQcOQm0AKbe4UeA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,216,1716274800"; 
-   d="scan'208";a="54779185"
-Received: from ysheng4-mobl.ccr.corp.intel.com (HELO [10.238.2.30]) ([10.238.2.30])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 18:42:13 -0700
-Message-ID: <d55d3c5a-41d9-46bd-91da-f07187501bfa@linux.intel.com>
-Date: Thu, 18 Jul 2024 09:42:11 +0800
+	s=arc-20240116; t=1721267366; c=relaxed/simple;
+	bh=Pi8/3jwy2l9+AmJtuYgshe/ziSNw878e7MeG21eo1K8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ur2mK5JYOW/vXbL+OWaB2U1MtRFIwL4X/Qq7HSb/IapNqRY5Y3p0taj/fctDoIlEASVtPZ8hQ2RaucSAXsDYlrQ0yeEpA0I7TUtUarHrGgMWDTsdtc1Jz0yVtfxImE1SQHJWoUuN4mQC1rMfF5l6fhOeax4spEzJHZ7rneW/Qj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=b1DGKJ+u; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1721267358;
+	bh=1NRM7JcRwY2THxFpUefXrObhIbdMlndIp71Mh/8WNt0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=b1DGKJ+ukjIW2SzPeEReZGJvUlAc1Ap9iBHztuyhoMDvKbVONNxoXP2AmaZQA1aVo
+	 /+T5AZjarjTQ6Ys/07iveL72XVI5K8vKo3jZ2nre5HrwFCwIdUZjicGAEEbG+D68U/
+	 tsghnJXQ90zjn0a3gbIXrNIEeDXXzsKD+ddRn0uVMCR1vcf5r45KeXrQf+h275QRxM
+	 6kDO6nu4GgFVwJAqQYxYemF8QlS6+V69WU1NBC6QyI2ogU+MQEqfUH7d4tgm6kYYx9
+	 Dma9Zb9Gc6lDkoZRS3DUCn+2bSoKZTS7UsxnuPJRkCzoibt0D3JjZMMsayoM9saY4z
+	 BbSN3gvraoz/A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WPbMK4D5Sz4wbr;
+	Thu, 18 Jul 2024 11:49:17 +1000 (AEST)
+Date: Thu, 18 Jul 2024 11:49:16 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: Jiri Kosina <jikos@kernel.org>, David Miller <davem@davemloft.net>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Mark
+ Brown <broonie@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Alexei
+ Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, bpf
+ <bpf@vger.kernel.org>, Networking <netdev@vger.kernel.org>, Kui-Feng Lee
+ <thinker.li@gmail.com>, Martin KaFai Lau <martin.lau@kernel.org>,
+ linux-input@vger.kernel.org, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the bpf-next tree
+Message-ID: <20240718114916.7fab0442@canb.auug.org.au>
+In-Reply-To: <20240710091344.2f3f2029@canb.auug.org.au>
+References: <ZnB9X1Jj6c04ufC0@sirena.org.uk>
+	<20240710091344.2f3f2029@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v19 117/130] KVM: TDX: Silently ignore INIT/SIPI
-To: Isaku Yamahata <isaku.yamahata@intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- isaku.yamahata@gmail.com, Paolo Bonzini <pbonzini@redhat.com>,
- erdemaktas@google.com, Sean Christopherson <seanjc@google.com>,
- Sagi Shahar <sagis@google.com>, Kai Huang <kai.huang@intel.com>,
- chen.bo@intel.com, hang.yuan@intel.com, tina.zhang@intel.com,
- rick.p.edgecombe@intel.com
-References: <cover.1708933498.git.isaku.yamahata@intel.com>
- <4a4225de42be0f7568c5ecb5c22f2029f8e91d62.1708933498.git.isaku.yamahata@intel.com>
- <c45a1448-09ee-4750-bf86-28295dfc6089@linux.intel.com>
- <20240716225504.GE1900928@ls.amr.corp.intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20240716225504.GE1900928@ls.amr.corp.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/2M387VI3s81L9IdtWW7R0d/";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/2M387VI3s81L9IdtWW7R0d/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 7/17/2024 6:55 AM, Isaku Yamahata wrote:
-> On Mon, Jun 17, 2024 at 09:20:36AM +0800,
-> Binbin Wu <binbin.wu@linux.intel.com> wrote:
+On Wed, 10 Jul 2024 09:13:44 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
->>
->> On 2/26/2024 4:26 PM, isaku.yamahata@intel.com wrote:
->>> From: Isaku Yamahata <isaku.yamahata@intel.com>
->>>
->>> The TDX module API doesn't provide API for VMM to inject INIT IPI and SIPI.
->>> Instead it defines the different protocols to boot application processors.
->>> Ignore INIT and SIPI events for the TDX guest.
->>>
->>> There are two options. 1) (silently) ignore INIT/SIPI request or 2) return
->>> error to guest TDs somehow.  Given that TDX guest is paravirtualized to
->>> boot AP, the option 1 is chosen for simplicity.
->>>
->>> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
->>> ---
->>>    arch/x86/include/asm/kvm-x86-ops.h |  1 +
->>>    arch/x86/include/asm/kvm_host.h    |  2 ++
->>>    arch/x86/kvm/lapic.c               | 19 +++++++++++-------
->>>    arch/x86/kvm/svm/svm.c             |  1 +
->>>    arch/x86/kvm/vmx/main.c            | 32 ++++++++++++++++++++++++++++--
->>>    arch/x86/kvm/vmx/tdx.c             |  4 ++--
->>>    6 files changed, 48 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/arch/x86/include/asm/kvm-x86-ops.h b/arch/x86/include/asm/kvm-x86-ops.h
->>> index 22d93d4124c8..85c04aad6ab3 100644
->>> --- a/arch/x86/include/asm/kvm-x86-ops.h
->>> +++ b/arch/x86/include/asm/kvm-x86-ops.h
->>> @@ -149,6 +149,7 @@ KVM_X86_OP_OPTIONAL(migrate_timers)
->>>    KVM_X86_OP(msr_filter_changed)
->>>    KVM_X86_OP(complete_emulated_msr)
->>>    KVM_X86_OP(vcpu_deliver_sipi_vector)
->>> +KVM_X86_OP(vcpu_deliver_init)
->>>    KVM_X86_OP_OPTIONAL_RET0(vcpu_get_apicv_inhibit_reasons);
->>>    KVM_X86_OP_OPTIONAL(get_untagged_addr)
->>>    KVM_X86_OP_OPTIONAL_RET0(gmem_max_level)
->>> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
->>> index bb8be091f996..2686c080820b 100644
->>> --- a/arch/x86/include/asm/kvm_host.h
->>> +++ b/arch/x86/include/asm/kvm_host.h
->>> @@ -1836,6 +1836,7 @@ struct kvm_x86_ops {
->>>    	int (*complete_emulated_msr)(struct kvm_vcpu *vcpu, int err);
->>>    	void (*vcpu_deliver_sipi_vector)(struct kvm_vcpu *vcpu, u8 vector);
->>> +	void (*vcpu_deliver_init)(struct kvm_vcpu *vcpu);
->>>    	/*
->>>    	 * Returns vCPU specific APICv inhibit reasons
->>> @@ -2092,6 +2093,7 @@ void kvm_get_segment(struct kvm_vcpu *vcpu, struct kvm_segment *var, int seg);
->>>    void kvm_set_segment(struct kvm_vcpu *vcpu, struct kvm_segment *var, int seg);
->>>    int kvm_load_segment_descriptor(struct kvm_vcpu *vcpu, u16 selector, int seg);
->>>    void kvm_vcpu_deliver_sipi_vector(struct kvm_vcpu *vcpu, u8 vector);
->>> +void kvm_vcpu_deliver_init(struct kvm_vcpu *vcpu);
->>>    int kvm_task_switch(struct kvm_vcpu *vcpu, u16 tss_selector, int idt_index,
->>>    		    int reason, bool has_error_code, u32 error_code);
->>> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
->>> index 8025c7f614e0..431074679e83 100644
->>> --- a/arch/x86/kvm/lapic.c
->>> +++ b/arch/x86/kvm/lapic.c
->>> @@ -3268,6 +3268,16 @@ int kvm_lapic_set_pv_eoi(struct kvm_vcpu *vcpu, u64 data, unsigned long len)
->>>    	return 0;
->>>    }
->>> +void kvm_vcpu_deliver_init(struct kvm_vcpu *vcpu)
->>> +{
->>> +	kvm_vcpu_reset(vcpu, true);
->>> +	if (kvm_vcpu_is_bsp(vcpu))
->>> +		vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
->>> +	else
->>> +		vcpu->arch.mp_state = KVM_MP_STATE_INIT_RECEIVED;
->>> +}
->>> +EXPORT_SYMBOL_GPL(kvm_vcpu_deliver_init);
->>> +
->>>    int kvm_apic_accept_events(struct kvm_vcpu *vcpu)
->>>    {
->>>    	struct kvm_lapic *apic = vcpu->arch.apic;
->>> @@ -3299,13 +3309,8 @@ int kvm_apic_accept_events(struct kvm_vcpu *vcpu)
->>>    		return 0;
->>>    	}
->>> -	if (test_and_clear_bit(KVM_APIC_INIT, &apic->pending_events)) {
->>> -		kvm_vcpu_reset(vcpu, true);
->>> -		if (kvm_vcpu_is_bsp(apic->vcpu))
->>> -			vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
->>> -		else
->>> -			vcpu->arch.mp_state = KVM_MP_STATE_INIT_RECEIVED;
->>> -	}
->>> +	if (test_and_clear_bit(KVM_APIC_INIT, &apic->pending_events))
->>> +		static_call(kvm_x86_vcpu_deliver_init)(vcpu);
->>>    	if (test_and_clear_bit(KVM_APIC_SIPI, &apic->pending_events)) {
->>>    		if (vcpu->arch.mp_state == KVM_MP_STATE_INIT_RECEIVED) {
->>>    			/* evaluate pending_events before reading the vector */
->>> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
->>> index f76dd52d29ba..27546d993809 100644
->>> --- a/arch/x86/kvm/svm/svm.c
->>> +++ b/arch/x86/kvm/svm/svm.c
->>> @@ -5037,6 +5037,7 @@ static struct kvm_x86_ops svm_x86_ops __initdata = {
->>>    	.complete_emulated_msr = svm_complete_emulated_msr,
->>>    	.vcpu_deliver_sipi_vector = svm_vcpu_deliver_sipi_vector,
->>> +	.vcpu_deliver_init = kvm_vcpu_deliver_init,
->>>    	.vcpu_get_apicv_inhibit_reasons = avic_vcpu_get_apicv_inhibit_reasons,
->>>    };
->>> diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
->>> index 4f3b872cd401..84d2dc818cf7 100644
->>> --- a/arch/x86/kvm/vmx/main.c
->>> +++ b/arch/x86/kvm/vmx/main.c
->>> @@ -320,6 +320,14 @@ static void vt_enable_smi_window(struct kvm_vcpu *vcpu)
->>>    }
->>>    #endif
->>> +static bool vt_apic_init_signal_blocked(struct kvm_vcpu *vcpu)
->>> +{
->>> +	if (is_td_vcpu(vcpu))
->>> +		return true;
->> Since for TD, INIT is always blocked, then in kvm_apic_accept_events(), the
->> code path to handle INIT/SIPI delivery will not be called, i.e, the OPs
->> .vcpu_deliver_init() and .vcpu_deliver_sipi_vector() are never called for
->> TD.
->> Seems no need to add the new interface  vcpu_deliver_init or the new wrapper
->> vt_vcpu_deliver_sipi_vector().
->>
->> And consider the INIT/SIPI for TD:
->> - Normally, for TD, INIT ans SIPI should not be set in APIC's
->> pending_events.
->>    Maybe we can call KVM_BUG_ON() in vt_apic_init_signal_blocked() for TD?
->> - If INIT and SIPI are allowed be set in APIC's pending_events for somehow,
->> the current code has a problem, it will never clear INIT bit in APIC's
->> pending_events.
->>    Then kvm_apic_accept_events() needs to execute more check code if INIT was
->> once set.
->>    INIT bit should be cleared with this assumption.
->
-> KVM_SET_MP_STATE and KVM_SET_VCPU_EVENTS can set INIT/SIPI by the user space.
-> If we change those two IOCTLs to reject INIT/SIPI for TDX, we can go for the
-> above "Normally" option.  Because I didn't want to touch the common functions, I
-> ended in extra callbacks.  The user space shouldn't use those two IOCTLs for
-> TDX, though.
+> On Mon, 17 Jun 2024 19:15:59 +0100 Mark Brown <broonie@kernel.org> wrote:
+> >
+> > After merging the bpf-next tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> >=20
+> > /tmp/next/build/drivers/hid/bpf/hid_bpf_struct_ops.c:280:16: error: ini=
+tialization of 'int (*)(void *, struct bpf_link *)' from incompatible point=
+er type 'int (*)(void *)' [-Werror=3Dincompatible-pointer-types]
+> >   280 |         .reg =3D hid_bpf_reg,
+> >       |                ^~~~~~~~~~~
+> > /tmp/next/build/drivers/hid/bpf/hid_bpf_struct_ops.c:280:16: note: (nea=
+r initialization for 'bpf_hid_bpf_ops.reg')
+> > /tmp/next/build/drivers/hid/bpf/hid_bpf_struct_ops.c:281:18: error: ini=
+tialization of 'void (*)(void *, struct bpf_link *)' from incompatible poin=
+ter type 'void (*)(void *)' [-Werror=3Dincompatible-pointer-types]
+> >   281 |         .unreg =3D hid_bpf_unreg,
+> >       |                  ^~~~~~~~~~~~~
+> > /tmp/next/build/drivers/hid/bpf/hid_bpf_struct_ops.c:281:18: note: (nea=
+r initialization for 'bpf_hid_bpf_ops.unreg')
+> >=20
+> > Caused by commit
+> >=20
+> >   73287fe228721b ("bpf: pass bpf_struct_ops_link to callbacks in bpf_st=
+ruct_ops.")
+> >=20
+> > interacting with commit
+> >=20
+> >   ebc0d8093e8c97 ("HID: bpf: implement HID-BPF through bpf_struct_ops")
+> >=20
+> > from the HID tree.
+> >=20
+> > I've fixed it up as below:
+> >=20
+> > From e8aeaba00440845f9bd8d6183ca5d7383a678cd3 Mon Sep 17 00:00:00 2001
+> > From: Mark Brown <broonie@kernel.org>
+> > Date: Mon, 17 Jun 2024 19:02:27 +0100
+> > Subject: [PATCH] HID: bpf: Fix up build
+> >=20
+> > Fix up build error due to 73287fe228721b ("bpf: pass bpf_struct_ops_lin=
+k to callbacks in bpf_struct_ops.")
+> >=20
+> > Signed-off-by: Mark Brown <broonie@kernel.org>
+> > ---
+> >  drivers/hid/bpf/hid_bpf_struct_ops.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/hid/bpf/hid_bpf_struct_ops.c b/drivers/hid/bpf/hid=
+_bpf_struct_ops.c
+> > index 5f200557ff12b..744318e7d936b 100644
+> > --- a/drivers/hid/bpf/hid_bpf_struct_ops.c
+> > +++ b/drivers/hid/bpf/hid_bpf_struct_ops.c
+> > @@ -175,7 +175,7 @@ static int hid_bpf_ops_init_member(const struct btf=
+_type *t,
+> >  	return 0;
+> >  }
+> > =20
+> > -static int hid_bpf_reg(void *kdata)
+> > +static int hid_bpf_reg(void *kdata, struct bpf_link *link)
+> >  {
+> >  	struct hid_bpf_ops *ops =3D kdata;
+> >  	struct hid_device *hdev;
+> > @@ -229,7 +229,7 @@ static int hid_bpf_reg(void *kdata)
+> >  	return err;
+> >  }
+> > =20
+> > -static void hid_bpf_unreg(void *kdata)
+> > +static void hid_bpf_unreg(void *kdata, struct bpf_link *link)
+> >  {
+> >  	struct hid_bpf_ops *ops =3D kdata;
+> >  	struct hid_device *hdev;
+> > --=20
+> > 2.39.2
+> >  =20
+>=20
+> This fixup is now required when the hid and next-next trees are merged.
 
-Even though INIT/SIPI can be set by userspace to APIC's pending_events,
-for TD, INIT is always blocked, then in kvm_apic_accept_events(), the
-code path to handle INIT/SIPI delivery will not be called, i.e, the OPs
-.vcpu_deliver_init() and .vcpu_deliver_sipi_vector() are never called for
-TD.
+And now this is needed when the hid tree is merged with Linus' tree.
 
-Can we just drop the new OPs .vcpu_deliver_init() and the new wrapper
-vt_vcpu_deliver_sipi_vector()?
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/2M387VI3s81L9IdtWW7R0d/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaYdJwACgkQAVBC80lX
+0Gzm4gf+K5Eaw1hvi2atamuIucgJDjivmNzXb3gDTrIWxAwufU6uM61blbV8fBJ2
+H7ZcSIvsPD51QsazauCN77Xcgt80KMlhCAYixSXqoz9LU9+k5w29S7hXdseL/HYS
+hlFFw1BPtnTlPx6pzXEtq6z0MxUFoif3/D6j0wWFJLFx3DQsLGCOdxVtOnQ0hboA
+pFFzgZ9XKnYGhqRqpbCn/AXyFb6rgwzUM0gbgLCIoQDGfWchYfeD6Wi/+j9vGDTI
+Kr4x4nUlxlt0a+FdLKHAerlAOU49cUdhMuAxsTAA0SbJCRZNm/VcevAMNMD7arH0
+7ANk3vvbMrFCAYZspujkNW2ggjRC6w==
+=1aIh
+-----END PGP SIGNATURE-----
+
+--Sig_/2M387VI3s81L9IdtWW7R0d/--
 
