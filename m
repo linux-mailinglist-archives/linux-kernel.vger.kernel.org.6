@@ -1,112 +1,114 @@
-Return-Path: <linux-kernel+bounces-256464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35DD4934EF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:12:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3A66934EF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF1091F2109A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:12:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA6162847AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F191419A1;
-	Thu, 18 Jul 2024 14:12:04 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED657140E30;
+	Thu, 18 Jul 2024 14:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gEZVbq/e"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D7284DF5;
-	Thu, 18 Jul 2024 14:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9002AEE3
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 14:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721311923; cv=none; b=Mt/9pI0LJNbl9QOPMyK8hZsaTCrDtR8/JbhzbQG5uFXW8kFqtphJ6Bsx0Fz+vuYxxl4HPb0ben3slTj6la5SzlDueBs6Uy+zJkjj9Vj5AFsvGsuz4JLzeXBl6N6WMk6MUjZ0zn1askV1yjHzdBp9/HnhkhFBJ7TGVcaDVyYyFpQ=
+	t=1721311958; cv=none; b=HRdRXoiyH9ckvDYU+oxwUcWvAJ0kcTaMaa1XDExFPfA5Vbhn8b09RBPZuHgPegwP4NNAq+TiZampyazhyNj8kB+oj0O/piM78Z0G5UW4gH8cEhaXkDcZpyNOms9+W+AwuIGcxcA9sudNFtzl7pX1DmqwfBvz2ByNpwPdy6U+Cxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721311923; c=relaxed/simple;
-	bh=doTpESTqeubI6mB28UxNmhl+1oSmC1LfNMwJTifaYZU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FllIuN88LQkcnrxBpcUcpFLR4tVZ20ViDR3QjoTjtc719YPXQE+2Bk33En2mYwRu/bCFaxeO4A9fiYl3uTDVVhS4r4BlGSECDz0Bax9T4WienxiOamx5Vo+UPixLSxuC3id6KwGxt6OCJDQZgG6LelVPQJGuwNWyl84+jkDPLtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-01 (Coremail) with SMTP id qwCowABHTMieIplmbo8TBA--.5572S2;
-	Thu, 18 Jul 2024 22:11:52 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	srinivasan.shanmugam@amd.com,
-	chenjiahao16@huawei.com,
-	aurabindo.pillai@amd.com,
-	make24@iscas.ac.cn,
-	Jammy.Zhou@amd.com
-Cc: amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v3] drm/amdgpu: fix a possible null pointer dereference
-Date: Thu, 18 Jul 2024 22:11:41 +0800
-Message-Id: <20240718141141.872558-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1721311958; c=relaxed/simple;
+	bh=hiEzASeB10fNdaIpxw1XadKQUoRQLlgLlwTAxj43bc0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DeN7byoiDewFCsbdb3E+EI431eBWq4jhSjo2FQocI+AhlYVoIfzy1ltsnc1w2liK3PEH/T8j174zxRykTzG2zTVTnYKKs0GnqNJZFv+wI/4XPfV2x1El0FyRhaSuTN7A2OXoGdQwYbhmLdUDgQDhSLWK8VX7lMrvhbu4X0rnxn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gEZVbq/e; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70af3d9169bso654440b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 07:12:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721311956; x=1721916756; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hFMXWaNIqTAXV7kGU93gXqY15VB1HitSXOGrvoDOazw=;
+        b=gEZVbq/eA15qqNWOFMURriTf991ixSjp5COxMKGKBqxcbD1Aoy1ucJ1UWr4qWGqBIi
+         7MdYRj0mltvjuY/j/GZHzIsXXrfWN6k11WEJg53pHBHn6HbzhHdxmdFylNb8sYyq5PkP
+         BcCkfns/Ikuwvw4A+/CprdjwQPAkz/z40MDXKGPv1sjg92iepNJvmnYHGtV/sODUUvL6
+         DNr0b0N9kyhIfhixS7vAzE92DIFA/p3uizxXsOCjp+yKCj6FdMiyXX+uP0bX1FCYyoR8
+         qNDV7S8YJ1/qfLkqAsQ+AXtHB1M8QMv/RoHPV1O47V20FAez3PfKxytGT01EYTSluDFY
+         3Lqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721311956; x=1721916756;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hFMXWaNIqTAXV7kGU93gXqY15VB1HitSXOGrvoDOazw=;
+        b=Gjv8Cv4a/uBaiQTOaZzkWj8c/Z43ClPFlJVOvLIG8/ZNI1S+9yfB7njqFGL83hzm+e
+         1JmAdQMPGphfRj4wBm0N4Gjz/GbWw29OdLYxq7e2Noxo8dVTBHDvy/Fn9n2dteEQIT9I
+         ePAcK9W6WjYIzngSacXPunHMgvrZxNLsFe6USuz9z52nDkdUT6ti3jQoAQarigCYyRWp
+         AUXZXvsVEjVISUls+zaLnr2cJgwKfkVjvNUdv12Dz6RHHOhiOTRO208crtk17sO8xUGO
+         skRkkZnUXarCdI+O6TxM67QjGoEW3vroooFmR0Fj2rslogqVuOMusAz5ceJMlVRWVwcM
+         ZQhg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBtiQAQFNL1Ou6tcKqVm1Gk0W4zwqUdHAiNIq1kyIjoJKwkdFiSWTsYYAkqwTS5xOzxY8ppKdazc6p+jSanN5y3KlsaBW/6B1puKbU
+X-Gm-Message-State: AOJu0YzG+IFY+aYSqrmNk4uanvLz7fE+p5apXCHStcW5LnCDTF5arIjX
+	s4MzTnlfupWFQnCOkY/DisVHAjk2+beFXvQXi++ceQjQcn607XM4
+X-Google-Smtp-Source: AGHT+IEmCFmBg1tjU2Ii0ewR1LYNyJpwL7iEJVy4VVxNjNQi32QcbP53w182ILjMWIhfooCqb2fPxA==
+X-Received: by 2002:a05:6a00:cd3:b0:706:6106:5565 with SMTP id d2e1a72fcca58-70ce50a9473mr5969342b3a.27.1721311956173;
+        Thu, 18 Jul 2024 07:12:36 -0700 (PDT)
+Received: from five231003 ([2405:201:c006:312d:e88f:5b9e:fc3e:8053])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7ebb6aa1sm10084781b3a.77.2024.07.18.07.12.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jul 2024 07:12:35 -0700 (PDT)
+Date: Thu, 18 Jul 2024 19:42:07 +0530
+From: Kousik Sanagavarapu <five231003@gmail.com>
+To: Nishanth Menon <nm@ti.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Julia Lawall <julia.lawall@inria.fr>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 0/4] Do device node auto cleanup in drivers/soc/ti/
+Message-ID: <ZpkitzRCeCz9RQtn@five231003>
+References: <20240707055341.3656-1-five231003@gmail.com>
+ <Zpg41yZRHPv9w0Lg@five231003>
+ <20240718112134.txuimtlg62375jaw@musky>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABHTMieIplmbo8TBA--.5572S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrtw4UAFy5KF45Aw4rCFWDXFb_yoWkAwc_CF
-	WUZFZxXw43AFnYyr47Zw4SvwnIva4UAr4ktr1Sqa9av34xX3W7Jry5JF9YqF1fuF93CFnF
-	q34Ygw1rA3ZrCjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb3xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
-	YxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
-	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
-	C2KfnxnUUI43ZEXa7VUbHa0DUUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240718112134.txuimtlg62375jaw@musky>
 
-In amdgpu_connector_add_common_modes(), the return value of drm_cvt_mode()
-is assigned to mode, which will lead to a NULL pointer dereference on
-failure of drm_cvt_mode(). Add a check to avoid npd.
+On Thu, Jul 18, 2024 at 06:21:34AM -0500, Nishanth Menon wrote:
+> On 03:04-20240718, Kousik Sanagavarapu wrote:
+>
+> [...]
+>
+> > Ping
+> 
+> Umm... ping for what? for whom and why? In addition to reviews, I will
+> need someone to do tested-by as well - pruss/am33xx folks..? Further,
+> fyi, 6.12 collection cycle starts with 6.11 rc1 and I close mine around
+> rc4.
 
-Cc: stable@vger.kernel.org
-Fixes: d38ceaf99ed0 ("drm/amdgpu: add core driver (v4)")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v3:
-- added Cc stable line.
-Changes in v2:
-- modified the patch according to suggestions;
-- added Fixes line.
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c | 3 +++
- 1 file changed, 3 insertions(+)
+Sorry for not being more specific.  Since the last version was reviewed
+by Jonathan, I was wondering if he could review this round too.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c
-index 9caba10315a8..25b51b600f6f 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c
-@@ -458,6 +458,9 @@ static void amdgpu_connector_add_common_modes(struct drm_encoder *encoder,
- 			continue;
- 
- 		mode = drm_cvt_mode(dev, common_modes[i].w, common_modes[i].h, 60, false, false, false);
-+		if (!mode)
-+			return;
-+
- 		drm_mode_probed_add(connector, mode);
- 	}
- }
--- 
-2.25.1
+And yes, it would be great if someone could test these patches as I don't
+have access to the hardware - so RFT.
 
+Also thanks for the heads up on the cycle, I didn't know.
+
+Thanks
 
