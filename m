@@ -1,386 +1,412 @@
-Return-Path: <linux-kernel+bounces-256442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47152934E8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:50:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02C39934E8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F148D2820FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:50:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45DABB2380E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5FE913FD86;
-	Thu, 18 Jul 2024 13:49:44 +0000 (UTC)
-Received: from norbury.hmeau.com (abb.hmeau.com [144.6.53.87])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D317613E033;
+	Thu, 18 Jul 2024 13:50:40 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E991713EFF3;
-	Thu, 18 Jul 2024 13:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7B713DDCE;
+	Thu, 18 Jul 2024 13:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721310583; cv=none; b=Wz+9nuigAVj5srW/FBS1/t4lA0d5aVGGWhALsOD9ynfZvQnL+O/DXE4T9k3H47EzBOtYoi3D6e1qWanDk0+bRFTsEu7fHVJj4fyx+meUQuvQhTpCZXbJUV1o0aQUmTly64U5+cFq+jq0JV5LLyRRYvJ1sABXVjg6FKecommVMn8=
+	t=1721310640; cv=none; b=kbKDgnJVG85nbaNBRonBjSPSv9jD6znOUq7xCN3t0s9oPoY3y22KgUN8q6XpYZFv7J/2pnxBRYrL7poJZe/I4K02Y5SI/7KJCtJP7tL3UQ1F58+V+qgHl+6XZVpMhv/yH9++Yjfux6Newwj8bI6PY4KFMe8VryWwkz8+oRIWkYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721310583; c=relaxed/simple;
-	bh=J9KCo5f8uen/bxXMvzz73npaRCUfWsQFO8n+RVBqGEQ=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YtuoVH6+xHefoOTTe8xIAfCaIQYjiIGBCiUmFlqGi0UBdOuAEZRrnt1TE3eWBOEqV6P6GiemuS1N/MQj/iUi9mElj1zHPehQEtki7Nv0cwgu6JOIIBY61arWWKsGG7xba4uRTIN4T/z2oxUxJ5jzMJZRVqlBtEV9GCTpDe3477M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
-	by norbury.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sURVR-003Wte-1C;
-	Thu, 18 Jul 2024 23:49:14 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 19 Jul 2024 01:49:26 +1200
-Date: Fri, 19 Jul 2024 01:49:26 +1200
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Subject: [GIT PULL] Crypto Update for 6.11
-Message-ID: <ZpkdZopjF9/9/Njx@gondor.apana.org.au>
-References: <Yzv0wXi4Uu2WND37@gondor.apana.org.au>
- <Y5mGGrBJaDL6mnQJ@gondor.apana.org.au>
- <Y/MDmL02XYfSz8XX@gondor.apana.org.au>
- <ZEYLC6QsKnqlEQzW@gondor.apana.org.au>
- <ZJ0RSuWLwzikFr9r@gondor.apana.org.au>
- <ZOxnTFhchkTvKpZV@gondor.apana.org.au>
- <ZUNIBcBJ0VeZRmT9@gondor.apana.org.au>
- <ZZ3F/Pp1pxkdqfiD@gondor.apana.org.au>
- <ZfO6zKtvp2jSO4vF@gondor.apana.org.au>
- <ZkGN64ulwzPVvn6-@gondor.apana.org.au>
+	s=arc-20240116; t=1721310640; c=relaxed/simple;
+	bh=QXAL6I7DsWubQgk8xZ25uIekGqKOOpHeycHBZiLKKlo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uFYRd7g1tDxPLl9zL1YPvA4egngmTROI2tr0whB4/J9qoeeoMTPjke0jmQQX6DrGmFYHAEwUFzJwTW8SL1bguTtCvBQ1Ee6To3Mh+Tdmfhn5u5vhAKfb+MbZuiDNcYuGDwM8z8ZfNnolwqEEqSM9b6eJ/Pp/8H1OqQTZro89/Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i5e860d09.versanet.de ([94.134.13.9] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sURWf-0005NY-Lb; Thu, 18 Jul 2024 15:50:29 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Conor Dooley <conor@kernel.org>, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org
+Subject:
+ Re: [PATCH v2 1/3] dt-bindings: clocks: add binding for
+ voltage-controlled-oscillators
+Date: Thu, 18 Jul 2024 15:50:28 +0200
+Message-ID: <3522360.som1txNFv6@diego>
+In-Reply-To: <1d0e65a0e7797727815ff1b735e881da@manjaro.org>
+References:
+ <20240715110251.261844-1-heiko@sntech.de> <30200583.43St1lv6Oq@diego>
+ <1d0e65a0e7797727815ff1b735e881da@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZkGN64ulwzPVvn6-@gondor.apana.org.au>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-Hi Linus:
+Hi Dragan,
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+Am Donnerstag, 18. Juli 2024, 15:00:57 CEST schrieb Dragan Simic:
+> On 2024-07-18 13:30, Heiko St=FCbner wrote:
+> > Am Donnerstag, 18. Juli 2024, 12:53:07 CEST schrieb Dragan Simic:
+> >> On 2024-07-18 11:25, Heiko St=FCbner wrote:
+> >> > Am Dienstag, 16. Juli 2024, 18:15:08 CEST schrieb Conor Dooley:
+> >> >> On Mon, Jul 15, 2024 at 01:02:49PM +0200, Heiko Stuebner wrote:
+> >> >> > In contrast to fixed clocks that are described as ungateable, boa=
+rds
+> >> >> > sometimes use additional oscillators for things like PCIe referen=
+ce
+> >> >> > clocks, that need actual supplies to get enabled and enable-gpios=
+ to be
+> >> >> > toggled for them to work.
+> >> >> >
+> >> >> > This adds a binding for such oscillators that are not configurable
+> >> >> > themself, but need to handle supplies for them to work.
+> >> >> >
+> >> >> > In schematics they often can be seen as
+> >> >> >
+> >> >> >          ----------------
+> >> >> > Enable - | 100MHz,3.3V, | - VDD
+> >> >> >          |    3225      |
+> >> >> >    GND - |              | - OUT
+> >> >> >          ----------------
+> >> >> >
+> >> >> > or similar. The enable pin might be separate but can also just be=
+ tied
+> >> >> > to the vdd supply, hence it is optional in the binding.
+> >> >> >
+> >> >> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> >> >> > ---
+> >> >> >  .../bindings/clock/voltage-oscillator.yaml    | 49 +++++++++++++=
+++++++
+> >> >> >  1 file changed, 49 insertions(+)
+> >> >> >  create mode 100644 Documentation/devicetree/bindings/clock/volta=
+ge-oscillator.yaml
+> >> >> >
+> >> >> > diff --git a/Documentation/devicetree/bindings/clock/voltage-osci=
+llator.yaml b/Documentation/devicetree/bindings/clock/voltage-oscillator.ya=
+ml
+> >> >> > new file mode 100644
+> >> >> > index 0000000000000..8bff6b0fd582e
+> >> >> > --- /dev/null
+> >> >> > +++ b/Documentation/devicetree/bindings/clock/voltage-oscillator.=
+yaml
+> >> >> > @@ -0,0 +1,49 @@
+> >> >> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >> >> > +%YAML 1.2
+> >> >> > +---
+> >> >> > +$id: http://devicetree.org/schemas/clock/voltage-oscillator.yaml#
+> >> >> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >> >> > +
+> >> >> > +title: Voltage controlled oscillator
+> >> >>
+> >> >> Voltage controlled oscillator? Really? That sounds far too similar =
+to
+> >> >> a
+> >> >> VCO to me, and the input voltage here (according to the description=
+ at
+> >> >> least) does not affect the frequency of oscillation.
+> >> >
+> >> > That naming was suggested by Stephen in v1 [0] .
+> >> >
+> >> > Of course the schematics for the board I have only describe it as
+> >> > "100MHz,3.3V,3225" , thumbing through some mouser parts matching that
+> >> > only mentions "supply voltage" in their datasheets but not a depende=
+ncy
+> >> > between rate and voltage.
+> >> >
+> >> > [0]
+> >> > https://lore.kernel.org/linux-arm-kernel/b3c450a94bcb4ad0bc5b3c7ee87=
+12cb8.sboyd@kernel.org/
+> >> >
+> >> >> Why the dedicated binding, rather than adding a supply and enable-g=
+pio
+> >> >> to the existing "fixed-clock" binding? I suspect that a large porti=
+on
+> >> >> of
+> >> >> "fixed-clock"s actually require a supply that is (effectively)
+> >> >> always-on.
+> >> >
+> >> > I guess there are three aspects:
+> >> > - I do remember discussions in the past about not extending generic
+> >> >   bindings with device-specific stuff. I think generic power-sequenc=
+es
+> >> >   were the topic back then, though that might have changed over time?
+> >> > - There are places that describe "fixed-clock" as
+> >> >   "basic fixed-rate clock that cannot gate" [1]
+> >> > - Stephen also suggested a separate binding [2]
+> >> >
+> >> > With the fixed-clock being sort of the root for everything else on m=
+ost
+> >> > systems, I opted to leave it alone. I guess if the consenus really is
+> >> > that
+> >> > this should go there, I can move it, but discussion in v1
+> >> >
+> >> > Interestingly the fixed clock had a gpios property 10 years ago [3] =
+:-)
+> >> > .
+> >> >
+> >> > [1]
+> >> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/t=
+ree/drivers/clk/clk-fixed-rate.c#n18
+> >> > [2]
+> >> > https://lore.kernel.org/linux-arm-kernel/68f6dc44a8202fd83792e58aea1=
+37632.sboyd@kernel.org/
+> >> > [3]
+> >> > https://lore.kernel.org/linux-kernel//20140515064420.9521.47383@quan=
+tum/T/#t
+> >>=20
+> >> After finally going through the v1 discussion [4] in detail,
+> >> here are my further thoughts:
+> >>=20
+> >> - I agree with dropping the Diodes stuff, [5] because I see
+> >>    no need for that at this point;  though, am I missing
+> >>    something, where are they actually used?
+> >=20
+> > On the Rock5 ITX that 100MHz clock comes the one single oscillator=20
+> > thing.
+> >=20
+> > The Diodes parts are not root sources for their clocks but instead sort
+> > PLLs or something, though their manual describes them as
+> > "clock generator supporting PCI Express and Ethernet requirements" [8]
+> >=20
+> > So they generate the 100MHz (frequency actually is
+> > selected by input pins of the chip) from a separate 25MHz source clock.
+> >=20
+> > One example are the Theobroma/Cherry embedded boards changed in v1=20
+> > where
+> > they currently are described via existing generic things (no=20
+> > schematics).
+> >=20
+> > Another user is the rk3568-rock3b for example, where the diodes part
+> > is enabled by the same rail as the port itself, so in contrast to the
+> > Rock 5 ITX, it works "by accident" on the rock 3b [9]
+>=20
+> Ah, I see now, thanks for the clarification.  The way Diodes PI6C557
+> is used on the ROCK 3B, together with its 25 MHz "passive" crystal,
+> is pretty much the same as the way Aurasemi AU5426 is used on the
+> ROCK 5 ITX, together with its 100 MHz "active" clock generator.  All
+> that from the software standpoint, of course.
+>=20
+> To explain it further, the PI6C577 and the AU5426 are the components
+> that actually generate the clocks for the PCIe interfaces.  Thus,
+> technically we should describe two components per board in their DTs:
+>=20
+> - ROCK 5 ITX:
+>      - 100 MHz clock generator (which goes to the AU5426),
+>        i.e. the "100MHz,3.3V,3225"
+>      - clock buffer that fans the 100 MHz clock out to the
+>        PCIe interfaces, i.e. the Aurasemi AU5426
+>=20
+> - ROCK 3B:
+>      - 25 MHz "passive" crystal (which goes to the PI6C557)
+>      - clock generator that uses the 25 MHz crystal to generate
+>        100 MHz and fan it out to the PCIe interfaces, i.e. the
+>        Diodes PI6C557
+>=20
+> (The "passive" 25 MHz crystal is very similar to the main 24 MHz
+> crystal used by the SoC, also known as xin24m.)
+>=20
+> However, simplifying and abstracting the things out a bit should
+> be fine, to end up with the following:
+>=20
+> - ROCK 5 ITX:
+>      - "black box" that generates fixed 100 MHz clocks for the
+>         PCIe interfaces, which can be gated
+>=20
+> - ROCK 3B:
+>      - "black box" that generates fixed 100 MHz clocks for the
+>         PCIe interfaces, which can be gated
+>=20
+> ... and that's our, hopefully, gated-clock. :)
 
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+I don't think we want too many black-boxes. Devicetree's purpose is to
+describe the hardware as best as possible, the OS can make of it what it
+wants afterwards ;-) .
 
-are available in the Git repository at:
+That was also Stephen's point in v1 when he wanted to distinguish
+between the input-less oscillator and the Diodes things that needs an
+input clock.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git v6.11-p1 
 
-for you to fetch changes up to df1e9791998a92fe9f1e7d3f031b34daaad39e2f:
+> > The interesting part of the Diodes ICs is that they actually allow
+> > configuration of the generated frequency via their S0 + S1 pins,
+> > though they might be statically set in the board layout without
+> > being user configurable. (Rock3b does it this way for example)
+>=20
+> The Aurasemi AU5426 also has a few tricks up its sleeve. :)  For
+> example, it can also use a "passive" crystal instead of using an
+> external clock generator, i.e. it can be configured to work in
+> the same "big picture" layout as the PI6C577.
+>=20
+> >> - I agree that "enable-gpios" and "vdd-supply" should be
+> >>    required in the binding, [5] because that's the basis for
+> >>    something to be actually represented this way
+> >=20
+> > I would only require the vdd supply though.
+> >=20
+> > On the Rock 5 ITX, the chip does have an enable-gpio input, but that is
+> > tied directly to the voltage rail and is not user controllable.
+>=20
+> Isn't that voltage rail (VCC3V3_PI6C_05, provided by the U90099=20
+> regulator,
+> which is an RT9193) actually enabled by GPIO1_A4_d (see pages 14 and 35
+> in the ROCK 5 ITX schematic and follow PCIE30x_PWREN_H)?
+>=20
+> Unless I'm missing something, that's the source of all troubles, because
+> we basically also need to enable PCIE30x_PWREN_H when only the other M.2
+> slot is in use, or when it's enumerated first.  Thus, we need=20
+> enable-gpios
+> to be able to enable the VCC3V3_PI6C_05 independently.
 
-  hwrng: core - remove (un)register_miscdev() (2024-07-13 11:50:28 +1200)
+And you correctly described the problem I faced and that got me on that
+journey (sata-pcie-controller probing before M.2 attached controller).
 
-----------------------------------------------------------------
-This update includes the following changes:
+PCIE30x4_PWREN_H actually drives two separate regulators though,
+U90098 and U90099 .=20
 
-API:
+U90098 creates VCC3V3_MKEY which is the supply for the main M.2 slot
+U90099 creates VCC3V3_PI6C_05 which is the oscillator and Au5426 supply
 
-- Test setkey in no-SIMD context.
-- Add skcipher speed test for user-specified algorithm.
+PCIE30x4_PWREN_H definitly belongs to a regulator node in the devicetree
+that then either the M.2 slot or the oscillator can enable first.
 
-Algorithms:
 
-- Add x25519 support on ppc64le.
-- Add VAES and AVX512 / AVX10 optimized AES-GCM on x86.
-- Remove sm2 algorithm.
+> >> - I agree that it should be better not to touch fixed-clock
+> >>    at this point, simply because it's used in very many places,
+> >>    and because in this case we need more than it requires (see
+> >>    the bullet point above)
+> >>=20
+> >> - As I wrote already, [6] I highly disagree with this being
+> >>    called voltage-controlled oscillator (VCO), [7] simply
+> >>    because it isn't a VCO, but a clock that can be gated;
+> >>    though, looking forward to what the last bullet point
+> >>    asks to be clarified further
+> >>=20
+> >> - I still think that gated-clock is the best choice for the
+> >>    name, because it uses "clock" that's used throughout the
+> >>    entire codebase, and uses "gated" to reflect the nature
+> >>    of the clock generator
+> >=20
+> > "gated-oscillator" perhaps?
+>=20
+> But what's the output of an oscillator, which we actually care about?
+> It's nothing more but a clock. :)
+>=20
+> > This would make it more explicit that we're talking about a root
+> > for clock signals. "gated-clock" can be anything, in the middle
+> > of a clock tree. Having a very generic name, also invites misuse.
+>=20
+> I can't escape wondering why doesn't "fixed-clock", which is also
+> a very generic name, invite abuse?
 
-Drivers:
+I guess it does - see the misuse in the rk3588 tiger and jaguar boards.
+But it is sort of grandfathered I guess. It is still from a time more than
+12 years ago, when architectures (like sunxi) tried to model their clock-
+controllers via individual interconnected dt-nodes.
 
-- Add Allwinner H616 support to sun8i-ce.
-- Use DMA in stm32.
-- Add Exynos850 hwrng support to exynos.
-----------------------------------------------------------------
 
-Andre Przywara (3):
-      dt-bindings: crypto: sun8i-ce: Add compatible for H616
-      crypto: sun8i-ce - wrap accesses to descriptor address fields
-      crypto: sun8i-ce - add Allwinner H616 support
+> Speaking about the root of clock signals, the above-mentioned xin24m,
+> which is represented in DTs as a fixed-clock, is the root of pretty
+> much everything.  Also, it technically isn't a clock, it's a crystal.
+> That's another example of the above-mentioned abstraction, in which
+> we care about the way sotware sees it, which is a clock.
 
-Andy Shevchenko (1):
-      hwrng: core - Remove list.h from the hw_random.h
+At this point I think we should dt-people weigh in more on which
+direction to take ;-) .
 
-Ard Biesheuvel (1):
-      crypto: arm/crc32 - add kCFI annotations to asm routines
+Because as a lot of dt-binding review in the past mentioned, the
+"software-perspective" doesn't matter for the binding.
 
-Chenghai Huang (2):
-      crypto: hisilicon/qm - adjust the internal processing sequence of the vf enable and disable
-      crypto: hisilicon/zip - optimize the address offset of the reg query function
 
-Christophe JAILLET (1):
-      crypto: tegra - Remove an incorrect iommu_fwspec_free() call in tegra_se_remove()
+Heiko
 
-Damian Muszynski (1):
-      Documentation: qat: fix auto_reset attribute details
+> >> - Maybe we could actually use fixed-gated-clock as the name,
+> >>    which would make more sense from the stanpoint of possibly
+> >>    merging it into fixed-clock at some point, but I'd like
+> >>    to hear first what's actually going on with the Diodes
+> >>    stuff that was deleted in v2, which I already asked about
+> >>    in the first bullet point
+> >>=20
+> >> [4]
+> >> https://lore.kernel.org/linux-rockchip/20240709123121.1452394-1-heiko@=
+sntech.de/T/#u
+> >> [5]
+> >> https://lore.kernel.org/linux-rockchip/2e5852b9e94b9a8d0261ce7ad79f432=
+9.sboyd@kernel.org/
+> >> [6]
+> >> https://lore.kernel.org/linux-rockchip/ec84dc37e2c421ee6d31294e08392d5=
+7@manjaro.org/
+> >> [7]
+> >> https://lore.kernel.org/linux-rockchip/b3c450a94bcb4ad0bc5b3c7ee8712cb=
+8.sboyd@kernel.org/
+> >=20
+> > [8] https://www.diodes.com/assets/Datasheets/PI6C557-03.pdf
+> > [9] https://dl.radxa.com/rock3/docs/hw/3b/Radxa_ROCK_3B_V1.51_SCH.pdf
+> >     page 31, bottom left of the page
+> >=20
+> >=20
+> >> >> > +
+> >> >> > +maintainers:
+> >> >> > +  - Heiko Stuebner <heiko@sntech.de>
+> >> >> > +
+> >> >> > +properties:
+> >> >> > +  compatible:
+> >> >> > +    const: voltage-oscillator
+> >> >> > +
+> >> >> > +  "#clock-cells":
+> >> >> > +    const: 0
+> >> >> > +
+> >> >> > +  clock-frequency: true
+> >> >> > +
+> >> >> > +  clock-output-names:
+> >> >> > +    maxItems: 1
+> >> >> > +
+> >> >> > +  enable-gpios:
+> >> >> > +    description:
+> >> >> > +      Contains a single GPIO specifier for the GPIO that enables=
+ and disables
+> >> >> > +      the oscillator.
+> >> >> > +    maxItems: 1
+> >> >> > +
+> >> >> > +  vdd-supply:
+> >> >> > +    description: handle of the regulator that provides the suppl=
+y voltage
+> >> >> > +
+> >> >> > +required:
+> >> >> > +  - compatible
+> >> >> > +  - "#clock-cells"
+> >> >> > +  - clock-frequency
+> >> >> > +  - vdd-supply
+> >> >> > +
+> >> >> > +additionalProperties: false
+> >> >> > +
+> >> >> > +examples:
+> >> >> > +  - |
+> >> >> > +    voltage-oscillator {
+> >> >> > +      compatible =3D "voltage-oscillator";
+> >> >> > +      #clock-cells =3D <0>;
+> >> >> > +      clock-frequency =3D <1000000000>;
+> >> >> > +      vdd-supply =3D <&reg_vdd>;
+> >> >> > +    };
+> >> >> > +...
+>=20
 
-Dan Carpenter (1):
-      crypto: lib/mpi - delete unnecessary condition
 
-Danny Tsen (3):
-      crypto: ppc/curve25519 - Low-level primitives for ppc64le
-      crypto: ppc/curve25519 - Core functions for ppc64le
-      crypto: ppc/curve25519 - Update Kconfig and Makefile for ppc64le
 
-David Gstir (1):
-      crypto: mxs-dcp - Ensure payload is zero when using key slot
 
-Deming Wang (1):
-      crypto: qat - Fix typo
-
-Dr. David Alan Gilbert (4):
-      crypto: axis - Remove unused struct 'dbgfs_u32'
-      crypto: ccree - Remove unused struct 'tdes_keys'
-      crypto: hifn_795x - Remove unused hifn_*_command structs
-      crypto: n2 - Remove unused struct 'n2_skcipher_request_context'
-
-Eric Biggers (4):
-      crypto: testmgr - test setkey in no-SIMD context
-      crypto: x86/aes-gcm - add VAES and AVX512 / AVX10 optimized AES-GCM
-      crypto: x86/aes-gcm - rewrite the AES-NI optimized AES-GCM
-      crypto: testmgr - generate power-of-2 lengths more often
-
-Francesco Dolcini (1):
-      hwrng: Kconfig - Do not enable by default CN10K driver
-
-Greg Kroah-Hartman (1):
-      crypto: qat - make adf_ctl_class constant
-
-Harald Freudenberger (1):
-      hwrng: core - Fix wrong quality calculation at hw rng registration
-
-Hareshx Sankar Raj (1):
-      crypto: qat - fix unintentional re-enabling of error interrupts
-
-Herbert Xu (2):
-      crypto: api - Disable boot-test-finished if algapi is a module
-      crypto: sm2 - Remove sm2 algorithm
-
-Ilpo Järvinen (1):
-      hwrng: amd - Convert PCIBIOS_* return codes to errnos
-
-Jarkko Sakkinen (1):
-      crypto: ecdsa - Fix the public key format description
-
-Jeff Johnson (13):
-      crypto: Add missing MODULE_DESCRIPTION() macros
-      crypto: lib - add missing MODULE_DESCRIPTION() macros
-      crypto: x86 - add missing MODULE_DESCRIPTION() macros
-      crypto: atmel-sha204a - add missing MODULE_DESCRIPTION() macro
-      crypto: keembay - add missing MODULE_DESCRIPTION() macro
-      crypto: sa2ul - add missing MODULE_DESCRIPTION() macro
-      crypto: xilinx - add missing MODULE_DESCRIPTION() macro
-      hwrng: omap - add missing MODULE_DESCRIPTION() macro
-      crypto: arm64 - add missing MODULE_DESCRIPTION() macros
-      hwrng: drivers - add missing Arm & Cavium MODULE_DESCRIPTION() macros
-      crypto: arm/poly1305 - add missing MODULE_DESCRIPTION() macro
-      crypto: arm - add missing MODULE_DESCRIPTION() macros
-      crypto: lib - add missing MODULE_DESCRIPTION() macros
-
-Jia Jie Ho (2):
-      crypto: starfive - Align rsa input data to 32-bit
-      crypto: starfive - Fix nent assignment in rsa dec
-
-Jiapeng Chong (2):
-      crypto: lib/mpi - Use swap() in mpi_ec_mul_point()
-      crypto: lib/mpi - Use swap() in mpi_powm()
-
-Jiwei Sun (1):
-      crypto: qat - initialize user_input.lock for rate_limiting
-
-Kim Phillips (1):
-      crypto: ccp - Fix null pointer dereference in __sev_snp_shutdown_locked
-
-Kyle Meyer (1):
-      crypto: deflate - Add aliases to deflate
-
-Lothar Rubusch (1):
-      crypto: atmel-sha204a - fix negated return value
-
-Marek Vasut (3):
-      hwrng: stm32 - use pm_runtime_resume_and_get()
-      hwrng: stm32 - cache device pointer in struct stm32_rng_private
-      hwrng: stm32 - use sizeof(*priv) instead of sizeof(struct stm32_rng_private)
-
-Mario Limonciello (5):
-      crypto: ccp - Represent capabilities register as a union
-      crypto: ccp - Move security attributes to their own file
-      crypto: ccp - align psp_platform_access_msg
-      crypto: ccp - Add support for getting security attributes on some older systems
-      crypto: ccp - Move message about TSME being enabled later in init
-
-Mark Brown (1):
-      crypto: arm64/crc10dif - Raise priority of NEON crct10dif implementation
-
-Masahiro Yamada (1):
-      hwrng: core - remove (un)register_miscdev()
-
-Maxime Méré (4):
-      crypto: stm32/cryp - use dma when possible
-      crypto: stm32/cryp - increase priority
-      crypto: stm32/cryp - add CRYPTO_ALG_KERN_DRIVER_ONLY flag
-      crypto: stm32/cryp - call finalize with bh disabled
-
-Neil Armstrong (1):
-      dt-bindings: rng: meson: add optional power-domains
-
-Nivas Varadharajan Mugunthakumar (1):
-      crypto: qat - extend scope of lock in adf_cfg_add_key_value_param()
-
-Sam Protsenko (6):
-      dt-bindings: rng: Add Exynos850 support to exynos-trng
-      hwrng: exynos - Improve coding style
-      hwrng: exynos - Use devm_clk_get_enabled() to get the clock
-      hwrng: exynos - Implement bus clock control
-      hwrng: exynos - Add SMC based TRNG operation
-      hwrng: exynos - Enable Exynos850 support
-
-Sergey Portnoy (1):
-      crypto: tcrypt - add skcipher speed for given alg
-
-Stefan Berger (4):
-      crypto: ecdsa - Use ecc_digits_from_bytes to create hash digits array
-      crypto: ecdsa - Use ecc_digits_from_bytes to convert signature
-      crypto: ecc - Add comment to ecc_digits_from_bytes about input byte array
-      crypto: ecc - Fix off-by-one missing to clear most significant digit
-
-Tony Luck (2):
-      crypto: x86/twofish - Switch to new Intel CPU model defines
-      crypto: x86/poly1305 - Switch to new Intel CPU model defines
-
- Documentation/ABI/testing/sysfs-driver-qat         |    4 +-
- .../bindings/crypto/allwinner,sun8i-ce.yaml        |    2 +
- .../devicetree/bindings/rng/amlogic,meson-rng.yaml |    3 +
- .../bindings/rng/samsung,exynos5250-trng.yaml      |   40 +-
- MAINTAINERS                                        |    6 +
- arch/arm/crypto/aes-neonbs-glue.c                  |    1 +
- arch/arm/crypto/crc32-ce-core.S                    |   17 +-
- arch/arm/crypto/crc32-ce-glue.c                    |    1 +
- arch/arm/crypto/crct10dif-ce-glue.c                |    1 +
- arch/arm/crypto/curve25519-glue.c                  |    1 +
- arch/arm/crypto/poly1305-glue.c                    |    1 +
- arch/arm64/crypto/aes-neonbs-glue.c                |    1 +
- arch/arm64/crypto/crct10dif-ce-glue.c              |    3 +-
- arch/arm64/crypto/poly1305-glue.c                  |    1 +
- arch/powerpc/crypto/Kconfig                        |   11 +
- arch/powerpc/crypto/Makefile                       |    2 +
- arch/powerpc/crypto/curve25519-ppc64le-core.c      |  299 +++
- arch/powerpc/crypto/curve25519-ppc64le_asm.S       |  671 +++++
- arch/x86/crypto/Kconfig                            |    1 +
- arch/x86/crypto/Makefile                           |    8 +-
- arch/x86/crypto/aes-gcm-aesni-x86_64.S             | 1128 ++++++++
- arch/x86/crypto/aes-gcm-avx10-x86_64.S             | 1222 +++++++++
- arch/x86/crypto/aesni-intel_asm.S                  | 1503 +----------
- arch/x86/crypto/aesni-intel_avx-x86_64.S           | 2804 --------------------
- arch/x86/crypto/aesni-intel_glue.c                 | 1269 +++++----
- arch/x86/crypto/crc32-pclmul_glue.c                |    1 +
- arch/x86/crypto/curve25519-x86_64.c                |    1 +
- arch/x86/crypto/poly1305_glue.c                    |    4 +-
- arch/x86/crypto/twofish_glue_3way.c                |    9 +-
- crypto/Kconfig                                     |   18 -
- crypto/Makefile                                    |    8 -
- crypto/af_alg.c                                    |    1 +
- crypto/algapi.c                                    |    3 +
- crypto/algif_hash.c                                |    1 +
- crypto/algif_skcipher.c                            |    1 +
- crypto/api.c                                       |    4 +-
- crypto/asymmetric_keys/pkcs7_parser.c              |    4 -
- crypto/asymmetric_keys/public_key.c                |    7 -
- crypto/asymmetric_keys/x509_cert_parser.c          |   16 -
- crypto/asymmetric_keys/x509_public_key.c           |   17 +-
- crypto/cast_common.c                               |    1 +
- crypto/curve25519-generic.c                        |    1 +
- crypto/deflate.c                                   |    1 +
- crypto/ecc.c                                       |    3 +-
- crypto/ecdsa.c                                     |   34 +-
- crypto/internal.h                                  |    7 +-
- crypto/simd.c                                      |    1 +
- crypto/sm2.c                                       |  498 ----
- crypto/sm2signature.asn1                           |    4 -
- crypto/tcrypt.c                                    |    9 +
- crypto/testmgr.c                                   |   51 +-
- crypto/testmgr.h                                   |   59 -
- crypto/xor.c                                       |    1 +
- drivers/char/hw_random/Kconfig                     |    1 -
- drivers/char/hw_random/amd-rng.c                   |    4 +-
- drivers/char/hw_random/arm_smccc_trng.c            |    1 +
- drivers/char/hw_random/cavium-rng-vf.c             |    1 +
- drivers/char/hw_random/cavium-rng.c                |    1 +
- drivers/char/hw_random/core.c                      |   18 +-
- drivers/char/hw_random/exynos-trng.c               |  217 +-
- drivers/char/hw_random/omap-rng.c                  |    1 +
- drivers/char/hw_random/omap3-rom-rng.c             |    1 +
- drivers/char/hw_random/stm32-rng.c                 |   35 +-
- .../crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c    |    8 +-
- drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c  |   28 +-
- drivers/crypto/allwinner/sun8i-ce/sun8i-ce-hash.c  |    6 +-
- drivers/crypto/allwinner/sun8i-ce/sun8i-ce-prng.c  |    6 +-
- drivers/crypto/allwinner/sun8i-ce/sun8i-ce-trng.c  |    2 +-
- drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h       |   15 +
- drivers/crypto/atmel-sha204a.c                     |    3 +-
- drivers/crypto/axis/artpec6_crypto.c               |    7 -
- drivers/crypto/ccp/Makefile                        |    3 +-
- drivers/crypto/ccp/dbc.c                           |    2 +-
- drivers/crypto/ccp/hsti.c                          |  138 +
- drivers/crypto/ccp/hsti.h                          |   17 +
- drivers/crypto/ccp/psp-dev.c                       |   23 +-
- drivers/crypto/ccp/psp-dev.h                       |   46 +-
- drivers/crypto/ccp/sev-dev.c                       |    8 +-
- drivers/crypto/ccp/sp-dev.h                        |    2 +-
- drivers/crypto/ccp/sp-pci.c                        |   67 +-
- drivers/crypto/ccree/cc_cipher.c                   |    6 -
- drivers/crypto/hifn_795x.c                         |   17 -
- drivers/crypto/hisilicon/qm.c                      |   11 +-
- drivers/crypto/hisilicon/zip/zip_main.c            |   48 +-
- drivers/crypto/intel/keembay/ocs-hcu.c             |    1 +
- drivers/crypto/intel/qat/qat_common/adf_cfg.c      |    6 +-
- drivers/crypto/intel/qat/qat_common/adf_ctl_drv.c  |   21 +-
- drivers/crypto/intel/qat/qat_common/adf_dev_mgr.c  |    2 +-
- .../crypto/intel/qat/qat_common/adf_gen2_pfvf.c    |    4 +-
- drivers/crypto/intel/qat/qat_common/adf_rl.c       |    1 +
- .../intel/qat/qat_dh895xcc/adf_dh895xcc_hw_data.c  |    8 +-
- drivers/crypto/mxs-dcp.c                           |    3 +-
- drivers/crypto/n2_core.c                           |    4 -
- drivers/crypto/sa2ul.c                             |    1 +
- drivers/crypto/starfive/jh7110-cryp.h              |    4 +-
- drivers/crypto/starfive/jh7110-rsa.c               |   15 +-
- drivers/crypto/stm32/stm32-cryp.c                  |  719 ++++-
- drivers/crypto/tegra/tegra-se-main.c               |    1 -
- drivers/crypto/xilinx/zynqmp-aes-gcm.c             |    1 +
- include/crypto/internal/ecc.h                      |    3 +
- include/crypto/sm2.h                               |   28 -
- include/linux/hw_random.h                          |    3 +-
- include/linux/psp-platform-access.h                |    5 +-
- lib/crypto/arc4.c                                  |    1 +
- lib/crypto/des.c                                   |    1 +
- lib/crypto/libchacha.c                             |    1 +
- lib/crypto/mpi/ec.c                                |    6 +-
- lib/crypto/mpi/mpi-bit.c                           |   10 +-
- lib/crypto/mpi/mpi-pow.c                           |    9 +-
- lib/crypto/poly1305.c                              |    1 +
- lib/crypto/sha1.c                                  |    1 +
- lib/crypto/sha256.c                                |    1 +
- lib/crypto/utils.c                                 |    1 +
- security/integrity/digsig_asymmetric.c             |    3 +-
- 114 files changed, 5480 insertions(+), 5893 deletions(-)
- create mode 100644 arch/powerpc/crypto/curve25519-ppc64le-core.c
- create mode 100644 arch/powerpc/crypto/curve25519-ppc64le_asm.S
- create mode 100644 arch/x86/crypto/aes-gcm-aesni-x86_64.S
- create mode 100644 arch/x86/crypto/aes-gcm-avx10-x86_64.S
- delete mode 100644 arch/x86/crypto/aesni-intel_avx-x86_64.S
- delete mode 100644 crypto/sm2.c
- delete mode 100644 crypto/sm2signature.asn1
- create mode 100644 drivers/crypto/ccp/hsti.c
- create mode 100644 drivers/crypto/ccp/hsti.h
- delete mode 100644 include/crypto/sm2.h
-
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
