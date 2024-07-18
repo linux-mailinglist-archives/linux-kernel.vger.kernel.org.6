@@ -1,139 +1,179 @@
-Return-Path: <linux-kernel+bounces-256168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F26B4934A32
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:45:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB23934A61
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8B941F255B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:45:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A51D71C21A74
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242037E576;
-	Thu, 18 Jul 2024 08:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="rLiF7O9f"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9B282866;
+	Thu, 18 Jul 2024 08:46:29 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03322745F4;
-	Thu, 18 Jul 2024 08:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852203F8F7
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 08:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721292314; cv=none; b=SjU8qSSbWZ3QqU0V0qmvB1zGDmJbvrGIa9jV/wJBky2rAfjoY7P0+wBzN7BJmiBZuRbtNw/NS86U/AWrLgPQszy99rGYVwPoEylTAoL7H6H14mWD/oRBFxeeoxfRGHRqdGT5uYW5RTBVcKINA0I/uOROjrP2BIlqYryfNVstzOY=
+	t=1721292388; cv=none; b=ZgsnbpF5cQdHN2eprffIIukvLL3rvyeoOr/q4vjTyCEGLVb2OKN5PiM1nFSTzCN3eN3kZ4vrRx9DB9PZas5233a/T/tCf5l8QMR5eWgaF2TBZCxeYUAAB/yeE3g1kJsJmnwRP0lhT7DdgTku1tBwydiresByL1XR936dB/LDvvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721292314; c=relaxed/simple;
-	bh=fkCywxD3okS1KYREw38tF1DYuPRi9L2ZeQTfpycQs3U=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pBngoFZUxjaVtuBw+OJDgbJB86HOM9iM3NYxDhcbD3Znha8SWfv5GF23VI8+PQ/jsnbMQl0mXRx0CCvrPGmW5dmtE0KCP+BImrQ+7cc7XTbw9L6ALLs8YFU5M8knpf9WvIegX4QhkS2/BJtz6dY92v7PYGZZZAvkdl3CqrN+C1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=rLiF7O9f; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721292311;
-	bh=fkCywxD3okS1KYREw38tF1DYuPRi9L2ZeQTfpycQs3U=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=rLiF7O9fmaFWzbFQdiQyoRcpH9TaxgcAct7wegDUE+I3wTVmk35/m15OAschwhYpH
-	 DbXTMAwcMyeI+w4TwsSNYRldxwxCgB3jz3wRrpX7d1ycz6Y1YO+Q3dpuF+mYBE7Rnq
-	 Qlaz49lNlj+KkgbKdWLX3cuUSU5SyctiqacNBIZFl16vgsvFlmwoZxm9En4db9pgi0
-	 p572Ix5/w8tpjTDTlXQS73XqXheAy11TWgOb7VG9BSvlpZzlDkvsSXzJEM551TNbGD
-	 JQBaBUSrAzDP2ePnicoVymKTS47aL5qFb/qf20ROAz+5Q2SqDGepAJifocY+EuLt7F
-	 qaKrn3bsj/jqA==
-Received: from [100.77.12.232] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: obbardc)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 7F4913782167;
-	Thu, 18 Jul 2024 08:45:10 +0000 (UTC)
-Message-ID: <7dd789fb26817a8f752b6b0e8224b2ddf7293156.camel@collabora.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: arm: rockchip: Add Firefly
- Core-PX30-JD4 with baseboard
-From: Christopher Obbard <chris.obbard@collabora.com>
-To: Dragan Simic <dsimic@manjaro.org>, Conor Dooley
- <conor.dooley@microchip.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org,  linux-kernel@vger.kernel.org, Kever
- Yang <kever.yang@rock-chips.com>,  Collabora Kernel Mailing List
- <kernel@collabora.com>
-Date: Thu, 18 Jul 2024 09:45:09 +0100
-In-Reply-To: <6ed3e6c6b74ddba1bca1a719dfdf3ac4@manjaro.org>
-References: <20240717-rockchip-px30-firefly-v2-0-06541a5a5946@collabora.com>
-	 <20240717-rockchip-px30-firefly-v2-1-06541a5a5946@collabora.com>
-	 <0c804e9a0227904b16bfb779f2009af1@manjaro.org>
-	 <e34f1a0a81de24437be7f582c719d3f128d44b51.camel@collabora.com>
-	 <20240718-lapped-suffocate-0216bad82c68@wendy>
-	 <6ed3e6c6b74ddba1bca1a719dfdf3ac4@manjaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-1 
+	s=arc-20240116; t=1721292388; c=relaxed/simple;
+	bh=wV5ybvQPor2bnJGgnEn0Oh+kFS+xgnjnr0Hxc8kRgHA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=U5LPpFKPeGHkEWqyqClc6MC3mIR01ezl5ntnjWZdFqpJEMC70BpF/N2WLR/uly2D7luuWC9V73LZNOSlyg8iN/Csxl4cMhIws73lj+8gvnXqMY0B/XSMMub8WWtifFwHkvLevrZedQmDtWBxzNmx2jHX9FvpfOQSRFaKRJvY31Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-396a2362fb0so8181765ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 01:46:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721292383; x=1721897183;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4zPAYIuXO5OCe6dNXtaa4wLM0bA3nIGaPdAwSXVyIi4=;
+        b=GZP9zukNjrZx0hXlwHYsQ0XY90GugHxCN5/yilUYmdKAhptVIL702Oa8DOZsEkxc7L
+         OHvs24N1/H/NRMl2TTa8UiPH/12hY68ClkZwjJUJPHZhSA2dY3mHbL/ZqCQCpN65RWS4
+         AasH7PUDxTKZ6xxY/3a1eO944B13sVMhpiUvwZkCiCT+48znUEWi+fV83G8M+038Kz0g
+         MpAqXRFdHIs8IqmzrLZ0W8HB1v1PY1l87PoiO9lS2usmYHyNepPiRMIA0+B8PFgcNK5f
+         kztqyKISVDCT3HFurud3y1RBJ9ebJZ0fd8KWpmmr2S+GZMcYI884EvWlN2pmL6OgOqMO
+         edhA==
+X-Forwarded-Encrypted: i=1; AJvYcCUoVfOLqu9zco+h+iMN/DUy4xtlBTVD7eTizqHb5LsUggkrzdKlmVnBrNad89/l466E2eOe6a7su6jPRhglfZWrtYKkmKepz/nkHkBm
+X-Gm-Message-State: AOJu0YyyRoglFdY3RphFYSuAPL+aNdqyD6xjLgWW/OrvppUV+7t90IJl
+	hWITmXUASNqk63ts+4SUmZ1MHsWT38gnQQ1DaMo/uw7rKbB9VLdTCkvr+cxDLNfgne8zcyvskaO
+	AAk6DoYwuOFUna48iasphVLJdV4HIjVxeebeWS+jQ0KrGH1FzdCYh9ac=
+X-Google-Smtp-Source: AGHT+IHfTQRHpCcbQEQMMigbvGYeylVBPR6NAUlcDpcwGlttqEKqQ56bCIDRYDV+m5WxrLtGPQzHuSWwSK9BUAxYbpReV8TK97NX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:219c:b0:397:3a28:94e8 with SMTP id
+ e9e14a558f8ab-3973a28973fmr25725ab.3.1721292383653; Thu, 18 Jul 2024 01:46:23
+ -0700 (PDT)
+Date: Thu, 18 Jul 2024 01:46:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000152438061d819d0b@google.com>
+Subject: [syzbot] [wireless?] divide error in mac80211_hwsim_link_info_changed
+From: syzbot <syzbot+c6f3c081bf956c97e4de@syzkaller.appspotmail.com>
+To: johannes@sipsolutions.net, kvalo@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Dragan,
+Hello,
 
-On Thu, 2024-07-18 at 10:43 +0200, Dragan Simic wrote:
-> On 2024-07-18 10:34, Conor Dooley wrote:
-> > On Thu, Jul 18, 2024 at 09:31:45AM +0100, Christopher Obbard wrote:
-> > > Thanks for the review.
-> > >=20
-> > > On Thu, 2024-07-18 at 06:36 +0200, Dragan Simic wrote:
-> > > > Hello Christopher,
-> > > >=20
-> > > > On 2024-07-17 18:46, Christopher Obbard wrote:
-> > > > > Add binding for the Firefly Core-PX30-JD4 SoM when used in
-> > > > > conjunction
-> > > > > with the MB-JD4-RK3328 & PX30 baseboard.
-> > > > >=20
-> > > > > Signed-off-by: Christopher Obbard <chris.obbard@collabora.com>
-> > > > > ---
-> > > > > =C2=A0Documentation/devicetree/bindings/arm/rockchip.yaml | 6 +++=
-+++
-> > > > > =C2=A01 file changed, 6 insertions(+)
-> > > > >=20
-> > > > > diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml
-> > > > > b/Documentation/devicetree/bindings/arm/rockchip.yaml
-> > > > > index 1ef09fbfdfaf5..33ca8028bc151 100644
-> > > > > --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
-> > > > > +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
-> > > > > @@ -148,6 +148,12 @@ properties:
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - co=
-nst: engicam,px30-core
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - co=
-nst: rockchip,px30
-> > > > >=20
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Firefly Core-PX30-=
-JD4 with MB-JD4-PX30
-> > > > > baseboard
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
-firefly,px30-mb-jd4
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
-firefly,px30-core-jd4
-> > > >=20
-> > > > Similarly to how I suggested the new dts(i) files to be named, [1]
-> > > > the model names should be named like this:
-> > > >=20
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - cons=
-t: firefly,px30-jd4-core
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - cons=
-t: firefly,px30-jd4-core-mb
-> > >=20
-> > > I suppose the order should be the other way around to match other=20
-> > > entries, e.g
-> > > firefly,px30-jd4-core-mb first?
-> >=20
-> > Yes. Mainboard first, then som, then soc.
->=20
-> Ah yes, sorry, I somehow managed to get the order wrong.=C2=A0 Basically,
-> it goes from more specific to less specific.
+syzbot found the following issue on:
 
-Right, I thought so and was just double-checking ;-).
+HEAD commit:    51835949dda3 Merge tag 'net-next-6.11' of git://git.kernel..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=15f207a5980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d3bdd09ea2371c89
+dashboard link: https://syzkaller.appspot.com/bug?extid=c6f3c081bf956c97e4de
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/9690deac1819/disk-51835949.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/54d261dbb3f0/vmlinux-51835949.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e61465cd524f/bzImage-51835949.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c6f3c081bf956c97e4de@syzkaller.appspotmail.com
+
+Oops: divide error: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 0 PID: 11 Comm: kworker/u8:0 Not tainted 6.10.0-syzkaller-04472-g51835949dda3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: events_unbound cfg80211_wiphy_work
+
+RIP: 0010:mac80211_hwsim_link_info_changed+0x409/0xf00 drivers/net/wireless/virtual/mac80211_hwsim.c:2547
+Code: 00 fc ff df 43 80 7c 3d 00 00 48 8b 44 24 20 74 0f 48 8b 7c 24 20 e8 a6 ff 0d fb 48 8b 44 24 20 48 8b 08 89 ce 48 89 d8 31 d2 <48> f7 f6 29 d1 48 69 f1 e8 03 00 00 4c 89 f7 31 d2 b9 05 00 00 00
+RSP: 0018:ffffc900001077a0 EFLAGS: 00010246
+
+RAX: 00061d780b08a1f3 RBX: 00061d780b08a1f3 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000040
+RBP: ffffc90000107890 R08: ffffffff8183f431 R09: 1ffffffff25f9ec5
+R10: dffffc0000000000 R11: ffffffff813597f0 R12: 0000000000000200
+R13: 1ffff1100c778e08 R14: ffff888063bc7048 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000110c34d35b CR3: 000000006a936000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ drv_link_info_changed+0x53d/0x8b0
+ ieee80211_offchannel_return+0x3a4/0x530 net/mac80211/offchannel.c:160
+ __ieee80211_scan_completed+0x77f/0xb60 net/mac80211/scan.c:495
+ ieee80211_scan_work+0x1cc/0x1da0 net/mac80211/scan.c:1162
+ cfg80211_wiphy_work+0x2db/0x490 net/wireless/core.c:440
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:mac80211_hwsim_link_info_changed+0x409/0xf00 drivers/net/wireless/virtual/mac80211_hwsim.c:2547
+Code: 00 fc ff df 43 80 7c 3d 00 00 48 8b 44 24 20 74 0f 48 8b 7c 24 20 e8 a6 ff 0d fb 48 8b 44 24 20 48 8b 08 89 ce 48 89 d8 31 d2 <48> f7 f6 29 d1 48 69 f1 e8 03 00 00 4c 89 f7 31 d2 b9 05 00 00 00
+RSP: 0018:ffffc900001077a0 EFLAGS: 00010246
+RAX: 00061d780b08a1f3 RBX: 00061d780b08a1f3 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000040
+RBP: ffffc90000107890 R08: ffffffff8183f431 R09: 1ffffffff25f9ec5
+R10: dffffc0000000000 R11: ffffffff813597f0 R12: 0000000000000200
+R13: 1ffff1100c778e08 R14: ffff888063bc7048 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f37c5e6dfc8 CR3: 000000001f47a000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess), 3 bytes skipped:
+   0:	df 43 80             	filds  -0x80(%rbx)
+   3:	7c 3d                	jl     0x42
+   5:	00 00                	add    %al,(%rax)
+   7:	48 8b 44 24 20       	mov    0x20(%rsp),%rax
+   c:	74 0f                	je     0x1d
+   e:	48 8b 7c 24 20       	mov    0x20(%rsp),%rdi
+  13:	e8 a6 ff 0d fb       	call   0xfb0dffbe
+  18:	48 8b 44 24 20       	mov    0x20(%rsp),%rax
+  1d:	48 8b 08             	mov    (%rax),%rcx
+  20:	89 ce                	mov    %ecx,%esi
+  22:	48 89 d8             	mov    %rbx,%rax
+  25:	31 d2                	xor    %edx,%edx
+* 27:	48 f7 f6             	div    %rsi <-- trapping instruction
+  2a:	29 d1                	sub    %edx,%ecx
+  2c:	48 69 f1 e8 03 00 00 	imul   $0x3e8,%rcx,%rsi
+  33:	4c 89 f7             	mov    %r14,%rdi
+  36:	31 d2                	xor    %edx,%edx
+  38:	b9 05 00 00 00       	mov    $0x5,%ecx
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
