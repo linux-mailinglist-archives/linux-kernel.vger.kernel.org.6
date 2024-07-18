@@ -1,124 +1,122 @@
-Return-Path: <linux-kernel+bounces-256631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDA68935147
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:34:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA91C93514B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:41:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86C011F222B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:34:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 876A02839F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2313D966;
-	Thu, 18 Jul 2024 17:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5F014533D;
+	Thu, 18 Jul 2024 17:41:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x6YezqWA"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GcHisq0Q"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D2763A
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 17:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10AC63A;
+	Thu, 18 Jul 2024 17:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721324072; cv=none; b=TnDvLHqpUbO7vxdSbsV5jAQZNgDcWKd4lTrdOKaudWS5Lgggr1DSiXKe8vuF7BVGUmV+qi3rtUH6xz0hoVkH4S5YyFT66Aa4+GlywxC22tlG5pcd/CBvfQsUM9g9Jg7sxLl7LjNJ0g8XwlTbBH3/VOASibc/55UOpIWyB+iYlfk=
+	t=1721324495; cv=none; b=ifvUlDbwQGMw902nOSGD6U427kNEzzIxqN91it2K9BkOEWSzBJ9kdyADENIH4/NJyFy6KfrXhRDXehKu1YvEk4TlEmbhxepNyTrn7QUORrXiTp2WpIt8l1pKBnqWsmP5RvbWgT59sHs3NjpHuu9ej5zBz2pIop6NVfM25KWPFxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721324072; c=relaxed/simple;
-	bh=CUHwvzK4V4eEqiHPrEkeBIjYw9V1Jkc88exvlaLUyxM=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=f+dMf9gAKZNy5jDX13Fah3zXjElnWZGANW5eAuz0Z81SBdTMj+/sCEKhWy95Wyz2698H9ojYOFvMxh0fCxEt7MqsMlz6E+VlT339sIsn5G/ms1AXAifX7J9XSSALl9b8kyZVO2mWw78yb6PDkK9y2mGZ5rbFuCDZ7Jq4B3Fh6Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--maskray.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x6YezqWA; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--maskray.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-668e964ffd9so8400187b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 10:34:30 -0700 (PDT)
+	s=arc-20240116; t=1721324495; c=relaxed/simple;
+	bh=b9UYGyJ3/vQpMXCA/Sfwxz6MCAKrrxB8FyY3lMOhKCs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VA0nfFT3ifdW/7cfDywJVVj3u8iJ5LKASAW0mFgWjDYoi9EehcEI9ev0bbW4hD6hJswV0pVx9k4T4akI6Df2a5WuZuRzC936nPXREfTLkko5kvOpGoJEkMbw2CysbHC5zHKOwP5Zn+ppmTTpPCmIMxXZQbZIQ5dKfgrBlmC3PDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GcHisq0Q; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-78512d44a17so727011a12.3;
+        Thu, 18 Jul 2024 10:41:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721324070; x=1721928870; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2bPXOft7a0DVPxryCI2cNdVhhqnEsyUQPtbGOfbLI5A=;
-        b=x6YezqWAa4S5Binalb9QJsf84vwlbdRKsk7YxvQv5dvmQcrZk9dmpV9LBNV0Nz/R7d
-         CHjbTWZPM7+TSRl+ji0t3UYSdRf0zrug2FzPWUCLXbgSFWq0UaRr2GQMJVIUy0UfqUbX
-         /IR3wv5x7Ql9PQyVHToD40qbk7c5DpMwGdTfAq9/s/NexL0Feru/ugnnpzIXtrt7bsRv
-         eWA3Kmw9NbtszaycC2XzhsN2MtfjIIS4+zPRl5B3FO/31q3nrJ0nA9E14KSkKukkTSwg
-         rHmdk8gATEveOP2Fmvmq+bCJLG7HiVi9C1RRylihbkaAcoiTR2+NmHjlY2Of6hs8dE2b
-         9AUg==
+        d=gmail.com; s=20230601; t=1721324493; x=1721929293; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jXGWWfWKwu4C0Pwh4ekXo4Fyxb931LLzXNEPPDV5NVo=;
+        b=GcHisq0QRkj/bwwgxldvsQ+zttw7dEh/Vs+bm8+QuBv8QSkk1duJlW2R0DiZkUKzLp
+         X4tu7gG8BBebmmx4im+ISjfx6rXuyMspXB1x6NucvBGQaFxBbmyrcEHmMHK0nvN5EliA
+         0w6x50GTbceG8s9n4Ye5gioEfJbo4eioD9gJG0IwJ4xoTrgLUXCJsPhqChPSKUKNAt1p
+         RPmibI0D1duK62fG0ZRsxP9naHnXqS77baS55pTvIBL5gpFeENzGHa7X3TtPhNbtEHj/
+         NUX8Mwr6ofmPX4pvw8uVNl79qIxJB/QgH8d7vtvGdUJ09xZk85Ju49FowUeH2DIbDsC4
+         cgSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721324070; x=1721928870;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2bPXOft7a0DVPxryCI2cNdVhhqnEsyUQPtbGOfbLI5A=;
-        b=RgireM70PxPNP+LGR1dTrW9TftExuvkfqIKbtOQG2QwqNQBcUZePIRp2jAodEfODm0
-         evq6lu6KkTah9icfckOl/TDDcR9IWnhqZQcWOrNbBAKmclAOJhfsxWqxHafzmvdyIi5h
-         e/E6g1N6Z6GDQo/120x6vAkIt0hYBmAp0rGBzIN5tiRml33izd1INv8TtdqkhTLtZa4p
-         jKwEkLyrlCRTPF6K2e+52sefnJ4yZvA6eeaGZ8xnpwFu1Jo3rUdy4DisZVDeJxQCqt7N
-         mP5l8SjfD1cEVMYPZ1WyHvg0mxkDa2hmjNITV5olTwMzlcTAJGu7gFroj7JX0Juus5vV
-         vNzQ==
-X-Gm-Message-State: AOJu0YyirL9ReXCYhpfhpntDwLKWIrFSw3pdHBiDR7A7u9C/3I46qLtH
-	3AYHi2HPbI4lPKkjt7UwdB0WaDjGX1lRynfZknC/R1UUZBCRFKL+2usy132zR3hrqnbr21LNJED
-	56WXGmQ==
-X-Google-Smtp-Source: AGHT+IFTq+/cpSAPzHRrHWCy4g9drFEpQsAZ1O48hw2tifp6CjMKfyB846WCIKQEGoJuuPOHlISWzdbhuGbb
-X-Received: from maskray.svl.corp.google.com ([2620:15c:2d3:205:3158:f77d:549c:7b32])
- (user=maskray job=sendgmr) by 2002:a05:690c:3:b0:650:a16c:91ac with SMTP id
- 00721157ae682-666040cca3amr2358647b3.8.1721324069699; Thu, 18 Jul 2024
- 10:34:29 -0700 (PDT)
-Date: Thu, 18 Jul 2024 10:34:23 -0700
+        d=1e100.net; s=20230601; t=1721324493; x=1721929293;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jXGWWfWKwu4C0Pwh4ekXo4Fyxb931LLzXNEPPDV5NVo=;
+        b=SumtV9DQNCHZsf6Jua7vhLUI5eUdX5nK7IVbHCTM/PBWCFN1sj6qidkfv0/zM6iFtP
+         P+ljrnTQaA+C4VXyQaabuL8qVeLFS6DN8olyJvnRka/mYP18pFXjd3F8MV4TS9IRm+Ak
+         wgg1sDbozO5PkUOGEq/eiZ4EzZ16CcrFM4CAQRhWlL+5uED2VPOZfx7NY5KpU40SLQcX
+         DVZjdOtXxbP0m5OdZRh/Yb4Q6D+QRwZwkFNAtHt26/qgw/AHy0SsiuogHcSOyX3W4zH6
+         0uYvVQiCBoZ+SsjK8ZUxyHvl4A4dzVUNU4Qm1lqtUxKuaBSYkMisBAQuN2Ob7jYw/Phr
+         1Ktg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUsV+Wx6v7RDea4HjSFDJbkybNidnovnb24/SpW+EacLFiG090uer83thSsZwxYunvEXYXVHPsJ0uVXm95/1EAoVs0dr8zIVWuL3PObMPXyLcybo1ZYWg/W6wOvDsPTf8GIvJNpSF9I3rUHnd8tAGpnscjOG31Ya3H/w5Mq9ppjvpKRQ==
+X-Gm-Message-State: AOJu0Ywkp+ld5Az2FVez5aP+Y2h6Dl84iITJJENqQ15N/0RrBQxRz1WT
+	V15z02G6WlZ/V5kTRUvubR5qFAhgDmzSflxOe5bfysybLRHF4qWBIy9lCup8+woPan7b8TJuTrm
+	o7H50yACy5kIFuOKW2oyTUv29NO0=
+X-Google-Smtp-Source: AGHT+IFlqXix0J0Vl60VZOa8dpQ6b1kD0/PDt7P1pKnLxKndutbwr7jYSWW2mE3X9PpeGlT0/ouME0Zq10kwP4RWq6M=
+X-Received: by 2002:a17:90a:df11:b0:2c5:32c3:a777 with SMTP id
+ 98e67ed59e1d1-2cb5293597dmr4256261a91.28.1721324492939; Thu, 18 Jul 2024
+ 10:41:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <20240718173423.1574395-1-maskray@google.com>
-Subject: [PATCH] arm64/vdso: Remove --hash-style=sysv
-From: Fangrui Song <maskray@google.com>
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Fangrui Song <maskray@google.com>
+MIME-Version: 1.0
+References: <20240715102326.1910790-2-radoslaw.zielonek@gmail.com> <20240715104719.GA14400@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240715104719.GA14400@noisy.programming.kicks-ass.net>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 18 Jul 2024 10:41:20 -0700
+Message-ID: <CAEf4BzaYL9zZN8TZyRHW3_O3vbHc7On+NSunrkDvDQx2=wwyRw@mail.gmail.com>
+Subject: Re: [PATCH] perf callchain: Fix suspicious RCU usage in get_callchain_entry()
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Radoslaw Zielonek <radoslaw.zielonek@gmail.com>, mingo@redhat.com, acme@kernel.org, 
+	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, syzbot+72a43cdb78469f7fbad1@syzkaller.appspotmail.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-glibc added support for .gnu.hash in 2006 and .hash has been obsoleted
-for more than one decade in many Linux distributions.  Using
---hash-style=sysv might imply unaddressed issues and confuse readers.
+On Mon, Jul 15, 2024 at 3:47=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Mon, Jul 15, 2024 at 12:23:27PM +0200, Radoslaw Zielonek wrote:
+> > The rcu_dereference() is using rcu_read_lock_held() as a checker, but
+> > BPF in bpf_prog_test_run_syscall() is using rcu_read_lock_trace() locke=
+r.
+> > To fix this issue the proper checker has been used
+> > (rcu_read_lock_trace_held() || rcu_read_lock_held())
+>
+> How does that fix it? release_callchain_buffers() does call_rcu(), not
+> call_rcu_tracing().
+>
+> Does a normal RCU grace period fully imply an RCU-tracing grace period?
 
-Just drop the option and rely on the linker default, which is likely
-"both", or "gnu" when the distribution really wants to eliminate sysv
-hash overhead.
+I don't think so, they are completely independent. So this change
+doesn't seem correct. I think we should just ensure
+rcu_read_lock()/rcu_read_unlock() before calling into perf_callchain
+functionality.
 
-Similar to commit 6b7e26547fad ("x86/vdso: Emit a GNU hash").
+Which is what I'm doing in [0]. Radoslaw, can you please help
+validating if those changes are enough to fix this issue or we need to
+do some more?
 
-Signed-off-by: Fangrui Song <maskray@google.com>
----
- arch/arm64/kernel/vdso/Makefile   | 2 +-
- arch/arm64/kernel/vdso32/Makefile | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+  [0] https://patchwork.kernel.org/project/netdevbpf/patch/20240709204245.3=
+847811-10-andrii@kernel.org/
 
-diff --git a/arch/arm64/kernel/vdso/Makefile b/arch/arm64/kernel/vdso/Makefile
-index d63930c82839..d11da6461278 100644
---- a/arch/arm64/kernel/vdso/Makefile
-+++ b/arch/arm64/kernel/vdso/Makefile
-@@ -21,7 +21,7 @@ btildflags-$(CONFIG_ARM64_BTI_KERNEL) += -z force-bti
- # potential future proofing if we end up with internal calls to the exported
- # routines, as x86 does (see 6f121e548f83 ("x86, vdso: Reimplement vdso.so
- # preparation in build-time C")).
--ldflags-y := -shared -soname=linux-vdso.so.1 --hash-style=sysv	\
-+ldflags-y := -shared -soname=linux-vdso.so.1 \
- 	     -Bsymbolic --build-id=sha1 -n $(btildflags-y)
- 
- ifdef CONFIG_LD_ORPHAN_WARN
-diff --git a/arch/arm64/kernel/vdso32/Makefile b/arch/arm64/kernel/vdso32/Makefile
-index cc4508c604b2..25a2cb6317f3 100644
---- a/arch/arm64/kernel/vdso32/Makefile
-+++ b/arch/arm64/kernel/vdso32/Makefile
-@@ -98,7 +98,7 @@ VDSO_AFLAGS += -D__ASSEMBLY__
- # From arm vDSO Makefile
- VDSO_LDFLAGS += -Bsymbolic --no-undefined -soname=linux-vdso.so.1
- VDSO_LDFLAGS += -z max-page-size=4096 -z common-page-size=4096
--VDSO_LDFLAGS += -shared --hash-style=sysv --build-id=sha1
-+VDSO_LDFLAGS += -shared --build-id=sha1
- VDSO_LDFLAGS += --orphan-handling=$(CONFIG_LD_ORPHAN_WARN_LEVEL)
- 
- 
--- 
-2.45.2.1089.g2a221341d9-goog
+>
+> > ---
+> >  kernel/events/callchain.c | 11 +++++++++--
+> >  1 file changed, 9 insertions(+), 2 deletions(-)
+> >
 
+[...]
 
