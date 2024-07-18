@@ -1,186 +1,279 @@
-Return-Path: <linux-kernel+bounces-256467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B49934EF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:14:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CF7B934F31
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:37:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 625D71F21927
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:14:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92D57B22F08
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA791420D8;
-	Thu, 18 Jul 2024 14:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="i62v8n27"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1C91428EC;
+	Thu, 18 Jul 2024 14:37:13 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57F713C687
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 14:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438986F312;
+	Thu, 18 Jul 2024 14:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721312053; cv=none; b=N6nTaZfrS2CCnRJ/fnCGu4OKDTisjzO5Ba6kbhFcg37Rp48tZDu21NZyNSyljRqKSJ6Rzw2rGvYfbM0QddJ5yhoAdh0ScKMyDmH4vVMctkNrDG3qgtneMoPhdascR6Oyc78oT2eVT1SjADUr5ItrqWZPj0pswTbXz/p9atVt+TY=
+	t=1721313433; cv=none; b=NffpU84/cm7HhHjpn7ubbCTGem4VclLYFG3WiCbXBOtzQBy4BeRgE4QfEIcBzLMTWhyJy2Wy8ImTJgLVfmlOuGLrzuZ13OO41stCaJ93G6CrvfLxivpf763tIkgQjtgX4E9Tcr6DHD4Q+Ojuchofknt5bKTvI7PCyzMY5G4SzDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721312053; c=relaxed/simple;
-	bh=rYwpk6s2aA8ZaW64DEjhw3d8KkxHYtZFWh2w7miHsMM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jij0wUWJ7P3G8ez2T33wgh9QqW2YlS3agqx0Do3I7NjtGkJhRRzUAyCtFZnzsvDkKxNUoPqdIDka+gp6ePSF46hrQwtwOCT6RxaxZSxn8+ilLXdzI+UubR5CpgAM9eJrBKjm4bf5rBObEiyhY17fQbKWCTGDzSeK/uz/7aX6cdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=i62v8n27; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2eebc76119aso11027321fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 07:14:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1721312050; x=1721916850; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rwa/FUqGTiwfCXFjYhMYhkkWQN1Udk6UTjtKmVq4fKU=;
-        b=i62v8n27rHqSgdenH9Ii5Hd9FaVDBMIBAbVf9t1kUGs8w5xEqwlJ+lqIUnEiQPuO0e
-         bWDt7kG4VQKSTgX3gl2RSpfDezRSrbvq2hm58VbxAO+Fx8zChkv7Si8k/qzLXdVQ/Lem
-         8Xgtniuaoclpg/j98jWreRsd7X9KUGJS9AacX9dJCB5EOGET4Ew4BF63QQVY1c/ZuThX
-         NYZSMmFMU3aqKLDmLwWVgSkl+hRk7BSCb89WsfI0e+6xwRKekc6xJC4+/ymZ+MZqEu3y
-         pQpCiwKB4cazLx4VvnlyCHuTwJZxwMyNk29UqTLInTdz5NltbVNZ7irr46XDQtAv9ds5
-         tP3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721312050; x=1721916850;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rwa/FUqGTiwfCXFjYhMYhkkWQN1Udk6UTjtKmVq4fKU=;
-        b=jykLlhr0duUTgx/viBn0Usfk52dvCeNqJwUSOz8+Y48bjxMGymB0fQKR6UhvP48PP4
-         5WQoV9SzEHZ7IEvVMPoNZXdI3wYYWo7rXZaweRCx6MsRn9hDXdvbLBbxN561IQ0m1omg
-         efIRLijU0H/kBJyqZQobsu6BNb4CxZaxB2xHbnCwmlg5vSX8AlXePNSH/GAYjm6lkxvj
-         HTXWpEuI6XT5059e/3EnQ3rr0bLnPCwUiPOS4XCmDXUei1PoRHb1FbS34PnNOeA3I7Sc
-         lJKS9DMb0DrqmmmEPC0U9IBv5ucnMICkY1KQi5zj1xZO61SpMwN7FwgUSHUQm0LqNYFl
-         rSqw==
-X-Forwarded-Encrypted: i=1; AJvYcCX078H5tTkfx/Vi+q4jqvU9sNpJS1QSFKEuvd9krJiWyGdTO7FifiVtdEZ8cra0AlmUYGoe4atDkj2nd2KLzrhyfDx86lCkKezLEw3z
-X-Gm-Message-State: AOJu0YxdGer8B4B4pKiyM2sd4RK/snvQkxNU74f1uHvwcbjHlEOKyKTm
-	1l4YF6y5kq8BV0nUqeJroCVgUp+XR5RD1/WAE+V2TwWndqBR2QORoLTiCMVAGuL+ysVXl85/RkJ
-	87Q6SfwafdiIdBebemB1tdUEtyd+2t2kxlwA0ow==
-X-Google-Smtp-Source: AGHT+IFVNqh/Ic+HGgiTUP80uh/xt5qB6Maa3HQuATJzOmnrapkD+TnATl8wZg505uKzpIjbkG0XUm3KWjSHRIG+r7I=
-X-Received: by 2002:a05:651c:153:b0:2ee:88d8:e807 with SMTP id
- 38308e7fff4ca-2ef05c78c57mr16981821fa.16.1721312049997; Thu, 18 Jul 2024
- 07:14:09 -0700 (PDT)
+	s=arc-20240116; t=1721313433; c=relaxed/simple;
+	bh=KG+r9+pdBxGhUyc5bKGSm19ff+3ISaJmIXIzLEDRzxg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VFx0NvDLz/M0qhLp2+u0gJlGuBqOa6BRd6OgQR6zYotMOgqYmUUgm9rleXkOVcQbyBw4c59pGbp3b5JtOZRqb6/zugYT/NzVnRDjgSIH9mTq6Lh36PKL9pJKe1qVEf2HbKGda9tEJ0hbKI4Z3UlZjXUcvuLJBpEsch/7asMD1Q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4WPvYC0VmNz9v7Hk;
+	Thu, 18 Jul 2024 21:58:55 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 1531314061D;
+	Thu, 18 Jul 2024 22:17:15 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwAnJC7RI5lm88lbAA--.56617S2;
+	Thu, 18 Jul 2024 15:17:14 +0100 (CET)
+Message-ID: <ae769bbfe51a2c1c270739a91defc0dfbd5b8b5a.camel@huaweicloud.com>
+Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
+ SHOULD_EXEC_RESTRICT securebits
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>, Kees Cook
+	 <kees@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>,  Linus Torvalds <torvalds@linux-foundation.org>, Paul
+ Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>,  Alejandro
+ Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd
+ Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>,
+ Christian Heimes <christian@python.org>, Dmitry Vyukov
+ <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, Eric Chiang
+ <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, Florian Weimer
+ <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, James
+ Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>,  Jann Horn
+ <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet
+ <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, Lakshmi
+ Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi
+ <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T .
+ Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski
+ <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, Matthew
+ Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, Mimi
+ Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet
+ <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, Shuah
+ Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Steve
+ Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, Thibaut
+ Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel
+ <vincent.strubel@ssi.gouv.fr>,  Xiaoming Ni <nixiaoming@huawei.com>, Yin
+ Fengwei <fengwei.yin@intel.com>,  kernel-hardening@lists.openwall.com,
+ linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+ linux-integrity@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org
+Date: Thu, 18 Jul 2024 16:16:45 +0200
+In-Reply-To: <20240706.eng1ieSh0wa5@digikod.net>
+References: <20240704190137.696169-1-mic@digikod.net>
+	 <20240704190137.696169-3-mic@digikod.net> <202407041711.B7CD16B2@keescook>
+	 <20240705.IeTheequ7Ooj@digikod.net> <202407051425.32AF9D2@keescook>
+	 <20240706.eng1ieSh0wa5@digikod.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708075023.14893-1-brgl@bgdev.pl> <20240708075023.14893-4-brgl@bgdev.pl>
- <7c0140be-4325-4005-9068-7e0fc5ff344d@nvidia.com> <CAMRc=McF93F6YsQ+eT9oOe+c=2ZCQ3rBdj+-3Ruy8iO1B-syjw@mail.gmail.com>
- <CAMRc=Mc=8Sa76TOZujMMZcaF2Dc8OL_HKo=gXuj-YALaH4zKHg@mail.gmail.com> <6e12f5a5-8007-4ddc-a5ad-be556656af71@nvidia.com>
-In-Reply-To: <6e12f5a5-8007-4ddc-a5ad-be556656af71@nvidia.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 18 Jul 2024 16:13:58 +0200
-Message-ID: <CAMRc=MdvsKeYEEvf2w3RxPiR=yLFXDwesiQ75JHTU-YEpkF-ZA@mail.gmail.com>
-Subject: Re: [RESEND PATCH net-next v3 3/4] net: phy: aquantia: wait for the
- GLOBAL_CFG to start returning real values
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, "David S . Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Brad Griffis <bgriffis@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID:GxC2BwAnJC7RI5lm88lbAA--.56617S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3GFyUAw4rKrWDKF4UtF15twb_yoWxWw1fpa
+	yrAayUKF4DGF10y3Z2k3W8Xa4SkrWxJF1UWr9Iqryruwn09F1IgrW3tr4Y9FykursY93W2
+	vrW2v343Wa4DAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26rWY6Fy7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8
+	Jr1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	xUVZ2-UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAIBGaYenQJ5wAAsQ
 
-On Thu, Jul 18, 2024 at 4:08=E2=80=AFPM Jon Hunter <jonathanh@nvidia.com> w=
-rote:
->
->
-> On 18/07/2024 14:29, Bartosz Golaszewski wrote:
-> > On Thu, Jul 18, 2024 at 3:04=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev=
-.pl> wrote:
-> >>
-> >> On Thu, Jul 18, 2024 at 2:23=E2=80=AFPM Jon Hunter <jonathanh@nvidia.c=
-om> wrote:
-> >>>
-> >>>
-> >>> With the current -next and mainline we are seeing the following issue=
- on
-> >>> our Tegra234 Jetson AGX Orin platform ...
-> >>>
-> >>>    Aquantia AQR113C stmmac-0:00: aqr107_fill_interface_modes failed: =
--110
-> >>>    tegra-mgbe 6800000.ethernet eth0: __stmmac_open: Cannot attach to =
-PHY (error: -110)
-> >>>
-> >>>
-> >>> We have tracked it down to this change and looks like our PHY does no=
+On Sat, 2024-07-06 at 16:56 +0200, Micka=C3=ABl Sala=C3=BCn wrote:
+> On Fri, Jul 05, 2024 at 02:44:03PM -0700, Kees Cook wrote:
+> > On Fri, Jul 05, 2024 at 07:54:16PM +0200, Micka=C3=ABl Sala=C3=BCn wrot=
+e:
+> > > On Thu, Jul 04, 2024 at 05:18:04PM -0700, Kees Cook wrote:
+> > > > On Thu, Jul 04, 2024 at 09:01:34PM +0200, Micka=C3=ABl Sala=C3=BCn =
+wrote:
+> > > > > Such a secure environment can be achieved with an appropriate acc=
+ess
+> > > > > control policy (e.g. mount's noexec option, file access rights, L=
+SM
+> > > > > configuration) and an enlighten ld.so checking that libraries are
+> > > > > allowed for execution e.g., to protect against illegitimate use o=
+f
+> > > > > LD_PRELOAD.
+> > > > >=20
+> > > > > Scripts may need some changes to deal with untrusted data (e.g. s=
+tdin,
+> > > > > environment variables), but that is outside the scope of the kern=
+el.
+> > > >=20
+> > > > If the threat model includes an attacker sitting at a shell prompt,=
+ we
+> > > > need to be very careful about how process perform enforcement. E.g.=
+ even
+> > > > on a locked down system, if an attacker has access to LD_PRELOAD or=
+ a
+> > >=20
+> > > LD_PRELOAD should be OK once ld.so will be patched to check the
+> > > libraries.  We can still imagine a debug library used to bypass secur=
+ity
+> > > checks, but in this case the issue would be that this library is
+> > > executable in the first place.
+> >=20
+> > Ah yes, that's fair: the shell would discover the malicious library
+> > while using AT_CHECK during resolution of the LD_PRELOAD.
+>=20
+> That's the idea, but it would be checked by ld.so, not the shell.
+>=20
+> >=20
+> > > > seccomp wrapper (which you both mention here), it would be possible=
+ to
+> > > > run commands where the resulting process is tricked into thinking i=
 t
-> >>> support 10M ...
-> >>>
-> >>> $ ethtool eth0
-> >>> Settings for eth0:
-> >>>           Supported ports: [  ]
-> >>>           Supported link modes:   100baseT/Full
-> >>>                                   1000baseT/Full
-> >>>                                   10000baseT/Full
-> >>>                                   1000baseKX/Full
-> >>>                                   10000baseKX4/Full
-> >>>                                   10000baseKR/Full
-> >>>                                   2500baseT/Full
-> >>>                                   5000baseT/Full
-> >>>
-> >>> The following fixes this for this platform ...
-> >>>
-> >>> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/p=
-hy/aquantia/aquantia_main.c
-> >>> index d12e35374231..0b2db486d8bd 100644
-> >>> --- a/drivers/net/phy/aquantia/aquantia_main.c
-> >>> +++ b/drivers/net/phy/aquantia/aquantia_main.c
-> >>> @@ -656,7 +656,7 @@ static int aqr107_fill_interface_modes(struct phy=
-_device *phydev)
-> >>>           int i, val, ret;
-> >>>
-> >>>           ret =3D phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
-> >>> -                                       VEND1_GLOBAL_CFG_10M, val, va=
-l !=3D 0,
-> >>> +                                       VEND1_GLOBAL_CFG_100M, val, v=
-al !=3D 0,
-> >>>                                           1000, 100000, false);
-> >>>           if (ret)
-> >>>                   return ret;
-> >>>
-> >>>
-> >>> However, I am not sure if this is guaranteed to work for all?
-> >>
-> >> Ah cr*p. No, I don't think it is. We should take the first supported
-> >> mode for a given PHY I think.
-> >>
-> >
-> > TBH I only observed the issue on AQR115C. I don't have any other model
-> > to test with. Is it fine to fix it by implementing
-> > aqr115_fill_interface_modes() that would first wait for this register
-> > to return non-0 and then call aqr107_fill_interface_modes()?
->
-> I am doing a bit more testing. We have seen a few issues with this PHY
-> driver and so I am wondering if we also need something similar for the
-> AQR113C variant too.
->
-> Interestingly, the product brief for these PHYs [0] do show that both
-> the AQR113C and AQR115C both support 10M. So I wonder if it is our
-> ethernet controller that is not supporting 10M? I will check on this too.
->
+> > > > doesn't have the bits set.
+> > >=20
+> > > As explained in the UAPI comments, all parent processes need to be
+> > > trusted.  This meeans that their code is trusted, their seccomp filte=
+rs
+> > > are trusted, and that they are patched, if needed, to check file
+> > > executability.
+> >=20
+> > But we have launchers that apply arbitrary seccomp policy, e.g. minijai=
+l
+> > on Chrome OS, or even systemd on regular distros. In theory, this shoul=
+d
+> > be handled via other ACLs.
+>=20
+> Processes running with untrusted seccomp filter should be considered
+> untrusted.  It would then make sense for these seccomp filters/programs
+> to be considered executable code, and then for minijail and systemd to
+> check them with AT_CHECK (according to the securebits policy).
+>=20
+> >=20
+> > > > But this would be exactly true for calling execveat(): LD_PRELOAD o=
+r
+> > > > seccomp policy could have it just return 0.
+> > >=20
+> > > If an attacker is allowed/able to load an arbitrary seccomp filter on=
+ a
+> > > process, we cannot trust this process.
+> > >=20
+> > > >=20
+> > > > While I like AT_CHECK, I do wonder if it's better to do the checks =
+via
+> > > > open(), as was originally designed with O_MAYEXEC. Because then
+> > > > enforcement is gated by the kernel -- the process does not get a fi=
+le
+> > > > descriptor _at all_, no matter what LD_PRELOAD or seccomp tricks it=
+ into
+> > > > doing.
+> > >=20
+> > > Being able to check a path name or a file descriptor (with the same
+> > > syscall) is more flexible and cover more use cases.
+> >=20
+> > If flexibility costs us reliability, I think that flexibility is not
+> > a benefit.
+>=20
+> Well, it's a matter of letting user space do what they think is best,
+> and I think there are legitimate and safe uses of path names, even if I
+> agree that this should not be used in most use cases.  Would we want
+> faccessat2(2) to only take file descriptor as argument and not file
+> path? I don't think so but I'd defer to the VFS maintainers.
+>=20
+> Christian, Al, Linus?
+>=20
+> Steve, could you share a use case with file paths?
+>=20
+> >=20
+> > > The execveat(2)
+> > > interface, including current and future flags, is dedicated to file
+> > > execution.  I then think that using execveat(2) for this kind of chec=
+k
+> > > makes more sense, and will easily evolve with this syscall.
+> >=20
+> > Yeah, I do recognize that is feels much more natural, but I remain
+> > unhappy about how difficult it will become to audit a system for safety
+> > when the check is strictly per-process opt-in, and not enforced by the
+> > kernel for a given process tree. But, I think this may have always been
+> > a fiction in my mind. :)
+>=20
+> Hmm, I'm not sure to follow. Securebits are inherited, so process tree.
+> And we need the parent processes to be trusted anyway.
+>=20
+> >=20
+> > > > And this thinking also applies to faccessat() too: if a process can=
+ be
+> > > > tricked into thinking the access check passed, it'll happily interp=
+ret
+> > > > whatever. :( But not being able to open the fd _at all_ when O_MAYE=
+XEC
+> > > > is being checked seems substantially safer to me...
+> > >=20
+> > > If attackers can filter execveat(2), they can also filter open(2) and
+> > > any other syscalls.  In all cases, that would mean an issue in the
+> > > security policy.
+> >=20
+> > Hm, as in, make a separate call to open(2) without O_MAYEXEC, and pass
+> > that fd back to the filtered open(2) that did have O_MAYEXEC. Yes, true=
+.
+> >=20
+> > I guess it does become morally equivalent.
+> >=20
+> > Okay. Well, let me ask about usability. Right now, a process will need
+> > to do:
+> >=20
+> > - should I use AT_CHECK? (check secbit)
+> > - if yes: perform execveat(AT_CHECK)
+> >=20
+> > Why not leave the secbit test up to the kernel, and then the program ca=
+n
+> > just unconditionally call execveat(AT_CHECK)?
+>=20
+> That was kind of the approach of the previous patch series and Linus
+> wanted the new interface to follow the kernel semantic.  Enforcing this
+> kind of restriction will always be the duty of user space anyway, so I
+> think it's simpler (i.e. no mix of policy definition, access check, and
+> policy enforcement, but a standalone execveat feature), more flexible,
+> and it fully delegates the policy enforcement to user space instead of
+> trying to enforce some part in the kernel which would only give the
+> illusion of security/policy enforcement.
 
-Oh you have an 113c? I didn't get this. Yeah, weird, all docs say it
-should support 10M. In fact all AQR PHYs should hence my initial
-change.
+A problem could be that from IMA perspective there is no indication on
+whether the interpreter executed or not execveat(). Sure, we can detect
+that the binary supports it, but if the enforcement was
+enabled/disabled that it is not recorded.
 
-Bart
+Maybe, setting the process flags should be influenced by the kernel,
+for example not allowing changes and enforcing when there is an IMA
+policy loaded requiring to measure/appraise scripts.
 
-> Jon
->
-> [0]
-> https://www.marvell.com/content/dam/marvell/en/public-collateral/transcei=
-vers/marvell-phys-transceivers-aqrate-gen4-product-brief.pdf
->
->
-> --
-> nvpublic
+Roberto
+
+> >=20
+> > Though perhaps the issue here is that an execveat() EINVAL doesn't
+> > tell the program if AT_CHECK is unimplemented or if something else
+> > went wrong, and the secbit prctl() will give the correct signal about
+> > AT_CHECK availability?
+>=20
+> This kind of check could indeed help to identify the issue.
+
 
