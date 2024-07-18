@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-256306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C871934C47
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:16:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D5C4934C4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BB6CB209FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:16:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 487892812D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B206C13210D;
-	Thu, 18 Jul 2024 11:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5EB136657;
+	Thu, 18 Jul 2024 11:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O/O7hlgt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jCskHelQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029507D3EF
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 11:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD2D7D3EF;
+	Thu, 18 Jul 2024 11:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721301400; cv=none; b=Hwxhg3vn0o9Mp3KFpzXTgAPAIhGlPeMH0z7Q+ygEJGktwvJNgI/r1vyataoDOEZvrnVYu47nHwRwdoRnuZPdjwlixw5yO2eyfkb4pmfItXXVcRnuTMsBBy8ZLmS6OfIkKvfLHxrL/0Pwvv4EcGfhAo4vrh9hiFQw1bDkH7yzg9Y=
+	t=1721301557; cv=none; b=K/7Be9wGpwm59iW/r+J9Iw/hX/dOlf/fN17D+Ie0ArHl28IzmjbKS5ICnWbxGUmJ9u1mdsouRgoNRPOfnOvg2v0hBYYGPQDg/QS0eEdKeVxrtIo1U3xUoSH6NV0q5hwNZ4J96wUTAKTXf4hrzyTIkJePOdRizKvGB780SWwikYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721301400; c=relaxed/simple;
-	bh=41McLAL0buFEegU9JpAI8+wwAy56uuO6YT3HPAfpnZc=;
+	s=arc-20240116; t=1721301557; c=relaxed/simple;
+	bh=0AhJ90EdbnHIUUwth+DAtYzqSMzjIxsaALpFpmPbiqM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dSSchrcpBcO4rqBbhvfZ/+XsSTlNC1mThvTYvsfNPT1t3mXxAytClD+4SFrktvPL7/HAhu1cy3JULVf+AFJLrwsv576bj0IIryVLB+A8zSAfEBPlGlonaFNdHwVipwFplOJlCluO6NKpsbP4QxO6ERVzxfq2ehj4U3RTINYMdWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O/O7hlgt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E604BC116B1;
-	Thu, 18 Jul 2024 11:16:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721301399;
-	bh=41McLAL0buFEegU9JpAI8+wwAy56uuO6YT3HPAfpnZc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=O/O7hlgtxbeSUrMj49RzBgA7RI7Mz4tx2bmVlmn4bvyGhumV/FRUw8RHEg4iROuE/
-	 +HM3mVEl3FjdKXN6UIcybeiRPRvbviRMa0jU0TnBO8G9RvOaeD8EpbDlXD9iPgjA3+
-	 GtLqnsXczne2F0Tz2Kx30jEcxz/tGVfSrIDlilLHQXaGYFSIIjhi3+ipq6SvaZk7eJ
-	 j5U2BcbuKeZXmKAMMq/1Wmws0uQ7Bk20l+tqgChaO+PFSfxtX7P13VGuLM1c4c+2Rb
-	 7fpbu7VMbfYi447hACzgRaS8HBmW0irXOQTV6kKjzoKRs/xNzml3HDrrE+u74DYeZ0
-	 jE6FU9I4c4Ljw==
-Message-ID: <6f2151a9-da23-4917-b985-8de6b0852e37@kernel.org>
-Date: Thu, 18 Jul 2024 13:16:35 +0200
+	 In-Reply-To:Content-Type; b=nJ05TELobTYlDdmVuK6hkSla0tEjHo4o3niEN+psNwq/UD1FOkEeZKk645+SlcCM3/ulkGqgYuLt0leqnjg9cFoC8nTKzHFOE0JgLMm5KyHX122UwTSPVN38TEKQmZGJ0oPvnRcKMlhVNSJc2DXyEOv6aetLsio7HEH4KaRShxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jCskHelQ; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721301555; x=1752837555;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=0AhJ90EdbnHIUUwth+DAtYzqSMzjIxsaALpFpmPbiqM=;
+  b=jCskHelQB4AjDzA99hpp25Hb9v4wYfpE85Qi6AZpxlrQ2tlTay4Venk4
+   v/b6k8XhJkS3qwxdD58zwkx4K33DRTOZIeu2tdP5N5+hbNtOmtBiM8WwV
+   AhKuiTQqbQ50AO4WoVVNkSy+aEjjjYm2redUiSECGhc6RAS2eY+qadzjn
+   hm9Lh2xiHqSybdhNGK7GRiXjz+RzZ8mxuT6cbPT/AcMJQsAGFRK8NtLUr
+   Qsj+GFwwPS7jXKbSfWD1hS7wQWiAf8tnkf6hNqktKou58WwW5u9ZQMpGY
+   v8kVZUq4TtOZwITUFuIqv9lB1PTse+cq3ndtL22ncT0bkJH906kUfSRYA
+   w==;
+X-CSE-ConnectionGUID: zlP5ul13SOuwVz3MSOeJXA==
+X-CSE-MsgGUID: BlaPC0beQw6JilTF9KZMIg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="30243872"
+X-IronPort-AV: E=Sophos;i="6.09,217,1716274800"; 
+   d="scan'208";a="30243872"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 04:19:15 -0700
+X-CSE-ConnectionGUID: sYHOG/iRSZO0WsTnDjF1Bw==
+X-CSE-MsgGUID: QwXKpOj7RLeR8oUvmJ6iyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,217,1716274800"; 
+   d="scan'208";a="88216115"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.94.249.84])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 04:19:08 -0700
+Message-ID: <14cd68b2-eeee-42e3-87a6-c12d3814bd51@intel.com>
+Date: Thu, 18 Jul 2024 14:19:03 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,100 +66,123 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] mm/page_alloc: Fix pcp->count race between
- drain_pages_zone() vs __rmqueue_pcplist()
+Subject: Re: [PATCH V9 02/13] perf/core: Add aux_pause, aux_resume,
+ aux_start_paused
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Thomas Richter <tmricht@linux.ibm.com>,
+ Hendrik Brueckner <brueckner@linux.ibm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+ coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ Yicong Yang <yangyicong@hisilicon.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Will Deacon
+ <will@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>, Andi Kleen <ak@linux.intel.com>,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+References: <20240715160712.127117-1-adrian.hunter@intel.com>
+ <20240715160712.127117-3-adrian.hunter@intel.com>
+ <20240718093846.GJ26750@noisy.programming.kicks-ass.net>
 Content-Language: en-US
-To: Li Zhijian <lizhijian@fujitsu.com>, linux-mm@kvack.org
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
- Yasunori Gotou <y-goto@fujitsu.com>, David Hildenbrand <david@redhat.com>,
- Yao Xingtao <yaoxt.fnst@fujitsu.com>, Lucas Stach <l.stach@pengutronix.de>
-References: <20240716073929.843277-1-lizhijian@fujitsu.com>
-From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
-In-Reply-To: <20240716073929.843277-1-lizhijian@fujitsu.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240718093846.GJ26750@noisy.programming.kicks-ass.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 7/16/24 9:39 AM, Li Zhijian wrote:
-> It's expected that no page should be left in pcp_list after calling
-> zone_pcp_disable() in offline_pages(). Previously, it's observed that
-> offline_pages() gets stuck [1] due to some pages remaining in pcp_list.
+On 18/07/24 12:38, Peter Zijlstra wrote:
+> On Mon, Jul 15, 2024 at 07:07:01PM +0300, Adrian Hunter wrote:
+>> Hardware traces, such as instruction traces, can produce a vast amount of
+>> trace data, so being able to reduce tracing to more specific circumstances
+>> can be useful.
+>>
+>> The ability to pause or resume tracing when another event happens, can do
+>> that.
+>>
+>> Add ability for an event to "pause" or "resume" AUX area tracing.
+>>
+>> Add aux_pause bit to perf_event_attr to indicate that, if the event
+>> happens, the associated AUX area tracing should be paused. Ditto
+>> aux_resume. Do not allow aux_pause and aux_resume to be set together.
+>>
+>> Add aux_start_paused bit to perf_event_attr to indicate to an AUX area
+>> event that it should start in a "paused" state.
+>>
+>> Add aux_paused to struct hw_perf_event for AUX area events to keep track of
+>> the "paused" state. aux_paused is initialized to aux_start_paused.
+>>
+>> Add PERF_EF_PAUSE and PERF_EF_RESUME modes for ->stop() and ->start()
+>> callbacks. Call as needed, during __perf_event_output(). Add
 > 
-> Cause:
-> There is a race condition between drain_pages_zone() and __rmqueue_pcplist()
-> involving the pcp->count variable. See below scenario:
+> Why in __perf_event_output() rather than in __perf_event_overflow().
+> Specifically, before bpf_overflow_handler().
 > 
->          CPU0                              CPU1
->     ----------------                    ---------------
->                                       spin_lock(&pcp->lock);
->                                       __rmqueue_pcplist() {
-> zone_pcp_disable() {
->                                         /* list is empty */
->                                         if (list_empty(list)) {
->                                           /* add pages to pcp_list */
->                                           alloced = rmqueue_bulk()
->   mutex_lock(&pcp_batch_high_lock)
->   ...
->   __drain_all_pages() {
->     drain_pages_zone() {
->       /* read pcp->count, it's 0 here */
->       count = READ_ONCE(pcp->count)
->       /* 0 means nothing to drain */
->                                           /* update pcp->count */
->                                           pcp->count += alloced << order;
->       ...
->                                       ...
->                                       spin_unlock(&pcp->lock);
-> 
-> In this case, after calling zone_pcp_disable() though, there are still some
-> pages in pcp_list. And these pages in pcp_list are neither movable nor
-> isolated, offline_pages() gets stuck as a result.
-> 
-> Solution:
-> Expand the scope of the pcp->lock to also protect pcp->count in
-> drain_pages_zone(), ensuring no pages are left in the pcp list.
-> 
-> [1] https://lore.kernel.org/linux-mm/6a07125f-e720-404c-b2f9-e55f3f166e85@fujitsu.com/
-> 
-> Cc: David Hildenbrand <david@redhat.com>
-> Reported-by: Yao Xingtao <yaoxt.fnst@fujitsu.com>
-> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
-> ---
->  mm/page_alloc.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 9ecf99190ea2..1780df31d5f5 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -2323,16 +2323,17 @@ void drain_zone_pages(struct zone *zone, struct per_cpu_pages *pcp)
->  static void drain_pages_zone(unsigned int cpu, struct zone *zone)
->  {
->  	struct per_cpu_pages *pcp = per_cpu_ptr(zone->per_cpu_pageset, cpu);
-> -	int count = READ_ONCE(pcp->count);
-> +	int count;
->  
-> +	spin_lock(&pcp->lock);
-> +	count = pcp->count;
->  	while (count) {
->  		int to_drain = min(count, pcp->batch << CONFIG_PCP_BATCH_SCALE_MAX);
->  		count -= to_drain;
->  
-> -		spin_lock(&pcp->lock);
->  		free_pcppages_bulk(zone, to_drain, pcp, 0);
-> -		spin_unlock(&pcp->lock);
->  	}
-> +	spin_unlock(&pcp->lock);
+> That is, what do we want BPF to be able to do here? To me it seems
+> strange that BPF would be able to affect this functionality. You want
+> this pause/resume to happen irrespective of how the rest of the event is
+> processed, no?
 
-This way seems to be partially going against the purpose of 55f77df7d715
-("mm: page_alloc: control latency caused by zone PCP draining") - the zone
-lock hold time will still be limited by the batch, but not the pcp lock
-time. It should still be possible to relock between the iterations? To
-prevent the race I think the main part is determining pcp->count under the
-lock, but release/retake should still be ok if the pcp->count is reread
-after relocking.
+The thought was to have the output match up with pause/resume, but it
+doesn't really make much difference.
 
->  }
->  
->  /*
+Putting it before the BPF handler is reasonable.
+
+> 
+>> aux_in_pause_resume to struct perf_buffer to prevent races with the NMI
+>> handler. Pause/resume in NMI context will miss out if it coincides with
+>> another pause/resume.
+> 
+> I'm struggling here. That variable is only ever used inside that one
+> function. So it must be self-recursion. Are you thinking something like:
+> 
+>   swevent_overflow()
+>     ...
+>       event_aux_pause()
+>         <NMI>
+> 	  event_overflow()
+> 	    ...
+> 	      event_aux_pause()
+> 
+> ?
+> 
+> Where two events in the group, one software and one hardware, are both
+> trying to control the AUX thing?
+
+Exactly that yes.
+
+>                                  Because I don't think the PT-PMI ever
+> gets here.
+
+No it doesn't.  AUX pause/resume is something a non-AUX event in the
+group does to the AUX event which is the group leader.
+
+> 
+>> To use aux_pause or aux_resume, an event must be in a group with the AUX
+>> area event as the group leader.
+> 
+> 
+>> @@ -402,6 +411,15 @@ struct pmu {
+>>  	 *
+>>  	 * ->start() with PERF_EF_RELOAD will reprogram the counter
+>>  	 *  value, must be preceded by a ->stop() with PERF_EF_UPDATE.
+>> +	 *
+>> +	 * ->stop() with PERF_EF_PAUSE will stop as simply as possible. Will not
+>> +	 * overlap another ->stop() with PERF_EF_PAUSE nor ->start() with
+>> +	 * PERF_EF_RESUME.
+>> +	 *
+>> +	 * ->start() with PERF_EF_RESUME will start as simply as possible but
+>> +	 * only if the counter is not otherwise stopped. Will not overlap
+>> +	 * another ->start() with PERF_EF_RESUME nor ->stop() with
+>> +	 * PERF_EF_PAUSE.
+>>  	 */
+>>  	void (*start)			(struct perf_event *event, int flags);
+>>  	void (*stop)			(struct perf_event *event, int flags);
+> 
+> Notably, they *can* race with ->stop/start without EF_PAUSE/RESUME.
+
+Yes that would be worth adding to the comments.
 
 
