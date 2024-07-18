@@ -1,174 +1,170 @@
-Return-Path: <linux-kernel+bounces-256583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 584509350AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:26:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B0DC9350D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA85A1F22465
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:26:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6E68B227DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62961144D39;
-	Thu, 18 Jul 2024 16:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC3A14533A;
+	Thu, 18 Jul 2024 16:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I8PfQs6j"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="C0r8YI/f"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB976144D22;
-	Thu, 18 Jul 2024 16:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C1C3B784;
+	Thu, 18 Jul 2024 16:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721319956; cv=none; b=iyOGuquPD4pg/5nF22eyW34dfjFm5+b6XqysTwb+d19IFz6NGVgfaIKXJ3p8zJuYTETJmSPzw9UFryTX95IbTcoGj+aZzotBnwNJS4gQMAVfsgUrH/wJsH9O5DBeVXpl45T/Nj2QQqsQa3G+GQkJG9zWdcIgYMYTrSSAWTa7eIo=
+	t=1721321109; cv=none; b=OakChMDmIjnmgoquzFn+Fqhiq8GB711piG4G0QmTvY+oZNO3TczKr+ZvxbDG8j8fa0Xa1QhrlwdwJj//svyRN77m97aT5nAnn2qeMbilgMdsmZTTyuSnNeXWGFQ5Hc/S/UGhIsnmgAsQ3CsfrdUDJFPJSjeOTFUO76IZgDKM2RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721319956; c=relaxed/simple;
-	bh=+cPFQlWhiHlbsYRp3wmTrvUckoL0T/pu/UurO73Cwww=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oxDX4968Dhk3x0WWbcQjMt25t+0wyXE1cxx+o6U+NtJf9o94cOo2YAOQogZ8/HAbTzLLp0o1lciN0sbqE3jJOEKAHm3IoKJisR1286Zz/9bZ/MVfV0TGbuQ8EMnnzGaEFJDU1SfiyuN26kBXNsrzWI/i4gJa8cUVGWwjRr3p3Yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I8PfQs6j; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ee91d9cb71so11940441fa.0;
-        Thu, 18 Jul 2024 09:25:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721319953; x=1721924753; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gJQIRnbTYy2sGZ5gk+HAHZWSmrPa0UShn83IpJ2tEh4=;
-        b=I8PfQs6jojt5XLoZhtVQn7P8zfAhHv0TmX98lA4lh9l22rGUS2X6YvOqVMvcLiDkbg
-         crjCevElxSF9GaSmVJJYcgG5OwBqs5GV7e+r5mfzjl7Ys2lMfplFqtBM5wF1NagpzcKH
-         K+7uM5ureVqh36GaLm01NNCTH54z1ekFV5KapJGCcTsCj8x4cx0X0eoJJLBFfEkxbd9r
-         LUC+kN8YEMIpMpgIxiMtP0Fjw8gA40I/p1mqmivi3WNcf6PLzSFCWrL0FFAaEQA5WDzk
-         PxSfmmUsYO+HQboNbzjjCICz2Vbw3lxjI99XE5QholiSEZYHxMi6aVMYBbk1BUTTJUUM
-         SwTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721319953; x=1721924753;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gJQIRnbTYy2sGZ5gk+HAHZWSmrPa0UShn83IpJ2tEh4=;
-        b=FLRRtCU392wZrUttRIOYj34Gv0yxWAJqHlWC7/igPy3vfP1iT3WvwenqMEFEvl0Q1I
-         0l7+1aUsChpPrbF2Q3WzPoczqA4p4MdJhD+cioobTJ+fKlpqKeBJ9zV86ZK8KEKdqx0u
-         lyl8OcsdWtqEH/8ub/B59NZZbP8SuRrcfviNAHCUWZpVe0PmrGnZlx03ibi76Mt+OuAd
-         pqSPB9qhRRv/XVYCcda+MHaqg2HeeuY2d5AsrksYJ05XTtM4FmzXT7dMNvLnWXSl0qk0
-         7ORT0uXKr7ZWIpHryCpLg/Vc9Sq+kSIdOSD/ijt+Wo2fVbIkkr59iyq+eDw7cSOjxVJ+
-         n9kA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbl8B2bdNWRRMCTD1BxbhIijncfvWWPUjsNtDV2U2UoVcj/fLZVRZBo/TCCMhVjONuXSZyC75h5pNGZwSJVj1C8X1dSEolZZJoYCEr+ZV/HzwZIe2h7Vhs8vC7dElwLLQ7GBllvT2SDD+53w==
-X-Gm-Message-State: AOJu0YyuIeswxE9ZJlEJqSSkCxHoVnmbez/2oOF9D9gsigvYKnWAXdX3
-	ESJJ8G78vpX13Lb9UZkfXCBSzMN1acwkibZJDX0+sFhsqA9Fn6P8kceWg1QfzpVH/56U0yqt+48
-	cXnp7mP3k/KmcICnqaP4LcdppgDQ=
-X-Google-Smtp-Source: AGHT+IG+LN9SE1sQOAD4WTHQhFN5BbXkqVEFuPvsEPI+d/27gk+W67iADV6K6CnQBlGKixrjKAEdN1ZkXxCckNCAcNU=
-X-Received: by 2002:a2e:a541:0:b0:2ee:7dfe:d99c with SMTP id
- 38308e7fff4ca-2ef05d2ed3fmr24920861fa.31.1721319952621; Thu, 18 Jul 2024
- 09:25:52 -0700 (PDT)
+	s=arc-20240116; t=1721321109; c=relaxed/simple;
+	bh=MH4Q4XVP/39bjBRKGYVnf68mFPvP2t7C9VKeg2k4XlY=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=Q3FuNA4Uc3smtcQ+NolJhwhMgZJsUNYGoFTYxUXe7mFz5Cl4TaTUmt+dPr7BmRYCCt/vOLMh+yBHPOlEnzumeRRY+fvKeOgR+fi1CMuL9lvIoGdB5FIFxp69CAgk+apefOiFj8Wfd8jGmpies7aNLiq2M38vm/DIPIW+DTelML8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=C0r8YI/f; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1721320800; bh=069pD/YAJpfQ8jHaMRThKwpeiyzyE+NfLH9us2kGFnc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=C0r8YI/fbHI6J5vBnWJ+1ioNdVphtdLLL1M6E12q3hVVxMEfdGRWncSVjtW2yhLYN
+	 KTDnnRPHr2KSvk5QmF6+iisQyZOeUFrFs1u3aVrmKahMusIrTPH44SvLYlSnyPWTMg
+	 YnZA5sK86MiMsqYfvhppVVd0+I6BL9BnYGMcBOqA=
+Received: from ubuntu.. ([175.167.155.224])
+	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
+	id 6A9A8008; Fri, 19 Jul 2024 00:26:41 +0800
+X-QQ-mid: xmsmtpt1721320001tea7nkyxk
+Message-ID: <tencent_2FCF6CC9E10DC8A27AE58A5A0FE4FCE96D0A@qq.com>
+X-QQ-XMAILINFO: OKkKo7I1HxIe5TtchEP1Gp8rYBvef4royzorLuTkiPosYdx5ym8rPEm1qbY9oj
+	 DsjTALFofYnriSpdeW8ItMrmpIpNBoDYUG0XGlGw6zH3jzt/FzxnB3GlFE+AzCJ3tkyiczSOkYPE
+	 jLwR8HJXzupNi/t0w2x8kIpUHY6+UBPe6piGEW7wf3J6nDmQUd7o2sIW8uTuoPpMNlhQvzXmI4G7
+	 8fgjlyzKO2MkF+oOfILbEA+8TGFDhslJXjWPTAyiLBhx8n3AjPrsYkceeVeF+i5J+7jIyIj0xJKA
+	 zd9SwJmwFHE5qoZf5GPgvN7KGc4IOjpNAsTWOhQNZwL5zZnfdO8qSGE+DqD8oGhHCvsPHsb9cQyM
+	 NMC7Q2TzrAQrUFp++Ny8Wg4smZ6I3UOKXF8c5SMyxJYd0ZSLd2gwwy6ysdFk40ol3U3c0cY5BUt6
+	 Ok4FPGLBYSto8fYJXVjY3sJ0pI/ZSbowxI363j41Bi1/QJwsZxX/86RdJsBbpX2kybR3QZ1JpjXH
+	 z/ItoRQzuROPHNkQb8gSTvvZPjuW5wxZ92zYYT0OU5S+3Issa+LnNBQ2T8yT0CQd77GbLz9oqbGK
+	 o8M+hiePa/LoVlRFVcWfsWkfPpv3R0EjUomiwKbNW9Yv3sZPoe5fc4cxlY4n0TRUrf12Oaa0B7C6
+	 xASl36oPoAtczpy2E4+JFvFub30A+N+b+/cU6fAKyDrGdToIt3rZDRQkYivdENZwrPogRT9gD+mh
+	 sVXs2LGrLvMoBSAc/yf9W7N0hGDqEuSxmtV8TskkQs95vjZUbGawHTtJfFhTv3MRPNoUutaxsJfy
+	 0QoDAJLqbpOZcsQnoZfgtb+VI8tQqnZfP1kYljO2YLq3JYuKy6swPZfo5zCg3b2/nZb1BsR6NOTE
+	 RYQQwmJjg9z4P2DM3d+uKmXdVxzAqxVUltvT3Lzkm7X2cwNGXxaBP8VICbCCI3zpriwxDMDuu9xZ
+	 VPZ70PpXyazaWEH/pL6vHeGEfaUn5F24NUDbe49eWlv+jRSPNE/Hw8UOhxxKvniYCmBfZasFY=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Congjie Zhou <zcjie0802@qq.com>
+To: linux-kernel@vger.kernel.org
+Cc: zcjie0802@qq.com,
+	brauner@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz
+Subject: [PATCH v4] vfs: correct the comments of vfs_*() helpers
+Date: Fri, 19 Jul 2024 00:25:45 +0800
+X-OQ-MSGID: <20240718162545.11435-1-zcjie0802@qq.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <tencent_3A7366F414667EE52C073850077331ADC709@qq.com>
+References: <tencent_3A7366F414667EE52C073850077331ADC709@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717215847.5310-1-robdclark@gmail.com> <CAD=FV=XCOKJHJ-yzENpvm_MD34tMR5LRy2m2jYdcWzZXP4pfXQ@mail.gmail.com>
- <CAF6AEGuBZqV4zg1asUNbMLvq0-i-iyFwfi37uKS3kWNuRSOU+g@mail.gmail.com> <CAD=FV=UMiDTLBBEMk3fpg+TfE_K23fyL+JDZj77Fe9fCY8DyjA@mail.gmail.com>
-In-Reply-To: <CAD=FV=UMiDTLBBEMk3fpg+TfE_K23fyL+JDZj77Fe9fCY8DyjA@mail.gmail.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Thu, 18 Jul 2024 09:25:39 -0700
-Message-ID: <CAF6AEGs22brXntJ-eDv_uTZGc2=rH2q2V4y6Vt8K4s+dsO=4-A@mail.gmail.com>
-Subject: Re: [RFC] drm/panel/simple-edp: Add Samsung ATNA45DC02
-To: Doug Anderson <dianders@chromium.org>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	Rob Clark <robdclark@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 18, 2024 at 9:00=E2=80=AFAM Doug Anderson <dianders@chromium.or=
-g> wrote:
->
-> Hi,
->
-> On Wed, Jul 17, 2024 at 6:09=E2=80=AFPM Rob Clark <robdclark@gmail.com> w=
-rote:
-> >
-> > On Wed, Jul 17, 2024 at 5:19=E2=80=AFPM Doug Anderson <dianders@chromiu=
-m.org> wrote:
-> > >
-> > > Hi,
-> > >
-> > > On Wed, Jul 17, 2024 at 2:58=E2=80=AFPM Rob Clark <robdclark@gmail.co=
-m> wrote:
-> > > >
-> > > > From: Rob Clark <robdclark@chromium.org>
-> > > >
-> > > > Just a guess on the panel timings, but they appear to work.
-> > > >
-> > > > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > > > ---
-> > > > This adds the panel I have on my lenovo yoga slim 7x laptop.  I cou=
-ldn't
-> > > > find any datasheet so timings is just a guess.  But AFAICT everythi=
-ng
-> > > > works fine.
-> > > >
-> > > >  drivers/gpu/drm/panel/panel-edp.c | 2 ++
-> > > >  1 file changed, 2 insertions(+)
-> > >
-> > > Given that this is a Samsung ATNA<mumble>, is there any chance it's a=
-n
-> > > OLED panel? Should it be supported with the Samsung OLED panel driver
-> > > like this:
-> > >
-> > > https://lore.kernel.org/r/20240715-x1e80100-crd-backlight-v2-0-31b7f2=
-f658a3@linaro.org
-> >
-> > it is an OLED panel, and I did see that patchset and thought that
-> > samsung panel driver would work.  But changing the compat string on
-> > the yoga dts only gave me a black screen (and I didn't see any of the
-> > other mentioned problems with bl control or dpms with panel-edp).  So
-> > :shrug:?  It could be I overlooked something else, but it _seems_ like
-> > panel-edp is fine for this panel. Plus, it would avoid awkwardness if
-> > it turned out there were other non-samsung 2nd sources, but so far
-> > with a sample size of two 100% of these laptops have the same panel
->
-> Hmm, OK. One question for you: are you using the "enable" GPIO in
-> panel-edp? IMO the code handling that GPIO in panel-edp is somewhat
-> dodgy, but it predates my deeper involvement with panels. I've never
-> seen an eDP panel that could use panel-edp where it was actually
-> required--every instance where someone thought it was required was
-> better modeled by using that GPIO as the backlight enable. On the
-> other hand, the "enable" GPIO in the Samsung OLED panel driver came
-> straight from the panel datasheet and it makes sense for it to be in
-> the panel driver since the backlight is handled straight by the
-> panel...
+correct the comments of vfs_*() helpers in fs/namei.c, including:
+1. vfs_create()
+2. vfs_mknod()
+3. vfs_mkdir()
+4. vfs_rmdir()
+5. vfs_symlink()
 
-hmm, at least current dts doesn't have an enable gpio.  Which could be
-why panel-samsung-atna33xc20 wasn't working.
+All of them come from the same commit:
+6521f8917082 "namei: prepare for idmapped mounts"
 
-It is entirely possible we are relying on something left on by the bootload=
-er.
+The @dentry is actually the dentry of child directory rather than
+base directory(parent directory), and thus the @dir has to be
+modified due to the change of @dentry.
 
-> In any case, I guess if things are working it doesn't really hurt to
-> take it in panel-edp for now...
->
+Signed-off-by: Congjie Zhou <zcjie0802@qq.com>
+---
+It has been more than one month since my last email but no response, 
+so I make some changes and resend it.
 
-I wonder if using compatible=3D"edp-panel" everywhere isn't a great idea
-if we want to switch drivers later.  But I guess that is already water
-under the bridge (so to speak)
+ fs/namei.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-BR,
--R
+diff --git a/fs/namei.c b/fs/namei.c
+index 3a4c40e12..5512cb10f 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3248,9 +3248,9 @@ static inline umode_t vfs_prepare_mode(struct mnt_idmap *idmap,
+ /**
+  * vfs_create - create new file
+  * @idmap:	idmap of the mount the inode was found from
+- * @dir:	inode of @dentry
+- * @dentry:	pointer to dentry of the base directory
+- * @mode:	mode of the new file
++ * @dir:	inode of the parent directory
++ * @dentry:	dentry of the child file
++ * @mode:	mode of the child file
+  * @want_excl:	whether the file must not yet exist
+  *
+  * Create a new file.
+@@ -4047,9 +4047,9 @@ EXPORT_SYMBOL(user_path_create);
+ /**
+  * vfs_mknod - create device node or file
+  * @idmap:	idmap of the mount the inode was found from
+- * @dir:	inode of @dentry
+- * @dentry:	pointer to dentry of the base directory
+- * @mode:	mode of the new device node or file
++ * @dir:	inode of the parent directory
++ * @dentry:	dentry of the child device node
++ * @mode:	mode of the child device node
+  * @dev:	device number of device to create
+  *
+  * Create a device node or file.
+@@ -4174,9 +4174,9 @@ SYSCALL_DEFINE3(mknod, const char __user *, filename, umode_t, mode, unsigned, d
+ /**
+  * vfs_mkdir - create directory
+  * @idmap:	idmap of the mount the inode was found from
+- * @dir:	inode of @dentry
+- * @dentry:	pointer to dentry of the base directory
+- * @mode:	mode of the new directory
++ * @dir:	inode of the parent directory
++ * @dentry:	dentry of the child directory
++ * @mode:	mode of the child directory
+  *
+  * Create a directory.
+  *
+@@ -4256,8 +4256,8 @@ SYSCALL_DEFINE2(mkdir, const char __user *, pathname, umode_t, mode)
+ /**
+  * vfs_rmdir - remove directory
+  * @idmap:	idmap of the mount the inode was found from
+- * @dir:	inode of @dentry
+- * @dentry:	pointer to dentry of the base directory
++ * @dir:	inode of the parent directory
++ * @dentry:	dentry of the child directory
+  *
+  * Remove a directory.
+  *
+@@ -4537,8 +4537,8 @@ SYSCALL_DEFINE1(unlink, const char __user *, pathname)
+ /**
+  * vfs_symlink - create symlink
+  * @idmap:	idmap of the mount the inode was found from
+- * @dir:	inode of @dentry
+- * @dentry:	pointer to dentry of the base directory
++ * @dir:	inode of the parent directory
++ * @dentry:	dentry of the child symlink file
+  * @oldname:	name of the file to link to
+  *
+  * Create a symlink.
+-- 
+2.34.1
 
-> > But that was the reason for posting this as an RFC.  I was hoping
-> > someone had some hint about where to find datasheets (my google'ing
-> > was not successful), etc.
->
-> I don't personally have any hints.
->
-> -Doug
->
 
