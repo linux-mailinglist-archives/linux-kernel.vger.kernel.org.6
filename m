@@ -1,291 +1,172 @@
-Return-Path: <linux-kernel+bounces-256050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA08093483E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:43:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0C99934843
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:44:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 160FEB221BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:43:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5619C28151A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CE66F2F6;
-	Thu, 18 Jul 2024 06:43:15 +0000 (UTC)
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B084B6F315;
+	Thu, 18 Jul 2024 06:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iafXJI0j"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C332AD29;
-	Thu, 18 Jul 2024 06:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D775FB8A;
+	Thu, 18 Jul 2024 06:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721284995; cv=none; b=FdeTllw6jX/jttXA1/JabDiZArWYVt95Se2vnQFJt+m+F1Xzuu9YLOy9MP/AbYp8vZMg69rBFh52cOkao5bymqMOtdmjJFRhmmrd4Nwnm4gCdCbv7bDxm44/tATAWxgZXQq0lmmdNZ1Jn6sOXD5RAUiuKRjvQQOEZ63drbGgSh4=
+	t=1721285031; cv=none; b=onS3V20PhPGXi+B9B4vh/ysRQLzCLmitdM8hf2JWKnirFspTFobhGCJJzCbNJiR5lDGzRETuvG3S8i7DjcIZTBfB3Iq1seDoTqzOxhJXrttUaH5n71vREomfqkHhbOwIbSbHXyDCZs9gM+0WKlMFMpIcxf3mvODpu/EuYqlIegE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721284995; c=relaxed/simple;
-	bh=Sja/4fv+wFUvpDPelMJwbUYsVGjwENFFqB4kVO5h1JU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jrTvvDCeS2bxeipu5fFPYOxcyLvdlm94Tz3GEGkGdF0yulpPfWj5zTZzK2gymP092U3HT3kcIV3U3ED59YBtswWFvRnrP0EpO0EX6FkWtOTudS2SMhOTe0AWbSx4ByCw3Vpox0/zodAKiaq8VtgfdZ7REvqVGdy3e/z6QTESVTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2cb217f17acso346370a91.1;
-        Wed, 17 Jul 2024 23:43:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721284993; x=1721889793;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gpS/owR9JazRM2dBxQW4LiJLxkxRTrwOxrYgYnl0BZk=;
-        b=EKpDpVIbhT5oOMtMLmeIV7wLRNGQh2oGLSV/ospF2+5cXfoQinEt3UE8IlGU/kd6w1
-         B3OVwHeFSnXfcvUEEPIpXnIeCqrVWy0tPIrBviBrcRqFl9YRQRrpVnKy5FxBmtr+mebt
-         g1ixTKmR24KCpzKMtJ24DXbU7dSdCKBhn2R5T1GrR7N9IGl7yrgXE9wyF9s9Np2ikGvH
-         igQXHDxBv7meRJivllzveqg2PzFIaBfBh3UYB2+S7G4SLUDLlUYbE/pgnRdndjpqkrjR
-         xKVlBG1XbHuLMvRprNgNAe4q/Nc+Ak2sGkATL6yEXWo8lYvSgbii8glAlHSbOSbx2EW6
-         10SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWkGLIIdLuNi4oOqVH/oNUzRXeS69Sb1YREfmZpyOpzAPQ/brzTnSGGiDRAuQq9v+qpWMsT52xHTaBggnEH1clMJ0Y63hudvpIOE6bB1W6YV+dyELJdR/1LOzi1OAdKU4UFiqn0ylCGcpdWEddyMA==
-X-Gm-Message-State: AOJu0Yy6kzRwdlq/Y7mSRr8sBLI3Sl5YaV0xDmyuKBqyqThzLNIPPECV
-	lNTRWMgQ9L46UD6GFb3ldeQbF4x8ZswanHAeWN7j4nU5Ym1ieAU7QOe2BT98UHd8ifUadAif4Hy
-	6KOJexL8lQf+2JrDIovym4OkH/ws=
-X-Google-Smtp-Source: AGHT+IGGCbeydYQPV6gMZXlaxTtaOrU+n87GbARJIM4cSViYrA7ztlvWSjbcHjVfHtVMhE5rJgZ+sDIyT3YfSb+X98s=
-X-Received: by 2002:a17:90a:d44e:b0:2c9:3370:56e3 with SMTP id
- 98e67ed59e1d1-2cb52913a6emr3198583a91.34.1721284992782; Wed, 17 Jul 2024
- 23:43:12 -0700 (PDT)
+	s=arc-20240116; t=1721285031; c=relaxed/simple;
+	bh=jyY9+99v2YwBKp1b/vSnaYlfjK379yRxOnO+QtRYWO8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=P0xAHduFgwUDLZSt8yiftgT+LN0f8FJUhlq79YwocQpsh58gvDQnL/AaswDWJqDKsDF2uC0M92zYKXsza81KMjD9L8v+joZlpDY0/pbcGWO5k0vV1qZdVfBTuPO6/PRWpkOChZ9nHdI4CGWw7ScFDc3faEmLOYaAfqV8hp6Sky8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iafXJI0j; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46I1FLKU001753;
+	Thu, 18 Jul 2024 06:43:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FzHd8BfRF/tt9UYrgZHqu1HlvsI5sz3lmgH0cRhUT8w=; b=iafXJI0jDrtFJwvc
+	KIVPIuDcQ+SvbkIpHeZxSDQkyw+6u7rieu3AleQBYI6lgKERPwhCEhahO4vt33jY
+	T7y7aEBScn+YjOXtnrKopCOOk7uE22qwb++fNn7EYbGZKK6R7x0UGA0L27z+7YTD
+	+ssn8suFyOPiJX84ERa5hWk8VJnQhWLjTrqAsotXSCGAtah/S2uCXTKH11oxemx6
+	kBP0CBTc+d1LjnyQtSgLdGR9Zv/Ql8oik8Dnh4SCx9cgZi4IBtV9A8hv4ieUb8AP
+	TDP/Rc/CetT2s4h1owf9Z7vnCcg8H10Qaef9klN5e9a1ajHAlOaogg15gzr85Lp3
+	YT3xqQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40es1wrj23-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Jul 2024 06:43:43 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46I6hhOH004524
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Jul 2024 06:43:43 GMT
+Received: from [10.151.37.100] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 17 Jul
+ 2024 23:43:37 -0700
+Message-ID: <de9f2ab7-e6d0-4c59-8653-c60d9f5a2a33@quicinc.com>
+Date: Thu, 18 Jul 2024 12:13:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240713165529.59298-1-atrajeev@linux.vnet.ibm.com>
- <ZpipZcu8KixXxzbw@google.com> <B807AB51-B49D-436D-98B3-E6344A53ABCA@linux.vnet.ibm.com>
-In-Reply-To: <B807AB51-B49D-436D-98B3-E6344A53ABCA@linux.vnet.ibm.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Wed, 17 Jul 2024 23:43:01 -0700
-Message-ID: <CAM9d7cg5MYvLeOoBuKqp1pw7uvRfqCw1fXpLtgct0npL96JaYg@mail.gmail.com>
-Subject: Re: [PATCH V7 00/18] Add data type profiling support for powerpc
-To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, irogers@google.com, segher@kernel.crashing.org, 
-	christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	akanksha@linux.ibm.com, maddy@linux.ibm.com, kjain@linux.ibm.com, 
-	disgoel@linux.vnet.ibm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V6 4/4] PCI: qcom: Add support for IPQ9574
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        devi priya
+	<quic_devipriy@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Anusha Rao <quic_anusha@quicinc.com>
+References: <20240716092347.2177153-1-quic_srichara@quicinc.com>
+ <20240716092347.2177153-5-quic_srichara@quicinc.com>
+ <20240717083856.GD2574@thinkpad>
+Content-Language: en-US
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <20240717083856.GD2574@thinkpad>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ufqeYTtQOUeouqgZUXXrvP064jfAI_zQ
+X-Proofpoint-ORIG-GUID: ufqeYTtQOUeouqgZUXXrvP064jfAI_zQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-18_03,2024-07-17_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 spamscore=0
+ mlxscore=0 bulkscore=0 adultscore=0 impostorscore=0 priorityscore=1501
+ phishscore=0 clxscore=1015 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407180044
 
-On Wed, Jul 17, 2024 at 11:12=E2=80=AFPM Athira Rajeev
-<atrajeev@linux.vnet.ibm.com> wrote:
->
->
->
-> > On 18 Jul 2024, at 11:04=E2=80=AFAM, Namhyung Kim <namhyung@kernel.org>=
- wrote:
-> >
-> > Hello,
-> >
-> > On Sat, Jul 13, 2024 at 10:25:11PM +0530, Athira Rajeev wrote:
-> >> The patchset from Namhyung added support for data type profiling
-> >> in perf tool. This enabled support to associate PMU samples to data
-> >> types they refer using DWARF debug information. With the upstream
-> >> perf, currently it possible to run perf report or perf annotate to
-> >> view the data type information on x86.
-> >>
-> >> Initial patchset posted here had changes need to enable data type
-> >> profiling support for powerpc.
-> >>
-> >> https://lore.kernel.org/all/6e09dc28-4a2e-49d8-a2b5-ffb3396a9952@csgro=
-up.eu/T/
-> >>
-> >> Main change were:
-> >> 1. powerpc instruction nmemonic table to associate load/store
-> >> instructions with move_ops which is use to identify if instruction
-> >> is a memory access one.
-> >> 2. To get register number and access offset from the given
-> >> instruction, code uses fields from "struct arch" -> objump.
-> >> Added entry for powerpc here.
-> >> 3. A get_arch_regnum to return register number from the
-> >> register name string.
-> >>
-> >> But the apporach used in the initial patchset used parsing of
-> >> disassembled code which the current perf tool implementation does.
-> >>
-> >> Example: lwz     r10,0(r9)
-> >>
-> >> This line "lwz r10,0(r9)" is parsed to extract instruction name,
-> >> registers names and offset. Also to find whether there is a memory
-> >> reference in the operands, "memory_ref_char" field of objdump is used.
-> >> For x86, "(" is used as memory_ref_char to tackle instructions of the
-> >> form "mov  (%rax), %rcx".
-> >>
-> >> In case of powerpc, not all instructions using "(" are the only memory
-> >> instructions. Example, above instruction can also be of extended form =
-(X
-> >> form) "lwzx r10,0,r19". Inorder to easy identify the instruction categ=
-ory
-> >> and extract the source/target registers, second patchset added support=
- to use
-> >> raw instruction. With raw instruction, macros are added to extract opc=
-ode
-> >> and register fields.
-> >> Link to second patchset:
-> >> https://lore.kernel.org/all/20240506121906.76639-1-atrajeev@linux.vnet=
-.ibm.com/
-> >>
-> >> Example representation using --show-raw-insn in objdump gives result:
-> >>
-> >> 38 01 81 e8     ld      r4,312(r1)
-> >>
-> >> Here "38 01 81 e8" is the raw instruction representation. In powerpc,
-> >> this translates to instruction form: "ld RT,DS(RA)" and binary code
-> >> as:
-> >>  _____________________________________
-> >>  | 58 |  RT  |  RA |      DS       | |
-> >>  -------------------------------------
-> >> 0    6     11    16              30 31
-> >>
-> >> Second patchset used "objdump" again to read the raw instruction.
-> >> But since there is no need to disassemble and binary code can be read
-> >> directly from the DSO, third patchset (ie this patchset) uses below
-> >> apporach. The apporach preferred in powerpc to parse sample for data
-> >> type profiling in V3 patchset is:
-> >> - Read directly from DSO using dso__data_read_offset
-> >> - If that fails for any case, fallback to using libcapstone
-> >> - If libcapstone is not supported, approach will use objdump
-> >>
-> >> Patchset adds support to pick the opcode and reg fields from this
-> >> raw/binary instruction code. This approach came in from review comment
-> >> by Segher Boessenkool and Christophe for the initial patchset.
-> >>
-> >> Apart from that, instruction tracking is enabled for powerpc and
-> >> support function is added to find variables defined as registers
-> >> Example, in powerpc, below two registers are
-> >> defined to represent variable:
-> >> 1. r13: represents local_paca
-> >> register struct paca_struct *local_paca asm("r13");
-> >>
-> >> 2. r1: represents stack_pointer
-> >> register void *__stack_pointer asm("r1");
-> >>
-> >> These are handled in this patchset.
-> >>
-> >> - Patch 1 is to rearrange register state type structures to header fil=
-e
-> >> so that it can referred from other arch specific files
-> >> - Patch 2 is to make instruction tracking as a callback to"struct arch=
-"
-> >> so that it can be implemented by other archs easily and defined in arc=
-h
-> >> specific files
-> >> - Patch 3 is to handle state type regs array size for x86 and powerpc
-> >> - Patch 4 adds support to capture and parse raw instruction in powerpc
-> >> using dso__data_read_offset utility
-> >> - Patch 4 also adds logic to support using objdump when doing default =
-"perf
-> >> report" or "perf annotate" since it that needs disassembled instructio=
-n.
-> >> - Patch 5 adds disasm_line__parse to parse raw instruction for powerpc
-> >> - Patch 6 update parameters for reg extract functions to use raw
-> >> instruction on powerpc
-> >> - Patch 7 updates ins__find to carry raw_insn and also adds parse
-> >> callback for memory instructions for powerpc
-> >> - Patch 8 add support to identify memory instructions of opcode 31 in
-> >> powerpc
-> >> - Patch 9 adds more instructions to support instruction tracking in po=
-werpc
-> >> - Patch 10 and 11 handles instruction tracking for powerpc.
-> >> - Patch 12, 13 and 14 add support to use libcapstone in powerpc
-> >> - Patch 15 and patch 16 handles support to find global register variab=
-les
-> >> - PAtch 17 updates data type compare functions data_type_cmp and
-> >>  sort__typeoff_sort to include var_name along with type_name in
-> >>  comparison.
-> >> - Patch 18 handles insn-stat option for perf annotate
-> >>
-> >> Note:
-> >> - There are remaining unknowns (25%) as seen in annotate Instruction s=
-tats
-> >> below.
-> >> - This patchset is not tested on powerpc32. In next step of enhancemen=
-ts
-> >> along with handling remaining unknowns, plan to cover powerpc32 change=
-s
-> >> based on how testing goes.
-> >>
-> >> With the current patchset:
-> >>
-> >> ./perf record -a -e mem-loads sleep 1
-> >> ./perf report -s type,typeoff --hierarchy --group --stdio
-> >> ./perf annotate --data-type --insn-stat
-> >>
-> >> perf annotate logs:
-> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>
-> >>
-> >> Annotate Instruction stats
-> >> total 609, ok 446 (73.2%), bad 163 (26.8%)
-> >>
-> >>  Name/opcode         :  Good   Bad
-> >>  -----------------------------------------------------------
-> >>  58                  :   323    80
-> >>  32                  :    49    43
-> >>  34                  :    33    11
-> >>  OP_31_XOP_LDX       :     8    20
-> >>  40                  :    23     0
-> >>  OP_31_XOP_LWARX     :     5     1
-> >>  OP_31_XOP_LWZX      :     2     3
-> >>  OP_31_XOP_LDARX     :     3     0
-> >>  33                  :     0     2
-> >>  OP_31_XOP_LBZX      :     0     1
-> >>  OP_31_XOP_LWAX      :     0     1
-> >>  OP_31_XOP_LHZX      :     0     1
-> >>
-> >> perf report logs:
-> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>
-> >>  Total Lost Samples: 0
-> >>
-> >>  Samples: 1K of event 'mem-loads'
-> >>  Event count (approx.): 937238
-> >>
-> >>  Overhead  Data Type  Data Type Offset
-> >> ........  .........  ................
-> >>    48.60%  (unknown)  (unknown) +0 (no field)
-> >>    11.42%  long unsigned int  long unsigned int +0 (current_stack_poin=
-ter)
-> >>     4.68%  struct paca_struct  struct paca_struct +2312 (__current)
-> >>     4.57%  struct paca_struct  struct paca_struct +2354 (irq_soft_mask=
-)
-> >>     2.69%  struct paca_struct  struct paca_struct +2808 (canary)
-> >>     2.68%  struct paca_struct  struct paca_struct +8 (paca_index)
-> >>     2.24%  struct paca_struct  struct paca_struct +48 (data_offset)
-> >>     1.43%  long unsigned int  long unsigned int +0 (no field)
-> >>     1.41%  struct vm_fault  struct vm_fault +0 (vma)
-> >>     1.29%  struct task_struct  struct task_struct +276 (flags)
-> >>     1.03%  struct pt_regs  struct pt_regs +264 (user_regs.msr)
-> >>     0.90%  struct security_hook_list  struct security_hook_list +0 (li=
-st.next)
-> >>     0.76%  struct irq_desc  struct irq_desc +304 (irq_data.chip)
-> >>     0.76%  struct rq  struct rq +2856 (cpu)
-> >>     0.72%  long long unsigned int  long long unsigned int +0 (no field=
-)
-> >
-> > Thanks for your work!  But I think you need to split the basic part and
-> > global register support part which needs more review.
-> >
-> > For the patch 1 to 14:
-> > Reviewed-by: Namhyung Kim <namhyung@kernel.org>
->
-> Hi Namhyung
->
-> Thanks for all suggestions and reviews. I will check latest comments for =
-patches 15 and 16 (also patch 17 is dependent the global register support p=
-art). But patch 18 is not dependent on global register support patches. Alo=
-ng with patches 1 to 14, can you please add patch 18 also ?
 
-Sure, feel free to add it to the patch 18.
 
-Reviewed-by: Namhyung Kim <namhyung@kernel.org>
+On 7/17/2024 2:08 PM, Manivannan Sadhasivam wrote:
+> On Tue, Jul 16, 2024 at 02:53:47PM +0530, Sricharan R wrote:
+>> From: devi priya <quic_devipriy@quicinc.com>
+>>
+>> The IPQ9574 platform has four Gen3 PCIe controllers:
+>> two single-lane and two dual-lane based on SNPS core 5.70a.
+>>
+>> QCOM IP rev is 1.27.0 and Synopsys IP rev is 5.80a.
+>> Add a new compatible 'qcom,pcie-ipq9574' and 'ops_1_27_0'
+>> which reuses all the members of 'ops_2_9_0' except for the
+>> post_init as the SLV_ADDR_SPACE_SIZE configuration differs
+>> between 2_9_0 and 1_27_0.
+>>
+>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
+>> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+>> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+>> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
+>> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>> ---
+>>   [V6] Fixed all Manivannan's and Bjorn Helgaas comments.
+>>        Removed the SLV_ADDR_SPACE_SZ_1_27_0 macro to have default value.
+>>
+>>   drivers/pci/controller/dwc/pcie-qcom.c | 31 ++++++++++++++++++++++----
+>>   1 file changed, 27 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+>> index 0180edf3310e..26acd9f5385e 100644
+>> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+>> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+>> @@ -1116,16 +1116,13 @@ static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
+>>   	return clk_bulk_prepare_enable(res->num_clks, res->clks);
+>>   }
+>>   
+>> -static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
+>> +static int qcom_pcie_post_init(struct qcom_pcie *pcie)
+>>   {
+>>   	struct dw_pcie *pci = pcie->pci;
+>>   	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+>>   	u32 val;
+>>   	int i;
+>>   
+>> -	writel(SLV_ADDR_SPACE_SZ,
+>> -		pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
+>> -
+>>   	val = readl(pcie->parf + PARF_PHY_CTRL);
+>>   	val &= ~PHY_TEST_PWR_DOWN;
+>>   	writel(val, pcie->parf + PARF_PHY_CTRL);
+>> @@ -1165,6 +1162,18 @@ static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
+>>   	return 0;
+>>   }
+>>   
+>> +static int qcom_pcie_post_init_1_27_0(struct qcom_pcie *pcie)
+>> +{
+>> +	return qcom_pcie_post_init(pcie);
+>> +}
+>> +
+>> +static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
+>> +{
+>> +	writel(SLV_ADDR_SPACE_SZ, pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
+>> +
+> As discussed in [1], DBI/ATU mirroring should be disabled completely to avoid
+> the enumeration issue you are seeing on this platform. Please rebase on top of
+> the referenced patch (once v2 gets posted).
+ok, got it.
 
-Thanks,
-Namhyung
+Regards,
+  Sricharan
 
