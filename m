@@ -1,136 +1,158 @@
-Return-Path: <linux-kernel+bounces-256210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5630D934AC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:17:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ED03934ACA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 123A8286DF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:17:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0FF11C219D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3968172A;
-	Thu, 18 Jul 2024 09:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MeWX1Mb8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13D880C04;
+	Thu, 18 Jul 2024 09:20:15 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDA828DD1
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 09:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3633478C8F
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 09:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721294265; cv=none; b=sygqJ54XptZrlyfOWkN+yNum8n+f2ci/nc/XJvFwgyFUA9LRzFRU62EzNDvv9im45H1a41VGiPFkwxIj2Is+wKknHdG20GeDWsVdhauk/TTfLkFI50p0NRG3VPR6MYghmAUyDRqrlL3bo+TXyA0PWje5prgFIRi+0j71/kbZFLs=
+	t=1721294415; cv=none; b=LF9uFOA4RSWMHPUp3IvzN+wTPbB+IYZ1BscNMC1V9ep6QcINebxRQN42vxiHM/nWVuBujIHJ3uhDei9iWuRmKik92AzVmLVjzy2VXKlSkz00Ul6QcVQXhqSUj3oeMWITUP9Z3BphNqeAb+3SxMjBxxY09/7nEEYlFAMaMvi4I+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721294265; c=relaxed/simple;
-	bh=vPy/nMMk1C76qqZRHaFBx0D6uZVQfOEera0mnUKS1Ns=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LoOJkfw854AzJbSybgPXijUk/n8cvPmhB9MCpNbTvPrq8Nxckwni7YnCNVyjOOEqMdD5I8TjijDHQ1jBeZY+IpwiaXcEvYRHzlelic3690VwvtyoiLG2ljsJL5zGY2I8whKKhp3Ftibl6uOScGUUXrlgKrUd+j5K78Mfx0isndQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MeWX1Mb8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721294262;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6ZwV4xC2XIy0bnRWnXbVpRjb1sT4l2/9bWUdXm5/n8k=;
-	b=MeWX1Mb8yh5YIZtGWHo9aD4J4ejblza2xC+B2GizmTF1Dgz7cwBQIiAyINBxZd+HgCiipY
-	DiBc3jvVFjJMkOdFGntY1oNBP7T91pdzejAY9GzGqoZWO2yJagKJbcnzJJOVlO/xCp3zZG
-	xwhzv1IwXnMv6CZChIjAPZOAxuZq9o0=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-301-65uwaXIFN3aUH9SroG_EZg-1; Thu, 18 Jul 2024 05:17:41 -0400
-X-MC-Unique: 65uwaXIFN3aUH9SroG_EZg-1
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2ee9cd9b5fdso466301fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 02:17:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721294260; x=1721899060;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6ZwV4xC2XIy0bnRWnXbVpRjb1sT4l2/9bWUdXm5/n8k=;
-        b=STXeL+eRiwj/tGtSMmmzJ+wI4Ljz/tm5LGwe86ADY2R7Ki4NXc8H0jlRIQUIw2Dd0G
-         ooodCiaop0U6GVICV64jFj7qgIeWF1XDj+fQGvfGqJhRjZyo4T3Gp98SVE7B5f9jbobI
-         SujurwtPQ7iqnP8bgaPIAphmLPWAZVeXm4lP3BqEyE7cfNYCKLEKtJofxbH7bcGO8yNK
-         NroCXXYXVVAFIoJE3hzDuycDCqX354a5Xw7odQ8G2QRbIYNlohAH+e1fRPcShTJYjIKG
-         bXn6+zlI1YEYnaT/aFRhFyvKU4DU0xCLKMszNcJip58JavwbaDbumIKCbDtH6FOUiQ7V
-         ko/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU1jcHpAgUerjYklguu30HALjvQSh1R077qjLOM6Lmw1uKlVKasRinqkqZyYoMv2oD850kAyYrV2o7g/2aDliUZyWeD7bF2nTtvtpa2
-X-Gm-Message-State: AOJu0YwLBhGK9czEwv+61ttYLimWy86gdEvHc/vcmoXLoVLWyq2DwPq7
-	h8ONZQC8RJI5jZovqMIcenNgnlBkzwF4tYFXxMLt2k4VD13eoRl70V1iVoihqR0UCSSdVyOvgUe
-	RPUHqqvhe4nfLObnNP6rTsder2qjy9o+sCh1ehgMCmIX/+wTGofXKq15RIS5CvA==
-X-Received: by 2002:a2e:8396:0:b0:2ee:8071:5f03 with SMTP id 38308e7fff4ca-2ef05d33113mr7422771fa.5.1721294259910;
-        Thu, 18 Jul 2024 02:17:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEC7SAChnVTkqMThBZ6Thcv9r82ds9BHgKpNdZmhfu9sRo1Nqg7wv+mY+GC+hLh5U6SiIVSmw==
-X-Received: by 2002:a2e:8396:0:b0:2ee:8071:5f03 with SMTP id 38308e7fff4ca-2ef05d33113mr7422601fa.5.1721294259439;
-        Thu, 18 Jul 2024 02:17:39 -0700 (PDT)
-Received: from ?IPV6:2a0d:3341:b08b:7710:c7b:f018:3ba3:eb24? ([2a0d:3341:b08b:7710:c7b:f018:3ba3:eb24])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2920313sm2848755e9.0.2024.07.18.02.17.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jul 2024 02:17:38 -0700 (PDT)
-Message-ID: <cfc3ba0a-4c91-4c58-9c98-6285720473c8@redhat.com>
-Date: Thu, 18 Jul 2024 11:17:37 +0200
+	s=arc-20240116; t=1721294415; c=relaxed/simple;
+	bh=NVmocxKup4CnNxG4HHYvEU51kiKuUcSnBQFJoZmyjlw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bmjqf1kIaE8e6SI1m6nRVOMCYn9AuyaM7MS66/rjzLwpkL4+D9BX/dhiHBBAmzsHid5vfOzGUnJo6f6h17mvrq3bs6FDWBs4BN8zsmIPFG9ugS+9jxN1/y9V/KbXtFYAfXoIAiiLGt/VfC52Fq3QNx3a8NFwBnVM2yXz/b1LMK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sUNGz-0002U5-TA; Thu, 18 Jul 2024 11:18:01 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sUNGr-000PqF-MB; Thu, 18 Jul 2024 11:17:53 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sUNGr-003zXS-1Y;
+	Thu, 18 Jul 2024 11:17:53 +0200
+Date: Thu, 18 Jul 2024 11:17:53 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Russell King <linux@armlinux.org.uk>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Vladimir Zapolskiy <vz@mleia.com>, Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>, linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	imx@lists.linux.dev, linux-omap@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+	openbmc@lists.ozlabs.org, linuxppc-dev@lists.ozlabs.org,
+	linux-mips@vger.kernel.org, loongarch@lists.linux.dev
+Subject: Re: [PATCH 4/9] mtd: devices: add AT24 eeprom support
+Message-ID: <20240718091753.apwsrvmekn2vvo4k@pengutronix.de>
+References: <07b701a9-7b52-45b7-8dba-1c25d77cbf15@linaro.org>
+ <mafs0ikxnykpr.fsf@kernel.org>
+ <20240702-congenial-vigilant-boar-aeae44@houat>
+ <mafs0ed8byj5z.fsf@kernel.org>
+ <20240702-mighty-brilliant-eel-b0d9fa@houat>
+ <20240708084440.70186564@xps-13>
+ <20240709092214.omr7ccphdzdk7z7j@pengutronix.de>
+ <20240709114302.3c604ef3@xps-13>
+ <20240709103841.7x7n4hdtqrunyoc3@pengutronix.de>
+ <20240717101948.2e99f472@xps-13>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] tcp: process the 3rd ACK with sk_socket for for
- TFO/MPTCP
-To: Matthieu Baerts <matttbe@kernel.org>, Eric Dumazet <edumazet@google.com>,
- Neal Cardwell <ncardwell@google.com>
-Cc: mptcp@lists.linux.dev, "David S. Miller" <davem@davemloft.net>,
- David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
- Kuniyuki Iwashima <kuniyu@amazon.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240716-upstream-net-next-20240716-tcp-3rd-ack-consume-sk_socket-v1-1-4e61d0b79233@kernel.org>
- <CANn89iKrHnzuHpRn0fi6+2WB_wxi5r-HpZ2jrkhrZEPyhBe0HQ@mail.gmail.com>
- <310de142-e263-4bcd-b499-69e0640de51e@kernel.org>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <310de142-e263-4bcd-b499-69e0640de51e@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240717101948.2e99f472@xps-13>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 7/17/24 17:09, Matthieu Baerts wrote:
-> On 17/07/2024 16:57, Eric Dumazet wrote:
->> I had no time yet to run all our packetdrill tests with Kuniyuki patch
->> because of the ongoing netdev conference.
->>
->> Is it ok for you if we hold your patch for about 5 days ?
-> 
-> Sure, no problem, take your time!
-> 
->> I would like to make sure we did not miss anything else.
-> 
-> I understand!
-> 
->> I am CCing Neal, perhaps he can help to expedite the testing part
->> while I am busy.
-> 
-> Thank you, no urgency here.
-> 
-> If it's OK with you, I can send a v2 using Kuniyuki's suggestion --
-> simply limiting the bypass to SYN+ACK only -- because it is simpler and
-> ready to be sent, but also to please the CI because my v1 was rejected
-> by the CI because I sent it just before the sync with Linus tree. We can
-> choose later to pick the v2, the previous one, or a future one.
+Hi Miquel,
 
-I think it would be better to have this patch going through the netdev 
-CI, so a repost would be appreciated. I also thing Kuniyuki's suggestion 
-should be preferred, so I would say go for it :)
+On 24-07-17, Miquel Raynal wrote:
+> Hi Marco,
+> 
+> > > > > Overall I think the idea of getting rid of these misc/ drivers is goes
+> > > > > into the right direction, but registering directly into NVMEM makes
+> > > > > more sense IMO.    
+> > > > 
+> > > > So you propose to have two places for the partition handling (one for
+> > > > MTD and one for NVMEM) instead of one and moving the code into NVMEM
+> > > > directly?  
+> > > 
+> > > Why two places for the partitions handling? Just one, in NVMEM. Also  
+> > 
+> > Without checking the details I think that converting the MTD
+> > partitioning code into NVMEM partitioning code is a bigger task. As you
+> > said below there are many legacy code paths you need to consider so they
+> > still work afterwards as well.
+> > 
+> > > usually EEPROMs don't require very advanced partitioning schemes,
+> > > unlike flashes (which are the most common MTD devices today).  
+> > 
+> > As said in my cover letter EEPROMs can become quite large and MTD
+> > supports partitioning storage devices which is very handy for large
+> > EEPROMs as well.
+> 
+> Did you had a look at nvmem-layouts ? In particular the fixed-layout.
 
-@Neal could you please run the pktdrill tests on the new, upcoming 
-version, instead?
+Yes I had a look at nvmem-layouts and we use them within a
+mtd-partition. Using them instead of a mtd-partition is not sufficient
+since they:
+ 1) don't support user-space write (I send a patch for it but it doesn't
+    seem to be accepted soon).
+ 2) If write would be supported the user-space need to write the
+    complete cell e.g. no partial writes.
 
-Thanks,
+> Is there anything you would like to achieve already that is not
+> possible with nvmem but is with mtd?
 
-Paolo
+Please see above.
 
+Regards,
+  Marco
 
