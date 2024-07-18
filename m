@@ -1,115 +1,109 @@
-Return-Path: <linux-kernel+bounces-256253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AB6E934B70
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:02:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B659934B7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D56C285C1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:02:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DC711C21DF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B78112D1FD;
-	Thu, 18 Jul 2024 10:02:25 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DF085285;
+	Thu, 18 Jul 2024 10:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="WlMNGhyW"
+Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A0F81720
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 10:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20023A267
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 10:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721296945; cv=none; b=DUyvoZJThUFQmNF7YAM5ECpIvrROE9qnDxFygDk5H0VTcR3IxL2JiXJgqJyEe6jcDgmwjhsnPARAb7NNnm5U8n8X3SQtwGAhkAe0k3HEHGMvnH1PRU1L0nfytUAU54Ce5aib+9llYAdTrSo0r3wZnpTYjvmmTriXr7ixUkIH73w=
+	t=1721297282; cv=none; b=cAC/qamBUbaab1lCcvVfJEBM5tT4BTLwCqWMku9/1WX4uVVN5L7hel5UcdDfAku2FBrZlFn+V/JoYH57CCB9qF0VTBA3JnNNuGNL4GCQdcYQxV5g8T0kpmCTs9t7P//Tn4hd7PiaQNs6ffoneaOiNjNm5FToiyQazBuEllqEGe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721296945; c=relaxed/simple;
-	bh=VLNrsDp1/dwijE+YFKkb8kkskdhh80i1siuDq/8eO2Y=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=MxvpzPNDITBLiMRwaBMWefDI7SqywJpmIjchu8KMW+QpvotzmKg4RhCVTEcH5rAYwfjFeO9mOmVQtrE00YofoJxyCmN6wXRSGMJHxoSpWiEplTWNrv2MLlypG36vaHxLPF+ylo1ijju62pEu+BBsS+3SWHnEi5ZpmpImD/rqHBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-80-_z23Jv5lPxy11QywTJfvFg-1; Thu, 18 Jul 2024 11:02:20 +0100
-X-MC-Unique: _z23Jv5lPxy11QywTJfvFg-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Thu, 18 Jul
- 2024 11:01:41 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Thu, 18 Jul 2024 11:01:41 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Stewart Hildebrand' <stewart.hildebrand@amd.com>, Bjorn Helgaas
-	<bhelgaas@google.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
-	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, "Michael
- Ellerman" <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N. Rao"
-	<naveen.n.rao@linux.ibm.com>, Thomas Zimmermann <tzimmermann@suse.de>, "Arnd
- Bergmann" <arnd@arndb.de>, Sam Ravnborg <sam@ravnborg.org>, Yongji Xie
-	<elohimes@gmail.com>, =?utf-8?B?SWxwbyBKw6RydmluZW4=?=
-	<ilpo.jarvinen@linux.intel.com>
-CC: "x86@kernel.org" <x86@kernel.org>, "linux-pci@vger.kernel.org"
-	<linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org"
-	<linuxppc-dev@lists.ozlabs.org>
-Subject: RE: [PATCH v2 0/8] PCI: Align small (<4k) BARs
-Thread-Topic: [PATCH v2 0/8] PCI: Align small (<4k) BARs
-Thread-Index: AQHa17cKP+9xH7dU/kmzREQ0omlV2bH64QzQgABNsICAAQylQA==
-Date: Thu, 18 Jul 2024 10:01:41 +0000
-Message-ID: <6cd271759286482db8d390823f408b05@AcuMS.aculab.com>
-References: <20240716193246.1909697-1-stewart.hildebrand@amd.com>
- <0da056616de54589bc1d4b95dcdf5d3d@AcuMS.aculab.com>
- <a4e2fdae-0db3-46de-b95d-bf6ef7b61b33@amd.com>
-In-Reply-To: <a4e2fdae-0db3-46de-b95d-bf6ef7b61b33@amd.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1721297282; c=relaxed/simple;
+	bh=tZP1fkWEB1ULarjCH9v62tNcZ5x7nHm75Ee94zSsPf4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PDB6PSW0aFZyMLU8bvuxUbjzTu2VLAaniwfwvnfkB0ODvvTxxdo0aAmk4fyjx5D27GBptBBo3Xz1iMtOiRnum0N0fbqhEJzBM57XrXokIo/UpdePN5bB2ev/kBDwhCNEwWUa8f9O5YZw4IiJGu4pOA037a95Ht35vu9MabC+Gns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=WlMNGhyW; arc=none smtp.client-ip=91.26.50.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
+	q=dns/txt; i=@phytec.de; t=1721296368; x=1723888368;
+	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=tZP1fkWEB1ULarjCH9v62tNcZ5x7nHm75Ee94zSsPf4=;
+	b=WlMNGhyWNv2J+Dezx9UoiRaBPc4hSCBqHsIjyJ3jcmlf+w9m7m5uIU+huTa92Rhi
+	FNED6k+CX5n/jGDBua6zzzJttI+HnrnjeO4EDxxdKxi0m9BclMrgK9FdJ8x2oVU5
+	xzx3ptFFNZ1dQl7mr2X0a6jk0bRyxtUHFKnP42rQDVM=;
+X-AuditID: ac14000a-03251700000021bc-f8-6698e5f0fd96
+Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
+	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(Client did not present a certificate)
+	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 87.32.08636.0F5E8966; Thu, 18 Jul 2024 11:52:48 +0200 (CEST)
+Received: from augenblix2.phytec.de (172.25.0.11) by Berlix.phytec.de
+ (172.25.0.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Thu, 18 Jul
+ 2024 11:52:48 +0200
+From: Wadim Egorov <w.egorov@phytec.de>
+To: <catalin.marinas@arm.com>, <will@kernel.org>, <quic_bjorande@quicinc.com>,
+	<krzysztof.kozlowski@linaro.org>, <geert+renesas@glider.be>,
+	<dmitry.baryshkov@linaro.org>, <shawnguo@kernel.org>,
+	<neil.armstrong@linaro.org>, <arnd@arndb.de>, <m.szyprowski@samsung.com>,
+	<nfraprado@collabora.com>, <u-kumar1@ti.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<upstream@lists.phytec.de>
+Subject: [PATCH] arm64: defconfig: Enable PCF857X GPIO expander
+Date: Thu, 18 Jul 2024 11:52:39 +0200
+Message-ID: <20240718095239.922641-1-w.egorov@phytec.de>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Florix.phytec.de (172.25.0.13) To Berlix.phytec.de
+ (172.25.0.12)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAIsWRmVeSWpSXmKPExsWyRpKBR/fD0xlpBpv3aFj8nXSM3eL9sh5G
+	i4nnf7JZzJ09idFi7+ut7BabHl9jtbi8aw6bxdojd4FKdt5itPi6+QWzRePjGYwWL7aIW0zb
+	O4PZovudukXLHVMHfo8189Ywevz+NYnRY8fdJYweE8/qemxa1cnmcefaHjaPzUvqPfq7W1g9
+	Ju6p8+jbsorR4/iN7UwenzfJBfBEcdmkpOZklqUW6dslcGVcn7WAveA/S8X6p3eYGhhXsHQx
+	cnJICJhIzJg4AcwWEljCJLFssXUXIxeQ/ZhRYv/1U2wgCTYBdYk7G76xgiREBA4wSUybeYEZ
+	JMEskCEx689rsG5hAXuJtivrmEBsFgFViXsTT4A18wpYSDQfvMcIsU1eYual7+wQcUGJkzOf
+	sEDMkZdo3jobaqaExMEXL5ghLpKXeHFpOQtM77Rzr5kh7FCJI5tWM01gFJiFZNQsJKNmIRm1
+	gJF5FaNQbmZydmpRZrZeQUZlSWqyXkrqJkZQrIkwcO1g7JvjcYiRiYPxEKMEB7OSCO8Exmlp
+	QrwpiZVVqUX58UWlOanFhxilOViUxHlXdwSnCgmkJ5akZqemFqQWwWSZODilGhhzIqVX7VRk
+	VHvkectrDc/Hfbeq1zYW2rzTfvIwnsVde7LA5IIvDI/2PVvz4nnKReecA5PnLbpcwB37xKT1
+	mfm9efU7d8eIpc/+Grnlw72VtxjWKkqEKIuys/9+F7zftKOnW1rh3KTHNsWL/0vY6h2dv+/c
+	vG9Hgj4zzdFi1Lr3Lkv1g3XBr811SizFGYmGWsxFxYkA0gOb+KMCAAA=
 
-RnJvbTogU3Rld2FydCBIaWxkZWJyYW5kDQo+IFNlbnQ6IDE3IEp1bHkgMjAyNCAxOTozMQ0KLi4u
-DQo+ID4gRm9yIG1vcmUgbm9ybWFsIGhhcmR3YXJlIGp1c3QgZW5zdXJpbmcgdGhhdCB0d28gc2Vw
-YXJhdGUgdGFyZ2V0cyBkb24ndCBzaGFyZQ0KPiA+IGEgcGFnZSB3aGlsZSBhbGxvd2luZyAoZWcp
-IHR3byAxayBCQVIgdG8gcmVzaWRlIGluIHRoZSBzYW1lIDY0ayBwYWdlIHdvdWxkDQo+ID4gZ2l2
-ZSBzb21lIHNlY3VyaXR5Lg0KPiANCj4gQWxsb3cgbWUgdG8gdW5kZXJzdGFuZCB0aGlzIGJldHRl
-ciwgd2l0aCBhbiBleGFtcGxlOg0KPiANCj4gUENJIERldmljZSBBDQo+ICAgICBCQVIgMSAoMWsp
-DQo+ICAgICBCQVIgMiAoMWspDQo+IA0KPiBQQ0kgRGV2aWNlIEINCj4gICAgIEJBUiAxICgxaykN
-Cj4gICAgIEJBUiAyICgxaykNCj4gDQo+IFdlIGFsaWduIGFsbCBCQVJzIHRvIDRrLiBBZGRpdGlv
-bmFsbHksIGFyZSB5b3Ugc2F5aW5nIGl0IHdvdWxkIGJlIG9rIHRvDQo+IGxldCBib3RoIGRldmlj
-ZSBBIEJBUnMgdG8gcmVzaWRlIGluIHRoZSBzYW1lIDY0ayBwYWdlLCB3aGlsZSBkZXZpY2UgQg0K
-PiBCQVJzIHdvdWxkIG5lZWQgdG8gcmVzaWRlIGluIGEgc2VwYXJhdGUgNjRrIHBhZ2U/IEkuZS4g
-aGF2aW5nIHR3byBsZXZlbHMNCj4gb2YgYWxpZ25tZW50OiBQQUdFX1NJWkUgb24gYSBwZXItZGV2
-aWNlIGJhc2lzLCBhbmQgNGsgb24gYSBwZXItQkFSDQo+IGJhc2lzPw0KPiANCj4gSWYgSSB1bmRl
-cnN0YW5kIHlvdSBjb3JyZWN0bHksIHRoZXJlJ3MgY3VycmVudGx5IG5vIGxvZ2ljIGluIHRoZSBQ
-Q0kNCj4gc3Vic3lzdGVtIHRvIGVhc2lseSBzdXBwb3J0IHRoaXMsIHNvIHRoYXQgaXMgYSByYXRo
-ZXIgbGFyZ2UgYXNrLiBJJ20NCj4gYWxzbyBub3Qgc3VyZSB0aGF0IGl0J3MgbmVjZXNzYXJ5Lg0K
-DQpUaGF0IGlzIHdoYXQgSSB3YXMgdGhpbmtpbmcsIGJ1dCBpdCBwcm9iYWJseSBkb2Vzbid0IG1h
-dHRlci4NCkl0IHdvdWxkIG9ubHkgYmUgbmVjZXNzYXJ5IGlmIHRoZSBzeXN0ZW0gd291bGQgb3Ro
-ZXJ3aXNlIHJ1biBvdXQNCm9mIFBDSShlKSBhZGRyZXNzIHNwYWNlLg0KDQpFdmVuIGFmdGVyIEkg
-cmVkdWNlZCBvdXIgRlBHQXMgQkFScyBmcm9tIDMyTUIgdG8gJ29ubHknIDRNQiAoMU1CICsgMU1C
-ICsgOGspDQp3ZSBzdGlsbCBnZXQgaXNzdWVzIHdpdGggc29tZSBQQyBiaW9zIGZhaWxpbmcgdG8g
-YWxsb2NhdGUgdGhlIHJlc291cmNlcw0KaW4gc29tZSBzbG90cyAtIGJ1dCB0aGVzZSBhcmUgb2xk
-IHg4Ni02NCBzeXN0ZW1zIHRoYXQgbWlnaHQgaGF2ZSBiZWVuIGV4cGVjdGVkDQp0byBydW4gMzJi
-aXQgd2luZG93cy4NClRoZSByZXF1aXJlbWVudCB0byB1c2UgYSBzZXBhcmF0ZSBCQVIgZm9yIE1T
-SVggcHJldHR5IG11Y2ggZG91YmxlcyB0aGUNCnJlcXVpcmVkIGFkZHJlc3Mgc3BhY2UuDQoNCkFz
-IGFuIGFzaWRlLCBpZiBhIFBDSWUgZGV2aWNlIGFza3MgZm9yOg0KCUJBUi0wICg0aykNCglCQVIt
-MSAoOGspDQoJQkFSLTIgKDRrKQ0KKHdoaWNoIGlzIGEgYml0IHNpbGx5KQ0KZG9lcyBpdCBnZXQg
-cGFja2VkIGludG8gMTZrIHdpdGggbm8gcGFkZGluZyBieSBhc3NpZ25pbmcgQkFSLTIgYmV0d2Vl
-bg0KQkFSLTAgYW5kIEJBUi0xLCBvciBpcyBpdCBhbGwgcGFkZGVkIG91dCB0byAzMmsuDQpJJ2Qg
-cHJvYmFibHkgYWRkIGEgY29tbWVudCB0byBzYXkgaXQgaXNuJ3QgZG9uZSA6LSkNCg0KCURhdmlk
-DQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBG
-YXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2
-IChXYWxlcykNCg==
+Enable the PCF857X GPIO expander which is equipped on
+the PHYTEC phyBOARD-Lyra AM625.
+
+Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index ef2235838c44..0c7d3f7717ff 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -655,6 +655,7 @@ CONFIG_GPIO_XGENE_SB=y
+ CONFIG_GPIO_MAX732X=y
+ CONFIG_GPIO_PCA953X=y
+ CONFIG_GPIO_PCA953X_IRQ=y
++CONFIG_GPIO_PCF857X=m
+ CONFIG_GPIO_BD9571MWV=m
+ CONFIG_GPIO_MAX77620=y
+ CONFIG_GPIO_SL28CPLD=m
+-- 
+2.34.1
 
 
