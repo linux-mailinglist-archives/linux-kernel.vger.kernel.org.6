@@ -1,158 +1,142 @@
-Return-Path: <linux-kernel+bounces-256300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F3B934C37
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:09:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EAA5934C3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:10:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4907F1C21020
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:09:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18CE82834A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DE812EBCA;
-	Thu, 18 Jul 2024 11:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1691312EBCA;
+	Thu, 18 Jul 2024 11:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mEYFvZg7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fooishbar-org.20230601.gappssmtp.com header.i=@fooishbar-org.20230601.gappssmtp.com header.b="xJ0Y85f3"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15428823C8
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 11:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7978B4D8A1
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 11:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721300949; cv=none; b=XUjwkSaWe4uLLSJY1L62WWQ2T040KSeuiPgAnzMKeeUNOrbfe4PJpDh0deLB7NEw2stQ+L1rTONfT/U4sdMe7kKkNbBIAi5wWZflLA70s790VD7OkgIyLgN/seqkeQW+CC0cdPStTpfhuu2CqCH+My1b86mQRbgPZENCRXu12ec=
+	t=1721301046; cv=none; b=GbKMHwgbUjtjR4scTEFKAJv7N6gOqUhtrBugqXiRDS5HpZI/9O/hG7FjHaxmLJ+Dva083oief/3ifIPbzTSj56UYjP4GzPwdE4FpT9hm1swcYr8cBHdHpyyCba7hN0+mUhx6gIU80KozvXUN2UTxuCCPqCLjWXcGccdVcTsTxVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721300949; c=relaxed/simple;
-	bh=Hi6+PXjlyeovTHQCMrMLw0CwZB4LvaETQJ3QzsgUfO8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lRlXtvE3CFzwbvNOEC4JI3zfzykKvlN++2oyeafELdbtSxqjEwCBGcHhUpy/Q4fKB77cGJLANKNaoQYu1EoSFuZwNLgKnsotusexGfvO0SGQ5/7db/mr9xayGSMoPWXP20SRPYG/87fpS35BZu/BBio0/XOZrWobtqQ74Y5i1GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mEYFvZg7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0691CC4AF09;
-	Thu, 18 Jul 2024 11:09:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721300948;
-	bh=Hi6+PXjlyeovTHQCMrMLw0CwZB4LvaETQJ3QzsgUfO8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mEYFvZg7kvRmLB/LOXJn1qqSA4nL8dLMVSOAco0ZhQdjCaDlGP4P53gW8yXa1m7TD
-	 qTQ8qt8e6RyfQu52erOphvgADnHQpgF4bsFbjyb4yE8ByKWRdOZnzaspku1cyqczfv
-	 qa/RV4LHRMRA1LgH7F1/q7H3lBlHVo5dqgNKCpjc=
-Date: Thu, 18 Jul 2024 13:09:05 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Marco Elver <elver@google.com>
-Cc: syzbot <syzbot+0ac8e4da6d5cfcc7743e@syzkaller.appspotmail.com>,
-	linux-kernel@vger.kernel.org, rafael@kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [kernel?] KCSAN: data-race in kobject_put /
- kobject_uevent_env (2)
-Message-ID: <2024071845-breach-dripping-a1e5@gregkh>
-References: <000000000000381fbb061d81bd85@google.com>
- <CANpmjNPzw1=_VDfMDskrKWiabLV1aZVC1VeThLZTDn=qWMUsZQ@mail.gmail.com>
+	s=arc-20240116; t=1721301046; c=relaxed/simple;
+	bh=g2difOvlWIEO63yHi+zzCArMOSeh2R/YOZyOxHPP5y8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IXLf9d44jpIN65G/Soadf56JZ+W0iynAWA2AmQDKCoV9520/bd3Njc9GZq+pGh8pJ8QXK9hdPM+jZ9iNbLMEAPF9gNWRpC2+DC1UdRxphgfRWx3WShBSePcra+CmFPbgSYKl+iIYZqwvXtI0XC3p2NIru9x/MgpJcPRyxCHtjIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=none smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar-org.20230601.gappssmtp.com header.i=@fooishbar-org.20230601.gappssmtp.com header.b=xJ0Y85f3; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fooishbar.org
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-79ef72bb8c8so8113785a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 04:10:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fooishbar-org.20230601.gappssmtp.com; s=20230601; t=1721301043; x=1721905843; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=g2difOvlWIEO63yHi+zzCArMOSeh2R/YOZyOxHPP5y8=;
+        b=xJ0Y85f3mfdBeKtiCg7XdEZwkFGTICo8gm6Q2EFOnFpfghD1KbWYLHERZABaJGDmzg
+         Yuk8Ld5Ja7lOHq/DZvasjXIDKNw5A7F9Jlo8E1bxE0hMVpIZkMLDI279uA5W2MSvTtVr
+         9Du9ryY5Iayxmmco/EeobRBxwvjQ4V8Nxf8mnMnlSbyUFXmlVI+c5MXEw0yjTFHf1Rb5
+         jCSEVyDMAafWTSPflv5qcYmVfP/MCEEuFxaCSP10LHt8hiq2y8CC2WZKbUA4JPAEyWyX
+         X0av3t4UybDji3OrdbJN/HShdM7U+t54uvWpgoDK4W0ESorNkpCPzHeEOsUMeBiTjUea
+         PW5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721301043; x=1721905843;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g2difOvlWIEO63yHi+zzCArMOSeh2R/YOZyOxHPP5y8=;
+        b=N5zxTgXf5IiyghrItLkpUm9UZ5vWwnPPEmTH98N24PBzVCpW65AAagMZBRECPMX7/1
+         6JMwTQsgJ0RvTR0kuNvYgcosfL2heN3LwxgUa0IY4jIeOiWmJa7CLIR9JGq0ANFJ71HG
+         B0GbYTmi5hWpMrxDfdrnIIElt0eKyJx26D49e05Kwy0xWVHhO6vx5ONrVj4ATsS8U+zm
+         2l/tlP7xakwVyJfosPm+BDBLGPFaT8fdT9aIJUXEmBgO3vhpX8/+EJLusDTfLVN3umW/
+         1e3MpGxRbcP1Z1s0+SWNO7iPX1t4eOgKVsH4ixOwQDPW7RHpqtbPX58LLdZ6920/QErK
+         RDwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhaJapagiLoRx9MYjrRmRXne+0fp/WEGQHNUO1YxwEZBDFy2SdsgSyCGOqcR2OA1UN1KbdHx/ZZxd00S9AAcrsWnf3Klv33IclJMPN
+X-Gm-Message-State: AOJu0Yz9pqgERs/Jt+uoGLbVYZcOWgOtfbP1CHsqgfN8jZz0soaGfyLJ
+	Ne0nJz99u8k4q6fZWo6bUm+7HBv3elLcjgP4jeLC/zbpTqXj80y66+chGMjeTCDbO+eyDAmuG4N
+	xP9agfunIaqr9XoMHov/xWo5LWXItmg3Nj0mTDA==
+X-Google-Smtp-Source: AGHT+IHkpXrj6tfe5GKUAxDloIykkCd7pSLfu610KYCjUhm0uSHpFNmHy8/JsbORj2vqFg5Eb30UAAlM+BNEUmR4XcM=
+X-Received: by 2002:a05:620a:29c6:b0:79b:ea85:9f9f with SMTP id
+ af79cd13be357-7a1938c1e9amr47232985a.2.1721301043317; Thu, 18 Jul 2024
+ 04:10:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANpmjNPzw1=_VDfMDskrKWiabLV1aZVC1VeThLZTDn=qWMUsZQ@mail.gmail.com>
+References: <20240718082410.204459-1-angelogioacchino.delregno@collabora.com>
+ <CAGXv+5GBg73kWuiDt=9s7M4oJeHhWOF3bPY7Ju+qn1kJgNNaGw@mail.gmail.com>
+ <CAC=S1nigoJWAECBrm-Q=Co1-qd_yUhx3R4D9=dYeUV=gr5UYfQ@mail.gmail.com> <74e7477b-81c7-4713-80cc-1cb476185bc9@collabora.com>
+In-Reply-To: <74e7477b-81c7-4713-80cc-1cb476185bc9@collabora.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Thu, 18 Jul 2024 12:10:32 +0100
+Message-ID: <CAPj87rPZRjmMPjaOY-UH4auTuMS6mh9N7=maRBzxut2OgtALbw@mail.gmail.com>
+Subject: Re: [PATCH] drm/mediatek: Set sensible cursor width/height values to
+ fix crash
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Fei Shao <fshao@chromium.org>, Chen-Yu Tsai <wenst@chromium.org>, chunkuang.hu@kernel.org, 
+	p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch, 
+	matthias.bgg@gmail.com, shawn.sung@mediatek.com, ck.hu@mediatek.com, 
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jul 18, 2024 at 12:38:05PM +0200, Marco Elver wrote:
-> On Thu, 18 Jul 2024 at 10:55, syzbot
-> <syzbot+0ac8e4da6d5cfcc7743e@syzkaller.appspotmail.com> wrote:
-> >
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    d67978318827 Merge tag 'x86_cpu_for_v6.11_rc1' of git://gi..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=11af145e980000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=ca8f4e92a17047ec
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=0ac8e4da6d5cfcc7743e
-> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> >
-> > Unfortunately, I don't have any reproducer for this issue yet.
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/1f219d0a9994/disk-d6797831.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/91aed26b830f/vmlinux-d6797831.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/c7e753e56950/bzImage-d6797831.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+0ac8e4da6d5cfcc7743e@syzkaller.appspotmail.com
-> >
-> > llcp: llcp_sock_recvmsg: Recv datagram failed state 3 -6 0
-> > ==================================================================
-> > BUG: KCSAN: data-race in kobject_put / kobject_uevent_env
-> >
-> > read-write to 0xffff888139ddec54 of 1 bytes by task 22621 on cpu 0:
-> >  kobject_uevent_env+0x4e/0x550 lib/kobject_uevent.c:476
-> >  kobject_uevent+0x1c/0x30 lib/kobject_uevent.c:641
-> >  device_del+0x6fa/0x780 drivers/base/core.c:3886
-> >  nfc_unregister_device+0x114/0x130 net/nfc/core.c:1183
-> >  nci_unregister_device+0x14c/0x160 net/nfc/nci/core.c:1312
-> >  virtual_ncidev_close+0x30/0x50 drivers/nfc/virtual_ncidev.c:172
-> >  __fput+0x192/0x6f0 fs/file_table.c:422
-> >  ____fput+0x15/0x20 fs/file_table.c:450
-> >  task_work_run+0x13a/0x1a0 kernel/task_work.c:180
-> >  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
-> >  exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
-> >  exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
-> >  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
-> >  syscall_exit_to_user_mode+0xbe/0x130 kernel/entry/common.c:218
-> >  do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >
-> > read to 0xffff888139ddec54 of 1 bytes by task 22615 on cpu 1:
-> >  kobject_put+0x25/0x180 lib/kobject.c:733
-> >  put_device+0x1f/0x30 drivers/base/core.c:3787
-> >  nfc_put_device net/nfc/nfc.h:103 [inline]
-> >  nfc_llcp_local_put+0x87/0xb0 net/nfc/llcp_core.c:196
-> >  nfc_llcp_sock_free net/nfc/llcp_sock.c:1021 [inline]
-> >  llcp_sock_destruct+0x14d/0x1a0 net/nfc/llcp_sock.c:966
-> >  __sk_destruct+0x3d/0x440 net/core/sock.c:2175
-> >  sk_destruct net/core/sock.c:2223 [inline]
-> >  __sk_free+0x284/0x2d0 net/core/sock.c:2234
-> >  sk_free+0x39/0x70 net/core/sock.c:2245
-> >  sock_put include/net/sock.h:1879 [inline]
-> >  llcp_sock_release+0x38f/0x3d0 net/nfc/llcp_sock.c:646
-> >  __sock_release net/socket.c:659 [inline]
-> >  sock_close+0x68/0x150 net/socket.c:1421
-> >  __fput+0x192/0x6f0 fs/file_table.c:422
-> >  ____fput+0x15/0x20 fs/file_table.c:450
-> >  task_work_run+0x13a/0x1a0 kernel/task_work.c:180
-> >  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
-> >  exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
-> >  exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
-> >  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
-> >  syscall_exit_to_user_mode+0xbe/0x130 kernel/entry/common.c:218
-> >  do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >
-> > value changed: 0x07 -> 0x0d
-> >
-> > Reported by Kernel Concurrency Sanitizer on:
-> > CPU: 1 PID: 22615 Comm: syz.0.6322 Tainted: G        W          6.10.0-syzkaller-01155-gd67978318827 #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-> > ==================================================================
-> 
-> The two racing accesses here (on bitfield variables
-> kobj->state_remove_uevent_sent, kobj->state_initialized) are in the
-> same bitfield. There's no guarantee (by the compiler) that while the
-> bitfield is being updated the bit at kobj->state_initialized will
-> remain non-zero, and therefore the WARN in kobject_put() could be
-> triggered. This appears benign, unless of course someone set
-> panic_on_warn.
-> 
-> More generally, if the bitfield is updated concurrently, it's very
-> likely that one of the updates would be lost.
-> 
-> Just my initial observation.
+Hi all,
 
-Thanks for the review, I'll try to carve out some time next week to
-knock up a patch for this...
+On Thu, 18 Jul 2024 at 11:24, AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+> Il 18/07/24 11:27, Fei Shao ha scritto:
+> > This matches my preference in [1], so of course I'd like to see it
+> > merged... if maintainers are okay with it.
+> > Given I've tested the exact same change before:
+> > Reviewed-by: Fei Shao <fshao@chromium.org>
+> > Tested-by: Fei Shao <fshao@chromium.org>
+>
+> Thanks!
 
-greg k-h
+And:
+Reviewed-by: Daniel Stone <daniels@collabora.com>
+
+> >> OOTH, Intel recently added a feature for enumerating "suggested"
+> >> cursor sizes. See https://patchwork.freedesktop.org/patch/583299/
+> >>
+> >> Not sure if other compositors will end up using it or not.
+>
+> Yeah, that's good, and we might do that as well in MediaTek DRM... in a slightly
+> different way, as it looks like they are simply hinting the same values as the
+> mode_config is declaring... while we'd be adding a hint with a sensible size that
+> is less than the maximum supported one from the overlay.
+>
+> In reality, here, the issue is that the most popular compositors do not support
+> overlay planes (as in, they don't use them at all)... my first idea was to remove
+> the CURSOR plane entirely and declare it as per what it is for real (an OVERLAY),
+> but that would only give a performance penalty as that'd become yet another unused
+> plane and nothing else.
+>
+> If at least the most popular compositors did support overlay planes, I'd have done
+> that instead... but oh, well!
+>
+> And anyway I hope that the maintainers are okay with this because, well, otherwise
+> MediaTek SoCs won't be usable with any popular WM.
+
+Every compositor is going to use it, yeah. But until it does, people
+are just going to use cursor_width and cursor_size. A lot of older
+desktop hardware supports only a single fixed dimension for the cursor
+plane (hence the single values), so rather than guess if it needs to
+be 32x32 or 64x64 or whatever, people just allocate to the size. Not
+to mention that the old pre-atomic cursor ioctls actually require that
+you allocate for cursor_width x cursor_height.
+
+So yeah, this is the right fix - though you could even be more
+aggressive and reduce it to 256x256 - and supporting the CURSOR_SIZE
+property would be even more useful again.
+
+Cheers,
+Daniel
 
