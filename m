@@ -1,121 +1,117 @@
-Return-Path: <linux-kernel+bounces-256420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBC1D934E26
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:27:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7443A934E30
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 527EDB21C94
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:26:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C38C1B21A6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599A913DBB6;
-	Thu, 18 Jul 2024 13:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WCXtRszX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44B913DDCD;
+	Thu, 18 Jul 2024 13:30:13 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D0A84E11;
-	Thu, 18 Jul 2024 13:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5077081745;
+	Thu, 18 Jul 2024 13:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721309179; cv=none; b=tBMx8eXiKg8/04pr1cd5kXSbmWacizwa7m/uGjK/osq6DObj0Dc5tpTdXPYOWl2mfX6dHItCKxsqcbK372ss/u7utTliXtgjSZLed61vkHaNiEuCJTcM6v2saawWLqr2bX7vVqTxtiJlJi0ES+MgGT8bwg5nt5fT62f+7KKSN8Q=
+	t=1721309413; cv=none; b=MYvaekPzhezns63NGYkVfZZZu7rGMZfQazE8ohtXxzx8bzUhCGrG5x3QkNZL4hyniLqqVVsMftVBSk8C0SUpuv7MjnbkB48MOYXyeaDHaIHzEzreC6utf1SsJF4cGO1hFPxyJ+OcKnhsdLARFn+/mYsCLpGJa9WMzteFywZuPhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721309179; c=relaxed/simple;
-	bh=WWIYlpDXQm783D9m/jAvKaCjz9DEW+KZ86P21mQMfSA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hX3rb2Tu1aFlxHawArsuKPwHbwOsbdVA2r/3QWvgiAp2SkqKzp8jtIarDroFU9flUAK0hQQyESN3inOgPu71slMV+u23imlSUX/kBIqYtF8DMDVTIq9FCZ7voUUBNmXlD4m4RYDWLyGw9Je5BcolaOrPDRkGOgzlJGpD5DetNDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WCXtRszX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35156C116B1;
-	Thu, 18 Jul 2024 13:26:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721309179;
-	bh=WWIYlpDXQm783D9m/jAvKaCjz9DEW+KZ86P21mQMfSA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WCXtRszXKIng7/f0BsBiszMubZHc1RcAak/lURtqS5Bp+2Cs2G4Ff5kzJNV78HR7I
-	 vYGsVz2kiLJQ/6/hsNIketBqaNd/XC7vb/bkl/CkrZkykh7HDtuobSk+7aFG8RiySx
-	 eCLvrJlqqTtQtTLHG/gmns71YW2oLxVkSiHhQK9WXHtKlKOR68yTxosCTpvs59Cgbv
-	 W/ROTXCeqxYb0swWls0bm7HBPJKOnaNeWghhChhzMVvSxrxX3ooCLsLN5OXLexu7XZ
-	 XNCL5t/mezPvNVbqXJuCny87Z7YbIf081udmNXkjs6w8FbzNvK0MlkGUPT++Ua4UhQ
-	 cYb99hRxtXGlA==
-Date: Thu, 18 Jul 2024 16:26:13 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Easwar Hariharan <eahariha@linux.microsoft.com>,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH v2 2/2] dma: add IOMMU static calls with clear default ops
-Message-ID: <20240718132613.GA1265781@unreal>
-References: <cover.1721219730.git.leon@kernel.org>
- <dd34bf3ecef252b4910d70aa21ff5273b5e8b19b.1721219730.git.leon@kernel.org>
- <20240718034854.GA31912@lst.de>
- <20240718070406.GK5630@unreal>
- <20240718123038.GA27055@lst.de>
+	s=arc-20240116; t=1721309413; c=relaxed/simple;
+	bh=+Npn2ARSeScntu6PPTnz0FNM0maOuRq69uO3r2huVj4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DqzrilOMFz2VhSAgR74gN0bjJwrcNkMHQoyX+i+zun6g/LA98rnKV3eDZudur4liM8GY1QswLM0dL4kbNWDozAbhMntyV0XNXRtFNpSnlttDM8/3U3Nkl7igDHIGtzxPG6LNyuO7eUz4UjjHV72XI+t94GFqTUd302ay9uKFOoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-01 (Coremail) with SMTP id qwCowACXd0zTGJlmdAMSBA--.2984S2;
+	Thu, 18 Jul 2024 21:30:00 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: dinguyen@kernel.org,
+	bp@alien8.de,
+	tony.luck@intel.com,
+	james.morse@arm.com,
+	mchehab@kernel.org,
+	rric@kernel.org,
+	niravkumar.l.rabara@intel.com
+Cc: linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH RESEND] EDAC/altera: Fix possible null pointer dereference
+Date: Thu, 18 Jul 2024 21:29:53 +0800
+Message-Id: <20240718132953.789690-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240718123038.GA27055@lst.de>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowACXd0zTGJlmdAMSBA--.2984S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WF47GF13XF1kCr48Xr1DKFg_yoW8GFyrpF
+	47W34YyFyUKa48Gr4qvwn5XFy5Cwn3XayxWrWIya4Y93y3X345JryUZFWjya4jqrW8Cay3
+	tr45tw45Aay8JaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUAkucUUUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-On Thu, Jul 18, 2024 at 02:30:38PM +0200, Christoph Hellwig wrote:
-> On Thu, Jul 18, 2024 at 10:04:06AM +0300, Leon Romanovsky wrote:
-> > Whom should I add?
-> 
-> Greg as the device model maintainer.
+In altr_s10_sdram_check_ecc_deps(), of_get_address() may return NULL which
+is later dereferenced. Fix this bug by adding NULL check.
 
-No problem, I will add him to the next version.
+Cc: stable@vger.kernel.org
+Fixes: e1bca853dddc ("EDAC/altera: Add SDRAM ECC check for U-Boot")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/edac/altera_edac.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-> 
-> > > The normal style would be to move the ifdefs outside the helper
-> > > function.
-> > 
-> > I think you are talking about the style of functions declarations in
-> > header files. This function is inside c-file and it is much easier
-> > to write it this way. 
-> 
-> But also much harder to read, which will happen much more often.
+diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+index fe89f5c4837f..d6bf0eebeb41 100644
+--- a/drivers/edac/altera_edac.c
++++ b/drivers/edac/altera_edac.c
+@@ -1086,6 +1086,7 @@ static int altr_s10_sdram_check_ecc_deps(struct altr_edac_device_dev *device)
+ 	struct arm_smccc_res result;
+ 	struct device_node *np;
+ 	phys_addr_t sdram_addr;
++	const __be32 *sdram_addrp;
+ 	u32 read_reg;
+ 	int ret;
+ 
+@@ -1093,8 +1094,14 @@ static int altr_s10_sdram_check_ecc_deps(struct altr_edac_device_dev *device)
+ 	if (!np)
+ 		goto sdram_err;
+ 
+-	sdram_addr = of_translate_address(np, of_get_address(np, 0,
+-							     NULL, NULL));
++	sdram_addrp = of_get_address(np, 0, NULL, NULL);
++	if (!sdram_addrp)
++		return -EINVAL;
++
++	sdram_addr = of_translate_address(np, sdram_addrp);
++	if (!sdram_addr)
++		return -EINVAL;
++
+ 	of_node_put(np);
+ 	sdram_ecc_addr = (unsigned long)sdram_addr + prv->ecc_en_ofst;
+ 	arm_smccc_smc(INTEL_SIP_SMC_REG_READ, sdram_ecc_addr,
+-- 
+2.25.1
 
-I'll change.
-
-> 
-> > > >  #ifdef CONFIG_DMA_OPS_BYPASS
-> > > > +	WARN_ON_ONCE(dev->dma_ops_bypass && dma_is_default_iommu(dev));
-> > > >  	if (dev->dma_ops_bypass)
-> > > 
-> > > Let's skip this and think about it if we ever use the bypass for
-> > > something that is not powerpc with it's own dma ops.
-> > 
-> > I wanted to catch misconfigurations, but I can remove it. Is this what
-> > you are suggesting?
-> > 
-> >   126 static bool dma_go_direct(struct device *dev, dma_addr_t mask, 
-> >   127                 const struct dma_map_ops *ops)                
-> >   128 {                                                            
-> >   129         if (likely(!ops && !dma_is_default_iommu(dev)))     
-> >   130                 return true;                               
-> >   131                                                           
-> >   132         if (dma_is_default_iommu(dev))    
-> >   133                 return false;
-> 
-> I'd go for:
-> 
-> 		if (use_dma_iommu(dev))
-> 			return false;
-> 		if (likely(!ops))
-> 			return true;
-> 		...
-> 
-
-I will change.
-
-Thanks
 
