@@ -1,79 +1,47 @@
-Return-Path: <linux-kernel+bounces-256140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E685F9349A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:12:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEF5B9349A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E55231C22C9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:12:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18EB91C22D8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:12:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222587B3E1;
-	Thu, 18 Jul 2024 08:12:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 241C778C8B;
+	Thu, 18 Jul 2024 08:12:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wg2PNIcp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="topNe8KL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BF17711F
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 08:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5489778C71;
+	Thu, 18 Jul 2024 08:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721290335; cv=none; b=N6PHrtfPNJpaKAGQCgjoMpNUDrnE1eDmuDlImD7P/UQ+06auOm9/e4A4pavn6gGXBjkIovFKNfgo4N3uota7S8nn/XTLe3dosqUwOPSMxE9cYoX2UijcG3g6d/70hF9It07YnJK+0Y7LWdsMEdh/CKzYN9wM8IV0ESjkggSok7g=
+	t=1721290363; cv=none; b=fVsm+7eIWrMyGd63whV2Zt4knMQxzlXR+fnBD/UH+Q/HSw2sG1bgQd0j2bJr3c+jJ2+x0iUZzmIES9qcnk92zmXdyUEhQQnepFmKT7pcJst8GjZ6V6BAUl6KSc4nTpNOguCoZleTrv+oOWV/tEeGlfDJwH5cSJxAbTYKsGG69c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721290335; c=relaxed/simple;
-	bh=NRTQo8ILUpl8MmArK13XX07qcKlygom/cOhL5iHDl/I=;
+	s=arc-20240116; t=1721290363; c=relaxed/simple;
+	bh=dk+iL5Q7Ym85T0WoUq3bMcJRKL94pL7/kW/Z6U4W7UU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MnPZ2XC6GE3QV2Anwqszy7ZBc+bndGJ2aPPWpTjoGD6oLRWJ8W/2o/XFybvd+mjUlsevFOCh+dDTWhyu+Uh1dEajM0qIkkJalWfwp3KYRccDVRB6Z31ZlTHxzz+EOvBtZ3dyczcMqpMVk02ctrT4dYdPfFAlhZ1SRTTzd21p204=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wg2PNIcp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721290332;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WHwHwCnpQ+alZdnTfgigFFSHVcRZeANUFwuVGxc+7PU=;
-	b=Wg2PNIcpZtfteQWbG0ObRJCOqeRM5F+KXFpT9g3YgwaS+fTEHn+W8vY8OVedjW7dv0Xvjs
-	ALGy8CCj7SxCYguWexZM6yHibZQTEgpBY2GrP5D49v4q5cIZ5Qc5Yas9+1VmGdiE0zv0SE
-	BF4aPbi5mzktQbVTqfrMm+fPoas5NIM=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-471-C43z4PuUOYS4OVXmHtZ-0w-1; Thu, 18 Jul 2024 04:12:10 -0400
-X-MC-Unique: C43z4PuUOYS4OVXmHtZ-0w-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-36865706f5eso77299f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 01:12:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721290329; x=1721895129;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WHwHwCnpQ+alZdnTfgigFFSHVcRZeANUFwuVGxc+7PU=;
-        b=CpkOVlYAInSKzidDmCUfGuWfyKzCVJai4y4MjdYa3kDPKkWC5PY81PRC1GlRqB10PE
-         pzBcYKKF8N8t+Jz+jo3q4qgclbWXCKZF3FnbehUFG6H1jLG9RZVWBn0AioIUVnbaBZlc
-         SjtkrZjAGJm84M3x/IxyPYm5IcKzXmt4CLlF8zQiwO4pTeY8atlI0RZFxcNW/+3NWKpc
-         7eNj6ZDjdtR2zQcg0FYQJQ4oH4Nrbgke0xkRIgmuxFwrZyioe1GWywGbWEZqkAznKyD0
-         46AeBpIKoQhJRNNJwFDDP+gDv0BrLvLlNTT3SBruzNThkjK/4cw3k/djNfJbLWSF6PSp
-         U/iw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCxXUr667OEwNOVtQCZiKnwKSkLsP4GGCRn8KoxG/cWn5/w5vb+sbGoRL7cLeM4iOPGU8R78AqfgFG2m57FuATcr8ebrsv39fqeBi0
-X-Gm-Message-State: AOJu0YySLjW4MyotvWRR9kJ54MV0VZ7wUzZ3B3sBkcM4mQwS66AZL/K/
-	i1BjPYhNqUVBAEjEnA0+47RoA0lD6uESiX8w7ZVe2/Qtf38BV5jg7jGg+50YSFGUwAp8+qT50/Y
-	ZZV7Uq9tl3DJv3trZB0y1QgkmjVKHpW3ZN0v85TAht79V73uT4YLL5p39bq/8bw==
-X-Received: by 2002:a5d:64e6:0:b0:360:9cf4:58ce with SMTP id ffacd0b85a97d-36831738d5emr3110623f8f.46.1721290329340;
-        Thu, 18 Jul 2024 01:12:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHSuJdIL5ugjM/EkJXXLU6+RCg00EXSasDKJSd6pH58ocj7HqEoXGV16ErsC+vYYWRzVdwOIA==
-X-Received: by 2002:a5d:64e6:0:b0:360:9cf4:58ce with SMTP id ffacd0b85a97d-36831738d5emr3110606f8f.46.1721290329004;
-        Thu, 18 Jul 2024 01:12:09 -0700 (PDT)
-Received: from [172.18.228.53] (ip-185-104-138-47.ptr.icomera.net. [185.104.138.47])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680dab3cd1sm13574006f8f.22.2024.07.18.01.12.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jul 2024 01:12:08 -0700 (PDT)
-Message-ID: <53b247e1-62cf-4289-8ad6-2138a1757e06@redhat.com>
-Date: Thu, 18 Jul 2024 10:12:06 +0200
+	 In-Reply-To:Content-Type; b=U2j2gnGOR/cr+XrS2l87uknr1arTUwzCm17hTz5yv3p0ivronmgAJRHD+rzJLJGqDHWUlbjfBh0AiLNZ/nFQsrsCctdwD1r91+xA7R3fIRCHzjSYkirnSlC8nSLH25+ZC5suzxDnwDPRplPeOhFaNJt6bxkMVqh9JgByr56r+z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=topNe8KL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2683C4AF0C;
+	Thu, 18 Jul 2024 08:12:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721290362;
+	bh=dk+iL5Q7Ym85T0WoUq3bMcJRKL94pL7/kW/Z6U4W7UU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=topNe8KLbnhdMnyS1Zsd+GsWr55kpB3t63FkZY11mfQsZiJQpc4/h1w71u2ghO3mV
+	 n4GwGgaSKEEl39J1YDrWtM+MLFtwbKhC2PowjaGNhlHJ1ZW2lOT7i6sJbJkpTpUhyg
+	 mZ7yefndZj/FB3krYrd2kgzAThHd4Je1mlz0hkXT9nShdEgxnQmD41ZCRjH4+AHJ+8
+	 eef4wEoARq2oWlJyg+Bdz9j01KEti83fmYayYEeUIKEOWT2hMRqQ4PRBZOPy3F0hqH
+	 cZsQicVIBmCWaEpwvJi+OEIpJa9ZNfDiLZ+tvMWEBQZruivHsYpBuvsPZzn3PLkzG8
+	 NFQl7EU3cqZYw==
+Message-ID: <c2ac13d7-f280-4be7-929a-d46c1dc7692c@kernel.org>
+Date: Thu, 18 Jul 2024 10:12:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,54 +49,152 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] platform/x86: ideapad-laptop: add a mutex to
- synchronize VPC commands
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Gergo Koteles <soyer@irl.hu>
-Cc: Ike Panhc <ike.pan@canonical.com>, platform-driver-x86@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
-References: <cover.1721258854.git.soyer@irl.hu>
- <70d3957b315815085cdd8cb04b002cdb4a372ddc.1721258854.git.soyer@irl.hu>
- <06e44cdc-b984-23ea-2d89-b4489bce2c27@linux.intel.com>
+Subject: Re: [PATCH V7 1/2] cgroup/rstat: Avoid thundering herd problem by
+ kswapd across NUMA nodes
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: tj@kernel.org, cgroups@vger.kernel.org, shakeel.butt@linux.dev,
+ hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com,
+ kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <172070450139.2992819.13210624094367257881.stgit@firesoul>
+ <a4e67f81-6946-47c0-907e-5431e7e01eb1@kernel.org>
+ <CAJD7tkYV3iwk-ZJcr_==V4e24yH-1NaCYFUL7wDaQEi8ZXqfqQ@mail.gmail.com>
+ <100caebf-c11c-45c9-b864-d8562e2a5ac5@kernel.org>
+ <CAJD7tkaBKTiMzSkXfaKO5EO58aN708L4XBS3cX85JvxVpcNkQQ@mail.gmail.com>
 Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <06e44cdc-b984-23ea-2d89-b4489bce2c27@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <CAJD7tkaBKTiMzSkXfaKO5EO58aN708L4XBS3cX85JvxVpcNkQQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi,
 
-On 7/18/24 10:06 AM, Ilpo Järvinen wrote:
-> On Thu, 18 Jul 2024, Gergo Koteles wrote:
-> 
->> Calling VPC commands consists of several VPCW and VPCR ACPI calls.
->> These calls and their results can get mixed up if they are called
->> simultaneously from different threads, like acpi notify handler,
->> sysfs, debugfs, notification chain.
+
+On 17/07/2024 18.49, Yosry Ahmed wrote:
+> On Wed, Jul 17, 2024 at 9:36 AM Jesper Dangaard Brouer <hawk@kernel.org> wrote:
 >>
->> Add a mutex to synchronize VPC commands.
 >>
->> Signed-off-by: Gergo Koteles <soyer@irl.hu>
->> ---
+>> On 17/07/2024 02.35, Yosry Ahmed wrote:
+>>> [..]
+>>>>
+>>>>
+>>>> This is a clean (meaning no cadvisor interference) example of kswapd
+>>>> starting simultaniously on many NUMA nodes, that in 27 out of 98 cases
+>>>> hit the race (which is handled in V6 and V7).
+>>>>
+>>>> The BPF "cnt" maps are getting cleared every second, so this
+>>>> approximates per sec numbers.  This patch reduce pressure on the lock,
+>>>> but we are still seeing (kfunc:vmlinux:cgroup_rstat_flush_locked) full
+>>>> flushes approx 37 per sec (every 27 ms). On the positive side
+>>>> ongoing_flusher mitigation stopped 98 per sec of these.
+>>>>
+>>>> In this clean kswapd case the patch removes the lock contention issue
+>>>> for kswapd. The lock_contended cases 27 seems to be all related to
+>>>> handled_race cases 27.
+>>>>
+>>>> The remaning high flush rate should also be addressed, and we should
+>>>> also work on aproaches to limit this like my ealier proposal[1].
+>>>
+>>> I honestly don't think a high number of flushes is a problem on its
+>>> own as long as we are not spending too much time flushing, especially
+>>> when we have magnitude-based thresholding so we know there is
+>>> something to flush (although it may not be relevant to what we are
+>>> doing).
+>>>
+>>
+>> We are "spending too much time flushing" see below.
+>>
+>>> If we keep observing a lot of lock contention, one thing that I
+>>> thought about is to have a variant of spin_lock with a timeout. This
+>>> limits the flushing latency, instead of limiting the number of flushes
+>>> (which I believe is the wrong metric to optimize).
+>>>
+>>> It also seems to me that we are doing a flush each 27ms, and your
+>>> proposed threshold was once per 50ms. It doesn't seem like a
+>>> fundamental difference.
+>>>
+>>
+>>
+>> Looking at the production numbers for the time the lock is held for level 0:
+>>
+>> @locked_time_level[0]:
+>> [4M, 8M)     623 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@               |
+>> [8M, 16M)    860 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+>> [16M, 32M)   295 |@@@@@@@@@@@@@@@@@                                   |
+>> [32M, 64M)   275 |@@@@@@@@@@@@@@@@                                    |
+>>
+>> The time is in nanosec, so M corresponds to ms (milliseconds).
+>>
+>> With 36 flushes per second (as shown earlier) this is a flush every
+>> 27.7ms.  It is not unreasonable (from above data) that the flush time
+>> also spend 27ms, which means that we spend a full CPU second flushing.
+>> That is spending too much time flushing.
+>>
+>> This around 1 sec CPU usage for kswapd is also quite clear in the
+>> attached grafana graph for when server was rebooted into this V7 kernel.
+>>
+>> I choose 50ms because at the time I saw flush taking around 30ms, and I
+>> view the flush time as queue service-time.  When arrival-rate is faster
+>> than service-time, then a queue will form.  So, choosing 50ms as
+>> arrival-rate gave me some headroom.  As I mentioned earlier, optimally
+>> this threshold should be dynamically measured.
 > 
->> @@ -2027,6 +2053,8 @@ static int ideapad_acpi_add(struct platform_device *pdev)
->>  	priv->adev = adev;
->>  	priv->platform_device = pdev;
->>  
->> +	mutex_init(&priv->vpc_mutex);
->> +
->>  	ideapad_check_features(priv);
->>  
->>  	err = ideapad_sysfs_init(priv);
+> Thanks for the data. Yeah this doesn't look good.
 > 
-> mutex_destroy() missing from rollback and ideapad_acpi_remove().
+> Does it make sense to just throttle flushers at some point to increase
+> the chances of coalescing multiple flushers?
+> 
+> Otherwise I think it makes sense in this case to ratelimit flushing in
+> general. Although instead of just checking how much time elapsed since
+> the last flush, can we use something like __ratelimit()?
+> 
+> This will make sure that we skip flushes when we actually have a high
+> rate of flushing over a period of time, not because two flushes
+> happened to be requested in close succession and the flushing rate is
+> generally low.
+> 
 
-Right, note the easiest way to fix this is to use the new devm_mutex_init()
-instead of plain mutex_init() that will also take care of destroying the mutex
-on any exit-on-error cases from probe().
+I really think "time elapsed since the last flush" is the right solution
+here.  As, we *do* want to catch the case you describe "two flushes
+happened to be requested in close succession and the flushing rate is
+generally low."
 
-Regards,
+(After this patch fixing the lock contention triggered by kswapd).
+The remaining problem with kswapd is that those flushes that doesn't
+"collide" on the lock, will be flushing in close succession.  And we
+likely have a generally low flushing rate, until kswapd starts up.
 
-Hans
+Some production data from a "slow" period where only kswapd is active:
+
+05:59:32 @ongoing_flusher_cnt[kswapd11]: 1
+@ongoing_flusher_cnt[kswapd7]: 1
+@ongoing_flusher_cnt[kswapd3]: 1
+@ongoing_flusher_cnt[kswapd5]: 1
+@ongoing_flusher_cnt[kswapd10]: 1
+@ongoing_flusher_cnt[kswapd6]: 2
+@ongoing_flusher_cnt[kswapd8]: 2
+@ongoing_flusher_cnt[kswapd1]: 2
+@ongoing_flusher_cnt[kswapd9]: 2
+@ongoing_flusher_cnt[kswapd0]: 2
+@ongoing_flusher_cnt[kswapd2]: 2
+@ongoing_flusher_cnt[kswapd4]: 2
+@ongoing_flusher_cnt[handled_race]: 2
+@ongoing_flusher_cnt[all]: 14
+@cnt[tracepoint:cgroup:cgroup_rstat_lock_contended]: 2
+@cnt[tracepoint:cgroup:cgroup_ongoing_flusher_wait]: 10
+@cnt[kfunc:vmlinux:cgroup_rstat_flush_locked]: 43
+@cnt[tracepoint:cgroup:cgroup_rstat_locked]: 51
+
+We observe that ongoing_flusher scheme saves/avoids 14 of the flushes
+great, but we still have 43 flushes in this period.  I think only kswapd
+is doing the flushing here, so I claim 41 flushes are likely unnecessary
+(as there are indication of 2 kswapd startups in the period).  Also
+observe that some of the kswapdNN processes only have
+ongoing_flusher_cnt 1, which indicate they didn't fully "collide" with
+an ongoing flusher, while others have 2.
+
+--Jesper
+
+
+
+
 
 
