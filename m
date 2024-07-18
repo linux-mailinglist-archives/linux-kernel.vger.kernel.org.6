@@ -1,201 +1,107 @@
-Return-Path: <linux-kernel+bounces-256592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A8899350DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:45:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBE4C9350DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6844B22831
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:45:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 979E7282BAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B735145A15;
-	Thu, 18 Jul 2024 16:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A04D7407A;
+	Thu, 18 Jul 2024 16:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iyDyzd58"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ScrKvlXX"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A527C3B784;
-	Thu, 18 Jul 2024 16:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527F92F877;
+	Thu, 18 Jul 2024 16:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721321117; cv=none; b=ekc9NT5Mph91xWTCAt3wJIT7vWPyIFGZh0eD1/YIHAlaSaZpQg5t4JeLTv7iwcpFymwABQYoSdYB7fuP6CuIM0FTRwRYmQJQLbvVcz9W1y7I1bX7/fU2QPtdhYYcrIBSckyJTPA8/4CpLl2AV9ydqhtl+ffFU/OhSd3CdRLwlGE=
+	t=1721321173; cv=none; b=t/jhiQHjUcywUKw42kIuIJRC4ZJblLQJdqUsu8N+zGjpDefDp/dsokwVgXGzYsT0/jaSFQ0xy2k1gW4TLYOy0zxZH1rud+OsAmto79zyvWfkPCxXNiX7VJWBFMnZKBOrE+cnP8QcMvZEMimSbQhrCX6/eG4UsrSkdfrSx1OXs0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721321117; c=relaxed/simple;
-	bh=lVDX/+QnEfzC03lLByaa7hCwk3fz1v8QaMSfokwCBzk=;
+	s=arc-20240116; t=1721321173; c=relaxed/simple;
+	bh=arhQFPA35GKI/93FWGqsJVzt2AdCMpET0AJ4iJUPkU0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JoQPvgZNm9zNVfOsr+nUzv2Bw+lUu50HHecFD5Jq6x/iDFUurLsmkNbNEpi4sXmCcq7ozXFfqhzdyhzG5PKHRtCoDtyFKl6k2FUJ5T22yIApiy248qSfyKS4mbDXxmuqKvA+mP+Uro4Jl1vLl442mdB7QS5e1+9YZ/82aY6eIlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iyDyzd58; arc=none smtp.client-ip=209.85.208.53
+	 To:Cc:Content-Type; b=D2hfnlRSvM64BeNP+9mUSZSokXxUX2DgJ+xLlPsgWZQmrT3Lt8LIuTxp5b3p3veCLcY+r9lsN/jOTfSHLtZ43gpIXtLn91EWAcEo8+TGKVaixXseGgzI+uDCWnrIo8+be3hP0kMoCk03IX/WwlS/7K2w9xJNZw1uQxTssa12fxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ScrKvlXX; arc=none smtp.client-ip=209.85.210.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5a1c49632deso34626a12.2;
-        Thu, 18 Jul 2024 09:45:15 -0700 (PDT)
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70b4267ccfcso31578b3a.3;
+        Thu, 18 Jul 2024 09:46:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721321114; x=1721925914; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1721321171; x=1721925971; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pVzXycChnKr63nEwcjziKm5NEqOOi3cFRrHO2p0Rnx0=;
-        b=iyDyzd580D7GO6L0S4nd/an41dR3PF8z+NEo1VKsbbD2MxoVvhGydrHzAld3LvekKB
-         1ZorcUJti3EbBnv6IFdeNV3luY/HD8e070iWgft1DaY7wivk3MZ8l70MhXuVey9UG3Oe
-         E0VH5ro20NTWdcTcnH5PiEfpXnqnUlPVrRI/q8IeG5sQvjrXrJvIvimFmPAmcYXKZ5Tv
-         0hYAKUFkiIDqDF+hwfssAwuSbqf+EQGi/UpBBYZZDSJAdhs3vDOLtIQ+2TofNr9QJ0Rd
-         0OxRh9yTPzYcgq0DiLtnAZJLdkDBASy/mWMpfFKptliCwIdySgk74ysv/6OUwAnVlmWf
-         a+sQ==
+        bh=arhQFPA35GKI/93FWGqsJVzt2AdCMpET0AJ4iJUPkU0=;
+        b=ScrKvlXXiDuzpYxPkXWinR1r0D5CtZyqra4CDo8MImTGEUARScCs9g+A9Do5a4YQGJ
+         KH4t0NieO/xzQfwk70Fr5i64eowAoXzaD+CEGzSyyEa3JtOrA2XZ2YWCSt5s3wzQpTfP
+         OW9eBE3BfcVlmJFSucE2oASE1303WAG4//oABDsXwpxSjQP27O9hfScGykKG5sTLQBsR
+         Y5mPcHgQtKnbANwsbv9M1usXTerwuqM7ngROWVRL9nxdrI1GUgtnyGNvmx5VBOxR54iY
+         Y7Koz57On6F7T6fTbakogdOQ779tHkU9o5WfruGsMhjXIZel7bXNkr9Rua447kZcYR14
+         wIwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721321114; x=1721925914;
+        d=1e100.net; s=20230601; t=1721321171; x=1721925971;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pVzXycChnKr63nEwcjziKm5NEqOOi3cFRrHO2p0Rnx0=;
-        b=s38Uvcb//ESqG4EgIu2uS3l0vkOT4UgVYp1ztma3oFFE+pLsznklqinFw86nhwFqBd
-         MV1UvFEqg1vAslxlgnI3HcmNuGTtxcnOHcx0ef9u8Ha32QIoytEwX37LSQ3GimNO8owC
-         akNaxgIK5QCqRA/NWYiAxBkvw8lzaEVz8UJ0PKPEDJMB5EEGXKoGUiTuOllKQEC2735l
-         3MGsO5jJYCSfdi5MXJm+XOiVkd+CEHmvbnALhgkCeta8Hi2YcDM2ALZWfy2W0WlQOq9c
-         y/VGTWC7eD3lT20zULHMnBds+/ipPEKryaCCXXRzwgTNhFn5+yFFv3x0p6h5oK3Mq74e
-         j/BQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJpb9h8M4sfnQCXhHbH8UDxMXbFWkM5/OwRpL/v3lpwUVIXkykScgv47jr+iUK7F76XRATcSbjItHjVctNPMMMABhBpStg+1XSVKHPKtrhdFK35eRP/Iawm8pjlFih7uxtSJ3vKFVGMZoa8Q==
-X-Gm-Message-State: AOJu0YwuQzPtDr26U2qLi0TVksTcCNlV6Znt3SwOeoRJVoBnyjE8b1HA
-	MrvVNcU4HC0Ln6Nhn0DT+tKQzTdrc0oOGrlQZcGkTPg/8aKyUogtOEX2YNH0dMtF7MhtkzSLGrJ
-	n7u40CwngsPB+PZ6iemjNP4QNH48=
-X-Google-Smtp-Source: AGHT+IGuTcqmmeJDdC8he/jrXxZHods4xE5TAOJqnQw6+GlV83nW2Pca/3os5Hoj6/X5RM55Q56rhdNym2wbZFaOuhU=
-X-Received: by 2002:a50:99d7:0:b0:584:a6f8:c0c5 with SMTP id
- 4fb4d7f45d1cf-5a0589c99c0mr3821440a12.0.1721321113717; Thu, 18 Jul 2024
- 09:45:13 -0700 (PDT)
+        bh=arhQFPA35GKI/93FWGqsJVzt2AdCMpET0AJ4iJUPkU0=;
+        b=aZXTAJwRSk5W6Yg46JMdA4TbWEWGC2J44DSoqqOcbj54XjCm564wji21gENXro4epR
+         ip0pwnAkng3FswD9TFIDvjZ2U1qJGS+AO+JYfW8HjLNULAqb+wcAYbdWtd4Huc92nH8a
+         FYj0nSJD8XUEljXDyZG5B1McCYUFr0r0sR9QzO8hF7hf/5AmH55asxRRNzAOPtuPXxvj
+         ZqU+jtnExFjxm1H/ZsZuNZiZIm+Ttgt5lyanXBg+0sFy1FKzNvKmKjU5ISgULZg27rZv
+         5/+LmSJpuIxIyUm0ttiIMniZAvGqpyxsrrtXI/N3bYAn3pTBq0fQLQVs350fj0wIJAaw
+         dTnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXvLNjlttN43EvXMcB31JMyA1Wt2AlCizggwT05NHsF6UWQPz/1R7xf0HZj+Ta2aVPesMckKyFQNXdQ5oUECbE+Hjns1ejbbEmPqXm6jrNyrPzKQPOiliEITgRsPU4VJuQivnLjoUglm59sLkdjJKip/yJvZ6X/RoN8z3X5Q/jUrQ8yM6wCt424Jci1uoQo+JQbG6zNnwkh2gw8EisaiG0k22smtZlXFQ==
+X-Gm-Message-State: AOJu0YyGdLhnqW5Mf3aYHRZGH/6tEIACPZLP3D61gMew8XWwhRpi8Udy
+	SnHsZnbTresnSXDOv25iZxGcfhiWD+xAGe00W3SwKULqx/gdFp80t0NrBCcZJl8/e5Hi3x7Tc2M
+	PajWiaIm8cLXIdaZzNb1NAPkDIzw=
+X-Google-Smtp-Source: AGHT+IFHq/HyFGjzo5nT29rrLEfgvMPTpXRQf82XzBKasZvQqN+a6kU4Jb41QlgaO1cXmg4e697XxADWX/sczTUn/ek=
+X-Received: by 2002:a05:6a21:3985:b0:1bd:288f:e8b4 with SMTP id
+ adf61e73a8af0-1c3fdc661b0mr6776285637.7.1721321171572; Thu, 18 Jul 2024
+ 09:46:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717215847.5310-1-robdclark@gmail.com> <CAD=FV=XCOKJHJ-yzENpvm_MD34tMR5LRy2m2jYdcWzZXP4pfXQ@mail.gmail.com>
- <CAF6AEGuBZqV4zg1asUNbMLvq0-i-iyFwfi37uKS3kWNuRSOU+g@mail.gmail.com>
- <CAD=FV=UMiDTLBBEMk3fpg+TfE_K23fyL+JDZj77Fe9fCY8DyjA@mail.gmail.com>
- <CAF6AEGs22brXntJ-eDv_uTZGc2=rH2q2V4y6Vt8K4s+dsO=4-A@mail.gmail.com> <CAD=FV=WJQBTjt61ma-CoJQeGYKigEyXpA6j25JSyEfikrLeSNQ@mail.gmail.com>
-In-Reply-To: <CAD=FV=WJQBTjt61ma-CoJQeGYKigEyXpA6j25JSyEfikrLeSNQ@mail.gmail.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Thu, 18 Jul 2024 09:45:01 -0700
-Message-ID: <CAF6AEGvxAVWDC45P3fbmVRO-yq5oV8wgPj0nqC7U0n6c9YuhbQ@mail.gmail.com>
-Subject: Re: [RFC] drm/panel/simple-edp: Add Samsung ATNA45DC02
-To: Doug Anderson <dianders@chromium.org>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	Rob Clark <robdclark@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	open list <linux-kernel@vger.kernel.org>
+References: <20240710193653.1175435-1-andrii@kernel.org> <CAEf4BzaTEUkRU37fsuGy+-otWk9K0-c9=hs0APRz7pJy7rq-5w@mail.gmail.com>
+ <20240718114521.4b0220b7@rorschach.local.home>
+In-Reply-To: <20240718114521.4b0220b7@rorschach.local.home>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 18 Jul 2024 09:45:59 -0700
+Message-ID: <CAEf4BzYGWLYBOYxK6YteDNu3tEkF00MBm4d1Z7twXF-SfSZXJw@mail.gmail.com>
+Subject: Re: [PATCH v5] perf,x86: avoid missing caller address in stack traces
+ captured in uprobe
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
+	peterz@infradead.org, mhiramat@kernel.org, x86@kernel.org, mingo@redhat.com, 
+	tglx@linutronix.de, jpoimboe@redhat.com, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, rihams@fb.com, linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 18, 2024 at 9:31=E2=80=AFAM Doug Anderson <dianders@chromium.or=
-g> wrote:
+On Thu, Jul 18, 2024 at 8:45=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org=
+> wrote:
 >
-> Hi,
+> On Thu, 18 Jul 2024 08:29:23 -0700
+> Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
 >
-> On Thu, Jul 18, 2024 at 9:25=E2=80=AFAM Rob Clark <robdclark@gmail.com> w=
-rote:
-> >
-> > On Thu, Jul 18, 2024 at 9:00=E2=80=AFAM Doug Anderson <dianders@chromiu=
-m.org> wrote:
-> > >
-> > > Hi,
-> > >
-> > > On Wed, Jul 17, 2024 at 6:09=E2=80=AFPM Rob Clark <robdclark@gmail.co=
-m> wrote:
-> > > >
-> > > > On Wed, Jul 17, 2024 at 5:19=E2=80=AFPM Doug Anderson <dianders@chr=
-omium.org> wrote:
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > On Wed, Jul 17, 2024 at 2:58=E2=80=AFPM Rob Clark <robdclark@gmai=
-l.com> wrote:
-> > > > > >
-> > > > > > From: Rob Clark <robdclark@chromium.org>
-> > > > > >
-> > > > > > Just a guess on the panel timings, but they appear to work.
-> > > > > >
-> > > > > > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > > > > > ---
-> > > > > > This adds the panel I have on my lenovo yoga slim 7x laptop.  I=
- couldn't
-> > > > > > find any datasheet so timings is just a guess.  But AFAICT ever=
-ything
-> > > > > > works fine.
-> > > > > >
-> > > > > >  drivers/gpu/drm/panel/panel-edp.c | 2 ++
-> > > > > >  1 file changed, 2 insertions(+)
-> > > > >
-> > > > > Given that this is a Samsung ATNA<mumble>, is there any chance it=
-'s an
-> > > > > OLED panel? Should it be supported with the Samsung OLED panel dr=
-iver
-> > > > > like this:
-> > > > >
-> > > > > https://lore.kernel.org/r/20240715-x1e80100-crd-backlight-v2-0-31=
-b7f2f658a3@linaro.org
-> > > >
-> > > > it is an OLED panel, and I did see that patchset and thought that
-> > > > samsung panel driver would work.  But changing the compat string on
-> > > > the yoga dts only gave me a black screen (and I didn't see any of t=
-he
-> > > > other mentioned problems with bl control or dpms with panel-edp).  =
-So
-> > > > :shrug:?  It could be I overlooked something else, but it _seems_ l=
-ike
-> > > > panel-edp is fine for this panel. Plus, it would avoid awkwardness =
-if
-> > > > it turned out there were other non-samsung 2nd sources, but so far
-> > > > with a sample size of two 100% of these laptops have the same panel
-> > >
-> > > Hmm, OK. One question for you: are you using the "enable" GPIO in
-> > > panel-edp? IMO the code handling that GPIO in panel-edp is somewhat
-> > > dodgy, but it predates my deeper involvement with panels. I've never
-> > > seen an eDP panel that could use panel-edp where it was actually
-> > > required--every instance where someone thought it was required was
-> > > better modeled by using that GPIO as the backlight enable. On the
-> > > other hand, the "enable" GPIO in the Samsung OLED panel driver came
-> > > straight from the panel datasheet and it makes sense for it to be in
-> > > the panel driver since the backlight is handled straight by the
-> > > panel...
-> >
-> > hmm, at least current dts doesn't have an enable gpio.  Which could be
-> > why panel-samsung-atna33xc20 wasn't working.
-> >
-> > It is entirely possible we are relying on something left on by the boot=
-loader.
+> > Ping. What's the status of this patch? Is it just waiting until after
+> > the merge window, or it got lost?
 >
-> That would be my best guess. Is there any way for you to find out if
-> there's an enable GPIO?
+> It's probably best to re-ping after rc1 is out. With recent events, a
+> lot of us are way behind in our work.
+>
 
-presumably it would be in the ACPI dump (which I've not much of a clue
-what I'm looking for there)
+I understand, will resend later, thanks for quickly getting back to me!
 
-BR,
--R
-
+> Thanks,
 >
-> > > In any case, I guess if things are working it doesn't really hurt to
-> > > take it in panel-edp for now...
-> > >
-> >
-> > I wonder if using compatible=3D"edp-panel" everywhere isn't a great ide=
-a
-> > if we want to switch drivers later.  But I guess that is already water
-> > under the bridge (so to speak)
->
-> For panels that aren't OLED it's all very standard and we're kinda
-> forced to use something generic since manufacturers want lots of 2nd
-> (and 3rd and 4th and ...) sourcing. As far as I've been able to tell
-> you can't do 2nd sourcing between OLED panels and other panels since
-> the wires hooked up to the panels are a little different for the OLED
-> panels and the power sequencing is a bit different. It would also be
-> pretty obvious to an end user if some of their devices had an OLED
-> panel and some didn't. I'm not aware of OLED panels other than the
-> Samsung ones, but I haven't done any real research here...
->
-> -Doug
->
+> -- Steve
 
