@@ -1,157 +1,132 @@
-Return-Path: <linux-kernel+bounces-256225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBB24934B0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:39:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68467934B0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 738951F247CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:39:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82CF01C21BD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3293F839E3;
-	Thu, 18 Jul 2024 09:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CACB82866;
+	Thu, 18 Jul 2024 09:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rwQpcfFx"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b="dW4Kbg8L"
+Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68DB71BF37;
-	Thu, 18 Jul 2024 09:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8798002E
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 09:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721295547; cv=none; b=icwadAQ0eDMq1VMROsmxouMzCFo1yol5ydLq/qMr0N4GG6RCW3qW2hz/Acu4NdqkyVMYV5O9c/MDIxW0oYtnVWxfP8puE2LxHYVxS5VO73Z8DMzPPh41pGV+K/sqpTy0DqjunJfo4xsUUBFV3nHLsu/OIVxYA3TvJVepOMuWc1M=
+	t=1721295568; cv=none; b=thDEz/tYJmi4uP1f61Us5tTQnQgnwF7Aszi7Rh/AWZpdc3w3v+DUM56wjtxgVOjB9PBFTGAN2pBV+SWXjslxKzBrArRyHQJsqWKU0koRowkrcBdNFIrTyADh9Gm7wzwEQNYnh/ny+p5vswASmlew/tfr1vRdVNi3VrJUxII3otQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721295547; c=relaxed/simple;
-	bh=or/dYLZwuKob/2SmTnu50xKA9faM6wgcIEKdV0rCwG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VzmpwB87hqPlvoUf+XRbP1CyQ4oQxVevl0LvHKXhjQmG+2L+BOA8PzmUSXQAiIVLmxptojreap/RV9B++8CsNo6G62khFjS3wDYiSxi1nCZb76Mnlef0DgTayEV7Co+z8Oa7IDtWvQ+MObiZONDpFjuVg8coNwxxi1eaVutobjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rwQpcfFx; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=wT78pFN34/V9uidmy7XYu2UoYrn2A2taxXO8JOLiM9Q=; b=rwQpcfFxtKPKmXhYBtiHgeClbk
-	wN7G9+koaKNpwtI0xqxNOT5rPipdVFi/RxbrX25DgXSgqggw+9Zj/C1YaLWCsrU18VffViblVNZTc
-	cVx5cbtLmMxW88++yGXH4yyvuPEDAqypkfmCqMNQxK2yCaEKEijdHBsEtg/sjKIWiMfCf0fFVgPuk
-	MgVzlv6sbp6lSQpnz0X8rGialcGDebGKdvpspnATBqPwzFYzhkLJRxbEsRlHP7sJPxcuZp5J/qq63
-	rn4zu9MLhMmSlnUAMhT4L2iNhzAcCUMXZFdJYl/mgUMBdDoOmAllKpJl2BBZRl80M44uyUURzwgYU
-	pwkGbZ8g==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sUNb5-00000001pRp-2CG5;
-	Thu, 18 Jul 2024 09:38:47 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 7F3583006B7; Thu, 18 Jul 2024 11:38:46 +0200 (CEST)
-Date: Thu, 18 Jul 2024 11:38:46 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Hendrik Brueckner <brueckner@linux.ibm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@arm.com>, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Will Deacon <will@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>, Andi Kleen <ak@linux.intel.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH V9 02/13] perf/core: Add aux_pause, aux_resume,
- aux_start_paused
-Message-ID: <20240718093846.GJ26750@noisy.programming.kicks-ass.net>
-References: <20240715160712.127117-1-adrian.hunter@intel.com>
- <20240715160712.127117-3-adrian.hunter@intel.com>
+	s=arc-20240116; t=1721295568; c=relaxed/simple;
+	bh=Qkdjuh70RCJPvujNbOCNmR9yHLaw3LN+OKruVzEdynk=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=lcknqP5hnYojKB2VqEG1zAB5N+V0RKtbU12LC1p0Z5nFksU+XdEmcR8PRnB0wIKcfDAqPL4DlIbzeEzSs29q0FdHYUBp/HashcbKoFhshBftwVBzWrQ995uJr1Is1SxefyKW3RyDw4XW/cJkQ6geg2cFpa8bY04NSOZtASJ5WcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net; spf=pass smtp.mailfrom=asahilina.net; dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b=dW4Kbg8L; arc=none smtp.client-ip=212.63.210.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asahilina.net
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: lina@asahilina.net)
+	by mail.marcansoft.com (Postfix) with ESMTPSA id E194542A6F;
+	Thu, 18 Jul 2024 09:39:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
+	s=default; t=1721295556;
+	bh=Qkdjuh70RCJPvujNbOCNmR9yHLaw3LN+OKruVzEdynk=;
+	h=Date:To:From:Subject:Cc;
+	b=dW4Kbg8LSKomT59k3hq7rYttO0l+C30aNIAV4nLNUIuqzSwpQfDgG/6R2XDuJtkv0
+	 mQ6ZjcmoKs5SgOIsYbTc0TZVgjaRVy62i0RVFCvSuOGZYlbwlngCfXyLHdwH9KgxQJ
+	 bRyJUv2sJBPZGWizsfWwc2F8h/gBaJzp/kYHcmuLGeNd2CEJWLowrROcVJ4uAwzEQp
+	 xx1yL6FdajGiB8bgTBysQdcwW5de7+WMTw3SGekkrUpjFydUnUCgWLv/MMxasTIn5a
+	 ur0EAhuDbZFZ/Qu5d1YArjlGWSFAxphgV9Xq8cMx2rjqxwz9037e0ecXjZRqvu+/RZ
+	 UABhrkNlEOknQ==
+Message-ID: <50360968-13fb-4e6f-8f52-1725b3177215@asahilina.net>
+Date: Thu, 18 Jul 2024 18:39:10 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240715160712.127117-3-adrian.hunter@intel.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: linux-mm@kvack.org, linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+From: Asahi Lina <lina@asahilina.net>
+Subject: LPA2 on non-LPA2 hardware broken with 16K pages
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 15, 2024 at 07:07:01PM +0300, Adrian Hunter wrote:
-> Hardware traces, such as instruction traces, can produce a vast amount of
-> trace data, so being able to reduce tracing to more specific circumstances
-> can be useful.
-> 
-> The ability to pause or resume tracing when another event happens, can do
-> that.
-> 
-> Add ability for an event to "pause" or "resume" AUX area tracing.
-> 
-> Add aux_pause bit to perf_event_attr to indicate that, if the event
-> happens, the associated AUX area tracing should be paused. Ditto
-> aux_resume. Do not allow aux_pause and aux_resume to be set together.
-> 
-> Add aux_start_paused bit to perf_event_attr to indicate to an AUX area
-> event that it should start in a "paused" state.
-> 
-> Add aux_paused to struct hw_perf_event for AUX area events to keep track of
-> the "paused" state. aux_paused is initialized to aux_start_paused.
-> 
-> Add PERF_EF_PAUSE and PERF_EF_RESUME modes for ->stop() and ->start()
-> callbacks. Call as needed, during __perf_event_output(). Add
+Hi,
 
-Why in __perf_event_output() rather than in __perf_event_overflow().
-Specifically, before bpf_overflow_handler().
+I ran into this with the Asahi Linux downstream kernel, based on v6.9.9,
+but I believe the problem is also still upstream. The issue seems to be
+an interaction between folding one page table level at compile time and
+another one at runtime.
 
-That is, what do we want BPF to be able to do here? To me it seems
-strange that BPF would be able to affect this functionality. You want
-this pause/resume to happen irrespective of how the rest of the event is
-processed, no?
+With this config, we have:
 
-> aux_in_pause_resume to struct perf_buffer to prevent races with the NMI
-> handler. Pause/resume in NMI context will miss out if it coincides with
-> another pause/resume.
+CONFIG_PGTABLE_LEVELS=4
+PAGE_SHIFT=14
+PMD_SHIFT=25
+PUD_SHIFT=36
+PGDIR_SHIFT=47
+pgtable_l5_enabled() == false (compile time)
+pgtable_l4_enabled() == false (runtime, due to no LPA2)
 
-I'm struggling here. That variable is only ever used inside that one
-function. So it must be self-recursion. Are you thinking something like:
+With p4d folded at compile-time, and pud folded at runtime when LPA2 is
+not supported.
 
-  swevent_overflow()
-    ...
-      event_aux_pause()
-        <NMI>
-	  event_overflow()
-	    ...
-	      event_aux_pause()
+With this setup, pgd_offset() is broken since the pgd is actually
+supposed to become a pud but the shift is wrong, as it is set at compile
+time:
 
-?
+#define pgd_index(a)  (((a) >> PGDIR_SHIFT) & (PTRS_PER_PGD - 1))
 
-Where two events in the group, one software and one hardware, are both
-trying to control the AUX thing? Because I don't think the PT-PMI ever
-gets here.
+static inline pgd_t *pgd_offset_pgd(pgd_t *pgd, unsigned long address)
+{
+        return (pgd + pgd_index(address));
+};
 
-> To use aux_pause or aux_resume, an event must be in a group with the AUX
-> area event as the group leader.
+Then we follow the gup logic (abbreviated):
 
+gup_pgd_range:
+    pgdp = pgd_offset(current->mm, addr);
+    pgd_t pgd = READ_ONCE(*pgdp);
 
-> @@ -402,6 +411,15 @@ struct pmu {
->  	 *
->  	 * ->start() with PERF_EF_RELOAD will reprogram the counter
->  	 *  value, must be preceded by a ->stop() with PERF_EF_UPDATE.
-> +	 *
-> +	 * ->stop() with PERF_EF_PAUSE will stop as simply as possible. Will not
-> +	 * overlap another ->stop() with PERF_EF_PAUSE nor ->start() with
-> +	 * PERF_EF_RESUME.
-> +	 *
-> +	 * ->start() with PERF_EF_RESUME will start as simply as possible but
-> +	 * only if the counter is not otherwise stopped. Will not overlap
-> +	 * another ->start() with PERF_EF_RESUME nor ->stop() with
-> +	 * PERF_EF_PAUSE.
->  	 */
->  	void (*start)			(struct perf_event *event, int flags);
->  	void (*stop)			(struct perf_event *event, int flags);
+At this point, pgd is just the 0th entry of the top level page table
+(since those extra address bits will always be 0 for valid 47-bit user
+addresses).
 
-Notably, they *can* race with ->stop/start without EF_PAUSE/RESUME.
+p4d then gets folded via pgtable-nop4d.h:
+
+gup_p4d_range:
+    p4dp = p4d_offset_lockless(pgdp, pgd, addr);
+         = p4d_offset(&(pgd), address)
+         = &pgd
+    p4d_t p4d = READ_ONCE(*p4dp);
+
+Now we have p4dp = stack address of pgd, and p4d = pgd.
+
+gup_pud_range:
+    pudp = pud_offset_lockless(p4dp, p4d, addr);
+         -> if (!pgtable_l4_enabled())
+           = p4d_to_folded_pud(p4dp, addr);
+           = (pud_t *)PTR_ALIGN_DOWN(p4dp, PAGE_SIZE) + pud_index(addr);
+    pud_t pud = READ_ONCE(*pudp);
+
+Which is bad pointer math because it only works if p4dp points to a real
+page table entry inside a page table, not a single u64 stack address.
+
+This causes random oopses in internal_get_user_pages_fast and related
+codepaths.
+
+~~ Lina
 
