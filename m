@@ -1,128 +1,111 @@
-Return-Path: <linux-kernel+bounces-256142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F8B89349A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:17:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D47E9349B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:20:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7800285489
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:17:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AF512853C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0458577F12;
-	Thu, 18 Jul 2024 08:17:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2121E768EE;
+	Thu, 18 Jul 2024 08:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e4vqdXBo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="TunnX+tv"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA8D5259C;
-	Thu, 18 Jul 2024 08:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D771EA8F
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 08:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721290628; cv=none; b=TR9NW7JLNLSkkTyxiI1wzhNPZxjXEoj5J/PFWAym0HUUZcFYQizwFNIq/0J/wGX5svT1MEPL06YUX3E8w6Z3OpjT5v1LwtgtQ9KNLTA24gMHfwwyAsYxHpEyeUvFOvk0XT+iT+zjb9hzv56wJis910hSBxAlybsnlH+cEU70tfk=
+	t=1721290826; cv=none; b=bytEHoRvND3zv8sW+j1GRgAX+lIK67yWm+hrPjb8q67pS40GfU+Om/Z+l22t942m7hQX6MF6DyEGKIPA3jmZ0mmFgbZGGI2AQehKLym64H2r7rpGNpVUKnZYKlnmB0tXq9trLLsab3cfenoakUltHsGAHq5Bh4xjCO9owMShHcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721290628; c=relaxed/simple;
-	bh=9KFE5vKKAi4vMxtGZ6yrl34SdkCq8Fi7gdAzW1B0lNs=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=i3BOS/6Iro6dcA+iUyWsXGxFDRqB35DCs1FnxDany3Og279cePgpW6CMsDVjqU4r7/YhGGpCRslCJLezRYUUzKRBgbCMmZA9XrmwGq3+hsvmYXKnU8gWezgTc8U/gZ3V6LL+vAhGjEFMQFGCp37oAjWW84nZVrIdQlLV21GtHJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e4vqdXBo; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721290627; x=1752826627;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=9KFE5vKKAi4vMxtGZ6yrl34SdkCq8Fi7gdAzW1B0lNs=;
-  b=e4vqdXBoatuYnFVwjQ/Mb5CRCkTIQn16h9LnkGTR9na590BP1wSEu+dK
-   4XZFLEGpw206Jj1kfk66435AkZc3S5Vl8F1BYP7dlOPgIiRGTNxAEOG/n
-   qftIK+CggcV8TDm4XvuFGe2sgYzaFdhNi5JiiTCQ7Isl9wSpyWW9/ok2f
-   PZ3MHTB5Ot5/vX3mPCzTxRTWyt8eouGHzNzLKTtt7HriOhnflcToNNjvR
-   LR+KinG7xVw821vDFl3reZ2bjLqlgk2NHunsVutUIN773FasItlJRe1c8
-   PRm9MFia19N8xbio9OIER67MLamaRDqn807r2JKc+/c0ptm+LbmohKtT8
-   Q==;
-X-CSE-ConnectionGUID: zDJbiy3qR36+N7pm6lPx5Q==
-X-CSE-MsgGUID: uO4kgsZVQJqZbjn/h1ja+A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="18979919"
-X-IronPort-AV: E=Sophos;i="6.09,217,1716274800"; 
-   d="scan'208";a="18979919"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 01:17:06 -0700
-X-CSE-ConnectionGUID: gJG4lUe0TqW6/zsJOe1hkw==
-X-CSE-MsgGUID: +55knUx/Tpej6Ottc4hk/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,217,1716274800"; 
-   d="scan'208";a="55815889"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.139])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 01:17:04 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 18 Jul 2024 11:17:01 +0300 (EEST)
-To: Hans de Goede <hdegoede@redhat.com>
-cc: Gergo Koteles <soyer@irl.hu>, Ike Panhc <ike.pan@canonical.com>, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 4/4] platform/x86: ideapad-laptop: add a mutex to
- synchronize VPC commands
-In-Reply-To: <53b247e1-62cf-4289-8ad6-2138a1757e06@redhat.com>
-Message-ID: <5f593905-b829-03bd-7a6a-160dea55ed46@linux.intel.com>
-References: <cover.1721258854.git.soyer@irl.hu> <70d3957b315815085cdd8cb04b002cdb4a372ddc.1721258854.git.soyer@irl.hu> <06e44cdc-b984-23ea-2d89-b4489bce2c27@linux.intel.com> <53b247e1-62cf-4289-8ad6-2138a1757e06@redhat.com>
+	s=arc-20240116; t=1721290826; c=relaxed/simple;
+	bh=wIlP3vxYiZQz7DlYZptBzAkZ0z2V/MpBSpUcwowUwI4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n1YEOUpdJtkYXATa2lsjsS4kxrv9unGmFaLK33c2xB3YXMOMuCF+m2TFYU4qaIVaEwtBdGEHCS9Cy8f2Qldm1h73KiMUXE43eaejyrDI4grQuxFvP0k43UHW15qlNPoxJ05D4LxAAhuvEoZBH8MfQq34oajzyBJccxIf3eaEDJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=TunnX+tv; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70b31272a04so1115327b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 01:20:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1721290823; x=1721895623; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nI+gUtWsEz/D3kTb323tMNCV4WxP0ZMUHl9M0eK169c=;
+        b=TunnX+tvma9ooG4X1STCh0ldKkX2YbMqNWK5qm4wPPf7Heqpb3LIPnU1ZrgmGJFZrP
+         tThgKXvzYlV4I4lau2Tkb0fg48znXl+OWCnHBjGDAveeDBwkcsjI5gPY70OH2YWeHPQa
+         Z+pP2MCmpv0GVNF6G2U9adfB5FYZQRsbNkaPG1x5UaxG//OKxM6YCAjfKspAcSBr3Lf0
+         KzWWX4dA8IWHw3SncK64wtHdjjbwHH3WQXJu1a3FIOOkipgDHgkzAZ5RcrPRxDqMLH4G
+         fd6v/tJ+2FQSw8A2TSRj42FU9Hu3xqoe3DxTpc0UMocR1ZE594n0MKDN40VYg5zpjY4U
+         r3Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721290823; x=1721895623;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=nI+gUtWsEz/D3kTb323tMNCV4WxP0ZMUHl9M0eK169c=;
+        b=IrXKdKd8AKgN6E5ZoMvO0iHZFSe6Sv/dG9H3kBanZBahEstr8Fm5YngJXeS6ideDG7
+         AbdXvtMCU3E8rk67sjFapwfXoQAUoQImhWEW9e3M6sM8tDPRQg2MbSgUBvEn2FSvCffY
+         9SF83RoP3NpmJnH1HpxqknZqa01zOfnHG3/1BJcDeJxoxei5Zt2Dsj5El2HXkRc/A9At
+         riU+Xu0sm5AyS6ZelVwF4XDVcwRhM9v6tNG4mHT+wd8HjcdMhPXQrQoibhjmXReW6aRi
+         jyPanLpeud2xZ4S4RtX1++qDXHPrmDNR3lwJs/9OE6llFNdxv/JdyQMILhrSQwuJ9z4+
+         ZSnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXUHSxpZE5PKFyY1ORP7CeaXC+XDmTbNoKNKaqlxiAohbQLZMhQ/eouDdIpnhS4X/ErSevWoVxfIu/LM7OSYLzxyZ9xdQnz3Oxm5oTE
+X-Gm-Message-State: AOJu0YxNxAcFzJOeMUpLHiNHNS3ThWEzaUtECJx8afGSLIe2vwbhXtUi
+	82Ki4FSXB7E/SaUbR2YdxFK54sIWcA41XRgKK7ThHZVJKbmRTYLB/lPV7a1+Coc=
+X-Google-Smtp-Source: AGHT+IFVGxfYd+I48xnoJr+z3ji7t/hEk8/u2yRWsUsWw3N+vaibv/D275yGj4hTzWYQOV/2ZYjhmQ==
+X-Received: by 2002:a05:6a21:6d92:b0:1c0:ebca:964b with SMTP id adf61e73a8af0-1c40791f2ecmr3758686637.23.1721290823441;
+        Thu, 18 Jul 2024 01:20:23 -0700 (PDT)
+Received: from [10.84.154.236] ([203.208.167.148])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-78e386d7ad4sm7227399a12.69.2024.07.18.01.20.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Jul 2024 01:20:23 -0700 (PDT)
+Message-ID: <d39bdb5b-6f98-496d-8e14-eef123681519@bytedance.com>
+Date: Thu, 18 Jul 2024 16:20:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-692716757-1721290621=:1055"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] sched/fair: Remove cfs_rq::nr_spread_over and
+ cfs_rq::exec_clock
+To: K Prateek Nayak <kprateek.nayak@amd.com>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org
+Cc: chengming.zhou@linux.dev, linux-kernel@vger.kernel.org,
+ Vishal Chourasia <vishalc@linux.ibm.com>
+References: <20240717143342.593262-1-zhouchuyi@bytedance.com>
+ <3a2efbd7-075c-2a93-0ea7-51566362f17e@amd.com>
+From: Chuyi Zhou <zhouchuyi@bytedance.com>
+In-Reply-To: <3a2efbd7-075c-2a93-0ea7-51566362f17e@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hello,
 
---8323328-692716757-1721290621=:1055
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+在 2024/7/18 11:28, K Prateek Nayak 写道:
+> Hello Chuyi,
+> 
+> On 7/17/2024 8:03 PM, Chuyi Zhou wrote:
+>> nr_spread_over tracks the number of instances where the difference
+>> between a scheduling entity's virtual runtime and the minimum virtual
+>> runtime in the runqueue exceeds three times the scheduler latency,
+>> indicating significant disparity in task scheduling.
+>> Commit that removed its usage: 5e963f2bd: sched/fair: Commit to EEVDF
+> 
+> scripts/checkpatch.pl complains about the commit description style here.
+> The above can be reworded as:
+> 
 
-On Thu, 18 Jul 2024, Hans de Goede wrote:
+I will send v3 later.
 
-> Hi,
->=20
-> On 7/18/24 10:06 AM, Ilpo J=C3=A4rvinen wrote:
-> > On Thu, 18 Jul 2024, Gergo Koteles wrote:
-> >=20
-> >> Calling VPC commands consists of several VPCW and VPCR ACPI calls.
-> >> These calls and their results can get mixed up if they are called
-> >> simultaneously from different threads, like acpi notify handler,
-> >> sysfs, debugfs, notification chain.
-> >>
-> >> Add a mutex to synchronize VPC commands.
-> >>
-> >> Signed-off-by: Gergo Koteles <soyer@irl.hu>
-> >> ---
-> >=20
-> >> @@ -2027,6 +2053,8 @@ static int ideapad_acpi_add(struct platform_devi=
-ce *pdev)
-> >>  =09priv->adev =3D adev;
-> >>  =09priv->platform_device =3D pdev;
-> >> =20
-> >> +=09mutex_init(&priv->vpc_mutex);
-> >> +
-> >>  =09ideapad_check_features(priv);
-> >> =20
-> >>  =09err =3D ideapad_sysfs_init(priv);
-> >=20
-> > mutex_destroy() missing from rollback and ideapad_acpi_remove().
->=20
-> Right, note the easiest way to fix this is to use the new devm_mutex_init=
-()
-> instead of plain mutex_init() that will also take care of destroying the =
-mutex
-> on any exit-on-error cases from probe().
+Thanks for the review!
 
-Right, of course. I though one existed but it seems I tried to grep for=20
-dev_mutex_init() while searching for it... :-/
-
---=20
- i.
-
---8323328-692716757-1721290621=:1055--
 
