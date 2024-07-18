@@ -1,206 +1,154 @@
-Return-Path: <linux-kernel+bounces-256205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0077D934AB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:12:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59888934AB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:12:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0DE9286451
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:12:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 198FE286746
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B0C81211;
-	Thu, 18 Jul 2024 09:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF5381720;
+	Thu, 18 Jul 2024 09:12:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B0YoN5Wv"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iHvPzGmM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD613BB30
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 09:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72118063C
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 09:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721293942; cv=none; b=aEJeb4qI/zfMH9cB8VzH0tjjG41btFiyk24GffhpOvJ+Nbpk4F1X1rsROxpq4sJMtqh11HmEfEoXaPq4NRjwmtBRjay045fPnvI8WnaM7vLgK0TzPUwJtGqKS7OtI1Re8ixlmKDNNufz+Bozi0EKJgBaPyUZMzpCVGkg1SvyHmU=
+	t=1721293963; cv=none; b=GRFE1X8Amzl4JSgdKzNOAcDEzbV/Gh/gyGD96JCwToMk0/9vk7dK59NJJc2PfNzXsanYNQdSm51cHM5fRPCOPZ41RhSPn9h6Wp8TmwdTY8I0S+nygzvqwpPIJ9aj/xuIOcUIT3nODJd4NorGOr2O78khaBsZh09jtUO8ToGEZyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721293942; c=relaxed/simple;
-	bh=PEXsUQRuWFa/XsPmagCm6KmvlhiwIZA1STK121ylA0s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n/2bnLrXJqVy5mPePZptTbDB7EhRod3Ky6yC8KJAeEH54Pz/XrCfn1Xmx6iinAEs6aFQmTovyq5T/ayUA/Y55fiPKvmcVUbWiFM5K8huwx0RAVWqw0aAJfjh2juXcMr53zB8wiLQ7X4Q6jB8G6GnJY+vU4Ho2Ux/RPvT2aKFxvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B0YoN5Wv; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ee9b098bd5so8358761fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 02:12:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721293939; x=1721898739; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xYRDJTXb7VkR2nu2Bt3xlsYZzSCplD55JeoAUmrsGvg=;
-        b=B0YoN5Wvq8xfUhvPrQJyKcodiyhUIvzlXoWnFr9kgpti66eejPv1Qe2YlqhGN0+l0w
-         EMOn8QgpOhy5pKJbHeQN9961qxiknmJcslJ49/bAUiZN0BQfoVNyDq4r2/k6HZggXlxB
-         +Yqw0F3bgLKogVEyIp9M6oE5m3dISEQyWrlp4zVZANEFxypFcZRbUlDf7KVXhCnYDvn7
-         JqoDmKgaf6emMO1fKYaCnvvujUJi0rEzWw3sk+Y4YM+rr09qk76AHO7gBlTr1NHybbH4
-         fGvqSxnppSRBqRdBnSvc5rWNeReL9U7rj7zrg9mw1uG6cH3rloLGYPessCy1/y/fXhUz
-         Y77A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721293939; x=1721898739;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xYRDJTXb7VkR2nu2Bt3xlsYZzSCplD55JeoAUmrsGvg=;
-        b=p+zl0+ZN53KyrEHU2Uj/Ky+Stqn6YD2cUMIkFkBBHCMNGI6QVdHn3CbYv4eLZujJZZ
-         K/3ritlYRmkFjsf41fxM2uKhIafXaLqoSyKJzV8engZVFNTmfH1u0LjFHiCcQLiACcUO
-         pX8+y+16WaoEelXJ7SpSvJ6E9EBOB5ElpnRBf2dkUtBMnLnvudp+zBlP1YAgTK1nrEio
-         FelRvIW7yQEhumjTeoFFYpmw/4tWgjdp/dJdVGPDBvastEo56HtDy48d8/BQZqVb8eu4
-         C1AJzfHxAh31cuDxfDy2P9491m4F9OUXUXJNi+tiYz9DY9I4aQHikcQmTZDe551MN9Li
-         IaYw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLb2uXqdPd+QhZfLRJZC5vcopPzc7xtf9Ci/HQh4PkAUwg0GSISC9ye75dIEc6cRg2hJ8ztEf73Glw16Gg25nLtBepxd8nIYohoxrx
-X-Gm-Message-State: AOJu0Yz640NN0pm7YuWzz0ae+yNJO6B7N9Km9qrwgqjBPeuyr0yw/pwV
-	pX9ir7LB7bvyZgdp318JyTSkinHuPUldTjX45VjQHyKC+P8nBGaunFgleT5HRnooIWBLjccXwTi
-	5HhEFC6G6ALjmlKJArmi+5hDkvGlNYJKJtOc=
-X-Google-Smtp-Source: AGHT+IEzjEv1damTpttKz+LCf+AT1wIDiCcudbwQkbMrBn8f0B3SN1rLlEKpdwAapOoV9piTt/ea7WMFEKVP7gI0zWA=
-X-Received: by 2002:a2e:9ed3:0:b0:2ee:87e9:319d with SMTP id
- 38308e7fff4ca-2ef05d48368mr13444611fa.48.1721293938819; Thu, 18 Jul 2024
- 02:12:18 -0700 (PDT)
+	s=arc-20240116; t=1721293963; c=relaxed/simple;
+	bh=QYe0N5asl+jIDbTVeVE7d9My/QO1y/ezNH3N+O5/sw4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iRkQM+RU8TfwCRIzPdzu26TurdK48Sns3wDMbXkuG2v7EpY3hAlXfZEr263RveZXOpJySHiJWeXwe+m+90Gc5zR0+g+InjIJDKi92hXLl72bKNoxVjQJTQJjEUI5bIR8/k4G2DGiwvnbcThOD7MnmwWBuuqJcrFRxnvoiFzL9Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iHvPzGmM; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721293962; x=1752829962;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=QYe0N5asl+jIDbTVeVE7d9My/QO1y/ezNH3N+O5/sw4=;
+  b=iHvPzGmMViLZs8UViPT1K3Q6Ej833Nmp0APZynogeb6vq1V04GLC/qTb
+   6bzhcbqnM2ADa+XIhHcgTWu+ypERUaqvrByAmjNVAuh03MYyuV5czjuzj
+   T6QM1Fa5mvKjuxY6CPMg7nE7z8VB+xFluVQzWeRjlQIpn2ocV9n+Ma9cm
+   bGGxK2ONxKlRC9WcKQx5zudaH0DvCi08Z/YKWWWM+hNFAXHunX5IV0RdS
+   vJG+7/HamQmQ6flRxRx+Y6NwpGZxGEP/oPZPnaA1gKjRFcqS7PqorLsP2
+   5pdSDKgN3PMMAKYBKpLocEHWL1vfK8NEu8WV9K2HJM+KwVC9/x+VK00PV
+   Q==;
+X-CSE-ConnectionGUID: Yrczej0uQfudwSrc9NKsQQ==
+X-CSE-MsgGUID: TN8pJPewRQ+gidtflvsb/w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="18800803"
+X-IronPort-AV: E=Sophos;i="6.09,217,1716274800"; 
+   d="scan'208";a="18800803"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 02:12:30 -0700
+X-CSE-ConnectionGUID: ceCJIchsQI+TWOPMFFF9/g==
+X-CSE-MsgGUID: 2Dmhh3EmQWaE2ilNHYqILA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,217,1716274800"; 
+   d="scan'208";a="50747716"
+Received: from sbutnari-mobl1.ti.intel.com (HELO [10.245.246.71]) ([10.245.246.71])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 02:12:27 -0700
+Message-ID: <9a0eba2e-9933-43bb-ab3b-0480bf1d34a4@linux.intel.com>
+Date: Thu, 18 Jul 2024 11:12:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240718063242.52275-1-ubizjak@gmail.com> <4049EB19-E869-4886-AD61-E716A75E4559@zytor.com>
- <CAFULd4bs7meRq_iTqq1nSzpkSzEQqLkM8S=x4=zqtX6Fo9qQPQ@mail.gmail.com> <77174D9A-79DE-44A7-85E0-63B0BFE343C2@zytor.com>
-In-Reply-To: <77174D9A-79DE-44A7-85E0-63B0BFE343C2@zytor.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Thu, 18 Jul 2024 11:12:07 +0200
-Message-ID: <CAFULd4Z91bzEDb+MTDP3NgF_3DxW0mG8jbjCR75e8yjWEeHQkw@mail.gmail.com>
-Subject: Re: [PATCH] x86/boot: Use __ASM_SIZE() to reduce ifdeffery in cpuflags.c
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: ld.lld: error: undefined symbol: iosf_mbi_available
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Nathan Chancellor <nathan@kernel.org>, kernel test robot <lkp@intel.com>,
+ llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+ Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>,
+ Bard Liao <bard.liao@intel.com>
+References: <202407160704.zpdhJ8da-lkp@intel.com>
+ <05954a59-2bef-4262-bd91-cfe21d2381f2@linux.intel.com>
+ <20240717202806.GA728411@thelio-3990X> <87wmljw485.wl-tiwai@suse.de>
+ <d121ec31-0861-4324-8f53-6e06eaf60233@linux.intel.com>
+ <87le1zvzw9.wl-tiwai@suse.de>
+Content-Language: en-US
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <87le1zvzw9.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 18, 2024 at 10:56=E2=80=AFAM H. Peter Anvin <hpa@zytor.com> wro=
-te:
->
-> On July 18, 2024 1:52:17 AM PDT, Uros Bizjak <ubizjak@gmail.com> wrote:
-> >On Thu, Jul 18, 2024 at 8:36=E2=80=AFAM H. Peter Anvin <hpa@zytor.com> w=
-rote:
-> >>
-> >> On July 17, 2024 11:32:18 PM PDT, Uros Bizjak <ubizjak@gmail.com> wrot=
-e:
-> >> >Use __ASM_SIZE() macro to add correct insn suffix to pushf/popf.
-> >> >
-> >> >Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> >> >Cc: Thomas Gleixner <tglx@linutronix.de>
-> >> >Cc: Ingo Molnar <mingo@kernel.org>
-> >> >Cc: Borislav Petkov <bp@alien8.de>
-> >> >Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> >> >Cc: "H. Peter Anvin" <hpa@zytor.com>
-> >> >---
-> >> > arch/x86/boot/cpuflags.c | 10 +++-------
-> >> > 1 file changed, 3 insertions(+), 7 deletions(-)
-> >> >
-> >> >diff --git a/arch/x86/boot/cpuflags.c b/arch/x86/boot/cpuflags.c
-> >> >index d75237ba7ce9..aacabe431fd5 100644
-> >> >--- a/arch/x86/boot/cpuflags.c
-> >> >+++ b/arch/x86/boot/cpuflags.c
-> >> >@@ -2,6 +2,7 @@
-> >> > #include <linux/types.h>
-> >> > #include "bitops.h"
-> >> >
-> >> >+#include <asm/asm.h>
-> >> > #include <asm/processor-flags.h>
-> >> > #include <asm/required-features.h>
-> >> > #include <asm/msr-index.h>
-> >> >@@ -36,13 +37,8 @@ static int has_fpu(void)
-> >> >  * compressed/ directory where it may be 64-bit code, and thus needs
-> >> >  * to be 'pushfq' or 'popfq' in that case.
-> >> >  */
-> >> >-#ifdef __x86_64__
-> >> >-#define PUSHF "pushfq"
-> >> >-#define POPF "popfq"
-> >> >-#else
-> >> >-#define PUSHF "pushfl"
-> >> >-#define POPF "popfl"
-> >> >-#endif
-> >> >+#define PUSHF __ASM_SIZE(pushf)
-> >> >+#define POPF __ASM_SIZE(popf)
-> >> >
-> >> > int has_eflag(unsigned long mask)
-> >> > {
-> >>
-> >> Just use pushf/popf. gas hasn't needed that suffix for a long time as =
-far as I know.
-> >
-> >Unfortunately, clang does not do the right thing when pushf/popf
-> >without suffix are used.
-> >
-> >arch/x86/boot/cpuflags.c compiles to:
-> >
-> >00000000 <has_eflag>:
-> >   0:    9c                       pushf
-> >   1:    9c                       pushf
-> >   2:    66 5a                    pop    %edx
-> >   4:    66 89 d1                 mov    %edx,%ecx
-> >   7:    66 31 c1                 xor    %eax,%ecx
-> >   a:    66 51                    push   %ecx
-> >   c:    9d                       popf
-> >   d:    9c                       pushf
-> >   e:    66 59                    pop    %ecx
-> >  10:    9d                       popf
-> >  11:    66 31 ca                 xor    %ecx,%edx
-> >  14:    66 31 c9                 xor    %ecx,%ecx
-> >  17:    66 85 c2                 test   %eax,%edx
-> >  1a:    0f 95 c1                 setne  %cl
-> >  1d:    66 89 c8                 mov    %ecx,%eax
-> >  20:    66 c3                    retl
-> >
-> >instead of:
-> >
-> >00000000 <has_eflag>:
-> >   0:    66 9c                    pushfl
-> >   2:    66 9c                    pushfl
-> >   4:    66 5a                    pop    %edx
-> >   6:    66 89 d1                 mov    %edx,%ecx
-> >   9:    66 31 c1                 xor    %eax,%ecx
-> >   c:    66 51                    push   %ecx
-> >   e:    66 9d                    popfl
-> >  10:    66 9c                    pushfl
-> >  12:    66 59                    pop    %ecx
-> >  14:    66 9d                    popfl
-> >  16:    66 31 ca                 xor    %ecx,%edx
-> >  19:    66 31 c9                 xor    %ecx,%ecx
-> >  1c:    66 85 c2                 test   %eax,%edx
-> >  1f:    0f 95 c1                 setne  %cl
-> >  22:    66 89 c8                 mov    %ecx,%eax
-> >  25:    66 c3                    retl
-> >
-> >Please note missing 0x66 operand size override prefixes with pushfl
-> >and popfl. This is 16bit code, operand prefixes are mandatory to push
-> >32-bit EFLAGS register (ID flag lives in bit 21).
-> >
-> >So, the original patch is the way to go.
-> >
-> >Uros.
-> >
->
-> You do know that has_eflag can be completely elided on x86-64, or you can=
- use %z with one of the register operands.
 
-It is 32-bit PUSHFL insn that requires the "L" suffix in 16-bit code.
-This is x86_32 issue and clang was just lucky that the instruction was
-always defined with explicit L suffix. Please note that PUSHF has no
-register operand, so %z can't be used.
 
-> One more reason why clang really needs to shape up.
+>>> --- a/sound/soc/sof/intel/Kconfig
+>>> +++ b/sound/soc/sof/intel/Kconfig
+>>> @@ -19,6 +19,7 @@ config SND_SOC_SOF_INTEL_ATOM_HIFI_EP
+>>>  	tristate
+>>>  	select SND_SOC_SOF_INTEL_COMMON
+>>>  	select SND_SOC_SOF_INTEL_HIFI_EP_IPC
+>>> +	select IOSF_MBI if X86 && PCI
+>>>  	help
+>>>  	  This option is not user-selectable but automagically handled by
+>>>  	  'select' statements at a higher level.
+>>> @@ -44,7 +45,6 @@ config SND_SOC_SOF_BAYTRAIL
+>>>  	select SND_SOC_SOF_INTEL_COMMON
+>>>  	select SND_SOC_SOF_INTEL_ATOM_HIFI_EP
+>>>  	select SND_SOC_SOF_ACPI_DEV
+>>> -	select IOSF_MBI if X86 && PCI
+>>>  	help
+>>>  	  This adds support for Sound Open Firmware for Intel(R) platforms
+>>>  	  using the Baytrail, Braswell or Cherrytrail processors.
+>>
+>> I don't think it's the 'right' fix Takashi.
+>>
+>> The problem is that we end-up using the iosf_mbi_read() routine by
+>> including the soc-intel-quirks.h header file blindly for all X66
+>> platforms - even when Baytrail is not used.
+>>
+>> Adding IOSF support for Tangiger doesn't seem right to me, it's not a
+>> real dependency.
+>>
+>> We can be more restrictive and only use the helper for Baytrail, and use
+>> a fallback if Baytrail is not used.
+>>
+>> diff --git a/sound/soc/intel/common/soc-intel-quirks.h
+>> b/sound/soc/intel/common/soc-intel-quirks.h
+>> index de4e550c5b34..ae67853f7e2e 100644
+>> --- a/sound/soc/intel/common/soc-intel-quirks.h
+>> +++ b/sound/soc/intel/common/soc-intel-quirks.h
+>> @@ -11,7 +11,9 @@
+>>
+>>  #include <linux/platform_data/x86/soc.h>
+>>
+>> -#if IS_ENABLED(CONFIG_X86)
+>> +#if IS_ENABLED(CONFIG_X86) && \
+>> +       (IS_ENABLED(CONFIG_SND_SOC_SOF_BAYTRAIL) || \
+>> +        IS_ENABLED(CONFIG_SND_SST_ATOM_HIFI2_PLATFORM_ACPI))
+>>
+>>  #include <linux/dmi.h>
+>>  #include <asm/iosf_mbi.h>
+>>
+>> also at https://github.com/thesofproject/linux/pull/5114
+> 
+> I'm afraid it's not enough, either.  It's included in
+> sound/soc/sof/intel/atom.c, and this one can be built-in by selected
+> from others while CONFIG_SND_SOC_SOF_BAYTRAIL=m.  And, the reverse
+> selection is done from CONFIG_SND_SOC_SOF_BAYTRAIL -- so
+> CONFIG_IOSF_MBI can be m as well, and this can lead to the unresolved
+> symbol from the built-in atom.c.
 
-Indeed.
+Fair point, I was only looking at the reported failure where Baytrail
+was completely disabled.
 
-Thanks,
-Uros.
+I am not sure though if it makes sense to split hair in N dimensions.
+Building Merrifield as y and Baytrail as m is a corner case that
+shouldn't exist at all. And it's only an academic compilation issue, in
+practice using 'y' would fail at run-time due to the usual firmware load
+dependencies...
 
