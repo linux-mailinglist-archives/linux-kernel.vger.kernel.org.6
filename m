@@ -1,102 +1,139 @@
-Return-Path: <linux-kernel+bounces-256056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6BD7934866
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:55:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2727934873
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 887E628295E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:55:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BDDF1F21E51
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE2C7318A;
-	Thu, 18 Jul 2024 06:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BBC75817;
+	Thu, 18 Jul 2024 06:57:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YOvEi3rP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OlB6nsD5"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF10526ACF;
-	Thu, 18 Jul 2024 06:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A009F2CCA3;
+	Thu, 18 Jul 2024 06:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721285738; cv=none; b=atWbQopI25rwD5gv8DYWD08oUuyEmagbrVN/QGc1LHx+cDZ9z/7mW/UzZW5H36L6v5F2StLA573q9CpPu/0pLOL3HCFA3frpWV5DAXc+UXJ2w9X2bCYNTrZCphjDfxsweav4+lGQ6dYcPOSs3WCyqJXpWzcfEp8yVQayQDu5DjU=
+	t=1721285833; cv=none; b=fNmUaH5/hDAeWsLLvkppIIirgmi1HtbJnuKnYqml9XcyWghm6dQ0du5cbbl9lGMp/uVT21LNCzIcGIFrEPxbQY+muuwMfwitKnnkwLQvTCyb6xuhA0REMgSsgoInLb+0Mq0qvqXOq9oC95A5W0TTZAbZj/VzxzslgLsYebixoxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721285738; c=relaxed/simple;
-	bh=nFH7ut82unMgxgxSn/vjZJx5nU38HuR9Ig9R58XYFes=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nwbCSn/zTVbBV2Fghosd8MW+Rcq4kp5NJiSESpjqabHM2uv7jULwae/gpjyGim+/44Um3oG14XBB/VhuWlF/frFo+3++7Q8vwnfCXc6RMEwxSl/XnAxojZqLneqWJhLIUZbP0alo1ueluqJev1GvgLdvASDjqA0VNE+LynRCYlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YOvEi3rP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEE7DC116B1;
-	Thu, 18 Jul 2024 06:55:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721285737;
-	bh=nFH7ut82unMgxgxSn/vjZJx5nU38HuR9Ig9R58XYFes=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YOvEi3rPsQSihVZL3J7iTGBlF80v0KaMUv45OTE52xI5S0fgUgT/2Q6Tz0B5CAJKK
-	 FYLAuRLnMQ0tcf5eDGzIIYs09RPSJNXzlEt70XZCuUFrPw1kHnCGqL75HcpiDTwREa
-	 VRaTDpesmQarSklaXYrRI8O99QO7dXDF1bDxOUTA=
-Date: Thu, 18 Jul 2024 08:55:34 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 5.10 000/109] 5.10.222-rc2 review
-Message-ID: <2024071825-unifier-patriot-26c2@gregkh>
-References: <20240717063758.061781150@linuxfoundation.org>
- <CA+G9fYtfAbfcQ9J9Hzq-e6yoBVG3t_iHZ=bS2eJbO_aiOcquXQ@mail.gmail.com>
+	s=arc-20240116; t=1721285833; c=relaxed/simple;
+	bh=z+aCMhKYfdvSH3LqcS7QRiHX5Ygt46joT7nhNjNOLXA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R6V6ocq6oikBjxhzj8+vNfcMiWTu45ZEzHbhFgRHS4+nC6GeFhk81jBnyENm1YSo++iXzaZ1tfBJdxX+Dx2IpYBffxq1vvSDPIikQ1n9+bjxTEe0xWaT6Q7Ooc3L/Myt/6rFktvb5dlU/5RMviYmnc0bsfk8t91KKzRBpzY/tRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OlB6nsD5; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 66B00C0011;
+	Thu, 18 Jul 2024 06:56:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1721285821;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TgZHkXL2FGs1/bjZPDSboGR72yBe//NfgloPvNTjUQ0=;
+	b=OlB6nsD5RtGZmYjd7bhjEoZx7QMkbbOT8V45YhxxCFz4y2iiCJe+cf2PVPl+VsXD6UUMqk
+	Yc28bGhZQ13OubzP5CW/pjPqqFo91MRM0eVoREVGLvn0MLgNZy6pPxquFKWhNBkv4SbFT2
+	sax9ioW5vC5M5bokQz4XncM9ZdU0GCDemzBwA+l1XJdTnXTEUKHI48dxPqMAjv00+G3aQG
+	rBXI5/ojqb79XSjovNP74Rn6wSf1My85vfzfK9OmlUEoc3d8vGPg+knHhqSD5yHTRQLUcZ
+	BDxiKiWHxBRawYhcLiwX+N2Krj0xmgk4IRTokaqbJaztXMntEG+p6mo1v3ON7A==
+Date: Thu, 18 Jul 2024 08:56:51 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Andreas Kemnade <andreas@kemnade.info>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Bjorn Andersson <andersson@kernel.org>, Broadcom internal
+ kernel review list <bcm-kernel-feedback-list@broadcom.com>, Chen-Yu Tsai
+ <wens@csie.org>, Chester Lin <chester62515@gmail.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Damien Le Moal <dlemoal@kernel.org>, Daniel Lezcano
+ <daniel.lezcano@linaro.org>, Dong Aisheng <aisheng.dong@nxp.com>, Doug
+ Berger <opendmb@gmail.com>, Emilio =?UTF-8?Q?L=C3=B3pez?=
+ <emilio@elopez.com.ar>, Fabio Estevam <festevam@gmail.com>, Florian
+ Fainelli <florian.fainelli@broadcom.com>, Ghennadi Procopciuc
+ <ghennadi.procopciuc@oss.nxp.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Jacky Bai <ping.bai@nxp.com>, Jaroslav Kysela
+ <perex@perex.cz>, Jernej Skrabec <jernej.skrabec@gmail.com>, Jiri Slaby 
+ <jirislaby@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Kevin Hilman
+ <khilman@baylibre.com>, Krzysztof Kozlowski <krzk@kernel.org>, Lars-Peter
+ Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>, Liam Girdwood
+ <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown
+ <broonie@kernel.org>, Matthias Brugger <mbrugger@suse.com>, Michael
+ Ellerman <mpe@ellerman.id.au>, Michael Turquette <mturquette@baylibre.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Nicholas Piggin
+ <npiggin@gmail.com>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, Richard Leitner
+ <richard.leitner@linux.dev>, Rob Herring <robh@kernel.org>, Roger Quadros
+ <rogerq@kernel.org>, Samuel Holland <samuel@sholland.org>, Saravana Kannan
+ <saravanak@google.com>, Shawn Guo <shawnguo@kernel.org>, Takashi Iwai
+ <tiwai@suse.com>, Thomas Gleixner  <tglx@linutronix.de>, Tony Lindgren
+ <tony@atomide.com>, Uwe =?UTF-8?Q?Kleine-K=C3=B6nig?=
+ <ukleinek@kernel.org>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, llvm@lists.linux.dev,
+ linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-usb@vger.kernel.org, patches@opensource.cirrus.com,
+ linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-riscv@lists.infradead.org, Andre Przywara <andre.przywara@arm.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, Uwe =?UTF-8?Q?Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@baylibre.com>, Richard Fitzgerald
+ <rf@opensource.cirrus.com>
+Subject: Re: [PATCH v2] of: remove internal arguments from
+ of_property_for_each_u32()
+Message-ID: <20240718085651.63ddfb20@booty>
+In-Reply-To: <1e36b1ba8af3584128550822a70cb072.sboyd@kernel.org>
+References: <20240717-of_property_for_each_u32-v2-1-4060990f49c9@bootlin.com>
+	<1e36b1ba8af3584128550822a70cb072.sboyd@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYtfAbfcQ9J9Hzq-e6yoBVG3t_iHZ=bS2eJbO_aiOcquXQ@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Thu, Jul 18, 2024 at 10:45:22AM +0530, Naresh Kamboju wrote:
-> On Wed, 17 Jul 2024 at 12:09, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 5.10.222 release.
-> > There are 109 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Fri, 19 Jul 2024 06:37:32 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.222-rc2.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> 
-> The QEMU arm64 booting kunit enabled boot failed with clang and gcc.
-> 
-> Anders bisected to this as first bad commit,
-> # first bad commit: [c2ef31fd37ae11e89cb63c73cb7ee05bf4376455]
->             arm64/bpf: Remove 128MB limit for BPF JIT programs
->             commit b89ddf4cca43f1269093942cf5c4e457fd45c335 upstream.
-> 
-> Reverting the above patch made the boot successful on QEMU arm64.
+Hello Stephen,
 
-Thanks, will go drop this now.
+On Wed, 17 Jul 2024 16:33:34 -0700
+Stephen Boyd <sboyd@kernel.org> wrote:
 
-greg k-h
+> > @@ -1191,20 +1191,24 @@ static int si5351_dt_parse(struct i2c_client *client,
+> >          * property silabs,pll-source : <num src>, [<..>]
+> >          * allow to selectively set pll source
+> >          */
+> > -       of_property_for_each_u32(np, "silabs,pll-source", prop, p, num) {
+> > +       sz = of_property_read_variable_u32_array(np, "silabs,pll-source", array, 2, 4);
+> > +       sz = (sz == -EINVAL) ? 0 : sz; /* Missing property is OK */
+> > +       if (sz < 0)
+> > +               return dev_err_probe(&client->dev, sz, "invalid pll-source");  
+> 
+> Needs a newline on the printk message.
+
+Ouch! Fix queued for v3.
+
+Thanks,
+Luca
+
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
