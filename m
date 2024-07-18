@@ -1,126 +1,108 @@
-Return-Path: <linux-kernel+bounces-256689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BAD89351F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 20:58:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C19549351FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 21:02:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96C2A1C20E8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:58:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45ECAB2171B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED5C13BAD7;
-	Thu, 18 Jul 2024 18:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8265E145A15;
+	Thu, 18 Jul 2024 19:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="zIKoa500"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.135])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="H+90Uuoh"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA921B86FD;
-	Thu, 18 Jul 2024 18:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9995A64A8F;
+	Thu, 18 Jul 2024 19:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721329078; cv=none; b=JxuT1JvPwXTVsouuvx/FHmO5AX+CJJEgRFvRq3z2/hHr5begpBLlplvCNJalDXz4SkWu7jRz1fWwiua0nRj8Q8sEKiX72cILCqCKExLd6tJUbt7JmYlkpIkRP4kE13IW7wXLwR/lpKuBarx0qUfbTsDqaS6lBblK2qQEoyBi9DA=
+	t=1721329321; cv=none; b=sonGz+9lSNWincTG+Ip9gkgxdVe4D9IG/HlYrD8P0VcIer2bGq/yr0jbrYE28dlUQ9SLu6NXxvWAEGq6i84IHXaYPKzUyjMMnv9sI067J++nyu/eGKIcoBUuRludRab1nXWZ2Lur3ZcOX5ltGiOA9YvX/GWvhW5rh0Wkkn5tnbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721329078; c=relaxed/simple;
-	bh=jWIr2p9q+APTlA02P8awT/Hq1xwOmy8iyNMZDtQywyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qH7/zya+JPHxwCWQI0v8/7hggXv+FFcbI3/KzTukAax/1cc9i3nR4ub0v8zmEXGQitDwa6Xclz8cXMWDo0+MLoH12kMKarVJx6UY0ImDkYcUxehRYCB9CAiM2bopPBs+CRCydqT7WHS9XE/8e81NZsEHU3orfCw2hdtQt0FSgSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=zIKoa500; arc=none smtp.client-ip=212.227.126.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1721329028; x=1721933828; i=christian@heusel.eu;
-	bh=pasceRveCFkn1+I2qnzr9ZEiAmtkorF811Ry/SVshWg=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=zIKoa500aTr9p0u74sywlwEhn+cUQHubQk0tZqFZmLV9dR4HaM7q4AbZkLAsQOrU
-	 Uf8bq7wxipUnbDVkpuPGZLEcCg7lHIuPDwRaFL8sxt5ETrwTLU+EaDqTz1aPcZQto
-	 SFNVIqwKYxhCL8V16zT5M1Rk8+8g7UsE4OKm5+64WiIb1RTi/k88UKg5C2rQkTiS2
-	 MkKfckUpO7aIK1u8QYMiZdBE8xNBihChLS133dy5nevyz0gleWrpJcNBCOuoZKzip
-	 u43te/iGVjuvbX2KiStWbNMAy2ZCcxR7nebMK1RlzrfDGrzB5eaTu0n0ST+FJtRbj
-	 jC/mKqxHVFp2/bQOxA==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([147.142.158.42]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MZkxj-1srnyF091L-00J2Qy; Thu, 18 Jul 2024 20:57:08 +0200
-Date: Thu, 18 Jul 2024 20:57:05 +0200
-From: Christian Heusel <christian@heusel.eu>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
-	allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.9 000/142] 6.9.10-rc2 review
-Message-ID: <90470268-4e53-4667-8102-38f1059d8e25@heusel.eu>
-References: <20240717063806.741977243@linuxfoundation.org>
+	s=arc-20240116; t=1721329321; c=relaxed/simple;
+	bh=rBrqNlGHoyqxTj5lItqIEBVy+ITa0UoIHmj5CeHTN2k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U2TiaUrw6hvdiDru+GjaWeYhGPp42mZ1gHrh8SeiBJBPsmbaS83mp0ckZUc9i5lPQy/YbM3aGbicEGMTsIkRaafABEnv67iZiLH1VTrPWi6HbG6aXII0gMZc4EObBn96qa8zJbsUU5dqfvOPDSlCBJFubcDVn1l/xwwVqfCKpZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=H+90Uuoh reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id eb960682e024e54f; Thu, 18 Jul 2024 21:01:57 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 03E176A1D1C;
+	Thu, 18 Jul 2024 21:01:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1721329317;
+	bh=rBrqNlGHoyqxTj5lItqIEBVy+ITa0UoIHmj5CeHTN2k=;
+	h=From:To:Cc:Subject:Date;
+	b=H+90UuohrdZ777vYD8zVF2BFoFMQtxsNPhqfQDuq4AtmE6e2AEKjKM+lQtHS1tZdd
+	 y+jH5uM4/K/MwVlJ+XWRzyTbB+v1m8tKdZEhFCiN0JohzfMv3x2OuXC69U7ZM+lI3N
+	 1kY/sPVWHnpDm2aBwileWxA3wpGkVwagy7KCsQwmA8RjHniZ+4dlxj+jpJLzE6BgI/
+	 fX7ByXfJt4AI/CWf0cUj4NKwcJPTL6pLnfE+60r969EctuOb27F/fQaNdPAzErVciB
+	 Lomm0gSu2N1+0PmMpRhn3x51PtzUqw9C2pBRMmKp+PWfa0/wlmNW5eO8yts187TP7N
+	 CadHUKeFpIi5Q==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Subject:
+ [PATCH v1 0/2] thermal: core: Handle failed temperature checks more carefully
+Date: Thu, 18 Jul 2024 20:57:28 +0200
+Message-ID: <2348857.ElGaqSPkdT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="vqaie2gfvhvbkzao"
-Content-Disposition: inline
-In-Reply-To: <20240717063806.741977243@linuxfoundation.org>
-X-Provags-ID: V03:K1:dwWZqQh0pX0cFK40QZ2IgXmiV1UEQ26AvCed0edPxDRa3f2IwcR
- xlRD3lxXm9uKHdW5IDl+xSs15jUXlNhKtTBdK1nE4yNnXLMgg6NekVoSOx2zXLBpVhHeNg1
- pXXeSy/C4inXHfafDjh93Y1BGFmL536eH62dDS/RbjQ6ZIfSrArJSumZx0wzIWuqGSwkJM1
- AFyui8I6Pg1io0RJI7lKQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:LPailIGziT8=;DsTel/T6L9rSZYSat8vc4pz+Hfo
- wfbXeaiTqWoSr+hlf67IVLETYSKRWNft1UgJ9SigAnFPDzHH15xUfIkAe/XV/G+UOAgxySgOP
- 6r58waa8HA+/MEgcMkLbC5etDX1sgvBA/L/w1jrz6CXvTmSuSykUiACJ4vAkQ8QUH86SBlOT2
- avPyy/i2Y522M4mqp9pb9bMoCF70McSVNJyPu2K8UR9uya5HuvmaaEFlC8QO0LvYabmAH6fr+
- 3pRNf7+5pO1Ns+xnKMbhKPyQ7KMBOHG+lqW6Z80qnVxsp7+vY7+9gLgz6I5SWPBINS/JTum+N
- IBrPYErTxaa6P4MxE+/yaoTQvakLVccwGIT9oN2/8GESkCHJYiAL85HVdXi0zbDTgsb3b7Qp2
- 7fGLS21pJilUqdJ5WUunY9h3oB/rgcPcsHU6gQ/hTzXjK5W79IcImwhJeHzmNlSReU0eh5esg
- yYOmY70GINdcXvSKaA3KJoTU5jh3Hzv6F4x3kGW1HXo2qlStbzxdnWVXChPpqtZ0H5QqnFjaR
- KDDq5doYDCaiZrxp5N13l9uVHrJQeEHGHapOBr0XlM4FfejWaXfszKFiFLQnZv4oWzf6snsXG
- VsSS/K8Xnh06oUXm76qxPG731LqDoMAy1MvncWqtsTcjAe/4NdBePJ6wy+gv9+VUAxPWj9tz1
- A6V7xb0I74k8/Ih5o7msoB6RMvcdKfQDiXXETMQpr1Oen9ms+tGuFUEUTBZAOVezOo6dpn/ta
- H2Q9tAnBD4L5LoY4pcOcNMbSTUPFoDORw==
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrgeelgddufeduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepgeffhfdujeelhfdtgeffkeetudfhtefhhfeiteethfekvefgvdfgfeeikeeigfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeehpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgr
+ rhhordhorhhgpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrgh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
+
+Hi Everyone,
+
+This series kind of augments
+
+https://lore.kernel.org/linux-pm/4950004.31r3eYUQgx@rjwysocki.net/
+
+so I'm considering adding it to 6.11.
+
+The problem with handing temperature check errors in __thermal_zone_device_update()
+after the above is that if someone has a dead thermal zone returning such errors
+continuously lurking somewhere in their system, they will get a flood of
+"temperature check failed" messages in the log which will be reported as a
+regression.  Rightfully, because these messages render the kernel log
+practically unusable and the continuous and useless polling of such a thermal
+zone may even prevent the system from entering deep idle states.  Clearly,
+something needs to be done about this.
+
+One possible approach might be to simply disable the thermal zone in question
+after the first error (that is not -EAGAIN) returned by its .get_temp()
+callback, but that cannot be done because there are thermal zones in which
+.get_temp() returns errors to start with, but they recover later, and they
+need to be taken into account.
+
+So the only other alternative that is not overly complicated is to add a
+back-off mechanism to the polling, so the thermal zone has a chance to recover,
+but the core will not wait for that forever.  At one point it will just disable
+the thermal zone and let user space re-enable it if that's regarded as a good
+idea.  This is done in the second patch and the first patch is preparatory.
+
+Thanks!
 
 
---vqaie2gfvhvbkzao
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On 24/07/17 08:40AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.9.10 release.
-> There are 142 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-Tested-by: Christian Heusel <christian@heusel.eu>
-
-Tested on a ThinkPad E14 Gen 3 with a AMD Ryzen 5 5500U CPU
-
---vqaie2gfvhvbkzao
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmaZZYAACgkQwEfU8yi1
-JYVBBBAA4Ek4o84UKsxwDAEL4G6nWV7sEPqbJ/BOCyZGkyPYlzADhkqnorNsTbSl
-Sy7wyAfspvanYFcLFRGQK282YpobNA80zY9m/nPr4JdHVsBzaMq04w+79+0UezDN
-l0IB4BAaY3DgvgNJZ9vY09eIY0sIUTPcuuw7d299FsHYeyRnCj+6Rw2PrgqvTr0L
-pLXW42MiRaMBW2LcP7mOQIkQwR4/NJw8SoKjpnhkyjVyakZ74jT4//HPodvD58xV
-8n2PqqNFMqNyVvhAGSXltTPksyJz9pA6kR6H2SOylU68LQWt65k2Q0iJsbceVYtB
-eRzuiDJixFEty775J0J2abyPNNCwvWYiMYYlARUjy6Q+kfsGmCnVuCX8nQJqbO9i
-jy5pE2A8b68EPL6SORLjC6o00wOEcvr2U1GFsiJ/Vg3M1gBkT/W6vgw6DVqCXatq
-TqZ/SfsFIRpcHYhCzY+5HotbKAyMouNbihk7kf7c1e3NJpoyvxsEsAyQLQusup5o
-91Je++yQWE0elpJpWDByRZkKIrtnAgumfX4MVUe68o6dhtvCD1CvH89q7obRmnJP
-3qVBmuKKHHZqJ4HwMJhZh7Hl+uikfIfCGYGq1jMPFRQ6Bvqv5vQynFA9aqaJHoEg
-dwQN2Ee/aOeIFrt5ltBF2C7XYIbX7sIHxCY0dR9zDJ+S6oenAK4=
-=k7Hx
------END PGP SIGNATURE-----
-
---vqaie2gfvhvbkzao--
 
