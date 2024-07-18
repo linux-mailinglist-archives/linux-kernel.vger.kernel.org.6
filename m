@@ -1,112 +1,152 @@
-Return-Path: <linux-kernel+bounces-256109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2124934910
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:42:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E04A934925
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:44:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 690C61F250E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:42:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F53B1C219F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC12677114;
-	Thu, 18 Jul 2024 07:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF81382499;
+	Thu, 18 Jul 2024 07:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZuH3d+J7"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qlc7f3py"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20E9770E1
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 07:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98148172A;
+	Thu, 18 Jul 2024 07:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721288553; cv=none; b=AJhY5ZJWbyvtwKs66WesinNPIp6uy0/tn1dq0KOTow5ilT6wWyd6LowVoY3g06t+KuX4nKdtwhWcc2MPeBvK9iZg4X/2VqWrxxqMo2ccBxOMpJ7okodLpWgrJRM6Mb9pGoGSNo4NmPJQnB/6a9vPEFJ7nnAfhIplL5OVXIZX4mY=
+	t=1721288582; cv=none; b=lQj6HnYghdP9EGFA/qIVseZwgPS3YbU9FG4EoXGF/qWxeS7evFrB40niHgLfk5iKdBJMvjB4MnWrvd04UIahw4iooGwo4Gqw+hGt6qsuTTz2ulGkZk2lLz9ulYnSg8eyRDOq4KCTtApdKAWJicAItkU55MzzFfBf2vVGsntmwgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721288553; c=relaxed/simple;
-	bh=crZJmCqK87jwljEupGaNu7UvUqSuBB8l1HzWelVei2Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fy4dxLxeoHj0/XCCc5Q3E8J/Ipu7uOBzQIfQGvkg2P/hrHbpGdmImfVFKsAbl6v1PkXHsyjuUnjKmhD3d3xORI8dtm5ynwrjACtzz4j2qZ2G5dLxEh37/gP4L2DYuFZA0qMY25d5bWATTNAbWMw0YeVCzdOg8hMV1/U23+JN8EE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZuH3d+J7; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a77e392f59fso47054066b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 00:42:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721288549; x=1721893349; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZX287HaqyP7vcUJ0qc5XZL5lWkyJafdbelVz1ASHFps=;
-        b=ZuH3d+J71ypVm9H3vUvAZmuqdbwzkhBoNmVfnf8te1EuU6oJog8Zy2aNbi9S7QOUe+
-         uXXDXEDNIwbPLPA+plv1MNiNWXO5IiOICBiOsCZLaHsWoTWSupHvX4A0N4Y/KHwnG/kf
-         k6EHsXyuHWmk8ur/gEqVfpXMqFAuiUnSpPCfPNK8aWxW1jBIZ7+wII9B9PB+yV90R7a4
-         x8wqkYHGUqUA3+UP8dlXSHcxFdcNvs+RxrPlwf+6A3q0Ggccec3jCUSXf8dXlG+ALgbu
-         k29lh3C3evrEhfD5Yd7Mb6onXIi69JlAUOO/wCVkXfp9yzWNnPAb9AIvCZprvEXwo75g
-         rt1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721288549; x=1721893349;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZX287HaqyP7vcUJ0qc5XZL5lWkyJafdbelVz1ASHFps=;
-        b=xUQNS5vb+k9hyuBOray+zTEffE5Z3Tm4FryeA12GUhrHDHkLUsoF69JFnCe7Bjt3Iu
-         l2qlj+dDHQEUt7Wehmul1OaWOVkcslzkw47WP47/VM5zdPq5n2rHHmHR0RlfzJ62Zbqd
-         PtsmP3qoWWlr9ezYoyNr8e6kzj5wLRehcN6YMS8Tu2qayOusOCuhkeejlC0ELZy/G8M8
-         8MPt+0+KN+pRQzRws/cIcFUcP6Qs/J0ELGrFCKFnt7nLovd2z0CN66XOQ8WiIT88laH3
-         zwRODFWg6tMzGPU+vbHWzuPMPDGJiAIujLUKifGws3y5FxnzDgEJKvnfNossuxFaJOi6
-         slNA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkykM71cRe84GajkWekOYp3iUHm22uTVui+wm5C+t4HRqSNiN+I68f1antMUCZKJBzSOVsdjO9IekFMPpqF8/oqKXf8DNZpNlyDrWd
-X-Gm-Message-State: AOJu0Ywj0wayr+TjsNdj23+VrZ/Qca+E0hzW0IRXyy9KwmzhkbM+LR+c
-	y8FITJO2p+T5erWdRXO54wKNExl/eRa6eFMnlBPlcaRXvR2rc8rq+nW0CY6TL88=
-X-Google-Smtp-Source: AGHT+IEWjQawmcXV1ywfjT5eUOoTbnv2DLE4PcXWO7RcnvTtWMyUSEg1A/4wLFF5qysl0PAozkvpcg==
-X-Received: by 2002:a17:906:408b:b0:a72:4b31:13b5 with SMTP id a640c23a62f3a-a7a0130ce00mr266533066b.54.1721288549115;
-        Thu, 18 Jul 2024 00:42:29 -0700 (PDT)
-Received: from ?IPV6:2a02:8109:aa0d:be00::7424? ([2a02:8109:aa0d:be00::7424])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5b8366sm521156466b.61.2024.07.18.00.42.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jul 2024 00:42:28 -0700 (PDT)
-Message-ID: <1c5b3f7f-95b6-4efb-aa16-11571b87c6c6@linaro.org>
-Date: Thu, 18 Jul 2024 09:42:27 +0200
+	s=arc-20240116; t=1721288582; c=relaxed/simple;
+	bh=dgY9ctGV63+aAMBJiulUPmmgfSVxqHOrq8GV4P/WcKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iAE4sHgSR4sPux4gwHg5q+Vwv6e6kl/wRZqTidX0fA6kP0c1Wqv2C2XPJXaMHSKPVq2bZ3ApUyhWoYFfhjyYucm0bIHlZtXOiV3Q/+KFdVTOOuQCgFCYiWcGh2SjAIHqSytBwpmqrB399Q1ugE5eZE6p0N/ZjdxmbPP9jTIYWBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qlc7f3py; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EDC0C4AF0E;
+	Thu, 18 Jul 2024 07:42:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721288581;
+	bh=dgY9ctGV63+aAMBJiulUPmmgfSVxqHOrq8GV4P/WcKg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qlc7f3pywX2T3z+k8tNSelThsx9gTS/JkX6ybGOvxdsLBaeMzg1vviSITC/cPbfRo
+	 uol0Cy3qGlMJtaQZD486BapAKuDfKcTCCR89KX82W5aqWBPtO2KzIr389OHi+lNmVG
+	 8em/6AWe++FaW9ObWLGCbwMX8QtdweY9AgY0PAPSDo00RW2E4PNNIrfzWzTtL4Aik3
+	 h7OcvgV3JslGLHuPmuoVgyL2fsFsnFBQ3clIOiE3kjSo1DxL27Ek+C8qrua52VuT2x
+	 wPj33f/2oggk12Xu1v6tsOCqRhJqNe8wmBRFcrcyAcgzvUHG2LP5gcqx3vOHCAIhea
+	 W2clBZ+7NICXA==
+Date: Thu, 18 Jul 2024 09:42:55 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jiri Kosina <jikos@kernel.org>, David Miller <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Mark Brown <broonie@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, Networking <netdev@vger.kernel.org>, 
+	Kui-Feng Lee <thinker.li@gmail.com>, Martin KaFai Lau <martin.lau@kernel.org>, 
+	linux-input@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the bpf-next tree
+Message-ID: <t4w4wdnnecux55skwvgnsp3z2jvaxhstvfgpr3ztgxogpxbxvq@irlwzwarbh7a>
+References: <ZnB9X1Jj6c04ufC0@sirena.org.uk>
+ <20240710091344.2f3f2029@canb.auug.org.au>
+ <20240718114916.7fab0442@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] soc: qcom: cmd-db: Map shared memory as WC, not WB
-To: Pavan Kondeti <quic_pkondeti@quicinc.com>,
- Maulik Shah <quic_mkshah@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, stephan@gerhold.net,
- swboyd@chromium.org, dianders@chromium.org, robdclark@gmail.com,
- nikita@trvn.ru, quic_eberman@quicinc.com, quic_lsrao@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Volodymyr Babchuk <Volodymyr_Babchuk@epam.com>, stable@vger.kernel.org
-References: <20240718-cmd_db_uncached-v2-1-f6cf53164c90@quicinc.com>
- <a49113a2-d7f8-4b77-81c7-22855809cee8@quicinc.com>
-Content-Language: en-US
-From: Caleb Connolly <caleb.connolly@linaro.org>
-In-Reply-To: <a49113a2-d7f8-4b77-81c7-22855809cee8@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240718114916.7fab0442@canb.auug.org.au>
 
-Hi Pavan,
+Hi Stephen,
 
+On Jul 18 2024, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Thanks Maulik for sharing the patch. It works as expected. Feel free to
-> use
-
-Can I ask how you're testing this?
-
-Kind regards,
+> On Wed, 10 Jul 2024 09:13:44 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > On Mon, 17 Jun 2024 19:15:59 +0100 Mark Brown <broonie@kernel.org> wrote:
+> > >
+> > > After merging the bpf-next tree, today's linux-next build (x86_64
+> > > allmodconfig) failed like this:
+> > > 
+> > > /tmp/next/build/drivers/hid/bpf/hid_bpf_struct_ops.c:280:16: error: initialization of 'int (*)(void *, struct bpf_link *)' from incompatible pointer type 'int (*)(void *)' [-Werror=incompatible-pointer-types]
+> > >   280 |         .reg = hid_bpf_reg,
+> > >       |                ^~~~~~~~~~~
+> > > /tmp/next/build/drivers/hid/bpf/hid_bpf_struct_ops.c:280:16: note: (near initialization for 'bpf_hid_bpf_ops.reg')
+> > > /tmp/next/build/drivers/hid/bpf/hid_bpf_struct_ops.c:281:18: error: initialization of 'void (*)(void *, struct bpf_link *)' from incompatible pointer type 'void (*)(void *)' [-Werror=incompatible-pointer-types]
+> > >   281 |         .unreg = hid_bpf_unreg,
+> > >       |                  ^~~~~~~~~~~~~
+> > > /tmp/next/build/drivers/hid/bpf/hid_bpf_struct_ops.c:281:18: note: (near initialization for 'bpf_hid_bpf_ops.unreg')
+> > > 
+> > > Caused by commit
+> > > 
+> > >   73287fe228721b ("bpf: pass bpf_struct_ops_link to callbacks in bpf_struct_ops.")
+> > > 
+> > > interacting with commit
+> > > 
+> > >   ebc0d8093e8c97 ("HID: bpf: implement HID-BPF through bpf_struct_ops")
+> > > 
+> > > from the HID tree.
+> > > 
+> > > I've fixed it up as below:
+> > > 
+> > > From e8aeaba00440845f9bd8d6183ca5d7383a678cd3 Mon Sep 17 00:00:00 2001
+> > > From: Mark Brown <broonie@kernel.org>
+> > > Date: Mon, 17 Jun 2024 19:02:27 +0100
+> > > Subject: [PATCH] HID: bpf: Fix up build
+> > > 
+> > > Fix up build error due to 73287fe228721b ("bpf: pass bpf_struct_ops_link to callbacks in bpf_struct_ops.")
+> > > 
+> > > Signed-off-by: Mark Brown <broonie@kernel.org>
+> > > ---
+> > >  drivers/hid/bpf/hid_bpf_struct_ops.c | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/hid/bpf/hid_bpf_struct_ops.c b/drivers/hid/bpf/hid_bpf_struct_ops.c
+> > > index 5f200557ff12b..744318e7d936b 100644
+> > > --- a/drivers/hid/bpf/hid_bpf_struct_ops.c
+> > > +++ b/drivers/hid/bpf/hid_bpf_struct_ops.c
+> > > @@ -175,7 +175,7 @@ static int hid_bpf_ops_init_member(const struct btf_type *t,
+> > >  	return 0;
+> > >  }
+> > >  
+> > > -static int hid_bpf_reg(void *kdata)
+> > > +static int hid_bpf_reg(void *kdata, struct bpf_link *link)
+> > >  {
+> > >  	struct hid_bpf_ops *ops = kdata;
+> > >  	struct hid_device *hdev;
+> > > @@ -229,7 +229,7 @@ static int hid_bpf_reg(void *kdata)
+> > >  	return err;
+> > >  }
+> > >  
+> > > -static void hid_bpf_unreg(void *kdata)
+> > > +static void hid_bpf_unreg(void *kdata, struct bpf_link *link)
+> > >  {
+> > >  	struct hid_bpf_ops *ops = kdata;
+> > >  	struct hid_device *hdev;
+> > > -- 
+> > > 2.39.2
+> > >   
+> > 
+> > This fixup is now required when the hid and next-next trees are merged.
 > 
-> Tested-by: Pavankumar Kondeti <quic_pkondeti@quicinc.com>
+> And now this is needed when the hid tree is merged with Linus' tree.
 > 
-> Thanks,
-> Pavan
 
--- 
-// Caleb (they/them)
+Thanks a lot for all of your reminders.
+
+The HID PR has been accepted and merged thanks to both of your merge
+conflicts detection, Mark and you. So this conflict should no longer be a
+problem.
+
+Cheers,
+Benjamin
 
