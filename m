@@ -1,171 +1,328 @@
-Return-Path: <linux-kernel+bounces-256471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 618F8934F09
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:22:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54323934F10
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:25:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6567B20BA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:22:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D70881F22046
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04A9140E30;
-	Thu, 18 Jul 2024 14:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8689C1422BC;
+	Thu, 18 Jul 2024 14:24:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="gntoFL0+"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="a2pzK2hw"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E26CDDB8;
-	Thu, 18 Jul 2024 14:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7380513E8AE;
+	Thu, 18 Jul 2024 14:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721312523; cv=none; b=Be8yc5Tv+Q1tYxlKn25UPslSUtT+Q6bjJyy9kMhpukYSOaBsOgb12H4eyQ33aoGX12hirCVaKCl3Bdtnr0BP6qA+GNlP8/6CLx7X2CS77Mn62VoLnpn/1m3Fk+T6WNCloizpLctoR5YnL2zlDVjZM2uKROrRg4BM4iHefyOllOw=
+	t=1721312692; cv=none; b=E4qt1gdtziVm0jR2etL/hermmUCabCxgdWYjj17m+A3Q+Y7kLHyuOQXc4syY/inWBK/RC4HkSaMGgU4YVfO7VWdNaEMidiCI8WVts4jD629CugodvB6+S5T4b5RqdCuWl2Dakh7JLrRX5Z7etlQiqt21yVdUuVOuCGjtEp1z7Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721312523; c=relaxed/simple;
-	bh=6Awzt8JGBUCfQi3+vkxjv14KSnCTjlN2BZqHQGDoIxA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OEeJtySEwpUvb0qS+X90jKtza+Zv47F97ZCkI0OI47nAeIpZMluenPAQ7Bu7dslJEJov9LK8Q+ZOyrcrRfAtdwzIX/H6BrOW9JJ1fFSEHh8hpOCNoQ9NH559Yrt11GdficWGfkUEiMztZnpT7T94fjpXHd42oeHuCloJoZbpr+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=gntoFL0+; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
-Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 049A2100023;
-	Thu, 18 Jul 2024 17:21:49 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 049A2100023
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1721312509;
-	bh=hv9yQJjhlaFavYGxLanR/jVIoSKLN0ySNfyS5FHaCQk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=gntoFL0+4pb9iNHyZVdyAuF8qCor5uemLXT6B+t56M67fAySsNPyvsuIBc3jh5DoW
-	 0JNDFZsQIn97aB0sHHcNziJSwHxwuVcSB8uLddEdePbO+EWmp4/HqiJyQ82qFs7YV9
-	 JZfBuyfMxwOAFIYtDh5x2RPBKsZ9j/INfCN70bI+IRJguoKroYGqHn2qzjJREJr2H1
-	 lXu2WSaoJkONNTFyQXmcA/Kvh9qRSwLSUynLczb8xypGHy9ZU7Q97xSYlu0HvN5Kcd
-	 iNoKqd4dirhYI65hmGCAKLjRDGqb65m1c0gKhvTgjHShflY/Xdd4OgWi/1oTdSlNsN
-	 FJF9FHs9t9vOw==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Thu, 18 Jul 2024 17:21:48 +0300 (MSK)
-Received: from [172.28.192.11] (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Thu, 18 Jul 2024 17:21:48 +0300
-Message-ID: <07b4e6b9-7448-45fb-b5a0-d069addb5dc2@salutedevices.com>
-Date: Thu, 18 Jul 2024 17:20:32 +0300
+	s=arc-20240116; t=1721312692; c=relaxed/simple;
+	bh=O7FXaGBiWPqHzYeOnlM/8Rm+nQSt/ekJVBYqHT0mREk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T7gIzWLE4S/GaXClyq6O+2RRTONY6cLrWbitDuuq2K/3pf0D224dXW7lg5WEJZvtMZh+vFkwvG7ii/Pqis4xRqle8RB2PonWzFSpgN3af56j8o3wUrnLXksED1uxo1WuBsMeVJqxTqbNqlnRR1TBu/fyNZPo2dCUSRNKx+BlB2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=a2pzK2hw; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (mob-5-91-158-41.net.vodafone.it [5.91.158.41])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DB22CC85;
+	Thu, 18 Jul 2024 16:24:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1721312643;
+	bh=O7FXaGBiWPqHzYeOnlM/8Rm+nQSt/ekJVBYqHT0mREk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a2pzK2hw1lawaibwPlDda1KMZQH3Dt5nXUKomWlaXzoJudKaSNNs+zX1Uu5TaE74a
+	 HD2aahemjnkgBAF+P4v73gfziA+zDIgq4GRoSwt7G0nA8PgOgPbcgcCjGneOsHUBWR
+	 eQj5/uQjpmcAJJfiVAOUyMZwZyHJetAsc/Falqtw=
+Date: Thu, 18 Jul 2024 16:24:37 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Maxime Ripard <mripard@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Jack Zhu <jack.zhu@starfivetech.com>, Keith Zhao <keith.zhao@starfivetech.com>, 
+	Jayshri Pawar <jpawar@cadence.com>, Jai Luthra <j-luthra@ti.com>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH v2 1/5] media: cadence: csi2rx: Support runtime PM
+Message-ID: <rpbe5ebzu7e536qrruseffklmtvfkp5bbenjtx7enipm6y5gbr@wsjvomihwmv6>
+References: <20240718032834.53876-1-changhuang.liang@starfivetech.com>
+ <20240718032834.53876-2-changhuang.liang@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/9] reset: amlogic: move audio reset drivers out of
- CCF
-To: Jerome Brunet <jbrunet@baylibre.com>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>, Neil Armstrong
-	<neil.armstrong@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>
-References: <20240718095755.3511992-1-jbrunet@baylibre.com>
-Content-Language: en-US
-From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-In-Reply-To: <20240718095755.3511992-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186588 [Jul 18 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_smtp_not_equal_from}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/07/18 08:50:00
-X-KSMG-LinksScanning: Clean, bases: 2024/07/18 08:50:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/18 08:29:00 #26061289
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240718032834.53876-2-changhuang.liang@starfivetech.com>
 
-In previous series there was a patch "[PATCH 8/8] clk: amlogic:
-axg-audio: use the auxiliary reset driver", but I don't see it here. Did
-you removed it, or I missed something?
+Hello Changhuang
 
+On Wed, Jul 17, 2024 at 08:28:30PM GMT, Changhuang Liang wrote:
+> Use runtime power management hooks to save power when CSI-RX is not in
+> use.
+>
 
-On 7/18/24 12:57, Jerome Brunet wrote:
-> This patchset follows the discussion about having reset driver in the
-> clock tree [1]. Ideally those should reside in the reset part of tree.
-> 
-> Also the code of the amlogic reset driver is very similar between the 2
-> trees and could use the same driver code.
-> 
-> This patcheset alignes the reset drivers present in the reset and clock
-> then adds support for the reset driver of audio clock controller found in
-> the  g12 and sm1 SoC family to the reset tree, using the auxiliary bus.
-> 
-> The infrastructure put in place is meant to be generic enough so we may
-> eventually also move the reset drivers in the meson8b and aoclk clock
-> controllers.
-> 
-> Changes since v1 [3]:
->  * Fixes formatting errors reported by Stephen.
->  * Changed parameters type to unsigned
->  * Fix usage of ops passed as parameters, previously ignored.
->  * Return 0 instead of an error if reset support is absent
->    to properly decouple from the clock and have a weak
->    dependency
->  * Split the platform and auxiliary modules in 2 distinct modules
->    to fix the COMPILE_TEST error reported by ktest robot.
-> 
-> Change since RFC [2]:
->  * Move the aux registration helper out of clock too.
-> 
-> [1] https://lore.kernel.org/linux-clk/e3a85852b911fdf16dd9ae158f42b3ef.sboyd@kernel.org
-> [2] https://lore.kernel.org/linux-clk/20240516150842.705844-1-jbrunet@baylibre.com
-> [3] https://lore.kernel.org/linux-clk/20240710162526.2341399-1-jbrunet@baylibre.com
-> 
-> Jerome Brunet (9):
->   reset: amlogic: convert driver to regmap
->   reset: amlogic: use generic data matching function
->   reset: amlogic: make parameters unsigned
->   reset: amlogic: add driver parameters
->   reset: amlogic: use reset number instead of register count
->   reset: amlogic: add reset status support
->   reset: amlogic: move drivers to a dedicated directory
->   reset: amlogic: split the device core and platform probe
->   reset: amlogic: add auxiliary reset driver support
-> 
->  drivers/reset/Kconfig                         |  15 +-
->  drivers/reset/Makefile                        |   3 +-
->  drivers/reset/amlogic/Kconfig                 |  27 ++++
->  drivers/reset/amlogic/Makefile                |   4 +
->  .../{ => amlogic}/reset-meson-audio-arb.c     |   0
->  drivers/reset/amlogic/reset-meson-aux.c       | 136 ++++++++++++++++
->  drivers/reset/amlogic/reset-meson-core.c      | 140 ++++++++++++++++
->  drivers/reset/amlogic/reset-meson-pltf.c      |  95 +++++++++++
->  drivers/reset/amlogic/reset-meson.h           |  28 ++++
->  drivers/reset/reset-meson.c                   | 153 ------------------
->  include/soc/amlogic/meson-auxiliary-reset.h   |  23 +++
->  11 files changed, 455 insertions(+), 169 deletions(-)
->  create mode 100644 drivers/reset/amlogic/Kconfig
->  create mode 100644 drivers/reset/amlogic/Makefile
->  rename drivers/reset/{ => amlogic}/reset-meson-audio-arb.c (100%)
->  create mode 100644 drivers/reset/amlogic/reset-meson-aux.c
->  create mode 100644 drivers/reset/amlogic/reset-meson-core.c
->  create mode 100644 drivers/reset/amlogic/reset-meson-pltf.c
->  create mode 100644 drivers/reset/amlogic/reset-meson.h
->  delete mode 100644 drivers/reset/reset-meson.c
->  create mode 100644 include/soc/amlogic/meson-auxiliary-reset.h
-> 
+The driver does not depend on PM afaict and the IP can be integrated in
+different SoCs and not all of them might select PM.
 
--- 
-Best regards
-Jan Dakinevich
+Either make it depend on PM in Kconfig or manually enable the device during
+probe (see the many examples of drivers manually enabling the device
+in probe() then calling pm_runtime_set_active(), pm_runtime_enable()
+and pm_request_idle()).
+
+Also, you might want to consider autosuspend delay. Autosuspend delay
+avoids power cycling the interface by delaying suspend by a certain
+amout of time, in case it resumed immediately.
+
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+> ---
+>  drivers/media/platform/cadence/cdns-csi2rx.c | 121 ++++++++++++-------
+>  1 file changed, 80 insertions(+), 41 deletions(-)
+>
+> diff --git a/drivers/media/platform/cadence/cdns-csi2rx.c b/drivers/media/platform/cadence/cdns-csi2rx.c
+> index 6f7d27a48eff..981819adbb3a 100644
+> --- a/drivers/media/platform/cadence/cdns-csi2rx.c
+> +++ b/drivers/media/platform/cadence/cdns-csi2rx.c
+> @@ -211,11 +211,6 @@ static int csi2rx_start(struct csi2rx_priv *csi2rx)
+>  	u32 reg;
+>  	int ret;
+>
+> -	ret = clk_prepare_enable(csi2rx->p_clk);
+> -	if (ret)
+> -		return ret;
+> -
+> -	reset_control_deassert(csi2rx->p_rst);
+>  	csi2rx_reset(csi2rx);
+>
+>  	reg = csi2rx->num_lanes << 8;
+> @@ -253,7 +248,7 @@ static int csi2rx_start(struct csi2rx_priv *csi2rx)
+>  		if (ret) {
+>  			dev_err(csi2rx->dev,
+>  				"Failed to configure external DPHY: %d\n", ret);
+> -			goto err_disable_pclk;
+> +			return ret;
+>  		}
+>  	}
+>
+> @@ -268,11 +263,6 @@ static int csi2rx_start(struct csi2rx_priv *csi2rx)
+>  	 * hence the reference counting.
+>  	 */
+>  	for (i = 0; i < csi2rx->max_streams; i++) {
+> -		ret = clk_prepare_enable(csi2rx->pixel_clk[i]);
+> -		if (ret)
+> -			goto err_disable_pixclk;
+> -
+> -		reset_control_deassert(csi2rx->pixel_rst[i]);
+>
+>  		writel(CSI2RX_STREAM_CFG_FIFO_MODE_LARGE_BUF,
+>  		       csi2rx->base + CSI2RX_STREAM_CFG_REG(i));
+> @@ -288,34 +278,18 @@ static int csi2rx_start(struct csi2rx_priv *csi2rx)
+>  		       csi2rx->base + CSI2RX_STREAM_CTRL_REG(i));
+>  	}
+>
+> -	ret = clk_prepare_enable(csi2rx->sys_clk);
+> -	if (ret)
+> -		goto err_disable_pixclk;
+> -
+> -	reset_control_deassert(csi2rx->sys_rst);
+>
+>  	ret = v4l2_subdev_call(csi2rx->source_subdev, video, s_stream, true);
+>  	if (ret)
+> -		goto err_disable_sysclk;
+> -
+> -	clk_disable_unprepare(csi2rx->p_clk);
+> +		goto err_phy_power_off;
+>
+>  	return 0;
+>
+> -err_disable_sysclk:
+> -	clk_disable_unprepare(csi2rx->sys_clk);
+> -err_disable_pixclk:
+> -	for (; i > 0; i--) {
+> -		reset_control_assert(csi2rx->pixel_rst[i - 1]);
+> -		clk_disable_unprepare(csi2rx->pixel_clk[i - 1]);
+> -	}
+> -
+> +err_phy_power_off:
+>  	if (csi2rx->dphy) {
+>  		writel(0, csi2rx->base + CSI2RX_DPHY_LANE_CTRL_REG);
+>  		phy_power_off(csi2rx->dphy);
+>  	}
+> -err_disable_pclk:
+> -	clk_disable_unprepare(csi2rx->p_clk);
+>
+>  	return ret;
+>  }
+> @@ -326,10 +300,6 @@ static void csi2rx_stop(struct csi2rx_priv *csi2rx)
+>  	u32 val;
+>  	int ret;
+>
+> -	clk_prepare_enable(csi2rx->p_clk);
+> -	reset_control_assert(csi2rx->sys_rst);
+> -	clk_disable_unprepare(csi2rx->sys_clk);
+> -
+>  	for (i = 0; i < csi2rx->max_streams; i++) {
+>  		writel(CSI2RX_STREAM_CTRL_STOP,
+>  		       csi2rx->base + CSI2RX_STREAM_CTRL_REG(i));
+> @@ -342,14 +312,8 @@ static void csi2rx_stop(struct csi2rx_priv *csi2rx)
+>  		if (ret)
+>  			dev_warn(csi2rx->dev,
+>  				 "Failed to stop streaming on pad%u\n", i);
+> -
+> -		reset_control_assert(csi2rx->pixel_rst[i]);
+> -		clk_disable_unprepare(csi2rx->pixel_clk[i]);
+>  	}
+>
+> -	reset_control_assert(csi2rx->p_rst);
+> -	clk_disable_unprepare(csi2rx->p_clk);
+> -
+>  	if (v4l2_subdev_call(csi2rx->source_subdev, video, s_stream, false))
+>  		dev_warn(csi2rx->dev, "Couldn't disable our subdev\n");
+>
+> @@ -374,9 +338,15 @@ static int csi2rx_s_stream(struct v4l2_subdev *subdev, int enable)
+>  		 * enable the whole controller.
+>  		 */
+>  		if (!csi2rx->count) {
+> +			ret = pm_runtime_resume_and_get(csi2rx->dev);
+> +			if (ret < 0)
+> +				goto out;
+> +
+>  			ret = csi2rx_start(csi2rx);
+> -			if (ret)
+> +			if (ret) {
+> +				pm_runtime_put(csi2rx->dev);
+>  				goto out;
+> +			}
+>  		}
+>
+>  		csi2rx->count++;
+> @@ -386,8 +356,10 @@ static int csi2rx_s_stream(struct v4l2_subdev *subdev, int enable)
+>  		/*
+>  		 * Let the last user turn off the lights.
+>  		 */
+> -		if (!csi2rx->count)
+> +		if (!csi2rx->count) {
+>  			csi2rx_stop(csi2rx);
+> +			pm_runtime_put(csi2rx->dev);
+> +		}
+>  	}
+>
+>  out:
+> @@ -707,6 +679,7 @@ static int csi2rx_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto err_cleanup;
+>
+> +	pm_runtime_enable(csi2rx->dev);
+>  	ret = v4l2_async_register_subdev(&csi2rx->subdev);
+>  	if (ret < 0)
+>  		goto err_free_state;
+> @@ -721,6 +694,7 @@ static int csi2rx_probe(struct platform_device *pdev)
+>
+>  err_free_state:
+>  	v4l2_subdev_cleanup(&csi2rx->subdev);
+> +	pm_runtime_disable(csi2rx->dev);
+>  err_cleanup:
+>  	v4l2_async_nf_unregister(&csi2rx->notifier);
+>  	v4l2_async_nf_cleanup(&csi2rx->notifier);
+> @@ -739,9 +713,73 @@ static void csi2rx_remove(struct platform_device *pdev)
+>  	v4l2_async_unregister_subdev(&csi2rx->subdev);
+>  	v4l2_subdev_cleanup(&csi2rx->subdev);
+>  	media_entity_cleanup(&csi2rx->subdev.entity);
+> +	pm_runtime_disable(csi2rx->dev);
+>  	kfree(csi2rx);
+>  }
+>
+> +static int csi2rx_runtime_suspend(struct device *dev)
+> +{
+> +	struct csi2rx_priv *csi2rx = dev_get_drvdata(dev);
+> +	unsigned int i;
+> +
+> +	reset_control_assert(csi2rx->sys_rst);
+> +	clk_disable_unprepare(csi2rx->sys_clk);
+> +
+> +	for (i = 0; i < csi2rx->max_streams; i++) {
+> +		reset_control_assert(csi2rx->pixel_rst[i]);
+> +		clk_disable_unprepare(csi2rx->pixel_clk[i]);
+> +	}
+> +
+> +	reset_control_assert(csi2rx->p_rst);
+> +	clk_disable_unprepare(csi2rx->p_clk);
+> +
+> +	return 0;
+> +}
+> +
+> +static int csi2rx_runtime_resume(struct device *dev)
+> +{
+> +	struct csi2rx_priv *csi2rx = dev_get_drvdata(dev);
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	ret = clk_prepare_enable(csi2rx->p_clk);
+> +	if (ret)
+> +		return ret;
+> +
+> +	reset_control_deassert(csi2rx->p_rst);
+> +
+> +	for (i = 0; i < csi2rx->max_streams; i++) {
+> +		ret = clk_prepare_enable(csi2rx->pixel_clk[i]);
+> +		if (ret)
+> +			goto err_disable_pixclk;
+> +
+> +		reset_control_deassert(csi2rx->pixel_rst[i]);
+> +	}
+> +
+> +	ret = clk_prepare_enable(csi2rx->sys_clk);
+> +	if (ret)
+> +		goto err_disable_pixclk;
+> +
+> +	reset_control_deassert(csi2rx->sys_rst);
+> +
+> +	return ret;
+
+You can return 0 here
+
+Thanks
+   j
+
+> +
+> +err_disable_pixclk:
+> +	for (; i > 0; i--) {
+> +		reset_control_assert(csi2rx->pixel_rst[i - 1]);
+> +		clk_disable_unprepare(csi2rx->pixel_clk[i - 1]);
+> +	}
+> +
+> +	reset_control_assert(csi2rx->p_rst);
+> +	clk_disable_unprepare(csi2rx->p_clk);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct dev_pm_ops csi2rx_pm_ops = {
+> +	SET_RUNTIME_PM_OPS(csi2rx_runtime_suspend, csi2rx_runtime_resume, NULL)
+> +};
+> +
+>  static const struct of_device_id csi2rx_of_table[] = {
+>  	{ .compatible = "starfive,jh7110-csi2rx" },
+>  	{ .compatible = "cdns,csi2rx" },
+> @@ -756,6 +794,7 @@ static struct platform_driver csi2rx_driver = {
+>  	.driver	= {
+>  		.name		= "cdns-csi2rx",
+>  		.of_match_table	= csi2rx_of_table,
+> +		.pm		= &csi2rx_pm_ops,
+>  	},
+>  };
+>  module_platform_driver(csi2rx_driver);
+> --
+> 2.25.1
+>
+>
 
