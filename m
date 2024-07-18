@@ -1,201 +1,194 @@
-Return-Path: <linux-kernel+bounces-255921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 033AD9346AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 05:21:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEFEC9346AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 05:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8441F1F235DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:21:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 947D9282FA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173E329CFB;
-	Thu, 18 Jul 2024 03:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431AC2E419;
+	Thu, 18 Jul 2024 03:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="X5rBHllf"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2063.outbound.protection.outlook.com [40.107.237.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QD/CBKeb"
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA2E10FA
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 03:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721272874; cv=fail; b=ZYBaCfzmPuRRrqu4+H62MDw7+I0knFn18Bl/WsTyvt2b8CKeHUVT+csp21GCw2Vo7zchezayCivmqsb1humNIVqExih4dwF9s+BNIWWCy26KjG5KVvbNCai87aYdsJYoN6yiZrg/cmWdwGv4Awy8WXTXUCDNgbMJ1uudKozHf2s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721272874; c=relaxed/simple;
-	bh=gBvRfGg0EfvgTl8cS8I2pFYKvyRoSTb6tH4HobHADoU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=l/VYZ+n10v48iB9gUbV/s3fk3IIF65dIarzBHC6NvGPLpAm7X5Lkc/N0kWTMCN5k4lWASvuyNm19k6uGOk/w6qrzArKRYvrEWV3lSYG0Ds6h4LcwcYz8UCiXtcNHgvffyjIr+7V18Kig8m0E6DTy7fOC+NhQLGKb7dWZJHcRXuc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=X5rBHllf; arc=fail smtp.client-ip=40.107.237.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DzFM+yRL8jRh/NymK2gUoNU//lBIQErTwMeorWViSsPo2PNNe3Nl6mMqSLs/M1EIeyOtRJWWC5Ba5yGCNtQIf+zVf4gnnbnxFABwLPgN/WUrhhQ7VzkHioMHXRL6isZcDinTGsbrE6UCoB+eYY6gd+wLm9wKiblBOGWBOcCON1eBilbZwhcrqM5ZYYQNBb9utE0YKpJCB/4ppoiFYrtPjrB020jezMOOkqOQGyM+w8uQ4bpXLXacjApcW0YRP0LisbfyvT1KIryaT2CA3Ui6pqyseYkbpdhIV+F6yNIXaThoHzC+Y1CJdJg12g5mEvPpqL9LbGtTGghLtQ4/PcbIEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YvAXgzcYQOHpNBT+KafnPP4RaCG40cPJgVOUVEfy4Dc=;
- b=FRcq7/Vo17TbanXdj3XIJZXi5RCWM3qPfYbWR1kQiuoHxnTbFoThl+LVN8R4d19BsTvQ5xpQjBOwAqm7Cqu997beGt2VCkGYbwG3jBsl/aejPB4H3nneUjnr0DKuhkECSQaG6Zy5mD4N5xYZEjLxv+IWY1Jkdb32gXKAC5vGxG0DN5/0cnjkCvjU0nXEn6C6l/+LkFK04QwnVUkfynO6D5181LoFS90/YHXcjTJ0swZFl1ZQTlzOndeLnq2CFa7jm1FxnFZNu4GhSjOoavT7pp50X7ujVCx4qTO/sXSt4cNo9NwwOEVGEDQJ/5uU/xC0u4lfSfeOjhkhgxhL5hFAJQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YvAXgzcYQOHpNBT+KafnPP4RaCG40cPJgVOUVEfy4Dc=;
- b=X5rBHllf8VIdf40ECnrw0yXXMwBwk7vUjsfagSSr2WdvntPV8s4t+OHJ6DUfP6RmoCTGatXMkRO7pRAcfjEHA2z4Vptj3Nkl1fG8QPKOS3gc9Yo18sa4NSWvKYBXqkpxa97EAUhIAb1jeKubrZvHGQ0jfutCYIlThXZQRV8C5L0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM8PR12MB5445.namprd12.prod.outlook.com (2603:10b6:8:24::7) by
- SJ0PR12MB6758.namprd12.prod.outlook.com (2603:10b6:a03:44a::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.24; Thu, 18 Jul
- 2024 03:21:07 +0000
-Received: from DM8PR12MB5445.namprd12.prod.outlook.com
- ([fe80::a544:caf8:b505:5db6]) by DM8PR12MB5445.namprd12.prod.outlook.com
- ([fe80::a544:caf8:b505:5db6%5]) with mapi id 15.20.7784.016; Thu, 18 Jul 2024
- 03:21:07 +0000
-Message-ID: <ae7e415d-0e70-4d84-82e3-d6827f931565@amd.com>
-Date: Thu, 18 Jul 2024 10:20:59 +0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu/amd: Convert comma to semicolon
-Content-Language: en-US
-To: Chen Ni <nichen@iscas.ac.cn>, joro@8bytes.org, will@kernel.org,
- robin.murphy@arm.com
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240716072545.968690-1-nichen@iscas.ac.cn>
-From: "Suthikulpanit, Suravee" <suravee.suthikulpanit@amd.com>
-In-Reply-To: <20240716072545.968690-1-nichen@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI1PR02CA0042.apcprd02.prod.outlook.com
- (2603:1096:4:1f6::17) To DM8PR12MB5445.namprd12.prod.outlook.com
- (2603:10b6:8:24::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0817810FA;
+	Thu, 18 Jul 2024 03:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721272995; cv=none; b=En6amxG3XD8f+G+if74aLpR8jY1v0YAPgYTWZwXmR+TMfVdoE98HouXhX+jFOLaKOXGZvkapVt1WOh24+r2sWv1xUh+exG7Bgn3/qOpkd5M3VjVz5Yq/7F/jg3d5SPN1FXkMay4QayPAcUQInLeyB65FbqCGX1V3RcxGGq5DEvA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721272995; c=relaxed/simple;
+	bh=ocC1OTqw3T1wvfygr2ORlqKY0Usj/NrGbAVbjVYPmEc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ULygbqytyhRcqDQWVyYIFEXo13J3Mg0wZEfU3duc4yV2fV5sIvsziPwSMAO2nsQuFskENALfUATkK52UswVhBje678LO+88y4vo4yuYBpmikMzhXkIZmSwBHuOPVnOqBcV54dr3l4qrrnMu27apoRX5Ff593nIJ+cjMJ1G4A9d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QD/CBKeb; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5ce739c2650so160468eaf.1;
+        Wed, 17 Jul 2024 20:23:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721272993; x=1721877793; darn=vger.kernel.org;
+        h=content-transfer-encoding:fcc:content-language:user-agent
+         :mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wmKhCzrI7nozSPGCF6gnN66wwRZauYwlhxHfZZORJFc=;
+        b=QD/CBKeb80jsDVtxlgl0tVW9WPuwmQew4tx/ikpV8GRwz3rw0tycRpx7GVjrybrFib
+         8lcMKkUpqPtjwF03srlCIkGRSrIbnsvXGuUNe11WQ1LJAjxrrYSOus1eLoDKY2sVM3yj
+         vEjR01z/CfRKqE6SQ1INq9ZgHWUfNnOsrTNfAxxw7exu7/RNGzxweJ+hJJEqAVacscUh
+         IeNpZ0LA8I4JHfcWfC2Zvd44rnworybvawdlJ0LmRIrqMi1fgl3D63KhIpwAa+EOoBcN
+         QSWYmu9CJPxsUCrVAKahW7dMDBOIaVsFrNtPwP5GIdkuhEfoytXcHveqMeGknw/FYB43
+         xjZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721272993; x=1721877793;
+        h=content-transfer-encoding:fcc:content-language:user-agent
+         :mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wmKhCzrI7nozSPGCF6gnN66wwRZauYwlhxHfZZORJFc=;
+        b=nORbwsHSlA7ziVznCQLJOalac8jGtxKlDhTcc6DTxPs7vm9WFgufvNwxIyUU+k4mPO
+         eZTmIkJJ22/Q3MaiPndITfrbXaYgeI22Q+f4Feq788jq2UKNyemCVUZsDCS8/IXmbAel
+         JEkL5S+KH9yzV3BmQO/M8PlicXNX3aOC4u5ur8O+plh+JRSOVqPmcuhJ2iXNCIrIvWvV
+         kVACwe1eiDY1kp45qSuK6R61MHkjJJ6nlaqLJVIB4x0mZC9P1E9VSnQocy8TjDMRHjX+
+         eiGDZCztUb00/d8epWrImpjwxuAeiXGWRDQH6QcaCLHmil6UXMdCtRmTSwMSA2Tx3pXo
+         Qemw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQEOHyE74tVWrv2laN+kuZ+/9OUVPsbLpbrbJpeWp868hx6JO7lhYu2paoKdWKXOOumXlCb/mLMt8GSn7K/dgRR/TnjyLo9aC7ggHmYFO/rdf1EsutzDfJcw9cmdBAe6nsdT6UfciD
+X-Gm-Message-State: AOJu0Ywqji5ZrL+HQpq4VQzkZFClJS2lQsHh60xPlOvcZ2Lh5iUZI7hy
+	ZzV9oeHwdWLC8/xdEiqYYlMuTXsADGCUg1v0LapIvZLdF3RoAnN4
+X-Google-Smtp-Source: AGHT+IG/ulTlPDzfO2E4rJK0ztjEQZSnQyTBptuASu2KXhLvJ6IJ2s+Sef21KtMIdTTu03BpqcXpcg==
+X-Received: by 2002:a05:6870:55d4:b0:254:9501:db80 with SMTP id 586e51a60fabf-260ee7ccf3dmr1221481fac.14.1721272993010;
+        Wed, 17 Jul 2024 20:23:13 -0700 (PDT)
+Received: from js-pc.. ([116.162.132.209])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7eca7794sm9205580b3a.149.2024.07.17.20.23.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jul 2024 20:23:12 -0700 (PDT)
+From: Hongyu Xie <xy521521@gmail.com>
+To: stern@rowland.harvard.edu,
+	oneukum@suse.com,
+	xy521521@gmail.com
+Cc: gregkh@linuxfoundation.org,
+	brauner@kernel.org,
+	jlayton@kernel.org,
+	jack@suse.cz,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	xiehongyu1@kylinos.cn
+Subject: Re: [PATCH next] usb: usbfs: Add reset_resume for usbfs
+Date: Thu, 18 Jul 2024 11:23:02 +0800
+Message-Id: <987f97f4-293a-42f0-a9f5-9d67b6db2ce5@kylinos.cn>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <a648a2b3-026a-445c-8154-2da43b641570@suse.com>
+References: <20240711084321.44916-1-xiehongyu1@kylinos.cn>
+ <527927b8-9475-47da-bf2b-7a5d9e81e470@suse.com>
+ <9ef72886-13b8-46cf-a0aa-54dad36102e9@rowland.harvard.edu>
+ <2a80d11d-029f-4e7e-9a8e-3abae1034add@suse.com>
+ <429eb27a-578a-4208-8ce1-89434b8d739f@rowland.harvard.edu>
+ <3073c8ce-1923-4816-a442-41b4cc333af9@suse.com>
+ <6419a4e9-e084-4eb6-8376-9202930ea8be@kylinos.cn>
+ <a648a2b3-026a-445c-8154-2da43b641570@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR12MB5445:EE_|SJ0PR12MB6758:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9343b168-461a-4618-12fc-08dca6d8a965
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZElzQkI5UWo3R2RRV0h1V09NZHBRbUFNTDNaa3o4a2txRkJaTVhwS2I1d0Z5?=
- =?utf-8?B?YzltdHhmdGZKUWVnRktkRENqdWxkOU5odHVzbGtaSVVON3drNmY4SUlpaklB?=
- =?utf-8?B?cUpLNlZZcXRVenhKWTg2MFNMRXRmVUVXalg1V3VweVRWcFdrMHFPaC9WNXZl?=
- =?utf-8?B?TkZRa2R0MTU5NnBxOU1rQnVQS3M2RVp6b05TWTV6Q3RJNGh0amVPREU0T3Fa?=
- =?utf-8?B?OUF4eDF4WUVGVXpJck1lRXFwNnk4Z2VtTWd1WkVOck9lc3RSMzcyU2NldjVX?=
- =?utf-8?B?OUVjWEtucEh6L3ZpKzBHMkcvSFpnbVNhNmtxMWZzalNtMG05ekJXdFRwd1Fz?=
- =?utf-8?B?aUhIa2U0a1ZiKzlrY2tOa2FXWmJLMUp6S3NKUVZVRFBIeUw2Zm9yeWdGancr?=
- =?utf-8?B?aGNkSUx2bXlRWFFENUVJTmVucUk0WXRiQzJVNXp2aGorcUYxbDZ1OG11dG83?=
- =?utf-8?B?UXpkTGIvbTR5d25TdGE3RVJOYjJtMWhBVE5yMXlFTjRUS2R3SW1US3U3NDhI?=
- =?utf-8?B?SmtWY1B2N1pUV1ZWOHZ5eXdkMk9ucVUrK1pqRXJ5WXl4d0MxQm94TEZaRjVw?=
- =?utf-8?B?cXJ0L25nS2FLd2Z6QnQ1R1NiRnFTLzNFTEtyS0tRWlRqQllWT1l3SEh5QmZq?=
- =?utf-8?B?b1dRc2JQT0ZxT3F4OE00ZW12OUZieW1CV3BGQzFrZk9ibVdZOXRBeDVraS9s?=
- =?utf-8?B?dXAwQ3cwOXc1MHlQVGNaeEoybnM5TVQ3aXNGK20xbHF5U2QwUkZQRWZKSWVH?=
- =?utf-8?B?TXFWbUQ0MUZHUXZJY0phL0NhcG01VjlOYllpcjE3OFlaQXJvTjRDNTU5N2JZ?=
- =?utf-8?B?eVVuaUwwYnJQUGdzTmozUkE0eVNIVi91RDhFY1gwbCtSMUY3Mm45dXRoMUo5?=
- =?utf-8?B?RXovdE1VcjB3WmZsS2hLem9XbGxVM2tqckVKcUx2M3VxTWtHc3U5VG1mQnlU?=
- =?utf-8?B?VU1DaVBMWk5ieUdsNEZ6MTNUNkl1bGJYMXIxRlZGWlpvejdLUTlkTGhqWndC?=
- =?utf-8?B?QzkrRGloQTllRmYzRFdBQm9QWE9QT0d5bnFTdVJLVHdKZ2NRYlBKdVNTNlU0?=
- =?utf-8?B?R0RVUys3em16VGJVUlNzOXgyK1FiS040OHdiczROSVM2UVY0MTk2dVFOaXZV?=
- =?utf-8?B?d2RwdWp4eHoxT2FXdXpnTzlySjJqdFl1U3drYjhLaUx0bENHdGJBdktwZ0k2?=
- =?utf-8?B?bi95VnMxWFpNUXorc3N2WGg0WE1kSEJ2S1dHQ25mQnVWZ2c4YWxXbWFWT2Jh?=
- =?utf-8?B?LzVYK3hYem9wbi9rWmJLOVdRcXJvN1NvVkQ1ZzFqM3d3M2lIZzJqMndVQWg4?=
- =?utf-8?B?UTlZelBFRlJqcnZkYkkvbjg0L1ViM2pMdCtKUVpBb0xLSk5HMUpicVFPV01t?=
- =?utf-8?B?WUFjdzhBdDRWY1pHUFpMclI2WUNFbW5yZ3JZUmsyNDQzN3FVcFY3c29FVTk4?=
- =?utf-8?B?TW9WQlVsOUh5S3NzNmJHOXp0UFB3Tjk4Y0JQVWpWVVdnVm45QzM0REFuT1Vm?=
- =?utf-8?B?WmtLbUUwUjRyUjYvUzhPODBFQ2FyL2UxZDEraDdLWFQxd2UzQlk4Wk5lTEI1?=
- =?utf-8?B?SmNqYnE1VHpuU0ZaTHlsUVF0cVpQbUlua3RqbWp2aUhzOXNURmVqM0x3N09h?=
- =?utf-8?B?RFF3VkduT1hYdXRqaXpMRjU3bVQ0Ui9FV0dMbWRjZU9qYkpiRUhXRDhnK1M1?=
- =?utf-8?B?ejhDSzJVZUZJY3VSRnNjQzBaVDhNYmdYUGtlRnBlUDhXbDFJSStEYWJUZGkx?=
- =?utf-8?B?TnlMeFZuSGloa3UzTlhCWmQrNHNxeTRKQkVuUEowSXN6TExEVTJGWjZzT2M4?=
- =?utf-8?B?Tk9pUGdKaGY2QTYzeXArZz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5445.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TXFveHRZOU9WR0UvYUpqd1Jab01GbVdlSWI2N2V4ZlJ3YTNsL0I1MDFRWXVn?=
- =?utf-8?B?VG4xRFRMYjhBNGRUaVFieWRuaktyYWFCNzJBOFdpVERNTTM3ZDhiUzRwSWlD?=
- =?utf-8?B?Zy9rTVFTR2FWVHFvT1hLWmhBd3d1Ym4xemxoQlFCdHJLOWIzYnBBQTVUc2pR?=
- =?utf-8?B?Z2lkczF2cURjckgxOENOKzhubUwwa01BVUpCT1U1a3VxcFppOGZPQnU0UnND?=
- =?utf-8?B?YytHaTNwS1JPRXpMcFNNNTVlVEhkc3RUemt6SDhVNjlWeVlzeStnbDFrMnRt?=
- =?utf-8?B?ZTRWdTlzUmlQU3ZBM0t4Mjd2WjhuZnhlRFFMd29YUU5yOGplT2VGZEhINlk1?=
- =?utf-8?B?Qkt5SUJtK1RLWlVTRElTTVZUWkg5TVN1SUFRQk5pMDk0MWhBYWJNNEtYdy80?=
- =?utf-8?B?dlV4alc4SDhNQXNxbWdiRm5uMUEzMG5nYWc3ZW1RcThvdHNJd2Y1Q0xHa0d1?=
- =?utf-8?B?SENjTUp6U1BKR1JhZ1R1eFB1LzM1Vk5HbFlkNm5YVzJMN1pqNG5ENTF4RTZU?=
- =?utf-8?B?S2hLY1h5QjRBRkQyalo4YTFDZm9rdEZVVWRtaytaQzdva1hHV1ZtRll4Ni9S?=
- =?utf-8?B?QjEyYjhIWnYvUHdiY0VDSVVUcE84SmhEVjA1S1VlOHhWVjZrajZkREt6QzBa?=
- =?utf-8?B?a1I0cnZMZ1R0ZWYwbDN2OVZvMnh4b3FybDdVdWtKVzlqYWo1ejBqZ1RWdVda?=
- =?utf-8?B?SWZtcG55VHJseUlHcGZFRHJoQWYrblN4dTlROXIwczRIdGUvZDBwNDFqUDRQ?=
- =?utf-8?B?WDNoYlI2WjJKM0pHcWlFVEl3L2tuYXJZVkFMQ24rMjl0UFZNNDF2cTVoczM2?=
- =?utf-8?B?ZWRGWUp5Yy8xVDYySmRkZG9CY0RuZ0drVjBhRXR6NXJnWFJ0czN1VXptc1JG?=
- =?utf-8?B?elp0MU96RkhVa3o2QTU4NG9lWEdReG1LRENPWHNjRThtTk8zcTZTalpic25I?=
- =?utf-8?B?ZVdEQXk1Y3dyT3JtOXRyb0F6M2g0REZtbE9yNTExUkx2ejZ4enBqM3N2dFll?=
- =?utf-8?B?dWJlZHdiZ3FZbXlFeXI2K1R0ZmRxdnlraDFoR0ZiRzF2c0VDeHY4NGVKYTVq?=
- =?utf-8?B?Z0x0TUpYWWNHbGVEbG1PQk1JaTNUTU8xM2VnK1pXaGFZZmtHb1FKcGlmb0hT?=
- =?utf-8?B?ZkpiK0xvc2FHUWZvei9YZDVRNURZK1B5L2YxT2pMNlA5MEtCdEZLVFI0QlVk?=
- =?utf-8?B?Qm9wYzJkZWVtYVhCUlUrdWhWeFNwU1RhYlE1d1NMb0hZSG1yT3Azc2ZzcEs5?=
- =?utf-8?B?TkpxL1l0cnlSMG1nSW9ZcUxUeFY2UEtzbWpFSGJKVXBqWURPa3l3ODF3Q3Vi?=
- =?utf-8?B?cXE3dW8waWFWNFhWTVpqVHdiOHhObENlWk0vdStCQ2JYWHVtOEYxdjBpNnBz?=
- =?utf-8?B?ODJrR2ptZE9TVk9FRzRVOGFRa2ErWVNQdTRVM1E4K2p0RHBUeHhXdnZhNjBO?=
- =?utf-8?B?dmRRRVpONTEwMG5CdGRQY3NKRk1NU0ZOMUhnVGxzSzVVS2F2bk93WXUvMlll?=
- =?utf-8?B?bzVsQnY3VGYzcndKUlJGeCtXMzltR2RIbGprSWl3Vmo5aXR3MXFTOGpDclps?=
- =?utf-8?B?dDNsYVhTV0dGVFFnK3RBYkU0aFZMdlBqbFhwdU9vRjczR01oUXRwTDhLTnBv?=
- =?utf-8?B?bDFkK0JoUXFCWEJyTUZidU9GWEJtUUhobUNocy9UbzNRRFZTV20zNVg5SGRZ?=
- =?utf-8?B?V1lnRUFVT21XcDNEQUFMVzkxekpTOENHdTA4VTRKTFVNcDhvQnI1L3UzQnpG?=
- =?utf-8?B?M0JveUlwWFkyeU55RGQyaERFM1Zxam5kT2FqZnVsZEVWN2xkNVZjdlJsU0dE?=
- =?utf-8?B?VDNMRHgvTDRLUjNTRzlYNVZRME4ySWJLN0kyWUNocVQrZ0w4eEw4WHdpYVdQ?=
- =?utf-8?B?dFZKcUs3d3phdHRUVHo4TmU5Nm9DN0ZJNU1OMElBdjlielorS2QvMkJrSlg3?=
- =?utf-8?B?RjlVelVxTzVrZjhGTnd4NDE2SGV3bDE0Q3Q3QVhTRlZVZ3VHeWRpWEtpU1R1?=
- =?utf-8?B?OUtvSTFKYjRMeFIwS2Z1Mk13bVBWN00vWExlU0M0MTYwcGI1NW5razJIajRj?=
- =?utf-8?B?aEU5eGZpZWdYWTNmZTY3MHQxS2FJOHM0UkdYeUVGaFZoNDV3c2d2MWtXTTFQ?=
- =?utf-8?Q?Ox/Jj8BQyRaTPrg1Mshuxi0C7?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9343b168-461a-4618-12fc-08dca6d8a965
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5445.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2024 03:21:07.1236
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4iedQaEkkeC33VMkrlZrTtzR0bzoatzJj98vSiPw7QZegSpC6+9Rok9zRa9zsFXVjuMuIcKmvbm89GH4EchOrw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6758
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+X-Mozilla-Draft-Info: internal/draft; vcard=0; receipt=0; DSN=0; uuencode=0;
+ attachmentreminder=0; deliveryformat=1
+X-Identity-Key: id1
+Fcc: imap://xiehongyu1%40kylinos.cn@imap.kylinos.cn/Sent
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On 7/16/2024 2:25 PM, Chen Ni wrote:
-> Replace a comma between expression statements by a semicolon.
-> 
-> Fixes: c9b258c6be09 ("iommu/amd: Prepare for generic IO page table framework")
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
-> ---
->   drivers/iommu/amd/io_pgtable.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/iommu/amd/io_pgtable.c b/drivers/iommu/amd/io_pgtable.c
-> index 9d9a7fde59e7..1074ee25064d 100644
-> --- a/drivers/iommu/amd/io_pgtable.c
-> +++ b/drivers/iommu/amd/io_pgtable.c
-> @@ -588,9 +588,9 @@ static struct io_pgtable *v1_alloc_pgtable(struct io_pgtable_cfg *cfg, void *coo
->   {
->   	struct amd_io_pgtable *pgtable = io_pgtable_cfg_to_data(cfg);
->   
-> -	cfg->pgsize_bitmap  = AMD_IOMMU_PGSIZES,
-> -	cfg->ias            = IOMMU_IN_ADDR_BIT_SIZE,
-> -	cfg->oas            = IOMMU_OUT_ADDR_BIT_SIZE,
-> +	cfg->pgsize_bitmap  = AMD_IOMMU_PGSIZES;
-> +	cfg->ias            = IOMMU_IN_ADDR_BIT_SIZE;
-> +	cfg->oas            = IOMMU_OUT_ADDR_BIT_SIZE;
->   	cfg->tlb            = &v1_flush_ops;
->   
->   	pgtable->iop.ops.map_pages    = iommu_v1_map_pages;
+From: Hongyu Xie <xiehongyu1@kylinos.cn>=0D
 
-Reviewed-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-
-Thanks,
-Suravee
+=0D
+=0D
+On 2024/7/17 15:42, Oliver Neukum wrote:=0D
+> On 17.07.24 03:43, Hongyu Xie wrote:=0D
+>> From: Hongyu Xie <xiehongyu1@kylinos.cn>=0D
+> =0D
+> Hi,=0D
+> =0D
+> sorry for being incomprehensible. I'll try to do better.=0D
+> =0D
+>> =C2=A0From what I know, that CONFIG_USB_DEFAULT_PERSIST is enabled by =0D
+>> default. Then udev->persist_enabled is set to 1 and this causing =0D
+>> udev->reset_resume set to 1 during init2 in hub_activate.=0D
+>> During resume,=0D
+>> usb_resume_both=0D
+>> =C2=A0=C2=A0 usb_resume_device=0D
+>> =C2=A0=C2=A0=C2=A0=C2=A0 generic_resume=0D
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 usb_port_resume=0D
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 finish_port_resume=0D
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 usb_reset_a=
+nd_verify_device (if udev->reset_resume is 1)=0D
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ hub_port_init=0D
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 hub_port_reset=0D
+>> =C2=A0=C2=A0 usb_resume_interface (udev->reset_resume is 1 but usbfs doe=
+sn't =0D
+>> have reset_resume implementation so set intf->needs_binding to 1, and =0D
+>> it will be rebind in usb_resume_complete)=0D
+> =0D
+> That is correct. But even if CONFIG_USB_DEFAULT_PERSIST were not set, =0D
+> losing power=0D
+> would just lead to reenumeration by another code path. Devices reset =0D
+> themselves=0D
+> when they are power cycled. There is no way around that.=0D
+> =0D
+>> Even before usbfs->reset_resume is called (if there is one), the USB =0D
+>> device has already been reset=0D
+> =0D
+> Yes, it has been reset.=0D
+> =0D
+>> and in a good state.=0D
+> =0D
+> No, it is not. Or rather, it is in the wrong state. This is not a =0D
+> question of good and bad.=0D
+> It is a question of being in the same state.=0D
+After resume, it's in USB_STATE_CONFIGURED state. But here I'm guessing =0D
+you mean not in a good state from user-space's point of view, right?=0D
+> =0D
+>> After all that thaw_processes is called and user-space application =0D
+>> runs again.=0D
+> =0D
+> Yes. And user space does not know what has happened.=0D
+>>=0D
+>> So I still don't understand why "the race necessarily exists". Can you =
+=0D
+>> show me an example that usbfs->reset_resume causes race?=0D
+> =0D
+> Sure. Let's look at the example of a scanner attached to the host.=0D
+> =0D
+> OS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Scan=
+ning process (in user space)=0D
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1. Se=
+t a resolution=0D
+> 2. Going to S4=0D
+> 3. Returning to S0=0D
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 4. In=
+itiate a scan=0D
+> =0D
+> As you can see the system would now scan at the wrong resolution. Step#4=
+=0D
+> has to fail. As there is no synchronization between S4 and user space, =0D
+> initiating=0D
+> the scan can always be the last step.=0D
+> For this to work, reset_resume() would have to restore the correct =0D
+> resolution. The kernel=0D
+> cannot do so.=0D
+Now I can see your point. And I think with or without =0D
+usbfs->reset_resume right now, Step#4 has to fail.=0D
+> =0D
+>  =C2=A0=C2=A0=C2=A0=C2=A0Regards=0D
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Oliver=0D
+Regards=0D
+Hongyu Xie=0D
 
