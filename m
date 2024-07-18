@@ -1,232 +1,160 @@
-Return-Path: <linux-kernel+bounces-256475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74C5C934F19
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:30:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36D02934F1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:31:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1FC91F2236B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:30:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D54B71F2221A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C0E13F45F;
-	Thu, 18 Jul 2024 14:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3DF13F45F;
+	Thu, 18 Jul 2024 14:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IyQACnWm"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VSYMeOg8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28FB1B86D4
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 14:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432371B86D4
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 14:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721313042; cv=none; b=rVV35Efh4XBKvp2KcchBhitCM1/DmaHQlb1hotUyxPHgxm+kGCRcMkyLEJJ/NMOSkF9Fw3UlXQ+IuDkxI02O7HgekNsE7ON/k87eLIhzAERDF1GhOCooxmsVppGUlydlNgQDlLoqc9DffWhZD5hcEjb6KoT6GfWqfNe8e+emb6I=
+	t=1721313100; cv=none; b=odDAIlvt1s9mhFfKx6Aq4bttu+ts5ADXAiHIwpLVZHA/8zVlvM4WrfGvNEWCnOqNW77i+HSt5gjCz813g3mkF7G8h2i4X9ncOunbPPo1Ts7iV1ablqMRowCktuFxvuB87w2/C53DlT1feJmAZqq6vRh25xekdfGpC/Dz+3kl/yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721313042; c=relaxed/simple;
-	bh=n+PSSMI6nv/YfKu3UdJHQRKmZ2cGqYsPVsZRJpNlM1g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=khLhTp0k7q3SJSgQWn/5AH3QKqfXvWRVjE8oNafq7PV4HDys7Xeb7jvRAYiB2KPlqycBykLV6wPdMqY9/hNdvlQ5n0dpCOKTqQBMDHon2FB4ZG97r7hUlRGSIdyI9368JZNekKXDj9+6AXePt/T+1GXJx41+syiv6TxcWHrb1xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IyQACnWm; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-36844375001so631136f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 07:30:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721313039; x=1721917839; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dj5LMN7WC5hyXsTa12aKoD9fUdmkTYmEKmHMU1kkuso=;
-        b=IyQACnWmJG4BZu48o1A45H6J4GXda6KCo8xDqkW6VdX/lX7cM0He7KJlgmLt6wnf1A
-         YMWEajXNAaXAh5geda+2HHhSyie7Lq/fZGQE0pfQWHk0ApWkUyhQ7nmD340tyGEXFlFU
-         ofHE6uYKck8AzshCxGpL8xZW4mJaxMpvF6LjtVMbSGZuGvOs8p31wfp6b6JVDXybzhoJ
-         aY9KLNhFaYwG6nWIAiyHe3kco6Zh0hBZBBiK7iqaKIuW/Y10rCjbsjNLJL+TbfaPaRhG
-         1w183P7gMVK4DvtNKEEJcUdQb5GnipbP94HldRsRXFQuLjVAFyTktEThhAQNR/bliMjX
-         63cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721313039; x=1721917839;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dj5LMN7WC5hyXsTa12aKoD9fUdmkTYmEKmHMU1kkuso=;
-        b=VfiFY5W6zPd6RX13O9DdHSdzPdnw/VSf5PLrB49MhIFcwJ9WnHrky4PfRoyXXVUPqJ
-         VS7GNkH9pKHadj9wUtGmK/QokDdRww0XZdYBVCCkO5+9LUxr9vk87VuKLf9tI6M1f1Ke
-         +spob3jCErRIuOhfv88eFUJ0KyIvZfjHYdMkmuzB3VT4rR3+qhz0VMxLkmPyOJP9dcEO
-         3pEkUo4OClLsiOiSq7ehcff0NXxZqGK/Bcbe5kb71zCRDIqJOk3riOUgPuqysLlX/g0p
-         OG2GNGMl3vfLcTtnoYtj49j1+0vUoJ1Wk3aIdqtDNuADpdHn09HI/Xv8BTPT4rRTML9v
-         rKuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWdwx1OJbNhYxEIR7hbZWaxiKaW5UfurLG+iev8hJBRqaFMRJOBRW0FSTuh0z+7ETR247/P6iTy402dsAvOxeP3vZa9+Pra4cztDmMZ
-X-Gm-Message-State: AOJu0YzncMYD0LeAbvQHgMcfcryvojibvgj5ldNnA0RyUTvxaQay+ja3
-	rJltf4n2CH7D+/6ez3OC6OhdtgQ8i0VG3ttAdQ9sHPOj76YuWfuDcGmo0N1xmK4=
-X-Google-Smtp-Source: AGHT+IFOP3RQsHFhOPvwxIOpDtZEM5OEE0sT4/N57Q5DPMChPXAGM5Y2JTMoio0KQUCNU0jXohhDbg==
-X-Received: by 2002:adf:fe50:0:b0:367:9748:ee7f with SMTP id ffacd0b85a97d-368317c3bcfmr3783240f8f.65.1721313038912;
-        Thu, 18 Jul 2024 07:30:38 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36868da687asm517286f8f.38.2024.07.18.07.30.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jul 2024 07:30:38 -0700 (PDT)
-Message-ID: <f1561c30-8b77-4ba5-964f-012b1e11cd2b@linaro.org>
-Date: Thu, 18 Jul 2024 15:30:36 +0100
+	s=arc-20240116; t=1721313100; c=relaxed/simple;
+	bh=aZC0NipmOCpnDWuRU4Lpn4yFcg9U/gTdWFivPqFpvck=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qNN6Q+SqfbVhdogfd7NYiApx5cXx1zocTZiYJANpb1gj5LzLcpqttIWQvLApi7IuB46RD0zX93+Vfq5gZmC19XBUyhNrV92cK3zP8ZwO0vlDRT2RF0POZT60p0XaGpXxc13TO+nbNFoFzjNIhxbYuA64hGlkGn3T239sPxV8/rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VSYMeOg8; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721313098;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RQgd9VnW1B97sus5iTeLLvYo9dx1plAad5b8ctUM7g8=;
+	b=VSYMeOg8azn3NN2yGX1Xo6rGntcdMKjmTamPh4ebVo1Afl2teCk0P5gjoKkQHWopC4pbBA
+	OSlA2ziQv5y75LWAHhheww0I0uB/o2j/kP9NHE50iWLVKZDzIYM9mnIQW3+Pzj9dbMNq0N
+	t0tKof8hJBgLG/dNKEcttnv1Mm3C6K4=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-572-9bsy6NdJObKfacfuKh6QJQ-1; Thu,
+ 18 Jul 2024 10:31:29 -0400
+X-MC-Unique: 9bsy6NdJObKfacfuKh6QJQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DB7741956080;
+	Thu, 18 Jul 2024 14:31:27 +0000 (UTC)
+Received: from alecto.usersys.redhat.com (unknown [10.45.224.8])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 17B52195605A;
+	Thu, 18 Jul 2024 14:31:24 +0000 (UTC)
+From: Artem Savkov <asavkov@redhat.com>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	bpf@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Artem Savkov <asavkov@redhat.com>
+Subject: [PATCH bpf-next] selftests/bpf: fix compilation failure when CONFIG_NET_FOU!=y
+Date: Thu, 18 Jul 2024 16:31:22 +0200
+Message-ID: <20240718143122.2230780-1-asavkov@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 07/17] perf: cs-etm: Print queue number in raw trace
- dump
-To: Mike Leach <mike.leach@linaro.org>
-Cc: coresight@lists.linaro.org, suzuki.poulose@arm.com,
- gankulkarni@os.amperecomputing.com, leo.yan@linux.dev,
- anshuman.khandual@arm.com,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-perf-users@vger.kernel.org
-References: <20240712102029.3697965-1-james.clark@linaro.org>
- <20240712102029.3697965-8-james.clark@linaro.org>
- <CAJ9a7VjH+3LFJvSHkKUD_hJjxnpk3zyJ3ohFL6J6rgyquqyj=Q@mail.gmail.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <CAJ9a7VjH+3LFJvSHkKUD_hJjxnpk3zyJ3ohFL6J6rgyquqyj=Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
+Without CONFIG_NET_FOU bpf selftests are unable to build because of
+missing definitions. Add ___local versions of struct bpf_fou_encap and
+enum bpf_fou_encap_type to fix the issue.
 
+Signed-off-by: Artem Savkov <asavkov@redhat.com>
+---
+ .../selftests/bpf/progs/test_tunnel_kern.c    | 24 +++++++++++++------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
 
-On 18/07/2024 2:25 pm, Mike Leach wrote:
-> Hi James
-> 
-> On Fri, 12 Jul 2024 at 11:22, James Clark <james.clark@linaro.org> wrote:
->>
->> From: James Clark <james.clark@arm.com>
->>
->> Now that we have overlapping trace IDs it's also useful to know what the
->> queue number is to be able to distinguish the source of the trace so
->> print it inline.
->>
-> 
-> Not sure queue number is meaningful to anyone other than someone
-> debugging the etm decode in perf. Perhaps cpu number?
+diff --git a/tools/testing/selftests/bpf/progs/test_tunnel_kern.c b/tools/testing/selftests/bpf/progs/test_tunnel_kern.c
+index 3f5abcf3ff136..0913ec384b159 100644
+--- a/tools/testing/selftests/bpf/progs/test_tunnel_kern.c
++++ b/tools/testing/selftests/bpf/progs/test_tunnel_kern.c
+@@ -26,10 +26,20 @@
+  */
+ #define ASSIGNED_ADDR_VETH1 0xac1001c8
+ 
++struct bpf_fou_encap___local {
++       __be16 sport;
++       __be16 dport;
++};
++
++enum bpf_fou_encap_type___local {
++       FOU_BPF_ENCAP_FOU___local,
++       FOU_BPF_ENCAP_GUE___local,
++};
++
+ int bpf_skb_set_fou_encap(struct __sk_buff *skb_ctx,
+-			  struct bpf_fou_encap *encap, int type) __ksym;
++			  struct bpf_fou_encap___local *encap, int type) __ksym;
+ int bpf_skb_get_fou_encap(struct __sk_buff *skb_ctx,
+-			  struct bpf_fou_encap *encap) __ksym;
++			  struct bpf_fou_encap___local *encap) __ksym;
+ struct xfrm_state *
+ bpf_xdp_get_xfrm_state(struct xdp_md *ctx, struct bpf_xfrm_state_opts *opts,
+ 		       u32 opts__sz) __ksym;
+@@ -745,7 +755,7 @@ SEC("tc")
+ int ipip_gue_set_tunnel(struct __sk_buff *skb)
+ {
+ 	struct bpf_tunnel_key key = {};
+-	struct bpf_fou_encap encap = {};
++	struct bpf_fou_encap___local encap = {};
+ 	void *data = (void *)(long)skb->data;
+ 	struct iphdr *iph = data;
+ 	void *data_end = (void *)(long)skb->data_end;
+@@ -769,7 +779,7 @@ int ipip_gue_set_tunnel(struct __sk_buff *skb)
+ 	encap.sport = 0;
+ 	encap.dport = bpf_htons(5555);
+ 
+-	ret = bpf_skb_set_fou_encap(skb, &encap, FOU_BPF_ENCAP_GUE);
++	ret = bpf_skb_set_fou_encap(skb, &encap, FOU_BPF_ENCAP_GUE___local);
+ 	if (ret < 0) {
+ 		log_err(ret);
+ 		return TC_ACT_SHOT;
+@@ -782,7 +792,7 @@ SEC("tc")
+ int ipip_fou_set_tunnel(struct __sk_buff *skb)
+ {
+ 	struct bpf_tunnel_key key = {};
+-	struct bpf_fou_encap encap = {};
++	struct bpf_fou_encap___local encap = {};
+ 	void *data = (void *)(long)skb->data;
+ 	struct iphdr *iph = data;
+ 	void *data_end = (void *)(long)skb->data_end;
+@@ -806,7 +816,7 @@ int ipip_fou_set_tunnel(struct __sk_buff *skb)
+ 	encap.sport = 0;
+ 	encap.dport = bpf_htons(5555);
+ 
+-	ret = bpf_skb_set_fou_encap(skb, &encap, FOU_BPF_ENCAP_FOU);
++	ret = bpf_skb_set_fou_encap(skb, &encap, FOU_BPF_ENCAP_FOU___local);
+ 	if (ret < 0) {
+ 		log_err(ret);
+ 		return TC_ACT_SHOT;
+@@ -820,7 +830,7 @@ int ipip_encap_get_tunnel(struct __sk_buff *skb)
+ {
+ 	int ret;
+ 	struct bpf_tunnel_key key = {};
+-	struct bpf_fou_encap encap = {};
++	struct bpf_fou_encap___local encap = {};
+ 
+ 	ret = bpf_skb_get_tunnel_key(skb, &key, sizeof(key), 0);
+ 	if (ret < 0) {
+-- 
+2.45.2
 
-It's more than just for debugging Perf, anyone who was previously 
-reading the raw trace would probably have grepped for, or be looking at 
-the "ID:" field. Now that doesn't identify trace from a single source 
-anymore, due to the overlapping IDs. Same applies if you want to process 
-the output in some way per-line.
-
-With ETE technically it is CPU number, but I didn't want to name it like 
-that because it's overloaded: With ETM it's the "collection CPU" which 
-would be too misleading to label as CPU, and in per-thread mode it's 
-always 0 and not a CPU at all.
-
-Although I suppose it's already labeled as CPU on the 
-PERF_RECORD_AUXTRACE output, and this just duplicates that so it should 
-be called CPU. Maybe it is ok to drop this one  because the info already 
-exists in the PERF_RECORD_AUXTRACE output.
-
-> 
-> Moreover - other additional debugging in the trace output is
-> controlled with build options.
-> See:-
-> Makefile.config ->  ifdef CSTRACE_RAW,
-> thence:-
-> #ifdef CS_DEBUG_RAW in cs-etm-decoder.c
-> 
-> which adds in the raw byte data from the trace dump.
-> 
-> Could we make this addtional info dependent on either the standard
-> DEBUG macro, or an additional build macro.
-> 
-> 
-
-What about behind the verbose argument to Perf?
-
-> 
->> Signed-off-by: James Clark <james.clark@arm.com>
->> Signed-off-by: James Clark <james.clark@linaro.org>
->> ---
->>   tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 4 ++--
->>   tools/perf/util/cs-etm-decoder/cs-etm-decoder.h | 2 +-
->>   tools/perf/util/cs-etm.c                        | 7 ++++---
->>   3 files changed, 7 insertions(+), 6 deletions(-)
->>
->> diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
->> index d49c3e9c7c21..b78ef0262135 100644
->> --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
->> +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
->> @@ -41,7 +41,7 @@ const u32 INSTR_PER_NS = 10;
->>
->>   struct cs_etm_decoder {
->>          void *data;
->> -       void (*packet_printer)(const char *msg);
->> +       void (*packet_printer)(const char *msg, void *data);
->>          bool suppress_printing;
->>          dcd_tree_handle_t dcd_tree;
->>          cs_etm_mem_cb_type mem_access;
->> @@ -202,7 +202,7 @@ static void cs_etm_decoder__print_str_cb(const void *p_context,
->>          const struct cs_etm_decoder *decoder = p_context;
->>
->>          if (p_context && str_len && !decoder->suppress_printing)
->> -               decoder->packet_printer(msg);
->> +               decoder->packet_printer(msg, decoder->data);
->>   }
->>
->>   static int
->> diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
->> index 272c2efe78ee..12c782fa6db2 100644
->> --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
->> +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
->> @@ -60,7 +60,7 @@ struct cs_etm_trace_params {
->>
->>   struct cs_etm_decoder_params {
->>          int operation;
->> -       void (*packet_printer)(const char *msg);
->> +       void (*packet_printer)(const char *msg, void *data);
->>          cs_etm_mem_cb_type mem_acc_cb;
->>          bool formatted;
->>          bool fsyncs;
->> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
->> index 87e983da19be..49fadf46f42b 100644
->> --- a/tools/perf/util/cs-etm.c
->> +++ b/tools/perf/util/cs-etm.c
->> @@ -762,15 +762,16 @@ static void cs_etm__packet_swap(struct cs_etm_auxtrace *etm,
->>          }
->>   }
->>
->> -static void cs_etm__packet_dump(const char *pkt_string)
->> +static void cs_etm__packet_dump(const char *pkt_string, void *data)
->>   {
->>          const char *color = PERF_COLOR_BLUE;
->>          int len = strlen(pkt_string);
->> +       struct cs_etm_queue *etmq = data;
->>
->>          if (len && (pkt_string[len-1] == '\n'))
->> -               color_fprintf(stdout, color, "  %s", pkt_string);
->> +               color_fprintf(stdout, color, "  Qnr:%d; %s", etmq->queue_nr, pkt_string);
->>          else
->> -               color_fprintf(stdout, color, "  %s\n", pkt_string);
->> +               color_fprintf(stdout, color, "  Qnr:%d; %s\n", etmq->queue_nr, pkt_string);
->>
->>          fflush(stdout);
->>   }
->> --
->> 2.34.1
->>
-> 
-> Mike
-> --
-> Mike Leach
-> Principal Engineer, ARM Ltd.
-> Manchester Design Centre. UK
 
