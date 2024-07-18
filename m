@@ -1,137 +1,175 @@
-Return-Path: <linux-kernel+bounces-256270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D7F9934BC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:35:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A99D934BC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:38:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C8DD1C21E49
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:35:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98DFF1F23E51
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623A0139CEC;
-	Thu, 18 Jul 2024 10:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2101512C54D;
+	Thu, 18 Jul 2024 10:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sKqDCuj7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AyDWb7dc"
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EAFB137757;
-	Thu, 18 Jul 2024 10:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9D8757FD
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 10:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721298864; cv=none; b=d4EhzbGasFAAYKGmLtHWiFn+ASTNcTtgguPi0gnjiz59SeVNzf6vKcB+NEMxFhyKEc5gr5n7BaFDVaphDCtmmqUb7a0eIIPgKDVg9RLx3TnaqLObn1FeAAelK+czLHVi17vfXjGeHYr0Nm+YJAeFb/mk1JoZQx3V4YaS6eZDpBc=
+	t=1721299128; cv=none; b=YwxCsZUV1d8WO7Uqwau4i+YaWPCdaTnFE6zHN16dioeCydGBKKM+2iKEw/uYiU68S4EcQrtMxpA6p+/FB3LHxQXY1ehFw5WW1kSINRa2CeigyJIdyja806XupItUpdHXjRFiWRLH7ZTfde41EfNkGUzGDfGR4s3YhC/oa8M8+4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721298864; c=relaxed/simple;
-	bh=v7Pr56rb4xW7zvxZmarCh7nw1f560R1oMhklrIazOeo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=h4ILnWQcUQ1PfP07yQjG2yX4BsluX+eHA7etSmDSyZRxyIzjyAk63pnO0cmvXhFUThk0nk9rn8CElbVROYjQ7nuEbNqtj/3zATGs9JQVOaK7TSvYnIa0qni2X+MW9DenvrRkEj2g11AJWTwXqD+2+AobDzV2ricQW21OsAq9c9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sKqDCuj7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CE7FC4AF0B;
-	Thu, 18 Jul 2024 10:34:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721298864;
-	bh=v7Pr56rb4xW7zvxZmarCh7nw1f560R1oMhklrIazOeo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=sKqDCuj7vairxNbQPltODvUeuzLbGkak3VzLKCjEmH+38l/yuYGwkZbJrGgeo5Wff
-	 wh72k2oEze/hVvbdO0BCrj/N9dKAew0GojI+Lfc8o+PlAt6DIuYLXuIqjR5VyPiW7+
-	 LqpJ4/EO/3e/sw+H50FsuCAFPaUib7LGe4qyIWOygb++nd2c9XbhA8GLduzROWbJZl
-	 lsBBbJlar9WHdntLMdf3RVbgNy8S2w80oPnmiQgDvBbLJ1n4MoZeDvrGVH3VpBNC4V
-	 LK2C/AdoUUqcCXFJ9p0rVKwnGOpzLHJJGiPdemTsI24+DtsTfdiBrDLDIryebdb+5B
-	 GY2Yf70N0db7A==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Thu, 18 Jul 2024 12:33:57 +0200
-Subject: [PATCH net v2 2/2] tcp: limit wake-up for crossed SYN cases to
- SYN-ACK
+	s=arc-20240116; t=1721299128; c=relaxed/simple;
+	bh=2tmwJlhR1Wfi7Q9NdjSeYRRqYjuP3qeE9l7HqVIkQFc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ka8+gkvvCF23IjSW9qRVRPL7NxbQFpgmoeoRNm/5Kbjgu5MsrwS/DMW20/AZYiNxvakBjDeGCXQIbbqVrmNq0ZbJ27nC/eoR6WtdI/SPsIkXYua0NUaISlz1ObApUmXJtEiB+FRHAK8o6BhgWr0yNByPyNjb+y5s+ygFs7+7tzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AyDWb7dc; arc=none smtp.client-ip=209.85.217.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-48fefaf11f9so215441137.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 03:38:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721299125; x=1721903925; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=b86cIiTag/D6+MRxZijhKiaNV9RKluj5rIh+Hf3ZPgE=;
+        b=AyDWb7dc0h2Yw5U/fz+PHHczW8JMseR01I5rRO/T0MqaKBolAQrjdrHTkq4ffBHetc
+         PN7LgvIS6ppvx486agrICRvLzKy416AOLKLevcIiAwB2m5szt5vGZe8YKpAJgbofBhtf
+         iiAzL90wk3CCfvIej2yPU3URox39VFMY0hV+6a7zfWjoIwypuBgvg9AO83oYtSq+1rTu
+         w4GjfmBPbZjDTliMW91h2NamzXCbCoNpG8APfUBSzgSKO9K9E5MCEZMfTDVntnGc28yv
+         BA3XifKKpRZPq+mqnklU3LrUEAUlFabJWeBuyqlFkplWzJQJX/YPWZJqB0PDfvhgbxVy
+         g6Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721299125; x=1721903925;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b86cIiTag/D6+MRxZijhKiaNV9RKluj5rIh+Hf3ZPgE=;
+        b=i4Iw5Rda5CAk2DcMEf1scEiswwUG1BIRC03S4bFgWUq5a0v9R6VA7LMsRYCb+vv7e1
+         V+yLQr5WSL2UJ/ymvlR1eGaFArgXXC3hldz5pThA+L5DGvs9jO3DIRbriwx3bTH9i1u3
+         YWPoO7a6wznNk+NsvmOpvduXX4G8bMiAvq6tPjRhLo1UGOmqpY9GwIosshKAmzXIxoo5
+         +Js9H6QtNscHWgheICjlphlRLM89YZ3AReJp1TLOEiAMI69PhEmXZhmVoxLQXO5BmpN0
+         uqxvQ69wuCx8NM6DRw8Vyfp8OFFEaCEx9afUIJ95dE7kjBlIz8o1q10dgTkXps2ASTWR
+         /OqA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8tnsFmOGP8A0/nnvKoQAWZLDuD46PiU7ECBIxrC8Qs5AuGY+49TncZXo337NISJtKjyi5+3XNM/qi/iOMSbmfTimfIRMB91PSpeNC
+X-Gm-Message-State: AOJu0YyzP2IOj53LJu7fN7/m0AIs7uFDlzPKeOCzTMUseQQaBYaiAdvh
+	cxxncfi0LXnLGFc//H/GY7uYxq3ej/KSWiakipr68JXNTFtWX4H+WQ6/4h+YLH3077q0XjoRi8j
+	OGzrPBvgo+q6FGLte9rMPg/+S6B5HsyRrQZHL
+X-Google-Smtp-Source: AGHT+IHTs4lcw5d7jz7YAnmB7NRpCcJPtf93z8Dm6wDouQL7/xcfSGyoEUjFd6PWBOaxn6YkafOZrTK7FeMy0ERbV6A=
+X-Received: by 2002:a05:6102:3e02:b0:48f:8d1a:ff8c with SMTP id
+ ada2fe7eead31-49159731b59mr5745714137.3.1721299124343; Thu, 18 Jul 2024
+ 03:38:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240718-upstream-net-next-20240716-tcp-3rd-ack-consume-sk_socket-v2-2-d653f85639f6@kernel.org>
-References: <20240718-upstream-net-next-20240716-tcp-3rd-ack-consume-sk_socket-v2-0-d653f85639f6@kernel.org>
-In-Reply-To: <20240718-upstream-net-next-20240716-tcp-3rd-ack-consume-sk_socket-v2-0-d653f85639f6@kernel.org>
-To: Eric Dumazet <edumazet@google.com>, 
- "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Kuniyuki Iwashima <kuniyu@amazon.com>, Jerry Chu <hkchu@google.com>
-Cc: netdev@vger.kernel.org, mptcp@lists.linux.dev, 
- linux-kernel@vger.kernel.org, "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2053; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=v7Pr56rb4xW7zvxZmarCh7nw1f560R1oMhklrIazOeo=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBmmO+oidQcOp7WgYYSyX0/O0xhsCh4ZAUIQ/Csp
- VR244lKzdiJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZpjvqAAKCRD2t4JPQmmg
- c7YpEACM79BFPN8vnPh61+T9XVJery417L0PZFZC76xymxb86ifiBMSdUFX3DRbWimOqNVLNnJA
- i1cWVRtdRUn1BU+0YVLcBtbnmY1CIPFBoLEIhiSMW2e8dqg/Uyux7moGMqzDS5nGb6CYknxr/ev
- hhzNbfiVAwk6vgSON563xkDnd+MfBe7Ywny8IOOPECyHm66flOOZU3QQ6WoZIGkKztVMNNdnCrU
- nmLZH0+/BPUi1QcZAl7jOOhJYklJLOmXMguctdumWbDIiqoEK98mjGR1HIIFgEO8PGocWxTKfGd
- ko7s+jryLrZzfadLCn14hpMPKcwvgGoe335ylaCNHs+EljLu0UQDj3R5bmJhURnUlrT7YkFLOJ6
- BGBdTqIMrpwLOrjZfBhgGO+pCa0/KCY6gwP3OOtuTQUdz+zGYPcoRuFIe59GyWlD9kFYv072VdB
- B692ywT6+dxFxvz+jjKD5409VHapq8iiaju9W56FZyY9goqZR1beuQRt0c/2+X9ib78MrcT6rEd
- 0QMpPFHMrelqg6mBNHWJBbFjG8uxQfPnAve329yXPtnxHCQSw0B7qR4/xTqt7WHHGX8USO4kjDu
- o/5uW02imOuLrc2M0SUU7tw/aYf9BVGiZI/sO5lRRxwukUc8LnBVuzjLqSD8z/Fp7mBnHgHdaYM
- /pO8Na/XLPBvYCg==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+References: <000000000000381fbb061d81bd85@google.com>
+In-Reply-To: <000000000000381fbb061d81bd85@google.com>
+From: Marco Elver <elver@google.com>
+Date: Thu, 18 Jul 2024 12:38:05 +0200
+Message-ID: <CANpmjNPzw1=_VDfMDskrKWiabLV1aZVC1VeThLZTDn=qWMUsZQ@mail.gmail.com>
+Subject: Re: [syzbot] [kernel?] KCSAN: data-race in kobject_put /
+ kobject_uevent_env (2)
+To: syzbot <syzbot+0ac8e4da6d5cfcc7743e@syzkaller.appspotmail.com>
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	rafael@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-sk->sk_socket will be assigned in case of marginal crossed SYN, but also
-in other cases, e.g.
+On Thu, 18 Jul 2024 at 10:55, syzbot
+<syzbot+0ac8e4da6d5cfcc7743e@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    d67978318827 Merge tag 'x86_cpu_for_v6.11_rc1' of git://gi..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11af145e980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=ca8f4e92a17047ec
+> dashboard link: https://syzkaller.appspot.com/bug?extid=0ac8e4da6d5cfcc7743e
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/1f219d0a9994/disk-d6797831.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/91aed26b830f/vmlinux-d6797831.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/c7e753e56950/bzImage-d6797831.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+0ac8e4da6d5cfcc7743e@syzkaller.appspotmail.com
+>
+> llcp: llcp_sock_recvmsg: Recv datagram failed state 3 -6 0
+> ==================================================================
+> BUG: KCSAN: data-race in kobject_put / kobject_uevent_env
+>
+> read-write to 0xffff888139ddec54 of 1 bytes by task 22621 on cpu 0:
+>  kobject_uevent_env+0x4e/0x550 lib/kobject_uevent.c:476
+>  kobject_uevent+0x1c/0x30 lib/kobject_uevent.c:641
+>  device_del+0x6fa/0x780 drivers/base/core.c:3886
+>  nfc_unregister_device+0x114/0x130 net/nfc/core.c:1183
+>  nci_unregister_device+0x14c/0x160 net/nfc/nci/core.c:1312
+>  virtual_ncidev_close+0x30/0x50 drivers/nfc/virtual_ncidev.c:172
+>  __fput+0x192/0x6f0 fs/file_table.c:422
+>  ____fput+0x15/0x20 fs/file_table.c:450
+>  task_work_run+0x13a/0x1a0 kernel/task_work.c:180
+>  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+>  exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+>  exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+>  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+>  syscall_exit_to_user_mode+0xbe/0x130 kernel/entry/common.c:218
+>  do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> read to 0xffff888139ddec54 of 1 bytes by task 22615 on cpu 1:
+>  kobject_put+0x25/0x180 lib/kobject.c:733
+>  put_device+0x1f/0x30 drivers/base/core.c:3787
+>  nfc_put_device net/nfc/nfc.h:103 [inline]
+>  nfc_llcp_local_put+0x87/0xb0 net/nfc/llcp_core.c:196
+>  nfc_llcp_sock_free net/nfc/llcp_sock.c:1021 [inline]
+>  llcp_sock_destruct+0x14d/0x1a0 net/nfc/llcp_sock.c:966
+>  __sk_destruct+0x3d/0x440 net/core/sock.c:2175
+>  sk_destruct net/core/sock.c:2223 [inline]
+>  __sk_free+0x284/0x2d0 net/core/sock.c:2234
+>  sk_free+0x39/0x70 net/core/sock.c:2245
+>  sock_put include/net/sock.h:1879 [inline]
+>  llcp_sock_release+0x38f/0x3d0 net/nfc/llcp_sock.c:646
+>  __sock_release net/socket.c:659 [inline]
+>  sock_close+0x68/0x150 net/socket.c:1421
+>  __fput+0x192/0x6f0 fs/file_table.c:422
+>  ____fput+0x15/0x20 fs/file_table.c:450
+>  task_work_run+0x13a/0x1a0 kernel/task_work.c:180
+>  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+>  exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+>  exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+>  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+>  syscall_exit_to_user_mode+0xbe/0x130 kernel/entry/common.c:218
+>  do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> value changed: 0x07 -> 0x0d
+>
+> Reported by Kernel Concurrency Sanitizer on:
+> CPU: 1 PID: 22615 Comm: syz.0.6322 Tainted: G        W          6.10.0-syzkaller-01155-gd67978318827 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+> ==================================================================
 
- - With TCP Fast Open, if the connection got accept()'ed before
-   receiving the 3rd ACK ;
+The two racing accesses here (on bitfield variables
+kobj->state_remove_uevent_sent, kobj->state_initialized) are in the
+same bitfield. There's no guarantee (by the compiler) that while the
+bitfield is being updated the bit at kobj->state_initialized will
+remain non-zero, and therefore the WARN in kobject_put() could be
+triggered. This appears benign, unless of course someone set
+panic_on_warn.
 
- - With MPTCP, when accepting additional subflows to an existing MPTCP
-   connection.
+More generally, if the bitfield is updated concurrently, it's very
+likely that one of the updates would be lost.
 
-In these cases, the switch to TCP_ESTABLISHED is done when receiving the
-3rd ACK, without the SYN flag then.
-
-To properly restrict the wake-up to crossed SYN cases, it is then
-required to also limit the check to packets containing the SYN-ACK
-flags.
-
-While at it, also update the attached comment: sk->sk_sleep has been
-removed in 2010, and replaced by sk->sk_wq in commit 43815482370c ("net:
-sock_def_readable() and friends RCU conversion").
-
-Fixes: 168a8f58059a ("tcp: TCP Fast Open Server - main code path")
-Suggested-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
-Notes:
- - The above 'Fixes' tag should correspond to the commit introducing the
-   possibility to have sk->sk_socket being set there in other cases than
-   the crossed SYN one. But I might have missed other cases. Maybe
-   1da177e4c3f4 ("Linux-2.6.12-rc2") might be safer? On the other hand,
-   I don't think this wake-up was causing any visible issue, apart from
-   not being needed.
----
- net/ipv4/tcp_input.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index bfe1bc69dc3e..5cebb389bf71 100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -6797,9 +6797,9 @@ tcp_rcv_state_process(struct sock *sk, struct sk_buff *skb)
- 
- 		/* Note, that this wakeup is only for marginal crossed SYN case.
- 		 * Passively open sockets are not waked up, because
--		 * sk->sk_sleep == NULL and sk->sk_socket == NULL.
-+		 * sk->sk_wq == NULL and sk->sk_socket == NULL.
- 		 */
--		if (sk->sk_socket)
-+		if (sk->sk_socket && th->syn)
- 			sk_wake_async(sk, SOCK_WAKE_IO, POLL_OUT);
- 
- 		tp->snd_una = TCP_SKB_CB(skb)->ack_seq;
-
--- 
-2.45.2
-
+Just my initial observation.
 
