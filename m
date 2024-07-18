@@ -1,279 +1,112 @@
-Return-Path: <linux-kernel+bounces-256088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BDF49348CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:29:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 800DE9348CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AB2FB22249
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:29:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16EE41F20FC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8D9770E5;
-	Thu, 18 Jul 2024 07:28:08 +0000 (UTC)
-Received: from irl.hu (irl.hu [95.85.9.111])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BCEA770F6;
+	Thu, 18 Jul 2024 07:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="ILgxsa4l"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0842078C88;
-	Thu, 18 Jul 2024 07:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299B97605E
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 07:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721287688; cv=none; b=bcuLWPu7FxqUeLdUBiFEiT/yJ+87fFvbTLTKDLe3eoVgtXIEq8rEt5UYUjelyblcYD1qYtdF01su3Ux2ZsVLUhKf/QdVaxtGNBr8VMzeJ7/9ZZoptsCwKquQA7LvF22Ea2JKeBTzebzpaxIaDcsS5LwLlrBQIlu7IEIx7LWsZqc=
+	t=1721287716; cv=none; b=pIQBNwkdr2upgt6+eUnUWSv8VVWccVuJ4OZyHoboNasup43dvajg2jggQ+vYyPKlM70YLhm8UUNKcaZ52kto7cPUSgvrJ8AGTovyw59FBLA5oAcGbZdxSJDLOYT8j7E2oCD8sytIAR+PJ91J6EyS9cCVJb3EWNrit5+4AIQ/PX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721287688; c=relaxed/simple;
-	bh=IR3xmB7CA+9p9w5sMuZmWGr9nM1s91Aps+vLK2fG6gs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=JUCL7ZVaAoEpl6CJVBME32CEdzlN/ZAa0AVVKN4XziKejQ89YZT5m8QkN4j92mqdw1/zUEAcYWY5KH0dxm4s2PkbdtRwiVptBCjOgGJ7vApwAzyVrD3fF2U5w2FYwdrzsUFrCsxVOiXPcVueBaxAamFaVXaY7EFVg1fxjzC6Nwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
-Received: from fedori.. (netacc-gpn-104-115-214.pool.yettel.hu [::ffff:91.104.115.214])
-  (AUTH: CRAM-MD5 soyer@irl.hu, )
-  by irl.hu with ESMTPSA
-  id 0000000000072DD0.000000006698C404.00180BC3; Thu, 18 Jul 2024 09:28:04 +0200
-From: Gergo Koteles <soyer@irl.hu>
-To: Hans de Goede <hdegoede@redhat.com>,
-  =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-  Ike Panhc <ike.pan@canonical.com>
-Cc: platform-driver-x86@vger.kernel.org,
-  linux-kernel@vger.kernel.org, Gergo Koteles <soyer@irl.hu>
-Subject: [PATCH v2 4/4] platform/x86: ideapad-laptop: add a mutex to synchronize VPC commands
-Date: Thu, 18 Jul 2024 09:27:16 +0200
-Message-ID: <70d3957b315815085cdd8cb04b002cdb4a372ddc.1721258854.git.soyer@irl.hu>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1721258854.git.soyer@irl.hu>
-References: <cover.1721258854.git.soyer@irl.hu>
+	s=arc-20240116; t=1721287716; c=relaxed/simple;
+	bh=J0zu6UYzFzKqQ1OcRouTUBxQW3l6uNgwoyeCJY1FPfo=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=s3vUJEDiRlG+9OWT3YU9EKnrXTPPdQoZe0BzXDU7PO1SKYBgz9oJl6tzQ4MrYzqIgbO4Ba9qxTOZ5jOJ7Cd0HLFnGHgtoMD/0ZHamL7r+w0i1wBxXIoqwIOPB1yYxGD+Wh2ElKneW88a7Li34HRkT3ocyx5IqMvZe6aEoJugkTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=ILgxsa4l; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 46I7SBPH3114719
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 18 Jul 2024 00:28:12 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 46I7SBPH3114719
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024071601; t=1721287692;
+	bh=J0zu6UYzFzKqQ1OcRouTUBxQW3l6uNgwoyeCJY1FPfo=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=ILgxsa4l+rtHw3pKyTf7Ap7TePeaIkxYJpWU6RjVDiYOWXrgE7TRBKT0HyEyygo1/
+	 Nluj5MckUKzafNL9Ewwa+C3ZwxylnxR5sRYSPl+CmSkMUlPnQhwrBRQiNPhnwzAVrI
+	 ydoDSpZvaMzKSnFWVrSbkCP5jhlwKnWQ9PA/MEyDWrUPvpGGcaCtB22sIHXi8IeCVj
+	 l9CncbtJCG6OARvRhYgF6wgkWKVRyS9AKUY0cGCxzc2gd4s9R1PT1rmVeFzvXbeXH+
+	 6QaoDz09KVUCENIiOA2O8ReoVe6bem77f3dK5ZVXuWCNvq7fQ9s+TpYJQ2ZoFEZ2Mg
+	 U4uHYq3N/1E6g==
+Date: Thu, 18 Jul 2024 00:28:09 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Uros Bizjak <ubizjak@gmail.com>
+CC: x86@kernel.org, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_x86/boot=3A_Use_=5F=5FASM=5FSIZE?=
+ =?US-ASCII?Q?=28=29_to_reduce_ifdeffery_in_cpuflags=2Ec?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAFULd4ZXQzxq4ACOZUKpZKmGFomPxHxc+LhmXZ_uEVizjWbXiA@mail.gmail.com>
+References: <20240718063242.52275-1-ubizjak@gmail.com> <4049EB19-E869-4886-AD61-E716A75E4559@zytor.com> <CAFULd4bVO39emR49thto4w6LZX0vS9eJKE75u26aCFk7CRVrVw@mail.gmail.com> <3E2205B3-C2D9-4D4C-9847-1CF0BFF68D72@zytor.com> <CAFULd4ZXQzxq4ACOZUKpZKmGFomPxHxc+LhmXZ_uEVizjWbXiA@mail.gmail.com>
+Message-ID: <6CDAC2CA-7F30-4DFF-994D-576E5F8396B7@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Mime-Autoconverted: from 8bit to 7bit by courier 1.0
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Calling VPC commands consists of several VPCW and VPCR ACPI calls.
-These calls and their results can get mixed up if they are called
-simultaneously from different threads, like acpi notify handler,
-sysfs, debugfs, notification chain.
+On July 18, 2024 12:27:04 AM PDT, Uros Bizjak <ubizjak@gmail=2Ecom> wrote:
+>On Thu, Jul 18, 2024 at 8:59=E2=80=AFAM H=2E Peter Anvin <hpa@zytor=2Ecom=
+> wrote:
+>>
+>> >> >-#ifdef __x86_64__
+>> >> >-#define PUSHF "pushfq"
+>> >> >-#define POPF "popfq"
+>> >> >-#else
+>> >> >-#define PUSHF "pushfl"
+>> >> >-#define POPF "popfl"
+>> >> >-#endif
+>> >> >+#define PUSHF __ASM_SIZE(pushf)
+>> >> >+#define POPF __ASM_SIZE(popf)
+>> >> >
+>> >> > int has_eflag(unsigned long mask)
+>> >> > {
+>> >>
+>> >> Just use pushf/popf=2E gas hasn't needed that suffix for a long time=
+ as far as I know=2E
+>> >
+>> >Yes, this works, too=2E So I guess we can also remove the comment
+>> >explaining the reason for explicit suffixes?
+>> >
+>> >Thanks,
+>> >Uros=2E
+>> >
+>>
+>> Yeah=2E You may want to check the version of binutils that fixed it and=
+ put that in the comments=2E
+>
+>I have checked that the build works with 9 year old binutils-2=2E25
+>(minimal required version), so the fix was applied to an even earlier
+>version=2E I guess we don't want to burden unsuspecting readers with
+>historic toolchain oddities, so I propose to just remove the comment
+>for good=2E
+>
+>Uros=2E
+>
 
-Add a mutex to synchronize VPC commands.
-
-Signed-off-by: Gergo Koteles <soyer@irl.hu>
----
- drivers/platform/x86/ideapad-laptop.c | 62 +++++++++++++++++++--------
- 1 file changed, 45 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
-index 66b34e99147e..d2e7dd5027b8 100644
---- a/drivers/platform/x86/ideapad-laptop.c
-+++ b/drivers/platform/x86/ideapad-laptop.c
-@@ -154,6 +154,7 @@ struct ideapad_rfk_priv {
- 
- struct ideapad_private {
- 	struct acpi_device *adev;
-+	struct mutex vpc_mutex; /* protects the VPC calls */
- 	struct rfkill *rfk[IDEAPAD_RFKILL_DEV_NUM];
- 	struct ideapad_rfk_priv rfk_priv[IDEAPAD_RFKILL_DEV_NUM];
- 	struct platform_device *platform_device;
-@@ -435,6 +436,8 @@ static int debugfs_status_show(struct seq_file *s, void *data)
- 	struct ideapad_private *priv = s->private;
- 	unsigned long value;
- 
-+	guard(mutex)(&priv->vpc_mutex);
-+
- 	if (!read_ec_data(priv->adev->handle, VPCCMD_R_BL_MAX, &value))
- 		seq_printf(s, "Backlight max:  %lu\n", value);
- 	if (!read_ec_data(priv->adev->handle, VPCCMD_R_BL, &value))
-@@ -553,7 +556,8 @@ static ssize_t camera_power_show(struct device *dev,
- 	unsigned long result;
- 	int err;
- 
--	err = read_ec_data(priv->adev->handle, VPCCMD_R_CAMERA, &result);
-+	scoped_guard(mutex, &priv->vpc_mutex)
-+		err = read_ec_data(priv->adev->handle, VPCCMD_R_CAMERA, &result);
- 	if (err)
- 		return err;
- 
-@@ -572,7 +576,8 @@ static ssize_t camera_power_store(struct device *dev,
- 	if (err)
- 		return err;
- 
--	err = write_ec_cmd(priv->adev->handle, VPCCMD_W_CAMERA, state);
-+	scoped_guard(mutex, &priv->vpc_mutex)
-+		err = write_ec_cmd(priv->adev->handle, VPCCMD_W_CAMERA, state);
- 	if (err)
- 		return err;
- 
-@@ -625,7 +630,8 @@ static ssize_t fan_mode_show(struct device *dev,
- 	unsigned long result;
- 	int err;
- 
--	err = read_ec_data(priv->adev->handle, VPCCMD_R_FAN, &result);
-+	scoped_guard(mutex, &priv->vpc_mutex)
-+		err = read_ec_data(priv->adev->handle, VPCCMD_R_FAN, &result);
- 	if (err)
- 		return err;
- 
-@@ -647,7 +653,8 @@ static ssize_t fan_mode_store(struct device *dev,
- 	if (state > 4 || state == 3)
- 		return -EINVAL;
- 
--	err = write_ec_cmd(priv->adev->handle, VPCCMD_W_FAN, state);
-+	scoped_guard(mutex, &priv->vpc_mutex)
-+		err = write_ec_cmd(priv->adev->handle, VPCCMD_W_FAN, state);
- 	if (err)
- 		return err;
- 
-@@ -700,7 +707,8 @@ static ssize_t touchpad_show(struct device *dev,
- 	unsigned long result;
- 	int err;
- 
--	err = read_ec_data(priv->adev->handle, VPCCMD_R_TOUCHPAD, &result);
-+	scoped_guard(mutex, &priv->vpc_mutex)
-+		err = read_ec_data(priv->adev->handle, VPCCMD_R_TOUCHPAD, &result);
- 	if (err)
- 		return err;
- 
-@@ -721,7 +729,8 @@ static ssize_t touchpad_store(struct device *dev,
- 	if (err)
- 		return err;
- 
--	err = write_ec_cmd(priv->adev->handle, VPCCMD_W_TOUCHPAD, state);
-+	scoped_guard(mutex, &priv->vpc_mutex)
-+		err = write_ec_cmd(priv->adev->handle, VPCCMD_W_TOUCHPAD, state);
- 	if (err)
- 		return err;
- 
-@@ -1118,6 +1127,8 @@ static int ideapad_rfk_set(void *data, bool blocked)
- 	struct ideapad_rfk_priv *priv = data;
- 	int opcode = ideapad_rfk_data[priv->dev].opcode;
- 
-+	guard(mutex)(&priv->priv->vpc_mutex);
-+
- 	return write_ec_cmd(priv->priv->adev->handle, opcode, !blocked);
- }
- 
-@@ -1131,6 +1142,8 @@ static void ideapad_sync_rfk_state(struct ideapad_private *priv)
- 	int i;
- 
- 	if (priv->features.hw_rfkill_switch) {
-+		guard(mutex)(&priv->vpc_mutex);
-+
- 		if (read_ec_data(priv->adev->handle, VPCCMD_R_RF, &hw_blocked))
- 			return;
- 		hw_blocked = !hw_blocked;
-@@ -1302,8 +1315,9 @@ static void ideapad_input_novokey(struct ideapad_private *priv)
- {
- 	unsigned long long_pressed;
- 
--	if (read_ec_data(priv->adev->handle, VPCCMD_R_NOVO, &long_pressed))
--		return;
-+	scoped_guard(mutex, &priv->vpc_mutex)
-+		if (read_ec_data(priv->adev->handle, VPCCMD_R_NOVO, &long_pressed))
-+			return;
- 
- 	if (long_pressed)
- 		ideapad_input_report(priv, 17);
-@@ -1315,8 +1329,9 @@ static void ideapad_check_special_buttons(struct ideapad_private *priv)
- {
- 	unsigned long bit, value;
- 
--	if (read_ec_data(priv->adev->handle, VPCCMD_R_SPECIAL_BUTTONS, &value))
--		return;
-+	scoped_guard(mutex, &priv->vpc_mutex)
-+		if (read_ec_data(priv->adev->handle, VPCCMD_R_SPECIAL_BUTTONS, &value))
-+			return;
- 
- 	for_each_set_bit (bit, &value, 16) {
- 		switch (bit) {
-@@ -1346,6 +1361,8 @@ static int ideapad_backlight_get_brightness(struct backlight_device *blightdev)
- 	unsigned long now;
- 	int err;
- 
-+	guard(mutex)(&priv->vpc_mutex);
-+
- 	err = read_ec_data(priv->adev->handle, VPCCMD_R_BL, &now);
- 	if (err)
- 		return err;
-@@ -1358,6 +1375,8 @@ static int ideapad_backlight_update_status(struct backlight_device *blightdev)
- 	struct ideapad_private *priv = bl_get_data(blightdev);
- 	int err;
- 
-+	guard(mutex)(&priv->vpc_mutex);
-+
- 	err = write_ec_cmd(priv->adev->handle, VPCCMD_W_BL,
- 			   blightdev->props.brightness);
- 	if (err)
-@@ -1435,6 +1454,8 @@ static void ideapad_backlight_notify_power(struct ideapad_private *priv)
- 	if (!blightdev)
- 		return;
- 
-+	guard(mutex)(&priv->vpc_mutex);
-+
- 	if (read_ec_data(priv->adev->handle, VPCCMD_R_BL_POWER, &power))
- 		return;
- 
-@@ -1447,7 +1468,8 @@ static void ideapad_backlight_notify_brightness(struct ideapad_private *priv)
- 
- 	/* if we control brightness via acpi video driver */
- 	if (!priv->blightdev)
--		read_ec_data(priv->adev->handle, VPCCMD_R_BL, &now);
-+		scoped_guard(mutex, &priv->vpc_mutex)
-+			read_ec_data(priv->adev->handle, VPCCMD_R_BL, &now);
- 	else
- 		backlight_force_update(priv->blightdev, BACKLIGHT_UPDATE_HOTKEY);
- }
-@@ -1613,7 +1635,8 @@ static void ideapad_sync_touchpad_state(struct ideapad_private *priv, bool send_
- 	int ret;
- 
- 	/* Without reading from EC touchpad LED doesn't switch state */
--	ret = read_ec_data(priv->adev->handle, VPCCMD_R_TOUCHPAD, &value);
-+	scoped_guard(mutex, &priv->vpc_mutex)
-+		ret = read_ec_data(priv->adev->handle, VPCCMD_R_TOUCHPAD, &value);
- 	if (ret)
- 		return;
- 
-@@ -1673,7 +1696,8 @@ static void ideapad_laptop_trigger_ec(void)
- 	if (!priv->features.ymc_ec_trigger)
- 		return;
- 
--	ret = write_ec_cmd(priv->adev->handle, VPCCMD_W_YMC, 1);
-+	scoped_guard(mutex, &priv->vpc_mutex)
-+		ret = write_ec_cmd(priv->adev->handle, VPCCMD_W_YMC, 1);
- 	if (ret)
- 		dev_warn(&priv->platform_device->dev, "Could not write YMC: %d\n", ret);
- }
-@@ -1719,11 +1743,13 @@ static void ideapad_acpi_notify(acpi_handle handle, u32 event, void *data)
- 	struct ideapad_private *priv = data;
- 	unsigned long vpc1, vpc2, bit;
- 
--	if (read_ec_data(handle, VPCCMD_R_VPC1, &vpc1))
--		return;
-+	scoped_guard(mutex, &priv->vpc_mutex) {
-+		if (read_ec_data(handle, VPCCMD_R_VPC1, &vpc1))
-+			return;
- 
--	if (read_ec_data(handle, VPCCMD_R_VPC2, &vpc2))
--		return;
-+		if (read_ec_data(handle, VPCCMD_R_VPC2, &vpc2))
-+			return;
-+	}
- 
- 	vpc1 = (vpc2 << 8) | vpc1;
- 
-@@ -2027,6 +2053,8 @@ static int ideapad_acpi_add(struct platform_device *pdev)
- 	priv->adev = adev;
- 	priv->platform_device = pdev;
- 
-+	mutex_init(&priv->vpc_mutex);
-+
- 	ideapad_check_features(priv);
- 
- 	err = ideapad_sysfs_init(priv);
--- 
-2.45.2
-
+Yeah, I meant the commit message not comments, sorry=2E
 
