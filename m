@@ -1,256 +1,209 @@
-Return-Path: <linux-kernel+bounces-256722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 437B8935284
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 22:50:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C46D9935287
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 22:53:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79BA9B21784
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 20:50:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4451A1F21AA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 20:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15E414389A;
-	Thu, 18 Jul 2024 20:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1735613DDAD;
+	Thu, 18 Jul 2024 20:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xVaKwoaw"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="DEglXqOl"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E89C1EA8F
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 20:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2088B1EA8F
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 20:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721335823; cv=none; b=kO2rV7wDKWEs9bov4rSEqPxrcXU9l9iS3G6b+vVH6/cmzFJUPJ/OCYLWBgd+/5LX1tYT30FJFt+RwWgFniJ7sRfD0mo2jrhI5Ni+YawdvAA9jECtKY6F7VLEpBQ2JtS8SgwGkI8vCDimxi8YTk8sYX6U/77Jf2DN/awQiOZH0eg=
+	t=1721336026; cv=none; b=QBZzqnBfHxgsqvUKFZv8JWkzrE48pIHBx4QlJO0fzyH3LEF7j0LvGtuXy61cOLNJbhNbm9FBDMAyD+ieXda6zbz+9Jn3EOoCx6O9BKdg+Gf0VzWsQs56T00bLs8nLgFIUfM4WF5U7l79T+3wr9+x78kj4kzmCDlbDxkZSQjnN+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721335823; c=relaxed/simple;
-	bh=e6PqTtu3rr9V/8nv48Dj+sjpyD85saz3uYZtrFTgfwI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ez60Yc2onSW14WfKRlXITyJrAI3omRb+PfYYa0K0LoEzHaewKlw63YB/wNyIH1z/JknvDfYwP+bqh4wY4TO4qTxCXK+TYJH5ZnzsgK3ryh4Z5yJzz9iluMzqahO8moNwf7/H6m0eXHk7oOhLdutEjlVC52mYpHQdvywp1ZpJpxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xVaKwoaw; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-38b3543541dso40755ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 13:50:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721335820; x=1721940620; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qz/mod9fMJfSjeVQu/iuesJBhQWoQQDJHWVa2NbAKHA=;
-        b=xVaKwoawrd7oG2AEIiU7nyA9P1lPGVuwwBASqIwF8gyJ4PiPuAp5UuvPFcKBVvaSl+
-         EABFcsf3eUdJDCUv8JCcc57dwgJaBQonSH6PH82c37L8aJiQnzlquz86jh9hj0m53Z+o
-         syXgREmrCjiDd49C/e0g3KhEnvZQVwEXYDN3mFb8RPtbbrqSdoe3rpBoACEiiQMUAWYW
-         0zDTKQbfVwLVmhEmo6rASupwcbNPUkYArN9O8HeCHIptUhsqXb5WENJP0NUJBTuqxZMe
-         ShssQLXbXIBEeUfIFFQzqZYihm+TLpkQiIRlb69oNd8ccgU3bUpztkmYzMvzVK52lM9J
-         owFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721335820; x=1721940620;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qz/mod9fMJfSjeVQu/iuesJBhQWoQQDJHWVa2NbAKHA=;
-        b=ueYzS5IoffmWgKYPybSjcq9m7jkRjS97eVH68kIXfENjYcePq7mjhs49EWgs7rvwgi
-         tL4TpabFQxmFdiKYiTL+KyBYIfTuknswhgprtle59UCoRG2bc3PUdl1o177U9CEm4UXE
-         WjovPB/h+A2K1u8kKMyIH/GmMEAKY8if+xLKRWUn5pGQ1NITsk2HSQ+w82AvSx8AUkI1
-         ByF65Z+v6Yx0gy+59aRm3nWteNBuiBUIqaM+jcUWuWXRxtQlhFSB3h3hEbIkoz2n91/v
-         8WyLjRGbwPSC7hzZaBlPMInCsGS37nmcIFQL1vQJffu6U0fwy+RUsHz62DYelz90GV2V
-         X1xw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkhBvEL2oKDg5X7ZlFpzyJ8grEMtPTOzmHBwDdsBJuqhKFm1IkaTSacZQKas+UL9Woiy5WDYNCf6EEFTTPB2nRLk2SuTfzN7qA0Fve
-X-Gm-Message-State: AOJu0YwFSqXX2/g5yyWKQGSW1v3qu1MJ+1e5ROQS1KnCT5NVU0LsDM06
-	Cc/H97mxVkME32lDUYK3cfh40ENJPk6UWM5mn+Iw48p3tz0m5Vf4FVDz/ZQAGThdT/32xTJWSrR
-	dIhPDE33wFCps25gtbRwDUt7553x+5R2YIo1f
-X-Google-Smtp-Source: AGHT+IH2CtpfHfcmZXuSnIMbLk0AhcQwjdmVCbZ/pLecFOb5wDHdwQ43ffSvDTZSn/VneNJ3Sy39hhhYNenMo5S+Lg4=
-X-Received: by 2002:a05:6e02:1c03:b0:397:98d7:5175 with SMTP id
- e9e14a558f8ab-397b611bf14mr784305ab.12.1721335820410; Thu, 18 Jul 2024
- 13:50:20 -0700 (PDT)
+	s=arc-20240116; t=1721336026; c=relaxed/simple;
+	bh=Z72pP+/b3tBVZyO6kYXKpfMzk3Ot1dE/rbpWf5vmwaQ=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=ce4+W4pd44IccP3cp3aUnRHvEXc+y+2tqebdzAmHY/H3/o7tv+CUT0o96maVIi4AQQfV9A+U/WD2p9MizvAO2agOFBKZ4SEYv4rpEMBn8wMyazdYtP7AVrbCadp/ChEwyVg9c/6MhCnLjsa5QMoSgWaZnK0wDyCpJQFEglN+95E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=DEglXqOl; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 46IKrJsQ3344380
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 18 Jul 2024 13:53:20 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 46IKrJsQ3344380
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024071601; t=1721336000;
+	bh=EaT2/2QYEmLs7a7CVh/qhbXPciI2wxYy7EhM+vysIQY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=DEglXqOlnmyeaxTl1rtBnTaDmdOYGp9Zublsd8JBOfefoQzlSKBo5fmE57qNQvwej
+	 xnOPywY7q7rt+m+Oa/eYPjFaJmm38RGqtPJo2Q8jvekIUVvC1gmP5lv1zpYgn3JRtO
+	 PYLq6FUiBy+ASiOr2+niSrmrWW3SRsLJwLBE1qLlwEp6swC5LKHAGwmhCBVaZ+cnlC
+	 0nTIH+KajbF2RzTBXT+wcEAabiMt+j9e9lRX+ONXLZIdqIgde83Pq5ZcFRxw26hVUg
+	 4dKYuz52znufcOgpVLyERO9KX/dIkRi/tQwb3wO8V/LUpQYwa2wItH73uuROELmzIB
+	 A47TyVxSyl5gg==
+Date: Thu, 18 Jul 2024 13:53:16 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Uros Bizjak <ubizjak@gmail.com>
+CC: x86@kernel.org, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_x86/boot=3A_Use_=5F=5FASM=5FSIZE?=
+ =?US-ASCII?Q?=28=29_to_reduce_ifdeffery_in_cpuflags=2Ec?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAFULd4Z91bzEDb+MTDP3NgF_3DxW0mG8jbjCR75e8yjWEeHQkw@mail.gmail.com>
+References: <20240718063242.52275-1-ubizjak@gmail.com> <4049EB19-E869-4886-AD61-E716A75E4559@zytor.com> <CAFULd4bs7meRq_iTqq1nSzpkSzEQqLkM8S=x4=zqtX6Fo9qQPQ@mail.gmail.com> <77174D9A-79DE-44A7-85E0-63B0BFE343C2@zytor.com> <CAFULd4Z91bzEDb+MTDP3NgF_3DxW0mG8jbjCR75e8yjWEeHQkw@mail.gmail.com>
+Message-ID: <0A743606-067F-450C-85A5-55ECE4378E22@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240718003025.1486232-1-irogers@google.com> <20240718003025.1486232-4-irogers@google.com>
- <92ceb8b5-240a-4715-98db-c73e8e9d3e50@linux.intel.com> <CAP-5=fUfoMZ0HjCNoJe6hgEMi5ciY+LqFjBbLzfiZgO6dioshA@mail.gmail.com>
- <64030eab-6e95-494a-ab72-bc33792ef723@linux.intel.com>
-In-Reply-To: <64030eab-6e95-494a-ab72-bc33792ef723@linux.intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 18 Jul 2024 13:50:09 -0700
-Message-ID: <CAP-5=fVMV4ZmGk4-XguqV=LAuif-MgAL+BK=mMAE1tC3f3tbhQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] perf pmu: Add support for event.cpus files in sysfs
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, James Clark <james.clark@arm.com>, 
-	Ravi Bangoria <ravi.bangoria@amd.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, ananth.narayan@amd.com, gautham.shenoy@amd.com, 
-	kprateek.nayak@amd.com, sandipan.das@amd.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 18, 2024 at 10:48=E2=80=AFAM Liang, Kan <kan.liang@linux.intel.=
+On July 18, 2024 2:12:07 AM PDT, Uros Bizjak <ubizjak@gmail=2Ecom> wrote:
+>On Thu, Jul 18, 2024 at 10:56=E2=80=AFAM H=2E Peter Anvin <hpa@zytor=2Eco=
+m> wrote:
+>>
+>> On July 18, 2024 1:52:17 AM PDT, Uros Bizjak <ubizjak@gmail=2Ecom> wrot=
+e:
+>> >On Thu, Jul 18, 2024 at 8:36=E2=80=AFAM H=2E Peter Anvin <hpa@zytor=2E=
 com> wrote:
+>> >>
+>> >> On July 17, 2024 11:32:18 PM PDT, Uros Bizjak <ubizjak@gmail=2Ecom> =
+wrote:
+>> >> >Use __ASM_SIZE() macro to add correct insn suffix to pushf/popf=2E
+>> >> >
+>> >> >Signed-off-by: Uros Bizjak <ubizjak@gmail=2Ecom>
+>> >> >Cc: Thomas Gleixner <tglx@linutronix=2Ede>
+>> >> >Cc: Ingo Molnar <mingo@kernel=2Eorg>
+>> >> >Cc: Borislav Petkov <bp@alien8=2Ede>
+>> >> >Cc: Dave Hansen <dave=2Ehansen@linux=2Eintel=2Ecom>
+>> >> >Cc: "H=2E Peter Anvin" <hpa@zytor=2Ecom>
+>> >> >---
+>> >> > arch/x86/boot/cpuflags=2Ec | 10 +++-------
+>> >> > 1 file changed, 3 insertions(+), 7 deletions(-)
+>> >> >
+>> >> >diff --git a/arch/x86/boot/cpuflags=2Ec b/arch/x86/boot/cpuflags=2E=
+c
+>> >> >index d75237ba7ce9=2E=2Eaacabe431fd5 100644
+>> >> >--- a/arch/x86/boot/cpuflags=2Ec
+>> >> >+++ b/arch/x86/boot/cpuflags=2Ec
+>> >> >@@ -2,6 +2,7 @@
+>> >> > #include <linux/types=2Eh>
+>> >> > #include "bitops=2Eh"
+>> >> >
+>> >> >+#include <asm/asm=2Eh>
+>> >> > #include <asm/processor-flags=2Eh>
+>> >> > #include <asm/required-features=2Eh>
+>> >> > #include <asm/msr-index=2Eh>
+>> >> >@@ -36,13 +37,8 @@ static int has_fpu(void)
+>> >> >  * compressed/ directory where it may be 64-bit code, and thus nee=
+ds
+>> >> >  * to be 'pushfq' or 'popfq' in that case=2E
+>> >> >  */
+>> >> >-#ifdef __x86_64__
+>> >> >-#define PUSHF "pushfq"
+>> >> >-#define POPF "popfq"
+>> >> >-#else
+>> >> >-#define PUSHF "pushfl"
+>> >> >-#define POPF "popfl"
+>> >> >-#endif
+>> >> >+#define PUSHF __ASM_SIZE(pushf)
+>> >> >+#define POPF __ASM_SIZE(popf)
+>> >> >
+>> >> > int has_eflag(unsigned long mask)
+>> >> > {
+>> >>
+>> >> Just use pushf/popf=2E gas hasn't needed that suffix for a long time=
+ as far as I know=2E
+>> >
+>> >Unfortunately, clang does not do the right thing when pushf/popf
+>> >without suffix are used=2E
+>> >
+>> >arch/x86/boot/cpuflags=2Ec compiles to:
+>> >
+>> >00000000 <has_eflag>:
+>> >   0:    9c                       pushf
+>> >   1:    9c                       pushf
+>> >   2:    66 5a                    pop    %edx
+>> >   4:    66 89 d1                 mov    %edx,%ecx
+>> >   7:    66 31 c1                 xor    %eax,%ecx
+>> >   a:    66 51                    push   %ecx
+>> >   c:    9d                       popf
+>> >   d:    9c                       pushf
+>> >   e:    66 59                    pop    %ecx
+>> >  10:    9d                       popf
+>> >  11:    66 31 ca                 xor    %ecx,%edx
+>> >  14:    66 31 c9                 xor    %ecx,%ecx
+>> >  17:    66 85 c2                 test   %eax,%edx
+>> >  1a:    0f 95 c1                 setne  %cl
+>> >  1d:    66 89 c8                 mov    %ecx,%eax
+>> >  20:    66 c3                    retl
+>> >
+>> >instead of:
+>> >
+>> >00000000 <has_eflag>:
+>> >   0:    66 9c                    pushfl
+>> >   2:    66 9c                    pushfl
+>> >   4:    66 5a                    pop    %edx
+>> >   6:    66 89 d1                 mov    %edx,%ecx
+>> >   9:    66 31 c1                 xor    %eax,%ecx
+>> >   c:    66 51                    push   %ecx
+>> >   e:    66 9d                    popfl
+>> >  10:    66 9c                    pushfl
+>> >  12:    66 59                    pop    %ecx
+>> >  14:    66 9d                    popfl
+>> >  16:    66 31 ca                 xor    %ecx,%edx
+>> >  19:    66 31 c9                 xor    %ecx,%ecx
+>> >  1c:    66 85 c2                 test   %eax,%edx
+>> >  1f:    0f 95 c1                 setne  %cl
+>> >  22:    66 89 c8                 mov    %ecx,%eax
+>> >  25:    66 c3                    retl
+>> >
+>> >Please note missing 0x66 operand size override prefixes with pushfl
+>> >and popfl=2E This is 16bit code, operand prefixes are mandatory to pus=
+h
+>> >32-bit EFLAGS register (ID flag lives in bit 21)=2E
+>> >
+>> >So, the original patch is the way to go=2E
+>> >
+>> >Uros=2E
+>> >
+>>
+>> You do know that has_eflag can be completely elided on x86-64, or you c=
+an use %z with one of the register operands=2E
 >
+>It is 32-bit PUSHFL insn that requires the "L" suffix in 16-bit code=2E
+>This is x86_32 issue and clang was just lucky that the instruction was
+>always defined with explicit L suffix=2E Please note that PUSHF has no
+>register operand, so %z can't be used=2E
 >
+>> One more reason why clang really needs to shape up=2E
 >
-> On 2024-07-18 11:39 a.m., Ian Rogers wrote:
-> > On Thu, Jul 18, 2024 at 7:33=E2=80=AFAM Liang, Kan <kan.liang@linux.int=
-el.com> wrote:
-> >>
-> >>
-> >>
-> >> On 2024-07-17 8:30 p.m., Ian Rogers wrote:
-> >>> If an event file exists in sysfs, check if a event.cpus file exists
-> >>> and read a perf_cpu_map from it if it does. This allows particular
-> >>> events to have a different set of CPUs compared to the PMU.
-> >>>
-> >>> One scenario where this could be useful is when a PMU is set up with =
-a
-> >>> cpumask/events per SMT thread but some events record for all SMT
-> >>> threads. Programming an event on each SMT thread will cause
-> >>> unnecessary counters to be programmed and the aggregate value to be
-> >>> too large.
-> >>
-> >> If I understand the scenario correctly, I think the issue should have
-> >> been addressed since ICX, with the introduction of  the "SMT-aware
-> >> events". Is there a specific event which still has the issue on newer
-> >> platforms?
-> >
-> > Nothing comes to mind, but it is there on popular machines like Skylake=
-.
-> >
-> >>>
-> >>> Another scenario where this could be useful if when a PMU has
-> >>> historically had a cpumask at the package level, but now newer per
-> >>> die, core or CPU information is available.
-> >>
-> >> The traditional way to support new counters with a different scope is =
-to
-> >> add a new PMU.
-> >>
-> >>>
-> >>> Additional context for the motivation is in these patches and
-> >>> conversation:
-> >>> https://lore.kernel.org/lkml/20240711102436.4432-1-Dhananjay.Ugwekar@=
-amd.com/
-> >>
-> >> I don't see the advantages of the new event.cpus way.
-> >> The aggregation should be the same.
-> >
-> > Agreed. My concern is that we may end up with a pattern of
-> > <pmu>_per_pkg, <pmu>_per_core, <pmu>_per_cpu, <pmu>_per_l3, etc. just
-> > for the sake of the cpumask.
+>Indeed=2E
 >
-> The cstate PMUs already do so, e.g., cstate_core, cstate_pkg.
+>Thanks,
+>Uros=2E
 >
-> From another perspective, it discloses the scope information in a PMU
-> name. If a user only cares about the information of a package, they just
-> need to focus on everything under <pmu>_pkg. Otherwise, they have to go
-> through all the events.
->
-> >
-> >> The RAPL counters are free-running counters. So there is no difference
-> >> whether grouping or not grouping.
-> >
-> > Should the RAPL counters return true for perf_pmu__is_software? In the
-> > tool we currently return false and won't allow grouping, these events
-> > with other hardware events. The intent in perf_pmu__is_software was to
-> > emulate the way the kernel allows/disallows groups - software context
-> > events can be in a hardware context but otherwise I don't believe the
-> > grouping is allowed.
->
-> No, it's not allowed for the RAPL counters.
->
-> If the motivation is to find another way to group counters with
-> different scope, it may not work.
->
-> We once tried to mix the perf_invalid_context PMUs in a group. But it's
-> denied.
-> https://yhbt.net/lore/all/20150415172856.GA5029@twins.programming.kicks-a=
-ss.net/
->
-> The event.cpus still faces the same issues.
 
-Why so? The events would share the same perf_event_context, I thought
-the perf_event_open would succeed.
+Oh, I see =E2=80=93 it is a bug in clang -m16 (=2Ecode16gcc or its equival=
+ent=2E)
 
-> >
-> >> But it makes the kernel driver complex, since it has to maintain at
-> >> least two different cpumasks.
-> >
-> > Two drivers each maintaining a cpumask or 1 driver maintaining 2
-> > cpumasks, it seems like there is chance for code reuse in both cases.
-> > I'm not seeing how it adds to complexity particularly.
->
-> Yes, there are some cleanup opportunities for the cpumask/hotplug codes.
->
-> We may even abstracts some generic interfaces for pkg or core level PMUs.
->
-> Eventually, the complexity/duplication should be able to be reduced.
->
-> >
-> >> The tool becomes complex either, since it has to take care of the
-> >> per-event CPU override case.
-> >
-> > I'm not sure I agree with this. What we need for perf_event_open is a
-> > perf_event_attr, we dress these up as evsels which also have the
-> > ability to be for >1 CPU or thread. Longer term I think evsels can
-> > also have >1 PMU, for the wildcard cases like uncore memory
-> > controllers - this would remove the need for resorting evsels except
-> > for topdown events which have thrown us a giant bundle of challenges.
-> > Anyway, so an evsel is perf_event_attr information paired with CPU
-> > information, it makes sense to me that the parser should do this
-> > pairing. What's harder in the evsel/evlist setup is trying to fix CPU
-> > maps up not in parsing, like with __perf_evlist__propagate_maps where
-> > the parsing is trying to leave crumbs around (like system_wide,
-> > has_user_cpus, is_pmu_core) so the map propagation works properly.
-> >
-> >> The json file must also be updated to add a
-> >> new field cpumask.
-> >
-> > Yeah, I don't like this as it means we end up putting CPU information
-> > into the json that isn't the same for every CPU variant of the same
-> > architecture model. Maybe we can have some kind of "scope" enum value
-> > in the json and then when the scope differs from the PMU's, core scope
-> > vs the PMU's hyperthread scope, then in the tool we can figure out the
-> > cpumask from the topology in sysfs. Maybe we should just always use
-> > the topology and get rid of cpumask files in sysfs, replacing them
-> > with "scope" files. Will Deacon pushed back on having ARM PMUs
-> > supporting hot plugging
-> > (https://lore.kernel.org/lkml/20240701142222.GA2691@willie-the-truck/)
-> > where the main thing hot plugging handler needs to maintain is set the
-> > cpumask.
->
-> Not just the cpumask but also migrate the context for some PMUs, see
-> perf_pmu_migrate_context().
+However, there you can always do pushfl/popfl since that doesn't apply to =
+64-bit mode: both AC and ID always exist in 64-bit mode and any future feat=
+ures should be detected by cpuid rather than by frobbing random bits in xFL=
+AGS=2E
 
-Will do, thanks.
+I suggest have_eflag_ac() and have_eflag_id() and just have them return tr=
+ue on 64 bits=2E
 
-> It seems we really need a shared cpumask in the generic code, so the
-> drivers don't need to handle the hotplug everywhere. I will think about i=
-t.
-
-Thanks. There are other problems on ARM PMUs like having no or empty
-cpumasks, which the tool take to mean open the event on every online
-CPU (there is no cpus or cpumask file on core PMUs historically, so we
-adopt this behavior when the cpumask is empty or not present). I've
-been thinking to expand `tools/perf/tests/pmu.c` with basic PMU sanity
-tests. Some ideas:
-
-1) some kind of cpumask sanity check - we could open an event with the
-cpumask and see if it yields multiplexing.. which would highlight the
-ARM no cpumask bug
-2) do the /sys/devices/<pmu>/events/event.(unit|scale|per-pkg|snapshot)
-files parse correctly and have a corresponding event.
-3) keep adding opening events on the PMU to a group to make sure that
-when counters are exhausted the perf_event_open fails (I've seen this
-bug on AMD)
-4) are the values in the type file unique
-
-Thanks,
-Ian
 
