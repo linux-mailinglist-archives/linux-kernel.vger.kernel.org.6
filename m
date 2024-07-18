@@ -1,118 +1,169 @@
-Return-Path: <linux-kernel+bounces-256789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C3C93703F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 23:48:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B50DA937042
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 23:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1209F1F227C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 21:48:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6245328263D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 21:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2567E145B0B;
-	Thu, 18 Jul 2024 21:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E49145B26;
+	Thu, 18 Jul 2024 21:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c9QxbNeI"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jIpJ/n5g"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78126D1B4
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 21:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2DD74E26
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 21:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721339275; cv=none; b=HQIEEVPVJCB6lGi5Ewm50pmhT13YSyyEdP0SOJvbJE1Cog4Wl/amJEoXmPzfVJwkaHRZL+/0EGx6Hxz46K8TXNPhOzUcVKdXU8x6g/BuKSJyb4l+xn3tHGkDj1yp8703uSmA5a2jPPCB4QT0kQJh64/Rv18OoCM2798gPKd1+/Q=
+	t=1721339343; cv=none; b=Os0P7Z4BLCOLKgIZkBMW7kEbHBouDQ/FCM491MbQ2Kp+P0dhOWV0Q/FBVYaGbpRilC83/99TAkLm3AC8LgbBjf6cFD0UItW9dNzJUBJfMWq7wzpNJEXn/iyRa1sBO/v5W/DDngA7sP27y72vj/7rSDpPb1kJOcSezcj3M2XRyro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721339275; c=relaxed/simple;
-	bh=sIlaMapUNBK5D0OB317lndvKGlXcNDPuqRvYytuCjvE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b4LBWqneWlJ7py2TG7pkt0qcsoa/9XTNerAtwft1+thteUKX2TS/hPyKCMdncEWbzZIndX6oRRLwWbWwZ++AqbZAsC25siy6i9PR2G8qHZ1AvTEMAwIC66fG+zHhQojSEmdBFhsfdVmWPG55QjlqMVvT6Qs7If3VzptBnMo0DGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c9QxbNeI; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52ea5765e75so1189844e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 14:47:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721339272; x=1721944072; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mpMLX3kfs8/bfyK2ait4QZAXJJhBDNKyleclQhXZDdA=;
-        b=c9QxbNeIaF6Waz4VqSW7thtQ0FLR8JXTY+OQftOdH9jXH+1d22DLkapxzNKwYTlkpy
-         iHVksuoAZVhYGuWtHdvd3GkN1gBN1QmzyG7n0Ee0rcmv9MJNTgvjSplDOpp+vCewR29t
-         IpB9+OufjupWeOOuFvzL8X6AlR2MJMaH+Kc1pkZhetLhdCFkQL9VLreHZncYHn+1Ifue
-         mT2UtKrbRM/wRPbWlKAeMpInl+13lDG/b6frkVO0FiM8HuspqtFa0bFY2NC+4HO56D5F
-         iSnjebd30WOdqv9bHzaZAKsLpuPRQgSIWOK147cHsAubFRstaOGGrbA/qeIFnQS6SiNB
-         GhmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721339272; x=1721944072;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mpMLX3kfs8/bfyK2ait4QZAXJJhBDNKyleclQhXZDdA=;
-        b=Z47cI3QxbYzWk8cOLbUB/RvU01rOTv80kDzZ6gViRZ85f7trcbUZD5F3ZUksws6w7f
-         aLqUJK3vBW/PqS7w/B3M7Y08LuozGWslBzR9JXrdJP+z5AKAPQ3Y36037qmHCelIgmHg
-         lzeCl6fWtbg6iNLPQsuH44VN8b+uH+IjXxvrsBI/ThKYUGpZtA80SW31XBt71Pub2aHR
-         5tGwK1PexnmABaFas7MJAGxP437NbXCw+g17MJAg4qozdhyJXrRYbZ8eI9AJ5jt+2LRY
-         pLS/rqCnlH+Sri58BBwVYmkWC8BXzUwEYHR4r7VMgvIXZ+AzFfPeLC+wGcHB18QVesWf
-         tgPw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0Ljb7WsGYHigWQ8gcnyaKpIRgLBExeInKm/TwhpI+cY05bscPA9g6+LP6SNF8Kb101/u3QtlSaNrPmTskFESkRkBQzgShH6t+OKCK
-X-Gm-Message-State: AOJu0Yz5PGx5nx0PuzafpRs9Y9hbKObLPD+WF31pAhZOta2FEWnuzbL0
-	+zIJGhB39vl4+D4psfC1e5JGnU7ALQ1a7dmOLO51khDlr4+swxN82GWNLan3ZjM=
-X-Google-Smtp-Source: AGHT+IHblCKnDA5X9aLd7Di/A53K4ImLa7YtSeAHvDZw3KfD4za5bxapeD5LaXRZlyMqLAGzfMTH5g==
-X-Received: by 2002:a05:6512:3c97:b0:52b:bd90:29c8 with SMTP id 2adb3069b0e04-52ee5428b13mr3546662e87.60.1721339271758;
-        Thu, 18 Jul 2024 14:47:51 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ef556ad17sm20e87.166.2024.07.18.14.47.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 14:47:51 -0700 (PDT)
-Date: Fri, 19 Jul 2024 00:47:49 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: "Dr. David Alan Gilbert" <linux@treblig.org>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	maarten.lankhorst@linux.intel.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/bridge: analogix: remove unused struct
- 'bridge_init'
-Message-ID: <7csq4ml5hm53gqwrs4z6pc2vtokxsadzqmyc3yj57zcxz56766@asuk4vt2z43f>
-References: <20240520125551.11534-1-linux@treblig.org>
- <g4nwb5cgcg2wff4qogzayhdrj3omneeusfjqmdupghy6zlji5m@kp55dmkbj6k3>
- <ZplVoj6xAAaMnisJ@gallifrey>
+	s=arc-20240116; t=1721339343; c=relaxed/simple;
+	bh=fRDaX9VTlaeoApmfLRQ+W7qdpJvrMy/JLsVSvBohTwo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MtqE8FSkK4jc170LG/Ao1dw3xNNlGjG7jKb0qeRdZR9qqI/QnHgygwwWjp4mxpVxwnIdlO55N2kX196AbsrQW2YNS1yuQ01R06OfC5aZUJSw7w7gIa4ILei1JYPsCScYC4qjy9hyU3fCBlVms5viZzqVSvsYd9VFfzcbHfDMRZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jIpJ/n5g; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721339339;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iSDJ+UGcBOwd8jwVhUDcFJXEg2LhB5hHVkSUyhvGsv4=;
+	b=jIpJ/n5gbhERymXfv6nyvlcqVZfvzo+YCdL0twKWeKu5GSV43392ub7eOgZRP9iCSXS67R
+	Ry3MpH+KA4o1Gpyfgc/5lzYC5pvcDA15l0P4FrCn1grDVz5IkoyvNWFVEFNpUHjia71l9t
+	bAQs9cmoSg47kun9OuO23IkAS3yzgBE=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-641-xZdVVzpXPYOxyTivrBnr-w-1; Thu,
+ 18 Jul 2024 17:48:53 -0400
+X-MC-Unique: xZdVVzpXPYOxyTivrBnr-w-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7C56D19560B1;
+	Thu, 18 Jul 2024 21:48:52 +0000 (UTC)
+Received: from [10.22.32.50] (unknown [10.22.32.50])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2214C195605A;
+	Thu, 18 Jul 2024 21:48:50 +0000 (UTC)
+Message-ID: <3f4f7090-7009-4509-9122-b75a0d9ce32c@redhat.com>
+Date: Thu, 18 Jul 2024 17:48:50 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZplVoj6xAAaMnisJ@gallifrey>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] bcachefs changes for 6.11
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <r75jqqdjp24gikil2l26wwtxdxvqxpgfaixb2rqmuyzxnbhseq@6k34emck64hv>
+ <CAHk-=wigjHuE2OPyuT6GK66BcQSAukSp0sm8vYvVJeB7+V+ecQ@mail.gmail.com>
+ <5ypgzehnp2b3z2e5qfu2ezdtyk4dc4gnlvme54hm77aypl3flj@xlpjs7dbmkwu>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <5ypgzehnp2b3z2e5qfu2ezdtyk4dc4gnlvme54hm77aypl3flj@xlpjs7dbmkwu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Thu, Jul 18, 2024 at 05:49:22PM GMT, Dr. David Alan Gilbert wrote:
-> * Dmitry Baryshkov (dmitry.baryshkov@linaro.org) wrote:
-> > On Mon, May 20, 2024 at 01:55:51PM +0100, linux@treblig.org wrote:
-> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > > 
-> > > commit 6a1688ae8794 ("drm/bridge: ptn3460: Convert to I2C driver model")
-> > > has dropped all the users of the struct bridge_init from the
-> > > exynos_dp_core, while retaining unused structure definition.
-> > > Later on the driver was reworked and the definition migrated
-> > > to the analogix_dp driver. Remove unused struct bridge_init definition.
-> > > 
-> > > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> > > ---
-> > >  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 5 -----
-> > >  1 file changed, 5 deletions(-)
-> > > 
-> > 
-> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> 
-> Hi Dmitry,
->   Do you know who is likely to pick this one up?  I think all
-> my other drm patches have found their way into -next.
+On 7/18/24 17:20, Kent Overstreet wrote:
+> On Wed, Jul 17, 2024 at 11:53:04AM GMT, Linus Torvalds wrote:
+>> On Sun, 14 Jul 2024 at 18:26, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+>>> Hi Linus - another opossum for the posse:
+>> (The kernel naming tends to be related to some random event, in this
+>> case we had a family of opossums under our shed for a couple of
+>> months)
+> Oh cute :)
+>
+>>> bcachefs changes for 6.11-rc1
+>> As Stephen pointed out, all of this seems to have been rebased
+>> basically as the merge window opened, so if it was in linux-next, I
+>> certainly can't easily validate it without having to compare patch ids
+>> etc. DON'T DO THIS.
+> I had to give this some thought; the proximate cause was just
+> fat fingering/old reflexes, but the real issue that's been causing
+> conflicts is that I've got testers running my trees who very much /do/
+> need to be on the latest tagged release.
+>
+> And I can't just leave it for them to do a rebase/merge, because a) they
+> don't do that, and b) then I'm looking at logs with commits I can't
+> reference.
+>
+> So - here's how my branches are going to be from now on:
+>
+> As before:
+>
+> - bcachefs-testing: code goes here first, until it's passed the testing
+>    automation. Don't run this unless you're working with me on something.
+> - for-next: the subset of bcachefs-testing that's believed to be stable
+> - bcachefs-for-upstream: queue for next pull request, generally just
+>    hotfixes
+>
+> But my master branch (previously the same as for-next) will now be
+> for-next merged with the latest tag from your tree, and I may do
+> similarly for bcachefs-for-upstream if it's needed.
+>
+> As a bonus, this means the testing automation will now be automatically
+> testing my branch + your latest; this would have caught the breakage
+> from Christoph's FUA changes back in 6.7.
+>
+>> Also, the changes to outside fs/bcachefs had questions that weren't answered.
+> Yeah, those comments should have been added. Waiman, how's this?
+>
+> -- >8 --
+>
+>  From 1d8cbc45ef1bab9be7119e0c5a6f8a05d5e2ca7d Mon Sep 17 00:00:00 2001
+> From: Kent Overstreet <kent.overstreet@linux.dev>
+> Date: Thu, 18 Jul 2024 17:17:10 -0400
+> Subject: [PATCH] lockdep: Add comments for lockdep_set_no{validate,track}_class()
+>
+> Cc: Waiman Long <longman@redhat.com>
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+>
+> diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+> index b76f1bcd2f7f..bdfbdb210fd7 100644
+> --- a/include/linux/lockdep.h
+> +++ b/include/linux/lockdep.h
+> @@ -178,9 +178,22 @@ static inline void lockdep_init_map(struct lockdep_map *lock, const char *name,
+>   			      (lock)->dep_map.wait_type_outer,		\
+>   			      (lock)->dep_map.lock_type)
+>   
+> +/**
+> + * lockdep_set_novalidate_class: disable checking of lock ordering on a given
+> + * lock
+> + *
+> + * Lockdep will still record that this lock has been taken, and print held
+> + * instances when dumping locks
+> + */
+>   #define lockdep_set_novalidate_class(lock) \
+>   	lockdep_set_class_and_name(lock, &__lockdep_no_validate__, #lock)
+>   
+> +/**
+> + * lockdep_set_notrack_class: disable lockdep tracking of a given lock entirely
+> + *
+> + * Bigger hammer than lockdep_set_novalidate_class: so far just for bcachefs,
+> + * which takes more locks than lockdep is able to track (48).
+> + */
+>   #define lockdep_set_notrack_class(lock) \
+>   	lockdep_set_class_and_name(lock, &__lockdep_no_track__, #lock)
+>   
+>
+That should be good enough.
 
-Applied and pushed.
+Thanks,
+Longman
 
--- 
-With best wishes
-Dmitry
 
