@@ -1,120 +1,131 @@
-Return-Path: <linux-kernel+bounces-256710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC12D935258
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 22:08:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2DC493525A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 22:10:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 565EC282F1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 20:08:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E7B71C20B9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 20:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2974F145B0C;
-	Thu, 18 Jul 2024 20:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C563145A1D;
+	Thu, 18 Jul 2024 20:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uuvgCAy0"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QKdqX0kq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3987413D516
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 20:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3049569D31
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 20:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721333322; cv=none; b=eKeIYAQQ3pJaRloN53UEdFeaE4cI3icEpgPYuGNd+Gjs3+qK5/4ek5MQMPCPU1+hxy6BZ7rCBfXl+5Ybc0euHJ6sVG0y7lQrHJkSZ5DIIk+Fi/HzWdMq38nUGgLd8WxwWh9MqO+GmnfctfrdbuvR1zuLsN/vJd75EV3t3MR/hEs=
+	t=1721333416; cv=none; b=tyUY1mRFPVu7Lo1KUK/Az68hQd7TKYies6NmICDUdbN5gVTMWiW0JWcHn74EadsLt8He8BwIySapd/CGNey55S60DTmWMCFKa58OeQSYKfTQ+26pXfWDA6lrRuKCO0zdxUso9cls++XMmRz20Py29CnrMG5anMhZ1vPuVfzkn7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721333322; c=relaxed/simple;
-	bh=roVaJVLQ8Of78HQnsJm4kUqib5zBKHi0p3Ier02zSy8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VJDPoa386qx21z213N+BOMm9MNloXVzrf8oC6iZn/fyohMJH5beGY499sTdTkNueGWAU92MhYJm6wXyxEMVJgGnISUYizgtTkSqA8hfR2BWyvnccb8b44voKyu9Sia19c8bdiap28/w2XH1+FjzG4y6oTv+u5IUt4u4JKrp3HmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uuvgCAy0; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-70365f905b6so745684a34.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 13:08:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721333319; x=1721938119; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Jp0oyTo7suZ1p/VJFPY2j+EgXru6EPJQFDcV3HqH2M4=;
-        b=uuvgCAy0AtttPne0AEemcnbMuyuiKdn2xkn1jq86RhmgI+TXK+ao1WaOPMVkfWK/2M
-         tmcwlJxFbE6gY0cLbbYSDb+rlPnqtHm23KBpPtudQKSzs+s9jFIICsGrl4ZEmccPuyuq
-         M5dGRYqf19WtjR3jyrXtwXeJFplY1k2Zk8nN2G+yUXyMgbhUg1MkFNu0ZLdr6dzuAbXn
-         tC+KOKmFP0PC+ASkvWY0ha4ai2wW7fSp+DdmxILpBUxuuhMt1G71TdiHYKbq2J1jJTaX
-         cZ5VvRyJjDJIvFtCXXMhmIdoVRZrbBsiMePgzU55LrfABZdonzao/CB0nqiqLw2zm5s8
-         G9dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721333319; x=1721938119;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jp0oyTo7suZ1p/VJFPY2j+EgXru6EPJQFDcV3HqH2M4=;
-        b=OM0aTxVPYxPbEP58BoA4/bjQRRQQUx4LvGAAzWUn2t+Ys1zljC2OPmZTQkc967EkuQ
-         N8uXhBbwRD+dCBXGNH4SDuH5aSeeZwsaFw550LbNTXW1o6gI8Y/uqzwWzQFzufYcpXlV
-         LV2cPzNIwMDNOpo+Zj81LCBwpWXydP+b3xx6pFFmb9eRct6iX/umtA2WhGlw0nCm1Phy
-         E5xKi4AAdXj3IS7ybjXFywX9GSbOhzT4LQw9ErOQRYnqGrH0a3uzu5UXA5qYcsFHaxAa
-         mQzNr1DbvU4vuUocP6FrYOWUitnIub6JnvlyBHrBDkFr7/VYaoVChriUyw0llP3h0lNU
-         IoSw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFKw5BZ5c/2xDoiv0xYYh6WEo8magomFoHu3yDqAd+3XOfsi70saVmWsQMDkc4QCnSW3a4LmT3Z502/aOdEGoyb9IhDKszR88qgpxD
-X-Gm-Message-State: AOJu0YzMAKybJKiYHdFNX/KEcCnjaQbRvoMqBkCqZtneIazkC3rhKLKk
-	skNCVpmt6/rvZKkbMU03zjssrzw2RqINc/8CQMf6zGhRia591fNqLnxsn9uWIOw=
-X-Google-Smtp-Source: AGHT+IFQkhBljK1MS0GoVn+FbZK4gkfbyBP+j6byThpGUBkHb6s72SWk871XFe5thqyDhAAjoaa/CQ==
-X-Received: by 2002:a05:6830:369a:b0:703:6d27:63e0 with SMTP id 46e09a7af769-708e37f0e3amr8445206a34.26.1721333319343;
-        Thu, 18 Jul 2024 13:08:39 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:8d5a:14eb:55d7:f0ba])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-708f6174ee5sm2621a34.55.2024.07.18.13.08.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 13:08:38 -0700 (PDT)
-Date: Thu, 18 Jul 2024 15:08:36 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Perry Yuan <Perry.Yuan@amd.com>
-Cc: Huang Rui <ray.huang@amd.com>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] cpufreq: amd-pstate: Fix uninitialized variable in
- amd_pstate_cpu_boost_update()
-Message-ID: <7ff53543-6c04-48a0-8d99-7dc010b93b3a@stanley.mountain>
+	s=arc-20240116; t=1721333416; c=relaxed/simple;
+	bh=ugaWR8JGHdj3yGFXvMOXzTdia9uN1CQ7x8IvBCYoT6A=;
+	h=From:In-Reply-To:References:To:cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=UZ1ZkvZaeUhEmOvvYoBAqtwfgVThuwDU4LpXNQiUJ60Wnlh6+Vz5tWJiCviRK66E22ShIgIr980Z3iq2hCZQprln6M7Bs0rI4It48lUPdXRLmkj91dwJlyqggAx7rkdKSPWro8qe/U7FSpgj846ZG2mlOgOP4lCsdOzJCCNLQ+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QKdqX0kq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721333414;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MhNrypD9tKCB76J+bi+54vbqRuUJuHcgPMKesV6Oa6c=;
+	b=QKdqX0kqu1uYVv+rxeeuZipINbl84qqxHXfXwrN92bOz7L9h4pMwWUfkOQyd7vwwhFiDZY
+	8YQHAcgVbYL2u9OE5xStnpioau4gDBHhwYVmbndfBF9ubifkkRkH0qRJ87cPrBgZ8Gz8Ga
+	zb3dbS+G17aO4KV+nH35JlJ+kjxVLJo=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-107-l6JER5hFOUaXuakXyqR36A-1; Thu,
+ 18 Jul 2024 16:10:10 -0400
+X-MC-Unique: l6JER5hFOUaXuakXyqR36A-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 97A42195420D;
+	Thu, 18 Jul 2024 20:10:09 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.216])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7E4971955F40;
+	Thu, 18 Jul 2024 20:10:07 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <1410685.1721333252@warthog.procyon.org.uk>
+References: <1410685.1721333252@warthog.procyon.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+cc: dhowells@redhat.com,
+    Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+    Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] netfs: Rename CONFIG_FSCACHE_DEBUG to CONFIG_NETFS_DEBUG
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 18 Jul 2024 21:10:06 +0100
+Message-ID: <1410796.1721333406@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Smatch complains that "ret" could be uninitialized:
 
-  drivers/cpufreq/amd-pstate.c:734 amd_pstate_cpu_boost_update()
-  error: uninitialized symbol 'ret'.
+CONFIG_FSCACHE_DEBUG should have been renamed to CONFIG_NETFS_DEBUG, so do
+that now.
 
-This seems like it probably is a real issue.  Initialize "ret" to zero to
-be safe.
-
-Fixes: c8c68c38b56f ("cpufreq: amd-pstate: initialize core precision boost state")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Uwe Kleine-K=C3=B6nig <ukleinek@kernel.org>
+cc: Christian Brauner <brauner@kernel.org>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
 ---
- drivers/cpufreq/amd-pstate.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/netfs/Kconfig |   18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-index 68c616b572f2..358bd88cd0c5 100644
---- a/drivers/cpufreq/amd-pstate.c
-+++ b/drivers/cpufreq/amd-pstate.c
-@@ -692,7 +692,7 @@ static int amd_pstate_cpu_boost_update(struct cpufreq_policy *policy, bool on)
- 	struct amd_cpudata *cpudata = policy->driver_data;
- 	struct cppc_perf_ctrls perf_ctrls;
- 	u32 highest_perf, nominal_perf, nominal_freq, max_freq;
--	int ret;
-+	int ret = 0;
- 
- 	highest_perf = READ_ONCE(cpudata->highest_perf);
- 	nominal_perf = READ_ONCE(cpudata->nominal_perf);
--- 
-2.43.0
+diff --git a/fs/netfs/Kconfig b/fs/netfs/Kconfig
+index bec805e0c44c..1b78e8b65ebc 100644
+--- a/fs/netfs/Kconfig
++++ b/fs/netfs/Kconfig
+@@ -22,6 +22,14 @@ config NETFS_STATS
+ 	  between CPUs.  On the other hand, the stats are very useful for
+ 	  debugging purposes.  Saying 'Y' here is recommended.
+=20
++config NETFS_DEBUG
++	bool "Enable dynamic debugging netfslib and FS-Cache"
++	depends on NETFS
++	help
++	  This permits debugging to be dynamically enabled in the local caching
++	  management module.  If this is set, the debugging output may be
++	  enabled by setting bits in /sys/module/netfs/parameters/debug.
++
+ config FSCACHE
+ 	bool "General filesystem local caching manager"
+ 	depends on NETFS_SUPPORT
+@@ -50,13 +58,3 @@ config FSCACHE_STATS
+ 	  debugging purposes.  Saying 'Y' here is recommended.
+=20
+ 	  See Documentation/filesystems/caching/fscache.rst for more information.
+-
+-config FSCACHE_DEBUG
+-	bool "Debug FS-Cache"
+-	depends on FSCACHE
+-	help
+-	  This permits debugging to be dynamically enabled in the local caching
+-	  management module.  If this is set, the debugging output may be
+-	  enabled by setting bits in /sys/modules/fscache/parameter/debug.
+-
+-	  See Documentation/filesystems/caching/fscache.rst for more information.
 
 
