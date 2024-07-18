@@ -1,237 +1,186 @@
-Return-Path: <linux-kernel+bounces-256718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3FE493527B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 22:40:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72DBE93527C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 22:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 278F5B215E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 20:40:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29346282A07
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 20:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC76B145B27;
-	Thu, 18 Jul 2024 20:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFF6145A1F;
+	Thu, 18 Jul 2024 20:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CwQXc5aC";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3TFas+F3";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="D+ZeWRmY";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SZjz36ZN"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="d6Q8fGQ3"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2043.outbound.protection.outlook.com [40.107.220.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E97143C54;
-	Thu, 18 Jul 2024 20:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721335218; cv=none; b=nSUf6qOUU3XXBl10vMFARiCX+pgcs3rKc9IK8a6BzAw9ieFC7WE123yFcKFllGzg4CW5gKjo3y0pUhgh3Le8R6V2JSTUbkZOkkswearH7IV5hJQHmJeSe1r97R1XdidKdnfD0ikuxiahzknjHWvUwqVz41QXw8L4iUsQV4zobMc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721335218; c=relaxed/simple;
-	bh=QivVf0yOJ4j9FWAgm7rYE+HpDApzpZa/B0WyGW+kKVE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uadJofNR12Ax0UtQpwbICwFMxJeJp61KRuBI+b5NN2cAiFhMXeAj3S0Sm2MAnXi7CfSiF707KV2KU1N4tFHds+ozAFefJq8hvKHY4MnzUrdoOJC5rtqjKRrqbLVYrDbmFuYLiHe3OnAsMYBVRihnhCnWiZ/c8wRe4XIVSXNSua4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CwQXc5aC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3TFas+F3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=D+ZeWRmY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SZjz36ZN; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1CBF721C30;
-	Thu, 18 Jul 2024 20:40:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721335214; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=82lPptaZbhKCSi1vGqHZHbBmsVDaEQXXJeWHUMbZyII=;
-	b=CwQXc5aCeoEaYQ9XiULmidgV2142YcqVZ9csbDWRUutHH7tD3OAUGQyh+jhIQgzDOUBEoF
-	lxGCvZFEX85wpFr3/efKpQI1Cw4DisSsp6daMWlyY0ZYPSg1aAruRa8F2WEytwvOOkkKC7
-	EytZwa3TUPmMT10DgR3LNJneCjQ5lj4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721335214;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=82lPptaZbhKCSi1vGqHZHbBmsVDaEQXXJeWHUMbZyII=;
-	b=3TFas+F39BetoT5zCbnbLDWnqBIbRPJrvIgleTBKnuJ8AZvYY+/f2W5HRhL1cwiP9CFtCn
-	D+D04Wp34SXawuDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721335213; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=82lPptaZbhKCSi1vGqHZHbBmsVDaEQXXJeWHUMbZyII=;
-	b=D+ZeWRmY6Nvf5CYCPoS5o8+ViBZUaYym0unMu6LBP00Pmh3VKqDnWHrItVDHzFeCpitu3p
-	OPYr5hj1Evns5FDXH48v0E784RbEj114RVJmi9lbG8Xu/rX5seec8567B04f0u/i0QYcNY
-	KKeQysFGXYDRtaJsz8u7XSrF9zdyrlI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721335213;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=82lPptaZbhKCSi1vGqHZHbBmsVDaEQXXJeWHUMbZyII=;
-	b=SZjz36ZNJV4zkutOwS5CEa1Ko8dUwk6/eeFMjePho18EQq0Z+2ZR/fxdETFLeixqWwXVen
-	oHv25rZDX9DI9sAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 10684136F7;
-	Thu, 18 Jul 2024 20:40:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id G1r3A619mWbAfwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 18 Jul 2024 20:40:13 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A61ABA0987; Thu, 18 Jul 2024 22:40:12 +0200 (CEST)
-Date: Thu, 18 Jul 2024 22:40:12 +0200
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Jakub Kicinski <kuba@kernel.org>, v9fs@lists.linux.dev
-Subject: Re: [PATCH] vfs: handle __wait_on_freeing_inode() and evict() race
-Message-ID: <20240718204012.x4ysnjmvjh5v2zf3@quack3>
-References: <20240718151838.611807-1-mjguzik@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF91143C54
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 20:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721335264; cv=fail; b=qVWMp12FiBtJEu1mObWl1sHB/IOTDLiY9LHZiKCdw1kt/MxWfJb28k68LoS27RQ7rKQTJ4a+OgfW0Pxf5E7LaCZhbKnxZ3kzMWaD3ATGaRXmcbsKtdjag/HoGqpC3GPCYMRNIq22I+4/WnM7gPe6A1AUq5aqCCfeIW2wKqkvODI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721335264; c=relaxed/simple;
+	bh=xwg8UXUAdTBZCb1uk05qqd4TUELR3TVDYXUX5qGtekI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=owk++Azh2IdNArM8NGp/kXxTw3Wwj0kFBK6G98fCOD+RUToTmyQGXz4b+F5z7EjZJhOHKxoteUWTsfmmEuEXLDbaJDXZKM8Dt6lWgMe/rc5k+sKQluCZVI6G6TcvXz8EqeCPUM7xd/sE79OSaj2KibaV0n/akbnNuSm4K8vG0YU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=d6Q8fGQ3; arc=fail smtp.client-ip=40.107.220.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aVbu5P25txReV/IF/Gi2xDpDChrt9AeblN/pjDnQCV3LU+nArE40WsU+8qGJ0J2VRRC0NAC39jNAmn1USQOPCXFqEzpxQfcoTlpFNlMIPZpsmvegElL/yUG1WWXJZLKmJLmpeWVuwhNrIl7XDkGzWrebF+2McOGnK/4B0WeeXa2l/roe/qSK5OP1U8ZGblt7O4kn9SxObBouBIAXibHZdfhe+4aQvsj3MhGKGBgaGDI/eCspfVrjZJgIkQlxIz6/ZwX2RPmcaTwpsGkdqZFyne2A/KgI1ZSuRWIcXADHcaGJH4YkFigbYKR/5PEpSkUTZcYmKifQdRpdQSWkOs4hlQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EQgqmU4ydfnWMQ06X1UbJ+AimtO+M3HPPGSXr+p1sLo=;
+ b=BFDyHQ6unIyKwQaDF8S+Wiuy8WDklLCc+zUNmwt6UsfSvx1ZFHPtUbapCQBd4/I7cI2U0eBz8mqJKCIMcBOs4KEc6TGW4OIH0bI4NjaZasqe2+LjMf8zR6PQyA9PBIt5yFR99rjbDdJTgagOgnKKk0ljy68W+4PSdYZjeyzhE9FDugNRrHt8y0gC69IrZyY4EhCT0X+qUy5vUGpgOHf9TY017dSCmc80WRFOo2U/b3f8T2F8YLO5gDNH8G+nZIibwC1tYND31oUJ1xyHX8pmyMI3OfH1AfrdyGegC8HRGl6i3ZSabvBU5FLdfkhAzd/r9npaSg1sRlwnII/YVoAaIw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=lists.infradead.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EQgqmU4ydfnWMQ06X1UbJ+AimtO+M3HPPGSXr+p1sLo=;
+ b=d6Q8fGQ3w6YQz7arknQtJyAeAb/nHQ34TzVuByVGnjeAlsMUr9UbF6EPpUzNLx9t17yK7R5Pw+xWHrV8J8tBzvIvCnPEolcspGozudxNlFNe3zctAGgmXRKkYdlPUKCfgjmjAeGiDnDujYhxzrtXVs8r8ifaC8QvMLTas1QHs6c=
+Received: from DM6PR12CA0017.namprd12.prod.outlook.com (2603:10b6:5:1c0::30)
+ by MN0PR12MB5980.namprd12.prod.outlook.com (2603:10b6:208:37f::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.17; Thu, 18 Jul
+ 2024 20:40:59 +0000
+Received: from DS1PEPF00017093.namprd03.prod.outlook.com
+ (2603:10b6:5:1c0:cafe::fd) by DM6PR12CA0017.outlook.office365.com
+ (2603:10b6:5:1c0::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28 via Frontend
+ Transport; Thu, 18 Jul 2024 20:40:59 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DS1PEPF00017093.mail.protection.outlook.com (10.167.17.136) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7784.11 via Frontend Transport; Thu, 18 Jul 2024 20:40:59 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 18 Jul
+ 2024 15:40:58 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 18 Jul
+ 2024 15:40:57 -0500
+Received: from xsjblevinsk50.xilinx.com (172.19.2.206) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Thu, 18 Jul 2024 15:40:57 -0500
+From: Ben Levinsky <ben.levinsky@amd.com>
+To: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<michal.simek@amd.com>, <jassisinghbrar@gmail.com>
+Subject: [PATCH v2] mailbox: zynqmp-ipi: Make polling period configurable
+Date: Thu, 18 Jul 2024 13:40:57 -0700
+Message-ID: <20240718204057.307655-1-ben.levinsky@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240718151838.611807-1-mjguzik@gmail.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.com:email,codewreck.org:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB05.amd.com: ben.levinsky@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF00017093:EE_|MN0PR12MB5980:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9e57faa4-e20a-46fe-047c-08dca769ee7d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?G/VCElyyEXw8F8sVDJ6ZElxxu0xX5+bM3VVCopnVv4U7xIMSKtnkXlBiVoAd?=
+ =?us-ascii?Q?dpT0qRCCC8BBeZoPTprch4R6u4Pu86+EqrMieN7xJipuXwrC0ZHDEaqJx+bO?=
+ =?us-ascii?Q?fNApiA5v8olIgm6XR/4LAUdssfnq3rs6a/Vt+45aSdoawntoC/fUe8CaYcb/?=
+ =?us-ascii?Q?sIx/ipY/wtM1xd6swuNPNG6QXNgexX1Dt0qnRHzwtiDIGtvtpmTzzUT7hJS1?=
+ =?us-ascii?Q?Y0QBjBPb2M/fAPBYp7911m+5qpS/mon+4J6zrx8mLsQWTBlHJCI6hSc5FyCj?=
+ =?us-ascii?Q?wK7u8vDtxLMT2D8IM7KyXWiO0xTznkeje3jhrOo7wSr+p8rxyLxAPiD/L0g8?=
+ =?us-ascii?Q?Jb/Uyg2kzF3mj+xqyfKINdTWwEoGZFLWvYm/YkiNOfxB29wf5J/SDt8UjC0f?=
+ =?us-ascii?Q?/UlddNIu/rF0ptlYZuVqPJYot52b9ULDJfFKby/T0w3TkByin30R7FOZ6Pj2?=
+ =?us-ascii?Q?0Tm/9ut+1ZnDZ6HoQ8p1qMv7yRuyAx1vA3bwNCaxJk5GRhA1wiGE8NL5fxA4?=
+ =?us-ascii?Q?RE2+0Y5nyD+ASefa7bXVOQ4MLGD0RQckfLsU+weMJblbP15nLKYj3c+tzDnG?=
+ =?us-ascii?Q?l13YR10LT5Xa+VLCh/GUbri+Wr5bOv3pkbks11mJZh5iw0GVWtUMOwrfPJWT?=
+ =?us-ascii?Q?Z2pDZMM+WKTJrhReUy60WomMnvThFPloS1f/tdGRXm4HSr2Dgvvsd4UT3f+Q?=
+ =?us-ascii?Q?MZZoC2IhG+r75MqqWKjDGtIAAlm5yXo1fjQJHcMs83vU7n/hvfWjT5x3ZLik?=
+ =?us-ascii?Q?OBuJ78izOccaWK5+sMOkkbdDUfboGd34AUdEiHH6VUm3T0Q99OD6AMApdE5h?=
+ =?us-ascii?Q?98JiyVG/h2+Gz5CXd9UZprvL9PH4sY/I11i7dYycZUdRkzQkkb4DaS4z0Lg/?=
+ =?us-ascii?Q?R912A7544kbz+InJQKl6JeNXg93wVYlZ5dRqXjR6Aen8rIn3Z/54TGfZH7uq?=
+ =?us-ascii?Q?oxvHq7Do3KygrFw3HEu/qWNuj2uNuUUGZwiLwqbJestRhYouRmek4gx4pZWh?=
+ =?us-ascii?Q?+vhc6999WzaMBy5+FkyZbKsIjNQb3VJLZaQ1MjN+3zVhca5PrYF9HIkgBbIy?=
+ =?us-ascii?Q?kIh+LozG43ehC6lQZ20TCsZYzLtPlrhTcL02vTj/l+NpEPrU0SMIQlhE/XxD?=
+ =?us-ascii?Q?lEn198YUh/0LJZCt7Kv4/zwJhRA2PL3+PU4Cnj4n5zIiuR5S7sPfYi5WRoza?=
+ =?us-ascii?Q?UglJFepTsztvU2bHam7rypNWv8WQgIhlYKnaGGJzNvowXnDjcnSBfIA2QbRu?=
+ =?us-ascii?Q?TTkkQdyxvFkhvbKWz8Xj98nf6wgo2A9KOL8IZzNmUlL/FRmhTCvVsSaYyDnD?=
+ =?us-ascii?Q?kcUNb7EQGurR7y4nEcT3S4Bgk63M81TY6X8b3pzgxKNxnY7KEEPIPquyQ9Ja?=
+ =?us-ascii?Q?ecKgMG/OFekUN+A3AKAmVEIt8MehjgRmyTuAdtecnRJ88pp3OQrbxPIiBsR+?=
+ =?us-ascii?Q?0epAvRDcppNvEJR8CaO6akE2WYg66tyi?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2024 20:40:59.2311
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e57faa4-e20a-46fe-047c-08dca769ee7d
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF00017093.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5980
 
-On Thu 18-07-24 17:18:37, Mateusz Guzik wrote:
-> Lockless hash lookup can find and lock the inode after it gets the
-> I_FREEING flag set, at which point it blocks waiting for teardown in
-> evict() to finish.
-> 
-> However, the flag is still set even after evict() wakes up all waiters.
-> 
-> This results in a race where if the inode lock is taken late enough, it
-> can happen after both hash removal and wakeups, meaning there is nobody
-> to wake the racing thread up.
-> 
-> This worked prior to RCU-based lookup because the entire ordeal was
-> synchronized with the inode hash lock.
-> 
-> Since unhashing requires the inode lock, we can safely check whether it
-> happened after acquiring it.
-> 
-> Link: https://lore.kernel.org/v9fs/20240717102458.649b60be@kernel.org/
-> Reported-by: Dominique Martinet <asmadeus@codewreck.org>
-> Fixes: 7180f8d91fcb ("vfs: add rcu-based find_inode variants for iget ops")
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+There are cases where remote that is acking mailbox message can take longer
+than the default tx_poll_period value. Therefore, enable this to be mutable.
 
-Looks good. Feel free to add:
+Added tx_poll_period field while inserting the module to set the
+poll period for ack after sending mailbox message.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Ben Levinsky <ben.levinsky@amd.com>
+---
+v2: Made param a module_param_named mutable arg as opposed to compiled option
+---
+ drivers/mailbox/zynqmp-ipi-mailbox.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-								Honza
-
-> ---
-> 
-> The 'fixes' tag is contingent on testing by someone else. :>
-> 
-> I have 0 experience with 9pfs and the docs failed me vs getting it
-> running on libvirt+qemu, so I gave up on trying to test it myself.
-> 
-> Dominique, you offered to narrow things down here, assuming the offer
-> stands I would appreciate if you got this sorted out :)
-> 
-> Even if the patch in the current form does not go in, it should be
-> sufficient to confirm the problem diagnosis is correct.
-> 
-> A debug printk can be added to validate the problematic condition was
-> encountered, for example:
-> 
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index 54e0be80be14..8f61fad0bc69 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -2308,6 +2308,7 @@ static void __wait_on_freeing_inode(struct inode *inode, bool locked)
-> >         if (unlikely(inode_unhashed(inode))) {
-> >                 BUG_ON(locked);
-> >                 spin_unlock(&inode->i_lock);
-> > +               printk(KERN_EMERG "%s: got unhashed inode %p\n", __func__, inode);
-> >                 return;
-> >         }
-> 
-> 
->  fs/inode.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index f356fe2ec2b6..54e0be80be14 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -676,6 +676,16 @@ static void evict(struct inode *inode)
->  
->  	remove_inode_hash(inode);
->  
-> +	/*
-> +	 * Wake up waiters in __wait_on_freeing_inode().
-> +	 *
-> +	 * Lockless hash lookup may end up finding the inode before we removed
-> +	 * it above, but only lock it *after* we are done with the wakeup below.
-> +	 * In this case the potential waiter cannot safely block.
-> +	 *
-> +	 * The inode being unhashed after the call to remove_inode_hash() is
-> +	 * used as an indicator whether blocking on it is safe.
-> +	 */
->  	spin_lock(&inode->i_lock);
->  	wake_up_bit(&inode->i_state, __I_NEW);
->  	BUG_ON(inode->i_state != (I_FREEING | I_CLEAR));
-> @@ -2291,6 +2301,16 @@ static void __wait_on_freeing_inode(struct inode *inode, bool locked)
->  {
->  	wait_queue_head_t *wq;
->  	DEFINE_WAIT_BIT(wait, &inode->i_state, __I_NEW);
-> +
-> +	/*
-> +	 * Handle racing against evict(), see that routine for more details.
-> +	 */
-> +	if (unlikely(inode_unhashed(inode))) {
-> +		BUG_ON(locked);
-> +		spin_unlock(&inode->i_lock);
-> +		return;
-> +	}
-> +
->  	wq = bit_waitqueue(&inode->i_state, __I_NEW);
->  	prepare_to_wait(wq, &wait.wq_entry, TASK_UNINTERRUPTIBLE);
->  	spin_unlock(&inode->i_lock);
-> -- 
-> 2.43.0
-> 
+diff --git a/drivers/mailbox/zynqmp-ipi-mailbox.c b/drivers/mailbox/zynqmp-ipi-mailbox.c
+index 4acf5612487c..521d08b9ab47 100644
+--- a/drivers/mailbox/zynqmp-ipi-mailbox.c
++++ b/drivers/mailbox/zynqmp-ipi-mailbox.c
+@@ -64,6 +64,13 @@
+ 
+ #define MAX_SGI 16
+ 
++/*
++ * Module parameters
++ */
++static int tx_poll_period = 5;
++module_param_named(tx_poll_period, tx_poll_period, int, 0644);
++MODULE_PARM_DESC(tx_poll_period, "Poll period waiting for ack after send.");
++
+ /**
+  * struct zynqmp_ipi_mchan - Description of a Xilinx ZynqMP IPI mailbox channel
+  * @is_opened: indicate if the IPI channel is opened
+@@ -537,7 +544,7 @@ static int zynqmp_ipi_mbox_probe(struct zynqmp_ipi_mbox *ipi_mbox,
+ 	mbox->num_chans = 2;
+ 	mbox->txdone_irq = false;
+ 	mbox->txdone_poll = true;
+-	mbox->txpoll_period = 5;
++	mbox->txpoll_period = tx_poll_period;
+ 	mbox->of_xlate = zynqmp_ipi_of_xlate;
+ 	chans = devm_kzalloc(mdev, 2 * sizeof(*chans), GFP_KERNEL);
+ 	if (!chans)
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.25.1
+
 
