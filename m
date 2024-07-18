@@ -1,204 +1,123 @@
-Return-Path: <linux-kernel+bounces-255796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 917EF934556
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 02:18:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5AF8934554
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 02:18:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3901C282BB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:18:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D71461C2156F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F24849C;
-	Thu, 18 Jul 2024 00:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FDE10F2;
+	Thu, 18 Jul 2024 00:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Yt7/FCmw"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Cs1xMgtU"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F94110A;
-	Thu, 18 Jul 2024 00:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587B3139F
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 00:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721261900; cv=none; b=uRDLU7qt/3GCAnMudj+uv240Y6MMVHVuwu5u3SPDiaUAQfDrAh/r4F5JXzGlJWoh8VxMh04s/nwfoxERvjwZXQO4mtdo2GjLRSJAGuiQf+fUdHI57437SR4w85wpOgggIgsIUaUEpFX8JyOOh0d4SbAMmKj03kwsaT/ttW30Ey4=
+	t=1721261899; cv=none; b=uRh9jZ1jbcoE4K7EYX88bnL6zvdnwy+QCpy/8JHn896ttNb6fBCGP4cNGKZlBRwUC3bIm1YQ+WMRFHPErxNkntIIvd2Kkhez6QKdvaV7gSXK8rOJnG8S+kmTHfvUtt1sdHvlCHaMRB9UjrtyogSR3ixDC0MSL0VLZADCvHM/bWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721261900; c=relaxed/simple;
-	bh=YAdKIdCQxC2OE44k2pU5gFUD9p+GyJ9koCSMZuhusQQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EEQjYeOx1+52fYj0ggx4fQASCBtAX9xfs3GkXdMduUP3NNHOzbDdwn44lZSmCz369/RHT16iLySqTYqWvxmyPm7ZAWu7fd8QwmtlAakDEwsEZelZC+HFkHyDrVXc7nAUOd5o/FGUAxa/XFL3PP7jNDZB7BwK1FnhaUodJ/XXUOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Yt7/FCmw; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46HEwWE5023107;
-	Thu, 18 Jul 2024 00:17:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=fUNVu7aXgTOSt3jYuESDirOa
-	PpbzxWkbmxCG//zdUck=; b=Yt7/FCmwze61SAtoQCBDlb4zCst6z7f5xuYP7ZEb
-	3AvxhWLsON5T8m5fkn14tOBj3Nuv0/sdSeerRqze6xnYva/1TTe8PjajecMqPDco
-	APfkKx/SAn9nJU3GI/h75H+san9AU/tutuIkulKyrhy2DOXu4/Ory7kybvHKr/i2
-	IYjDEB8PHfOBEiCaEBkLp8FG0WfI7kX3rihac2PyTivHVeOXxoBxcKY8ciHxmQeb
-	ENDTxMJ607CwK5dexjevxQKtfW+DC7GGC/WfpyCd0OwpBOjCGrL6AHE7fJv/a/on
-	OYiNP/jZji6mmiVrnfyWcYCJ4RyUIvJ2koeMRggRie2rbg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfnm1s6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Jul 2024 00:17:58 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46I0Hv6r015254
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Jul 2024 00:17:57 GMT
-Received: from stor-berry.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 17 Jul 2024 17:17:56 -0700
-From: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>
-To: <quic_cang@quicinc.com>, <quic_nitirawa@quicinc.com>, <bvanassche@acm.org>,
-        <avri.altman@wdc.com>, <peter.wang@mediatek.com>,
-        <manivannan.sadhasivam@linaro.org>, <minwoo.im@samsung.com>,
-        <adrian.hunter@intel.com>, <martin.petersen@oracle.com>
-CC: <linux-scsi@vger.kernel.org>, "Bao D. Nguyen" <quic_nguyenb@quicinc.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        "James E.J. Bottomley"
-	<jejb@linux.ibm.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Maramaina Naresh
-	<quic_mnaresh@quicinc.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 1/1] scsi: ufs: core: Support Updating UIC Command Timeout
-Date: Wed, 17 Jul 2024 17:17:34 -0700
-Message-ID: <44dc4790b53e2f8aa92568a9e13785e3bedd617d.1721261491.git.quic_nguyenb@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1721261491.git.quic_nguyenb@quicinc.com>
-References: <cover.1721261491.git.quic_nguyenb@quicinc.com>
+	s=arc-20240116; t=1721261899; c=relaxed/simple;
+	bh=LDZP5PjnqCXHTDVJyKWG9YjKqovok23dIPj9ME9VSZs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CA9Gt1GRb/+2cNgfbHTe5wrHwUlk8wzYRUfqntG5iJZNc/Po/iI9xQjm8v27lfclGs+3C9dmQL2G5VilnURTSfQOPqkSHnChC/zpKuflxKpz0G5UqLOT4dHeBwXVVY+rjeUq4kUNAO0YNGRakyj7K5mOpzCGL1iJ8pxX5n99rKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Cs1xMgtU; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e02b79c6f21so267031276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 17:18:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1721261896; x=1721866696; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jR5TgSXxmEkVnQyI32oZApsa806xibThRKsCEzfjQ2s=;
+        b=Cs1xMgtUAuzNnmdLvpW8Og71KU0tYqR6Bq6KOIa/CMDlZFSgUmn8uteqERj+WBaeW/
+         65OW6Y45HIpGtKtfJyWmuPGtwQ5zEclrMUw3LnGFP0zMocI/66KxeoKFBwYYn/7XIlck
+         5HpSLbOZOYUT4oZW+FB+g4bSziuo4QGDGjxV8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721261896; x=1721866696;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jR5TgSXxmEkVnQyI32oZApsa806xibThRKsCEzfjQ2s=;
+        b=iyGRyPPYFu2bhVNPGcUgt7GLz3ldB7tmBfqSrnENdyiYNgi14JPZLM++xfKvmZlQ3k
+         Yjvzr3Vyg1SWr1uHwgYZ+hE63EXxC95rJW1KLn46IMorW5HpC9hhnV49kRgSfK9ZBOGh
+         /T87EhCz/4khY0CrnA56NHQhHaZ487NkiSd9SNrXjFL4UhSkq1sS1qz5IxJqDMhh0sOl
+         2ZIUNjwLBodAyn1LzJH5sM6+2oqCYKssuIBtAqZE7Pplarf/cQf6C7Udma1xcfrkb51d
+         Xzg41j7eaFG3bzEYjZd3vLj+hBOGaOFs3ovyivkwv5QO4xFSgALt7PqyRwjvhbwYKHbb
+         Iw9g==
+X-Forwarded-Encrypted: i=1; AJvYcCXi8n61ozVP8U7/sIjdgvcDhfyk1LolZkf6PFiZ0iCebIcGyz1ko06HJZKVouYrxItSmXWKO2cDipb+OEVla1SLwUC0+zcLnn4aJMOd
+X-Gm-Message-State: AOJu0YxOrwxwscyQEZt1tOZOLCrToydcJKiHgD+e5c2943FMUkrugBef
+	WKAdV7K50mlfDyhQxO4NiYVtjJINfvkhQwAGcFPm9li6NSSgH5L2XuHBSHbaea9qAwp4JGAB+vM
+	=
+X-Google-Smtp-Source: AGHT+IEmk/H+gZvV+BD2vN0aebiV/Wm4bpa1gA3Ls9qgw0c/6pYKZQ/dSl0vhZ1a77tuJjyDYDdupQ==
+X-Received: by 2002:a05:6902:2b08:b0:e03:41c8:4fbf with SMTP id 3f1490d57ef6-e05feae1051mr1410809276.15.1721261896480;
+        Wed, 17 Jul 2024 17:18:16 -0700 (PDT)
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com. [209.85.160.177])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b79c4ba0e0sm3447886d6.28.2024.07.17.17.18.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 17:18:15 -0700 (PDT)
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-447f8aa87bfso156611cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 17:18:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX2J9NpdrM9KveCJu5lkFgTd82v9xL6XJ/XZtxrzS8J1QoJJlYCcC4ect7jXbHRGfItmXA6QFRZY2U0nISrjtC5rAhuOAl/cxTlMXF0
+X-Received: by 2002:a05:622a:2506:b0:447:f5de:bd18 with SMTP id
+ d75a77b69052e-44f925cad76mr430051cf.9.1721261894932; Wed, 17 Jul 2024
+ 17:18:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: cv-FUhh66BZb4KDgwCRo8l4EzUQTiJHo
-X-Proofpoint-ORIG-GUID: cv-FUhh66BZb4KDgwCRo8l4EzUQTiJHo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-17_19,2024-07-17_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 bulkscore=0 malwarescore=0 suspectscore=0
- priorityscore=1501 clxscore=1015 spamscore=0 mlxscore=0 phishscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2407180000
+References: <20240717215847.5310-1-robdclark@gmail.com>
+In-Reply-To: <20240717215847.5310-1-robdclark@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 17 Jul 2024 17:17:58 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XCOKJHJ-yzENpvm_MD34tMR5LRy2m2jYdcWzZXP4pfXQ@mail.gmail.com>
+Message-ID: <CAD=FV=XCOKJHJ-yzENpvm_MD34tMR5LRy2m2jYdcWzZXP4pfXQ@mail.gmail.com>
+Subject: Re: [RFC] drm/panel/simple-edp: Add Samsung ATNA45DC02
+To: Rob Clark <robdclark@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	Rob Clark <robdclark@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The default UIC command timeout still remains 500ms.
-Allow platform drivers to override the UIC command
-timeout if desired.
+Hi,
 
-In a real product, the 500ms timeout value is probably good enough.
-However, during the product development where there are a lot of
-logging and debug messages being printed to the uart console,
-interrupt starvations happen occasionally because the uart may
-print long debug messages from different modules in the system.
-While printing, the uart may have interrupts disabled for more
-than 500ms, causing UIC command timeout.
-The UIC command timeout would trigger more printing from
-the UFS driver, and eventually a watchdog timeout may
-occur unnecessarily.
+On Wed, Jul 17, 2024 at 2:58=E2=80=AFPM Rob Clark <robdclark@gmail.com> wro=
+te:
+>
+> From: Rob Clark <robdclark@chromium.org>
+>
+> Just a guess on the panel timings, but they appear to work.
+>
+> Signed-off-by: Rob Clark <robdclark@chromium.org>
+> ---
+> This adds the panel I have on my lenovo yoga slim 7x laptop.  I couldn't
+> find any datasheet so timings is just a guess.  But AFAICT everything
+> works fine.
+>
+>  drivers/gpu/drm/panel/panel-edp.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Add support for overriding the UIC command timeout value
-with the newly created uic_cmd_timeout kernel module parameter.
-Default value is 500ms. Supported values range from 500ms
-to 2 seconds.
+Given that this is a Samsung ATNA<mumble>, is there any chance it's an
+OLED panel? Should it be supported with the Samsung OLED panel driver
+like this:
 
-Signed-off-by: Bao D. Nguyen <quic_nguyenb@quicinc.com>
-Suggested-by: Bart Van Assche <bvanassche@acm.org>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
----
- drivers/ufs/core/ufshcd.c | 37 ++++++++++++++++++++++++++++++++-----
- 1 file changed, 32 insertions(+), 5 deletions(-)
+https://lore.kernel.org/r/20240715-x1e80100-crd-backlight-v2-0-31b7f2f658a3=
+@linaro.org
 
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 21429ee..d66da13 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -51,8 +51,10 @@
- 
- 
- /* UIC command timeout, unit: ms */
--#define UIC_CMD_TIMEOUT	500
--
-+enum {
-+	UIC_CMD_TIMEOUT_DEFAULT	= 500,
-+	UIC_CMD_TIMEOUT_MAX	= 2000,
-+};
- /* NOP OUT retries waiting for NOP IN response */
- #define NOP_OUT_RETRIES    10
- /* Timeout after 50 msecs if NOP OUT hangs without response */
-@@ -113,6 +115,31 @@ static bool is_mcq_supported(struct ufs_hba *hba)
- module_param(use_mcq_mode, bool, 0644);
- MODULE_PARM_DESC(use_mcq_mode, "Control MCQ mode for controllers starting from UFSHCI 4.0. 1 - enable MCQ, 0 - disable MCQ. MCQ is enabled by default");
- 
-+static unsigned int uic_cmd_timeout = UIC_CMD_TIMEOUT_DEFAULT;
-+
-+static int uic_cmd_timeout_set(const char *val, const struct kernel_param *kp)
-+{
-+	unsigned int n;
-+	int ret;
-+
-+	ret = kstrtou32(val, 0, &n);
-+	if (ret != 0 || n < UIC_CMD_TIMEOUT_DEFAULT || n > UIC_CMD_TIMEOUT_MAX)
-+		return -EINVAL;
-+
-+	uic_cmd_timeout = n;
-+
-+	return 0;
-+}
-+
-+static const struct kernel_param_ops uic_cmd_timeout_ops = {
-+	.set = uic_cmd_timeout_set,
-+	.get = param_get_uint,
-+};
-+
-+module_param_cb(uic_cmd_timeout, &uic_cmd_timeout_ops, &uic_cmd_timeout, 0644);
-+MODULE_PARM_DESC(uic_cmd_timeout,
-+		"UFS UIC command timeout in milliseconds. Defaults to 500ms. Supported values range from 500ms to 2 seconds inclusively");
-+
- #define ufshcd_toggle_vreg(_dev, _vreg, _on)				\
- 	({                                                              \
- 		int _ret;                                               \
-@@ -2460,7 +2487,7 @@ static inline bool ufshcd_ready_for_uic_cmd(struct ufs_hba *hba)
- {
- 	u32 val;
- 	int ret = read_poll_timeout(ufshcd_readl, val, val & UIC_COMMAND_READY,
--				    500, UIC_CMD_TIMEOUT * 1000, false, hba,
-+				    500, uic_cmd_timeout * 1000, false, hba,
- 				    REG_CONTROLLER_STATUS);
- 	return ret == 0;
- }
-@@ -2520,7 +2547,7 @@ ufshcd_wait_for_uic_cmd(struct ufs_hba *hba, struct uic_command *uic_cmd)
- 	lockdep_assert_held(&hba->uic_cmd_mutex);
- 
- 	if (wait_for_completion_timeout(&uic_cmd->done,
--					msecs_to_jiffies(UIC_CMD_TIMEOUT))) {
-+					msecs_to_jiffies(uic_cmd_timeout))) {
- 		ret = uic_cmd->argument2 & MASK_UIC_COMMAND_RESULT;
- 	} else {
- 		ret = -ETIMEDOUT;
-@@ -4298,7 +4325,7 @@ static int ufshcd_uic_pwr_ctrl(struct ufs_hba *hba, struct uic_command *cmd)
- 	}
- 
- 	if (!wait_for_completion_timeout(hba->uic_async_done,
--					 msecs_to_jiffies(UIC_CMD_TIMEOUT))) {
-+					 msecs_to_jiffies(uic_cmd_timeout))) {
- 		dev_err(hba->dev,
- 			"pwr ctrl cmd 0x%x with mode 0x%x completion timeout\n",
- 			cmd->command, cmd->argument3);
--- 
-2.7.4
-
+-Doug
 
