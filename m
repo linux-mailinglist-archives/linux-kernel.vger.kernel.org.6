@@ -1,228 +1,263 @@
-Return-Path: <linux-kernel+bounces-255876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAA1F9345EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:51:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B2A79345F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:59:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 572B91F226C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:51:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0D48B216D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728C01B86F8;
-	Thu, 18 Jul 2024 01:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F81E1BDDB;
+	Thu, 18 Jul 2024 01:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="bIo7lFlA"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2065.outbound.protection.outlook.com [40.107.117.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="shdf9e8O"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249A9139F;
-	Thu, 18 Jul 2024 01:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721267509; cv=fail; b=SN1llkrEotagx/QQDEVzb6PdW8gBMocbqcjjIQLZ5/yvsrMh1zrBl5tDD0ZsWh8GeRztqwKLs3wygWznLgM4Kp5elIbcj9wDRV+uTCdzN+Ulbn5AIgNXUYZrlay98orZjkz6dFxxvxNLJGuA3f6BTDzpIryA6O9DrDm8ULBxm9A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721267509; c=relaxed/simple;
-	bh=ffDLRbkxwkuL0zy4zx2d6GO5nVrKB6ADTOtXYk4krtk=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=JAdSL/CxCamI+yPfPNHuGFMXVjBeCOc1oM96yopD8mNe7rCJqtg1eoHtsG8aOz/9FLBbxQyEiR2UDEQkv9FrS+IhVBo0UGpqJeWOuT1zm6R6jxWLB6oUkkaP889uordwHWJFw2C5CoX4Adc2fvpozDTyAwSluCqFlUj+rw4mH0g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=bIo7lFlA; arc=fail smtp.client-ip=40.107.117.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XNn/EAqvAuQFy2wbXg6v+D7el16I1x0pKsl6IZSaNqMP3g9x49xPN0KfW6huVFLxW6fGBb+YnlPKTdVIMBKdFogtnVnZIj/tAIGGL2Cc6n1AtK9xenY3ppkj39w3ntKgL43fvXKbI5+OncNAUFuSFlcyUc5IMeOShz2cUeRIvoEqTQWS8b3Ul1Lmk8U+KAvEb+/p9S2gUdEYxe5gbLkNnCrUtreQ2bgtxuZUUGY907ehSet4v2N6h3+z5vnDWZp+KPOIONxaS87f78PHaxE9Wg3Hl9xK1IH0qGXYFEU4Qkj4Nn0mDi+Sbhlh9Ujk8mjHzkhAbUzmFRDuixtLO2QrlQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZpL7g4xdX7luCR1v3OrmoiAGKG0lpxcIFChmNB8OgHg=;
- b=O0zPw6Ed4IUqqp1WQONA8s5G0OL3y2QikhkEmwmtIjvixnhDDPpxrn+GTXI+yB2LaZzqEvPd8wT0aMeuqSG0hkpHtz8mElh1xYcmRzk/EkNixleaTy8HhlG4ktGLQuZdVMqntkWhJithvlvulHl8PNHlZXHLWwVGz6aeseDMY9aQ/xJZn/CDsHc0+r0MQ2ImllE1LBUItOhzzUU+zfNC39W1oQb5hzKq8s+s1wyQzzdi67k5fybuWHll4HwNn4XbyIFg97Kn/05bhOHwB4agT8bL7AGLFkIaIrDBM+9ev+8j0yQco+aIT9lgOrRQwDfmBsxGUxxSMtmTQhyT3HDq6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZpL7g4xdX7luCR1v3OrmoiAGKG0lpxcIFChmNB8OgHg=;
- b=bIo7lFlAbdE4c2QnFjQP3xFFmjePqC+srKSqdXFCeJ8RRlZIdA0Qjf/lvGrNcFc8yLmFF/TDTInS8/d7QBHl5bf3aczWLR2kAKfiJNWJwNS0i3X4F2evUQI4WObtg5vS/eyAvD5wi6U+TpTl48QSk0PhUD6LpUpddmFasS431j/jKJ5pVNB9+Des3Eo9RlD4MQNVu41/Zb6meJHP5xFqnEGYUYWKBw0kWvxwA63YIEXxhQ3PjA1vTpdGFWulbzZd3TneT3bR7UbN1zgp/L7xV+PiMfgTIpgkbEVgjLwX3SV2+NKttJTuSf3gXn/KrEV9pKgxEaIFOysR5rUCwLZiuQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
- by TYUPR06MB6271.apcprd06.prod.outlook.com (2603:1096:400:352::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Thu, 18 Jul
- 2024 01:51:43 +0000
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f%6]) with mapi id 15.20.7762.027; Thu, 18 Jul 2024
- 01:51:43 +0000
-Message-ID: <7140a145-7dd5-43b0-8b2a-0fd12bb9e62d@vivo.com>
-Date: Thu, 18 Jul 2024 09:51:39 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dma-buf: heaps: DMA_HEAP_IOCTL_ALLOC_READ_FILE
- framework
-To: Christoph Hellwig <hch@infradead.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
- "T.J. Mercier" <tjmercier@google.com>, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
- linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-References: <20240711074221.459589-1-link@vivo.com>
- <20240711074221.459589-2-link@vivo.com>
- <5ccbe705-883c-4651-9e66-6b452c414c74@amd.com>
- <ZpTnzkdolpEwFbtu@phenom.ffwll.local>
- <99364176-a7f0-4a17-8889-75ff92d5694e@amd.com>
- <06713006-c5ce-4773-a1b3-ca3bea56ee45@vivo.com>
- <ZpY-CfcDdEhzWpxN@phenom.ffwll.local>
- <b18ad853-90e4-4ad7-b621-2ca8a8111708@vivo.com>
- <Zpff-8LmqK5AD-a8@phenom.ffwll.local> <Zpf5R7fRZZmEwVuR@infradead.org>
-From: Huan Yang <link@vivo.com>
-In-Reply-To: <Zpf5R7fRZZmEwVuR@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TY2PR06CA0030.apcprd06.prod.outlook.com
- (2603:1096:404:2e::18) To PUZPR06MB5676.apcprd06.prod.outlook.com
- (2603:1096:301:f8::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCEE1FB5
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 01:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721267982; cv=none; b=upPDVcx7AjfOFO52bFBB/7z7xsCmhlF3RWpk3f1wj7/MIbu5AA3VqasG9bgmT2StIneHxz12cuYmbyU/VT+R8MbZymq3GmbiSeUih2bFEvTU0MWjkR/VGTI5gzEGuxjUIrqQZte39SrINae66qSN+Vt1nsOB+4cwhb8NySN2HlI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721267982; c=relaxed/simple;
+	bh=fwy7tFrFnUI3LzbR2916EQ2Ng8NP4m5zIbrt2rE9Xrc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M29FHVPzJTAS2BkXITwAYzappHo5xcknJPbpEgpqCL/TFrxMDr8zXy06nEXXDyjZssXu49Lw+Q5n83JfHN36HCaCEwRZKb+gbZshH1sPM5mrR4J8UUAmdJJ+64E0C1pUl/Lyn0WKNzBT9w1AELWWLUB7+ZTUUv+Mcx05hdcrkOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=shdf9e8O; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-44e534a1fbeso91381cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 18:59:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721267980; x=1721872780; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fwy7tFrFnUI3LzbR2916EQ2Ng8NP4m5zIbrt2rE9Xrc=;
+        b=shdf9e8OCwOmIcW2lHIJjQcCRTS4U5f/60IHR3QWp8aCkvtNM0ylSi0hUcnwDqwiPS
+         Ka85X8xukgEBl2XZEnx10nMkEc+hPfYjBusVRPnOqlHBdJP+3YPIcMi9aUIotXhw4rOv
+         6nas0c307f299cgeR8x/0LQNO18BMZK5vDuRSE6lMIQXqX/hB0EuoVpjQg84OFeBoV17
+         JcDWJwrYD+Blw3jAFuA5UJdoLG64o4dENzIVTjNH9gU9+GGrncSS8uY+JufKgVKEgNuO
+         KgTpeDStK4Ps8l373mVITs71kAPmxrF1hvozw7UYn4iXXgWW+OSBNTSwEOSHNLpsQr+u
+         OK7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721267980; x=1721872780;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fwy7tFrFnUI3LzbR2916EQ2Ng8NP4m5zIbrt2rE9Xrc=;
+        b=hIGJ09t4orqtGyXgyplTQS5DtIJCjPYK46+fh5KXqjtwS6B/KifqkxZFdyOpy+SIwu
+         vm2xYvJjgdgQ8MAGItSVm8STAUqHflyVr9g8p44L53yOPqWFbavo7P3SXDR8SHLmq+ZC
+         43kusUNLyPJ0ux0Vh9h1u3geD6MGyVC294Tv+g2V40apiIyO5e5pWaHBFJGI3fMwhlLH
+         M06lpob05tRq8PJmlCteshvO+XOD5Xa+uik4XAksAps2tHJ11por3XeTScWja2nAWNzF
+         nXxxHZDz61YOaMw/UhaG1jE6PowOnhacLs3HzNRHvZN15iE9kQF8VzwOgUEHNXvjsqiq
+         nazA==
+X-Forwarded-Encrypted: i=1; AJvYcCVpil+B2oEs2cmYNbd2JfyGT3owjuI2D9XvQNGbXwaEk4ZJMHTqJcr3wtAe4kd0V1G5n1l/KmPT3u3pQMp5S0ZKHdp3GQiJW8xbNBxY
+X-Gm-Message-State: AOJu0YxEH0iIksBLNbg2kSIyE3xOhaGQyLSxkPT2+8Gd4KTgSr2JHUmZ
+	FFhGRztI7LzE3dq0yxowlcdNAtLFbCdImLXksQTXAOg740+fWRbtmWOJM82ElNpBnT7wln8RJpc
+	VxKOAxyjRLPujEZHqPLfKeSx8RGXhpRNYc4nO
+X-Google-Smtp-Source: AGHT+IE58y37covXCZXpnSJtGTosaOLDYejn3iVUtH4Ayy+oebIBQjA8FkdBSlTvRYoeDLEBTBvkMRc0DIX3l5grc1I=
+X-Received: by 2002:a05:622a:4d06:b0:447:e4cb:bf50 with SMTP id
+ d75a77b69052e-44f91ae2480mr892591cf.8.1721267979720; Wed, 17 Jul 2024
+ 18:59:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|TYUPR06MB6271:EE_
-X-MS-Office365-Filtering-Correlation-Id: 79e3dc2a-1239-47a1-4546-08dca6cc2cad
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|52116014|376014|1800799024|366016|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Qk5nRFEwKzdBOWZ4UzJaOE9SaG1BejFzN3NGRGZsNDZrcnZPbWxuQW90dmRl?=
- =?utf-8?B?OUpyUnVHaCt2enBuQjFPalc2eDk2cFJtMXdmMGtxeXU1dTNueitsKy96M1Q4?=
- =?utf-8?B?b2Y5dU9HdHpYQSt4RGZOdUVhT2krU3VzRWQvbjVUYk4vUE82bmxteHNYVmlh?=
- =?utf-8?B?NFdTdHAyeUVBK2pNL0w2M3p2clNnRTZnNzlpNXpjV01KQkFRRURUZlhJL2VH?=
- =?utf-8?B?UlpFbWdtc3lwcjcvQVVTc3AwNTJpZWlOaFVubUJ1VTNDb0UvclM5L3JJKy9T?=
- =?utf-8?B?R055TTVFOStlTVJ5QzZsTVlkMzJ6OE16MURZdnJwMjNUTko0eVRUQWhsNDlR?=
- =?utf-8?B?TE5sNWRPU1RKUnYwSHNkTDM4c1dickFxNjZ5aEhNdWhZS0UwLzkxMEc4YW1V?=
- =?utf-8?B?M2VBb2dJN0ZUdW9lNmlFb3VzVnJyZ2QwZ3dDZUlDeWR2WDdYZUJBTGZXR2tS?=
- =?utf-8?B?QnMwbm0xNkswbDhIcmhvZ0Q5QWh0OEJKYUVHbStqMjJCSGs4WllCTXJLSTJR?=
- =?utf-8?B?TmVtaEdrakZaRkV4aTRveUVpVVdOczNEOTJFSzIvQkRuMFJPbjgyR3l3ZGZ1?=
- =?utf-8?B?NThYdWpMSUFaaU5TODd2V2c2S2R5MmZjcXZEUVRGckYzOWlLRmlZblNPMXJS?=
- =?utf-8?B?OVJvSlM4dkRHanZsK200TzVsbEFFS0FuemRBRTBXU3JKWExoVGk2MFhWNDFx?=
- =?utf-8?B?K2g0RGtZVTI3UktUN1ZMaDE2dmRxZHZJZFFHeDEzakRFOU5iWHQ2eTM5eERJ?=
- =?utf-8?B?ZlZvcVhyYzJZQXBPSkI2ODJjMXZzdC9RdERzZWY4SVVVN3NKSXBabnRwbklv?=
- =?utf-8?B?YlcwdWR4RU93dm9ialRsWm1meU16T2pFNHZML21YQlVYZDNzY0ZwODdXVElQ?=
- =?utf-8?B?dk5Kekl6NFdQZFpYbitrckY3RUxJWW9HYW90MHdYc0dBemVnVGN3Zk5sUngv?=
- =?utf-8?B?MUVRdWNPeURTVTVIcVV0c0ZnaTI1M1lLdS95bHpIeDhYQVY2c0RLTzBkK0t1?=
- =?utf-8?B?djdqNVZXUkVWbzR0WXFJQi8wdWYrQkl6a0VBSTFzUjhiRFJleFFBdVNMeWFm?=
- =?utf-8?B?Sm5ORG94QW1oUUt3b2RQR0ZUUDFxT2tUMTdubStYZUlUWGZyS1VJN0UrSlVH?=
- =?utf-8?B?OFhVMDFSaEpQbWZwN0JwdEJiaFVoTWs1VTQzVWlFeDAvOVFiVDE4dU5EMjdx?=
- =?utf-8?B?ZVFYV2EzcnVzaTB0Z0VlUnVCM2FvMlJhMjlPQ0hkMm5mTW50S0ZnM2lvbVda?=
- =?utf-8?B?Zm0yaXJrak5aNlNRYnZWOHkvMnBFYnpuSUVra1hxL0IwVWl2ZW1lUjVNcS9C?=
- =?utf-8?B?R0JJTnlsTDRTZDZtNHloVHdoM2dydWQyYm4rS2RReVVRdUZvSlpzVUh1QlRM?=
- =?utf-8?B?ZDV4bDR4djR2RzhrbWpHcFI2SXRPOTdoZ0NpbWVqQjlxS0o2UXZhL2xpc3Fu?=
- =?utf-8?B?Y3RBVGgzMnRiQkRYOXpxZFBZUHd4Z1drTGRXQW53b2d4c2lVaHZnd3g1bGNL?=
- =?utf-8?B?cDN0OU9GTEs4SCtLQkozY3hjMTVTcUV3NHNhWk00TjM2VDgwZEMxMlJQNUxD?=
- =?utf-8?B?VW5Hb3Via09UWm5CZXR1L3NjWXF3bjVmRTRJb0xGUjNZVHhzd3o0UlJmRHNo?=
- =?utf-8?B?WWJSSElmTGlpS09sVk1yVjFGUElZZXZ0c2pqcmlBaW9lbUNFTU9hMlBONnE5?=
- =?utf-8?B?ZGljUklpT2NjclhtbzdUdFFhemVyUW1ZUWhaNnRNS3ZHckxscVdBazNpbEZX?=
- =?utf-8?B?MzVoR0V1TkF5V2F4QXhiTEJXM09FdDRLVGJRMk5jUDJuRkhvN2NZaUxWV2Q4?=
- =?utf-8?B?TDUwVGJQUzlnWkNlRTQzbHQ5OHVPbEEvU3g5dThXM09NMzh0bHNSN2hJMHJM?=
- =?utf-8?B?REFvT1JZMmpoV2FvbDdsaXJudVFRWmpzL3FTV2hSSkJCcFF4dFBTL3FuVDB4?=
- =?utf-8?Q?4BPzSb8tjH0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(1800799024)(366016)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bjYzanlMNmk5cUgwUjVjcUQrUW8yaFFTT3RWKzFhVGc4N2diaGcxM0tYUjZ3?=
- =?utf-8?B?RndZczJmUnE0RjR0R2FPTUpjYm1ZRktnUzRUeURjOGxhenNPU1h5bnNWMVZh?=
- =?utf-8?B?Ky91VmdQTldhQUdveXF1cEVaa2ZIK0x4YzROeDRVVUxYR2RvNkV1RDBMREtE?=
- =?utf-8?B?bXptY0N2cFlEbmUwaUFleVNjK05MZWFERHFkaXRvUThCQUVzaUNXVWUrcXhi?=
- =?utf-8?B?azNlZFo2UUJZbUxqWlpaOWozMkk3RndPSWc1ak5MNnlIZWV6SXAwQ09MSUhz?=
- =?utf-8?B?clM5b2VxeXl5NjZqQXZZUE1kQUdpczV5eDJ0YkJDeFlRTm1IdFkxQ2dTa01p?=
- =?utf-8?B?RlFuTUovMEtZK1p2a0RFa2tGSXlndk8waFJNekREQytNVkJoODR3L0xWMjky?=
- =?utf-8?B?S2ZEQ09hTHlxMUtzbGQ4SnRqRTFYbG0vNTNrOExNVmI2aXNKblEvWkdadTdh?=
- =?utf-8?B?K0Q1NlJoQU9wcmZJbVJXV3VnV2FhOXZjS0V1dnFwUXJ3ajlrbWxqN0xETWsv?=
- =?utf-8?B?Qy8vdkI5Njh4ZEtpbXBkL2RaYU9qUjdrY1l4YWViMS9sS2FGZjBaZmtJRE9L?=
- =?utf-8?B?aGNlQTMzVWZUK3Y2aXBFK3Z1bFQ5ZWtnN1c3NnE3RlpEekxLb2RnbTRaL1BP?=
- =?utf-8?B?VGNkWHdTeXlOWWZ0Sk1rQzNZWWcvSEc5MzZCbXUya3M2T1RXRm5ER2hOcUdC?=
- =?utf-8?B?T1AvdkgwL1ljLzgydm5KdjNBUGNGSThoM2hMaXdBeDYrbCt5TW1LRm9sSjk2?=
- =?utf-8?B?VG1TM05oRGlxelh0TjJTQXpuTWJWSit6UDJEV0tYR0ZyYXBJYUdhcVhENGsv?=
- =?utf-8?B?SHVRNjJvNXBFZlhzb0pMZEhvNXkwSFgxMDdVSHAvRElLT1ZNcStYT3JvZkNt?=
- =?utf-8?B?RTA2VUhJcFFDb1BsdTZ5ZFFtQzIwMThRYlNxbnRUQXVuLzdkVjc3ckcreHVw?=
- =?utf-8?B?VnpWaDJBdmhiS3EwU3Q2RlFYQ2QrdTB4cmFVbG1Gd3JVRFVQV2xUc3psUi8y?=
- =?utf-8?B?TmlRd3ZZSzFwYXo3b2JTaHpoWDR5azZKc2E3Y0lnQkU0MEprL2E0ZG0xa01U?=
- =?utf-8?B?TUJQV3lIUjFuY0wwWlhVQ0gyN0QwMkxnRjR3cjhUYVVrWC92aVN6RlBQMWNr?=
- =?utf-8?B?aFp0Sm9POGV6UXZpNy8yMlZtS1Jmb3ludlBOSXRPUkNVRVVJLzYrd0JDUnJG?=
- =?utf-8?B?a0w0NXBlWElueVJ2ZDFibWh3YWhrN0E5UW5oSnlFUXJBcm1RV1lzZnJFeFhw?=
- =?utf-8?B?L1pucnZtcGU3SStHNkFEYjlmK3ZDVTlKNTc3MitCem5nNHMwWHdYZzlTM1hx?=
- =?utf-8?B?aktsN2dQaitGajlPMWJCbWkxSDFHRVRLWEtKY0JYL0draFd0cUFITElabVh0?=
- =?utf-8?B?QmxMZWZIZ1RQYUUzQ0t1Z3FoYkE3dXZubm9YMXRWSDhJNjBIN01aSjJiRk1o?=
- =?utf-8?B?RjlKR0dPa2Q1VGhkOFI3N3YyQithMm5pWWVWeXFGWVdScHE0TG9pSXRYK3l2?=
- =?utf-8?B?UUpwdWE2NUdXWkNSS3ZXQ3RmT3UwUVArRm5RaDIvUDZCWXVWZkNyWklsWkZp?=
- =?utf-8?B?YTVkZUtUL3BxNXdQN0JhRHZFMXE3RWg0RmtIK1M2RHd5QVhyWkNhSVV1L2tE?=
- =?utf-8?B?UHRyVUh3aXhjUy9qcFpCbUJFQXVJVFdMY241eXVyaTR0ck1rZHpTN1FORjNX?=
- =?utf-8?B?NUNYR0pXL2h3anNKS1JaREVLZlBGY1NHdGVxeFlYSnY3UkQ4MFNTWmU1YWJa?=
- =?utf-8?B?Q2VHVzhhQ2FsNGV2aG5hM1p6L3RubzJzaXV5N1AyV3dBQy9zM3p6Q0lobndF?=
- =?utf-8?B?dEdrVTlMT05vdG9DeGY5Znd0akpodkNOYkFvWVNZcWZZRFFwM2k3bmdJbmRQ?=
- =?utf-8?B?ZUorZG5MN2tHUWhtd2RrQmF5alV0NGt6QVcrSlZ2STJJakttSkttZ3E1TEYx?=
- =?utf-8?B?b3VUajFFSzNmUy94ZE41d0lUOVZBYnNhUStHZFRxSkZraWswRi9sRmRCSVpQ?=
- =?utf-8?B?RjBmR0Y1QjNOSXFsUEZkcm5OaEp0Ym8va2tBUTkzRnJ5dGdEYW9Fa1N2bXZ0?=
- =?utf-8?B?N204QkFjRVNDeGtNWUdLcmRSbTNNRHVjVTYvbGxjQS83aWpIdTFZQlpkTldU?=
- =?utf-8?Q?959M0bplvgwk8YP5w5EtZpQWn?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 79e3dc2a-1239-47a1-4546-08dca6cc2cad
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2024 01:51:43.4375
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2GkIeZ2xh0SBptEBFZUO8aNsiEImc61nSOESAtFf+PkRba3loPYr208WsZYNRkrGkoiA4EXTSyBqSgQHhSL64w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYUPR06MB6271
+References: <20240710234222.2333120-1-jthoughton@google.com> <CALzav=d+eALgV5UKnwHh67XYba53tkWwDNPWrThcmCP++sCiLg@mail.gmail.com>
+In-Reply-To: <CALzav=d+eALgV5UKnwHh67XYba53tkWwDNPWrThcmCP++sCiLg@mail.gmail.com>
+From: James Houghton <jthoughton@google.com>
+Date: Wed, 17 Jul 2024 18:59:02 -0700
+Message-ID: <CADrL8HUi2x2z+Jow_rb+iiuySWMCRq8Ti6SwzBoHUNSH1mcYhw@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/18] KVM: Post-copy live migration for guest_memfd
+To: David Matlack <dmatlack@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	Sean Christopherson <seanjc@google.com>, Shuah Khan <shuah@kernel.org>, 
+	Axel Rasmussen <axelrasmussen@google.com>, kvm@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, Peter Xu <peterx@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-在 2024/7/18 1:03, Christoph Hellwig 写道:
-> [Some people who received this message don't often get email from hch@infradead.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+On Thu, Jul 11, 2024 at 4:37=E2=80=AFPM David Matlack <dmatlack@google.com>=
+ wrote:
 >
-> On Wed, Jul 17, 2024 at 05:15:07PM +0200, Daniel Vetter wrote:
->> I'm talking about memfd, not dma-buf here. I think copy_file_range to
->> dma-buf is as architecturally unsound as allowing O_DIRECT on the dma-buf
->> mmap.
-> copy_file_range only work inside the same file system anyway, so
-> it is completely irrelevant here.
+> On Wed, Jul 10, 2024 at 4:42=E2=80=AFPM James Houghton <jthoughton@google=
+.com> wrote:
+> >
+> > --- Preventing access: KVM_MEMORY_ATTRIBUTE_USERFAULT ---
+> >
+> > The most straightforward way to inform KVM of userfault-enabled pages i=
+s
+> > to use a new memory attribute, say KVM_MEMORY_ATTRIBUTE_USERFAULT.
+> >
+> > There is already infrastructure in place for modifying and checking
+> > memory attributes. Using this interface is slightly challenging, as the=
+re
+> > is no UAPI for setting/clearing particular attributes; we must set the
+> > exact attributes we want.
+>
+> The thing we'll want to optimize specifically is clearing
+> ATTRIBUTE_USERFAULT. During post-copy migration, there will be
+> potentially hundreds of vCPUs in a single VM concurrently
+> demand-fetching memory. Clearing ATTRIBUTE_USERFAULT for each page
+> fetched is on the critical path of getting the vCPU back into
+> guest-mode.
+>
+> Clearing ATTRIBUTE_USERFAULT just needs to clear the attribute. It
+> doesn't need to modify page tables or update any data structures other
+> than the attribute itself. But the existing UAPI takes both mmu_lock
+> and slots_lock IIRC.
+>
+> I'm also concerned that the existing UAPI could lead to userspace
+> accidentally clearing ATTRIBUTE_USERFAULT when it goes to set
+> ATTRIBUTE_PRIVATE (or any other potential future attribute). Sure that
+> could be solved but that means centrally tracking attributes in
+> userspace and issuing one ioctl per contiguous region of guest memory
+> with matching attributes. Imagine a scenario where ~every other page
+> of guest memory as ATTRIBUTE_USERFAULT and then userspace wants to set
+> a differient attribute on a large region of memory. That's going to
+> take a _lot_ of ioctls.
+>
+> Having a UAPI to set (attributes |=3D delta) and clear (attributes &=3D
+> ~delta) attributes on a range of GFNs would solve both these problems.
 
-Yes, actually, if dma-buf want's to copy_file_range from a file, it need 
-change something in vfs_copy_file_range:
+Hi David, sorry for the delay getting back to you.
 
-1. in generic_file_rw_checks, dma-buf file is not a normal file, but 
-inode_out check it.  need bypass
-
-2. file in and out need in the same file system which you point it. So, 
-need bypass it
-
-3. if dma-buf above 2G, need bypass generic_write_check_limits's file 
-O_LARGEFILE check, it only allow copy range below 2G.
-
-I feel that the above limitations indicate that copy_file_range is not 
-really suitable for copying between different file systems or 
-unconventional file types.(both shmemfs and other's)
-
-Perhaps enabling dma-buf to support copy_file_range is not a good idea? :)
+I agree with all of these points.
 
 >
-> What should work just fine is using sendfile (or splice if you like it
-> complicated) to write TO the dma buf.  That just iterates over the page
-OK, I'll research it also.
-> cache on the source file and calls ->write_iter from the page cache
-> pages.  Of course that requires that you actually implement
-> ->write_iter, but given that dmabufs support mmaping there I can't
-> see why you should not be able to write to it.
+> >
+> > The synchronization that is in place for updating memory attributes is
+> > not suitable for post-copy live migration either, which will require
+> > updating memory attributes (from userfault to no-userfault) very
+> > frequently.
 >
-> Reading FROM the dma buf in that fashion should also work if you provide
-> a ->read_iter wire up ->splice_read to copy_splice_read so that it
-> doesn't require any page cache.
+> There is also the xarray. I imagine that will trigger a lot of dynamic
+> memory allocations during post-copy which will slow increase the total
+> time a vCPU is paused due to a USERFAULT page.
 >
+> Is it feasible to convert attributes to a bitmap?
+
+I don't see any reason why we couldn't convert attributes to be a
+bitmap (or to have some attributes be stored in bitmaps and others be
+stored in the xarray).
+
+>
+> >
+> > Another potential interface could be to use something akin to a dirty
+> > bitmap, where a bitmap describes which pages within a memslot (or VM)
+> > should trigger userfaults. This way, it is straightforward to make
+> > updates to the userfault status of a page cheap.
+>
+> Taking a similar approach to dirty logging is attractive for several reas=
+ons.
+>
+> 1. The infrastructure to manage per-memslot bitmaps already exists for
+> dirty logging.
+> 2. It avoids the performance problems with xarrays by using a bitmap.
+> 3. It avoids the performance problems with setting all attributes at once=
+.
+>
+> However it will require new specific UAPIs to set/clear. And it's
+> probably possible to optimize attributes to meet our needs, and those
+> changes will benefit all attributes.
+
+Ok so the three options in my head are:
+1. Add an attribute diff UAPI and track the USERFAULT attribute in the xarr=
+ay.
+2. Add an attribute diff UAPI and track the USERFAULT attribute with a bitm=
+ap.
+3. Add a new UAPI to enable KVM userfaults on gfns according to a
+particular bitmap, similar to dirty logging.
+
+(1) is problematic because it is valid to have every page (or, say,
+every other page) have ATTRIBUTE_USERFAULT.
+
+(2) seems ok to me.
+
+(3) would be great, but maybe the much more complicated UAPI is not
+worth it. (We get the ability to mark many different regions as
+USERFAULT in one syscall, and KVM has a lot of code for handling
+bitmap arguments.)
+
+I'm hoping others will weigh in here.
+
+> >
+> > When KVM Userfault is enabled, we need to be careful not to map a
+> > userfault page in response to a fault on a non-userfault page. In this
+> > RFC, I've taken the simplest approach: force new PTEs to be PAGE_SIZE.
+> >
+> > --- Page fault notifications ---
+> >
+> > For page faults generated by vCPUs running in guest mode, if the page
+> > the vCPU is trying to access is a userfault-enabled page, we use
+> > KVM_EXIT_MEMORY_FAULT with a new flag: KVM_MEMORY_EXIT_FLAG_USERFAULT.
+> >
+> > For arm64, I believe this is actually all we need, provided we handle
+> > steal_time properly.
+>
+> There's steal time, and also the GIC pages. Steal time can use
+> KVM_EXIT_MEMORY_FAULT, but that requires special casing in the ARM
+> code. Alternatively, both can use the async mechanism and to avoid
+> special handling in the ARM code.
+
+Oh, of course, I forgot about the GIC. Thanks. And yes, if the async
+userfault mechanism is acceptable, using that would be better than
+adding the special cases.
+
+>
+> >
+> > For x86, where returning from deep within the instruction emulator (or
+> > other non-trivial execution paths) is infeasible, being able to pause
+> > execution while userspace fetches the page, just as userfaultfd would
+> > do, is necessary. Let's call these "asynchronous userfaults."
+> >
+> > A new ioctl, KVM_READ_USERFAULT, has been added to read asynchronous
+> > userfaults, and an eventfd is used to signal that new faults are
+> > available for reading.
+> >
+> > Today, we busy-wait for a gfn to have userfault disabled. This will
+> > change in the future.
+> >
+> > --- Fault resolution ---
+> >
+> > Resolving userfaults today is as simple as removing the USERFAULT memor=
+y
+> > attribute on the faulting gfn. This will change if we do not end up
+> > using memory attributes for KVM Userfault. Having a range-based wake-up
+> > like userfaultfd (see UFFDIO_WAKE) might also be helpful for
+> > performance.
+> >
+> > Problems with this series
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+> > - This cannot be named KVM Userfault! Perhaps "KVM missing pages"?
+> > - Memory attribute modification doesn't scale well.
+> > - We busy-wait for pages to not be userfault-enabled.
+>
+> Async faults are a slow path so I think a wait queue would suffice.
+
+I think a wait queue seems like a good fit too. (It's what userfaultfd uses=
+.)
+
+>
+> > - gfn_to_hva and gfn_to_pfn caches are not invalidated.
+> > - Page tables are not collapsed when KVM Userfault is disabled.
+> > - There is no self-test for asynchronous userfaults.
+> > - Asynchronous page faults can be dropped if KVM_READ_USERFAULT fails.
+>
+> Userspace would probably treat this as fatal anyway right?
+
+Yes, but I still think dropping the gfn isn't great. I'll fix this
+when I change from using the hacky list-based thing to something more
+sophisticated (like a wait_queue).
 
