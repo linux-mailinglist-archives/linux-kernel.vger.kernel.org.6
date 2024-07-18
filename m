@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-256432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8472D934E79
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:48:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9948F934E7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:48:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45AE4281C77
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:48:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E30CFB22B0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2769213DDCE;
-	Thu, 18 Jul 2024 13:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB78314290E;
+	Thu, 18 Jul 2024 13:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DAYenlJc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="onVoMKfr"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1thGcdOs";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hMmbL945"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82EB0140E37
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 13:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1801422BC
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 13:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721310495; cv=none; b=kaEj5PbhbktD8SpZnUQS8VEtLK5wBR9s/RcrC4dQhz6njasg0y1RCMdkCgRja4KZIlk9Zj5fh3kY//pMmoj3o3tTybMyxga/axPIAAmPlYA+lybP3h/TiHU2WnkNcl2PDhIXZ8Pv1JAE6Qtjs9eg90HARRHb85fWSjhWBNTpEgU=
+	t=1721310497; cv=none; b=PdhBjlCoe2tUivgYsgPMAyzGtUZ/D+hPHpNRrtme6nmQvi7eaomusGmGiD78S07HJmkJMWtrCCsjXJaKxqoFAe5zAZpQzKLEl8iA3bzzNsZcmOnb1tqi19GvZ75UcC/Visnbac7iUlsD+bhAgp7yHzCeeC1Xhs9lxMqsoOgU+BY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721310495; c=relaxed/simple;
-	bh=BGGsL3a5xjiuuIDamsAibYynkz0WjXbniB4VwvZ52b4=;
+	s=arc-20240116; t=1721310497; c=relaxed/simple;
+	bh=ieb26+HvROHpjrBlsfNQn3VahOfpbPTOekx+lC0dgHM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=celqRWC89wfG6xM3d2fY981QL8pfOjsGn0ccGufQuj1ybvD5CZ9bPRBbZccqC0YXIrXH/jXSG34O6Av/5XUaDg9MCVrOd46Ua6/UR0DzBceifjwdzQ2LtJLyaPjrdPcc01+GmtyLgSQeMcpfy642ygcIOId0IQgb0Bgte5XJjP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DAYenlJc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=onVoMKfr; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=UFYHdXtvGn7YEd09flKLGY3kboMd+PSoFiDQpcgCMjLScdrMLpK5YNagi/wA5OnyAlrO3rKsTnubGgW//Lt/kKPw5Y+AwMOKmcoS4tfjqxCpV/HamzjbvkRS+nVp3umY68wobWko5ps6GbMMVVgWzXqBREu43mW184tcMQbbdh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1thGcdOs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hMmbL945; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: "Ahmed S. Darwish" <darwi@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1721310492;
+	s=2020; t=1721310494;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7Umcf2zmF9IhfYteUxUaw3o2Qql3nqUK1ghOyWeUxCc=;
-	b=DAYenlJcfPZj2ref++6hNSl4di3+nEIXIn+SVlBVh5x1KFa/Hs5aMClhJov2aKAmCFhs2q
-	cHGmSyl8r9JPiyYiXyny71hz7uZCQoWDS4x6veG/iQuNpLptW0qCtC/O5fWwJNJR2Awcj/
-	/3p5oVwjftohnMpLcZ1j4x0tzv4kzvgXnIo1KZPCMUWHJwRt31OyzuM6WSP4ABuIXU7WJ4
-	eKlPf816yJzcL8LjazUfY2k9F9weuMZ20ycUjJOzBbW69t65I9y49GCSzxB6nGvjcKiQS4
-	I58GBGVWrPykmvncRfuRcbtFQ4OjhbXg1wcrJxyCM7FJVxDSp3U/Kr5s6awAog==
+	bh=oagI1ZvAvl/8BfIhwHwIeoOuLdM4WCcZAE/REEIdwdg=;
+	b=1thGcdOs/VdvYeBwwq7xCa23ulBmKB3rh6P33jrHMIAobUQ8escmcOg45+jP1nqNfFB/4t
+	RdN615Vmfcp/MrSfCcHNpWTnY6sI2kTZqMVrzJeOQ9/Z2ATqXA1wyWxyTEPsMmfq6LQH9l
+	1jhARy+xF+g9JClmpeQJgdfVUlMvjHVT4xlersVhar7mf2m0OkkhjOewAZyzdcxgw0OnMf
+	4birSjtFXiMjX4L69+X6SL4HO+dyQVVS2ciLITLPhBrSQilv0oENmrh2vFc22S8uduHdPu
+	2cL21cvX556HDouF0vkYyj3TPo+3fYUwWpc6rf9Cg2iWBi4i7GakDgITPwuI7g==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1721310492;
+	s=2020e; t=1721310494;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7Umcf2zmF9IhfYteUxUaw3o2Qql3nqUK1ghOyWeUxCc=;
-	b=onVoMKfr5nAYPOhobyB1ZdHEBZL5emA1sIX0nN2yFXQqjN6lPfkDOFNNbGG5m6nCYAZcu4
-	jHfjfAAjkuovPQAQ==
+	bh=oagI1ZvAvl/8BfIhwHwIeoOuLdM4WCcZAE/REEIdwdg=;
+	b=hMmbL945sOxTmDcKXCKZjdxURyhCUbtJbLaHD4W2UhhTiI5EupPsllcNkeHgKosUB0WhmW
+	VbUVp96d3WEb7gCA==
 To: Borislav Petkov <bp@alien8.de>,
 	Ingo Molnar <mingo@redhat.com>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
@@ -62,9 +62,9 @@ To: Borislav Petkov <bp@alien8.de>,
 Cc: Thomas Gleixner <tglx@linutronix.de>,
 	linux-kernel@vger.kernel.org,
 	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v1 2/9] tools/x86/kcpuid: Properly align long-description columns
-Date: Thu, 18 Jul 2024 15:47:42 +0200
-Message-ID: <20240718134755.378115-3-darwi@linutronix.de>
+Subject: [PATCH v1 3/9] tools/x86/kcpuid: Set max possible subleaves count to 64
+Date: Thu, 18 Jul 2024 15:47:43 +0200
+Message-ID: <20240718134755.378115-4-darwi@linutronix.de>
 In-Reply-To: <20240718134755.378115-1-darwi@linutronix.de>
 References: <ZpkckA2SHa1r3Bor@lx-t490>
  <20240718134755.378115-1-darwi@linutronix.de>
@@ -76,46 +76,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When kcpuid is invoked with "--all --details", the detailed description
-column is not properly aligned for all bitfield rows:
+cpuid.csv will be extended in further commits with all-publicly-known
+CPUID leaves and bitfields.  One of the new leaves is 0xd for extended
+CPU state enumeration.  Depending on XCR0 dword bits, it can export up to
+64 subleaves.
 
-CPUID_0x4_ECX[0x0]:
-	 cache_level        	: 0x1       	- Cache Level ...
-	 cache_self_init     - Cache Self Initialization
-
-This is due to differences in output handling between boolean single-bit
-"bitflags" and multi-bit bitfields.  For the former, the bitfield's value
-is not outputted as it is implied to be true by just outputting the
-bitflag's name in its respective line.
-
-If long descriptions were requested through the --all parameter, properly
-align the bitflag's description columns through extra tabs.  With that,
-the sample output above becomes:
-
-CPUID_0x4_ECX[0x0]:
-	 cache_level        	: 0x1       	- Cache Level ...
-	 cache_self_init     			- Cache Self Initialization
+Set kcpuid.c MAX_SUBLEAF_NUM to 64.
 
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
 ---
- tools/arch/x86/kcpuid/kcpuid.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/arch/x86/kcpuid/kcpuid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/tools/arch/x86/kcpuid/kcpuid.c b/tools/arch/x86/kcpuid/kcpuid.c
-index e1973d8b322e..08f64d9ecb40 100644
+index 08f64d9ecb40..a87cddc19554 100644
 --- a/tools/arch/x86/kcpuid/kcpuid.c
 +++ b/tools/arch/x86/kcpuid/kcpuid.c
-@@ -449,8 +449,9 @@ static void decode_bits(u32 value, struct reg_desc *rdesc, enum cpuid_reg reg)
- 		if (start == end) {
- 			/* single bit flag */
- 			if (value & (1 << start))
--				printf("\t%-20s %s%s\n",
-+				printf("\t%-20s %s%s%s\n",
- 					bdesc->simp,
-+				        show_flags_only ? "" : "\t\t\t",
- 					show_details ? "-" : "",
- 					show_details ? bdesc->detail : ""
- 					);
+@@ -203,7 +203,7 @@ static void raw_dump_range(struct cpuid_range *range)
+ 	}
+ }
+ 
+-#define MAX_SUBLEAF_NUM		32
++#define MAX_SUBLEAF_NUM		64
+ struct cpuid_range *setup_cpuid_range(u32 input_eax)
+ {
+ 	u32 max_func, idx_func;
 -- 
 2.45.2
 
