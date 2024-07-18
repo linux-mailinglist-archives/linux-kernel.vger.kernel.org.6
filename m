@@ -1,247 +1,108 @@
-Return-Path: <linux-kernel+bounces-256277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A430934BF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:52:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C96E934BF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1E872854A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:52:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2124F1F23E98
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0E013212E;
-	Thu, 18 Jul 2024 10:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eeCIzMOX"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2113312D1FA;
+	Thu, 18 Jul 2024 10:53:09 +0000 (UTC)
+Received: from mail115-24.sinamail.sina.com.cn (mail115-24.sinamail.sina.com.cn [218.30.115.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4234086126
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 10:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319351B86FB
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 10:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721299927; cv=none; b=QTIWrh17s1e3As+FVsxl/D7IcajOlxrCsXQ9NvB9AMeB7CwRiPIdaxyO4WsXq/4Ia35HPKfMf6hxtiiq40S4/mHKJz0OoDUVMidKKL9AUg/Cp8apkLdlzqdomNREFe3UdlMIIzPhl93iiepcQMKcDV9VEqVTtT68WmyiM349AdY=
+	t=1721299988; cv=none; b=Y4YBjmfFu5h/jNUT9sG/EQEY6xn0Nmk5pgi9lkdu0OGf2xEVH60oVUU0WmZCjnMdHcgGYaOZeB9mgM+CFj7St57r1MVdpGmJQGxb2g5D0lqrhyIeuyNeMgYV4xN485j2TpqmYrQYF13RiULJ7211nj+2yZHUyUh8WmjFNziotRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721299927; c=relaxed/simple;
-	bh=lBIlDUiykBuOgPFc61Vvr3xO8ijOQel4+ZwjDujMWeQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=SnW5w2gIB5E0QhkQViSNZHoH4oAJXrLHsuWpOmSt0KiOnIPuIZ8EiQ1ZUOuWPucLnqZHoxrKVpagc5aUEOXLLIOzbm23Myff8eQiE6kG1CMZDu6C+GYJF1WYeyAOS51L2OW/bGUyoudspeYSAUeDnG9FGKWYJTr+n9rwvZbUpJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eeCIzMOX; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4266fd395eeso1441775e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 03:52:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721299923; x=1721904723; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7vsoSZI8djYrMDueWc0T6pkGrBB7VsF+sJdPwOVu6Tk=;
-        b=eeCIzMOXAA8fLxk5HAK30/nFFvQpRHTuCqdqkMITwuY7FGyUKjrTq0v0PWh3JE1hth
-         GuNFbNqqiKhX/0aIEiUjLt3dCzrXZDMjTS9cdshKtuPIJhesQxR68ccMkVplEKCb+hAT
-         2mRn5vsS05HVh9V81EBjjB+/72UHFTQqPyzVRTLZMc3gICaGx5uED+a8U1I9WDRQFh08
-         KbhOXs3NtuKdeAC6xTOSQmVb+bl0VBADE3L9OwMdWmW3gvevMMRtfCgaqDENJIafx13W
-         uJAs89PR4yFYD72tH0ZdUcAxoj3hjsFGSmoGIgeMEwbu4SpJB17LAsrEfxUZqTVHzQ9V
-         epag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721299923; x=1721904723;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7vsoSZI8djYrMDueWc0T6pkGrBB7VsF+sJdPwOVu6Tk=;
-        b=eHzfl6S3I6YwAcSStMirqrVU/x7T9fEXymtZEsms6GeCHWCQZj2lAsL55vyUE6mBx0
-         2tcFP24c3Jj2g9L/N13Kl884pKF3AEkQyKcLdCvqmYvEsgz4q7ardZ5CSUoGzD27j734
-         kwte8MFtuhP3BOHR/OyrDi3j6ac6h8Cc3V4UD78yATdNkB9B6Q1HdnWvt9oxv0lJt9AB
-         GjKpF3UAXkbbQFmRTO95JrkD3YlZwEuB/7f24RipB6bR1J2jU7Eu5/NeTz7XQxND1boB
-         RvZkk8vws37V/ZZ4sxFWFvEpysZQds37R6+69TQzOAQujTDlVCPomOvZjpYbugEnGm4H
-         NAEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVgOtO/zCJxazs/Qx+7M0REn285rLPrQ0NlA+lmBZP5dhMVzkuhqSAu9qfUGuM5mAis8gKCYItTMZqKMT9PeMJqEg9uPM+oikqhwaFv
-X-Gm-Message-State: AOJu0YxkR9DG9enqJPC4AsL19CwOvp+pQKNLUC1NRM+M9wbnkoxVf9Sy
-	S/pW34lLnfRhoJhzC8oOPtZ3jSWBo15sR7M2qRLVFOLbUl+Si3Cv36ZnKOJGusg=
-X-Google-Smtp-Source: AGHT+IFPFRQYTOuAYTHkPZwO0GLL14vatUuOFjFlXexJO8bh6QrqOEBCOTeZlJqllSIbqcGI4dkdQg==
-X-Received: by 2002:adf:f048:0:b0:367:9614:fb9f with SMTP id ffacd0b85a97d-368315f42d1mr3440024f8f.2.1721299923460;
-        Thu, 18 Jul 2024 03:52:03 -0700 (PDT)
-Received: from localhost ([2a0a:ef40:ee7:2401:197d:e048:a80f:bc44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3684c042985sm1743727f8f.2.2024.07.18.03.52.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jul 2024 03:52:03 -0700 (PDT)
+	s=arc-20240116; t=1721299988; c=relaxed/simple;
+	bh=tHKrLtovADsfcDwZ714TZLnNp3nG+96PlQVnPoteZck=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=uZ2Sg9nPa06yuRr0YlfJFwgCkwMTVzaTKhh9sMGbCqRqxyFNluz4CeIkvqBykfBisEAerV6BDc7hSf83/fGwdVPOma9Bhja0BLhQOJV3NIHP72u5sW+58iboSDV6PRxc5EcrHwQevaUk2Tsd2bIfSxlSVzcdreQrNvaewCxNlmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([116.24.11.47])
+	by sina.com (10.185.250.22) with ESMTP
+	id 6698F40900004832; Thu, 18 Jul 2024 18:52:59 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 2058687602654
+X-SMAIL-UIID: 6AF591B3D38E4FC3A1734554B97F3E8F-20240718-185259-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+ca9ad1d31885c81155b6@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] WARNING: suspicious RCU usage in dev_deactivate_queue
+Date: Thu, 18 Jul 2024 18:52:48 +0800
+Message-Id: <20240718105248.1380-1-hdanton@sina.com>
+In-Reply-To: <000000000000c2f7f2061d7bfb12@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 18 Jul 2024 11:52:02 +0100
-Message-Id: <D2SLWBZCNPRH.CIJ1IYJA6IOS@linaro.org>
-Subject: Re: [PATCH] dt-bindings: net: qcom,emac: convert to dtschema
-From: "Rayyan Ansari" <rayyan.ansari@linaro.org>
-To: "Rob Herring" <robh@kernel.org>
-Cc: <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>, "David S.
- Miller" <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Timur Tabi" <timur@kernel.org>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.17.0-0-g6ea74eb30457
-References: <20240717090931.13563-1-rayyan.ansari@linaro.org>
- <20240717163959.GA182655-robh@kernel.org>
-In-Reply-To: <20240717163959.GA182655-robh@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed Jul 17, 2024 at 5:39 PM BST, Rob Herring wrote:
-> On Wed, Jul 17, 2024 at 10:09:27AM +0100, Rayyan Ansari wrote:
-> > Convert the bindings for the Qualcomm EMAC Ethernet Controller from the
-> > old text format to yaml.
-> >=20
-> > Also move the phy node of the controller to be within an mdio block so
-> > we can use mdio.yaml.
-> >=20
-> > Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
-> > ---
-> >  .../devicetree/bindings/net/qcom,emac.yaml    |  98 ++++++++++++++++
-> >  .../devicetree/bindings/net/qcom-emac.txt     | 111 ------------------
-> >  2 files changed, 98 insertions(+), 111 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/net/qcom,emac.yam=
-l
-> >  delete mode 100644 Documentation/devicetree/bindings/net/qcom-emac.txt
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/net/qcom,emac.yaml b/Doc=
-umentation/devicetree/bindings/net/qcom,emac.yaml
-> > new file mode 100644
-> > index 000000000000..cef65130578f
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/net/qcom,emac.yaml
-> > @@ -0,0 +1,98 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > +---
-> > +$id: http://devicetree.org/schemas/net/qcom,emac.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Qualcomm EMAC Gigabit Ethernet Controller
-> > +
-> > +maintainers:
-> > +  - Timur Tabi <timur@kernel.org>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    oneOf:
-> > +      - const: qcom,fsm9900-emac
-> > +      - enum:
-> > +          - qcom,fsm9900-emac-sgmii
-> > +          - qcom,qdf2432-emac-sgmii
->
-> You just need a single enum for all 3 compatibles.
-> =20
-> > +  reg:
-> > +    minItems: 1
-> > +    maxItems: 2
->
-> Need to define what each entry is and perhaps constraints on when it 1=20
-> vs. 2 entries.
->
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - interrupts
-> > +
-> > +if:
-> > +  properties:
-> > +    compatible:
-> > +      const: qcom,fsm9900-emac
-> > +then:
-> > +  allOf:
-> > +    - $ref: ethernet-controller.yaml#
->
-> This goes at the top level and the 'if' schema should be under the=20
-> 'allOf'.
+On Wed, 17 Jul 2024 19:03:22 -0700
+> syzbot found the following issue on:
+> 
+> HEAD commit:    51835949dda3 Merge tag 'net-next-6.11' of git://git.kernel..
+> git tree:       upstream
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=170b4f31980000
 
-Wouldn't this make ethernet-controller.yaml also be included for
-emac-sgmii as well - which isn't a controller?
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git  523b23f0bee3
 
-> > +  properties:
-> > +    clocks:
-> > +      minItems: 7
-> > +      maxItems: 7
-> > +
-> > +    clock-names:
-> > +      items:
-> > +        - const: axi_clk
-> > +        - const: cfg_ahb_clk
-> > +        - const: high_speed_clk
-> > +        - const: mdio_clk
-> > +        - const: tx_clk
-> > +        - const: rx_clk
-> > +        - const: sys_clk
->
-> Define these at the top level and then exclude them in the if schema.
-
-Just clocks and clock-names? Why so, if sgmii does not require clocks?
-
-> > +
-> > +    internal-phy:
-> > +      maxItems: 1
->
-> This needs a type ref.
->
-> > +
-> > +    mdio:
-> > +      $ref: mdio.yaml#
-> > +      unevaluatedProperties: false
-> > +
-> > +  required:
-> > +    - clocks
-> > +    - clock-names
-> > +    - internal-phy
-> > +    - phy-handle
-> > +    - mdio
-> > +
-> > +unevaluatedProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    emac0: ethernet@feb20000 {
->
-> Drop unused labels.
->
-> > +        compatible =3D "qcom,fsm9900-emac";
-> > +        reg =3D <0xfeb20000 0x10000>,
-> > +              <0xfeb36000 0x1000>;
-> > +        interrupts =3D <76>;
-> > +
-> > +        clocks =3D <&gcc 0>, <&gcc 1>, <&gcc 3>, <&gcc 4>, <&gcc 5>,
-> > +                 <&gcc 6>, <&gcc 7>;
-> > +        clock-names =3D "axi_clk", "cfg_ahb_clk", "high_speed_clk",
-> > +                      "mdio_clk", "tx_clk", "rx_clk", "sys_clk";
-> > +
-> > +        internal-phy =3D <&emac_sgmii>;
-> > +        phy-handle =3D <&phy0>;
-> > +
-> > +        mdio {
-> > +            #address-cells =3D <1>;
-> > +            #size-cells =3D <0>;
-> > +
-> > +            phy0: ethernet-phy@0 {
-> > +                reg =3D <0>;
-> > +            };
-> > +        };
-> > +    };
-> > +
-> > +    emac_sgmii: ethernet@feb38000 {
->
-> This should be a separate entry. (You need '- |' above it.)
-
-Should they not be part of one complete example, since the main node
-requires a handle to the sgmii node with 'internal-phy'?
-
-> > +        compatible =3D "qcom,fsm9900-emac-sgmii";
-> > +        reg =3D <0xfeb38000 0x1000>;
-> > +        interrupts =3D <80>;
-> > +    };
-
+--- x/net/ethtool/ioctl.c
++++ y/net/ethtool/ioctl.c
+@@ -58,10 +58,11 @@ static struct devlink *netdev_to_devlink
+ 
+ u32 ethtool_op_get_link(struct net_device *dev)
+ {
+-	/* Synchronize carrier state with link watch, see also rtnl_getlink() */
+-	linkwatch_sync_dev(dev);
++	u32 rc = netif_carrier_ok(dev) ? 1 : 0;
+ 
+-	return netif_carrier_ok(dev) ? 1 : 0;
++	linkwatch_fire_event(NULL);
++
++	return rc;
+ }
+ EXPORT_SYMBOL(ethtool_op_get_link);
+ 
+--- x/net/core/link_watch.c
++++ y/net/core/link_watch.c
+@@ -286,13 +286,17 @@ static void linkwatch_event(struct work_
+ 
+ void linkwatch_fire_event(struct net_device *dev)
+ {
+-	bool urgent = linkwatch_urgent_event(dev);
++	bool urgent = true;
+ 
++	if (!dev)
++		goto sched;
++	urgent = linkwatch_urgent_event(dev);
+ 	if (!test_and_set_bit(__LINK_STATE_LINKWATCH_PENDING, &dev->state)) {
+ 		linkwatch_add_event(dev);
+ 	} else if (!urgent)
+ 		return;
+ 
++sched:
+ 	linkwatch_schedule_work(urgent);
+ }
+ EXPORT_SYMBOL(linkwatch_fire_event);
+--
 
