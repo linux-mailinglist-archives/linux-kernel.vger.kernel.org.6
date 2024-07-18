@@ -1,305 +1,284 @@
-Return-Path: <linux-kernel+bounces-256290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8F2C934C1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:01:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24BB6934C1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 476D1B22F4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:01:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4295A1C20EB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513E313DB8D;
-	Thu, 18 Jul 2024 10:59:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE63C13FD8C;
+	Thu, 18 Jul 2024 10:59:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="i7YlcF6j";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zUWKNZPd";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dNFZLmEG";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="q+V6AbMK"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i4Tll6ON"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B989212FB37
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 10:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD26813F435;
+	Thu, 18 Jul 2024 10:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721300367; cv=none; b=tcz2Qx5nPH/spwl3aszWajkT8d/jznX1btx4mEYuKiA51PQwHAwBSdG7HQWkgydI1OXgCBq9N+qkdEO/340JoRhYAVrwgB6bmfkwaQSFZlLBDoR9IM4uuSXc5c7LL1n0yCsrHwZYReOYT/dGq930rd3viCH4hly68BQYbvDrlHw=
+	t=1721300389; cv=none; b=FZEIYuKf9LnnW1rEOgqJ9MzQjECDAVhsuRoYcTyBdccB3NmiLYfVaCb3y+o9yi5xtCk1HPZg9aUpwhkTYxgEIBVXjPs4/XRLo5PzgYvPoiq8Co4rfKH1rzxaVl5E/4LXJ8dgl562Y4t5fg7kyAh+LiWXqYT6Ckj+H6aPfS0k7Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721300367; c=relaxed/simple;
-	bh=NtyKd2VXtSWlrxMsMQIRBK02B6Pdh6tlI1jOhxjg4Ss=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aOJmaR5cbCdDfoWeDg8HKtTsxKbGoi/haxIZf1q5R0sex3vECT4J3ar3bS7wX4hDgbZHimOugVE4pJudm6rxcakUiPjGQp6wCQ2TtovNhiy8lEzkHDq/eH7jHQiPVz7afyppemfspkHcWKe1/hLCovokZjAGLPHHvYD3J97BJws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=i7YlcF6j; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zUWKNZPd; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dNFZLmEG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=q+V6AbMK; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DA41721AD8;
-	Thu, 18 Jul 2024 10:59:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721300364; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RffRCKVkf4tOMl6I565jAg9VCZIGD0dLIYK/HF2buBQ=;
-	b=i7YlcF6j7N95/M1bzdjQk/afWpIjGNnzYBM7IKxJRilPCZADsZR+KAOy5MPqVuth0UC3TY
-	VYbeTdWmkl+pGUD0B02lHJKDykyJ4mHqRy2ei6PELxhKkgMVbqk+zBvdeVIxHX5Pmx6PzB
-	/clXhZ28nwy4pf4/mEKapyjVALPXJ4I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721300364;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RffRCKVkf4tOMl6I565jAg9VCZIGD0dLIYK/HF2buBQ=;
-	b=zUWKNZPd5+IxiEQPxQAclcXFDg9fvY1JH7A4xLgRpX8D9a4jdMse3U81Xed5E26wfiTaTM
-	ueLaKILTzBMa29Ag==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721300363; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RffRCKVkf4tOMl6I565jAg9VCZIGD0dLIYK/HF2buBQ=;
-	b=dNFZLmEGJP9bLQS+FwbrILkK+PuB/MFoTFYzQLTLyte33tBS8Jghb6eq8gGvG6NwrF8iUi
-	UvH8JkYJ4dhwtjDz/cLRYPq4DrVY0Z9JHYS9nNdwt/Qtthx4ZZhNk6PlfIpt1+rn7HWqgQ
-	RSbSjoCT21Fn0hS0n6+/V+B6fd7WXnA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721300363;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RffRCKVkf4tOMl6I565jAg9VCZIGD0dLIYK/HF2buBQ=;
-	b=q+V6AbMKo0wQpmJoguEfMZf6MSJe6F0vmu3igxL+4bW6YzWJtlwnQuOjWkyvfoA3p9pMU4
-	3/lzuvOjos2TJhDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CD9F2137EB;
-	Thu, 18 Jul 2024 10:59:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2MgSLor1mGbnVAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Thu, 18 Jul 2024 10:59:22 +0000
-From: Oscar Salvador <osalvador@suse.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Peter Xu <peterx@redhat.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Michal Hocko <mhocko@suse.com>,
-	Donet Tom <donettom@linux.ibm.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH 9/9] mm: Consolidate common checks in hugetlb_mmap_check_and_align
-Date: Thu, 18 Jul 2024 12:59:03 +0200
-Message-ID: <20240718105903.19617-10-osalvador@suse.de>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240718105903.19617-1-osalvador@suse.de>
-References: <20240718105903.19617-1-osalvador@suse.de>
+	s=arc-20240116; t=1721300389; c=relaxed/simple;
+	bh=jhsgDwBRGKnaFJAbnC7tJ4ahtvpX/ys+EZqHg3VXwng=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=erKHdOV7oIptgSTJzwINhrnLQqH2z2QaAt6ekjvPlpwlM4l6hIQDpEZQewbL0FtQ/Hz8llAuRPQFDCvHPnU6rCNRGtMKS1oTU1BAWwF1VfhhlfG7MPSECec6vGZCtpPR0r14oQR1yQ/7m7GTljbBvnEC2i03shHf/wGrrtbPdoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i4Tll6ON; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22863C4AF15;
+	Thu, 18 Jul 2024 10:59:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721300389;
+	bh=jhsgDwBRGKnaFJAbnC7tJ4ahtvpX/ys+EZqHg3VXwng=;
+	h=Date:Subject:To:References:From:Cc:In-Reply-To:From;
+	b=i4Tll6ONzj5WCYRSrQu3kj2wSYX/EG6rqpABC0baHy8bYZpF0HZNe9nucdyHH1xvq
+	 p252VvtafzyJqmVJ6UoogTj/LiR58L2+eAq1+7eFDrYUmyClJF1FiklOEdk3gLffcW
+	 BoMGCHmPx0Kc6spdvwK36o8OXrCQ1tJ1W357/+Y/PHutFqqqTvyetX5EhS6SLWPyxM
+	 xUHY3dBaj6uWw4EjSNJfZXFIlU5qehstmdObQvriOmgT4DdZPyFkrKUXI6fdsY5GlO
+	 Djd/4Ndh5IOlgVg6J9Z4Z6hQNQnJXL1chHXgZH7gAvryqFFQYJIptvoemUUXEI+c3P
+	 rll5xOs6oSRpA==
+Message-ID: <46f44064-255b-4a1e-9317-f4b168706d65@kernel.org>
+Date: Thu, 18 Jul 2024 12:59:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: 1.20
-X-Spamd-Result: default: False [1.20 / 50.00];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Level: *
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [crypto?] KASAN: slab-use-after-free Read in
+ handle_mm_fault
+Content-Language: en-US
+To: syzbot <syzbot+4c882a4a0697c4a25364@syzkaller.appspotmail.com>,
+ akpm@linux-foundation.org, davem@davemloft.net, herbert@gondor.apana.org.au,
+ linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+References: <00000000000037cdb0061d5924b3@google.com>
+From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+In-Reply-To: <00000000000037cdb0061d5924b3@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-prepare_hugepage_range() performs almost the same checks for all
-architectures that define it, with the exception of mips and loongarch
-that also check for overflows.
-The rest checks for the addr and len to be properly aligned, so we can
-move that to the generic hugetlb_mmap_check_and_align() function and get
-rid of a fair amount of duplicated code.
+On 7/16/24 10:29 AM, syzbot wrote:
+> Hello,
 
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
----
- arch/loongarch/include/asm/hugetlb.h |  4 ----
- arch/mips/include/asm/hugetlb.h      |  4 ----
- arch/parisc/include/asm/hugetlb.h    | 15 ---------------
- arch/s390/include/asm/hugetlb.h      | 17 -----------------
- arch/sh/include/asm/hugetlb.h        | 15 ---------------
- fs/hugetlbfs/inode.c                 |  8 ++++++--
- include/asm-generic/hugetlb.h        |  7 -------
- 7 files changed, 6 insertions(+), 64 deletions(-)
+dunno about the [crypto?] parts, sounds rather something for Suren or Liam
+or maybe it's due to some changes to gup?
 
-diff --git a/arch/loongarch/include/asm/hugetlb.h b/arch/loongarch/include/asm/hugetlb.h
-index aa44b3fe43dd..107566c98938 100644
---- a/arch/loongarch/include/asm/hugetlb.h
-+++ b/arch/loongarch/include/asm/hugetlb.h
-@@ -18,10 +18,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	unsigned long task_size = STACK_TOP;
- 	struct hstate *h = hstate_file(file);
- 
--	if (len & ~huge_page_mask(h))
--		return -EINVAL;
--	if (addr & ~huge_page_mask(h))
--		return -EINVAL;
- 	if (len > task_size)
- 		return -ENOMEM;
- 	if (task_size - len < addr)
-diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
-index fd69c8808554..6a63d82a8ab3 100644
---- a/arch/mips/include/asm/hugetlb.h
-+++ b/arch/mips/include/asm/hugetlb.h
-@@ -19,10 +19,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	unsigned long task_size = STACK_TOP;
- 	struct hstate *h = hstate_file(file);
- 
--	if (len & ~huge_page_mask(h))
--		return -EINVAL;
--	if (addr & ~huge_page_mask(h))
--		return -EINVAL;
- 	if (len > task_size)
- 		return -ENOMEM;
- 	if (task_size - len < addr)
-diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
-index 72daacc472a0..5b3a5429f71b 100644
---- a/arch/parisc/include/asm/hugetlb.h
-+++ b/arch/parisc/include/asm/hugetlb.h
-@@ -12,21 +12,6 @@ void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
- pte_t huge_ptep_get_and_clear(struct mm_struct *mm, unsigned long addr,
- 			      pte_t *ptep);
- 
--/*
-- * If the arch doesn't supply something else, assume that hugepage
-- * size aligned regions are ok without further preparation.
-- */
--#define __HAVE_ARCH_PREPARE_HUGEPAGE_RANGE
--static inline int prepare_hugepage_range(struct file *file,
--			unsigned long addr, unsigned long len)
--{
--	if (len & ~HPAGE_MASK)
--		return -EINVAL;
--	if (addr & ~HPAGE_MASK)
--		return -EINVAL;
--	return 0;
--}
--
- #define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
- static inline pte_t huge_ptep_clear_flush(struct vm_area_struct *vma,
- 					  unsigned long addr, pte_t *ptep)
-diff --git a/arch/s390/include/asm/hugetlb.h b/arch/s390/include/asm/hugetlb.h
-index f01b101c80b7..d4277e5a27d9 100644
---- a/arch/s390/include/asm/hugetlb.h
-+++ b/arch/s390/include/asm/hugetlb.h
-@@ -25,23 +25,6 @@ extern pte_t huge_ptep_get(pte_t *ptep);
- extern pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
- 			      unsigned long addr, pte_t *ptep);
- 
--/*
-- * If the arch doesn't supply something else, assume that hugepage
-- * size aligned regions are ok without further preparation.
-- */
--#define __HAVE_ARCH_PREPARE_HUGEPAGE_RANGE
--static inline int prepare_hugepage_range(struct file *file,
--			unsigned long addr, unsigned long len)
--{
--	struct hstate *h = hstate_file(file);
--
--	if (len & ~huge_page_mask(h))
--		return -EINVAL;
--	if (addr & ~huge_page_mask(h))
--		return -EINVAL;
--	return 0;
--}
--
- static inline void arch_clear_hugetlb_flags(struct folio *folio)
- {
- 	clear_bit(PG_arch_1, &folio->flags);
-diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
-index 75028bd568ba..4a92e6e4d627 100644
---- a/arch/sh/include/asm/hugetlb.h
-+++ b/arch/sh/include/asm/hugetlb.h
-@@ -5,21 +5,6 @@
- #include <asm/cacheflush.h>
- #include <asm/page.h>
- 
--/*
-- * If the arch doesn't supply something else, assume that hugepage
-- * size aligned regions are ok without further preparation.
-- */
--#define __HAVE_ARCH_PREPARE_HUGEPAGE_RANGE
--static inline int prepare_hugepage_range(struct file *file,
--			unsigned long addr, unsigned long len)
--{
--	if (len & ~HPAGE_MASK)
--		return -EINVAL;
--	if (addr & ~HPAGE_MASK)
--		return -EINVAL;
--	return 0;
--}
--
- #define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
- static inline pte_t huge_ptep_clear_flush(struct vm_area_struct *vma,
- 					  unsigned long addr, pte_t *ptep)
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 4902220adf42..38b8a9a63ba2 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -180,8 +180,12 @@ hugetlb_mmap_check_and_align(struct file *file, unsigned long addr,
- 
- 	if (len & ~huge_page_mask(h))
- 		return -EINVAL;
--	if ((flags & MAP_FIXED) && prepare_hugepage_range(file, addr, len))
--		return -EINVAL;
-+	if (flags & MAP_FIXED) {
-+		if (addr & ~huge_page_mask(h))
-+			return -EINVAL;
-+		if (prepare_hugepage_range(file, addr, len))
-+			return -EINVAL;
-+	}
- 	if (addr)
- 		addr0 = ALIGN(addr, huge_page_size(h));
- 
-diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
-index 0b89d36a4310..0ca5da28fb01 100644
---- a/include/asm-generic/hugetlb.h
-+++ b/include/asm-generic/hugetlb.h
-@@ -123,13 +123,6 @@ static inline int huge_pte_none_mostly(pte_t pte)
- static inline int prepare_hugepage_range(struct file *file,
- 		unsigned long addr, unsigned long len)
- {
--	struct hstate *h = hstate_file(file);
--
--	if (len & ~huge_page_mask(h))
--		return -EINVAL;
--	if (addr & ~huge_page_mask(h))
--		return -EINVAL;
--
- 	return 0;
- }
- #endif
--- 
-2.45.2
+> syzbot found the following issue on:
+> 
+> HEAD commit:    3fe121b62282 Add linux-next specific files for 20240712
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1097ebed980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=98dd8c4bab5cdce
+> dashboard link: https://syzkaller.appspot.com/bug?extid=4c882a4a0697c4a25364
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d611a5980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13ce3259980000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/8c6fbf69718d/disk-3fe121b6.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/39fc7e43dfc1/vmlinux-3fe121b6.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/0a78e70e4b4e/bzImage-3fe121b6.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/66cfe5a679f2/mount_0.gz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+4c882a4a0697c4a25364@syzkaller.appspotmail.com
+> 
+> ==================================================================
+> BUG: KASAN: slab-use-after-free in handle_mm_fault+0x14f0/0x19a0 mm/memory.c:5842
+> Read of size 8 at addr ffff88802c4719d0 by task syz-executor125/5235
+> 
+> CPU: 1 UID: 0 PID: 5235 Comm: syz-executor125 Not tainted 6.10.0-rc7-next-20240712-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  print_address_description mm/kasan/report.c:377 [inline]
+>  print_report+0x169/0x550 mm/kasan/report.c:488
+>  kasan_report+0x143/0x180 mm/kasan/report.c:601
+>  handle_mm_fault+0x14f0/0x19a0 mm/memory.c:5842
+>  faultin_page mm/gup.c:1194 [inline]
+>  __get_user_pages+0x6ec/0x16a0 mm/gup.c:1493
+>  populate_vma_page_range+0x264/0x330 mm/gup.c:1932
+>  __mm_populate+0x27a/0x460 mm/gup.c:2035
+>  mm_populate include/linux/mm.h:3429 [inline]
+>  vm_mmap_pgoff+0x2c3/0x3d0 mm/util.c:593
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f093ce17fe9
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 1d 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f093cd9e158 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+> RAX: ffffffffffffffda RBX: 00007f093ce9f4b8 RCX: 00007f093ce17fe9
+> RDX: 0000000000000002 RSI: 0000000000b36000 RDI: 0000000020000000
+> RBP: 00007f093ce9f4b0 R08: 00000000ffffffff R09: 0000000000000000
+> R10: 0000000000008031 R11: 0000000000000246 R12: 00007f093ce9f4bc
+> R13: 000000000000006e R14: 00007ffe8008cc30 R15: 00007ffe8008cd18
+>  </TASK>
+> 
+> Allocated by task 5235:
+>  kasan_save_stack mm/kasan/common.c:47 [inline]
+>  kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+>  unpoison_slab_object mm/kasan/common.c:312 [inline]
+>  __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
+>  kasan_slab_alloc include/linux/kasan.h:201 [inline]
+>  slab_post_alloc_hook mm/slub.c:3988 [inline]
+>  slab_alloc_node mm/slub.c:4037 [inline]
+>  kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4044
+>  vm_area_alloc+0x24/0x1d0 kernel/fork.c:472
+>  mmap_region+0xc3d/0x2090 mm/mmap.c:2944
+>  do_mmap+0x8f9/0x1010 mm/mmap.c:1468
+>  vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:588
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> Freed by task 5237:
+>  kasan_save_stack mm/kasan/common.c:47 [inline]
+>  kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+>  kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+>  poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
+>  __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
+>  kasan_slab_free include/linux/kasan.h:184 [inline]
+>  slab_free_hook mm/slub.c:2252 [inline]
+>  slab_free mm/slub.c:4473 [inline]
+>  kmem_cache_free+0x145/0x350 mm/slub.c:4548
+>  rcu_do_batch kernel/rcu/tree.c:2569 [inline]
+>  rcu_core+0xafd/0x1830 kernel/rcu/tree.c:2843
+>  handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
+>  __do_softirq kernel/softirq.c:588 [inline]
+>  invoke_softirq kernel/softirq.c:428 [inline]
+>  __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
+>  irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
+>  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
+>  sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
+>  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+> 
+> Last potentially related work creation:
+>  kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
+>  __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:541
+>  __call_rcu_common kernel/rcu/tree.c:3106 [inline]
+>  call_rcu+0x167/0xa70 kernel/rcu/tree.c:3210
+>  remove_vma mm/mmap.c:189 [inline]
+>  remove_mt mm/mmap.c:2415 [inline]
+>  do_vmi_align_munmap+0x155c/0x18c0 mm/mmap.c:2758
+>  do_vmi_munmap+0x261/0x2f0 mm/mmap.c:2830
+>  mmap_region+0x72f/0x2090 mm/mmap.c:2881
+>  do_mmap+0x8f9/0x1010 mm/mmap.c:1468
+>  vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:588
+>  ksys_mmap_pgoff+0x544/0x720 mm/mmap.c:1514
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> The buggy address belongs to the object at ffff88802c4719b0
+>  which belongs to the cache vm_area_struct of size 184
+> The buggy address is located 32 bytes inside of
+>  freed 184-byte region [ffff88802c4719b0, ffff88802c471a68)
+> 
+> The buggy address belongs to the physical page:
+> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x2c471
+> memcg:ffff888024312e01
+> flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+> page_type: 0xfdffffff(slab)
+> raw: 00fff00000000000 ffff888015eefb40 ffffea000091a480 0000000000000008
+> raw: 0000000000000000 0000000080100010 00000001fdffffff ffff888024312e01
+> page dumped because: kasan: bad access detected
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 4769, tgid 4769 (S41dhcpcd), ts 42147845478, free_ts 42112307396
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1493
+>  prep_new_page mm/page_alloc.c:1501 [inline]
+>  get_page_from_freelist+0x2ccb/0x2d80 mm/page_alloc.c:3474
+>  __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4732
+>  __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+>  alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+>  alloc_slab_page+0x5f/0x120 mm/slub.c:2321
+>  allocate_slab+0x5a/0x2f0 mm/slub.c:2484
+>  new_slab mm/slub.c:2537 [inline]
+>  ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3723
+>  __slab_alloc+0x58/0xa0 mm/slub.c:3813
+>  __slab_alloc_node mm/slub.c:3866 [inline]
+>  slab_alloc_node mm/slub.c:4025 [inline]
+>  kmem_cache_alloc_noprof+0x1c1/0x2a0 mm/slub.c:4044
+>  vm_area_dup+0x27/0x290 kernel/fork.c:487
+>  dup_mmap kernel/fork.c:696 [inline]
+>  dup_mm kernel/fork.c:1674 [inline]
+>  copy_mm+0xc7b/0x1f30 kernel/fork.c:1723
+>  copy_process+0x186b/0x3d90 kernel/fork.c:2376
+>  kernel_clone+0x226/0x8f0 kernel/fork.c:2788
+>  __do_sys_clone kernel/fork.c:2931 [inline]
+>  __se_sys_clone kernel/fork.c:2915 [inline]
+>  __x64_sys_clone+0x258/0x2a0 kernel/fork.c:2915
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> page last free pid 4768 tgid 4768 stack trace:
+>  reset_page_owner include/linux/page_owner.h:25 [inline]
+>  free_pages_prepare mm/page_alloc.c:1094 [inline]
+>  free_unref_folios+0x103a/0x1b00 mm/page_alloc.c:2692
+>  folios_put_refs+0x76e/0x860 mm/swap.c:1039
+>  free_pages_and_swap_cache+0x5c8/0x690 mm/swap_state.c:335
+>  __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
+>  tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
+>  tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
+>  tlb_flush_mmu+0x3a3/0x680 mm/mmu_gather.c:373
+>  tlb_finish_mmu+0xd4/0x200 mm/mmu_gather.c:465
+>  exit_mmap+0x44f/0xc80 mm/mmap.c:3425
+>  __mmput+0x115/0x390 kernel/fork.c:1347
+>  exit_mm+0x220/0x310 kernel/exit.c:571
+>  do_exit+0x9b2/0x27f0 kernel/exit.c:869
+>  do_group_exit+0x207/0x2c0 kernel/exit.c:1031
+>  __do_sys_exit_group kernel/exit.c:1042 [inline]
+>  __se_sys_exit_group kernel/exit.c:1040 [inline]
+>  __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1040
+>  x64_sys_call+0x26c3/0x26d0 arch/x86/include/generated/asm/syscalls_64.h:232
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> Memory state around the buggy address:
+>  ffff88802c471880: fc fc fc fc fc fc fc 00 00 00 00 00 00 00 00 00
+>  ffff88802c471900: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fc fc
+>>ffff88802c471980: fc fc fc fc fc fc fa fb fb fb fb fb fb fb fb fb
+>                                                  ^
+>  ffff88802c471a00: fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc
+>  ffff88802c471a80: fc fc fc fc fc 00 00 00 00 00 00 00 00 00 00 00
+> ==================================================================
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
+> 
 
 
