@@ -1,157 +1,170 @@
-Return-Path: <linux-kernel+bounces-256068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 655D2934894
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:06:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C02B79348B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96D551C21A84
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:06:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2BCA1C21786
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1D375808;
-	Thu, 18 Jul 2024 07:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2091757FD;
+	Thu, 18 Jul 2024 07:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JW9XMahH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ibjI173y"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279D374429
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 07:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8A1487A5
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 07:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721286369; cv=none; b=ebu5rMmYv1dfTc1MC0XM5+un0MhNlc2lSr3kbaXQriaTQM0Pw6v2OW1W4DqHxl/mIzDPcnmT/I/N1AAzTq2hGQCGkbPd/7groaU0/aKc/WIc9l0JD2hF/cwFJrjC7ebjavpUEIqmzqCV3fg5TqYSA/skXj+WZ0WSuP5KN2dbLZo=
+	t=1721287335; cv=none; b=b/EytCOYTucdhtfC4zaHc4Fg5EQcHK5pSlLTweDiFpcgfqeLzx8hTEXRO/ExeaXf9n8pkpqVxCchkih40vQlRRusHfrf885wJDzN8nBvakWlVrYfoA3dESvOjIaxzvaHMuQ8fDF0DgySChIrDCk30lM3iyT2VarGBUWcdflHcmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721286369; c=relaxed/simple;
-	bh=uA0JGGjakiMbR9WsA7dhks+DdnDu6St2X1YRdoaTlws=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=YJc9SSDex5FqPmAID3aqHEv0y1Cw52nvKjHkipJ+K/5LAj7s5qWVAa9C+EBMXjF9h8SKFK/UCiqTd2EdF5DR3LERmC/HiWRQyzYRP4z6vo8RtPy34VEF9KoaGCx4iv+YDz1YPGl99aXBZs8pHdMzCPJ0xSXnkhtHBE/qSCqBbZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JW9XMahH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721286366;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LZ1lU4s3MEl0eqBrDrKpVc0POkcvbrGUvI/MYSaxt9I=;
-	b=JW9XMahHpN9JlXItgjKirIQ2J7fVIUqpwRNQJqJ33LLNJo1XiyAYv4U+PB76JJrMFG4ZlI
-	cIW3tBTFdsdN7pf4I9ovUcSWoDwtiwkrH5/asx0b7ooH3hDMlBD9NkS6uEl8HuOG4qis2M
-	9fVbe3VNeTgIznaRJURJMyfuWPR28RQ=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-121-7NhJeS4cMv-GjG_WjDODaw-1; Thu, 18 Jul 2024 03:06:04 -0400
-X-MC-Unique: 7NhJeS4cMv-GjG_WjDODaw-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-426724679f0so7450965e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 00:06:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721286363; x=1721891163;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LZ1lU4s3MEl0eqBrDrKpVc0POkcvbrGUvI/MYSaxt9I=;
-        b=j3F3Y2rrovfDWVDSrfyiAu0YWuKgyLsm/XxaQFRuDgtimjZFaOzW4sADtF00jFkUvh
-         qonEqHl3LQ+QHhRPjsa0/bn3CCQ5m8fQqqs+qAF02XNANSVpH0Q+/RvkcWaOLt3o3R0w
-         itERBcNfRw94ifF/4h4fEUjcNwC7W1uHRz+7xvnvh2oDcIFOIcv/riSD/JYCkSXbECi8
-         BCbZWuaVkoU5QkH6sKE5VeEiZZRT/FU4JAVNMYaM6uTJRxrhM72z/q1KnPq0tUuHAgRE
-         yaluiAlOUmjvPFdf30MHNJZkcmQWPDud1Anq2UYu27qXJCigdii55a/yrnsl6IOi8B4D
-         ZLgw==
-X-Forwarded-Encrypted: i=1; AJvYcCXOm8kjV26IKCp6xoUHhNxPnYT44wrP00G74WR5Yx36NtE9xYp0Nr6hTGDKzV/bE6WKIzEv4fB2ze8kDOK64WDeN2CQqJ0vYbysl4Yp
-X-Gm-Message-State: AOJu0Yzg40Ah1tu1Um8yM2I9LTsoHKA2dbcBs3etorxBw7snGjdXvlt8
-	Fiyr/c7Gm8ckoe3aSBOWEM9wPTma7AlV8J2uF5CjN8uiDeq18XGIIzbzrTSOWRb88GEnj6+GZUP
-	dZ8LuI6yJ6GlhYWM5q6gY7LZDGEt2lUkImdvFDfT3CYM6RismbnbLqU6fpKZSUA==
-X-Received: by 2002:a05:600c:a41:b0:424:a7f1:ba2 with SMTP id 5b1f17b1804b1-427c83abaacmr11056425e9.17.1721286363350;
-        Thu, 18 Jul 2024 00:06:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHa7qUlOIVPtRLS94vJ5+kzoefqLguJcUGf7zXA8087LONGESX8WhOSNJuoCKzvG05hbn781w==
-X-Received: by 2002:a05:600c:a41:b0:424:a7f1:ba2 with SMTP id 5b1f17b1804b1-427c83abaacmr11056155e9.17.1721286362999;
-        Thu, 18 Jul 2024 00:06:02 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427c77f21bdsm23840755e9.29.2024.07.18.00.06.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jul 2024 00:06:02 -0700 (PDT)
-Message-ID: <93589af2-dcfc-437b-85ca-b0029f4d6401@redhat.com>
-Date: Thu, 18 Jul 2024 09:06:01 +0200
+	s=arc-20240116; t=1721287335; c=relaxed/simple;
+	bh=wPyOAmR53ULPE6Dq7KdjQV3wp/zEs9oj/w5PUnWP+bM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=Mb9lGAdx2pznNVNU64PfTrATdN3SkKzarDih+JpFArIoh3krBqUFJ7oek9srWT8ETJBNykp1zRZFa34H6rgHdE9U4NmHnFOIsls4EjEZ3hTLMXZqsJouludtVLxLDaErHv84PKEjwrl4URP1jU28YZoywdSezMVKhfhXA/NWYIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ibjI173y; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240718072204epoutp035241e950b8e8c3996f016967dfc2cc5f~jPbOq8Bs11545215452epoutp03D
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 07:22:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240718072204epoutp035241e950b8e8c3996f016967dfc2cc5f~jPbOq8Bs11545215452epoutp03D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1721287324;
+	bh=13FCV97nEtgiaVZ11kx9ddZIZe6T/jO3F12+cKIMIxE=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=ibjI173yXQH+Abe+Yft8W2qVNPNx6RHDZqdq0QaDXqonzo2tWzhqMf/EQnp21enMn
+	 NNp2p0TEfmOATBspPVaGhkf8cMyCDb3orxt+rqC1M579jlTPPPzg0E21CWytITEtfQ
+	 s2Sqqqm6WqM3A3hpfd+gCI+wFs3A3hN7Gr7oSltQ=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240718072204epcas5p2f3a0b245274dd89b955e1f6be285d6b8~jPbOR_v1g0558505585epcas5p2v;
+	Thu, 18 Jul 2024 07:22:04 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.176]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4WPklG2WF0z4x9Q7; Thu, 18 Jul
+	2024 07:22:02 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	57.75.06857.A92C8966; Thu, 18 Jul 2024 16:22:02 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240718070823epcas5p14445a1ab8f8bf8a496405a1424ea067f~jPPSSZ5Y52735427354epcas5p1C;
+	Thu, 18 Jul 2024 07:08:23 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240718070823epsmtrp148f9ae4bc5ac408493f174ea3e637c2a~jPPSRswvg0526105261epsmtrp1f;
+	Thu, 18 Jul 2024 07:08:23 +0000 (GMT)
+X-AuditID: b6c32a4b-88bff70000021ac9-fa-6698c29a4e02
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	AF.49.29940.76FB8966; Thu, 18 Jul 2024 16:08:23 +0900 (KST)
+Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240718070822epsmtip2dde660fe4aa025631f465b5efe342a35~jPPRRKnAF2748427484epsmtip2i;
+	Thu, 18 Jul 2024 07:08:22 +0000 (GMT)
+From: hexue <xue01.he@samsung.com>
+To: axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, hexue
+	<xue01.he@samsung.com>
+Subject: [PATCH v3] block: Avoid polling configuration errors
+Date: Thu, 18 Jul 2024 15:08:17 +0800
+Message-Id: <20240718070817.1031494-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] fbcon: Add an option to disable fbcon in panic.
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Helge Deller <deller@gmx.de>,
- "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Javier Martinez Canillas <javierm@redhat.com>,
- Samuel Thibault <samuel.thibault@ens-lyon.org>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-fbdev@vger.kernel.org
-References: <20240717090102.968152-1-jfalempe@redhat.com>
- <20240717090102.968152-3-jfalempe@redhat.com>
- <ZpfdcC2Es9rweHW_@phenom.ffwll.local>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <ZpfdcC2Es9rweHW_@phenom.ffwll.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrAKsWRmVeSWpSXmKPExsWy7bCmpu6sQzPSDH6v4bNYfbefzeJX911G
+	i723tC0u75rDZnF2wgdWi64Lp9gc2Dwuny316NuyitHj8ya5AOaobJuM1MSU1CKF1Lzk/JTM
+	vHRbJe/geOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoK1KCmWJOaVAoYDE4mIlfTubovzS
+	klSFjPziElul1IKUnAKTAr3ixNzi0rx0vbzUEitDAwMjU6DChOyMpc0CBd+5KlpON7M3MLZy
+	djFyckgImEjsevGKCcQWEtjNKNFxn7+LkQvI/sQoce1TLwuE841R4nHPFqAqDrCOn+1Q8b2M
+	ElOOLmSDcH4wSqxsnccIMopNQEli/5YPYLaIgLDE/o5WFhCbWSBW4uiyB2BxYQFbia2n74PF
+	WQRUJb4smcMOYvMKWEscmTKDGeI8eYmbXfuZIeKCEidnPoGaIy/RvHU2M8hiCYFN7BIzJ/VD
+	NbhIzF/4mhHCFpZ4dXwLO4QtJfGyvw3KzpeY/H09VE2NxLrN71ggbGuJf1f2sIB8ySygKbF+
+	lz5EWFZi6ql1TBB7+SR6fz9hgojzSuyYB2MrSSw5sgJqpITE7wmLWCFsD4mTOy8zQ4I3VqJv
+	5wmWCYzys5C8MwvJO7MQNi9gZF7FKJlaUJybnlpsWmCcl1oOj9bk/NxNjOCkp+W9g/HRgw96
+	hxiZOBgPMUpwMCuJ8E5gnJYmxJuSWFmVWpQfX1Sak1p8iNEUGMYTmaVEk/OBaTevJN7QxNLA
+	xMzMzMTS2MxQSZz3devcFCGB9MSS1OzU1ILUIpg+Jg5OqQamivk3zndXTJwS9tXA9ay8efj+
+	QjvTVfvLdl55n9p8aJ7QivXldaFeGbPv5tTXNIfdjXV4E9J96J+ruLlT/1mXI4Gsj/s21/Ou
+	1Z/6cO1jBbmw1s+M544ednDT8Z38kOfowat23/b1y0++KKCnKe97tKfYyknFMux2ezaHksRU
+	gZ9BVpfuKX7eU12dZTv/wntONsH59Q/uzGotZi1LfaZV7casnVVT8ZTn+OLFysteL1ISLPxw
+	tLn8nmZi0PwLgjbuQU9KrodVirM82qW+texs/6a3+kt9xXRfMx66fj3vZJRbT+ml6E9X/i7v
+	WJy+WLV2bfN04axD19l3aXiKJWhcExQ+bZX2PLyt4YfQ9ONKLMUZiYZazEXFiQBmufTpAwQA
+	AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNLMWRmVeSWpSXmKPExsWy7bCSvG76/hlpBvcvK1msvtvPZvGr+y6j
+	xd5b2haXd81hszg74QOrRdeFU2wObB6Xz5Z69G1ZxejxeZNcAHMUl01Kak5mWWqRvl0CV8bS
+	ZoGC71wVLaeb2RsYWzm7GDk4JARMJH62s3QxcnEICexmlPg9YydjFyMnUFxCYsejP6wQtrDE
+	yn/P2UFsIYFvjBLvH0SA2GwCShL7t3wAqxcBqtnf0coCYjMLxEtcmnqeGcQWFrCV2Hr6Plic
+	RUBV4suSOWBzeAWsJY5MmcEMMV9e4mbXfmaIuKDEyZlPoObISzRvnc08gZFvFpLULCSpBYxM
+	qxglUwuKc9Nziw0LDPNSy/WKE3OLS/PS9ZLzczcxgsNPS3MH4/ZVH/QOMTJxMB5ilOBgVhLh
+	ncA4LU2INyWxsiq1KD++qDQntfgQozQHi5I4r/iL3hQhgfTEktTs1NSC1CKYLBMHp1QDU9Ap
+	O45bi26X2Zt1HDu5qOSSev781k/XPpVX3eC4VNFeW5r5nSNRvvvbl9CS74ssN4d0rcgRTT/z
+	e073J1uF3kf+NxVmSFyYo6Jne+aBfZeU38rlbdfNMpn23NBnzVF7HfLIZf2ZK3fzM88wsi/Y
+	79MrrJTF0L2Mw8t/kaTZEcGDt17Pt2K2usHGuOnryyelKladVqKmJkm+X8PipZLfV5oePJMj
+	ueV6y8LzOevecHGqdz1udZ/wYGFb3dmTChtkM0V3rHhwo/mccU7HtoXf61hKih5vf/L/YOwv
+	y8n+B079P+P9p8dA2+VR+dYOpkQ9r+SKufMYF+YxXZr1Iz8pYl9rmV/irrKFRv+72n5nKbEU
+	ZyQaajEXFScCAA37s7quAgAA
+X-CMS-MailID: 20240718070823epcas5p14445a1ab8f8bf8a496405a1424ea067f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240718070823epcas5p14445a1ab8f8bf8a496405a1424ea067f
+References: <CGME20240718070823epcas5p14445a1ab8f8bf8a496405a1424ea067f@epcas5p1.samsung.com>
 
+This patch add a poll queue check, aims to help users to use poll tolls
+accurately.
 
+If users do polled IO but device doesn't have poll queues, they will get
+wrong perfromance data and waste CPU resources. So here adding a poll queue
+check, if users do this misconfiguration, it will return users that device
+does not support this operation, to help users adjust their configuration
+promptly.
+--
+changes from v2:
+- move check into block layer
+- return -EOPNOTSUPP instead of print a warning in io_uring
+v2: https://lore.kernel.org/io-uring/20240711082430.609597-1-xue01.he@samsung.com/T/#u
 
-On 17/07/2024 17:04, Daniel Vetter wrote:
-> On Wed, Jul 17, 2024 at 10:48:40AM +0200, Jocelyn Falempe wrote:
->> This is required to avoid conflict between DRM_PANIC, and fbcon. If
->> a drm device already handle panic with drm_panic, it should set
->> the skip_panic field in fb_info, so that fbcon will stay quiet, and
->> not overwrite the panic_screen.
->>
->> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
->> ---
->>   drivers/gpu/drm/drm_fb_helper.c  | 2 ++
->>   drivers/video/fbdev/core/fbcon.c | 7 ++++++-
->>   include/linux/fb.h               | 1 +
->>   3 files changed, 9 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
->> index e2e19f49342e..3662d664d8f9 100644
->> --- a/drivers/gpu/drm/drm_fb_helper.c
->> +++ b/drivers/gpu/drm/drm_fb_helper.c
->> @@ -40,6 +40,7 @@
->>   #include <drm/drm_fourcc.h>
->>   #include <drm/drm_framebuffer.h>
->>   #include <drm/drm_modeset_helper_vtables.h>
->> +#include <drm/drm_panic.h>
->>   #include <drm/drm_print.h>
->>   #include <drm/drm_vblank.h>
->>   
->> @@ -524,6 +525,7 @@ struct fb_info *drm_fb_helper_alloc_info(struct drm_fb_helper *fb_helper)
->>   	fb_helper->info = info;
->>   	info->skip_vt_switch = true;
->>   
->> +	info->skip_panic = drm_panic_is_enabled(fb_helper->dev);
->>   	return info;
->>   
->>   err_release:
-> 
-> Bit a bikeshed, but I'd split this patch out since it's for drm's fbdev
-> emulation, not the fbcon core code. With that:
-> 
-> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+changes from v1:
+- without disrupting the original I/O process.
+- move judgement from block to io_uring.
+v1: https://lore.kernel.org/linux-block/ZlrQCaR6xEaghWdQ@infradead.org/T/#t
 
-Agreed, I considered doing that when writing the patch, but as it was 1 
-line, I kept it with the fbcon change.
+Signed-off-by: hexue <xue01.he@samsung.com>
+---
+ block/blk-core.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Thanks,
-
+diff --git a/block/blk-core.c b/block/blk-core.c
+index 82c3ae22d76d..9788808bd488 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -791,8 +791,11 @@ void submit_bio_noacct(struct bio *bio)
+ 		}
+ 	}
+ 
+-	if (!test_bit(QUEUE_FLAG_POLL, &q->queue_flags))
++	if (!test_bit(QUEUE_FLAG_POLL, &q->queue_flags) &&
++			(bio->bi_opf & REQ_POLLED)) {
+ 		bio_clear_polled(bio);
++		goto not_supported;
++	}
+ 
+ 	switch (bio_op(bio)) {
+ 	case REQ_OP_READ:
 -- 
-
-Jocelyn
-
-> 
+2.40.1
 
 
