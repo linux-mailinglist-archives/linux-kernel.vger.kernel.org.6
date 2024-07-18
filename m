@@ -1,114 +1,92 @@
-Return-Path: <linux-kernel+bounces-256781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D9C937022
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 23:34:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA87E937024
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 23:35:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75444281976
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 21:34:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F3EB1C21C91
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 21:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B5E14375A;
-	Thu, 18 Jul 2024 21:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB39A145A1C;
+	Thu, 18 Jul 2024 21:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="MfxcetQw"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="l5xCkuAs"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40CCD75808
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 21:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C57181219;
+	Thu, 18 Jul 2024 21:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721338483; cv=none; b=hZDccll9o/yywUiMSVZV5HZWFnAaFzdVacG20ZZkHjYgXGEY4RHfzVj2sy/j3Mof9VDg2HjKOoRHFxsIrcxq1nJBks7Me9zjAJOzCndK0dxVXKy+vNAgNs+N7XFPVWXKwFHm95Km98HZfYr9a5OBbKBAnmIrji5w1ueDzjP+hlQ=
+	t=1721338507; cv=none; b=rIC0E3olWGEbkCINVoJmkaz7q2ex15hicNiUM98UaQhfM1eJGSkBoAZfp14C32loLG7Gl+dRHwCVlLhanuqwb9v2ihe8T8NDd3s8ebgsZt7MH8ktTBcVMDovM5VoB12kZgrOA0xkTrKu+8pm0SdtoT2t9BI7ljGX22HCK2V9Yt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721338483; c=relaxed/simple;
-	bh=4KCBrR/1FAbkFN9EuBapxHz7zR2ybB/HYnvsQhM6krw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cgaK+6jcVGoOkzMzDBMhnAq+hYZ3/rKWEfz9XYNPAO/Ebk+9iPIBuFnELeCh9qpzfno/V9nJ/iEtW7dzBh4DUGPxDpyFVn/k+cXvj1U3tvJrmU7Ba25+v/dKJGu8XaOsAlUL0E2ZzAMquVYMYyUn3UKRyvitYEUWR6Iy0FTOg7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=MfxcetQw; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-8152f0c63c1so47712539f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 14:34:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1721338481; x=1721943281; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IUtCKtIzqGuY0q5cwXIOFhLdAMxypBe1qmgcMDT+NXI=;
-        b=MfxcetQwC/qGAr4NEpF8qEEpvBOGIvUQZVIouDsa3pkxAnFfqg+PGhS1lLdSQO9Qdx
-         YBsHx1i71tgkFpM8yw+y4Va1PGhItXABAOElE8NnDWLat/V8D9+J5jHH5unwDn36vPQ7
-         QDFvRTZMNGkWYQzh9ZvegDJc6zu5hDE8NaakxwyZFo3VgyO0w4zvv5pom9PUL/NOemzw
-         C9Pqf0XYM1P225a+2lJ9haO4u8GbHrRujUqg1ate9sokpheMY4aTLVYufUFRzK5xaNe6
-         E3ZI8m9SWDDgXI/OOQZBOJpKrsri4QdYfds98SfnHH0a6gF03nPKaMtLkteNfQmTQf6k
-         C3FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721338481; x=1721943281;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IUtCKtIzqGuY0q5cwXIOFhLdAMxypBe1qmgcMDT+NXI=;
-        b=DcNSB46xj7WHjntu5htsbMciqHBKK/a5Oi3ES36Kg3bu8LBpIR11PAAdEhSwcqi+zP
-         HmJ0C6WYabFGULvSTUtatXAnlz3W3eo0pFDHEmSik7irkigSSJNLw65e/VRNx3vHHjOC
-         1yWav7xwlvrXCDow/yBX+bthKqxpaBlDsBjzXhIStKaUdhiHC/O2mdIuf439WUb9WPJ5
-         WY4l19B/oPP91aaaJV0n3Kp7eE8Es47goF8aaPHARvOabLdUAau7+Q4FXr4I8f1DfiIO
-         HAqkkvuuLsn+rFvxjOft9+22Xto85NsVNZREO00L4eiiDJSgX23raUez+13NOjppqt9U
-         dKVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWqfZ+zunBgEj5WzIhZSIoYHPgNOwlZxbIbQpc9m+v2G0+5yNb/ku7Std0zf6XTyNSgo1MhykQN5rgEf8ayg2gfPVv7XpuovmFE2fa2
-X-Gm-Message-State: AOJu0YyG93i2VuuWiSkLHn2W2VoZcXZRDrVww5HTaoUFXRa2Sraw5s0x
-	QkxS/kLP/FUe0GudL9o9bX6nxl0/4nVDBrLxNv9FvwHK78EP9N0n6NK3mgxgJAs=
-X-Google-Smtp-Source: AGHT+IGlIiHvpq47W3PGwq6TDOaf2pcHH3RyIU5b5agJJADcI2hIKDn1U46oKogXvzuHTqteosSwEg==
-X-Received: by 2002:a05:6602:1503:b0:7f9:217c:c109 with SMTP id ca18e2360f4ac-81710bd3fe7mr956517739f.9.1721338481365;
-        Thu, 18 Jul 2024 14:34:41 -0700 (PDT)
-Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-819aba121f9sm3552839f.6.2024.07.18.14.34.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jul 2024 14:34:40 -0700 (PDT)
-Message-ID: <75ba30e5-3371-4ca9-9dbd-af7f78907c30@sifive.com>
-Date: Thu, 18 Jul 2024 16:34:39 -0500
+	s=arc-20240116; t=1721338507; c=relaxed/simple;
+	bh=ZmxgnuBDWh6i1eOKbNR+WtcJ7E6/jUSlCHurAL2ynP8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W9RqcJrAeta/wYPUXdDR32HAm/b3l6DEwerCEuYFeAFBg8B4zVA0buNwDxK3U9zqZ7zn0a4s+xqO1uFoidq9Ll9/TOtSRNRpcnk7zJqtUFTv8xvONwVh5naVkywXK/2Q74G2LUNnyvLytdjjGlI/9QQwkJA8suDGB0GcsrhBs0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=l5xCkuAs; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=UPhjJsHI/bJ95ZrIvMkQ/9lSSkr1RFbsBFFDZhdYq5U=; b=l5xCkuAsveqNszVTNHfxjxwAaC
+	Qr7TsxF3dGpJlnMgCek+iq56/hMxp4Wb6Aqe/02JrMr/qPqhDHo5v2HYm7UmgsgfoiXsU6cViu1hr
+	PXXjrH79M83FM+uhct8OuRKegKq1kifxcT9xQdZUuEHWTB0EGoxyi6zowEVAt1vX9ZER7feiwWHy3
+	z/HQxFst1lOmt6zUjW0rEZg4/LqKSBSzm399ez3Qno/FnICDJtjOHWYXpgTC+R7GvemGxyW8WgTnX
+	DV0gaZjDNOsJB1TIV81phf3UKRG/84Snju1zQZgPH81sBp8Qan3bGvJgyS3gmwT4TSGr9LqIoeZus
+	vZNE+Vyw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sUYmE-00000002LwS-2oOd;
+	Thu, 18 Jul 2024 21:35:02 +0000
+Date: Thu, 18 Jul 2024 22:35:02 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mary Strodl <mstrodl@freedom.csh.rit.edu>,
+	Christoph Hellwig <hch@infradead.org>,
+	Mary Strodl <mstrodl@csh.rit.edu>, linux-kernel@vger.kernel.org,
+	urezki@gmail.com, linux-mm@kvack.org, lee@kernel.org,
+	andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
+	s.hauer@pengutronix.de, christian.gmeiner@gmail.com
+Subject: Re: [PATCH 1/3] mm: vmalloc: export __vmalloc_node_range
+Message-ID: <ZpmKho9_t0_MeOP7@casper.infradead.org>
+References: <20240718011504.4106163-1-mstrodl@csh.rit.edu>
+ <20240718011504.4106163-2-mstrodl@csh.rit.edu>
+ <ZpiGIbczW4iItKVx@infradead.org>
+ <ZpkNOyuxuJHaTW35@freedom.csh.rit.edu>
+ <ZpkOV3mdOU1b8vMn@casper.infradead.org>
+ <ZpkPStwq_S3mJYb5@infradead.org>
+ <ZpkQQ5GzJ4atvR6a@casper.infradead.org>
+ <ZpkWj-iFiA-JHbbf@freedom.csh.rit.edu>
+ <20240718143103.82e33c556b2d1b6145ae43e0@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -fixes] riscv: cpufeature: Do not drop Linux-internal
- extensions
-To: Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org
-Cc: Albert Ou <aou@eecs.berkeley.edu>, Andrew Jones
- <ajones@ventanamicro.com>, Andy Chiu <andy.chiu@sifive.com>,
- Charlie Jenkins <charlie@rivosinc.com>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?=
- <cleger@rivosinc.com>, Conor Dooley <conor@kernel.org>,
- Evan Green <evan@rivosinc.com>, Paul Walmsley <paul.walmsley@sifive.com>,
- linux-kernel@vger.kernel.org
-References: <20240718213011.2600150-1-samuel.holland@sifive.com>
-From: Samuel Holland <samuel.holland@sifive.com>
-Content-Language: en-US
-In-Reply-To: <20240718213011.2600150-1-samuel.holland@sifive.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240718143103.82e33c556b2d1b6145ae43e0@linux-foundation.org>
 
-On 2024-07-18 4:29 PM, Samuel Holland wrote:
-> The Linux-internal Xlinuxenvcfg ISA extension is omitted from the
-> riscv_isa_ext array because it has no DT binding and should not appear
-> in /proc/cpuinfo. The logic added in commit 625034abd52a ("riscv: add
-> ISA extensions validation callback") assumes all extensions are included
-> in riscv_isa_ext, and so riscv_resolve_isa() wrongly drops Xlinuxenvcfg
-> from the final ISA string. Instead, accept such Linux-internal ISA
-> extensions as if they have no validation callback.
-> 
-> Fixes: 625034abd52a ("riscv: add ISA extensions validation callback")
+On Thu, Jul 18, 2024 at 02:31:03PM -0700, Andrew Morton wrote:
+> The hardware is weird, but we should try to support it in some fashion.
 
-Apologies for the incorrect subject line. This fixes a commit in for-next, so
-this patch is targeting for-next.
+Why?  It's been around since 2005, and Linux has done perfectly well
+without support for it.  What's so compelling about it, as compared to
+ohidontknow the nVidia GPU driver where we definitely don't support
+taking a binary blob of random x86 code and run it inside the kernel?
 
-> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
-> ---
-> 
->  arch/riscv/kernel/cpufeature.c | 14 ++++++--------
->  1 file changed, 6 insertions(+), 8 deletions(-)
+> Dumb idea, there will be other ideas: is it practical to take that code
+> blob out of the BIOS, put it into a kernel module (as a .byte table in
+> a .s file and suitable C interfacing), compile that up and insmod that
+> module?  
 
+Have you tried asking someone who cares about security like Kees?
+Preferably in person so you can take a picture of the hair on their head
+standing straight out and steam coming out of their ears.
 
