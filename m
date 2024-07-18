@@ -1,106 +1,172 @@
-Return-Path: <linux-kernel+bounces-256637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEAF0935159
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:49:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33FB0935164
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:55:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A173B22B34
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:49:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A814E1F2245B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D72D1459E2;
-	Thu, 18 Jul 2024 17:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F04D145A05;
+	Thu, 18 Jul 2024 17:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="hEluMvje"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YmgOcFNc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C242F877
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 17:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A01145356;
+	Thu, 18 Jul 2024 17:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721324973; cv=none; b=ji22A9akdEl/CM9+RPSMEE4zr8n/5vLTOC+pM3ZoG8VyDO2fZs234jOucLn90qcbZoBwq0nK3QQYU587zWOrBZMibDAyJY+otnCV/Z1jPsw028OvygcbK/4wUH2s19ytRXzptl6ZEVoifAFuKGnoYCI09PJ6/NCIpTPNRZe1jTQ=
+	t=1721325295; cv=none; b=WgM2yTURSFpMF4f7oKdK9dvpUojFW2K4D4gpDenq2+7KWR4Xua+QERBM7BmL8ssxz4cbsSfMkYmlRJ/HcQk6rB0IMcG47OBOa/yJIYbiA84HbzODhx23035dNNBosxw2XLHaRt0e+DS44OJ2Gdmno5VM9iOFlyUI8aB3ovGBX4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721324973; c=relaxed/simple;
-	bh=GG3cmYBj90FbRp7kBVFg2jwR2ny67g3T0+78i1SlIos=;
+	s=arc-20240116; t=1721325295; c=relaxed/simple;
+	bh=X6jIlfRKMPKmywDaK5B+vu56+DcG5UEkdLppnfbwn9A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VvQH+XF50HpJc4DM35ZwYLJwI4yQE2c6+SB2FJ2fotsbb6SFluwxwAmyMfVtcCwAY9ETHMClhGWFkbfWT5ZzIpE1F3voFvXKg3P5Kg2gi04obRPcQMwNNREEpSzRtnpglPuukR//9ve+akMP3zqY5SVp6k3SEvtbm4lCmPr9rjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=hEluMvje; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=APE8v24CDfDeTKUllDKgnHGGXJJZJeBkAsUOI8cc6ss=; b=hEluMvjecZ4OxKIQ
-	mBoFy9o0g6IOs2BN0jRywV4uZ/P1cijkwXGaAHDzbASbGMQ7dx2v8VdFuoNLdVzoz9VsZO3MhwDar
-	e9izJ+SLrswXFaSefq1uDq8q932MNF2Pnab69kMEZJV68C4PBiRQIwTZFoPmNDzdssIXCgn6J+4kw
-	NsVBg65EygRefNAO513ekoOPLC9tEQgcvkeRagUog74alI8EiarkQKgcdiccJ4PZeGo/w/bxwb1dy
-	U++mWSimunqOHI9LzZehyXgkKOnnHY/BOoALKZvpXnWqWRQTyD1TTsbc4pihLHlwkA/kxHXRYvbeg
-	LJeJoj5qN5YDbCt69A==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sUVFq-00CLPp-0U;
-	Thu, 18 Jul 2024 17:49:22 +0000
-Date: Thu, 18 Jul 2024 17:49:22 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
-	maarten.lankhorst@linux.intel.com, daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/bridge: analogix: remove unused struct
- 'bridge_init'
-Message-ID: <ZplVoj6xAAaMnisJ@gallifrey>
-References: <20240520125551.11534-1-linux@treblig.org>
- <g4nwb5cgcg2wff4qogzayhdrj3omneeusfjqmdupghy6zlji5m@kp55dmkbj6k3>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EqOThebVCh5kq6WI8auICdbd/dAsmfMDue7N2llQFw3xoYR3yExPbdFgYGo3oc+btpsQshNPEKJHHkJJ1BusqT71kqOzKIgYtl8nPe6uePZgX57lX0ZSO1BQ4ffVi3njSD3wcnN8OkiYzNaDFx+wB2qqgYnhc0ciRnJZesSQ5yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YmgOcFNc; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721325294; x=1752861294;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=X6jIlfRKMPKmywDaK5B+vu56+DcG5UEkdLppnfbwn9A=;
+  b=YmgOcFNchRrZL1FMwzsAV7awQOnjkgKYlITUwJTgq6KO2oTldx5nDqRS
+   UMKQ81xIbizHqk4IXaVIZfJHKZjrOntgczVd2qAGETR99UY31OUSH6FfR
+   XneohxTVEZTH97eqSWgx/A3b2R+0QPmyzOlX6GZDWQQsVf1FMsF7sN2yN
+   dPIOQauBuJt+AsBBlc98ajByQ7qV0pRFiST2VSdd3zca67kUritvKSCuG
+   C/PXpRw3ic5HkD4XCUhGE27XwvCDI5jjHV62AhBzycm0IUckdjmsQuR0u
+   4RgrXt9wq1IIK7aljhRP87m+RIj17Ud5Wq6gLXgo7CU6KFBV50QjDij5a
+   A==;
+X-CSE-ConnectionGUID: jlP5v9jpR4aUQVrheE2Qzg==
+X-CSE-MsgGUID: odVTBz95QSu3Om7p6VVC5w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11137"; a="30067124"
+X-IronPort-AV: E=Sophos;i="6.09,218,1716274800"; 
+   d="scan'208";a="30067124"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 10:54:53 -0700
+X-CSE-ConnectionGUID: DmbDazKDTIujuQlms22ytw==
+X-CSE-MsgGUID: 6HtGeUCMTcSNafbbvmS4HQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,218,1716274800"; 
+   d="scan'208";a="50606615"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 18 Jul 2024 10:54:48 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sUVL4-000hUQ-1g;
+	Thu, 18 Jul 2024 17:54:46 +0000
+Date: Fri, 19 Jul 2024 01:53:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: LeoLiu-oc <LeoLiu-oc@zhaoxin.com>, rafael@kernel.org, lenb@kernel.org,
+	james.morse@arm.com, tony.luck@intel.com, bp@alien8.de,
+	bhelgaas@google.com, robert.moore@intel.com, yazen.ghannam@amd.com,
+	avadhut.naik@amd.com, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	acpica-devel@lists.linux.dev
+Cc: oe-kbuild-all@lists.linux.dev, CobeChen@zhaoxin.com, TimGuo@zhaoxin.com,
+	TonyWWang-oc@zhaoxin.com, leoliu-oc@zhaoxin.com
+Subject: Re: [PATCH v3 1/3] ACPI/APEI: Add hest_parse_pcie_aer()
+Message-ID: <202407190133.KRXYQI5m-lkp@intel.com>
+References: <20240718062405.30571-2-LeoLiu-oc@zhaoxin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <g4nwb5cgcg2wff4qogzayhdrj3omneeusfjqmdupghy6zlji5m@kp55dmkbj6k3>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 17:48:31 up 71 days,  5:02,  1 user,  load average: 0.06, 0.02, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <20240718062405.30571-2-LeoLiu-oc@zhaoxin.com>
 
-* Dmitry Baryshkov (dmitry.baryshkov@linaro.org) wrote:
-> On Mon, May 20, 2024 at 01:55:51PM +0100, linux@treblig.org wrote:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> > commit 6a1688ae8794 ("drm/bridge: ptn3460: Convert to I2C driver model")
-> > has dropped all the users of the struct bridge_init from the
-> > exynos_dp_core, while retaining unused structure definition.
-> > Later on the driver was reworked and the definition migrated
-> > to the analogix_dp driver. Remove unused struct bridge_init definition.
-> > 
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> > ---
-> >  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 5 -----
-> >  1 file changed, 5 deletions(-)
-> > 
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Hi LeoLiu-oc,
 
-Hi Dmitry,
-  Do you know who is likely to pick this one up?  I think all
-my other drm patches have found their way into -next.
+kernel test robot noticed the following build warnings:
 
-Thanks,
+[auto build test WARNING on pci/for-linus]
+[also build test WARNING on rafael-pm/linux-next rafael-pm/bleeding-edge linus/master v6.10 next-20240718]
+[cannot apply to pci/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Dave
+url:    https://github.com/intel-lab-lkp/linux/commits/LeoLiu-oc/ACPI-APEI-Add-hest_parse_pcie_aer/20240718-144218
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git for-linus
+patch link:    https://lore.kernel.org/r/20240718062405.30571-2-LeoLiu-oc%40zhaoxin.com
+patch subject: [PATCH v3 1/3] ACPI/APEI: Add hest_parse_pcie_aer()
+config: x86_64-randconfig-161-20240718 (https://download.01.org/0day-ci/archive/20240719/202407190133.KRXYQI5m-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240719/202407190133.KRXYQI5m-lkp@intel.com/reproduce)
 
-> 
-> -- 
-> With best wishes
-> Dmitry
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407190133.KRXYQI5m-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/acpi/apei/hest.c: In function 'hest_source_is_pcie_aer':
+>> drivers/acpi/apei/hest.c:155:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
+     155 |                 if (pcie_type != PCI_EXP_TYPE_ROOT_PORT)
+         |                    ^
+   drivers/acpi/apei/hest.c:157:9: note: here
+     157 |         case ACPI_HEST_TYPE_AER_ENDPOINT:
+         |         ^~~~
+   drivers/acpi/apei/hest.c:158:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
+     158 |                 if (pcie_type != PCI_EXP_TYPE_ENDPOINT)
+         |                    ^
+   drivers/acpi/apei/hest.c:160:9: note: here
+     160 |         case ACPI_HEST_TYPE_AER_BRIDGE:
+         |         ^~~~
+   drivers/acpi/apei/hest.c:161:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
+     161 |                 if (pcie_type != PCI_EXP_TYPE_PCI_BRIDGE && pcie_type != PCI_EXP_TYPE_PCIE_BRIDGE)
+         |                    ^
+   drivers/acpi/apei/hest.c:163:9: note: here
+     163 |         default:
+         |         ^~~~~~~
+
+
+vim +155 drivers/acpi/apei/hest.c
+
+   144	
+   145	static bool hest_source_is_pcie_aer(struct acpi_hest_header *hest_hdr, struct pci_dev *dev)
+   146	{
+   147		u16 hest_type = hest_hdr->type;
+   148		u8 pcie_type = pci_pcie_type(dev);
+   149		struct acpi_hest_aer_common *common;
+   150	
+   151		common = (struct acpi_hest_aer_common *)(hest_hdr + 1);
+   152	
+   153		switch (hest_type) {
+   154		case ACPI_HEST_TYPE_AER_ROOT_PORT:
+ > 155			if (pcie_type != PCI_EXP_TYPE_ROOT_PORT)
+   156				return false;
+   157		case ACPI_HEST_TYPE_AER_ENDPOINT:
+   158			if (pcie_type != PCI_EXP_TYPE_ENDPOINT)
+   159				return false;
+   160		case ACPI_HEST_TYPE_AER_BRIDGE:
+   161			if (pcie_type != PCI_EXP_TYPE_PCI_BRIDGE && pcie_type != PCI_EXP_TYPE_PCIE_BRIDGE)
+   162				return false;
+   163		default:
+   164			return false;
+   165		}
+   166	
+   167		if (common->flags & ACPI_HEST_GLOBAL)
+   168			return true;
+   169	
+   170		if (hest_match_pci_devfn(common, dev))
+   171			return true;
+   172	
+   173		return false;
+   174	}
+   175	
+
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
