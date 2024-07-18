@@ -1,106 +1,101 @@
-Return-Path: <linux-kernel+bounces-256024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F539347DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:12:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBB129347D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 187911F23476
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:12:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C036B21AC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583C9558B6;
-	Thu, 18 Jul 2024 06:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698E053E22;
+	Thu, 18 Jul 2024 06:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="sTuhT3YZ"
-Received: from qq.com (ec2-54-164-151-162.compute-1.amazonaws.com [54.164.151.162])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="e1SBxS09"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D218D4D8AF;
-	Thu, 18 Jul 2024 06:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.164.151.162
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22364D8C3
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 06:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721283158; cv=none; b=VRUdzmaT3IowEGr4/5hD9QSTSBF3TKeu8XekbKnu1YsH8dmX36lOQwGmlTZlA14S4LLnLT3W64A7ZgDi3MjYOLlxlA2HzfEl/24V0/pT0iv6A5LRSgqrCG9sj6hJqg0hSDM8rquyk05XqhmdCb6KMbTHyooSySDjS7k5bKKLl10=
+	t=1721282961; cv=none; b=bNved5T92b87i1z+jyOK8+di5uvcv/peNzHHEiEyjzQucKd5PXeZAaGiVixhDAhAfKcpHt8EOE1im3MRlJvCQ7GH8KRQ9v9Y7K3mvjO/9szohLT1EeGi5DSKgacT6DoPA3GTd92ra55QDiXocnQOUNgvAG9PInEEFYgqs+0VcGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721283158; c=relaxed/simple;
-	bh=7JUm4p+EuPVcOm1o3oLVGCkZZPHSDs3UrfRpHozmgvw=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=DWpg/mf4lF0y/BOekA1KJSavICsI3eT20TjXxZLpzPVWFTdFIeIq0EPQHWFreK7mZIY2y/DBfkZn31Xv2GC4/XV7g5lhdNHpC2tQy/f0FpM9XMT6H3CZn2AFNYIwFfAOyPbDWwQ7xq8nPu4/Ri/R50XVZsKro+YcjLcfH1EZyds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=sTuhT3YZ; arc=none smtp.client-ip=54.164.151.162
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1721283151;
-	bh=/7iSlBFI9MY1Y4PScPXpFxG9gotJAJRZJot1OTuuAO4=;
-	h=From:To:Cc:Subject:Date;
-	b=sTuhT3YZZ0w834jLJzowFUsweOOA6PtU6o5edzrkwEiaC5/xSFZeo7R8ZnU7Xn0ZW
-	 1/2/yrhKVk/eQ8vlT4zVWsGni9B4l5zedXbG5D4YXGszBfzuqmZ/OpAUuTuCfjV+BX
-	 ruyx1n0546ceAl8lPaYL66mB1mjnQ/8k+qqKNDE0=
-Received: from xp-virtual-machine.. ([111.48.58.13])
-	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
-	id 172BCE40; Thu, 18 Jul 2024 14:05:50 +0800
-X-QQ-mid: xmsmtpt1721282750tsh8h88qb
-Message-ID: <tencent_4A21A2865B8B0A0D12CAEBEB84708EDDB505@qq.com>
-X-QQ-XMAILINFO: NY3HYYTs4gYS7OOWi8VYXIKN4SmPNanHlFkl9M5hD6udx6uGqWXekcsBDUflRr
-	 8KTN6NXcomSsq+VpYWOngnszoM6c4U+0iVmxxpYcH1PgR0BIqlbBdrY5jKrls5/qeZFsxCMCkcfB
-	 WiJmTrupuW5qhCae0maNRwA4X+4SBX+RS9gDPpVIXawM5hzXur8pTfHliCmD5FsF/Qsii1qBdMH4
-	 pftNc37JpPApe4y3pgz//n1CM4YCK0bz4d32l3aj5oIaeb1nU1KGGIJ3LrNhFrtQ6J7tS+TaBcnL
-	 HVT1wnxGdLrXwEVSnWdmj4aZ9DQulwh3rQRVQUY/kRGilOXd+JYRMzZjCFtg+rR7CKrUZ4d+gKbB
-	 R8vO+Xf/lcCQbQxw5ySCj/QEqXfArnP5W8jYkYqsCJLqjv2hCMXsAyC39wfyjxIwpMipLJnu/PQt
-	 zjJs2TLS0OtUkVOnKWnW6J+9qyMgGQQ9zdBi3AXN7f6qaWbUQ21mFMxnf6p1N87gWsyPmp5YJzaE
-	 v9K7aCcLUn6pG4TeHn/x6HmHAPvkm0czYHKShGvagq8v05q5Hh8zsjcVmhgpWShI6ryZELmMcEa+
-	 FrhylYHCeOh2OiAwCBEy7ZU66BS28zmND+mNT0ih0GQtUBEiWnFNYQH4spbmGTzPuxQI6cQ3gyRr
-	 0CJb0fui5mkHKWS9mpp7x6AxHdp6FW4+3O49MZf0DTAUtBaIknRqA4rL8564M929xpU5Z50EVnwS
-	 Ndp5E/0nr3mmGHfrrONi68cUoJ9vuypjm/b0pjE9h6c+4rVdKEC/wMTx19KBudu+opO1LlY7ffUo
-	 CqnszrHtSmirAvhivFfaoHXZRT+dv0LhMBu560m+/Y236W5QDAJaJzdv+ZhoV1dpYpQdW0Hz9S9F
-	 7LhPuseEtngoekBPkb3AMkhtEexAZ2dyWgccZ458E6oikL5izpD7NkSaKV9byYsBrqGS3n+HEDYg
-	 PWKlOLA38rBcnxAquusPXigWb6YD5WNLDIz3SrZve+PyTU13n0ckXOS0QVzGgAWP+QRb9uMMf5tx
-	 jufyIg0BLzDEoQMNHitn2mAYVuZWZ+0IAa3GYhh1OTeRxlE4gTPtcm2qrM5bA=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: xiaopeitux@foxmail.com
-To: robert.moore@intel.com,
-	rafael.j.wysocki@intel.com
-Cc: acpica-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	xiaopei01@kylinos.cn
-Subject: [PATCH] ACPICA: ACPICA: check null return of ACPI_ALLOCATE_ZEROED in acpi_db_convert_to_package ACPICA commit 4d4547cf13cca820ff7e0f859ba83e1a610b9fd0
-Date: Thu, 18 Jul 2024 14:05:48 +0800
-X-OQ-MSGID: <3e39c54f8278e163691d629f1cf89bffcf4c6031.1721280951.git.xiaopei01@kylinos.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1721282961; c=relaxed/simple;
+	bh=8TELw1GSGX+NLZTXJBpEVR3AisUwDBU+WRnsu8/phTc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aOgm1UU1YUFKujcGMaGqKRP9v6V18KAQdcgeZB9IcN0VDESxgAZyc+VqOEwO1pza53fj5Mbiv0Tb8Ip7sc0rqNy/42qf7uO2HYFWVeeYApr5qc4zJjw51Q0ZYup29bq3oARnXpkEhZaw3P3IMrBxKYi0PocCLQLoW5Et469IsEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=e1SBxS09; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: shahuang@redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721282955;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wUojTRMLIjKYQq/hlr2+G8wV6gdnpgRx4UJFibcBjBU=;
+	b=e1SBxS09mQ3CMf4e+UZpBoSQDSzMz1BJzitVzq98YCRnQS3ndTKz7jp+cC68IJ+RNx6VUQ
+	TaAbG1IGb/gycpsjVZrl2K+oYxRLylCdnHuDyeXPA2z7WvmvaUJOwv1GdeoxqR7jH9YAUq
+	6YCpUdssAdsYsyMPD2OrAzqavsge2zI=
+X-Envelope-To: maz@kernel.org
+X-Envelope-To: kvmarm@lists.linux.dev
+X-Envelope-To: broonie@kernel.org
+X-Envelope-To: eauger@redhat.com
+X-Envelope-To: sebott@redhat.com
+X-Envelope-To: cohuck@redhat.com
+X-Envelope-To: james.morse@arm.com
+X-Envelope-To: suzuki.poulose@arm.com
+X-Envelope-To: yuzenghui@huawei.com
+X-Envelope-To: catalin.marinas@arm.com
+X-Envelope-To: will@kernel.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Date: Wed, 17 Jul 2024 23:09:08 -0700
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Shaoqin Huang <shahuang@redhat.com>
+Cc: Marc Zyngier <maz@kernel.org>, kvmarm@lists.linux.dev,
+	Mark Brown <broonie@kernel.org>, Eric Auger <eauger@redhat.com>,
+	Sebastian Ott <sebott@redhat.com>,
+	Cornelia Huck <cohuck@redhat.com>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] KVM: arm64: Disable fields that KVM doesn't know
+ how to handle in ID_AA64PFR1_EL1
+Message-ID: <ZpixhBjsqhWTpEQH@linux.dev>
+References: <20240718035017.434996-1-shahuang@redhat.com>
+ <20240718035017.434996-2-shahuang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240718035017.434996-2-shahuang@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-From: Pei Xiao <xiaopei01@kylinos.cn>
+Hi Shaoqin,
 
-ACPI_ALLOCATE_ZEROED may fails, elements might be null and will cause
-null pointer dereference later.
+On Wed, Jul 17, 2024 at 11:50:14PM -0400, Shaoqin Huang wrote:
+> For some of the fields in the ID_AA64PFR1_EL1 register, KVM doesn't know
+> how to handle them right now. So explicitly disable them in the register
+> accessor, then those fields value will be masked to 0 even if on the
+> hardware the field value is 1.
 
-Link: https://github.com/acpica/acpica/commit/4d4547cf
-Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
----
- drivers/acpi/acpica/dbconvert.c | 2 ++
- 1 file changed, 2 insertions(+)
+It is probably important to note that the only reason this is safe to do
+from a UAPI POV is that read_sanitised_ftr_reg() doesn't yet return a
+nonzero value for any of these fields.
 
-diff --git a/drivers/acpi/acpica/dbconvert.c b/drivers/acpi/acpica/dbconvert.c
-index 2b84ac093698..8dbab6932049 100644
---- a/drivers/acpi/acpica/dbconvert.c
-+++ b/drivers/acpi/acpica/dbconvert.c
-@@ -174,6 +174,8 @@ acpi_status acpi_db_convert_to_package(char *string, union acpi_object *object)
- 	elements =
- 	    ACPI_ALLOCATE_ZEROED(DB_DEFAULT_PKG_ELEMENTS *
- 				 sizeof(union acpi_object));
-+	if (!elements)
-+		return (AE_NO_MEMORY);
- 
- 	this = string;
- 	for (i = 0; i < (DB_DEFAULT_PKG_ELEMENTS - 1); i++) {
 -- 
-2.34.1
-
+Thanks,
+Oliver
 
