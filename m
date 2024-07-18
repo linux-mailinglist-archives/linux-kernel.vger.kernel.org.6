@@ -1,108 +1,174 @@
-Return-Path: <linux-kernel+bounces-256582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A97B99350A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:25:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 584509350AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:26:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FD3C1F22434
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:25:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA85A1F22465
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BC5144D3A;
-	Thu, 18 Jul 2024 16:25:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62961144D39;
+	Thu, 18 Jul 2024 16:25:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pOSlvqrz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I8PfQs6j"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE1A2F877;
-	Thu, 18 Jul 2024 16:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB976144D22;
+	Thu, 18 Jul 2024 16:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721319940; cv=none; b=B3uXs6jbzXhS1SDZV/0a291VyBufHEBo4SfARAjx1JN1EP/3d7EVZsmvul4csgsh7xoqPQ/CFOgJ04SbyOIW+fs/SM8gtbY3A44LMDYC37jBChOokhBixXh9DFSOaJHzzaEYqzpnia0CoW5rOg8bb78hLB5lgRkVLZvHs1zAyd8=
+	t=1721319956; cv=none; b=iyOGuquPD4pg/5nF22eyW34dfjFm5+b6XqysTwb+d19IFz6NGVgfaIKXJ3p8zJuYTETJmSPzw9UFryTX95IbTcoGj+aZzotBnwNJS4gQMAVfsgUrH/wJsH9O5DBeVXpl45T/Nj2QQqsQa3G+GQkJG9zWdcIgYMYTrSSAWTa7eIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721319940; c=relaxed/simple;
-	bh=eAYqluCiv6LpOeEE/Gjs6FAht/2LLqsRLhVkGs8Q4rY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=TgiZ7FrQo/KIIM9hWcLz5P3NcFy7mh1Ofr8cn5Z27krI/1UNHf4TxkLWS5m/QQpZBs529VB/akP9tIdT+Y1sQvfQJ6tycRltXajSSQ0RunqUh59OtX7/165OXNPPos5ah1jZJDfxbgxsajPOFOG5zfg3Ah75sfjuY0CXWtq/jno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pOSlvqrz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CA19C4AF10;
-	Thu, 18 Jul 2024 16:25:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721319940;
-	bh=eAYqluCiv6LpOeEE/Gjs6FAht/2LLqsRLhVkGs8Q4rY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=pOSlvqrzQfLn/3M4AcllF/jMT74KnCxbxNX0McsxiQkH+D0bn71LMZa991bKhAIqL
-	 J4JeMJNvtyOORdryJNbeekoMVk+42FhYu6x/Ert8GJhDQdXircn1h9VKOucAfz+j6R
-	 EuA6135fS31k9/qJxcRybtlIlr5bc0QUAEnmNvHr+yU0zSln8zS2tHnw8oFvFoqVyz
-	 /eqtDStijsgIlKLmYlzC2Rbh1JyQqasP3O456sMskPfPE/rdKNwdoNknNkWRKYHNH5
-	 hJu4xLSberQs8/AxJt/1txFloTcLwvKePFfQ35oc5O36ISTdZ4L2U/DVfh7rUvNpjE
-	 WlKdKozfyK1GQ==
-From: Mark Brown <broonie@kernel.org>
-To: linux-kernel@vger.kernel.org, Conor Dooley <conor@kernel.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Maxime Ripard <mripard@kernel.org>, 
- devicetree@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
-In-Reply-To: <20240717-impotence-zippy-254b86593069@spud>
-References: <20240717-impotence-zippy-254b86593069@spud>
-Subject: Re: (subset) [PATCH v1 0/3] Fix incorrect bh2228fv compatible
-Message-Id: <172131993701.119619.18261000113153693411.b4-ty@kernel.org>
-Date: Thu, 18 Jul 2024 17:25:37 +0100
+	s=arc-20240116; t=1721319956; c=relaxed/simple;
+	bh=+cPFQlWhiHlbsYRp3wmTrvUckoL0T/pu/UurO73Cwww=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oxDX4968Dhk3x0WWbcQjMt25t+0wyXE1cxx+o6U+NtJf9o94cOo2YAOQogZ8/HAbTzLLp0o1lciN0sbqE3jJOEKAHm3IoKJisR1286Zz/9bZ/MVfV0TGbuQ8EMnnzGaEFJDU1SfiyuN26kBXNsrzWI/i4gJa8cUVGWwjRr3p3Yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I8PfQs6j; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ee91d9cb71so11940441fa.0;
+        Thu, 18 Jul 2024 09:25:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721319953; x=1721924753; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gJQIRnbTYy2sGZ5gk+HAHZWSmrPa0UShn83IpJ2tEh4=;
+        b=I8PfQs6jojt5XLoZhtVQn7P8zfAhHv0TmX98lA4lh9l22rGUS2X6YvOqVMvcLiDkbg
+         crjCevElxSF9GaSmVJJYcgG5OwBqs5GV7e+r5mfzjl7Ys2lMfplFqtBM5wF1NagpzcKH
+         K+7uM5ureVqh36GaLm01NNCTH54z1ekFV5KapJGCcTsCj8x4cx0X0eoJJLBFfEkxbd9r
+         LUC+kN8YEMIpMpgIxiMtP0Fjw8gA40I/p1mqmivi3WNcf6PLzSFCWrL0FFAaEQA5WDzk
+         PxSfmmUsYO+HQboNbzjjCICz2Vbw3lxjI99XE5QholiSEZYHxMi6aVMYBbk1BUTTJUUM
+         SwTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721319953; x=1721924753;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gJQIRnbTYy2sGZ5gk+HAHZWSmrPa0UShn83IpJ2tEh4=;
+        b=FLRRtCU392wZrUttRIOYj34Gv0yxWAJqHlWC7/igPy3vfP1iT3WvwenqMEFEvl0Q1I
+         0l7+1aUsChpPrbF2Q3WzPoczqA4p4MdJhD+cioobTJ+fKlpqKeBJ9zV86ZK8KEKdqx0u
+         lyl8OcsdWtqEH/8ub/B59NZZbP8SuRrcfviNAHCUWZpVe0PmrGnZlx03ibi76Mt+OuAd
+         pqSPB9qhRRv/XVYCcda+MHaqg2HeeuY2d5AsrksYJ05XTtM4FmzXT7dMNvLnWXSl0qk0
+         7ORT0uXKr7ZWIpHryCpLg/Vc9Sq+kSIdOSD/ijt+Wo2fVbIkkr59iyq+eDw7cSOjxVJ+
+         n9kA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbl8B2bdNWRRMCTD1BxbhIijncfvWWPUjsNtDV2U2UoVcj/fLZVRZBo/TCCMhVjONuXSZyC75h5pNGZwSJVj1C8X1dSEolZZJoYCEr+ZV/HzwZIe2h7Vhs8vC7dElwLLQ7GBllvT2SDD+53w==
+X-Gm-Message-State: AOJu0YyuIeswxE9ZJlEJqSSkCxHoVnmbez/2oOF9D9gsigvYKnWAXdX3
+	ESJJ8G78vpX13Lb9UZkfXCBSzMN1acwkibZJDX0+sFhsqA9Fn6P8kceWg1QfzpVH/56U0yqt+48
+	cXnp7mP3k/KmcICnqaP4LcdppgDQ=
+X-Google-Smtp-Source: AGHT+IG+LN9SE1sQOAD4WTHQhFN5BbXkqVEFuPvsEPI+d/27gk+W67iADV6K6CnQBlGKixrjKAEdN1ZkXxCckNCAcNU=
+X-Received: by 2002:a2e:a541:0:b0:2ee:7dfe:d99c with SMTP id
+ 38308e7fff4ca-2ef05d2ed3fmr24920861fa.31.1721319952621; Thu, 18 Jul 2024
+ 09:25:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
+References: <20240717215847.5310-1-robdclark@gmail.com> <CAD=FV=XCOKJHJ-yzENpvm_MD34tMR5LRy2m2jYdcWzZXP4pfXQ@mail.gmail.com>
+ <CAF6AEGuBZqV4zg1asUNbMLvq0-i-iyFwfi37uKS3kWNuRSOU+g@mail.gmail.com> <CAD=FV=UMiDTLBBEMk3fpg+TfE_K23fyL+JDZj77Fe9fCY8DyjA@mail.gmail.com>
+In-Reply-To: <CAD=FV=UMiDTLBBEMk3fpg+TfE_K23fyL+JDZj77Fe9fCY8DyjA@mail.gmail.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Thu, 18 Jul 2024 09:25:39 -0700
+Message-ID: <CAF6AEGs22brXntJ-eDv_uTZGc2=rH2q2V4y6Vt8K4s+dsO=4-A@mail.gmail.com>
+Subject: Re: [RFC] drm/panel/simple-edp: Add Samsung ATNA45DC02
+To: Doug Anderson <dianders@chromium.org>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	Rob Clark <robdclark@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 17 Jul 2024 10:59:47 +0100, Conor Dooley wrote:
-> Maxime made a typo when adding this device to the kernel all the way
-> back in 2012, fix the spelling mistake.
-> 
-> Really this device should not be in trivial-devices.yaml, but I'm
-> leaving the creation of a dedicated binding for when I get my hands on a
-> device :smiling_imp:
-> 
-> [...]
+On Thu, Jul 18, 2024 at 9:00=E2=80=AFAM Doug Anderson <dianders@chromium.or=
+g> wrote:
+>
+> Hi,
+>
+> On Wed, Jul 17, 2024 at 6:09=E2=80=AFPM Rob Clark <robdclark@gmail.com> w=
+rote:
+> >
+> > On Wed, Jul 17, 2024 at 5:19=E2=80=AFPM Doug Anderson <dianders@chromiu=
+m.org> wrote:
+> > >
+> > > Hi,
+> > >
+> > > On Wed, Jul 17, 2024 at 2:58=E2=80=AFPM Rob Clark <robdclark@gmail.co=
+m> wrote:
+> > > >
+> > > > From: Rob Clark <robdclark@chromium.org>
+> > > >
+> > > > Just a guess on the panel timings, but they appear to work.
+> > > >
+> > > > Signed-off-by: Rob Clark <robdclark@chromium.org>
+> > > > ---
+> > > > This adds the panel I have on my lenovo yoga slim 7x laptop.  I cou=
+ldn't
+> > > > find any datasheet so timings is just a guess.  But AFAICT everythi=
+ng
+> > > > works fine.
+> > > >
+> > > >  drivers/gpu/drm/panel/panel-edp.c | 2 ++
+> > > >  1 file changed, 2 insertions(+)
+> > >
+> > > Given that this is a Samsung ATNA<mumble>, is there any chance it's a=
+n
+> > > OLED panel? Should it be supported with the Samsung OLED panel driver
+> > > like this:
+> > >
+> > > https://lore.kernel.org/r/20240715-x1e80100-crd-backlight-v2-0-31b7f2=
+f658a3@linaro.org
+> >
+> > it is an OLED panel, and I did see that patchset and thought that
+> > samsung panel driver would work.  But changing the compat string on
+> > the yoga dts only gave me a black screen (and I didn't see any of the
+> > other mentioned problems with bl control or dpms with panel-edp).  So
+> > :shrug:?  It could be I overlooked something else, but it _seems_ like
+> > panel-edp is fine for this panel. Plus, it would avoid awkwardness if
+> > it turned out there were other non-samsung 2nd sources, but so far
+> > with a sample size of two 100% of these laptops have the same panel
+>
+> Hmm, OK. One question for you: are you using the "enable" GPIO in
+> panel-edp? IMO the code handling that GPIO in panel-edp is somewhat
+> dodgy, but it predates my deeper involvement with panels. I've never
+> seen an eDP panel that could use panel-edp where it was actually
+> required--every instance where someone thought it was required was
+> better modeled by using that GPIO as the backlight enable. On the
+> other hand, the "enable" GPIO in the Samsung OLED panel driver came
+> straight from the panel datasheet and it makes sense for it to be in
+> the panel driver since the backlight is handled straight by the
+> panel...
 
-Applied to
+hmm, at least current dts doesn't have an enable gpio.  Which could be
+why panel-samsung-atna33xc20 wasn't working.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+It is entirely possible we are relying on something left on by the bootload=
+er.
 
-Thanks!
+> In any case, I guess if things are working it doesn't really hurt to
+> take it in panel-edp for now...
+>
 
-[1/3] dt-bindings: trivial-devices: fix Rohm BH2228FV compatible string
-      commit: 5170dae5591036dba7daa519ea3126169300e275
-[2/3] spi: spidev: add correct compatible for Rohm BH2228FV
-      commit: fc28d1c1fe3b3e2fbc50834c8f73dda72f6af9fc
+I wonder if using compatible=3D"edp-panel" everywhere isn't a great idea
+if we want to switch drivers later.  But I guess that is already water
+under the bridge (so to speak)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+BR,
+-R
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+> > But that was the reason for posting this as an RFC.  I was hoping
+> > someone had some hint about where to find datasheets (my google'ing
+> > was not successful), etc.
+>
+> I don't personally have any hints.
+>
+> -Doug
+>
 
