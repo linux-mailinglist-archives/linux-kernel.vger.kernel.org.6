@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-255968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27224934729
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:33:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F81C93472F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:36:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D77A5282FD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 04:33:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FF3E1F21E9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 04:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CF43D967;
-	Thu, 18 Jul 2024 04:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B935A3F8F7;
+	Thu, 18 Jul 2024 04:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="ibWb1zOp"
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="IWBaG5kh"
 Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88687186A;
-	Thu, 18 Jul 2024 04:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36171B86FB;
+	Thu, 18 Jul 2024 04:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721277188; cv=none; b=T4sH7UzK24ALvM2KwnTF7TNon5CptP7zzvTYDVeeQn6wJfWEBWiyEem+YKgFTJY6rYTvdMCGRX46UWiGe9Tdr6k+du9KeTCE/CC6uSGbSArH41fDPHsDrNBnsiKdSr36UlQBzBnxlHFrNGPatxurVoGBeWye+NC+f3mun5fujWs=
+	t=1721277381; cv=none; b=BIG568/mZZQtSazggnhGcKd1RuP6OYCZ0Y+C33f9BXzCdXaQdjyr2OBgxTdnZ7j3+DQorWpVGWZfkkWtHMzXqEPsN3O2S7aTjW850Ybgo76HETQb9gPcnvRDlEX8iiyDxRswPCdn5O4O2ymJ9Yl7sXIiYnI1fDoUfmJgUPpKdKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721277188; c=relaxed/simple;
-	bh=eXiWsyvo3xbFtmzFjNHUvzmDy5KuNooROFO1O+ua8/U=;
+	s=arc-20240116; t=1721277381; c=relaxed/simple;
+	bh=L6XLXMwNzjIRYrf7YyEUyCXji/eqfOMPxL1quiGMKEc=;
 	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=mtazceVTpTeJgcbYvJFJpl4XTywrdqznEtxov0m56118dPAy70QcCJin7Oh+NEBLZ/dhku9F4uwwJq85NQQRyZsJlRxP1dl55cguGQMoPqOxVbqAaYv8I3fkn5AmIkqcpYdlOkdHK8XZyfQPL6XYMu6e9NHNy72BG0vKEE0cG8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=ibWb1zOp; arc=none smtp.client-ip=116.203.91.91
+	 Message-ID:Content-Type; b=S7iGtXUATKeyliQbiz43BmvcVJALsZBnfcmswv+nBp6S7HyBttLI4kFDHWc217ewUyqabdHJDdpIRri7A5SNtOzDMFLnorOZyUA7s/7fqWRbv4CVNcB4nLLInR1ZH77dqZOpM4NmoqLM79q5mmMGf6/gQKDIdyq+CUPeym01sSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=IWBaG5kh; arc=none smtp.client-ip=116.203.91.91
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
@@ -37,18 +37,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1721277184;
+	t=1721277377;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LtwV/4WIDbK+8ZAf8F7AmoboBuDaoArPtGFAuXsacys=;
-	b=ibWb1zOpKy9ZI5nXD1vhDusuMQ4PARctoV12KdFb8hR5WPuN4uPLFz2wfzrkCVgseE9FkK
-	wxr+n+jy7ImDib+jkJ8dY+BQykkD0OnOwX9DtGuHtRTx7izrooNAWEnBz1UeIoA3xfaRH8
-	KCt0YoqpQQRYN8eaeB6fFRn9V8h4I1ighz62TmxdZZz7d9gG92XNJEVEzvAtUfxVUy3kbJ
-	D6guebULiUMWkVarXc7WtMrYBEIWU9+QJznprFnkTcxPJF+zYIZ1Ugk/TB+RK1m0cgNNGE
-	EDM+9AbT8tgs2nyQ5Q0J1QSCPrSqeO9bwgk8b4ZZP9sJNvKrs+aFhh83pW8QgA==
-Date: Thu, 18 Jul 2024 06:33:04 +0200
+	bh=tOqNb1H2eOYhzV9Qd6Dsedv66pK9VwGnewTuikI5a20=;
+	b=IWBaG5kh85WTR4/3uiiIoGv3jOMvzJVWWgErMsjsg9/FqzDS8zGFp6VYN0mVmCV7+i7JO1
+	lnC7i6SW/++7ZISec/iGNU8yYlBfkDCYGxBj9/UcR9gS565ELKGWjEbgobyGPDLBf7czcd
+	yHIs3w75OqHN3iqMSH+hNvqE11oJw8I5huoJwKZm5FxwdpzzHYY+fjWEnV5tqftXEIwlD9
+	+w1NCO1nmIW38pmDcFxGYuN6VJ0S2lAJwGPBiFGsSX5FAZLmLzENLo5r/EkWxuHKMmkNPK
+	HK0rOjWoj0gRjMem88+CC6MUNQ5i27WZd/np4LbF5OivH4nxb/cssi3E5E6zhQ==
+Date: Thu, 18 Jul 2024 06:36:16 +0200
 From: Dragan Simic <dsimic@manjaro.org>
 To: Christopher Obbard <chris.obbard@collabora.com>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -57,11 +57,12 @@ Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Kever Yang
  <kever.yang@rock-chips.com>, Collabora Kernel Mailing List
  <kernel@collabora.com>
-Subject: Re: [PATCH v2 0/3] Add support for Firefly Core-PX30-JD4 SoM &
- baseboard
-In-Reply-To: <20240717-rockchip-px30-firefly-v2-0-06541a5a5946@collabora.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: arm: rockchip: Add Firefly
+ Core-PX30-JD4 with baseboard
+In-Reply-To: <20240717-rockchip-px30-firefly-v2-1-06541a5a5946@collabora.com>
 References: <20240717-rockchip-px30-firefly-v2-0-06541a5a5946@collabora.com>
-Message-ID: <38d7b7e9ab71bf1b0817e666f4233b9e@manjaro.org>
+ <20240717-rockchip-px30-firefly-v2-1-06541a5a5946@collabora.com>
+Message-ID: <0c804e9a0227904b16bfb779f2009af1@manjaro.org>
 X-Sender: dsimic@manjaro.org
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
@@ -72,57 +73,42 @@ Authentication-Results: ORIGINATING;
 Hello Christopher,
 
 On 2024-07-17 18:46, Christopher Obbard wrote:
-> This adds support for the PX30-based Core-PX30-JD4 system-on-module 
-> from
-> Firefly and includes support for the SoM in combination with the
-> Firefly MB-JD4-PX30 baseboard.
+> Add binding for the Firefly Core-PX30-JD4 SoM when used in conjunction
+> with the MB-JD4-RK3328 & PX30 baseboard.
 > 
+> Signed-off-by: Christopher Obbard <chris.obbard@collabora.com>
 > ---
-> Changes in v2:
-> - Split into two separate files: dtsi for the SoM and dts for the 
-> carrier.
-> - Change devicetree compatible to match SoM/carrier split.
-> - Change device names to better match vendor's name.
-> - Properly model baseboard & SoM regulators.
-> - Properly model baseboard recovery key.
-> - Remove DSI panel (& related nodes) since "sitronix,st7703" compatible
->   is undocumented & hardware is unavailable.
-> - Remove unused audio-related nodes.
-> - Remove unused UART nodes.
-> - Remove unused PMIC pinctrl nodes.
-> - Add node for baseboard LEDs.
-> - Link to v1:
-> https://lore.kernel.org/r/20240716-rockchip-px30-firefly-v1-0-60cdad3023a3@collabora.com
-
-Thanks for the v2.
-
-> ---
-> Christopher Obbard (3):
->       dt-bindings: arm: rockchip: Add Firefly Core-PX30-JD4 with 
-> baseboard
->       arm64: dts: rockchip: add Firefly Core-PX30-JD4 SoM
->       arm64: dts: rockchip: add Firefly JD4 baseboard with 
-> Core-PX30-JD4 SoM
+>  Documentation/devicetree/bindings/arm/rockchip.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
->  .../devicetree/bindings/arm/rockchip.yaml          |   6 +
->  arch/arm64/boot/dts/rockchip/Makefile              |   1 +
->  .../boot/dts/rockchip/px30-firefly-jd4-core.dtsi   | 322 
-> +++++++++++++++++++++
->  arch/arm64/boot/dts/rockchip/px30-firefly-jd4.dts  | 178 ++++++++++++
->  4 files changed, 507 insertions(+)
-
-It would be better to name the new dts(i) files like this:
-
-- px30-firefly-jd4-core.dtsi
-- px30-firefly-jd4-core-mb.dts
-
-This would follow the <SoC>-<brand>-<SoM>-<carrier>.dts pattern, which
-is somewhat common and sorts nicely in directory listings when there's
-more than one carrier board for the same SoM.
-
-> ---
-> base-commit: 51835949dda3783d4639cfa74ce13a3c9829de00
-> change-id: 20240716-rockchip-px30-firefly-59efc93d6784
+> diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml
+> b/Documentation/devicetree/bindings/arm/rockchip.yaml
+> index 1ef09fbfdfaf5..33ca8028bc151 100644
+> --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
+> +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+> @@ -148,6 +148,12 @@ properties:
+>            - const: engicam,px30-core
+>            - const: rockchip,px30
 > 
-> Best regards,
+> +      - description: Firefly Core-PX30-JD4 with MB-JD4-PX30 baseboard
+> +        items:
+> +          - const: firefly,px30-mb-jd4
+> +          - const: firefly,px30-core-jd4
+
+Similarly to how I suggested the new dts(i) files to be named, [1]
+the model names should be named like this:
+
+           - const: firefly,px30-jd4-core
+           - const: firefly,px30-jd4-core-mb
+
+This would also follow the "inheritance graph" pattern, so to speak.
+
+[1] 
+https://lore.kernel.org/linux-rockchip/38d7b7e9ab71bf1b0817e666f4233b9e@manjaro.org/
+
+> +          - const: rockchip,px30
+> +
+>        - description: Firefly Firefly-RK3288
+>          items:
+>            - enum:
 
