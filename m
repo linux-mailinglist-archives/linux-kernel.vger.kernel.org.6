@@ -1,179 +1,247 @@
-Return-Path: <linux-kernel+bounces-256498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C9E5934F52
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:46:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 407BF934F4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89F601F22916
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:46:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBF512810C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F80714290E;
-	Thu, 18 Jul 2024 14:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C2E1419BA;
+	Thu, 18 Jul 2024 14:46:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iW1RlZB6"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qjGuezHe";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="h6xBmlay";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qjGuezHe";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="h6xBmlay"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F96A1422C4
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 14:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0718E2AF18
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 14:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721313980; cv=none; b=VdtuYMCumJjxLlOpqHWFN62Aj9wuO65dZjqWDShpuS07s4ydPdCQMyWrey3a5VdPMUeCe7YP0VOmQV2dLgSpGfdx1U7wBP3/+p+lQn2s8sIAzyiu5RS4lEZfKtEClFVlZ/euhR1aGzULQ8E4YRowVL2/rUwlmg9NFbgdSep/Jwo=
+	t=1721313960; cv=none; b=u3l7Hll3jdBE1gSwyg6MdKDFiyaYExjfiwQPSB+y6F13dhm3vPb0QMOq9HnyFWbpb5GmemkuRM7w2oS4AMIB5SAG9jgF2sUKPmLNzHhyH4DQGf6l2Wx0PoR5KeI1u5g3bs/PaFSzRO1vmX5/jb6EJdTyc83sI+mQ+BU2Jlign7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721313980; c=relaxed/simple;
-	bh=ItEYfyU78HUDQ4/9fhXGu8NLyqmW1vdphw7TfYOCTU0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oc6+ox/aLa+ytVW93y6QYN6AWs4ObADPdmWy0+xXnIKztWO3D2rNqJs1o6JsfIBL4J7a3ZBbRSyT7klLbDjsSSDDEJ/PJsRXA3mdcDFZ4WLtr6nQKzqeOL854aYG6LYXeBrFJoxyeGCjd+9u9eN21uVNshauHbJp1pm2ADGsJoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=iW1RlZB6; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6b791cddfcbso5385716d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 07:46:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1721313975; x=1721918775; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ItEYfyU78HUDQ4/9fhXGu8NLyqmW1vdphw7TfYOCTU0=;
-        b=iW1RlZB6E4R8CHisAXCGIyocGXZTD5+1CGoYmrPO3VK7m/rBBrys3L/BXKKR1k4Biy
-         rj35ewsWUUKoAKCwEVE8nA+/7XkbU+wVuqNXbsXTjoiWXAN/GJrMbiI6CAXb9WboUub/
-         Oh2bzwObOA4xRcwMA9Nr0zGdihUGAAJFfZzfQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721313975; x=1721918775;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ItEYfyU78HUDQ4/9fhXGu8NLyqmW1vdphw7TfYOCTU0=;
-        b=RB1aza0hY+2I7RdAqR6VF+leiGW5tZ2qjQGwCstCN90NdfzbRXaENdkgTB0L602KRo
-         qLJ6LRUSitlOdp5h/l0Yn4PElQKq1JDlfGLPflyFsVofEghSBx9G8a3KY0C1AK8fTAlJ
-         BzYis7B69sMRd8UvaBqgs7Glii2N7M/9oSDf11RSHXFgmO2Gao8KghETh6yOKAcdlNkN
-         xJ6vnt8jvilgC2HWkGBa22u5KKCmP00Z62kO2gb3LZ68k8LArbkbLbC+C85rNZs0b9ox
-         XELVRVBfNynGJMf9/YxjRNJd6ItLLxJk/8Q845UYe0/bZOfRbXnILILf4Okd12KJccOa
-         ZpWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUZBQPkhf9yDt2ngjTPYunNoUW1qdn5V2n0VmYpwzxYBxvEwjjJ5IiwO4tdOXzTkCcKXsXyG9KYOHSX4BiYsiTZ1O5LHk7I452A/qD
-X-Gm-Message-State: AOJu0YzxNL7V4diS2xs0Eo0CBqNqmWmdmPaJ1pqZSEBoONYWVXyeSPNH
-	3nB0qBcF+Yc/hve4rvonzJMu8AUmXG8auZ8EUhneG9igMlw+OIMviigNgy/a7f8wmb8kCxBVuP0
-	=
-X-Google-Smtp-Source: AGHT+IGwBjInnL6Mh2jSKwFPqRA8rQVCei4hvZ9T9AqDCtvN4WrnC40vzrOScl9j8G/Xu8WzNoaO3A==
-X-Received: by 2002:ad4:5f8d:0:b0:6b0:7327:c45b with SMTP id 6a1803df08f44-6b79c53980emr34558096d6.16.1721313975420;
-        Thu, 18 Jul 2024 07:46:15 -0700 (PDT)
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com. [209.85.160.181])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b79c4ba0ebsm8778726d6.10.2024.07.18.07.46.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jul 2024 07:46:14 -0700 (PDT)
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-447f8aa87bfso156681cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 07:46:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWIR9oeGsDKeBUqOY3ZVp5qWcEYmrOZKvUiLErDUxbAM6AcqKF6DHH3cEHvHLJTb9Bzc9jC1Ce4ybPZcRiHN71UxcsHRnM26eVHDG2/
-X-Received: by 2002:ac8:6d08:0:b0:447:e792:c797 with SMTP id
- d75a77b69052e-44f96af537emr962911cf.29.1721313973898; Thu, 18 Jul 2024
- 07:46:13 -0700 (PDT)
+	s=arc-20240116; t=1721313960; c=relaxed/simple;
+	bh=jKKPfmiq1BZstorpqgUaWt3UtIZEC4y7SGOw3fnh27I=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qlyYBIK32IyOt/2eIkzGDCxO3SinaaXgNOtpJytj5vqblELwDLMgvjKRP6Pty4DzduZ9DeBWbuCenVK+foMwnIKwlxbcWBSxu3+fsrznuM/XTLgj4p/Bfss/iC+DLkaFUaQwRRSRXdAYFcMwip0dHasys64bhlV6GufCgUTqK/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qjGuezHe; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=h6xBmlay; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qjGuezHe; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=h6xBmlay; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1C4361FBF2;
+	Thu, 18 Jul 2024 14:45:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1721313957; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JKlk4dAQ+4CO151rlnqHradhM/+S38g4Bf/PHUpYSmE=;
+	b=qjGuezHetbAGlWQ7IuReyBTRFSjuFNFwsWj7TMvV+IXL52czlv2Ua1iL2jkgkhauJztIzU
+	vdLXbSbNPrLSUIy28LA4zl1iD9knfqBKaUnXDB8kKu/t29sFqXg1lV4uecSBZEhwwGxEFC
+	vt/l0IaKUhdCOvfIiF543Po1dWSILvc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1721313957;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JKlk4dAQ+4CO151rlnqHradhM/+S38g4Bf/PHUpYSmE=;
+	b=h6xBmlay97b8FQBKERtJesp/Uj4+moco/A+wm2vOdmxCcwDiaxDu1MFT6+Fv/lWRHutFU6
+	cN6Xi4t1MpgpqrBQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=qjGuezHe;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=h6xBmlay
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1721313957; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JKlk4dAQ+4CO151rlnqHradhM/+S38g4Bf/PHUpYSmE=;
+	b=qjGuezHetbAGlWQ7IuReyBTRFSjuFNFwsWj7TMvV+IXL52czlv2Ua1iL2jkgkhauJztIzU
+	vdLXbSbNPrLSUIy28LA4zl1iD9knfqBKaUnXDB8kKu/t29sFqXg1lV4uecSBZEhwwGxEFC
+	vt/l0IaKUhdCOvfIiF543Po1dWSILvc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1721313957;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JKlk4dAQ+4CO151rlnqHradhM/+S38g4Bf/PHUpYSmE=;
+	b=h6xBmlay97b8FQBKERtJesp/Uj4+moco/A+wm2vOdmxCcwDiaxDu1MFT6+Fv/lWRHutFU6
+	cN6Xi4t1MpgpqrBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D1026136F7;
+	Thu, 18 Jul 2024 14:45:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TlXeMaQqmWZvHwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 18 Jul 2024 14:45:56 +0000
+Date: Thu, 18 Jul 2024 16:46:30 +0200
+Message-ID: <87le1yvjuh.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: wangdicheng <wangdich9700@163.com>
+Cc: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org,
+	wangdicheng <wangdicheng@kylinos.cn>
+Subject: Re: [PATCH v2] ALSA: usb-audio: Fix microphone sound on HD webcam.
+In-Reply-To: <20240718060756.15322-1-wangdich9700@163.com>
+References: <20240718060756.15322-1-wangdich9700@163.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240715-x1e80100-crd-backlight-v2-0-31b7f2f658a3@linaro.org>
- <20240715-x1e80100-crd-backlight-v2-1-31b7f2f658a3@linaro.org>
- <20240715-scorn-canning-a7f23b9e2039@spud> <CAD=FV=U-nOMu-JDQ3T=ZRJ-rZ0BTtyzFVfnzbtCJdbRzAq3YMg@mail.gmail.com>
- <e017259b-bc62-4b57-9276-b834237225e1@kernel.org>
-In-Reply-To: <e017259b-bc62-4b57-9276-b834237225e1@kernel.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 18 Jul 2024 07:45:57 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VY5Ug3TfUo1RctiVQrHUjuod15HA8BxAyWdd_0bK8_Dw@mail.gmail.com>
-Message-ID: <CAD=FV=VY5Ug3TfUo1RctiVQrHUjuod15HA8BxAyWdd_0bK8_Dw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: display: panel: samsung,atna33xc20:
- Document ATNA45AF01
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Conor Dooley <conor@kernel.org>, Stephan Gerhold <stephan.gerhold@linaro.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: 1C4361FBF2
+X-Spam-Flag: NO
+X-Spam-Score: 0.49
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [0.49 / 50.00];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[163.com];
+	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,kernel.org,perex.cz,suse.com,vger.kernel.org,alsa-project.org,lists.infradead.org,kylinos.cn];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Level: 
+X-Spamd-Bar: /
 
-Hi,
+On Thu, 18 Jul 2024 08:07:56 +0200,
+wangdicheng wrote:
+> 
+> I own an external usb Webcam, HD webcam, which had low mic volume and
+> inconsistent sound quality. Video works as expected.
+> 
+> (snip)
+> [   95.473820][ 1] [   T73] usb 5-2.2: new high-speed USB device number 7 using xhci_hcd
+> [   95.773974][ 1] [   T73] usb 5-2.2: New USB device found, idVendor=1bcf, idProduct=2281, bcdDevice= 0.05
+> [   95.783445][ 1] [   T73] usb 5-2.2: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+> [   95.791872][ 1] [   T73] usb 5-2.2: Product: HD webcam
+> [   95.797001][ 1] [   T73] usb 5-2.2: Manufacturer: Sunplus IT Co
+> [   95.802996][ 1] [   T73] usb 5-2.2: SerialNumber: 20200513
+> [   96.092610][ 2] [ T3680] usb 5-2.2: Warning! Unlikely big volume range (=4096), cval->res is probably wrong.
+> [   96.102436][ 2] [ T3680] usb 5-2.2: [5] FU [Mic Capture Volume] ch = 1, val = 0/4096/1
+> 
+> Set up quirk cval->res to 16 for 256 levels,
+> Set GET_SAMPLE_RATE quirk flag to stop trying to get the sample rate.
+> Confirmed that happened anyway later due to the backoff mechanism,
+> After 3 failures.
+> 
+> All audio stream on device interfaces share the same values,
+> apart from wMaxPacketSize and tSamFreq :
+> 
+>       bLength                 9
+>       bDescriptorType         4
+>       bInterfaceNumber        3
+>       bAlternateSetting       4
+>       bNumEndpoints           1
+>       bInterfaceClass         1 Audio
+> 
+> Interface Descriptor:
+>   bLength                 9
+>   bDescriptorType         4
+>   bInterfaceNumber        3
+>   bAlternateSetting       4
+>   bNumEndpoints           1
+>   bInterfaceClass         1 Audio
+>   bInterfaceSubClass      2 Streaming
+>   bInterfaceProtocol      0
+>   iInterface              0
+>   AudioStreaming Interface Descriptor:
+>     bLength                 7
+>     bDescriptorType        36
+>     bDescriptorSubtype      1 (AS_GENERAL)
+>     bTerminalLink           3
+>     bDelay                  1 frames
+>     wFormatTag         0x0001 PCM
+>   AudioStreaming Interface Descriptor:
+>     bLength                11
+>     bDescriptorType        36
+>     bDescriptorSubtype      2 (FORMAT_TYPE)
+>     bFormatType             1 (FORMAT_TYPE_I)
+>     bNrChannels             1
+>     bSubframeSize           2
+>     bBitResolution         16
+>     bSamFreqType            1 Discrete
+>     tSamFreq[ 0]        48000
+>   Endpoint Descriptor:
+>     bLength                 9
+>     bDescriptorType         5
+>     bEndpointAddress     0x86  EP 6 IN
+>     bmAttributes            5
+>       Transfer Type            Isochronous
+>       Synch Type               Asynchronous
+>       Usage Type               Data
+>     wMaxPacketSize     0x0064  1x 100 bytes
+>     bInterval               4
+>     bRefresh                0
+>     bSynchAddress           0
+>     AudioStreaming Endpoint Descriptor:
+>       bLength                 7
+>       bDescriptorType        37
+>       bDescriptorSubtype      1 (EP_GENERAL)
+>       bmAttributes         0x01
+>         Sampling Frequency
+>       bLockDelayUnits         0 Undefined
+>       wLockDelay         0x0000
+> (snip)
+> 
+> Testing patch provides consistent good sound recording quality and volume range.
+> 
+> (snip)
+> [   95.473820][ 1] [   T73] usb 5-2.2: new high-speed USB device number 7 using xhci_hcd
+> [   95.773974][ 1] [   T73] usb 5-2.2: New USB device found, idVendor=1bcf, idProduct=2281, bcdDevice= 0.05
+> [   95.783445][ 1] [   T73] usb 5-2.2: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+> [   95.791872][ 1] [   T73] usb 5-2.2: Product: HD webcam
+> [   95.797001][ 1] [   T73] usb 5-2.2: Manufacturer: Sunplus IT Co
+> [   95.802996][ 1] [   T73] usb 5-2.2: SerialNumber: 20200513
+> [   96.110630][ 3] [ T3680] usbcore: registered new interface driver snd-usb-audio
+> [   96.114329][ 7] [ T3677] usb 5-2.2: Found UVC 1.00 device HD webcam (1bcf:2281)
+> [   96.167555][ 7] [ T3677] usbcore: registered new interface driver uvcvideo
+> 
+> Signed-off-by: wangdicheng <wangdicheng@kylinos.cn>
+> ---
+> V1 -> V2: align the space,Update code to v6.8-rc3,and make modifications based on it
 
-On Wed, Jul 17, 2024 at 11:19=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.o=
-rg> wrote:
->
-> On 18/07/2024 02:21, Doug Anderson wrote:
-> > Conor (and/or) Krzysztof and Rob,
-> >
-> > On Mon, Jul 15, 2024 at 8:31=E2=80=AFAM Conor Dooley <conor@kernel.org>=
- wrote:
-> >>
-> >> On Mon, Jul 15, 2024 at 02:15:37PM +0200, Stephan Gerhold wrote:
-> >>> The Samsung ATNA45AF01 panel is an AMOLED eDP panel that has backligh=
-t
-> >>> control over the DP AUX channel. While it works almost correctly with=
- the
-> >>> generic "edp-panel" compatible, the backlight needs special handling =
-to
-> >>> work correctly. It is similar to the existing ATNA33XC20 panel, just =
-with
-> >>> a larger resolution and size.
-> >>>
-> >>> Add a new "samsung,atna45af01" compatible to describe this panel in t=
-he DT.
-> >>> Use the existing "samsung,atna33xc20" as fallback compatible since ex=
-isting
-> >>> drivers should work as-is, given that resolution and size are discove=
-rable
-> >>> through the eDP link.
-> >>>
-> >>> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> >>
-> >> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> >
-> > Can you comment on whether you would consider this bindings a "Fix"
-> > since it's a dependency for later patches in this series (which are
-> > "Fix"es) to pass dtbs_check? See:
-> >
-> > https://lore.kernel.org/r/4bca316a-2334-425b-87a6-e1bb241d26b5@linaro.o=
-rg
->
-> The patch itself is not a fix, for sure, but it might be a dependency of
-> a fix (which you wrote above), thus could be pulled to stable as a
-> dependency.
->
-> I do not care about dtbs_check warnings in stable kernels, mostly
-> because dtbs_check warnings depend heavily on dtschema and dtschema
-> follows mainline kernel. Basically if you had warnings-free v6.8 but try
-> to run dtbs_check now with latest dtschema, your results will differ.
->
-> At some point in the future, I could imagine "no new dtbs_check warnings
-> in stable kernels" requirement or at least preference, but so far I
-> don't think there is any benefit.
+Just one minor issue: the mail address of your Signed-off-by is
+different from the From address.  Try to make them consistent.
 
-In this case it's not about whether it makes it to the stable kernel
-but about which main kernel it goes through.
 
-If we land the bindings in drm-misc-next right now then it'll be a
-long time before it makes it into Linus's tree because of the way that
-drm-misc-next merges. It will make it to Linus's tree at 6.12. You can
-see the drm-misc merging strategy at:
+thanks,
 
-https://drm.pages.freedesktop.org/maintainer-tools/drm-misc.html
-
-If we land the dts change (a fix) through the Qualcomm tree as a fix
-then it should target 6.11.
-
-This means that the 6.11 tree will have a dtbs_check error because it
-has the dts change (a fix) but not the bindings change (not a fix).
-
-One way to resolve this would be to treat this bindings as a "fix" and
-land it through "drm-misc-fixes". That would make the bindings and
-device tree change meet up in Linux 6.11.
-
-Did I get that all correct?
-
--Doug
+Takashi
 
