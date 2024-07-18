@@ -1,315 +1,236 @@
-Return-Path: <linux-kernel+bounces-256607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9BDF935106
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:01:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0724935107
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCA1B1C20B1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:01:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EF421C21C09
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD00144306;
-	Thu, 18 Jul 2024 17:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBA514533A;
+	Thu, 18 Jul 2024 17:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a6Jybjn0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BvUhQcGu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4E012FB13
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 17:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721322105; cv=fail; b=mkC4Z8rbyJAwyRsMBOOWegYSuh0hjcsHDulPC3sdZ5g79+iTJZ5SHMs6UtfTt2Is0qI/J6J+3p61+LN5fbHPZu7sc1HNpwubzw1DnJ4DUEY/8UjHn6UYiClTrMP/3hIjI2eRud23Y5L9VIyC91ihXiagi5V5aAAYAa4f9gmwlLg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721322105; c=relaxed/simple;
-	bh=GdMg/YwcJwZyhBC+xMMSFPkcvWLGP020AiLhOgX9hdg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=dr8UjXSZNv0v/1LftsmxwmKnx2FX/2+4vsQU88rZ/2az/IRlfSxZOw7CVegMIe3Su6uQb5VaY/cCqnF0jEV0RfiGN/E4mJHvH0kZG3/lJ+kTQon4km+MLs+mo8vSeP2CeEth0yDOX7Ykj8QRA2W9Pc2h604KhdQiedtiA/KlMq0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a6Jybjn0; arc=fail smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E1012FB13;
+	Thu, 18 Jul 2024 17:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721322149; cv=none; b=IvMDGhYOow09BXyek9bv6tAd5sh1BC+E+Gqci7cqXzYAhDulDetZJGBGzniklzoeQz4VHINi0yIiC+ZcSfLIq202LaF6n4RDTakBVxDPAf+Oym9+vNX8Zte5oOLRJhmRhVLapgW6KndjUkFd2V6u+ixFi4tbQ9RxQZjpClNLDaE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721322149; c=relaxed/simple;
+	bh=MYK8Iqf70n3GxpdTVH1IK5e5KAoR7Wbbpr8B36x5udk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LR7L/lLj4pO1bLM64sHnnzcU0SWPuX7F8As3uCcFbgmaipXeJcSPY4YBWAjoNOkMT8YYZ6R11OBclBX362w5HD9DUD9cGfoynLC7pKoBPO94OyxMabVZFbPfb1bIO4wDR2v/PQoQ5qa1LX3/OtnFWsc//JVMyh9Gzj2iEGmXc2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BvUhQcGu; arc=none smtp.client-ip=192.198.163.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721322104; x=1752858104;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=GdMg/YwcJwZyhBC+xMMSFPkcvWLGP020AiLhOgX9hdg=;
-  b=a6Jybjn01vVu0tRN7BI7jNnMfbbu7pzxPYEn/hIEZWFnMplf5RRwtEj/
-   yRcKaTVxnRvJEsnjYXVYOy8uC5DJK2Ohuhk63RJb7+I3ttIp761+a/kZT
-   fVoRFJoUI2XpypgVgHgQAQkalUlTw+AJu1EY0JvwNBGGOu8ZIWToAwffO
-   kgu+44sIOTEaYozs959keTXWG9bcRNwszdP6NkyPsZftYBOl4Z3Q+A8Vm
-   ZH0p8av8IG6sJLU6Efs6pEK2o6+h6JI76iQ9iTVYaKDovW3S2XP2qO/1z
-   vVJho91s3XC7tMZsQ2V0QCY0RAnh/gFQuDTs/NsvEg/SzLnXrT0mu4wz2
-   w==;
-X-CSE-ConnectionGUID: ATUupAJ2QQ+W2hwhpYfqeQ==
-X-CSE-MsgGUID: 2pyG683BSw6B5JiQ8ZZBOQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11137"; a="36342166"
+  t=1721322148; x=1752858148;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=MYK8Iqf70n3GxpdTVH1IK5e5KAoR7Wbbpr8B36x5udk=;
+  b=BvUhQcGud+W3QTh7i4lTzDUNUd+cNaS/Qx3O5yj3Rjtc/HsOLJGbx3Dh
+   StW81Cz1ZMMAWrw2nHjMGoO5Tb5jadBmQpljArC8UMi8YbeILwE04P7ic
+   9BhWO3p/2MZs7ywNpCxcvAsEnR4rh3zVYb3Pf+VQag/OS2w1oNC+IRP4q
+   sksX4y1/OYyvK8wnW4RMuHqe7zfywrdknO/egOsGuMZOdO41WERN7yhdE
+   3Rl+AHL9/fQgRBNX00Rr6UDEFE+ZEzRfO9O8P89E3h3xIN8HqYvZ8EHOk
+   sQK5pbL498y9IGLCN/OgPbaNHFozkXtCKs0Tpg1EpkHKNgTbIpkr5sdu6
+   A==;
+X-CSE-ConnectionGUID: Ydt4Y2nKTGaqUUHOnGM2Kg==
+X-CSE-MsgGUID: IS4v3H4HRXKMnTmnepwjRg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11137"; a="12611788"
 X-IronPort-AV: E=Sophos;i="6.09,218,1716274800"; 
-   d="scan'208";a="36342166"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 10:01:43 -0700
-X-CSE-ConnectionGUID: 1UFaFZHeTWarV4LRAG9cyw==
-X-CSE-MsgGUID: 4GatN8mtQUmNWWx0g0M/RA==
+   d="scan'208";a="12611788"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 10:02:27 -0700
+X-CSE-ConnectionGUID: kQZGkZijTee4MhtT4mDzSw==
+X-CSE-MsgGUID: QmhNHGV0QTy8TxEi0wscUQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,218,1716274800"; 
-   d="scan'208";a="50867221"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 18 Jul 2024 10:01:43 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 18 Jul 2024 10:01:42 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 18 Jul 2024 10:01:42 -0700
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (104.47.51.48) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 18 Jul 2024 10:01:41 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xJHTd+oEQcT3n0e+YvBLwfahWXl6Wp7sgOCusLg74c+gYkaSMUpwfTr45BQ5da3fjbCBr8s5wMxIyWBsBOxgAyRXAAAHu3zmfw9+DUcgyrWjkbX91rI9RYsRLpwOsWiY2k6fs7hfMKpaB0egZKwKs8GLI7OPdRoIjrZIaPAa3k8TWSm9E4obZaGflecsZsiIh3pcbGqxvhp75j0QiPDPSmQqoZPcbHq3VuKP3w9snt97NZ7IQWpLcdjbO3F7Qs+iq20E6Vx+UQy/l++TN8jEm2BUttqWHeqdDA3zv8KnSIT4IfzJHGH6wfj96ou/Rj/+iaknq28w59Nn+/0Dkcl+Qw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XT0tvQd6eLm7o3QErxtcBgtzCftiM/4HlufrfOOYr+E=;
- b=RUWjauUjuBI3euD7Y8Gk+3NjEAkJdVkWxUqjcfEX5LFfo9no2XGCxKrF4XoBENBFopME2U4R7j1No7OhUNViAHBpI3X6Ls/mlnrYm9KWb87ZqrjPQU2fj4KIb5rIE++4udYTUhoN7s8XExWosNBcVGSIvpZVuuoSp7mM9ZtSrluUswODlhHL8ucu6Any4X+zGT1QxVyHCjPkzx73atmQrTZ1JFaBhnJMeHVCXuesHjTODEYmBB5GO9NLayCWDxrfByYYvbsCHoxu9Q6DxvyARFFp+UJvlrr4oiscGDaMS9SIH9MxSC+yuqwm3t1ZK4bVssK6aoY22w4wqsOpmOY4IQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6020.namprd11.prod.outlook.com (2603:10b6:8:61::19) by
- IA1PR11MB6242.namprd11.prod.outlook.com (2603:10b6:208:3e8::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.17; Thu, 18 Jul
- 2024 17:01:39 +0000
-Received: from DM4PR11MB6020.namprd11.prod.outlook.com
- ([fe80::4af6:d44e:b6b0:fdce]) by DM4PR11MB6020.namprd11.prod.outlook.com
- ([fe80::4af6:d44e:b6b0:fdce%4]) with mapi id 15.20.7784.013; Thu, 18 Jul 2024
- 17:01:39 +0000
-Date: Fri, 19 Jul 2024 01:01:25 +0800
-From: Chen Yu <yu.c.chen@intel.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-CC: Peter Zijlstra <peterz@infradead.org>, Vincent Guittot
-	<vincent.guittot@linaro.org>, Ingo Molnar <mingo@redhat.com>, Juri Lelli
-	<juri.lelli@redhat.com>, Tim Chen <tim.c.chen@intel.com>, Mel Gorman
-	<mgorman@techsingularity.net>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>, Chen Yu
-	<yu.chen.surf@gmail.com>, Aaron Lu <aaron.lu@intel.com>,
-	<linux-kernel@vger.kernel.org>, <void@manifault.com>, Matt Fleming
-	<matt@readmodwrite.com>
-Subject: Re: [RFC PATCH 0/7] Optimization to reduce the cost of newidle
- balance
-Message-ID: <ZplKZQYpqILia+aW@chenyu5-mobl2>
-References: <cover.1690273854.git.yu.c.chen@intel.com>
- <20240717121745.GF26750@noisy.programming.kicks-ass.net>
- <29172279-ac5e-4860-921f-2905639dd8bf@amd.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <29172279-ac5e-4860-921f-2905639dd8bf@amd.com>
-X-ClientProxiedBy: SGXP274CA0018.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::30)
- To DM4PR11MB6020.namprd11.prod.outlook.com (2603:10b6:8:61::19)
+   d="scan'208";a="88320990"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.94.249.84])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 10:02:22 -0700
+Message-ID: <4ddbcd4a-bbf1-4773-94da-0a2ad63469dc@intel.com>
+Date: Thu, 18 Jul 2024 20:02:16 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6020:EE_|IA1PR11MB6242:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3aee9fbc-44d3-49f0-395e-08dca74b4a1f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?uaFLE09Z6/XM03GLDv/7O/2CyeoTZl9otm3I2KcK2q/FZSo/uk2HpXCtRJDA?=
- =?us-ascii?Q?jaaap9GpWY9RznQ0vV7rV6B8Q14MlRdikJoTJr6SkXWchl6MUeSneWXSwv8U?=
- =?us-ascii?Q?pAWtfZAw0vxkRwy44dKL0pSC2bVtl3yvoXwcE4q2CyhUiwwONvISs908yL7H?=
- =?us-ascii?Q?35UZ1j/1msDvEHECWhawtMapcQwkcSV4dBNuUC8yI4F+SoVofQizk6HSG5LP?=
- =?us-ascii?Q?EmfkT2xdkpI4sLfI8oxPXaBj/C3TA3etaTvxRZsfeifGuYknU4PDdONX2F1A?=
- =?us-ascii?Q?R6t8FGRLKesKrN9sP6h2MezgD+ABD3RP896Ky3FK+zS81Z0DqoX02U1IsXdI?=
- =?us-ascii?Q?Wly2R50nPtBXNN0t1nqoZaqG1EJV9SBqda+0LJZ2w5T95/Iuc1AW9R7WMdYE?=
- =?us-ascii?Q?gAJEb3eyqVMovtT6yw4/+eOf53SAAvzbvZk0Kdk5mzS0SQGpJVMx8qEf96qw?=
- =?us-ascii?Q?tqI7yuTysXS2xho6NZEJg2ek7hkFmGGNUxShdorbVOg78MRK45UTNyROR7ur?=
- =?us-ascii?Q?MhZqXPJDx6YsmwVC9xnM9N5yZw6JIttRJXC6KOKXsLjiqraUdPt5HsFQc2OJ?=
- =?us-ascii?Q?/h1IqSxAq23XTbsGoRGHaVl54XF0GgOpmgDvYIQt2AlG7fSNI6NZZg2AC8y1?=
- =?us-ascii?Q?OVEsNcOHCIeTCawyRO9slLzZYNEEasJURm5O2L6k97hOTlNAvnvt0zBp57MJ?=
- =?us-ascii?Q?zRBADzDBrnnDP7EMcqfzerJuygQH46ApLn9sqDDa6A15OyvTz96EGNq7UR3v?=
- =?us-ascii?Q?M/sK6sADW0k2ifvw1w0r+wH3t7STENSPJJ95lKxm3JveszdINcuIQWG+ZsuT?=
- =?us-ascii?Q?jjjitvlVcMSZnMOb766s6F5L3zmtY/EG2eiSVxGB0gVo/jvbE/eDKgsUum+1?=
- =?us-ascii?Q?WXey9SJtSZfT9iKNBWELvWHSoPZNq3IgLevzPL7oMarw1MICDE+8wBffxRd7?=
- =?us-ascii?Q?XG0jusfSKWT4cS1i8g/uTVq1q5L8S2boazf255EDt33AMVnIxt4GNgzAqN2W?=
- =?us-ascii?Q?SMPUVhAqluEKPvBBMUdV3kuhWCvD34s2mnc9fE4EyQ9FqNppm4Ioo8SByUFh?=
- =?us-ascii?Q?GPVUN3THG1I8fY6UXII0QTdwyfXHQbhIkmXiAvT52+Ldg+bul2T4/8AzvKDk?=
- =?us-ascii?Q?Fx5fcuokxpn3Lobix4vhL/RruNp5gOotjFs4hjcP0PmyyqNu8n680Z7WEIQU?=
- =?us-ascii?Q?is9W07HLHHkFfIh/hNmmHMY5uUSe2FWde7FAsoH9r28IiwB0Gje417aM32Bf?=
- =?us-ascii?Q?oY2/gK1xs5JtS7qYPnTIOfPyWPIdRs9ISQZ3xNunKl2WSrwuX90Su3eYCI8w?=
- =?us-ascii?Q?VHwggVcIXhHVM+QXZ9rp2sI4?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6020.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?XXwqV+0pVDwnYsS83y+Z03BiL0Qzfmkn41HsZHbHLQfhC8VmMlNKZwmultjP?=
- =?us-ascii?Q?C1pLTB+qHomIXIMxt9zVbgoiDRWmYAi4bzweg7jR0tVVt1ps9uHcxI7UMUuk?=
- =?us-ascii?Q?vmshvVnZ4M7BfminkPVJIMnWkIT23uh9zSj8+6YwdrYcuXf//YmiMmEeRXHu?=
- =?us-ascii?Q?fG7iseQMLM2Y8FgMTWOoM5xENdIhzuRn8BHRD0OdQ23KUer1KYOlYvDsR3Ke?=
- =?us-ascii?Q?XsIwokOT7AvIvO1rz3OcpNvQamJ5KnhQP3cyjam1PQYJpU2Gs1aGFng29Ynu?=
- =?us-ascii?Q?FQWY310ZX75gaqBPER9JoxnlgZzDRlTY0QKp6/YMpvHPiAjw5SdXfThJhaBg?=
- =?us-ascii?Q?9CHVc+7My9/0UM81w02sIiGv7XrueJhrsk1cYHI9HoxgEXuDz/cWjEwq8cI4?=
- =?us-ascii?Q?hY9PWaEl5o/AtxIgNsNkGPQfyE3FDdgKrZgD0O6wi9u7YgWcuBhJX1D6G55d?=
- =?us-ascii?Q?DuFsjWR2uuTTZR0+IHqrlHIWJuULBQaOob5qSouG+uaQK/15XGunJEtTzuEP?=
- =?us-ascii?Q?p12U5q7TJTk30o7Mi03O6IWAjSN4DQuWnEtGSY8DXlrjqeR6pCe/yD2l1voa?=
- =?us-ascii?Q?rmfoVvBQdEOU8moFdPBDjuNumVMTK0CdwNLhLe7/PKkUDEFvydOz08MuRwnI?=
- =?us-ascii?Q?TwraKflxibSiX2Fd8czkogKwh6RJMQTfVvMqs9qLUglSHZxbKygmneo2A/dj?=
- =?us-ascii?Q?PmYmSIHhG2ZyNfJMIc3gONSCTm1hKuC1oC0D9qNEiT8OnkvR/h3qoI/afzjS?=
- =?us-ascii?Q?wSCvt/tZJe9NLtGuTQwPR5ODwPvhnCQIZocrzvw6J2FRX2CkAkd2TVw/sd/G?=
- =?us-ascii?Q?5lTXjYLveiKTkUaodeJ53lznSbzFYdNwAy+vjLCw1165p9bJHV7ChxJ36yyy?=
- =?us-ascii?Q?usPrsIg3qoH2Qn9XVZotrWLrIniS85g2CMTY3idE6JhfQabY12ICKdTPP9pW?=
- =?us-ascii?Q?d+cSpxfngLr4OnZlvuyO4eTFMpC7XqD5OT8H5+tgINHBJfuOE95V33xzn9GY?=
- =?us-ascii?Q?K+5n1pTqOY2H7wqtoqb8CDeYxi4g+Ir/RigXZZEen5nye9Y1oPOW1IfKRUb3?=
- =?us-ascii?Q?rHOwVFEwTYVSeYxd2L4/Z4N5BDw6FKwJL8bBGZdbZlQPH4lLJlbuAMWr6iA6?=
- =?us-ascii?Q?xxD5wEJhEqcF0BYvh1h37Sqja9cW0vn8TCaxL4A61MiCJq1SYnqVMpzTAE7S?=
- =?us-ascii?Q?JLpVbVoVy+/URnmEM2kUfPuU9+IeRvt3/pxhUuqjiqjRXPMXqZ2CoaG3iuL9?=
- =?us-ascii?Q?nUeihbbeCUr6pLQJ4qpg7o32h5rdSUZzrCnwtnr1xmfoWhwsx1lZF88fU6SZ?=
- =?us-ascii?Q?or4CZiq9x1/tNL4A5sk1yDHpkipdvoRvFpL7L6Koog9A8Ubb3A4RjwOgEUKi?=
- =?us-ascii?Q?Qbp6R9PlZ5DnxRtBt+i+T8JvanU+XZIcbe7YmtV1uIW5LWhTMsS8cZF9gpNn?=
- =?us-ascii?Q?3huMLk+PjLYuPqnfJ8YyWWeiC8oe/APMU8gTKvalMwjLSYM6E5LT+djun4bs?=
- =?us-ascii?Q?AdNLHcNyr2SHmxFwHiDKU7S87lWdWjOJYR//5zHW21RrQbCdtBf7+uYHg4AR?=
- =?us-ascii?Q?p2+x27QKLFMYG0hr/Y5CJX3sMQCJu5z+Qu5F+pKL?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3aee9fbc-44d3-49f0-395e-08dca74b4a1f
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6020.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2024 17:01:38.9000
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NYTr4jfJXNNh0Flb8kW9AeobqNSPhecdZLi4vQdf+hICTyDRNgZJnatdY46cTtnyf19WRVlHkzcqbSJxrCEr9g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6242
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/8] perf: support specify vdso path in cmdline
+To: Changbin Du <changbin.du@huawei.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Nathan Chancellor <nathan@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, Hui Wang <hw.huiwang@huawei.com>
+References: <20240702041837.5306-1-changbin.du@huawei.com>
+ <20240702041837.5306-2-changbin.du@huawei.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240702041837.5306-2-changbin.du@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Prateek,
+On 2/07/24 07:18, Changbin Du wrote:
+> The vdso dumped from process memory (in buildid-cache) lacks debugging
+> info. To annotate vdso symbols with source lines we need specify a
+> debugging version.
+> 
+> For x86, we can find them from your local build as
+> arch/x86/entry/vdso/vdso{32,64}.so.dbg. Or they may reside in
+> /lib/modules/<version>/vdso/vdso{32,64}.so on Ubuntu. But notice that
+> the buildid has to match.
+> 
+> $ sudo perf record -a
+> $ sudo perf report --objdump=llvm-objdump \
+>   --vdso arch/x86/entry/vdso/vdso64.so.dbg,arch/x86/entry/vdso/vdso32.so.dbg
+> 
+> Samples: 17K of event 'cycles:P', 4000 Hz, Event count (approx.): 1760
+> __vdso_clock_gettime  /work/linux-host/arch/x86/entry/vdso/vdso64.so.d
+> Percent│       movq    -48(%rbp),%rsi
+>        │       testq   %rax,%rax
+>        │     ;               return vread_hvclock();
+>        │       movq    %rax,%rdx
+>        │     ;               if (unlikely(!vdso_cycles_ok(cycles)))
+>        │     ↑ js      eb
+>        │     ↑ jmp     74
+>        │     ;               ts->tv_sec = vdso_ts->sec;
+>   0.02 │147:   leaq    2(%rbx),%rax
+>        │       shlq    $4, %rax
+>        │       addq    %r10,%rax
+>        │     ;               while ((seq = READ_ONCE(vd->seq)) & 1) {
+>   9.38 │152:   movl    (%r10),%ecx
+> 
+> When doing cross platform analysis, we also need specify the vdso path if
+> we are interested in its symbols.
+> 
 
-On 2024-07-18 at 14:58:30 +0530, K Prateek Nayak wrote:
-> Hello Peter,
-> 
-> On 7/17/2024 5:47 PM, Peter Zijlstra wrote:
-> > On Thu, Jul 27, 2023 at 10:33:58PM +0800, Chen Yu wrote:
-> > > Hi,
-> > > 
-> > > This is the second version of the newidle balance optimization[1].
-> > > It aims to reduce the cost of newidle balance which is found to
-> > > occupy noticeable CPU cycles on some high-core count systems.
-> > > 
-> > > For example, when running sqlite on Intel Sapphire Rapids, which has
-> > > 2 x 56C/112T = 224 CPUs:
-> > > 
-> > > 6.69%    0.09%  sqlite3     [kernel.kallsyms]   [k] newidle_balance
-> > > 5.39%    4.71%  sqlite3     [kernel.kallsyms]   [k] update_sd_lb_stats
-> > > 
-> > > To mitigate this cost, the optimization is inspired by the question
-> > > raised by Tim:
-> > > Do we always have to find the busiest group and pull from it? Would
-> > > a relatively busy group be enough?
-> > 
-> > So doesn't this basically boil down to recognising that new-idle might
-> > not be the same as regular load-balancing -- we need any task, fast,
-> > rather than we need to make equal load.
-> > 
-> > David's shared runqueue patches did the same, they re-imagined this very
-> > path.
-> > 
-> > Now, David's thing went side-ways because of some regression that wasn't
-> > further investigated.
-> 
-> In case of SHARED_RUNQ, I suspected frequent wakeup-sleep pattern of
-> hackbench at lower utilization seemed to raise some contention somewhere
-> but perf profile with IBS showed nothing specific and I left it there.
-> 
-> I revisited this again today and found this interesting data for perf
-> bench sched messaging running with one group pinned to one LLC domain on
-> my system:
-> 
-> - NO_SHARED_RUNQ
-> 
->     $ time ./perf bench sched messaging -p -t -l 100000 -g 1
->     # Running 'sched/messaging' benchmark:
->     # 20 sender and receiver threads per group
->     # 1 groups == 40 threads run
->          Total time: 3.972 [sec] (*)
->     real    0m3.985s
->     user    0m6.203s	(*)
->     sys     1m20.087s	(*)
-> 
->     $ sudo perf record -C 0-7,128-135 --off-cpu -- taskset -c 0-7,128-135 perf bench sched messaging -p -t -l 100000 -g 1
->     $ sudo perf report --no-children
-> 
->     Samples: 128  of event 'offcpu-time', Event count (approx.): 96,216,883,498 (*)
->       Overhead  Command          Shared Object  Symbol
->     +   51.43%  sched-messaging  libc.so.6      [.] read
->     +   44.94%  sched-messaging  libc.so.6      [.] __GI___libc_write
->     +    3.60%  sched-messaging  libc.so.6      [.] __GI___futex_abstimed_wait_cancelable64
->          0.03%  sched-messaging  libc.so.6      [.] __poll
->          0.00%  sched-messaging  perf           [.] sender
-> 
-> 
-> - SHARED_RUNQ
-> 
->     $ time taskset -c 0-7,128-135 perf bench sched messaging -p -t -l 100000 -g 1
->     # Running 'sched/messaging' benchmark:
->     # 20 sender and receiver threads per group
->     # 1 groups == 40 threads run
->          Total time: 48.171 [sec] (*)
->     real    0m48.186s
->     user    0m5.409s	(*)
->     sys     0m41.185s	(*)
-> 
->     $ sudo perf record -C 0-7,128-135 --off-cpu -- taskset -c 0-7,128-135 perf bench sched messaging -p -t -l 100000 -g 1
->     $ sudo perf report --no-children
-> 
->     Samples: 157  of event 'offcpu-time', Event count (approx.): 5,882,929,338,882 (*)
->       Overhead  Command          Shared Object     Symbol
->     +   47.49%  sched-messaging  libc.so.6         [.] read
->     +   46.33%  sched-messaging  libc.so.6         [.] __GI___libc_write
->     +    2.40%  sched-messaging  libc.so.6         [.] __GI___futex_abstimed_wait_cancelable64
->     +    1.08%  snapd            snapd             [.] 0x000000000006caa3
->     +    1.02%  cron             libc.so.6         [.] clock_nanosleep@GLIBC_2.2.5
->     +    0.86%  containerd       containerd        [.] runtime.futex.abi0
->     +    0.82%  containerd       containerd        [.] runtime/internal/syscall.Syscall6
-> 
-> 
-> (*) The runtime has bloated massively but both "user" and "sys" time
->     are down and the "offcpu-time" count goes up with SHARED_RUNQ.
-> 
-> There seems to be a corner case that is not accounted for but I'm not
-> sure where it lies currently. P.S. I tested this on a v6.8-rc4 kernel
-> since that is what I initially tested the series on but I can see the
-> same behavior when I rebased the changed on the current v6.10-rc5 based
-> tip:sched/core.
-> 
-> > 
-> > But it occurs to me this might be the same thing that Prateek chased
-> > down here:
-> > 
-> >    https://lkml.kernel.org/r/20240710090210.41856-1-kprateek.nayak@amd.com
-> > 
-> > Hmm ?
-> 
-> Without the nohz_csd_func fix and the SM_IDLE fast-path (Patch 1 and 2),
-> currently, the scheduler depends on the newidle_balance to pull tasks to
-> an idle CPU. Vincent had pointed it out on the first RCF to tackle the
-> problem that tried to do what SM_IDLE does but for fair class alone:
-> 
->     https://lore.kernel.org/all/CAKfTPtC446Lo9CATPp7PExdkLhHQFoBuY-JMGC7agOHY4hs-Pw@mail.gmail.com/
-> 
-> It shouldn't be too frequent but it could be the reason why
-> newidle_balance() might jump up in traces, especially if it decides to
-> scan a domain with large number of CPUs (NUMA1/NUMA2 in Matt's case,
-> perhaps the PKG/NUMA in the case Chenyu was investigating initially).
->
+Just realized this is about objdump.  Sorry for not getting that
+earlier.
 
-Yes, this is my understanding too, I'll apply your patches and have a re-test.
+Like perf tools, objdump follows the paradigm of attempting to
+locate and use debug info transparently.  However, objdump looks
+at the installed debug info in /usr/lib/debug/.build-id/
 
-thanks,
-Chenyu
+For example, if the debug file is copied (or linked) there, then
+objdump or llvm-objdump will find it:
+
+$ llvm-objdump-18 -dS ~/.debug/\[vdso\]/cf702469f4637840fd6ba1a8d8a628ff83253d04/vdso | head -20
+
+~/.debug/[vdso]/cf702469f4637840fd6ba1a8d8a628ff83253d04/vdso:      file format elf64-x86-64
+
+Disassembly of section .text:
+
+00000000000006d0 <.text>:
+    6d0: 48 8d 3d 29 d9 ff ff          leaq    -0x26d7(%rip), %rdi     # 0xffffffffffffe000
+    6d7: eb 19                         jmp     0x6f2 <.text+0x22>
+    6d9: 4c 8b 0d 28 d9 ff ff          movq    -0x26d8(%rip), %r9      # 0xffffffffffffe008
+    6e0: 4c 8b 05 29 d9 ff ff          movq    -0x26d7(%rip), %r8      # 0xffffffffffffe010
+    6e7: 0f 01 f9                      rdtscp
+    6ea: 66 90                         nop
+    6ec: 8b 0f                         movl    (%rdi), %ecx
+    6ee: 39 ce                         cmpl    %ecx, %esi
+    6f0: 74 0e                         je      0x700 <.text+0x30>
+    6f2: 8b 37                         movl    (%rdi), %esi
+    6f4: 85 f6                         testl   %esi, %esi
+    6f6: 75 e1                         jne     0x6d9 <.text+0x9>
+    6f8: 48 c7 c0 ff ff ff ff          movq    $-0x1, %rax
+    6ff: c3                            retq
+$ sudo ln -s /lib/modules/6.9.2-local/build/arch/x86/entry/vdso/vdso64.so.dbg /usr/lib/debug/.build-id/cf/702469f4637840fd6ba1a8d8a628ff83253d04.debug
+$ llvm-objdump-18 -dS ~/.debug/\[vdso\]/cf702469f4637840fd6ba1a8d8a628ff83253d04/vdso | head -20                                                       
+
+~/.debug/[vdso]/cf702469f4637840fd6ba1a8d8a628ff83253d04/vdso:      file format elf64-x86-64
+
+Disassembly of section .text:
+
+00000000000006d0 <vread_hvclock>:
+; hv_read_tsc_page_tsc(const struct ms_hyperv_tsc_page *tsc_pg,
+    6d0: 48 8d 3d 29 d9 ff ff          leaq    -0x26d7(%rip), %rdi     # 0xffffffffffffe000 <hvclock_page>
+    6d7: eb 19                         jmp     0x6f2 <vread_hvclock+0x22>
+;               scale = READ_ONCE(tsc_pg->tsc_scale);
+    6d9: 4c 8b 0d 28 d9 ff ff          movq    -0x26d8(%rip), %r9      # 0xffffffffffffe008 <hvclock_page+0x8>
+;               offset = READ_ONCE(tsc_pg->tsc_offset);
+    6e0: 4c 8b 05 29 d9 ff ff          movq    -0x26d7(%rip), %r8      # 0xffffffffffffe010 <hvclock_page+0x10>
+;       asm volatile(ALTERNATIVE_2("rdtsc",
+    6e7: 0f 31                         rdtsc
+    6e9: 90                            nop
+    6ea: 90                            nop
+    6eb: 90                            nop
+;       } while (READ_ONCE(tsc_pg->tsc_sequence) != sequence);
+    6ec: 8b 0f                         movl    (%rdi), %ecx
+$
+
+Would that solve your problem?
+
+Notably, later versions of llvm-objdump have an option
+--debug-file-directory which makes it possible to
+have the debug info in a directory owned by the user,
+for example:
+
+$ sudo rm /usr/lib/debug/.build-id/cf/702469f4637840fd6ba1a8d8a628ff83253d04.debug
+$ llvm-objdump-18 -dS ~/.debug/\[vdso\]/cf702469f4637840fd6ba1a8d8a628ff83253d04/vdso | head -20
+
+~/.debug/[vdso]/cf702469f4637840fd6ba1a8d8a628ff83253d04/vdso:      file format elf64-x86-64
+
+Disassembly of section .text:
+
+00000000000006d0 <.text>:
+    6d0: 48 8d 3d 29 d9 ff ff          leaq    -0x26d7(%rip), %rdi     # 0xffffffffffffe000
+    6d7: eb 19                         jmp     0x6f2 <.text+0x22>
+    6d9: 4c 8b 0d 28 d9 ff ff          movq    -0x26d8(%rip), %r9      # 0xffffffffffffe008
+    6e0: 4c 8b 05 29 d9 ff ff          movq    -0x26d7(%rip), %r8      # 0xffffffffffffe010
+    6e7: 0f 01 f9                      rdtscp
+    6ea: 66 90                         nop
+    6ec: 8b 0f                         movl    (%rdi), %ecx
+    6ee: 39 ce                         cmpl    %ecx, %esi
+    6f0: 74 0e                         je      0x700 <.text+0x30>
+    6f2: 8b 37                         movl    (%rdi), %esi
+    6f4: 85 f6                         testl   %esi, %esi
+    6f6: 75 e1                         jne     0x6d9 <.text+0x9>
+    6f8: 48 c7 c0 ff ff ff ff          movq    $-0x1, %rax
+    6ff: c3                            retq
+$ mkdir -p /tmp/debug/.build-id/cf/
+$ ln -s /lib/modules/6.9.2-local/build/arch/x86/entry/vdso/vdso64.so.dbg /tmp/debug/.build-id/cf/702469f4637840fd6ba1a8d8a628ff83253d04.debug        
+$ llvm-objdump-18 --debug-file-directory /tmp/debug -dS ~/.debug/\[vdso\]/cf702469f4637840fd6ba1a8d8a628ff83253d04/vdso | head -20
+
+~/.debug/[vdso]/cf702469f4637840fd6ba1a8d8a628ff83253d04/vdso:      file format elf64-x86-64
+
+Disassembly of section .text:
+
+00000000000006d0 <vread_hvclock>:
+; hv_read_tsc_page_tsc(const struct ms_hyperv_tsc_page *tsc_pg,
+    6d0: 48 8d 3d 29 d9 ff ff          leaq    -0x26d7(%rip), %rdi     # 0xffffffffffffe000 <hvclock_page>
+    6d7: eb 19                         jmp     0x6f2 <vread_hvclock+0x22>
+;               scale = READ_ONCE(tsc_pg->tsc_scale);
+    6d9: 4c 8b 0d 28 d9 ff ff          movq    -0x26d8(%rip), %r9      # 0xffffffffffffe008 <hvclock_page+0x8>
+;               offset = READ_ONCE(tsc_pg->tsc_offset);
+    6e0: 4c 8b 05 29 d9 ff ff          movq    -0x26d7(%rip), %r8      # 0xffffffffffffe010 <hvclock_page+0x10>
+;       asm volatile(ALTERNATIVE_2("rdtsc",
+    6e7: 0f 31                         rdtsc
+    6e9: 90                            nop
+    6ea: 90                            nop
+    6eb: 90                            nop
+;       } while (READ_ONCE(tsc_pg->tsc_sequence) != sequence);
+    6ec: 8b 0f                         movl    (%rdi), %ecx
+$
+
+
 
