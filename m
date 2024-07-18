@@ -1,107 +1,229 @@
-Return-Path: <linux-kernel+bounces-256593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE4C9350DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:46:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1546A9350DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:46:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 979E7282BAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:46:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 387A41C218D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A04D7407A;
-	Thu, 18 Jul 2024 16:46:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB4B144D01;
+	Thu, 18 Jul 2024 16:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ScrKvlXX"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="v+DBl7wP"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527F92F877;
-	Thu, 18 Jul 2024 16:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8100513E033
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 16:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721321173; cv=none; b=t/jhiQHjUcywUKw42kIuIJRC4ZJblLQJdqUsu8N+zGjpDefDp/dsokwVgXGzYsT0/jaSFQ0xy2k1gW4TLYOy0zxZH1rud+OsAmto79zyvWfkPCxXNiX7VJWBFMnZKBOrE+cnP8QcMvZEMimSbQhrCX6/eG4UsrSkdfrSx1OXs0s=
+	t=1721321201; cv=none; b=bH6zdvfW28tRbVA46aObB3flUwX3AI459m5lJ7b0+VIRX5o3C7NUT8CJjyYOP+S4mh4RG1FDGVJqNCGviQODpp4KV03/98ri6COyepCsyMAlOcrpRI4tTQvj6NHoAMHx+hfNkaNKpen4O3Sh3AOqtzoLWNiwZPgn5XdICIyKueA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721321173; c=relaxed/simple;
-	bh=arhQFPA35GKI/93FWGqsJVzt2AdCMpET0AJ4iJUPkU0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D2hfnlRSvM64BeNP+9mUSZSokXxUX2DgJ+xLlPsgWZQmrT3Lt8LIuTxp5b3p3veCLcY+r9lsN/jOTfSHLtZ43gpIXtLn91EWAcEo8+TGKVaixXseGgzI+uDCWnrIo8+be3hP0kMoCk03IX/WwlS/7K2w9xJNZw1uQxTssa12fxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ScrKvlXX; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70b4267ccfcso31578b3a.3;
-        Thu, 18 Jul 2024 09:46:12 -0700 (PDT)
+	s=arc-20240116; t=1721321201; c=relaxed/simple;
+	bh=3TaMFJClL91Mk6uYB1Z2gfkij/2N4qB4v23wtBnKSGM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YvBUAzqA8+FuILWOkUe6tXVzuDiD6hATXsGV0unpKjrVmqpAyqTV6vwBLw3EEUEqaZvFm7G/kXhkvUyONDMcjoE699v8+9EdBcXRMN15wczoBqm/bIy5lFOLyiP43thzUgbyzlCW0fyHjQAVDBzIzsy3PMBu5poqWQL3w2tuAik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=v+DBl7wP; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-79ef8e0c294so37763185a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 09:46:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721321171; x=1721925971; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=arhQFPA35GKI/93FWGqsJVzt2AdCMpET0AJ4iJUPkU0=;
-        b=ScrKvlXXiDuzpYxPkXWinR1r0D5CtZyqra4CDo8MImTGEUARScCs9g+A9Do5a4YQGJ
-         KH4t0NieO/xzQfwk70Fr5i64eowAoXzaD+CEGzSyyEa3JtOrA2XZ2YWCSt5s3wzQpTfP
-         OW9eBE3BfcVlmJFSucE2oASE1303WAG4//oABDsXwpxSjQP27O9hfScGykKG5sTLQBsR
-         Y5mPcHgQtKnbANwsbv9M1usXTerwuqM7ngROWVRL9nxdrI1GUgtnyGNvmx5VBOxR54iY
-         Y7Koz57On6F7T6fTbakogdOQ779tHkU9o5WfruGsMhjXIZel7bXNkr9Rua447kZcYR14
-         wIwQ==
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1721321197; x=1721925997; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UCJzuich5vcNF0XDpn0++KWksAKuSuGZiqpZTSOzP6g=;
+        b=v+DBl7wPZ5DrylWoCGo6TREuE00iz3cuXktM8P+bFuz3vIqPGSc7CRMM+3r2/Z7qwi
+         DFcHlsvMw/8fRiK5cXIORX3pVnAFpiT8+hSAKvB17lO24nhgeb7BlMQr5V3YKNjUCzBT
+         4VPcvQylNL24WH1P1qEjEz3SzKys5YyffVR3uolg7b4RVbE7QA1mY5V/4yBV+Rs5LLFV
+         4KsPU1fVS2LceOqTeTHwysMUsFOKxMkpy/XG/7G3zGgJkm71gxLFLK2Bp3BwC81G2t29
+         HRHdfVyPc5kx6fjDsIcMi8zAfmt9Zaz2RaMHwQferENXHOnPT3L7Bs+CNwfTClKuTAaI
+         XFhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721321171; x=1721925971;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=arhQFPA35GKI/93FWGqsJVzt2AdCMpET0AJ4iJUPkU0=;
-        b=aZXTAJwRSk5W6Yg46JMdA4TbWEWGC2J44DSoqqOcbj54XjCm564wji21gENXro4epR
-         ip0pwnAkng3FswD9TFIDvjZ2U1qJGS+AO+JYfW8HjLNULAqb+wcAYbdWtd4Huc92nH8a
-         FYj0nSJD8XUEljXDyZG5B1McCYUFr0r0sR9QzO8hF7hf/5AmH55asxRRNzAOPtuPXxvj
-         ZqU+jtnExFjxm1H/ZsZuNZiZIm+Ttgt5lyanXBg+0sFy1FKzNvKmKjU5ISgULZg27rZv
-         5/+LmSJpuIxIyUm0ttiIMniZAvGqpyxsrrtXI/N3bYAn3pTBq0fQLQVs350fj0wIJAaw
-         dTnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvLNjlttN43EvXMcB31JMyA1Wt2AlCizggwT05NHsF6UWQPz/1R7xf0HZj+Ta2aVPesMckKyFQNXdQ5oUECbE+Hjns1ejbbEmPqXm6jrNyrPzKQPOiliEITgRsPU4VJuQivnLjoUglm59sLkdjJKip/yJvZ6X/RoN8z3X5Q/jUrQ8yM6wCt424Jci1uoQo+JQbG6zNnwkh2gw8EisaiG0k22smtZlXFQ==
-X-Gm-Message-State: AOJu0YyGdLhnqW5Mf3aYHRZGH/6tEIACPZLP3D61gMew8XWwhRpi8Udy
-	SnHsZnbTresnSXDOv25iZxGcfhiWD+xAGe00W3SwKULqx/gdFp80t0NrBCcZJl8/e5Hi3x7Tc2M
-	PajWiaIm8cLXIdaZzNb1NAPkDIzw=
-X-Google-Smtp-Source: AGHT+IFHq/HyFGjzo5nT29rrLEfgvMPTpXRQf82XzBKasZvQqN+a6kU4Jb41QlgaO1cXmg4e697XxADWX/sczTUn/ek=
-X-Received: by 2002:a05:6a21:3985:b0:1bd:288f:e8b4 with SMTP id
- adf61e73a8af0-1c3fdc661b0mr6776285637.7.1721321171572; Thu, 18 Jul 2024
- 09:46:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721321197; x=1721925997;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UCJzuich5vcNF0XDpn0++KWksAKuSuGZiqpZTSOzP6g=;
+        b=f2I0P3zNjsi+4wE38xx6JMfbSJwGkb5w6/y5fanjGU6bZnFjwZklmJIfHZq29ixirf
+         /MwhKPssv+yA1rcB81F8cPPWvGeaNk1YcfHGqAHRNw/4yJm9x4FeQ178+vjO8662UvDa
+         pBmtHhLPydObY721qTva3wsiSSKX0jj79z/nQIcfkEW7YWnFYOcemuLxDGfES3blBuuH
+         4w1KgFhnwFjuJxkCN0VoQQcnm2Vb2UV9xjeuj6mYTfmXhb0/0BGuNt9/+RX8JuUa3Xzu
+         YggjSo49v3N6FiWMYWReFcdWOBVMQ4w2WbFl4k/E6MaqSFWLKV2KbMASom8llHDzyC0i
+         jnsg==
+X-Forwarded-Encrypted: i=1; AJvYcCV7STP8OCAEIMkQSrYpxvcQrT/61eZjVsZd/CkxcWIXSBrIUTMv+H3CON+dmLcugPcQZRf9WSSlGK5w18JSDHgQVQBwInRdq2+S61z5
+X-Gm-Message-State: AOJu0YwpNmRZ84P6hoZreZb3S1eBWWO5ddvtOFrfsSmN5D7qhB7qDIJT
+	LYr+AXG9xUprWRQKro3vxu6rh5FNE+XGLjz5Zg5OCeA+E3B805ittRGvmkBFw1k=
+X-Google-Smtp-Source: AGHT+IHJwrUl/hDdqC/9tlGT2hk67IHXHUg+9Nt8C0hnwHeNLUcBO/UNKF5hNdOJ0fKvP8V96Myt1g==
+X-Received: by 2002:a05:620a:4014:b0:79f:7c0:ebfd with SMTP id af79cd13be357-7a193929281mr215018785a.16.1721321197324;
+        Thu, 18 Jul 2024 09:46:37 -0700 (PDT)
+Received: from nicolas-tpx395.lan ([2606:6d00:15:6720::7a9])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a19396e2b6sm41538085a.109.2024.07.18.09.46.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jul 2024 09:46:36 -0700 (PDT)
+Message-ID: <7a5167163f1df60899c9e2bfef1e42e0c67567f7.camel@ndufresne.ca>
+Subject: Re: [PATCH v4 1/2] media: videodev2: Add flags to unconditionnaly
+ enumerate pixels formats
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, Jacopo Mondi
+	 <jacopo.mondi@ideasonboard.com>
+Cc: mchehab@kernel.org, ezequiel@vanguardiasur.com.ar,
+ hverkuil-cisco@xs4all.nl,  linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-rockchip@lists.infradead.org,
+ kernel@collabora.com
+Date: Thu, 18 Jul 2024 12:46:35 -0400
+In-Reply-To: <069a9e2b-f0bc-46a7-aaec-f30157e9be2d@collabora.com>
+References: <20240717131430.159727-1-benjamin.gaignard@collabora.com>
+	 <20240717131430.159727-2-benjamin.gaignard@collabora.com>
+	 <2kbxr3hkjbcnaqescxmlcerziixg72icqpug6wa25eeggy2pnj@vqmxe4ojcwml>
+	 <dfc292f8-0014-4bf4-9429-31f729a176cd@collabora.com>
+	 <ok2a4ubzka6rhzyj2c5op73ij7pw35g6e75whc2jjget62fatx@zka2ewyt3kfv>
+	 <c8358d79bd51a9bfa5116b33ae5e7766b95d344d.camel@ndufresne.ca>
+	 <1faa7098-b108-480e-ae4b-ed25e0020e51@collabora.com>
+	 <7113029e2e192d43523a1ea5dae041fb53ae5948.camel@ndufresne.ca>
+	 <b454d93d607047c63663b3f003b3d3c23f07bac7.camel@ndufresne.ca>
+	 <069a9e2b-f0bc-46a7-aaec-f30157e9be2d@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710193653.1175435-1-andrii@kernel.org> <CAEf4BzaTEUkRU37fsuGy+-otWk9K0-c9=hs0APRz7pJy7rq-5w@mail.gmail.com>
- <20240718114521.4b0220b7@rorschach.local.home>
-In-Reply-To: <20240718114521.4b0220b7@rorschach.local.home>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 18 Jul 2024 09:45:59 -0700
-Message-ID: <CAEf4BzYGWLYBOYxK6YteDNu3tEkF00MBm4d1Z7twXF-SfSZXJw@mail.gmail.com>
-Subject: Re: [PATCH v5] perf,x86: avoid missing caller address in stack traces
- captured in uprobe
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
-	peterz@infradead.org, mhiramat@kernel.org, x86@kernel.org, mingo@redhat.com, 
-	tglx@linutronix.de, jpoimboe@redhat.com, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, rihams@fb.com, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 18, 2024 at 8:45=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org=
-> wrote:
->
-> On Thu, 18 Jul 2024 08:29:23 -0700
-> Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
->
-> > Ping. What's the status of this patch? Is it just waiting until after
-> > the merge window, or it got lost?
->
-> It's probably best to re-ping after rc1 is out. With recent events, a
-> lot of us are way behind in our work.
->
+Le jeudi 18 juillet 2024 =C3=A0 16:43 +0200, Benjamin Gaignard a =C3=A9crit=
+=C2=A0:
+> Le 18/07/2024 =C3=A0 16:02, Nicolas Dufresne a =C3=A9crit=C2=A0:
+> > Le jeudi 18 juillet 2024 =C3=A0 09:56 -0400, Nicolas Dufresne a =C3=A9c=
+rit=C2=A0:
+> > > Hi,
+> > >=20
+> > > Le jeudi 18 juillet 2024 =C3=A0 09:04 +0200, Benjamin Gaignard a =C3=
+=A9crit=C2=A0:
+> > > > Le 17/07/2024 =C3=A0 19:50, Nicolas Dufresne a =C3=A9crit=C2=A0:
+> > > [...]
+> > >=20
+> > > > > > > > > @@ -1569,6 +1569,7 @@ static int v4l_enum_fmt(const struc=
+t v4l2_ioctl_ops *ops,
+> > > > > > > > >     	int ret =3D check_fmt(file, p->type);
+> > > > > > > > >     	u32 mbus_code;
+> > > > > > > > >     	u32 cap_mask;
+> > > > > > > > > +	u32 flags;
+> > > > > > > > >=20
+> > > > > > > > >     	if (ret)
+> > > > > > > > >     		return ret;
+> > > > > > > > > @@ -1578,8 +1579,10 @@ static int v4l_enum_fmt(const stru=
+ct v4l2_ioctl_ops *ops,
+> > > > > > > > >     		p->mbus_code =3D 0;
+> > > > > > > > >=20
+> > > > > > > > >     	mbus_code =3D p->mbus_code;
+> > > > > > > > > +	flags =3D p->flags & V4L2_FMT_FLAG_ENUM_ALL_FORMATS;
+> > > > > > > > >     	memset_after(p, 0, type);
+> > > > > > > > >     	p->mbus_code =3D mbus_code;
+> > > > > > > > > +	p->flags =3D flags;
+> > > > > > > > Won't this set V4L2_FMT_FLAG_ENUM_ALL_FORMATS (if present) =
+in the
+> > > > > > > > flags returned to userspace ? Shouldn't be drivers to set
+> > > > > > > > V4L2_FMT_FLAG_ALL_FORMATS instead ?
+> > > > > > > memset_after zeroed flags field so we need this to send V4L2_=
+FMT_FLAG_ENUM_ALL_FORMATS
+> > > > > > > flag to drivers. Return it to userspace is a side effect but =
+I don't that is problem
+> > > > > > > since it set it anyway.
+> > > > > > >=20
+> > > > > > Ok, if the expectation is that the flag is preserved through th=
+e ioctl
+> > > > > > call, this is fine with me
+> > > > > I might be missing something other similar features are explicitl=
+y advertised by
+> > > > > drivers. This way, the generic layer can keep or clear the flag b=
+ased of if its
+> > > > > supported. The fact the flag persist the ioctl() or not endup hav=
+ing a useful
+> > > > > semantic.
+> > > > >=20
+> > > > > Could we do the same?
+> > > > It is the only flag set by userspace when calling the ioctl(), all =
+others
+> > > > are set by the drivers.
+> > > > I can clean it from the ioctl() structure after driver call but tha=
+t won't change anything.
+> > > This does not answer my question. In other similar feature, we have a=
+n
+> > > **internal** flag set by drivers to tell the framework that such feat=
+ure is
+> > > abled. Using that, the framework can keep or remove that flag based o=
+n if its
+> > > supported or not. This way, userspace have a clue if the driver do ha=
+ve this
+> > > support or if the returned result (in that case) is just a subset mat=
+ching the
+> > > configuration. We don't seem to have done the same level of effort he=
+re.
+> > For the reference, you actually use that semantic in GStreamer implemen=
+tation,
+> > but the kernel code seems broken.
+> >=20
+> > https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/707=
+8/diffs#eb90d5495df2f085f163996014c748a36f143f76_516_527
+>=20
+> device_caps u32 field is already almost fully used, only one 1 bit is fre=
+e.
+> I could use it but, for me, the capability to enumerate all the formats
+> doesn't fit well in the existing list.
 
-I understand, will resend later, thanks for quickly getting back to me!
+Sorry, but I will re-iterate that I don't mean to add a uAPI but an **inter=
+nal**
+flag between driver and framework. This way the framework knows at least.
 
-> Thanks,
->
-> -- Steve
+>=20
+> Benjamin
+>=20
+> >=20
+> > > Nicolas
+> > >=20
+> > > > > > Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> > > > > >=20
+> > > > > > > > >     	switch (p->type) {
+> > > > > > > > >     	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
+> > > > > > > > > diff --git a/include/uapi/linux/videodev2.h b/include/uap=
+i/linux/videodev2.h
+> > > > > > > > > index fe6b67e83751..b6a5da79ba21 100644
+> > > > > > > > > --- a/include/uapi/linux/videodev2.h
+> > > > > > > > > +++ b/include/uapi/linux/videodev2.h
+> > > > > > > > > @@ -886,6 +886,8 @@ struct v4l2_fmtdesc {
+> > > > > > > > >     #define V4L2_FMT_FLAG_CSC_HSV_ENC		V4L2_FMT_FLAG_CSC_=
+YCBCR_ENC
+> > > > > > > > >     #define V4L2_FMT_FLAG_CSC_QUANTIZATION		0x0100
+> > > > > > > > >     #define V4L2_FMT_FLAG_META_LINE_BASED		0x0200
+> > > > > > > > > +#define V4L2_FMT_FLAG_ENUM_ALL_FORMATS		0x0400
+> > > > > > > > > +#define V4L2_FMT_FLAG_ALL_FORMATS		0x0800
+> > > > > > > > >=20
+> > > > > > > > >     	/* Frame Size and frame rate enumeration */
+> > > > > > > > >     /*
+> > > > > > > > > --
+> > > > > > > > > 2.43.0
+> > > > > > > > >=20
+> > > > > > > > >=20
+> > > > > > > > _______________________________________________
+> > > > > > > > Kernel mailing list -- kernel@mailman.collabora.com
+> > > > > > > > To unsubscribe send an email to kernel-leave@mailman.collab=
+ora.com
+> > > > > > > > This list is managed by https://mailman.collabora.com
+> > > > _______________________________________________
+> > > > Kernel mailing list -- kernel@mailman.collabora.com
+> > > > To unsubscribe send an email to kernel-leave@mailman.collabora.com
+> > > > This list is managed by https://mailman.collabora.com
+> > > _______________________________________________
+> > > Kernel mailing list -- kernel@mailman.collabora.com
+> > > To unsubscribe send an email to kernel-leave@mailman.collabora.com
+> > > This list is managed by https://mailman.collabora.com
+
 
