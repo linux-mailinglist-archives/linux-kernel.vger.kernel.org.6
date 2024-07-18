@@ -1,172 +1,158 @@
-Return-Path: <linux-kernel+bounces-256425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AFC4934E4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:37:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5A76934E66
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A735B22848
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:37:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04C031C22BB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E96713DB99;
-	Thu, 18 Jul 2024 13:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wxiM+Fv7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a4xTJAAq";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wxiM+Fv7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a4xTJAAq"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C2B13DDAB;
+	Thu, 18 Jul 2024 13:38:42 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA4713D2A9;
-	Thu, 18 Jul 2024 13:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5364413D89D
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 13:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721309827; cv=none; b=nXn1NIHMKuWwl7fJ8E/Py11WGwZyoPBEz/RIErG+7MJN+OZ8m+nc6JUt5u5ytP3vIH2avghpP2dSfpnoI0pJqv1KEhJWp5/QTYooNO1ndzbnF3anFZVvVC1ytOgiPzfRwLOfHRMKVgNfDBa0K21DqQ3SAc8mRxpf8LMa3jaDbK8=
+	t=1721309922; cv=none; b=HW21xYT0ySE1bZGCM/V09V3QNxtWIhyjhq0PZCxo0opW/89NBoDHKbkKXftcXWovtBiyqIBQK3wg/AYb0NkfOTrmhpZcbqDz4ihyFHVq+cxWYNa6Ej3oUeKW0VQ+LI/tJLnceP4f6iDL0/Hvc/hCRE9Z1u2FHi+TkOrme1VBj6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721309827; c=relaxed/simple;
-	bh=IxzQVedj8HjeYrtYiiT/ZIo17tYJbx0z7fBH4Ca/L80=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YFg06USVpKTEdWEIrnAlIx5tutPSFMsD77NPLZITLQ3Rm6jwr8+K9o7fSTbVumywHmmQte4ptBojys/78eUJCvsgPlWZ16ob0U4KTtlX61gn42rfMq9VYtIFIdzQrI8msk/uxoNrM0WWWo2kEmU5LWoGKWyhXkLab4A1P1SwLJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wxiM+Fv7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a4xTJAAq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wxiM+Fv7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a4xTJAAq; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 7B1181F395;
-	Thu, 18 Jul 2024 13:37:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721309823;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bnHHRnpfO9jAdEpLbj2fGiz87wmhvdQ209v3Jxvxsp0=;
-	b=wxiM+Fv70jqRiow+TYRbVDQzEofhHiYABjpcxKcf8VftMH5lmOfKV1l20di+82Em04z3pb
-	1eZ1hGHLGiSoNeWoDmqa0L0mIY/GlYGicH5EUcuwfSFcV03dKXi/AzAwqSYNt1KwaNn42J
-	y3dTMbd0uPRbrvsyvBa7r4i5TjfxXfI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721309823;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bnHHRnpfO9jAdEpLbj2fGiz87wmhvdQ209v3Jxvxsp0=;
-	b=a4xTJAAq+onypgGhYwrypBrJymHqkZv1G0CpcYfriS2pnO7++wxFka5GwFGXUdhjzX0fDg
-	TmDU8mklRYZ1s9Aw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=wxiM+Fv7;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=a4xTJAAq
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721309823;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bnHHRnpfO9jAdEpLbj2fGiz87wmhvdQ209v3Jxvxsp0=;
-	b=wxiM+Fv70jqRiow+TYRbVDQzEofhHiYABjpcxKcf8VftMH5lmOfKV1l20di+82Em04z3pb
-	1eZ1hGHLGiSoNeWoDmqa0L0mIY/GlYGicH5EUcuwfSFcV03dKXi/AzAwqSYNt1KwaNn42J
-	y3dTMbd0uPRbrvsyvBa7r4i5TjfxXfI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721309823;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bnHHRnpfO9jAdEpLbj2fGiz87wmhvdQ209v3Jxvxsp0=;
-	b=a4xTJAAq+onypgGhYwrypBrJymHqkZv1G0CpcYfriS2pnO7++wxFka5GwFGXUdhjzX0fDg
-	TmDU8mklRYZ1s9Aw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 60F921379D;
-	Thu, 18 Jul 2024 13:37:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dUxxF38amWbhCAAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 18 Jul 2024 13:37:03 +0000
-Date: Thu, 18 Jul 2024 15:37:02 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] Btrfs updates for 6.11
-Message-ID: <20240718133701.GG8022@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <cover.1721066206.git.dsterba@suse.com>
- <CAHk-=wgw9uyrpi+qL28Ee650p7jaXEMjUoRzXBymraoENDMt6w@mail.gmail.com>
+	s=arc-20240116; t=1721309922; c=relaxed/simple;
+	bh=+MOBinJhyFH9jlNjpQWWV3Sh3JRD66MJunjrU//bXk0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gShFhBhkpBH4sCY32cYSdaVCKM4i3+sVO3kTvL+GfFKuVkCra6wqMgqlP8TcUN8n0wjxxcCH8xTRobVSsjIo+qZTYSECUJBqD/b79S/ZDuLYwoq2NrFdnBZDV5qr0mkrZpUM0bWNhBniQIsPv7ZfJZ7hGIuohkdO6g1U+pCQinw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from [2601:18c:9101:a8b6:6e0b:84ff:fee2:98bb] (helo=imladris.surriel.com)
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1sURKs-000000000Jg-3Siz;
+	Thu, 18 Jul 2024 09:38:18 -0400
+Message-ID: <d18ff73a0ef7536f654b63854dc891984319093f.camel@surriel.com>
+Subject: Re: [RFC PATCH] nmi,printk: fix ABBA deadlock between nmi_backtrace
+ and dump_stack_lvl
+From: Rik van Riel <riel@surriel.com>
+To: John Ogness <john.ogness@linutronix.de>, Andrew Morton
+	 <akpm@linux-foundation.org>
+Cc: Omar Sandoval <osandov@meta.com>, linux-kernel@vger.kernel.org, Petr
+ Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>, kernel-team <kernel-team@meta.com>
+Date: Thu, 18 Jul 2024 09:38:18 -0400
+In-Reply-To: <87r0brkvqd.fsf@jogness.linutronix.de>
+References: <20240715232052.73eb7fb1@imladris.surriel.com>
+	 <87plrcqyii.fsf@jogness.linutronix.de>
+	 <93155b2ccafa43ed4845ae450451c6b8e27509cc.camel@surriel.com>
+	 <87r0brkvqd.fsf@jogness.linutronix.de>
+Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
+ keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33Aeo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdYdIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gUmllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986ogEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHVWjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE+BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTeg4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/j
+	ddPxKRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/NefO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0MmG1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tPokBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznnekoTE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44NcQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhIomYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0IpQrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkEc4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgw9uyrpi+qL28Ee650p7jaXEMjUoRzXBymraoENDMt6w@mail.gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_THREE(0.00)[4];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:replyto,suse.cz:dkim]
-X-Spam-Flag: NO
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.21
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 7B1181F395
+Sender: riel@surriel.com
 
-On Wed, Jul 17, 2024 at 01:21:17PM -0700, Linus Torvalds wrote:
-> On Mon, 15 Jul 2024 at 11:12, David Sterba <dsterba@suse.com> wrote:
-> >
-> > There's a merge conflict caused by the latency fixes from last week in
-> > extent_map.c:btrfs_scan_inode(), related commits 4e660ca3a98d931809734
-> > and b3ebb9b7e92a928344a. Resolved in branch for-6.11-merged and that's
-> > been in linux-next for a few days.
-> 
-> Oh, and I notice that my resolution is slightly different, but looks
-> like the actual code is equivalent.
-> 
-> I kept the "q" logic that had been introduced by commit 4e660ca3a98d
-> ("btrfs: use a regular rb_root instead of cached rb_root for
-> extent_map_tree").
-> 
-> I don't know how you prefer the code, but it kept the two "while
-> (node)" loops in that file looking similar.
+On Thu, 2024-07-18 at 09:31 +0206, John Ogness wrote:
+> On 2024-07-17, Rik van Riel <riel@surriel.com> wrote:
+> > I think that would do the trick. The nmi_backtrace() printk is
+> > already
+> > deferred, because of the check for in_nmi() in vprintk(), and this
+> > change would put all the other users of
+> > printk_cpu_sync_get_irqsave()
+> > on the exact same footing as nmi_backtrace().
+> >=20
+> > Combing through the code a little, it looks like that would remove
+> > the potential for this deadlock to happen again.
+>=20
+> Let's see what Petr has to say. (He'll be back on Monday.) He might
+> prefer a solution that does not result in deferring printing for all
+> cases. i.e. allow the console_lock if it is available, but avoid the
+> spinning if it is not. Below is a patch that would achieve this.
+>=20
+> John
+>=20
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index dddb15f48d59..36f40db0bf93 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -1060,6 +1060,8 @@ static int __init log_buf_len_setup(char *str)
+> =C2=A0early_param("log_buf_len", log_buf_len_setup);
+> =C2=A0
+> =C2=A0#ifdef CONFIG_SMP
+> +static bool vprintk_emit_may_spin(void);
+> +
+> =C2=A0#define __LOG_CPU_MAX_BUF_LEN (1 << CONFIG_LOG_CPU_MAX_BUF_SHIFT)
+> =C2=A0
+> =C2=A0static void __init log_buf_add_cpu(void)
+> @@ -1090,6 +1092,7 @@ static void __init log_buf_add_cpu(void)
+> =C2=A0}
+> =C2=A0#else /* !CONFIG_SMP */
+> =C2=A0static inline void log_buf_add_cpu(void) {}
+> +static inline bool vprintk_emit_may_spin(void) { return true };
+> =C2=A0#endif /* CONFIG_SMP */
+> =C2=A0
+> =C2=A0static void __init set_percpu_data_ready(void)
+> @@ -2330,6 +2333,8 @@ asmlinkage int vprintk_emit(int facility, int
+> level,
+> =C2=A0
+> =C2=A0	/* If called from the scheduler, we can not call up(). */
+> =C2=A0	if (!in_sched) {
+> +		int ret;
+> +
+> =C2=A0		/*
+> =C2=A0		 * The caller may be holding system-critical or
+> =C2=A0		 * timing-sensitive locks. Disable preemption during
+> @@ -2344,7 +2349,11 @@ asmlinkage int vprintk_emit(int facility, int
+> level,
+> =C2=A0		 * spinning variant, this context tries to take over
+> the
+> =C2=A0		 * printing from another printing context.
+> =C2=A0		 */
+> -		if (console_trylock_spinning())
+> +		if (vprintk_emit_may_spin())
+> +			ret =3D console_trylock_spinning();
+> +		else
+> +			ret =3D console_trylock();
+> +		if (ret)
+> =C2=A0			console_unlock();
+> =C2=A0		preempt_enable();
+> =C2=A0	}
+> @@ -4321,6 +4330,15 @@ void console_replay_all(void)
+> =C2=A0static atomic_t printk_cpu_sync_owner =3D ATOMIC_INIT(-1);
+> =C2=A0static atomic_t printk_cpu_sync_nested =3D ATOMIC_INIT(0);
+> =C2=A0
+> +/*
+> + * As documented in printk_cpu_sync_get_irqsave(), a context holding
+> the
+> + * printk_cpu_sync must not spin waiting for another CPU.
+> + */
+> +static bool vprintk_emit_may_spin(void)
+> +{
+> +	return (atomic_read(&printk_cpu_sync_owner) !=3D
+> smp_processor_id());
+> +}
 
-That is fine, keeping the same style makes sense.
+I think the above would still deadlock, because the reported
+deadlock is an ABBA deadlock between two different CPUs.
 
-> Of course, they were very different in other respects (ie
-> drop_all_extent_maps_fast() does all extents unconditionally with that
-> retry logic, while btrfs_scan_inode() has that whole "bail out on any
-> contention" model, so whatever.
-> 
-> Anyway, it all *looks* ok to me, but please go and double-check that I
-> didn't mess something up.
+I think what the code would have to do is only trylock, and never
+spin after taking the printk_cpu_sync_get_irqsave lock.
 
-Looks correct to me as well.
+Were you thinking of moving the=C2=A0 this_cpu_read(printk_context)
+check from vprintk() into  vprintk_emit() and use that to decide
+whether to spin for the lock, or to give up if the trylock fails?
+
+--=20
+All Rights Reversed.
 
