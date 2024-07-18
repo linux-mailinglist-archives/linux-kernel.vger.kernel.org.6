@@ -1,87 +1,91 @@
-Return-Path: <linux-kernel+bounces-256353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0303C934CDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:00:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86581934CE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65DB1B22CD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:00:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 974461C2232E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F62513B7BE;
-	Thu, 18 Jul 2024 12:00:06 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5829B137905;
+	Thu, 18 Jul 2024 12:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c1l5liDI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFC012FB34
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 12:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E58512C473
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 12:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721304005; cv=none; b=oTHY9GmtUkdg4yiv/7xFT/qMwHTkH0fOgjNJeWT9l4ry0FlAUQ/kfxUTI1wCPLz+XfEzUX3AXdXrGHxqtHf5xCcC94YAhe78nT/63f5atRzFEuErQ/fnBqQRt2i4bSHst6t6e1t1ooHg4b7LhMVWP4s6HDj/YrHd8kltVp0gSuE=
+	t=1721304142; cv=none; b=fGD8x0EpO3RuHCbrfPGawLq4+F1EuNmqNbr69anK2js4rptKhnkVYJKbcsWeH+RCJM1azR8q4m2RI8rZMsGxRRLndHzMxidU+xNnh9oyWhf2IyqfSSDq0q9C5avg6EgmuN21kePmcOyHWWzItGS7EhAfWQuhLAtFxoW84nE6Mz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721304005; c=relaxed/simple;
-	bh=3gLBsscoSBFCxLmDvvnBKSsjHCec6Gpm0ks/pSurpTc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=dYNW6gEKoe1MQ7okzDICeQDxTKA9Aq+PowapsLw3Gn8U27uiffX8/WsGJ7Cy58wDeA0o8lqLnNvKFhipMiomQ/j0S+g+1THQLqZl12yhP6+Bk6NQU2pIbKs5CjvAkiybrOnub41LBWBuhlpdK3EihRbPcFgnj74ho9G5nUWvn3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8152f0c63c4so228519139f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 05:00:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721304003; x=1721908803;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0xRxDJxtAdMMpSSvxFYj6JkhxMKleL/Og5yP/fDMtos=;
-        b=uYFyUpSh9vMAwzINUBQhnarIv+H3EmzRSUAYBDjRJiyrVmz51FqwV2GG/30caF4lN3
-         MRRFv0NhuZl/k4OjNC1oYyBY/DbL+bo57RVWBM8mxrzxvx6pEm53H8eY1sFEXik4mQGP
-         ZEQAVlvgFWPvANiPNNhmavlKd19xW1Zj12Q73OdK5oeeA3vW36Xt+9DQfxQoPOaoCLoj
-         amHCYTTxEL9VPRnYpH7lrmFbAXWYHWJ15kcBVvTadgtEBVeHKppSmKFYJGLcR/Vlwqqo
-         ePMdIKlN+aW0sK4cmeYPsWK3Ww5QQj+zvyBnxsS8jGe2LGi9xnikEArqKqz5nyzdPeSd
-         n99A==
-X-Forwarded-Encrypted: i=1; AJvYcCW+tGtNOMeDPBTcp5XuVVZayT0QPXF7XzpeR/aprJjb4jn8xgVBZm1jadI01Wd28IdT3CwswbWjowrJglGIsTST9UWqgx8SMZqNK7Rs
-X-Gm-Message-State: AOJu0Yw0ylRbJaQGJ66YYkAFzCUZjtxBH8DTf5LUrouKCUUBIjrlIe7l
-	c3hfsTEJAKQ728wi8e1jtl8hqvQwKMhkGyzM6Re73N8tgHXiqSkjzCBfCNrnlaRsy6OwOIlH5pc
-	icd0G8OpahqlcqhxNTkQmQYJUu4hJoqAG0fHnUdzU2a/6AidFei2to6w=
-X-Google-Smtp-Source: AGHT+IFvi6Rj51UYqaujK4CcrHiK0jD+18oJowhra8vBynVABXLRhCQ+81bwUGz7WfaOl5fVNVVsi9mjGFDKF1yw6bSQauh5O7B7
+	s=arc-20240116; t=1721304142; c=relaxed/simple;
+	bh=4X3CaJuNtXM+dLODj6haMa7pA8m3mfucWCuMrl33fzA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=oopJN9iaskapyMFLoEp9oQRxW2X3I7V6BZaSuv9L4DvzZxHv3t998CELKAqt2yvVm2+LcV51SVLk2idsS7qzAFxzcEs7uIDAA4+/DpmcRtlpJg2xXGS0FaKisPeU0FA0E/09L0OU2H2iyab693wtgNEZ2yxRWggZ3/KuGzI1ePE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c1l5liDI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12162C116B1;
+	Thu, 18 Jul 2024 12:02:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721304142;
+	bh=4X3CaJuNtXM+dLODj6haMa7pA8m3mfucWCuMrl33fzA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=c1l5liDIz6OLKuDSicL7hu2aczwlYF0xi7JxW4hGZ8Qk7MfOleMq65Uq1dJHoCIl8
+	 Bd8mf9fnKtlaWT+iFHqNg971jKj70kmxaAu4MtzlEJm+sWssxkfRdI73KEFDuyHpLG
+	 /JwZeXOfsnw19RhZ65OeT3RIwjni92jquBu4iL9iyZAZbqBTb4Nib+1An2uKTSqrCn
+	 LDyJCoZ6ZavyXN0uFBpahg88fZa2HqhSydbMDTlT2IxMIzFfCRW8Q6rJd98X+n6jWp
+	 YEqG+zKaBcJi7A3JDbZL7tmxVfqi9xROuAUUUTb5TQRbQDhcC3c7pnsB+9mOjJQ+DP
+	 /XazVANzV67dQ==
+From: Robert Foss <rfoss@kernel.org>
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240711-bridge-connector-fix-dbl-free-v1-1-d558b2d0eb93@collabora.com>
+References: <20240711-bridge-connector-fix-dbl-free-v1-1-d558b2d0eb93@collabora.com>
+Subject: Re: [PATCH] drm/bridge-connector: Fix double free in error
+ handling paths
+Message-Id: <172130413876.532897.864210015976659933.b4-ty@kernel.org>
+Date: Thu, 18 Jul 2024 14:02:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:204d:b0:4c0:971d:36b1 with SMTP id
- 8926c6da1cb9f-4c21fc95f5amr105399173.3.1721304003359; Thu, 18 Jul 2024
- 05:00:03 -0700 (PDT)
-Date: Thu, 18 Jul 2024 05:00:03 -0700
-In-Reply-To: <20240718110318.1438-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000abc9fc061d8451a5@google.com>
-Subject: Re: [syzbot] [fs?] WARNING: lock held when returning to user space in ns_ioctl
-From: syzbot <syzbot+dd73570cf9918519e789@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-Hello,
+On Thu, 11 Jul 2024 14:26:55 +0300, Cristian Ciocaltea wrote:
+> The recent switch to drmm allocation in drm_bridge_connector_init() may
+> cause double free on bridge_connector in some of the error handling
+> paths.
+> 
+> Drop the explicit kfree() calls on bridge_connector.
+> 
+> 
+> [...]
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Applied, thanks!
 
-Reported-by: syzbot+dd73570cf9918519e789@syzkaller.appspotmail.com
-Tested-by: syzbot+dd73570cf9918519e789@syzkaller.appspotmail.com
+[1/1] drm/bridge-connector: Fix double free in error handling paths
+      https://cgit.freedesktop.org/drm/drm-misc/commit/?id=ca5442ed8f53
 
-Tested on:
 
-commit:         51835949 Merge tag 'net-next-6.11' of git://git.kernel..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=102d825e980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d3bdd09ea2371c89
-dashboard link: https://syzkaller.appspot.com/bug?extid=dd73570cf9918519e789
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1575825e980000
 
-Note: testing is done by a robot and is best-effort only.
+Rob
+
+
 
