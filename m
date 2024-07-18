@@ -1,263 +1,376 @@
-Return-Path: <linux-kernel+bounces-255879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B2A79345F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:59:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F2AB9345FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 04:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0D48B216D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:59:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A315283559
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 02:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F81E1BDDB;
-	Thu, 18 Jul 2024 01:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="shdf9e8O"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9122837D;
+	Thu, 18 Jul 2024 02:03:26 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCEE1FB5
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 01:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24632175A5
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 02:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721267982; cv=none; b=upPDVcx7AjfOFO52bFBB/7z7xsCmhlF3RWpk3f1wj7/MIbu5AA3VqasG9bgmT2StIneHxz12cuYmbyU/VT+R8MbZymq3GmbiSeUih2bFEvTU0MWjkR/VGTI5gzEGuxjUIrqQZte39SrINae66qSN+Vt1nsOB+4cwhb8NySN2HlI=
+	t=1721268205; cv=none; b=KSKCTlgLjRTmFqJXj8fSziffPC2A1tn/HCwcwhiDhwRrNj6HAvkM6TVaP4rdA8V15R4CtfJIT+cNh7dWYsMbOn4I+87ND9MPMmSXFwEMfW0ix+dfUM2xfilhgGsd9ffIYMTCAmznTSRWcAcwpfxcAm0SAP63oDti1/d6AC+kMOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721267982; c=relaxed/simple;
-	bh=fwy7tFrFnUI3LzbR2916EQ2Ng8NP4m5zIbrt2rE9Xrc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M29FHVPzJTAS2BkXITwAYzappHo5xcknJPbpEgpqCL/TFrxMDr8zXy06nEXXDyjZssXu49Lw+Q5n83JfHN36HCaCEwRZKb+gbZshH1sPM5mrR4J8UUAmdJJ+64E0C1pUl/Lyn0WKNzBT9w1AELWWLUB7+ZTUUv+Mcx05hdcrkOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=shdf9e8O; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-44e534a1fbeso91381cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 18:59:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721267980; x=1721872780; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fwy7tFrFnUI3LzbR2916EQ2Ng8NP4m5zIbrt2rE9Xrc=;
-        b=shdf9e8OCwOmIcW2lHIJjQcCRTS4U5f/60IHR3QWp8aCkvtNM0ylSi0hUcnwDqwiPS
-         Ka85X8xukgEBl2XZEnx10nMkEc+hPfYjBusVRPnOqlHBdJP+3YPIcMi9aUIotXhw4rOv
-         6nas0c307f299cgeR8x/0LQNO18BMZK5vDuRSE6lMIQXqX/hB0EuoVpjQg84OFeBoV17
-         JcDWJwrYD+Blw3jAFuA5UJdoLG64o4dENzIVTjNH9gU9+GGrncSS8uY+JufKgVKEgNuO
-         KgTpeDStK4Ps8l373mVITs71kAPmxrF1hvozw7UYn4iXXgWW+OSBNTSwEOSHNLpsQr+u
-         OK7Q==
+	s=arc-20240116; t=1721268205; c=relaxed/simple;
+	bh=6PKGXN0nBxY7ErtJ/aDukPwNVodKVv72RWtidWdFaz4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DeGK8IQBWnFLIJbkHkeceD6OTnicAIyxNwKDd5jmPt1t5nVxFXTdgvupJk1wdIKp5MVpw69fE8Y1Ia146MxJOJ8anHNvZBlBa7Q+7Mdb4ltiUrr02dFHt7jToQoo5f8RBrnC7LCtr0KAsjMcL3XpIegMazG+uBdA6R8gLF+oE00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-385872df1e8so4442505ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 19:03:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721267980; x=1721872780;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fwy7tFrFnUI3LzbR2916EQ2Ng8NP4m5zIbrt2rE9Xrc=;
-        b=hIGJ09t4orqtGyXgyplTQS5DtIJCjPYK46+fh5KXqjtwS6B/KifqkxZFdyOpy+SIwu
-         vm2xYvJjgdgQ8MAGItSVm8STAUqHflyVr9g8p44L53yOPqWFbavo7P3SXDR8SHLmq+ZC
-         43kusUNLyPJ0ux0Vh9h1u3geD6MGyVC294Tv+g2V40apiIyO5e5pWaHBFJGI3fMwhlLH
-         M06lpob05tRq8PJmlCteshvO+XOD5Xa+uik4XAksAps2tHJ11por3XeTScWja2nAWNzF
-         nXxxHZDz61YOaMw/UhaG1jE6PowOnhacLs3HzNRHvZN15iE9kQF8VzwOgUEHNXvjsqiq
-         nazA==
-X-Forwarded-Encrypted: i=1; AJvYcCVpil+B2oEs2cmYNbd2JfyGT3owjuI2D9XvQNGbXwaEk4ZJMHTqJcr3wtAe4kd0V1G5n1l/KmPT3u3pQMp5S0ZKHdp3GQiJW8xbNBxY
-X-Gm-Message-State: AOJu0YxEH0iIksBLNbg2kSIyE3xOhaGQyLSxkPT2+8Gd4KTgSr2JHUmZ
-	FFhGRztI7LzE3dq0yxowlcdNAtLFbCdImLXksQTXAOg740+fWRbtmWOJM82ElNpBnT7wln8RJpc
-	VxKOAxyjRLPujEZHqPLfKeSx8RGXhpRNYc4nO
-X-Google-Smtp-Source: AGHT+IE58y37covXCZXpnSJtGTosaOLDYejn3iVUtH4Ayy+oebIBQjA8FkdBSlTvRYoeDLEBTBvkMRc0DIX3l5grc1I=
-X-Received: by 2002:a05:622a:4d06:b0:447:e4cb:bf50 with SMTP id
- d75a77b69052e-44f91ae2480mr892591cf.8.1721267979720; Wed, 17 Jul 2024
- 18:59:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721268202; x=1721873002;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2zoNBiqiw7wd4dWLPFJKgChR6DhPP4L7PMHeKP4K28Q=;
+        b=cn6y/pwqL4QRw2IaKdB/PSPtXZ/wURN/reeMrjiO9kAQnsW8DDdXrj5iWJrhga6ecd
+         DEFnEkwaVDoLduM7DuR47n0RbbcdKr15nLvbRlbm5nxV+jVOHtC21N/haDFmyaRr/ful
+         +Qa1GCMkakor74rNNQObfhf2BpPWYBJNuRMMsJO9k61ANo3ue4UgbaeWD7UQRko4dyRT
+         3l4BHJLmVnFC8tPJizL/TY4IFchqb0sEuDL+i8AjxAimNtsNKR/RStOBGV5IuP0V3Kat
+         Nrn36OaHCCW4QpA1fjlymXLr3aleadBSOnjx1OUa5UXrD6Z9Q0/yEuAYCyQ/oc/uG0cW
+         Fj4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUkZ+9SVZtkXNXrPeHqpco3Umw7y3Fucm5qwCQi5qMxThL+DV0XZJMcBw7CGuBLjyAkLB/v1iR0QkOd095/naocB417gBB7+7r4sWm5
+X-Gm-Message-State: AOJu0Yyizu+ZTIFzbOIhFYrur+AJqs0/hSQiGOUpkb1w+KcLxfA2/JyG
+	cNtoQoJ366RQbsKOMgxYuTAw1qZ5rPYIdz/DVUHp189jkpAAV8+WqlvZPR8lE4kcKD35tjmdUQE
+	1Q/IH0HjTZ/x8gGKsCER/36eXSY9moaPARmUp1rJ0tFnGjkg6lGMvSbE=
+X-Google-Smtp-Source: AGHT+IGPjFZWf3fOkaa/IO35e/QoZDVBZr56JbE3XviU6mtfhlbqV6shRhabbSsZm8KRGU/LihEpw2d18IwYteSi5hYHJKCsnkIv
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710234222.2333120-1-jthoughton@google.com> <CALzav=d+eALgV5UKnwHh67XYba53tkWwDNPWrThcmCP++sCiLg@mail.gmail.com>
-In-Reply-To: <CALzav=d+eALgV5UKnwHh67XYba53tkWwDNPWrThcmCP++sCiLg@mail.gmail.com>
-From: James Houghton <jthoughton@google.com>
-Date: Wed, 17 Jul 2024 18:59:02 -0700
-Message-ID: <CADrL8HUi2x2z+Jow_rb+iiuySWMCRq8Ti6SwzBoHUNSH1mcYhw@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/18] KVM: Post-copy live migration for guest_memfd
-To: David Matlack <dmatlack@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	Sean Christopherson <seanjc@google.com>, Shuah Khan <shuah@kernel.org>, 
-	Axel Rasmussen <axelrasmussen@google.com>, kvm@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, Peter Xu <peterx@redhat.com>
+X-Received: by 2002:a05:6e02:1c0b:b0:382:ef85:c3a1 with SMTP id
+ e9e14a558f8ab-39558298e30mr2375255ab.6.1721268202300; Wed, 17 Jul 2024
+ 19:03:22 -0700 (PDT)
+Date: Wed, 17 Jul 2024 19:03:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c2f7f2061d7bfb12@google.com>
+Subject: [syzbot] [net?] WARNING: suspicious RCU usage in dev_deactivate_queue
+From: syzbot <syzbot+ca9ad1d31885c81155b6@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, jhs@mojatatu.com, 
+	jiri@resnulli.us, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
+	xiyou.wangcong@gmail.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 11, 2024 at 4:37=E2=80=AFPM David Matlack <dmatlack@google.com>=
- wrote:
->
-> On Wed, Jul 10, 2024 at 4:42=E2=80=AFPM James Houghton <jthoughton@google=
-.com> wrote:
-> >
-> > --- Preventing access: KVM_MEMORY_ATTRIBUTE_USERFAULT ---
-> >
-> > The most straightforward way to inform KVM of userfault-enabled pages i=
-s
-> > to use a new memory attribute, say KVM_MEMORY_ATTRIBUTE_USERFAULT.
-> >
-> > There is already infrastructure in place for modifying and checking
-> > memory attributes. Using this interface is slightly challenging, as the=
-re
-> > is no UAPI for setting/clearing particular attributes; we must set the
-> > exact attributes we want.
->
-> The thing we'll want to optimize specifically is clearing
-> ATTRIBUTE_USERFAULT. During post-copy migration, there will be
-> potentially hundreds of vCPUs in a single VM concurrently
-> demand-fetching memory. Clearing ATTRIBUTE_USERFAULT for each page
-> fetched is on the critical path of getting the vCPU back into
-> guest-mode.
->
-> Clearing ATTRIBUTE_USERFAULT just needs to clear the attribute. It
-> doesn't need to modify page tables or update any data structures other
-> than the attribute itself. But the existing UAPI takes both mmu_lock
-> and slots_lock IIRC.
->
-> I'm also concerned that the existing UAPI could lead to userspace
-> accidentally clearing ATTRIBUTE_USERFAULT when it goes to set
-> ATTRIBUTE_PRIVATE (or any other potential future attribute). Sure that
-> could be solved but that means centrally tracking attributes in
-> userspace and issuing one ioctl per contiguous region of guest memory
-> with matching attributes. Imagine a scenario where ~every other page
-> of guest memory as ATTRIBUTE_USERFAULT and then userspace wants to set
-> a differient attribute on a large region of memory. That's going to
-> take a _lot_ of ioctls.
->
-> Having a UAPI to set (attributes |=3D delta) and clear (attributes &=3D
-> ~delta) attributes on a range of GFNs would solve both these problems.
+Hello,
 
-Hi David, sorry for the delay getting back to you.
+syzbot found the following issue on:
 
-I agree with all of these points.
+HEAD commit:    51835949dda3 Merge tag 'net-next-6.11' of git://git.kernel..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=147a6e95980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d3bdd09ea2371c89
+dashboard link: https://syzkaller.appspot.com/bug?extid=ca9ad1d31885c81155b6
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=139998b1980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=170b4f31980000
 
->
-> >
-> > The synchronization that is in place for updating memory attributes is
-> > not suitable for post-copy live migration either, which will require
-> > updating memory attributes (from userfault to no-userfault) very
-> > frequently.
->
-> There is also the xarray. I imagine that will trigger a lot of dynamic
-> memory allocations during post-copy which will slow increase the total
-> time a vCPU is paused due to a USERFAULT page.
->
-> Is it feasible to convert attributes to a bitmap?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/24fbc1342de2/disk-51835949.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/80cd41210088/vmlinux-51835949.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/26bfbd59223a/bzImage-51835949.xz
 
-I don't see any reason why we couldn't convert attributes to be a
-bitmap (or to have some attributes be stored in bitmaps and others be
-stored in the xarray).
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ca9ad1d31885c81155b6@syzkaller.appspotmail.com
 
->
-> >
-> > Another potential interface could be to use something akin to a dirty
-> > bitmap, where a bitmap describes which pages within a memslot (or VM)
-> > should trigger userfaults. This way, it is straightforward to make
-> > updates to the userfault status of a page cheap.
->
-> Taking a similar approach to dirty logging is attractive for several reas=
-ons.
->
-> 1. The infrastructure to manage per-memslot bitmaps already exists for
-> dirty logging.
-> 2. It avoids the performance problems with xarrays by using a bitmap.
-> 3. It avoids the performance problems with setting all attributes at once=
-.
->
-> However it will require new specific UAPIs to set/clear. And it's
-> probably possible to optimize attributes to meet our needs, and those
-> changes will benefit all attributes.
+=============================
+WARNING: suspicious RCU usage
+6.10.0-syzkaller-04472-g51835949dda3 #0 Not tainted
+-----------------------------
+net/sched/sch_generic.c:1284 suspicious rcu_dereference_protected() usage!
 
-Ok so the three options in my head are:
-1. Add an attribute diff UAPI and track the USERFAULT attribute in the xarr=
-ay.
-2. Add an attribute diff UAPI and track the USERFAULT attribute with a bitm=
-ap.
-3. Add a new UAPI to enable KVM userfaults on gfns according to a
-particular bitmap, similar to dirty logging.
+other info that might help us debug this:
 
-(1) is problematic because it is valid to have every page (or, say,
-every other page) have ATTRIBUTE_USERFAULT.
 
-(2) seems ok to me.
+rcu_scheduler_active = 2, debug_locks = 1
+3 locks held by kworker/u8:11/2874:
+ #0: ffff888023286148 ((wq_completion)bond0){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
+ #0: ffff888023286148 ((wq_completion)bond0){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
+ #1: ffffc90009dc7d00 ((work_completion)(&(&bond->mii_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
+ #1: ffffc90009dc7d00 ((work_completion)(&(&bond->mii_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
+ #2: ffffffff8e335fe0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:327 [inline]
+ #2: ffffffff8e335fe0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:839 [inline]
+ #2: ffffffff8e335fe0 (rcu_read_lock){....}-{1:2}, at: bond_mii_monitor+0x174/0x3170 drivers/net/bonding/bond_main.c:2824
 
-(3) would be great, but maybe the much more complicated UAPI is not
-worth it. (We get the ability to mark many different regions as
-USERFAULT in one syscall, and KVM has a lot of code for handling
-bitmap arguments.)
+stack backtrace:
+CPU: 0 PID: 2874 Comm: kworker/u8:11 Not tainted 6.10.0-syzkaller-04472-g51835949dda3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: bond0 bond_mii_monitor
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ lockdep_rcu_suspicious+0x221/0x340 kernel/locking/lockdep.c:6711
+ dev_deactivate_queue+0x8f/0x160 net/sched/sch_generic.c:1284
+ netdev_for_each_tx_queue include/linux/netdevice.h:2513 [inline]
+ dev_deactivate_many+0xc8/0xb10 net/sched/sch_generic.c:1357
+ dev_deactivate+0x184/0x280 net/sched/sch_generic.c:1397
+ linkwatch_do_dev+0x10a/0x170 net/core/link_watch.c:175
+ ethtool_op_get_link+0x15/0x60 net/ethtool/ioctl.c:62
+ bond_check_dev_link+0x1f1/0x3f0 drivers/net/bonding/bond_main.c:757
+ bond_miimon_inspect drivers/net/bonding/bond_main.c:2604 [inline]
+ bond_mii_monitor+0x49a/0x3170 drivers/net/bonding/bond_main.c:2826
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-I'm hoping others will weigh in here.
+=============================
+WARNING: suspicious RCU usage
+6.10.0-syzkaller-04472-g51835949dda3 #0 Not tainted
+-----------------------------
+include/linux/rtnetlink.h:100 suspicious rcu_dereference_protected() usage!
 
-> >
-> > When KVM Userfault is enabled, we need to be careful not to map a
-> > userfault page in response to a fault on a non-userfault page. In this
-> > RFC, I've taken the simplest approach: force new PTEs to be PAGE_SIZE.
-> >
-> > --- Page fault notifications ---
-> >
-> > For page faults generated by vCPUs running in guest mode, if the page
-> > the vCPU is trying to access is a userfault-enabled page, we use
-> > KVM_EXIT_MEMORY_FAULT with a new flag: KVM_MEMORY_EXIT_FLAG_USERFAULT.
-> >
-> > For arm64, I believe this is actually all we need, provided we handle
-> > steal_time properly.
->
-> There's steal time, and also the GIC pages. Steal time can use
-> KVM_EXIT_MEMORY_FAULT, but that requires special casing in the ARM
-> code. Alternatively, both can use the async mechanism and to avoid
-> special handling in the ARM code.
+other info that might help us debug this:
 
-Oh, of course, I forgot about the GIC. Thanks. And yes, if the async
-userfault mechanism is acceptable, using that would be better than
-adding the special cases.
 
->
-> >
-> > For x86, where returning from deep within the instruction emulator (or
-> > other non-trivial execution paths) is infeasible, being able to pause
-> > execution while userspace fetches the page, just as userfaultfd would
-> > do, is necessary. Let's call these "asynchronous userfaults."
-> >
-> > A new ioctl, KVM_READ_USERFAULT, has been added to read asynchronous
-> > userfaults, and an eventfd is used to signal that new faults are
-> > available for reading.
-> >
-> > Today, we busy-wait for a gfn to have userfault disabled. This will
-> > change in the future.
-> >
-> > --- Fault resolution ---
-> >
-> > Resolving userfaults today is as simple as removing the USERFAULT memor=
-y
-> > attribute on the faulting gfn. This will change if we do not end up
-> > using memory attributes for KVM Userfault. Having a range-based wake-up
-> > like userfaultfd (see UFFDIO_WAKE) might also be helpful for
-> > performance.
-> >
-> > Problems with this series
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-> > - This cannot be named KVM Userfault! Perhaps "KVM missing pages"?
-> > - Memory attribute modification doesn't scale well.
-> > - We busy-wait for pages to not be userfault-enabled.
->
-> Async faults are a slow path so I think a wait queue would suffice.
+rcu_scheduler_active = 2, debug_locks = 1
+3 locks held by kworker/u8:11/2874:
+ #0: ffff888023286148 ((wq_completion)bond0){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
+ #0: ffff888023286148 ((wq_completion)bond0){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
+ #1: ffffc90009dc7d00 ((work_completion)(&(&bond->mii_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
+ #1: ffffc90009dc7d00 ((work_completion)(&(&bond->mii_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
+ #2: ffffffff8e335fe0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:327 [inline]
+ #2: ffffffff8e335fe0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:839 [inline]
+ #2: ffffffff8e335fe0 (rcu_read_lock){....}-{1:2}, at: bond_mii_monitor+0x174/0x3170 drivers/net/bonding/bond_main.c:2824
 
-I think a wait queue seems like a good fit too. (It's what userfaultfd uses=
-.)
+stack backtrace:
+CPU: 1 PID: 2874 Comm: kworker/u8:11 Not tainted 6.10.0-syzkaller-04472-g51835949dda3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: bond0 bond_mii_monitor
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ lockdep_rcu_suspicious+0x221/0x340 kernel/locking/lockdep.c:6711
+ dev_ingress_queue include/linux/rtnetlink.h:100 [inline]
+ dev_deactivate_many+0x18f/0xb10 net/sched/sch_generic.c:1359
+ dev_deactivate+0x184/0x280 net/sched/sch_generic.c:1397
+ linkwatch_do_dev+0x10a/0x170 net/core/link_watch.c:175
+ ethtool_op_get_link+0x15/0x60 net/ethtool/ioctl.c:62
+ bond_check_dev_link+0x1f1/0x3f0 drivers/net/bonding/bond_main.c:757
+ bond_miimon_inspect drivers/net/bonding/bond_main.c:2604 [inline]
+ bond_mii_monitor+0x49a/0x3170 drivers/net/bonding/bond_main.c:2826
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+BUG: sleeping function called from invalid context at net/core/dev.c:11221
+in_atomic(): 0, irqs_disabled(): 0, non_block: 0, pid: 2874, name: kworker/u8:11
+preempt_count: 0, expected: 0
+RCU nest depth: 1, expected: 0
+3 locks held by kworker/u8:11/2874:
+ #0: ffff888023286148 ((wq_completion)bond0){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
+ #0: ffff888023286148 ((wq_completion)bond0){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
+ #1: ffffc90009dc7d00 ((work_completion)(&(&bond->mii_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
+ #1: ffffc90009dc7d00 ((work_completion)(&(&bond->mii_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
+ #2: ffffffff8e335fe0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:327 [inline]
+ #2: ffffffff8e335fe0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:839 [inline]
+ #2: ffffffff8e335fe0 (rcu_read_lock){....}-{1:2}, at: bond_mii_monitor+0x174/0x3170 drivers/net/bonding/bond_main.c:2824
+CPU: 1 PID: 2874 Comm: kworker/u8:11 Not tainted 6.10.0-syzkaller-04472-g51835949dda3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: bond0 bond_mii_monitor
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ __might_resched+0x5d4/0x780 kernel/sched/core.c:8437
+ synchronize_net+0x1b/0x50 net/core/dev.c:11221
+ dev_deactivate_many+0x4a7/0xb10 net/sched/sch_generic.c:1371
+ dev_deactivate+0x184/0x280 net/sched/sch_generic.c:1397
+ linkwatch_do_dev+0x10a/0x170 net/core/link_watch.c:175
+ ethtool_op_get_link+0x15/0x60 net/ethtool/ioctl.c:62
+ bond_check_dev_link+0x1f1/0x3f0 drivers/net/bonding/bond_main.c:757
+ bond_miimon_inspect drivers/net/bonding/bond_main.c:2604 [inline]
+ bond_mii_monitor+0x49a/0x3170 drivers/net/bonding/bond_main.c:2826
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
->
-> > - gfn_to_hva and gfn_to_pfn caches are not invalidated.
-> > - Page tables are not collapsed when KVM Userfault is disabled.
-> > - There is no self-test for asynchronous userfaults.
-> > - Asynchronous page faults can be dropped if KVM_READ_USERFAULT fails.
->
-> Userspace would probably treat this as fatal anyway right?
+=============================
+WARNING: suspicious RCU usage
+6.10.0-syzkaller-04472-g51835949dda3 #0 Tainted: G        W         
+-----------------------------
+kernel/rcu/tree_exp.h:931 Illegal synchronize_rcu_expedited() in RCU read-side critical section!
 
-Yes, but I still think dropping the gfn isn't great. I'll fix this
-when I change from using the hacky list-based thing to something more
-sophisticated (like a wait_queue).
+other info that might help us debug this:
+
+
+rcu_scheduler_active = 2, debug_locks = 1
+3 locks held by kworker/u8:11/2874:
+ #0: ffff888023286148 ((wq_completion)bond0){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
+ #0: ffff888023286148 ((wq_completion)bond0){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
+ #1: ffffc90009dc7d00 ((work_completion)(&(&bond->mii_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
+ #1: ffffc90009dc7d00 ((work_completion)(&(&bond->mii_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
+ #2: ffffffff8e335fe0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:327 [inline]
+ #2: ffffffff8e335fe0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:839 [inline]
+ #2: ffffffff8e335fe0 (rcu_read_lock){....}-{1:2}, at: bond_mii_monitor+0x174/0x3170 drivers/net/bonding/bond_main.c:2824
+
+stack backtrace:
+CPU: 1 PID: 2874 Comm: kworker/u8:11 Tainted: G        W          6.10.0-syzkaller-04472-g51835949dda3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: bond0 bond_mii_monitor
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ lockdep_rcu_suspicious+0x221/0x340 kernel/locking/lockdep.c:6711
+ synchronize_rcu_expedited+0x12e/0x830 kernel/rcu/tree_exp.h:928
+ dev_deactivate_many+0x4a7/0xb10 net/sched/sch_generic.c:1371
+ dev_deactivate+0x184/0x280 net/sched/sch_generic.c:1397
+ linkwatch_do_dev+0x10a/0x170 net/core/link_watch.c:175
+ ethtool_op_get_link+0x15/0x60 net/ethtool/ioctl.c:62
+ bond_check_dev_link+0x1f1/0x3f0 drivers/net/bonding/bond_main.c:757
+ bond_miimon_inspect drivers/net/bonding/bond_main.c:2604 [inline]
+ bond_mii_monitor+0x49a/0x3170 drivers/net/bonding/bond_main.c:2826
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+=============================
+[ BUG: Invalid wait context ]
+6.10.0-syzkaller-04472-g51835949dda3 #0 Tainted: G        W         
+-----------------------------
+kworker/u8:11/2874 is trying to lock:
+ffffffff8e33b3b8 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:328 [inline]
+ffffffff8e33b3b8 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x451/0x830 kernel/rcu/tree_exp.h:958
+other info that might help us debug this:
+context-{4:4}
+3 locks held by kworker/u8:11/2874:
+ #0: ffff888023286148 ((wq_completion)bond0){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
+ #0: ffff888023286148 ((wq_completion)bond0){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
+ #1: ffffc90009dc7d00 ((work_completion)(&(&bond->mii_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
+ #1: ffffc90009dc7d00 ((work_completion)(&(&bond->mii_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
+ #2: ffffffff8e335fe0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:327 [inline]
+ #2: ffffffff8e335fe0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:839 [inline]
+ #2: ffffffff8e335fe0 (rcu_read_lock){....}-{1:2}, at: bond_mii_monitor+0x174/0x3170 drivers/net/bonding/bond_main.c:2824
+stack backtrace:
+CPU: 1 PID: 2874 Comm: kworker/u8:11 Tainted: G        W          6.10.0-syzkaller-04472-g51835949dda3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: bond0 bond_mii_monitor
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ print_lock_invalid_wait_context kernel/locking/lockdep.c:4750 [inline]
+ check_wait_context kernel/locking/lockdep.c:4820 [inline]
+ __lock_acquire+0x1507/0x1fd0 kernel/locking/lockdep.c:5086
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5753
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+ exp_funnel_lock kernel/rcu/tree_exp.h:328 [inline]
+ synchronize_rcu_expedited+0x451/0x830 kernel/rcu/tree_exp.h:958
+ dev_deactivate_many+0x4a7/0xb10 net/sched/sch_generic.c:1371
+ dev_deactivate+0x184/0x280 net/sched/sch_generic.c:1397
+ linkwatch_do_dev+0x10a/0x170 net/core/link_watch.c:175
+ ethtool_op_get_link+0x15/0x60 net/ethtool/ioctl.c:62
+ bond_check_dev_link+0x1f1/0x3f0 drivers/net/bonding/bond_main.c:757
+ bond_miimon_inspect drivers/net/bonding/bond_main.c:2604 [inline]
+ bond_mii_monitor+0x49a/0x3170 drivers/net/bonding/bond_main.c:2826
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+------------[ cut here ]------------
+Voluntary context switch within RCU read-side critical section!
+WARNING: CPU: 1 PID: 2874 at kernel/rcu/tree_plugin.h:330 rcu_note_context_switch+0xcf4/0xff0 kernel/rcu/tree_plugin.h:330
+Modules linked in:
+CPU: 1 PID: 2874 Comm: kworker/u8:11 Tainted: G        W          6.10.0-syzkaller-04472-g51835949dda3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: bond0 bond_mii_monitor
+RIP: 0010:rcu_note_context_switch+0xcf4/0xff0 kernel/rcu/tree_plugin.h:330
+Code: 00 ba 02 00 00 00 e8 cb 02 fe ff 4c 8b b4 24 80 00 00 00 eb 91 c6 05 98 3f 1b 0e 01 90 48 c7 c7 40 21 cc 8b e8 8d 26 db ff 90 <0f> 0b 90 90 e9 3b f4 ff ff 90 0f 0b 90 45 84 ed 0f 84 00 f4 ff ff
+RSP: 0018:ffffc90009dc6fc0 EFLAGS: 00010046
+RAX: 129439ac0980bb00 RBX: ffff88802b6c8444 RCX: ffff88802b6c8000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90009dc7110 R08: ffffffff815878a2 R09: fffffbfff1c39d94
+R10: dffffc0000000000 R11: fffffbfff1c39d94 R12: ffff88802b6c8000
+R13: 0000000000000000 R14: 1ffff920013b8e10 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000563178d9e028 CR3: 000000000e134000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __schedule+0x348/0x4a60 kernel/sched/core.c:6417
+ __schedule_loop kernel/sched/core.c:6606 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6621
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
+ mutex_optimistic_spin kernel/locking/mutex.c:510 [inline]
+ __mutex_lock_common kernel/locking/mutex.c:612 [inline]
+ __mutex_lock+0x391/0xd70 kernel/locking/mutex.c:752
+ exp_funnel_lock kernel/rcu/tree_exp.h:328 [inline]
+ synchronize_rcu_expedited+0x451/0x830 kernel/rcu/tree_exp.h:958
+ dev_deactivate_many+0x4a7/0xb10 net/sched/sch_generic.c:1371
+ dev_deactivate+0x184/0x280 net/sched/sch_generic.c:1397
+ linkwatch_do_dev+0x10a/0x170 net/core/link_watch.c:175
+ ethtool_op_get_link+0x15/0x60 net/ethtool/ioctl.c:62
+ bond_check_dev_link+0x1f1/0x3f0 drivers/net/bonding/bond_main.c:757
+ bond_miimon_inspect drivers/net/bonding/bond_main.c:2604 [inline]
+ bond_mii_monitor+0x49a/0x3170 drivers/net/bonding/bond_main.c:2826
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
