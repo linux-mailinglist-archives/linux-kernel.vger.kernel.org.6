@@ -1,194 +1,200 @@
-Return-Path: <linux-kernel+bounces-256584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E7B89350B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:31:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5F039350B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD9EA282329
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:31:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36D231F227D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1C0144D3C;
-	Thu, 18 Jul 2024 16:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5BC144D3E;
+	Thu, 18 Jul 2024 16:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kpIE0f0Z"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="b+lOCet0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2E213A3F6
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 16:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7707407A;
+	Thu, 18 Jul 2024 16:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721320292; cv=none; b=MmuRUStKUfvFVffGXkMjux0gv++NTvY+YJtKIAgoUCGX77UMj5qqWeId8zpidirlytcq2Zov4OwNo3wWbRwjcxTPATfkiQ/y8nHtP5yVudAh4z/8gz4z3yN21BnK5Z1GHhHX/yJC3+W5kP6U+sx/Oco1D7lb235yta87+CBXb4g=
+	t=1721320588; cv=none; b=QedtJqlXYp64PQlaeJXe0+mMrfAoCU81mxUqFack+vnjnvDZqJrGB7ypa0m6JwZna00R0V+FlWVdkHRT2P6BNV1q8UWBrqOlFQI2e9y2Kwz/8cbKorkhBK9mF5ilrhJBfGJRZjbuYDBZ9yBQESbi8GUIqkAOV3EYD87IMDQvIm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721320292; c=relaxed/simple;
-	bh=iBUIcBwnMuihOnq59qynpcixcuRU2Gtb0ufDRZgAdNI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jfc1MleSIcf0WTeXn2Z/t27VDETtmjvBZkSE3rsx8rjZ/fV0yIZklroX9JEgVD3sCT4YcyGqW5lun7mAN8ygw86/0DP5LDiNjnUY4eGzMNVOilEkyFxAZvXbIHWIQ7RXW22T2K3SUb4zClt8rb8iH+wOtKZykt7+NG+P4Wv48aQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kpIE0f0Z; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6b79b93a4c9so7598416d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 09:31:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1721320286; x=1721925086; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kYXM0M2L9/ShtUVFb30rLFi4Wo4QnGam8REPnb23O7o=;
-        b=kpIE0f0ZVjhmD1e8l6uzdVoUwMPivx+XiL1f/7L4S0MbvIt5J0gsChF1K8rfVgVxCe
-         C58xqFSf8ryYuGn6Gi9unHm/17c3EbVJAQfOULO7Ja/1q4MLBKbgpxrnYMZKFvBtsve8
-         eOpif559kLORQhJ8OMTdlB0T4jApfSSRyKHT0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721320286; x=1721925086;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kYXM0M2L9/ShtUVFb30rLFi4Wo4QnGam8REPnb23O7o=;
-        b=GLvBm3y6RuJZMlygYBRHT95JSMmWv3cMP5EDiHPeznhmKIyC6sak1Mzc76Na9EQ2aG
-         cBSGOu0vCvdVdJgBlpCnB9izH0kw9qWcKKsXc1u2ZkCByZ8hzgpL5WF0AMlzSpBKVl8G
-         R/V2xk+lI7KcSdbC0Hb/b2G8kcTP/CsvgtCjtqBZJ4SysbPmNxqUgqJO87seKjXQALAL
-         pxEjXg+RPR2cKhSBMXg+QUdsGaibSDjFGfKbuyuf1jQLKrziSQNL8bLXo0pYoo2JfmWC
-         y5rKzI87/lQfyh4FWnu6n88lIwe0uA9mgB/mnDHZ+eiTl4Xui/ZlT0uxXWCUmhs5v26L
-         JAwg==
-X-Forwarded-Encrypted: i=1; AJvYcCWTFFgdFrKq6bz9KLHq+GkrO/C1lL4VGAKDmLVmT2xpkUJMRMXFmMpsNyVS7oqA9j0C90PyoXwxs7gtyAHYGyS3s7gHCzL6Op4CGQt6
-X-Gm-Message-State: AOJu0YzBGy/OLjPgudqfEbnzejN6bDzIbHhH4s8enTh4Oecz8uuqC7QO
-	yKTMUPHkBfKmg1lRAhbQ2WY0GbS7uJEXCncTuVmLuj5V7pUsrz1b9hj5IVtfNjiOH8QZJzUXUdI
-	=
-X-Google-Smtp-Source: AGHT+IHcum8BpJ7codTKPfq06pY0TKyDYCqPRdnVw25EjglSVMO461WgcndOguwWxZ9j0GZjOOtSng==
-X-Received: by 2002:a0c:f9c2:0:b0:6b0:8ac1:26bc with SMTP id 6a1803df08f44-6b79cc45e4cmr51308216d6.14.1721320286272;
-        Thu, 18 Jul 2024 09:31:26 -0700 (PDT)
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com. [209.85.160.182])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44f96ac4475sm3832621cf.82.2024.07.18.09.31.24
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jul 2024 09:31:25 -0700 (PDT)
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-447f8aa87bfso2391cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 09:31:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWv5MtsOUTijvIGl4XfLXE8DluAE08WEXqA5ni5Yf3GTPqPw53NrR5RLgq96Za7x/B4ECmACGLYuXR0kULYIQKC8vgS1EAZe4GhepUr
-X-Received: by 2002:ac8:53cd:0:b0:447:ed90:7396 with SMTP id
- d75a77b69052e-44f96ac4b5dmr1388311cf.24.1721320284402; Thu, 18 Jul 2024
- 09:31:24 -0700 (PDT)
+	s=arc-20240116; t=1721320588; c=relaxed/simple;
+	bh=7sZQ1hBzF7alnTKa6InyMxKteYP6n+PfZ2TNT3VFOkQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gclDDmVYoT9f3rZrOZ36u5rW+6IetbQ/wPL3JC7P68oIMft2aC/aOLha5gIn5w3EEdnE4FfpIZrPqYykhHP6MEz+/w/QxgMaTaG8o07rbpilENw0c6ZtfAFMYNvXXHJKTAnEbz3nyBolxoFkpY4BrGtSpViYD8ybb2GS5YWiCoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=b+lOCet0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A802FC116B1;
+	Thu, 18 Jul 2024 16:36:26 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="b+lOCet0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1721320584;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bix84t35gXtRPYkty3QSaB5g/cT04qbn9fpRULI+1f0=;
+	b=b+lOCet0lIq3w4Oyk5bxv+krjhI3wODYAsyh39cH4X//DeNImfSsa3mIixA88UMTL608qJ
+	nSCPGRJPP2rIrMAIZNCzX7Pf8kF1MapKBrRwYXPI+eeYFTfUaF+sGtzCAY/RKUMqLzcseI
+	mxc1guzbyWiBeSwT+Kfu/AbodPwoF1o=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id ff761e3f (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Thu, 18 Jul 2024 16:36:22 +0000 (UTC)
+Date: Thu, 18 Jul 2024 18:36:19 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	"Vlastimil Babka (SUSE)" <vbabka@kernel.org>,
+	syzbot <syzbot+4c882a4a0697c4a25364@syzkaller.appspotmail.com>,
+	akpm@linux-foundation.org, davem@davemloft.net,
+	herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	syzkaller-bugs@googlegroups.com,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Subject: Re: [syzbot] [crypto?] KASAN: slab-use-after-free Read in
+ handle_mm_fault
+Message-ID: <ZplEgwFFb0LAXbH4@zx2c4.com>
+References: <00000000000037cdb0061d5924b3@google.com>
+ <46f44064-255b-4a1e-9317-f4b168706d65@kernel.org>
+ <flthie3lmh4ovhlullgz2rsd5yfmwwfuqd76yef7xa2ncpqs4j@dxvhd64eoa7t>
+ <CAJuCfpEX7JFbWbLT0w+nyKz-m87ccuzSoorB3PfnW82mA-nFfw@mail.gmail.com>
+ <CAJuCfpEGATSeybdVNnUW5eS5EKHF00VzxHGwKoMfPiS_QRiKbQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717215847.5310-1-robdclark@gmail.com> <CAD=FV=XCOKJHJ-yzENpvm_MD34tMR5LRy2m2jYdcWzZXP4pfXQ@mail.gmail.com>
- <CAF6AEGuBZqV4zg1asUNbMLvq0-i-iyFwfi37uKS3kWNuRSOU+g@mail.gmail.com>
- <CAD=FV=UMiDTLBBEMk3fpg+TfE_K23fyL+JDZj77Fe9fCY8DyjA@mail.gmail.com> <CAF6AEGs22brXntJ-eDv_uTZGc2=rH2q2V4y6Vt8K4s+dsO=4-A@mail.gmail.com>
-In-Reply-To: <CAF6AEGs22brXntJ-eDv_uTZGc2=rH2q2V4y6Vt8K4s+dsO=4-A@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 18 Jul 2024 09:31:07 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WJQBTjt61ma-CoJQeGYKigEyXpA6j25JSyEfikrLeSNQ@mail.gmail.com>
-Message-ID: <CAD=FV=WJQBTjt61ma-CoJQeGYKigEyXpA6j25JSyEfikrLeSNQ@mail.gmail.com>
-Subject: Re: [RFC] drm/panel/simple-edp: Add Samsung ATNA45DC02
-To: Rob Clark <robdclark@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	Rob Clark <robdclark@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpEGATSeybdVNnUW5eS5EKHF00VzxHGwKoMfPiS_QRiKbQ@mail.gmail.com>
 
-Hi,
-
-On Thu, Jul 18, 2024 at 9:25=E2=80=AFAM Rob Clark <robdclark@gmail.com> wro=
-te:
->
-> On Thu, Jul 18, 2024 at 9:00=E2=80=AFAM Doug Anderson <dianders@chromium.=
-org> wrote:
+On Thu, Jul 18, 2024 at 04:23:47PM +0000, Suren Baghdasaryan wrote:
+> On Thu, Jul 18, 2024 at 4:20 PM Suren Baghdasaryan <surenb@google.com> wrote:
 > >
-> > Hi,
-> >
-> > On Wed, Jul 17, 2024 at 6:09=E2=80=AFPM Rob Clark <robdclark@gmail.com>=
- wrote:
+> > On Thu, Jul 18, 2024 at 3:43 PM Liam R. Howlett <Liam.Howlett@oracle.com> wrote:
 > > >
-> > > On Wed, Jul 17, 2024 at 5:19=E2=80=AFPM Doug Anderson <dianders@chrom=
-ium.org> wrote:
+> > > * Vlastimil Babka (SUSE) <vbabka@kernel.org> [240718 07:00]:
+> > > > On 7/16/24 10:29 AM, syzbot wrote:
+> > > > > Hello,
 > > > >
-> > > > Hi,
-> > > >
-> > > > On Wed, Jul 17, 2024 at 2:58=E2=80=AFPM Rob Clark <robdclark@gmail.=
-com> wrote:
-> > > > >
-> > > > > From: Rob Clark <robdclark@chromium.org>
-> > > > >
-> > > > > Just a guess on the panel timings, but they appear to work.
-> > > > >
-> > > > > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > > > > ---
-> > > > > This adds the panel I have on my lenovo yoga slim 7x laptop.  I c=
-ouldn't
-> > > > > find any datasheet so timings is just a guess.  But AFAICT everyt=
-hing
-> > > > > works fine.
-> > > > >
-> > > > >  drivers/gpu/drm/panel/panel-edp.c | 2 ++
-> > > > >  1 file changed, 2 insertions(+)
-> > > >
-> > > > Given that this is a Samsung ATNA<mumble>, is there any chance it's=
- an
-> > > > OLED panel? Should it be supported with the Samsung OLED panel driv=
-er
-> > > > like this:
-> > > >
-> > > > https://lore.kernel.org/r/20240715-x1e80100-crd-backlight-v2-0-31b7=
-f2f658a3@linaro.org
+> > > > dunno about the [crypto?] parts, sounds rather something for Suren or Liam
+> > > > or maybe it's due to some changes to gup?
 > > >
-> > > it is an OLED panel, and I did see that patchset and thought that
-> > > samsung panel driver would work.  But changing the compat string on
-> > > the yoga dts only gave me a black screen (and I didn't see any of the
-> > > other mentioned problems with bl control or dpms with panel-edp).  So
-> > > :shrug:?  It could be I overlooked something else, but it _seems_ lik=
-e
-> > > panel-edp is fine for this panel. Plus, it would avoid awkwardness if
-> > > it turned out there were other non-samsung 2nd sources, but so far
-> > > with a sample size of two 100% of these laptops have the same panel
+> > > Yes, that crypto part is very odd.
+> > >
+> > > >
+> > > > > syzbot found the following issue on:
+> > > > >
+> > > > > HEAD commit:    3fe121b62282 Add linux-next specific files for 20240712
+> > > > > git tree:       linux-next
+> > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=1097ebed980000
+> > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=98dd8c4bab5cdce
+> > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=4c882a4a0697c4a25364
+> > > > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> > > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d611a5980000
+> > > > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13ce3259980000
+> > > > >
+> > > > > Downloadable assets:
+> > > > > disk image: https://storage.googleapis.com/syzbot-assets/8c6fbf69718d/disk-3fe121b6.raw.xz
+> > > > > vmlinux: https://storage.googleapis.com/syzbot-assets/39fc7e43dfc1/vmlinux-3fe121b6.xz
+> > > > > kernel image: https://storage.googleapis.com/syzbot-assets/0a78e70e4b4e/bzImage-3fe121b6.xz
+> > > > > mounted in repro: https://storage.googleapis.com/syzbot-assets/66cfe5a679f2/mount_0.gz
+> > > > >
+> > > > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > > > Reported-by: syzbot+4c882a4a0697c4a25364@syzkaller.appspotmail.com
+> > > > >
+> > > > > ==================================================================
+> > > > > BUG: KASAN: slab-use-after-free in handle_mm_fault+0x14f0/0x19a0 mm/memory.c:5842
+> > > > > Read of size 8 at addr ffff88802c4719d0 by task syz-executor125/5235
+> > > > >
+> > > > > CPU: 1 UID: 0 PID: 5235 Comm: syz-executor125 Not tainted 6.10.0-rc7-next-20240712-syzkaller #0
+> > > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+> > > > > Call Trace:
+> > > > >  <TASK>
+> > > > >  __dump_stack lib/dump_stack.c:94 [inline]
+> > > > >  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+> > > > >  print_address_description mm/kasan/report.c:377 [inline]
+> > > > >  print_report+0x169/0x550 mm/kasan/report.c:488
+> > > > >  kasan_report+0x143/0x180 mm/kasan/report.c:601
+> > > > >  handle_mm_fault+0x14f0/0x19a0 mm/memory.c:5842
+> > >
+> > > /*
+> > >  * By the time we get here, we already hold the mm semaphore
+> > >  *
+> > >  * The mmap_lock may have been released depending on flags and our
+> > >  * return value.  See filemap_fault() and __folio_lock_or_retry().
+> > >  */
+> > >
+> > > Somehow we are here without an RCU or mmap_lock held?
 > >
-> > Hmm, OK. One question for you: are you using the "enable" GPIO in
-> > panel-edp? IMO the code handling that GPIO in panel-edp is somewhat
-> > dodgy, but it predates my deeper involvement with panels. I've never
-> > seen an eDP panel that could use panel-edp where it was actually
-> > required--every instance where someone thought it was required was
-> > better modeled by using that GPIO as the backlight enable. On the
-> > other hand, the "enable" GPIO in the Samsung OLED panel driver came
-> > straight from the panel datasheet and it makes sense for it to be in
-> > the panel driver since the backlight is handled straight by the
-> > panel...
->
-> hmm, at least current dts doesn't have an enable gpio.  Which could be
-> why panel-samsung-atna33xc20 wasn't working.
->
-> It is entirely possible we are relying on something left on by the bootlo=
-ader.
-
-That would be my best guess. Is there any way for you to find out if
-there's an enable GPIO?
-
-
-> > In any case, I guess if things are working it doesn't really hurt to
-> > take it in panel-edp for now...
+> > I'm guessing we did enter handle_mm_fault() with mmap_lock held but
+> > __handle_mm_fault() dropped it before returning, see the comment for
+> > __handle_mm_fault():
 > >
->
-> I wonder if using compatible=3D"edp-panel" everywhere isn't a great idea
-> if we want to switch drivers later.  But I guess that is already water
-> under the bridge (so to speak)
+> > /*
+> >  * On entry, we hold either the VMA lock or the mmap_lock
+> >  * (FAULT_FLAG_VMA_LOCK tells you which).  If VM_FAULT_RETRY is set in
+> >  * the result, the mmap_lock is not held on exit.  See filemap_fault()
+> >  * and __folio_lock_or_retry().
+> >  */
+> >
+> > So after that there is nothing that guarantees VMA is not destroyed
+> > from under us and if (vma->vm_flags & VM_DROPPABLE) check is unsafe.
+> > Hillf's suggestion should fix this issue but we need to figure out how
+> > to make this path more robust. Currently it's very easy to make a
+> > similar mistake. Maybe a WARNING comment after __handle_mm_fault()
+> > that VMA might be unstable after that function and should not be used?
+> 
+> CC'ing Jason.
 
-For panels that aren't OLED it's all very standard and we're kinda
-forced to use something generic since manufacturers want lots of 2nd
-(and 3rd and 4th and ...) sourcing. As far as I've been able to tell
-you can't do 2nd sourcing between OLED panels and other panels since
-the wires hooked up to the panels are a little different for the OLED
-panels and the power sequencing is a bit different. It would also be
-pretty obvious to an end user if some of their devices had an OLED
-panel and some didn't. I'm not aware of OLED panels other than the
-Samsung ones, but I haven't done any real research here...
+Thanks for bringing this to my attention. I'll incorporate Hillf's patch
+and also add a comment as you suggested. Something like the below?
 
--Doug
+diff --git a/mm/memory.c b/mm/memory.c
+index 18fe893ce96d..f596a8d508ef 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -5660,6 +5660,7 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+ 	/* If the fault handler drops the mmap_lock, vma may be freed */
+ 	struct mm_struct *mm = vma->vm_mm;
+ 	vm_fault_t ret;
++	bool is_droppable;
+
+ 	__set_current_state(TASK_RUNNING);
+
+@@ -5674,6 +5675,8 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+ 		goto out;
+ 	}
+
++	is_droppable = !!(vma->vm_flags & VM_DROPPABLE);
++
+ 	/*
+ 	 * Enable the memcg OOM handling for faults triggered in user
+ 	 * space.  Kernel faults are handled more gracefully.
+@@ -5688,10 +5691,15 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+ 	else
+ 		ret = __handle_mm_fault(vma, address, flags);
+
++	/*
++	 * It is no longer safe to dereference vma-> after this point, as
++	 * __handle_mm_fault may have already destroyed it.
++	 */
++
+ 	lru_gen_exit_fault();
+
+-	/* If the mapping is droppable, then errors due to OOM aren't fatal. */
+-	if (vma->vm_flags & VM_DROPPABLE)
++	/* If the mapping is is_droppable, then errors due to OOM aren't fatal. */
++	if (is_droppable)
+ 		ret &= ~VM_FAULT_OOM;
+
+ 	if (flags & FAULT_FLAG_USER) {
+
 
