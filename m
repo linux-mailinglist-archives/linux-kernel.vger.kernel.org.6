@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-256679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A0E29351D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 20:42:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 831DA9351D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 20:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 843C91C20DDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:42:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6E35B222E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E971B1494A3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FED514885C;
 	Thu, 18 Jul 2024 18:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jNvRuGWt";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DY0BkesX"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xi0lrukO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1ZXckBzu"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67C61465A0;
-	Thu, 18 Jul 2024 18:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E2C146A64;
+	Thu, 18 Jul 2024 18:39:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721327949; cv=none; b=KxZSRCW3Ei/amlDc/T8uVinYA5SPgw3QbMfSkanaAXaPY6uDpJlo60NckOVwiRww4HeMAb7PHLyv9W5KOxUA+ZxwPXdEnuPzb5cByKK55CKLD66YpQbV8h2QUcyBd51GJZDiGxNWgXIqjUohwR+PB8hVxkXj9QRz5O2v81QpA5c=
+	t=1721327949; cv=none; b=tCJ+aeTZewQLzPUsxGEN6QMdp9YS7Ok8cVwHkYWxxIBGWf4theJcMs/jPHlZwgHwt8a8GFDoU+1ObdA1JncTqeqW8MpowUKSNwcePJZKkKZs0cu44ckI2CgvlGidFe045EJH44DyQxJ0OrA5MvqE+6/DBdwcXCx+Pin+FHS8kHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721327949; c=relaxed/simple;
-	bh=Fg0Wo+73guJ1Xts+9YArvjH5q6VqDssw0ea9aPAYbvA=;
+	bh=byQMLopCqEVVYeS6WbfqTQRpMwLFBiv3vq0o7ShpLkU=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=nedAt3q6pYOjc4kWYS7DRzFsyuZ3iQ7LjyCDj7um+n269PsbMwq8b1/KYG/h1jEsCL/ROJHqr3kOFw5+7iUtXJvb4qLzja3jGx+nZhLeenfYf/bN2sC6NeP4/mWUlYkoRH/nR4zDIIGWFgd0Da+G/9sJ8fx9JqYMS6ubPRq4Vo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jNvRuGWt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DY0BkesX; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=Wb6vciGnnanLx2pJjv5qxYwdsUFY6AI4gEykiGSbdYhBLhsbpHadieR3G+/P3/bwW+dzCrr/vlzoLyIWlAN0OEOizAdtergRG0O4avTvDF6RzX7beX0TDhVQhwJkFc1u+pbXrUGWBth+WFkhlEHRzdB/cPnVeL9h+WvH0Pdv0ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xi0lrukO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1ZXckBzu; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 18 Jul 2024 18:39:01 -0000
+Date: Thu, 18 Jul 2024 18:39:02 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1721327941;
+	s=2020; t=1721327942;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Zq7byvcY1wpRmwdyP3SAJGou+hH4x1dwg+pANQgV560=;
-	b=jNvRuGWtlZtrqyi6VHsoVVX5zGdFB+rlft0SutVL1B0zfYDrfAIhknTzBaZG2qPJt4lyT0
-	fVbjY2lxAarvM3D5wRxjz5TVJIBlBJCwMEOXXSKSP0OLOb79sGE4YQH+6BJl1VOTjC/rid
-	lyS3q+T3ZZ2gUD/nx3nTFAZBWNd9/W9euhAP+YKhpLBy7LIdhmjq/lvmcZjV5LUBb5LxsV
-	tbiCCU5eTw5j/S8IW1Has/BnehdM4PFRfm43kgVg8Ydqj+ymin4kxr+iL2fbpt16fx5GK3
-	XUVtnUmGgSCPoBdvRB+eyXPXyImRp0Hre6wMxd58UtI5baDshfzYRnkUPtdSaw==
+	bh=iJJ9PkvFYr3P8Q2bsABOAxrpPtSU41rM8xRNaU7khy4=;
+	b=xi0lrukOpIry7imgDaVKe7exdD6/1JTMinAbDQx6R7ATNtMROqw7fjSpSC+OtywJU2h0/9
+	04rstgWw9veR1H1wyQmxuSA5CpVRe6Se/W9irKfav0WJyVX226lc2icjUC0ocCivY//cmC
+	EM8YAfJFjqz0CRmbfrccu6FkoSM7SsL5ayYZiQTxsylQOmHCTgQfLo3d8YNv6JpdbhYfHT
+	UH9YLCCEqaw8/ujS5M22e+GZBzkoezTHuCJWj4g8doI29uv5KvNZFnMhZAMiheMmJ+pskC
+	V4JGlXVFcQib19pH9ilOu5ZDhCKcjpXKhHFiM/HUWMFZGV8fHpLJuqKvBMIIpA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1721327941;
+	s=2020e; t=1721327942;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Zq7byvcY1wpRmwdyP3SAJGou+hH4x1dwg+pANQgV560=;
-	b=DY0BkesXbtV8m7IqcI8K/IzSqbBuUUAaqoGizHZZ3TwvbJb1LO7nZBrG2lxPjCW/I0/PvW
-	qBpUmidbzQoMTGBQ==
+	bh=iJJ9PkvFYr3P8Q2bsABOAxrpPtSU41rM8xRNaU7khy4=;
+	b=1ZXckBzuCpDsHAkquVU7GztzV1hkHyrY8aEnXJ50Gi0WmYJhndt1FFxfjzSd/bzm9wgxz8
+	YsMQzhaQI1AqrtCw==
 From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/msi] irqchip/gic-v3-its: Provide MSI parent for PCI/MSI[-X]
+Subject: [tip: irq/msi] irqchip: Provide irq-msi-lib
 Cc: Thomas Gleixner <tglx@linutronix.de>,
  "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
  Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20240623142235.024567623@linutronix.de>
-References: <20240623142235.024567623@linutronix.de>
+In-Reply-To: <20240623142234.840975799@linutronix.de>
+References: <20240623142234.840975799@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172132794147.2215.5360744427829017993.tip-bot2@tip-bot2>
+Message-ID: <172132794226.2215.11615513597402701600.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,407 +82,209 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the irq/msi branch of tip:
 
-Commit-ID:     b5712bf89b4bbc5bcc9ebde8753ad222f1f68296
-Gitweb:        https://git.kernel.org/tip/b5712bf89b4bbc5bcc9ebde8753ad222f1f68296
+Commit-ID:     72e257c6f058032daba1c4fe0c81003d545d0f81
+Gitweb:        https://git.kernel.org/tip/72e257c6f058032daba1c4fe0c81003d545d0f81
 Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Sun, 23 Jun 2024 17:18:39 +02:00
+AuthorDate:    Sun, 23 Jun 2024 17:18:34 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 18 Jul 2024 20:31:20 +02:00
+CommitterDate: Thu, 18 Jul 2024 20:31:19 +02:00
 
-irqchip/gic-v3-its: Provide MSI parent for PCI/MSI[-X]
+irqchip: Provide irq-msi-lib
 
-The its_pci_msi_prepare() function from the ITS-PCI/MSI code provides the
-'global' PCI/MSI domains. Move this function to the ITS-MSI parent code and
-amend the function to use the domain hardware size, which is the MSI[X]
-vector count, for allocating the ITS slots for the PCI device.
+All irqdomains which provide MSI parent domain functionality for per device
+MSI domains need to provide a select() callback for the irqdomain and a
+function to initialize the child domain.
 
-Enable PCI matching in msi_parent_ops and provide the necessary update to
-the ITS specific child domain initialization function so that the prepare
-callback gets invoked on allocations.
-
-The latter might be optimized to do the allocation right at the point where
-the child domain is initialized, but keep it simple for now.
+Most of these functions would just be copy&paste with minimal
+modifications, so provide a library function which implements the required
+functionality and is customizable via parent_domain::msi_parent_ops. The
+check for the supported bus tokens in msi_lib_init_dev_msi_info() is
+expanded step by step within the next patches.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 Signed-off-by: Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/20240623142235.024567623@linutronix.de
+Link: https://lore.kernel.org/r/20240623142234.840975799@linutronix.de
 
 
 
 ---
- drivers/irqchip/Makefile                    |   1 +-
- drivers/irqchip/irq-gic-v3-its-msi-parent.c | 114 ++++++++++-
- drivers/irqchip/irq-gic-v3-its-pci-msi.c    | 202 +-------------------
- 3 files changed, 111 insertions(+), 206 deletions(-)
- delete mode 100644 drivers/irqchip/irq-gic-v3-its-pci-msi.c
+ drivers/irqchip/Kconfig       |   3 +-
+ drivers/irqchip/Makefile      |   1 +-
+ drivers/irqchip/irq-msi-lib.c | 112 +++++++++++++++++++++++++++++++++-
+ drivers/irqchip/irq-msi-lib.h |  19 ++++++-
+ 4 files changed, 135 insertions(+)
+ create mode 100644 drivers/irqchip/irq-msi-lib.c
+ create mode 100644 drivers/irqchip/irq-msi-lib.h
 
+diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+index 1446471..2bf8d94 100644
+--- a/drivers/irqchip/Kconfig
++++ b/drivers/irqchip/Kconfig
+@@ -74,6 +74,9 @@ config ARM_VIC_NR
+ 	  The maximum number of VICs available in the system, for
+ 	  power management.
+ 
++config IRQ_MSI_LIB
++	bool
++
+ config ARMADA_370_XP_IRQ
+ 	bool
+ 	select GENERIC_IRQ_CHIP
 diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index 6e4f771..c531663 100644
+index d9dc3d9..72c7f62 100644
 --- a/drivers/irqchip/Makefile
 +++ b/drivers/irqchip/Makefile
-@@ -33,7 +33,6 @@ obj-$(CONFIG_IRQ_MSI_LIB)		+= irq-msi-lib.o
+@@ -29,6 +29,7 @@ obj-$(CONFIG_ARCH_SPEAR3XX)		+= spear-shirq.o
+ obj-$(CONFIG_ARM_GIC)			+= irq-gic.o irq-gic-common.o
+ obj-$(CONFIG_ARM_GIC_PM)		+= irq-gic-pm.o
+ obj-$(CONFIG_ARCH_REALVIEW)		+= irq-gic-realview.o
++obj-$(CONFIG_IRQ_MSI_LIB)		+= irq-msi-lib.o
  obj-$(CONFIG_ARM_GIC_V2M)		+= irq-gic-v2m.o
  obj-$(CONFIG_ARM_GIC_V3)		+= irq-gic-v3.o irq-gic-v3-mbi.o irq-gic-common.o
- obj-$(CONFIG_ARM_GIC_V3_ITS)		+= irq-gic-v3-its.o irq-gic-v3-its-platform-msi.o irq-gic-v4.o irq-gic-v3-its-msi-parent.o
--obj-$(CONFIG_ARM_GIC_V3_ITS_PCI)	+= irq-gic-v3-its-pci-msi.o
- obj-$(CONFIG_ARM_GIC_V3_ITS_FSL_MC)	+= irq-gic-v3-its-fsl-mc-msi.o
- obj-$(CONFIG_PARTITION_PERCPU)		+= irq-partition-percpu.o
- obj-$(CONFIG_HISILICON_IRQ_MBIGEN)	+= irq-mbigen.o
-diff --git a/drivers/irqchip/irq-gic-v3-its-msi-parent.c b/drivers/irqchip/irq-gic-v3-its-msi-parent.c
-index cdc0844..33b04c3 100644
---- a/drivers/irqchip/irq-gic-v3-its-msi-parent.c
-+++ b/drivers/irqchip/irq-gic-v3-its-msi-parent.c
-@@ -1,17 +1,100 @@
- // SPDX-License-Identifier: GPL-2.0-only
-+// Copyright (C) 2013-2015 ARM Limited, All Rights Reserved.
-+// Author: Marc Zyngier <marc.zyngier@arm.com>
- // Copyright (C) 2022 Linutronix GmbH
- // Copyright (C) 2022 Intel
- 
-+#include <linux/pci.h>
+ obj-$(CONFIG_ARM_GIC_V3_ITS)		+= irq-gic-v3-its.o irq-gic-v3-its-platform-msi.o irq-gic-v4.o
+diff --git a/drivers/irqchip/irq-msi-lib.c b/drivers/irqchip/irq-msi-lib.c
+new file mode 100644
+index 0000000..ec1a10f
+--- /dev/null
++++ b/drivers/irqchip/irq-msi-lib.c
+@@ -0,0 +1,112 @@
++// SPDX-License-Identifier: GPL-2.0-only
++// Copyright (C) 2022 Linutronix GmbH
++// Copyright (C) 2022 Intel
 +
- #include "irq-gic-common.h"
- #include "irq-msi-lib.h"
- 
- #define ITS_MSI_FLAGS_REQUIRED  (MSI_FLAG_USE_DEF_DOM_OPS |	\
--				 MSI_FLAG_USE_DEF_CHIP_OPS)
-+				 MSI_FLAG_USE_DEF_CHIP_OPS |	\
-+				 MSI_FLAG_PCI_MSI_MASK_PARENT)
- 
- #define ITS_MSI_FLAGS_SUPPORTED (MSI_GENERIC_FLAGS_MASK |	\
- 				 MSI_FLAG_PCI_MSIX      |	\
--				 MSI_FLAG_MULTI_PCI_MSI |	\
--				 MSI_FLAG_PCI_MSI_MASK_PARENT)
-+				 MSI_FLAG_MULTI_PCI_MSI)
++#include <linux/export.h>
 +
-+#ifdef CONFIG_PCI_MSI
-+static int its_pci_msi_vec_count(struct pci_dev *pdev, void *data)
++#include "irq-msi-lib.h"
++
++/**
++ * msi_lib_init_dev_msi_info - Domain info setup for MSI domains
++ * @dev:		The device for which the domain is created for
++ * @domain:		The domain providing this callback
++ * @real_parent:	The real parent domain of the domain to be initialized
++ *			which might be a domain built on top of @domain or
++ *			@domain itself
++ * @info:		The domain info for the domain to be initialize
++ *
++ * This function is to be used for all types of MSI domains above the root
++ * parent domain and any intermediates. The topmost parent domain specific
++ * functionality is determined via @real_parent.
++ *
++ * All intermediate domains between the root and the device domain must
++ * have either msi_parent_ops.init_dev_msi_info = msi_parent_init_dev_msi_info
++ * or invoke it down the line.
++ */
++bool msi_lib_init_dev_msi_info(struct device *dev, struct irq_domain *domain,
++			       struct irq_domain *real_parent,
++			       struct msi_domain_info *info)
 +{
-+	int msi, msix, *count = data;
++	const struct msi_parent_ops *pops = real_parent->msi_parent_ops;
 +
-+	msi = max(pci_msi_vec_count(pdev), 0);
-+	msix = max(pci_msix_vec_count(pdev), 0);
-+	*count += max(msi, msix);
-+
-+	return 0;
-+}
-+
-+static int its_get_pci_alias(struct pci_dev *pdev, u16 alias, void *data)
-+{
-+	struct pci_dev **alias_dev = data;
-+
-+	*alias_dev = pdev;
-+
-+	return 0;
-+}
-+
-+static int its_pci_msi_prepare(struct irq_domain *domain, struct device *dev,
-+			       int nvec, msi_alloc_info_t *info)
-+{
-+	struct pci_dev *pdev, *alias_dev;
-+	struct msi_domain_info *msi_info;
-+	int alias_count = 0, minnvec = 1;
-+
-+	if (!dev_is_pci(dev))
-+		return -EINVAL;
-+
-+	pdev = to_pci_dev(dev);
-+	/*
-+	 * If pdev is downstream of any aliasing bridges, take an upper
-+	 * bound of how many other vectors could map to the same DevID.
-+	 * Also tell the ITS that the signalling will come from a proxy
-+	 * device, and that special allocation rules apply.
-+	 */
-+	pci_for_each_dma_alias(pdev, its_get_pci_alias, &alias_dev);
-+	if (alias_dev != pdev) {
-+		if (alias_dev->subordinate)
-+			pci_walk_bus(alias_dev->subordinate,
-+				     its_pci_msi_vec_count, &alias_count);
-+		info->flags |= MSI_ALLOC_FLAGS_PROXY_DEVICE;
-+	}
-+
-+	/* ITS specific DeviceID, as the core ITS ignores dev. */
-+	info->scratchpad[0].ul = pci_msi_domain_get_msi_rid(domain, pdev);
++	/* Parent ops available? */
++	if (WARN_ON_ONCE(!pops))
++		return false;
 +
 +	/*
-+	 * @domain->msi_domain_info->hwsize contains the size of the
-+	 * MSI[-X] domain, but vector allocation happens one by one. This
-+	 * needs some thought when MSI comes into play as the size of MSI
-+	 * might be unknown at domain creation time and therefore set to
-+	 * MSI_MAX_INDEX.
++	 * MSI parent domain specific settings. For now there is only the
++	 * root parent domain, e.g. NEXUS, acting as a MSI parent, but it is
++	 * possible to stack MSI parents. See x86 vector -> irq remapping
 +	 */
-+	msi_info = msi_get_domain_info(domain);
-+	if (msi_info->hwsize > nvec)
-+		nvec = msi_info->hwsize;
-+
-+	/*
-+	 * Always allocate a power of 2, and special case device 0 for
-+	 * broken systems where the DevID is not wired (and all devices
-+	 * appear as DevID 0). For that reason, we generously allocate a
-+	 * minimum of 32 MSIs for DevID 0. If you want more because all
-+	 * your devices are aliasing to DevID 0, consider fixing your HW.
-+	 */
-+	nvec = max(nvec, alias_count);
-+	if (!info->scratchpad[0].ul)
-+		minnvec = 32;
-+	nvec = max_t(int, minnvec, roundup_pow_of_two(nvec));
-+
-+	msi_info = msi_get_domain_info(domain->parent);
-+	return msi_info->ops->msi_prepare(domain->parent, dev, nvec, info);
-+}
-+#else /* CONFIG_PCI_MSI */
-+#define its_pci_msi_prepare	NULL
-+#endif /* !CONFIG_PCI_MSI */
- 
- static bool its_init_dev_msi_info(struct device *dev, struct irq_domain *domain,
- 				  struct irq_domain *real_parent, struct msi_domain_info *info)
-@@ -19,6 +102,30 @@ static bool its_init_dev_msi_info(struct device *dev, struct irq_domain *domain,
- 	if (!msi_lib_init_dev_msi_info(dev, domain, real_parent, info))
- 		return false;
- 
-+	switch(info->bus_token) {
-+	case DOMAIN_BUS_PCI_DEVICE_MSI:
-+	case DOMAIN_BUS_PCI_DEVICE_MSIX:
-+		/*
-+		 * FIXME: This probably should be done after a (not yet
-+		 * existing) post domain creation callback once to make
-+		 * support for dynamic post-enable MSI-X allocations
-+		 * work without having to reevaluate the domain size
-+		 * over and over. It is known already at allocation
-+		 * time via info->hwsize.
-+		 *
-+		 * That should work perfectly fine for MSI/MSI-X but needs
-+		 * some thoughts for purely software managed MSI domains
-+		 * where the index space is only limited artificially via
-+		 * %MSI_MAX_INDEX.
-+		 */
-+		info->ops->msi_prepare = its_pci_msi_prepare;
-+		break;
-+	default:
-+		/* Confused. How did the lib return true? */
++	if (domain->bus_token == pops->bus_select_token) {
++		if (WARN_ON_ONCE(domain != real_parent))
++			return false;
++	} else {
 +		WARN_ON_ONCE(1);
 +		return false;
 +	}
 +
- 	return true;
- }
- 
-@@ -26,6 +133,7 @@ const struct msi_parent_ops gic_v3_its_msi_parent_ops = {
- 	.supported_flags	= ITS_MSI_FLAGS_SUPPORTED,
- 	.required_flags		= ITS_MSI_FLAGS_REQUIRED,
- 	.bus_select_token	= DOMAIN_BUS_NEXUS,
-+	.bus_select_mask	= MATCH_PCI_MSI,
- 	.prefix			= "ITS-",
- 	.init_dev_msi_info	= its_init_dev_msi_info,
- };
-diff --git a/drivers/irqchip/irq-gic-v3-its-pci-msi.c b/drivers/irqchip/irq-gic-v3-its-pci-msi.c
-deleted file mode 100644
-index 93f77a8..0000000
---- a/drivers/irqchip/irq-gic-v3-its-pci-msi.c
-+++ /dev/null
-@@ -1,202 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- * Copyright (C) 2013-2015 ARM Limited, All Rights Reserved.
-- * Author: Marc Zyngier <marc.zyngier@arm.com>
-- */
--
--#include <linux/acpi_iort.h>
--#include <linux/pci.h>
--#include <linux/msi.h>
--#include <linux/of.h>
--#include <linux/of_irq.h>
--#include <linux/of_pci.h>
--
--static void its_mask_msi_irq(struct irq_data *d)
--{
--	pci_msi_mask_irq(d);
--	irq_chip_mask_parent(d);
--}
--
--static void its_unmask_msi_irq(struct irq_data *d)
--{
--	pci_msi_unmask_irq(d);
--	irq_chip_unmask_parent(d);
--}
--
--static struct irq_chip its_msi_irq_chip = {
--	.name			= "ITS-MSI",
--	.irq_unmask		= its_unmask_msi_irq,
--	.irq_mask		= its_mask_msi_irq,
--	.irq_eoi		= irq_chip_eoi_parent,
--};
--
--static int its_pci_msi_vec_count(struct pci_dev *pdev, void *data)
--{
--	int msi, msix, *count = data;
--
--	msi = max(pci_msi_vec_count(pdev), 0);
--	msix = max(pci_msix_vec_count(pdev), 0);
--	*count += max(msi, msix);
--
--	return 0;
--}
--
--static int its_get_pci_alias(struct pci_dev *pdev, u16 alias, void *data)
--{
--	struct pci_dev **alias_dev = data;
--
--	*alias_dev = pdev;
--
--	return 0;
--}
--
--static int its_pci_msi_prepare(struct irq_domain *domain, struct device *dev,
--			       int nvec, msi_alloc_info_t *info)
--{
--	struct pci_dev *pdev, *alias_dev;
--	struct msi_domain_info *msi_info;
--	int alias_count = 0, minnvec = 1;
--
--	if (!dev_is_pci(dev))
--		return -EINVAL;
--
--	msi_info = msi_get_domain_info(domain->parent);
--
--	pdev = to_pci_dev(dev);
--	/*
--	 * If pdev is downstream of any aliasing bridges, take an upper
--	 * bound of how many other vectors could map to the same DevID.
--	 * Also tell the ITS that the signalling will come from a proxy
--	 * device, and that special allocation rules apply.
--	 */
--	pci_for_each_dma_alias(pdev, its_get_pci_alias, &alias_dev);
--	if (alias_dev != pdev) {
--		if (alias_dev->subordinate)
--			pci_walk_bus(alias_dev->subordinate,
--				     its_pci_msi_vec_count, &alias_count);
--		info->flags |= MSI_ALLOC_FLAGS_PROXY_DEVICE;
--	}
--
--	/* ITS specific DeviceID, as the core ITS ignores dev. */
--	info->scratchpad[0].ul = pci_msi_domain_get_msi_rid(domain, pdev);
--
--	/*
--	 * Always allocate a power of 2, and special case device 0 for
--	 * broken systems where the DevID is not wired (and all devices
--	 * appear as DevID 0). For that reason, we generously allocate a
--	 * minimum of 32 MSIs for DevID 0. If you want more because all
--	 * your devices are aliasing to DevID 0, consider fixing your HW.
--	 */
--	nvec = max(nvec, alias_count);
--	if (!info->scratchpad[0].ul)
--		minnvec = 32;
--	nvec = max_t(int, minnvec, roundup_pow_of_two(nvec));
--	return msi_info->ops->msi_prepare(domain->parent, dev, nvec, info);
--}
--
--static struct msi_domain_ops its_pci_msi_ops = {
--	.msi_prepare	= its_pci_msi_prepare,
--};
--
--static struct msi_domain_info its_pci_msi_domain_info = {
--	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
--		   MSI_FLAG_MULTI_PCI_MSI | MSI_FLAG_PCI_MSIX),
--	.ops	= &its_pci_msi_ops,
--	.chip	= &its_msi_irq_chip,
--};
--
--static struct of_device_id its_device_id[] = {
--	{	.compatible	= "arm,gic-v3-its",	},
--	{},
--};
--
--static int __init its_pci_msi_init_one(struct fwnode_handle *handle,
--				       const char *name)
--{
--	struct irq_domain *parent;
--
--	parent = irq_find_matching_fwnode(handle, DOMAIN_BUS_NEXUS);
--	if (!parent || !msi_get_domain_info(parent)) {
--		pr_err("%s: Unable to locate ITS domain\n", name);
--		return -ENXIO;
--	}
--
--	if (!pci_msi_create_irq_domain(handle, &its_pci_msi_domain_info,
--				       parent)) {
--		pr_err("%s: Unable to create PCI domain\n", name);
--		return -ENOMEM;
--	}
--
--	return 0;
--}
--
--static int __init its_pci_of_msi_init(void)
--{
--	struct device_node *np;
--
--	for (np = of_find_matching_node(NULL, its_device_id); np;
--	     np = of_find_matching_node(np, its_device_id)) {
--		if (!of_device_is_available(np))
--			continue;
--		if (!of_property_read_bool(np, "msi-controller"))
--			continue;
--
--		if (its_pci_msi_init_one(of_node_to_fwnode(np), np->full_name))
--			continue;
--
--		pr_info("PCI/MSI: %pOF domain created\n", np);
--	}
--
--	return 0;
--}
--
--#ifdef CONFIG_ACPI
--
--static int __init
--its_pci_msi_parse_madt(union acpi_subtable_headers *header,
--		       const unsigned long end)
--{
--	struct acpi_madt_generic_translator *its_entry;
--	struct fwnode_handle *dom_handle;
--	const char *node_name;
--	int err = -ENXIO;
--
--	its_entry = (struct acpi_madt_generic_translator *)header;
--	node_name = kasprintf(GFP_KERNEL, "ITS@0x%lx",
--			      (long)its_entry->base_address);
--	dom_handle = iort_find_domain_token(its_entry->translation_id);
--	if (!dom_handle) {
--		pr_err("%s: Unable to locate ITS domain handle\n", node_name);
--		goto out;
--	}
--
--	err = its_pci_msi_init_one(dom_handle, node_name);
--	if (!err)
--		pr_info("PCI/MSI: %s domain created\n", node_name);
--
--out:
--	kfree(node_name);
--	return err;
--}
--
--static int __init its_pci_acpi_msi_init(void)
--{
--	acpi_table_parse_madt(ACPI_MADT_TYPE_GENERIC_TRANSLATOR,
--			      its_pci_msi_parse_madt, 0);
--	return 0;
--}
--#else
--static int __init its_pci_acpi_msi_init(void)
--{
--	return 0;
--}
--#endif
--
--static int __init its_pci_msi_init(void)
--{
--	its_pci_of_msi_init();
--	its_pci_acpi_msi_init();
--
--	return 0;
--}
--early_initcall(its_pci_msi_init);
++	/* Is the target domain bus token supported? */
++	switch(info->bus_token) {
++	default:
++		/*
++		 * This should never be reached. See
++		 * msi_lib_irq_domain_select()
++		 */
++		WARN_ON_ONCE(1);
++		return false;
++	}
++
++	/*
++	 * Mask out the domain specific MSI feature flags which are not
++	 * supported by the real parent.
++	 */
++	info->flags			&= pops->supported_flags;
++	/* Enforce the required flags */
++	info->flags			|= pops->required_flags;
++
++	/* Chip updates for all child bus types */
++	if (!info->chip->irq_eoi)
++		info->chip->irq_eoi	= irq_chip_eoi_parent;
++
++	/*
++	 * The device MSI domain can never have a set affinity callback. It
++	 * always has to rely on the parent domain to handle affinity
++	 * settings. The device MSI domain just has to write the resulting
++	 * MSI message into the hardware which is the whole purpose of the
++	 * device MSI domain aside of mask/unmask which is provided e.g. by
++	 * PCI/MSI device domains.
++	 */
++	info->chip->irq_set_affinity	= msi_domain_set_affinity;
++	return true;
++}
++EXPORT_SYMBOL_GPL(msi_lib_init_dev_msi_info);
++
++/**
++ * msi_lib_irq_domain_select - Shared select function for NEXUS domains
++ * @d:		Pointer to the irq domain on which select is invoked
++ * @fwspec:	Firmware spec describing what is searched
++ * @bus_token:	The bus token for which a matching irq domain is looked up
++ *
++ * Returns:	%0 if @d is not what is being looked for
++ *
++ *		%1 if @d is either the domain which is directly searched for or
++ *		   if @d is providing the parent MSI domain for the functionality
++ *			 requested with @bus_token.
++ */
++int msi_lib_irq_domain_select(struct irq_domain *d, struct irq_fwspec *fwspec,
++			      enum irq_domain_bus_token bus_token)
++{
++	const struct msi_parent_ops *ops = d->msi_parent_ops;
++	u32 busmask = BIT(bus_token);
++
++	if (fwspec->fwnode != d->fwnode || fwspec->param_count != 0)
++		return 0;
++
++	/* Handle pure domain searches */
++	if (bus_token == ops->bus_select_token)
++		return 1;
++
++	return ops && !!(ops->bus_select_mask & busmask);
++}
++EXPORT_SYMBOL_GPL(msi_lib_irq_domain_select);
+diff --git a/drivers/irqchip/irq-msi-lib.h b/drivers/irqchip/irq-msi-lib.h
+new file mode 100644
+index 0000000..f0706cc
+--- /dev/null
++++ b/drivers/irqchip/irq-msi-lib.h
+@@ -0,0 +1,19 @@
++// SPDX-License-Identifier: GPL-2.0-only
++// Copyright (C) 2022 Linutronix GmbH
++// Copyright (C) 2022 Intel
++
++#ifndef _DRIVERS_IRQCHIP_IRQ_MSI_LIB_H
++#define _DRIVERS_IRQCHIP_IRQ_MSI_LIB_H
++
++#include <linux/bits.h>
++#include <linux/irqdomain.h>
++#include <linux/msi.h>
++
++int msi_lib_irq_domain_select(struct irq_domain *d, struct irq_fwspec *fwspec,
++			      enum irq_domain_bus_token bus_token);
++
++bool msi_lib_init_dev_msi_info(struct device *dev, struct irq_domain *domain,
++			       struct irq_domain *real_parent,
++			       struct msi_domain_info *info);
++
++#endif /* _DRIVERS_IRQCHIP_IRQ_MSI_LIB_H */
 
