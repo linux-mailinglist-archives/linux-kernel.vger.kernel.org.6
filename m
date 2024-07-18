@@ -1,445 +1,116 @@
-Return-Path: <linux-kernel+bounces-256126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CD8793496F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:57:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9971E934966
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:55:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7008B1C21C04
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:57:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E84F1F22B06
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952CB770FB;
-	Thu, 18 Jul 2024 07:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E80677103;
+	Thu, 18 Jul 2024 07:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hiUs1qh4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KizPUkSn"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3470B768EE
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 07:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5603042078
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 07:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721289448; cv=none; b=V9NkXy0vCxliSAYR+/+SWFgM3BSXFVqRfyDKDNWeCCIDfLhUDqw8xwgSP/dZnC7m3KfU8OfG4lvZNrLKc1drORXLq26xI8yvptuKPXXEwvF4SdYybr3xOxFBrd2HyWnFRzk0iYaD0to1kYdpeGEojdGHPd9V/lB1LqlnX7Cy0Nk=
+	t=1721289307; cv=none; b=mjxDNcu7q4E9nqTlcpHhfrDklKDTwTp0Tu7YB3JB6uu0+q5w/Ru8nXo2BZE7N+4cwen/IEkrolQ4q9j6M8Lsq4kDzxE3xWdQrjNbdndWvSM1utF9RvZBxaBO0sbytQX/jEnRec+IsqIXzP565l6f1lA3FCTeOrxACMAxPz0PvxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721289448; c=relaxed/simple;
-	bh=aX34zE463HVf8i7YY78wd6CQ6DhDOuWiCsimDyCDk7A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NL2VLcbF+nEXJOHOAgRwfjp94p0ugFpKf8InGFfaOy9ql8LLKTqTXQLYSLHN/kSFffGRdbCK0GLjYSj0sKP8S46D+HME0btgDBvRSsswzZ/gHQwRUHkyFatDezZAXPoaCOFJZPse5CPVlgurAaS0WBt2HsutaQunANX2pmnLDu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hiUs1qh4; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721289446; x=1752825446;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=aX34zE463HVf8i7YY78wd6CQ6DhDOuWiCsimDyCDk7A=;
-  b=hiUs1qh4GFifP8nSmhkCyyypVbWZdDJZ54wU3VtBOX9zmZcypkkUpyCk
-   lHsvAxs1NuYPab/3bipeoK88lsfsAGNJPmXVH2Hce4QVkGsMOKsVxri6n
-   F/B3X7yEAO4mvt6RbnPa0BohYfd+8QCJupEIpLwTTa+YjG8ljSp4rM8aX
-   4ltAY2mhVumpPofoeKPrKQiCHeeTifW05NxigiFgj1Hy223L47xvR/I1c
-   8lYTriKwKuJgAP+MD+vtZKo4fgnTS44p3Oajzg8izhKL9JoYzD69dyuIF
-   D7OXNUAocTKVn5vo3I7MaDYW4MfDocBgQySojxvbKTINp2ycMmjYT0Khu
-   g==;
-X-CSE-ConnectionGUID: Rwz90vJNTqeKulYpDtcaAw==
-X-CSE-MsgGUID: K4EWium9RUqeqezrd21A1Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="30249325"
-X-IronPort-AV: E=Sophos;i="6.09,217,1716274800"; 
-   d="scan'208";a="30249325"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 00:57:25 -0700
-X-CSE-ConnectionGUID: yMcBT5HjST+hdw2/kTnaWQ==
-X-CSE-MsgGUID: 8Q/j9dqfS/mJgfaVO13owg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,217,1716274800"; 
-   d="scan'208";a="51395255"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 00:57:23 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Chris Li <chrisl@kernel.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  Kairui Song <kasong@tencent.com>,  Hugh
- Dickins <hughd@google.com>,  Kalesh Singh <kaleshsingh@google.com>,
-  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,  Barry Song
- <baohua@kernel.org>
-Subject: Re: [PATCH v4 2/3] mm: swap: mTHP allocate swap entries from
- nonfull list
-In-Reply-To: <CACePvbXfeyt5cSX3zQhbZQ4Z5suW6iXw4Kb8BDH96SeMi54o8Q@mail.gmail.com>
-	(Chris Li's message of "Wed, 17 Jul 2024 08:41:07 -0700")
-References: <20240711-swap-allocator-v4-0-0295a4d4c7aa@kernel.org>
-	<20240711-swap-allocator-v4-2-0295a4d4c7aa@kernel.org>
-	<ea720b4a-da70-4ee3-8f74-2c7344480170@arm.com>
-	<CACePvbW_g4T10mqcG-FnJ11nP0obRG8ZgtdAN_EMCosnk9EQpA@mail.gmail.com>
-	<b4b31314-1125-40ee-b784-20abc78bd468@arm.com>
-	<CACePvbXfeyt5cSX3zQhbZQ4Z5suW6iXw4Kb8BDH96SeMi54o8Q@mail.gmail.com>
-Date: Thu, 18 Jul 2024 15:53:49 +0800
-Message-ID: <874j8nxhiq.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1721289307; c=relaxed/simple;
+	bh=d5Q4s4KdiwKVZCeMG8tsoDS/u17yAjv7xbwNDFlgqyQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nEYXfJkwrMgqZv5O799aKkZofXglPsPIaUnutbR9usKDkWK+jKfB/kCjigbDje/TUxFAMBru/QFKnPcFJC+O5YEEQDeAP54xxJA1l7mGfZCVR1PjOgyOyuXlKe24/gd9Gvlhk/X6iqysiIYZAnMu9QWCulQjU4ZxbC9tDbTBC0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KizPUkSn; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fc47abc040so4024205ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 00:55:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721289305; x=1721894105; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZZA5IPLmrPdo1khB/bNRcx/2WhOlf5P673XgW+aShrs=;
+        b=KizPUkSnG1ahN7ofzsqmaDIVY6enVhGBTsMuzkPTSTxW87BZNypiACLgl0wgtw4y6J
+         dijYmM3tGK8U7hwpNPEgY1wTm4BbLR7FPdNG61+c6+nA/9ZjaGpUg2y0IRiEpuR/JtNX
+         sRRDk3k2MNpb7MEFWlTtBL5JJu6Dq8GplCvNVLdWDsHZhJ3Wy7uQuaegSvOr3Vn9WibJ
+         OhcYzE0RwRlMRfCjwrOCsdNhEy6XPAabz+ZYoiVeD74EG2g7eLoTjm2QoNBr2sOKboMf
+         jJh5KrWfI3+5GEZdeOpQBZF09nPVmpBLDhjWPaj5zY/7Eoqe052yuhjYanWKbzTY/FBz
+         kHnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721289305; x=1721894105;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZZA5IPLmrPdo1khB/bNRcx/2WhOlf5P673XgW+aShrs=;
+        b=XWQBl73rHjOgfrE6xPDH32ODMSWiPWA63uookiP/Vj88VJMHcdXNDWpNsfAXNmdl1M
+         6wePCGPs2SpgYXDqpzpds2rNxEv7UEIE9xnutqZLfwM6IY4NOenXMPY7VrM4MYX7ujuO
+         xqB361K42Owvl0VKW411DHPB+gZAJ+xIh41PpKWAApYwUgtMY2ZCaXVPHjQSqAEmyRDH
+         pKGm0MWXA3L+6zXwY4KX96oTwHhO5cm0/2Cua8vSt07qVgidxh63ykQJ8P0fSroOD3no
+         qiYLwLWgqEhyllB6A9XpY71pFobdqn6/Tp5Qv4zs+W1mQBSQjc6cNvoaPF+KzNCRlwDo
+         mncw==
+X-Forwarded-Encrypted: i=1; AJvYcCVz2KGqM1anm52QAtfdphzsQtbA5R/FYR6pnrxngDg3vboDaUVJcH32G77n4IeSVaXNVozY7Aub5lslgk32pw96kAOFqOH4iDiV++vA
+X-Gm-Message-State: AOJu0Yw54K9tydMPNeXas+6sYEeuGwKKjs0qoLIauBvnoXLGdjYELwBi
+	WlkNAysw2romx4qEdn++zJwJB6q21d0okT+Bo6eh1LCvAd95AQLI
+X-Google-Smtp-Source: AGHT+IEbsSUG6Tl4S9fs21p9y8/LyN8sXplN/4SY9rbtGmpj7qnhhT0h61oCSCHp1J3h7zx1E0OpUw==
+X-Received: by 2002:a17:902:ce8d:b0:1fc:4b4f:68aa with SMTP id d9443c01a7336-1fc4e1361f5mr37321515ad.1.1721289305522;
+        Thu, 18 Jul 2024 00:55:05 -0700 (PDT)
+Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc62e57bd9sm6187295ad.39.2024.07.18.00.55.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jul 2024 00:55:05 -0700 (PDT)
+Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
+	by twhmp6px (Postfix) with ESMTPS id B9F5580483;
+	Thu, 18 Jul 2024 16:04:15 +0800 (CST)
+From: Cheng Ming Lin <linchengming884@gmail.com>
+To: miquel.raynal@bootlin.com,
+	vigneshr@ti.com,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: richard@nod.at,
+	alvinzhou@mxic.com.tw,
+	leoyu@mxic.com.tw,
+	Cheng Ming Lin <chengminglin@mxic.com.tw>
+Subject: [PATCH v2 0/2] Add fixups for two-plane serial NAND flash 
+Date: Thu, 18 Jul 2024 15:53:54 +0800
+Message-Id: <20240718075356.488253-1-linchengming884@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Chris Li <chrisl@kernel.org> writes:
+From: Cheng Ming Lin <chengminglin@mxic.com.tw>
 
-> On Wed, Jul 17, 2024 at 3:14=E2=80=AFAM Ryan Roberts <ryan.roberts@arm.co=
-m> wrote:
->>
->> On 16/07/2024 23:46, Chris Li wrote:
->> > On Mon, Jul 15, 2024 at 8:40=E2=80=AFAM Ryan Roberts <ryan.roberts@arm=
-.com> wrote:
->> >>
->> >> On 11/07/2024 08:29, Chris Li wrote:
->> >>> Track the nonfull cluster as well as the empty cluster
->> >>> on lists. Each order has one nonfull cluster list.
->> >>>
->> >>> The cluster will remember which order it was used during
->> >>> new cluster allocation.
->> >>>
->> >>> When the cluster has free entry, add to the nonfull[order]
->> >>> list.  When the free cluster list is empty, also allocate
->> >>> from the nonempty list of that order.
->> >>>
->> >>> This improves the mTHP swap allocation success rate.
->> >>>
->> >>> There are limitations if the distribution of numbers of
->> >>> different orders of mTHP changes a lot. e.g. there are a lot
->> >>> of nonfull cluster assign to order A while later time there
->> >>> are a lot of order B allocation while very little allocation
->> >>> in order A. Currently the cluster used by order A will not
->> >>> reused by order B unless the cluster is 100% empty.
->> >>>
->> >>> Signed-off-by: Chris Li <chrisl@kernel.org>
->> >>> ---
->> >>>  include/linux/swap.h |  4 ++++
->> >>>  mm/swapfile.c        | 34 +++++++++++++++++++++++++++++++---
->> >>>  2 files changed, 35 insertions(+), 3 deletions(-)
->> >>>
->> >>> diff --git a/include/linux/swap.h b/include/linux/swap.h
->> >>> index e9be95468fc7..db8d6000c116 100644
->> >>> --- a/include/linux/swap.h
->> >>> +++ b/include/linux/swap.h
->> >>> @@ -254,9 +254,11 @@ struct swap_cluster_info {
->> >>>                                */
->> >>>       u16 count;
->> >>>       u8 flags;
->> >>> +     u8 order;
->> >>>       struct list_head list;
->> >>>  };
->> >>>  #define CLUSTER_FLAG_FREE 1 /* This cluster is free */
->> >>> +#define CLUSTER_FLAG_NONFULL 2 /* This cluster is on nonfull list */
->> >>>
->> >>>
->> >>>  /*
->> >>> @@ -296,6 +298,8 @@ struct swap_info_struct {
->> >>>       unsigned long *zeromap;         /* vmalloc'ed bitmap to track =
-zero pages */
->> >>>       struct swap_cluster_info *cluster_info; /* cluster info. Only =
-for SSD */
->> >>>       struct list_head free_clusters; /* free clusters list */
->> >>> +     struct list_head nonfull_clusters[SWAP_NR_ORDERS];
->> >>> +                                     /* list of cluster that contai=
-ns at least one free slot */
->> >>>       unsigned int lowest_bit;        /* index of first free in swap=
-_map */
->> >>>       unsigned int highest_bit;       /* index of last free in swap_=
-map */
->> >>>       unsigned int pages;             /* total of usable pages of sw=
-ap */
->> >>> diff --git a/mm/swapfile.c b/mm/swapfile.c
->> >>> index f70d25005d2c..e13a33664cfa 100644
->> >>> --- a/mm/swapfile.c
->> >>> +++ b/mm/swapfile.c
->> >>> @@ -361,14 +361,21 @@ static void swap_cluster_schedule_discard(stru=
-ct swap_info_struct *si,
->> >>>       memset(si->swap_map + idx * SWAPFILE_CLUSTER,
->> >>>                       SWAP_MAP_BAD, SWAPFILE_CLUSTER);
->> >>>
->> >>> -     list_add_tail(&ci->list, &si->discard_clusters);
->> >>> +     if (ci->flags)
->> >>
->> >> I'm not sure this is future proof; what happens if a flag is added in=
- future
->> >> that does not indicate that the cluster is on a list. Perhaps explici=
-tly check
->> >> CLUSTER_FLAG_NONFULL? Or `if (!list_empty(&ci->list))`.
->> >
->> > Currently flags are only used to track which list it is on.
->>
->> Yes, I get that it works correctly at the moment. I just don't think it'=
-s wise
->> for the code to assume that any flag being set means its on a list; that=
- feels
->> fragile for future.
->
-> ACK.
->
->>
->> > BTW, this
->> > line has changed to check for explicite which list in patch 3 the big
->> > rewrite. I can move that line change to patch 2 if you want.
->>
->> That would get my vote; let's make every patch as good as it can be.
->
-> Done.
->
->>
->> >
->> >>
->> >>> +             list_move_tail(&ci->list, &si->discard_clusters);
->> >>> +     else
->> >>> +             list_add_tail(&ci->list, &si->discard_clusters);
->> >>> +     ci->flags =3D 0;
->> >>
->> >> Bug: (I think?) the cluster ends up on the discard_clusters list and
->> >> swap_do_scheduled_discard() calls __free_cluster() which will then ca=
-ll
->> >
->> > swap_do_scheduled_discard() delete the entry from discard list.
->>
->> Ahh yes, my bad!
->>
->> > The flag does not track the discard list state.
->> >
->> >> list_add_tail() to put it on the free_clusters list. But since it is =
-on the
->> >> discard_list at that point, shouldn't it call list_move_tail()?
->> >
->> > See above. Call list_move_tail() would be a mistake.
->> >
->> >>
->> >>>       schedule_work(&si->discard_work);
->> >>>  }
->> >>>
->> >>>  static void __free_cluster(struct swap_info_struct *si, struct swap=
-_cluster_info *ci)
->> >>>  {
->> >>> +     if (ci->flags & CLUSTER_FLAG_NONFULL)
->> >>> +             list_move_tail(&ci->list, &si->free_clusters);
->> >>> +     else
->> >>> +             list_add_tail(&ci->list, &si->free_clusters);
->> >>>       ci->flags =3D CLUSTER_FLAG_FREE;
->> >>> -     list_add_tail(&ci->list, &si->free_clusters);
->> >>>  }
->> >>>
->> >>>  /*
->> >>> @@ -491,7 +498,12 @@ static void dec_cluster_info_page(struct swap_i=
-nfo_struct *p, struct swap_cluste
->> >>>       ci->count--;
->> >>>
->> >>>       if (!ci->count)
->> >>> -             free_cluster(p, ci);
->> >>> +             return free_cluster(p, ci);
->> >>
->> >> nit: I'm not sure what the kernel style guide says about this, but I'=
-m not a
->> >> huge fan of returning void. I'd find it clearer if you just turn the =
-below `if`
->> >> into an `else if`.
->> >
->> > I try to avoid 'else if' if possible.
->> > Changed to
->> > if (!ci->count) {
->> >               free_cluster(p, ci);
->> >               return;
->> > }
->>
->> ok
->>
->> >
->> >>
->> >>> +
->> >>> +     if (!(ci->flags & CLUSTER_FLAG_NONFULL)) {
->> >>> +             list_add_tail(&ci->list, &p->nonfull_clusters[ci->orde=
-r]);
->> >>
->> >> I find the transitions when you add and remove a cluster from the
->> >> nonfull_clusters list a bit strange (if I've understood correctly): I=
-t is added
->> >> to the list whenever there is at least one free swap entry if not alr=
-eady on the
->> >> list. But you take it off the list when assigning it as the current c=
-luster for
->> >> a cpu in scan_swap_map_try_ssd_cluster().
->> >>
->> >> So you could have this situation:
->> >>
->> >>   - cpuA allocs cluster from free list (exclusive to that cpu)
->> >>   - cpuA allocs 1 swap entry from current cluster
->> >>   - swap entry is freed; cluster added to nonfull_clusters
->> >>   - cpuB "allocs" cluster from nonfull_clusters
->> >>
->> >> At this point both cpuA and cpuB share the same cluster as their curr=
-ent
->> >> cluster. So why not just put the cluster on the nonfull_clusters list=
- at
->> >> allocation time (when removed from free_list) and only remove it from=
- the
->> >
->> > The big rewrite on patch 3 does that, taking it off the free list and
->> > moving it into nonfull.
->>
->> Oh, from the title, "RFC: mm: swap: seperate SSD allocation from
->> scan_swap_map_slots()" I assumed that was just a refactoring of the code=
- to
->> separate the SSD and HDD code paths. Personally I'd prefer to see the
->> refactoring separated from behavioural changes.
->
-> It is not a refactoring. It is a big rewrite of the swap allocator
-> using the cluster. Behavior change is expected. The goal is completely
-> removing the brute force scanning of swap_map[] array for cluster swap
-> allocation.
->
->>
->> Since the patch was titled RFC and I thought it was just refactoring, I =
-was
->> deferring review. But sounds like it is actually required to realize the=
- test
->> results quoted on the cover letter?
->
-> Yes, required because it handles the previous fall out case try_ssd()
-> failed. This big rewrite has gone through a lot of testing and bug
-> fix. It is pretty stable now. The only reason I keep it as RFC is
-> because it is not feature complete. Currently it does not do swap
-> cache reclaim. The next version will have swap cache reclaim and
-> remove the RFC.
->
->>
->> > I am only making the minimal change in this step so the big rewrite ca=
-n land.
->> >
->> >> nonfull_clusters list when it is completely full (or at least definit=
-ely doesn't
->> >> have room for an `order` allocation)? Then you allow "stealing" alway=
-s instead
->> >> of just sometimes. You would likely want to move the cluster to the e=
-nd of the
->> >> nonfull list when selecting it in scan_swap_map_try_ssd_cluster() to =
-reduce the
->> >> chances of multiple CPUs using the same cluster.
->> >
->> > For nonfull clusters it is less important to avoid multiple CPU
->> > sharing the cluster. Because the cluster already has previous swap
->> > entries allocated from the previous CPU.
->>
->> But if 2 CPUs have the same cluster, isn't there a pathalogical case whe=
-re cpuA
->> could be slightly ahead of cpuB so that cpuA allocates all the free page=
-s and
->
-> That happens to exist per cpu next pointer already. When the other CPU
-> advances to the next cluster pointer, it can cross with the other
-> CPU's next cluster pointer.
+Macronix serial NAND flash with a two-plane structure
+requires insertion of Plane Select bit into the column
+address during the write_to_cache operation.
 
-No.  si->percpu_cluster[cpu].next will keep in the current per cpu
-cluster only.  If it doesn't do that, we should fix it.
+Additionally, for MX35{U,F}2G14AC, insertion of Plane
+Select bit into the column address is required during
+the read_from_cache operation.
 
-I agree with Ryan that we should make per cpu cluster correct.  A
-cluster in per cpu cluster shouldn't be put in nonfull list.  When we
-scan to the end of a per cpu cluster, we can put the cluster in nonfull
-list if necessary.  And, we should make it correct in this patch instead
-of later in series.  I understand that you want to make the patch itself
-simple, but it's important to make code simple to be understood too.
-Consistent design choice will do that.
+These flashes have been validated on Xilinx zynq-picozed
+board which included Macronix SPI Host.
 
->> cpuB just ends up scanning and finding nothing to allocate. I think do w=
-ant to
->> share the cluster when you really need to, but try to avoid it if there =
-are
->> other options, and I think moving the cluster to the end of the list mig=
-ht be a
->> way to help that?
->
-> Simply moving to the end of the list can create a possible deadloop
-> when all clusters have been scanned and not available swap range
-> found.
+Cheng Ming Lin (2):
+  mtd: spinand: Add fixups for spinand
+  mtd: spinand: macronix: Fixups for Plane Select bit
 
-This is another reason that we should put the cluster in
-nonfull_clusters[order--] if there are no free swap entry with "order"
-in the cluster.  It makes design complex to keep it in
-nonfull_clusters[order].
+ drivers/mtd/nand/spi/core.c     |  7 ++++
+ drivers/mtd/nand/spi/macronix.c | 66 ++++++++++++++++++++++++++++++---
+ include/linux/mtd/spinand.h     | 17 +++++++++
+ 3 files changed, 84 insertions(+), 6 deletions(-)
 
-> We have tried many different approaches including moving to the end of
-> the list. It can cause more fragmentation because each CPU allocates
-> their swap slot cache (64 entries) from a different cluster.
->
->> > Those behaviors will be fine
->> > tuned after the patch 3 big rewrite. Try to make this patch simple.
->
-> Again, I want to keep it simple here so patch 3 can land.
->
->> >> Another potential optimization (which was in my hacked version IIRC) =
-is to only
->> >> add/remove from nonfull list when `total - count` crosses the (1 << o=
-rder)
->> >> boundary rather than when becoming completely full. You definitely wo=
-n't be able
->> >> to allocate order-2 if there are only 3 pages available, for example.
->> >
->> > That is in patch 3 as well. This patch is just doing the bare minimum
->> > to introduce the nonfull list.
->> >
->> >>
->> >>> +             ci->flags |=3D CLUSTER_FLAG_NONFULL;
->> >>> +     }
->> >>>  }
->> >>>
->> >>>  /*
->> >>> @@ -550,6 +562,18 @@ static bool scan_swap_map_try_ssd_cluster(struc=
-t swap_info_struct *si,
->> >>>       if (tmp =3D=3D SWAP_NEXT_INVALID) {
->> >>>               if (!list_empty(&si->free_clusters)) {
->> >>>                       ci =3D list_first_entry(&si->free_clusters, st=
-ruct swap_cluster_info, list);
->> >>> +                     list_del(&ci->list);
->> >>> +                     spin_lock(&ci->lock);
->> >>> +                     ci->order =3D order;
->> >>> +                     ci->flags =3D 0;
->> >>> +                     spin_unlock(&ci->lock);
->> >>> +                     tmp =3D cluster_index(si, ci) * SWAPFILE_CLUST=
-ER;
->> >>> +             } else if (!list_empty(&si->nonfull_clusters[order])) {
->> >>> +                     ci =3D list_first_entry(&si->nonfull_clusters[=
-order], struct swap_cluster_info, list);
->> >>> +                     list_del(&ci->list);
->> >>> +                     spin_lock(&ci->lock);
->> >>> +                     ci->flags =3D 0;
->> >>> +                     spin_unlock(&ci->lock);
->> >>>                       tmp =3D cluster_index(si, ci) * SWAPFILE_CLUST=
-ER;
->> >>>               } else if (!list_empty(&si->discard_clusters)) {
->> >>>                       /*
->> >>> @@ -964,6 +988,7 @@ static void swap_free_cluster(struct swap_info_s=
-truct *si, unsigned long idx)
->> >>>       ci =3D lock_cluster(si, offset);
->> >>>       memset(si->swap_map + offset, 0, SWAPFILE_CLUSTER);
->> >>>       ci->count =3D 0;
->> >>> +     ci->order =3D 0;
->> >>>       ci->flags =3D 0;
->> >>
->> >> Wonder if it would be better to put this in __free_cluster()?
->> >
->> > Both flags and order were moved to __free_cluster() in patch 3 of this
->> > series. The order is best assigned together with flags when the
->> > cluster changes the list.
->> >
->> > Thanks for the review. The patch 3 big rewrite is the heavy lifting.
->>
->> OK, but sounds like patch 3 isn't really RFC after all, but a crucial pa=
-rt of
->> the series? I'll try to take a look at it today.
->
-> Yes, it is the cluster swap allocator big rewrite.
->
-> Thank you for taking a look.
+-- 
+2.25.1
 
---
-Best Regards,
-Huang, Ying
 
