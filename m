@@ -1,198 +1,157 @@
-Return-Path: <linux-kernel+bounces-256223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF45934B09
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:37:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBB24934B0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 360B21F2483E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:37:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 738951F247CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E8682866;
-	Thu, 18 Jul 2024 09:37:11 +0000 (UTC)
-Received: from mail.valinux.co.jp (mail.valinux.co.jp [210.128.90.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3293F839E3;
+	Thu, 18 Jul 2024 09:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rwQpcfFx"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B185325634
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 09:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.128.90.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68DB71BF37;
+	Thu, 18 Jul 2024 09:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721295430; cv=none; b=jcbykHcvIHiDNYboKsLzUFciZjMZIOLzDE+dJz4orASohw8KhU2uFhxOF4wtyvON34Z7sqAqndHOGqQqmu3FefzmqhuIUDnc1O7tv8yx1DiCE67iFzpF0CCauFtoUvtqQBI/xuAp5c6+qdT7roJ6HVkUhtWWNPEOOS1CFaRImm8=
+	t=1721295547; cv=none; b=icwadAQ0eDMq1VMROsmxouMzCFo1yol5ydLq/qMr0N4GG6RCW3qW2hz/Acu4NdqkyVMYV5O9c/MDIxW0oYtnVWxfP8puE2LxHYVxS5VO73Z8DMzPPh41pGV+K/sqpTy0DqjunJfo4xsUUBFV3nHLsu/OIVxYA3TvJVepOMuWc1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721295430; c=relaxed/simple;
-	bh=sJbPNxK5gRhIDyjMLN+0i8DFfx8g3MhG6j4IptBLT8s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NC/34UV3RZazCFGUOJbJQtfVwVm7fhQ6eO34GPXiikXwIjJ/ZXogLJs0R6z1UQhMdCsEfiSG9ISGcjSY23GPG3WZgulF5XW2Q/kAByzcxckysnv/FW6d+xXtGISOuQl04hNtkWfZ//zuDHcmdhKbf6CVFI6lf6zZEqqHTwL+ai0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; arc=none smtp.client-ip=210.128.90.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
-Received: from localhost (localhost [127.0.0.1])
-	by mail.valinux.co.jp (Postfix) with ESMTP id F07ACA9D5E;
-	Thu, 18 Jul 2024 18:37:06 +0900 (JST)
-X-Virus-Scanned: Debian amavisd-new at valinux.co.jp
-Received: from mail.valinux.co.jp ([127.0.0.1])
-	by localhost (mail.valinux.co.jp [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id UzITp37JSzLc; Thu, 18 Jul 2024 18:37:06 +0900 (JST)
-Received: from DESKTOP-NBGHJ1C.local.valinux.co.jp (vagw.valinux.co.jp [210.128.90.14])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mail.valinux.co.jp (Postfix) with ESMTPSA id C2B36A9606;
-	Thu, 18 Jul 2024 18:37:06 +0900 (JST)
-From: takakura@valinux.co.jp
-To: palmer@dabbelt.com,
-	bjorn@kernel.org,
-	paul.walmsley@sifive.com,
-	akpm@linux-foundation.org,
-	aou@eecs.berkeley.edu,
-	apatel@ventanamicro.com,
-	arnd@arndb.de,
-	atishp@rivosinc.com,
-	bmeng.cn@gmail.com,
-	conor.dooley@microchip.com,
-	daniel.thompson@linaro.org,
-	samuel.holland@sifive.com,
-	sfr@canb.auug.org.au
-Cc: linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	taka@valinux.co.jp,
-	Ryo Takakura <takakura@valinux.co.jp>
-Subject: [PATCH v2] RISC-V: Enable IPI CPU Backtrace
-Date: Thu, 18 Jul 2024 18:36:59 +0900
-Message-Id: <20240718093659.158912-1-takakura@valinux.co.jp>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1721295547; c=relaxed/simple;
+	bh=or/dYLZwuKob/2SmTnu50xKA9faM6wgcIEKdV0rCwG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VzmpwB87hqPlvoUf+XRbP1CyQ4oQxVevl0LvHKXhjQmG+2L+BOA8PzmUSXQAiIVLmxptojreap/RV9B++8CsNo6G62khFjS3wDYiSxi1nCZb76Mnlef0DgTayEV7Co+z8Oa7IDtWvQ+MObiZONDpFjuVg8coNwxxi1eaVutobjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rwQpcfFx; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=wT78pFN34/V9uidmy7XYu2UoYrn2A2taxXO8JOLiM9Q=; b=rwQpcfFxtKPKmXhYBtiHgeClbk
+	wN7G9+koaKNpwtI0xqxNOT5rPipdVFi/RxbrX25DgXSgqggw+9Zj/C1YaLWCsrU18VffViblVNZTc
+	cVx5cbtLmMxW88++yGXH4yyvuPEDAqypkfmCqMNQxK2yCaEKEijdHBsEtg/sjKIWiMfCf0fFVgPuk
+	MgVzlv6sbp6lSQpnz0X8rGialcGDebGKdvpspnATBqPwzFYzhkLJRxbEsRlHP7sJPxcuZp5J/qq63
+	rn4zu9MLhMmSlnUAMhT4L2iNhzAcCUMXZFdJYl/mgUMBdDoOmAllKpJl2BBZRl80M44uyUURzwgYU
+	pwkGbZ8g==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sUNb5-00000001pRp-2CG5;
+	Thu, 18 Jul 2024 09:38:47 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7F3583006B7; Thu, 18 Jul 2024 11:38:46 +0200 (CEST)
+Date: Thu, 18 Jul 2024 11:38:46 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Hendrik Brueckner <brueckner@linux.ibm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@arm.com>, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Will Deacon <will@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>, Andi Kleen <ak@linux.intel.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH V9 02/13] perf/core: Add aux_pause, aux_resume,
+ aux_start_paused
+Message-ID: <20240718093846.GJ26750@noisy.programming.kicks-ass.net>
+References: <20240715160712.127117-1-adrian.hunter@intel.com>
+ <20240715160712.127117-3-adrian.hunter@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240715160712.127117-3-adrian.hunter@intel.com>
 
-From: Ryo Takakura <takakura@valinux.co.jp>
+On Mon, Jul 15, 2024 at 07:07:01PM +0300, Adrian Hunter wrote:
+> Hardware traces, such as instruction traces, can produce a vast amount of
+> trace data, so being able to reduce tracing to more specific circumstances
+> can be useful.
+> 
+> The ability to pause or resume tracing when another event happens, can do
+> that.
+> 
+> Add ability for an event to "pause" or "resume" AUX area tracing.
+> 
+> Add aux_pause bit to perf_event_attr to indicate that, if the event
+> happens, the associated AUX area tracing should be paused. Ditto
+> aux_resume. Do not allow aux_pause and aux_resume to be set together.
+> 
+> Add aux_start_paused bit to perf_event_attr to indicate to an AUX area
+> event that it should start in a "paused" state.
+> 
+> Add aux_paused to struct hw_perf_event for AUX area events to keep track of
+> the "paused" state. aux_paused is initialized to aux_start_paused.
+> 
+> Add PERF_EF_PAUSE and PERF_EF_RESUME modes for ->stop() and ->start()
+> callbacks. Call as needed, during __perf_event_output(). Add
 
-Add arch_trigger_cpumask_backtrace() which is a generic infrastructure 
-for sampling other CPUs' backtrace using IPI.
+Why in __perf_event_output() rather than in __perf_event_overflow().
+Specifically, before bpf_overflow_handler().
 
-The feature is used when lockups are detected or in case of oops/panic 
-if parameters are set accordingly.
+That is, what do we want BPF to be able to do here? To me it seems
+strange that BPF would be able to affect this functionality. You want
+this pause/resume to happen irrespective of how the rest of the event is
+processed, no?
 
-Below is the case of oops with the oops_all_cpu_backtrace enabled.
+> aux_in_pause_resume to struct perf_buffer to prevent races with the NMI
+> handler. Pause/resume in NMI context will miss out if it coincides with
+> another pause/resume.
 
-$ sysctl kernel.oops_all_cpu_backtrace=1
+I'm struggling here. That variable is only ever used inside that one
+function. So it must be self-recursion. Are you thinking something like:
 
-triggering oops shows:
-[  212.214237] NMI backtrace for cpu 1
-[  212.214390] CPU: 1 PID: 610 Comm: in:imklog Tainted: G           OE      6.10.0-rc6 #1
-[  212.214570] Hardware name: riscv-virtio,qemu (DT)
-[  212.214690] epc : fallback_scalar_usercopy+0x8/0xdc
-[  212.214809]  ra : _copy_to_user+0x20/0x40
-[  212.214913] epc : ffffffff80c3a930 ra : ffffffff8059ba7e sp : ff20000000eabb50
-[  212.215061]  gp : ffffffff82066f90 tp : ff6000008e958000 t0 : 3463303866660000
-[  212.215210]  t1 : 000000000000005b t2 : 3463303866666666 s0 : ff20000000eabb60
-[  212.215358]  s1 : 0000000000000386 a0 : 00007ff6e81df926 a1 : ff600000824df800
-[  212.215505]  a2 : 000000000000003f a3 : 7fffffffffffffc0 a4 : 0000000000000000
-[  212.215651]  a5 : 000000000000003f a6 : 0000000000000000 a7 : 0000000000000000
-[  212.215857]  s2 : ff600000824df800 s3 : ffffffff82066cc0 s4 : 0000000000001c1a
-[  212.216074]  s5 : ffffffff8206a5a8 s6 : 00007ff6e81df926 s7 : ffffffff8206a5a0
-[  212.216278]  s8 : ff600000824df800 s9 : ffffffff81e25de0 s10: 000000000000003f
-[  212.216471]  s11: ffffffff8206a59d t3 : ff600000824df812 t4 : ff600000824df812
-[  212.216651]  t5 : ff600000824df818 t6 : 0000000000040000
-[  212.216796] status: 0000000000040120 badaddr: 0000000000000000 cause: 8000000000000001
-[  212.217035] [<ffffffff80c3a930>] fallback_scalar_usercopy+0x8/0xdc
-[  212.217207] [<ffffffff80095f56>] syslog_print+0x1f4/0x2b2
-[  212.217362] [<ffffffff80096e5c>] do_syslog.part.0+0x94/0x2d8
-[  212.217502] [<ffffffff800979e8>] do_syslog+0x66/0x88
-[  212.217636] [<ffffffff803a5dda>] kmsg_read+0x44/0x5c
-[  212.217764] [<ffffffff80392dbe>] proc_reg_read+0x7a/0xa8
-[  212.217952] [<ffffffff802ff726>] vfs_read+0xb0/0x24e
-[  212.218090] [<ffffffff803001ba>] ksys_read+0x64/0xe4
-[  212.218264] [<ffffffff8030025a>] __riscv_sys_read+0x20/0x2c
-[  212.218453] [<ffffffff80c4af9a>] do_trap_ecall_u+0x60/0x1d4
-[  212.218664] [<ffffffff80c56998>] ret_from_exception+0x0/0x64
+  swevent_overflow()
+    ...
+      event_aux_pause()
+        <NMI>
+	  event_overflow()
+	    ...
+	      event_aux_pause()
 
-Signed-off-by: Ryo Takakura <takakura@valinux.co.jp>
+?
 
----
+Where two events in the group, one software and one hardware, are both
+trying to control the AUX thing? Because I don't think the PT-PMI ever
+gets here.
 
-Changes since V1:
-https://lore.kernel.org/lkml/20240417050711.41930-1-takakura@valinux.co.jp/
-- fix build failure when SMP=n as @Palmer pointed out
+> To use aux_pause or aux_resume, an event must be in a group with the AUX
+> area event as the group leader.
 
----
- arch/riscv/include/asm/irq.h |  5 +++++
- arch/riscv/kernel/smp.c      | 16 ++++++++++++++++
- 2 files changed, 21 insertions(+)
 
-diff --git a/arch/riscv/include/asm/irq.h b/arch/riscv/include/asm/irq.h
-index 8e10a9443..8330d16b0 100644
---- a/arch/riscv/include/asm/irq.h
-+++ b/arch/riscv/include/asm/irq.h
-@@ -12,6 +12,11 @@
- 
- #include <asm-generic/irq.h>
- 
-+#ifdef CONFIG_SMP
-+void arch_trigger_cpumask_backtrace(const cpumask_t *mask, int exclude_cpu);
-+#define arch_trigger_cpumask_backtrace arch_trigger_cpumask_backtrace
-+#endif
-+
- void riscv_set_intc_hwnode_fn(struct fwnode_handle *(*fn)(void));
- 
- struct fwnode_handle *riscv_get_intc_hwnode(void);
-diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
-index 8e6eb6445..9b0478997 100644
---- a/arch/riscv/kernel/smp.c
-+++ b/arch/riscv/kernel/smp.c
-@@ -21,6 +21,7 @@
- #include <linux/delay.h>
- #include <linux/irq.h>
- #include <linux/irq_work.h>
-+#include <linux/nmi.h>
- 
- #include <asm/tlbflush.h>
- #include <asm/cacheflush.h>
-@@ -33,6 +34,7 @@ enum ipi_message_type {
- 	IPI_CPU_CRASH_STOP,
- 	IPI_IRQ_WORK,
- 	IPI_TIMER,
-+	IPI_CPU_BACKTRACE,
- 	IPI_MAX
- };
- 
-@@ -136,6 +138,9 @@ static irqreturn_t handle_IPI(int irq, void *data)
- 		tick_receive_broadcast();
- 		break;
- #endif
-+	case IPI_CPU_BACKTRACE:
-+		nmi_cpu_backtrace(get_irq_regs());
-+		break;
- 	default:
- 		pr_warn("CPU%d: unhandled IPI%d\n", smp_processor_id(), ipi);
- 		break;
-@@ -203,6 +208,7 @@ static const char * const ipi_names[] = {
- 	[IPI_CPU_CRASH_STOP]	= "CPU stop (for crash dump) interrupts",
- 	[IPI_IRQ_WORK]		= "IRQ work interrupts",
- 	[IPI_TIMER]		= "Timer broadcast interrupts",
-+	[IPI_CPU_BACKTRACE]     = "CPU backtrace interrupts",
- };
- 
- void show_ipi_stats(struct seq_file *p, int prec)
-@@ -323,3 +329,13 @@ void arch_smp_send_reschedule(int cpu)
- 	send_ipi_single(cpu, IPI_RESCHEDULE);
- }
- EXPORT_SYMBOL_GPL(arch_smp_send_reschedule);
-+
-+static void riscv_backtrace_ipi(cpumask_t *mask)
-+{
-+	send_ipi_mask(mask, IPI_CPU_BACKTRACE);
-+}
-+
-+void arch_trigger_cpumask_backtrace(const cpumask_t *mask, int exclude_cpu)
-+{
-+	nmi_trigger_cpumask_backtrace(mask, exclude_cpu, riscv_backtrace_ipi);
-+}
--- 
-2.34.1
+> @@ -402,6 +411,15 @@ struct pmu {
+>  	 *
+>  	 * ->start() with PERF_EF_RELOAD will reprogram the counter
+>  	 *  value, must be preceded by a ->stop() with PERF_EF_UPDATE.
+> +	 *
+> +	 * ->stop() with PERF_EF_PAUSE will stop as simply as possible. Will not
+> +	 * overlap another ->stop() with PERF_EF_PAUSE nor ->start() with
+> +	 * PERF_EF_RESUME.
+> +	 *
+> +	 * ->start() with PERF_EF_RESUME will start as simply as possible but
+> +	 * only if the counter is not otherwise stopped. Will not overlap
+> +	 * another ->start() with PERF_EF_RESUME nor ->stop() with
+> +	 * PERF_EF_PAUSE.
+>  	 */
+>  	void (*start)			(struct perf_event *event, int flags);
+>  	void (*stop)			(struct perf_event *event, int flags);
 
+Notably, they *can* race with ->stop/start without EF_PAUSE/RESUME.
 
