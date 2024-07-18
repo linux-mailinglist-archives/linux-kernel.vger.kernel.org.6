@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-255888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A72C593463B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 04:19:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE14A934638
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 04:19:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62B38282701
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 02:19:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72BEC1F22284
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 02:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 814732BB1B;
-	Thu, 18 Jul 2024 02:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB7D1DFFB;
+	Thu, 18 Jul 2024 02:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XL2pElcW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d2w/Zf9O"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CD815C3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C60115C9;
 	Thu, 18 Jul 2024 02:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721269142; cv=none; b=GATP/+cRFCMIf4AVnc7+E38/LumtFwnqSKqqpivYVj1qV6jaS8aJxRaUIJWmA+K5lAtE27R0ZTaz7iw4q7atpmYIs4xsivgdKRtdDl59hOHwX6jQ3f3JgiDxQYIlZRk7rk+tUJ2WhVIpJV+eLN54S/cM21wokpBeQaLtIkHINpo=
+	t=1721269141; cv=none; b=gx84tnOLG3HYy6zShflV01y8DPK6vxs9tBLb4wclgDdn6vvoLXBzpKr3NGSSqIATr7OM+E+Xx8LIM2Paj+axdiIPrrsiModKkwXaESY/E29/rIkEzkfZZI3KiO/XuGbOPmSl9rbeSDCPs8mP90mUu0NSsgO+kwd5s+HbD0qHxeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721269142; c=relaxed/simple;
-	bh=/KzmiqZ1DGwvGOZCrjg/tYdiQhsCdmhOg4/3Iz+Fiwg=;
+	s=arc-20240116; t=1721269141; c=relaxed/simple;
+	bh=w/e2NqSnrmE1tRqCIsezqabfPYxwJY6lN0kCEP46PDc=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N+KiOwGLlddXE/Fsnu9YefQp13Bl10cwielfppAvGeqEiNKkp54QXHCapVg6V/h5ec1V5uVSpYu4P3JhrST+Kjex3NVkfHFn8/7458ZVbWJVI8fote9pXXyFZMTZA2JLNgho/3vPYNb43QUrdRmlHaFRug/IL3cTyjr/ESHRLQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XL2pElcW; arc=none smtp.client-ip=205.220.180.131
+	 MIME-Version:Content-Type; b=AAg+MZfLpWwIcQBGPsvHaBiqT23gqApRI2tHEzjJ3cmvZ69Ei29MGb+zr0Q7TFFqbn5CtSHIul5i62Dh4PX+yqm/+5uG/Tz8a6kUR0pHGqAcZO8qskuP+uiP1Ay+wuauRQ7w8uHjs8gBS2XE7x/MBEVmC37dXlBeErquSOtxKtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d2w/Zf9O; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46HFt0Eh029141;
-	Thu, 18 Jul 2024 02:18:41 GMT
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46HEtlhA007015;
+	Thu, 18 Jul 2024 02:18:40 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UOOKMMmT5K9ZRMdtHreWgAH9PIVNDRgvbwbIqD3C7Zo=; b=XL2pElcWyOEYzN6r
-	y7EYbctCLmayXqGwQZekkYklW9Cax5wTrxLj731nRZtosvusOowEpMTq8hL/2ZE8
-	szI2TZBgeYcbOo279tzl5YRMiwTb1ibvKrUz5qBgMAxI5bDuI7XzRXDDsQVH2d6r
-	V2tdKyLiBLAvoInq/qywZjB6WHgF8l8FtQ0Sk43rfXp6CnM/k7nGeA5/9QevjvQo
-	5Jmany51NNgIwDtYE0G8rbjLs2N6vcRRIa6pdQ4SqVkzhHT6v3XdpqFD+oiZU4Pe
-	DGMj5uHdLYaHphWSng3DRelOFOSbnIRoESUceSHZapqzJNePHi7LkU0tDM69YxCz
-	OcrJDg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfpm5fr-1
+	4PdV6SI7MaqpNg7kLZI8izQWRBN+brJg0Qqo5GBUYYw=; b=d2w/Zf9Om5G41pjU
+	+nQrQZgpt8/jPKsa4kf2OGIVW0+6lpwc8WoGLJjZhwE1fHwVIzW0ZkS6vhGc5T9i
+	ivtaLEC6sBz78smVDvX6gf7twYkF/jzIUpyG4ru03rLk63+4nMfyXMKznUyVtmUD
+	2gTAVfROnIiGiHfnoKH1w2SKcdWYShO8cUSpNZ/5WciJUnMtKt1gj7xTI3O30efa
+	eeg/bF9XKesqRl7TX9jyZ6YLSoMWGJGsd9W34iSfFhh9VYd7Ww3OBrOg66V+hx22
+	ZJt+ey0IlJIxx8EK4GdHvM+nVIecTOtBsgYTKDd5VacPr62CIMu5DAX0MkIUw/h/
+	u1QSsQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfxc3sj-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Thu, 18 Jul 2024 02:18:40 +0000 (GMT)
 Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46I2Id1I030971
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46I2IdWT015487
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Thu, 18 Jul 2024 02:18:39 GMT
 Received: from hu-obabatun-lv.qualcomm.com (10.49.16.6) by
@@ -62,9 +62,9 @@ CC: <kernel@quicinc.com>, <linux-kernel@vger.kernel.org>,
         <linux-sh@vger.kernel.org>, <robh+dt@kernel.org>,
         Oreoluwa Babatunde
 	<quic_obabatun@quicinc.com>
-Subject: [PATCH v5 1/2] sh: Restructure call site for early_reserve_mem()
-Date: Wed, 17 Jul 2024 19:18:21 -0700
-Message-ID: <20240718021822.1545976-2-quic_obabatun@quicinc.com>
+Subject: [PATCH v5 2/2] sh: Restructure setup code to reserve memory regions earlier
+Date: Wed, 17 Jul 2024 19:18:22 -0700
+Message-ID: <20240718021822.1545976-3-quic_obabatun@quicinc.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240718021822.1545976-1-quic_obabatun@quicinc.com>
 References: <20240718021822.1545976-1-quic_obabatun@quicinc.com>
@@ -80,96 +80,72 @@ X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
  nalasex01b.na.qualcomm.com (10.47.209.197)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 2PkGXoz85e_Eex27rSNozL6vu--Aad8z
-X-Proofpoint-GUID: 2PkGXoz85e_Eex27rSNozL6vu--Aad8z
+X-Proofpoint-ORIG-GUID: Gix7L43Y5yrVdhRK9DlDY_5x3dMtjbVs
+X-Proofpoint-GUID: Gix7L43Y5yrVdhRK9DlDY_5x3dMtjbVs
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-07-17_19,2024-07-17_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 suspectscore=0 clxscore=1015 bulkscore=0 mlxscore=0
- adultscore=0 phishscore=0 spamscore=0 malwarescore=0 mlxlogscore=680
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=694 bulkscore=0 adultscore=0
+ spamscore=0 clxscore=1015 mlxscore=0 phishscore=0 priorityscore=1501
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2407110000 definitions=main-2407180014
 
-early_reserve_mem() reserves memory for important regions in the kernel
-such as kernel text region and bootmem bitmap.
-Reserving these memory regions should take precedence over any other
-reserved memory allocations so that the system does not unknowingly
-reserve them for some other use case.
+The unflatten_device_tree() function contains a call to
+memblock_alloc(). This is a problem because this allocation is done
+before any of the reserved memory regions are set aside in
+paging_init().
+As a result, there is a possibility for memblock to unknowingly allocate
+from any of the memory regions that are meant to be reserved.
 
-Hence, move the call site of early_reserve_mem() out of the
-paging_init() function and into an earlier point in setup_arch()
+Hence, restructure the setup code to reserve the memory regions before
+any allocation is done by the unflatten_devicetree*() using memblock.
 
 Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
 ---
- arch/sh/include/asm/mmu.h | 1 +
- arch/sh/kernel/setup.c    | 3 +++
- arch/sh/mm/init.c         | 5 ++---
- 3 files changed, 6 insertions(+), 3 deletions(-)
+ arch/sh/mm/init.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/arch/sh/include/asm/mmu.h b/arch/sh/include/asm/mmu.h
-index 172e329fd92d..696e303a2f19 100644
---- a/arch/sh/include/asm/mmu.h
-+++ b/arch/sh/include/asm/mmu.h
-@@ -96,6 +96,7 @@ static inline int pmb_unmap(void __iomem *addr)
- 
- #endif /* CONFIG_PMB */
- 
-+void __init early_reserve_mem(void);
- static inline void __iomem *
- pmb_remap(phys_addr_t phys, unsigned long size, pgprot_t prot)
- {
-diff --git a/arch/sh/kernel/setup.c b/arch/sh/kernel/setup.c
-index 620e5cf8ae1e..3b0bc191a2a2 100644
---- a/arch/sh/kernel/setup.c
-+++ b/arch/sh/kernel/setup.c
-@@ -40,6 +40,7 @@
- #include <asm/setup.h>
- #include <asm/clock.h>
- #include <asm/smp.h>
-+#include <asm/mmu.h>
- #include <asm/mmu_context.h>
- #include <asm/mmzone.h>
- #include <asm/processor.h>
-@@ -319,6 +320,8 @@ void __init setup_arch(char **cmdline_p)
- 
- 	sh_mv_setup();
- 
-+	early_reserve_mem();
-+
- 	/* Let earlyprintk output early console messages */
- 	sh_early_platform_driver_probe("earlyprintk", 1, 1);
- 
 diff --git a/arch/sh/mm/init.c b/arch/sh/mm/init.c
-index bf1b54055316..643e3617c6a6 100644
+index 643e3617c6a6..857ce8cc84bd 100644
 --- a/arch/sh/mm/init.c
 +++ b/arch/sh/mm/init.c
-@@ -19,6 +19,7 @@
- #include <linux/io.h>
- #include <linux/dma-mapping.h>
- #include <linux/export.h>
-+#include <asm/mmu.h>
- #include <asm/mmu_context.h>
- #include <asm/mmzone.h>
- #include <asm/kexec.h>
-@@ -242,7 +243,7 @@ static void __init do_init_bootmem(void)
- 	sparse_init();
- }
- 
--static void __init early_reserve_mem(void)
-+void __init early_reserve_mem(void)
- {
- 	unsigned long start_pfn;
+@@ -249,6 +249,7 @@ void __init early_reserve_mem(void)
  	u32 zero_base = (u32)__MEMORY_START + (u32)PHYSICAL_OFFSET;
-@@ -282,8 +283,6 @@ void __init paging_init(void)
+ 	u32 start = zero_base + (u32)CONFIG_ZERO_PAGE_OFFSET;
  
- 	sh_mv.mv_mem_init();
- 
--	early_reserve_mem();
++	sh_mv.mv_mem_init();
+ 	/*
+ 	 * Partially used pages are not usable - thus
+ 	 * we are rounding upwards:
+@@ -274,14 +275,6 @@ void __init early_reserve_mem(void)
+ 	 */
+ 	check_for_initrd();
+ 	reserve_crashkernel();
+-}
 -
+-void __init paging_init(void)
+-{
+-	unsigned long max_zone_pfns[MAX_NR_ZONES];
+-	unsigned long vaddr, end;
+-
+-	sh_mv.mv_mem_init();
+ 
  	/*
  	 * Once the early reservations are out of the way, give the
- 	 * platforms a chance to kick out some memory.
+@@ -289,6 +282,12 @@ void __init paging_init(void)
+ 	 */
+ 	if (sh_mv.mv_mem_reserve)
+ 		sh_mv.mv_mem_reserve();
++}
++
++void __init paging_init(void)
++{
++	unsigned long max_zone_pfns[MAX_NR_ZONES];
++	unsigned long vaddr, end;
+ 
+ 	memblock_enforce_memory_limit(memory_limit);
+ 	memblock_allow_resize();
 -- 
 2.34.1
 
