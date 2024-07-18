@@ -1,602 +1,273 @@
-Return-Path: <linux-kernel+bounces-256499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D36B6934F5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:47:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CA5F934F61
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 900A7282583
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:47:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FFC71C21ED5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEAE143726;
-	Thu, 18 Jul 2024 14:47:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76FD142E92;
+	Thu, 18 Jul 2024 14:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OF3gh7dT"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ijGRyZ7e"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2075.outbound.protection.outlook.com [40.107.93.75])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE621411EE
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 14:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721314030; cv=none; b=pIo6Z3kqwLs7rxeIuPni0yl4HEqKFzl/gc9opi9rBezODnx/iHOqzguFm9O8BHMlhnhyl98+a5Lppdh+EJiw95F+6V9K/KVkIAqFlTr/T2BqHH+gJDbCBSsCV4S5BpyX279GEo8Z98TLEjdDdQS4G2obmLt2uNto8OuRrOz9ZXU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721314030; c=relaxed/simple;
-	bh=pzDguAn2RpKuySmu1UkP1bpC+dvezveXRLmVVVUt9K0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZpK8gGN7xlvzH6lSjRD+RENuDB6SRco6/QPV95GMIemQG0twV8bcdxM7Pi19Lj86VETu10ZUaFF0hzC36GFlP9cA2GUDIK2XzB2fiLnC1kx5cswnDe9h/cLA+oHZcF2VRD/osPVAM21CzglLoPiRrtPUqaWgl7yd37V63dxDBrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OF3gh7dT; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6b797a2384cso5289226d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 07:47:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721314026; x=1721918826; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vljuJ4o4UxIGYqUpiheaXXPQgxoSmXq4w5vxDBK4t3g=;
-        b=OF3gh7dTYZDZderGt3C1PeUpKlieDQgebVru8RFem2fSH8NBBvoW6KfBszTallrHWe
-         b1lBhqhVi0Cub1sFnDwQr3Y5Gs6nLPuWg1i+LFfcyEizxahm1ADpn573pTRvezaUsv3B
-         kyohFuAi8vXfpd8Zp0uVuTDuXL5+65ez9390PLqY7HGP4grC79g2P8u3No6php0pZulK
-         hzypp2IerBZD0UlYLcQHe80XhFOEmJSPBv++5GrOH8tywKBCrZcMVTZqFapL939I90FT
-         WvmKJlh3G4MZnM/KnJ6wq7F8whQqf/7+4k3x3QENudX0xJ5jn5EMI3kjMhwUBB8KGwGp
-         ASPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721314026; x=1721918826;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vljuJ4o4UxIGYqUpiheaXXPQgxoSmXq4w5vxDBK4t3g=;
-        b=QSS2kra3yV6CnBd9xRgqdEHu5ar+Oa24st3kjiMU430QkFQXzoRGPuI3Z1hthcPMLr
-         /O5aI94KIEwrwifJ8iGEZf+Lj7JSi8Vb+1zCJAx3PZd/YkH9ysc8bsx88FotWIXnphPB
-         VipPgsVS+6SQUf1F6hzzfFrlqXnGYbLARP+AJIkovhB3tlTAfziSypRq/MGrT/4mctYH
-         DLglFxw9H9CxRr86Dv+hPWAjVMgI38SX8lwqPmlfHw/Ijt8+cx9jm8322nCQCzFpBwfZ
-         fYXK34gHYePBY1hcJeMFeQHJo1ojA9xJNYT7aBvJ8sMFj0u8RFOmLvASwrVlzn/Eprst
-         ZZRw==
-X-Forwarded-Encrypted: i=1; AJvYcCXP/+b0tMnP3/p/kLdXjMfTPyYNlFsbU0OWlC932E1tK3QQfc2avXGh3YsZP+cQCyvuHSjrVWKYrWdvhpvy68iPuspJzzd3CvJjG78k
-X-Gm-Message-State: AOJu0YzyztxXEe+/htj1orX33V0hKSfWkSQ5UNWjAYnNCkb2nuUSk3gy
-	Ird7msh7YKTATYQ/t3SCtCJ3p+11SVLPVOWxUalSFNGaNTVdBcehtxnNIODnTOIVE/eoZ9iC6Xw
-	15RfROVZdc4dyyNeGqjOiFKg+JtTvQBak9Ldn
-X-Google-Smtp-Source: AGHT+IGmr1+h+5duLMAXMv2UWhI10Zg4kHJfLLJVDIs3Fg1nAYHuxC6cGq0kMHLj9kykTlLcObh2Nwn+sc4JLqvhBOg=
-X-Received: by 2002:ad4:5d69:0:b0:6b5:e44a:6b30 with SMTP id
- 6a1803df08f44-6b79c9282bdmr38032616d6.47.1721314026153; Thu, 18 Jul 2024
- 07:47:06 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CDD66F312;
+	Thu, 18 Jul 2024 14:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721314156; cv=fail; b=BX1YH2tFH0miA7cCX4p0eNbyteKuTpOciYIm+UY+3sAaxF3f83MpWR4Oe0jvhewyRXjocJRyW7yA5RAYMRlBDurq4oBxsxG1fTQ6nR7PkqDq04/mCdaGg57wM/KxpL0a9aAitnmkvFYqFAiTJbhCS7PZ5YCClFwPFUClhB3Jcmc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721314156; c=relaxed/simple;
+	bh=d43+vRnEpGvAVhXyR96tWB5+lPfIWzob99FthIvKAl0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=qpJroSml6S6Ek3G1wSKv2MEds6ZkqtjEW6qlLoIqb6HE2IDgaMlCEsa+JT649qGMDQknjLDGIk4FOsu4uD3JpD6XVpAHFvQJ6Xnhz/su9WopLvZSsRT7j/XX4F4Uer8wFN6C7YDTyJIKmwrSpVTJpU8CZ/2BC7Gs93s18eaYOkU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ijGRyZ7e; arc=fail smtp.client-ip=40.107.93.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vOL5Vk+8ho7zsgX+7ryn4P7VOhciBI3CsAmsuI9FNZXkhpF1ovMmKjrgTcBrJ6UrS86X2lg6HqNdxIK6/btJ9rFFmbe3b+mRLWEvg1GElmI3Z7XqFYFEiqRWnWjF+7q3VKxPXvVPmgp4tlKuC24KOVSn7xmIs4agki6XhfP4LzAG+uAoYferMK2AFZ8ACdMT95FsXWK5blehTG4XfRWUTA5vS/IPmXVCjhy/Xzl6qArMlL3aC3CtCkMhRfemKJZ5CoXdMlrY1yLWDzapVRSk0ljzLyKHLBs+vrOpzNurKv3oaCl2de9M70L5mzz4F3KF59JBNlkTjjwFJ8VPZ6bPSA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zlEIpOCM5ODOsYaFAg9pjbPFzKOqJs2B2dzXXBF0uLs=;
+ b=IVwUkjQ0NYIRrYEg7dd9NzmyzhGP/wJPZH3+X09KZDswKosovEw17oPzm6pZ6VuaizlCpgSNsZOIrbqeY3BqAgdKw5Zeh/ARUpyqnqOnS4DThowNCxmMvdfVSCKQ+hCFYAQoF0s7CbXNQDsv7TpTi0sRbln9A3xIP7a4FfoyfA83kPwgLl4TMS3DY8bE9QO5Jy/yf/qhnIZtdBuvZcCY47R76CiF2RoL4as+3alKQa9gUjPikq8Qxc3KeHjP3sTNsWJE+VWZV3es9Tt8BFugEyGvmnl0h70vY6h/egXgeA9hrSSHX/UrEamK2ywjNljjAsvLjbAcwk8sb5jM1RjXPw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zlEIpOCM5ODOsYaFAg9pjbPFzKOqJs2B2dzXXBF0uLs=;
+ b=ijGRyZ7eJ0Fof9OXeGOzNRjFzBhYL2iZZpyT6jmTTP4cYcT8k3/G/E80EfOl+4K8GKJPneXoI/kLZB8bX12v/VeC+ECFie5+qjKILUoXQHOmzs+bJf3Ci6kYfZiSxVJgi4AJNJ/4Imb+mTkA/Zocz3hJnHGY4mma/v+r3XBjYO3ZG15tkyqjyCpysfq4W4pp5eW7t/UEa/1Eb5GQhl7eu2rb+39lQLZV6/+znLJF0WHJGO4/OBS/NYwBit38OeGy25CZLHMyo7FEasZchdw0ptca0dCMiI5uiCd47pnrDz2IkUUYwmfFevGzJTvyrNILfl89xVyFJhk0QNoOYr0fMA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ DM6PR12MB4355.namprd12.prod.outlook.com (2603:10b6:5:2a3::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7784.17; Thu, 18 Jul 2024 14:49:08 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::ae68:3461:c09b:e6e3]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::ae68:3461:c09b:e6e3%6]) with mapi id 15.20.7784.017; Thu, 18 Jul 2024
+ 14:49:07 +0000
+Message-ID: <874f68e3-a5f4-4771-9d40-59d2efbf2693@nvidia.com>
+Date: Thu, 18 Jul 2024 15:49:01 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH net-next v3 3/4] net: phy: aquantia: wait for the
+ GLOBAL_CFG to start returning real values
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ Brad Griffis <bgriffis@nvidia.com>
+References: <20240708075023.14893-1-brgl@bgdev.pl>
+ <20240708075023.14893-4-brgl@bgdev.pl>
+ <7c0140be-4325-4005-9068-7e0fc5ff344d@nvidia.com>
+ <CAMRc=McF93F6YsQ+eT9oOe+c=2ZCQ3rBdj+-3Ruy8iO1B-syjw@mail.gmail.com>
+ <CAMRc=Mc=8Sa76TOZujMMZcaF2Dc8OL_HKo=gXuj-YALaH4zKHg@mail.gmail.com>
+ <6e12f5a5-8007-4ddc-a5ad-be556656af71@nvidia.com>
+ <CAMRc=MdvsKeYEEvf2w3RxPiR=yLFXDwesiQ75JHTU-YEpkF-ZA@mail.gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <CAMRc=MdvsKeYEEvf2w3RxPiR=yLFXDwesiQ75JHTU-YEpkF-ZA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO2P265CA0437.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:e::17) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704190137.696169-1-mic@digikod.net> <20240704190137.696169-2-mic@digikod.net>
- <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
- <20240717.neaB5Aiy2zah@digikod.net> <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
-In-Reply-To: <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
-From: enh <enh@google.com>
-Date: Thu, 18 Jul 2024 10:46:54 -0400
-Message-ID: <CAJgzZor6frRHx1oZt3wnrNc6-13og=BL3GSKDhDmGE5JRq_LmQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-To: Jeff Xu <jeffxu@google.com>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Paul Moore <paul@paul-moore.com>, "Theodore Ts'o" <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, 
-	Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
-	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
-	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|DM6PR12MB4355:EE_
+X-MS-Office365-Filtering-Correlation-Id: 059ae335-9f7f-47af-0a28-08dca738c703
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bGw0RGtzeFZ4MDJ2SXB5NHo1dC9ndDQ1YWFrUEYwVDdLYVhzTUpwc0FVYlFY?=
+ =?utf-8?B?aTlCTTdwNUMvb1VyU2JKb2VMaHNQSTZkc2hDV0ZpRXlXZitQWHBQS2c1WThi?=
+ =?utf-8?B?YVlyb0ZiZ1B1aVBRdktQZFVtdUpneGpsTTJGb0ZQUkZlWC9UdEhWcmdGVkJm?=
+ =?utf-8?B?alpDSmNSdEFqTVNsQmNGWHRMNE9KUEpLRlVKTmVvZFpHNzVPSFNIWW5xZHpi?=
+ =?utf-8?B?SHh6cEJHaUVBNzlhV1hVd0loMWcrc1M0NnVLZnpTT3VuTVBUekdNTDNvcFoz?=
+ =?utf-8?B?VDNFS0Y2dUxadUx2a0M1VmVOak1mUUN4NTN4ZUZxSHRVMndQMUhPa3VmajM3?=
+ =?utf-8?B?MjlHVUZ1N0JjZWNKOEpUTU4vYy9lenJWUEVIVmU2R2xURWFBdm9VRHBOb0FK?=
+ =?utf-8?B?TlBvREYxUXMwUlhrQW1abXJlOUNrSEczYkFJQnB6M09uVVh1YjBBeHBlL0dF?=
+ =?utf-8?B?UlNIRHV3eHdCVlBVcFg3dU9CTlJ2ZkRBUDdoOTYzY0M2R1VnYTcrNFZlRklu?=
+ =?utf-8?B?MHhXalJOcVlwNCt1V2tsOTB2UFRsdDgwN0pTSTE5Z0ZHL0ZZM1ExaHc1MnV5?=
+ =?utf-8?B?YTAxS015MStEMFZMVnc1ZnJPNnZOSk5jOTdDWXI4d1JyblEzUmY3TytQeEt6?=
+ =?utf-8?B?Rm5JWHhPT3BVRFFLQ21IUWNaM3U4RHJKdDJVeXZLeWhDMCsyWldtU1RMdEtr?=
+ =?utf-8?B?bXhWZjIrZnJDcEtvbVpraDhSWEF5Ty90QVRqelJWK0I3WFlGSktNNC96Y2dL?=
+ =?utf-8?B?Mm1saTF3d3YxMXJ0aGg1Nklnd1E1R3hOOS9VRUZTTDh2MVcvK2RZaGUydXAx?=
+ =?utf-8?B?Yy9saTlja0VjRUg1YXllL0RTeEZ2Z2hrL3ZpSitTSzN4dFAyNjZpalVWNi9n?=
+ =?utf-8?B?YnQ5RTBMWUFHSkJqRnlYMTB3SnFwdzZlUzBmTnlTZzRhSlVKcUhUVWdETWhI?=
+ =?utf-8?B?YjlvcXRKaGlrYWF3aFExcUlNd0dEMHpqRllubHVlNFR5Zm9mdm5MVVRNVHk2?=
+ =?utf-8?B?VUZWTStXSnJFcjJ2b3lqUXBaTy83TDIxbERUVXRveTdFQU8zMTVmb1UzZi9v?=
+ =?utf-8?B?aWdPazZ3d0h5Q2tjd2dCVEFTMGJNM0VKSUE4L1FMVXRrdThtdVhzUXZxWkR2?=
+ =?utf-8?B?bnVzR3pIRkNwUzRwcDdDTVl0ZzJ2cnBlRkRSeWd6Q2JqVVFjd3crOXp2YVhr?=
+ =?utf-8?B?a2lpQ3VpeWhNdzdESk5QZnE0MVpCdk11QTZadjNlaTFLNDNkWnJ1T2xXaEZ5?=
+ =?utf-8?B?WW9lVi9hd3AxWjc0eDA1QWVYNFdkejRjV2xWdFZBc0MzQUhkaW5YdStUSE11?=
+ =?utf-8?B?RTdxWjJoUmR2d1FSeEZBMmZZTnB5anNpK25WOElISVdGR3hTMzBIaEhVV00x?=
+ =?utf-8?B?cGRMcVVqVVEzYy9JUkZ6dDR4K2xFZU1sUDArZlBxMVd5eFJ0ZU15MGhsWGV3?=
+ =?utf-8?B?NUdHRHZwZ0hiT2c0UnZidlhhMkNaVFJQMDlLV2doQVduSUtlbzhzSXNpYXFW?=
+ =?utf-8?B?TGxCdmp6WisvM3VHYXFHQnBYRkw5VjJZT2taOWNWaXhpOE1EN3JWdWFwSlpl?=
+ =?utf-8?B?c3NyMHo5Z2VOV2s0Y1hRMDZkMHlLUWJOR0d1aEtNMnZpWkUxWVp4dUVCOEUx?=
+ =?utf-8?B?WGlSVnF3STJieFVFM3gwbmtKOHdNNkltaHM5Zkd1V0k4UFdaeGZMMFRpRTcv?=
+ =?utf-8?B?QVdUMHFmZTkybm9VM0pSS1IrTDI5Vng1dVl0ak1UdHZZZjlWNVBZZXg3V0dE?=
+ =?utf-8?B?NC9DZkZ5bHllL0lBOFg3TUhRR0dUb1pCbDFPMFFTWWRsMmNXcjVDSjNTTGU2?=
+ =?utf-8?B?MHlreUgxNnlodlVLTTIxZz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RTlIVlpGOWdXMWNHQ1MwZ2J5eWtWZDE5MW8xeFdnMkFvRDMydnZldW9ndHlB?=
+ =?utf-8?B?Q3Z1MGtUMW9NUC9Sa3R3WVV2TzVid1hZSE50bXJLS3c1U3ZoeWg2MFJXcWQ0?=
+ =?utf-8?B?dEt6YzdudXdmaTVGdVVUQzZENTZwczZ4T1VXUFYyRFpBTXYrV1JRS1E4bC9D?=
+ =?utf-8?B?STNqR2FEdldPUmFjOWxNdUJhNFlOS0Z3eXV2bUhWZUpjeUtJRVoyU09iRmQy?=
+ =?utf-8?B?K3h5bjd4YkxURFFIbG0wb3UyejV3bDJpN3E3cnJDUFBTVlgxSFJjWFBYWUhY?=
+ =?utf-8?B?ZmVrM3JIbHIzNHo5aTJXVjBRQ0d2QlBjaVdPVGRDS2hiR3RoNG5RdzRxaFVp?=
+ =?utf-8?B?ZDZuSVg0cjBPK1JsOXRFbTRiNVNKa0JyT0tSZnIxeXlHNVhnZ0RLa3lVQ1Fr?=
+ =?utf-8?B?SUNxUWNDeVFsZThnSkdMVW9TeitjNGhDUHNZeTlIMVlUUTlkeUg5WnR2SWRs?=
+ =?utf-8?B?dEVpSk1zeFF5WjNIc1YxMmhUZTlhNHZkd1ZQaTBBZ0VnKzcwSHRKTUtoSjEx?=
+ =?utf-8?B?QUFPcHU4eWZjMWo5T2k2NVMwUFZ4c0FSTFZVek5YWCtmdTdqcGV1aHhyQk1z?=
+ =?utf-8?B?azdGMUdiRnEzTDM4TytFSFVFMTVsOTlMY3Q4bFlJdk5ET1pNOTNpZWNPV0RR?=
+ =?utf-8?B?bWZ1Rk90V2pORGxzMWJWSmdLZU9CaDhkY1lTQnNyRUVWYlhOOGtTeXhYbzQx?=
+ =?utf-8?B?QVdsRENVN3J2cnVFYTZxUXBYZ0k3UU5GblF2WWtFWmplOXA1Y3RyU0VPNExw?=
+ =?utf-8?B?RXh3eDluSkMzTkpxYmlFc0xFN2ZBbzNkbXNGRHNZNjNPcloyNlJJZm5ZVEV1?=
+ =?utf-8?B?eHJVSXdXU3VsTVFhMzgvcEw0Y1JOUlp5Ykx2eUxsa1JCc21CeDFEY3RNVXlk?=
+ =?utf-8?B?OUk2Y0VmOFZlNWJWY1dFRzFkUzhyYkM3WnhtMklEZm9XcHc4NHQ0MjEvMy9W?=
+ =?utf-8?B?UVdZakcrZTA1bVFXWmQxWGNNekZCT0V5K09ueXRIazgybHVJb1VaL1duWlph?=
+ =?utf-8?B?UnN5a1Y4L3NTTzd1bnU4T2plVlFWK00yZWxuNklsWDkvRWVaakh3VUE1d3R5?=
+ =?utf-8?B?a0tQaTZyNW9ONy9FdTZ5UHloRWRHVjRYZktuQVB4aHV1U21jQ0U4aFV4aXJB?=
+ =?utf-8?B?emZHaHZmSk5ldFVGQlpxTzdUNVBFdjF4VGt0aDl1MHovQUQrY1RCdnlzbEwz?=
+ =?utf-8?B?Zm5SOVdDZDlEakZ2UHRhRFhhdmphWXA1Tm5mZzVETDZBcVpIWnBFUkIwQXlx?=
+ =?utf-8?B?dzdwMDBFVHExZUExK0RRV09TT1I5QWNwMVRRRHV0WHRnaVlFRjBnbWNHNzd2?=
+ =?utf-8?B?WXppRkpKSUdVK0c5N3AzZHYyOUZRY0tDY3ZCaEtOOEgzVVptMWxFNlJNcFZB?=
+ =?utf-8?B?V2F2eHYyTCtIWlliU2FQRnJnT0pUc2thbi8rNllxVnpiSW9FbEIyVUtZOGJY?=
+ =?utf-8?B?TTB3QUtEdkp1RlNwY1UxLzRNQ0U1cjF0SEVQOWhEVlA0QldESitRVWFGZmJZ?=
+ =?utf-8?B?T0oyakN2YXY0bkxXK1VVSk5wTnJNd1pIMkExVUtzaEhLamJqZ3hYMnQwT1VG?=
+ =?utf-8?B?dERlQnJHMFFxZWxUZkpDZGxNZTZsOE5mcGpmS2tlNTJ5UU4zak1GR0hRNmNo?=
+ =?utf-8?B?MHlUTThLZEQxaktoQ2o2bHNZZStBZWREK2tKbjBCUndlSmJKcmNIMUZwYjBh?=
+ =?utf-8?B?OUtQMCsxOEVBRklzQnlCM1V4WnRXRzR4bm15Q1NIWEtkNjBhTzBXMVNyMW1v?=
+ =?utf-8?B?WklJRW9yYXcyQ0hFb3FtZHMydG5FdkpzcHY3VGhtc3FMaVM1Qjl4RUo0NWEy?=
+ =?utf-8?B?d2F4eG5pQW13TnlzQ21rWkRWSUkrOEJ5OFp5Qnc5STF0Kzd3eVptZ3kyZjVx?=
+ =?utf-8?B?enhBTkNZa25Uc0tRcDRuRlQvUWpPbmNFOWcwZjV2SWRBaXp6eHF3VDAwdUFQ?=
+ =?utf-8?B?YjIySk9DQWpnT1Bmb01rQmhlR2w3SHB6d1VtZkM3NTFGOUJQZks5SURXc3Ry?=
+ =?utf-8?B?aW13V29VMnI1dUhhVU5ZcXRWQlJ2WGFCbWQ3dUttUndUK3lDc0RFTEh5WjBY?=
+ =?utf-8?B?RlhNWnZrZ3ozSU9ERnIrVjF1cTQvWTM2QThnNnBVQUtPOVNzYUoyWFNqRjk0?=
+ =?utf-8?Q?1YID3lueMoztlvtetxx57AZG4?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 059ae335-9f7f-47af-0a28-08dca738c703
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2024 14:49:07.9598
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LptYLfYYcBOBbAdI2I0ieeVnZdcLnUvZxtkst9C/pqRHrpit7rsx5uNYsEWCPjE2dW4s42d0fVPCVO8OvXvs1A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4355
 
-On Wed, Jul 17, 2024 at 10:08=E2=80=AFPM Jeff Xu <jeffxu@google.com> wrote:
->
-> On Wed, Jul 17, 2024 at 3:01=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@dig=
-ikod.net> wrote:
-> >
-> > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
-> > > On Thu, Jul 4, 2024 at 12:02=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic=
-@digikod.net> wrote:
-> > > >
-> > > > Add a new AT_CHECK flag to execveat(2) to check if a file would be
-> > > > allowed for execution.  The main use case is for script interpreter=
-s and
-> > > > dynamic linkers to check execution permission according to the kern=
-el's
-> > > > security policy. Another use case is to add context to access logs =
-e.g.,
-> > > > which script (instead of interpreter) accessed a file.  As any
-> > > > executable code, scripts could also use this check [1].
-> > > >
-> > > > This is different than faccessat(2) which only checks file access
-> > > > rights, but not the full context e.g. mount point's noexec, stack l=
-imit,
-> > > > and all potential LSM extra checks (e.g. argv, envp, credentials).
-> > > > Since the use of AT_CHECK follows the exact kernel semantic as for =
-a
-> > > > real execution, user space gets the same error codes.
-> > > >
-> > > So we concluded that execveat(AT_CHECK) will be used to check the
-> > > exec, shared object, script and config file (such as seccomp config),
-> >
-> > "config file" that contains executable code.
-> >
-> Is seccomp config  considered as "contains executable code", seccomp
-> config is translated into bpf, so maybe yes ? but bpf is running in
-> the kernel.
->
-> > > I'm still thinking  execveat(AT_CHECK) vs faccessat(AT_CHECK) in
-> > > different use cases:
-> > >
-> > > execveat clearly has less code change, but that also means: we can't
-> > > add logic specific to exec (i.e. logic that can't be applied to
-> > > config) for this part (from do_execveat_common to
-> > > security_bprm_creds_for_exec) in future.  This would require some
-> > > agreement/sign-off, I'm not sure from whom.
-> >
-> > I'm not sure to follow. We could still add new flags, but for now I
-> > don't see use cases.  This patch series is not meant to handle all
-> > possible "trust checks", only executable code, which makes sense for th=
-e
-> > kernel.
-> >
-> I guess the "configfile" discussion is where I get confused, at one
-> point, I think this would become a generic "trust checks" api for
-> everything related to "generating executable code", e.g. javascript,
-> java code, and more.
-> We will want to clearly define the scope of execveat(AT_CHECK)
->
-> > If we want other checks, we'll need to clearly define their semantic an=
-d
-> > align with the kernel.  faccessat2(2) might be used to check other file
-> > properties, but the executable property is not only defined by the file
-> > attributes.
-> >
-> Agreed.
->
-> > >
-> > > --------------------------
-> > > now looked at user cases (focus on elf for now)
-> > >
-> > > 1> ld.so /tmp/a.out, /tmp/a.out is on non-exec mount
-> > > dynamic linker will first call execveat(fd, AT_CHECK) then execveat(f=
-d)
-> > >
-> > > 2> execve(/usr/bin/some.out) and some.out has dependency on /tmp/a.so
-> > > /usr/bin/some.out will pass AT_CHECK
-> > >
-> > > 3> execve(usr/bin/some.out) and some.out uses custom /tmp/ld.so
-> > > /usr/bin/some.out will pass AT_CHECK, however, it uses a custom
-> > > /tmp/ld.so (I assume this is possible  for elf header will set the
-> > > path for ld.so because kernel has no knowledge of that, and
-> > > binfmt_elf.c allocate memory for ld.so during execveat call)
-> > >
-> > > 4> dlopen(/tmp/a.so)
-> > > I assume dynamic linker will call execveat(AT_CHECK), before map a.so
-> > > into memory.
-> > >
-> > > For case 1>
-> > > Alternative solution: Because AT_CHECK is always called, I think we
-> > > can avoid the first AT_CHECK call, and check during execveat(fd),
-> >
-> > There is no need to use AT_CHECK if we're going to call execveat(2) on
-> > the same file descriptor.  By design, AT_CHECK is implicit for any
-> > execve(2).
-> >
-> Yes. I realized I was wrong to say that ld.so will call execve() for
-> /tmp/a.out, there is no execve() call, otherwise it would have been
-> blocked already today.
-> The ld.so will  mmap the /tmp/a.out directly.  So case 1 is no
-> different than case 2 and 4.  ( the elf objects are mapped to memory
-> by dynamic linker.)
-> I'm not familiar with dynamic linker, Florian is on this thread, and
-> can help to correct me if my guess is wrong.
 
-for Android, this has been the nail in the coffin of previous attempts
-to disallow running code from non-trusted filesystems --- instead of
-execing /tmp/a.out, the attacker just execs the linker with /tmp/a.out
-as an argument. people are doing this already in some cases, because
-we already have ineffectual "barriers" in place. [the usual argument
-for doing such things anyway is "it makes it harder to be doing this
-by _accident_".]
+On 18/07/2024 15:13, Bartosz Golaszewski wrote:
+> On Thu, Jul 18, 2024 at 4:08 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+>>
+>>
+>> On 18/07/2024 14:29, Bartosz Golaszewski wrote:
+>>> On Thu, Jul 18, 2024 at 3:04 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>>>>
+>>>> On Thu, Jul 18, 2024 at 2:23 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+>>>>>
+>>>>>
+>>>>> With the current -next and mainline we are seeing the following issue on
+>>>>> our Tegra234 Jetson AGX Orin platform ...
+>>>>>
+>>>>>     Aquantia AQR113C stmmac-0:00: aqr107_fill_interface_modes failed: -110
+>>>>>     tegra-mgbe 6800000.ethernet eth0: __stmmac_open: Cannot attach to PHY (error: -110)
+>>>>>
+>>>>>
+>>>>> We have tracked it down to this change and looks like our PHY does not
+>>>>> support 10M ...
+>>>>>
+>>>>> $ ethtool eth0
+>>>>> Settings for eth0:
+>>>>>            Supported ports: [  ]
+>>>>>            Supported link modes:   100baseT/Full
+>>>>>                                    1000baseT/Full
+>>>>>                                    10000baseT/Full
+>>>>>                                    1000baseKX/Full
+>>>>>                                    10000baseKX4/Full
+>>>>>                                    10000baseKR/Full
+>>>>>                                    2500baseT/Full
+>>>>>                                    5000baseT/Full
+>>>>>
+>>>>> The following fixes this for this platform ...
+>>>>>
+>>>>> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
+>>>>> index d12e35374231..0b2db486d8bd 100644
+>>>>> --- a/drivers/net/phy/aquantia/aquantia_main.c
+>>>>> +++ b/drivers/net/phy/aquantia/aquantia_main.c
+>>>>> @@ -656,7 +656,7 @@ static int aqr107_fill_interface_modes(struct phy_device *phydev)
+>>>>>            int i, val, ret;
+>>>>>
+>>>>>            ret = phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
+>>>>> -                                       VEND1_GLOBAL_CFG_10M, val, val != 0,
+>>>>> +                                       VEND1_GLOBAL_CFG_100M, val, val != 0,
+>>>>>                                            1000, 100000, false);
+>>>>>            if (ret)
+>>>>>                    return ret;
+>>>>>
+>>>>>
+>>>>> However, I am not sure if this is guaranteed to work for all?
+>>>>
+>>>> Ah cr*p. No, I don't think it is. We should take the first supported
+>>>> mode for a given PHY I think.
+>>>>
+>>>
+>>> TBH I only observed the issue on AQR115C. I don't have any other model
+>>> to test with. Is it fine to fix it by implementing
+>>> aqr115_fill_interface_modes() that would first wait for this register
+>>> to return non-0 and then call aqr107_fill_interface_modes()?
+>>
+>> I am doing a bit more testing. We have seen a few issues with this PHY
+>> driver and so I am wondering if we also need something similar for the
+>> AQR113C variant too.
+>>
+>> Interestingly, the product brief for these PHYs [0] do show that both
+>> the AQR113C and AQR115C both support 10M. So I wonder if it is our
+>> ethernet controller that is not supporting 10M? I will check on this too.
+>>
+> 
+> Oh you have an 113c? I didn't get this. Yeah, weird, all docs say it
+> should support 10M. In fact all AQR PHYs should hence my initial
+> change.
 
-the other workaround for the attacker is to copy and paste the entire
-dynamic linker source and change the bits they don't like :-) (if
-you're thinking "is that a thing?", yes, so much so that the idea has
-been independently reinvented multiple times by several major legit
-apps and by basically every piece of DRM middleware. which is why --
-although i'm excited by mseal(2) -- i expect to face significant
-challenges rolling it out in Android _especially_ in places like
-"dynamic linker internal data structures" where i've wanted it for
-years!)
 
-this proposal feels like it _ought_ to let a defender tighten their
-seccomp filter to require a "safe" fd if i'm using mmap() with an fd,
-but in practice as long as JITs exist i can always just copy code into
-a non-fd-backed mmap() region. and -- from the perspective of Android,
-where all "apps" are code loaded into a Java runtime -- there's not
-much getting away from JITs. (and last i looked, ART -- Android's Java
-runtime -- uses memfd() for the JIT cache.)
+Yes we have an AQR113C. I agree it should support this, but for whatever 
+reason this is not advertised. I do see that 10M is advertised as 
+supported by the network ...
 
-> > > this means the kernel will enforce SECBIT_EXEC_RESTRICT_FILE =3D 1, t=
-he
-> > > benefit is that there is no TOCTOU and save one round trip of syscall
-> > > for a succesful execveat() case.
-> >
-> > As long as user space uses the same file descriptor, there is no TOCTOU=
-.
-> >
-> > SECBIT_EXEC_RESTRICT_FILE only makes sense for user space: it defines
-> > the user space security policy.  The kernel already enforces the same
-> > security policy for any execve(2), whatever are the calling process's
-> > securebits.
-> >
-> > >
-> > > For case 2>
-> > > dynamic linker will call execve(AT_CHECK), then mmap(fd) into memory.
-> > > However,  the process can all open then mmap() directly, it seems
-> > > minimal effort for an attacker to walk around such a defence from
-> > > dynamic linker.
-> >
-> > Which process?  What do you mean by "can all open then mmap() directly"=
-?
-> >
-> > In this context the dynamic linker (like its parent processes) is
-> > trusted (guaranteed by the system).
-> >
-> > For case 2, the dynamic linker must check with AT_CHECK all files that
-> > will be mapped, which include /usr/bin/some.out and /tmp/a.so
-> >
-> My point is that the process can work around this by mmap() the file dire=
-ctly.
->
-> > >
-> > > Alternative solution:
-> > > dynamic linker call AT_CHECK for each .so, kernel will save the state
-> > > (associated with fd)
-> > > kernel will check fd state at the time of mmap(fd, executable memory)
-> > > and enforce SECBIT_EXEC_RESTRICT_FILE =3D 1
-> >
-> > The idea with AT_CHECK is that there is no kernel side effect, no extra
-> > kernel state, and the semantic is the same as with execve(2).
-> >
-> > This also enables us to check file's executable permission and ignore
-> > it, which is useful in a "permissive mode" when preparing for a
-> > migration without breaking a system, or to do extra integrity checks.
-> For preparing a migration (detect all violations), this is useful.
-> But as a defense mechanism (SECBIT_EXEC_RESTRICT_FILE =3D 1) , this
-> seems to be weak, at least for elf loading case.
->
-> > BTW, this use case would also be more complex with a new openat2(2) fla=
-g
-> > like the original O_MAYEXEC.
-> >
-> > >
-> > > Alternative solution 2:
-> > > a new syscall to load the .so and enforce the AT_CHECK in kernel
-> >
-> > A new syscall would be overkill for this feature.  Please see Linus's
-> > comment.
-> >
-> maybe, I was thinking on how to prevent "/tmp/a.o" from getting mmap()
-> to executable memory.
->
-> > >
-> > > This also means, for the solution to be complete, we might want to
-> > > block creation of executable anonymous memory (e.g. by seccomp, ),
-> >
-> > How seccomp could create anonymous memory in user space?
-> > seccomp filters should be treated (and checked with AT_CHECK) as
-> > executable code anyway.
-> >
-> > > unless the user space can harden the creation of  executable anonymou=
-s
-> > > memory in some way.
-> >
-> > User space is already in charge of mmapping its own memory.  I don't se=
-e
-> > what is missing.
-> >
-> > >
-> > > For case 3>
-> > > I think binfmt_elf.c in the kernel needs to check the ld.so to make
-> > > sure it passes AT_CHECK, before loading it into memory.
-> >
-> > All ELF dependencies are opened and checked with open_exec(), which
-> > perform the main executability checks (with the __FMODE_EXEC flag).
-> > Did I miss something?
-> >
-> I mean the ld-linux-x86-64.so.2 which is loaded by binfmt in the kernel.
-> The app can choose its own dynamic linker path during build, (maybe
-> even statically link one ?)  This is another reason that relying on a
-> userspace only is not enough.
->
-> > However, we must be careful with programs using the (deprecated)
-> > uselib(2). They should also check with AT_CHECK because this syscall
-> > opens the shared library without __FMODE_EXEC (similar to a simple file
-> > open). See
-> > https://lore.kernel.org/all/CAHk-=3DwiUwRG7LuR=3Dz5sbkFVGQh+7qVB6_1NM0N=
-y9SVNL1Un4Sw@mail.gmail.com/
-> >
-> > >
-> > > For case 4>
-> > > same as case 2.
-> > >
-> > > Consider those cases: I think:
-> > > a> relying purely on userspace for enforcement does't seem to be
-> > > effective,  e.g. it is trivial  to call open(), then mmap() it into
-> > > executable memory.
-> >
-> > As Steve explained (and is also explained in the patches), it is trivia=
-l
-> > if the attacker can already execute its own code, which is too late to
-> > enforce any script execution control.
-> >
-> > > b> if both user space and kernel need to call AT_CHECK, the faccessat
-> > > seems to be a better place for AT_CHECK, e.g. kernel can call
-> > > do_faccessat(AT_CHECK) and userspace can call faccessat(). This will
-> > > avoid complicating the execveat() code path.
-> >
-> > A previous version of this patches series already patched faccessat(2),
-> > but this is not the right place.  faccessat2(2) is dedicated to check
-> > file permissions, not executability (e.g. with mount's noexec).
-> >
-> > >
-> > > What do you think ?
-> >
-> > I think there are some misunderstandings.  Please let me know if it's
-> > clearer now.
-> >
-> I'm still not sure about the user case for dynamic linker (elf
-> loading) case. Maybe this patch is more suitable for scripts?
-> A detailed user case will help demonstrate the use case for dynamic
-> linker, e.g. what kind of app will benefit from
-> SECBIT_EXEC_RESTRICT_FILE =3D 1, what kind of threat model are we
-> dealing with , what kind of attack chain we blocked as a result.
->
-> > >
-> > > Thanks
-> > > -Jeff
-> > >
-> > > > With the information that a script interpreter is about to interpre=
-t a
-> > > > script, an LSM security policy can adjust caller's access rights or=
- log
-> > > > execution request as for native script execution (e.g. role transit=
-ion).
-> > > > This is possible thanks to the call to security_bprm_creds_for_exec=
-().
-> > > >
-> > > > Because LSMs may only change bprm's credentials, use of AT_CHECK wi=
-th
-> > > > current kernel code should not be a security issue (e.g. unexpected=
- role
-> > > > transition).  LSMs willing to update the caller's credential could =
-now
-> > > > do so when bprm->is_check is set.  Of course, such policy change sh=
-ould
-> > > > be in line with the new user space code.
-> > > >
-> > > > Because AT_CHECK is dedicated to user space interpreters, it doesn'=
-t
-> > > > make sense for the kernel to parse the checked files, look for
-> > > > interpreters known to the kernel (e.g. ELF, shebang), and return EN=
-OEXEC
-> > > > if the format is unknown.  Because of that, security_bprm_check() i=
-s
-> > > > never called when AT_CHECK is used.
-> > > >
-> > > > It should be noted that script interpreters cannot directly use
-> > > > execveat(2) (without this new AT_CHECK flag) because this could lea=
-d to
-> > > > unexpected behaviors e.g., `python script.sh` could lead to Bash be=
-ing
-> > > > executed to interpret the script.  Unlike the kernel, script
-> > > > interpreters may just interpret the shebang as a simple comment, wh=
-ich
-> > > > should not change for backward compatibility reasons.
-> > > >
-> > > > Because scripts or libraries files might not currently have the
-> > > > executable permission set, or because we might want specific users =
-to be
-> > > > allowed to run arbitrary scripts, the following patch provides a dy=
-namic
-> > > > configuration mechanism with the SECBIT_SHOULD_EXEC_CHECK and
-> > > > SECBIT_SHOULD_EXEC_RESTRICT securebits.
-> > > >
-> > > > This is a redesign of the CLIP OS 4's O_MAYEXEC:
-> > > > https://github.com/clipos-archive/src_platform_clip-patches/blob/f5=
-cb330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
-> > > > This patch has been used for more than a decade with customized scr=
-ipt
-> > > > interpreters.  Some examples can be found here:
-> > > > https://github.com/clipos-archive/clipos4_portage-overlay/search?q=
-=3DO_MAYEXEC
-> > > >
-> > > > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > > > Cc: Christian Brauner <brauner@kernel.org>
-> > > > Cc: Kees Cook <keescook@chromium.org>
-> > > > Cc: Paul Moore <paul@paul-moore.com>
-> > > > Link: https://docs.python.org/3/library/io.html#io.open_code [1]
-> > > > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> > > > Link: https://lore.kernel.org/r/20240704190137.696169-2-mic@digikod=
-.net
-> > > > ---
-> > > >
-> > > > New design since v18:
-> > > > https://lore.kernel.org/r/20220104155024.48023-3-mic@digikod.net
-> > > > ---
-> > > >  fs/exec.c                  |  5 +++--
-> > > >  include/linux/binfmts.h    |  7 ++++++-
-> > > >  include/uapi/linux/fcntl.h | 30 ++++++++++++++++++++++++++++++
-> > > >  kernel/audit.h             |  1 +
-> > > >  kernel/auditsc.c           |  1 +
-> > > >  5 files changed, 41 insertions(+), 3 deletions(-)
-> > > >
-> > > > diff --git a/fs/exec.c b/fs/exec.c
-> > > > index 40073142288f..ea2a1867afdc 100644
-> > > > --- a/fs/exec.c
-> > > > +++ b/fs/exec.c
-> > > > @@ -931,7 +931,7 @@ static struct file *do_open_execat(int fd, stru=
-ct filename *name, int flags)
-> > > >                 .lookup_flags =3D LOOKUP_FOLLOW,
-> > > >         };
-> > > >
-> > > > -       if ((flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) !=3D 0=
-)
-> > > > +       if ((flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH | AT_CHE=
-CK)) !=3D 0)
-> > > >                 return ERR_PTR(-EINVAL);
-> > > >         if (flags & AT_SYMLINK_NOFOLLOW)
-> > > >                 open_exec_flags.lookup_flags &=3D ~LOOKUP_FOLLOW;
-> > > > @@ -1595,6 +1595,7 @@ static struct linux_binprm *alloc_bprm(int fd=
-, struct filename *filename, int fl
-> > > >                 bprm->filename =3D bprm->fdpath;
-> > > >         }
-> > > >         bprm->interp =3D bprm->filename;
-> > > > +       bprm->is_check =3D !!(flags & AT_CHECK);
-> > > >
-> > > >         retval =3D bprm_mm_init(bprm);
-> > > >         if (!retval)
-> > > > @@ -1885,7 +1886,7 @@ static int bprm_execve(struct linux_binprm *b=
-prm)
-> > > >
-> > > >         /* Set the unchanging part of bprm->cred */
-> > > >         retval =3D security_bprm_creds_for_exec(bprm);
-> > > > -       if (retval)
-> > > > +       if (retval || bprm->is_check)
-> > > >                 goto out;
-> > > >
-> > > >         retval =3D exec_binprm(bprm);
-> > > > diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-> > > > index 70f97f685bff..8ff9c9e33aed 100644
-> > > > --- a/include/linux/binfmts.h
-> > > > +++ b/include/linux/binfmts.h
-> > > > @@ -42,7 +42,12 @@ struct linux_binprm {
-> > > >                  * Set when errors can no longer be returned to the
-> > > >                  * original userspace.
-> > > >                  */
-> > > > -               point_of_no_return:1;
-> > > > +               point_of_no_return:1,
-> > > > +               /*
-> > > > +                * Set by user space to check executability accordi=
-ng to the
-> > > > +                * caller's environment.
-> > > > +                */
-> > > > +               is_check:1;
-> > > >         struct file *executable; /* Executable to pass to the inter=
-preter */
-> > > >         struct file *interpreter;
-> > > >         struct file *file;
-> > > > diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.=
-h
-> > > > index c0bcc185fa48..bcd05c59b7df 100644
-> > > > --- a/include/uapi/linux/fcntl.h
-> > > > +++ b/include/uapi/linux/fcntl.h
-> > > > @@ -118,6 +118,36 @@
-> > > >  #define AT_HANDLE_FID          AT_REMOVEDIR    /* file handle is n=
-eeded to
-> > > >                                         compare object identity and=
- may not
-> > > >                                         be usable to open_by_handle=
-_at(2) */
-> > > > +
-> > > > +/*
-> > > > + * AT_CHECK only performs a check on a regular file and returns 0 =
-if execution
-> > > > + * of this file would be allowed, ignoring the file format and the=
-n the related
-> > > > + * interpreter dependencies (e.g. ELF libraries, script's shebang)=
-.  AT_CHECK
-> > > > + * should only be used if SECBIT_SHOULD_EXEC_CHECK is set for the =
-calling
-> > > > + * thread.  See securebits.h documentation.
-> > > > + *
-> > > > + * Programs should use this check to apply kernel-level checks aga=
-inst files
-> > > > + * that are not directly executed by the kernel but directly passe=
-d to a user
-> > > > + * space interpreter instead.  All files that contain executable c=
-ode, from the
-> > > > + * point of view of the interpreter, should be checked.  The main =
-purpose of
-> > > > + * this flag is to improve the security and consistency of an exec=
-ution
-> > > > + * environment to ensure that direct file execution (e.g. ./script=
-.sh) and
-> > > > + * indirect file execution (e.g. sh script.sh) lead to the same re=
-sult.  For
-> > > > + * instance, this can be used to check if a file is trustworthy ac=
-cording to
-> > > > + * the caller's environment.
-> > > > + *
-> > > > + * In a secure environment, libraries and any executable dependenc=
-ies should
-> > > > + * also be checked.  For instance dynamic linking should make sure=
- that all
-> > > > + * libraries are allowed for execution to avoid trivial bypass (e.=
-g. using
-> > > > + * LD_PRELOAD).  For such secure execution environment to make sen=
-se, only
-> > > > + * trusted code should be executable, which also requires integrit=
-y guarantees.
-> > > > + *
-> > > > + * To avoid race conditions leading to time-of-check to time-of-us=
-e issues,
-> > > > + * AT_CHECK should be used with AT_EMPTY_PATH to check against a f=
-ile
-> > > > + * descriptor instead of a path.
-> > > > + */
-> > > > +#define AT_CHECK               0x10000
-> > > > +
-> > > >  #if defined(__KERNEL__)
-> > > >  #define AT_GETATTR_NOSEC       0x80000000
-> > > >  #endif
-> > > > diff --git a/kernel/audit.h b/kernel/audit.h
-> > > > index a60d2840559e..8ebdabd2ab81 100644
-> > > > --- a/kernel/audit.h
-> > > > +++ b/kernel/audit.h
-> > > > @@ -197,6 +197,7 @@ struct audit_context {
-> > > >                 struct open_how openat2;
-> > > >                 struct {
-> > > >                         int                     argc;
-> > > > +                       bool                    is_check;
-> > > >                 } execve;
-> > > >                 struct {
-> > > >                         char                    *name;
-> > > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> > > > index 6f0d6fb6523f..b6316e284342 100644
-> > > > --- a/kernel/auditsc.c
-> > > > +++ b/kernel/auditsc.c
-> > > > @@ -2662,6 +2662,7 @@ void __audit_bprm(struct linux_binprm *bprm)
-> > > >
-> > > >         context->type =3D AUDIT_EXECVE;
-> > > >         context->execve.argc =3D bprm->argc;
-> > > > +       context->execve.is_check =3D bprm->is_check;
-> > > >  }
-> > > >
-> > > >
-> > > > --
-> > > > 2.45.2
-> > > >
-> > >
+  Link partner advertised link modes:  10baseT/Half 10baseT/Full
+                                       100baseT/Half 100baseT/Full
+                                       1000baseT/Full
+
+My PC that is on the same network supports 10M, but just not this Tegra 
+device. I am checking to see if this is expected for this device.
+
+Jon
+
+-- 
+nvpublic
 
