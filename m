@@ -1,289 +1,156 @@
-Return-Path: <linux-kernel+bounces-256258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04311934B8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:13:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 907AB934B91
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 678CEB23A60
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:13:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13098284B4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61AE112C474;
-	Thu, 18 Jul 2024 10:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737DE12C522;
+	Thu, 18 Jul 2024 10:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Q8AOWycx"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t8uQmutP"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D103612C46D;
-	Thu, 18 Jul 2024 10:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FF340856
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 10:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721297617; cv=none; b=KXAgbb8n+jNik2tuzUlyDW+ohVbWC1zcGUN2dG0x98OcwnJLizqQtWMkNCWKmf1tpCQ6+bXafKGOPWnLyPPhWpHLNUtnkIfpBk1M+hhzuBt3RkbYQetq4suUNOKZqzSlzlScVaLzbVoxpSmI8OKyYxZ+A09bV1aK9Chawwv+ZYM=
+	t=1721298039; cv=none; b=ZkNZJyavcZziMSj7fEuZ+UgeVAp/D5KjK+DOBFIUVvA/7NFyfS67IMuPnmBFUtmZpP9x3obWQKmwC8MaqDzcCUdy8DrpVbEJPFx4TasxajrxsSInOyEVoHVIH15t9/pXsOMFiYfgVt6BQoOWZN08tEgTuzs7vtSO+aSTgw70CZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721297617; c=relaxed/simple;
-	bh=R3Xl2ulng1qAC+aJtbMR94fFWC6W2dXLXgdRmegLgWQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O3cZXbiL99T7Jl+AUgnC1dQw0gCu3AEZRtyhBnF0jnO/Xc+ZAfFHpZcBBAukkuobBm1c4zSRieHFfI7ufajrcmG6Y6w6AFPXv5qGScwnnagkPAR1mZ2kOIyAQYIPQX7/nLd8IQM2zohAnTkBGSalLH/wrRN7PmA8V9hy9479NzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Q8AOWycx; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46I30Wdf024108;
-	Thu, 18 Jul 2024 10:13:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=eR8901HJO9WITQXSspzaYXad
-	3fJdO0EezwyJ9Xn459I=; b=Q8AOWycxxTaFrfPR+SH/hQf0nTv3AeJvra0O4mSj
-	WMFap5FNqsR/h66kTqWBIYk6rX/p/kLjoqi/TY9aHhF83eTO/NFGzSS87xBvcH2z
-	lCa4CBvuZC+Rgyrwn/6I6QvWLTNiw9H6PjykkmCzErCCW6FMmz2VLhthEjmtEizL
-	q6vSdcIjLnLivGDi7J6YcUBmSJ8RcnX8qSBqRRm1vJaaxbdCpo0gyrjeU+nyX5KJ
-	cXiuULlc0hD6Q+GQwx+9Tizimqe1G5gSfgOJE93pJs6apJ+3Jyh68BMO2ANZbs80
-	SpcBkJvSlkBDgHi6Z4ZCYLmHR/MwEApubaoHrhN/iGiKOg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfnn592-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Jul 2024 10:13:26 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46IADPOL017215
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Jul 2024 10:13:25 GMT
-Received: from hu-pkondeti-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 18 Jul 2024 03:13:21 -0700
-Date: Thu, 18 Jul 2024 15:43:18 +0530
-From: Pavan Kondeti <quic_pkondeti@quicinc.com>
-To: Will Deacon <will@kernel.org>, Vidya Sagar <vidyas@nvidia.com>
-CC: Bjorn Helgaas <helgaas@kernel.org>,
-        "Rafael J. Wysocki"
-	<rafael@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        "linux-pci@vger.kernel.org"
-	<linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        Manikanta Maddireddy
-	<mmaddireddy@nvidia.com>,
-        Shanker Donthineni <sdonthineni@nvidia.com>,
-        Krishna Thota <kthota@nvidia.com>, Joerg Roedel <joro@8bytes.org>
-Subject: Re: [Query] ACS enablement in the DT based boot flow
-Message-ID: <f551eecc-33fa-4729-b004-64a532493705@quicinc.com>
-References: <PH8PR12MB667446D4A4CAD6E0A2F488B5B83F2@PH8PR12MB6674.namprd12.prod.outlook.com>
- <20240410192840.GA2147526@bhelgaas>
- <20240428072318.GA11447@willie-the-truck>
+	s=arc-20240116; t=1721298039; c=relaxed/simple;
+	bh=xRgSCVVplPiL0xpVC03cKU7lVCIrDvizoH5klcKMOz4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FsHT+SdLRJXnBsJXdbWGYXq54waZEZVxhehBt5XJU44HgitcMaj+eG3elpWSeCBC7lyXAgAoh65ApdnE9X4Oly2G5e2kR08oD1N4Wuj1NoY0BM9L7lZmrX7FS/l0vb7CarV1EzJL4+a+3q7Fc846zlBp39x2fUA6/SxMfhKM6J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t8uQmutP; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4266f344091so1281165e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 03:20:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721298036; x=1721902836; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RQH5T+Pkl1n4Zwh31INvJnyflxCcVkziswAHPe6DR8E=;
+        b=t8uQmutPdPiSbJFJKg8gNYKm7eQLEMxiMrGC0/aPAtDD/o+v8B4SX+k4ggUa3u8GBc
+         PQNdc1Qa4LsxCvfK7f9OxPUxJ3gMd55/Mrkp0cKQvCffnHbrRoCl/9eS5lrCB89jVu4w
+         RmKvc7w5xtGSfO65sYd2qaU2co8imbIVSc58235BR0eyIFcS7qqwwjdwm6tw+wtSSygT
+         SJewJ068LcnoItt1+ax4KxANaHbNF5h7O6VijTkq3ScgZrP3++0LUsG/SMmpZaNPqVbU
+         iWuW1XeCoSO7hDG3is+4fFZhD4wKRPQyyQxPofRupfGfvycuWzFJNFgxCAXd5A3jI9by
+         70Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721298036; x=1721902836;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RQH5T+Pkl1n4Zwh31INvJnyflxCcVkziswAHPe6DR8E=;
+        b=vZHl93n6Xqf1yrX6aQX+gf+80bzSPL4G/kRVDLIg1los2pAoJGickIOy2j3ShB/zR0
+         ADnC0wV2yKtqy22YmisMyNvPm/VykueyYAis3MmX9OluUFQM7vZLcKZ+bXQOK7ocBp1p
+         DIW+M0wrVOUY1Hyxd+ydYZrLz1JP6T/Q1voD303AFr8hG7no8SLQVFm+kQ1jfNIjzkIW
+         GgPmmbj9ygGMTN1iIELO8pD0xgQ0sybqM2CmoQaLOrcQxG4Y+P1Pnh5B79ZeMr0L0dmu
+         pxNiCBjhksF5P59D/te5bKrpoS+f0CJCPQZRQjd5+Q3v2YdXrF0zGN2HXIeJZTdhUXzl
+         0fEg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBUaHXb6wGEQcTTTlLowcMbZxjAb5/S4N9+V9LnxxZ0Cg8rLX3TgqydnVBP4Aoovci/MJkRuimWA3gt8ZLLi8njCyuOAPHvL16BDbV
+X-Gm-Message-State: AOJu0YxT6Qq983zK6ClTY6qpaVADPxs8kvW5dc/Uf8WG9gYOSCKHXciY
+	CuCwi5rAE0/GDViCUxXlRe1qKVvbR4k2HIvnCQ8rzFPMQm46mE+ypI4Npbks6NY=
+X-Google-Smtp-Source: AGHT+IE8n2UsoIYCjK1SWuC28/N90RYfodiLo727k5oWb/pOXPXMmeuepRpyKssx5LAqcYAIhRURag==
+X-Received: by 2002:a05:600c:45d2:b0:426:6241:5eb9 with SMTP id 5b1f17b1804b1-427c2d00746mr29162015e9.39.1721298036414;
+        Thu, 18 Jul 2024 03:20:36 -0700 (PDT)
+Received: from [127.0.1.1] ([82.79.124.209])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2b29342sm5137465e9.31.2024.07.18.03.20.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jul 2024 03:20:35 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Date: Thu, 18 Jul 2024 13:20:25 +0300
+Subject: [PATCH] arm64: dts: qcom: sm8450: Add Broadcast_AND region in LLCC
+ block
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240428072318.GA11447@willie-the-truck>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: iDxlsnbsC8QinLVrS0tGPOoz8_Quukl9
-X-Proofpoint-ORIG-GUID: iDxlsnbsC8QinLVrS0tGPOoz8_Quukl9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-18_06,2024-07-17_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 bulkscore=0 malwarescore=0 suspectscore=0
- priorityscore=1501 clxscore=1011 spamscore=0 mlxscore=0 phishscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2407180066
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240718-x1e80100-dts-llcc-add-broadcastand_region-v1-1-20b6edf4557e@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAGjsmGYC/x3N0QqDMAxA0V+RPC+QdkK7/coYIzbRBaSOVkQQ/
+ 92yx/ty7gFVi2mFZ3dA0c2qLbmFu3WQvpwnRZPW4Mn3FFzE3WkkR4SyVpznlJBFcCgLS+K6cpZ
+ P0akpGB6hd3dVz3GE5v2Kjrb/X6/3eV4GCtsxewAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Rajendra Nayak <quic_rjendra@quicinc.com>, 
+ Sibi Sankar <quic_sibis@quicinc.com>
+Cc: Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1633; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=xRgSCVVplPiL0xpVC03cKU7lVCIrDvizoH5klcKMOz4=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmmOxv73rDa4ZQQW0wzr7YeIbOhFD5aZDQIdhbU
+ Nk6h/C1Y/WJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZpjsbwAKCRAbX0TJAJUV
+ Vk7/D/42TucbcmuXKV9a090uwl5da0pcJVTmg9Zv7+kHGGGz4kFFENwAtVjoDUq3wVVWneufE0H
+ yAwNMnW2dzlMFKV2IlRP6qLXQkYJ93mTKb/TaBBQDEGXAMl6+2QRw4psw9132Wp2JbgKVum7y14
+ ULBk/1ys41S/GSU7C+y4GUGNQp8+zb0CdTJHVZdYB5v0xqFXnLtX0dUV+aIF957rftCJg5YJJey
+ m/9/1XsDxKraMMMfRXQPilJL3mpfaW/qXnau+sXqZT+fBpdUmCbE0V4H39wVPAjR2tHJI6gz+N4
+ SazHaZwLRJh5A2WZEQ6s1GrX6GnoD7XSOmwOe38rb/Aj6XZzWm9k/y3liXWATs6x2w4m9Owg6al
+ 73J7C+cOTw1mshXb4QYPiL6qXEOHl5uZjt8vu0ZGc/10E3CBTFgMaOTAxOxlr1JFNLddNOVi/K3
+ ftYhM04EmAHkkNKsr+eX3ofG/aaB8+PevckDjEnutVZyFQL9veXAPC0lPhnDyxpaXbcjSn58e9G
+ 4yNaP4BY6nL2qzObCgSFQnyLlSpSin+3btIgkqw7vX+DZjTWN4Q5DQc8H1LlTwecE6D4Dqvx6C3
+ +xTT+jQw5O2Ui+h7MTKm2XLmgA5OpnFrrzG2yuTYigsGzzq7VufeLfyosRZrtlw5PdpsqQUEYd7
+ AJlm28+wordmfug==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-Hi Vidya/Will,
+Add missing Broadcast_AND region to the LLCC block for x1e80100,
+as the LLCC version on this platform is 4.1 and it provides the region.
 
-On Sun, Apr 28, 2024 at 08:23:18AM +0100, Will Deacon wrote:
-> On Wed, Apr 10, 2024 at 02:28:40PM -0500, Bjorn Helgaas wrote:
-> > [+cc Will, Joerg]
-> > 
-> > On Mon, Apr 01, 2024 at 10:40:15AM +0000, Vidya Sagar wrote:
-> > > Hi folks,
-> > > ACS (Access Control Services) is configured for a PCI device through
-> > > pci_enable_acs().  The first thing pci_enable_acs() checks for is
-> > > whether the global flag 'pci_acs_enable' is set or not.  The global
-> > > flag 'pci_acs_enable' is set by the function pci_request_acs().
-> > > 
-> > > pci_enable_acs() function is called whenever a new PCI device is
-> > > added to the system
-> > > 
-> > >  pci_enable_acs+0x4c/0x2a4
-> > >  pci_acs_init+0x38/0x60
-> > >  pci_device_add+0x1a0/0x670
-> > >  pci_scan_single_device+0xc4/0x100
-> > >  pci_scan_slot+0x6c/0x1e0
-> > >  pci_scan_child_bus_extend+0x48/0x2e0
-> > >  pci_scan_root_bus_bridge+0x64/0xf0
-> > >  pci_host_probe+0x18/0xd0
-> > > 
-> > > In the case of a system that boots using device-tree blob,
-> > > pci_request_acs() is called when the device driver binds with the
-> > > respective device
-> > > 
-> > > of_iommu_configure+0xf4/0x230
-> > > of_dma_configure_id+0x110/0x340
-> > > pci_dma_configure+0x54/0x120
-> > > really_probe+0x80/0x3e0
-> > > __driver_probe_device+0x88/0x1c0
-> > > driver_probe_device+0x3c/0x140
-> > > __device_attach_driver+0xe8/0x1e0
-> > > bus_for_each_drv+0x78/0xf0
-> > > __device_attach+0x104/0x1e0
-> > > device_attach+0x14/0x30
-> > > pci_bus_add_device+0x50/0xd0
-> > > pci_bus_add_devices+0x38/0x90
-> > > pci_host_probe+0x40/0xd0
-> > > 
-> > > Since the device addition always happens first followed by the
-> > > driver binding, this flow effectively makes sure that ACS never gets
-> > > enabled.
-> > > 
-> > > Ideally, I would expect the pci_request_acs() get called (probably
-> > > by the OF framework itself) before calling pci_enable_acs().
-> > > 
-> > > This happens in the ACPI flow where pci_request_acs() is called
-> > > during IORT node initialization (i.e. iort_init_platform_devices()
-> > > function).
-> > > 
-> > > Is this understanding correct? If yes, would it make sense to call
-> > > pci_request_acs() during OF initialization (similar to IORT
-> > > initialization in ACPI flow)?
-> > 
-> > Your understanding looks correct to me.  My call graph notes, FWIW:
-> > 
-> >   mem_init
-> >     pci_iommu_alloc                   # x86 only
-> >       amd_iommu_detect                # init_state = IOMMU_START_STATE
-> >         iommu_go_to_state(IOMMU_IVRS_DETECTED)
-> >           state_next
-> >             switch (init_state)
-> >             case IOMMU_START_STATE:
-> >               detect_ivrs
-> >                 pci_request_acs
-> >                   pci_acs_enable = 1  # <--
-> >       detect_intel_iommu
-> >         pci_request_acs
-> >           pci_acs_enable = 1          # <--
-> > 
-> >   pci_scan_single_device              # PCI enumeration
-> >     ...
-> >       pci_init_capabilities
-> >         pci_acs_init
-> >           pci_enable_acs
-> >             if (pci_acs_enable)       # <--
-> >               pci_std_enable_acs
-> > 
-> >   __driver_probe_device
-> >     really_probe
-> >       pci_dma_configure               # pci_bus_type.dma_configure
-> >         if (OF)
-> >           of_dma_configure
-> >             of_dma_configure_id
-> >               of_iommu_configure
-> >                 pci_request_acs       # <-- 6bf6c24720d3
-> >                 iommu_probe_device
-> >         else if (ACPI)
-> >           acpi_dma_configure
-> >             acpi_dma_configure_id
-> >               acpi_iommu_configure_id
-> >                 iommu_probe_device
-> > 
-> > The pci_request_acs() in of_iommu_configure(), which happens too late
-> > to affect pci_enable_acs(), was added by 6bf6c24720d3 ("iommu/of:
-> > Request ACS from the PCI core when configuring IOMMU linkage"), so I
-> > cc'd Will and Joerg.  I don't know if that *used* to work and got
-> > broken somehow, or if it never worked as intended.
-> 
-> I don't have any way to test this, but I'm supportive of having the same
-> flow for DT and ACPI-based flows. Vidya, are you able to cook a patch?
-> 
+This also fixes the following error caused by the missing region:
 
-I ran into a similar observation while testing a PCI device assignment
-to a VM. In my configuration, the virtio-iommu is enumerated over the
-PCI transport. So, I am thinking we can't hook pci_request_acs() to an
-IOMMU driver. Does the below patch makes sense?
+[    3.797768] qcom-llcc 25000000.system-cache-controller: error -EINVAL: invalid resource (null)
 
-The patch is tested with a VM and I could see ACS getting enabled and
-separate IOMMU groups are created for the devices attached under
-PCIe root port(s).
+Fixes: af16b00578a7 ("arm64: dts: qcom: Add base X1E80100 dtsi and the QCP dts")
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-The RC/devices with ACS quirks are not suffering from this problem as we 
-short circuit ACS capability detection checking in
-pci_acs_enabled()->pci_dev_specific_acs_enabled() . May be this is one
-of the reason why this was not reported/observed by some platforms with
-DT.
-
-diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-index b908fe1ae951..0eeb7abfbcfa 100644
---- a/drivers/pci/of.c
-+++ b/drivers/pci/of.c
-@@ -123,6 +123,13 @@ bool pci_host_of_has_msi_map(struct device *dev)
- 	return false;
- }
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+index 7bca5fcd7d52..2cbc959fc878 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+@@ -5687,7 +5687,8 @@ system-cache-controller@25000000 {
+ 			      <0 0x25a00000 0 0x200000>,
+ 			      <0 0x25c00000 0 0x200000>,
+ 			      <0 0x25e00000 0 0x200000>,
+-			      <0 0x26000000 0 0x200000>;
++			      <0 0x26000000 0 0x200000>,
++			      <0 0x26200000 0 0x200000>;
+ 			reg-names = "llcc0_base",
+ 				    "llcc1_base",
+ 				    "llcc2_base",
+@@ -5696,7 +5697,8 @@ system-cache-controller@25000000 {
+ 				    "llcc5_base",
+ 				    "llcc6_base",
+ 				    "llcc7_base",
+-				    "llcc_broadcast_base";
++				    "llcc_broadcast_base",
++				    "llcc_broadcast_and_base";
+ 			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
  
-+bool pci_host_of_has_iommu_map(struct device *dev)
-+{
-+	if (dev && dev->of_node)
-+		return of_get_property(dev->of_node, "iommu-map", NULL);
-+	return false;
-+}
-+
- static inline int __of_pci_pci_compare(struct device_node *node,
- 				       unsigned int data)
- {
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 4c367f13acdc..ea6fcdaf63e2 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -889,6 +889,7 @@ static void pci_set_bus_msi_domain(struct pci_bus *bus)
- 	dev_set_msi_domain(&bus->dev, d);
- }
- 
-+bool pci_host_of_has_iommu(struct device *dev);
- static int pci_register_host_bridge(struct pci_host_bridge *bridge)
- {
- 	struct device *parent = bridge->dev.parent;
-@@ -951,6 +952,9 @@ static int pci_register_host_bridge(struct pci_host_bridge *bridge)
- 	    !pci_host_of_has_msi_map(parent))
- 		bus->bus_flags |= PCI_BUS_FLAGS_NO_MSI;
- 
-+	if (pci_host_of_has_iommu_map(parent))
-+		pci_request_acs();
-+
- 	if (!parent)
- 		set_dev_node(bus->bridge, pcibus_to_node(bus));
- 
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index cafc5ab1cbcb..7eceed71236a 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -2571,6 +2571,7 @@ struct device_node;
- struct irq_domain;
- struct irq_domain *pci_host_bridge_of_msi_domain(struct pci_bus *bus);
- bool pci_host_of_has_msi_map(struct device *dev);
-+bool pci_host_of_has_iommu_map(struct device *dev);
- 
- /* Arch may override this (weak) */
- struct device_node *pcibios_get_phb_of_node(struct pci_bus *bus);
-@@ -2579,6 +2580,7 @@ struct device_node *pcibios_get_phb_of_node(struct pci_bus *bus);
- static inline struct irq_domain *
- pci_host_bridge_of_msi_domain(struct pci_bus *bus) { return NULL; }
- static inline bool pci_host_of_has_msi_map(struct device *dev) { return false; }
-+static inline bool pci_host_of_has_iommu_map(struct device *dev) { return false; }
- #endif  /* CONFIG_OF */
- 
- static inline struct device_node *
 
-Thanks,
-Pavan
+---
+base-commit: 73399b58e5e5a1b28a04baf42e321cfcfc663c2f
+change-id: 20240718-x1e80100-dts-llcc-add-broadcastand_region-797413ee2a8f
 
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
 
 
