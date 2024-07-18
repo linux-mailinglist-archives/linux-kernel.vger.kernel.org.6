@@ -1,202 +1,264 @@
-Return-Path: <linux-kernel+bounces-256063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF60993487F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:04:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DBB593487D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCD971C219BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:04:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56C482829D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA3D7581A;
-	Thu, 18 Jul 2024 07:04:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6117E74E26;
+	Thu, 18 Jul 2024 07:04:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CM8GYjKI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o0zyEpA0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1D64C62E
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 07:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C8974058;
+	Thu, 18 Jul 2024 07:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721286252; cv=none; b=J74UHzWw3PVAoD3K+XzK0XkPOSQN4qBhLuvRGHlEs41tNie6eRRz0qsnGH/TaLj/noavFrFpbkXCa5QfxSgT3bWMy9AJLreJ1ELno3niB16ZbCJEtTYmRmTasHnYICtPEhBHmQxMhd+xIVrYPn/bBWQq9n1GYKa6bNghO0vZZOE=
+	t=1721286251; cv=none; b=CfUxKSe3aKaYaOVa/YB+EzohlHyqQhXXTZ7XpHAuVGUt9cvPGqZerbzynbIoVuXcI9qdPeKoaCaMq71SE/FQOvhPyVCpBnLF2PgI9PqFFkexbTNN9M6ERIQ7xIudnA6xIOr2AvFdsq6aXIXX6LpeTCqeBFeRbyk8vBM72BrXWRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721286252; c=relaxed/simple;
-	bh=Qy5XXJ89Ktic3Aa1K9odT3n9Ohijkwg0eluVKDn6+pM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=QuW2VcDAN9QJsL27a4y3bjAR9tnH6LMl1dWuxdlDx9mojLMLTz/MZPAuMmifAbXf5M0PtJKpX3NHWsSbWdiUMveRCzE1lz8OSxmU+F5RxAv8aoOAAT07PjdZJ2862NRfj4djTdUeOixVaNs4PIU5FD2lDjuY7PnobREkGXPGt4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CM8GYjKI; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721286250;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yzJwnsiZ2ke6MzC/8F3MYwH+Ub1DtGJI2z59uDcufYU=;
-	b=CM8GYjKI9iKBEsiWBOuHZLz1M8n1L7jcxGPA7GcXwoOJX5ZY1Yzv/4h+o2w+DVHTlU3eVI
-	+EY9gYdEZohlIahqZNhsw/IzqnVUwkZDHacUNxA8l6MwOSzEgvQlSY+NJBVbu7JhZ37jQ8
-	C/4UDt2nimCX8RgbGU5JrJDEs8nuMhc=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-621-Ql7QEc26OnyxK9cJI4Jdsw-1; Thu, 18 Jul 2024 03:04:08 -0400
-X-MC-Unique: Ql7QEc26OnyxK9cJI4Jdsw-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42490ae735dso4444695e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 00:04:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721286247; x=1721891047;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yzJwnsiZ2ke6MzC/8F3MYwH+Ub1DtGJI2z59uDcufYU=;
-        b=KVIuOQiOETfILs/+n4tTdZ3u04hLtOodiPREYEOllH6x90sDP2927t0ORkD56hzLdv
-         W6r60dqsYvEN5ANTuNnO9tg9CCGVktQZrAKimz6x0NiNZx+5jXHYK743OjT5v6EPu68B
-         ku/2nYrX+GBZ+PCxY1RR/T30500/EevHIViuQtSoaXxXKq3pFrP+kS4/xf2WvjJMQEzv
-         b03ydYCjF9FbjElZkXduUdcHioywvt8dki/qOmo3dHBQan/NMW5VEN7GL+o9L/ynLSwQ
-         F9GzAONRHOJMb+ecGOJ487gqm9aqjQcWElBlCdUoB7CWUrh4M13qLotDmDRzKMGlOxGX
-         I4/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWiVj6U2OYRVa1pD3BBboB8J1k6f+v8kmJwfO8kDNEnghZFFIt1DoDawsVF+RWx90Smk4YR5z5XNz7/W/7KPv/sLOrkXsm0yLxfqlcN
-X-Gm-Message-State: AOJu0Yy1DwtLG2Bbn1tOIwSq+BOWq1MVVjMkE7gh4/KmhiE4u06YaR8k
-	FjIJz8zxJT17PDl0YMXnibNQOPnBviFC8QFknl7ZE/vWJv8tLXRD1vG2oflOMEcGzj5KqfNGSad
-	UmDScqMrzMpDEXYgUaMEeR/z8afRWhCpaVM9QcGt9mvwA8JRffPSTZc2wwyR2wg==
-X-Received: by 2002:a05:600c:1f89:b0:425:64c5:5780 with SMTP id 5b1f17b1804b1-427c2cad7d5mr36509545e9.1.1721286247225;
-        Thu, 18 Jul 2024 00:04:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF/KUVPhRm2HpDoAZJMxonN2aOgQWPFNeB5yzFSNwGye7MxC3l02lsOkLZOMlNf7V+jEkpGEg==
-X-Received: by 2002:a05:600c:1f89:b0:425:64c5:5780 with SMTP id 5b1f17b1804b1-427c2cad7d5mr36509225e9.1.1721286246782;
-        Thu, 18 Jul 2024 00:04:06 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427c77d810dsm23762885e9.26.2024.07.18.00.04.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jul 2024 00:04:06 -0700 (PDT)
-Message-ID: <34305c58-38a6-4b5a-9777-69833aefa003@redhat.com>
-Date: Thu, 18 Jul 2024 09:04:04 +0200
+	s=arc-20240116; t=1721286251; c=relaxed/simple;
+	bh=pAIKRUOe4rqwHdGMj8JeiKi4lyWdhmkJFpi2cWSoqW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lAxzBDuUeKwY0SRVeK+C+abd+DqPGVpzDpg2rLnsga2i22Nc/sA7BB67o8rBTWniOeImtMhdmdJPdr1kQ/Ty4TmihvcIx3EKALAhRBd+IUG/rEGcXBSpo8eEgTBYFRicZt7a+ElNxfSO/KOXjc13tgS2ZXd+3mtGSuGvWGQXzYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o0zyEpA0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58487C116B1;
+	Thu, 18 Jul 2024 07:04:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721286250;
+	bh=pAIKRUOe4rqwHdGMj8JeiKi4lyWdhmkJFpi2cWSoqW4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o0zyEpA03KDfPUPqxa8E0tRYAieqTSVOLhMT1QkWTyfDO0HCIexuYbbCfWmXu7nJI
+	 mNt3GdjTWLEcVOD1BbGxSc91b5IbzbL7oA0WZdPjwtlJfSV2h1/4oRdRmw6oIqAuxa
+	 UAuCQkU04Vo8uZApACdt1rIf6V9O+h91qCwVY/7PauzWy3F+3c98btHRAKJKXiuXn5
+	 Fnorbk0QsSg2Z7QnFaOmtsz8XSsKBHCr/+LVNbxlhChjYid8c5izz1L4xF//KDQqUq
+	 +o0JwH4kEGmwYId5ravPpOk+CkUyo/s1AoSW86DkuZmrrVAqS+qNJ+DnL/DQrMSFAx
+	 tvH/PPrTfmHKA==
+Date: Thu, 18 Jul 2024 10:04:06 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Easwar Hariharan <eahariha@linux.microsoft.com>,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH v2 2/2] dma: add IOMMU static calls with clear default ops
+Message-ID: <20240718070406.GK5630@unreal>
+References: <cover.1721219730.git.leon@kernel.org>
+ <dd34bf3ecef252b4910d70aa21ff5273b5e8b19b.1721219730.git.leon@kernel.org>
+ <20240718034854.GA31912@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] drm/panic: Add drm_panic_is_enabled()
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Helge Deller <deller@gmx.de>,
- "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Javier Martinez Canillas <javierm@redhat.com>,
- Samuel Thibault <samuel.thibault@ens-lyon.org>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-fbdev@vger.kernel.org
-References: <20240717090102.968152-1-jfalempe@redhat.com>
- <20240717090102.968152-2-jfalempe@redhat.com>
- <ZpfeiMj48JQTQcOE@phenom.ffwll.local>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <ZpfeiMj48JQTQcOE@phenom.ffwll.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240718034854.GA31912@lst.de>
 
+On Thu, Jul 18, 2024 at 05:48:54AM +0200, Christoph Hellwig wrote:
+> On Wed, Jul 17, 2024 at 03:37:11PM +0300, Leon Romanovsky wrote:
+> > From: Leon Romanovsky <leonro@nvidia.com>
+> > 
+> > Most of the arch DMA ops (which often, but not  always, involve
+> > some sort of IOMMU) are using the same DMA operations. These DMA
+> > operations are default ones implemented in drivers/iomem/dma-iommu.c.
+> 
+> I'm not sure I agree with the exact wording.  There's tons of arch DMA
+> ops not in any way tied to dma-iommu (or the iommu subsystem, but not
+> dma-iommu like the arm32 ones), but for all modern platforms dma-iommu
+> is what actually matters.
 
-
-On 17/07/2024 17:08, Daniel Vetter wrote:
-> On Wed, Jul 17, 2024 at 10:48:39AM +0200, Jocelyn Falempe wrote:
->> It allows to check if the drm device supports drm_panic.
->> Prepare the work to have better integration with fbcon and vtconsole.
->>
->> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
->> ---
->>   drivers/gpu/drm/drm_panic.c | 20 ++++++++++++++++++++
->>   include/drm/drm_panic.h     |  2 ++
->>   2 files changed, 22 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
->> index 948aed00595e..d9a25c2d0a65 100644
->> --- a/drivers/gpu/drm/drm_panic.c
->> +++ b/drivers/gpu/drm/drm_panic.c
->> @@ -703,6 +703,26 @@ static void debugfs_register_plane(struct drm_plane *plane, int index)
->>   static void debugfs_register_plane(struct drm_plane *plane, int index) {}
->>   #endif /* CONFIG_DRM_PANIC_DEBUG */
->>   
->> +/**
->> + * drm_panic_is_enabled
->> + * @dev: the drm device that may supports drm_panic
->> + *
->> + * returns true if the drm device supports drm_panic
->> + */
->> +bool drm_panic_is_enabled(struct drm_device *dev)
->> +{
->> +	struct drm_plane *plane;
->> +
->> +	if (!dev->mode_config.num_total_plane)
->> +		return false;
->> +
->> +	drm_for_each_plane(plane, dev)
->> +		if (plane->helper_private && plane->helper_private->get_scanout_buffer)
->> +			return true;
->> +	return false;
->> +}
->> +EXPORT_SYMBOL(drm_panic_is_enabled);
-> 
-> This feels like overkill since you currently only have one user in the
-> fbdev emulation code, but maybe useful in some other places ...
-> 
->> +
->>   /**
->>    * drm_panic_register() - Initialize DRM panic for a device
->>    * @dev: the drm device on which the panic screen will be displayed.
->> diff --git a/include/drm/drm_panic.h b/include/drm/drm_panic.h
->> index 73bb3f3d9ed9..c3a358dc3e27 100644
->> --- a/include/drm/drm_panic.h
->> +++ b/include/drm/drm_panic.h
->> @@ -148,11 +148,13 @@ struct drm_scanout_buffer {
->>   
->>   #ifdef CONFIG_DRM_PANIC
->>   
->> +bool drm_panic_is_enabled(struct drm_device *dev);
-> 
-> Since it's internal only, this should be in
-> drivers/gpu/drm/drm_crtc_internal.h and not int he include for drivers.
-
-Yes, that makes sense, drivers won't need that API.
-
-> With that:
-> 
-> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> 
->>   void drm_panic_register(struct drm_device *dev);
->>   void drm_panic_unregister(struct drm_device *dev);
-> 
-> These two are only used in drm.ko. Can you please move them to
-> drm_crtc_internal.h too and drop the EXPORT_SYMBOL in a follow-up patch?
-> We're trying to limit the exported interface and official headers to
-> really only the pieces drivers actually need.
-
-Sure, I'll add this to my next drm_panic series.
+I can change to any other wording, whatever you think is better.
 
 > 
-> Thanks, Sima
+> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> > Signed-off-by: Leon Romanovsky <leon@kernel.org>
 > 
->>   
->>   #else
->>   
->> +bool drm_panic_is_enabled(struct drm_device *dev) {return false; }
->>   static inline void drm_panic_register(struct drm_device *dev) {}
->>   static inline void drm_panic_unregister(struct drm_device *dev) {}
->>   
->> -- 
->> 2.45.2
->>
+> A double-signoff for the same person is a bit weird, isn't it?
+
+Sorry about that, it is a mistake in my tooling.
+
 > 
+> >  	struct iommu_domain *domain = iommu_get_domain_for_dev(dev);
+> > @@ -1756,10 +1733,10 @@ void iommu_setup_dma_ops(struct device *dev)
+> >  	if (iommu_is_dma_domain(domain)) {
+> >  		if (iommu_dma_init_domain(domain, dev))
+> >  			goto out_err;
+> > +		dev->dma_iommu = true;
+> > +	} else if (dev->dma_iommu) {
+> >  		/* Clean up if we've switched *from* a DMA domain */
+> > +		dev->dma_iommu = false;
+> >  	}
+> 
+> Strictly speaking we can no remove the if part of the else if above.
+> Or reword this a bit to:
+> 
+> 	dev->dma_iommu = iommu_is_dma_domain(domain);
+> 	if (dev->dma_iommu && iommu_dma_init_domain(domain, dev))
+> 		goto out_err;
 
-Best regards,
+I'll change
 
--- 
+> 
+> > diff --git a/include/linux/device.h b/include/linux/device.h
+> > index ace039151cb8..7fa1e40b617a 100644
+> > --- a/include/linux/device.h
+> > +++ b/include/linux/device.h
+> > @@ -822,6 +822,9 @@ struct device {
+> >  #ifdef CONFIG_DMA_NEED_SYNC
+> >  	bool			dma_skip_sync:1;
+> >  #endif
+> > +#ifdef CONFIG_IOMMU_DMA
+> > +	bool			dma_iommu : 1;
+> > +#endif
+> 
+> The kerneldoc above should be updated to describe this field.
 
-Jocelyn
+Will do
 
+> Please also add the maintainers of this file to the next round.
+
+I added them, there is no special maintainer for include/linux/device.h file:
+➜  kernel git:(dma-static-calls-v2) ✗ ./scripts/get_maintainer.pl --git-min-percent 100 /tmp/e/v2-0002-dma-add-IOMMU-static-calls-with-clear-default-ops.patch
+Joerg Roedel <joro@8bytes.org> (maintainer:IOMMU SUBSYSTEM)
+Will Deacon <will@kernel.org> (maintainer:IOMMU SUBSYSTEM)
+Robin Murphy <robin.murphy@arm.com> (reviewer:IOMMU SUBSYSTEM)
+Christoph Hellwig <hch@lst.de> (supporter:DMA MAPPING HELPERS)
+Marek Szyprowski <m.szyprowski@samsung.com> (supporter:DMA MAPPING HELPERS)
+linux-kernel@vger.kernel.org (open list)
+iommu@lists.linux.dev (open list:IOMMU SUBSYSTEM)
+
+Whom should I add?
+
+> 
+> > +static inline bool dma_is_default_iommu(struct device *dev)
+> > +{
+> > +#ifdef CONFIG_IOMMU_DMA
+> > +	return dev->dma_iommu;
+> > +#else
+> > +	return false;
+> > +#endif
+> > +}
+> 
+> The normal style would be to move the ifdefs outside the helper
+> function.
+
+I think you are talking about the style of functions declarations in
+header files. This function is inside c-file and it is much easier
+to write it this way. 
+
+
+> Also maybe name this use_dma_iommu?
+
+Sure, I'll change it.
+
+> 
+> >  static bool dma_go_direct(struct device *dev, dma_addr_t mask,
+> >  		const struct dma_map_ops *ops)
+> >  {
+> > +	WARN_ON_ONCE(ops && dma_is_default_iommu(dev));
+> 
+> I'd prefer to keep this out of the fast path and only do it in
+> say dma_set_mask.  And fail the call while we're at it.
+
+I will add it to dma_supported().
+
+> 
+> > +	if (likely(!ops) && !dma_is_default_iommu(dev))
+> 
+> The likely should cover both conditions.
+
+Sure
+
+> 
+> >  		return true;
+> > +
+> >  #ifdef CONFIG_DMA_OPS_BYPASS
+> > +	WARN_ON_ONCE(dev->dma_ops_bypass && dma_is_default_iommu(dev));
+> >  	if (dev->dma_ops_bypass)
+> 
+> Let's skip this and think about it if we ever use the bypass for
+> something that is not powerpc with it's own dma ops.
+
+I wanted to catch misconfigurations, but I can remove it. Is this what
+you are suggesting?
+
+  126 static bool dma_go_direct(struct device *dev, dma_addr_t mask, 
+  127                 const struct dma_map_ops *ops)                
+  128 {                                                            
+  129         if (likely(!ops && !dma_is_default_iommu(dev)))     
+  130                 return true;                               
+  131                                                           
+  132         if (dma_is_default_iommu(dev))    
+  133                 return false;
+  134                             
+  135 #ifdef CONFIG_DMA_OPS_BYPASS 
+  136         if (dev->dma_ops_bypass)
+  137                 return min_not_zero(mask, dev->bus_dma_limit) >= 
+  138                             dma_direct_get_required_mask(dev);  
+  139 #endif                                                         
+  140         return false;                                         
+  141 }         
+
+> 
+> > @@ -323,8 +346,12 @@ void dma_unmap_resource(struct device *dev, dma_addr_t addr, size_t size,
+> >  	const struct dma_map_ops *ops = get_dma_ops(dev);
+> >  
+> >  	BUG_ON(!valid_dma_direction(dir));
+> > -	if (!dma_map_direct(dev, ops) && ops->unmap_resource)
+> > -		ops->unmap_resource(dev, addr, size, dir, attrs);
+> > +	if (!dma_map_direct(dev, ops)) {
+> > +		if (dma_is_default_iommu(dev))
+> > +			iommu_dma_unmap_resource(dev, addr, size, dir, attrs);
+> > +		else if (ops->unmap_resource)
+> > +			ops->unmap_resource(dev, addr, size, dir, attrs);
+> > +	}
+> 
+> I'd prefer to order this as:
+> 
+> 	if (dma_map_direct(dev, ops))
+> 		; /* nothing to do: uncached and no swiotlb */
+> 	else if (use_dma_iommu(dev))
+> 		iommu_dma_unmap_resource(dev, addr, size, dir, attrs);
+> 	else if (ops->unmap_resource)
+> 		ops->unmap_resource(dev, addr, size, dir, attrs);
+
+I will change.
+
+> 
+> > +	return (!ops || dma_is_default_iommu(dev));
+> 
+> dma_is_default_iommu implies !ops, so the second condition is
+> redundant.
+
+Right
+
+> 
+> >  EXPORT_SYMBOL_GPL(dma_opt_mapping_size);
+> > @@ -888,7 +943,12 @@ unsigned long dma_get_merge_boundary(struct device *dev)
+> >  {
+> >  	const struct dma_map_ops *ops = get_dma_ops(dev);
+> >  
+> > +	if (!ops)
+> > +		return 0;	/* can't merge */
+> > +	if (dma_is_default_iommu(dev))
+> > +		return iommu_dma_get_merge_boundary(dev);
+> 
+> The second check needs to move up here.
+
+Right, will fix.
+
+I'll send v3 after weekend.
+
+Thanks
 
