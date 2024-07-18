@@ -1,189 +1,253 @@
-Return-Path: <linux-kernel+bounces-256561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4355935037
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:54:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A26E93503F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 581C8B225C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:54:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E2441C20E6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CD2144D19;
-	Thu, 18 Jul 2024 15:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C5414533D;
+	Thu, 18 Jul 2024 15:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iJCh00NQ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Uj8Hvw2B";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="E69SeGTh";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5uFBpiLV"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RalfMmnf"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C714D8B7;
-	Thu, 18 Jul 2024 15:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F33C144D0F
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 15:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721318067; cv=none; b=uSIOTgT869LMJRhT5M2hrmJMNud17XKh0zCuMj6HDI3l1KcTrCfT9ySY38Pz7TV9Ljt8oUxDoEhUf6R/Zg7qnAZSCf+g5sZFAhSFCPSV/Le8S7N8wvUSA3DjkL30Q8TuVD0CL6jf0ureNWAqW1r/zjlM1k0wX4dS96FeXLvVU+s=
+	t=1721318171; cv=none; b=NxTX521kKmQAyg/NZqr0+YRTn4BEJDbumSo1y3uCDp45020VPHif78s90XNOJ9LkgbTJ1XIg0EoUO9468tojeu0ASEuVWT82yhEyKT7hcX8QQSkQlcEbp5PyByA0ID3wgTC9wQUsP76sGvH8r2+ZKMR2RfddHQH/gQut4EhEVsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721318067; c=relaxed/simple;
-	bh=+GyF6wF45Mva/16xGi0bZK4e1fiwil2bPTQjhXLOiuA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mdnDxpZdnMmKFTTUZO2AH/Ik7k5OjnD8C+2IAoEgvEPZAYMFpEjmweyI2FOyiBCrdbSCfIbw0UYi9sijbVFxoEteLJ70LXaR8JrShg/3kh+hBZtJ1uXw9DfOHES8zbwJs7wJscg4jFcnFuwVQckGUm3qR06H5mvnvCJmfQwbFGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iJCh00NQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Uj8Hvw2B; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=E69SeGTh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5uFBpiLV; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C07061FBFB;
-	Thu, 18 Jul 2024 15:54:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721318064; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Hw0JL5HeNP2tQP8OBPZN6qivjdHQ01R9UaXvGFT6Pl0=;
-	b=iJCh00NQGkmfEwGvfwMzpKue/TWOiYXwjn+GMJToXjItCBVOcl1OUyr0AIC9gEEJVW9b61
-	XW2XYvIONDxZHC8aKWSjEieRE618ITkMd9P0j5l6NPKBVr4L5GyBavXRRX81306M1lEafW
-	DK9iHSCx63rRqfwMGsyIZg72gupWvW8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721318064;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Hw0JL5HeNP2tQP8OBPZN6qivjdHQ01R9UaXvGFT6Pl0=;
-	b=Uj8Hvw2B+SS4PYs54olzZcUTitI6gR7jaxSDzGJzjhOBbZCwnjhgnFWb7JYv/KX01ocBnG
-	fioRhtpAU7HrPTAw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=E69SeGTh;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=5uFBpiLV
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721318063; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Hw0JL5HeNP2tQP8OBPZN6qivjdHQ01R9UaXvGFT6Pl0=;
-	b=E69SeGThIYDdtfZ76g0+pC+Lfs1snFpP9Zy33ITQEk1+E3+wxGdJNazTURqB0/GEcCykwh
-	M+KGhULAeFNJgiI5xKMWQmhOl5rYCzg/ZFXvI2VQ1P4DfuOqHZIftd5+aIC3GDs2Ubx0BU
-	Gh3M4kj9XQMcW28ShyHxCO45KOwzLSI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721318063;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Hw0JL5HeNP2tQP8OBPZN6qivjdHQ01R9UaXvGFT6Pl0=;
-	b=5uFBpiLVBmYySZIclc9Wuxvf6b4xhF9lMS4vb6s37vgtXQ2NZmqMjoZF9EKUkBRe3tcgN0
-	PRzbVTkeR+Fk8GCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CC9681379D;
-	Thu, 18 Jul 2024 15:54:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id jw2UL646mWYFNAAAD6G6ig
-	(envelope-from <svarbanov@suse.de>); Thu, 18 Jul 2024 15:54:22 +0000
-Message-ID: <3fa9cdef-b242-43ef-bf53-33fb3f294039@suse.de>
-Date: Thu, 18 Jul 2024 18:54:18 +0300
+	s=arc-20240116; t=1721318171; c=relaxed/simple;
+	bh=1pOANHGT3ZDBfZJaJvyg3dRQGTHF5cppcYVLUfHUi3w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=raavbcLOSqAcV99qykK9YZ7m/hcEvYZ0maKezuK+rEI22Z57+HFPAUzz5HsdV/8U7jd5x+foMwveo2prPJu/7wxT6otDu1QpOP5/b8thPrxnALp9FWMhCfqCunB/9bYnrQpKuF0RdzUys9Ti7du3l1MYlD24U65E7GLKc8oqRhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RalfMmnf; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52ea929ea56so1039561e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 08:56:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721318168; x=1721922968; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fxgux2vbdZYB6RZEvo07oOPDR4FUj2S7XQtL1IHtKck=;
+        b=RalfMmnfd8Hzx1eaniyp/RsHiZmIyAQGL4S3b+GgM5b03t9vtycPnXGeUGwbRsfPds
+         12QtWTKT4STxESr3Ea31HS/G+QJDnhikM+kDu0JIn8B04FoeePIF6O0NT6CUGjZ68dzH
+         kPWN0dByF2dR+4baU8+RqavouF06ztycPTo46OLuWYDV7JNxMky1Yf0zj0S7ahFpQLhp
+         QKZyrkVPrDXB2My8RKksTsfIvU4nkRv4THU7Q+MPdo2nqCHmnhL+AGsV9WtGuBbc9PiY
+         qGHjE9Z6jhD9aEgYREyZ6FCPlZoq7ybvps3PHDNmqMysied8nfgPqdQ49nXtYwOShIBz
+         cS3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721318168; x=1721922968;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fxgux2vbdZYB6RZEvo07oOPDR4FUj2S7XQtL1IHtKck=;
+        b=Q6WKEIB4ML0yYwz5qA5ppOPXUwmsc34xjKxtdygbo6cnrd/0UNJb30fLTP8LKedUBd
+         SLtQWlHJSwB+2oKcPDHskX+Zmc2yQkdNrqlJYPOZ7vQUy6JEBFHOOH7+Gf2CA2KhbNDU
+         WCIP3wU7jYbnkzgV+JU2obFNVurWHKnEC2KmvbLGTkPE8Ad6M8cNPNXLx9qNrKqnwTsl
+         0DU9ZYe21uBquwlYlKnJIJ2odYAEQCO4naRNfgo1WXKYrRz/6jklAxpspFVlxNINo/8f
+         RrR+Ta0zM2GcAcVOk1dvgirXkhvQDXKi0V5dWdBBQKIqOIT7W01hXSsJaBTcDRZY8V9f
+         GeJg==
+X-Forwarded-Encrypted: i=1; AJvYcCWPNmfi8jK4uJN4kk4bneEJuf/XECvoRNN47COq7kozwdKby5sIVVkOZmCjCYyBlTJthnoMnlocxL9Ws1EE+M/W27Ds8SMW01ftz+pY
+X-Gm-Message-State: AOJu0Yw7Eh90GnNiat+rsSLB3/Yehc8Z/2VEdSbG9MAn4YX+QeRU2whc
+	gqJqm8ksW7oswgRj1aV/yq0yu2wHdHOLGQ9/iuF8J0DmJ4KhLkpdZUw/LvuTGM+3W90FFRd5EUq
+	J8g4/Yv7HDLlfEb87ByL5M/4ysQmdx35pdcwl
+X-Google-Smtp-Source: AGHT+IFPE0lghj2YZixrbpHmgxoF0kZ8549vynInTdXVmmjQgeXJvlltx3tprAguDK2P3x48GSK3zddRYlWRwkMyDkE=
+X-Received: by 2002:a05:6512:1318:b0:52c:e05f:9052 with SMTP id
+ 2adb3069b0e04-52ee5435136mr4625806e87.47.1721318167063; Thu, 18 Jul 2024
+ 08:56:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] irqchip: Add Broadcom bcm2712 MSI-X interrupt
- controller
-To: Thomas Gleixner <tglx@linutronix.de>,
- Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Jim Quinlan <jim2101024@gmail.com>,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Andrea della Porta <andrea.porta@suse.com>,
- Phil Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>
-References: <20240626104544.14233-1-svarbanov@suse.de>
- <20240626104544.14233-4-svarbanov@suse.de> <87ikxu1t5e.ffs@tglx>
-Content-Language: en-US
-From: Stanimir Varbanov <svarbanov@suse.de>
-In-Reply-To: <87ikxu1t5e.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-3.00 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	XM_UA_NO_VERSION(0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[kernel.org,broadcom.com,gmail.com,google.com,linux.com,pengutronix.de,suse.com,raspberrypi.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[dt];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim]
-X-Spam-Flag: NO
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.00
-X-Spam-Level: 
-X-Rspamd-Queue-Id: C07061FBFB
+References: <172070450139.2992819.13210624094367257881.stgit@firesoul>
+ <a4e67f81-6946-47c0-907e-5431e7e01eb1@kernel.org> <CAJD7tkYV3iwk-ZJcr_==V4e24yH-1NaCYFUL7wDaQEi8ZXqfqQ@mail.gmail.com>
+ <100caebf-c11c-45c9-b864-d8562e2a5ac5@kernel.org> <CAJD7tkaBKTiMzSkXfaKO5EO58aN708L4XBS3cX85JvxVpcNkQQ@mail.gmail.com>
+ <c2ac13d7-f280-4be7-929a-d46c1dc7692c@kernel.org>
+In-Reply-To: <c2ac13d7-f280-4be7-929a-d46c1dc7692c@kernel.org>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Thu, 18 Jul 2024 08:55:28 -0700
+Message-ID: <CAJD7tkZ5nxoa7aCpAix1bYOoYiLVfn+aNkq7jmRAZqsxruHYLw@mail.gmail.com>
+Subject: Re: [PATCH V7 1/2] cgroup/rstat: Avoid thundering herd problem by
+ kswapd across NUMA nodes
+To: Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: tj@kernel.org, cgroups@vger.kernel.org, shakeel.butt@linux.dev, 
+	hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com, 
+	kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Thomas,
+On Thu, Jul 18, 2024 at 1:12=E2=80=AFAM Jesper Dangaard Brouer <hawk@kernel=
+.org> wrote:
+>
+>
+>
+> On 17/07/2024 18.49, Yosry Ahmed wrote:
+> > On Wed, Jul 17, 2024 at 9:36=E2=80=AFAM Jesper Dangaard Brouer <hawk@ke=
+rnel.org> wrote:
+> >>
+> >>
+> >> On 17/07/2024 02.35, Yosry Ahmed wrote:
+> >>> [..]
+> >>>>
+> >>>>
+> >>>> This is a clean (meaning no cadvisor interference) example of kswapd
+> >>>> starting simultaniously on many NUMA nodes, that in 27 out of 98 cas=
+es
+> >>>> hit the race (which is handled in V6 and V7).
+> >>>>
+> >>>> The BPF "cnt" maps are getting cleared every second, so this
+> >>>> approximates per sec numbers.  This patch reduce pressure on the loc=
+k,
+> >>>> but we are still seeing (kfunc:vmlinux:cgroup_rstat_flush_locked) fu=
+ll
+> >>>> flushes approx 37 per sec (every 27 ms). On the positive side
+> >>>> ongoing_flusher mitigation stopped 98 per sec of these.
+> >>>>
+> >>>> In this clean kswapd case the patch removes the lock contention issu=
+e
+> >>>> for kswapd. The lock_contended cases 27 seems to be all related to
+> >>>> handled_race cases 27.
+> >>>>
+> >>>> The remaning high flush rate should also be addressed, and we should
+> >>>> also work on aproaches to limit this like my ealier proposal[1].
+> >>>
+> >>> I honestly don't think a high number of flushes is a problem on its
+> >>> own as long as we are not spending too much time flushing, especially
+> >>> when we have magnitude-based thresholding so we know there is
+> >>> something to flush (although it may not be relevant to what we are
+> >>> doing).
+> >>>
+> >>
+> >> We are "spending too much time flushing" see below.
+> >>
+> >>> If we keep observing a lot of lock contention, one thing that I
+> >>> thought about is to have a variant of spin_lock with a timeout. This
+> >>> limits the flushing latency, instead of limiting the number of flushe=
+s
+> >>> (which I believe is the wrong metric to optimize).
+> >>>
+> >>> It also seems to me that we are doing a flush each 27ms, and your
+> >>> proposed threshold was once per 50ms. It doesn't seem like a
+> >>> fundamental difference.
+> >>>
+> >>
+> >>
+> >> Looking at the production numbers for the time the lock is held for le=
+vel 0:
+> >>
+> >> @locked_time_level[0]:
+> >> [4M, 8M)     623 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@               =
+|
+> >> [8M, 16M)    860 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=
+|
+> >> [16M, 32M)   295 |@@@@@@@@@@@@@@@@@                                   =
+|
+> >> [32M, 64M)   275 |@@@@@@@@@@@@@@@@                                    =
+|
+> >>
+> >> The time is in nanosec, so M corresponds to ms (milliseconds).
+> >>
+> >> With 36 flushes per second (as shown earlier) this is a flush every
+> >> 27.7ms.  It is not unreasonable (from above data) that the flush time
+> >> also spend 27ms, which means that we spend a full CPU second flushing.
+> >> That is spending too much time flushing.
+> >>
+> >> This around 1 sec CPU usage for kswapd is also quite clear in the
+> >> attached grafana graph for when server was rebooted into this V7 kerne=
+l.
+> >>
+> >> I choose 50ms because at the time I saw flush taking around 30ms, and =
+I
+> >> view the flush time as queue service-time.  When arrival-rate is faste=
+r
+> >> than service-time, then a queue will form.  So, choosing 50ms as
+> >> arrival-rate gave me some headroom.  As I mentioned earlier, optimally
+> >> this threshold should be dynamically measured.
+> >
+> > Thanks for the data. Yeah this doesn't look good.
+> >
+> > Does it make sense to just throttle flushers at some point to increase
+> > the chances of coalescing multiple flushers?
+> >
+> > Otherwise I think it makes sense in this case to ratelimit flushing in
+> > general. Although instead of just checking how much time elapsed since
+> > the last flush, can we use something like __ratelimit()?
+> >
+> > This will make sure that we skip flushes when we actually have a high
+> > rate of flushing over a period of time, not because two flushes
+> > happened to be requested in close succession and the flushing rate is
+> > generally low.
+> >
+>
+> I really think "time elapsed since the last flush" is the right solution
+> here.  As, we *do* want to catch the case you describe "two flushes
+> happened to be requested in close succession and the flushing rate is
+> generally low."
+>
+> (After this patch fixing the lock contention triggered by kswapd).
+> The remaining problem with kswapd is that those flushes that doesn't
+> "collide" on the lock, will be flushing in close succession.  And we
+> likely have a generally low flushing rate, until kswapd starts up.
 
-Thank you for the comments!
+I do not disagree, I think I may have misrepresented my intention.
 
-On 6/27/24 15:12, Thomas Gleixner wrote:
-> Stanimir!
-> 
-> On Wed, Jun 26 2024 at 13:45, Stanimir Varbanov wrote:
->> Add an interrupt controller driver for MSI-X Interrupt Peripheral (MIP)
->> hardware block found in bcm2712. The interrupt controller is used to
->> handle MSI-X interrupts from peripherials behind PCIe endpoints like
->> RP1 south bridge found in RPi5.
->>
->> There are two MIPs on bcm2712, the first has 64 consecutive SPIs
->> assigned to 64 output vectors, and the second has 17 SPIs, but only
->> 8 of them are consecutive starting at the 8th output vector.
-> 
-> This is going to conflict with:
-> 
->   https://lore.kernel.org/all/20240623142137.448898081@linutronix.de/
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git devmsi-arm-v4-1
-> 
-> Can you please have a look and rework it to the new per device MSI
-> domain concept?
+Time since last flush is essentially ratelimiting to 2 flushes per
+(let's say) 50 ms. So if we only have 2 flushes in an entire second,
+but they happen to occur <50ms apart, the latter will be skipped
+(arguably unnecessarily).
 
-When do you expect this will be merged?
+What I am trying to say is to make it more generalized/less-granular,
+and apply ratelimiting when we are actually spending a large portion
+of our time flushing. For example, cap it at 20 flushes per 1s. I
+think __ratelimit() does exactly that, although it's currently mostly
+used to ratelimit warnings, but I think we can reuse it here.
 
-~Stan
+Ideally, of course, the number would be dynamic as you described
+before, but we can start with a reasonable static value based on data.
+What we do when the limit is hit could be changed later as well. We
+can just skip flushes initially, and later we can be smarter about it
+and throttle them in a way that makes them collide more effectively.
+
+>
+> Some production data from a "slow" period where only kswapd is active:
+>
+> 05:59:32 @ongoing_flusher_cnt[kswapd11]: 1
+> @ongoing_flusher_cnt[kswapd7]: 1
+> @ongoing_flusher_cnt[kswapd3]: 1
+> @ongoing_flusher_cnt[kswapd5]: 1
+> @ongoing_flusher_cnt[kswapd10]: 1
+> @ongoing_flusher_cnt[kswapd6]: 2
+> @ongoing_flusher_cnt[kswapd8]: 2
+> @ongoing_flusher_cnt[kswapd1]: 2
+> @ongoing_flusher_cnt[kswapd9]: 2
+> @ongoing_flusher_cnt[kswapd0]: 2
+> @ongoing_flusher_cnt[kswapd2]: 2
+> @ongoing_flusher_cnt[kswapd4]: 2
+> @ongoing_flusher_cnt[handled_race]: 2
+> @ongoing_flusher_cnt[all]: 14
+> @cnt[tracepoint:cgroup:cgroup_rstat_lock_contended]: 2
+> @cnt[tracepoint:cgroup:cgroup_ongoing_flusher_wait]: 10
+> @cnt[kfunc:vmlinux:cgroup_rstat_flush_locked]: 43
+> @cnt[tracepoint:cgroup:cgroup_rstat_locked]: 51
+>
+> We observe that ongoing_flusher scheme saves/avoids 14 of the flushes
+> great, but we still have 43 flushes in this period.  I think only kswapd
+> is doing the flushing here, so I claim 41 flushes are likely unnecessary
+> (as there are indication of 2 kswapd startups in the period).  Also
+> observe that some of the kswapdNN processes only have
+> ongoing_flusher_cnt 1, which indicate they didn't fully "collide" with
+> an ongoing flusher, while others have 2.
+>
+> --Jesper
 
