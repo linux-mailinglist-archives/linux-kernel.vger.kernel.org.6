@@ -1,160 +1,144 @@
-Return-Path: <linux-kernel+bounces-256311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 926E2934C54
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:21:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4558C934C53
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E821E28284E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:21:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2991B21C14
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA119137905;
-	Thu, 18 Jul 2024 11:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6D5136E01;
+	Thu, 18 Jul 2024 11:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bqD0ebCp"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="URbxCITs"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897A312D1FA
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 11:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5248565E
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 11:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721301657; cv=none; b=ocSbpBCAbW190ZSjFpKmEOVgMIxwxSyHsauw6WswgKj7IJveVKaw6wRyp9X8KXkW3ziPK3D2IatfTLmcOpwIiyIK1rO0GBtcLDw+JTgFDZninDyTsmPUzQZZCvw77AG9Srtl/LlDEGmCvZdjcHRBx40+cEV1TZayrL5Gqx/291Y=
+	t=1721301644; cv=none; b=pQHIll/Lhgx8Ma0KacSSwNVk2QT2uLSBVKWRhPEui+F7L9Kme/yk7sQhs5Hm/j7XlZmcEEaVyUAAt1iGA0UxX5StVp/SKfWxKF+LXBltiXw6Vm6jpvDPkjAjq2kmi8WrwkohBN5xsGF20sx4Gkr8irAMJ1gsFaV45GN24MGp8cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721301657; c=relaxed/simple;
-	bh=IfHDXa9N/+7SF+YoRUEpyGweRKIae/m5inzkjl9K83w=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=r2TguJTAdkU3+CeeQog9dGSvCcYjM8yL6+Ui8x1qKZQfOI1OLexaU5YWh4bgNWKuDbpBcK1M9/GRWNaMHVc6+nxM/kntizQZ2+jUfKNclaDduLpZNkSmJrHQTOWtzWcLROI4wpFHydy6SHhN9ZJo51jc/0T4KKcvcGXsURwXwM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bqD0ebCp; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: vbabka@suse.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721301652;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9PnGey5McE5FQao9lIF/IWdEuDxFp9LqXLKRL3lwW64=;
-	b=bqD0ebCpwiJakwQbd+nu95d613nzy6ckidLCqOh2xzUWixV8sspQhYrFGmBO4lP2F8YbaV
-	vJsJcRBQpJz1J6bGdbQ6zZzGHdqteuftrI4r/zUckUk7tJaFoaU/TPsRcH/Cogx77BP7LD
-	/PFM+cvX0x1spMxK4SPBiwDisYj3KgM=
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: nphamcs@gmail.com
-X-Envelope-To: songmuchun@bytedance.com
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: mhocko@kernel.org
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
+	s=arc-20240116; t=1721301644; c=relaxed/simple;
+	bh=iv20VAb6LpGASS19cXeiUPfpWaZEMqnqCnGgiQW6vis=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a7DkCelF9u21OjJQxpm/uTCNy7HNa/psawbHQycRYveP8CKeBDJ2WAf/MUkLM2p0VuR9LBYW8+4npOC/tYS1BLnuGlL1BwKn7DDaGkGYciwtqnEWmZE0IZrhiSPmyudC91adRH2FP/ECenYY91RshM6q35Atpne/VY5RCKw5DNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=URbxCITs; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-58ba3e38028so688135a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 04:20:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721301641; x=1721906441; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=QdPwyZBp9vMOZVz7lUUwmgecgkSCLrQ0rjAotCotg+0=;
+        b=URbxCITsmn4bBsiPBcaL2vGYW4aLQvVBlzg6TbQniJFHUoUEcKH3F2mf9zoOyytjBi
+         jzABDgIPIdjBBN0ZnU1nbIBnXb8m6WN8KNNzkx3/Ak7GE2/ZhocyRplVk5kE5m8VNp2R
+         /rhxinEFe38pedzpjBGKvhcvlLKi0KZu+vDEzOIs1ntKffLzXUslKu4gJZDAp0qy1RLm
+         I9rcHtUyUOG4+UWxg2/Yc1JP3eumjy/Gpy4In893GukRTxWX0qqmPdN54fM2F8MWPPER
+         GapLT6ZpopB8lYFRRqO5Bg9oV/cvZZdvbsjmEjmRHMgSzOPv46vrEP/ZucnfW9ShGlcu
+         vvzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721301641; x=1721906441;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QdPwyZBp9vMOZVz7lUUwmgecgkSCLrQ0rjAotCotg+0=;
+        b=OHEuIFAZIWvlEJzsavCD7ewiYcg57n0olx9IKwHhxiIm4Ul6BZjwyPGAjltSR+7CZR
+         UsnrOhd41Gomj1fVIyiShqR/0Pa7VlnD15OE+YiTrv9cV4yoP02zz7/xGesHpb9rohvJ
+         XUhhL2WETKE3JI8qePYIeHcvmMADaUAuqq2JyptGi0/WKHPkLm/dmTeaxTBBNToYxRyB
+         hdQz4Q296iC1YENLAgkFbkbvylnqdTDsaAODC7TArFvZIEoDndirF8j8SzzoAFSmEbTq
+         WKnFGYNkmjLdAEx84x7R2hpRRmn4xe+gv5VZiXiIQ2FLlRxhXy1GWMtwRRPl2g1tplmH
+         Z4HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUjVf84+bh8tYSvXydRh+A6vHx3H/ntf/0L49J3w+xwnLFa6ITEt2BDxWGjwtvW96LAm0sf2W+rU3VGto+6pWKiCuvZrIMmxA+yR7sY
+X-Gm-Message-State: AOJu0YzWwOy0NVz0LC6kAbR726UAiLrGzKlHUC34L+HoOiVGx5y6pt6+
+	UH5Sh88d6L/xrhtZmUj1iO8NLK+dNo5w72gMyUuzxg4t3gXW+5UsRpFmYo1dWA8=
+X-Google-Smtp-Source: AGHT+IF9iu6NNq9VCQIGnpytgnvrD3+aeNGAuSKJw8t9yX/qIIYfxpIVf1/g3LyDNbi2qcTT3rtY4A==
+X-Received: by 2002:a17:906:a387:b0:a77:f2c5:84b7 with SMTP id a640c23a62f3a-a7a01131319mr342413466b.5.1721301640476;
+        Thu, 18 Jul 2024 04:20:40 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7f1e20sm545466566b.116.2024.07.18.04.20.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Jul 2024 04:20:40 -0700 (PDT)
+Message-ID: <39df7ff4-7f22-4715-a0f7-eb2475bd7b55@linaro.org>
+Date: Thu, 18 Jul 2024 13:20:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] mm: list_lru: fix UAF for memory cgroup
-Date: Thu, 18 Jul 2024 19:20:14 +0800
-Message-Id: <E0A7CC1A-B02C-4210-A1DF-0600E027D5D0@linux.dev>
-References: <65b7d88b-af4f-4869-9322-e38910abce6d@suse.cz>
-Cc: Muchun Song <songmuchun@bytedance.com>, akpm@linux-foundation.org,
- hannes@cmpxchg.org, nphamcs@gmail.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Michal Hocko <mhocko@kernel.org>
-In-Reply-To: <65b7d88b-af4f-4869-9322-e38910abce6d@suse.cz>
-To: Vlastimil Babka <vbabka@suse.cz>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: sm8450: Add Broadcast_AND region in
+ LLCC block
+To: Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Rajendra Nayak
+ <quic_rjendra@quicinc.com>, Sibi Sankar <quic_sibis@quicinc.com>
+Cc: Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240718-x1e80100-dts-llcc-add-broadcastand_region-v1-1-20b6edf4557e@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240718-x1e80100-dts-llcc-add-broadcastand_region-v1-1-20b6edf4557e@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 18.07.2024 12:20 PM, Abel Vesa wrote:
+> Add missing Broadcast_AND region to the LLCC block for x1e80100,
+> as the LLCC version on this platform is 4.1 and it provides the region.
+> 
+> This also fixes the following error caused by the missing region:
+> 
+> [    3.797768] qcom-llcc 25000000.system-cache-controller: error -EINVAL: invalid resource (null)
+> 
+> Fixes: af16b00578a7 ("arm64: dts: qcom: Add base X1E80100 dtsi and the QCP dts")
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
 
+Please fix the commit title
 
-> On Jul 18, 2024, at 18:30, Vlastimil Babka <vbabka@suse.cz> wrote:
->=20
-> =EF=BB=BFOn 7/18/24 10:36 AM, Muchun Song wrote:
->> The mem_cgroup_from_slab_obj() is supposed to be called under rcu
->> lock or cgroup_mutex or others which could prevent returned memcg
->> from being freed. Fix it by adding missing rcu read lock.
->=20
-> Was the UAF ever observed, or is this due to code review?
-
-Just code review.
-
-Thanks.
-
-> Should there be some lockdep_assert somwhere?
->=20
-
-It=E2=80=99s a good option to improve this. Maybe mem_cgroup_from_slab_obj()=
- is a good place.
-
->> Fixes: 0a97c01cd20bb ("list_lru: allow explicit memcg and NUMA node selec=
-tion)
->> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
->> ---
->> mm/list_lru.c | 24 ++++++++++++++++++------
->> 1 file changed, 18 insertions(+), 6 deletions(-)
->>=20
->> diff --git a/mm/list_lru.c b/mm/list_lru.c
->> index 3fd64736bc458..225da0778a3be 100644
->> --- a/mm/list_lru.c
->> +++ b/mm/list_lru.c
->> @@ -85,6 +85,7 @@ list_lru_from_memcg_idx(struct list_lru *lru, int nid, i=
-nt idx)
->> }
->> #endif /* CONFIG_MEMCG_KMEM */
->>=20
->> +/* The caller must ensure the memcg lifetime. */
->> bool list_lru_add(struct list_lru *lru, struct list_head *item, int nid,
->>            struct mem_cgroup *memcg)
->> {
->> @@ -109,14 +110,20 @@ EXPORT_SYMBOL_GPL(list_lru_add);
->>=20
->> bool list_lru_add_obj(struct list_lru *lru, struct list_head *item)
->> {
->> +    bool ret;
->>    int nid =3D page_to_nid(virt_to_page(item));
->> -    struct mem_cgroup *memcg =3D list_lru_memcg_aware(lru) ?
->> -        mem_cgroup_from_slab_obj(item) : NULL;
->> +    struct mem_cgroup *memcg;
->>=20
->> -    return list_lru_add(lru, item, nid, memcg);
->> +    rcu_read_lock();
->> +    memcg =3D list_lru_memcg_aware(lru) ? mem_cgroup_from_slab_obj(item)=
- : NULL;
->> +    ret =3D list_lru_add(lru, item, nid, memcg);
->> +    rcu_read_unlock();
->> +
->> +    return ret;
->> }
->> EXPORT_SYMBOL_GPL(list_lru_add_obj);
->>=20
->> +/* The caller must ensure the memcg lifetime. */
->> bool list_lru_del(struct list_lru *lru, struct list_head *item, int nid,
->>            struct mem_cgroup *memcg)
->> {
->> @@ -139,11 +146,16 @@ EXPORT_SYMBOL_GPL(list_lru_del);
->>=20
->> bool list_lru_del_obj(struct list_lru *lru, struct list_head *item)
->> {
->> +    bool ret;
->>    int nid =3D page_to_nid(virt_to_page(item));
->> -    struct mem_cgroup *memcg =3D list_lru_memcg_aware(lru) ?
->> -        mem_cgroup_from_slab_obj(item) : NULL;
->> +    struct mem_cgroup *memcg;
->>=20
->> -    return list_lru_del(lru, item, nid, memcg);
->> +    rcu_read_lock();
->> +    memcg =3D list_lru_memcg_aware(lru) ? mem_cgroup_from_slab_obj(item)=
- : NULL;
->> +    ret =3D list_lru_del(lru, item, nid, memcg);
->> +    rcu_read_unlock();
->> +
->> +    return ret;
->> }
->> EXPORT_SYMBOL_GPL(list_lru_del_obj);
->>=20
->=20
+Konrad
 
