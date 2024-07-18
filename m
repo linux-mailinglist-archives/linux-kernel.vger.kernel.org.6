@@ -1,255 +1,569 @@
-Return-Path: <linux-kernel+bounces-256036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65A03934811
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:24:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 420D2934815
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:29:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B002B2209D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:24:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5504B21FFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2862D6F315;
-	Thu, 18 Jul 2024 06:24:27 +0000 (UTC)
-Received: from mx1.zhaoxin.com (MX1.ZHAOXIN.COM [210.0.225.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23AFB6CDCC;
+	Thu, 18 Jul 2024 06:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hp8q2Ow9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7304D8D0
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 06:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.0.225.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E373D28366
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 06:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721283866; cv=none; b=D1l4QYpCjFnDgYAGJ97O+zhWC6c+H0E+D88HRvpi6zEYMQTutCvurlyaiyv+azpuuQa0bI+Z2GLnmRrxrDubVEbg2aH4fq8ZLXFzNLJ0yJdiTgNrJW/WprIh5GzT4Z/ss8A/A6NzaRBK30LrSP8wKHxpf1dyIh12RLj9SeFUlr4=
+	t=1721284186; cv=none; b=bpFigIuSjziPySiv5xkBCVy5RIRX2HQAdcpNbUw9ktw9dcNNWMwFKyL7GAy+pN4jlAimSg08uXAW/4trp3eRHd82kf7QZbdyXNMYhIsN0iUly7Z4Frf3ja6rxTNQbYSTuXvmf07zf+fvU3tyGqc10Q08N8XmYROyXcSGBrIx9vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721283866; c=relaxed/simple;
-	bh=MOLtsCdEYmFWYJf/WDR3CpjTzHaMsnGa+p1Ce7Ah/j0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SEZ3VZR+W5eIeWClwwiiTpTXjWXr4g8Cyu4ISPHOJRnfgfD5byJoYnyzcVMZo2VTdUjT+oc+cxvjT/ZW1CYXGogJloGggDXwBoGXitF1E/7jyhVxsnN3a6Dr9ccC+Rk1nIvOK+Qry8LZ3kysK000j4WsBSuoIR0hMRWX2on0lvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=210.0.225.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
-X-ASG-Debug-ID: 1721283854-086e2311051c8fb0001-xx1T2L
-Received: from ZXSHMBX2.zhaoxin.com (ZXSHMBX2.zhaoxin.com [10.28.252.164]) by mx1.zhaoxin.com with ESMTP id 7t3wzscZeRPh1psd (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Thu, 18 Jul 2024 14:24:14 +0800 (CST)
-X-Barracuda-Envelope-From: LeoLiu-oc@zhaoxin.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.164
-Received: from ZXBJMBX03.zhaoxin.com (10.29.252.7) by ZXSHMBX2.zhaoxin.com
- (10.28.252.164) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 18 Jul
- 2024 14:24:13 +0800
-Received: from xin.lan (10.32.64.1) by ZXBJMBX03.zhaoxin.com (10.29.252.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 18 Jul
- 2024 14:24:11 +0800
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.164
-From: LeoLiu-oc <LeoLiu-oc@zhaoxin.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.29.252.7
-To: <rafael@kernel.org>, <lenb@kernel.org>, <james.morse@arm.com>,
-	<tony.luck@intel.com>, <bp@alien8.de>, <bhelgaas@google.com>,
-	<robert.moore@intel.com>, <yazen.ghannam@amd.com>, <avadhut.naik@amd.com>,
-	<linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>, <acpica-devel@lists.linux.dev>
-CC: <CobeChen@zhaoxin.com>, <TimGuo@zhaoxin.com>, <TonyWWang-oc@zhaoxin.com>,
-	<leoliu-oc@zhaoxin.com>, LeoLiuoc <LeoLiu-oc@zhaoxin.com>
-Subject: [PATCH v3 3/3] PCI/ACPI: Add pci_acpi_program_hest_aer_params()
-Date: Thu, 18 Jul 2024 14:24:05 +0800
-X-ASG-Orig-Subj: [PATCH v3 3/3] PCI/ACPI: Add pci_acpi_program_hest_aer_params()
-Message-ID: <20240718062405.30571-4-LeoLiu-oc@zhaoxin.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240718062405.30571-1-LeoLiu-oc@zhaoxin.com>
-References: <b99685d9-9f3a-4c21-8d33-2eaa5de8be54@zhaoxin.com>
- <20240718062405.30571-1-LeoLiu-oc@zhaoxin.com>
+	s=arc-20240116; t=1721284186; c=relaxed/simple;
+	bh=ZzEor4fsmnPyqtggEVld1PFBUcN93bEaWZfPd4XqC3I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Pc/AMukdYC+dj568bg91D0aFTMyowNbigcgExcrc/cuGP8MidXkmqjinnOB1pn+QuVhMzCbWc6nfWtaxRkcq6ahwDU2JQATZwhdwBDOdERlmURciiMXPvag6BTiRD7xcxL1fd0ZBy+6A4Sd4g/ibh8mWU7X9DZ2ZPRAxoYkr3xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hp8q2Ow9; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721284185; x=1752820185;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=ZzEor4fsmnPyqtggEVld1PFBUcN93bEaWZfPd4XqC3I=;
+  b=hp8q2Ow9FcDQQLXBHkhVM5v+wbBkVfN7LnT3/Wz78kkIZ2BUKAW7ZHPr
+   LtXCFArFliAhLz+ib2qxTRSrXWeN2gpuHLm2lAwY/SK9QCXOgff8QV7n4
+   sZVbba7c4+zdRBpV46kWicwdl6+9fDvlwKQgibuZUHTnUoi66FtZzMG8X
+   kGIKLqPX48rgE6GQDSlIYe5UjaWZ4O4fuXFfBplNEsfDn0KNCCWKL7KTV
+   Tq45/dSZIFXUfIziU6fdhCuYNyF6qPrsODDG5TKgKwSUT2wUTcBBNOi+d
+   U0X4vx2UABWJER2AF6wLxZfSCs/FEwF26j/UEwHmTqH9P96Ts6CUBtCt8
+   w==;
+X-CSE-ConnectionGUID: bmWbA1RGQAaJZM3FDZHhOA==
+X-CSE-MsgGUID: UtOhc3tWRwy4DFNNvddZmw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="18967987"
+X-IronPort-AV: E=Sophos;i="6.09,217,1716274800"; 
+   d="scan'208";a="18967987"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 23:29:44 -0700
+X-CSE-ConnectionGUID: 4a+rkA/+TIiJrTlS6fOMrw==
+X-CSE-MsgGUID: FJcV2qU2TG+uCuN9N55UrQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,217,1716274800"; 
+   d="scan'208";a="73889489"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 23:29:41 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Chris Li <chrisl@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,  Kairui Song
+ <kasong@tencent.com>,  Hugh Dickins <hughd@google.com>,  Ryan Roberts
+ <ryan.roberts@arm.com>,  Kalesh Singh <kaleshsingh@google.com>,
+  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,  Barry Song
+ <baohua@kernel.org>
+Subject: Re: [PATCH v4 1/3] mm: swap: swap cluster switch to double link list
+In-Reply-To: <20240711-swap-allocator-v4-1-0295a4d4c7aa@kernel.org> (Chris
+	Li's message of "Thu, 11 Jul 2024 00:29:05 -0700")
+References: <20240711-swap-allocator-v4-0-0295a4d4c7aa@kernel.org>
+	<20240711-swap-allocator-v4-1-0295a4d4c7aa@kernel.org>
+Date: Thu, 18 Jul 2024 14:26:08 +0800
+Message-ID: <878qxzxlkv.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
- ZXBJMBX03.zhaoxin.com (10.29.252.7)
-X-Barracuda-Connect: ZXSHMBX2.zhaoxin.com[10.28.252.164]
-X-Barracuda-Start-Time: 1721283854
-X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
-X-Barracuda-URL: https://10.28.252.35:4443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at zhaoxin.com
-X-Barracuda-Scan-Msg-Size: 5203
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
-X-Barracuda-Spam-Score: -2.02
-X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.127785
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------------------------
+Content-Type: text/plain; charset=ascii
 
-From: LeoLiuoc <LeoLiu-oc@zhaoxin.com>
+Chris Li <chrisl@kernel.org> writes:
 
-Call the func pci_acpi_program_hest_aer_params() for every PCIe device,
-the purpose of this function is to extract register value from HEST PCIe
-AER structures and program them into AER Capabilities. This function
-applies to all hardware platforms that has a PCI Express AER structure
-in HEST.
+> Previously, the swap cluster used a cluster index as a pointer
+> to construct a custom single link list type "swap_cluster_list".
+> The next cluster pointer is shared with the cluster->count.
+> It prevents puting the non free cluster into a list.
+>
+> Change the cluster to use the standard double link list instead.
+> This allows tracing the nonfull cluster in the follow up patch.
+> That way, it is faster to get to the nonfull cluster of that order.
+>
+> Remove the cluster getter/setter for accessing the cluster
+> struct member.
+>
+> The list operation is protected by the swap_info_struct->lock.
+>
+> Change cluster code to use "struct swap_cluster_info *" to
+> reference the cluster rather than by using index. That is more
+> consistent with the list manipulation. It avoids the repeat
+> adding index to the cluser_info. The code is easier to understand.
+>
+> Remove the cluster next pointer is NULL flag, the double link
+> list can handle the empty list pretty well.
+>
+> The "swap_cluster_info" struct is two pointer bigger, because
+> 512 swap entries share one swap struct, it has very little impact
+                             ~~~~
+                             swap_cluster_info ?
 
-Signed-off-by: LeoLiuoc <LeoLiu-oc@zhaoxin.com>
----
- drivers/pci/pci-acpi.c | 101 +++++++++++++++++++++++++++++++++++++++++
- drivers/pci/pci.h      |   9 ++++
- drivers/pci/probe.c    |   1 +
- 3 files changed, 111 insertions(+)
+> on the average memory usage per swap entry. For 1TB swapfile, the
+> swap cluster data structure increases from 8MB to 24MB.
+>
+> Other than the list conversion, there is no real function change
+> in this patch.
+>
+> Signed-off-by: Chris Li <chrisl@kernel.org>
+> ---
+>  include/linux/swap.h |  26 +++---
+>  mm/swapfile.c        | 225 ++++++++++++++-------------------------------------
+>  2 files changed, 70 insertions(+), 181 deletions(-)
+>
+> diff --git a/include/linux/swap.h b/include/linux/swap.h
+> index e473fe6cfb7a..e9be95468fc7 100644
+> --- a/include/linux/swap.h
+> +++ b/include/linux/swap.h
+> @@ -243,22 +243,21 @@ enum {
+>   * free clusters are organized into a list. We fetch an entry from the list to
+>   * get a free cluster.
+>   *
+> - * The data field stores next cluster if the cluster is free or cluster usage
+> - * counter otherwise. The flags field determines if a cluster is free. This is
+> - * protected by swap_info_struct.lock.
+> + * The flags field determines if a cluster is free. This is
+> + * protected by cluster lock.
+>   */
+>  struct swap_cluster_info {
+>  	spinlock_t lock;	/*
+>  				 * Protect swap_cluster_info fields
+> -				 * and swap_info_struct->swap_map
+> -				 * elements correspond to the swap
+> -				 * cluster
+> +				 * other than list, and swap_info_struct->swap_map
+> +				 * elements correspond to the swap cluster.
+>  				 */
+> -	unsigned int data:24;
+> -	unsigned int flags:8;
+> +	u16 count;
+> +	u8 flags;
+> +	struct list_head list;
+>  };
+>  #define CLUSTER_FLAG_FREE 1 /* This cluster is free */
+> -#define CLUSTER_FLAG_NEXT_NULL 2 /* This cluster has no next cluster */
+> +
+>  
+>  /*
+>   * The first page in the swap file is the swap header, which is always marked
+> @@ -283,11 +282,6 @@ struct percpu_cluster {
+>  	unsigned int next[SWAP_NR_ORDERS]; /* Likely next allocation offset */
+>  };
+>  
+> -struct swap_cluster_list {
+> -	struct swap_cluster_info head;
+> -	struct swap_cluster_info tail;
+> -};
+> -
+>  /*
+>   * The in-memory structure used to track swap areas.
+>   */
+> @@ -301,7 +295,7 @@ struct swap_info_struct {
+>  	unsigned char *swap_map;	/* vmalloc'ed array of usage counts */
+>  	unsigned long *zeromap;		/* vmalloc'ed bitmap to track zero pages */
+>  	struct swap_cluster_info *cluster_info; /* cluster info. Only for SSD */
+> -	struct swap_cluster_list free_clusters; /* free clusters list */
+> +	struct list_head free_clusters; /* free clusters list */
+>  	unsigned int lowest_bit;	/* index of first free in swap_map */
+>  	unsigned int highest_bit;	/* index of last free in swap_map */
+>  	unsigned int pages;		/* total of usable pages of swap */
+> @@ -332,7 +326,7 @@ struct swap_info_struct {
+>  					 * list.
+>  					 */
+>  	struct work_struct discard_work; /* discard worker */
+> -	struct swap_cluster_list discard_clusters; /* discard clusters list */
+> +	struct list_head discard_clusters; /* discard clusters list */
+>  	struct plist_node avail_lists[]; /*
+>  					   * entries in swap_avail_heads, one
+>  					   * entry per node.
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index f7224bc1320c..f70d25005d2c 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -290,62 +290,15 @@ static void discard_swap_cluster(struct swap_info_struct *si,
+>  #endif
+>  #define LATENCY_LIMIT		256
+>  
+> -static inline void cluster_set_flag(struct swap_cluster_info *info,
+> -	unsigned int flag)
+> -{
+> -	info->flags = flag;
+> -}
+> -
+> -static inline unsigned int cluster_count(struct swap_cluster_info *info)
+> -{
+> -	return info->data;
+> -}
+> -
+> -static inline void cluster_set_count(struct swap_cluster_info *info,
+> -				     unsigned int c)
+> -{
+> -	info->data = c;
+> -}
+> -
+> -static inline void cluster_set_count_flag(struct swap_cluster_info *info,
+> -					 unsigned int c, unsigned int f)
+> -{
+> -	info->flags = f;
+> -	info->data = c;
+> -}
+> -
+> -static inline unsigned int cluster_next(struct swap_cluster_info *info)
+> -{
+> -	return info->data;
+> -}
+> -
+> -static inline void cluster_set_next(struct swap_cluster_info *info,
+> -				    unsigned int n)
+> -{
+> -	info->data = n;
+> -}
+> -
+> -static inline void cluster_set_next_flag(struct swap_cluster_info *info,
+> -					 unsigned int n, unsigned int f)
+> -{
+> -	info->flags = f;
+> -	info->data = n;
+> -}
+> -
+>  static inline bool cluster_is_free(struct swap_cluster_info *info)
+>  {
+>  	return info->flags & CLUSTER_FLAG_FREE;
+>  }
+>  
+> -static inline bool cluster_is_null(struct swap_cluster_info *info)
+> -{
+> -	return info->flags & CLUSTER_FLAG_NEXT_NULL;
+> -}
+> -
+> -static inline void cluster_set_null(struct swap_cluster_info *info)
+> +static inline unsigned int cluster_index(struct swap_info_struct *si,
+> +					 struct swap_cluster_info *ci)
+>  {
+> -	info->flags = CLUSTER_FLAG_NEXT_NULL;
+> -	info->data = 0;
+> +	return ci - si->cluster_info;
+>  }
+>  
+>  static inline struct swap_cluster_info *lock_cluster(struct swap_info_struct *si,
+> @@ -394,65 +347,11 @@ static inline void unlock_cluster_or_swap_info(struct swap_info_struct *si,
+>  		spin_unlock(&si->lock);
+>  }
+>  
+> -static inline bool cluster_list_empty(struct swap_cluster_list *list)
+> -{
+> -	return cluster_is_null(&list->head);
+> -}
+> -
+> -static inline unsigned int cluster_list_first(struct swap_cluster_list *list)
+> -{
+> -	return cluster_next(&list->head);
+> -}
+> -
+> -static void cluster_list_init(struct swap_cluster_list *list)
+> -{
+> -	cluster_set_null(&list->head);
+> -	cluster_set_null(&list->tail);
+> -}
+> -
+> -static void cluster_list_add_tail(struct swap_cluster_list *list,
+> -				  struct swap_cluster_info *ci,
+> -				  unsigned int idx)
+> -{
+> -	if (cluster_list_empty(list)) {
+> -		cluster_set_next_flag(&list->head, idx, 0);
+> -		cluster_set_next_flag(&list->tail, idx, 0);
+> -	} else {
+> -		struct swap_cluster_info *ci_tail;
+> -		unsigned int tail = cluster_next(&list->tail);
+> -
+> -		/*
+> -		 * Nested cluster lock, but both cluster locks are
+> -		 * only acquired when we held swap_info_struct->lock
+> -		 */
+> -		ci_tail = ci + tail;
+> -		spin_lock_nested(&ci_tail->lock, SINGLE_DEPTH_NESTING);
+> -		cluster_set_next(ci_tail, idx);
+> -		spin_unlock(&ci_tail->lock);
+> -		cluster_set_next_flag(&list->tail, idx, 0);
+> -	}
+> -}
+> -
+> -static unsigned int cluster_list_del_first(struct swap_cluster_list *list,
+> -					   struct swap_cluster_info *ci)
+> -{
+> -	unsigned int idx;
+> -
+> -	idx = cluster_next(&list->head);
+> -	if (cluster_next(&list->tail) == idx) {
+> -		cluster_set_null(&list->head);
+> -		cluster_set_null(&list->tail);
+> -	} else
+> -		cluster_set_next_flag(&list->head,
+> -				      cluster_next(&ci[idx]), 0);
+> -
+> -	return idx;
+> -}
+> -
+>  /* Add a cluster to discard list and schedule it to do discard */
+>  static void swap_cluster_schedule_discard(struct swap_info_struct *si,
+> -		unsigned int idx)
+> +		struct swap_cluster_info *ci)
+>  {
+> +	unsigned int idx = cluster_index(si, ci);
+>  	/*
+>  	 * If scan_swap_map_slots() can't find a free cluster, it will check
+>  	 * si->swap_map directly. To make sure the discarding cluster isn't
+> @@ -462,17 +361,14 @@ static void swap_cluster_schedule_discard(struct swap_info_struct *si,
+>  	memset(si->swap_map + idx * SWAPFILE_CLUSTER,
+>  			SWAP_MAP_BAD, SWAPFILE_CLUSTER);
+>  
+> -	cluster_list_add_tail(&si->discard_clusters, si->cluster_info, idx);
+> -
+> +	list_add_tail(&ci->list, &si->discard_clusters);
+>  	schedule_work(&si->discard_work);
+>  }
+>  
+> -static void __free_cluster(struct swap_info_struct *si, unsigned long idx)
+> +static void __free_cluster(struct swap_info_struct *si, struct swap_cluster_info *ci)
+>  {
+> -	struct swap_cluster_info *ci = si->cluster_info;
+> -
+> -	cluster_set_flag(ci + idx, CLUSTER_FLAG_FREE);
+> -	cluster_list_add_tail(&si->free_clusters, ci, idx);
+> +	ci->flags = CLUSTER_FLAG_FREE;
+> +	list_add_tail(&ci->list, &si->free_clusters);
+>  }
+>  
+>  /*
+> @@ -481,24 +377,25 @@ static void __free_cluster(struct swap_info_struct *si, unsigned long idx)
+>  */
+>  static void swap_do_scheduled_discard(struct swap_info_struct *si)
+>  {
+> -	struct swap_cluster_info *info, *ci;
+> +	struct swap_cluster_info *ci;
+>  	unsigned int idx;
+>  
+> -	info = si->cluster_info;
+> -
+> -	while (!cluster_list_empty(&si->discard_clusters)) {
+> -		idx = cluster_list_del_first(&si->discard_clusters, info);
+> +	while (!list_empty(&si->discard_clusters)) {
+> +		ci = list_first_entry(&si->discard_clusters, struct swap_cluster_info, list);
+> +		list_del(&ci->list);
+> +		idx = cluster_index(si, ci);
+>  		spin_unlock(&si->lock);
+>  
+>  		discard_swap_cluster(si, idx * SWAPFILE_CLUSTER,
+>  				SWAPFILE_CLUSTER);
+>  
+>  		spin_lock(&si->lock);
+> -		ci = lock_cluster(si, idx * SWAPFILE_CLUSTER);
+> -		__free_cluster(si, idx);
+> +
+> +		spin_lock(&ci->lock);
+> +		__free_cluster(si, ci);
+>  		memset(si->swap_map + idx * SWAPFILE_CLUSTER,
+>  				0, SWAPFILE_CLUSTER);
+> -		unlock_cluster(ci);
+> +		spin_unlock(&ci->lock);
+>  	}
+>  }
+>  
+> @@ -521,20 +418,20 @@ static void swap_users_ref_free(struct percpu_ref *ref)
+>  	complete(&si->comp);
+>  }
+>  
+> -static void alloc_cluster(struct swap_info_struct *si, unsigned long idx)
+> +static struct swap_cluster_info *alloc_cluster(struct swap_info_struct *si, unsigned long idx)
+>  {
+> -	struct swap_cluster_info *ci = si->cluster_info;
+> +	struct swap_cluster_info *ci = list_first_entry(&si->free_clusters, struct swap_cluster_info, list);
+>  
+> -	VM_BUG_ON(cluster_list_first(&si->free_clusters) != idx);
+> -	cluster_list_del_first(&si->free_clusters, ci);
+> -	cluster_set_count_flag(ci + idx, 0, 0);
+> +	VM_BUG_ON(cluster_index(si, ci) != idx);
+> +	list_del(&ci->list);
+> +	ci->count = 0;
+> +	ci->flags = 0;
+> +	return ci;
+>  }
+>  
+> -static void free_cluster(struct swap_info_struct *si, unsigned long idx)
+> +static void free_cluster(struct swap_info_struct *si, struct swap_cluster_info *ci)
+>  {
+> -	struct swap_cluster_info *ci = si->cluster_info + idx;
+> -
+> -	VM_BUG_ON(cluster_count(ci) != 0);
+> +	VM_BUG_ON(ci->count != 0);
+>  	/*
+>  	 * If the swap is discardable, prepare discard the cluster
+>  	 * instead of free it immediately. The cluster will be freed
+> @@ -542,11 +439,11 @@ static void free_cluster(struct swap_info_struct *si, unsigned long idx)
+>  	 */
+>  	if ((si->flags & (SWP_WRITEOK | SWP_PAGE_DISCARD)) ==
+>  	    (SWP_WRITEOK | SWP_PAGE_DISCARD)) {
+> -		swap_cluster_schedule_discard(si, idx);
+> +		swap_cluster_schedule_discard(si, ci);
+>  		return;
+>  	}
+>  
+> -	__free_cluster(si, idx);
+> +	__free_cluster(si, ci);
+>  }
+>  
+>  /*
+> @@ -559,15 +456,15 @@ static void add_cluster_info_page(struct swap_info_struct *p,
+>  	unsigned long count)
+>  {
+>  	unsigned long idx = page_nr / SWAPFILE_CLUSTER;
+> +	struct swap_cluster_info *ci = cluster_info + idx;
+>  
+>  	if (!cluster_info)
+>  		return;
+> -	if (cluster_is_free(&cluster_info[idx]))
+> +	if (cluster_is_free(ci))
+>  		alloc_cluster(p, idx);
+>  
+> -	VM_BUG_ON(cluster_count(&cluster_info[idx]) + count > SWAPFILE_CLUSTER);
+> -	cluster_set_count(&cluster_info[idx],
+> -		cluster_count(&cluster_info[idx]) + count);
+> +	VM_BUG_ON(ci->count + count > SWAPFILE_CLUSTER);
+> +	ci->count += count;
+>  }
+>  
+>  /*
+> @@ -581,24 +478,20 @@ static void inc_cluster_info_page(struct swap_info_struct *p,
+>  }
+>  
+>  /*
+> - * The cluster corresponding to page_nr decreases one usage. If the usage
+> - * counter becomes 0, which means no page in the cluster is in using, we can
+> - * optionally discard the cluster and add it to free cluster list.
+> + * The cluster ci decreases one usage. If the usage counter becomes 0,
+> + * which means no page in the cluster is in using, we can optionally discard
+> + * the cluster and add it to free cluster list.
+>   */
+> -static void dec_cluster_info_page(struct swap_info_struct *p,
+> -	struct swap_cluster_info *cluster_info, unsigned long page_nr)
+> +static void dec_cluster_info_page(struct swap_info_struct *p, struct swap_cluster_info *ci)
+>  {
+> -	unsigned long idx = page_nr / SWAPFILE_CLUSTER;
+> -
+> -	if (!cluster_info)
+> +	if (!p->cluster_info)
+>  		return;
+>  
+> -	VM_BUG_ON(cluster_count(&cluster_info[idx]) == 0);
+> -	cluster_set_count(&cluster_info[idx],
+> -		cluster_count(&cluster_info[idx]) - 1);
+> +	VM_BUG_ON(ci->count == 0);
+> +	ci->count--;
+>  
+> -	if (cluster_count(&cluster_info[idx]) == 0)
+> -		free_cluster(p, idx);
+> +	if (!ci->count)
+> +		free_cluster(p, ci);
+>  }
+>  
+>  /*
+> @@ -611,10 +504,10 @@ scan_swap_map_ssd_cluster_conflict(struct swap_info_struct *si,
+>  {
+>  	struct percpu_cluster *percpu_cluster;
+>  	bool conflict;
+> -
+> +	struct swap_cluster_info *first = list_first_entry(&si->free_clusters, struct swap_cluster_info, list);
+>  	offset /= SWAPFILE_CLUSTER;
+> -	conflict = !cluster_list_empty(&si->free_clusters) &&
+> -		offset != cluster_list_first(&si->free_clusters) &&
+> +	conflict = !list_empty(&si->free_clusters) &&
+> +		offset !=  first - si->cluster_info &&
 
-diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-index 004575091596..b522e8b226b8 100644
---- a/drivers/pci/pci-acpi.c
-+++ b/drivers/pci/pci-acpi.c
-@@ -18,6 +18,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/pm_qos.h>
- #include <linux/rwsem.h>
-+#include <acpi/apei.h>
- #include "pci.h"
- 
- /*
-@@ -783,6 +784,106 @@ int pci_acpi_program_hp_params(struct pci_dev *dev)
- 	return -ENODEV;
- }
- 
-+#ifdef CONFIG_ACPI_APEI
-+/*
-+ * program_hest_aer_common() - configure AER common registers for Root Ports,
-+ * Endpoints and PCIe to PCI/PCI-X bridges
-+ */
-+static void program_hest_aer_common(struct acpi_hest_aer_common aer_common, struct pci_dev *dev,
-+				    int pos)
-+{
-+	u32 uncor_mask;
-+	u32 uncor_severity;
-+	u32 cor_mask;
-+	u32 adv_cap;
-+
-+	uncor_mask = aer_common.uncorrectable_mask;
-+	uncor_severity = aer_common.uncorrectable_severity;
-+	cor_mask = aer_common.correctable_mask;
-+	adv_cap = aer_common.advanced_capabilities;
-+
-+	pci_write_config_dword(dev, pos + PCI_ERR_UNCOR_MASK, uncor_mask);
-+	pci_write_config_dword(dev, pos + PCI_ERR_UNCOR_SEVER, uncor_severity);
-+	pci_write_config_dword(dev, pos + PCI_ERR_COR_MASK, cor_mask);
-+	pci_write_config_dword(dev, pos + PCI_ERR_CAP, adv_cap);
-+}
-+
-+static void program_hest_aer_root(struct acpi_hest_aer_root *aer_root, struct pci_dev *dev, int pos)
-+{
-+	u32 root_err_cmd;
-+
-+	root_err_cmd = aer_root->root_error_command;
-+
-+	pci_write_config_dword(dev, pos + PCI_ERR_ROOT_COMMAND, root_err_cmd);
-+}
-+
-+static void program_hest_aer_bridge(struct acpi_hest_aer_bridge *hest_aer_bridge,
-+				    struct pci_dev *dev, int pos)
-+{
-+	u32 uncor_mask2;
-+	u32 uncor_severity2;
-+	u32 adv_cap2;
-+
-+	uncor_mask2 = hest_aer_bridge->uncorrectable_mask2;
-+	uncor_severity2 = hest_aer_bridge->uncorrectable_severity2;
-+	adv_cap2 = hest_aer_bridge->advanced_capabilities2;
-+
-+	pci_write_config_dword(dev, pos + PCI_ERR_UNCOR_MASK2, uncor_mask2);
-+	pci_write_config_dword(dev, pos + PCI_ERR_UNCOR_SEVER2, uncor_severity2);
-+	pci_write_config_dword(dev, pos + PCI_ERR_CAP2, adv_cap2);
-+}
-+
-+static void program_hest_aer_params(struct hest_parse_aer_info info)
-+{
-+	struct pci_dev *dev;
-+	int port_type;
-+	int pos;
-+	struct acpi_hest_aer_root *hest_aer_root;
-+	struct acpi_hest_aer *hest_aer_endpoint;
-+	struct acpi_hest_aer_bridge *hest_aer_bridge;
-+
-+	dev = info.pci_dev;
-+	port_type = pci_pcie_type(dev);
-+	pos = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ERR);
-+	if (!pos)
-+		return;
-+
-+	switch (port_type) {
-+	case PCI_EXP_TYPE_ROOT_PORT:
-+		hest_aer_root = info.hest_aer_root_port;
-+		program_hest_aer_common(hest_aer_root->aer, dev, pos);
-+		program_hest_aer_root(hest_aer_root, dev, pos);
-+		break;
-+	case PCI_EXP_TYPE_ENDPOINT:
-+		hest_aer_endpoint = info.hest_aer_endpoint;
-+		program_hest_aer_common(hest_aer_endpoint->aer, dev, pos);
-+		break;
-+	case PCI_EXP_TYPE_PCI_BRIDGE:
-+		hest_aer_bridge = info.hest_aer_bridge;
-+		program_hest_aer_common(hest_aer_bridge->aer, dev, pos);
-+		program_hest_aer_bridge(hest_aer_bridge, dev, pos);
-+		break;
-+	default:
-+		break;
-+	}
-+}
-+
-+int pci_acpi_program_hest_aer_params(struct pci_dev *dev)
-+{
-+	struct hest_parse_aer_info info = {
-+		.pci_dev = dev
-+	};
-+
-+	if (!pci_is_pcie(dev))
-+		return -ENODEV;
-+
-+	if (apei_hest_parse(hest_parse_pcie_aer, &info) == 1)
-+		program_hest_aer_params(info);
-+
-+	return 0;
-+}
-+#endif
-+
- /**
-  * pciehp_is_native - Check whether a hotplug port is handled by the OS
-  * @bridge: Hotplug port to check
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index fd44565c4756..03b5339f399f 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -731,6 +731,15 @@ static inline void pci_save_aer_state(struct pci_dev *dev) { }
- static inline void pci_restore_aer_state(struct pci_dev *dev) { }
- #endif
- 
-+#ifdef CONFIG_ACPI_APEI
-+int pci_acpi_program_hest_aer_params(struct pci_dev *dev);
-+#else
-+static inline int pci_acpi_program_hest_aer_params(struct pci_dev *dev)
-+{
-+	return 0;
-+}
-+#endif
-+
- #ifdef CONFIG_ACPI
- int pci_acpi_program_hp_params(struct pci_dev *dev);
- extern const struct attribute_group pci_dev_acpi_attr_group;
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 4c367f13acdc..f7d80b2a9d1d 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -2267,6 +2267,7 @@ static void pci_configure_device(struct pci_dev *dev)
- 	pci_configure_serr(dev);
- 
- 	pci_acpi_program_hp_params(dev);
-+	pci_acpi_program_hest_aer_params(dev);
- }
- 
- static void pci_release_capabilities(struct pci_dev *dev)
--- 
-2.34.1
+offset != cluster_index(si, first) ?
 
+>  		cluster_is_free(&si->cluster_info[offset]);
+>  
+>  	if (!conflict)
+> @@ -655,10 +548,10 @@ static bool scan_swap_map_try_ssd_cluster(struct swap_info_struct *si,
+>  	cluster = this_cpu_ptr(si->percpu_cluster);
+>  	tmp = cluster->next[order];
+>  	if (tmp == SWAP_NEXT_INVALID) {
+> -		if (!cluster_list_empty(&si->free_clusters)) {
+> -			tmp = cluster_next(&si->free_clusters.head) *
+> -					SWAPFILE_CLUSTER;
+> -		} else if (!cluster_list_empty(&si->discard_clusters)) {
+> +		if (!list_empty(&si->free_clusters)) {
+> +			ci = list_first_entry(&si->free_clusters, struct swap_cluster_info, list);
+> +			tmp = cluster_index(si, ci) * SWAPFILE_CLUSTER;
+> +		} else if (!list_empty(&si->discard_clusters)) {
+>  			/*
+>  			 * we don't have free cluster but have some clusters in
+>  			 * discarding, do discard now and reclaim them, then
+> @@ -1070,8 +963,9 @@ static void swap_free_cluster(struct swap_info_struct *si, unsigned long idx)
+>  
+>  	ci = lock_cluster(si, offset);
+>  	memset(si->swap_map + offset, 0, SWAPFILE_CLUSTER);
+> -	cluster_set_count_flag(ci, 0, 0);
+> -	free_cluster(si, idx);
+> +	ci->count = 0;
+> +	ci->flags = 0;
+> +	free_cluster(si, ci);
+>  	unlock_cluster(ci);
+>  	swap_range_free(si, offset, SWAPFILE_CLUSTER);
+>  }
+> @@ -1344,7 +1238,7 @@ static void swap_entry_free(struct swap_info_struct *p, swp_entry_t entry)
+>  	count = p->swap_map[offset];
+>  	VM_BUG_ON(count != SWAP_HAS_CACHE);
+>  	p->swap_map[offset] = 0;
+> -	dec_cluster_info_page(p, p->cluster_info, offset);
+> +	dec_cluster_info_page(p, ci);
+>  	unlock_cluster(ci);
+>  
+>  	mem_cgroup_uncharge_swap(entry, 1);
+> @@ -3022,8 +2916,8 @@ static int setup_swap_map_and_extents(struct swap_info_struct *p,
+>  
+>  	nr_good_pages = maxpages - 1;	/* omit header page */
+>  
+> -	cluster_list_init(&p->free_clusters);
+> -	cluster_list_init(&p->discard_clusters);
+> +	INIT_LIST_HEAD(&p->free_clusters);
+> +	INIT_LIST_HEAD(&p->discard_clusters);
+>  
+>  	for (i = 0; i < swap_header->info.nr_badpages; i++) {
+>  		unsigned int page_nr = swap_header->info.badpages[i];
+> @@ -3074,14 +2968,15 @@ static int setup_swap_map_and_extents(struct swap_info_struct *p,
+>  	for (k = 0; k < SWAP_CLUSTER_COLS; k++) {
+>  		j = (k + col) % SWAP_CLUSTER_COLS;
+>  		for (i = 0; i < DIV_ROUND_UP(nr_clusters, SWAP_CLUSTER_COLS); i++) {
+> +			struct swap_cluster_info *ci;
+>  			idx = i * SWAP_CLUSTER_COLS + j;
+> +			ci = cluster_info + idx;
+>  			if (idx >= nr_clusters)
+>  				continue;
+> -			if (cluster_count(&cluster_info[idx]))
+> +			if (ci->count)
+>  				continue;
+> -			cluster_set_flag(&cluster_info[idx], CLUSTER_FLAG_FREE);
+> -			cluster_list_add_tail(&p->free_clusters, cluster_info,
+> -					      idx);
+> +			ci->flags = CLUSTER_FLAG_FREE;
+> +			list_add_tail(&ci->list, &p->free_clusters);
+>  		}
+>  	}
+>  	return nr_extents;
+
+--
+Best Regards,
+Huang, Ying
 
