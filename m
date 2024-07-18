@@ -1,105 +1,195 @@
-Return-Path: <linux-kernel+bounces-256598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8C679350ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:52:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C66B9350EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:54:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9CFE1C21C8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:52:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 013631F228B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51A3145335;
-	Thu, 18 Jul 2024 16:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5848144D3E;
+	Thu, 18 Jul 2024 16:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Jy+Drlp8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="fH9Q7jub"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005703716D;
-	Thu, 18 Jul 2024 16:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C756814430A
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 16:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721321536; cv=none; b=bBm7aMGryYyxi07xGNnpZr4/KC4rmrr1HKX6wI9AVHAZwnEnMHJQA8jL1+KRsn6ICqS/V0KPHZA9WvU+kHeiKpxRo0ONWshU3gf5cwf7JeA5FDvHamc7Rj1x5gO1yoho2Uy5dKduPdUoGW5bSpsPdwRFdTU1F95mnMT9gJk74T0=
+	t=1721321633; cv=none; b=ksa2dRhUy4SMy8TEDJIbMqKR6cdnBfjMOoc+UFF4/BYk+jpOkUnMtWSE3Wtf9Uavmj6cQjG7Tj2xwUQRBrQ0Ei/E2I2cTtbAVLzS2oS3/HfwEAE9GuA0IL6r36Ql4y98smYqf+uRwD8Hi6ysoXH+piz0W6HFfPzSCMUCkETUYOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721321536; c=relaxed/simple;
-	bh=ZnX+WIDhVdVxYVXHFRUIZPNjtj3cNuRGslOGjAQbd4M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sp8CQ8RipsAindHwpUcBsJ83VT8GSEeyUG5DvWCIBK3WY/qCL3KXx1CJWlnHfB0VinLmCW4P0ElIqGd/N4YNoMwNqmuKYSA0VVFO0qb0Zu0GJMicmdj6JrJsW3xrwrmYUy1eGH88PFnOaKBpaHnCS7Mchz804DRfPeT5BHEF9Lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=Jy+Drlp8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56A5EC4AF0C;
-	Thu, 18 Jul 2024 16:52:15 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Jy+Drlp8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1721321532;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZnX+WIDhVdVxYVXHFRUIZPNjtj3cNuRGslOGjAQbd4M=;
-	b=Jy+Drlp8vqhnVyK7eLOwFzw9W2m9y7nQLfasMgjI7wJLcDuRF6IIozSuNW+CWiwUHJWwS8
-	47C0ZnNcj2p2nfBgIJDqubvOhNtTW+89z1m2GhfHrtmX+xhs7nYmyWJ0XrG4Y7JvyPpwl9
-	RDEV8Da+4bXEXgcX5MI38RIyif32XyE=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id eae52d3c (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Thu, 18 Jul 2024 16:52:12 +0000 (UTC)
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-260e1b5576aso544700fac.1;
-        Thu, 18 Jul 2024 09:52:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUgw7hqYZ8NefiLERGQpFzTeMi2lang//QWfMPEJyMADZS0TBhnLyv99oD/O24/xYm5/CD1GlMrt5A3GU4WDhGRbVuHyu5s1vEHVt7ToijRBXe/nrhpQnRYrsdofgTAVAFf8wSaVPX7NtRM
-X-Gm-Message-State: AOJu0YzQ3vyghNCHRPtsoPDpgrDGcdl5xgjPCxJ+HFD1oWnz91FDc8tD
-	DMkBVuGnRZDG+LXNtwoVENoCVwHyr20g8pv+37sa7lVPrgFI+4AqXCCa8JpJixjl5pC+bmZbtXB
-	YaddsmP6l/PrME5M46qPKrrgZVAE=
-X-Google-Smtp-Source: AGHT+IEjjx5WeoBlVvTblOQ5Yroj8xtuhPbFHMfRMdXsd2Iy8to7rONgNEFytjHJi0DWvlUB/MEjgRW29c4x/QEEYs0=
-X-Received: by 2002:a05:6870:1701:b0:260:fbf6:3221 with SMTP id
- 586e51a60fabf-260fbf6370fmr1355604fac.35.1721321530793; Thu, 18 Jul 2024
- 09:52:10 -0700 (PDT)
+	s=arc-20240116; t=1721321633; c=relaxed/simple;
+	bh=vInHxOUpkqrGYsaG/py3NaAKtWS74DcT2BcOxRpawGs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jMJYEiAA6SkptP+Ac9THkdJuBg+xkCzaFapkK5HXHxJsgU41u5qFvllCp8Fq2MBK0YK9Y/qrq5F4tnDDxX7pgxKldBfV81JQhgXDh7bonG0B0PsyM/7mHmVBjt/RUvWMrb1WDhsdknwjapLqcbPCC3rdEA7MC3dpkgzmME0H/Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=fH9Q7jub; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-808a8c90f5bso31965039f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 09:53:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1721321631; x=1721926431; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9zJZZ9bWEPMAlkC/QkLHGli62aQv2OdpuoT4H3F0l2Y=;
+        b=fH9Q7jubu9pttrJr3gDgLWdMqd6B4/r0CfLDqSy2C++4NAYUnaWi94IyNeWwJ41S/l
+         /ZQX7iTAHlm0DvA3b2P4WKQ5Po6A7QdLJyoaxOSeLnfPgS/+bP6nIFGqb9Jguh+atylp
+         ZBF8RG8N4LUx0+et8Hrsl+jtI3Ddo6b7YHq7CNti9Evq+8PfCTOeFaI0doLq5DvI7gkL
+         62EdfKH+L3sVP0NNJRKPMKx19smiu//FpQzjHdlpb5Y82ZqqC4xf8J5WvG97/XP/Vcfh
+         jiWAqnIMasX9veo7y6uA7mU86M/Bw8OOfFQWLjkIeg2DLDfjM0W6gqpzdhyuW0XQIkuX
+         FQUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721321631; x=1721926431;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9zJZZ9bWEPMAlkC/QkLHGli62aQv2OdpuoT4H3F0l2Y=;
+        b=VE9SJE8hO1Kbd1FW0TDXFrq686P+5puCr4fe36rUN5iXkkp2coeBUUBF4OM9CtqWKl
+         zarzrJYgPsI1Dz9kiXWZrl8tCR1vKhARXH6GUiJGPbdRaixYX976ngUQ3tIH3kJIYiOz
+         BNelRvx4kmHWwi7RmbeWk1CtMIxAO/XMIWiygthYqSj/fhjEP2NTkH/dZOURp4choBSh
+         7zbklzqucLwJFZp+vHABXa/Y5p4LBdsEKQI5zbX5T0SVUvcL0mj0Qi1BLHR7OP6HV0Gn
+         F1urBC2eXA0cJpUuPW98LD0I20wQjmS91a1pJZ7Dy35pttrrKf5O1CTsMh61cZfP4Y46
+         144A==
+X-Gm-Message-State: AOJu0Yw8IblQbPGZv5uWKde5VVF6wQ0Go6Vgbxq9lCdvxwopAFerLN2S
+	HEX22bNmIhbgZkWwIjYJPbRnNT7TCsFjsZTJlR0U2UdU4eAlCRsDyeS8l8CY+CE=
+X-Google-Smtp-Source: AGHT+IFngzTW8EHtTFvx7omE0v/qG3WhmjLl/7uA05MsoNd2N82RVXCmEyfoWoRu19pmQ31JPxhJiA==
+X-Received: by 2002:a05:6602:1605:b0:7f9:beb8:7952 with SMTP id ca18e2360f4ac-81711e19b10mr820491439f.13.1721321630783;
+        Thu, 18 Jul 2024 09:53:50 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c210f24b6fsm1606088173.94.2024.07.18.09.53.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jul 2024 09:53:50 -0700 (PDT)
+Date: Thu, 18 Jul 2024 11:53:49 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: zhouquan@iscas.ac.cn
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, linux-perf-users@vger.kernel.org, 
+	anup@brainfault.org, atishp@atishpatra.org, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, mark.rutland@arm.com, 
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org
+Subject: Re: [PATCH 1/2] riscv: perf: add guest vs host distinction
+Message-ID: <20240718-e689be134be5b958b1eec65a@orel>
+References: <cover.1721271251.git.zhouquan@iscas.ac.cn>
+ <8e2d2f60fc30d64b6c69b38184a1b640c7b30003.1721271251.git.zhouquan@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <00000000000037cdb0061d5924b3@google.com> <46f44064-255b-4a1e-9317-f4b168706d65@kernel.org>
- <flthie3lmh4ovhlullgz2rsd5yfmwwfuqd76yef7xa2ncpqs4j@dxvhd64eoa7t>
- <CAJuCfpEX7JFbWbLT0w+nyKz-m87ccuzSoorB3PfnW82mA-nFfw@mail.gmail.com>
- <CAJuCfpEGATSeybdVNnUW5eS5EKHF00VzxHGwKoMfPiS_QRiKbQ@mail.gmail.com>
- <ZplEgwFFb0LAXbH4@zx2c4.com> <CAJuCfpG07s2jcsgT3EE85B_JGWY2B23n+iPhVWP6amgZgSHi3w@mail.gmail.com>
- <CAHmME9pjUJKTtYz10ULrWYBCB3LUCG77aNFz_n7uBvyddOge6Q@mail.gmail.com> <CAJuCfpEQQ4dKOwS8a9dRgwWtqR7LyKMx2Qr8vjaBu=CM4dNSCw@mail.gmail.com>
-In-Reply-To: <CAJuCfpEQQ4dKOwS8a9dRgwWtqR7LyKMx2Qr8vjaBu=CM4dNSCw@mail.gmail.com>
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date: Thu, 18 Jul 2024 18:51:59 +0200
-X-Gmail-Original-Message-ID: <CAHmME9rugxJiJTVCr5tdz5_YHcJVFckubQfK6Xn9TCuua5o1JA@mail.gmail.com>
-Message-ID: <CAHmME9rugxJiJTVCr5tdz5_YHcJVFckubQfK6Xn9TCuua5o1JA@mail.gmail.com>
-Subject: Re: [syzbot] [crypto?] KASAN: slab-use-after-free Read in handle_mm_fault
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, "Vlastimil Babka (SUSE)" <vbabka@kernel.org>, 
-	syzbot <syzbot+4c882a4a0697c4a25364@syzkaller.appspotmail.com>, 
-	akpm@linux-foundation.org, davem@davemloft.net, herbert@gondor.apana.org.au, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8e2d2f60fc30d64b6c69b38184a1b640c7b30003.1721271251.git.zhouquan@iscas.ac.cn>
 
-Hi Suren,
+On Thu, Jul 18, 2024 at 07:23:41PM GMT, zhouquan@iscas.ac.cn wrote:
+> From: Quan Zhou <zhouquan@iscas.ac.cn>
+> 
+> Introduce basic guest support in perf, enabling it to distinguish
+> between PMU interrupts in the host or guest, and collect
+> fundamental information.
+> 
+> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
+> ---
+>  arch/riscv/include/asm/perf_event.h |  7 ++++++
+>  arch/riscv/kernel/perf_callchain.c  | 38 +++++++++++++++++++++++++++++
+>  2 files changed, 45 insertions(+)
+> 
+> diff --git a/arch/riscv/include/asm/perf_event.h b/arch/riscv/include/asm/perf_event.h
+> index 665bbc9b2f84..5866d028aee5 100644
+> --- a/arch/riscv/include/asm/perf_event.h
+> +++ b/arch/riscv/include/asm/perf_event.h
+> @@ -8,13 +8,20 @@
+>  #ifndef _ASM_RISCV_PERF_EVENT_H
+>  #define _ASM_RISCV_PERF_EVENT_H
+>  
+> +#ifdef CONFIG_PERF_EVENTS
+>  #include <linux/perf_event.h>
+>  #define perf_arch_bpf_user_pt_regs(regs) (struct user_regs_struct *)regs
+>  
+> +extern unsigned long perf_instruction_pointer(struct pt_regs *regs);
+> +extern unsigned long perf_misc_flags(struct pt_regs *regs);
+> +#define perf_misc_flags(regs) perf_misc_flags(regs)
+> +
+>  #define perf_arch_fetch_caller_regs(regs, __ip) { \
 
-On Thu, Jul 18, 2024 at 6:49=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
-> > > Warning: It is no longer safe to dereference vma-> after this point, =
-because mmap_lock is dropped, so vma might be destroyed from underneath us.
+Arm has this outside the #ifdef CONFIG_PERF_EVENTS, but it doesn't
+look like it should be.
+
+>  	(regs)->epc = (__ip); \
+>  	(regs)->s0 = (unsigned long) __builtin_frame_address(0); \
+>  	(regs)->sp = current_stack_pointer; \
+>  	(regs)->status = SR_PP; \
+>  }
+> +#endif
+> +
+>  #endif /* _ASM_RISCV_PERF_EVENT_H */
+> diff --git a/arch/riscv/kernel/perf_callchain.c b/arch/riscv/kernel/perf_callchain.c
+> index 3348a61de7d9..c673dc6d9bd2 100644
+> --- a/arch/riscv/kernel/perf_callchain.c
+> +++ b/arch/riscv/kernel/perf_callchain.c
+> @@ -58,6 +58,11 @@ void perf_callchain_user(struct perf_callchain_entry_ctx *entry,
+>  {
+>  	unsigned long fp = 0;
+>  
+> +	if (perf_guest_state()) {
+> +		/* TODO: We don't support guest os callchain now */
+> +		return;
+> +	}
+> +
+>  	fp = regs->s0;
+>  	perf_callchain_store(entry, regs->epc);
+>  
+> @@ -74,5 +79,38 @@ static bool fill_callchain(void *entry, unsigned long pc)
+>  void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry,
+>  			   struct pt_regs *regs)
+>  {
+> +	if (perf_guest_state()) {
+> +		/* TODO: We don't support guest os callchain now */
+> +		return;
+> +	}
+> +
+>  	walk_stackframe(NULL, regs, fill_callchain, entry);
+>  }
+> +
+> +unsigned long perf_instruction_pointer(struct pt_regs *regs)
+> +{
+> +	if (perf_guest_state())
+> +		return perf_guest_get_ip();
+> +
+> +	return instruction_pointer(regs);
+> +}
+> +
+> +unsigned long perf_misc_flags(struct pt_regs *regs)
+> +{
+> +	unsigned int guest_state = perf_guest_state();
+> +	int misc = 0;
+
+Should use unsigned long for misc.
+
+> +
+> +	if (guest_state) {
+> +		if (guest_state & PERF_GUEST_USER)
+> +			misc |= PERF_RECORD_MISC_GUEST_USER;
+> +		else
+> +			misc |= PERF_RECORD_MISC_GUEST_KERNEL;
+> +	} else {
+> +		if (user_mode(regs))
+> +			misc |= PERF_RECORD_MISC_USER;
+> +		else
+> +			misc |= PERF_RECORD_MISC_KERNEL;
+> +	}
+> +
+> +	return misc;
+> +}
+> -- 
+> 2.34.1
 >
-> Better but I would change "mmap_lock is dropped" to "mmap_lock might
-> have been dropped by __handle_mm_fault()" because mmap_lock is not
-> always dropped by __handle_mm_fault(). Technicality but better be
-> clear about it.
-> With that changed feel free to add:
->
-> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
-
-Will do.
 
 Thanks,
-Jason
+drew
 
