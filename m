@@ -1,140 +1,130 @@
-Return-Path: <linux-kernel+bounces-256189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC70C934A6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:51:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A54D934A6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:51:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBAC3B240EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:51:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C080428A10B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2AD88120D;
-	Thu, 18 Jul 2024 08:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DC6981AD7;
+	Thu, 18 Jul 2024 08:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GW7c9hfe"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L620DYJ2"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1C67D3F1
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 08:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5FB81204
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 08:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721292582; cv=none; b=k1QVv0Bfs7C0HiewVQ7canwF+YH07a1wTjlAkGzVZxsVjNwy05oaBImIu6EZodX81QqHzyFDgtSt6v3hi6Ml2tqufSoqwV5LeT3sXnMAJHDsLtYIVQZdnuEjZ+WJ9p7cg8sh2YeoAG0NQsAAGeTfeOadzBnuaBTAHLGBt3EJ3ZU=
+	t=1721292604; cv=none; b=cQarfP+nqazZjRRTyYzSqsA9aZhRGeC1NXtLk1tPmM4V/rxw14wHuUptiZsx+4Su86XJrFPYMEMxlq4tuAwhO+tK76pL6CS0ytVc/+cEoL4/FdyZsiaR0xZ6fRIRh+m8zImk8ifMGkFNf55BWykF/MUBLE0UjBWkeiGgQWjWCSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721292582; c=relaxed/simple;
-	bh=YON3qQZRadOsGV3/dzsrJ+NuUTonvuNjaJNMNLEy8h0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hj8TrQ2SmT5NYAzf3yfALijWL7m+SfBkd+FAsYGIAyhafcdSnspa4StEfE7BF7zwpuJt1fOW770u59A056EsjwcqZ3dkXtUisS/YaxgGEp+8C6k5GDZL+vAA7OXSQ01rQW1o/kH9uW1Njg+jHkyP3cfcU3DfCIntl7jBbLjwbWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GW7c9hfe; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2eee083c044so6348811fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 01:49:40 -0700 (PDT)
+	s=arc-20240116; t=1721292604; c=relaxed/simple;
+	bh=xU9PgZjATJTgeGVb3zkgiWRPKhFL8Pot0cTuFhsbMYQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eFO3s+qC+WwnwkF7L90BUKid130M9xUGTQL2SKcz1HwRTpJPb92ZT59O4T/0DtmUon5lbBNdfH4oZsmNmBlLA9RxE5KsdjAYEtQtEp6w6BudxDRVCV/i+PCe5CDPzia9ZtGctiZChzdn+nBg1mgMKx1qjXozqmJTrWQaThr+qcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L620DYJ2; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-58ba3e38028so552340a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 01:50:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1721292579; x=1721897379; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P5XSGgt22gfhlNdwJOJsw/pH5jU2PiKPxPPeoeirhoI=;
-        b=GW7c9hfeO3ZUZjgJOz9iVqLtaJ2rQyh6dvFpJutl6gqQrXs3BOGYJ+eoT/hgMx/73R
-         yOP1j5frR7xz4kcFCeIFdTxWbc4+OsjEMYPjk85zNaxbT0sU8fVE+IG4TRPntsB994X0
-         PMNh98CsFUU8g2GnRUaygpGvs+FKHdYIXh20w=
+        d=linaro.org; s=google; t=1721292600; x=1721897400; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DKVAbydblk8W4SNZYSxcfG3UIlWqFYP7xjT78K0eLCU=;
+        b=L620DYJ21hhtwVtq7CgbTRRYEt/9AWy57XCIVSMZyqjJr/fGZvfhbIVqNGgQtPcX32
+         J6cQCul7w47kRuUW+etTSYOlJb3ZQoNixdazImUxql8YeEkAoaI+W+wu95qZDhfNWcek
+         827Fa6TtNbIOuHxtBbVc6pcmJNlo+JvVHV7YgjTYqb9dZrWzRBIHktCCILBF3eytAaHH
+         3gm3VyTCtxU8dRdva1+ALhdUIyCuqld5RnrkKWxh28ALv+EPmOFwuBX3YgqYCd4ZAS8o
+         gevm9RyPaUbUM23L4MImtJoMhQUsrmcHgvGRjqNxZznLaOb54QlTG93Rxj+znxi27paW
+         MjbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721292579; x=1721897379;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P5XSGgt22gfhlNdwJOJsw/pH5jU2PiKPxPPeoeirhoI=;
-        b=ssM9dAr2UGtEFAyTWgh1jvch/5ymNZDp+MXIjfv421dQItOFBjztkEU1JCyhJMBUkC
-         1FqS64wMSQ/QHXd2jGIhA3dGf73wNLQCpgIVp1Hu9Zl3vprSwbY17eVDWN3aqKUsO7DL
-         ila6kMOd79spyRSrSMj+Qoh/Hlf4L7KY4X85mKwf0BFrTekB3f05cSA4PMUySs0HjS5B
-         nbn5k/rU0QbZOobHmJTixDY4D9QHl3XXuFjDiv84N2pjArT7iGUSykAFvSTa/ezZqAFV
-         JJdwZtgUhb4zUhXllfFdfxdFOXYXkHJIP22452MxiTaFjOw0aHudh0CiUiEOpJ62pZUO
-         G2hg==
-X-Forwarded-Encrypted: i=1; AJvYcCV2G8LNRLDW6DffRpeC0L16wKgZOnOSI8fnppjkQos494yIF12Iq4SsFgyBfIgm6UhLX9BeGkcfLGqgrTfPn26N6fXxos4afjZVyjk/
-X-Gm-Message-State: AOJu0YwnwYQSHFJUAkdKL6SSOZIw+Q1ueM6MqQJ5iltveLEjF0QzFnq1
-	EIsD6Lg7uANdQXeMEheMJMeBwfQyTPST4er8y3uScf3UrXv8/3I0mdPASHQRUk4iw7YvDi14Fm8
-	ecG1gTzQJDNJiIZ3U1tSHAX7EDvNft+0PDDCI
-X-Google-Smtp-Source: AGHT+IG2DjunGNz+AEb1WXabve2JGyl+FmIAwPg8sY9p8UhtyfkrR6meUMRp3lKB0WgoJmvcUUvoRzt5fDDJIVdF3V8=
-X-Received: by 2002:a2e:9b89:0:b0:2ec:5945:6301 with SMTP id
- 38308e7fff4ca-2ef05c79995mr11185471fa.18.1721292578930; Thu, 18 Jul 2024
- 01:49:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721292600; x=1721897400;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DKVAbydblk8W4SNZYSxcfG3UIlWqFYP7xjT78K0eLCU=;
+        b=WyMxFXl+8yJ11+cJgodRz8kd3UCUWO8qADhlp5JEQrls2EWjYlw+3xnyLPsh1Pkmx3
+         aMpT92EsuD8HHgZy5kSvP66NVS7D9RTJmiZuNGyYg16Y3Wu8QSPLaxTTs+t0kyQjfNhP
+         ZGJToR9DJDpkUHVGYjJuPYRzC2SDs+x9ZBi4W3FUZksC7u5D9Gz7nXgC1nWpnwcrliVj
+         2Udxwf9QXBO8A/OMRQgSWx9s1OpgGAon3wFE25I+iAYve4lDCseUMLz8tSnnr0PAPFN7
+         DsS+f+qnpwRb5eQM4bITwxI3kk1h/x55dLu1gKATwrUAu+5rekZzrCBjYIdHyFC8BUS5
+         LHDw==
+X-Forwarded-Encrypted: i=1; AJvYcCWkIoVngNNxpM1fj6vWaldgnueNM4mPOKEbtUwzgK4vFdXXmJlPREO4CTuy7EWbnHxGFBQp3s54NOkztqZ71Jcw78q8Z0tQ4fMWXKSY
+X-Gm-Message-State: AOJu0YzwhlIEEu34CscrBCz7aNki9ndt0dzeHWy9u2Pg4tab//+OCX97
+	DQWXJ/QGOpUfYiGn4KM54qG30tWT12B7DRrgIth6cIrMg0LUhc/DpmVgRJVEqdA=
+X-Google-Smtp-Source: AGHT+IGy7dpukOH0Ine9zKVAKnODt6FZYUwekNOac+p/AsUJFd7XuGKLKmL8QouKVqCwrNOpsziXJg==
+X-Received: by 2002:a50:9e29:0:b0:5a1:22d:b0ff with SMTP id 4fb4d7f45d1cf-5a1022db20emr2073507a12.35.1721292600104;
+        Thu, 18 Jul 2024 01:50:00 -0700 (PDT)
+Received: from ?IPV6:2a02:8109:aa0d:be00::7424? ([2a02:8109:aa0d:be00::7424])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b26f62bd9sm8112269a12.94.2024.07.18.01.49.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Jul 2024 01:49:59 -0700 (PDT)
+Message-ID: <83f721bf-b2a6-4c05-b142-3473ffc86fde@linaro.org>
+Date: Thu, 18 Jul 2024 10:49:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240718082410.204459-1-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20240718082410.204459-1-angelogioacchino.delregno@collabora.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 18 Jul 2024 16:49:27 +0800
-Message-ID: <CAGXv+5GBg73kWuiDt=9s7M4oJeHhWOF3bPY7Ju+qn1kJgNNaGw@mail.gmail.com>
-Subject: Re: [PATCH] drm/mediatek: Set sensible cursor width/height values to
- fix crash
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com, 
-	daniel@ffwll.ch, matthias.bgg@gmail.com, shawn.sung@mediatek.com, 
-	ck.hu@mediatek.com, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kernel@collabora.com, 
-	Fei Shao <fshao@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] soc: qcom: cmd-db: Map shared memory as WC, not WB
+To: Pavan Kondeti <quic_pkondeti@quicinc.com>
+Cc: Maulik Shah <quic_mkshah@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, stephan@gerhold.net,
+ swboyd@chromium.org, dianders@chromium.org, robdclark@gmail.com,
+ nikita@trvn.ru, quic_eberman@quicinc.com, quic_lsrao@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Volodymyr Babchuk <Volodymyr_Babchuk@epam.com>, stable@vger.kernel.org
+References: <20240718-cmd_db_uncached-v2-1-f6cf53164c90@quicinc.com>
+ <a49113a2-d7f8-4b77-81c7-22855809cee8@quicinc.com>
+ <1c5b3f7f-95b6-4efb-aa16-11571b87c6c6@linaro.org>
+ <de7930b1-6f33-4ff5-911d-e5156a020585@quicinc.com>
+Content-Language: en-US
+From: Caleb Connolly <caleb.connolly@linaro.org>
+In-Reply-To: <de7930b1-6f33-4ff5-911d-e5156a020585@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-(CC-ed Fei Shao)
 
-On Thu, Jul 18, 2024 at 4:24=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> Hardware-speaking, there is no feature-reduced cursor specific
-> plane, so this driver reserves the last all Overlay plane as a
-> Cursor plane, but sets the maximum cursor width/height to the
-> maximum value that the full overlay plane can use.
->
-> While this could be ok, it raises issues with common userspace
-> using libdrm (especially Mutter, but other compositors too) which
-> will crash upon performing allocations and/or using said cursor
-> plane.
->
-> Reduce the maximum width/height for the cursor to 512x512 pixels,
-> value taken from IGT's maximum cursor size test, which succeeds.
->
-> Fixes: a4c9410b31ca ("drm/mediatek: Set DRM mode configs accordingly")
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/med=
-iatek/mtk_drm_drv.c
-> index 6f0b415a978d..b96763664c4f 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> @@ -540,8 +540,8 @@ static int mtk_drm_kms_init(struct drm_device *drm)
->         }
->
->         /* IGT will check if the cursor size is configured */
-> -       drm->mode_config.cursor_width =3D drm->mode_config.max_width;
-> -       drm->mode_config.cursor_height =3D drm->mode_config.max_height;
-> +       drm->mode_config.cursor_width =3D 512;
-> +       drm->mode_config.cursor_height =3D 512;
 
-Fei already did the same (?) workaround downstream just recently.
+On 18/07/2024 09:55, Pavan Kondeti wrote:
+> On Thu, Jul 18, 2024 at 09:42:27AM +0200, Caleb Connolly wrote:
+>> Hi Pavan,
+>>
+>>>
+>>> Thanks Maulik for sharing the patch. It works as expected. Feel free to
+>>> use
+>>
+>> Can I ask how you're testing this?
+>>
+>> Kind regards,
+>>>
+>>> Tested-by: Pavankumar Kondeti <quic_pkondeti@quicinc.com>
+>>>
+>>
+> 
+> The QCM6490 RB3 board boots from upstream kernel. As part of releases
+> here [1] we plan to support booting Linux in EL2. Currently, I have an
+> internal board/build with firmware allowing this already. I have boot tested
+> Maulik's patch (and as well v1 patch). The targets gets reset early in
+> the boot up w/o this patch and I could boot w/ this patch.
 
-OOTH, Intel recently added a feature for enumerating "suggested"
-cursor sizes. See https://patchwork.freedesktop.org/patch/583299/
+Ahh awesome! Thanks for the info :)
+> 
+> Thanks,
+> Pavan
+> 
+> [1] https://github.com/quic-yocto/qcom-manifest
 
-Not sure if other compositors will end up using it or not.
-
-ChenYu
-
->         /* Use OVL device for all DMA memory allocations */
->         crtc =3D drm_crtc_from_index(drm, 0);
-> --
-> 2.45.2
->
+-- 
+// Caleb (they/them)
 
