@@ -1,191 +1,171 @@
-Return-Path: <linux-kernel+bounces-256215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9E6A934AD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:25:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01048934AE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:28:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8578A2878C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:25:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 808D61F21471
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B1F81AD7;
-	Thu, 18 Jul 2024 09:25:45 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A4281737;
+	Thu, 18 Jul 2024 09:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="banip5eg"
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B7A28DD1;
-	Thu, 18 Jul 2024 09:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF628172A
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 09:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721294744; cv=none; b=px6y1VsNcdLv1dEI5WhC23hMc3z0Ag3WqljUd7a9EiqGguVe/gQgXAZdGcdYIfqUACsvIqZYAlJUGtyfc5DOv8QXHZX7cSCr6p7+6nUPyBYH8Kl2oZW7WAmnrIbvYgJYfMt5vkj4BxE3TtkOcLgHV92hRZyOEU5oKu+mEyc5vzM=
+	t=1721294894; cv=none; b=AzG+GD3VbibKAZWRa5J9vbahBYyaAx+J5amAXEFI1sVc4Xy/jDkjWsd0c0ssplnNiL+ICiJc+btLAByuTGGp0CLBhbA+6aPLYHD+pJaTZPZte/LWhostAUoO3F16wKcC7k5xryTDpOEKbuj8uc6Fht/7xULDoqvupXJiJkzvlWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721294744; c=relaxed/simple;
-	bh=sBpRG87XTr+lD5LPwEAV/IC2h5JXbj8qV0PXvNTPR9c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J4FrZv3S9V7YRtAoUFLUWzqTumi7D36avutDKbZEpLaTv31MZRo18MyzLnQF2B4mKySzhBUNyCNhiOh94AkSNNSl3eMLEuLO+3i4MOa1sSZtF7lg+r05V6cH+sYSyaeedYG17mQEQuTEcuxc5ioDvCE0uB08lVruEykENMHJ0u4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i5e860d09.versanet.de ([94.134.13.9] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sUNOD-0003Jt-IN; Thu, 18 Jul 2024 11:25:29 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Conor Dooley <conor@kernel.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject:
- Re: [PATCH v2 1/3] dt-bindings: clocks: add binding for
- voltage-controlled-oscillators
-Date: Thu, 18 Jul 2024 11:25:28 +0200
-Message-ID: <3178118.zE8UqtGg2D@diego>
-In-Reply-To: <20240716-deceiving-saucy-851fb2303c1f@spud>
-References:
- <20240715110251.261844-1-heiko@sntech.de>
- <20240715110251.261844-2-heiko@sntech.de>
- <20240716-deceiving-saucy-851fb2303c1f@spud>
+	s=arc-20240116; t=1721294894; c=relaxed/simple;
+	bh=SHjvs2OcUJuk5DCQOHH5lk9zzR3fbK6RRXo4DL3QsKw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xtestbig7bHtACDw1BrLBe2/XSVAWgDmOca/saOBO5LRv86Ww+xv79yp3UDRuXUUFHyn1Y9yJpGq8I0feGrih5E8FvGjmrNPgoTvD5xFRH0RVMxnJ5ENNgSKxbzqNcX8Yz0GFTQeDau8dSa0ktShAl6LWoX+XRJt7GAvr2CiIe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=banip5eg; arc=none smtp.client-ip=209.85.222.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-8100ff1cec5so240023241.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 02:28:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1721294892; x=1721899692; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vIVo0OQ1EsBJVsYCtM25PmcXBbJ96Ax/6H8Xf2sBrfU=;
+        b=banip5eguaO6LOyw/ILjt9swIKu5BIAlCh3WH/jmDlQxZLCoBm+HrhAjI44blWk59l
+         a2jKtYPvIvIu8RHG2vJIrbHftOMm9JvVfV0lz4KemBkGdIuQyzcXWMc/ifTgKdAA4EbQ
+         WAITxCnAnP05w2FWZmI4OKeXVUFYGcTY0P/ys=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721294892; x=1721899692;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vIVo0OQ1EsBJVsYCtM25PmcXBbJ96Ax/6H8Xf2sBrfU=;
+        b=VtlPx8wjIarB+R00X7Ef9EhUyF/AGlLuLYYfRWFYqt224DZT5cO5qod80llTeAliqa
+         4TFOp0v4fGiwL1DsYCFpAcxQhId2MaiYYc2a9EYrlNOD79/gHerZ+crqHGayDPO/qJuY
+         6qhvM3IcKY3oKfXXdfsIBuUNM1Iwr3qzeMObE8jfp3dqk50V37+KoQR4ydeGzdN3xdBa
+         4a/s2hpGYvhjNhCQPm+QBzjUNtmb5zvODDlGdXOk+SEg2uWmmVkEkrpaU+u3Ccxk2aC2
+         gSeSpZPNe43THbVVjtHnP7P5mCUDJBudL+UVw504kmzUi/E01p+SPEp9YLwygk2Wntxs
+         eVgA==
+X-Forwarded-Encrypted: i=1; AJvYcCVNtWO4Vwj4TLyIqN5IpvNQzF5z/UR/sVdHRPlQlFtG687Q04rOd5FxWmXaq7HrPpq4MLNEfckIfwWrujnx1Yp7Yh6Y020UBcjk6yPU
+X-Gm-Message-State: AOJu0YyCv/j0mV+CVkWp0co2MJY1x60MhKVaSKBKJAAU7jLjAuxnLPej
+	Wy/PkqdvkCNFuscPEOqSrltSr29IxjYzbKHUfwyaOgeZh4Hyi4/q41XMeMENczcVFGTS10aOkuh
+	sMA==
+X-Google-Smtp-Source: AGHT+IEOZOvY4ejawMs1l2l3efW4vssF7+G9PwV1DG6xM3jsjwZEG/2AOQDguOwVIMFe6ZABeNoNig==
+X-Received: by 2002:a05:6102:3312:b0:48f:a7a6:bacb with SMTP id ada2fe7eead31-491597aa5b1mr5690301137.12.1721294891939;
+        Thu, 18 Jul 2024 02:28:11 -0700 (PDT)
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com. [209.85.221.172])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-822c8ac43b9sm128696241.25.2024.07.18.02.28.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Jul 2024 02:28:11 -0700 (PDT)
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-4f2f24f6470so244322e0c.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 02:28:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVRovVjGlQZK7ShINg0NQq1JHNHxG+8IJtru3QYvt6PyabSVmsrYDm8UgiR6tE6Vi2g/yBzHRp+yUBqs1ukB0vAFUkr/wUHJHd7gRgU
+X-Received: by 2002:a05:6122:3684:b0:4ec:fc9b:a0bc with SMTP id
+ 71dfb90a1353d-4f4df688191mr5774468e0c.4.1721294891079; Thu, 18 Jul 2024
+ 02:28:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20240718082410.204459-1-angelogioacchino.delregno@collabora.com> <CAGXv+5GBg73kWuiDt=9s7M4oJeHhWOF3bPY7Ju+qn1kJgNNaGw@mail.gmail.com>
+In-Reply-To: <CAGXv+5GBg73kWuiDt=9s7M4oJeHhWOF3bPY7Ju+qn1kJgNNaGw@mail.gmail.com>
+From: Fei Shao <fshao@chromium.org>
+Date: Thu, 18 Jul 2024 17:27:33 +0800
+X-Gmail-Original-Message-ID: <CAC=S1nigoJWAECBrm-Q=Co1-qd_yUhx3R4D9=dYeUV=gr5UYfQ@mail.gmail.com>
+Message-ID: <CAC=S1nigoJWAECBrm-Q=Co1-qd_yUhx3R4D9=dYeUV=gr5UYfQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/mediatek: Set sensible cursor width/height values to
+ fix crash
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, chunkuang.hu@kernel.org, 
+	p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch, 
+	matthias.bgg@gmail.com, shawn.sung@mediatek.com, ck.hu@mediatek.com, 
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Conor,
-
-Am Dienstag, 16. Juli 2024, 18:15:08 CEST schrieb Conor Dooley:
-> On Mon, Jul 15, 2024 at 01:02:49PM +0200, Heiko Stuebner wrote:
-> > In contrast to fixed clocks that are described as ungateable, boards
-> > sometimes use additional oscillators for things like PCIe reference
-> > clocks, that need actual supplies to get enabled and enable-gpios to be
-> > toggled for them to work.
-> > 
-> > This adds a binding for such oscillators that are not configurable
-> > themself, but need to handle supplies for them to work.
-> > 
-> > In schematics they often can be seen as
-> > 
-> >          ----------------
-> > Enable - | 100MHz,3.3V, | - VDD
-> >          |    3225      |
-> >    GND - |              | - OUT
-> >          ----------------
-> > 
-> > or similar. The enable pin might be separate but can also just be tied
-> > to the vdd supply, hence it is optional in the binding.
-> > 
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+On Thu, Jul 18, 2024 at 4:49=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org> w=
+rote:
+>
+> (CC-ed Fei Shao)
+>
+> On Thu, Jul 18, 2024 at 4:24=E2=80=AFPM AngeloGioacchino Del Regno
+> <angelogioacchino.delregno@collabora.com> wrote:
+> >
+> > Hardware-speaking, there is no feature-reduced cursor specific
+> > plane, so this driver reserves the last all Overlay plane as a
+> > Cursor plane, but sets the maximum cursor width/height to the
+> > maximum value that the full overlay plane can use.
+> >
+> > While this could be ok, it raises issues with common userspace
+> > using libdrm (especially Mutter, but other compositors too) which
+> > will crash upon performing allocations and/or using said cursor
+> > plane.
+> >
+> > Reduce the maximum width/height for the cursor to 512x512 pixels,
+> > value taken from IGT's maximum cursor size test, which succeeds.
+> >
+> > Fixes: a4c9410b31ca ("drm/mediatek: Set DRM mode configs accordingly")
+> > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@co=
+llabora.com>
 > > ---
-> >  .../bindings/clock/voltage-oscillator.yaml    | 49 +++++++++++++++++++
-> >  1 file changed, 49 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
-> > new file mode 100644
-> > index 0000000000000..8bff6b0fd582e
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
-> > @@ -0,0 +1,49 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/voltage-oscillator.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Voltage controlled oscillator
-> 
-> Voltage controlled oscillator? Really? That sounds far too similar to a
-> VCO to me, and the input voltage here (according to the description at
-> least) does not affect the frequency of oscillation.
+> >  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/m=
+ediatek/mtk_drm_drv.c
+> > index 6f0b415a978d..b96763664c4f 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> > @@ -540,8 +540,8 @@ static int mtk_drm_kms_init(struct drm_device *drm)
+> >         }
+> >
+> >         /* IGT will check if the cursor size is configured */
+> > -       drm->mode_config.cursor_width =3D drm->mode_config.max_width;
+> > -       drm->mode_config.cursor_height =3D drm->mode_config.max_height;
+> > +       drm->mode_config.cursor_width =3D 512;
+> > +       drm->mode_config.cursor_height =3D 512;
+>
+> Fei already did the same (?) workaround downstream just recently.
 
-That naming was suggested by Stephen in v1 [0] .
+Well, so another userspace gets confused...
+I actually sent a separate userspace (i.e. Chrome) fix where I
+encountered the issue, so I didn't proceed with upstreaming it in the
+end.
 
-Of course the schematics for the board I have only describe it as
-"100MHz,3.3V,3225" , thumbing through some mouser parts matching that
-only mentions "supply voltage" in their datasheets but not a dependency
-between rate and voltage.
+This matches my preference in [1], so of course I'd like to see it
+merged... if maintainers are okay with it.
+Given I've tested the exact same change before:
+Reviewed-by: Fei Shao <fshao@chromium.org>
+Tested-by: Fei Shao <fshao@chromium.org>
 
-[0] https://lore.kernel.org/linux-arm-kernel/b3c450a94bcb4ad0bc5b3c7ee8712cb8.sboyd@kernel.org/
+[1]: https://lore.kernel.org/all/CAC=3DS1nhKPo5BUYJ_cHGz3OoPrWNh5eO8rhdyikL=
+imsqSOrZ5Xg@mail.gmail.com/
 
-> Why the dedicated binding, rather than adding a supply and enable-gpio
-> to the existing "fixed-clock" binding? I suspect that a large portion of
-> "fixed-clock"s actually require a supply that is (effectively)
-> always-on.
-
-I guess there are three aspects:
-- I do remember discussions in the past about not extending generic
-  bindings with device-specific stuff. I think generic power-sequences
-  were the topic back then, though that might have changed over time?
-- There are places that describe "fixed-clock" as
-  "basic fixed-rate clock that cannot gate" [1]
-- Stephen also suggested a separate binding [2]
-
-With the fixed-clock being sort of the root for everything else on most
-systems, I opted to leave it alone. I guess if the consenus really is that
-this should go there, I can move it, but discussion in v1 
-
-Interestingly the fixed clock had a gpios property 10 years ago [3] :-) .
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/clk-fixed-rate.c#n18
-[2] https://lore.kernel.org/linux-arm-kernel/68f6dc44a8202fd83792e58aea137632.sboyd@kernel.org/
-[3] https://lore.kernel.org/linux-kernel//20140515064420.9521.47383@quantum/T/#t
-
-
-Heiko
-
-
-> > +
-> > +maintainers:
-> > +  - Heiko Stuebner <heiko@sntech.de>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: voltage-oscillator
-> > +
-> > +  "#clock-cells":
-> > +    const: 0
-> > +
-> > +  clock-frequency: true
-> > +
-> > +  clock-output-names:
-> > +    maxItems: 1
-> > +
-> > +  enable-gpios:
-> > +    description:
-> > +      Contains a single GPIO specifier for the GPIO that enables and disables
-> > +      the oscillator.
-> > +    maxItems: 1
-> > +
-> > +  vdd-supply:
-> > +    description: handle of the regulator that provides the supply voltage
-> > +
-> > +required:
-> > +  - compatible
-> > +  - "#clock-cells"
-> > +  - clock-frequency
-> > +  - vdd-supply
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    voltage-oscillator {
-> > +      compatible = "voltage-oscillator";
-> > +      #clock-cells = <0>;
-> > +      clock-frequency = <1000000000>;
-> > +      vdd-supply = <&reg_vdd>;
-> > +    };
-> > +...
-> 
-
-
-
-
+Regards,
+Fei
+>
+> OOTH, Intel recently added a feature for enumerating "suggested"
+> cursor sizes. See https://patchwork.freedesktop.org/patch/583299/
+>
+> Not sure if other compositors will end up using it or not.
+>
+> ChenYu
+>
+> >         /* Use OVL device for all DMA memory allocations */
+> >         crtc =3D drm_crtc_from_index(drm, 0);
+> > --
+> > 2.45.2
+> >
 
