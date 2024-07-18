@@ -1,91 +1,105 @@
-Return-Path: <linux-kernel+bounces-256354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86581934CE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:02:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B741934CE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 974461C2232E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:02:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3CD1B21E41
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5829B137905;
-	Thu, 18 Jul 2024 12:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9DF7137905;
+	Thu, 18 Jul 2024 12:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c1l5liDI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2U7gy2f"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E58512C473
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 12:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C944712FB13
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 12:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721304142; cv=none; b=fGD8x0EpO3RuHCbrfPGawLq4+F1EuNmqNbr69anK2js4rptKhnkVYJKbcsWeH+RCJM1azR8q4m2RI8rZMsGxRRLndHzMxidU+xNnh9oyWhf2IyqfSSDq0q9C5avg6EgmuN21kePmcOyHWWzItGS7EhAfWQuhLAtFxoW84nE6Mz4=
+	t=1721304285; cv=none; b=JqwSVov/2sz7Oc9Zir1C9iworrf0QYQuvqb4tQ/T5AixH5l7T9h/ocHkA9FWMkcOixuJGmyk1JKxGqs1Vre6dqWR+d6CKSbdwdAGKqFE9RVIX6j+IMofgjU6bOshncQwmZge2ZXhf4jCDgeuUsVHnKT6aItmmyDUqFu79vlSM1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721304142; c=relaxed/simple;
-	bh=4X3CaJuNtXM+dLODj6haMa7pA8m3mfucWCuMrl33fzA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=oopJN9iaskapyMFLoEp9oQRxW2X3I7V6BZaSuv9L4DvzZxHv3t998CELKAqt2yvVm2+LcV51SVLk2idsS7qzAFxzcEs7uIDAA4+/DpmcRtlpJg2xXGS0FaKisPeU0FA0E/09L0OU2H2iyab693wtgNEZ2yxRWggZ3/KuGzI1ePE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c1l5liDI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12162C116B1;
-	Thu, 18 Jul 2024 12:02:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721304142;
-	bh=4X3CaJuNtXM+dLODj6haMa7pA8m3mfucWCuMrl33fzA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=c1l5liDIz6OLKuDSicL7hu2aczwlYF0xi7JxW4hGZ8Qk7MfOleMq65Uq1dJHoCIl8
-	 Bd8mf9fnKtlaWT+iFHqNg971jKj70kmxaAu4MtzlEJm+sWssxkfRdI73KEFDuyHpLG
-	 /JwZeXOfsnw19RhZ65OeT3RIwjni92jquBu4iL9iyZAZbqBTb4Nib+1An2uKTSqrCn
-	 LDyJCoZ6ZavyXN0uFBpahg88fZa2HqhSydbMDTlT2IxMIzFfCRW8Q6rJd98X+n6jWp
-	 YEqG+zKaBcJi7A3JDbZL7tmxVfqi9xROuAUUUTb5TQRbQDhcC3c7pnsB+9mOjJQ+DP
-	 /XazVANzV67dQ==
-From: Robert Foss <rfoss@kernel.org>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240711-bridge-connector-fix-dbl-free-v1-1-d558b2d0eb93@collabora.com>
-References: <20240711-bridge-connector-fix-dbl-free-v1-1-d558b2d0eb93@collabora.com>
-Subject: Re: [PATCH] drm/bridge-connector: Fix double free in error
- handling paths
-Message-Id: <172130413876.532897.864210015976659933.b4-ty@kernel.org>
-Date: Thu, 18 Jul 2024 14:02:18 +0200
+	s=arc-20240116; t=1721304285; c=relaxed/simple;
+	bh=Lx+yy9Iw767d4BIHylrSib1+7BL5Oh0LwpkDO9BukPc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=q4EQa6LczDgyeGngfAtZ7w6F4OjT0QMZgzcNKJWXyBbit2iBS9IA0o/T6okSsiloMarRxD7drupwt40c4/UmoxOkAn/AYiNUZEs23EmcY//3ZOC/Yk7tuAbM7xJur01JbrG8CXiYFfnWQlBjvR7Smljp5Q0/H04s3H7lBclQf4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T2U7gy2f; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fc424901dbso6675035ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 05:04:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721304283; x=1721909083; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4xJnAZcJFi/7QBpbb2lPd2reHM3PE2XgOmpWH+Y0tPI=;
+        b=T2U7gy2fY65Ry7m62ioNWSuDBUdFFcNgMROY/Sqr+WmdQ54oPrY0QmOb8tK0Vzvw/Y
+         mnLHqVP85JDcrUfy8iX2vdwn2hNu7tzzyHezLk1USHvw3oT3+2dwUnp0+Bm+PQ/CSma8
+         3MkVfWIohKtLkKw2XJyXmMIVgnjRe7RmKtbb6XIVAbnpskMJoWyydQOV9zNsZVUeRG3n
+         vHkm4pdTTujX/lLnoUGBId8ARm0x3tTw+MhArs7ehf1VPlLhbkq54MG3hoIFLSGXzGb9
+         7hl5wHuoF79I33aVR8N9t12DwAwitSuA3xLid/pd56yy4w+pAmXMJqWTzL3untaPPP4i
+         CC0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721304283; x=1721909083;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4xJnAZcJFi/7QBpbb2lPd2reHM3PE2XgOmpWH+Y0tPI=;
+        b=oECBOgMx+c7GfKCrkBnBKqjqJkvA+FuFwzAUlv5KYNMEXh/NjYd3ojSDhLV5q7cAiK
+         eFBHR/UautUqLv5ToEAQxEkHa+c18xNEqkORJf5nFdDXeC5cv2BZe9l2dwfnoGXYd5p7
+         DBD34tgsSDnWzgQ8V+zZOsp4nAO+I1n+5O8G2ZfuNVyJMl6Y/CWhh1kRBgKj9viiUvyM
+         +p9B2JFFwebs2YGfwjExwDqa2q0iHPEn7Eng31pRUuoOMmC8Kxyo4wxM5USP3Nf0zYJ0
+         g+I4HQEjEyiPfATe670PJ99Zrs8ukMoFfwaMRWvMXtOFtXMqNX3IwVZdM/Sm+X0apyqq
+         qDXQ==
+X-Gm-Message-State: AOJu0YwMUhpYpk27wziY2Q03nZUsmiiTwTtSWorfGYJM3lszOx+KHWdx
+	T2tkLjBXyHSGK8cVTAd8DjxmG3yR7MkUGWhcx/wKxVhRpyQ8f57W
+X-Google-Smtp-Source: AGHT+IF3zjoG9QvOXyeZC59ZkKL+h+5406IcCivXZEuwOqSiqH2+9C/ZgpAbqqYOIwe5UVRjdpXa+A==
+X-Received: by 2002:a17:902:f64e:b0:1fc:71fb:10d6 with SMTP id d9443c01a7336-1fc71fb1160mr862865ad.6.1721304282938;
+        Thu, 18 Jul 2024 05:04:42 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc2b822sm91169705ad.160.2024.07.18.05.04.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jul 2024 05:04:42 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: syzbot+a81f2759d022496b40ab@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [syzbot] [net?] KMSAN: uninit-value in hsr_get_node (3)
+Date: Thu, 18 Jul 2024 21:04:39 +0900
+Message-Id: <20240718120439.59661-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <0000000000004a86bf0616571fc7@google.com>
+References: <0000000000004a86bf0616571fc7@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 11 Jul 2024 14:26:55 +0300, Cristian Ciocaltea wrote:
-> The recent switch to drmm allocation in drm_bridge_connector_init() may
-> cause double free on bridge_connector in some of the error handling
-> paths.
-> 
-> Drop the explicit kfree() calls on bridge_connector.
-> 
-> 
-> [...]
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
-Applied, thanks!
+---
+ drivers/net/virtio_net.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1/1] drm/bridge-connector: Fix double free in error handling paths
-      https://cgit.freedesktop.org/drm/drm-misc/commit/?id=ca5442ed8f53
-
-
-
-Rob
-
-
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index af474cc191d0..2088b566d10b 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -2895,7 +2895,7 @@ static int virtnet_open(struct net_device *dev)
+ 	for (i = 0; i < vi->max_queue_pairs; i++) {
+ 		if (i < vi->curr_queue_pairs)
+ 			/* Make sure we have some buffers: if oom use wq. */
+-			if (!try_fill_recv(vi, &vi->rq[i], GFP_KERNEL))
++			if (!try_fill_recv(vi, &vi->rq[i], GFP_KERNEL | GFP_ZERO))
+ 				schedule_delayed_work(&vi->refill, 0);
+ 
+ 		err = virtnet_enable_queue_pair(vi, i);
+--
 
