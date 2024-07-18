@@ -1,60 +1,83 @@
-Return-Path: <linux-kernel+bounces-256343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75514934CBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:45:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C829934CBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:46:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 245141F226D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:45:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3EF7282368
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F338413AA38;
-	Thu, 18 Jul 2024 11:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62EE613BAD7;
+	Thu, 18 Jul 2024 11:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hAZWFU+5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="MkQd7xxZ"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C4012DD88;
-	Thu, 18 Jul 2024 11:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583201353FE
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 11:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721303119; cv=none; b=Gbn9AylKndR5ZwTZGiXEgYqCC1khC6IWLK2AWcklf1QCPiVuYghMqiPDZaq0zAXbiDJ2XTkL43qQwjTfkoANvJRttmSmk/rHvsGksfyp3MSqP0KNA++nGAiswA9ofOEDu+aHjxmklN8ptj7QRbGL+xmcn7gxKeu6KB1dWfCwuGc=
+	t=1721303145; cv=none; b=gfkKo09IujCpoJa2E/sfoj16YZOTIaWxrvdsAJKHVQjyRH9GdhuCzSPgtcWWyaAts84JXiGFr0QNgieEJJF7cwNTR3EJtA1hAHJ5EHZF2P8ILq3MmYVKdHrwnCJyX/tx/3OJ9bvu3/teVl/osghGrc9IhplJ60s5lwOvvgavONk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721303119; c=relaxed/simple;
-	bh=6dDkmxqvJY8h61QecQ5gJGkM7Qx9fiJB6j7R5iGc7TU=;
+	s=arc-20240116; t=1721303145; c=relaxed/simple;
+	bh=9OGPBmn7v1HT1nS9fhahCKmtj5g7KxEYk27uNk2Dx/k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oCe6h7lxfcOfwSuOidc+aNtER6DFMK7UFGDldtYGfXHErY0om0/KGLgLhafM22s7p6u0jAB5DxCc7AZ6m1o7GAzhr6l54t41eCeaikazjsXitmoqoSsB3NqKRTHUekWZJgU3WfX7rqJJvgJa8ypKxOxg5TtHMpbxbiFw87gsPgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hAZWFU+5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B72AAC116B1;
-	Thu, 18 Jul 2024 11:45:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721303118;
-	bh=6dDkmxqvJY8h61QecQ5gJGkM7Qx9fiJB6j7R5iGc7TU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hAZWFU+5O9a3urAw6D6eH506PIDqNsVSfC9vYYllWtzOOOipRvFCyQRAmfO3RGLzR
-	 EapBZ+yFliVUUQJ6ypC1xJaCoEZ8hM4Z4bgdB6k2uQ6DbEKK02beSf5xaiscmqMLb9
-	 3qaSOftrgSs7pPf0y18DxDE5Ls9I3d2qFyOuXgrWgVwwj50HTN4Ew5dwiks8sfxo+J
-	 E8+4Zvtf/d7SGJIkVXRyIGz7/wNXnvyWmecRkBAi5DVpOzEujLToxcSGrGbjavlWlc
-	 wwdSu/oTKdBqNeaW4XURZg6IfXMOmKHULCMH1pAk9kh4KDv0LgQlW2CBuMcFQCS57x
-	 3boscUjlhGk3Q==
-Date: Thu, 18 Jul 2024 13:45:11 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: cl@linux.com, penberg@kernel.org, rientjes@google.com,
-	iamjoonsoo.kim@lge.com, akpm@linux-foundation.org, vbabka@suse.cz,
-	roman.gushchin@linux.dev, 42.hyeyoo@gmail.com, urezki@gmail.com,
-	kees@kernel.org, ojeda@kernel.org, wedsonaf@gmail.com,
-	mhocko@kernel.org, mpe@ellerman.id.au, chandan.babu@oracle.com,
-	christian.koenig@amd.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 2/2] mm: kvmalloc: align kvrealloc() with krealloc()
-Message-ID: <ZpkARwEkp70YMVzf@pollux>
-References: <20240717222427.2211-1-dakr@kernel.org>
- <20240717222427.2211-3-dakr@kernel.org>
- <ZpiJvj1_rKodpVSt@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oblz8INMZD1Q3EWIxddh5L+PJ+7aSgw7oRSlhshUvXhUvvD4PdsjuUYaPpX3uJwIel88bSYyZ1DCGX+ZliGBu9NMGtbe6NR4WPojl/2Et9uX5VtUHgjU4IrarqUFN1PBUefi9+J+GvN2S2llaqLbUgXC/KY66qE36lpil3wFjRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=MkQd7xxZ; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a77d876273dso37711766b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 04:45:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1721303141; x=1721907941; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9OGPBmn7v1HT1nS9fhahCKmtj5g7KxEYk27uNk2Dx/k=;
+        b=MkQd7xxZQy7BO1/2k57yNqJt97ibbZth6N1+FF2blJ4tkIL+i22Uad+AY9t+xb0plD
+         Ela9CzJZ9Ep2UeVKtLm1bho613KEl9Yh0LYB4YH7aBphO1sJ8eHAW0R8QebTIyKO02Eg
+         CScnQCo7ZqgwGD1VFgrgeiUgVi5/qJj/xiAPLC+vM8ThQorJBx2jJNVrqdToxwInLFEn
+         CNgTs8XtYomkcIdfyEmtsMQH4SzONAJtkGqahsWDKdiN2l/uJYPaNiLoF6L+v35aOQPz
+         BdRpSOIdBZkLtdetU+rhSbCuZgOVMgbii7F3PO4t66umlqO9KPsyT00bOcBD3kmLfYE2
+         l0rQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721303141; x=1721907941;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9OGPBmn7v1HT1nS9fhahCKmtj5g7KxEYk27uNk2Dx/k=;
+        b=tyJdTMrfw67XQQd2ATS2QesJvlVYHlN6Yh57Mt4jDI4uB2Sb7krugiuzkQKyKos9Aa
+         SJDyMzZCRDgAlRcgaHARncDyC5JvzCE16gXuJ4a80bzLhUvlESxe4yXgD3M1Ci1dx8xt
+         MdTVWGSL987Qj8/T+aNgOqKId/dP2B5hlrig++46cfwHr482Wo2Sd4SdwAmLFdvH0jMt
+         LAKybgpJGnWKR2TN21XuinBeF4Qzc1Mt0hCN94sFtq9P4IdUfc0v9vzm0BSfGzOzJDCc
+         BJC81wwg5zceBQyHLZWmmEbaM/37pAjGhkwTUx19CZV+OgYhbKu//0fq92zerlNDloul
+         AjBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUF5wZjTWYOM4vDA1gHZPve03YTzqRci5ASrOqCLsZPXyR+HrGImzNJDRrD+SwxfZ37Yk0yujm0LjwKzBFbmRDvnQ/uHrh/V42ngQ9I
+X-Gm-Message-State: AOJu0Yw9tkykZDfSY95Rcc1snc8pKanm3D3UYkr9lLnVpBbIqO3dF/4N
+	LXwlAUY0fGj3lEs+Yo3HnGC4RGANbTStiZzlFFIuDwPSf/iDQ3EaqO779rSip1U=
+X-Google-Smtp-Source: AGHT+IHPdu4zw1VmdZAGMAnb4mmwfuXfp/AC8jcealqbCQKkuxjd+WBHJME8aDdWWPj2OW016A3tIQ==
+X-Received: by 2002:a05:6402:2108:b0:58c:7c01:2763 with SMTP id 4fb4d7f45d1cf-5a05d2e006amr4622062a12.33.1721303141413;
+        Thu, 18 Jul 2024 04:45:41 -0700 (PDT)
+Received: from localhost (78-80-9-176.customers.tmcz.cz. [78.80.9.176])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59e663e4a6esm5066623a12.80.2024.07.18.04.45.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jul 2024 04:45:39 -0700 (PDT)
+Date: Thu, 18 Jul 2024 13:45:37 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>, davem@davemloft.net,
+	edumazet@google.com, pabeni@redhat.com, michal.simek@amd.com,
+	andrew@lunn.ch, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	git@amd.com,
+	Appana Durga Kedareswara Rao <appana.durga.rao@xilinx.com>
+Subject: Re: [PATCH net-next] net: axienet: Fix coding style issues
+Message-ID: <ZpkAYdubmlv0jOiZ@nanopsycho.orion>
+References: <1721242483-3121341-1-git-send-email-radhey.shyam.pandey@amd.com>
+ <20240717170043.45aaf7e2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,35 +86,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZpiJvj1_rKodpVSt@infradead.org>
+In-Reply-To: <20240717170043.45aaf7e2@kernel.org>
 
-On Wed, Jul 17, 2024 at 08:19:26PM -0700, Christoph Hellwig wrote:
-> > +extern void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags) __realloc_size(2);
-> 
-> Please drop the extern while you're at it and move the __realloc_size
-> attribute to a separate line.
+Thu, Jul 18, 2024 at 02:00:43AM CEST, kuba@kernel.org wrote:
+>On Thu, 18 Jul 2024 00:24:43 +0530 Radhey Shyam Pandey wrote:
+>> Replace all occurences of (1<<x) by BIT(x) to get rid of checkpatch.pl
+>> "CHECK" output "Prefer using the BIT macro".
+>
+>FWIW the BIT() thing is a matter of preference, we don't enforce it
+>strictly in networking, it may not be worth patching. Up to you.
 
-Will do.
-
-> 
-> > +static gfp_t to_kmalloc_flags(gfp_t flags, size_t size)
-> > +{
-> > +	if (size > PAGE_SIZE) {
-> > +		flags |= __GFP_NOWARN;
-> > +
-> > +		if (!(flags & __GFP_RETRY_MAYFAIL))
-> > +			flags |= __GFP_NORETRY;
-> > +
-> > +		/* nofail semantic is implemented by the vmalloc fallback */
-> > +		flags &= ~__GFP_NOFAIL;
-> > +	}
-> > +
-> > +	return flags;
-> 
-> The name for this function sounds a bit odd.  Maybe kmalloc_gfp_adjust
-> instead?  Also the comment explaining these flags tweaks should move
-> from the caller to this function.
-
-kmalloc_gfp_adjust() sounds good to me. I will rename it and move the comment
-up.
+In the past, I recall we did.
 
