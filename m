@@ -1,128 +1,161 @@
-Return-Path: <linux-kernel+bounces-256026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 078079347ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:17:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE1799347F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:19:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 917B11F22F26
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:17:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A91AB21F45
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB7457C9F;
-	Thu, 18 Jul 2024 06:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C291605BA;
+	Thu, 18 Jul 2024 06:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="POI6V7ce"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lNPryReU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4D826ACF
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 06:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9276D1B4;
+	Thu, 18 Jul 2024 06:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721283415; cv=none; b=M6VDhzmqAoAnkgKRuxVdicyMfYBxj9thz+eyVQZvs1++Ge2kousidEpkBwpVUyuWiywYpaTULnVJWShNQGg83niEvDk659WeNsWWGcK3QwmJwesyTwqKfUI+86gAksIjJWmY5yNpcJs+IATJ/DRWarME7YXYDiu/jhnG1ZC1V2I=
+	t=1721283550; cv=none; b=QwydJd0gcs1xOPE/qo2SIRWxEx5CTYwOstfYGYUp9TOM4Fuvbui4bBvLbbPKNMbJVJ80zgDXYznNTpZ5ZmbKE6isLFiofnonstgE1jSOT6yyjfPxOdYLrQGycf+hEoECu0wL6ddWG7kn6IkdA1Jx51e0JvlXhJKfyV+Kc14w2yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721283415; c=relaxed/simple;
-	bh=kyAEPQ8aqEpNHP56KgTxfs8DkAW5y/OXpKADmfMqipw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SI5r6tTtT1GZ6IX0oUel6kk+xHRGntRIJ0Xbv8i/8Dc7LS5R6lEPTp52+P22fxYOCZwn4W+tf3OdEDMFmcGpUovUEyPtjubRoDLjWfWfsqwgoeXXWsE4/w5jhgraO+Ekl1kD+gJ/HZCNsRtCWCu2kPamDA2H29V+ceFRhJzDIDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=POI6V7ce; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=xdf5
-	pkRjQk/2l7quEdwVVAsVanyOiLoDYJ1UByBzIFM=; b=POI6V7cerUMTOAI3LNPa
-	SuZEQDja66K97w9kNDpZKFS1i0hZQ4C22Z/mPPBqtGJmTb1XBifYeKxfMPa4Vm2u
-	cpHLrmpn+Y2ct3lPvQzPHgPBZvlHQeyW+B4umKyk+5oVxWkBCLtODdYjEl9wojGB
-	ZpaD6dGweS6xuinPYe0sFEq9CWTtxZfu1Rp2B/6eVXuS+SX31ZvDNwwrIYMq2JGF
-	TnFO3vUnwqbrXNS/bEOD7MxjiwKJ1WgsDLc/iDgUImpSZ//2e0G/ldxsetFwuy60
-	qT9XBjaFjCjQNSfTpIm9IEYXiMaXZBVxgMUtChQSpuWuCkiDFzIn9p9hs8DNAdpe
-	iQ==
-Received: (qmail 784982 invoked from network); 18 Jul 2024 08:16:41 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Jul 2024 08:16:41 +0200
-X-UD-Smtp-Session: l3s3148p1@LqCmhX8dULK57tsn
-Date: Thu, 18 Jul 2024 08:16:40 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: Re: [PULL REQUEST] i2c-for-6.11-rc1
-Message-ID: <ZpizSLI-sAIng0GO@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
-References: <ZpY3X1tggZC3s_1X@shikoro>
- <CAHk-=wigtUnqv+RXkLZ2TwqV35YQeGrYsMnrowpnmQNN6wyhCg@mail.gmail.com>
- <CAHk-=wir5OYeNSytz+EocQnQxoFX0LY962R6FDj9cAHBiXFe5Q@mail.gmail.com>
+	s=arc-20240116; t=1721283550; c=relaxed/simple;
+	bh=TTHXDISLWM4G5/ABRq+uF9kx4rxKG5ZyaIr3GrXMmOI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EbZg8ZFurWdz358FqoAoyIRSribho3oM1WoXmZDSxbpPyMYiI5XnLhqCCThgYbrLCSJcTL1fTftVhv0mjh7CRX1toKYxzxeFqB3foQFQH7m2MmedSINIn3qfLfCZYCKh07L/J7VJkBr2oyOfHy1+7SCK0gUyVf5ioqp7zeqi8PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lNPryReU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43F62C116B1;
+	Thu, 18 Jul 2024 06:19:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721283549;
+	bh=TTHXDISLWM4G5/ABRq+uF9kx4rxKG5ZyaIr3GrXMmOI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lNPryReUhYV/UiPX3jQcG2E2w3CeY0tDaH+aIvuJGO9w8x05FslO8B6Ln4PX2r+1/
+	 5SnycoRn/HFg6w43rxSIPjsn/LHkCVvGkNF+GUJjgDLFYGB70ZpUwHt3hiH6WEsL3T
+	 m4sTl3bI64+bkqxS3JPYPxQQvEwkJvgr8+ASLmEq8qxlEYyXp2BobWZeoENTDEusCJ
+	 pfdJIaBiptu2Bbv8Kq38UERmQ9J/iDwMBxdfzmWe55szEcpcRnHEZeZ6UjbUHZk42I
+	 hYgXQVuouAe0g7dloGUiOkEfHgp/IXsCt9hRrOWmjqsAZFxqTYUCyerq0pA+B/mWY8
+	 EOYOtBEXoWA0A==
+Message-ID: <e017259b-bc62-4b57-9276-b834237225e1@kernel.org>
+Date: Thu, 18 Jul 2024 08:19:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="V4NMR6WsPI0KAuJv"
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wir5OYeNSytz+EocQnQxoFX0LY962R6FDj9cAHBiXFe5Q@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindings: display: panel: samsung,atna33xc20:
+ Document ATNA45AF01
+To: Doug Anderson <dianders@chromium.org>, Conor Dooley <conor@kernel.org>
+Cc: Stephan Gerhold <stephan.gerhold@linaro.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
+ Johan Hovold <johan@kernel.org>
+References: <20240715-x1e80100-crd-backlight-v2-0-31b7f2f658a3@linaro.org>
+ <20240715-x1e80100-crd-backlight-v2-1-31b7f2f658a3@linaro.org>
+ <20240715-scorn-canning-a7f23b9e2039@spud>
+ <CAD=FV=U-nOMu-JDQ3T=ZRJ-rZ0BTtyzFVfnzbtCJdbRzAq3YMg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <CAD=FV=U-nOMu-JDQ3T=ZRJ-rZ0BTtyzFVfnzbtCJdbRzAq3YMg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 18/07/2024 02:21, Doug Anderson wrote:
+> Conor (and/or) Krzysztof and Rob,
+> 
+> On Mon, Jul 15, 2024 at 8:31 AM Conor Dooley <conor@kernel.org> wrote:
+>>
+>> On Mon, Jul 15, 2024 at 02:15:37PM +0200, Stephan Gerhold wrote:
+>>> The Samsung ATNA45AF01 panel is an AMOLED eDP panel that has backlight
+>>> control over the DP AUX channel. While it works almost correctly with the
+>>> generic "edp-panel" compatible, the backlight needs special handling to
+>>> work correctly. It is similar to the existing ATNA33XC20 panel, just with
+>>> a larger resolution and size.
+>>>
+>>> Add a new "samsung,atna45af01" compatible to describe this panel in the DT.
+>>> Use the existing "samsung,atna33xc20" as fallback compatible since existing
+>>> drivers should work as-is, given that resolution and size are discoverable
+>>> through the eDP link.
+>>>
+>>> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+>>
+>> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> 
+> Can you comment on whether you would consider this bindings a "Fix"
+> since it's a dependency for later patches in this series (which are
+> "Fix"es) to pass dtbs_check? See:
+> 
+> https://lore.kernel.org/r/4bca316a-2334-425b-87a6-e1bb241d26b5@linaro.org
 
---V4NMR6WsPI0KAuJv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The patch itself is not a fix, for sure, but it might be a dependency of
+a fix (which you wrote above), thus could be pulled to stable as a
+dependency.
 
-Linus,
+I do not care about dtbs_check warnings in stable kernels, mostly
+because dtbs_check warnings depend heavily on dtschema and dtschema
+follows mainline kernel. Basically if you had warnings-free v6.8 but try
+to run dtbs_check now with latest dtschema, your results will differ.
 
-> > I have looked up said explanations, but next time I need to go look
-> > for explanations I'm just going to ignore the pull request as clearly
-> > just not worth bothering with.
+At some point in the future, I could imagine "no new dtbs_check warnings
+in stable kernels" requirement or at least preference, but so far I
+don't think there is any benefit.
 
-Okay, I got the first part. My reasoning was that the summaries from the
-merges I pulled in were excellent and I could not add something to it
-*plus* I was assuming you skim through the patches you pull anyhow. But
-I can see that you want to know *before* you pull something. I will send
-you an updated PR.
+Best regards,
+Krzysztof
 
-> There are other merges in there too, and this just pisses me off.
-
-That part I do not get:
-
-$ git log --pretty=oneline master..i2c/for-mergewindow | grep Merge
-479f18ccca110b727d99c2db60d769736bf390e6 Merge tag 'i2c-host-6.11' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-mergewindow
-711703013e340caac3e4a6a3a605324691292621 Merge tag 'at24-updates-for-v6.11-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux into i2c/for-mergewindow
-
-These two merges I mentioned. What others are in there?
-
-Regards,
-
-   Wolfram
-
-
---V4NMR6WsPI0KAuJv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaYs0QACgkQFA3kzBSg
-Kbb7ShAAsYkzZIWcYYi0+3xUnQTyFd7720G5Ow/1tZZ0GE4MsC6EfUtxoPZQ0Dez
-4F0gCIVUSf6YFgMN1oBrg1FgA8TEu6nnrpXB7BbyOz5FBwFo80UaFbYJMMH5FXit
-SWP1wxJSXfEwf9sSmHtOdSFCEVb31FwxR3VicYMlcv0DBpfFcrT/Jfl+Gk/9Ee+I
-wrtcuGDz0+ItNS+HZQEcUtG0wUP45DtQeRS7g1DHraEODP7W4YYiE50Y4nXwE0Ti
-c01kE3hF5JP5AAk3oIap0DmzmfLSE7pqp1MBycIRLl5YaGofc3TXYwWVMK3D62tq
-6jOzkUnyNq8sQqYajMsxfsvSdx/RRAb9g4FZPp5iRR6P8OeS9Iyg50FfFB5yy9Sj
-cY7sQZ2PS8N1/Fu1liMigXB2kBIuKLxpr10th1o1T9cS3C7GtqxKnpzxUfU7PdtS
-HdGRlCRGMVlnk1/r8ckxRvmKdjZoTeNSdH7YW5yOzvVEDMcoEm0cr1Dn/6BLwQ7Y
-83Q0PgK8qbzf8RRjFhpSbJjTsXGywfk53g1abxdwTMuD6PquGzax9u0IaZlxV97I
-otUdxGvZ/jVyo4Amb2UsalzI/fzNAZNHOj0P16NlpgSwa9MorJHlaPICNLU1zKo8
-bWJOUBySu/YVrDsgk7YWrjbN0u9wruv8xlOvJm+HIl3NZn5oDjU=
-=SQOV
------END PGP SIGNATURE-----
-
---V4NMR6WsPI0KAuJv--
 
