@@ -1,160 +1,132 @@
-Return-Path: <linux-kernel+bounces-256476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36D02934F1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:31:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BE50934F1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D54B71F2221A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:31:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 074711F22678
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3DF13F45F;
-	Thu, 18 Jul 2024 14:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6AD14386F;
+	Thu, 18 Jul 2024 14:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VSYMeOg8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hH58ADin"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432371B86D4
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 14:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0224713C9CF;
+	Thu, 18 Jul 2024 14:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721313100; cv=none; b=odDAIlvt1s9mhFfKx6Aq4bttu+ts5ADXAiHIwpLVZHA/8zVlvM4WrfGvNEWCnOqNW77i+HSt5gjCz813g3mkF7G8h2i4X9ncOunbPPo1Ts7iV1ablqMRowCktuFxvuB87w2/C53DlT1feJmAZqq6vRh25xekdfGpC/Dz+3kl/yI=
+	t=1721313109; cv=none; b=r87mtxnSNXzsZKXFQjheZNGA2yIXx1sJpHgBGotDbL95duGcvSkJCoEyVvKtHxYszd3ol0ouQtU5skzW4ZVQ0QAaz+SXJ3fUbD2ZJNAsQlvL/YGElxKB3fPKUwC/Hf72UgcECtRqjxaZgSX2WzIu9deLm+9obWVSq1WSIiOe7VM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721313100; c=relaxed/simple;
-	bh=aZC0NipmOCpnDWuRU4Lpn4yFcg9U/gTdWFivPqFpvck=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qNN6Q+SqfbVhdogfd7NYiApx5cXx1zocTZiYJANpb1gj5LzLcpqttIWQvLApi7IuB46RD0zX93+Vfq5gZmC19XBUyhNrV92cK3zP8ZwO0vlDRT2RF0POZT60p0XaGpXxc13TO+nbNFoFzjNIhxbYuA64hGlkGn3T239sPxV8/rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VSYMeOg8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721313098;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=RQgd9VnW1B97sus5iTeLLvYo9dx1plAad5b8ctUM7g8=;
-	b=VSYMeOg8azn3NN2yGX1Xo6rGntcdMKjmTamPh4ebVo1Afl2teCk0P5gjoKkQHWopC4pbBA
-	OSlA2ziQv5y75LWAHhheww0I0uB/o2j/kP9NHE50iWLVKZDzIYM9mnIQW3+Pzj9dbMNq0N
-	t0tKof8hJBgLG/dNKEcttnv1Mm3C6K4=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-572-9bsy6NdJObKfacfuKh6QJQ-1; Thu,
- 18 Jul 2024 10:31:29 -0400
-X-MC-Unique: 9bsy6NdJObKfacfuKh6QJQ-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DB7741956080;
-	Thu, 18 Jul 2024 14:31:27 +0000 (UTC)
-Received: from alecto.usersys.redhat.com (unknown [10.45.224.8])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 17B52195605A;
-	Thu, 18 Jul 2024 14:31:24 +0000 (UTC)
-From: Artem Savkov <asavkov@redhat.com>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	bpf@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Artem Savkov <asavkov@redhat.com>
-Subject: [PATCH bpf-next] selftests/bpf: fix compilation failure when CONFIG_NET_FOU!=y
-Date: Thu, 18 Jul 2024 16:31:22 +0200
-Message-ID: <20240718143122.2230780-1-asavkov@redhat.com>
+	s=arc-20240116; t=1721313109; c=relaxed/simple;
+	bh=bsRtTEMFMyiOKG6+6H1MC0nu1CQwdAkjGuoqXfx9ZzY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qasyGO6+eQILmLBh8a4h9dacGtE3VZmqMYRbffKWED6tOPlBGXRn+FsQnkTdZElpn0Kq3spHBJThBmR9ykeaapZ0mCAYl0vs64Uvr5JvUHPeZ+BoDgNOmtJ0xpfzYxWp2x2WJTKlR3CJBe3JbSJBcZC6COM7KJgoT01q35H01lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=hH58ADin; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (mob-5-91-158-41.net.vodafone.it [5.91.158.41])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1B243766;
+	Thu, 18 Jul 2024 16:31:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1721313067;
+	bh=bsRtTEMFMyiOKG6+6H1MC0nu1CQwdAkjGuoqXfx9ZzY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hH58ADinG9Pk/p8GF/PaPm8EblmvUJZ1HSLw5v220zHjWQIR7kdi1CIA49agAhTDP
+	 QwAl/b6PGPhPENVaANz7kfRVuHZAgrZmg8V/PmAX+q7eCbZOCLaa6Hld4Odqk3nlnl
+	 td0FgTpy0tEaBxmhZnMwVG6deAAR1FUDswNvv//c=
+Date: Thu, 18 Jul 2024 16:31:42 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Maxime Ripard <mripard@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Jack Zhu <jack.zhu@starfivetech.com>, Keith Zhao <keith.zhao@starfivetech.com>, 
+	Jayshri Pawar <jpawar@cadence.com>, Jai Luthra <j-luthra@ti.com>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH v2 2/5] media: cadence: csi2rx: Add system PM support
+Message-ID: <ozikmyczwjig6mawmgo7bxzbsup3uxvscxhvu3qhmxnhopedtx@373um4bhd3nz>
+References: <20240718032834.53876-1-changhuang.liang@starfivetech.com>
+ <20240718032834.53876-3-changhuang.liang@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240718032834.53876-3-changhuang.liang@starfivetech.com>
 
-Without CONFIG_NET_FOU bpf selftests are unable to build because of
-missing definitions. Add ___local versions of struct bpf_fou_encap and
-enum bpf_fou_encap_type to fix the issue.
+Hi Changhuang
 
-Signed-off-by: Artem Savkov <asavkov@redhat.com>
----
- .../selftests/bpf/progs/test_tunnel_kern.c    | 24 +++++++++++++------
- 1 file changed, 17 insertions(+), 7 deletions(-)
+On Wed, Jul 17, 2024 at 08:28:31PM GMT, Changhuang Liang wrote:
+> Add system PM support make it stopping streaming at system suspend time,
+> and restarting streaming at system resume time.
+>
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
 
-diff --git a/tools/testing/selftests/bpf/progs/test_tunnel_kern.c b/tools/testing/selftests/bpf/progs/test_tunnel_kern.c
-index 3f5abcf3ff136..0913ec384b159 100644
---- a/tools/testing/selftests/bpf/progs/test_tunnel_kern.c
-+++ b/tools/testing/selftests/bpf/progs/test_tunnel_kern.c
-@@ -26,10 +26,20 @@
-  */
- #define ASSIGNED_ADDR_VETH1 0xac1001c8
- 
-+struct bpf_fou_encap___local {
-+       __be16 sport;
-+       __be16 dport;
-+};
-+
-+enum bpf_fou_encap_type___local {
-+       FOU_BPF_ENCAP_FOU___local,
-+       FOU_BPF_ENCAP_GUE___local,
-+};
-+
- int bpf_skb_set_fou_encap(struct __sk_buff *skb_ctx,
--			  struct bpf_fou_encap *encap, int type) __ksym;
-+			  struct bpf_fou_encap___local *encap, int type) __ksym;
- int bpf_skb_get_fou_encap(struct __sk_buff *skb_ctx,
--			  struct bpf_fou_encap *encap) __ksym;
-+			  struct bpf_fou_encap___local *encap) __ksym;
- struct xfrm_state *
- bpf_xdp_get_xfrm_state(struct xdp_md *ctx, struct bpf_xfrm_state_opts *opts,
- 		       u32 opts__sz) __ksym;
-@@ -745,7 +755,7 @@ SEC("tc")
- int ipip_gue_set_tunnel(struct __sk_buff *skb)
- {
- 	struct bpf_tunnel_key key = {};
--	struct bpf_fou_encap encap = {};
-+	struct bpf_fou_encap___local encap = {};
- 	void *data = (void *)(long)skb->data;
- 	struct iphdr *iph = data;
- 	void *data_end = (void *)(long)skb->data_end;
-@@ -769,7 +779,7 @@ int ipip_gue_set_tunnel(struct __sk_buff *skb)
- 	encap.sport = 0;
- 	encap.dport = bpf_htons(5555);
- 
--	ret = bpf_skb_set_fou_encap(skb, &encap, FOU_BPF_ENCAP_GUE);
-+	ret = bpf_skb_set_fou_encap(skb, &encap, FOU_BPF_ENCAP_GUE___local);
- 	if (ret < 0) {
- 		log_err(ret);
- 		return TC_ACT_SHOT;
-@@ -782,7 +792,7 @@ SEC("tc")
- int ipip_fou_set_tunnel(struct __sk_buff *skb)
- {
- 	struct bpf_tunnel_key key = {};
--	struct bpf_fou_encap encap = {};
-+	struct bpf_fou_encap___local encap = {};
- 	void *data = (void *)(long)skb->data;
- 	struct iphdr *iph = data;
- 	void *data_end = (void *)(long)skb->data_end;
-@@ -806,7 +816,7 @@ int ipip_fou_set_tunnel(struct __sk_buff *skb)
- 	encap.sport = 0;
- 	encap.dport = bpf_htons(5555);
- 
--	ret = bpf_skb_set_fou_encap(skb, &encap, FOU_BPF_ENCAP_FOU);
-+	ret = bpf_skb_set_fou_encap(skb, &encap, FOU_BPF_ENCAP_FOU___local);
- 	if (ret < 0) {
- 		log_err(ret);
- 		return TC_ACT_SHOT;
-@@ -820,7 +830,7 @@ int ipip_encap_get_tunnel(struct __sk_buff *skb)
- {
- 	int ret;
- 	struct bpf_tunnel_key key = {};
--	struct bpf_fou_encap encap = {};
-+	struct bpf_fou_encap___local encap = {};
- 
- 	ret = bpf_skb_get_tunnel_key(skb, &key, sizeof(key), 0);
- 	if (ret < 0) {
--- 
-2.45.2
+Looks ok to me!
 
+Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+
+> ---
+>  drivers/media/platform/cadence/cdns-csi2rx.c | 32 ++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+>
+> diff --git a/drivers/media/platform/cadence/cdns-csi2rx.c b/drivers/media/platform/cadence/cdns-csi2rx.c
+> index 981819adbb3a..81e90b31e9f8 100644
+> --- a/drivers/media/platform/cadence/cdns-csi2rx.c
+> +++ b/drivers/media/platform/cadence/cdns-csi2rx.c
+> @@ -776,8 +776,40 @@ static int csi2rx_runtime_resume(struct device *dev)
+>  	return ret;
+>  }
+>
+> +static int __maybe_unused csi2rx_suspend(struct device *dev)
+> +{
+> +	struct csi2rx_priv *csi2rx = dev_get_drvdata(dev);
+> +
+> +	mutex_lock(&csi2rx->lock);
+> +	if (csi2rx->count)
+> +		csi2rx_stop(csi2rx);
+> +	mutex_unlock(&csi2rx->lock);
+> +
+> +	pm_runtime_force_suspend(dev);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused csi2rx_resume(struct device *dev)
+> +{
+> +	struct csi2rx_priv *csi2rx = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	ret = pm_runtime_force_resume(dev);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	mutex_lock(&csi2rx->lock);
+> +	if (csi2rx->count)
+> +		csi2rx_start(csi2rx);
+> +	mutex_unlock(&csi2rx->lock);
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct dev_pm_ops csi2rx_pm_ops = {
+>  	SET_RUNTIME_PM_OPS(csi2rx_runtime_suspend, csi2rx_runtime_resume, NULL)
+> +	SET_SYSTEM_SLEEP_PM_OPS(csi2rx_suspend, csi2rx_resume)
+>  };
+>
+>  static const struct of_device_id csi2rx_of_table[] = {
+> --
+> 2.25.1
+>
+>
 
