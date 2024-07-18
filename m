@@ -1,169 +1,139 @@
-Return-Path: <linux-kernel+bounces-256065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46DA5934886
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:05:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0583C934892
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A9311C21A5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:05:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04E271C21B6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2558575804;
-	Thu, 18 Jul 2024 07:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A73CF76F1B;
+	Thu, 18 Jul 2024 07:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="P1SpwMaA"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01olkn2092.outbound.protection.outlook.com [40.92.52.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="o0qdFaQH"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691C18488;
-	Thu, 18 Jul 2024 07:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.52.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721286289; cv=fail; b=J28PbfE8vNKiuffz+GYNJEAsmyMp5PKGcl45RvWimZ2OJ40wowo+F2Qx17iSOuOvTL7A/6Ffq40w8GgzeBQtDSBguB6+1Vys851np0Ij6sLTZklQnjRcUcLyQBGoW1tsEHj2VHMHf4D4k2UtyQodBj+zs2yLgXDeqm8MDKmHvio=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721286289; c=relaxed/simple;
-	bh=gNBKP691WolSCJwdamCiuI2nr4ioa1cUZbsi7CcD/HU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=cueZncEw70hKb5LBxluSA/XM76Ae/1B9+MgHMfmDVkNbje3FJ4SWSsgdGp2g8iNMkFNHpn/2p6ilkMaNeMkoovoxOeuG1PjwGxDYbIiXqyfqgMTFKEkTdj2WImu+RhlkCh901g2xEr8+5/x0Wo9J1dFtu9elqlHxIMU/mHoX6ws=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=P1SpwMaA; arc=fail smtp.client-ip=40.92.52.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZzhJtP11ksi9fEbWDq58Wzx0rXmri9SIcWZyR7+2tzCvBhnHgUsAZfrtxeBPDBJa/HB7IwkP8v2JJ4rQiuRXT9JtmLNvweVM9quBojndrGguLSPeFrjhsMPPBc05pp8/eYOg1trjQ9Ja0s4sOJJjwyQRAfw/wOQk0fR0I0lYjcymlWCfUhzPFu/+8m09APLBEKZLNpWCGQZPbh1XadJqHB4zE9bG+Mv+dlDutGWwP5vG8a5yYbwQztpl4STU5kvNHseZ25AAo04hDdDbxNSR3Ib+xWRPqbnIL2vDeMxQ6+/YB/NpQy8caa9i2Rxzs/vyw4cQXTokRPJlcDIgmP2FIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c5auj5y2lzNCWipKBwXCxAnDsdpmcSFyJBdoh6ka9kI=;
- b=YVbhHtPw3EbctYiX34pcVbs5gsF3ICO7vRbTozYBam5GJC6n4Fxsu6tLxtIf7dzPQEK5WV+R5duempWX9aUjM38SpWPKidXge4H3+BKiA5T+BBYAFTaCXFKg9cGFgfoLgENe5h+PsJnkI4bbKhfvaeAHQni7K5dnJ0zhETKrTs7IPb3aWvMAU8fg66rniNdwYwzWFlGPVjVSOdjyUL4XULUdgBf6bOsHYf/FFhC+LU7kHVATouVFhjUbmGVWmJNMS8stTZP7mQaF0YNk98gAuCodMfP5FR5JjMRwz8uKVbX0lTRPZ3giUUdtWzbBBP8n4AJ+BsmFXzWuiO+jYyozmw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c5auj5y2lzNCWipKBwXCxAnDsdpmcSFyJBdoh6ka9kI=;
- b=P1SpwMaA+r7UPS9a9w/kSFhZKRmPpX6ptEdkt1KKFFuhFgKf3ABjxOmlpWIiTLXjSXcaLvqUSctDUc8bseuAPpdlyl5/+FHe2MAU0py59TSm3uueea0+htiAsMsBd22ud0TmGrAnZsBDR/dTt/pQqaABWGgzFUQ4Os94Jn/K9FrXfg0KV4OxS7jHHa5wc69RQCH+95CRO5kf7GfETgr5ZhsjS/dcWvZsJ+caImqJVSW8FHuNLSC07wmY7+1uXuqjiGwd5hDRpd+eG2VIlub6/M/ZKnwYgsdV9AVneszEjd/uGzFGOgVGsfPlCGd2u7QEVeWrjgGcDoD4tLC18fvElQ==
-Received: from SEYPR01MB4221.apcprd01.prod.exchangelabs.com
- (2603:1096:101:56::12) by PUZPR01MB4676.apcprd01.prod.exchangelabs.com
- (2603:1096:301:e8::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16; Thu, 18 Jul
- 2024 07:04:40 +0000
-Received: from SEYPR01MB4221.apcprd01.prod.exchangelabs.com
- ([fe80::b674:8f70:6e29:3756]) by SEYPR01MB4221.apcprd01.prod.exchangelabs.com
- ([fe80::b674:8f70:6e29:3756%5]) with mapi id 15.20.7762.027; Thu, 18 Jul 2024
- 07:04:39 +0000
-Date: Thu, 18 Jul 2024 07:04:32 +0000
-From: Haylen Chu <heylenay@outlook.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Conor Dooley <conor@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v4 1/3] dt-bindings: thermal: sophgo,cv1800-thermal: Add
- Sophgo CV1800 thermal
-Message-ID:
- <SEYPR01MB422112F63D19A0EA86726110D7AC2@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
-References: <SEYPR01MB422158B2766DA03728AD90CBD7A22@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
- <SEYPR01MB4221281561CCE511A5094D28D7A22@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
- <MA0P287MB2822445DD34485B94D22E7FFFEA22@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
- <20240716-cloning-canopy-a6799dc7f3b9@spud>
- <MA0P287MB28228BA5CC8B6F61A4C237E9FEA32@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
- <SEYPR01MB4221940059E23BCD8BA75125D7A32@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
- <aee6eff4-4421-4122-be97-f258cfaa9f43@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aee6eff4-4421-4122-be97-f258cfaa9f43@kernel.org>
-X-TMN: [Fhu5y9x7YHoxkmcWymlrm7AUgmX2o2Jb]
-X-ClientProxiedBy: SG2PR06CA0209.apcprd06.prod.outlook.com
- (2603:1096:4:68::17) To SEYPR01MB4221.apcprd01.prod.exchangelabs.com
- (2603:1096:101:56::12)
-X-Microsoft-Original-Message-ID: <Zpi-gAgAJ-0GdrPi@ketchup>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF966F30B
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 07:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721286358; cv=none; b=gXXbr3nuouN9b8B9LsiN7joPEvBctXEIUanzO10ym/n0/pnj8ksfhVT9C73xaiwjAwzlF1cnHYlqFFgfMFXqOBYB84Ps+7fqa2HHzUmM2nWWxAMOe+YQvnj/JNsAvNEy5zSKyAmNJ1jVPBVE8H2NWWJPpauTkCpqY8S0kL+I0EM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721286358; c=relaxed/simple;
+	bh=ONlCOr94Vlebt+Tj8R0yQblOSnVNxli5b/oS4OkJ2Rc=;
+	h=From:To:Cc:Subject:In-Reply-To:Message-ID:References:Date:
+	 MIME-Version:Content-Type; b=lOKyc0RwyuwqlUL8FRraUzjZXI+rVwqfoyUM1tc2UCj7ukwBc9+kM0ytYbZ1efI4Zwy7Mh+sa2sqFf2P108UVaf3UO2uekEXuCfA/zuox+qyrP25+55WssZ2ezeUPlC1Zde382mpCAcwAMQYlzKdxZTkW3DH2RJyIqMxMVUxE/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=o0qdFaQH; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4279c924ca7so3239005e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 00:05:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721286354; x=1721891154; darn=vger.kernel.org;
+        h=mime-version:date:references:message-id:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dfv35sh3gYQtuyIGmcm2dQB4xPWrXbKxJ/DGyIqTwEg=;
+        b=o0qdFaQH/OYYxPAS1K9dRl+VCrf6PG8sE5zhGeq3uvZlPeoaMhn0OEESOz7uEt58MG
+         ykLc3SfJSqnrxpcoDaqGwvGxZqtEBNNDHLE29Vhk1na5t9+s5IMltaeUci4U7BSwXpeJ
+         I6AFkx2CdHY7f+fNjHCdrpfPzIbQNDg2r4yxA7/9Xu4UHpNMMxOWulLlVi4EmlUxNwpo
+         tggGtab7V4nmM8/pXrudfzPBK9HbGvHptXp302XEnpZpunw281HggJJs1oxmUEKRVC5T
+         NigE4dLE58HFcOJ4N40JbYBQNidnCwsPLn5ytC+DOxDcllWY1hCj81CYc1RAD0Ldc710
+         n4cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721286354; x=1721891154;
+        h=mime-version:date:references:message-id:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dfv35sh3gYQtuyIGmcm2dQB4xPWrXbKxJ/DGyIqTwEg=;
+        b=ejozqflkQ+P61EM4+XsadfObw6jECmZYKX0n/94WMSDHkoajVzMv6bpXGBEeA9d/4L
+         QcxRszZYMIXvkaAKqa5fVhnu0J1u/G5DdGZ9AsTPE89oA+X6rU1FAdobe9RBf8ZTyPMa
+         ejc74dvPT4rB6yOK0NWYPb4K7XSkVpBv31JKT8Fx/iC7LfQXDH9PoutbpnQJZGL1RDH0
+         r87tLzSQunmPcLYzhbnrgGNg/Ji1r/x91JO2Ibr+zqUnebq/ctxbxxVEB+rM7MdgigjK
+         HXDyuWFonLwVBzYBzar7NhksWKgB7OvTqY8eJIEbkBFrocMYt0wH9vO6cm3iaYxMEIm8
+         kuwA==
+X-Forwarded-Encrypted: i=1; AJvYcCWplPE+dBQ0ASTnJFWjC8RfhZ8mguY3o8bp8agFgAYQUzafZYcVS6f4LTyOibDygY4WcRDL1IbqtZaizWj3ip7Ds3X/uiE8gDAyyUI6
+X-Gm-Message-State: AOJu0YxWrBwlK/ra2xEDFxbAqB+vT/sbD4SdUaMXp3cWYD5sxi9LMinP
+	+MhtIci8FSpO+THgFP6bC51XzY1wWLjlIM2bTfFQwfA1ggM4TyLiy9Y4BNg3AVI=
+X-Google-Smtp-Source: AGHT+IFTOfM/mQUajELxmAa5WkTAStnDIYPtSa8XPZN2j5zMvI+mGY2wGnKvPVh2ONzOHqDJuGcDdQ==
+X-Received: by 2002:a05:600c:1c9b:b0:426:66fb:fcd6 with SMTP id 5b1f17b1804b1-427c2c99bf0mr21833815e9.3.1721286354188;
+        Thu, 18 Jul 2024 00:05:54 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:8d37:f44a:c212:e320])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427c77efba3sm23784375e9.28.2024.07.18.00.05.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jul 2024 00:05:53 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Philipp Zabel
+ <p.zabel@pengutronix.de>,  Jan Dakinevich
+ <jan.dakinevich@salutedevices.com>,  linux-kernel@vger.kernel.org,
+  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org
+Subject: Re: [PATCH 7/8] reset: amlogic: add auxiliary reset driver support
+In-Reply-To: <7db2d8ae07a9ef1a226dfd08a3f88f8a.sboyd@kernel.org> (Stephen
+	Boyd's message of "Mon, 15 Jul 2024 12:30:21 -0700")
+Message-ID: <1jzfqho5pp.fsf@starbuckisacylon.baylibre.com>
+References: <20240710162526.2341399-1-jbrunet@baylibre.com>
+	<20240710162526.2341399-8-jbrunet@baylibre.com>
+	<88d1dbd92e922ad002367d8dac67d0eb.sboyd@kernel.org>
+	<1jv81cgv4z.fsf@starbuckisacylon.baylibre.com>
+	<7db2d8ae07a9ef1a226dfd08a3f88f8a.sboyd@kernel.org>
+Date: Thu, 18 Jul 2024 09:05:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEYPR01MB4221:EE_|PUZPR01MB4676:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7199b384-8ab9-4453-827c-08dca6f7e422
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|19110799003|8060799006|461199028|3412199025|4302099013|1602099012|440099028;
-X-Microsoft-Antispam-Message-Info:
-	oCUAtI4wytXRAYNZC8CjXYCWD0Wng2zgDnu8r8fc8H4zm8+39wPgG58Y44CjYd/GnXIKlwCKo0FViOETtIUY29XrrO/MBl8l033mVDIWw5kJYUlRcsphE3IISONNi1t18lLnOI8rRRN3PnJaaAdSQJcQvo5Y8Q8OR1NQ0uX+B/BMa2JSNLEwfq/zaX7Jkxw1F2qj7/1vD/ULV98nmohcxm2b+6tuXqNAPQRFT9xHO/s/UwDJT5By4Pf+FU1ozW8T1VsU2TZPNr+FVONColUeHo319KED7EGsQqLLWiNbElzd4V5OhpjQXy74j9zLwSmubsuYdMUePRWch+ATf/21I+b3wlcvGQWWz5xmk0RtVu3iFaGeo23SO5GMiokqTEdT/XESUXe4Fy8jY+1MHUOWZHbFdFXttfeLK5N9Aq6SQFijZEHCkDoGp5TGBJ07+RJTd2y1VGVp7KCkUYjq557YT0Q7y8wGtr6tZYx81PBqYn7PmmG0wccn4kljCBOl07B3youx3KfPLutUpoLFAYdRm2kV5q6ROBZCBJZ07rMzwslmtR6loLI9giXyJLGhpRCPab6bf4NKNR702k5B47ld2FppeS2SPVmtMPyoxJV7RtD4C8sgLYcVi27g6uE1X3bjq1c2GheureLwDnQ+bH691zInqemVXi8eGnWLeeFoemfQSsa1fwDrN9LWfhw0phE3nkcvaI3fbYD8Ia/5xAStT3LbtvgmBZWfFiLE6rqKdrPvZh8xlyD1wQKJel2dOEeo
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?HVM7k9Glh9P/2bQ3u6SAeb8NSY22kjw1/d9xn7zY28x7SQ5vICJ9a72VlS7M?=
- =?us-ascii?Q?PT8PmlR6AJYu3wR5W1MC84MKImSLPbnHQ0pfUVif6897ZL+sMWkZYPuXgqk0?=
- =?us-ascii?Q?O2I3IwZKC1casOQtmE1r1dWBOEjjw0ahf3IsXVF7jPe50t+GKQDbsYZfrh3Q?=
- =?us-ascii?Q?7bFy34hSDCFqX1ePzHf3q3tEL41UlWKXzJZrnKdAv4XLO3UlQVe901sM4WwA?=
- =?us-ascii?Q?NaV6BFbHCx46ey1uTonsRno7ecEQ4vh4ASPRSsBkqXMo7JPYeHoXYShSZVGC?=
- =?us-ascii?Q?eAWI58ySPddI8FD7oo7g13k3hz4PNpU+1TY9++lWVlqGQRGvQQife7ndNwxO?=
- =?us-ascii?Q?Wmpv0GmQjiixZm2oJ23gvcvXxRUIq9I7rfyKMp3G3Ht8aErESAZjDayuJk/R?=
- =?us-ascii?Q?o/yjJ6WMv6u/ghpZwDzxF3dDBAkIEaQcfYkU6iJHaclLeqp7Hfm9eo7IVk6K?=
- =?us-ascii?Q?cLaEBZbw3tq/8CtXe8sBfS5hy8r/6u4ryZRIzwzHJfsKftze7VD9JnRMZ9eX?=
- =?us-ascii?Q?XcCFWLVCh8dFFHZ3uzsGiPZpRcfYRhje8ITa+DlWGKVmO6UUOtFZrVnt1ZM7?=
- =?us-ascii?Q?fnFocwR+nnSWbZKLUSEvUusZTooNelUW1Ir5/ym2wzbrutxxjMvdTD25853I?=
- =?us-ascii?Q?Ben4qBlgJW4DM+gN4M2TVHtexqryCdVRWiWQ/uBvWIUya0EWXzHBgPWLYfXb?=
- =?us-ascii?Q?8/s3MteF9Qq0UMAeLXK3BPlsJYjM2lsJkUHbZI9VF/FY1Kl8gWxWnRjix96E?=
- =?us-ascii?Q?Bk5RNc652TwPXLIHAxWJOEMbk19/RD2j3r/Z7cajL00L+aHS9uHGMofUaXqf?=
- =?us-ascii?Q?/Di4odYz/gP1bARfiQfRZDciG1gL+bieH6zIp926GaoxjjE1+zJTV9GR1UJ+?=
- =?us-ascii?Q?pv9zdCpsHRzhF74MDVHk2mM2I9LrPEUUh6liSgfbiadDZSCez3tPIsV+geL8?=
- =?us-ascii?Q?PeE7TUxi7JAac3g+lQ1OZJUKlu3TWohnzUp345cIM7ibdL3U2q+eirH/fUoi?=
- =?us-ascii?Q?tt5L/PyMbDIuFnk4G6tDRnPoKFQiDkDLz3kbgpIyoTnXVWZ6lV/PtD4G7+kW?=
- =?us-ascii?Q?956F3hEVLoO9xq0aRdxoybYhA6JbItDNF+FHOnlSgeVBTOLYHb33Pjb942rU?=
- =?us-ascii?Q?sy4IP0jyGLtPMsf1WWkfUNhyefjCREikF5V8b2X4H90zuG62y1ClQpfh5e7L?=
- =?us-ascii?Q?qBYCkrEmIyRqHByvT81YxoTYJ1ypul4kOxWFqia1qDjp/n6VAtYX5p6uxng?=
- =?us-ascii?Q?=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7199b384-8ab9-4453-827c-08dca6f7e422
-X-MS-Exchange-CrossTenant-AuthSource: SEYPR01MB4221.apcprd01.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2024 07:04:39.6483
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR01MB4676
+Content-Type: text/plain
 
-On Wed, Jul 17, 2024 at 11:12:52AM +0200, Krzysztof Kozlowski wrote:
-> On 17/07/2024 07:19, Haylen Chu wrote:
-> > On Wed, Jul 17, 2024 at 08:05:10AM +0800, Chen Wang wrote:
-> >> Haylen, so you want a compatible that matches an actual SoC and use it
-> >> everywhere?
-> >>
-> >> Or we can add ones for each SoC and have a fallback to cv1800.
-> > 
-> > I would prefer "sophgo,cv1800-thermal" and use it everywhere. I don't
-> > see any difference on thermal sensors between cv18xx-series SoCs.
-> 
-> Please use proper fallbacks - there is a very specific rule, repeated
-> many times:
-> 
-> https://elixir.bootlin.com/linux/v6.10-rc1/source/Documentation/devicetree/bindings/writing-bindings.rst#L42
+On Mon 15 Jul 2024 at 12:30, Stephen Boyd <sboyd@kernel.org> wrote:
 
-Just in case I misunderstood,
+>> >> +int devm_meson_rst_aux_register(struct device *dev,
+>> >> +                               struct regmap *map,
+>> >> +                               const char *adev_name);
+>> >> +#else
+>> >> +static inline int devm_meson_rst_aux_register(struct device *dev,
+>> >> +                                             struct regmap *map,
+>> >> +                                             const char *adev_name)
+>> >> +{
+>> >> +       return -EOPNOTSUPP;
+>> >
+>> > Shouldn't this be 'return 0' so that the clk driver doesn't have to care
+>> > about the config?
+>> 
+>> I don't think the system (in general) would be able function without the reset
+>> driver, so the question is rather phylosophical.
+>> 
+>> Let's say it could, if this returns 0, consumers of the reset controller
+>> will defer indefinitely ... which is always a bit more difficult to sort
+>> out.
+>> 
+>> If it returns an error, the problem is pretty obvious, helping people
+>> solve it quickly.
+>> 
+>> Also the actual device we trying to register provides clocks and reset.
+>> It is not like the reset is an optional part we don't care about.
+>> 
+>> On this instance it starts from clock, but it could have been the other
+>> way around. Both are equally important.
+>> 
+>> I'd prefer if it returns an error when the registration can't even start.
+>> 
+>
+> Ok. Fair enough.
 
-You would prefer different SoC-specific compatible strings like
-"sophgo,cv1800-thermal" "sophgo,sg2002-thermal" added to the driver,
-and each thermal-sensor node contains two compatible strings, one
-matches the SoC exactly and one is "sophgo,cv1800-thermal" just as a
-fallback, right?
+Actually, thinking about it more I changed my mind and I tend to agree
+on 'return 0' which I'll use in the next version.
 
-Best regards,
-Haylen Chu
+The initial request was to de-couple clk and reset. I was planning on
+having clk 'imply' reset to have a weak dependency. That does not make
+sense if an error is returned above. I would have to use 'depends on' and
+don't like it in that case, sooo weak dependency it is.
+
+It remains fairly easy to change later on if necessary
+
+-- 
+Jerome
 
