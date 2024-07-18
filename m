@@ -1,164 +1,178 @@
-Return-Path: <linux-kernel+bounces-256016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED7699347CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:04:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CB5C9347D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ECE41F22017
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:04:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C69AAB217EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:04:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD4B5339D;
-	Thu, 18 Jul 2024 06:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B59154278;
+	Thu, 18 Jul 2024 06:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Qxf7Osif"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Vg2BP8zB"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897C14AED1;
-	Thu, 18 Jul 2024 06:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D970843ABD
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 06:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721282640; cv=none; b=tz00NCSYGALt190gI+ND3J+bFJwxNraygnj82YxGLCTqk9oUuNn7dpS+Gqa7poU4DKKD2YTZCziErK7Q+6xV++oFL9Tts/kM7Mb+sMdcDsG5tr21OuRxxwaXbzq+N8obPlfaEYFjR6oxdV+HzshEBbU+aU0CsZUvPMaaHyi9jRY=
+	t=1721282670; cv=none; b=Wa4l5MSgjc3/Z6BET7oF0zb+YDv8SuvCsZ8H1QeGMlvVMJ8DRn0GMeYr1+ZVVTgIGUJmzGBQHbY2HfdocLmgqC6RqAN5BTegzjst4765NDJ6BhqTtiRCRhvq3He1s1MdgwNpy7DTLPFSY+NHYhIgSkGdyGVXgfRpOsSWX1poIRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721282640; c=relaxed/simple;
-	bh=NZ3ng2iZcjXEfmc3D40nbbx/ZyOe2D+kdxHgxKcXUbw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=qv3KFrCh/n0q71/XbJeEk1QX1IEGatOGkxoCoYYNbbbJfneJ7/U/Yocj5LS4QVf+V0B75H4siLY5ud0A3p32Wr3dfn7IqiybxG77gIl9/q+TsfEUpRzbVUzVfEj0pjJ3bCAggkrPAGx6FaZomxCTZevAOYDeEeFFa+OwmKILwlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Qxf7Osif; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46I5f4Ns008355;
-	Thu, 18 Jul 2024 06:03:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=vlQY4FXkD/U9iUSMXAzp43
-	NvlX/hl5sdIfBON9ao3sc=; b=Qxf7OsifQWPHyzJfFo/spQn+E5oXdykDpQNstk
-	kVS4uLgfuaKg2XAS6Ak+GZLUoi83VL3rAlB+IPshtGntI4q+iUGByqoNgoCpJuHE
-	K57jWh0w0c9bnqVDYz2y17sSg6WZAOfq203zLjEj2GgUaH6spi7gJsWkerjgmO+M
-	R72JFxoWK8ma9b7XSXjhLLKFfNKLGMfbFcilXUMtHJNOmJx2LvN9xkoW/Xaxhqif
-	qeD6ODW+eTvU7RGE1kA7k9Tnq1v9+Xo1F/3Rw6R2IgCBEwDik/3gvXDO8yfOwDde
-	19UcjE6BA/VvIvz25dSCEe3XNOex8SXjc8DanrnoGpXbbhBA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfu4f8v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Jul 2024 06:03:43 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46I63gkP000418
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Jul 2024 06:03:42 GMT
-Received: from hu-mkshah-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 17 Jul 2024 23:03:37 -0700
-From: Maulik Shah <quic_mkshah@quicinc.com>
-Date: Thu, 18 Jul 2024 11:33:23 +0530
-Subject: [PATCH v2] soc: qcom: cmd-db: Map shared memory as WC, not WB
+	s=arc-20240116; t=1721282670; c=relaxed/simple;
+	bh=QfTgL/I/TgLu6XUSR3k5WsBkx8SZ5zYCe55lbljcCCw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EnedGX3+89WV/VgWzl7Yq+neJsL/AZX0iEJquMlZJbm/PzZu4kFSlJ0RTH9bWKf2KaCusRRSTJew704CjTitogT3EP6VQI8as+jaIf6sCjbBrlu91JQQ12V426LNrnEZuMdI/dwoQ96WD5Zqk0QXDqpEomKeheZqZmEBCAilQEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Vg2BP8zB; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-447df43324fso123031cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 23:04:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721282668; x=1721887468; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=E8scQbL3ojunFA2vu6Mm/M82C9xFWuPlbVxUojeYRbc=;
+        b=Vg2BP8zByNYsIcilvDNp3aJ4K2xIlWBe6F7zS+/iXd+NSylIaYHadt7LYTSUAKxPx8
+         nvczGR4d5p4pH/9Ft4+gE4RLYugTr0WZkaYF1mgWnWUqt8pC9vQS0nEiWUbE2G3aztW0
+         dTdwX4Eun8LU5hmrHNi8kv6YqGA+osM6oYayb8xasHpmKHjWo+C+0tq4uRhzB4jL6jMx
+         wfkWbr2sUTM+Vb/7TJqtMARAo8EdXKynsoSxEQHwdGAuCdxkCauOL+mHNFTh7xKQNQu9
+         Y+x2Erf3XG6Ft6zQQHdj2yAzeAPaIfiImJ4EZfFPSxLxpODSafsEVjoyH+KxzCJcMnvq
+         t1Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721282668; x=1721887468;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E8scQbL3ojunFA2vu6Mm/M82C9xFWuPlbVxUojeYRbc=;
+        b=KZWZadEl3qMbTunp3XVREBG0YDJ06oJi8+hBM7r6QOYomrRFdIWcVZZBUPmZ+1SSHf
+         2X4SJQJx3Hv8PPzQOVjsKzfwStLCykl4PTwV6ewgseQizonilGH9To6nx1/Vm2x1jrWi
+         ShlcP/mr0wd5qzY32mHSayqezSUGCH+9//D7Z+10xt5PpD0BeCPynTe72SnbMeh2bbZC
+         Je/1VbIFpvyuEsrPgFoMks+SXou3gopfns0Jd6yeS7V4PaBk2g/zDws9QrjcCF8rKBuR
+         sxXHJtMvPUmvn8/CArY7uQf8n/fhl2ibj8IiF6oT+mxix/7qtX1qj5ygfJNbCYpC13si
+         XIQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVlpnq9+CVoSIjRQz8L0AhQObE128v4cJYwYqNxYT7emXymdCFqG3cA/MwXJxtLRXGj2FphMFhGqDY3UeViHMPYSFsz1Inr6o3/E3xg
+X-Gm-Message-State: AOJu0YwUb8Vk62hCIc+GknUm7QNnJEM4WyAu5s5xAp8jxu5ddq9The6B
+	IBOaoAsu/taBCICUlphBCa+2k87L/4QnXTg84GOVbIOcNBTn0M2On09bfiUXJ0SriPBC6N4usyX
+	jX3zjuIY2CsLTFH01UB9azV0CHwKaXDDflvKd
+X-Google-Smtp-Source: AGHT+IFWiSFqWtqZYfC0jy++zn1iek0Vig5wz8pSEdHMvDV8US/DapjvjgpSBDodO3pWivnkdS9LQpK1eVFmUnjjxIc=
+X-Received: by 2002:a05:622a:4297:b0:447:d78d:773b with SMTP id
+ d75a77b69052e-44f919d5b5emr1331311cf.6.1721282667643; Wed, 17 Jul 2024
+ 23:04:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240718-cmd_db_uncached-v2-1-f6cf53164c90@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIACqwmGYC/0XMTQ6CMBBA4auYWVtShp+CK+9hDCnTwTZaSooQC
- eHuNm5cfov3dpg5Op7hctoh8upmF8YEPJ+ArB4fLJxJBpRYSpU3grzpTN8tI2mybAQ3bW10RRW
- 2NaRqijy4z+94uycPMXjxtpH1/1OgQinbXGVYqVoWpcjFGl7BbH6LXa97ssvzypP2GQUPx/EFw
- 1Q65qcAAAA=
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>
-CC: <caleb.connolly@linaro.org>, <stephan@gerhold.net>, <swboyd@chromium.org>,
-        <dianders@chromium.org>, <robdclark@gmail.com>, <nikita@trvn.ru>,
-        <quic_eberman@quicinc.com>, <quic_pkondeti@quicinc.com>,
-        <quic_lsrao@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Volodymyr Babchuk
-	<Volodymyr_Babchuk@epam.com>,
-        <stable@vger.kernel.org>,
-        Volodymyr Babchuk
-	<volodymyr_babchuk@epam.com>,
-        Maulik Shah <quic_mkshah@quicinc.com>
-X-Mailer: b4 0.12.5-dev-2aabd
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1721282617; l=2071;
- i=quic_mkshah@quicinc.com; s=20240109; h=from:subject:message-id;
- bh=lKAIUb1skUkA8cL4EPiYWVNEAhYmNSsLm3hrt7vTGws=;
- b=6hCYuosMLrGlEhy14UfQUk3w8yLUpMDXqzOv48AtomrT5PHSzKYN11QC6DBRnBx54hITFszSz
- irz48zwvpGMBgzDW25DGEFwOod49uUiIxF+HvQid2ULK9iTlxtCWgIA
-X-Developer-Key: i=quic_mkshah@quicinc.com; a=ed25519;
- pk=bd9h5FIIliUddIk8p3BlQWBlzKEQ/YW5V+fe759hTWQ=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: H62BE5nWWiN7h4iV7B0cjeGlWH15OCnp
-X-Proofpoint-GUID: H62BE5nWWiN7h4iV7B0cjeGlWH15OCnp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-18_02,2024-07-17_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- phishscore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501
- clxscore=1011 bulkscore=0 impostorscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407180039
+References: <20240717212230.work.346-kees@kernel.org>
+In-Reply-To: <20240717212230.work.346-kees@kernel.org>
+From: David Gow <davidgow@google.com>
+Date: Thu, 18 Jul 2024 14:04:14 +0800
+Message-ID: <CABVgOSmKwPq7JEpHfS6sbOwsR0B-DBDk_JP-ZD9s9ZizvpUjbQ@mail.gmail.com>
+Subject: Re: [PATCH] execve: Move KUnit tests to tests/ subdirectory
+To: Kees Cook <kees@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Eric Biederman <ebiederm@xmission.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Volodymyr Babchuk <Volodymyr_Babchuk@epam.com>
+On Thu, 18 Jul 2024 at 05:22, Kees Cook <kees@kernel.org> wrote:
+>
+> Move the exec KUnit tests into a separate directory to avoid polluting
+> the local directory namespace. Additionally update MAINTAINERS for the
+> new files and mark myself as Maintainer.
+>
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> I'll toss this into -next and send it to Linus before -rc1 closes.
+> ---
 
-Linux does not write into cmd-db region. This region of memory is write
-protected by XPU. XPU may sometime falsely detect clean cache eviction
-as "write" into the write protected region leading to secure interrupt
-which causes an endless loop somewhere in Trust Zone.
+With s/_test/_kunit (once the docs changes are sorted), this looks good.
 
-The only reason it is working right now is because Qualcomm Hypervisor
-maps the same region as Non-Cacheable memory in Stage 2 translation
-tables. The issue manifests if we want to use another hypervisor (like
-Xen or KVM), which does not know anything about those specific mappings.
+Reviewed-by: David Gow <davidgow@google.com>
 
-Changing the mapping of cmd-db memory from MEMREMAP_WB to MEMREMAP_WT/WC
-removes dependency on correct mappings in Stage 2 tables. This patch
-fixes the issue by updating the mapping to MEMREMAP_WC.
+Cheers,
+-- David
 
-I tested this on SA8155P with Xen.
-
-Fixes: 312416d9171a ("drivers: qcom: add command DB driver")
-Cc: stable@vger.kernel.org # 5.4+
-Signed-off-by: Volodymyr Babchuk <volodymyr_babchuk@epam.com>
-Tested-by: Nikita Travkin <nikita@trvn.ru> # sc7180 WoA in EL2
-Signed-off-by: Maulik Shah <quic_mkshah@quicinc.com>
----
-Changes in v2:
- - Use MEMREMAP_WC instead of MEMREMAP_WT
- - Update commit message from comments in v1
- - Add Fixes tag and Cc to stable
- - Link to v1: https://lore.kernel.org/lkml/20240327200917.2576034-1-volodymyr_babchuk@epam.com
----
- drivers/soc/qcom/cmd-db.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
-index d84572662017..ae66c2623d25 100644
---- a/drivers/soc/qcom/cmd-db.c
-+++ b/drivers/soc/qcom/cmd-db.c
-@@ -349,7 +349,7 @@ static int cmd_db_dev_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	cmd_db_header = memremap(rmem->base, rmem->size, MEMREMAP_WB);
-+	cmd_db_header = memremap(rmem->base, rmem->size, MEMREMAP_WC);
- 	if (!cmd_db_header) {
- 		ret = -ENOMEM;
- 		cmd_db_header = NULL;
-
----
-base-commit: 797012914d2d031430268fe512af0ccd7d8e46ef
-change-id: 20240718-cmd_db_uncached-e896da5c5296
-
-Best regards,
--- 
-Maulik Shah <quic_mkshah@quicinc.com>
-
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Eric Biederman <ebiederm@xmission.com>
+> Cc: David Gow <davidgow@google.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> ---
+>  MAINTAINERS                      | 5 +++--
+>  fs/binfmt_elf.c                  | 2 +-
+>  fs/exec.c                        | 2 +-
+>  fs/{ => tests}/binfmt_elf_test.c | 0
+>  fs/{ => tests}/exec_test.c       | 0
+>  5 files changed, 5 insertions(+), 4 deletions(-)
+>  rename fs/{ => tests}/binfmt_elf_test.c (100%)
+>  rename fs/{ => tests}/exec_test.c (100%)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8dfbe998f175..35474718c05b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -8211,8 +8211,8 @@ S:        Maintained
+>  F:     rust/kernel/net/phy.rs
+>
+>  EXEC & BINFMT API, ELF
+> +M:     Kees Cook <keescook@chromium.org>
+>  R:     Eric Biederman <ebiederm@xmission.com>
+> -R:     Kees Cook <keescook@chromium.org>
+>  L:     linux-mm@kvack.org
+>  S:     Supported
+>  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/execve
+> @@ -8220,7 +8220,8 @@ F:        Documentation/userspace-api/ELF.rst
+>  F:     fs/*binfmt_*.c
+>  F:     fs/Kconfig.binfmt
+>  F:     fs/exec.c
+> -F:     fs/exec_test.c
+> +F:     fs/tests/binfmt_*_test.c
+> +F:     fs/tests/exec_test.c
+>  F:     include/linux/binfmts.h
+>  F:     include/linux/elf.h
+>  F:     include/uapi/linux/binfmts.h
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index 40111451aa95..1a032811b304 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -2152,5 +2152,5 @@ core_initcall(init_elf_binfmt);
+>  module_exit(exit_elf_binfmt);
+>
+>  #ifdef CONFIG_BINFMT_ELF_KUNIT_TEST
+> -#include "binfmt_elf_test.c"
+> +#include "tests/binfmt_elf_test.c"
+>  #endif
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 5b580ff8d955..5a59063c50b1 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -2244,5 +2244,5 @@ fs_initcall(init_fs_exec_sysctls);
+>  #endif /* CONFIG_SYSCTL */
+>
+>  #ifdef CONFIG_EXEC_KUNIT_TEST
+> -#include "exec_test.c"
+> +#include "tests/exec_test.c"
+>  #endif
+> diff --git a/fs/binfmt_elf_test.c b/fs/tests/binfmt_elf_test.c
+> similarity index 100%
+> rename from fs/binfmt_elf_test.c
+> rename to fs/tests/binfmt_elf_test.c
+> diff --git a/fs/exec_test.c b/fs/tests/exec_test.c
+> similarity index 100%
+> rename from fs/exec_test.c
+> rename to fs/tests/exec_test.c
+> --
+> 2.34.1
+>
 
