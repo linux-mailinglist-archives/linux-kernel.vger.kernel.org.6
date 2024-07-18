@@ -1,129 +1,116 @@
-Return-Path: <linux-kernel+bounces-256043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A370934825
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:36:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39864934826
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE90028325D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:36:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F0051C217C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4B655E58;
-	Thu, 18 Jul 2024 06:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8515A55E58;
+	Thu, 18 Jul 2024 06:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LprSzpdR"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="lw7oDvgJ"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAE138DE1
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 06:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2EA38DE1
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 06:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721284556; cv=none; b=fqbcjdOJi20d7OFD2MTevyyUPTw6YEs0ZSTDnRfiJxUxkKq0RCRNNcj2SslDCbb1fHEvItTEzT81iqH712m+UG6AVGcB39kcLvqQf7FobtR1n+6iiiSLEN5fXXuL7Q9rmTZyRqjAiwLRyLHB9z39jX1M/X7AOetYR26zlXXyty4=
+	t=1721284583; cv=none; b=rOipuOG0edI4aRCWbVRBPKZnHsy508PiAJ++ZPHb/tUsxsoj7sOyJw9rUdyVbVoiyqkxIMk86+g+M4nFnvEHUF/cBK3qRHUH5zoX02RFoyN2WhqjZWRM8On+cBX/5f90v2M8Js3NFNxIYpI4hAbLZhS+K7xzpPVFj+DdnSL2ed8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721284556; c=relaxed/simple;
-	bh=WEoI/jlO1KNksYFzMJK3ximHdWWunHC33aWhhJ1R06o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k/7sRGUp0ohZABbbIOwLxWKacHYsWxKCjU5vntvTWb9RkbRr7pcfe9i1Guv7lIk+1HrAx41YqTLl5V20zGcxys+0X0vcfygspojGBs7dz8ljj/cd2T7rlrYxV+PIBhwTciEk1jF1WOU/z1f/xmaX6HCOqq+5jZTZSuJe7oZ15uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LprSzpdR; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: shahuang@redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721284552;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=edZsUsnY1AwRV/5CHltQ1IFyYB5NPQx9b++gCTSIpio=;
-	b=LprSzpdRtRT9DCGiydEuvgSPYHe2Ka398bazDSoOOsO9uSreab4fgj+2pmcdYJ2YNMwILM
-	1WiY9czoycY1q5c7okzZQ5H2RR+NnJG3+lpTOBVCksWnAcr1n8UWUbt7WChdWZCorrCbgp
-	6Ad5ERGii8Bj1M5cF4wKf4Z61fTzvh4=
-X-Envelope-To: maz@kernel.org
-X-Envelope-To: kvmarm@lists.linux.dev
-X-Envelope-To: broonie@kernel.org
-X-Envelope-To: eauger@redhat.com
-X-Envelope-To: sebott@redhat.com
-X-Envelope-To: cohuck@redhat.com
-X-Envelope-To: james.morse@arm.com
-X-Envelope-To: suzuki.poulose@arm.com
-X-Envelope-To: yuzenghui@huawei.com
-X-Envelope-To: catalin.marinas@arm.com
-X-Envelope-To: will@kernel.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Wed, 17 Jul 2024 23:35:42 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Shaoqin Huang <shahuang@redhat.com>
-Cc: Marc Zyngier <maz@kernel.org>, kvmarm@lists.linux.dev,
-	Mark Brown <broonie@kernel.org>, Eric Auger <eauger@redhat.com>,
-	Sebastian Ott <sebott@redhat.com>,
-	Cornelia Huck <cohuck@redhat.com>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] KVM: arm64: Allow userspace to change
- ID_AA64PFR1_EL1
-Message-ID: <Zpi3vjxLQ37Q_8OV@linux.dev>
-References: <20240718035017.434996-1-shahuang@redhat.com>
- <20240718035017.434996-3-shahuang@redhat.com>
+	s=arc-20240116; t=1721284583; c=relaxed/simple;
+	bh=kKu8M4Ys25JGjAI9AWyCPhJrMrl3Ra0FEMmgZaSnnZQ=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=qKF57K+suufVudZroL3X9Lsig/V5hmKJJjcw00UVJYsfY0hKj+JAVgbQdGkrZ6MDLQ4K8jlUgnouHBrCzAVhwku0P+zJjKzVT4j2XO61N4v+OiJhF/F/+3/TAjI1Ywfb9PnmJ28mhDSPVhB4tUc2Sj1333+0vPJJ+2+b8VhZ3j0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=lw7oDvgJ; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 46I6a0vI3098584
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 17 Jul 2024 23:36:01 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 46I6a0vI3098584
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024061501; t=1721284561;
+	bh=olo1J9Ekj3oE7AMNzS+YKv+bJI1P8bkfXQDak1NfIMM=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=lw7oDvgJHZzls5gqBdVbWtrmt1nTugB6QIOco/6UbR1XkbX8IcNdOi0GHHqVzUU+4
+	 KYvzD4h41Best6tZr40wbkhNr43tMB3xAGCNC5giu6Do3dd0jmiNCN/8vSyXRBzoul
+	 xjDQtTldbf9JYSbSycv1Kxry8PQpW/AoT1xT+UeBrARso9HOdRR2URmzUBTOq8Tfsg
+	 ndIqev1Ioyaa7owV/VBFM0b568hBVB7zcbsQ9GNnzQh91I4Jb1Cv5hQscHg/X/RiLA
+	 GPN5dbjH6R7EqzsFBFX6mBmTPWDz4i24pQfhcde8YszY6RhtCQPOss5vZolXaUEeYX
+	 JaI7jQQB6lG8Q==
+Date: Wed, 17 Jul 2024 23:35:57 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_x86/boot=3A_Use_=5F=5FASM=5FSIZE?=
+ =?US-ASCII?Q?=28=29_to_reduce_ifdeffery_in_cpuflags=2Ec?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20240718063242.52275-1-ubizjak@gmail.com>
+References: <20240718063242.52275-1-ubizjak@gmail.com>
+Message-ID: <4049EB19-E869-4886-AD61-E716A75E4559@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240718035017.434996-3-shahuang@redhat.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 17, 2024 at 11:50:15PM -0400, Shaoqin Huang wrote:
-> Allow userspace to change the guest-visible value of the register with
-> different way of handling:
-> 
->   - Since the RAS and MPAM is not writable in the ID_AA64PFR0_EL1
->     register, RAS_frac and MPAM_frac are also not writable in the
->     ID_AA64PFR1_EL1 register.
-> 
->   - The MTE is controlled by an internal flag (KVM_ARCH_FLAG_MTE_ENABLED),
->     so it's not writable.
+On July 17, 2024 11:32:18 PM PDT, Uros Bizjak <ubizjak@gmail=2Ecom> wrote:
+>Use __ASM_SIZE() macro to add correct insn suffix to pushf/popf=2E
+>
+>Signed-off-by: Uros Bizjak <ubizjak@gmail=2Ecom>
+>Cc: Thomas Gleixner <tglx@linutronix=2Ede>
+>Cc: Ingo Molnar <mingo@kernel=2Eorg>
+>Cc: Borislav Petkov <bp@alien8=2Ede>
+>Cc: Dave Hansen <dave=2Ehansen@linux=2Eintel=2Ecom>
+>Cc: "H=2E Peter Anvin" <hpa@zytor=2Ecom>
+>---
+> arch/x86/boot/cpuflags=2Ec | 10 +++-------
+> 1 file changed, 3 insertions(+), 7 deletions(-)
+>
+>diff --git a/arch/x86/boot/cpuflags=2Ec b/arch/x86/boot/cpuflags=2Ec
+>index d75237ba7ce9=2E=2Eaacabe431fd5 100644
+>--- a/arch/x86/boot/cpuflags=2Ec
+>+++ b/arch/x86/boot/cpuflags=2Ec
+>@@ -2,6 +2,7 @@
+> #include <linux/types=2Eh>
+> #include "bitops=2Eh"
+>=20
+>+#include <asm/asm=2Eh>
+> #include <asm/processor-flags=2Eh>
+> #include <asm/required-features=2Eh>
+> #include <asm/msr-index=2Eh>
+>@@ -36,13 +37,8 @@ static int has_fpu(void)
+>  * compressed/ directory where it may be 64-bit code, and thus needs
+>  * to be 'pushfq' or 'popfq' in that case=2E
+>  */
+>-#ifdef __x86_64__
+>-#define PUSHF "pushfq"
+>-#define POPF "popfq"
+>-#else
+>-#define PUSHF "pushfl"
+>-#define POPF "popfl"
+>-#endif
+>+#define PUSHF __ASM_SIZE(pushf)
+>+#define POPF __ASM_SIZE(popf)
+>=20
+> int has_eflag(unsigned long mask)
+> {
 
-The flag isn't the relevant part, what's important about MTE is that it
-already has a separate UAPI for controlling it (KVM_CAP_ARM_MTE).
-
->   - For those fields which KVM doesn't know how to handle, they have
->     are not exposed to the guest (being disabled in the register read
->     accessor), those fields value will always be 0. Allow those fields
->     writable is fine, since the userspace can only write 0 into those
->     fields. Maybe in the future KVM know how to handle some of the
->     fields, then they can be written into other value.
->     So let them writable.
->     Those fields include SME, RNDR_trap, NMI, GCS, THE, DF2, PFAR,
->     MTE_frac, MTEX.
-
-This doesn't seem right. We're committing to a UAPI behavior the moment
-these fields are advertised to userspace, which is rather difficult to
-do for features that we don't even implement.
-
-Please only advertise the fields known to KVM and leave the others
-unadvertised.
-
->   - The BT, SSBS, CSV2_frac don't introduce any new registers which KVM
->     doesn't know how to handle, they can be written without ill effect.
->     So let them writable.
-
-I think the handling of ARM_SMCCC_ARCH_WORKAROUND_2 needs to be updated
-to consider the presence of FEAT_SSBS in the guest's ID registers.
-Otherwise we'll wind up returning NOT_SUPPORTED and the guest will
-conclude it is in a vulnerable state.
-
--- 
-Thanks,
-Oliver
+Just use pushf/popf=2E gas hasn't needed that suffix for a long time as fa=
+r as I know=2E
 
