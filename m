@@ -1,205 +1,174 @@
-Return-Path: <linux-kernel+bounces-255866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 646629345D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:31:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD7979345D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:31:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85C771C20F47
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:31:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1AB01C21D46
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714AB4688;
-	Thu, 18 Jul 2024 01:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=endava.com header.i=@endava.com header.b="KjyLeCXc"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2138.outbound.protection.outlook.com [40.107.21.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24D6364AB;
+	Thu, 18 Jul 2024 01:31:29 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D0219F;
-	Thu, 18 Jul 2024 01:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.138
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721266251; cv=fail; b=RyZbdQ9o1f9s7ybTw8y0RGI0cWcHs2iK6zDEy6vWlQfbx1SYxD05wPB319C3/5ffre+9vl2xY4B/SCmzjFJkmsm7TZfMpXYc9zbBkrTtJkZy3V+hQjMJnuTvciYCrB98dVhS2QV08Zyoi+Lv4KDdJJcjwlWb/DbvLQPRutyxmkc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721266251; c=relaxed/simple;
-	bh=pVaSmFqdNsEjDxPRDtVZiBX6tgQjdmVh8pzL78B4Hes=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=BuFtr6uwVMhHs+/JcyAqHV9On6ohmCnOb7URDzYRBv1tAlhW4ZIx8FwKEiQK5btkjTFCXwD1jS3ydxfypWdmsPaPTknyGfUqU7GtrUnHGFeSYuhdyTdnjARkRokh06PbsHVJ9sr0NTAEQExp+aMQol4M2uCQ6BPs3C83Ji7Im6U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=endava.com; spf=pass smtp.mailfrom=endava.com; dkim=pass (2048-bit key) header.d=endava.com header.i=@endava.com header.b=KjyLeCXc; arc=fail smtp.client-ip=40.107.21.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=endava.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=endava.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rtMZp+8NkSCb39cH+5F5bjwRCSoMbrId9JYj65JmQsNbNZPSJNgHJ1/lkVXi/QZMLih9KM4vBDDj75hu88MpaKEgItSJR6J5KDXO3pY7TEoqJsxUnK57osuLbzA65PNLU9GRv8FPVH0Qi+MhCoxjvEmJsrLgixhg6Yk3Hqi2dK6WLIBFfgqvg17PX2ncDvyAP+sCAPFB+2gS09f1Axkf1qqqBk/umO5T5G8j5cgGDUupaj9y0boc6Cny8wZJ1P9ykpSCQMoFtNEXTVQZwy8nDgZ3and6G+KccpNv3CeNVwkMroIr+Tg6RHap1ArU9feKbY9eiOlFF9KEhr178x1nLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pVaSmFqdNsEjDxPRDtVZiBX6tgQjdmVh8pzL78B4Hes=;
- b=Lq/hlhknpI///AulnSR5pxZONERQYj8aTowdfC8ElcHtj1YIhsLJ2e6ELrbmW3m6OTcboV8wOxDZRIh2HMYkEycOJyUQrftj2SaChZaqIYw3Nbh3sK/MBQxF/5Hy9R8EVX0UwIY9MruvtL4pGMkXpnkqDGHhEu8MepZoXvHvsXBfDtD8hruwvCWTN/sxCKdDz7XbyOG1lIZMBE6jkiTpnpOeu6cLpUuvt44QwJntYttp/MulpfSUfnR6iVw5et3fYRz8kokWF+UfmpFey6/9upwrlz3GKNMUhVxPa9QK3hju0TeVN7NSpleSSvBAIGT4nhZ1ieUk2pJyp/O6SGhUjA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=endava.com; dmarc=pass action=none header.from=endava.com;
- dkim=pass header.d=endava.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=endava.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pVaSmFqdNsEjDxPRDtVZiBX6tgQjdmVh8pzL78B4Hes=;
- b=KjyLeCXcNFyMOwB/QOqnzWhwzNe3AcQBLPRcNE+hLmks326BhgozC/Jypqof0i2+YQfOwR2VB2YumagRVQJ3hM2GTzHzpqbGKcqqA3znGDis4ph6BAKKGduNl5drBJrlgJwg7jB/6tBcHFBqZu2dQ2LZ+eiZSNLRJU2y2HlknGz76etUOX0WYMfSqt4jY8vxnLooBNOu9OmIiDV928WcadqxDtYqXbT0Yue9JVge1t3ah3xSzgnAPjzOSlzcF7/BgeRVtFLFGilToCF1VAAE0+hhRlQ5pixQc8NNE7nFUYiTFW+jD/IuaHZW3GnSOC8v1EQ0feKV2N8UJHziOCrmow==
-Received: from AS5PR06MB8752.eurprd06.prod.outlook.com (2603:10a6:20b:67d::20)
- by AM9PR06MB7331.eurprd06.prod.outlook.com (2603:10a6:20b:2ca::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16; Thu, 18 Jul
- 2024 01:30:45 +0000
-Received: from AS5PR06MB8752.eurprd06.prod.outlook.com
- ([fe80::72f2:c654:1827:9c41]) by AS5PR06MB8752.eurprd06.prod.outlook.com
- ([fe80::72f2:c654:1827:9c41%3]) with mapi id 15.20.7784.013; Thu, 18 Jul 2024
- 01:30:45 +0000
-From: Tung Nguyen <tung.q.nguyen@endava.com>
-To: Jakub Kicinski <kuba@kernel.org>
-CC: Shigeru Yoshida <syoshida@redhat.com>, "pabeni@redhat.com"
-	<pabeni@redhat.com>, "jmaloy@redhat.com" <jmaloy@redhat.com>,
-	"ying.xue@windriver.com" <ying.xue@windriver.com>, "davem@davemloft.net"
-	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"tipc-discussion@lists.sourceforge.net"
-	<tipc-discussion@lists.sourceforge.net>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH net] tipc: Return non-zero value from tipc_udp_addr2str()
- on error
-Thread-Topic: [PATCH net] tipc: Return non-zero value from tipc_udp_addr2str()
- on error
-Thread-Index:
- AQHa1yUvQPqLAGQ2A0GB9aoYG5W6f7H49WZwgAAEmICAAD0xAIAAA3+wgAAaDgCAAAO9YIAA1GKAgAABTLCAAOB6AIAApuAw
-Date: Thu, 18 Jul 2024 01:30:45 +0000
-Message-ID:
- <AS5PR06MB8752E506B21D2922F7D08BE4DBAC2@AS5PR06MB8752.eurprd06.prod.outlook.com>
-References:
- <AS5PR06MB875264DC53F4C10ACA87D227DBA22@AS5PR06MB8752.eurprd06.prod.outlook.com>
-	<c87f411c-ad0e-4c14-b437-8191db438531@redhat.com>
-	<AS5PR06MB8752EA2E98654061F6A24073DBA22@AS5PR06MB8752.eurprd06.prod.outlook.com>
-	<20240717.110353.1959442391771656779.syoshida@redhat.com>
-	<AS5PR06MB8752F1B379BB6B90262C741CDBA32@AS5PR06MB8752.eurprd06.prod.outlook.com>
- <20240717083158.79ee4727@kernel.org>
-In-Reply-To: <20240717083158.79ee4727@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=endava.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS5PR06MB8752:EE_|AM9PR06MB7331:EE_
-x-ms-office365-filtering-correlation-id: 0776c78b-dccd-467a-c023-08dca6c93ebf
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?Bv73aR/j20UE/S7jdeyx05FpWHXT31uimZ+ME834KxHKvtL/6i9Tx3bnh/Oi?=
- =?us-ascii?Q?huDu8tCCdBD4P+MWDm2C+rCwZwl4ZYkQRqonmEjHhBEg7z5j0GTZ/+z8DIxr?=
- =?us-ascii?Q?YY9i3+D1s8PPMXUsEt+DviDPcsTcJfVVNuJix8Zo/87AyQvKXtTlANMIyOSq?=
- =?us-ascii?Q?gG4jJmuPMiLmikIBr9AmGvxZjY7ty7Yh2rrUI8bRHcanZZRAcDKHP2HhJGW9?=
- =?us-ascii?Q?FBp0kc3VJiy/sRlJjdSmvX7JIl0IH6ZCblsdePLFRSgMDR5e3HBPF5Woil7O?=
- =?us-ascii?Q?xzq7YzXQ3EX3xdT2ZN71z6y7aCc6yEslJiflA6BsAa/FaInlt8rH/V7Atk86?=
- =?us-ascii?Q?FW2zOENWpwr3KIvdS8A4LXwdxpNKJyUZDzmKWJB8Hviv/tJtltoEj6lz8R+K?=
- =?us-ascii?Q?s7pBb5bbJV5jHVuWxK9ATm28tRYE9llQQKZspBBhWfe1bB5EtqdL89yrBUW3?=
- =?us-ascii?Q?3p+QAdTnQt8PKZlgym118bH1MzqsyIM1VQSUO68Jds8VCaLII9KXjAkAJujI?=
- =?us-ascii?Q?1Xfzk3zg6BP6ljIuUQUWIwMYOwaF9dXi+Sp43N2O28korJz/PuHgyQhHm1Dp?=
- =?us-ascii?Q?PrnncA7mBsTnkDK8Qs5uI08TvsCVBgTQYwZZetgh1FXhp1ulDxv3Q+IHetYp?=
- =?us-ascii?Q?dKFcFLL8fEM9oO0TZUbg6TZ0rPZw/oQwUEId5NBLUGQRjH4Kr/xtMf4fwIcj?=
- =?us-ascii?Q?xBCOd8w4ltxRsPztfDUrbhySco0t8i2ZrD8vdO9rqKDlz4uwkwvm0LWTAjk+?=
- =?us-ascii?Q?fvLgNRIUUsJZW5zGjfjqm3k971mmkr2MBS4YrqiI1+xN3tTrE+WnAxgzY2t/?=
- =?us-ascii?Q?+oEtG1bxlB5BHvtz7Etq3LAC5fU4oRWOZou+v4ixXXd/fgYYREcYDcM3RD70?=
- =?us-ascii?Q?ZQYtVNfyxNJdfgJCM4diTFyO/zA+PmY9CBm6nyc/jcsxwPdkvegE8XpIiYTA?=
- =?us-ascii?Q?i6u4kD8reV2hy+eq/OFrsBjlYPGJNdfF4uG71OMzXZStrGFq7ZjND5JkbE53?=
- =?us-ascii?Q?agg0f5saN+C6h6dX2xIaLpPeXYHqmsvYTFOb9UcEaMfnvOwh8AZ6e3KZCSIv?=
- =?us-ascii?Q?0vczJtW1ZofyWRxHtcK3pJNYpyPQ8m+/lQluX5sU2p9tQS2JURmGvLAxNuOE?=
- =?us-ascii?Q?qyWhgFNE1DnL3uanPQBcgpFmiE6Nu9WrRPeGpHnNOkZDWWVUBS79qcuVdL8G?=
- =?us-ascii?Q?kwXvOEpNbIgNhkgSF/xRZHqgimTqvolInpAO9QsKg+Lf6qXpAC+m1rvialFw?=
- =?us-ascii?Q?BQonuhvCk6pO92MH7iqhR322xX3ZvUhancuNv8l+rmr3GwIdIkP6TUeVwQh3?=
- =?us-ascii?Q?vmup8fUymqfc/REAx2CfwAJTNjKx/E0GN0KcgBIRl/pB9YPtwtnS4RSNT0ka?=
- =?us-ascii?Q?AiJFrK929TGHL7TMik89GuBHhzocSLrEdj3mX6lqEEtF0ZGJKw=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS5PR06MB8752.eurprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?8+YIAzG7Yf/XH83gkVsNH/J6fdXaG+vyv1Fv14iWuxIOEOeXc29o8KTFCljU?=
- =?us-ascii?Q?ctTTTf3lfUriBfYORfXk1OJhaBemYIIwYYMrqEW+Wod+qc04sxIZrnVyb1Zs?=
- =?us-ascii?Q?M9UP4iaWPJLtq9zk1gwEDPhbwYfbFoEl7Dn4ypxrynLmgkeO8GB9/of4gFZK?=
- =?us-ascii?Q?bFYUKGDq9NzIg69R4FNOUJJJd1wMd885wKaokmcnB2V/WzjyRCHkp7U6QMdu?=
- =?us-ascii?Q?HqgbJEmde5vroyY3gjjCoI5x5+wPTG/P1d40XDvkKLcpIT4K6g/tLGik55uf?=
- =?us-ascii?Q?aFN5DolpSwCePlmg3ji1HeTtb0OlNR1zJ+9zNLzrK7Nn7hZyG/n6T3QK9wVY?=
- =?us-ascii?Q?+oiJ7Nvhsr4dnUWdZhESMA01opt86o+aSzc2gAZdv9080h9/RaVfCdoxbTeE?=
- =?us-ascii?Q?6nIftBpZ8ks2nx3lSNoA2O8vV1VPOVJdheA0VIf+2ZCrOn7bZeEMI8PveOEG?=
- =?us-ascii?Q?9NYc3dXuv8WzZ6IGU0ctSy63ktLg42TbCQzJSMqVkvP/k+9unCSqfejUqyiB?=
- =?us-ascii?Q?CMw7V7/RfECYIrzwFgxAGQZrmdm9j2TxHqZgYArgcJACjobZ4XX64HktPZ/W?=
- =?us-ascii?Q?LTOssAKrZ+fVBst7KFPBWJgmC327GihvfP9vssY667Do/IhCU6qjDhSr8jPx?=
- =?us-ascii?Q?cuLv5vojsPzk8gbTDdjpxuwyNTIYQNdLEAk+rHrFi0OYqmctfBgz1muZifz4?=
- =?us-ascii?Q?LE35ua0A9xPr59B99ELtq8AexbBWPBs0MIkbPy8JWkuRMQ/bcOWwrXbm26My?=
- =?us-ascii?Q?HZRPJviWAhrG4Qk7YRa0bYjx6C/Bqt13b/B5rmf0l3Vs61GoxTh6FZmGdJQV?=
- =?us-ascii?Q?uSue6M1n88joMqelaJTeemnE3h+eYUUEOucTxuLvMqaNPVvnOSUajSqSQlWl?=
- =?us-ascii?Q?VJ4wu9eTX8FL+tCf+sEmZv9nqL662EJxGivxGc0ribhoD/SC9+c8mZt6/19d?=
- =?us-ascii?Q?pAsIxPZKeJJRkYe1vb0km4v/LkUUIRDbOweXJznT8Fze1NXW7XVE97x8NqcW?=
- =?us-ascii?Q?We4I8/KL+ywvF2dB5KxZ0OU9llGGPQYL6zKsrCVaAaty5B2knqBbWpzb4RZo?=
- =?us-ascii?Q?Xxn9Dd40CiCMooVvPZfSbTSuFV5DATPJ91Qe7ukfsqtYyu5EbXQDo0HnGdxS?=
- =?us-ascii?Q?lTmpinH4tpCmPpah+JFybi2IcHoAI2A6A4ImgCEAcCHfx1yTKAteNK28Ubum?=
- =?us-ascii?Q?i/8AF7jX2wQ1Ie/oGNNCjJlqmiEFQuCGO678FjcHaJztPcWPPlH/U+gQWHu4?=
- =?us-ascii?Q?0v5JowyeteETY2DogehORmepXz6VxpXMkwwF+T5MGncH8Odk+BBqHjMSpTF6?=
- =?us-ascii?Q?EARZBe82kwLIsfSV+sJv2y7CLhc1MPvLR4XIk3063ib6AshdesvPNjKSAqWk?=
- =?us-ascii?Q?+2VOAlim1pwnUHfSLdhg9TtDWO+JYI8QvGC6X8HOzbctbjEDzrgUkObgGzmx?=
- =?us-ascii?Q?oPXEj1vS0iQNHB+5AiF7Qz88lVVz6uqQYMTPAMDuGD2vc9+37JGW2TYKdWwV?=
- =?us-ascii?Q?wWFRafoznZyrS9VnZwUe2enVYissvJGLacK6WoRNmFGyzdKr3sFB1paVJHuX?=
- =?us-ascii?Q?uKy+UrWgQh3JSVqk8Y69er6QszUOyYvJGT9bU4bH?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D185286A6
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 01:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721266289; cv=none; b=mJ/tppm+TWfInnhQekrBf6+0ynyjtxrzEfZ3t+EuEiGNPYjqUgvmn2jSFymQLU9nD8LNoulqhg018YKFImVushHT5iDHTosbi3H7H0sH9beJBoLy4BYLw8JWUSFcHG5n2ONVh78J/L8XUMihEjRA3VlKKf/jZA1ro2DkxXygBqY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721266289; c=relaxed/simple;
+	bh=bSFAwrHikfHtV5XAliAhDkqUwP7BAVOT7M7B3F3e+Ro=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Xk2AydQz3otpJzdrq2i2eh6YSwu4Udyb7pTGfMfU1dzecoJhz1VLiU6bOxy+TM6anFbW6dcoDuWkCZFq7pYMPb5I8fObou1OTzwAo2c8+gjoNP3x7S/HnItoD2KWu7gc4+QeOOqSvSfwI4dgNk2aEoGpgfoaUNrZPd89pOj6XC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-80502b81995so41249239f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 18:31:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721266285; x=1721871085;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GQ1BVktSx7DAWpt9QOHqXq4RsBhsS3hDO43i4FEFpdw=;
+        b=ebiLfN3aYus8CP7onxaeDAEHUcvLQW2eoXnAj+CIcZq3golWfI96fDrzBiZUB6iRu/
+         8EzS6xwnhEVYpsbx9ucRFm9vePFNo4yA9rXy8UyRBvNBk0YaNnfdrFteW/CnNQDHmPMu
+         ZYg8ICnaY2Fk9Gu18Y5cyUQPlPLfjC3qB8i3x/9gdqDuFqTxC1q7yLJ1ZKBmtverDmUX
+         daQ0hXGRQfAJAYvYImdsASJ6MptMlw6uZMfcoVyMlkHx67JCO15WTYUBAH+dcArTdbbr
+         uUfP6VTbUH+SkbeMep36i7yKzzEK2MrSx1dR6WL8poI5Dd2QKBNNwwq188sEKM6rRy+7
+         4BdA==
+X-Forwarded-Encrypted: i=1; AJvYcCXuKKM7tJ06qu2cQPZWiIUBvYhX1Ai03aPx97md+BYdPQdHEu15ASD7+ZGAo86/CeBpS4n4oy/iP1FsBDOhFw6cvso+GCRq7wiJ9Riq
+X-Gm-Message-State: AOJu0Ywjkf1F2wu7xH9vxBGtUc7woDLdXj3VBBHIzfWRHgguqqT1k95P
+	FYsWWH0I+jOnHLVA1xaAGV7M90r+JzOj+4u1jjtnzhhGLHgSqbfViKZw+/ZVuIzoML/TSAP4ZEM
+	7yNGWcQP/xHwJXTTyyxzyjozw8AzYjUiPNR5811xHOYrArfiAhZEvNgc=
+X-Google-Smtp-Source: AGHT+IGLAY4Nutw+38nLhIs754r866qVPKgfnCJfnldbQ06hpA+fDzuprk7mXlT0+smxSxP5sFGPtwnGtwmXJPUIYnsXyzkSJGJc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: endava.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS5PR06MB8752.eurprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0776c78b-dccd-467a-c023-08dca6c93ebf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jul 2024 01:30:45.1043
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0b3fc178-b730-4e8b-9843-e81259237b77
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 733Abhh2AbDy9q4Xy1UKThYM+2iYqyfCsXvRDVIY1xMusRo/yRfVl3Kkb2VH1FG5nXk3Twtwq9+/a/eySv1ECQF2ZTd2bDdM7L0PP+RuWCw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR06MB7331
+X-Received: by 2002:a05:6638:370b:b0:4b9:ad96:2adc with SMTP id
+ 8926c6da1cb9f-4c215b6b706mr145762173.4.1721266284769; Wed, 17 Jul 2024
+ 18:31:24 -0700 (PDT)
+Date: Wed, 17 Jul 2024 18:31:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000077c88b061d7b893e@google.com>
+Subject: [syzbot] [fs?] WARNING: lock held when returning to user space in ns_ioctl
+From: syzbot <syzbot+dd73570cf9918519e789@syzkaller.appspotmail.com>
+To: aleksandr.mikhalitsyn@canonical.com, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
->> Reviewed-by: Tung Nguyen <tung.q.nguyen@endava.com>
->>
->> The information in this email is confidential and may be legally privile=
-ged. ...
->
->What do you expect us to do with a review tag that has a two-paragraph leg=
-al license attached to it?
-Please ignore that disclaimer message. I am still asking help from my organ=
-ization to remove that annoying message.
+Hello,
 
-The information in this email is confidential and may be legally privileged=
-. It is intended solely for the addressee. Any opinions expressed are mine =
-and do not necessarily represent the opinions of the Company. Emails are su=
-sceptible to interference. If you are not the intended recipient, any discl=
-osure, copying, distribution or any action taken or omitted to be taken in =
-reliance on it, is strictly prohibited and may be unlawful. If you have rec=
-eived this message in error, do not open any attachments but please notify =
-the Endava Service Desk on (+44 (0)870 423 0187), and delete this message f=
-rom your system. The sender accepts no responsibility for information, erro=
-rs or omissions in this email, or for its use or misuse, or for any act com=
-mitted or omitted in connection with this communication. If in doubt, pleas=
-e verify the authenticity of the contents with the sender. Please rely on y=
-our own virus checkers as no responsibility is taken by the sender for any =
-damage rising out of any bug or virus infection.
+syzbot found the following issue on:
 
-Endava plc is a company registered in England under company number 5722669 =
-whose registered office is at 125 Old Broad Street, London, EC2N 1AR, Unite=
-d Kingdom. Endava plc is the Endava group holding company and does not prov=
-ide any services to clients. Each of Endava plc and its subsidiaries is a s=
-eparate legal entity and has no liability for another such entity's acts or=
- omissions.
+HEAD commit:    51835949dda3 Merge tag 'net-next-6.11' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1758d8e6980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a2f87f8b8afcec45
+dashboard link: https://syzkaller.appspot.com/bug?extid=dd73570cf9918519e789
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1799ccb5980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15ef5b4e980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/67cb6b0946ba/disk-51835949.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1946faba5973/vmlinux-51835949.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fc2e329875bd/bzImage-51835949.xz
+
+The issue was bisected to:
+
+commit ca567df74a28a9fb368c6b2d93e864113f73f5c2
+Author: Christian Brauner <brauner@kernel.org>
+Date:   Sun Jun 7 20:47:08 2020 +0000
+
+    nsfs: add pid translation ioctls
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=113c7b2d980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=133c7b2d980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=153c7b2d980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+dd73570cf9918519e789@syzkaller.appspotmail.com
+Fixes: ca567df74a28 ("nsfs: add pid translation ioctls")
+
+================================================
+WARNING: lock held when returning to user space!
+6.10.0-syzkaller-04472-g51835949dda3 #0 Not tainted
+------------------------------------------------
+syz-executor257/5082 is leaving the kernel with locks still held!
+1 lock held by syz-executor257/5082:
+ #0: ffffffff8e335fe0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:327 [inline]
+ #0: ffffffff8e335fe0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:839 [inline]
+ #0: ffffffff8e335fe0 (rcu_read_lock){....}-{1:2}, at: ns_ioctl+0x3e0/0x740 fs/nsfs.c:184
+BUG: sleeping function called from invalid context at include/linux/sched/mm.h:337
+in_atomic(): 0, irqs_disabled(): 0, non_block: 0, pid: 5082, name: syz-executor257
+preempt_count: 0, expected: 0
+RCU nest depth: 1, expected: 0
+INFO: lockdep is turned off.
+CPU: 1 PID: 5082 Comm: syz-executor257 Not tainted 6.10.0-syzkaller-04472-g51835949dda3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ __might_resched+0x5d4/0x780 kernel/sched/core.c:8437
+ might_alloc include/linux/sched/mm.h:337 [inline]
+ prepare_alloc_pages+0x1c9/0x5d0 mm/page_alloc.c:4454
+ __alloc_pages_noprof+0x166/0x6c0 mm/page_alloc.c:4672
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ vma_alloc_folio_noprof+0xf3/0x1f0 mm/mempolicy.c:2304
+ folio_prealloc+0x31/0x170
+ wp_page_copy mm/memory.c:3285 [inline]
+ do_wp_page+0x11cc/0x52f0 mm/memory.c:3677
+ handle_pte_fault+0x117e/0x7090 mm/memory.c:5397
+ __handle_mm_fault mm/memory.c:5524 [inline]
+ handle_mm_fault+0xfb0/0x19d0 mm/memory.c:5689
+ do_user_addr_fault arch/x86/mm/fault.c:1338 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+ exc_page_fault+0x459/0x8c0 arch/x86/mm/fault.c:1539
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0033:0x7f72e4df2de0
+Code: 41 54 55 48 89 f5 53 89 fb 48 83 ec 18 48 83 3d 0d 02 0a 00 00 89 54 24 0c 74 08 84 c9 0f 85 09 02 00 00 31 c0 ba 01 00 00 00 <f0> 0f b1 15 e0 2e 0a 00 0f 85 0f 02 00 00 4c 8d 25 d3 2e 0a 00 4c
+RSP: 002b:00007ffd9317a820 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000001
+RDX: 0000000000000001 RSI: 00007f72e4e93110 RDI: 0000000000000000
+RBP: 00007f72e4e93110 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
