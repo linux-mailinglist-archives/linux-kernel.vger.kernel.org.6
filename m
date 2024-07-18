@@ -1,283 +1,250 @@
-Return-Path: <linux-kernel+bounces-256164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1104F934A1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:41:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9F71934A23
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAEAA2832CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:41:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A1CF1C21ADD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F85B80BEC;
-	Thu, 18 Jul 2024 08:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CB07E107;
+	Thu, 18 Jul 2024 08:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Sn7mPMug"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="f7uD2/F7"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E5F7D3FB;
-	Thu, 18 Jul 2024 08:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783933B784;
+	Thu, 18 Jul 2024 08:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721292050; cv=none; b=TD0JGTEm2ry/6iFXPO8pM8WmQzl+hGHfWa0HFWds10j3T/ksoRPUUSgL2j5U1zMyMfEGmfKYttrpzdwXVxDQuWTDXOtt1fLSKzg+TmcRsbj+ueIsYcHbg5Y2qzs9but/QzCi0p+ePw9vJuTLLI5DKSWSfH7DqdOFaYHMKSSZUus=
+	t=1721292125; cv=none; b=UlKkxI+0JIzzllN8gwIErQto9Gr4FcN2NZZ58Y9DPOS89DvobUlQ8VH+GFXyud5HJ4rZ2SUYqX9u+wT5Wnje5YJX7NghyVpDjNHpNNu+zKWJzzPcKFP1R5JrHwPgHmi8V5AV85Mh7g07OuB7cIrr030fFMe6NyIjLvhEobx804w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721292050; c=relaxed/simple;
-	bh=FE+llVdixIGVgAVfM0CVTfAtDvpu6Y0k1yVja8RG0a0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VgnuUdcGxCUv0dyVo6XY4wPOEnpSEn/t+Rt9j5mIKrqAPLUQynOyeg9z05oiVsEaqakrvau3qfO63TgaxIpKpBurHZR8wwowbqT7lteysZkyhsW/7DyYYuA3RhEldI7TXtvOguJ0VnsyJfkWAAvRJRqtjnoHfPhqo2DmDpLVpxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Sn7mPMug; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721292047;
-	bh=FE+llVdixIGVgAVfM0CVTfAtDvpu6Y0k1yVja8RG0a0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Sn7mPMugaRByKx4adM7+CVo+xMKSBG1wT8yR75Fj49MuwLlHVFiRyFcDuE7j3/iBM
-	 sPbI8M2UQsKnemfju60XulG7BLPfvo53iTGCM6xpJENw89DGqt1uTRXfnfvWhFH7K1
-	 nBr3HhNMYSmZw/Eu3/PsWBbEBBsTNo7GMvGQrcSQcbtu8bKbxbhMibugZaGfWOy9bZ
-	 JzpU3efnkN+QPbWY2dVKpVWkShwQOZ719nyPnI1mB8577hCO3wXvwN1dzp9YprDx8O
-	 PYsVkbsZ12AyS6Gff6mjq81PruDUwZySnPGwNCzKzGJG0gi2oz7ZpIq7YYVElRzDG4
-	 C3cfgqlhNQhAA==
-Received: from [127.0.1.1] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: obbardc)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 5C13037821D8;
-	Thu, 18 Jul 2024 08:40:46 +0000 (UTC)
-From: Christopher Obbard <chris.obbard@collabora.com>
-Date: Thu, 18 Jul 2024 09:40:26 +0100
-Subject: [PATCH v3 3/3] arm64: dts: rockchip: add Firefly JD4 baseboard
- with Core-PX30-JD4 SoM
+	s=arc-20240116; t=1721292125; c=relaxed/simple;
+	bh=bZxPqhxRGdkOe6ZLtw3jKcUWDWSwAmYsYQ61dXx/HOM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n8PIYb4gV/t2p7F6PPCiu5NEaXDnGbSnNnjw/TFc5E3SVGQL4f++IjkfMMO/JycI3aVxEZLzzxeIOHb5VdBIeqr6S/1lYVf6Yuwi6Js0Y6jkpw+K7em2ZBqUWCTbo6Eb031M+zwNHL9W1QyusGTZmLWu36tfPlLVhyKwkKI3OEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=f7uD2/F7; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 954dd25644e111ef87684b57767b52b1-20240718
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=7cJPIYBOZKxw9By0YCCiUkOLCsHVgJUmv6aYpcZa7dk=;
+	b=f7uD2/F7SkTFOfUYHRiR66c1Sk2Hi+FvaLxUyzevtOaezO80RN9BEmg9rJz0ekolP6FcjJKCmy60GT9YNMmNRLexmkAAKLL1IU6+2uEkN9hQuRq471+y4EiQKy4L4L7F6aKrVpqXMzhVQbP3pHW84cehEMVTCGJ5M5Da7rTWl4o=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.40,REQID:53f467ad-055b-4c6d-be37-d96deb48ce75,IP:0,U
+	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-25
+X-CID-META: VersionHash:ba885a6,CLOUDID:6b877245-a117-4f46-a956-71ffeac67bfa,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 954dd25644e111ef87684b57767b52b1-20240718
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
+	(envelope-from <boy.wu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 717439943; Thu, 18 Jul 2024 16:41:53 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 18 Jul 2024 16:41:53 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Thu, 18 Jul 2024 16:41:53 +0800
+From: boy.wu <boy.wu@mediatek.com>
+To: Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>, Jens Axboe
+	<axboe@kernel.dk>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Boris Burkov <boris@bur.io>,
+	<cgroups@vger.kernel.org>, <linux-block@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <iverlin.wang@mediatek.com>, Boy Wu
+	<boy.wu@mediatek.com>
+Subject: [PATCH v4] blk-cgroup: Replace u64 sync with spinlock for iostat
+Date: Thu, 18 Jul 2024 16:41:12 +0800
+Message-ID: <20240718084112.12202-1-boy.wu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240718-rockchip-px30-firefly-v3-3-3835cdd22eae@collabora.com>
-References: <20240718-rockchip-px30-firefly-v3-0-3835cdd22eae@collabora.com>
-In-Reply-To: <20240718-rockchip-px30-firefly-v3-0-3835cdd22eae@collabora.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Kever Yang <kever.yang@rock-chips.com>, Dragan Simic <dsimic@manjaro.org>, 
- Collabora Kernel Mailing List <kernel@collabora.com>, 
- Christopher Obbard <chris.obbard@collabora.com>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--7.618200-8.000000
+X-TMASE-MatchedRID: YZKi2GGnn9+ZtBi01n3C9xafLXbshfogcx5k3wffojOHwGEm+CpYGTEG
+	FjeZwyRUzbrWhbT2b8cTMOv2lZG8w2zFfXEzaNt8wCZxkTHxccn64i5lgawyBFSOymiJfTYXZmL
+	HoWzm2fS1hH+43GdK0QG2ORx9EyapCCk23kSAVszovZduO2AF9zQAp53S718HVo+424uIBNJYTM
+	99NlfBm1EXNKIgpuQj+9p3HcFJM3mVhIWL9FEuN54CIKY/Hg3AGdQnQSTrKGPEQdG7H66TyH4gK
+	q42LRYkpO8ojRYm4lcl4rDZgwtgKw3kTcv9FMbtpUElRFcYt7l+3BndfXUhXQ==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--7.618200-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP: F123CDD9A65F6182C8CF3180A6DA8AB398AC9F1B101EEA855735D2109E5C8CC32000:8
+X-MTK: N
 
-The Firefly MB-PX30-JD4 is a baseboard for the Core-PX30-JD4 SoM.
+From: Boy Wu <boy.wu@mediatek.com>
 
-Signed-off-by: Christopher Obbard <chris.obbard@collabora.com>
+In 32bit SMP systems, if multiple CPUs call blkcg_print_stat,
+it may cause blkcg_fill_root_iostats to have a concurrent problem
+on the seqlock in u64_stats_update, which will cause a deadlock
+on u64_stats_fetch_begin in blkcg_print_one_stat.
+
+Thus, replace u64 sync with spinlock to protect iostat.
+
+Fixes: ef45fe470e1e ("blk-cgroup: show global disk stats in root cgroup io.stat")
+Signed-off-by: Boy Wu <boy.wu@mediatek.com>
 ---
- arch/arm64/boot/dts/rockchip/Makefile              |   1 +
- .../boot/dts/rockchip/px30-firefly-jd4-core-mb.dts | 179 +++++++++++++++++++++
- 2 files changed, 180 insertions(+)
+Change in v2:
+ - update commit message
+ - Remove u64_sync
+ - Replace spin_lock_irq with guard statement
+ - Replace blkg->q->queue_lock with blkg_stat_lock
+Change in v3:
+ - update commit message
+ - Add spinlock in blkg_iostat_set structure
+ - Replace all u64_sync with spinlock for iostat
+ - Replace blkg_stat_lock with iostat.spinlock
+Change in v4:
+ - update commit message
+ - Remove spinlock in blkg_iostat_set structure
+ - Replace iostat.spinlock with blkg_stat_lock
+ - Add 32-bit systems only define
+---
+ block/blk-cgroup.c | 34 +++++++++++++---------------------
+ 1 file changed, 13 insertions(+), 21 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index fda1b980eb4bc..4861987457a42 100644
---- a/arch/arm64/boot/dts/rockchip/Makefile
-+++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -3,6 +3,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-evb.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-engicam-px30-core-ctouch2.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-engicam-px30-core-ctouch2-of10.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-engicam-px30-core-edimm2.2.dtb
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-firefly-jd4-core-mb.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-ringneck-haikou.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3308-evb.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3308-roc-cc.dtb
-diff --git a/arch/arm64/boot/dts/rockchip/px30-firefly-jd4-core-mb.dts b/arch/arm64/boot/dts/rockchip/px30-firefly-jd4-core-mb.dts
-new file mode 100644
-index 0000000000000..e109988f4e6be
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/px30-firefly-jd4-core-mb.dts
-@@ -0,0 +1,179 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2019 Fuzhou Rockchip Electronics Co., Ltd
-+ */
-+
-+/dts-v1/;
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
-+#include "px30-firefly-jd4-core.dtsi"
-+
-+/ {
-+	model = "Firefly Core-PX30-JD4 on MB-JD4-PX30 baseboard";
-+	compatible = "firefly,px30-jd4-core-mb", "firefly,px30-jd4-core",
-+		   "rockchip,px30";
-+
-+	aliases {
-+		ethernet0 = &gmac;
-+		mmc0 = &sdmmc;
-+		mmc1 = &sdio;
-+		mmc2 = &emmc;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial2:115200n8";
-+	};
-+
-+	dc_12v: dc-12v-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "dc_12v";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+	};
-+
-+	adc-keys {
-+		compatible = "adc-keys";
-+		io-channels = <&saradc 2>;
-+		io-channel-names = "buttons";
-+		keyup-threshold-microvolt = <1500000>;
-+		poll-interval = <100>;
-+
-+		button-recovery {
-+			label = "Recovery";
-+			linux,code = <KEY_VENDOR>;
-+			press-threshold-microvolt = <18000>;
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&blue_led>, <&green_led>;
-+
-+		blue-led {
-+			color = <LED_COLOR_ID_BLUE>;
-+			default-state = "on";
-+			function = LED_FUNCTION_HEARTBEAT;
-+			gpios = <&gpio1 RK_PB5 GPIO_ACTIVE_HIGH>;
-+			label = "px30-mb-jd4:blue:work";
-+			linux,default-trigger = "heartbeat";
-+		};
-+
-+		green-led {
-+			color = <LED_COLOR_ID_GREEN>;
-+			default-state = "on";
-+			function = LED_FUNCTION_POWER;
-+			gpios = <&gpio1 RK_PB4 GPIO_ACTIVE_HIGH>;
-+			label = "px30-mb-jd4:blue:diy";
-+			linux,default-trigger = "default-on";
-+		};
-+	};
-+
-+	sdio_pwrseq: sdio-pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&wifi_enable_h>;
-+
-+		/*
-+		 * On the module itself this is one of these (depending
-+		 * on the actual card populated):
-+		 * - SDIO_RESET_L_WL_REG_ON
-+		 * - PDN (power down when low)
-+		 */
-+		reset-gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_LOW>; /* GPIO3_A4 */
-+	};
-+
-+	vcc5v0_baseboard: vcc5v0-baseboard-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc5v0_baseboard";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		vin-supply = <&dc_12v>;
-+	};
-+};
-+
-+&gmac {
-+	clock_in_out = "output";
-+	phy-supply = <&vcc_rmii>;
-+	snps,reset-gpio = <&gpio2 13 GPIO_ACTIVE_LOW>;
-+	snps,reset-active-low;
-+	snps,reset-delays-us = <0 50000 50000>;
-+	status = "okay";
-+};
-+
-+&pinctrl {
-+	leds {
-+		blue_led: blue-led {
-+			rockchip,pins = <1 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+
-+		green_led: green-led {
-+			rockchip,pins = <1 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
-+	sdio-pwrseq {
-+		wifi_enable_h: wifi-enable-h {
-+			rockchip,pins =
-+				<0 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+};
-+
-+&sdmmc {
-+	bus-width = <4>;
-+	cap-mmc-highspeed;
-+	cap-sd-highspeed;
-+	card-detect-delay = <800>;
-+	sd-uhs-sdr12;
-+	sd-uhs-sdr25;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
-+	vmmc-supply = <&vcc_sd>;
-+	vqmmc-supply = <&vccio_sd>;
-+	status = "okay";
-+};
-+
-+&sdio {
-+	bus-width = <4>;
-+	cap-sd-highspeed;
-+	keep-power-in-suspend;
-+	non-removable;
-+	mmc-pwrseq = <&sdio_pwrseq>;
-+	sd-uhs-sdr104;
-+	status = "okay";
-+};
-+
-+&u2phy {
-+	status = "okay";
-+
-+	u2phy_host: host-port {
-+		status = "okay";
-+	};
-+
-+	u2phy_otg: otg-port {
-+		status = "okay";
-+	};
-+};
-+
-+&uart2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart2m1_xfer>;
-+	status = "okay";
-+};
-+
-+&usb20_otg {
-+	status = "okay";
-+};
-+
-+&usb_host0_ehci {
-+	status = "okay";
-+};
-+
-+&usb_host0_ohci {
-+	status = "okay";
-+};
-
+diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+index 37e6cc91d576..faa604c6fab9 100644
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -329,7 +329,6 @@ static struct blkcg_gq *blkg_alloc(struct blkcg *blkcg, struct gendisk *disk,
+ 	INIT_WORK(&blkg->async_bio_work, blkg_async_bio_workfn);
+ #endif
+ 
+-	u64_stats_init(&blkg->iostat.sync);
+ 	for_each_possible_cpu(cpu) {
+ 		u64_stats_init(&per_cpu_ptr(blkg->iostat_cpu, cpu)->sync);
+ 		per_cpu_ptr(blkg->iostat_cpu, cpu)->blkg = blkg;
+@@ -632,18 +631,18 @@ static void blkg_iostat_set(struct blkg_iostat *dst, struct blkg_iostat *src)
+ static void __blkg_clear_stat(struct blkg_iostat_set *bis)
+ {
+ 	struct blkg_iostat cur = {0};
+-	unsigned long flags;
+ 
+-	flags = u64_stats_update_begin_irqsave(&bis->sync);
+ 	blkg_iostat_set(&bis->cur, &cur);
+ 	blkg_iostat_set(&bis->last, &cur);
+-	u64_stats_update_end_irqrestore(&bis->sync, flags);
+ }
+ 
+ static void blkg_clear_stat(struct blkcg_gq *blkg)
+ {
+ 	int cpu;
+ 
++#if BITS_PER_LONG == 32
++	guard(raw_spinlock_irqsave)(&blkg_stat_lock);
++#endif
+ 	for_each_possible_cpu(cpu) {
+ 		struct blkg_iostat_set *s = per_cpu_ptr(blkg->iostat_cpu, cpu);
+ 
+@@ -995,15 +994,12 @@ static void blkcg_iostat_update(struct blkcg_gq *blkg, struct blkg_iostat *cur,
+ 				struct blkg_iostat *last)
+ {
+ 	struct blkg_iostat delta;
+-	unsigned long flags;
+ 
+ 	/* propagate percpu delta to global */
+-	flags = u64_stats_update_begin_irqsave(&blkg->iostat.sync);
+ 	blkg_iostat_set(&delta, cur);
+ 	blkg_iostat_sub(&delta, last);
+ 	blkg_iostat_add(&blkg->iostat.cur, &delta);
+ 	blkg_iostat_add(last, &delta);
+-	u64_stats_update_end_irqrestore(&blkg->iostat.sync, flags);
+ }
+ 
+ static void __blkcg_rstat_flush(struct blkcg *blkcg, int cpu)
+@@ -1034,7 +1030,6 @@ static void __blkcg_rstat_flush(struct blkcg *blkcg, int cpu)
+ 		struct blkcg_gq *blkg = bisc->blkg;
+ 		struct blkcg_gq *parent = blkg->parent;
+ 		struct blkg_iostat cur;
+-		unsigned int seq;
+ 
+ 		/*
+ 		 * Order assignment of `next_bisc` from `bisc->lnode.next` in
+@@ -1051,10 +1046,7 @@ static void __blkcg_rstat_flush(struct blkcg *blkcg, int cpu)
+ 			goto propagate_up; /* propagate up to parent only */
+ 
+ 		/* fetch the current per-cpu values */
+-		do {
+-			seq = u64_stats_fetch_begin(&bisc->sync);
+-			blkg_iostat_set(&cur, &bisc->cur);
+-		} while (u64_stats_fetch_retry(&bisc->sync, seq));
++		blkg_iostat_set(&cur, &bisc->cur);
+ 
+ 		blkcg_iostat_update(blkg, &cur, &bisc->last);
+ 
+@@ -1112,7 +1104,6 @@ static void blkcg_fill_root_iostats(void)
+ 		struct blkcg_gq *blkg = bdev->bd_disk->queue->root_blkg;
+ 		struct blkg_iostat tmp;
+ 		int cpu;
+-		unsigned long flags;
+ 
+ 		memset(&tmp, 0, sizeof(tmp));
+ 		for_each_possible_cpu(cpu) {
+@@ -1133,10 +1124,10 @@ static void blkcg_fill_root_iostats(void)
+ 			tmp.bytes[BLKG_IOSTAT_DISCARD] +=
+ 				cpu_dkstats->sectors[STAT_DISCARD] << 9;
+ 		}
+-
+-		flags = u64_stats_update_begin_irqsave(&blkg->iostat.sync);
++#if BITS_PER_LONG == 32
++		guard(raw_spinlock_irqsave)(&blkg_stat_lock);
++#endif
+ 		blkg_iostat_set(&blkg->iostat.cur, &tmp);
+-		u64_stats_update_end_irqrestore(&blkg->iostat.sync, flags);
+ 	}
+ }
+ 
+@@ -1145,7 +1136,6 @@ static void blkcg_print_one_stat(struct blkcg_gq *blkg, struct seq_file *s)
+ 	struct blkg_iostat_set *bis = &blkg->iostat;
+ 	u64 rbytes, wbytes, rios, wios, dbytes, dios;
+ 	const char *dname;
+-	unsigned seq;
+ 	int i;
+ 
+ 	if (!blkg->online)
+@@ -1157,16 +1147,18 @@ static void blkcg_print_one_stat(struct blkcg_gq *blkg, struct seq_file *s)
+ 
+ 	seq_printf(s, "%s ", dname);
+ 
+-	do {
+-		seq = u64_stats_fetch_begin(&bis->sync);
+-
++#if BITS_PER_LONG == 32
++	scoped_guard(raw_spinlock_irqsave, &blkg_stat_lock) {
++#endif
+ 		rbytes = bis->cur.bytes[BLKG_IOSTAT_READ];
+ 		wbytes = bis->cur.bytes[BLKG_IOSTAT_WRITE];
+ 		dbytes = bis->cur.bytes[BLKG_IOSTAT_DISCARD];
+ 		rios = bis->cur.ios[BLKG_IOSTAT_READ];
+ 		wios = bis->cur.ios[BLKG_IOSTAT_WRITE];
+ 		dios = bis->cur.ios[BLKG_IOSTAT_DISCARD];
+-	} while (u64_stats_fetch_retry(&bis->sync, seq));
++#if BITS_PER_LONG == 32
++	}
++#endif
+ 
+ 	if (rbytes || wbytes || rios || wios) {
+ 		seq_printf(s, "rbytes=%llu wbytes=%llu rios=%llu wios=%llu dbytes=%llu dios=%llu",
 -- 
-2.45.2
+2.18.0
 
 
