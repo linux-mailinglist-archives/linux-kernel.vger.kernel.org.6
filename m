@@ -1,91 +1,73 @@
-Return-Path: <linux-kernel+bounces-255913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB805934699
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 05:06:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 327DE93469C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 05:08:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 557E8B22122
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:06:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69EE31C219A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0268A2746F;
-	Thu, 18 Jul 2024 03:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6692CCC2;
+	Thu, 18 Jul 2024 03:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nf7ruRec"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IpuNKge5"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2428156CE
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 03:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23E934CD8;
+	Thu, 18 Jul 2024 03:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721271962; cv=none; b=pUyVbff5vuGDjyYmdtn2cEW4hiOMXJ81c8lm5e8nHK9TkF0B3hKlRf7FErGE9sjWVpU+kDgi4y9s/H6ahG5pP6qVI9t6XJ+9WNfF/A71uhh6MnEdMSxAlEwJVdMdyHVPDRw1ujtQL8GPi+ELDWa0rZRKACe9eb/o2x4wlJyDLyM=
+	t=1721272111; cv=none; b=lMDJSfw49pOQqbLlwYy0TJuAqMN0E5nd3lxFI5dHGGCEWpJmyP9LnJl8Xfrw0GilWbZV9aa4OeKMIp/24+4On58JjErLlK58xra4GTbxKdyxNhb1k19RoxXSEt6BR0SsScDw9+Cg8BZUJt3jDdueqoPKdQymxOg75rMjWesiv0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721271962; c=relaxed/simple;
-	bh=3p1nHlyFmbd2Mqt/h3ECuwH02UH1qFkMjptXlGRXakM=;
+	s=arc-20240116; t=1721272111; c=relaxed/simple;
+	bh=MiNlsXGgcHh+E5vT/xG2YFf4Mbm5LGxVLddc+UVv2zM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EgjnWwEhyIKxoY/rk89ATnVdXujHk/2kbH2nBRvweVcODAgzQseFTRrgGwrgt7aHRaLyZe1rmX7UR2SGbLp/eRYM5It1LBj+fuhmtgUhRXvWMMJ5JRxzqC22jm7TxBe/Ytycxl+kaGkftqkHWytRLe8UoORlIaLttNrXEQUT3d4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nf7ruRec; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7611b6a617cso154680a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 20:06:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721271960; x=1721876760; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yeW6dMBKtWe8oDZj4BcQTEdzzbJoa7udjbLAE+AJzpw=;
-        b=nf7ruRecmH17OyG5D6e3NRbhVcNXggf0gG9iOHljGVqvloxoQIPcHQKHUhmwsQoyga
-         GSwfGqPA7JfQZbRLuo4RSmzBpMZWVXRE9Z5Gz14ZILTJRHrlYB9efcWlRTekLfvXC7Bq
-         CXZuwjBf9zeisNKcMLGscV1niHTmykwIALM8MAJFtjjm4jjWy6eTOG1+XNOXyrnVHIaN
-         yB8Zr7tDbSAs1h1QA3NWOOXBHWdew9ePme1Q7neATnw7s6hF1hPklM462Gbq4tW4bbja
-         k7YiaLYo+3tDZGsXzGAm5lAfzG2oJEoe84Pmy6uXiKM13O74D8q8dZCEj46mOUEZkb3O
-         VQig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721271960; x=1721876760;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yeW6dMBKtWe8oDZj4BcQTEdzzbJoa7udjbLAE+AJzpw=;
-        b=JL7LMWmuZY8nEKDmw+TCxPbFfrwANCIKRgeU/0JgDpdaifMwLE1JeMtBwrW4Jg/fth
-         v8krdd7bmXzq2lprBkBW2OduMSxA9Px2BPyTE7R01dI+1x9o/jYTEzhvtCw0GYfoaHa8
-         /nd/HGSCyyLnPqQRku5q+IoEX0QxZHMycivvWqDdgVuqo2JaRLks64Z3zeP3CZA9XWYn
-         XpTuv+VGGxCoWQ3dqQIrwKGixo0N6BvhSWKZFenLCHL+QGLE6CNUirlrvDHjFQJDEhtu
-         JZD6gzVxntkHzO8ROi1xYC5i5FZgAlS1y+CyHfmO830iJMo/Fs0X0DgaMyivxn0bpqqR
-         NDew==
-X-Forwarded-Encrypted: i=1; AJvYcCVeG1UgGagO45qcbMANAKRVYuZ7m0eau7hhmxcUyUF1u32ntfHsqiT60VeRXD9qIXPGuS2XbCmHB6bth/WZ+mYNd6HyYEWV4kXF8NPJ
-X-Gm-Message-State: AOJu0Yz/k+ciwV34CaCPLnpgWHIAGW0cvo7/cs/41pMxyq5CRJW4+ORn
-	X2shuG8JS4qU15OdsF/3bgxU64X/y68xbJ8mtW+64lITuHuXRCH2ViGH6jZQ7Bk=
-X-Google-Smtp-Source: AGHT+IGZQrMHKumtV17odbuMLApq0aWGZDMpuPSD6YxnkxMLKUzBluzrVqhDLqn9KpZgTHq+5klwjQ==
-X-Received: by 2002:a05:6a20:a11e:b0:1bd:253e:28e with SMTP id adf61e73a8af0-1c3fdc962c8mr4939585637.16.1721271960004;
-        Wed, 17 Jul 2024 20:06:00 -0700 (PDT)
-Received: from localhost ([122.172.84.129])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc4bcab736sm18649325ad.233.2024.07.17.20.05.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 20:05:59 -0700 (PDT)
-Date: Thu, 18 Jul 2024 08:35:56 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>, Nikunj Kela <nkela@quicinc.com>,
-	Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM
- domains
-Message-ID: <20240718030556.dmgzs24d2bk3hmpb@vireshk-i7>
-References: <20240625105425.pkociumt4biv4j36@vireshk-i7>
- <CAPDyKFpLfBjozpcOzKp4jngkYenqSdpmejvCK37XvE1-WbBY2g@mail.gmail.com>
- <20240701114748.hodf6pngk7opx373@vireshk-i7>
- <20240702051526.hyqhvmxnywofsjp2@vireshk-i7>
- <CAPDyKFoA9O5a6xZ+948QOzYqsRjk_0jJaSxeYRwx=76YsLHzXQ@mail.gmail.com>
- <20240711031356.rl2j6fqxrykmqfoy@vireshk-i7>
- <CAPDyKFocjOt+JyzcAqOfCnmTxBMZmPjMerSh6RZ-hSMajRhzEA@mail.gmail.com>
- <CAPDyKFoWgX=r1QtrcpEF-Y4BkiOtVnz4jaztL9zggo-=uiKsUg@mail.gmail.com>
- <20240711131637.opzrayksfadimgq4@vireshk-i7>
- <CAPDyKFqczrJzHApBOYRSg=MXzzd1_nSgQQ3QwKYLWzgZ+XY32A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZK+TujkXM62IKSF2P1yRR4BKcuWfyiR1ORS27b3F1y640sCHh2nW+lPlJEFYTNn+QlrAORqaimyq+AYLuUk+3KhNwk4s6Yd+EHWv+uxo14E4Tyz7VDLfqnKah8ye8UEomyG/xeW/sH4knqhtPz6I5YxfShd4wDw4vaKiqVH0gHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IpuNKge5; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=dhbKOOXLOR2dvKgzNkDsF4yaQ6Osy862xbMrlR1zrlQ=; b=IpuNKge5/alV6Zh+IIdYK02o6o
+	mQ6vK/76s7+pxU7WODCEyWz/6yKYMACOjWbuNN4pfqaGfqwjrVJvk6szr8URtWhT3CD8Yu6EV2RJ+
+	LdboflFJOE/rpX8VL8rN7I795cKHfm5U9BD7/mom5/xJnC9F0ggILKciQJ60LMLmE/a0MYkBudjWs
+	909niZLucPZQkdPbI9FbVL0SFbseSieO4T6Xf2faKmBw/AVRNmqLdd3jX7OUD7F94MesgwTfOqdk6
+	6g66H6TUQnwT6o6pwSBBVSI/GEyDRUbkc38BZbKtUB5rZ884cpQMrPjBckplXxQTjxXMykRDG6Z9C
+	Z99aa10A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sUHVJ-0000000FavV-24cO;
+	Thu, 18 Jul 2024 03:08:25 +0000
+Date: Wed, 17 Jul 2024 20:08:25 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Huan Yang <link@vivo.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T.J. Mercier" <tjmercier@google.com>, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+Subject: Re: [PATCH 1/2] dma-buf: heaps: DMA_HEAP_IOCTL_ALLOC_READ_FILE
+ framework
+Message-ID: <ZpiHKY2pGiBuEq4z@infradead.org>
+References: <20240711074221.459589-2-link@vivo.com>
+ <5ccbe705-883c-4651-9e66-6b452c414c74@amd.com>
+ <ZpTnzkdolpEwFbtu@phenom.ffwll.local>
+ <99364176-a7f0-4a17-8889-75ff92d5694e@amd.com>
+ <06713006-c5ce-4773-a1b3-ca3bea56ee45@vivo.com>
+ <ZpY-CfcDdEhzWpxN@phenom.ffwll.local>
+ <b18ad853-90e4-4ad7-b621-2ca8a8111708@vivo.com>
+ <Zpff-8LmqK5AD-a8@phenom.ffwll.local>
+ <Zpf5R7fRZZmEwVuR@infradead.org>
+ <7140a145-7dd5-43b0-8b2a-0fd12bb9e62d@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,36 +76,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPDyKFqczrJzHApBOYRSg=MXzzd1_nSgQQ3QwKYLWzgZ+XY32A@mail.gmail.com>
+In-Reply-To: <7140a145-7dd5-43b0-8b2a-0fd12bb9e62d@vivo.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 11-07-24, 17:25, Ulf Hansson wrote:
-> Right, I get your point.
-> 
-> Although, it seems to me that just limiting required-opps to
-> performance-levels, could avoid us from having to enforce the OPPs for
-> genpd. In other words, doing something along the lines of $subject
-> patch should work fine.
+On Thu, Jul 18, 2024 at 09:51:39AM +0800, Huan Yang wrote:
+> Yes, actually, if dma-buf want's to copy_file_range from a file, it need
+> change something in vfs_copy_file_range:
 
-I really don't want to design the code that way. Required OPPs don't
-have anything to do with a genpd. Genpd is just one of the possible
-use cases and I would like the code to reflect it, even if we don't
-have any other users for this kind of stuff for now, but we surely
-can. Just that those problems are solved differently for now. For
-example, cache DVFS along with CPUs, etc.
+No, it doesn't.  copy_file_range is specifically designed to copy inside
+a single file system as already mentioned.  The generic offload for
+copying between arbitrary FDs is splice and the sendfile convenience
+wrapper around it
 
-And as I said earlier, it is entirely possible that the genpd OPP
-table wants to configure few more things apart from just level, and
-hence a full fledged set-opp is a better design choice.
-
-> In fact, it looks to me that the required-opps handling for the
-> *single* PM domain case, is already limited to solely
-> performance-levels (opp-level), as there are no required_devs being
-> assigned for it. Or did I get that wrong?
-
-That's why the API for setting required-opps was introduced, to make
-it a central point of entry for all use cases where we want to attach
-a device.
-
--- 
-viresh
 
