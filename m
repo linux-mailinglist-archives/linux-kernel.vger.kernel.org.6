@@ -1,433 +1,220 @@
-Return-Path: <linux-kernel+bounces-256264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58169934BA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:28:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 175C3934BAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:29:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D8CF286618
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:28:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 202AB1C21BD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:29:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5E912C470;
-	Thu, 18 Jul 2024 10:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3533012D758;
+	Thu, 18 Jul 2024 10:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ANHfbg+S"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OFtsf01i"
+Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576C63A267
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 10:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A4712CD96
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 10:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721298525; cv=none; b=OIViywWTy7x/uk5syxaX3swWOmqdMoSKT/AaTfDwn/MaVPPr8A3rrTI8EUYyK3qiB6sXZui7J7Aj4Nfhb0Jct5zD4QIGO8BCLoGkTcDcGnxCB04c+X6R+PieMbdKjwqmVBUDUYfITITDM9FjleoHyZL1L86X8dbQhgGGmqYPuks=
+	t=1721298587; cv=none; b=GW5Zng8p+muVbkrG7XTeYsY2uMh4tVhooqNz8Iht7LI0LlYuTv4XrRzL1FYdWoe1I+FDYYA7UGGagunWCxT5PZoRzPI31RA8Sgr+LeOeLqe5odt1Yoeuwz1eyUWl4GEVJNGYSXypGAiUAp1/5KT5DOo5j29kRQo/FIY6d+Q+0i0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721298525; c=relaxed/simple;
-	bh=zVq1oQep4PfiPGVOflbRNNWoSHM9Z6gCk18HjH5A6pc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X5eQRu3V84UOcg9vgJzePOo6gW2XkHd6tGjHEbofU3bFtfMHudLewGBP7spz6RFG5ivO+3CC+8bxQYxSV5cs3jlg2TwmUsCFAagKRcamS0/r0rdjiwkT7vRmsWLVB60+r5JDDFlTv+d+jDPUOPM7vYadePe3KfH8GlDLcZ8jI9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ANHfbg+S; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721298520;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tKUmSGCl+XqkJcVeT9f782AS0+B3hs0Tqt7OuTXmRSg=;
-	b=ANHfbg+ScOv31mTdZaW0RO2uITeudnmotkMhYePh4eLpYX9rsR8fa6q58MPsXJTrpty9Ev
-	J+0rGAHGQtesp7ePH8VnyamsBa6VyJLWq+p22cz8ZL5asy5GCR8Jz1TxfmM1ZDsCaDs4wE
-	6QMbekx+fSkC8qTbTztfL0A16Z2vpQM=
-Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com
- [209.85.167.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-206-jrGEcfb5OtmAdDdfuCA-4Q-1; Thu, 18 Jul 2024 06:28:38 -0400
-X-MC-Unique: jrGEcfb5OtmAdDdfuCA-4Q-1
-Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-3d92a4ae97eso552395b6e.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 03:28:36 -0700 (PDT)
+	s=arc-20240116; t=1721298587; c=relaxed/simple;
+	bh=3Qyk3nLyLDIHrxPcP2TVz5Xq7b5aJdgiNMZExcslJDs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hc39zvodkYJNligx8dPi/3nt/4wx6+0w8SsdPnUmhUT5zSQZBGoXOQ+tnSnSP9ryqT1GYefc/0oboPrpus43JsXVlH3tyuQciNUmsDK6znJmx91Lv1vxZP9TszqBEskuOOnFlc+gokRp6mkO5PXKY00A35Je8AjKwMpp+6hfAwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OFtsf01i; arc=none smtp.client-ip=209.85.161.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5ce74defe41so345608eaf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 03:29:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721298585; x=1721903385; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Qn595tj+8ziMn0/QIYoTkBU+IARmrWlkcsfgecQj10Y=;
+        b=OFtsf01icfZ0OGFJL4tHDxXooNhlpx2q6FBXzNRliE/tcdziWs9NqzF6mrMD7k5sSK
+         93ak/qihLNJ1qvSU8uB3H4N0oO+0LzkPf0tOZXWG9W1BWkOEc04gOvr72gji8t8T1P/L
+         91FFi3fVmji0vcbUUfIDhWoQAlh9Jx6pR86PQPas+J4EchFP36cL9U8CRz/ZqBvHfXsl
+         SFG7nJb5L/U5GC7jQuH7dW2TSxrjfn4YAGnsZAxi9JeYpAxnswbc+Fl28THlAA2i6iO6
+         XM+TLtr/TYxFAmpl39E1QvXzxSeUhkihqgHlvJ8PE2b3cHOfAhJgBf1oMLLF4jno/k6e
+         02tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721298516; x=1721903316;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tKUmSGCl+XqkJcVeT9f782AS0+B3hs0Tqt7OuTXmRSg=;
-        b=kymycyAGMg+PPEs75HRV6sA3ZpAKxhep16iTcz6CSD+bV7CFmhyWVrp0DUmF4AUpYa
-         PM9qwhzJ2bMTM4wnWWcpThOoXhVI+cx/tZ7g6RxMh06qFUXmdNtl77jBKS55u9uOwXM9
-         mgUNqLJpjAvnq1fmJWhPfp+WM5FXC7Xc6BNer73vSPX2oG2tnXf5ghqP2G3zIqQB+tzT
-         uN/93l5PPMzkz1hqKE75LHE9gDUrxbHa6PbdrTbIIRmdZGokJCxsNIclU3JMsZAbw0Il
-         +rR/nGotJusodcR/HW1tDYltcVCqPnC1JKKJ1PpgVebgOjMG3J6bsIkTFoqVtX3o8evF
-         hNJw==
-X-Forwarded-Encrypted: i=1; AJvYcCXTM1hTge8EwKlkChL+c3YyM7pBKzNR/MFoqIBp2MNWo70Jzpdr+fEChPPGkqcDereHAo3XDvfjpQtxUdFLxmeUwc0bodvHErhEPKLG
-X-Gm-Message-State: AOJu0YyuNuPowhs3go0g4azr6KysRC1DyTywoSyox8Fqm90BHxlMch8N
-	1mIbSljrekzeuspRJa5UX8n9sjszJb6jRb+mBdf6E05R7gJEobFU0Oxm7HWyPbYI4o6UETg0QI7
-	ERaLvgF1yEyFwKIEqCC5Mr7NzSCiRoU7QOwIG7NNE1ycum29Q4XczYwww/sVSgj7pJV0bSZV3uv
-	PVOdLs8aHUqQQD1oV7vXabBGiFERhAQDrEvG6W
-X-Received: by 2002:a05:6870:1584:b0:260:fbf6:3222 with SMTP id 586e51a60fabf-260fbf63773mr487748fac.10.1721298515987;
-        Thu, 18 Jul 2024 03:28:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGm7hCw80oesmICa4/aUZEE504nr4toU2z+fL7ihD/IKUzG8XYH6xm20TLaQEeAYuUfP7w/gbV9P8M4o2MJheY=
-X-Received: by 2002:a05:6870:1584:b0:260:fbf6:3222 with SMTP id
- 586e51a60fabf-260fbf63773mr487734fac.10.1721298515622; Thu, 18 Jul 2024
- 03:28:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721298585; x=1721903385;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qn595tj+8ziMn0/QIYoTkBU+IARmrWlkcsfgecQj10Y=;
+        b=HFZVlIQEOAqBgBBBcDgSSaJzBZuraW3E8+aAon6k8xz6cQFmzPb09BgPZKdQMOJqlY
+         LbDGzkT0dfSmvdST0gF1oJi7hsmWgUzyRkVJPgT13vvfDWVKHGtNOCBYjJWsY5lBaQW/
+         FQMOgHPSKwRbsqpeq+gEuMsbXfgvd0cZv3f8hEhM15fPBtyC8Np/GwAvLGNSWFLtcS4/
+         DIieHJRWW3BXtsyP45kM8tdlEjLALvbbJRAv7ABBcBKha6tOibWLTu/OsJ1lxCYB3YGi
+         JdRliv+rROaDFb+ohKf4GHdrCmiD+OxhRaVLFEGgUGdkHkU2nURA31BrvPoSkkrnvwNG
+         9Nvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXk+OoDgrHzr75ocQGz5gaGyoMIIt5mipej/zfPhIXxHMsUFeZT+EEW3D6sMQetOH8yCdCBB1YUVAPWol1m4hTsLZdE999ocXuoTwDS
+X-Gm-Message-State: AOJu0Yz70X9svVMkJJhGyIdVM4APUCCX1HtKrYFUCdDEN7AMtuKoVj1q
+	WAndvaFrSA8HjQyJzQwec5aQr13T26RCTdmU3NOdKErP0mZ5DTqflZoUUXx2lGXHqVM1C/kWLsg
+	=
+X-Google-Smtp-Source: AGHT+IEqtMgjvMxkbWmWOdXGGWp0Zjuz/CWNaJsNsiv+FSoHC2NTjU/GPw8xwFN3knQ+HKmaZvHkxw==
+X-Received: by 2002:a05:6871:149:b0:25e:12b9:be40 with SMTP id 586e51a60fabf-260d9221b48mr3740633fac.25.1721298584639;
+        Thu, 18 Jul 2024 03:29:44 -0700 (PDT)
+Received: from thinkpad ([220.158.156.207])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7ec7ed56sm9640357b3a.125.2024.07.18.03.29.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jul 2024 03:29:44 -0700 (PDT)
+Date: Thu, 18 Jul 2024 15:59:38 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Mayank Rana <quic_mrana@quicinc.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 12/13] PCI: qcom: Simulate PCIe hotplug using 'global'
+ interrupt
+Message-ID: <20240718102938.GA8877@thinkpad>
+References: <20240717-pci-qcom-hotplug-v2-0-71d304b817f8@linaro.org>
+ <20240717-pci-qcom-hotplug-v2-12-71d304b817f8@linaro.org>
+ <02b94a07-fcd6-4a48-bead-530b81c8a27e@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240615093433.3659829-1-s-vadapalli@ti.com> <20240615093433.3659829-2-s-vadapalli@ti.com>
-In-Reply-To: <20240615093433.3659829-2-s-vadapalli@ti.com>
-From: Enric Balletbo i Serra <eballetb@redhat.com>
-Date: Thu, 18 Jul 2024 12:28:25 +0200
-Message-ID: <CALE0LRuKN0fPAJX+StBn+_N0L1-MvEoVGng+8miXuEDB7uEDpw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] phy: cadence-torrent: Add PCIe multilink
- configuration for 100MHz refclk
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, sjakhade@cadence.com, 
-	rogerq@kernel.org, thomas.richard@bootlin.com, robh@kernel.org, 
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, srk@ti.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <02b94a07-fcd6-4a48-bead-530b81c8a27e@quicinc.com>
 
-Hi,
+On Wed, Jul 17, 2024 at 03:57:11PM -0700, Mayank Rana wrote:
+> Hi Mani
+> 
+> I don't think we can suggest that usage of link up event with Global IRQ as
+> simulate PCIe hotplug. hotplug is referring to allow handling of both
+> add or remove of endpoint device whereas here you are using global IRQ as
+> last step to rescan bus if endpoint is power up later after link training is
+> initiated.
+> 
 
-Many thanks for your patch. I'm not an expert on this but from a
-general overview the patch looks good to me, for what it's worth I
-picked the patches on my AM69-SK board and make it run USB and the
-NVMe without problems so,
+Why not? Well it is not entirely the standard 'hotplug' and that's why I
+referred it as 'simulating hotplug'.
 
-On Sat, Jun 15, 2024 at 11:35=E2=80=AFAM Siddharth Vadapalli <s-vadapalli@t=
-i.com> wrote:
->
-> From: Swapnil Jakhade <sjakhade@cadence.com>
->
-> Add register sequences to support PCIe multilink configuration for 100MHz
-> reference clock. Maximum two PCIe links are supported.
->
-> Signed-off-by: Swapnil Jakhade <sjakhade@cadence.com>
-> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+The point of having this feature is to avoid the hassle of rescanning the bus
+manually when the devices are connected to this bus post boot.
 
-Tested-by: Enric Balletbo i Serra <eballetbo@redhat.com>
+> Will this work if you remove endpoint device and add it back again ?
+> 
 
-> ---
->  drivers/phy/cadence/phy-cadence-torrent.c | 130 +++++++++++++++++++++-
->  1 file changed, 129 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/phy/cadence/phy-cadence-torrent.c b/drivers/phy/cade=
-nce/phy-cadence-torrent.c
-> index 89e647bff99f..db60faeea988 100644
-> --- a/drivers/phy/cadence/phy-cadence-torrent.c
-> +++ b/drivers/phy/cadence/phy-cadence-torrent.c
-> @@ -197,6 +197,7 @@
->  #define RX_SDCAL1_INIT_TMR             0x004CU
->  #define RX_SDCAL1_ITER_TMR             0x004DU
->  #define RX_CDRLF_CNFG                  0x0080U
-> +#define RX_CDRLF_CNFG2                 0x0081U
->  #define RX_CDRLF_CNFG3                 0x0082U
->  #define RX_SIGDET_HL_FILT_TMR          0x0090U
->  #define RX_REE_GCSM1_CTRL              0x0108U
-> @@ -204,6 +205,7 @@
->  #define RX_REE_GCSM1_EQENM_PH2         0x010AU
->  #define RX_REE_GCSM2_CTRL              0x0110U
->  #define RX_REE_PERGCSM_CTRL            0x0118U
-> +#define RX_REE_PEAK_UTHR               0x0142U
->  #define RX_REE_ATTEN_THR               0x0149U
->  #define RX_REE_TAP1_CLIP               0x0171U
->  #define RX_REE_TAP2TON_CLIP            0x0172U
-> @@ -212,6 +214,7 @@
->  #define RX_DIAG_DFE_CTRL               0x01E0U
->  #define RX_DIAG_DFE_AMP_TUNE_2         0x01E2U
->  #define RX_DIAG_DFE_AMP_TUNE_3         0x01E3U
-> +#define RX_DIAG_REE_DAC_CTRL           0x01E4U
->  #define RX_DIAG_NQST_CTRL              0x01E5U
->  #define RX_DIAG_SIGDET_TUNE            0x01E8U
->  #define RX_DIAG_PI_RATE                        0x01F4U
-> @@ -3075,6 +3078,101 @@ static void cdns_torrent_phy_remove(struct platfo=
-rm_device *pdev)
->         cdns_torrent_clk_cleanup(cdns_phy);
->  }
->
-> +/* Multi link PCIe configuration */
-> +static struct cdns_reg_pairs ml_pcie_link_cmn_regs[] =3D {
-> +       {0x0002, PHY_PLL_CFG},
-> +       {0x0601, CMN_PDIAG_PLL0_CLK_SEL_M0}
-> +};
-> +
-> +static struct cdns_reg_pairs ml_pcie_xcvr_diag_ln_regs[] =3D {
-> +       {0x0100, XCVR_DIAG_HSCLK_SEL},
-> +       {0x0001, XCVR_DIAG_HSCLK_DIV},
-> +       {0x0812, XCVR_DIAG_PLLDRC_CTRL}
-> +};
-> +
-> +static struct cdns_torrent_vals ml_pcie_link_cmn_vals =3D {
-> +       .reg_pairs =3D ml_pcie_link_cmn_regs,
-> +       .num_regs =3D ARRAY_SIZE(ml_pcie_link_cmn_regs),
-> +};
-> +
-> +static struct cdns_torrent_vals ml_pcie_xcvr_diag_ln_vals =3D {
-> +       .reg_pairs =3D ml_pcie_xcvr_diag_ln_regs,
-> +       .num_regs =3D ARRAY_SIZE(ml_pcie_xcvr_diag_ln_regs),
-> +};
-> +
-> +/* Multi link PCIe, 100 MHz Ref clk, no SSC */
-> +static struct cdns_reg_pairs ml_pcie_100_no_ssc_cmn_regs[] =3D {
-> +       {0x0003, CMN_PLL0_VCOCAL_TCTRL},
-> +       {0x0003, CMN_PLL1_VCOCAL_TCTRL}
-> +};
-> +
-> +static struct cdns_reg_pairs ml_pcie_100_no_ssc_rx_ln_regs[] =3D {
-> +       {0x0019, RX_REE_TAP1_CLIP},
-> +       {0x0019, RX_REE_TAP2TON_CLIP},
-> +       {0x0008, RX_REE_PEAK_UTHR},
-> +       {0x018E, RX_CDRLF_CNFG},
-> +       {0x2E33, RX_CDRLF_CNFG2},
-> +       {0x0001, RX_DIAG_ACYA},
-> +       {0x0C21, RX_DIAG_DFE_AMP_TUNE_2},
-> +       {0x0002, RX_DIAG_DFE_AMP_TUNE_3},
-> +       {0x0005, RX_DIAG_REE_DAC_CTRL}
-> +};
-> +
-> +static struct cdns_torrent_vals ml_pcie_100_no_ssc_cmn_vals =3D {
-> +       .reg_pairs =3D ml_pcie_100_no_ssc_cmn_regs,
-> +       .num_regs =3D ARRAY_SIZE(ml_pcie_100_no_ssc_cmn_regs),
-> +};
-> +
-> +static struct cdns_torrent_vals ml_pcie_100_no_ssc_rx_ln_vals =3D {
-> +       .reg_pairs =3D ml_pcie_100_no_ssc_rx_ln_regs,
-> +       .num_regs =3D ARRAY_SIZE(ml_pcie_100_no_ssc_rx_ln_regs),
-> +};
-> +
-> +/* Multi link PCIe, 100 MHz Ref clk, internal SSC */
-> +static struct cdns_reg_pairs ml_pcie_100_int_ssc_cmn_regs[] =3D {
-> +       {0x0004, CMN_PLL0_DSM_DIAG_M0},
-> +       {0x0004, CMN_PLL1_DSM_DIAG_M0},
-> +       {0x0509, CMN_PDIAG_PLL0_CP_PADJ_M0},
-> +       {0x0509, CMN_PDIAG_PLL1_CP_PADJ_M0},
-> +       {0x0F00, CMN_PDIAG_PLL0_CP_IADJ_M0},
-> +       {0x0F00, CMN_PDIAG_PLL1_CP_IADJ_M0},
-> +       {0x0F08, CMN_PDIAG_PLL0_FILT_PADJ_M0},
-> +       {0x0F08, CMN_PDIAG_PLL1_FILT_PADJ_M0},
-> +       {0x0064, CMN_PLL0_INTDIV_M0},
-> +       {0x0050, CMN_PLL1_INTDIV_M0},
-> +       {0x0002, CMN_PLL0_FRACDIVH_M0},
-> +       {0x0002, CMN_PLL1_FRACDIVH_M0},
-> +       {0x0044, CMN_PLL0_HIGH_THR_M0},
-> +       {0x0036, CMN_PLL1_HIGH_THR_M0},
-> +       {0x0002, CMN_PDIAG_PLL0_CTRL_M0},
-> +       {0x0002, CMN_PDIAG_PLL1_CTRL_M0},
-> +       {0x0001, CMN_PLL0_SS_CTRL1_M0},
-> +       {0x0001, CMN_PLL1_SS_CTRL1_M0},
-> +       {0x011B, CMN_PLL0_SS_CTRL2_M0},
-> +       {0x011B, CMN_PLL1_SS_CTRL2_M0},
-> +       {0x006E, CMN_PLL0_SS_CTRL3_M0},
-> +       {0x0058, CMN_PLL1_SS_CTRL3_M0},
-> +       {0x000E, CMN_PLL0_SS_CTRL4_M0},
-> +       {0x0012, CMN_PLL1_SS_CTRL4_M0},
-> +       {0x0C5E, CMN_PLL0_VCOCAL_REFTIM_START},
-> +       {0x0C5E, CMN_PLL1_VCOCAL_REFTIM_START},
-> +       {0x0C56, CMN_PLL0_VCOCAL_PLLCNT_START},
-> +       {0x0C56, CMN_PLL1_VCOCAL_PLLCNT_START},
-> +       {0x0003, CMN_PLL0_VCOCAL_TCTRL},
-> +       {0x0003, CMN_PLL1_VCOCAL_TCTRL},
-> +       {0x00C7, CMN_PLL0_LOCK_REFCNT_START},
-> +       {0x00C7, CMN_PLL1_LOCK_REFCNT_START},
-> +       {0x00C7, CMN_PLL0_LOCK_PLLCNT_START},
-> +       {0x00C7, CMN_PLL1_LOCK_PLLCNT_START},
-> +       {0x0005, CMN_PLL0_LOCK_PLLCNT_THR},
-> +       {0x0005, CMN_PLL1_LOCK_PLLCNT_THR}
-> +};
-> +
-> +static struct cdns_torrent_vals ml_pcie_100_int_ssc_cmn_vals =3D {
-> +       .reg_pairs =3D ml_pcie_100_int_ssc_cmn_regs,
-> +       .num_regs =3D ARRAY_SIZE(ml_pcie_100_int_ssc_cmn_regs),
-> +};
-> +
->  /* SGMII and QSGMII link configuration */
->  static struct cdns_reg_pairs sgmii_qsgmii_link_cmn_regs[] =3D {
->         {0x0002, PHY_PLL_CFG}
-> @@ -4475,7 +4573,7 @@ static struct cdns_torrent_vals sl_sgmii_xcvr_diag_=
-ln_vals =3D {
->         .num_regs =3D ARRAY_SIZE(sl_sgmii_xcvr_diag_ln_regs),
->  };
->
-> -/* Multi link PCIe, 100 MHz Ref clk, internal SSC */
-> +/* For PCIe (with some other protocol), 100 MHz Ref clk, internal SSC */
->  static struct cdns_reg_pairs pcie_100_int_ssc_cmn_regs[] =3D {
->         {0x0004, CMN_PLL0_DSM_DIAG_M0},
->         {0x0004, CMN_PLL0_DSM_DIAG_M1},
-> @@ -4614,6 +4712,7 @@ static struct cdns_torrent_vals_entry link_cmn_vals=
-_entries[] =3D {
->         {CDNS_TORRENT_KEY_ANYCLK(TYPE_DP, TYPE_USB), &usb_dp_link_cmn_val=
-s},
->
->         {CDNS_TORRENT_KEY_ANYCLK(TYPE_PCIE, TYPE_NONE), NULL},
-> +       {CDNS_TORRENT_KEY_ANYCLK(TYPE_PCIE, TYPE_PCIE), &ml_pcie_link_cmn=
-_vals},
->         {CDNS_TORRENT_KEY_ANYCLK(TYPE_PCIE, TYPE_SGMII), &pcie_sgmii_link=
-_cmn_vals},
->         {CDNS_TORRENT_KEY_ANYCLK(TYPE_PCIE, TYPE_QSGMII), &pcie_sgmii_lin=
-k_cmn_vals},
->         {CDNS_TORRENT_KEY_ANYCLK(TYPE_PCIE, TYPE_USB), &pcie_usb_link_cmn=
-_vals},
-> @@ -4650,6 +4749,7 @@ static struct cdns_torrent_vals_entry xcvr_diag_val=
-s_entries[] =3D {
->         {CDNS_TORRENT_KEY_ANYCLK(TYPE_DP, TYPE_USB), &dp_usb_xcvr_diag_ln=
-_vals},
->
->         {CDNS_TORRENT_KEY_ANYCLK(TYPE_PCIE, TYPE_NONE), NULL},
-> +       {CDNS_TORRENT_KEY_ANYCLK(TYPE_PCIE, TYPE_PCIE), &ml_pcie_xcvr_dia=
-g_ln_vals},
->         {CDNS_TORRENT_KEY_ANYCLK(TYPE_PCIE, TYPE_SGMII), &pcie_sgmii_xcvr=
-_diag_ln_vals},
->         {CDNS_TORRENT_KEY_ANYCLK(TYPE_PCIE, TYPE_QSGMII), &pcie_sgmii_xcv=
-r_diag_ln_vals},
->         {CDNS_TORRENT_KEY_ANYCLK(TYPE_PCIE, TYPE_USB), &pcie_usb_xcvr_dia=
-g_ln_vals},
-> @@ -4700,6 +4800,10 @@ static struct cdns_torrent_vals_entry cmn_vals_ent=
-ries[] =3D {
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_NONE,=
- EXTERNAL_SSC), NULL},
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_NONE,=
- INTERNAL_SSC), &sl_pcie_100_int_ssc_cmn_vals},
->
-> +       {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_PCIE,=
- NO_SSC), &ml_pcie_100_no_ssc_cmn_vals},
-> +       {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_PCIE,=
- EXTERNAL_SSC), &ml_pcie_100_no_ssc_cmn_vals},
-> +       {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_PCIE,=
- INTERNAL_SSC), &ml_pcie_100_int_ssc_cmn_vals},
-> +
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_SGMII=
-, NO_SSC), &pcie_100_no_ssc_cmn_vals},
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_SGMII=
-, EXTERNAL_SSC), &pcie_100_no_ssc_cmn_vals},
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_SGMII=
-, INTERNAL_SSC), &pcie_100_int_ssc_cmn_vals},
-> @@ -4782,6 +4886,10 @@ static struct cdns_torrent_vals_entry cdns_tx_ln_v=
-als_entries[] =3D {
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_NONE,=
- EXTERNAL_SSC), NULL},
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_NONE,=
- INTERNAL_SSC), NULL},
->
-> +       {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_PCIE,=
- NO_SSC), NULL},
-> +       {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_PCIE,=
- EXTERNAL_SSC), NULL},
-> +       {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_PCIE,=
- INTERNAL_SSC), NULL},
-> +
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_SGMII=
-, NO_SSC), NULL},
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_SGMII=
-, EXTERNAL_SSC), NULL},
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_SGMII=
-, INTERNAL_SSC), NULL},
-> @@ -4864,6 +4972,10 @@ static struct cdns_torrent_vals_entry cdns_rx_ln_v=
-als_entries[] =3D {
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_NONE,=
- EXTERNAL_SSC), &pcie_100_no_ssc_rx_ln_vals},
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_NONE,=
- INTERNAL_SSC), &pcie_100_no_ssc_rx_ln_vals},
->
-> +       {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_PCIE,=
- NO_SSC), &ml_pcie_100_no_ssc_rx_ln_vals},
-> +       {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_PCIE,=
- EXTERNAL_SSC), &ml_pcie_100_no_ssc_rx_ln_vals},
-> +       {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_PCIE,=
- INTERNAL_SSC), &ml_pcie_100_no_ssc_rx_ln_vals},
-> +
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_SGMII=
-, NO_SSC), &pcie_100_no_ssc_rx_ln_vals},
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_SGMII=
-, EXTERNAL_SSC), &pcie_100_no_ssc_rx_ln_vals},
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_SGMII=
-, INTERNAL_SSC), &pcie_100_no_ssc_rx_ln_vals},
-> @@ -4982,6 +5094,10 @@ static struct cdns_torrent_vals_entry ti_tx_ln_val=
-s_entries[] =3D {
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_NONE,=
- EXTERNAL_SSC), NULL},
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_NONE,=
- INTERNAL_SSC), NULL},
->
-> +       {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_PCIE,=
- NO_SSC), NULL},
-> +       {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_PCIE,=
- EXTERNAL_SSC), NULL},
-> +       {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_PCIE,=
- INTERNAL_SSC), NULL},
-> +
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_SGMII=
-, NO_SSC), NULL},
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_SGMII=
-, EXTERNAL_SSC), NULL},
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_SGMII=
-, INTERNAL_SSC), NULL},
-> @@ -5098,6 +5214,10 @@ static struct cdns_torrent_vals_entry ti_j7200_cmn=
-_vals_entries[] =3D {
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_NONE,=
- EXTERNAL_SSC), NULL},
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_NONE,=
- INTERNAL_SSC), &sl_pcie_100_int_ssc_cmn_vals},
->
-> +       {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_PCIE,=
- NO_SSC), &ml_pcie_100_no_ssc_cmn_vals},
-> +       {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_PCIE,=
- EXTERNAL_SSC), &ml_pcie_100_no_ssc_cmn_vals},
-> +       {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_PCIE,=
- INTERNAL_SSC), &ml_pcie_100_int_ssc_cmn_vals},
-> +
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_SGMII=
-, NO_SSC), &pcie_100_no_ssc_cmn_vals},
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_SGMII=
-, EXTERNAL_SSC), &pcie_100_no_ssc_cmn_vals},
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_SGMII=
-, INTERNAL_SSC), &pcie_100_int_ssc_cmn_vals},
-> @@ -5180,6 +5300,10 @@ static struct cdns_torrent_vals_entry ti_j7200_tx_=
-ln_vals_entries[] =3D {
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_NONE,=
- EXTERNAL_SSC), NULL},
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_NONE,=
- INTERNAL_SSC), NULL},
->
-> +       {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_PCIE,=
- NO_SSC), NULL},
-> +       {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_PCIE,=
- EXTERNAL_SSC), NULL},
-> +       {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_PCIE,=
- INTERNAL_SSC), NULL},
-> +
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_SGMII=
-, NO_SSC), NULL},
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_SGMII=
-, EXTERNAL_SSC), NULL},
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_SGMII=
-, INTERNAL_SSC), NULL},
-> @@ -5262,6 +5386,10 @@ static struct cdns_torrent_vals_entry ti_j7200_rx_=
-ln_vals_entries[] =3D {
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_NONE,=
- EXTERNAL_SSC), &pcie_100_no_ssc_rx_ln_vals},
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_NONE,=
- INTERNAL_SSC), &pcie_100_no_ssc_rx_ln_vals},
->
-> +       {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_PCIE,=
- NO_SSC), &pcie_100_no_ssc_rx_ln_vals},
-> +       {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_PCIE,=
- EXTERNAL_SSC), &pcie_100_no_ssc_rx_ln_vals},
-> +       {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_PCIE,=
- INTERNAL_SSC), &pcie_100_no_ssc_rx_ln_vals},
-> +
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_SGMII=
-, NO_SSC), &pcie_100_no_ssc_rx_ln_vals},
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_SGMII=
-, EXTERNAL_SSC), &pcie_100_no_ssc_rx_ln_vals},
->         {CDNS_TORRENT_KEY(CLK_100_MHZ, CLK_100_MHZ, TYPE_PCIE, TYPE_SGMII=
-, INTERNAL_SSC), &pcie_100_no_ssc_rx_ln_vals},
-> --
-> 2.40.1
->
->
+No, not currently. But we could add that logic using LINK_DOWN event. Though,
+when the device comes back again, it will not get enumerated successfully due to
+a bug in the link training part (which I plan to address later). But this
+issue is irrespective of this hotplug simulation.
 
+> Regards,
+> Mayank
+> On 7/17/2024 10:03 AM, Manivannan Sadhasivam via B4 Relay wrote:
+> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > 
+> > Historically, Qcom PCIe RC controllers lack standard hotplug support. So
+> > when an endpoint is attached to the SoC, users have to rescan the bus
+> > manually to enumerate the device. But this can be avoided by simulating the
+> > PCIe hotplug using Qcom specific way.
+> > 
+> > Qcom PCIe RC controllers are capable of generating the 'global' SPI
+> > interrupt to the host CPUs. The device driver can use this event to
+> > identify events such as PCIe link specific events, safety events etc...
+> > 
+> > One such event is the PCIe Link up event generated when an endpoint is
+> > detected on the bus and the Link is 'up'. This event can be used to
+> > simulate the PCIe hotplug in the Qcom SoCs.
+> > 
+> > So add support for capturing the PCIe Link up event using the 'global'
+> > interrupt in the driver. Once the Link up event is received, the bus
+> > underneath the host bridge is scanned to enumerate PCIe endpoint devices,
+> > thus simulating hotplug.
+> > 
+> > All of the Qcom SoCs have only one rootport per controller instance. So
+> > only a single 'Link up' event is generated for the PCIe controller.
+> > 
+> > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >   drivers/pci/controller/dwc/pcie-qcom.c | 55 +++++++++++++++++++++++++++++++++-
+> >   1 file changed, 54 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> > index 0180edf3310e..a1d678fe7fa5 100644
+> > --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> > @@ -50,6 +50,9 @@
+> >   #define PARF_AXI_MSTR_WR_ADDR_HALT_V2		0x1a8
+> >   #define PARF_Q2A_FLUSH				0x1ac
+> >   #define PARF_LTSSM				0x1b0
+> > +#define PARF_INT_ALL_STATUS			0x224
+> > +#define PARF_INT_ALL_CLEAR			0x228
+> > +#define PARF_INT_ALL_MASK			0x22c
+> >   #define PARF_SID_OFFSET				0x234
+> >   #define PARF_BDF_TRANSLATE_CFG			0x24c
+> >   #define PARF_SLV_ADDR_SPACE_SIZE		0x358
+> > @@ -121,6 +124,9 @@
+> >   /* PARF_LTSSM register fields */
+> >   #define LTSSM_EN				BIT(8)
+> > +/* PARF_INT_ALL_{STATUS/CLEAR/MASK} register fields */
+> > +#define PARF_INT_ALL_LINK_UP			BIT(13)
+> > +
+> >   /* PARF_NO_SNOOP_OVERIDE register fields */
+> >   #define WR_NO_SNOOP_OVERIDE_EN			BIT(1)
+> >   #define RD_NO_SNOOP_OVERIDE_EN			BIT(3)
+> > @@ -1488,6 +1494,29 @@ static void qcom_pcie_init_debugfs(struct qcom_pcie *pcie)
+> >   				    qcom_pcie_link_transition_count);
+> >   }
+> > +static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
+> > +{
+> > +	struct qcom_pcie *pcie = data;
+> > +	struct dw_pcie_rp *pp = &pcie->pci->pp;
+> > +	struct device *dev = pcie->pci->dev;
+> > +	u32 status = readl_relaxed(pcie->parf + PARF_INT_ALL_STATUS);
+> > +
+> > +	writel_relaxed(status, pcie->parf + PARF_INT_ALL_CLEAR);
+> > +
+> > +	if (FIELD_GET(PARF_INT_ALL_LINK_UP, status)) {
+> > +		dev_dbg(dev, "Received Link up event. Starting enumeration!\n");
+> > +		/* Rescan the bus to enumerate endpoint devices */
+> > +		pci_lock_rescan_remove();
+> > +		pci_rescan_bus(pp->bridge->bus);
+> > +		pci_unlock_rescan_remove();
+> How do you handle case where endpoint is already enumerated, and seeing link
+> up event in parallel or later ? will it go ahead to rescan bus again here ?
+> 
+
+If the endpoint is already enumerated, there will be no Link up event. Unless
+the controller reinitializes the bus (which is the current behavior).
+
+If the endpoint is already powered on during controller probe, then it will be
+enumerated during dw_pcie_host_init() and since we register the IRQ handler
+afterwards, there will be no Link up in that case.
+
+This feature is only applicable for endpoints that comes up post boot.
+
+> Also can you consider doing this outside hardirq context ?
+> 
+
+This is already running in threaded irq context (bottom half), wouldn't that
+be enough?
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
