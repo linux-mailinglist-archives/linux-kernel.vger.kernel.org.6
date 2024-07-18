@@ -1,165 +1,125 @@
-Return-Path: <linux-kernel+bounces-256034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDE8393480A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:23:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94A73934828
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0661E1C2196E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:23:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D665282F3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E7973467;
-	Thu, 18 Jul 2024 06:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="moQFoqeI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDAA06A022;
+	Thu, 18 Jul 2024 06:37:58 +0000 (UTC)
+Received: from mx2.zhaoxin.com (mx2.zhaoxin.com [203.110.167.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7076F2E2;
-	Thu, 18 Jul 2024 06:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B1B273FD
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 06:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.110.167.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721283815; cv=none; b=C3yCOCxnBC19ee184+6uVt6FmBPBo8Yl4RxPcj0hgQYi4ueVr2F+E+gRPi9lYnA5uhaiEW6Uek/cYuZg90yzqW6FHmWuHp/JwV30067DszmMcpPNnaFmj9sT9iT1NTNVH1yCepVXfwf0yu0DCzirZT8mqgxq7dRRTEhXhfjVDP0=
+	t=1721284678; cv=none; b=goYSamrlo8ipmwUG+IuGr9KhcJYBf67UhWMo4SVPvpGp8MVoq9GyNLwJ4BAEd+nitGWQ+DbsSIMQG3nnMhgL/FSG/aV80WxCuj0ifbY9bd6JUCSZJlLn09e5IlqLmdEaH2u0rcmdWktxebZEMUD6qBUB1swPGrlah6LCoQGy/GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721283815; c=relaxed/simple;
-	bh=SvVf4UyACVq2ID5CqwMvBFY+DkB1EhPM0jXf/gJ76X4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Cx6+2gMDk9B0FG728OIvCnTzSjDduUT0aa7GY4o4fRyPHxSmGBvbIr2J8IcAsz6HQTjUXcesyXsvHuknishso9ODlZKs/5MVnIH4hdZMIPN0bfidRtbhSkSSvk7FvlBJpvS1OV3H9WXOiZVD0Bt1jptWbURxfwsNKJLpwa3lWgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=moQFoqeI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFC46C4AF19;
-	Thu, 18 Jul 2024 06:23:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721283815;
-	bh=SvVf4UyACVq2ID5CqwMvBFY+DkB1EhPM0jXf/gJ76X4=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=moQFoqeIpkzwRvXFhfuhUYtbt5B2waEKoqrHRMbU9x9z9u5ZBX5RRJ2YJFuJ+H7WL
-	 gR1EiTqTKG5ZwolO3Zk6g2ZlnbUB3gaVusYg0jyqzbyP8ZxekB1nWg1WuonZmc7I4G
-	 vIkUH5uW1hwRSuRq790gweTM2Ec3PNBgoe2ODurUb7K+YYEVyizA08fv7FK2qj+R1t
-	 MVGXooiSCBOjAe5Y6HQyXFhOOjW3AMUFqGn5SfAgqDxpLgJWjfoHLyHygDlmW0PSC6
-	 5W1HuXbR7Fa8XNM5cYxsVszMNeqHHYTjcmK+2takYkfTGuF7wAPyP1lIldwqBLT1+M
-	 dOJ83pBxCmNpA==
-Message-ID: <fe83d463-b52a-44bc-b122-ed4fa4c20bf7@kernel.org>
-Date: Thu, 18 Jul 2024 08:23:28 +0200
+	s=arc-20240116; t=1721284678; c=relaxed/simple;
+	bh=ZGMAaa3hz4DkXQmXeLg0cxOwAuuJE5uqmlYG/Vh/z8Q=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V1LxgmbwT6oOUuhFUBDqermROhd7dJg7HykmvL8tKUiBjhKKPGkNAYZDUH+X1GbbS7fWFXEA5Le/pVuAXwmt96fIBIiow8fT+dMJYhRxWencqn5Kf8DRVy3BrsTtCNWsbzHtv8LXj0JiezBCpJGske1jRDEbWtH2UNCs6BlBXKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=203.110.167.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
+X-ASG-Debug-ID: 1721283848-1eb14e2e5f151040001-xx1T2L
+Received: from ZXSHMBX2.zhaoxin.com (ZXSHMBX2.zhaoxin.com [10.28.252.164]) by mx2.zhaoxin.com with ESMTP id c4cjHLpIiBIaD9bC (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Thu, 18 Jul 2024 14:24:08 +0800 (CST)
+X-Barracuda-Envelope-From: LeoLiu-oc@zhaoxin.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.164
+Received: from ZXBJMBX03.zhaoxin.com (10.29.252.7) by ZXSHMBX2.zhaoxin.com
+ (10.28.252.164) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 18 Jul
+ 2024 14:24:08 +0800
+Received: from xin.lan (10.32.64.1) by ZXBJMBX03.zhaoxin.com (10.29.252.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 18 Jul
+ 2024 14:24:06 +0800
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.164
+From: LeoLiu-oc <LeoLiu-oc@zhaoxin.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.29.252.7
+To: <rafael@kernel.org>, <lenb@kernel.org>, <james.morse@arm.com>,
+	<tony.luck@intel.com>, <bp@alien8.de>, <bhelgaas@google.com>,
+	<robert.moore@intel.com>, <yazen.ghannam@amd.com>, <avadhut.naik@amd.com>,
+	<linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>, <acpica-devel@lists.linux.dev>
+CC: <CobeChen@zhaoxin.com>, <TimGuo@zhaoxin.com>, <TonyWWang-oc@zhaoxin.com>,
+	<leoliu-oc@zhaoxin.com>, LeoLiuoc <LeoLiu-oc@zhaoxin.com>
+Subject: [PATCH v3 0/3] Parse the HEST PCIe AER and set to relevant registers
+Date: Thu, 18 Jul 2024 14:24:02 +0800
+X-ASG-Orig-Subj: [PATCH v3 0/3] Parse the HEST PCIe AER and set to relevant registers
+Message-ID: <20240718062405.30571-1-LeoLiu-oc@zhaoxin.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <b99685d9-9f3a-4c21-8d33-2eaa5de8be54@zhaoxin.com>
+References: <b99685d9-9f3a-4c21-8d33-2eaa5de8be54@zhaoxin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: usb: qcom,dwc3: Update ipq5332
- interrupt info
-To: Varadarajan Narayanan <quic_varada@quicinc.com>,
- gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
- quic_wcheng@quicinc.com, quic_kriskura@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240717094848.3536239-1-quic_varada@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240717094848.3536239-1-quic_varada@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
+ ZXBJMBX03.zhaoxin.com (10.29.252.7)
+X-Barracuda-Connect: ZXSHMBX2.zhaoxin.com[10.28.252.164]
+X-Barracuda-Start-Time: 1721283848
+X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
+X-Barracuda-URL: https://10.28.252.36:4443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at zhaoxin.com
+X-Barracuda-Scan-Msg-Size: 1611
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
+X-Barracuda-Spam-Score: -2.02
+X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.127785
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------------------------
 
-On 17/07/2024 11:48, Varadarajan Narayanan wrote:
-> IPQ5332 has only three interrupts. Update the constraints
-> to fix the following dt_binding_check errors.
-> 
-> 	interrupt-names: ['pwr_event', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
-> 
-> Fixes: 53c6d854be4e ("dt-bindings: usb: dwc3: Clean up hs_phy_irq in binding")
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
-> v2: Fix patch version numbering. Incorrectly marked the first version as v0
->     Add interrupts and interrupt-names for ipq5332 instead of clubbing it with
->     qcom,x1e80100-dwc3
-> ---
->  Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-> index 6c5f962bbcf9..5e5cc2175526 100644
-> --- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-> +++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-> @@ -235,6 +235,13 @@ allOf:
->              - const: core
->              - const: sleep
->              - const: mock_utmi
-> +        interrupts:
-> +          maxItems: 3
-> +        interrupt-names:
-> +          items:
-> +            - const: pwr_event
-> +            - const: dp_hs_phy_irq
-> +            - const: dm_hs_phy_irq
+From: LeoLiuoc <LeoLiu-oc@zhaoxin.com>
 
-Why are you duplicating interrupts for this variant? This is
-qcom,ipq6018-dwc3, not 5332. Read carefully how the file is currently
-organized - there is no entry which has clocks and interrupts at one
-place. You are bringing inconsistency, why?
+According to the Section 18.3.2.4, 18.3.2.5 and 18.3.2.6 in ACPI SPEC
+r6.5, the register value form HEST PCI Express AER Structure should be
+written to relevant PCIe Device's AER Capabilities. So the purpose of the
+patch set is to extract register value from HEST PCI Express AER
+structures and program them into PCIe Device's AER registers.
+Refer to the ACPI SPEC r6.5 for the more detailed description. This patch
+is an effective supplement to _HPP/_HPX method when the Firmware does not
+support the _HPP/_HPX method and can be specially configured for the AER
+register of the specific device.
 
->  
->    - if:
->        properties:
-> @@ -442,7 +449,6 @@ allOf:
->          compatible:
->            contains:
->              enum:
-> -              - qcom,ipq5332-dwc3
->                - qcom,x1e80100-dwc3
+v1->v2:
+- Move the definition of structure "hest_parse_aer_info" to file apei.h.
 
-So now 5332 does not have any constraints.
+v2->v3:
+- The applicable hardware for this patch is added to the commit
+  information.
+- Change the function name "program_hest_aer_endpoint" to
+  "program_hest_aer_common".
+- Add the comment to function "program_hest_aer_common".
+- Remove the "PCI_EXP_TYPE_PCIE_BRIDGE" branch handling in function
+  "program_hest_aer_params".
 
->      then:
->        properties:
+LeoLiuoc (3):
+  ACPI/APEI: Add hest_parse_pcie_aer()
+  PCI: Add AER bits #defines for PCIe to PCI/PCI-X Bridge
+  PCI/ACPI: Add pci_acpi_program_hest_aer_params()
 
-Best regards,
-Krzysztof
+ drivers/acpi/apei/hest.c      |  66 +++++++++++++++++++++-
+ drivers/pci/pci-acpi.c        | 101 ++++++++++++++++++++++++++++++++++
+ drivers/pci/pci.h             |   9 +++
+ drivers/pci/probe.c           |   1 +
+ include/acpi/apei.h           |  17 ++++++
+ include/uapi/linux/pci_regs.h |   3 +
+ 6 files changed, 195 insertions(+), 2 deletions(-)
+
+-- 
+2.34.1
 
 
