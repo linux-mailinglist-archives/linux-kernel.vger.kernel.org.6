@@ -1,112 +1,107 @@
-Return-Path: <linux-kernel+bounces-255900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 867AD934662
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 04:26:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F8E8934667
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 04:27:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A5191F2281B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 02:26:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE914281060
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 02:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D495727462;
-	Thu, 18 Jul 2024 02:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE6F273FD;
+	Thu, 18 Jul 2024 02:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xPKBNa0j"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YmVk3VPk"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD8E1FB5
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 02:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A7B15C3;
+	Thu, 18 Jul 2024 02:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721269559; cv=none; b=heZNbufzOIy8hj1xN0pvEEK++CWaXNY9isJ8PZLS5eqwzxiIuHesH6zd94CVJJPSoH/I3qn8CaWSdaNVp4oMqxyW2HOkUcN5wDVC/6Abtt0QogmyKBruuk4jfOKOtHCOOKEazMnoSAkzYMoqu0ayNxLeOt9bAeFHjjvEAAgiQz8=
+	t=1721269660; cv=none; b=Dcvezj6Z4LFhsCILPX0CSfaF1FyHvcoby11yIa1DLPO+wjpK3Ul1QyK8XwRFMSkgcVpDj3Ahv/8Br9WOZdeXBuVH/qc5sILjW53qUK48nKOGIoPetisEha7C5XBSJm0msfuWONtqgUTgqk0te75yBACUWFI4zCe9OyV38RBsg6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721269559; c=relaxed/simple;
-	bh=M6VIKClxCKUTHKil/lftXivMZWewfbeoa7Xddd9eHf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Z6upFjQBs1xCwwH8vUq4trI6Dl+82iaoNIoPjFxl6XRNNnve/YzL0VzEg0pd5wwaXB50kYr658mfjJDqdgYnvjAyNvVoc2CwLfVBn6LtN4ruXfx4Y+SGZShp2KT6xrS+JvZFKYCFNmswhkY+jNerAYxVUGACHW9GfOZ52n1Q8jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xPKBNa0j; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-260e6dfc701so186969fac.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 19:25:57 -0700 (PDT)
+	s=arc-20240116; t=1721269660; c=relaxed/simple;
+	bh=CV7LYfCxINP5w09KGhat3kkBY4Oo+VC8T93Z6UfqSUs=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hz8EdxeYEyVxRBemXBxAVym10tZilVqlBUZFv8ZucecoObV/paan1adwT5T9hRlVq1WFlte/W4cOXN18uyi56jHpVwnzwOgHfCDtyhbID0LeaLPIe8cFor5EgMTmJ+ExykpNI04L2ucQApT1sxzzweZeacaChpzkOCIzWSxWlSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YmVk3VPk; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2c9e37bdd6fso226097a91.3;
+        Wed, 17 Jul 2024 19:27:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721269556; x=1721874356; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gklRP1Mg2lPJDFn6YnROe/wcKMjIXNM5Cvhi4UGcBq0=;
-        b=xPKBNa0jmD+kLpOtPIT1JsGpQgplR6ypUfDz/AjTVQUUGLhubdKwFnLmGiVP4MM0FA
-         KtiCK6+qNneo90+fSnQ5BFgm0F/OTPKiEMvim3EoT49k6bCMs4lQWelOSF22isfCBOhW
-         CesqKLr0Q8ThvHmXeB8q77wGxJn77gA53ddXfucNxKDBXqGMq+MXSYoQAlCw1q0/WVBH
-         bBuFtb38CbAcLniP0ICCmzFSZxmaZP2oEsL6b2h2ZHIbVK7wFQCQfMSroEThfVeoweaP
-         JWUD3IO+vAiurkQhI/6KhNuqrmQzsjhSFJPXpcXH9y115EFGXO/uThqQDSzRmRi1UEht
-         oFqw==
+        d=gmail.com; s=20230601; t=1721269659; x=1721874459; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=GUAd6g54xeJRdV81nGL0g6LtQDcATLm06ClbA+KAow0=;
+        b=YmVk3VPkhaShHuV6sYN0Wzq6WCzWirBMqsII8PJh6S36bLQjcXXbzRZJvCjEMbfOLU
+         itLI66/eJnIV/oSxh4sIWBhduzBc0sHR3z1aMYAK93ylA2Cgm7UMsMCHLwBI/f75cNnf
+         gyLN5KKHjNmHLKppQ/WqN7PGQOY0BTvgAzN8J7UgU9ViX8evC1Wxh8gP3Ynn+LjSiOk/
+         IgAyMRXk0N7TD6FPwpem/CF33lRC854f7JLRvW7feyBYlV5Y2Ff+v1cOnavkscU3Bpgq
+         GrUrxTUX8tQK0BSdyiJcDjeYeViU5UGX5sX7UxA1hXCDq0a8JZ78gszoViF78jGdB/ij
+         MWQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721269556; x=1721874356;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1721269659; x=1721874459;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gklRP1Mg2lPJDFn6YnROe/wcKMjIXNM5Cvhi4UGcBq0=;
-        b=KEPz5YOEN5RlZpvRiEWipYjJ3e/jOlBbh4CHxp412E+VQJMsi4+TyTc85TGfxYi7Je
-         RBmJMJSm0Zs5S1uk9WJ1HozF5ndE3fu7RNqqBklxDzHUg6JzUwPVB5pPmGvuokcRwm3g
-         6goarIAFrhrX4oEGLFhpT+SYYkbHeoWMXDo8FSDlOcKZ1+tHgbOLkOevvksnvYuZsdjs
-         VVcZxYGejSmhNM3961MA0xH5by2Om+ZY3WjeCFF/VHN/ErNCGyT0B0mV1THQ9h0lPBGV
-         +52/qBNPErFkRF6Par9q5oYnha58tBCN/ShzB90L8vkKdhc3wpnDc7YyUWU2vTEAF4sd
-         3f3g==
-X-Forwarded-Encrypted: i=1; AJvYcCViARzF8AT8ZyAU7vrjqn7H7eIIR96ixtixP6g5cSY40jrcWpui5WBr81KFqX74Oj7QbP/lj/vLWoFdq0n2HXZf2m0mYP9emKlS4Y4D
-X-Gm-Message-State: AOJu0YwQJA85v/xRxD5AgT50k4i0OZC338z+XHlQs5ojdbZoEyzz9h/r
-	4VER4XZZ2VHVlDP+FKUdTRsOzv5va6ktEnhkpx5TdV+RmWXNd/KUfJ8x1GL1dkQ=
-X-Google-Smtp-Source: AGHT+IHupNh4IdHfYITPiJHzo+24fJypzIvoRScwFusZfpcnc4Pu3dq0o5eCy94zxrmTygwA8vdt/w==
-X-Received: by 2002:a05:6870:d206:b0:260:8f6d:f029 with SMTP id 586e51a60fabf-260d9504d8bmr3106193fac.42.1721269556637;
-        Wed, 17 Jul 2024 19:25:56 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:eef3:26c0:a400:406b])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-260ee947f82sm192994fac.50.2024.07.17.19.25.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 19:25:56 -0700 (PDT)
-Date: Wed, 17 Jul 2024 21:25:53 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Chen Wang <unicorn_wang@outlook.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Inochi Amaoto <inochiama@outlook.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] clk: sophgo: clk-sg2042-pll: Fix uninitialized variable in
- debug output
-Message-ID: <baf0a490-d5ba-4528-90ba-80399684692d@stanley.mountain>
+        bh=GUAd6g54xeJRdV81nGL0g6LtQDcATLm06ClbA+KAow0=;
+        b=RZucKeurtWdjULt4i5uWs+Qle/b9bfqapjbpXed2s0pmNZZRjl1m6unKz6STbwFYla
+         B2Cb7H3VjMu3LrfVGlmJfu5kT4BC4hePTGW8Bl0a7NsR0IOqtMXMOtIeNTdNxmPgGKJ6
+         uLFUy0GEaPIMxVfAKt8YmA0pmS2iUD5raEpvW+6JmvwhgmPvyF5TXyWTCo9XjzLJQLk0
+         XWgDbdsNe2R3P1VB26crnYcFsw1Cm5zl8BuVfCsSmxJTBy7+MyQeSZAyNnVSGTqCwasW
+         +w//7awLTsvg2Qkp4XjFcj7eyHio3MsqF+ULwDCmu0zExv0U0V+j21V9h5Znu4tPcTrc
+         gwmw==
+X-Forwarded-Encrypted: i=1; AJvYcCXczA+r9wi3cj1wh/ReKsNWkeDzVzudGrRi7A6DL6vD7O3NzDq2quXtAJpRQsCeCCAMb3pwkcmEmvFBKR6ohWfeNbitpETevGiZGLp8NP6ebt8d+fw1Dubb3aZJ+OzyuqD+BcjZzK4=
+X-Gm-Message-State: AOJu0YwG6LathwkXVrOmc1WxSQ5glJEOiRiS0fCkaKvs/0iaKBANdRRc
+	OslIiJN/KW7q2GTppf11wJuOVCpXhv8lJgC8TuOqFQuQzG5xPTeVtAGZ2BNp
+X-Google-Smtp-Source: AGHT+IE8SvX4CLDwAqE0jj8m+KCvYqhmkfATV+kF3+EHc9JlTZrnccUYA8tLj1CrFijiVCWM2kehCw==
+X-Received: by 2002:a17:90a:fb8f:b0:2c8:1f30:4e04 with SMTP id 98e67ed59e1d1-2cb5293beb9mr3038183a91.36.1721269658624;
+        Wed, 17 Jul 2024 19:27:38 -0700 (PDT)
+Received: from [198.18.0.1] ([2401:d9c0:2902::c2eb])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cb601e42easm662877a91.40.2024.07.17.19.27.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 19:27:36 -0700 (PDT)
+From: Cryolitia PukNgae <cryolitia@gmail.com>
+X-Google-Original-From: Cryolitia PukNgae <Cryolitia@gmail.com>
+Message-ID: <22807968-922a-460d-9dda-7e8f9b4791ad@gmail.com>
+Date: Thu, 18 Jul 2024 10:27:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] hwmon: add GPD devices sensor driver
+To: Krzysztof Kozlowski <krzk@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+ Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-doc@vger.kernel.org, Celeste Liu <CoelacanthusHex@gmail.com>,
+ Yao Zi <ziyao@disroot.org>, =?UTF-8?Q?Marcin_Str=C4=85gowski?=
+ <marcin@stragowski.com>
+References: <20240717-gpd_fan-v3-0-8d7efb1263b7@gmail.com>
+ <20240717-gpd_fan-v3-1-8d7efb1263b7@gmail.com>
+ <14e3654e-27b1-41f7-a66f-03ec47e95593@kernel.org>
+Content-Language: en-US
+In-Reply-To: <14e3654e-27b1-41f7-a66f-03ec47e95593@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-If sg2042_get_pll_ctl_setting() fails then "value" isn't initialized and
-it is printed in the debug output.  Initialize it to zero.
 
-Fixes: 48cf7e01386e ("clk: sophgo: Add SG2042 clock driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/clk/sophgo/clk-sg2042-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2024/7/17 15:11, Krzysztof Kozlowski wrote:
+> This entire driver still does not look like using Linux coding style.
 
-diff --git a/drivers/clk/sophgo/clk-sg2042-pll.c b/drivers/clk/sophgo/clk-sg2042-pll.c
-index aa142897aa5e..24b0eab6154b 100644
---- a/drivers/clk/sophgo/clk-sg2042-pll.c
-+++ b/drivers/clk/sophgo/clk-sg2042-pll.c
-@@ -387,7 +387,7 @@ static int sg2042_clk_pll_set_rate(struct clk_hw *hw,
- 	struct sg2042_pll_clock *pll = to_sg2042_pll_clk(hw);
- 	struct sg2042_pll_ctrl pctrl_table;
- 	unsigned long flags;
--	u32 value;
-+	u32 value = 0;
- 	int ret;
- 
- 	spin_lock_irqsave(pll->lock, flags);
--- 
-2.43.0
+I carefully read the code style again and adjusted my code.
+
+I apologize for my rookie recklessness and sincerely thank you for your 
+patience.
+
+v4 sent: 
+https://lore.kernel.org/all/20240718-gpd_fan-v4-1-116e5431a9fe@gmail.com/
 
 
