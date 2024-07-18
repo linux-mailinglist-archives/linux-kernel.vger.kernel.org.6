@@ -1,222 +1,173 @@
-Return-Path: <linux-kernel+bounces-256544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E33D8935001
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:36:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17E5B93500B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E982282652
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:36:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 380001C2165D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C8D1448C9;
-	Thu, 18 Jul 2024 15:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAABF1448C9;
+	Thu, 18 Jul 2024 15:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aGughunY";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6KlUwaHt";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aGughunY";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6KlUwaHt"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fSfDdonQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17BC143C55
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 15:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85491442FD;
+	Thu, 18 Jul 2024 15:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721316973; cv=none; b=c/jUAneGfus8wCNmeTiH4yrTUuuXsvN/naI/JavRkEuc253lfQ2fS/8+mhuJEnYOMHpIVjzQFvZ+KOOP+U79qg9HP5mcG9sUOPDexgaV8OFWW7J6lpmKSovxmwbDy0dlSL5VaL3fSQEE8HbhMA04A+aDptpI3igAjtpU7ncyDuk=
+	t=1721317038; cv=none; b=ETyJShMIE4zEfE51fM3Befiw5wv7/200/9sXTnlJEmzkabpIFXD80ORIWN95LOWIxH98D1drHzIEFtQIWTUvOugy+Shm6FRtb4EadwjeJjbXkgnrOibYy0P81gtR+vylCSykd7DW7OLAfb2K6eFbYbjuYDIcdxe6XuLpuX/xqJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721316973; c=relaxed/simple;
-	bh=EPk55vtVVOGG0WBDbaVEAZ0EcmpdcpX8XphKJSpydSg=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eG+/kHWNFJqf3ALxT7qXaB2YCyVbnn4w65sgk/BK2s2dwKIcOTO4h4cWnDV7FIGwkblA7cW15j+SiujxUGxGWvMjeU/f7XBlLO/mM7NP6Tc4fXTZYPyQSHG0TUx06YxxDcrP4v4ExhR/vNvWQ793abjqcuaNHTwBIwBjLRgkHb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aGughunY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6KlUwaHt; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aGughunY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6KlUwaHt; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3501B219F7;
-	Thu, 18 Jul 2024 15:36:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721316969; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yCQGOCdj0k9IIWZ/dv2P5anlkuuHGnwdNdth1ScTvAY=;
-	b=aGughunYPBWnQPly93A2947/SJsWfm0RFc2mD1oATnyP9ahPOPARd6viGCcy+kBxvYDu8N
-	D0HCQlAVJPudZJ1pik/QYtE4o840DPnLpMVMTUwvuv36YGe3QlZoRw4CkvV0p98RJXAQfo
-	HG9a+RT3RGwIjSw/4s2F/FBYpixBccg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721316969;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yCQGOCdj0k9IIWZ/dv2P5anlkuuHGnwdNdth1ScTvAY=;
-	b=6KlUwaHtFro6zJpzJ0UsVwX6sL+SCCHgS2lhcueQ6dTL/dd3oUXYIfpxN9cmyKRvAO+ti+
-	RuOlwq/3E+1+U2CQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=aGughunY;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=6KlUwaHt
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721316969; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yCQGOCdj0k9IIWZ/dv2P5anlkuuHGnwdNdth1ScTvAY=;
-	b=aGughunYPBWnQPly93A2947/SJsWfm0RFc2mD1oATnyP9ahPOPARd6viGCcy+kBxvYDu8N
-	D0HCQlAVJPudZJ1pik/QYtE4o840DPnLpMVMTUwvuv36YGe3QlZoRw4CkvV0p98RJXAQfo
-	HG9a+RT3RGwIjSw/4s2F/FBYpixBccg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721316969;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yCQGOCdj0k9IIWZ/dv2P5anlkuuHGnwdNdth1ScTvAY=;
-	b=6KlUwaHtFro6zJpzJ0UsVwX6sL+SCCHgS2lhcueQ6dTL/dd3oUXYIfpxN9cmyKRvAO+ti+
-	RuOlwq/3E+1+U2CQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D9E201379D;
-	Thu, 18 Jul 2024 15:36:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vjLYM2g2mWbNLgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 18 Jul 2024 15:36:08 +0000
-Date: Thu, 18 Jul 2024 17:36:42 +0200
-Message-ID: <878qxyvhit.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Nathan Chancellor <nathan@kernel.org>,
-	kernel test robot <lkp@intel.com>,
-	llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>,
-	Bard Liao <bard.liao@intel.com>
-Subject: Re: ld.lld: error: undefined symbol: iosf_mbi_available
-In-Reply-To: <69dfb1e2-eac6-4cd4-a9d3-caaa7f36f9b9@linux.intel.com>
-References: <202407160704.zpdhJ8da-lkp@intel.com>
-	<05954a59-2bef-4262-bd91-cfe21d2381f2@linux.intel.com>
-	<20240717202806.GA728411@thelio-3990X>
-	<87wmljw485.wl-tiwai@suse.de>
-	<d121ec31-0861-4324-8f53-6e06eaf60233@linux.intel.com>
-	<87le1zvzw9.wl-tiwai@suse.de>
-	<9a0eba2e-9933-43bb-ab3b-0480bf1d34a4@linux.intel.com>
-	<87frs6vj4m.wl-tiwai@suse.de>
-	<69dfb1e2-eac6-4cd4-a9d3-caaa7f36f9b9@linux.intel.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1721317038; c=relaxed/simple;
+	bh=UxSMm25WvI6T12VAkReUDX4L63ptrBWgJixBihl4TUY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=pL3OtFXJR0r0a/wG75WTWoz/im/bWqudspYmeThZ7ACw/eXxh70d3o/+l1rXPJjDO6CJVXcA4XQsEWr2hRcefWtfLp4MioJ99Ao5DrzvniIMIF5YlwvvS0KP2+gCLYFkFBwBPp2oS4mSG2ilQCLflVOiMpkL2m5UkOr/ZwF2VoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fSfDdonQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5182DC116B1;
+	Thu, 18 Jul 2024 15:37:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721317037;
+	bh=UxSMm25WvI6T12VAkReUDX4L63ptrBWgJixBihl4TUY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fSfDdonQ7MhyRZad7FV9U5ZQl+aQJhhbg2YCr0UxTZDXaiVUH3KQ9xH+d6bHGQ2Sh
+	 SJr5ArmhGQmsG6KxCLVqLEGOGZYBHXYsPdxS573ZpWiY0T+k2dXL91VNyKVbpBsddm
+	 kKbnd61xuXsmzZx9Rw0WiMoli9WRQfSQLHPQMwMFVUo2XTf+GJqWfJyscL4MA9bX46
+	 Ci5OhtQN/4XxUXovnnlU0jsf0TA5GW0hqGl+/0dzxIUDYSOruWBQ/LCJu3KBk9fQyh
+	 ZOoaYV4TLmVsAl/v0NwGcm6j3Lx3sD4RR5syfqDwZhG1hVZJwQxBYbIuXVz0HG8xQT
+	 Hl7vYCvfrlhAA==
+Date: Fri, 19 Jul 2024 00:37:13 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: linux-trace-kernel@vger.kernel.org, "Naveen N. Rao"
+ <naveen.n.rao@linux.ibm.com>, Anil S Keshavamurthy
+ <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>,
+ Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
+ stable@vgar.kernel.org
+Subject: Re: [PATCH pre-6.7] kprobes: Fix double free of kretprobe_holder
+Message-Id: <20240719003713.6c47efeb2741504996e1df15@kernel.org>
+In-Reply-To: <92cff289-facb-4e42-b761-6fd2515d6018@suse.com>
+References: <92cff289-facb-4e42-b761-6fd2515d6018@suse.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Flag: NO
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.51
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 3501B219F7
+Content-Transfer-Encoding: 7bit
 
-On Thu, 18 Jul 2024 17:16:54 +0200,
-Pierre-Louis Bossart wrote:
+On Wed, 17 Jul 2024 14:52:43 +0200
+Petr Pavlu <petr.pavlu@suse.com> wrote:
+
+> Hello,
 > 
+> Below is a patch for a kretprobe-related problem that was already fixed
+> in v6.7 as a side-effect of the objpool optimization, in commit
+> 4bbd93455659 ("kprobes: kretprobe scalability improvement").
 > 
-> >>>> diff --git a/sound/soc/intel/common/soc-intel-quirks.h
-> >>>> b/sound/soc/intel/common/soc-intel-quirks.h
-> >>>> index de4e550c5b34..ae67853f7e2e 100644
-> >>>> --- a/sound/soc/intel/common/soc-intel-quirks.h
-> >>>> +++ b/sound/soc/intel/common/soc-intel-quirks.h
-> >>>> @@ -11,7 +11,9 @@
-> >>>>
-> >>>>  #include <linux/platform_data/x86/soc.h>
-> >>>>
-> >>>> -#if IS_ENABLED(CONFIG_X86)
-> >>>> +#if IS_ENABLED(CONFIG_X86) && \
-> >>>> +       (IS_ENABLED(CONFIG_SND_SOC_SOF_BAYTRAIL) || \
-> >>>> +        IS_ENABLED(CONFIG_SND_SST_ATOM_HIFI2_PLATFORM_ACPI))
-> >>>>
-> >>>>  #include <linux/dmi.h>
-> >>>>  #include <asm/iosf_mbi.h>
-> >>>>
-> >>>> also at https://github.com/thesofproject/linux/pull/5114
-> >>>
-> >>> I'm afraid it's not enough, either.  It's included in
-> >>> sound/soc/sof/intel/atom.c, and this one can be built-in by selected
-> >>> from others while CONFIG_SND_SOC_SOF_BAYTRAIL=m.  And, the reverse
-> >>> selection is done from CONFIG_SND_SOC_SOF_BAYTRAIL -- so
-> >>> CONFIG_IOSF_MBI can be m as well, and this can lead to the unresolved
-> >>> symbol from the built-in atom.c.
-> >>
-> >> Fair point, I was only looking at the reported failure where Baytrail
-> >> was completely disabled.
-> >>
-> >> I am not sure though if it makes sense to split hair in N dimensions.
-> >> Building Merrifield as y and Baytrail as m is a corner case that
-> >> shouldn't exist at all. And it's only an academic compilation issue, in
-> >> practice using 'y' would fail at run-time due to the usual firmware load
-> >> dependencies...
-> > 
-> > Surely this kind of bug won't hit anyone in practical use, but it's
-> > only about the randconfig failures.  The original report is in the
-> > same category, after all.
-> > 
-> > Maybe another (rather easier) workaround would be to use
-> > IS_REACHABLE(), something like below.  This should fix the original
-> > issue and the potential mess-up of kconfig dependencies.
+> I'm sending it to the list because it might be useful to pick the fix up
+> for longterm or distribution kernels. Additionally, I would like to
+> propose a small improvement to refcount_t and this gives me an actual
+> problem to point to about its motivation.
 > 
-> The simplest solution works for me :-)
+> Cheers,
+> Petr
 > 
-> Do you want me to send a patch with your Suggested-by: tag or do it
-> yourself?
+> ---
+> 
+> From b0dde62cc5268a7d728cfdb360cb5170266a5e11 Mon Sep 17 00:00:00 2001
+> From: Petr Pavlu <petr.pavlu@suse.com>
+> Date: Thu, 4 Apr 2024 16:44:02 +0200
+> Subject: [PATCH pre-6.7] kprobes: Fix double free of kretprobe_holder
+> 
+> When unregistering a kretprobe, the code in unregister_kretprobes() sets
+> rp->rph->rp to NULL which forces all associated kretprobe_instances
+> still in use to be later freed separately via free_rp_inst_rcu().
+> 
+> Function unregister_kretprobes() then calls free_rp_inst() which takes
+> care of releasing all currently unused kretprobe_instances, the ones
+> that are on the kretprobe's freelist. The code in free_rp_inst() counts
+> a number of these released kretprobe_instances and invokes
+> refcount_sub_and_test(count, &rp->rph->ref) to decrease the
+> kretprobe_holder's refcount and subsequently calls kfree(rp->rph) if the
+> function returns true, indicating the refcount reached zero.
+> 
+> It is possible that the number of released kretprobe_instances in
+> free_rp_inst() is zero and therefore refcount_sub_and_test() is invoked
+> with count=0.
 
-If you can send from your side, it'd be more appreciated ;)
+Ah, good catch! Calling unregsiter_kretprobe() when all instances are
+used, this happens. To avoid this, usually refcount starts from 1 as
+initial reference, but it didn't.
 
+> Additionally, depending on timing, it can happen
+> that all previously used kretprobe_instances were already freed via
+> free_rp_inst_rcu(). This means the refcount of kretprobe_holder already
+> reached zero and was deallocated.
+> 
+> The resulting call of refcount_sub_and_test(0, &rp->rph->ref) in
+> free_rp_inst() is then a use-after-free. If the memory previously
+> occupied by the refcount is still set to zero then the call returns true
+> and kretprobe_holder gets wrongly freed for the second time.
 
-thanks,
-
-Takashi
+Right.
 
 > 
-> > --- a/sound/soc/intel/common/soc-intel-quirks.h
-> > +++ b/sound/soc/intel/common/soc-intel-quirks.h
-> > @@ -11,7 +11,7 @@
-> >  
-> >  #include <linux/platform_data/x86/soc.h>
-> >  
-> > -#if IS_ENABLED(CONFIG_X86)
-> > +#if IS_REACHABLE(CONFIG_IOSF_MBI)
-> >  
-> >  #include <linux/dmi.h>
-> >  #include <asm/iosf_mbi.h>
+> Fix the problem by adding a check for count>0 before calling
+> refcount_sub_and_test() in free_rp_inst().
+
+OK, this can avoid use-after-free.
+
+> 
+> Note that this code was reworked in v6.7 by commit 4bbd93455659
+> ("kprobes: kretprobe scalability improvement") and the new objpool
+> implementation doesn't have this problem.
+> 
+
+Looks good to me.
+
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+This should go directly into stable because there is no applicable code
+in the latest kernel.
+
+
+> Fixes: d741bf41d7c7 ("kprobes: Remove kretprobe hash")
+> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+> ---
+>  kernel/kprobes.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+> index 0c6185aefaef..7ae5873545a1 100644
+> --- a/kernel/kprobes.c
+> +++ b/kernel/kprobes.c
+> @@ -1942,10 +1942,9 @@ static inline void free_rp_inst(struct kretprobe *rp)
+>  		count++;
+>  	}
+>  
+> -	if (refcount_sub_and_test(count, &rp->rph->ref)) {
+> +	if (count > 0 && refcount_sub_and_test(count, &rp->rph->ref))
+>  		kfree(rp->rph);
+> -		rp->rph = NULL;
+> -	}
+> +	rp->rph = NULL;
+>  }
+>  
+>  /* This assumes the 'tsk' is the current task or the is not running. */
+> 
+> base-commit: ffc253263a1375a65fa6c9f62a893e9767fbebfa
+> -- 
+> 2.35.3
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
