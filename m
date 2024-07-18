@@ -1,139 +1,156 @@
-Return-Path: <linux-kernel+bounces-256238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EFAA934B4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:54:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A584B934B53
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE59E282531
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:54:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1FF6B234CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7631B85285;
-	Thu, 18 Jul 2024 09:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B951412C470;
+	Thu, 18 Jul 2024 09:58:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="djTNqt3x"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="d/Bri/rw"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160577D3EF;
-	Thu, 18 Jul 2024 09:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D29584DE4
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 09:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721296485; cv=none; b=B1FYghFs5/yQINEbjh8hOhXArLgezDjgpk7y4xy4CSN7WD8e5pnwZpRIK5vtYfLBMDrsifBkQ+QImoXMWieHUg0vjr8Pv+Hq81MGMhg/tCW2VRJI6bcVYqG/BZSdlLemLsOjlX4DFkjyu47DEZn9/fE/MyBPqLYwZGAu4mVJQCI=
+	t=1721296688; cv=none; b=umGNJAw7vE0Gl+zeAPwaKWXylQa4jJjR6PX5EqGXE0BXLWrDk9ZNpVq1EALAwfGgijg6lKV993MUyOFKC/QmV3d1YJfuPHZCkhulWENpelheH0xFMA9sCO796pgcEFSBuFaWThT/oZ9yxIvKbTtDMeBu+qXIVI/YRfBYhdX8RwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721296485; c=relaxed/simple;
-	bh=LNvfFe6lpclQyzVtfWGQIEmYsoX37dvAyhtKRFDDsFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U5OnOxPEWzh+j1BEC7BDYa198tPa4UdWLn3iaCZEoqeh9LJM15NYRZVISo+MPQUzJveubQNKhmZSKcJozyVsFDrKEKAvpFMXsydxNRJFNkUC2h3GR3137V3LwtQfnBxLZfMNe/XlclaZFel4cxlR+N1z+mQCzfBqjZ3A7etCtqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=djTNqt3x; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721296484; x=1752832484;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LNvfFe6lpclQyzVtfWGQIEmYsoX37dvAyhtKRFDDsFM=;
-  b=djTNqt3x0NVN/TPsCHJHQUKmNhkIE2DW7FcWg333NVa9X9SX/OqGlMrz
-   uBFZK3HjNMdiulFJhnPKNClBeGUrSJ7Es3doFdFtFkef4ul5hYNmLvOLz
-   zUH8isZdJ2m3pnothz+TDORmgjT7NAzCAVCaUQ97qu0OZgGqPf0PqaDG+
-   Y+TeeibqrjJcmZXF+efKfediQGcK5XI/drXLGKgNJKHXgKCAsJ4G+auJF
-   OnFIIePgyQyF/Ffr8FuyxtNgrLJpGA8W6bjWbXdDBJyK+1k8+xWwfwaj7
-   LUCAqtQWFRfIW9YqYgmYFB2hEUpkwhb9vR7ae0pwakT8OaBJNvDk5Syu8
-   g==;
-X-CSE-ConnectionGUID: b1tkrImdQ8qPoITdBycwYA==
-X-CSE-MsgGUID: Ww5gAsH/Sk604LI8rp9e6w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="18805822"
-X-IronPort-AV: E=Sophos;i="6.09,217,1716274800"; 
-   d="scan'208";a="18805822"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 02:54:43 -0700
-X-CSE-ConnectionGUID: 2zJkzbk3Qg25Fe946qM/UA==
-X-CSE-MsgGUID: 9WjGZjySSfipH90FxDXWBg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,217,1716274800"; 
-   d="scan'208";a="73943022"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO intel.com) ([10.245.246.52])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 02:54:38 -0700
-Date: Thu, 18 Jul 2024 11:54:34 +0200
-From: Andi Shyti <andi.shyti@linux.intel.com>
-To: Easwar Hariharan <eahariha@linux.microsoft.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Zhenyu Wang <zhenyuw@linux.intel.com>,
-	Zhi Wang <zhi.wang.linux@gmail.com>,
-	"open list:INTEL DRM DISPLAY FOR XE AND I915 DRIVERS" <intel-gfx@lists.freedesktop.org>,
-	"open list:INTEL DRM DISPLAY FOR XE AND I915 DRIVERS" <intel-xe@lists.freedesktop.org>,
-	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:INTEL GVT-g DRIVERS (Intel GPU Virtualization)" <intel-gvt-dev@lists.freedesktop.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	"open list:RADEON and AMDGPU DRM DRIVERS" <amd-gfx@lists.freedesktop.org>,
-	"open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
-	"open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>,
-	Zhi Wang <zhiwang@kernel.org>
-Subject: Re: [PATCH v4 3/6] drm/i915: Make I2C terminology more inclusive
-Message-ID: <ZpjmWtmaiu294ca_@ashyti-mobl2.lan>
-References: <20240711052734.1273652-1-eahariha@linux.microsoft.com>
- <20240711052734.1273652-4-eahariha@linux.microsoft.com>
+	s=arc-20240116; t=1721296688; c=relaxed/simple;
+	bh=JmZZOfYeNgwLmbv9ZzZmueAe0OYP+/3+b1TO99PfC5U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LOh/uKEMXM5BxAYGWf7wdDC0XeBU9oKujo5OhhTCldePbXUrSsbxAO559a+Af098y3zQzOJIbwGjzVbHFbrpe6rJgLc2oxexirNapNAHlwyVCUNRTx2KZ0eFG5oT+W7q3WJcEXEKtf5bxLNHzR2vgol9LOGCj/ffad8dyPV0tyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=d/Bri/rw; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3684eb5be64so299600f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 02:58:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721296683; x=1721901483; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=apqr4MjpXZ1D4CbWyTpnUc+azdCUdbdHdOC61/0sTcA=;
+        b=d/Bri/rwDB9b3xkqiDhdcXpC9RHCJfvMDaT4Dt0wMuLQjTeX01VzH14BgRN3yoxBkg
+         rxIQthkCgqWbqEurDT2OFKWXSPoyht/kFjTBpqnjc2iHf8ludFFGgWH35T1UKvJWfnwj
+         7zpvIpn6aNEbgWG0q5MLknFtUTyAD/d2N8ddYAlfx8/zjJddcI/+0TV+tHJUOPRRKGbc
+         RhfXsp7vfEvhKycPIDrrRHbx5Jlc+6oAyQXwaso+j1HGVr2fM+g4h7QBxnZD8pAhMYcZ
+         7uRJ5NPa2Y9sCh5mqeX+pFzbmao5nk+9TdItmn5vh9cndZVcPS4szLgOOWRn2eLbf6i1
+         RMZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721296683; x=1721901483;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=apqr4MjpXZ1D4CbWyTpnUc+azdCUdbdHdOC61/0sTcA=;
+        b=ccSMyJBizQEnKGqx/tZRk3Pw6bmE9GkdO8BBCV7TBg6Gj2Yh69LhJrBwzYuoTMIQKE
+         u/y4Y9reuMIdMhMqNUzH7Lm+SBzZvOnyzZuZyc/Yd2cfzH8sZh+2XSsH1SANssiBitdq
+         kOJ5bW+TnSr3HYgA680d1FOgXNgE/M0GsX5Pvo0T2yIkSz19rg7JkQQ7pydp+1Lw+Ay+
+         7kU0A3+RV/PXD6a4FxmTs7aDWoyFYo8P81FRkKt0q3sG/Wsar/SdziyLYPiuv1doX0de
+         QANfa38L74OyB8Ajb8Og7UYtcURhawxQNbyMcwL6eHZAiLN8Kgwe74CwDHrBW4t8Ou2t
+         1P7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWQQyZ2wwc/cC05uBK7NUWOm2FzONNw/xVOmDqH18+fvkoQZ7hcpultqFAZwWNK5GdNHHu3CA5sfYzu3dxRJCmQ4ddpN9r+kmsE9zXx
+X-Gm-Message-State: AOJu0YxH2bdpnJMPFFoUx25iUsQj8WeE7gzh3MUiSV3fpa2tpQPou19f
+	G+rkf/0L+gEDJcSZbWzAOcnr42ONJtyEdNhupd3KUvc8vEqUG7M1ExSYzfGSw6Y=
+X-Google-Smtp-Source: AGHT+IHPLDzIfgK/BifnQdo6doJOM8/tpFYJfvzun4tqGe+2vBGATojTwO9cCkzNqJXzETloX+A32Q==
+X-Received: by 2002:a5d:59a2:0:b0:367:9073:3496 with SMTP id ffacd0b85a97d-3683160e527mr3553248f8f.29.1721296683409;
+        Thu, 18 Jul 2024 02:58:03 -0700 (PDT)
+Received: from toaster.lan ([2a01:e0a:3c5:5fb1:8d37:f44a:c212:e320])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3680dab3be3sm13837155f8f.24.2024.07.18.02.58.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jul 2024 02:58:02 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Jan Dakinevich <jan.dakinevich@salutedevices.com>,
+	linux-kernel@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 0/9] reset: amlogic: move audio reset drivers out of CCF
+Date: Thu, 18 Jul 2024 11:57:44 +0200
+Message-ID: <20240718095755.3511992-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240711052734.1273652-4-eahariha@linux.microsoft.com>
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 
-Hi Easwar,
+This patchset follows the discussion about having reset driver in the
+clock tree [1]. Ideally those should reside in the reset part of tree.
 
-On Thu, Jul 11, 2024 at 05:27:31AM +0000, Easwar Hariharan wrote:
-> I2C v7, SMBus 3.2, and I3C 1.1.1 specifications have replaced "master/slave"
-> with more appropriate terms. Inspired by Wolfram's series to fix drivers/i2c/,
-> fix the terminology for users of I2C_ALGOBIT bitbanging interface, now that
-> the approved verbiage exists in the specification.
-> 
-> Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> Acked-by: Zhi Wang <zhiwang@kernel.org>
-> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
-> ---
->  drivers/gpu/drm/i915/display/dvo_ch7017.c     | 14 ++++-----
->  drivers/gpu/drm/i915/display/dvo_ch7xxx.c     | 18 +++++------
->  drivers/gpu/drm/i915/display/dvo_ivch.c       | 16 +++++-----
->  drivers/gpu/drm/i915/display/dvo_ns2501.c     | 18 +++++------
->  drivers/gpu/drm/i915/display/dvo_sil164.c     | 18 +++++------
->  drivers/gpu/drm/i915/display/dvo_tfp410.c     | 18 +++++------
->  drivers/gpu/drm/i915/display/intel_bios.c     | 22 +++++++-------
->  .../gpu/drm/i915/display/intel_display_core.h |  2 +-
->  drivers/gpu/drm/i915/display/intel_dsi.h      |  2 +-
->  drivers/gpu/drm/i915/display/intel_dsi_vbt.c  | 20 ++++++-------
->  drivers/gpu/drm/i915/display/intel_dvo.c      | 14 ++++-----
->  drivers/gpu/drm/i915/display/intel_dvo_dev.h  |  2 +-
->  drivers/gpu/drm/i915/display/intel_gmbus.c    |  4 +--
->  drivers/gpu/drm/i915/display/intel_sdvo.c     | 30 +++++++++----------
->  drivers/gpu/drm/i915/display/intel_vbt_defs.h |  4 +--
->  drivers/gpu/drm/i915/gvt/edid.c               | 28 ++++++++---------
->  drivers/gpu/drm/i915/gvt/edid.h               |  4 +--
->  drivers/gpu/drm/i915/gvt/opregion.c           |  2 +-
->  18 files changed, 118 insertions(+), 118 deletions(-)
+Also the code of the amlogic reset driver is very similar between the 2
+trees and could use the same driver code.
 
-it's a complex/long patch and I want to make sure there are no
-subtle errors. I will submit another round of tests and if it
-convinces me, I will take it in.
+This patcheset alignes the reset drivers present in the reset and clock
+then adds support for the reset driver of audio clock controller found in
+the  g12 and sm1 SoC family to the reset tree, using the auxiliary bus.
 
-The failures you see[*] are definitely not related to this patch,
-but better safe safe safe than sorry sorry sorry :-)
+The infrastructure put in place is meant to be generic enough so we may
+eventually also move the reset drivers in the meson8b and aoclk clock
+controllers.
 
-Thanks,
-Andi
+Changes since v1 [3]:
+ * Fixes formatting errors reported by Stephen.
+ * Changed parameters type to unsigned
+ * Fix usage of ops passed as parameters, previously ignored.
+ * Return 0 instead of an error if reset support is absent
+   to properly decouple from the clock and have a weak
+   dependency
+ * Split the platform and auxiliary modules in 2 distinct modules
+   to fix the COMPILE_TEST error reported by ktest robot.
 
-[*] https://patchwork.freedesktop.org/series/131867/
+Change since RFC [2]:
+ * Move the aux registration helper out of clock too.
+
+[1] https://lore.kernel.org/linux-clk/e3a85852b911fdf16dd9ae158f42b3ef.sboyd@kernel.org
+[2] https://lore.kernel.org/linux-clk/20240516150842.705844-1-jbrunet@baylibre.com
+[3] https://lore.kernel.org/linux-clk/20240710162526.2341399-1-jbrunet@baylibre.com
+
+Jerome Brunet (9):
+  reset: amlogic: convert driver to regmap
+  reset: amlogic: use generic data matching function
+  reset: amlogic: make parameters unsigned
+  reset: amlogic: add driver parameters
+  reset: amlogic: use reset number instead of register count
+  reset: amlogic: add reset status support
+  reset: amlogic: move drivers to a dedicated directory
+  reset: amlogic: split the device core and platform probe
+  reset: amlogic: add auxiliary reset driver support
+
+ drivers/reset/Kconfig                         |  15 +-
+ drivers/reset/Makefile                        |   3 +-
+ drivers/reset/amlogic/Kconfig                 |  27 ++++
+ drivers/reset/amlogic/Makefile                |   4 +
+ .../{ => amlogic}/reset-meson-audio-arb.c     |   0
+ drivers/reset/amlogic/reset-meson-aux.c       | 136 ++++++++++++++++
+ drivers/reset/amlogic/reset-meson-core.c      | 140 ++++++++++++++++
+ drivers/reset/amlogic/reset-meson-pltf.c      |  95 +++++++++++
+ drivers/reset/amlogic/reset-meson.h           |  28 ++++
+ drivers/reset/reset-meson.c                   | 153 ------------------
+ include/soc/amlogic/meson-auxiliary-reset.h   |  23 +++
+ 11 files changed, 455 insertions(+), 169 deletions(-)
+ create mode 100644 drivers/reset/amlogic/Kconfig
+ create mode 100644 drivers/reset/amlogic/Makefile
+ rename drivers/reset/{ => amlogic}/reset-meson-audio-arb.c (100%)
+ create mode 100644 drivers/reset/amlogic/reset-meson-aux.c
+ create mode 100644 drivers/reset/amlogic/reset-meson-core.c
+ create mode 100644 drivers/reset/amlogic/reset-meson-pltf.c
+ create mode 100644 drivers/reset/amlogic/reset-meson.h
+ delete mode 100644 drivers/reset/reset-meson.c
+ create mode 100644 include/soc/amlogic/meson-auxiliary-reset.h
+
+-- 
+2.43.0
+
 
