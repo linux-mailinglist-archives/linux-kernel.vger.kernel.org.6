@@ -1,132 +1,159 @@
-Return-Path: <linux-kernel+bounces-256804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0550E93708E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 00:07:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60086937095
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 00:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 360401C21E00
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 22:07:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFCDA1F22874
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 22:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB3414600C;
-	Thu, 18 Jul 2024 22:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4E4145356;
+	Thu, 18 Jul 2024 22:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="eGD9EUXe"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FL8YgOOp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589201386BF
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 22:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F0012CD96
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 22:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721340466; cv=none; b=BIjxUKJmo0x9dPMEvSIBv2dKc5CALBD8LKgHi6Yxjj5FPx3l/nZzs4mk0vc1Tu2DvoCzx0o409UXinMALsU81u6/gmJorZUs+ja4ua4BMT1tKKm8sRUIV1744v0aaIjTWSGOkZnu7x4MGpsbTIkqjoD8a6YCSTZYkDVlp/FVu+s=
+	t=1721341381; cv=none; b=EUYxANm7V9dCdAQ0jzODrWMDt8Tvoip58pm7e3yvWU1SNmkvEIU40JROCDucP1x+XuQTkhssL5kr2ldUg0Sftd+OOVK7rCHWRit24tdiIhNSmnotCFmDMqTlFGUD1x7wD/Srp/fUp/hR01Md7uSAle/2fi3agFc4u04SfKrXSwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721340466; c=relaxed/simple;
-	bh=gzGiI2wvuZEYnzUMFQ5wGfxZiwKRMQdKAglWmCVvamQ=;
+	s=arc-20240116; t=1721341381; c=relaxed/simple;
+	bh=Ig/Q3nC7lv0caDrDuLbp6u7AxC6DLNVhOorHAYQrHz4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KlQEk3Srm7wVNzsva34yfvJUu/r+SyPt5zNObUxnYeENcWHApdSj/Vt9rFvYGd4j/B/MoHOmxgLMRXrPkRXra74ybL6V114dh+ygc5T/61LBghPJ2KWE73sIFlxy1e7b7qre+qGx5Uk2btmvbQIPPLTmFX6qUqVyl6zezyLMG88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=eGD9EUXe; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721340462;
-	bh=gzGiI2wvuZEYnzUMFQ5wGfxZiwKRMQdKAglWmCVvamQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eGD9EUXebDntpI1lVGMqIM9QrrH1deaoVIzxKhENmh3W17tvtAp1fnPoZZb0wr7Jl
-	 7YDULidHqHeCU81e9AeYM5KVRmH7I57A+lUTHzegyr9GxRtMtkVGYBuGzXUJQ4rnhk
-	 mWfXIo1erYGSpQ5quJzjentVLKjx4JMq12TJr7JzN0thSKkKbdgt/WEtV8MMDdnyXq
-	 ird2tawtKmt2g3Ln2LOA9TUW1AXBEiaXxaXxGolYjC6Gvf0LlTk3hlgGW2oG0v7OD0
-	 ftz4bilWCdLC0EMfX4fd0dTfqazOT0++DZDBPDE3P11sfoSv+AUsCJVf+RcPL6gG9k
-	 Ab8CCBZTWz9iQ==
-Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 6BA5B3780520;
-	Thu, 18 Jul 2024 22:07:40 +0000 (UTC)
-Date: Thu, 18 Jul 2024 18:07:38 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Chen-Yu Tsai <wenst@chromium.org>, kernel@collabora.com,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v2] nvmem: mtk-efuse: Only register socinfo device if
- needed cells are there
-Message-ID: <05dd24ec-d084-4708-a241-b4714391118a@notapiano>
-References: <20240708-mtk-socinfo-no-data-probe-err-v2-1-7ae252acbcc2@collabora.com>
- <a1914f2b-93f2-4de4-9c4b-2e1f6b39cf3a@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=e4+dW2xJ2YUwLaCayDTHK68f0FsrSWfiW+xfUygyToha2bkdNq/0LfxXrKCJq3X6+UfWSUmjHcs2QMtArouC7cVNTihgEL6OAoSpAlQNV/gIYauMlN9Txawt0pNCqt9wrL8vrQ4axL6ww69qRxwwsxGCEkL7CjzMYz6TJ8Y3Ab0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FL8YgOOp; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721341378; x=1752877378;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Ig/Q3nC7lv0caDrDuLbp6u7AxC6DLNVhOorHAYQrHz4=;
+  b=FL8YgOOpQvVy+U/gYpGQ9IoDJq0O8LhfyuLXugHtwWlwxiQ9KH90+AsK
+   IirvP3jJZJKgF4gwdHS6QNxgToo8SfoaIrcgtp7dAt2G3+MjlH5gIXORL
+   B5PmVSlv2PRtwd1DMo53Hs/XZwduH6dgbwmAKBIahzBANONLYi3Sv79/w
+   xt2olDjt+e6NLOv464MIzfvrqzJZoYXvwPKeeZHlaXdqVv8Vsf5Z91DUg
+   h6RK7dC90X/2iTd6zxPPUUELw8Osd7T2zYKaiURD7S6G/ttCN3J20zOMQ
+   rFq41ySk0TQijfq7aBW4qczYvnOMeyJRAhq7+IMZPTDK2DHRpyyR7cpcJ
+   Q==;
+X-CSE-ConnectionGUID: 3zEbtHlDRvyg75jlv6udNA==
+X-CSE-MsgGUID: 9fLsd1ENSb6WL5eoNZ395Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11137"; a="30323009"
+X-IronPort-AV: E=Sophos;i="6.09,219,1716274800"; 
+   d="scan'208";a="30323009"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 15:22:58 -0700
+X-CSE-ConnectionGUID: BOLf5UILSbuSa0ewlQSssQ==
+X-CSE-MsgGUID: 8c9y4aRRRbq/dYCvgvw1lQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,219,1716274800"; 
+   d="scan'208";a="51201732"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 18 Jul 2024 15:22:54 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sUZWV-000hcs-2l;
+	Thu, 18 Jul 2024 22:22:51 +0000
+Date: Fri, 19 Jul 2024 06:22:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: Oscar Salvador <osalvador@suse.de>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	linux-kernel@vger.kernel.org, Peter Xu <peterx@redhat.com>,
+	Muchun Song <muchun.song@linux.dev>, Michal Hocko <mhocko@suse.com>,
+	Donet Tom <donettom@linux.ibm.com>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH 4/9] arch/sparc: Teach arch_get_unmapped_area{_topdown}
+ to handle hugetlb mappings
+Message-ID: <202407190616.9AIcabfU-lkp@intel.com>
+References: <20240718105903.19617-5-osalvador@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a1914f2b-93f2-4de4-9c4b-2e1f6b39cf3a@collabora.com>
+In-Reply-To: <20240718105903.19617-5-osalvador@suse.de>
 
-On Wed, Jul 10, 2024 at 11:31:11AM +0200, AngeloGioacchino Del Regno wrote:
-> Il 08/07/24 21:43, Nícolas F. R. A. Prado ha scritto:
-> > Not every efuse region has cells storing SoC information. Only register
-> > an socinfo device if the required cells are present.
-> > 
-> > This prevents the pointless process of creating an socinfo device,
-> > probing it with the socinfo driver only to ultimately error out like so
-> > 
-> >    mtk-socinfo mtk-socinfo.0.auto: error -ENOENT: Failed to get socinfo data
-> >    mtk-socinfo mtk-socinfo.0.auto: probe with driver mtk-socinfo failed with error -2
-> > 
-> > This issue is observed on the mt8183-kukui-jacuzzi-juniper-sku16
-> > platform, which has two efuse regions, but only one of them contains the
-> > SoC data.
-> > 
-> 
-> I think that we should rather remove or disable the first eFuse region, as
-> even though that is enabled:
-> 
->  - This is the only SoC having two regions
->    - I'm not even sure that the region at 0x8000000 is really efuse
->    - Not even referenced in datasheets....
->  - It's unused, as in, it's not exposing any information and no declared cells
-> 
-> Don't misunderstand me, this is not an invalid change, but I rather prefer
-> to resolve this by disabling that (effectively unused!) node, avoiding to
-> add more lines to this driver that would be useless after fixing that small
-> single thing.
+Hi Oscar,
 
-I'm not confident that we can say that that efuse is not exposing any
-information. Indeed there are no cells so it's not used by any other driver, but
-the efuse contents are still exposed to userspace if CONFIG_NVMEM_SYSFS is
-enabled.
+kernel test robot noticed the following build errors:
 
-I dumped it on one of the mt8183-kukui-jacuzzi-juniper-sku16 units:
+[auto build test ERROR on s390/features]
+[also build test ERROR on akpm-mm/mm-everything powerpc/next powerpc/fixes deller-parisc/for-next arnd-asm-generic/master linus/master v6.10 next-20240718]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-  $ ls -l /sys/bus/nvmem/devices/
-  total 0
-  lrwxrwxrwx    1 root     root             0 Jul 18 21:43 mmtd0 -> ../../../devices/platform/soc/11010000.spi/spi_master/spi1/spi1.0/mtd/mtd0/mtd0
-  lrwxrwxrwx    1 root     root             0 Jul 18 21:43 nvmem0 -> ../../../devices/platform/soc/8000000.efuse/nvmem0
-  lrwxrwxrwx    1 root     root             0 Jul 18 21:43 nvmem1 -> ../../../devices/platform/soc/11f10000.efuse/nvmem1
-  
-  $ hexdump -C /sys/bus/nvmem/devices/nvmem0/nvmem
-  00000000  88 07 00 00 00 8a 00 00  00 ca 00 00 00 00 00 00  |................|
-  00000010
+url:    https://github.com/intel-lab-lkp/linux/commits/Oscar-Salvador/mm-mmap-Teach-generic_get_unmapped_area-_topdown-to-handle-hugetlb-mappings/20240718-191208
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git features
+patch link:    https://lore.kernel.org/r/20240718105903.19617-5-osalvador%40suse.de
+patch subject: [PATCH 4/9] arch/sparc: Teach arch_get_unmapped_area{_topdown} to handle hugetlb mappings
+config: sparc64-defconfig (https://download.01.org/0day-ci/archive/20240719/202407190616.9AIcabfU-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240719/202407190616.9AIcabfU-lkp@intel.com/reproduce)
 
-I power cycled the unit and ran this again and it still showed the same
-contents. I also ran the same on a different unit of the same model and it
-showed the same contents. Of course this doesn't prove anything, but given that
-the contents seem to be constant across reboots and even different units, it
-does look like it could be an efuse to me. :)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407190616.9AIcabfU-lkp@intel.com/
 
-As to whether the contents are useful at all, or if there are
-userspace applications making use of it I have no clue. But if in doubt,
-shouldn't we keep it around?
+All errors (new ones prefixed by >>):
 
-Thanks,
-Nícolas
+   arch/sparc/kernel/sys_sparc_64.c: In function 'get_align_mask':
+>> arch/sparc/kernel/sys_sparc_64.c:92:21: error: implicit declaration of function 'is_file_hugepages' [-Wimplicit-function-declaration]
+      92 |         if (filp && is_file_hugepages(filp))
+         |                     ^~~~~~~~~~~~~~~~~
+>> arch/sparc/kernel/sys_sparc_64.c:93:24: error: implicit declaration of function 'huge_page_mask_align' [-Wimplicit-function-declaration]
+      93 |                 return huge_page_mask_align(filp);
+         |                        ^~~~~~~~~~~~~~~~~~~~
+   In file included from arch/sparc/include/asm/bug.h:25,
+                    from include/linux/bug.h:5,
+                    from include/linux/thread_info.h:13,
+                    from include/asm-generic/preempt.h:5,
+                    from ./arch/sparc/include/generated/asm/preempt.h:1,
+                    from include/linux/preempt.h:79,
+                    from include/linux/rcupdate.h:27,
+                    from include/linux/rculist.h:11,
+                    from include/linux/sched/signal.h:5,
+                    from arch/sparc/kernel/sys_sparc_64.c:11:
+   arch/sparc/kernel/sys_sparc_64.c: In function 'arch_get_unmapped_area_topdown':
+>> include/asm-generic/bug.h:71:27: error: expected ',' or ';' before 'do'
+      71 | #define BUG_ON(condition) do { if (unlikely(condition)) BUG(); } while (0)
+         |                           ^~
+   arch/sparc/kernel/sys_sparc_64.c:175:9: note: in expansion of macro 'BUG_ON'
+     175 |         BUG_ON(!test_thread_flag(TIF_32BIT));
+         |         ^~~~~~
+
+
+vim +/is_file_hugepages +92 arch/sparc/kernel/sys_sparc_64.c
+
+    89	
+    90	static unsigned long get_align_mask(struct file *filp, unsigned long flags)
+    91	{
+  > 92		if (filp && is_file_hugepages(filp))
+  > 93			return huge_page_mask_align(filp);
+    94		if (filp || (flags & MAP_SHARED))
+    95			return PAGE_MASK & (SHMLBA - 1);
+    96	
+    97		return 0;
+    98	}
+    99	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
