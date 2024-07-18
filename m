@@ -1,116 +1,168 @@
-Return-Path: <linux-kernel+bounces-256044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39864934826
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:36:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CD0393482E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:40:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F0051C217C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:36:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D006B21F6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8515A55E58;
-	Thu, 18 Jul 2024 06:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F4B6F2F6;
+	Thu, 18 Jul 2024 06:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="lw7oDvgJ"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JinHSecY"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2EA38DE1
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 06:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB0E273FD;
+	Thu, 18 Jul 2024 06:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721284583; cv=none; b=rOipuOG0edI4aRCWbVRBPKZnHsy508PiAJ++ZPHb/tUsxsoj7sOyJw9rUdyVbVoiyqkxIMk86+g+M4nFnvEHUF/cBK3qRHUH5zoX02RFoyN2WhqjZWRM8On+cBX/5f90v2M8Js3NFNxIYpI4hAbLZhS+K7xzpPVFj+DdnSL2ed8=
+	t=1721284801; cv=none; b=CL6HMmecOGUiHxHPUnI1n4PJQvrA4iM0YZS2fNBpthyytIu01mWCb6TnVJ1BXDY8YqqzEUL/QGs6ouOmZp/p+57oPwcTtUDAsXwzoepQS4ldovU9yo3wRuThHBig1XxsQ/uPQ3hpdAjYxqD0MFz+GqeLVpf+scsovAPpDZjpj2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721284583; c=relaxed/simple;
-	bh=kKu8M4Ys25JGjAI9AWyCPhJrMrl3Ra0FEMmgZaSnnZQ=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=qKF57K+suufVudZroL3X9Lsig/V5hmKJJjcw00UVJYsfY0hKj+JAVgbQdGkrZ6MDLQ4K8jlUgnouHBrCzAVhwku0P+zJjKzVT4j2XO61N4v+OiJhF/F/+3/TAjI1Ywfb9PnmJ28mhDSPVhB4tUc2Sj1333+0vPJJ+2+b8VhZ3j0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=lw7oDvgJ; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 46I6a0vI3098584
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 17 Jul 2024 23:36:01 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 46I6a0vI3098584
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024061501; t=1721284561;
-	bh=olo1J9Ekj3oE7AMNzS+YKv+bJI1P8bkfXQDak1NfIMM=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=lw7oDvgJHZzls5gqBdVbWtrmt1nTugB6QIOco/6UbR1XkbX8IcNdOi0GHHqVzUU+4
-	 KYvzD4h41Best6tZr40wbkhNr43tMB3xAGCNC5giu6Do3dd0jmiNCN/8vSyXRBzoul
-	 xjDQtTldbf9JYSbSycv1Kxry8PQpW/AoT1xT+UeBrARso9HOdRR2URmzUBTOq8Tfsg
-	 ndIqev1Ioyaa7owV/VBFM0b568hBVB7zcbsQ9GNnzQh91I4Jb1Cv5hQscHg/X/RiLA
-	 GPN5dbjH6R7EqzsFBFX6mBmTPWDz4i24pQfhcde8YszY6RhtCQPOss5vZolXaUEeYX
-	 JaI7jQQB6lG8Q==
-Date: Wed, 17 Jul 2024 23:35:57 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_x86/boot=3A_Use_=5F=5FASM=5FSIZE?=
- =?US-ASCII?Q?=28=29_to_reduce_ifdeffery_in_cpuflags=2Ec?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20240718063242.52275-1-ubizjak@gmail.com>
-References: <20240718063242.52275-1-ubizjak@gmail.com>
-Message-ID: <4049EB19-E869-4886-AD61-E716A75E4559@zytor.com>
+	s=arc-20240116; t=1721284801; c=relaxed/simple;
+	bh=o89AGorTf23IgzPfJaytCNoM57GTR1/i487FcdWHjDM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cf4rElYEjpB3dFip4Cx6VkFkNRNGX9v3gz3WW+4JnRBnrIyGeEndKvFZCrvikjPse2pgZyFMTO1bg/z40SuCwB0GazkL4l39ewwT3/vOUuYZDn78fmKMdKoav/0lLHuv1wntj5MpOvm58GVIsvhrRww+BxB1rrHz+2ckW/3Z6bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JinHSecY; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46I20oT1002489;
+	Thu, 18 Jul 2024 06:39:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	PpRraKb5qMJnMbM32gBiIJu+HGLUV+zSLXSxhQycvVM=; b=JinHSecYS1+JZEYp
+	eM35Kut17tjDH3YjUJgg0lPA2xSQhD+D7hWedG3bYjB8gf7kRAO3PJIZhWvPQPeY
+	RlvkoMwKszzzE10Z9oWprI/pXRQjOHGHDvkHEHp8ju4PsCpV0JEUOu/2USm7JzaX
+	qyDPoZ2SPGSSCE7HBBdQNb3t4789NPzkSQcfRKOrKBKLQmXjyGbjUO+j1eSBq2xJ
+	JUZA/Yb8GgB9w1/wJ5gVsBHml1znpR1RXyiSPmg2AWzW/QM9MP83PiPY03wR4A9C
+	arfXgV2ND0TELddJAt/VCIUNhS2SNb7qBZUpb7qxk2LQT9nEiwCqfeslEl6rZPMq
+	oQrugw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfs4hw0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Jul 2024 06:39:48 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46I6dl4Q031186
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Jul 2024 06:39:47 GMT
+Received: from [10.151.37.100] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 17 Jul
+ 2024 23:39:42 -0700
+Message-ID: <927af089-ecd0-4175-ab13-e6086aac9ce3@quicinc.com>
+Date: Thu, 18 Jul 2024 12:09:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V6 2/4] arm64: dts: qcom: ipq9574: Add PCIe PHYs and
+ controller nodes
+To: Konrad Dybcio <konrad.dybcio@linaro.org>, <bhelgaas@google.com>,
+        <lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <manivannan.sadhasivam@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: devi priya <quic_devipriy@quicinc.com>
+References: <20240716092347.2177153-1-quic_srichara@quicinc.com>
+ <20240716092347.2177153-3-quic_srichara@quicinc.com>
+ <dbd172e0-d7c6-4ecc-b8cd-1329a4b03374@linaro.org>
+Content-Language: en-US
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <dbd172e0-d7c6-4ecc-b8cd-1329a4b03374@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 8Zj3ozB_gM5C32iOdVbV2Kt30I2fnot6
+X-Proofpoint-GUID: 8Zj3ozB_gM5C32iOdVbV2Kt30I2fnot6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-18_03,2024-07-17_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 malwarescore=0 impostorscore=0 bulkscore=0 adultscore=0
+ suspectscore=0 phishscore=0 spamscore=0 mlxlogscore=859 mlxscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407180043
 
-On July 17, 2024 11:32:18 PM PDT, Uros Bizjak <ubizjak@gmail=2Ecom> wrote:
->Use __ASM_SIZE() macro to add correct insn suffix to pushf/popf=2E
->
->Signed-off-by: Uros Bizjak <ubizjak@gmail=2Ecom>
->Cc: Thomas Gleixner <tglx@linutronix=2Ede>
->Cc: Ingo Molnar <mingo@kernel=2Eorg>
->Cc: Borislav Petkov <bp@alien8=2Ede>
->Cc: Dave Hansen <dave=2Ehansen@linux=2Eintel=2Ecom>
->Cc: "H=2E Peter Anvin" <hpa@zytor=2Ecom>
->---
-> arch/x86/boot/cpuflags=2Ec | 10 +++-------
-> 1 file changed, 3 insertions(+), 7 deletions(-)
->
->diff --git a/arch/x86/boot/cpuflags=2Ec b/arch/x86/boot/cpuflags=2Ec
->index d75237ba7ce9=2E=2Eaacabe431fd5 100644
->--- a/arch/x86/boot/cpuflags=2Ec
->+++ b/arch/x86/boot/cpuflags=2Ec
->@@ -2,6 +2,7 @@
-> #include <linux/types=2Eh>
-> #include "bitops=2Eh"
->=20
->+#include <asm/asm=2Eh>
-> #include <asm/processor-flags=2Eh>
-> #include <asm/required-features=2Eh>
-> #include <asm/msr-index=2Eh>
->@@ -36,13 +37,8 @@ static int has_fpu(void)
->  * compressed/ directory where it may be 64-bit code, and thus needs
->  * to be 'pushfq' or 'popfq' in that case=2E
->  */
->-#ifdef __x86_64__
->-#define PUSHF "pushfq"
->-#define POPF "popfq"
->-#else
->-#define PUSHF "pushfl"
->-#define POPF "popfl"
->-#endif
->+#define PUSHF __ASM_SIZE(pushf)
->+#define POPF __ASM_SIZE(popf)
->=20
-> int has_eflag(unsigned long mask)
-> {
 
-Just use pushf/popf=2E gas hasn't needed that suffix for a long time as fa=
-r as I know=2E
+
+On 7/16/2024 5:33 PM, Konrad Dybcio wrote:
+> On 16.07.2024 11:23 AM, Sricharan R wrote:
+>> From: devi priya <quic_devipriy@quicinc.com>
+>>
+>> Add PCIe0, PCIe1, PCIe2, PCIe3 (and corresponding PHY) devices
+>> found on IPQ9574 platform. The PCIe0 & PCIe1 are 1-lane Gen3
+>> host whereas PCIe2 & PCIe3 are 2-lane Gen3 host.
+>>
+>> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
+>> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>> ---
+> [...]
+>
+>> +
+>> +			ranges = <0x01000000 0x0 0x00000000 0x10200000 0x0 0x100000>,  /* I/O */
+>> +				 <0x02000000 0x0 0x10300000 0x10300000 0x0 0x7d00000>; /* MEM */
+> Drop these comments, please
+ok
+>> +
+>> +			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
+>> +
+> Inconsistent newline
+ok, will fix
+>> +			interrupt-names = "msi0",
+>> +					  "msi1",
+>> +					  "msi2",
+>> +					  "msi3",
+>> +					  "msi4",
+>> +					  "msi5",
+>> +					  "msi6",
+>> +					  "msi7";
+>> +
+>> +			#interrupt-cells = <1>;
+>> +			interrupt-map-mask = <0 0 0 0x7>;
+>> +			interrupt-map = <0 0 0 1 &intc 0 0 35 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
+>> +					<0 0 0 2 &intc 0 0 49 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
+>> +					<0 0 0 3 &intc 0 0 84 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
+>> +					<0 0 0 4 &intc 0 0 85 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
+> Drop these comments, please
+>
+> (all these comments apply to all the similar nodes)
+ok
+> [...]
+>
+>> +
+>> +		pcie3: pcie@18000000 {
+>> +			compatible = "qcom,pcie-ipq9574";
+>> +			reg =  <0x18000000 0xf1d>,
+>> +			       <0x18000f20 0xa8>,
+>> +			       <0x18001000 0x1000>,
+>> +			       <0x000f0000 0x4000>,
+>> +			       <0x18100000 0x1000>;
+>> +			reg-names = "dbi", "elbi", "atu", "parf", "config";
+>> +			device_type = "pci";
+>> +			linux,pci-domain = <4>;
+> Any reason the PCI domain for PCIeN is N+1? You can start at 0
+ok, will fix
+
+Regards,
+  Sricharan
 
