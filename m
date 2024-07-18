@@ -1,104 +1,277 @@
-Return-Path: <linux-kernel+bounces-256726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78BD0935293
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 22:58:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C51E935298
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 23:01:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA8D21C211CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 20:58:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06BE81F21818
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 21:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74941459F3;
-	Thu, 18 Jul 2024 20:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7761144D35;
+	Thu, 18 Jul 2024 21:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b="YvFiTAqA"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="DRku0V6U";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="DRku0V6U"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947A914389A;
-	Thu, 18 Jul 2024 20:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A578412B94;
+	Thu, 18 Jul 2024 21:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721336305; cv=none; b=SYBeW3jG2MMVzRumZPOYkHzACiDov/0kap/kY4siVQJpHLXOKD/xcGlM0fBw1zxXnusPINoBgmVMxgHG5mQf2tM+hR9pkBvaPQP40ruNVd78QSzRFuGoValInXjGbMZNdE3bbZW8qDbf195tO+a2h9VKCsJR/GOmsjXvT7XJ/yI=
+	t=1721336452; cv=none; b=ViF7Zv1V2Hog8D3rMkTv5egHJj1LSQj81OrJBjqN5TiSbmleIpbEIhS/bnF/B+PB0WNqJ6PAFCU2FQ++Nvl6nNGEXIDknvIWp1pA+tf42MTd23ExskqE+xduxmtFw3lMy3Uiw6nqIwzKlf1xtP0dlK2v+BLojq9yxbE09SoX28Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721336305; c=relaxed/simple;
-	bh=2LBOPGsD0Ssm1Sq4yeFLUDik9ii/DlpsfqgQD/1exLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m2pDxPOKwX55FeyR1117cVsHFyzrnjJL8yOk5LIFAJ4LLD25uHZyKVsZPxMxUc4aUrzTmfaZj+6ifXRFzy0ro61y7C+gtr+w9SJP2+MRlYjhpmEvIxvA+tNKTEc6G40IERzmtiIYnCzAk2SV9YZE2tqwvU0vUloGCAhCFXyDlrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b=YvFiTAqA; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1721336295; x=1721941095; i=j.neuschaefer@gmx.net;
-	bh=2LBOPGsD0Ssm1Sq4yeFLUDik9ii/DlpsfqgQD/1exLo=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=YvFiTAqAoXj43jUDJz5NbdR8dm3nVAi/mDwIx3+E/IsRtjEGwm6F+xJrhJuenYHe
-	 inaqm4CHyDncgJq4xLJillKaAVaEJUwFOLxwsL9VPhicQuDFU9+iDuyJVVcX6ouR1
-	 FBT5CMVGyglaM22cr+K8MoGMCeAkcTfsEk15+449rmq8XmitFdCKSmKILRbXiMi4z
-	 8lhN18r7Fwt3Ag0RERY+iN/dmjFBWzwbqlcYRdO6QN3VGNMzQdDqt1A9ZflQbZCrD
-	 GY1ew83KS5KQEFRKyV5c+Y2PooIzmTflrCNlynHBC3RB5d/dSFPKVty4sb4ZQh40G
-	 dbRHEw/AfRswaA6o+A==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from probook ([151.216.37.99]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N3bWr-1sLzYy1XQR-00uTcF; Thu, 18
- Jul 2024 22:58:15 +0200
-Date: Thu, 18 Jul 2024 22:58:13 +0200
-From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To: Tomer Maimon <tmaimon77@gmail.com>
-Cc: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	linus.walleij@linaro.org, avifishman70@gmail.com,
-	tali.perry1@gmail.com, joel@jms.id.au, venture@google.com,
-	yuenn@google.com, benjaminfair@google.com,
-	linux-gpio@vger.kernel.org, openbmc@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 4/7] pinctrl: nuvoton: npcm8xx: remove unused smb4den
- pin, group, function
-Message-ID: <ZpmB5XHvEsiER6Ee@probook>
-References: <20240711193749.2397471-1-tmaimon77@gmail.com>
- <20240711193749.2397471-5-tmaimon77@gmail.com>
- <ZpFrslx57m62SEsg@probook>
- <CAP6Zq1gYSiXFhtA0HAaoSLD7Lz-9nuoy-cUn+qvh0BLev_ifVg@mail.gmail.com>
+	s=arc-20240116; t=1721336452; c=relaxed/simple;
+	bh=KY05MccZUIJDV+lvcNDZwh2noM+K9Gvqo8y6cn2+OPM=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=AU7efFwQy2S2VnKe6dr7Oe+LzqfifYH4ZxHqQySUTJ927E/o+c8o5ed5Z47qfLljo5rHl4Dc4YdcUk0cQBvS093UwojYYGnBWUfK/ewqAVSNimCsZ5jdcQ7QwdEEvxV9p4nK+IJe8c3mqW5/JHOSPfF0xth8VRWxdSu+A8HViPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=DRku0V6U; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=DRku0V6U; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1721336449;
+	bh=KY05MccZUIJDV+lvcNDZwh2noM+K9Gvqo8y6cn2+OPM=;
+	h=Message-ID:Subject:From:To:Date:From;
+	b=DRku0V6UC1iVuDePTbi6LAzbs99fZIWro/z5XqXpTHju3bwbJ2wa8MK0iyNKvkgty
+	 59yfiUd67m7m7exFOy/W/XTghOSyhEbCahfo1stB9813jwVEpOO3ggnVGHxPmNGMO/
+	 J4lm8m6zZcwuCuz0lDDD2jbVpqKyMgwytgR+JGeE=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id E24771286268;
+	Thu, 18 Jul 2024 17:00:49 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id UYCbke5Ip2BE; Thu, 18 Jul 2024 17:00:49 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1721336449;
+	bh=KY05MccZUIJDV+lvcNDZwh2noM+K9Gvqo8y6cn2+OPM=;
+	h=Message-ID:Subject:From:To:Date:From;
+	b=DRku0V6UC1iVuDePTbi6LAzbs99fZIWro/z5XqXpTHju3bwbJ2wa8MK0iyNKvkgty
+	 59yfiUd67m7m7exFOy/W/XTghOSyhEbCahfo1stB9813jwVEpOO3ggnVGHxPmNGMO/
+	 J4lm8m6zZcwuCuz0lDDD2jbVpqKyMgwytgR+JGeE=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::db7])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 3FD621285D88;
+	Thu, 18 Jul 2024 17:00:49 -0400 (EDT)
+Message-ID: <553d4e0924cc47e41ca799c19c666761c5de6023.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI updates for the 6.10+ merge window
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds
+	 <torvalds@linux-foundation.org>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel
+	 <linux-kernel@vger.kernel.org>
+Date: Thu, 18 Jul 2024 17:00:47 -0400
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAP6Zq1gYSiXFhtA0HAaoSLD7Lz-9nuoy-cUn+qvh0BLev_ifVg@mail.gmail.com>
-X-Provags-ID: V03:K1:NSSQMffJHv86bYx90IK9aYBaZp0OdImfBR1MyR761oZdk83gvl1
- 97JAsjwirurgsJcklBoqIlEwWjhxjgCpGciu6iMnSue4KS4S5ZdVfbPHVipO+KN42DD+kNb
- wcjG78gDAKk0vy7U3Ns91JLNtYT3yC2gdnWzItnsDO8wQxOLCM3t0PJg1Msf0NKyg4wn0wv
- CTZ+FaaUW0nulIjWG9Vyg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:fPr0PDlDbJE=;y5zDiP4m3x2DelNKmAFMw1IQbtp
- Om4Tp2J/vZVF1j6t0wOSzXHTC+LrdWQz38j+GRW6xDUBzFToMgVJPzMF1/O5qLacmFsJ1NtuL
- P/JACF1SOY537kytQxI0otqUT47ASMzsER1szJcOvai34xPPDuWt22TAWdpTG8ZXzF7wPsDsI
- vNsgpWT6NBKuYjli905awrlfUKDbCOSNvnQgnuxtRAAwE7pJ3SaKnoQ0Iq8gzLG46D03hVUI8
- ENHFvhcbHyohLtazY9OYig0+AOp0sGVJReRjvpP3CNml0EqenZsKYRkqWe23DblAoCqyCkkXe
- mFrTAqmJdSJjnP5ErfiMK4NGVGEarPiH4sui/aiwZh7Mr81fmdAf9RG790qFD+6hngY0t8LsN
- jcifnyXT0W3KqNOQVuuv3suk6WO26BArFSBcwm9CbNiv6RKU773mnMzUxaOH1jiw6CPyKT56U
- 3yPaPuHuJ1qUt0cmSOvSqZ7FXWnSbKBgW2Ym8Fx4UGpwsmIMhpagns2ade/j/eLBFwIbX+qYX
- U1OLQWKIDraqGXT5gYoV0/cor/NoHQa1sU0538iQH1T2LKQ/4d181FMKHbMWbzaArxu7TDvNN
- UAARIPcJ04j7sAg9M6gwBglHjZKrzMs3xYHkrRSUQLmqnlPKDOfYtqVQRQnu41muzVFYUgXRo
- jp7nKVjJ8u5mOEKWY/VzOOkgSDmLKfBJF+pGCE6WK+6QcJF0z1PJg+I2+6Su7qBMAGCzGKOpb
- mPzy/DYX3ihMIkS+ODrhVebvx5fM0Gv2qBrwj2ZvfTU4raSflpIHE3XNLszhnr2ZGMuMNr0it
- rc7iCrB4dYKJrTIKGVMXZAhA==
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 16, 2024 at 05:24:11PM +0300, Tomer Maimon wrote:
-> Hi,
->
-> It does not exist, do you suggest modifying the "unused" to "not exist"?
+Updates to the usual drivers (ufs, lpfc, qla2xxx, mpi3mr) plus some
+misc small fixes. The only core changes are to both bsg and scsi to
+pass in the device instead of setting it afterwards as q->queuedata, so
+no functional change.
 
-Yes, that would be clearer in my opinion.
+The patch is available here:
 
-Best regards,
-Jonathan
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-misc
+
+The short changelog is:
+
+Adrian Hunter (1):
+      scsi: ufs: ufs-pci: Add support for Intel Panther Lake
+
+Avri Altman (3):
+      scsi: ufs: sysfs: Make max_number_of_rtt read-write
+      scsi: ufs: core: Maximum RTT supported by the host driver
+      scsi: ufs: core: Allow RTT negotiation
+
+Bart Van Assche (15):
+      scsi: ufs: mcq: Make .get_hba_mac() optional
+      scsi: ufs: mcq: Inline ufshcd_mcq_vops_get_hba_mac()
+      scsi: ufs: mcq: Move the ufshcd_mcq_enable() call
+      scsi: ufs: mcq: Move the "hba->mcq_enabled = true" assignment
+      scsi: ufs: core: Inline is_mcq_enabled()
+      scsi: ufs: core: Initialize hba->reserved_slot earlier
+      scsi: ufs: core: Rename the MASK_TRANSFER_REQUESTS_SLOTS constant
+      scsi: ufs: core: Remove two constants
+      scsi: ufs: core: Initialize struct uic_command once
+      scsi: ufs: core: Declare functions once
+      scsi: core: Fix an incorrect comment
+      scsi: powertec: Declare local function static
+      scsi: eesox: Declare local function static
+      scsi: cumana: Declare local function static
+      scsi: acornscsi: Declare local functions static
+
+Chen Ni (1):
+      scsi: qla2xxx: Convert comma to semicolon
+
+Dr. David Alan Gilbert (1):
+      scsi: qla2xxx: Remove unused struct 'scsi_dif_tuple'
+
+Eric Biggers (6):
+      scsi: ufs: exynos: Add support for Flash Memory Protector (FMP)
+      scsi: ufs: core: Add UFSHCD_QUIRK_KEYS_IN_PRDT
+      scsi: ufs: core: Add fill_crypto_prdt variant op
+      scsi: ufs: core: Add UFSHCD_QUIRK_BROKEN_CRYPTO_ENABLE
+      scsi: ufs: core: fold ufshcd_clear_keyslot() into its caller
+      scsi: ufs: core: Add UFSHCD_QUIRK_CUSTOM_CRYPTO_PROFILE
+
+Huai-Yuan Liu (1):
+      scsi: lpfc: Fix a possible null pointer dereference
+
+Igor Pylypiv (1):
+      scsi: pm80xx: Set phy->enable_completion only when we wait for it
+
+Jeff Johnson (2):
+      scsi: ufs: qcom: Add missing MODULE_DESCRIPTION() macro
+      scsi: Add missing MODULE_DESCRIPTION() macros
+
+John Garry (2):
+      scsi: bsg: Pass dev to blk_mq_alloc_queue()
+      scsi: core: Pass sdev to blk_mq_alloc_queue()
+
+Justin Tee (8):
+      scsi: lpfc: Update lpfc version to 14.4.0.3
+      scsi: lpfc: Revise lpfc_prep_embed_io routine with proper endian macro usages
+      scsi: lpfc: Fix incorrect request len mbox field when setting trunking via sysfs
+      scsi: lpfc: Handle mailbox timeouts in lpfc_get_sfp_info
+      scsi: lpfc: Fix handling of fully recovered fabric node in dev_loss callbk
+      scsi: lpfc: Relax PRLI issue conditions after GID_FT response
+      scsi: lpfc: Allow DEVICE_RECOVERY mode after RSCN receipt if in PRLI_ISSUE state
+      scsi: lpfc: Cancel ELS WQE instead of issuing abort when SLI port is inactive
+
+Kyoungrul Kim (1):
+      scsi: ufs: core: Remove SCSI host only if added
+
+Manish Rangankar (1):
+      scsi: qla2xxx: During vport delete send async logout explicitly
+
+Minwoo Im (4):
+      scsi: ufs: mcq: Prevent no I/O queue case for MCQ
+      scsi: ufs: pci: Add support MCQ for QEMU-based UFS
+      scsi: ufs: mcq: Convert MCQ_CFG_n to an inline function
+      scsi: ufs: mcq: Fix missing argument 'hba' in MCQ_OPR_OFFSET_n
+
+Nilesh Javali (2):
+      scsi: qla2xxx: Update version to 10.02.09.300-k
+      scsi: qla2xxx: validate nvme_local_port correctly
+
+Quinn Tran (4):
+      scsi: qla2xxx: Use QP lock to search for bsg
+      scsi: qla2xxx: Reduce fabric scan duplicate code
+      scsi: qla2xxx: Fix flash read failure
+      scsi: qla2xxx: Unable to act on RSCN for port online
+
+Ram Prakash Gupta (2):
+      scsi: ufs: qcom: Enable suspending clk scaling on no request
+      scsi: ufs: core: Suspend clk scaling on no request
+
+Ranjan Kumar (4):
+      scsi: mpi3mr: Update driver version to 8.9.1.0.50
+      scsi: mpi3mr: Add ioctl support for HDB
+      scsi: mpi3mr: Trigger support
+      scsi: mpi3mr: HDB allocation and posting for hardware and firmware buffers
+
+Saurav Kashyap (1):
+      scsi: qla2xxx: Return ENOBUFS if sg_cnt is more than one for ELS cmds
+
+Shreyas Deodhar (3):
+      scsi: qla2xxx: Fix optrom version displayed in FDMI
+      scsi: qla2xxx: Complete command early within lock
+      scsi: qla2xxx: Fix for possible memory corruption
+
+Sumit Saxena (3):
+      scsi: mpi3mr: Driver version update
+      scsi: mpi3mr: Prevent PCI writes from driver during PCI error recovery
+      scsi: mpi3mr: Support PCI Error Recovery callback handlers
+
+Terrence Adams (1):
+      scsi: pm8001: Update log level when reading config table
+
+Tomas Henzl (1):
+      scsi: mpi3mr: Correct a test in mpi3mr_sas_port_add()
+
+Zhongqiu Han (1):
+      scsi: aha152x: Use DECLARE_COMPLETION_ONSTACK for non-constant completion
+
+And the diffstat:
+
+ Documentation/ABI/testing/sysfs-driver-ufs |   14 +-
+ block/bsg-lib.c                            |    3 +-
+ drivers/scsi/BusLogic.c                    |    1 +
+ drivers/scsi/advansys.c                    |    1 +
+ drivers/scsi/aha152x.c                     |    2 +-
+ drivers/scsi/aha1542.c                     |    2 +
+ drivers/scsi/aha1740.c                     |    1 +
+ drivers/scsi/arm/acornscsi.c               |    9 +-
+ drivers/scsi/arm/cumana_2.c                |    2 +-
+ drivers/scsi/arm/eesox.c                   |    2 +-
+ drivers/scsi/arm/powertec.c                |    2 +-
+ drivers/scsi/atari_scsi.c                  |    1 +
+ drivers/scsi/atp870u.c                     |    2 +
+ drivers/scsi/elx/efct/efct_driver.c        |    1 +
+ drivers/scsi/g_NCR5380.c                   |    1 +
+ drivers/scsi/imm.c                         |    1 +
+ drivers/scsi/isci/init.c                   |    1 +
+ drivers/scsi/lpfc/lpfc_attr.c              |   10 +-
+ drivers/scsi/lpfc/lpfc_ct.c                |   16 +-
+ drivers/scsi/lpfc/lpfc_els.c               |   19 +-
+ drivers/scsi/lpfc/lpfc_hbadisc.c           |   10 +-
+ drivers/scsi/lpfc/lpfc_sli.c               |   43 +-
+ drivers/scsi/lpfc/lpfc_version.h           |    2 +-
+ drivers/scsi/mac_scsi.c                    |    1 +
+ drivers/scsi/mpi3mr/mpi/mpi30_tool.h       |   44 ++
+ drivers/scsi/mpi3mr/mpi3mr.h               |  140 +++-
+ drivers/scsi/mpi3mr/mpi3mr_app.c           | 1090 +++++++++++++++++++++++++++-
+ drivers/scsi/mpi3mr/mpi3mr_fw.c            |  294 +++++++-
+ drivers/scsi/mpi3mr/mpi3mr_os.c            |  361 ++++++++-
+ drivers/scsi/mpi3mr/mpi3mr_transport.c     |   43 +-
+ drivers/scsi/pcmcia/aha152x_stub.c         |    1 +
+ drivers/scsi/pm8001/pm8001_sas.c           |    4 +-
+ drivers/scsi/pm8001/pm80xx_hwi.c           |    6 +-
+ drivers/scsi/ppa.c                         |    1 +
+ drivers/scsi/qla2xxx/qla_bsg.c             |   98 ++-
+ drivers/scsi/qla2xxx/qla_def.h             |   17 +-
+ drivers/scsi/qla2xxx/qla_gbl.h             |    6 +-
+ drivers/scsi/qla2xxx/qla_gs.c              |  467 ++++++------
+ drivers/scsi/qla2xxx/qla_init.c            |   94 ++-
+ drivers/scsi/qla2xxx/qla_inline.h          |    8 +
+ drivers/scsi/qla2xxx/qla_isr.c             |    6 -
+ drivers/scsi/qla2xxx/qla_mid.c             |    2 +-
+ drivers/scsi/qla2xxx/qla_nvme.c            |    5 +-
+ drivers/scsi/qla2xxx/qla_os.c              |   19 +-
+ drivers/scsi/qla2xxx/qla_sup.c             |  108 ++-
+ drivers/scsi/qla2xxx/qla_version.h         |    4 +-
+ drivers/scsi/scsi_common.c                 |    1 +
+ drivers/scsi/scsi_devinfo.c                |   11 +-
+ drivers/scsi/scsi_scan.c                   |    3 +-
+ drivers/scsi/sun3_scsi.c                   |    1 +
+ drivers/ufs/core/ufs-mcq.c                 |   89 ++-
+ drivers/ufs/core/ufs-sysfs.c               |   73 +-
+ drivers/ufs/core/ufshcd-crypto.c           |   34 +-
+ drivers/ufs/core/ufshcd-crypto.h           |   36 +
+ drivers/ufs/core/ufshcd-priv.h             |   15 +-
+ drivers/ufs/core/ufshcd.c                  |  163 +++--
+ drivers/ufs/host/ufs-exynos.c              |  240 +++++-
+ drivers/ufs/host/ufs-mediatek.c            |    7 +-
+ drivers/ufs/host/ufs-mediatek.h            |    3 +
+ drivers/ufs/host/ufs-qcom.c                |    3 +
+ drivers/ufs/host/ufshcd-pci.c              |   49 +-
+ include/uapi/scsi/scsi_bsg_mpi3mr.h        |    3 +-
+ include/ufs/ufs.h                          |    2 +
+ include/ufs/ufshcd.h                       |   54 +-
+ include/ufs/ufshci.h                       |    4 +-
+ 65 files changed, 3141 insertions(+), 615 deletions(-)
+ create mode 100644 drivers/scsi/mpi3mr/mpi/mpi30_tool.h
+
+James
+
 
