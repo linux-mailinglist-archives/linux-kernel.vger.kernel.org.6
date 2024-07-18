@@ -1,213 +1,183 @@
-Return-Path: <linux-kernel+bounces-255978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 867E893475C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:03:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CBD293470D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:16:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AA92B22139
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 05:03:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A600C2829EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 04:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9124AED1;
-	Thu, 18 Jul 2024 05:02:57 +0000 (UTC)
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2108.outbound.protection.partner.outlook.cn [139.219.146.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8263EA64;
+	Thu, 18 Jul 2024 04:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="awq+TxRF"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D871C41C7F;
-	Thu, 18 Jul 2024 05:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.108
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721278976; cv=fail; b=cObrTrN+08PyLodqvmK0iNXeXUcDnSBtlypaOGoAykn6kcn94/yhoEsbQ3F6+gysVNSMxxzdhsQ+xv1iaeR83CMWyVOyUMOuGpdBH5VkSZRQYBLkrNym+JtbghI7AGI818rLm/AN7LgkYlTh6JYwM7oFR0q0og6GkdR928oPuHI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721278976; c=relaxed/simple;
-	bh=3ALIIwaquQs4Ms4Lp4N9MuFsYbjraB6dnxG6CEfEyF4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DQe3SrA0bva3DTgjry4qsXZzuhBK0CyL7NaGhzRk3CdV7QZvzBKkNyfUEvby3Nq4hO7J+GiV1U5R+KrWJW0HNoMP/Xb0kB3ofUnyxCQSaF54D1vnkEUdovXYYovc2aaGDsktwTQvILMnb1zMGgeBUbRX9CjOdktPw2a+ckKkFms=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oM5Z+qbRJrCnTrm/QU989AJyEIeZ3b8PvqCWBfoTWbZ37no6m4USshcDCmCmBbuvczxw4DF5pEJ7x1zTbuL4Ps3c6d+mDSFbtQD9ABXZgtgNbFPPdA1KMjUdYLuV+Xx0d/I/xuwE0Z6GxfAMNBBLKe59NT85rPM+O35vN3Kbtu4S3Wp29vxNLWkve7Z7pKJXOQ9yTIxI6FEVh3ns3ZEo3NZneO8FcneaLqhLZwKp6tvaZ8g4IqX4PuwMs76HvrDnGIO0ub+R/PJ6ZFW6cEK7eRd+AsfTnXyKCKQLJphXg/4oIgQ4tJRTtAC5ulTsZiOsK8N3DbM3y7mqbaZrQIzfbw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=51NUMLFUOslcX5PgbS299VUsPDMwW+amx2sRqAl03fQ=;
- b=EYa8I9l5oP50RqNgqXFgEH0t7lJtHCvfdBIJdPdwGilQ4R5zesNGStY5W5XTpc96CBHJ7pM+3wWHok+FclQ8lpo7ARza7YAMdME1G9mONXYNOnyPLNhFXZaG32RF3PKgQRsXFjlnyPON2vwyN7F/JDaPdc7DflUNLks1fcn93RBrdItuJ26e2oxsz/KkVdG3cs7v3a2qiK1qBEb4DINN4Zm4pNKoCYCNZMoMbSey4AjsV8mt9cI+LXJIl/Gj3NG/ozi7Dh3BmNzGeksd7O1gUPMMYOxDAHYVgSHerKP3N3J3sAcML7kxf11ZLjgsBwDc0adY5Q1ihaUTYT2zzlUdWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:1b::9) by ZQ0PR01MB1046.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:e::5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36; Thu, 18 Jul
- 2024 03:28:47 +0000
-Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- ([fe80::64c5:50d8:4f2c:59aa]) by
- ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn ([fe80::64c5:50d8:4f2c:59aa%6])
- with mapi id 15.20.7741.044; Thu, 18 Jul 2024 03:28:47 +0000
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Jack Zhu <jack.zhu@starfivetech.com>,
-	Keith Zhao <keith.zhao@starfivetech.com>,
-	Changhuang Liang <changhuang.liang@starfivetech.com>,
-	Jayshri Pawar <jpawar@cadence.com>,
-	Jai Luthra <j-luthra@ti.com>,
-	linux-media@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132CE1B86E7;
+	Thu, 18 Jul 2024 04:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721276149; cv=none; b=nZJ/w9+pMGRNVyXIRgrpcuKkhkTVeEwXHda2ytWUZDBzLb7LN+U5L6pL2N7AZJeBrZ3sIk8G8zxYc+es2Ge96BP8drFZNPDXt9vi9WW14gWFNBY6WtWuv5XfloiDgzTAy1MFlc8X4ffDSfK8I4i/bxFsv4ahP/higmrvl849La8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721276149; c=relaxed/simple;
+	bh=xS9HzJ26eapCxsqG22ug07nWyykWP5myd8/Gi2rEkfs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=LyEF+erlbvc1wnXOskPVGh6xr/D3+M6S8lABfMfZE1bjr0+CoInGgu0UBCLMAupkYUwxpygvHx6La8R4CSsOw/tlOs8pZeFu28RqDTq3Wd02QB5dA0thMMgMCQGk+kcmSAH6mXAz2AEt7vaebQeAp7r7Vs6R+4Kjj7Vfv5ERh+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=awq+TxRF; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-75c3acf90f0so217929a12.2;
+        Wed, 17 Jul 2024 21:15:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721276147; x=1721880947; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1xfBb1hnVWsV5Z8J/Lq5YU91WCxCZemS1KmpZKl+3DM=;
+        b=awq+TxRFtLUIGDFjsG7vjtUUpJkot3aB3Rsa2RqcEb4zXQX2ZUPeLumrWIJIBfmsFg
+         2T4hlEz+nTWJXtAezkkVuYZ7dMtacqx2BpRAUYqzXIKyVxHf9oSXAMMwKCQFcISSSq36
+         ouJek3ds9PTUN2oBET0nXMUf+6fZifKmz2EHeQntan/bcngUlhbHc5Ye+Ot+LFnP2qK9
+         6yPhb7FvC43IDkQ4HviUKRvvaV5RjWhwOelzTndCzfP+FQPs3RlGkvSEUf7gVUL1EX2J
+         /qvEQDPWAlx4jwWmYKoHOURgruYe5RQwpBeumwfVhe4/C5qKEW3Bu+6CEpPZPmlmrK4M
+         H0Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721276147; x=1721880947;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1xfBb1hnVWsV5Z8J/Lq5YU91WCxCZemS1KmpZKl+3DM=;
+        b=C0Mza0RDQbkyMJefHKv2o9swV3n30kwq2kXSlJid/CDbKNZYWBPygGw9Q3AXZkQbPp
+         OPVRM+KInLUanofn0+J9C0Eiq9dm0b8GdO9APCPaKDp3o/AjEZ6lsA5F3zOyz7Ofcnsk
+         sIjjQ6rd0j+PJwWgqC0SNQ5NH/YrWMS5yO2wWkL+u1LWrr3xIYyrhoNcA3Uvn3J/24x8
+         hUF9tAZFVgmc7Sv5CjrAf83UPQ+PnlxllCu+XhXWjoztMdFgzZESWPaJ4Smw6eM9GEmW
+         LItg0jbhJph+bWLW0YrWK1Y0J0oi5/F6xuMMQ9uW/Dt+x4xZR9N9ntiY5M2svUqBp3GA
+         cEaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWYZzjhd9QLXJ9+Tjiq1VTgIXd8Tjqhb6+9dZI0OKdBnLxwZL2bOMo5vJEWPrwx6GX2BUg8Of2pu2NWYOI9XARnpDudp8778ac9pLayexfrfw8LptGiCOEAYPnW5uMcez3ir/1J/BRXN/NZ3X6m6/SBvRgFzE9CHJ/Jd/pZUFjaRGapwA9j6vJ4LO1v
+X-Gm-Message-State: AOJu0YzDE0Zzh0OuZzYmXRdYMAPO+NGorlDMEekZx5RZEtj8fVAc68FM
+	qrpRiOOvXBDhGKuTsxMQyLn2nGhlHkgYegDcwyc2KELL0O7tLdEd
+X-Google-Smtp-Source: AGHT+IESaYhpfV02sqOsiWtMIHrOjSqm0AcrATEmKLVT9QNkCxeByy3igBQsB6Kqh7pEJw5O6a//Jg==
+X-Received: by 2002:a05:6a20:9147:b0:1c2:8bcf:a38e with SMTP id adf61e73a8af0-1c3fdd338ddmr4456730637.37.1721276147082;
+        Wed, 17 Jul 2024 21:15:47 -0700 (PDT)
+Received: from tahera-OptiPlex-5000.tail3bf47f.ts.net ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc38dc0sm83152785ad.215.2024.07.17.21.15.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jul 2024 21:15:46 -0700 (PDT)
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: mic@digikod.net,
+	gnoack@google.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: [PATCH v2 5/5] staging: media: starfive: Add system PM support
-Date: Wed, 17 Jul 2024 20:28:34 -0700
-Message-Id: <20240718032834.53876-6-changhuang.liang@starfivetech.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240718032834.53876-1-changhuang.liang@starfivetech.com>
-References: <20240718032834.53876-1-changhuang.liang@starfivetech.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: NT0PR01CA0031.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c510:c::14) To ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:1b::9)
+	bjorn3_gh@protonmail.com,
+	jannh@google.com,
+	outreachy@lists.linux.dev,
+	netdev@vger.kernel.org
+Cc: Tahera Fahimi <fahimitahera@gmail.com>
+Subject: [PATCH v7 0/4] Landlock: Abstract Unix Socket Scoping Support
+Date: Wed, 17 Jul 2024 22:15:18 -0600
+Message-Id: <cover.1721269836.git.fahimitahera@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ZQ0PR01MB1302:EE_|ZQ0PR01MB1046:EE_
-X-MS-Office365-Filtering-Correlation-Id: 00fe384c-a902-4976-4716-08dca6d9bc1a
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|52116014|41320700013|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	81rzuWjzaYgsvPdhEzC/RfB1iEE11XZKkurrP0Wsm9Wzo4Xj1EuW2H5opsraTBfncfvZjpX5Nyj5+8AmHzrG5SA8YZPo4gaLRR33QFCs1aZupqsGrp3xbvGOKcqx8TUN0qfj52GZmhMXGh6Ep/euaQpq+5RhCQ9yNlD6pAMblSmKpovlp1rp7wHNUpk14Xu/niK59eVph3KC2ru62f1g+W0GwwsW7ERgcYhEJ2l00WIjcz51b0Cdcz2x0eupE+FkyelV2FpnzxQsxrrQWPbj2coSvO/tfuPaB0qFPfngRolHD2FRNEjVW6FLZwAOWkW9Us2ZnQxensewbkmWH/Pu4kLBiovEiA4VOFsRD04aBQ1CN9/uqk8UVmM4hEHyq3oUkiiHqzSFOQWNXujV392Wn3blIriQNRlGTFja0nkdibxvdcAnc7jsiDE15heQVvbIqSpAvr6HcJU/1kuInV4BqPscFtieF9agwGdnDIkSP49l1eBWNgJG547bDAPkq3s97mYC062QZIz1f347UqgyKU9NwhcNgJGn6B+JwB3yptoZouob6qg4NoD71pwMmWAI7Uvm6XaAa3lBFBxk3Fx8Zit5OUmi2Juafg/Q5HME7P0SgAVDHa8gEHvzvoixv3aO
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(52116014)(41320700013)(366016)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?whqkQN7gAsT3TJ4u02KlUZy68hEDIsY2/+JxsmqX3gbtffwq8/WqC7DmGHPb?=
- =?us-ascii?Q?3BmB3n2jU1ljqOlW1PLFcMW6WkYvvKPIH9wYxuQDVuO8HndJEBy06ZMXpeec?=
- =?us-ascii?Q?mwqEcusfu9vWtMUvueK1OY+xyppVn41fsIL0n8Go7F+tOB5uQh0Uey+bkHhc?=
- =?us-ascii?Q?PGucRXCbLt98QfCPOXcwuup2p8V6kwLgX+JPutNU00PdAQR5j3Mot646ohg8?=
- =?us-ascii?Q?CrDZ+nuL1zyJ5waZQNcfaaokLE/23FGTJ93tRJJfZ1AoN1VsMqyGBQrrh74W?=
- =?us-ascii?Q?ONZ9j5iXKcmB8K0EBcBtZ6n5wFSlGWzLM+TDENUvPGMd0fUsSgtxH4lL4Qot?=
- =?us-ascii?Q?u5jYyvjYb9xGpcWw3Wu1fnqTWUxT3C0+b+jkfkBW/aBtz6uQpPu5LoCv5Clm?=
- =?us-ascii?Q?Wd172Js1amBvKWxphUz+ixufYh6S7JJzFPofeULZvk2+1UL3VfCzBGN0guOf?=
- =?us-ascii?Q?b45NtOITHByhj0w581YRjpE/7euPOfStPdO2TtE2zu51+oX+5pz5qxfYQgf+?=
- =?us-ascii?Q?ET9nO6KBiDeup0klf7RKDyumHWI2cPACLWH6MLGRuBsaJHMHAtvuhqXvhoUw?=
- =?us-ascii?Q?cbLx7GHNx4cmBYaUx4epDFHxI9eXvxJhg6vtgbFYxpWKBdyvVU49vpfozKNM?=
- =?us-ascii?Q?ULuT7PM3w/p+NKabS5i9zJZ4UxDRUr0v+LSYPitwSIY7TStZ43Po08yBzd4a?=
- =?us-ascii?Q?6QXwFM2ALuNbYVZMEoybRd5zRXbaOZAuKgfmdmvJAj0h85qL58m8ED9Fxx6F?=
- =?us-ascii?Q?oA7aBL4ziduKFDcwll0OhqkFymUPxPTub2g+riH4NrlExpcisM5vKU5TvJF4?=
- =?us-ascii?Q?uq00rTFFH46j9O/EpsMCZL2Is8B/7ldNO3roIX37co48FtMiLc6d+aTBOSs3?=
- =?us-ascii?Q?GZi5MwdFIoKhHrln6A0Vqcd4yBi6rSF9UyJq5dY5gNHV9VhCylzxTER/W1iU?=
- =?us-ascii?Q?qM3jvNABpIRydTkmhJQO7bMgznUWtrPVWu0/RHfRb69XSy9Qq25Q8MtzzWJ9?=
- =?us-ascii?Q?M0ex3fBig71yBJTvlpA8DIsjhRz7mVgxcYDfsR2RyyaHhw2Gg7vc/TCVstPo?=
- =?us-ascii?Q?XKE9nw7iRqg9q32iij2aNZ7im0wF/rIOl8sG+mUXAcj+cuvmCKPH5aLygXJp?=
- =?us-ascii?Q?WqYCfrrd6yGbkV8fSgYGufqN3mAo4BM3U1ZPEdoHYdbcQ/fCeZzQ1ggNZTPN?=
- =?us-ascii?Q?ynkF7/Kw23Ryo0DQeAUhUxqqdjC8to5m9NBxOREvWWjEuILRf7rcMhxfDpiR?=
- =?us-ascii?Q?FE1kkjhos+JryDsOySUG5/vILinjehpddbIKFpvB/1ntGA2srBAgiWcGHRmm?=
- =?us-ascii?Q?pN0WqYHhM3AdDHshrTUUMwbo2bgqG6domObPBnAXCu8xXO781OoHnhFJE8/c?=
- =?us-ascii?Q?PH5SwFp1+6FAvW0WE/GzAAKZWc4wF1U8fvIUhhoJqZ+3q5E08/U4hjMby9Yt?=
- =?us-ascii?Q?yrcGnbMlaRZgGFhroytIK5W4+fU7o4GQFkS/zVY77XZsPKhRiGD0Y1bz2WJU?=
- =?us-ascii?Q?vwwuQtRYkUuXl26rjujtitTksnFRcmApDTKaqsAL8Z3QmipU6GnWP6fdseTc?=
- =?us-ascii?Q?Lc9fvAEGYdI1UPN5S6cl+fIyOxuE1HH8LXBpfUlnFV+zaedd6db58r9Z6N/r?=
- =?us-ascii?Q?8tsKHbJ60ZHFEBmc+Pr1FrI=3D?=
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 00fe384c-a902-4976-4716-08dca6d9bc1a
-X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2024 03:28:47.4993
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eTMJcpFQyHjwPh5ob1ouEaAME9wa6NN544I0QKOECbZArCdjwzxe8z0W6n+WID4caOcEoqmlLvOt/N/zgR2vwfkMtTTv34JCrG8bHhU6gMwmyG1wuMmVRE1A9aJXwthr
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB1046
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-This patch implements system suspend and system resume operation for
-StarFive Camera Subsystem. It supports hibernation during streaming
-and restarts streaming at system resume time.
+This patch series adds scoping mechanism for abstract unix sockets.
+Closes: https://github.com/landlock-lsm/linux/issues/7
 
-Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
----
- .../staging/media/starfive/camss/stf-camss.c  | 49 +++++++++++++++++++
- 1 file changed, 49 insertions(+)
+Problem
+=======
 
-diff --git a/drivers/staging/media/starfive/camss/stf-camss.c b/drivers/staging/media/starfive/camss/stf-camss.c
-index fecd3e67c7a1..8dcd35aef69d 100644
---- a/drivers/staging/media/starfive/camss/stf-camss.c
-+++ b/drivers/staging/media/starfive/camss/stf-camss.c
-@@ -416,10 +416,59 @@ static int __maybe_unused stfcamss_runtime_resume(struct device *dev)
- 	return 0;
- }
- 
-+static int __maybe_unused stfcamss_suspend(struct device *dev)
-+{
-+	struct stfcamss *stfcamss = dev_get_drvdata(dev);
-+	struct stfcamss_video *video;
-+	unsigned int i;
-+
-+	for (i = 0; i < STF_CAPTURE_NUM; ++i) {
-+		video = &stfcamss->captures[i].video;
-+		if (video->vb2_q.streaming) {
-+			video->ops->stop_streaming(video);
-+			video->ops->flush_buffers(video, VB2_BUF_STATE_ERROR);
-+		}
-+	}
-+
-+	return pm_runtime_force_suspend(dev);
-+}
-+
-+static int __maybe_unused stfcamss_resume(struct device *dev)
-+{
-+	struct stfcamss *stfcamss = dev_get_drvdata(dev);
-+	struct stf_isp_dev *isp_dev = &stfcamss->isp_dev;
-+	struct v4l2_subdev_state *sd_state;
-+	struct stfcamss_video *video;
-+	unsigned int i;
-+	int ret;
-+
-+	ret = pm_runtime_force_resume(dev);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to resume\n");
-+		return ret;
-+	}
-+
-+	sd_state = v4l2_subdev_lock_and_get_active_state(&isp_dev->subdev);
-+
-+	if (isp_dev->streaming)
-+		stf_isp_stream_on(isp_dev, sd_state);
-+
-+	v4l2_subdev_unlock_state(sd_state);
-+
-+	for (i = 0; i < STF_CAPTURE_NUM; ++i) {
-+		video = &stfcamss->captures[i].video;
-+		if (video->vb2_q.streaming)
-+			video->ops->start_streaming(video);
-+	}
-+
-+	return 0;
-+}
-+
- static const struct dev_pm_ops stfcamss_pm_ops = {
- 	SET_RUNTIME_PM_OPS(stfcamss_runtime_suspend,
- 			   stfcamss_runtime_resume,
- 			   NULL)
-+	SET_SYSTEM_SLEEP_PM_OPS(stfcamss_suspend, stfcamss_resume)
- };
- 
- static struct platform_driver stfcamss_driver = {
+Abstract unix sockets are used for local inter-process communications
+independent of the filesystem. Currently, a sandboxed process can
+connect to a socket outside of the sandboxed environment, since Landlock
+has no restriction for connecting to an abstract socket address(see more
+details in [1,2]). Access to such sockets for a sandboxed process should
+be scoped the same way ptrace is limited.
+
+[1] https://lore.kernel.org/all/20231023.ahphah4Wii4v@digikod.net/
+[2] https://lore.kernel.org/all/20231102.MaeWaepav8nu@digikod.net/
+
+Solution
+========
+
+To solve this issue, we extend the user space interface by adding a new
+"scoped" field to Landlock ruleset attribute structure. This field can
+contains different rights to restrict different functionalities. For
+abstract unix sockets, we introduce
+"LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" field to specify that a ruleset
+will deny any connection from within the sandbox domain to its parent
+(i.e. any parent sandbox or non-sandbox processes).
+
+Example
+=======
+
+Starting a listening socket with socat(1):
+	socat abstract-listen:mysocket -
+
+Starting a sandboxed shell from $HOME with samples/landlock/sandboxer:
+	LL_FS_RO=/ LL_FS_RW=. LL_SCOPED="a" ./sandboxer /bin/bash
+
+If we try to connect to the listening socket, the connection would be
+refused.
+	socat - abstract-connect:mysocket --> fails
+
+
+Notes of Implementation
+=======================
+
+* Using the "scoped" field provides enough compatibility and flexibility
+  to extend the scoping mechanism for other IPCs(e.g. signals).
+
+* To access the domain of a socket, we use its credentials of the file's FD
+  which point to the credentials of the process that created the socket.
+  (see more details in [3]). Cases where the process using the socket has
+  a different domain than the process created it are covered in the 
+  unix_sock_special_cases test.
+
+[3] https://lore.kernel.org/outreachy/Zmi8Ydz4Z6tYtpY1@tahera-OptiPlex-5000/T/#m8cdf33180d86c7ec22932e2eb4ef7dd4fc94c792
+
+Thanks to Mickaël Salaün and Paul Moore for guiding me through this
+implementation.
+
+Previous Versions
+=================
+v6: https://lore.kernel.org/all/Zn32CYZiu7pY+rdI@tahera-OptiPlex-5000/
+and https://lore.kernel.org/all/Zn32KKIJrY7Zi51K@tahera-OptiPlex-5000/
+v5: https://lore.kernel.org/all/ZnSZnhGBiprI6FRk@tahera-OptiPlex-5000/
+v4: https://lore.kernel.org/all/ZnNcE3ph2SWi1qmd@tahera-OptiPlex-5000/
+v3: https://lore.kernel.org/all/ZmJJ7lZdQuQop7e5@tahera-OptiPlex-5000/
+v2: https://lore.kernel.org/all/ZgX5TRTrSDPrJFfF@tahera-OptiPlex-5000/
+v1: https://lore.kernel.org/all/ZgXN5fi6A1YQKiAQ@tahera-OptiPlex-5000/
+
+
+Tahera Fahimi (4):
+  Landlock: Add abstract unix socket connect restriction
+  selftests/landlock: Abstract unix socket restriction tests
+  samples/landlock: Support abstract unix socket restriction
+  documentation/landlock: Adding scoping mechanism documentation
+
+ Documentation/userspace-api/landlock.rst      |  23 +-
+ include/uapi/linux/landlock.h                 |  29 +
+ samples/landlock/sandboxer.c                  |  25 +-
+ security/landlock/limits.h                    |   3 +
+ security/landlock/ruleset.c                   |   7 +-
+ security/landlock/ruleset.h                   |  23 +-
+ security/landlock/syscalls.c                  |  14 +-
+ security/landlock/task.c                      | 112 +++
+ tools/testing/selftests/landlock/base_test.c  |   2 +-
+ .../testing/selftests/landlock/ptrace_test.c  | 867 ++++++++++++++++++
+ 10 files changed, 1088 insertions(+), 17 deletions(-)
+
 -- 
-2.25.1
+2.34.1
 
 
