@@ -1,154 +1,189 @@
-Return-Path: <linux-kernel+bounces-256560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2A59935032
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:53:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4355935037
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0090C1C20B90
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:53:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 581C8B225C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 543BA144D09;
-	Thu, 18 Jul 2024 15:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CD2144D19;
+	Thu, 18 Jul 2024 15:54:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mKH5T1rb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iJCh00NQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Uj8Hvw2B";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="E69SeGTh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5uFBpiLV"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B58E4D8B7;
-	Thu, 18 Jul 2024 15:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C714D8B7;
+	Thu, 18 Jul 2024 15:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721317984; cv=none; b=LZrKpM62j4TR/UvoSu89WGFoq65VcjZAtbS5KUo/iLEU+7BaZe+QUQK/3+DrA4EDqroTu9cIl5DPDtCsRY6bNFBCQh6qGfDWaenh+H8ZE8zqysMW8SMM4sT65sPF4AcruF1QK2aWZ7Rdg7CW1ksE1CnUZD/MxAKHuNEiyGlnwDk=
+	t=1721318067; cv=none; b=uSIOTgT869LMJRhT5M2hrmJMNud17XKh0zCuMj6HDI3l1KcTrCfT9ySY38Pz7TV9Ljt8oUxDoEhUf6R/Zg7qnAZSCf+g5sZFAhSFCPSV/Le8S7N8wvUSA3DjkL30Q8TuVD0CL6jf0ureNWAqW1r/zjlM1k0wX4dS96FeXLvVU+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721317984; c=relaxed/simple;
-	bh=B6iJ8irjzz/fOi4lxXcJbV9yEeC3eoXu0jTG6TiEPUs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rjgHsvR6mMyS4PpcUmgOTQnfJvfeGLHQh3+1aF7MAhbx2Z1E8PTdfkDCh+NqDaP9y+VfZbpGxMWoSQIVTc+q7/w3njGI8Xh+UZH3GSERrWqzU15B/IRBXOqxgRpDS8udXCKUHPudKsM/FwtRPRGa905vpSzmv5BqMOXswOxLqe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mKH5T1rb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 872FDC116B1;
-	Thu, 18 Jul 2024 15:53:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721317984;
-	bh=B6iJ8irjzz/fOi4lxXcJbV9yEeC3eoXu0jTG6TiEPUs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mKH5T1rbFec9wRNcHrkmhjzBr2c1uhMGVcP9KX45hACZt+yoOXyRiclZLBZL5g7MQ
-	 7cQkLgnxDCmdLt5++A2K+OuFLyM4frb5WPnyM/NPRwKgGX6mpSYaWqEVqJ6TdWzM7A
-	 fw44b5e0UH7LYuas5XxKZxFljegRv35N3S2A3opwtT2+NAHy9pDV1kBrSDGutYtZPT
-	 Lt0nKiTCV8rVeYGHQjPmgO4FMUyBPK3ikcSSiQl9LiPBovx0BwXUsfMLkJFbZN0f8T
-	 2Md7mFGAjfTyhfn9ZtImQXKTts+K7GUBXJsgVLu2jw5VaXTAt0aBU3tIHeHwcG4Zk3
-	 efq+uA0gw5pmQ==
-Date: Thu, 18 Jul 2024 17:53:00 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch, 
-	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, tglx@linutronix.de
-Subject: Re: [PATCH 02/10] dt-bindings: display: imx: Add i.MX8qxp Display
- Controller display engine
-Message-ID: <20240718-watchful-macho-muskrat-dcda01@houat>
-References: <20240705090932.1880496-1-victor.liu@nxp.com>
- <20240705090932.1880496-3-victor.liu@nxp.com>
- <cd558335-6e72-46d1-911b-68ccbb211136@kernel.org>
- <b9583c86-b5ed-4642-9baf-2ac850656ee3@nxp.com>
- <eda90514-e40c-4edd-8c15-18717a5e9784@kernel.org>
- <20240708-mega-nautilus-of-champagne-cd4be6@houat>
- <35667bd4-bfb4-4939-9fd7-328e2e8c228f@kernel.org>
+	s=arc-20240116; t=1721318067; c=relaxed/simple;
+	bh=+GyF6wF45Mva/16xGi0bZK4e1fiwil2bPTQjhXLOiuA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mdnDxpZdnMmKFTTUZO2AH/Ik7k5OjnD8C+2IAoEgvEPZAYMFpEjmweyI2FOyiBCrdbSCfIbw0UYi9sijbVFxoEteLJ70LXaR8JrShg/3kh+hBZtJ1uXw9DfOHES8zbwJs7wJscg4jFcnFuwVQckGUm3qR06H5mvnvCJmfQwbFGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iJCh00NQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Uj8Hvw2B; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=E69SeGTh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5uFBpiLV; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C07061FBFB;
+	Thu, 18 Jul 2024 15:54:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1721318064; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hw0JL5HeNP2tQP8OBPZN6qivjdHQ01R9UaXvGFT6Pl0=;
+	b=iJCh00NQGkmfEwGvfwMzpKue/TWOiYXwjn+GMJToXjItCBVOcl1OUyr0AIC9gEEJVW9b61
+	XW2XYvIONDxZHC8aKWSjEieRE618ITkMd9P0j5l6NPKBVr4L5GyBavXRRX81306M1lEafW
+	DK9iHSCx63rRqfwMGsyIZg72gupWvW8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1721318064;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hw0JL5HeNP2tQP8OBPZN6qivjdHQ01R9UaXvGFT6Pl0=;
+	b=Uj8Hvw2B+SS4PYs54olzZcUTitI6gR7jaxSDzGJzjhOBbZCwnjhgnFWb7JYv/KX01ocBnG
+	fioRhtpAU7HrPTAw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=E69SeGTh;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=5uFBpiLV
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1721318063; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hw0JL5HeNP2tQP8OBPZN6qivjdHQ01R9UaXvGFT6Pl0=;
+	b=E69SeGThIYDdtfZ76g0+pC+Lfs1snFpP9Zy33ITQEk1+E3+wxGdJNazTURqB0/GEcCykwh
+	M+KGhULAeFNJgiI5xKMWQmhOl5rYCzg/ZFXvI2VQ1P4DfuOqHZIftd5+aIC3GDs2Ubx0BU
+	Gh3M4kj9XQMcW28ShyHxCO45KOwzLSI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1721318063;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hw0JL5HeNP2tQP8OBPZN6qivjdHQ01R9UaXvGFT6Pl0=;
+	b=5uFBpiLVBmYySZIclc9Wuxvf6b4xhF9lMS4vb6s37vgtXQ2NZmqMjoZF9EKUkBRe3tcgN0
+	PRzbVTkeR+Fk8GCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CC9681379D;
+	Thu, 18 Jul 2024 15:54:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id jw2UL646mWYFNAAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Thu, 18 Jul 2024 15:54:22 +0000
+Message-ID: <3fa9cdef-b242-43ef-bf53-33fb3f294039@suse.de>
+Date: Thu, 18 Jul 2024 18:54:18 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gkwlffv6qrxgj6ri"
-Content-Disposition: inline
-In-Reply-To: <35667bd4-bfb4-4939-9fd7-328e2e8c228f@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/7] irqchip: Add Broadcom bcm2712 MSI-X interrupt
+ controller
+To: Thomas Gleixner <tglx@linutronix.de>,
+ Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Jim Quinlan <jim2101024@gmail.com>,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Andrea della Porta <andrea.porta@suse.com>,
+ Phil Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>
+References: <20240626104544.14233-1-svarbanov@suse.de>
+ <20240626104544.14233-4-svarbanov@suse.de> <87ikxu1t5e.ffs@tglx>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <87ikxu1t5e.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-3.00 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	XM_UA_NO_VERSION(0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[kernel.org,broadcom.com,gmail.com,google.com,linux.com,pengutronix.de,suse.com,raspberrypi.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[dt];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim]
+X-Spam-Flag: NO
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.00
+X-Spam-Level: 
+X-Rspamd-Queue-Id: C07061FBFB
 
+Hi Thomas,
 
---gkwlffv6qrxgj6ri
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you for the comments!
 
-On Tue, Jul 09, 2024 at 08:50:35AM GMT, Krzysztof Kozlowski wrote:
-> On 08/07/2024 16:52, Maxime Ripard wrote:
-> > On Mon, Jul 08, 2024 at 04:04:21PM GMT, Krzysztof Kozlowski wrote:
-> >> On 08/07/2024 08:40, Liu Ying wrote:
-> >>>>> +
-> >>>>> +  "^framegen@[0-9a-f]+$":
-> >>>>> +    type: object
-> >>>>> +    additionalProperties: true
-> >>>>> +
-> >>>>> +    properties:
-> >>>>> +      compatible:
-> >>>>> +        const: fsl,imx8qxp-dc-framegen
-> >>>>> +
-> >>>>> +  "^gammacor@[0-9a-f]+$":
-> >>>>
-> >>>> This looks like you are organizing bindings per your driver architec=
-ture.
-> >>>
-> >>> As I mentioned in cover letter, this series addresses Maxime's
-> >>> comment for the previous series - split the display controller
-> >>> into multiple internal devices.  Maxime insisted on doing this.
-> >>
-> >> But these are not separate devices. Look:
-> >> 1. parent DC:
-> >> reg =3D <0x56180000 0x40000>;
-> >>
-> >> 2. child interrupt controller:
-> >> reg =3D <0x56180040 0x60>;
-> >>
-> >> That address is within parent.
-> >>
-> >> 3. Then we go to things like:
-> >> reg =3D <0x5618b400 0x14>, <0x5618b800 0x1c00>;
-> >>
-> >> Still within parent's range and just few words in address range. That's
-> >> a clear indication that you choose few registers and call it a "device=
-".
-> >=20
-> > That's never really been a metric though?
-> >=20
-> > If not, one could just create a "soc" device node covering the entire
-> > register map, and since it would overlap despite clearly defined
-> > features, you would claim it's a single device?
->=20
-> Since I do not create such one-address-soc devices, I claim I have
-> separate devices in the SoC. Here is not the case: there is a device
-> covering entire address space.
->=20
-> Soc is a good example, because components/blocks of the SoC are being
-> re-used among different SoCs. Is the case here?
->=20
-> BTW, it could be that some of the sub-devices here are worth to be
-> devices, I agree.
+On 6/27/24 15:12, Thomas Gleixner wrote:
+> Stanimir!
+> 
+> On Wed, Jun 26 2024 at 13:45, Stanimir Varbanov wrote:
+>> Add an interrupt controller driver for MSI-X Interrupt Peripheral (MIP)
+>> hardware block found in bcm2712. The interrupt controller is used to
+>> handle MSI-X interrupts from peripherials behind PCIe endpoints like
+>> RP1 south bridge found in RPi5.
+>>
+>> There are two MIPs on bcm2712, the first has 64 consecutive SPIs
+>> assigned to 64 output vectors, and the second has 17 SPIs, but only
+>> 8 of them are consecutive starting at the 8th output vector.
+> 
+> This is going to conflict with:
+> 
+>   https://lore.kernel.org/all/20240623142137.448898081@linutronix.de/
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git devmsi-arm-v4-1
+> 
+> Can you please have a look and rework it to the new per device MSI
+> domain concept?
 
-This was the binding of the previous version:
-https://lore.kernel.org/dri-devel/20230822085949.816844-2-victor.liu@nxp.co=
-m/
+When do you expect this will be merged?
 
-To me, the duplication of interrupts, clocks and power domains with
-different indices kind of proves that it's all separate devices
-
-Maxime
-
---gkwlffv6qrxgj6ri
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZpk6XAAKCRDj7w1vZxhR
-xYY5AQDq8KMOoRmdOKy1XHix4IqZooYahpg3GzvOtZ/WqsMsZwEA8vf7t6Uk7oIc
-BmI0C5iPkUa2dgea9uKW9CpOO3yBXAM=
-=8Z54
------END PGP SIGNATURE-----
-
---gkwlffv6qrxgj6ri--
+~Stan
 
