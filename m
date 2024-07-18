@@ -1,130 +1,205 @@
-Return-Path: <linux-kernel+bounces-256229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57841934B18
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:44:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D01B4934B2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1276C286B0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:44:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55A751F249CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0CB84E04;
-	Thu, 18 Jul 2024 09:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70EE82D83;
+	Thu, 18 Jul 2024 09:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FOnbss9g"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nnmUgOLg"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA447F47F
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 09:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546967EEF5
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 09:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721295851; cv=none; b=X4kyJjzvgVo1J/d4dpdWO0UENMnxso6nWCQKfQqlbPpFsd4lUqBS9FkknolKCGmGogCMIWPFKa+DbOdjTIrbP3WuDt+415mmcTLyWJR5uNX5vcEBVlzuizsVJvYqsmzRAxqKyxR3xGsNRHmM1sRsHt+9wvT9BnGYuzZo5MxGppw=
+	t=1721296277; cv=none; b=W53y454AKoqtEukkkog09Yyf6s5iN1CgMA9WjcXhgdj7vhkopvXdE+Z3tqLEV0ctguv1oMlN9GjatYcy4C7LfnVcIiAG7ipYmoB+Ml0cGTlXmpNiza5gstt4hoTiV+RYo6j4QX00RhBH8hrR69yYdqKPbrUvXZQ6upqzqZY5aDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721295851; c=relaxed/simple;
-	bh=SvwI1DIplhMjMtLmPow6061mOYop5TfX4h2cEZYPO3E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ORX0oTH5nYZV7P4KZGrOj4aE/Vu1mYFhjx/XpGxUS+IbYy0sdCV38YnU+/2+TewwzM5/OWXZQ2Av4vSTUrFxS5ILWDLhdTAY954HOQucPnJh4xNdB33IAUw6aGO5y++mPMBQRnRsIIseV0wglbUQi0+rUqRRIQIITTIP7WXJ0u4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FOnbss9g; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: tytso@mit.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721295844;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=VTXNakot6fFVM3BBXblMUSXLT44vEFf+YFIeQYft0Jw=;
-	b=FOnbss9gjN3qJqWtheT6SQoQlleYpg+k6BBfcQaXH4vQzlANFydH1+XEy2ub6zVjq6GOA3
-	dXSYknJa82feMHAMW+nPS5tldQOYvNkq9GK+MkAlEhHVhCvAKwlRNzjcpmAhRNgOWT5UyF
-	piYM+47qwbi4v4q4l2qu3NnJcICZhyI=
-X-Envelope-To: adilger@dilger.ca
-X-Envelope-To: linux-ext4@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: luis.henriques@linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>
-To: Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger@dilger.ca>
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Luis Henriques (SUSE)" <luis.henriques@linux.dev>
-Subject: [PATCH] ext4: fix access to uninitialised lock in fc replay path
-Date: Thu, 18 Jul 2024 10:43:56 +0100
-Message-ID: <20240718094356.7863-1-luis.henriques@linux.dev>
+	s=arc-20240116; t=1721296277; c=relaxed/simple;
+	bh=FfEysmryiD4OXybOFEozQuRpA+VqNfPyZXbB6wPtLQw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b/0d5Wxf7ce4/DafSD0Pa3IYc2wC8Byei5zN2tip6MTd+Nw1a6cWtpHB3ObscHjvcBqLcqA+4vrQ0y/w+I3ilIHxjQOMyYU4zgtxVKT9QgPHTkfVMnA/uk+bOtmiUY/FNOAB018znp9EkYN3YmVBt8AneJSkqnI+gVLfiEZIjIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nnmUgOLg; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-822eb80f6e4so147259241.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 02:51:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1721296275; x=1721901075; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RynWyZj/Mk6W2PWFZ6UdeaZvnGfxuKvGDrjfGdoRyoQ=;
+        b=nnmUgOLgnBeGWyurB2oYOGQexcpG1TlNxJ4AFAMW5tWMz1n2yWmHlAcFdkEVYPOMFD
+         so9RROKvIN5gOVGF6HHUM8pZkUUhaozrW3pLiMFAZCvcnIinJyhefnB8CeyO0SzPd7sK
+         wuSP34dAAAfbvLcZTk/RTK6PNqNqiD3kAoIC8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721296275; x=1721901075;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RynWyZj/Mk6W2PWFZ6UdeaZvnGfxuKvGDrjfGdoRyoQ=;
+        b=wY2GyU7twQdQAckiY5vSGCfWXFfuf6PwmZueG+mZT3Nfad2jzHbjwPb72taMMuJhME
+         3JiNHZyU1ctp2K6/istwyrTnHIgJubvY6xhRkTw78FnFy7ZnUi1PcJB8CurBCJwKDIIq
+         RXHFxYLwi0e/swwZkz4ijRsbx5qwAL98nro5bjVAnW9aY1s58CjO0lC/tMtnlUVQPvdF
+         opx0ztkOzezOUu99rNsvUUpuM88vnwx9JHXQeJQUi+JvyDK8sEZBKDeZ+ziLP7Ojc70L
+         MwCsEniZCYZ+q7/h3iAigfZ5zSPC+eq0CWnY9l7fqpv12OFJSAKmqUgQDjp7OcRlKCva
+         nBVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWzPlIXPy4SIPRSmC5tabgEj969TUD8iNtChuMOz5sCLPgtF6mmrYToVWTMtkAyYRWZ6nGu0lO/LeT58aKjGlh6yQZRiMwkMsV1TH52
+X-Gm-Message-State: AOJu0Yx8WGergQZDSXo7T3Tknro4ZvGzEuCjI1/OM5aIJiF6SOGjySjr
+	M+uHVgrZsBP/MI3wi6bom1OEcWcSvdmXE7WLNRdEnQMFKLHaCREJ32TUgQvJQIUkwCxiNiWekQR
+	23A==
+X-Google-Smtp-Source: AGHT+IGe2rAzyb07068+hyz9w7fS/ApXmiDrB2hQl+cSucZKM4gLkQscXlyolC1bZbspFN4EBG69IQ==
+X-Received: by 2002:a05:6102:158b:b0:48f:df86:da4 with SMTP id ada2fe7eead31-491598bf866mr5627827137.20.1721296275055;
+        Thu, 18 Jul 2024 02:51:15 -0700 (PDT)
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com. [209.85.221.169])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4915617d425sm777554137.27.2024.07.18.02.51.14
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Jul 2024 02:51:14 -0700 (PDT)
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-4f2f24f6470so252186e0c.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 02:51:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVtWMF4jhgX+/TdslkJfLG0zas0a4yk2A7q/ut0HICTjl0rv4hjc5bB51GhXJzjNrlNXWQrsISJLXlnFyAR7puMI9AcKE6F7WV5IQUY
+X-Received: by 2002:a05:6122:a0b:b0:4f2:ff08:ba3c with SMTP id
+ 71dfb90a1353d-4f4df688321mr6001081e0c.5.1721296273968; Thu, 18 Jul 2024
+ 02:51:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20240718082507.216764-1-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20240718082507.216764-1-angelogioacchino.delregno@collabora.com>
+From: Fei Shao <fshao@chromium.org>
+Date: Thu, 18 Jul 2024 17:50:37 +0800
+X-Gmail-Original-Message-ID: <CAC=S1njFSULdpTefLpb8biEUARVH4c_dZndUav_S-6D-bstn6w@mail.gmail.com>
+Message-ID: <CAC=S1njFSULdpTefLpb8biEUARVH4c_dZndUav_S-6D-bstn6w@mail.gmail.com>
+Subject: Re: [PATCH] drm/mediatek: Declare Z Position for all planes
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com, 
+	daniel@ffwll.ch, matthias.bgg@gmail.com, shawn.sung@mediatek.com, 
+	ck.hu@mediatek.com, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following kernel trace can be triggered with fstest generic/629 when
-executed against a filesystem with fast-commit feature enabled:
+On Thu, Jul 18, 2024 at 4:25=E2=80=AFPM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> MediaTek SoCs support multiple planes, one of which is the primary
+> and all the others are overlays (and CURSOR is the last overlay).
+>
+> In all currently supported SoCs, the Z order of the overlays can't
+> be changed with any fast muxing action, and can only be changed by
+> swapping the contents of the entire register set of one overlay
+> with the other to internally reorder the layer properties, which
+> is indeed feasible, but probably more expensive than desired.
+>
+> Declare the Z position for all planes with an immutable property
+> at least for now, so that the userspace can take its decisions
+> accordingly.
+>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
 
-INFO: trying to register non-static key.
-The code is fine but needs lockdep annotation, or maybe
-you didn't initialize this object before use?
-turning off the locking correctness validator.
-CPU: 0 PID: 866 Comm: mount Not tainted 6.10.0+ #11
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.2-3-gd478f380-prebuilt.qemu.org 04/01/2014
-Call Trace:
- <TASK>
- dump_stack_lvl+0x66/0x90
- register_lock_class+0x759/0x7d0
- __lock_acquire+0x85/0x2630
- ? __find_get_block+0xb4/0x380
- lock_acquire+0xd1/0x2d0
- ? __ext4_journal_get_write_access+0xd5/0x160
- _raw_spin_lock+0x33/0x40
- ? __ext4_journal_get_write_access+0xd5/0x160
- __ext4_journal_get_write_access+0xd5/0x160
- ext4_reserve_inode_write+0x61/0xb0
- __ext4_mark_inode_dirty+0x79/0x270
- ? ext4_ext_replay_set_iblocks+0x2f8/0x450
- ext4_ext_replay_set_iblocks+0x330/0x450
- ext4_fc_replay+0x14c8/0x1540
- ? jread+0x88/0x2e0
- ? rcu_is_watching+0x11/0x40
- do_one_pass+0x447/0xd00
- jbd2_journal_recover+0x139/0x1b0
- jbd2_journal_load+0x96/0x390
- ext4_load_and_init_journal+0x253/0xd40
- ext4_fill_super+0x2cc6/0x3180
-...
-
-In the replay path there's an attempt to lock sbi->s_bdev_wb_lock in
-function ext4_check_bdev_write_error().  Unfortunately, at this point this
-spinlock has not been initialized yet.  Moving it's initialization to an
-earlier point in __ext4_fill_super() fixes this splat.
-
-Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
----
- fs/ext4/super.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index c682fb927b64..d615a41ada0e 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -5325,6 +5325,8 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
- 	INIT_LIST_HEAD(&sbi->s_orphan); /* unlinked but open files */
- 	mutex_init(&sbi->s_orphan_lock);
- 
-+	spin_lock_init(&sbi->s_bdev_wb_lock);
-+
- 	ext4_fast_commit_init(sb);
- 
- 	sb->s_root = NULL;
-@@ -5546,7 +5548,6 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
- 	 * Save the original bdev mapping's wb_err value which could be
- 	 * used to detect the metadata async write error.
- 	 */
--	spin_lock_init(&sbi->s_bdev_wb_lock);
- 	errseq_check_and_advance(&sb->s_bdev->bd_mapping->wb_err,
- 				 &sbi->s_bdev_wb_err);
- 	EXT4_SB(sb)->s_mount_state |= EXT4_ORPHAN_FS;
+Reviewed-by: Fei Shao <fshao@chromium.org>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_crtc.c  |  2 +-
+>  drivers/gpu/drm/mediatek/mtk_plane.c | 18 +++++++++++++++++-
+>  drivers/gpu/drm/mediatek/mtk_plane.h |  3 +--
+>  3 files changed, 19 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/mediatek/mtk_crtc.c b/drivers/gpu/drm/mediat=
+ek/mtk_crtc.c
+> index 072b2fdae87b..327214721b4d 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_crtc.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_crtc.c
+> @@ -874,7 +874,7 @@ static int mtk_crtc_init_comp_planes(struct drm_devic=
+e *drm_dev,
+>                                 mtk_crtc_plane_type(mtk_crtc->layer_nr, n=
+um_planes),
+>                                 mtk_ddp_comp_supported_rotations(comp),
+>                                 mtk_ddp_comp_get_formats(comp),
+> -                               mtk_ddp_comp_get_num_formats(comp));
+> +                               mtk_ddp_comp_get_num_formats(comp), i);
+>                 if (ret)
+>                         return ret;
+>
+> diff --git a/drivers/gpu/drm/mediatek/mtk_plane.c b/drivers/gpu/drm/media=
+tek/mtk_plane.c
+> index 5bf757a3ef20..7d2cb4e0fafa 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_plane.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_plane.c
+> @@ -321,7 +321,7 @@ static const struct drm_plane_helper_funcs mtk_plane_=
+helper_funcs =3D {
+>  int mtk_plane_init(struct drm_device *dev, struct drm_plane *plane,
+>                    unsigned long possible_crtcs, enum drm_plane_type type=
+,
+>                    unsigned int supported_rotations, const u32 *formats,
+> -                  size_t num_formats)
+> +                  size_t num_formats, unsigned int plane_idx)
+>  {
+>         int err;
+>
+> @@ -338,6 +338,22 @@ int mtk_plane_init(struct drm_device *dev, struct dr=
+m_plane *plane,
+>                 return err;
+>         }
+>
+> +       /*
+> +        * The hardware does not support repositioning planes by muxing: =
+their
+> +        * Z-position is infact fixed and the only way to change the actu=
+al
+> +        * order is to swap the contents of the entire register set of on=
+e
+> +        * overlay with another, which may be more expensive than desired=
+.
+> +        *
+> +        * With no repositioning, the caller of this function guarantees =
+that
+> +        * the plane_idx is correct. This means that, for example, the PR=
+IMARY
+> +        * plane fed to this function will always have plane_idx zero.
+> +        */
+> +       err =3D drm_plane_create_zpos_immutable_property(plane, plane_idx=
+);
+> +       if (err) {
+> +               DRM_ERROR("Failed to create zpos property for plane %u\n"=
+, plane_idx);
+> +               return err;
+> +       }
+> +
+>         if (supported_rotations) {
+>                 err =3D drm_plane_create_rotation_property(plane,
+>                                                          DRM_MODE_ROTATE_=
+0,
+> diff --git a/drivers/gpu/drm/mediatek/mtk_plane.h b/drivers/gpu/drm/media=
+tek/mtk_plane.h
+> index 231bb7aac947..5b177eac67b7 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_plane.h
+> +++ b/drivers/gpu/drm/mediatek/mtk_plane.h
+> @@ -49,6 +49,5 @@ to_mtk_plane_state(struct drm_plane_state *state)
+>  int mtk_plane_init(struct drm_device *dev, struct drm_plane *plane,
+>                    unsigned long possible_crtcs, enum drm_plane_type type=
+,
+>                    unsigned int supported_rotations, const u32 *formats,
+> -                  size_t num_formats);
+> -
+> +                  size_t num_formats, unsigned int plane_idx);
+>  #endif
+> --
+> 2.45.2
+>
+>
 
