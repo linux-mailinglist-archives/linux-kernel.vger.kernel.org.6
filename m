@@ -1,59 +1,104 @@
-Return-Path: <linux-kernel+bounces-256542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 373A3934FF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:34:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30545934FF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E557D28339D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:34:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD75E283277
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D7214431C;
-	Thu, 18 Jul 2024 15:34:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197901448C9;
+	Thu, 18 Jul 2024 15:35:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M2t2Xmhu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1sQC/uAe";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uHZbt707";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1sQC/uAe";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uHZbt707"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FA484DF5;
-	Thu, 18 Jul 2024 15:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED807A724;
+	Thu, 18 Jul 2024 15:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721316856; cv=none; b=WSJm4Q81WE0ypiF/afr2L4ZVKFbOd7FgtCPTqqufb4YNPIrcfkWNHGQamKNQBUwzzRfo5tKHfYzE49PWMdqUB79/DHHrK+OOXkgi7scSEV0YpTO+rEnxxZCz0l5xdJOqcxFOg3Raa2YECo7LULcwIwdwj5dB3ER1NMdkI9iHyoo=
+	t=1721316915; cv=none; b=C674EuFf1+szcyEK6h6Bc9QkDNOUBAFfVyKzuUSK/FGx0Lt+D0wnUPmvrq61fQ00xI0OgRHMMLxSp5/anQaABY2839Sh0uc0x0/UHnMgtVVfibgygcUTTmYYpzu5CmN23SgYhpPYfE0tJ6eUmlJMVIZ1dEWt0IkEoLYh3eYiiO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721316856; c=relaxed/simple;
-	bh=d8p7JTSMNvZCbWgBO9OlvaoJIKaIcHFTnIofjqs4coY=;
+	s=arc-20240116; t=1721316915; c=relaxed/simple;
+	bh=lIWToKvgUfIYprmsD7pL/ApsVusrVH2hYx0XZf2O5GU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qEtNX4b1uhPYXIVMwA0Xl8amKdAej8GiBUstmPVcp6GzDEoy0wcdSudlkhJE5LQPyD4rZnT5FmqTfdr3K/5Y6zXZLw/V/VXa6Mer672FOqNUs8p+DtNSaUSIoGFCM+1MHTc7Ym8f+HXJT/9pUTvI7AjSu7nKiNlIZ4hqsD1WWzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M2t2Xmhu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0903C116B1;
-	Thu, 18 Jul 2024 15:34:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721316855;
-	bh=d8p7JTSMNvZCbWgBO9OlvaoJIKaIcHFTnIofjqs4coY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M2t2XmhuV5HcuQvM7AcRwmwGB3C54/gs6iv9TwmMjv8U5IMM7fuRXuu/Mn8VQd9rF
-	 GJ3hUBs1H80+5VGwtbIg1tYCcWZ2AQmRfIlYiaPJbJZ/4695469zYGcu8FWijcaVDH
-	 hJayA+FovUBrisDLh0iOFcPMFEgp/xqRi23bU12layGfKGcJEMjruYYNmK7cTh+CSi
-	 VqoayXNXC3mJZS1+K48tozx7e98hgFzrN0EB1RylWUj3qQssCtpBdbn/nBq5ytMBn0
-	 iQaTei8XjEFcpoYaI7f2xEGJVlElkCWHVojTBFo7MgPFBONdD4YePWFFYkQFanyRTG
-	 FPjhSJmumGdFg==
-Date: Thu, 18 Jul 2024 16:34:10 +0100
-From: Will Deacon <will@kernel.org>
-To: Dev Jain <dev.jain@arm.com>
-Cc: Remington Brasga <rbrasga@uci.edu>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Shuah Khan <shuah@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	Anshuman.Khandual@arm.com, Mark Brown <broonie@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>
-Subject: Re: [PATCH] kselftest: missing arg in ptrace.c
-Message-ID: <20240718153410.GA21354@willie-the-truck>
-References: <20240712231730.2794-1-rbrasga@uci.edu>
- <f7383c8c-83f3-45da-a8c4-2cfcfa497936@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DlWF0++1dSD9zBUIs9Uwda8lY5pTUZaFjSbRYuqZUIRRQd7rRw0fE3YRBWMGPqy/maGvxO4KmSY/bwiM4RqtraEUBTmx/k84NRPo3ijrbFaEnDPstAMMFMPijbeVkUKOo/obbbNOp6RuKv0A0RTNJA4TCeqfMP4xmG2CENbEH2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1sQC/uAe; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uHZbt707; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1sQC/uAe; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uHZbt707; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9B1E221A47;
+	Thu, 18 Jul 2024 15:35:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721316911;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oOF6GAsaVPMZI1BMvowPVFk8h6lPiD2wmG7Jf94UVZU=;
+	b=1sQC/uAeKpeMJGgZBDc56QBaQoTChuBo1cmzAjJXK1ZanaUTZ5WWhyYK7hQwtf9+n4wbrq
+	ynG2PanUqGl0wTDA7QpA7JqvfRBpmwnJu1t4W56dVHUsr9SmyrM5dljQEg66GS6hvns4Fx
+	4PakgO+n2ZqPytJoXfpemHTIlxBVeJI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721316911;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oOF6GAsaVPMZI1BMvowPVFk8h6lPiD2wmG7Jf94UVZU=;
+	b=uHZbt707qaPzr06k50ToInHzzVGdSmreef/LGKVz3RygPkKAhVxn0AHU6rCRn5yQ3dpoCT
+	MCoKu4M7JR8YpUCA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="1sQC/uAe";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=uHZbt707
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721316911;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oOF6GAsaVPMZI1BMvowPVFk8h6lPiD2wmG7Jf94UVZU=;
+	b=1sQC/uAeKpeMJGgZBDc56QBaQoTChuBo1cmzAjJXK1ZanaUTZ5WWhyYK7hQwtf9+n4wbrq
+	ynG2PanUqGl0wTDA7QpA7JqvfRBpmwnJu1t4W56dVHUsr9SmyrM5dljQEg66GS6hvns4Fx
+	4PakgO+n2ZqPytJoXfpemHTIlxBVeJI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721316911;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oOF6GAsaVPMZI1BMvowPVFk8h6lPiD2wmG7Jf94UVZU=;
+	b=uHZbt707qaPzr06k50ToInHzzVGdSmreef/LGKVz3RygPkKAhVxn0AHU6rCRn5yQ3dpoCT
+	MCoKu4M7JR8YpUCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 742491379D;
+	Thu, 18 Jul 2024 15:35:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LNAhGy82mWaPLgAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Thu, 18 Jul 2024 15:35:11 +0000
+Date: Thu, 18 Jul 2024 17:35:10 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Johannes Thumshirn <jth@kernel.org>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Qu Wenru <wqu@suse.com>,
+	Filipe Manana <fdmanana@suse.com>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH v3 2/3] btrfs: replace stripe extents
+Message-ID: <20240718153510.GH8022@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20240712-b4-rst-updates-v3-0-5cf27dac98a7@kernel.org>
+ <20240712-b4-rst-updates-v3-2-5cf27dac98a7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,45 +107,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f7383c8c-83f3-45da-a8c4-2cfcfa497936@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20240712-b4-rst-updates-v3-2-5cf27dac98a7@kernel.org>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Queue-Id: 9B1E221A47
+X-Spam-Flag: NO
+X-Spam-Score: -0.21
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-0.21 / 50.00];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:replyto];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Level: 
+X-Spamd-Bar: /
 
-On Tue, Jul 16, 2024 at 09:49:12AM +0530, Dev Jain wrote:
+On Fri, Jul 12, 2024 at 09:48:37AM +0200, Johannes Thumshirn wrote:
+> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 > 
-> On 7/13/24 04:47, Remington Brasga wrote:
-> > The string passed to ksft_test_result_skip is missing the `type_name`
-> > 
-> > Signed-off-by: Remington Brasga <rbrasga@uci.edu>
-> > ---
-> > clang-tidy reported clang-diagnostic-format-insufficient-args warning
-> > on this line, so I am fixing it.
-> > 
-> >   tools/testing/selftests/arm64/abi/ptrace.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/testing/selftests/arm64/abi/ptrace.c b/tools/testing/selftests/arm64/abi/ptrace.c
-> > index abe4d58d731d..6144f83f8ab4 100644
-> > --- a/tools/testing/selftests/arm64/abi/ptrace.c
-> > +++ b/tools/testing/selftests/arm64/abi/ptrace.c
-> > @@ -156,7 +156,7 @@ static void test_hw_debug(pid_t child, int type, const char *type_name)
-> >   		/* Zero is not currently architecturally valid */
-> >   		ksft_test_result(arch, "%s_arch_set\n", type_name);
-> >   	} else {
-> > -		ksft_test_result_skip("%s_arch_set\n");
-> > +		ksft_test_result_skip("%s_arch_set\n", type_name);
-> >   	}
-> >   }
+> Update stripe extents in case a write to an already existing address
+> incoming.
 > 
-> Okay, I almost forgot that I had a patch fixing this as part of another series:
-> https://lore.kernel.org/all/20240625122408.1439097-6-dev.jain@arm.com/
-> If that is OK, Will, can you please pull that? Or should I send that as a
-> separate patch?
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-I think Mark already suggested sending that separately:
-
-  | This should ideally be a separate patch, there's no overlap.
-
-and he's right: it's best to keep fixes and features separate.
-
-Will
+Please update the subject and changelog (in for-next), this does explain
+much or lacks context. Thanks.
 
