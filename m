@@ -1,156 +1,207 @@
-Return-Path: <linux-kernel+bounces-256280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A74F2934C01
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:54:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C78D5934C12
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27D861F20C1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:54:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 775DE2852CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094491304AD;
-	Thu, 18 Jul 2024 10:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7829513210D;
+	Thu, 18 Jul 2024 10:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tVuwIs9w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jP04u4Ti";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+Pl4KKTX";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="b3oSIphJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0UiQITRe"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345B97FBB7;
-	Thu, 18 Jul 2024 10:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75431EA80
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 10:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721300045; cv=none; b=DxyOQp2inpmnTCQt/Exp3KeS+tDW4oGTpiUvPpNNBat4JiFjemusQILbtpdrBVuRqZegHgVab5gJZUydPv/Y94+fSHuSnllNoWPCSCc93UxdSifrcVd8L2kyhn19VVxyVNPbNeuOGKXgeDTrszk71ECIrcSRgNu9zZW9zG0d/mw=
+	t=1721300356; cv=none; b=gr84NjayVa72V8aBWgHcMh5DUasqtesKBp8GBfRPm/CH14ZpbvimN4bAtLSFU8nnNfvq6BD1JYLLVHJW4Tt6MU03pHysUhKAuhKRAR84cTbkzekactI4ogaaVUOOt0v2APxQbZyQ30+QZInyf+Mm5ed3hoe3GeL4owdYGnmcIyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721300045; c=relaxed/simple;
-	bh=H20qHZWg3BotWC1vJsjvuhtgbNZOFsFgVHhz3CyfqTQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SgcEeZbwVDCWWoCvHJwYgYWOH6sl+zInOmJtBj5sBAwgj4zzUyvt9UV/qj9v1CCqO5v3ZsTSQjuKlt4Ps2eIYYQ9JcEcy09ioNH6W86+juqpOacJosWDfonII8jdZvkBY1Byff8qriaCOGILxhawCcnLkGX4SP3JWLgfCRPM4PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tVuwIs9w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10D49C116B1;
-	Thu, 18 Jul 2024 10:53:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721300044;
-	bh=H20qHZWg3BotWC1vJsjvuhtgbNZOFsFgVHhz3CyfqTQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tVuwIs9wbNOgYp/zri+xnm2JLWhwAKhDeC8c6OArSTURsxGZQ5dCvM4FN5jTXPlU4
-	 dGypesbeG/5ImZixPyX9/+uVBzf9ennHUzZYPP6r2j8VOZDgBY+UHhZymHHO7Pxt0t
-	 +ROm4G04/Wtl7xcqviWYwU2rnW1Vy+k6XnKJ+sKa47Py5q8Z+PZVe6NkXHF5/1KiCO
-	 +AdPHFMsLhp103n30TrosnKXdHo0nT9U875XUJ8eY1UwnU42DfFT0xqIO4ahkYjack
-	 qi67w3f+/S8ZghmtLe4PjCXkMSqSrle5xm9+NeGpVrTOLTlarJf7pCfD1fxBln2Ulk
-	 +91prrXqbKmvw==
-Message-ID: <ef481d85-dff1-4f8f-87ab-5e9086dd8eed@kernel.org>
-Date: Thu, 18 Jul 2024 12:53:56 +0200
+	s=arc-20240116; t=1721300356; c=relaxed/simple;
+	bh=oOBzUDACGWmqlTkywrzVC20TPybCG2SsiDfnXEa5qtQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JS42nc5r0XsQb7JZFZFTHX3lZlMRH1vaotsxPRMzooTq+pHKXqWdQcuZXKsbsn+fjvVVinznn19MxSISps5dNhL+xKrca2v723PETmyrFxhDLeix3lGF27K42xD8qgR2POLehpvVqIZENpzDcAquiQZJv9qWG/lNASKHnIqmXhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jP04u4Ti; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+Pl4KKTX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=b3oSIphJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0UiQITRe; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 09B201FBB6;
+	Thu, 18 Jul 2024 10:59:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1721300353; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=ZFAOU3HyKG9tRnPsNhPL4DSqpPq3LSyftAT+pe/MGVc=;
+	b=jP04u4TiFtdKUVsw6+9h8RaPMeXwEoXBKSJnSVFW9sTMNqZpJmB9fyZ+fEKvT25o+der97
+	H/XJyqu0ITsQOMtsgF9fp/bSaTyDYv84pLa6tSpLHnJ/aStbYYfBaBJF6NTbVAf5l/hGRQ
+	K8iQtRSGON/uO34Q5eQM3LEnqn+fNdg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1721300353;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=ZFAOU3HyKG9tRnPsNhPL4DSqpPq3LSyftAT+pe/MGVc=;
+	b=+Pl4KKTXhjQVfMnKnTxftQjY0L0MOKhjrW01aYcbEbs43kTz6+Z0pUO/f4QXBFl7aTIxXi
+	frydlOmrb6BpKvCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=b3oSIphJ;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=0UiQITRe
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1721300352; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=ZFAOU3HyKG9tRnPsNhPL4DSqpPq3LSyftAT+pe/MGVc=;
+	b=b3oSIphJjh+WSEs76GyYowWwp39g3y4SEXwzhbWSQRdL5B8DPCt91cP3JJGciTykcAZamj
+	fGLFxucGm9SKpL2+a7aVZx7/NXgPB0v5QOAR+J5b4nzrKRQDjnPVBEM0kwQ/Ya0FdqJKEP
+	/gZQmXocc+Vc/cetvw3gEdO8Iflj8to=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1721300352;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=ZFAOU3HyKG9tRnPsNhPL4DSqpPq3LSyftAT+pe/MGVc=;
+	b=0UiQITRe7i8FD6UiEBclgT1AvrbjB8BWsjYhd5Et8mDY6kf7OLg7mrwzYmPp0UnS6iXud3
+	FB6Iwhr+/Aq5VyDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F26F0136F7;
+	Thu, 18 Jul 2024 10:59:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id PD7ZNX71mGbnVAAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Thu, 18 Jul 2024 10:59:10 +0000
+From: Oscar Salvador <osalvador@suse.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Peter Xu <peterx@redhat.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Michal Hocko <mhocko@suse.com>,
+	Donet Tom <donettom@linux.ibm.com>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH 0/9] Unify hugetlb into arch_get_unmapped_area functions
+Date: Thu, 18 Jul 2024 12:58:54 +0200
+Message-ID: <20240718105903.19617-1-osalvador@suse.de>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] dt-bindings: thermal: sophgo,cv1800-thermal: Add
- Sophgo CV1800 thermal
-To: Haylen Chu <heylenay@outlook.com>, Chen Wang <unicorn_wang@outlook.com>,
- Conor Dooley <conor@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Inochi Amaoto <inochiama@outlook.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Jisheng Zhang <jszhang@kernel.org>, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <SEYPR01MB422158B2766DA03728AD90CBD7A22@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
- <SEYPR01MB4221281561CCE511A5094D28D7A22@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
- <MA0P287MB2822445DD34485B94D22E7FFFEA22@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
- <20240716-cloning-canopy-a6799dc7f3b9@spud>
- <MA0P287MB28228BA5CC8B6F61A4C237E9FEA32@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
- <SEYPR01MB4221940059E23BCD8BA75125D7A32@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
- <aee6eff4-4421-4122-be97-f258cfaa9f43@kernel.org>
- <SEYPR01MB422112F63D19A0EA86726110D7AC2@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <SEYPR01MB422112F63D19A0EA86726110D7AC2@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 09B201FBB6
+X-Spam-Flag: NO
+X-Spam-Score: 0.99
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [0.99 / 50.00];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim]
+X-Spam-Level: 
+X-Spamd-Bar: /
 
-On 18/07/2024 09:04, Haylen Chu wrote:
-> On Wed, Jul 17, 2024 at 11:12:52AM +0200, Krzysztof Kozlowski wrote:
->> On 17/07/2024 07:19, Haylen Chu wrote:
->>> On Wed, Jul 17, 2024 at 08:05:10AM +0800, Chen Wang wrote:
->>>> Haylen, so you want a compatible that matches an actual SoC and use it
->>>> everywhere?
->>>>
->>>> Or we can add ones for each SoC and have a fallback to cv1800.
->>>
->>> I would prefer "sophgo,cv1800-thermal" and use it everywhere. I don't
->>> see any difference on thermal sensors between cv18xx-series SoCs.
->>
->> Please use proper fallbacks - there is a very specific rule, repeated
->> many times:
->>
->> https://elixir.bootlin.com/linux/v6.10-rc1/source/Documentation/devicetree/bindings/writing-bindings.rst#L42
-> 
-> Just in case I misunderstood,
-> 
-> You would prefer different SoC-specific compatible strings like
-> "sophgo,cv1800-thermal" "sophgo,sg2002-thermal" added to the driver,
+Hi all,
 
-There is nothing in above - comment or guideline - mentioning drivers.
+this is a first attempt to get rid of a fair amount of duplicated code
+wrt. hugetlb and *get_unmapped_area* functions.
 
-> and each thermal-sensor node contains two compatible strings, one
-> matches the SoC exactly and one is "sophgo,cv1800-thermal" just as a
-> fallback, right?
+HugeTLB registers a .get_unmapped_area function which gets called from
+__get_unmapped_area().
+hugetlb_get_unmapped_area() is defined by a bunch of architectures and
+it also has a generic definition for those that do not define it.
+Short-long story is that there is a ton of duplicated code between
+specific hugetlb *_get_unmapped_area_* functions and mm-core functions,
+so we can do better by teaching arch_get_unmapped_area* functions how
+to deal with hugetlb mappings.
 
+Note that not a lot of things need to be taught though.
+hugetlb_mmap_check_and_align(), that gets called for hugetlb mappings
+prior to call mm_get_unmapped_area_vmflags(), runs some sanity checks
+and aligns the addr to huge_page_size(), so we do not need to that
+down the road in the respective {generic,arch}_get_unmapped_area*
+functions.
 
+More information can be found in the respective patches.
 
-Best regards,
-Krzysztof
+LTP mmapstress and hugemmap testcases were ran succesfully on:
+
+- arm64
+- powerpc64
+- s390
+- x86_64
+
+Oscar Salvador (9):
+  mm/mmap: Teach generic_get_unmapped_area{_topdown} to handle hugetlb
+    mappings
+  arch/s390: Teach arch_get_unmapped_area{_topdown} to handle hugetlb
+    mappings
+  arch/x86: Teach arch_get_unmapped_area_vmflags to handle hugetlb
+    mappings
+  arch/sparc: Teach arch_get_unmapped_area{_topdown} to handle hugetlb
+    mappings
+  arch/powerpc: Teach book3s64 arch_get_unmapped_area{_topdown} to
+    handle hugetlb mappings
+  mm: Make hugetlb mappings go through mm_get_unmapped_area_vmflags
+  mm: Drop hugetlb_get_unmapped_area{_*} functions
+  arch/s390: Clean up hugetlb definitions
+  mm: Consolidate common checks in hugetlb_mmap_check_and_align
+
+ arch/loongarch/include/asm/hugetlb.h |   4 -
+ arch/mips/include/asm/hugetlb.h      |   4 -
+ arch/parisc/include/asm/hugetlb.h    |  15 ----
+ arch/parisc/mm/hugetlbpage.c         |  23 ------
+ arch/powerpc/mm/book3s64/slice.c     |  49 +++++++-----
+ arch/s390/include/asm/hugetlb.h      |  73 ++++--------------
+ arch/s390/mm/hugetlbpage.c           |  84 ---------------------
+ arch/s390/mm/mmap.c                  |   9 ++-
+ arch/sh/include/asm/hugetlb.h        |  15 ----
+ arch/sparc/kernel/sys_sparc_32.c     |  16 +++-
+ arch/sparc/kernel/sys_sparc_64.c     |  36 +++++++--
+ arch/sparc/mm/hugetlbpage.c          | 108 ---------------------------
+ arch/x86/kernel/sys_x86_64.c         |  24 ++++--
+ arch/x86/mm/hugetlbpage.c            | 100 -------------------------
+ fs/hugetlbfs/inode.c                 |  92 ++---------------------
+ include/asm-generic/hugetlb.h        |  15 ++--
+ include/linux/hugetlb.h              |  21 +++---
+ mm/mmap.c                            |  19 ++++-
+ 18 files changed, 153 insertions(+), 554 deletions(-)
+
+-- 
+2.45.2
 
 
