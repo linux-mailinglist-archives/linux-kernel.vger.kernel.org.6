@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-255804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27C82934564
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 02:31:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF285934565
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 02:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D843E2810EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:31:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CAAD1C2168B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A10420B33;
-	Thu, 18 Jul 2024 00:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8D615C9;
+	Thu, 18 Jul 2024 00:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XPGSTcs9"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RlSsjkxc"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781B5C148
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 00:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCD61B86F6
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 00:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721262650; cv=none; b=qdfFLizH+uOxVqOAMeflDnwSJWSSE1Lc2GndkiWHYjAmCV48j9/ygRBcK5T3O9cyD1jgSK8GZLxIPwv26NBo/65PlZ7brFSVyvBI4m4g/IapQPkcrx6//B48/uxQX5EREWJDl95U5ORkz7J5DiuW4vtijyLGrOiK+eylGkOJtm4=
+	t=1721262652; cv=none; b=kpj7APSu1L9QjR+cnJhLIkTDJumCR6mF81HtCjEfydrTmt2VdYq4xeHUfEmsM71iapj12pL4gffr8ahWj9aGplx/MJfu6j9MzBGcZdn1dac6gYMansQG/fLO7eVkkXdHPylco1gm6iJkHbFzsf3zbirW/dFlKCknJx0E624Bgmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721262650; c=relaxed/simple;
-	bh=80YyIwk/8VkjU4yqstE1PlbqioOpSQzgF7vZUjQSVCE=;
+	s=arc-20240116; t=1721262652; c=relaxed/simple;
+	bh=xO1LeDUwAlVEwZnVaFmHHPJ2GZce6TEJ/S7/OdCC7Zg=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=LCQpbqjEapOcGWXvMQIiTiL6SZgqdKFmc4Kg2tKSUdJ+hne08frSXtPz/n/+2YihTE25QH/THje+LD55pJPOn3WZfEs+eEMerR5g+fRUDOGTI42KuxFwCIa3AFwcDKemYr3ovY8okwr5ZAdmTEH0DrKIFOk6zpRjI57Uy7FL7Bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XPGSTcs9; arc=none smtp.client-ip=209.85.128.202
+	 To:Content-Type; b=u2+RivIao6Trg6m2hgD4O8lZUEHPe26WSEtFSTZt6GAn8rE16rLE6BrX0iw0FjfA1sanGmNBiCi1I6xH7Gu0qs0ArbOyrk9GOnMY4yeON40J7j6VOPshWHMLyJj78e0+nQiJ1nwqT4wRxZ2b6npPUIjAuusViQVZ4Bh6XohKXr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RlSsjkxc; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6522c6e5ed9so6052447b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 17:30:48 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6506bfeaf64so4569597b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 17:30:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721262647; x=1721867447; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1721262650; x=1721867450; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=gDSkmz2B6LUpQkGELdRI3zhIL2uXO0hylwMkxD4wWcI=;
-        b=XPGSTcs9oEovpu+c75CYIvQFf+5TEJG2W6tRXaI+Q+LBja+qjrQFzf6fQKM7a/aI6k
-         96QS5xevZdD24OcjipZ23N15Xi0ER8aBSnMIp9OZ3XU6b3JH3zDv6LLN9TNiLDa/kfjC
-         F6VaelwvWa7AXexWXLWPjyIB/Ac7y+Ud3s1BWPpgScnxn/SMChEg4QKmwobCu/a4K2oH
-         anWGmkjIVhRiXY75y2CD2wQsPTTbn5tYeFtzk62synIx7q2hAjBX6lOH1gpgZ6euETPm
-         GiAZRFhPgLg7jtsiCEWJxFuMX2K8lQVD9sZjbXipWxx5z0+SSM8zVoCyfYe5C/dTIODA
-         rhkQ==
+        bh=rpNlJN2SGII3MYeevUlf4p1OQiPVTTvbXe1jkW5mOAw=;
+        b=RlSsjkxcC/IRWN0WwacEwBho1lsHj484vVq20I8wgxjlpySQ7KdgFFm9QetjsWq4TT
+         DcnnRzOrrfuoA7vrUtvT1DWxmOfVDBefQBvrFAWDe/QHWbmnIZkP1R/4qa8Q9EqhnioR
+         j4f/sAOE74MPaFb1fPF2EGLmdaj8TpGUU8aHebIbt/5+kuLKgRwImR+N3+GuN1fDbFA3
+         7eIyQxpYoFyK80Q3B3Y0xBD0Mc8kjUCeY/KmJ4EzbnhBrTtG6soLkCu8/tkNnMIDfTeH
+         QpaIvz/LUSBvOIx1yE2fkk25QZr4qQRXGyDv9KRwoZCOVSYN8774EdGu4GVD8Gru8/rh
+         wwEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721262647; x=1721867447;
+        d=1e100.net; s=20230601; t=1721262650; x=1721867450;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gDSkmz2B6LUpQkGELdRI3zhIL2uXO0hylwMkxD4wWcI=;
-        b=XhRJZInH68UVbd7QX56kAwWtToE9LSYJrQ5AgzbZV3IezlEzWvrrPibJpdRJJ+dcZp
-         A57/xiBcY5ZHwbbotcGD/L2BktGJuFUkn8AGxAsxciBUf05BGqfVP7j9me4f25LGFSWo
-         x5ny2VjoWf1mqe7gsy3eME435YTanogDnK3uG5mw53yhJnM8sjfVOK8Na/3KFMbaiS38
-         v7SokrV5ivntLzMxwGjYyFfy7kSI/ywOJVb/uNw2TRzxOAhJv2RQzlo++0B+U9QZ5zRD
-         AScgnD5mdH0WGeiVq85/R6zAJnL74WKsM5UkYwlHkIEpOoU4WpIwW/WurdnyqrgKuHNM
-         C5kA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2vpFYQNfly3n0TPspfk64KrRvc/aqG1uch3+QJ6I7nF9fUj/1+9T44WtqaDC5mfz4vnyNxtsl1Zjkp004mfAD8ExfQng0Vqi3y5dQ
-X-Gm-Message-State: AOJu0YynGibsKl2aiGomaCCMdmca1/f436JUpdEmi+x/xT9r+PqojtrC
-	6Hclo+7uxKcekYZajCfP8X6ahi8DZHsZSYKN5MgpueZiEFDqgJu9TjXFj4B4IDs029MQgi1+aF9
-	oMPybjA==
-X-Google-Smtp-Source: AGHT+IH1DzVbGdCGf8iHYG86fAS44PcWG5nVWkwtb0soiT/pdpCH02hy1TkeYGYlcEMSjompVQrf1VmgRxIm
+        bh=rpNlJN2SGII3MYeevUlf4p1OQiPVTTvbXe1jkW5mOAw=;
+        b=U7+b4zaf90megdZj0wadeldQjVsCJINXJ/dbWtqIgY5anPCCNNDGkephfu8/tcdH44
+         l6kPSj8zNP9B1R9k2bQAP5wnvOHeGV17zjAVGxQ0lUketLTS3bl8w1LJG+PuOgFc4le0
+         BCe+mkssqjr1kvggiutqhUygYYIIr3oSOAheGssaH7RlZscvcK4/hul2pLIvtU2bAitd
+         e+0mC+uScCC8/KWCJ2TJHDRIeMwEEhdnL1e7W3wN5eH9FEYQugJnVpR3c6IUoIlJ7ZgL
+         nmYpSs5bULs+N3S4uX68/bd2cI3e/OAZLmpov/V/H5imHk/YAFzFquM0TfJd0ZSPe1RI
+         3rZA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9oifC/cr64krSzfnOvEg0PTcgIZloxtOUYKFaK2N5TJldjMzsAEwbc5etNbBrl2Olz9B1jyBUTF0XCGugwM7wJWfVao7FwXIu2xdu
+X-Gm-Message-State: AOJu0YzHi8QEdMJRT0NUniQmq1i89bRHm0+qa3nUa/ncnDkwqyqUE+Au
+	Adwkp/98bgxHqsmTNIcbnqcwG/RE11SssQTGjqgOHqBJwafrFxAblNkTQcB3TLK9mmzgBt8Sawb
+	DhVrd0w==
+X-Google-Smtp-Source: AGHT+IGG7VWzTnmycXmTdJphblM+hhP0c4L9vMl9r5mE9Xw5+miKnxk+TogRA/6By5AIKP4LV8790tNifGhm
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:940b:9044:fa83:4060])
- (user=irogers job=sendgmr) by 2002:a25:a2c4:0:b0:e03:39fb:5729 with SMTP id
- 3f1490d57ef6-e05fedaf378mr1994276.10.1721262647487; Wed, 17 Jul 2024 17:30:47
- -0700 (PDT)
-Date: Wed, 17 Jul 2024 17:30:22 -0700
+ (user=irogers job=sendgmr) by 2002:a05:690c:289:b0:62c:ff73:83f with SMTP id
+ 00721157ae682-666040ccaedmr396737b3.8.1721262649825; Wed, 17 Jul 2024
+ 17:30:49 -0700 (PDT)
+Date: Wed, 17 Jul 2024 17:30:23 -0700
 In-Reply-To: <20240718003025.1486232-1-irogers@google.com>
-Message-Id: <20240718003025.1486232-4-irogers@google.com>
+Message-Id: <20240718003025.1486232-5-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240718003025.1486232-1-irogers@google.com>
 X-Mailer: git-send-email 2.45.2.1089.g2a221341d9-goog
-Subject: [PATCH v2 3/6] perf pmu: Add support for event.cpus files in sysfs
+Subject: [PATCH v2 4/6] libperf cpumap: Add ability to create CPU from a
+ single CPU number
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -89,285 +90,49 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	kprateek.nayak@amd.com, sandipan.das@amd.com
 Content-Type: text/plain; charset="UTF-8"
 
-If an event file exists in sysfs, check if a event.cpus file exists
-and read a perf_cpu_map from it if it does. This allows particular
-events to have a different set of CPUs compared to the PMU.
-
-One scenario where this could be useful is when a PMU is set up with a
-cpumask/events per SMT thread but some events record for all SMT
-threads. Programming an event on each SMT thread will cause
-unnecessary counters to be programmed and the aggregate value to be
-too large.
-
-Another scenario where this could be useful if when a PMU has
-historically had a cpumask at the package level, but now newer per
-die, core or CPU information is available.
-
-Additional context for the motivation is in these patches and
-conversation:
-https://lore.kernel.org/lkml/20240711102436.4432-1-Dhananjay.Ugwekar@amd.com/
+Add perf_cpu_map__new_int so that a CPU map can be created from a
+single integer.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- .../sysfs-bus-event_source-devices-events     | 14 ++++++
- tools/perf/util/parse-events.c                | 45 ++++++++++---------
- tools/perf/util/pmu.c                         | 44 +++++++++++++++++-
- tools/perf/util/pmu.h                         |  1 +
- 4 files changed, 82 insertions(+), 22 deletions(-)
+ tools/lib/perf/cpumap.c              | 10 ++++++++++
+ tools/lib/perf/include/perf/cpumap.h |  2 ++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-event_source-devices-events b/Documentation/ABI/testing/sysfs-bus-event_source-devices-events
-index e7efeab2ee83..d8e3a4dd3ba7 100644
---- a/Documentation/ABI/testing/sysfs-bus-event_source-devices-events
-+++ b/Documentation/ABI/testing/sysfs-bus-event_source-devices-events
-@@ -70,6 +70,20 @@ Description:	Per-pmu performance monitoring events specific to the running syste
- 		This is referred to as "event parameterization". Event
- 		parameters have the format 'param=?'.
- 
-+What: /sys/bus/event_source/devices/<pmu>/events/<event>.cpus
-+Date: 2024/07/17
-+Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
-+Description:	Perf event CPUs
-+
-+		A list of CPUs on which a the perf event should be
-+		opened by default. This is an event specific variant
-+		of /sys/bus/event_source/devices/<pmu>/cpumask.
-+
-+		Examples (each of these lines would be in a separate file):
-+
-+			0,2,4,6
-+			0-7
-+
- What: /sys/bus/event_source/devices/<pmu>/events/<event>.unit
- Date: 2014/02/24
- Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 43501eb56336..b181f83c9678 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -1425,12 +1425,13 @@ static int parse_events_add_pmu(struct parse_events_state *parse_state,
- 				bool auto_merge_stats)
- {
- 	struct perf_event_attr attr;
--	struct perf_pmu_info info;
-+	struct perf_pmu_info info = {};
- 	struct evsel *evsel;
- 	struct parse_events_error *err = parse_state->error;
- 	LIST_HEAD(config_terms);
- 	struct parse_events_terms parsed_terms;
- 	bool alias_rewrote_terms = false;
-+	int ret = 0;
- 
- 	if (verbose > 1) {
- 		struct strbuf sb;
-@@ -1465,8 +1466,7 @@ static int parse_events_add_pmu(struct parse_events_state *parse_state,
- 
- 	parse_events_terms__init(&parsed_terms);
- 	if (const_parsed_terms) {
--		int ret = parse_events_terms__copy(const_parsed_terms, &parsed_terms);
--
-+		ret = parse_events_terms__copy(const_parsed_terms, &parsed_terms);
- 		if (ret)
- 			return ret;
- 	}
-@@ -1474,15 +1474,15 @@ static int parse_events_add_pmu(struct parse_events_state *parse_state,
- 
- 	/* Configure attr/terms with a known PMU, this will set hardcoded terms. */
- 	if (config_attr(&attr, &parsed_terms, parse_state->error, config_term_pmu)) {
--		parse_events_terms__exit(&parsed_terms);
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto out_err;
- 	}
- 
- 	/* Look for event names in the terms and rewrite into format based terms. */
- 	if (!parse_state->fake_pmu && perf_pmu__check_alias(pmu, &parsed_terms,
- 							    &info, &alias_rewrote_terms, err)) {
--		parse_events_terms__exit(&parsed_terms);
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto out_err;
- 	}
- 
- 	if (verbose > 1) {
-@@ -1497,13 +1497,13 @@ static int parse_events_add_pmu(struct parse_events_state *parse_state,
- 	/* Configure attr/terms again if an alias was expanded. */
- 	if (alias_rewrote_terms &&
- 	    config_attr(&attr, &parsed_terms, parse_state->error, config_term_pmu)) {
--		parse_events_terms__exit(&parsed_terms);
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto out_err;
- 	}
- 
- 	if (get_config_terms(&parsed_terms, &config_terms)) {
--		parse_events_terms__exit(&parsed_terms);
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto out_err;
- 	}
- 
- 	/*
-@@ -1512,24 +1512,23 @@ static int parse_events_add_pmu(struct parse_events_state *parse_state,
- 	 */
- 	if (pmu->perf_event_attr_init_default &&
- 	    get_config_chgs(pmu, &parsed_terms, &config_terms)) {
--		parse_events_terms__exit(&parsed_terms);
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto out_err;
- 	}
- 
- 	if (!parse_state->fake_pmu &&
- 	    perf_pmu__config(pmu, &attr, &parsed_terms, parse_state->error)) {
--		free_config_terms(&config_terms);
--		parse_events_terms__exit(&parsed_terms);
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto out_err;
- 	}
- 
- 	evsel = __add_event(list, &parse_state->idx, &attr, /*init_attr=*/true,
- 			    get_config_name(&parsed_terms),
- 			    get_config_metric_id(&parsed_terms), pmu,
--			    &config_terms, auto_merge_stats, /*cpu_list=*/NULL);
-+			    &config_terms, auto_merge_stats, info.cpus);
- 	if (!evsel) {
--		parse_events_terms__exit(&parsed_terms);
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto out_err;
- 	}
- 
- 	if (evsel->name)
-@@ -1542,13 +1541,17 @@ static int parse_events_add_pmu(struct parse_events_state *parse_state,
- 		return 0;
- 	}
- 
--	parse_events_terms__exit(&parsed_terms);
- 	free((char *)evsel->unit);
- 	evsel->unit = strdup(info.unit);
- 	evsel->scale = info.scale;
- 	evsel->per_pkg = info.per_pkg;
- 	evsel->snapshot = info.snapshot;
--	return 0;
-+out_err:
-+	parse_events_terms__exit(&parsed_terms);
-+	if (ret)
-+		free_config_terms(&config_terms);
-+	perf_cpu_map__put(info.cpus);
-+	return ret;
+diff --git a/tools/lib/perf/cpumap.c b/tools/lib/perf/cpumap.c
+index cae799ad44e1..2c8e36d0efaa 100644
+--- a/tools/lib/perf/cpumap.c
++++ b/tools/lib/perf/cpumap.c
+@@ -293,6 +293,16 @@ struct perf_cpu_map *perf_cpu_map__new(const char *cpu_list)
+ 	return cpus;
  }
  
- int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 5148b6639dd3..280b2499c861 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -73,6 +73,11 @@ struct perf_pmu_alias {
- 	 * differ from the PMU name as it won't have suffixes.
- 	 */
- 	char *pmu_name;
-+	/**
-+	 * @cpus: A possible per-event cpumap that overrides that given for the
-+	 * PMU.
-+	 */
-+	struct perf_cpu_map *cpus;
- 	/** @unit: Units for the event, such as bytes or cache lines. */
- 	char unit[UNIT_MAX_LEN+1];
- 	/** @scale: Value to scale read counter values by. */
-@@ -332,6 +337,32 @@ static int perf_pmu__parse_scale(struct perf_pmu *pmu, struct perf_pmu_alias *al
- 	return ret;
- }
- 
-+static void perf_pmu__parse_cpus(struct perf_pmu *pmu, struct perf_pmu_alias *alias)
++struct perf_cpu_map *perf_cpu_map__new_int(int cpu)
 +{
-+	char path[PATH_MAX];
-+	size_t len;
-+	FILE *file;
-+	int fd;
++	struct perf_cpu_map *cpus = perf_cpu_map__alloc(1);
 +
-+	len = perf_pmu__event_source_devices_scnprintf(path, sizeof(path));
-+	if (!len)
-+		return;
-+	scnprintf(path + len, sizeof(path) - len, "%s/events/%s.cpus", pmu->name, alias->name);
++	if (cpus)
++		RC_CHK_ACCESS(cpus)->map[0].cpu = cpu;
 +
-+	fd = open(path, O_RDONLY);
-+	if (fd == -1)
-+		return; /* Expected common case. */
-+
-+	file = fdopen(fd, "r");
-+	if (!file) {
-+		close(fd);
-+		return;
-+	}
-+
-+	alias->cpus = perf_cpu_map__read(file);
-+	fclose(file);
++	return cpus;
 +}
 +
- static int perf_pmu__parse_unit(struct perf_pmu *pmu, struct perf_pmu_alias *alias)
+ static int __perf_cpu_map__nr(const struct perf_cpu_map *cpus)
  {
- 	char path[PATH_MAX];
-@@ -493,6 +524,7 @@ static void read_alias_info(struct perf_pmu *pmu, struct perf_pmu_alias *alias)
- 	/*
- 	 * load unit name and scale if available
- 	 */
-+	perf_pmu__parse_cpus(pmu, alias);
- 	perf_pmu__parse_unit(pmu, alias);
- 	perf_pmu__parse_scale(pmu, alias);
- 	perf_pmu__parse_per_pkg(pmu, alias);
-@@ -618,7 +650,7 @@ static inline bool pmu_alias_info_file(const char *name)
- 	size_t len;
- 
- 	len = strlen(name);
--	if (len > 5 && !strcmp(name + len - 5, ".unit"))
-+	if (len > 5 && (!strcmp(name + len - 5, ".cpus") || !strcmp(name + len - 5, ".unit")))
- 		return true;
- 	if (len > 6 && !strcmp(name + len - 6, ".scale"))
- 		return true;
-@@ -1560,6 +1592,12 @@ static int check_info_data(struct perf_pmu *pmu,
- 	 * define unit, scale and snapshot, fail
- 	 * if there's more than one.
- 	 */
-+	if (!perf_cpu_map__is_empty(info->cpus) && !perf_cpu_map__is_empty(alias->cpus)) {
-+		parse_events_error__handle(err, column,
-+					strdup("Attempt to set event's cpus twice"),
-+					NULL);
-+		return -EINVAL;
-+	}
- 	if (info->unit && alias->unit[0]) {
- 		parse_events_error__handle(err, column,
- 					strdup("Attempt to set event's unit twice"),
-@@ -1579,6 +1617,9 @@ static int check_info_data(struct perf_pmu *pmu,
- 		return -EINVAL;
- 	}
- 
-+	if (!perf_cpu_map__is_empty(alias->cpus))
-+		info->cpus = perf_cpu_map__get(alias->cpus);
-+
- 	if (alias->unit[0])
- 		info->unit = alias->unit;
- 
-@@ -1610,6 +1651,7 @@ int perf_pmu__check_alias(struct perf_pmu *pmu, struct parse_events_terms *head_
- 	 * Mark unit and scale as not set
- 	 * (different from default values, see below)
- 	 */
-+	info->cpus     = NULL;
- 	info->unit     = NULL;
- 	info->scale    = 0.0;
- 	info->snapshot = false;
-diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
-index b2d3fd291f02..b1ccfe8d3df4 100644
---- a/tools/perf/util/pmu.h
-+++ b/tools/perf/util/pmu.h
-@@ -177,6 +177,7 @@ struct perf_pmu {
- extern struct perf_pmu perf_pmu__fake;
- 
- struct perf_pmu_info {
-+	struct perf_cpu_map *cpus;
- 	const char *unit;
- 	double scale;
- 	bool per_pkg;
+ 	return RC_CHK_ACCESS(cpus)->nr;
+diff --git a/tools/lib/perf/include/perf/cpumap.h b/tools/lib/perf/include/perf/cpumap.h
+index 90457d17fb2f..79ed3449d288 100644
+--- a/tools/lib/perf/include/perf/cpumap.h
++++ b/tools/lib/perf/include/perf/cpumap.h
+@@ -37,6 +37,8 @@ LIBPERF_API struct perf_cpu_map *perf_cpu_map__new_online_cpus(void);
+  *                     perf_cpu_map__new_online_cpus is returned.
+  */
+ LIBPERF_API struct perf_cpu_map *perf_cpu_map__new(const char *cpu_list);
++/** perf_cpu_map__new_int - create a map with the one given cpu. */
++LIBPERF_API struct perf_cpu_map *perf_cpu_map__new_int(int cpu);
+ LIBPERF_API struct perf_cpu_map *perf_cpu_map__read(FILE *file);
+ LIBPERF_API struct perf_cpu_map *perf_cpu_map__get(struct perf_cpu_map *map);
+ LIBPERF_API struct perf_cpu_map *perf_cpu_map__merge(struct perf_cpu_map *orig,
 -- 
 2.45.2.1089.g2a221341d9-goog
 
