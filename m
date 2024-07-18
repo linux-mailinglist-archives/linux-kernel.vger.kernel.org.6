@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-256087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE0439348CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:28:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BDF49348CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61D071F21D2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:28:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AB2FB22249
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4DA7A715;
-	Thu, 18 Jul 2024 07:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8D9770E5;
+	Thu, 18 Jul 2024 07:28:08 +0000 (UTC)
 Received: from irl.hu (irl.hu [95.85.9.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BAE2CCA3;
-	Thu, 18 Jul 2024 07:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0842078C88;
+	Thu, 18 Jul 2024 07:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721287686; cv=none; b=M3qShN1gPYF9G+UWWRh6CoPRaOqPo6tMAHXb09Z9aA2RHbJz2vGEfHEOcNTKQyW+chwI7g0Z1+6py5zwsj5rv49Onjy5GFFvEP7dJtW+FvmnZ8uTF+yqnHZkaH+rA8ZkMnpcsTtHU9YWeqiJuCurgumg0o5tsT+R16XJOtjb5z8=
+	t=1721287688; cv=none; b=bcuLWPu7FxqUeLdUBiFEiT/yJ+87fFvbTLTKDLe3eoVgtXIEq8rEt5UYUjelyblcYD1qYtdF01su3Ux2ZsVLUhKf/QdVaxtGNBr8VMzeJ7/9ZZoptsCwKquQA7LvF22Ea2JKeBTzebzpaxIaDcsS5LwLlrBQIlu7IEIx7LWsZqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721287686; c=relaxed/simple;
-	bh=4WFIGHu0tfPuMfV+V5uOx6WbbvbvDeQixpAh3RXO1TU=;
+	s=arc-20240116; t=1721287688; c=relaxed/simple;
+	bh=IR3xmB7CA+9p9w5sMuZmWGr9nM1s91Aps+vLK2fG6gs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=l9qGYeDLtviqZXtBGZr5GHJyjNoy+92ArbwfBrSgY+oC1oJ2MzRCDkl06GtOx9gMaca8IAUh5COVxLFLWp829n4+o2F+X4BCkiVVMWqDZjr6ByWHtippvipsQN0ij1N9e43FO4e0+E+wjl0F5SRPJfQC6plnzsgL5B/yIsOOgj4=
+	 Mime-Version:Content-Type; b=JUCL7ZVaAoEpl6CJVBME32CEdzlN/ZAa0AVVKN4XziKejQ89YZT5m8QkN4j92mqdw1/zUEAcYWY5KH0dxm4s2PkbdtRwiVptBCjOgGJ7vApwAzyVrD3fF2U5w2FYwdrzsUFrCsxVOiXPcVueBaxAamFaVXaY7EFVg1fxjzC6Nwk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
 Received: from fedori.. (netacc-gpn-104-115-214.pool.yettel.hu [::ffff:91.104.115.214])
   (AUTH: CRAM-MD5 soyer@irl.hu, )
   by irl.hu with ESMTPSA
-  id 0000000000072DCF.000000006698C402.00180BBD; Thu, 18 Jul 2024 09:28:02 +0200
+  id 0000000000072DD0.000000006698C404.00180BC3; Thu, 18 Jul 2024 09:28:04 +0200
 From: Gergo Koteles <soyer@irl.hu>
 To: Hans de Goede <hdegoede@redhat.com>,
   =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
   Ike Panhc <ike.pan@canonical.com>
 Cc: platform-driver-x86@vger.kernel.org,
   linux-kernel@vger.kernel.org, Gergo Koteles <soyer@irl.hu>
-Subject: [PATCH v2 3/4] platform/x86: ideapad-laptop: move ACPI helpers from header to source file
-Date: Thu, 18 Jul 2024 09:27:15 +0200
-Message-ID: <0d11fe28dedb77c0dd8a27e76d0bf467c6ab6c7d.1721258854.git.soyer@irl.hu>
+Subject: [PATCH v2 4/4] platform/x86: ideapad-laptop: add a mutex to synchronize VPC commands
+Date: Thu, 18 Jul 2024 09:27:16 +0200
+Message-ID: <70d3957b315815085cdd8cb04b002cdb4a372ddc.1721258854.git.soyer@irl.hu>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <cover.1721258854.git.soyer@irl.hu>
 References: <cover.1721258854.git.soyer@irl.hu>
@@ -54,347 +54,225 @@ Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 X-Mime-Autoconverted: from 8bit to 7bit by courier 1.0
 
-Since moving ymc_trigger_ec from lenovo-ymc to ideapad-laptop, only the
-latter uses these definitions and functions.
+Calling VPC commands consists of several VPCW and VPCR ACPI calls.
+These calls and their results can get mixed up if they are called
+simultaneously from different threads, like acpi notify handler,
+sysfs, debugfs, notification chain.
 
-Move them back to source file.
+Add a mutex to synchronize VPC commands.
 
 Signed-off-by: Gergo Koteles <soyer@irl.hu>
 ---
- drivers/platform/x86/ideapad-laptop.c | 136 +++++++++++++++++++++++++
- drivers/platform/x86/ideapad-laptop.h | 139 --------------------------
- 2 files changed, 136 insertions(+), 139 deletions(-)
+ drivers/platform/x86/ideapad-laptop.c | 62 +++++++++++++++++++--------
+ 1 file changed, 45 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
-index 1d61bd921528..66b34e99147e 100644
+index 66b34e99147e..d2e7dd5027b8 100644
 --- a/drivers/platform/x86/ideapad-laptop.c
 +++ b/drivers/platform/x86/ideapad-laptop.c
-@@ -21,6 +21,7 @@
- #include <linux/init.h>
- #include <linux/input.h>
- #include <linux/input/sparse-keymap.h>
-+#include <linux/jiffies.h>
- #include <linux/kernel.h>
- #include <linux/leds.h>
- #include <linux/module.h>
-@@ -86,6 +87,34 @@ enum {
- 	SALS_FNLOCK_OFF       = 0xf,
- };
+@@ -154,6 +154,7 @@ struct ideapad_rfk_priv {
  
-+enum {
-+	VPCCMD_R_VPC1 = 0x10,
-+	VPCCMD_R_BL_MAX,
-+	VPCCMD_R_BL,
-+	VPCCMD_W_BL,
-+	VPCCMD_R_WIFI,
-+	VPCCMD_W_WIFI,
-+	VPCCMD_R_BT,
-+	VPCCMD_W_BT,
-+	VPCCMD_R_BL_POWER,
-+	VPCCMD_R_NOVO,
-+	VPCCMD_R_VPC2,
-+	VPCCMD_R_TOUCHPAD,
-+	VPCCMD_W_TOUCHPAD,
-+	VPCCMD_R_CAMERA,
-+	VPCCMD_W_CAMERA,
-+	VPCCMD_R_3G,
-+	VPCCMD_W_3G,
-+	VPCCMD_R_ODD, /* 0x21 */
-+	VPCCMD_W_FAN,
-+	VPCCMD_R_RF,
-+	VPCCMD_W_RF,
-+	VPCCMD_W_YMC = 0x2A,
-+	VPCCMD_R_FAN = 0x2B,
-+	VPCCMD_R_SPECIAL_BUTTONS = 0x31,
-+	VPCCMD_W_BL_POWER = 0x33,
-+};
+ struct ideapad_private {
+ 	struct acpi_device *adev;
++	struct mutex vpc_mutex; /* protects the VPC calls */
+ 	struct rfkill *rfk[IDEAPAD_RFKILL_DEV_NUM];
+ 	struct ideapad_rfk_priv rfk_priv[IDEAPAD_RFKILL_DEV_NUM];
+ 	struct platform_device *platform_device;
+@@ -435,6 +436,8 @@ static int debugfs_status_show(struct seq_file *s, void *data)
+ 	struct ideapad_private *priv = s->private;
+ 	unsigned long value;
+ 
++	guard(mutex)(&priv->vpc_mutex);
 +
- /*
-  * These correspond to the number of supported states - 1
-  * Future keyboard types may need a new system, if there's a collision
-@@ -234,6 +263,7 @@ static void ideapad_shared_exit(struct ideapad_private *priv)
- /*
-  * ACPI Helpers
-  */
-+#define IDEAPAD_EC_TIMEOUT 200 /* in ms */
+ 	if (!read_ec_data(priv->adev->handle, VPCCMD_R_BL_MAX, &value))
+ 		seq_printf(s, "Backlight max:  %lu\n", value);
+ 	if (!read_ec_data(priv->adev->handle, VPCCMD_R_BL, &value))
+@@ -553,7 +556,8 @@ static ssize_t camera_power_show(struct device *dev,
+ 	unsigned long result;
+ 	int err;
  
- static int eval_int(acpi_handle handle, const char *name, unsigned long *res)
- {
-@@ -249,6 +279,29 @@ static int eval_int(acpi_handle handle, const char *name, unsigned long *res)
- 	return 0;
+-	err = read_ec_data(priv->adev->handle, VPCCMD_R_CAMERA, &result);
++	scoped_guard(mutex, &priv->vpc_mutex)
++		err = read_ec_data(priv->adev->handle, VPCCMD_R_CAMERA, &result);
+ 	if (err)
+ 		return err;
+ 
+@@ -572,7 +576,8 @@ static ssize_t camera_power_store(struct device *dev,
+ 	if (err)
+ 		return err;
+ 
+-	err = write_ec_cmd(priv->adev->handle, VPCCMD_W_CAMERA, state);
++	scoped_guard(mutex, &priv->vpc_mutex)
++		err = write_ec_cmd(priv->adev->handle, VPCCMD_W_CAMERA, state);
+ 	if (err)
+ 		return err;
+ 
+@@ -625,7 +630,8 @@ static ssize_t fan_mode_show(struct device *dev,
+ 	unsigned long result;
+ 	int err;
+ 
+-	err = read_ec_data(priv->adev->handle, VPCCMD_R_FAN, &result);
++	scoped_guard(mutex, &priv->vpc_mutex)
++		err = read_ec_data(priv->adev->handle, VPCCMD_R_FAN, &result);
+ 	if (err)
+ 		return err;
+ 
+@@ -647,7 +653,8 @@ static ssize_t fan_mode_store(struct device *dev,
+ 	if (state > 4 || state == 3)
+ 		return -EINVAL;
+ 
+-	err = write_ec_cmd(priv->adev->handle, VPCCMD_W_FAN, state);
++	scoped_guard(mutex, &priv->vpc_mutex)
++		err = write_ec_cmd(priv->adev->handle, VPCCMD_W_FAN, state);
+ 	if (err)
+ 		return err;
+ 
+@@ -700,7 +707,8 @@ static ssize_t touchpad_show(struct device *dev,
+ 	unsigned long result;
+ 	int err;
+ 
+-	err = read_ec_data(priv->adev->handle, VPCCMD_R_TOUCHPAD, &result);
++	scoped_guard(mutex, &priv->vpc_mutex)
++		err = read_ec_data(priv->adev->handle, VPCCMD_R_TOUCHPAD, &result);
+ 	if (err)
+ 		return err;
+ 
+@@ -721,7 +729,8 @@ static ssize_t touchpad_store(struct device *dev,
+ 	if (err)
+ 		return err;
+ 
+-	err = write_ec_cmd(priv->adev->handle, VPCCMD_W_TOUCHPAD, state);
++	scoped_guard(mutex, &priv->vpc_mutex)
++		err = write_ec_cmd(priv->adev->handle, VPCCMD_W_TOUCHPAD, state);
+ 	if (err)
+ 		return err;
+ 
+@@ -1118,6 +1127,8 @@ static int ideapad_rfk_set(void *data, bool blocked)
+ 	struct ideapad_rfk_priv *priv = data;
+ 	int opcode = ideapad_rfk_data[priv->dev].opcode;
+ 
++	guard(mutex)(&priv->priv->vpc_mutex);
++
+ 	return write_ec_cmd(priv->priv->adev->handle, opcode, !blocked);
  }
  
-+static int eval_int_with_arg(acpi_handle handle, const char *name, unsigned long arg,
-+			     unsigned long *res)
-+{
-+	struct acpi_object_list params;
-+	unsigned long long result;
-+	union acpi_object in_obj;
-+	acpi_status status;
+@@ -1131,6 +1142,8 @@ static void ideapad_sync_rfk_state(struct ideapad_private *priv)
+ 	int i;
+ 
+ 	if (priv->features.hw_rfkill_switch) {
++		guard(mutex)(&priv->vpc_mutex);
 +
-+	params.count = 1;
-+	params.pointer = &in_obj;
-+	in_obj.type = ACPI_TYPE_INTEGER;
-+	in_obj.integer.value = arg;
-+
-+	status = acpi_evaluate_integer(handle, (char *)name, &params, &result);
-+	if (ACPI_FAILURE(status))
-+		return -EIO;
-+
-+	if (res)
-+		*res = result;
-+
-+	return 0;
-+}
-+
- static int exec_simple_method(acpi_handle handle, const char *name, unsigned long arg)
+ 		if (read_ec_data(priv->adev->handle, VPCCMD_R_RF, &hw_blocked))
+ 			return;
+ 		hw_blocked = !hw_blocked;
+@@ -1302,8 +1315,9 @@ static void ideapad_input_novokey(struct ideapad_private *priv)
  {
- 	acpi_status status = acpi_execute_simple_method(handle, (char *)name, arg);
-@@ -291,6 +344,89 @@ static int eval_dytc(acpi_handle handle, unsigned long cmd, unsigned long *res)
- 	return eval_int_with_arg(handle, "DYTC", cmd, res);
+ 	unsigned long long_pressed;
+ 
+-	if (read_ec_data(priv->adev->handle, VPCCMD_R_NOVO, &long_pressed))
+-		return;
++	scoped_guard(mutex, &priv->vpc_mutex)
++		if (read_ec_data(priv->adev->handle, VPCCMD_R_NOVO, &long_pressed))
++			return;
+ 
+ 	if (long_pressed)
+ 		ideapad_input_report(priv, 17);
+@@ -1315,8 +1329,9 @@ static void ideapad_check_special_buttons(struct ideapad_private *priv)
+ {
+ 	unsigned long bit, value;
+ 
+-	if (read_ec_data(priv->adev->handle, VPCCMD_R_SPECIAL_BUTTONS, &value))
+-		return;
++	scoped_guard(mutex, &priv->vpc_mutex)
++		if (read_ec_data(priv->adev->handle, VPCCMD_R_SPECIAL_BUTTONS, &value))
++			return;
+ 
+ 	for_each_set_bit (bit, &value, 16) {
+ 		switch (bit) {
+@@ -1346,6 +1361,8 @@ static int ideapad_backlight_get_brightness(struct backlight_device *blightdev)
+ 	unsigned long now;
+ 	int err;
+ 
++	guard(mutex)(&priv->vpc_mutex);
++
+ 	err = read_ec_data(priv->adev->handle, VPCCMD_R_BL, &now);
+ 	if (err)
+ 		return err;
+@@ -1358,6 +1375,8 @@ static int ideapad_backlight_update_status(struct backlight_device *blightdev)
+ 	struct ideapad_private *priv = bl_get_data(blightdev);
+ 	int err;
+ 
++	guard(mutex)(&priv->vpc_mutex);
++
+ 	err = write_ec_cmd(priv->adev->handle, VPCCMD_W_BL,
+ 			   blightdev->props.brightness);
+ 	if (err)
+@@ -1435,6 +1454,8 @@ static void ideapad_backlight_notify_power(struct ideapad_private *priv)
+ 	if (!blightdev)
+ 		return;
+ 
++	guard(mutex)(&priv->vpc_mutex);
++
+ 	if (read_ec_data(priv->adev->handle, VPCCMD_R_BL_POWER, &power))
+ 		return;
+ 
+@@ -1447,7 +1468,8 @@ static void ideapad_backlight_notify_brightness(struct ideapad_private *priv)
+ 
+ 	/* if we control brightness via acpi video driver */
+ 	if (!priv->blightdev)
+-		read_ec_data(priv->adev->handle, VPCCMD_R_BL, &now);
++		scoped_guard(mutex, &priv->vpc_mutex)
++			read_ec_data(priv->adev->handle, VPCCMD_R_BL, &now);
+ 	else
+ 		backlight_force_update(priv->blightdev, BACKLIGHT_UPDATE_HOTKEY);
  }
+@@ -1613,7 +1635,8 @@ static void ideapad_sync_touchpad_state(struct ideapad_private *priv, bool send_
+ 	int ret;
  
-+static int eval_vpcr(acpi_handle handle, unsigned long cmd, unsigned long *res)
-+{
-+	return eval_int_with_arg(handle, "VPCR", cmd, res);
-+}
-+
-+static int eval_vpcw(acpi_handle handle, unsigned long cmd, unsigned long data)
-+{
-+	struct acpi_object_list params;
-+	union acpi_object in_obj[2];
-+	acpi_status status;
-+
-+	params.count = 2;
-+	params.pointer = in_obj;
-+	in_obj[0].type = ACPI_TYPE_INTEGER;
-+	in_obj[0].integer.value = cmd;
-+	in_obj[1].type = ACPI_TYPE_INTEGER;
-+	in_obj[1].integer.value = data;
-+
-+	status = acpi_evaluate_object(handle, "VPCW", &params, NULL);
-+	if (ACPI_FAILURE(status))
-+		return -EIO;
-+
-+	return 0;
-+}
-+
-+static int read_ec_data(acpi_handle handle, unsigned long cmd, unsigned long *data)
-+{
-+	unsigned long end_jiffies, val;
-+	int err;
-+
-+	err = eval_vpcw(handle, 1, cmd);
-+	if (err)
-+		return err;
-+
-+	end_jiffies = jiffies + msecs_to_jiffies(IDEAPAD_EC_TIMEOUT) + 1;
-+
-+	while (time_before(jiffies, end_jiffies)) {
-+		schedule();
-+
-+		err = eval_vpcr(handle, 1, &val);
-+		if (err)
-+			return err;
-+
-+		if (val == 0)
-+			return eval_vpcr(handle, 0, data);
+ 	/* Without reading from EC touchpad LED doesn't switch state */
+-	ret = read_ec_data(priv->adev->handle, VPCCMD_R_TOUCHPAD, &value);
++	scoped_guard(mutex, &priv->vpc_mutex)
++		ret = read_ec_data(priv->adev->handle, VPCCMD_R_TOUCHPAD, &value);
+ 	if (ret)
+ 		return;
+ 
+@@ -1673,7 +1696,8 @@ static void ideapad_laptop_trigger_ec(void)
+ 	if (!priv->features.ymc_ec_trigger)
+ 		return;
+ 
+-	ret = write_ec_cmd(priv->adev->handle, VPCCMD_W_YMC, 1);
++	scoped_guard(mutex, &priv->vpc_mutex)
++		ret = write_ec_cmd(priv->adev->handle, VPCCMD_W_YMC, 1);
+ 	if (ret)
+ 		dev_warn(&priv->platform_device->dev, "Could not write YMC: %d\n", ret);
+ }
+@@ -1719,11 +1743,13 @@ static void ideapad_acpi_notify(acpi_handle handle, u32 event, void *data)
+ 	struct ideapad_private *priv = data;
+ 	unsigned long vpc1, vpc2, bit;
+ 
+-	if (read_ec_data(handle, VPCCMD_R_VPC1, &vpc1))
+-		return;
++	scoped_guard(mutex, &priv->vpc_mutex) {
++		if (read_ec_data(handle, VPCCMD_R_VPC1, &vpc1))
++			return;
+ 
+-	if (read_ec_data(handle, VPCCMD_R_VPC2, &vpc2))
+-		return;
++		if (read_ec_data(handle, VPCCMD_R_VPC2, &vpc2))
++			return;
 +	}
-+
-+	acpi_handle_err(handle, "timeout in %s\n", __func__);
-+
-+	return -ETIMEDOUT;
-+}
-+
-+static int write_ec_cmd(acpi_handle handle, unsigned long cmd, unsigned long data)
-+{
-+	unsigned long end_jiffies, val;
-+	int err;
-+
-+	err = eval_vpcw(handle, 0, data);
-+	if (err)
-+		return err;
-+
-+	err = eval_vpcw(handle, 1, cmd);
-+	if (err)
-+		return err;
-+
-+	end_jiffies = jiffies + msecs_to_jiffies(IDEAPAD_EC_TIMEOUT) + 1;
-+
-+	while (time_before(jiffies, end_jiffies)) {
-+		schedule();
-+
-+		err = eval_vpcr(handle, 1, &val);
-+		if (err)
-+			return err;
-+
-+		if (val == 0)
-+			return 0;
-+	}
-+
-+	acpi_handle_err(handle, "timeout in %s\n", __func__);
-+
-+	return -ETIMEDOUT;
-+}
-+
- /*
-  * debugfs
-  */
-diff --git a/drivers/platform/x86/ideapad-laptop.h b/drivers/platform/x86/ideapad-laptop.h
-index 948cc61800a9..1e52f2aa0aac 100644
---- a/drivers/platform/x86/ideapad-laptop.h
-+++ b/drivers/platform/x86/ideapad-laptop.h
-@@ -9,9 +9,6 @@
- #ifndef _IDEAPAD_LAPTOP_H_
- #define _IDEAPAD_LAPTOP_H_
  
--#include <linux/acpi.h>
--#include <linux/jiffies.h>
--#include <linux/errno.h>
- #include <linux/notifier.h>
+ 	vpc1 = (vpc2 << 8) | vpc1;
  
- enum ideapad_laptop_notifier_actions {
-@@ -22,140 +19,4 @@ int ideapad_laptop_register_notifier(struct notifier_block *nb);
- int ideapad_laptop_unregister_notifier(struct notifier_block *nb);
- void ideapad_laptop_call_notifier(unsigned long action, void *data);
+@@ -2027,6 +2053,8 @@ static int ideapad_acpi_add(struct platform_device *pdev)
+ 	priv->adev = adev;
+ 	priv->platform_device = pdev;
  
--enum {
--	VPCCMD_R_VPC1 = 0x10,
--	VPCCMD_R_BL_MAX,
--	VPCCMD_R_BL,
--	VPCCMD_W_BL,
--	VPCCMD_R_WIFI,
--	VPCCMD_W_WIFI,
--	VPCCMD_R_BT,
--	VPCCMD_W_BT,
--	VPCCMD_R_BL_POWER,
--	VPCCMD_R_NOVO,
--	VPCCMD_R_VPC2,
--	VPCCMD_R_TOUCHPAD,
--	VPCCMD_W_TOUCHPAD,
--	VPCCMD_R_CAMERA,
--	VPCCMD_W_CAMERA,
--	VPCCMD_R_3G,
--	VPCCMD_W_3G,
--	VPCCMD_R_ODD, /* 0x21 */
--	VPCCMD_W_FAN,
--	VPCCMD_R_RF,
--	VPCCMD_W_RF,
--	VPCCMD_W_YMC = 0x2A,
--	VPCCMD_R_FAN = 0x2B,
--	VPCCMD_R_SPECIAL_BUTTONS = 0x31,
--	VPCCMD_W_BL_POWER = 0x33,
--};
--
--static inline int eval_int_with_arg(acpi_handle handle, const char *name, unsigned long arg, unsigned long *res)
--{
--	struct acpi_object_list params;
--	unsigned long long result;
--	union acpi_object in_obj;
--	acpi_status status;
--
--	params.count = 1;
--	params.pointer = &in_obj;
--	in_obj.type = ACPI_TYPE_INTEGER;
--	in_obj.integer.value = arg;
--
--	status = acpi_evaluate_integer(handle, (char *)name, &params, &result);
--	if (ACPI_FAILURE(status))
--		return -EIO;
--
--	if (res)
--		*res = result;
--
--	return 0;
--}
--
--static inline int eval_vpcr(acpi_handle handle, unsigned long cmd, unsigned long *res)
--{
--	return eval_int_with_arg(handle, "VPCR", cmd, res);
--}
--
--static inline int eval_vpcw(acpi_handle handle, unsigned long cmd, unsigned long data)
--{
--	struct acpi_object_list params;
--	union acpi_object in_obj[2];
--	acpi_status status;
--
--	params.count = 2;
--	params.pointer = in_obj;
--	in_obj[0].type = ACPI_TYPE_INTEGER;
--	in_obj[0].integer.value = cmd;
--	in_obj[1].type = ACPI_TYPE_INTEGER;
--	in_obj[1].integer.value = data;
--
--	status = acpi_evaluate_object(handle, "VPCW", &params, NULL);
--	if (ACPI_FAILURE(status))
--		return -EIO;
--
--	return 0;
--}
--
--#define IDEAPAD_EC_TIMEOUT 200 /* in ms */
--
--static inline int read_ec_data(acpi_handle handle, unsigned long cmd, unsigned long *data)
--{
--	unsigned long end_jiffies, val;
--	int err;
--
--	err = eval_vpcw(handle, 1, cmd);
--	if (err)
--		return err;
--
--	end_jiffies = jiffies + msecs_to_jiffies(IDEAPAD_EC_TIMEOUT) + 1;
--
--	while (time_before(jiffies, end_jiffies)) {
--		schedule();
--
--		err = eval_vpcr(handle, 1, &val);
--		if (err)
--			return err;
--
--		if (val == 0)
--			return eval_vpcr(handle, 0, data);
--	}
--
--	acpi_handle_err(handle, "timeout in %s\n", __func__);
--
--	return -ETIMEDOUT;
--}
--
--static inline int write_ec_cmd(acpi_handle handle, unsigned long cmd, unsigned long data)
--{
--	unsigned long end_jiffies, val;
--	int err;
--
--	err = eval_vpcw(handle, 0, data);
--	if (err)
--		return err;
--
--	err = eval_vpcw(handle, 1, cmd);
--	if (err)
--		return err;
--
--	end_jiffies = jiffies + msecs_to_jiffies(IDEAPAD_EC_TIMEOUT) + 1;
--
--	while (time_before(jiffies, end_jiffies)) {
--		schedule();
--
--		err = eval_vpcr(handle, 1, &val);
--		if (err)
--			return err;
--
--		if (val == 0)
--			return 0;
--	}
--
--	acpi_handle_err(handle, "timeout in %s\n", __func__);
--
--	return -ETIMEDOUT;
--}
--
--#undef IDEAPAD_EC_TIMEOUT
- #endif /* !_IDEAPAD_LAPTOP_H_ */
++	mutex_init(&priv->vpc_mutex);
++
+ 	ideapad_check_features(priv);
+ 
+ 	err = ideapad_sysfs_init(priv);
 -- 
 2.45.2
 
