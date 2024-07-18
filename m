@@ -1,107 +1,111 @@
-Return-Path: <linux-kernel+bounces-256077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DCE49348AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:21:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BCBF93489F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE37C2820BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:21:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B4471C208FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB2078C73;
-	Thu, 18 Jul 2024 07:20:52 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365C3757EB;
+	Thu, 18 Jul 2024 07:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="WyC/VB/u"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D9F74058
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 07:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66EF24211;
+	Thu, 18 Jul 2024 07:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721287252; cv=none; b=GWDlSed835biX7mi+SrySxgUGqeqpQTVS/ZvDEDfHI1NeuIP4a3cGhGu8QDbpVQDaSt7xNHDvL/rLRmOqs4nNK8di8ymIXAx+THZ2tMwf0LGXZc+4GuXoMf/M2ayDC/rYpWwhkCaaH80iwDJ8/ecU9sAY0IWHImRa0mm0tZ3I8Y=
+	t=1721286814; cv=none; b=CoFIHaTHuQiWl+agCAP25w1U/rz8xoGtraeEZhcsxQ7EzaTT7R0jN0/GOCVZnVkaQ+9Fj9WWz4FovkRfubKEdxIS5DJ9QunRnpIpo8bR4aSqPF318Io7zI1n/+XuYoTBiz0jyhVTiYL1x5kv3e1yw9TodB4QqKQqq5Z0sH22Uk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721287252; c=relaxed/simple;
-	bh=5RgJpskfnQBLGNBbJmxZ/9WkbHIpVM8ehSKPiV3QKhg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NzoAi89jR2wwk276mXBMqi4/IuKnl/Di7UzbE+mhWzQNnUCegK489/MuzfSmuxNNUbiIDye/WYAC2gTTigwa1ZBVAGgajTQjkMCBmn5W2dClOL3EKt2vUtHzQI4Xdbzj1SLrS3c/njMvxnB0wcWD5gHROWKuR3XvZmJnUFj9Vo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WPkcs0pFTz28fXS;
-	Thu, 18 Jul 2024 15:16:29 +0800 (CST)
-Received: from kwepemm600004.china.huawei.com (unknown [7.193.23.242])
-	by mail.maildlp.com (Postfix) with ESMTPS id 51C221402D0;
-	Thu, 18 Jul 2024 15:20:48 +0800 (CST)
-Received: from localhost.localdomain (10.28.79.22) by
- kwepemm600004.china.huawei.com (7.193.23.242) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 18 Jul 2024 15:20:47 +0800
-From: Huisong Li <lihuisong@huawei.com>
-To: <xuwei5@hisilicon.com>
-CC: <linux-kernel@vger.kernel.org>, <soc@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <Jonathan.Cameron@Huawei.com>,
-	<liuyonglong@huawei.com>, <lihuisong@huawei.com>
-Subject: [PATCH 5/5] doc: soc: hisilicon: kunpeng_hccs: add low power interface description for HCCS
-Date: Thu, 18 Jul 2024 15:11:34 +0800
-Message-ID: <20240718071134.31155-6-lihuisong@huawei.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20240718071134.31155-1-lihuisong@huawei.com>
-References: <20240718071134.31155-1-lihuisong@huawei.com>
+	s=arc-20240116; t=1721286814; c=relaxed/simple;
+	bh=yZ2QaQ6p9Z+RtBrpzPLhsQ3P78x2NI+aDTceKi1qjjw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mtvwv5ef2geoNSiA3bX0wXVDwAavKJJ8gl/sI3tV+ixnMQHdIpTGPBCiv8/kqH0LPJ1SlCkrskupXpNvKLIB1V3RvlfohuK4slV7OuJcxf4giFNQW/allRYObDz+hhMnFQJyT16pKyKGtnHDSrFW2R4ffnK7CyEQCeYSN6t1yl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=WyC/VB/u; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1721286812; x=1752822812;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yZ2QaQ6p9Z+RtBrpzPLhsQ3P78x2NI+aDTceKi1qjjw=;
+  b=WyC/VB/uDI0T+LZ5oe2hVL/TeCpC76GDq+SviFncyvaZSurXzgRh/xkx
+   XP3EqbUFiYHb1nl12eE+QnYN5MnyAqXX9wMja0ab1106KVQz9ZboS2Ol7
+   CiQuL5YnSU4nnNkCDM94ug4Qssp2cihHqy7zotXmzEGNJmLOoAaaBXZAm
+   UxlcHcOxL5qubxifryvkdZRx7Mbs4agr1p431fHb8FgmBahlz6rVcpFrZ
+   mgr7Kl6H7gO8X2xMp6XfwvhU4P9LcpSwl5KpQYWEp1oDzoZ1jWrLA0HBm
+   6t9iE/8DjdYMPO/gJGPGbLzL2eEQswqePNDqhowX+thvlX4b2CLEx9CFM
+   g==;
+X-CSE-ConnectionGUID: 4xvfPWz5TieNyLJ40wg/zg==
+X-CSE-MsgGUID: 1vgItF1PTx+dbdtiJd3f7g==
+X-IronPort-AV: E=Sophos;i="6.09,217,1716274800"; 
+   d="asc'?scan'208";a="29361118"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Jul 2024 00:13:24 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 18 Jul 2024 00:12:55 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Thu, 18 Jul 2024 00:12:54 -0700
+Date: Thu, 18 Jul 2024 08:12:31 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patch in the riscv-soc tree
+Message-ID: <20240718-playing-mulberry-a1494425f9ee@wendy>
+References: <20240717081456.57ee0709@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemm600004.china.huawei.com (7.193.23.242)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="LtI7V3OW/Rv8FP1a"
+Content-Disposition: inline
+In-Reply-To: <20240717081456.57ee0709@canb.auug.org.au>
 
-This patch add low power interface description for HCCS.
+--LtI7V3OW/Rv8FP1a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Huisong Li <lihuisong@huawei.com>
----
- .../sysfs-devices-platform-kunpeng_hccs       | 26 +++++++++++++++++++
- 1 file changed, 26 insertions(+)
+On Wed, Jul 17, 2024 at 08:14:56AM +1000, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> The following commit is also in Linus Torvalds' tree as a different commit
+> (but the same patch):
+>=20
+>   c813ef3c5f6c ("MAINTAINERS: drop riscv list from cache controllers")
 
-diff --git a/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs b/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs
-index 1666340820f7..28bffb79e742 100644
---- a/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs
-+++ b/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs
-@@ -79,3 +79,29 @@ Description:
- 			           indicates a lane.
- 		crc_err_cnt:  (RO) CRC err count on this port.
- 		============= ==== =============================================
-+
-+What:		/sys/devices/platform/HISI04Bx:00/used_typs
-+Date:		July 2024
-+KernelVersion:	6.11
-+Contact:	Huisong Li <lihuisong@huawei.com>
-+Description:
-+		This interface is used to show all HCCS type used on current
-+		platform, like, HCCS-v1, HCCS-v2 and so on.
-+
-+What:		/sys/devices/platform/HISI04Bx:00/support_pm_types
-+What:		/sys/devices/platform/HISI04Bx:00/dec_lane
-+What:		/sys/devices/platform/HISI04Bx:00/inc_lane
-+Date:		July 2024
-+KernelVersion:	6.11
-+Contact:	Huisong Li <lihuisong@huawei.com>
-+Description:
-+		This series interface under /sys/devices/platform/HISI04Bx/
-+		directory is used to support low power of some HCCS type
-+		by operating their lane number. The 'inc_lane' and 'dec_lane'
-+		are just exposed with root privilege and write-onely attributes
-+		when there is the HCCS type supported low power operation.
-+		The 'support_pm_types' with read-only attributes is used to
-+		expose the HCCS type supported PM. The available input of
-+		'inc_lane' and 'dec_lane' is from 'support_pm_types'.
-+		Note: allow to decrease lane only when all specified HCCS ports
-+		are not busy.
--- 
-2.22.0
+Yeah, that's expected. I had one commit as a fix after sending my PRs
+for v6.11, so I sent that one as a patch rather than a PR. I'll drop it
+now, thanks.
 
+
+--LtI7V3OW/Rv8FP1a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpjAUwAKCRB4tDGHoIJi
+0pSIAQDoo4fV87WN//rrAarrWir9zxyX0CKRh0UogJZ95MSp0wEA904JekTuhfUA
+6v+bjsuEFzweVOfug+XjAtEs2W2y+Qg=
+=Z4J8
+-----END PGP SIGNATURE-----
+
+--LtI7V3OW/Rv8FP1a--
 
