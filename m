@@ -1,37 +1,60 @@
-Return-Path: <linux-kernel+bounces-256400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98261934DCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:08:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE56934DD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:09:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB29E1C22BE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:08:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CBB51C22D31
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D373713C9DC;
-	Thu, 18 Jul 2024 13:08:47 +0000 (UTC)
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D361413CAA5;
+	Thu, 18 Jul 2024 13:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="mPWZxvdB"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB75839E3;
-	Thu, 18 Jul 2024 13:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87CCD13C3F6;
+	Thu, 18 Jul 2024 13:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721308127; cv=none; b=VoqclKVnetjB7IwJ0QMlIw8iMPouOZrqGQH1KCTEP/3VRmJsc2LJZj1CUevQLGaz+si78TdV2cwjvS1xd8PuU/Jc5y/wMhamTnQg5941R/WUfjxZdxPqg0pELvbKo/g65GXlUL0Z0MSYiyuzat3/Wf6cejOSRzSC01zCrWmH3m0=
+	t=1721308153; cv=none; b=cdtQI/tI2IsLhaJXxEBUTAU5eXrBZ6oZn/N426sNH6Idu5K/xS1MGJASmz1nQYcJ1IB+LrsbqWhvePL2OjlmYx/4DOYDiQk2x7TFu9eeZw8UJVHV6qwv+ydlz1G5dkn/nJIMi3IL2rvmGHnJbAxlDekM68VenUtBNZBS3sWUH00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721308127; c=relaxed/simple;
-	bh=fPG4In1liwBLGKmi0Zhpipjq4VcDJmEnF0sgTNwj5CM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OJk0XdOBkDpLutQPJCZe3RKBmFbUDrRZVznpFUacm/tk7syg1hNy3M+4QjS6NMRpk9bFFT44x9nKjqi7NL2xLGqK9iU36AiJDXAr9cteOumymQJv4BjeEM4uZ5aY85w5tisBt586eK7gR5gE9EinCw4OU+BWijY1/fDpwIXUy2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A304B1C0009;
-	Thu, 18 Jul 2024 13:08:39 +0000 (UTC)
-Message-ID: <2c227c58-d414-4994-9382-11feb80bb818@ghiti.fr>
-Date: Thu, 18 Jul 2024 15:08:39 +0200
+	s=arc-20240116; t=1721308153; c=relaxed/simple;
+	bh=WX7ukJI8n3jjzffY/JPZ9oaOhlROEeN4zgp0zjWA1Gw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eviHdXF5CAZZOS8nzU+oCwvTfq3b6ju15BuVYip9lojDjRmtWrVWQeQPPFpKBE3sPggdwF0Lk+WBTuQTpt5AmqC4PGJr4QBpMOamCOXSpJ1SKUpDhUuR7r/VVKqoGSra5w+8XNY4tlatDN4fhYdy2qugLzD0sGQPxZo10njYHC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=mPWZxvdB; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id AC9D5120010;
+	Thu, 18 Jul 2024 16:09:05 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru AC9D5120010
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1721308145;
+	bh=Rs10WoBRGbxVA1tpxhegD8xnv3KUn3Y5nh+zd+3yfX4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=mPWZxvdBkbvEFNl+vpCubAemBLzMi854k4tuKT+wtnijRwNNVDI2bcUA2E99Tw9qA
+	 Tp2U+oSqZgn9qewJg5NmYD0DHC3xyUC53V0cxO5YNYzNvLRreJ66GXyYekraMVmJMJ
+	 sM7XHAs3TQ5ZnzFjopWxJw6JXN4XBGmr6rQ5fUR4qxqVwcubdG+jGdfMbO2nxlnODy
+	 /57f97dKMW9T68Gb0AFUxRIrvyjmz9TNcikU0+sz3b/DzdPsMTuDkb28DP6uasJk3b
+	 odCaxC/YWGyHDFmnbgFJUoUJZ8doNrcikgpUu6AV09A50Uih34uc5F9joe93ol4YuP
+	 v4TEPm+nfrMZA==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Thu, 18 Jul 2024 16:09:05 +0300 (MSK)
+Received: from [172.28.129.66] (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Thu, 18 Jul 2024 16:09:05 +0300
+Message-ID: <52e2e211-a0b7-47b1-a451-34c304028097@salutedevices.com>
+Date: Thu, 18 Jul 2024 16:09:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -39,184 +62,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 11/11] riscv: Add qspinlock support
+Subject: Re: [PATCH v4 0/3] pwm: meson: add pwm support for A1
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<neil.armstrong@linaro.org>
+CC: <ukleinek@kernel.org>, <linux-pwm@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <martin.blumenstingl@googlemail.com>,
+	<jbrunet@baylibre.com>, <khilman@baylibre.com>,
+	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <kernel@salutedevices.com>,
+	<hkallweit1@gmail.com>
+References: <20240710234116.2370655-1-gnstark@salutedevices.com>
 Content-Language: en-US
-To: Andrea Parri <parri.andrea@gmail.com>,
- Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
- Leonardo Bras <leobras@redhat.com>, Guo Ren <guoren@kernel.org>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org
-References: <20240717061957.140712-1-alexghiti@rivosinc.com>
- <20240717061957.140712-12-alexghiti@rivosinc.com> <ZpfxUvIx+0ClOqCc@andrea>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <ZpfxUvIx+0ClOqCc@andrea>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: George Stark <gnstark@salutedevices.com>
+In-Reply-To: <20240710234116.2370655-1-gnstark@salutedevices.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 186588 [Jul 18 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/07/18 08:50:00
+X-KSMG-LinksScanning: Clean, bases: 2024/07/18 08:50:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/18 08:29:00 #26061289
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-Hi Andrea,
+Hello
 
-On 17/07/2024 18:29, Andrea Parri wrote:
->> +config RISCV_QUEUED_SPINLOCKS
-> I'm seeing the following warnings with CONFIG_RISCV_QUEUED_SPINLOCKS=y:
->
-> In file included from ./arch/riscv/include/generated/asm/qspinlock.h:1,
->                   from kernel/locking/qspinlock.c:24:
-> ./include/asm-generic/qspinlock.h:144:9: warning: "arch_spin_is_locked" redefined
->    144 | #define arch_spin_is_locked(l)          queued_spin_is_locked(l)
->        |         ^~~~~~~~~~~~~~~~~~~
-> In file included from ./arch/riscv/include/generated/asm/ticket_spinlock.h:1,
->                   from ./arch/riscv/include/asm/spinlock.h:33,
->                   from ./include/linux/spinlock.h:95,
->                   from ./include/linux/sched.h:2142,
->                   from ./include/linux/percpu.h:13,
->                   from kernel/locking/qspinlock.c:19:
-> ./include/asm-generic/ticket_spinlock.h:97:9: note: this is the location of the previous definition
->     97 | #define arch_spin_is_locked(l)          ticket_spin_is_locked(l)
->        |         ^~~~~~~~~~~~~~~~~~~
-> ./include/asm-generic/qspinlock.h:145:9: warning: "arch_spin_is_contended" redefined
->    145 | #define arch_spin_is_contended(l)       queued_spin_is_contended(l)
->        |         ^~~~~~~~~~~~~~~~~~~~~~
-> ./include/asm-generic/ticket_spinlock.h:98:9: note: this is the location of the previous definition
->     98 | #define arch_spin_is_contended(l)       ticket_spin_is_contended(l)
->        |         ^~~~~~~~~~~~~~~~~~~~~~
-> ./include/asm-generic/qspinlock.h:146:9: warning: "arch_spin_value_unlocked" redefined
->    146 | #define arch_spin_value_unlocked(l)     queued_spin_value_unlocked(l)
->        |         ^~~~~~~~~~~~~~~~~~~~~~~~
-> ./include/asm-generic/ticket_spinlock.h:99:9: note: this is the location of the previous definition
->     99 | #define arch_spin_value_unlocked(l)     ticket_spin_value_unlocked(l)
->        |         ^~~~~~~~~~~~~~~~~~~~~~~~
-> ./include/asm-generic/qspinlock.h:147:9: warning: "arch_spin_lock" redefined
->    147 | #define arch_spin_lock(l)               queued_spin_lock(l)
->        |         ^~~~~~~~~~~~~~
-> ./include/asm-generic/ticket_spinlock.h:100:9: note: this is the location of the previous definition
->    100 | #define arch_spin_lock(l)               ticket_spin_lock(l)
->        |         ^~~~~~~~~~~~~~
-> ./include/asm-generic/qspinlock.h:148:9: warning: "arch_spin_trylock" redefined
->    148 | #define arch_spin_trylock(l)            queued_spin_trylock(l)
->        |         ^~~~~~~~~~~~~~~~~
-> ./include/asm-generic/ticket_spinlock.h:101:9: note: this is the location of the previous definition
->    101 | #define arch_spin_trylock(l)            ticket_spin_trylock(l)
->        |         ^~~~~~~~~~~~~~~~~
-> ./include/asm-generic/qspinlock.h:149:9: warning: "arch_spin_unlock" redefined
->    149 | #define arch_spin_unlock(l)             queued_spin_unlock(l)
->        |         ^~~~~~~~~~~~~~~~
-> ./include/asm-generic/ticket_spinlock.h:102:9: note: this is the location of the previous definition
->    102 | #define arch_spin_unlock(l)             ticket_spin_unlock(l)
->
->
-> The following diff resolves them for me (please double check):
->
-> diff --git a/arch/riscv/include/asm/spinlock.h b/arch/riscv/include/asm/spinlock.h
-> index 4856d50006f28..2d59f56a9e2d1 100644
-> --- a/arch/riscv/include/asm/spinlock.h
-> +++ b/arch/riscv/include/asm/spinlock.h
-> @@ -30,7 +30,11 @@ SPINLOCK_BASE_DECLARE(value_unlocked, int, arch_spinlock_t)
->   
->   #else
->   
-> +#if defined(CONFIG_RISCV_TICKET_SPINLOCKS)
->   #include <asm/ticket_spinlock.h>
-> +#elif defined(CONFIG_RISCV_QUEUED_SPINLOCKS)
-> +#include <asm/qspinlock.h>
-> +#endif
->   
->   #endif
+Excuse me, should I fix/improve anything on this series?
 
+On 7/11/24 02:41, George Stark wrote:
+> Add support for Amlogic meson A1 SoC family PWM
+> 
+> Changes in v2:
+>    add patch with optional power-domains to pwm bindings;
+>    fix syntax in a1 bindigns patch:
+>    - use enum over const for amlogic,meson-a1-pwm beacuse adding more devices here
+>      are expected
+>    - leave only base compatible amlogic,meson-s4-pwm in check section
+>    dt_binding_check and dtbs_check run ok now;
+>    previous version: [1]
+> 
+> Changes in v3:
+>    squash power-domains patch into main bindigns patch
+>    add conditional to bindings that power-domains property is required only for a1
+>    previous version: [2]
+> 
+> Changes in v4:
+>    split bindings patch into power-domains patch and new compatible patch
+>    previous version: [3]
+> 
+> [1] https://lore.kernel.org/lkml/20240701130113.433169-3-gnstark@salutedevices.com/T/
+> [2] https://lore.kernel.org/lkml/20240701172016.523402-1-gnstark@salutedevices.com/T/
+> [3] https://lore.kernel.org/lkml/20240702123425.584610-1-gnstark@salutedevices.com/T/
+> 
+> George Stark (3):
+>    dt-bindings: pwm: amlogic: Add optional power-domains
+>    dt-bindings: pwm: amlogic: Add new bindings for meson A1 PWM
+>    arm64: dts: meson: a1: add definitions for meson PWM
+> 
+>   .../devicetree/bindings/pwm/pwm-amlogic.yaml  |  17 ++
+>   arch/arm64/boot/dts/amlogic/meson-a1.dtsi     | 215 ++++++++++++++++++
+>   2 files changed, 232 insertions(+)
+> 
+> --
+> 2.25.1
+> 
 
-Thanks for testing this config (when I did not...)!
-
-I came up with something slightly different, but same fix in the end, 
-thanks!
-
-
->
->> +DEFINE_STATIC_KEY_TRUE(qspinlock_key);
->> +EXPORT_SYMBOL(qspinlock_key);
->> +
->> +static void __init riscv_spinlock_init(void)
->> +{
->> +	char *using_ext;
->> +
->> +	if (IS_ENABLED(CONFIG_RISCV_ISA_ZACAS) &&
->> +	    IS_ENABLED(CONFIG_RISCV_ISA_ZABHA)) {
->> +		using_ext = "using Zabha";
->> +
->> +		asm goto(ALTERNATIVE("j %[no_zacas]", "nop", 0, RISCV_ISA_EXT_ZACAS, 1)
->> +			 : : : : no_zacas);
->> +		asm goto(ALTERNATIVE("nop", "j %[qspinlock]", 0, RISCV_ISA_EXT_ZABHA, 1)
->> +			 : : : : qspinlock);
->> +	}
->> +
->> +no_zacas:
->> +	using_ext = "using Ziccrse";
->> +	asm goto(ALTERNATIVE("nop", "j %[qspinlock]", 0,
->> +			     RISCV_ISA_EXT_ZICCRSE, 1)
->> +		 : : : : qspinlock);
->> +
->> +	static_branch_disable(&qspinlock_key);
->> +	pr_info("Ticket spinlock: enabled\n");
->> +
->> +	return;
->> +
->> +qspinlock:
->> +	pr_info("Queued spinlock %s: enabled\n", using_ext);
->> +}
->> +
-> Your commit message suggests that riscv_spinlock_init() doesn't need to
-> do anything if CONFIG_RISCV_COMBO_SPINLOCKS=n:
->
-> diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
-> index d7c31c9b8ead2..b2be1b0b700d2 100644
-> --- a/arch/riscv/kernel/setup.c
-> +++ b/arch/riscv/kernel/setup.c
-> @@ -244,6 +244,7 @@ static void __init parse_dtb(void)
->   #endif
->   }
->   
-> +#if defined(CONFIG_RISCV_COMBO_SPINLOCKS)
->   DEFINE_STATIC_KEY_TRUE(qspinlock_key);
->   EXPORT_SYMBOL(qspinlock_key);
->   
-> @@ -275,6 +276,11 @@ static void __init riscv_spinlock_init(void)
->   qspinlock:
->   	pr_info("Queued spinlock %s: enabled\n", using_ext);
->   }
-> +#else
-> +static void __init riscv_spinlock_init(void)
-> +{
-> +}
-> +#endif
->   
->   extern void __init init_rt_signal_env(void);
->
->
-> Makes sense?  What am I missing?
-
-
-Totally makes sense, I completely overlooked this when I added the 
-ticket/queued configs, thanks for taking the time to look into it.
-
-That will be fixed in the next version.
-
-Thanks again,
-
-Alex
-
-
->
->    Andrea
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+-- 
+Best regards
+George
 
