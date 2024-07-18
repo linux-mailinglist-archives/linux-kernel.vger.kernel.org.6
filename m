@@ -1,116 +1,204 @@
-Return-Path: <linux-kernel+bounces-256458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA8DB934EE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:08:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C80BA934EE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:09:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 631222849F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:08:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AA77B23708
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2FE1422AD;
-	Thu, 18 Jul 2024 14:08:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008251422C8;
+	Thu, 18 Jul 2024 14:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cx4I6LZd"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kw/eKmmK"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D33513E028;
-	Thu, 18 Jul 2024 14:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B9813FD8C;
+	Thu, 18 Jul 2024 14:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721311718; cv=none; b=l/Dt+POMIU3le+y+rsZwmWfSoVph5+kMTdRGwimmrG9P9Lon26OoiYdJkLsHe+uqEBbIrp5NtlFu3EctFPob6zL9yC+TRc8kR2WDVQU6wogK7E131A38kp42AftpK3cMjywzqo4tn7HgpiV2I8DSFH6uwvjRTUrEZv01CNEy2rk=
+	t=1721311737; cv=none; b=c+g+TrRU0o6xmC/WfuTmWUN/wMZuwyUO2yOsec1UCbEkGeOpesKLtberD1tk+qvkg3S5sHzKG3JW86DqxNV6goemrUYPKAlCS9+mKR0ajH9mfTLa3HYzyYNr5ssf78TNf73eu7xnWOyWq9yDAUsWedpEq/d1iAqGkSjcHG8FVEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721311718; c=relaxed/simple;
-	bh=Zu41XDxS0G+XZTGya57Mh9o/OsV+lTxsEHtcdNGShBk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=k6ThaRw6WsdkItnOoBmYWxetBqI1uIaqXvefSlkbYuJijTPng4LuC3QRf6thbiYtNmKITOEzyUP4hVefKXRKtZ5yMqM/GsJSSXmtYSHGv08ju0yS8o/dtZaWcFC1vsEK5Aao18itRkcDkFsHFQAUWTJsneUe1LdXWmH4CSFbfs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cx4I6LZd; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52ea0f18500so376454e87.3;
-        Thu, 18 Jul 2024 07:08:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721311715; x=1721916515; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Zu41XDxS0G+XZTGya57Mh9o/OsV+lTxsEHtcdNGShBk=;
-        b=Cx4I6LZdUdVuCfI/vGZJ2Go3i//TJ63C2adAn3BOz8EKsIPmet4QrPIl//Pj3tZ7W/
-         bPPtv0QToH6XtHQsDBBpu04hhIYvZkl93lXjTG4OcxQLUG0UXUGFv2V8oPZS0GPei/g9
-         T4runz2LJHkxbDR5+/nayAKUV5NviyVjlld5XDt6HxY5e7/J9Jt37HaPfJ1hzmYV/AOI
-         pzkMn55b1Ryfof9rLB3lQkvCmTRkAXiJZsQuV7CbCLH1vFA62PRFcHmEqTfG9BRqDVcI
-         Q9qegflWyGehXwbeC1uUcVxsnzDTSMFID9DXA1QgHiRHiMc5K8fRy/LtnBrEUoErC1+y
-         g9kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721311715; x=1721916515;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Zu41XDxS0G+XZTGya57Mh9o/OsV+lTxsEHtcdNGShBk=;
-        b=Rsh7O6RnSezZ2TQgwqO/uXxzZlPFCWH7ERU356OfIhUX4aftNtFRH2utba/mqPUZHL
-         wQwlMt2oyLiNb6b65TmxHLYqf7X0O3PUYn7A8krRHN3m+P0t++4O4tE9e4np6hEKa5sm
-         eES0o+j2i/GzuJXXjs4N7etEkond2awLblLoskXh/EcqH6bRLVC/0sPLBvO2XpWdzplq
-         yuXo3vPqOMlGcAynYnZwNfPZ7dYh1ksnPJUPLmyZJifxoDoVtDRDGt8NkKE7k482HJ8L
-         R/kH22g4GHLn/NmM9lV7HT5sa7OxdeLGCum/GoMBygzFLw3voZkKvyD0E7tGVbc6WacL
-         F1rg==
-X-Forwarded-Encrypted: i=1; AJvYcCXMjkDJuSboPgQhlS6gUX4WxpDJIP5xlWeTk9GY9DL0bKroDf7OV9w1oaLEiE3oMR5zf2Zx/arCdb2QI5srCZgHb1q3+WW5VLEod7LMvp9kNAa+E/C4lKLxo0LC7yJ+XBCD8Z79B9o+3JdUTop8DOfFeANMFEhHkEOoziUpf2nO24ijIA==
-X-Gm-Message-State: AOJu0Yx+xZ743Zt0Lwyfoseb6UD8L+JZiGqMphZQjvtWfZpJ68tEIWP1
-	/i+5FqYHk3Sf0xg+CWXvLfEYuitCDha7AS+fP0dVdCjUiz11ZKG6
-X-Google-Smtp-Source: AGHT+IEJ516zfOSBvP+CO6M25dL18hqjOXPoF08EMhPOhsI7c1waSlPDuumU94Lt5tfdUG2hN0squg==
-X-Received: by 2002:a05:6512:b8b:b0:52c:dbc2:ea1 with SMTP id 2adb3069b0e04-52ee53ac96dmr3690480e87.6.1721311714107;
-        Thu, 18 Jul 2024 07:08:34 -0700 (PDT)
-Received: from nsa.fritz.box ([2001:a61:359b:e801:d44:32b3:6924:10d1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a7257esm15994785e9.28.2024.07.18.07.08.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 07:08:33 -0700 (PDT)
-Message-ID: <cc1d58f9ca652dff81ffda0af2329cc673e888fb.camel@gmail.com>
-Subject: Re: [PATCH v7 2/4] iio: adc: ad7192: Update clock config
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Alisa-Dariana Roman <alisadariana@gmail.com>, Alisa-Dariana Roman
- <alisa.roman@analog.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- Michael Hennerich <michael.hennerich@analog.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron
- <jic23@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Date: Thu, 18 Jul 2024 16:08:33 +0200
-In-Reply-To: <20240717212535.8348-3-alisa.roman@analog.com>
-References: <20240717212535.8348-1-alisa.roman@analog.com>
-	 <20240717212535.8348-3-alisa.roman@analog.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	s=arc-20240116; t=1721311737; c=relaxed/simple;
+	bh=85oCYDcBp5EM2UxdcGxHH8ALQcV/Up8tD6ANr8mtmPU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZeC6Us8ktuRz8xLxFic4HKWMmwCy3T3os6HJlmctNwglakQO3WLoROeqH8i5j2qmins45bM5dpwqRi4FDNWrOAF7QL8IZB7vB6who/k4fOuQgyqVTzenIBCBe7CFROWfYFmFkMaeUKyFAOylca5YqqSdjUGYpOaKVuAB6He7OQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kw/eKmmK; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46IE8eLN019943;
+	Thu, 18 Jul 2024 09:08:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1721311720;
+	bh=J1b26Z4gPzOh81ZAO/HOxeNUSxmtc4N3KEvIsEO1QS8=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=kw/eKmmKRzI8t3K0wcoPtULzVY/F/5IM0+NG3f7aRMP/d7LsvSPWy7UEVJnwFIkuu
+	 ZaHNm6LE7u6P27wEXnK/7C/WUuP2sbvOa6pvWJA1/Xj7wCLv+tJ+E2AnzlP9PL2ImR
+	 bCDSqV7vpaX5trc8iF+OnC0KS0R1oua30dLVZ0J8=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46IE8enk105271
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 18 Jul 2024 09:08:40 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 18
+ Jul 2024 09:08:40 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 18 Jul 2024 09:08:40 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46IE8eEV038180;
+	Thu, 18 Jul 2024 09:08:40 -0500
+Message-ID: <d1d7f693-1dd6-4aea-bdbd-4385dc35d462@ti.com>
+Date: Thu, 18 Jul 2024 09:08:40 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: ti: k3-j722s-evm: Add support for multiple
+ CAN instances
+To: Bhavya Kapoor <b-kapoor@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <conor+dt@kernel.org>,
+        <krzk+dt@kernel.org>, <robh@kernel.org>, <kristo@kernel.org>,
+        <vigneshr@ti.com>, <nm@ti.com>
+References: <20240621091057.1473010-1-b-kapoor@ti.com>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <20240621091057.1473010-1-b-kapoor@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Thu, 2024-07-18 at 00:25 +0300, Alisa-Dariana Roman wrote:
-> There are actually 4 configuration modes of clock source for AD719X
-> devices. Either a crystal can be attached externally between MCLK1 and
-> MCLK2 pins, or an external CMOS-compatible clock can drive the MCLK2
-> pin. The other 2 modes make use of the 4.92MHz internal clock.
->=20
-> Undocumented properties adi,int-clock-output-enable and adi,clock-xtal
-> still supported for backward compatibility, but their use is highly
-> discouraged. Use cleaner alternative of configuring external clock by
-> using clock names mclk and xtal.
->=20
-> Functionality of AD7192_CLK_INT_CO will be implemented in complementary
-> patch by adding clock provider.
->=20
-> Signed-off-by: Alisa-Dariana Roman <alisa.roman@analog.com>
+Hi Bhavya,
+
+On 6/21/24 4:10 AM, Bhavya Kapoor wrote:
+> CAN instances 0 and 1 in the mcu domain and 0 in the main domain are
+> brought on the evm through headers J5, J8 and J10 respectively. Thus,
+> add their respective transceiver's 0, 1 and 2 dt nodes as well as
+> add the required pinmux to add support for these CAN instances.
+> 
+
+Looks good to me.
+
+Reviewed-by: Judith Mendez <jm@ti.com>
+
+> Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
 > ---
-
-LGTM,
-
-Reviewed-by: Nuno Sa <nuno.sa@analog.com>
-
+> 
+> rebased to: next-20240620
+> 
+>   arch/arm64/boot/dts/ti/k3-j722s-evm.dts | 74 +++++++++++++++++++++++++
+>   1 file changed, 74 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+> index 253b02f0437d..4fcfbade07c8 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+> @@ -124,10 +124,39 @@ vsys_io_1v2: regulator-vsys-io-1v2 {
+>   		regulator-always-on;
+>   		regulator-boot-on;
+>   	};
+> +
+> +	transceiver0: can-phy0 {
+> +		compatible = "ti,tcan1042";
+> +		#phy-cells = <0>;
+> +		max-bitrate = <5000000>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&mcu_mcan0_gpio_pins_default>;
+> +		standby-gpios = <&mcu_gpio0 12 GPIO_ACTIVE_HIGH>;
+> +	};
+> +
+> +	transceiver1: can-phy1 {
+> +		compatible = "ti,tcan1042";
+> +		#phy-cells = <0>;
+> +		max-bitrate = <5000000>;
+> +	};
+> +
+> +	transceiver2: can-phy2 {
+> +		compatible = "ti,tcan1042";
+> +		#phy-cells = <0>;
+> +		max-bitrate = <5000000>;
+> +		standby-gpios = <&exp1 17 GPIO_ACTIVE_HIGH>;
+> +	};
+>   };
+>   
+>   &main_pmx0 {
+>   
+> +	main_mcan0_pins_default: main-mcan0-default-pins {
+> +		pinctrl-single,pins = <
+> +			J722S_IOPAD(0x1dc, PIN_INPUT, 0) /* (C22) MCAN0_RX */
+> +			J722S_IOPAD(0x1d8, PIN_OUTPUT, 0) /*(D22) MCAN0_TX */
+> +		>;
+> +	};
+> +
+>   	main_i2c0_pins_default: main-i2c0-default-pins {
+>   		pinctrl-single,pins = <
+>   			J722S_IOPAD(0x01e0, PIN_INPUT_PULLUP, 0) /* (D23) I2C0_SCL */
+> @@ -250,6 +279,26 @@ &main_uart0 {
+>   
+>   &mcu_pmx0 {
+>   
+> +	mcu_mcan0_pins_default: mcu-mcan0-default-pins {
+> +		pinctrl-single,pins = <
+> +			J722S_MCU_IOPAD(0x038, PIN_INPUT, 0) /* (D8) MCU_MCAN0_RX */
+> +			J722S_MCU_IOPAD(0x034, PIN_OUTPUT, 0) /* (B2) MCU_MCAN0_TX */
+> +		>;
+> +	};
+> +
+> +	mcu_mcan1_pins_default: mcu-mcan1-default-pins {
+> +		pinctrl-single,pins = <
+> +			J722S_MCU_IOPAD(0x040, PIN_INPUT, 0) /* (B1) MCU_MCAN1_RX */
+> +			J722S_MCU_IOPAD(0x03C, PIN_OUTPUT, 0) /*(C1) MCU_MCAN1_TX */
+> +		>;
+> +	};
+> +
+> +	mcu_mcan0_gpio_pins_default: mcu-mcan0-gpio-default-pins {
+> +		pinctrl-single,pins = <
+> +			J722S_MCU_IOPAD(0x0030, PIN_OUTPUT, 7) /* (C3) MCU_GPIO0_12 */
+> +		>;
+> +	};
+> +
+>   	wkup_uart0_pins_default: wkup-uart0-default-pins {
+>   		pinctrl-single,pins = <
+>   			J722S_MCU_IOPAD(0x02c, PIN_INPUT, 0)	/* (C7) WKUP_UART0_CTSn */
+> @@ -457,3 +506,28 @@ &usb1 {
+>   	phys = <&serdes0_usb_link>;
+>   	phy-names = "cdns3,usb3-phy";
+>   };
+> +
+> +&mcu_mcan0 {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&mcu_mcan0_pins_default>;
+> +	phys = <&transceiver0>;
+> +};
+> +
+> +&mcu_mcan1 {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&mcu_mcan1_pins_default>;
+> +	phys = <&transceiver1>;
+> +};
+> +
+> +&main_mcan0 {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&main_mcan0_pins_default>;
+> +	phys = <&transceiver2>;
+> +};
+> +
+> +&mcu_gpio0 {
+> +	status = "okay";
+> +};
 
 
