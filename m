@@ -1,125 +1,111 @@
-Return-Path: <linux-kernel+bounces-255864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC659345CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:29:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 064BF9345CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FAAD1C2198F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:29:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 390371C21C2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48E21B86E8;
-	Thu, 18 Jul 2024 01:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IC6md1y0"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330CE1C36;
+	Thu, 18 Jul 2024 01:30:21 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8799394;
-	Thu, 18 Jul 2024 01:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F0510F2
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 01:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721266067; cv=none; b=mSUm8QBJLKZdVMeEuBPNgd4Au3sz28GypZH4LzNb8q9XLHIYbO/U02BxsypNF++2+6/aRRSN2cgCrOghtprk99B+uxOvn53hVzqrzNVuCsVTWXW9H7JaM0CW1bsnf02myMuFGofEdWfvlmSRy3tBO8XJmrvdPHtdBabyPyPXwhM=
+	t=1721266220; cv=none; b=O6AHZRs6PMjCon+jvZLwivF3GDcufwSI4lMgzKdvJMcj3ERB/y1MwQgcbGw8Xqb5dYK5p8Qq6S0HzSRJBJo47af/NXzL5/rwG/v8YrLBABDFs1K04uF89PYdeR9iJ/aD1UlRT7V+PqNsWKeiztH7AFc5zXEeAQXmXwf9eVQc+e8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721266067; c=relaxed/simple;
-	bh=iu6CKfJt3C2PrK2EYYcvUZWys67ejVF77qvWw1WKZbM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cge6+8KF4RoKw9cRA73e9iTEBiXcuikLHsBUy9aIro/LoX5n9nkq5NBYkmNgzx0yZXYw21ac7I/RCvibWBRpCr1pCosZr18vwQgxtJqadJobwrDXyZAPrzUU7qThmjspeMjdB0gMck7s5APMDtg8+EcN6BP96N9rMlcpy7x9ur0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IC6md1y0; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fb4fa1bb34so2187205ad.0;
-        Wed, 17 Jul 2024 18:27:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721266065; x=1721870865; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Y4ozxE+CESJqEyygZCUvpW9+U/UE2rBQc20tR/KurlY=;
-        b=IC6md1y0k/bNnmubsBdvUCa3a5yrS2QyBz56YTxmdqn4af+Lh4XWKXIY95Am0wwf6D
-         irhppLrweBEsRpp+aPiHYBv3b46ElViUkmv0LsP5BLGofyU9FCCLejzxVRIb48+0KaLp
-         X5MPVg4IZ3MRHlp60/yS3fxD1QDVSy9wyyYiXGGUenQ6TLSNSsb8fcoSocPcBn27YgC7
-         oR/6QkfmZr3VSGwjyWq5e3hsWDYzOmcAAYxX3hOtipyhyR3Yqt01UZIaSdjMbh/qo9QU
-         c33cbgbLAmkiB586zBR6Y1dYJWQUxdBkOPQNzOn1UzasmCWNHNgtGpD1Q59IBYV319b1
-         7yRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721266065; x=1721870865;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y4ozxE+CESJqEyygZCUvpW9+U/UE2rBQc20tR/KurlY=;
-        b=UedutAjLskGJXOROAC+1YpBFEsamOdKak4NRE4zuM/Fx2sWdXtgM+5kOiHbzG3YZMY
-         wgTzCl73Vcgj8bfYxO3zfX22RvBu7ZBZWVLoMYnDh6dsC+uIIw3ETi0xhP47Q1+v5N+O
-         IYk9B6hzhtnCzPMR3LWo/B6VOxQddZIvwJCAHTvWWxOCEC7HSFN59LRhXc7uefItc1Jt
-         agQnebldL/MXqtfqR49/svh0kRocQHmdIxgk8kOCwljg93cIicCYRiGrbpBg7LOpY6MH
-         QIdyVlc5l+rRZdkUR0pTpgEWeeDHXB2yVGz4lO2RHApyWi2sKjn/jOdk6zLsyHYXzhpa
-         PnBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYo3duvzmfzhWTdKeOcMTQoW5JhHY78wU4TsxsB3GFcNhxh1MTkb4BsFga/a6u8xcbNX8IpmOK4weUpJu6H64NWr4RcoSvxVm2+A1ch5DAnP54J3uk7GU2EMdY8bHEm+nMIFtf
-X-Gm-Message-State: AOJu0YwqwQ+v337ak2EZaGs8ISAk7bHWLiCvIPGy76amlJEGc77Aloye
-	gJ96S3seVW2v2J7urY14jH7Pwi46d18nAYE4UYLbU3lkIPwhEanc
-X-Google-Smtp-Source: AGHT+IGFzhGd/HPG0T+63S0zeLibabNl6AfaM7YtnEYUXk0y2kUd+9RFKrltbxyfxtzY5ZszEYEhRA==
-X-Received: by 2002:a17:902:d511:b0:1fb:8f62:a7bc with SMTP id d9443c01a7336-1fc4e571fdemr32851955ad.52.1721266064946;
-        Wed, 17 Jul 2024 18:27:44 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc4656dsm81461375ad.258.2024.07.17.18.27.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 18:27:44 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Wed, 17 Jul 2024 15:27:43 -1000
-From: "tj@kernel.org" <tj@kernel.org>
-To: Boy Wu =?utf-8?B?KOWQs+WLg+iqvCk=?= <Boy.Wu@mediatek.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"boris@bur.io" <boris@bur.io>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-	"axboe@kernel.dk" <axboe@kernel.dk>,
-	Iverlin Wang =?utf-8?B?KOeOi+iLs+mclik=?= <Iverlin.Wang@mediatek.com>,
-	"josef@toxicpanda.com" <josef@toxicpanda.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v3] blk-cgroup: Replace u64 sync with spinlock for iostat
- update
-Message-ID: <Zphvj1kXK2xcKj7J@slm.duckdns.org>
-References: <20240716075206.23121-1-boy.wu@mediatek.com>
- <Zpbify32lel9J-5I@slm.duckdns.org>
- <c5bcbcbaeacdb805adc75c26f92ec69f26ad7706.camel@mediatek.com>
- <5560c690cc6de67139a9b2e45c7a11938b70fc58.camel@mediatek.com>
- <1b19b68adb34410bf6dc8fd3f50e4b82c1a014e4.camel@mediatek.com>
- <Zpf3ks2drDZ7ULTa@slm.duckdns.org>
- <99af713e187a92f0501482e8344be469f1b3e454.camel@mediatek.com>
+	s=arc-20240116; t=1721266220; c=relaxed/simple;
+	bh=zZ6xsWC57pu2p/tQS0vBCKCKUdueopQ2D2kgD9n38X0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HZczC/6rzthVdcBqopS9I3R9YCfOY2EIN2pw7up+Hoyt5lK29279RXxldKwR51XQPActmLNZbnGx4dswtQfoHxId+ozrNX+/5q/mPm65jCMBAs6mcoxaj3vX4/0wgang+kkK4ISLX0DVEi9viNNwc0xDzTBoHUpP8uYg+VFdS2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [198.18.0.1] (unknown [180.110.112.93])
+	by APP-05 (Coremail) with SMTP id zQCowAAnUiIMcJhmy2fnAw--.10199S2;
+	Thu, 18 Jul 2024 09:29:50 +0800 (CST)
+Message-ID: <ae740896-ca8c-482f-8b80-acc3fa60d0c3@iscas.ac.cn>
+Date: Thu, 18 Jul 2024 09:29:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] riscv: add tracepoints for page fault
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Suren Baghdasaryan <surenb@google.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240715101400.39103-1-zhuhengbo@iscas.ac.cn>
+ <20240717082728.84401-1-zhuhengbo@iscas.ac.cn>
+ <ZpfbVzwT5flLqatZ@casper.infradead.org>
+From: Zhu Hengbo <zhuhengbo@iscas.ac.cn>
+In-Reply-To: <ZpfbVzwT5flLqatZ@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <99af713e187a92f0501482e8344be469f1b3e454.camel@mediatek.com>
+X-CM-TRANSID:zQCowAAnUiIMcJhmy2fnAw--.10199S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKFWkAF47Zw13XF48JrW3GFg_yoWkCrb_AF
+	1Iyryxu3W7Xr47Kr45Kw1Y9r9rJrW2gw1fJ3WkZr9rCFZxJr9xWrs5Kwn3A3WxWwsrGFn3
+	uF9Fqw1Iyrya9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbc8YjsxI4VWDJwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
+	6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+	8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0
+	cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4
+	A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7
+	MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr
+	0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0E
+	wIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJV
+	W8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAI
+	cVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU2rcTDUUUU
+X-CM-SenderInfo: x2kxxvpqje0q5lvft2wodfhubq/1tbiBgoCDGaYTG1jIwAAsd
 
-Hello,
 
-On Thu, Jul 18, 2024 at 01:21:32AM +0000, Boy Wu (吳勃誼) wrote:
-...
-> I think this will work, but as I mentioned before, this issue is only
-> on 32 bit SMP systems. Replacing u64 sync with spinlock will increase
-> overhead on 64 bit systems, because u64 sync does nothing on 64 bit
-> systems. However, if it is acceptable, we can proceed with this
-> solution.
+On 2024/7/17 22:55, Matthew Wilcox wrote:
+> On Wed, Jul 17, 2024 at 08:27:19AM +0000, Zhu Hengbo wrote:
+>> +	TP_STRUCT__entry(
+>> +		__field(unsigned long, address)
+>> +		__field(unsigned long, epc)
+>> +		__field(unsigned long, cause)
+>> +	),
+>> +
+>> +	TP_fast_assign(
+>> +		__entry->address	= regs->badaddr;
+>> +		__entry->epc		= regs->epc;
+>> +		__entry->cause		= regs->cause;
+>> +	),
+>> +
+>> +	TP_printk("user page fault, address=%ps epc=%ps cause=0x%lx",
+>> +			(void *)__entry->address, (void *)__entry->epc,
+>> +			__entry->cause)
+> What is "epc"?  You've made this gratuitously different from x86.
+> Never do that.  Always copy what somebody else has done unless you have
+> a good reason to be different.
 
-We can encapsulate the spinlock in some helpers and make them conditional on
-32bit. However, the u64_sync -> spinlock conversions in the suggested patch
-are all on cold paths, so I doubt it'd be all that noticeable especially
-given that the hottest path of them all is already grabbing blkg_stat_lock,
-but either way is fine by me.
+“epc” stands for Exception Program Counter, which keeps track of where the CPU is within the code. It is the same as the Instruction Pointer in x86.
 
-Thanks.
+For example, here is the encapsulation of accessing the instruction pointer in risc-v:
 
--- 
-tejun
+    /* Helpers for working with the instruction pointer */
+    static inline unsigned long instruction_pointer(struct pt_regs *regs)
+    {
+        return regs->epc;
+    }
+
+
+
 
