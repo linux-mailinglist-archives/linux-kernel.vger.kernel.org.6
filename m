@@ -1,408 +1,333 @@
-Return-Path: <linux-kernel+bounces-256402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F3D4934DD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:10:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13122934DD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE2A1B20B10
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:10:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3792D1C20DC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E8213D25E;
-	Thu, 18 Jul 2024 13:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="Ik/G3JQv"
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2057.outbound.protection.outlook.com [40.107.103.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1CD13D52E;
+	Thu, 18 Jul 2024 13:11:43 +0000 (UTC)
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E00224CF;
-	Thu, 18 Jul 2024 13:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721308238; cv=fail; b=Wao9mRGcTflOaCmc6xfCTt4VAN0ee1Mqb3MBNeBye0b6gbx2DCB5jvHoJFOVOvI3qbb2Z1jzWcQjU00zLw442sQTIKy/yRDZIJGW3m+y5IA+kwb3wqZunZi2YLO3asBxRBt5cd8ys1dCe28oAb4h/BwblKQwOknFYDEqHhig+UY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721308238; c=relaxed/simple;
-	bh=Ca21phELjLEbiurlhWl3mECziJxSJ1nGWaj4fPra8GY=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=VeDeLniAXNaU1LOaAUuIkKA096M/LfjS8BtUa6qG4ryaeWs3JkUGh+mLUB/sCSXgupnd2QNe/v5cqd9qZAtYMWJmMbeQ7EOqxNAWhHOPiaDHMRqoTm1h+yu2ZIeHHzZTzyTlR9gZAL5qKmMGhYHEDn+CH9wgRO8ld6Lgtbl5cec=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=Ik/G3JQv; arc=fail smtp.client-ip=40.107.103.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Y4qrvmeWqUxCRbPsKSg3bBs7uzJDj31Fjck//6wPsWycGKpJDImO2nvliQZFIMfCcIVQzhZ6fYIbE2Uumq7NW2Al3MS/hxzeF6AJeyodpGArmlhdlkUI0JPEsH8kfWuSvEP3kZs2toSSZFkHwDhNuDnrHeDweAOqm5mRg5rPucFJiBGghyBDZOqM8og7652+A2OtNRllXiAIdSBir9Lt0yuVRvM7cRCs4jOiUhPpZCBsHXNhZ3oDjsTPeR1HquZyw9BfQ+Ht0J30QwNapXdGsuKzb6i4Nph3c8pNBGo7ZKmVRluQLx7cb2ZftJ2tegIXYPgKiydnDYe2u4q5VCzyzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CYzX5qY4PDjEJKYbifF2Gf9XqvYl3zTWqQ1xZOsZpvE=;
- b=GekKs6oaAhbuXWSuTS/eadGO5Z3HBFHpzLGG52brywiI5AoPw+SamDFGacaD981TaXhvpLFYiqZoQsu1VrPn9x4gQ1vDiAPHxMydfL1H9y7b6DKIqYNgDw5iOi1WaFko/bj84R2TUZ8gK/Ey8VSEu+U18Wu1DcSmeuCQmly7Vh+u+rIZ2zDHeqqZPwP1ZJmqCdFPQ6hHcpCvOWlh2lDgf7ZwSEuf287Ah72PTDtZALgSUUr7P8DHw0pcAuf3/nrp9P0DLQymvyy8pwUNhwuPS1pUs900Sb85M/X3dnEQCS4ZATSkUrfha8cOsuBKaRNM0GFhsakkK+9LU5HutR5XKw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=de.bosch.com; dmarc=pass action=none header.from=de.bosch.com;
- dkim=pass header.d=de.bosch.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CYzX5qY4PDjEJKYbifF2Gf9XqvYl3zTWqQ1xZOsZpvE=;
- b=Ik/G3JQvE/+5nevXCpIEhwF4mAvMb9NMj15kZ+IpRFoOMlcr2M9JrzD6qzNgn1207ivbN4x6IZyrjDv6uyjoBS88guiao1sAA01ahegXHzMLVIWfHYEc0UU2GodCs1tlPf3oW+QOyDE4rxTQyALEG//cmv2tU/DJ/nLwRndvSFimVAznblxpURs5RUROMSASPdhNfdjtPvyz0cvIUobobMNlY78nbvrhwiNjsaAAVLzdLGduf0952m4CwqQM3knFDDqaJu3gSAoClJxAB1bf7z7HxPNP78X8tAO3WZrO9M9Yg7S+XDoeKXO/P2YdxdYtB+hF2rnN5S+58DFsR3C5Zg==
-Received: from AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:315::22)
- by DUZPR10MB8292.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:4af::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Thu, 18 Jul
- 2024 13:10:31 +0000
-Received: from AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::6748:a0c9:d73d:db74]) by AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::6748:a0c9:d73d:db74%4]) with mapi id 15.20.7784.017; Thu, 18 Jul 2024
- 13:10:31 +0000
-From: "Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, "jic23@kernel.org"
-	<jic23@kernel.org>, "lars@metafoo.de" <lars@metafoo.de>, "robh@kernel.org"
-	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "dima.fedrau@gmail.com"
-	<dima.fedrau@gmail.com>, "marcelo.schmitt1@gmail.com"
-	<marcelo.schmitt1@gmail.com>, "linux-iio@vger.kernel.org"
-	<linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Lorenz Christian (ME-SE/EAD2)"
-	<Christian.Lorenz3@de.bosch.com>, "Frauendorf Ulrike (ME/PJ-SW3)"
-	<Ulrike.Frauendorf@de.bosch.com>, "Dolde Kai (ME-SE/PAE-A3)"
-	<Kai.Dolde@de.bosch.com>
-Subject: RE: [PATCH] drivers: Bosch SMI240 IMU Driver
-Thread-Topic: [PATCH] drivers: Bosch SMI240 IMU Driver
-Thread-Index: AQHa2Q2TbBqQYS6A20K/zlBvlG3w9bH8by6AgAAF7KA=
-Date: Thu, 18 Jul 2024 13:10:31 +0000
-Message-ID:
- <AM8PR10MB4721849BB056482F6A27D633CDAC2@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-References: <20240718122449.7607-1-Jianping.Shen@de.bosch.com>
- <5aec49af-0a24-464b-b24c-cb23c7b1ae95@kernel.org>
-In-Reply-To: <5aec49af-0a24-464b-b24c-cb23c7b1ae95@kernel.org>
-Accept-Language: en-US
-Content-Language: de-DE
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=de.bosch.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM8PR10MB4721:EE_|DUZPR10MB8292:EE_
-x-ms-office365-filtering-correlation-id: 02cf1a03-5daa-4042-ef86-08dca72b005d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018|921020;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?jzJEKPETjMaSouL7wAezO0Pa4Vd78DFh5BkrMzaPI/MEHeTauz/MsIZxT3?=
- =?iso-8859-1?Q?Onng6b7QG7qaJ6PzMLu1r7QgpSA0dA+mHt7vZnc5odPKTazFlSxcN7SEt5?=
- =?iso-8859-1?Q?lgzlk1VD2/4GDhphWrLoLgVekVCDuz3ARrT8iD0sLL70HpuRSYBTj6jYO/?=
- =?iso-8859-1?Q?Elj/ZUnG6HfkWPOkXPKLs8xEVGCtFId/jXu8bHv9TaTr6N+7H74ofghaEH?=
- =?iso-8859-1?Q?pF0Drp0DwgHZKPMD651LGOc6YFX+HTj6xkoHsb7VXjrOI9IDwUSmvcTRRY?=
- =?iso-8859-1?Q?97BzOVC+gPWNBeJywlb91LmB/korvf4T8OfPjh/Vaf1T/F1+rWF7EoVqvW?=
- =?iso-8859-1?Q?w2jA90457ZNQErzc8ArP+PaelpKsBgXXeWRaakE4+Egfzu2q9VmGNhs8O0?=
- =?iso-8859-1?Q?KKnCqAa6EHgqdo/qvyYZXIaDLGFs2SgfefBsWecjmiCHCV0dpVF5mI3p9V?=
- =?iso-8859-1?Q?XhzVOEKmK/kjWqLYJY3zuHiTKpqzbO94Xv0YcWHpliByfO7QSvGmcEzKvY?=
- =?iso-8859-1?Q?Lh4B7NWKwCZT2RNfCvC9W1u6m0b7Ut32i+q4NJwaT9vjrdZ5QS2rjFFrcV?=
- =?iso-8859-1?Q?uFpO5feIXVu2WWPdBKwfYlWIEl2EwyLMo1OTTISF1P4nNjcwNUvkYAIzeq?=
- =?iso-8859-1?Q?STJKXnc27b/XxqN5VbgRiHxFLTxUKHxJguaSfl1MlDCGtFku0HrY8uthVR?=
- =?iso-8859-1?Q?wsXocwSV4BdjstfMzEB6CGYmICVgg9/gP5qQPE2hpN3udkBtJJP5u1FXEe?=
- =?iso-8859-1?Q?OZLfMDus43NJ/K0UkFGob0musLqD82j/lp6YVFOJJBNSo2xYmPqAQM1g6O?=
- =?iso-8859-1?Q?dlQbnufrUrtlN+eFa9TuqS/vEa3J9cr4vWcN6lx8Wkj0YhzMgir3iOsNpL?=
- =?iso-8859-1?Q?aW63pJtmhteQHvLU5UozBTjyjjZBaOAQWtvk8ZPru/CwMjg6bqs3zoc4+f?=
- =?iso-8859-1?Q?LDNr7Dy3JL8yNYrSjpoJXm6zuuBqh9CmkbrZGZxPbPauLN6bDB1031hQp/?=
- =?iso-8859-1?Q?mZCIBpGgM9YixC0Djf5pke0EhIsIufB4WR2yngaeemtGZ0IguTayFLIIxs?=
- =?iso-8859-1?Q?Im6mv1Cq3UjoKLgh3qd4NqrWXcWjxzGyg0EzUYk1v5CPXcZfeA4mk7d/9F?=
- =?iso-8859-1?Q?Y8ybMIXrOJgAHyyOwSRC6EBR9VAxtHs0ufJmtetDN/tJNS2wboa8Nc408v?=
- =?iso-8859-1?Q?0knCESMLCMEsGq0Z+U9Q9okrk6kYvnXfw17FCkWE8Uc6ZQ/j6d//l275yf?=
- =?iso-8859-1?Q?hp7TABrvKCXmFrlmqN18X4PXLy96e7aGeoGBHRf/ma3+61jVJTZVaWEymM?=
- =?iso-8859-1?Q?f8I3/sF80O+np4uNL3lHWx5Pr7VWC/sk80A6CBY9dC177bfFHZ/ePGIwP7?=
- =?iso-8859-1?Q?43LnIw8ANjz7txYVc+WztGY4NrxpPP0rSPXctTxR1Jo+HO11QWrQI=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?GwbQhIm4KUXSoyuMTNkLNrgXRA9E+8M80kDHSSbIM+IWD7N6A2MfIFjuE2?=
- =?iso-8859-1?Q?dkwIWc3iXeKwgnGDy0BZeBNVc3dazD695/pM0fthUaO7xWQN7pv1mYHrgy?=
- =?iso-8859-1?Q?oshoWPz3MDefBHZYCQQfC/raz4y5iQjmXgThvMv2trVdNjTkNhDS3EUbsK?=
- =?iso-8859-1?Q?WjD/COQTHrHAvM829xw3Riv+b1N2v3Bse+KVefE5YaHCrJ44lIrmR4u1Qt?=
- =?iso-8859-1?Q?5qlNw1RdYZ/pUBs52D5pxX82X2UxQDxj54xHytEWM4as/f4CiCdELFNiHt?=
- =?iso-8859-1?Q?BswcI198Z9L+rQx3T+VvNMv9pGp7fhLIST+jpIhFFGPoGRMF+ZdKWvhRwQ?=
- =?iso-8859-1?Q?5ikKHaZ9CEuacb8oGrG2IjrOOcWNleFemJKmbz9FNErl6pPnYsgMszRt4Z?=
- =?iso-8859-1?Q?fSYJJbLY+QPDtwiPynSgGxZHJtTUXcPZ8p6VTfPDQCOpmQw+EwN/7kfluu?=
- =?iso-8859-1?Q?O2KHpP/Zc6AM5UPhUflOsQyfkVZ7YrkuQAus3DtL8v0K9CgnGRji1VeVP3?=
- =?iso-8859-1?Q?MCu4V+9JAeZSegmkN6MVD0gcDPO1i8ng1bFAtVRYbzzF0ZbrYC4F3dRyQ9?=
- =?iso-8859-1?Q?5v5qALuI8SMxhP7GhP0z7hgXyu4FH6qKN1rn+rRlj7ZhlO8TaF6aFSduHe?=
- =?iso-8859-1?Q?7MO1q8CuFiqPDeWxSn0B4JIAWv7iDQDPX/w0DWbMqv5JAjgCcI6L5YTMQS?=
- =?iso-8859-1?Q?3hZqPhtTXr1zv8N7etRSyFXODedsweXmzdTKcwYrTIS206avrrIrWtTyxO?=
- =?iso-8859-1?Q?4GOSEp/SZxzlQsJy6Imued5RlKl8VJaj378NHmrToppjxDbAJ45qkbVVKZ?=
- =?iso-8859-1?Q?sh30skpPWaG4E+nEdsTsC2QGFZ6I6jQI87IbQ+nMzuURUkn1/MBcg4bmxd?=
- =?iso-8859-1?Q?LkcnghnkhiqNpxebhdlsQrG33VJmNxvwKguRJLgBGzvYRyKMh9fGnVQW7a?=
- =?iso-8859-1?Q?OdnKkkGoCMwz0wgdYPefMXq0FvYTFpW2ydR+ZproB5R4GHuWL4WUXivwuS?=
- =?iso-8859-1?Q?6CQQefR0HCZI7a0AGt/zopSPIG2CXkmlhRO1w7dHTgfSx6BJRxSYqBwIgY?=
- =?iso-8859-1?Q?7+/5rCaBz2f7VGwLBPyYBWBWiFF6Sqkcnxqf/IXEO5Q4xN1ILf6wJtlBa+?=
- =?iso-8859-1?Q?cY3JZKsB8B0FBwp1M2fn+l/aKj45CnCZQzL5fn6uZ6pjU1Cj1b2ohpwHyO?=
- =?iso-8859-1?Q?9QoNTq+WS6X3Qo6xL6R6djPJjVuv80ybTeCcY1AYzxlQRZOUz3mcZdDsJZ?=
- =?iso-8859-1?Q?D31WoxsSK3ErLafMGeMJ6/hqKVmbrQgyZCIILsL+bEY0ezR8TKxz7eCaqN?=
- =?iso-8859-1?Q?suPWX9NxAD+wHAY/JT1KAJxuUNHLKr/jJkVJFLz/+DUqxZoG6RK3LSqe/v?=
- =?iso-8859-1?Q?9nH1NbwNsYIipwVqjqauNsa6yBimKqf8Z+d7EFawH4RVnWpIaHYeKezF54?=
- =?iso-8859-1?Q?lty5crVJ1lspifzuffHLtYAh+u2O5Hj9iPlYcpUFohU6NEbM9L7sx7uxDf?=
- =?iso-8859-1?Q?F7F/8bEKzEavcMFZ3cqKgRK2Yr88jGmlkmR/hZYOSQjNQDXDajya4664tO?=
- =?iso-8859-1?Q?/St8sytLfIEX633za0PaaLJmrrhiGoZUwBCAUtgRmn3ia/kAJkd9UI0drA?=
- =?iso-8859-1?Q?Nu/iaInFhGukY=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C6213C802;
+	Thu, 18 Jul 2024 13:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721308303; cv=none; b=k/xA8hI93JVO1vNe5JpiA3xmEZoGn0PLna3DEjPCpydQiRr/1zMFyOPHwRc7INPr2IZJFdadHqeGsxeIxFG+evFbaUd2HpEy3+NmLowhjmnISrN/4Lr9mROpomogtqxJQYLUub9z8pmnjYJZemH5a3SJn/yz4O+nJt/jhDntuL4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721308303; c=relaxed/simple;
+	bh=h8nVFlgb9Xd54gcrrMTusWTBlTcF4WJ91u1miu+YWIc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F/DBPFaQ9fxMiVxK40UBEj4PjZD1ZFM6L/EVCm2Hv7kdLYpnAcx4TuOwcVizeBKrRq1snVCVFcQw7RnbNsWwJOJrxrphkzWiWFzzU4Fcu33/6OmkP2qgSgiZoxVVOqKiUDVnwFIKIFHbNYrrGdKGuLIwT+/Cb7I/W+Gl/ObyQ4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 04B676000B;
+	Thu, 18 Jul 2024 13:11:32 +0000 (UTC)
+Message-ID: <8b817513-a901-4445-b523-54ad8ceaf8c8@ghiti.fr>
+Date: Thu, 18 Jul 2024 15:11:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: de.bosch.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02cf1a03-5daa-4042-ef86-08dca72b005d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jul 2024 13:10:31.0796
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: d5AJxwVetzuJ0ldlOUPWn09j/BNXM/rX2xrMKZE5uAYcSl6IblMyq6v9YHqRPS7Eg3CYvyIAWwwod2jPfzoFxg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DUZPR10MB8292
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 11/11] riscv: Add qspinlock support
+Content-Language: en-US
+To: Guo Ren <guoren@kernel.org>, Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Andrea Parri <parri.andrea@gmail.com>, Nathan Chancellor
+ <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+ Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org
+References: <20240717061957.140712-1-alexghiti@rivosinc.com>
+ <20240717061957.140712-12-alexghiti@rivosinc.com>
+ <CAJF2gTQtT5KxpjjOs5QMcrxz6wEKTjHgxrgXZvXy1HbQ3AhhTQ@mail.gmail.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <CAJF2gTQtT5KxpjjOs5QMcrxz6wEKTjHgxrgXZvXy1HbQ3AhhTQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: alex@ghiti.fr
 
-Thank you for the fast feedback. We will rework on the findings and send yo=
-u the new version soon.
+Hi Guo,
 
-Mit freundlichen Gr=FC=DFen / Best regards
-
-Jianping Shen
-
-Mobility Electronics - Sensors, Engineering Advanced Development - MEMS Sol=
-utions Software (ME-SE/EAD2)
-Robert Bosch GmbH | Postfach 13 42 | 72703 Reutlingen | GERMANY | www.bosch=
-.com
-Tel. +49 7121 35-37749 | Telefax +49 711 811-509378 | Jianping.Shen@de.bosc=
-h.com
-
-Sitz: Stuttgart, Registergericht: Amtsgericht Stuttgart, HRB 14000;
-Aufsichtsratsvorsitzender: Prof. Dr. Stefan Asenkerschbaumer;=20
-Gesch=E4ftsf=FChrung: Dr. Stefan Hartung, Dr. Christian Fischer, Dr. Markus=
- Forschner,=20
-Stefan Grosch, Dr. Markus Heyn, Dr. Frank Meyer, Dr. Tanja R=FCckert
-
------Original Message-----
-From: Krzysztof Kozlowski <krzk@kernel.org>=20
-Sent: Thursday, July 18, 2024 2:47 PM
-To: Shen Jianping (ME-SE/EAD2) <Jianping.Shen@de.bosch.com>; jic23@kernel.o=
-rg; lars@metafoo.de; robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.o=
-rg; dima.fedrau@gmail.com; marcelo.schmitt1@gmail.com; linux-iio@vger.kerne=
-l.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; Lorenz Chr=
-istian (ME-SE/EAD2) <Christian.Lorenz3@de.bosch.com>; Frauendorf Ulrike (ME=
-/PJ-SW3) <Ulrike.Frauendorf@de.bosch.com>; Dolde Kai (ME-SE/PAE-A3) <Kai.Do=
-lde@de.bosch.com>
-Subject: Re: [PATCH] drivers: Bosch SMI240 IMU Driver
-
-On 18/07/2024 14:24, Jianping.Shen@de.bosch.com wrote:
-> From: "Shen Jianping (ME-SE/EAD2)"=20
-> <she2rt@LR-C-0008DVM.rt.de.bosch.com>
->=20
-> Add Bosch SMI240 IMU IIO Driver to iio-for-6.10b
-
-What is "iio-for-6.10b"? How is it relevant to git history? This is suppose=
-d to say something about the driver and hardware.
-
->=20
-> Signed-off-by: Shen Jianping (ME-SE/EAD2)=20
-> <she2rt@LR-C-0008DVM.rt.de.bosch.com>
-> ---
->  .../bindings/iio/imu/bosch,smi240.yaml        |  45 +
->  drivers/iio/imu/Kconfig                       |   2 +
->  drivers/iio/imu/Makefile                      |   1 +
->  drivers/iio/imu/smi240/Kconfig                |  30 +
->  drivers/iio/imu/smi240/Makefile               |   8 +
->  drivers/iio/imu/smi240/smi240.h               |  31 +
->  drivers/iio/imu/smi240/smi240_core.c          | 814 ++++++++++++++++++
->  drivers/iio/imu/smi240/smi240_spi.c           | 153 ++++
->  8 files changed, 1084 insertions(+)
->  create mode 100644=20
-> Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml
->  create mode 100644 drivers/iio/imu/smi240/Kconfig  create mode 100644=20
-> drivers/iio/imu/smi240/Makefile  create mode 100644=20
-> drivers/iio/imu/smi240/smi240.h  create mode 100644=20
-> drivers/iio/imu/smi240/smi240_core.c
->  create mode 100644 drivers/iio/imu/smi240/smi240_spi.c
->=20
-> diff --git=20
-> a/Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml=20
-> b/Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml
-> new file mode 100644
-> index 00000000000..972819cacff
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml
-> @@ -0,0 +1,45 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause) %YAML 1.2
-> +---
-> +$id:=20
-> +https://eur03.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fdevi
-> +cetree.org%2Fschemas%2Fiio%2Fimu%2Fbosch%2Csmi240.yaml%23&data=3D05%7C0
-> +2%7CJianping.Shen%40de.bosch.com%7C666fcf2fcad249cc892908dca727cdda%7
-> +C0ae51e1907c84e4bbb6d648ee58410f4%7C0%7C0%7C638569036597203543%7CUnkn
-> +own%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWw
-> +iLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=3DijO6JQTkrWJw5XLJMk%2FKey6Wq%2BvEk%
-> +2B0FmIAwLiNaSxM%3D&reserved=3D0
-> +$schema:=20
-> +https://eur03.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fdevi
-> +cetree.org%2Fmeta-schemas%2Fcore.yaml%23&data=3D05%7C02%7CJianping.Shen
-> +%40de.bosch.com%7C666fcf2fcad249cc892908dca727cdda%7C0ae51e1907c84e4b
-> +bb6d648ee58410f4%7C0%7C0%7C638569036597212752%7CUnknown%7CTWFpbGZsb3d
-> +8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7
-> +C0%7C%7C%7C&sdata=3DmbYZyVVoFzmBDNT0YELRFQmV6Ag3AJNJ%2BjGJKN%2BTv2k%3D&
-> +reserved=3D0
-> +
-> +title: BOSCH SMI240
-
-Also: BOSCH or Bosch?
-
-> +
-> +maintainers:
-> +  - unknown
-> +
-> +description: |
-> +  Inertial Measurement Unit with Accelerometer, Gyroscope
-> + =20
-> +https://eur03.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fwww
-> +.bosch-semiconductors.com%2Fmems-sensors%2Fhighly-automated-driving%2
-> +Fsmi240%2F&data=3D05%7C02%7CJianping.Shen%40de.bosch.com%7C666fcf2fcad2
-> +49cc892908dca727cdda%7C0ae51e1907c84e4bbb6d648ee58410f4%7C0%7C0%7C638
-> +569036597218023%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV
-> +2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=3D1OK2dyvXLmN0
-> +STEslacOHryAVJ%2F0%2BQcILMtirBmQDwc%3D&reserved=3D0
-> +
-> +properties:
-> +  compatible:
-> +    const: BOSCH,SMI240
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - spi-max-frequency
-> +  - reg
-> +
-> +allOf:
-> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    // Example
-> +    spi {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        smi240@0 {
-> +            compatible =3D "BOSCH,SMI240";
-> +            spi-max-frequency =3D <10000000>;
-> +            reg =3D <0>;
-> +        };
-> +    };
-> diff --git a/drivers/iio/imu/Kconfig b/drivers/iio/imu/Kconfig index=20
-> 52a155ff325..2c348ad686a 100644
-> --- a/drivers/iio/imu/Kconfig
-> +++ b/drivers/iio/imu/Kconfig
-> @@ -96,6 +96,8 @@ config KMX61
-> =20
->  source "drivers/iio/imu/inv_icm42600/Kconfig"
->  source "drivers/iio/imu/inv_mpu6050/Kconfig"
-> +source "/home/she2rt/dev/smi240-linux-driver-iio/drivers/iio/imu/smi240/=
-Kconfig"
-
-Yeah... this won't work, obviously.
-
-> +source "drivers/iio/imu/smi240/Kconfig"
->  source "drivers/iio/imu/st_lsm6dsx/Kconfig"
->  source "drivers/iio/imu/st_lsm9ds0/Kconfig"
-> =20
-> diff --git a/drivers/iio/imu/Makefile b/drivers/iio/imu/Makefile index=20
-> 7e2d7d5c3b7..b6f162ae4ed 100644
-> --- a/drivers/iio/imu/Makefile
-> +++ b/drivers/iio/imu/Makefile
-> @@ -27,5 +27,6 @@ obj-y +=3D inv_mpu6050/
-> =20
->  obj-$(CONFIG_KMX61) +=3D kmx61.o
-> =20
-> +obj-y +=3D smi240/
->  obj-y +=3D st_lsm6dsx/
->  obj-y +=3D st_lsm9ds0/
-> diff --git a/drivers/iio/imu/smi240/Kconfig=20
-> b/drivers/iio/imu/smi240/Kconfig new file mode 100644 index=20
-> 00000000000..7114c941cc3
-> --- /dev/null
-> +++ b/drivers/iio/imu/smi240/Kconfig
-> @@ -0,0 +1,30 @@
-
-Missing SPDX
-
-> +config SMI240
-> +	tristate "Bosch Sensor SMI240 Inertial Measurement Unit"
-> +	depends on SPI_MASTER
-> +	select IIO_BUFFER
-> +	select IIO_TRIGGERED_BUFFER
-> +	help
-> +	  Build driver
-> +	  for Bosch
-> +	  SMI240 6-axis IMU
-> +	  sensor.
-
-Ooh my... what's this style?
-
-Read coding style for Kconfig.
-
-
-> +
-> +config SMI240_MAX_BUFFER_LEN
-
-Drop, dead code.
-
-> +	depends on SMI240
-> +	int "configue read buffer size"
-> +	default "1024"
-> +	help
-> +	  1024 bytes are big
-> +	  enough for most cases.
-> +	  Do not change this value
-> +	  if not sure.
-> +
-> +config SMI240_UNIT_TEST
-
-Drop, dead code.
-
-> +	tristate "Unit Test for SMI240"
-> +	depends on KUNIT=3Dy
-> +	help
-> +	  Build Unit Test
-> +	  for Bosch
-> +	  SMI240 6-axis
-> +	  IMU sensor.
-> +
-> diff --git a/drivers/iio/imu/smi240/Makefile=20
-> b/drivers/iio/imu/smi240/Makefile new file mode 100644 index=20
-> 00000000000..394eaecf5f3
-> --- /dev/null
-> +++ b/drivers/iio/imu/smi240/Makefile
-> @@ -0,0 +1,8 @@
-> +#
-> +# Makefile for Bosch SMI240
-
-Drop. It cannot be anything else. Do not say that "x" is a "x".
-
-You miss SPDX on the other hand.
-
-> +#
-> +
-> +obj-$(CONFIG_SMI240) +=3D smi240.o
-> +smi240-objs :=3D smi240_core.o
+On 17/07/2024 11:30, Guo Ren wrote:
+> On Wed, Jul 17, 2024 at 2:31 PM Alexandre Ghiti <alexghiti@rivosinc.com> wrote:
+>> In order to produce a generic kernel, a user can select
+>> CONFIG_COMBO_SPINLOCKS which will fallback at runtime to the ticket
+>> spinlock implementation if Zabha or Ziccrse are not present.
+>>
+>> Note that we can't use alternatives here because the discovery of
+>> extensions is done too late and we need to start with the qspinlock
+>> implementation because the ticket spinlock implementation would pollute
+>> the spinlock value, so let's use static keys.
+>>
+>> This is largely based on Guo's work and Leonardo reviews at [1].
+>>
+>> Link: https://lore.kernel.org/linux-riscv/20231225125847.2778638-1-guoren@kernel.org/ [1]
+>> Signed-off-by: Guo Ren <guoren@kernel.org>
+>> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+>> ---
+>>   .../locking/queued-spinlocks/arch-support.txt |  2 +-
+>>   arch/riscv/Kconfig                            | 29 ++++++++++++++
+>>   arch/riscv/include/asm/Kbuild                 |  4 +-
+>>   arch/riscv/include/asm/spinlock.h             | 39 +++++++++++++++++++
+>>   arch/riscv/kernel/setup.c                     | 33 ++++++++++++++++
+>>   include/asm-generic/qspinlock.h               |  2 +
+>>   include/asm-generic/ticket_spinlock.h         |  2 +
+>>   7 files changed, 109 insertions(+), 2 deletions(-)
+>>   create mode 100644 arch/riscv/include/asm/spinlock.h
+>>
+>> diff --git a/Documentation/features/locking/queued-spinlocks/arch-support.txt b/Documentation/features/locking/queued-spinlocks/arch-support.txt
+>> index 22f2990392ff..cf26042480e2 100644
+>> --- a/Documentation/features/locking/queued-spinlocks/arch-support.txt
+>> +++ b/Documentation/features/locking/queued-spinlocks/arch-support.txt
+>> @@ -20,7 +20,7 @@
+>>       |    openrisc: |  ok  |
+>>       |      parisc: | TODO |
+>>       |     powerpc: |  ok  |
+>> -    |       riscv: | TODO |
+>> +    |       riscv: |  ok  |
+>>       |        s390: | TODO |
+>>       |          sh: | TODO |
+>>       |       sparc: |  ok  |
+>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+>> index 0bbaec0444d0..5040c7eac70d 100644
+>> --- a/arch/riscv/Kconfig
+>> +++ b/arch/riscv/Kconfig
+>> @@ -72,6 +72,7 @@ config RISCV
+>>          select ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP
+>>          select ARCH_WANTS_NO_INSTR
+>>          select ARCH_WANTS_THP_SWAP if HAVE_ARCH_TRANSPARENT_HUGEPAGE
+>> +       select ARCH_WEAK_RELEASE_ACQUIRE if ARCH_USE_QUEUED_SPINLOCKS
+>>          select BINFMT_FLAT_NO_DATA_START_OFFSET if !MMU
+>>          select BUILDTIME_TABLE_SORT if MMU
+>>          select CLINT_TIMER if RISCV_M_MODE
+>> @@ -482,6 +483,34 @@ config NODES_SHIFT
+>>            Specify the maximum number of NUMA Nodes available on the target
+>>            system.  Increases memory reserved to accommodate various tables.
+>>
+>> +choice
+>> +       prompt "RISC-V spinlock type"
+>> +       default RISCV_COMBO_SPINLOCKS
+>> +
+>> +config RISCV_TICKET_SPINLOCKS
+>> +       bool "Using ticket spinlock"
+>> +
+>> +config RISCV_QUEUED_SPINLOCKS
+>> +       bool "Using queued spinlock"
+>> +       depends on SMP && MMU
+>> +       select ARCH_USE_QUEUED_SPINLOCKS
+>> +       help
+>> +         The queued spinlock implementation requires the forward progress
+>> +         guarantee of cmpxchg()/xchg() atomic operations: CAS with Zabha or
+>> +         LR/SC with Ziccrse provide such guarantee.
+>> +
+>> +         Select this if and only if Zabha or Ziccrse is available on your
+>> +         platform.
+>> +
+>> +config RISCV_COMBO_SPINLOCKS
+>> +       bool "Using combo spinlock"
+>> +       depends on SMP && MMU
+>> +       select ARCH_USE_QUEUED_SPINLOCKS
+>> +       help
+>> +         Embed both queued spinlock and ticket lock so that the spinlock
+>> +         implementation can be chosen at runtime.
+>> +endchoice
+>> +
+>>   config RISCV_ALTERNATIVE
+>>          bool
+>>          depends on !XIP_KERNEL
+>> diff --git a/arch/riscv/include/asm/Kbuild b/arch/riscv/include/asm/Kbuild
+>> index 504f8b7e72d4..ad72f2bd4cc9 100644
+>> --- a/arch/riscv/include/asm/Kbuild
+>> +++ b/arch/riscv/include/asm/Kbuild
+>> @@ -2,10 +2,12 @@
+>>   generic-y += early_ioremap.h
+>>   generic-y += flat.h
+>>   generic-y += kvm_para.h
+>> +generic-y += mcs_spinlock.h
+>>   generic-y += parport.h
+>> -generic-y += spinlock.h
+>>   generic-y += spinlock_types.h
+>> +generic-y += ticket_spinlock.h
+>>   generic-y += qrwlock.h
+>>   generic-y += qrwlock_types.h
+>> +generic-y += qspinlock.h
+>>   generic-y += user.h
+>>   generic-y += vmlinux.lds.h
+>> diff --git a/arch/riscv/include/asm/spinlock.h b/arch/riscv/include/asm/spinlock.h
+>> new file mode 100644
+>> index 000000000000..4856d50006f2
+>> --- /dev/null
+>> +++ b/arch/riscv/include/asm/spinlock.h
+>> @@ -0,0 +1,39 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +
+>> +#ifndef __ASM_RISCV_SPINLOCK_H
+>> +#define __ASM_RISCV_SPINLOCK_H
+>> +
+>> +#ifdef CONFIG_RISCV_COMBO_SPINLOCKS
+>> +#define _Q_PENDING_LOOPS       (1 << 9)
+>> +
+>> +#define __no_arch_spinlock_redefine
+>> +#include <asm/ticket_spinlock.h>
+>> +#include <asm/qspinlock.h>
+>> +#include <asm/alternative.h>
+>> +
+>> +DECLARE_STATIC_KEY_TRUE(qspinlock_key);
+>> +
+>> +#define SPINLOCK_BASE_DECLARE(op, type, type_lock)                     \
+>> +static __always_inline type arch_spin_##op(type_lock lock)             \
+>> +{                                                                      \
+>> +       if (static_branch_unlikely(&qspinlock_key))                     \
+>> +               return queued_spin_##op(lock);                          \
+>> +       return ticket_spin_##op(lock);                                  \
+>> +}
+>> +
+>> +SPINLOCK_BASE_DECLARE(lock, void, arch_spinlock_t *)
+>> +SPINLOCK_BASE_DECLARE(unlock, void, arch_spinlock_t *)
+>> +SPINLOCK_BASE_DECLARE(is_locked, int, arch_spinlock_t *)
+>> +SPINLOCK_BASE_DECLARE(is_contended, int, arch_spinlock_t *)
+>> +SPINLOCK_BASE_DECLARE(trylock, bool, arch_spinlock_t *)
+>> +SPINLOCK_BASE_DECLARE(value_unlocked, int, arch_spinlock_t)
+>> +
+>> +#else
+>> +
+>> +#include <asm/ticket_spinlock.h>
+>> +
+>> +#endif
+>> +
+>> +#include <asm/qrwlock.h>
+>> +
+>> +#endif /* __ASM_RISCV_SPINLOCK_H */
+>> diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
+>> index 4f73c0ae44b2..d7c31c9b8ead 100644
+>> --- a/arch/riscv/kernel/setup.c
+>> +++ b/arch/riscv/kernel/setup.c
+>> @@ -244,6 +244,38 @@ static void __init parse_dtb(void)
+>>   #endif
+>>   }
+>>
+>> +DEFINE_STATIC_KEY_TRUE(qspinlock_key);
+>> +EXPORT_SYMBOL(qspinlock_key);
+>> +
+>> +static void __init riscv_spinlock_init(void)
+>> +{
+>> +       char *using_ext;
+>> +
+>> +       if (IS_ENABLED(CONFIG_RISCV_ISA_ZACAS) &&
+>> +           IS_ENABLED(CONFIG_RISCV_ISA_ZABHA)) {
+>> +               using_ext = "using Zabha";
+>> +
+>> +               asm goto(ALTERNATIVE("j %[no_zacas]", "nop", 0, RISCV_ISA_EXT_ZACAS, 1)
+>> +                        : : : : no_zacas);
+>> +               asm goto(ALTERNATIVE("nop", "j %[qspinlock]", 0, RISCV_ISA_EXT_ZABHA, 1)
+>> +                        : : : : qspinlock);
+>> +       }
+> I'm okay with this patch.
 
 
-Best regards,
-Krzysztof
+Great, thanks!
 
+
+> I suggest putting an arg such as "enable_qspinlock," which people
+> could use on the non-ZABHA machines. I hope it could happen in this
+> series. That's all I need, thank you very much.
+
+
+Do you think that's really necessary? I added Ziccrse support just 
+below, to me that fits your needs to use qspinlocks on !Ziccrse.
+
+BTW, can I add you SoB on this patch? Or a Co-developed-by or anything 
+to show that you greatly contributed to this patch?
+
+Thanks,
+
+Alex
+
+
+>
+>> +
+>> +no_zacas:
+>> +       using_ext = "using Ziccrse";
+>> +       asm goto(ALTERNATIVE("nop", "j %[qspinlock]", 0,
+>> +                            RISCV_ISA_EXT_ZICCRSE, 1)
+>> +                : : : : qspinlock);
+>> +
+>> +       static_branch_disable(&qspinlock_key);
+>> +       pr_info("Ticket spinlock: enabled\n");
+>> +
+>> +       return;
+>> +
+>> +qspinlock:
+>> +       pr_info("Queued spinlock %s: enabled\n", using_ext);
+>> +}
+>> +
+>>   extern void __init init_rt_signal_env(void);
+>>
+>>   void __init setup_arch(char **cmdline_p)
+>> @@ -295,6 +327,7 @@ void __init setup_arch(char **cmdline_p)
+>>          riscv_set_dma_cache_alignment();
+>>
+>>          riscv_user_isa_enable();
+>> +       riscv_spinlock_init();
+>>   }
+>>
+>>   bool arch_cpu_is_hotpluggable(int cpu)
+>> diff --git a/include/asm-generic/qspinlock.h b/include/asm-generic/qspinlock.h
+>> index 0655aa5b57b2..bf47cca2c375 100644
+>> --- a/include/asm-generic/qspinlock.h
+>> +++ b/include/asm-generic/qspinlock.h
+>> @@ -136,6 +136,7 @@ static __always_inline bool virt_spin_lock(struct qspinlock *lock)
+>>   }
+>>   #endif
+>>
+>> +#ifndef __no_arch_spinlock_redefine
+>>   /*
+>>    * Remapping spinlock architecture specific functions to the corresponding
+>>    * queued spinlock functions.
+>> @@ -146,5 +147,6 @@ static __always_inline bool virt_spin_lock(struct qspinlock *lock)
+>>   #define arch_spin_lock(l)              queued_spin_lock(l)
+>>   #define arch_spin_trylock(l)           queued_spin_trylock(l)
+>>   #define arch_spin_unlock(l)            queued_spin_unlock(l)
+>> +#endif
+>>
+>>   #endif /* __ASM_GENERIC_QSPINLOCK_H */
+>> diff --git a/include/asm-generic/ticket_spinlock.h b/include/asm-generic/ticket_spinlock.h
+>> index cfcff22b37b3..325779970d8a 100644
+>> --- a/include/asm-generic/ticket_spinlock.h
+>> +++ b/include/asm-generic/ticket_spinlock.h
+>> @@ -89,6 +89,7 @@ static __always_inline int ticket_spin_is_contended(arch_spinlock_t *lock)
+>>          return (s16)((val >> 16) - (val & 0xffff)) > 1;
+>>   }
+>>
+>> +#ifndef __no_arch_spinlock_redefine
+>>   /*
+>>    * Remapping spinlock architecture specific functions to the corresponding
+>>    * ticket spinlock functions.
+>> @@ -99,5 +100,6 @@ static __always_inline int ticket_spin_is_contended(arch_spinlock_t *lock)
+>>   #define arch_spin_lock(l)              ticket_spin_lock(l)
+>>   #define arch_spin_trylock(l)           ticket_spin_trylock(l)
+>>   #define arch_spin_unlock(l)            ticket_spin_unlock(l)
+>> +#endif
+>>
+>>   #endif /* __ASM_GENERIC_TICKET_SPINLOCK_H */
+>> --
+>> 2.39.2
+>>
+>
 
