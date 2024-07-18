@@ -1,151 +1,164 @@
-Return-Path: <linux-kernel+bounces-256015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F5E9347CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:03:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED7699347CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 975DE2822C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:03:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ECE41F22017
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF28537F5;
-	Thu, 18 Jul 2024 06:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD4B5339D;
+	Thu, 18 Jul 2024 06:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mMLuc5h8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Qxf7Osif"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42D81B86FD;
-	Thu, 18 Jul 2024 06:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897C14AED1;
+	Thu, 18 Jul 2024 06:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721282583; cv=none; b=k+zHb0wk4fVcPuRDOUUaZMFvhQqnAYmIN//8RW206rKSWPHFXOznopoGFEePOh2SX6wk7Vo/RFJDZBVLZk1V1pNzznfQb8Qrdon65kXCd3y7hQ1PDMOugz//B13fFQrFdecmD3y7UO3B8q8BqdFD5BOBQpsdtsy/bwUeLxeMk7U=
+	t=1721282640; cv=none; b=tz00NCSYGALt190gI+ND3J+bFJwxNraygnj82YxGLCTqk9oUuNn7dpS+Gqa7poU4DKKD2YTZCziErK7Q+6xV++oFL9Tts/kM7Mb+sMdcDsG5tr21OuRxxwaXbzq+N8obPlfaEYFjR6oxdV+HzshEBbU+aU0CsZUvPMaaHyi9jRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721282583; c=relaxed/simple;
-	bh=Gt7h/1eNr5sV/Mz1IOGovSIWkVyhvI+7miXoGYNHHm8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uam0ENLUYqV/ZbiR9jmJjYPG4wH8vT7sTS1N9xunmMMWVcM7GkRYkU4gj9/Vs5Z/B18TyKvhcvDOJQGJ/1gwxkbY5VOsd9d3hBFklF0S9btl2kaOk5eQ6InkWfdX3RgCna38KWpQr3EPTXBJz64lZQ7HqmqgfIc7BIJmGKUrHLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mMLuc5h8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A227EC116B1;
-	Thu, 18 Jul 2024 06:02:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721282582;
-	bh=Gt7h/1eNr5sV/Mz1IOGovSIWkVyhvI+7miXoGYNHHm8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mMLuc5h8plUvTEl1mTr+wIsIGbdkU6RReS/9HkNo4VYp7A+yKZkJDf7RZXBjNG5bv
-	 OyFokycRb+G/huzEBhAUbQvWKg909YPj/FH6c87UWodbkl16qivNawVEWB8Izqi6tB
-	 exhq0am6EuM35tgHDN4S2/kV8T47YqYKZkky2hQxdTC/8XdB2XXgTjTaHC2oPDAzgQ
-	 jcozmfe2HWc0jb91eB68EDC085ceANAF06EFetETj1vgsHBvVTfRvEPDF5R+2mX0oS
-	 JHB7srKhPwWFoE2nEjsZvsV/9GKuxTXO1SYUi1bZqgafkatBxqPSRYlhFp1YT8ej2M
-	 liJKUNeUWTAXw==
-Message-ID: <a03c1536-c5fe-4d52-bf10-0cf9b95e828c@kernel.org>
-Date: Thu, 18 Jul 2024 08:02:55 +0200
+	s=arc-20240116; t=1721282640; c=relaxed/simple;
+	bh=NZ3ng2iZcjXEfmc3D40nbbx/ZyOe2D+kdxHgxKcXUbw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=qv3KFrCh/n0q71/XbJeEk1QX1IEGatOGkxoCoYYNbbbJfneJ7/U/Yocj5LS4QVf+V0B75H4siLY5ud0A3p32Wr3dfn7IqiybxG77gIl9/q+TsfEUpRzbVUzVfEj0pjJ3bCAggkrPAGx6FaZomxCTZevAOYDeEeFFa+OwmKILwlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Qxf7Osif; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46I5f4Ns008355;
+	Thu, 18 Jul 2024 06:03:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=vlQY4FXkD/U9iUSMXAzp43
+	NvlX/hl5sdIfBON9ao3sc=; b=Qxf7OsifQWPHyzJfFo/spQn+E5oXdykDpQNstk
+	kVS4uLgfuaKg2XAS6Ak+GZLUoi83VL3rAlB+IPshtGntI4q+iUGByqoNgoCpJuHE
+	K57jWh0w0c9bnqVDYz2y17sSg6WZAOfq203zLjEj2GgUaH6spi7gJsWkerjgmO+M
+	R72JFxoWK8ma9b7XSXjhLLKFfNKLGMfbFcilXUMtHJNOmJx2LvN9xkoW/Xaxhqif
+	qeD6ODW+eTvU7RGE1kA7k9Tnq1v9+Xo1F/3Rw6R2IgCBEwDik/3gvXDO8yfOwDde
+	19UcjE6BA/VvIvz25dSCEe3XNOex8SXjc8DanrnoGpXbbhBA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfu4f8v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Jul 2024 06:03:43 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46I63gkP000418
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Jul 2024 06:03:42 GMT
+Received: from hu-mkshah-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 17 Jul 2024 23:03:37 -0700
+From: Maulik Shah <quic_mkshah@quicinc.com>
+Date: Thu, 18 Jul 2024 11:33:23 +0530
+Subject: [PATCH v2] soc: qcom: cmd-db: Map shared memory as WC, not WB
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/12] dt-bindings: PCI: Cleanup of brcmstb YAML and
- add 7712 SoC
-To: Florian Fainelli <florian.fainelli@broadcom.com>,
- Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
- bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-References: <20240716213131.6036-1-james.quinlan@broadcom.com>
- <20240716213131.6036-2-james.quinlan@broadcom.com>
- <d20be2d3-4fdd-48ca-b73e-80e8157bd5b2@kernel.org>
- <238a1132-9ae5-4a2b-8f7c-31326d5d464c@broadcom.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <238a1132-9ae5-4a2b-8f7c-31326d5d464c@broadcom.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20240718-cmd_db_uncached-v2-1-f6cf53164c90@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIACqwmGYC/0XMTQ6CMBBA4auYWVtShp+CK+9hDCnTwTZaSooQC
+ eHuNm5cfov3dpg5Op7hctoh8upmF8YEPJ+ArB4fLJxJBpRYSpU3grzpTN8tI2mybAQ3bW10RRW
+ 2NaRqijy4z+94uycPMXjxtpH1/1OgQinbXGVYqVoWpcjFGl7BbH6LXa97ssvzypP2GQUPx/EFw
+ 1Q65qcAAAA=
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>
+CC: <caleb.connolly@linaro.org>, <stephan@gerhold.net>, <swboyd@chromium.org>,
+        <dianders@chromium.org>, <robdclark@gmail.com>, <nikita@trvn.ru>,
+        <quic_eberman@quicinc.com>, <quic_pkondeti@quicinc.com>,
+        <quic_lsrao@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Volodymyr Babchuk
+	<Volodymyr_Babchuk@epam.com>,
+        <stable@vger.kernel.org>,
+        Volodymyr Babchuk
+	<volodymyr_babchuk@epam.com>,
+        Maulik Shah <quic_mkshah@quicinc.com>
+X-Mailer: b4 0.12.5-dev-2aabd
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1721282617; l=2071;
+ i=quic_mkshah@quicinc.com; s=20240109; h=from:subject:message-id;
+ bh=lKAIUb1skUkA8cL4EPiYWVNEAhYmNSsLm3hrt7vTGws=;
+ b=6hCYuosMLrGlEhy14UfQUk3w8yLUpMDXqzOv48AtomrT5PHSzKYN11QC6DBRnBx54hITFszSz
+ irz48zwvpGMBgzDW25DGEFwOod49uUiIxF+HvQid2ULK9iTlxtCWgIA
+X-Developer-Key: i=quic_mkshah@quicinc.com; a=ed25519;
+ pk=bd9h5FIIliUddIk8p3BlQWBlzKEQ/YW5V+fe759hTWQ=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: H62BE5nWWiN7h4iV7B0cjeGlWH15OCnp
+X-Proofpoint-GUID: H62BE5nWWiN7h4iV7B0cjeGlWH15OCnp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-18_02,2024-07-17_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ phishscore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501
+ clxscore=1011 bulkscore=0 impostorscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407180039
 
-On 17/07/2024 23:06, Florian Fainelli wrote:
->>> +  resets:
->>> +    minItems: 1
->>> +    items:
->>> +      - description: reset for external PCIe PERST# signal # perst
->>> +      - description: reset for phy reset calibration       # rescal
->>> +
->>> +  reset-names:
->>> +    minItems: 1
->>> +    items:
->>> +      - const: perst
->>> +      - const: rescal
->>
->> There are no devices with two resets. Anyway, this does not match one of
->> your variants which have first element as rescal.
-> 
-> Just to be clear, is the diff below what you would expect to see when 
-> applying both patch 1 and 4 in succession, that is the reset properties 
-> are described "generically" and the conditional section only describes 
-> the order and values:
+From: Volodymyr Babchuk <Volodymyr_Babchuk@epam.com>
 
-Yeah, this would work. I still propose the format I provided link to
-(here in this thread or in my talks).
+Linux does not write into cmd-db region. This region of memory is write
+protected by XPU. XPU may sometime falsely detect clean cache eviction
+as "write" into the write protected region leading to secure interrupt
+which causes an endless loop somewhere in Trust Zone.
+
+The only reason it is working right now is because Qualcomm Hypervisor
+maps the same region as Non-Cacheable memory in Stage 2 translation
+tables. The issue manifests if we want to use another hypervisor (like
+Xen or KVM), which does not know anything about those specific mappings.
+
+Changing the mapping of cmd-db memory from MEMREMAP_WB to MEMREMAP_WT/WC
+removes dependency on correct mappings in Stage 2 tables. This patch
+fixes the issue by updating the mapping to MEMREMAP_WC.
+
+I tested this on SA8155P with Xen.
+
+Fixes: 312416d9171a ("drivers: qcom: add command DB driver")
+Cc: stable@vger.kernel.org # 5.4+
+Signed-off-by: Volodymyr Babchuk <volodymyr_babchuk@epam.com>
+Tested-by: Nikita Travkin <nikita@trvn.ru> # sc7180 WoA in EL2
+Signed-off-by: Maulik Shah <quic_mkshah@quicinc.com>
+---
+Changes in v2:
+ - Use MEMREMAP_WC instead of MEMREMAP_WT
+ - Update commit message from comments in v1
+ - Add Fixes tag and Cc to stable
+ - Link to v1: https://lore.kernel.org/lkml/20240327200917.2576034-1-volodymyr_babchuk@epam.com
+---
+ drivers/soc/qcom/cmd-db.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
+index d84572662017..ae66c2623d25 100644
+--- a/drivers/soc/qcom/cmd-db.c
++++ b/drivers/soc/qcom/cmd-db.c
+@@ -349,7 +349,7 @@ static int cmd_db_dev_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	cmd_db_header = memremap(rmem->base, rmem->size, MEMREMAP_WB);
++	cmd_db_header = memremap(rmem->base, rmem->size, MEMREMAP_WC);
+ 	if (!cmd_db_header) {
+ 		ret = -ENOMEM;
+ 		cmd_db_header = NULL;
+
+---
+base-commit: 797012914d2d031430268fe512af0ccd7d8e46ef
+change-id: 20240718-cmd_db_uncached-e896da5c5296
 
 Best regards,
-Krzysztof
+-- 
+Maulik Shah <quic_mkshah@quicinc.com>
 
 
