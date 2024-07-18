@@ -1,118 +1,135 @@
-Return-Path: <linux-kernel+bounces-255972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B7D3934742
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:45:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58EF5934744
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43F661F226AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 04:45:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3E991F226BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 04:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1B940848;
-	Thu, 18 Jul 2024 04:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B3F3FBB3;
+	Thu, 18 Jul 2024 04:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="rz5PMYiA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GDfepS6T"
-Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="KDxGFgBL"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C8D1B86CC;
-	Thu, 18 Jul 2024 04:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB8D8C04;
+	Thu, 18 Jul 2024 04:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721277931; cv=none; b=s6DHb4i5t1r4TWs0TjEu3NuLIKXyStttUmxx/EcM/a3i/06YlV65xSyMzP9ZyJi8BIOf+dOmjAtM+Ngf0RNqy9zdFwTM02oTHxwNyoZlXFE2Jgn/ciGBysDFu93nhI7Y51cB6g+Y8hulyrO6a24bvWmjF3dXpmHRwnWyHxuQnsA=
+	t=1721277998; cv=none; b=eG0ONGtpqFhae3zJnrRfJ64q/6+thqEnneJHYJaUgSnye4IUfp8OHPASvdX43fYLPcmkePy5bitaYzv4SL0kP/2ZSogX+15OIZ5pNEOxbHnb+AoC68Syrtqo3ArvStf5MnkzNCEJw21s4NQmEGb5UOWALyZfO49Ls76ikKX7290=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721277931; c=relaxed/simple;
-	bh=BRy2bM2IKgR8xgKYEPIAFK1X2XFkO/8SAl9n4X17KO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AdYK6QO4x53KFhlwNE6uoX1N0A3ji5Ic9kn0BFaymTI/J6u9W+63hoAcCWY682ZmbJe+pbbVcbKbx04R/iyCszz/Rq5ZZxhlTHio8j8vDRMQMUWSc8vV4Lc2TutK0MmMdhz52DvuCzvuKseFQ4JtJZfqaPD+lJcivYfrAlINgAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=rz5PMYiA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GDfepS6T; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 2487C13801DB;
-	Thu, 18 Jul 2024 00:45:28 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Thu, 18 Jul 2024 00:45:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1721277928; x=1721364328; bh=q31G4O/MNO
-	/gOgnqYp7t4bFpYnaYCryDFvme9kOpRlQ=; b=rz5PMYiAx9gdb5JmmrWiMasRKm
-	RXWQl7ofwbxlQkKC9lQVd6jwNynJQaPbGIazP2IEbqSJU+ZgkaHThX+uO2kZXPjL
-	DV8pvhQOVy20F8cKgJpYWvgQl0rzUq68G7wOKBucUY0J3HHv93ltCUpij2ngdzy1
-	09n1xch3pw+y0EOP3VSyB/dunj3GKLzVkC9zH4Faq8E/AZtre4Qac2jym19jRKH8
-	pOo4n67KXyHDhjRF7Ksx/CDrpQg8JcvqvMe0UYQ2T1ZsoYSZOr5muBDO7HhGM+0/
-	P6akGMP+uzCFeCMrYUkmfHgueSJSrWcoo6qRnMKKdThxPJ3hTlpTLpTBEXUw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1721277928; x=1721364328; bh=q31G4O/MNO/gOgnqYp7t4bFpYnaY
-	CryDFvme9kOpRlQ=; b=GDfepS6T5SU3Eg2qItsMD6uvuVs29UEk/Sw7vxXW44DW
-	57KD9U/Gep2PyApBioxNs7ZNhvLelJe7grRr9tYpTa7x4dA1aRZYbzUoxQGj91am
-	ODE/mfHgyii4tjLjrPww2Pi8wEPycF2hXvO39/ysQDvVb304qaRGyJNg6NeRoBao
-	MISoHxY5u4mzACW5xhmM3jUph6VNwwR4EesNpDBlM0CSFu/UHy/9bTL5DnIG1s+g
-	0ZHq983SLYmqgo7rIROwV9hMDtEa9pMtUaaKngGQAUqZFwJTjioahyL0Y8lAggIT
-	F+tq7fCsFWr8bhzu1mnu9JYbnUmq1F7vtiLAscV1IQ==
-X-ME-Sender: <xms:5p2YZsGGLTtRbUfcYLdlfNtjtr_Ftr8FMFIFVyfVV8aogdtdaFriSA>
-    <xme:5p2YZlXiVfnHz9OEu_GK8HzGfcJ-FXk2E3Ly9wE5TEGIGZudDfgxPqMhrcWfHG0Gp
-    rcC7sdt-rO_bA>
-X-ME-Received: <xmr:5p2YZmIUpqZRbM9LA_n0gcXd3B1gXv4CYmOxR7G-vkdyVtMuzX2uJ4igWkg01sigW8Dod13z-DjVcbI0MPVxezzMZbEFJ2K4SVRXxA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgeekgdeklecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeehgedvve
-    dvleejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueefhffgheekteenucevlhhushht
-    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhh
-    drtghomh
-X-ME-Proxy: <xmx:5p2YZuElQjbhjKsZ4ISAkFU9vqrMNlYPtfsRJ_-q6TMo_CISxxqbQg>
-    <xmx:5p2YZiUL4s22Z8m3VLoc-5A9GnN3UyTurBc3qO-sK_opm59LIph9wQ>
-    <xmx:5p2YZhOZRJwiQUHqprmcuyLaSojz4A6OvVIbIl0-r4VBhXDmuWWa3A>
-    <xmx:5p2YZp3Q3TRUZ9_IyQlYuNxg2wfWQZE0OTgsqXdgtQ5YJeBhyaz0cg>
-    <xmx:6J2YZlrldnw_5lQB5_Fe1cLzKDcEtgM6XPNJidTpWW3g6W6mKv9AGukV>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 18 Jul 2024 00:45:25 -0400 (EDT)
-Date: Thu, 18 Jul 2024 06:45:24 +0200
-From: Greg KH <greg@kroah.com>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Jonathan Corbet <corbet@lwn.net>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [RFC PATCH 1/5] doc: rust: create safety standard
-Message-ID: <2024071845-neuron-figure-2e26@gregkh>
-References: <20240717221133.459589-1-benno.lossin@proton.me>
- <20240717221133.459589-2-benno.lossin@proton.me>
+	s=arc-20240116; t=1721277998; c=relaxed/simple;
+	bh=QP4D3BX1OnkIHvOYI5T3eOGiV1AR7OFCUdrV3V75iYI=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=uBaxT9frYgsMqMbU0bBpXhcjcZMEySK+iGuDsWscwCPXKhVokdv7PWbqjw3D0wf3Y5Xrd3NMMY8sTvXO0+VgsDrrrkbwVMoDqiwli9xYpcW1eKfINcigounBiyDG/YU9cdeP/y0gCiWf1/8blrUCoVaJPeydfYEGsKhRsgPgTsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=KDxGFgBL; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240717221133.459589-2-benno.lossin@proton.me>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1721277993;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qd3uHQf3ElXbQbEOOq3qPy+xGLH85gFnWLBiiNOzwi0=;
+	b=KDxGFgBLIktO9TmU0MLoT1Yqxmgp6n858buuI5q1lkjj+dtBQzBAUitCnF/9JYqsLsP5nh
+	w0Bz1Kl81ntxf0XZMFbymfgj39Y23K4CBaF7xxaQ5XOKWAuxfpVfAJaZUtaiNKq7q5e8kG
+	Brkwxshj99m8NYBdzeXPxLXr1BCmEjwA0D5bxytrTNf/tSSV1THDKQdG4+SI8zIjZegI1C
+	sbHchyLT3mKlQTyIyrCiTrIb9VNqATBUHtnUggMGhmABh1RjysshnavvKSxze50GIKHFhy
+	iJc/hzHak6lFk13RpBEwzM1gRKdMSr9mTW9GxiTUeVLxUNllH5j//pctkCLYAg==
+Date: Thu, 18 Jul 2024 06:46:32 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
+ Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Heiko
+ Stuebner <heiko@sntech.de>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Huacai Chen <chenhuacai@kernel.org>,
+ WANG Xuerui <kernel@xen0n.name>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ imx@lists.linux.dev, loongarch@lists.linux.dev
+Subject: Re: [PATCH v1 2/4] ARM: dts: rockchip: remove unlikly-to-exist DAC
+ from elgin-r1
+In-Reply-To: <9a492f785e0851a828e0864c33204920@manjaro.org>
+References: <20240717-anvil-ashy-544e80a1317c@spud>
+ <20240717-parrot-malt-83cc04bf6b36@spud>
+ <9a492f785e0851a828e0864c33204920@manjaro.org>
+Message-ID: <b63ca795e5155dff13b3afa571869ea8@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Wed, Jul 17, 2024 at 10:12:29PM +0000, Benno Lossin wrote:
-> +Because unsoundness issues have the potential for allowing safe code to experience UB, they are
-> +treated similarly to actual bugs with UB. Their fixes should also be included in the  stable tree.
+On 2024-07-18 06:20, Dragan Simic wrote:
+> Hello Conor,
+> 
+> On 2024-07-17 11:37, Conor Dooley wrote:
+>> From: Conor Dooley <conor.dooley@microchip.com>
+>> 
+>> The Rohm dh2228fv (really the bh2228fv, the compatible in the kernel 
+>> has
+>> a typo) does not support frequencies above 10 MHz, nor per the
+>> datasheet appear to use either CPOL or CPHA. I suspect that this
+>> devicetree is abusing the compatible in order to bind the spidev 
+>> driver
+>> in Linux. Pretending to have devices on a board for this purpose is 
+>> not
+>> acceptable, so remove it.
+>> 
+>> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> 
+> There's a small typo in the patch subject:
+> s/unlikly/unlikely/
 
-Odd extra space before "stable".
+Ah, sorry for the noise, I see now it's been pointed out already.
 
-Also, link to the stable kernel rules here when you reference "stable
-tree"?  That will explain what you mean here.
-
-thanks,
-
-greg k-h
+>> ---
+>> I could not find any documentation for this board online, and it does
+>> not blatantly say that the device is a "spidev" like other [ab]users, 
+>> so
+>> it is possible there's actually a DAC here - but I doubt it is a
+>> bh2228fv given the other incompatibilities.
+>> ---
+>>  arch/arm/boot/dts/rockchip/rv1108-elgin-r1.dts | 8 --------
+>>  1 file changed, 8 deletions(-)
+>> 
+>> diff --git a/arch/arm/boot/dts/rockchip/rv1108-elgin-r1.dts
+>> b/arch/arm/boot/dts/rockchip/rv1108-elgin-r1.dts
+>> index 2d9994379eb2..9df1cef406c5 100644
+>> --- a/arch/arm/boot/dts/rockchip/rv1108-elgin-r1.dts
+>> +++ b/arch/arm/boot/dts/rockchip/rv1108-elgin-r1.dts
+>> @@ -167,14 +167,6 @@ &spi {
+>>  	pinctrl-names = "default";
+>>  	pinctrl-0 = <&spim1_clk &spim1_cs0 &spim1_tx &spim1_rx>;
+>>  	status = "okay";
+>> -
+>> -	dh2228fv: dac@0 {
+>> -		compatible = "rohm,dh2228fv";
+>> -		reg = <0>;
+>> -		spi-max-frequency = <24000000>;
+>> -		spi-cpha;
+>> -		spi-cpol;
+>> -	};
+>>  };
+>> 
+>>  &u2phy {
+> 
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
 
