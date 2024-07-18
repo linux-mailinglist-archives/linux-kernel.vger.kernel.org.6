@@ -1,169 +1,103 @@
-Return-Path: <linux-kernel+bounces-255976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1D40934755
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:02:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1640E934754
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62E201F22AE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 05:02:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 472521C2183C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 05:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1430C40848;
-	Thu, 18 Jul 2024 05:02:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5512F40848;
+	Thu, 18 Jul 2024 05:01:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="IPXo0Aq/"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2047.outbound.protection.outlook.com [40.107.243.47])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="j5YpFonX"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3B72746F
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 05:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721278921; cv=fail; b=Q3myc9sgJnI3g8EeVq2cHkjY1MOVXHlxs//FonOcNBW2RKfqZ+oXKSM0D+D1umyz9/vSE4gUiBhvJn6PTQne2C/9TNTuBIoUWxmO3mWvrT+Uph1Bl6cszFXRJ7s4FgTBfGF1aCGitb6RyE3upOu6EFpGDiVp9+argblpI3NhVb4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721278921; c=relaxed/simple;
-	bh=mLRiSuPxMW3T48C+mcVvqgJZ7YZ2LIvudHaPA3aDOcc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eEDyHBt+fJIkLJgVzroGlhM3YZwxgO2hCqYSxw+hfbR+q6oFbv5j/rKyXsi6fmdBJcJdD6/qYbUNpMuWuPhA+jvIHp9wRzCgGfKy/iPaBY2tG69kMcIW90D/4be3cc3V/k4BW97mqRjYghaudiCzRzt5cjMXhGWTXhNOjGqGO4w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=IPXo0Aq/; arc=fail smtp.client-ip=40.107.243.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LMM8qb+XZHbaDiRwcoAsKMFAkFH8AnwCAse3i0JujR+sIh43+lm/ew+XIZS/Th7BHylbHtiwDx6gnwKsFX6Qva753kAh8ghOBOienawQRzLYQI0FNaElQaxjAOCAlSIwlfZsEYyYs9RCp7XOoj17+e/YMQypOwDjgaJFZ1Qi/WGo6S+Rhnw/1gd08VSmBLn3IprHfH54mI8RqbKET6tsxGp5cbNTp7Hwgw08BqsJsINZcmwITcldy0EKA3ybMxnJ+bTGg4QqmslaAnXmo1W6MyE44MP/GKzx9tBfvc92m4lfwiP3QKpM2Ij/4O0JiSex+PGvxqS46dE0/cREZ0w2Wg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UkBdSgvop5PtWWXUOA4zzguTiI1Ppcf67k7e4Z5L8gk=;
- b=fmPMAC85X9LYKLpX9P/XPQw6T4lTWsYJWI9AzCjqR5hXHnRwecjfYdo9pVi1p7MeLEqjwS8eiEueVwvhXDDCjwULT5EIO6TogeeKBkPOko56gFCi522lZSVBbzRRozhiMC+I+VERqyrsRHbUbzPtJ/Hv/21cS/xYeoFhuZQ8vRSoTn7mxjiBIXTR982zT2/qs0G7ofwhPoEE2UxUssXggHWBGHSriNUgsGS7KyI23mIApa8pj6qsvWTHlzuNDggh4h9cVQ/pVgk6wGaNHvEWOxCPwtER16LcvDd1TvvaFlfwnXzU5JNzHwHNx/79EQbJoSoJ9h3U8AvvSu3J4gcmFg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UkBdSgvop5PtWWXUOA4zzguTiI1Ppcf67k7e4Z5L8gk=;
- b=IPXo0Aq/BpRC9gWIr99pf9UBwNNvP6fYSrJLOzSJY6kYpyHRy00QzkFJzrkghDCZwM82y+IKMOneSXpKZxfhGsFY/zbzbn0nquOpHUMZdWxLStw8jSxSyGBw0t/e7DQJg/wqC17i+v71SDB4yDUbXDn8wI/tdE1YAx1CMJnuJHMFC/4s4LzKT+qZ8bueTNMTO/+YF5UpdgMNxHNZmFwqIwYW+BvgKwJds6hLjVIJbdc6MiTGHpSIqop3KpSyhxLrncGnMjlelZKIU4SzFVr9AZ9MfAJzIt2hUcq1eBqR6m7b1/bSlv5oVg6uQHmgHxMCv906EMs1Ap1sL/z/P5uhkg==
-Received: from BN0PR07CA0024.namprd07.prod.outlook.com (2603:10b6:408:141::33)
- by MW4PR12MB6998.namprd12.prod.outlook.com (2603:10b6:303:20a::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14; Thu, 18 Jul
- 2024 05:01:54 +0000
-Received: from BN2PEPF000044A3.namprd02.prod.outlook.com
- (2603:10b6:408:141:cafe::24) by BN0PR07CA0024.outlook.office365.com
- (2603:10b6:408:141::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14 via Frontend
- Transport; Thu, 18 Jul 2024 05:01:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN2PEPF000044A3.mail.protection.outlook.com (10.167.243.154) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7784.11 via Frontend Transport; Thu, 18 Jul 2024 05:01:52 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 17 Jul
- 2024 22:01:37 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 17 Jul
- 2024 22:01:37 -0700
-Received: from Asurada-Nvidia.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 17 Jul 2024 22:01:37 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: <jgg@nvidia.com>, <kevin.tian@intel.com>
-CC: <yi.l.liu@intel.com>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] iommufd/device: Fix hwpt at err_unresv in iommufd_device_do_replace()
-Date: Wed, 17 Jul 2024 22:01:30 -0700
-Message-ID: <20240718050130.1956804-1-nicolinc@nvidia.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1CF63A;
+	Thu, 18 Jul 2024 05:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721278908; cv=none; b=Ip/rzzLk3blNWswndtLv8OBdvPLswWDZV8BLm2eOuVGRJQMD1u4hkOPaYY1rKFLjhTS8epFVnQV6SF5++fgzM3TVC6fRd9fsUYhFveHvMnvuy+aoB5EaGidOMA0ihJvJguk1yxRNoG3jLf9MnghHIcmygby2T92Eau6UTLDwbZ4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721278908; c=relaxed/simple;
+	bh=3IsrN2GMyCmTrWqAnVDpFkzVI8+nI8HtjMYumLKLcQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=R+C7ZJ6jtEkJVEE8d/B1V2trRDCVgeg6cP3Mj3JF1qyTjTzV/OXVZkxbuiwHCfy1MG7xRNQL932KCtiduaNyS8nzC/pn/szXsqhrLzwQWGH30rrNFsytBoOBrWfYEucCeoZOHe+x3i2BSe7DCHOXN3yZSa+iCWAKcqn2hHQ/atU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=j5YpFonX; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1721278902;
+	bh=RpX8psbBjt1eyBCMYFZzGdaQiaV9JlBmfVMFvmm7VQY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=j5YpFonXxiH1SYslgcimizZ6E21zz3JIfXe14l5z07CXOTMd0eqeSVRpyhPkOct5w
+	 HPRnB9Xq9dRnMCL12g31TSb1nHpadtJEqQmsNeD/GvWgtlYA4Y2nHdkP37tvhs8c0M
+	 myFnEkjxh6LdUxVuC2Go4Q+JxKx9/LUfXPG/aqxSIFSw0PcgICC23/EaZb4+NxZa/+
+	 U3R1ADp+Lvf01bzuj6Kumwv59wsz4rmBP9N5Zj95nTf7iprC0IllxJfBlvGS1NDFmT
+	 ylUQAVLou0pli690+uD7sPwDIhpZQk8ctkP+zglLDczH1zUSxs6KejPqhQPDqXYY7j
+	 hpCQn4agp9DcA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WPgdK4f4tz4w2N;
+	Thu, 18 Jul 2024 15:01:41 +1000 (AEST)
+Date: Thu, 18 Jul 2024 15:01:41 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Michael S. Tsirkin" <mst@redhat.com>, Greg KH <greg@kroah.com>, Arnd
+ Bergmann <arnd@arndb.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the vhost tree
+Message-ID: <20240718150141.49349347@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000044A3:EE_|MW4PR12MB6998:EE_
-X-MS-Office365-Filtering-Correlation-Id: 92c1ca03-a72e-49d5-631a-08dca6e6bd7e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CS7w1X9RX8Xn9zWwMiZKSMqc4QDQ9X+QL+MrPWRB2mSIBaJBnT0gcxK5d78H?=
- =?us-ascii?Q?amkrY9UTBhD503mBijZZSxdmiVJGe+PdPxaZJdy5Dv/u/hRhUVWrv6K9G4l7?=
- =?us-ascii?Q?VcVOlciFJFHSj7D+8LTEox0xTFbmQ62uo3whl++i1MEtTKo+Q58L2zTKGWPk?=
- =?us-ascii?Q?xF8QRt3dQPxg2F81DTnATJuEZWnhGw2aKgWcb+fzBnWpi18ad2xbgyudfzAD?=
- =?us-ascii?Q?ZzP2OlazrfMgCPZupTgIQ/zomoXqGU916SzSgrq2pgL/RhvGVH+SKc8e/Elv?=
- =?us-ascii?Q?eOykuQy5WezXSEtjQXFYrkacnVBUFgj+f0YTdv7Al+pl4oJ7+UfjeeekaKnR?=
- =?us-ascii?Q?/59bzp1Mv3bsH2ajdjlhGse6u4zIc5X78OPYL/xqMywNS035meU8CIIjLQEQ?=
- =?us-ascii?Q?NotfA5gWH2e2NHx7x9n/BfJ+zEalEVcXnQmGKpxO/Usk1+vl+/JNoLXzehIV?=
- =?us-ascii?Q?4aPRcloSQFxvcEfLhT47Nd+wRBExv4BMxgIYod5f7cOLO2SwzXYhQEpu4n00?=
- =?us-ascii?Q?JmLqNYMTth1vSqzZn/lB88OokqJufTqWbkzorYNs993gIr3Lq8ou/EvDH3c6?=
- =?us-ascii?Q?r9Ajh6kJT6oUw5h9y7M9SaQ5cAdSos/safZpb4aJx3l9DUE45GCWvqaNSvJX?=
- =?us-ascii?Q?ua0RLTKDaPBo1S2MOY4ZIAZhpL3x1YH1IdOzy04t94qietF6Oj5pHXdMnnUS?=
- =?us-ascii?Q?jT6dm59mLk+IubKDdrQF/rmuOtTyhaoGDzzrKo9kLis2QRLmhrK2oSfhKI6X?=
- =?us-ascii?Q?V8bcqUbx0+2z41E/RqQ4xFKrGt9sB1FqfkcTG/7ravonbw1y80hfUGx85CRw?=
- =?us-ascii?Q?lP8VZHFQdcBbj/QpDcvmJOLyIgcCcZ8Co2729+x2fJOcHJ+OmH34M6sYuwQK?=
- =?us-ascii?Q?N8PM12YwueZjrTRs+XUF2pmxI328jQ2v6C8L8phwumSiy//kzOF9gTm7+Vp5?=
- =?us-ascii?Q?0inozsTg4gEdA/P7FJTjDDTfAccLK4gLkm2JRW5KmrX86vvHzVHWEzmFZTSs?=
- =?us-ascii?Q?sPyR5GjBLgw3iEHgEs1aCHnv3i+ek28zimjbK6dvP3uNV8xeKjLgGtwTx7wV?=
- =?us-ascii?Q?YHqyoAS+FWyKr4/i07BcZBRxl/NTbrjt2cZW0NVz06Ab2io6STbLevhStRl2?=
- =?us-ascii?Q?gmgGzpOZHmUBg03qVingqoxw2NckovaJMQAn33X2NUsTr3/Usy/rURQ/yXBc?=
- =?us-ascii?Q?1sFzO6opFSJEedUOLTw7Yji5Rs/5qDpPn+akQ0dUqadXHsHWumjQabTh7JkC?=
- =?us-ascii?Q?j4iJr61fKgAPLgnr3ChT2H3SNnqszob9pMqAfAEjb15m596LuIiZsw2+reGe?=
- =?us-ascii?Q?6wiHgTVv/MdCccKGQMFGw2PvVh2y8QHm2NKDa8j84fxeUsvwwUFq5XF62Lx4?=
- =?us-ascii?Q?9Jc4kE8x2/cEN4TeICTqcFAZQ9gy8gmyDO11iPkuHhNdhnfC00SZrAZ8f/uJ?=
- =?us-ascii?Q?TuoEH85s86jCuaoKZ2qKL8e1Vzd79axZ?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2024 05:01:52.9758
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 92c1ca03-a72e-49d5-631a-08dca6e6bd7e
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF000044A3.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6998
+Content-Type: multipart/signed; boundary="Sig_/YMOnmi+ULyPuQ2TvjPaOczY";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-The rewind routine should remove the reserved iovas added to the new hwpt.
+--Sig_/YMOnmi+ULyPuQ2TvjPaOczY
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 89db31635c87 ("iommufd: Derive iommufd_hwpt_paging from iommufd_hw_pagetable")
-Cc: stable@vger.kernel.org
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
----
- drivers/iommu/iommufd/device.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi all,
 
-diff --git a/drivers/iommu/iommufd/device.c b/drivers/iommu/iommufd/device.c
-index 9a7ec5997c61c..3214a4c17c6b3 100644
---- a/drivers/iommu/iommufd/device.c
-+++ b/drivers/iommu/iommufd/device.c
-@@ -526,7 +526,7 @@ iommufd_device_do_replace(struct iommufd_device *idev,
- err_unresv:
- 	if (hwpt_is_paging(hwpt))
- 		iommufd_group_remove_reserved_iova(igroup,
--						   to_hwpt_paging(old_hwpt));
-+						   to_hwpt_paging(hwpt));
- err_unlock:
- 	mutex_unlock(&idev->igroup->lock);
- 	return ERR_PTR(rc);
--- 
-2.43.0
+The following commit is also in the char-misc tree as a different commit
+(but the same patch):
 
+  69eced9eb49a ("virtio: add missing MODULE_DESCRIPTION() macro")
+
+This is commit
+
+  89067019d7db ("virtio: add missing MODULE_DESCRIPTION() macro")
+
+in the char-misc tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/YMOnmi+ULyPuQ2TvjPaOczY
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaYobUACgkQAVBC80lX
+0GzAzwf/TFk92u+7DCPuE1r6jLtxQq8euXFRfUYErjJzKUESpkZr/aad3TqYJlk9
+hFAJjcvnaHQPZDXi9rn0YIdHImJWhtV2Api3xKny5AsWzKxeTSYHGdzwJBSwhyAa
+ssUiBLbKYFxGKeeCn7ihHIPiksK7ptuJDJVomDgyNyn4gKiDhLTanQvAIEcnTjNV
+VXOTrzt8HZMHviw8vZOFzn2GSZYFtxWLNY/AsiPkO1TxEvcFBPwdk6+Adcl0a+My
+GekORMwI9XidxjSdSje1ioEmvYw5sLqayr6RvxqNb3IxswgOSFKGSxiHKn4AxGdx
+b8Kt9ExpLRfToC5D9ZCHLBIhQ3mkaA==
+=VC2X
+-----END PGP SIGNATURE-----
+
+--Sig_/YMOnmi+ULyPuQ2TvjPaOczY--
 
