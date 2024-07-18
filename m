@@ -1,169 +1,152 @@
-Return-Path: <linux-kernel+bounces-255812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D87D93457A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 02:57:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24B2C934572
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 02:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 804291C21485
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:57:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F9EC1C213AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1219730358;
-	Thu, 18 Jul 2024 00:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838FA1C36;
+	Thu, 18 Jul 2024 00:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="bSyFr86C"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GUHoXZXn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD51228DB3
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 00:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37EBE639
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 00:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721263715; cv=none; b=qvvE5dcVy344MNa1C+6yu+bPtJXc95Ffw0YwJJhegPhaLInwvnIfuKha8tGfHk5QtIltRJMHA0zcZiniGEe3Q+sCAQkoxQ5D4Vof98ZL1VIKT9mcrVEVY5kWY9JBtYljo2vAgyf1U+hx6vWkEowfcBHD67IDILzp5Ww+8oAozqI=
+	t=1721263964; cv=none; b=q3PvY0/FR+l6mqy1qpiQZBiQV7cW6LNfEoYhwkkafEWjIDm0arz5Af8T6qHVo/ZkIML7x8NrJaLKMG3ObKPq8s+aByL7JKgVWrojUY0maTkEt8koleLo5GDKnLMD34u8i7CFI9iECq2jRIe+JHMBJ64g+EIU+ffFU4dA4QQC22g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721263715; c=relaxed/simple;
-	bh=ayKMuH111uQmazVuhzUPdxu7GFGYmwbxVcBauWxUhXs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gQRAuykEmCq8qbhIZSucE3gyYpfWVMQtDf5bitL6s6CE74oo5rBZKG0ZlAi7VjVcPggxWSDmVBYwJPLkbxqTlZXkK/4R8Z8G46NYCgWo9lhQVjGXiGeapDtq7swkO6rsknwDmGWeZGRQv4iNmBKfqxcr2jgU/RHKay/X4vuIRH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=bSyFr86C; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70b31272a04so941583b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 17:48:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1721263697; x=1721868497; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CFld1vW28kOoabvpVtGlz2RoBm7PVswCH1l6QYeAzTM=;
-        b=bSyFr86CUxVLB3BFxENAliE4lV5wyzxnDLEstG0Cg/VcvmMKpOYK5/4Z4vxbzxo3e4
-         l9p7KAuUyUubmrTAVR9erAkXEzuLur2MAdj6JUz53H5A9RZd97EI00u1yAeHlXgABlYf
-         QmijC2FS39cmbfYcjhlylQeEdWVT+GQTFdu8AZC60p7oWJmq+gXdXq5s/dNaINzZV/zQ
-         hfoAU9uwa5pmgXnWgeZqsI8SxH/JrzNCM4yl7HKB1KANbvHZN2vz0f5Fa4n9KIcgy8um
-         4mK5/ZM1qXdmyu5tfO0gsnQRrOaIwyGd5EFnmDIaxPnY/cmb82y3f01qXF8VW6p5gBub
-         FR7w==
+	s=arc-20240116; t=1721263964; c=relaxed/simple;
+	bh=esd7lYe5iq+onNX9j0js0Xwd+FXvQRDJiIeVuo28nhI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F5Od/Tfc3GuTtNZ1MKKZNJhQSa7T6pTInBYBwarhq3CEqSlv4S9ciOuc5ctwd6AfLOCRejMafd1r+5MPRo9JXQUQD6dNtTSfFQEJys+93BKIVS1/ANQ7ak+gS9W3HaavYa5z74WEUFC0lrCUJpWSVmHxZRnwdPvKwF/S10rSWxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GUHoXZXn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721263962;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AodQvD7UxAvNv2pUpx69b2DHyG8xaHJX0frFiPMlh3I=;
+	b=GUHoXZXnQ0jT/GaD8XAXtk1pEViDje+/t9q2ieOMv8zri+jSAiK/qBknyStQziSh2JZGfF
+	OgeL1s62E53mBekPGHN0LJPb1hhEBari9m8eJUwzYtq7bxWCVtUCxyvie/2z3z45GB7KeM
+	9UO+XEaGCC5qAByf5i0cvB1f309+8Mc=
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
+ [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-470-ZyAe7OZiOZaxMHxzRUpKtA-1; Wed, 17 Jul 2024 20:52:40 -0400
+X-MC-Unique: ZyAe7OZiOZaxMHxzRUpKtA-1
+Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3d92b366160so285124b6e.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 17:52:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721263697; x=1721868497;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1721263960; x=1721868760;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CFld1vW28kOoabvpVtGlz2RoBm7PVswCH1l6QYeAzTM=;
-        b=Ygy5gKyf4s2CQRLkjT86gFaSX3eSHynGFmezuYODkzX4sNnJ2/KLbH7iKufzWVsnU2
-         0ny78x4z8Wn0WDIfEihEVkHLwv2YlrWuWYTXzd/eQU9mxz/aGBZcyxili38BfmC0qF3v
-         z8WcN6YbMzToYOdJqaDn6Auk0xnZtGyfmoWanxnNexOxsTNGXxnc/v9z+3UXl/C7+2w/
-         zjjh38awK+FQ/k/yx13nPqPO8Byh/4Qlc5T/Go5tF9HxDhfet0RjJs//J9/O4M7RmmsF
-         ABjfzN0p8kOpu8QhN9sLoaW5Ss/DKART0het0yjavCIYmhv9ylioW8nJ6ZKpxYDOaX3t
-         KbcA==
-X-Forwarded-Encrypted: i=1; AJvYcCXVuujAogiTyVUfpP6jGdYWXkQdjTbBH9tCKPe2dUIbGW9lQqXLAEnlcVYXH/xOi+RVLNlOTnLDLbUQGEBFF4jxTr6T2EctgqI7AveA
-X-Gm-Message-State: AOJu0YwzRHo1KjrAGRBqasd7uU9hXIBpS7xCz89ezh1Ef7TLqFxsJvCX
-	UmAWFcGKdJOnV+9RZPvqjjPjzmd2wNErrBQHfBRVkJtxpmt4GA5cEbQymbEP/GI=
-X-Google-Smtp-Source: AGHT+IF8mHZFxowkJGrx83wri8IP0GWRoDPRyQHAkdVWFwQ+fv5skyg8lghAXu3kMcXnk8PDhmI/Og==
-X-Received: by 2002:a05:6a20:12c9:b0:1c0:e225:b11e with SMTP id adf61e73a8af0-1c407846c80mr2231878637.13.1721263697497;
-        Wed, 17 Jul 2024 17:48:17 -0700 (PDT)
-Received: from sw06.internal.sifive.com ([4.53.31.132])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-78e386d53e4sm5694300a12.70.2024.07.17.17.48.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 17:48:16 -0700 (PDT)
-From: Samuel Holland <samuel.holland@sifive.com>
-To: linux-riscv@lists.infradead.org,
-	Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Andrew Jones <ajones@ventanamicro.com>,
-	Conor Dooley <conor@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Deepak Gupta <debug@rivosinc.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Andy Chiu <andy.chiu@sifive.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Evan Green <evan@rivosinc.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Xiao Wang <xiao.w.wang@intel.com>
-Subject: [PATCH v3 3/3] riscv: Call riscv_user_isa_enable() only on the boot hart
-Date: Wed, 17 Jul 2024 17:47:56 -0700
-Message-ID: <20240718004808.2246354-4-samuel.holland@sifive.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240718004808.2246354-1-samuel.holland@sifive.com>
-References: <20240718004808.2246354-1-samuel.holland@sifive.com>
+        bh=AodQvD7UxAvNv2pUpx69b2DHyG8xaHJX0frFiPMlh3I=;
+        b=C3d/MT+N3KYglxR/BbeHJQRIBpsZp62TVVm5lpN3VjzBmgZrd57Y/r6TUEw1qvQFRk
+         Prr/QhMepiOuZuipgRv3eNBlZIS6qLARgN8qqkvmhxjiwn2hHqAAI6VoCzyy6unQNznc
+         htM8XCW2Ihe9Wu3++2Wc/uD2NQbFg0/WHAtHnbhokND7n/kzMAicFIvJE6wXaKpmD8dW
+         Uq/YP9CkXxQzzNMwWcuPI8eOtRRPA3mSeoS6ye/W7pRCMikcxVv1QovBj17AHZ1lEmlR
+         LXP61NDHh8+e4Vgh43NOPbY26R22KmMyx06AKp41Q/ofOsFnkW7iZAnFXGxQHenmkZ20
+         ZIGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZWF9PtbSQGgp1YejmNCf74uhYIn7tNCa8XQITbgiP45iRHV8r8mWjqATGlOa+9sjpd5MAQg7hur+z7qG2PCIOJQPpAliGhwGG220K
+X-Gm-Message-State: AOJu0YyYe1647kUcXm6k1sGRIDjgw8VKKrEIYyQ3z4ws2shRmKdkqDOc
+	y/IIT3r7WsU5eYorqiX8Q3Q3sv4RMBQtBssID4g9SzOiIWoZWvrIwvLzWq0qu/IiTon/kSlhFw5
+	sn1SkhIqvD+QqZJzOUT5fuJy/Py9wx3GN89LB6DcnmW0ovItiFi2eUZWOnYSADrGwWedS2Os9/k
+	H1xiER+BYWFrj6ZXvNBYWOHxmeCzz4bBl6RGe5
+X-Received: by 2002:a05:6808:1a23:b0:3d9:28d0:fcdb with SMTP id 5614622812f47-3dad51eee14mr3145976b6e.12.1721263960081;
+        Wed, 17 Jul 2024 17:52:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG9h+0U2xvRbnvYEIv1j3r48AzVXHuxA2+eaNiLAp0VT0zFKA+GDu9vEaf/3S87+CdfT1c71ctDFijpnhuen/I=
+X-Received: by 2002:a05:6808:1a23:b0:3d9:28d0:fcdb with SMTP id
+ 5614622812f47-3dad51eee14mr3145947b6e.12.1721263959710; Wed, 17 Jul 2024
+ 17:52:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240717053034-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20240717053034-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Date: Thu, 18 Jul 2024 08:52:28 +0800
+Message-ID: <CACGkMEura9v43QtBmWSd1+E_jpEUeXf+u5UmUzP1HT5vZOw3NA@mail.gmail.com>
+Subject: Re: [GIT PULL] virtio: features, fixes, cleanups
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, kvm@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, aha310510@gmail.com, arefev@swemel.ru, 
+	arseny.krasnov@kaspersky.com, davem@davemloft.net, dtatulea@nvidia.com, 
+	eperezma@redhat.com, glider@google.com, iii@linux.ibm.com, jiri@nvidia.com, 
+	jiri@resnulli.us, kuba@kernel.org, lingshan.zhu@intel.com, 
+	ndabilpuram@marvell.com, pgootzen@nvidia.com, pizhenwei@bytedance.com, 
+	quic_jjohnson@quicinc.com, schalla@marvell.com, stefanha@redhat.com, 
+	sthotton@marvell.com, syzbot+6c21aeb59d0e82eb2782@syzkaller.appspotmail.com, 
+	vattunuru@marvell.com, will@kernel.org, xuanzhuo@linux.alibaba.com, 
+	yskelg@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now that the [ms]envcfg CSR value is maintained per thread, not per
-hart, riscv_user_isa_enable() only needs to be called once during boot,
-to set the value for the init task. This also allows it to be marked as
-__init.
+On Wed, Jul 17, 2024 at 5:30=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
+ wrote:
+>
+> This is relatively small.
+> I had to drop a buggy commit in the middle so some hashes
+> changed from what was in linux-next.
+> Deferred admin vq scalability fix to after rc2 as a minor issue was
+> found with it recently, but the infrastructure for it
+> is there now.
+>
+> The following changes since commit e9d22f7a6655941fc8b2b942ed354ec780936b=
+3e:
+>
+>   Merge tag 'linux_kselftest-fixes-6.10-rc7' of git://git.kernel.org/pub/=
+scm/linux/kernel/git/shuah/linux-kselftest (2024-07-02 13:53:24 -0700)
+>
+> are available in the Git repository at:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_=
+linus
+>
+> for you to fetch changes up to 6c85d6b653caeba2ef982925703cbb4f2b3b3163:
+>
+>   virtio: rename virtio_find_vqs_info() to virtio_find_vqs() (2024-07-17 =
+05:20:58 -0400)
+>
+> ----------------------------------------------------------------
+> virtio: features, fixes, cleanups
+>
+> Several new features here:
+>
+> - Virtio find vqs API has been reworked
+>   (required to fix the scalability issue we have with
+>    adminq, which I hope to merge later in the cycle)
+>
+> - vDPA driver for Marvell OCTEON
+>
+> - virtio fs performance improvement
+>
+> - mlx5 migration speedups
+>
+> Fixes, cleanups all over the place.
+>
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+>
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
-Reviewed-by: Deepak Gupta <debug@rivosinc.com>
-Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
----
+It looks like this one is missing?
 
-Changes in v3:
- - Drop use of __initdata due to conflicts with cpufeature.c refactoring
+https://lore.kernel.org/kvm/20240701033159.18133-1-jasowang@redhat.com/T/
 
-Changes in v2:
- - Rebase on riscv/for-next
-
- arch/riscv/include/asm/cpufeature.h | 2 +-
- arch/riscv/kernel/cpufeature.c      | 4 ++--
- arch/riscv/kernel/smpboot.c         | 2 --
- 3 files changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/arch/riscv/include/asm/cpufeature.h b/arch/riscv/include/asm/cpufeature.h
-index 000796c2d0b1..7670792760b6 100644
---- a/arch/riscv/include/asm/cpufeature.h
-+++ b/arch/riscv/include/asm/cpufeature.h
-@@ -31,7 +31,7 @@ DECLARE_PER_CPU(struct riscv_cpuinfo, riscv_cpuinfo);
- /* Per-cpu ISA extensions. */
- extern struct riscv_isainfo hart_isa[NR_CPUS];
- 
--void riscv_user_isa_enable(void);
-+void __init riscv_user_isa_enable(void);
- 
- #if defined(CONFIG_RISCV_MISALIGNED)
- bool check_unaligned_access_emulated_all_cpus(void);
-diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-index 43fdae953379..517035356107 100644
---- a/arch/riscv/kernel/cpufeature.c
-+++ b/arch/riscv/kernel/cpufeature.c
-@@ -875,12 +875,12 @@ unsigned long riscv_get_elf_hwcap(void)
- 	return hwcap;
- }
- 
--void riscv_user_isa_enable(void)
-+void __init riscv_user_isa_enable(void)
- {
- 	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_ZICBOZ))
- 		current->thread.envcfg |= ENVCFG_CBZE;
- 	else if (any_cpu_has_zicboz)
--		pr_warn_once("Zicboz disabled as it is unavailable on some harts\n");
-+		pr_warn("Zicboz disabled as it is unavailable on some harts\n");
- }
- 
- #ifdef CONFIG_RISCV_ALTERNATIVE
-diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
-index 19baf0d574d3..0646f79e0a02 100644
---- a/arch/riscv/kernel/smpboot.c
-+++ b/arch/riscv/kernel/smpboot.c
-@@ -235,8 +235,6 @@ asmlinkage __visible void smp_callin(void)
- 	numa_add_cpu(curr_cpuid);
- 	set_cpu_online(curr_cpuid, true);
- 
--	riscv_user_isa_enable();
--
- 	/*
- 	 * Remote cache and TLB flushes are ignored while the CPU is offline,
- 	 * so flush them both right now just in case.
--- 
-2.45.1
+Thanks
 
 
