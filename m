@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-256851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33FD993713C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 01:45:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F15FC93713D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 01:45:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC7341F21FB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 23:45:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CC9C1F21C89
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 23:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19971146A8B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE5714884B;
 	Thu, 18 Jul 2024 23:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z/I9ZBRo"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u6KNyqmN"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C59148314
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 23:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4D4146A6B
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 23:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721346215; cv=none; b=Ed4s59smWJwa+N3hMSe/U92n1SbvdMGVBk7V/1WLEdzIjCTCiC9Mhl0artbCkAd9Qie2Yj2C+w7VEB0s5yuUR4tI3rtWH0EXp4mrEh4Sj9BFHpkNX4vDfB2Odfh2M4cJj3p85uO2eHovXxBdjZv+ENM7QnQZsTjZAmpVWOvXvyo=
+	t=1721346215; cv=none; b=RQMYkOTQv3DfOE/Sqnp25cyk9ldfgXtGfT3w1CTto+KqJFNgDp+/cR2gH1HpZMBhx7yN4FjW3C+OyqqqnGEgxG90G5wpNuPY01evuyfMpBLhb+FSrJoQpJOEdaYkFPXGJ/+9YpZNBDTqZ6Kw5KrAhYjgsJ+1zBFb1ePlw+/mZfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721346215; c=relaxed/simple;
-	bh=q9HqaY78viyGGiaUkgmvLpNWtXDFKV24MjRfrhvMn+U=;
+	bh=qimQZF+FWN9z++adsecIC/pT/coamrdDTurSaVUGTQs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XYNn16nH5ckTtnLNqp22f01krNCsCxzrMCk5rfjScLWUQoDBt7nukhd1i76RrO+72F7iUbVrztjmKEyUs5qu2evstbHlmE4QhXdh6DOj6/5jShYurbqGEqPkLJfI7KwkVM/TlxA+DDz3uvTGK/+zikatXsq7o3e5C8nTpVWgM/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z/I9ZBRo; arc=none smtp.client-ip=209.85.167.45
+	 MIME-Version; b=HweU+TK4iVmY4PAae+plIwLEFWYQqE00zI7+DF1ylFQxfTe3R0ZT8Nycg+bfprFmF4PC5JDiBH9RWPB8Cd/aM19unQnfQkBIF0T2buHx6zJxlZ7jJf26XwdvOfBy0o5izunCiugfDF/7HFNNy7swb76XIttstvWqViix0e84nx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u6KNyqmN; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52e99060b0dso1109750e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 16:43:32 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52e97e5a84bso1431673e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 16:43:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721346211; x=1721951011; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1721346212; x=1721951012; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qiy79RCH12nO+kuD43r9KxQZmT684plvYyRVA5SbNNc=;
-        b=Z/I9ZBRoZ6zTywC1rtlBk+efuDYKgcIlMhFHnaljqMSk7EpqsX0/sA113l4E/o9wlu
-         LRnKUuQoxlHIoF7qAxViIaEXgttiCIXeAlgfgFa9RNGBlRNc8bor845iQLHqrHTRtz4O
-         RmSlhf8cVZ+8/w0EhpWMIk3iTlQWZJRzM/cZPdHDboYBagr8l2A02Ie9v3opihNWC6Ek
-         pNtOxlYtwRFTQTRGQHqo9G1y42jCatIzqTsn9lkIeLhjIkoX7UCJcVxyHaGgHJBY+7Yr
-         PB3OUriKodUml5FrPNfvDFkwlFuMqs3qOIh3KUzxgcgdOxdphMMt0OiL3Y8G2Rud1dby
-         NbEQ==
+        bh=X41EpoGFTr7V+lfPhB4bKmmLvKDngcfGjNQze8E5PAc=;
+        b=u6KNyqmN8TZZocJzEu4W5hIcc/qF2FtxEZXkwZcsb3hobPsqT3FXsZ2gRz0MCCVBOB
+         6nndK5GyNRgkHvz1yImXOec3t+ud/8GxbZOvi+8DpoHzTiYCYPH2wBU0b5uxmY0sIT4O
+         qjw7dfY0hbOt98+OmN573p+Jx37BQnr5LPg02uDPELKVg5KYhABuHa6Jc41r1HUZP6Jc
+         7CnAtnC3ZukEr0meXbxGsXL181sbbgaIahUVQZXq3QZJ/MeAWG62Hu8jFvOdbgFFvlxE
+         5+jejjY+JwRb0gkG6jU5fjIcTcGIAyuAcgsPhsTyot5obpr+u6S5E1URn5fxVr9GeC1K
+         AxCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721346211; x=1721951011;
+        d=1e100.net; s=20230601; t=1721346212; x=1721951012;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qiy79RCH12nO+kuD43r9KxQZmT684plvYyRVA5SbNNc=;
-        b=SygKQNI/06HyJ22Gpo6m0Q8gMOBI7RXUXSVZuzzAdQFAPUhN7keFwmxGZY8VBdqkCO
-         6mstnnksifxsOAeR2Nt+6HeNy2wZxgMMzlsGLQXjGvhHceEoO022nU9UgvU/wC1XWwqy
-         6YTNzwiwWfqewGu+ahEozRqGnhWs9JU6WNT4tPFWeE52odAR0PDZSlmwPAm+lbO+d8Mo
-         Oxomx2K3C6/GIkN5C6E5lmjHFNxmfTNgEGUzaX9CbWh6KY34NYuvmDkXKo7MRRyKC+BP
-         hIEcWp8mlUg87elK7Q4UPsK/6+xxTKsixb/2JqB088M2vttWUERt5q1vCyk7MPHVcm6L
-         Nasw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbIv1qDxQTHgEoCLqtsRdVPUM7TrkuO+uORwzaenLkV5/62tFnR6b9q5IQPR5pquYwgZJiggjRiS/IwzVXM0Cgw5D7ThYXFeua2wjL
-X-Gm-Message-State: AOJu0YyWF+ujpNJE8cuzG5jRc0yqVh+PIpPh2qBIGRm588L0LsefVVbE
-	SLjGKAkY5PhZVWXhOaTMWzJoZq58ZUme6qPNGaYppNOEtNwbGOYw7VYe2VUBkvo=
-X-Google-Smtp-Source: AGHT+IE/PQcs9Xj45ekRvDZ9k+t/Et7RHcrmh62SIuBoPAG7Wl7rJpYPtWq1KQeWzrJ9ZjlpqQ2KEA==
-X-Received: by 2002:a05:6512:39c7:b0:52c:8df9:2e6f with SMTP id 2adb3069b0e04-52ee5429228mr4551665e87.42.1721346210863;
-        Thu, 18 Jul 2024 16:43:30 -0700 (PDT)
+        bh=X41EpoGFTr7V+lfPhB4bKmmLvKDngcfGjNQze8E5PAc=;
+        b=m1+m8J1/4B3szM3pbozZ6roDuN4OJZtkHEp9Qh6xiu5au0K7cX9BS/NUZUEaqSDolm
+         dQNxDouQhgnCwdaeB+EVo7FGVgJpC6AQeek86cm2WDHL5uU9qsh3Lrbr8oX4ZC+uxUyE
+         oDvCV1F7s6ilxXwyuIWgQSN/K1fbC7tBImyVmU+tRvT7nTS5WfFAWVi9lOjj5CHi0yB4
+         K5fqy3tOaLArXMORi1dRa0i7tArpTaTm0uRvI039i6352ifc2oJhlffkjBOJ9cDp4Er7
+         fdC2HoUqlixiiW6g6HWBJ8SuYDjVIagqtn/9HfRirIA4bafWUPHLC0eIPgv59VO+jIw/
+         toUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxOuX9Lv6pOIm+wKOsn8Rd8OvAGeqvCP62pTjrD9fM1sE+mw+1fSlA2L8RqwrlnHwrk5d9eSZVzNF6GnVQbSPLuqkQ4jL2rmpTebv0
+X-Gm-Message-State: AOJu0YyfswR26+yJ/+abeChrhH9oRP67TClmywot/zKFifQ55CGaCCux
+	mPMNYMnxnZ0eX/VTazp0ppGUtcQDnr0iCXiHo0/NshGBPRm4d0PZH569iZ8xQ84=
+X-Google-Smtp-Source: AGHT+IE9TgIAs0CUhULlnfsv1TaESmkfsLC57MT/HQS4rq5Rt9A4FzXWOTcdoX2vwlTRiyP6cV3eIQ==
+X-Received: by 2002:a05:6512:3a87:b0:52c:dd94:bda9 with SMTP id 2adb3069b0e04-52ee5452793mr5704184e87.56.1721346212081;
+        Thu, 18 Jul 2024 16:43:32 -0700 (PDT)
 Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ef556b4fbsm22491e87.139.2024.07.18.16.43.29
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ef556b4fbsm22491e87.139.2024.07.18.16.43.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 16:43:30 -0700 (PDT)
+        Thu, 18 Jul 2024 16:43:31 -0700 (PDT)
 From: Ulf Hansson <ulf.hansson@linaro.org>
 To: Viresh Kumar <vireshk@kernel.org>,
 	Nishanth Menon <nm@ti.com>,
@@ -80,9 +80,9 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	linux-pm@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/6] pmdomain: core: Drop the redundant dev_to_genpd_dev()
-Date: Fri, 19 Jul 2024 01:43:18 +0200
-Message-Id: <20240718234319.356451-6-ulf.hansson@linaro.org>
+Subject: [PATCH v2 6/6] OPP: Drop redundant code in _link_required_opps()
+Date: Fri, 19 Jul 2024 01:43:19 +0200
+Message-Id: <20240718234319.356451-7-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240718234319.356451-1-ulf.hansson@linaro.org>
 References: <20240718234319.356451-1-ulf.hansson@linaro.org>
@@ -94,63 +94,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There's no longer any users of dev_to_genpd_dev(), hence let's drop it.
+Due to that the required-devs for the required OPPs are now always being
+assigned during the attach process in genpd, we no longer need the special
+treatment in _link_required_opps() for the single PM domain case. Let's
+therefore drop it.
 
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
 
 Changes in v2:
-	- None.
+	- New patch.
 ---
- drivers/pmdomain/core.c   | 10 ----------
- include/linux/pm_domain.h |  6 ------
- 2 files changed, 16 deletions(-)
+ drivers/opp/of.c | 39 +++------------------------------------
+ 1 file changed, 3 insertions(+), 36 deletions(-)
 
-diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-index fdbc3aab9083..bc89edcbd583 100644
---- a/drivers/pmdomain/core.c
-+++ b/drivers/pmdomain/core.c
-@@ -184,16 +184,6 @@ static struct generic_pm_domain *dev_to_genpd(struct device *dev)
- 	return pd_to_genpd(dev->pm_domain);
+diff --git a/drivers/opp/of.c b/drivers/opp/of.c
+index 55c8cfef97d4..fd5ed2858258 100644
+--- a/drivers/opp/of.c
++++ b/drivers/opp/of.c
+@@ -295,7 +295,7 @@ void _of_clear_opp(struct opp_table *opp_table, struct dev_pm_opp *opp)
+ 	of_node_put(opp->np);
  }
  
--struct device *dev_to_genpd_dev(struct device *dev)
--{
--	struct generic_pm_domain *genpd = dev_to_genpd(dev);
--
--	if (IS_ERR(genpd))
--		return ERR_CAST(genpd);
--
--	return &genpd->dev;
--}
--
- static int genpd_stop_dev(const struct generic_pm_domain *genpd,
- 			  struct device *dev)
+-static int _link_required_opps(struct dev_pm_opp *opp, struct opp_table *opp_table,
++static int _link_required_opps(struct dev_pm_opp *opp,
+ 			       struct opp_table *required_table, int index)
  {
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index f24546a3d3db..772d3280d35f 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -260,7 +260,6 @@ int pm_genpd_remove_subdomain(struct generic_pm_domain *genpd,
- int pm_genpd_init(struct generic_pm_domain *genpd,
- 		  struct dev_power_governor *gov, bool is_off);
- int pm_genpd_remove(struct generic_pm_domain *genpd);
--struct device *dev_to_genpd_dev(struct device *dev);
- int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int state);
- int dev_pm_genpd_add_notifier(struct device *dev, struct notifier_block *nb);
- int dev_pm_genpd_remove_notifier(struct device *dev);
-@@ -308,11 +307,6 @@ static inline int pm_genpd_remove(struct generic_pm_domain *genpd)
- 	return -EOPNOTSUPP;
+ 	struct device_node *np;
+@@ -313,39 +313,6 @@ static int _link_required_opps(struct dev_pm_opp *opp, struct opp_table *opp_tab
+ 		return -ENODEV;
+ 	}
+ 
+-	/*
+-	 * There are two genpd (as required-opp) cases that we need to handle,
+-	 * devices with a single genpd and ones with multiple genpds.
+-	 *
+-	 * The single genpd case requires special handling as we need to use the
+-	 * same `dev` structure (instead of a virtual one provided by genpd
+-	 * core) for setting the performance state.
+-	 *
+-	 * It doesn't make sense for a device's DT entry to have both
+-	 * "opp-level" and single "required-opps" entry pointing to a genpd's
+-	 * OPP, as that would make the OPP core call
+-	 * dev_pm_domain_set_performance_state() for two different values for
+-	 * the same device structure. Lets treat single genpd configuration as a
+-	 * case where the OPP's level is directly available without required-opp
+-	 * link in the DT.
+-	 *
+-	 * Just update the `level` with the right value, which
+-	 * dev_pm_opp_set_opp() will take care of in the normal path itself.
+-	 *
+-	 * There is another case though, where a genpd's OPP table has
+-	 * required-opps set to a parent genpd. The OPP core expects the user to
+-	 * set the respective required `struct device` pointer via
+-	 * dev_pm_opp_set_config().
+-	 */
+-	if (required_table->is_genpd && opp_table->required_opp_count == 1 &&
+-	    !opp_table->required_devs[0]) {
+-		/* Genpd core takes care of propagation to parent genpd */
+-		if (!opp_table->is_genpd) {
+-			if (!WARN_ON(opp->level != OPP_LEVEL_UNSET))
+-				opp->level = opp->required_opps[0]->level;
+-		}
+-	}
+-
+ 	return 0;
  }
  
--static inline struct device *dev_to_genpd_dev(struct device *dev)
--{
--	return ERR_PTR(-EOPNOTSUPP);
--}
--
- static inline int dev_pm_genpd_set_performance_state(struct device *dev,
- 						     unsigned int state)
- {
+@@ -370,7 +337,7 @@ static int _of_opp_alloc_required_opps(struct opp_table *opp_table,
+ 		if (IS_ERR_OR_NULL(required_table))
+ 			continue;
+ 
+-		ret = _link_required_opps(opp, opp_table, required_table, i);
++		ret = _link_required_opps(opp, required_table, i);
+ 		if (ret)
+ 			goto free_required_opps;
+ 	}
+@@ -391,7 +358,7 @@ static int lazy_link_required_opps(struct opp_table *opp_table,
+ 	int ret;
+ 
+ 	list_for_each_entry(opp, &opp_table->opp_list, node) {
+-		ret = _link_required_opps(opp, opp_table, new_table, index);
++		ret = _link_required_opps(opp, new_table, index);
+ 		if (ret)
+ 			return ret;
+ 	}
 -- 
 2.34.1
 
