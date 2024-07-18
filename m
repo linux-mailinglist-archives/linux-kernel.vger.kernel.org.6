@@ -1,222 +1,149 @@
-Return-Path: <linux-kernel+bounces-256809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F40F9370B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 00:34:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 336FA9370B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 00:35:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3509F281E17
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 22:34:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 630261C219AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 22:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9269E14658B;
-	Thu, 18 Jul 2024 22:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC124145A0A;
+	Thu, 18 Jul 2024 22:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aVTFg7Jk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BUyX0VUH"
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B8480C07;
-	Thu, 18 Jul 2024 22:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9798480C07
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 22:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721342042; cv=none; b=OX50QCjzj6A3lXuEVRIY2uUZKIo+z0JK99E/WqaHefcPy2rBCp9qPtV+9BXkdSrkhkFLGf2kEVg/ppTcYLlYIj9yUexgZ88WH/an3qU6tiiMAT4100LMF3qEogU4sA8N1vWZHc/Ip1MfQqEhvXaMWSd22GuEUxL2PAqGN+10lQ0=
+	t=1721342121; cv=none; b=qCppa3Ok9Kt2aUfI4wrGRy/bRgJWFTBUTuOB5A521Z+QU1eJMJ2ZzSAERYPiaNPU1ntWzqB2VY4ZSlCMbacBsRdsKCBz3swXNpkMJfIP8w9cwBHhPVSK+58WwI24MqH9MGwT1R8GhPE+xamb7vPPxeGIacqb8gZkRT9tjTPcOEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721342042; c=relaxed/simple;
-	bh=0WYpy6TNv7sxifEV/XZ2E3aJ5S6L6mB+S2jYNf3TtIo=;
+	s=arc-20240116; t=1721342121; c=relaxed/simple;
+	bh=uBrVziKrh9wuW7qZktms0c2SGtYTIAf+915rwmXJe3w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oYNcQAiaZ0tu17szEoY3ndHJR096x+5Yzm1RBLZ8qecXixfrgFpNg4NgfE452OTOP4Wr9WPIY+/s6SBDOXbnF2hLnS+vZKUv+GFGqivS5FzI0cmS89M3h74j8PzTZJGUinuHNxTbzxciDikSJo1nUpUryMkVf4AyLFuy77UcI3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aVTFg7Jk; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721342039; x=1752878039;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0WYpy6TNv7sxifEV/XZ2E3aJ5S6L6mB+S2jYNf3TtIo=;
-  b=aVTFg7JkCXfbuyNDlUDLARdVbabF7fnmuKQMX03soHMYCZjnq2zA5QWx
-   zz7TzawLTxD7cCo5WaBCNb9ssBgIgAmyY8+2XXGZpFPToolPPg2FOOIzh
-   M/mmIQHjtydGEIm+LCBuZ/57ZJNPd9oTVh2ByX2di/Qbz07Va85c2o+ic
-   TDnSpoTbStqiwGky8bJGacWVsqtS1sm9P/J695UFYHKhJ3dA1RK+MmRFk
-   xXWEMry4XmMgMDRZhN6IUlyM9hSGtupX8M9JKmO1fqb92dqvPuwDdwbDU
-   6Z9Wt1ALid+lO/HFm8XXNJJVRiDqgX8p8VT6skFO0TksaEOsqiXhiAyQB
-   w==;
-X-CSE-ConnectionGUID: GiTlDfGtQra0/ZER01zctQ==
-X-CSE-MsgGUID: OVXfd/ZcRcm4Xyn3GCf67A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11137"; a="18560897"
-X-IronPort-AV: E=Sophos;i="6.09,219,1716274800"; 
-   d="scan'208";a="18560897"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 15:33:58 -0700
-X-CSE-ConnectionGUID: lWcU/w7YTh2RQM/ujVXg8Q==
-X-CSE-MsgGUID: KCFJ9vEbSzuCh/f911RZsQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,219,1716274800"; 
-   d="scan'208";a="50776120"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 18 Jul 2024 15:33:54 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sUZhA-000hdK-0f;
-	Thu, 18 Jul 2024 22:33:52 +0000
-Date: Fri, 19 Jul 2024 06:33:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Valentin Caron <valentin.caron@foss.st.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Amelie Delaunay <amelie.delaunay@foss.st.com>,
-	Valentin Caron <valentin.caron@foss.st.com>
-Subject: Re: [PATCH v2 2/4] rtc: stm32: add pinctrl and pinmux interfaces
-Message-ID: <202407190654.I3RI7WfP-lkp@intel.com>
-References: <20240717074835.2210411-3-valentin.caron@foss.st.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OyEM+EVZatmM/mG7Jclvw/dPIvZljDTjgeylvofbztFTQr0AgH2SOMJidgrwXmASO6IyTqkPuMfas7HvUIMquUQjgAzh2P9FMIl6a5dvdqSZHiwrkzI4Y6OdNSR9v13xRbxH/2U7i1kYglVjKbS/ibTjzE+N83OLAP2xAi4DucY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BUyX0VUH; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-807007b8dd1so52912539f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 15:35:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1721342119; x=1721946919; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RHed+P96itcIQNzLtbTOuPRqeg9F31qpRuhm4M1r37w=;
+        b=BUyX0VUHv4e3+msQmonB5kA6JgwKFqACMjMRKZrnfcYYmocq9p5wjlYBHkrqFIobgZ
+         V6jzJUX3YW3+6EkBcRk+rhzdkpm60cjUrhk8pIuLCza51OxLExoaK7vh32YF8HN5Lo9x
+         06/AGuJUGhlGjfPYBAnyUwd6nsOSKt3NpP6gw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721342119; x=1721946919;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RHed+P96itcIQNzLtbTOuPRqeg9F31qpRuhm4M1r37w=;
+        b=Np+VFcQUgIniJL1UIa3V6HNCFsdhJVePFAYS9oLVm2Hud84Bqn98Lh6kDhRsfqEcMH
+         v88vPkc5ltDbAUWaHHI8jUTIdbS8vsKaqMWe6N4jV/YHbe+1SGuHELIv1tHe/JqmvxaD
+         YZtattDwMhaYzKh11+Wvwx1CmeK9WW2ty9whcYWfzcsxu5G9p+tCzJsp+8cMHvm2pRsz
+         6cO/nWFn7knJv2PARUEfSO0zZopr5lsfZu1cuuZ0Rya0ZDdXZEQ4ItAEzMwJwvNgXwbH
+         /0ZBpW5YW/TH0NBKJqIlwnq12u8kL5mtwqNeadhayLb78jIjpAJooT3p+sJnSB1FmexA
+         EaiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXJc8NtUe56FXB7wcnxb/Nu2Sqayi4WvvAJ+ghxGFXOkZ+cVzptj31TP/c02W/vo6Hvz5BhteG4sj3e4y3BX0snSN8XQns258ooqwAQ
+X-Gm-Message-State: AOJu0YzZKLBMCqy+OG7h9zBQmIc8FWz39YbX/U2YVct9K1iYiwqll5ZY
+	QgQCZt8sqQCjwyAFqmleepxs7jrA3RBwX2NqE+4clNkpDmDnFox0tSInn992wA==
+X-Google-Smtp-Source: AGHT+IE7ztAOpPJbMaHRiLmD4M8ceQs8LFBUXdW3Xk37Ryv3IBx0w2NCY6VQZzcxRrDl/CCuXvvQSw==
+X-Received: by 2002:a05:6602:6d86:b0:7ff:cec0:2985 with SMTP id ca18e2360f4ac-81711e17e2bmr905711639f.13.1721342118602;
+        Thu, 18 Jul 2024 15:35:18 -0700 (PDT)
+Received: from localhost (161.74.123.34.bc.googleusercontent.com. [34.123.74.161])
+        by smtp.gmail.com with UTF8SMTPSA id ca18e2360f4ac-819aba11fd4sm6868639f.4.2024.07.18.15.35.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Jul 2024 15:35:18 -0700 (PDT)
+Date: Thu, 18 Jul 2024 22:35:17 +0000
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Cc: gregkh@linuxfoundation.org, javier.carrasco@wolfvision.net,
+	benjamin.bara@skidata.com, macpaul.lin@mediatek.com,
+	linux.amoon@gmail.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, git@amd.com
+Subject: Re: [PATCH v2 1/2] usb: misc: onboard_dev: extend platform data to
+ add power on delay field
+Message-ID: <ZpmYpQepfSZDaPew@google.com>
+References: <1721244223-3194869-1-git-send-email-radhey.shyam.pandey@amd.com>
+ <1721244223-3194869-2-git-send-email-radhey.shyam.pandey@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240717074835.2210411-3-valentin.caron@foss.st.com>
+In-Reply-To: <1721244223-3194869-2-git-send-email-radhey.shyam.pandey@amd.com>
 
-Hi Valentin,
+On Thu, Jul 18, 2024 at 12:53:42AM +0530, Radhey Shyam Pandey wrote:
+> Introduce dedicated field 'power_on_delay_us' in onboard platform data
+> and update its delay for USB5744 configuration. Hub itself requires some
+> delay after reset to get to state where configuration data is going to
+> be accepted. Without delay upcoming support for configuration via SMBUS
+> is reporting a failure on the first SMBus write.
+> 
+> i2c 2-002d: error -ENXIO: BYPASS_UDC_SUSPEND bit configuration failed
+> 
+> Similar delay is likely also required for default configuration but
+> because there is enough time (code execution) between reset and usage
+> of the hub any issue is not visible but it doesn't mean delay shouldn't
+> be reflected.
+> 
+> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+> Suggested-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+> Changes for v2:
+> - New patch
+> ---
+>  drivers/usb/misc/onboard_usb_dev.c | 1 +
+>  drivers/usb/misc/onboard_usb_dev.h | 2 ++
+>  2 files changed, 3 insertions(+)
+> 
+> diff --git a/drivers/usb/misc/onboard_usb_dev.c b/drivers/usb/misc/onboard_usb_dev.c
+> index f2bcc1a8b95f..94d5424841fd 100644
+> --- a/drivers/usb/misc/onboard_usb_dev.c
+> +++ b/drivers/usb/misc/onboard_usb_dev.c
+> @@ -98,6 +98,7 @@ static int onboard_dev_power_on(struct onboard_dev *onboard_dev)
+>  
+>  	fsleep(onboard_dev->pdata->reset_us);
+>  	gpiod_set_value_cansleep(onboard_dev->reset_gpio, 0);
+> +	fsleep(onboard_dev->pdata->power_on_delay_us);
+>  
+>  	onboard_dev->is_powered_on = true;
+>  
+> diff --git a/drivers/usb/misc/onboard_usb_dev.h b/drivers/usb/misc/onboard_usb_dev.h
+> index fbba549c0f47..82c76a0b3346 100644
+> --- a/drivers/usb/misc/onboard_usb_dev.h
+> +++ b/drivers/usb/misc/onboard_usb_dev.h
+> @@ -10,6 +10,7 @@
+>  
+>  struct onboard_dev_pdata {
+>  	unsigned long reset_us;		/* reset pulse width in us */
+> +	unsigned long power_on_delay_us; /* power on pulse width in us */
 
-kernel test robot noticed the following build errors:
+nit: it isn't really a pulse width, just a simple delay.
 
-[auto build test ERROR on abelloni/rtc-next]
-[also build test ERROR on atorgue-stm32/stm32-next robh/for-next linus/master v6.10 next-20240718]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Valentin-Caron/dt-bindings-rtc-stm32-describe-pinmux-nodes/20240717-193541
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git rtc-next
-patch link:    https://lore.kernel.org/r/20240717074835.2210411-3-valentin.caron%40foss.st.com
-patch subject: [PATCH v2 2/4] rtc: stm32: add pinctrl and pinmux interfaces
-config: m68k-randconfig-r052-20240718 (https://download.01.org/0day-ci/archive/20240719/202407190654.I3RI7WfP-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240719/202407190654.I3RI7WfP-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407190654.I3RI7WfP-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-mdp.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-mfg.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-mm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-apmixedsys.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-topckgen.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-peri_ao.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-infra_ao.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-img.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-imp_iic_wrap.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-ipe.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-vdec.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-venc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-vpp0.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-vpp1.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-wpe.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-aud.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-cam.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-img.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-mfg.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-msdc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-scp_adsp.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-venc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-mfg.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-apmixedsys.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-mfg.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-vdec.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-venc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sunxi-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/suniv-f1c100s-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun20i-d1-r-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun50i-a100-r-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun50i-h6-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun50i-h6-r-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun50i-h616-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun4i-a10-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun6i-a31-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun6i-rtc-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-a23-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-a33-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-h3-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-r40-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-de2-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-r-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun9i-a80-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun9i-a80-de-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun9i-a80-usb-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/ixp4xx/ixp4xx-qmgr.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/mediatek/mtk-cmdq-helper.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/amlogic/meson-clk-measure.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/virtio/virtio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/virtio/virtio_ring.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/rt4831-regulator.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/reset/hisilicon/hi6220_reset.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/lp.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/dtlk.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/ppdev.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iommu/iova.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/rt4831.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firewire/uapi-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firewire/packet-serdes-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/vivaldi-fmap.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/i2c/busses/i2c-pxa.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwmon/mr75203.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/host/tmio_mmc_core.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/host/renesas_sdhi_core.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/mmc_core.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-aureal.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-cypress.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-emsff.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-evision.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-ezkey.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-vivaldi-common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-google-stadiaff.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-maltron.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-ortek.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-pl.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-primax.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-saitek.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-sjoy.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-speedlink.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-steam.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-sunplus.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-gaff.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-xinmo.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mailbox/mtk-cmdq-mailbox.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_powersave.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwtracing/intel_th/intel_th_msu_sink.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvmem/nvmem-apple-efuses.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/parport/parport.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/parsers/brcm_u-boot.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/parsers/tplink_safeloader.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/chips/cfi_util.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/chips/cfi_cmdset_0020.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spmi/hisi-spmi-controller.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spmi/spmi-pmic-arb.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/pcmcia_rsrc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/greybus/greybus.o
->> ERROR: modpost: "pinconf_generic_dt_node_to_map" [drivers/rtc/rtc-stm32.ko] undefined!
->> ERROR: modpost: "pinconf_generic_dt_free_map" [drivers/rtc/rtc-stm32.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>  	unsigned int num_supplies;	/* number of supplies */
+>  	const char * const supply_names[MAX_SUPPLIES];
+>  	bool is_hub;
+> @@ -24,6 +25,7 @@ static const struct onboard_dev_pdata microchip_usb424_data = {
+>  
+>  static const struct onboard_dev_pdata microchip_usb5744_data = {
+>  	.reset_us = 0,
+> +	.power_on_delay_us = 10000,
+>  	.num_supplies = 2,
+>  	.supply_names = { "vdd", "vdd2" },
+>  	.is_hub = true,
+> -- 
+> 2.34.1
+> 
 
