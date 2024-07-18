@@ -1,165 +1,178 @@
-Return-Path: <linux-kernel+bounces-256194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C4B3934A84
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:55:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 854B3934A87
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:56:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEEAB28A957
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:55:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F13F32847B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0F37F498;
-	Thu, 18 Jul 2024 08:55:25 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DDE17F7C3;
+	Thu, 18 Jul 2024 08:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="B67/8SEi"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7F37A715
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 08:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AF77FBA1
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 08:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721292925; cv=none; b=jvlW+RNBa7Q7yGaeUqpwYlM/xkunW1kVN6/8XEWoDruWGhZ2r1M+2PlCZeG/KV5w/Qtzk7qWQjP4aoYrSFlnEyPn7DKuK6HkABe19RwUOZ+FCCDMOp6/R38sP/6788VuJbkba/xd4O21kMjQDHrV6ZKDeCAhdBbxifsf/FJshr0=
+	t=1721292984; cv=none; b=DzCGU7lSWlkbhPJk7E+FETOn4p7PD1APBxtpXQUxWU8XBDX5frhc+OeiPOQFLJmhJO1JEmjZEfSRKDYBBcabBC9QKEZdNXMzch8ucdLUIgrKJefEYSUqi+I5CT0HghvCVNvnwuiGE/Vjcg1UxYKC8Q1hywIx4j1bj2ZTPrsHils=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721292925; c=relaxed/simple;
-	bh=G4tg2F/QW0nKngT8+nay3BKNMXLV48bRsFGcwpHn98I=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MpVCDCswIwq/GjcMIhbx/rVExBkZ0RGfIu0HloqtPlbXWqhAWfNz5BulOikGVW+NHJU57Jnwid9QdIZB2smelbv6O4mXD1q43Cv//xtk75pxjIvg9S1nFVbwX8rU2AAvycSW2LAIU5Ce/cueI0wkgdzQ/7Q3mMorpZBf0P/EhA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8048edd8993so90701639f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 01:55:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721292923; x=1721897723;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/7McO9m37Lnvov1xbsyKaOD5AcBS50AYUxNojjkUYXI=;
-        b=autTU1aXn9PjO1dHSQv/65PtieepOl29WhJjBRoQx9+LMjwxDk8EGhhnDShLxsjtUf
-         UmuE2Q1VBtyCnMC8GcT+xTEL/6tXeHrZuR54dsjkF9Ql0pNUooQRozQ6P7HRb/7GfU1M
-         qve8M7kKuH8ARi8Z0nrY3MzqU9q7RxZVYjJSaRIHHRuQEds3jxzC3QKrCkUg5Zc5OdNf
-         dxkOCWkRdwn+Q/kmE4aorJvFeJirU14BMv4g6I4M8jGSE6ZF/Dhm7mBlN291LZMONLo0
-         85nqlV7ss1D1hlfytEAeN1g/8BLyZH/MZYvSNYsoiYsH25sjK10UxuUCy25dl3xlYUFN
-         oXjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIQDC0ny4DmktV6yDH27F37xpRGfCGbVi4KiR7dFq86dTbTL2oOOSfO1UAJYg/WkUcQyIGHuKZcvkDuwfkqRYn4lDK74j0cp0vL/Ro
-X-Gm-Message-State: AOJu0Yxi/Kzk+TKoN1g9BthW0suQPZ0mioDTzrhjoculsG5/UVV5bNBX
-	HoxfcJJrAkeZTzlmCEAE4wc6JACFNruPKPTw4c1aLJNfR0gUEGFLynTEeOGZXp03ZM0BZUDH1c2
-	YTlz0l1PF5ZR4ep5V6o4GdK5YeSRC+kgxkgES5IQM1XsIIhHLPX/ljpQ=
-X-Google-Smtp-Source: AGHT+IEAGzfHtksu/BSVmcmICthN2j/912YUuRqCXWfnNS67UCTXmYCAib65VHO+zAAZXCBxtUWn47APkrsmVyUBIgMYctbJZu4/
+	s=arc-20240116; t=1721292984; c=relaxed/simple;
+	bh=ufHGR84Ts7TyIV1HbNK0pVDmWcDSKSrL7sy3BOnKJxI=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=WHKLwWFUt9IJDw/w2294ad3sjW1uvG0z0GLqNxdiQuLavoH+yfLjY9NteN4AvKmeB2EQ11z0X3OVzDgAZPvZiBXPjUWjssJqDNO5P3g+SOmOGugwc9v5dJaF5gOu80S98F8d5CUqCyXi1gypHpQCI3e9Ia8dqaMxfFLHtX7rQ7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=B67/8SEi; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 46I8twLp3139901
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 18 Jul 2024 01:55:59 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 46I8twLp3139901
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024071601; t=1721292959;
+	bh=p1bS2PJReKAboFX8GdS8kSgPNgi46JIAfAMiwdA5Yj8=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=B67/8SEiq4HXk/Qj3qNV/vqxZ70XizOTTxgavbjeWSiRe5JnQUcgmnCALCxJWPs7w
+	 UCkiTfMl7EnbfhDka3XVQESnRJlKOiiHJybldCTuR/XAAYtyNKLTuzufH1R0dspYjB
+	 pUy7PUD+372vUbj2MPvRnIKBq28tALlo4Op/1EJUsiLwW3sxyrPKO7jDWAgD7HEbTA
+	 Hk+hWtuBVputeneA2qQFns2SdqYsLOsIpNdyfGZmOkIHZXbifkhcH9BjlWpjPLF/oF
+	 PphKMav1C9CbF0emWJu9oEaXxjh52p6UBlXRUGfID8PtHYhDLhQftVvKT0GaqcrtFA
+	 unjVBau/+rNew==
+Date: Thu, 18 Jul 2024 01:55:56 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Uros Bizjak <ubizjak@gmail.com>
+CC: x86@kernel.org, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_x86/boot=3A_Use_=5F=5FASM=5FSIZE?=
+ =?US-ASCII?Q?=28=29_to_reduce_ifdeffery_in_cpuflags=2Ec?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAFULd4bs7meRq_iTqq1nSzpkSzEQqLkM8S=x4=zqtX6Fo9qQPQ@mail.gmail.com>
+References: <20240718063242.52275-1-ubizjak@gmail.com> <4049EB19-E869-4886-AD61-E716A75E4559@zytor.com> <CAFULd4bs7meRq_iTqq1nSzpkSzEQqLkM8S=x4=zqtX6Fo9qQPQ@mail.gmail.com>
+Message-ID: <77174D9A-79DE-44A7-85E0-63B0BFE343C2@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:25c7:b0:4b9:afd1:d4f8 with SMTP id
- 8926c6da1cb9f-4c215870ddemr228550173.2.1721292922817; Thu, 18 Jul 2024
- 01:55:22 -0700 (PDT)
-Date: Thu, 18 Jul 2024 01:55:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000381fbb061d81bd85@google.com>
-Subject: [syzbot] [kernel?] KCSAN: data-race in kobject_put /
- kobject_uevent_env (2)
-From: syzbot <syzbot+0ac8e4da6d5cfcc7743e@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	rafael@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On July 18, 2024 1:52:17 AM PDT, Uros Bizjak <ubizjak@gmail=2Ecom> wrote:
+>On Thu, Jul 18, 2024 at 8:36=E2=80=AFAM H=2E Peter Anvin <hpa@zytor=2Ecom=
+> wrote:
+>>
+>> On July 17, 2024 11:32:18 PM PDT, Uros Bizjak <ubizjak@gmail=2Ecom> wro=
+te:
+>> >Use __ASM_SIZE() macro to add correct insn suffix to pushf/popf=2E
+>> >
+>> >Signed-off-by: Uros Bizjak <ubizjak@gmail=2Ecom>
+>> >Cc: Thomas Gleixner <tglx@linutronix=2Ede>
+>> >Cc: Ingo Molnar <mingo@kernel=2Eorg>
+>> >Cc: Borislav Petkov <bp@alien8=2Ede>
+>> >Cc: Dave Hansen <dave=2Ehansen@linux=2Eintel=2Ecom>
+>> >Cc: "H=2E Peter Anvin" <hpa@zytor=2Ecom>
+>> >---
+>> > arch/x86/boot/cpuflags=2Ec | 10 +++-------
+>> > 1 file changed, 3 insertions(+), 7 deletions(-)
+>> >
+>> >diff --git a/arch/x86/boot/cpuflags=2Ec b/arch/x86/boot/cpuflags=2Ec
+>> >index d75237ba7ce9=2E=2Eaacabe431fd5 100644
+>> >--- a/arch/x86/boot/cpuflags=2Ec
+>> >+++ b/arch/x86/boot/cpuflags=2Ec
+>> >@@ -2,6 +2,7 @@
+>> > #include <linux/types=2Eh>
+>> > #include "bitops=2Eh"
+>> >
+>> >+#include <asm/asm=2Eh>
+>> > #include <asm/processor-flags=2Eh>
+>> > #include <asm/required-features=2Eh>
+>> > #include <asm/msr-index=2Eh>
+>> >@@ -36,13 +37,8 @@ static int has_fpu(void)
+>> >  * compressed/ directory where it may be 64-bit code, and thus needs
+>> >  * to be 'pushfq' or 'popfq' in that case=2E
+>> >  */
+>> >-#ifdef __x86_64__
+>> >-#define PUSHF "pushfq"
+>> >-#define POPF "popfq"
+>> >-#else
+>> >-#define PUSHF "pushfl"
+>> >-#define POPF "popfl"
+>> >-#endif
+>> >+#define PUSHF __ASM_SIZE(pushf)
+>> >+#define POPF __ASM_SIZE(popf)
+>> >
+>> > int has_eflag(unsigned long mask)
+>> > {
+>>
+>> Just use pushf/popf=2E gas hasn't needed that suffix for a long time as=
+ far as I know=2E
+>
+>Unfortunately, clang does not do the right thing when pushf/popf
+>without suffix are used=2E
+>
+>arch/x86/boot/cpuflags=2Ec compiles to:
+>
+>00000000 <has_eflag>:
+>   0:    9c                       pushf
+>   1:    9c                       pushf
+>   2:    66 5a                    pop    %edx
+>   4:    66 89 d1                 mov    %edx,%ecx
+>   7:    66 31 c1                 xor    %eax,%ecx
+>   a:    66 51                    push   %ecx
+>   c:    9d                       popf
+>   d:    9c                       pushf
+>   e:    66 59                    pop    %ecx
+>  10:    9d                       popf
+>  11:    66 31 ca                 xor    %ecx,%edx
+>  14:    66 31 c9                 xor    %ecx,%ecx
+>  17:    66 85 c2                 test   %eax,%edx
+>  1a:    0f 95 c1                 setne  %cl
+>  1d:    66 89 c8                 mov    %ecx,%eax
+>  20:    66 c3                    retl
+>
+>instead of:
+>
+>00000000 <has_eflag>:
+>   0:    66 9c                    pushfl
+>   2:    66 9c                    pushfl
+>   4:    66 5a                    pop    %edx
+>   6:    66 89 d1                 mov    %edx,%ecx
+>   9:    66 31 c1                 xor    %eax,%ecx
+>   c:    66 51                    push   %ecx
+>   e:    66 9d                    popfl
+>  10:    66 9c                    pushfl
+>  12:    66 59                    pop    %ecx
+>  14:    66 9d                    popfl
+>  16:    66 31 ca                 xor    %ecx,%edx
+>  19:    66 31 c9                 xor    %ecx,%ecx
+>  1c:    66 85 c2                 test   %eax,%edx
+>  1f:    0f 95 c1                 setne  %cl
+>  22:    66 89 c8                 mov    %ecx,%eax
+>  25:    66 c3                    retl
+>
+>Please note missing 0x66 operand size override prefixes with pushfl
+>and popfl=2E This is 16bit code, operand prefixes are mandatory to push
+>32-bit EFLAGS register (ID flag lives in bit 21)=2E
+>
+>So, the original patch is the way to go=2E
+>
+>Uros=2E
+>
 
-syzbot found the following issue on:
+You do know that has_eflag can be completely elided on x86-64, or you can =
+use %z with one of the register operands=2E
 
-HEAD commit:    d67978318827 Merge tag 'x86_cpu_for_v6.11_rc1' of git://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11af145e980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ca8f4e92a17047ec
-dashboard link: https://syzkaller.appspot.com/bug?extid=0ac8e4da6d5cfcc7743e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1f219d0a9994/disk-d6797831.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/91aed26b830f/vmlinux-d6797831.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c7e753e56950/bzImage-d6797831.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0ac8e4da6d5cfcc7743e@syzkaller.appspotmail.com
-
-llcp: llcp_sock_recvmsg: Recv datagram failed state 3 -6 0
-==================================================================
-BUG: KCSAN: data-race in kobject_put / kobject_uevent_env
-
-read-write to 0xffff888139ddec54 of 1 bytes by task 22621 on cpu 0:
- kobject_uevent_env+0x4e/0x550 lib/kobject_uevent.c:476
- kobject_uevent+0x1c/0x30 lib/kobject_uevent.c:641
- device_del+0x6fa/0x780 drivers/base/core.c:3886
- nfc_unregister_device+0x114/0x130 net/nfc/core.c:1183
- nci_unregister_device+0x14c/0x160 net/nfc/nci/core.c:1312
- virtual_ncidev_close+0x30/0x50 drivers/nfc/virtual_ncidev.c:172
- __fput+0x192/0x6f0 fs/file_table.c:422
- ____fput+0x15/0x20 fs/file_table.c:450
- task_work_run+0x13a/0x1a0 kernel/task_work.c:180
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0xbe/0x130 kernel/entry/common.c:218
- do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-read to 0xffff888139ddec54 of 1 bytes by task 22615 on cpu 1:
- kobject_put+0x25/0x180 lib/kobject.c:733
- put_device+0x1f/0x30 drivers/base/core.c:3787
- nfc_put_device net/nfc/nfc.h:103 [inline]
- nfc_llcp_local_put+0x87/0xb0 net/nfc/llcp_core.c:196
- nfc_llcp_sock_free net/nfc/llcp_sock.c:1021 [inline]
- llcp_sock_destruct+0x14d/0x1a0 net/nfc/llcp_sock.c:966
- __sk_destruct+0x3d/0x440 net/core/sock.c:2175
- sk_destruct net/core/sock.c:2223 [inline]
- __sk_free+0x284/0x2d0 net/core/sock.c:2234
- sk_free+0x39/0x70 net/core/sock.c:2245
- sock_put include/net/sock.h:1879 [inline]
- llcp_sock_release+0x38f/0x3d0 net/nfc/llcp_sock.c:646
- __sock_release net/socket.c:659 [inline]
- sock_close+0x68/0x150 net/socket.c:1421
- __fput+0x192/0x6f0 fs/file_table.c:422
- ____fput+0x15/0x20 fs/file_table.c:450
- task_work_run+0x13a/0x1a0 kernel/task_work.c:180
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0xbe/0x130 kernel/entry/common.c:218
- do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-value changed: 0x07 -> 0x0d
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 PID: 22615 Comm: syz.0.6322 Tainted: G        W          6.10.0-syzkaller-01155-gd67978318827 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+One more reason why clang really needs to shape up=2E
 
