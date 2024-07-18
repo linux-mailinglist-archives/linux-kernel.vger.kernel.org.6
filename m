@@ -1,75 +1,92 @@
-Return-Path: <linux-kernel+bounces-256682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4F619351DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 20:45:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FFE29351EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 20:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F184B249BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:45:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BADF1F21334
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806AB145FE2;
-	Thu, 18 Jul 2024 18:43:37 +0000 (UTC)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2431459FC;
+	Thu, 18 Jul 2024 18:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NhRBYe4/"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248E9145B24;
-	Thu, 18 Jul 2024 18:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12F3145332;
+	Thu, 18 Jul 2024 18:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721328216; cv=none; b=Po8bJ6KLAMit5f1cX5XAaytfujWp0RjRT2no0B4ztBMjr1VEmMbfbrxS7ozHBU6GKk2OwzwrMVWVnZ2N8Bl1QD+J9VJL7mRwODOzPmcheGOr2Rfa25+EbVN6zXbFuDCQpbVscyoCdV76ht9JTl7PF7+SBVK5SkICIVa6gi2Y0zs=
+	t=1721328288; cv=none; b=V81k5aK+OdTgwO5Uo/OGAo26Uh4/f2535hFW85i4FvDO5AmM/G0wraT+mBt06vb1tpZiixraTu7AO74ltA+HelI07mmSWYQXwDSDNWyZ+EB1X4aD8L75JSaMIfB23d4ggbPnjVj+VaPiZYQNt6GSGNjdfHtviVeqa0D/iXdUgus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721328216; c=relaxed/simple;
-	bh=SFUdWWInwtuiBpj1g9M+LnbLUdUW5EYRgDvbx6lA7pA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gRIbpZWxOCGLt2Wh3oFec4PQGOdceFpg7qcGsDh8SFCsDXoFe91V3Z1tAaHbDFQpFmwlI8PmA1fIq7RUGjMDAgkOi6410iV8rZRe/NQVH1k8E5JhAv1tRWNjMScUgN23BH2ftFCBB1noj6V/LuSw23gWX0kVQZW63EnXwV0hA/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	s=arc-20240116; t=1721328288; c=relaxed/simple;
+	bh=+XRF+u4xM/4om6BU01EZCl77VDMoLkuPeewcYmgvI1I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RRROY2c5PNxgJ7Z5yMWmleRjWboNQZ3QEv7dqYpYCS2IE/IjKz5MJOFYjqPdd8zIKsUUn7OWPUOrKLSXfZhqPWWcagKIA+lfAiM1yU6wkQS0Q/n9F5bv/+g1c1nSHxzmxu/j+u6JNXtTEoXkVe5Sj153uPh0SjwUmNpTpHO7TF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NhRBYe4/; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52ed741fe46so1042643e87.0;
-        Thu, 18 Jul 2024 11:43:30 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fc611a0f8cso7733265ad.2;
+        Thu, 18 Jul 2024 11:44:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721328285; x=1721933085; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C5Xir0kH2JjHhRYu7hQDjOGhA/R02SRiM/dfrZJX4tw=;
+        b=NhRBYe4/86zPJWbiRxXRLbZSEAv7JzX0ymgTC3J8581s2yWSS9MpJwnnw3DLfEZUre
+         bB2200t8RtPjJOeu8ZtWDht/VB+VdZIJi1DIt66JERzCKWNAfp6Exyxsc1Njapr/IMOB
+         s7aenmg14LgsfYziCeL8WYjhq9z8y0qNUCt0blRbGS1+fCPOUF73swSDLdKBa8VTP7y3
+         YWLsbsQT5n0ofqrCNHZ8YUxf23VPDLR+k6b1tQUqRpuuNnPsYNnH7zXaQmXVK3UrQIci
+         5/HP9QMtoJx1zGajn/3PyB4noVzCFFxpcueNGCM+tKo9d/FcpC8h1EZlK/CIEbuY6jZP
+         WX/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721328209; x=1721933009;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4XeMe11OUYPV7XqgVENrFs5LHpWOFIgoau8MLc6vOHU=;
-        b=ZEaDaP873iI83fu2EiKITBRUEsCm6FU1PQtDSPrBdxWEwrvEnniI1y2LW+cOYr7eJL
-         6VicnSriMW3yYAYAY/OjuqFvsN790DMuEULYL46xmw/WAqRL9xBJqGgv7a+VEku7hLR4
-         GEnNgeFBhExpnX99Ayo8sLvAuH0z5VO+SEV3aIcAYex1F54snt9Biq77dDLEJKaLuo0J
-         FnjtCeHjddZAC1bG6+j3SL3WKORGVEX7+V/S3BQlnYMqjqVKuJ0+5j1LoDJnq7WM/p2/
-         c19WbWJ/GXKVjfwV7F2x9aN4FD+08WsK8YwgkkdZOymORds+F55eCT/TS+2na8ELEQxb
-         ofpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDm9BYZBSH9z+7oAKH+JV1rfHfF8olhMbHIlCmusoHC5JlRLwbmq91md4DgsrV9x4EOLtjhRfsnsi0v2UJNttjseE5hALT2nYphXb0RoC2Z+i/qdaKt0ggar6v4BZbHEqqPu5q
-X-Gm-Message-State: AOJu0YxYeMzwtCP1pV84QA6yxmo+LeiaRIXaF4zAAYTWsHMta5VPSQPB
-	eiImIy7OzECJvX+3eaZmOMaHojwJCI1GJC4mPAzW4PjUDC5/qwSj
-X-Google-Smtp-Source: AGHT+IEECp55Densx2ZVEqhSwgt/Yl9a60qu1BgwaRkG5ATPZKQ4kpwCgXfcLjtO1kjzGjas+ozq1w==
-X-Received: by 2002:a05:6512:3d27:b0:52d:b150:b9b3 with SMTP id 2adb3069b0e04-52ee53dbcf3mr4550621e87.32.1721328208976;
-        Thu, 18 Jul 2024 11:43:28 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-009.fbsv.net. [2a03:2880:30ff:9::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc800f5asm599003666b.178.2024.07.18.11.43.28
+        d=1e100.net; s=20230601; t=1721328285; x=1721933085;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C5Xir0kH2JjHhRYu7hQDjOGhA/R02SRiM/dfrZJX4tw=;
+        b=X83hlWr44LQjzY/YMPeO/3rMXsAzDnYmUEsOsDdM58fTLzgxNnlO/Qehvr0GrOBK8V
+         ksftdngg1EKkXQwiKItDpFl9+lpS1HsP6TcZB9bCyXWWYbnu8nqxlI/Cb+afnXMQkK8v
+         nqG9c49iAi6CD0hW+OZ2T5+HQt3ESRJF2GnbAq1TJ3439Ghfe3jLSnxtFrylv5AYZuko
+         1J6AxA1zsTHdQg2/nY6ABcjrKEAJ4744MLSt2wjzftoXhndbOQNpBZsm3FqzGtIFudY0
+         6Xgv0YNnOHok+HBBwUvkAXKIW6TF3dvlO14rur6yG0x5dO5tQQ444HOsWDOxVLwmQlbr
+         38TA==
+X-Forwarded-Encrypted: i=1; AJvYcCWVdvM38/aAj7N9YND/WyLpNkAq8FGxP4SDTJa3yzmOKQlYvt0M0ApOriMMMjkzUFZYFurfjZV1oPke2Ishj+NoSIZa6NPWmBYgzikH+OQE16Sst4ez5HKYDZXzIlLxRXlOxI3cWjOIWw==
+X-Gm-Message-State: AOJu0YwH3s/T84m1OGNFn8kU2i+VjmTaQMITkym//vr25USMHU3WUWTZ
+	mbggqSiNksirWHffbr+34Ksho3k/fTVYIQ8iy5qqtoNwiYsFtplMqFe/jg==
+X-Google-Smtp-Source: AGHT+IHGChTs8X3tqnORG7L3i64G79rLMi0c0cdzHOqrs0XdmhGbNEKKyA2Tqb9BQKUtqRCD17YRFg==
+X-Received: by 2002:a05:6a21:9ccb:b0:1c0:d9c9:64f9 with SMTP id adf61e73a8af0-1c3fdd998e6mr7280403637.36.1721328284730;
+        Thu, 18 Jul 2024 11:44:44 -0700 (PDT)
+Received: from localhost ([2a00:79e1:2e00:1301:3279:d3cd:5dde:c799])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bba4506sm96459175ad.85.2024.07.18.11.44.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 11:43:28 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: kuba@kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com
-Cc: thepacketgeek@gmail.com,
-	riel@surriel.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	paulmck@kernel.org,
-	davej@codemonkey.org.uk
-Subject: [RFC PATCH 2/2] netconsole: Defer netpoll cleanup to avoid lock release during list traversal
-Date: Thu, 18 Jul 2024 11:43:06 -0700
-Message-ID: <20240718184311.3950526-3-leitao@debian.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240718184311.3950526-1-leitao@debian.org>
-References: <20240718184311.3950526-1-leitao@debian.org>
+        Thu, 18 Jul 2024 11:44:44 -0700 (PDT)
+From: Rob Clark <robdclark@gmail.com>
+To: linux-arm-msm@vger.kernel.org
+Cc: Doug Anderson <dianders@chromium.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Rob Clark <robdclark@chromium.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	dri-devel@lists.freedesktop.org (open list:DRM PANEL DRIVERS),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/3] dt-bindings: display: panel: samsung,atna45dc02: Document ATNA45DC02
+Date: Thu, 18 Jul 2024 11:44:32 -0700
+Message-ID: <20240718184434.6307-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,183 +95,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Current issue:
-- The `target_list_lock` spinlock is held while iterating over
-  target_list() entries.
-- Mid-loop, the lock is released to call __netpoll_cleanup(), then
-  reacquired.
-- This practice compromises the protection provided by
-  `target_list_lock`.
+From: Rob Clark <robdclark@chromium.org>
 
-Reason for current design:
-1. __netpoll_cleanup() may sleep, incompatible with holding a spinlock.
-2. target_list_lock must be a spinlock because write_msg() cannot sleep.
-   (See commit b5427c27173e ("[NET] netconsole: Support multiple logging targets"))
+The Samsung ATNA45DC02 panel is an AMOLED eDP panel, similar to the
+existing ATNA45AF01 and ATNA33XC20 panel but with a higher resolution.
 
-Defer the cleanup of the netpoll structure to outside the
-target_list_lock() protected area. Create another list
-(target_cleanup_list) to hold the entries that need to be cleaned up,
-and clean them using a mutex (target_cleanup_list_lock).
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Rob Clark <robdclark@chromium.org>
 ---
- drivers/net/netconsole.c | 77 +++++++++++++++++++++++++++++++---------
- 1 file changed, 61 insertions(+), 16 deletions(-)
+ .../devicetree/bindings/display/panel/samsung,atna33xc20.yaml   | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-index 9c09293b5258..0515fee5a2d1 100644
---- a/drivers/net/netconsole.c
-+++ b/drivers/net/netconsole.c
-@@ -37,6 +37,7 @@
- #include <linux/configfs.h>
- #include <linux/etherdevice.h>
- #include <linux/utsname.h>
-+#include <linux/rtnetlink.h>
+diff --git a/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml b/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml
+index d668e8d0d296..284a4ee79bbf 100644
+--- a/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml
++++ b/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml
+@@ -19,6 +19,8 @@ properties:
+       - samsung,atna33xc20
+       # Samsung 14.5" WQXGA+ (2880x1800 pixels) eDP AMOLED panel
+       - samsung,atna45af01
++      # Samsung 14.5" 3K (2944x1840 pixels) eDP AMOLED panel
++      - samsung,atna45dc02
  
- MODULE_AUTHOR("Maintainer: Matt Mackall <mpm@selenic.com>");
- MODULE_DESCRIPTION("Console driver for network interfaces");
-@@ -72,9 +73,16 @@ __setup("netconsole=", option_setup);
- 
- /* Linked list of all configured targets */
- static LIST_HEAD(target_list);
-+/* target_cleanup_list is used to track targets that need to be cleaned outside
-+ * of target_list_lock. It should be cleaned in the same function it is
-+ * populated.
-+ */
-+static LIST_HEAD(target_cleanup_list);
- 
- /* This needs to be a spinlock because write_msg() cannot sleep */
- static DEFINE_SPINLOCK(target_list_lock);
-+/* This needs to be a mutex because netpoll_cleanup might sleep */
-+static DEFINE_MUTEX(target_cleanup_list_lock);
- 
- /*
-  * Console driver for extended netconsoles.  Registered on the first use to
-@@ -323,6 +331,39 @@ static ssize_t remote_mac_show(struct config_item *item, char *buf)
- 	return sysfs_emit(buf, "%pM\n", to_target(item)->np.remote_mac);
- }
- 
-+/* Clean up every target in the cleanup_list and move the clean targets back to the
-+ * main target_list.
-+ */
-+static void netconsole_process_cleanups_core(void)
-+{
-+	struct netconsole_target *nt, *tmp;
-+	unsigned long flags;
-+
-+	/* The cleanup needs RTNL locked */
-+	ASSERT_RTNL();
-+
-+	mutex_lock(&target_cleanup_list_lock);
-+	list_for_each_entry_safe(nt, tmp, &target_cleanup_list, list) {
-+		/* all entries in the cleanup_list needs to be disabled */
-+		WARN_ON_ONCE(nt->enabled);
-+		do_netpoll_cleanup(&nt->np);
-+		/* moved the cleaned target to target_list. Need to hold both locks */
-+		spin_lock_irqsave(&target_list_lock, flags);
-+		list_move(&nt->list, &target_list);
-+		spin_unlock_irqrestore(&target_list_lock, flags);
-+	}
-+	WARN_ON_ONCE(!list_empty(&target_cleanup_list));
-+	mutex_unlock(&target_cleanup_list_lock);
-+}
-+
-+/* Do the list cleanup with the rtnl lock hold */
-+static void netconsole_process_cleanups(void)
-+{
-+	rtnl_lock();
-+	netconsole_process_cleanups_core();
-+	rtnl_unlock();
-+}
-+
- /*
-  * This one is special -- targets created through the configfs interface
-  * are not enabled (and the corresponding netpoll activated) by default.
-@@ -376,12 +417,20 @@ static ssize_t enabled_store(struct config_item *item,
- 		 * otherwise we might end up in write_msg() with
- 		 * nt->np.dev == NULL and nt->enabled == true
- 		 */
-+		mutex_lock(&target_cleanup_list_lock);
- 		spin_lock_irqsave(&target_list_lock, flags);
- 		nt->enabled = false;
-+		/* Remove the target from the list, while holding
-+		 * target_list_lock
-+		 */
-+		list_move(&nt->list, &target_cleanup_list);
- 		spin_unlock_irqrestore(&target_list_lock, flags);
--		netpoll_cleanup(&nt->np);
-+		mutex_unlock(&target_cleanup_list_lock);
- 	}
- 
-+	/* Deferred cleanup */
-+	netconsole_process_cleanups();
-+
- 	mutex_unlock(&dynamic_netconsole_mutex);
- 	return strnlen(buf, count);
- out_unlock:
-@@ -950,7 +999,7 @@ static int netconsole_netdev_event(struct notifier_block *this,
- 				   unsigned long event, void *ptr)
- {
- 	unsigned long flags;
--	struct netconsole_target *nt;
-+	struct netconsole_target *nt, *tmp;
- 	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
- 	bool stopped = false;
- 
-@@ -958,9 +1007,9 @@ static int netconsole_netdev_event(struct notifier_block *this,
- 	      event == NETDEV_RELEASE || event == NETDEV_JOIN))
- 		goto done;
- 
-+	mutex_lock(&target_cleanup_list_lock);
- 	spin_lock_irqsave(&target_list_lock, flags);
--restart:
--	list_for_each_entry(nt, &target_list, list) {
-+	list_for_each_entry_safe(nt, tmp, &target_list, list) {
- 		netconsole_target_get(nt);
- 		if (nt->np.dev == dev) {
- 			switch (event) {
-@@ -970,25 +1019,16 @@ static int netconsole_netdev_event(struct notifier_block *this,
- 			case NETDEV_RELEASE:
- 			case NETDEV_JOIN:
- 			case NETDEV_UNREGISTER:
--				/* rtnl_lock already held
--				 * we might sleep in __netpoll_cleanup()
--				 */
- 				nt->enabled = false;
--				spin_unlock_irqrestore(&target_list_lock, flags);
--
--				__netpoll_cleanup(&nt->np);
--
--				spin_lock_irqsave(&target_list_lock, flags);
--				netdev_put(nt->np.dev, &nt->np.dev_tracker);
--				nt->np.dev = NULL;
-+				list_move(&nt->list, &target_cleanup_list);
- 				stopped = true;
--				netconsole_target_put(nt);
--				goto restart;
- 			}
- 		}
- 		netconsole_target_put(nt);
- 	}
- 	spin_unlock_irqrestore(&target_list_lock, flags);
-+	mutex_unlock(&target_cleanup_list_lock);
-+
- 	if (stopped) {
- 		const char *msg = "had an event";
- 
-@@ -1007,6 +1047,11 @@ static int netconsole_netdev_event(struct notifier_block *this,
- 			dev->name, msg);
- 	}
- 
-+	/* Process target_cleanup_list entries. By the end, target_cleanup_list
-+	 * should be empty
-+	 */
-+	netconsole_process_cleanups_core();
-+
- done:
- 	return NOTIFY_DONE;
- }
+   enable-gpios: true
+   port: true
 -- 
-2.43.0
+2.45.2
 
 
