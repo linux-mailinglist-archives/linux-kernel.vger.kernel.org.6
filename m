@@ -1,178 +1,198 @@
-Return-Path: <linux-kernel+bounces-255957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BBA9934703
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:01:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E881A9346B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 05:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29D071F22019
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 04:01:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73E681F2223F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:29:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB482D057;
-	Thu, 18 Jul 2024 04:01:17 +0000 (UTC)
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2110.outbound.protection.partner.outlook.cn [139.219.146.110])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9463A1C9;
+	Thu, 18 Jul 2024 03:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LyVfzpNX"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2042.outbound.protection.outlook.com [40.107.92.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8035328366;
-	Thu, 18 Jul 2024 04:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37CA259C
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 03:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.42
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721275276; cv=fail; b=VSvu1Zeau73OORuk5tNFLSmKEyJrinJvxbP3KHXls/Ev6ZPV6H7nG18pwDn+2c3HchW7HvOS183E8BZlUCrocd7LQ/Yysd/UsIALfIPVb6LtYIXhU4+HGc4aiwi2RzQFCA9TgQdeIeMQX1EYzkO5DzWoyeWmAtMhBKD9qeUfOsY=
+	t=1721273338; cv=fail; b=e+tNZ4L/YeVNE1XCtME7FziK7pnDj/bztcX4XhqTABpV7HiJFqkxe/ifEMhoKePSd2UCNNNJJ9zOz2xyq7q/e0NGX/X5esvBMtGp49u11XOZwiDTAyCRWh/kkJ+2nYnBhi+BjPWfHidisFLLSfakC4wiucgAW+eAQrkomroqu6w=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721275276; c=relaxed/simple;
-	bh=oHnhrOBFfd6JOM6QcOedN0vteZsv7jxNwPs0DqzJqYk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QLsfbKH971hSsNzg71BgTW5ktvJGvzHq69gnubqdQKUfFxxHBPVZqXc8vkOUXTtnuSV+sWiJ6c+EPdF7zykv3FuU5R9n2Cf3vGty9IDbhUZabNGi6bsnD3C43NxLKELXtJIwLNO+39IT9xRuZHRUlmbw7s5kueIpZpttete2B5o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dK0Vw7z4H3ciAbovjqO4Ohd73kkcdlJNTQAnAkjC1pS4EF7aMxi4dTzHUck0KZ0i4yt6pPYYUTEojnzmS1THlN0F4I2G3UDhZFMozgjj7CB2SGPYgSGEMcZNG1Xt6AGVj3lv/hhdhjh+NUF14pWJb0Sz7jyKyPck/hflhdHDxRM9pmKt6wNHd4buBkEl0kJRDQ8y3DkhJ+xNxh/+VjI0pef2EfkRCWAjZcshk8LzTPhttrX0LIoXS4aw3E2Lspk7AcFlCdp5NHaDj8+eliBiJ8SYaw1/wMAjRtc/EeGo+7bpkqCo1FITeBvWIbUANCHmLiIv16duJLrvQjcW25eHoA==
+	s=arc-20240116; t=1721273338; c=relaxed/simple;
+	bh=UWDfX3cJOlGAy4F/0Q890B/zIgYLsBIR4l2lpPfxLwQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SQbzyg4DGOU+YhelZsUYCrn9NgGB4pEhTv0VH6dp/s+xMAO1/Jqng3YWmB9RTisohOTolMz5h2rdCdnvjdTUo3/nwEnALIiZMHuvnAzMS48ce35TpwBwPSXxWbSN1ACXkd81S5goQdDJyS6gR1Asexxec4MWO0tU3lyXYsuh7j8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LyVfzpNX; arc=fail smtp.client-ip=40.107.92.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FdrzZ36TCvdhH4vmR4F5dNyTHjD6i81OUYfb61EVS1DklnX084PBRCVplOrRjfMNRifLMUPUCOqjD8lDh+Xnj53Ycm9QATry2DU2P8ZbjF5eA7cqCLfu0Uu8fGY4jZQ1nJobGbwQcIh8D6BiZ5/B6rOOflGcsyF0XWPGd2y7rwFx62PDc39A2ohcNWhXZiJMJhJNcLMY5Ryboo1/J7wsFUMsL6jU4mPqUy4ZxyEwXQL/fQsDF4ImzULpu7sbU7hFU+h8Uz4kVaNlloUst0VUH6u149bXYYX+bvX7Pi8IBkNS2eXC/Sqg0ZA7m6zxS+ZgeCw/A9loagzQKYAKLa9+Xw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
+ s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gSrFOBGfbgCUI+unAuWZ1XrSPb4kJg5v+m4cXld/C+Y=;
- b=C4a0OrAkKNN78HRrLMJ2xcGPoAxRMGA0lvArLqQUrrSoS1vXXcj/Nv8T4uURgriLUBAIQxOyICK3PcQphPFfoNx31ndoPAmISOTlctm08GPhGtBTLGQ5LeWsVBw1fcBDN22eqrpGa9ZMY3vJMGpUDFxNa5Kd07Tm21zUsjQAkgzALa2MTDDVeA2N3BlQYeEjUXUL/Xw4VlYaMPIfMxAdDP/Y1ICHZS/Us7CaN1jySOGkeKHncBP7+7M7O9DASEhRWrl9+nZV/KcijRvf4sLcxDqTciAUBBSqvh9ToOFG9EyPSl4HpMLec06+o9Q771sOk2lE1Hk4ts9X6oobgLdZvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:1b::9) by ZQ0PR01MB1046.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:e::5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36; Thu, 18 Jul
- 2024 03:28:46 +0000
-Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- ([fe80::64c5:50d8:4f2c:59aa]) by
- ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn ([fe80::64c5:50d8:4f2c:59aa%6])
- with mapi id 15.20.7741.044; Thu, 18 Jul 2024 03:28:46 +0000
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Jack Zhu <jack.zhu@starfivetech.com>,
-	Keith Zhao <keith.zhao@starfivetech.com>,
-	Changhuang Liang <changhuang.liang@starfivetech.com>,
-	Jayshri Pawar <jpawar@cadence.com>,
-	Jai Luthra <j-luthra@ti.com>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: [PATCH v2 4/5] staging: media: starfive: Introduce streaming for ISP subdev
-Date: Wed, 17 Jul 2024 20:28:33 -0700
-Message-Id: <20240718032834.53876-5-changhuang.liang@starfivetech.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240718032834.53876-1-changhuang.liang@starfivetech.com>
-References: <20240718032834.53876-1-changhuang.liang@starfivetech.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: NT0PR01CA0031.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c510:c::14) To ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:1b::9)
+ bh=auGXVcGE8fqsl4EvlITIFFf4ZWyBxvg9YdLx04wRAjA=;
+ b=GBbSnC4TCF3GjqCUzXiEOpIL4KZ2GB7k1iAY04zFwHEI3Te5LZCfzg33clqK4EWfK4xxC36R1fQN6xZZJ8wB78rMcxK9b8WqpBt3II6tTV6lN6N3fUHx4qmIoO9uEu/pMIeUq63vFKLdo7aPyGhJSJOcSqzExS0ig9wjcV3QffRHrUhpbl9o7l9+M53iLldJhBAEWFCqm8PO5X4iu975G9ZB8z7yYrsr1JCpMOoI/OZzFzwd5fvwJeoT4ac2ta/I0cNnSnVub5aqBuYjoS05P/m6e9eUldn6RhYDenMxarJH4aQeqvQLnBBIKrHumfMN8EphbWGLIgnqBBbBTuHl/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=bytedance.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=auGXVcGE8fqsl4EvlITIFFf4ZWyBxvg9YdLx04wRAjA=;
+ b=LyVfzpNXHj6tGyCu+H5htyF66HZzX5s45T8IZwuXDBVfh3+l2lPuJs0O+jsm+OKMW9yE5YTtdBY1XpllsQ8V8qRTWb3CTQMdckFpsvYMT6S5mRTHgtjHmK1vCDWMW/5BV01xs9YyrA+UeKCuvMzYwbIGkEuSqVS1lG5nWGMdZlA=
+Received: from SA0PR11CA0136.namprd11.prod.outlook.com (2603:10b6:806:131::21)
+ by CY8PR12MB7268.namprd12.prod.outlook.com (2603:10b6:930:54::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28; Thu, 18 Jul
+ 2024 03:28:53 +0000
+Received: from SA2PEPF000015C6.namprd03.prod.outlook.com
+ (2603:10b6:806:131:cafe::76) by SA0PR11CA0136.outlook.office365.com
+ (2603:10b6:806:131::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16 via Frontend
+ Transport; Thu, 18 Jul 2024 03:28:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SA2PEPF000015C6.mail.protection.outlook.com (10.167.241.196) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7784.11 via Frontend Transport; Thu, 18 Jul 2024 03:28:53 +0000
+Received: from [10.136.40.40] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 17 Jul
+ 2024 22:28:50 -0500
+Message-ID: <3a2efbd7-075c-2a93-0ea7-51566362f17e@amd.com>
+Date: Thu, 18 Jul 2024 08:58:48 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [PATCH v2] sched/fair: Remove cfs_rq::nr_spread_over and
+ cfs_rq::exec_clock
+Content-Language: en-US
+To: Chuyi Zhou <zhouchuyi@bytedance.com>, <mingo@redhat.com>,
+	<peterz@infradead.org>, <juri.lelli@redhat.com>, <vincent.guittot@linaro.org>
+CC: <chengming.zhou@linux.dev>, <linux-kernel@vger.kernel.org>, Vishal
+ Chourasia <vishalc@linux.ibm.com>
+References: <20240717143342.593262-1-zhouchuyi@bytedance.com>
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20240717143342.593262-1-zhouchuyi@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ZQ0PR01MB1302:EE_|ZQ0PR01MB1046:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7d7bde85-deb8-44a2-178a-08dca6d9bb62
+X-MS-TrafficTypeDiagnostic: SA2PEPF000015C6:EE_|CY8PR12MB7268:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6da0c6d2-3901-4012-45e4-08dca6d9bfb3
 X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|52116014|41320700013|366016|38350700014;
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	0DY95Jjqulq8K+xVvx7pxwCNxq+0X1LrpKxMWOeoVU+HkmqIBW09Q2XXgVl3moH2hn7XS5NfoyWDSe7cLroRv5sE3SYQVRbXAlAu/OP8u/Jvnj1dbrlyLmVIWgYDcBN7pUXfrk6/1LJ/Mx1vBRtHpRjnYDO5sp4Mknkn6xeNeUobM+7//XkwXUGgzl4UqeAbx77NCyyvdX/Z9Dpb4rQXX5soo6XbFN/VDGb2J6UPf3qy3qYoEwt4nMYL0yMaoY5TdKSKtE7nIQq9Lw/qBgaOm/praxDkUUX8D0bBpREyFhvk09UnNqV1SnscIUIKHRN6xYNpGI91vK56s3il51oWU3baDKpWp6uY7dWstRlFKPsKRlQin0bhZSCxyO5G1+Ttr6eMY3dim6bHJGAJmJzFY4T6vW9ssFZncv0VQrnx3i1tk0kMn3lIQmLOLQwQk7Tz6cD+1oiWV6O2GkWFb2ZP7bN7SuumjLaX24vGrZsEz/ypDMVVF4itJZc8xmDDXa7mpxJa3UzCbxAhAdH9LSF2SrjNe+eBaggEd2lB0m5CHaDLjgRLgtnFvSSGBip2BkLm+di3KdGmq9qRf6QAPeerXmHdDCSbOuaYRKwwKP6O1EYA+m1a9wp9y3zCPeYnbyRs
+	=?utf-8?B?bDNXdEEvMkNUY3VyaHVONDZ1VlRBeHFQdzNEL2Y2ZjNCNS93UUNLb0IrRHQz?=
+ =?utf-8?B?cU4vSGtIaUhQUnd6RmFEZ1htTG9FeCtCUU9kOVFvMmNmSWhyUDc2SkxIMmIx?=
+ =?utf-8?B?Q0k2VkhKSWt3WktaOEUxN0tkSE9iMnBLQVJHSGszYXZQTzdybUpCVVBKOXFs?=
+ =?utf-8?B?NFdkYmh4S2Jmb0NWcC9EZFEyTG9FaHN1SnlRd1U4dzlpNkVxdWJWVkhUWWwy?=
+ =?utf-8?B?Ny9wemdwMklIQ2hDbGtlcmNWLzVaUWQxbm5zRndlSWc2WFFPcDdFUTlsZ3hY?=
+ =?utf-8?B?bW03YzBqbkk4L3MxWE43Q21JVHF0UXo2RkxtaFUyYWlUUm0xeEpOMXExSks1?=
+ =?utf-8?B?M0JvSVFkTm9KalVmLzgzUUtwOUhZdkVaYWtVNG5TV1g2amdWYStMTkhLR25v?=
+ =?utf-8?B?RHpKaVZuK2kzeDNKWXZwOUVjdjRiU2NBRVNrbU12SVB5cUpxNWQxMFFINm5W?=
+ =?utf-8?B?eWh2OVlRVkdSbE5aTktrYVBCdVBRQTNFM1YyN1FDOVpWaFU4Mk1tREJTNlUr?=
+ =?utf-8?B?QTlRcE1QL3J2Qm5uUFBES2dwVlA0V3d5YUlibFZqMTRwNXYyYjYxUUorRXow?=
+ =?utf-8?B?NTdlNWNndDMyKzROZk9QNE5GU05XTitSSlo3bVlRYmN5dGNVUUhtZFF3NHg4?=
+ =?utf-8?B?cU02Q3ZwdExUR1ZneW5uaFZIeEI5RmtYM1gyM0ZmeHZBVXU3bElYVG5VK2Ju?=
+ =?utf-8?B?dTROWGpPQ1U2aGRtV1U3Wk53czcyVnc2V1pybnY0VmE3OFJqWEdNanNRWkZZ?=
+ =?utf-8?B?ckZua3VoRXlUVGhjdEpqVXZ0RzVDUDNLYkZiR0NRNXBWL0g2U1NORmFBeCsx?=
+ =?utf-8?B?MzZPNXRIUE8zWVVlNkt0WFBPajk5YkpIbWcyVVFXYW91REZ2NlZ4L0FBVEEv?=
+ =?utf-8?B?MEZrSEc1b01iQUZBSTV5S2JoYkxkcDFodzMyMXBkVU1ZaElLdEFCOFJ0cmNC?=
+ =?utf-8?B?QUdRaTJtNlNRT2c3cHI3ZjErb0ZQVUNKWklpMVdKNzl4ZlloVXlwNmxodGNL?=
+ =?utf-8?B?Mm51eGd1N2ZZWDZUMDdEZGFGczF0QnB0K0lmUVVnQUpEM0pydUE1NE5RZFBE?=
+ =?utf-8?B?WWkzb0I1Y2lFbHVETVlDT2R0dGdFdW10OWYvTkt5NEx4L242UUJCZk1tRDMx?=
+ =?utf-8?B?RTlhNGRhaGU2RG5TNWFPVEUyS1lZajZrc2ZFS3ZjbmZHcENzaFJPTXpVeHVm?=
+ =?utf-8?B?cGdzQ0UxOXQwckFSeXJERU5GK1dJN2FkOHk1Syt6MUJsSE50R2wyTU9VRUo0?=
+ =?utf-8?B?aTh6N1pnRUFCcS8xR2h5eWdIUFZMY2l1T3lpbktFcks2dnBUMzN0VEI3SGNz?=
+ =?utf-8?B?SXIwVlBqYXBkUmNla094aGFWTEQxMmt2UTROUlNkRFRDS3FrL3dNSmpzd0FH?=
+ =?utf-8?B?RXViZFVOanRrOXNtMXRXbUYxWG1XVU82WjkzcHY3R2F3aWtsQWFJaDY3L3Av?=
+ =?utf-8?B?VmJDL3hXd3JTVmZyK1VhZ0VENi8yYVppUU1kMTZUTG1oVnAveTBFNzVyNTFa?=
+ =?utf-8?B?MXAvSkxjaURYdEhldjVzUmZ3Qm1lK0JiNHB5Mm5xZUJ5eDYwa2NUd0tMRndE?=
+ =?utf-8?B?QmNzUWxZVmJBK1lGOGZBckp6clQ0ZlRlWFY5TzJMR3NJNVFId0s4bWhkTmVR?=
+ =?utf-8?B?cDhtMkV0dmd0WHpncGoxQk00YVYxK216MkVROFZ1M0p4MFYrMUhmK3Q0eDFY?=
+ =?utf-8?B?ZFhUelZBOE43MzVBK2YyY0kyWDJwU3JkRFNrYzhMVndIb0s4N0NoeGg3STc3?=
+ =?utf-8?B?SnBITEszYnhhSkJVbjArZUd1cFFDbnRRWU53RGZvVGpRcytLT0dBVm9OL3dO?=
+ =?utf-8?B?WVlkQjZlajV0cXVxMm54bWV0ZEFGNU1iU0VaTWpjZWxSS3pncTFPNXRlTEFP?=
+ =?utf-8?B?alJDdkNIeTJuQ3dBT3dTNFlmUkFlTDRGTFVhRm9KVWhiWlRsaE94dVNkSDlR?=
+ =?utf-8?Q?0oR9DyJz3o/e/XhWYVbqWPCn/jqhNy4h?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(52116014)(41320700013)(366016)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?negYN2tdQppCtqr8/Fa7xKaGjbVz5THdkotyGK92F4uPcUI8UzCRLy6Xx1Uu?=
- =?us-ascii?Q?AJcAMfYPMJRmUCqNcGsBqwpvQX6ghcSktD7g3v0U7835hPmd+4mIamPecVgl?=
- =?us-ascii?Q?SNabiB9C9BjUocptcT/UipOfqCfl3x3l3k/avy5869k9Z7jLAbOIXkGbl0c1?=
- =?us-ascii?Q?EPzfm2vetAqn/XmO0wjMA8A2HNTJ33Q6VOAsArmmaHAMPDgWC9vIFLTZvWmV?=
- =?us-ascii?Q?FbC6jTQbjQxtFDbKKsZXpbx527yzVjl2AUyPNigasVX4WdxtSHTdWypiGKBZ?=
- =?us-ascii?Q?ZCuwrw5rPXroA/AJVAVSWDJtZ1hevtoQkl+JTUOAfaO13rIQEKlpovMORwAm?=
- =?us-ascii?Q?1P7YDXsgYar6ouYkARHlgVv2Ypfuzs2yx9EueTWTDt3acx6/Vy2QMNgMDPMx?=
- =?us-ascii?Q?Rwvh4B4pVLg3tVd0wUd2kzG4wZphL35Cxug5Rbzwu0DZhJyETuXbLV6oG474?=
- =?us-ascii?Q?V5ojnDyON2+kf2hL358IrlUu1SPp48mvRg3e3vGOBBqnYM8OzsQfllCSnMAJ?=
- =?us-ascii?Q?3ktPfe2f4BwVkfmeJ6KpSGcelX+sIKU00siIRJTIXpvmZhlbYJAO8CYsH/FJ?=
- =?us-ascii?Q?Gej6x2q5Qo9BKYdNOEFsLoVry62DUBYVvIGIhQ5GJYtvcX42nfD1juTJW6GH?=
- =?us-ascii?Q?U00JWo4d9y++PpxsIyiOruBQWN6xjfHuX+d9hqUda0WUUqoVckQhGneArdMi?=
- =?us-ascii?Q?Vpp4va3m1kzdcfTz+XQxxddNBUQNkPLNEDf3jip7ADVG7EYkE9P2rEdUSbFw?=
- =?us-ascii?Q?ghogrP/xx07JQuKGy2G3CkTeOC/9QGY8RUzYT66l0eS3L8QPpgPejs0wYmln?=
- =?us-ascii?Q?Yw+FSvnSCrsskDpjRURKdL9GjV4lfiRiT0gbvlAMKQKQ/j68TQolM5a1iRrE?=
- =?us-ascii?Q?p//GXu1Z6bq5CfFrlKd7brqzkFpxeS1B1O4sWRnDHFKqx/Ub0TtlGdvwE18F?=
- =?us-ascii?Q?lNro8Bzr29mNsU7N0XIr1FMr0BeMswkRHhKWuETvoNHYgpRwTAjYcUgsc6It?=
- =?us-ascii?Q?fOaqdCiQk00BnQG1scFaD/cRruBXcBYwQXFbhZ6aLOj08nxaDaV6Rfc+IfO7?=
- =?us-ascii?Q?gfRrITlw1aCzxrOkYOONK/TcazlIS8lntEI0NkTEjQsihHMAO11+1El74cF/?=
- =?us-ascii?Q?SUrilkDnetfNc3qqk78R3oYaEiQPnO0arSlfd8vQ8ldaXmzRTUwIPzqebAGU?=
- =?us-ascii?Q?ixTxFyM+oS6sUhYV3LsJSeQhqYZmo+WMNQSqYPlU2GouA7jP8PJ1CqXXvbOr?=
- =?us-ascii?Q?H42MsZKGZ27ycJAKNhvmBTq8fQt/lFyYM0P0VZeVnPbzA47TsVd5xHndNLHF?=
- =?us-ascii?Q?w8SrzKxwBD8N0nbFSkoQGDk526y2jOg31DIQ3LixgiD778g2FaOKX7dxtNbQ?=
- =?us-ascii?Q?8Llh8OGZiPh2D3fwyZfQcyx9LNPlKDaVMfi0KQU2TcFTdZL9ZE3d5TzzVS55?=
- =?us-ascii?Q?7ggCDKcGASKLkMELDT6EiWj9qbwl/5TaCk2Bjdpgc+JahnuGrc5NalnVFHv9?=
- =?us-ascii?Q?P0W9yOOLjWNHCWyxUx8+8UvmvOtwQBz7OUAz1UwOsnR62LUf3ZZyvQ1ZYQcy?=
- =?us-ascii?Q?INitey6t0EEsdVm6yI5tVjf5JkjILnjTA770aKSQ3UYfyr8LdmkNGpY4hHlb?=
- =?us-ascii?Q?ApEjSGuUbI4hTyMLurErs3o=3D?=
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7d7bde85-deb8-44a2-178a-08dca6d9bb62
-X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2024 03:28:46.2403
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2024 03:28:53.3297
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XfV9cMm0sUR5zwLt5ZD4JvkF9xuhSYd+6ZQ7sI9x0QlpcZSYl9l2DgVGG05ZWfGL6KpN2xCtB/qbdf4XhaA/kOquAlI0Y7tmoZ/3Dx6BRSTg8zhPMtQ7rPj75R6NVw+x
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB1046
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6da0c6d2-3901-4012-45e4-08dca6d9bfb3
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF000015C6.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7268
 
-Use "streaming" to indicate whether the ISP is in the streaming state.
+Hello Chuyi,
 
-Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
----
- drivers/staging/media/starfive/camss/stf-isp.c | 6 +++++-
- drivers/staging/media/starfive/camss/stf-isp.h | 1 +
- 2 files changed, 6 insertions(+), 1 deletion(-)
+On 7/17/2024 8:03 PM, Chuyi Zhou wrote:
+> nr_spread_over tracks the number of instances where the difference
+> between a scheduling entity's virtual runtime and the minimum virtual
+> runtime in the runqueue exceeds three times the scheduler latency,
+> indicating significant disparity in task scheduling.
+> Commit that removed its usage: 5e963f2bd: sched/fair: Commit to EEVDF
 
-diff --git a/drivers/staging/media/starfive/camss/stf-isp.c b/drivers/staging/media/starfive/camss/stf-isp.c
-index 8c6388edf049..d71b95ebd3d3 100644
---- a/drivers/staging/media/starfive/camss/stf-isp.c
-+++ b/drivers/staging/media/starfive/camss/stf-isp.c
-@@ -77,8 +77,12 @@ static int isp_set_stream(struct v4l2_subdev *sd, int enable)
- 
- 	sd_state = v4l2_subdev_lock_and_get_active_state(sd);
- 
--	if (enable)
-+	if (enable) {
-+		isp_dev->streaming = true;
- 		stf_isp_stream_on(isp_dev, sd_state);
-+	} else {
-+		isp_dev->streaming = false;
-+	}
- 
- 	v4l2_subdev_call(isp_dev->source_subdev, video, s_stream, enable);
- 
-diff --git a/drivers/staging/media/starfive/camss/stf-isp.h b/drivers/staging/media/starfive/camss/stf-isp.h
-index 1a3e8cf7859c..85ca1c210639 100644
---- a/drivers/staging/media/starfive/camss/stf-isp.h
-+++ b/drivers/staging/media/starfive/camss/stf-isp.h
-@@ -414,6 +414,7 @@ struct stf_isp_dev {
- 	unsigned int nformats;
- 	struct v4l2_subdev *source_subdev;
- 	const struct stf_isp_format *current_fmt;
-+	bool streaming;
- };
- 
- int stf_isp_reset(struct stf_isp_dev *isp_dev);
+scripts/checkpatch.pl complains about the commit description style here.
+The above can be reworded as:
+
+Commit 5e963f2bd465 ("sched/fair: Commit to EEVDF") removed its usage.
+
+> 
+> cfs_rq->exec_clock was used to account for time spent executing tasks.
+> Commit that removed its usage: 5d69eca542ee1 sched: Unify runtime
+> accounting across classes
+
+And this as:
+
+Commit 5d69eca542ee ("sched: Unify runtime accounting across classes")
+removed its usage.
+
+> 
+> cfs_rq::nr_spread_over and cfs_rq::exec_clock are not used anymore in
+> eevdf. Remove them from struct cfs_rq.
+> 
+> Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
+> Acked-by: Vishal Chourasia <vishalc@linux.ibm.com>
+> Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
+
+Apart from those nits,
+
+Reviewed-by: K Prateek Nayak <kprateek.nayak@amd.com>
+
 -- 
-2.25.1
+Thanks and Regards,
+Prateek
 
+> ---
+>   kernel/sched/debug.c | 4 ----
+>   kernel/sched/sched.h | 6 ------
+>   2 files changed, 10 deletions(-)
+> 
+> [..snip..]
 
