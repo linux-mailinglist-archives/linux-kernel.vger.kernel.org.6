@@ -1,179 +1,242 @@
-Return-Path: <linux-kernel+bounces-256185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB23934A61
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:50:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 500E5934A62
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:50:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A51D71C21A74
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:50:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFAC4B24774
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9B282866;
-	Thu, 18 Jul 2024 08:46:29 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E347FBB7;
+	Thu, 18 Jul 2024 08:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ph9l9f2B"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852203F8F7
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 08:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060FE78C7F;
+	Thu, 18 Jul 2024 08:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721292388; cv=none; b=ZgsnbpF5cQdHN2eprffIIukvLL3rvyeoOr/q4vjTyCEGLVb2OKN5PiM1nFSTzCN3eN3kZ4vrRx9DB9PZas5233a/T/tCf5l8QMR5eWgaF2TBZCxeYUAAB/yeE3g1kJsJmnwRP0lhT7DdgTku1tBwydiresByL1XR936dB/LDvvM=
+	t=1721292506; cv=none; b=J57gR5o8OkQIxrZd2MvbmSLksUoLrW1uQ/HcP6e2bFarEq3DfPRUY1u2dBsC9rRFqO48dDLRDvKsDqg/FtKaVp3imTfKxMgICBIuCTPmsam9yj0IFJ0a3ERuvUkZjW9dMHNP6uZ4hEb66CnsHJP2CrOlFrb+3qv3WPwoJz/p3eI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721292388; c=relaxed/simple;
-	bh=wV5ybvQPor2bnJGgnEn0Oh+kFS+xgnjnr0Hxc8kRgHA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=U5LPpFKPeGHkEWqyqClc6MC3mIR01ezl5ntnjWZdFqpJEMC70BpF/N2WLR/uly2D7luuWC9V73LZNOSlyg8iN/Csxl4cMhIws73lj+8gvnXqMY0B/XSMMub8WWtifFwHkvLevrZedQmDtWBxzNmx2jHX9FvpfOQSRFaKRJvY31Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-396a2362fb0so8181765ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 01:46:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721292383; x=1721897183;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4zPAYIuXO5OCe6dNXtaa4wLM0bA3nIGaPdAwSXVyIi4=;
-        b=GZP9zukNjrZx0hXlwHYsQ0XY90GugHxCN5/yilUYmdKAhptVIL702Oa8DOZsEkxc7L
-         OHvs24N1/H/NRMl2TTa8UiPH/12hY68ClkZwjJUJPHZhSA2dY3mHbL/ZqCQCpN65RWS4
-         AasH7PUDxTKZ6xxY/3a1eO944B13sVMhpiUvwZkCiCT+48znUEWi+fV83G8M+038Kz0g
-         MpAqXRFdHIs8IqmzrLZ0W8HB1v1PY1l87PoiO9lS2usmYHyNepPiRMIA0+B8PFgcNK5f
-         kztqyKISVDCT3HFurud3y1RBJ9ebJZ0fd8KWpmmr2S+GZMcYI884EvWlN2pmL6OgOqMO
-         edhA==
-X-Forwarded-Encrypted: i=1; AJvYcCUoVfOLqu9zco+h+iMN/DUy4xtlBTVD7eTizqHb5LsUggkrzdKlmVnBrNad89/l466E2eOe6a7su6jPRhglfZWrtYKkmKepz/nkHkBm
-X-Gm-Message-State: AOJu0YyyRoglFdY3RphFYSuAPL+aNdqyD6xjLgWW/OrvppUV+7t90IJl
-	hWITmXUASNqk63ts+4SUmZ1MHsWT38gnQQ1DaMo/uw7rKbB9VLdTCkvr+cxDLNfgne8zcyvskaO
-	AAk6DoYwuOFUna48iasphVLJdV4HIjVxeebeWS+jQ0KrGH1FzdCYh9ac=
-X-Google-Smtp-Source: AGHT+IHfTQRHpCcbQEQMMigbvGYeylVBPR6NAUlcDpcwGlttqEKqQ56bCIDRYDV+m5WxrLtGPQzHuSWwSK9BUAxYbpReV8TK97NX
+	s=arc-20240116; t=1721292506; c=relaxed/simple;
+	bh=M8B7nK5QS1XayxeoEXQ34C+iSS2fuBashk39HHL2JsU=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UXar+jwa8/ayTcuN36w4CIm0PSMY/JBo5xxYdoyhIfhxBjNKus9VS+0MUHedQy4wG4tgeZTyEUOjBmoaPNdHzsOLRTfVSV5rdUIcD5iSybGNvteXZ0hT4070G9aRYuo4SOxg317tfrNmfwL/OOPowoVyjnBgNvK6PTKLfT1UZZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ph9l9f2B; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46I7vD9s010017;
+	Thu, 18 Jul 2024 08:48:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:subject:to:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	t6qHBKoOTZCAntpCci5zD8gB9Up74avaeJCF1kFQXcg=; b=ph9l9f2BTYspNd8G
+	OcHqzOayb5mqd3RC/o9iAIGqgUbTRTP4TKE3Fi5ztEQpxaT6MI1GvHmqmUfGgCIk
+	ECfKNhRbVphR7VvSuls2vAgDEcUyVZhUm5jfUj54vML8Bq30/gbHvb14rytAf8g3
+	XOI1LNTlMD0G9xh42fs1DQ7i371SLepQNQa5ZYQvFEEbN1woDB3bDAoHL7yuw+2s
+	D/bLvI3lS4mRlRc2LcC9uVhuGYPTLOiF9+E1/AgUYMjXQ9YdUosxEpKK+63MCTmu
+	i7VPkVuhS0pMlVqEg3nMlLr4CHTeW+DfO6I36IbJjVgqvsvVtpLSm2BWQqTbdeT7
+	q0fuGQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40eev9aghc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Jul 2024 08:48:10 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46I8m9pV023545;
+	Thu, 18 Jul 2024 08:48:09 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40eev9agh8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Jul 2024 08:48:09 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46I50lmp006337;
+	Thu, 18 Jul 2024 08:48:08 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 40dwkmgs69-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Jul 2024 08:48:08 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46I8m2dE55575014
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 18 Jul 2024 08:48:04 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B0E952004B;
+	Thu, 18 Jul 2024 08:48:02 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B4EF320040;
+	Thu, 18 Jul 2024 08:47:59 +0000 (GMT)
+Received: from [9.109.199.72] (unknown [9.109.199.72])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 18 Jul 2024 08:47:59 +0000 (GMT)
+Message-ID: <6645190c-e66f-49db-a23d-e08f6308a422@linux.ibm.com>
+Date: Thu, 18 Jul 2024 14:17:58 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] perf test: Avoid python leak sanitizer test failures
+To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
+        Thomas Richter <tmricht@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org
+References: <20240717165717.1315003-1-irogers@google.com>
+Content-Language: en-US
+From: Aditya Gupta <adityag@linux.ibm.com>
+In-Reply-To: <20240717165717.1315003-1-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 6cSHL7E-ksIuD889sKrLbRPMT5vLkiDW
+X-Proofpoint-GUID: MssmmmpBkH6WQ8HBJ79YHge55LoAFZxA
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:219c:b0:397:3a28:94e8 with SMTP id
- e9e14a558f8ab-3973a28973fmr25725ab.3.1721292383653; Thu, 18 Jul 2024 01:46:23
- -0700 (PDT)
-Date: Thu, 18 Jul 2024 01:46:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000152438061d819d0b@google.com>
-Subject: [syzbot] [wireless?] divide error in mac80211_hwsim_link_info_changed
-From: syzbot <syzbot+c6f3c081bf956c97e4de@syzkaller.appspotmail.com>
-To: johannes@sipsolutions.net, kvalo@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-18_04,2024-07-17_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 suspectscore=0 spamscore=0 mlxscore=0 phishscore=0
+ priorityscore=1501 impostorscore=0 bulkscore=0 clxscore=1011
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2407180054
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    51835949dda3 Merge tag 'net-next-6.11' of git://git.kernel..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=15f207a5980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d3bdd09ea2371c89
-dashboard link: https://syzkaller.appspot.com/bug?extid=c6f3c081bf956c97e4de
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/9690deac1819/disk-51835949.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/54d261dbb3f0/vmlinux-51835949.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e61465cd524f/bzImage-51835949.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c6f3c081bf956c97e4de@syzkaller.appspotmail.com
-
-Oops: divide error: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 PID: 11 Comm: kworker/u8:0 Not tainted 6.10.0-syzkaller-04472-g51835949dda3 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Workqueue: events_unbound cfg80211_wiphy_work
-
-RIP: 0010:mac80211_hwsim_link_info_changed+0x409/0xf00 drivers/net/wireless/virtual/mac80211_hwsim.c:2547
-Code: 00 fc ff df 43 80 7c 3d 00 00 48 8b 44 24 20 74 0f 48 8b 7c 24 20 e8 a6 ff 0d fb 48 8b 44 24 20 48 8b 08 89 ce 48 89 d8 31 d2 <48> f7 f6 29 d1 48 69 f1 e8 03 00 00 4c 89 f7 31 d2 b9 05 00 00 00
-RSP: 0018:ffffc900001077a0 EFLAGS: 00010246
-
-RAX: 00061d780b08a1f3 RBX: 00061d780b08a1f3 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000040
-RBP: ffffc90000107890 R08: ffffffff8183f431 R09: 1ffffffff25f9ec5
-R10: dffffc0000000000 R11: ffffffff813597f0 R12: 0000000000000200
-R13: 1ffff1100c778e08 R14: ffff888063bc7048 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000110c34d35b CR3: 000000006a936000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- drv_link_info_changed+0x53d/0x8b0
- ieee80211_offchannel_return+0x3a4/0x530 net/mac80211/offchannel.c:160
- __ieee80211_scan_completed+0x77f/0xb60 net/mac80211/scan.c:495
- ieee80211_scan_work+0x1cc/0x1da0 net/mac80211/scan.c:1162
- cfg80211_wiphy_work+0x2db/0x490 net/wireless/core.c:440
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:mac80211_hwsim_link_info_changed+0x409/0xf00 drivers/net/wireless/virtual/mac80211_hwsim.c:2547
-Code: 00 fc ff df 43 80 7c 3d 00 00 48 8b 44 24 20 74 0f 48 8b 7c 24 20 e8 a6 ff 0d fb 48 8b 44 24 20 48 8b 08 89 ce 48 89 d8 31 d2 <48> f7 f6 29 d1 48 69 f1 e8 03 00 00 4c 89 f7 31 d2 b9 05 00 00 00
-RSP: 0018:ffffc900001077a0 EFLAGS: 00010246
-RAX: 00061d780b08a1f3 RBX: 00061d780b08a1f3 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000040
-RBP: ffffc90000107890 R08: ffffffff8183f431 R09: 1ffffffff25f9ec5
-R10: dffffc0000000000 R11: ffffffff813597f0 R12: 0000000000000200
-R13: 1ffff1100c778e08 R14: ffff888063bc7048 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f37c5e6dfc8 CR3: 000000001f47a000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess), 3 bytes skipped:
-   0:	df 43 80             	filds  -0x80(%rbx)
-   3:	7c 3d                	jl     0x42
-   5:	00 00                	add    %al,(%rax)
-   7:	48 8b 44 24 20       	mov    0x20(%rsp),%rax
-   c:	74 0f                	je     0x1d
-   e:	48 8b 7c 24 20       	mov    0x20(%rsp),%rdi
-  13:	e8 a6 ff 0d fb       	call   0xfb0dffbe
-  18:	48 8b 44 24 20       	mov    0x20(%rsp),%rax
-  1d:	48 8b 08             	mov    (%rax),%rcx
-  20:	89 ce                	mov    %ecx,%esi
-  22:	48 89 d8             	mov    %rbx,%rax
-  25:	31 d2                	xor    %edx,%edx
-* 27:	48 f7 f6             	div    %rsi <-- trapping instruction
-  2a:	29 d1                	sub    %edx,%ecx
-  2c:	48 69 f1 e8 03 00 00 	imul   $0x3e8,%rcx,%rsi
-  33:	4c 89 f7             	mov    %r14,%rdi
-  36:	31 d2                	xor    %edx,%edx
-  38:	b9 05 00 00 00       	mov    $0x5,%ecx
+Hi,
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+On 17/07/24 22:27, Ian Rogers wrote:
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> Leak sanitizer will report memory leaks from python and the leak
+> sanitizer output causes tests to fail. For example:
+>
+> ```
+> $ perf test 98 -v
+>   98: perf script tests:
+> --- start ---
+> test child forked, pid 1272962
+> DB test
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.046 MB /tmp/perf-test-script.x0EktdCel8/perf.data (8 samples) ]
+> call_path_table((1, 0, 0, 0)
+> call_path_table((2, 1, 0, 140339508617447)
+> call_path_table((3, 2, 2, 0)
+> call_path_table((4, 3, 3, 0)
+> call_path_table((5, 4, 4, 0)
+> call_path_table((6, 5, 5, 0)
+> call_path_table((7, 6, 6, 0)
+> call_path_table((8, 7, 7, 0)
+> call_path_table((9, 8, 8, 0)
+> call_path_table((10, 9, 9, 0)
+> call_path_table((11, 10, 10, 0)
+> call_path_table((12, 11, 11, 0)
+> call_path_table((13, 12, 1, 0)
+> sample_table((1, 1, 1, 1, 1, 1, 1, 8, -2058824120, 588306954119000, -1, 0, 0, 0, 0, 1, 0, 0, 128933429281, 0, 0, 13, 0, 0, 0, -1, -1))
+> sample_table((2, 1, 1, 1, 1, 1, 1, 8, -2058824120, 588306954137053, -1, 0, 0, 0, 0, 1, 0, 0, 128933429281, 0, 0, 13, 0, 0, 0, -1, -1))
+> sample_table((3, 1, 1, 1, 1, 1, 1, 8, -2058824120, 588306954140089, -1, 0, 0, 0, 0, 9, 0, 0, 128933429281, 0, 0, 13, 0, 0, 0, -1, -1))
+> sample_table((4, 1, 1, 1, 1, 1, 1, 8, -2058824120, 588306954142376, -1, 0, 0, 0, 0, 155, 0, 0, 128933429281, 0, 0, 13, 0, 0, 0, -1, -1))
+> sample_table((5, 1, 1, 1, 1, 1, 1, 8, -2058824120, 588306954144045, -1, 0, 0, 0, 0, 2493, 0, 0, 128933429281, 0, 0, 13, 0, 0, 0, -1, -1))
+> sample_table((6, 1, 1, 1, 1, 1, 12, 77, -2046828595, 588306954145722, -1, 0, 0, 0, 0, 47555, 0, 0, 128933429281, 0, 0, 13, 0, 0, 0, -1, -1))
+> call_path_table((14, 9, 14, 0)
+> call_path_table((15, 14, 15, 0)
+> call_path_table((16, 15, 0, -1040969624)
+> call_path_table((17, 16, 16, 0)
+> call_path_table((18, 17, 17, 0)
+> call_path_table((19, 18, 18, 0)
+> call_path_table((20, 19, 19, 0)
+> call_path_table((21, 20, 13, 0)
+> sample_table((7, 1, 1, 1, 2, 1, 13, 46, -2053700898, 588306954157436, -1, 0, 0, 0, 0, 964078, 0, 0, 128933429281, 0, 0, 21, 0, 0, 0, -1, -1))
+> call_path_table((22, 1, 21, 0)
+> call_path_table((23, 22, 22, 0)
+> call_path_table((24, 23, 23, 0)
+> call_path_table((25, 24, 24, 0)
+> call_path_table((26, 25, 25, 0)
+> call_path_table((27, 26, 26, 0)
+> call_path_table((28, 27, 27, 0)
+> call_path_table((29, 28, 28, 0)
+> call_path_table((30, 29, 29, 0)
+> call_path_table((31, 30, 30, 0)
+> call_path_table((32, 31, 31, 0)
+> call_path_table((33, 32, 32, 0)
+> call_path_table((34, 33, 33, 0)
+> call_path_table((35, 34, 20, 0)
+> sample_table((8, 1, 1, 1, 2, 1, 20, 49, -2046878127, 588306954378624, -1, 0, 0, 0, 0, 2534317, 0, 0, 128933429281, 0, 0, 35, 0, 0, 0, -1, -1))
+>
+> =================================================================
+> ==1272975==ERROR: LeakSanitizer: detected memory leaks
+>
+> Direct leak of 13628 byte(s) in 6 object(s) allocated from:
+>      #0 0x56354f60c092 in malloc (/tmp/perf/perf+0x29c092)
+>      #1 0x7ff25c7d02e7 in _PyObject_Malloc /build/python3.11/../Objects/obmalloc.c:2003:11
+>      #2 0x7ff25c7d02e7 in _PyObject_Malloc /build/python3.11/../Objects/obmalloc.c:1996:1
+>
+> SUMMARY: AddressSanitizer: 13628 byte(s) leaked in 6 allocation(s).
+> --- Cleaning up ---
+> ---- end(-1) ----
+>   98: perf script tests                                               : FAILED!
+> ```
+>
+> Disable leak sanitizer when running specific perf+python tests to
+> avoid this. This causes the tests to pass when run with leak
+> sanitizer.
+>
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>   tools/perf/tests/shell/script.sh             | 3 +++
+>   tools/perf/tests/shell/test_task_analyzer.sh | 3 +++
+>   2 files changed, 6 insertions(+)
+>
+> diff --git a/tools/perf/tests/shell/script.sh b/tools/perf/tests/shell/script.sh
+> index c1a603653662..d3e2958d2242 100755
+> --- a/tools/perf/tests/shell/script.sh
+> +++ b/tools/perf/tests/shell/script.sh
+> @@ -61,7 +61,10 @@ _end_of_file_
+>   	esac
+>   
+>   	perf record $cmd_flags -o "${perfdatafile}" true
+> +	# Disable lsan to avoid warnings about python memory leaks.
+> +	export ASAN_OPTIONS=detect_leaks=0
+>   	perf script -i "${perfdatafile}" -s "${db_test}"
+> +	export ASAN_OPTIONS=
+>   	echo "DB test [Success]"
+>   }
+>   
+> diff --git a/tools/perf/tests/shell/test_task_analyzer.sh b/tools/perf/tests/shell/test_task_analyzer.sh
+> index 92d15154ba79..cb02bf23e6a5 100755
+> --- a/tools/perf/tests/shell/test_task_analyzer.sh
+> +++ b/tools/perf/tests/shell/test_task_analyzer.sh
+> @@ -11,6 +11,9 @@ if [ -e "$perfdir/scripts/python/Perf-Trace-Util" ]; then
+>     export PERF_EXEC_PATH=$perfdir
+>   fi
+>   
+> +# Disable lsan to avoid warnings about python memory leaks.
+> +export ASAN_OPTIONS=detect_leaks=0
+> +
+>   cleanup() {
+>     rm -f perf.data
+>     rm -f perf.data.old
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Looks good, and test passes with this patch:
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Reviewed-by: Aditya Gupta <adityag@linux.ibm.com>
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
 
-If you want to undo deduplication, reply with:
-#syz undup
+Linux-ci build test results: 
+https://github.com/adi-g15-ibm/linux-ci/actions?query=branch%3Atmp-test-branch-25073
+
+
+Thanks,
+Aditya Gupta
+
 
