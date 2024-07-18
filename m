@@ -1,175 +1,244 @@
-Return-Path: <linux-kernel+bounces-255791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0339934544
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 02:05:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB97B93454A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 02:09:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5121F1F2234A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:05:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55F69B21F9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A16B15C3;
-	Thu, 18 Jul 2024 00:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB11915BB;
+	Thu, 18 Jul 2024 00:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="iE6rsGtt"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qS8afZNj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC56B17C
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 00:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95B3365;
+	Thu, 18 Jul 2024 00:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721261090; cv=none; b=X+rF/+pYMYBwXdpwpbHJhXCtKBS620JKchW6Zc+9RQ1ZCwql4Mt5XayB2oMOkI7/chKjcIgSCtM1nd7FtqePwF8WkftHcrhiv5V0BEsCF828SYb8KXuyVdw1TSvA8q1OJQ21A91euNpB803PIYFxxhEIyRuyllF5lsbLh+pWO/4=
+	t=1721261362; cv=none; b=T5TnieEP0MiJwS0sMF/Rs6Pqqt61aM4JOp5BJEfagei+fEds0BV+Y4xdIJn3kHXM5m44ctbxW9Mwfdhz1UzzMBNyAuU3iXdbHhDcKvmiov9SFayFJYcOHIBb4VPQfIKpRsOeeOiPX2eT0ZbHVx8kktfJcu5RUS+MrvksIbLJlM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721261090; c=relaxed/simple;
-	bh=FAj1MClzOnm7txs8nlFo1G77N9NS2dCzEHAW+o9TMto=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zt6KIGn9UDTc99xIuTrXXdrkEjuajXOHUb2lssRpNnhJfEk/nXZec1zCX4c4ug22kkcnxOOIGBk7vsfI3HFlsEAKH5bZPGr5loMHCtpG6Awpj+pDvB35Bn3QIzge9cdQgX9ZR9+AbkHb5OhpuRxO04QelNXgC1VdMqTyG4Bg3bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=iE6rsGtt; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52ea5dc3c79so328763e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 17:04:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1721261086; x=1721865886; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fgh/5TL5RuPEkrIYyZ+YL3lfHWM6eC22E94AhsG1cyU=;
-        b=iE6rsGtt4tI9s13ZeRpYW6N7GXXikpHJOxduC05ahwLSXy2XjgO1QAo78BFEWjMJK3
-         4mJXXJht5D8SGxeNV2uJ0qa5fLR1DMEk3xNA0SpvJnalJiHMul9p7RPQDWKycnbeHGZd
-         Y/kzmRQhyAktb5DcBQkazVsCwEL852ekBlkj0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721261086; x=1721865886;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fgh/5TL5RuPEkrIYyZ+YL3lfHWM6eC22E94AhsG1cyU=;
-        b=mvvzqQ93wEluhEMX18WAj7k0aUXmKFg2TSSgTPjP2GbcU7GVamLzHVaa/OVQMg3/0b
-         dVRr57xhWeGbtswwdwUmaH/d69r7xZhXeCQGkZGbIe3v9S/HdzVmGD5NWRdd7pNjAyWB
-         Nhg6TNwkYNuNNcNricdzhRATal7MNf/1vlN/A9jDubAg9tLl82H6wJ9fb/P+ornGdLhu
-         xw7JOmUOY4IRPI/InQvAim248eu1WqqIUb92efEWrVu3QyceALVTtsswJ0jc+VSK6Mne
-         3biSnl8kYa/TUEUCBIstSIiw5mDLUbI1Nj3PxzYR8fqex5dfXGFHx82qFsWyZZOczIWJ
-         omYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQJ/G0dHTLibyAZD5ErqG86CfPtuklplwki2ELa15mmaphd3gkin0tGmxsXSx+EXNtby5yrp0NfvT5WnrcTrrzLtD/D+wkORJfUkWr
-X-Gm-Message-State: AOJu0Yw7QekifmlC/F6WGdlGQSZViwIR3bMFgWC9PQNQYROoVhAdUocp
-	DVOkDCdWZ59oNFTQv/NWbn+u9udfRp/bkK4vln71l30w0c+nFh0feS6OPDS3V1ddB9dFTJzf+DT
-	CnLCvRA==
-X-Google-Smtp-Source: AGHT+IGRThg8G+QkXJjNDlv9YLdNjO4d95uTZYC3hfPseTqpZwaa0bXPDZCK/SYC8WxLq/H2Hb5rNA==
-X-Received: by 2002:a05:6512:33d3:b0:52c:e3bd:c70b with SMTP id 2adb3069b0e04-52ee53a6f58mr2316604e87.1.1721261085705;
-        Wed, 17 Jul 2024 17:04:45 -0700 (PDT)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7ff715sm497871066b.161.2024.07.17.17.04.44
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 17:04:44 -0700 (PDT)
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a77c080b521so19664666b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 17:04:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX8sXyN4i8YQNVj/jREKcQjISRg4zuFsjre1KbQMSi6kMJyChH7LwHUZKKzLJrFBRsSejMhacuRp2aayXOzCFC90Mxr4lv4qrKOH7vB
-X-Received: by 2002:a17:906:40d5:b0:a77:cd3c:e9b7 with SMTP id
- a640c23a62f3a-a7a0133ac71mr230759566b.57.1721261084140; Wed, 17 Jul 2024
- 17:04:44 -0700 (PDT)
+	s=arc-20240116; t=1721261362; c=relaxed/simple;
+	bh=7f58NATk/lks0DgmRpcHdttEv16OLx86uzxxaU4HTD4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NNFva+DQ7lmJUKfTRw8LoIvcu49ehXXc2rIRUJ2RfvZpSi5BTVMRRWsD5+GsEQ/xvjg+CAxmAZGcDOY1RX9SijHND7ZPKEoxkk0tlUrI2I+q1NQD2jO64eVRZgb8pL+86zryCx8iCPcwlzO84BOo7+tg6OorcIc3x4GKuP69ZA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qS8afZNj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 503DFC2BD10;
+	Thu, 18 Jul 2024 00:09:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721261361;
+	bh=7f58NATk/lks0DgmRpcHdttEv16OLx86uzxxaU4HTD4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qS8afZNjJNeg2LJkAucf7XNvBQuMTRMjoGeUGMU6xwQJ3wW4VJjmmiCu4XyQ36g/5
+	 8u5BAnpGE2jBiDF9283m3PfpWnraw64QrqYfPLCW2HHxvIP6GGVzZgD/68as1UHFPn
+	 zcsuf9hTqOtr9FMae6A98coUnyZN+dGQmcQTBVdE26NsRvHbXFKgWtzq+twGMUYJ9/
+	 S7wjz6OmjhDVGl4aeJe22wVdt6dUe09dS6F364Dc+At/96HzCrXHJQnS5Ubiq9Q+TW
+	 Ew0VvnfDU+xUxPQ/c/xvPS6LmcLQsqy0zmK9jz6D272A0BFBasymnj2gifaXDspw8V
+	 s5KuWJCYI6+FA==
+Date: Wed, 17 Jul 2024 17:09:19 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: bigeasy@linutronix.de
+Cc: syzbot <syzbot+709e4c85c904bcd62735@syzkaller.appspotmail.com>,
+ andrii@kernel.org, ast@kernel.org, bp@alien8.de, bpf@vger.kernel.org,
+ daniel@iogearbox.net, dave.hansen@linux.intel.com, davem@davemloft.net,
+ eddyz87@gmail.com, edumazet@google.com, haoluo@google.com, hawk@kernel.org,
+ hpa@zytor.com, jacob.jun.pan@linux.intel.com, jasowang@redhat.com,
+ jiri@resnulli.us, john.fastabend@gmail.com, jolsa@kernel.org,
+ kpsingh@kernel.org, linux-kernel@vger.kernel.org, martin.lau@linux.dev,
+ mingo@redhat.com, netdev@vger.kernel.org, pabeni@redhat.com,
+ pbonzini@redhat.com, peterz@infradead.org, sdf@fomichev.me,
+ song@kernel.org, syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+ wei.liu@kernel.org, willemdebruijn.kernel@gmail.com, x86@kernel.org,
+ yonghong.song@linux.dev
+Subject: Re: [syzbot] [bpf?] [net?] KASAN: stack-out-of-bounds Read in
+ xdp_do_check_flushed
+Message-ID: <20240717170919.455624c0@kernel.org>
+In-Reply-To: <000000000000968ac6061d0f53ba@google.com>
+References: <000000000000968ac6061d0f53ba@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717111358.415712-1-adrian.ratiu@collabora.com>
- <202407171017.A0930117@keescook> <CAHk-=wi3m98GCv-kXJqRvsjOa+DCFqQux7pcmJW9WR8_n=QPqg@mail.gmail.com>
- <202407171520.FD49AE35@keescook>
-In-Reply-To: <202407171520.FD49AE35@keescook>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 17 Jul 2024 17:04:27 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi9qsy-bX65ev8jgDzGM+uTk=Vbix32F8SLfUWegajT+w@mail.gmail.com>
-Message-ID: <CAHk-=wi9qsy-bX65ev8jgDzGM+uTk=Vbix32F8SLfUWegajT+w@mail.gmail.com>
-Subject: Re: [PATCH] proc: add config to block FOLL_FORCE in mem writes
-To: Kees Cook <kees@kernel.org>
-Cc: Adrian Ratiu <adrian.ratiu@collabora.com>, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, kernel@collabora.com, gbiv@google.com, 
-	inglorion@google.com, ajordanr@google.com, 
-	Doug Anderson <dianders@chromium.org>, Jeff Xu <jeffxu@google.com>, Jann Horn <jannh@google.com>, 
-	Christian Brauner <brauner@kernel.org>
-Content-Type: multipart/mixed; boundary="0000000000007ccffd061d7a5312"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
---0000000000007ccffd061d7a5312
-Content-Type: text/plain; charset="UTF-8"
+Hi Sebastian!
 
-On Wed, 17 Jul 2024 at 15:24, Kees Cook <kees@kernel.org> wrote:
->
-> > In particular, this patch would make it easy to make that
-> > SECURITY_PROC_MEM_RESTRICT_FOLL_FORCE config option be a "choice"
-> > where you pick "never, ptrace, always" by just changing the rules in
-> > proc_is_ptracing().
->
-> So the original patch could be reduced to just the single tristate option
-> instead of 3 tristates? I think that would be a decent middle ground,
-> and IIUC, will still provide the coverage Chrome OS is looking for[1].
+IIUC syzbot continues to hit this, is it on your radar?
 
-So here's what I kind of think might be ok.
+On Fri, 12 Jul 2024 09:25:24 -0700 syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    523b23f0bee3 Add linux-next specific files for 20240710
+> git tree:       linux-next
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=13187c7e980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=98dd8c4bab5cdce
+> dashboard link: https://syzkaller.appspot.com/bug?extid=709e4c85c904bcd62735
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=106dd859980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=111637b9980000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/345bcd25ed2f/disk-523b23f0.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/a4508962d345/vmlinux-523b23f0.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/4ba5eb555639/bzImage-523b23f0.xz
+> 
+> The issue was bisected to:
+> 
+> commit fecef4cd42c689a200bdd39e6fffa71475904bc1
+> Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Date:   Thu Jul 4 14:48:15 2024 +0000
+> 
+>     tun: Assign missing bpf_net_context.
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=164d6f76980000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=154d6f76980000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=114d6f76980000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+709e4c85c904bcd62735@syzkaller.appspotmail.com
+> Fixes: fecef4cd42c6 ("tun: Assign missing bpf_net_context.")
+> 
+> ==================================================================
+> BUG: KASAN: stack-out-of-bounds in bpf_net_ctx_get_all_used_flush_lists include/linux/filter.h:837 [inline]
+> BUG: KASAN: stack-out-of-bounds in xdp_do_check_flushed+0x231/0x240 net/core/filter.c:4298
+> Read of size 4 at addr ffffc90003def7f8 by task syz-executor156/5107
+> 
+> CPU: 0 UID: 0 PID: 5107 Comm: syz-executor156 Not tainted 6.10.0-rc7-next-20240710-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+> Call Trace:
+>  <IRQ>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  print_address_description mm/kasan/report.c:377 [inline]
+>  print_report+0x169/0x550 mm/kasan/report.c:488
+>  kasan_report+0x143/0x180 mm/kasan/report.c:601
+>  bpf_net_ctx_get_all_used_flush_lists include/linux/filter.h:837 [inline]
+>  xdp_do_check_flushed+0x231/0x240 net/core/filter.c:4298
+>  __napi_poll+0xe4/0x490 net/core/dev.c:6774
+>  napi_poll net/core/dev.c:6840 [inline]
+>  net_rx_action+0x89b/0x1240 net/core/dev.c:6962
+>  handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
+>  do_softirq+0x11b/0x1e0 kernel/softirq.c:455
+>  </IRQ>
+>  <TASK>
+>  __local_bh_enable_ip+0x1bb/0x200 kernel/softirq.c:382
+>  local_bh_enable include/linux/bottom_half.h:33 [inline]
+>  tun_get_user+0x2884/0x4720 drivers/net/tun.c:1936
+>  tun_chr_write_iter+0x113/0x1f0 drivers/net/tun.c:2052
+>  new_sync_write fs/read_write.c:497 [inline]
+>  vfs_write+0xa72/0xc90 fs/read_write.c:590
+>  ksys_write+0x1a0/0x2c0 fs/read_write.c:643
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f26cdb99d90
+> Code: 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 80 3d 11 e3 07 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
+> RSP: 002b:00007ffd1139eb08 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f26cdb99d90
+> RDX: 000000000000fdef RSI: 0000000020000200 RDI: 00000000000000c8
+> RBP: 0000000000000000 R08: 00007ffd1139ec38 R09: 00007ffd1139ec38
+> R10: 00007ffd1139ec38 R11: 0000000000000202 R12: 0000000000000000
+> R13: 0000000000000000 R14: 00007ffd1139eb40 R15: 00007ffd1139eb30
+>  </TASK>
+> 
+> The buggy address belongs to stack of task syz-executor156/5107
+>  and is located at offset 88 in frame:
+>  do_softirq+0x0/0x1e0
+> 
+> This frame has 2 objects:
+>  [32, 40) 'flags.i.i.i105'
+>  [64, 72) 'flags.i.i.i'
+> 
+> The buggy address belongs to the virtual mapping at
+>  [ffffc90003de8000, ffffc90003df1000) created by:
+>  copy_process+0x5d1/0x3d90 kernel/fork.c:2206
+> 
+> The buggy address belongs to the physical page:
+> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x6b798
+> flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+> raw: 00fff00000000000 0000000000000000 dead000000000122 0000000000000000
+> raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+> page dumped because: kasan: bad access detected
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2dc2(GFP_KERNEL|__GFP_HIGHMEM|__GFP_NOWARN|__GFP_ZERO), pid 5089, tgid 5089 (sshd), ts 45267990588, free_ts 13316620078
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1493
+>  prep_new_page mm/page_alloc.c:1501 [inline]
+>  get_page_from_freelist+0x2ccb/0x2d80 mm/page_alloc.c:3480
+>  __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4738
+>  alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2263
+>  vm_area_alloc_pages mm/vmalloc.c:3584 [inline]
+>  __vmalloc_area_node mm/vmalloc.c:3660 [inline]
+>  __vmalloc_node_range_noprof+0x971/0x1460 mm/vmalloc.c:3841
+>  alloc_thread_stack_node kernel/fork.c:314 [inline]
+>  dup_task_struct+0x444/0x8c0 kernel/fork.c:1115
+>  copy_process+0x5d1/0x3d90 kernel/fork.c:2206
+>  kernel_clone+0x226/0x8f0 kernel/fork.c:2788
+>  __do_sys_clone kernel/fork.c:2931 [inline]
+>  __se_sys_clone kernel/fork.c:2915 [inline]
+>  __x64_sys_clone+0x258/0x2a0 kernel/fork.c:2915
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> page last free pid 1 tgid 1 stack trace:
+>  reset_page_owner include/linux/page_owner.h:25 [inline]
+>  free_pages_prepare mm/page_alloc.c:1094 [inline]
+>  free_unref_page+0xd22/0xea0 mm/page_alloc.c:2644
+>  free_contig_range+0x9e/0x160 mm/page_alloc.c:6694
+>  destroy_args+0x8a/0x890 mm/debug_vm_pgtable.c:1017
+>  debug_vm_pgtable+0x4be/0x550 mm/debug_vm_pgtable.c:1397
+>  do_one_initcall+0x248/0x880 init/main.c:1267
+>  do_initcall_level+0x157/0x210 init/main.c:1329
+>  do_initcalls+0x3f/0x80 init/main.c:1345
+>  kernel_init_freeable+0x435/0x5d0 init/main.c:1578
+>  kernel_init+0x1d/0x2b0 init/main.c:1467
+>  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> 
+> Memory state around the buggy address:
+>  ffffc90003def680: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>  ffffc90003def700: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> >ffffc90003def780: 00 00 00 00 f1 f1 f1 f1 00 f2 f2 f2 00 f3 f3 f3  
+>                                                                 ^
+>  ffffc90003def800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>  ffffc90003def880: f1 f1 f1 f1 00 f3 f3 f3 00 00 00 00 00 00 00 00
+> ==================================================================
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-ENTIRELY UNTESTED! This is more of a "look, something like this,
-perhaps" patch than a real one.
-
-If somebody tests this, and it is ok for Chrome OS, you can consider
-this signed-off-on, but only with actual testing. I might have gotten
-something hroribly wrong.
-
-              Linus
-
---0000000000007ccffd061d7a5312
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lyqie9xt0>
-X-Attachment-Id: f_lyqie9xt0
-
-IGZzL3Byb2MvYmFzZS5jICAgfCAyMiArKysrKysrKysrKysrKysrKysrKystCiBzZWN1cml0eS9L
-Y29uZmlnIHwgMzIgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKIDIgZmlsZXMgY2hh
-bmdlZCwgNTMgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2ZzL3By
-b2MvYmFzZS5jIGIvZnMvcHJvYy9iYXNlLmMKaW5kZXggNzJhMWFjZDAzNjc1Li5mYmU5YTk2YzJk
-OTggMTAwNjQ0Ci0tLSBhL2ZzL3Byb2MvYmFzZS5jCisrKyBiL2ZzL3Byb2MvYmFzZS5jCkBAIC04
-MzUsNiArODM1LDI0IEBAIHN0YXRpYyBpbnQgbWVtX29wZW4oc3RydWN0IGlub2RlICppbm9kZSwg
-c3RydWN0IGZpbGUgKmZpbGUpCiAJcmV0dXJuIHJldDsKIH0KIAorc3RhdGljIGJvb2wgcHJvY19t
-ZW1fZm9sbF9mb3JjZShzdHJ1Y3QgZmlsZSAqZmlsZSwgc3RydWN0IG1tX3N0cnVjdCAqbW0pCit7
-CisjaWYgZGVmaW5lZChDT05GSUdfUFJPQ19NRU1fTk9fRk9SQ0UpCisJcmV0dXJuIGZhbHNlOwor
-I2VsaWYgZGVmaW5lZChDT05GSUdfUFJPQ19NRU1fRk9SQ0VfUFRSQUNFKQorCWJvb2wgcHRyYWNl
-X2FjdGl2ZSA9IGZhbHNlOworCXN0cnVjdCB0YXNrX3N0cnVjdCAqdGFzayA9IGdldF9wcm9jX3Rh
-c2soZmlsZV9pbm9kZShmaWxlKSk7CisKKwlpZiAodGFzaykgeworCQlwdHJhY2VfYWN0aXZlID0g
-dGFzay0+cHRyYWNlICYmIHRhc2stPm1tID09IG1tICYmIHRhc2stPnBhcmVudCA9PSBjdXJyZW50
-OworCQlwdXRfdGFza19zdHJ1Y3QodGFzayk7CisJfQorCXJldHVybiBwdHJhY2VfYWN0aXZlOwor
-I2Vsc2UKKwlyZXR1cm4gdHJ1ZTsKKyNlbmRpZgorfQorCiBzdGF0aWMgc3NpemVfdCBtZW1fcnco
-c3RydWN0IGZpbGUgKmZpbGUsIGNoYXIgX191c2VyICpidWYsCiAJCQlzaXplX3QgY291bnQsIGxv
-ZmZfdCAqcHBvcywgaW50IHdyaXRlKQogewpAQCAtODU1LDcgKzg3Myw5IEBAIHN0YXRpYyBzc2l6
-ZV90IG1lbV9ydyhzdHJ1Y3QgZmlsZSAqZmlsZSwgY2hhciBfX3VzZXIgKmJ1ZiwKIAlpZiAoIW1t
-Z2V0X25vdF96ZXJvKG1tKSkKIAkJZ290byBmcmVlOwogCi0JZmxhZ3MgPSBGT0xMX0ZPUkNFIHwg
-KHdyaXRlID8gRk9MTF9XUklURSA6IDApOworCWZsYWdzID0gd3JpdGUgPyBGT0xMX1dSSVRFIDog
-MDsKKwlpZiAocHJvY19tZW1fZm9sbF9mb3JjZShmaWxlLCBtbSkpCisJCWZsYWdzIHw9IEZPTExf
-Rk9SQ0U7CiAKIAl3aGlsZSAoY291bnQgPiAwKSB7CiAJCXNpemVfdCB0aGlzX2xlbiA9IG1pbl90
-KHNpemVfdCwgY291bnQsIFBBR0VfU0laRSk7CmRpZmYgLS1naXQgYS9zZWN1cml0eS9LY29uZmln
-IGIvc2VjdXJpdHkvS2NvbmZpZwppbmRleCA0MTJlNzZmMTU3NWQuLmIyMDFhZTNmZWVhYiAxMDA2
-NDQKLS0tIGEvc2VjdXJpdHkvS2NvbmZpZworKysgYi9zZWN1cml0eS9LY29uZmlnCkBAIC0xOSw2
-ICsxOSwzOCBAQCBjb25maWcgU0VDVVJJVFlfRE1FU0dfUkVTVFJJQ1QKIAogCSAgSWYgeW91IGFy
-ZSB1bnN1cmUgaG93IHRvIGFuc3dlciB0aGlzIHF1ZXN0aW9uLCBhbnN3ZXIgTi4KIAorY2hvaWNl
-CisJcHJvbXB0ICJBbGxvdyAvcHJvYy9waWQvbWVtIGFjY2VzcyBvdmVycmlkZSIKKwlkZWZhdWx0
-IFBST0NfUElEX01FTV9BTFdBWVNfRk9SQ0UKKwloZWxwCisJICBUcmFkaXRpb25hbGx5IC9wcm9j
-L3BpZC9tZW0gYWxsb3dzIHVzZXJzIHRvIG92ZXJyaWRlIG1lbW9yeQorCSAgcGVybWlzc2lvbnMg
-Zm9yIHVzZXJzIGxpa2UgcHRyYWNlLCBhc3N1bWluZyB0aGV5IGhhdmUgcHRyYWNlCisJICBjYXBh
-YmlsaXR5LgorCisJICBUaGlzIGFsbG93cyBwZW9wbGUgdG8gbGltaXQgdGhhdCAtIGVpdGhlciBu
-ZXZlciBvdmVycmlkZSwgb3IKKwkgIHJlcXVpcmUgYWN0dWFsIGFjdGl2ZSBwdHJhY2UgYXR0YWNo
-bWVudC4KKworCSAgRGVmYXVsdHMgdG8gdGhlIHRyYWRpdGlvbmFsIGJlaGF2aW9yIChmb3Igbm93
-KQorCitjb25maWcgUFJPQ19QSURfTUVNX0FMV0FZU19GT1JDRQorCWJvb2wgIlRyYWRpdGlvbmFs
-IC9wcm9jL3BpZC9tZW0gYmVoYXZpb3IiCisJaGVscAorCSAgVGhpcyBhbGxvd3MgL3Byb2MvcGlk
-L21lbSBhY2Nlc3NlcyB0byBvdmVycmlkZSBtZW1vcnkgbWFwcGluZworCSAgcGVybWlzc2lvbnMg
-aWYgeW91IGhhdmUgcHRyYWNlIGFjY2VzcyByaWdodHMuCisKK2NvbmZpZyBDT05GSUdfUFJPQ19N
-RU1fRk9SQ0VfUFRSQUNFCisJYm9vbCAiUmVxdWlyZSBhY3RpdmUgcHRyYWNlKCkgdXNlIGZvciBh
-Y2Nlc3Mgb3ZlcnJpZGUiCisJaGVscAorCSAgVGhpcyBhbGxvd3MgL3Byb2MvcGlkL21lbSBhY2Nl
-c3NlcyB0byBvdmVycmlkZSBtZW1vcnkgbWFwcGluZworCSAgcGVybWlzc2lvbnMgZm9yIGFjdGl2
-ZSBwdHJhY2VycyBsaWtlIGdkYi4KKworY29uZmlnIENPTkZJR19QUk9DX01FTV9OT19GT1JDRQor
-CWJvb2wgIk5ldmVyIgorCWhlbHAKKwkgIE5ldmVyIG92ZXJyaWRlIG1lbW9yeSBtYXBwaW5nIHBl
-cm1pc3Npb25zCisKK2VuZGNob2ljZQorCiBjb25maWcgU0VDVVJJVFkKIAlib29sICJFbmFibGUg
-ZGlmZmVyZW50IHNlY3VyaXR5IG1vZGVscyIKIAlkZXBlbmRzIG9uIFNZU0ZTCg==
---0000000000007ccffd061d7a5312--
 
