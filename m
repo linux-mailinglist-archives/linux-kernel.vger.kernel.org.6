@@ -1,152 +1,100 @@
-Return-Path: <linux-kernel+bounces-255870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 711779345D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:32:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 337079345D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:34:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF83AB210FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:32:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D05201F23788
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 701301FB5;
-	Thu, 18 Jul 2024 01:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AppCQr4Q"
-Received: from mail-yw1-f195.google.com (mail-yw1-f195.google.com [209.85.128.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27A41878;
+	Thu, 18 Jul 2024 01:34:38 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5551B6138;
-	Thu, 18 Jul 2024 01:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB43C10F2
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 01:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721266346; cv=none; b=m1WaoRfJ77WpIvVKYt/d1pcVpOep1U+HXsNEz4q0Xk5PP84s+0HgTGYB2sM04/Fbu6+QzebIXMsDdelN8d7tM12VLkQY1fy+fAMCMuK4Jj+Nu6VuadFNCIkeBos3K1t/5kKB088DT6IIOhkKiQEvNIsaqAHKJUJjGyf7g3d9aA8=
+	t=1721266478; cv=none; b=gD5VMIuMJEgEhWub0IImqqsvTRxZVAjBU6j1Fc+494boP2x7GU7xZ2bT9cVWhlDbYqttpRxNhEQDRPDPqvcz/waOeC1VUIlu8/mFsTaoe935HZsgCpXAhvZoEn8yx7IElqsD0LV4TDfTolK0woKGoIKL3hRNQZ4puET+WsU/e0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721266346; c=relaxed/simple;
-	bh=58JNHxVOW23dXB1RpVD7Rk5sNX+3OU2RKhTPML4WOGM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cR1II+9VZvU4Zqo4u9a9qShdVvjbICx1pNmxb7RA8qHmB02qY+iKop5h6ZW1cv1DMuY9G9/MmfmqoWD/8nIkvvdRHZbBCErkQICJSQFr0o3qK4wJcewztp3U9cstTC2IE+TVOGsA70flMikay1LG1WKctCFmLYrpNlCfiNwo1pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AppCQr4Q; arc=none smtp.client-ip=209.85.128.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f195.google.com with SMTP id 00721157ae682-651da7c1531so2429467b3.0;
-        Wed, 17 Jul 2024 18:32:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721266344; x=1721871144; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D0lrpvrR/8Ce+qh3lazY0C8Wgs5FIQPQpnRSul0bdNc=;
-        b=AppCQr4Qb1x6roerVWnsXENg1z6Sv1B8u4ba1Xgx+ABh5lFrV9bV+1/crdDtL5TL+s
-         8iBC8niqTlGfHvH93/yjKA+gW1qwY0HnxOe+QmrG4Cb4Dx+SVlpVNr7irO0XVAfegq65
-         Zt0M+fzH1sQCmJ5k7dVtOGsXoqfqJidx5P1j704Xx5PkGs4ls7j6MlTr93SDGVYlrhfN
-         yU3L324W4F6Q1OCc2pw2o8ilr7fH3+fK6VlJhv9aG39Es/Ws8B+45A0inL66MMEXwEwB
-         zU3KjNRIYWZcs03kw0gR7jqSYKrWeLLFpboNlGekrWX3oU3pfn6cj3kzfbDrhft0NHDU
-         7DcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721266344; x=1721871144;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D0lrpvrR/8Ce+qh3lazY0C8Wgs5FIQPQpnRSul0bdNc=;
-        b=jBPGN7yaXtX4n5VaFuafULf7KBu3S80B3mg49pP8rrt1OLNwop1A81H0i/vbYNlMKx
-         ou1raqmkzvN9DiKHpGnwSA31Gz7qoOlTz6/4zmheJr1tfvJNgrDEVKHr0aG8oEa/hOKQ
-         1w90mAUMas+AH3TKq03WpfaTcgSg3jNORVe2H4yx675yDICwc5QC8EGrjZPbYLQ4yrFo
-         e0BAlUAfgQCK7TEQTlwcsi5F2kvUgdmLEaGbqrMXwierFy1UW8eiyP0eE+9Nl3V6NFDk
-         o9MftercUZUAMCCChsJSfDpZCM3Kh0MgBkpoU6YGiPBWUxmRu0d+u8552VGjEuy93KQI
-         YlWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7TvlHJxGlsFvc0j6ACayG1qszAqmckk3ClaECquwRteihYwZBV1xXPHsIjxacxk13CKUJihaA0S/K82fE0C/QQfwwBVaRbOKx7YBMy8VU5w4nFNLSZsgOkLL0ogRxBnBB5+enQ1nCkpS6M6MRBzy9Hq/UBXc7KjkopqVlxdzoOyX39bwy
-X-Gm-Message-State: AOJu0YzrXaKse8UPoub2QqEna1oV/rLGkzTTG5vnJ5CjilwhXVgSSSgJ
-	tDYyMmdix7sCo7LKNNKcFDgbmoNZWYC4Ia9Xeyi6yEEoPUc5YrdCgJMYFjcJ03OZryiF615f70E
-	hASN2TAScb87PpL9NpVTyWrsZvN0=
-X-Google-Smtp-Source: AGHT+IGKx/mA49tpwQ+/gqsE/E+hx0yQ2GYm0gmS1Kvp32w7k7zXF5sUb46uZjs4Op7DEyA+y0BR2IlMu/PA4XhxwLo=
-X-Received: by 2002:a05:6902:1024:b0:dfa:4ce2:3311 with SMTP id
- 3f1490d57ef6-e05ed764b53mr4523830276.39.1721266344390; Wed, 17 Jul 2024
- 18:32:24 -0700 (PDT)
+	s=arc-20240116; t=1721266478; c=relaxed/simple;
+	bh=9kGZsHE+kaX0bg2zb3HpHgSyUQXm6r3Zx68HxAdvhRc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wf1Xc3nAqlw9wnOZvX5s9iTTbFSO2Oc8AuS0X5IllACp11pjlSeMQcYfETZULuURSyacoCD4UbYS+YiDLT4E4Eg/LE2wpVO3dRDCZen46SnameJtEu8vayveKXkxqLNeMLIkNPyJe2X5mNglFsJE+JoQzb33dT25O1sFNTp07oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [198.18.0.1] (unknown [180.110.112.93])
+	by APP-05 (Coremail) with SMTP id zQCowACHj+cfcZhm7IrnAw--.9704S2;
+	Thu, 18 Jul 2024 09:34:24 +0800 (CST)
+Message-ID: <70bd489b-2a9f-4be3-86db-0a131abee8ab@iscas.ac.cn>
+Date: Thu, 18 Jul 2024 09:34:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710085939.11520-1-dongml2@chinatelecom.cn>
- <Zo6I47BQlLnNN3R-@krava> <20240710231805.868703dc681815bb2257b0ac@kernel.org>
-In-Reply-To: <20240710231805.868703dc681815bb2257b0ac@kernel.org>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Thu, 18 Jul 2024 09:32:13 +0800
-Message-ID: <CADxym3aE3YpbMMYnKBh5voy0YuEjjvafFALGdGMd4-_6ADMKhA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] bpf: kprobe: remove unused declaring of bpf_kprobe_override
-To: Masami Hiramatsu <mhiramat@kernel.org>, Jiri Olsa <olsajiri@gmail.com>
-Cc: rostedt@goodmis.org, mathieu.desnoyers@efficios.com, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, Menglong Dong <dongml2@chinatelecom.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] riscv: add tracepoints for page fault
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Suren Baghdasaryan <surenb@google.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240715101400.39103-1-zhuhengbo@iscas.ac.cn>
+ <20240717082728.84401-1-zhuhengbo@iscas.ac.cn>
+ <ZpfbVzwT5flLqatZ@casper.infradead.org>
+From: Zhu Hengbo <zhuhengbo@iscas.ac.cn>
+In-Reply-To: <ZpfbVzwT5flLqatZ@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowACHj+cfcZhm7IrnAw--.9704S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKFWkAF47Zw13XF48JrW3GFg_yoW3KFg_A3
+	WxK348C3Wjqw4jgr45tws8Kr9xZ3yav3s5X3Z3Xr9rCFZ3XryxGFn7KwsrJa47XwsrGF97
+	u3ZFg340yFWa9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbckYjsxI4VW3JwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
+	6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+	8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0
+	cI8IcVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I
+	8E87Iv6xkF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xK
+	xwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r
+	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
+	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr
+	0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
+	0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jbrc-UUUUU=
+X-CM-SenderInfo: x2kxxvpqje0q5lvft2wodfhubq/1tbiCRACDGaYT59iaQABsz
 
-On Wed, Jul 10, 2024 at 10:18=E2=80=AFPM Masami Hiramatsu <mhiramat@kernel.=
-org> wrote:
->
-> On Wed, 10 Jul 2024 15:13:07 +0200
-> Jiri Olsa <olsajiri@gmail.com> wrote:
->
-> > On Wed, Jul 10, 2024 at 04:59:39PM +0800, Menglong Dong wrote:
-> > > After the commit 66665ad2f102 ("tracing/kprobe: bpf: Compare instruct=
-ion
-> >
-> > should be in Fixes: tag probably ?
->
-> Yes, I'll add a Fixed tag.
->
 
-Hello!
+On 2024/7/17 22:55, Matthew Wilcox wrote:
+> On Wed, Jul 17, 2024 at 08:27:19AM +0000, Zhu Hengbo wrote:
+>> +	TP_STRUCT__entry(
+>> +		__field(unsigned long, address)
+>> +		__field(unsigned long, epc)
+>> +		__field(unsigned long, cause)
+>> +	),
+>> +
+>> +	TP_fast_assign(
+>> +		__entry->address	= regs->badaddr;
+>> +		__entry->epc		= regs->epc;
+>> +		__entry->cause		= regs->cause;
+>> +	),
+>> +
+>> +	TP_printk("user page fault, address=%ps epc=%ps cause=0x%lx",
+>> +			(void *)__entry->address, (void *)__entry->epc,
+>> +			__entry->cause)
+> What is "epc"?  You've made this gratuitously different from x86.
+> Never do that.  Always copy what somebody else has done unless you have
+> a good reason to be different.
+Yes, I have referred to the implementation in x86, but the fields in “struct pt_regs” are quite different between RISC-V and x86
 
-Should I send a v2 with the "Fixes" tag? It seems that this commit has
-been pending for a while.
-
-Thanks!
-Menglong Dong
-
-> >
-> > > pointer with original one"), "bpf_kprobe_override" is not used anywhe=
-re
-> > > anymore, and we can remove it now.
-> > >
-> > > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> >
-> > lgtm, cc-ing Masami
-> >
-> > Acked-by: Jiri Olsa <jolsa@kernel.org>
->
-> Thanks!
->
-> >
-> > jirka
-> >
-> > > ---
-> > >  include/linux/trace_events.h | 1 -
-> > >  1 file changed, 1 deletion(-)
-> > >
-> > > diff --git a/include/linux/trace_events.h b/include/linux/trace_event=
-s.h
-> > > index 9df3e2973626..9435185c10ef 100644
-> > > --- a/include/linux/trace_events.h
-> > > +++ b/include/linux/trace_events.h
-> > > @@ -880,7 +880,6 @@ do {                                             =
-                       \
-> > >  struct perf_event;
-> > >
-> > >  DECLARE_PER_CPU(struct pt_regs, perf_trace_regs);
-> > > -DECLARE_PER_CPU(int, bpf_kprobe_override);
-> > >
-> > >  extern int  perf_trace_init(struct perf_event *event);
-> > >  extern void perf_trace_destroy(struct perf_event *event);
-> > > --
-> > > 2.39.2
-> > >
-> > >
->
->
-> --
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
