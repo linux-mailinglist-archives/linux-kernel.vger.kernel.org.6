@@ -1,177 +1,202 @@
-Return-Path: <linux-kernel+bounces-256359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95FD3934CF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:11:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB8BC934CF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:11:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50F72282E2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:11:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E5C41F21D84
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A554313B295;
-	Thu, 18 Jul 2024 12:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zbplqjNg"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A54113B587;
+	Thu, 18 Jul 2024 12:11:47 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C96812C473
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 12:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AFFB59164
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 12:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721304666; cv=none; b=knrRHFhguzhSVDyYOMRIYp13TxgEUY5KBpaVWCc572igTCmaaeHrpUf/VpoQv2r1bNbE6v6W0BCUlcC5ebwa5ftO2+AS6T6eIGj1f0zogF6X5xKIsPLNmwIFX/lygj3aHDe2xklxKfjcwGgZ1Z5/9/T4MlRxrldUdcYI3fOsl38=
+	t=1721304707; cv=none; b=Z+uj6MeJeqzUvXdcrLSNnb4EAF1fwQ8ZYsiz7Xqo3pK8LayH2aBjyL7GDYnXETrcfELxe/KyMf7ZZbiZfmydmImBnjqpLYYyo73dgjIxFeI8t1ih28p2CNDVE8mRQseXViL2W10AQlboKVX0s21+DCRAunze++Zhu9+Fs2bwizU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721304666; c=relaxed/simple;
-	bh=5FlvvF6ElZoar91TZyjpmKtRh40LGlBGD1Ri5a2ma5s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=roeZHg1DgPmMV9lPjQScFT9J3qD18jhEV8YBkWtxqeUFq1mVQOo/CcKwu5kl2LC/0O7tn4XSW71tKhIutr5G0gxKV+nh5L1/a36V4leFnDwl8TZ17n9NF1cu+fsbN33cEObqWpXYtNsd9Q6nHZYIDjj8y5MN2cA3/m2lShtqFfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zbplqjNg; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5a10bb7bcd0so914510a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 05:11:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721304664; x=1721909464; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=HMhzX7yfMRYWWdn8bv1T9AEmz4KNpf5iD+xeOE74dI4=;
-        b=zbplqjNgzzswYLqQve+cEiGc1I7tBZgic1M0R1D0Q4/xFtavr1XC0zfP+aF4Mz3A1I
-         lcwhKZc7UEEc35RP0BJhmOxgw3vFERFvBm1uwqA8gBXYXMvLd5viCoX9k8PxjnpIMtC9
-         p3WUiqWlsGff4z/55kSC5GLYo193Xm7i7L1RGLBeDarUzrWl2Osw9Y94+VhJzLBGFcRr
-         SjCzprgxMF57r4P28KPZ1ve0OqMjmgTSRRbuyD+KdqOWYMZnaxL7NoARmw0VWq5yqnUm
-         tReLC2m5VNyufr0bN99xfcrvQaUY7zl2LcaHXcs+zqP3Co4sng8Gxe+QjXc8kULdUscK
-         FmOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721304664; x=1721909464;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HMhzX7yfMRYWWdn8bv1T9AEmz4KNpf5iD+xeOE74dI4=;
-        b=D7wfTf2xHI//H/qGcSBuYZfyPw/JuKaI8ywGLOeFRnwYZTxBjoUgRRZUy1/GA/Xy+s
-         vCBcXeyRqUiDiun3stRdC6/higUf/RpVINz8d3XOhxMAkNC+QlkHrUTZmQfNkWVrkd9A
-         jfzUtzmVzPyt4H4syimJKuCcCWH/0KD6SXyOn69vEa9qMfutdZ7GsCn2En1NArtbMIHD
-         Pe+itv3wALzecxfStxa352i0WNi6pO/4IYW9YMVtNgGXeLxrWTlbCVi2VX3aCp6t+0i1
-         fXJZVAD05JgmoRlsaiQBt3f3FSXZNKVV+WDpJSOQch7rvhEpm3BaA29+2nGVnRihjVkN
-         tDIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWPECTxdpH235Hgl93JDdkKkba0uMsStY1EO00lYHNJp8gVhtPZfDTkjUKeMydkh+JVBDDB5AG2SnawocrdhtplxOWFtRzEvEmpD8QO
-X-Gm-Message-State: AOJu0Yw8vV9lruDjUH6P43OxAkiEFD2fMRIean2q4LfirxJXQUL/RmVr
-	i/JuVI9nc8Gcxnfe+V+cqWrXIs21u4pKvsgebRN/FN2La4U6fAxvKzb4pFeAgcQ=
-X-Google-Smtp-Source: AGHT+IEaFqvxuZZ7uAVDsD2FLeFUDd9vDe5QIGuH7rH9x2g06eiK94eBPWI/FWmwd3PIAyZkU8JvJg==
-X-Received: by 2002:a17:906:80c3:b0:a72:80b8:ba64 with SMTP id a640c23a62f3a-a7a01145e24mr325166966b.25.1721304662661;
-        Thu, 18 Jul 2024 05:11:02 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5e85ebsm558826066b.96.2024.07.18.05.11.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jul 2024 05:11:02 -0700 (PDT)
-Message-ID: <8b6cd895-8904-4d8c-bf23-5d933f476d57@linaro.org>
-Date: Thu, 18 Jul 2024 14:11:00 +0200
+	s=arc-20240116; t=1721304707; c=relaxed/simple;
+	bh=smLC8HSoky1gAyXDIIvU8mYjvfylHVKxbCcEa0K1XnY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Orr/fTGY7x6KHMZM0p4aM8VcIhSbESDhcv2/I0p1PWBa9h9uZ620/6idK9EXrhplWncAMO7kBQYSCFgvlTLPOqM+1HecSwtLSiGswroCigHwTNM8iQDJ8Oj1KpUqbx+gIR3A8YNq5epj2o2LIUzlo9FBkuW5Xi43zvYJ2iqMcK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WPs7T1x7fzdjDQ;
+	Thu, 18 Jul 2024 20:09:57 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7FA0B180087;
+	Thu, 18 Jul 2024 20:11:41 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 18 Jul 2024 20:11:40 +0800
+Message-ID: <42e69f31-44da-0525-0a79-8d4b5f3e4c57@huawei.com>
+Date: Thu, 18 Jul 2024 20:11:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/13] PCI: endpoint: Assign PCI domain number for
- endpoint controllers
-To: manivannan.sadhasivam@linaro.org,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20240717-pci-qcom-hotplug-v2-0-71d304b817f8@linaro.org>
- <20240717-pci-qcom-hotplug-v2-5-71d304b817f8@linaro.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v3 1/3] crash: Fix x86_32 crash memory reserve dead loop
+ bug
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240717-pci-qcom-hotplug-v2-5-71d304b817f8@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+To: Baoquan He <bhe@redhat.com>
+CC: <linux@armlinux.org.uk>, <catalin.marinas@arm.com>, <will@kernel.org>,
+	<paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
+	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <hpa@zytor.com>, <vgoyal@redhat.com>,
+	<dyoung@redhat.com>, <arnd@arndb.de>, <afd@ti.com>,
+	<linus.walleij@linaro.org>, <akpm@linux-foundation.org>,
+	<eric.devolder@oracle.com>, <gregkh@linuxfoundation.org>,
+	<javierm@redhat.com>, <deller@gmx.de>, <robh@kernel.org>,
+	<hbathini@linux.ibm.com>, <thunder.leizhen@huawei.com>,
+	<chenjiahao16@huawei.com>, <linux-kernel@vger.kernel.org>,
+	<kexec@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-riscv@lists.infradead.org>
+References: <20240718035444.2977105-1-ruanjinjie@huawei.com>
+ <20240718035444.2977105-2-ruanjinjie@huawei.com>
+ <Zpj4OUsTPshBK4JZ@MiWiFi-R3L-srv>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <Zpj4OUsTPshBK4JZ@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
-On 17.07.2024 7:03 PM, Manivannan Sadhasivam via B4 Relay wrote:
-> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> Right now, PCI endpoint subsystem doesn't assign PCI domain number for the
-> PCI endpoint controllers. But this domain number could be useful to the EPC
-> drivers to uniquely identify each controller based on the hardware instance
-> when there are multiple ones present in an SoC (even multiple RC/EP).
-> 
-> So let's make use of the existing pci_bus_find_domain_nr() API to allocate
-> domain numbers based on either Devicetree (linux,pci-domain) property or
-> dynamic domain number allocation scheme.
-> 
-> It should be noted that the domain number allocated by this API will be
-> based on both RC and EP controllers in a SoC. If the 'linux,pci-domain' DT
-> property is present, then the domain number represents the actual hardware
-> instance of the PCI endpoint controller. If not, then the domain number
-> will be allocated based on the PCI EP/RC controller probe order.
-> 
-> If the architecture doesn't support CONFIG_PCI_DOMAINS_GENERIC (rare), then
-> currently a warning is thrown to indicate that the architecture specific
-> implementation is needed.
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  drivers/pci/endpoint/pci-epc-core.c | 10 ++++++++++
->  include/linux/pci-epc.h             |  2 ++
->  2 files changed, 12 insertions(+)
-> 
-> diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-> index 84309dfe0c68..7fa81b91e762 100644
-> --- a/drivers/pci/endpoint/pci-epc-core.c
-> +++ b/drivers/pci/endpoint/pci-epc-core.c
-> @@ -838,6 +838,9 @@ void pci_epc_destroy(struct pci_epc *epc)
->  {
->  	pci_ep_cfs_remove_epc_group(epc->group);
->  	device_unregister(&epc->dev);
-> +
-> +	if (IS_ENABLED(CONFIG_PCI_DOMAINS_GENERIC))
-> +		pci_bus_release_domain_nr(NULL, &epc->dev);	
 
-Shouldn't this be called before device_unregister? pci/remove.c
-does that (via pci_remove_bus() in pci_remove_root_bus())
 
-Konrad
+On 2024/7/18 19:10, Baoquan He wrote:
+> On 07/18/24 at 11:54am, Jinjie Ruan wrote:
+>> On x86_32 Qemu machine with 1GB memory, the cmdline "crashkernel=1G,high"
+>> will cause system stall as below:
+>>
+>> 	ACPI: Reserving FACP table memory at [mem 0x3ffe18b8-0x3ffe192b]
+>> 	ACPI: Reserving DSDT table memory at [mem 0x3ffe0040-0x3ffe18b7]
+>> 	ACPI: Reserving FACS table memory at [mem 0x3ffe0000-0x3ffe003f]
+>> 	ACPI: Reserving APIC table memory at [mem 0x3ffe192c-0x3ffe19bb]
+>> 	ACPI: Reserving HPET table memory at [mem 0x3ffe19bc-0x3ffe19f3]
+>> 	ACPI: Reserving WAET table memory at [mem 0x3ffe19f4-0x3ffe1a1b]
+>> 	143MB HIGHMEM available.
+>> 	879MB LOWMEM available.
+>> 	  mapped low ram: 0 - 36ffe000
+>> 	  low ram: 0 - 36ffe000
+>> 	 (stall here)
+>>
+>> The reason is that the CRASH_ADDR_LOW_MAX is equal to CRASH_ADDR_HIGH_MAX
+>> on x86_32, the first high crash kernel memory reservation will fail, then
+>> go into the "retry" loop and never came out as below.
+>>
+>> -> reserve_crashkernel_generic() and high is true
+>>  -> alloc at [CRASH_ADDR_LOW_MAX, CRASH_ADDR_HIGH_MAX] fail
+>>     -> alloc at [0, CRASH_ADDR_LOW_MAX] fail and repeatedly
+>>        (because CRASH_ADDR_LOW_MAX = CRASH_ADDR_HIGH_MAX).
+>>
+>> Fix it by prevent crashkernel=,high from being parsed successfully on 32bit
+>> system with a architecture-defined macro.
+>>
+>> After this patch, the 'crashkernel=,high' for 32bit system can't succeed,
+>> and it has no chance to call reserve_crashkernel_generic(), therefore this
+>> issue on x86_32 is solved.
+>>
+>> Fixes: 9c08a2a139fe ("x86: kdump: use generic interface to simplify crashkernel reservation code")
+>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+>> Signed-off-by: Baoquan He <bhe@redhat.com>
+> 
+> Just adding my Suggested-by is fine. If multiple people cooperate on one
+> patch, the Co-developed-by tag is needed. As a maintainer, I prefer to
+> have the Suggested-by tag in this case.
+
+OK, thank you very much!
+
+> 
+>> Tested-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> 
+> You can't add Tested-by tag for your own patch. When you post patch,
+> testing it is your obligation.
+> 
+> Other than these tag adding concerns, this patch looks good to me. You
+> can post v4 to update and add my:
+
+Thank you, I'll fix it next version.
+
+> 
+> Acked-by: Baoquan He <bhe@redhat.com>>
+>> ---
+>> v3:
+>> - Fix it as Baoquan suggested.
+>> - Update the commit message.
+>> v2:
+>> - Peel off the other two patches.
+>> - Update the commit message and fix tag.
+>> ---
+>>  arch/arm64/include/asm/crash_reserve.h | 2 ++
+>>  arch/riscv/include/asm/crash_reserve.h | 2 ++
+>>  arch/x86/include/asm/crash_reserve.h   | 1 +
+>>  kernel/crash_reserve.c                 | 2 +-
+>>  4 files changed, 6 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/include/asm/crash_reserve.h b/arch/arm64/include/asm/crash_reserve.h
+>> index 4afe027a4e7b..bf362c1a612f 100644
+>> --- a/arch/arm64/include/asm/crash_reserve.h
+>> +++ b/arch/arm64/include/asm/crash_reserve.h
+>> @@ -7,4 +7,6 @@
+>>  
+>>  #define CRASH_ADDR_LOW_MAX              arm64_dma_phys_limit
+>>  #define CRASH_ADDR_HIGH_MAX             (PHYS_MASK + 1)
+>> +
+>> +#define HAVE_ARCH_CRASHKERNEL_RESERVATION_HIGH
+>>  #endif
+>> diff --git a/arch/riscv/include/asm/crash_reserve.h b/arch/riscv/include/asm/crash_reserve.h
+>> index 013962e63587..8d7a8fc1d459 100644
+>> --- a/arch/riscv/include/asm/crash_reserve.h
+>> +++ b/arch/riscv/include/asm/crash_reserve.h
+>> @@ -7,5 +7,7 @@
+>>  #define CRASH_ADDR_LOW_MAX		dma32_phys_limit
+>>  #define CRASH_ADDR_HIGH_MAX		memblock_end_of_DRAM()
+>>  
+>> +#define HAVE_ARCH_CRASHKERNEL_RESERVATION_HIGH
+>> +
+>>  extern phys_addr_t memblock_end_of_DRAM(void);
+>>  #endif
+>> diff --git a/arch/x86/include/asm/crash_reserve.h b/arch/x86/include/asm/crash_reserve.h
+>> index 7835b2cdff04..24c2327f9a16 100644
+>> --- a/arch/x86/include/asm/crash_reserve.h
+>> +++ b/arch/x86/include/asm/crash_reserve.h
+>> @@ -26,6 +26,7 @@ extern unsigned long swiotlb_size_or_default(void);
+>>  #else
+>>  # define CRASH_ADDR_LOW_MAX     SZ_4G
+>>  # define CRASH_ADDR_HIGH_MAX    SZ_64T
+>> +#define HAVE_ARCH_CRASHKERNEL_RESERVATION_HIGH
+>>  #endif
+>>  
+>>  # define DEFAULT_CRASH_KERNEL_LOW_SIZE crash_low_size_default()
+>> diff --git a/kernel/crash_reserve.c b/kernel/crash_reserve.c
+>> index 5b2722a93a48..c5213f123e19 100644
+>> --- a/kernel/crash_reserve.c
+>> +++ b/kernel/crash_reserve.c
+>> @@ -306,7 +306,7 @@ int __init parse_crashkernel(char *cmdline,
+>>  	/* crashkernel=X[@offset] */
+>>  	ret = __parse_crashkernel(cmdline, system_ram, crash_size,
+>>  				crash_base, NULL);
+>> -#ifdef CONFIG_ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
+>> +#ifdef HAVE_ARCH_CRASHKERNEL_RESERVATION_HIGH
+>>  	/*
+>>  	 * If non-NULL 'high' passed in and no normal crashkernel
+>>  	 * setting detected, try parsing crashkernel=,high|low.
+>> -- 
+>> 2.34.1
+>>
+> 
+> 
 
