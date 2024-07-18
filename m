@@ -1,149 +1,153 @@
-Return-Path: <linux-kernel+bounces-255869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD7979345D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:31:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD0CC9345D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1AB01C21D46
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:31:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AB981F23EF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24D6364AB;
-	Thu, 18 Jul 2024 01:31:29 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015F629422;
+	Thu, 18 Jul 2024 01:31:28 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D185286A6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEEC1DA2F
 	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 01:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721266289; cv=none; b=mJ/tppm+TWfInnhQekrBf6+0ynyjtxrzEfZ3t+EuEiGNPYjqUgvmn2jSFymQLU9nD8LNoulqhg018YKFImVushHT5iDHTosbi3H7H0sH9beJBoLy4BYLw8JWUSFcHG5n2ONVh78J/L8XUMihEjRA3VlKKf/jZA1ro2DkxXygBqY=
+	t=1721266287; cv=none; b=W8pK5JfE1mSWuKe+YHJ5Vb0CbGyQCzErbKGLWWoEMOr/RbunBKWBnFRvh5RRRcC14X4VFGg5DXD5aWSjEjU31TH+IYkwhtB/rwLtDtTWByFfllbLVDr728Wzs/jvMxM9CVwX+gCgbvUC6faEZDK5gBodWarvqYcrYHY1CM2wzso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721266289; c=relaxed/simple;
-	bh=bSFAwrHikfHtV5XAliAhDkqUwP7BAVOT7M7B3F3e+Ro=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Xk2AydQz3otpJzdrq2i2eh6YSwu4Udyb7pTGfMfU1dzecoJhz1VLiU6bOxy+TM6anFbW6dcoDuWkCZFq7pYMPb5I8fObou1OTzwAo2c8+gjoNP3x7S/HnItoD2KWu7gc4+QeOOqSvSfwI4dgNk2aEoGpgfoaUNrZPd89pOj6XC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+	s=arc-20240116; t=1721266287; c=relaxed/simple;
+	bh=H6421hUWgOHPk8Prphd4QoomoEFVL8l1nu8WD7kqbKc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=IUDIJi0kTEIYe/A4e+dcmBSapRiWMWp03y+KZHVeLZeYy0z4rcft5v6kMdb/Tfc6dyCIbkjiLx2Wcqq+5YFMcqWEkueQyuXbJpkHu1vf3EdaY2elDyFkz2DwsYXv0Q4DFQKFW2+tY8OtiLHKZ0uKo4iwnRfmdN9RD8gb9nUvcrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-80502b81995so41249239f.2
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-803aad60527so38478639f.1
         for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 18:31:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1721266285; x=1721871085;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=GQ1BVktSx7DAWpt9QOHqXq4RsBhsS3hDO43i4FEFpdw=;
-        b=ebiLfN3aYus8CP7onxaeDAEHUcvLQW2eoXnAj+CIcZq3golWfI96fDrzBiZUB6iRu/
-         8EzS6xwnhEVYpsbx9ucRFm9vePFNo4yA9rXy8UyRBvNBk0YaNnfdrFteW/CnNQDHmPMu
-         ZYg8ICnaY2Fk9Gu18Y5cyUQPlPLfjC3qB8i3x/9gdqDuFqTxC1q7yLJ1ZKBmtverDmUX
-         daQ0hXGRQfAJAYvYImdsASJ6MptMlw6uZMfcoVyMlkHx67JCO15WTYUBAH+dcArTdbbr
-         uUfP6VTbUH+SkbeMep36i7yKzzEK2MrSx1dR6WL8poI5Dd2QKBNNwwq188sEKM6rRy+7
-         4BdA==
-X-Forwarded-Encrypted: i=1; AJvYcCXuKKM7tJ06qu2cQPZWiIUBvYhX1Ai03aPx97md+BYdPQdHEu15ASD7+ZGAo86/CeBpS4n4oy/iP1FsBDOhFw6cvso+GCRq7wiJ9Riq
-X-Gm-Message-State: AOJu0Ywjkf1F2wu7xH9vxBGtUc7woDLdXj3VBBHIzfWRHgguqqT1k95P
-	FYsWWH0I+jOnHLVA1xaAGV7M90r+JzOj+4u1jjtnzhhGLHgSqbfViKZw+/ZVuIzoML/TSAP4ZEM
-	7yNGWcQP/xHwJXTTyyxzyjozw8AzYjUiPNR5811xHOYrArfiAhZEvNgc=
-X-Google-Smtp-Source: AGHT+IGLAY4Nutw+38nLhIs754r866qVPKgfnCJfnldbQ06hpA+fDzuprk7mXlT0+smxSxP5sFGPtwnGtwmXJPUIYnsXyzkSJGJc
+        bh=T3m39QGuDbE/4hBGkcK6Bm82mAdr7LA9r1OCWNKU0i8=;
+        b=kaEwSDRas8U0QeIkyOYYvmO1FZfMAYb35ZIG9CB0Gx1uN7F8QbzIcq6Ek/L61WRLUb
+         Od4KeJiWcqUKXMU0hlMsK7jJzvh1zib+h4eq5x9wvJQbByB28Bk6FzLuijQbRj+zuiLG
+         FD8isY4qOy0iy6HeBdrHt6+kHs/6aJZlYHeHYCP/HlUiKdQLVZ+njAUVX7NX9KTb9ZhO
+         wzt+7rRG/AEjfE215sbsymWzJFPiblLCOqaLXdVHPqU1KFruFK+TgPZ3VuflRDbrI59e
+         XtC3DwyaAkoHGn6T/0pWH7V2clTlCndnRLhcJtHj/YYrBi5KYthZTRugeECU1FSuiAtA
+         GSCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWoTiqAnv8idzAEqxIhuzgIn6gSa6R2CIBbSy93svpao4CoPS11t9fYi0C2MkG0sHRi+x+/6f8zk+2RC+ZSUEWRK6Qr8vE+4red1PME
+X-Gm-Message-State: AOJu0Yw7FEMT5J2yJBJ4uZzGByzp8mHHtKv/zvf7zIUW6N43FyQRPHO9
+	uRBZtNjMGwP5HvGWA/O9NRIlFvx78Tbqj06lRkeUL1PjgHTCcWZM4qtY+0D9s/IVKLlzS4p509Q
+	wv3MHPrTrdSXPEImIqJ2hG7b41bM5FBYlcpYdlGoZpBlg16gpmI7Naag=
+X-Google-Smtp-Source: AGHT+IH9ObtESPAwXLA53Gf1PWGg7p22AvMYtLUWoKG4seIvV4ymWDufQYECfSECFGJvAAp+GY5uBs0SREFeIfNIf+mBy64qqcNk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:370b:b0:4b9:ad96:2adc with SMTP id
- 8926c6da1cb9f-4c215b6b706mr145762173.4.1721266284769; Wed, 17 Jul 2024
- 18:31:24 -0700 (PDT)
+X-Received: by 2002:a05:6e02:1c01:b0:381:7075:6911 with SMTP id
+ e9e14a558f8ab-3955523de17mr2555315ab.1.1721266285003; Wed, 17 Jul 2024
+ 18:31:25 -0700 (PDT)
 Date: Wed, 17 Jul 2024 18:31:24 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000077c88b061d7b893e@google.com>
-Subject: [syzbot] [fs?] WARNING: lock held when returning to user space in ns_ioctl
-From: syzbot <syzbot+dd73570cf9918519e789@syzkaller.appspotmail.com>
-To: aleksandr.mikhalitsyn@canonical.com, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Message-ID: <0000000000007b5313061d7b897d@google.com>
+Subject: [syzbot] [bcachefs?] WARNING in __replicas_deltas_realloc
+From: syzbot <syzbot+50bcc3c92dc2516c4ca7@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    51835949dda3 Merge tag 'net-next-6.11' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1758d8e6980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a2f87f8b8afcec45
-dashboard link: https://syzkaller.appspot.com/bug?extid=dd73570cf9918519e789
+HEAD commit:    c912bf709078 Merge remote-tracking branches 'origin/arm64-..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=10fa3b6e980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=79a49b0b9ffd6585
+dashboard link: https://syzkaller.appspot.com/bug?extid=50bcc3c92dc2516c4ca7
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1799ccb5980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15ef5b4e980000
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=121892e9980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10e6054e980000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/67cb6b0946ba/disk-51835949.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1946faba5973/vmlinux-51835949.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/fc2e329875bd/bzImage-51835949.xz
-
-The issue was bisected to:
-
-commit ca567df74a28a9fb368c6b2d93e864113f73f5c2
-Author: Christian Brauner <brauner@kernel.org>
-Date:   Sun Jun 7 20:47:08 2020 +0000
-
-    nsfs: add pid translation ioctls
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=113c7b2d980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=133c7b2d980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=153c7b2d980000
+disk image: https://storage.googleapis.com/syzbot-assets/fea69a9d153c/disk-c912bf70.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/be06762a72ef/vmlinux-c912bf70.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6c8e58b4215d/Image-c912bf70.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/26bfb87318b0/mount_0.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+dd73570cf9918519e789@syzkaller.appspotmail.com
-Fixes: ca567df74a28 ("nsfs: add pid translation ioctls")
+Reported-by: syzbot+50bcc3c92dc2516c4ca7@syzkaller.appspotmail.com
 
-================================================
-WARNING: lock held when returning to user space!
-6.10.0-syzkaller-04472-g51835949dda3 #0 Not tainted
-------------------------------------------------
-syz-executor257/5082 is leaving the kernel with locks still held!
-1 lock held by syz-executor257/5082:
- #0: ffffffff8e335fe0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:327 [inline]
- #0: ffffffff8e335fe0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:839 [inline]
- #0: ffffffff8e335fe0 (rcu_read_lock){....}-{1:2}, at: ns_ioctl+0x3e0/0x740 fs/nsfs.c:184
-BUG: sleeping function called from invalid context at include/linux/sched/mm.h:337
-in_atomic(): 0, irqs_disabled(): 0, non_block: 0, pid: 5082, name: syz-executor257
-preempt_count: 0, expected: 0
-RCU nest depth: 1, expected: 0
-INFO: lockdep is turned off.
-CPU: 1 PID: 5082 Comm: syz-executor257 Not tainted 6.10.0-syzkaller-04472-g51835949dda3 #0
+bcachefs (loop0): journal_replay... done
+bcachefs (loop0): resume_logged_ops... done
+bcachefs (loop0): going read-write
+bcachefs (loop0): done starting filesystem
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6286 at fs/bcachefs/buckets.c:395 __replicas_deltas_realloc+0x16c/0x2a4 fs/bcachefs/buckets.c:395
+Modules linked in:
+CPU: 1 PID: 6286 Comm: syz-executor316 Not tainted 6.10.0-rc7-syzkaller-gc912bf709078 #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- __might_resched+0x5d4/0x780 kernel/sched/core.c:8437
- might_alloc include/linux/sched/mm.h:337 [inline]
- prepare_alloc_pages+0x1c9/0x5d0 mm/page_alloc.c:4454
- __alloc_pages_noprof+0x166/0x6c0 mm/page_alloc.c:4672
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- vma_alloc_folio_noprof+0xf3/0x1f0 mm/mempolicy.c:2304
- folio_prealloc+0x31/0x170
- wp_page_copy mm/memory.c:3285 [inline]
- do_wp_page+0x11cc/0x52f0 mm/memory.c:3677
- handle_pte_fault+0x117e/0x7090 mm/memory.c:5397
- __handle_mm_fault mm/memory.c:5524 [inline]
- handle_mm_fault+0xfb0/0x19d0 mm/memory.c:5689
- do_user_addr_fault arch/x86/mm/fault.c:1338 [inline]
- handle_page_fault arch/x86/mm/fault.c:1481 [inline]
- exc_page_fault+0x459/0x8c0 arch/x86/mm/fault.c:1539
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-RIP: 0033:0x7f72e4df2de0
-Code: 41 54 55 48 89 f5 53 89 fb 48 83 ec 18 48 83 3d 0d 02 0a 00 00 89 54 24 0c 74 08 84 c9 0f 85 09 02 00 00 31 c0 ba 01 00 00 00 <f0> 0f b1 15 e0 2e 0a 00 0f 85 0f 02 00 00 4c 8d 25 d3 2e 0a 00 4c
-RSP: 002b:00007ffd9317a820 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000001
-RDX: 0000000000000001 RSI: 00007f72e4e93110 RDI: 0000000000000000
-RBP: 00007f72e4e93110 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
- </TASK>
+pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : __replicas_deltas_realloc+0x16c/0x2a4 fs/bcachefs/buckets.c:395
+lr : __replicas_deltas_realloc+0x16c/0x2a4 fs/bcachefs/buckets.c:395
+sp : ffff80009bb26650
+x29: ffff80009bb26650 x28: 000000000001ffa0 x27: 1fffe0001abe3025
+x26: dfff800000000000 x25: 1fffe0001c4c8000 x24: 000000000001ffd0
+x23: 0000000000000000 x22: ffff0000e2640000 x21: ffff0000d5f18000
+x20: 0000000000002800 x19: ffff0000d5f18128 x18: ffff80009bb25c80
+x17: 000000000000d4f8 x16: ffff80008af00270 x15: 0000000000000003
+x14: 1ffff00013764d12 x13: 0000000040000000 x12: 0000000000000080
+x11: ffff700013764d15 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000d6f2bc80 x7 : 0000000002200000 x6 : ffff0000d62bd6d0
+x5 : ffff0000d62bd6a8 x4 : ffff80009bb268a8 x3 : 0000000002200000
+x2 : 0000000000002800 x1 : 000000000001ffd0 x0 : 0000000000010000
+Call trace:
+ __replicas_deltas_realloc+0x16c/0x2a4 fs/bcachefs/buckets.c:395
+ bch2_replicas_deltas_realloc fs/bcachefs/buckets.c:427 [inline]
+ __trigger_reservation+0x100/0x424 fs/bcachefs/buckets.c:1280
+ bch2_trigger_reservation+0xec/0x148 fs/bcachefs/buckets.c:1312
+ bch2_key_trigger fs/bcachefs/bkey_methods.h:88 [inline]
+ bch2_key_trigger_new fs/bcachefs/bkey_methods.h:116 [inline]
+ run_one_trans_trigger fs/bcachefs/btree_trans_commit.c:517 [inline]
+ run_btree_triggers+0x680/0xc18 fs/bcachefs/btree_trans_commit.c:544
+ bch2_trans_commit_run_triggers fs/bcachefs/btree_trans_commit.c:576 [inline]
+ __bch2_trans_commit+0x30c/0x592c fs/bcachefs/btree_trans_commit.c:1022
+ bch2_trans_commit fs/bcachefs/btree_update.h:170 [inline]
+ bch2_extent_update+0x3d0/0x9b4 fs/bcachefs/io_write.c:326
+ bch2_extent_fallocate+0x7c0/0x1a28 fs/bcachefs/io_misc.c:111
+ __bchfs_fallocate fs/bcachefs/fs-io.c:673 [inline]
+ bchfs_fallocate fs/bcachefs/fs-io.c:736 [inline]
+ bch2_fallocate_dispatch+0x19b8/0x2d50 fs/bcachefs/fs-io.c:783
+ vfs_fallocate+0x480/0x5bc fs/open.c:330
+ ioctl_preallocate+0x21c/0x2a0 fs/ioctl.c:291
+ do_vfs_ioctl+0x1b88/0x2404 fs/ioctl.c:886
+ __do_sys_ioctl fs/ioctl.c:905 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __arm64_sys_ioctl+0xe4/0x1c8 fs/ioctl.c:893
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:131
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:150
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+irq event stamp: 67842
+hardirqs last  enabled at (67841): [<ffff8000809b3374>] lruvec_stat_mod_folio include/linux/vmstat.h:561 [inline]
+hardirqs last  enabled at (67841): [<ffff8000809b3374>] __kmalloc_large_node+0x124/0x200 mm/slub.c:4071
+hardirqs last disabled at (67842): [<ffff80008afc1964>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:470
+softirqs last  enabled at (67088): [<ffff80008003067c>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
+softirqs last disabled at (67086): [<ffff800080030648>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
+---[ end trace 0000000000000000 ]---
 
 
 ---
@@ -153,7 +157,6 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
