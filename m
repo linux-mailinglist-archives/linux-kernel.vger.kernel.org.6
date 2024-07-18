@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-256849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F8FE937137
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 01:44:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DD3893713A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 01:44:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B5B21F21FB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 23:44:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94BCCB21D1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 23:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B20147C96;
-	Thu, 18 Jul 2024 23:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952951487D8;
+	Thu, 18 Jul 2024 23:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yKnCZb6K"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NDoUzT2N"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CCE146D59
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 23:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C921474C5
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 23:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721346211; cv=none; b=BwyYeRFzhnn+ZKJJl5Z69jRtldFm/y4iCq3aoF8QxX2wloZ1z/2G4OQltVyZ1Up2XUdW1HgYjvaaNVp4dww+rRrizvMsW1RAFs+cYoyxhnTS1xRAaOhZ49+tU1mGMa5Isks6XrPZxRfjsDD8ce5oTEBpFjU4mdAUSAiWSmyjW1A=
+	t=1721346213; cv=none; b=UKSBBID7Mxt3SJD3Tp6hQ8jEXO1DptpPLDvm7qsWnOAh/ipyLT32bYyXOtR0kYuQ+soEr1zxpj3n6beICkx8so1pBVmwTFKRx6RNfdeIchc9o5YmgJ+vtTdyxIXuljY6dMbY4ap1GzvK5aBVe7UNnyamKoiNv7vmVkRMbOJ5qi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721346211; c=relaxed/simple;
-	bh=Y3hwNFUGYkYRfIHL/7k3SZgbiEUCm5J9K1Jr9I8q53M=;
+	s=arc-20240116; t=1721346213; c=relaxed/simple;
+	bh=NAfpFw+HWYAoDaBWfwr80BMUDZiqy4N+6uqMB5AAJX4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ED/xJI7FQqFsiQrn//VviOhlyxXtVcas5aDd7F45NVtB3F2lVPRrkMJpp4Y47xgJ1kpvcU8n3egzOhJX4yU/lSapclu4RsET62CF1rM0gAMBA6Y8/hcMAqhGLAoTdFUuqpvb4IQb8JDoVMkNFtSLd7PYQETWA5Hy35reYAt+XsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yKnCZb6K; arc=none smtp.client-ip=209.85.167.53
+	 MIME-Version; b=SU4SrKrzgSs1ecsCBuHfW7mdh8m2MX4/MyFlbQ5vWoS4jPBTKaNFmiRTZh4JxqnPe4kyFga0AxqC1i9KRs5Ciozh7Q4pt2iul3CusqXQQ4qLHXmMuwO+H0w7O9zAX75lhOcdj0ERw0s4FQq1PQQATORIVwkSTi3ecW518PeMPEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NDoUzT2N; arc=none smtp.client-ip=209.85.208.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52ea2f58448so1443607e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 16:43:29 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2eeb1ba040aso20133631fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 16:43:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721346208; x=1721951008; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1721346209; x=1721951009; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Faj5QcK3We3F3NVuTbRR7vS8a3eBKTUsob4pR7kBr7Q=;
-        b=yKnCZb6Khu8Vs/frX6dovOzo+VqjRnJLPt76bngbG/WkJpPmeL6numGXRUd1PqsRxK
-         sr5YHmR6QeL0XnaBwUsxDzZ2IADNag2S2rIE6WNbPiowBiIiQLm4tH3zvqoy/+mp2305
-         7/2PeV1j2TZaI4AydX/rR6w1G0IW3uTCR8Cd/EaQVcYDRv1LWf2ACT/bUD0ZK6euw2DL
-         mb+JS/fSvHb0LJcQJHeM5djNJmbU0I6wWHx1jWUu3QQFAEAc03vMBFoDvGsjvr7b2+ww
-         BfrvFur/10FxxnMvk8wXd3yovtRzQXoIerCSI+VZb5kru4E/33F2HnLJBGLG4R4oJzV7
-         PNpA==
+        bh=J9vI4SwwGNFQB5ve0cZ2IKXbIbaFjJCx9WMpU5iHjvI=;
+        b=NDoUzT2N5rNubEzf8c2tkC1qn9EcLuP/3SANWyx5XWHbSmlYqH21RG3HrWKHEr9Rpe
+         DmDMPngr5Ww4YsnQPELkoo5nqtCb/DcbCDjVn2RBtLl5H9EA3v++ktKU1h3XNILxMrUA
+         ZDteHFXCPS8hbgZTbD6axL/+qtN1EYwtVdCsnahiH2AnxXlS8g+TUKpAZ0qq2e6MpnhL
+         Bv6/bf4y9RwzUN7LRpJ85ZJtiYnK8h40Fz3xwnDvhujA72b2AeLbWGWLd1t7oOnSqWLG
+         s5PrnBQ8GzM/z3rWR6XG0otadG6HbpM8MkK5BjiJekobe0jIMeMa8TgJgsUd8HotcvWN
+         a9dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721346208; x=1721951008;
+        d=1e100.net; s=20230601; t=1721346209; x=1721951009;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Faj5QcK3We3F3NVuTbRR7vS8a3eBKTUsob4pR7kBr7Q=;
-        b=reOOYB5D9ri/h6/OUgvODg+XokfPVsDm2t4tE2kQjI+VGEp34FkOCFKXhDyxwV3Q67
-         8bJe/eW+HjatgzlCzm3sbf867mJ0EjSqrA2/gsgxIeJaCygQAIiwiSwXZKOPyYMoqmpu
-         ehwPN2/xIDC7vLFmFWyhoz+PtnVn9rMDWGoSg5rZaq4Jq8/rd6XFQTpfvV0z/sTTJkwi
-         X4ZDr0h9N7LQ436Z4AbIgT0DvddDSWIaCOPXatvux8JtV1BdcH61FJQv7yVMVdnpORt4
-         gYX5YMAerh2avH0MqS13+rJnMNyP3PrTyU2HvtMRXkrXo81tDHUANq/wfQIV/NhrTRrw
-         YuMA==
-X-Forwarded-Encrypted: i=1; AJvYcCXnoUcncXuXF9Kqwmv1051N1b5aR5551NRxw9JTxOJZVrxGF7jTG2WWzux3gNgk+K0cFkreJ0MZ7c8wWmLHCQXenNQp3WbIHcybh2Dr
-X-Gm-Message-State: AOJu0Yxc0bIm9TBwmwukoRUrCnExOYTpGmiM5B9cszTpPwozjkIuFr0Q
-	fhKOyydZsxaBQ+TtjgRt+CYNsvy1L7QZuk4DAccBxSJaKeW/9AUKEFkor7p0zk8=
-X-Google-Smtp-Source: AGHT+IHK7FOzBoV+1FS5of2LM4i6O9EZB5TaiB2xWzxT7vDsImay40B6se0ysI9gGqmvrwlYKjDpPA==
-X-Received: by 2002:a05:6512:234b:b0:52e:9cf0:69cf with SMTP id 2adb3069b0e04-52eeaea73bdmr3196721e87.62.1721346208245;
-        Thu, 18 Jul 2024 16:43:28 -0700 (PDT)
+        bh=J9vI4SwwGNFQB5ve0cZ2IKXbIbaFjJCx9WMpU5iHjvI=;
+        b=ScQ9v88mjziB6vcgMYSVGV8/+wkVlCrevs2NT3IUcSK4E9/kIXA2PukCiVpQX9RXMV
+         LHo8N42OpbCcIZGKucP7rf4+DD1cCfJPiqMpr0yA6YLk0fufNUvVW7Ma/HJLR6zeY9aN
+         tJWLevqKR3Q3K73KIlTWxODrDvDqEzG5FGPQftpyV5svaqCtnctiTRoeB5jeGMKWcuUx
+         K64AjGnb6WyDf4Cf2Y+SvdGiugzROXh54Slxm1Me9uy9lzmUwWNIEWEhABNgtVnbQMzI
+         Oev2PD5RLa/2znD0VcTnMOcZkHIWIU43ewva5blUApFMN+rVhaBRJqsHIVm0nd9aEwVW
+         l6JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3hxc9kUUlYA8V7cO/g3FlTRjQK9WdUpQtWcNn4STbpRmR1527+CJbcMmD0QvO/AT6ofN4dj2Upxwu0+geJv9Qa3/bAEsByQgrxNJt
+X-Gm-Message-State: AOJu0YxHpzLMAFwmksdHHsdfQlmc3cG0A9ThvszsiBY556JcCTrRT6ez
+	PAJGXNEk8vRvnbKoi6hIOdvfTtWN14GwpxXhOyBe9sqWkOlcAeWs+AN438TGc0Y=
+X-Google-Smtp-Source: AGHT+IHhvBJQZZLF4qvCA1+VeH1XflwZ0B4C4bcRfZpPoV5ESlTMWrHmMyYLyE0Fj/9144c0IPpr/w==
+X-Received: by 2002:a05:6512:31ca:b0:52e:be30:7e7 with SMTP id 2adb3069b0e04-52ee53a25ebmr4597627e87.1.1721346209536;
+        Thu, 18 Jul 2024 16:43:29 -0700 (PDT)
 Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ef556b4fbsm22491e87.139.2024.07.18.16.43.27
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ef556b4fbsm22491e87.139.2024.07.18.16.43.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 16:43:27 -0700 (PDT)
+        Thu, 18 Jul 2024 16:43:29 -0700 (PDT)
 From: Ulf Hansson <ulf.hansson@linaro.org>
 To: Viresh Kumar <vireshk@kernel.org>,
 	Nishanth Menon <nm@ti.com>,
@@ -80,9 +80,9 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	linux-pm@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/6] pmdomain: core: Manage the default required OPP from a separate function
-Date: Fri, 19 Jul 2024 01:43:16 +0200
-Message-Id: <20240718234319.356451-4-ulf.hansson@linaro.org>
+Subject: [PATCH v2 4/6] OPP/pmdomain: Set the required_dev for a required OPP during genpd attach
+Date: Fri, 19 Jul 2024 01:43:17 +0200
+Message-Id: <20240718234319.356451-5-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240718234319.356451-1-ulf.hansson@linaro.org>
 References: <20240718234319.356451-1-ulf.hansson@linaro.org>
@@ -94,87 +94,179 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-To improve the readability of the code in __genpd_dev_pm_attach(), let's
-move out the required OPP handling into a separate function.
+Through dev_pm_opp_set_config() the _opp_attach_genpd() allows consumer
+drivers to hook up a device to its PM domains. Their corresponding virtual
+devices that are created by genpd during attach, are later being assigned
+as the required_devs for the corresponding required OPPs.
+
+In _opp_attach_genpd() we are also cross-checking whether the attached
+device's required OPPs really belongs to its PM domain's OPP table - and
+tries to fix it up if possible. In principle this works fine, but sometimes
+it's not convenient for consumer drivers to use _opp_attach_genpd().
+Especially in the single PM domain case, when a device is usually attached
+by the bus-level ->probe() callbacks.
+
+Moreover, we now have dev_pm_domain_attach|detach_list() that helps
+consumer drivers to attach their devices to their PM domains.
+
+To improve the situation, let's instead assign the required_devs during
+device attach in genpd, by using _opp_set_required_dev(). In this way, the
+cross-check of the OPP table is always being done.
+
+Note that, we still need to allow existing users of _opp_attach_genpd(),
+which makes this change slightly more complicated. On the other hand, once
+we have migrated those users to dev_pm_domain_attach|detach_list(), the
+entire _opp_attach_genpd() should be removed.
 
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
 
 Changes in v2:
-	- None.
+	- Clarified the commitmsg.
+	- Add a check for #power-domain-cells in genpd to avoid assigning the
+	required-devs for non-genpd-providers.
 ---
- drivers/pmdomain/core.c | 38 +++++++++++++++++++++++++-------------
- 1 file changed, 25 insertions(+), 13 deletions(-)
+ drivers/opp/core.c      | 35 +-----------------------
+ drivers/pmdomain/core.c | 59 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 60 insertions(+), 34 deletions(-)
 
+diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+index b6a699286aaa..cad7e84c9ad3 100644
+--- a/drivers/opp/core.c
++++ b/drivers/opp/core.c
+@@ -2369,7 +2369,6 @@ static void _opp_detach_genpd(struct opp_table *opp_table)
+ 			continue;
+ 
+ 		dev_pm_domain_detach(opp_table->required_devs[index], false);
+-		opp_table->required_devs[index] = NULL;
+ 	}
+ }
+ 
+@@ -2393,8 +2392,7 @@ static void _opp_detach_genpd(struct opp_table *opp_table)
+ static int _opp_attach_genpd(struct opp_table *opp_table, struct device *dev,
+ 			const char * const *names, struct device ***virt_devs)
+ {
+-	struct device *virt_dev, *gdev;
+-	struct opp_table *genpd_table;
++	struct device *virt_dev;
+ 	int index = 0, ret = -EINVAL;
+ 	const char * const *name = names;
+ 
+@@ -2427,37 +2425,6 @@ static int _opp_attach_genpd(struct opp_table *opp_table, struct device *dev,
+ 			goto err;
+ 		}
+ 
+-		/*
+-		 * The required_opp_tables parsing is not perfect, as the OPP
+-		 * core does the parsing solely based on the DT node pointers.
+-		 * The core sets the required_opp_tables entry to the first OPP
+-		 * table in the "opp_tables" list, that matches with the node
+-		 * pointer.
+-		 *
+-		 * If the target DT OPP table is used by multiple devices and
+-		 * they all create separate instances of 'struct opp_table' from
+-		 * it, then it is possible that the required_opp_tables entry
+-		 * may be set to the incorrect sibling device.
+-		 *
+-		 * Cross check it again and fix if required.
+-		 */
+-		gdev = dev_to_genpd_dev(virt_dev);
+-		if (IS_ERR(gdev)) {
+-			ret = PTR_ERR(gdev);
+-			goto err;
+-		}
+-
+-		genpd_table = _find_opp_table(gdev);
+-		if (!IS_ERR(genpd_table)) {
+-			if (genpd_table != opp_table->required_opp_tables[index]) {
+-				dev_pm_opp_put_opp_table(opp_table->required_opp_tables[index]);
+-				opp_table->required_opp_tables[index] = genpd_table;
+-			} else {
+-				dev_pm_opp_put_opp_table(genpd_table);
+-			}
+-		}
+-
+-		opp_table->required_devs[index] = virt_dev;
+ 		index++;
+ 		name++;
+ 	}
 diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-index 623d15b68707..930cd5382032 100644
+index 930cd5382032..fdbc3aab9083 100644
 --- a/drivers/pmdomain/core.c
 +++ b/drivers/pmdomain/core.c
-@@ -2774,12 +2774,34 @@ static void genpd_dev_pm_sync(struct device *dev)
+@@ -2774,6 +2774,61 @@ static void genpd_dev_pm_sync(struct device *dev)
  	genpd_queue_power_off_work(pd);
  }
  
-+static int genpd_set_required_opp(struct device *dev, unsigned int index)
++static struct opp_table *genpd_find_opp_table(struct generic_pm_domain *genpd,
++					      unsigned int depth)
 +{
-+	int ret, pstate;
++	struct opp_table *opp_table;
++	struct gpd_link *link;
 +
-+	/* Set the default performance state */
-+	pstate = of_get_required_opp_performance_state(dev->of_node, index);
-+	if (pstate < 0 && pstate != -ENODEV && pstate != -EOPNOTSUPP) {
-+		ret = pstate;
-+		goto err;
-+	} else if (pstate > 0) {
-+		ret = dev_pm_genpd_set_performance_state(dev, pstate);
-+		if (ret)
-+			goto err;
-+		dev_gpd_data(dev)->default_pstate = pstate;
++	if (genpd->opp_table)
++		return genpd->opp_table;
++
++	list_for_each_entry(link, &genpd->child_links, child_node) {
++		struct generic_pm_domain *parent = link->parent;
++
++		genpd_lock_nested(parent, depth + 1);
++		opp_table = genpd_find_opp_table(parent, depth + 1);
++		genpd_unlock(parent);
++
++		if (opp_table)
++			return opp_table;
 +	}
 +
-+	return 0;
-+err:
-+	dev_err(dev, "failed to set required performance state for power-domain %s: %d\n",
-+		dev_to_genpd(dev)->name, ret);
++	return NULL;
++}
++
++static int genpd_set_required_opp_dev(struct device *dev,
++				      struct device *base_dev)
++{
++	struct generic_pm_domain *genpd = dev_to_genpd(dev);
++	struct opp_table *opp_table;
++	int ret = 0;
++
++	/* Limit support to non-providers for now. */
++	if (of_property_present(base_dev->of_node, "#power-domain-cells"))
++		return 0;
++
++	if (!dev_pm_opp_of_has_required_opp(base_dev))
++		return 0;
++
++	genpd_lock(genpd);
++	opp_table = genpd_find_opp_table(genpd, 0);
++	genpd_unlock(genpd);
++
++	if (opp_table) {
++		struct dev_pm_opp_config config = {
++			.required_dev = dev,
++			.required_opp_table = opp_table,
++		};
++
++		ret = devm_pm_opp_set_config(base_dev, &config);
++		if (ret < 0)
++			dev_err(dev, "failed to set opp config %d\n", ret);
++	}
++
 +	return ret;
 +}
 +
- static int __genpd_dev_pm_attach(struct device *dev, struct device *base_dev,
- 				 unsigned int index, bool power_on)
+ static int genpd_set_required_opp(struct device *dev, unsigned int index)
  {
- 	struct of_phandle_args pd_args;
- 	struct generic_pm_domain *pd;
--	int pstate;
- 	int ret;
- 
- 	ret = of_parse_phandle_with_args(dev->of_node, "power-domains",
-@@ -2808,17 +2830,9 @@ static int __genpd_dev_pm_attach(struct device *dev, struct device *base_dev,
+ 	int ret, pstate;
+@@ -2830,6 +2885,10 @@ static int __genpd_dev_pm_attach(struct device *dev, struct device *base_dev,
  	dev->pm_domain->detach = genpd_dev_pm_detach;
  	dev->pm_domain->sync = genpd_dev_pm_sync;
  
--	/* Set the default performance state */
--	pstate = of_get_required_opp_performance_state(dev->of_node, index);
--	if (pstate < 0 && pstate != -ENODEV && pstate != -EOPNOTSUPP) {
--		ret = pstate;
-+	ret = genpd_set_required_opp(dev, index);
++	ret = genpd_set_required_opp_dev(dev, base_dev);
 +	if (ret)
++		goto err;
++
+ 	ret = genpd_set_required_opp(dev, index);
+ 	if (ret)
  		goto err;
--	} else if (pstate > 0) {
--		ret = dev_pm_genpd_set_performance_state(dev, pstate);
--		if (ret)
--			goto err;
--		dev_gpd_data(dev)->default_pstate = pstate;
--	}
- 
- 	if (power_on) {
- 		genpd_lock(pd);
-@@ -2840,8 +2854,6 @@ static int __genpd_dev_pm_attach(struct device *dev, struct device *base_dev,
- 	return 1;
- 
- err:
--	dev_err(dev, "failed to set required performance state for power-domain %s: %d\n",
--		pd->name, ret);
- 	genpd_remove_device(pd, dev);
- 	return ret;
- }
 -- 
 2.34.1
 
