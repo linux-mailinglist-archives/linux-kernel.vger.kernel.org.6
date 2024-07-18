@@ -1,107 +1,177 @@
-Return-Path: <linux-kernel+bounces-256405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2AAB934DDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:13:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5544C934DE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:14:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 975A91F23EF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:13:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F32D61F23D91
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B8113D25E;
-	Thu, 18 Jul 2024 13:13:52 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FAEA13D262;
+	Thu, 18 Jul 2024 13:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kohwbtlZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD5D13C9DC;
-	Thu, 18 Jul 2024 13:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE8513C80F;
+	Thu, 18 Jul 2024 13:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721308431; cv=none; b=TY8LjPcGYoT1u7XV7FupVimiS2Usiqm/tstuDezht5kptU008LXfKyAXClXD0oYKnAlqY2y5WU9WkEPAUzeSsfz0tu0Ef0mgKPT9GiHsf55Rck8eGHIFwXs0QoZ/oMjudTsDdPiEIq686/MvD8zYL7s5TkeoPFNHmhb1tKQ2dIw=
+	t=1721308474; cv=none; b=BD2quDv8xKr7O3COJmZopd+7pGl0oWxwyrTVsy3cGY3eYT9QyM6gf24b+IqNPkrenHwwl9v3PNLATts/R8WPbuNhqE/OXBflsyvfT/Fpvy56rNbsqpK7kHcYW3D67vALPmqMrmxxOWCLRga/wQYuc651zoFvykzq6c+PVE7HmS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721308431; c=relaxed/simple;
-	bh=Jb00TNqusAQxW43f+tpffuQwhG8ZccOM5j1i6yPK0Qw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iUZ7bun3naiSFgMIyZwL+NJx6+DYi8orIUOcULh8zAbvBHOdY66VOZlx0sItaI5Dy0XF6NVBhadH1bPJL4YQY44l8+2d/g3Tuwm3QiwrfxVSIvX5WASZQ1PWVCr8aHAOFWT4vtE1bV2XR8W43PmSYM/f8tCmOgLCQDodwKvlE3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-01 (Coremail) with SMTP id qwCowABXX8v7FJlm+nERBA--.708S2;
-	Thu, 18 Jul 2024 21:13:39 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	airlied@linux.ie
-Cc: amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] drm/radeon: fix null pointer dereference in radeon_add_common_modes
-Date: Thu, 18 Jul 2024 21:13:29 +0800
-Message-Id: <20240718131329.756742-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1721308474; c=relaxed/simple;
+	bh=HvrJ9oF4i6bQhzSV0CfGEEb9fgSftBt40VoTMdJ6uxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CfEewgy8dBRl99FG1JBUMqCzp6H9m3ZZzA345w5b/gYP1UFR4+MRV9BNd30VHfJtnX3RN80dSpFKVe2CIlVaiLkqHxZ4lmhZMWMcDlfDFd5yS7k+E2O3S6WkqrW88/7lFWm04/Q2gzBNxV7san0bcZB3Lx+nJKRZFms05xLMv04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kohwbtlZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 655A0C116B1;
+	Thu, 18 Jul 2024 13:14:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721308474;
+	bh=HvrJ9oF4i6bQhzSV0CfGEEb9fgSftBt40VoTMdJ6uxw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kohwbtlZAW0NkahfLKpf6AS09Jn/Gy//fwHk2p2jfOja9MlwghkCWBkrohbkyV26v
+	 RvFn597yfmv6Js+6xv1t/XwPcs3NDtAQueB0BMBGlZiSgdoybnkC+DgCn5mPz3qIBO
+	 T6t1rAtbuMd5kRVzMv4xO8He/BJF0jERUtOFLsSKRVO/jYGDvMTSNtmxWfcce+B5PA
+	 L1d2COfz5pz7y3syNoajDo3KcroceWhEUhGZVcOnW4LrUhFgdgG4JYFP1exBCtvjaz
+	 uQSdaLmWehWYGSauYvbItyCdJ25N3SecMB47BRSIBH3eNfi5b7/V7uSLpJgPdgT46X
+	 QPcEIgTlYZRow==
+Date: Thu, 18 Jul 2024 14:14:28 +0100
+From: Will Deacon <will@kernel.org>
+To: Asahi Lina <lina@asahilina.net>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>, ryan.roberts@arm.com,
+	mark.rutland@arm.com, ardb@kernel.org
+Subject: Re: LPA2 on non-LPA2 hardware broken with 16K pages
+Message-ID: <20240718131428.GA21243@willie-the-truck>
+References: <50360968-13fb-4e6f-8f52-1725b3177215@asahilina.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABXX8v7FJlm+nERBA--.708S2
-X-Coremail-Antispam: 1UD129KBjvdXoWruryxAF1kZryktw4kArWxCrg_yoWDKFc_CF
-	10qa9rXas0qas5ZF4Uuan3Zr9I93y0yw4kJF1IqaySv347XF1fWFyayFy8Zw47Xa98AFnx
-	J34rKw1fAr4xGjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb3xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
-	YxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
-	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
-	C2KfnxnUUI43ZEXa7VU1c4S5UUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <50360968-13fb-4e6f-8f52-1725b3177215@asahilina.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-In radeon_add_common_modes(), the return value of drm_cvt_mode() is
-assigned to mode, which will lead to a possible NULL pointer dereference
-on failure of drm_cvt_mode(). Add a check to avoid npd.
+Hi Lina, [+Ard, Mark and Ryan],
 
-Cc: stable@vger.kernel.org
-Fixes: d50ba256b5f1 ("drm/kms: start adding command line interface using fb.")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v2:
-- added a blank line;
-- added Cc line.
----
- drivers/gpu/drm/radeon/radeon_connectors.c | 3 +++
- 1 file changed, 3 insertions(+)
+On Thu, Jul 18, 2024 at 06:39:10PM +0900, Asahi Lina wrote:
+> I ran into this with the Asahi Linux downstream kernel, based on v6.9.9,
+> but I believe the problem is also still upstream. The issue seems to be
+> an interaction between folding one page table level at compile time and
+> another one at runtime.
 
-diff --git a/drivers/gpu/drm/radeon/radeon_connectors.c b/drivers/gpu/drm/radeon/radeon_connectors.c
-index b84b58926106..37c56c16af8d 100644
---- a/drivers/gpu/drm/radeon/radeon_connectors.c
-+++ b/drivers/gpu/drm/radeon/radeon_connectors.c
-@@ -520,6 +520,9 @@ static void radeon_add_common_modes(struct drm_encoder *encoder, struct drm_conn
- 			continue;
+Thanks for reporting this!
+
+> With this config, we have:
+> 
+> CONFIG_PGTABLE_LEVELS=4
+> PAGE_SHIFT=14
+> PMD_SHIFT=25
+> PUD_SHIFT=36
+> PGDIR_SHIFT=47
+> pgtable_l5_enabled() == false (compile time)
+> pgtable_l4_enabled() == false (runtime, due to no LPA2)
+
+I think this is 'defconfig' w/ 16k pages, although I wasn't able to
+trigger the issue quickly under QEMU with that. Your analysis looks
+correct, however.
+
+> With p4d folded at compile-time, and pud folded at runtime when LPA2 is
+> not supported.
+> 
+> With this setup, pgd_offset() is broken since the pgd is actually
+> supposed to become a pud but the shift is wrong, as it is set at compile
+> time:
+> 
+> #define pgd_index(a)  (((a) >> PGDIR_SHIFT) & (PTRS_PER_PGD - 1))
+> 
+> static inline pgd_t *pgd_offset_pgd(pgd_t *pgd, unsigned long address)
+> {
+>         return (pgd + pgd_index(address));
+> };
+> 
+> Then we follow the gup logic (abbreviated):
+> 
+> gup_pgd_range:
+>     pgdp = pgd_offset(current->mm, addr);
+>     pgd_t pgd = READ_ONCE(*pgdp);
+> 
+> At this point, pgd is just the 0th entry of the top level page table
+> (since those extra address bits will always be 0 for valid 47-bit user
+> addresses).
+> 
+> p4d then gets folded via pgtable-nop4d.h:
+> 
+> gup_p4d_range:
+>     p4dp = p4d_offset_lockless(pgdp, pgd, addr);
+>          = p4d_offset(&(pgd), address)
+>          = &pgd
+>     p4d_t p4d = READ_ONCE(*p4dp);
+> 
+> Now we have p4dp = stack address of pgd, and p4d = pgd.
+> 
+> gup_pud_range:
+>     pudp = pud_offset_lockless(p4dp, p4d, addr);
+>          -> if (!pgtable_l4_enabled())
+>            = p4d_to_folded_pud(p4dp, addr);
+>            = (pud_t *)PTR_ALIGN_DOWN(p4dp, PAGE_SIZE) + pud_index(addr);
+>     pud_t pud = READ_ONCE(*pudp);
+> 
+> Which is bad pointer math because it only works if p4dp points to a real
+> page table entry inside a page table, not a single u64 stack address.
+
+Cheers for the explanation; I agree that 6.10 looks like it's affected
+in the same way, even though I couldn't reproduce the crash. I think the
+root of the problem is that p4d_offset_lockless() returns a stack
+address when the p4d level is folded. I wondered about changing the
+dummy pXd_offset_lockless() definitions in linux/pgtable.h to pass the
+real pointer through instead of the address of the local, but then I
+suppose _most_ pXd_offset() implementations are going to dereference
+that and it would break the whole point of having _lockless routines
+to start with.
+
+What if we provided our own implementation of p4d_offset_lockless()
+for the folding case, which could just propagate the page-table pointer?
+Diff below.
+
+> This causes random oopses in internal_get_user_pages_fast and related
+> codepaths.
+
+Do you have a reliable way to trigger those? I tried doing some GUPpy
+things like strace (access_process_vm()) but it all seemed fine.
+
+Thanks,
+
+Will
+
+--->8
+
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index f8efbc128446..3afe624a39e1 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -1065,6 +1065,13 @@ static inline bool pgtable_l5_enabled(void) { return false; }
  
- 		mode = drm_cvt_mode(dev, common_modes[i].w, common_modes[i].h, 60, false, false, false);
-+		if (!mode)
-+			continue;
+ #define p4d_offset_kimg(dir,addr)      ((p4d_t *)dir)
+ 
++static inline
++p4d_t *p4d_offset_lockless(pgd_t *pgdp, pgd_t pgd, unsigned long addr)
++{
++       return p4d_offset(pgdp, addr);
++}
++#define p4d_offset_lockless p4d_offset_lockless
 +
- 		drm_mode_probed_add(connector, mode);
- 	}
- }
--- 
-2.25.1
+ #endif  /* CONFIG_PGTABLE_LEVELS > 4 */
+ 
+ #define pgd_ERROR(e)   \
 
 
