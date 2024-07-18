@@ -1,142 +1,78 @@
-Return-Path: <linux-kernel+bounces-256824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 315549370ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 01:04:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 990679370F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 01:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63B741C2162C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 23:03:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53FA1282649
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 23:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4CF1465B4;
-	Thu, 18 Jul 2024 23:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00950146587;
+	Thu, 18 Jul 2024 23:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W+PBN2aR"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQMeQ5Bm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0594212FB0A
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 23:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354A612FB0A;
+	Thu, 18 Jul 2024 23:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721343828; cv=none; b=d9eVuIUIZdLcATJJ62aqBj//HH17dPaAI/OpPVTwivuzWNwjn4gfwlDqH0wOBtnX4z31T+lmqXoAALIDu22TMSsUC5uP+On4FrzIUJddp+rdVC7ql0Ro7lL4V7lOAF66PJ9A0xP9SIXYq4khuVZb6a7q/CgooSF0v3knG+JPdN4=
+	t=1721343967; cv=none; b=sI80dXGF+5pXhRBgVI+l6dxYp3bA8gIYfic1Rep5w1XWHewri8USr/0alXYrze6IKJRQsTutNTWRl6AvVI08paAoyd0vTUWCfqJBcTI/HU/yvOVqzGlTilyoqPiXf+e9zf7o50cQEztWnnYwaEkaTR4Tltzw+8BKV6DLrVAhlF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721343828; c=relaxed/simple;
-	bh=ZlxohWJiVwAqoT9g5IouKqA+eC9Q/GshbQdY1r9is2Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ofxU+28ud704jjFehsuC2aQw9m/BJfCvaAiOlV1yOVHi23lnJaHLBYL2eeF5LtbSSanb8fDbIR/aMc7rOwvXbgnQL2XBpJ0peSBvtgj3UmAmTp/TV56g2sIjM/UzymxRBheePSdzy2mI/Y6B0V6r6qYxnizqAku4j7KGUTKXYnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W+PBN2aR; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1fb0d88fdc8so8447535ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 16:03:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721343825; x=1721948625; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pz/gqH3g6k+Tlg5PlSG754DQsZEyo/RAObvbOwwmn1M=;
-        b=W+PBN2aRA4gn0ZHLHAD3l3+rtcOMqbNhBblqTH10seGmxKXSIM/gdGXfqr2NJVCcC/
-         /TRUnWk77f+K+ZVvbKkg5rquOwN0y4TxqeXNA9O8k3pMEkNdRvodmtYyGgs5bqbfHHKT
-         2t3c5ue9lwf4FtZA9w8GcIYkJ6AmWgHfOERhM2n4M9l5xieCZQyGj3ewMRYI9DFIGgHJ
-         6ntB6euLzI6KsDTQpIE2oCqhqxJ9U3gPRfQLOIU3b3ssX+Wk2/+/BBL6/+mi99YQDj4R
-         CAF9uFTz47IQVvxL0BvqD98C9SgIk8j21PmbrDDJccOIFbGzRc+PXxLHLsIVj+HWENAZ
-         8JnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721343825; x=1721948625;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pz/gqH3g6k+Tlg5PlSG754DQsZEyo/RAObvbOwwmn1M=;
-        b=QyvmSYAWYYsSz80bI2lNXd243T3c53nRhSak4/gTnDjPxkNpQy8IjtnBRzbyqPGOv9
-         I2hvGB0mZeiWv9bWnWkyb34Ucg4RGHdkNbaJXPTxV0d/NU3zwRkYX6DEdwP4PuzkmpHB
-         2tKEMqCeOfLzgnuolI9pLWylTbYZxsDCA1Gd8h6MOCxL0UJSsgPtl7wT3dt8t/E6XbVS
-         /XzWIeuAkGIpT9zf48gXnOqki7FxuMgGqK8AS/Ybwmnwg802uZO9z9S/jGg9YivP/BEq
-         pCA0HkMFFHbHaCYY8HL4eH380tuI/mlUrjeu+s9D/1ZD4+P9SvsPXcNqbrM9ydbVNicO
-         8jfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWa/ZNyWnzGET3a7e8sYH1f/xLqciJjRUa41i4iS1XXJr4pGc6wHhHRvFmNEwuqAbkXmS0fT1z8pvWyi39StvtPEROcptnHOeAWIUJ7
-X-Gm-Message-State: AOJu0YwQRM977QcFenn8GxozQstzKBusxdmpUHiPf64wBiTK8Mvo7R92
-	IPFKvdwCoxv1JwV+bxddFB8uFUPPauB4At9z+gkcH+4MsjjAMZ1Yplhbi+eSKek=
-X-Google-Smtp-Source: AGHT+IF1+3P0pRgwkXsR0FAWIIytKywrIML3Fqxwpp1fn6IdRgXx4TsuO6HiuiBf9bLph6vSY6g+qA==
-X-Received: by 2002:a17:902:d48d:b0:1fb:24ea:fe02 with SMTP id d9443c01a7336-1fc4e16ab7emr52140735ad.18.1721343825147;
-        Thu, 18 Jul 2024 16:03:45 -0700 (PDT)
-Received: from localhost ([2804:14d:7e39:8470:15c8:3512:f33c:2f80])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd64b8693asm1105435ad.72.2024.07.18.16.03.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 16:03:44 -0700 (PDT)
-From: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,  Will Deacon
- <will@kernel.org>,  Jonathan Corbet <corbet@lwn.net>,  Andrew Morton
- <akpm@linux-foundation.org>,  Marc Zyngier <maz@kernel.org>,  Oliver Upton
- <oliver.upton@linux.dev>,  James Morse <james.morse@arm.com>,  Suzuki K
- Poulose <suzuki.poulose@arm.com>,  Arnd Bergmann <arnd@arndb.de>,  Oleg
- Nesterov <oleg@redhat.com>,  Eric Biederman <ebiederm@xmission.com>,
-  Shuah Khan <shuah@kernel.org>,  "Rick P. Edgecombe"
- <rick.p.edgecombe@intel.com>,  Deepak Gupta <debug@rivosinc.com>,  Ard
- Biesheuvel <ardb@kernel.org>,  Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-  Kees Cook <kees@kernel.org>,  "H.J. Lu" <hjl.tools@gmail.com>,  Paul
- Walmsley <paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>,
-  Albert Ou <aou@eecs.berkeley.edu>,  Florian Weimer <fweimer@redhat.com>,
-  Christian Brauner <brauner@kernel.org>,  Ross Burton
- <ross.burton@arm.com>,  linux-arm-kernel@lists.infradead.org,
-  linux-doc@vger.kernel.org,  kvmarm@lists.linux.dev,
-  linux-fsdevel@vger.kernel.org,  linux-arch@vger.kernel.org,
-  linux-mm@kvack.org,  linux-kselftest@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v9 37/39] kselftest/arm64: Add GCS signal tests
-In-Reply-To: <20240625-arm64-gcs-v9-37-0f634469b8f0@kernel.org> (Mark Brown's
-	message of "Tue, 25 Jun 2024 15:58:05 +0100")
-References: <20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org>
-	<20240625-arm64-gcs-v9-37-0f634469b8f0@kernel.org>
-Date: Thu, 18 Jul 2024 20:03:41 -0300
-Message-ID: <87a5iexpyq.fsf@linaro.org>
+	s=arc-20240116; t=1721343967; c=relaxed/simple;
+	bh=BeSnoBV0D6cUCjOyt+tSSFpNxOsdVXsJHVyeVB2Ncgk=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=VhZkqkyjJG1Cf1jw4nBgkynmDl2jRct+ujEstIVaDCZVvjTLriDvQR1UFa4WDonWfvryjYm9EyIgW0hd0oAHN2EO6efwRz1l+wmRFGYEXNHKiXDFwJBse1/MU9X1thQGyjGFROVVIPtlnDmLs5YtmQjTOCWRkLbQZ1MX+0q+6Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQMeQ5Bm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B6A8EC116B1;
+	Thu, 18 Jul 2024 23:06:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721343966;
+	bh=BeSnoBV0D6cUCjOyt+tSSFpNxOsdVXsJHVyeVB2Ncgk=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=ZQMeQ5BmjbU+aOg7DtpGnxa+OWHQjho6PmwwmHezAmRM3prZltzAc2MExArI1cZvm
+	 84XQMBRKp/yE4NhnUOOMIzGZ+4WKrOAD451iWKDg5XMI83TsFxvfqOD3ZO2tNvzTbK
+	 T9BdCX7ONolOlJO65G71lAMc4zDn5/Yfgwh5H24QVM8TTnBnFj1dZA+/akh83iU/dD
+	 VZfKls2Txy8YEZDs/B9aQ10L0GJPdkbgyWpYG5UuENaFR59wCLRg9xmK38cwGyluMY
+	 fMaNQZ9sLX43OaMw3Qq9ByyYtBWx5AhMkzrtp1E5o6Q8YC6kWnSLtJS5Nk66wIrsIX
+	 uihv7OG3YA10A==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AC7CFC43443;
+	Thu, 18 Jul 2024 23:06:06 +0000 (UTC)
+Subject: Re: [GIT PULL] s390 patches for the 6.11 merge window
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <your-ad-here.call-01721246975-ext-7833@work.hours>
+References: <your-ad-here.call-01721246975-ext-7833@work.hours>
+X-PR-Tracked-List-Id: <linux-s390.vger.kernel.org>
+X-PR-Tracked-Message-Id: <your-ad-here.call-01721246975-ext-7833@work.hours>
+X-PR-Tracked-Remote: https://lore.kernel.org/all/20240627150405.27663-1-iii@linux.ibm.com ---
+X-PR-Tracked-Commit-Id: df39038cd89525d465c2c8827eb64116873f141a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 1c7d0c3af5cc8adafef6477f9416820fc894ca40
+Message-Id: <172134396669.16085.7253506528451652809.pr-tracker-bot@kernel.org>
+Date: Thu, 18 Jul 2024 23:06:06 +0000
+To: Vasily Gorbik <gor@linux.ibm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Heiko Carstens <hca@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, Ilya Leoshkevich <iii@linux.ibm.com>, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
 
-Mark Brown <broonie@kernel.org> writes:
+The pull request you sent on Wed, 17 Jul 2024 22:09:35 +0200:
 
-> Do some testing of the signal handling for GCS, checking that a GCS
-> frame has the expected information in it and that the expected signals
-> are delivered with invalid operations.
->
-> Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  tools/testing/selftests/arm64/signal/.gitignore    |  1 +
->  .../selftests/arm64/signal/test_signals_utils.h    | 10 +++
->  .../arm64/signal/testcases/gcs_exception_fault.c   | 62 +++++++++++++++
->  .../selftests/arm64/signal/testcases/gcs_frame.c   | 88 ++++++++++++++++++++++
->  .../arm64/signal/testcases/gcs_write_fault.c       | 67 ++++++++++++++++
->  5 files changed, 228 insertions(+)
+> https://lore.kernel.org/all/20240627150405.27663-1-iii@linux.ibm.com ---
 
-The gcs_write_fault test fails for me, even without THP:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/1c7d0c3af5cc8adafef6477f9416820fc894ca40
 
-$ sudo ./run_kselftest.sh -t arm64:gcs_write_fault
-TAP version 13
-1..1
-# timeout set to 45
-# selftests: arm64: gcs_write_fault
-# # GCS write fault :: Normal writes to a GCS segfault
-# Registered handlers for all signals.
-# Detected MINSTKSIGSZ:4720
-# Required Features: [ GCS ] supported
-# Incompatible Features: [] absent
-# Testcase initialized.
-# Read value 0x0
-# SIG_OK -- SP:0xFFFFCF1292D0  si_addr@:0xffffba645000  si_code:10  token@:(nil)  offset:-281473808879616
-# si_code != SEGV_ACCERR...test is probably broken!
-# -- RX UNEXPECTED SIGNAL: 6 code -6 address 0xf76
-# ==>> completed. FAIL(0)
-not ok 1 selftests: arm64: gcs_write_fault # exit=1
-
-It also generates an "INVALID GCS" line in dmesg.
+Thank you!
 
 -- 
-Thiago
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
