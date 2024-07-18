@@ -1,301 +1,141 @@
-Return-Path: <linux-kernel+bounces-256116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A72C93492E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:47:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C718934940
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:49:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F9051F212A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:47:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B19E1B227CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB8277117;
-	Thu, 18 Jul 2024 07:47:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB08677F10;
+	Thu, 18 Jul 2024 07:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="frQSO0db"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gdIxMQxy"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042C01C36;
-	Thu, 18 Jul 2024 07:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1DB75804;
+	Thu, 18 Jul 2024 07:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721288854; cv=none; b=GW9aAZk0Czvr59obYy9ZPFBn4LdSYq6i6d5EyT3BhMLibx4GpEM+SXw5QRpAEvL/yQSTzN1vwwj/sMoyjeVC9cS3xSpB0lxD1aFszpR7EMJDY/j8zr27PjZtSdRu9m/JvwNK0QbhwVe6ENW1TcSYFj1SV26sk7u37QfI+8yi1QU=
+	t=1721288977; cv=none; b=A/6bAGVuzKEHHaDK0bgVrM94EDUEnX7qp6wc9oL7rH1ecTq6Tzuqjrhts2Gwmqj0pamELtcNWoJy7NMSUqWheEk4ezpH7ZKRZSTLctvFiA7KTHtodH5hBa7T439ufWHU9Zg2wcPXRF0BdooA6EBRl5GIMcr/rk7vHcuvEj876rU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721288854; c=relaxed/simple;
-	bh=Ifd3ZyZiWcGSeHHusth+UilGRRT83bnliaZFUc5lL5s=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=RCn2NE4QvOg6EnkjvMkSsoVz9TI9YbfccJbgnECeN54IiaX0DWDFn4wsjIQBajdoG1+8dlpJr3/uQjEIGICq1Vk2MYgYa64mtAB58wI0k2B95pLO29t9Hts5UTSgLe6qJcDupQEGePI3RGVj90yK10CAa/0EMgp5+dqXb/btDIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=frQSO0db; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721288853; x=1752824853;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=Ifd3ZyZiWcGSeHHusth+UilGRRT83bnliaZFUc5lL5s=;
-  b=frQSO0dbi4PcnZH6czEi+rIienkT5No/kB0IHOFEa6jrTFJ79STANyRx
-   tWxPXxnAF2JreROuq4/HFZjzwrghAAXE5sKKYYK678SOKm3SJBPA27DLh
-   DIO20KPejOHlqVKenBR5ngZuoIcbGjDlHimpjnSk+0VZ8/sK/YzGeRDN3
-   1zI673zIXRYGmXzb+InoSPQ9e+FrMePhEVey8vzkkR7jR0XU5XEAI+l6M
-   V6uyxTnXz4oo3OilOymljaDdYCUjc7rkwRri6JwAjXsN3XAgoXshJJvFZ
-   4XP7YhPUBrueizSHP23vyy7aOWkLeQxhgCa69fjviTx3XMNCO1rBiSc1t
-   Q==;
-X-CSE-ConnectionGUID: B7b0SZ7qTb+QlLtl7SIzPg==
-X-CSE-MsgGUID: 7hdq7lglQUOXfNaOcaIqGg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="21739157"
-X-IronPort-AV: E=Sophos;i="6.09,217,1716274800"; 
-   d="scan'208";a="21739157"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 00:47:32 -0700
-X-CSE-ConnectionGUID: S6P2ceP9RimzKllZ/qPsXA==
-X-CSE-MsgGUID: REKv0HNkT9eWoi+65bXpjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,217,1716274800"; 
-   d="scan'208";a="51288364"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.139])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 00:47:28 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 18 Jul 2024 10:47:24 +0300 (EEST)
-To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-cc: Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <helgaas@kernel.org>, 
-    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
-    Yazen Ghannam <yazen.ghannam@amd.com>, Bowman Terry <terry.bowman@amd.com>, 
-    Hagan Billy <billy.hagan@amd.com>, Simon Guinot <simon.guinot@seagate.com>, 
-    "Maciej W . Rozycki" <macro@orcam.me.uk>, 
-    Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Subject: Re: [PATCH v2] PCI: pciehp: Clear LBMS on hot-remove to prevent link
- speed reduction
-In-Reply-To: <ca2b8c13-a7d8-e157-fd1a-770ee8cb10c1@amd.com>
-Message-ID: <1a252080-2076-5840-5add-7b584188d025@linux.intel.com>
-References: <20240617231841.GA1232294@bhelgaas> <27be113e-3e33-b969-c1e3-c5e82d1b8b7f@amd.com> <cf5f3b03-4c70-7a35-056e-5d94fc26f697@amd.com> <ZnKNJxJwdtWRphgX@wunner.de> <73fd7b2d-9256-9eba-70be-d69ea336fd67@amd.com> <6014882f-0936-ec31-d641-112a70eb2749@linux.intel.com>
- <ca2b8c13-a7d8-e157-fd1a-770ee8cb10c1@amd.com>
+	s=arc-20240116; t=1721288977; c=relaxed/simple;
+	bh=QTc8Un5upPXJIhlGhjl7ubZAXV0Z5YsCy7aukHFflpU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ao0hJHzCiH6fY1ttr2nuGpk65CVhXbGxsRPKdSMO9I5bChe1dkIVkeUnZ+mT0FmSnx2HxfBl9v+VoZunRWH75ipTLYt54XgaGeYDvTM6IEr0e6yWvON+NQwDJefXYa+QXbLrR0QcqaV0TzIEIcobPIj3hwmeQyPXHo4VS6QyP5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gdIxMQxy; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-389ccd2f0abso1650085ab.2;
+        Thu, 18 Jul 2024 00:49:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721288975; x=1721893775; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=crzw/d+f/3t32IpPYEw2grNnNxXUQHVB18xLlsRWPEY=;
+        b=gdIxMQxyiu7Nc8EV8zTLksENKj8iP2ymL/eP//Q6Z+19cHN245hwZSIRIymEod9d9s
+         8YrOrPrlvn3bNCz0yjHisgQ8mXL8gBSCBLyDK82E+bJ1m0nJvJEq6QVlGtYX0xtPNnTv
+         rNoKR7+BquiV5nGmyKyv2Xpr2YGnMpkV1J7UbpfYIZoHx32DarQnqrZ/7gquFzIrMeDT
+         cJGRYmzwMueAI4MgFR+4IFrL+/bXmh8GKAIu3TMlP2IYD05k96VseVxUg/mb5LzPkR56
+         aKf1Lukonvi1JmEyTxpYE6oFiJDU2sAlPGl6xYF8GPFsjuGZ9QYkSgn90dT296vRDM+c
+         y/ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721288975; x=1721893775;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=crzw/d+f/3t32IpPYEw2grNnNxXUQHVB18xLlsRWPEY=;
+        b=WjlNhiwyhR5BZijLf605hmR9fKC7Wvo34Icdp06GMKS7nWsFVuXoJL6JFkoeOugDr7
+         gcsZ/9emYb65C94YRnSsJ1ZxRkapkfUvgHfKaBMg1rKGZecZsv0TjcuUrRz5s6DsT19v
+         nqlKOoM1YSf49kwvRc1VjCn40Xk7a+hDH8TyDdyQwCj8sLUpOI0NhiovS1oUB7TF6NEi
+         dYmkUW4BJ8PyAHDpi9NABNesdBcnkZqc1v6Tu6VaXoHbv8ItnGcloTh/mzgkPtqFxaCv
+         kg/wG9SuCAVAcsmo4cYs3znNFa2l88JqQd62mfBMhY7XyFoX9rDbvrf8+6fx/WNntY2l
+         fS8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU1bnFxv/l3/HP/MYhnHXjedrYl1DRct1EC9Ap0ETDr1NfcC+gdsD95E8uVBtQa2KJ9XTwyZ6Ri8G8DAvAlTUKHnxiuvOsRQOAvT1sK
+X-Gm-Message-State: AOJu0Yx/MIskDE2L4/dtniVUbBxnmd3WEYMBbIEXYnfuvYhZUMnt+JDT
+	ZP/hJUYsijWAINIx1WPW4MbdywpmS5kt2WCRTvsfheWW23MHyBlNTtjEO8ep
+X-Google-Smtp-Source: AGHT+IHhOYm6z/NSf5t5yzcsvPFJDNLCfFlR456J19tntfH6MwJnRzpPZIdSaAhucLvT6UOspsTChw==
+X-Received: by 2002:a92:c542:0:b0:397:2481:7acd with SMTP id e9e14a558f8ab-39724817c3cmr1211545ab.10.1721288974064;
+        Thu, 18 Jul 2024 00:49:34 -0700 (PDT)
+Received: from sis-tammy.. ([2402:7500:4d8:362f:664:b744:64a4:16d8])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7ec7d2bcsm9656642b3a.99.2024.07.18.00.49.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jul 2024 00:49:33 -0700 (PDT)
+From: tammy tseng <tammy0524@gmail.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org
+Cc: linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tammy tseng <tammy0524@gmail.com>
+Subject: [PATCH] hid: add patch for sis multitouch format
+Date: Thu, 18 Jul 2024 15:48:03 +0800
+Message-ID: <20240718074804.1316064-1-tammy0524@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1535258471-1721288844=:1055"
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+The patch is to add quirks for sis multitouch format
 
---8323328-1535258471-1721288844=:1055
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Signed-off-by: tammy tseng <tammy0524@gmail.com>
+---
+ drivers/hid/hid-multitouch.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-On Wed, 17 Jul 2024, Smita Koralahalli wrote:
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 56fc78841f24..9f49bc7a157c 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -212,6 +212,7 @@ static void mt_post_parse(struct mt_device *td, struct mt_application *app);
+ #define MT_CLS_GOOGLE				0x0111
+ #define MT_CLS_RAZER_BLADE_STEALTH		0x0112
+ #define MT_CLS_SMART_TECH			0x0113
++#define MT_CLS_SIS				0x0457
+ 
+ #define MT_DEFAULT_MAXCONTACT	10
+ #define MT_MAX_MAXCONTACT	250
+@@ -396,6 +397,11 @@ static const struct mt_class mt_classes[] = {
+ 			MT_QUIRK_CONTACT_CNT_ACCURATE |
+ 			MT_QUIRK_SEPARATE_APP_REPORT,
+ 	},
++	{ .name = MT_CLS_SIS,
++		.quirks = MT_QUIRK_NOT_SEEN_MEANS_UP |
++			MT_QUIRK_ALWAYS_VALID |
++			MT_QUIRK_CONTACT_CNT_ACCURATE,
++	},
+ 	{ }
+ };
+ 
+@@ -1787,6 +1793,9 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 	if (mtclass->quirks & MT_QUIRK_FIX_CONST_CONTACT_ID)
+ 		mt_fix_const_fields(hdev, HID_DG_CONTACTID);
+ 
++	if (hdev->vendor == USB_VENDOR_ID_SIS_TOUCH)
++		hdev->quirks |= HID_QUIRK_NOGET;
++
+ 	ret = hid_hw_start(hdev, HID_CONNECT_DEFAULT);
+ 	if (ret)
+ 		return ret;
+@@ -2243,6 +2252,11 @@ static const struct hid_device_id mt_devices[] = {
+ 		HID_DEVICE(BUS_USB, HID_GROUP_MULTITOUCH_WIN_8, USB_VENDOR_ID_GOOGLE,
+ 			USB_DEVICE_ID_GOOGLE_WHISKERS) },
+ 
++	/* sis */
++	{ .driver_data = MT_CLS_SIS,
++		HID_DEVICE(HID_BUS_ANY, HID_GROUP_ANY, USB_VENDOR_ID_SIS_TOUCH,
++			HID_ANY_ID) },
++
+ 	/* Generic MT device */
+ 	{ HID_DEVICE(HID_BUS_ANY, HID_GROUP_MULTITOUCH, HID_ANY_ID, HID_ANY_ID) },
+ 
+-- 
+2.43.0
 
-> On 7/9/2024 3:52 AM, Ilpo J=C3=A4rvinen wrote:
-> > On Tue, 25 Jun 2024, Smita Koralahalli wrote:
-> >=20
-> > > Sorry for the delay here. Took some time to find a system to run
-> > > experiments.
-> > > Comments inline.
-> > >=20
-> > > On 6/19/2024 12:47 AM, Lukas Wunner wrote:
-> > > > On Tue, Jun 18, 2024 at 02:23:21PM -0700, Smita Koralahalli wrote:
-> > > > > On 6/18/2024 11:51 AM, Smita Koralahalli wrote:
-> > > > > > > > > But IIUC LBMS is set by hardware but never cleared by
-> > > > > > > > > hardware, so
-> > > > > > > > > if
-> > > > > > > > > we remove a device and power off the slot, it doesn't see=
-m
-> > > > > > > > > like
-> > > > > > > > > LBMS
-> > > > > > > > > could be telling us anything useful (what could we do in
-> > > > > > > > > response
-> > > > > > > > > to
-> > > > > > > > > LBMS when the slot is empty?), so it makes sense to me to
-> > > > > > > > > clear
-> > > > > > > > > it.
-> > > > > > > > >=20
-> > > > > > > > > It seems like pciehp_unconfigure_device() does sort of PC=
-I
-> > > > > > > > > core
-> > > > > > > > > and
-> > > > > > > > > driver-related things and possibly could be something sha=
-red
-> > > > > > > > > by
-> > > > > > > > > all
-> > > > > > > > > hotplug drivers, while remove_board() does things more
-> > > > > > > > > specific to
-> > > > > > > > > the
-> > > > > > > > > hotplug model (pciehp, shpchp, etc).
-> > > > > > > > >=20
-> > > > > > > > >   From that perspective, clearing LBMS might fit better i=
-n
-> > > > > > > > > remove_board(). In that case, I wonder whether it should =
-be
-> > > > > > > > > done
-> > > > > > > > > after turning off slot power? This patch clears is *befor=
-e*
-> > > > > > > > > turning
-> > > > > > > > > off the power, so I wonder if hardware could possibly set=
- it
-> > > > > > > > > again
-> > > > > > > > > before the poweroff?
-> > > > >=20
-> > > > > While clearing LBMS in remove_board() here:
-> > > > >=20
-> > > > > if (POWER_CTRL(ctrl)) {
-> > > > > =09pciehp_power_off_slot(ctrl);
-> > > > > +=09pcie_capability_write_word(ctrl->pcie->port, PCI_EXP_LNKSTA,
-> > > > > =09=09=09=09   PCI_EXP_LNKSTA_LBMS);
-> > > > >=20
-> > > > > =09/*
-> > > > > =09 * After turning power off, we must wait for at least 1 second
-> > > > > =09 * before taking any action that relies on power having been
-> > > > > =09 * removed from the slot/adapter.
-> > > > > =09 */
-> > > > > =09msleep(1000);
-> > > > >=20
-> > > > > =09/* Ignore link or presence changes caused by power off */
-> > > > > =09atomic_and(~(PCI_EXP_SLTSTA_DLLSC | PCI_EXP_SLTSTA_PDC),
-> > > > > =09=09   &ctrl->pending_events);
-> > > > > }
-> > > > >=20
-> > > > > This can happen too right? I.e Just after the slot poweroff and b=
-efore
-> > > > > LBMS
-> > > > > clearing the PDC/PDSC could be fired. Then
-> > > > > pciehp_handle_presence_or_link_change() would hit case "OFF_STATE=
-" and
-> > > > > proceed with pciehp_enable_slot() ....pcie_failed_link_retrain() =
-and
-> > > > > ultimately link speed drops..
-> > > > >=20
-> > > > > So, I added clearing just before turning off the slot.. Let me kn=
-ow if
-> > > > > I'm
-> > > > > thinking it right.
-> > >=20
-> > > I guess I should have experimented before putting this comment out.
-> > >=20
-> > > After talking to the HW/FW teams, I understood that, none of our CRBs
-> > > support
-> > > power controller for NVMe devices, which means the "Power Controller
-> > > Present"
-> > > in Slot_Cap is always false. That's what makes it a "surprise removal=
-=2E" If
-> > > the
-> > > OS was notified beforehand and there was a power controller attached,=
- the
-> > > OS
-> > > would turn off the power with SLOT_CNTL. That's an "orderly" removal.=
- So
-> > > essentially, the entire block from "if (POWER_CTRL(ctrl))" will never=
- be
-> > > executed for surprise removal for us.
-> > >=20
-> > > There could be board designs outside of us, with power controllers fo=
-r the
-> > > NVME devices, which I'm not aware of.
-> > > >=20
-> > > > This was added by 3943af9d01e9 ("PCI: pciehp: Ignore Link State Cha=
-nges
-> > > > after powering off a slot").  You can try reproducing it by writing=
- "0"
-> > > > to the slot's "power" file in sysfs, but your hardware needs to sup=
-port
-> > > > slot power.
-> > > >=20
-> > > > Basically the idea is that after waiting for 1 sec, chances are ver=
-y low
-> > > > that any DLLSC or PDSC events caused by removing slot power may sti=
-ll
-> > > > occur.
-> > >=20
-> > > PDSC events occurring in our case aren't by removing slot power. It
-> > > should/will always happen on a surprise removal along with DLLSC for =
-us.
-> > > But
-> > > this PDSC is been delayed and happens after DLLSC is invoked and
-> > > ctrl->state =3D
-> > > OFF_STATE in pciehp_disable_slot(). So the PDSC is mistook to enable =
-slot
-> > > in
-> > > pciehp_enable_slot() inside pciehp_handle_presence_or_link_change().
-> > > >=20
-> > > > Arguably the same applies to LBMS changes, so I'd recommend to like=
-wise
-> > > > clear stale LBMS after the msleep(1000).
-> > > >=20
-> > > > pciehp_ctrl.c only contains the state machine and higher-level logi=
-c of
-> > > > the hotplug controller and all the actual register accesses are in
-> > > > helpers
-> > > > in pciehp_hpc.c.  So if you want to do it picture-perfectly, add a
-> > > > helper
-> > > > in pciehp_hpc.c to clear LBMS and call that from remove_board().
-> > > >=20
-> > > > That all being said, I'm wondering how this plays together with Ilp=
-o's
-> > > > bandwidth control driver?
-> > > >=20
-> > > > https://lore.kernel.org/all/20240516093222.1684-1-ilpo.jarvinen@lin=
-ux.intel.com/
-> > >=20
-> > > I need to yet do a thorough reading of Ilpo's bandwidth control drive=
-r.
-> > > Ilpo
-> > > please correct me if I misspeak something as I don't have a thorough
-> > > understanding.
-> > >=20
-> > > Ilpo's bandwidth controller also checks for lbms count to be greater =
-than
-> > > zero
-> > > to bring down link speeds if CONFIG_PCIE_BWCTRL is true. If false, it
-> > > follows
-> > > the default path to check LBMS bit in link status register. So if,
-> > > CONFIG_PCIE_BWCTRL is disabled by default we continue to see link spe=
-ed
-> > > drops.
-> > > Even, if BWCTRL is enabled, LBMS count is incremented to 1 in
-> > > pcie_bwnotif_enable() so likely pcie_lbms_seen() might return true th=
-ereby
-> > > bringing down speeds here as well if DLLLA is clear?
-> >=20
-> > I did add code to clear the LBMS count in pciehp_unconfigure_device() i=
-n
-> > part thanks to this patch of yours. Do you think it wouldn't work?
->=20
-> It works with BWCTRL enabled. Just my concern would be to keep the cleari=
-ng in
-> pciehp_unconfigure_device() and not do it inside POWER_CTRL(ctrl), in
-> remove_board() as per the suggestions given above.
-
-I added that LBMS count reset based on one of the first versions of your=20
-patch which had the LBMS clearing in pciehp_unconfigure_device() before=20
-this discussion went further. The point anyway is that bwctrl change would=
-=20
-replace the line you put in to clear LBMS, wherever that will be placed=20
-in the end.
-
-> > But I agree there would still be problem if BWCTRL is not enabled. I
-> > already have to keep part of it enabled due to the Target Speed quirk
-> > and now this is another case where just having it always on would be
-> > beneficial.
->=20
-> Correct, it should always be on to not see the problem.
->
-> Would like to have this "LBMS clearing fix" accepted in sooner since its
-> breaking things on our systems! :)
-
-Sure, I've no objection to that. In fact, it's what I prefer myself too=20
-because it makes things easier for stable folks. :-)
-
-I'd also like to see those Target Speed quick fixes to go in before
-bwctl (to the extent I did base my series on top of them) but it seems=20
-Maciej might not be updating them so perhaps I'll have to take look at=20
-Bjorn's comments on that series and see what can be done to those patches.
-
---=20
- i.
-
---8323328-1535258471-1721288844=:1055--
 
