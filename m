@@ -1,149 +1,195 @@
-Return-Path: <linux-kernel+bounces-256080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D6499348B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:25:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 735229348BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:25:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0056FB218E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:25:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E95751F22568
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A090745CB;
-	Thu, 18 Jul 2024 07:25:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8272B74058;
+	Thu, 18 Jul 2024 07:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1k2KjYbE";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QRwn0Jpr"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="poFAvwBd";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oRN5uQXj";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="poFAvwBd";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oRN5uQXj"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B0B2CCA3
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 07:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AD36F2E5
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 07:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721287528; cv=none; b=ofr5xfG/qd/H39IGd6iw+zGkbJ2xU2NAL3efpfAsNModeCH5IrAE9pxsVFUPCAeUgnTQ0VNGEaJoWguKTzQ283cOxKyCUYR69Rp3NXnFuBC+07scqTMVb+t/Yox8nyOQshkpUVMeERFaG/HDmvnARR/JAk8b+MeIQHrdhH6En4U=
+	t=1721287548; cv=none; b=FgB6sEIXxv4BALIU92BsDef83COCTo/t/gBiLdQ8HpdkwXUcJeQXp8srO/q89C6q+bE3/qyl9dpZfPpkg8s+xOjMjm4EAy1ESM7joPkR5+1TxMzLG31KWhZF2ZYxaHagLgEmso2mFqTBdKRZntimGzsW6m70xxravcL4CfFwKX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721287528; c=relaxed/simple;
-	bh=dVlEsiq3WpoVPVRfCi0y480MQYxzoni0zWm4l4dNPXs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=uVjoiJjHJX9/lXUNzCFORVl0gAe+cFxUqXWjcO1j2sjbTyewdIp9XmWEqJJIX/8gZ0MG90ld0QARBWMmknCUU1nBUFsUsXazgrQrvG5mXvioB1trgNxM3omaHm5cV0JVmV6NYSd+LX6XXXKga+6+CiYqYVuXwt3DTRbeqw6Fbc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1k2KjYbE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QRwn0Jpr; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1721287515;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1721287548; c=relaxed/simple;
+	bh=0H4XV8TOISM3Gt1+8SMaDb8bfqGOnzwUgxRHRqrmJTE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZOAkdWrOOrEGY2wxo00rY17Lh8gzWoOTtxgXC3J4QN7s3SCXcTo8BkHFuLi5scS4gs2W0oBQtR3hxIupHm3dEOK58uKVAdzCQjHF51xnNXQueEs6PvN6ZP4lN3h64mfBFQMVIxXgdx157PCJ/z+fY3lu7SsDGJxOBhvKvwhDFPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=poFAvwBd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oRN5uQXj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=poFAvwBd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oRN5uQXj; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 686A621A80;
+	Thu, 18 Jul 2024 07:25:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1721287545; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=IybnAjkns1vo3Yzo3bcVZRByBGhG1dccIwYMdpc8U4k=;
-	b=1k2KjYbEruhgnRkMGc+fTzVnCfrCYYWxDBPCoA2H32uwWPy6jQ+90Tl9f8IPFh8qI3be30
-	2Hlcb2wWlka1WPH/Vk+t0hifP4Qr3dvgy4ZKsw0iv48HtUqmH2zDOdupPsifg69OBDWzKz
-	v0xclbLFmczkREQCD4atrrOqGHhH/aJwChRUjzL20AhhXG+4i/DE8fUJq8sNA60J64YvdP
-	GLAvzTeDHid+YOR+4zB/MLG47zU5kmVlaTbAJxpzAPJDyTTXAKPbk0ZfnlKmQEzpdZnLa+
-	yO5Eg1gyAqUqDRMHWXImsY9rmKlkm+TKU0NCYnqLqTq6uEAppCE44I3ZfG/g0w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1721287515;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	bh=Mq/1yoSlo6cu8qdLhhM1bAep0Jfw5LSOtI55xWrH4fg=;
+	b=poFAvwBdFdvIjnhpANGHGAjF+VZTGg/xJTb4lE5UhxoMQRfCNO0RHtXFKEGXCOJpDUD+Uk
+	AWGtggcEcwduSuQd2Pb5btF/vxtpcpy2w7Sg8TdqmvW4vC6cvf0Lg84gje3fFiQ8eEq1T/
+	jHpGCtyEJb2P4VmRvftqucD9+pgkWsM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1721287545;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=IybnAjkns1vo3Yzo3bcVZRByBGhG1dccIwYMdpc8U4k=;
-	b=QRwn0Jprs3oJwRX0qlQ2u32cf1z1/mfAfoIeUyD1znjZ/wfDzLIicGCS1lcyKCgiu37TJ6
-	QbVyS0G2rWX/tDCQ==
-To: Rik van Riel <riel@surriel.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Omar Sandoval <osandov@meta.com>, linux-kernel@vger.kernel.org, Petr
- Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Sergey
- Senozhatsky <senozhatsky@chromium.org>, kernel-team <kernel-team@meta.com>
-Subject: Re: [RFC PATCH] nmi,printk: fix ABBA deadlock between nmi_backtrace
- and dump_stack_lvl
-In-Reply-To: <93155b2ccafa43ed4845ae450451c6b8e27509cc.camel@surriel.com>
-References: <20240715232052.73eb7fb1@imladris.surriel.com>
- <87plrcqyii.fsf@jogness.linutronix.de>
- <93155b2ccafa43ed4845ae450451c6b8e27509cc.camel@surriel.com>
-Date: Thu, 18 Jul 2024 09:31:14 +0206
-Message-ID: <87r0brkvqd.fsf@jogness.linutronix.de>
+	bh=Mq/1yoSlo6cu8qdLhhM1bAep0Jfw5LSOtI55xWrH4fg=;
+	b=oRN5uQXjXNTqmxAvZNARP1zp8p/uVJifhqXhBGP4A3I5X+Vakn7gmjX39KDshqvrxH8vVV
+	sJ4ayCWiSYN3XhBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1721287545; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mq/1yoSlo6cu8qdLhhM1bAep0Jfw5LSOtI55xWrH4fg=;
+	b=poFAvwBdFdvIjnhpANGHGAjF+VZTGg/xJTb4lE5UhxoMQRfCNO0RHtXFKEGXCOJpDUD+Uk
+	AWGtggcEcwduSuQd2Pb5btF/vxtpcpy2w7Sg8TdqmvW4vC6cvf0Lg84gje3fFiQ8eEq1T/
+	jHpGCtyEJb2P4VmRvftqucD9+pgkWsM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1721287545;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mq/1yoSlo6cu8qdLhhM1bAep0Jfw5LSOtI55xWrH4fg=;
+	b=oRN5uQXjXNTqmxAvZNARP1zp8p/uVJifhqXhBGP4A3I5X+Vakn7gmjX39KDshqvrxH8vVV
+	sJ4ayCWiSYN3XhBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1F7F81379D;
+	Thu, 18 Jul 2024 07:25:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id jA96BnnDmGZwEAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 18 Jul 2024 07:25:45 +0000
+Date: Thu, 18 Jul 2024 09:26:18 +0200
+Message-ID: <87wmljw485.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	kernel test robot <lkp@intel.com>,
+	llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Takashi Iwai <tiwai@suse.de>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>,
+	Bard Liao <bard.liao@intel.com>
+Subject: Re: ld.lld: error: undefined symbol: iosf_mbi_available
+In-Reply-To: <20240717202806.GA728411@thelio-3990X>
+References: <202407160704.zpdhJ8da-lkp@intel.com>
+	<05954a59-2bef-4262-bd91-cfe21d2381f2@linux.intel.com>
+	<20240717202806.GA728411@thelio-3990X>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
+X-Spam-Level: 
 
-On 2024-07-17, Rik van Riel <riel@surriel.com> wrote:
-> I think that would do the trick. The nmi_backtrace() printk is already
-> deferred, because of the check for in_nmi() in vprintk(), and this
-> change would put all the other users of printk_cpu_sync_get_irqsave()
-> on the exact same footing as nmi_backtrace().
->
-> Combing through the code a little, it looks like that would remove
-> the potential for this deadlock to happen again.
+On Wed, 17 Jul 2024 22:28:06 +0200,
+Nathan Chancellor wrote:
+> 
+> On Wed, Jul 17, 2024 at 01:43:35PM +0200, Pierre-Louis Bossart wrote:
+> > 
+> > 
+> > On 7/16/24 01:07, kernel test robot wrote:
+> > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> > > head:   3e7819886281e077e82006fe4804b0d6b0f5643b
+> > > commit: 8d4ba1be3d2257606e04aff412829d8972670750 ASoC: SOF: pci: split PCI into different drivers
+> > > date:   3 years, 4 months ago
+> > 
+> > This doesn't seem to be a problem on the latest code? was it intentional
+> > to report a problem on such an old commit?
+> 
+> It's still reproducible at commit 8b0f0bb27c32 ("Merge tag
+> 'fs_for_v6.11-rc1' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs") for me,
+> using either LLVM or GCC with the configuration linked below:
+> 
+>   ld.lld: error: undefined symbol: iosf_mbi_available
+>   >>> referenced by atom.c
+>   >>>               sound/soc/sof/intel/atom.o:(atom_machine_select) in archive vmlinux.a
+> 
+>   ld.lld: error: undefined symbol: iosf_mbi_read
+>   >>> referenced by atom.c
+>   >>>               sound/soc/sof/intel/atom.o:(atom_machine_select) in archive vmlinux.a
+> 
+>   .../gcc/14.1.0/bin/i386-linux-ld: sound/soc/sof/intel/atom.o: in function `atom_machine_select':
+>   atom.c:(.text+0x1b9): undefined reference to `iosf_mbi_available'
+>   .../gcc/14.1.0/bin/i386-linux-ld: atom.c:(.text+0x1e3): undefined reference to `iosf_mbi_read'
 
-Let's see what Petr has to say. (He'll be back on Monday.) He might
-prefer a solution that does not result in deferring printing for all
-cases. i.e. allow the console_lock if it is available, but avoid the
-spinning if it is not. Below is a patch that would achieve this.
+Yours looks different from the original report, and indeed this must
+be a missing fix.
 
-John
+Does the following change cover it?
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index dddb15f48d59..36f40db0bf93 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -1060,6 +1060,8 @@ static int __init log_buf_len_setup(char *str)
- early_param("log_buf_len", log_buf_len_setup);
- 
- #ifdef CONFIG_SMP
-+static bool vprintk_emit_may_spin(void);
-+
- #define __LOG_CPU_MAX_BUF_LEN (1 << CONFIG_LOG_CPU_MAX_BUF_SHIFT)
- 
- static void __init log_buf_add_cpu(void)
-@@ -1090,6 +1092,7 @@ static void __init log_buf_add_cpu(void)
- }
- #else /* !CONFIG_SMP */
- static inline void log_buf_add_cpu(void) {}
-+static inline bool vprintk_emit_may_spin(void) { return true };
- #endif /* CONFIG_SMP */
- 
- static void __init set_percpu_data_ready(void)
-@@ -2330,6 +2333,8 @@ asmlinkage int vprintk_emit(int facility, int level,
- 
- 	/* If called from the scheduler, we can not call up(). */
- 	if (!in_sched) {
-+		int ret;
-+
- 		/*
- 		 * The caller may be holding system-critical or
- 		 * timing-sensitive locks. Disable preemption during
-@@ -2344,7 +2349,11 @@ asmlinkage int vprintk_emit(int facility, int level,
- 		 * spinning variant, this context tries to take over the
- 		 * printing from another printing context.
- 		 */
--		if (console_trylock_spinning())
-+		if (vprintk_emit_may_spin())
-+			ret = console_trylock_spinning();
-+		else
-+			ret = console_trylock();
-+		if (ret)
- 			console_unlock();
- 		preempt_enable();
- 	}
-@@ -4321,6 +4330,15 @@ void console_replay_all(void)
- static atomic_t printk_cpu_sync_owner = ATOMIC_INIT(-1);
- static atomic_t printk_cpu_sync_nested = ATOMIC_INIT(0);
- 
-+/*
-+ * As documented in printk_cpu_sync_get_irqsave(), a context holding the
-+ * printk_cpu_sync must not spin waiting for another CPU.
-+ */
-+static bool vprintk_emit_may_spin(void)
-+{
-+	return (atomic_read(&printk_cpu_sync_owner) != smp_processor_id());
-+}
-+
- /**
-  * __printk_cpu_sync_wait() - Busy wait until the printk cpu-reentrant
-  *                            spinning lock is not owned by any CPU.
+
+thanks,
+
+Takashi
+
+--- a/sound/soc/sof/intel/Kconfig
++++ b/sound/soc/sof/intel/Kconfig
+@@ -19,6 +19,7 @@ config SND_SOC_SOF_INTEL_ATOM_HIFI_EP
+ 	tristate
+ 	select SND_SOC_SOF_INTEL_COMMON
+ 	select SND_SOC_SOF_INTEL_HIFI_EP_IPC
++	select IOSF_MBI if X86 && PCI
+ 	help
+ 	  This option is not user-selectable but automagically handled by
+ 	  'select' statements at a higher level.
+@@ -44,7 +45,6 @@ config SND_SOC_SOF_BAYTRAIL
+ 	select SND_SOC_SOF_INTEL_COMMON
+ 	select SND_SOC_SOF_INTEL_ATOM_HIFI_EP
+ 	select SND_SOC_SOF_ACPI_DEV
+-	select IOSF_MBI if X86 && PCI
+ 	help
+ 	  This adds support for Sound Open Firmware for Intel(R) platforms
+ 	  using the Baytrail, Braswell or Cherrytrail processors.
 
