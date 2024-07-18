@@ -1,351 +1,151 @@
-Return-Path: <linux-kernel+bounces-256539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12CD4934FE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:28:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C648934FE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 952BE1F221D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:28:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCB101F21E3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF6E1448F6;
-	Thu, 18 Jul 2024 15:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A362C1448C5;
+	Thu, 18 Jul 2024 15:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RsqO2imq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b7CSK46n"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E9D7A724;
-	Thu, 18 Jul 2024 15:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F637A724;
+	Thu, 18 Jul 2024 15:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721316510; cv=none; b=OnuqzSuf1cjsUlLpYDfPw7GtiFxsQVj0RJHg087PkisCqGUz24HdOCIMdY4l5AGFjOjfqCtDgV0CFWsLaiMz54ZWLQOZCjTanqP92aRURzlRyj6QQAsbk3KtNgz3ifQN+q/iByB/8GX27E0UZsoP3p1M4q/vvFmRZqvoZ+Hg3as=
+	t=1721316577; cv=none; b=Nnvcdv4UNCsU5yonaTTM/4AXwCvflEBH+9AQpSHv0jjkxitNT255kdn3452irLqqAfE+GOLk7Ax7nEzgDGS+Fz75PZdN9aN2sUGi8ZSrgpAk2tjrDq/A/I4lfYOQm9blpOvOe/9NN/FaOEovU/G3XomQt9TE+sxH9l3TZlXlpME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721316510; c=relaxed/simple;
-	bh=jl49LSCR3gPldv5VQLdP8sm/wukwB1bh9gHx7piNvSE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kJvNk0tBCy3Ql4ZhT0Y+YA4cPj26+vyUmKaCidmgn4hkqh4Xbnz/NGbUXX5MHZMR6cb13khrdfzOmiNqLMi+TWqutWdKphM8vPklZiK1rS9X1EMdPAJ3LhosO1GRIlpq4WbBepzhBnOUVbrib+fkxkHgMsRs1QczTMu1pMAILf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RsqO2imq; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721316507; x=1752852507;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=jl49LSCR3gPldv5VQLdP8sm/wukwB1bh9gHx7piNvSE=;
-  b=RsqO2imqARowcItepYor9IqOY9wDdyDGFTyaKUflYE1EK1cZiroj49d2
-   cnfbfT9l6vqt4zebF9xke5lm9HIlFLoE844w7ehtKY5mLu1VbSA/vUMVZ
-   7ime+KqRr5/uT3oaKOC4/4qmmYSNptUehHlmL3zYzlV0tmESm6Z/K2ims
-   sg8MbPMnCdoXiz+OR8dO/rk25a+T6XY6kARIIwCNQ3Hu3r09dbPPMw0IG
-   6MWlUtlaPvOfdgRN3iMls+YN/4brihl5TuB/v1+E4rT64egpqbjefLsSY
-   9/Pm7s9ckQQpD3Nhn/Vt/YJRuJ7uup70G7pLKPoBGrxnPICPjOIWdI7+0
-   w==;
-X-CSE-ConnectionGUID: Xa0t+9KUSQCv4xnNDjCbuA==
-X-CSE-MsgGUID: FzTSjq55TpKRUjmG7vjb2Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11137"; a="36328900"
-X-IronPort-AV: E=Sophos;i="6.09,218,1716274800"; 
-   d="scan'208";a="36328900"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 08:28:26 -0700
-X-CSE-ConnectionGUID: MSt9EznZRhyasg+ywpCYVQ==
-X-CSE-MsgGUID: 697LenmXRlq96CRWddfqbg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,218,1716274800"; 
-   d="scan'208";a="50519854"
-Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 08:28:24 -0700
-Date: Thu, 18 Jul 2024 08:28:23 -0700
-From: Isaku Yamahata <isaku.yamahata@intel.com>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "Zhao, Yan Y" <yan.y.zhao@intel.com>, "Gao, Chao" <chao.gao@intel.com>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"Huang, Kai" <kai.huang@intel.com>,
-	"sagis@google.com" <sagis@google.com>,
-	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Aktas, Erdem" <erdemaktas@google.com>,
-	"dmatlack@google.com" <dmatlack@google.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"Yamahata, Isaku" <isaku.yamahata@intel.com>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	isaku.yamahata@linux.intel.com
-Subject: Re: [PATCH v3 17/17] KVM: x86/tdp_mmu: Take root types for
- kvm_tdp_mmu_invalidate_all_roots()
-Message-ID: <20240718152823.GG1900928@ls.amr.corp.intel.com>
-References: <20240619223614.290657-1-rick.p.edgecombe@intel.com>
- <20240619223614.290657-18-rick.p.edgecombe@intel.com>
- <ZnUncmMSJ3Vbn1Fx@yzhao56-desk.sh.intel.com>
- <0e026a5d31e7e3a3f0eb07a2b75cb4f659d014d5.camel@intel.com>
+	s=arc-20240116; t=1721316577; c=relaxed/simple;
+	bh=UgMiXpOeAx1GvjfndlczEo6peKjvAwRTgIP2UtrCinw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EXAqhFXBrcZIDClvgCYxPBPKcf9JDoEYYHZKNpnuRde1SR7jSi31xyFfKWy18nLBxCvpBm4mZQPYEjJZa3cgdKMgXY3ZeGv/SXcOf8wPgRbV32spAwYmINBdp3vSJ9FnrZ8t1g+kaIBwS7Qs3pBzMN2FKac6E0aqyohzbWP9tWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b7CSK46n; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-75a6c290528so629540a12.1;
+        Thu, 18 Jul 2024 08:29:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721316576; x=1721921376; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RkIMG8Ff5B1D43lrbNrRALe+o/BMBNiqDHduHrCM/HY=;
+        b=b7CSK46n91QXK/tf368I+xwDFdXGvQ5lfXzxq0KiGLQ3j0DFLf6IhF5LMNZHBtEtKx
+         TAUbKPzB6Na4jtxj3KmO8C1zH01zXtEicb9IOgt2+tgWsnBP46VoAPUI4iF/hQRI9Nld
+         LGwVJivHLNGysEX23hqkhI3tGrJrmDQpcfUucp3p+kZ2NnKNt57YJ31wkjmoCajGSjtx
+         xHjYeTsoIVF1JxOfW/5QMOXh9FOyk/A7KfkdaiIOngdrmwlJ6cudB8E9Uo/FDtc5+npU
+         MpE1oIpTNV1AbBJWlbSQCGPNTNFEUlX9ZI8j6NcsEZCGsFsbwagK9l22KlPvMGbEQU2g
+         DseQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721316576; x=1721921376;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RkIMG8Ff5B1D43lrbNrRALe+o/BMBNiqDHduHrCM/HY=;
+        b=riwxI5u9oYbHh+2eQb1+lroNjrfFV64Kw1g+UpXIZLbwonThU+wCNUnQ3WtfJXlrmM
+         yh151+BI/iy/7Oh3z7uu3EvNvwavaRETHOUG8MQ4VGIv+nGVhGHil0abyiBTHD/rTw/5
+         273ywkEtHSfw280SSZFss1cCGFne7rncJEdam4ocjFoAik+QXzwR/5wu39j9y62G6Z0R
+         j02Y9cFjFg//S5k85DlAWca/rlAfkSzuI5djDyhHCGBZ3yaPeSqiW/LWpLoesgI1w7NT
+         zOjDpMYMMH0w4JLDBa5Lca/b9Xe6/HIK3AQpD3lKk8Eeyqp3G5ft6WRkPzaDIDzv9MhW
+         RldA==
+X-Forwarded-Encrypted: i=1; AJvYcCWX7l7+9Y233KZ157hVbOU/64YoUHvyd9FDNYqLDf7GGgx0PwimRThb6Dkb9g+9RCwyWQKkYHruCHRcsuvQ5/fzPT6RiX8UfimuAeigjk3TCDlxTdb1M120ULvR3LeWaOYmmJswDnfHaHyd91Ejvfiw+8TCniUSboTGnhVSQZqLefnUIA==
+X-Gm-Message-State: AOJu0YyOTXWGZap57t08ZgrWNiuK9Fcc7MrcskrAO+2wsNUuHvNoVfpW
+	8MyRrbJBh89J71z3f9yk279k8IsKEyo1svPKjOlzuUA6t/xvOWtuFFaWb0yfj+40Dnl+2hHgHJI
+	HtvCy4RMpCMNNnFvUTBa7bdXYPhI=
+X-Google-Smtp-Source: AGHT+IEkeaBR4zHqL2VFNKAB2q09CJ+qNphhqcwQ3sxWK2fxn+rjuWfCLb2/M3yQI68xt22na6UbtV0GCi7LpS3DYOY=
+X-Received: by 2002:a05:6a20:3943:b0:1c2:a722:92b2 with SMTP id
+ adf61e73a8af0-1c3fdd30824mr5827661637.45.1721316575873; Thu, 18 Jul 2024
+ 08:29:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0e026a5d31e7e3a3f0eb07a2b75cb4f659d014d5.camel@intel.com>
+References: <20240710193653.1175435-1-andrii@kernel.org>
+In-Reply-To: <20240710193653.1175435-1-andrii@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 18 Jul 2024 08:29:23 -0700
+Message-ID: <CAEf4BzaTEUkRU37fsuGy+-otWk9K0-c9=hs0APRz7pJy7rq-5w@mail.gmail.com>
+Subject: Re: [PATCH v5] perf,x86: avoid missing caller address in stack traces
+ captured in uprobe
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org, 
+	rostedt@goodmis.org, mhiramat@kernel.org, x86@kernel.org, mingo@redhat.com, 
+	tglx@linutronix.de, jpoimboe@redhat.com, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, rihams@fb.com, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 21, 2024 at 07:08:22PM +0000,
-"Edgecombe, Rick P" <rick.p.edgecombe@intel.com> wrote:
+On Wed, Jul 10, 2024 at 12:36=E2=80=AFPM Andrii Nakryiko <andrii@kernel.org=
+> wrote:
+>
+> When tracing user functions with uprobe functionality, it's common to
+> install the probe (e.g., a BPF program) at the first instruction of the
+> function. This is often going to be `push %rbp` instruction in function
+> preamble, which means that within that function frame pointer hasn't
+> been established yet. This leads to consistently missing an actual
+> caller of the traced function, because perf_callchain_user() only
+> records current IP (capturing traced function) and then following frame
+> pointer chain (which would be caller's frame, containing the address of
+> caller's caller).
+>
+> So when we have target_1 -> target_2 -> target_3 call chain and we are
+> tracing an entry to target_3, captured stack trace will report
+> target_1 -> target_3 call chain, which is wrong and confusing.
+>
+> This patch proposes a x86-64-specific heuristic to detect `push %rbp`
+> (`push %ebp` on 32-bit architecture) instruction being traced. Given
+> entire kernel implementation of user space stack trace capturing works
+> under assumption that user space code was compiled with frame pointer
+> register (%rbp/%ebp) preservation, it seems pretty reasonable to use
+> this instruction as a strong indicator that this is the entry to the
+> function. In that case, return address is still pointed to by %rsp/%esp,
+> so we fetch it and add to stack trace before proceeding to unwind the
+> rest using frame pointer-based logic.
+>
+> We also check for `endbr64` (for 64-bit modes) as another common pattern
+> for function entry, as suggested by Josh Poimboeuf. Even if we get this
+> wrong sometimes for uprobes attached not at the function entry, it's OK
+> because stack trace will still be overall meaningful, just with one
+> extra bogus entry. If we don't detect this, we end up with guaranteed to
+> be missing caller function entry in the stack trace, which is worse
+> overall.
+>
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> ---
+>  arch/x86/events/core.c  | 63 +++++++++++++++++++++++++++++++++++++++++
+>  include/linux/uprobes.h |  2 ++
+>  kernel/events/uprobes.c |  2 ++
+>  3 files changed, 67 insertions(+)
+>
 
-> On Fri, 2024-06-21 at 15:10 +0800, Yan Zhao wrote:
-> > On Wed, Jun 19, 2024 at 03:36:14PM -0700, Rick Edgecombe wrote:
-> > > diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-> > > index 630e6b6d4bf2..a1ab67a4f41f 100644
-> > > --- a/arch/x86/kvm/mmu/tdp_mmu.c
-> > > +++ b/arch/x86/kvm/mmu/tdp_mmu.c
-> > > @@ -37,7 +37,7 @@ void kvm_mmu_uninit_tdp_mmu(struct kvm *kvm)
-> > >          * for zapping and thus puts the TDP MMU's reference to each root,
-> > > i.e.
-> > >          * ultimately frees all roots.
-> > >          */
-> > > -       kvm_tdp_mmu_invalidate_all_roots(kvm);
-> > > +       kvm_tdp_mmu_invalidate_roots(kvm, KVM_VALID_ROOTS);
-> > all roots (mirror + direct) are invalidated here.
-> 
-> Right.
-> > 
-> > >         kvm_tdp_mmu_zap_invalidated_roots(kvm);
-> > kvm_tdp_mmu_zap_invalidated_roots() will zap invalidated mirror root with
-> > mmu_lock held for read, which should trigger KVM_BUG_ON() in
-> > __tdp_mmu_set_spte_atomic(), which assumes "atomic zapping don't operate on
-> > mirror roots".
-> > 
-> > But up to now, the KVM_BUG_ON() is not triggered because
-> > kvm_mmu_notifier_release() is called earlier than kvm_destroy_vm() (as in
-> > below
-> > call trace), and kvm_arch_flush_shadow_all() in kvm_mmu_notifier_release() has
-> > zapped all mirror SPTEs before kvm_mmu_uninit_vm() called in kvm_destroy_vm().
-> > 
-> > 
-> > kvm_mmu_notifier_release
-> >   kvm_flush_shadow_all
-> >     kvm_arch_flush_shadow_all
-> >       static_call_cond(kvm_x86_flush_shadow_all_private)(kvm);
-> >       kvm_mmu_zap_all  ==>hold mmu_lock for write
-> >         kvm_tdp_mmu_zap_all ==>zap KVM_ALL_ROOTS with mmu_lock held for write
-> > 
-> > kvm_destroy_vm
-> >   kvm_arch_destroy_vm
-> >     kvm_mmu_uninit_vm
-> >       kvm_mmu_uninit_tdp_mmu
-> >         kvm_tdp_mmu_invalidate_roots ==>invalid all KVM_VALID_ROOTS
-> >         kvm_tdp_mmu_zap_invalidated_roots ==> zap all roots with mmu_lock held
-> > for read
-> > 
-> > 
-> > A question is that kvm_mmu_notifier_release(), as a callback of primary MMU
-> > notifier, why does it zap mirrored tdp when all other callbacks are with
-> > KVM_FILTER_SHARED?
-> > 
-> > Could we just zap all KVM_DIRECT_ROOTS (valid | invalid) in
-> > kvm_mmu_notifier_release() and move mirrord tdp related stuffs from 
-> > kvm_arch_flush_shadow_all() to kvm_mmu_uninit_tdp_mmu(), ensuring mmu_lock is
-> > held for write?
-> 
-> Sigh, thanks for flagging this. I agree it seems weird to free private memory
-> from an MMU notifier callback. I also found this old thread where Sean NAKed the
-> current approach (free hkid in mmu release):
-> https://lore.kernel.org/kvm/ZN+1QHGa6ltpQxZn@google.com/#t
-> 
-> One challenge is that flush_shadow_all_private() needs to be done before
-> kvm_destroy_vcpus(), where it gets into tdx_vcpu_free(). So kvm_mmu_uninit_vm()
-> is too late. Perhaps this is why it was shoved into mmu notifier release (which
-> happens long before as you noted). Isaku, do you recall any other reasons?
+Ping. What's the status of this patch? Is it just waiting until after
+the merge window, or it got lost?
 
-Although it's a bit late, it's for record.
+> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+> index 5b0dd07b1ef1..780b8dc36f05 100644
+> --- a/arch/x86/events/core.c
+> +++ b/arch/x86/events/core.c
+> @@ -41,6 +41,8 @@
+>  #include <asm/desc.h>
+>  #include <asm/ldt.h>
+>  #include <asm/unwind.h>
+> +#include <asm/uprobes.h>
+> +#include <asm/ibt.h>
+>
+>  #include "perf_event.h"
+>
+> @@ -2813,6 +2815,46 @@ static unsigned long get_segment_base(unsigned int=
+ segment)
 
-It's to optimize the destruction Secure-EPT.  Free HKID early and destruct
-Secure-EPT by TDH.PHYMEM.PAGE.RECLAIM().  QEMU doesn't close any KVM file
-descriptors on exit. (gmem fd references KVM VM fd. so vm destruction happens
-after all gmem fds are closed.  Closing gmem fd causes secure-EPT zapping befure
-releasing HKID.)
-
-Because we're ignoring such optimization for now, we can simply defer releasing
-HKID following Seans's call.
-
-
-> But static_call_cond(kvm_x86_vm_destroy) happens before kvm_destroy_vcpus, so we
-> could maybe actually just do the tdx_mmu_release_hkid() part there. Then drop
-> the flush_shadow_all_private x86 op. See the (not thoroughly checked) diff at
-> the bottom of this mail.
-
-Yep, we can release HKID at vm destruction with potential too slow zapping of
-Secure-EPT.  The following change basically looks good to me.
-(The callback for Secure-EPT can be simplified.)
-
-Thanks,
-
-> But most of what is being discussed is in future patches where it starts to get
-> into the TDX module interaction. So I wonder if we should drop this patch 17
-> from "part 1" and include it with the next series so it can all be considered
-> together.
-> 
-> diff --git a/arch/x86/include/asm/kvm-x86-ops.h b/arch/x86/include/asm/kvm-x86-
-> ops.h
-> index 2adf36b74910..3927731aa947 100644
-> --- a/arch/x86/include/asm/kvm-x86-ops.h
-> +++ b/arch/x86/include/asm/kvm-x86-ops.h
-> @@ -23,7 +23,6 @@ KVM_X86_OP(has_emulated_msr)
->  KVM_X86_OP(vcpu_after_set_cpuid)
->  KVM_X86_OP_OPTIONAL(vm_enable_cap)
->  KVM_X86_OP(vm_init)
-> -KVM_X86_OP_OPTIONAL(flush_shadow_all_private)
->  KVM_X86_OP_OPTIONAL(vm_destroy)
->  KVM_X86_OP_OPTIONAL(vm_free)
->  KVM_X86_OP_OPTIONAL_RET0(vcpu_precreate)
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 8a72e5873808..8b2b79b39d0f 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1647,7 +1647,6 @@ struct kvm_x86_ops {
->         unsigned int vm_size;
->         int (*vm_enable_cap)(struct kvm *kvm, struct kvm_enable_cap *cap);
->         int (*vm_init)(struct kvm *kvm);
-> -       void (*flush_shadow_all_private)(struct kvm *kvm);
->         void (*vm_destroy)(struct kvm *kvm);
->         void (*vm_free)(struct kvm *kvm);
->  
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index e1299eb03e63..4deeeac14324 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -6446,7 +6446,7 @@ static void kvm_mmu_zap_all_fast(struct kvm *kvm)
->          * lead to use-after-free.
->          */
->         if (tdp_mmu_enabled)
-> -               kvm_tdp_mmu_zap_invalidated_roots(kvm);
-> +               kvm_tdp_mmu_zap_invalidated_roots(kvm, true);
->  }
->  
->  static bool kvm_has_zapped_obsolete_pages(struct kvm *kvm)
-> @@ -6977,13 +6977,6 @@ static void kvm_mmu_zap_all(struct kvm *kvm)
->  
->  void kvm_arch_flush_shadow_all(struct kvm *kvm)
->  {
-> -       /*
-> -        * kvm_mmu_zap_all() zaps both private and shared page tables.  Before
-> -        * tearing down private page tables, TDX requires some TD resources to
-> -        * be destroyed (i.e. keyID must have been reclaimed, etc).  Invoke
-> -        * kvm_x86_flush_shadow_all_private() for this.
-> -        */
-> -       static_call_cond(kvm_x86_flush_shadow_all_private)(kvm);
->         kvm_mmu_zap_all(kvm);
->  }
->  
-> diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-> index 68dfcdb46ab7..9e8b012aa8cc 100644
-> --- a/arch/x86/kvm/mmu/tdp_mmu.c
-> +++ b/arch/x86/kvm/mmu/tdp_mmu.c
-> @@ -38,7 +38,7 @@ void kvm_mmu_uninit_tdp_mmu(struct kvm *kvm)
->          * ultimately frees all roots.
->          */
->         kvm_tdp_mmu_invalidate_roots(kvm, KVM_VALID_ROOTS);
-> -       kvm_tdp_mmu_zap_invalidated_roots(kvm);
-> +       kvm_tdp_mmu_zap_invalidated_roots(kvm, false);
->  
->         WARN_ON(atomic64_read(&kvm->arch.tdp_mmu_pages));
->         WARN_ON(!list_empty(&kvm->arch.tdp_mmu_roots));
-> @@ -1057,7 +1057,7 @@ void kvm_tdp_mmu_zap_all(struct kvm *kvm)
->          * KVM_RUN is unreachable, i.e. no vCPUs will ever service the request.
->          */
->         lockdep_assert_held_write(&kvm->mmu_lock);
-> -       for_each_tdp_mmu_root_yield_safe(kvm, root)
-> +       __for_each_tdp_mmu_root_yield_safe(kvm, root, -1, KVM_DIRECT_ROOTS)
->                 tdp_mmu_zap_root(kvm, root, false);
->  }
->  
-> @@ -1065,11 +1065,14 @@ void kvm_tdp_mmu_zap_all(struct kvm *kvm)
->   * Zap all invalidated roots to ensure all SPTEs are dropped before the "fast
->   * zap" completes.
->   */
-> -void kvm_tdp_mmu_zap_invalidated_roots(struct kvm *kvm)
-> +void kvm_tdp_mmu_zap_invalidated_roots(struct kvm *kvm, bool shared)
->  {
->         struct kvm_mmu_page *root;
->  
-> -       read_lock(&kvm->mmu_lock);
-> +       if (shared)
-> +               read_lock(&kvm->mmu_lock);
-> +       else
-> +               write_lock(&kvm->mmu_lock);
->  
->         for_each_tdp_mmu_root_yield_safe(kvm, root) {
->                 if (!root->tdp_mmu_scheduled_root_to_zap)
-> @@ -1087,7 +1090,7 @@ void kvm_tdp_mmu_zap_invalidated_roots(struct kvm *kvm)
->                  * that may be zapped, as such entries are associated with the
->                  * ASID on both VMX and SVM.
->                  */
-> -               tdp_mmu_zap_root(kvm, root, true);
-> +               tdp_mmu_zap_root(kvm, root, shared);
->  
->                 /*
->                  * The referenced needs to be put *after* zapping the root, as
-> @@ -1097,7 +1100,10 @@ void kvm_tdp_mmu_zap_invalidated_roots(struct kvm *kvm)
->                 kvm_tdp_mmu_put_root(kvm, root);
->         }
->  
-> -       read_unlock(&kvm->mmu_lock);
-> +       if (shared)
-> +               read_unlock(&kvm->mmu_lock);
-> +       else
-> +               write_unlock(&kvm->mmu_lock);
->  }
->  
->  /*
-> diff --git a/arch/x86/kvm/mmu/tdp_mmu.h b/arch/x86/kvm/mmu/tdp_mmu.h
-> index 56741d31048a..7927fa4a96e0 100644
-> --- a/arch/x86/kvm/mmu/tdp_mmu.h
-> +++ b/arch/x86/kvm/mmu/tdp_mmu.h
-> @@ -68,7 +68,7 @@ bool kvm_tdp_mmu_zap_sp(struct kvm *kvm, struct kvm_mmu_page
-> *sp);
->  void kvm_tdp_mmu_zap_all(struct kvm *kvm);
->  void kvm_tdp_mmu_invalidate_roots(struct kvm *kvm,
->                                   enum kvm_tdp_mmu_root_types root_types);
-> -void kvm_tdp_mmu_zap_invalidated_roots(struct kvm *kvm);
-> +void kvm_tdp_mmu_zap_invalidated_roots(struct kvm *kvm, bool shared);
->  
->  int kvm_tdp_mmu_map(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault);
->  
-> diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
-> index b6828e35eb17..3f9bfcd3e152 100644
-> --- a/arch/x86/kvm/vmx/main.c
-> +++ b/arch/x86/kvm/vmx/main.c
-> @@ -98,16 +98,12 @@ static int vt_vm_init(struct kvm *kvm)
->         return vmx_vm_init(kvm);
->  }
->  
-> -static void vt_flush_shadow_all_private(struct kvm *kvm)
-> -{
-> -       if (is_td(kvm))
-> -               tdx_mmu_release_hkid(kvm);
-> -}
-> -
->  static void vt_vm_destroy(struct kvm *kvm)
->  {
-> -       if (is_td(kvm))
-> +       if (is_td(kvm)) {
-> +               tdx_mmu_release_hkid(kvm);
->                 return;
-> +       }
->  
->         vmx_vm_destroy(kvm);
->  }
-> @@ -980,7 +976,6 @@ struct kvm_x86_ops vt_x86_ops __initdata = {
->         .vm_size = sizeof(struct kvm_vmx),
->         .vm_enable_cap = vt_vm_enable_cap,
->         .vm_init = vt_vm_init,
-> -       .flush_shadow_all_private = vt_flush_shadow_all_private,
->         .vm_destroy = vt_vm_destroy,
->         .vm_free = vt_vm_free,
->  
-> 
-
--- 
-Isaku Yamahata <isaku.yamahata@intel.com>
+[...]
 
