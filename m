@@ -1,334 +1,137 @@
-Return-Path: <linux-kernel+bounces-256786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17DF893702F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 23:44:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 633F793703B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 23:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43433B21FC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 21:44:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B00D1C20BF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 21:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBB514535E;
-	Thu, 18 Jul 2024 21:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2F8145B34;
+	Thu, 18 Jul 2024 21:46:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tCyFIP8K"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="U+I4x50K"
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7920975808
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 21:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EC014535E
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 21:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721339058; cv=none; b=Er7geEaNMz//DBPVNDUZEOAFxTHpB9yCxPTe0/QeGFbbzwdn0B9sbnlSX0//nmp14KBH5jvCjomkonXCPJEIQdjSlOrHC3v1+mxWiEASZ+lbJNdt0uhlDn4HtWXx30ZztmtuHl/YYwV628lyXE5tdZz/SG227VGXO9nj6slqRK0=
+	t=1721339185; cv=none; b=S+iLw8f1GwWZ464I3qYZejL+MB3FtLaRa2AG2D/kviiYiR9Ka2PFXswJqGAieNBNwxjL5ijDgISsvpqxkHod6UVv2oZ4//x8XIP7b0qWaaB+rcIPv9DXdh17YizmiqUH+4JskXWnGrw11AiRYHcZU8nSig0lwNpdpAFxFObH7gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721339058; c=relaxed/simple;
-	bh=h+fAt05va5sYjEVQuomruqJ+9owh9FpKqBq/T/pNkYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iM84xv+zO1M3uSmeJFG5gQcANwYMDuDC7tBHTv6u1iK+6SaeqSp6Ls9sKo8cKRbYBh9QMbTzWsa1kNYdoHhJy/cWEE1mQn0BsEmRZkVpeGecTYFj3LttSh+LLeos6Tp/8lAZEXV4QOXzGU+MsIwVf7lnt07DIuDGDgxF1z6oUBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tCyFIP8K; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: pasha.tatashin@soleen.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721339054;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vRcjS/iHB/YMBfjlrTFTUUEyvvd22iRJeaks2kJ4lCk=;
-	b=tCyFIP8K2ww9uIxE7uIITgek9x/8XLOkaaN0OmLFwXXbwq6iwLKnzgteBd/+Xs/R4PbNCK
-	zUaveYFIHq/XnTl7iFmnPuSMM0/VW7COuiMKKWqn4q3QdjYJ/eiS4g+XPLQCQdsEvaaoh5
-	U3o/ixatn80HJmut1CJbxUcvCDL5Erk=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: jpoimboe@kernel.org
-X-Envelope-To: peterz@infradead.org
-X-Envelope-To: nphamcs@gmail.com
-X-Envelope-To: cerasuolodomenico@gmail.com
-X-Envelope-To: surenb@google.com
-X-Envelope-To: lizhijian@fujitsu.com
-X-Envelope-To: willy@infradead.org
-X-Envelope-To: shakeel.butt@linux.dev
-X-Envelope-To: vbabka@suse.cz
-X-Envelope-To: ziy@nvidia.com
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-mm@kvack.org
-Date: Thu, 18 Jul 2024 17:44:12 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, jpoimboe@kernel.org, peterz@infradead.org, 
-	nphamcs@gmail.com, cerasuolodomenico@gmail.com, surenb@google.com, 
-	lizhijian@fujitsu.com, willy@infradead.org, shakeel.butt@linux.dev, vbabka@suse.cz, 
-	ziy@nvidia.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v4] vmstat: Kernel stack usage histogram
-Message-ID: <o3ovvnwhzulw4h7k5zmud46gyscigqx6uolksjdsx6vsvzchue@bwxesck7n357>
-References: <20240718202611.1695164-1-pasha.tatashin@soleen.com>
+	s=arc-20240116; t=1721339185; c=relaxed/simple;
+	bh=QIe/2kbFHCA11Q9TL7mLMduOjYNsGQd/Tv+tn4jIdAA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oyw5vbXbtYM3Yw776fPfo0GomzEIlVa+yc38nJkgjEkJqtfmKMpnu2AUYodcSCUQayVIIJlTXOpiP61MyHAGh5O11ycQFUxobP5JZc/tQdQrcnkEg6uBTqasnqxHimOYkXyXLWAII3lbAasZuNIzFhYIqEujOG/EEVikQojIZKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=U+I4x50K; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-7f684af6af1so53054039f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 14:46:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1721339181; x=1721943981; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=b/3KVXgmf69sNo7YCAFBU75fVyP3kLvsv8BGm2iEjzc=;
+        b=U+I4x50KPl4X8RHNN5WKXgaZlEHjW1XglGeBCiLPeDrA3B+KPiBhvahd+FDuWPjb3+
+         87XEXsm4pfnSHwtps3MIP+TEfZCsdspc+yTjRy2CuGXrEoam95Al6g0CygaBSnC7ExCA
+         RyHihQX9Zo7+MvnRzEr8pj4uCXjohr23/SwVBcsrkRfsRX2fqDkhdWkK11O/eSelP+eL
+         /d3uDT3c4Ryb2bL0kMYavtCuYoMYn2E5sOc6EGM3M2zuFmF625pNWCLDfHfN8m1dypcR
+         YCbJlYmcrqMljxJYDSm/J4J+WSao69397c5/M406TScUTHCJTPHsBmberRIPN7VbEQzd
+         3+aA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721339181; x=1721943981;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b/3KVXgmf69sNo7YCAFBU75fVyP3kLvsv8BGm2iEjzc=;
+        b=HplA2dqCSYlr2JXqzmJ7UE46cFF0KjeEDG3XF4cUzoigq3c7exz5huO/UWnEqvAf/O
+         vhO8eMPjHzfgRhzdkBZovqzjzU2RTIO6rwAcaoH63Q7tFdrcAhbNWaDqJy3o4fhUX6Un
+         feAaymxGNa68m2RT1PFxj+7iP+QnnLorjQzAH4L+iHs0b1ZLIerf8gUgCDa5NbD8x3ta
+         qakf70uVD3iPucBvO1G4ImCajFYOPYGWBs/BJdxZQcKvY90t3vHMA4fWq6JkWAYXAVaX
+         Ppzo8SY1zmgiuPTyng+zvtQ5KZ5dK0ob31StI5Cpg/jOq37jFBC5EKPxUHKUt62x5Gaf
+         9SMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZPlBM0yOkwnU665s0ZQb2KCBrKEij44OLkQSUF0NF76uNFbb8LLTDFPWUBfYATti11IhpP3Dkqrb5RnuYgcKrdYiI8iFau7+ZVM5w
+X-Gm-Message-State: AOJu0YwjxcSAGFFZgLVxU6kctMMIzfj1FEIo3PC0lEghCpG8vymRriQo
+	uoUG5+fMmlKK5bRX0Sg566P9hQM1UCsTfv29S1vRQNJFu5S1/vNRnYJ8KHIt8HA=
+X-Google-Smtp-Source: AGHT+IFfmYe/UsMSfgkCsdMUFOYZdCp937Ia8bMlaDCUPuHT0PtpOJmSb9jac6FVvVir80F2WXRXbQ==
+X-Received: by 2002:a05:6602:26c7:b0:806:7f5a:1fb7 with SMTP id ca18e2360f4ac-81710605dacmr801576939f.5.1721339181354;
+        Thu, 18 Jul 2024 14:46:21 -0700 (PDT)
+Received: from [100.64.0.1] ([147.124.94.167])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c2342f164esm35433173.69.2024.07.18.14.46.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Jul 2024 14:46:20 -0700 (PDT)
+Message-ID: <8b402e92-d874-4b30-9108-f521bd20d36c@sifive.com>
+Date: Thu, 18 Jul 2024 16:46:17 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240718202611.1695164-1-pasha.tatashin@soleen.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 13/17] mm: move numa_distance and related code from x86 to
+ numa_memblks
+To: Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
+ Borislav Petkov <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, "David S. Miller"
+ <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Heiko Carstens <hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Palmer Dabbelt <palmer@dabbelt.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Thomas Gleixner <tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>,
+ Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org,
+ x86@kernel.org
+References: <20240716111346.3676969-1-rppt@kernel.org>
+ <20240716111346.3676969-14-rppt@kernel.org>
+From: Samuel Holland <samuel.holland@sifive.com>
+Content-Language: en-US
+In-Reply-To: <20240716111346.3676969-14-rppt@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 18, 2024 at 08:26:11PM GMT, Pasha Tatashin wrote:
-> As part of the dynamic kernel stack project, we need to know the amount
-> of data that can be saved by reducing the default kernel stack size [1].
+On 2024-07-16 6:13 AM, Mike Rapoport wrote:
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 > 
-> Provide a kernel stack usage histogram to aid in optimizing kernel stack
-> sizes and minimizing memory waste in large-scale environments. The
-> histogram divides stack usage into power-of-two buckets and reports the
-> results in /proc/vmstat. This information is especially valuable in
-> environments with millions of machines, where even small optimizations
-> can have a significant impact.
+> Move code dealing with numa_distance array from arch/x86 to
+> mm/numa_memblks.c
 > 
-> The histogram data is presented in /proc/vmstat with entries like
-> "kstack_1k", "kstack_2k", and so on, indicating the number of threads
-> that exited with stack usage falling within each respective bucket.
+> This code will be later reused by arch_numa.
 > 
-> Example outputs:
-> Intel:
-> $ grep kstack /proc/vmstat
-> kstack_1k 3
-> kstack_2k 188
-> kstack_4k 11391
-> kstack_8k 243
-> kstack_16k 0
+> No functional changes.
 > 
-> ARM with 64K page_size:
-> $ grep kstack /proc/vmstat
-> kstack_1k 1
-> kstack_2k 340
-> kstack_4k 25212
-> kstack_8k 1659
-> kstack_16k 0
-> kstack_32k 0
-> kstack_64k 0
-> 
-> Note: once the dynamic kernel stack is implemented it will depend on the
-> implementation the usability of this feature: On hardware that supports
-> faults on kernel stacks, we will have other metrics that show the total
-> number of pages allocated for stacks. On hardware where faults are not
-> supported, we will most likely have some optimization where only some
-> threads are extended, and for those, these metrics will still be very
-> useful.
-> 
-> [1] https://lwn.net/Articles/974367
-
-Nice and simple, and this gets us exactly the data we want for dynamic
-kernel stacks...
-
-Reviewed-by: Kent Overstreet <kent.overstreet@linux.dev>
-
-> 
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 > ---
-> 
-> Changelog:
-> v4:
-> - Expanded the commit message as requested by Andrew Morton.
-> 
->  include/linux/sched/task_stack.h | 49 ++++++++++++++++++++++++++++++--
->  include/linux/vm_event_item.h    | 42 +++++++++++++++++++++++++++
->  include/linux/vmstat.h           | 16 -----------
->  mm/vmstat.c                      | 24 ++++++++++++++++
->  4 files changed, 113 insertions(+), 18 deletions(-)
-> 
-> diff --git a/include/linux/sched/task_stack.h b/include/linux/sched/task_stack.h
-> index ccd72b978e1f..65e8c9fb7f9b 100644
-> --- a/include/linux/sched/task_stack.h
-> +++ b/include/linux/sched/task_stack.h
-> @@ -95,9 +95,51 @@ static inline int object_is_on_stack(const void *obj)
->  extern void thread_stack_cache_init(void);
->  
->  #ifdef CONFIG_DEBUG_STACK_USAGE
-> +#ifdef CONFIG_VM_EVENT_COUNTERS
-> +#include <linux/vm_event_item.h>
-> +
-> +/* Count the maximum pages reached in kernel stacks */
-> +static inline void kstack_histogram(unsigned long used_stack)
-> +{
-> +	if (used_stack <= 1024)
-> +		this_cpu_inc(vm_event_states.event[KSTACK_1K]);
-> +#if THREAD_SIZE > 1024
-> +	else if (used_stack <= 2048)
-> +		this_cpu_inc(vm_event_states.event[KSTACK_2K]);
-> +#endif
-> +#if THREAD_SIZE > 2048
-> +	else if (used_stack <= 4096)
-> +		this_cpu_inc(vm_event_states.event[KSTACK_4K]);
-> +#endif
-> +#if THREAD_SIZE > 4096
-> +	else if (used_stack <= 8192)
-> +		this_cpu_inc(vm_event_states.event[KSTACK_8K]);
-> +#endif
-> +#if THREAD_SIZE > 8192
-> +	else if (used_stack <= 16384)
-> +		this_cpu_inc(vm_event_states.event[KSTACK_16K]);
-> +#endif
-> +#if THREAD_SIZE > 16384
-> +	else if (used_stack <= 32768)
-> +		this_cpu_inc(vm_event_states.event[KSTACK_32K]);
-> +#endif
-> +#if THREAD_SIZE > 32768
-> +	else if (used_stack <= 65536)
-> +		this_cpu_inc(vm_event_states.event[KSTACK_64K]);
-> +#endif
-> +#if THREAD_SIZE > 65536
-> +	else
-> +		this_cpu_inc(vm_event_states.event[KSTACK_REST]);
-> +#endif
-> +}
-> +#else /* !CONFIG_VM_EVENT_COUNTERS */
-> +static inline void kstack_histogram(unsigned long used_stack) {}
-> +#endif /* CONFIG_VM_EVENT_COUNTERS */
-> +
->  static inline unsigned long stack_not_used(struct task_struct *p)
->  {
->  	unsigned long *n = end_of_stack(p);
-> +	unsigned long unused_stack;
->  
->  	do { 	/* Skip over canary */
->  # ifdef CONFIG_STACK_GROWSUP
-> @@ -108,10 +150,13 @@ static inline unsigned long stack_not_used(struct task_struct *p)
->  	} while (!*n);
->  
->  # ifdef CONFIG_STACK_GROWSUP
-> -	return (unsigned long)end_of_stack(p) - (unsigned long)n;
-> +	unused_stack = (unsigned long)end_of_stack(p) - (unsigned long)n;
->  # else
-> -	return (unsigned long)n - (unsigned long)end_of_stack(p);
-> +	unused_stack = (unsigned long)n - (unsigned long)end_of_stack(p);
->  # endif
-> +	kstack_histogram(THREAD_SIZE - unused_stack);
-> +
-> +	return unused_stack;
->  }
->  #endif
->  extern void set_task_stack_end_magic(struct task_struct *tsk);
-> diff --git a/include/linux/vm_event_item.h b/include/linux/vm_event_item.h
-> index 747943bc8cc2..73fa5fbf33a3 100644
-> --- a/include/linux/vm_event_item.h
-> +++ b/include/linux/vm_event_item.h
-> @@ -154,9 +154,51 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOUT,
->  		VMA_LOCK_RETRY,
->  		VMA_LOCK_MISS,
->  #endif
-> +#ifdef CONFIG_DEBUG_STACK_USAGE
-> +		KSTACK_1K,
-> +#if THREAD_SIZE > 1024
-> +		KSTACK_2K,
-> +#endif
-> +#if THREAD_SIZE > 2048
-> +		KSTACK_4K,
-> +#endif
-> +#if THREAD_SIZE > 4096
-> +		KSTACK_8K,
-> +#endif
-> +#if THREAD_SIZE > 8192
-> +		KSTACK_16K,
-> +#endif
-> +#if THREAD_SIZE > 16384
-> +		KSTACK_32K,
-> +#endif
-> +#if THREAD_SIZE > 32768
-> +		KSTACK_64K,
-> +#endif
-> +#if THREAD_SIZE > 65536
-> +		KSTACK_REST,
-> +#endif
-> +#endif /* CONFIG_DEBUG_STACK_USAGE */
->  		NR_VM_EVENT_ITEMS
->  };
->  
-> +#ifdef CONFIG_VM_EVENT_COUNTERS
-> +/*
-> + * Light weight per cpu counter implementation.
-> + *
-> + * Counters should only be incremented and no critical kernel component
-> + * should rely on the counter values.
-> + *
-> + * Counters are handled completely inline. On many platforms the code
-> + * generated will simply be the increment of a global address.
-> + */
-> +
-> +struct vm_event_state {
-> +	unsigned long event[NR_VM_EVENT_ITEMS];
-> +};
-> +
-> +DECLARE_PER_CPU(struct vm_event_state, vm_event_states);
-> +#endif
-> +
->  #ifndef CONFIG_TRANSPARENT_HUGEPAGE
->  #define THP_FILE_ALLOC ({ BUILD_BUG(); 0; })
->  #define THP_FILE_FALLBACK ({ BUILD_BUG(); 0; })
-> diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
-> index 735eae6e272c..131966a4af78 100644
-> --- a/include/linux/vmstat.h
-> +++ b/include/linux/vmstat.h
-> @@ -41,22 +41,6 @@ enum writeback_stat_item {
->  };
->  
->  #ifdef CONFIG_VM_EVENT_COUNTERS
-> -/*
-> - * Light weight per cpu counter implementation.
-> - *
-> - * Counters should only be incremented and no critical kernel component
-> - * should rely on the counter values.
-> - *
-> - * Counters are handled completely inline. On many platforms the code
-> - * generated will simply be the increment of a global address.
-> - */
-> -
-> -struct vm_event_state {
-> -	unsigned long event[NR_VM_EVENT_ITEMS];
-> -};
-> -
-> -DECLARE_PER_CPU(struct vm_event_state, vm_event_states);
-> -
->  /*
->   * vm counters are allowed to be racy. Use raw_cpu_ops to avoid the
->   * local_irq_disable overhead.
-> diff --git a/mm/vmstat.c b/mm/vmstat.c
-> index 8507c497218b..642d761b557b 100644
-> --- a/mm/vmstat.c
-> +++ b/mm/vmstat.c
-> @@ -1416,6 +1416,30 @@ const char * const vmstat_text[] = {
->  	"vma_lock_retry",
->  	"vma_lock_miss",
->  #endif
-> +#ifdef CONFIG_DEBUG_STACK_USAGE
-> +	"kstack_1k",
-> +#if THREAD_SIZE > 1024
-> +	"kstack_2k",
-> +#endif
-> +#if THREAD_SIZE > 2048
-> +	"kstack_4k",
-> +#endif
-> +#if THREAD_SIZE > 4096
-> +	"kstack_8k",
-> +#endif
-> +#if THREAD_SIZE > 8192
-> +	"kstack_16k",
-> +#endif
-> +#if THREAD_SIZE > 16384
-> +	"kstack_32k",
-> +#endif
-> +#if THREAD_SIZE > 32768
-> +	"kstack_64k",
-> +#endif
-> +#if THREAD_SIZE > 65536
-> +	"kstack_rest",
-> +#endif
-> +#endif
->  #endif /* CONFIG_VM_EVENT_COUNTERS || CONFIG_MEMCG */
->  };
->  #endif /* CONFIG_PROC_FS || CONFIG_SYSFS || CONFIG_NUMA || CONFIG_MEMCG */
-> -- 
-> 2.45.2.1089.g2a221341d9-goog
-> 
+>  arch/x86/mm/numa.c                   | 101 ---------------------------
+>  arch/x86/mm/numa_internal.h          |   2 -
+>  include/linux/numa_memblks.h         |   4 ++
+>  {arch/x86/mm => mm}/numa_emulation.c |   0
+>  mm/numa_memblks.c                    | 101 +++++++++++++++++++++++++++
+>  5 files changed, 105 insertions(+), 103 deletions(-)
+>  rename {arch/x86/mm => mm}/numa_emulation.c (100%)
+
+The numa_emulation.c rename looks like it should be part of the next commit, not
+this one.
+
 
