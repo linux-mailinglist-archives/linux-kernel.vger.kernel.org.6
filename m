@@ -1,272 +1,132 @@
-Return-Path: <linux-kernel+bounces-255952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ADA09346F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 05:51:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D959C9346FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 05:57:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24859B22DEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:51:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C52F1F234BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7960537FF;
-	Thu, 18 Jul 2024 03:50:55 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96E83B784;
+	Thu, 18 Jul 2024 03:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PZKT34Vy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEEB3E467
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 03:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6549239FD4;
+	Thu, 18 Jul 2024 03:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721274655; cv=none; b=n9MfXJXgyAFGevSHtCDjbKYJz7gpMJGYl5TSPhXa3oFQle79nIw7H8BBPCX9i/OZq+hg+8onLuaE010fgP+lKsh8VcRoCAMHkdMV6KmKQWDnYqg3t2uz4L8yJ2RthRWwySISG8nOJLpJvCXYykabAxVnYQp1MLlHlsWl6v42t0U=
+	t=1721275036; cv=none; b=SDlRaAlBd3eCyuWTo1ROsCnwtI73otm62WctICPrlkn5/tUFeOLIigrqEkTwKbUygr+W12Vo7g5zzzOnM/K6Qw0qv/PFiB6DG/ZhX6RuFH8To1699YwF2uJNZ+7c+cTcCPZMGIlOfdsn4SxYAJ4dVjiipWf1YMVVz0rbYPFQYzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721274655; c=relaxed/simple;
-	bh=gy9A20lnG3pP6r6xE3X4+301VNj3pLy98wlQHCj6+nE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UK7mdAgH21yvgP6evGMpTXkG+Q0GVIwD0n2FLBQBt2ZofkMBv2ZJXIlF5qzRk+zNvWxolf34IjqQgL1KAlj+IPpqGvZ571LTypJPbqGPjsw5bv+1TjllI7DElv5cy4s5tQkE1aD1L3wNYUNctbdWI6qbrLp2JjiZGx8DcPLkdbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WPf1Z1J4nzdhdQ;
-	Thu, 18 Jul 2024 11:49:06 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 42D43180105;
-	Thu, 18 Jul 2024 11:50:35 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
- (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 18 Jul
- 2024 11:50:05 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <linux@armlinux.org.uk>, <catalin.marinas@arm.com>, <will@kernel.org>,
-	<paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <hpa@zytor.com>, <bhe@redhat.com>,
-	<vgoyal@redhat.com>, <dyoung@redhat.com>, <arnd@arndb.de>, <afd@ti.com>,
-	<linus.walleij@linaro.org>, <akpm@linux-foundation.org>,
-	<eric.devolder@oracle.com>, <gregkh@linuxfoundation.org>,
-	<javierm@redhat.com>, <deller@gmx.de>, <robh@kernel.org>,
-	<hbathini@linux.ibm.com>, <thunder.leizhen@huawei.com>,
-	<chenjiahao16@huawei.com>, <linux-kernel@vger.kernel.org>,
-	<kexec@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-riscv@lists.infradead.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH v3 3/3] ARM: Use generic interface to simplify crashkernel reservation
-Date: Thu, 18 Jul 2024 11:54:44 +0800
-Message-ID: <20240718035444.2977105-4-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240718035444.2977105-1-ruanjinjie@huawei.com>
-References: <20240718035444.2977105-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1721275036; c=relaxed/simple;
+	bh=twHvAcda8Z/GGj5MjDm3WeTacn53HYfEBn563aMraqQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IcUvePln5REDlnhVIAz7dXRMjALm+V6Y612AE2fmiDGl6k8aCMLYXF7FDXBZRodhxefduZYyurfgeOgZloiIA8PidH1/iCGBh6rQ9sMOswBCIZP6Qk+0eF4cIGDakrd1AYAsPBSKM6nqCIJK7Rrw2YFUdnrBQ6Vl1Ks5Mqx3SN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PZKT34Vy; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721275035; x=1752811035;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=twHvAcda8Z/GGj5MjDm3WeTacn53HYfEBn563aMraqQ=;
+  b=PZKT34VyMKrMG3tvBR1h+lJOs1iEhjz/cMlHl0nPe+ZxHux5+dbiEV05
+   hSIA1iiY+l4A6PjJFumeAdNQj6Bbx80X+wW/rtbIMISGNqWJwKwT9xOze
+   QTKpHvWq7/q9hmZWwPWyqN6lKHNH0bjyD301WDpPYb7wUtUqCiVmthtQG
+   g6mXnAl3EtiCfhyy8DVXQkRLi2VmHbHo5RuOZdm2bp7KpCnQNZYglGuoH
+   YbilC8OQw0gGqrK1ZM72TFuDSlQ2WZ52F2wpMm67WAS7nIDN2o0irqGoE
+   d3Cnk6i+YOF/RJsJg4ovsqE/iYvwZTKj67IMEFnGmZeFcebkhnIeVDZ5R
+   Q==;
+X-CSE-ConnectionGUID: LY6YsaxjSlCjkQF0BVq0Yw==
+X-CSE-MsgGUID: CGVBtpItTHyBBXnaHhm5XQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="18626954"
+X-IronPort-AV: E=Sophos;i="6.09,216,1716274800"; 
+   d="scan'208";a="18626954"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 20:57:14 -0700
+X-CSE-ConnectionGUID: BgezPt6PQciq+6bm85OcoA==
+X-CSE-MsgGUID: ivDuiGalRpa2v6si1bKteQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,216,1716274800"; 
+   d="scan'208";a="88100677"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 17 Jul 2024 20:57:11 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sUIGS-000gvi-18;
+	Thu, 18 Jul 2024 03:57:08 +0000
+Date: Thu, 18 Jul 2024 11:56:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mary Strodl <mstrodl@csh.rit.edu>, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, akpm@linux-foundation.org,
+	urezki@gmail.com, hch@infradead.org, linux-mm@kvack.org,
+	lee@kernel.org, andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
+	s.hauer@pengutronix.de, christian.gmeiner@gmail.com,
+	Mary Strodl <mstrodl@csh.rit.edu>
+Subject: Re: [PATCH 2/3] x86: Add basic support for the Congatec CGEB BIOS
+ interface
+Message-ID: <202407181147.SJ9mOE8q-lkp@intel.com>
+References: <20240718011504.4106163-3-mstrodl@csh.rit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240718011504.4106163-3-mstrodl@csh.rit.edu>
 
-Currently, x86, arm64, riscv and loongarch has been switched to generic
-crashkernel reservation, which is also ready for 32bit system.
-So with the help of function parse_crashkernel() and generic
-reserve_crashkernel_generic(), arm32 crashkernel reservation can also
-be simplified by steps:
+Hi Mary,
 
-1) Add a new header file <asm/crash_reserve.h>, and define CRASH_ALIGN,
-   CRASH_ADDR_LOW_MAX, CRASH_ADDR_HIGH_MAX in it;
+kernel test robot noticed the following build warnings:
 
-2) Add arch_reserve_crashkernel() to call parse_crashkernel() and
-   reserve_crashkernel_generic();
+[auto build test WARNING on lee-mfd/for-mfd-next]
+[also build test WARNING on lee-mfd/for-mfd-fixes akpm-mm/mm-everything andi-shyti/i2c/i2c-host linus/master v6.10 next-20240717]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-3) Add ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION Kconfig in
-   arch/arm/Kconfig.
+url:    https://github.com/intel-lab-lkp/linux/commits/Mary-Strodl/mm-vmalloc-export-__vmalloc_node_range/20240718-091816
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
+patch link:    https://lore.kernel.org/r/20240718011504.4106163-3-mstrodl%40csh.rit.edu
+patch subject: [PATCH 2/3] x86: Add basic support for the Congatec CGEB BIOS interface
+reproduce: (https://download.01.org/0day-ci/archive/20240718/202407181147.SJ9mOE8q-lkp@intel.com/reproduce)
 
-The old reserve_crashkernel() can be removed.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407181147.SJ9mOE8q-lkp@intel.com/
 
-Following test cases have been performed as expected on QEMU vexpress-a9
-(1GB system memory):
+versioncheck warnings: (new ones prefixed by >>)
+   INFO PATH=/opt/cross/rustc-1.78.0-bindgen-0.65.1/cargo/bin:/opt/cross/clang-18/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+   /usr/bin/timeout -k 100 3h /usr/bin/make KCFLAGS= -Wtautological-compare -Wno-error=return-type -Wreturn-type -Wcast-function-type -funsigned-char -Wundef -fstrict-flex-arrays=3 -Wformat-overflow -Wformat-truncation -Wenum-conversion W=1 --keep-going LLVM=1 -j32 ARCH=x86_64 versioncheck
+   find ./* \( -name SCCS -o -name BitKeeper -o -name .svn -o -name CVS -o -name .pc -o -name .hg -o -name .git \) -prune -o \
+   	-name '*.[hcS]' -type f -print | sort \
+   	| xargs perl -w ./scripts/checkversion.pl
+   ./drivers/accessibility/speakup/genmap.c: 13 linux/version.h not needed.
+   ./drivers/accessibility/speakup/makemapdata.c: 13 linux/version.h not needed.
+>> ./drivers/mfd/congatec-cgeb.c: 25 linux/version.h not needed.
+   ./drivers/staging/media/atomisp/include/linux/atomisp.h: 23 linux/version.h not needed.
+   ./samples/bpf/spintest.bpf.c: 8 linux/version.h not needed.
+   ./samples/trace_events/trace_custom_sched.c: 11 linux/version.h not needed.
+   ./sound/soc/codecs/cs42l42.c: 14 linux/version.h not needed.
+   ./tools/lib/bpf/bpf_helpers.h: 423: need linux/version.h
+   ./tools/testing/selftests/bpf/progs/dev_cgroup.c: 9 linux/version.h not needed.
+   ./tools/testing/selftests/bpf/progs/netcnt_prog.c: 3 linux/version.h not needed.
+   ./tools/testing/selftests/bpf/progs/test_map_lock.c: 4 linux/version.h not needed.
+   ./tools/testing/selftests/bpf/progs/test_send_signal_kern.c: 4 linux/version.h not needed.
+   ./tools/testing/selftests/bpf/progs/test_spin_lock.c: 4 linux/version.h not needed.
+   ./tools/testing/selftests/bpf/progs/test_tcp_estats.c: 37 linux/version.h not needed.
+   ./tools/testing/selftests/wireguard/qemu/init.c: 27 linux/version.h not needed.
 
-1) crashkernel=4G,high				// invalid
-2) crashkernel=1G,high				// invalid
-3) crashkernel=1G,high crashkernel=0M,low	// invalid
-4) crashkernel=256M,high			// invalid
-5) crashkernel=256M,low				// invalid
-6) crashkernel=256M crashkernel=256M,high	// high is ignored, ok
-7) crashkernel=256M crashkernel=256M,low	// low is ignored, ok
-8) crashkernel=256M,high crashkernel=256M,low	// invalid
-9) crashkernel=256M,high crashkernel=4G,low	// invalid
-10) crashkernel=256M				// ok
-11) crashkernel=512M				// ok
-12) crashkernel=256M@0x88000000			// ok
-13) crashkernel=256M@0x78000000			// ok
-14) crashkernel=512M@0x78000000			// ok
-
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-Tested-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
-v3:
-- Update the commit message.
----
- arch/arm/Kconfig                     |  3 ++
- arch/arm/include/asm/crash_reserve.h | 24 +++++++++++
- arch/arm/kernel/setup.c              | 63 ++++------------------------
- 3 files changed, 36 insertions(+), 54 deletions(-)
- create mode 100644 arch/arm/include/asm/crash_reserve.h
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index f434afff4a2c..3f198ae63950 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1597,6 +1597,9 @@ config ATAGS_PROC
- config ARCH_SUPPORTS_CRASH_DUMP
- 	def_bool y
- 
-+config ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
-+	def_bool CRASH_RESERVE
-+
- config AUTO_ZRELADDR
- 	bool "Auto calculation of the decompressed kernel image address" if !ARCH_MULTIPLATFORM
- 	default !(ARCH_FOOTBRIDGE || ARCH_RPC || ARCH_SA1100)
-diff --git a/arch/arm/include/asm/crash_reserve.h b/arch/arm/include/asm/crash_reserve.h
-new file mode 100644
-index 000000000000..85c9298bd3b7
---- /dev/null
-+++ b/arch/arm/include/asm/crash_reserve.h
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+#ifndef _ARM_CRASH_RESERVE_H
-+#define _ARM_CRASH_RESERVE_H
-+
-+/*
-+ * The crash region must be aligned to 128MB to avoid
-+ * zImage relocating below the reserved region.
-+ */
-+#define CRASH_ALIGN			(128 << 20)
-+
-+#define CRASH_ADDR_LOW_MAX		crash_addr_low_max()
-+#define CRASH_ADDR_HIGH_MAX		memblock_end_of_DRAM()
-+
-+static inline unsigned long crash_addr_low_max(void)
-+{
-+	unsigned long long crash_max = idmap_to_phys((u32)~0);
-+	unsigned long long lowmem_max = __pa(high_memory - 1) + 1;
-+
-+	return (crash_max > lowmem_max) ? lowmem_max : crash_max;
-+}
-+
-+
-+#define HAVE_ARCH_ADD_CRASH_RES_TO_IOMEM_EARLY
-+#endif
-diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
-index e6a857bf0ce6..fc0ada003f6d 100644
---- a/arch/arm/kernel/setup.c
-+++ b/arch/arm/kernel/setup.c
-@@ -979,13 +979,6 @@ static int __init init_machine_late(void)
- }
- late_initcall(init_machine_late);
- 
--#ifdef CONFIG_CRASH_RESERVE
--/*
-- * The crash region must be aligned to 128MB to avoid
-- * zImage relocating below the reserved region.
-- */
--#define CRASH_ALIGN	(128 << 20)
--
- static inline unsigned long long get_total_mem(void)
- {
- 	unsigned long total;
-@@ -994,60 +987,25 @@ static inline unsigned long long get_total_mem(void)
- 	return total << PAGE_SHIFT;
- }
- 
--/**
-- * reserve_crashkernel() - reserves memory are for crash kernel
-- *
-- * This function reserves memory area given in "crashkernel=" kernel command
-- * line parameter. The memory reserved is used by a dump capture kernel when
-- * primary kernel is crashing.
-- */
--static void __init reserve_crashkernel(void)
-+static void __init arch_reserve_crashkernel(void)
- {
--	unsigned long long crash_size, crash_base;
-+	unsigned long long crash_size, crash_base, low_size = 0;
- 	unsigned long long total_mem;
-+	bool high = false;
- 	int ret;
- 
-+	if (!IS_ENABLED(CONFIG_CRASH_RESERVE))
-+		return;
-+
- 	total_mem = get_total_mem();
- 	ret = parse_crashkernel(boot_command_line, total_mem,
- 				&crash_size, &crash_base,
--				NULL, NULL);
-+				&low_size, &high);
- 	/* invalid value specified or crashkernel=0 */
- 	if (ret || !crash_size)
- 		return;
- 
--	if (crash_base <= 0) {
--		unsigned long long crash_max = idmap_to_phys((u32)~0);
--		unsigned long long lowmem_max = __pa(high_memory - 1) + 1;
--		if (crash_max > lowmem_max)
--			crash_max = lowmem_max;
--
--		crash_base = memblock_phys_alloc_range(crash_size, CRASH_ALIGN,
--						       CRASH_ALIGN, crash_max);
--		if (!crash_base) {
--			pr_err("crashkernel reservation failed - No suitable area found.\n");
--			return;
--		}
--	} else {
--		unsigned long long crash_max = crash_base + crash_size;
--		unsigned long long start;
--
--		start = memblock_phys_alloc_range(crash_size, SECTION_SIZE,
--						  crash_base, crash_max);
--		if (!start) {
--			pr_err("crashkernel reservation failed - memory is in use.\n");
--			return;
--		}
--	}
--
--	pr_info("Reserving %ldMB of memory at %ldMB for crashkernel (System RAM: %ldMB)\n",
--		(unsigned long)(crash_size >> 20),
--		(unsigned long)(crash_base >> 20),
--		(unsigned long)(total_mem >> 20));
--
--	/* The crashk resource must always be located in normal mem */
--	crashk_res.start = crash_base;
--	crashk_res.end = crash_base + crash_size - 1;
--	insert_resource(&iomem_resource, &crashk_res);
-+	reserve_crashkernel_generic(boot_command_line, crash_size, crash_base, low_size, high);
- 
- 	if (arm_has_idmap_alias()) {
- 		/*
-@@ -1064,9 +1022,6 @@ static void __init reserve_crashkernel(void)
- 		insert_resource(&iomem_resource, &crashk_boot_res);
- 	}
- }
--#else
--static inline void reserve_crashkernel(void) {}
--#endif /* CONFIG_CRASH_RESERVE*/
- 
- void __init hyp_mode_check(void)
- {
-@@ -1189,7 +1144,7 @@ void __init setup_arch(char **cmdline_p)
- 	if (!is_smp())
- 		hyp_mode_check();
- 
--	reserve_crashkernel();
-+	arch_reserve_crashkernel();
- 
- #ifdef CONFIG_VT
- #if defined(CONFIG_VGA_CONSOLE)
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
