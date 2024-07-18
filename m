@@ -1,231 +1,271 @@
-Return-Path: <linux-kernel+bounces-256595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76B8D9350E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:48:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A24C09350E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A37E1C21DBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:48:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F9851F2229A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C92145335;
-	Thu, 18 Jul 2024 16:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E78145335;
+	Thu, 18 Jul 2024 16:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FQy0QEQl"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2065.outbound.protection.outlook.com [40.107.237.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ub2YOAKA"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6BC13C3E6;
-	Thu, 18 Jul 2024 16:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721321305; cv=fail; b=Qa7/Xd8HEYqCOLDT9lgDECHrzm0zpr6U75WevEHCU2GGuCrsGTgQJCT2Na7HRJ6chDWHxsb+N3fLVsiZL+PwKUYGuNi5iOYys8RyS0eb9dNo5OuhUXCkuFghTcF2MGkHCFiaN1QhttDxn1AlPtzyoT2znBjU93/84+SdBIO22mY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721321305; c=relaxed/simple;
-	bh=8xhyFrqBCvEy/sZOwnJbO5DMAnUdsU2KOHEdx3ylkBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=IwcbfqmgQZ8cJ7Ncomy6Tn5jp0eOltuBiZna0gTjGNccqOP6LCoW8/v+Tw7DuYFOU38J310am8dlFZ8Ka72isFG5L2q1ujOHbf58fG+z32FL0xOT7eWINytQKvgrKtChliTbRk+X7lG5ht6boK2l1IWB1woz7d0rMlECMgHkOnQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FQy0QEQl; arc=fail smtp.client-ip=40.107.237.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mpXICvHhEq054+PjPJeirFiCB+XMgy9kA3lgB3NtZl9O8PYtm2ivt9updgXjo8E6QKmcDk4CsQAoZ4x5E9ilNNondhwgNY3GrIKkQmTFNRMrGeh9VHUIFsgFAic3uqnH3Eh21m0Xgo/JOu0sHOAxgnS1oFx/qo32zgXf3FL91RIcFqDBWIVRJMGKN1Do5kv0Mrjzne2LpGaO2c8q8RCjOpdcIDjUyNLWb6x5pjPBtKU0UrpIU3C9MHInedaT9Irhsm0IenxCB2nazZuKumWfqydsuEp+giYxRNq60wUrF3ioJoUh1UwNinoV8Yz607XFr/xPN+vGmZlnHTEXrbPp4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HXpDUHP75KMDflNYv4AW2mIquMKC7DNRHip4S+1SRVw=;
- b=S5yCy3cwmlD92dnuGXdyjrhTf1DzY+XG09PdLV1hxcmnPgHZ/wl4OFmypqI7cHYKAwibnknoYFd0C/MVrQRFNSAWx3LvvjG0wmO17S3HTXJHWVVlRv3ct/wRL1/RenNV3BMsM9OXdt5h39/bVDYn+nG5yCH3cKZdjbmynNqX8OaN9r1s+BkKxsy/J+Lsrb2EwcRSOjJY1yIJwgSWaeeo4XsYfa5x/93RbPkO4BTUo3QeSBVrtc6xiumjlTaUxIAMqOzgpfXDXIlaEe0oxhEvXqCCx+K8rgJcmry4RZCPN7r70M6uO4N3ZZ4W1fdGDjOATUYDzILaZpijuE8FMkXwwQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HXpDUHP75KMDflNYv4AW2mIquMKC7DNRHip4S+1SRVw=;
- b=FQy0QEQlY6OLTga7X/FEptmgncGSnPvvsGLO7K/w8KOPtXR6QrOCRZwwP4Lfa1bjj6sziht0SsgEek+8KmsUphCZraaGpm/SSmRIuctjum9+rRZEGRGMdA/pamj6tO9aicz+09DMmfOOytbpeYcn1JzNfoH90JFZcEjXL7joMM0/5yd7sUXAKq9C9MNYJyEFlZ7UkIMBN2Ua0dqCd32ezG2Vjf7KPKf9vgcfRTAvpJHgULMFSu1TbthIv0193TKGA9w0lcT4aUQsXOXsfIrUcONcBBS5oDHEsLym41eqVLVxVl1SKaDi0pWm4bylrWF7OA/rU+KvlQHljmFk3p2Jow==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by DM4PR12MB6158.namprd12.prod.outlook.com (2603:10b6:8:a9::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16; Thu, 18 Jul
- 2024 16:48:20 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7784.016; Thu, 18 Jul 2024
- 16:48:20 +0000
-Date: Thu, 18 Jul 2024 13:48:18 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Konstantin Taranov <kotaranov@microsoft.com>
-Cc: Leon Romanovsky <leon@kernel.org>,
-	Konstantin Taranov <kotaranov@linux.microsoft.com>,
-	Wei Hu <weh@microsoft.com>,
-	"sharmaajay@microsoft.com" <sharmaajay@microsoft.com>,
-	Long Li <longli@microsoft.com>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [EXTERNAL] Re: [PATCH rdma-next 1/1] RDMA/mana_ib: indicate that
- inline data is not supported
-Message-ID: <20240718164818.GH1482543@nvidia.com>
-References: <1721126889-22770-1-git-send-email-kotaranov@linux.microsoft.com>
- <20240716111441.GB5630@unreal>
- <PAXPR83MB0559406ED7CCDAFC0CAEC63DB4A22@PAXPR83MB0559.EURPRD83.prod.outlook.com>
- <20240716142223.GC5630@unreal>
- <PAXPR83MB05595BBC92EB695753EB8563B4A22@PAXPR83MB0559.EURPRD83.prod.outlook.com>
- <20240716170608.GD5630@unreal>
- <PAXPR83MB0559D97004241D37765A151DB4A22@PAXPR83MB0559.EURPRD83.prod.outlook.com>
- <20240717062250.GE5630@unreal>
- <20240717163437.GG1482543@nvidia.com>
- <PAXPR83MB05599E93C7F584D34D715E8AB4AC2@PAXPR83MB0559.EURPRD83.prod.outlook.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR83MB05599E93C7F584D34D715E8AB4AC2@PAXPR83MB0559.EURPRD83.prod.outlook.com>
-X-ClientProxiedBy: BLAPR03CA0154.namprd03.prod.outlook.com
- (2603:10b6:208:32f::28) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760A614430A
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 16:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721321375; cv=none; b=J4X5d0B7A2UKLPbr+BE4jOXyeVeY72+sgvKaNgVVFZdneVyGc3TQK+yZSTcCvmIpA1ADFwgF8FDq9Rokc2Z80NvSKjUyL22hXoNCJhgpfCRXE80K6N1LL3uNN+t2g/24Zo6tp8ucE+3ecrbYRei1huQy1AJt88jX9TWm1LxCOc0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721321375; c=relaxed/simple;
+	bh=nVNCbjdzFsWWbzorkn5xrK7/8mXxriF07L/cD5E8yxI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZdMBMEFR4jOdDZpiAANm8gOvokK6wIlVXyR+dafkoyAu5HviIv/X74x8Gctrw1V1VThdI6Kq/qzWihm6Jg1BLgCn8dOm8wvtZRy4N9TSq3zeWIy1VQ4RJZv0q9+Cr9me9CmPffY8B0l8+gilDWqhR+HGCm6DKap/iEzRuYqlK2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ub2YOAKA; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e0857a11862so511313276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 09:49:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721321372; x=1721926172; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZkZH2FYoDVOzEAvUwq5XuX+scAvrug+/FBbJphKQO3U=;
+        b=Ub2YOAKArnbwZJOSZkliaiBM9NGEBVoT59jujK3rWpH1rOeud+lYy/R4oX/v8U/W95
+         XcHrIlCBMc0VwLfnn+HX3Q/VGjiJrQm10OpAETz2OD4SsJJ3kSSD9Tv9Y2lft1i1mZ9y
+         0ilPQ3thKY5eqfezaAQQf7OJUWf3pZMKEqALtNs0mod0GoseXnGHggvXj+LSEZWBYZbO
+         aTrrp8DXaI2zYIsTiigCpEteu6wWW35BK36qa2FbErcvq0olRl/MQE5KZa3pxsbGUxhQ
+         HnkITgT8i2PuuzyuxvXe7VX8UUA9RdP4qEljp5bApsF7qWKHuBsv0lGJFicXTJI6Rv+g
+         FAYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721321372; x=1721926172;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZkZH2FYoDVOzEAvUwq5XuX+scAvrug+/FBbJphKQO3U=;
+        b=wAU0Maf2wDoeU8Qk8tA7BtZ4XKleoY8pqUTKUOPSMsLqZ8N7qX4hFw+d3vkPNBHdq/
+         ISw+yKDX296t5zuAPhUKO+3q5UthS3Kd7jPMES1hA75Prmh0LzxFgwN3YJlpDjG+au7H
+         jtYNfsoedLZerQwn1bxW6itlZKw/M7O0P9aLCDPFnyWRpethfnVbivDfOrzekPiaPpVz
+         nmCxY5MBQ+cmwrPhG2qS/uuyMGCjMzEFPP+n8JZpzWH4WTQto6QiJ6O1CSnjqvr4Uh/G
+         q8mnu6mJrZF5MKxD9DSWO7lHBhdlE1BItN4euKo5y80JD/BJUtFdHuVFxgbft+4qIFsr
+         yejQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmhG/LS2syHTekXUlgVPanXi2Go/1rxmObSWgPx6E+u5T8MbSM7lFn/t+/J9WJ9wleTb1Tz7mFi+ebYqCYQvDcc5n+7PstZVlMnvqG
+X-Gm-Message-State: AOJu0YwXU4m/YcIfBZdUleipiQk0ujPHwMtmWuB7U54gfg+VaU5V/ph9
+	VojMDBD/owmXW0RrIq9HPc1EcFgpHR/pL/Z75sANzaSp8ljvPxhLDp8Ke3tamp2gG5gMGqsjd85
+	eSXsoJ8ccW4dlfawqCnVNFCpUo+tGxGOCEt+J
+X-Google-Smtp-Source: AGHT+IEpvltijk6evqDJoq94UChM5YTgvvy6ILts2O1q38N109QkAR78Yxtbz/O3Co1rYWU4XgsHUftmxubfhsZWJfg=
+X-Received: by 2002:a05:6902:11c1:b0:e03:9a95:bc78 with SMTP id
+ 3f1490d57ef6-e05ed722c7cmr5882551276.36.1721321372149; Thu, 18 Jul 2024
+ 09:49:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|DM4PR12MB6158:EE_
-X-MS-Office365-Filtering-Correlation-Id: f35ce0a9-1014-4e0e-35e7-08dca7496e0b
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?i1OUWkCs0Z6sC48+JM/l7wbJtHBlCVyk47Ki/PX5w83HhNG68SEDVTLI12DE?=
- =?us-ascii?Q?5yqyeq7Le4ZS8B5+qLudkpLusQfXWsGPxk8mBC0Ei93eDlSMj6S8OhyzWNW5?=
- =?us-ascii?Q?tusocCnJo5HyZeNItxLM2RAy3TIXCoZRPvZ1JUVn8NpKvo0Wtl4psTw9Qpae?=
- =?us-ascii?Q?jjDSbPZcfpFSu3FihPpkFksHL+hHmh/lm67Gk4cztwlLHdYFof8jrGkFPnwj?=
- =?us-ascii?Q?Xc5UdS4tuPWOK1ZzMkdNUjwK4DWmRF6es6DIYXnVvj+fw+8z5pnEyjk6oGlT?=
- =?us-ascii?Q?gZZI2FgR99O6CIehRAddfbcqVqMlwGluRiBqDmjrBElso696XTbvYAjUlLJi?=
- =?us-ascii?Q?ppLFjrVl24t5YwbzvIDe/2eepDppX2IJNOh9h25ll8N2cdIXqPim6Mvi7Hfm?=
- =?us-ascii?Q?vgMcU0CE7e3xqzRkZle3u9OXGEj8VWLfG34Ag+/JxxcUoG3KGr/iGtmoBS8H?=
- =?us-ascii?Q?ZU1IgFudM9bvrULLJ+wWIdX11FBIQJpnESIzMkEyaKUVv2IK4/vKXfSStQck?=
- =?us-ascii?Q?G2Jq+KCezGuDSratC1x/eNzp6MBQz8KQAd7+G7mkwgciRoK61TOmod+a1lWB?=
- =?us-ascii?Q?6f7Vq0o+lztz6rvmryAxpFj6evSwe8bZq85xbVR0A8GXu9f0iHuaWUIA6tTj?=
- =?us-ascii?Q?3UBQBraEAEZBJmCzjwGrP2OPbQooZXtSTssfAVpyd2TuObj+zU2sWPG8yJWb?=
- =?us-ascii?Q?9vmRnEnJR06vOV99pAB1EVRmJqvV/9Nxrbvj2BxpFy8QuL0kqFVoJ7mtxQ+v?=
- =?us-ascii?Q?SK+/dpuNZRAk6EODyWHsRg2iZCQFDCe90hDWrSSWWDwcx3TDUFqXAve5BxNc?=
- =?us-ascii?Q?w0TPm97qUcAwj5xQjESYvrZb15fwwU8PWwIf5Q7dqL0D08zhvXeDkIVj1agp?=
- =?us-ascii?Q?7IzQuD5ZZWzLXpwU75tv0VV1Ca6VjlGHnCDv1OePng2LCjLq/JYiaqwCCb01?=
- =?us-ascii?Q?ZhDY7yS0lT623xnZQHF/eubdnEON57Sx6+Kj6VP3CVzPdndFk+v1Pn6TFF5f?=
- =?us-ascii?Q?nwKtDIJE9F3SpJ2vVywXV+6waPTBxM+rti9Lgj0S6x15j/R4NqU8BXQeU50L?=
- =?us-ascii?Q?FAT9TpSLG61Q6eUQ76b6UBI5IoQEQ7Ffq7HpPCkWVESNpYzAiGd1LO8CghfS?=
- =?us-ascii?Q?ps3s2LGzpl2EvBl5La+zg/kjUFt70lGefmBx2aJ+qiv6f+95MxCzK1zp+EDA?=
- =?us-ascii?Q?4/K2WY/ZdDbhHtyzJZYf59YRPtC+oYMP2LrkExmV2mvHJBV8mMJHfMrTLMXu?=
- =?us-ascii?Q?UJkEN25haFLaiVdGfAcXfqsHIWmZr1IUjw/Igcor577vJa6xK1SfrzQH3Y+9?=
- =?us-ascii?Q?x8bVRL+lRPUZEj0d2JZZ5Yi9Ok7Wct1HLj5zR/Q2DLKnyg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?jys3oiV1T/Fyhvw3ssvrb1vJfEQ+wOprP3llE7LmkkjgoG+uTJbNORzU5zOC?=
- =?us-ascii?Q?4L1a3aFxrMmR4X/Ol2Mvzx8Dby34FUy26d6uIqRL+xxPQedTVGufnBhKDXRY?=
- =?us-ascii?Q?6uMsj+cjaYXffVdCsGDWKTrKfzMl/XaNoZwkVMhlfbZ+Kr6XeJy/XZKTgvZq?=
- =?us-ascii?Q?jx9NU5Ddu7YRpRCS1PfLx5KwDb2Za5xl2omlyEtzpX1tMH9akuETHKYWq5Ix?=
- =?us-ascii?Q?igQ8R3796GnWG3CFyINnC5fE4iYY7d5rnv4K5XtoBC8toXSgkhH5VrP1gwpF?=
- =?us-ascii?Q?QXC+Uvn/bBDHDGjdeDfczSFPOo8+iqsf6zbb160MCpklNSfCVA4DbXf4Pqxu?=
- =?us-ascii?Q?Yn0U2rmLqvRRkH3TdlWf3raWSOdfHrnLwU5A/Dz8ionGIfYnGoOdO1pcIj7F?=
- =?us-ascii?Q?TXAWMBe7ncvM+Dfh5+UD9SBhQvMXulJsKGNAkPERb048JE7yd9LvRfXAIafb?=
- =?us-ascii?Q?CiJUlkSgBpPM4SiHNuBCrBoHyhjl9tB0TIL1xhCUAp+6ZSmQ9BzFhXA7Y3rd?=
- =?us-ascii?Q?V5oBXSeDBaNZcU+muXW7ZTk+KPNN7Ohk2NyGB/RTPutRa52l/w24osWz+0Le?=
- =?us-ascii?Q?7T02r7mAe83VzXaIfY9NSiM2h9hhOG4FC4A49x0duglcsP0TfXUhYdBVirBZ?=
- =?us-ascii?Q?HVQhAT9uQVQnksGjUUar5pqrwOcfrK5SWt1tO88igXB9lJToyZB8+2NY+l5J?=
- =?us-ascii?Q?SkMfm2VgqU4TYWloRkvdD/Rwby43WkWu8cBxte9B7fi1weaoRFeStUDO3/D2?=
- =?us-ascii?Q?H2F/gID8PlGr0vqlrMgaoH6sySUhUrEAAc7mvTETfEzJTQCWzUXr6AYH0HuL?=
- =?us-ascii?Q?hYHmqtoTd7g/x3Z8kWKyQeTJj7OUW0fFnhLSlliyZneKxnD2pq6kbL8kXro6?=
- =?us-ascii?Q?/jT3fD/ITsYWTWkM/ojXBKMdNpoJbN5O1pNOcKkRuLvPKsjwsclXmJzYnu0b?=
- =?us-ascii?Q?DlkXJCZ84qWQRn9W6z7RYNuHzyDQKbIt8iex0roC0iVDpSrvYGqCup7Ow7Ry?=
- =?us-ascii?Q?SIEMZVfRWygMQE13NOfcSSlI1z5gf9A6yy80xIuDAgEe+NmXvt94R1GpopFA?=
- =?us-ascii?Q?ORouvMZI5h9hBOVyBIzchKt5TfiUE3UYS8KRiGKQplVCrDwQ7vHn8P9Iz62n?=
- =?us-ascii?Q?LtKPOn1NUPPOHS1mQzL8Et0ZGjns1TOjPv61JfewnqJ+dpRtGill7Knizsws?=
- =?us-ascii?Q?QDq3VR0lIryTltSe5Yu3TZed47OwBlMkVSKSv+B7gC9SQ/cslowLDAT96ohw?=
- =?us-ascii?Q?OO2ybdtBQKTfJ3aOfU5Ftv5OubBE56CUnV3f4MKdkNiH/LIsAlwt8ZE4CODN?=
- =?us-ascii?Q?OmKlGXWeT4FcWi9R5hYhPt3+BItlT2JHWVBPDp8CyJXR1Fc33Z9AiDQADVoh?=
- =?us-ascii?Q?2bVVekRTWiiEzySL9nzhKB9lrfi3JwCVIctFicWfek87A7ksrGY1VkdPWQAj?=
- =?us-ascii?Q?IJK5j7bZNkCSAzlsZaRDDkVcnEbzKIriri0ZgNgjKPLmK7AUftQyltWKK6jk?=
- =?us-ascii?Q?vZoih5bqVwyKEjeE/2jG7+ozqpN4dhJUlCuM3hRI6a9ZA96uDCFvjBE40GA8?=
- =?us-ascii?Q?oyqUvX36wUqj7k3b6VY=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f35ce0a9-1014-4e0e-35e7-08dca7496e0b
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2024 16:48:20.2206
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tHFX5XXgfmfVkMf/SXvSP2hJ5xN5OnZ5cGVQr1fsh24ZeBA2HM4Ok3IpwabnAgUR
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6158
+References: <00000000000037cdb0061d5924b3@google.com> <46f44064-255b-4a1e-9317-f4b168706d65@kernel.org>
+ <flthie3lmh4ovhlullgz2rsd5yfmwwfuqd76yef7xa2ncpqs4j@dxvhd64eoa7t>
+ <CAJuCfpEX7JFbWbLT0w+nyKz-m87ccuzSoorB3PfnW82mA-nFfw@mail.gmail.com>
+ <CAJuCfpEGATSeybdVNnUW5eS5EKHF00VzxHGwKoMfPiS_QRiKbQ@mail.gmail.com>
+ <ZplEgwFFb0LAXbH4@zx2c4.com> <CAJuCfpG07s2jcsgT3EE85B_JGWY2B23n+iPhVWP6amgZgSHi3w@mail.gmail.com>
+ <CAHmME9pjUJKTtYz10ULrWYBCB3LUCG77aNFz_n7uBvyddOge6Q@mail.gmail.com>
+In-Reply-To: <CAHmME9pjUJKTtYz10ULrWYBCB3LUCG77aNFz_n7uBvyddOge6Q@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 18 Jul 2024 09:49:21 -0700
+Message-ID: <CAJuCfpEQQ4dKOwS8a9dRgwWtqR7LyKMx2Qr8vjaBu=CM4dNSCw@mail.gmail.com>
+Subject: Re: [syzbot] [crypto?] KASAN: slab-use-after-free Read in handle_mm_fault
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, "Vlastimil Babka (SUSE)" <vbabka@kernel.org>, 
+	syzbot <syzbot+4c882a4a0697c4a25364@syzkaller.appspotmail.com>, 
+	akpm@linux-foundation.org, davem@davemloft.net, herbert@gondor.apana.org.au, 
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 18, 2024 at 03:05:59PM +0000, Konstantin Taranov wrote:
-> > > > > Yes, you are. If user asked for specific functionality
-> > > > > (max_inline_data != 0) and your device doesn't support it, you should
-> > return an error.
-> > > > >
-> > > > > pvrdma, mlx4 and rvt are not good examples, they should return an
-> > > > > error as well, but because of being legacy code, we won't change them.
-> > > > >
-> > > > > Thanks
-> > > > >
-> > > >
-> > > > I see. So I guess we can return a larger value, but not smaller. Right?
-> > > > I will send v2 that fails QP creation then.
-> > > >
-> > > > In this case, may I submit a patch to rdma-core that queries device
-> > > > caps before trying to create a qp in rdma_client.c and
-> > > > rdma_server.c? As that code violates what you described.
+On Thu, Jul 18, 2024 at 9:44=E2=80=AFAM Jason A. Donenfeld <Jason@zx2c4.com=
+> wrote:
+>
+> On Thu, Jul 18, 2024 at 6:42=E2=80=AFPM Suren Baghdasaryan <surenb@google=
+.com> wrote:
+> >
+> > On Thu, Jul 18, 2024 at 4:36=E2=80=AFPM Jason A. Donenfeld <Jason@zx2c4=
+.com> wrote:
 > > >
-> > > Let's ask Jason, why is that? Do we allow to ignore max_inline_data?
+> > > On Thu, Jul 18, 2024 at 04:23:47PM +0000, Suren Baghdasaryan wrote:
+> > > > On Thu, Jul 18, 2024 at 4:20=E2=80=AFPM Suren Baghdasaryan <surenb@=
+google.com> wrote:
+> > > > >
+> > > > > On Thu, Jul 18, 2024 at 3:43=E2=80=AFPM Liam R. Howlett <Liam.How=
+lett@oracle.com> wrote:
+> > > > > >
+> > > > > > * Vlastimil Babka (SUSE) <vbabka@kernel.org> [240718 07:00]:
+> > > > > > > On 7/16/24 10:29 AM, syzbot wrote:
+> > > > > > > > Hello,
+> > > > > > >
+> > > > > > > dunno about the [crypto?] parts, sounds rather something for =
+Suren or Liam
+> > > > > > > or maybe it's due to some changes to gup?
+> > > > > >
+> > > > > > Yes, that crypto part is very odd.
+> > > > > >
+> > > > > > >
+> > > > > > > > syzbot found the following issue on:
+> > > > > > > >
+> > > > > > > > HEAD commit:    3fe121b62282 Add linux-next specific files =
+for 20240712
+> > > > > > > > git tree:       linux-next
+> > > > > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=
+=3D1097ebed980000
+> > > > > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=
+=3D98dd8c4bab5cdce
+> > > > > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=3D4=
+c882a4a0697c4a25364
+> > > > > > > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Bi=
+nutils for Debian) 2.40
+> > > > > > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=
+=3D11d611a5980000
+> > > > > > > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=
+=3D13ce3259980000
+> > > > > > > >
+> > > > > > > > Downloadable assets:
+> > > > > > > > disk image: https://storage.googleapis.com/syzbot-assets/8c=
+6fbf69718d/disk-3fe121b6.raw.xz
+> > > > > > > > vmlinux: https://storage.googleapis.com/syzbot-assets/39fc7=
+e43dfc1/vmlinux-3fe121b6.xz
+> > > > > > > > kernel image: https://storage.googleapis.com/syzbot-assets/=
+0a78e70e4b4e/bzImage-3fe121b6.xz
+> > > > > > > > mounted in repro: https://storage.googleapis.com/syzbot-ass=
+ets/66cfe5a679f2/mount_0.gz
+> > > > > > > >
+> > > > > > > > IMPORTANT: if you fix the issue, please add the following t=
+ag to the commit:
+> > > > > > > > Reported-by: syzbot+4c882a4a0697c4a25364@syzkaller.appspotm=
+ail.com
+> > > > > > > >
+> > > > > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > > > > > BUG: KASAN: slab-use-after-free in handle_mm_fault+0x14f0/0=
+x19a0 mm/memory.c:5842
+> > > > > > > > Read of size 8 at addr ffff88802c4719d0 by task syz-executo=
+r125/5235
+> > > > > > > >
+> > > > > > > > CPU: 1 UID: 0 PID: 5235 Comm: syz-executor125 Not tainted 6=
+.10.0-rc7-next-20240712-syzkaller #0
+> > > > > > > > Hardware name: Google Google Compute Engine/Google Compute =
+Engine, BIOS Google 06/07/2024
+> > > > > > > > Call Trace:
+> > > > > > > >  <TASK>
+> > > > > > > >  __dump_stack lib/dump_stack.c:94 [inline]
+> > > > > > > >  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+> > > > > > > >  print_address_description mm/kasan/report.c:377 [inline]
+> > > > > > > >  print_report+0x169/0x550 mm/kasan/report.c:488
+> > > > > > > >  kasan_report+0x143/0x180 mm/kasan/report.c:601
+> > > > > > > >  handle_mm_fault+0x14f0/0x19a0 mm/memory.c:5842
+> > > > > >
+> > > > > > /*
+> > > > > >  * By the time we get here, we already hold the mm semaphore
+> > > > > >  *
+> > > > > >  * The mmap_lock may have been released depending on flags and =
+our
+> > > > > >  * return value.  See filemap_fault() and __folio_lock_or_retry=
+().
+> > > > > >  */
+> > > > > >
+> > > > > > Somehow we are here without an RCU or mmap_lock held?
+> > > > >
+> > > > > I'm guessing we did enter handle_mm_fault() with mmap_lock held b=
+ut
+> > > > > __handle_mm_fault() dropped it before returning, see the comment =
+for
+> > > > > __handle_mm_fault():
+> > > > >
+> > > > > /*
+> > > > >  * On entry, we hold either the VMA lock or the mmap_lock
+> > > > >  * (FAULT_FLAG_VMA_LOCK tells you which).  If VM_FAULT_RETRY is s=
+et in
+> > > > >  * the result, the mmap_lock is not held on exit.  See filemap_fa=
+ult()
+> > > > >  * and __folio_lock_or_retry().
+> > > > >  */
+> > > > >
+> > > > > So after that there is nothing that guarantees VMA is not destroy=
+ed
+> > > > > from under us and if (vma->vm_flags & VM_DROPPABLE) check is unsa=
+fe.
+> > > > > Hillf's suggestion should fix this issue but we need to figure ou=
+t how
+> > > > > to make this path more robust. Currently it's very easy to make a
+> > > > > similar mistake. Maybe a WARNING comment after __handle_mm_fault(=
+)
+> > > > > that VMA might be unstable after that function and should not be =
+used?
+> > > >
+> > > > CC'ing Jason.
 > > >
-> > > librdmacm/examples/rdma_client.c
-> > >   63         memset(&attr, 0, sizeof attr);
-> > >   64         attr.cap.max_send_wr = attr.cap.max_recv_wr = 1;
-> > >   65         attr.cap.max_send_sge = attr.cap.max_recv_sge = 1;
-> > >   66         attr.cap.max_inline_data = 16;
-> > >   67         attr.qp_context = id;
-> > >   68         attr.sq_sig_all = 1;
-> > >   69         ret = rdma_create_ep(&id, res, NULL, &attr);
-> > >   70         // Check to see if we got inline data allowed or not
-> > >   71         if (attr.cap.max_inline_data >= 16)
-> > >   72                 send_flags = IBV_SEND_INLINE;
-> > >   73         else
-> > >   74                 printf("rdma_client: device doesn't support
-> > IBV_SEND_INLINE, "
-> > >   75                        "using sge sends\n");
-> > 
-> > I think the idea expressed in this code is that if max_inline_data requested
-> > too much it would be limited to the device capability.
-> > 
-> > ie qp creation should limit the requests values to what the HW can do, similar
-> > to how entries and other work.
-> > 
-> > If the HW has no support it should return - for max_inline_data not an error,
-> > I guess?
-> 
-> Yes, this code implies that max_inline_data can be ignored at creation, while the manual of ibv_create_qp says:
-> "The function ibv_create_qp() will update the qp_init_attr->cap struct with the actual QP values of the QP that was created;
-> the values will be **greater than or equal to** the values
-> requested."
+> > > Thanks for bringing this to my attention. I'll incorporate Hillf's pa=
+tch
+> > > and also add a comment as you suggested. Something like the below?
+> > >
+> > > diff --git a/mm/memory.c b/mm/memory.c
+> > > index 18fe893ce96d..f596a8d508ef 100644
+> > > --- a/mm/memory.c
+> > > +++ b/mm/memory.c
+> > > @@ -5660,6 +5660,7 @@ vm_fault_t handle_mm_fault(struct vm_area_struc=
+t *vma, unsigned long address,
+> > >         /* If the fault handler drops the mmap_lock, vma may be freed=
+ */
+> > >         struct mm_struct *mm =3D vma->vm_mm;
+> > >         vm_fault_t ret;
+> > > +       bool is_droppable;
+> > >
+> > >         __set_current_state(TASK_RUNNING);
+> > >
+> > > @@ -5674,6 +5675,8 @@ vm_fault_t handle_mm_fault(struct vm_area_struc=
+t *vma, unsigned long address,
+> > >                 goto out;
+> > >         }
+> > >
+> > > +       is_droppable =3D !!(vma->vm_flags & VM_DROPPABLE);
+> > > +
+> > >         /*
+> > >          * Enable the memcg OOM handling for faults triggered in user
+> > >          * space.  Kernel faults are handled more gracefully.
+> > > @@ -5688,10 +5691,15 @@ vm_fault_t handle_mm_fault(struct vm_area_str=
+uct *vma, unsigned long address,
+> > >         else
+> > >                 ret =3D __handle_mm_fault(vma, address, flags);
+> > >
+> > > +       /*
+> > > +        * It is no longer safe to dereference vma-> after this point=
+, as
+> > > +        * __handle_mm_fault may have already destroyed it.
+> >
+> > __handle_mm_fault does not really destroy the vma. It might drop
+> > mmap_lock and another task might destroy it from under us.
+>
+> Err, right. Okay, wording time:
+>
+> > Warning: It is no longer safe to dereference vma-> after this point, be=
+cause mmap_lock is dropped, so vma might be destroyed from underneath us.
 
-Ah, well that seems to be some misunderstandings then, yes.
+Better but I would change "mmap_lock is dropped" to "mmap_lock might
+have been dropped by __handle_mm_fault()" because mmap_lock is not
+always dropped by __handle_mm_fault(). Technicality but better be
+clear about it.
+With that changed feel free to add:
 
-> I see two options:
-> 1) Remove code from rdma examples that rely on ignoring max_inline; add a warning to libibverbs when drivers ignore that value.
-> 2) Add to manual that max_inline_data might be ignored by drivers; and allow my current patch that ignores max_inline_data in mana_ib.
+Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 
-I don't know, what do the majority of drivers do? If enough are
-already doing 1 then lets force everyone into 1, otherwise we have to
-document 2.
-
-And a pyverbs test should be added to cover this weirdness
-
-Jason
+>
+> How about that?
 
