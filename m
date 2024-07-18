@@ -1,152 +1,129 @@
-Return-Path: <linux-kernel+bounces-255912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14024934695
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 05:05:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB805934699
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 05:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37AD61C21DD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:05:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 557E8B22122
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A700328B6;
-	Thu, 18 Jul 2024 03:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0268A2746F;
+	Thu, 18 Jul 2024 03:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="N8CX28Rd"
-Received: from AUS01-SY4-obe.outbound.protection.outlook.com (mail-sy4aus01olkn2157.outbound.protection.outlook.com [40.92.62.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nf7ruRec"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8468D3D966;
-	Thu, 18 Jul 2024 03:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.62.157
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721271897; cv=fail; b=i8b8sr7In0v07NWUkllP6VGI0KF/95ka/vPhYOQGGHtGmZwSbGd3CnT9C4mvobvWRnr/LbW3+feY3xsdmxSweSeiOqb2skRwLLIaipPR+lBzsTFnWydj3VChvsXrcgZFPfwwMnTOt/egNhuuGEZK0vV+dEYLWYrhkCGrmSSKU+A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721271897; c=relaxed/simple;
-	bh=Afqn/+KWRwsqZS1fnrYQyMfoZP2TLodbAXCiHtzv+08=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=COqj9SOOENsd51aCBPWbbEcerfNQ/CogHI4loYKkfJ30MD+SC9IB/QNYRFIDf4LuqkGmd0sGBRl/+9x9UnY08nLxAtZ+BW/5yYBAPSanYHJavGu9k00qY/nLVBP7ql1G39eq59cyYA5M66uYQXtaUlk/y/5uIdpR8mPh7Pp2wjc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=N8CX28Rd; arc=fail smtp.client-ip=40.92.62.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RLW8oXY/Fy1JaTOyMr2bTiOYJG5zlx5kQdTEAu9jBPJjt6tPKnqz6PMDkLCy3zk2RVG3gPWc1aAH3xeZRli3JI8weyfKXEKkg/Sc9ZZYs1kIH6Hg3DZgFSLyclcvIrlXHz4QGGnusGxMj6B3j7XWeiLtpm2WT4baQnrbv9mlNiw1c2/aJlFMFnAJt2UXJVuycAWjDdtHBl8m5h4WyYJ75EAY0htbfGbfJYcXmHkGAsVRrFXnGT2wXRu8xABtDuOIvvadbt4L8q58UI9GSY/hzE84V9P9/jIIifJDmsmlNJKF/hfiLZq26SANkBVU3Cye2d92/IphxHQTUxGLxilO5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WLzBeUv7uEyatawNZn4TXVt661GeDzmP6Lg6H1TaZCY=;
- b=CTRjdT69OshQWI/gJScyDcdzXAxomRcTXQVHKOvz1tTfW4Kdt9gJuxh+eTRV7pithOo1MYJJEozvzF56kC7p82H9s8fmUZnjedthPWSz7VuWJ+McqWEmil8NeE//XXkNafrEFTmjxTSd34QqBkADXBt7LqiGa+JuUiPy0BHgxXcvAOthDNbf7UFL/UtyV37mv53s35bZ5b1FeJZ3MU5DelUNQq/e2jZQx0Grd+hWPpr1zIHQP56wf4PqGc0hztnIJZ/ehIecmu+Zz4f2CoszMq6QVA9lYmYzDhIkGy2PraoD/LYafbe/1D98ih1ppcodSWzi4MGJAxIPU/rQN6Ocpw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WLzBeUv7uEyatawNZn4TXVt661GeDzmP6Lg6H1TaZCY=;
- b=N8CX28Rd5jGYT0SF2qilAXhEtdeM5ZyYbQpX9By5d3M2U4qYx7l+5GnPGpglnHnOLBZR602YkNmGLotQ/cteRXeMw5FQqU1sUSRcDABCBF66yzR2KNf7skEtR1u3RvOxLGc3Gpa+kVn3B+DoDBTzYU6+ODEXXLvYNuaKGn34Wxr/IDzq3GRhbj8aIabkJzytJMxoGh/mJ1Al88HiRlN99dbR2l91xkgrAfL4EAwuk7mqovLpsUXp1rNxN3C7BfLEXeL4Bz1ovipnKpYd+MGQe7WderHLbE/qAAq40QxKHk64G+63E97i1g8jif9NDqRTBuQ8AkBBYpiXACfFMITNTw==
-Received: from MEYP282MB3164.AUSP282.PROD.OUTLOOK.COM (2603:10c6:220:159::11)
- by SY4P282MB3661.AUSP282.PROD.OUTLOOK.COM (2603:10c6:10:1c0::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.17; Thu, 18 Jul
- 2024 03:04:50 +0000
-Received: from MEYP282MB3164.AUSP282.PROD.OUTLOOK.COM
- ([fe80::f65e:52a:9bfb:525f]) by MEYP282MB3164.AUSP282.PROD.OUTLOOK.COM
- ([fe80::f65e:52a:9bfb:525f%5]) with mapi id 15.20.7784.017; Thu, 18 Jul 2024
- 03:04:50 +0000
-From: Ryder Wang <rydercoding@hotmail.com>
-To: Theodore Ts'o <tytso@mit.edu>, Zhihao Cheng <chengzhihao@huaweicloud.com>
-CC: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>, Christoph Hellwig
-	<hch@infradead.org>, linux-mtd <linux-mtd@lists.infradead.org>, Richard
- Weinberger <richard@nod.at>, "zhangyi (F)" <yi.zhang@huawei.com>, yangerkun
-	<yangerkun@huawei.com>, "wangzhaolong (A)" <wangzhaolong1@huawei.com>
-Subject: Re: [BUG REPORT] potential deadlock in inode evicting under the inode
- lru traversing context on ext4 and ubifs
-Thread-Topic: [BUG REPORT] potential deadlock in inode evicting under the
- inode lru traversing context on ext4 and ubifs
-Thread-Index: AQHa1CTInbJ5495Kk0Oyw9CF3kyldLHzKagAgAiorN0=
-Date: Thu, 18 Jul 2024 03:04:50 +0000
-Message-ID:
- <MEYP282MB3164B39D532251DC6C36B652BFAC2@MEYP282MB3164.AUSP282.PROD.OUTLOOK.COM>
-References: <37c29c42-7685-d1f0-067d-63582ffac405@huaweicloud.com>
- <20240712143708.GA151742@mit.edu>
-In-Reply-To: <20240712143708.GA151742@mit.edu>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-x-tmn: [JV5QR5IXsnChSSdq0+cS3AJvHdP1OA03]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MEYP282MB3164:EE_|SY4P282MB3661:EE_
-x-ms-office365-filtering-correlation-id: c7cfac0f-5a47-4335-7f5e-08dca6d66379
-x-microsoft-antispam:
- BCL:0;ARA:14566002|19110799003|461199028|8060799006|3412199025|102099032|440099028;
-x-microsoft-antispam-message-info:
- J9LaPZ5lds60YiEF5umOrG1UmOo5Imp33idt7iBE7WGnkNGBF35v9i4d0q/dbPZwctLI/9/F253gi95x8gn0w5VTnoWmQTY4IcGL4FTvYCVZ5Qbmlb1LMKogK6tG/lhcmhGtUZesS/WBYd+jy92V3LuSrmkPlrB/tso/Tj2FnDYZj/83asGgyan6n2/WfSREiM4Eur9Gb1iZ2eyn7y6jXEK4LjWdIpKZOJjU0RVwDp7rwT7ksQP9Tn2w36DZ86rEJ4KaRoSioPcTHSp5gRj6dUfQQPnYaslDS0lP9Jr2NAH0KeaUrWPIx1DyXpsZy5DyKtJUCKVWICm86tDtQlbCWLjtzGZqFjg2SQxLgTgRwpHEGtx6lVHBtEhzbbu+uKhLqxfeYfHwRtYhRvAKu2FmKrzosJkkVAEzdB7hhISQHWHp+C/UHj/dZ1MPe8TB/wn3guyeP39iG5hri+d40O0RmJ/U+a3YL8kkiFXfVfa/mRHlsLLg/wgRHEkuz6h8N+YFL/A3GEk5EweKMZNffePfk6kgOc0xgM0KDRhEn7htO7SyPqLRSbDDzuHnOTO8zDAE35jRFaIP9Gm72TVO81anE8q653AyRv8rdwVR9LICxgHiYnlGdPFW753JNzWDPg5sdMHjM7f/lxRa+o1ZTP2S+Q==
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?+ailHlAzLLI3Pmbdph/b8iovr3EOB5E4cTBGw9bdxGmXocT62+p/a1z43R?=
- =?iso-8859-1?Q?w/Z8FBDXxFtXvC6I1ijw3dmeG7fSlmk77cMsDnFsFWDMeh8XLI2HgVgWkP?=
- =?iso-8859-1?Q?brDxdI2dT5VIhWukVkpL3m4kncjdL2Vqq+PkvuVQWXYtU2jPwgO1Hion40?=
- =?iso-8859-1?Q?hA5bn0kINK9YnWbLvXge4YNZV/hsc+LsTihktKCEEyUEVtBboXY/G09I9h?=
- =?iso-8859-1?Q?g2XbSY/He1GAyITuTkJgL52mmtNxgKBLqQGQ63QekwY9mNEcwY0wCaNpAK?=
- =?iso-8859-1?Q?wmTFTKM6MJPlQYrH3U4NaGO8Q1kBuwVnz6KjhV/5DRIFOCuAKQlg2bU9ol?=
- =?iso-8859-1?Q?e2lYZSAEY/AaidqKYTO3JsOvX5OGJD7ZThwPGpsPLnFnIq7X0mJl6RUX1j?=
- =?iso-8859-1?Q?kI6/Hyu5QFDAR27AG/iNvzEJXqGzT01wH6hISyxkW7RpWyTxizTFGA5++E?=
- =?iso-8859-1?Q?EeadmPGcuK4PBYFR7iU0JJANin6U4dR/vJLXYrQEgIAxBCLvACjBTVopZO?=
- =?iso-8859-1?Q?jGK4doMohNKK0Kad21Ja/+FOwTUISpRTJO7HLTM7TiJGBrCKEJXoU2aA55?=
- =?iso-8859-1?Q?oGB94yhpAZbXzjJtD5Js25Vjf2efDaRLR8imJcdJ0QcECrUT4NNhO0vEr6?=
- =?iso-8859-1?Q?E3heju6ajObz2XzQv1GN7/vovIXVpA97WwPPi/XT10DzsaWM9kD8EwVo12?=
- =?iso-8859-1?Q?KTJ/NlHsITNwq7zncpJpboCP3g+eK/dm2ALMMhgjyayDYwzeYqgJO71m84?=
- =?iso-8859-1?Q?nPL7TqjRfIKZVhv6EM5QQOrFcpLB6p0LuE/aGc/FoTrNm3o0o5+0DtzWaQ?=
- =?iso-8859-1?Q?sx7NbukCaIg5QShNefk0S64auiqzrZ2ljBHphqqkI1GjjZS/OQHvWacIjX?=
- =?iso-8859-1?Q?GLtAd+jnko6Dgz8uwYQACGLu+gBBdrprjVZnQurJOvxVwzSUVPy7SA3vvs?=
- =?iso-8859-1?Q?KacC1S42cuB/WrJ9vqoB6cfKgK3lmu89j2VQj0GMW2z6N89xTaxPNCh9a3?=
- =?iso-8859-1?Q?P46kCSjnQL/vFI5OQ5fD5o24rAibrmOohcYOb/fHDF5WjkUV/vsig9CM5N?=
- =?iso-8859-1?Q?kkBlDtgNfEJ7kMZxrOHpuU2Cm2D4Ib2fvopog71zKNcGTcxzLAwLgXcKlw?=
- =?iso-8859-1?Q?mtmQiEt9FIiDb5TdhXubipPEXIIhTCgIOHUVedSB+t4ACI4i/Lzd/n2cm1?=
- =?iso-8859-1?Q?RJrwuK3C1QzSXi/BFnMHBHBSMOw9StN6qflc0Ahxbo4OzBQFMbgFEMuiKv?=
- =?iso-8859-1?Q?Ek2K0UnlHsTubTHKB/m56mF1eIgPC6j5mGvuHb3+I=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2428156CE
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 03:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721271962; cv=none; b=pUyVbff5vuGDjyYmdtn2cEW4hiOMXJ81c8lm5e8nHK9TkF0B3hKlRf7FErGE9sjWVpU+kDgi4y9s/H6ahG5pP6qVI9t6XJ+9WNfF/A71uhh6MnEdMSxAlEwJVdMdyHVPDRw1ujtQL8GPi+ELDWa0rZRKACe9eb/o2x4wlJyDLyM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721271962; c=relaxed/simple;
+	bh=3p1nHlyFmbd2Mqt/h3ECuwH02UH1qFkMjptXlGRXakM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EgjnWwEhyIKxoY/rk89ATnVdXujHk/2kbH2nBRvweVcODAgzQseFTRrgGwrgt7aHRaLyZe1rmX7UR2SGbLp/eRYM5It1LBj+fuhmtgUhRXvWMMJ5JRxzqC22jm7TxBe/Ytycxl+kaGkftqkHWytRLe8UoORlIaLttNrXEQUT3d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nf7ruRec; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7611b6a617cso154680a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 20:06:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721271960; x=1721876760; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yeW6dMBKtWe8oDZj4BcQTEdzzbJoa7udjbLAE+AJzpw=;
+        b=nf7ruRecmH17OyG5D6e3NRbhVcNXggf0gG9iOHljGVqvloxoQIPcHQKHUhmwsQoyga
+         GSwfGqPA7JfQZbRLuo4RSmzBpMZWVXRE9Z5Gz14ZILTJRHrlYB9efcWlRTekLfvXC7Bq
+         CXZuwjBf9zeisNKcMLGscV1niHTmykwIALM8MAJFtjjm4jjWy6eTOG1+XNOXyrnVHIaN
+         yB8Zr7tDbSAs1h1QA3NWOOXBHWdew9ePme1Q7neATnw7s6hF1hPklM462Gbq4tW4bbja
+         k7YiaLYo+3tDZGsXzGAm5lAfzG2oJEoe84Pmy6uXiKM13O74D8q8dZCEj46mOUEZkb3O
+         VQig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721271960; x=1721876760;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yeW6dMBKtWe8oDZj4BcQTEdzzbJoa7udjbLAE+AJzpw=;
+        b=JL7LMWmuZY8nEKDmw+TCxPbFfrwANCIKRgeU/0JgDpdaifMwLE1JeMtBwrW4Jg/fth
+         v8krdd7bmXzq2lprBkBW2OduMSxA9Px2BPyTE7R01dI+1x9o/jYTEzhvtCw0GYfoaHa8
+         /nd/HGSCyyLnPqQRku5q+IoEX0QxZHMycivvWqDdgVuqo2JaRLks64Z3zeP3CZA9XWYn
+         XpTuv+VGGxCoWQ3dqQIrwKGixo0N6BvhSWKZFenLCHL+QGLE6CNUirlrvDHjFQJDEhtu
+         JZD6gzVxntkHzO8ROi1xYC5i5FZgAlS1y+CyHfmO830iJMo/Fs0X0DgaMyivxn0bpqqR
+         NDew==
+X-Forwarded-Encrypted: i=1; AJvYcCVeG1UgGagO45qcbMANAKRVYuZ7m0eau7hhmxcUyUF1u32ntfHsqiT60VeRXD9qIXPGuS2XbCmHB6bth/WZ+mYNd6HyYEWV4kXF8NPJ
+X-Gm-Message-State: AOJu0Yz/k+ciwV34CaCPLnpgWHIAGW0cvo7/cs/41pMxyq5CRJW4+ORn
+	X2shuG8JS4qU15OdsF/3bgxU64X/y68xbJ8mtW+64lITuHuXRCH2ViGH6jZQ7Bk=
+X-Google-Smtp-Source: AGHT+IGZQrMHKumtV17odbuMLApq0aWGZDMpuPSD6YxnkxMLKUzBluzrVqhDLqn9KpZgTHq+5klwjQ==
+X-Received: by 2002:a05:6a20:a11e:b0:1bd:253e:28e with SMTP id adf61e73a8af0-1c3fdc962c8mr4939585637.16.1721271960004;
+        Wed, 17 Jul 2024 20:06:00 -0700 (PDT)
+Received: from localhost ([122.172.84.129])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc4bcab736sm18649325ad.233.2024.07.17.20.05.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jul 2024 20:05:59 -0700 (PDT)
+Date: Thu, 18 Jul 2024 08:35:56 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>, Nikunj Kela <nkela@quicinc.com>,
+	Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM
+ domains
+Message-ID: <20240718030556.dmgzs24d2bk3hmpb@vireshk-i7>
+References: <20240625105425.pkociumt4biv4j36@vireshk-i7>
+ <CAPDyKFpLfBjozpcOzKp4jngkYenqSdpmejvCK37XvE1-WbBY2g@mail.gmail.com>
+ <20240701114748.hodf6pngk7opx373@vireshk-i7>
+ <20240702051526.hyqhvmxnywofsjp2@vireshk-i7>
+ <CAPDyKFoA9O5a6xZ+948QOzYqsRjk_0jJaSxeYRwx=76YsLHzXQ@mail.gmail.com>
+ <20240711031356.rl2j6fqxrykmqfoy@vireshk-i7>
+ <CAPDyKFocjOt+JyzcAqOfCnmTxBMZmPjMerSh6RZ-hSMajRhzEA@mail.gmail.com>
+ <CAPDyKFoWgX=r1QtrcpEF-Y4BkiOtVnz4jaztL9zggo-=uiKsUg@mail.gmail.com>
+ <20240711131637.opzrayksfadimgq4@vireshk-i7>
+ <CAPDyKFqczrJzHApBOYRSg=MXzzd1_nSgQQ3QwKYLWzgZ+XY32A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-722bc.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MEYP282MB3164.AUSP282.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: c7cfac0f-5a47-4335-7f5e-08dca6d66379
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jul 2024 03:04:50.1493
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SY4P282MB3661
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFqczrJzHApBOYRSg=MXzzd1_nSgQQ3QwKYLWzgZ+XY32A@mail.gmail.com>
 
-> Um, I don't see how this can happen.  If the ea_inode is in use,=0A=
-> i_count will be greater than zero, and hence the inode will never be=0A=
-> go down the rest of the path in inode_lru_inode():=0A=
-> =0A=
->         if (atomic_read(&inode->i_count) ||=0A=
->             ...) {=0A=
->                 list_lru_isolate(lru, &inode->i_lru);=0A=
->                 spin_unlock(&inode->i_lock);=0A=
->                 this_cpu_dec(nr_unused);=0A=
->                 return LRU_REMOVED;=0A=
->         }=0A=
-=0A=
-Yes, in the function inode_lru_inode (in case of clearing cache), there has=
- been such inode->i_state check mechanism to avoid double-removing the inod=
-e which is being removed by another process. Unluckily, no such similar ino=
-de->i_state check mechanism in the function iput_final (in case of removing=
- file), so double-removing inode can still appear.=0A=
-=0A=
-It looks we need to add some inode->i_state check in iput_final() , if we w=
-ant to fix this race condition bug.=
+On 11-07-24, 17:25, Ulf Hansson wrote:
+> Right, I get your point.
+> 
+> Although, it seems to me that just limiting required-opps to
+> performance-levels, could avoid us from having to enforce the OPPs for
+> genpd. In other words, doing something along the lines of $subject
+> patch should work fine.
+
+I really don't want to design the code that way. Required OPPs don't
+have anything to do with a genpd. Genpd is just one of the possible
+use cases and I would like the code to reflect it, even if we don't
+have any other users for this kind of stuff for now, but we surely
+can. Just that those problems are solved differently for now. For
+example, cache DVFS along with CPUs, etc.
+
+And as I said earlier, it is entirely possible that the genpd OPP
+table wants to configure few more things apart from just level, and
+hence a full fledged set-opp is a better design choice.
+
+> In fact, it looks to me that the required-opps handling for the
+> *single* PM domain case, is already limited to solely
+> performance-levels (opp-level), as there are no required_devs being
+> assigned for it. Or did I get that wrong?
+
+That's why the API for setting required-opps was introduced, to make
+it a central point of entry for all use cases where we want to attach
+a device.
+
+-- 
+viresh
 
