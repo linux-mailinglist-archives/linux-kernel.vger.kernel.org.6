@@ -1,267 +1,206 @@
-Return-Path: <linux-kernel+bounces-256204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68CC3934AB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:12:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0077D934AB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:12:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C026B2103F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:12:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0DE9286451
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCFB8120D;
-	Thu, 18 Jul 2024 09:12:01 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B0C81211;
+	Thu, 18 Jul 2024 09:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B0YoN5Wv"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723383BB30;
-	Thu, 18 Jul 2024 09:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD613BB30
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 09:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721293920; cv=none; b=pFpRWJ3uOTshF3Ftm0AQU4YRIYPu3yyQG5MlnnAa6Ujs1p7AsOEqKeUd8bLUg7CeYXcOidb+9eU3i+gColCErDiNw34G/6+1mv7tm8vwNeRqxGnuojL8PgPBzBxQW1zEc7bqa00XTi0w+B1S26Xdm4TBssKY5DgZRarfUlK/xB8=
+	t=1721293942; cv=none; b=aEJeb4qI/zfMH9cB8VzH0tjjG41btFiyk24GffhpOvJ+Nbpk4F1X1rsROxpq4sJMtqh11HmEfEoXaPq4NRjwmtBRjay045fPnvI8WnaM7vLgK0TzPUwJtGqKS7OtI1Re8ixlmKDNNufz+Bozi0EKJgBaPyUZMzpCVGkg1SvyHmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721293920; c=relaxed/simple;
-	bh=vf30FpQALX2+GvASM3UCP8rE9XKN+SKOGQTB8/JhcKM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=j2Fnw4gcZt7Rg/QzqNJhzJycrctfrnm0B7G2DsHUwCagwFID1ydsuHH9YK9sDfSPaL6nX91qdZqmtw7QfBgt20Szc2JjDnuD7DGTL6J+NfTSRWob7SG85fIrJr6ktTX3USsjvrSC68mLSDFOkGv/b0zA4a+luUxlSHr8HCOngxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WPn7w2MFKz6K6G8;
-	Thu, 18 Jul 2024 17:10:04 +0800 (CST)
-Received: from lhrpeml500002.china.huawei.com (unknown [7.191.160.78])
-	by mail.maildlp.com (Postfix) with ESMTPS id BF51E140B2F;
-	Thu, 18 Jul 2024 17:11:54 +0800 (CST)
-Received: from lhrpeml500006.china.huawei.com (7.191.161.198) by
- lhrpeml500002.china.huawei.com (7.191.160.78) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 18 Jul 2024 10:11:54 +0100
-Received: from lhrpeml500006.china.huawei.com ([7.191.161.198]) by
- lhrpeml500006.china.huawei.com ([7.191.161.198]) with mapi id 15.01.2507.039;
- Thu, 18 Jul 2024 10:11:54 +0100
-From: Shiju Jose <shiju.jose@huawei.com>
-To: "nifan.cxl@gmail.com" <nifan.cxl@gmail.com>
-CC: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "bp@alien8.de" <bp@alien8.de>,
-	"tony.luck@intel.com" <tony.luck@intel.com>, "rafael@kernel.org"
-	<rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>,
-	"mchehab@kernel.org" <mchehab@kernel.org>, "dan.j.williams@intel.com"
-	<dan.j.williams@intel.com>, "dave@stgolabs.net" <dave@stgolabs.net>,
-	"Jonathan Cameron" <jonathan.cameron@huawei.com>, "dave.jiang@intel.com"
-	<dave.jiang@intel.com>, "alison.schofield@intel.com"
-	<alison.schofield@intel.com>, "vishal.l.verma@intel.com"
-	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"david@redhat.com" <david@redhat.com>, "Vilas.Sridharan@amd.com"
-	<Vilas.Sridharan@amd.com>, "leo.duran@amd.com" <leo.duran@amd.com>,
-	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>, "rientjes@google.com"
-	<rientjes@google.com>, "jiaqiyan@google.com" <jiaqiyan@google.com>,
-	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>, "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>, "naoya.horiguchi@nec.com"
-	<naoya.horiguchi@nec.com>, "james.morse@arm.com" <james.morse@arm.com>,
-	"jthoughton@google.com" <jthoughton@google.com>, "somasundaram.a@hpe.com"
-	<somasundaram.a@hpe.com>, "erdemaktas@google.com" <erdemaktas@google.com>,
-	"pgonda@google.com" <pgonda@google.com>, "duenwen@google.com"
-	<duenwen@google.com>, "mike.malvestuto@intel.com"
-	<mike.malvestuto@intel.com>, "gthelen@google.com" <gthelen@google.com>,
-	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
-	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
-	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>, tanxiaofei
-	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>, "Roberto
- Sassu" <roberto.sassu@huawei.com>, "kangkang.shen@futurewei.com"
-	<kangkang.shen@futurewei.com>, wanghuiqiang <wanghuiqiang@huawei.com>,
-	Linuxarm <linuxarm@huawei.com>
-Subject: RE: [RFC PATCH v9 05/11] cxl/mbox: Add GET_FEATURE mailbox command
-Thread-Topic: [RFC PATCH v9 05/11] cxl/mbox: Add GET_FEATURE mailbox command
-Thread-Index: AQHa15F4Ou8ZYOXrVUerA137Puj/7LH7KKwAgAEKkDA=
-Date: Thu, 18 Jul 2024 09:11:54 +0000
-Message-ID: <e3f35823df1448e0935dabf0979ed4e8@huawei.com>
-References: <20240716150336.2042-1-shiju.jose@huawei.com>
- <20240716150336.2042-6-shiju.jose@huawei.com>
- <66980890.050a0220.163b98.0210@mx.google.com>
-In-Reply-To: <66980890.050a0220.163b98.0210@mx.google.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1721293942; c=relaxed/simple;
+	bh=PEXsUQRuWFa/XsPmagCm6KmvlhiwIZA1STK121ylA0s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n/2bnLrXJqVy5mPePZptTbDB7EhRod3Ky6yC8KJAeEH54Pz/XrCfn1Xmx6iinAEs6aFQmTovyq5T/ayUA/Y55fiPKvmcVUbWiFM5K8huwx0RAVWqw0aAJfjh2juXcMr53zB8wiLQ7X4Q6jB8G6GnJY+vU4Ho2Ux/RPvT2aKFxvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B0YoN5Wv; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ee9b098bd5so8358761fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 02:12:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721293939; x=1721898739; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xYRDJTXb7VkR2nu2Bt3xlsYZzSCplD55JeoAUmrsGvg=;
+        b=B0YoN5Wvq8xfUhvPrQJyKcodiyhUIvzlXoWnFr9kgpti66eejPv1Qe2YlqhGN0+l0w
+         EMOn8QgpOhy5pKJbHeQN9961qxiknmJcslJ49/bAUiZN0BQfoVNyDq4r2/k6HZggXlxB
+         +Yqw0F3bgLKogVEyIp9M6oE5m3dISEQyWrlp4zVZANEFxypFcZRbUlDf7KVXhCnYDvn7
+         JqoDmKgaf6emMO1fKYaCnvvujUJi0rEzWw3sk+Y4YM+rr09qk76AHO7gBlTr1NHybbH4
+         fGvqSxnppSRBqRdBnSvc5rWNeReL9U7rj7zrg9mw1uG6cH3rloLGYPessCy1/y/fXhUz
+         Y77A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721293939; x=1721898739;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xYRDJTXb7VkR2nu2Bt3xlsYZzSCplD55JeoAUmrsGvg=;
+        b=p+zl0+ZN53KyrEHU2Uj/Ky+Stqn6YD2cUMIkFkBBHCMNGI6QVdHn3CbYv4eLZujJZZ
+         K/3ritlYRmkFjsf41fxM2uKhIafXaLqoSyKJzV8engZVFNTmfH1u0LjFHiCcQLiACcUO
+         pX8+y+16WaoEelXJ7SpSvJ6E9EBOB5ElpnRBf2dkUtBMnLnvudp+zBlP1YAgTK1nrEio
+         FelRvIW7yQEhumjTeoFFYpmw/4tWgjdp/dJdVGPDBvastEo56HtDy48d8/BQZqVb8eu4
+         C1AJzfHxAh31cuDxfDy2P9491m4F9OUXUXJNi+tiYz9DY9I4aQHikcQmTZDe551MN9Li
+         IaYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLb2uXqdPd+QhZfLRJZC5vcopPzc7xtf9Ci/HQh4PkAUwg0GSISC9ye75dIEc6cRg2hJ8ztEf73Glw16Gg25nLtBepxd8nIYohoxrx
+X-Gm-Message-State: AOJu0Yz640NN0pm7YuWzz0ae+yNJO6B7N9Km9qrwgqjBPeuyr0yw/pwV
+	pX9ir7LB7bvyZgdp318JyTSkinHuPUldTjX45VjQHyKC+P8nBGaunFgleT5HRnooIWBLjccXwTi
+	5HhEFC6G6ALjmlKJArmi+5hDkvGlNYJKJtOc=
+X-Google-Smtp-Source: AGHT+IEzjEv1damTpttKz+LCf+AT1wIDiCcudbwQkbMrBn8f0B3SN1rLlEKpdwAapOoV9piTt/ea7WMFEKVP7gI0zWA=
+X-Received: by 2002:a2e:9ed3:0:b0:2ee:87e9:319d with SMTP id
+ 38308e7fff4ca-2ef05d48368mr13444611fa.48.1721293938819; Thu, 18 Jul 2024
+ 02:12:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240718063242.52275-1-ubizjak@gmail.com> <4049EB19-E869-4886-AD61-E716A75E4559@zytor.com>
+ <CAFULd4bs7meRq_iTqq1nSzpkSzEQqLkM8S=x4=zqtX6Fo9qQPQ@mail.gmail.com> <77174D9A-79DE-44A7-85E0-63B0BFE343C2@zytor.com>
+In-Reply-To: <77174D9A-79DE-44A7-85E0-63B0BFE343C2@zytor.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Thu, 18 Jul 2024 11:12:07 +0200
+Message-ID: <CAFULd4Z91bzEDb+MTDP3NgF_3DxW0mG8jbjCR75e8yjWEeHQkw@mail.gmail.com>
+Subject: Re: [PATCH] x86/boot: Use __ASM_SIZE() to reduce ifdeffery in cpuflags.c
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->-----Original Message-----
->From: nifan.cxl@gmail.com <nifan.cxl@gmail.com>
->Sent: 17 July 2024 19:08
->To: Shiju Jose <shiju.jose@huawei.com>
->Cc: linux-edac@vger.kernel.org; linux-cxl@vger.kernel.org; linux-
->acpi@vger.kernel.org; linux-mm@kvack.org; linux-kernel@vger.kernel.org;
->bp@alien8.de; tony.luck@intel.com; rafael@kernel.org; lenb@kernel.org;
->mchehab@kernel.org; dan.j.williams@intel.com; dave@stgolabs.net; Jonathan
->Cameron <jonathan.cameron@huawei.com>; dave.jiang@intel.com;
->alison.schofield@intel.com; vishal.l.verma@intel.com; ira.weiny@intel.com;
->david@redhat.com; Vilas.Sridharan@amd.com; leo.duran@amd.com;
->Yazen.Ghannam@amd.com; rientjes@google.com; jiaqiyan@google.com;
->Jon.Grimm@amd.com; dave.hansen@linux.intel.com;
->naoya.horiguchi@nec.com; james.morse@arm.com; jthoughton@google.com;
->somasundaram.a@hpe.com; erdemaktas@google.com; pgonda@google.com;
->duenwen@google.com; mike.malvestuto@intel.com; gthelen@google.com;
->wschwartz@amperecomputing.com; dferguson@amperecomputing.com;
->wbs@os.amperecomputing.com; nifan.cxl@gmail.com; tanxiaofei
-><tanxiaofei@huawei.com>; Zengtao (B) <prime.zeng@hisilicon.com>; Roberto
->Sassu <roberto.sassu@huawei.com>; kangkang.shen@futurewei.com;
->wanghuiqiang <wanghuiqiang@huawei.com>; Linuxarm
-><linuxarm@huawei.com>
->Subject: Re: [RFC PATCH v9 05/11] cxl/mbox: Add GET_FEATURE mailbox
->command
+On Thu, Jul 18, 2024 at 10:56=E2=80=AFAM H. Peter Anvin <hpa@zytor.com> wro=
+te:
 >
->On Tue, Jul 16, 2024 at 04:03:29PM +0100, shiju.jose@huawei.com wrote:
->> From: Shiju Jose <shiju.jose@huawei.com>
->>
->> Add support for GET_FEATURE mailbox command.
->>
->> CXL spec 3.1 section 8.2.9.6 describes optional device specific features=
-.
->> The settings of a feature can be retrieved using Get Feature command.
->>
->> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
->> ---
->Minor comments inline.
+> On July 18, 2024 1:52:17 AM PDT, Uros Bizjak <ubizjak@gmail.com> wrote:
+> >On Thu, Jul 18, 2024 at 8:36=E2=80=AFAM H. Peter Anvin <hpa@zytor.com> w=
+rote:
+> >>
+> >> On July 17, 2024 11:32:18 PM PDT, Uros Bizjak <ubizjak@gmail.com> wrot=
+e:
+> >> >Use __ASM_SIZE() macro to add correct insn suffix to pushf/popf.
+> >> >
+> >> >Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> >> >Cc: Thomas Gleixner <tglx@linutronix.de>
+> >> >Cc: Ingo Molnar <mingo@kernel.org>
+> >> >Cc: Borislav Petkov <bp@alien8.de>
+> >> >Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> >> >Cc: "H. Peter Anvin" <hpa@zytor.com>
+> >> >---
+> >> > arch/x86/boot/cpuflags.c | 10 +++-------
+> >> > 1 file changed, 3 insertions(+), 7 deletions(-)
+> >> >
+> >> >diff --git a/arch/x86/boot/cpuflags.c b/arch/x86/boot/cpuflags.c
+> >> >index d75237ba7ce9..aacabe431fd5 100644
+> >> >--- a/arch/x86/boot/cpuflags.c
+> >> >+++ b/arch/x86/boot/cpuflags.c
+> >> >@@ -2,6 +2,7 @@
+> >> > #include <linux/types.h>
+> >> > #include "bitops.h"
+> >> >
+> >> >+#include <asm/asm.h>
+> >> > #include <asm/processor-flags.h>
+> >> > #include <asm/required-features.h>
+> >> > #include <asm/msr-index.h>
+> >> >@@ -36,13 +37,8 @@ static int has_fpu(void)
+> >> >  * compressed/ directory where it may be 64-bit code, and thus needs
+> >> >  * to be 'pushfq' or 'popfq' in that case.
+> >> >  */
+> >> >-#ifdef __x86_64__
+> >> >-#define PUSHF "pushfq"
+> >> >-#define POPF "popfq"
+> >> >-#else
+> >> >-#define PUSHF "pushfl"
+> >> >-#define POPF "popfl"
+> >> >-#endif
+> >> >+#define PUSHF __ASM_SIZE(pushf)
+> >> >+#define POPF __ASM_SIZE(popf)
+> >> >
+> >> > int has_eflag(unsigned long mask)
+> >> > {
+> >>
+> >> Just use pushf/popf. gas hasn't needed that suffix for a long time as =
+far as I know.
+> >
+> >Unfortunately, clang does not do the right thing when pushf/popf
+> >without suffix are used.
+> >
+> >arch/x86/boot/cpuflags.c compiles to:
+> >
+> >00000000 <has_eflag>:
+> >   0:    9c                       pushf
+> >   1:    9c                       pushf
+> >   2:    66 5a                    pop    %edx
+> >   4:    66 89 d1                 mov    %edx,%ecx
+> >   7:    66 31 c1                 xor    %eax,%ecx
+> >   a:    66 51                    push   %ecx
+> >   c:    9d                       popf
+> >   d:    9c                       pushf
+> >   e:    66 59                    pop    %ecx
+> >  10:    9d                       popf
+> >  11:    66 31 ca                 xor    %ecx,%edx
+> >  14:    66 31 c9                 xor    %ecx,%ecx
+> >  17:    66 85 c2                 test   %eax,%edx
+> >  1a:    0f 95 c1                 setne  %cl
+> >  1d:    66 89 c8                 mov    %ecx,%eax
+> >  20:    66 c3                    retl
+> >
+> >instead of:
+> >
+> >00000000 <has_eflag>:
+> >   0:    66 9c                    pushfl
+> >   2:    66 9c                    pushfl
+> >   4:    66 5a                    pop    %edx
+> >   6:    66 89 d1                 mov    %edx,%ecx
+> >   9:    66 31 c1                 xor    %eax,%ecx
+> >   c:    66 51                    push   %ecx
+> >   e:    66 9d                    popfl
+> >  10:    66 9c                    pushfl
+> >  12:    66 59                    pop    %ecx
+> >  14:    66 9d                    popfl
+> >  16:    66 31 ca                 xor    %ecx,%edx
+> >  19:    66 31 c9                 xor    %ecx,%ecx
+> >  1c:    66 85 c2                 test   %eax,%edx
+> >  1f:    0f 95 c1                 setne  %cl
+> >  22:    66 89 c8                 mov    %ecx,%eax
+> >  25:    66 c3                    retl
+> >
+> >Please note missing 0x66 operand size override prefixes with pushfl
+> >and popfl. This is 16bit code, operand prefixes are mandatory to push
+> >32-bit EFLAGS register (ID flag lives in bit 21).
+> >
+> >So, the original patch is the way to go.
+> >
+> >Uros.
+> >
 >
->>  drivers/cxl/core/mbox.c | 37 +++++++++++++++++++++++++++++++++++++
->>  drivers/cxl/cxlmem.h    | 27 +++++++++++++++++++++++++++
->>  2 files changed, 64 insertions(+)
->>
->> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c index
->> 9b9b1d26454e..b1eeed508459 100644
->> --- a/drivers/cxl/core/mbox.c
->> +++ b/drivers/cxl/core/mbox.c
->> @@ -1351,6 +1351,43 @@ int cxl_get_supported_features(struct
->> cxl_memdev_state *mds,  }
->> EXPORT_SYMBOL_NS_GPL(cxl_get_supported_features, CXL);
->>
->> +size_t cxl_get_feature(struct cxl_memdev_state *mds,
->> +		       const uuid_t feat_uuid, void *feat_out,
->> +		       size_t feat_out_size,
->> +		       enum cxl_get_feat_selection selection)
->feat_uuid and selection are both payload inputs, maybe more natural to put
->them together before feat_out.
-Will do.
->> +{
->> +	size_t data_to_rd_size, size_out;
->> +	struct cxl_mbox_get_feat_in pi;
->> +	struct cxl_mbox_cmd mbox_cmd;
->> +	size_t data_rcvd_size =3D 0;
->> +	int rc;
->> +
->> +	size_out =3D min(feat_out_size, mds->payload_size);
->> +	pi.uuid =3D feat_uuid;
->> +	pi.selection =3D selection;
->> +	do {
->> +		data_to_rd_size =3D min(feat_out_size - data_rcvd_size, mds-
->>payload_size);
->> +		pi.offset =3D cpu_to_le16(data_rcvd_size);
->> +		pi.count =3D cpu_to_le16(data_to_rd_size);
->> +
->> +		mbox_cmd =3D (struct cxl_mbox_cmd) {
->> +			.opcode =3D CXL_MBOX_OP_GET_FEATURE,
->> +			.size_in =3D sizeof(pi),
->> +			.payload_in =3D &pi,
->> +			.size_out =3D size_out,
->> +			.payload_out =3D feat_out + data_rcvd_size,
->> +			.min_out =3D data_to_rd_size,
->> +		};
->> +		rc =3D cxl_internal_send_cmd(mds, &mbox_cmd);
->> +		if (rc < 0 || mbox_cmd.size_out =3D=3D 0)
->Is there other case when size_out will be 0 other than the feat_out_size i=
-s 0?
-I think size_out can be 0 depending on the implementation on the firmware o=
-r some
-error situation when the feat_out_size is non zero.
+> You do know that has_eflag can be completely elided on x86-64, or you can=
+ use %z with one of the register operands.
 
->
->If feat_out_size is 0, maybe we return directly, or we use while () {}, in=
-stead of
->do {} while.
-I had a check for feat_out_size against min feat out size in the previous v=
-ersion.=20
-Will add return directly if feat_out_size is 0. =20
->Anyway, if there is no other case that will return size_out as 0, we can a=
-void the
->check.
->
->Fan
->> +			return 0;
->> +		data_rcvd_size +=3D mbox_cmd.size_out;
->> +	} while (data_rcvd_size < feat_out_size);
->> +
->> +	return data_rcvd_size;
->> +}
->> +EXPORT_SYMBOL_NS_GPL(cxl_get_feature, CXL);
->> +
->>  int cxl_mem_get_poison(struct cxl_memdev *cxlmd, u64 offset, u64 len,
->>  		       struct cxl_region *cxlr)
->>  {
->> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h index
->> b0e1565b9d2e..25698a6fbe66 100644
->> --- a/drivers/cxl/cxlmem.h
->> +++ b/drivers/cxl/cxlmem.h
->> @@ -531,6 +531,7 @@ enum cxl_opcode {
->>  	CXL_MBOX_OP_CLEAR_LOG           =3D 0x0403,
->>  	CXL_MBOX_OP_GET_SUP_LOG_SUBLIST =3D 0x0405,
->>  	CXL_MBOX_OP_GET_SUPPORTED_FEATURES	=3D 0x0500,
->> +	CXL_MBOX_OP_GET_FEATURE		=3D 0x0501,
->>  	CXL_MBOX_OP_IDENTIFY		=3D 0x4000,
->>  	CXL_MBOX_OP_GET_PARTITION_INFO	=3D 0x4100,
->>  	CXL_MBOX_OP_SET_PARTITION_INFO	=3D 0x4101,
->> @@ -757,6 +758,28 @@ struct cxl_mbox_get_supp_feats_out {
->>  	struct cxl_mbox_supp_feat_entry feat_entries[];  } __packed;
->>
->> +/*
->> + * Get Feature CXL 3.1 Spec 8.2.9.6.2  */
->> +
->> +/*
->> + * Get Feature input payload
->> + * CXL rev 3.1 section 8.2.9.6.2 Table 8-99  */ enum
->> +cxl_get_feat_selection {
->> +	CXL_GET_FEAT_SEL_CURRENT_VALUE,
->> +	CXL_GET_FEAT_SEL_DEFAULT_VALUE,
->> +	CXL_GET_FEAT_SEL_SAVED_VALUE,
->> +	CXL_GET_FEAT_SEL_MAX
->> +};
->> +
->> +struct cxl_mbox_get_feat_in {
->> +	uuid_t uuid;
->> +	__le16 offset;
->> +	__le16 count;
->> +	u8 selection;
->> +}  __packed;
->> +
->>  /* Get Poison List  CXL 3.0 Spec 8.2.9.8.4.1 */  struct
->> cxl_mbox_poison_in {
->>  	__le64 offset;
->> @@ -891,6 +914,10 @@ int cxl_set_timestamp(struct cxl_memdev_state
->> *mds);  int cxl_get_supported_features(struct cxl_memdev_state *mds,
->>  			       u32 count, u16 start_index,
->>  			       struct cxl_mbox_get_supp_feats_out *feats_out);
->> +size_t cxl_get_feature(struct cxl_memdev_state *mds,
->> +		       const uuid_t feat_uuid, void *feat_out,
->> +		       size_t feat_out_size,
->> +		       enum cxl_get_feat_selection selection);
->>  int cxl_poison_state_init(struct cxl_memdev_state *mds);  int
->> cxl_mem_get_poison(struct cxl_memdev *cxlmd, u64 offset, u64 len,
->>  		       struct cxl_region *cxlr);
->> --
->> 2.34.1
->>
+It is 32-bit PUSHFL insn that requires the "L" suffix in 16-bit code.
+This is x86_32 issue and clang was just lucky that the instruction was
+always defined with explicit L suffix. Please note that PUSHF has no
+register operand, so %z can't be used.
+
+> One more reason why clang really needs to shape up.
+
+Indeed.
 
 Thanks,
-Shiju
+Uros.
 
