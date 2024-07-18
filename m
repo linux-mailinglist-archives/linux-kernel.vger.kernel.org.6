@@ -1,82 +1,233 @@
-Return-Path: <linux-kernel+bounces-255873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A7B39345DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:36:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C8959345E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D716AB20DD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:36:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24C032828EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116D51B86F0;
-	Thu, 18 Jul 2024 01:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E736138;
+	Thu, 18 Jul 2024 01:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="CFFBfeqh"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cw6cbdTj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE1310F2;
-	Thu, 18 Jul 2024 01:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43EA15C3;
+	Thu, 18 Jul 2024 01:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721266594; cv=none; b=T8zXrZc8RdhsXUzuWWg74fDFyIF1jFavLoQB18oy4RjpvpTDsgjY+a4ekAbOGfI/gFLjVzCeXNCXQTRC+g+flCvyHF3mn1d7szeN2tREZVFfDkS9QxqYPiWAA1jKtoRBBeSYxKIGoOllD3LDrx93Dq9sTVTnscZN77SBjBS3Dd0=
+	t=1721266939; cv=none; b=IDJvlexrD4xaPlmrBvxcmzbxsAxFHA5YlOg7lG2+ymi9BaGYj6PgZir6NHo8UvYEuj6usavw4DxCA5gmEt1wCMPV4bSviELZvo82/5GKihmRBJjy3N36rMDU0VcBJRlJKzal+Hl91z6+R80WNqecLjfg3LnXyD5YLbEq7szQgW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721266594; c=relaxed/simple;
-	bh=rAsWtQXS+qM9uvcRnh/reBRB7lEyG2hOSWFEc4blHqY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kp0nx1DT+WBvPdG5ZnsCNZR/+8uDovAcjiq6TByMaENZRHF1QkM5C69Ba9Jp/7eUkzwXuAEmlmlnghA3NE0LKFhhTzk72mSkVi2VQuB+goZla36k7FZYrlPtSPIas5GmMDYOIMcnalgJoCQ1Aow5pgriERkOs89dFQBTC1Nd4tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=CFFBfeqh; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=XocxSTpJ25YAEjXThF5g485FEKCzEW3wFCztsb0eDJE=; b=CFFBfeqh7TRrHPA96GQx05dodn
-	njXJ/n5uCjkecfWLZMSOCW46eO/Yw+iO+7W9sJktZBp711zw6wCG3pBSVdgvcHxOxuzOqkxVy+ZXT
-	cZTBMG9uLUKE5WGLApDw67MibudQKlSG6q6cldYGGIaG0oD+mTIXUJX/6FlFtonI7m7I=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sUG4I-002kVG-1J; Thu, 18 Jul 2024 03:36:26 +0200
-Date: Thu, 18 Jul 2024 03:36:26 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Pawel Dembicki <paweldembicki@gmail.com>
-Cc: netdev@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 2/2] dt-bindings: net: dsa: vsc73xx: add
- {rx,tx}-internal-delay-ps
-Message-ID: <e2de19f9-f565-41e3-b277-8d2b3f4d3984@lunn.ch>
-References: <20240717212732.1775267-1-paweldembicki@gmail.com>
- <20240717212732.1775267-2-paweldembicki@gmail.com>
+	s=arc-20240116; t=1721266939; c=relaxed/simple;
+	bh=fYtsXOKoarU/BaH7mJyp7Q0as/Oahc5IxEnsQfZojes=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QE4ao53VhGJncKVM868IXzOzLiyjmezjDDnNZYNWLvrSjTbSJgv6QTnfLizBBt6ctK4gyeekBluHie3RPvbc/GO1FyNCJXSjgfx5XOzmp7WMnhbhXJcvQHjXBrFrcoW66Nd96MdpnIVHdeXRKipmv5IF6TAsdQ2N6EvW9gwZkEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cw6cbdTj; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721266937; x=1752802937;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=fYtsXOKoarU/BaH7mJyp7Q0as/Oahc5IxEnsQfZojes=;
+  b=Cw6cbdTjb24WhrQYsRfHiF/+13YzSfEfg106E5pdFwce8C2v44nGmxnZ
+   1vSIyZUoyquwuGaxbKGpScquIU4IoZ3U6bHQeNGzTUmQGTFw7HN9PGW6r
+   +Mpj2D4y3uEaQhFX4JfrEe5bKeLKY1weoUxJP4iAtSrGIMkwuXADMxTZ0
+   d0Sj6pshxY/WeLkxxRiXNiREJFwNBkXhQAaWrdawksRs3/REEyvxeNepY
+   ZP4d9rFRX3uYWEaNYcI+GAfSMQZ0bLrinqyzhRQJxZ1SFXXRo+t5kf0w/
+   ZfwMs4nTmJivhJ+zZIWDP3WML4l1zNiEcOgJ6yvnL2K3C1LX1pkSISD2h
+   Q==;
+X-CSE-ConnectionGUID: LoCrI9p9R4SE9Q+WlGhngg==
+X-CSE-MsgGUID: ES6zXrjFSsK/Zjd+B9IXOQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="36250883"
+X-IronPort-AV: E=Sophos;i="6.09,216,1716274800"; 
+   d="scan'208";a="36250883"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 18:42:16 -0700
+X-CSE-ConnectionGUID: Ea567sx6QYK0hJ4Sq/AGBQ==
+X-CSE-MsgGUID: 2tu23JPnQcOQm0AKbe4UeA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,216,1716274800"; 
+   d="scan'208";a="54779185"
+Received: from ysheng4-mobl.ccr.corp.intel.com (HELO [10.238.2.30]) ([10.238.2.30])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 18:42:13 -0700
+Message-ID: <d55d3c5a-41d9-46bd-91da-f07187501bfa@linux.intel.com>
+Date: Thu, 18 Jul 2024 09:42:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240717212732.1775267-2-paweldembicki@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v19 117/130] KVM: TDX: Silently ignore INIT/SIPI
+To: Isaku Yamahata <isaku.yamahata@intel.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ isaku.yamahata@gmail.com, Paolo Bonzini <pbonzini@redhat.com>,
+ erdemaktas@google.com, Sean Christopherson <seanjc@google.com>,
+ Sagi Shahar <sagis@google.com>, Kai Huang <kai.huang@intel.com>,
+ chen.bo@intel.com, hang.yuan@intel.com, tina.zhang@intel.com,
+ rick.p.edgecombe@intel.com
+References: <cover.1708933498.git.isaku.yamahata@intel.com>
+ <4a4225de42be0f7568c5ecb5c22f2029f8e91d62.1708933498.git.isaku.yamahata@intel.com>
+ <c45a1448-09ee-4750-bf86-28295dfc6089@linux.intel.com>
+ <20240716225504.GE1900928@ls.amr.corp.intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20240716225504.GE1900928@ls.amr.corp.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 17, 2024 at 11:27:33PM +0200, Pawel Dembicki wrote:
-> Add a schema validator to vitesse,vsc73xx.yaml for MAC-level RGMII delays
-> in the CPU port. Additionally, valid values for VSC73XX were defined,
-> and a common definition for the RX and TX valid range was created.
-> 
-> Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-    Andrew
+On 7/17/2024 6:55 AM, Isaku Yamahata wrote:
+> On Mon, Jun 17, 2024 at 09:20:36AM +0800,
+> Binbin Wu <binbin.wu@linux.intel.com> wrote:
+>
+>>
+>> On 2/26/2024 4:26 PM, isaku.yamahata@intel.com wrote:
+>>> From: Isaku Yamahata <isaku.yamahata@intel.com>
+>>>
+>>> The TDX module API doesn't provide API for VMM to inject INIT IPI and SIPI.
+>>> Instead it defines the different protocols to boot application processors.
+>>> Ignore INIT and SIPI events for the TDX guest.
+>>>
+>>> There are two options. 1) (silently) ignore INIT/SIPI request or 2) return
+>>> error to guest TDs somehow.  Given that TDX guest is paravirtualized to
+>>> boot AP, the option 1 is chosen for simplicity.
+>>>
+>>> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+>>> ---
+>>>    arch/x86/include/asm/kvm-x86-ops.h |  1 +
+>>>    arch/x86/include/asm/kvm_host.h    |  2 ++
+>>>    arch/x86/kvm/lapic.c               | 19 +++++++++++-------
+>>>    arch/x86/kvm/svm/svm.c             |  1 +
+>>>    arch/x86/kvm/vmx/main.c            | 32 ++++++++++++++++++++++++++++--
+>>>    arch/x86/kvm/vmx/tdx.c             |  4 ++--
+>>>    6 files changed, 48 insertions(+), 11 deletions(-)
+>>>
+>>> diff --git a/arch/x86/include/asm/kvm-x86-ops.h b/arch/x86/include/asm/kvm-x86-ops.h
+>>> index 22d93d4124c8..85c04aad6ab3 100644
+>>> --- a/arch/x86/include/asm/kvm-x86-ops.h
+>>> +++ b/arch/x86/include/asm/kvm-x86-ops.h
+>>> @@ -149,6 +149,7 @@ KVM_X86_OP_OPTIONAL(migrate_timers)
+>>>    KVM_X86_OP(msr_filter_changed)
+>>>    KVM_X86_OP(complete_emulated_msr)
+>>>    KVM_X86_OP(vcpu_deliver_sipi_vector)
+>>> +KVM_X86_OP(vcpu_deliver_init)
+>>>    KVM_X86_OP_OPTIONAL_RET0(vcpu_get_apicv_inhibit_reasons);
+>>>    KVM_X86_OP_OPTIONAL(get_untagged_addr)
+>>>    KVM_X86_OP_OPTIONAL_RET0(gmem_max_level)
+>>> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+>>> index bb8be091f996..2686c080820b 100644
+>>> --- a/arch/x86/include/asm/kvm_host.h
+>>> +++ b/arch/x86/include/asm/kvm_host.h
+>>> @@ -1836,6 +1836,7 @@ struct kvm_x86_ops {
+>>>    	int (*complete_emulated_msr)(struct kvm_vcpu *vcpu, int err);
+>>>    	void (*vcpu_deliver_sipi_vector)(struct kvm_vcpu *vcpu, u8 vector);
+>>> +	void (*vcpu_deliver_init)(struct kvm_vcpu *vcpu);
+>>>    	/*
+>>>    	 * Returns vCPU specific APICv inhibit reasons
+>>> @@ -2092,6 +2093,7 @@ void kvm_get_segment(struct kvm_vcpu *vcpu, struct kvm_segment *var, int seg);
+>>>    void kvm_set_segment(struct kvm_vcpu *vcpu, struct kvm_segment *var, int seg);
+>>>    int kvm_load_segment_descriptor(struct kvm_vcpu *vcpu, u16 selector, int seg);
+>>>    void kvm_vcpu_deliver_sipi_vector(struct kvm_vcpu *vcpu, u8 vector);
+>>> +void kvm_vcpu_deliver_init(struct kvm_vcpu *vcpu);
+>>>    int kvm_task_switch(struct kvm_vcpu *vcpu, u16 tss_selector, int idt_index,
+>>>    		    int reason, bool has_error_code, u32 error_code);
+>>> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+>>> index 8025c7f614e0..431074679e83 100644
+>>> --- a/arch/x86/kvm/lapic.c
+>>> +++ b/arch/x86/kvm/lapic.c
+>>> @@ -3268,6 +3268,16 @@ int kvm_lapic_set_pv_eoi(struct kvm_vcpu *vcpu, u64 data, unsigned long len)
+>>>    	return 0;
+>>>    }
+>>> +void kvm_vcpu_deliver_init(struct kvm_vcpu *vcpu)
+>>> +{
+>>> +	kvm_vcpu_reset(vcpu, true);
+>>> +	if (kvm_vcpu_is_bsp(vcpu))
+>>> +		vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
+>>> +	else
+>>> +		vcpu->arch.mp_state = KVM_MP_STATE_INIT_RECEIVED;
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(kvm_vcpu_deliver_init);
+>>> +
+>>>    int kvm_apic_accept_events(struct kvm_vcpu *vcpu)
+>>>    {
+>>>    	struct kvm_lapic *apic = vcpu->arch.apic;
+>>> @@ -3299,13 +3309,8 @@ int kvm_apic_accept_events(struct kvm_vcpu *vcpu)
+>>>    		return 0;
+>>>    	}
+>>> -	if (test_and_clear_bit(KVM_APIC_INIT, &apic->pending_events)) {
+>>> -		kvm_vcpu_reset(vcpu, true);
+>>> -		if (kvm_vcpu_is_bsp(apic->vcpu))
+>>> -			vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
+>>> -		else
+>>> -			vcpu->arch.mp_state = KVM_MP_STATE_INIT_RECEIVED;
+>>> -	}
+>>> +	if (test_and_clear_bit(KVM_APIC_INIT, &apic->pending_events))
+>>> +		static_call(kvm_x86_vcpu_deliver_init)(vcpu);
+>>>    	if (test_and_clear_bit(KVM_APIC_SIPI, &apic->pending_events)) {
+>>>    		if (vcpu->arch.mp_state == KVM_MP_STATE_INIT_RECEIVED) {
+>>>    			/* evaluate pending_events before reading the vector */
+>>> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+>>> index f76dd52d29ba..27546d993809 100644
+>>> --- a/arch/x86/kvm/svm/svm.c
+>>> +++ b/arch/x86/kvm/svm/svm.c
+>>> @@ -5037,6 +5037,7 @@ static struct kvm_x86_ops svm_x86_ops __initdata = {
+>>>    	.complete_emulated_msr = svm_complete_emulated_msr,
+>>>    	.vcpu_deliver_sipi_vector = svm_vcpu_deliver_sipi_vector,
+>>> +	.vcpu_deliver_init = kvm_vcpu_deliver_init,
+>>>    	.vcpu_get_apicv_inhibit_reasons = avic_vcpu_get_apicv_inhibit_reasons,
+>>>    };
+>>> diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
+>>> index 4f3b872cd401..84d2dc818cf7 100644
+>>> --- a/arch/x86/kvm/vmx/main.c
+>>> +++ b/arch/x86/kvm/vmx/main.c
+>>> @@ -320,6 +320,14 @@ static void vt_enable_smi_window(struct kvm_vcpu *vcpu)
+>>>    }
+>>>    #endif
+>>> +static bool vt_apic_init_signal_blocked(struct kvm_vcpu *vcpu)
+>>> +{
+>>> +	if (is_td_vcpu(vcpu))
+>>> +		return true;
+>> Since for TD, INIT is always blocked, then in kvm_apic_accept_events(), the
+>> code path to handle INIT/SIPI delivery will not be called, i.e, the OPs
+>> .vcpu_deliver_init() and .vcpu_deliver_sipi_vector() are never called for
+>> TD.
+>> Seems no need to add the new interface  vcpu_deliver_init or the new wrapper
+>> vt_vcpu_deliver_sipi_vector().
+>>
+>> And consider the INIT/SIPI for TD:
+>> - Normally, for TD, INIT ans SIPI should not be set in APIC's
+>> pending_events.
+>>    Maybe we can call KVM_BUG_ON() in vt_apic_init_signal_blocked() for TD?
+>> - If INIT and SIPI are allowed be set in APIC's pending_events for somehow,
+>> the current code has a problem, it will never clear INIT bit in APIC's
+>> pending_events.
+>>    Then kvm_apic_accept_events() needs to execute more check code if INIT was
+>> once set.
+>>    INIT bit should be cleared with this assumption.
+>
+> KVM_SET_MP_STATE and KVM_SET_VCPU_EVENTS can set INIT/SIPI by the user space.
+> If we change those two IOCTLs to reject INIT/SIPI for TDX, we can go for the
+> above "Normally" option.  Because I didn't want to touch the common functions, I
+> ended in extra callbacks.  The user space shouldn't use those two IOCTLs for
+> TDX, though.
+
+Even though INIT/SIPI can be set by userspace to APIC's pending_events,
+for TD, INIT is always blocked, then in kvm_apic_accept_events(), the
+code path to handle INIT/SIPI delivery will not be called, i.e, the OPs
+.vcpu_deliver_init() and .vcpu_deliver_sipi_vector() are never called for
+TD.
+
+Can we just drop the new OPs .vcpu_deliver_init() and the new wrapper
+vt_vcpu_deliver_sipi_vector()?
+
 
