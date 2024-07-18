@@ -1,232 +1,341 @@
-Return-Path: <linux-kernel+bounces-256292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D47934C21
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:02:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8063A934C25
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73C361C21587
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:02:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3567828143E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318C6139580;
-	Thu, 18 Jul 2024 11:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1775F12D1FC;
+	Thu, 18 Jul 2024 11:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KhrmtiEI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZXGn7n7F";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="z7nuwnKN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZCK2+Nl+"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="qQxVXHas"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDBA12E1ED;
-	Thu, 18 Jul 2024 11:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47364639;
+	Thu, 18 Jul 2024 11:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721300419; cv=none; b=MaMmrQFnR7s6zFUiMHI6xD7UmBqjsymkxMNTsTvb83Mnb4Nq51aDE1XX7Ir5858YoqrZIuyAtVkR4QIOcQSLV1Eq7KvsM71zmUOYL2HmIifbqkua0p9ndCXYZf54HJRVRn8fS5uvXa3zEO7E7sFxud33mzclZAB3Auegr65caN8=
+	t=1721300573; cv=none; b=hmlo7tBiSmcU0v36cKLlGuync8ny10y9iagAyJYtngpAGTWmJFmIfdLW3VkQkzDJ+y5nb7T9MUp/kUDlwTev0JudrhzEEAETB0b+ViZA1aJy8tn2ns2pOIU8H8ZxPDsQKJ1JKL8fB7vJ/z4tDkmZJ1gUdhK/gI4Zb+L0PPrTbFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721300419; c=relaxed/simple;
-	bh=ZnFBgBSdghWnOThKxFAs+bNBSnTvOa0eWC1NThbVxes=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fdu5HEwQJBqXYTT8rCLh3j1XPSvLRLUlLf3Z4trhTpJqdk1eMUnlbtnFqJC3bYudSIBhvH22FmgQPOH9iwMEL6yNuZVVQ1zu0bHTTVUVflsilWXPX+/G/jooiJuE36QDQQtVULNLpKZAj90cnl8Ppr78qk9zX9uCIqD61K4wcDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KhrmtiEI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZXGn7n7F; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=z7nuwnKN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZCK2+Nl+; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1721300573; c=relaxed/simple;
+	bh=X/HQm62ChmQqbf7vNuPH4/wMzrEn5xIr+iFUFrsKV1I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Zt2S/aGQ+QDYfW2oOCA/z+DphOUaZu4R+H88mUMD2nW4U21c3/vcZR0WKaXqX64ePLInzCPYD9O/qhHdY8L66J0ebbf6JKFrFczHwRbOZju3gFrE4K50ynM2edV1UmfPib18kdDWq9KmmJeX5NIW+6eZ5DV2l8Pok+xZR/3wi1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=qQxVXHas; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 80F4412000C;
+	Thu, 18 Jul 2024 14:02:44 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 80F4412000C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1721300564;
+	bh=ZDQSOG3k8ZUK0B9MteuPszxC5L5ry7AyEP36vu1Itk4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=qQxVXHasMXN8r6lXaxzAK9/pPEFCfPJsyUPD988Ue1spPsgnoOsWmqwvdC1ftnMOb
+	 dsxjiA4h04AvZ3Ixut7YqRJ6sNrxLZKufHxHAqBYzkHiibPzelpEDt6tep00Y344Dk
+	 JwRqcyheNhncy7xR3EGERiFALa9duR9cWrcDKtFXPoVj2yrjuzIboe7H8zQdM1s/dQ
+	 fNlfAWIy1/6ZfTRXvvkHQew4ELq/jpTXycmZQFT8wULxZwOXy7syS8YlOxbdGo+aiJ
+	 WsapW2y8e3qv5qnuk84AZukVVnXAwnBayXUUAIGwRoETgnmU7feV8PfV++P0kdK+QQ
+	 xtfn0sN5GJBgg==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E00AD1FBCD;
-	Thu, 18 Jul 2024 11:00:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721300416; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZKcjZ/QSjyruTeoxo246rV87qrDID/c6cWL+ycl2EnY=;
-	b=KhrmtiEI/XMEwFb/mSqs2YLOq3S4slfLXlAtsNXzLI1ca4wieMWLBxz667Ao3kZupIB+UH
-	eeZJddx8qESOAMofQw/OQvG3+mzHfHcgJNTYPkotHQCxj0h4VUtlFQ+VOOsRVT1xy9IpAD
-	NnDCyOMr5aENe8wSqzLb7VsgFOpA0eI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721300416;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZKcjZ/QSjyruTeoxo246rV87qrDID/c6cWL+ycl2EnY=;
-	b=ZXGn7n7FozqiYIWEQR9tm1GsTOzV3kdPQMShOWGKU72yjJE634QNVR3MYnDi2CojfU97dF
-	s1GNpAJWwEEDO2Dg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=z7nuwnKN;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ZCK2+Nl+
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721300415; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZKcjZ/QSjyruTeoxo246rV87qrDID/c6cWL+ycl2EnY=;
-	b=z7nuwnKNAwwDjeqeFOiZQgOaBCXDJ9dMkRdfsckxJvrVqWIh5yVDuTe7mlaKnpwIi65I63
-	pLq8NBIISNLtZC4thXJkMQba+a7BIUtuwqCyPXRUr0xrAx1MuwISB/812wZ2Wys+v7W7oN
-	8U/aKQwCOzEyv72yIfXW18UUbONsVqM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721300415;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZKcjZ/QSjyruTeoxo246rV87qrDID/c6cWL+ycl2EnY=;
-	b=ZCK2+Nl+A6tFn2FEVbYes4Xwz0t5TnVny6G/nduVOTD4TaiKTVHbZ2I3SU1pBi1HW/2cGP
-	EvB3qpuCLPmNZZCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D2189137EB;
-	Thu, 18 Jul 2024 11:00:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id No5MM7/1mGZiVQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 18 Jul 2024 11:00:15 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 743B8A0987; Thu, 18 Jul 2024 13:00:11 +0200 (CEST)
-Date: Thu, 18 Jul 2024 13:00:11 +0200
-From: Jan Kara <jack@suse.cz>
-To: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>
-Cc: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger@dilger.ca>,
-	Jan Kara <jack@suse.cz>,
-	Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] ext4: fix fast commit inode enqueueing during a full
- journal commit
-Message-ID: <20240718110011.p2sq5hdy57nqkpxg@quack3>
-References: <20240717172220.14201-1-luis.henriques@linux.dev>
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Thu, 18 Jul 2024 14:02:44 +0300 (MSK)
+Received: from [172.28.192.11] (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Thu, 18 Jul 2024 14:02:43 +0300
+Message-ID: <f5bc9590-f37e-491e-9978-c1eab8914c30@salutedevices.com>
+Date: Thu, 18 Jul 2024 14:01:28 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240717172220.14201-1-luis.henriques@linux.dev>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[mit.edu,dilger.ca,suse.cz,gmail.com,vger.kernel.org];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,linux.dev:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:dkim]
-X-Spam-Flag: NO
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Level: 
-X-Rspamd-Queue-Id: E00AD1FBCD
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/8] reset: amlogic: convert driver to regmap
+To: Jerome Brunet <jbrunet@baylibre.com>
+CC: Philipp Zabel <p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>, <linux-kernel@vger.kernel.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>
+References: <20240710162526.2341399-1-jbrunet@baylibre.com>
+ <20240710162526.2341399-2-jbrunet@baylibre.com>
+ <b12ac6b2-cb46-4410-9846-86ed4c3aea1f@salutedevices.com>
+ <1jv813makr.fsf@starbuckisacylon.baylibre.com>
+Content-Language: en-US
+From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+In-Reply-To: <1jv813makr.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 186588 [Jul 18 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_smtp_not_equal_from}, {Tracking_from_domain_doesnt_match_to}, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/18 08:29:00 #26061289
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Wed 17-07-24 18:22:20, Luis Henriques (SUSE) wrote:
-> When a full journal commit is on-going, any fast commit has to be enqueued
-> into a different queue: FC_Q_STAGING instead of FC_Q_MAIN.  This enqueueing
-> is done only once, i.e. if an inode is already queued in a previous fast
-> commit entry it won't be enqueued again.  However, if a full commit starts
-> _after_ the inode is enqueued into FC_Q_MAIN, the next fast commit needs to
-> be done into FC_Q_STAGING.  And this is not being done in function
-> ext4_fc_track_template().
-> 
-> This patch fixes the issue by re-enqueuing an inode into the STAGING queue
-> during the fast commit clean-up callback when doing a full commit.  However,
-> to prevent a race with a fast-commit, the clean-up callback has to be called
-> with the journal locked.
-> 
-> This bug was found using fstest generic/047.  This test creates several 32k
-> bytes files, sync'ing each of them after it's creation, and then shutting
-> down the filesystem.  Some data may be loss in this operation; for example a
-> file may have it's size truncated to zero.
-> 
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
 
-Looks good to me. Feel free to add:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+On 7/18/24 10:19, Jerome Brunet wrote:
+> On Thu 18 Jul 2024 at 05:39, Jan Dakinevich <jan.dakinevich@salutedevices.com> wrote:
+> 
+>> On 7/10/24 19:25, Jerome Brunet wrote:
+>>> To allow using the same driver for the main reset controller and the
+>>> auxiliary ones embedded in the clock controllers, convert the
+>>> the Amlogic reset driver to regmap.
+>>>
+>>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>>> ---
+>>>  drivers/reset/reset-meson.c | 80 ++++++++++++++++++++-----------------
+>>>  1 file changed, 44 insertions(+), 36 deletions(-)
+>>>
+>>> diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
+>>> index f78be97898bc..8f3d6e9df235 100644
+>>> --- a/drivers/reset/reset-meson.c
+>>> +++ b/drivers/reset/reset-meson.c
+>>> @@ -11,36 +11,44 @@
+>>>  #include <linux/of.h>
+>>>  #include <linux/module.h>
+>>>  #include <linux/platform_device.h>
+>>> +#include <linux/regmap.h>
+>>>  #include <linux/reset-controller.h>
+>>>  #include <linux/slab.h>
+>>>  #include <linux/types.h>
+>>>  
+>>> -#define BITS_PER_REG	32
+>>> -
+>>>  struct meson_reset_param {
+>>>  	int reg_count;
+>>>  	int level_offset;
+>>>  };
+>>>  
+>>>  struct meson_reset {
+>>> -	void __iomem *reg_base;
+>>>  	const struct meson_reset_param *param;
+>>>  	struct reset_controller_dev rcdev;
+>>> -	spinlock_t lock;
+>>> +	struct regmap *map;
+>>>  };
+>>>  
+>>> +static void meson_reset_offset_and_bit(struct meson_reset *data,
+>>> +				       unsigned long id,
+>>> +				       unsigned int *offset,
+>>> +				       unsigned int *bit)
+>>> +{
+>>> +	unsigned int stride = regmap_get_reg_stride(data->map);
+>>> +
+>>> +	*offset = (id / (stride * BITS_PER_BYTE)) * stride;
+>>> +	*bit = id % (stride * BITS_PER_BYTE);
+>>> +}
+>>> +
+>>>  static int meson_reset_reset(struct reset_controller_dev *rcdev,
+>>> -			      unsigned long id)
+>>> +			     unsigned long id)
+>>>  {
+>>>  	struct meson_reset *data =
+>>>  		container_of(rcdev, struct meson_reset, rcdev);
+>>> -	unsigned int bank = id / BITS_PER_REG;
+>>> -	unsigned int offset = id % BITS_PER_REG;
+>>> -	void __iomem *reg_addr = data->reg_base + (bank << 2);
+>>> +	unsigned int offset, bit;
+>>>  
+>>> -	writel(BIT(offset), reg_addr);
+>>> +	meson_reset_offset_and_bit(data, id, &offset, &bit);
+>>>  
+>>> -	return 0;
+>>> +	return regmap_update_bits(data->map, offset,
+>>> +				  BIT(bit), BIT(bit));
+>>
+>> regmap_update_bits() is not equal to writel(), I suppose regmap_write()
+>> should be here.
+>>
+>> I'm still under testing, but I see unexpected behavior on A1 SoC:
+>>
+>> [    1.482446] Call trace:
+>> [    1.484860]  dump_backtrace+0x94/0xec
+>> [    1.488482]  show_stack+0x18/0x24
+>> [    1.491754]  dump_stack_lvl+0x78/0x90
+>> [    1.495377]  dump_stack+0x18/0x24
+>> [    1.498654]  __report_bad_irq+0x38/0xe4
+>> [    1.502453]  note_interrupt+0x324/0x374
+>> [    1.506244]  handle_irq_event+0x9c/0xac
+>> [    1.510039]  handle_fasteoi_irq+0xa4/0x238
+>> [    1.514093]  generic_handle_domain_irq+0x2c/0x44
+>> [    1.518664]  gic_handle_irq+0x40/0xc4
+>> [    1.522287]  call_on_irq_stack+0x24/0x4c
+>> [    1.526168]  do_interrupt_handler+0x80/0x84
+>> [    1.530308]  el1_interrupt+0x34/0x68
+>> [    1.533844]  el1h_64_irq_handler+0x18/0x24
+>> [    1.537898]  el1h_64_irq+0x64/0x68
+>> [    1.541262]  default_idle_call+0x28/0x3c
+>> [    1.545143]  do_idle+0x208/0x260
+>> [    1.548334]  cpu_startup_entry+0x38/0x3c
+>> [    1.552220]  kernel_init+0x0/0x1dc
+>> [    1.555579]  start_kernel+0x5ac/0x6f0
+>> [    1.559206]  __primary_switched+0x80/0x88
+> 
+> That stack trace is not helping
+> >>
+>>
+>> and using of regmap_write() (apparently) fixes it.
+> 
+> Nor does that conclusion.
+> > It is perfectly possible I have made mistake somewhere (I have already
+> fixed one in v2), but sending incomplete report like this, with
+> unargumented conclusion is just noise in the end.
+> 
+> No, there is no situation in which `regmap_write` would solve a problem
+> with `regmap_update_bits`.
+> 
 
-								Honza
+What is the default regs' value of this reset controller? The doc that I
+have doesn't clearly specifies it, but it tells that "the reset will
+auto-cover to 0 by HW". However pr_info() say that there is 0xffffffff
+before write (I am talking about A1).
 
-> ---
-> Hi!
+Also we know, that reset is triggered by writing 1 to specific bit. So,
+what will happen if 1 will be written where we did not intend to write it?
+
+> Either send a full analysis of the problem you found, if you did one, or
+> at least send the full dump, explaining that you don't know what is
+> happening.
 > 
-> And here's another attempt to fix this bug.  The most significant change is
-> that now it doesn't assume a 'special' meaning for a tid of '0'.  Which is
-> a wrong assumption as Jan has shown.
+
+Full analysis is following:
+- using regmap_update_bits() instead of writel() is incorrect because
+this changes the behavior of the driver
+- regmap_update_bits() should not be used here because default value of
+regs isn't taken into account and (_apparently_, the doc is terse) these
+regs could be updated by hw itself.
+
+> I'll also point that I did not send g12 clock along with v1 and that a1
+> support is not upstream or even reviewed. So this 'tests' obviously rely
+> on an integration of v1, rfc and your custom develpment. That is hardly a
+> reference at this point.
 > 
-> I've also added a Suggested-by: tag, although Jan pretty much owns this
-> patch -- I have simply tested it and sent it out!
+> This patches address g12 and sm1. If you want to contribute with tests,
+> please test on these platforms. a1 will be addressed in due time.
 > 
->  fs/ext4/fast_commit.c | 15 ++++++++++++++-
->  fs/jbd2/journal.c     |  2 +-
->  2 files changed, 15 insertions(+), 2 deletions(-)
+
+Where did you find in my words any reference to not upstreamed
+functionality? Support of A1 SoC is here since commit bdb369e1e98a
+("reset: add support for the Meson-A1 SoC Reset Controller").
+
+> Testing is good but making complete report (trace and environment
+> details) is equally important, especially for maintainers who might not
+> be following Amlogic development as much as you do.
 > 
-> diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
-> index 3926a05eceee..df71fd5b1fed 100644
-> --- a/fs/ext4/fast_commit.c
-> +++ b/fs/ext4/fast_commit.c
-> @@ -1288,8 +1288,21 @@ static void ext4_fc_cleanup(journal_t *journal, int full, tid_t tid)
->  		list_del_init(&iter->i_fc_list);
->  		ext4_clear_inode_state(&iter->vfs_inode,
->  				       EXT4_STATE_FC_COMMITTING);
-> -		if (tid_geq(tid, iter->i_sync_tid))
-> +		if (tid_geq(tid, iter->i_sync_tid)) {
->  			ext4_fc_reset_inode(&iter->vfs_inode);
-> +		} else if (full) {
-> +			/*
-> +			 * We are called after a full commit, inode has been
-> +			 * modified while the commit was running. Re-enqueue
-> +			 * the inode into STAGING, which will then be splice
-> +			 * back into MAIN. This cannot happen during
-> +			 * fastcommit because the journal is locked all the
-> +			 * time in that case (and tid doesn't increase so
-> +			 * tid check above isn't reliable).
-> +			 */
-> +			list_add_tail(&EXT4_I(&iter->vfs_inode)->i_fc_list,
-> +				      &sbi->s_fc_q[FC_Q_STAGING]);
-> +		}
->  		/* Make sure EXT4_STATE_FC_COMMITTING bit is clear */
->  		smp_mb();
->  #if (BITS_PER_LONG < 64)
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index 1ebf2393bfb7..291a431f8aaf 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -740,9 +740,9 @@ EXPORT_SYMBOL(jbd2_fc_begin_commit);
->   */
->  static int __jbd2_fc_end_commit(journal_t *journal, tid_t tid, bool fallback)
->  {
-> -	jbd2_journal_unlock_updates(journal);
->  	if (journal->j_fc_cleanup_callback)
->  		journal->j_fc_cleanup_callback(journal, 0, tid);
-> +	jbd2_journal_unlock_updates(journal);
->  	write_lock(&journal->j_state_lock);
->  	journal->j_flags &= ~JBD2_FAST_COMMIT_ONGOING;
->  	if (fallback)
+>>
+>>>  }
+>>>  
+>>>  static int meson_reset_level(struct reset_controller_dev *rcdev,
+>>> @@ -48,25 +56,13 @@ static int meson_reset_level(struct reset_controller_dev *rcdev,
+>>>  {
+>>>  	struct meson_reset *data =
+>>>  		container_of(rcdev, struct meson_reset, rcdev);
+>>> -	unsigned int bank = id / BITS_PER_REG;
+>>> -	unsigned int offset = id % BITS_PER_REG;
+>>> -	void __iomem *reg_addr;
+>>> -	unsigned long flags;
+>>> -	u32 reg;
+>>> +	unsigned int offset, bit;
+>>>  
+>>> -	reg_addr = data->reg_base + data->param->level_offset + (bank << 2);
+>>> +	meson_reset_offset_and_bit(data, id, &offset, &bit);
+>>> +	offset += data->param->level_offset;
+>>>  
+>>> -	spin_lock_irqsave(&data->lock, flags);
+>>> -
+>>> -	reg = readl(reg_addr);
+>>> -	if (assert)
+>>> -		writel(reg & ~BIT(offset), reg_addr);
+>>> -	else
+>>> -		writel(reg | BIT(offset), reg_addr);
+>>> -
+>>> -	spin_unlock_irqrestore(&data->lock, flags);
+>>> -
+>>> -	return 0;
+>>> +	return regmap_update_bits(data->map, offset,
+>>> +				  BIT(bit), assert ? 0 : BIT(bit));
+>>>  }
+>>>  
+>>>  static int meson_reset_assert(struct reset_controller_dev *rcdev,
+>>> @@ -113,30 +109,42 @@ static const struct of_device_id meson_reset_dt_ids[] = {
+>>>  };
+>>>  MODULE_DEVICE_TABLE(of, meson_reset_dt_ids);
+>>>  
+>>> +static const struct regmap_config regmap_config = {
+>>> +	.reg_bits   = 32,
+>>> +	.val_bits   = 32,
+>>> +	.reg_stride = 4,
+>>> +};
+>>> +
+>>>  static int meson_reset_probe(struct platform_device *pdev)
+>>>  {
+>>> +	struct device *dev = &pdev->dev;
+>>>  	struct meson_reset *data;
+>>> +	void __iomem *base;
+>>>  
+>>> -	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+>>> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+>>>  	if (!data)
+>>>  		return -ENOMEM;
+>>>  
+>>> -	data->reg_base = devm_platform_ioremap_resource(pdev, 0);
+>>> -	if (IS_ERR(data->reg_base))
+>>> -		return PTR_ERR(data->reg_base);
+>>> +	base = devm_platform_ioremap_resource(pdev, 0);
+>>> +	if (IS_ERR(base))
+>>> +		return PTR_ERR(base);
+>>>  
+>>> -	data->param = of_device_get_match_data(&pdev->dev);
+>>> +	data->param = of_device_get_match_data(dev);
+>>>  	if (!data->param)
+>>>  		return -ENODEV;
+>>>  
+>>> -	spin_lock_init(&data->lock);
+>>> +	data->map = devm_regmap_init_mmio(dev, base, &regmap_config);
+>>> +	if (IS_ERR(data->map))
+>>> +		return dev_err_probe(dev, PTR_ERR(data->map),
+>>> +				     "can't init regmap mmio region\n");
+>>>  
+>>>  	data->rcdev.owner = THIS_MODULE;
+>>> -	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_REG;
+>>> +	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_BYTE
+>>> +		* regmap_config.reg_stride;
+>>>  	data->rcdev.ops = &meson_reset_ops;
+>>> -	data->rcdev.of_node = pdev->dev.of_node;
+>>> +	data->rcdev.of_node = dev->of_node;
+>>>  
+>>> -	return devm_reset_controller_register(&pdev->dev, &data->rcdev);
+>>> +	return devm_reset_controller_register(dev, &data->rcdev);
+>>>  }
+>>>  
+>>>  static struct platform_driver meson_reset_driver = {
 > 
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Best regards
+Jan Dakinevich
 
