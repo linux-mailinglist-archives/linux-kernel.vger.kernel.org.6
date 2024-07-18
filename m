@@ -1,142 +1,204 @@
-Return-Path: <linux-kernel+bounces-256301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EAA5934C3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:10:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 587E6934C3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:11:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18CE82834A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:10:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BDE01C2193F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1691312EBCA;
-	Thu, 18 Jul 2024 11:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2CF112A14C;
+	Thu, 18 Jul 2024 11:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar-org.20230601.gappssmtp.com header.i=@fooishbar-org.20230601.gappssmtp.com header.b="xJ0Y85f3"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BZsF02yT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7978B4D8A1
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 11:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E6B12EBCA
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 11:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721301046; cv=none; b=GbKMHwgbUjtjR4scTEFKAJv7N6gOqUhtrBugqXiRDS5HpZI/9O/hG7FjHaxmLJ+Dva083oief/3ifIPbzTSj56UYjP4GzPwdE4FpT9hm1swcYr8cBHdHpyyCba7hN0+mUhx6gIU80KozvXUN2UTxuCCPqCLjWXcGccdVcTsTxVw=
+	t=1721301073; cv=none; b=k0wPjugmFDcI6alZCs5YAy+l/+7g/SxjE+Hq/Vl9SpCyjt3efH6G0WNNQAdn/o+peCBDRxgD6RyLSF2hvYM7JEVoPcIk3iS+3M6ch2WI0uLujyck8Y086llvQyWspr5iR6OVk7wFSBQbqbQjXdVt1c8Q7WmEnY+JsQaHg+I5AEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721301046; c=relaxed/simple;
-	bh=g2difOvlWIEO63yHi+zzCArMOSeh2R/YOZyOxHPP5y8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IXLf9d44jpIN65G/Soadf56JZ+W0iynAWA2AmQDKCoV9520/bd3Njc9GZq+pGh8pJ8QXK9hdPM+jZ9iNbLMEAPF9gNWRpC2+DC1UdRxphgfRWx3WShBSePcra+CmFPbgSYKl+iIYZqwvXtI0XC3p2NIru9x/MgpJcPRyxCHtjIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=none smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar-org.20230601.gappssmtp.com header.i=@fooishbar-org.20230601.gappssmtp.com header.b=xJ0Y85f3; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fooishbar.org
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-79ef72bb8c8so8113785a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 04:10:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar-org.20230601.gappssmtp.com; s=20230601; t=1721301043; x=1721905843; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=g2difOvlWIEO63yHi+zzCArMOSeh2R/YOZyOxHPP5y8=;
-        b=xJ0Y85f3mfdBeKtiCg7XdEZwkFGTICo8gm6Q2EFOnFpfghD1KbWYLHERZABaJGDmzg
-         Yuk8Ld5Ja7lOHq/DZvasjXIDKNw5A7F9Jlo8E1bxE0hMVpIZkMLDI279uA5W2MSvTtVr
-         9Du9ryY5Iayxmmco/EeobRBxwvjQ4V8Nxf8mnMnlSbyUFXmlVI+c5MXEw0yjTFHf1Rb5
-         jCSEVyDMAafWTSPflv5qcYmVfP/MCEEuFxaCSP10LHt8hiq2y8CC2WZKbUA4JPAEyWyX
-         X0av3t4UybDji3OrdbJN/HShdM7U+t54uvWpgoDK4W0ESorNkpCPzHeEOsUMeBiTjUea
-         PW5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721301043; x=1721905843;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g2difOvlWIEO63yHi+zzCArMOSeh2R/YOZyOxHPP5y8=;
-        b=N5zxTgXf5IiyghrItLkpUm9UZ5vWwnPPEmTH98N24PBzVCpW65AAagMZBRECPMX7/1
-         6JMwTQsgJ0RvTR0kuNvYgcosfL2heN3LwxgUa0IY4jIeOiWmJa7CLIR9JGq0ANFJ71HG
-         B0GbYTmi5hWpMrxDfdrnIIElt0eKyJx26D49e05Kwy0xWVHhO6vx5ONrVj4ATsS8U+zm
-         2l/tlP7xakwVyJfosPm+BDBLGPFaT8fdT9aIJUXEmBgO3vhpX8/+EJLusDTfLVN3umW/
-         1e3MpGxRbcP1Z1s0+SWNO7iPX1t4eOgKVsH4ixOwQDPW7RHpqtbPX58LLdZ6920/QErK
-         RDwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhaJapagiLoRx9MYjrRmRXne+0fp/WEGQHNUO1YxwEZBDFy2SdsgSyCGOqcR2OA1UN1KbdHx/ZZxd00S9AAcrsWnf3Klv33IclJMPN
-X-Gm-Message-State: AOJu0Yz9pqgERs/Jt+uoGLbVYZcOWgOtfbP1CHsqgfN8jZz0soaGfyLJ
-	Ne0nJz99u8k4q6fZWo6bUm+7HBv3elLcjgP4jeLC/zbpTqXj80y66+chGMjeTCDbO+eyDAmuG4N
-	xP9agfunIaqr9XoMHov/xWo5LWXItmg3Nj0mTDA==
-X-Google-Smtp-Source: AGHT+IHkpXrj6tfe5GKUAxDloIykkCd7pSLfu610KYCjUhm0uSHpFNmHy8/JsbORj2vqFg5Eb30UAAlM+BNEUmR4XcM=
-X-Received: by 2002:a05:620a:29c6:b0:79b:ea85:9f9f with SMTP id
- af79cd13be357-7a1938c1e9amr47232985a.2.1721301043317; Thu, 18 Jul 2024
- 04:10:43 -0700 (PDT)
+	s=arc-20240116; t=1721301073; c=relaxed/simple;
+	bh=cuttWEZD3FpxypnUQ9jmCx45XcqKjZqgckz4XijONwI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JLarNp0/VyQ3Q0DFXmwuEViC5uZepB2VdAnlgZuaVplx4ULigzXDYxBYJuLNIzMWH7doXW1asqhheZKdw4YTibNIz0fnF6aSZa1grMxEd+G5gSIr+GEqs56n2a7gK9xIR26Va9QdFWitQzilVFJ4KD4U3rY2/7iK7bHDQYJPa9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BZsF02yT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721301070;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XSODUOEexthmLgwTf2Q/7unpL442Tw+C3z/R5dCTkQc=;
+	b=BZsF02yTayvWAlfHYGM1Xt68rz7cfWVsdoyVnpve7aB/etE9rt4pUCZt6Xnmv2HUlbraPw
+	dAmp3JAv0z+6iHd+MRaAlTWkhw+LOaoxumxvUWmVUhEZ95+QxvJtaMmekK5u5L4GUJrm1W
+	pbjj9/A2OuVfqCGpKWdEq0gLM2stWgQ=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-113-8UIMRK83NRqlsiS1CiZDTA-1; Thu,
+ 18 Jul 2024 07:11:06 -0400
+X-MC-Unique: 8UIMRK83NRqlsiS1CiZDTA-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 50F9E1955D4F;
+	Thu, 18 Jul 2024 11:11:00 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.39])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AEE0319560B2;
+	Thu, 18 Jul 2024 11:10:53 +0000 (UTC)
+Date: Thu, 18 Jul 2024 19:10:49 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: linux@armlinux.org.uk, catalin.marinas@arm.com, will@kernel.org,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, hpa@zytor.com, vgoyal@redhat.com,
+	dyoung@redhat.com, arnd@arndb.de, afd@ti.com,
+	linus.walleij@linaro.org, akpm@linux-foundation.org,
+	eric.devolder@oracle.com, gregkh@linuxfoundation.org,
+	javierm@redhat.com, deller@gmx.de, robh@kernel.org,
+	hbathini@linux.ibm.com, thunder.leizhen@huawei.com,
+	chenjiahao16@huawei.com, linux-kernel@vger.kernel.org,
+	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v3 1/3] crash: Fix x86_32 crash memory reserve dead loop
+ bug
+Message-ID: <Zpj4OUsTPshBK4JZ@MiWiFi-R3L-srv>
+References: <20240718035444.2977105-1-ruanjinjie@huawei.com>
+ <20240718035444.2977105-2-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240718082410.204459-1-angelogioacchino.delregno@collabora.com>
- <CAGXv+5GBg73kWuiDt=9s7M4oJeHhWOF3bPY7Ju+qn1kJgNNaGw@mail.gmail.com>
- <CAC=S1nigoJWAECBrm-Q=Co1-qd_yUhx3R4D9=dYeUV=gr5UYfQ@mail.gmail.com> <74e7477b-81c7-4713-80cc-1cb476185bc9@collabora.com>
-In-Reply-To: <74e7477b-81c7-4713-80cc-1cb476185bc9@collabora.com>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Thu, 18 Jul 2024 12:10:32 +0100
-Message-ID: <CAPj87rPZRjmMPjaOY-UH4auTuMS6mh9N7=maRBzxut2OgtALbw@mail.gmail.com>
-Subject: Re: [PATCH] drm/mediatek: Set sensible cursor width/height values to
- fix crash
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Fei Shao <fshao@chromium.org>, Chen-Yu Tsai <wenst@chromium.org>, chunkuang.hu@kernel.org, 
-	p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch, 
-	matthias.bgg@gmail.com, shawn.sung@mediatek.com, ck.hu@mediatek.com, 
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240718035444.2977105-2-ruanjinjie@huawei.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hi all,
+On 07/18/24 at 11:54am, Jinjie Ruan wrote:
+> On x86_32 Qemu machine with 1GB memory, the cmdline "crashkernel=1G,high"
+> will cause system stall as below:
+> 
+> 	ACPI: Reserving FACP table memory at [mem 0x3ffe18b8-0x3ffe192b]
+> 	ACPI: Reserving DSDT table memory at [mem 0x3ffe0040-0x3ffe18b7]
+> 	ACPI: Reserving FACS table memory at [mem 0x3ffe0000-0x3ffe003f]
+> 	ACPI: Reserving APIC table memory at [mem 0x3ffe192c-0x3ffe19bb]
+> 	ACPI: Reserving HPET table memory at [mem 0x3ffe19bc-0x3ffe19f3]
+> 	ACPI: Reserving WAET table memory at [mem 0x3ffe19f4-0x3ffe1a1b]
+> 	143MB HIGHMEM available.
+> 	879MB LOWMEM available.
+> 	  mapped low ram: 0 - 36ffe000
+> 	  low ram: 0 - 36ffe000
+> 	 (stall here)
+> 
+> The reason is that the CRASH_ADDR_LOW_MAX is equal to CRASH_ADDR_HIGH_MAX
+> on x86_32, the first high crash kernel memory reservation will fail, then
+> go into the "retry" loop and never came out as below.
+> 
+> -> reserve_crashkernel_generic() and high is true
+>  -> alloc at [CRASH_ADDR_LOW_MAX, CRASH_ADDR_HIGH_MAX] fail
+>     -> alloc at [0, CRASH_ADDR_LOW_MAX] fail and repeatedly
+>        (because CRASH_ADDR_LOW_MAX = CRASH_ADDR_HIGH_MAX).
+> 
+> Fix it by prevent crashkernel=,high from being parsed successfully on 32bit
+> system with a architecture-defined macro.
+> 
+> After this patch, the 'crashkernel=,high' for 32bit system can't succeed,
+> and it has no chance to call reserve_crashkernel_generic(), therefore this
+> issue on x86_32 is solved.
+> 
+> Fixes: 9c08a2a139fe ("x86: kdump: use generic interface to simplify crashkernel reservation code")
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> Signed-off-by: Baoquan He <bhe@redhat.com>
 
-On Thu, 18 Jul 2024 at 11:24, AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
-> Il 18/07/24 11:27, Fei Shao ha scritto:
-> > This matches my preference in [1], so of course I'd like to see it
-> > merged... if maintainers are okay with it.
-> > Given I've tested the exact same change before:
-> > Reviewed-by: Fei Shao <fshao@chromium.org>
-> > Tested-by: Fei Shao <fshao@chromium.org>
->
-> Thanks!
+Just adding my Suggested-by is fine. If multiple people cooperate on one
+patch, the Co-developed-by tag is needed. As a maintainer, I prefer to
+have the Suggested-by tag in this case.
 
-And:
-Reviewed-by: Daniel Stone <daniels@collabora.com>
+> Tested-by: Jinjie Ruan <ruanjinjie@huawei.com>
 
-> >> OOTH, Intel recently added a feature for enumerating "suggested"
-> >> cursor sizes. See https://patchwork.freedesktop.org/patch/583299/
-> >>
-> >> Not sure if other compositors will end up using it or not.
->
-> Yeah, that's good, and we might do that as well in MediaTek DRM... in a slightly
-> different way, as it looks like they are simply hinting the same values as the
-> mode_config is declaring... while we'd be adding a hint with a sensible size that
-> is less than the maximum supported one from the overlay.
->
-> In reality, here, the issue is that the most popular compositors do not support
-> overlay planes (as in, they don't use them at all)... my first idea was to remove
-> the CURSOR plane entirely and declare it as per what it is for real (an OVERLAY),
-> but that would only give a performance penalty as that'd become yet another unused
-> plane and nothing else.
->
-> If at least the most popular compositors did support overlay planes, I'd have done
-> that instead... but oh, well!
->
-> And anyway I hope that the maintainers are okay with this because, well, otherwise
-> MediaTek SoCs won't be usable with any popular WM.
+You can't add Tested-by tag for your own patch. When you post patch,
+testing it is your obligation.
 
-Every compositor is going to use it, yeah. But until it does, people
-are just going to use cursor_width and cursor_size. A lot of older
-desktop hardware supports only a single fixed dimension for the cursor
-plane (hence the single values), so rather than guess if it needs to
-be 32x32 or 64x64 or whatever, people just allocate to the size. Not
-to mention that the old pre-atomic cursor ioctls actually require that
-you allocate for cursor_width x cursor_height.
+Other than these tag adding concerns, this patch looks good to me. You
+can post v4 to update and add my:
 
-So yeah, this is the right fix - though you could even be more
-aggressive and reduce it to 256x256 - and supporting the CURSOR_SIZE
-property would be even more useful again.
+Acked-by: Baoquan He <bhe@redhat.com>
 
-Cheers,
-Daniel
+> ---
+> v3:
+> - Fix it as Baoquan suggested.
+> - Update the commit message.
+> v2:
+> - Peel off the other two patches.
+> - Update the commit message and fix tag.
+> ---
+>  arch/arm64/include/asm/crash_reserve.h | 2 ++
+>  arch/riscv/include/asm/crash_reserve.h | 2 ++
+>  arch/x86/include/asm/crash_reserve.h   | 1 +
+>  kernel/crash_reserve.c                 | 2 +-
+>  4 files changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/include/asm/crash_reserve.h b/arch/arm64/include/asm/crash_reserve.h
+> index 4afe027a4e7b..bf362c1a612f 100644
+> --- a/arch/arm64/include/asm/crash_reserve.h
+> +++ b/arch/arm64/include/asm/crash_reserve.h
+> @@ -7,4 +7,6 @@
+>  
+>  #define CRASH_ADDR_LOW_MAX              arm64_dma_phys_limit
+>  #define CRASH_ADDR_HIGH_MAX             (PHYS_MASK + 1)
+> +
+> +#define HAVE_ARCH_CRASHKERNEL_RESERVATION_HIGH
+>  #endif
+> diff --git a/arch/riscv/include/asm/crash_reserve.h b/arch/riscv/include/asm/crash_reserve.h
+> index 013962e63587..8d7a8fc1d459 100644
+> --- a/arch/riscv/include/asm/crash_reserve.h
+> +++ b/arch/riscv/include/asm/crash_reserve.h
+> @@ -7,5 +7,7 @@
+>  #define CRASH_ADDR_LOW_MAX		dma32_phys_limit
+>  #define CRASH_ADDR_HIGH_MAX		memblock_end_of_DRAM()
+>  
+> +#define HAVE_ARCH_CRASHKERNEL_RESERVATION_HIGH
+> +
+>  extern phys_addr_t memblock_end_of_DRAM(void);
+>  #endif
+> diff --git a/arch/x86/include/asm/crash_reserve.h b/arch/x86/include/asm/crash_reserve.h
+> index 7835b2cdff04..24c2327f9a16 100644
+> --- a/arch/x86/include/asm/crash_reserve.h
+> +++ b/arch/x86/include/asm/crash_reserve.h
+> @@ -26,6 +26,7 @@ extern unsigned long swiotlb_size_or_default(void);
+>  #else
+>  # define CRASH_ADDR_LOW_MAX     SZ_4G
+>  # define CRASH_ADDR_HIGH_MAX    SZ_64T
+> +#define HAVE_ARCH_CRASHKERNEL_RESERVATION_HIGH
+>  #endif
+>  
+>  # define DEFAULT_CRASH_KERNEL_LOW_SIZE crash_low_size_default()
+> diff --git a/kernel/crash_reserve.c b/kernel/crash_reserve.c
+> index 5b2722a93a48..c5213f123e19 100644
+> --- a/kernel/crash_reserve.c
+> +++ b/kernel/crash_reserve.c
+> @@ -306,7 +306,7 @@ int __init parse_crashkernel(char *cmdline,
+>  	/* crashkernel=X[@offset] */
+>  	ret = __parse_crashkernel(cmdline, system_ram, crash_size,
+>  				crash_base, NULL);
+> -#ifdef CONFIG_ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
+> +#ifdef HAVE_ARCH_CRASHKERNEL_RESERVATION_HIGH
+>  	/*
+>  	 * If non-NULL 'high' passed in and no normal crashkernel
+>  	 * setting detected, try parsing crashkernel=,high|low.
+> -- 
+> 2.34.1
+> 
+
 
