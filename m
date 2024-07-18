@@ -1,121 +1,280 @@
-Return-Path: <linux-kernel+bounces-256166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B1A5934A29
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:44:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD64C934A47
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:47:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 746141C2175B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:44:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 509F81F2640F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBFEC7E0E8;
-	Thu, 18 Jul 2024 08:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8091369BB;
+	Thu, 18 Jul 2024 08:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="XTBAEQjI"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pP30OrkB"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704AE3B784;
-	Thu, 18 Jul 2024 08:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE93E12E1F1;
+	Thu, 18 Jul 2024 08:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721292236; cv=none; b=VAf0tF8xgtgIildSWlU7lOKLcD/MOPInIgLsYsmewxFKZ3foX129c8KrIAXR249ggC0Bn5FPxmyHyy0fLrodmCPGW0g44z0T8fTVvwaeBYmNFh7HoF0axmdDFmwyeimv05VzpjWtMaxbpvVyoo5ZapDVCL5QMC4aJ84Tx0geK6c=
+	t=1721292334; cv=none; b=kt5RcWlhRLqEYvNMhuC6vAtRWV3Zi66Yr3kUTdnb7JBXFvkdoPa09mhFjsgH7jkJrb0sRAfJgGuD8Gu9BAleOFkTUp+z3dsT0Yn7VYE0iv3S8g2oocsijePwcZte/zKeEyXRRdj3U18cAJXMKOAJ/0/9QG5s0+1SyOpezrED2mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721292236; c=relaxed/simple;
-	bh=t59HvvioUnAYN4TRwpXWrIUMqAPeRW5LGIJ3kW8HqgQ=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=XV3leLR4U5qFHDXyqNxldJ9bSbbAppF9zpSqtvY5FJTDi1SCgJQAxRHRqiH8Dby9XFEyErDpoMtYGqJ8fW8ZytQBSUfn4frhGzPmL6WZfeEjkVJ2AeNM/HCIUO+FV/gf0f+3ZnxB+WfN3/EiZPnK3J+a4ZvclKhEE0TLqafrSh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=XTBAEQjI; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1721292334; c=relaxed/simple;
+	bh=3YwUwJ0K84uHBIcDJQfrW7iPspWCFUs/utfoSxBhiI8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ixEva554vQnq3FWoyLm6jh0nYGD8jaoXQbtyt/9zmPMGNg8VMS5T/ofaUnSjZ5IqazxBDtjga1ZgInn+a0ZFgBg8PNnTocpca3ZthDUg9cLKGnkcLWy1xaOuHHxpYuOVMqM4GeOr9gl1KMD1HFMLfDs6DPIwPVerXDRqTd4Hd2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pP30OrkB; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46I6U1AA029785;
+	Thu, 18 Jul 2024 08:45:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:in-reply-to:references
+	:mime-version:content-transfer-encoding; s=pp1; bh=Cj8tY90pEiVaq
+	iF//wmCOn+cTiaFsJf7EukncWwGBX4=; b=pP30OrkB1EGZBEcY6LjCe7i5b8oPC
+	5Doosg827Utsu0CxZJjOlLL7cGUDKCiNOgZH6tujUYh8tbmOalW1GTj0LzkLA6Du
+	I7kkVV6S5HjWprodCBeZ1yiGc3BHX1IHIULtvfMfrRq7551SEKu6dM6kbD9AUv8j
+	vFSIdL+qpFVubpNqC/sU/oayPPR1v+cn3GdR4AXp3CFLjM9l/rj2d4ekORTZJx5s
+	fae++tZPSlAiJ+ufpFdAatYN68Shm3Ncxs7tJwQhbH2k+tw2x0AOhLM5Vzecd7kc
+	ZsHXju7Nlh3a4UQIJMy01GXjjYQEbxxzHbToukCW+tf3Pt28/BsESo5mw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40ewtpg90m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Jul 2024 08:45:22 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46I8jMqS027309;
+	Thu, 18 Jul 2024 08:45:22 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40ewtpg90j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Jul 2024 08:45:22 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46I5DscO000462;
+	Thu, 18 Jul 2024 08:45:21 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40dwkk8qx0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Jul 2024 08:45:21 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46I8jFKn37880204
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 18 Jul 2024 08:45:17 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 86AF52004B;
+	Thu, 18 Jul 2024 08:45:15 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6922E20040;
+	Thu, 18 Jul 2024 08:45:12 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.43.69.1])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 18 Jul 2024 08:45:12 +0000 (GMT)
+From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+To: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
+        irogers@google.com, namhyung@kernel.org, segher@kernel.crashing.org,
+        christophe.leroy@csgroup.eu
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com,
+        maddy@linux.ibm.com, atrajeev@linux.vnet.ibm.com, kjain@linux.ibm.com,
+        hbathini@linux.ibm.com, disgoel@linux.vnet.ibm.com
+Subject: [PATCH V8 07/15] tools/perf: Add parse function for memory instructions in powerpc
+Date: Thu, 18 Jul 2024 14:13:50 +0530
+Message-Id: <20240718084358.72242-8-atrajeev@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20240718084358.72242-1-atrajeev@linux.vnet.ibm.com>
+References: <20240718084358.72242-1-atrajeev@linux.vnet.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1721292231;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kKk8adyi9jKYJ3vFAHnVWE13YqvAw47sg8mkzonVaMk=;
-	b=XTBAEQjIAr/Sm2A4jEnG0EecGJsQtbpQ71+5D9saa21Z31AlZzAuCCJB2UV93jw/+uf09E
-	lDPD9O//Y2wtfeIcL7hsxVWsTxU2ZzvfK7ZbSH8u80DZvCnk7+lGC6VUb5tolqXY08I/AZ
-	2Bqjlc0+wt6+pNVWN9rWx4LLHRjvd1gA/wbcoFfAwKoUxeKgkLU1d4Ti3Iyekvwslzkz1/
-	6D+44dufeuQDm6SbfFpestveehQS/w9ROgX63HRgrec1bbQLe4/+wo9UMhBaJRPYldAOHJ
-	o9t65FddTbvPbu9rItji07hs6ooM5kbuOrUBkPbCYURzvo+WWhU09JQk+Qc3Kg==
-Date: Thu, 18 Jul 2024 10:43:50 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Conor Dooley <conor.dooley@microchip.com>
-Cc: Christopher Obbard <chris.obbard@collabora.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Kever Yang
- <kever.yang@rock-chips.com>, Collabora Kernel Mailing List
- <kernel@collabora.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: arm: rockchip: Add Firefly
- Core-PX30-JD4 with baseboard
-In-Reply-To: <20240718-lapped-suffocate-0216bad82c68@wendy>
-References: <20240717-rockchip-px30-firefly-v2-0-06541a5a5946@collabora.com>
- <20240717-rockchip-px30-firefly-v2-1-06541a5a5946@collabora.com>
- <0c804e9a0227904b16bfb779f2009af1@manjaro.org>
- <e34f1a0a81de24437be7f582c719d3f128d44b51.camel@collabora.com>
- <20240718-lapped-suffocate-0216bad82c68@wendy>
-Message-ID: <6ed3e6c6b74ddba1bca1a719dfdf3ac4@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
 Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: VcYm20MTTiJ-KfT2FY5OewCGSWEU8A8K
+X-Proofpoint-ORIG-GUID: 81nUuBcAQKd9rYJG6-MJIbbwQT-a9--O
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-18_04,2024-07-17_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ clxscore=1015 adultscore=0 priorityscore=1501 impostorscore=0
+ lowpriorityscore=0 mlxscore=0 spamscore=0 suspectscore=0 mlxlogscore=999
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407180054
 
-On 2024-07-18 10:34, Conor Dooley wrote:
-> On Thu, Jul 18, 2024 at 09:31:45AM +0100, Christopher Obbard wrote:
->> Thanks for the review.
->> 
->> On Thu, 2024-07-18 at 06:36 +0200, Dragan Simic wrote:
->> > Hello Christopher,
->> >
->> > On 2024-07-17 18:46, Christopher Obbard wrote:
->> > > Add binding for the Firefly Core-PX30-JD4 SoM when used in conjunction
->> > > with the MB-JD4-RK3328 & PX30 baseboard.
->> > >
->> > > Signed-off-by: Christopher Obbard <chris.obbard@collabora.com>
->> > > ---
->> > >  Documentation/devicetree/bindings/arm/rockchip.yaml | 6 ++++++
->> > >  1 file changed, 6 insertions(+)
->> > >
->> > > diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml
->> > > b/Documentation/devicetree/bindings/arm/rockchip.yaml
->> > > index 1ef09fbfdfaf5..33ca8028bc151 100644
->> > > --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
->> > > +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
->> > > @@ -148,6 +148,12 @@ properties:
->> > >            - const: engicam,px30-core
->> > >            - const: rockchip,px30
->> > >
->> > > +      - description: Firefly Core-PX30-JD4 with MB-JD4-PX30 baseboard
->> > > +        items:
->> > > +          - const: firefly,px30-mb-jd4
->> > > +          - const: firefly,px30-core-jd4
->> >
->> > Similarly to how I suggested the new dts(i) files to be named, [1]
->> > the model names should be named like this:
->> >
->> >            - const: firefly,px30-jd4-core
->> >            - const: firefly,px30-jd4-core-mb
->> 
->> I suppose the order should be the other way around to match other 
->> entries, e.g
->> firefly,px30-jd4-core-mb first?
-> 
-> Yes. Mainboard first, then som, then soc.
+Use the raw instruction code and macros to identify memory instructions,
+extract register fields and also offset. The implementation addresses
+the D-form, X-form, DS-form instructions. Two main functions are added.
+New parse function "load_store__parse" as instruction ops parser for
+memory instructions. Unlink other parser (like mov__parse), this parser
+fills in the "multi_regs" field for source/target and new added "mem_ref"
+field. No other fields are set because, here there is no need to parse the
+disassembled code and arch specific macros will take care of extracting
+offset and regs which is easier and will be precise.
 
-Ah yes, sorry, I somehow managed to get the order wrong.  Basically,
-it goes from more specific to less specific.
+In powerpc, all instructions with a primary opcode from 32 to 63
+are memory instructions. Update "ins__find" function to have "raw_insn"
+also as a parameter.
+
+Reviewed-and-tested-by: Kajol Jain <kjain@linux.ibm.com>
+Reviewed-by: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Athira Rajeev<atrajeev@linux.vnet.ibm.com>
+---
+ .../perf/arch/powerpc/annotate/instructions.c | 16 ++++++
+ tools/perf/util/disasm.c                      | 54 +++++++++++++++++--
+ tools/perf/util/disasm.h                      |  2 +-
+ 3 files changed, 66 insertions(+), 6 deletions(-)
+
+diff --git a/tools/perf/arch/powerpc/annotate/instructions.c b/tools/perf/arch/powerpc/annotate/instructions.c
+index d57fd023ef9c..b084423d8477 100644
+--- a/tools/perf/arch/powerpc/annotate/instructions.c
++++ b/tools/perf/arch/powerpc/annotate/instructions.c
+@@ -49,6 +49,22 @@ static struct ins_ops *powerpc__associate_instruction_ops(struct arch *arch, con
+ 	return ops;
+ }
+ 
++#define PPC_OP(op)      (((op) >> 26) & 0x3F)
++
++static struct ins_ops *check_ppc_insn(u32 raw_insn)
++{
++	int opcode = PPC_OP(raw_insn);
++
++	/*
++	 * Instructions with opcode 32 to 63 are memory
++	 * instructions in powerpc
++	 */
++	if ((opcode & 0x20))
++		return &load_store_ops;
++
++	return NULL;
++}
++
+ static int powerpc__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
+ {
+ 	if (!arch->initialized) {
+diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
+index 8e45f0874e03..b30277a930c0 100644
+--- a/tools/perf/util/disasm.c
++++ b/tools/perf/util/disasm.c
+@@ -37,6 +37,7 @@ static struct ins_ops mov_ops;
+ static struct ins_ops nop_ops;
+ static struct ins_ops lock_ops;
+ static struct ins_ops ret_ops;
++static struct ins_ops load_store_ops;
+ 
+ static int jump__scnprintf(struct ins *ins, char *bf, size_t size,
+ 			   struct ins_operands *ops, int max_ins_name);
+@@ -522,7 +523,7 @@ static int lock__parse(struct arch *arch, struct ins_operands *ops, struct map_s
+ 	if (disasm_line__parse(ops->raw, &ops->locked.ins.name, &ops->locked.ops->raw) < 0)
+ 		goto out_free_ops;
+ 
+-	ops->locked.ins.ops = ins__find(arch, ops->locked.ins.name);
++	ops->locked.ins.ops = ins__find(arch, ops->locked.ins.name, 0);
+ 
+ 	if (ops->locked.ins.ops == NULL)
+ 		goto out_free_ops;
+@@ -678,6 +679,37 @@ static struct ins_ops mov_ops = {
+ 	.scnprintf = mov__scnprintf,
+ };
+ 
++static int load_store__scnprintf(struct ins *ins, char *bf, size_t size,
++		struct ins_operands *ops, int max_ins_name)
++{
++	return scnprintf(bf, size, "%-*s %s", max_ins_name, ins->name,
++			ops->raw);
++}
++
++/*
++ * Sets the fields: multi_regs and "mem_ref".
++ * "mem_ref" is set for ops->source which is later used to
++ * fill the objdump->memory_ref-char field. This ops is currently
++ * used by powerpc and since binary instruction code is used to
++ * extract opcode, regs and offset, no other parsing is needed here
++ */
++static int load_store__parse(struct arch *arch __maybe_unused, struct ins_operands *ops,
++		struct map_symbol *ms __maybe_unused, struct disasm_line *dl __maybe_unused)
++{
++	ops->source.mem_ref = true;
++	ops->source.multi_regs = false;
++
++	ops->target.mem_ref = false;
++	ops->target.multi_regs = false;
++
++	return 0;
++}
++
++static struct ins_ops load_store_ops = {
++	.parse     = load_store__parse,
++	.scnprintf = load_store__scnprintf,
++};
++
+ static int dec__parse(struct arch *arch __maybe_unused, struct ins_operands *ops, struct map_symbol *ms __maybe_unused,
+ 		struct disasm_line *dl __maybe_unused)
+ {
+@@ -769,11 +801,23 @@ static void ins__sort(struct arch *arch)
+ 	qsort(arch->instructions, nmemb, sizeof(struct ins), ins__cmp);
+ }
+ 
+-static struct ins_ops *__ins__find(struct arch *arch, const char *name)
++static struct ins_ops *__ins__find(struct arch *arch, const char *name, u32 raw_insn)
+ {
+ 	struct ins *ins;
+ 	const int nmemb = arch->nr_instructions;
+ 
++	if (arch__is(arch, "powerpc")) {
++		/*
++		 * For powerpc, identify the instruction ops
++		 * from the opcode using raw_insn.
++		 */
++		struct ins_ops *ops;
++
++		ops = check_ppc_insn(raw_insn);
++		if (ops)
++			return ops;
++	}
++
+ 	if (!arch->sorted_instructions) {
+ 		ins__sort(arch);
+ 		arch->sorted_instructions = true;
+@@ -803,9 +847,9 @@ static struct ins_ops *__ins__find(struct arch *arch, const char *name)
+ 	return ins ? ins->ops : NULL;
+ }
+ 
+-struct ins_ops *ins__find(struct arch *arch, const char *name)
++struct ins_ops *ins__find(struct arch *arch, const char *name, u32 raw_insn)
+ {
+-	struct ins_ops *ops = __ins__find(arch, name);
++	struct ins_ops *ops = __ins__find(arch, name, raw_insn);
+ 
+ 	if (!ops && arch->associate_instruction_ops)
+ 		ops = arch->associate_instruction_ops(arch, name);
+@@ -815,7 +859,7 @@ struct ins_ops *ins__find(struct arch *arch, const char *name)
+ 
+ static void disasm_line__init_ins(struct disasm_line *dl, struct arch *arch, struct map_symbol *ms)
+ {
+-	dl->ins.ops = ins__find(arch, dl->ins.name);
++	dl->ins.ops = ins__find(arch, dl->ins.name, dl->raw.raw_insn);
+ 
+ 	if (!dl->ins.ops)
+ 		return;
+diff --git a/tools/perf/util/disasm.h b/tools/perf/util/disasm.h
+index 30be0a94ea04..c1bb1e484bfb 100644
+--- a/tools/perf/util/disasm.h
++++ b/tools/perf/util/disasm.h
+@@ -105,7 +105,7 @@ struct annotate_args {
+ struct arch *arch__find(const char *name);
+ bool arch__is(struct arch *arch, const char *name);
+ 
+-struct ins_ops *ins__find(struct arch *arch, const char *name);
++struct ins_ops *ins__find(struct arch *arch, const char *name, u32 raw_insn);
+ int ins__scnprintf(struct ins *ins, char *bf, size_t size,
+ 		   struct ins_operands *ops, int max_ins_name);
+ 
+-- 
+2.43.0
+
 
