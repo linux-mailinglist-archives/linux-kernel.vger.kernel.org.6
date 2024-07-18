@@ -1,279 +1,178 @@
-Return-Path: <linux-kernel+bounces-256796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0025E937054
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 23:57:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB0F93707F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 00:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820121F228AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 21:57:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41A031F227E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 22:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3A3146593;
-	Thu, 18 Jul 2024 21:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C6D145FFF;
+	Thu, 18 Jul 2024 22:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UTAhKufj"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jciSS3Dw"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E05145B1F
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 21:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC33D143891;
+	Thu, 18 Jul 2024 22:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721339842; cv=none; b=e1NqQwFj8QMasYyy+USEvRhWILVlvt8Xeej4Dbs4Sy/TiQl068vCsn3/xyu9Rz/Bz1zSoP5A3ANvos/Ly2icxwoPDcMr82+tAuT8/raRx7JwrFuvZ2BH5hyI4gD6IwKT38dJe8ToiSWFuTCpbcwmc9mDB4upi99ePIG+k8B4xZU=
+	t=1721340150; cv=none; b=Z7lyo/QIeT7EgLr/bzN38YtZBECAatKOyI7ZPcMgCZenPn4JlZIq9agiWmuT4CujC10JjCrRGBoL3c1y62yN9yngu5yPSKFE/sRwQsblZO4d0d5PwitB1IIbVHUtJhGU6wpGY260Gd7Aa0dbbdcDjA7tTT4mqoyH0gbXUKOWeT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721339842; c=relaxed/simple;
-	bh=VkQpN60GcRBqBD4ybwlP2k2+Vn+Caes8BT6nK9Loess=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t1wrg0mhUrpt8jzsqafaDhwFOZatfJHDTc9fRUUFa7SVFqsrMnJd5RZyeap7NZPBaiXVx6w+Ol0i67wsIErVk+eGnveYefTns1f+NJnksXYAS3kIi+eW5lV+MQp1HPNw6vXQsgyEPSnf0dLKSCYGgeiFEIeJCUZNMqloWVMbVrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UTAhKufj; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-80a2939265cso40596539f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 14:57:19 -0700 (PDT)
+	s=arc-20240116; t=1721340150; c=relaxed/simple;
+	bh=mJorrD2tnuyN7ngnHQjsdGPkLJyryGhiaujRYaKwy2g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cNrv7xVHziiZjcSveM8W/6ke8WoYckkBgVOuCkKrOQycI/RQqA7cC8axxEwUGYVdZcLU5DYg0k745Og2wJ2joora8NWYwDMBNLCmHNrgPaO/E/JYilQVh48wx0yax6XWMwBs2mqTfFG/A8V7cAxELGpzlDTQDMQjaaxQ+6o2Cnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jciSS3Dw; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-427b4c621b9so6006695e9.1;
+        Thu, 18 Jul 2024 15:02:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1721339838; x=1721944638; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ESReBtfRYbWAFdqZsiENsIRpb4yAg4v5BmBq8aEhHNc=;
-        b=UTAhKufjD+aRC1s/ocxQSEPt7eBXf8t/e2UViV1fFYkJDNe8SJlX9RHjRTxuIJZkuD
-         /jjXRXGrW2B06pklbGUQu4e5Gz21wUB0BFIvlNTxhnrVGpYt712Sce6E011lNeqMCQKw
-         XcWvEDf4wlCx28udFqR/xyclg/HSvV3U/+1og=
+        d=gmail.com; s=20230601; t=1721340147; x=1721944947; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UitsaCex0rhKIBN25ncNSW34VIXCM0DAlM4U4CaOTtU=;
+        b=jciSS3DwJ9Cnc8O9W3ktdD2pYZsFAnc1PrEq+IgzTy5XuMVt9TONxO7ZUisZ80zPgZ
+         Rnt1LBthbOZHQ2EjqEYfi/YbbKpR9nfOYw19TkoVgZXf4dR+WXPivxcmEHwFCoGnfwX8
+         eC6qf4sJ2ROlHzkTJOliUzx/FwbNb2/lawOVdpkVZJofSt3R2ub9oFwTIJD7HkP/a/X7
+         AF0iZ+cAJ3tPSOisRi1ENpxHDJ8F2GpjMefOj4e1Gi0Z6D8jN4XukCbFzTjg6Uk2kFxP
+         0u9ARmxQqNDHGJuznBnk2LyF+IjxYMvvxbodRcishNN4V8FlMh+yWr8N2PLY9SVVRCZU
+         c8mQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721339838; x=1721944638;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ESReBtfRYbWAFdqZsiENsIRpb4yAg4v5BmBq8aEhHNc=;
-        b=Ih399Tm8JCglPZes3n/q3TZ3tnRt0qMbaU7MNZ2T+1xguTSUvilRt7XwC1CSPuPggF
-         m+2CTx9ivJ/UafmKXXqZ4q82xSJ3c8ArY5fiLTRT/Dx+hBArF4RvXjD2OIWjYCG7ilD1
-         Hjr2mJ+iW5/AzzGyVu0X6PmvQQwRMHBdSiMv5VJnMx5iJ6a6Y6a48TOm8/LCaGnPf8fo
-         mJQaRaGx6iXIbhbZ0DCyrwWKoZ17TYlpEUqAkrvmjUcFjZV/zvvsmvVtPqBtSG6xcXsU
-         H4bh3xKOH/Oqwl54DcxJT9I4/Th/pxvtSt2Fg2iTku0D2k5tT/0KV4gUU7zZEKsYzcKh
-         rU9A==
-X-Forwarded-Encrypted: i=1; AJvYcCW/bUI3JHB6KsWuBHXNiHDt29ICFvSOAmkqLBMWurOszCBYqCvjsYu5HnNQOq5rtCCCcF5Wz0oTZX5sC9/u68IkvtYjrzXaIE+GFrwp
-X-Gm-Message-State: AOJu0Yxe6mvhjMEWMWHaAFpNaeBgnjHAWor4eGsnA2WlFvlqVzzw2Eyg
-	e+DcRjrkZEr4fq0NUcij48+aEWu5MJalCbPL5yCXrIFArqsCfE5gVPrv6a7crw==
-X-Google-Smtp-Source: AGHT+IEAXH4Y2cTf5yDjSgxvPlXvU2z3xqhyqDWVlhaZnNGznQBBP9bqXzFNgQppD3BxzBsvfarEwg==
-X-Received: by 2002:a05:6602:6422:b0:7f6:76f2:e359 with SMTP id ca18e2360f4ac-81710040e70mr906632339f.4.1721339838507;
-        Thu, 18 Jul 2024 14:57:18 -0700 (PDT)
-Received: from localhost (161.74.123.34.bc.googleusercontent.com. [34.123.74.161])
-        by smtp.gmail.com with UTF8SMTPSA id 8926c6da1cb9f-4c2342bf50asm40510173.5.2024.07.18.14.57.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jul 2024 14:57:18 -0700 (PDT)
-Date: Thu, 18 Jul 2024 21:57:17 +0000
-From: Matthias Kaehlcke <mka@chromium.org>
-To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Cc: gregkh@linuxfoundation.org, javier.carrasco@wolfvision.net,
-	benjamin.bara@skidata.com, macpaul.lin@mediatek.com,
-	linux.amoon@gmail.com, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, git@amd.com
-Subject: Re: [PATCH v2 2/2] usb: misc: onboard_usb_dev: add Microchip usb5744
- SMBus programming support
-Message-ID: <ZpmPvaknDw2cGnOQ@google.com>
-References: <1721244223-3194869-1-git-send-email-radhey.shyam.pandey@amd.com>
- <1721244223-3194869-3-git-send-email-radhey.shyam.pandey@amd.com>
+        d=1e100.net; s=20230601; t=1721340147; x=1721944947;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UitsaCex0rhKIBN25ncNSW34VIXCM0DAlM4U4CaOTtU=;
+        b=YILDa3djLTGe2bfwBz74Jfy0w8sdKST/fdtgMBZNPmtPqUeUhBJgY3CbS+Ze1vPrAF
+         IRyptOMicD4aK+lFDtCd+GKDZ2Tczp+UsR2T7bYKWO1HJqYElwUiMwuOdUtNyn5jPQHa
+         zafK+joPDJbit7Q4TSBinn+mykkdr2v5eGYe1eCfZmCM/har1nuAtVGwq56TdtEci/HC
+         NNPvH+Bk0ioII/1nhyOk9nZqHYqLYPS3kjxKu4GrRsjZBw3vUeYTdk9DMxkvpjnrcFPh
+         85AA3QhFNWRwx0Ob0RhIEo0YE+aweiuiIZbvpGmlRmfBvpULf9xal6NgxjuZyGJrF/UA
+         6RZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVDrlO7iuJsSTHXRRErZfVtuS/a/EUGtpI9GzTPtC+rYPgr2J/fQzfwtvuU4wnU8TwKEK55qXpTVa0ZJKpMtL5HJVqK11k+nvInIpaxj4MxUVURZPAvej7D8PKdKRk/U8d6WhfzFPYXzsN4CTGYR3jM/OAiNDPwXPfBp6osssI2Tb6txg==
+X-Gm-Message-State: AOJu0YzGHF1g+9fZRPKZm2IdGSysbm/p5ZsBDvJBa9LtQ5ouephYNMlg
+	yKqqGFybPVNkO36wzQTF2iN8K7nqSTCc9wshsdmc9B7L/f/VzuW7
+X-Google-Smtp-Source: AGHT+IHhRQpjIqehS6RkFcjaxgF9L+d7kAwxV2D46PfGVsMhKByv0SHLBGn5drvJhiejRoCZ3FjSPA==
+X-Received: by 2002:a5d:4cc4:0:b0:367:f054:7aba with SMTP id ffacd0b85a97d-3683175ce54mr4102591f8f.41.1721340146741;
+        Thu, 18 Jul 2024 15:02:26 -0700 (PDT)
+Received: from localhost.localdomain ([2a10:d582:37c5:0:2ab4:ee:97a:e67f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d6936d62sm2739765e9.42.2024.07.18.15.02.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jul 2024 15:02:26 -0700 (PDT)
+From: Mudit Sharma <muditsharma.info@gmail.com>
+To: jic23@kernel.org,
+	lars@metafoo.de,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	robh@kernel.org
+Cc: Mudit Sharma <muditsharma.info@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	mazziesaccount@gmail.com,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v8 1/2] dt-bindings: iio: light: ROHM BH1745
+Date: Thu, 18 Jul 2024 23:02:05 +0100
+Message-ID: <20240718220208.331942-1-muditsharma.info@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1721244223-3194869-3-git-send-email-radhey.shyam.pandey@amd.com>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Add ROHM BH1745 - 4 channel I2C colour sensor's dt-bindings.
 
-On Thu, Jul 18, 2024 at 12:53:43AM +0530, Radhey Shyam Pandey wrote:
-> usb5744 supports SMBus Configuration and it may be configured via the
-> SMBus slave interface during the hub start-up configuration stage.
-> 
-> To program it driver uses i2c-bus phandle (added in commit '02be19e914b8
-> dt-bindings: usb: Add support for Microchip usb5744 hub controller') to
-> get i2c client device and then based on usb5744 compatible check calls
-> usb5744 i2c default initialization sequence.
-> 
-> Apart from the USB command attach, prevent the hub from suspend.
-> when the USB Attach with SMBus (0xAA56) command is issued to the hub,
-> the hub is getting enumerated and then it puts in a suspend mode.
-> This causes the hub to NAK any SMBus access made by the SMBus Master
-> during this period and not able to see the hub's slave address while
-> running the "i2c probe" command.
-> 
-> Prevent the MCU from the putting the HUB in suspend mode through
-> register write. The BYPASS_UDC_SUSPEND bit (Bit 3) of the RuntimeFlags2
-> register at address 0x411D controls this aspect of the hub. The
-> BYPASS_UDC_SUSPEND bit in register 0x411Dh must be set to ensure that the
-> MCU is always enabled and ready to respond to SMBus runtime commands.
-> This register needs to be written before the USB attach command is issued.
-> 
-> The byte sequence is as follows:
-> Slave addr: 0x2d           00 00 05 00 01 41 1D 08
-> Slave addr: 0x2d           99 37 00
-> Slave addr: 0x2d           AA 56 00
-> 
-> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-> ---
-> Changes for v2:
-> - Move power on reset delay to separate patch.
-> - Switch to compatible based check for calling usb5755
->   onboard_dev_5744_i2c_init(). This is done to make
->   onboard_dev_5744_i2c_init() as static.
-> - Fix subsystem "usb: misc: onboard_usb_dev:..."
-> - Use #define for different register bits instead of magic values.
-> - Use err_power_off label name.
-> - Modified commit description to be in sync with v2 changes.
-> ---
->  drivers/usb/misc/onboard_usb_dev.c | 56 ++++++++++++++++++++++++++++++
->  drivers/usb/misc/onboard_usb_dev.h | 12 +++++++
->  2 files changed, 68 insertions(+)
-> 
-> diff --git a/drivers/usb/misc/onboard_usb_dev.c b/drivers/usb/misc/onboard_usb_dev.c
-> index 94d5424841fd..4f3845f35ac4 100644
-> --- a/drivers/usb/misc/onboard_usb_dev.c
-> +++ b/drivers/usb/misc/onboard_usb_dev.c
-> @@ -11,6 +11,7 @@
->  #include <linux/err.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/init.h>
-> +#include <linux/i2c.h>
->  #include <linux/kernel.h>
->  #include <linux/list.h>
->  #include <linux/module.h>
-> @@ -297,10 +298,40 @@ static void onboard_dev_attach_usb_driver(struct work_struct *work)
->  		pr_err("Failed to attach USB driver: %pe\n", ERR_PTR(err));
->  }
->  
-> +static int onboard_dev_5744_i2c_init(struct i2c_client *client)
-> +{
-> +	struct device *dev = &client->dev;
-> +	int ret;
-> +
+Signed-off-by: Mudit Sharma <muditsharma.info@gmail.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+v7->v8:
+- no change
+v6->v7:
+- no change
+v5->v6:
+- no change
+v4->v5:
+- add power supply info
+v3->v4:
+- no changes
+v2->v3:
+- move 'additionalproperties' after 'required' block
+- remove block style indicator '|' from description
+v1->v2:
+- fix yaml issue: make `maintainers` a list
 
-Please explain what the purpose of this sequence is. It is described
-in the commit message, however that is not directly available to a
-reader of the code.
+ .../bindings/iio/light/rohm,bh1745.yaml       | 53 +++++++++++++++++++
+ 1 file changed, 53 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/light/rohm,bh1745.yaml
 
-> +	char wr_buf[7] = {USB5744_CREG_MEM_ADDR, USB5744_CREG_MEM_NBYTES,
+diff --git a/Documentation/devicetree/bindings/iio/light/rohm,bh1745.yaml b/Documentation/devicetree/bindings/iio/light/rohm,bh1745.yaml
+new file mode 100644
+index 000000000000..44896795c67e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/light/rohm,bh1745.yaml
+@@ -0,0 +1,53 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/light/rohm,bh1745.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ROHM BH1745 colour sensor
++
++maintainers:
++  - Mudit Sharma <muditsharma.info@gmail.com>
++
++description:
++  BH1745 is an I2C colour sensor with red, green, blue and clear
++  channels. It has a programmable active low interrupt pin.
++  Interrupt occurs when the signal from the selected interrupt
++  source channel crosses set interrupt threshold high/low level.
++
++properties:
++  compatible:
++    const: rohm,bh1745
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  vdd-supply: true
++
++required:
++  - compatible
++  - reg
++  - vdd-supply
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        colour-sensor@38 {
++            compatible = "rohm,bh1745";
++            reg = <0x38>;
++            interrupt-parent = <&gpio>;
++            interrupts = <19 IRQ_TYPE_LEVEL_LOW>;
++            vdd-supply = <&vdd>;
++        };
++    };
++
++...
+-- 
+2.43.0
 
-IIUC USB5744_CREG_MEM_NBYTES is the number of registers written to the
-configuration register by this specific command, it could be different
-for other commands. If that is correct then I think this shouldn't be
-a constant but a literal plus a comment.
-
-> +			  USB5744_CREG_WRITE, USB5744_CREG_NBYTES,
-
-Similar as above, USB5744_CREG_NBYTES should be a literal + comment, or
-alternatively something like USB5744_CREG_SIZE, assuming the width of
-all registers is one byte.
-
-It would also be an option to add a wrapper onboard_dev_5744_write_creg(),
-that encapsulates writing a configuration register. Not strictly need
-since currently only one register is written.
-
-> +			  USB5744_CREG_RUNTIMEFLAGS2,
-> +			  USB5744_CREG_RUNTIMEFLAGS2_LSB,
-> +			  USB5744_CREG_BYPASS_UDC_SUSPEND};
-> +
-> +	ret = i2c_smbus_write_block_data(client, 0, sizeof(wr_buf), wr_buf);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "BYPASS_UDC_SUSPEND bit configuration failed\n");
-> +
-> +	ret = i2c_smbus_write_word_data(client, USB5744_CREG_ACCESS,
-> +					USB5744_CREG_ACCESS_LSB);
-
-This is a command ("Configuration Register Access command", this should be
-reflected in the name, as for USB5744_CMD_ATTACH.
-
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Configuration Register Access Command failed\n");
-> +
-> +	/* Send SMBus command to boot hub. */
-> +	ret = i2c_smbus_write_word_data(client, USB5744_CMD_ATTACH,
-> +					USB5744_CMD_ATTACH_LSB);
-> +	if (ret < 0)
-> +		return dev_err_probe(dev, ret, "USB Attach with SMBus command failed\n");
-> +
-> +	return ret;
-
-	return 0;
-> +}
-> +
->  static int onboard_dev_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct onboard_dev *onboard_dev;	
-> +	struct device_node *i2c_node;
->  	int err;
->  
->  	onboard_dev = devm_kzalloc(dev, sizeof(*onboard_dev), GFP_KERNEL);
-> @@ -340,6 +371,27 @@ static int onboard_dev_probe(struct platform_device *pdev)
->  	if (err)
->  		return err;
->  
-> +	i2c_node = of_parse_phandle(pdev->dev.of_node, "i2c-bus", 0);
-> +	if (i2c_node) {
-> +		struct i2c_client *client;
-> +
-> +		client = of_find_i2c_device_by_node(i2c_node);
-> +		of_node_put(i2c_node);
-> +
-> +		if (!client) {
-> +			err = -EPROBE_DEFER;
-> +			goto err_power_off;
-> +		}
-> +
-> +		if (of_device_is_compatible(pdev->dev.of_node, "usb424,2744") ||
-> +		    of_device_is_compatible(pdev->dev.of_node, "usb424,5744"))
-> +			err = onboard_dev_5744_i2c_init(client);
-> +
-> +		put_device(&client->dev);
-> +		if (err < 0)
-> +			goto err_power_off;
-> +	}
-> +
->  	/*
->  	 * The USB driver might have been detached from the USB devices by
->  	 * onboard_dev_remove() (e.g. through an 'unbind' by userspace),
-> @@ -351,6 +403,10 @@ static int onboard_dev_probe(struct platform_device *pdev)
->  	schedule_work(&attach_usb_driver_work);
->  
->  	return 0;
-> +
-> +err_power_off:
-> +	onboard_dev_power_off(onboard_dev);
-> +	return err;
->  }
->  
->  static void onboard_dev_remove(struct platform_device *pdev)
-> diff --git a/drivers/usb/misc/onboard_usb_dev.h b/drivers/usb/misc/onboard_usb_dev.h
-> index 82c76a0b3346..5744c589b90f 100644
-> --- a/drivers/usb/misc/onboard_usb_dev.h
-> +++ b/drivers/usb/misc/onboard_usb_dev.h
-> @@ -8,6 +8,18 @@
->  
->  #define MAX_SUPPLIES 2
->  
-> +#define USB5744_CMD_ATTACH			0xAA
-> +#define USB5744_CMD_ATTACH_LSB			0x56
-> +#define USB5744_CREG_ACCESS			0x99
-> +#define USB5744_CREG_ACCESS_LSB			0x37
-> +#define USB5744_CREG_MEM_ADDR			0x00
-> +#define USB5744_CREG_MEM_NBYTES			0x05
-> +#define USB5744_CREG_WRITE			0x00
-> +#define USB5744_CREG_NBYTES			0x01
-> +#define USB5744_CREG_RUNTIMEFLAGS2		0x41
-> +#define USB5744_CREG_RUNTIMEFLAGS2_LSB		0x1D
-> +#define USB5744_CREG_BYPASS_UDC_SUSPEND		BIT(3)
-> +
-
-These defines are specific to the Microchip 5744 hub, there is no need
-for them to be defined in the include of the onboard_usb_dev driver.
-Please move them to the .c file
-
-Thanks
-
-Matthias
 
