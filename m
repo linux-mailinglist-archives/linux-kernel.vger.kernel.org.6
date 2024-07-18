@@ -1,144 +1,186 @@
-Return-Path: <linux-kernel+bounces-256313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B57B934C57
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:23:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73AE2934C5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:24:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DA921C2190A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:23:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29BB9280FF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8E213210D;
-	Thu, 18 Jul 2024 11:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="eRVtoGyN"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3077D3EF;
+	Thu, 18 Jul 2024 11:24:03 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725821BF37
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 11:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240FC84DF5;
+	Thu, 18 Jul 2024 11:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721301792; cv=none; b=iqJ7HybMYdLuvhzKWOw6s8aSG41AqJZ3Uw/5NXnopADlXqhKfn0JkHPnYhW5Ijh1J6G8gSG8Twmwu1fI/gyicWu9RCvJAR9tkkBOR7rPxU9vO21ZqINN6eFkRHF1RmwJYbCzlRLDMbaiLUGaaa4uknZz46iAP4KE9ytWN4NQksk=
+	t=1721301843; cv=none; b=qTfZ4o5+UvQ0P3uFAQPSMc8G0urBrS62oV+gVkuolk1UfMPjIglZTbwGGIQmqGJeqP39XSpHH8ZuJrtHsawOxR9p7IOCuuUqU6SO7mMxqCYQQmsmv5mC9SCfFus88wYlqrVOy+4UismJzPMdW4GDPJcazoZG+JyeCjMii/to5/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721301792; c=relaxed/simple;
-	bh=Rhu+ivLN8i4cGGfuNKe45o1pJKIStecWgDqToMVnLUk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JtU5FKR//txGhSbvajkF9cz+W+PESnpnxsJp0O/CdQnPjDOkYkv/iwPP8RK/Zq5zX6RNAhl4aGsENPi1M2ha8fv5B478yv3XTHVQ3uaCYbR05/LRTUctL7Gbgp0B2/3cVnxxckfwLy0Gr6RursTBka4pOtKJ6M9SIcClIFNKTVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=eRVtoGyN; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721301787;
-	bh=Rhu+ivLN8i4cGGfuNKe45o1pJKIStecWgDqToMVnLUk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eRVtoGyNQfsWeg4dFxpH5wAPa+R0323lbfRdSK23/AWBENSv+IAO3XPjSge9THc/E
-	 PZqHjs4HABtU3UnGe0EYzgLA+quFty+o7HbaYM2ueuBQj/5vOKc2M2FXZidiTnCaU1
-	 lf5JhkTpiidnrL8ssxsLdxAivJhW0mij2wPJzPeDrVWRNno4+ZpKrxpCARnFrEEYbw
-	 s/JHlZ7qhswD4XVdqDl8KEh5CQjt8zqnTceRAKP2if5Op5phQV3RuBJBDJEnDi0BWR
-	 M0ibod+QQlL4Pu/12Y9YGAq53aIJJFDv+RZl/3iYWfsqjpuTRdASZYbUQCyfkV/v+Q
-	 gGySo5cAKzTbQ==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id A5FBB378202D;
-	Thu, 18 Jul 2024 11:23:06 +0000 (UTC)
-Message-ID: <d6f20609-5127-4010-b691-40cd3b253283@collabora.com>
-Date: Thu, 18 Jul 2024 13:23:05 +0200
+	s=arc-20240116; t=1721301843; c=relaxed/simple;
+	bh=Von70e325NTMhrdRJlBmZTpEzJqO3hoYObIgLIfWjLU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oSd5mWooiqpUiTQNEl3SRJpDUxFsCJrIfEVVnEtUaFPE0Uren+vtA3WwMkPrYd7m2u3QTD/z62L5f4Kk2hDQ22a/cY5HXfQwYJLAtFVh4dqF3mLr0KeHJCENaT59TU0sYZ56qMFzqPLgymzsKnymTEPvn2/xK7bzRcpSiDLaiXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from ThinkPad-T480s.. (unknown [180.110.112.93])
+	by APP-03 (Coremail) with SMTP id rQCowABXXNQ1+5hmHaZgFg--.36655S2;
+	Thu, 18 Jul 2024 19:23:35 +0800 (CST)
+From: zhouquan@iscas.ac.cn
+To: linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-perf-users@vger.kernel.org
+Cc: anup@brainfault.org,
+	atishp@atishpatra.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	Quan Zhou <zhouquan@iscas.ac.cn>
+Subject: [PATCH 0/2] Add perf support to collect KVM guest statistics from host side
+Date: Thu, 18 Jul 2024 19:23:33 +0800
+Message-Id: <cover.1721271251.git.zhouquan@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/mediatek: Set sensible cursor width/height values to
- fix crash
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: Fei Shao <fshao@chromium.org>, Chen-Yu Tsai <wenst@chromium.org>,
- chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com,
- daniel@ffwll.ch, matthias.bgg@gmail.com, shawn.sung@mediatek.com,
- ck.hu@mediatek.com, dri-devel@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, kernel@collabora.com
-References: <20240718082410.204459-1-angelogioacchino.delregno@collabora.com>
- <CAGXv+5GBg73kWuiDt=9s7M4oJeHhWOF3bPY7Ju+qn1kJgNNaGw@mail.gmail.com>
- <CAC=S1nigoJWAECBrm-Q=Co1-qd_yUhx3R4D9=dYeUV=gr5UYfQ@mail.gmail.com>
- <74e7477b-81c7-4713-80cc-1cb476185bc9@collabora.com>
- <CAPj87rPZRjmMPjaOY-UH4auTuMS6mh9N7=maRBzxut2OgtALbw@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <CAPj87rPZRjmMPjaOY-UH4auTuMS6mh9N7=maRBzxut2OgtALbw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowABXXNQ1+5hmHaZgFg--.36655S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJw17AFy7Gr4UGF1rCr1xKrg_yoWrtr17pr
+	43CrsxtF4rAryIqw1Svr1YkryUJ397XrnxGrnxJr4rAr4jvaykXwn2gr1xZ3y0qrykKryr
+	Xw1ktFy2kas0yFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwAKzVCY07xG64k0F24l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
+	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
+	17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
+	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
+	73UjIFyTuYvjfUe6pBDUUUU
+X-CM-SenderInfo: 52kr31xxdqqxpvfd2hldfou0/1tbiDAUCBmaY7wwhDAAAs9
 
-Il 18/07/24 13:10, Daniel Stone ha scritto:
-> Hi all,
-> 
-> On Thu, 18 Jul 2024 at 11:24, AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->> Il 18/07/24 11:27, Fei Shao ha scritto:
->>> This matches my preference in [1], so of course I'd like to see it
->>> merged... if maintainers are okay with it.
->>> Given I've tested the exact same change before:
->>> Reviewed-by: Fei Shao <fshao@chromium.org>
->>> Tested-by: Fei Shao <fshao@chromium.org>
->>
->> Thanks!
-> 
-> And:
-> Reviewed-by: Daniel Stone <daniels@collabora.com>
-> 
->>>> OOTH, Intel recently added a feature for enumerating "suggested"
->>>> cursor sizes. See https://patchwork.freedesktop.org/patch/583299/
->>>>
->>>> Not sure if other compositors will end up using it or not.
->>
->> Yeah, that's good, and we might do that as well in MediaTek DRM... in a slightly
->> different way, as it looks like they are simply hinting the same values as the
->> mode_config is declaring... while we'd be adding a hint with a sensible size that
->> is less than the maximum supported one from the overlay.
->>
->> In reality, here, the issue is that the most popular compositors do not support
->> overlay planes (as in, they don't use them at all)... my first idea was to remove
->> the CURSOR plane entirely and declare it as per what it is for real (an OVERLAY),
->> but that would only give a performance penalty as that'd become yet another unused
->> plane and nothing else.
->>
->> If at least the most popular compositors did support overlay planes, I'd have done
->> that instead... but oh, well!
->>
->> And anyway I hope that the maintainers are okay with this because, well, otherwise
->> MediaTek SoCs won't be usable with any popular WM.
-> 
-> Every compositor is going to use it, yeah. But until it does, people
-> are just going to use cursor_width and cursor_size. A lot of older
-> desktop hardware supports only a single fixed dimension for the cursor
-> plane (hence the single values), so rather than guess if it needs to
-> be 32x32 or 64x64 or whatever, people just allocate to the size. Not
-> to mention that the old pre-atomic cursor ioctls actually require that
-> you allocate for cursor_width x cursor_height.
-> 
-> So yeah, this is the right fix - though you could even be more
-> aggressive and reduce it to 256x256 - and supporting the CURSOR_SIZE
-> property would be even more useful again.
-> 
+From: Quan Zhou <zhouquan@iscas.ac.cn>
 
-I thought about being more aggressive, but then I saw that IGT tests for up to 512
-and that MSM also declares the same, so, making IGT happy because we can indeed
-support that much (since we can support even more, but doesn't make sense) :-)
+Add basic guest support to RISC-V perf, enabling it to distinguish
+whether PMU interrupts occur in the host or the guest, and then
+collect some basic guest information from the host side
+(guest os callchain is not supported for now).
 
-Regarding CURSOR_SIZE ... right, I can take a look at that a bit later, most
-probably not for this merge window, though.
+Based on the x86/arm implementation, tested with kvm-riscv.
+test env:
+- host: qemu-9.0.0
+- guest: qemu-9.0.0 --enable-kvm (only start one guest and run top)
 
-Cheers!
+-----------------------------------------
+1) perf kvm top
+./perf kvm --host --guest \
+  --guestkallsyms=/root/repo/shared/kallsyms \
+  --guestmodules=/root/repo/shared/modules top
 
-> Cheers,
-> Daniel
+PerfTop:      41 irqs/sec  kernel:97.6% us: 0.0% guest kernel: 0.0% guest us: 0.0% exact:  0.0% [250Hz cycles:P],  (all, 4 CPUs)
+-------------------------------------------------------------------------------
 
+    64.57%  [kernel]        [k] default_idle_call
+     3.12%  [kernel]        [k] _raw_spin_unlock_irqrestore
+     3.03%  [guest.kernel]  [g] mem_serial_out
+     2.61%  [kernel]        [k] handle_softirqs
+     2.32%  [kernel]        [k] do_trap_ecall_u
+     1.71%  [kernel]        [k] _raw_spin_unlock_irq
+     1.26%  [guest.kernel]  [g] do_raw_spin_lock
+     1.25%  [kernel]        [k] finish_task_switch.isra.0
+     1.16%  [kernel]        [k] do_idle
+     0.77%  libc.so.6       [.] ioctl
+     0.76%  [kernel]        [k] queue_work_on
+     0.69%  [kernel]        [k] __local_bh_enable_ip
+     0.67%  [guest.kernel]  [g] __noinstr_text_start
+     0.64%  [guest.kernel]  [g] mem_serial_in
+     0.41%  libc.so.6       [.] pthread_sigmask
+     0.39%  [kernel]        [k] mem_cgroup_uncharge_skmem
+     0.39%  [kernel]        [k] __might_resched
+     0.39%  [guest.kernel]  [g] _nohz_idle_balance.isra.0
+     0.37%  [kernel]        [k] sched_balance_update_blocked_averages
+     0.34%  [kernel]        [k] sched_balance_rq
+
+2) perf kvm record
+./perf kvm --host --guest \
+  --guestkallsyms=/root/repo/shared/kallsyms \
+  --guestmodules=/root/repo/shared/modules record -a sleep 60
+
+[ perf record: Woken up 3 times to write data ]
+[ perf record: Captured and wrote 1.292 MB perf.data.kvm (17990 samples) ]
+
+3) perf kvm report (the data shown here is not complete)
+./perf kvm --host --guest \
+  --guestkallsyms=/root/repo/shared/kallsyms \
+  --guestmodules=/root/repo/shared/modules report -i perf.data.kvm
+
+# Total Lost Samples: 0
+#
+# Samples: 17K of event 'cycles:P'
+# Event count (approx.): 269968947184
+#
+# Overhead  Command          Shared Object            Symbol                                        
+# ........  ...............  .......................  ..............................................
+#
+    61.86%  swapper          [kernel.kallsyms]        [k] default_idle_call
+     2.93%  :6463            [guest.kernel.kallsyms]  [g] do_raw_spin_lock
+     2.82%  :6462            [guest.kernel.kallsyms]  [g] mem_serial_out
+     2.11%  sshd             [kernel.kallsyms]        [k] _raw_spin_unlock_irqrestore
+     1.78%  :6462            [guest.kernel.kallsyms]  [g] do_raw_spin_lock
+     1.37%  swapper          [kernel.kallsyms]        [k] handle_softirqs
+     1.36%  swapper          [kernel.kallsyms]        [k] do_idle
+     1.21%  sshd             [kernel.kallsyms]        [k] do_trap_ecall_u
+     1.21%  sshd             [kernel.kallsyms]        [k] _raw_spin_unlock_irq
+     1.11%  qemu-system-ris  [kernel.kallsyms]        [k] do_trap_ecall_u
+     0.93%  qemu-system-ris  libc.so.6                [.] ioctl
+     0.89%  sshd             [kernel.kallsyms]        [k] __local_bh_enable_ip
+     0.77%  qemu-system-ris  [kernel.kallsyms]        [k] _raw_spin_unlock_irqrestore
+     0.68%  qemu-system-ris  [kernel.kallsyms]        [k] queue_work_on
+     0.65%  sshd             [kernel.kallsyms]        [k] handle_softirqs
+     0.44%  :6462            [guest.kernel.kallsyms]  [g] mem_serial_in
+     0.42%  sshd             libc.so.6                [.] pthread_sigmask
+     0.34%  :6462            [guest.kernel.kallsyms]  [g] serial8250_tx_chars
+     0.30%  swapper          [kernel.kallsyms]        [k] finish_task_switch.isra.0
+     0.29%  swapper          [kernel.kallsyms]        [k] sched_balance_rq
+     0.29%  sshd             [kernel.kallsyms]        [k] __might_resched
+     0.26%  swapper          [kernel.kallsyms]        [k] tick_nohz_idle_exit
+     0.26%  swapper          [kernel.kallsyms]        [k] sched_balance_update_blocked_averages
+     0.26%  swapper          [kernel.kallsyms]        [k] _nohz_idle_balance.isra.0
+     0.24%  qemu-system-ris  [kernel.kallsyms]        [k] finish_task_switch.isra.0
+     0.23%  :6462            [guest.kernel.kallsyms]  [g] __noinstr_text_start
+
+
+Quan Zhou (2):
+  riscv: perf: add guest vs host distinction
+  riscv: KVM: add basic support for host vs guest profiling
+
+ arch/riscv/include/asm/kvm_host.h   |  6 +++++
+ arch/riscv/include/asm/perf_event.h |  7 ++++++
+ arch/riscv/kernel/perf_callchain.c  | 38 +++++++++++++++++++++++++++++
+ arch/riscv/kvm/Kconfig              |  1 +
+ arch/riscv/kvm/main.c               | 12 +++++++--
+ arch/riscv/kvm/vcpu.c               |  7 ++++++
+ 6 files changed, 69 insertions(+), 2 deletions(-)
+
+
+base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+-- 
+2.34.1
 
 
