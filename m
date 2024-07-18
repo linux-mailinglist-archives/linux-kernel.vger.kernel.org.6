@@ -1,80 +1,95 @@
-Return-Path: <linux-kernel+bounces-256703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A189935233
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 21:38:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A418935236
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 21:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA8C2B21E51
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:38:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1EC61F2114C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F7B145A1A;
-	Thu, 18 Jul 2024 19:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42EB1459F6;
+	Thu, 18 Jul 2024 19:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KQBnzRyB"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fTZ1n62Y"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80777145359
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 19:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55E413AA26
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 19:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721331492; cv=none; b=DN9Yq6x1XLDgGcas7eJkuc/LfBmaqJRLFJfIWgZpDBl3zc4m6tLyZSnVEJ+982D59A6reuUQDVP8VX1erpY+DXz/9ONGwUiR6dXWk5KU9gG5BPVktwZRkKYpJWZvHmxa6AiJ1JGvKZicgXwU8PdPWS0UwVlWzw030Sec4dIMycQ=
+	t=1721331553; cv=none; b=hlMp5+dyr8LL5GhZcJg2afHkCg1I31/YUFjCqoYB53H9CEFjNLkcBBBaIEdD5u8Xlq1BCliCozwuDZ+VDRsIJUEaFrjvNPdUK6488a37ad1TqGO9vu8kZEJRK+Jg5W8mzv0IMlQHBoC7x+NochUP8cKy2qiNOhpQyzb39Z0+Vjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721331492; c=relaxed/simple;
-	bh=RYuacLTG+z634FBy6S6dcaYTEgCpyJ6rTHqYmBDdDPU=;
-	h=From:Date:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PrG3SOMPLCEhgZQZoQquSR6VUXrfVDi1E4Q0rCynQmnEYH29V+gvUPU50Qy9q+vQXOeGqFKiBCCO17SbSaNyt3YneustRT/jdjQ0ItMpBPbwd8+vtRIEFwFWUGbNO92ybItTxk9mCzf5bt3sWpaXe25uRqE+3wbHS6xWU8czVyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KQBnzRyB; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fb1c918860so18074065ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 12:38:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721331491; x=1721936291; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xlvbcmfbLNtQB/g1YUVOloxgGcbDxiAVH5DBzdK+Zy4=;
-        b=KQBnzRyBd5BXSG1Phky2Ik6AFq9mFr+ovKhKj+u9dkk3pFtm/WRlqzHOwnc3gmsKJm
-         uTYlV+SbNNNbKWHz8DNLjRdJarqs6LUHLjmXCDGlLBFMCIItwqlqTQtFpnC6aquIKZm3
-         kpg/AX0wXKI1ulLpRgTNpuZV5caKmTfsJtDzK3BcJxICM4kceNKYIV5sk40kgVKF7IjC
-         z4n9athcgch4tjdZnKjAGULlVveXG1AKo4nw1yQGO/7oSHngT/usA4omwZS6I8yZ9BEn
-         uC0AdHkLg0ISg2BuOCdNEvzdJ7C3731S/nIeSQZG93OLdh9C2gg0EEAvw3m2eEXGXNKG
-         1Img==
+	s=arc-20240116; t=1721331553; c=relaxed/simple;
+	bh=YNdqwy7kCRnthAWGt25BAuPpmrM1cC32dACjVkXCQHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZoiT1Sdhr/U9K9Mu8gP9/bT61Lw6GoMuF7CA6oS0aj0lNW83wOe6QkKwBXqm7MTagc8w1+xEOaTH9d06XRLLhcssb5qZ04h2dX25IQKc0i3Jkc8D6NKA1KfvnStdaYfLvsUhw+37wvMIlIscLKQHnc+mrIhJl6FlYoxKeNsR9aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fTZ1n62Y; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721331550;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M+Nl6R9d4RbpOHYlmLt5JwqOfz9o9yrilMSlqF926WM=;
+	b=fTZ1n62YoihrJZRGWj/7x+SxY35UhrreQ+HMvIA0yKOB54rh7zQ2Sx+wMs1S1q1sBRgCoI
+	8HqrTYyy30LgAOO4iO9i3bx+epmo6BCRJBInXKLdimclnroqe0kLtyPk1J+63aYCkPpOux
+	daIHdVQpQ/OMGlYff36nO64VjIY2R0A=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-315-TA3GLrkoMAuZK3dNZZYE1g-1; Thu, 18 Jul 2024 15:39:09 -0400
+X-MC-Unique: TA3GLrkoMAuZK3dNZZYE1g-1
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-57d3eca4c01so96010a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 12:39:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721331491; x=1721936291;
-        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xlvbcmfbLNtQB/g1YUVOloxgGcbDxiAVH5DBzdK+Zy4=;
-        b=LxV6RIy2apmHuhM75oCeS8Saau5Hd4/g8S+KT2D6xGZvYiqTv7BvfiMTH1TLRolJeK
-         0v4DkjB6bq2BcX2Msy+qq3MSRvPzo37VIBuXVRdSUtXxKWY1/VjoUcmLgADIs43m8HnT
-         65wgGPjBlH6+eet0klh40UbY8hjohS5bLgsKOkYzDid8CcaGq3ADnmhh5tAJ+Ror+P2H
-         AZM/UZo1L7dX1Abx9Xg4R0j9jzP/CCrtdKTRD3m2KhZsuqcfqwrKePKNC3br+s6U+6k+
-         Qc22a9kThDhPNjS9gWCnBnFCweYueM0Jmme+a3AFcYAv7eiZ5NoqfMv1oPfQ9LGgg1cs
-         5odw==
-X-Forwarded-Encrypted: i=1; AJvYcCUyd0oDF97LPZuK6xfsWelIa4xeGqazyYs5g64nPfdL7Ow8A8wRvPXbjDtDDpKmtGJUQ6LvSjW4Bj/zffc4kYPKFQZOmLnJih/zIS66
-X-Gm-Message-State: AOJu0Yxk0YvqqJWR60SNpgiwwZ7PrYpjFuXjeJtg/i7knizi1EbGmdTT
-	5Cy8ZlDbar4KB2lrch/YbWVvMrH/1gQdYMlqGrFzCpHQ4Uhop/DS
-X-Google-Smtp-Source: AGHT+IHsUqhh+XVVyUQrl9f8/4GnVrFP6k1Z70IknXZEWEGomJDovsBSVGGzpjk1aX4pH5Xw1iSRCQ==
-X-Received: by 2002:a17:902:eccc:b0:1fb:9b91:d7d9 with SMTP id d9443c01a7336-1fc5b647251mr64844255ad.26.1721331490555;
-        Thu, 18 Jul 2024 12:38:10 -0700 (PDT)
-Received: from localhost ([138.0.199.154])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc72faa189sm5898605ad.46.2024.07.18.12.38.09
+        d=1e100.net; s=20230601; t=1721331548; x=1721936348;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M+Nl6R9d4RbpOHYlmLt5JwqOfz9o9yrilMSlqF926WM=;
+        b=uqVdMcw4JeOCFfmCVmBIVmfSqLaHH91k8m9fuK+fSYA1YVuk3TK2CHEsgPFSqzaEe4
+         uPLTnynbmtpBLNcLoy3L1QmkuQ3s+qZ08eAqzTcy6pQkdA6cB4oWsu6BvQhYtYzCxnVC
+         /DbWMDdEiZ8h46jej9eEZ3xWdtScB81GFafxjSqxPBGw/8EjDl5lTmJ93eyzuEQYDPFD
+         NOpSXNMWZLZr7jK+h2gRWpDbWz+pMoQ4TG2RZs+c0C1V6d7ctRDCixAL9DaX+uoGVtJ+
+         c7fmj98yztJOfogH7FjmJfBg78nXxmiV8uIhUd+q+mBlI61KFudDObk+ZqYRU90xxd+V
+         OPjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0B+f+pibCr0CHj8PT//veQRgFkOuAj5xk7WLbZkdxw711mih1rc2sIY6XhqXMLVYDftrIlHzh98aV2c8NbPBdrczd2ws32abau45I
+X-Gm-Message-State: AOJu0YzDBCNNG5ZPpxFKzLVPDWsCIYcwNyG5RfOao+rzBr6grUm/I1ai
+	VgIwFGk2BOjETgenpRTrb8j5fafHQoAbaGbpbd2uYmgn5Q5q4P8ZVDUJVxWWN0bYx2h97ZCYkCE
+	I2oJQzr7z8qMP7FT3+1O5r4NQvRBpgUVmnCJaGTt4UqLg4zCbhgtIx8G37+s1IGFq/aDKDQ==
+X-Received: by 2002:a50:9e85:0:b0:5a1:6c50:a3d with SMTP id 4fb4d7f45d1cf-5a16c500aa5mr2188081a12.20.1721331548111;
+        Thu, 18 Jul 2024 12:39:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHaoGS44bEP46gwargFeZVeVI2AZznegXlDO8vExCziupfmD6LupuDU+NRqxyVgGi7d2vM86g==
+X-Received: by 2002:a50:9e85:0:b0:5a1:6c50:a3d with SMTP id 4fb4d7f45d1cf-5a16c500aa5mr2188072a12.20.1721331547261;
+        Thu, 18 Jul 2024 12:39:07 -0700 (PDT)
+Received: from redhat.com (mob-5-90-112-15.net.vodafone.it. [5.90.112.15])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a2b8665941sm228569a12.86.2024.07.18.12.39.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 12:38:10 -0700 (PDT)
-From: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@redhat.com>
-Date: Thu, 18 Jul 2024 16:38:07 -0300
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH perf-tools 1/1] perf daemon: Fix the build on 32-bit
- architectures
-Message-ID: <ZplvH21aQ8pzmza_@x1>
+        Thu, 18 Jul 2024 12:39:06 -0700 (PDT)
+Date: Thu, 18 Jul 2024 15:39:04 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: Steven Sistare <steven.sistare@oracle.com>,
+	virtualization@lists.linux-foundation.org,
+	linux-kernel@vger.kernel.org, Si-Wei Liu <si-wei.liu@oracle.com>,
+	Eugenio Perez Martin <eperezma@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Dragos Tatulea <dtatulea@nvidia.com>,
+	Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: [PATCH V2 5/7] vhost-vdpa: VHOST_IOTLB_REMAP
+Message-ID: <20240718153724-mutt-send-email-mst@kernel.org>
+References: <1720790333-456232-1-git-send-email-steven.sistare@oracle.com>
+ <1720790333-456232-6-git-send-email-steven.sistare@oracle.com>
+ <CACGkMEurG88fXiThyainxbuzpgBUzzGkmvyQB5vuXsU7_6XBBw@mail.gmail.com>
+ <d738a0e2-5a17-4323-9c86-b5a806066292@oracle.com>
+ <CACGkMEuj-6EcEPo9xKkmuPSaQPQnH6zG+j2cqLRiScWUB4oqXw@mail.gmail.com>
+ <5a1cfaaf-64aa-426a-b1b4-da84a66b362a@oracle.com>
+ <CACGkMEtuErg+nd96k6FkL9dfSxOv2o38L1HSsK9jU-xmmkv8oQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,68 +98,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CACGkMEtuErg+nd96k6FkL9dfSxOv2o38L1HSsK9jU-xmmkv8oQ@mail.gmail.com>
 
-Noticed with:
+On Thu, Jul 18, 2024 at 08:45:31AM +0800, Jason Wang wrote:
+> > > For example:
+> > >
+> > > 1) old owner pass fd to new owner which is another process
+> > > 2) the new owner do VHOST_NEW_OWNER
+> > > 3) new owner doesn't do remap correctly
+> > >
+> > > There's no way for the old owner to remove/unpin the mappings as we
+> > > have the owner check in IOTLB_UPDATE. Looks like a potential way for
+> > > DOS.
+> >
+> > This is a bug in the second cooperating process, not a DOS.  The application
+> > must fix it.  Sometimes you cannot recover from an application bug at run time.
+> >
+> > BTW, at one time vfio enforced the concept of an owner, but Alex deleted it.
+> > It adds no value, because possession of the fd is the key.
+> >    ffed0518d871 ("vfio: remove useless judgement")
+> 
+> This seems to be a great relaxation of the ownership check. I would
+> like to hear from Michael first.
+> 
+> Thanks
 
-   1     6.22 debian:experimental-x-mipsel  : FAIL gcc version 13.2.0 (Debian 13.2.0-25)
-    builtin-daemon.c: In function 'cmd_session_list':
-    builtin-daemon.c:691:35: error: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'time_t' {aka 'long long int'} [-Werror=format=]
+It could be that the ownership model is too restrictive.
+But again, this is changing a security assumption.
+Looks like yes another reason to tie this to the switch to iommufd.
 
-Use inttypes.h's PRIu64 to deal with that.
-
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-daemon.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/tools/perf/builtin-daemon.c b/tools/perf/builtin-daemon.c
-index de76bbc50bfbcbb6..5c9335fff2d396b4 100644
---- a/tools/perf/builtin-daemon.c
-+++ b/tools/perf/builtin-daemon.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <internal/lib.h>
-+#include <inttypes.h>
- #include <subcmd/parse-options.h>
- #include <api/fd/array.h>
- #include <api/fs/fs.h>
-@@ -688,7 +689,7 @@ static int cmd_session_list(struct daemon *daemon, union cmd *cmd, FILE *out)
- 			/* lock */
- 			csv_sep, daemon->base, "lock");
- 
--		fprintf(out, "%c%lu",
-+		fprintf(out, "%c%" PRIu64,
- 			/* session up time */
- 			csv_sep, (curr - daemon->start) / 60);
- 
-@@ -700,7 +701,7 @@ static int cmd_session_list(struct daemon *daemon, union cmd *cmd, FILE *out)
- 				daemon->base, SESSION_OUTPUT);
- 			fprintf(out, "  lock:    %s/lock\n",
- 				daemon->base);
--			fprintf(out, "  up:      %lu minutes\n",
-+			fprintf(out, "  up:      %" PRIu64 " minutes\n",
- 				(curr - daemon->start) / 60);
- 		}
- 	}
-@@ -727,7 +728,7 @@ static int cmd_session_list(struct daemon *daemon, union cmd *cmd, FILE *out)
- 				/* session ack */
- 				csv_sep, session->base, SESSION_ACK);
- 
--			fprintf(out, "%c%lu",
-+			fprintf(out, "%c%" PRIu64,
- 				/* session up time */
- 				csv_sep, (curr - session->start) / 60);
- 
-@@ -745,7 +746,7 @@ static int cmd_session_list(struct daemon *daemon, union cmd *cmd, FILE *out)
- 				session->base, SESSION_CONTROL);
- 			fprintf(out, "  ack:     %s/%s\n",
- 				session->base, SESSION_ACK);
--			fprintf(out, "  up:      %lu minutes\n",
-+			fprintf(out, "  up:      %" PRIu64 " minutes\n",
- 				(curr - session->start) / 60);
- 		}
- 	}
 -- 
-2.45.1
+MST
 
 
