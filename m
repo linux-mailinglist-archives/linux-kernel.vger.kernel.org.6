@@ -1,156 +1,126 @@
-Return-Path: <linux-kernel+bounces-256345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2094934CC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:51:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D53EA934CCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:51:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F39F1F22DCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:51:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55AEB281E1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5BCF13AD13;
-	Thu, 18 Jul 2024 11:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C8713AD13;
+	Thu, 18 Jul 2024 11:51:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="zevrOBOT"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BZ+vlkxB"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665D113774B
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 11:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0E31B86FB;
+	Thu, 18 Jul 2024 11:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721303463; cv=none; b=gHCHX1QeZ57Wbm5OGrAQt5GMI/27HkxXA7W5XKsbeMzJ+vqkP9pGNeEj+j1Cdz0q5h42AAXoYpDF9stcLIJ4IL82Fs4Y5dHsq654o59vDcb5IzGxn/cQiN99CE5zlhyeHx4f6QivbpPQDki+3ZBJSy/MuTZrBBde4BP/YUo7uZU=
+	t=1721303509; cv=none; b=QD+W3s1c3YZrnofq05gFXLj4PPWSpY86oBvQlblF97sR3CGUWOpkdU6+rMJtQECman7XxkGvaEscM6teDd8O8imZ0h6+K5cHWx0jvIQLUsZqFDBDhYFsAZC6Ey9TpQhNltBhUR0Mm0TcPxkENoeTJJYx/yyP8EpYjDIu5nRQHt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721303463; c=relaxed/simple;
-	bh=vD3tfVsWGs13fLKirLM+QMolfsmQJwO7QPEf2sxf1ks=;
+	s=arc-20240116; t=1721303509; c=relaxed/simple;
+	bh=iTKD9vLO0vuTlvZTMWOfzEYbAPyf4A5qsCQ1FQNjE48=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z3OMFr6t1A2K0MPJ0wJblClv5GF+f3mLZcbhrfJUkv6IrG1PGg8+80RQMsAr/yudfYmh8nrxqRfWTPe5GowMNR9/Ey/ddt/bmUE/oORLA5KPjm4h1Yos5EAzWyR9pCHOPO7XYspYQUP4AeRric9blwo4Ntu9rYGYKVwWLkYxyJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=zevrOBOT; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a77c080b521so67644166b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 04:51:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721303460; x=1721908260; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vD3tfVsWGs13fLKirLM+QMolfsmQJwO7QPEf2sxf1ks=;
-        b=zevrOBOTfQssDP8/bbpgUa7VXzjUA4xtdvNvDjTAgv/DXuA1vgzp5ttbWK1A8W0Bk+
-         Vc1zI+OlqZ5lDw5A0ruRlYDnb/xSyY5ae1o1+h/WlULR+RdbJdMrY346jCljROlRt/Bu
-         jevaQnKIIUkDqeUx9xwQ1etZFJvCx8+a1K/Y8WMidGDggRB12KTkOOwe738THxJKb/sd
-         py2mjEe8r+/3p5EuM2sK3ZpCOoj7kmDsWxc+40uH9pnsuVnmt4WQQZP6K55UhasZlWcY
-         OlZTF+D3RBez9TIg18vPZjlApp9YVhrygrly2Xvo4mrxrAQTlxIAZEmtkZVaqgy5C6W/
-         66cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721303460; x=1721908260;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vD3tfVsWGs13fLKirLM+QMolfsmQJwO7QPEf2sxf1ks=;
-        b=vgPsPjY/ic9Jz9yFEcHUwFWLJitIxGXB3d/B/dJSkxn1T5tQiTXAqQjOM1NdPUGJCO
-         8499Xq2wUgS86zeSii9U3b5/Db7bbTvrss6ktBytEIXyoLBaEu946seVcrdhWyrcrNR9
-         FqFk48zjJXKHntXTlIpXnNexC2HLgtI/TFF4Let3C9o5orbLtF/IWla4lx8MSrP5l1Us
-         SISM/x9civs7aqjpQEvzMG0TL72BJJoEbbEwCD9AujrO1l+C0SfwAUzrWzZP/FT/j2AS
-         mTH/Eg9CG9sUzgJcUxGvaEf/K9W4kUXf7056OFUJegakeqAp0fc9fXdY2wusQG69N1ru
-         TkLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkTrXiiU2tW3rVpSIpUFGI7Ac4FxSRnkMhkNjFZSqEN+19yZotymPUbLFD9qgHsA6HexKHpd30L6dX3nDlw7+dVuP8oKIBAuSQMxpt
-X-Gm-Message-State: AOJu0Yyj5HyZALwYFoX0KwE8cZYpudOZE9gldtAQ2EyEfM7T3Ap1wUPT
-	0AJTaw19WgF3wVJDtnvH2cxgHeZPB+dRnoA7qWQ34o1thRkSU2xo7krqqVk0hnA=
-X-Google-Smtp-Source: AGHT+IFwXIStMSuamLLszfwue44fiFsyS5r1vkhJKc/V6fjTvStINXv3htkE7bc+brSBhJS1PmJGBQ==
-X-Received: by 2002:a17:906:e0d5:b0:a77:c26c:a56f with SMTP id a640c23a62f3a-a7a01130925mr304316966b.3.1721303459640;
-        Thu, 18 Jul 2024 04:50:59 -0700 (PDT)
-Received: from localhost ([193.197.128.38])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc820d2fsm546971466b.200.2024.07.18.04.50.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 04:50:59 -0700 (PDT)
-Date: Thu, 18 Jul 2024 13:50:57 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Quentin Schulz <quentin.schulz@cherry.de>
-Cc: Farouk Bouabid <farouk.bouabid@cherry.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, linux-pwm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 2/6] pwm: add mule pwm-over-i2c driver
-Message-ID: <fgpb3aswlk25kkziiwe62cjk5ajwx6xy6xvyfzlx35uc7quzwh@cov5otcowkgv>
-References: <20240529-buzzer_support-v1-0-fd3eb0a24442@cherry.de>
- <20240529-buzzer_support-v1-2-fd3eb0a24442@cherry.de>
- <5hd7fndgivgusx76wq6mbvgefngd3tllqsfsk6pppbphchczte@ujagkep4miet>
- <25d71c19-6e94-477d-8d04-758015ca4b2c@cherry.de>
- <e7b3bfpvtrvt5g637yy7qxsbvfiylyzrjvwsro4hzp5t6cmeux@eqafx3k7oaks>
- <33d93798-459b-4d33-ac59-623a68ea48cf@cherry.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q20WLZAvw+Fey08lVWAbFkLUsPPozM2HcmbMuroC22gSnpHejDtlj7ER7HsIxVXCI6gznq1BRmUiE/lzjTMzXLYkWUCBorC+1N3U05NK7xZgRnEX2GBXdqtRFzsubwCXoNzrmBKqSH3tnn3ce/t4v4A/Fol8neE7bWvTdAvxSZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BZ+vlkxB; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=+aThDcNvYH+xTn1UAd/vTyjcw0pFDf2+xHmJSo8H8Hs=; b=BZ+vlkxBfSmzU2MwFIPnfAUitm
+	S417eFMyco97UvGgMwAuQ4qG0c8C42IboCcDQ4/BLFtTYEBszTz3myny6V8Vq6WlDk/h7N5GiHEo+
+	viWHEDBFgw1k3u1euozXCu0J5A/DklTOKVcok1+KNsy0S4zGsoKLa8Qu9kYzSUuBvXbuJ3S2BwPlp
+	MEw9RxBcKVzw+FFB86a6IVTxJqYUJR5IytWPgnlMIruKGXq7JvS+cpAtpPTX4HOzPYdcMQIXzWvGl
+	c4hxv3fhO+QMF9ZB9xC/QkRvjq+EdF5AaHIcKPG6CRe4kYebxxB1S4KMNUeXZC65nqIv8Y0a7oqjM
+	1Xr4ZMYA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sUPfU-00000001xAi-1LRH;
+	Thu, 18 Jul 2024 11:51:28 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id DF68B3006B7; Thu, 18 Jul 2024 13:51:26 +0200 (CEST)
+Date: Thu, 18 Jul 2024 13:51:26 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Hendrik Brueckner <brueckner@linux.ibm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@arm.com>, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Will Deacon <will@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>, Andi Kleen <ak@linux.intel.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH V9 02/13] perf/core: Add aux_pause, aux_resume,
+ aux_start_paused
+Message-ID: <20240718115126.GK26750@noisy.programming.kicks-ass.net>
+References: <20240715160712.127117-1-adrian.hunter@intel.com>
+ <20240715160712.127117-3-adrian.hunter@intel.com>
+ <20240718093846.GJ26750@noisy.programming.kicks-ass.net>
+ <14cd68b2-eeee-42e3-87a6-c12d3814bd51@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ddsoalw7wih372qx"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <33d93798-459b-4d33-ac59-623a68ea48cf@cherry.de>
+In-Reply-To: <14cd68b2-eeee-42e3-87a6-c12d3814bd51@intel.com>
 
+On Thu, Jul 18, 2024 at 02:19:03PM +0300, Adrian Hunter wrote:
+> On 18/07/24 12:38, Peter Zijlstra wrote:
+> > On Mon, Jul 15, 2024 at 07:07:01PM +0300, Adrian Hunter wrote:
+> >> Hardware traces, such as instruction traces, can produce a vast amount of
+> >> trace data, so being able to reduce tracing to more specific circumstances
+> >> can be useful.
+> >>
+> >> The ability to pause or resume tracing when another event happens, can do
+> >> that.
+> >>
+> >> Add ability for an event to "pause" or "resume" AUX area tracing.
+> >>
+> >> Add aux_pause bit to perf_event_attr to indicate that, if the event
+> >> happens, the associated AUX area tracing should be paused. Ditto
+> >> aux_resume. Do not allow aux_pause and aux_resume to be set together.
+> >>
+> >> Add aux_start_paused bit to perf_event_attr to indicate to an AUX area
+> >> event that it should start in a "paused" state.
+> >>
+> >> Add aux_paused to struct hw_perf_event for AUX area events to keep track of
+> >> the "paused" state. aux_paused is initialized to aux_start_paused.
+> >>
+> >> Add PERF_EF_PAUSE and PERF_EF_RESUME modes for ->stop() and ->start()
+> >> callbacks. Call as needed, during __perf_event_output(). Add
+> > 
+> > Why in __perf_event_output() rather than in __perf_event_overflow().
+> > Specifically, before bpf_overflow_handler().
+> > 
+> > That is, what do we want BPF to be able to do here? To me it seems
+> > strange that BPF would be able to affect this functionality. You want
+> > this pause/resume to happen irrespective of how the rest of the event is
+> > processed, no?
+> 
+> The thought was to have the output match up with pause/resume, but it
+> doesn't really make much difference.
+> 
+> Putting it before the BPF handler is reasonable.
 
---ddsoalw7wih372qx
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+OK, let me do that and make a few more edits and see if I can stare at
+that next patch some.
 
-Hello Quentin,
-
-On Wed, Jul 17, 2024 at 10:48:52AM +0200, Quentin Schulz wrote:
-> On 7/15/24 5:09 PM, Uwe Kleine-K=F6nig wrote:
-> > On Mon, Jul 15, 2024 at 02:16:15PM +0200, Quentin Schulz wrote:
-> > > To give a bit more info on this, there are two possible flavors of th=
-e MCU,
-> > > ATtiny 816 (datasheet: https://ww1.microchip.com/downloads/en/DeviceD=
-oc/ATtiny416-816-DataSheet-DS40001913B.pdf)
-> > > and STM32F072CB (datasheet: https://www.st.com/content/ccc/resource/t=
-echnical/document/reference_manual/c2/f8/8a/f2/18/e6/43/96/DM00031936.pdf/f=
-iles/DM00031936.pdf/jcr:content/translations/en.DM00031936.pdf).
-> > >=20
-> > > FYI, on ATtiny, we use TCA in single-slope PWM generation mode and PE=
-RBUF
-> > > and CMP2BUF as period and duty-cycle registers. On STM32, we use TIM1=
-5 in
-> > > PWM mode and ARR and CCR1 as period and duty-cycle registers.
-> >=20
-> > Wouldn't it be more natural with these to have duty in a base-2 register
-> > for duty, in the assumption that your MCUs habe this, too?
->=20
-> Not sure to understand what you meant by base-2 register here? I am guess=
-ing
-> you rather wanted to suggest a different unit/representation of the duty
-> cycle in the register in the FW API?
-
-For humans 100 as maximal value for a register is natural, but hardware
-usually uses binary representation ("base-2") for values and usually a
-register (or bit field) is used completely. That is, valid values range
-beween 0 and 2^n (or 2^n - 1) for some n.
-
-Note this discussion isn't really relevant to the driver. Just me
-wondering about the hardware design. So if you don't want to follow up,
-that's fine for me.
-
-Best regards
-Uwe
-
---ddsoalw7wih372qx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaZAYsACgkQj4D7WH0S
-/k4txQgAm2WzqXl0JXzy98Aebusbt2VhAwr2jKTv4YxBaue6sXmXUxAWnguTQCxy
-nLoe42a8AStJHRpj8fo1gZe2/2cBr+/0gr6+/VnMvSl4mcMeU6Djur4GTUrMLq52
-q73wDi1ujB/D3EqSiBv9lDQazE3HE27hiEIl3DtftfHURQcXW6Lcv34Px2opdkK5
-6hwJdNw9orw6h15+QblnBv4SCDNgzf8F3qPR9YNZneGIBkkLPInBSEeRYuGZpOX6
-FdAcYHdocdWg7b80RVgEWiDsupOOhEM/UWvxypLeA3/5GnZokkuEli0w8DaYBvl4
-E59r+LLHZgfIgeWdZhBw31y8J0G83w==
-=3jTY
------END PGP SIGNATURE-----
-
---ddsoalw7wih372qx--
 
