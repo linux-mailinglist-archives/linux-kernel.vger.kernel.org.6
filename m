@@ -1,252 +1,241 @@
-Return-Path: <linux-kernel+bounces-256586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D21E39350C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:43:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FB289350CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF4C5B21935
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:43:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F7A6B226CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 892C714532C;
-	Thu, 18 Jul 2024 16:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c+ShKx1T"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7D0145339;
+	Thu, 18 Jul 2024 16:43:21 +0000 (UTC)
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0882B7407A
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 16:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0510F7407A;
+	Thu, 18 Jul 2024 16:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721320976; cv=none; b=R4Do1hr/PhH6tqAjfQLfrWbG8rVwCa12Gv63AFCGXee55GEs+2iPKCa/XmkziDJ9epFySBwLwwb7Mg4+sQDaLqMlbl0ijTk8EBCvlXzAu0V95NHYTcBmcN/T5x1N6jgFfltDhIDEZqNXSb88/cT4FbYchltueQHSa5CfRQQqXxE=
+	t=1721321001; cv=none; b=fiALR8xqkRNecXEdSyzB5pW7kMHE0xxwpqeaKg2onco8Ericy4uQLIiyr9ol9t09XLcYNkNKl5BU6sNml9aOj+1HatN1c/72j0Ueplp7sZwhXMoPTAQTWaVtWD8oa5tsSM8OsGBLXkJAOdnSiysbYblhYF24Oe9n/7Y175xDKfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721320976; c=relaxed/simple;
-	bh=Z4DGzv2Nr6sgtMWqry15J/1mPi8Sy4eYGPSZXIgGgi0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EavYHMMJh9mTi39mYAI7393vmRf+KK2zd//7JVhtHTsgj5su2Syxsn4gTsjpQZDjlDxG4BTysY3MJTA6Ed5KWJDFKs0HQ9gDMFqLqofnGMq0dCqDOtnN4Vx5zMIVs2Rw65Hw0IdUwQFg988t0HRBpplAwmoXfYO+L9nZQ+CSrlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c+ShKx1T; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-65f9b244018so10268297b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 09:42:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721320974; x=1721925774; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cI2QPhNVp09Qr9l9jfhIeKemivTmvklc7dGwXzlD48Y=;
-        b=c+ShKx1TFTrd8lF+DmBBm8hoebHHXtnovUYWvAU4Ke5QF5F2gXLV7u6J4FX8+j1/f6
-         NwHMACS9KwoUtltzaFEidJgvbiEXJWDvoHui4buKmxS8SQHxdhWVfkeaqKKO/G9QLQLP
-         iwSxDW8hHB58oI+ctWtwGWSlZ/4wGPa1L74+DSMujRBmHnejvAA9hXkxMY1IjlARsp5U
-         sn/yZHtFKsQQJgnVX+VP2YFJf1YurslJ+Lpq0UL8BtK4cUIE4LP5QwPVhd1bQ6dPp4P+
-         XfQcu2upBAMUJPGhcrkmUcgJWFSkodv1tBDJzAKlZfmGQPcB/OZdZBktLkATeq2NYbWj
-         T+IA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721320974; x=1721925774;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cI2QPhNVp09Qr9l9jfhIeKemivTmvklc7dGwXzlD48Y=;
-        b=Hh9JNO4rbPAdnRG61J1W7eoGtQHpj9RbZFw/qZ5rhJRVq8LZ0HyIVtFbT6XK5sNEzT
-         qHdNy9mwBFOLrSVyj57WBjH8WBWnr3URlyGOBMYz8cDylcau1lLr4EOVnt5P/r/tsLBq
-         fr6NoKLwDdTySG0kGJSdWXymVerhdoz4c2+BXpl6IE5MD+Q+Dq0Hf0EgvKzzl6pW8hyB
-         J7pqjEhDSNmLKq08B7NK9cdIal4y2N28PLqOyLuwxklDwCiz42QqWrQZ6se75h3YuRbf
-         UtktUyAReiY+3H2/j+xHsUGQK4hABa5+gFHGgy1ka/L2y8YCuutq4GByKaFirkhReiM+
-         LWLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtqmmkKhWm6j2iTJv+P7DRPlWoMBX1HeMWhT9UrzLXg+F72FzD64R02P7QH/mVhIgn7/NIrJWt2K89WqUpMI2xfRtd7+56ncUx8Wz/
-X-Gm-Message-State: AOJu0Ywkl3wfw+Eh+Gs7Cffmmx1WaI/MXtB1YVY+VorjVM1ZNoO8Wf6V
-	jpD7iLe1xE8X4imvXk2WFcO7bTUWub7aNVktP0FCXaLemb3lIkeHft62FCq40DGcebMuPFfEUAs
-	RyIppm8Uq787btPDPbBCWoR7yN8YZ29dtHAoP
-X-Google-Smtp-Source: AGHT+IHEJYW9btAxJlFZwTEwgi6lSq+MyoaQR3zPqdN7fqmKx+jYCgqfJVax8uuyuwp2beK5Tnha6wBy5+UlK8FV394=
-X-Received: by 2002:a81:8b50:0:b0:62f:67b4:790c with SMTP id
- 00721157ae682-666a1c1ca30mr28650117b3.14.1721320973534; Thu, 18 Jul 2024
- 09:42:53 -0700 (PDT)
+	s=arc-20240116; t=1721321001; c=relaxed/simple;
+	bh=3K2FoxZJI8IVfJ/Ojm3BQv5IdOA4of5foZBfiZTHiTg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZbacA5U4dSH3uJraWrDli4Lx6PHFkEnNCxpmFsFOt6isN/9UQtUIHWMUnzBOdSscgf9KDZbOyDZ2wj8xbfhRvhi+yHAMxy9S//+EuM6LK4S2LjqryhoWfJu2oDSI/CLgai4hDrMUhSV2CRSI4dQbS6QFnYdNcFeuLkF/5Mec6FY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B39ED1BF205;
+	Thu, 18 Jul 2024 16:43:05 +0000 (UTC)
+Message-ID: <6ad0c386-6777-4467-bab4-8fba149f3bfe@ghiti.fr>
+Date: Thu, 18 Jul 2024 18:43:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <00000000000037cdb0061d5924b3@google.com> <46f44064-255b-4a1e-9317-f4b168706d65@kernel.org>
- <flthie3lmh4ovhlullgz2rsd5yfmwwfuqd76yef7xa2ncpqs4j@dxvhd64eoa7t>
- <CAJuCfpEX7JFbWbLT0w+nyKz-m87ccuzSoorB3PfnW82mA-nFfw@mail.gmail.com>
- <CAJuCfpEGATSeybdVNnUW5eS5EKHF00VzxHGwKoMfPiS_QRiKbQ@mail.gmail.com> <ZplEgwFFb0LAXbH4@zx2c4.com>
-In-Reply-To: <ZplEgwFFb0LAXbH4@zx2c4.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 18 Jul 2024 16:42:39 +0000
-Message-ID: <CAJuCfpG07s2jcsgT3EE85B_JGWY2B23n+iPhVWP6amgZgSHi3w@mail.gmail.com>
-Subject: Re: [syzbot] [crypto?] KASAN: slab-use-after-free Read in handle_mm_fault
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, "Vlastimil Babka (SUSE)" <vbabka@kernel.org>, 
-	syzbot <syzbot+4c882a4a0697c4a25364@syzkaller.appspotmail.com>, 
-	akpm@linux-foundation.org, davem@davemloft.net, herbert@gondor.apana.org.au, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/4] RISC-V: Add Svade and Svadu Extensions Support
+Content-Language: en-US
+To: Yong-Xuan Wang <yongxuan.wang@sifive.com>, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org,
+ kvm@vger.kernel.org
+Cc: greentime.hu@sifive.com, vincent.chen@sifive.com,
+ Jinyu Tang <tjytimi@163.com>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>,
+ Conor Dooley <conor.dooley@microchip.com>,
+ Mayuresh Chitale <mchitale@ventanamicro.com>,
+ Atish Patra <atishp@rivosinc.com>, Samuel Ortiz <sameo@rivosinc.com>,
+ Daniel Henrique Barboza <dbarboza@ventanamicro.com>,
+ Samuel Holland <samuel.holland@sifive.com>,
+ =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>,
+ Evan Green <evan@rivosinc.com>, Xiao Wang <xiao.w.wang@intel.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Kemeng Shi <shikemeng@huaweicloud.com>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Leonardo Bras <leobras@redhat.com>,
+ Charlie Jenkins <charlie@rivosinc.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Jisheng Zhang <jszhang@kernel.org>
+References: <20240712083850.4242-1-yongxuan.wang@sifive.com>
+ <20240712083850.4242-2-yongxuan.wang@sifive.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20240712083850.4242-2-yongxuan.wang@sifive.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-On Thu, Jul 18, 2024 at 4:36=E2=80=AFPM Jason A. Donenfeld <Jason@zx2c4.com=
-> wrote:
+Hi Yong-Xuan,
+
+On 12/07/2024 10:38, Yong-Xuan Wang wrote:
+> Svade and Svadu extensions represent two schemes for managing the PTE A/D
+> bits. When the PTE A/D bits need to be set, Svade extension intdicates
+> that a related page fault will be raised. In contrast, the Svadu extension
+> supports hardware updating of PTE A/D bits. Since the Svade extension is
+> mandatory and the Svadu extension is optional in RVA23 profile, by default
+> the M-mode firmware will enable the Svadu extension in the menvcfg CSR
+> when only Svadu is present in DT.
 >
-> On Thu, Jul 18, 2024 at 04:23:47PM +0000, Suren Baghdasaryan wrote:
-> > On Thu, Jul 18, 2024 at 4:20=E2=80=AFPM Suren Baghdasaryan <surenb@goog=
-le.com> wrote:
-> > >
-> > > On Thu, Jul 18, 2024 at 3:43=E2=80=AFPM Liam R. Howlett <Liam.Howlett=
-@oracle.com> wrote:
-> > > >
-> > > > * Vlastimil Babka (SUSE) <vbabka@kernel.org> [240718 07:00]:
-> > > > > On 7/16/24 10:29 AM, syzbot wrote:
-> > > > > > Hello,
-> > > > >
-> > > > > dunno about the [crypto?] parts, sounds rather something for Sure=
-n or Liam
-> > > > > or maybe it's due to some changes to gup?
-> > > >
-> > > > Yes, that crypto part is very odd.
-> > > >
-> > > > >
-> > > > > > syzbot found the following issue on:
-> > > > > >
-> > > > > > HEAD commit:    3fe121b62282 Add linux-next specific files for =
-20240712
-> > > > > > git tree:       linux-next
-> > > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D109=
-7ebed980000
-> > > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D98d=
-d8c4bab5cdce
-> > > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=3D4c882=
-a4a0697c4a25364
-> > > > > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binuti=
-ls for Debian) 2.40
-> > > > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1=
-1d611a5980000
-> > > > > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D13c=
-e3259980000
-> > > > > >
-> > > > > > Downloadable assets:
-> > > > > > disk image: https://storage.googleapis.com/syzbot-assets/8c6fbf=
-69718d/disk-3fe121b6.raw.xz
-> > > > > > vmlinux: https://storage.googleapis.com/syzbot-assets/39fc7e43d=
-fc1/vmlinux-3fe121b6.xz
-> > > > > > kernel image: https://storage.googleapis.com/syzbot-assets/0a78=
-e70e4b4e/bzImage-3fe121b6.xz
-> > > > > > mounted in repro: https://storage.googleapis.com/syzbot-assets/=
-66cfe5a679f2/mount_0.gz
-> > > > > >
-> > > > > > IMPORTANT: if you fix the issue, please add the following tag t=
-o the commit:
-> > > > > > Reported-by: syzbot+4c882a4a0697c4a25364@syzkaller.appspotmail.=
-com
-> > > > > >
-> > > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > > > BUG: KASAN: slab-use-after-free in handle_mm_fault+0x14f0/0x19a=
-0 mm/memory.c:5842
-> > > > > > Read of size 8 at addr ffff88802c4719d0 by task syz-executor125=
-/5235
-> > > > > >
-> > > > > > CPU: 1 UID: 0 PID: 5235 Comm: syz-executor125 Not tainted 6.10.=
-0-rc7-next-20240712-syzkaller #0
-> > > > > > Hardware name: Google Google Compute Engine/Google Compute Engi=
-ne, BIOS Google 06/07/2024
-> > > > > > Call Trace:
-> > > > > >  <TASK>
-> > > > > >  __dump_stack lib/dump_stack.c:94 [inline]
-> > > > > >  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
-> > > > > >  print_address_description mm/kasan/report.c:377 [inline]
-> > > > > >  print_report+0x169/0x550 mm/kasan/report.c:488
-> > > > > >  kasan_report+0x143/0x180 mm/kasan/report.c:601
-> > > > > >  handle_mm_fault+0x14f0/0x19a0 mm/memory.c:5842
-> > > >
-> > > > /*
-> > > >  * By the time we get here, we already hold the mm semaphore
-> > > >  *
-> > > >  * The mmap_lock may have been released depending on flags and our
-> > > >  * return value.  See filemap_fault() and __folio_lock_or_retry().
-> > > >  */
-> > > >
-> > > > Somehow we are here without an RCU or mmap_lock held?
-> > >
-> > > I'm guessing we did enter handle_mm_fault() with mmap_lock held but
-> > > __handle_mm_fault() dropped it before returning, see the comment for
-> > > __handle_mm_fault():
-> > >
-> > > /*
-> > >  * On entry, we hold either the VMA lock or the mmap_lock
-> > >  * (FAULT_FLAG_VMA_LOCK tells you which).  If VM_FAULT_RETRY is set i=
-n
-> > >  * the result, the mmap_lock is not held on exit.  See filemap_fault(=
-)
-> > >  * and __folio_lock_or_retry().
-> > >  */
-> > >
-> > > So after that there is nothing that guarantees VMA is not destroyed
-> > > from under us and if (vma->vm_flags & VM_DROPPABLE) check is unsafe.
-> > > Hillf's suggestion should fix this issue but we need to figure out ho=
-w
-> > > to make this path more robust. Currently it's very easy to make a
-> > > similar mistake. Maybe a WARNING comment after __handle_mm_fault()
-> > > that VMA might be unstable after that function and should not be used=
-?
-> >
-> > CC'ing Jason.
+> This patch detects Svade and Svadu extensions from DT and adds
+> arch_has_hw_pte_young() to enable optimization in MGLRU and
+> __wp_page_copy_user() when we have the PTE A/D bits hardware updating
+> support.
 >
-> Thanks for bringing this to my attention. I'll incorporate Hillf's patch
-> and also add a comment as you suggested. Something like the below?
+> Co-developed-by: Jinyu Tang <tjytimi@163.com>
+> Signed-off-by: Jinyu Tang <tjytimi@163.com>
+> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+> ---
+>   arch/riscv/Kconfig               |  1 +
+>   arch/riscv/include/asm/csr.h     |  1 +
+>   arch/riscv/include/asm/hwcap.h   |  2 ++
+>   arch/riscv/include/asm/pgtable.h | 13 ++++++++++++-
+>   arch/riscv/kernel/cpufeature.c   | 32 ++++++++++++++++++++++++++++++++
+>   5 files changed, 48 insertions(+), 1 deletion(-)
 >
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 18fe893ce96d..f596a8d508ef 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -5660,6 +5660,7 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *v=
-ma, unsigned long address,
->         /* If the fault handler drops the mmap_lock, vma may be freed */
->         struct mm_struct *mm =3D vma->vm_mm;
->         vm_fault_t ret;
-> +       bool is_droppable;
->
->         __set_current_state(TASK_RUNNING);
->
-> @@ -5674,6 +5675,8 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *v=
-ma, unsigned long address,
->                 goto out;
->         }
->
-> +       is_droppable =3D !!(vma->vm_flags & VM_DROPPABLE);
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index 0525ee2d63c7..3d705e28ff85 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -36,6 +36,7 @@ config RISCV
+>   	select ARCH_HAS_PMEM_API
+>   	select ARCH_HAS_PREPARE_SYNC_CORE_CMD
+>   	select ARCH_HAS_PTE_SPECIAL
+> +	select ARCH_HAS_HW_PTE_YOUNG
+>   	select ARCH_HAS_SET_DIRECT_MAP if MMU
+>   	select ARCH_HAS_SET_MEMORY if MMU
+>   	select ARCH_HAS_STRICT_KERNEL_RWX if MMU && !XIP_KERNEL
+> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
+> index 25966995da04..524cd4131c71 100644
+> --- a/arch/riscv/include/asm/csr.h
+> +++ b/arch/riscv/include/asm/csr.h
+> @@ -195,6 +195,7 @@
+>   /* xENVCFG flags */
+>   #define ENVCFG_STCE			(_AC(1, ULL) << 63)
+>   #define ENVCFG_PBMTE			(_AC(1, ULL) << 62)
+> +#define ENVCFG_ADUE			(_AC(1, ULL) << 61)
+>   #define ENVCFG_CBZE			(_AC(1, UL) << 7)
+>   #define ENVCFG_CBCFE			(_AC(1, UL) << 6)
+>   #define ENVCFG_CBIE_SHIFT		4
+> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
+> index e17d0078a651..35d7aa49785d 100644
+> --- a/arch/riscv/include/asm/hwcap.h
+> +++ b/arch/riscv/include/asm/hwcap.h
+> @@ -81,6 +81,8 @@
+>   #define RISCV_ISA_EXT_ZTSO		72
+>   #define RISCV_ISA_EXT_ZACAS		73
+>   #define RISCV_ISA_EXT_XANDESPMU		74
+> +#define RISCV_ISA_EXT_SVADE             75
+> +#define RISCV_ISA_EXT_SVADU		76
+>   
+>   #define RISCV_ISA_EXT_XLINUXENVCFG	127
+>   
+> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+> index aad8b8ca51f1..ec0cdacd7da0 100644
+> --- a/arch/riscv/include/asm/pgtable.h
+> +++ b/arch/riscv/include/asm/pgtable.h
+> @@ -120,6 +120,7 @@
+>   #include <asm/tlbflush.h>
+>   #include <linux/mm_types.h>
+>   #include <asm/compat.h>
+> +#include <asm/cpufeature.h>
+>   
+>   #define __page_val_to_pfn(_val)  (((_val) & _PAGE_PFN_MASK) >> _PAGE_PFN_SHIFT)
+>   
+> @@ -288,7 +289,6 @@ static inline pte_t pud_pte(pud_t pud)
+>   }
+>   
+>   #ifdef CONFIG_RISCV_ISA_SVNAPOT
+> -#include <asm/cpufeature.h>
+>   
+>   static __always_inline bool has_svnapot(void)
+>   {
+> @@ -624,6 +624,17 @@ static inline pgprot_t pgprot_writecombine(pgprot_t _prot)
+>   	return __pgprot(prot);
+>   }
+>   
+> +/*
+> + * Both Svade and Svadu control the hardware behavior when the PTE A/D bits need to be set. By
+> + * default the M-mode firmware enables the hardware updating scheme when only Svadu is present in
+> + * DT.
+> + */
+> +#define arch_has_hw_pte_young arch_has_hw_pte_young
+> +static inline bool arch_has_hw_pte_young(void)
+> +{
+> +	return riscv_has_extension_unlikely(RISCV_ISA_EXT_SVADU);
+> +}
 > +
->         /*
->          * Enable the memcg OOM handling for faults triggered in user
->          * space.  Kernel faults are handled more gracefully.
-> @@ -5688,10 +5691,15 @@ vm_fault_t handle_mm_fault(struct vm_area_struct =
-*vma, unsigned long address,
->         else
->                 ret =3D __handle_mm_fault(vma, address, flags);
->
-> +       /*
-> +        * It is no longer safe to dereference vma-> after this point, as
-> +        * __handle_mm_fault may have already destroyed it.
-
-__handle_mm_fault does not really destroy the vma. It might drop
-mmap_lock and another task might destroy it from under us.
-
-> +        */
+>   /*
+>    * THP functions
+>    */
+> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+> index 5ef48cb20ee1..b2c3fe945e89 100644
+> --- a/arch/riscv/kernel/cpufeature.c
+> +++ b/arch/riscv/kernel/cpufeature.c
+> @@ -301,6 +301,8 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
+>   	__RISCV_ISA_EXT_DATA(ssaia, RISCV_ISA_EXT_SSAIA),
+>   	__RISCV_ISA_EXT_DATA(sscofpmf, RISCV_ISA_EXT_SSCOFPMF),
+>   	__RISCV_ISA_EXT_DATA(sstc, RISCV_ISA_EXT_SSTC),
+> +	__RISCV_ISA_EXT_DATA(svade, RISCV_ISA_EXT_SVADE),
+> +	__RISCV_ISA_EXT_DATA(svadu, RISCV_ISA_EXT_SVADU),
+>   	__RISCV_ISA_EXT_DATA(svinval, RISCV_ISA_EXT_SVINVAL),
+>   	__RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
+>   	__RISCV_ISA_EXT_DATA(svpbmt, RISCV_ISA_EXT_SVPBMT),
+> @@ -554,6 +556,21 @@ static void __init riscv_fill_hwcap_from_isa_string(unsigned long *isa2hwcap)
+>   			clear_bit(RISCV_ISA_EXT_v, isainfo->isa);
+>   		}
+>   
+> +		/*
+> +		 * When neither Svade nor Svadu present in DT, it is technically
+> +		 * unknown whether the platform uses Svade or Svadu. Supervisor may
+> +		 * assume Svade to be present and enabled or it can discover based
+> +		 * on mvendorid, marchid, and mimpid. When both Svade and Svadu present
+> +		 * in DT, supervisor must assume Svadu turned-off at boot time. To use
+> +		 * Svadu, supervisor must explicitly enable it using the SBI FWFT extension.
+> +		 */
+> +		if (!test_bit(RISCV_ISA_EXT_SVADE, isainfo->isa) &&
+> +		    !test_bit(RISCV_ISA_EXT_SVADU, isainfo->isa))
+> +			set_bit(RISCV_ISA_EXT_SVADE, isainfo->isa);
+> +		else if (test_bit(RISCV_ISA_EXT_SVADE, isainfo->isa) &&
+> +			 test_bit(RISCV_ISA_EXT_SVADU, isainfo->isa))
+> +			clear_bit(RISCV_ISA_EXT_SVADU, isainfo->isa);
 > +
->         lru_gen_exit_fault();
->
-> -       /* If the mapping is droppable, then errors due to OOM aren't fat=
-al. */
-> -       if (vma->vm_flags & VM_DROPPABLE)
-> +       /* If the mapping is is_droppable, then errors due to OOM aren't =
-fatal. */
-> +       if (is_droppable)
->                 ret &=3D ~VM_FAULT_OOM;
->
->         if (flags & FAULT_FLAG_USER) {
->
+>   		/*
+>   		 * All "okay" hart should have same isa. Set HWCAP based on
+>   		 * common capabilities of every "okay" hart, in case they don't
+> @@ -619,6 +636,21 @@ static int __init riscv_fill_hwcap_from_ext_list(unsigned long *isa2hwcap)
+>   
+>   		of_node_put(cpu_node);
+>   
+> +		/*
+> +		 * When neither Svade nor Svadu present in DT, it is technically
+> +		 * unknown whether the platform uses Svade or Svadu. Supervisor may
+> +		 * assume Svade to be present and enabled or it can discover based
+> +		 * on mvendorid, marchid, and mimpid. When both Svade and Svadu present
+> +		 * in DT, supervisor must assume Svadu turned-off at boot time. To use
+> +		 * Svadu, supervisor must explicitly enable it using the SBI FWFT extension.
+> +		 */
+> +		if (!test_bit(RISCV_ISA_EXT_SVADE, isainfo->isa) &&
+> +		    !test_bit(RISCV_ISA_EXT_SVADU, isainfo->isa))
+> +			set_bit(RISCV_ISA_EXT_SVADE, isainfo->isa);
+> +		else if (test_bit(RISCV_ISA_EXT_SVADE, isainfo->isa) &&
+> +			 test_bit(RISCV_ISA_EXT_SVADU, isainfo->isa))
+> +			clear_bit(RISCV_ISA_EXT_SVADU, isainfo->isa);
+> +
+>   		/*
+>   		 * All "okay" harts should have same isa. Set HWCAP based on
+>   		 * common capabilities of every "okay" hart, in case they don't.
+
+
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
+Thanks,
+
+Alex
+
 
