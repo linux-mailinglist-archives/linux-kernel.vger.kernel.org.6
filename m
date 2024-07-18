@@ -1,144 +1,118 @@
-Return-Path: <linux-kernel+bounces-256639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D06CD935160
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:54:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED48A935167
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:59:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CEB11C21F92
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:54:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22A171C222A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757C41459E8;
-	Thu, 18 Jul 2024 17:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD18B1459FA;
+	Thu, 18 Jul 2024 17:59:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tI0wHB8M"
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="I2vpzOwb"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469D814037F
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 17:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0691A14535D
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 17:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721325284; cv=none; b=HQiEW/613gDbxyxEcY9oV08Vv421D1DVyPME86DHjq+unfNG5/GE/xaSMrCVX4wiahOaRezr3g1U5QTJZMrP2IkRaW/uDi8NHfZnDQ6liQL1mpPHTYoBAfGYScyJhiR/GNpMD0dNbiTFQka940nBkjnZM9lhkt4nz+Ay7WgMCs4=
+	t=1721325578; cv=none; b=HjrnIgBFITsxKt9ynYdYVY9ggA2vgAa5bwt0OTJv8aLKAauXfC8mnlsrNS9mq4h0ZaNA0ocIt74dHKqe+u7hXAZWbEKj9pqRGa1PcMBGTB842p4jVr3o1mzPyWMFNYhTs64SGphsbOvXGMbW9zVsHzOPqvZEW0ZO0wvxcn/DIKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721325284; c=relaxed/simple;
-	bh=er1KGbL9lI7rHYeiRUh/0c+RhXEbNw4CXvEBwGOKCek=;
+	s=arc-20240116; t=1721325578; c=relaxed/simple;
+	bh=Wy0IFokGwJYGUXAIqugE7Z0e3NoK7kmoVt0wQteo6Z4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SrzmtG6BhRCE4TyzBNVPrVWUJ15T11cxXF7a1XHxrQ243VrjcHr1gzXnNE/s5mHtz9cXOM0169fP1YL0pndnPc2QVEIGIYLuengmHhPqEK0UfDMe6as6Ob5e9fFsAyNOsgbBlR3p20adXVTCeIaRVshx3z5e785fN/AgseKCFAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tI0wHB8M; arc=none smtp.client-ip=209.85.222.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-810177d1760so320514241.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 10:54:43 -0700 (PDT)
+	 To:Cc:Content-Type; b=r+xVjUttmjXZrxLF72QXbVVj1h+UVo30jFGWSLkcFNZfPW/Uub7NgEMj8jlUGOiM8qABol6R1JjrgK2LOlnkpKgfgdqg/E110LkndAxdRaGIDDgNl6ed1xkG772JtGQGbLiO04RqpSzqQSQmKp4HPzJi3r6ezPIxRo/tO1X6jJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=I2vpzOwb; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-58e76294858so204378a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 10:59:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721325282; x=1721930082; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a4SvoCOfHNYf2EY8mfu400oO+cE1SqNQGKec2qHgTrs=;
-        b=tI0wHB8MNkeNURiYC9YiZWmCbSzwT9s+ClxUvG5RC4HmUtpgF02Vw9jH2aCC90X/gk
-         rEIHP1Nag6WHPwnoB7ikM1uh065Y7cZ+MPt27sehooJAHoiBN7YdmvOvsclDIan1Qjw3
-         xklhvtj/0EGNfjhBPO1Z04cXlSnYWWUI67lGlPQLsqM47I01Gzf3vB3BHq9gZPkCU0Jq
-         BMVkO0GpIPOpoWrI0aInq59N3KHebKlMQrMW5iluzJptAXUpbXMo86bkaPl4NkNqUpjx
-         FTuxTpOOsLHTZIczAzRgx2IJS54LMbZ2p6v7KWP5MMS4cnrAy8JLOHGXhCWRPP2K6mpr
-         jFCQ==
+        d=linux-foundation.org; s=google; t=1721325574; x=1721930374; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=v5aL09+/Yh6o0fwipgODCnyP5VYgOkPRzvmeaKHvEPg=;
+        b=I2vpzOwbWsF9ZCqtE9WoxsSxa4Rs1Mf64ieIOphVgUfGf2RfeDJQEs9kynJC3y4C9e
+         fRzyYzgznQ+4TX8VI3gDmXMrH2djgDVc68GQXSKn0d+hgXutCsQv0kH7KUdxTJg7X1nE
+         m9RAAaRwOhKB+Fvn2Ug9a1fRXoCKZJzlzgBDs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721325282; x=1721930082;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a4SvoCOfHNYf2EY8mfu400oO+cE1SqNQGKec2qHgTrs=;
-        b=H8MtM5/n30lB9fb0xsI68LaueB5RssSGa4V3XjSmmfr5F+TswiMpEewX51U3wBdK7U
-         IY+mBrwf99CX99kM5+SjcsiggJk9Oa/9VKV3QBbOtPAEiLXQCnNkmOcQcRQP5fR2k35h
-         Jv5vvXipXMryB6VBhXz4RmqRz2pm+6TkKuUJHeOknGzvPy613F3vXoVvnmnPO+G5oC2t
-         fyZzvDPz6enLbflOjwaC1JTDtv7U8wZCYbS9W8JueV6VXBeWIC93sG7q/cLXpLZklTux
-         wIR9k7xSXB/VJjFA4UPCKUMYTLxEqOJB4ID6+gOgQI3IF7K/aNDgSWjDdEu5Le4iU7Eh
-         jUcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1PwOi6MZFZwNrLKeJ6vRkH3sdxpO7PFykKWnOb14RJ+EbWU4QFiabg00Tkk+Qy5AV0PYuJNWkehIMCnY5gddVL/1B42zDjBXZrYCg
-X-Gm-Message-State: AOJu0YwC20aCqhWTgZVEau3ROy/rGBioaBh6MgSQ6HD8aTg1Ifj+RW3M
-	MgrSQB2ojJFupVOu4nZZ5pqKgM1SsnS5R4YlOWSgQOS1pBxprFihOP9iJCNtZLYr3yq2xI9NAaH
-	4IbplcXYZGJM2wsi+hXdTstrPj8FbpP2zwEAf
-X-Google-Smtp-Source: AGHT+IFu8fSO+esPncf5i90Eh9ur5Prn0Oq01lFyV4cisEHacDtIFIUR6lWCMmPTIx1Hw8JznJo213vAvtbAhHdx1OQ=
-X-Received: by 2002:a05:6102:15aa:b0:48f:79de:909e with SMTP id
- ada2fe7eead31-49159849e1cmr8258860137.18.1721325281957; Thu, 18 Jul 2024
- 10:54:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721325574; x=1721930374;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v5aL09+/Yh6o0fwipgODCnyP5VYgOkPRzvmeaKHvEPg=;
+        b=n0PS4ufO9pUtkubeGAGCrnUYm/3UAqLIe/C2IJUWGmDc0iPnjFuRqD8FMhntjjOH9/
+         I9D07OU2kx6A7skJANx3oUr1sqb/3UgtCYd/imJPRjTzMiQgRJQr1u79/TQU/a8An0XE
+         DqqDgi70UUq2tC3mWqZaJg2NGSkFA7BPpp527CzGAb+JmtSJ/xDmthewrY9q/wgmsEJN
+         zI01fnZbFFlzpZj3wmcZGN2BqdwuWDDR0/YAuJJ/6SyLfg3jVDnTymfXhdC4XWx/rMSK
+         Q7RV1COA2KJm0KrEAyUZdA5lJWRtnkILBEy99aTctsPZH+lt1cyvb8OyhRd8SCLaFO6U
+         kRFA==
+X-Gm-Message-State: AOJu0YznSVZBqNO9wtUGSCDMMlNpDNlji7VaGc3qN1RGBlQEK68EbWTm
+	a9kXTXpv8GdX8rXWb7A0OYb9IbinEnC3GbR0BAsn5nQAuhD9zAW/Ge5O+SGk89fOldOKpJehmG+
+	Fb92esg==
+X-Google-Smtp-Source: AGHT+IHgMR05ugFP0VvR+NXu6/NE3eoVzrJdWk/dM3OBAbDsi61INlpVY9R8XhdNv3EstVWiZpqIgQ==
+X-Received: by 2002:a17:906:f294:b0:a77:e6dd:7f35 with SMTP id a640c23a62f3a-a7a0f137e24mr356530766b.13.1721325573995;
+        Thu, 18 Jul 2024 10:59:33 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5d1a95sm584590466b.79.2024.07.18.10.59.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Jul 2024 10:59:33 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a22f09d976so174585a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 10:59:33 -0700 (PDT)
+X-Received: by 2002:a05:6402:2105:b0:58c:36e:51bf with SMTP id
+ 4fb4d7f45d1cf-5a2d10bbd26mr13918a12.3.1721325573191; Thu, 18 Jul 2024
+ 10:59:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717182828.1527504-1-masahiroy@kernel.org>
-In-Reply-To: <20240717182828.1527504-1-masahiroy@kernel.org>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Thu, 18 Jul 2024 17:54:03 +0000
-Message-ID: <CABCJKucE0c7SLbf5sxcNCj+tiL9uwYDKspg2Zq0vjR-ZSePpng@mail.gmail.com>
-Subject: Re: [PATCH v2] Makefile: add comment to discourage tools/* addition
- for kernel builds
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jiri Olsa <jolsa@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Brian Norris <briannorris@chromium.org>, Nathan Chancellor <nathan@kernel.org>
+References: <20240718120647.1115592-1-mark.rutland@arm.com> <CAHk-=wjVvVfZM-cakf49j7XixrN9mNimyL0P7zZm-zoYKpp0_A@mail.gmail.com>
+In-Reply-To: <CAHk-=wjVvVfZM-cakf49j7XixrN9mNimyL0P7zZm-zoYKpp0_A@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 18 Jul 2024 10:59:16 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjQVVXx=vu5O3MxcscKKujvjUZebfUG-QuOkBV1GrnDqg@mail.gmail.com>
+Message-ID: <CAHk-=wjQVVXx=vu5O3MxcscKKujvjUZebfUG-QuOkBV1GrnDqg@mail.gmail.com>
+Subject: Re: [PATCH] init/Kconfig: remove CONFIG_GCC_ASM_GOTO_OUTPUT_WORKAROUND
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-kernel@vger.kernel.org, alex.coplan@arm.com, catalin.marinas@arm.com, 
+	jakub@gcc.gnu.org, linux-arm-kernel@lists.infradead.org, peterz@infradead.org, 
+	seanjc@google.com, szabolcs.nagy@arm.com, will@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Masahiro,
+On Thu, 18 Jul 2024 at 09:59, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Let's keep the "which gcc versions are scrogged" as a separate config
+> entry, and then have this just as a
+>
+>      default n if CC_IS_GCC && GCC_NO_ASM_GOTO_OUTPUTS
 
-On Wed, Jul 17, 2024 at 6:28=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> Kbuild provides scripts/Makefile.host to build host programs used for
-> building the kernel. Unfortunately, there are two exceptions that opt
-> out of Kbuild. The build system under tools/ is a cheesy replica, and
-> cause issues. I was recently poked about a problem in the tools build
-> system, which I do not maintain (and nobody maintains). [1]
->
-> Without a comment, people might believe this is the right location
-> because that is where objtool lives, even if a more robust Kbuild
-> syntax satisfies their needs. [2]
->
-> [1]: https://lore.kernel.org/linux-kbuild/ZnIYWBgrJ-IJtqK8@google.com/T/#=
-m8ece130dd0e23c6f2395ed89070161948dee8457
-> [2]: https://lore.kernel.org/all/20240618200501.GA1611012@google.com/
->
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> Acked-by: Nicolas Schier <nicolas@fjasle.eu>
-> Reviewed-by: Brian Norris <briannorris@chromium.org>
-> ---
->
-> Changes in v2:
->   - rephase the comment for clarification
->
->  Makefile | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/Makefile b/Makefile
-> index 768d3dc107f8..943899656977 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1328,6 +1328,12 @@ prepare: tools/bpf/resolve_btfids
->  endif
->  endif
->
-> +# The tools build system is not a part of Kbuild and tends to introduce
-> +# its own unique issues. If you need to integrate a new tool into Kbuild=
-,
-> +# please consider locating that tool outside the tools/ tree and using t=
-he
-> +# standard Kbuild "hostprogs" syntax instead of adding a new tools/* ent=
-ry
-> +# here. See Documentation/kbuild/makefiles.rst for details.
-> +
->  PHONY +=3D resolve_btfids_clean
->
->  resolve_btfids_O =3D $(abspath $(objtree))/tools/bpf/resolve_btfids
+Ok, I ended up playing around with this a bit more, and it ended up like
 
-Looks good to me, thanks for adding the clarification!
+  config GCC_ASM_GOTO_OUTPUT_BROKEN
+        bool
+        depends on CC_IS_GCC
+        default y if GCC_VERSION < 110500
+        ..
 
-Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
+with then CC_HAS_ASM_GOTO_OUTPUT just having a
 
-Sami
+        depends on !GCC_ASM_GOTO_OUTPUT_BROKEN
+
+in it. That looks fairly legible to me, and seems to work fine.
+
+I left it all credited to you, since you found all the problems and
+wrote that big nice commit log. But it means that if I screwed up in
+my edits, you get the blame too. So if that happens, just point haters
+at this email and say it's all my fault.
+
+           Linus
 
