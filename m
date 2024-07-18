@@ -1,127 +1,148 @@
-Return-Path: <linux-kernel+bounces-256305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11D29934C45
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:15:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C871934C47
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E4AEB221FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:15:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BB6CB209FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB0E757EB;
-	Thu, 18 Jul 2024 11:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B206C13210D;
+	Thu, 18 Jul 2024 11:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar-org.20230601.gappssmtp.com header.i=@fooishbar-org.20230601.gappssmtp.com header.b="QsuMcjAz"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O/O7hlgt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE5D80BFC
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 11:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029507D3EF
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 11:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721301314; cv=none; b=rQGJZGvuCr0kk1fI54f+i7YW1BiF/HgEaeRdyzz5Zc4otBMCnbqDOTmHDCXrZX3DYQRzrUFJpGHlFAQR3Ob+0oM5v+crEKN6Qa4LiGAboFyeDEsLKRyBsFmloTal+HwQpPtjtyfQXWabk5EqmRlcgQfizQjGVNhvq5Ju0aATWYE=
+	t=1721301400; cv=none; b=Hwxhg3vn0o9Mp3KFpzXTgAPAIhGlPeMH0z7Q+ygEJGktwvJNgI/r1vyataoDOEZvrnVYu47nHwRwdoRnuZPdjwlixw5yO2eyfkb4pmfItXXVcRnuTMsBBy8ZLmS6OfIkKvfLHxrL/0Pwvv4EcGfhAo4vrh9hiFQw1bDkH7yzg9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721301314; c=relaxed/simple;
-	bh=fvLtlvVLIc2uX9Mv4C24Hw1TFHGs1i0AqLl5Tk1HA1I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ECwOsU/VsEc/JJaCi8lBKbDPT1wzBCSfW7+yBo4b9GsyW8OXN+zx0iOSMguZ/4U/esYEcJzEN/aYOxlraWCbJoY+VfdQ5jIFNsdi6xmsjnw7aL67N7RhzB3WCy4jGtKO3LK5T6HjJ1xIsiHyKZ9LrMfyFqoyx+DjetE1a1GCT/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=none smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar-org.20230601.gappssmtp.com header.i=@fooishbar-org.20230601.gappssmtp.com header.b=QsuMcjAz; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fooishbar.org
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-643f3130ed1so6439917b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 04:15:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar-org.20230601.gappssmtp.com; s=20230601; t=1721301311; x=1721906111; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fvLtlvVLIc2uX9Mv4C24Hw1TFHGs1i0AqLl5Tk1HA1I=;
-        b=QsuMcjAzQn/kEzFWU9IjeCMifSJHAYP3rsMwuVolTUWtOJzM1/pdjSvdegQib2lWSD
-         /8XjTjNXs9qbUN+wyKiC6Jiks3+Z73Y8msuS/FFgYVT9aF0TmXgV8rlWC//ba2LR6xbj
-         9l++OoK0E4nHPgUIxc7oPjTVvFfvqigaIXmCkHVWUWr/nL4CgEm9DLczIPNrjVMpZVgf
-         4aPE5+m1BHNqbGjO/NXWVlNc+PXAfxoWVhg08SEsNEU5wkBmr6A1sJ87MBHBOIomzZoa
-         kPzb9KJPCztCjGL0vkeSQxRPejparcRxPeaKZ9gcttTXr5TMVy+OyfXThUzzRcPCvy3j
-         NZ/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721301311; x=1721906111;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fvLtlvVLIc2uX9Mv4C24Hw1TFHGs1i0AqLl5Tk1HA1I=;
-        b=mf98VDdgW8nHKNDSx8uxzQCyRyu9GSnsgFhKNAmH3dkFgmVqIQeWub7rj33OGW70m4
-         yGeAqLLqRKbXoX3FFSUWx2gV1ilNawBMebiZ+Oepd/idEQ7tHSEm61K3JfvIyTJ7E1hn
-         D+TCMRx2G79KmJes1cV47hUJIOaWyn9IXIsHuwSu0wjDokZFZTfcwsYk55dirGWiZhPS
-         o+0G7qdDo1ETCFmN8MMyc0RA/p+n/9m88/zOpsAiePbZ5wEkFt0T+KQNpUo26SstzKdH
-         NjbK1S1y7t8UAEj0dk1c+1YsEpG3xfy9GJgoYe1liXXi7UPgV3QTYvyA9vH+B8BcCBj0
-         Fr7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWy1ZoH5vKAg+e4+UIDFcJ+M/03PGkhXoQgBU8JDUhxvP/RE6HDmHtlBExJ5oAINTYUkl0GQ2w1JrMNLfx0C/DR3URhE9YyzpdegjbB
-X-Gm-Message-State: AOJu0YyvuMSCeQnfqPlHa3PWVyQO+3vDidFhqJ1Ev9OzkIeSEqZIJtDh
-	13bbKZYaye1rdGH5oGrUgazKXyH600hYv8cPZXLd1bxnwUwny2pmIXlEfnA+Y89OtSbFBBKQtTK
-	M9omg6gCoW7Ansy/OF0sAHO4KO7/zyu5DHIzadA==
-X-Google-Smtp-Source: AGHT+IHg27/h28x8cH6RNystKqwtN9ObuunzW9wLXPCT62zkr9oqTMXzH3ODAVfWE0/MOqv8X7Ek5YsHXkLmGxcCKWA=
-X-Received: by 2002:a0d:da07:0:b0:64b:630f:9f85 with SMTP id
- 00721157ae682-664fe45113fmr49718207b3.12.1721301311396; Thu, 18 Jul 2024
- 04:15:11 -0700 (PDT)
+	s=arc-20240116; t=1721301400; c=relaxed/simple;
+	bh=41McLAL0buFEegU9JpAI8+wwAy56uuO6YT3HPAfpnZc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dSSchrcpBcO4rqBbhvfZ/+XsSTlNC1mThvTYvsfNPT1t3mXxAytClD+4SFrktvPL7/HAhu1cy3JULVf+AFJLrwsv576bj0IIryVLB+A8zSAfEBPlGlonaFNdHwVipwFplOJlCluO6NKpsbP4QxO6ERVzxfq2ehj4U3RTINYMdWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O/O7hlgt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E604BC116B1;
+	Thu, 18 Jul 2024 11:16:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721301399;
+	bh=41McLAL0buFEegU9JpAI8+wwAy56uuO6YT3HPAfpnZc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=O/O7hlgtxbeSUrMj49RzBgA7RI7Mz4tx2bmVlmn4bvyGhumV/FRUw8RHEg4iROuE/
+	 +HM3mVEl3FjdKXN6UIcybeiRPRvbviRMa0jU0TnBO8G9RvOaeD8EpbDlXD9iPgjA3+
+	 GtLqnsXczne2F0Tz2Kx30jEcxz/tGVfSrIDlilLHQXaGYFSIIjhi3+ipq6SvaZk7eJ
+	 j5U2BcbuKeZXmKAMMq/1Wmws0uQ7Bk20l+tqgChaO+PFSfxtX7P13VGuLM1c4c+2Rb
+	 7fpbu7VMbfYi447hACzgRaS8HBmW0irXOQTV6kKjzoKRs/xNzml3HDrrE+u74DYeZ0
+	 jE6FU9I4c4Ljw==
+Message-ID: <6f2151a9-da23-4917-b985-8de6b0852e37@kernel.org>
+Date: Thu, 18 Jul 2024 13:16:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240718082507.216764-1-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20240718082507.216764-1-angelogioacchino.delregno@collabora.com>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Thu, 18 Jul 2024 12:15:00 +0100
-Message-ID: <CAPj87rM1dbawwtRnMzDRLLCt6FuOU+851hcJhKDsg1ioRM2Pqw@mail.gmail.com>
-Subject: Re: [PATCH] drm/mediatek: Declare Z Position for all planes
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com, 
-	daniel@ffwll.ch, matthias.bgg@gmail.com, shawn.sung@mediatek.com, 
-	ck.hu@mediatek.com, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] mm/page_alloc: Fix pcp->count race between
+ drain_pages_zone() vs __rmqueue_pcplist()
+Content-Language: en-US
+To: Li Zhijian <lizhijian@fujitsu.com>, linux-mm@kvack.org
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+ Yasunori Gotou <y-goto@fujitsu.com>, David Hildenbrand <david@redhat.com>,
+ Yao Xingtao <yaoxt.fnst@fujitsu.com>, Lucas Stach <l.stach@pengutronix.de>
+References: <20240716073929.843277-1-lizhijian@fujitsu.com>
+From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+In-Reply-To: <20240716073929.843277-1-lizhijian@fujitsu.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 7/16/24 9:39 AM, Li Zhijian wrote:
+> It's expected that no page should be left in pcp_list after calling
+> zone_pcp_disable() in offline_pages(). Previously, it's observed that
+> offline_pages() gets stuck [1] due to some pages remaining in pcp_list.
+> 
+> Cause:
+> There is a race condition between drain_pages_zone() and __rmqueue_pcplist()
+> involving the pcp->count variable. See below scenario:
+> 
+>          CPU0                              CPU1
+>     ----------------                    ---------------
+>                                       spin_lock(&pcp->lock);
+>                                       __rmqueue_pcplist() {
+> zone_pcp_disable() {
+>                                         /* list is empty */
+>                                         if (list_empty(list)) {
+>                                           /* add pages to pcp_list */
+>                                           alloced = rmqueue_bulk()
+>   mutex_lock(&pcp_batch_high_lock)
+>   ...
+>   __drain_all_pages() {
+>     drain_pages_zone() {
+>       /* read pcp->count, it's 0 here */
+>       count = READ_ONCE(pcp->count)
+>       /* 0 means nothing to drain */
+>                                           /* update pcp->count */
+>                                           pcp->count += alloced << order;
+>       ...
+>                                       ...
+>                                       spin_unlock(&pcp->lock);
+> 
+> In this case, after calling zone_pcp_disable() though, there are still some
+> pages in pcp_list. And these pages in pcp_list are neither movable nor
+> isolated, offline_pages() gets stuck as a result.
+> 
+> Solution:
+> Expand the scope of the pcp->lock to also protect pcp->count in
+> drain_pages_zone(), ensuring no pages are left in the pcp list.
+> 
+> [1] https://lore.kernel.org/linux-mm/6a07125f-e720-404c-b2f9-e55f3f166e85@fujitsu.com/
+> 
+> Cc: David Hildenbrand <david@redhat.com>
+> Reported-by: Yao Xingtao <yaoxt.fnst@fujitsu.com>
+> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+> ---
+>  mm/page_alloc.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 9ecf99190ea2..1780df31d5f5 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -2323,16 +2323,17 @@ void drain_zone_pages(struct zone *zone, struct per_cpu_pages *pcp)
+>  static void drain_pages_zone(unsigned int cpu, struct zone *zone)
+>  {
+>  	struct per_cpu_pages *pcp = per_cpu_ptr(zone->per_cpu_pageset, cpu);
+> -	int count = READ_ONCE(pcp->count);
+> +	int count;
+>  
+> +	spin_lock(&pcp->lock);
+> +	count = pcp->count;
+>  	while (count) {
+>  		int to_drain = min(count, pcp->batch << CONFIG_PCP_BATCH_SCALE_MAX);
+>  		count -= to_drain;
+>  
+> -		spin_lock(&pcp->lock);
+>  		free_pcppages_bulk(zone, to_drain, pcp, 0);
+> -		spin_unlock(&pcp->lock);
+>  	}
+> +	spin_unlock(&pcp->lock);
 
-On Thu, 18 Jul 2024 at 09:25, AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
-> MediaTek SoCs support multiple planes, one of which is the primary
-> and all the others are overlays (and CURSOR is the last overlay).
->
-> In all currently supported SoCs, the Z order of the overlays can't
-> be changed with any fast muxing action, and can only be changed by
-> swapping the contents of the entire register set of one overlay
-> with the other to internally reorder the layer properties, which
-> is indeed feasible, but probably more expensive than desired.
->
-> Declare the Z position for all planes with an immutable property
-> at least for now, so that the userspace can take its decisions
-> accordingly.
+This way seems to be partially going against the purpose of 55f77df7d715
+("mm: page_alloc: control latency caused by zone PCP draining") - the zone
+lock hold time will still be limited by the batch, but not the pcp lock
+time. It should still be possible to relock between the iterations? To
+prevent the race I think the main part is determining pcp->count under the
+lock, but release/retake should still be ok if the pcp->count is reread
+after relocking.
 
-Thanks a lot for this fix!
+>  }
+>  
+>  /*
 
-If I understand your middle paragraph correctly, please don't ever do
-that though. I think what you're suggesting by 'swapping the contents
-of the entire register set' is:
-* plane ID 40 (normally) controls OVL1
-* plane ID 41 controls OVL2
-* userspace configures planes 40 & 41 with a zpos suggesting that 41
-should be below 40
-* the DRM driver 'swaps the contents of the entire register set' by
-making plane 40 control OVL2 instead and plane 41 control OVL1 instead
-
-If so - please no. Just declare an immutable zpos, because that
-actually matches the hardware, and then leave userspace to configure
-the planes in a way which makes sense. Looking at the zpos property is
-already required in order to handle overlapping overlay planes, and
-any userspace which supports overlays (including Weston) already looks
-at zpos, handles immutable properties, and will dtrt.
-
-Anyway, this is:
-Acked-by: Daniel Stone <daniels@collabora.com>
-
-Cheers,
-Daniel
 
