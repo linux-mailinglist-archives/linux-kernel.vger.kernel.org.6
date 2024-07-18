@@ -1,242 +1,168 @@
-Return-Path: <linux-kernel+bounces-256186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 500E5934A62
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:50:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50372934A65
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFAC4B24774
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:50:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1254B23FC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E347FBB7;
-	Thu, 18 Jul 2024 08:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B63812C478;
+	Thu, 18 Jul 2024 08:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ph9l9f2B"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Y8ObGMNl"
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2068.outbound.protection.outlook.com [40.92.103.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060FE78C7F;
-	Thu, 18 Jul 2024 08:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721292506; cv=none; b=J57gR5o8OkQIxrZd2MvbmSLksUoLrW1uQ/HcP6e2bFarEq3DfPRUY1u2dBsC9rRFqO48dDLRDvKsDqg/FtKaVp3imTfKxMgICBIuCTPmsam9yj0IFJ0a3ERuvUkZjW9dMHNP6uZ4hEb66CnsHJP2CrOlFrb+3qv3WPwoJz/p3eI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721292506; c=relaxed/simple;
-	bh=M8B7nK5QS1XayxeoEXQ34C+iSS2fuBashk39HHL2JsU=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=UXar+jwa8/ayTcuN36w4CIm0PSMY/JBo5xxYdoyhIfhxBjNKus9VS+0MUHedQy4wG4tgeZTyEUOjBmoaPNdHzsOLRTfVSV5rdUIcD5iSybGNvteXZ0hT4070G9aRYuo4SOxg317tfrNmfwL/OOPowoVyjnBgNvK6PTKLfT1UZZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ph9l9f2B; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46I7vD9s010017;
-	Thu, 18 Jul 2024 08:48:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:subject:to:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	t6qHBKoOTZCAntpCci5zD8gB9Up74avaeJCF1kFQXcg=; b=ph9l9f2BTYspNd8G
-	OcHqzOayb5mqd3RC/o9iAIGqgUbTRTP4TKE3Fi5ztEQpxaT6MI1GvHmqmUfGgCIk
-	ECfKNhRbVphR7VvSuls2vAgDEcUyVZhUm5jfUj54vML8Bq30/gbHvb14rytAf8g3
-	XOI1LNTlMD0G9xh42fs1DQ7i371SLepQNQa5ZYQvFEEbN1woDB3bDAoHL7yuw+2s
-	D/bLvI3lS4mRlRc2LcC9uVhuGYPTLOiF9+E1/AgUYMjXQ9YdUosxEpKK+63MCTmu
-	i7VPkVuhS0pMlVqEg3nMlLr4CHTeW+DfO6I36IbJjVgqvsvVtpLSm2BWQqTbdeT7
-	q0fuGQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40eev9aghc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Jul 2024 08:48:10 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46I8m9pV023545;
-	Thu, 18 Jul 2024 08:48:09 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40eev9agh8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Jul 2024 08:48:09 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46I50lmp006337;
-	Thu, 18 Jul 2024 08:48:08 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 40dwkmgs69-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Jul 2024 08:48:08 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46I8m2dE55575014
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 18 Jul 2024 08:48:04 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B0E952004B;
-	Thu, 18 Jul 2024 08:48:02 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B4EF320040;
-	Thu, 18 Jul 2024 08:47:59 +0000 (GMT)
-Received: from [9.109.199.72] (unknown [9.109.199.72])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 18 Jul 2024 08:47:59 +0000 (GMT)
-Message-ID: <6645190c-e66f-49db-a23d-e08f6308a422@linux.ibm.com>
-Date: Thu, 18 Jul 2024 14:17:58 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995D480028;
+	Thu, 18 Jul 2024 08:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721292509; cv=fail; b=QilvoR0E4hGZZloqW57Vy6e8tM1bTr9qHiOh2SpEKLYfQ8MAQZsCz/I3iTSc7xJYuALFTS19MrhkzB2E8zy6KQ2ynrGOWTKsqgrZZXp9zMLjYKKFLeREA1paOgxCHhTmjntKh85IYHcwHilA/9Peva/8u/ztFJIvNkvJK7D29Io=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721292509; c=relaxed/simple;
+	bh=kwtDF/g66S+e/6mD8Cqmufm4mxVO6FagL+8Wwdp6ib0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=T78srLhEWyBgaY9vJrmPBulrkUFvEQfDxI2CS+MDnBe8VMCpE6o6WlhGXfhE2eoVSiDgvu7xFarmy0rROkFZSXA46pFhn0h7clBjzSni63iU0eu7Ke0zK1CUlrldJUkkPdwrENtEu8+yYQkaOuuOSyocWbDl5X47JQA2vswV8NM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Y8ObGMNl; arc=fail smtp.client-ip=40.92.103.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Y3FKEPxxC1Q8y6+pE7iE/J1fFTzf9339GpIApGD7W0oyygOU8oABaGvPD9vWdNQVy/HUwBi23b+cr3ktCNdRiGDiDc0Ei/SbwsyXyHgF8heb4w5bY3JT+HUCAIoXruEIVC1TTcoerm/K3TgeSY84FYs2G2f+gOArNpITmQN7qiR2phtfvkDYEZlJdt4vTrE2+FcqWVnDEpgbZkiV0ib9kwjML8RFoUcv2szRzO9X5YZWZiGoSfnTjRT4TKnTvTN3Cq/iOXTpOF+SIk9xXOyLl7YntDE2oOur4kuH5nsmZZtxuGwjQoDt3CZseU0shHrh1VBpdtxOVQzXqwYm6KGhQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WITdROI8ebkmF4dGVy4gwwxUmWcYjRvIHJAew95TJSc=;
+ b=FlHAUkyTnJ1ElxDc1NbhQs3G3qEH8QvGRUk+YmD+vmEgCWBbNfgOQU7gSm+j5cN2BCKgX+DJJo0ErtKphSLLmgMCbcPIJHirQtcPj+kRmt9dpTVm8o7BTSrx2Kv5nyiVliNbJCcqKM2K+EehHFIVAnZsaXOFlquH7+HHASXNGpdYvydIog0Q41EZIoQSja5qhVH5bsYXcQkSC7z8exVzrILBYlgeakvvz4cbLVwb6seq3PRHxC248dm/5/XCgAKep0CA0uMv0fS5h/0HU5C2kxAiacrLQ65WuNcMbYAFfvRWxsA0Ucw7Rs8ob3HijwRxtZMZDChqJS31hc/qd4iVqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WITdROI8ebkmF4dGVy4gwwxUmWcYjRvIHJAew95TJSc=;
+ b=Y8ObGMNlMIqd7ygm0Evc+xHJkPVJs2k8Wrl+UXMyCsWpSIDCle4rdyTvo1qcWbGtc3P5ynp/6r9c80zqIlmu4oaahEPk4jYZYk1B0KmicRI0E1uCv73xZV3yNhsTw6GrBPUlwTNHWftZRMYB05czVTGYUZ9NdDRBgYbUkNAwyDtl6l8Z8Lix97BQ1fU1AEWLWtMorVd7SeCM7f0bmKVX74zcSWGr24CeN79crqLPbk24V6zlVWsuecMR6+TkmfoeZXFQu3rts7BO4oLadjkavdPsh6nOdTiebnnya7/Tb6p5wqdY+XydnhbeAj2hIUEtQjfqzOUsEpPIzCXRpKEC4A==
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
+ by PN0P287MB1553.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:180::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.18; Thu, 18 Jul
+ 2024 08:48:21 +0000
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c%6]) with mapi id 15.20.7784.017; Thu, 18 Jul 2024
+ 08:48:21 +0000
+Message-ID:
+ <MA0P287MB2822E6317E7167B69BCD75EFFEAC2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Date: Thu, 18 Jul 2024 16:48:15 +0800
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] perf test: Avoid python leak sanitizer test failures
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
-        Thomas Richter <tmricht@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org
-References: <20240717165717.1315003-1-irogers@google.com>
-Content-Language: en-US
-From: Aditya Gupta <adityag@linux.ibm.com>
-In-Reply-To: <20240717165717.1315003-1-irogers@google.com>
+Subject: Re: [PATCH] clk: sophgo: clk-sg2042-pll: Fix uninitialized variable
+ in debug output
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Inochi Amaoto <inochiama@outlook.com>,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <baf0a490-d5ba-4528-90ba-80399684692d@stanley.mountain>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <baf0a490-d5ba-4528-90ba-80399684692d@stanley.mountain>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 6cSHL7E-ksIuD889sKrLbRPMT5vLkiDW
-X-Proofpoint-GUID: MssmmmpBkH6WQ8HBJ79YHge55LoAFZxA
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+X-TMN: [D5c9CCdoVTmZ676xbgBOks07gPfsjmK9]
+X-ClientProxiedBy: TY2PR02CA0046.apcprd02.prod.outlook.com
+ (2603:1096:404:a6::34) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:138::5)
+X-Microsoft-Original-Message-ID:
+ <f7dd655a-216b-4170-920c-0110616fe81b@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-18_04,2024-07-17_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 suspectscore=0 spamscore=0 mlxscore=0 phishscore=0
- priorityscore=1501 impostorscore=0 bulkscore=0 clxscore=1011
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2407180054
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN0P287MB1553:EE_
+X-MS-Office365-Filtering-Correlation-Id: ee50e31a-a222-4a47-ed82-08dca7065fe6
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|19110799003|8060799006|461199028|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	q9q30iUO7YubKE9VCM2TMVDjWqAAh/RNrk7MEz1CTix6K1vltwOmgNe1oY/qLstgneceLaRgbhIbed5vjjgZqgCzo4JIzYCL3liEd3TZneeL28LA1L5eUlZsOXpnNC9uCw1IYpk1aaAAYvd7DAfFoUtVB0V3jUAEX+JdKxlo7b1dh+U7f73dVmpcLG0EPNL+vxXeRze9GeBPeFRrgHyYO7/JvY6qrYNJxfV6hd3OoYEo0XlK1DBHJxV8HI7FocnQgjqFt1d8QL/wphNOOxF3uje/EQYBkdWuZ7Xq2PZZOS1Ge69LbER91ALHSsMw51o91G+7a6ZRDZy8ZQEP+6oThGrF7UWLbd+ftZYFUKCqRjVYNBr2B9lYUZUq+pNJEH7rZi+J7PeA638vu87mZSwDZCi5nDaH/OFEyBSuQYLtLd54jvF6NKaHtK9KwBoVstdfanjDIEHHoLTfcEW3HUavtU1SXe7m/3/uiDQU1UKw5MZfQ9Sgaqxq6ceMM5Uxx30JSwzd3NjBLLbxkxOCJ0nmof9XcWlKoNmILLGZcqx6IJD8CJJYT10CLFbU9iacHJBcflV6LraSJPnREoR62+glzhiYQaLcV0IIBfJdX/4eTA1TYB9FBFkEjg88YagcBG/lYgSUG3EHvZT91EQRMIi96A==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aXhPYXN6cmVvRVZHa2xuV2VrVkFIT0dzdUlta08wakFnWjAxME5mbEF5Y0g0?=
+ =?utf-8?B?RGdhOFVVemx3bTFFcXJoaWZsaXdOcWNXUndhaDFhN21YZE41b3ozMDNHellk?=
+ =?utf-8?B?aXoxTmxDb2JWUlA0NXNDd0ttUllWaGJwdmp4L1VCMUM2dUpqN0swRk1VdU16?=
+ =?utf-8?B?cmNvQmR2MjdBZk9KazRmU1hvM01yVndmaXZhUUFtRm5CUDcvNVV1Z3NSQzhQ?=
+ =?utf-8?B?ZGh3TllSRzVuMzVNS2tOaFF2Z1Bzcmg0bFZYNEdwTkMyZmFtcnU4My9ZL21O?=
+ =?utf-8?B?YllHOUpieHZYdWRDZExyWEcyUlZFNEJvRVYyQ1ViOVNzbm9Tc1BrZFNZMmlk?=
+ =?utf-8?B?K2RuWVRIZ1lNUlRoMkthcE8ybUdFMVVrSDZVU1lPRXZadmVWNm92MmhiL3Bu?=
+ =?utf-8?B?N1dsa3Y4OTM3MGdvY0p0c3owSldzWTBUU3FrNjdhaUs5QUVBanVpV2NiUHV2?=
+ =?utf-8?B?WnM0YS9xZURlOFNHZGdOak5RVzNvNk5OeHpvcWpYQVJ5OC9qVzh5ODB6UDZD?=
+ =?utf-8?B?WE9uWGZnMVNPR1g2cmxKTlV5SmxHTTJQSDdSZjBGT0pYa3hRa0VHazhjV1VL?=
+ =?utf-8?B?TEplYTU0U0RwWC9GSUx6YjBTMWNiOTA1N3dxR0ZORFArb1pHM3BPeHphYXBQ?=
+ =?utf-8?B?S1BrcGFnTWJ5UU1FZmpnNTJIdlFYNDI3OGhzU0ZBOGFYTFVvTkE2SXhWdTRl?=
+ =?utf-8?B?UGpIdm5pejh1UTgvWTRMcXl4UU54bVRydU1PY2ZXTG83VkhzOFhJa3AraE1Y?=
+ =?utf-8?B?cTlEaklPT0VpREY0WDZ6NTdBQU9RbFY4RDNQeGxaNW5yZGhsVUdFeGF5ckxB?=
+ =?utf-8?B?T01HQ2VGendlckk0QzF3TGV2dGUyQUJzYUZZeWhwTDdCaDFrc044NzhUdG50?=
+ =?utf-8?B?ZXNRZWQ4WEJjRkU2NTVIcG9sSzllam5RS01qWnloc2pFbUUxQ3BoMFZGcTJ6?=
+ =?utf-8?B?SWVSZlVFWkExZXBnM3JwTEdXUGpnUGZKT0lRbkk2cGZRYXZxdWlFaEtSU0dm?=
+ =?utf-8?B?UEUxT1hMRjJVWTBhV0hLaGFoYitTckRpK1VLRTI0UW1XTjdqY1dvdnFIbklP?=
+ =?utf-8?B?MmdYY21Ea2dMMFJJektETW9JeDJsUzdmNUxVYUZqblZ6OTFZNkFxdnNsZTcx?=
+ =?utf-8?B?cDJhNHhOdldzMGtUWElHbWlJYXUyekRVdlVQa2o2UDdKVWU0dXNtOEwyWDhH?=
+ =?utf-8?B?dERKb1RSTnl1T2h6QnJEakNsQ3dHRUpBeFZ0MlBpQld0ZzhpY1JqT2VaSHlU?=
+ =?utf-8?B?bmlBUVJWR0dLQzM1b1FYMXhsTEtpQkNNbnJXWXl4U2pnYWlXR3RtT1NwaFE5?=
+ =?utf-8?B?bWVSMTYvbzE3azB3MGhoV1laTHI4ZXBaRXRvNktHTGJ0U05xdjR1V2JSRnhi?=
+ =?utf-8?B?cHpWMFdsSU84TzV6TEh6Tm95elJyNndqeGo0UWF5VUJFUzc1RWZtdUhWQUZk?=
+ =?utf-8?B?dVJhdDhXUmpHQmxkaTFjRk9yWkxLS0lDOEtBVFhMalpUNjIrMkVyVlJDK0dh?=
+ =?utf-8?B?SWZJSmlUMjduUEYwcC9nUWFBcnUrNEN5YWNHYXRVS3ZmVktRZUFNODB3MU9M?=
+ =?utf-8?B?RWlCYURMTjJET044NEgyOFJ0dWFCT2JkdkJRM05GQnJXYUdhOGlwaGx5ZHFw?=
+ =?utf-8?B?NCtRL0E0UEQyYnEzdTZkNVNZaFRiVDI5WmZNMHpSRWZBZmExelFJYW1YV0ky?=
+ =?utf-8?Q?TFzw/TFNVp6F1Al+JMxi?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ee50e31a-a222-4a47-ed82-08dca7065fe6
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2024 08:48:21.5369
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB1553
 
-Hi,
 
-
-On 17/07/24 22:27, Ian Rogers wrote:
-
-> Leak sanitizer will report memory leaks from python and the leak
-> sanitizer output causes tests to fail. For example:
+On 2024/7/18 10:25, Dan Carpenter wrote:
+> If sg2042_get_pll_ctl_setting() fails then "value" isn't initialized and
+> it is printed in the debug output.  Initialize it to zero.
 >
-> ```
-> $ perf test 98 -v
->   98: perf script tests:
-> --- start ---
-> test child forked, pid 1272962
-> DB test
-> [ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 0.046 MB /tmp/perf-test-script.x0EktdCel8/perf.data (8 samples) ]
-> call_path_table((1, 0, 0, 0)
-> call_path_table((2, 1, 0, 140339508617447)
-> call_path_table((3, 2, 2, 0)
-> call_path_table((4, 3, 3, 0)
-> call_path_table((5, 4, 4, 0)
-> call_path_table((6, 5, 5, 0)
-> call_path_table((7, 6, 6, 0)
-> call_path_table((8, 7, 7, 0)
-> call_path_table((9, 8, 8, 0)
-> call_path_table((10, 9, 9, 0)
-> call_path_table((11, 10, 10, 0)
-> call_path_table((12, 11, 11, 0)
-> call_path_table((13, 12, 1, 0)
-> sample_table((1, 1, 1, 1, 1, 1, 1, 8, -2058824120, 588306954119000, -1, 0, 0, 0, 0, 1, 0, 0, 128933429281, 0, 0, 13, 0, 0, 0, -1, -1))
-> sample_table((2, 1, 1, 1, 1, 1, 1, 8, -2058824120, 588306954137053, -1, 0, 0, 0, 0, 1, 0, 0, 128933429281, 0, 0, 13, 0, 0, 0, -1, -1))
-> sample_table((3, 1, 1, 1, 1, 1, 1, 8, -2058824120, 588306954140089, -1, 0, 0, 0, 0, 9, 0, 0, 128933429281, 0, 0, 13, 0, 0, 0, -1, -1))
-> sample_table((4, 1, 1, 1, 1, 1, 1, 8, -2058824120, 588306954142376, -1, 0, 0, 0, 0, 155, 0, 0, 128933429281, 0, 0, 13, 0, 0, 0, -1, -1))
-> sample_table((5, 1, 1, 1, 1, 1, 1, 8, -2058824120, 588306954144045, -1, 0, 0, 0, 0, 2493, 0, 0, 128933429281, 0, 0, 13, 0, 0, 0, -1, -1))
-> sample_table((6, 1, 1, 1, 1, 1, 12, 77, -2046828595, 588306954145722, -1, 0, 0, 0, 0, 47555, 0, 0, 128933429281, 0, 0, 13, 0, 0, 0, -1, -1))
-> call_path_table((14, 9, 14, 0)
-> call_path_table((15, 14, 15, 0)
-> call_path_table((16, 15, 0, -1040969624)
-> call_path_table((17, 16, 16, 0)
-> call_path_table((18, 17, 17, 0)
-> call_path_table((19, 18, 18, 0)
-> call_path_table((20, 19, 19, 0)
-> call_path_table((21, 20, 13, 0)
-> sample_table((7, 1, 1, 1, 2, 1, 13, 46, -2053700898, 588306954157436, -1, 0, 0, 0, 0, 964078, 0, 0, 128933429281, 0, 0, 21, 0, 0, 0, -1, -1))
-> call_path_table((22, 1, 21, 0)
-> call_path_table((23, 22, 22, 0)
-> call_path_table((24, 23, 23, 0)
-> call_path_table((25, 24, 24, 0)
-> call_path_table((26, 25, 25, 0)
-> call_path_table((27, 26, 26, 0)
-> call_path_table((28, 27, 27, 0)
-> call_path_table((29, 28, 28, 0)
-> call_path_table((30, 29, 29, 0)
-> call_path_table((31, 30, 30, 0)
-> call_path_table((32, 31, 31, 0)
-> call_path_table((33, 32, 32, 0)
-> call_path_table((34, 33, 33, 0)
-> call_path_table((35, 34, 20, 0)
-> sample_table((8, 1, 1, 1, 2, 1, 20, 49, -2046878127, 588306954378624, -1, 0, 0, 0, 0, 2534317, 0, 0, 128933429281, 0, 0, 35, 0, 0, 0, -1, -1))
->
-> =================================================================
-> ==1272975==ERROR: LeakSanitizer: detected memory leaks
->
-> Direct leak of 13628 byte(s) in 6 object(s) allocated from:
->      #0 0x56354f60c092 in malloc (/tmp/perf/perf+0x29c092)
->      #1 0x7ff25c7d02e7 in _PyObject_Malloc /build/python3.11/../Objects/obmalloc.c:2003:11
->      #2 0x7ff25c7d02e7 in _PyObject_Malloc /build/python3.11/../Objects/obmalloc.c:1996:1
->
-> SUMMARY: AddressSanitizer: 13628 byte(s) leaked in 6 allocation(s).
-> --- Cleaning up ---
-> ---- end(-1) ----
->   98: perf script tests                                               : FAILED!
-> ```
->
-> Disable leak sanitizer when running specific perf+python tests to
-> avoid this. This causes the tests to pass when run with leak
-> sanitizer.
->
-> Signed-off-by: Ian Rogers <irogers@google.com>
+> Fixes: 48cf7e01386e ("clk: sophgo: Add SG2042 clock driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->   tools/perf/tests/shell/script.sh             | 3 +++
->   tools/perf/tests/shell/test_task_analyzer.sh | 3 +++
->   2 files changed, 6 insertions(+)
+>   drivers/clk/sophgo/clk-sg2042-pll.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/tools/perf/tests/shell/script.sh b/tools/perf/tests/shell/script.sh
-> index c1a603653662..d3e2958d2242 100755
-> --- a/tools/perf/tests/shell/script.sh
-> +++ b/tools/perf/tests/shell/script.sh
-> @@ -61,7 +61,10 @@ _end_of_file_
->   	esac
+> diff --git a/drivers/clk/sophgo/clk-sg2042-pll.c b/drivers/clk/sophgo/clk-sg2042-pll.c
+> index aa142897aa5e..24b0eab6154b 100644
+> --- a/drivers/clk/sophgo/clk-sg2042-pll.c
+> +++ b/drivers/clk/sophgo/clk-sg2042-pll.c
+> @@ -387,7 +387,7 @@ static int sg2042_clk_pll_set_rate(struct clk_hw *hw,
+>   	struct sg2042_pll_clock *pll = to_sg2042_pll_clk(hw);
+>   	struct sg2042_pll_ctrl pctrl_table;
+>   	unsigned long flags;
+> -	u32 value;
+> +	u32 value = 0;
+>   	int ret;
 >   
->   	perf record $cmd_flags -o "${perfdatafile}" true
-> +	# Disable lsan to avoid warnings about python memory leaks.
-> +	export ASAN_OPTIONS=detect_leaks=0
->   	perf script -i "${perfdatafile}" -s "${db_test}"
-> +	export ASAN_OPTIONS=
->   	echo "DB test [Success]"
->   }
->   
-> diff --git a/tools/perf/tests/shell/test_task_analyzer.sh b/tools/perf/tests/shell/test_task_analyzer.sh
-> index 92d15154ba79..cb02bf23e6a5 100755
-> --- a/tools/perf/tests/shell/test_task_analyzer.sh
-> +++ b/tools/perf/tests/shell/test_task_analyzer.sh
-> @@ -11,6 +11,9 @@ if [ -e "$perfdir/scripts/python/Perf-Trace-Util" ]; then
->     export PERF_EXEC_PATH=$perfdir
->   fi
->   
-> +# Disable lsan to avoid warnings about python memory leaks.
-> +export ASAN_OPTIONS=detect_leaks=0
-> +
->   cleanup() {
->     rm -f perf.data
->     rm -f perf.data.old
+>   	spin_lock_irqsave(pll->lock, flags);
 
-Looks good, and test passes with this patch:
+Reviewed-by: Chen Wang <unicorn_wang@outlook.com>
 
-Reviewed-by: Aditya Gupta <adityag@linux.ibm.com>
+Thank you Dan.
 
+Regards,
 
-Linux-ci build test results: 
-https://github.com/adi-g15-ibm/linux-ci/actions?query=branch%3Atmp-test-branch-25073
-
-
-Thanks,
-Aditya Gupta
+Chen
 
 
