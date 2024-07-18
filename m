@@ -1,195 +1,199 @@
-Return-Path: <linux-kernel+bounces-256081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 735229348BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:25:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AF609348C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:27:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E95751F22568
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:25:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 729FC1C211F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8272B74058;
-	Thu, 18 Jul 2024 07:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9430576056;
+	Thu, 18 Jul 2024 07:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="poFAvwBd";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oRN5uQXj";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="poFAvwBd";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oRN5uQXj"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EKBZ5CYN"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AD36F2E5
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 07:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463B02CCA3;
+	Thu, 18 Jul 2024 07:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721287548; cv=none; b=FgB6sEIXxv4BALIU92BsDef83COCTo/t/gBiLdQ8HpdkwXUcJeQXp8srO/q89C6q+bE3/qyl9dpZfPpkg8s+xOjMjm4EAy1ESM7joPkR5+1TxMzLG31KWhZF2ZYxaHagLgEmso2mFqTBdKRZntimGzsW6m70xxravcL4CfFwKX0=
+	t=1721287622; cv=none; b=EAJ6jT4JJ4uE24mWsQYaFT2FDYoC0OoBl+yZ+1ZK7EXYHvK1/9S4fDjciHppQ51K4OIRCQO2+axtb1YTceOamXLhv/T+usgekeTC0ejnzR42hOTVz17uTW7plXh4r7IDRRWk3AAFzyvrYYXQddlR8eM5zxDiusB2El6euGf5cV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721287548; c=relaxed/simple;
-	bh=0H4XV8TOISM3Gt1+8SMaDb8bfqGOnzwUgxRHRqrmJTE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZOAkdWrOOrEGY2wxo00rY17Lh8gzWoOTtxgXC3J4QN7s3SCXcTo8BkHFuLi5scS4gs2W0oBQtR3hxIupHm3dEOK58uKVAdzCQjHF51xnNXQueEs6PvN6ZP4lN3h64mfBFQMVIxXgdx157PCJ/z+fY3lu7SsDGJxOBhvKvwhDFPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=poFAvwBd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oRN5uQXj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=poFAvwBd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oRN5uQXj; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 686A621A80;
-	Thu, 18 Jul 2024 07:25:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721287545; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mq/1yoSlo6cu8qdLhhM1bAep0Jfw5LSOtI55xWrH4fg=;
-	b=poFAvwBdFdvIjnhpANGHGAjF+VZTGg/xJTb4lE5UhxoMQRfCNO0RHtXFKEGXCOJpDUD+Uk
-	AWGtggcEcwduSuQd2Pb5btF/vxtpcpy2w7Sg8TdqmvW4vC6cvf0Lg84gje3fFiQ8eEq1T/
-	jHpGCtyEJb2P4VmRvftqucD9+pgkWsM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721287545;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mq/1yoSlo6cu8qdLhhM1bAep0Jfw5LSOtI55xWrH4fg=;
-	b=oRN5uQXjXNTqmxAvZNARP1zp8p/uVJifhqXhBGP4A3I5X+Vakn7gmjX39KDshqvrxH8vVV
-	sJ4ayCWiSYN3XhBg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721287545; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mq/1yoSlo6cu8qdLhhM1bAep0Jfw5LSOtI55xWrH4fg=;
-	b=poFAvwBdFdvIjnhpANGHGAjF+VZTGg/xJTb4lE5UhxoMQRfCNO0RHtXFKEGXCOJpDUD+Uk
-	AWGtggcEcwduSuQd2Pb5btF/vxtpcpy2w7Sg8TdqmvW4vC6cvf0Lg84gje3fFiQ8eEq1T/
-	jHpGCtyEJb2P4VmRvftqucD9+pgkWsM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721287545;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mq/1yoSlo6cu8qdLhhM1bAep0Jfw5LSOtI55xWrH4fg=;
-	b=oRN5uQXjXNTqmxAvZNARP1zp8p/uVJifhqXhBGP4A3I5X+Vakn7gmjX39KDshqvrxH8vVV
-	sJ4ayCWiSYN3XhBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1F7F81379D;
-	Thu, 18 Jul 2024 07:25:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id jA96BnnDmGZwEAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 18 Jul 2024 07:25:45 +0000
-Date: Thu, 18 Jul 2024 09:26:18 +0200
-Message-ID: <87wmljw485.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	kernel test robot <lkp@intel.com>,
-	llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Takashi Iwai <tiwai@suse.de>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>,
-	Bard Liao <bard.liao@intel.com>
-Subject: Re: ld.lld: error: undefined symbol: iosf_mbi_available
-In-Reply-To: <20240717202806.GA728411@thelio-3990X>
-References: <202407160704.zpdhJ8da-lkp@intel.com>
-	<05954a59-2bef-4262-bd91-cfe21d2381f2@linux.intel.com>
-	<20240717202806.GA728411@thelio-3990X>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1721287622; c=relaxed/simple;
+	bh=GIsncHVy76pTxeEgDEjyoILkmmFXZxoE2s5n3GlSYPo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EG4KIILakfjFicVZfo/gbdKGgZYGQXRiN3ZO5aoXVrT5gvde0IrPAZCCPsFizbBwEXlZuatB++0giN++dM+V+z7lUa54ZHZG2KFCOFc+EuQwFUapS0VKaq+6FwQW0UifY3ivZYte8PtqatvV+1glScXzjLqs3BP4y6zZIkV+xh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EKBZ5CYN; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5d31ef2c73cso246090eaf.3;
+        Thu, 18 Jul 2024 00:27:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721287620; x=1721892420; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WSvSUpNQZRp2YKhgVtO8QG42U2eOtSDdmhMTp/cDq/E=;
+        b=EKBZ5CYNHs/oix7VpCnC5sJt+oSPnD7zB1Ed5ESJgbZB+uIFOfRtDUoyQJ/iTpv41e
+         YDTNUfb1ZcTR6WWK07IqPAJdcHUFbmUnacqyjey+3hjuTK/5JVoPLsUc+GT9hhNAHlu5
+         x43gJ7XEp66DzOSe/sHiUfBTEW5z985waVtPD10VOXLBJlLTuP6hplmPu3HjrIRuV9WF
+         LquEDBkOvYEw39z+E2RBoSfxMV+4MnJK441MbdMt7/UpenTwuclpQ9d6M0SNNukmy5TO
+         a0s7AC0I1e1vO1sUdTBXkZ2KWLud5fZagfb2XWYM/C2Zxx39zXIqSZ8AfuN4WhoRtqHg
+         nxng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721287620; x=1721892420;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WSvSUpNQZRp2YKhgVtO8QG42U2eOtSDdmhMTp/cDq/E=;
+        b=rVciAbEHcEtrYmTbR4qwRZQ6/6xff2SlP7mY0eDHhFc9w0GuSXzZDrBgfo8kD53n/U
+         LIzNcEqXhA1Nol6We0btc8htEVAxL/hjIsxW+blkfVs+KyIUA4W9ZG25vxkhbO+TTSHr
+         BS/rKh12+FLFm7DW3lNn+pT28LYjZKNEA9dE5w6bAQimUdo86eJ2uyh5YkvaAZBNatFT
+         zemb3Ki/cEem1ODmZRKqzygfb35248kxj6YkB7seN7zaf8840SM4s+7Kr+fuqHgcejPN
+         Az4XR7Xntcg2SfwA6U4ueUwz593noo3Z9KVqpFJBMDiRXIVu5XJsRV0recDQf6FMeFeT
+         eS5w==
+X-Forwarded-Encrypted: i=1; AJvYcCW6BojyzLYFdBuyAD+Es4IopHoqfE3If0OFZOovPjF82PMxztknNiGHFq7uOjdeLPiyRHY5ySQ7Po5Li15sI3s+2BYRNnkFmA4SMwFpopo2ZRcc4zmwRTvKmLsv/MjCvSuTNRb26f25xZ/tKcCYHe+BNXr4iqqeLthz/jNUhOeLIWhoeA==
+X-Gm-Message-State: AOJu0YzVEH0QQn65UM7XHn6/HieOmTlFWilH3nNsVUkCFz8LIaOFREzo
+	byRp/khU7K92XyadxMvRpgBJFtx/1SuU9DEjo/t79Qa0bIQx+fm76TJL6krH+H29zJZ0YTFUvOv
+	6256A27Pb0jYvOXM6wRniK9H8hzY=
+X-Google-Smtp-Source: AGHT+IHAWI3Xg3mDtfREDUCxHyoF4gTS2b1DQd8tHuhgBypbHELjTsim3tbP/m0LxVCn39FYamneM1MkEQiw2eIcPmQ=
+X-Received: by 2002:a05:6820:2017:b0:5c6:4807:2d1f with SMTP id
+ 006d021491bc7-5d41d3b833dmr5554884eaf.8.1721287620137; Thu, 18 Jul 2024
+ 00:27:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
-X-Spam-Level: 
+MIME-Version: 1.0
+References: <20240715110251.261844-1-heiko@sntech.de> <20240715110251.261844-4-heiko@sntech.de>
+In-Reply-To: <20240715110251.261844-4-heiko@sntech.de>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Thu, 18 Jul 2024 12:56:43 +0530
+Message-ID: <CANAwSgS_ZaEkt5-kKud9OwdN4za+xvW5SoBr34EmOdU2OQJWnw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] arm64: dts: rockchip: fix the pcie refclock
+ oscillator on Rock 5 ITX
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 17 Jul 2024 22:28:06 +0200,
-Nathan Chancellor wrote:
-> 
-> On Wed, Jul 17, 2024 at 01:43:35PM +0200, Pierre-Louis Bossart wrote:
-> > 
-> > 
-> > On 7/16/24 01:07, kernel test robot wrote:
-> > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> > > head:   3e7819886281e077e82006fe4804b0d6b0f5643b
-> > > commit: 8d4ba1be3d2257606e04aff412829d8972670750 ASoC: SOF: pci: split PCI into different drivers
-> > > date:   3 years, 4 months ago
-> > 
-> > This doesn't seem to be a problem on the latest code? was it intentional
-> > to report a problem on such an old commit?
-> 
-> It's still reproducible at commit 8b0f0bb27c32 ("Merge tag
-> 'fs_for_v6.11-rc1' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs") for me,
-> using either LLVM or GCC with the configuration linked below:
-> 
->   ld.lld: error: undefined symbol: iosf_mbi_available
->   >>> referenced by atom.c
->   >>>               sound/soc/sof/intel/atom.o:(atom_machine_select) in archive vmlinux.a
-> 
->   ld.lld: error: undefined symbol: iosf_mbi_read
->   >>> referenced by atom.c
->   >>>               sound/soc/sof/intel/atom.o:(atom_machine_select) in archive vmlinux.a
-> 
->   .../gcc/14.1.0/bin/i386-linux-ld: sound/soc/sof/intel/atom.o: in function `atom_machine_select':
->   atom.c:(.text+0x1b9): undefined reference to `iosf_mbi_available'
->   .../gcc/14.1.0/bin/i386-linux-ld: atom.c:(.text+0x1e3): undefined reference to `iosf_mbi_read'
+Hi Heiko,
 
-Yours looks different from the original report, and indeed this must
-be a missing fix.
+On Mon, 15 Jul 2024 at 16:35, Heiko Stuebner <heiko@sntech.de> wrote:
+>
+> The Rock 5 ITX uses two PCIe controllers to drive both a M.2 slot and its
+> SATA controller with 2 lanes each. The supply for the refclk oscillator is
+> the same that supplies the M.2 slot, but the SATA controller port is
+> supplied by a different rail.
+>
+> This leads to the effect that if the PCIe30x4 controller for the M.2
+> probes first, everything works normally. But if the PCIe30x2 controller
+> that is connected to the SATA controller probes first, it will hang on
+> the first DBI read as nothing will have enabled the refclock before.
+>
 
-Does the following change cover it?
+I just checked the rk3588-rock-5-itx.dts in the linux-next.
+You have not enabled sata0 and sata2, which might be the problem
+for the SATA controller not getting initialized.
 
+Thanks
+-Anand
 
-thanks,
-
-Takashi
-
---- a/sound/soc/sof/intel/Kconfig
-+++ b/sound/soc/sof/intel/Kconfig
-@@ -19,6 +19,7 @@ config SND_SOC_SOF_INTEL_ATOM_HIFI_EP
- 	tristate
- 	select SND_SOC_SOF_INTEL_COMMON
- 	select SND_SOC_SOF_INTEL_HIFI_EP_IPC
-+	select IOSF_MBI if X86 && PCI
- 	help
- 	  This option is not user-selectable but automagically handled by
- 	  'select' statements at a higher level.
-@@ -44,7 +45,6 @@ config SND_SOC_SOF_BAYTRAIL
- 	select SND_SOC_SOF_INTEL_COMMON
- 	select SND_SOC_SOF_INTEL_ATOM_HIFI_EP
- 	select SND_SOC_SOF_ACPI_DEV
--	select IOSF_MBI if X86 && PCI
- 	help
- 	  This adds support for Sound Open Firmware for Intel(R) platforms
- 	  using the Baytrail, Braswell or Cherrytrail processors.
+> Fix this by describing the clock generator with its supplies so that
+> both controllers can reference it as needed.
+>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  .../boot/dts/rockchip/rk3588-rock-5-itx.dts   | 38 ++++++++++++++++++-
+>  1 file changed, 36 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
+> index d0b922b8d67e8..37bc53f2796fc 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
+> @@ -72,6 +72,15 @@ hdd-led2 {
+>                 };
+>         };
+>
+> +       /* Unnamed voltage oscillator: 100MHz,3.3V,3225 */
+> +       pcie30_port0_refclk: pcie30_port1_refclk: pcie-voltage-oscillator {
+> +               compatible = "voltage-oscillator";
+> +               #clock-cells = <0>;
+> +               clock-frequency = <100000000>;
+> +               clock-output-names = "pcie30_refclk";
+> +               vdd-supply = <&vcc3v3_pi6c_05>;
+> +       };
+> +
+>         fan0: pwm-fan {
+>                 compatible = "pwm-fan";
+>                 #cooling-cells = <2>;
+> @@ -146,13 +155,14 @@ vcc3v3_lan: vcc3v3_lan_phy2: regulator-vcc3v3-lan {
+>                 vin-supply = <&vcc_3v3_s3>;
+>         };
+>
+> -       vcc3v3_mkey: regulator-vcc3v3-mkey {
+> +       /* The PCIE30x4_PWREN_H controls two regulators */
+> +       vcc3v3_mkey: vcc3v3_pi6c_05: regulator-vcc3v3-pi6c-05 {
+>                 compatible = "regulator-fixed";
+>                 enable-active-high;
+>                 gpios = <&gpio1 RK_PA4 GPIO_ACTIVE_HIGH>;
+>                 pinctrl-names = "default";
+>                 pinctrl-0 = <&pcie30x4_pwren_h>;
+> -               regulator-name = "vcc3v3_mkey";
+> +               regulator-name = "vcc3v3_pi6c_05";
+>                 regulator-min-microvolt = <3300000>;
+>                 regulator-max-microvolt = <3300000>;
+>                 startup-delay-us = <5000>;
+> @@ -513,6 +523,18 @@ &pcie30phy {
+>
+>  /* ASMedia ASM1164 Sata controller */
+>  &pcie3x2 {
+> +       /*
+> +        * The board has a "pcie_refclk" oscillator that needs enabling,
+> +        * so add it to the list of clocks.
+> +        */
+> +       clocks = <&cru ACLK_PCIE_2L_MSTR>, <&cru ACLK_PCIE_2L_SLV>,
+> +                <&cru ACLK_PCIE_2L_DBI>, <&cru PCLK_PCIE_2L>,
+> +                <&cru CLK_PCIE_AUX1>, <&cru CLK_PCIE2L_PIPE>,
+> +                <&pcie30_port1_refclk>;
+> +       clock-names = "aclk_mst", "aclk_slv",
+> +                     "aclk_dbi", "pclk",
+> +                     "aux", "pipe",
+> +                     "ref";
+>         pinctrl-names = "default";
+>         pinctrl-0 = <&pcie30x2_perstn_m1_l>;
+>         reset-gpios = <&gpio4 RK_PB0 GPIO_ACTIVE_HIGH>;
+> @@ -522,6 +544,18 @@ &pcie3x2 {
+>
+>  /* M.2 M.key */
+>  &pcie3x4 {
+> +       /*
+> +        * The board has a "pcie_refclk" oscillator that needs enabling,
+> +        * so add it to the list of clocks.
+> +        */
+> +       clocks = <&cru ACLK_PCIE_4L_MSTR>, <&cru ACLK_PCIE_4L_SLV>,
+> +                <&cru ACLK_PCIE_4L_DBI>, <&cru PCLK_PCIE_4L>,
+> +                <&cru CLK_PCIE_AUX0>, <&cru CLK_PCIE4L_PIPE>,
+> +                <&pcie30_port0_refclk>;
+> +       clock-names = "aclk_mst", "aclk_slv",
+> +                     "aclk_dbi", "pclk",
+> +                     "aux", "pipe",
+> +                     "ref";
+>         num-lanes = <2>;
+>         pinctrl-names = "default";
+>         pinctrl-0 = <&pcie30x4_perstn_m1_l>;
+> --
+> 2.39.2
+>
+>
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
 
