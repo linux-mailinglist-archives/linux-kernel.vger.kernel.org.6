@@ -1,125 +1,267 @@
-Return-Path: <linux-kernel+bounces-256203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8893C934AAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:07:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68CC3934AB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:12:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 493E02826EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:06:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C026B2103F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFF080633;
-	Thu, 18 Jul 2024 09:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b7LiQIbo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCFB8120D;
+	Thu, 18 Jul 2024 09:12:01 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCFE2E419
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 09:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723383BB30;
+	Thu, 18 Jul 2024 09:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721293614; cv=none; b=nv4QJLUnXtJbcnx8dNl0m2Aab0lmpQ24tVQBOXXbej54QyF6FmiEHsU/7Xob2eqc8LtSRQzIfPy9l3fj3vKPFFqd7oJoX9DcNq5R5QpPIXDa7eWMKHAN45ycCmmTqQT+PMZPXzFNPCag6GndOitE+pytBbSojeNNFbPFvQYwiCo=
+	t=1721293920; cv=none; b=pFpRWJ3uOTshF3Ftm0AQU4YRIYPu3yyQG5MlnnAa6Ujs1p7AsOEqKeUd8bLUg7CeYXcOidb+9eU3i+gColCErDiNw34G/6+1mv7tm8vwNeRqxGnuojL8PgPBzBxQW1zEc7bqa00XTi0w+B1S26Xdm4TBssKY5DgZRarfUlK/xB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721293614; c=relaxed/simple;
-	bh=fyyWx8U8VVx1dX3aVlq0lEv6E7jxlmpHFgOb/0d128E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VnC05obncoN9eykRs224KJB0Fue9pkr/YNAqITwy5UjIxS6fRzVRazYNb/1/mcztsPsuHrATdqPQbaWMnsIYb4NWPJ/e0qX+NeyJh5o6JHm/KpFn8qP//h9KjVoFErqHp8iabKKx5wI21lRGDB5ho8UiycJeQrtzp2L9RwKZ99U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b7LiQIbo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721293611;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8RCvekDuVMGClEb5Zcx5cpKXF2G/MkF3FsUT2L2fQJc=;
-	b=b7LiQIbo5pL7KqfSwrnqwb7O3LZ5wVGrUPt/M+j7vjb4MhRhwczGAloplji1Dp3bBlJOOA
-	1jNMsDl0er9KFli7fQS0TI7GI16dD2+osxXTTe4gWue8BwirsBc5Qu6t2Sfl+TrG4SPigU
-	KhIs9gSuEwZLyQItoZUPdfCX42es3dQ=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-54-Zpgvpz_fOEKKTXDyg0cLYg-1; Thu, 18 Jul 2024 05:06:47 -0400
-X-MC-Unique: Zpgvpz_fOEKKTXDyg0cLYg-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4265e546ca9so123945e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 02:06:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721293606; x=1721898406;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8RCvekDuVMGClEb5Zcx5cpKXF2G/MkF3FsUT2L2fQJc=;
-        b=hpxAXvG0Ed+ckwhP4sGzIYYLiZVbCkTSsRF/P9eOx1EANEjMqwClc7viwz2n9U4YY9
-         PfS83ZGGuVicht6jArUwnaArMA94Bm3W6Ssf8KDg0jVgImpDc6JRgDFyWG6G4fZMK6XI
-         5O5ByLBHS6h/i5WM+K+yd8tq+CIf3mq+KYhMxX1zUtcmISWJAMw7oxAeajLPAG/Luub9
-         BvyO0vylVWXc4eEHv7IJ7PfHydtG3tfWdr9sFoglhQy6ft6a/FzqDn5g+vPuWkl+/IpQ
-         mlMiV+Boj5eiEzCanR6lLWLtutrofBvH0Atc7/siFdaa2OgGd5iTQN4Xzp7w9ZALfPvm
-         ZVMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW818gMdDNZdk7YyWjLC566YRg8szhE3Ca1U7Z9v1WT3z4LDIl5VDGRFLQ5igjFEUs+Z0ITV8TY3tS/Uc5npG9+n7sIk86BQfB/wd/D
-X-Gm-Message-State: AOJu0YwQH6BfYUbgUFGxtfubJ61CR3HkbX2GA/Rw+uIVs3tcIwT5ckBT
-	gDnyTwwLCJ5Mze79fg1i65QEJqgzJdsHARG4Jv06gWQOuhM2z1H0Uro+H+INdh1UlkQS3CfbjiJ
-	lm43lLD21Sy0KuEC5OL0541f8dUBbxMo3wnzHg3dL6mXFf5pj9WwbZ0SWGrWsHQ==
-X-Received: by 2002:a05:600c:4743:b0:427:9f6f:4914 with SMTP id 5b1f17b1804b1-427d2aac236mr1057685e9.6.1721293606351;
-        Thu, 18 Jul 2024 02:06:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEsT3v4FMriXfs1n3xUxl+Nav2GTdTv3Ty+wMHYrugLpRBpptpKSiqdz3BT6uF6IHT2hyVbHA==
-X-Received: by 2002:a05:600c:4743:b0:427:9f6f:4914 with SMTP id 5b1f17b1804b1-427d2aac236mr1057585e9.6.1721293605964;
-        Thu, 18 Jul 2024 02:06:45 -0700 (PDT)
-Received: from ?IPV6:2a0d:3341:b08b:7710:c7b:f018:3ba3:eb24? ([2a0d:3341:b08b:7710:c7b:f018:3ba3:eb24])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a3b7aasm3663905e9.6.2024.07.18.02.06.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jul 2024 02:06:45 -0700 (PDT)
-Message-ID: <eff0af6e-ad83-4935-bf69-8acb42e37380@redhat.com>
-Date: Thu, 18 Jul 2024 11:06:43 +0200
+	s=arc-20240116; t=1721293920; c=relaxed/simple;
+	bh=vf30FpQALX2+GvASM3UCP8rE9XKN+SKOGQTB8/JhcKM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=j2Fnw4gcZt7Rg/QzqNJhzJycrctfrnm0B7G2DsHUwCagwFID1ydsuHH9YK9sDfSPaL6nX91qdZqmtw7QfBgt20Szc2JjDnuD7DGTL6J+NfTSRWob7SG85fIrJr6ktTX3USsjvrSC68mLSDFOkGv/b0zA4a+luUxlSHr8HCOngxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WPn7w2MFKz6K6G8;
+	Thu, 18 Jul 2024 17:10:04 +0800 (CST)
+Received: from lhrpeml500002.china.huawei.com (unknown [7.191.160.78])
+	by mail.maildlp.com (Postfix) with ESMTPS id BF51E140B2F;
+	Thu, 18 Jul 2024 17:11:54 +0800 (CST)
+Received: from lhrpeml500006.china.huawei.com (7.191.161.198) by
+ lhrpeml500002.china.huawei.com (7.191.160.78) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 18 Jul 2024 10:11:54 +0100
+Received: from lhrpeml500006.china.huawei.com ([7.191.161.198]) by
+ lhrpeml500006.china.huawei.com ([7.191.161.198]) with mapi id 15.01.2507.039;
+ Thu, 18 Jul 2024 10:11:54 +0100
+From: Shiju Jose <shiju.jose@huawei.com>
+To: "nifan.cxl@gmail.com" <nifan.cxl@gmail.com>
+CC: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+	"tony.luck@intel.com" <tony.luck@intel.com>, "rafael@kernel.org"
+	<rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>,
+	"mchehab@kernel.org" <mchehab@kernel.org>, "dan.j.williams@intel.com"
+	<dan.j.williams@intel.com>, "dave@stgolabs.net" <dave@stgolabs.net>,
+	"Jonathan Cameron" <jonathan.cameron@huawei.com>, "dave.jiang@intel.com"
+	<dave.jiang@intel.com>, "alison.schofield@intel.com"
+	<alison.schofield@intel.com>, "vishal.l.verma@intel.com"
+	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
+	"david@redhat.com" <david@redhat.com>, "Vilas.Sridharan@amd.com"
+	<Vilas.Sridharan@amd.com>, "leo.duran@amd.com" <leo.duran@amd.com>,
+	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>, "rientjes@google.com"
+	<rientjes@google.com>, "jiaqiyan@google.com" <jiaqiyan@google.com>,
+	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "naoya.horiguchi@nec.com"
+	<naoya.horiguchi@nec.com>, "james.morse@arm.com" <james.morse@arm.com>,
+	"jthoughton@google.com" <jthoughton@google.com>, "somasundaram.a@hpe.com"
+	<somasundaram.a@hpe.com>, "erdemaktas@google.com" <erdemaktas@google.com>,
+	"pgonda@google.com" <pgonda@google.com>, "duenwen@google.com"
+	<duenwen@google.com>, "mike.malvestuto@intel.com"
+	<mike.malvestuto@intel.com>, "gthelen@google.com" <gthelen@google.com>,
+	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
+	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
+	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>, tanxiaofei
+	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>, "Roberto
+ Sassu" <roberto.sassu@huawei.com>, "kangkang.shen@futurewei.com"
+	<kangkang.shen@futurewei.com>, wanghuiqiang <wanghuiqiang@huawei.com>,
+	Linuxarm <linuxarm@huawei.com>
+Subject: RE: [RFC PATCH v9 05/11] cxl/mbox: Add GET_FEATURE mailbox command
+Thread-Topic: [RFC PATCH v9 05/11] cxl/mbox: Add GET_FEATURE mailbox command
+Thread-Index: AQHa15F4Ou8ZYOXrVUerA137Puj/7LH7KKwAgAEKkDA=
+Date: Thu, 18 Jul 2024 09:11:54 +0000
+Message-ID: <e3f35823df1448e0935dabf0979ed4e8@huawei.com>
+References: <20240716150336.2042-1-shiju.jose@huawei.com>
+ <20240716150336.2042-6-shiju.jose@huawei.com>
+ <66980890.050a0220.163b98.0210@mx.google.com>
+In-Reply-To: <66980890.050a0220.163b98.0210@mx.google.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net: axienet: Fix coding style issues
-To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, michal.simek@amd.com, andrew@lunn.ch
-Cc: netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, git@amd.com,
- Appana Durga Kedareswara Rao <appana.durga.rao@xilinx.com>
-References: <1721242483-3121341-1-git-send-email-radhey.shyam.pandey@amd.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <1721242483-3121341-1-git-send-email-radhey.shyam.pandey@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 7/17/24 20:54, Radhey Shyam Pandey wrote:
-> From: Appana Durga Kedareswara Rao <appana.durga.rao@xilinx.com>
-> 
-> Replace all occurences of (1<<x) by BIT(x) to get rid of checkpatch.pl
-> "CHECK" output "Prefer using the BIT macro".
-> 
-> It also removes unnecessary ftrace-like logging, add missing blank line
-> after declaration and remove unnecessary parentheses around 'ndev->mtu
-> <= XAE_JUMBO_MTU' and 'ndev->mtu > XAE_MTU'.
-> 
-> Signed-off-by: Appana Durga Kedareswara Rao <appana.durga.rao@xilinx.com>
-> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+>-----Original Message-----
+>From: nifan.cxl@gmail.com <nifan.cxl@gmail.com>
+>Sent: 17 July 2024 19:08
+>To: Shiju Jose <shiju.jose@huawei.com>
+>Cc: linux-edac@vger.kernel.org; linux-cxl@vger.kernel.org; linux-
+>acpi@vger.kernel.org; linux-mm@kvack.org; linux-kernel@vger.kernel.org;
+>bp@alien8.de; tony.luck@intel.com; rafael@kernel.org; lenb@kernel.org;
+>mchehab@kernel.org; dan.j.williams@intel.com; dave@stgolabs.net; Jonathan
+>Cameron <jonathan.cameron@huawei.com>; dave.jiang@intel.com;
+>alison.schofield@intel.com; vishal.l.verma@intel.com; ira.weiny@intel.com;
+>david@redhat.com; Vilas.Sridharan@amd.com; leo.duran@amd.com;
+>Yazen.Ghannam@amd.com; rientjes@google.com; jiaqiyan@google.com;
+>Jon.Grimm@amd.com; dave.hansen@linux.intel.com;
+>naoya.horiguchi@nec.com; james.morse@arm.com; jthoughton@google.com;
+>somasundaram.a@hpe.com; erdemaktas@google.com; pgonda@google.com;
+>duenwen@google.com; mike.malvestuto@intel.com; gthelen@google.com;
+>wschwartz@amperecomputing.com; dferguson@amperecomputing.com;
+>wbs@os.amperecomputing.com; nifan.cxl@gmail.com; tanxiaofei
+><tanxiaofei@huawei.com>; Zengtao (B) <prime.zeng@hisilicon.com>; Roberto
+>Sassu <roberto.sassu@huawei.com>; kangkang.shen@futurewei.com;
+>wanghuiqiang <wanghuiqiang@huawei.com>; Linuxarm
+><linuxarm@huawei.com>
+>Subject: Re: [RFC PATCH v9 05/11] cxl/mbox: Add GET_FEATURE mailbox
+>command
+>
+>On Tue, Jul 16, 2024 at 04:03:29PM +0100, shiju.jose@huawei.com wrote:
+>> From: Shiju Jose <shiju.jose@huawei.com>
+>>
+>> Add support for GET_FEATURE mailbox command.
+>>
+>> CXL spec 3.1 section 8.2.9.6 describes optional device specific features=
+.
+>> The settings of a feature can be retrieved using Get Feature command.
+>>
+>> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+>> ---
+>Minor comments inline.
+>
+>>  drivers/cxl/core/mbox.c | 37 +++++++++++++++++++++++++++++++++++++
+>>  drivers/cxl/cxlmem.h    | 27 +++++++++++++++++++++++++++
+>>  2 files changed, 64 insertions(+)
+>>
+>> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c index
+>> 9b9b1d26454e..b1eeed508459 100644
+>> --- a/drivers/cxl/core/mbox.c
+>> +++ b/drivers/cxl/core/mbox.c
+>> @@ -1351,6 +1351,43 @@ int cxl_get_supported_features(struct
+>> cxl_memdev_state *mds,  }
+>> EXPORT_SYMBOL_NS_GPL(cxl_get_supported_features, CXL);
+>>
+>> +size_t cxl_get_feature(struct cxl_memdev_state *mds,
+>> +		       const uuid_t feat_uuid, void *feat_out,
+>> +		       size_t feat_out_size,
+>> +		       enum cxl_get_feat_selection selection)
+>feat_uuid and selection are both payload inputs, maybe more natural to put
+>them together before feat_out.
+Will do.
+>> +{
+>> +	size_t data_to_rd_size, size_out;
+>> +	struct cxl_mbox_get_feat_in pi;
+>> +	struct cxl_mbox_cmd mbox_cmd;
+>> +	size_t data_rcvd_size =3D 0;
+>> +	int rc;
+>> +
+>> +	size_out =3D min(feat_out_size, mds->payload_size);
+>> +	pi.uuid =3D feat_uuid;
+>> +	pi.selection =3D selection;
+>> +	do {
+>> +		data_to_rd_size =3D min(feat_out_size - data_rcvd_size, mds-
+>>payload_size);
+>> +		pi.offset =3D cpu_to_le16(data_rcvd_size);
+>> +		pi.count =3D cpu_to_le16(data_to_rd_size);
+>> +
+>> +		mbox_cmd =3D (struct cxl_mbox_cmd) {
+>> +			.opcode =3D CXL_MBOX_OP_GET_FEATURE,
+>> +			.size_in =3D sizeof(pi),
+>> +			.payload_in =3D &pi,
+>> +			.size_out =3D size_out,
+>> +			.payload_out =3D feat_out + data_rcvd_size,
+>> +			.min_out =3D data_to_rd_size,
+>> +		};
+>> +		rc =3D cxl_internal_send_cmd(mds, &mbox_cmd);
+>> +		if (rc < 0 || mbox_cmd.size_out =3D=3D 0)
+>Is there other case when size_out will be 0 other than the feat_out_size i=
+s 0?
+I think size_out can be 0 depending on the implementation on the firmware o=
+r some
+error situation when the feat_out_size is non zero.
 
-## Form letter - net-next-closed
+>
+>If feat_out_size is 0, maybe we return directly, or we use while () {}, in=
+stead of
+>do {} while.
+I had a check for feat_out_size against min feat out size in the previous v=
+ersion.=20
+Will add return directly if feat_out_size is 0. =20
+>Anyway, if there is no other case that will return size_out as 0, we can a=
+void the
+>check.
+>
+>Fan
+>> +			return 0;
+>> +		data_rcvd_size +=3D mbox_cmd.size_out;
+>> +	} while (data_rcvd_size < feat_out_size);
+>> +
+>> +	return data_rcvd_size;
+>> +}
+>> +EXPORT_SYMBOL_NS_GPL(cxl_get_feature, CXL);
+>> +
+>>  int cxl_mem_get_poison(struct cxl_memdev *cxlmd, u64 offset, u64 len,
+>>  		       struct cxl_region *cxlr)
+>>  {
+>> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h index
+>> b0e1565b9d2e..25698a6fbe66 100644
+>> --- a/drivers/cxl/cxlmem.h
+>> +++ b/drivers/cxl/cxlmem.h
+>> @@ -531,6 +531,7 @@ enum cxl_opcode {
+>>  	CXL_MBOX_OP_CLEAR_LOG           =3D 0x0403,
+>>  	CXL_MBOX_OP_GET_SUP_LOG_SUBLIST =3D 0x0405,
+>>  	CXL_MBOX_OP_GET_SUPPORTED_FEATURES	=3D 0x0500,
+>> +	CXL_MBOX_OP_GET_FEATURE		=3D 0x0501,
+>>  	CXL_MBOX_OP_IDENTIFY		=3D 0x4000,
+>>  	CXL_MBOX_OP_GET_PARTITION_INFO	=3D 0x4100,
+>>  	CXL_MBOX_OP_SET_PARTITION_INFO	=3D 0x4101,
+>> @@ -757,6 +758,28 @@ struct cxl_mbox_get_supp_feats_out {
+>>  	struct cxl_mbox_supp_feat_entry feat_entries[];  } __packed;
+>>
+>> +/*
+>> + * Get Feature CXL 3.1 Spec 8.2.9.6.2  */
+>> +
+>> +/*
+>> + * Get Feature input payload
+>> + * CXL rev 3.1 section 8.2.9.6.2 Table 8-99  */ enum
+>> +cxl_get_feat_selection {
+>> +	CXL_GET_FEAT_SEL_CURRENT_VALUE,
+>> +	CXL_GET_FEAT_SEL_DEFAULT_VALUE,
+>> +	CXL_GET_FEAT_SEL_SAVED_VALUE,
+>> +	CXL_GET_FEAT_SEL_MAX
+>> +};
+>> +
+>> +struct cxl_mbox_get_feat_in {
+>> +	uuid_t uuid;
+>> +	__le16 offset;
+>> +	__le16 count;
+>> +	u8 selection;
+>> +}  __packed;
+>> +
+>>  /* Get Poison List  CXL 3.0 Spec 8.2.9.8.4.1 */  struct
+>> cxl_mbox_poison_in {
+>>  	__le64 offset;
+>> @@ -891,6 +914,10 @@ int cxl_set_timestamp(struct cxl_memdev_state
+>> *mds);  int cxl_get_supported_features(struct cxl_memdev_state *mds,
+>>  			       u32 count, u16 start_index,
+>>  			       struct cxl_mbox_get_supp_feats_out *feats_out);
+>> +size_t cxl_get_feature(struct cxl_memdev_state *mds,
+>> +		       const uuid_t feat_uuid, void *feat_out,
+>> +		       size_t feat_out_size,
+>> +		       enum cxl_get_feat_selection selection);
+>>  int cxl_poison_state_init(struct cxl_memdev_state *mds);  int
+>> cxl_mem_get_poison(struct cxl_memdev *cxlmd, u64 offset, u64 len,
+>>  		       struct cxl_region *cxlr);
+>> --
+>> 2.34.1
+>>
 
-The merge window for v6.11 and therefore net-next is closed for new
-drivers, features, code refactoring and optimizations. We are currently
-accepting bug fixes only.
-
-Please repost when net-next reopens after July 29th.
-
-RFC patches sent for review only are obviously welcome at any time.
-
-See:
-https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
--- 
-pw-bot: defer
-
+Thanks,
+Shiju
 
