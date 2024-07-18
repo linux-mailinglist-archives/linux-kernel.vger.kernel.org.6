@@ -1,107 +1,87 @@
-Return-Path: <linux-kernel+bounces-256469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F92B934EFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:18:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5238934F00
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4EB81F24653
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:18:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 013191C21E35
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69EDE1411FD;
-	Thu, 18 Jul 2024 14:17:57 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3568913E021;
+	Thu, 18 Jul 2024 14:18:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C14DDB8;
-	Thu, 18 Jul 2024 14:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584692AEE3
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 14:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721312277; cv=none; b=UurF1KEIPPsK9thxl8NYjHeMewVRUiQqV2RKTowPYdc2zg5v8Wc2UlLBJPwTSdxVSHdNpMpESgxJHNGOsJoHd+TI2vHJ0bE79pvG6d65y0+nuwUUDEZJxtFvl36tAfdeEnz48oxpPm65o6sAuNYXJENRXHlOYJbO9HyezHhZYAs=
+	t=1721312284; cv=none; b=E2icyTsZOqbMLyMOi+WJNp91NV8AeBm/PFiEYsLUhOuOKaXDAf0FJeZJLr5J/x/fzk4AcyXeqY6OmsPwxHVus6+Sdzy0BuXIsaLwKJf0Owx/D8tpr6l4ZvDE6tHRuZFnTq6cxoFrcMbwDMGtFml8EcIPbf1HCmxCNeJ5hYkjv0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721312277; c=relaxed/simple;
-	bh=RcoV8/M0MDaBl/W7j/eL2SU1pdRDKJ0SgHyHMsP5GQk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A+MrRlspS3E/7pkDHfYLacfqM8osPwvtaYJLgJTaX8nI7zSvDvPDML6BRplwEyjftB5ZrQNuP8J03SNkFvLDoWJMn2VVhYSRGFQ4uws29Hc+wS9cjuQATYpGC+EWghTnkPXvAizI6/ofaKG0iVw1WAykAy4RPl7ndtL+A5ro8Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-01 (Coremail) with SMTP id qwCowACXd0wHJJlmgs0TBA--.3468S2;
-	Thu, 18 Jul 2024 22:17:47 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	lijo.lazar@amd.com,
-	make24@iscas.ac.cn,
-	asad.kamal@amd.com,
-	le.ma@amd.com,
-	kenneth.feng@amd.com,
-	evan.quan@amd.com
-Cc: amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v2] drm/amd/amdgpu: Fix uninitialized variable warnings
-Date: Thu, 18 Jul 2024 22:17:35 +0800
-Message-Id: <20240718141735.884347-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1721312284; c=relaxed/simple;
+	bh=8uSh4nbszjk1vi8Jomyl020PZUDhzOmFnMABAmRBs3s=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=PlYrM4ERWEeTh2hb00R7MlhJY+vpIa1a43qqFAi7FV1+DtdZSVzE5JAGTdQ3vNJ7UHxU0KVY91/twEd00g8HW7RbHJsnpCtFymp5P1aAK6rFuszwwwTXa9fH4K3YK7CIoU8sH2gPYOaXyPMx8mSfQI5JC5Sr1m2Ml8PQKQe4oMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-800e520a01dso135404939f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 07:18:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721312282; x=1721917082;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O5ak2g7K4GZezFXrsLLIUk5Z1/yciMp7JX46vxt4qgM=;
+        b=eFNwP7wNCZYE3edo3/63pkl/lDHsDxdxPN5dnYLtNWYomb6kM6yFTTsL/9W8WJ6GY/
+         4fxYtPIX6bwFrSl/WOMXBtJgH1dYbuqB50XxiXA99F//PEm6qZ2uu1Rh+oDx8E40W/Dw
+         LOvRWvgrdKTzWmbe7iHqhfEr8G7Xx0sv0ZLoRzBzdgzDOUi+aQ+SRqHZTSd3K/HFB3Xv
+         2gb0t8C3bpuPX8ZqREShU5PThYRu8qXdr50L1BeJ7hI4JTr6559s0Y7Qjzt5ujDA1XAH
+         zlJX5ZxL/CdKywM2SyD2WX3kjurcxVjkXzRDJWzPZRv0dF+B7uYrc8arFwp8sZv3wyEx
+         1mPA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2EdcyAdbbIoH1bWivHxkfcD4g2qq2TfYPBU7hz6lqaaiZID2kG/p2OxQkIjjZqy1UFKEO7qmn1OglXSevWQnywbU9wVWACJ9hXkvR
+X-Gm-Message-State: AOJu0YyhPJzoShbp8ZZJ0vb28KL9p0hhAUXE3Du0F1eihD2LAbfmq76S
+	AvySdGDa4hzCvvCterEGHfx48nLZAO+v/hzxkiBnzfL8zJAki9HwiwQnCa+OawzxQkJEZ9gVFIQ
+	vwjsEUPYa2bAj2t/6DU05N2mAh8ICOM3LS3Ow4Tdh8SkzrH79al24KHg=
+X-Google-Smtp-Source: AGHT+IFYNx6QrghjgJciGNc6qXbezM6leaYOefRTUk6OGlct8iN83pn0xrdJIYpWkLA3abI90Da9SofKA7r2vRAsqxoFXpj5Y0qn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowACXd0wHJJlmgs0TBA--.3468S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrtryrKF48CrW7ZFWxKFWDXFb_yoW3uFg_Kr
-	4UJasrGr9rAF1qgr1UZayFvFy2yF98uF4kta4ktFyFv3y7X343Xr93WFykXF1ruF43C3Zr
-	Aa4UWr15AwsIkjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb3xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
-	YxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
-	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
-	C2KfnxnUUI43ZEXa7VUbZmitUUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+X-Received: by 2002:a05:6638:3706:b0:4b9:6637:4913 with SMTP id
+ 8926c6da1cb9f-4c215add2edmr253935173.3.1721312282500; Thu, 18 Jul 2024
+ 07:18:02 -0700 (PDT)
+Date: Thu, 18 Jul 2024 07:18:02 -0700
+In-Reply-To: <20240718103953.1323-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000256e74061d863f41@google.com>
+Subject: Re: [syzbot] [fs?] KASAN: slab-use-after-free Read in lockref_get
+From: syzbot <syzbot+d5dc2801166df6d34774@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Return 0 to avoid returning an uninitialized variable r.
+Hello,
 
-Cc: stable@vger.kernel.org
-Fixes: 230dd6bb6117 ("drm/amd/amdgpu: implement mode2 reset on smu_v13_0_10")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v2:
-- added Cc stable line.
----
- drivers/gpu/drm/amd/amdgpu/smu_v13_0_10.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/smu_v13_0_10.c b/drivers/gpu/drm/amd/amdgpu/smu_v13_0_10.c
-index 04c797d54511..0af648931df5 100644
---- a/drivers/gpu/drm/amd/amdgpu/smu_v13_0_10.c
-+++ b/drivers/gpu/drm/amd/amdgpu/smu_v13_0_10.c
-@@ -91,7 +91,7 @@ static int smu_v13_0_10_mode2_suspend_ip(struct amdgpu_device *adev)
- 		adev->ip_blocks[i].status.hw = false;
- 	}
- 
--	return r;
-+	return 0;
- }
- 
- static int
--- 
-2.25.1
+Reported-by: syzbot+d5dc2801166df6d34774@syzkaller.appspotmail.com
+Tested-by: syzbot+d5dc2801166df6d34774@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         58f9416d Merge branch 'ice-support-to-dump-phy-config-..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=12d9e159980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=db697e01efa9d1d7
+dashboard link: https://syzkaller.appspot.com/bug?extid=d5dc2801166df6d34774
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=111a7b2d980000
+
+Note: testing is done by a robot and is best-effort only.
 
