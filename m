@@ -1,78 +1,85 @@
-Return-Path: <linux-kernel+bounces-256706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85C31935240
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 21:46:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8B06935243
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 21:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFA341C20C2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:46:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22D78B21E26
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C44145A19;
-	Thu, 18 Jul 2024 19:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QK8kHQfm"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37763145A12;
+	Thu, 18 Jul 2024 19:48:36 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DADD01459F6
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 19:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D311459E4;
+	Thu, 18 Jul 2024 19:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721332013; cv=none; b=sWvL3PjtYFXte49ClReziEeIeWmddSKYsH7ptFL7eGZGlevGNn0DBPTJdjcL//moKp5QzaxmWAO2QbaMZtSLHNdkGh55x1klIvG1yZhMk0A3neWHyWVMKUAtlKIGM4YlAXdFq/dK+WpJpF+4eeO0OiYU2pyr7bIV0tV86Dntbm8=
+	t=1721332115; cv=none; b=G78aDozr2CPLuorfSdTe3zvUacGBomwN46Tp08pFrHxd60BOxbWTa11UU88AbwYxYOy68LOj4oObD4zBZR2bsxHdSIVQ0bwh4EczT3TdQlgWn/KBQYYIjiCAyRmWzHgm0RlaoHta+RKpTyeRyLlmikV63MHMkhzo1xqtZeylrw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721332013; c=relaxed/simple;
-	bh=kzWORm6SuvaebzRysuNkfCQVCvljqnpJ5Ea/vPeoqdY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z2Dfe/nGoULuNrl7T8ELaKZb57u4aTpiGhrYymlLherzvzT20SqjyzZm0ZLkBd48V3R68DuLC1qdEMNlu+pWiBHcdiqyYgnUnY2a/k3qpzE8PqARRQbU5ypVv9B3ThOJGG6ZDpJrxYDdqBrMMSFYiPRmtY+nYdS/t2niWNNnhGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QK8kHQfm; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: songmuchun@bytedance.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721332008;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XSregXPsYAdLpJ32tUMyFkFjP1/Em/6OT6zvIe33cXk=;
-	b=QK8kHQfmsi5HBkWkeLugs8bBPe2sbNzGZjHx5bRZj9DlKSzh0RAfKBtMbvrmqoLFZQRjV8
-	AgFkuMucQMNm2bXMdP1NWA6dZzY1RwTriBKaIC+PmsGf8rft/nl6flYMT6pD1/mwDargiz
-	6Rdn9En3DjQqwoZbdFLsPkCYG6rdxOQ=
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: mhocko@kernel.org
-X-Envelope-To: roman.gushchin@linux.dev
-X-Envelope-To: muchun.song@linux.dev
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: cgroups@vger.kernel.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Thu, 18 Jul 2024 12:46:35 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Muchun Song <songmuchun@bytedance.com>
-Cc: hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
-	muchun.song@linux.dev, akpm@linux-foundation.org, cgroups@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: kmem: remove mem_cgroup_from_obj()
-Message-ID: <qimvdyf5tcu5uob75mn2j6ohx64affxlhnhzxgebxwr2plfmjg@tpajkur3s2wc>
-References: <20240718091821.44740-1-songmuchun@bytedance.com>
+	s=arc-20240116; t=1721332115; c=relaxed/simple;
+	bh=y9CFX7lS8m59Vz8H8XZtfuqVB1PPYP2PBFkuP8DaW8Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=K2AQZKZ3xUJ70xRxR/UWFtVdx9KiAyi6LM/VD+3fv6WBeXb7BTQvpGehNsUvTbEwtNSSZaKgwmfocozmzPUBC85MtnZthnK0pjBZRhC1kVr+w9EP8MDmO2AdsKRdxaCI5lbBJKP84w7Z9uYIqsRTyFNIHI74ON93JjxBML4eCvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from [2601:18c:9101:a8b6:6e0b:84ff:fee2:98bb] (helo=imladris.surriel.com)
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1sUX6N-0000000006w-3EaI;
+	Thu, 18 Jul 2024 15:47:43 -0400
+Message-ID: <ff42f723b718c7ac8aee992ba0719cb56910ebe3.camel@surriel.com>
+Subject: Re: [RFC PATCH 1/2] netpoll: extract core of netpoll_cleanup
+From: Rik van Riel <riel@surriel.com>
+To: Breno Leitao <leitao@debian.org>, kuba@kernel.org, davem@davemloft.net, 
+	edumazet@google.com, pabeni@redhat.com
+Cc: thepacketgeek@gmail.com, horms@kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, paulmck@kernel.org, davej@codemonkey.org.uk
+Date: Thu, 18 Jul 2024 15:47:43 -0400
+In-Reply-To: <20240718184311.3950526-2-leitao@debian.org>
+References: <20240718184311.3950526-1-leitao@debian.org>
+	 <20240718184311.3950526-2-leitao@debian.org>
+Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
+ keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33Aeo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdYdIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gUmllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986ogEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHVWjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE+BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTeg4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/j
+	ddPxKRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/NefO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0MmG1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tPokBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznnekoTE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44NcQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhIomYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0IpQrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkEc4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240718091821.44740-1-songmuchun@bytedance.com>
-X-Migadu-Flow: FLOW_OUT
+Sender: riel@surriel.com
 
-On Thu, Jul 18, 2024 at 05:18:21PM GMT, Muchun Song wrote:
-> There is no user of mem_cgroup_from_obj(), remove it.
-> 
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+On Thu, 2024-07-18 at 11:43 -0700, Breno Leitao wrote:
+> Extract the core part of netpoll_cleanup(), so, it could be called
+> from
+> a caller that has the rtnl lock already.
+>=20
+> Netconsole uses this in a weird way right now:
+>=20
+> 	__netpoll_cleanup(&nt->np);
+> 	spin_lock_irqsave(&target_list_lock, flags);
+> 	netdev_put(nt->np.dev, &nt->np.dev_tracker);
+> 	nt->np.dev =3D NULL;
+> 	nt->enabled =3D false;
+>=20
+> This will be replaced by do_netpoll_cleanup() as the locking
+> situation
+> is overhauled.
+>=20
+> Signed-off-by: Breno Leitao <leitao@debian.org>
 
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+Reviewed-by: Rik van Riel <riel@surriel.com>
+
+--=20
+All Rights Reversed.
 
