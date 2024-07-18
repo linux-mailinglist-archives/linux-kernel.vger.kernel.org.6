@@ -1,45 +1,47 @@
-Return-Path: <linux-kernel+bounces-256018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2031B9347D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:06:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B1DD9347D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 502381C216DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:06:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2985A282D69
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29464D8C3;
-	Thu, 18 Jul 2024 06:06:09 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF315579F;
+	Thu, 18 Jul 2024 06:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="odrGcV0L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18CE1E495
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 06:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639151E495;
+	Thu, 18 Jul 2024 06:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721282769; cv=none; b=UhPh+p/MnBkrmiA1WUYqwWn5E2lyciv6HCRAk+H5hNpsBab8OUerJ1Je88OtbKWiPBuXJTuQXhuXpZRgMtQDZOWFcEAx2mD+K/RAOFExWwZCJrzVEi7xjLHPeLJoMP6TWTB9MsDGx/AFTBsp6+VPKCzVEmv09uB7/IK8VHpiA/I=
+	t=1721282870; cv=none; b=hCnJTf4lleLStduzSIGpW3hyewI1URwspIqrA+nh0/K8pXnGjvIneSiVU62NmyCO3WgEZ1wJI0L6nFVe9xk/WLnaaHryD3zJF8/Gx8Sw/fYt+jxHgHDqbC0pucfvyCoLWnPUotOUYHECCBHC5go3QZRHhdRTyIUMOlVLGhk8teE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721282769; c=relaxed/simple;
-	bh=o8iXN582iwnMLhjRy2uq3UhYHG73Y4W7F3YBR8b3t24=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tDFxmOV8o9/dk3tv0Lggfjdq8g4kZc/ZmYjhoUTZa0d/m6W4sbhF3di9DvemC2cQrOK1rXnX+XMQu0eu5Riy26TRSP1H0eTeOFRZ+aVv9BR4Nk9/bLjLXzYcYXVb29xg1J6YaAIjwsMQ6QSDpvKk+cmwJuHWhMWjknRlbclxcNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WPhxk5Bnjz2ClL3;
-	Thu, 18 Jul 2024 14:00:58 +0800 (CST)
-Received: from kwepemg200007.china.huawei.com (unknown [7.202.181.34])
-	by mail.maildlp.com (Postfix) with ESMTPS id 192281A0188;
-	Thu, 18 Jul 2024 14:05:18 +0800 (CST)
-Received: from [10.45.190.163] (10.45.190.163) by
- kwepemg200007.china.huawei.com (7.202.181.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 18 Jul 2024 14:05:17 +0800
-Message-ID: <7d39f26d-3c9f-4ee4-977c-87f9bed0bac1@huawei.com>
-Date: Thu, 18 Jul 2024 14:04:47 +0800
+	s=arc-20240116; t=1721282870; c=relaxed/simple;
+	bh=lHlcu2lUicWi14xBP5F/gzbA2w5wacDNzXIXi/R4yPs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CnEM0Yw4MvP81CI61Acdu87qhB/ceZupZhSrEhNvdyJgyPcCqgdsHTwoish2h7Sf2GbrfTQk1ocBPNufwBO5DSYKEiIaJTLfqBDBpQeedxM8korWtunC6jXZH7PPh0Njvp2Lj6Im1Yr8TBzih5an5E5eAezJltbG9Ujcz2/8NSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=odrGcV0L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 806E6C116B1;
+	Thu, 18 Jul 2024 06:07:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721282870;
+	bh=lHlcu2lUicWi14xBP5F/gzbA2w5wacDNzXIXi/R4yPs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=odrGcV0LjpERs3jP2i9PaTTuKHfLKLum67TChNwQ8j2cuZ8rrcFBjdbKzbSDnhaQs
+	 nRJP38u9Ek+HTeSLQoatmBfqTHnKg+Kk8Vh1BdHAxsjtJPBAFDJB/o88N6f+AgJMdu
+	 p3sikan466lYYrq3kYX/BnP+II3gB8mDnEcldSb8SS3wTZJXhKRpxp6MYIKb7i1vI8
+	 EW70Qh8IxQg1r1Gny0Vlm6j9kkoXvDX0ldAF0CNhwnxQ6Kt/5cdrHw0kfuRPTMo/ky
+	 13hXfdH+td5aEgS7Ft4winps+TzoRZ0IR4rgYgRR/yDVqIdhMzHHSeHyNznet2lImH
+	 qFjm+FflLDKIA==
+Message-ID: <6252e83a-1cbd-469b-8209-37fa87d9358a@kernel.org>
+Date: Thu, 18 Jul 2024 08:07:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,107 +49,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH sched_ext/for-6.11] sched_ext: Reverting @p->sched_class
- if @p->disallow is set
-To: Tejun Heo <tj@kernel.org>
-CC: <void@manifault.com>, <linux-kernel@vger.kernel.org>
-References: <20240711110720.1285-1-zhangqiao22@huawei.com>
- <ZpArK0qxZZI-0ykt@slm.duckdns.org>
- <ba2702f9-f66e-498b-853c-d23f1f9191bc@huawei.com>
- <ZpbclgFjf_q6PSd1@slm.duckdns.org>
- <cd3fa16d-5a70-4c85-a591-fa4fa481f50b@huawei.com>
- <ZpgERphu--gPn235@slm.duckdns.org>
-From: "Zhangqiao (2012 lab)" <zhangqiao22@huawei.com>
-In-Reply-To: <ZpgERphu--gPn235@slm.duckdns.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg200007.china.huawei.com (7.202.181.34)
+Subject: Re: [PATCH v4 01/12] dt-bindings: PCI: Cleanup of brcmstb YAML and
+ add 7712 SoC
+To: Florian Fainelli <florian.fainelli@broadcom.com>,
+ Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
+ bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20240716213131.6036-1-james.quinlan@broadcom.com>
+ <20240716213131.6036-2-james.quinlan@broadcom.com>
+ <d20be2d3-4fdd-48ca-b73e-80e8157bd5b2@kernel.org>
+ <238a1132-9ae5-4a2b-8f7c-31326d5d464c@broadcom.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <238a1132-9ae5-4a2b-8f7c-31326d5d464c@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-在 2024/7/18 1:49, Tejun Heo 写道:
-> On Wed, Jul 17, 2024 at 10:01:13AM +0800, Zhangqiao (2012 lab) wrote:
->>> Ah, I see what you mean. I was referring to the classs switching operations
->>> in scx_ops_enable(). You're looking at the fork path. I don't think we can
+On 17/07/2024 23:06, Florian Fainelli wrote:
+> On 7/16/24 23:51, Krzysztof Kozlowski wrote:
+>> On 16/07/2024 23:31, Jim Quinlan wrote:
+>>> o Change order of the compatible strings to be alphabetical
+>>>
+>>> o Describe resets/reset-names before using them in rules
+>>>
 >>
->> Yes, i was referring to the fork path.
+>> <form letter>
+>> This is a friendly reminder during the review process.
 >>
->>> switch sched_class at that point and the .disallow mechanism is there to
->>> allow the scheduler to filter out tasks on scheduler start. I'll update the
->>> code so that .disallow is only allowed during the initial attach.
+>> It seems my or other reviewer's previous comments were not fully
+>> addressed. Maybe the feedback got lost between the quotes, maybe you
+>> just forgot to apply it. Please go back to the previous discussion and
+>> either implement all requested changes or keep discussing them.
 > 
-> So, something like this.
-> 
+> Maybe the feedback was not clear, the fault cannot always be in the 
+> submitter, right?
 
-LGTM for this patch.
+That why it is nice to ack each reviewers comment. If reviewers comments
+are somehow trickier, then such acks or further clarifications are even
+more useful.
 
-In addition, the @scx_nr_rejected is only updated while the BPF
-scheduler is being loaded and this update behavior is proected by
-scx_ops_enable_mutex, so is it appropriate to change the
-@scx_nr_rejcted's type from atomic to int ?
+Did it happen for v3? No.
 
-> Thanks.
-> 
-> diff --git a/include/linux/sched/ext.h b/include/linux/sched/ext.h
-> index 593d2f4909dd..a4aa516cee7d 100644
-> --- a/include/linux/sched/ext.h
-> +++ b/include/linux/sched/ext.h
-> @@ -181,11 +181,12 @@ struct sched_ext_entity {
->  	 * If set, reject future sched_setscheduler(2) calls updating the policy
->  	 * to %SCHED_EXT with -%EACCES.
->  	 *
-> -	 * If set from ops.init_task() and the task's policy is already
-> -	 * %SCHED_EXT, which can happen while the BPF scheduler is being loaded
-> -	 * or by inhering the parent's policy during fork, the task's policy is
-> -	 * rejected and forcefully reverted to %SCHED_NORMAL. The number of
-> -	 * such events are reported through /sys/kernel/debug/sched_ext::nr_rejected.
-> +	 * Can be set from ops.init_task() while the BPF scheduler is being
-> +	 * loaded (!scx_init_task_args->fork). If set and the task's policy is
-> +	 * already %SCHED_EXT, the task's policy is rejected and forcefully
-> +	 * reverted to %SCHED_NORMAL. The number of such events are reported
-> +	 * through /sys/kernel/debug/sched_ext::nr_rejected. Setting this flag
-> +	 * during fork is not allowed.
->  	 */
->  	bool			disallow;	/* reject switching into SCX */
->  
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index da9cac6b6cc2..cf60474efa75 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -3399,18 +3399,17 @@ static int scx_ops_init_task(struct task_struct *p, struct task_group *tg, bool
->  
->  	scx_set_task_state(p, SCX_TASK_INIT);
->  
-> -	if (p->scx.disallow) {
-> +	if (!fork && p->scx.disallow) {
->  		struct rq *rq;
->  		struct rq_flags rf;
->  
->  		rq = task_rq_lock(p, &rf);
->  
->  		/*
-> -		 * We're either in fork or load path and @p->policy will be
-> -		 * applied right after. Reverting @p->policy here and rejecting
-> -		 * %SCHED_EXT transitions from scx_check_setscheduler()
-> -		 * guarantees that if ops.init_task() sets @p->disallow, @p can
-> -		 * never be in SCX.
-> +		 * We're in the load path and @p->policy will be applied right
-> +		 * after. Reverting @p->policy here and rejecting %SCHED_EXT
-> +		 * transitions from scx_check_setscheduler() guarantees that if
-> +		 * ops.init_task() sets @p->disallow, @p can never be in SCX.
->  		 */
->  		if (p->policy == SCHED_EXT) {
->  			p->policy = SCHED_NORMAL;
-> @@ -3418,6 +3417,9 @@ static int scx_ops_init_task(struct task_struct *p, struct task_group *tg, bool
->  		}
->  
->  		task_rq_unlock(rq, p, &rf);
-> +	} else if (p->scx.disallow) {
-> +		scx_ops_error("ops.init_task() set task->scx.disallow for %s[%d] during fork",
-> +			      p->comm, p->pid);
->  	}
->  
->  	p->scx.flags |= SCX_TASK_RESET_RUNNABLE_AT;
-> 
+Best regards,
+Krzysztof
+
 
