@@ -1,142 +1,114 @@
-Return-Path: <linux-kernel+bounces-256619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F5E2935123
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:13:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B08A935126
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D15A1C21BF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:13:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7679F2814D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A898B14534B;
-	Thu, 18 Jul 2024 17:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B8014535B;
+	Thu, 18 Jul 2024 17:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mr1kQlb6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qKm1Wzpd"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C3E13DBA2;
-	Thu, 18 Jul 2024 17:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0C61E4AD;
+	Thu, 18 Jul 2024 17:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721322825; cv=none; b=BPSRPVfvqc/Wq9XhJmwk8g71qDkaWCYjlM8eHweEbgvttPjvoiJpxkQIbljQxkOgBE6a6ZvvbV6y028mRJ8nbLjG6N7PNk8unyGm2CoFraRCCtcrEIs2JIz+COri5di/tVH4v9shkx478ipWw4yi1zioM5L++X8NIef9hIYWwIw=
+	t=1721322958; cv=none; b=VydC0ntlbEkSNerqXnIyhKe7dQo65S6nfFy87+jPfxQtvnqf1ClgbMHFoQsFaSKARD5TSOshJro1RJHvsSWvl6/qhvGvzBboiP+G6SnY+C+N/4lOF6y7A/6cDildDh3YF2/Bib9Mbz1JRXq3xBQCGXyi5CwhEgjg8Xp7/LNAUrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721322825; c=relaxed/simple;
-	bh=U6vghfZXsKDNxxoo5h7FLigqzlJKZg2VsEsKvxx/DPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=pPnDH4UiyGNZR5xgqJ6+gUibJ8rPAaVxqv5PZNyAEo/3CZfP4et9sQZ1p0JZF9rLiK9fv4z519o95zmbzxDv2T9ZN0Nv8yprAs7RhzKG2zrY7158KHWRC1nX0zgCk3IlhrZ16yhdZy/weMyS0s0AcZb/n6ftgBDws277vU3G9Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mr1kQlb6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37AC0C4AF11;
-	Thu, 18 Jul 2024 17:13:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721322824;
-	bh=U6vghfZXsKDNxxoo5h7FLigqzlJKZg2VsEsKvxx/DPY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=mr1kQlb6cKa6LRKRFqYdj4F7qJdGamMhx3hAYCJU1cOfBZ+k17UZiesiCmfVLSS2t
-	 lIAoasQi+5dbGkq2RhRAUKHAseAZNyCPKeB50SmlP435r0IKUu8OQxwQ7vLEh4GCuX
-	 wPi6stjWzTQg5AeZ2jzuk9Hqfz4+OGHWcPoGTNHnvLwhj4v54oO4K9BP43Kc2oDszB
-	 jh3IfwQIuoOtSGvlBCZo6/HFmntGA3WW2FoE9QUuVwUSMF4FT2Bf9LPkm9cwuY5Gcc
-	 +rgF5kl+hU3CkO6edfmIapfc7rXrP5IiFVv7K9MN5UDaTPXq6DjJvZDGjZ3bG2ZbwU
-	 m5lHyzdUExS6A==
-Date: Thu, 18 Jul 2024 12:13:42 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Peter Anvin <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>,
-	Muralidhara M K <muralidhara.mk@amd.com>,
-	Yazen Ghannam <yazen.ghannam@amd.com>,
-	Avadhut Naik <Avadhut.Naik@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Subject: Re: [PATCH v1] x86/amd_nb: Add new PCI IDs for AMD family 0x1a model
- 60h
-Message-ID: <20240718171342.GA575689@bhelgaas>
+	s=arc-20240116; t=1721322958; c=relaxed/simple;
+	bh=Q8zNgc+7hrY5JnU4IWEXyGDGa6A8Rxwhz3jMgMcDeqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PD8Y6uh7k+VJSIljg/AneX/JA+MjfGfAk/MILljw0Ht37x82uMip+LV8cKwmnvrco02wLC+6Hrry4Q6i6YSezclxQ7/YMl7VQ6t9i8CvqFowXI+Cv9MYOD+619FKxRvVFXdtRhH/cARgwNgbw57lenGhlx+Iy+HseCmLbhizcGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qKm1Wzpd; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=nzofLT5tIYdWN9XeUlSlttsrRWtNc7/F41l2/uaJDwU=; b=qKm1Wzpd4/tkRJSx9UoLrzQ4ES
+	Bmx7of+BO45TPaDcR/ePUKt5MGLuTgm9Jp5gmP/mFI3oZpdBfFDZpBSAEA9DLtIlJixV1tQONcEKE
+	pSdXUEpmlGC5sNBXQ6bBIS7NQMRtMGW6qTV5ORRNvPm/hlWl6sZW4rScvdu1K33NEBiGqeIDAV6lF
+	Ul1uli4d2/nOPCMmE4D+EOQrBniROkKIRndxvfQ030wvDcZ2tkJu5d0Nm1zhwZDPw/9ixcZu9pY5V
+	R84jinTY3etz4ejKQ8X5p1ExTgmIlr1RCt21EofaVHSiEUJ+L7GubA9mUG3wOd74gRYdVX5+mBAn5
+	7V1vW1vg==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sUUjP-000000004Wm-1hBk;
+	Thu, 18 Jul 2024 17:15:51 +0000
+Date: Thu, 18 Jul 2024 10:15:51 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Kris Van Hees <kris.van.hees@oracle.com>,
+	Sami Tolvanen <samitolvanen@google.com>
+Cc: Andreas Hindborg <nmi@metaspace.dk>, Miguel Ojeda <ojeda@kernel.org>,
+	rust-for-linux@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Adam Bratschi-Kaye <ark.email@gmail.com>
+Subject: Re: [PATCH] rust: add `module_params` macro
+Message-ID: <ZplNxxXS3RLULeI6@bombadil.infradead.org>
+References: <20240705111455.142790-1-nmi@metaspace.dk>
+ <ZoxdRjpy2hRndqmc@bombadil.infradead.org>
+ <CANiq72=VU+PHfkiq8HokfeCEKvQoeBiUaB76XbW6s3f2zYmEtA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240718140258.3425851-1-Shyam-sundar.S-k@amd.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72=VU+PHfkiq8HokfeCEKvQoeBiUaB76XbW6s3f2zYmEtA@mail.gmail.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On Thu, Jul 18, 2024 at 07:32:58PM +0530, Shyam Sundar S K wrote:
-> Add the new PCI Device IDs to the root IDs and misc ids list to support
-> new generation of AMD 1Ah family 60h Models of processors.
+On Tue, Jul 09, 2024 at 12:08:16PM +0200, Miguel Ojeda wrote:
+> On Mon, Jul 8, 2024 at 11:42 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> >
+> > The rationale here is that a rust binding means commitment then also
+> > from fresh blood to help co-maintain review C / Rust for exising code
+> > when there is will / desire to collaborate from an existing C maintainer.
+> >
+> > I realize this may be a lot to ask, but I think this is one of the
+> > responsible ways to ask to scale here.
 > 
-> Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-> ---
-> (As the amd_nb functions are used by PMC and PMF drivers, without these IDs
-> being present AMD PMF/PMC probe shall fail.)
+> But, yes, I think Rust is a great opportunity to get new
+> co-maintainers, as well as getting new developers involved with kernel
+> maintenance in general, which could help with other issues too.
 
-Is there any plan for making this generic so a kernel update is not
-needed?  Obviously the *functionality* is not changed by this patch,
-so having to add a device ID for every new processor just makes work
-for distros and users.
+Great well then my preference is to not have Rust bindings for modules
+unless the Rust community can commit to not only a co-maintianer for
+both C And Rust but also commit to not ditching the role; if a C/Rust
+co-maintainer gets hits by a bus the Rust community would strive to
+look for someone else to step in. This would proactively help with
+upstream responsibilities understood by companies who hire developers
+in this context. It is why I brought up Andreas's work, I already know
+he has a lot of work to do and responsibilities. If not Andreas, who else
+can step up to help with this, Sami? While each company varies in
+accepting a developer's roles in the community, I think we would stand
+to gain to consider the long term aspects of this before it becomes an
+issue, so we get employers to understand / accept this as part of our
+work. I don't think this is an unreasonable for companies or developers
+interested in Rust advancements.
 
->  arch/x86/kernel/amd_nb.c | 3 +++
->  include/linux/pci_ids.h  | 1 +
->  2 files changed, 4 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
-> index 059e5c16af05..61eadde08511 100644
-> --- a/arch/x86/kernel/amd_nb.c
-> +++ b/arch/x86/kernel/amd_nb.c
-> @@ -26,6 +26,7 @@
->  #define PCI_DEVICE_ID_AMD_19H_M70H_ROOT		0x14e8
->  #define PCI_DEVICE_ID_AMD_1AH_M00H_ROOT		0x153a
->  #define PCI_DEVICE_ID_AMD_1AH_M20H_ROOT		0x1507
-> +#define PCI_DEVICE_ID_AMD_1AH_M60H_ROOT		0x1122
->  #define PCI_DEVICE_ID_AMD_MI200_ROOT		0x14bb
->  #define PCI_DEVICE_ID_AMD_MI300_ROOT		0x14f8
->  
-> @@ -63,6 +64,7 @@ static const struct pci_device_id amd_root_ids[] = {
->  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_19H_M70H_ROOT) },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_1AH_M00H_ROOT) },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_1AH_M20H_ROOT) },
-> +	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_1AH_M60H_ROOT) },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_MI200_ROOT) },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_MI300_ROOT) },
->  	{}
-> @@ -95,6 +97,7 @@ static const struct pci_device_id amd_nb_misc_ids[] = {
->  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_19H_M78H_DF_F3) },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_1AH_M00H_DF_F3) },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_1AH_M20H_DF_F3) },
-> +	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_1AH_M60H_DF_F3) },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_1AH_M70H_DF_F3) },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_MI200_DF_F3) },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_MI300_DF_F3) },
-> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-> index 76a8f2d6bd64..bbe8f3dfa813 100644
-> --- a/include/linux/pci_ids.h
-> +++ b/include/linux/pci_ids.h
-> @@ -580,6 +580,7 @@
->  #define PCI_DEVICE_ID_AMD_19H_M78H_DF_F3 0x12fb
->  #define PCI_DEVICE_ID_AMD_1AH_M00H_DF_F3 0x12c3
->  #define PCI_DEVICE_ID_AMD_1AH_M20H_DF_F3 0x16fb
-> +#define PCI_DEVICE_ID_AMD_1AH_M60H_DF_F3 0x124b
+This includes testing, helping improve tests and using existing tests
+or automation tools for them so we don't regress.
 
-Why not add this in amd_nb.c, as you did for
-PCI_DEVICE_ID_AMD_1AH_M60H_ROOT?  There's already a
-PCI_DEVICE_ID_AMD_CNB17H_F4 definition there.  No need to update
-pci_ids.h unless PCI_DEVICE_ID_AMD_1AH_M60H_DF_F3 is used in more than
-one place.
+Clearly, this isn't just about a module_params macro, for example
+I'm starting to see other module related code I need to review and
+having to be very careful to ensure all of what is ongoing with modules
+like Kris's work on kbuild CONFIG_BUILTIN_MODULE_RANGES will still work
+in a Rust modules world with Sami's work on module modversions.
 
-Based on previous history, I suppose PCI_DEVICE_ID_AMD_1AH_M60H_DF_F3
-will someday be used by k10temp.c?  Ideally a pci_ids.h addition would
-be in the same patch that adds uses in both amd_nb.c and k10temp.c so
-it's clear that the new definition is used in two places.
+[0] https://lkml.kernel.org/r/20240716031045.1781332-1-kris.van.hees@oracle.com
 
->  #define PCI_DEVICE_ID_AMD_1AH_M70H_DF_F3 0x12bb
->  #define PCI_DEVICE_ID_AMD_MI200_DF_F3	0x14d3
->  #define PCI_DEVICE_ID_AMD_MI300_DF_F3	0x152b
-> -- 
-> 2.25.1
-> 
+  Luis
 
