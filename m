@@ -1,172 +1,139 @@
-Return-Path: <linux-kernel+bounces-256051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0C99934843
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:44:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19FF1934845
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:47:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5619C28151A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:44:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33759B22047
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B084B6F315;
-	Thu, 18 Jul 2024 06:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02F5548F7;
+	Thu, 18 Jul 2024 06:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iafXJI0j"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L0xB9Y1j"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D775FB8A;
-	Thu, 18 Jul 2024 06:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6221B86F4
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 06:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721285031; cv=none; b=onS3V20PhPGXi+B9B4vh/ysRQLzCLmitdM8hf2JWKnirFspTFobhGCJJzCbNJiR5lDGzRETuvG3S8i7DjcIZTBfB3Iq1seDoTqzOxhJXrttUaH5n71vREomfqkHhbOwIbSbHXyDCZs9gM+0WKlMFMpIcxf3mvODpu/EuYqlIegE=
+	t=1721285232; cv=none; b=irl8mZgK99cp7gu4zEc7eSn2TFS3OY96cR81hHXA7b4R39EUfzkqql3G94Hh19jX4nMkM1ST6+jYaTXaKlKSAb5USxWibU1Vq2NHHZtY/bPwqIv1S2MQ9RHqkX5+9eNljGMY+nV3g6P+GcKNkNgtiJwQBOfUvfd6EobVgl/dnng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721285031; c=relaxed/simple;
-	bh=jyY9+99v2YwBKp1b/vSnaYlfjK379yRxOnO+QtRYWO8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=P0xAHduFgwUDLZSt8yiftgT+LN0f8FJUhlq79YwocQpsh58gvDQnL/AaswDWJqDKsDF2uC0M92zYKXsza81KMjD9L8v+joZlpDY0/pbcGWO5k0vV1qZdVfBTuPO6/PRWpkOChZ9nHdI4CGWw7ScFDc3faEmLOYaAfqV8hp6Sky8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iafXJI0j; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46I1FLKU001753;
-	Thu, 18 Jul 2024 06:43:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FzHd8BfRF/tt9UYrgZHqu1HlvsI5sz3lmgH0cRhUT8w=; b=iafXJI0jDrtFJwvc
-	KIVPIuDcQ+SvbkIpHeZxSDQkyw+6u7rieu3AleQBYI6lgKERPwhCEhahO4vt33jY
-	T7y7aEBScn+YjOXtnrKopCOOk7uE22qwb++fNn7EYbGZKK6R7x0UGA0L27z+7YTD
-	+ssn8suFyOPiJX84ERa5hWk8VJnQhWLjTrqAsotXSCGAtah/S2uCXTKH11oxemx6
-	kBP0CBTc+d1LjnyQtSgLdGR9Zv/Ql8oik8Dnh4SCx9cgZi4IBtV9A8hv4ieUb8AP
-	TDP/Rc/CetT2s4h1owf9Z7vnCcg8H10Qaef9klN5e9a1ajHAlOaogg15gzr85Lp3
-	YT3xqQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40es1wrj23-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Jul 2024 06:43:43 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46I6hhOH004524
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Jul 2024 06:43:43 GMT
-Received: from [10.151.37.100] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 17 Jul
- 2024 23:43:37 -0700
-Message-ID: <de9f2ab7-e6d0-4c59-8653-c60d9f5a2a33@quicinc.com>
-Date: Thu, 18 Jul 2024 12:13:34 +0530
+	s=arc-20240116; t=1721285232; c=relaxed/simple;
+	bh=UlbtBemEK6GvKquWkv5ZyY/3GRVdzO8WO0mw+648oX4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P1xJoGCcGvnozq0PteuQCbZOzI8edQVVurt8I1rczMtFKR0KFNXPdbEIZnE8V35VE0H3Us/Oon0oX4WghyZZ5B/60+51UYwmyKwLYGyI7FoM33+llcPGI1WD6GB5iPPhr9z9fbhd/cxNUwcm87h0dO4xpndyl7aX5GZFPnVWvHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L0xB9Y1j; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2eedebccfa4so5108901fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 23:47:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721285229; x=1721890029; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Koq1oUeB0gtIrGDkTnuFVZsRFiG+jnXF5/RVRatsvuI=;
+        b=L0xB9Y1jCF5Mo8YZt3m51x/LFMTRLGA9f+kDk8wcOGgaoOB/LxO9knWl31v7Ues/c6
+         swwxU9HWrQf9eIuEl4rBWDlCTLyq0mfgZ8jaPkIwDEEp+1LKXcRz0rGri46Y9eLH//my
+         pxC0W+sguHxYcALQgmfQmhaQRKEbIX/0K6fw8JbruR2zgrcTTphXS+AW5z+R+TlufX3g
+         2tdDA+8pZC10fE0M0V7WRTcU7dVT7LPsDM3EcAo8KOT0jS01j7XxCzmjYvNWmbFoPt/c
+         4RSdy9/kV3R5cDI8ieFodEFQs0i9DTQm78+WufIEUNzCsBa4zjlkLMBYew2RG74Di+/i
+         DNiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721285229; x=1721890029;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Koq1oUeB0gtIrGDkTnuFVZsRFiG+jnXF5/RVRatsvuI=;
+        b=qKqUsyDZKHjpD/LI7u5yt0QViv5n8+ulYis9ZNb61As96hqBI52Rkacl2bDbaSLxIH
+         NKQpekKRZgg5KN+PaPAXjygpunUYKD+Hr4Q5M/dOthZPkEvl7/MbolrfliPcANN12qWS
+         1WUzMjg0KiJUPJZfglKuTvuLdBBLP1pq/qpZL8SFW23kTZtAQsXH+6fIG1PsWDmGXgqg
+         tYE0AAKXHxkbQMHq0xRMCqEDB28moPg1IY5PBgAH78QqPMQks5pZ364BxKqYdjlowhMu
+         YW/WhJh2hpIpuBX0fLYM16zoYI7OxHuxUaJpC0zg6pdZwQg3W0AV3gLmAWRL+99+jRE7
+         9Z6A==
+X-Forwarded-Encrypted: i=1; AJvYcCW1ZsIOnhPJ26+aLFn57wtgdrr1uMOPb9hrjR8aDwXOUR3krvP9TvbYQh+AMNtnmv4fUVGU8WBTH0FTNTgsrO/XdXOKJ7W0ruhWh017
+X-Gm-Message-State: AOJu0YwZyJaHJQ0MeCn33qTAGSS35CmcI6T2WLtE74hjPq/JBSLsg5uC
+	GJwRG3Ew0ZrA3PWDpepHbTN8JEwDzZj59z3tfNXkxF79pGgLvw5eNTkeTxohQACg+izXN6M4j4x
+	TxnEtO1sDUanBtb17HoMpjDbFd0c=
+X-Google-Smtp-Source: AGHT+IFydJquVFZOWqizYF+4etpQ4v+1fsLmR2yG9CbYmHQpcnJHPh4z2Uew/E7MDrm6pmmI+IdMYdnMcF19k4G3qNc=
+X-Received: by 2002:a2e:a164:0:b0:2ee:868e:e281 with SMTP id
+ 38308e7fff4ca-2ef05c73786mr10895851fa.14.1721285228787; Wed, 17 Jul 2024
+ 23:47:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V6 4/4] PCI: qcom: Add support for IPQ9574
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        devi priya
-	<quic_devipriy@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Anusha Rao <quic_anusha@quicinc.com>
-References: <20240716092347.2177153-1-quic_srichara@quicinc.com>
- <20240716092347.2177153-5-quic_srichara@quicinc.com>
- <20240717083856.GD2574@thinkpad>
-Content-Language: en-US
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <20240717083856.GD2574@thinkpad>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ufqeYTtQOUeouqgZUXXrvP064jfAI_zQ
-X-Proofpoint-ORIG-GUID: ufqeYTtQOUeouqgZUXXrvP064jfAI_zQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-18_03,2024-07-17_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 spamscore=0
- mlxscore=0 bulkscore=0 adultscore=0 impostorscore=0 priorityscore=1501
- phishscore=0 clxscore=1015 suspectscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407180044
+References: <20240718063242.52275-1-ubizjak@gmail.com> <4049EB19-E869-4886-AD61-E716A75E4559@zytor.com>
+In-Reply-To: <4049EB19-E869-4886-AD61-E716A75E4559@zytor.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Thu, 18 Jul 2024 08:46:57 +0200
+Message-ID: <CAFULd4bVO39emR49thto4w6LZX0vS9eJKE75u26aCFk7CRVrVw@mail.gmail.com>
+Subject: Re: [PATCH] x86/boot: Use __ASM_SIZE() to reduce ifdeffery in cpuflags.c
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jul 18, 2024 at 8:36=E2=80=AFAM H. Peter Anvin <hpa@zytor.com> wrot=
+e:
+>
+> On July 17, 2024 11:32:18 PM PDT, Uros Bizjak <ubizjak@gmail.com> wrote:
+> >Use __ASM_SIZE() macro to add correct insn suffix to pushf/popf.
+> >
+> >Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> >Cc: Thomas Gleixner <tglx@linutronix.de>
+> >Cc: Ingo Molnar <mingo@kernel.org>
+> >Cc: Borislav Petkov <bp@alien8.de>
+> >Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> >Cc: "H. Peter Anvin" <hpa@zytor.com>
+> >---
+> > arch/x86/boot/cpuflags.c | 10 +++-------
+> > 1 file changed, 3 insertions(+), 7 deletions(-)
+> >
+> >diff --git a/arch/x86/boot/cpuflags.c b/arch/x86/boot/cpuflags.c
+> >index d75237ba7ce9..aacabe431fd5 100644
+> >--- a/arch/x86/boot/cpuflags.c
+> >+++ b/arch/x86/boot/cpuflags.c
+> >@@ -2,6 +2,7 @@
+> > #include <linux/types.h>
+> > #include "bitops.h"
+> >
+> >+#include <asm/asm.h>
+> > #include <asm/processor-flags.h>
+> > #include <asm/required-features.h>
+> > #include <asm/msr-index.h>
+> >@@ -36,13 +37,8 @@ static int has_fpu(void)
+> >  * compressed/ directory where it may be 64-bit code, and thus needs
+> >  * to be 'pushfq' or 'popfq' in that case.
+> >  */
+> >-#ifdef __x86_64__
+> >-#define PUSHF "pushfq"
+> >-#define POPF "popfq"
+> >-#else
+> >-#define PUSHF "pushfl"
+> >-#define POPF "popfl"
+> >-#endif
+> >+#define PUSHF __ASM_SIZE(pushf)
+> >+#define POPF __ASM_SIZE(popf)
+> >
+> > int has_eflag(unsigned long mask)
+> > {
+>
+> Just use pushf/popf. gas hasn't needed that suffix for a long time as far=
+ as I know.
 
+Yes, this works, too. So I guess we can also remove the comment
+explaining the reason for explicit suffixes?
 
-On 7/17/2024 2:08 PM, Manivannan Sadhasivam wrote:
-> On Tue, Jul 16, 2024 at 02:53:47PM +0530, Sricharan R wrote:
->> From: devi priya <quic_devipriy@quicinc.com>
->>
->> The IPQ9574 platform has four Gen3 PCIe controllers:
->> two single-lane and two dual-lane based on SNPS core 5.70a.
->>
->> QCOM IP rev is 1.27.0 and Synopsys IP rev is 5.80a.
->> Add a new compatible 'qcom,pcie-ipq9574' and 'ops_1_27_0'
->> which reuses all the members of 'ops_2_9_0' except for the
->> post_init as the SLV_ADDR_SPACE_SIZE configuration differs
->> between 2_9_0 and 1_27_0.
->>
->> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
->> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
->> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
->> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
->> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->> ---
->>   [V6] Fixed all Manivannan's and Bjorn Helgaas comments.
->>        Removed the SLV_ADDR_SPACE_SZ_1_27_0 macro to have default value.
->>
->>   drivers/pci/controller/dwc/pcie-qcom.c | 31 ++++++++++++++++++++++----
->>   1 file changed, 27 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
->> index 0180edf3310e..26acd9f5385e 100644
->> --- a/drivers/pci/controller/dwc/pcie-qcom.c
->> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
->> @@ -1116,16 +1116,13 @@ static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
->>   	return clk_bulk_prepare_enable(res->num_clks, res->clks);
->>   }
->>   
->> -static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
->> +static int qcom_pcie_post_init(struct qcom_pcie *pcie)
->>   {
->>   	struct dw_pcie *pci = pcie->pci;
->>   	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
->>   	u32 val;
->>   	int i;
->>   
->> -	writel(SLV_ADDR_SPACE_SZ,
->> -		pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
->> -
->>   	val = readl(pcie->parf + PARF_PHY_CTRL);
->>   	val &= ~PHY_TEST_PWR_DOWN;
->>   	writel(val, pcie->parf + PARF_PHY_CTRL);
->> @@ -1165,6 +1162,18 @@ static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
->>   	return 0;
->>   }
->>   
->> +static int qcom_pcie_post_init_1_27_0(struct qcom_pcie *pcie)
->> +{
->> +	return qcom_pcie_post_init(pcie);
->> +}
->> +
->> +static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
->> +{
->> +	writel(SLV_ADDR_SPACE_SZ, pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
->> +
-> As discussed in [1], DBI/ATU mirroring should be disabled completely to avoid
-> the enumeration issue you are seeing on this platform. Please rebase on top of
-> the referenced patch (once v2 gets posted).
-ok, got it.
-
-Regards,
-  Sricharan
+Thanks,
+Uros.
 
