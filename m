@@ -1,166 +1,334 @@
-Return-Path: <linux-kernel+bounces-256785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3763C93702E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 23:43:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17DF893702F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 23:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5030282001
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 21:43:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43433B21FC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 21:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48394145A1C;
-	Thu, 18 Jul 2024 21:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBB514535E;
+	Thu, 18 Jul 2024 21:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="U8DYPjfB"
-Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D0F81751;
-	Thu, 18 Jul 2024 21:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tCyFIP8K"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7920975808
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 21:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721338976; cv=none; b=iEylJA0OQpQBey+KxZryfMCOGjBYkEZzDA1bv8/29gc1q1GagfiBys6tcXXN1W3vy9m/acwHApyH2XCGZWRN0HATkhSCqyP5PdJczXmXXZYBlU6GUt+hviU1nu/trXgvWyU/pAcC9twfPl1E0BZ89VcTo9x0F3rEne/M4xU6SLs=
+	t=1721339058; cv=none; b=Er7geEaNMz//DBPVNDUZEOAFxTHpB9yCxPTe0/QeGFbbzwdn0B9sbnlSX0//nmp14KBH5jvCjomkonXCPJEIQdjSlOrHC3v1+mxWiEASZ+lbJNdt0uhlDn4HtWXx30ZztmtuHl/YYwV628lyXE5tdZz/SG227VGXO9nj6slqRK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721338976; c=relaxed/simple;
-	bh=rwBrBSOWEvecCpPOsN8DxHsjyJveE8a6kM3AAAAnytE=;
+	s=arc-20240116; t=1721339058; c=relaxed/simple;
+	bh=h+fAt05va5sYjEVQuomruqJ+9owh9FpKqBq/T/pNkYs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bCW5RO02TzW+yM4ZO2CPCNCxIAZWApqHn06foUOr+r1lY3Fbiu9jRcQ5dnSZw+y0JrR1ucDG39BISNZI161m1i1q/nur0WqKLv1FOdhRbToVjerIblBCbDfp712ekjWffHp5gpaKbHkDy3oMEycTmIOrX/uhxChYmVMYIR5OfT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=U8DYPjfB; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id AACCE14C2DD;
-	Thu, 18 Jul 2024 23:42:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1721338971;
+	 Content-Type:Content-Disposition:In-Reply-To; b=iM84xv+zO1M3uSmeJFG5gQcANwYMDuDC7tBHTv6u1iK+6SaeqSp6Ls9sKo8cKRbYBh9QMbTzWsa1kNYdoHhJy/cWEE1mQn0BsEmRZkVpeGecTYFj3LttSh+LLeos6Tp/8lAZEXV4QOXzGU+MsIwVf7lnt07DIuDGDgxF1z6oUBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tCyFIP8K; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: pasha.tatashin@soleen.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721339054;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=U/bUkXzKitNH6YGqYdzXljxkIPFqMZav005MXLILfYg=;
-	b=U8DYPjfBivQPvUxmsnle9Iu4s6VEg3rqZbt8V2nYogOSm1ufX5X9yfzr6U2s8pH2jHsodQ
-	cCeRoMdTz4DO58ZIv4qrSIBWULt0kVJ1d+QyNIXOFKARamBVEWVW1Rz4CEXxogu7JU+dPY
-	qDapbQGi7omx4MLeM09z/oEoo/u3vPVc220ZzM3L+/G994eBmoz5Tb3T92WACbd5QZjWf4
-	0wcYaPgjHyqZb4msgY4R1K3GD7h7n0BeslfPIbJui3C8i7GKwxMLM+PxTqk9S1XjWxKdps
-	AltuOXRY3jPIdytIbx+Du9Roca8i0zDsVuRyNg5MfStRU575pQIgdmpoATy3+w==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 3e6bcb59;
-	Thu, 18 Jul 2024 21:42:46 +0000 (UTC)
-Date: Fri, 19 Jul 2024 06:42:31 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Jakub Kicinski <kuba@kernel.org>, v9fs@lists.linux.dev
-Subject: Re: [PATCH] vfs: handle __wait_on_freeing_inode() and evict() race
-Message-ID: <ZpmMRzyE-mVrK74M@codewreck.org>
-References: <20240718151838.611807-1-mjguzik@gmail.com>
+	bh=vRcjS/iHB/YMBfjlrTFTUUEyvvd22iRJeaks2kJ4lCk=;
+	b=tCyFIP8K2ww9uIxE7uIITgek9x/8XLOkaaN0OmLFwXXbwq6iwLKnzgteBd/+Xs/R4PbNCK
+	zUaveYFIHq/XnTl7iFmnPuSMM0/VW7COuiMKKWqn4q3QdjYJ/eiS4g+XPLQCQdsEvaaoh5
+	U3o/ixatn80HJmut1CJbxUcvCDL5Erk=
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: jpoimboe@kernel.org
+X-Envelope-To: peterz@infradead.org
+X-Envelope-To: nphamcs@gmail.com
+X-Envelope-To: cerasuolodomenico@gmail.com
+X-Envelope-To: surenb@google.com
+X-Envelope-To: lizhijian@fujitsu.com
+X-Envelope-To: willy@infradead.org
+X-Envelope-To: shakeel.butt@linux.dev
+X-Envelope-To: vbabka@suse.cz
+X-Envelope-To: ziy@nvidia.com
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-mm@kvack.org
+Date: Thu, 18 Jul 2024 17:44:12 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: akpm@linux-foundation.org, jpoimboe@kernel.org, peterz@infradead.org, 
+	nphamcs@gmail.com, cerasuolodomenico@gmail.com, surenb@google.com, 
+	lizhijian@fujitsu.com, willy@infradead.org, shakeel.butt@linux.dev, vbabka@suse.cz, 
+	ziy@nvidia.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v4] vmstat: Kernel stack usage histogram
+Message-ID: <o3ovvnwhzulw4h7k5zmud46gyscigqx6uolksjdsx6vsvzchue@bwxesck7n357>
+References: <20240718202611.1695164-1-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240718151838.611807-1-mjguzik@gmail.com>
+In-Reply-To: <20240718202611.1695164-1-pasha.tatashin@soleen.com>
+X-Migadu-Flow: FLOW_OUT
 
-Mateusz Guzik wrote on Thu, Jul 18, 2024 at 05:18:37PM +0200:
-> Lockless hash lookup can find and lock the inode after it gets the
-> I_FREEING flag set, at which point it blocks waiting for teardown in
-> evict() to finish.
+On Thu, Jul 18, 2024 at 08:26:11PM GMT, Pasha Tatashin wrote:
+> As part of the dynamic kernel stack project, we need to know the amount
+> of data that can be saved by reducing the default kernel stack size [1].
 > 
-> However, the flag is still set even after evict() wakes up all waiters.
+> Provide a kernel stack usage histogram to aid in optimizing kernel stack
+> sizes and minimizing memory waste in large-scale environments. The
+> histogram divides stack usage into power-of-two buckets and reports the
+> results in /proc/vmstat. This information is especially valuable in
+> environments with millions of machines, where even small optimizations
+> can have a significant impact.
 > 
-> This results in a race where if the inode lock is taken late enough, it
-> can happen after both hash removal and wakeups, meaning there is nobody
-> to wake the racing thread up.
+> The histogram data is presented in /proc/vmstat with entries like
+> "kstack_1k", "kstack_2k", and so on, indicating the number of threads
+> that exited with stack usage falling within each respective bucket.
 > 
-> This worked prior to RCU-based lookup because the entire ordeal was
-> synchronized with the inode hash lock.
+> Example outputs:
+> Intel:
+> $ grep kstack /proc/vmstat
+> kstack_1k 3
+> kstack_2k 188
+> kstack_4k 11391
+> kstack_8k 243
+> kstack_16k 0
 > 
-> Since unhashing requires the inode lock, we can safely check whether it
-> happened after acquiring it.
+> ARM with 64K page_size:
+> $ grep kstack /proc/vmstat
+> kstack_1k 1
+> kstack_2k 340
+> kstack_4k 25212
+> kstack_8k 1659
+> kstack_16k 0
+> kstack_32k 0
+> kstack_64k 0
 > 
-> Link: https://lore.kernel.org/v9fs/20240717102458.649b60be@kernel.org/
-> Reported-by: Dominique Martinet <asmadeus@codewreck.org>
-> Fixes: 7180f8d91fcb ("vfs: add rcu-based find_inode variants for iget ops")
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> Note: once the dynamic kernel stack is implemented it will depend on the
+> implementation the usability of this feature: On hardware that supports
+> faults on kernel stacks, we will have other metrics that show the total
+> number of pages allocated for stacks. On hardware where faults are not
+> supported, we will most likely have some optimization where only some
+> threads are extended, and for those, these metrics will still be very
+> useful.
+> 
+> [1] https://lwn.net/Articles/974367
+
+Nice and simple, and this gets us exactly the data we want for dynamic
+kernel stacks...
+
+Reviewed-by: Kent Overstreet <kent.overstreet@linux.dev>
+
+> 
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 > ---
 > 
-> The 'fixes' tag is contingent on testing by someone else. :>
-
-Thanks for the quick fix!
-
-> I have 0 experience with 9pfs and the docs failed me vs getting it
-> running on libvirt+qemu, so I gave up on trying to test it myself.
-
-I hadn't used it until yesterday either, but virtme-ng[1] should be easy
-enough to get running without much effort: just cloning this and running
-/path/to/virtme-ng/vng from a built linux tree will start a vm with /
-mounted as 9p read-only (--rwdir /foo for writing)
-[1] https://github.com/arighi/virtme-ng 
-
-> Dominique, you offered to narrow things down here, assuming the offer
-> stands I would appreciate if you got this sorted out :)
-
-Unfortunately I haven't been able to reproduce this :/
-I'm not running the exact same workload but 9p should be instanciating
-inodes from just a find in a large tree; I tried running finds in
-parallel etc to no avail.
-
-You mentioned adding some sleep to make this easier to hit, should
-something like this help or did I get this wrong?
-----
-diff --git a/fs/inode.c b/fs/inode.c
-index 54e0be80be14..c2991142a462 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -21,6 +21,7 @@
- #include <linux/list_lru.h>
- #include <linux/iversion.h>
- #include <linux/rw_hint.h>
-+#include <linux/delay.h>
- #include <trace/events/writeback.h>
- #include "internal.h"
- 
-@@ -962,6 +963,7 @@ static struct inode *find_inode_fast(struct super_block *sb,
-                        continue;
-                if (inode->i_sb != sb)
-                        continue;
-+               usleep_range(10,100);
-                spin_lock(&inode->i_lock);
-                if (inode->i_state & (I_FREEING|I_WILL_FREE)) {
-                        __wait_on_freeing_inode(inode, locked);
-----
-unfortunately I've checked with a printk there too and I never get there
-in the first place, so it probably needs to hit another race first where
-we're getting an inode that's about or has just been dropped or
-something, but none of my "9p stress" workloads seem to be hitting it
-either...
-Could be some scheduling difference or just that my workloads aren't
-appropriate; I need to try running networking tests but ran out of time
-for today.
-
-> Even if the patch in the current form does not go in, it should be
-> sufficient to confirm the problem diagnosis is correct.
+> Changelog:
+> v4:
+> - Expanded the commit message as requested by Andrew Morton.
 > 
-> A debug printk can be added to validate the problematic condition was
-> encountered, for example:
-
-That was helpful, thanks.
-
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index 54e0be80be14..8f61fad0bc69 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -2308,6 +2308,7 @@ static void __wait_on_freeing_inode(struct inode *inode, bool locked)
-> >         if (unlikely(inode_unhashed(inode))) {
-> >                 BUG_ON(locked);
-> >                 spin_unlock(&inode->i_lock);
-> > +               printk(KERN_EMERG "%s: got unhashed inode %p\n", __func__, inode);
-> >                 return;
-> >         }
-
--- 
-Dominique Martinet | Asmadeus
+>  include/linux/sched/task_stack.h | 49 ++++++++++++++++++++++++++++++--
+>  include/linux/vm_event_item.h    | 42 +++++++++++++++++++++++++++
+>  include/linux/vmstat.h           | 16 -----------
+>  mm/vmstat.c                      | 24 ++++++++++++++++
+>  4 files changed, 113 insertions(+), 18 deletions(-)
+> 
+> diff --git a/include/linux/sched/task_stack.h b/include/linux/sched/task_stack.h
+> index ccd72b978e1f..65e8c9fb7f9b 100644
+> --- a/include/linux/sched/task_stack.h
+> +++ b/include/linux/sched/task_stack.h
+> @@ -95,9 +95,51 @@ static inline int object_is_on_stack(const void *obj)
+>  extern void thread_stack_cache_init(void);
+>  
+>  #ifdef CONFIG_DEBUG_STACK_USAGE
+> +#ifdef CONFIG_VM_EVENT_COUNTERS
+> +#include <linux/vm_event_item.h>
+> +
+> +/* Count the maximum pages reached in kernel stacks */
+> +static inline void kstack_histogram(unsigned long used_stack)
+> +{
+> +	if (used_stack <= 1024)
+> +		this_cpu_inc(vm_event_states.event[KSTACK_1K]);
+> +#if THREAD_SIZE > 1024
+> +	else if (used_stack <= 2048)
+> +		this_cpu_inc(vm_event_states.event[KSTACK_2K]);
+> +#endif
+> +#if THREAD_SIZE > 2048
+> +	else if (used_stack <= 4096)
+> +		this_cpu_inc(vm_event_states.event[KSTACK_4K]);
+> +#endif
+> +#if THREAD_SIZE > 4096
+> +	else if (used_stack <= 8192)
+> +		this_cpu_inc(vm_event_states.event[KSTACK_8K]);
+> +#endif
+> +#if THREAD_SIZE > 8192
+> +	else if (used_stack <= 16384)
+> +		this_cpu_inc(vm_event_states.event[KSTACK_16K]);
+> +#endif
+> +#if THREAD_SIZE > 16384
+> +	else if (used_stack <= 32768)
+> +		this_cpu_inc(vm_event_states.event[KSTACK_32K]);
+> +#endif
+> +#if THREAD_SIZE > 32768
+> +	else if (used_stack <= 65536)
+> +		this_cpu_inc(vm_event_states.event[KSTACK_64K]);
+> +#endif
+> +#if THREAD_SIZE > 65536
+> +	else
+> +		this_cpu_inc(vm_event_states.event[KSTACK_REST]);
+> +#endif
+> +}
+> +#else /* !CONFIG_VM_EVENT_COUNTERS */
+> +static inline void kstack_histogram(unsigned long used_stack) {}
+> +#endif /* CONFIG_VM_EVENT_COUNTERS */
+> +
+>  static inline unsigned long stack_not_used(struct task_struct *p)
+>  {
+>  	unsigned long *n = end_of_stack(p);
+> +	unsigned long unused_stack;
+>  
+>  	do { 	/* Skip over canary */
+>  # ifdef CONFIG_STACK_GROWSUP
+> @@ -108,10 +150,13 @@ static inline unsigned long stack_not_used(struct task_struct *p)
+>  	} while (!*n);
+>  
+>  # ifdef CONFIG_STACK_GROWSUP
+> -	return (unsigned long)end_of_stack(p) - (unsigned long)n;
+> +	unused_stack = (unsigned long)end_of_stack(p) - (unsigned long)n;
+>  # else
+> -	return (unsigned long)n - (unsigned long)end_of_stack(p);
+> +	unused_stack = (unsigned long)n - (unsigned long)end_of_stack(p);
+>  # endif
+> +	kstack_histogram(THREAD_SIZE - unused_stack);
+> +
+> +	return unused_stack;
+>  }
+>  #endif
+>  extern void set_task_stack_end_magic(struct task_struct *tsk);
+> diff --git a/include/linux/vm_event_item.h b/include/linux/vm_event_item.h
+> index 747943bc8cc2..73fa5fbf33a3 100644
+> --- a/include/linux/vm_event_item.h
+> +++ b/include/linux/vm_event_item.h
+> @@ -154,9 +154,51 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOUT,
+>  		VMA_LOCK_RETRY,
+>  		VMA_LOCK_MISS,
+>  #endif
+> +#ifdef CONFIG_DEBUG_STACK_USAGE
+> +		KSTACK_1K,
+> +#if THREAD_SIZE > 1024
+> +		KSTACK_2K,
+> +#endif
+> +#if THREAD_SIZE > 2048
+> +		KSTACK_4K,
+> +#endif
+> +#if THREAD_SIZE > 4096
+> +		KSTACK_8K,
+> +#endif
+> +#if THREAD_SIZE > 8192
+> +		KSTACK_16K,
+> +#endif
+> +#if THREAD_SIZE > 16384
+> +		KSTACK_32K,
+> +#endif
+> +#if THREAD_SIZE > 32768
+> +		KSTACK_64K,
+> +#endif
+> +#if THREAD_SIZE > 65536
+> +		KSTACK_REST,
+> +#endif
+> +#endif /* CONFIG_DEBUG_STACK_USAGE */
+>  		NR_VM_EVENT_ITEMS
+>  };
+>  
+> +#ifdef CONFIG_VM_EVENT_COUNTERS
+> +/*
+> + * Light weight per cpu counter implementation.
+> + *
+> + * Counters should only be incremented and no critical kernel component
+> + * should rely on the counter values.
+> + *
+> + * Counters are handled completely inline. On many platforms the code
+> + * generated will simply be the increment of a global address.
+> + */
+> +
+> +struct vm_event_state {
+> +	unsigned long event[NR_VM_EVENT_ITEMS];
+> +};
+> +
+> +DECLARE_PER_CPU(struct vm_event_state, vm_event_states);
+> +#endif
+> +
+>  #ifndef CONFIG_TRANSPARENT_HUGEPAGE
+>  #define THP_FILE_ALLOC ({ BUILD_BUG(); 0; })
+>  #define THP_FILE_FALLBACK ({ BUILD_BUG(); 0; })
+> diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
+> index 735eae6e272c..131966a4af78 100644
+> --- a/include/linux/vmstat.h
+> +++ b/include/linux/vmstat.h
+> @@ -41,22 +41,6 @@ enum writeback_stat_item {
+>  };
+>  
+>  #ifdef CONFIG_VM_EVENT_COUNTERS
+> -/*
+> - * Light weight per cpu counter implementation.
+> - *
+> - * Counters should only be incremented and no critical kernel component
+> - * should rely on the counter values.
+> - *
+> - * Counters are handled completely inline. On many platforms the code
+> - * generated will simply be the increment of a global address.
+> - */
+> -
+> -struct vm_event_state {
+> -	unsigned long event[NR_VM_EVENT_ITEMS];
+> -};
+> -
+> -DECLARE_PER_CPU(struct vm_event_state, vm_event_states);
+> -
+>  /*
+>   * vm counters are allowed to be racy. Use raw_cpu_ops to avoid the
+>   * local_irq_disable overhead.
+> diff --git a/mm/vmstat.c b/mm/vmstat.c
+> index 8507c497218b..642d761b557b 100644
+> --- a/mm/vmstat.c
+> +++ b/mm/vmstat.c
+> @@ -1416,6 +1416,30 @@ const char * const vmstat_text[] = {
+>  	"vma_lock_retry",
+>  	"vma_lock_miss",
+>  #endif
+> +#ifdef CONFIG_DEBUG_STACK_USAGE
+> +	"kstack_1k",
+> +#if THREAD_SIZE > 1024
+> +	"kstack_2k",
+> +#endif
+> +#if THREAD_SIZE > 2048
+> +	"kstack_4k",
+> +#endif
+> +#if THREAD_SIZE > 4096
+> +	"kstack_8k",
+> +#endif
+> +#if THREAD_SIZE > 8192
+> +	"kstack_16k",
+> +#endif
+> +#if THREAD_SIZE > 16384
+> +	"kstack_32k",
+> +#endif
+> +#if THREAD_SIZE > 32768
+> +	"kstack_64k",
+> +#endif
+> +#if THREAD_SIZE > 65536
+> +	"kstack_rest",
+> +#endif
+> +#endif
+>  #endif /* CONFIG_VM_EVENT_COUNTERS || CONFIG_MEMCG */
+>  };
+>  #endif /* CONFIG_PROC_FS || CONFIG_SYSFS || CONFIG_NUMA || CONFIG_MEMCG */
+> -- 
+> 2.45.2.1089.g2a221341d9-goog
+> 
 
