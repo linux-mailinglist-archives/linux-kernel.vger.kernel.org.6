@@ -1,182 +1,128 @@
-Return-Path: <linux-kernel+bounces-256025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6D479347E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:16:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 078079347ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:17:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E3FD1C217EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:16:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 917B11F22F26
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 06:17:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADA157C9F;
-	Thu, 18 Jul 2024 06:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB7457C9F;
+	Thu, 18 Jul 2024 06:16:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="RxkJ27Un"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="POI6V7ce"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE9F44366;
-	Thu, 18 Jul 2024 06:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4D826ACF
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 06:16:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721283379; cv=none; b=KZk6v8/MEBfut25r8vPHWkSp84blyAtMFv4XS0m+pXtL3DCAnhbk9iueaq7DoTXYo6V51VUrjvNVy8E0ByBi3AOnpqo6/59Hxw4Ucftemt7YGzKjg7UIbo5ZR5T0x7EEduMsfhSIHQUWZpN2uG4DW+qaAjPwhP2GLQV1BfX3pao=
+	t=1721283415; cv=none; b=M6VDhzmqAoAnkgKRuxVdicyMfYBxj9thz+eyVQZvs1++Ge2kousidEpkBwpVUyuWiywYpaTULnVJWShNQGg83niEvDk659WeNsWWGcK3QwmJwesyTwqKfUI+86gAksIjJWmY5yNpcJs+IATJ/DRWarME7YXYDiu/jhnG1ZC1V2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721283379; c=relaxed/simple;
-	bh=BM2mNVmuJcY/LmUfiTpu7UXdpx1WXiN11WNPacxILig=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=B1R06E5NzU6MKfgFWeOlyVIuloXIm37GEm3/fbCz0Hnx2oouhkz75SNPfqlQ9p/yLMtKUOudS+qkMJAM2VAcG7zf6HwIXzF+SN53d4OqZ3hu+O1tYIbvdA0ZU2BzH/3nR+J8nHsL9UDO0g7Lyh5OS4S2cqG2OXXLYY1QIUs7nkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=RxkJ27Un; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 46I6FOBJ3092595
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 17 Jul 2024 23:15:25 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 46I6FOBJ3092595
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024061501; t=1721283326;
-	bh=4GPEBFCkI4GpI3gztc1bt8+74vJKF4Faqu6RZUuzNXE=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=RxkJ27UnaTzPZav0pWlggnAVZnJW7QeOPiI988iBXUIJMSjqIwnucAp9bOClzIHaY
-	 BAWuH28xPI7cPO0dJ1j5A21c4X4t4OsP6ZlD9se29CDROcgrBdiRsTe2gaGN4RXp2g
-	 Rcx0JKdZHaP0C0bhqbBXK9Na9W+Pgr3klPJQjjgrxXXcHFJ1qLEOPCKmJKjsC9T62A
-	 hmZs9rNSkms0dVOXN8hmWqoMP4rFvZ4ve3wJ5xUvtRzC5PqQ2ps0D2DCoUNLNDrGW6
-	 TuYMaqUHlMFCRStCKV3i5ehMQ9kn2EtNNagZGs8meU7+G10zOLI3UE+bxGGgQEdub2
-	 aTjk3GmBGcrBg==
-Date: Wed, 17 Jul 2024 23:15:21 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: "Shao, Marshall" <Marshall.Shao@Dell.com>,
-        "ardb@kernel.org" <ardb@kernel.org>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "bp@alien8.de" <bp@alien8.de>, "mingo@redhat.com" <mingo@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>
-CC: "Mishra, Ashish" <Ashish.Mishra4@dell.com>,
-        "Dion, Christopher" <Christopher.Dion@dell.com>,
-        "Caisse, Joe" <Joe.Caisse@dell.com>,
-        "Chia, Jia Yuan" <JiaYuan.Chia@dell.com>,
-        "Mukundan, Govind" <Govind.Mukundan@dell.com>
-Subject: Re: [Patch] Do not clear BSS region in x86 stub
-User-Agent: K-9 Mail for Android
-In-Reply-To: <DS7PR19MB570996A580C6F5D2C9CACCE48BA32@DS7PR19MB5709.namprd19.prod.outlook.com>
-References: <DS7PR19MB570996A580C6F5D2C9CACCE48BA32@DS7PR19MB5709.namprd19.prod.outlook.com>
-Message-ID: <A2AEC38D-56FB-4687-BDC2-54F1600F14A1@zytor.com>
+	s=arc-20240116; t=1721283415; c=relaxed/simple;
+	bh=kyAEPQ8aqEpNHP56KgTxfs8DkAW5y/OXpKADmfMqipw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SI5r6tTtT1GZ6IX0oUel6kk+xHRGntRIJ0Xbv8i/8Dc7LS5R6lEPTp52+P22fxYOCZwn4W+tf3OdEDMFmcGpUovUEyPtjubRoDLjWfWfsqwgoeXXWsE4/w5jhgraO+Ekl1kD+gJ/HZCNsRtCWCu2kPamDA2H29V+ceFRhJzDIDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=POI6V7ce; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=xdf5
+	pkRjQk/2l7quEdwVVAsVanyOiLoDYJ1UByBzIFM=; b=POI6V7cerUMTOAI3LNPa
+	SuZEQDja66K97w9kNDpZKFS1i0hZQ4C22Z/mPPBqtGJmTb1XBifYeKxfMPa4Vm2u
+	cpHLrmpn+Y2ct3lPvQzPHgPBZvlHQeyW+B4umKyk+5oVxWkBCLtODdYjEl9wojGB
+	ZpaD6dGweS6xuinPYe0sFEq9CWTtxZfu1Rp2B/6eVXuS+SX31ZvDNwwrIYMq2JGF
+	TnFO3vUnwqbrXNS/bEOD7MxjiwKJ1WgsDLc/iDgUImpSZ//2e0G/ldxsetFwuy60
+	qT9XBjaFjCjQNSfTpIm9IEYXiMaXZBVxgMUtChQSpuWuCkiDFzIn9p9hs8DNAdpe
+	iQ==
+Received: (qmail 784982 invoked from network); 18 Jul 2024 08:16:41 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Jul 2024 08:16:41 +0200
+X-UD-Smtp-Session: l3s3148p1@LqCmhX8dULK57tsn
+Date: Thu, 18 Jul 2024 08:16:40 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: Re: [PULL REQUEST] i2c-for-6.11-rc1
+Message-ID: <ZpizSLI-sAIng0GO@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+References: <ZpY3X1tggZC3s_1X@shikoro>
+ <CAHk-=wigtUnqv+RXkLZ2TwqV35YQeGrYsMnrowpnmQNN6wyhCg@mail.gmail.com>
+ <CAHk-=wir5OYeNSytz+EocQnQxoFX0LY962R6FDj9cAHBiXFe5Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="V4NMR6WsPI0KAuJv"
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wir5OYeNSytz+EocQnQxoFX0LY962R6FDj9cAHBiXFe5Q@mail.gmail.com>
 
-On July 17, 2024 12:33:08 AM PDT, "Shao, Marshall" <Marshall=2EShao@Dell=2E=
-com> wrote:
->From: Marshall Shao <marshall=2Eshao@dell=2Ecom>
->
->Clearing the BSS region may cause the UEFI firmware to malfunction
->during boot=2E
->
->When booting the kernel from an older firmware version that has TPM
->enabled and the MemoryOverwriteRequestControl bit set to 1, the
->firmware's boot service might encounter an exception if it attempts
->to initialize the BSS region within the x86 stub=2E
->
->To circumvent the firmware exception, it is advisable to enlarge the
->BOOT_STACK_SIZE and to perform the initialization of static variables
->prior to the decompression of the bzImage=2E
->
->Signed-off-by: Marshall Shao <marshall=2Eshao@dell=2Ecom>
->---
-> arch/x86/boot/compressed/misc=2Ec         | 8 +++-----
-> arch/x86/include/asm/boot=2Eh             | 2 +-
-> drivers/firmware/efi/libstub/x86-stub=2Ec | 5 -----
-> 3 files changed, 4 insertions(+), 11 deletions(-)
->
->diff --git a/arch/x86/boot/compressed/misc=2Ec b/arch/x86/boot/compressed=
-/misc=2Ec
->index b70e4a21c15f=2E=2Ebac5a3c55c2c 100644
->--- a/arch/x86/boot/compressed/misc=2Ec
->+++ b/arch/x86/boot/compressed/misc=2Ec
->@@ -356,11 +356,9 @@ unsigned long decompress_kernel(unsigned char *outbu=
-f, unsigned long virt_addr,
->                                void (*error)(char *x))
-> {
->        unsigned long entry;
->-
->-       if (!free_mem_ptr) {
->-               free_mem_ptr     =3D (unsigned long)boot_heap;
->-               free_mem_end_ptr =3D (unsigned long)boot_heap + sizeof(bo=
-ot_heap);
->-       }
->+       free_mem_ptr     =3D (unsigned long)boot_heap;
->+       free_mem_end_ptr =3D (unsigned long)boot_heap + sizeof(boot_heap)=
-;
->+       malloc_ptr =3D free_mem_ptr;
->
->        if (__decompress(input_data, input_len, NULL, NULL, outbuf, outpu=
-t_len,
->                         NULL, error) < 0)
->diff --git a/arch/x86/include/asm/boot=2Eh b/arch/x86/include/asm/boot=2E=
-h
->index 3e5b111e619d=2E=2E312bc87ab027 100644
->--- a/arch/x86/include/asm/boot=2Eh
->+++ b/arch/x86/include/asm/boot=2Eh
->@@ -33,7 +33,7 @@
-> #endif
->
-> #ifdef CONFIG_X86_64
->-# define BOOT_STACK_SIZE       0x4000
->+# define BOOT_STACK_SIZE       0x10000
->
-> /*
->  * Used by decompressor's startup_32() to allocate page tables for ident=
-ity
->diff --git a/drivers/firmware/efi/libstub/x86-stub=2Ec b/drivers/firmware=
-/efi/libstub/x86-stub=2Ec
->index 1983fd3bf392=2E=2Ed92d2ccc709b 100644
->--- a/drivers/firmware/efi/libstub/x86-stub=2Ec
->+++ b/drivers/firmware/efi/libstub/x86-stub=2Ec
->@@ -21,7 +21,6 @@
-> #include "efistub=2Eh"
-> #include "x86-stub=2Eh"
->
->-extern char _bss[], _ebss[];
->
-> const efi_system_table_t *efi_system_table;
-> const efi_dxe_services_table_t *efi_dxe_table;
->@@ -476,9 +475,6 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handl=
-e,
->        efi_status_t status;
->        char *cmdline_ptr;
->
->-       if (efi_is_native())
->-               memset(_bss, 0, _ebss - _bss);
->-
->        efi_system_table =3D sys_table_arg;
->
->        /* Check if we were booted by the EFI firmware */
->@@ -1000,7 +996,6 @@ void __noreturn efi_stub_entry(efi_handle_t handle,
-> void efi_handover_entry(efi_handle_t handle, efi_system_table_t *sys_tab=
-le_arg,
->                        struct boot_params *boot_params)
-> {
->-       memset(_bss, 0, _ebss - _bss);
->        efi_stub_entry(handle, sys_table_arg, boot_params);
-> }
->
->--
->2=2E34=2E1
->
->
->Internal Use - Confidential
->
 
-This is strange=2E Is the problem that the BSS is not properly reflected i=
-n the UEFI PECOFF header?
+--V4NMR6WsPI0KAuJv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Linus,
+
+> > I have looked up said explanations, but next time I need to go look
+> > for explanations I'm just going to ignore the pull request as clearly
+> > just not worth bothering with.
+
+Okay, I got the first part. My reasoning was that the summaries from the
+merges I pulled in were excellent and I could not add something to it
+*plus* I was assuming you skim through the patches you pull anyhow. But
+I can see that you want to know *before* you pull something. I will send
+you an updated PR.
+
+> There are other merges in there too, and this just pisses me off.
+
+That part I do not get:
+
+$ git log --pretty=oneline master..i2c/for-mergewindow | grep Merge
+479f18ccca110b727d99c2db60d769736bf390e6 Merge tag 'i2c-host-6.11' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-mergewindow
+711703013e340caac3e4a6a3a605324691292621 Merge tag 'at24-updates-for-v6.11-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux into i2c/for-mergewindow
+
+These two merges I mentioned. What others are in there?
+
+Regards,
+
+   Wolfram
+
+
+--V4NMR6WsPI0KAuJv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaYs0QACgkQFA3kzBSg
+Kbb7ShAAsYkzZIWcYYi0+3xUnQTyFd7720G5Ow/1tZZ0GE4MsC6EfUtxoPZQ0Dez
+4F0gCIVUSf6YFgMN1oBrg1FgA8TEu6nnrpXB7BbyOz5FBwFo80UaFbYJMMH5FXit
+SWP1wxJSXfEwf9sSmHtOdSFCEVb31FwxR3VicYMlcv0DBpfFcrT/Jfl+Gk/9Ee+I
+wrtcuGDz0+ItNS+HZQEcUtG0wUP45DtQeRS7g1DHraEODP7W4YYiE50Y4nXwE0Ti
+c01kE3hF5JP5AAk3oIap0DmzmfLSE7pqp1MBycIRLl5YaGofc3TXYwWVMK3D62tq
+6jOzkUnyNq8sQqYajMsxfsvSdx/RRAb9g4FZPp5iRR6P8OeS9Iyg50FfFB5yy9Sj
+cY7sQZ2PS8N1/Fu1liMigXB2kBIuKLxpr10th1o1T9cS3C7GtqxKnpzxUfU7PdtS
+HdGRlCRGMVlnk1/r8ckxRvmKdjZoTeNSdH7YW5yOzvVEDMcoEm0cr1Dn/6BLwQ7Y
+83Q0PgK8qbzf8RRjFhpSbJjTsXGywfk53g1abxdwTMuD6PquGzax9u0IaZlxV97I
+otUdxGvZ/jVyo4Amb2UsalzI/fzNAZNHOj0P16NlpgSwa9MorJHlaPICNLU1zKo8
+bWJOUBySu/YVrDsgk7YWrjbN0u9wruv8xlOvJm+HIl3NZn5oDjU=
+=SQOV
+-----END PGP SIGNATURE-----
+
+--V4NMR6WsPI0KAuJv--
 
