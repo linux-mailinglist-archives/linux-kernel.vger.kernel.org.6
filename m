@@ -1,240 +1,264 @@
-Return-Path: <linux-kernel+bounces-256397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4C3A934DC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:04:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B332934DB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:04:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59E79283F0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:04:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 940A6B23725
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C8813B587;
-	Thu, 18 Jul 2024 13:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ZODvij7E"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580D013BC30;
+	Thu, 18 Jul 2024 13:04:06 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F257F84E11
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 13:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12CA813213A
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 13:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721307856; cv=none; b=XgzXWevMNpVCp9ZEoUdVHSipT02mcGUtGH/naXH/SClvtvqHqfRn7+gdj6WSh9NnSZ2WNdLzMTe7TmGxII8e67Frib2M8Y1HOae3KEtru9gUjw2qcIh6qnbOf69E1c4iITGfugOXEHX2dMmHSoEamdQYJmKPNF1xEDpX7qFt6qc=
+	t=1721307845; cv=none; b=WXofdwJ44PPwNE7FwdaXbdWddfLPa/n4P/oSVH0Syr4JPG3D9NfVAp99LckEujqakj/GYqpWh084PZl8VEyFeFgKW0lD8+nE0KfO6rYxms8/8sY0nvDGii/jVxgAcN/+u47esUubTxVdJNlhSYb+xAKCSjKcpBKS3NbE2R2uvDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721307856; c=relaxed/simple;
-	bh=we2441mJ200UsbwMeH+W6qEctdwpO8gZRiXzNVf4FV4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bdr4P2xkb66EyTRU/LJDyvcsohwp25NaQULHOH0CfbbpSCGRcEHEI9FmeV4NdA0JejdjHLCmuuhx3v1xflrq+Ten1mjr1UUvvXzOyMl93rFQWYTxPfcd/5eJM+EjQoVy2XH1GdkDiuRolzwKDhn9F7dwZGs0TGuvcZvcy9bfiSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ZODvij7E; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2eecd2c6432so13058021fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 06:04:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1721307852; x=1721912652; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PaoSB/i75fBgDQfjxZ/xBZj8r8hOjb3uHVg3ton7t7o=;
-        b=ZODvij7E/PWDZRp8JxanPSE+4q0iUruBGtwg1nWQlDEP5GPQIf4KIroQydbRtQ15ZH
-         JWUQXBaddQaciHGn0rThwfoAUtsXmM2GoIPy8ksk+cb0IqX3uNYUd/EL1qK5cd66XfFK
-         vBW2PDF3arH28nPjPUcokCbDO86IWtBclsYkWHaFJTjN45apeI9l0EGuRAUfv3lCMI2U
-         vjSeuRTbljh6ogLPtfBmme+vETyO06lDSb4h9rk0euqk3Qf1+Z0zEgjPC6lFFo77sTQQ
-         QR3HdxjY8DuBL+BExYsqY3q1/1IrXJO+1L/QUfxtlEop3LILu7qPMf2o/59aRYAISD0B
-         Ot4w==
+	s=arc-20240116; t=1721307845; c=relaxed/simple;
+	bh=K7uIgvMf0nJ3U4oViwHBbtKyYRzwNniJIeTKPCPi//c=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=GJH1Wwc2aAVuO2ZhShMtu1knbYddhWMDpoKLmpIE4Lsue5uOJUZipJDYPttDgSMhd9l32r/9fWxfD0pDgFNEkaRzPlrJkiBHlg2vEpSITCgjZqYo4OB0pX8xMn+3RVEX9gIgJsMFMf9KIZlVUSm+9CsxdWCczp+TyVocwtNe1KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8048edd8993so118474139f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 06:04:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721307852; x=1721912652;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PaoSB/i75fBgDQfjxZ/xBZj8r8hOjb3uHVg3ton7t7o=;
-        b=SQeE4jFrECaxYYQtf5ukfUzlhfmcD3Htoxm+D2d3pTr1RbebT2pumj8X0O5/JpSkYz
-         l//G4fB7e0q6YVwy0CBIjuWLKcJrZhiCQRBdTgieut0kPeeTrBS4nyy9mqtDhogHiTvL
-         TXVUqGJY6WcK/NK40wUF02d1OtNpmBkttnuMhygRa3R+nguoOZiEx8vaZai8BWxo8g2/
-         R4mGK3eDS2diWiNoGBRx45ADcE7QVcsywYs7rLEWYAEhzzQm/H9bKp4FeX0wFBTI/ULP
-         BAtiFBoAme/CQjaMGd8JFbqH+A7a79t2U8oSEoSOLatLZeMxOLMI17KlEef+9IXxnyxc
-         VlJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkJTrhPv60z198zYP/8325fJPJq0k6b9NxcC0T1Mn/qH4Ecx/bh78eAgT0bCGhexGI8fq5nwv659Nr7EXHZcfSi+2cqkqZNayF9LZ4
-X-Gm-Message-State: AOJu0YxYOmea5cXdryLFvfjd8qfONc8co5x92oXJbO0IFudkg8h+d+JQ
-	SidTzINLrrUoZPIth3jcJChC01Z8LWFyVczpnVbLChGPCMdZZ7LWFbFVZBcmyPXhuWiC5QjaWP+
-	4LmAg+8iI3jiqXFYBnZY00eYu8Jf1xCvp25/Xag==
-X-Google-Smtp-Source: AGHT+IFdeMEc5qNFLBDKGp+G046kUIHhNXX2IhpfOE33oX22Xj+JyHbPKQLwME12ysWlC6x7Y2Tkkh0PP0R+QhfKifQ=
-X-Received: by 2002:a2e:2c12:0:b0:2ee:8d9a:811a with SMTP id
- 38308e7fff4ca-2ef05d288f9mr19213711fa.31.1721307851931; Thu, 18 Jul 2024
- 06:04:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721307843; x=1721912643;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MVodG+pJ7qP/ZXN0iBdskzdUvzPKCSAWWW87EbNRQ40=;
+        b=POJNJQjEJ/1sWy2aLyFPp/9YuzXxInkYgq3EFjyULkvMjMTBiblglDQay8NaeEXKJc
+         TkneBqcwkr0VnCgua08Tm9jiP1btssZSlrY0tYAkk135CoPyjuVGxkKriJqMBVKBQgnC
+         BGMyqEQVeEJE/1XYcM0Tl5suOKhimXKEpDYAXXOBcCoInsXolIA3DteK0l5fyBlqPggP
+         v06wRUj8SkgUGHZzMfDm/4nujOU26ROyl5hL7GBaETxIaQQrnVS7Mo9ubtL/eClC50+t
+         xuJuJ4MlHs3gjUgTgXo90OQ3Ob6rN0ENYGi6ZCSBG7MjuqnSpxgPQhFT7pdsvYA/NxIv
+         DUAA==
+X-Forwarded-Encrypted: i=1; AJvYcCWyrK0L0JNKsc+lgkGSi1Y4TNfW53syERTjpMPSpHyYy/gMRSDgLQCA3dEKMf+2QANmubhiDhNzRMwJy1MZBZAwCWCl2QREyP4Ic3NI
+X-Gm-Message-State: AOJu0YwApxiYxWVDBp8TQcCba9gSi3og+BgZBE1QHwy13109JtOYTALi
+	JqFXlDsfFqx0kD3c3Fu4Uolw5Mu3UAhPbr80iPwpdTvJ5mpY6Q9MDap4CWDlr8EudQN9a4X8kGU
+	i4x++TqJ8bVSiWXg/dpSTl/MNxNmCfPH7SQWqiifynrIMXCexGEUpsO0=
+X-Google-Smtp-Source: AGHT+IEw5mvZTMud4Cyo61lT5keK7mLRr7Yr9bm0YlQiJL3Yr/KhOrarR6e8wTyz9S8tQHYJbJ6ZRN8W/hAChIlmuJ1reI82KYLe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708075023.14893-1-brgl@bgdev.pl> <20240708075023.14893-4-brgl@bgdev.pl>
- <7c0140be-4325-4005-9068-7e0fc5ff344d@nvidia.com>
-In-Reply-To: <7c0140be-4325-4005-9068-7e0fc5ff344d@nvidia.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 18 Jul 2024 15:04:00 +0200
-Message-ID: <CAMRc=McF93F6YsQ+eT9oOe+c=2ZCQ3rBdj+-3Ruy8iO1B-syjw@mail.gmail.com>
-Subject: Re: [RESEND PATCH net-next v3 3/4] net: phy: aquantia: wait for the
- GLOBAL_CFG to start returning real values
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, "David S . Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Brad Griffis <bgriffis@nvidia.com>
+X-Received: by 2002:a05:6638:1390:b0:4b9:3703:4adf with SMTP id
+ 8926c6da1cb9f-4c215aefcd3mr278252173.3.1721307843250; Thu, 18 Jul 2024
+ 06:04:03 -0700 (PDT)
+Date: Thu, 18 Jul 2024 06:04:03 -0700
+In-Reply-To: <20240718123404.59833-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008bdce1061d853675@google.com>
+Subject: Re: [syzbot] [net?] KMSAN: uninit-value in hsr_get_node (3)
+From: syzbot <syzbot+a81f2759d022496b40ab@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 18, 2024 at 2:23=E2=80=AFPM Jon Hunter <jonathanh@nvidia.com> w=
-rote:
->
-> Hi Bartosz,
->
-> On 08/07/2024 08:50, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > When the PHY is first coming up (or resuming from suspend), it's
-> > possible that although the FW status shows as running, we still see
-> > zeroes in the GLOBAL_CFG set of registers and cannot determine availabl=
-e
-> > modes. Since all models support 10M, add a poll and wait the config to
-> > become available.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >   drivers/net/phy/aquantia/aquantia_main.c | 8 +++++++-
-> >   1 file changed, 7 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy=
-/aquantia/aquantia_main.c
-> > index 974795bd0860..2c8ba2725a91 100644
-> > --- a/drivers/net/phy/aquantia/aquantia_main.c
-> > +++ b/drivers/net/phy/aquantia/aquantia_main.c
-> > @@ -652,7 +652,13 @@ static int aqr107_fill_interface_modes(struct phy_=
-device *phydev)
-> >       unsigned long *possible =3D phydev->possible_interfaces;
-> >       unsigned int serdes_mode, rate_adapt;
-> >       phy_interface_t interface;
-> > -     int i, val;
-> > +     int i, val, ret;
-> > +
-> > +     ret =3D phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
-> > +                                     VEND1_GLOBAL_CFG_10M, val, val !=
-=3D 0,
-> > +                                     1000, 100000, false);
-> > +     if (ret)
-> > +             return ret;
-> >
-> >       /* Walk the media-speed configuration registers to determine whic=
-h
-> >        * host-side serdes modes may be used by the PHY depending on the
->
->
-> With the current -next and mainline we are seeing the following issue on
-> our Tegra234 Jetson AGX Orin platform ...
->
->   Aquantia AQR113C stmmac-0:00: aqr107_fill_interface_modes failed: -110
->   tegra-mgbe 6800000.ethernet eth0: __stmmac_open: Cannot attach to PHY (=
-error: -110)
->
->
-> We have tracked it down to this change and looks like our PHY does not
-> support 10M ...
->
-> $ ethtool eth0
-> Settings for eth0:
->          Supported ports: [  ]
->          Supported link modes:   100baseT/Full
->                                  1000baseT/Full
->                                  10000baseT/Full
->                                  1000baseKX/Full
->                                  10000baseKX4/Full
->                                  10000baseKR/Full
->                                  2500baseT/Full
->                                  5000baseT/Full
->
-> The following fixes this for this platform ...
->
-> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/a=
-quantia/aquantia_main.c
-> index d12e35374231..0b2db486d8bd 100644
-> --- a/drivers/net/phy/aquantia/aquantia_main.c
-> +++ b/drivers/net/phy/aquantia/aquantia_main.c
-> @@ -656,7 +656,7 @@ static int aqr107_fill_interface_modes(struct phy_dev=
-ice *phydev)
->          int i, val, ret;
->
->          ret =3D phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
-> -                                       VEND1_GLOBAL_CFG_10M, val, val !=
-=3D 0,
-> +                                       VEND1_GLOBAL_CFG_100M, val, val !=
-=3D 0,
->                                          1000, 100000, false);
->          if (ret)
->                  return ret;
->
->
-> However, I am not sure if this is guaranteed to work for all?
+Hello,
 
-Ah cr*p. No, I don't think it is. We should take the first supported
-mode for a given PHY I think.
+syzbot tried to test the proposed patch but the build/boot failed:
 
->
-> On a related note, we had also found an issue with this PHY where
-> the PHY reset is not working quite correctly. What we see is that
-> when polling for the firmware ID in aqr107_wait_reset_complete()
-> is that value in the firware ID registers transitions from 0 to
-> 0xffff and then to the firmware ID. We have been testing the
-> following change to fix this ...
->
-> diff --git a/drivers/net/phy/aquantia/aquantia.h b/drivers/net/phy/aquant=
-ia/aquantia.h
-> index 2465345081f8..278e3b167c58 100644
-> --- a/drivers/net/phy/aquantia/aquantia.h
-> +++ b/drivers/net/phy/aquantia/aquantia.h
-> @@ -20,6 +20,7 @@
->   #define VEND1_GLOBAL_FW_ID                     0x0020
->   #define VEND1_GLOBAL_FW_ID_MAJOR               GENMASK(15, 8)
->   #define VEND1_GLOBAL_FW_ID_MINOR               GENMASK(7, 0)
-> +#define VEND1_GLOBAL_FW_ID_MASK                        GENMASK(15, 0)
->
->   #define VEND1_GLOBAL_MAILBOX_INTERFACE1                        0x0200
->   #define VEND1_GLOBAL_MAILBOX_INTERFACE1_EXECUTE                BIT(15)
-> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/a=
-quantia/aquantia_main.c
-> index 0b2db486d8bd..5023fd70050d 100644
-> --- a/drivers/net/phy/aquantia/aquantia_main.c
-> +++ b/drivers/net/phy/aquantia/aquantia_main.c
-> @@ -447,7 +447,9 @@ int aqr_wait_reset_complete(struct phy_device *phydev=
-)
->          int val;
->
->          return phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
-> -                                        VEND1_GLOBAL_FW_ID, val, val !=
-=3D 0,
-> +                                        VEND1_GLOBAL_FW_ID, val,
-> +                                        ((val & VEND1_GLOBAL_FW_ID_MASK)=
- !=3D 0 &&
-> +                                        (val & VEND1_GLOBAL_FW_ID_MASK) =
-!=3D VEND1_GLOBAL_FW_ID_MASK),
->                                           20000, 2000000, false);
->   }
->
-> I have not tried the resume use-case, but curious if this may
-> also help here?
->
+failed to copy syz-execprog to VM: timedout after 1m0s ["scp" "-P" "22" "-F=
+" "/dev/null" "-o" "UserKnownHostsFile=3D/dev/null" "-o" "IdentitiesOnly=3D=
+yes" "-o" "BatchMode=3Dyes" "-o" "StrictHostKeyChecking=3Dno" "-o" "Connect=
+Timeout=3D10" "-v" "/syzkaller/jobs-2/linux/gopath/src/github.com/google/sy=
+zkaller/bin/linux_amd64/syz-execprog" "root@10.128.0.244:./syz-execprog"]
+Executing: program /usr/bin/ssh host 10.128.0.244, user root, command sftp
+OpenSSH_9.2p1 Debian-2+deb12u2, OpenSSL 3.0.11 19 Sep 2023
+debug1: Reading configuration data /dev/null
+debug1: Connecting to 10.128.0.244 [10.128.0.244] port 22.
+debug1: fd 3 clearing O_NONBLOCK
+debug1: Connection established.
+debug1: identity file /root/.ssh/id_rsa type -1
+debug1: identity file /root/.ssh/id_rsa-cert type -1
+debug1: identity file /root/.ssh/id_ecdsa type -1
+debug1: identity file /root/.ssh/id_ecdsa-cert type -1
+debug1: identity file /root/.ssh/id_ecdsa_sk type -1
+debug1: identity file /root/.ssh/id_ecdsa_sk-cert type -1
+debug1: identity file /root/.ssh/id_ed25519 type -1
+debug1: identity file /root/.ssh/id_ed25519-cert type -1
+debug1: identity file /root/.ssh/id_ed25519_sk type -1
+debug1: identity file /root/.ssh/id_ed25519_sk-cert type -1
+debug1: identity file /root/.ssh/id_xmss type -1
+debug1: identity file /root/.ssh/id_xmss-cert type -1
+debug1: identity file /root/.ssh/id_dsa type -1
+debug1: identity file /root/.ssh/id_dsa-cert type -1
+debug1: Local version string SSH-2.0-OpenSSH_9.2p1 Debian-2+deb12u2
+debug1: Remote protocol version 2.0, remote software version OpenSSH_9.1
+debug1: compat_banner: match: OpenSSH_9.1 pat OpenSSH* compat 0x04000000
+debug1: Authenticating to 10.128.0.244:22 as 'root'
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts: No such file or dire=
+ctory
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts2: No such file or dir=
+ectory
+debug1: SSH2_MSG_KEXINIT sent
+debug1: SSH2_MSG_KEXINIT received
+debug1: kex: algorithm: sntrup761x25519-sha512@openssh.com
+debug1: kex: host key algorithm: ssh-ed25519
+debug1: kex: server->client cipher: chacha20-poly1305@openssh.com MAC: <imp=
+licit> compression: none
+debug1: kex: client->server cipher: chacha20-poly1305@openssh.com MAC: <imp=
+licit> compression: none
+debug1: expecting SSH2_MSG_KEX_ECDH_REPLY
+debug1: SSH2_MSG_KEX_ECDH_REPLY received
+debug1: Server host key: ssh-ed25519 SHA256:88IuL3orPAmVsyjIy2DvkKzVRHqGoDX=
+xazNYOfOHasg
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts: No such file or dire=
+ctory
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts2: No such file or dir=
+ectory
+Warning: Permanently added '10.128.0.244' (ED25519) to the list of known ho=
+sts.
+debug1: rekey out after 134217728 blocks
+debug1: SSH2_MSG_NEWKEYS sent
+debug1: expecting SSH2_MSG_NEWKEYS
+debug1: SSH2_MSG_NEWKEYS received
+debug1: rekey in after 134217728 blocks
+debug1: Will attempt key: /root/.ssh/id_rsa=20
+debug1: Will attempt key: /root/.ssh/id_ecdsa=20
+debug1: Will attempt key: /root/.ssh/id_ecdsa_sk=20
+debug1: Will attempt key: /root/.ssh/id_ed25519=20
+debug1: Will attempt key: /root/.ssh/id_ed25519_sk=20
+debug1: Will attempt key: /root/.ssh/id_xmss=20
+debug1: Will attempt key: /root/.ssh/id_dsa=20
+debug1: SSH2_MSG_EXT_INFO received
+debug1: kex_input_ext_info: server-sig-algs=3D<ssh-ed25519,sk-ssh-ed25519@o=
+penssh.com,ssh-rsa,rsa-sha2-256,rsa-sha2-512,ssh-dss,ecdsa-sha2-nistp256,ec=
+dsa-sha2-nistp384,ecdsa-sha2-nistp521,sk-ecdsa-sha2-nistp256@openssh.com,we=
+bauthn-sk-ecdsa-sha2-nistp256@openssh.com>
+debug1: kex_input_ext_info: publickey-hostbound@openssh.com=3D<0>
+debug1: SSH2_MSG_SERVICE_ACCEPT received
+Authenticated to 10.128.0.244 ([10.128.0.244]:22) using "none".
+debug1: channel 0: new session [client-session] (inactive timeout: 0)
+debug1: Requesting no-more-sessions@openssh.com
+debug1: Entering interactive session.
+debug1: pledge: network
+debug1: client_input_global_request: rtype hostkeys-00@openssh.com want_rep=
+ly 0
+debug1: Sending subsystem: sftp
+debug1: pledge: fork
+scp: debug1: stat remote: No such file or directory
 
-Interesting. Unfortunately this doesn't help with the suspend/resume
-use-case if I revert my offending patch.
 
-Bart
 
-> Cheers
-> Jon
->
-> --
-> nvpublic
+
+syzkaller build log:
+go env (err=3D<nil>)
+GO111MODULE=3D'auto'
+GOARCH=3D'amd64'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFLAGS=3D''
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/usr/local/go'
+GOSUMDB=3D'sum.golang.org'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.21.4'
+GCCGO=3D'gccgo'
+GOAMD64=3D'v1'
+AR=3D'ar'
+CC=3D'gcc'
+CXX=3D'g++'
+CGO_ENABLED=3D'1'
+GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
+mod'
+GOWORK=3D''
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+PKG_CONFIG=3D'pkg-config'
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build1182856952=3D/tmp/go-build -gno-record-gc=
+c-switches'
+
+git status (err=3D<nil>)
+HEAD detached at 0d592ce46e
+nothing to commit, working tree clean
+
+
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
+s/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+bin/syz-sysgen
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D0d592ce46ebc504d579c07e5bc3f7f3f2038c4cf -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20240415-175759'" "-tags=
+=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-fuzzer=
+ github.com/google/syzkaller/syz-fuzzer
+GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D0d592ce46ebc504d579c07e5bc3f7f3f2038c4cf -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20240415-175759'" "-tags=
+=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-execpr=
+og github.com/google/syzkaller/tools/syz-execprog
+GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D0d592ce46ebc504d579c07e5bc3f7f3f2038c4cf -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20240415-175759'" "-tags=
+=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-stress=
+ github.com/google/syzkaller/tools/syz-stress
+mkdir -p ./bin/linux_amd64
+gcc -o ./bin/linux_amd64/syz-executor executor/executor.cc \
+	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
+ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
+t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
+static-pie -fpermissive -w -DGOOS_linux=3D1 -DGOARCH_amd64=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"0d592ce46ebc504d579c07e5bc3f7f3f20=
+38c4cf\"
+
+
+
+Tested on:
+
+commit:         b1bc554e Merge tag 'media/v6.11-1' of git://git.kernel..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dbb3ca33fe161b0c=
+c
+dashboard link: https://syzkaller.appspot.com/bug?extid=3Da81f2759d022496b4=
+0ab
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
+n) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D15796f2d9800=
+00
+
 
