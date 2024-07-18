@@ -1,149 +1,155 @@
-Return-Path: <linux-kernel+bounces-256361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58B95934CFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:12:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D113934D00
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 130FE281E36
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:12:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0D74B21945
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E88E13B5A2;
-	Thu, 18 Jul 2024 12:12:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DD312C473;
+	Thu, 18 Jul 2024 12:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Unm1ZWBI"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tCH/BBnM"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA5312FB34
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 12:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87FC13B7AF
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 12:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721304729; cv=none; b=eeCiP2F1aKr7MT+FR7O0n2sp1pP7Xs3/yW4I+raPcu8jeyHPzEdqNNNM/YqSBM4zALz7HSRquH3teLlssmpVCV1U1727w8i+1Css9TrmOPcn6KnupOMJtQIMhO3ivZvKO7uQb9iu3UHRQ2GBvuCoDJ/7THNOR3f8AZEtuFx6w/0=
+	t=1721304767; cv=none; b=ux7bTeNeExv6J6HMaN1BBCe+xm27wp9O2Sq6BKmY8nT5RlrMeWSHVqzba8+8WqMMXl2kS6c7AaLrq5rmyFVEeJm1ZX0TmjgAVYEtD3C3fjCnO63u2JcfhnU/XCPMg+/Sq/6x2hGWZTu/4zVnVD61x8+fSDQncXW7rdVPz3kp5aA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721304729; c=relaxed/simple;
-	bh=V4tza6XYunP9XtuqkepnXv6yRle3OpreNP0O5UPB4lI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mzq9ZcF3+OSzyHELhAr5sBu03wDz+8pXT4HCz2FEpbu4VekEuVU9fTZhP7EeuHfYp0074YdW1XrFQ8z8v3Y7zKs9iV9uZzFyxR0pGq0LGsPSIAGlKeyhyCX/DNbrelxe+3QSjzjS7bR5ccA0UzcWyRzUnWYZp6w+MdwwGJZ0Nzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Unm1ZWBI; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2eecd2c6432so12168611fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 05:12:07 -0700 (PDT)
+	s=arc-20240116; t=1721304767; c=relaxed/simple;
+	bh=lDk/OFM9GdPyF5mO3TlS15U51RwuYwspDnGe9beFFBg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FE+r34Qt2Np1hDh9HP2088fFydPWAp2pos/RA1KBZuYLQRPCFsUYFO9i3ivVDFGFd/I4Mg8gXX9yfaeVhUPXaia60LzMXB7jpHgMvFOzRgxAjapAm5fy/1Nyvj53rz2Vz32XJ83lWmZzHcEB5Mc/SvjgHwQOw+fgVFGN1RwnB38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tCH/BBnM; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-58f9874aeb4so790587a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 05:12:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721304726; x=1721909526; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3JbIOCcBdplPSNhXHQ/OhleOxgeAg8kacXZRAhR44BI=;
-        b=Unm1ZWBIkia5yySKu/rwSSg5kRTcCuA9VU0i2TAxbuWbdYMXFOFIopMKfjj6H01mgr
-         A3YANjFqcIAeeMmZO/izMPyfSSga2JVzZzseto9RltzkuLTIjklDlqdz6+d+L8QF41KX
-         jd1uW6rf66Nn8syyQGqSqfkFCDmgvbl6Yg5EcXenP6F6r4ntXSHtSG2VYEUNh9xO3Lf0
-         z1Fw6IMfb8Sr/bQM7njyeS8iRjK5hzqZa5JJc3Y3ttqCmD00UHfmFOKdDfWiGO4d2jtB
-         I5tplGZFWA+sz+0DOlo4/jo2c0bAZPtzlo2F+mdnsRCDyw8FXOMbF892T4RwechXNvut
-         ZQDg==
+        d=linaro.org; s=google; t=1721304763; x=1721909563; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=zU1bn+cQnLCjdK9wTnZiKvOPZWaExGinaKV5vKvZYpY=;
+        b=tCH/BBnMTu8CG3Gxs5kcYA3zXyCbKxQYHAxqy1GvR4ONT8pi/L+aitwJqnF520xrak
+         HRtSiCC0nGNkSrqw9+yx8Zm6kA9qlEschgYKC/UZWNYcNKHaO8JifGJhKdvjNNfsx8e3
+         X52tcsczT4+V5KYr3UZcFBiSxiTxQJxHGUxolhBpE/3wZmnY5G6JSn7BH8AGOUSvlgns
+         c/16o7S/Tg0HjwlTPDDfsL74WSNBTr0fj5rQpuAaN5a47zr3qxLIkwWzN52rIQQhmWml
+         jK4pM1VymsWYrlh7pA/7No2kc2osE+Ag8IUB8pElBWcOj5k9dm8NTheFFDNlcqlpIaiv
+         BakA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721304726; x=1721909526;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3JbIOCcBdplPSNhXHQ/OhleOxgeAg8kacXZRAhR44BI=;
-        b=EVGoLrKPRCeYoGCMekQxwQ+dUxnufzeZhsht7IDznuRGFop+C4v9++hQ0pvV6WztJo
-         yF0lMO/UhM6hT73P6RsUH2BFoGRS+KDn4BS+WA5eCP02nTpxO/IH+c2+nZegdcihVQI2
-         b2Gt07Jkz8ZygU09SpW8eme17yhCif1CodiZ1JZJ0vst7oEssd0CtixogZWBCHTA0lbp
-         eAtEeg/ue5r59xMKugbTYNRr7zzJrip4HJc6mQ4jgtGMh0Re/f4WOoiWwQpTHWLFsKFC
-         7xx9LgBcralU3knVtKnXf2C5QZ1ppn4ORbDgfzvYueiX5maxe06q8vI+Dz6DIm3qokrw
-         x+HA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKgjrjIHXfmay2r+ERDkOJP20xP8QtAPLoAP+gFJjcvXSV6r30fywvyqcA3eYX3iUyfXTlYYgvEvhEDg/e9HtZHbU/zii5+wQnwVZf
-X-Gm-Message-State: AOJu0YyYc/fylLdHjC7oY2xPqwSiKpz2G+uJR4Ms/GX9bJBPIHMCvLbF
-	We17CzgfFu8LiTyabE0R9stpDaMbhZuEKz96sQM3OvnEHIyPaDYoKvZBjYB+vGAAUUG84H4bJgL
-	LpBhGaQ3z8p6zFeJclmW6CgXJ8PI=
-X-Google-Smtp-Source: AGHT+IGADOgkOv+UO/f6fCr0cwG1TMuNLhp61jlQJFR5VxGypmKktddke7jNVONc7yit8nKlPg8SF8vH7oM5eirsoIM=
-X-Received: by 2002:a2e:87cd:0:b0:2ee:d5e1:25eb with SMTP id
- 38308e7fff4ca-2ef05c54440mr19870831fa.2.1721304725513; Thu, 18 Jul 2024
- 05:12:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721304763; x=1721909563;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zU1bn+cQnLCjdK9wTnZiKvOPZWaExGinaKV5vKvZYpY=;
+        b=ZEz6Db5yAEy0IDoSKdoaIznZks8huXGG7zmW4+yGlj1hoPyqgkWksOzWHsPE33mWJs
+         MSN+g+FIwxLvpy3DJMoK+A8XLF33tB2gFEogDwdSG3jsZjRanUCXh1nldCd2GR1X9QXs
+         toiGkiIKmYmXS944dOz/bWtODKaUQP3OxIRpWMbE90O41NjNDP+aOksomC6DSaA3YtlP
+         d7io6hEvjEbDuJW34ssNTo2dUq+x/GOvLPayTHvjhSnOJUMnTt6zSTFDAxcl9HpyhFpW
+         HqaY9vCTyQC/mrtclObrz0ulh4aonjxG9a0k3sr8qaVQ8AVzVkXRYqWEGHijWVgaCK+i
+         5Teg==
+X-Forwarded-Encrypted: i=1; AJvYcCVIXhHl1i6An3W7tdMZZr5KVArgmgEJzI0aItS8UnngpPxbdPqKOYUltHkFJ2Fjbsa9SF+dXHnkjWng/99SzqrFmW09xdTo0fZrrxO3
+X-Gm-Message-State: AOJu0Yw7nLrSA1iKTc1T0jJBDu9g41lsUy0uK937GDdKyNdk9qfKx5V1
+	Cn4CBz6PFtk1n7v+jrHzlymQIt3ldzwAQddS8ZikME45w5TySkTcKBJPGbauwPk=
+X-Google-Smtp-Source: AGHT+IHpzAvuicnAr0t0F/QpWfgztRHIDCadRZ2CkWua+qXiqi9HeASkOwId5phE5trHQaIlvHyHqg==
+X-Received: by 2002:a05:6402:510f:b0:57c:c166:ba6 with SMTP id 4fb4d7f45d1cf-5a05bfab3c0mr3393413a12.19.1721304762690;
+        Thu, 18 Jul 2024 05:12:42 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a1d9a49e32sm654035a12.29.2024.07.18.05.12.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Jul 2024 05:12:42 -0700 (PDT)
+Message-ID: <f171ded0-e9db-4bf0-8e1a-e00065becd4e@linaro.org>
+Date: Thu, 18 Jul 2024 14:12:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d2841226-e27b-4d3d-a578-63587a3aa4f3@amd.com> <3128c3c0-ede2-4930-a841-a1da56e797d7@suse.cz>
- <CAGudoHESB-+kHPJO+4MHnUDPJXGP87=yJ2QrW3q8pkO5z7OLRw@mail.gmail.com> <44fb1971-f3d3-4af8-9bac-aceb2fedd2a6@amd.com>
-In-Reply-To: <44fb1971-f3d3-4af8-9bac-aceb2fedd2a6@amd.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 18 Jul 2024 14:11:53 +0200
-Message-ID: <CAGudoHFDZi=79GgtWHWw52kyu81ZK2O4=30YrKhPerDxXdxbKg@mail.gmail.com>
-Subject: Re: Hard and soft lockups with FIO and LTP runs on a large system
-To: Bharata B Rao <bharata@amd.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	nikunj@amd.com, "Upadhyay, Neeraj" <Neeraj.Upadhyay@amd.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, willy@infradead.org, 
-	yuzhao@google.com, kinseyho@google.com, Mel Gorman <mgorman@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/13] PCI: qcom-ep: Modify 'global_irq' and
+ 'perst_irq' IRQ device names
+To: manivannan.sadhasivam@linaro.org,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>
+Cc: linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240717-pci-qcom-hotplug-v2-0-71d304b817f8@linaro.org>
+ <20240717-pci-qcom-hotplug-v2-6-71d304b817f8@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240717-pci-qcom-hotplug-v2-6-71d304b817f8@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 18, 2024 at 11:00=E2=80=AFAM Bharata B Rao <bharata@amd.com> wr=
-ote:
->
-> On 17-Jul-24 4:59 PM, Mateusz Guzik wrote:
-> > As for clear_shadow_entry mentioned in the opening mail, the content is=
-:
-> >          spin_lock(&mapping->host->i_lock);
-> >          xa_lock_irq(&mapping->i_pages);
-> >          __clear_shadow_entry(mapping, index, entry);
-> >          xa_unlock_irq(&mapping->i_pages);
-> >          if (mapping_shrinkable(mapping))
-> >                  inode_add_lru(mapping->host);
-> >          spin_unlock(&mapping->host->i_lock);
-> >
-> > so for all I know it's all about the xarray thing, not the i_lock per s=
-e.
->
-> The soft lockup signature has _raw_spin_lock and not _raw_spin_lock_irq
-> and hence concluded it to be i_lock.
+On 17.07.2024 7:03 PM, Manivannan Sadhasivam via B4 Relay wrote:
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> Currently, the IRQ device name for both of these IRQs doesn't have Qcom
+> specific prefix and PCIe domain number. This causes 2 issues:
+> 
+> 1. Pollutes the global IRQ namespace since 'global' is a common name.
+> 2. When more than one EP controller instance is present in the SoC, naming
+> conflict will occur.
+> 
+> Hence, add 'qcom_pcie_ep_' prefix and PCIe domain number suffix to the IRQ
+> names to uniquely identify the IRQs and also to fix the above mentioned
+> issues.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
 
-I'm not disputing it was i_lock. I am claiming that the i_pages is
-taken immediately after and it may be that in your workload this is
-the thing with the actual contention problem, making i_lock a red
-herring.
+lgtm
 
-I tried to match up offsets to my own kernel binary, but things went haywir=
-e.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-Can you please resolve a bunch of symbols, like this:
-./scripts/faddr2line vmlinux clear_shadow_entry+92
-
-and then paste the source code from reported lines? (I presume you are
-running with some local patches, so opening relevant files in my repo
-may still give bogus resutls)
-
-Addresses are: clear_shadow_entry+92 __remove_mapping+98 __filemap_add_foli=
-o+332
-
-Most notably in __remove_mapping i_lock is conditional:
-        if (!folio_test_swapcache(folio))
-                spin_lock(&mapping->host->i_lock);
-        xa_lock_irq(&mapping->i_pages);
-
-and the disasm of the offset in my case does not match either acquire.
-For all I know i_lock in this routine is *not* taken and all the
-queued up __remove_mapping callers increase i_lock -> i_pages wait
-times in clear_shadow_entry.
-
-To my cursory reading i_lock in clear_shadow_entry can be hacked away
-with some effort, but should this happen the contention is going to
-shift to i_pages presumably with more soft lockups (except on that
-lock). I am not convinced messing with it is justified. From looking
-at other places the i_lock is not a problem in other spots fwiw.
-
-All that said even if it is i_lock in both cases *and* someone whacks
-it, the mm folk should look into what happens when (maybe i_lock ->)
-i_pages lock is held. To that end perhaps you could provide a
-flamegraph or output of perf record -a -g, I don't know what's
-preferred.
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Konrad
 
