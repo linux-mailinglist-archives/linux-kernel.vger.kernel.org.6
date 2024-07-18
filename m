@@ -1,91 +1,108 @@
-Return-Path: <linux-kernel+bounces-255914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 327DE93469C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 05:08:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF7D49346A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 05:11:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69EE31C219A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:08:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FF3928175D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6692CCC2;
-	Thu, 18 Jul 2024 03:08:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3122CCC2;
+	Thu, 18 Jul 2024 03:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IpuNKge5"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="nE/UNPqc"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23E934CD8;
-	Thu, 18 Jul 2024 03:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E0518EBF;
+	Thu, 18 Jul 2024 03:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721272111; cv=none; b=lMDJSfw49pOQqbLlwYy0TJuAqMN0E5nd3lxFI5dHGGCEWpJmyP9LnJl8Xfrw0GilWbZV9aa4OeKMIp/24+4On58JjErLlK58xra4GTbxKdyxNhb1k19RoxXSEt6BR0SsScDw9+Cg8BZUJt3jDdueqoPKdQymxOg75rMjWesiv0I=
+	t=1721272265; cv=none; b=ASOwA3DKpaBPAU+YvdwFMwAXdmtvs02i+MiI4zrMPd/6A/fd+tamWX53U88L8dzSUGG52Sd5mccuaCcHgv0lA7abPneFZt3K/kmiN0etkjuPK08NS9O1otcylRv/hxCbmZsNr6b29wIZn2PLw9/4flQgbU5rz/kYAdhAZ1G/cmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721272111; c=relaxed/simple;
-	bh=MiNlsXGgcHh+E5vT/xG2YFf4Mbm5LGxVLddc+UVv2zM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZK+TujkXM62IKSF2P1yRR4BKcuWfyiR1ORS27b3F1y640sCHh2nW+lPlJEFYTNn+QlrAORqaimyq+AYLuUk+3KhNwk4s6Yd+EHWv+uxo14E4Tyz7VDLfqnKah8ye8UEomyG/xeW/sH4knqhtPz6I5YxfShd4wDw4vaKiqVH0gHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IpuNKge5; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=dhbKOOXLOR2dvKgzNkDsF4yaQ6Osy862xbMrlR1zrlQ=; b=IpuNKge5/alV6Zh+IIdYK02o6o
-	mQ6vK/76s7+pxU7WODCEyWz/6yKYMACOjWbuNN4pfqaGfqwjrVJvk6szr8URtWhT3CD8Yu6EV2RJ+
-	LdboflFJOE/rpX8VL8rN7I795cKHfm5U9BD7/mom5/xJnC9F0ggILKciQJ60LMLmE/a0MYkBudjWs
-	909niZLucPZQkdPbI9FbVL0SFbseSieO4T6Xf2faKmBw/AVRNmqLdd3jX7OUD7F94MesgwTfOqdk6
-	6g66H6TUQnwT6o6pwSBBVSI/GEyDRUbkc38BZbKtUB5rZ884cpQMrPjBckplXxQTjxXMykRDG6Z9C
-	Z99aa10A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sUHVJ-0000000FavV-24cO;
-	Thu, 18 Jul 2024 03:08:25 +0000
-Date: Wed, 17 Jul 2024 20:08:25 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Huan Yang <link@vivo.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>, linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Subject: Re: [PATCH 1/2] dma-buf: heaps: DMA_HEAP_IOCTL_ALLOC_READ_FILE
- framework
-Message-ID: <ZpiHKY2pGiBuEq4z@infradead.org>
-References: <20240711074221.459589-2-link@vivo.com>
- <5ccbe705-883c-4651-9e66-6b452c414c74@amd.com>
- <ZpTnzkdolpEwFbtu@phenom.ffwll.local>
- <99364176-a7f0-4a17-8889-75ff92d5694e@amd.com>
- <06713006-c5ce-4773-a1b3-ca3bea56ee45@vivo.com>
- <ZpY-CfcDdEhzWpxN@phenom.ffwll.local>
- <b18ad853-90e4-4ad7-b621-2ca8a8111708@vivo.com>
- <Zpff-8LmqK5AD-a8@phenom.ffwll.local>
- <Zpf5R7fRZZmEwVuR@infradead.org>
- <7140a145-7dd5-43b0-8b2a-0fd12bb9e62d@vivo.com>
+	s=arc-20240116; t=1721272265; c=relaxed/simple;
+	bh=pD2xubbTa4c6T4WNzg1CAB+MEyajjEmWSQtRqNVNtnE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WgaoRdFAbacWjT3oUrUh1GzCNp8KBn/GJUYiamN+PuGHlchP+W7PWAWzYgAxcz+D5qPu7fxRMp3G+Jw7/Ufb6AyY9MTpv08EkGBD+XAH4f4WGzGCrgsry6YZvV7cZ3mwSmdyaal0Ohq5BU7JnFILhtsMxirN/4iaHyz2Dhi3K58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=nE/UNPqc; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1721272252; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=tgQJsXXJZtuIafpHz+x3BoFD/+zTuz5fz+02sw/hJ+s=;
+	b=nE/UNPqcycmdXT0rTg5+4+pY9uCjw7ilYuhx3shAHDYBWjbnDBr3Z9bW9UdG43r6yATJ/bBzhcPITyPT9HlFQ+5IHuGHPOaHs2AAiFtYJgQ/PCIoRcc4CdmHcQSE59LKYBHF8X0sJwqUi4N7npmuE0m18tghrb5LaerzZesvfRo=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0WAmhdTk_1721272240;
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WAmhdTk_1721272240)
+          by smtp.aliyun-inc.com;
+          Thu, 18 Jul 2024 11:10:52 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: akpm@linux-foundation.org
+Cc: shuah@kernel.org,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] selftests/mm: mseal, self_elf: Fix warning comparing pointer to 0
+Date: Thu, 18 Jul 2024 11:10:39 +0800
+Message-Id: <20240718031039.69861-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7140a145-7dd5-43b0-8b2a-0fd12bb9e62d@vivo.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 18, 2024 at 09:51:39AM +0800, Huan Yang wrote:
-> Yes, actually, if dma-buf want's to copy_file_range from a file, it need
-> change something in vfs_copy_file_range:
+Avoid pointer type value compared with 0 to make code clear.
 
-No, it doesn't.  copy_file_range is specifically designed to copy inside
-a single file system as already mentioned.  The generic offload for
-copying between arbitrary FDs is splice and the sendfile convenience
-wrapper around it
+./tools/testing/selftests/mm/mseal_test.c:486:27-28: WARNING comparing pointer to 0.
+./tools/testing/selftests/mm/mseal_test.c:1399:29-30: WARNING comparing pointer to 0.
+
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9552
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+ tools/testing/selftests/mm/mseal_test.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/tools/testing/selftests/mm/mseal_test.c b/tools/testing/selftests/mm/mseal_test.c
+index a818f010de47..50a5b9b9399e 100644
+--- a/tools/testing/selftests/mm/mseal_test.c
++++ b/tools/testing/selftests/mm/mseal_test.c
+@@ -481,9 +481,8 @@ static void test_seal_zero_address(void)
+ 	int prot;
+ 
+ 	/* use mmap to change protection. */
+-	ptr = sys_mmap(0, size, PROT_NONE,
+-			MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED, -1, 0);
+-	FAIL_TEST_IF_FALSE(ptr == 0);
++	ptr = sys_mmap(0, size, PROT_NONE, MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED, -1, 0);
++	FAIL_TEST_IF_FALSE(!ptr);
+ 
+ 	size = get_vma_size(ptr, &prot);
+ 	FAIL_TEST_IF_FALSE(size == 4 * page_size);
+@@ -1390,13 +1389,12 @@ static void test_seal_mremap_move_fixed_zero(bool seal)
+ 	/*
+ 	 * MREMAP_FIXED can move the mapping to zero address
+ 	 */
+-	ret2 = mremap(ptr, size, 2 * page_size, MREMAP_MAYMOVE | MREMAP_FIXED,
+-			0);
++	ret2 = mremap(ptr, size, 2 * page_size, MREMAP_MAYMOVE | MREMAP_FIXED, 0);
+ 	if (seal) {
+ 		FAIL_TEST_IF_FALSE(ret2 == MAP_FAILED);
+ 		FAIL_TEST_IF_FALSE(errno == EPERM);
+ 	} else {
+-		FAIL_TEST_IF_FALSE(ret2 == 0);
++		FAIL_TEST_IF_FALSE(!ret2);
+ 
+ 	}
+ 
+-- 
+2.32.0.3.g01195cf9f
 
 
