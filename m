@@ -1,178 +1,129 @@
-Return-Path: <linux-kernel+bounces-256195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 854B3934A87
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:56:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E698D934A8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F13F32847B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:56:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1828285C09
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 08:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DDE17F7C3;
-	Thu, 18 Jul 2024 08:56:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD9F80043;
+	Thu, 18 Jul 2024 08:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="B67/8SEi"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fR97kKwA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AF77FBA1
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 08:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9BB7EEF5
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 08:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721292984; cv=none; b=DzCGU7lSWlkbhPJk7E+FETOn4p7PD1APBxtpXQUxWU8XBDX5frhc+OeiPOQFLJmhJO1JEmjZEfSRKDYBBcabBC9QKEZdNXMzch8ucdLUIgrKJefEYSUqi+I5CT0HghvCVNvnwuiGE/Vjcg1UxYKC8Q1hywIx4j1bj2ZTPrsHils=
+	t=1721293005; cv=none; b=b3BJXxew3DBnbGd5Xhte2hIVU2z0J0V6ILx51Gvy2K0Bkylm+5plbWORCmfqOn/gbPkdg4Gg3GwCbvYooHIJ4vlLtt1fwwvOtnCQ73ULpJI1x0V/i8zT2PFkL+w0nGzsZRDLLONhJj6DzKzG7mdq8eMzOQ2rjCJVT58jLKPf8sM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721292984; c=relaxed/simple;
-	bh=ufHGR84Ts7TyIV1HbNK0pVDmWcDSKSrL7sy3BOnKJxI=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=WHKLwWFUt9IJDw/w2294ad3sjW1uvG0z0GLqNxdiQuLavoH+yfLjY9NteN4AvKmeB2EQ11z0X3OVzDgAZPvZiBXPjUWjssJqDNO5P3g+SOmOGugwc9v5dJaF5gOu80S98F8d5CUqCyXi1gypHpQCI3e9Ia8dqaMxfFLHtX7rQ7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=B67/8SEi; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 46I8twLp3139901
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Thu, 18 Jul 2024 01:55:59 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 46I8twLp3139901
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024071601; t=1721292959;
-	bh=p1bS2PJReKAboFX8GdS8kSgPNgi46JIAfAMiwdA5Yj8=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=B67/8SEiq4HXk/Qj3qNV/vqxZ70XizOTTxgavbjeWSiRe5JnQUcgmnCALCxJWPs7w
-	 UCkiTfMl7EnbfhDka3XVQESnRJlKOiiHJybldCTuR/XAAYtyNKLTuzufH1R0dspYjB
-	 pUy7PUD+372vUbj2MPvRnIKBq28tALlo4Op/1EJUsiLwW3sxyrPKO7jDWAgD7HEbTA
-	 Hk+hWtuBVputeneA2qQFns2SdqYsLOsIpNdyfGZmOkIHZXbifkhcH9BjlWpjPLF/oF
-	 PphKMav1C9CbF0emWJu9oEaXxjh52p6UBlXRUGfID8PtHYhDLhQftVvKT0GaqcrtFA
-	 unjVBau/+rNew==
-Date: Thu, 18 Jul 2024 01:55:56 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Uros Bizjak <ubizjak@gmail.com>
-CC: x86@kernel.org, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_x86/boot=3A_Use_=5F=5FASM=5FSIZE?=
- =?US-ASCII?Q?=28=29_to_reduce_ifdeffery_in_cpuflags=2Ec?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CAFULd4bs7meRq_iTqq1nSzpkSzEQqLkM8S=x4=zqtX6Fo9qQPQ@mail.gmail.com>
-References: <20240718063242.52275-1-ubizjak@gmail.com> <4049EB19-E869-4886-AD61-E716A75E4559@zytor.com> <CAFULd4bs7meRq_iTqq1nSzpkSzEQqLkM8S=x4=zqtX6Fo9qQPQ@mail.gmail.com>
-Message-ID: <77174D9A-79DE-44A7-85E0-63B0BFE343C2@zytor.com>
+	s=arc-20240116; t=1721293005; c=relaxed/simple;
+	bh=OypfG3gE5lBqvsJ7lQXciPmFJDsRAMS1OSI4crIBEsQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EVeD6h6UTBrccXvEjyO9XZ8dVnEXznlWjFuttgBxnFLmmw6o8p10Xi27XoqY5NHCbGYl3Gcn7cvZpXlDW/RVBRSA6/BsfyAAFK2VkXo+/5vrh2Rkk6sJGq8am3CZyHMeRB2mkmY9nqQLRTTEksx3oTuKiXyU1at5JHf5g94z98w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fR97kKwA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721293002;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=kY9XX4Ug6bOZxHPTPt1uJFHl+uMLZ8/gOTrfu25TnWo=;
+	b=fR97kKwAbPusVRzQNw85KcqkkcixyZbzySTZ0CMfCtX4C4rcDtx3L/IqLChcxLY0cTBmbZ
+	n9K6xLM9+BUOXxAPODibQeMYLOWghwzo7gLfIn4W2ruuoJUIfEUYJVW4cAg5niDfWp6Hl6
+	cGpeymwGHEvTYzcoaQVuxM8YcOGbrXY=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-564-7Rf40grtP0CVRje7UxI4kw-1; Thu,
+ 18 Jul 2024 04:56:39 -0400
+X-MC-Unique: 7Rf40grtP0CVRje7UxI4kw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0F71A1955D4F;
+	Thu, 18 Jul 2024 08:56:37 +0000 (UTC)
+Received: from calimero.vinschen.de (unknown [10.39.193.237])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6969B195605A;
+	Thu, 18 Jul 2024 08:56:36 +0000 (UTC)
+Received: by calimero.vinschen.de (Postfix, from userid 500)
+	id E7076A80D05; Thu, 18 Jul 2024 10:56:33 +0200 (CEST)
+From: Corinna Vinschen <vinschen@redhat.com>
+To: netdev@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org,
+	Eric Dumazet <edumazet@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	Jason Xing <kerneljasonxing@gmail.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>
+Subject: [PATCH net v3] igb: cope with large MAX_SKB_FRAGS.
+Date: Thu, 18 Jul 2024 10:56:33 +0200
+Message-ID: <20240718085633.1285322-1-vinschen@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On July 18, 2024 1:52:17 AM PDT, Uros Bizjak <ubizjak@gmail=2Ecom> wrote:
->On Thu, Jul 18, 2024 at 8:36=E2=80=AFAM H=2E Peter Anvin <hpa@zytor=2Ecom=
-> wrote:
->>
->> On July 17, 2024 11:32:18 PM PDT, Uros Bizjak <ubizjak@gmail=2Ecom> wro=
-te:
->> >Use __ASM_SIZE() macro to add correct insn suffix to pushf/popf=2E
->> >
->> >Signed-off-by: Uros Bizjak <ubizjak@gmail=2Ecom>
->> >Cc: Thomas Gleixner <tglx@linutronix=2Ede>
->> >Cc: Ingo Molnar <mingo@kernel=2Eorg>
->> >Cc: Borislav Petkov <bp@alien8=2Ede>
->> >Cc: Dave Hansen <dave=2Ehansen@linux=2Eintel=2Ecom>
->> >Cc: "H=2E Peter Anvin" <hpa@zytor=2Ecom>
->> >---
->> > arch/x86/boot/cpuflags=2Ec | 10 +++-------
->> > 1 file changed, 3 insertions(+), 7 deletions(-)
->> >
->> >diff --git a/arch/x86/boot/cpuflags=2Ec b/arch/x86/boot/cpuflags=2Ec
->> >index d75237ba7ce9=2E=2Eaacabe431fd5 100644
->> >--- a/arch/x86/boot/cpuflags=2Ec
->> >+++ b/arch/x86/boot/cpuflags=2Ec
->> >@@ -2,6 +2,7 @@
->> > #include <linux/types=2Eh>
->> > #include "bitops=2Eh"
->> >
->> >+#include <asm/asm=2Eh>
->> > #include <asm/processor-flags=2Eh>
->> > #include <asm/required-features=2Eh>
->> > #include <asm/msr-index=2Eh>
->> >@@ -36,13 +37,8 @@ static int has_fpu(void)
->> >  * compressed/ directory where it may be 64-bit code, and thus needs
->> >  * to be 'pushfq' or 'popfq' in that case=2E
->> >  */
->> >-#ifdef __x86_64__
->> >-#define PUSHF "pushfq"
->> >-#define POPF "popfq"
->> >-#else
->> >-#define PUSHF "pushfl"
->> >-#define POPF "popfl"
->> >-#endif
->> >+#define PUSHF __ASM_SIZE(pushf)
->> >+#define POPF __ASM_SIZE(popf)
->> >
->> > int has_eflag(unsigned long mask)
->> > {
->>
->> Just use pushf/popf=2E gas hasn't needed that suffix for a long time as=
- far as I know=2E
->
->Unfortunately, clang does not do the right thing when pushf/popf
->without suffix are used=2E
->
->arch/x86/boot/cpuflags=2Ec compiles to:
->
->00000000 <has_eflag>:
->   0:    9c                       pushf
->   1:    9c                       pushf
->   2:    66 5a                    pop    %edx
->   4:    66 89 d1                 mov    %edx,%ecx
->   7:    66 31 c1                 xor    %eax,%ecx
->   a:    66 51                    push   %ecx
->   c:    9d                       popf
->   d:    9c                       pushf
->   e:    66 59                    pop    %ecx
->  10:    9d                       popf
->  11:    66 31 ca                 xor    %ecx,%edx
->  14:    66 31 c9                 xor    %ecx,%ecx
->  17:    66 85 c2                 test   %eax,%edx
->  1a:    0f 95 c1                 setne  %cl
->  1d:    66 89 c8                 mov    %ecx,%eax
->  20:    66 c3                    retl
->
->instead of:
->
->00000000 <has_eflag>:
->   0:    66 9c                    pushfl
->   2:    66 9c                    pushfl
->   4:    66 5a                    pop    %edx
->   6:    66 89 d1                 mov    %edx,%ecx
->   9:    66 31 c1                 xor    %eax,%ecx
->   c:    66 51                    push   %ecx
->   e:    66 9d                    popfl
->  10:    66 9c                    pushfl
->  12:    66 59                    pop    %ecx
->  14:    66 9d                    popfl
->  16:    66 31 ca                 xor    %ecx,%edx
->  19:    66 31 c9                 xor    %ecx,%ecx
->  1c:    66 85 c2                 test   %eax,%edx
->  1f:    0f 95 c1                 setne  %cl
->  22:    66 89 c8                 mov    %ecx,%eax
->  25:    66 c3                    retl
->
->Please note missing 0x66 operand size override prefixes with pushfl
->and popfl=2E This is 16bit code, operand prefixes are mandatory to push
->32-bit EFLAGS register (ID flag lives in bit 21)=2E
->
->So, the original patch is the way to go=2E
->
->Uros=2E
->
+From: Paolo Abeni <pabeni@redhat.com>
 
-You do know that has_eflag can be completely elided on x86-64, or you can =
-use %z with one of the register operands=2E
+Sabrina reports that the igb driver does not cope well with large
+MAX_SKB_FRAG values: setting MAX_SKB_FRAG to 45 causes payload
+corruption on TX.
 
-One more reason why clang really needs to shape up=2E
+An easy reproducer is to run ssh to connect to the machine.  With
+MAX_SKB_FRAGS=17 it works, with MAX_SKB_FRAGS=45 it fails.
+
+The root cause of the issue is that the driver does not take into
+account properly the (possibly large) shared info size when selecting
+the ring layout, and will try to fit two packets inside the same 4K
+page even when the 1st fraglist will trump over the 2nd head.
+
+Address the issue forcing the driver to fit a single packet per page,
+leaving there enough room to store the (currently) largest possible
+skb_shared_info.
+
+Fixes: 3948b05950fd ("net: introduce a config option to tweak MAX_SKB_FRAGS")
+Reported-by: Jan Tluka <jtluka@redhat.com>
+Reported-by: Jirka Hladky <jhladky@redhat.com>
+Reported-by: Sabrina Dubroca <sd@queasysnail.net>
+Tested-by: Sabrina Dubroca <sd@queasysnail.net>
+Tested-by: Corinna Vinschen <vinschen@redhat.com>
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+---
+v2: fix subject, add a simple reproducer
+v3: fix Fixes, tested with all MTUs from 1200 to 1280 per Eric's suggestion
+
+ drivers/net/ethernet/intel/igb/igb_main.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+index 11be39f435f3..232d6cb836a9 100644
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -4808,6 +4808,7 @@ static void igb_set_rx_buffer_len(struct igb_adapter *adapter,
+ 
+ #if (PAGE_SIZE < 8192)
+ 	if (adapter->max_frame_size > IGB_MAX_FRAME_BUILD_SKB ||
++	    SKB_HEAD_ALIGN(adapter->max_frame_size) > (PAGE_SIZE / 2) ||
+ 	    rd32(E1000_RCTL) & E1000_RCTL_SBP)
+ 		set_ring_uses_large_buffer(rx_ring);
+ #endif
+-- 
+2.45.2
+
 
