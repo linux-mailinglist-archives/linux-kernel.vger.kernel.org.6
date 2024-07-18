@@ -1,190 +1,158 @@
-Return-Path: <linux-kernel+bounces-256821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C13B9370E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 00:54:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4093D9370E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 00:55:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 333F728201B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 22:54:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB89F1F21808
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 22:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971781465A8;
-	Thu, 18 Jul 2024 22:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9351214659A;
+	Thu, 18 Jul 2024 22:55:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XQckQ9nW"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NfqGCVNn"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E996146594
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 22:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7593E1442E8
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 22:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721343280; cv=none; b=SZWRWxKzJurQaaWZyWp8/MyeyuMHC8xDESS3VjB3o6Mw7AjyJR0NIOtGLeWmDbRknacphwhCDkCNEhT9mGbbr6s+p0ZmDcISf75Nj3AJR/hdaEGm8Mebtyu3cHXvKM4qh9WfGBxxzYgfuHStGlfhqQcXar4PTo5KCpYG+5xM0Bs=
+	t=1721343321; cv=none; b=J6UjbozKDSNzSacURd9XBeZ6c0VLVkcux85V3povW3vtNysCYhK+vdfVqXDOrM2yZz9FY9jUgdH2CZ1G34GK2qC/A0/Qiqiwu9bvN3vx3ZoR6WEm+B7WsCksTMQ/zsO7XUWx6mYdZPCbURN3qrdr796xTiZ2zeQyDrcrJcutdZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721343280; c=relaxed/simple;
-	bh=VL+Lf2PCbmDdTiT3JFTZcz3U21Qry7ipzuZR0ssfsGQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z+RZ/IBgMZq/Ro4ECgKUDK026LMmBhxt21sK4D0qoe+rqUzJFgtmJFKoAHf1wPl5/FWpadiqnLm3CLn4OVHcY8X9Fdi70PGP9YONS6zzKwFKgfBQcYBDDb/0+JUO5ZQPZ0odG5WksMUnyLaI79LW2II75d9m22/emp/Wpw471EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XQckQ9nW; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso7785a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 15:54:38 -0700 (PDT)
+	s=arc-20240116; t=1721343321; c=relaxed/simple;
+	bh=GOfYFhDLUQ4SAuosej7e1TQonx93ed170tiVJhPnL2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DqzQJij4orBLCNTlaDAOwjE4Q0CybOZPjOa6IcVATzd36JZ6EbpE5r1u+Kc0i4dz+jjC21qi0R8Sl6xX++vn1/1EM1oRDYDSn4i8ojXeYMjXHyzt0Ef1EAc+qOQ5vfoRjU5rQLMh7cZBG+7ddgpgQaa2DojR8j7XIW/phr1K/QI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NfqGCVNn; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fc491f9b55so13631695ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 15:55:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721343277; x=1721948077; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SnXUJZUUq5kQBG44OPNJniIMw+LK8h1ZLMMk9t95bZg=;
-        b=XQckQ9nWXFaczFQ12cnNj9LPHSvF7Aqf8KMMakcXHkl3p4j9Oflv01OhW5eXUpBhT9
-         gvdlW2+XRxayOS/BrI/3ntkZGmlo693EHbmVdOvWr79dqI8J7SrTC6cu62c4F9+GOYax
-         uY6xA1+UQt9YkueKsJfwLZdI0wvsw7+PzcO3x6QSq71g0UjS682XQUrJb7TjpvBMdYqb
-         LegbKGPhiiW3A6Tfcp2nW17ArG/DCYgmRZIYsgSq7fuuRnSRyZPbYOyCPT86Mhdk/QDo
-         MMbO5XYkdNW4AMWhaSm8yVRjbcCmDc89gztqAEzK1+EHTlDEd9w60rVZNHuMyom/gCuc
-         n3tA==
+        d=chromium.org; s=google; t=1721343320; x=1721948120; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vdk6amR3ns9k94lR5EZk37+L9hpzLXv/vSzrTyKW9k4=;
+        b=NfqGCVNnHUDhtCb2vPEP3tw/AvhLL9qbLHV07TwWVA0YZQf0t9vymeBWZu7QBCGE91
+         zoUTRYamAez2i7DliE/YB3sCxT6suwE6i7irEztBvSfuXzGjncmILqkcP7sT7+AQ+sZp
+         tnH9U4sIHvZpvQmW6rL1FsDbNccuOWuiwscvU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721343277; x=1721948077;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SnXUJZUUq5kQBG44OPNJniIMw+LK8h1ZLMMk9t95bZg=;
-        b=FF9XIzg01xloe3NGWvK55ukOfmjlI+YTPr/3P79swAONKzjWQJaw7tBa9BvI8JDIfO
-         aIsJkPwOChBW3NoZPYcLnXOvPgJgb29NrTe5jkBy6Rr6r3Jj+9Qt7vaof3kOyLajhxjb
-         sjtPfcR4IgqPg3fXNk6Tx/nSycTIjwBoJ6OEn3PeQCLvscl9YsQu/diUgPtso8kTWMYh
-         uBjW2fHbZ3kIHOtLyXXoqd/BdgmrSVNR0D0QfrrflEcBxhnQoUndeaOUHYs621cudt1q
-         gQeMHsiqXVQWRtOU8U4gvDix0Eys+0bzYVPIqB2o+hjnsTu7ClfBHLzJ2bb7KhdN7mBu
-         A/UQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwYFl9Evyka5tm4vsdgG0uE96URKRTmVTJJT9udoIntbQR3ryGgKVbCsndeN6PdemY2dPJ0wUAVH9/6MOSK2n1StfvwYi7tpdv6vR5
-X-Gm-Message-State: AOJu0YxEcY4e/0Ix/FZ8227H9nl/U6ecN+8+B918Dl/9YZrV8dPF1uf3
-	mJQFDNTgjOXg9D17U1AWOAwOErUh4p/+h9nAXNBYEIorEnancmAXz1WJRMKoeRIbc3qbPGmFxTV
-	mDNk6xFg0pwXe29oE8sdnt/DB5yB5x1kIN5qM
-X-Google-Smtp-Source: AGHT+IFD08e2bkpE0+ciYMxbQAHum1I99VoHhJUfFR8GdMFbVfM2/11g6fb19Z5YGSucTrp/1La67vd2feM3Ldh0j0I=
-X-Received: by 2002:a05:6402:51cd:b0:57d:32ff:73ef with SMTP id
- 4fb4d7f45d1cf-5a2cae572bbmr113920a12.6.1721343277083; Thu, 18 Jul 2024
- 15:54:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721343320; x=1721948120;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vdk6amR3ns9k94lR5EZk37+L9hpzLXv/vSzrTyKW9k4=;
+        b=mmqUz6v3fL0ANQ3zaAr6sSED7G8VJIgkDCkBIZaWWVumCkUdaqkv1//UNKaYbiSBkr
+         jDxZcdUbeRYXuF2neka9pe/x8ga0/dxNjw1ujpPIO6xuS59b2tgW0HjT31jYxxHecyzE
+         IJbZRjQEhWIh74pU/+ixHb/tNCidBPOCaDeWh7KQGc/rxn0v+ciBSeKKkz0jC54MOJ2a
+         qP7ex0oCtOWfcojsuNdTf7cX4GyALF//bp7upQA1CVmiWTEMnvRbG5ZACE6AVzYebpUb
+         6QG6slNyS0f7HL3gymy6vJB6qfY5j2TEcv9RSOibP5hnlMhbEv59wCUVVf0rJPnHAYjk
+         y6Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5hjkeIpP4DZkDC6iyTG8A5dqvtL3KC2SZ0DAywhDfv4eWgkYQGBkh7uqdRkG3YazvqR7JmXWEwCp/ueRl7IkGyk06dKFsnzP9PF7E
+X-Gm-Message-State: AOJu0YwsMlAbuMhgK1RGsdCcYIys6+7Vdb/vF1mj7WmZlARCkXzGgEv1
+	4unAdZ7Wttw8EsLTDGox9ctzN+0IGfZVF0Y3uMzQtM06t0iz1kfsyjj14H0h6U7KUeTjGZjK300
+	=
+X-Google-Smtp-Source: AGHT+IHxqkJVExwWDt6K0KKTzJbmP4SxnCojPaN81CJY7ukRJquPtmiyHtpquREgFCuVrflVFmQoaA==
+X-Received: by 2002:a17:902:c401:b0:1fb:dffb:bc99 with SMTP id d9443c01a7336-1fc4e68cd5amr63135225ad.53.1721343319735;
+        Thu, 18 Jul 2024 15:55:19 -0700 (PDT)
+Received: from localhost ([2620:15c:9d:2:35aa:f87d:7549:3938])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-1fd64d20160sm973385ad.228.2024.07.18.15.55.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Jul 2024 15:55:19 -0700 (PDT)
+Date: Thu, 18 Jul 2024 15:55:18 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Francesco Dolcini <francesco@dolcini.it>, Kalle Valo <kvalo@kernel.org>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: Re: [PATCH v2 2/2] wifi: mwifiex: add support for WPA-PSK-SHA256
+Message-ID: <ZpmdVq2CkxRcLxvO@google.com>
+References: <20240717-mwifiex-wpa-psk-sha256-v2-0-eb53d5082b62@pengutronix.de>
+ <20240717-mwifiex-wpa-psk-sha256-v2-2-eb53d5082b62@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704190137.696169-1-mic@digikod.net> <20240704190137.696169-2-mic@digikod.net>
- <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
- <a0da7702-dabe-49e4-87f4-5d6111f023a8@python.org> <20240717.AGh2shahc9ee@digikod.net>
- <CALmYWFvxJSyi=BT5BKDiKCNanmbhLuZ6=iAMvv1ibnP24SC7fA@mail.gmail.com> <20240718.ahph4che5Shi@digikod.net>
-In-Reply-To: <20240718.ahph4che5Shi@digikod.net>
-From: Jeff Xu <jeffxu@google.com>
-Date: Thu, 18 Jul 2024 15:54:00 -0700
-Message-ID: <CALmYWFvAFfXmHgo6Ca+FsKhAapJ_C1VXhqT7LdFy3ZnU4Vu3Hw@mail.gmail.com>
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Steve Dower <steve.dower@python.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, 
-	"Theodore Ts'o" <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
-	Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
-	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
-	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240717-mwifiex-wpa-psk-sha256-v2-2-eb53d5082b62@pengutronix.de>
 
-On Thu, Jul 18, 2024 at 5:23=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
->
-> On Wed, Jul 17, 2024 at 06:51:11PM -0700, Jeff Xu wrote:
-> > On Wed, Jul 17, 2024 at 3:00=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > >
-> > > On Wed, Jul 17, 2024 at 09:26:22AM +0100, Steve Dower wrote:
-> > > > On 17/07/2024 07:33, Jeff Xu wrote:
-> > > > > Consider those cases: I think:
-> > > > > a> relying purely on userspace for enforcement does't seem to be
-> > > > > effective,  e.g. it is trivial  to call open(), then mmap() it in=
-to
-> > > > > executable memory.
-> > > >
-> > > > If there's a way to do this without running executable code that ha=
-d to pass
-> > > > a previous execveat() check, then yeah, it's not effective (e.g. a =
-Python
-> > > > interpreter that *doesn't* enforce execveat() is a trivial way to d=
-o it).
-> > > >
-> > > > Once arbitrary code is running, all bets are off. So long as all ar=
-bitrary
-> > > > code is being checked itself, it's allowed to do things that would =
-bypass
-> > > > later checks (and it's up to whoever audited it in the first place =
-to
-> > > > prevent this by not giving it the special mark that allows it to pa=
-ss the
-> > > > check).
-> > >
-> > We will want to define what is considered as "arbitrary code is running=
-"
-> >
-> > Using an example of ROP, attackers change the return address in stack,
-> > e.g. direct the execution flow to a gauge to call "ld.so /tmp/a.out",
-> > do you consider "arbitrary code is running" when stack is overwritten
-> > ? or after execve() is called.
->
-> Yes, ROP is arbitrary code execution (which can be mitigated with CFI).
-> ROP could be enough to interpret custom commands and create a small
-> interpreter/VM.
->
-> > If it is later, this patch can prevent "ld.so /tmp/a.out".
-> >
-> > > Exactly.  As explained in the patches, one crucial prerequisite is th=
-at
-> > > the executable code is trusted, and the system must provide integrity
-> > > guarantees.  We cannot do anything without that.  This patches series=
- is
-> > > a building block to fix a blind spot on Linux systems to be able to
-> > > fully control executability.
-> >
-> > Even trusted executable can have a bug.
->
-> Definitely, but this patch series is dedicated to script execution
-> control.
->
-> >
-> > I'm thinking in the context of ChromeOS, where all its system services
-> > are from trusted partitions, and legit code won't load .so from a
-> > non-exec mount.  But we want to sandbox those services, so even under
-> > some kind of ROP attack, the service still won't be able to load .so
-> > from /tmp. Of course, if an attacker can already write arbitrary
-> > length of data into the stack, it is probably already a game over.
-> >
->
-> OK, you want to tie executable file permission to mmap.  That makes
-> sense if you have a consistent execution model.  This can be enforced by
-> LSMs.  Contrary to script interpretation which is a full user space
-> implementation (and then controlled by user space), mmap restrictions
-> should indeed be enforced by the kernel.
-Ya, that is what I meant. it can be out of scope for this patch.
-Indeed, as you point out, this patch is dedicated to script execution
-control, and fixing ld.so /tmp/a.out is an extra bonus in addition to
-script.
+Hi Sascha,
 
-Thanks
--Jeff
+On Wed, Jul 17, 2024 at 10:30:08AM +0200, Sascha Hauer wrote:
+> This adds support for the WPA-PSK AKM suite with SHA256 as hashing
+> method (WPA-PSK-SHA256). Tested with a wpa_supplicant provided AP
+> using key_mgmt=WPA-PSK-SHA256.
+> 
+> Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> ---
+>  drivers/net/wireless/marvell/mwifiex/fw.h      | 1 +
+>  drivers/net/wireless/marvell/mwifiex/uap_cmd.c | 3 +++
+>  2 files changed, 4 insertions(+)
+> 
+> diff --git a/drivers/net/wireless/marvell/mwifiex/fw.h b/drivers/net/wireless/marvell/mwifiex/fw.h
+> index 3adc447b715f6..1c76754b616ff 100644
+> --- a/drivers/net/wireless/marvell/mwifiex/fw.h
+> +++ b/drivers/net/wireless/marvell/mwifiex/fw.h
+> @@ -415,6 +415,7 @@ enum MWIFIEX_802_11_PRIVACY_FILTER {
+>  #define KEY_MGMT_NONE               0x04
+>  #define KEY_MGMT_PSK                0x02
+>  #define KEY_MGMT_EAP                0x01
+> +#define KEY_MGMT_PSK_SHA256         0x100
+>  #define CIPHER_TKIP                 0x04
+>  #define CIPHER_AES_CCMP             0x08
+>  #define VALID_CIPHER_BITMAP         0x0c
+> diff --git a/drivers/net/wireless/marvell/mwifiex/uap_cmd.c b/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
+> index 7f822660fd955..c055fdc7114ba 100644
+> --- a/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
+> +++ b/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
+> @@ -60,6 +60,9 @@ int mwifiex_set_secure_params(struct mwifiex_private *priv,
+>  		case WLAN_AKM_SUITE_PSK:
+>  			bss_config->key_mgmt = KEY_MGMT_PSK;
+>  			break;
+> +		case WLAN_AKM_SUITE_PSK_SHA256:
+> +			bss_config->key_mgmt = KEY_MGMT_PSK_SHA256;
+> +			break;
+
+I feel like this relates to previous questions you've had [1], and while
+I think the answer at the time made sense to me (basically, EAP and PSK
+are mutually exclusive), it makes less sense to me here that PSK-SHA256
+is mutually exclusive with PSK. And in particular, IIUC, this means that
+the ordering in a wpa_supplicant.conf line like
+
+  key_mgmt=WPA-PSK WPA-PSK-SHA256
+
+matters -- only the latter will actually be in use.
+
+Is that intended? Is this really a single-value field, and not a
+multiple-option bitfield?
+
+Or if these are really mutually exclusive, then maybe we're on the wrong
+track here:
+  https://patchwork.kernel.org/project/linux-wireless/patch/20240530130156.1651174-1-s.hauer@pengutronix.de/
+  wifi: mwifiex: increase max_num_akm_suites
+
+In any case, something feels off here, because the nl80211 API doesn't
+say anything about the ordering of AKM suites being relevant.
+
+Brian
+
+>  		default:
+>  			break;
+>  		}
+> 
+> -- 
+> 2.39.2
+> 
+
+[1] Subject: Re: [EXT] Re: [PATCH v10 2/2] wifi: mwifiex: add host mlme for AP mode
+    https://lore.kernel.org/all/Zmvjw3aG9j8kW0Ld@pengutronix.de/
+    https://lore.kernel.org/all/PA4PR04MB9638B7F0F4E49F79057C15FBD1CD2@PA4PR04MB9638.eurprd04.prod.outlook.com/
 
