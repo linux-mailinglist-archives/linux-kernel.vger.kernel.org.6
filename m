@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-256790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B50DA937042
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 23:49:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A65B93704F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 23:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6245328263D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 21:49:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B8D11C20D7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 21:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E49145B26;
-	Thu, 18 Jul 2024 21:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E34145B32;
+	Thu, 18 Jul 2024 21:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jIpJ/n5g"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gV4cyZZC"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2DD74E26
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 21:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD10145B00;
+	Thu, 18 Jul 2024 21:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721339343; cv=none; b=Os0P7Z4BLCOLKgIZkBMW7kEbHBouDQ/FCM491MbQ2Kp+P0dhOWV0Q/FBVYaGbpRilC83/99TAkLm3AC8LgbBjf6cFD0UItW9dNzJUBJfMWq7wzpNJEXn/iyRa1sBO/v5W/DDngA7sP27y72vj/7rSDpPb1kJOcSezcj3M2XRyro=
+	t=1721339753; cv=none; b=IQycwDKEmjj7gGZbzHovVTkzk59TBj9dT1DY/bZ+WtFPOZiPSLPiceI/9IPmR8QONUg/8xakskXAUTy8Ugqy2g+Izuu+0N0X1qXo2YzORcostgCQ4Xror5h0fBZaCfwbup9/JBnmyZ64a0jf59lZ/dL4xI7KrHh6v14vDEBJPzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721339343; c=relaxed/simple;
-	bh=fRDaX9VTlaeoApmfLRQ+W7qdpJvrMy/JLsVSvBohTwo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MtqE8FSkK4jc170LG/Ao1dw3xNNlGjG7jKb0qeRdZR9qqI/QnHgygwwWjp4mxpVxwnIdlO55N2kX196AbsrQW2YNS1yuQ01R06OfC5aZUJSw7w7gIa4ILei1JYPsCScYC4qjy9hyU3fCBlVms5viZzqVSvsYd9VFfzcbHfDMRZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jIpJ/n5g; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721339339;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iSDJ+UGcBOwd8jwVhUDcFJXEg2LhB5hHVkSUyhvGsv4=;
-	b=jIpJ/n5gbhERymXfv6nyvlcqVZfvzo+YCdL0twKWeKu5GSV43392ub7eOgZRP9iCSXS67R
-	Ry3MpH+KA4o1Gpyfgc/5lzYC5pvcDA15l0P4FrCn1grDVz5IkoyvNWFVEFNpUHjia71l9t
-	bAQs9cmoSg47kun9OuO23IkAS3yzgBE=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-641-xZdVVzpXPYOxyTivrBnr-w-1; Thu,
- 18 Jul 2024 17:48:53 -0400
-X-MC-Unique: xZdVVzpXPYOxyTivrBnr-w-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7C56D19560B1;
-	Thu, 18 Jul 2024 21:48:52 +0000 (UTC)
-Received: from [10.22.32.50] (unknown [10.22.32.50])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2214C195605A;
-	Thu, 18 Jul 2024 21:48:50 +0000 (UTC)
-Message-ID: <3f4f7090-7009-4509-9122-b75a0d9ce32c@redhat.com>
-Date: Thu, 18 Jul 2024 17:48:50 -0400
+	s=arc-20240116; t=1721339753; c=relaxed/simple;
+	bh=aQn20DkKZX8DLc+OVqic662SFlNsLXgj0L6rqFW+IO8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uKyDWpGdXhyybHnxeryxnFI5AlpUoIkdriZIwegqeIK0ZeZKWDN2ufU4lDVPCYdg8rY6W/PZJIDmZfHjEU2mWFLXRgko2fZpdYNi1ciyoY1i5gRmngMdrpHBwuchznh+hFJMAleKw0SZKWJBtQ4fYJExCfTsWJaW2bxA+GzRjYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gV4cyZZC; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46IBD0wj023117;
+	Thu, 18 Jul 2024 21:52:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	h0mCvED66flAoqckntQBt2/IbGwfigCgEEWsJja9jeg=; b=gV4cyZZCVK5ZE+pI
+	S3W5U1iOrOb7cLrOkkgnTERXEYQ9WER3JUUY3TpcRLLl6EfH+TsBDK0WrIbfIZmq
+	/FOwJ76nUrbnZ/OXqRBsTvp6cNPNz8mV94xtIv0cX7VgRs8FqUayVaYLvJsiVRHi
+	ZlZLuZ+hIKhcOGYc0emEutJxrVTqosqv7fRzLx1x3oTwWQVeB8L+URBUaekaxzTU
+	En6vWvaHT7QmDjdHrb8G91tdTmIowsaOSpnQaqeGet0egbkN8kEmwjoTOHrH6wLR
+	OZcqtbVYEhKvjTZDCiQcNwdCxW3Y67Z8Kh5kZpuhBU6wev/I0oP5yobLfSEV82AO
+	xciYIg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfnprdw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Jul 2024 21:52:23 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46ILqLFZ027887
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Jul 2024 21:52:21 GMT
+Received: from [10.110.7.185] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 18 Jul
+ 2024 14:52:21 -0700
+Message-ID: <e04f8a63-3dc8-4a58-a9a4-4c70debd2b93@quicinc.com>
+Date: Thu, 18 Jul 2024 14:52:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,106 +64,229 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] bcachefs changes for 6.11
-To: Kent Overstreet <kent.overstreet@linux.dev>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <r75jqqdjp24gikil2l26wwtxdxvqxpgfaixb2rqmuyzxnbhseq@6k34emck64hv>
- <CAHk-=wigjHuE2OPyuT6GK66BcQSAukSp0sm8vYvVJeB7+V+ecQ@mail.gmail.com>
- <5ypgzehnp2b3z2e5qfu2ezdtyk4dc4gnlvme54hm77aypl3flj@xlpjs7dbmkwu>
+Subject: Re: [PATCH v2 2/2] PCI: qcom: Avoid DBI and ATU register space mirror
+ to BAR/MMIO region
+To: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>, <jingoohan1@gmail.com>,
+        <manivannan.sadhasivam@linaro.org>, <lpieralisi@kernel.org>,
+        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>
+CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+References: <20240718051258.1115271-1-quic_pyarlaga@quicinc.com>
+ <20240718051258.1115271-3-quic_pyarlaga@quicinc.com>
 Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <5ypgzehnp2b3z2e5qfu2ezdtyk4dc4gnlvme54hm77aypl3flj@xlpjs7dbmkwu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Mayank Rana <quic_mrana@quicinc.com>
+In-Reply-To: <20240718051258.1115271-3-quic_pyarlaga@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: emAt5mAXUMMkMGMADMyQ74DUJyIcGVZH
+X-Proofpoint-ORIG-GUID: emAt5mAXUMMkMGMADMyQ74DUJyIcGVZH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-18_15,2024-07-18_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 bulkscore=0 malwarescore=0 suspectscore=0
+ priorityscore=1501 clxscore=1015 spamscore=0 mlxscore=0 phishscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2407180146
 
-On 7/18/24 17:20, Kent Overstreet wrote:
-> On Wed, Jul 17, 2024 at 11:53:04AM GMT, Linus Torvalds wrote:
->> On Sun, 14 Jul 2024 at 18:26, Kent Overstreet <kent.overstreet@linux.dev> wrote:
->>> Hi Linus - another opossum for the posse:
->> (The kernel naming tends to be related to some random event, in this
->> case we had a family of opossums under our shed for a couple of
->> months)
-> Oh cute :)
->
->>> bcachefs changes for 6.11-rc1
->> As Stephen pointed out, all of this seems to have been rebased
->> basically as the merge window opened, so if it was in linux-next, I
->> certainly can't easily validate it without having to compare patch ids
->> etc. DON'T DO THIS.
-> I had to give this some thought; the proximate cause was just
-> fat fingering/old reflexes, but the real issue that's been causing
-> conflicts is that I've got testers running my trees who very much /do/
-> need to be on the latest tagged release.
->
-> And I can't just leave it for them to do a rebase/merge, because a) they
-> don't do that, and b) then I'm looking at logs with commits I can't
-> reference.
->
-> So - here's how my branches are going to be from now on:
->
-> As before:
->
-> - bcachefs-testing: code goes here first, until it's passed the testing
->    automation. Don't run this unless you're working with me on something.
-> - for-next: the subset of bcachefs-testing that's believed to be stable
-> - bcachefs-for-upstream: queue for next pull request, generally just
->    hotfixes
->
-> But my master branch (previously the same as for-next) will now be
-> for-next merged with the latest tag from your tree, and I may do
-> similarly for bcachefs-for-upstream if it's needed.
->
-> As a bonus, this means the testing automation will now be automatically
-> testing my branch + your latest; this would have caught the breakage
-> from Christoph's FUA changes back in 6.7.
->
->> Also, the changes to outside fs/bcachefs had questions that weren't answered.
-> Yeah, those comments should have been added. Waiman, how's this?
->
-> -- >8 --
->
->  From 1d8cbc45ef1bab9be7119e0c5a6f8a05d5e2ca7d Mon Sep 17 00:00:00 2001
-> From: Kent Overstreet <kent.overstreet@linux.dev>
-> Date: Thu, 18 Jul 2024 17:17:10 -0400
-> Subject: [PATCH] lockdep: Add comments for lockdep_set_no{validate,track}_class()
->
-> Cc: Waiman Long <longman@redhat.com>
-> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
->
-> diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-> index b76f1bcd2f7f..bdfbdb210fd7 100644
-> --- a/include/linux/lockdep.h
-> +++ b/include/linux/lockdep.h
-> @@ -178,9 +178,22 @@ static inline void lockdep_init_map(struct lockdep_map *lock, const char *name,
->   			      (lock)->dep_map.wait_type_outer,		\
->   			      (lock)->dep_map.lock_type)
->   
-> +/**
-> + * lockdep_set_novalidate_class: disable checking of lock ordering on a given
-> + * lock
-> + *
-> + * Lockdep will still record that this lock has been taken, and print held
-> + * instances when dumping locks
-> + */
->   #define lockdep_set_novalidate_class(lock) \
->   	lockdep_set_class_and_name(lock, &__lockdep_no_validate__, #lock)
->   
-> +/**
-> + * lockdep_set_notrack_class: disable lockdep tracking of a given lock entirely
-> + *
-> + * Bigger hammer than lockdep_set_novalidate_class: so far just for bcachefs,
-> + * which takes more locks than lockdep is able to track (48).
-> + */
->   #define lockdep_set_notrack_class(lock) \
->   	lockdep_set_class_and_name(lock, &__lockdep_no_track__, #lock)
->   
->
-That should be good enough.
+Hi Prudhvi
 
-Thanks,
-Longman
-
+On 7/17/2024 10:12 PM, Prudhvi Yarlagadda wrote:
+> PARF hardware block which is a wrapper on top of DWC PCIe controller
+> mirrors the DBI and ATU register space. It uses PARF_SLV_ADDR_SPACE_SIZE
+> register to get the size of the memory block to be mirrored and uses
+> PARF_DBI_BASE_ADDR, PARF_ATU_BASE_ADDR registers to determine the base
+> address of DBI and ATU space inside the memory block that is being
+> mirrored.
+> 
+> When a memory region which is located above the SLV_ADDR_SPACE_SIZE
+> boundary is used for BAR region then there could be an overlap of DBI and
+> ATU address space that is getting mirrored and the BAR region. This
+> results in DBI and ATU address space contents getting updated when a PCIe
+> function driver tries updating the BAR/MMIO memory region. Reference
+> memory map of the PCIe memory region with DBI and ATU address space
+> overlapping BAR region is as below.
+> 
+>                          |---------------|
+>                          |               |
+>                          |               |
+>          ------- --------|---------------|
+>             |       |    |---------------|
+>             |       |    |       DBI     |
+>             |       |    |---------------|---->DBI_BASE_ADDR
+>             |       |    |               |
+>             |       |    |               |
+>             |    PCIe    |               |---->2*SLV_ADDR_SPACE_SIZE
+>             |    BAR/MMIO|---------------|
+>             |    Region  |       ATU     |
+>             |       |    |---------------|---->ATU_BASE_ADDR
+>             |       |    |               |
+>          PCIe       |    |---------------|
+>          Memory     |    |       DBI     |
+>          Region     |    |---------------|---->DBI_BASE_ADDR
+>             |       |    |               |
+>             |    --------|               |
+>             |            |               |---->SLV_ADDR_SPACE_SIZE
+>             |            |---------------|
+>             |            |       ATU     |
+>             |            |---------------|---->ATU_BASE_ADDR
+>             |            |               |
+>             |            |---------------|
+>             |            |       DBI     |
+>             |            |---------------|---->DBI_BASE_ADDR
+>             |            |               |
+>             |            |               |
+>          ----------------|---------------|
+>                          |               |
+>                          |               |
+>                          |               |
+>                          |---------------|
+> 
+> Currently memory region beyond the SLV_ADDR_SPACE_SIZE boundary is not
+> used for BAR region which is why the above mentioned issue is not
+> encountered. This issue is discovered as part of internal testing when we
+> tried moving the BAR region beyond the SLV_ADDR_SPACE_SIZE boundary. Hence
+> we are trying to fix this.
+> 
+> As PARF hardware block mirrors DBI and ATU register space after every
+> PARF_SLV_ADDR_SPACE_SIZE (default 0x1000000) boundary multiple, write
+> U32_MAX (all 0xFF's) to PARF_SLV_ADDR_SPACE_SIZE register to avoid
+> mirroring DBI and ATU to BAR/MMIO region. Write the physical base address
+> of DBI and ATU register blocks to PARF_DBI_BASE_ADDR (default 0x0) and
+> PARF_ATU_BASE_ADDR (default 0x1000) respectively to make sure DBI and ATU
+> blocks are at expected memory locations.
+> 
+> The register offsets PARF_DBI_BASE_ADDR_V2, PARF_SLV_ADDR_SPACE_SIZE_V2
+> and PARF_ATU_BASE_ADDR are applicable for platforms that use PARF
+> Qcom IP rev 1.9.0, 2.7.0 and 2.9.0. PARF_DBI_BASE_ADDR_V2 and
+> PARF_SLV_ADDR_SPACE_SIZE_V2 are applicable for PARF Qcom IP rev 2.3.3.
+> PARF_DBI_BASE_ADDR and PARF_SLV_ADDR_SPACE_SIZE are applicable for PARF
+> Qcom IP rev 1.0.0, 2.3.2 and 2.4.0. Updating the init()/post_init()
+> functions of the respective PARF versions to program applicable
+> PARF_DBI_BASE_ADDR, PARF_SLV_ADDR_SPACE_SIZE and PARF_ATU_BASE_ADDR
+> register offsets. And remove the unused SLV_ADDR_SPACE_SZ macro.
+> 
+> Signed-off-by: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
+> ---
+>   drivers/pci/controller/dwc/pcie-qcom.c | 62 +++++++++++++++++++-------
+>   1 file changed, 45 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 0180edf3310e..845c7641431f 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -45,6 +45,7 @@
+>   #define PARF_PHY_REFCLK				0x4c
+>   #define PARF_CONFIG_BITS			0x50
+>   #define PARF_DBI_BASE_ADDR			0x168
+> +#define PARF_SLV_ADDR_SPACE_SIZE		0x16C
+>   #define PARF_MHI_CLOCK_RESET_CTRL		0x174
+>   #define PARF_AXI_MSTR_WR_ADDR_HALT		0x178
+>   #define PARF_AXI_MSTR_WR_ADDR_HALT_V2		0x1a8
+[...]> +static void qcom_pcie_configure_dbi_base(struct qcom_pcie *pcie)
+> +{
+> +	struct dw_pcie *pci = pcie->pci;
+> +
+> +	if (pci->dbi_phys_addr)
+> +		writel(lower_32_bits(pci->dbi_phys_addr), pcie->parf +
+> +							PARF_DBI_BASE_ADDR);
+> +
+> +	writel(U32_MAX, pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
+We can't update PARF_SLV_ADDR_SPACE_SIZE without updating 
+PARF_DBI_BASE_ADDR.
+Please make dbi_phys_addr mandatory to update PARF_SLV_ADDR_SPACE_SIZE.
+> +}
+> +
+> +static void qcom_pcie_configure_dbi_atu_base(struct qcom_pcie *pcie)
+> +{
+> +	struct dw_pcie *pci = pcie->pci;
+> +
+> +	if (pci->dbi_phys_addr) {
+> +		writel(lower_32_bits(pci->dbi_phys_addr), pcie->parf +
+> +							PARF_DBI_BASE_ADDR_V2);
+> +		writel(upper_32_bits(pci->dbi_phys_addr), pcie->parf +
+> +						PARF_DBI_BASE_ADDR_V2_HI);
+> +	}
+> +
+> +	if (pci->atu_phys_addr) {
+> +		writel(lower_32_bits(pci->atu_phys_addr), pcie->parf +
+> +							PARF_ATU_BASE_ADDR);
+> +		writel(upper_32_bits(pci->atu_phys_addr), pcie->parf +
+> +							PARF_ATU_BASE_ADDR_HI);
+> +	}
+> +
+> +	writel(U32_MAX, pcie->parf + PARF_SLV_ADDR_SPACE_SIZE_V2);
+> +	writel(U32_MAX, pcie->parf + PARF_SLV_ADDR_SPACE_SIZE_V2_HI);
+Same as above. atu_phys_addr shall be optional here but not 
+dbi_phys_addr to update PARF_SLV_ADDR_SPACE_SIZE.
+> +}
+> +
+>   static void qcom_pcie_2_1_0_ltssm_enable(struct qcom_pcie *pcie)
+>   {
+>   	u32 val;
+> @@ -540,8 +576,7 @@ static int qcom_pcie_init_1_0_0(struct qcom_pcie *pcie)
+>   
+>   static int qcom_pcie_post_init_1_0_0(struct qcom_pcie *pcie)
+>   {
+> -	/* change DBI base address */
+> -	writel(0, pcie->parf + PARF_DBI_BASE_ADDR);
+> +	qcom_pcie_configure_dbi_base(pcie);
+>   
+>   	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+>   		u32 val = readl(pcie->parf + PARF_AXI_MSTR_WR_ADDR_HALT);
+> @@ -628,8 +663,7 @@ static int qcom_pcie_post_init_2_3_2(struct qcom_pcie *pcie)
+>   	val &= ~PHY_TEST_PWR_DOWN;
+>   	writel(val, pcie->parf + PARF_PHY_CTRL);
+>   
+> -	/* change DBI base address */
+> -	writel(0, pcie->parf + PARF_DBI_BASE_ADDR);
+> +	qcom_pcie_configure_dbi_base(pcie);
+>   
+>   	/* MAC PHY_POWERDOWN MUX DISABLE  */
+>   	val = readl(pcie->parf + PARF_SYS_CTRL);
+> @@ -811,13 +845,11 @@ static int qcom_pcie_post_init_2_3_3(struct qcom_pcie *pcie)
+>   	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+>   	u32 val;
+>   
+> -	writel(SLV_ADDR_SPACE_SZ, pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
+> -
+>   	val = readl(pcie->parf + PARF_PHY_CTRL);
+>   	val &= ~PHY_TEST_PWR_DOWN;
+>   	writel(val, pcie->parf + PARF_PHY_CTRL);
+>   
+> -	writel(0, pcie->parf + PARF_DBI_BASE_ADDR);
+> +	qcom_pcie_configure_dbi_atu_base(pcie);
+>   
+>   	writel(MST_WAKEUP_EN | SLV_WAKEUP_EN | MSTR_ACLK_CGC_DIS
+>   		| SLV_ACLK_CGC_DIS | CORE_CLK_CGC_DIS |
+> @@ -913,8 +945,7 @@ static int qcom_pcie_init_2_7_0(struct qcom_pcie *pcie)
+>   	val &= ~PHY_TEST_PWR_DOWN;
+>   	writel(val, pcie->parf + PARF_PHY_CTRL);
+>   
+> -	/* change DBI base address */
+> -	writel(0, pcie->parf + PARF_DBI_BASE_ADDR);
+> +	qcom_pcie_configure_dbi_atu_base(pcie);
+>   
+>   	/* MAC PHY_POWERDOWN MUX DISABLE  */
+>   	val = readl(pcie->parf + PARF_SYS_CTRL);
+> @@ -1123,14 +1154,11 @@ static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
+>   	u32 val;
+>   	int i;
+>   
+> -	writel(SLV_ADDR_SPACE_SZ,
+> -		pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
+> -
+>   	val = readl(pcie->parf + PARF_PHY_CTRL);
+>   	val &= ~PHY_TEST_PWR_DOWN;
+>   	writel(val, pcie->parf + PARF_PHY_CTRL);
+>   
+> -	writel(0, pcie->parf + PARF_DBI_BASE_ADDR);
+> +	qcom_pcie_configure_dbi_atu_base(pcie);
+>   
+>   	writel(DEVICE_TYPE_RC, pcie->parf + PARF_DEVICE_TYPE);
+>   	writel(BYPASS | MSTR_AXI_CLK_EN | AHB_CLK_EN,
 
