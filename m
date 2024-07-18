@@ -1,55 +1,54 @@
-Return-Path: <linux-kernel+bounces-256257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD282934B86
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:12:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D998934B7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:09:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 983A228368C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:12:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60D661F2441A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 10:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5097212C474;
-	Thu, 18 Jul 2024 10:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CDFB84DE4;
+	Thu, 18 Jul 2024 10:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=online.de header.i=frank.scheiner@online.de header.b="Gt2sJXq+"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.135])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oYggl5Yq"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C448C06;
-	Thu, 18 Jul 2024 10:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C923478276
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 10:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721297560; cv=none; b=Z99vQC0w1s5iwCvCECWTTEGivL6i+IwNsjRrLhAnpOpI/nV44nCEqzAwa2P8sjZqNKCq9y/WT3CyJTjxxdB1sISf7cDJZI3pwxADux/BTV0Tt7sHPOPY+SiHZAhP4xdYVj+qbCRQXN9wGUGptdPIlepESuxiIAY6Iu6cddCFZqQ=
+	t=1721297379; cv=none; b=gbX9XTqlb5hddcDv6ejamIVOsxYmaIr3mGka3/P7hmz3KeG8mSpn/UGX9X7LN7AFnSbfXKZuvN/R3yGi9U0Un/iVovcwENjwnu/mmpIhP/bgE6zZN9Pt6xwucxLaLPGYdNhDv0+jSc03asY30KCbyuzXj88spHZYDuORTv5d4Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721297560; c=relaxed/simple;
-	bh=KY9GmeigUT2A3/Vsw1Iw7TBh+WH4pXgIITVAi38kpRc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=cHH+lvto//sxM9hPRgSF+3JbgfB9BrQi3bP8uA6RSkS9+3hROSBKfWXnDOATKf7Q7k5Wkkh81oQHqwwARGNRGirS0zPZ/MUwNEPjYuaeEWn/FaUAhSS9R+H9DTO47LpL2wxkPxrOqh6zy4HKvFjPnI4xZyvhewiUDgX6wZx+GNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=online.de; spf=pass smtp.mailfrom=online.de; dkim=pass (2048-bit key) header.d=online.de header.i=frank.scheiner@online.de header.b=Gt2sJXq+; arc=none smtp.client-ip=212.227.126.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=online.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=online.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=online.de;
-	s=s42582890; t=1721297553; x=1721902353;
-	i=frank.scheiner@online.de;
-	bh=KY9GmeigUT2A3/Vsw1Iw7TBh+WH4pXgIITVAi38kpRc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Gt2sJXq+CWgB0cuaWN+i1WdPz4OBu0Bi0JMFuFeYFcFwdTy/ARHjLE7yTcUoJrhW
-	 BsfoWGjRPnIWx3oqp4c1luYxjgntudJtnrHA2oKJ9jFoJOD5rB+xnjl+rwS/p/q1j
-	 f1vzuuRJokJcQZLxs8C/OCLFmgsxAJjRCQ7TW5dCtZBDy2v3iQ60Gk8q8e+Fose6d
-	 t402+cCguZppHe8GbEq2zpKaJR9I2Jzb4OY3ehbAhrp2zqWNUyzzq5gCKxqP8m0+u
-	 8IoUw9ze9qn3rcy1Kmvb5fF2wJ1KmId5YGJAGe3eHkbVfzPDil96q+NCSqSslCG5Z
-	 eEX+4b3/9nzvENcbDw==
-X-UI-Sender-Class: 6003b46c-3fee-4677-9b8b-2b628d989298
-Received: from [192.168.178.30] ([79.200.220.73]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MHmuE-1saQRE04H8-00HCUb; Thu, 18 Jul 2024 12:06:15 +0200
-Message-ID: <8dcb5d36-fc38-46f3-bb97-0e4e335c313b@online.de>
-Date: Thu, 18 Jul 2024 12:06:12 +0200
+	s=arc-20240116; t=1721297379; c=relaxed/simple;
+	bh=7W9NB+4beenTAyhTygX8/3CLonvIgT2Ws7zp0jH0pWk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xb7ie4tgX6SB9e0ITG1invCnILIKJuQZY4QXUpBq9ApH8uzfHBNtPyxWr1FHJlPIrYEahm+q/c7Bh3nTdBN/5JyZjjM5fmsTe+EIyf7eGCcmITGh+Np/51Mx9fBBWDYUyqL3ovHAsJ2392W1jsGfdKoQjdPWDgMnVlDzQ7pJWog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oYggl5Yq; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721297373;
+	bh=7W9NB+4beenTAyhTygX8/3CLonvIgT2Ws7zp0jH0pWk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oYggl5YqOJlMmwn2fZXbxfLjSz9+mDZzx2Yu564ULzbOMeLZuLsGTkR2oOlw01KyW
+	 fBWieElXAsPOf3lqOQmpFxWNMf5SR16lha+HGu5cZP0bAiM1OZpkrt1yWdgqIdQJ6o
+	 s7Ckc5/xpPpKXd5Xh3Jeo8W6mSPa2ME22AWqgENFSE3s/tdG0TB9Y/B3ltHyEUsttN
+	 JX/vHpHmI5peAgzgAicMmD4Gchp7uTphNywZh/iezEKGgX4CmXrcGb3js53NF/sl53
+	 VOOFuCgCATbK5IbcoRAMbDohrGLqA6zkfj0gbQxZhEXI8wnMTEbLSUCxWsU1N9ZQtv
+	 /IIQJ7nPXaMkw==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B1F99378020A;
+	Thu, 18 Jul 2024 10:09:32 +0000 (UTC)
+Message-ID: <8fbe44af-8da3-4554-ac2b-5db58003449e@collabora.com>
+Date: Thu, 18 Jul 2024 12:09:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,89 +56,148 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: torvalds@linux-foundation.org
-Cc: =?UTF-8?B?VG9tw6HFoSBHbG96YXI=?= <tglozar@gmail.com>,
- linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
- linux-ia64@vger.kernel.org, t2@t2sde.org,
- debian-ia64 <debian-ia64@lists.debian.org>
-References: <CAHk-=wjV_O2g_K19McjGKrxFxMFDqex+fyGcKc3uac1ft_O2gg@mail.gmail.com>
-Subject: Re: Linux 6.10
+Subject: Re: [PATCH v2] mailbox: mtk-cmdq: Move
+ devm_mbox_controller_register() after devm_pm_runtime_enable()
+To: jason-jh.lin@mediatek.com, Jassi Brar <jassisinghbrar@gmail.com>,
+ CK Hu <ck.hu@mediatek.com>
+Cc: Jassi Brar <jaswinder.singh@linaro.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Singo Chang <singo.chang@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20240718-mtk-cmdq-fixup-v2-1-f6bb3c052a60@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-From: Frank Scheiner <frank.scheiner@online.de>
-In-Reply-To: <CAHk-=wjV_O2g_K19McjGKrxFxMFDqex+fyGcKc3uac1ft_O2gg@mail.gmail.com>
+In-Reply-To: <20240718-mtk-cmdq-fixup-v2-1-f6bb3c052a60@mediatek.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Q/HDgBgt8vDzzKiEs0Tdykgw+sZKbcEH1kFFE/a65ijK2jI80cH
- zTh5iWQbCSmiM8XcL/O63E9j+yedh9EJ/aMm6PJDu1C3vka8pgo+bY/e6q3+vvgaJIjLJxr
- BLzRcAxMHzIhFfomRkxeNEsUuHcUS9BEmimMeLj7kAHJtj08zcDoUlOujWbMgMbHneoFP3q
- qCFngMfJZNhlKzXrImEtA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:fq/vFAUCl5E=;nEruqZeqr+KGt9a5kffg276cqpV
- NNYciQi2b9nwc5NIi50N5qBnRaJG+Snhm+1x9qK8oA5u55+AjmOpUMq1at/cBLWPm8GdrRgEr
- Z/DPFRSTO4AaGPEiK+lktc9fN4U/j1Tm3AFwDYouXVjLjqpuLJu/OZhHGtqbJQ2EE4+uQ73hl
- BUE0h9AC9/30XfTKdfgjZsOGNUb5NWG2Li6xUrfI9TiKNyJ3EB2/yZBsjp0CvP46l9+3pIYj4
- RWyLj6v2EQKXxs5tu+3W+d5rkkrtdzF3TGilKirve5eZY472cv8mAzSXivKytMzL3wIkmsvZA
- BWqadfUvR52mBY1rudUHyCCobauMBbDrYU7/avb9Hb76NHYJpBgTOrk1OY8lfCf9nmHsOMJIz
- xOa5oPdHpqmcDeiLWKO53OtMSEkCM0zKE/WSk5odOpo3Jc/ZMtFWSVJOqiGeqhtej2lTMMmI1
- 4dtskTrR5zaK91eaDBktRe3bqLusWMuGJJ4cEzIPzoi0Qf3S0l66Bla80AoY5GsiBorsqQL1z
- GBFb1QSXwvnEQfnnfjX2BbOxmQo1H82dc/E6KqwnsjbySJ+JT4TQGXn2Ro4jMlQbKZarvNovh
- nhutqg2hN92n31keEsvcygl/qFfZRf7abuZ746SU1lE3COqcxKotj+bU34dVhYV4JTuDS/NSg
- M3VyPicauCdhcRsODzZ6lhtol2sLo42wsxksFCd4ymSm0A2Fj4eZ//pG9VI8rZZcD4fE7ARX+
- LpEfaDOhOWyXO/Zui7KNOCv8XdDuugOVw==
+Content-Transfer-Encoding: 7bit
 
-Dear all,
+Il 18/07/24 10:38, Jason-JH.Lin via B4 Relay ha scritto:
+> From: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>
+> 
+> When mtk-cmdq unbinds, a WARN_ON message with condition
+> pm_runtime_get_sync() < 0 occurs.
+> 
+> According to the call tracei below:
+>    cmdq_mbox_shutdown
+>    mbox_free_channel
+>    mbox_controller_unregister
+>    __devm_mbox_controller_unregister
+>    ...
+> 
+> The root cause can be deduced to be calling pm_runtime_get_sync() after
+> calling pm_runtime_disable() as observed below:
+> 1. CMDQ driver uses devm_mbox_controller_register() in cmdq_probe()
+>     to bind the cmdq device to the mbox_controller, so
+>     devm_mbox_controller_unregister() will automatically unregister
+>     the device bound to the mailbox controller when the device-managed
+>     resource is removed. That means devm_mbox_controller_unregister()
+>     and cmdq_mbox_shoutdown() will be called after cmdq_remove().
+> 2. CMDQ driver also uses devm_pm_runtime_enable() in cmdq_probe() after
+>     devm_mbox_controller_register(), so that devm_pm_runtime_disable()
+>     will be called after cmdq_remove(), but before
+>     devm_mbox_controller_unregister().
+> 
+> To fix this problem, cmdq_probe() needs to move
+> devm_mbox_controller_register() after devm_pm_runtime_enable() to make
+> devm_pm_runtime_disable() be called after
+> devm_mbox_controller_unregister().
+> 
+> Fixes: 623a6143a845 ("mailbox: mediatek: Add Mediatek CMDQ driver")
+> Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
+> ---
+> When mtk-cmdq unbinds, a WARN_ON message with condition
+> pm_runtime_get_sync() < 0 occurs.
+> 
+> According to the call tracei below:
+>    cmdq_mbox_shutdown
+>    mbox_free_channel
+>    mbox_controller_unregister
+>    __devm_mbox_controller_unregister
+>    ...
+> 
+> The root cause can be deduced to be calling pm_runtime_get_sync() after
+> calling pm_runtime_disable() as observed below:
+> 1. CMDQ driver uses devm_mbox_controller_register() in cmdq_probe()
+>     to bind the cmdq device to the mbox_controller, so
+>     devm_mbox_controller_unregister() will automatically unregister
+>     the device bound to the mailbox controller when the device-managed
+>     resource is removed. That means devm_mbox_controller_unregister()
+>     and cmdq_mbox_shoutdown() will be called after cmdq_remove().
+> 2. CMDQ driver also uses devm_pm_runtime_enable() in cmdq_probe() after
+>     devm_mbox_controller_register(), so that devm_pm_runtime_disable()
+>     will be called after cmdq_remove(), but before
+>     devm_mbox_controller_unregister().
+> 
+> To fix this problem, cmdq_probe() needs to move
+> devm_mbox_controller_register() after devm_pm_runtime_enable() to make
+> devm_pm_runtime_disable() be called after
+> devm_mbox_controller_unregister().
+> 
+> Change-Id: I4f0e68eac5186fe8041ea2f16c8e852d52d71cb0
+> ---
+> Changes in v2:
+> - Change to move the calling sequence of devm_mbox_controller_register()
+>    and devm_pm_runtime_enable().
+> - Link to v1: https://lore.kernel.org/r/20240613150626.25280-1-jason-jh.lin@mediatek.com
+> ---
+>   drivers/mailbox/mtk-cmdq-mailbox.c | 14 ++++++++------
+>   1 file changed, 8 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
+> index f1dfce9e27f5..002003c3970a 100644
+> --- a/drivers/mailbox/mtk-cmdq-mailbox.c
+> +++ b/drivers/mailbox/mtk-cmdq-mailbox.c
+> @@ -370,6 +370,8 @@ static void cmdq_remove(struct platform_device *pdev)
+>   {
+>   	struct cmdq *cmdq = platform_get_drvdata(pdev);
+>   
+> +	devm_mbox_controller_unregister(&pdev->dev, &cmdq->mbox);
 
-a little later than usual, here comes the update on Linux/ia64 for v6.10:
-
-Well, nothing special to report in this cycle compared to the last cycle
-(see last update on [1] for details).
-
-[1]:
-https://lore.kernel.org/lkml/d308ad95-bee4-4401-a6f5-27bcf5bcc52d@web.de/
-
-No new regressions were detected on any of the tested ia64 machines and
-platforms (HP Sim on Ski) we have available for testing. Again no system
-support was lost during this cycle. Everything works as expected.
-
-Tomas maintains the ia64 patchset for Linux on [2] and is currently
-working on some EPIC updates. Please note the new URL. You can always
-find the per Linux release (candidate) source code used for regular
-testing on [3]. Please use the `[...]-w-ia64` branches.
-
-[2]: https://github.com/linux-ia64/linux-ia64/
-
-[3]: https://github.com/johnny-mnemonic/linux-ia64/
-
-****
-
-In an earlier report I already mentioned our autobuilder that
-cross-builds Linux stable releases and release candidates on x86 for
-ia64 and also tests HP-Sim kernels within Ski (see [4] for an example
-run). This continues to be helpful in detecting issues in stable kernels
-early on and even catched two issues recently. But those two also were
-the only ones found so far in the roughly 6 months this has been
-established.
-
-[4]: https://github.com/linux-ia64/linux-stable-rc/actions/runs/9984893242
-
-To also better cover the new developments outside of the kernel, this
-now got a commpanion autobuilder that cross-builds ia64 toolchain parts
-for us with T2 based on the regular snapshots of binutils, gcc and glibc
-(see [5] for an example run).
-
-[5]:
-https://github.com/johnny-mnemonic/toolchain-autobuilds/actions/runs/99849=
-83546
-
-****
-
-No new additions to the selection of Linux distributions for ia64 this
-time. In the meantime Debian on ia64 became history. Farewell.
-
-****
-
-Thank you all for your hard work on Linux!
+...if you moved devm_mbox_controller_register() after devm_pm_runtime_enable(),
+this means that the teardown sequence will disable pm runtime after unregistering
+the mbox controller, so why do you need to call devm_mbox_controller_unregister()
+manually here?
 
 Cheers,
-Frank et al
+Angelo
+
+> +
+>   	if (cmdq->pdata->sw_ddr_en)
+>   		cmdq_sw_ddr_enable(cmdq, false);
+>   
+> @@ -689,12 +691,6 @@ static int cmdq_probe(struct platform_device *pdev)
+>   		cmdq->mbox.chans[i].con_priv = (void *)&cmdq->thread[i];
+>   	}
+>   
+> -	err = devm_mbox_controller_register(dev, &cmdq->mbox);
+> -	if (err < 0) {
+> -		dev_err(dev, "failed to register mailbox: %d\n", err);
+> -		return err;
+> -	}
+> -
+>   	platform_set_drvdata(pdev, cmdq);
+>   
+>   	WARN_ON(clk_bulk_prepare(cmdq->pdata->gce_num, cmdq->clocks));
+> @@ -722,6 +718,12 @@ static int cmdq_probe(struct platform_device *pdev)
+>   	pm_runtime_set_autosuspend_delay(dev, CMDQ_MBOX_AUTOSUSPEND_DELAY_MS);
+>   	pm_runtime_use_autosuspend(dev);
+>   
+> +	err = devm_mbox_controller_register(dev, &cmdq->mbox);
+> +	if (err < 0) {
+> +		dev_err(dev, "failed to register mailbox: %d\n", err);
+> +		return err;
+> +	}
+> +
+>   	return 0;
+>   }
+>   
+> 
+> ---
+> base-commit: 797012914d2d031430268fe512af0ccd7d8e46ef
+> change-id: 20240718-mtk-cmdq-fixup-40379650e96b
+> 
+> Best regards,
+
 
