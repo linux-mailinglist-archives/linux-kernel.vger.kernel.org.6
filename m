@@ -1,73 +1,70 @@
-Return-Path: <linux-kernel+bounces-256488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA1FD934F3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:41:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D763934F40
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 16:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEE60B23D39
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:41:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50D991C21CBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CEA61422DF;
-	Thu, 18 Jul 2024 14:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2B4142E80;
+	Thu, 18 Jul 2024 14:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="HgVax8GW"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fbkFfJ/F"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A551420DF
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 14:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D93F12F5A1;
+	Thu, 18 Jul 2024 14:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721313670; cv=none; b=G9HPretF4k7sPuxiWZkiW7I95GTm0CaQNbw1DjL7rQOZ0QpY0mSkLZeLSSVn3aMprEre9Ee7MtwcOfBI97u+ORyzIgRlB6g3meUZLWap3QOfoRSrN1Q3mGrwyGEJBBwT6TITZwovxpgNTHiw2S0l58SacVJWQ/Ow1ktQbj1qzA4=
+	t=1721313699; cv=none; b=bYMS/zuhaEDZNA2+cFfFdVbBMJQYZ3wTmrdkldJvwQ7Fkx5k6s0mfgYpAKqYJoJLGGihxjWXWXG6w729EiS6snF7TkNGOrwWf5ThfjAsY9v8ClcrtY+F02i78gcFbgrx+wtVOlwLFK6SbiWnkclb4hhSkT3qWasqwPxnxq1iBhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721313670; c=relaxed/simple;
-	bh=8iksS6ZFnv53ZcAghL65KYmsNJMU8ft6S6eoiAhZaOk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=N8FWKITAnv894QkE8MW4hSVx+djq4jBH29ztGdsNfTKXUqE9LaRg3Gg3X7rF6cd4BpSJ4VebODId8+KA/UcThX01vzDG7BDpiM6CSsivpMk1tSARedi2natsx536XlJ/NHk63lgoF3EO4iTrVrceNTL2r6Utk3EfioJ5G+dxUks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=HgVax8GW; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3686b554cfcso91892f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 07:41:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1721313666; x=1721918466; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=d5zeQJ5Ow3UH0+RdZ7WJRjKIJGbUGTjL+v0QPQ6ApNI=;
-        b=HgVax8GWSB4R1kltVA/DXD5F3bYvs9nzcMo1TE75KXYE4mZNQsa7M4YXog31whlRoO
-         wNpaLOwqMIHbGcmstQU2Lwzp/khKUTLoQrZlz8tz7F1FjAaRghMZcuraCYbOHfDMPcXF
-         1vGgXDVJu6f+/Xp8nynyuzd6GYuaMZCE+flQ9LqUTKTh/KeuSM4Ym5BJ3qoDeukfrlIq
-         0XEzsmF2M/5Mp978T+woQvLKlkhiv3Vlnck+HETRVLcZKjLKhFJapu2Dd4UjxbW8vurn
-         OiRCcDf+Ch0B8yRglLobsL7MeCFPGSb8WyqQkVctOeRGzW540/rf0v/d/cFFWXIM5ArV
-         FyMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721313666; x=1721918466;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d5zeQJ5Ow3UH0+RdZ7WJRjKIJGbUGTjL+v0QPQ6ApNI=;
-        b=pxVWF8lKN8tam82D+vkwLTwSRPkFY/YS7IKu77dTE4UsdAjMf7YTNMoHwPpOvrArcy
-         kvUfEa32DY43+0kOUnq11IHrVhphRLEJ6v2uazJWWZgni0hHey6e4EpZ0xwffJihnQp3
-         oeIVh6/FhJVza3J/XCejlcEjw2JIuU/f12evzBpfhzezfcyvJTm5zop4DqbfbpjdQVQW
-         +8TZyZcnBBvcGWNUKE1CMq2RDEETHLeHH4HYb3i0MTGNAvcOCMwo5hnEAaIfp3aBmkW1
-         hvGlCRbBmV136yFTYPU+ZgQ+Qw0sakykbjsiKEd1I2F3eNUpIKLXp/ast11LURDYgjDn
-         gn6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWD0T2bFaPx/mBTMG3ltJdndrAXyHjLoGN4Aqnw3pnG7ghE4zAQ/Ncj+dSdcSUpnSBbNyTzTw9Cr5p5YJnHmIwuvM1+hPtfDwfb5vRW
-X-Gm-Message-State: AOJu0YxZpxOCc6/vg8n/BEFud23EHp0w1dPNHKDeMkbzVQXfO+COqF6Q
-	iBJQe6gbB+wx7k9Nq2RfEoGPqXRjtHay5gH31YZ98uGurONVtS0Yj52farT0T1w=
-X-Google-Smtp-Source: AGHT+IHLLY7FV8d3TW5DeDftcP9CR4qKgZexsCdXD1McSEmqtB8zHI2JozSns5pNcAAnLe1mJiEB7g==
-X-Received: by 2002:a5d:59a2:0:b0:367:9073:3496 with SMTP id ffacd0b85a97d-3683160e527mr4242349f8f.29.1721313666237;
-        Thu, 18 Jul 2024 07:41:06 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3685043637fsm1903132f8f.66.2024.07.18.07.41.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jul 2024 07:41:05 -0700 (PDT)
-Message-ID: <fd8078cb-fe1c-4aef-9e83-be2baa529720@tuxon.dev>
-Date: Thu, 18 Jul 2024 17:41:03 +0300
+	s=arc-20240116; t=1721313699; c=relaxed/simple;
+	bh=Z8/q5W40UjKPtp8xGXIy7XASUL0pCRYc8O0YvxZ356U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=VU7p7zwuOa3CDLzvS1uu2bV61cPT9uJ8UbUC5E8Vy885T3FEVSomDr77nCKkfEdViNeJ7dqSiu6+/XaILzXLrqjUzd185V+I1qYPudf1/ukvrKvamvVP4IsPCACy0FDm07gEaakjCgcPM24Umua4jI4vKn2lvgv1G853CpXRNlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fbkFfJ/F; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721313697; x=1752849697;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=Z8/q5W40UjKPtp8xGXIy7XASUL0pCRYc8O0YvxZ356U=;
+  b=fbkFfJ/FbwPhtswCVwWxPMf+cCmbfn0VcYIYCiiVdznv9S0VS0A1jZPk
+   4z4QQEDyVpcRXi4rkUaxHzf9Yo59KR4LdZzcF96I7Y1vTfQktJ06paQhS
+   Yc0zhfhLE/cOqSfjBLzje6uIB2crpCtIqEQ+6gD/ea7tTDGnQP7R87GYG
+   EawtP5ihBsJzuWb7yT1uMQf8jYYjkNisVl31Vdbxd1gXMztB8wNI4TaNp
+   F40fULvuT4T5P5h6ncJjj9CG89rlv3fsyVtlfWKyTVx9PYwPXeFyS4IK+
+   uX1WoT7UXNsravemdrzhITZV4q7EDZ7CCTupYmyxBlJJ9g3YVQYv3lS/U
+   A==;
+X-CSE-ConnectionGUID: uuokt91PSnqFVkgINjbL+A==
+X-CSE-MsgGUID: HJCrhnriQQ+6WW9a366gbA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11137"; a="18725746"
+X-IronPort-AV: E=Sophos;i="6.09,218,1716274800"; 
+   d="scan'208";a="18725746"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 07:41:36 -0700
+X-CSE-ConnectionGUID: dZ43LoM3Tm+MO4k73w/jCg==
+X-CSE-MsgGUID: TYLrFK2aRS6Uvpdl91XuYA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,218,1716274800"; 
+   d="scan'208";a="55626641"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 07:41:37 -0700
+Received: from [10.212.127.244] (kliang2-mobl1.ccr.corp.intel.com [10.212.127.244])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id E009720CFED5;
+	Thu, 18 Jul 2024 07:41:33 -0700 (PDT)
+Message-ID: <febefab7-7351-4bd5-a6cc-a0116248484f@linux.intel.com>
+Date: Thu, 18 Jul 2024 10:41:32 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,219 +72,374 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-Subject: Re: [PATCH v2 03/11] clk: renesas: clk-vbattb: Add VBATTB clock
- driver
-To: Stephen Boyd <sboyd@kernel.org>, alexandre.belloni@bootlin.com,
- conor+dt@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org,
- lee@kernel.org, magnus.damm@gmail.com, mturquette@baylibre.com,
- p.zabel@pengutronix.de, robh@kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com>
- <20240716103025.1198495-4-claudiu.beznea.uj@bp.renesas.com>
- <2abcd440664067d95b1ac0e765ad55a3.sboyd@kernel.org>
- <e3103f07-ce8a-4c34-af5c-bb271c7ec99a@tuxon.dev>
- <4cacf090dc56c3ffd15bccd960065769.sboyd@kernel.org>
+Subject: Re: [PATCH v2 6/6] perf parse-events: Add "cpu" term to set the CPU
+ an event is recorded on
+To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ James Clark <james.clark@arm.com>, Ravi Bangoria <ravi.bangoria@amd.com>,
+ Dominique Martinet <asmadeus@codewreck.org>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org,
+ Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, ananth.narayan@amd.com,
+ gautham.shenoy@amd.com, kprateek.nayak@amd.com, sandipan.das@amd.com
+References: <20240718003025.1486232-1-irogers@google.com>
+ <20240718003025.1486232-7-irogers@google.com>
 Content-Language: en-US
-In-Reply-To: <4cacf090dc56c3ffd15bccd960065769.sboyd@kernel.org>
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240718003025.1486232-7-irogers@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
-On 18.07.2024 03:39, Stephen Boyd wrote:
-> Quoting claudiu beznea (2024-07-17 01:31:20)
->> Hi, Stephen,
->>
->> On 17.07.2024 01:28, Stephen Boyd wrote:
->>> Quoting Claudiu (2024-07-16 03:30:17)
->>>> diff --git a/drivers/clk/renesas/clk-vbattb.c b/drivers/clk/renesas/clk-vbattb.c
->>>> new file mode 100644
->>>> index 000000000000..8effe141fc0b
->>>> --- /dev/null
->>>> +++ b/drivers/clk/renesas/clk-vbattb.c
->>>> @@ -0,0 +1,212 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>>> +/*
->>>> + * VBATTB clock driver
->>>> + *
->>>> + * Copyright (C) 2024 Renesas Electronics Corp.
->>>> + */
->>>> +
->>>> +#include <linux/cleanup.h>
->>>> +#include <linux/clk.h>
->>>
->>> Prefer clk providers to not be clk consumers.
->>
->> I added it here to be able to use devm_clk_get_optional() as it was
->> proposed to me in v1 to avoid adding a new binding for bypass and detect if
->> it's needed by checking the input clock name.
->>
+On 2024-07-17 8:30 p.m., Ian Rogers wrote:
+> The -C option allows the CPUs for a list of events to be specified but
+> its not possible to set the CPU for a single event. Add a term to
+> allow this. The term isn't a general CPU list due to ',' already being
+> a special character in event parsing instead multiple cpu= terms may
+> be provided and they will be merged/unioned together.
 > 
-> Understood.
+> An example of mixing different types of events counted on different CPUs:
+> ```
+> $ perf stat -A -C 0,4-5,8 -e "instructions/cpu=0/,l1d-misses/cpu=4,cpu=5/,inst_retired.any/cpu=8/,cycles" -a sleep 0.1
 > 
->>
->>>
->>> I also wonder if this is really a mux, 
->>
->> It's a way to determine what type of clock (crystal oscillator or device
->> clock) is connected to RTXIN/RTXOUT pins of the module
->> (the module block diagram at [1]) based on the clock name. Depending on the
->> type of the clock connected to RTXIN/RTXOUT we need to select the XC or
->> XBYP as input for the mux at [1].
->>
->> [1] https://gcdnb.pbrd.co/images/QYsCvhfQlX6n.png
+>  Performance counter stats for 'system wide':
 > 
-> That diagram shows a mux block, so at least something in there is a mux.
-> From what I can tell the binding uses clock-names to describe the mux.
-> What I'd like to avoid is using clk_get() to determine how to configure
-> the mux. That's because clk_get() is a clk consumer API, and because we
-> want clk providers to be able to register clks without making sure that
-> the entire parent chain has been registered first. Eventually, we'd like
-> clk_get() to probe defer if the clk is an orphan. Having clk providers
-> use clk_get() breaks that pretty quickly.
+> CPU0              368,647      instructions/cpu=0/              #    0.26  insn per cycle
+> CPU4        <not counted>      instructions/cpu=0/
+> CPU5        <not counted>      instructions/cpu=0/
+> CPU8        <not counted>      instructions/cpu=0/
+> CPU0        <not counted>      l1d-misses [cpu]
+> CPU4              203,377      l1d-misses [cpu]
+> CPU5              138,231      l1d-misses [cpu]
+> CPU8        <not counted>      l1d-misses [cpu]
+> CPU0        <not counted>      cpu/cpu=8/
+> CPU4        <not counted>      cpu/cpu=8/
+> CPU5        <not counted>      cpu/cpu=8/
+> CPU8              943,861      cpu/cpu=8/
+> CPU0            1,412,071      cycles
+> CPU4           20,362,900      cycles
+> CPU5           10,172,725      cycles
+> CPU8            2,406,081      cycles
 > 
->>
->>
->>> and either assigned-clock-parents should be used, 
->>> or the clk_ops should have an init routine that looks at
->>> which parent is present by determining the index and then use that to
->>> set the mux. The framework can take care of failing to set the other
->>> parent when it isn't present.
->>
->>
->> On the board, at any moment, it will be only one clock as input to the
->> VBATTB clock (either crystal oscillator or a clock device). If I'm getting
->> you correctly, this will involve describing both clocks in some scenarios.
->>
->> E.g. if want to use crystal osc, I can use this DT description:
->>
->> vbattclk: clock-controller@1c {
->>         compatible = "renesas,r9a08g045-vbattb-clk";
->>         reg = <0 0x1c 0 0x10>;
->>         clocks = <&vbattb_xtal>;
->>         clock-names = "xin";
->>         #clock-cells = <0>;
->>         status = "disabled";
->> };
->>
->> vbattb_xtal: vbattb-xtal {
->>         compatible = "fixed-clock";
->>         #clock-cells = <0>;
->>         clock-frequency = <32768>;
->> };
->>
->> If external clock device is to be used, I should describe a fake clock too:
->>
->> vbattclk: clock-controller@1c {
->>         compatible = "renesas,r9a08g045-vbattb-clk";
->>         reg = <0 0x1c 0 0x10>;
->>         clocks = <&vbattb_xtal>, <&ext_clk>;
+>        0.102925309 seconds time elapsed
+> ```
 > 
-> Is vbattb_xtal the fake clk? If so, I'd expect this to be
+> Note, the event name of inst_retired.any is missing, reported as
+> cpu/cpu=8/, as there are unmerged uniquify fixes:
+> https://lore.kernel.org/lkml/20240510053705.2462258-3-irogers@google.com/
 > 
-> 	clocks = <0>, <&ext_clk>;
+> An example of spreading uncore overhead across two CPUs:
+> ```
+> $ perf stat -A -e "data_read/cpu=0/,data_write/cpu=1/" -a sleep 0.1
 > 
-> so that we don't have a useless clk node.
+>  Performance counter stats for 'system wide':
 > 
->>         clock-names = "xin", "clkin";
->>         #clock-cells = <0>;
->>         status = "disabled";
->> };
->>
->> vbattb_xtal: vbattb-xtal {
->>         compatible = "fixed-clock";
->>         #clock-cells = <0>;
->>         clock-frequency = <0>;
->> };
->>
->> ext_clk: ext-clk {
->>         compatible = "fixed-clock";
->>         #clock-cells = <0>;
->>         clock-frequency = <32768>;
->> };
->>
->> Is this what you are suggesting?
->>
+> CPU0               223.65 MiB  uncore_imc_free_running_0/cpu=0/
+> CPU0               223.66 MiB  uncore_imc_free_running_1/cpu=0/
+> CPU0        <not counted> MiB  uncore_imc_free_running_0/cpu=1/
+> CPU1                 5.78 MiB  uncore_imc_free_running_0/cpu=1/
+> CPU0        <not counted> MiB  uncore_imc_free_running_1/cpu=1/
+> CPU1                 5.74 MiB  uncore_imc_free_running_1/cpu=1/
+> ```
 > 
-> Sort of. Ignoring the problem with the subnode for the clk driver, I
-> don't really like having clock-names that don't match the hardware pin
-> names. From the diagram you provided, it looks like clock-names should
-> be "bclk" and "rtxin" for the bus clock and the rtxin signal. Then the
-> clock-cells should be "1" instead of "0", and the mux should be one of
-> those provided clks and "xc" and "xbyp" should be the other two. If that
-> was done, then assigned-clocks could be used to assign the parent of the
-> mux.
+> Manually fixing the output it should be:
+> ```
+> CPU0               223.65 MiB  uncore_imc_free_running_0/data_read,cpu=0/
+> CPU0               223.66 MiB  uncore_imc_free_running_1/data_read,cpu=0/
+> CPU1                 5.78 MiB  uncore_imc_free_running_0/data_write,cpu=1/
+> CPU1                 5.74 MiB  uncore_imc_free_running_1/data_write,cpu=1/
+> ```
 > 
-> #define VBATTBCLK          0
-> #define VBATTB_XBYP        1
-> #define VBATTB_XC          2
-> 
->     vbattb: vbattb@1005c000 {
->         compatible = "renesas,r9a08g045-vbattb";
->         reg = <0x1005c000 0x1000>;
->         ranges = <0 0 0x1005c000 0 0x1000>;
->         interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
->         interrupt-names = "tampdi";
->         clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&ext_clk>;
->         clock-names = "bclk", "rtxin";
->         power-domains = <&cpg>;
->         resets = <&cpg R9A08G045_VBAT_BRESETN>;
->         #clock-cells = <1>;
->         assigned-clocks = <&vbattb VBATTBCLK>;
-> 	assigned-clock-parents = <&vbattb VBATTB_XBYP>;
->         renesas,vbattb-load-nanofarads = <12500>;
->     };
+> That is data_read from 2 PMUs was counted on CPU0 and data_write was
+> counted on CPU1.
 
-I think I got it now. Thank you for the detailed explanation.
+There was an effort to make the counter access from any CPU of the package.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d6a2f9035bfc27d0e9d78b13635dda9fb017ac01
+
+But now it limits the access from specific CPUs. It sounds like a
+regression.
+
+Thanks,
+Kan
 
 > 
-> One last thing that I don't really understand is why this needs to be a
-> clk provider. In the diagram, the RTC is also part of vbattb, so it
-> looks odd to have this node be a clk provider with #clock-cells at all.
-
-I did it like this because the RTC is a different IP mapped at it's own
-address and considering the other VBATTB functionalities (tamper, SRAM)
-might be implemented at some point.
-
-I also failed to notice that RTC might not work w/o bclk being enabled
-(thanks for pointing it).
-
-I saw that diagram more like describing the always-on power domain
-(PD_VBATTB) where the VBATTB logic and RTC resides. That power domain is
-backed by battery. From HW manual [1]: "PD_VBATT domain is the area where
-the RTC/backup register is located, works on battery power when the power
-of PD_VCC and PD_ISOVCC domain are turned off."
-
-[1]
-https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzg3s-general-purpose-microprocessors-single-core-arm-cortex-a55-11-ghz-cpu-and-dual-core-cortex-m33-250
-
-> Is it the case that if the rtxin pin is connected, you mux that over,
-> and if the pin is disconnected you mux over the internal oscillator? 
-
-From the description here at [2] I'm getting that the "32-KHz clock
-oscillator" block is used when crystal oscillator is connected to RTXIN,
-RTXOUT pins and it is skipped if external clock device is connected.
-
-[2] https://i2.paste.pics/RFKJ0.png?rand=Xq8w1RLDvZ
-
-> I'm
-> really wondering why a clk provider is implemented at all. Why not just
-> hit the registers directly from the RTC driver depending on a
-> devm_clk_get_optional() call?
-
-I did it like this because the RTC is a different IP mapped at it's own
-address with it's own interrupts, clock, power domain and considering that
-the other VBATTB functionalities (tamper, SRAM) might be used at some point
-in future. At the same time I failed to noticed the VBATTB clock might be
-needed for RTC.
-
-Do you consider better to just take a regmap to VBATTB from RTC driver and
-set the VBATTB from RTC driver itself?
-
-Thank you,
-Claudiu Beznea
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/Documentation/perf-list.txt |  9 ++++
+>  tools/perf/util/evsel_config.h         |  1 +
+>  tools/perf/util/parse-events.c         | 73 ++++++++++++++++++++++----
+>  tools/perf/util/parse-events.h         |  3 +-
+>  tools/perf/util/parse-events.l         |  1 +
+>  tools/perf/util/pmu.c                  |  1 +
+>  6 files changed, 77 insertions(+), 11 deletions(-)
+> 
+> diff --git a/tools/perf/Documentation/perf-list.txt b/tools/perf/Documentation/perf-list.txt
+> index 6bf2468f59d3..15511afe94a1 100644
+> --- a/tools/perf/Documentation/perf-list.txt
+> +++ b/tools/perf/Documentation/perf-list.txt
+> @@ -273,6 +273,15 @@ Sums up the event counts for all hardware threads in a core, e.g.:
+>  
+>    perf stat -e cpu/event=0,umask=0x3,percore=1/
+>  
+> +cpu:
+> +
+> +Specifies the CPU to open the event upon. The value may be repeated to
+> +specify opening the event on multiple CPUs:
+> +
+> +
+> +  perf stat -e instructions/cpu=0,cpu=2/,cycles/cpu=1,cpu=2/ -a sleep 1
+> +  perf stat -e data_read/cpu=0/,data_write/cpu=1/ -a sleep 1
+> +
+>  
+>  EVENT GROUPS
+>  ------------
+> diff --git a/tools/perf/util/evsel_config.h b/tools/perf/util/evsel_config.h
+> index aee6f808b512..9630c4a24721 100644
+> --- a/tools/perf/util/evsel_config.h
+> +++ b/tools/perf/util/evsel_config.h
+> @@ -47,6 +47,7 @@ struct evsel_config_term {
+>  		u32	      aux_sample_size;
+>  		u64	      cfg_chg;
+>  		char	      *str;
+> +		int	      cpu;
+>  	} val;
+>  	bool weak;
+>  };
+> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+> index 8c0c33361c5e..85faef85b8de 100644
+> --- a/tools/perf/util/parse-events.c
+> +++ b/tools/perf/util/parse-events.c
+> @@ -7,6 +7,7 @@
+>  #include <errno.h>
+>  #include <sys/ioctl.h>
+>  #include <sys/param.h>
+> +#include "cpumap.h"
+>  #include "term.h"
+>  #include "evlist.h"
+>  #include "evsel.h"
+> @@ -177,6 +178,26 @@ static char *get_config_name(const struct parse_events_terms *head_terms)
+>  	return get_config_str(head_terms, PARSE_EVENTS__TERM_TYPE_NAME);
+>  }
+>  
+> +static struct perf_cpu_map *get_config_cpu(const struct parse_events_terms *head_terms)
+> +{
+> +	struct parse_events_term *term;
+> +	struct perf_cpu_map *cpus = NULL;
+> +
+> +	if (!head_terms)
+> +		return NULL;
+> +
+> +	list_for_each_entry(term, &head_terms->terms, list) {
+> +		if (term->type_term == PARSE_EVENTS__TERM_TYPE_CPU) {
+> +			struct perf_cpu_map *cpu = perf_cpu_map__new_int(term->val.num);
+> +
+> +			cpus = perf_cpu_map__merge(cpus, cpu);
+> +			perf_cpu_map__put(cpu);
+> +		}
+> +	}
+> +
+> +	return cpus;
+> +}
+> +
+>  /**
+>   * fix_raw - For each raw term see if there is an event (aka alias) in pmu that
+>   *           matches the raw's string value. If the string value matches an
+> @@ -468,11 +489,12 @@ int parse_events_add_cache(struct list_head *list, int *idx, const char *name,
+>  	bool found_supported = false;
+>  	const char *config_name = get_config_name(parsed_terms);
+>  	const char *metric_id = get_config_metric_id(parsed_terms);
+> +	struct perf_cpu_map *cpus = get_config_cpu(parsed_terms);
+> +	int ret = 0;
+>  
+>  	while ((pmu = perf_pmus__scan(pmu)) != NULL) {
+>  		LIST_HEAD(config_terms);
+>  		struct perf_event_attr attr;
+> -		int ret;
+>  
+>  		if (parse_events__filter_pmu(parse_state, pmu))
+>  			continue;
+> @@ -486,7 +508,7 @@ int parse_events_add_cache(struct list_head *list, int *idx, const char *name,
+>  						   parsed_terms,
+>  						   perf_pmu__auto_merge_stats(pmu));
+>  			if (ret)
+> -				return ret;
+> +				goto out_err;
+>  			continue;
+>  		}
+>  
+> @@ -506,20 +528,27 @@ int parse_events_add_cache(struct list_head *list, int *idx, const char *name,
+>  
+>  		if (parsed_terms) {
+>  			if (config_attr(&attr, parsed_terms, parse_state->error,
+> -					config_term_common))
+> -				return -EINVAL;
+> -
+> -			if (get_config_terms(parsed_terms, &config_terms))
+> -				return -ENOMEM;
+> +					config_term_common)) {
+> +				ret = -EINVAL;
+> +				goto out_err;
+> +			}
+> +			if (get_config_terms(parsed_terms, &config_terms)) {
+> +				ret = -ENOMEM;
+> +				goto out_err;
+> +			}
+>  		}
+>  
+>  		if (__add_event(list, idx, &attr, /*init_attr*/true, config_name ?: name,
+>  				metric_id, pmu, &config_terms, /*auto_merge_stats=*/false,
+> -				/*cpu_list=*/NULL) == NULL)
+> -			return -ENOMEM;
+> +				cpus) == NULL)
+> +			ret = -ENOMEM;
+>  
+>  		free_config_terms(&config_terms);
+> +		if (ret)
+> +			goto out_err;
+>  	}
+> +out_err:
+> +	perf_cpu_map__put(cpus);
+>  	return found_supported ? 0 : -EINVAL;
+>  }
+>  
+> @@ -814,6 +843,7 @@ static const char *config_term_name(enum parse_events__term_type term_type)
+>  		[PARSE_EVENTS__TERM_TYPE_RAW]                   = "raw",
+>  		[PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE]          = "legacy-cache",
+>  		[PARSE_EVENTS__TERM_TYPE_HARDWARE]              = "hardware",
+> +		[PARSE_EVENTS__TERM_TYPE_CPU]			= "cpu",
+>  	};
+>  	if ((unsigned int)term_type >= __PARSE_EVENTS__TERM_TYPE_NR)
+>  		return "unknown term";
+> @@ -843,6 +873,7 @@ config_term_avail(enum parse_events__term_type term_type, struct parse_events_er
+>  	case PARSE_EVENTS__TERM_TYPE_METRIC_ID:
+>  	case PARSE_EVENTS__TERM_TYPE_SAMPLE_PERIOD:
+>  	case PARSE_EVENTS__TERM_TYPE_PERCORE:
+> +	case PARSE_EVENTS__TERM_TYPE_CPU:
+>  		return true;
+>  	case PARSE_EVENTS__TERM_TYPE_USER:
+>  	case PARSE_EVENTS__TERM_TYPE_SAMPLE_FREQ:
+> @@ -986,6 +1017,15 @@ do {									   \
+>  			return -EINVAL;
+>  		}
+>  		break;
+> +	case PARSE_EVENTS__TERM_TYPE_CPU:
+> +		CHECK_TYPE_VAL(NUM);
+> +		if (term->val.num >= (u64)cpu__max_present_cpu().cpu) {
+> +			parse_events_error__handle(err, term->err_val,
+> +						strdup("too big"),
+> +						NULL);
+> +			return -EINVAL;
+> +		}
+> +		break;
+>  	case PARSE_EVENTS__TERM_TYPE_DRV_CFG:
+>  	case PARSE_EVENTS__TERM_TYPE_USER:
+>  	case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
+> @@ -1112,6 +1152,7 @@ static int config_term_tracepoint(struct perf_event_attr *attr,
+>  	case PARSE_EVENTS__TERM_TYPE_RAW:
+>  	case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
+>  	case PARSE_EVENTS__TERM_TYPE_HARDWARE:
+> +	case PARSE_EVENTS__TERM_TYPE_CPU:
+>  	default:
+>  		if (err) {
+>  			parse_events_error__handle(err, term->err_term,
+> @@ -1243,6 +1284,7 @@ do {								\
+>  		case PARSE_EVENTS__TERM_TYPE_RAW:
+>  		case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
+>  		case PARSE_EVENTS__TERM_TYPE_HARDWARE:
+> +		case PARSE_EVENTS__TERM_TYPE_CPU:
+>  		default:
+>  			break;
+>  		}
+> @@ -1296,6 +1338,7 @@ static int get_config_chgs(struct perf_pmu *pmu, struct parse_events_terms *head
+>  		case PARSE_EVENTS__TERM_TYPE_RAW:
+>  		case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
+>  		case PARSE_EVENTS__TERM_TYPE_HARDWARE:
+> +		case PARSE_EVENTS__TERM_TYPE_CPU:
+>  		default:
+>  			break;
+>  		}
+> @@ -1350,6 +1393,7 @@ static int __parse_events_add_numeric(struct parse_events_state *parse_state,
+>  	struct perf_event_attr attr;
+>  	LIST_HEAD(config_terms);
+>  	const char *name, *metric_id;
+> +	struct perf_cpu_map *cpus;
+>  	int ret;
+>  
+>  	memset(&attr, 0, sizeof(attr));
+> @@ -1371,9 +1415,11 @@ static int __parse_events_add_numeric(struct parse_events_state *parse_state,
+>  
+>  	name = get_config_name(head_config);
+>  	metric_id = get_config_metric_id(head_config);
+> +	cpus = get_config_cpu(head_config);
+>  	ret = __add_event(list, &parse_state->idx, &attr, /*init_attr*/true, name,
+>  			metric_id, pmu, &config_terms, /*auto_merge_stats=*/false,
+> -			/*cpu_list=*/NULL) ? 0 : -ENOMEM;
+> +			cpus) ? 0 : -ENOMEM;
+> +	perf_cpu_map__put(cpus);
+>  	free_config_terms(&config_terms);
+>  	return ret;
+>  }
+> @@ -1440,6 +1486,7 @@ static int parse_events_add_pmu(struct parse_events_state *parse_state,
+>  	LIST_HEAD(config_terms);
+>  	struct parse_events_terms parsed_terms;
+>  	bool alias_rewrote_terms = false;
+> +	struct perf_cpu_map *term_cpu = NULL;
+>  	int ret = 0;
+>  
+>  	if (verbose > 1) {
+> @@ -1531,6 +1578,12 @@ static int parse_events_add_pmu(struct parse_events_state *parse_state,
+>  		goto out_err;
+>  	}
+>  
+> +	term_cpu = get_config_cpu(&parsed_terms);
+> +	if (!perf_cpu_map__is_empty(term_cpu)) {
+> +		perf_cpu_map__put(info.cpus);
+> +		info.cpus = term_cpu;
+> +		term_cpu = NULL;
+> +	}
+>  	evsel = __add_event(list, &parse_state->idx, &attr, /*init_attr=*/true,
+>  			    get_config_name(&parsed_terms),
+>  			    get_config_metric_id(&parsed_terms), pmu,
+> diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-events.h
+> index e13de2c8b706..b03857499030 100644
+> --- a/tools/perf/util/parse-events.h
+> +++ b/tools/perf/util/parse-events.h
+> @@ -79,7 +79,8 @@ enum parse_events__term_type {
+>  	PARSE_EVENTS__TERM_TYPE_RAW,
+>  	PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE,
+>  	PARSE_EVENTS__TERM_TYPE_HARDWARE,
+> -#define	__PARSE_EVENTS__TERM_TYPE_NR (PARSE_EVENTS__TERM_TYPE_HARDWARE + 1)
+> +	PARSE_EVENTS__TERM_TYPE_CPU,
+> +#define	__PARSE_EVENTS__TERM_TYPE_NR (PARSE_EVENTS__TERM_TYPE_CPU + 1)
+>  };
+>  
+>  struct parse_events_term {
+> diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-events.l
+> index 16045c383ada..e06097a62796 100644
+> --- a/tools/perf/util/parse-events.l
+> +++ b/tools/perf/util/parse-events.l
+> @@ -330,6 +330,7 @@ percore			{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_PERCORE); }
+>  aux-output		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_AUX_OUTPUT); }
+>  aux-sample-size		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_AUX_SAMPLE_SIZE); }
+>  metric-id		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_METRIC_ID); }
+> +cpu			{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_CPU); }
+>  cpu-cycles|cycles				{ return hw_term(yyscanner, PERF_COUNT_HW_CPU_CYCLES); }
+>  stalled-cycles-frontend|idle-cycles-frontend	{ return hw_term(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_FRONTEND); }
+>  stalled-cycles-backend|idle-cycles-backend	{ return hw_term(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_BACKEND); }
+> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+> index 280b2499c861..27e2ff23799e 100644
+> --- a/tools/perf/util/pmu.c
+> +++ b/tools/perf/util/pmu.c
+> @@ -1767,6 +1767,7 @@ int perf_pmu__for_each_format(struct perf_pmu *pmu, void *state, pmu_format_call
+>  		"percore",
+>  		"aux-output",
+>  		"aux-sample-size=number",
+> +		"cpu=number",
+>  	};
+>  	struct perf_pmu_format *format;
+>  	int ret;
 
