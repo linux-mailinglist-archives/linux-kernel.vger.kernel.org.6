@@ -1,202 +1,149 @@
-Return-Path: <linux-kernel+bounces-256360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB8BC934CF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:11:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58B95934CFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 14:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E5C41F21D84
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:11:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 130FE281E36
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 12:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A54113B587;
-	Thu, 18 Jul 2024 12:11:47 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E88E13B5A2;
+	Thu, 18 Jul 2024 12:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Unm1ZWBI"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AFFB59164
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 12:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA5312FB34
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 12:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721304707; cv=none; b=Z+uj6MeJeqzUvXdcrLSNnb4EAF1fwQ8ZYsiz7Xqo3pK8LayH2aBjyL7GDYnXETrcfELxe/KyMf7ZZbiZfmydmImBnjqpLYYyo73dgjIxFeI8t1ih28p2CNDVE8mRQseXViL2W10AQlboKVX0s21+DCRAunze++Zhu9+Fs2bwizU=
+	t=1721304729; cv=none; b=eeCiP2F1aKr7MT+FR7O0n2sp1pP7Xs3/yW4I+raPcu8jeyHPzEdqNNNM/YqSBM4zALz7HSRquH3teLlssmpVCV1U1727w8i+1Css9TrmOPcn6KnupOMJtQIMhO3ivZvKO7uQb9iu3UHRQ2GBvuCoDJ/7THNOR3f8AZEtuFx6w/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721304707; c=relaxed/simple;
-	bh=smLC8HSoky1gAyXDIIvU8mYjvfylHVKxbCcEa0K1XnY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Orr/fTGY7x6KHMZM0p4aM8VcIhSbESDhcv2/I0p1PWBa9h9uZ620/6idK9EXrhplWncAMO7kBQYSCFgvlTLPOqM+1HecSwtLSiGswroCigHwTNM8iQDJ8Oj1KpUqbx+gIR3A8YNq5epj2o2LIUzlo9FBkuW5Xi43zvYJ2iqMcK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WPs7T1x7fzdjDQ;
-	Thu, 18 Jul 2024 20:09:57 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7FA0B180087;
-	Thu, 18 Jul 2024 20:11:41 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 18 Jul 2024 20:11:40 +0800
-Message-ID: <42e69f31-44da-0525-0a79-8d4b5f3e4c57@huawei.com>
-Date: Thu, 18 Jul 2024 20:11:39 +0800
+	s=arc-20240116; t=1721304729; c=relaxed/simple;
+	bh=V4tza6XYunP9XtuqkepnXv6yRle3OpreNP0O5UPB4lI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mzq9ZcF3+OSzyHELhAr5sBu03wDz+8pXT4HCz2FEpbu4VekEuVU9fTZhP7EeuHfYp0074YdW1XrFQ8z8v3Y7zKs9iV9uZzFyxR0pGq0LGsPSIAGlKeyhyCX/DNbrelxe+3QSjzjS7bR5ccA0UzcWyRzUnWYZp6w+MdwwGJZ0Nzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Unm1ZWBI; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2eecd2c6432so12168611fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 05:12:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721304726; x=1721909526; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3JbIOCcBdplPSNhXHQ/OhleOxgeAg8kacXZRAhR44BI=;
+        b=Unm1ZWBIkia5yySKu/rwSSg5kRTcCuA9VU0i2TAxbuWbdYMXFOFIopMKfjj6H01mgr
+         A3YANjFqcIAeeMmZO/izMPyfSSga2JVzZzseto9RltzkuLTIjklDlqdz6+d+L8QF41KX
+         jd1uW6rf66Nn8syyQGqSqfkFCDmgvbl6Yg5EcXenP6F6r4ntXSHtSG2VYEUNh9xO3Lf0
+         z1Fw6IMfb8Sr/bQM7njyeS8iRjK5hzqZa5JJc3Y3ttqCmD00UHfmFOKdDfWiGO4d2jtB
+         I5tplGZFWA+sz+0DOlo4/jo2c0bAZPtzlo2F+mdnsRCDyw8FXOMbF892T4RwechXNvut
+         ZQDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721304726; x=1721909526;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3JbIOCcBdplPSNhXHQ/OhleOxgeAg8kacXZRAhR44BI=;
+        b=EVGoLrKPRCeYoGCMekQxwQ+dUxnufzeZhsht7IDznuRGFop+C4v9++hQ0pvV6WztJo
+         yF0lMO/UhM6hT73P6RsUH2BFoGRS+KDn4BS+WA5eCP02nTpxO/IH+c2+nZegdcihVQI2
+         b2Gt07Jkz8ZygU09SpW8eme17yhCif1CodiZ1JZJ0vst7oEssd0CtixogZWBCHTA0lbp
+         eAtEeg/ue5r59xMKugbTYNRr7zzJrip4HJc6mQ4jgtGMh0Re/f4WOoiWwQpTHWLFsKFC
+         7xx9LgBcralU3knVtKnXf2C5QZ1ppn4ORbDgfzvYueiX5maxe06q8vI+Dz6DIm3qokrw
+         x+HA==
+X-Forwarded-Encrypted: i=1; AJvYcCXKgjrjIHXfmay2r+ERDkOJP20xP8QtAPLoAP+gFJjcvXSV6r30fywvyqcA3eYX3iUyfXTlYYgvEvhEDg/e9HtZHbU/zii5+wQnwVZf
+X-Gm-Message-State: AOJu0YyYc/fylLdHjC7oY2xPqwSiKpz2G+uJR4Ms/GX9bJBPIHMCvLbF
+	We17CzgfFu8LiTyabE0R9stpDaMbhZuEKz96sQM3OvnEHIyPaDYoKvZBjYB+vGAAUUG84H4bJgL
+	LpBhGaQ3z8p6zFeJclmW6CgXJ8PI=
+X-Google-Smtp-Source: AGHT+IGADOgkOv+UO/f6fCr0cwG1TMuNLhp61jlQJFR5VxGypmKktddke7jNVONc7yit8nKlPg8SF8vH7oM5eirsoIM=
+X-Received: by 2002:a2e:87cd:0:b0:2ee:d5e1:25eb with SMTP id
+ 38308e7fff4ca-2ef05c54440mr19870831fa.2.1721304725513; Thu, 18 Jul 2024
+ 05:12:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v3 1/3] crash: Fix x86_32 crash memory reserve dead loop
- bug
-Content-Language: en-US
-To: Baoquan He <bhe@redhat.com>
-CC: <linux@armlinux.org.uk>, <catalin.marinas@arm.com>, <will@kernel.org>,
-	<paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <hpa@zytor.com>, <vgoyal@redhat.com>,
-	<dyoung@redhat.com>, <arnd@arndb.de>, <afd@ti.com>,
-	<linus.walleij@linaro.org>, <akpm@linux-foundation.org>,
-	<eric.devolder@oracle.com>, <gregkh@linuxfoundation.org>,
-	<javierm@redhat.com>, <deller@gmx.de>, <robh@kernel.org>,
-	<hbathini@linux.ibm.com>, <thunder.leizhen@huawei.com>,
-	<chenjiahao16@huawei.com>, <linux-kernel@vger.kernel.org>,
-	<kexec@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-riscv@lists.infradead.org>
-References: <20240718035444.2977105-1-ruanjinjie@huawei.com>
- <20240718035444.2977105-2-ruanjinjie@huawei.com>
- <Zpj4OUsTPshBK4JZ@MiWiFi-R3L-srv>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <Zpj4OUsTPshBK4JZ@MiWiFi-R3L-srv>
+References: <d2841226-e27b-4d3d-a578-63587a3aa4f3@amd.com> <3128c3c0-ede2-4930-a841-a1da56e797d7@suse.cz>
+ <CAGudoHESB-+kHPJO+4MHnUDPJXGP87=yJ2QrW3q8pkO5z7OLRw@mail.gmail.com> <44fb1971-f3d3-4af8-9bac-aceb2fedd2a6@amd.com>
+In-Reply-To: <44fb1971-f3d3-4af8-9bac-aceb2fedd2a6@amd.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 18 Jul 2024 14:11:53 +0200
+Message-ID: <CAGudoHFDZi=79GgtWHWw52kyu81ZK2O4=30YrKhPerDxXdxbKg@mail.gmail.com>
+Subject: Re: Hard and soft lockups with FIO and LTP runs on a large system
+To: Bharata B Rao <bharata@amd.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	nikunj@amd.com, "Upadhyay, Neeraj" <Neeraj.Upadhyay@amd.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, willy@infradead.org, 
+	yuzhao@google.com, kinseyho@google.com, Mel Gorman <mgorman@suse.de>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jul 18, 2024 at 11:00=E2=80=AFAM Bharata B Rao <bharata@amd.com> wr=
+ote:
+>
+> On 17-Jul-24 4:59 PM, Mateusz Guzik wrote:
+> > As for clear_shadow_entry mentioned in the opening mail, the content is=
+:
+> >          spin_lock(&mapping->host->i_lock);
+> >          xa_lock_irq(&mapping->i_pages);
+> >          __clear_shadow_entry(mapping, index, entry);
+> >          xa_unlock_irq(&mapping->i_pages);
+> >          if (mapping_shrinkable(mapping))
+> >                  inode_add_lru(mapping->host);
+> >          spin_unlock(&mapping->host->i_lock);
+> >
+> > so for all I know it's all about the xarray thing, not the i_lock per s=
+e.
+>
+> The soft lockup signature has _raw_spin_lock and not _raw_spin_lock_irq
+> and hence concluded it to be i_lock.
 
+I'm not disputing it was i_lock. I am claiming that the i_pages is
+taken immediately after and it may be that in your workload this is
+the thing with the actual contention problem, making i_lock a red
+herring.
 
-On 2024/7/18 19:10, Baoquan He wrote:
-> On 07/18/24 at 11:54am, Jinjie Ruan wrote:
->> On x86_32 Qemu machine with 1GB memory, the cmdline "crashkernel=1G,high"
->> will cause system stall as below:
->>
->> 	ACPI: Reserving FACP table memory at [mem 0x3ffe18b8-0x3ffe192b]
->> 	ACPI: Reserving DSDT table memory at [mem 0x3ffe0040-0x3ffe18b7]
->> 	ACPI: Reserving FACS table memory at [mem 0x3ffe0000-0x3ffe003f]
->> 	ACPI: Reserving APIC table memory at [mem 0x3ffe192c-0x3ffe19bb]
->> 	ACPI: Reserving HPET table memory at [mem 0x3ffe19bc-0x3ffe19f3]
->> 	ACPI: Reserving WAET table memory at [mem 0x3ffe19f4-0x3ffe1a1b]
->> 	143MB HIGHMEM available.
->> 	879MB LOWMEM available.
->> 	  mapped low ram: 0 - 36ffe000
->> 	  low ram: 0 - 36ffe000
->> 	 (stall here)
->>
->> The reason is that the CRASH_ADDR_LOW_MAX is equal to CRASH_ADDR_HIGH_MAX
->> on x86_32, the first high crash kernel memory reservation will fail, then
->> go into the "retry" loop and never came out as below.
->>
->> -> reserve_crashkernel_generic() and high is true
->>  -> alloc at [CRASH_ADDR_LOW_MAX, CRASH_ADDR_HIGH_MAX] fail
->>     -> alloc at [0, CRASH_ADDR_LOW_MAX] fail and repeatedly
->>        (because CRASH_ADDR_LOW_MAX = CRASH_ADDR_HIGH_MAX).
->>
->> Fix it by prevent crashkernel=,high from being parsed successfully on 32bit
->> system with a architecture-defined macro.
->>
->> After this patch, the 'crashkernel=,high' for 32bit system can't succeed,
->> and it has no chance to call reserve_crashkernel_generic(), therefore this
->> issue on x86_32 is solved.
->>
->> Fixes: 9c08a2a139fe ("x86: kdump: use generic interface to simplify crashkernel reservation code")
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> Signed-off-by: Baoquan He <bhe@redhat.com>
-> 
-> Just adding my Suggested-by is fine. If multiple people cooperate on one
-> patch, the Co-developed-by tag is needed. As a maintainer, I prefer to
-> have the Suggested-by tag in this case.
+I tried to match up offsets to my own kernel binary, but things went haywir=
+e.
 
-OK, thank you very much!
+Can you please resolve a bunch of symbols, like this:
+./scripts/faddr2line vmlinux clear_shadow_entry+92
 
-> 
->> Tested-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> 
-> You can't add Tested-by tag for your own patch. When you post patch,
-> testing it is your obligation.
-> 
-> Other than these tag adding concerns, this patch looks good to me. You
-> can post v4 to update and add my:
+and then paste the source code from reported lines? (I presume you are
+running with some local patches, so opening relevant files in my repo
+may still give bogus resutls)
 
-Thank you, I'll fix it next version.
+Addresses are: clear_shadow_entry+92 __remove_mapping+98 __filemap_add_foli=
+o+332
 
-> 
-> Acked-by: Baoquan He <bhe@redhat.com>>
->> ---
->> v3:
->> - Fix it as Baoquan suggested.
->> - Update the commit message.
->> v2:
->> - Peel off the other two patches.
->> - Update the commit message and fix tag.
->> ---
->>  arch/arm64/include/asm/crash_reserve.h | 2 ++
->>  arch/riscv/include/asm/crash_reserve.h | 2 ++
->>  arch/x86/include/asm/crash_reserve.h   | 1 +
->>  kernel/crash_reserve.c                 | 2 +-
->>  4 files changed, 6 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/include/asm/crash_reserve.h b/arch/arm64/include/asm/crash_reserve.h
->> index 4afe027a4e7b..bf362c1a612f 100644
->> --- a/arch/arm64/include/asm/crash_reserve.h
->> +++ b/arch/arm64/include/asm/crash_reserve.h
->> @@ -7,4 +7,6 @@
->>  
->>  #define CRASH_ADDR_LOW_MAX              arm64_dma_phys_limit
->>  #define CRASH_ADDR_HIGH_MAX             (PHYS_MASK + 1)
->> +
->> +#define HAVE_ARCH_CRASHKERNEL_RESERVATION_HIGH
->>  #endif
->> diff --git a/arch/riscv/include/asm/crash_reserve.h b/arch/riscv/include/asm/crash_reserve.h
->> index 013962e63587..8d7a8fc1d459 100644
->> --- a/arch/riscv/include/asm/crash_reserve.h
->> +++ b/arch/riscv/include/asm/crash_reserve.h
->> @@ -7,5 +7,7 @@
->>  #define CRASH_ADDR_LOW_MAX		dma32_phys_limit
->>  #define CRASH_ADDR_HIGH_MAX		memblock_end_of_DRAM()
->>  
->> +#define HAVE_ARCH_CRASHKERNEL_RESERVATION_HIGH
->> +
->>  extern phys_addr_t memblock_end_of_DRAM(void);
->>  #endif
->> diff --git a/arch/x86/include/asm/crash_reserve.h b/arch/x86/include/asm/crash_reserve.h
->> index 7835b2cdff04..24c2327f9a16 100644
->> --- a/arch/x86/include/asm/crash_reserve.h
->> +++ b/arch/x86/include/asm/crash_reserve.h
->> @@ -26,6 +26,7 @@ extern unsigned long swiotlb_size_or_default(void);
->>  #else
->>  # define CRASH_ADDR_LOW_MAX     SZ_4G
->>  # define CRASH_ADDR_HIGH_MAX    SZ_64T
->> +#define HAVE_ARCH_CRASHKERNEL_RESERVATION_HIGH
->>  #endif
->>  
->>  # define DEFAULT_CRASH_KERNEL_LOW_SIZE crash_low_size_default()
->> diff --git a/kernel/crash_reserve.c b/kernel/crash_reserve.c
->> index 5b2722a93a48..c5213f123e19 100644
->> --- a/kernel/crash_reserve.c
->> +++ b/kernel/crash_reserve.c
->> @@ -306,7 +306,7 @@ int __init parse_crashkernel(char *cmdline,
->>  	/* crashkernel=X[@offset] */
->>  	ret = __parse_crashkernel(cmdline, system_ram, crash_size,
->>  				crash_base, NULL);
->> -#ifdef CONFIG_ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
->> +#ifdef HAVE_ARCH_CRASHKERNEL_RESERVATION_HIGH
->>  	/*
->>  	 * If non-NULL 'high' passed in and no normal crashkernel
->>  	 * setting detected, try parsing crashkernel=,high|low.
->> -- 
->> 2.34.1
->>
-> 
-> 
+Most notably in __remove_mapping i_lock is conditional:
+        if (!folio_test_swapcache(folio))
+                spin_lock(&mapping->host->i_lock);
+        xa_lock_irq(&mapping->i_pages);
+
+and the disasm of the offset in my case does not match either acquire.
+For all I know i_lock in this routine is *not* taken and all the
+queued up __remove_mapping callers increase i_lock -> i_pages wait
+times in clear_shadow_entry.
+
+To my cursory reading i_lock in clear_shadow_entry can be hacked away
+with some effort, but should this happen the contention is going to
+shift to i_pages presumably with more soft lockups (except on that
+lock). I am not convinced messing with it is justified. From looking
+at other places the i_lock is not a problem in other spots fwiw.
+
+All that said even if it is i_lock in both cases *and* someone whacks
+it, the mm folk should look into what happens when (maybe i_lock ->)
+i_pages lock is held. To that end perhaps you could provide a
+flamegraph or output of perf record -a -g, I don't know what's
+preferred.
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
