@@ -1,273 +1,248 @@
-Return-Path: <linux-kernel+bounces-256099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE969348F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:34:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C2FA9348FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92E7528337C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:34:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2785B284445
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 07:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D617D3F0;
-	Thu, 18 Jul 2024 07:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAEB0770FA;
+	Thu, 18 Jul 2024 07:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J8b8RAPY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="cKoR0Q5q";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qOcJ8VT/"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147FE7D3F1;
-	Thu, 18 Jul 2024 07:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2CAB55886;
+	Thu, 18 Jul 2024 07:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721288014; cv=none; b=mgavwKTRDKWObDDeiyTfQi7+k1qKqvQh4X+Dw0UqyLUoDoQcnrcVoo1QD2ptJ6wCKgNRRbMEc8b+EZdzcA47FVYcajiorxQy32QAKyzI+nZnwozu1LHTunWsXPsPaRo5dEqcgdI2SjHAMEnF64iClE1iPmCccCoe7ud94TCeDPE=
+	t=1721288094; cv=none; b=DX+qOtmA6k2EL/KU1yYJ74MK5LWymem5eJQNXXJy5ykHan7oINyWAsQmRRfyCNuwsQf5AXpc/p/bNmuF5F0CGcNMrq+lhFndX8K43NxjTETHh2vvVm8J7rimWwttmTYrNJlk16ODIeh3Pts3+mAkiOuK1YhkdxTu5oupIpwWJ6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721288014; c=relaxed/simple;
-	bh=zVJAdWQ/IwEk/Sy+Dh2nXxrFJn/m57IRKW+sOy81ZwQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NPt3d7TeBCNG+Qw7PoqbqvW0zkUz5nFpnz1ZbRwRXXkWTGT1TQjcRcqeTa5I6DGPpXdGBLlrrw/wzjX6Vh1apeUoc35F5697Pri55M/LkXBvppV76P0E9GWpvJjC3irCA44VQw+NLE1SJOHwhkxb0d3awrIhqPlQ9uJYH4aB9YM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J8b8RAPY; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721288013; x=1752824013;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=zVJAdWQ/IwEk/Sy+Dh2nXxrFJn/m57IRKW+sOy81ZwQ=;
-  b=J8b8RAPYS2vlkytKo9jhcGTgJfZL/OTrxfELx/hlaXhycRuWwe7fgEtP
-   Aijj3bG/1Y9LyZ8nrSELNQ50PNSA9SF8qaEkJHNBnshHJWp6XOvulIVhe
-   lgGYMkHfHZY/eYhSDtv3rb0/pHio2tAMrRSGoTIoGHi1zgjgcMp/KXmHA
-   4tA1BpgMsXAg/KKIWuo5zwALx+ZMjL1hUg4P1eupwLHR38qdYS9s8aZMY
-   JO8HRPs46tWl2GDLgA6Q+kwLAepXZAbW44Sr9pMJ7WAMYULoorCgASYBu
-   gSl4WycVMJlBBVkELJGKBHm2xKK1HlylFKXOsTmRtgS5ykFvnrjVmnQRP
-   Q==;
-X-CSE-ConnectionGUID: MQyc43qCSbymRK5Yt2V21w==
-X-CSE-MsgGUID: oJqIJm/XQbmGYUbgMD/Ynw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="22693872"
-X-IronPort-AV: E=Sophos;i="6.09,217,1716274800"; 
-   d="scan'208";a="22693872"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 00:33:32 -0700
-X-CSE-ConnectionGUID: CCVrYolsQm6cirAvmE3Dxg==
-X-CSE-MsgGUID: LiZ4Yn0xTK2NwS2i0g7pMA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,217,1716274800"; 
-   d="scan'208";a="50972881"
-Received: from ysheng4-mobl.ccr.corp.intel.com (HELO [10.238.2.30]) ([10.238.2.30])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 00:33:28 -0700
-Message-ID: <457184ed-dcda-4363-a0c9-95b43b80a6a4@linux.intel.com>
-Date: Thu, 18 Jul 2024 15:33:25 +0800
+	s=arc-20240116; t=1721288094; c=relaxed/simple;
+	bh=JVkht1qZnDP6g6HGVT2/BKn0/OqsW09NZSc/8nVhE/8=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=QeRN/nalnKvf2nZ9j5LGsk/BnP4/qwerVZ8F55Drh78c1zS02tN7aBukBfvUviUXivWnGuC2M4mkFwQ1qfW61kEeJE/+qCl4r7sUkWk2AOfNa57MljpoXeDb90utsd8/ZknF5pBBVx24N0AVhC2/JKEwq0x8tIDjbnT/Ly4Bm60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=cKoR0Q5q; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qOcJ8VT/; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+	by mailfout.nyi.internal (Postfix) with ESMTP id CFBC913802C9;
+	Thu, 18 Jul 2024 03:34:51 -0400 (EDT)
+Received: from imap44 ([10.202.2.94])
+  by compute1.internal (MEProxy); Thu, 18 Jul 2024 03:34:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1721288091;
+	 x=1721374491; bh=FJF+1LemGg91SooO0HjNNjauHiI7Fh3BqdTtr1TiD3o=; b=
+	cKoR0Q5qunqzFDWh8FOnLL3NBAMpgH2vzXhi65Ey9tqsPeCoZZ7NTCG3oIgaCH4i
+	xeR0vFb5m8m8JZcVP26Y7C+irapT1hnUdfnrwNtQpMp+pD0/wMNLnZRVFnBWECgR
+	+8Mg25LiHc92N3pwTIVb0Wqu/nbrcSvabK6QFa6YMFxmNSS29Q+iXDQmEnF+LQR1
+	TjtoThwr86ztgjFaiDnG5cyHXkz1xifrWSNPEXZxGaO9YRPVlvKGzPXHqkYzC2XM
+	nQLQCLTo5g/6eZfKtMJF0u0tFfiB+HUi7URtPCHMDMZUrRU/I17+7wfw+3lEY8lA
+	Jj8a6haTim0ls4vA1MrBLA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1721288091; x=
+	1721374491; bh=FJF+1LemGg91SooO0HjNNjauHiI7Fh3BqdTtr1TiD3o=; b=q
+	OcJ8VT/+7WL5YcldfPq42DcqDiwksCfnSpt7uhZ7CLAl5xUlaUyB0g73ZtXjtCgE
+	G8S50Jk75ajf9BnBOlwYigjSvYTVnAN6zCFKMqjKHSlkph0t1xjoDIZ5GeOtsC0c
+	4aqqHxiuYwhu/65tQ35t+zCCz+h2rSe9y9g380vYuhcP1jR+yNKQeZRJrCm1x1DS
+	XPgatu7qu2RnwwXj0ZTzPobHQ0IRxuwlQ7lFwX64GeH3JHXtjHZvF0nA+nTt2gBG
+	McPL5w/vqTIFMNS3R1x/2bg0tiI291N707xWkvS1S5rlEEg5l2wk7WE+Nv9HNCLx
+	da4KtV3KmlBEACxf/P2Og==
+X-ME-Sender: <xms:msWYZl7t7JtZytLhJJBKKNDwQDuFshRFcZz21-MHF1PuiiY1lUtRxw>
+    <xme:msWYZi6hwd8pmGbjYYeVAa6RJbpsAf0M47tS2fFW8yYeRYwSnhPSVH_Mt6oqwavn3
+    9LKF8Xjq4fhss762q0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgeekgdduvdegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
+    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
+    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
+    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:msWYZsdMCa5F1_uuIKKyei-0jpUnZVnLiPX4nyzbePfWUd-qgowJ7w>
+    <xmx:msWYZuLmRxPCIqxRrk_mLV3nz5h-nskJTqd8mI_yj05eO-fvmsb0Cg>
+    <xmx:msWYZpIeqN-_J6cv4hbZnVVnvbBfeEDEGC5z-biLLAF3YyuK-45_yQ>
+    <xmx:msWYZnzMipEdgqp0SfxX6kXu5BhvM9_KHUNsx2buRVKkobtzsPUoUw>
+    <xmx:m8WYZp3FeW_Sy3NFp5HM7BP0M0VhF3QKWYNUWfQKI_LVgfArZzlYUxAz>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 353EC36A0074; Thu, 18 Jul 2024 03:34:50 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v19 110/130] KVM: TDX: Handle TDX PV MMIO hypercall
-To: Isaku Yamahata <isaku.yamahata@intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- isaku.yamahata@gmail.com, Paolo Bonzini <pbonzini@redhat.com>,
- erdemaktas@google.com, Sean Christopherson <seanjc@google.com>,
- Sagi Shahar <sagis@google.com>, Kai Huang <kai.huang@intel.com>,
- chen.bo@intel.com, hang.yuan@intel.com, tina.zhang@intel.com,
- Sean Christopherson <sean.j.christopherson@intel.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Reinette Chatre <reinette.chatre@intel.com>
-References: <cover.1708933498.git.isaku.yamahata@intel.com>
- <a4421e0f2eafc17b4703c920936e32489d2382a3.1708933498.git.isaku.yamahata@intel.com>
- <560f3796-5a41-49fb-be6e-558bbe582996@linux.intel.com>
- <20240716222514.GD1900928@ls.amr.corp.intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20240716222514.GD1900928@ls.amr.corp.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-Id: <e68b7f44-8a3c-4963-8d95-be8747bf9a61@app.fastmail.com>
+In-Reply-To: <20240714-loongson64-cevt-r4k-v1-1-98afed7260aa@flygoat.com>
+References: <20240714-loongson64-cevt-r4k-v1-1-98afed7260aa@flygoat.com>
+Date: Thu, 18 Jul 2024 15:34:30 +0800
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Huacai Chen" <chenhuacai@kernel.org>
+Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MIPS: Loongson64: Switch to SYNC_R4K
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
 
-On 7/17/2024 6:25 AM, Isaku Yamahata wrote:
-> On Tue, Jun 25, 2024 at 02:54:09PM +0800,
-> Binbin Wu <binbin.wu@linux.intel.com> wrote:
+=E5=9C=A82024=E5=B9=B47=E6=9C=8814=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8A=E5=
+=8D=8810:41=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
+> Nowadays SYNC_R4K is performing better than Loongson64's
+> custom sync mechanism.
 >
->>
->> On 2/26/2024 4:26 PM, isaku.yamahata@intel.com wrote:
->>> From: Sean Christopherson <sean.j.christopherson@intel.com>
->>>
->>> Export kvm_io_bus_read and kvm_mmio tracepoint and wire up TDX PV MMIO
->>> hypercall to the KVM backend functions.
->>>
->>> kvm_io_bus_read/write() searches KVM device emulated in kernel of the given
->>> MMIO address and emulates the MMIO.  As TDX PV MMIO also needs it, export
->>> kvm_io_bus_read().  kvm_io_bus_write() is already exported.  TDX PV MMIO
->>> emulates some of MMIO itself.  To add trace point consistently with x86
->>> kvm, export kvm_mmio tracepoint.
->>>
->>> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
->>> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
->>> Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
->>> ---
->>>    arch/x86/kvm/vmx/tdx.c | 114 +++++++++++++++++++++++++++++++++++++++++
->>>    arch/x86/kvm/x86.c     |   1 +
->>>    virt/kvm/kvm_main.c    |   2 +
->>>    3 files changed, 117 insertions(+)
->>>
->>> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
->>> index 55fc6cc6c816..389bb95d2af0 100644
->>> --- a/arch/x86/kvm/vmx/tdx.c
->>> +++ b/arch/x86/kvm/vmx/tdx.c
->>> @@ -1217,6 +1217,118 @@ static int tdx_emulate_io(struct kvm_vcpu *vcpu)
->>>    	return ret;
->>>    }
->>> +static int tdx_complete_mmio(struct kvm_vcpu *vcpu)
->>> +{
->>> +	unsigned long val = 0;
->>> +	gpa_t gpa;
->>> +	int size;
->>> +
->>> +	KVM_BUG_ON(vcpu->mmio_needed != 1, vcpu->kvm);
->>> +	vcpu->mmio_needed = 0;
->> mmio_needed is used by instruction emulator to setup the complete callback.
->> Since TDX handle MMIO in a PV way, mmio_needed is not needed here.
-> Ok, we don't need to update mmio_needed.
+> Switch to SYNC_R4K to improve performance and reduce code
+> duplication.
 >
->
->>> +
->>> +	if (!vcpu->mmio_is_write) {
->> It's also needed by instruction emulator, we can use
->> vcpu->run->mmio.is_write instead.
-> No because vcpu->run->mmio is shared with user space.  KVM need to stash
-> it independently.
->
->
->>> +		gpa = vcpu->mmio_fragments[0].gpa;
->>> +		size = vcpu->mmio_fragments[0].len;
->> Since MMIO cross page boundary is not allowed according to the input checks
->> from TDVMCALL, these mmio_fragments[] is not needed.
->> Just use vcpu->run->mmio.phys_addr and vcpu->run->mmio.len?
-> ditto.
->
->
->>> +
->>> +		memcpy(&val, vcpu->run->mmio.data, size);
->>> +		tdvmcall_set_return_val(vcpu, val);
->>> +		trace_kvm_mmio(KVM_TRACE_MMIO_READ, size, gpa, &val);
->>> +	}
->> Tracepoint for KVM_TRACE_MMIO_WRITE is missing when it is handled in
->> userspace.
-> tdx_mmio_write() has it before existing to the user space.  It matches with
-> how write_mmio() behaves in x86.c.
->
-> Hmm, to match with other code, we should remove
-> trace_kvm_mmio(KVM_TRACE_MMIO_READ) and keep KVM_TRACE_MMIO_READ_UNSATISFIED
-> in tdx_emulate_mmio().  That's how read_prepare() and read_exit_mmio() behaves.
->
-> For MMIO read
-> - When kernel can handle the MMIO, KVM_TRACE_MMIO_READ with data.
-> - When exiting to the user space, KVM_TRACE_MMIO_READ_UNSATISFIED before
->    the exit.  No trace after the user space handled the MMIO.
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> ---
+> Last minute for 6.11 :-)
 
-For MMIO read, in the emulator, there is still a trace after the 
-userspace handled the MMIO.
-In complete_emulated_mmio(), if all fragments have been handled, it will
-set vcpu->mmio_read_completed to 1 and call complete_emulated_io().
-complete_emulated_io
-     kvm_emulate_instruction(vcpu, EMULTYPE_NO_DECODE)
-         x86_emulate_instruction
-             x86_emulate_insn
-                 emulator_read_write
-                     read_prepare
-                         At this point, vcpu->mmio_read_completed is 1,
-                         it traces KVM_TRACE_MMIO_READ with data
-                         and then clear vcpu->mmio_read_completed
+Hi Thomas,
 
-So to align with emulator, we should keep the trace for KVM_TRACE_MMIO_READ.
+Could you please apply this to 6.11 PR, or 6.11 fixes?
 
+This is technically a left over of previous clock source series, and it =
+does help
+on preventing random RCU stall for multi-node Loongson-3 systems.
 
->
-> For MMIO write
-> - KVM_TRACE_MMIO_WRITE before handling it.
->
->
->> Also, the return code is only set when the emulation is done in kernel, but
->> not set when it's handled in userspace.
->>
->>> +	return 1;
->>> +}
->> How about the fixup as following:
->>
->> @@ -1173,19 +1173,18 @@ static int tdx_emulate_io(struct kvm_vcpu *vcpu)
->> static int tdx_complete_mmio(struct kvm_vcpu *vcpu) { unsigned long val = 0;
->> - gpa_t gpa; - int size; - - vcpu->mmio_needed = 0; - - if
->> (!vcpu->mmio_is_write) { - gpa = vcpu->mmio_fragments[0].gpa; - size =
->> vcpu->mmio_fragments[0].len; + gpa_t gpa = vcpu->run->mmio.phys_addr; + int
->> size = vcpu->run->mmio.len; + if (vcpu->run->mmio.is_write) { +
->> trace_kvm_mmio(KVM_TRACE_MMIO_WRITE, size, gpa, &val); + } else {
->> memcpy(&val, vcpu->run->mmio.data, size); tdvmcall_set_return_val(vcpu,
->> val); trace_kvm_mmio(KVM_TRACE_MMIO_READ, size, gpa, &val); } + +
->> tdvmcall_set_return_code(vcpu, TDVMCALL_SUCCESS); return 1; }
->>
->>
->>
->>> +
->>> +static inline int tdx_mmio_write(struct kvm_vcpu *vcpu, gpa_t gpa, int size,
->>> +				 unsigned long val)
->>> +{
->>> +	if (kvm_iodevice_write(vcpu, &vcpu->arch.apic->dev, gpa, size, &val) &&
->>> +	    kvm_io_bus_write(vcpu, KVM_MMIO_BUS, gpa, size, &val))
->>> +		return -EOPNOTSUPP;
->>> +
->>> +	trace_kvm_mmio(KVM_TRACE_MMIO_WRITE, size, gpa, &val);
->>> +	return 0;
->>> +}
->>> +
->>> +static inline int tdx_mmio_read(struct kvm_vcpu *vcpu, gpa_t gpa, int size)
->>> +{
->>> +	unsigned long val;
->>> +
->>> +	if (kvm_iodevice_read(vcpu, &vcpu->arch.apic->dev, gpa, size, &val) &&
->>> +	    kvm_io_bus_read(vcpu, KVM_MMIO_BUS, gpa, size, &val))
->>> +		return -EOPNOTSUPP;
->>> +
->>> +	tdvmcall_set_return_val(vcpu, val);
->>> +	trace_kvm_mmio(KVM_TRACE_MMIO_READ, size, gpa, &val);
->>> +	return 0;
->>> +}
->>> +
->>> +static int tdx_emulate_mmio(struct kvm_vcpu *vcpu)
->>> +{
->>> +	struct kvm_memory_slot *slot;
->>> +	int size, write, r;
->>> +	unsigned long val;
->>> +	gpa_t gpa;
->>> +
->>> +	KVM_BUG_ON(vcpu->mmio_needed, vcpu->kvm);
->>> +
->> [...]
->>> +
->>> +	/* Request the device emulation to userspace device model. */
->>> +	vcpu->mmio_needed = 1;
->>> +	vcpu->mmio_is_write = write;
->> Then they can be dropped.
-> We may drop mmio_needed. mmio_is_write is needed as above.
->
->
->
->>> +	vcpu->arch.complete_userspace_io = tdx_complete_mmio;
->>> +
->>> +	vcpu->run->mmio.phys_addr = gpa;
->>> +	vcpu->run->mmio.len = size;
->>> +	vcpu->run->mmio.is_write = write;
->>> +	vcpu->run->exit_reason = KVM_EXIT_MMIO;
->>> +
->>> +	if (write) {
->>> +		memcpy(vcpu->run->mmio.data, &val, size);
->>> +	} else {
->>> +		vcpu->mmio_fragments[0].gpa = gpa;
->>> +		vcpu->mmio_fragments[0].len = size;
->> These two lines can be dropped as well.
-> ditto.
+Thanks
+- Jiaxun
 
+> ---
+>  arch/mips/Kconfig           |  1 +
+>  arch/mips/include/asm/smp.h |  1 -
+>  arch/mips/loongson64/smp.c  | 35 ++---------------------------------
+>  3 files changed, 3 insertions(+), 34 deletions(-)
+>
+> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+> index 1236ea122061..e163059dd4d3 100644
+> --- a/arch/mips/Kconfig
+> +++ b/arch/mips/Kconfig
+> @@ -478,6 +478,7 @@ config MACH_LOONGSON64
+>  	select BOARD_SCACHE
+>  	select CSRC_R4K
+>  	select CEVT_R4K
+> +	select SYNC_R4K
+>  	select FORCE_PCI
+>  	select ISA
+>  	select I8259
+> diff --git a/arch/mips/include/asm/smp.h b/arch/mips/include/asm/smp.h
+> index bc2c240f414b..2427d76f953f 100644
+> --- a/arch/mips/include/asm/smp.h
+> +++ b/arch/mips/include/asm/smp.h
+> @@ -50,7 +50,6 @@ extern int __cpu_logical_map[NR_CPUS];
+>  #define SMP_CALL_FUNCTION	0x2
+>  /* Octeon - Tell another core to flush its icache */
+>  #define SMP_ICACHE_FLUSH	0x4
+> -#define SMP_ASK_C0COUNT		0x8
+>=20
+>  /* Mask of CPUs which are currently definitely operating coherently */
+>  extern cpumask_t cpu_coherent_mask;
+> diff --git a/arch/mips/loongson64/smp.c b/arch/mips/loongson64/smp.c
+> index 66d049cdcf14..147acd972a07 100644
+> --- a/arch/mips/loongson64/smp.c
+> +++ b/arch/mips/loongson64/smp.c
+> @@ -33,7 +33,6 @@ static void __iomem *ipi_clear0_regs[16];
+>  static void __iomem *ipi_status0_regs[16];
+>  static void __iomem *ipi_en0_regs[16];
+>  static void __iomem *ipi_mailbox_buf[16];
+> -static uint32_t core0_c0count[NR_CPUS];
+>=20
+>  static u32 (*ipi_read_clear)(int cpu);
+>  static void (*ipi_write_action)(int cpu, u32 action);
+> @@ -382,11 +381,10 @@ loongson3_send_ipi_mask(const struct cpumask=20
+> *mask, unsigned int action)
+>  		ipi_write_action(cpu_logical_map(i), (u32)action);
+>  }
+>=20
+> -
+>  static irqreturn_t loongson3_ipi_interrupt(int irq, void *dev_id)
+>  {
+> -	int i, cpu =3D smp_processor_id();
+> -	unsigned int action, c0count;
+> +	int cpu =3D smp_processor_id();
+> +	unsigned int action;
+>=20
+>  	action =3D ipi_read_clear(cpu);
+>=20
+> @@ -399,26 +397,14 @@ static irqreturn_t loongson3_ipi_interrupt(int=20
+> irq, void *dev_id)
+>  		irq_exit();
+>  	}
+>=20
+> -	if (action & SMP_ASK_C0COUNT) {
+> -		BUG_ON(cpu !=3D 0);
+> -		c0count =3D read_c0_count();
+> -		c0count =3D c0count ? c0count : 1;
+> -		for (i =3D 1; i < nr_cpu_ids; i++)
+> -			core0_c0count[i] =3D c0count;
+> -		nudge_writes(); /* Let others see the result ASAP */
+> -	}
+> -
+>  	return IRQ_HANDLED;
+>  }
+>=20
+> -#define MAX_LOOPS 800
+>  /*
+>   * SMP init and finish on secondary CPUs
+>   */
+>  static void loongson3_init_secondary(void)
+>  {
+> -	int i;
+> -	uint32_t initcount;
+>  	unsigned int cpu =3D smp_processor_id();
+>  	unsigned int imask =3D STATUSF_IP7 | STATUSF_IP6 |
+>  			     STATUSF_IP3 | STATUSF_IP2;
+> @@ -432,23 +418,6 @@ static void loongson3_init_secondary(void)
+>  		     cpu_logical_map(cpu) % loongson_sysconf.cores_per_package);
+>  	cpu_data[cpu].package =3D
+>  		cpu_logical_map(cpu) / loongson_sysconf.cores_per_package;
+> -
+> -	i =3D 0;
+> -	core0_c0count[cpu] =3D 0;
+> -	loongson3_send_ipi_single(0, SMP_ASK_C0COUNT);
+> -	while (!core0_c0count[cpu]) {
+> -		i++;
+> -		cpu_relax();
+> -	}
+> -
+> -	if (i > MAX_LOOPS)
+> -		i =3D MAX_LOOPS;
+> -	if (cpu_data[cpu].package)
+> -		initcount =3D core0_c0count[cpu] + i;
+> -	else /* Local access is faster for loops */
+> -		initcount =3D core0_c0count[cpu] + i/2;
+> -
+> -	write_c0_count(initcount);
+>  }
+>=20
+>  static void loongson3_smp_finish(void)
+>
+> ---
+> base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+> change-id: 20240714-loongson64-cevt-r4k-eb74d4ad984c
+>
+> Best regards,
+> --=20
+> Jiaxun Yang <jiaxun.yang@flygoat.com>
+
+--=20
+- Jiaxun
 
