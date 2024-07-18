@@ -1,196 +1,152 @@
-Return-Path: <linux-kernel+bounces-255911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47810934692
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 05:04:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14024934695
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 05:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F149628351B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:04:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37AD61C21DD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 03:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2B73A1C9;
-	Thu, 18 Jul 2024 03:04:52 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A700328B6;
+	Thu, 18 Jul 2024 03:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="N8CX28Rd"
+Received: from AUS01-SY4-obe.outbound.protection.outlook.com (mail-sy4aus01olkn2157.outbound.protection.outlook.com [40.92.62.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E387039ADD
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 03:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721271891; cv=none; b=mwmrzbd5U4Y8z90fU1i+mpfwP3LXtVKi+suUT3AP4rBa759Cd7UI3wRh/s3LlKAMXhjCl7ENUXYpHmlr5pS6+JL+1AKdZ1I/J2tC2tFNR/lifM/SlBwtBBzZG6hlovHHYA83d6E4Nvoy+xltaMdseiHedT63SKwtVdHHJuzTOHU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721271891; c=relaxed/simple;
-	bh=qdNxpB0BrTRvneP/CMzuEPcyLEl3mDQnMCVeGZpVLdQ=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=fkBBtp9EViCHupKovOeSvqo21w8+K0hfOWISOY5jo1Zv+rzogiyWlc45cZvK86wOCvHqx/PSwvhxt9hOD81TkYdAmPH1nwvRDuTBcoO7G8KMDjtOoVRdEs6vjpRX2zT0zUwfuRRGg+sSf73lRR4Qx0I83z6WTQKOaZfo+dcusBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WPcxb2kswzQm33;
-	Thu, 18 Jul 2024 11:00:35 +0800 (CST)
-Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9BBC5140390;
-	Thu, 18 Jul 2024 11:04:39 +0800 (CST)
-Received: from [10.173.127.72] (10.173.127.72) by
- kwepemd200019.china.huawei.com (7.221.188.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 18 Jul 2024 11:04:38 +0800
-Subject: Re: [PATCH] mm/memory-failure: fix VM_BUG_ON_PAGE(PagePoisoned(page))
- when unpoison memory
-To: David Hildenbrand <david@redhat.com>, Andrew Morton
-	<akpm@linux-foundation.org>
-CC: <nao.horiguchi@gmail.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240712064249.3882707-1-linmiaohe@huawei.com>
- <20240712140921.9aa90b18d22e67417d59dfc1@linux-foundation.org>
- <8fe349f9-d3d3-65ab-6045-da0bd19249ea@huawei.com>
- <00e18339-d911-4332-8732-e31bcecbf823@redhat.com>
- <5f8107e2-2b37-d899-f7f2-5a6093d8b089@huawei.com>
- <de73f251-08a0-4122-acfd-1d7fce7540ea@redhat.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <ec6ed1aa-0b6e-df66-1442-93786eabd1ef@huawei.com>
-Date: Thu, 18 Jul 2024 11:04:38 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8468D3D966;
+	Thu, 18 Jul 2024 03:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.62.157
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721271897; cv=fail; b=i8b8sr7In0v07NWUkllP6VGI0KF/95ka/vPhYOQGGHtGmZwSbGd3CnT9C4mvobvWRnr/LbW3+feY3xsdmxSweSeiOqb2skRwLLIaipPR+lBzsTFnWydj3VChvsXrcgZFPfwwMnTOt/egNhuuGEZK0vV+dEYLWYrhkCGrmSSKU+A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721271897; c=relaxed/simple;
+	bh=Afqn/+KWRwsqZS1fnrYQyMfoZP2TLodbAXCiHtzv+08=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=COqj9SOOENsd51aCBPWbbEcerfNQ/CogHI4loYKkfJ30MD+SC9IB/QNYRFIDf4LuqkGmd0sGBRl/+9x9UnY08nLxAtZ+BW/5yYBAPSanYHJavGu9k00qY/nLVBP7ql1G39eq59cyYA5M66uYQXtaUlk/y/5uIdpR8mPh7Pp2wjc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=N8CX28Rd; arc=fail smtp.client-ip=40.92.62.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RLW8oXY/Fy1JaTOyMr2bTiOYJG5zlx5kQdTEAu9jBPJjt6tPKnqz6PMDkLCy3zk2RVG3gPWc1aAH3xeZRli3JI8weyfKXEKkg/Sc9ZZYs1kIH6Hg3DZgFSLyclcvIrlXHz4QGGnusGxMj6B3j7XWeiLtpm2WT4baQnrbv9mlNiw1c2/aJlFMFnAJt2UXJVuycAWjDdtHBl8m5h4WyYJ75EAY0htbfGbfJYcXmHkGAsVRrFXnGT2wXRu8xABtDuOIvvadbt4L8q58UI9GSY/hzE84V9P9/jIIifJDmsmlNJKF/hfiLZq26SANkBVU3Cye2d92/IphxHQTUxGLxilO5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WLzBeUv7uEyatawNZn4TXVt661GeDzmP6Lg6H1TaZCY=;
+ b=CTRjdT69OshQWI/gJScyDcdzXAxomRcTXQVHKOvz1tTfW4Kdt9gJuxh+eTRV7pithOo1MYJJEozvzF56kC7p82H9s8fmUZnjedthPWSz7VuWJ+McqWEmil8NeE//XXkNafrEFTmjxTSd34QqBkADXBt7LqiGa+JuUiPy0BHgxXcvAOthDNbf7UFL/UtyV37mv53s35bZ5b1FeJZ3MU5DelUNQq/e2jZQx0Grd+hWPpr1zIHQP56wf4PqGc0hztnIJZ/ehIecmu+Zz4f2CoszMq6QVA9lYmYzDhIkGy2PraoD/LYafbe/1D98ih1ppcodSWzi4MGJAxIPU/rQN6Ocpw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WLzBeUv7uEyatawNZn4TXVt661GeDzmP6Lg6H1TaZCY=;
+ b=N8CX28Rd5jGYT0SF2qilAXhEtdeM5ZyYbQpX9By5d3M2U4qYx7l+5GnPGpglnHnOLBZR602YkNmGLotQ/cteRXeMw5FQqU1sUSRcDABCBF66yzR2KNf7skEtR1u3RvOxLGc3Gpa+kVn3B+DoDBTzYU6+ODEXXLvYNuaKGn34Wxr/IDzq3GRhbj8aIabkJzytJMxoGh/mJ1Al88HiRlN99dbR2l91xkgrAfL4EAwuk7mqovLpsUXp1rNxN3C7BfLEXeL4Bz1ovipnKpYd+MGQe7WderHLbE/qAAq40QxKHk64G+63E97i1g8jif9NDqRTBuQ8AkBBYpiXACfFMITNTw==
+Received: from MEYP282MB3164.AUSP282.PROD.OUTLOOK.COM (2603:10c6:220:159::11)
+ by SY4P282MB3661.AUSP282.PROD.OUTLOOK.COM (2603:10c6:10:1c0::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.17; Thu, 18 Jul
+ 2024 03:04:50 +0000
+Received: from MEYP282MB3164.AUSP282.PROD.OUTLOOK.COM
+ ([fe80::f65e:52a:9bfb:525f]) by MEYP282MB3164.AUSP282.PROD.OUTLOOK.COM
+ ([fe80::f65e:52a:9bfb:525f%5]) with mapi id 15.20.7784.017; Thu, 18 Jul 2024
+ 03:04:50 +0000
+From: Ryder Wang <rydercoding@hotmail.com>
+To: Theodore Ts'o <tytso@mit.edu>, Zhihao Cheng <chengzhihao@huaweicloud.com>
+CC: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, LKML
+	<linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>, Christoph Hellwig
+	<hch@infradead.org>, linux-mtd <linux-mtd@lists.infradead.org>, Richard
+ Weinberger <richard@nod.at>, "zhangyi (F)" <yi.zhang@huawei.com>, yangerkun
+	<yangerkun@huawei.com>, "wangzhaolong (A)" <wangzhaolong1@huawei.com>
+Subject: Re: [BUG REPORT] potential deadlock in inode evicting under the inode
+ lru traversing context on ext4 and ubifs
+Thread-Topic: [BUG REPORT] potential deadlock in inode evicting under the
+ inode lru traversing context on ext4 and ubifs
+Thread-Index: AQHa1CTInbJ5495Kk0Oyw9CF3kyldLHzKagAgAiorN0=
+Date: Thu, 18 Jul 2024 03:04:50 +0000
+Message-ID:
+ <MEYP282MB3164B39D532251DC6C36B652BFAC2@MEYP282MB3164.AUSP282.PROD.OUTLOOK.COM>
+References: <37c29c42-7685-d1f0-067d-63582ffac405@huaweicloud.com>
+ <20240712143708.GA151742@mit.edu>
+In-Reply-To: <20240712143708.GA151742@mit.edu>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+x-tmn: [JV5QR5IXsnChSSdq0+cS3AJvHdP1OA03]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MEYP282MB3164:EE_|SY4P282MB3661:EE_
+x-ms-office365-filtering-correlation-id: c7cfac0f-5a47-4335-7f5e-08dca6d66379
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|19110799003|461199028|8060799006|3412199025|102099032|440099028;
+x-microsoft-antispam-message-info:
+ J9LaPZ5lds60YiEF5umOrG1UmOo5Imp33idt7iBE7WGnkNGBF35v9i4d0q/dbPZwctLI/9/F253gi95x8gn0w5VTnoWmQTY4IcGL4FTvYCVZ5Qbmlb1LMKogK6tG/lhcmhGtUZesS/WBYd+jy92V3LuSrmkPlrB/tso/Tj2FnDYZj/83asGgyan6n2/WfSREiM4Eur9Gb1iZ2eyn7y6jXEK4LjWdIpKZOJjU0RVwDp7rwT7ksQP9Tn2w36DZ86rEJ4KaRoSioPcTHSp5gRj6dUfQQPnYaslDS0lP9Jr2NAH0KeaUrWPIx1DyXpsZy5DyKtJUCKVWICm86tDtQlbCWLjtzGZqFjg2SQxLgTgRwpHEGtx6lVHBtEhzbbu+uKhLqxfeYfHwRtYhRvAKu2FmKrzosJkkVAEzdB7hhISQHWHp+C/UHj/dZ1MPe8TB/wn3guyeP39iG5hri+d40O0RmJ/U+a3YL8kkiFXfVfa/mRHlsLLg/wgRHEkuz6h8N+YFL/A3GEk5EweKMZNffePfk6kgOc0xgM0KDRhEn7htO7SyPqLRSbDDzuHnOTO8zDAE35jRFaIP9Gm72TVO81anE8q653AyRv8rdwVR9LICxgHiYnlGdPFW753JNzWDPg5sdMHjM7f/lxRa+o1ZTP2S+Q==
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?+ailHlAzLLI3Pmbdph/b8iovr3EOB5E4cTBGw9bdxGmXocT62+p/a1z43R?=
+ =?iso-8859-1?Q?w/Z8FBDXxFtXvC6I1ijw3dmeG7fSlmk77cMsDnFsFWDMeh8XLI2HgVgWkP?=
+ =?iso-8859-1?Q?brDxdI2dT5VIhWukVkpL3m4kncjdL2Vqq+PkvuVQWXYtU2jPwgO1Hion40?=
+ =?iso-8859-1?Q?hA5bn0kINK9YnWbLvXge4YNZV/hsc+LsTihktKCEEyUEVtBboXY/G09I9h?=
+ =?iso-8859-1?Q?g2XbSY/He1GAyITuTkJgL52mmtNxgKBLqQGQ63QekwY9mNEcwY0wCaNpAK?=
+ =?iso-8859-1?Q?wmTFTKM6MJPlQYrH3U4NaGO8Q1kBuwVnz6KjhV/5DRIFOCuAKQlg2bU9ol?=
+ =?iso-8859-1?Q?e2lYZSAEY/AaidqKYTO3JsOvX5OGJD7ZThwPGpsPLnFnIq7X0mJl6RUX1j?=
+ =?iso-8859-1?Q?kI6/Hyu5QFDAR27AG/iNvzEJXqGzT01wH6hISyxkW7RpWyTxizTFGA5++E?=
+ =?iso-8859-1?Q?EeadmPGcuK4PBYFR7iU0JJANin6U4dR/vJLXYrQEgIAxBCLvACjBTVopZO?=
+ =?iso-8859-1?Q?jGK4doMohNKK0Kad21Ja/+FOwTUISpRTJO7HLTM7TiJGBrCKEJXoU2aA55?=
+ =?iso-8859-1?Q?oGB94yhpAZbXzjJtD5Js25Vjf2efDaRLR8imJcdJ0QcECrUT4NNhO0vEr6?=
+ =?iso-8859-1?Q?E3heju6ajObz2XzQv1GN7/vovIXVpA97WwPPi/XT10DzsaWM9kD8EwVo12?=
+ =?iso-8859-1?Q?KTJ/NlHsITNwq7zncpJpboCP3g+eK/dm2ALMMhgjyayDYwzeYqgJO71m84?=
+ =?iso-8859-1?Q?nPL7TqjRfIKZVhv6EM5QQOrFcpLB6p0LuE/aGc/FoTrNm3o0o5+0DtzWaQ?=
+ =?iso-8859-1?Q?sx7NbukCaIg5QShNefk0S64auiqzrZ2ljBHphqqkI1GjjZS/OQHvWacIjX?=
+ =?iso-8859-1?Q?GLtAd+jnko6Dgz8uwYQACGLu+gBBdrprjVZnQurJOvxVwzSUVPy7SA3vvs?=
+ =?iso-8859-1?Q?KacC1S42cuB/WrJ9vqoB6cfKgK3lmu89j2VQj0GMW2z6N89xTaxPNCh9a3?=
+ =?iso-8859-1?Q?P46kCSjnQL/vFI5OQ5fD5o24rAibrmOohcYOb/fHDF5WjkUV/vsig9CM5N?=
+ =?iso-8859-1?Q?kkBlDtgNfEJ7kMZxrOHpuU2Cm2D4Ib2fvopog71zKNcGTcxzLAwLgXcKlw?=
+ =?iso-8859-1?Q?mtmQiEt9FIiDb5TdhXubipPEXIIhTCgIOHUVedSB+t4ACI4i/Lzd/n2cm1?=
+ =?iso-8859-1?Q?RJrwuK3C1QzSXi/BFnMHBHBSMOw9StN6qflc0Ahxbo4OzBQFMbgFEMuiKv?=
+ =?iso-8859-1?Q?Ek2K0UnlHsTubTHKB/m56mF1eIgPC6j5mGvuHb3+I=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <de73f251-08a0-4122-acfd-1d7fce7540ea@redhat.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd200019.china.huawei.com (7.221.188.193)
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-722bc.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MEYP282MB3164.AUSP282.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: c7cfac0f-5a47-4335-7f5e-08dca6d66379
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jul 2024 03:04:50.1493
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SY4P282MB3661
 
-On 2024/7/17 17:01, David Hildenbrand wrote:
-> On 16.07.24 04:34, Miaohe Lin wrote:
->> On 2024/7/16 0:16, David Hildenbrand wrote:
->>> On 15.07.24 08:23, Miaohe Lin wrote:
->>>> On 2024/7/13 5:09, Andrew Morton wrote:
->>>>> On Fri, 12 Jul 2024 14:42:49 +0800 Miaohe Lin <linmiaohe@huawei.com> wrote:
->>>>>
->>>>>> When I did memory failure tests recently, below panic occurs:
->>>>>>
->>>>>> page dumped because: VM_BUG_ON_PAGE(PagePoisoned(page))
->>>>>> kernel BUG at include/linux/page-flags.h:616!
->>>>>> Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
->>>>>> CPU: 3 PID: 720 Comm: bash Not tainted 6.10.0-rc1-00195-g148743902568 #40
->>>>>> RIP: 0010:unpoison_memory+0x2f3/0x590
->>>>>> RSP: 0018:ffffa57fc8787d60 EFLAGS: 00000246
->>>>>> RAX: 0000000000000037 RBX: 0000000000000009 RCX: ffff9be25fcdc9c8
->>>>>> RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff9be25fcdc9c0
->>>>>> RBP: 0000000000300000 R08: ffffffffb4956f88 R09: 0000000000009ffb
->>>>>> R10: 0000000000000284 R11: ffffffffb4926fa0 R12: ffffe6b00c000000
->>>>>> R13: ffff9bdb453dfd00 R14: 0000000000000000 R15: fffffffffffffffe
->>>>>> FS:  00007f08f04e4740(0000) GS:ffff9be25fcc0000(0000) knlGS:0000000000000000
->>>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>>> CR2: 0000564787a30410 CR3: 000000010d4e2000 CR4: 00000000000006f0
->>>>>> Call Trace:
->>>>>>    <TASK>
->>>>>>    unpoison_memory+0x2f3/0x590
->>>>>>    simple_attr_write_xsigned.constprop.0.isra.0+0xb3/0x110
->>>>>>    debugfs_attr_write+0x42/0x60
->>>>>>    full_proxy_write+0x5b/0x80
->>>>>>    vfs_write+0xd5/0x540
->>>>>>    ksys_write+0x64/0xe0
->>>>>>    do_syscall_64+0xb9/0x1d0
->>>>>>    entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>>>>> RIP: 0033:0x7f08f0314887
->>>>>> RSP: 002b:00007ffece710078 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
->>>>>> RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f08f0314887
->>>>>> RDX: 0000000000000009 RSI: 0000564787a30410 RDI: 0000000000000001
->>>>>> RBP: 0000564787a30410 R08: 000000000000fefe R09: 000000007fffffff
->>>>>> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000009
->>>>>> R13: 00007f08f041b780 R14: 00007f08f0417600 R15: 00007f08f0416a00
->>>>>>    </TASK>
->>>>>> Modules linked in: hwpoison_inject
->>>>>> ---[ end trace 0000000000000000 ]---
->>>>>> RIP: 0010:unpoison_memory+0x2f3/0x590
->>>>>> RSP: 0018:ffffa57fc8787d60 EFLAGS: 00000246
->>>>>> RAX: 0000000000000037 RBX: 0000000000000009 RCX: ffff9be25fcdc9c8
->>>>>> RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff9be25fcdc9c0
->>>>>> RBP: 0000000000300000 R08: ffffffffb4956f88 R09: 0000000000009ffb
->>>>>> R10: 0000000000000284 R11: ffffffffb4926fa0 R12: ffffe6b00c000000
->>>>>> R13: ffff9bdb453dfd00 R14: 0000000000000000 R15: fffffffffffffffe
->>>>>> FS:  00007f08f04e4740(0000) GS:ffff9be25fcc0000(0000) knlGS:0000000000000000
->>>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>>> CR2: 0000564787a30410 CR3: 000000010d4e2000 CR4: 00000000000006f0
->>>>>> Kernel panic - not syncing: Fatal exception
->>>>>> Kernel Offset: 0x31c00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
->>>>>> ---[ end Kernel panic - not syncing: Fatal exception ]---
->>>>>>
->>>>>> The root cause is that unpoison_memory() tries to check the PG_HWPoison
->>>>>> flags of an uninitialized page. So VM_BUG_ON_PAGE(PagePoisoned(page)) is
->>>>>> triggered.
->>>>>
->>>>> I'm not seeing the call path.  Is this BUG happening via
->>>>>
->>>>> static __always_inline void __ClearPage##uname(struct page *page)    \
->>>>> {                                    \
->>>>>      VM_BUG_ON_PAGE(!Page##uname(page), page);            \
->>>>>      page->page_type |= PG_##lname;                    \
->>>>> }
->>>>>
->>>>> ?
->>>>>
->>>>> If so, where's the callsite?
->>>>
->>>> It is BUG on PF_ANY():
->>>>
->>>> PAGEFLAG(HWPoison, hwpoison, PF_ANY)
->>>>
->>>> #define PF_ANY(page, enforce)    PF_POISONED_CHECK(page)
->>>>
->>>> #define PF_POISONED_CHECK(page) ({                    \
->>>>      VM_BUG_ON_PGFLAGS(PagePoisoned(page), page);        \
->>>>      page; })
->>>>
->>>> #define    PAGE_POISON_PATTERN    -1l
->>>> static inline int PagePoisoned(const struct page *page)
->>>> {
->>>>      return READ_ONCE(page->flags) == PAGE_POISON_PATTERN;
->>>> }
->>>>
->>>> The offlined pages will have page->flags set to PAGE_POISON_PATTERN while pfn is still valid:
->>>>
->>>> offline_pages
->>>>     remove_pfn_range_from_zone
->>>>       page_init_poison
->>>>         memset(page, PAGE_POISON_PATTERN, size);
->>>
->>> Worth noting that this happens after __offline_isolated_pages() marked the covering sections as offline.
->>>
->>> Are we missing a pfn_to_online_page() check somewhere, or are we racing with offlining code that marks the section offline?
->>
->> I was thinking about to use pfn_to_online_page() instead of pfn_to_page() in unpoison_memory() so we can get rid of offlined pages.
->> But there're ZONE_DEVICE pages. They're not-onlined too. And unpoison_memory() should work for them. So we can't simply use
->> pfn_to_online_page() in that. Or am I miss something?
-> 
-> Right, pfn_to_online_page() does not detect ZONE_DEVICE. That has to be handled separately if pfn_to_online_page() would fail.
-> 
-> ... which is what we do in memory_failure():
-> 
-> p = pfn_to_online_page(pfn);
-> if (!p) {
->     if (pfn_valid(pfn)) {
->         pgmap = get_dev_pagemap(pfn, NULL);
->         put_ref_page(pfn, flags);
->         if (pgmap) {
->             ...
->         }
->     }
->     ...
-> }
-
-Yup, this will be a good alternative. But will it be better to simply check PagePoisoned() instead?
-
-Thanks.
-.
-
+> Um, I don't see how this can happen.  If the ea_inode is in use,=0A=
+> i_count will be greater than zero, and hence the inode will never be=0A=
+> go down the rest of the path in inode_lru_inode():=0A=
+> =0A=
+>         if (atomic_read(&inode->i_count) ||=0A=
+>             ...) {=0A=
+>                 list_lru_isolate(lru, &inode->i_lru);=0A=
+>                 spin_unlock(&inode->i_lock);=0A=
+>                 this_cpu_dec(nr_unused);=0A=
+>                 return LRU_REMOVED;=0A=
+>         }=0A=
+=0A=
+Yes, in the function inode_lru_inode (in case of clearing cache), there has=
+ been such inode->i_state check mechanism to avoid double-removing the inod=
+e which is being removed by another process. Unluckily, no such similar ino=
+de->i_state check mechanism in the function iput_final (in case of removing=
+ file), so double-removing inode can still appear.=0A=
+=0A=
+It looks we need to add some inode->i_state check in iput_final() , if we w=
+ant to fix this race condition bug.=
 
