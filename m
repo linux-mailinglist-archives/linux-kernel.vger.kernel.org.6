@@ -1,100 +1,229 @@
-Return-Path: <linux-kernel+bounces-256635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F24EE935155
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:46:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0C00935157
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:48:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FECDB21010
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:46:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63DDE1F226A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7CE41459EA;
-	Thu, 18 Jul 2024 17:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3247C1459E8;
+	Thu, 18 Jul 2024 17:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nj3znlN3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k7YLiS3W"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF79063A;
-	Thu, 18 Jul 2024 17:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE966144D37;
+	Thu, 18 Jul 2024 17:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721324769; cv=none; b=cfZ6t0EcBdwlxFbbT0Qm7ptAmvro7Fkc+6n7ZaaoeWWI0QPJiXbR/Xfhg/VfPicTYjbdoDu4jhczprnZRONjCWPz5RSzW4VZHTNsH641aZAidwV3sFAHGZJ2UWY4F9vUpewCODCUEvVgJ2cdPiFfOpCv6FUeIp+z7thpU6d+0zg=
+	t=1721324883; cv=none; b=P5lyWVSYKQISj4ms60H2YklbJxHgPpJPSMa6cxhVqRVFu57s2u5kXSsBiI3MJ8BpkXcsPy3lYQUm6YGhbtTLwWodFEk2bCPJK3CDoLEG7B+AXDpheA1HTR8s+dN7Kh/nWBhD7lxOjlWmeGEW/GjbuXeioiZsTbcRqAmmxmbM/FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721324769; c=relaxed/simple;
-	bh=FZDUnmMzTHtLAXj0DJWdawnws+McoB3ISL8JL9ZoqBk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qM27iiwuFL6eOh4Ppp77dx9kThvTtHW7cOPhb1CoWsT77V8PcNbzYLaITDTwZC9sVpTfN6OMkByUGZQECfsyWSRlnby0j8WVl9HLPPQaO9cJ7aOHmA+GecW7s1UCpXTBLNYIujv0W7R/9wWWeyC8Xtbn5hYYJWq4EpQzKc5A9YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nj3znlN3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AE0DC116B1;
-	Thu, 18 Jul 2024 17:46:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721324768;
-	bh=FZDUnmMzTHtLAXj0DJWdawnws+McoB3ISL8JL9ZoqBk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Nj3znlN3AMkMwF5rQdgZV+lF2XeAWxMV018XmeSJrCra/irgx1ml+Ts4wL5XHFGDn
-	 IZh75axRhZ4XO6r2EZ01HBw3E/RtbbPg//PY+ffUvFRO+9k5nNT9qxsslUst13h7TL
-	 GmP8K8LH1nvt6u/Lu9zly1GlcC3zTczZ5TGX1mzqjStBvM8EsD1CUjLXM2EkIu0WSp
-	 p24PS0vIPCjL9cUeyWvwiBYToHOD/Tp/XnKFpLuSHvSrFvsEK8jnTYwToZlJ956nlx
-	 ZvDOSyDkG6jG4nE9B+pAPwZMm4Oluk9q8a7KadRnGtFIBm5IltlobcQxQTOf3jtr4T
-	 LGX0zyysQAIqg==
-From: SeongJae Park <sj@kernel.org>
-To: David Gow <davidgow@google.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] execve: Move KUnit tests to tests/ subdirectory
-Date: Thu, 18 Jul 2024 10:46:01 -0700
-Message-Id: <20240718174601.64851-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <CABVgOSmKwPq7JEpHfS6sbOwsR0B-DBDk_JP-ZD9s9ZizvpUjbQ@mail.gmail.com>
-References: 
+	s=arc-20240116; t=1721324883; c=relaxed/simple;
+	bh=3/kqY1TSxTnbSmHQNPbYNycSBGkkf5or3v0kGKJPk/A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y3t/DtM+L+MIFzzp7TIXBUtLCfhAys5nOtmwUIVfaPiVZZcJwsNj1SDeTpWPVQHaG/YGwG1J+UQ5dTm//TpD/DqG9QoUOg/TZoQGXY8BAZCUc0mdbbGxR5fykFMh9nXeloZ17ubFMsYUjA3nRZW3JDnmEyEZDkOLTEQDlsPsB60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k7YLiS3W; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721324882; x=1752860882;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=3/kqY1TSxTnbSmHQNPbYNycSBGkkf5or3v0kGKJPk/A=;
+  b=k7YLiS3Wtef1Iz3/5xydq9gRCljMR4RGAgWjopZk5CY8Mve4QiP9CaX6
+   a6o9GSEF+zqZi80Z2IDdk6yCBaP/qOWnQQQhE54AMYv5mL7SbcFP0/ogM
+   2OZunFR60oUGSqvWo271zUfLHg0yxDl/mBGHebisq9S+bC3dGsKtMVdSJ
+   lohTYC4p/1T6jHqCuHllp8tWBzayICfnZeEL+WrBjYelaPjhtssXibKlP
+   f8Z/0Hzo7UswlK85Lk0FWz2VfbCggRld86Uyk1JCCfFJ8VXJfIeaVcsp9
+   pcQe19UiP7UknqRdOzd89C/aepCmTnagBdQX1evQm91cSfGuHXkSbomun
+   Q==;
+X-CSE-ConnectionGUID: t182dYJ/RUukW739fStsaQ==
+X-CSE-MsgGUID: TAKusAsAQ4uc+hN/0x6DaQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11137"; a="19049623"
+X-IronPort-AV: E=Sophos;i="6.09,218,1716274800"; 
+   d="scan'208";a="19049623"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 10:47:53 -0700
+X-CSE-ConnectionGUID: MwKLsyUNSEuv7AEhvlG7Dw==
+X-CSE-MsgGUID: YT+A57voRxyZJ/kxR8H1tQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,218,1716274800"; 
+   d="scan'208";a="55704720"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 10:47:52 -0700
+Received: from [10.212.127.244] (kliang2-mobl1.ccr.corp.intel.com [10.212.127.244])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 4798920CFED5;
+	Thu, 18 Jul 2024 10:47:49 -0700 (PDT)
+Message-ID: <64030eab-6e95-494a-ab72-bc33792ef723@linux.intel.com>
+Date: Thu, 18 Jul 2024 13:47:47 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/6] perf pmu: Add support for event.cpus files in
+ sysfs
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ James Clark <james.clark@arm.com>, Ravi Bangoria <ravi.bangoria@amd.com>,
+ Dominique Martinet <asmadeus@codewreck.org>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org,
+ Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, ananth.narayan@amd.com,
+ gautham.shenoy@amd.com, kprateek.nayak@amd.com, sandipan.das@amd.com
+References: <20240718003025.1486232-1-irogers@google.com>
+ <20240718003025.1486232-4-irogers@google.com>
+ <92ceb8b5-240a-4715-98db-c73e8e9d3e50@linux.intel.com>
+ <CAP-5=fUfoMZ0HjCNoJe6hgEMi5ciY+LqFjBbLzfiZgO6dioshA@mail.gmail.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <CAP-5=fUfoMZ0HjCNoJe6hgEMi5ciY+LqFjBbLzfiZgO6dioshA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On Thu, 18 Jul 2024 14:04:14 +0800 David Gow <davidgow@google.com> wrote:
 
-> On Thu, 18 Jul 2024 at 05:22, Kees Cook <kees@kernel.org> wrote:
-> >
-> > Move the exec KUnit tests into a separate directory to avoid polluting
-> > the local directory namespace. Additionally update MAINTAINERS for the
-> > new files and mark myself as Maintainer.
-> >
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> > ---
-> > I'll toss this into -next and send it to Linus before -rc1 closes.
-> > ---
+
+On 2024-07-18 11:39 a.m., Ian Rogers wrote:
+> On Thu, Jul 18, 2024 at 7:33 AM Liang, Kan <kan.liang@linux.intel.com> wrote:
+>>
+>>
+>>
+>> On 2024-07-17 8:30 p.m., Ian Rogers wrote:
+>>> If an event file exists in sysfs, check if a event.cpus file exists
+>>> and read a perf_cpu_map from it if it does. This allows particular
+>>> events to have a different set of CPUs compared to the PMU.
+>>>
+>>> One scenario where this could be useful is when a PMU is set up with a
+>>> cpumask/events per SMT thread but some events record for all SMT
+>>> threads. Programming an event on each SMT thread will cause
+>>> unnecessary counters to be programmed and the aggregate value to be
+>>> too large.
+>>
+>> If I understand the scenario correctly, I think the issue should have
+>> been addressed since ICX, with the introduction of  the "SMT-aware
+>> events". Is there a specific event which still has the issue on newer
+>> platforms?
 > 
-> With s/_test/_kunit (once the docs changes are sorted), this looks good.
+> Nothing comes to mind, but it is there on popular machines like Skylake.
+> 
+>>>
+>>> Another scenario where this could be useful if when a PMU has
+>>> historically had a cpumask at the package level, but now newer per
+>>> die, core or CPU information is available.
+>>
+>> The traditional way to support new counters with a different scope is to
+>> add a new PMU.
+>>
+>>>
+>>> Additional context for the motivation is in these patches and
+>>> conversation:
+>>> https://lore.kernel.org/lkml/20240711102436.4432-1-Dhananjay.Ugwekar@amd.com/
+>>
+>> I don't see the advantages of the new event.cpus way.
+>> The aggregation should be the same.
+> 
+> Agreed. My concern is that we may end up with a pattern of
+> <pmu>_per_pkg, <pmu>_per_core, <pmu>_per_cpu, <pmu>_per_l3, etc. just
+> for the sake of the cpumask.
 
-I have no strong opinion, but I agree to David's rationale [1] on preferrence
-of _kunit overall, and would prefer having a consistent and simple rule.
+The cstate PMUs already do so, e.g., cstate_core, cstate_pkg.
 
-[1] https://lore.kernel.org/CABVgOS=B29PcKyhVXtTk47k_BhjSaoxL8eF15fVhzty_0syeSQ@mail.gmail.com
+From another perspective, it discloses the scope information in a PMU
+name. If a user only cares about the information of a package, they just
+need to focus on everything under <pmu>_pkg. Otherwise, they have to go
+through all the events.
 
 > 
-> Reviewed-by: David Gow <davidgow@google.com>
+>> The RAPL counters are free-running counters. So there is no difference
+>> whether grouping or not grouping.
+> 
+> Should the RAPL counters return true for perf_pmu__is_software? In the
+> tool we currently return false and won't allow grouping, these events
+> with other hardware events. The intent in perf_pmu__is_software was to
+> emulate the way the kernel allows/disallows groups - software context
+> events can be in a hardware context but otherwise I don't believe the
+> grouping is allowed.
 
-Reviewed-by: SeongJae Park <sj@kernel.org>
+No, it's not allowed for the RAPL counters.
 
+If the motivation is to find another way to group counters with
+different scope, it may not work.
+
+We once tried to mix the perf_invalid_context PMUs in a group. But it's
+denied.
+https://yhbt.net/lore/all/20150415172856.GA5029@twins.programming.kicks-ass.net/
+
+The event.cpus still faces the same issues.
+
+> 
+>> But it makes the kernel driver complex, since it has to maintain at
+>> least two different cpumasks.
+> 
+> Two drivers each maintaining a cpumask or 1 driver maintaining 2
+> cpumasks, it seems like there is chance for code reuse in both cases.
+> I'm not seeing how it adds to complexity particularly.
+
+Yes, there are some cleanup opportunities for the cpumask/hotplug codes.
+
+We may even abstracts some generic interfaces for pkg or core level PMUs.
+
+Eventually, the complexity/duplication should be able to be reduced.
+
+> 
+>> The tool becomes complex either, since it has to take care of the
+>> per-event CPU override case.
+> 
+> I'm not sure I agree with this. What we need for perf_event_open is a
+> perf_event_attr, we dress these up as evsels which also have the
+> ability to be for >1 CPU or thread. Longer term I think evsels can
+> also have >1 PMU, for the wildcard cases like uncore memory
+> controllers - this would remove the need for resorting evsels except
+> for topdown events which have thrown us a giant bundle of challenges.
+> Anyway, so an evsel is perf_event_attr information paired with CPU
+> information, it makes sense to me that the parser should do this
+> pairing. What's harder in the evsel/evlist setup is trying to fix CPU
+> maps up not in parsing, like with __perf_evlist__propagate_maps where
+> the parsing is trying to leave crumbs around (like system_wide,
+> has_user_cpus, is_pmu_core) so the map propagation works properly.
+> 
+>> The json file must also be updated to add a
+>> new field cpumask.
+> 
+> Yeah, I don't like this as it means we end up putting CPU information
+> into the json that isn't the same for every CPU variant of the same
+> architecture model. Maybe we can have some kind of "scope" enum value
+> in the json and then when the scope differs from the PMU's, core scope
+> vs the PMU's hyperthread scope, then in the tool we can figure out the
+> cpumask from the topology in sysfs. Maybe we should just always use
+> the topology and get rid of cpumask files in sysfs, replacing them
+> with "scope" files. Will Deacon pushed back on having ARM PMUs
+> supporting hot plugging
+> (https://lore.kernel.org/lkml/20240701142222.GA2691@willie-the-truck/)
+> where the main thing hot plugging handler needs to maintain is set the
+> cpumask.
+
+Not just the cpumask but also migrate the context for some PMUs, see
+perf_pmu_migrate_context().
+
+It seems we really need a shared cpumask in the generic code, so the
+drivers don't need to handle the hotplug everywhere. I will think about it.
 
 Thanks,
-SJ
+Kan
 
-[...]
 
