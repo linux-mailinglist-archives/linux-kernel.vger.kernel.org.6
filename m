@@ -1,218 +1,216 @@
-Return-Path: <linux-kernel+bounces-255808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35525934569
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 02:33:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73CB793456F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 02:39:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5840C1C215D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:33:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA4FD1F22353
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CA0D15C9;
-	Thu, 18 Jul 2024 00:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E131878;
+	Thu, 18 Jul 2024 00:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WevXZsmZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r2KwpPmU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5FAB10F2
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 00:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9911FA3;
+	Thu, 18 Jul 2024 00:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721262804; cv=none; b=aOEE8jrRt0KvEjKAESo7GjYno6z/5aTU7Hp7bFJF4nG+a17ud7/mgASfM63WKj1EEKe8oLhn93GS12sFDwflY4nmVsdwnL4jiu5ppWWMwZk3F24r9m63Za6sXTEB7F1xZiUNw6abZ5fW/zQDXxohz6Ux9D2ImPs4gmK9TWpxSHw=
+	t=1721263157; cv=none; b=qiFzmaLcVd4bD9p4ZLkvupI7sPj4x24didiLhhcehAw77+HkABe/CLVD+I/leOjblgGslWXw5XYFKKRl/hd+s/N+OBDL41E4BIHZSEBDb0rvpC/Dh0EN1OFSsd5Jk50iz7GbzHCRH0OaORdKDheB9W3uVda70ibHyIU+18QKzuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721262804; c=relaxed/simple;
-	bh=Rp8c4UkQcNBnTx3QJZMU+cC81PiJjr4tBFbSpiLrR4Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XPVwG2lRBLX/NNEtEaB28MkiM/YM/kti7TGVd1hgPfkRkH6zl5sPEA0r//p4K0Q+n4Fu/bEPj4bCUhv/cxr44i8K2QczFO8ukglkvjkCSgDn8AaYQo2c9JODry3HPx4QhEjS3VTnO1pFt8q+cCY5IsZzHgp3DhYBVIj1Fq/PsKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WevXZsmZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721262801;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u68wgJ63ryVdre9iF5AoFnGzoJg7HXk9rm5FX/Mq98o=;
-	b=WevXZsmZlaHabNK1PuMihJNMdUSZj8LCxX7r/cXM1k96cSANAC2mwIlPP9EmqAQuOskK7n
-	qhelNL5fKiVtAzcobBy3+yO0GLksf/tqv66g6oyqA61lTLqJ75wP/d5I2CAcJ8iA/mFAHz
-	KsXRothSKiwgFh9VwJyIEII+JSWJUEM=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-376-c2PhZGIsNDu6Q6T9TvRdYg-1; Wed, 17 Jul 2024 20:33:20 -0400
-X-MC-Unique: c2PhZGIsNDu6Q6T9TvRdYg-1
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-721d20a0807so243616a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 17:33:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721262799; x=1721867599;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u68wgJ63ryVdre9iF5AoFnGzoJg7HXk9rm5FX/Mq98o=;
-        b=lxpICMGyNkoJzX65Ww9NebnmngP5jAdrm6UrGbHEgUU8OZ52Yy2beDoI7WDj+ZRimD
-         WUQuD+3xEq7tsLdHMcQ7NqvuQo/hx2kWJtE3MxT9RG6OOM7ZdoRbOU2FqWr87PwfNVUN
-         hMC7HEjouPbIacTCf5JbMYmrgATErIgRzoX3ssho47bluE3bHlyJQMSMfDC/C19sSVGD
-         SP5JaMaQsg/pMm/jdtAk1LkuLYpmJpqx65HRSE1WfIUFc2Fc2IpRwZ0Qie8vP6oLTWdz
-         M8bmuM81xBE/06zixUDOaLHhxFRVPWAko3OKMmkvu4tCDXYi3ybSshxISbdtS5RbTtPm
-         VyZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUuVNKGUpj+2btTDMzigU3ndCYDo9Rt8uXMKlfu5JkkFxBSWhZcTHrCBp/ARJtlv8Kt5zRLdl8HsK6RKNzGWxkgkggMg4QwnT4HKdMp
-X-Gm-Message-State: AOJu0YwcsPmN+tQDYcMm3o7sqzvJMyGaQXxNp2iK4+HkFti+9hKk6FYi
-	pMvnNoeGZ/RxUmpIpk2JMxMJElQNsRYKREXDdLJK8kF5+Bss04fPlK7ExPZnf8D1hVXqBG1bmVI
-	WVp3iMLMx5LLZkbHAtJrquVPZhoyvsq7vQYc/Aq30eVoToZ5qWchRJNcjvqaDxDRHjRHW6fZwWY
-	8v/+S5YA+9EQ/thlstL+ac2kTF6ZfqsBURhaXo
-X-Received: by 2002:a17:90b:30ca:b0:2c8:ac1:d8c3 with SMTP id 98e67ed59e1d1-2cb52927e76mr2869703a91.29.1721262799109;
-        Wed, 17 Jul 2024 17:33:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGZO+VU4obCAMlLWVT45xvTrxr3rvTyY+6U4DhssOpvN3TexH/9IeAtdQBJcSbdawQJw1uZ/ZkYQfYlgJK3i/A=
-X-Received: by 2002:a17:90b:30ca:b0:2c8:ac1:d8c3 with SMTP id
- 98e67ed59e1d1-2cb52927e76mr2869692a91.29.1721262798686; Wed, 17 Jul 2024
- 17:33:18 -0700 (PDT)
+	s=arc-20240116; t=1721263157; c=relaxed/simple;
+	bh=q0p1lGORvpOF1Z0/NFbmLqzuOehoaT6QsYiDkqPI4AU=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=WJ1TE1aECMe1SRgLFC8heuEcSo/ztld8YSHzNZN2oEBhnjjBymt+fCBRdHjPVJy1zjns9yrDITbNkcRZjSgDLBLtfl8VZqU/kiGLkuOCacOn5aWCVVtr9gTUk1lrrX7OjF5D7xnTrtfIwNAFbX7d36MxX/9DxFbF9TqxPQC4WkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r2KwpPmU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B2DFC4AF0B;
+	Thu, 18 Jul 2024 00:39:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721263157;
+	bh=q0p1lGORvpOF1Z0/NFbmLqzuOehoaT6QsYiDkqPI4AU=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=r2KwpPmU+W7hAxnlAdOuiRgYgE7yxb6DdPs/gm35QxQogv+05JHUph0GiF/Qw18KJ
+	 yC6nnzjXCf2/ANay177iI2v2cjYdhg05ZZht3uQZ5t+sUJPoM02marz/hKjtwhPF+Q
+	 JquCBIf+WWJfVbmmFry1WI5KkUFRpoIIc0x39TfiqHm/EPcRuRU/HIr/LAcpZIxQSx
+	 CShfdZY1d/2N6jae0YgdsE3iwUJWAmN/tstqV0l7VJlFoLZCv59ZdAbYetIfgotDxF
+	 7/pVXL9wBN11m71YDowNNMoqqeG2BTxJ3k2R96gv0iILYeuDxb8Vqh5rKLk8R0l8tK
+	 I5sl9upWK2o8Q==
+Message-ID: <4cacf090dc56c3ffd15bccd960065769.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1720790333-456232-1-git-send-email-steven.sistare@oracle.com>
- <CACGkMEs9SvtW=Dkg1aU6HuFqTP5eekD1JdR2w377u3iGsOR-Aw@mail.gmail.com>
- <911f018b-c273-4983-90ac-0a8f925ab6e7@oracle.com> <CACGkMEv_yJ6iwOexGGexVt=EEpr2SXHJSLFcH_7g1yh=L-eDgA@mail.gmail.com>
- <bab464f5-a660-4122-886a-c348be3d95fa@oracle.com>
-In-Reply-To: <bab464f5-a660-4122-886a-c348be3d95fa@oracle.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Thu, 18 Jul 2024 08:33:07 +0800
-Message-ID: <CACGkMEtpVOqsJMF1LLNOdTG+_1JBKy6yNbn12_nP=Tw0DeAZvQ@mail.gmail.com>
-Subject: Re: [PATCH V2 0/7] vdpa live update
-To: Steven Sistare <steven.sistare@oracle.com>
-Cc: virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Si-Wei Liu <si-wei.liu@oracle.com>, 
-	Eugenio Perez Martin <eperezma@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Dragos Tatulea <dtatulea@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <e3103f07-ce8a-4c34-af5c-bb271c7ec99a@tuxon.dev>
+References: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com> <20240716103025.1198495-4-claudiu.beznea.uj@bp.renesas.com> <2abcd440664067d95b1ac0e765ad55a3.sboyd@kernel.org> <e3103f07-ce8a-4c34-af5c-bb271c7ec99a@tuxon.dev>
+Subject: Re: [PATCH v2 03/11] clk: renesas: clk-vbattb: Add VBATTB clock driver
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+To: alexandre.belloni@bootlin.com, claudiu beznea <claudiu.beznea@tuxon.dev>, conor+dt@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org, lee@kernel.org, magnus.damm@gmail.com, mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org
+Date: Wed, 17 Jul 2024 17:39:15 -0700
+User-Agent: alot/0.10
 
-On Thu, Jul 18, 2024 at 2:29=E2=80=AFAM Steven Sistare
-<steven.sistare@oracle.com> wrote:
->
-> On 7/16/2024 1:30 AM, Jason Wang wrote:
-> > On Mon, Jul 15, 2024 at 10:29=E2=80=AFPM Steven Sistare
-> > <steven.sistare@oracle.com> wrote:
-> >>
-> >> On 7/14/2024 10:14 PM, Jason Wang wrote:
-> >>> On Fri, Jul 12, 2024 at 9:19=E2=80=AFPM Steve Sistare <steven.sistare=
-@oracle.com> wrote:
-> >>>>
-> >>>> Live update is a technique wherein an application saves its state, e=
-xec's
-> >>>> to an updated version of itself, and restores its state.  Clients of=
- the
-> >>>> application experience a brief suspension of service, on the order o=
-f
-> >>>> 100's of milliseconds, but are otherwise unaffected.
-> >>>>
-> >>>> Define and implement interfaces that allow vdpa devices to be preser=
-ved
-> >>>> across fork or exec, to support live update for applications such as=
- QEMU.
-> >>>> The device must be suspended during the update, but its DMA mappings=
- are
-> >>>> preserved, so the suspension is brief.
-> >>>>
-> >>>> The VHOST_NEW_OWNER ioctl transfers device ownership and pinned memo=
-ry
-> >>>> accounting from one process to another.
-> >>>>
-> >>>> The VHOST_BACKEND_F_NEW_OWNER backend capability indicates that
-> >>>> VHOST_NEW_OWNER is supported.
-> >>>>
-> >>>> The VHOST_IOTLB_REMAP message type updates a DMA mapping with its us=
-erland
-> >>>> address in the new process.
-> >>>>
-> >>>> The VHOST_BACKEND_F_IOTLB_REMAP backend capability indicates that
-> >>>> VHOST_IOTLB_REMAP is supported and required.  Some devices do not
-> >>>> require it, because the userland address of each DMA mapping is disc=
-arded
-> >>>> after being translated to a physical address.
-> >>>>
-> >>>> Here is a pseudo-code sequence for performing live update, based on
-> >>>> suspend + reset because resume is not yet widely available.  The vdp=
-a device
-> >>>> descriptor, fd, remains open across the exec.
-> >>>>
-> >>>>     ioctl(fd, VHOST_VDPA_SUSPEND)
-> >>>>     ioctl(fd, VHOST_VDPA_SET_STATUS, 0)
-> >>>
-> >>> I don't understand why we need a reset after suspend, it looks to me
-> >>> the previous suspend became meaningless.
-> >>
-> >> The suspend guarantees completion of in-progress DMA.  At least, that =
-is
-> >> my interpretation of why that is done for live migration in QEMU, whic=
-h
-> >> also does suspend + reset + re-create.  I am following the live migrat=
-ion
-> >> model.
-> >
-> > Yes, but any reason we need a reset after the suspension?
->
-> Probably not.  I found it cleanest to call reset and let new qemu configu=
-re the
-> device as it always does during startup, rather than altering those code =
-paths
-> to skip the kernel calls.
+Quoting claudiu beznea (2024-07-17 01:31:20)
+> Hi, Stephen,
+>=20
+> On 17.07.2024 01:28, Stephen Boyd wrote:
+> > Quoting Claudiu (2024-07-16 03:30:17)
+> >> diff --git a/drivers/clk/renesas/clk-vbattb.c b/drivers/clk/renesas/cl=
+k-vbattb.c
+> >> new file mode 100644
+> >> index 000000000000..8effe141fc0b
+> >> --- /dev/null
+> >> +++ b/drivers/clk/renesas/clk-vbattb.c
+> >> @@ -0,0 +1,212 @@
+> >> +// SPDX-License-Identifier: GPL-2.0
+> >> +/*
+> >> + * VBATTB clock driver
+> >> + *
+> >> + * Copyright (C) 2024 Renesas Electronics Corp.
+> >> + */
+> >> +
+> >> +#include <linux/cleanup.h>
+> >> +#include <linux/clk.h>
+> >=20
+> > Prefer clk providers to not be clk consumers.
+>=20
+> I added it here to be able to use devm_clk_get_optional() as it was
+> proposed to me in v1 to avoid adding a new binding for bypass and detect =
+if
+> it's needed by checking the input clock name.
+>=20
 
-If we care about the downtime, I think avoiding a reset should be faster.
+Understood.
 
-> So, consider this to be just one of several possible
-> userland algorithms.
->
-> - Steve
+>=20
+> >=20
+> > I also wonder if this is really a mux,=20
+>=20
+> It's a way to determine what type of clock (crystal oscillator or device
+> clock) is connected to RTXIN/RTXOUT pins of the module
+> (the module block diagram at [1]) based on the clock name. Depending on t=
+he
+> type of the clock connected to RTXIN/RTXOUT we need to select the XC or
+> XBYP as input for the mux at [1].
+>=20
+> [1] https://gcdnb.pbrd.co/images/QYsCvhfQlX6n.png
 
-Thanks
+That diagram shows a mux block, so at least something in there is a mux.
+From what I can tell the binding uses clock-names to describe the mux.
+What I'd like to avoid is using clk_get() to determine how to configure
+the mux. That's because clk_get() is a clk consumer API, and because we
+want clk providers to be able to register clks without making sure that
+the entire parent chain has been registered first. Eventually, we'd like
+clk_get() to probe defer if the clk is an orphan. Having clk providers
+use clk_get() breaks that pretty quickly.
 
->
-> >>>>     exec
-> >>>>
-> >>>>     ioctl(fd, VHOST_NEW_OWNER)
-> >>>>
-> >>>>     issue ioctls to re-create vrings
-> >>>>
-> >>>>     if VHOST_BACKEND_F_IOTLB_REMAP
-> >>>
-> >>> So the idea is for a device that is using a virtual address, it
-> >>> doesn't need VHOST_BACKEND_F_IOTLB_REMAP at all?
-> >>
-> >> Actually the reverse: if the device translates virtual to physical whe=
-n
-> >> the mappings are created, and discards the virtual, then VHOST_IOTLB_R=
-EMAP
-> >> is not needed.
-> >
-> > Ok.
-> >
-> >>
-> >>>>         foreach dma mapping
-> >>>>             write(fd, {VHOST_IOTLB_REMAP, new_addr})
-> >>>>
-> >>>>     ioctl(fd, VHOST_VDPA_SET_STATUS,
-> >>>>               ACKNOWLEDGE | DRIVER | FEATURES_OK | DRIVER_OK)
-> >>>
-> >>>   From API level, this seems to be asymmetric as we have suspending b=
-ut
-> >>> not resuming?
-> >>
-> >> Again, I am just following the path taken by live migration.
-> >> I will be happy to use resume when the devices and QEMU support it.
-> >> The decision to use reset vs resume should not affect the definition
-> >> and use of VHOST_NEW_OWNER and VHOST_IOTLB_REMAP.
-> >>
-> >> - Steve
-> >
-> > Thanks
-> >
->
+>=20
+>=20
+> > and either assigned-clock-parents should be used,=20
+> > or the clk_ops should have an init routine that looks at
+> > which parent is present by determining the index and then use that to
+> > set the mux. The framework can take care of failing to set the other
+> > parent when it isn't present.
+>=20
+>=20
+> On the board, at any moment, it will be only one clock as input to the
+> VBATTB clock (either crystal oscillator or a clock device). If I'm getting
+> you correctly, this will involve describing both clocks in some scenarios.
+>=20
+> E.g. if want to use crystal osc, I can use this DT description:
+>=20
+> vbattclk: clock-controller@1c {
+>         compatible =3D "renesas,r9a08g045-vbattb-clk";
+>         reg =3D <0 0x1c 0 0x10>;
+>         clocks =3D <&vbattb_xtal>;
+>         clock-names =3D "xin";
+>         #clock-cells =3D <0>;
+>         status =3D "disabled";
+> };
+>=20
+> vbattb_xtal: vbattb-xtal {
+>         compatible =3D "fixed-clock";
+>         #clock-cells =3D <0>;
+>         clock-frequency =3D <32768>;
+> };
+>=20
+> If external clock device is to be used, I should describe a fake clock to=
+o:
+>=20
+> vbattclk: clock-controller@1c {
+>         compatible =3D "renesas,r9a08g045-vbattb-clk";
+>         reg =3D <0 0x1c 0 0x10>;
+>         clocks =3D <&vbattb_xtal>, <&ext_clk>;
 
+Is vbattb_xtal the fake clk? If so, I'd expect this to be
+
+	clocks =3D <0>, <&ext_clk>;
+
+so that we don't have a useless clk node.
+
+>         clock-names =3D "xin", "clkin";
+>         #clock-cells =3D <0>;
+>         status =3D "disabled";
+> };
+>=20
+> vbattb_xtal: vbattb-xtal {
+>         compatible =3D "fixed-clock";
+>         #clock-cells =3D <0>;
+>         clock-frequency =3D <0>;
+> };
+>=20
+> ext_clk: ext-clk {
+>         compatible =3D "fixed-clock";
+>         #clock-cells =3D <0>;
+>         clock-frequency =3D <32768>;
+> };
+>=20
+> Is this what you are suggesting?
+>=20
+
+Sort of. Ignoring the problem with the subnode for the clk driver, I
+don't really like having clock-names that don't match the hardware pin
+names. From the diagram you provided, it looks like clock-names should
+be "bclk" and "rtxin" for the bus clock and the rtxin signal. Then the
+clock-cells should be "1" instead of "0", and the mux should be one of
+those provided clks and "xc" and "xbyp" should be the other two. If that
+was done, then assigned-clocks could be used to assign the parent of the
+mux.
+
+#define VBATTBCLK          0
+#define VBATTB_XBYP        1
+#define VBATTB_XC          2
+
+    vbattb: vbattb@1005c000 {
+        compatible =3D "renesas,r9a08g045-vbattb";
+        reg =3D <0x1005c000 0x1000>;
+        ranges =3D <0 0 0x1005c000 0 0x1000>;
+        interrupts =3D <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+        interrupt-names =3D "tampdi";
+        clocks =3D <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&ext_clk>;
+        clock-names =3D "bclk", "rtxin";
+        power-domains =3D <&cpg>;
+        resets =3D <&cpg R9A08G045_VBAT_BRESETN>;
+        #clock-cells =3D <1>;
+        assigned-clocks =3D <&vbattb VBATTBCLK>;
+	assigned-clock-parents =3D <&vbattb VBATTB_XBYP>;
+        renesas,vbattb-load-nanofarads =3D <12500>;
+    };
+
+One last thing that I don't really understand is why this needs to be a
+clk provider. In the diagram, the RTC is also part of vbattb, so it
+looks odd to have this node be a clk provider with #clock-cells at all.
+Is it the case that if the rtxin pin is connected, you mux that over,
+and if the pin is disconnected you mux over the internal oscillator? I'm
+really wondering why a clk provider is implemented at all. Why not just
+hit the registers directly from the RTC driver depending on a
+devm_clk_get_optional() call?
 
