@@ -1,169 +1,361 @@
-Return-Path: <linux-kernel+bounces-256563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBCAF93503D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:56:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F861935045
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 077091C20E7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:56:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 321C01C20E7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D24144D19;
-	Thu, 18 Jul 2024 15:56:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75ABA144D1E;
+	Thu, 18 Jul 2024 15:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A/We4EpV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EJT+bzOi"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C53B13B7AF;
-	Thu, 18 Jul 2024 15:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E6113B7AF
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 15:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721318169; cv=none; b=Pw8aEJiend8/JT/QiV0JJEj3dE+ki2NKGKN1B3KLmLGiZPMHm2ajgpxKYxJR+EwjN3E0N9ayUsnfTmdq07BOPnTCfYwDJPno/zXMTEKAfYdqaXXKgMWayLj9f9CXTJtMu3mKDDcgMGV+/Jt+juEGON+4dwJvSoLL8WV4YOZKfak=
+	t=1721318260; cv=none; b=e4mah33vgKowSH8LvrSgVC78LeKh+H2uz2hh4G60xMeEPj8PJkjUZeh28DjjWbRA+52iutvkj8ks/ZcwxHji/qRmAu8VEo0PYqk4Q+Zp/FfPxLk7KD7emFJpp31gDsd4kBV/KRjJ9JL5Rzbr35Xiy8J26E1JKNrBlXvUeUhVjas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721318169; c=relaxed/simple;
-	bh=wFUzftDcteRmA2NyKmVxglS13LnS1utkda/P2FIp9y4=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=oBtEueVtk9o8/lKgRIM/UF38XX/9CIAn+WLUz8dHtOGFtnUmrZZ7ws2hjVqBzFgiKlSSPoAwo+6T69GeAhyzdyQV2AvXI1LVWi1upM8pV798CHE7VJ107+IzQ4zWgxhaeq/c7shjkawIeLBM1ri525KGmO9QkbcgOGigrTT4ZIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A/We4EpV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30B90C116B1;
-	Thu, 18 Jul 2024 15:56:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721318169;
-	bh=wFUzftDcteRmA2NyKmVxglS13LnS1utkda/P2FIp9y4=;
-	h=Date:From:To:Subject:From;
-	b=A/We4EpVLkmBtNutObcnOePbkR1hlJ25HJp7KdxvYECL6I796uRDuyixuchZ9xAdP
-	 s81JdowqonElXN3CO3FFGBTkSyqQoxmGAseD43XboRPlseBxcOWHv0spuDx569RCHi
-	 tRQtGSA9rupij0leRbfIYGo0hmuGSo0VleOPJyIwdUi8Qp523L1u2BVK6N97RiwIz2
-	 i79fgH0Wuow94uOy1k1K+ksl5j1hx1u7i7Kt6t1JprdUV5yooXp9xEmjd3IkcLj38V
-	 t7if0aqAMlAdrSPqGDSyxX2nRTwsdYWq+UJEUdku1uWjyYf14o02pXEKObEsfKRs9V
-	 WjFzCrcWSI4dw==
-Date: Thu, 18 Jul 2024 17:56:03 +0200
-From: Helge Deller <deller@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Subject: [GIT PULL] fbdev fixes and cleanups for v6.11-rc1
-Message-ID: <Zpk7E3ZBlh2UdXy2@carbonx1>
+	s=arc-20240116; t=1721318260; c=relaxed/simple;
+	bh=sl2oiMooUMCsWoNkqPbfasyYma43SDKzi9XVVqT4ees=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f7Z7wFhQRXXdgVWU2+Igtp8DzG7NrmMLra8eCC/79gGdD0/AWquJK2Fjfn+DXeiShrQgInEliTR6n3WmXhuGOGi5eF06QVBNm8H730AYP7gl9Tyd9O3okU367AMn7fLpVjjL4fYas4FqizhsDoHP3TUNW8AEYoUDIMGx7bhzsCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EJT+bzOi; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fc587361b6so9965825ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 08:57:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721318258; x=1721923058; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7ofpb1acQLPPapQsKk29WrwkJyQ4QlooroHX/LncNk8=;
+        b=EJT+bzOiWP70WKN3gC4bPeLk02n5vAYhwC5mbaW53hq5/cU1QgeZw4/aRPUKDBXpOF
+         zC4jByOKr2n1FM9zhxO0r7DfStQHBlAW/V5HKWpHdtWtZJU5Rx6iDWpmH83Hpfyelsci
+         HzrZ7TNcaKJCOAqHkrHMEgJhpGmnmJI5fN8lOHYa29gqyq0HW7J3VpFO1dstjnrHS3zB
+         2vzPf2p4lUAGQlou9R2uQ/G7SkDaPZ0dYkxTzMzGK6IsH5mhfN3mLG9PiQN0FmOiej0I
+         CvyxJtpq2/cqpj/P6Y8Z9EtCEXnCGIUy4QRTVWGW4OYx8TlZbEsCRtphZ+0ggybggNS+
+         fmew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721318258; x=1721923058;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7ofpb1acQLPPapQsKk29WrwkJyQ4QlooroHX/LncNk8=;
+        b=ubdKoqNV1a6IeG3nVEg0LvB3mOipsIT6nyWunyd1SztskCcOeP93Xa14S2EP66NMKa
+         F0NiDni4EJikRCnA9chItPgk95rzVU7MU7HAxOFNRzd6oagFn0WjgBCs1UgjM/EAaX2k
+         L5ElvsWF+XxQLyFepBIqD8mwczTs78jFwUStlaGt5X4dC2nk++lPqRrFmHD33cXCyOxI
+         Cyj1UV7haoqclorLcyDlwpChKGjHFXNdJt+BiWFm66M9n4MDT9mRD8PkA6yh4OK72ohJ
+         nVnCRcpodEArQIGashYlaqpykpcKBmoH9CDSSYLnt6QpVbh/Q746Rxd+mH6lG0BvcSgu
+         pndg==
+X-Forwarded-Encrypted: i=1; AJvYcCXEZC2Cj0QT/sBAaEF5HlW70utl2WNqcXmRhn6K+0/3m6gX9vV9VlbND+ssaaE+GPSoj16YHktCVeSoNl+2Ne03q77TMSPBCgHEdVvG
+X-Gm-Message-State: AOJu0YxLctcPDdyX+lz3RZRqO8RIyvAhHH8lYnzq/wBXTEjbkfRcxSY5
+	S61a2T7YSE25lpyMXoDO/dH2AqE4bVgoJVAOO6bBoy0ujv5nJSPn5PE7yT2YUCReNR9CMR76gsA
+	OuOarLNVqavyLMrg0OhQc16gaKBgNtjtdFiOP8A==
+X-Google-Smtp-Source: AGHT+IGbdfGXPO7hQ91Vsor93o1jCzZy+QtCw+WCkF/HJmGy/VuDHRrY6xUrccW6dwxFPcKAOkKuD45Jqge2sKBipkU=
+X-Received: by 2002:a17:90a:514f:b0:2c9:7e9d:8424 with SMTP id
+ 98e67ed59e1d1-2cb52931aa8mr4312618a91.30.1721318257799; Thu, 18 Jul 2024
+ 08:57:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+References: <20240626060724.28862-1-quic_jinlmao@quicinc.com> <20240626060724.28862-3-quic_jinlmao@quicinc.com>
+In-Reply-To: <20240626060724.28862-3-quic_jinlmao@quicinc.com>
+From: Mike Leach <mike.leach@linaro.org>
+Date: Thu, 18 Jul 2024 16:57:26 +0100
+Message-ID: <CAJ9a7Vi8yE9mEbP3pPoE4xXxgomiqz6N_vz35PmFEH2tYcv=xw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] coresight: Add support to get preferred id for
+ system trace sources
+To: Mao Jinlong <quic_jinlmao@quicinc.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@arm.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, coresight@lists.linaro.org, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	Tingwei Zhang <quic_tingweiz@quicinc.com>, Yuanfang Zhang <quic_yuanfang@quicinc.com>, 
+	Tao Zhang <quic_taozha@quicinc.com>, songchai <quic_songchai@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+Hi,
 
-please pull a bunch of usual cleanups for the fbdev drivers for kernel 6.11-rc1.
+On Wed, 26 Jun 2024 at 07:07, Mao Jinlong <quic_jinlmao@quicinc.com> wrote:
+>
+> Dynamic trace id was introduced in coresight subsystem, so trace id is
+> allocated dynamically. However, some hardware ATB source has static trace
+> id and it cannot be changed via software programming. For such source,
+> it can call coresight_get_source_traceid to get the fixed trace id from
+> device node and pass id to coresight_trace_id_get_system_id to reserve
+> the id.
+>
+> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
+> ---
+>  .../hwtracing/coresight/coresight-platform.c  | 25 +++++++++++++
+>  drivers/hwtracing/coresight/coresight-stm.c   |  2 +-
+>  drivers/hwtracing/coresight/coresight-tpda.c  |  2 +-
+>  .../hwtracing/coresight/coresight-trace-id.c  | 35 ++++++++++++-------
+>  .../hwtracing/coresight/coresight-trace-id.h  | 11 +++++-
+>  include/linux/coresight.h                     |  1 +
+>  6 files changed, 61 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/hwtracing/coresight/coresight-platform.c b/drivers/hwtracing/coresight/coresight-platform.c
+> index 9d550f5697fa..df169f3f367e 100644
+> --- a/drivers/hwtracing/coresight/coresight-platform.c
+> +++ b/drivers/hwtracing/coresight/coresight-platform.c
+> @@ -183,6 +183,17 @@ static int of_coresight_get_cpu(struct device *dev)
+>         return cpu;
+>  }
+>
+> +/*
+> + * of_coresight_get_trace_id: Get the atid of a source device.
+> + *
+> + * Returns 0 on success.
+> + */
+> +static int of_coresight_get_trace_id(struct device *dev, u32 *id)
 
-Thanks!
-Helge
+name this "of_coresight_get_static_trace_id"
 
-----------------------------------------------------------------
-The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
+> +{
+> +
+> +       return of_property_read_u32(dev->of_node, "arm,trace-id", id);
 
-  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
+should be "arm,static-trace-id" for consistency.
 
-are available in the Git repository at:
+> +}
+> +
+>  /*
+>   * of_coresight_parse_endpoint : Parse the given output endpoint @ep
+>   * and fill the connection information in @pdata->out_conns
+> @@ -315,6 +326,11 @@ static inline int of_coresight_get_cpu(struct device *dev)
+>  {
+>         return -ENODEV;
+>  }
+> +
+> +static inline int of_coresight_get_trace_id(struct device *dev, u32 *id)
+> +{
+> +       return -ENODEV;
+> +}
+>  #endif
+>
+>  #ifdef CONFIG_ACPI
+> @@ -794,6 +810,15 @@ int coresight_get_cpu(struct device *dev)
+>  }
+>  EXPORT_SYMBOL_GPL(coresight_get_cpu);
+>
+> +int coresight_get_source_traceid(struct device *dev, u32 *id)
 
-  http://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git tags/fbdev-for-6.11-rc1
+This should be coresight_get_static_traceid.
 
-for you to fetch changes up to 8b5ea9029b03efda74292c57e0377a98ed0b7434:
+> +{
+> +       if (!is_of_node(dev->fwnode))
+> +               return -EINVAL;
+> +
+> +       return of_coresight_get_trace_id(dev, id);
+> +}
+> +EXPORT_SYMBOL_GPL(coresight_get_source_traceid);
+> +
+>  struct coresight_platform_data *
+>  coresight_get_platform_data(struct device *dev)
+>  {
+> diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
+> index e1c62820dfda..34fab2ce9a76 100644
+> --- a/drivers/hwtracing/coresight/coresight-stm.c
+> +++ b/drivers/hwtracing/coresight/coresight-stm.c
+> @@ -901,7 +901,7 @@ static int __stm_probe(struct device *dev, struct resource *res)
+>                 goto stm_unregister;
+>         }
+>
+> -       trace_id = coresight_trace_id_get_system_id();
+> +       trace_id = coresight_trace_id_get_system_id(TRACE_ID_ANY);
 
-  fbdev: viafb: Make I2C terminology more inclusive (2024-07-11 12:07:48 +0200)
+implement a coresight_trace_id_get_static_system_id() function and
+drop this change
 
-----------------------------------------------------------------
-fbdev fixes and cleanups for 6.11-rc1:
+>         if (trace_id < 0) {
+>                 ret = trace_id;
+>                 goto cs_unregister;
+> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/hwtracing/coresight/coresight-tpda.c
+> index 7739bc7adc44..46161cadb9e5 100644
+> --- a/drivers/hwtracing/coresight/coresight-tpda.c
+> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
+> @@ -251,7 +251,7 @@ static int tpda_init_default_data(struct tpda_drvdata *drvdata)
+>          * same trace-id. When TPDA does packetization, different
+>          * port will have unique channel number for decoding.
+>          */
+> -       atid = coresight_trace_id_get_system_id();
+> +       atid = coresight_trace_id_get_system_id(TRACE_ID_ANY);
 
-- Detect VGA compatibility from VESA attributes [Thomas Zimmermann]
-- Make I2C terminology more inclusive in smscufx and viafb [Easwar Hariharan]
-- Add lots of missing MODULE_DESCRIPTION() macros [Jeff Johnson]
-- Logo code cleanups [Geert Uytterhoeven]
-- Minor fixes by Chen Ni, Kuninori Morimoto, Uwe Kleine-König and Christophe Jaillett
+and here
 
-----------------------------------------------------------------
-Chen Ni (1):
-      fbdev: omap2: Return clk_prepare_enable to transfer the error
+>         if (atid < 0)
+>                 return atid;
+>
+> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.c b/drivers/hwtracing/coresight/coresight-trace-id.c
+> index af5b4ef59cea..59194f60362c 100644
+> --- a/drivers/hwtracing/coresight/coresight-trace-id.c
+> +++ b/drivers/hwtracing/coresight/coresight-trace-id.c
+> @@ -75,21 +75,26 @@ static int coresight_trace_id_find_odd_id(struct coresight_trace_id_map *id_map)
+>   * Allocate new ID and set in use
+>   *
+>   * if @preferred_id is a valid id then try to use that value if available.
+> - * if @preferred_id is not valid and @prefer_odd_id is true, try for odd id.
+> + * if TRACE_ID_WANT_PREFERRED is set, @preferred_id must be free, otherwise return
+> + * error -EINVAL.
+> + * if @preferred_id is not valid and TRACE_ID_WANT_ODD is true, try for odd id.
+>   *
+>   * Otherwise allocate next available ID.
+>   */
+>  static int coresight_trace_id_alloc_new_id(struct coresight_trace_id_map *id_map,
+> -                                          int preferred_id, bool prefer_odd_id)
+> +                          int preferred_id, unsigned int flags)
+>  {
+>         int id = 0;
+>
+>         /* for backwards compatibility, cpu IDs may use preferred value */
+> -       if (IS_VALID_CS_TRACE_ID(preferred_id) &&
+> -           !test_bit(preferred_id, id_map->used_ids)) {
+> -               id = preferred_id;
+> -               goto trace_id_allocated;
+> -       } else if (prefer_odd_id) {
+> +       if (IS_VALID_CS_TRACE_ID(preferred_id)) {
+> +               if (!test_bit(preferred_id, id_map->used_ids)) {
+> +                       id = preferred_id;
+> +                       goto trace_id_allocated;
+> +               } else if (WARN((flags & TRACE_ID_WANT_PREFERRED), "Trace ID %d is used.\n",
+> +                                       preferred_id))
+> +                       return -EINVAL;
+> +       } else if (flags & TRACE_ID_WANT_ODD) {
+>         /* may use odd ids to avoid preferred legacy cpu IDs */
+>                 id = coresight_trace_id_find_odd_id(id_map);
+>                 if (id)
+> @@ -175,7 +180,7 @@ static int coresight_trace_id_map_get_cpu_id(int cpu, struct coresight_trace_id_
+>          */
+>         id = coresight_trace_id_alloc_new_id(id_map,
+>                                              CORESIGHT_LEGACY_CPU_TRACE_ID(cpu),
+> -                                            false);
+> +                                            TRACE_ID_ANY);
+>         if (!IS_VALID_CS_TRACE_ID(id))
+>                 goto get_cpu_id_out_unlock;
+>
+> @@ -222,14 +227,20 @@ static void coresight_trace_id_map_put_cpu_id(int cpu, struct coresight_trace_id
+>         DUMP_ID_MAP(id_map);
+>  }
+>
+> -static int coresight_trace_id_map_get_system_id(struct coresight_trace_id_map *id_map)
+> +static int coresight_trace_id_map_get_system_id(struct coresight_trace_id_map *id_map,
+> +                               int preferred_id)
 
-Christophe JAILLET (1):
-      fbdev: mmp: Constify struct mmp_overlay_ops
+Add a trace_id flags parameter here and call in with flags already set
 
-Easwar Hariharan (2):
-      fbdev: smscufx: Make I2C terminology more inclusive
-      fbdev: viafb: Make I2C terminology more inclusive
+>  {
+>         unsigned long flags;
+>         int id;
+> +       unsigned int traceid_flags = 0;
+>
+>         spin_lock_irqsave(&id_map_lock, flags);
+> +
+>         /* prefer odd IDs for system components to avoid legacy CPU IDS */
+> -       id = coresight_trace_id_alloc_new_id(id_map, 0, true);
+> +       traceid_flags = TRACE_ID_WANT_ODD;
+> +       traceid_flags |= preferred_id > 0 ? TRACE_ID_WANT_PREFERRED : 0;
+> +
 
-Geert Uytterhoeven (2):
-      video/logo: Make logo data const again
-      video/logo: Remove linux_serial_image comments
+move the flags calculations to the calling functions
 
-Jeff Johnson (11):
-      fbdev: matroxfb: add missing MODULE_DESCRIPTION() macros
-      fbdev: viafb: add missing MODULE_DESCRIPTION() macro
-      fbdev: kyro: add missing MODULE_DESCRIPTION() macro
-      fbdev: goldfishfb: add missing MODULE_DESCRIPTION() macro
-      fbdev: macmodes: add missing MODULE_DESCRIPTION() macro
-      fbdev: vfb: add missing MODULE_DESCRIPTION() macro
-      fbdev: offb: add missing MODULE_DESCRIPTION() macro
-      fbdev: c2p_planar: add missing MODULE_DESCRIPTION() macro
-      fbdev: amifb: add missing MODULE_DESCRIPTION() macro
-      video: console: add missing MODULE_DESCRIPTION() macros
-      video: agp: add remaining missing MODULE_DESCRIPTION() macros
+> +       id = coresight_trace_id_alloc_new_id(id_map, preferred_id, traceid_flags);
+>         spin_unlock_irqrestore(&id_map_lock, flags);
+>
+>         DUMP_ID(id);
+> @@ -269,9 +280,9 @@ int coresight_trace_id_read_cpu_id(int cpu)
+>  }
+>  EXPORT_SYMBOL_GPL(coresight_trace_id_read_cpu_id);
+>
+> -int coresight_trace_id_get_system_id(void)
+> +int coresight_trace_id_get_system_id(int id)
+>  {
+> -       return coresight_trace_id_map_get_system_id(&id_map_default);
 
-Kuninori Morimoto (2):
-      fbdev: omapdss: use for_each_endpoint_of_node()
-      fbdev: omapfb: use of_graph_get_remote_port()
+drop the change to this function header and the call becomes
+trace_id_map_get_system_id(&id_map_default, 0, TRACE_ID_PREFER_ODD)
 
-Thomas Zimmermann (1):
-      fbdev: vesafb: Detect VGA compatibility from screen info's VESA attributes
+> +       return coresight_trace_id_map_get_system_id(&id_map_default, id);
+>  }
+>  EXPORT_SYMBOL_GPL(coresight_trace_id_get_system_id);
+>
 
-Uwe Kleine-König (1):
-      fbdev: Drop explicit initialization of struct i2c_device_id::driver_data to 0
+Add in a  coresight_trace_id_get_system_static_id(int trace_id) API
+function and call
+trace_id_map_get_system_id(&id_map_default, trace_id, TRACE_ID_REQ_STATIC)
 
- drivers/char/agp/ali-agp.c                         |  1 +
- drivers/char/agp/alpha-agp.c                       |  1 +
- drivers/char/agp/amd-k7-agp.c                      |  1 +
- drivers/char/agp/ati-agp.c                         |  1 +
- drivers/char/agp/efficeon-agp.c                    |  1 +
- drivers/char/agp/nvidia-agp.c                      |  1 +
- drivers/char/agp/parisc-agp.c                      |  1 +
- drivers/char/agp/sworks-agp.c                      |  1 +
- drivers/video/console/mdacon.c                     |  1 +
- drivers/video/console/newport_con.c                |  1 +
- drivers/video/console/sticon.c                     |  1 +
- drivers/video/console/vgacon.c                     |  1 +
- drivers/video/fbdev/amifb.c                        |  1 +
- drivers/video/fbdev/c2p_planar.c                   |  1 +
- drivers/video/fbdev/goldfishfb.c                   |  1 +
- drivers/video/fbdev/kyro/fbdev.c                   |  1 +
- drivers/video/fbdev/macmodes.c                     |  1 +
- drivers/video/fbdev/matrox/matroxfb_DAC1064.c      |  1 +
- drivers/video/fbdev/matrox/matroxfb_Ti3026.c       |  1 +
- drivers/video/fbdev/matrox/matroxfb_accel.c        |  1 +
- drivers/video/fbdev/matrox/matroxfb_maven.c        |  2 +-
- drivers/video/fbdev/mmp/hw/mmp_ctrl.c              |  2 +-
- drivers/video/fbdev/offb.c                         |  1 +
- drivers/video/fbdev/omap2/omapfb/dss/dss-of.c      | 15 +-------------
- .../fbdev/omap2/omapfb/dss/omapdss-boot-init.c     |  3 +--
- drivers/video/fbdev/omap2/omapfb/dss/venc.c        |  4 +---
- drivers/video/fbdev/smscufx.c                      |  4 ++--
- drivers/video/fbdev/ssd1307fb.c                    |  8 ++++----
- drivers/video/fbdev/vesafb.c                       |  2 +-
- drivers/video/fbdev/vfb.c                          |  1 +
- drivers/video/fbdev/via/chip.h                     |  8 ++++----
- drivers/video/fbdev/via/dvi.c                      | 24 +++++++++++-----------
- drivers/video/fbdev/via/lcd.c                      |  6 +++---
- drivers/video/fbdev/via/via_aux.h                  |  2 +-
- drivers/video/fbdev/via/via_i2c.c                  | 12 +++++------
- drivers/video/fbdev/via/viafbdev.c                 |  1 +
- drivers/video/fbdev/via/vt1636.c                   |  6 +++---
- drivers/video/logo/pnmtologo.c                     |  4 ++--
- include/linux/linux_logo.h                         |  3 ---
- include/linux/screen_info.h                        | 10 +++++++++
- include/video/mmp_disp.h                           |  4 ++--
- 41 files changed, 78 insertions(+), 64 deletions(-)
+> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.h b/drivers/hwtracing/coresight/coresight-trace-id.h
+> index 3797777d367e..a236cf87c169 100644
+> --- a/drivers/hwtracing/coresight/coresight-trace-id.h
+> +++ b/drivers/hwtracing/coresight/coresight-trace-id.h
+> @@ -61,6 +61,12 @@ struct coresight_trace_id_map {
+>         DECLARE_BITMAP(pend_rel_ids, CORESIGHT_TRACE_IDS_MAX);
+>  };
+>
+> +enum trace_id_flags {
+> +       TRACE_ID_ANY = 0x0,
+> +       TRACE_ID_WANT_ODD = 0x1,
+TRACE_ID_PREFER_ODD
+
+> +       TRACE_ID_WANT_PREFERRED = 0x2,
+
+TRACE_ID_REQ_STATIC
+
+> +};
+
+These flags can move to the coresight-trace-id.c file.
+
+>  /* Allocate and release IDs for a single default trace ID map */
+>
+>  /**
+> @@ -118,9 +124,12 @@ int coresight_trace_id_read_cpu_id(int cpu);
+>   *
+>   * Used to allocate IDs for system trace sources such as STM.
+>   *
+> + * @id: Preferred id value. If id is TRACE_ID_ANY, get a free id from id map.
+> + * If id is greater than TRACE_ID_ANY, get a preferred id.
+> + *
+>   * return: Trace ID or -EINVAL if allocation is impossible.
+>   */
+> -int coresight_trace_id_get_system_id(void);
+> +int coresight_trace_id_get_system_id(int id);
+>
+>  /**
+>   * Release an allocated system trace ID.
+> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+> index f09ace92176e..0599303be326 100644
+> --- a/include/linux/coresight.h
+> +++ b/include/linux/coresight.h
+> @@ -643,6 +643,7 @@ void coresight_relaxed_write64(struct coresight_device *csdev,
+>  void coresight_write64(struct coresight_device *csdev, u64 val, u32 offset);
+>
+>  extern int coresight_get_cpu(struct device *dev);
+> +extern int coresight_get_source_traceid(struct device *dev, u32 *id);
+>
+>  struct coresight_platform_data *coresight_get_platform_data(struct device *dev);
+>  struct coresight_connection *
+> --
+> 2.41.0
+>
+
+Regards
+
+Mike
+
+-- 
+Mike Leach
+Principal Engineer, ARM Ltd.
+Manchester Design Centre. UK
 
