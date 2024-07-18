@@ -1,129 +1,120 @@
-Return-Path: <linux-kernel+bounces-256445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14B3C934E96
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:54:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0F79934E99
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:56:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3E2AB21E37
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:54:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 594231F225B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF24D13EFF3;
-	Thu, 18 Jul 2024 13:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104EE13FD84;
+	Thu, 18 Jul 2024 13:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l8L4PziH"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OfHdyYKq"
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7A19457;
-	Thu, 18 Jul 2024 13:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4D913DDCE
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 13:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721310884; cv=none; b=XmUl0tK++G1JBOoDd7XogwxBMURqfawqAaSY9wy7yKgMluTVgn8QmcdjQFNJJQm3MVZkONqLXRnj3/yU+dnXhRtt7Pywo+5jEcl4/j4XCY8FaHIy39TSjLISetsYvniaKTi9EcF7duKmq4u1Tzcl6qc+Ydmfor0JRa7HTSRysQg=
+	t=1721310969; cv=none; b=FssTEYjtLIUmvuU+Qm0efmYM5Xte6ZB9I6KNj+050dqZ8KfOxJjvpKtphIbTDD2NPi/2/aC+OYZX6YRh5vrOg+nGgs9XaiUOM4S7iRDkmceHkWZ7zi6NUj7nM02xrnUh+jDW5kSA+B8AnTnEhD47CECsC6XcwYEGQYEKZU/MfFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721310884; c=relaxed/simple;
-	bh=ZOYEvzhgph1M/BP0ZuDtdq5mjqFGiR8wTi5Zc6s+bHM=;
+	s=arc-20240116; t=1721310969; c=relaxed/simple;
+	bh=kiAtcefpFbn8MafkCqnU2MkhxG+KwWmc6iZ6+xlp1nM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tExez2QvvvsOLjIxoR4TiEIRRPQQAZWkD0JPrr3ChRe5FEHez5/JMDi1SQ6IXYuoXsurGvzH9OjjhKEU9sfTMjBfNUMgbPe8IOQalug22tibwEC9m3sb+19zJjuxjjVHaKLeRxfH8v40sCsL6joNjWRlb0bJnIQr6N2X5iqF34U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l8L4PziH; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fc60c3ead4so6256725ad.0;
-        Thu, 18 Jul 2024 06:54:42 -0700 (PDT)
+	 To:Cc:Content-Type; b=jDANaSEcG5ywxsnl6i2S2zhG2DPqCctksJV4Ux0mnjk8F2jsKxSLGfU2tgu3+Z016kvtGWP6YRcutF5vy92owazpiIlwhrta9mzTikcN40YcdM0QN0GmWoj00cLjvUahIN5VT1QPjEfPkjJQEADs7xmaOTSuEsUUnEzrVassvR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OfHdyYKq; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-825a23c5e4cso55818241.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 06:56:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721310882; x=1721915682; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5zV2MPH5gSmcOC/Ol+e5BTBsjovoDd4as4GAddrNN+Q=;
-        b=l8L4PziHRZvHh1DoZCRF1gDOlMutTrXzld89YWqSkhADZvgZ8u2d9WskFIlOdkjYk8
-         7S6GxEp5x8OYD+mv88a23A5Y5tkpFqVutYwfFnvSXnr2FpWqn98PqWOhrrSNt2IWe3oT
-         K9eDr/BCV4uavSaXldojDwi7ISAjVAsN6QJ0HEpZ8GF6ygnYhDmbEXHSsh0vBKf+xtRe
-         vcjKMFqHLcQjNv+ttdt+zBqp5RfBQL/4JsZ2r79slA+dE98IuXhAdhigyeqJzVcWCwe8
-         Dpd9NqHkEO7b7uGLPelTHHdRD66noR3sko5qi8sbnOaYRG6D4cvku1ywAiNAndZ4vN6q
-         yydg==
+        d=linaro.org; s=google; t=1721310965; x=1721915765; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hjaqbuLagF0JEEpk29ZLJev6JqAlNKRQML8PETlv7eA=;
+        b=OfHdyYKq7o7lqK/nLHAGVDdXH7M/OJqFFzo98Lzrur11bYi1qyKa3Xo6F53GQSqIOn
+         1gljjfKi3GOXIgdzqofKIcp8MF2SadnUZurJU3ca1VCfVtfzLrHS4n0JTW5c6yDfY/CR
+         Mxn7Cw4NMJalariRzZ+ILcOMTKIKsk4sv3ETDHrbHq38e7dFij/t3yis33JPIkILRfv4
+         f+9NnDNebTXY/HiHMvYvD6XjVT8+S2li4WETnunAhB+UaTqGteMv4MSXZx4EqC9VuETi
+         1MoL8z9iUXOeCxVrrYDVQEbxXuSxn7fl1ggOFQ9RQp/86UBbZpoul0rvPfQ7J8c5joLj
+         pQUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721310882; x=1721915682;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5zV2MPH5gSmcOC/Ol+e5BTBsjovoDd4as4GAddrNN+Q=;
-        b=iW1uQw1eFs2WmldPbvs+GWNRYVTQTPxumDqzsNq+lEzlZFzYr71rU/NgwxV12c2ijW
-         PqKJ+UvsayzDM7ulquh/FHGb8eJTnmhJKN3AH5LpdZkcaradUrizzzNUpmxy8HKt8Wj6
-         aOAyFLFLlQt38g1YFLcIvTp9KwAcc7MxW7YAKlcBOycsqZvcXOdPnuVRR6GCsju6dCgF
-         ryibCqbJxrYLvnvSclNkenqmQcauLvMGU3wVC90bZPIfJn0+U9GzyMOxHPq7OJeG59zp
-         yCr4Md1W6wmu4JmOCD7mNizYZGbe+8AyPZojszhTb6pZzDsNk9UTBqd+7kgoEtetBPjc
-         XeLg==
-X-Forwarded-Encrypted: i=1; AJvYcCV75oYs91vqN4xpy5I4l6t8sx+CJytz6TjWZFwNK8tqxbV2wGwL1CWQ9U5ldu/M6PoifGnL/MqSxnFFiR+obR5Dwiv0xOJKiVSxxr3kU356cRiCUhpqEGXxkunPQg1B0kXm5THB
-X-Gm-Message-State: AOJu0YxK0I/6Ns+bxAv6IgvusYOzYW8DoCFUv0/y9ynGtpDUhKm9VZuX
-	PZLN7ykGzQYiPPmQYlQXAI1jn2mDjmH0Dt73N83qtyytYgAivhVT/D/7VmD3ZUR2f66LiOkLrwT
-	FzQoiDWPM3mh6oQZTAZU5aShELsg=
-X-Google-Smtp-Source: AGHT+IFI4cYLODpNXKiLgPsSh/NS7hTFY9BWhgG3KU0S/egbzJ01L6bxoqfo3h8scGyT3KhacGUdNeBT9XdG3UGpK6o=
-X-Received: by 2002:a17:90a:fe81:b0:2c9:69cc:3a6f with SMTP id
- 98e67ed59e1d1-2cb527f5861mr3697496a91.31.1721310881910; Thu, 18 Jul 2024
- 06:54:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721310965; x=1721915765;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hjaqbuLagF0JEEpk29ZLJev6JqAlNKRQML8PETlv7eA=;
+        b=fNH4VsX0vlQm20vc71Q/CwDzTCrUn8JR+KeIyC70lgBFdVU5EaYIfvQQKU4X9lTc6Q
+         EQicZUgW4q4UN4/qQ+KVX55qaXvYcy/0HGg/dsctYP7R9a/4N8LXyc8xq1c9TRk1HCrm
+         +XwWzazRyKfaWeBR/jiklAlY9ypAvxZ4KsbnDGQwtzfnqzurITflhihOHHl+Vq7axeQf
+         ctGw1QCpzvUN/n+PXz9umwb0XyHAO3+bya41TobFc8+nZarSelYalf6G5DmEQgSz+hjZ
+         dbVd7aUGeNYgjPXFbEzODVHY2DRBOwjHet1tEDntUdu5kWuRFajsHioXv+Bd5i78c6H8
+         2yPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXCDZxAab/PaLW811X3vfeISPAk3gATquHHjbc4chDpaEhUj0YxodfkT/8IqWbtYD392nJZaR5d39JEo+zboKyMDl9XTdHEK269/irH
+X-Gm-Message-State: AOJu0Yx9CZ5E0YydGUufPe2sEVyz0g3QauCtj1QQKyTIhi9a+i100wBc
+	LzXfj/Gmo1yiv4U0OeRmTByNWr/BR1Ujp7oLX3+lKpT0ABRcHPtmpFGgt9ANR43O7Iw1aw2EmxQ
+	eAnDY2q+1vUSU/Zke5aLaJG7YArlTWMNWwyeKeg==
+X-Google-Smtp-Source: AGHT+IEBao5ItMP4QyT2LAfmrmibbMJ/4flzNcciYnrIbz6h5/cn5rBOA5b/EI/enk/7jAbX+4iFkPp6JDuYiX+Ou7I=
+X-Received: by 2002:a05:6102:2b83:b0:48c:44c4:75bb with SMTP id
+ ada2fe7eead31-491598fda1bmr5399521137.21.1721310964320; Thu, 18 Jul 2024
+ 06:56:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240718131329.756742-1-make24@iscas.ac.cn>
-In-Reply-To: <20240718131329.756742-1-make24@iscas.ac.cn>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 18 Jul 2024 09:54:30 -0400
-Message-ID: <CADnq5_Mr97=TBi0pO95tVNqMZOja4_CU=JzdmPMjcG+xXad1MA@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/radeon: fix null pointer dereference in radeon_add_common_modes
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
-	airlied@gmail.com, daniel@ffwll.ch, airlied@linux.ie, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20240718125545.2238857-1-amit.pundir@linaro.org> <qitt2j5hw6pax7yekdooutxebhkznhdv3aafnhkysr5fjcbmd7@xqbp7h3ld4gs>
+In-Reply-To: <qitt2j5hw6pax7yekdooutxebhkznhdv3aafnhkysr5fjcbmd7@xqbp7h3ld4gs>
+From: Amit Pundir <amit.pundir@linaro.org>
+Date: Thu, 18 Jul 2024 19:25:28 +0530
+Message-ID: <CAMi1Hd1wzvzStEv2zoNocvYBkJDis27vzCDcBtMruQQ5TdOkDw@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: qcom: sm8550-hdk: add the Wifi node
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	linux-arm-msm <linux-arm-msm@vger.kernel.org>, dt <devicetree@vger.kernel.org>, 
+	lkml <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Applied.  Thanks!
+On Thu, 18 Jul 2024 at 18:36, Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> On Thu, Jul 18, 2024 at 06:25:45PM GMT, Amit Pundir wrote:
+> > Describe the ath12k WLAN on-board the WCN7850 module present on the
+> > board.
+> >
+> > Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+> > ---
+> > v2: Changes suggested by Neil
+>
+> Which changes?
 
-Alex
+Neil suggested a few changes to enable 'bt-enable-gpios' in
+sm8550-hdk, now that the hci_qca driver uses the power sequencer for
+wcn7850 https://lore.kernel.org/lkml/d3416be5-b97f-4db6-a779-9c436e41dd72@linaro.org/
 
-On Thu, Jul 18, 2024 at 9:13=E2=80=AFAM Ma Ke <make24@iscas.ac.cn> wrote:
+Similar to this sm8650-qrd change
+https://lore.kernel.org/all/20240709-hci_qca_refactor-v3-6-5f48ca001fed@linaro.org/
+
 >
-> In radeon_add_common_modes(), the return value of drm_cvt_mode() is
-> assigned to mode, which will lead to a possible NULL pointer dereference
-> on failure of drm_cvt_mode(). Add a check to avoid npd.
+> >
+> > v1: Kanged verbatim from 490812872449 ("arm64: dts: qcom: sm8550-qrd: add the Wifi node").
+> > Link: https://lore.kernel.org/lkml/20240702091655.278974-1-amit.pundir@linaro.org/T/#u
+> >
+> >  arch/arm64/boot/dts/qcom/sm8550-hdk.dts | 113 +++++++++++++++++++++---
+> >  1 file changed, 101 insertions(+), 12 deletions(-)
+> >
 >
-> Cc: stable@vger.kernel.org
-> Fixes: d50ba256b5f1 ("drm/kms: start adding command line interface using =
-fb.")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
-> Changes in v2:
-> - added a blank line;
-> - added Cc line.
-> ---
->  drivers/gpu/drm/radeon/radeon_connectors.c | 3 +++
->  1 file changed, 3 insertions(+)
 >
-> diff --git a/drivers/gpu/drm/radeon/radeon_connectors.c b/drivers/gpu/drm=
-/radeon/radeon_connectors.c
-> index b84b58926106..37c56c16af8d 100644
-> --- a/drivers/gpu/drm/radeon/radeon_connectors.c
-> +++ b/drivers/gpu/drm/radeon/radeon_connectors.c
-> @@ -520,6 +520,9 @@ static void radeon_add_common_modes(struct drm_encode=
-r *encoder, struct drm_conn
->                         continue;
->
->                 mode =3D drm_cvt_mode(dev, common_modes[i].w, common_mode=
-s[i].h, 60, false, false, false);
-> +               if (!mode)
-> +                       continue;
-> +
->                 drm_mode_probed_add(connector, mode);
->         }
->  }
 > --
-> 2.25.1
->
+> With best wishes
+> Dmitry
 
