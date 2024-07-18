@@ -1,120 +1,201 @@
-Return-Path: <linux-kernel+bounces-256446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F79934E99
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:56:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7624E934E9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 594231F225B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:56:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4DF2B20E9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104EE13FD84;
-	Thu, 18 Jul 2024 13:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6991420DF;
+	Thu, 18 Jul 2024 13:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OfHdyYKq"
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="aIyDMbHA"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4D913DDCE
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 13:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771C213E88B
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 13:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721310969; cv=none; b=FssTEYjtLIUmvuU+Qm0efmYM5Xte6ZB9I6KNj+050dqZ8KfOxJjvpKtphIbTDD2NPi/2/aC+OYZX6YRh5vrOg+nGgs9XaiUOM4S7iRDkmceHkWZ7zi6NUj7nM02xrnUh+jDW5kSA+B8AnTnEhD47CECsC6XcwYEGQYEKZU/MfFo=
+	t=1721310978; cv=none; b=P+MfRfR8TntwAjkyErPu4WEHKH6DF5JZODLucJpdYWRMQX36sOxrcQs9xk4LGh1nFE+aJFXuMSpuZjK6USfLyAnrnKfQiaqjTELK/AtwD+suNF3FXfFBurnG2gH34Mz/rjyHoLrnGHVFuTh0vRNb9AtdL9zDkV92HZB9FZRPvMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721310969; c=relaxed/simple;
-	bh=kiAtcefpFbn8MafkCqnU2MkhxG+KwWmc6iZ6+xlp1nM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jDANaSEcG5ywxsnl6i2S2zhG2DPqCctksJV4Ux0mnjk8F2jsKxSLGfU2tgu3+Z016kvtGWP6YRcutF5vy92owazpiIlwhrta9mzTikcN40YcdM0QN0GmWoj00cLjvUahIN5VT1QPjEfPkjJQEADs7xmaOTSuEsUUnEzrVassvR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OfHdyYKq; arc=none smtp.client-ip=209.85.222.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-825a23c5e4cso55818241.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 06:56:06 -0700 (PDT)
+	s=arc-20240116; t=1721310978; c=relaxed/simple;
+	bh=FN9lQnWaRRboDIggzQ7mgKydoQ5EpPRR91UZWwuXo8s=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qAwYD3yljDr1SU5RwW1CkAvrqCEWE0t01l1MI8MpJejXrOY8bA1p7MnTXypys+NqrSXL1DFPZUaPOpVdcoVh6YwPmHseuxhTZcNMBDlmjpFxm/9Sy52lWgYaYGeNqicwW2lg2gzfKyukDAIxvjeS6OOL/jgW/yLUxF2F84bsuT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=aIyDMbHA; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-44caaf77c7eso1652051cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 06:56:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721310965; x=1721915765; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hjaqbuLagF0JEEpk29ZLJev6JqAlNKRQML8PETlv7eA=;
-        b=OfHdyYKq7o7lqK/nLHAGVDdXH7M/OJqFFzo98Lzrur11bYi1qyKa3Xo6F53GQSqIOn
-         1gljjfKi3GOXIgdzqofKIcp8MF2SadnUZurJU3ca1VCfVtfzLrHS4n0JTW5c6yDfY/CR
-         Mxn7Cw4NMJalariRzZ+ILcOMTKIKsk4sv3ETDHrbHq38e7dFij/t3yis33JPIkILRfv4
-         f+9NnDNebTXY/HiHMvYvD6XjVT8+S2li4WETnunAhB+UaTqGteMv4MSXZx4EqC9VuETi
-         1MoL8z9iUXOeCxVrrYDVQEbxXuSxn7fl1ggOFQ9RQp/86UBbZpoul0rvPfQ7J8c5joLj
-         pQUQ==
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1721310974; x=1721915774; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/9PgN2CWlwkAlyMyd9I5yTG/RODQPuF8I+fsHHELrjs=;
+        b=aIyDMbHAc8DDvgSgmApo/q09ppsEl2CMHhu6BXJEOPHhYaooCZrAQYEcLH7t4Cgi2p
+         HcoRSxhoLbP+1HXNezk8QENTVjxnq2NUzkhJGt2TwObQiUSvOyLEU2QIN5SbbKNhgV+x
+         bPxhekQIR4qOmZIi5SYD0kx+TjT8IWwMzvkWwWwvLsgqODqYWGpcpiKR6KoWitvK6C+S
+         utGZ+eZb07gMwvLbrNDHyuH+njazwfpjHsdI+EOGV4AqdAJKvdg+8X0Ojuv/eu16i19x
+         eThl7PuFzdAOk7KCnlwOiutydnBnEYE/VNyr1dGS4Sn3IfLS7q1injJB+8X44cjWug3U
+         eUfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721310965; x=1721915765;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hjaqbuLagF0JEEpk29ZLJev6JqAlNKRQML8PETlv7eA=;
-        b=fNH4VsX0vlQm20vc71Q/CwDzTCrUn8JR+KeIyC70lgBFdVU5EaYIfvQQKU4X9lTc6Q
-         EQicZUgW4q4UN4/qQ+KVX55qaXvYcy/0HGg/dsctYP7R9a/4N8LXyc8xq1c9TRk1HCrm
-         +XwWzazRyKfaWeBR/jiklAlY9ypAvxZ4KsbnDGQwtzfnqzurITflhihOHHl+Vq7axeQf
-         ctGw1QCpzvUN/n+PXz9umwb0XyHAO3+bya41TobFc8+nZarSelYalf6G5DmEQgSz+hjZ
-         dbVd7aUGeNYgjPXFbEzODVHY2DRBOwjHet1tEDntUdu5kWuRFajsHioXv+Bd5i78c6H8
-         2yPA==
-X-Forwarded-Encrypted: i=1; AJvYcCXCDZxAab/PaLW811X3vfeISPAk3gATquHHjbc4chDpaEhUj0YxodfkT/8IqWbtYD392nJZaR5d39JEo+zboKyMDl9XTdHEK269/irH
-X-Gm-Message-State: AOJu0Yx9CZ5E0YydGUufPe2sEVyz0g3QauCtj1QQKyTIhi9a+i100wBc
-	LzXfj/Gmo1yiv4U0OeRmTByNWr/BR1Ujp7oLX3+lKpT0ABRcHPtmpFGgt9ANR43O7Iw1aw2EmxQ
-	eAnDY2q+1vUSU/Zke5aLaJG7YArlTWMNWwyeKeg==
-X-Google-Smtp-Source: AGHT+IEBao5ItMP4QyT2LAfmrmibbMJ/4flzNcciYnrIbz6h5/cn5rBOA5b/EI/enk/7jAbX+4iFkPp6JDuYiX+Ou7I=
-X-Received: by 2002:a05:6102:2b83:b0:48c:44c4:75bb with SMTP id
- ada2fe7eead31-491598fda1bmr5399521137.21.1721310964320; Thu, 18 Jul 2024
- 06:56:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721310974; x=1721915774;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/9PgN2CWlwkAlyMyd9I5yTG/RODQPuF8I+fsHHELrjs=;
+        b=hu5/6P6clBVKq4FktBIhmGwd82s1tg/v2raKPZtYpRObgmplmaaN55TUJqVhfrLuqz
+         Ro6X0vdesQmQvoSHl6CMlSC1YaIRYTTJD4zFeDISYSpM7gh6453axR+Du8YzUeGsRKKG
+         x8dsl8wqthN7H9FB8Z5BszMIqAfdHBftHYNYmBtgBmIHP18JL5UiNejUH5YOff84dK52
+         hNaP1R5Wk1063nkBxAcI8k5kHk/peoX8ZJXZMVUXDyeq9+1Z7ttCAMi0nmmbJzpjMFab
+         R1hPrRTaDf5JUalnThndRYZ9Cq/tOnIw4bnvn1p754xF71Jg+ZoEVbpOds43n5NMFHA/
+         /DOg==
+X-Forwarded-Encrypted: i=1; AJvYcCVecwwHjMNRJOBLmXtkCZ3t2vVUnq49zZdmbRJ8EHszH8T37sAUnFzpLnoNMol+yHHNduzrKPb6of3h4jaC/C7mENZQpZuqrI1OpLc3
+X-Gm-Message-State: AOJu0Ywde3c8lwPVaj81wppB2bLxixBI7ZwRhBq37QcNfEEELZUlnJPP
+	syad62GuzX4E06QkcDyV2cXmBa+wC62mhVcpQHJH54u+1IPh/8GTfRenXoEkHqSBNSbNif5DYKy
+	i
+X-Google-Smtp-Source: AGHT+IH5MTKib9696k0vgo2HoX8hTJTXldqZABkNwBgCpERpaxYd5V6iPU264qEzfgN6WERm7Mn/6g==
+X-Received: by 2002:ac8:7d95:0:b0:447:ede4:c6fe with SMTP id d75a77b69052e-44f9696658emr11297251cf.9.1721310974303;
+        Thu, 18 Jul 2024 06:56:14 -0700 (PDT)
+Received: from nicolas-tpx395.lan ([2606:6d00:15:6720::7a9])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44f96acd157sm2521331cf.95.2024.07.18.06.56.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jul 2024 06:56:13 -0700 (PDT)
+Message-ID: <7113029e2e192d43523a1ea5dae041fb53ae5948.camel@ndufresne.ca>
+Subject: Re: [PATCH v4 1/2] media: videodev2: Add flags to unconditionnaly
+ enumerate pixels formats
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, Jacopo Mondi
+	 <jacopo.mondi@ideasonboard.com>
+Cc: mchehab@kernel.org, ezequiel@vanguardiasur.com.ar,
+ hverkuil-cisco@xs4all.nl,  linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-rockchip@lists.infradead.org,
+ kernel@collabora.com
+Date: Thu, 18 Jul 2024 09:56:12 -0400
+In-Reply-To: <1faa7098-b108-480e-ae4b-ed25e0020e51@collabora.com>
+References: <20240717131430.159727-1-benjamin.gaignard@collabora.com>
+	 <20240717131430.159727-2-benjamin.gaignard@collabora.com>
+	 <2kbxr3hkjbcnaqescxmlcerziixg72icqpug6wa25eeggy2pnj@vqmxe4ojcwml>
+	 <dfc292f8-0014-4bf4-9429-31f729a176cd@collabora.com>
+	 <ok2a4ubzka6rhzyj2c5op73ij7pw35g6e75whc2jjget62fatx@zka2ewyt3kfv>
+	 <c8358d79bd51a9bfa5116b33ae5e7766b95d344d.camel@ndufresne.ca>
+	 <1faa7098-b108-480e-ae4b-ed25e0020e51@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240718125545.2238857-1-amit.pundir@linaro.org> <qitt2j5hw6pax7yekdooutxebhkznhdv3aafnhkysr5fjcbmd7@xqbp7h3ld4gs>
-In-Reply-To: <qitt2j5hw6pax7yekdooutxebhkznhdv3aafnhkysr5fjcbmd7@xqbp7h3ld4gs>
-From: Amit Pundir <amit.pundir@linaro.org>
-Date: Thu, 18 Jul 2024 19:25:28 +0530
-Message-ID: <CAMi1Hd1wzvzStEv2zoNocvYBkJDis27vzCDcBtMruQQ5TdOkDw@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: qcom: sm8550-hdk: add the Wifi node
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	linux-arm-msm <linux-arm-msm@vger.kernel.org>, dt <devicetree@vger.kernel.org>, 
-	lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 18 Jul 2024 at 18:36, Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Thu, Jul 18, 2024 at 06:25:45PM GMT, Amit Pundir wrote:
-> > Describe the ath12k WLAN on-board the WCN7850 module present on the
-> > board.
-> >
-> > Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
-> > ---
-> > v2: Changes suggested by Neil
->
-> Which changes?
+Hi,
 
-Neil suggested a few changes to enable 'bt-enable-gpios' in
-sm8550-hdk, now that the hci_qca driver uses the power sequencer for
-wcn7850 https://lore.kernel.org/lkml/d3416be5-b97f-4db6-a779-9c436e41dd72@linaro.org/
+Le jeudi 18 juillet 2024 =C3=A0 09:04 +0200, Benjamin Gaignard a =C3=A9crit=
+=C2=A0:
+> Le 17/07/2024 =C3=A0 19:50, Nicolas Dufresne a =C3=A9crit=C2=A0:
+> >=20
 
-Similar to this sm8650-qrd change
-https://lore.kernel.org/all/20240709-hci_qca_refactor-v3-6-5f48ca001fed@linaro.org/
+[...]
 
->
-> >
-> > v1: Kanged verbatim from 490812872449 ("arm64: dts: qcom: sm8550-qrd: add the Wifi node").
-> > Link: https://lore.kernel.org/lkml/20240702091655.278974-1-amit.pundir@linaro.org/T/#u
-> >
-> >  arch/arm64/boot/dts/qcom/sm8550-hdk.dts | 113 +++++++++++++++++++++---
-> >  1 file changed, 101 insertions(+), 12 deletions(-)
-> >
->
->
-> --
-> With best wishes
-> Dmitry
+> > > > > > @@ -1569,6 +1569,7 @@ static int v4l_enum_fmt(const struct v4l2=
+_ioctl_ops *ops,
+> > > > > >    	int ret =3D check_fmt(file, p->type);
+> > > > > >    	u32 mbus_code;
+> > > > > >    	u32 cap_mask;
+> > > > > > +	u32 flags;
+> > > > > >=20
+> > > > > >    	if (ret)
+> > > > > >    		return ret;
+> > > > > > @@ -1578,8 +1579,10 @@ static int v4l_enum_fmt(const struct v4l=
+2_ioctl_ops *ops,
+> > > > > >    		p->mbus_code =3D 0;
+> > > > > >=20
+> > > > > >    	mbus_code =3D p->mbus_code;
+> > > > > > +	flags =3D p->flags & V4L2_FMT_FLAG_ENUM_ALL_FORMATS;
+> > > > > >    	memset_after(p, 0, type);
+> > > > > >    	p->mbus_code =3D mbus_code;
+> > > > > > +	p->flags =3D flags;
+> > > > > Won't this set V4L2_FMT_FLAG_ENUM_ALL_FORMATS (if present) in the
+> > > > > flags returned to userspace ? Shouldn't be drivers to set
+> > > > > V4L2_FMT_FLAG_ALL_FORMATS instead ?
+> > > > memset_after zeroed flags field so we need this to send V4L2_FMT_FL=
+AG_ENUM_ALL_FORMATS
+> > > > flag to drivers. Return it to userspace is a side effect but I don'=
+t that is problem
+> > > > since it set it anyway.
+> > > >=20
+> > > Ok, if the expectation is that the flag is preserved through the ioct=
+l
+> > > call, this is fine with me
+> > I might be missing something other similar features are explicitly adve=
+rtised by
+> > drivers. This way, the generic layer can keep or clear the flag based o=
+f if its
+> > supported. The fact the flag persist the ioctl() or not endup having a =
+useful
+> > semantic.
+> >=20
+> > Could we do the same?
+>=20
+> It is the only flag set by userspace when calling the ioctl(), all others
+> are set by the drivers.
+> I can clean it from the ioctl() structure after driver call but that won'=
+t change anything.
+
+This does not answer my question. In other similar feature, we have an
+**internal** flag set by drivers to tell the framework that such feature is
+abled. Using that, the framework can keep or remove that flag based on if i=
+ts
+supported or not. This way, userspace have a clue if the driver do have thi=
+s
+support or if the returned result (in that case) is just a subset matching =
+the
+configuration. We don't seem to have done the same level of effort here.
+
+Nicolas
+
+>=20
+> >=20
+> > > Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> > >=20
+> > > > > >    	switch (p->type) {
+> > > > > >    	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
+> > > > > > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linu=
+x/videodev2.h
+> > > > > > index fe6b67e83751..b6a5da79ba21 100644
+> > > > > > --- a/include/uapi/linux/videodev2.h
+> > > > > > +++ b/include/uapi/linux/videodev2.h
+> > > > > > @@ -886,6 +886,8 @@ struct v4l2_fmtdesc {
+> > > > > >    #define V4L2_FMT_FLAG_CSC_HSV_ENC		V4L2_FMT_FLAG_CSC_YCBCR_E=
+NC
+> > > > > >    #define V4L2_FMT_FLAG_CSC_QUANTIZATION		0x0100
+> > > > > >    #define V4L2_FMT_FLAG_META_LINE_BASED		0x0200
+> > > > > > +#define V4L2_FMT_FLAG_ENUM_ALL_FORMATS		0x0400
+> > > > > > +#define V4L2_FMT_FLAG_ALL_FORMATS		0x0800
+> > > > > >=20
+> > > > > >    	/* Frame Size and frame rate enumeration */
+> > > > > >    /*
+> > > > > > --
+> > > > > > 2.43.0
+> > > > > >=20
+> > > > > >=20
+> > > > > _______________________________________________
+> > > > > Kernel mailing list -- kernel@mailman.collabora.com
+> > > > > To unsubscribe send an email to kernel-leave@mailman.collabora.co=
+m
+> > > > > This list is managed by https://mailman.collabora.com
+> >=20
+> _______________________________________________
+> Kernel mailing list -- kernel@mailman.collabora.com
+> To unsubscribe send an email to kernel-leave@mailman.collabora.com
+> This list is managed by https://mailman.collabora.com
+
 
