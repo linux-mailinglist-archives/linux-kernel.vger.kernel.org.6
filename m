@@ -1,125 +1,221 @@
-Return-Path: <linux-kernel+bounces-256533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AC50934FDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:22:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30415934FDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3C611F21B78
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:22:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99F071F21AAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFFC14431B;
-	Thu, 18 Jul 2024 15:22:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C95D1442E8;
+	Thu, 18 Jul 2024 15:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Icqp/Iyh"
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="CEx86e5W"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2981412C474;
-	Thu, 18 Jul 2024 15:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F1D746E
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 15:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721316140; cv=none; b=aIpQxN9ZZpwSizE7yLouLdIOz7SFwomOAR8EBW2M+F30FFNYONamr4LRfaN2zKb9xqI8Oej05Ax345rE5v5EAXOdpGRvQBQpJi0zF87TAoVt9dswUf1+A7xqwy22KcICHB4ntoPLZY885FGdDOuL1iMgK1Kkiv1oyxNAdykU+Jg=
+	t=1721316196; cv=none; b=SKHJHFvtGAgvdLMUNnvs4Q6H8zWpniYsgMKSa4Q78pA9DEg10ROLivkr5R/5HfdTox401wTOkpDpv+uzeXy+tWte5yx7RIEyTDa5ZCU2xGo8INwtvK4By0LZ4FMX58NLfL6/riyCjR6A2MpTDPMhzEFSpq3c8PVrTzxmqvQE7wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721316140; c=relaxed/simple;
-	bh=4lViKQDcMUuTapEpF71jKFarDXy3YYlrOWSUcoL487M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZqpCeWyLNt3CPVu+SfvG+HGdgko8h/dAHyv5bWClykyn3hPjX1GfklKz9B1ayMbwVeWTkfN88ACk/Pw+gGy6m+XzYoDuH6iRWPH9EMiSsPhiZoSEWLM8wgFcqX7pAEUGOWt9muFN9hfe7BdDx/5dIvOwpTuXCTmb8A+7+qFdO0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Icqp/Iyh; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7037c464792so477966a34.2;
-        Thu, 18 Jul 2024 08:22:18 -0700 (PDT)
+	s=arc-20240116; t=1721316196; c=relaxed/simple;
+	bh=oQnAg/XHgmHTaoNbQThZNL+nThyW0lkh2E2uvTmBiGM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=urHWxzmAL5Zot61OO7vIblaeZ4+Uo7KsqCbYJhFcjcx95hDdQBhFQkAfarEBLMEmKB6a9H5zALtNWaOHgzHczNoJaw6PDf02PiWEQ3bt5692rCoEpGbqNFch/ELse9czZrF/8YZZAqVuVvwv86HFXmO6rdSlyGxGJVEWhPSCeB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=CEx86e5W; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2cb585375f6so320134a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 08:23:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721316138; x=1721920938; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YQJnSHtMQef7mtUVuS0yssb981i3hZaGT8EB0Q1Pc4E=;
-        b=Icqp/IyhzQZwGpHCFB6coEatGpGZNIUXsDYZqJZlyy5GBXjtE7dSj+bI4QLFbnLE/C
-         Coh9TQygsEGBJijIH3bdetssKoVyttYtZi0l1S+b3iJwcz2rUOgA+OiphjRGbvX6FEPN
-         HBO3yYvohM0ItwRvYyqbzASqDe1mlgiAxMPqBxyDyFwQD/01HII2/g3MGU2TfHhfylSZ
-         +i9vYtEpOZ+rwamsCGaxdGObDMHBatQqCyjU6coQ2Itwgs0kBunMUVD6abt3NQUw2L44
-         Cx66EaVugZMAjYaIReRaQtzaOaRfbnjm0YaPckcYy/n25riJo2hzXDwo6//bwdpUOdt1
-         aTPg==
+        d=sifive.com; s=google; t=1721316194; x=1721920994; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hlSS9tFK0jyY2/f4QS94AO70MXLW8ulRLZCmaIHwXQA=;
+        b=CEx86e5WibVjYiMHWXvj/5ZhcngmJvfCXfdb4Rz7Tu1MeQo+aa2zEvGmZ0S7iUox/9
+         VaNrZxcX2rGCu8Y59KnZ6jhHdtSklHLqrKdquVvPag/FatSUFmvxVDTXanlkLvp9fS0O
+         U4ze9qQx8IJi2usrQYnQQDpEsg78j3tDuHTokYpeB6LmftxsxWJ9z3Pu3EHKxmlPV5oK
+         fRZP5qNYMQv7MiOAxXEy/nIpHSdCfwyfrdcm0Ps4+dW09bfpbr7guJwuPLDlEQummYIW
+         2cXHG8hj+XV+sKU978wjB2YIJIejrKgKICQqtTqTlwEYQp+/TEmBdelsaQOJEil57x3O
+         FfSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721316138; x=1721920938;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YQJnSHtMQef7mtUVuS0yssb981i3hZaGT8EB0Q1Pc4E=;
-        b=ctrsWulzqxf2RFaqg8MMN33DoUac/S2hhTq9jZOwLFZ7PNL2FcKzoYVNtE6rG4yoIH
-         WW/qPvNakwYMgP9I++z0fbX0DHBDnibQ0x5wIklBJXwaVXY96qd+uuc/Rw2oe1gD+dzE
-         BU+Odmf8by7waY71054+mal8fvfK+LVtWF7awdjG3BVqpkhkWSEt2Gfc5WgZPb3VFZtd
-         nlieA/m83oOZDqlRSo8tEXMHFp8QQEOpSM14oDprlorg02d0jXOK1MwK4MOVWdb0bdHs
-         mDLR73omjiDpF2WUclxiQWSxgKC/Z338DZCH0aH0B1WdEG11yfeYzyq+XqoDoky6WicJ
-         DfgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUoqwPQjHCvDfVIZHEMxlyNSUksI8IMmrbDQ/iIsJPJ4JpYFYyEWPsm4Io+oZKaixhE+OTmbAYuqoUEtgEN+WxgrZS2BpyXv6egpGM87C80jBN+V2nN0RFmgwOaRue2FaKyWJuX
-X-Gm-Message-State: AOJu0YzVGDZZnvKpZp9yWe4i9TVDUeIFvQCZdPfXoHJX3N/5e0WbXpN2
-	WR9SprOTmL1K2c8nW1HUt+Rx+adaqXr5UHL6HykpkeMjUxm4+B8N5OI9mFaE3wICn7SHvXdsWBR
-	W810l2gD+QETW+e5xGuZp+XLDFb8=
-X-Google-Smtp-Source: AGHT+IEiIcjze2sqfT1hps5RiIp13M1xmJPESEzqUtct0AXla+FiYHuqmHRs8F5ZJiFygKOSV/25hAiBvLnBodoW7Ms=
-X-Received: by 2002:a05:6830:908:b0:708:c1e7:912a with SMTP id
- 46e09a7af769-708e37889b9mr5937867a34.8.1721316138141; Thu, 18 Jul 2024
- 08:22:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721316194; x=1721920994;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hlSS9tFK0jyY2/f4QS94AO70MXLW8ulRLZCmaIHwXQA=;
+        b=MSSfiyW0k8JSNUYHVoWEoR3DdAP0fMOFxj7fZcq0j34JgOaUMNdz8nlM8vv8I6Lhu+
+         edp3QvKTg3A6OHJB1ZowbAylx5qdr+ga71IiJe7OL4niRD6alweyAs1hbT1x2XAKMaY7
+         uwYJO2ff0DNJCJoAxaFOcftFRml3rRZGz/mpop9z0IF7eEUMS9PQOcpGcnzONyg8VE0m
+         9l8ypPVA/962pptVFVIIooKv3wPV0W1ceFEyJnw2Fy2lrMxzr17Owm/yL4DAXqQvc44f
+         0koevogNHQQMPmGEgt32r6SIui7TU20rgF3/JjIdeDNdQZ5VniIlc6U75L9Q7E+lGyle
+         ppWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTrGeOYyMO9CsIdPb8RrcBRIhu56RNf+3WePbhNRIwa6hp53FiayuMKuKZ0hQ6lg4+GMhGT8uqglpdIvegwBfWnKt7ia1ZeNYGpMHI
+X-Gm-Message-State: AOJu0YykiG6vz36nkmr5QTjbV56sr3h43ykwX8sn2+MfDiysdm2ZDMKW
+	SsIbvUX5XCxxbP+50pTPHuVlxqk2D9Hp7G7/SnxwLrIEUFNscl0MtDQjQ9P6B80=
+X-Google-Smtp-Source: AGHT+IGYiT8Y8eVtORah7pg5+CDI8AQnZirmt9fO5DQfBE3quaBqJnjCZLTnRCt2ZV4FKuosjPfDtQ==
+X-Received: by 2002:a17:90b:144:b0:2c9:66d3:4663 with SMTP id 98e67ed59e1d1-2cb7755e41emr856950a91.43.1721316194279;
+        Thu, 18 Jul 2024 08:23:14 -0700 (PDT)
+Received: from hsinchu16.internal.sifive.com (59-124-168-89.hinet-ip.hinet.net. [59.124.168.89])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cb77a01046sm810525a91.14.2024.07.18.08.23.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jul 2024 08:23:13 -0700 (PDT)
+From: Eric Lin <eric.lin@sifive.com>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	peterlin@andestech.com,
+	dminus@andestech.com,
+	locus84@andestech.com,
+	jisheng.teoh@starfivetech.com,
+	inochiama@outlook.com,
+	n.shubin@yadro.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Cc: Eric Lin <eric.lin@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>
+Subject: [PATCH] perf arch events: Fix duplicate RISC-V SBI firmware event name
+Date: Thu, 18 Jul 2024 23:22:54 +0800
+Message-ID: <20240718152254.16007-1-eric.lin@sifive.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240718141735.884347-1-make24@iscas.ac.cn>
-In-Reply-To: <20240718141735.884347-1-make24@iscas.ac.cn>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 18 Jul 2024 11:22:06 -0400
-Message-ID: <CADnq5_MiT9BOdo4cxi=MWABu4u5qTtNvziUbOXsUrEqeUhWPZQ@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/amd/amdgpu: Fix uninitialized variable warnings
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
-	airlied@gmail.com, daniel@ffwll.ch, lijo.lazar@amd.com, asad.kamal@amd.com, 
-	le.ma@amd.com, kenneth.feng@amd.com, evan.quan@amd.com, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Applied.  Thanks!
+Currently, the RISC-V firmware JSON file has duplicate event name
+"FW_SFENCE_VMA_RECEIVED". According to the RISC-V SBI PMU extension[1],
+the event name should be "FW_SFENCE_VMA_ASID_SENT".
 
-Alex
+Before this patch:
+$ perf list
 
-On Thu, Jul 18, 2024 at 10:17=E2=80=AFAM Ma Ke <make24@iscas.ac.cn> wrote:
->
-> Return 0 to avoid returning an uninitialized variable r.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 230dd6bb6117 ("drm/amd/amdgpu: implement mode2 reset on smu_v13_0_=
-10")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
-> Changes in v2:
-> - added Cc stable line.
-> ---
->  drivers/gpu/drm/amd/amdgpu/smu_v13_0_10.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/smu_v13_0_10.c b/drivers/gpu/drm/=
-amd/amdgpu/smu_v13_0_10.c
-> index 04c797d54511..0af648931df5 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/smu_v13_0_10.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/smu_v13_0_10.c
-> @@ -91,7 +91,7 @@ static int smu_v13_0_10_mode2_suspend_ip(struct amdgpu_=
-device *adev)
->                 adev->ip_blocks[i].status.hw =3D false;
->         }
->
-> -       return r;
-> +       return 0;
->  }
->
->  static int
-> --
-> 2.25.1
->
+firmware:
+  fw_access_load
+       [Load access trap event. Unit: cpu]
+  fw_access_store
+       [Store access trap event. Unit: cpu]
+....
+ fw_set_timer
+       [Set timer event. Unit: cpu]
+  fw_sfence_vma_asid_received
+       [Received SFENCE.VMA with ASID request from other HART event. Unit: cpu]
+  fw_sfence_vma_received
+       [Sent SFENCE.VMA with ASID request to other HART event. Unit: cpu]
+
+After this patch:
+$ perf list
+
+firmware:
+  fw_access_load
+       [Load access trap event. Unit: cpu]
+  fw_access_store
+       [Store access trap event. Unit: cpu]
+.....
+  fw_set_timer
+       [Set timer event. Unit: cpu]
+  fw_sfence_vma_asid_received
+       [Received SFENCE.VMA with ASID request from other HART event. Unit: cpu]
+  fw_sfence_vma_asid_sent
+       [Sent SFENCE.VMA with ASID request to other HART event. Unit: cpu]
+  fw_sfence_vma_received
+       [Received SFENCE.VMA request from other HART event. Unit: cpu]
+
+Link: https://github.com/riscv-non-isa/riscv-sbi-doc/blob/master/src/ext-pmu.adoc#event-firmware-events-type-15 [1]
+Fixes: 8f0dcb4e7364 ("perf arch events: riscv sbi firmware std event files")
+Signed-off-by: Eric Lin <eric.lin@sifive.com>
+Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+---
+ tools/perf/pmu-events/arch/riscv/andes/ax45/firmware.json       | 2 +-
+ tools/perf/pmu-events/arch/riscv/riscv-sbi-firmware.json        | 2 +-
+ tools/perf/pmu-events/arch/riscv/sifive/u74/firmware.json       | 2 +-
+ .../perf/pmu-events/arch/riscv/starfive/dubhe-80/firmware.json  | 2 +-
+ .../perf/pmu-events/arch/riscv/thead/c900-legacy/firmware.json  | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/tools/perf/pmu-events/arch/riscv/andes/ax45/firmware.json b/tools/perf/pmu-events/arch/riscv/andes/ax45/firmware.json
+index 9b4a032186a7..7149caec4f80 100644
+--- a/tools/perf/pmu-events/arch/riscv/andes/ax45/firmware.json
++++ b/tools/perf/pmu-events/arch/riscv/andes/ax45/firmware.json
+@@ -36,7 +36,7 @@
+     "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
+   },
+   {
+-    "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
++    "ArchStdEvent": "FW_SFENCE_VMA_ASID_SENT"
+   },
+   {
+     "ArchStdEvent": "FW_SFENCE_VMA_ASID_RECEIVED"
+diff --git a/tools/perf/pmu-events/arch/riscv/riscv-sbi-firmware.json b/tools/perf/pmu-events/arch/riscv/riscv-sbi-firmware.json
+index a9939823b14b..0c9b9a2d2958 100644
+--- a/tools/perf/pmu-events/arch/riscv/riscv-sbi-firmware.json
++++ b/tools/perf/pmu-events/arch/riscv/riscv-sbi-firmware.json
+@@ -74,7 +74,7 @@
+   {
+     "PublicDescription": "Sent SFENCE.VMA with ASID request to other HART event",
+     "ConfigCode": "0x800000000000000c",
+-    "EventName": "FW_SFENCE_VMA_RECEIVED",
++    "EventName": "FW_SFENCE_VMA_ASID_SENT",
+     "BriefDescription": "Sent SFENCE.VMA with ASID request to other HART event"
+   },
+   {
+diff --git a/tools/perf/pmu-events/arch/riscv/sifive/u74/firmware.json b/tools/perf/pmu-events/arch/riscv/sifive/u74/firmware.json
+index 9b4a032186a7..7149caec4f80 100644
+--- a/tools/perf/pmu-events/arch/riscv/sifive/u74/firmware.json
++++ b/tools/perf/pmu-events/arch/riscv/sifive/u74/firmware.json
+@@ -36,7 +36,7 @@
+     "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
+   },
+   {
+-    "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
++    "ArchStdEvent": "FW_SFENCE_VMA_ASID_SENT"
+   },
+   {
+     "ArchStdEvent": "FW_SFENCE_VMA_ASID_RECEIVED"
+diff --git a/tools/perf/pmu-events/arch/riscv/starfive/dubhe-80/firmware.json b/tools/perf/pmu-events/arch/riscv/starfive/dubhe-80/firmware.json
+index 9b4a032186a7..7149caec4f80 100644
+--- a/tools/perf/pmu-events/arch/riscv/starfive/dubhe-80/firmware.json
++++ b/tools/perf/pmu-events/arch/riscv/starfive/dubhe-80/firmware.json
+@@ -36,7 +36,7 @@
+     "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
+   },
+   {
+-    "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
++    "ArchStdEvent": "FW_SFENCE_VMA_ASID_SENT"
+   },
+   {
+     "ArchStdEvent": "FW_SFENCE_VMA_ASID_RECEIVED"
+diff --git a/tools/perf/pmu-events/arch/riscv/thead/c900-legacy/firmware.json b/tools/perf/pmu-events/arch/riscv/thead/c900-legacy/firmware.json
+index 9b4a032186a7..7149caec4f80 100644
+--- a/tools/perf/pmu-events/arch/riscv/thead/c900-legacy/firmware.json
++++ b/tools/perf/pmu-events/arch/riscv/thead/c900-legacy/firmware.json
+@@ -36,7 +36,7 @@
+     "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
+   },
+   {
+-    "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
++    "ArchStdEvent": "FW_SFENCE_VMA_ASID_SENT"
+   },
+   {
+     "ArchStdEvent": "FW_SFENCE_VMA_ASID_RECEIVED"
+-- 
+2.43.2
+
 
