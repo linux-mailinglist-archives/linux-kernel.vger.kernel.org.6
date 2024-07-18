@@ -1,231 +1,116 @@
-Return-Path: <linux-kernel+bounces-256328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E29C934C88
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:29:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11AEE934C8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 13:30:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03D7EB20FEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:29:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC2F92832EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6859E13DB99;
-	Thu, 18 Jul 2024 11:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FFF13A89B;
+	Thu, 18 Jul 2024 11:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PSLBthdI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="X4wfE2Bi"
+Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C9213D63E;
-	Thu, 18 Jul 2024 11:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32BC12F375
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 11:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721302078; cv=none; b=FdgZ1QbhRfE8up0Dhv3zuFLthhp62uj81kbXxF1cSc9lqDY3MljAkENGEwOFTUTEJpqa/d8P/Gcf3HnAN3ZbP9azLFH++LpPS34GBEo6GMfGGxyYd0N8qdR7HPyfVkSXclw3aQs4jnH+duj4hVPE33Pji1LZH6jIICWcinMPsLQ=
+	t=1721302152; cv=none; b=TnQ/T0KSMJMJbOwYrXsLDOuVtf9sJ7nLB/127hPrLFKj5fOvuL1hEjcTO2w3oCfHFGqYqEyM/+zavbvoSAVZXNuK2aShXw1fEVN/UQ4Hlcxd/sQO8j+Dfy4IxPNxO/X3g3T0NLQ8cnyGCxpd5J2LZcZkweP1XbGHE6/N/cXf2k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721302078; c=relaxed/simple;
-	bh=HoxUNH3rJHWxZTGHOWJYLSl2Dr3ygT83Mu7tovtsC+4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jPc7cfq4kfLOGSJ3k+a1AGtlp8Iw41OB5Gp/JCdHyBU1KwR4292keVbPfl0KIS9SuwCDVrLOVLWWTOw4Rr+XHbEKpA2gPT2MRe/sbsVZh2OkHi0P0kZWRUaKbHe38T0R5L3c+MbSP7g9vIXA+izF278tfjafbdjDcSeeDeJP/og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PSLBthdI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73BF0C4AF09;
-	Thu, 18 Jul 2024 11:27:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721302078;
-	bh=HoxUNH3rJHWxZTGHOWJYLSl2Dr3ygT83Mu7tovtsC+4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PSLBthdIJCYs6KFMs38FEeFgbBqeMQ7IARAiILyMrFfV+fJ1moSd5DyXfeMTswlxm
-	 2/6ArORaDNQWturwlBAftcgLaUt2sYzNv3vb2mUjuVxirJ+ngHwzn5bYFsDtvSNPsG
-	 1vYXrwDnyXktMzc94+/PII2bplXVQdBiBUndKykgu/qT1AsIxlxudVL5Ij2YY81WeJ
-	 otcfOpXcl8vx8TqLIPYNnEfAsTVqQFevovyrZiK+/MEBccvI6/DBtrl1JWB4uHI0zU
-	 xEBF/j4N5jbj0wvHBrM7GHxbRQYM/jA1e1KaFzRQaKSZSCWux7+lccO8fOVV3odCy0
-	 qKdx4WpaY8HeA==
-Message-ID: <09605d65-8a0e-4d28-be8e-a07bbdf376d6@kernel.org>
-Date: Thu, 18 Jul 2024 13:27:51 +0200
+	s=arc-20240116; t=1721302152; c=relaxed/simple;
+	bh=bn3VgzhSAEhdQZg1IslFXJCq1k/bK2Pb74+mWuAsJU0=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ArUMS85Gzpcm9oesVOUaRFah2E4beUvF6qIct1UNIUd4NN0iOiozPa8ORKy0HD4kBoBE86QtPwLudBimsP8f5banAVqt0WXdq+z3XNEVZhqAa6NLaCio+fO6tiQAJe1Bru4NQjRB8nu2mn6TnMmftdfcYtw9xXKHNqAAGEXRkCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=X4wfE2Bi; arc=none smtp.client-ip=188.165.51.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1721302135; x=1721561335;
+	bh=YqXULOXBiO6I3qT5sax6NUnclYLueA776MI/l1Vr56Q=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=X4wfE2BijqzkxfnMuWJq8fjSDZuM1mIFHPbLCCUPXd9KcRwbD99Iqvu5C0VgCmVdE
+	 TBLQu/f9hZzXZetGurwqZxNeMueIlWQB2w3wBaeakrk2C/EfLrFvM/ME+XdCBv3C+V
+	 RzUdd6z9Ni+SJD99wJ2/qQQ1IBSAVqkCm1GhCEtTomn5WyjHZwQYbC7XmnI4HRc9u4
+	 EAz/9YyIo6fDVOzX4leGWV9d2jQ9/kd5X6w1E0I+iZejIJBg4+lYkecZ2Rf7eCS6ap
+	 vekE6RH1zFQO5WQqrMPBkEJHzSsPwIjX+uu2DiiW1VHZjatkUq/+BlLhXTeiwQVZJ0
+	 2sQ6EOyVsSMrw==
+Date: Thu, 18 Jul 2024 11:28:49 +0000
+To: linux-kernel@vger.kernel.org
+From: "Lin, Meng-Bo" <linmengbo06890@proton.me>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+Subject: [PATCH v2] arm64: dts: qcom: msm8916-samsung-grandmax: Add touchscreen
+Message-ID: <20240718112454.6095-1-linmengbo06890@proton.me>
+Feedback-ID: 112742687:user:proton
+X-Pm-Message-ID: 15df56a09ed5c9d39528bdaaa65da8cabf4df811
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/3] firmware: qcom: implement object invoke support
-To: Amirreza Zarrabi <quic_azarrabi@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- srinivas.kandagatla@linaro.org, bartosz.golaszewski@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
-References: <20240702-qcom-tee-object-and-ioctls-v1-0-633c3ddf57ee@quicinc.com>
- <20240702-qcom-tee-object-and-ioctls-v1-1-633c3ddf57ee@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240702-qcom-tee-object-and-ioctls-v1-1-633c3ddf57ee@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 03/07/2024 07:57, Amirreza Zarrabi wrote:
-> Qualcomm TEE hosts Trusted Applications and Services that run in the
-> secure world. Access to these resources is provided using object
-> capabilities. A TEE client with access to the capability can invoke
-> the object and request a service. Similarly, TEE can request a service
-> from nonsecure world with object capabilities that are exported to secure
-> world.
-> 
-> We provide qcom_tee_object which represents an object in both secure
-> and nonsecure world. TEE clients can invoke an instance of qcom_tee_object
-> to access TEE. TEE can issue a callback request to nonsecure world
-> by invoking an instance of qcom_tee_object in nonsecure world.
-> 
-> Any driver in nonsecure world that is interested to export a struct (or a
-> service object) to TEE, requires to embed an instance of qcom_tee_object in
-> the relevant struct and implements the dispatcher function which is called
-> when TEE invoked the service object.
-> 
-> We also provids simplified API which implements the Qualcomm TEE transport
-> protocol. The implementation is independent from any services that may
-> reside in nonsecure world.
-> 
-> Signed-off-by: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
-> ---
->  drivers/firmware/qcom/Kconfig                      |   14 +
->  drivers/firmware/qcom/Makefile                     |    2 +
->  drivers/firmware/qcom/qcom_object_invoke/Makefile  |    4 +
->  drivers/firmware/qcom/qcom_object_invoke/async.c   |  142 +++
->  drivers/firmware/qcom/qcom_object_invoke/core.c    | 1139 ++++++++++++++++++++
->  drivers/firmware/qcom/qcom_object_invoke/core.h    |  186 ++++
->  .../qcom/qcom_object_invoke/qcom_scm_invoke.c      |   22 +
->  .../firmware/qcom/qcom_object_invoke/release_wq.c  |   90 ++
->  include/linux/firmware/qcom/qcom_object_invoke.h   |  233 ++++
->  9 files changed, 1832 insertions(+)
-> 
-> diff --git a/drivers/firmware/qcom/Kconfig b/drivers/firmware/qcom/Kconfig
-> index 7f6eb4174734..103ab82bae9f 100644
-> --- a/drivers/firmware/qcom/Kconfig
-> +++ b/drivers/firmware/qcom/Kconfig
-> @@ -84,4 +84,18 @@ config QCOM_QSEECOM_UEFISECAPP
->  	  Select Y here to provide access to EFI variables on the aforementioned
->  	  platforms.
->  
-> +config QCOM_OBJECT_INVOKE_CORE
+Grand Max uses an Imagis IST3038 touchscreen that is connected to
+blsp_i2c5. Add it to the device tree.
 
-Let's avoid another rant from Linus and add here either proper defaults
-or dependencies.
+Signed-off-by: "Lin, Meng-Bo" <linmengbo06890@proton.me>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+v2: Fix comments for &reg_touch_key
+---
+ .../dts/qcom/msm8916-samsung-grandmax.dts     | 24 ++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
-> +	bool "Secure TEE Communication Support"
-> +	help
-> +	  Various Qualcomm SoCs have a Trusted Execution Environment (TEE) running
-> +	  in the Trust Zone. This module provides an interface to that via the
-> +	  capability based object invocation, using SMC calls.
-> +
-> +	  OBJECT_INVOKE_CORE allows capability based secure communication between
-> +	  TEE and VMs. Using OBJECT_INVOKE_CORE, kernel can issue calls to TEE or
-> +	  TAs to request a service or exposes services to TEE and TAs. It implements
-> +	  the necessary marshaling of messages with TEE.
-> +
-> +	  Select Y here to provide access to TEE.
-> +
->  endmenu
-> diff --git a/drivers/firmware/qcom/Makefile b/drivers/firmware/qc
+diff --git a/arch/arm64/boot/dts/qcom/msm8916-samsung-grandmax.dts b/arch/a=
+rm64/boot/dts/qcom/msm8916-samsung-grandmax.dts
+index 135df1739dbd..5ddb69bf8e78 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916-samsung-grandmax.dts
++++ b/arch/arm64/boot/dts/qcom/msm8916-samsung-grandmax.dts
+@@ -47,12 +47,34 @@ &battery {
+ =09constant-charge-voltage-max-microvolt =3D <4400000>;
+ };
+=20
++&blsp_i2c5 {
++=09status =3D "okay";
++
++=09touchscreen@50 {
++=09=09compatible =3D "imagis,ist3038";
++=09=09reg =3D <0x50>;
++
++=09=09interrupts-extended =3D <&tlmm 13 IRQ_TYPE_EDGE_FALLING>;
++
++=09=09touchscreen-size-x =3D <720>;
++=09=09touchscreen-size-y =3D <1280>;
++
++=09=09vdd-supply =3D <&reg_vdd_tsp_a>;
++=09=09vddio-supply =3D <&pm8916_l6>;
++
++=09=09pinctrl-0 =3D <&ts_int_default>;
++=09=09pinctrl-names =3D "default";
++
++=09=09linux,keycodes =3D <KEY_APPSELECT KEY_BACK>;
++=09};
++};
++
+ &reg_motor_vdd {
+ =09gpio =3D <&tlmm 72 GPIO_ACTIVE_HIGH>;
+ };
+=20
+ &reg_touch_key {
+-=09status =3D "disabled";
++=09status =3D "disabled"; /* Using Imagis touch key */
+ };
+=20
+ &sound {
+--=20
+2.39.2
 
-
-...
-
-> +		} else {
-> +			/* TEE obtained the ownership of QCOM_TEE_OBJECT_TYPE_CB_OBJECT
-> +			 * input objects in 'u'. On further failure, TEE is responsible
-> +			 * to release them.
-> +			 */
-> +
-> +			oic->flags |= OIC_FLAG_QCOM_TEE;
-> +		}
-> +
-> +		/* Is it a callback request?! */
-> +		if (response_type != QCOM_TEE_RESULT_INBOUND_REQ_NEEDED) {
-> +			if (!*result) {
-> +				ret = update_args(u, oic);
-> +				if (ret) {
-> +					arg_for_each_output_object(i, u)
-> +						put_qcom_tee_object(u[i].o);
-> +				}
-> +			}
-> +
-> +			break;
-> +
-> +		} else {
-> +			oic->flags |= OIC_FLAG_BUSY;
-> +
-> +			/* Before dispatching the request, handle any pending async requests. */
-> +			__fetch__async_reqs(oic);
-> +
-> +			qcom_tee_object_invoke(oic, cb_msg);
-> +		}
-> +	}
-> +
-> +	__fetch__async_reqs(oic);
-> +
-> +out:
-> +	qcom_tee_object_invoke_ctx_uninit(oic);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_tee_object_do_invoke);
-> +
-> +/* Primordial Object. */
-> +/* It is invoked by TEE for kernel services. */
-> +
-> +static struct qcom_tee_object *primordial_object = NULL_QCOM_TEE_OBJECT;
-> +static DEFINE_MUTEX(primordial_object_lock);
-
-Oh my... except that it looks like undocumented ABI, please avoid
-file-scope variables.
-
-Best regards,
-Krzysztof
 
 
