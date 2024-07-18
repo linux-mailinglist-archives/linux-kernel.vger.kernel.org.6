@@ -1,205 +1,196 @@
-Return-Path: <linux-kernel+bounces-256230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D01B4934B2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:51:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C142934B31
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 11:51:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55A751F249CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:51:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33683285207
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 09:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70EE82D83;
-	Thu, 18 Jul 2024 09:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D107B84FA0;
+	Thu, 18 Jul 2024 09:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nnmUgOLg"
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rtOzOvSr"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2087.outbound.protection.outlook.com [40.107.94.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546967EEF5
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 09:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721296277; cv=none; b=W53y454AKoqtEukkkog09Yyf6s5iN1CgMA9WjcXhgdj7vhkopvXdE+Z3tqLEV0ctguv1oMlN9GjatYcy4C7LfnVcIiAG7ipYmoB+Ml0cGTlXmpNiza5gstt4hoTiV+RYo6j4QX00RhBH8hrR69yYdqKPbrUvXZQ6upqzqZY5aDs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721296277; c=relaxed/simple;
-	bh=FfEysmryiD4OXybOFEozQuRpA+VqNfPyZXbB6wPtLQw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b/0d5Wxf7ce4/DafSD0Pa3IYc2wC8Byei5zN2tip6MTd+Nw1a6cWtpHB3ObscHjvcBqLcqA+4vrQ0y/w+I3ilIHxjQOMyYU4zgtxVKT9QgPHTkfVMnA/uk+bOtmiUY/FNOAB018znp9EkYN3YmVBt8AneJSkqnI+gVLfiEZIjIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nnmUgOLg; arc=none smtp.client-ip=209.85.222.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-822eb80f6e4so147259241.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 02:51:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1721296275; x=1721901075; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RynWyZj/Mk6W2PWFZ6UdeaZvnGfxuKvGDrjfGdoRyoQ=;
-        b=nnmUgOLgnBeGWyurB2oYOGQexcpG1TlNxJ4AFAMW5tWMz1n2yWmHlAcFdkEVYPOMFD
-         so9RROKvIN5gOVGF6HHUM8pZkUUhaozrW3pLiMFAZCvcnIinJyhefnB8CeyO0SzPd7sK
-         wuSP34dAAAfbvLcZTk/RTK6PNqNqiD3kAoIC8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721296275; x=1721901075;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RynWyZj/Mk6W2PWFZ6UdeaZvnGfxuKvGDrjfGdoRyoQ=;
-        b=wY2GyU7twQdQAckiY5vSGCfWXFfuf6PwmZueG+mZT3Nfad2jzHbjwPb72taMMuJhME
-         3JiNHZyU1ctp2K6/istwyrTnHIgJubvY6xhRkTw78FnFy7ZnUi1PcJB8CurBCJwKDIIq
-         RXHFxYLwi0e/swwZkz4ijRsbx5qwAL98nro5bjVAnW9aY1s58CjO0lC/tMtnlUVQPvdF
-         opx0ztkOzezOUu99rNsvUUpuM88vnwx9JHXQeJQUi+JvyDK8sEZBKDeZ+ziLP7Ojc70L
-         MwCsEniZCYZ+q7/h3iAigfZ5zSPC+eq0CWnY9l7fqpv12OFJSAKmqUgQDjp7OcRlKCva
-         nBVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWzPlIXPy4SIPRSmC5tabgEj969TUD8iNtChuMOz5sCLPgtF6mmrYToVWTMtkAyYRWZ6nGu0lO/LeT58aKjGlh6yQZRiMwkMsV1TH52
-X-Gm-Message-State: AOJu0Yx8WGergQZDSXo7T3Tknro4ZvGzEuCjI1/OM5aIJiF6SOGjySjr
-	M+uHVgrZsBP/MI3wi6bom1OEcWcSvdmXE7WLNRdEnQMFKLHaCREJ32TUgQvJQIUkwCxiNiWekQR
-	23A==
-X-Google-Smtp-Source: AGHT+IGe2rAzyb07068+hyz9w7fS/ApXmiDrB2hQl+cSucZKM4gLkQscXlyolC1bZbspFN4EBG69IQ==
-X-Received: by 2002:a05:6102:158b:b0:48f:df86:da4 with SMTP id ada2fe7eead31-491598bf866mr5627827137.20.1721296275055;
-        Thu, 18 Jul 2024 02:51:15 -0700 (PDT)
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com. [209.85.221.169])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4915617d425sm777554137.27.2024.07.18.02.51.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jul 2024 02:51:14 -0700 (PDT)
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-4f2f24f6470so252186e0c.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 02:51:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVtWMF4jhgX+/TdslkJfLG0zas0a4yk2A7q/ut0HICTjl0rv4hjc5bB51GhXJzjNrlNXWQrsISJLXlnFyAR7puMI9AcKE6F7WV5IQUY
-X-Received: by 2002:a05:6122:a0b:b0:4f2:ff08:ba3c with SMTP id
- 71dfb90a1353d-4f4df688321mr6001081e0c.5.1721296273968; Thu, 18 Jul 2024
- 02:51:13 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187FF839E4;
+	Thu, 18 Jul 2024 09:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721296299; cv=fail; b=SlLQ2jrfRexTTCKRdboIGEIe1QgAdgD1gELa5PNe8/mc/GGUbDxK7wBJBgc6lu09+2q3BQVvkJNu2EWMTCoCbzESoxP+upnupvCTIsFAEvQzEwmyek6Y+rPWf1pU0SWueSL0d+zDuek3xdmQx57QS8djegHD37NWCr/GhEBJT4Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721296299; c=relaxed/simple;
+	bh=V2wmEk5sTTj/qOR9viIGN99qZ10BzQSlD7qz5LxPLe0=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=etMkp9vHT02UUO6x7PvI9tTN6Qm4xIx9D7MyQkWOPmn0xveQ3cfvusabzdMFduvfoMsUdLymLaslJdlh2I4gUpvV+iBFNgo/XyT9Tm+SSYDfngvUz/DNE+18EFDF+thdFfO9+LqUUu+Elzo0GWttgHMVXaHpF24KekHO46UkWXs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rtOzOvSr; arc=fail smtp.client-ip=40.107.94.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=I7KQZm1pRX1gSJpuByA1Nd32iz0aD2KuNK6YQm/7toTBj6XQt+ZzOwtlmMUqa7zVf8PmjwHaLdOhBYdI4BEO5MK9OVMsqY9eWNiPAhbs6lCdeX1VL/XVndIXWRrCbOI+JnR8ZV1/AR4Q7h+C/yjn5rtpTAafW0Y+sKdnMOvzdh82oGti3HYx/Y5kYJ0OkXbKR7J+coppAzzbOavl/CTfP/zpvqw7CMGOZNuzbebRTNCfz5CQYkt3JACN5icMZ0bUrzH/DgZ34UGh+EODh4w8/CzjtGQ0EuLU1wqb0RAjETwBXyjs1plX8ciBtS1f5NpLVJ0mzTQZkMT8noTg8Kkf2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EHvYqt/mBFOKl481xqz7tMksv6Vayt/OaW2xD8F0Q9A=;
+ b=knpWSyisnvaSh1JtopKoe0TYfJCk1/2fGufnViBgzV2b6D61WamX15JOtTSUeztSo+G/e281KyL/ev9f8RK0YShg7T0d/YXSME7YLi6oauZXUwvkVLUZEY+Pq/ns10DWXroZEmf+YU6i8OXhaYdoAPdPs23N95oke0BQvzs+PQURT0fWXY3tOIlk6SqVv6kB0r6o3CimjMMHU9gr1yWEJm47FEcXeBKKiHfSUpYukV6KFs8JLNFjUAcn905Gu7BQuZnnY5A9ZDwKclVDu4boWtwlgWKi1QIxDLhWAn0UWkU1fee7XZ+rV10G2HI4NAj9WJKqGpyeGw5QaYcRsPsivg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EHvYqt/mBFOKl481xqz7tMksv6Vayt/OaW2xD8F0Q9A=;
+ b=rtOzOvSrBwzZHcT5OtFCb3BHI217zjlGW0JayQO+YjDQxSDWKgNKGxmTN+PSx9lrQm/2rifvlikplXcr9c64UEPsAMuhb/9WsBYl/fM172sstZK3F1WppUvHfY21xV+KtuTkT1D3KU4I8/LjAINHN5/A4hIsUpRn4vP3wy31W03oqxcnMZGdlKPcbj4cl0dTfRSwahJWGfJC1mWeYCslYKRtoFjIIfozvsFaU6ok9uupuTe7LAHlQNYQrr/WctdVe554EtJ6HsrOYteZK1JvjEd6/w2TfaWOA/OQ4/sOTYPzyGlL8ypUYEGcpLXqQea6UxZAw7qoBzz3VURXugSa+A==
+Received: from DM5PR07CA0095.namprd07.prod.outlook.com (2603:10b6:4:ae::24) by
+ PH8PR12MB7302.namprd12.prod.outlook.com (2603:10b6:510:221::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14; Thu, 18 Jul
+ 2024 09:51:35 +0000
+Received: from CY4PEPF0000FCC5.namprd03.prod.outlook.com
+ (2603:10b6:4:ae:cafe::82) by DM5PR07CA0095.outlook.office365.com
+ (2603:10b6:4:ae::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28 via Frontend
+ Transport; Thu, 18 Jul 2024 09:51:34 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CY4PEPF0000FCC5.mail.protection.outlook.com (10.167.242.107) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7784.11 via Frontend Transport; Thu, 18 Jul 2024 09:51:34 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 18 Jul
+ 2024 02:51:14 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 18 Jul 2024 02:51:14 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Thu, 18 Jul 2024 02:51:14 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 4.19 00/66] 4.19.318-rc3 review
+In-Reply-To: <20240717101028.579732070@linuxfoundation.org>
+References: <20240717101028.579732070@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240718082507.216764-1-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20240718082507.216764-1-angelogioacchino.delregno@collabora.com>
-From: Fei Shao <fshao@chromium.org>
-Date: Thu, 18 Jul 2024 17:50:37 +0800
-X-Gmail-Original-Message-ID: <CAC=S1njFSULdpTefLpb8biEUARVH4c_dZndUav_S-6D-bstn6w@mail.gmail.com>
-Message-ID: <CAC=S1njFSULdpTefLpb8biEUARVH4c_dZndUav_S-6D-bstn6w@mail.gmail.com>
-Subject: Re: [PATCH] drm/mediatek: Declare Z Position for all planes
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com, 
-	daniel@ffwll.ch, matthias.bgg@gmail.com, shawn.sung@mediatek.com, 
-	ck.hu@mediatek.com, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <b04f4a22-d40d-4824-ae6c-407b251194ca@drhqmail202.nvidia.com>
+Date: Thu, 18 Jul 2024 02:51:14 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCC5:EE_|PH8PR12MB7302:EE_
+X-MS-Office365-Filtering-Correlation-Id: 96fd0012-3906-4094-47e7-08dca70f3578
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bkt2T0FMQ0JmQjJBTFJkZW5SWDdsbXhvaEdYOTRCdDhhV1ZESDRCb2FzT1Vy?=
+ =?utf-8?B?MEEwMjE3Z3orVThZdndtNjNwcEpYOGV4V0VKUERMT2RaZjN4MkhZNlBjODF4?=
+ =?utf-8?B?eElmcFZyOHhScDhQNllmdXpYeW05NStaVW9iSTgrVDZrbGJNNFVDYTlaQ2kr?=
+ =?utf-8?B?WXkvbC82UmpTV2J6bnJIYy9wQnVxWEdta2RORzNTYjZxeUdTeE5CN2FkZm5P?=
+ =?utf-8?B?TlJiZkRDQXg1Y21oNjFPZjRVNjUyNDVVWjFBK0xvMlVpaE8rUDJoaHlTU1JJ?=
+ =?utf-8?B?bmJiWldoSmc4L1hWWElmZnMybURzaTlxZ1lwRWtHQW8wZVU4b2NzYjN2akND?=
+ =?utf-8?B?RGpqd2lzSjUvQXZUcEExWmZZWER5SEpEVEhkNWJ0RFU5cjFmM2xmRGF4czli?=
+ =?utf-8?B?UDF6ckVxVm9ocjlob3hiZUMvNGFNRGI0R1NhaWwwWXFHcm1FaHpVRnY1dEti?=
+ =?utf-8?B?UlJoKzJabGVINHZsbEp4bjRkRThOc2Zyd1l1NGZUNlZWMGpsdGZMd1owV0tu?=
+ =?utf-8?B?cmI5QkRhMnVEQmZucEhyUmIybk45OExyOEx0eXlERzZKQzBHWXV2K1Y1Wmg2?=
+ =?utf-8?B?SFVvdlFnUXhta3FkdklkdHRrWDVNMjZza0U0UXNBekhLbFpkVCtJWjVmbUJX?=
+ =?utf-8?B?MWhWZ09LcHVVc0ZLSTlxZkVVZUcvMlRYSUwyZ3lMWEhDb0dVbEFHU2NoaWo5?=
+ =?utf-8?B?R2lIRG9GcWE1ajlkbkZKVjRTaDdPanFOdUJQMTNXYVpVT04zL1orVFp1clVv?=
+ =?utf-8?B?a0xtL3Q5bmtLRVpHL0pKZU5ScUhuM3RIQ1ZzR3RrdDNCMFBUbjlzaUlsN2lS?=
+ =?utf-8?B?S3pMZi9KWGw1R25HaWNkOFY3RHI3MGlCbGtNOVl1WDlSNnQ5U09SK2VycFo5?=
+ =?utf-8?B?dWx0aUdXdCtNQkMyTEJJM2t1cDlrUUFGM3BUU1R3ZmVDaU5lazNyVCtOdGxF?=
+ =?utf-8?B?SDZJdWNUUFJQaGtiWm11WmRSRnJpOUxDS2grRlVpTVU5eEsyUi80czFwRk82?=
+ =?utf-8?B?amVDUzZFQ0FQSWNmOENwc1A0Yko3cmErT091cVpZOTZwcjZnY1o4bTNPUlQv?=
+ =?utf-8?B?SmNzaVkxUzQ3REVxSHp5UHhzdE8xd1gzUlU5UEpCKzg0aXNsL3VrYnFWSmZY?=
+ =?utf-8?B?QlNFZlFLL1drSUkyTWFHcWpXcVQ1VXkwb2JCVmlFdWRGM0ZFNTBpMzNGcTN5?=
+ =?utf-8?B?Y2haVVo0TFYvd01POS8wZ1lBQ05PVkJjd3pUbjhuTjVaK25GNTg0VU5vVGhx?=
+ =?utf-8?B?NFAveklUMm43MWFNZ1JKVzZKN01SWEU0V28zdllOQnk5aDhuVEtoRlBDTVhN?=
+ =?utf-8?B?ang0L2tsR2k4RVg1bW1MWmFpV0wzcGpwUHV0MVQyM0FPOFEyam1tUmMzZFpS?=
+ =?utf-8?B?MzY1NnFxMW5EQSt1cDZiOHI2NFF3NVFhNWNOVjlJQi80MDIvUWtrWnZqbS9B?=
+ =?utf-8?B?ajZpODZDTGFXdlZZRVMwZi9QdFNRMTc3YTVpM3l0NTVkU1ZleVBsTUIvSlBP?=
+ =?utf-8?B?Q2l2WHZsNDMxOGJ5RktjZE1mTkNnQU8rQ0JCbUNwbGhVRTY4aWhnYXdkVjdt?=
+ =?utf-8?B?a1FHN3ZMTjVpbHJnOEU1OTN1ZGorR3A2Q3I1NW5CNS9tQkhZK0J6ajBRV3J3?=
+ =?utf-8?B?TG5mTGIraXJWbENPQ0dROUVLcDUvWStKOEhUcTF0NTZWYWxLbms2Unc1M21w?=
+ =?utf-8?B?eC9SamhTYkNrd1dGTDBWZHhGTWt6R1FHM2FkZjNidVJ6ZFhwdGVZUkx4ZTd0?=
+ =?utf-8?B?aU5EenZsemVxYmY4bzRaOVpFR2dnWGxkUGZ2eHRZeUczNU5PTCtmTk1Laisx?=
+ =?utf-8?B?ek9HL1lydkxkU0thd05RK1lVZHc1a0U2RU5BRWFJdUkrNVRocElaYjVHV3la?=
+ =?utf-8?B?cWdDSzdTWERiUFBXODh3M2dMc3BSTHJLVHFvWEpmY0Y4eEIyNGlKT0U4YnR0?=
+ =?utf-8?Q?083kOnctn3zbSHAUcOhfoIDm25FOi7bx?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2024 09:51:34.2097
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 96fd0012-3906-4094-47e7-08dca70f3578
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000FCC5.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7302
 
-On Thu, Jul 18, 2024 at 4:25=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> MediaTek SoCs support multiple planes, one of which is the primary
-> and all the others are overlays (and CURSOR is the last overlay).
->
-> In all currently supported SoCs, the Z order of the overlays can't
-> be changed with any fast muxing action, and can only be changed by
-> swapping the contents of the entire register set of one overlay
-> with the other to internally reorder the layer properties, which
-> is indeed feasible, but probably more expensive than desired.
->
-> Declare the Z position for all planes with an immutable property
-> at least for now, so that the userspace can take its decisions
-> accordingly.
->
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
+On Wed, 17 Jul 2024 12:12:44 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.318 release.
+> There are 66 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 19 Jul 2024 10:10:11 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.318-rc3.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Reviewed-by: Fei Shao <fshao@chromium.org>
-> ---
->  drivers/gpu/drm/mediatek/mtk_crtc.c  |  2 +-
->  drivers/gpu/drm/mediatek/mtk_plane.c | 18 +++++++++++++++++-
->  drivers/gpu/drm/mediatek/mtk_plane.h |  3 +--
->  3 files changed, 19 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/mediatek/mtk_crtc.c b/drivers/gpu/drm/mediat=
-ek/mtk_crtc.c
-> index 072b2fdae87b..327214721b4d 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_crtc.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_crtc.c
-> @@ -874,7 +874,7 @@ static int mtk_crtc_init_comp_planes(struct drm_devic=
-e *drm_dev,
->                                 mtk_crtc_plane_type(mtk_crtc->layer_nr, n=
-um_planes),
->                                 mtk_ddp_comp_supported_rotations(comp),
->                                 mtk_ddp_comp_get_formats(comp),
-> -                               mtk_ddp_comp_get_num_formats(comp));
-> +                               mtk_ddp_comp_get_num_formats(comp), i);
->                 if (ret)
->                         return ret;
->
-> diff --git a/drivers/gpu/drm/mediatek/mtk_plane.c b/drivers/gpu/drm/media=
-tek/mtk_plane.c
-> index 5bf757a3ef20..7d2cb4e0fafa 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_plane.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_plane.c
-> @@ -321,7 +321,7 @@ static const struct drm_plane_helper_funcs mtk_plane_=
-helper_funcs =3D {
->  int mtk_plane_init(struct drm_device *dev, struct drm_plane *plane,
->                    unsigned long possible_crtcs, enum drm_plane_type type=
-,
->                    unsigned int supported_rotations, const u32 *formats,
-> -                  size_t num_formats)
-> +                  size_t num_formats, unsigned int plane_idx)
->  {
->         int err;
->
-> @@ -338,6 +338,22 @@ int mtk_plane_init(struct drm_device *dev, struct dr=
-m_plane *plane,
->                 return err;
->         }
->
-> +       /*
-> +        * The hardware does not support repositioning planes by muxing: =
-their
-> +        * Z-position is infact fixed and the only way to change the actu=
-al
-> +        * order is to swap the contents of the entire register set of on=
-e
-> +        * overlay with another, which may be more expensive than desired=
-.
-> +        *
-> +        * With no repositioning, the caller of this function guarantees =
-that
-> +        * the plane_idx is correct. This means that, for example, the PR=
-IMARY
-> +        * plane fed to this function will always have plane_idx zero.
-> +        */
-> +       err =3D drm_plane_create_zpos_immutable_property(plane, plane_idx=
-);
-> +       if (err) {
-> +               DRM_ERROR("Failed to create zpos property for plane %u\n"=
-, plane_idx);
-> +               return err;
-> +       }
-> +
->         if (supported_rotations) {
->                 err =3D drm_plane_create_rotation_property(plane,
->                                                          DRM_MODE_ROTATE_=
-0,
-> diff --git a/drivers/gpu/drm/mediatek/mtk_plane.h b/drivers/gpu/drm/media=
-tek/mtk_plane.h
-> index 231bb7aac947..5b177eac67b7 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_plane.h
-> +++ b/drivers/gpu/drm/mediatek/mtk_plane.h
-> @@ -49,6 +49,5 @@ to_mtk_plane_state(struct drm_plane_state *state)
->  int mtk_plane_init(struct drm_device *dev, struct drm_plane *plane,
->                    unsigned long possible_crtcs, enum drm_plane_type type=
-,
->                    unsigned int supported_rotations, const u32 *formats,
-> -                  size_t num_formats);
-> -
-> +                  size_t num_formats, unsigned int plane_idx);
->  #endif
-> --
-> 2.45.2
->
->
+All tests passing for Tegra ...
+
+Test results for stable-v4.19:
+    10 builds:	10 pass, 0 fail
+    20 boots:	20 pass, 0 fail
+    37 tests:	37 pass, 0 fail
+
+Linux version:	4.19.318-rc3-g8b5720263ede
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
 
