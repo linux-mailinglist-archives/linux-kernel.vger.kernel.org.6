@@ -1,97 +1,113 @@
-Return-Path: <linux-kernel+bounces-256523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B71F8934FAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:09:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BDC3934FAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:10:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E88E41C21746
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:09:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20889B23B0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB37143C60;
-	Thu, 18 Jul 2024 15:09:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BD71442EF;
+	Thu, 18 Jul 2024 15:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GrHFtX7h"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r5AJb37v"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9726314372D;
-	Thu, 18 Jul 2024 15:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CB213C9CF
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 15:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721315367; cv=none; b=RfgKlZ7mywjuMatWa+k9qFJ5yshB1JTh6ii2GjjCzloyIKEu1WdmQlM7nY8XumxaUi0RULOpNa2j1BilCxW5SlAH+DMs8cGiG+3lX0gudfnItGd4Bs+Wgz0YdV5j7G26sUJCZ8reb8Oaxq1Doz5qjIjXQWq6WL6mlZOTEOSqzAY=
+	t=1721315427; cv=none; b=ebeyJYaNpi6Tz3KQqQdsty3O15vr/+Xeh37GdRFdrCmRW/Jzj8fzo4mxQmkrsy3EIoLhc9VFYzO2YD7jnwIzambHlKhWG5tCJ4AxjwraI/LWtCMpk8Efnq7ah3HPNscYJAu1s7RfbKhkPKI+IrZSHwb8FKNYcJ7qODCnW+a7uvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721315367; c=relaxed/simple;
-	bh=aHgvN8DcpuIMoFz4mUzr/XhbxyJQPLiT8wsxrox6SmQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bZfBDtStrbGZ8UzA6LuSf+3cLQKWU56EOsbeQq6HQsCXK1NcHoWFDXNetp2fL+At8V+2lb2dqSeY2WMGN2boHLRC2ycvyhObEQ0fWkK75Gy8KSgRGMBXNMX9CXRbyWkQseA25ERrZtRS/ylM2Lq+cLKN61bUR9v+Ao54ZmdsSRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=GrHFtX7h; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=eahymJIWKeg6EuH2i+xe4KUuT0MlHFjbKV/EeHLuHQE=; b=GrHFtX7htOxaLDg469rq62ASgl
-	b/nWhWpwoaiaDVdPWKAvn2PTM9JgzBQ9wPxKHFmV5hw49bYA1KR7WMShKYa4S0NqflQtvoUeTisu/
-	PgC596VEbs4D05V0dSA7tx4B0H96Jbeok5ciQf7osdYiPpBL+/QqRjYdZI6a7DM/gf4Y=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sUSkt-002n1J-SE; Thu, 18 Jul 2024 17:09:15 +0200
-Date: Thu, 18 Jul 2024 17:09:15 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org,
-	horms@kernel.org, hkallweit1@gmail.com, richardcochran@gmail.com,
-	rdunlap@infradead.org, linux@armlinux.org.uk,
-	bryan.whitehead@microchip.com, edumazet@google.com,
-	pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	UNGLinuxDriver@microchip.com
-Subject: Re: [PATCH net-next V2 0/4] Add support to PHYLINK for
- LAN743x/PCI11x1x chips
-Message-ID: <336a5726-8654-441b-b5be-ef68888406c0@lunn.ch>
-References: <20240716113349.25527-1-Raju.Lakkaraju@microchip.com>
- <2d8d38c2-0781-47ff-bff8-aec57d68ef05@lunn.ch>
- <ZpijZH4pwymNbefz@HYD-DK-UNGSW21.microchip.com>
+	s=arc-20240116; t=1721315427; c=relaxed/simple;
+	bh=/Rob65fM3+aRaB5LrNu1u3X92itUJ28DXou6slgyftE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YlzlIm86pnY5mUQCA53gu1AQ0QnjS7rsvbe5/o/MBDD9sMjNIhgRpbxyoVqJ+XW1XsxXQ/eCQvbO3PI5Ov13cK8BobdhWdwbCQErZahaYmpH0zozo5puMbJV/Tmx/csqzAWQeug2v7v7zdeLOGvD+Tq+nu8xPSJ0cx55CdOaZjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r5AJb37v; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6b796667348so7377776d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 08:10:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721315425; x=1721920225; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7NuZKb+8fjUNjlnDoDMU26Z6gLE1hV8BUCclUB3ih1w=;
+        b=r5AJb37vVrZi4LgFjopAUEuwxEATA2KA6cO/VzXIr2ShaygDYKF4IyQLd5z+9+QThp
+         0ElMStobUesaUtVB2EgrhwARQO6KgGuMlkOCWfLi4ztFXPZLF3HJo5METMNR+bwheUcs
+         dRRT2pPJZZOjTtP7Fv8qti3iQopijnT28FrIk/K49nQbmceGhul1TxtDNg5YZ3eDzoRv
+         PxC5skOt+d8q+oFZJRzfrQ8maCsMcuxm63OfHu4comP0zbhD6ZUITcqjHrhs6/e3cu88
+         8flsrZsluWZftHzKWsMsIssQC2eHL87J5dX4NXYV3oC0KKfmg+9mUhtofcmK5anfSv3Y
+         VzHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721315425; x=1721920225;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7NuZKb+8fjUNjlnDoDMU26Z6gLE1hV8BUCclUB3ih1w=;
+        b=UscJ4SLUYDBYNMQhBgFhV8/IE9SZKXp6CNtlDGUsogaK+Y/C7ryjYZyMtG2Hm7xbIF
+         rdT93IzcbfPMwxp0F+SEiZATpP2hTK1/5fw2n4ozAusamhofnt9nLNE+U7S15bEPHD92
+         qgoAhAD8BxnlfWaBgslvHhUnwbJPmYHFCtuPf2TiKzyuaTgvQk6iH6ycNM0XIsniTMwS
+         pR8ltXLa/WYEguoDgcDluPZkFCbg1LXuY7kf/49fX9OnNiz5Gq8Cogn3nMEPw0pqwHD/
+         uXBznYdywuYcUVdHKlN3aWn5V37srKBvAkb60z3ZKFjFETZL9avjg9IUsn7LkQzm/wZB
+         gtAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkV1xPf0a8wkQv2mer5GedKY/yWFqtGED8aVNIG+VpjGRYLKMm2oVLooWkfj9y+wMjS9z/OBvfy3GAKkH0n8cTm/zwotO6bxRgf8w2
+X-Gm-Message-State: AOJu0YyjlH3BS5N8mBE/EP/1ra7iJCZrVYYGCyLAiXysNfGRpY6+weGz
+	zHX8gnioc9zJMBR15/8NoSLG9dcclyPevyhEOW//XlTv+qBhf3oxjJGaF0m8Z6vcoKWuDvK4YVZ
+	CTe5K9Rg8UJmCc42nfofdO6fgxU7MRrL0J8YS
+X-Google-Smtp-Source: AGHT+IGoglnoNYVfOL8Zm7Oker3ocuUgGHrDYu2Yd8e/L3gvhmhKE2vl+5Nw7A5JdAXyAHYVQ7/jKIhl4nx2VrvsuJs=
+X-Received: by 2002:a05:6214:2462:b0:6b5:82e1:f89e with SMTP id
+ 6a1803df08f44-6b79d006d80mr47186406d6.9.1721315422332; Thu, 18 Jul 2024
+ 08:10:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZpijZH4pwymNbefz@HYD-DK-UNGSW21.microchip.com>
+References: <000000000000df3f0b061d86c48f@google.com>
+In-Reply-To: <000000000000df3f0b061d86c48f@google.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Thu, 18 Jul 2024 17:09:42 +0200
+Message-ID: <CAG_fn=XWBP_b+fhquq9PMoN+vC7TXBWmvicvaJpOnbh3djaxRQ@mail.gmail.com>
+Subject: Re: [syzbot] [arm?] KASAN: invalid-access Write in setup_arch
+To: syzbot <syzbot+1aa1114f144c4051c1dd@syzkaller.appspotmail.com>
+Cc: catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	will@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 18, 2024 at 10:38:52AM +0530, Raju Lakkaraju wrote:
-> Hi Andrew,
-> 
-> Thank you for review the patches.
-> 
-> The 07/18/2024 05:27, Andrew Lunn wrote:
-> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> > 
-> > On Tue, Jul 16, 2024 at 05:03:45PM +0530, Raju Lakkaraju wrote:
-> > > This is the follow-up patch series of
-> > > https://lkml.iu.edu/hypermail/linux/kernel/2310.2/02078.html
-> > >
-> > > Divide the PHYLINK adaptation and SFP modifications into two separate patch
-> > > series.
-> > 
-> > You appear to be missing the PHYLINK maintainer in your Cc: list.
-> > 
-> I add all PHYLINK maintainers email id's in cc
-> 
-> i.e.
-> $ ./scripts/get_maintainer.pl drivers/net/phy/phylink.c
-> Russell King <linux@armlinux.org.uk> (maintainer:SFF/SFP/SFP+ MODULE SUPPORT)
+On Thu, Jul 18, 2024 at 4:55=E2=80=AFPM syzbot
+<syzbot+1aa1114f144c4051c1dd@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    9dafbe7b06a9 Merge remote-tracking branch 'kernel/kvmarm/=
+n..
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvma=
+rm.git fuzzme
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D12fd98b198000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D25f90809fb74c=
+5a4
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D1aa1114f144c405=
+1c1dd
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for D=
+ebian) 2.40
+> userspace arch: arm64
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
 
-Yes, sorry, Russell is on the list. My error.
+I am afraid this is an invalid report caused by me shooting down QEMU insta=
+nces.
 
-richardcochran@gmail.com is a bit odd, is PTP involved here?
-
-	Andrew
+#syz invalid
 
