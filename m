@@ -1,185 +1,146 @@
-Return-Path: <linux-kernel+bounces-256852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F15FC93713D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 01:45:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 696B393713F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 01:45:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CC9C1F21C89
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 23:45:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A3991C210D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 23:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE5714884B;
-	Thu, 18 Jul 2024 23:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9673C1465BE;
+	Thu, 18 Jul 2024 23:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u6KNyqmN"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EQcdblRb"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4D4146A6B
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 23:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2647B78C9E;
+	Thu, 18 Jul 2024 23:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721346215; cv=none; b=RQMYkOTQv3DfOE/Sqnp25cyk9ldfgXtGfT3w1CTto+KqJFNgDp+/cR2gH1HpZMBhx7yN4FjW3C+OyqqqnGEgxG90G5wpNuPY01evuyfMpBLhb+FSrJoQpJOEdaYkFPXGJ/+9YpZNBDTqZ6Kw5KrAhYjgsJ+1zBFb1ePlw+/mZfI=
+	t=1721346339; cv=none; b=dvycaNuNGpZqohF2IKkOj1kmZp6OptCZL7M/+XDoz6mth/Xm1cgWnLOpDXx/JMtBVfiTb+ymjaLXgd5fb138rR8hkRXm+m2ZTcfdSxOfLp5j7YTE1uzn6a4mSMjWS1nmobMwDikSLkaPqY2UzVfmDnxHZrHq1my2kY8zpEGTr3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721346215; c=relaxed/simple;
-	bh=qimQZF+FWN9z++adsecIC/pT/coamrdDTurSaVUGTQs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HweU+TK4iVmY4PAae+plIwLEFWYQqE00zI7+DF1ylFQxfTe3R0ZT8Nycg+bfprFmF4PC5JDiBH9RWPB8Cd/aM19unQnfQkBIF0T2buHx6zJxlZ7jJf26XwdvOfBy0o5izunCiugfDF/7HFNNy7swb76XIttstvWqViix0e84nx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u6KNyqmN; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52e97e5a84bso1431673e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 16:43:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721346212; x=1721951012; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X41EpoGFTr7V+lfPhB4bKmmLvKDngcfGjNQze8E5PAc=;
-        b=u6KNyqmN8TZZocJzEu4W5hIcc/qF2FtxEZXkwZcsb3hobPsqT3FXsZ2gRz0MCCVBOB
-         6nndK5GyNRgkHvz1yImXOec3t+ud/8GxbZOvi+8DpoHzTiYCYPH2wBU0b5uxmY0sIT4O
-         qjw7dfY0hbOt98+OmN573p+Jx37BQnr5LPg02uDPELKVg5KYhABuHa6Jc41r1HUZP6Jc
-         7CnAtnC3ZukEr0meXbxGsXL181sbbgaIahUVQZXq3QZJ/MeAWG62Hu8jFvOdbgFFvlxE
-         5+jejjY+JwRb0gkG6jU5fjIcTcGIAyuAcgsPhsTyot5obpr+u6S5E1URn5fxVr9GeC1K
-         AxCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721346212; x=1721951012;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X41EpoGFTr7V+lfPhB4bKmmLvKDngcfGjNQze8E5PAc=;
-        b=m1+m8J1/4B3szM3pbozZ6roDuN4OJZtkHEp9Qh6xiu5au0K7cX9BS/NUZUEaqSDolm
-         dQNxDouQhgnCwdaeB+EVo7FGVgJpC6AQeek86cm2WDHL5uU9qsh3Lrbr8oX4ZC+uxUyE
-         oDvCV1F7s6ilxXwyuIWgQSN/K1fbC7tBImyVmU+tRvT7nTS5WfFAWVi9lOjj5CHi0yB4
-         K5fqy3tOaLArXMORi1dRa0i7tArpTaTm0uRvI039i6352ifc2oJhlffkjBOJ9cDp4Er7
-         fdC2HoUqlixiiW6g6HWBJ8SuYDjVIagqtn/9HfRirIA4bafWUPHLC0eIPgv59VO+jIw/
-         toUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxOuX9Lv6pOIm+wKOsn8Rd8OvAGeqvCP62pTjrD9fM1sE+mw+1fSlA2L8RqwrlnHwrk5d9eSZVzNF6GnVQbSPLuqkQ4jL2rmpTebv0
-X-Gm-Message-State: AOJu0YyfswR26+yJ/+abeChrhH9oRP67TClmywot/zKFifQ55CGaCCux
-	mPMNYMnxnZ0eX/VTazp0ppGUtcQDnr0iCXiHo0/NshGBPRm4d0PZH569iZ8xQ84=
-X-Google-Smtp-Source: AGHT+IE9TgIAs0CUhULlnfsv1TaESmkfsLC57MT/HQS4rq5Rt9A4FzXWOTcdoX2vwlTRiyP6cV3eIQ==
-X-Received: by 2002:a05:6512:3a87:b0:52c:dd94:bda9 with SMTP id 2adb3069b0e04-52ee5452793mr5704184e87.56.1721346212081;
-        Thu, 18 Jul 2024 16:43:32 -0700 (PDT)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ef556b4fbsm22491e87.139.2024.07.18.16.43.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 16:43:31 -0700 (PDT)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Viresh Kumar <vireshk@kernel.org>,
-	Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Nikunj Kela <nkela@quicinc.com>,
-	Prasad Sodagudi <psodagud@quicinc.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/6] OPP: Drop redundant code in _link_required_opps()
-Date: Fri, 19 Jul 2024 01:43:19 +0200
-Message-Id: <20240718234319.356451-7-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240718234319.356451-1-ulf.hansson@linaro.org>
-References: <20240718234319.356451-1-ulf.hansson@linaro.org>
+	s=arc-20240116; t=1721346339; c=relaxed/simple;
+	bh=z5qtEUIN7adnSsQXLunxrEAjIOeyZD8thTkUpbH6OZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sfh5gS2nKjK49Qgxyh9MWKHnCgbUJZgpk5cjCk7khaCMfYIt81RFyrcAuIpWn2CjgyzZIEP9TTKvchVZsyUZHp/6SD4MYVlbSCMIGBsfa+y1JHmtW9kN5NdJ867H+tHS3H/+5Cxtxk0UFARLeXYrRoYsgoDGiAvrCvmUSn3YTdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=EQcdblRb; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1721346333;
+	bh=BemwD+FZk6gdaWxxCrGiD9ZmPOQsLmDLH5YFQA8T8tw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EQcdblRb3ALTCyRuyy/26wfBlAlIdWWXovACTqLtO6Ppv/5bW4KYcrtywb7rqwN4u
+	 ANTXzwvnOyajrwpU3hqGdxWnLw2vdh5GcGg2dz6tPvnoub0OeLZGxd98gAZd8WdvN4
+	 27TZgTXcawpU8YZTSNcBIyXFJHi1zlJwBqQgURjctRgdWML7aG3lY0s3Ooa1sB2Mst
+	 t29n++heGRSbi8UY7OS7FJvZDsBunci4Bl6t9AlRnUO9owlS7M66cvmq2dRi+kDo8o
+	 I0cPJ+Cf1NEswmOaCBZagARoFDq8CIqFRQDgARIvgP3BN6C8OEzRQV0qvtJZsYSYYL
+	 uIeXr3j435G4A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WQ8Z52SS0z4wbr;
+	Fri, 19 Jul 2024 09:45:33 +1000 (AEST)
+Date: Fri, 19 Jul 2024 09:45:32 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires
+ <benjamin.tissoires@redhat.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Benjamin Tissoires <bentiss@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Suren Baghdasaryan <surenb@google.com>
+Subject: Re: linux-next: manual merge of the hid tree with the mm tree
+Message-ID: <20240719094532.20fd065d@canb.auug.org.au>
+In-Reply-To: <20240709112544.190ffda4@canb.auug.org.au>
+References: <20240709112544.190ffda4@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/vt/OvPY5il/CYRPHOHRwjYD";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Due to that the required-devs for the required OPPs are now always being
-assigned during the attach process in genpd, we no longer need the special
-treatment in _link_required_opps() for the single PM domain case. Let's
-therefore drop it.
+--Sig_/vt/OvPY5il/CYRPHOHRwjYD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
+Hi all,
 
-Changes in v2:
-	- New patch.
----
- drivers/opp/of.c | 39 +++------------------------------------
- 1 file changed, 3 insertions(+), 36 deletions(-)
+On Tue, 9 Jul 2024 11:25:44 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the hid tree got a conflict in:
+>=20
+>   include/linux/hid_bpf.h
+>=20
+> between commit:
+>=20
+>   bad8443fbbca ("mm: add comments for allocation helpers explaining why t=
+hey are macros")
+>=20
+> from the mm-unstable branch of the mm tree and commit:
+>=20
+>   6cd735f0e57a ("HID: bpf: protect HID-BPF prog_list access by a SRCU")
+>=20
+> from the hid tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> diff --cc include/linux/hid_bpf.h
+> index 99a3edb6cf07,9ca96fc90449..000000000000
+> --- a/include/linux/hid_bpf.h
+> +++ b/include/linux/hid_bpf.h
+> @@@ -151,12 -227,7 +227,12 @@@ static inline int dispatch_hid_bpf_outp
+>   static inline int hid_bpf_connect_device(struct hid_device *hdev) { ret=
+urn 0; }
+>   static inline void hid_bpf_disconnect_device(struct hid_device *hdev) {}
+>   static inline void hid_bpf_destroy_device(struct hid_device *hid) {}
+> - static inline void hid_bpf_device_init(struct hid_device *hid) {}
+> + static inline int hid_bpf_device_init(struct hid_device *hid) { return =
+0; }
+>  +/*
+>  + * This specialized allocator has to be a macro for its allocations to =
+be
+>  + * accounted separately (to have a separate alloc_tag). The typecast is
+>  + * intentional to enforce typesafety.
+>  + */
+>   #define call_hid_bpf_rdesc_fixup(_hdev, _rdesc, _size)	\
+>   		((u8 *)kmemdup(_rdesc, *(_size), GFP_KERNEL))
+>  =20
 
-diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-index 55c8cfef97d4..fd5ed2858258 100644
---- a/drivers/opp/of.c
-+++ b/drivers/opp/of.c
-@@ -295,7 +295,7 @@ void _of_clear_opp(struct opp_table *opp_table, struct dev_pm_opp *opp)
- 	of_node_put(opp->np);
- }
- 
--static int _link_required_opps(struct dev_pm_opp *opp, struct opp_table *opp_table,
-+static int _link_required_opps(struct dev_pm_opp *opp,
- 			       struct opp_table *required_table, int index)
- {
- 	struct device_node *np;
-@@ -313,39 +313,6 @@ static int _link_required_opps(struct dev_pm_opp *opp, struct opp_table *opp_tab
- 		return -ENODEV;
- 	}
- 
--	/*
--	 * There are two genpd (as required-opp) cases that we need to handle,
--	 * devices with a single genpd and ones with multiple genpds.
--	 *
--	 * The single genpd case requires special handling as we need to use the
--	 * same `dev` structure (instead of a virtual one provided by genpd
--	 * core) for setting the performance state.
--	 *
--	 * It doesn't make sense for a device's DT entry to have both
--	 * "opp-level" and single "required-opps" entry pointing to a genpd's
--	 * OPP, as that would make the OPP core call
--	 * dev_pm_domain_set_performance_state() for two different values for
--	 * the same device structure. Lets treat single genpd configuration as a
--	 * case where the OPP's level is directly available without required-opp
--	 * link in the DT.
--	 *
--	 * Just update the `level` with the right value, which
--	 * dev_pm_opp_set_opp() will take care of in the normal path itself.
--	 *
--	 * There is another case though, where a genpd's OPP table has
--	 * required-opps set to a parent genpd. The OPP core expects the user to
--	 * set the respective required `struct device` pointer via
--	 * dev_pm_opp_set_config().
--	 */
--	if (required_table->is_genpd && opp_table->required_opp_count == 1 &&
--	    !opp_table->required_devs[0]) {
--		/* Genpd core takes care of propagation to parent genpd */
--		if (!opp_table->is_genpd) {
--			if (!WARN_ON(opp->level != OPP_LEVEL_UNSET))
--				opp->level = opp->required_opps[0]->level;
--		}
--	}
--
- 	return 0;
- }
- 
-@@ -370,7 +337,7 @@ static int _of_opp_alloc_required_opps(struct opp_table *opp_table,
- 		if (IS_ERR_OR_NULL(required_table))
- 			continue;
- 
--		ret = _link_required_opps(opp, opp_table, required_table, i);
-+		ret = _link_required_opps(opp, required_table, i);
- 		if (ret)
- 			goto free_required_opps;
- 	}
-@@ -391,7 +358,7 @@ static int lazy_link_required_opps(struct opp_table *opp_table,
- 	int ret;
- 
- 	list_for_each_entry(opp, &opp_table->opp_list, node) {
--		ret = _link_required_opps(opp, opp_table, new_table, index);
-+		ret = _link_required_opps(opp, new_table, index);
- 		if (ret)
- 			return ret;
- 	}
--- 
-2.34.1
+This is now a conflict between the mm-stable branch of the mm tree
+and Linus' tree.
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/vt/OvPY5il/CYRPHOHRwjYD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaZqRwACgkQAVBC80lX
+0Gyd5Qf9Ee4QsV38/4rOyx3rhsqajcWq9FxLXwHU9vmufpJeEOg+zVJxjyFnS/8K
+3mOaLwAvbRACjSZ4QmFvS66L2FmY1PhQNxqo+/9gCpcNzPHSQpB7JsCjFS5J7oFc
+uHrpVmoyqWwpOWx0GBoI5E66IGvA5ezHELlPrFy72j35mbWTIDrtXzktPfvcMcJT
+u1ml7PxZ+LKb22Yso2iRogE4tWS7y5Gy7ri/lD/hxE8Pn/f2WTeFU9eTkHMOduo0
+83pFVqwIJpdX0TwKV22PBWdU+rBJC7g0PmNGPvE2o/PGAHOATQsqwK/TQ398LyhE
+VnwYLDjfVQ1xZlsaQxGY/B9/OZJITA==
+=Gjr1
+-----END PGP SIGNATURE-----
+
+--Sig_/vt/OvPY5il/CYRPHOHRwjYD--
 
