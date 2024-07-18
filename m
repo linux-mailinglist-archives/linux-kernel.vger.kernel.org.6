@@ -1,92 +1,79 @@
-Return-Path: <linux-kernel+bounces-256626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E44D935139
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:23:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D253393513E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:26:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60FB61C20D1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:23:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61B351F21FA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6006714534C;
-	Thu, 18 Jul 2024 17:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D431459E5;
+	Thu, 18 Jul 2024 17:26:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yJNiSVvY"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f2iqnngK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D118C06
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 17:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050F5143892;
+	Thu, 18 Jul 2024 17:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721323389; cv=none; b=t47GcYg16ywMJApzdjx3oKP/8XbT5D/vp7uIqBMM9jJwSk6YP2p5tJwUotlFMe6dECr5whdtND76GvGmN46HxrNYzWNwPJFLmteCinx85oayr4OEO5nadQkcSFwHTIDvS+ADSDEa83vTNwyMIT+3wT2/pNimlvg3pvnGsvJuK3U=
+	t=1721323596; cv=none; b=cBwaVL6dazyI3+osZAmfGah7RxaU/TTnD8fhL/OokLcOtJieLAd5knheWkQ8YVXDpE46llgZI/bWSad+YC81/nDixJZhN10ZukMHz6wR0QBgy8y3xMsKLfZOBsAlkfr6jOcKK7bYvr8rTKUFsBHEHPJUqLtw+eVKHW+a/Mav5gQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721323389; c=relaxed/simple;
-	bh=0i7KtJ9FSifVfJLTP8L6MmmzH1IONF8nR5XE9Ek8NnA=;
+	s=arc-20240116; t=1721323596; c=relaxed/simple;
+	bh=+d5eh0z6xjhhhwdaQ0g67V4EjIHpa95pnKbaxP6L64U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H6GEJQwXkq8Yd1cw1+T0aVbaEaLgniJj5cVUmr7rTK7aSuXWRDox9PHto0l5VqZGaOp5U/8Hp0X6pbi4CJUW7//KTle5zrsP3yM3BDRW6IwfEofnNB8ySVF4oJ6JFvfB5opvn12rXidkrMlICVYG3xbjnGv/FVn9WNZO+uhakZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yJNiSVvY; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fc66fc35f2so5898455ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 10:23:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721323387; x=1721928187; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6ICFDDieCGpEoaZYDXXhvPh/cZNuguHANawunFSMXlc=;
-        b=yJNiSVvYXGaKMDXOs618SvxsjDyKUPC2MVc3X36Wpl2m0Zj6WXd3gzC6iM4TLO+VBv
-         PP/1Gc/tQqHb3THu4VmUsdlbdzIWmO+OBx47ZZpw9ycJwX+6kJ4vaZ6NCOuCk7JlWwVu
-         +tmc6lkunSs5N8AZSLTiOe5+LMPI14Fw1KNDCU1Qa7qcHDTUYZjmkKDlvm71w26A9HAu
-         prSUbsgJB94dI83Qmi1OirumiXr7OKBZiAmqaUB57tz6PkPEbEbj69Egab2Cmz3IouIM
-         fD00D7px8Yb4Qlfz5PxBN3nXN6yuB4g7ybwRmZqWXvxXcWz6YVu3QCziZSxnX/I2Bkqm
-         LqsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721323387; x=1721928187;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6ICFDDieCGpEoaZYDXXhvPh/cZNuguHANawunFSMXlc=;
-        b=GG1a7tcoTKctRGIJ6LeMQ4hSU8Q0jxQnnuBNvk04ITCTWPvatGz94b+c4pI8SsO2rM
-         yLYn3+LupVKY7REpFFuLnAHKB3pdoOzqQaVDQmDUf8IJOIVY23+btdODZBq/mkm42zC8
-         5qeBwUWuTzQVMgNnaiorHNY+iJpkNOecCqY1VKNPKuAAvsjfTTi7QzbgOCErDgYKPZVp
-         LfEWNNzph4LVfrfgJOZe2lRlO3Hz65Y0o86aC5arZHdXjXA+g3KkUHu8+WXmVNFjE69X
-         rs7Fyq70rH/ngG5ZerPysi10AbdGoww6v5a5hf0mfvIMA78M44KvEJ4H/uAXbXoMRMG+
-         8DPw==
-X-Forwarded-Encrypted: i=1; AJvYcCWQu2GiwRykxpg3dEEFFzBxDc8D0fllKWlHuofNoJwZ9bh/R0F0LH39YrvWxbvDxQb4/NIehkBfIEXHem3KDFMKldxxwicBouJTVocr
-X-Gm-Message-State: AOJu0YxEgHaTiD+9z2jpEVyaD9sSZvkrJo7YQk+8QHt54b1liZmqsanD
-	CXjDlBk4vdVECnLJyXzOQgM+fU0y11LJ0ODY7L5OgFMHpFBc5LI+xx+SrkVlEg==
-X-Google-Smtp-Source: AGHT+IEKTF3lGFKsLnOuovg2GIq+pf1Ok3ICUV+brkwjfKlutwdQ6WVPpLajBng6U/Qw4CmZ5dJUQA==
-X-Received: by 2002:a17:903:32c3:b0:1fc:54c4:61a7 with SMTP id d9443c01a7336-1fc5b60aa7bmr50154655ad.23.1721323387186;
-        Thu, 18 Jul 2024 10:23:07 -0700 (PDT)
-Received: from thinkpad ([120.56.207.21])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc2751bsm96197055ad.143.2024.07.18.10.23.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 10:23:06 -0700 (PDT)
-Date: Thu, 18 Jul 2024 22:53:01 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Mayank Rana <quic_mrana@quicinc.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 12/13] PCI: qcom: Simulate PCIe hotplug using 'global'
- interrupt
-Message-ID: <20240718172301.GC2499@thinkpad>
-References: <20240717-pci-qcom-hotplug-v2-0-71d304b817f8@linaro.org>
- <20240717-pci-qcom-hotplug-v2-12-71d304b817f8@linaro.org>
- <02b94a07-fcd6-4a48-bead-530b81c8a27e@quicinc.com>
- <20240718102938.GA8877@thinkpad>
- <8c3e77b6-0d23-42ef-a7db-52635bd5070a@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BgVEo6uu/WG1UnKwxrrthpoYSTnmMvAESMMzv7tDcZaY3EJy/W428MKzOWiS6t89I831YuKMYBuALlM1sTsZ48c4ORh5k71dBZ18SFB8gnOkUEVkrMTL2SV7PGEtq2VfU70O6qdQ2I/mrUn7Qy89exgZHndTNuRyjh4ogD5i9/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f2iqnngK; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721323594; x=1752859594;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=+d5eh0z6xjhhhwdaQ0g67V4EjIHpa95pnKbaxP6L64U=;
+  b=f2iqnngKxmCk2wzrpdzMtNVDiSDV0eHqGQ3Lt7ROtRo43np8HjFn4EiO
+   23J+9f3m3f8Svou7o/2H5rOrAnZlUZlQrThwvOTPr3jdOCdzaWUr6EgaP
+   UwS9ss4W8RdGvRJyB2ouvltYe+u5JxX59f5Nqmfq0AKFj2yoopdBa6xLq
+   j165psgUiK6gb1Xz55gVtQXGXzX4Uj8iQuoFF6fVzO22uwmOeogLID2nS
+   RKC22DAXG3M+/8cjPuxdl4+ybEcTLLBDFMSvWJqGN9JAUDvcD2L0ry7x8
+   gyZ9jlD4eXWJt+L66i4LcB4kCkPXGlE9D94e+5lYILu2iEvebJTJLyoaf
+   A==;
+X-CSE-ConnectionGUID: CAZTVO8BRwaDe/0JWUVgNg==
+X-CSE-MsgGUID: 46c2Xd84ToCXZL/DSiV7LQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11137"; a="36443413"
+X-IronPort-AV: E=Sophos;i="6.09,218,1716274800"; 
+   d="scan'208";a="36443413"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 10:26:33 -0700
+X-CSE-ConnectionGUID: CvnKnu6/QQi6I/BFdJW1CQ==
+X-CSE-MsgGUID: honD/yp7RTSSqvBfExkz4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,218,1716274800"; 
+   d="scan'208";a="50701285"
+Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 10:26:32 -0700
+Date: Thu, 18 Jul 2024 10:26:31 -0700
+From: Isaku Yamahata <isaku.yamahata@intel.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: Isaku Yamahata <isaku.yamahata@intel.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, isaku.yamahata@gmail.com,
+	Paolo Bonzini <pbonzini@redhat.com>, erdemaktas@google.com,
+	Sean Christopherson <seanjc@google.com>,
+	Sagi Shahar <sagis@google.com>, Kai Huang <kai.huang@intel.com>,
+	chen.bo@intel.com, hang.yuan@intel.com, tina.zhang@intel.com,
+	rick.p.edgecombe@intel.com
+Subject: Re: [PATCH v19 117/130] KVM: TDX: Silently ignore INIT/SIPI
+Message-ID: <20240718172631.GI1900928@ls.amr.corp.intel.com>
+References: <cover.1708933498.git.isaku.yamahata@intel.com>
+ <4a4225de42be0f7568c5ecb5c22f2029f8e91d62.1708933498.git.isaku.yamahata@intel.com>
+ <c45a1448-09ee-4750-bf86-28295dfc6089@linux.intel.com>
+ <20240716225504.GE1900928@ls.amr.corp.intel.com>
+ <d55d3c5a-41d9-46bd-91da-f07187501bfa@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,124 +83,168 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8c3e77b6-0d23-42ef-a7db-52635bd5070a@quicinc.com>
+In-Reply-To: <d55d3c5a-41d9-46bd-91da-f07187501bfa@linux.intel.com>
 
-On Thu, Jul 18, 2024 at 10:15:58AM -0700, Mayank Rana wrote:
-> Hi Mani
+On Thu, Jul 18, 2024 at 09:42:11AM +0800,
+Binbin Wu <binbin.wu@linux.intel.com> wrote:
+
 > 
-> On 7/18/2024 3:29 AM, Manivannan Sadhasivam wrote:
-> > On Wed, Jul 17, 2024 at 03:57:11PM -0700, Mayank Rana wrote:
-> > > Hi Mani
-> > > 
-> > > I don't think we can suggest that usage of link up event with Global IRQ as
-> > > simulate PCIe hotplug. hotplug is referring to allow handling of both
-> > > add or remove of endpoint device whereas here you are using global IRQ as
-> > > last step to rescan bus if endpoint is power up later after link training is
-> > > initiated.
-> > > 
-> > 
-> > Why not? Well it is not entirely the standard 'hotplug' and that's why I
-> > referred it as 'simulating hotplug'.
-> Because it is misleading here by saying simulate hotplug. You can mention as
-> use link up event
-> to rescan bus instead of using simulate PCIe hotplug here.
 > 
-
-Fair point. Will reword in v3.
-
-> > The point of having this feature is to avoid the hassle of rescanning the bus
-> > manually when the devices are connected to this bus post boot.
+> On 7/17/2024 6:55 AM, Isaku Yamahata wrote:
+> > On Mon, Jun 17, 2024 at 09:20:36AM +0800,
+> > Binbin Wu <binbin.wu@linux.intel.com> wrote:
 > > 
-> > > Will this work if you remove endpoint device and add it back again ?
 > > > 
-> > 
-> > No, not currently. But we could add that logic using LINK_DOWN event. Though,
-> > when the device comes back again, it will not get enumerated successfully due to
-> > a bug in the link training part (which I plan to address later). But this
-> > issue is irrespective of this hotplug simulation.
-> ok. Although LINK DOWN event not necessary suggests that endpoint has been
-> removed but it also suggests that link has gone into bad state, and it is
-> being detected and notified as link down event.
-
-Right, but what would be the recovery process if Link down event happens? You'd
-remove the device and insert it back, right?
-
-Doing link training again won't bring the link back I guess.
-
-> > > Regards,
-> > > Mayank
-> > > On 7/17/2024 10:03 AM, Manivannan Sadhasivam via B4 Relay wrote:
-> > > > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > > On 2/26/2024 4:26 PM, isaku.yamahata@intel.com wrote:
+> > > > From: Isaku Yamahata <isaku.yamahata@intel.com>
 > > > > 
-> > > > Historically, Qcom PCIe RC controllers lack standard hotplug support. So
-> > > > when an endpoint is attached to the SoC, users have to rescan the bus
-> > > > manually to enumerate the device. But this can be avoided by simulating the
-> > > > PCIe hotplug using Qcom specific way.
+> > > > The TDX module API doesn't provide API for VMM to inject INIT IPI and SIPI.
+> > > > Instead it defines the different protocols to boot application processors.
+> > > > Ignore INIT and SIPI events for the TDX guest.
 > > > > 
-> > > > Qcom PCIe RC controllers are capable of generating the 'global' SPI
-> > > > interrupt to the host CPUs. The device driver can use this event to
-> > > > identify events such as PCIe link specific events, safety events etc...
+> > > > There are two options. 1) (silently) ignore INIT/SIPI request or 2) return
+> > > > error to guest TDs somehow.  Given that TDX guest is paravirtualized to
+> > > > boot AP, the option 1 is chosen for simplicity.
 > > > > 
-> > > > One such event is the PCIe Link up event generated when an endpoint is
-> > > > detected on the bus and the Link is 'up'. This event can be used to
-> > > > simulate the PCIe hotplug in the Qcom SoCs.
-> > > > 
-> > > > So add support for capturing the PCIe Link up event using the 'global'
-> > > > interrupt in the driver. Once the Link up event is received, the bus
-> > > > underneath the host bridge is scanned to enumerate PCIe endpoint devices,
-> > > > thus simulating hotplug.
-> > > > 
-> > > > All of the Qcom SoCs have only one rootport per controller instance. So
-> > > > only a single 'Link up' event is generated for the PCIe controller.
-> > > > 
-> > > > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > > > Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
 > > > > ---
-> > > >    drivers/pci/controller/dwc/pcie-qcom.c | 55 +++++++++++++++++++++++++++++++++-
-> > > >    1 file changed, 54 insertions(+), 1 deletion(-)
+> > > >    arch/x86/include/asm/kvm-x86-ops.h |  1 +
+> > > >    arch/x86/include/asm/kvm_host.h    |  2 ++
+> > > >    arch/x86/kvm/lapic.c               | 19 +++++++++++-------
+> > > >    arch/x86/kvm/svm/svm.c             |  1 +
+> > > >    arch/x86/kvm/vmx/main.c            | 32 ++++++++++++++++++++++++++++--
+> > > >    arch/x86/kvm/vmx/tdx.c             |  4 ++--
+> > > >    6 files changed, 48 insertions(+), 11 deletions(-)
 > > > > 
-> > > > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> > > > index 0180edf3310e..a1d678fe7fa5 100644
-> > > > --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> > > > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-
-[...]
-
-> > > > +static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
+> > > > diff --git a/arch/x86/include/asm/kvm-x86-ops.h b/arch/x86/include/asm/kvm-x86-ops.h
+> > > > index 22d93d4124c8..85c04aad6ab3 100644
+> > > > --- a/arch/x86/include/asm/kvm-x86-ops.h
+> > > > +++ b/arch/x86/include/asm/kvm-x86-ops.h
+> > > > @@ -149,6 +149,7 @@ KVM_X86_OP_OPTIONAL(migrate_timers)
+> > > >    KVM_X86_OP(msr_filter_changed)
+> > > >    KVM_X86_OP(complete_emulated_msr)
+> > > >    KVM_X86_OP(vcpu_deliver_sipi_vector)
+> > > > +KVM_X86_OP(vcpu_deliver_init)
+> > > >    KVM_X86_OP_OPTIONAL_RET0(vcpu_get_apicv_inhibit_reasons);
+> > > >    KVM_X86_OP_OPTIONAL(get_untagged_addr)
+> > > >    KVM_X86_OP_OPTIONAL_RET0(gmem_max_level)
+> > > > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> > > > index bb8be091f996..2686c080820b 100644
+> > > > --- a/arch/x86/include/asm/kvm_host.h
+> > > > +++ b/arch/x86/include/asm/kvm_host.h
+> > > > @@ -1836,6 +1836,7 @@ struct kvm_x86_ops {
+> > > >    	int (*complete_emulated_msr)(struct kvm_vcpu *vcpu, int err);
+> > > >    	void (*vcpu_deliver_sipi_vector)(struct kvm_vcpu *vcpu, u8 vector);
+> > > > +	void (*vcpu_deliver_init)(struct kvm_vcpu *vcpu);
+> > > >    	/*
+> > > >    	 * Returns vCPU specific APICv inhibit reasons
+> > > > @@ -2092,6 +2093,7 @@ void kvm_get_segment(struct kvm_vcpu *vcpu, struct kvm_segment *var, int seg);
+> > > >    void kvm_set_segment(struct kvm_vcpu *vcpu, struct kvm_segment *var, int seg);
+> > > >    int kvm_load_segment_descriptor(struct kvm_vcpu *vcpu, u16 selector, int seg);
+> > > >    void kvm_vcpu_deliver_sipi_vector(struct kvm_vcpu *vcpu, u8 vector);
+> > > > +void kvm_vcpu_deliver_init(struct kvm_vcpu *vcpu);
+> > > >    int kvm_task_switch(struct kvm_vcpu *vcpu, u16 tss_selector, int idt_index,
+> > > >    		    int reason, bool has_error_code, u32 error_code);
+> > > > diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> > > > index 8025c7f614e0..431074679e83 100644
+> > > > --- a/arch/x86/kvm/lapic.c
+> > > > +++ b/arch/x86/kvm/lapic.c
+> > > > @@ -3268,6 +3268,16 @@ int kvm_lapic_set_pv_eoi(struct kvm_vcpu *vcpu, u64 data, unsigned long len)
+> > > >    	return 0;
+> > > >    }
+> > > > +void kvm_vcpu_deliver_init(struct kvm_vcpu *vcpu)
 > > > > +{
-> > > > +	struct qcom_pcie *pcie = data;
-> > > > +	struct dw_pcie_rp *pp = &pcie->pci->pp;
-> > > > +	struct device *dev = pcie->pci->dev;
-> > > > +	u32 status = readl_relaxed(pcie->parf + PARF_INT_ALL_STATUS);
+> > > > +	kvm_vcpu_reset(vcpu, true);
+> > > > +	if (kvm_vcpu_is_bsp(vcpu))
+> > > > +		vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
+> > > > +	else
+> > > > +		vcpu->arch.mp_state = KVM_MP_STATE_INIT_RECEIVED;
+> > > > +}
+> > > > +EXPORT_SYMBOL_GPL(kvm_vcpu_deliver_init);
 > > > > +
-> > > > +	writel_relaxed(status, pcie->parf + PARF_INT_ALL_CLEAR);
-> > > > +
-> > > > +	if (FIELD_GET(PARF_INT_ALL_LINK_UP, status)) {
-> > > > +		dev_dbg(dev, "Received Link up event. Starting enumeration!\n");
-> > > > +		/* Rescan the bus to enumerate endpoint devices */
-> > > > +		pci_lock_rescan_remove();
-> > > > +		pci_rescan_bus(pp->bridge->bus);
-> > > > +		pci_unlock_rescan_remove();
-> > > How do you handle case where endpoint is already enumerated, and seeing link
-> > > up event in parallel or later ? will it go ahead to rescan bus again here ?
+> > > >    int kvm_apic_accept_events(struct kvm_vcpu *vcpu)
+> > > >    {
+> > > >    	struct kvm_lapic *apic = vcpu->arch.apic;
+> > > > @@ -3299,13 +3309,8 @@ int kvm_apic_accept_events(struct kvm_vcpu *vcpu)
+> > > >    		return 0;
+> > > >    	}
+> > > > -	if (test_and_clear_bit(KVM_APIC_INIT, &apic->pending_events)) {
+> > > > -		kvm_vcpu_reset(vcpu, true);
+> > > > -		if (kvm_vcpu_is_bsp(apic->vcpu))
+> > > > -			vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
+> > > > -		else
+> > > > -			vcpu->arch.mp_state = KVM_MP_STATE_INIT_RECEIVED;
+> > > > -	}
+> > > > +	if (test_and_clear_bit(KVM_APIC_INIT, &apic->pending_events))
+> > > > +		static_call(kvm_x86_vcpu_deliver_init)(vcpu);
+> > > >    	if (test_and_clear_bit(KVM_APIC_SIPI, &apic->pending_events)) {
+> > > >    		if (vcpu->arch.mp_state == KVM_MP_STATE_INIT_RECEIVED) {
+> > > >    			/* evaluate pending_events before reading the vector */
+> > > > diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> > > > index f76dd52d29ba..27546d993809 100644
+> > > > --- a/arch/x86/kvm/svm/svm.c
+> > > > +++ b/arch/x86/kvm/svm/svm.c
+> > > > @@ -5037,6 +5037,7 @@ static struct kvm_x86_ops svm_x86_ops __initdata = {
+> > > >    	.complete_emulated_msr = svm_complete_emulated_msr,
+> > > >    	.vcpu_deliver_sipi_vector = svm_vcpu_deliver_sipi_vector,
+> > > > +	.vcpu_deliver_init = kvm_vcpu_deliver_init,
+> > > >    	.vcpu_get_apicv_inhibit_reasons = avic_vcpu_get_apicv_inhibit_reasons,
+> > > >    };
+> > > > diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
+> > > > index 4f3b872cd401..84d2dc818cf7 100644
+> > > > --- a/arch/x86/kvm/vmx/main.c
+> > > > +++ b/arch/x86/kvm/vmx/main.c
+> > > > @@ -320,6 +320,14 @@ static void vt_enable_smi_window(struct kvm_vcpu *vcpu)
+> > > >    }
+> > > >    #endif
+> > > > +static bool vt_apic_init_signal_blocked(struct kvm_vcpu *vcpu)
+> > > > +{
+> > > > +	if (is_td_vcpu(vcpu))
+> > > > +		return true;
+> > > Since for TD, INIT is always blocked, then in kvm_apic_accept_events(), the
+> > > code path to handle INIT/SIPI delivery will not be called, i.e, the OPs
+> > > .vcpu_deliver_init() and .vcpu_deliver_sipi_vector() are never called for
+> > > TD.
+> > > Seems no need to add the new interface  vcpu_deliver_init or the new wrapper
+> > > vt_vcpu_deliver_sipi_vector().
 > > > 
+> > > And consider the INIT/SIPI for TD:
+> > > - Normally, for TD, INIT ans SIPI should not be set in APIC's
+> > > pending_events.
+> > >    Maybe we can call KVM_BUG_ON() in vt_apic_init_signal_blocked() for TD?
+> > > - If INIT and SIPI are allowed be set in APIC's pending_events for somehow,
+> > > the current code has a problem, it will never clear INIT bit in APIC's
+> > > pending_events.
+> > >    Then kvm_apic_accept_events() needs to execute more check code if INIT was
+> > > once set.
+> > >    INIT bit should be cleared with this assumption.
 > > 
-> > If the endpoint is already enumerated, there will be no Link up event. Unless
-> > the controller reinitializes the bus (which is the current behavior).
-> > 
-> > If the endpoint is already powered on during controller probe, then it will be
-> > enumerated during dw_pcie_host_init() and since we register the IRQ handler
-> > afterwards, there will be no Link up in that case.
-> > 
-> > This feature is only applicable for endpoints that comes up post boot.
-> ok. thanks for above information. I feel capturing this information in
-> commit text
-> would be helpful.
+> > KVM_SET_MP_STATE and KVM_SET_VCPU_EVENTS can set INIT/SIPI by the user space.
+> > If we change those two IOCTLs to reject INIT/SIPI for TDX, we can go for the
+> > above "Normally" option.  Because I didn't want to touch the common functions, I
+> > ended in extra callbacks.  The user space shouldn't use those two IOCTLs for
+> > TDX, though.
+> 
+> Even though INIT/SIPI can be set by userspace to APIC's pending_events,
+> for TD, INIT is always blocked, then in kvm_apic_accept_events(), the
+> code path to handle INIT/SIPI delivery will not be called, i.e, the OPs
+> .vcpu_deliver_init() and .vcpu_deliver_sipi_vector() are never called for
+> TD.
+> 
+> Can we just drop the new OPs .vcpu_deliver_init() and the new wrapper
+> vt_vcpu_deliver_sipi_vector()?
 
-Sure.
+Ah, you're right. We simply always block INIT/SIPI.  We should update the commit
+message.  How about this?  Added option 3.
 
-- Mani
+The TDX module API doesn't provide API for VMM to inject INIT IPI and SIPI.
+Instead it defines the different protocols to boot application processors.
+Ignore INIT and SIPI events for the TDX guest.
 
+There are two options. 1) (silently) ignore INIT/SIPI request or 2) return
+error to guest TDs somehow.  3) Always block INIT/SIPI always.
+Given that TDX guest is paravirtualized to boot AP, the option 3
+is chosen for simplicity.
 -- 
-மணிவண்ணன் சதாசிவம்
+Isaku Yamahata <isaku.yamahata@intel.com>
 
