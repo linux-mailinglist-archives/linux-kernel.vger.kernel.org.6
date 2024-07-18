@@ -1,217 +1,197 @@
-Return-Path: <linux-kernel+bounces-256643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E8C693516F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 20:02:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47ED8935175
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 20:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62239B22EA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:02:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 667E31C22442
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 18:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E657714389A;
-	Thu, 18 Jul 2024 18:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B781459F0;
+	Thu, 18 Jul 2024 18:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NwqhH9rQ"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UpuSmyE2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2DA4204B;
-	Thu, 18 Jul 2024 18:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4F61459E8;
+	Thu, 18 Jul 2024 18:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721325716; cv=none; b=hkItOlHWM8+9Nup81ITy/XLNkz4WoXh742jvBbX5MIz9CHgVCXsg0caeGFZ72EuvixdEO0wrLdZg7R5Rnonpcy/MICWglLy/T9YcngzzHfp80ZWTTwCF3BPTYoOdNDjMmpDBkLqR9WHJ0KXXvVYCCt0AphvE9OfW3hByWn/7Lf4=
+	t=1721325790; cv=none; b=DDU5GTmnXQgfbVjKZu2cYGt8dJy5n/kfuuBJlM80oE++Qb6L4Zy9tshhMMkKf/GEwdcKEuCmOfZzworWeGw80OlnE9BCPAIud/lNU0iT6+at7eP/ehWx7sWXiDq8OEQpAwLwBAZeWjgdPZ7wUL+JD1jsty/tJB9+WoY43mpJw1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721325716; c=relaxed/simple;
-	bh=k2e9FTxMJcmFZ6iRpRLOB26XTkVkpXfMfb52s+UxKaU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lzuMx2DB1E+wOZ2VMbzzd3AKfItLSY+yEYmX5z8yFqQ4e+EI6ftkjfvjo2BszkbLBDa7XcUfN/wbLyFb8jM7irmOID2CudzUX6GpQ4oXfC35ON4gugNWpIamFO2DjYnn76OOWgcmTFN2vq4fu09XiKKq6WR60gptD72NBgc0tg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NwqhH9rQ; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a22f09d976so178684a12.1;
-        Thu, 18 Jul 2024 11:01:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721325713; x=1721930513; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XwjCmIgC9amJezzYNa7Vvk7vm/b0+JIIKpP0FzU5Lwk=;
-        b=NwqhH9rQbKVCXFazIyOjn7tzc1aeslhoIW/2OaIWNjkQjkzGl0vy+lCrfc+TcCere7
-         IV91+Cc1fcD1aSbkDXrjvBU4y8tEJXFHXqSdKnhJvisVdpeAPo3XCPuadQem34lZsWnG
-         jctFrcenPgOmnWVQVE8Cnvmj9RRouGWXrpeNCfbNmf6ZI2KqFJfKXRZVfmqWpV8wDfyl
-         ihdthVPqtT+mY08nINneTA7mmjeiS7RRzxyYX72J1bYlE33RuoYBRMR32iBRjNIg7W/Q
-         Da2wfz5CyUAxC1fVYG3Dh2MAj0Q4G61+RQHr+8tYkYKChulFn5tpDn+wcgu2UU6kj/Ab
-         ypGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721325713; x=1721930513;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XwjCmIgC9amJezzYNa7Vvk7vm/b0+JIIKpP0FzU5Lwk=;
-        b=XgSHjS5/2ZI8ZCtLvZMwf+YiB0AXzLMlwRVAW92I4elhl550C4hUs5N92068xZRtvL
-         PA9YYqpkw6o6fsPft9AV137Gl9KyBCeQaH8vS4unqjOGwn7MNhBWZtt9rMaylb/R2yKI
-         /1mkWShuwIxAdpYhlP3OO041OUVdXbmOCo/mocIurrh0cn/hpAYWNlagWzx/GefsPPEP
-         wHvdG1yXRhBqGSO+KwhrareQ0Ia4bzgSgDQnxqZhdBQQaznmC2lAsCmpdG3m4gGTJUj4
-         LP77zG5ySsRA4SOcZjCLJCeqcPahjS8uHFiGfk8JAFeO5gCjx2FRA0eidrbTTh+zrdNS
-         3koQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjeQD/SvFHJVHVkgo7jG3EoXP/gdLiRKvJGsl3l11e7J2Q3wJKOkv380hlrHza9lWGDlaQeZwzZ8GkDcQ0/YaHtEzf9iXyqPPUS6xyG/s7S72h15GeH7mgJMd4B4kA2wSgDRfvccd7+y0bVA==
-X-Gm-Message-State: AOJu0YyuQh6kQwudDLUoF1fyohi+FF4uXzDIEFshJBOTnmYqKbqtisub
-	Yrt82q4VUB6JNsVdujHiO4KpwTpwaQhccwiostN3wLRRUGZ8uT28lXX3Qd5iq8ym2GP+5V6iScQ
-	WwnTIIt792JPQjx50Nl2O/aCP360=
-X-Google-Smtp-Source: AGHT+IHnyhuY0wD7m5Nhg4/s+kP6IlMtQQiwPdS+LG//Il46Tc6q1VnUyZx7kaXZOUYWOB0F5U4b854qcA8dUvrJxkA=
-X-Received: by 2002:a50:c05b:0:b0:57d:455:d395 with SMTP id
- 4fb4d7f45d1cf-5a2caf4e97fmr70266a12.7.1721325712440; Thu, 18 Jul 2024
- 11:01:52 -0700 (PDT)
+	s=arc-20240116; t=1721325790; c=relaxed/simple;
+	bh=K+/D8ITQUYmyYg/+lBxDVcGiVjdI665hHS7auH4ZLKk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=APTDR12glDqqf4R8z+mmHPFG5wbDdwP2eFV5ZWWBAoQsDMemO3NqU5eL0CCmxgS7fwAMENrJ3BJ4LCPVlpu0/bfTv63/ZIwd7UwHd7HEByjD+uauYAFQK01YsLSXuQMqCSuKszgxm5deY8C+8MFegz9vBkVY1etLuWHR6rMwA68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UpuSmyE2; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721325789; x=1752861789;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=K+/D8ITQUYmyYg/+lBxDVcGiVjdI665hHS7auH4ZLKk=;
+  b=UpuSmyE2RCNr/UUDrN05sKr0Ob2PpDU6s6hEM5E1ofPooZ6WJpzBxxUu
+   VmP149azrIW2CyP7nOgMZneMDwQbmYaOmGnfRkIUajedBE0O1Ti0g8LKR
+   uEKN7CDRqAqbepNUfvT5Xl51+cUpjz5VBnDrSd0tEpTI2mTlGV0YBBOoO
+   N1IivDyMf4QwncaYL1KxKpD/2DI+HweUOAJETTQNUqT8PAsbkIA5NxaZS
+   8hVufGWw9xbfIP1bPvEaaom5QiAAc0T/r0Oki7yn1IHS1zSuUmLIRft5Y
+   7bxh60eCRm9eB60Sz0R7Wti2kMI4RV5X6ih2DW6kWbFtVCRO4n86fKeyd
+   Q==;
+X-CSE-ConnectionGUID: RIOZx6h2RqOhi5Rhj6YZ9w==
+X-CSE-MsgGUID: izn2i6qtQ86NJdi/9Upo8w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11137"; a="29488996"
+X-IronPort-AV: E=Sophos;i="6.09,218,1716274800"; 
+   d="scan'208";a="29488996"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 11:03:04 -0700
+X-CSE-ConnectionGUID: Hz/Q4zT2RNK9u6N0cZut+w==
+X-CSE-MsgGUID: 7xcXBoFSR0mgyHRXGzC0iQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,218,1716274800"; 
+   d="scan'208";a="50915618"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 11:02:36 -0700
+Received: from [10.212.127.244] (kliang2-mobl1.ccr.corp.intel.com [10.212.127.244])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 0F42D20CFED5;
+	Thu, 18 Jul 2024 11:02:32 -0700 (PDT)
+Message-ID: <2e76dd74-b702-4401-ade1-fc1fd1ff40ce@linux.intel.com>
+Date: Thu, 18 Jul 2024 14:02:32 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717215847.5310-1-robdclark@gmail.com> <CAD=FV=XCOKJHJ-yzENpvm_MD34tMR5LRy2m2jYdcWzZXP4pfXQ@mail.gmail.com>
- <CAF6AEGuBZqV4zg1asUNbMLvq0-i-iyFwfi37uKS3kWNuRSOU+g@mail.gmail.com>
- <CAD=FV=UMiDTLBBEMk3fpg+TfE_K23fyL+JDZj77Fe9fCY8DyjA@mail.gmail.com>
- <CAF6AEGs22brXntJ-eDv_uTZGc2=rH2q2V4y6Vt8K4s+dsO=4-A@mail.gmail.com>
- <CAD=FV=WJQBTjt61ma-CoJQeGYKigEyXpA6j25JSyEfikrLeSNQ@mail.gmail.com> <CAF6AEGvxAVWDC45P3fbmVRO-yq5oV8wgPj0nqC7U0n6c9YuhbQ@mail.gmail.com>
-In-Reply-To: <CAF6AEGvxAVWDC45P3fbmVRO-yq5oV8wgPj0nqC7U0n6c9YuhbQ@mail.gmail.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Thu, 18 Jul 2024 11:01:40 -0700
-Message-ID: <CAF6AEGuKbzXxzUJS58pBomExNOOoPR7T64rBKuCrLYLW0e7MCA@mail.gmail.com>
-Subject: Re: [RFC] drm/panel/simple-edp: Add Samsung ATNA45DC02
-To: Doug Anderson <dianders@chromium.org>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	Rob Clark <robdclark@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/6] perf parse-events: Add "cpu" term to set the CPU
+ an event is recorded on
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ James Clark <james.clark@arm.com>, Ravi Bangoria <ravi.bangoria@amd.com>,
+ Dominique Martinet <asmadeus@codewreck.org>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org,
+ Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, ananth.narayan@amd.com,
+ gautham.shenoy@amd.com, kprateek.nayak@amd.com, sandipan.das@amd.com
+References: <20240718003025.1486232-1-irogers@google.com>
+ <20240718003025.1486232-7-irogers@google.com>
+ <febefab7-7351-4bd5-a6cc-a0116248484f@linux.intel.com>
+ <CAP-5=fUUcehu-C=ytHVVixOpeCYoW4oJkkj6p6W=M0HtQ2wrRA@mail.gmail.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <CAP-5=fUUcehu-C=ytHVVixOpeCYoW4oJkkj6p6W=M0HtQ2wrRA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 18, 2024 at 9:45=E2=80=AFAM Rob Clark <robdclark@gmail.com> wro=
-te:
->
-> On Thu, Jul 18, 2024 at 9:31=E2=80=AFAM Doug Anderson <dianders@chromium.=
-org> wrote:
-> >
-> > Hi,
-> >
-> > On Thu, Jul 18, 2024 at 9:25=E2=80=AFAM Rob Clark <robdclark@gmail.com>=
- wrote:
-> > >
-> > > On Thu, Jul 18, 2024 at 9:00=E2=80=AFAM Doug Anderson <dianders@chrom=
-ium.org> wrote:
-> > > >
-> > > > Hi,
-> > > >
-> > > > On Wed, Jul 17, 2024 at 6:09=E2=80=AFPM Rob Clark <robdclark@gmail.=
-com> wrote:
-> > > > >
-> > > > > On Wed, Jul 17, 2024 at 5:19=E2=80=AFPM Doug Anderson <dianders@c=
-hromium.org> wrote:
-> > > > > >
-> > > > > > Hi,
-> > > > > >
-> > > > > > On Wed, Jul 17, 2024 at 2:58=E2=80=AFPM Rob Clark <robdclark@gm=
-ail.com> wrote:
-> > > > > > >
-> > > > > > > From: Rob Clark <robdclark@chromium.org>
-> > > > > > >
-> > > > > > > Just a guess on the panel timings, but they appear to work.
-> > > > > > >
-> > > > > > > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > > > > > > ---
-> > > > > > > This adds the panel I have on my lenovo yoga slim 7x laptop. =
- I couldn't
-> > > > > > > find any datasheet so timings is just a guess.  But AFAICT ev=
-erything
-> > > > > > > works fine.
-> > > > > > >
-> > > > > > >  drivers/gpu/drm/panel/panel-edp.c | 2 ++
-> > > > > > >  1 file changed, 2 insertions(+)
-> > > > > >
-> > > > > > Given that this is a Samsung ATNA<mumble>, is there any chance =
-it's an
-> > > > > > OLED panel? Should it be supported with the Samsung OLED panel =
-driver
-> > > > > > like this:
-> > > > > >
-> > > > > > https://lore.kernel.org/r/20240715-x1e80100-crd-backlight-v2-0-=
-31b7f2f658a3@linaro.org
-> > > > >
-> > > > > it is an OLED panel, and I did see that patchset and thought that
-> > > > > samsung panel driver would work.  But changing the compat string =
-on
-> > > > > the yoga dts only gave me a black screen (and I didn't see any of=
- the
-> > > > > other mentioned problems with bl control or dpms with panel-edp).=
-  So
-> > > > > :shrug:?  It could be I overlooked something else, but it _seems_=
- like
-> > > > > panel-edp is fine for this panel. Plus, it would avoid awkwardnes=
-s if
-> > > > > it turned out there were other non-samsung 2nd sources, but so fa=
-r
-> > > > > with a sample size of two 100% of these laptops have the same pan=
-el
-> > > >
-> > > > Hmm, OK. One question for you: are you using the "enable" GPIO in
-> > > > panel-edp? IMO the code handling that GPIO in panel-edp is somewhat
-> > > > dodgy, but it predates my deeper involvement with panels. I've neve=
-r
-> > > > seen an eDP panel that could use panel-edp where it was actually
-> > > > required--every instance where someone thought it was required was
-> > > > better modeled by using that GPIO as the backlight enable. On the
-> > > > other hand, the "enable" GPIO in the Samsung OLED panel driver came
-> > > > straight from the panel datasheet and it makes sense for it to be i=
-n
-> > > > the panel driver since the backlight is handled straight by the
-> > > > panel...
-> > >
-> > > hmm, at least current dts doesn't have an enable gpio.  Which could b=
-e
-> > > why panel-samsung-atna33xc20 wasn't working.
-> > >
-> > > It is entirely possible we are relying on something left on by the bo=
-otloader.
-> >
-> > That would be my best guess. Is there any way for you to find out if
-> > there's an enable GPIO?
->
-> presumably it would be in the ACPI dump (which I've not much of a clue
-> what I'm looking for there)
->
 
-Ok, turns out it is wired up the same way as on the crd.. if I copy
-those then panel-samsung-atna33xc20 is working
 
-BR,
--R
+On 2024-07-18 11:12 a.m., Ian Rogers wrote:
+> On Thu, Jul 18, 2024 at 7:41 AM Liang, Kan <kan.liang@linux.intel.com> wrote:
+>>
+>>
+>>
+>> On 2024-07-17 8:30 p.m., Ian Rogers wrote:
+>>> The -C option allows the CPUs for a list of events to be specified but
+>>> its not possible to set the CPU for a single event. Add a term to
+>>> allow this. The term isn't a general CPU list due to ',' already being
+>>> a special character in event parsing instead multiple cpu= terms may
+>>> be provided and they will be merged/unioned together.
+>>>
+>>> An example of mixing different types of events counted on different CPUs:
+>>> ```
+>>> $ perf stat -A -C 0,4-5,8 -e "instructions/cpu=0/,l1d-misses/cpu=4,cpu=5/,inst_retired.any/cpu=8/,cycles" -a sleep 0.1
+>>>
+>>>  Performance counter stats for 'system wide':
+>>>
+>>> CPU0              368,647      instructions/cpu=0/              #    0.26  insn per cycle
+>>> CPU4        <not counted>      instructions/cpu=0/
+>>> CPU5        <not counted>      instructions/cpu=0/
+>>> CPU8        <not counted>      instructions/cpu=0/
+>>> CPU0        <not counted>      l1d-misses [cpu]
+>>> CPU4              203,377      l1d-misses [cpu]
+>>> CPU5              138,231      l1d-misses [cpu]
+>>> CPU8        <not counted>      l1d-misses [cpu]
+>>> CPU0        <not counted>      cpu/cpu=8/
+>>> CPU4        <not counted>      cpu/cpu=8/
+>>> CPU5        <not counted>      cpu/cpu=8/
+>>> CPU8              943,861      cpu/cpu=8/
+>>> CPU0            1,412,071      cycles
+>>> CPU4           20,362,900      cycles
+>>> CPU5           10,172,725      cycles
+>>> CPU8            2,406,081      cycles
+>>>
+>>>        0.102925309 seconds time elapsed
+>>> ```
+>>>
+>>> Note, the event name of inst_retired.any is missing, reported as
+>>> cpu/cpu=8/, as there are unmerged uniquify fixes:
+>>> https://lore.kernel.org/lkml/20240510053705.2462258-3-irogers@google.com/
+>>>
+>>> An example of spreading uncore overhead across two CPUs:
+>>> ```
+>>> $ perf stat -A -e "data_read/cpu=0/,data_write/cpu=1/" -a sleep 0.1
+>>>
+>>>  Performance counter stats for 'system wide':
+>>>
+>>> CPU0               223.65 MiB  uncore_imc_free_running_0/cpu=0/
+>>> CPU0               223.66 MiB  uncore_imc_free_running_1/cpu=0/
+>>> CPU0        <not counted> MiB  uncore_imc_free_running_0/cpu=1/
+>>> CPU1                 5.78 MiB  uncore_imc_free_running_0/cpu=1/
+>>> CPU0        <not counted> MiB  uncore_imc_free_running_1/cpu=1/
+>>> CPU1                 5.74 MiB  uncore_imc_free_running_1/cpu=1/
+>>> ```
+>>>
+>>> Manually fixing the output it should be:
+>>> ```
+>>> CPU0               223.65 MiB  uncore_imc_free_running_0/data_read,cpu=0/
+>>> CPU0               223.66 MiB  uncore_imc_free_running_1/data_read,cpu=0/
+>>> CPU1                 5.78 MiB  uncore_imc_free_running_0/data_write,cpu=1/
+>>> CPU1                 5.74 MiB  uncore_imc_free_running_1/data_write,cpu=1/
+>>> ```
+>>>
+>>> That is data_read from 2 PMUs was counted on CPU0 and data_write was
+>>> counted on CPU1.
+>>
+>> There was an effort to make the counter access from any CPU of the package.
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d6a2f9035bfc27d0e9d78b13635dda9fb017ac01
+>>
+>> But now it limits the access from specific CPUs. It sounds like a
+>> regression.
+> 
+> Thanks Kan, I'm not sure I understand the comment. 
 
-> >
-> > > > In any case, I guess if things are working it doesn't really hurt t=
-o
-> > > > take it in panel-edp for now...
-> > > >
-> > >
-> > > I wonder if using compatible=3D"edp-panel" everywhere isn't a great i=
-dea
-> > > if we want to switch drivers later.  But I guess that is already wate=
-r
-> > > under the bridge (so to speak)
-> >
-> > For panels that aren't OLED it's all very standard and we're kinda
-> > forced to use something generic since manufacturers want lots of 2nd
-> > (and 3rd and 4th and ...) sourcing. As far as I've been able to tell
-> > you can't do 2nd sourcing between OLED panels and other panels since
-> > the wires hooked up to the panels are a little different for the OLED
-> > panels and the power sequencing is a bit different. It would also be
-> > pretty obvious to an end user if some of their devices had an OLED
-> > panel and some didn't. I'm not aware of OLED panels other than the
-> > Samsung ones, but I haven't done any real research here...
-> >
-> > -Doug
-> >
+The flag is also applied for the uncore and RAPL.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/arch/x86/events/intel/uncore.c?&id=e64cd6f73ff5a7eb4f8f759049ee24a3fe55e731
+
+So specifying a CPU to an uncore event doesn't make sense. If the
+current CPU is in the same package as the asked CPU. The kernel will
+always choose the current CPU.
+
+Thanks,
+Kan
+> The overhead I was
+> thinking of here is more along the lines of cgroup context switches
+> (although that isn't in my example). There may be a large number of
+> say memory controller events just by having 2 events for each PMU and
+> then there are 10s of PMUs. By putting half of the events on 1 CPU and
+> half on another, the context switch overhead is shared. That said, the
+> counters don't care what cgroup is accessing memory, and users doing
+> this are likely making some kind of error.
+> 
+> Thanks,
+> Ian
+> 
 
