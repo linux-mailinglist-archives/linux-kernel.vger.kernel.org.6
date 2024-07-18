@@ -1,131 +1,188 @@
-Return-Path: <linux-kernel+bounces-256617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B170D93511B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:10:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1F1C93511F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 19:11:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AF0B282FDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:10:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33E2DB2285C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670FF14534D;
-	Thu, 18 Jul 2024 17:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2181F14535B;
+	Thu, 18 Jul 2024 17:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DfuLPcYF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PPPtoIzQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA813144300;
-	Thu, 18 Jul 2024 17:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694FC144300;
+	Thu, 18 Jul 2024 17:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721322638; cv=none; b=FOBmBVDqKl5QO1Wf3euiNbI06Mn5tCg/t2rzEetPzRlDVuPe1lf6J3uFDcSTSdHQ1aLJKJjLTXSDD2/81Dxbr99vK0wP/sO6UMKf8rUkeYAPIh6s2QnlaBIiIu3leO/DgpcmRS2vVzG/UIeEbPbKL7Um0NOaEmJpXc48z+azRgg=
+	t=1721322654; cv=none; b=pVS1g7a9yjLobi/xBjAVGwex09eLck1EhliEIEkuY7KxMonQd+uDNHPQ9/nhH2W8HIfKGdfe+xIYa+GTQClAwIE0PV253resz1dPYdY4Lo/riq+tIIZre+e5k7N9a7m+7jSLwXVd+hzcDSjgKcgEQgwoPtkKToKQsjfSqJ6gWxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721322638; c=relaxed/simple;
-	bh=QZdYH3ME+OcwsRif5oGewFKnxSlxjBLMi5OPf+7dbZ0=;
+	s=arc-20240116; t=1721322654; c=relaxed/simple;
+	bh=n33IQJIKmhz52gVW94yS+nDVo20lt9j5mcPLmaVzON4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ptYz7Fy/QDoG0ikJbj473PzMLVbLdPVUNzn6fayg9FjHjpl+XUsycZFrvmV/v7ulIinmOQkeXiG6X2a3F6L49seZW2PPHpcLlAdIjLNdSd8FNVvO5qEwF9B9WHvQvHwFE/X8gUfTh7qxKj94ZmD99YqFwBDfaLdRgfWTX7o340I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DfuLPcYF; arc=none smtp.client-ip=198.175.65.10
+	 Content-Type:Content-Disposition:In-Reply-To; b=FgAB9qajNR7gZkYBMcAH6/SGjzQlPeqS8w/o2YAS56rz4hW79RgehO4H1rSx0nAf6Magnd57R1AIxtRj8Qep+/MAs1PuvTZMsYcts8rPr6QwXVZZEELYK3WuJHh4ejyrF93uAZiAYeHylc7XDdVSgSIYCvjZRX/nC99fHzHAd6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PPPtoIzQ; arc=none smtp.client-ip=192.198.163.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721322637; x=1752858637;
+  t=1721322652; x=1752858652;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=QZdYH3ME+OcwsRif5oGewFKnxSlxjBLMi5OPf+7dbZ0=;
-  b=DfuLPcYFApPpJWGHVkJtAlg+1m6/7khZlI5WORWx0xMUpO2WftE82Bc/
-   BPoq3wOV/Sb54H5R/HpGfJvktnGUh5UV0VZVDVSTghF2ZimL8aR+NG6BO
-   qXt7jKWncIAgLQh/Apk2ZsYQo00kCkdZvjZfI6jJ1s2etp63G/TdFNRwy
-   1QhVoq9H2spHECViYXuNu+/BXuWKHsXvOQYML61ykpbGVGYduzf3RuKwU
-   M9CP9t8NMNr2b09BnconKDCM5C8kgJbNntilCekwvefOLYfxS4BjX1a+5
-   U0fqn9Xy8H/LRWbcM9osa7eFCNU5IqlSpOKa0YTcfvZ7qA6kehVZ8XhqX
-   A==;
-X-CSE-ConnectionGUID: J+jyjTSAQtKg0TplgeCpfQ==
-X-CSE-MsgGUID: iDpYZ/c8RbeOGSpirGa+Aw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11137"; a="36343124"
+   mime-version:in-reply-to;
+  bh=n33IQJIKmhz52gVW94yS+nDVo20lt9j5mcPLmaVzON4=;
+  b=PPPtoIzQHnRNhTmogWfiPIq82Ae1Fs9z8jTMvDX26t7KPR1X8YyxtTBC
+   myUDX89AcQCuisNrYq7XNSE2Q7kggQxuZ8FIXe81nJANgpzmuPVAwe4iK
+   HhuHSitye1XAAfj0wvx357+HeTV7TQHsuwkBWny2zSmR0N/6xrboKJ9cZ
+   d2uqn+qkWkovvU2tnIf/8WsmOse1OMakAqL9tBWnkF/MgfxPYIaYNiykz
+   gKs21FKzKcekI4AY+dRHCkcISQedQIwiquww3iaUyumwy5ZJtBra4z+n/
+   XLB2SvF4hfwqQ2kUODqM/JNppZhOPnDg95ttL1gzmNgBfAltvxEvKtFIs
+   w==;
+X-CSE-ConnectionGUID: gzA/KCLHRUGaJMLBtCLfUA==
+X-CSE-MsgGUID: 2XIodvfjTE+HEwuUKqFiPg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11137"; a="12612529"
 X-IronPort-AV: E=Sophos;i="6.09,218,1716274800"; 
-   d="scan'208";a="36343124"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 10:10:36 -0700
-X-CSE-ConnectionGUID: z752KpM7QYOCFh4CH+MaZg==
-X-CSE-MsgGUID: V5Y9TFBUSuWf68gy+6wUsw==
+   d="scan'208";a="12612529"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 10:10:51 -0700
+X-CSE-ConnectionGUID: cw1Mc/AbQ7yBC0ZFnkEc2A==
+X-CSE-MsgGUID: zxFxd2nNTDGm9ENgS2X6Vg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,218,1716274800"; 
-   d="scan'208";a="50871249"
-Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2024 10:10:36 -0700
-Date: Thu, 18 Jul 2024 10:10:35 -0700
-From: Isaku Yamahata <isaku.yamahata@intel.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Isaku Yamahata <isaku.yamahata@intel.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, isaku.yamahata@gmail.com,
-	Paolo Bonzini <pbonzini@redhat.com>, erdemaktas@google.com,
-	Sean Christopherson <seanjc@google.com>,
-	Sagi Shahar <sagis@google.com>, Kai Huang <kai.huang@intel.com>,
-	chen.bo@intel.com, hang.yuan@intel.com, tina.zhang@intel.com,
-	Sean Christopherson <sean.j.christopherson@intel.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>
-Subject: Re: [PATCH v19 110/130] KVM: TDX: Handle TDX PV MMIO hypercall
-Message-ID: <20240718171035.GH1900928@ls.amr.corp.intel.com>
-References: <cover.1708933498.git.isaku.yamahata@intel.com>
- <a4421e0f2eafc17b4703c920936e32489d2382a3.1708933498.git.isaku.yamahata@intel.com>
- <560f3796-5a41-49fb-be6e-558bbe582996@linux.intel.com>
- <20240716222514.GD1900928@ls.amr.corp.intel.com>
- <457184ed-dcda-4363-a0c9-95b43b80a6a4@linux.intel.com>
+   d="scan'208";a="81862218"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 18 Jul 2024 10:10:48 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sUUeT-000hSM-1g;
+	Thu, 18 Jul 2024 17:10:45 +0000
+Date: Fri, 19 Jul 2024 01:10:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: LeoLiu-oc <LeoLiu-oc@zhaoxin.com>, rafael@kernel.org, lenb@kernel.org,
+	james.morse@arm.com, tony.luck@intel.com, bp@alien8.de,
+	bhelgaas@google.com, robert.moore@intel.com, yazen.ghannam@amd.com,
+	avadhut.naik@amd.com, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	acpica-devel@lists.linux.dev
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	CobeChen@zhaoxin.com, TimGuo@zhaoxin.com, TonyWWang-oc@zhaoxin.com,
+	leoliu-oc@zhaoxin.com
+Subject: Re: [PATCH v3 1/3] ACPI/APEI: Add hest_parse_pcie_aer()
+Message-ID: <202407190015.eutiIYQp-lkp@intel.com>
+References: <20240718062405.30571-2-LeoLiu-oc@zhaoxin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <457184ed-dcda-4363-a0c9-95b43b80a6a4@linux.intel.com>
+In-Reply-To: <20240718062405.30571-2-LeoLiu-oc@zhaoxin.com>
 
-On Thu, Jul 18, 2024 at 03:33:25PM +0800,
-Binbin Wu <binbin.wu@linux.intel.com> wrote:
+Hi LeoLiu-oc,
 
-> > > > +
-> > > > +		memcpy(&val, vcpu->run->mmio.data, size);
-> > > > +		tdvmcall_set_return_val(vcpu, val);
-> > > > +		trace_kvm_mmio(KVM_TRACE_MMIO_READ, size, gpa, &val);
-> > > > +	}
-> > > Tracepoint for KVM_TRACE_MMIO_WRITE is missing when it is handled in
-> > > userspace.
-> > tdx_mmio_write() has it before existing to the user space.  It matches with
-> > how write_mmio() behaves in x86.c.
-> > 
-> > Hmm, to match with other code, we should remove
-> > trace_kvm_mmio(KVM_TRACE_MMIO_READ) and keep KVM_TRACE_MMIO_READ_UNSATISFIED
-> > in tdx_emulate_mmio().  That's how read_prepare() and read_exit_mmio() behaves.
-> > 
-> > For MMIO read
-> > - When kernel can handle the MMIO, KVM_TRACE_MMIO_READ with data.
-> > - When exiting to the user space, KVM_TRACE_MMIO_READ_UNSATISFIED before
-> >    the exit.  No trace after the user space handled the MMIO.
-> 
-> For MMIO read, in the emulator, there is still a trace after the userspace
-> handled the MMIO.
-> In complete_emulated_mmio(), if all fragments have been handled, it will
-> set vcpu->mmio_read_completed to 1 and call complete_emulated_io().
-> complete_emulated_io
->     kvm_emulate_instruction(vcpu, EMULTYPE_NO_DECODE)
->         x86_emulate_instruction
->             x86_emulate_insn
->                 emulator_read_write
->                     read_prepare
->                         At this point, vcpu->mmio_read_completed is 1,
->                         it traces KVM_TRACE_MMIO_READ with data
->                         and then clear vcpu->mmio_read_completed
-> 
-> So to align with emulator, we should keep the trace for KVM_TRACE_MMIO_READ.
+kernel test robot noticed the following build warnings:
 
-Oops, you're right. Agreed to keep it.
+[auto build test WARNING on pci/for-linus]
+[also build test WARNING on rafael-pm/linux-next rafael-pm/bleeding-edge linus/master v6.10 next-20240718]
+[cannot apply to pci/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/LeoLiu-oc/ACPI-APEI-Add-hest_parse_pcie_aer/20240718-144218
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git for-linus
+patch link:    https://lore.kernel.org/r/20240718062405.30571-2-LeoLiu-oc%40zhaoxin.com
+patch subject: [PATCH v3 1/3] ACPI/APEI: Add hest_parse_pcie_aer()
+config: x86_64-rhel-8.3-rust (https://download.01.org/0day-ci/archive/20240719/202407190015.eutiIYQp-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240719/202407190015.eutiIYQp-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407190015.eutiIYQp-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/acpi/apei/hest.c:157:2: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
+     157 |         case ACPI_HEST_TYPE_AER_ENDPOINT:
+         |         ^
+   drivers/acpi/apei/hest.c:157:2: note: insert '__attribute__((fallthrough));' to silence this warning
+     157 |         case ACPI_HEST_TYPE_AER_ENDPOINT:
+         |         ^
+         |         __attribute__((fallthrough)); 
+   drivers/acpi/apei/hest.c:157:2: note: insert 'break;' to avoid fall-through
+     157 |         case ACPI_HEST_TYPE_AER_ENDPOINT:
+         |         ^
+         |         break; 
+   drivers/acpi/apei/hest.c:160:2: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
+     160 |         case ACPI_HEST_TYPE_AER_BRIDGE:
+         |         ^
+   drivers/acpi/apei/hest.c:160:2: note: insert '__attribute__((fallthrough));' to silence this warning
+     160 |         case ACPI_HEST_TYPE_AER_BRIDGE:
+         |         ^
+         |         __attribute__((fallthrough)); 
+   drivers/acpi/apei/hest.c:160:2: note: insert 'break;' to avoid fall-through
+     160 |         case ACPI_HEST_TYPE_AER_BRIDGE:
+         |         ^
+         |         break; 
+   drivers/acpi/apei/hest.c:163:2: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
+     163 |         default:
+         |         ^
+   drivers/acpi/apei/hest.c:163:2: note: insert '__attribute__((fallthrough));' to silence this warning
+     163 |         default:
+         |         ^
+         |         __attribute__((fallthrough)); 
+   drivers/acpi/apei/hest.c:163:2: note: insert 'break;' to avoid fall-through
+     163 |         default:
+         |         ^
+         |         break; 
+   3 warnings generated.
+
+
+vim +157 drivers/acpi/apei/hest.c
+
+   144	
+   145	static bool hest_source_is_pcie_aer(struct acpi_hest_header *hest_hdr, struct pci_dev *dev)
+   146	{
+   147		u16 hest_type = hest_hdr->type;
+   148		u8 pcie_type = pci_pcie_type(dev);
+   149		struct acpi_hest_aer_common *common;
+   150	
+   151		common = (struct acpi_hest_aer_common *)(hest_hdr + 1);
+   152	
+   153		switch (hest_type) {
+   154		case ACPI_HEST_TYPE_AER_ROOT_PORT:
+   155			if (pcie_type != PCI_EXP_TYPE_ROOT_PORT)
+   156				return false;
+ > 157		case ACPI_HEST_TYPE_AER_ENDPOINT:
+   158			if (pcie_type != PCI_EXP_TYPE_ENDPOINT)
+   159				return false;
+   160		case ACPI_HEST_TYPE_AER_BRIDGE:
+   161			if (pcie_type != PCI_EXP_TYPE_PCI_BRIDGE && pcie_type != PCI_EXP_TYPE_PCIE_BRIDGE)
+   162				return false;
+   163		default:
+   164			return false;
+   165		}
+   166	
+   167		if (common->flags & ACPI_HEST_GLOBAL)
+   168			return true;
+   169	
+   170		if (hest_match_pci_devfn(common, dev))
+   171			return true;
+   172	
+   173		return false;
+   174	}
+   175	
+
 -- 
-Isaku Yamahata <isaku.yamahata@intel.com>
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
