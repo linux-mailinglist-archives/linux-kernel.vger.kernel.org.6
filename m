@@ -1,544 +1,97 @@
-Return-Path: <linux-kernel+bounces-256522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E88EC934FA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:07:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B71F8934FAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 17:09:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F306286098
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:07:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E88E41C21746
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 15:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F3C143C57;
-	Thu, 18 Jul 2024 15:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB37143C60;
+	Thu, 18 Jul 2024 15:09:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IlYjmLrd"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GrHFtX7h"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CB314386E
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 15:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9726314372D;
+	Thu, 18 Jul 2024 15:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721315243; cv=none; b=NHzVnI6qcaJ6viacQfRuQ4b8Jv3l1EVUlLHrHc/JRMJzs+vVytP3ifdBde/q7tPNZcCdUTJj1UwAFeLp5wvrD0DFqMz5rUInKT99WXK5J1tcBBo+Cil+RgJjnurxDxunxSOroZ2/GnqZmfWg7SwBbIwrh4sxV0ADqT/1+UuI51Y=
+	t=1721315367; cv=none; b=RfgKlZ7mywjuMatWa+k9qFJ5yshB1JTh6ii2GjjCzloyIKEu1WdmQlM7nY8XumxaUi0RULOpNa2j1BilCxW5SlAH+DMs8cGiG+3lX0gudfnItGd4Bs+Wgz0YdV5j7G26sUJCZ8reb8Oaxq1Doz5qjIjXQWq6WL6mlZOTEOSqzAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721315243; c=relaxed/simple;
-	bh=SGSnXT6AGQNVK47nZqGxeMuHrxgrs2yy9JzNDP15pts=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i9VtazU9iziMFa8Fdu8YOFtRBtszo6MvSo5Scaj0546i2/i1E0GQV7NHDYlnnDKXgR/1hj2CfeHLL+KfrEmJDi67cZwNXCCFKYH7FPa140yDxaVX0mqfL4bXkQ4Z9ha0upfX5bgu+2Fs/U6Caw6v6uvA1GWBgVsNvz51B3mlbIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IlYjmLrd; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-447df43324fso138581cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 08:07:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721315240; x=1721920040; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1lyUsUp3zH5m+bvEX2jmvlPO9SAXaFdtd+AK96FliTA=;
-        b=IlYjmLrdbfxqyrEx+YEmmJO36UFFn5Biaz3dFi1WeeoTlQ3TyFLqKwCj0A7Hl3Bz3R
-         F5yqACRyJ5r/Gmh9pY+S+cXhchbuXojwhLfncXGkslGIVYZuE10cOmPaW3MYRqb4F4DH
-         JG2dCxmO1KxMRPIpkLVd1ChvMER4JFu9v9JMmnaFqzXLLJV/pYoyyd8skPHzX/X9IRM2
-         8WB6h/c7qgVtK67JaVerAiQKdiYZhQihMF2IR+T5mTAixe4eOISI0qna5m+zjoIiUEtF
-         YLF8AtQM8OA3gw5gVSL5xy9N5NzDP6Xa/wcqAOrbr8eDOxDyJqfcp80IfpfNEVez6GAk
-         wifg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721315240; x=1721920040;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1lyUsUp3zH5m+bvEX2jmvlPO9SAXaFdtd+AK96FliTA=;
-        b=DXLu4SHfyHAxBokqJ0oxmMHDoi/q28uvYRooeKUCLF2nzNY243tqDcEoOy6I0a4m3u
-         pt5DZvQjW2mwT1oSxL4g8pmvWSZugaA27bb86zbvINREtmzkJshISwJJopjpEBsEnBPb
-         Bk7pd39aOJqbrhsJ3e95DvmlFDyfziaVlt+DcjJz1I9U6v+dUTGrQFC9TdKK1OuT1UAK
-         9tOkKODNIu73dYl5wniCxc4pgcyvCWpkNbH24wVnPQCtVTNVKnQWfk3KB475YQWsgbQA
-         j5o6JJyGTzOYFVMN7HkjQsDtyDDJDQIWcocmhG6bS7BLi+XHHhMVBW6FwxhFz/gg/ZoU
-         Dh+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWsxLlUepg6jMjumH1A95VtiO9ZNhIq8U+FS31Kif8fM5SzLBwPSCt5iy0h4SbEU2Ab6SGHJppSoBKWzjYOiboziECexsyLP1Y6H896
-X-Gm-Message-State: AOJu0Yzvqpfi1rvTtipax7WN0BZ1fEhU2AvWw/SfveTcO711y9/yLbQ5
-	NGmasPDPAF1jyXP1F7yysGHbVWgbTyjIfvFLM/ICqDxZmuhmzc18lokkray2oJBpDeo36BqPG7h
-	/iN7cAOy71K57GP7R/7FN+fJL1PF3YhqvTF1q
-X-Google-Smtp-Source: AGHT+IHybviklDR72kWt6kzWwqEhV875IFAKxtsUr3jlt9uFUkSHLreXebzlnAiA0oaWD9DCasOUX2BYrI0qSSW98nY=
-X-Received: by 2002:ac8:4f50:0:b0:447:d555:7035 with SMTP id
- d75a77b69052e-44f969f1893mr1131571cf.13.1721315239414; Thu, 18 Jul 2024
- 08:07:19 -0700 (PDT)
+	s=arc-20240116; t=1721315367; c=relaxed/simple;
+	bh=aHgvN8DcpuIMoFz4mUzr/XhbxyJQPLiT8wsxrox6SmQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bZfBDtStrbGZ8UzA6LuSf+3cLQKWU56EOsbeQq6HQsCXK1NcHoWFDXNetp2fL+At8V+2lb2dqSeY2WMGN2boHLRC2ycvyhObEQ0fWkK75Gy8KSgRGMBXNMX9CXRbyWkQseA25ERrZtRS/ylM2Lq+cLKN61bUR9v+Ao54ZmdsSRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=GrHFtX7h; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=eahymJIWKeg6EuH2i+xe4KUuT0MlHFjbKV/EeHLuHQE=; b=GrHFtX7htOxaLDg469rq62ASgl
+	b/nWhWpwoaiaDVdPWKAvn2PTM9JgzBQ9wPxKHFmV5hw49bYA1KR7WMShKYa4S0NqflQtvoUeTisu/
+	PgC596VEbs4D05V0dSA7tx4B0H96Jbeok5ciQf7osdYiPpBL+/QqRjYdZI6a7DM/gf4Y=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sUSkt-002n1J-SE; Thu, 18 Jul 2024 17:09:15 +0200
+Date: Thu, 18 Jul 2024 17:09:15 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org,
+	horms@kernel.org, hkallweit1@gmail.com, richardcochran@gmail.com,
+	rdunlap@infradead.org, linux@armlinux.org.uk,
+	bryan.whitehead@microchip.com, edumazet@google.com,
+	pabeni@redhat.com, linux-kernel@vger.kernel.org,
+	UNGLinuxDriver@microchip.com
+Subject: Re: [PATCH net-next V2 0/4] Add support to PHYLINK for
+ LAN743x/PCI11x1x chips
+Message-ID: <336a5726-8654-441b-b5be-ef68888406c0@lunn.ch>
+References: <20240716113349.25527-1-Raju.Lakkaraju@microchip.com>
+ <2d8d38c2-0781-47ff-bff8-aec57d68ef05@lunn.ch>
+ <ZpijZH4pwymNbefz@HYD-DK-UNGSW21.microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240718003025.1486232-1-irogers@google.com> <20240718003025.1486232-7-irogers@google.com>
- <ecca73c3-3260-4e95-b9d6-6f6875258fb9@linaro.org>
-In-Reply-To: <ecca73c3-3260-4e95-b9d6-6f6875258fb9@linaro.org>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 18 Jul 2024 08:07:06 -0700
-Message-ID: <CAP-5=fVqhvR-3ya6GLs98A_1hTYX=jjjBkCbxMYb+2ZT5FRk1w@mail.gmail.com>
-Subject: Re: [PATCH v2 6/6] perf parse-events: Add "cpu" term to set the CPU
- an event is recorded on
-To: James Clark <james.clark@linaro.org>
-Cc: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>, James Clark <james.clark@arm.com>, 
-	Ravi Bangoria <ravi.bangoria@amd.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	ananth.narayan@amd.com, gautham.shenoy@amd.com, kprateek.nayak@amd.com, 
-	sandipan.das@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZpijZH4pwymNbefz@HYD-DK-UNGSW21.microchip.com>
 
-On Thu, Jul 18, 2024 at 7:10=E2=80=AFAM James Clark <james.clark@linaro.org=
-> wrote:
->
->
->
-> On 18/07/2024 1:30 am, Ian Rogers wrote:
-> > The -C option allows the CPUs for a list of events to be specified but
-> > its not possible to set the CPU for a single event. Add a term to
-> > allow this. The term isn't a general CPU list due to ',' already being
-> > a special character in event parsing instead multiple cpu=3D terms may
-> > be provided and they will be merged/unioned together.
-> >
-> > An example of mixing different types of events counted on different CPU=
-s:
-> > ```
-> > $ perf stat -A -C 0,4-5,8 -e "instructions/cpu=3D0/,l1d-misses/cpu=3D4,=
-cpu=3D5/,inst_retired.any/cpu=3D8/,cycles" -a sleep 0.1
-> >
->
-> I ran into cpu=3DN having no effect unless -C is also used. For example:
->
->   $ perf stat -vv -e branch-misses/cpu=3D1/ -- true
->
->   sys_perf_event_open: pid 10233  cpu -1  group_fd -1  flags 0x8 =3D 3
->
-> Vs:
->
->   $ perf stat -C 0,1 -vv -e branch-misses/cpu=3D1/ -- true
->
->   sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0x8 =3D 3
->
-> Is it possible to have a warning or error in that case? Seems like it's
-> quite likely to confuse a user.
+On Thu, Jul 18, 2024 at 10:38:52AM +0530, Raju Lakkaraju wrote:
+> Hi Andrew,
+> 
+> Thank you for review the patches.
+> 
+> The 07/18/2024 05:27, Andrew Lunn wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> > 
+> > On Tue, Jul 16, 2024 at 05:03:45PM +0530, Raju Lakkaraju wrote:
+> > > This is the follow-up patch series of
+> > > https://lkml.iu.edu/hypermail/linux/kernel/2310.2/02078.html
+> > >
+> > > Divide the PHYLINK adaptation and SFP modifications into two separate patch
+> > > series.
+> > 
+> > You appear to be missing the PHYLINK maintainer in your Cc: list.
+> > 
+> I add all PHYLINK maintainers email id's in cc
+> 
+> i.e.
+> $ ./scripts/get_maintainer.pl drivers/net/phy/phylink.c
+> Russell King <linux@armlinux.org.uk> (maintainer:SFF/SFP/SFP+ MODULE SUPPORT)
 
-Agreed. We have similar warnings for "-A". Tbh, there's no reason we
-can support this, perf_event_open does. The evlist propagate maps
-logic in my mind is crazy. I agree with a need to summarize the cpu
-maps in the evlist, but the code changes evsel cpu maps in ways that
-are brittle - for example, in this series I try to fix that legacy
-hardware and hardware cache events aren't considered core. Rather than
-processing command line options, the propagate maps fudge, I just wish
-event parsing would do parsing and the events be pretty immutable
-after that. The problem comes if you do -e then -C or -C then -e, as
-our command line processing is ordering dependent.
+Yes, sorry, Russell is on the list. My error.
 
-Thanks,
-Ian
+richardcochran@gmail.com is a bit odd, is PTP involved here?
 
-> Other than that it seems to work ok.
->
-> WRT the RAPL issue [1], I didn't quite follow how these two things will
-> join up. Doesn't this only end up setting the cpu argument to
-> perf_event_open(), which already aggregates per package rather than per
-> core, even if the cpu is set? And the fix for that behavior was rejected
-> because it would break Intel metrics [2].
->
-> Maybe I'm missing a piece.
->
-> [1]:
-> https://lore.kernel.org/lkml/CAP-5=3DfXXuWchzUK0n5KTH8kamr=3DDQoEni+bUoo8=
-f-4j8Y+eMBg@mail.gmail.com/
-> [2]:
-> https://lore.kernel.org/lkml/3e766f0e-37d4-0f82-3868-31b14228868d@linux.i=
-ntel.com/
->
-> James
->
-> >   Performance counter stats for 'system wide':
-> >
-> > CPU0              368,647      instructions/cpu=3D0/              #    =
-0.26  insn per cycle
-> > CPU4        <not counted>      instructions/cpu=3D0/
-> > CPU5        <not counted>      instructions/cpu=3D0/
-> > CPU8        <not counted>      instructions/cpu=3D0/
-> > CPU0        <not counted>      l1d-misses [cpu]
-> > CPU4              203,377      l1d-misses [cpu]
-> > CPU5              138,231      l1d-misses [cpu]
-> > CPU8        <not counted>      l1d-misses [cpu]
-> > CPU0        <not counted>      cpu/cpu=3D8/
-> > CPU4        <not counted>      cpu/cpu=3D8/
-> > CPU5        <not counted>      cpu/cpu=3D8/
-> > CPU8              943,861      cpu/cpu=3D8/
-> > CPU0            1,412,071      cycles
-> > CPU4           20,362,900      cycles
-> > CPU5           10,172,725      cycles
-> > CPU8            2,406,081      cycles
-> >
-> >         0.102925309 seconds time elapsed
-> > ```
-> >
-> > Note, the event name of inst_retired.any is missing, reported as
-> > cpu/cpu=3D8/, as there are unmerged uniquify fixes:
-> > https://lore.kernel.org/lkml/20240510053705.2462258-3-irogers@google.co=
-m/
-> >
-> > An example of spreading uncore overhead across two CPUs:
-> > ```
-> > $ perf stat -A -e "data_read/cpu=3D0/,data_write/cpu=3D1/" -a sleep 0.1
-> >
-> >   Performance counter stats for 'system wide':
-> >
-> > CPU0               223.65 MiB  uncore_imc_free_running_0/cpu=3D0/
-> > CPU0               223.66 MiB  uncore_imc_free_running_1/cpu=3D0/
-> > CPU0        <not counted> MiB  uncore_imc_free_running_0/cpu=3D1/
-> > CPU1                 5.78 MiB  uncore_imc_free_running_0/cpu=3D1/
-> > CPU0        <not counted> MiB  uncore_imc_free_running_1/cpu=3D1/
-> > CPU1                 5.74 MiB  uncore_imc_free_running_1/cpu=3D1/
-> > ```
-> >
-> > Manually fixing the output it should be:
-> > ```
-> > CPU0               223.65 MiB  uncore_imc_free_running_0/data_read,cpu=
-=3D0/
-> > CPU0               223.66 MiB  uncore_imc_free_running_1/data_read,cpu=
-=3D0/
-> > CPU1                 5.78 MiB  uncore_imc_free_running_0/data_write,cpu=
-=3D1/
-> > CPU1                 5.74 MiB  uncore_imc_free_running_1/data_write,cpu=
-=3D1/
-> > ```
-> >
-> > That is data_read from 2 PMUs was counted on CPU0 and data_write was
-> > counted on CPU1.
-> >
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >   tools/perf/Documentation/perf-list.txt |  9 ++++
-> >   tools/perf/util/evsel_config.h         |  1 +
-> >   tools/perf/util/parse-events.c         | 73 ++++++++++++++++++++++---=
--
-> >   tools/perf/util/parse-events.h         |  3 +-
-> >   tools/perf/util/parse-events.l         |  1 +
-> >   tools/perf/util/pmu.c                  |  1 +
-> >   6 files changed, 77 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/tools/perf/Documentation/perf-list.txt b/tools/perf/Docume=
-ntation/perf-list.txt
-> > index 6bf2468f59d3..15511afe94a1 100644
-> > --- a/tools/perf/Documentation/perf-list.txt
-> > +++ b/tools/perf/Documentation/perf-list.txt
-> > @@ -273,6 +273,15 @@ Sums up the event counts for all hardware threads =
-in a core, e.g.:
-> >
-> >     perf stat -e cpu/event=3D0,umask=3D0x3,percore=3D1/
-> >
-> > +cpu:
-> > +
-> > +Specifies the CPU to open the event upon. The value may be repeated to
-> > +specify opening the event on multiple CPUs:
-> > +
-> > +
-> > +  perf stat -e instructions/cpu=3D0,cpu=3D2/,cycles/cpu=3D1,cpu=3D2/ -=
-a sleep 1
-> > +  perf stat -e data_read/cpu=3D0/,data_write/cpu=3D1/ -a sleep 1
-> > +
-> >
-> >   EVENT GROUPS
-> >   ------------
-> > diff --git a/tools/perf/util/evsel_config.h b/tools/perf/util/evsel_con=
-fig.h
-> > index aee6f808b512..9630c4a24721 100644
-> > --- a/tools/perf/util/evsel_config.h
-> > +++ b/tools/perf/util/evsel_config.h
-> > @@ -47,6 +47,7 @@ struct evsel_config_term {
-> >               u32           aux_sample_size;
-> >               u64           cfg_chg;
-> >               char          *str;
-> > +             int           cpu;
-> >       } val;
-> >       bool weak;
-> >   };
-> > diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-eve=
-nts.c
-> > index 8c0c33361c5e..85faef85b8de 100644
-> > --- a/tools/perf/util/parse-events.c
-> > +++ b/tools/perf/util/parse-events.c
-> > @@ -7,6 +7,7 @@
-> >   #include <errno.h>
-> >   #include <sys/ioctl.h>
-> >   #include <sys/param.h>
-> > +#include "cpumap.h"
-> >   #include "term.h"
-> >   #include "evlist.h"
-> >   #include "evsel.h"
-> > @@ -177,6 +178,26 @@ static char *get_config_name(const struct parse_ev=
-ents_terms *head_terms)
-> >       return get_config_str(head_terms, PARSE_EVENTS__TERM_TYPE_NAME);
-> >   }
-> >
-> > +static struct perf_cpu_map *get_config_cpu(const struct parse_events_t=
-erms *head_terms)
-> > +{
-> > +     struct parse_events_term *term;
-> > +     struct perf_cpu_map *cpus =3D NULL;
-> > +
-> > +     if (!head_terms)
-> > +             return NULL;
-> > +
-> > +     list_for_each_entry(term, &head_terms->terms, list) {
-> > +             if (term->type_term =3D=3D PARSE_EVENTS__TERM_TYPE_CPU) {
-> > +                     struct perf_cpu_map *cpu =3D perf_cpu_map__new_in=
-t(term->val.num);
-> > +
-> > +                     cpus =3D perf_cpu_map__merge(cpus, cpu);
-> > +                     perf_cpu_map__put(cpu);
-> > +             }
-> > +     }
-> > +
-> > +     return cpus;
-> > +}
-> > +
-> >   /**
-> >    * fix_raw - For each raw term see if there is an event (aka alias) i=
-n pmu that
-> >    *           matches the raw's string value. If the string value matc=
-hes an
-> > @@ -468,11 +489,12 @@ int parse_events_add_cache(struct list_head *list=
-, int *idx, const char *name,
-> >       bool found_supported =3D false;
-> >       const char *config_name =3D get_config_name(parsed_terms);
-> >       const char *metric_id =3D get_config_metric_id(parsed_terms);
-> > +     struct perf_cpu_map *cpus =3D get_config_cpu(parsed_terms);
-> > +     int ret =3D 0;
-> >
-> >       while ((pmu =3D perf_pmus__scan(pmu)) !=3D NULL) {
-> >               LIST_HEAD(config_terms);
-> >               struct perf_event_attr attr;
-> > -             int ret;
-> >
-> >               if (parse_events__filter_pmu(parse_state, pmu))
-> >                       continue;
-> > @@ -486,7 +508,7 @@ int parse_events_add_cache(struct list_head *list, =
-int *idx, const char *name,
-> >                                                  parsed_terms,
-> >                                                  perf_pmu__auto_merge_s=
-tats(pmu));
-> >                       if (ret)
-> > -                             return ret;
-> > +                             goto out_err;
-> >                       continue;
-> >               }
-> >
-> > @@ -506,20 +528,27 @@ int parse_events_add_cache(struct list_head *list=
-, int *idx, const char *name,
-> >
-> >               if (parsed_terms) {
-> >                       if (config_attr(&attr, parsed_terms, parse_state-=
->error,
-> > -                                     config_term_common))
-> > -                             return -EINVAL;
-> > -
-> > -                     if (get_config_terms(parsed_terms, &config_terms)=
-)
-> > -                             return -ENOMEM;
-> > +                                     config_term_common)) {
-> > +                             ret =3D -EINVAL;
-> > +                             goto out_err;
-> > +                     }
-> > +                     if (get_config_terms(parsed_terms, &config_terms)=
-) {
-> > +                             ret =3D -ENOMEM;
-> > +                             goto out_err;
-> > +                     }
-> >               }
-> >
-> >               if (__add_event(list, idx, &attr, /*init_attr*/true, conf=
-ig_name ?: name,
-> >                               metric_id, pmu, &config_terms, /*auto_mer=
-ge_stats=3D*/false,
-> > -                             /*cpu_list=3D*/NULL) =3D=3D NULL)
-> > -                     return -ENOMEM;
-> > +                             cpus) =3D=3D NULL)
-> > +                     ret =3D -ENOMEM;
-> >
-> >               free_config_terms(&config_terms);
-> > +             if (ret)
-> > +                     goto out_err;
-> >       }
-> > +out_err:
-> > +     perf_cpu_map__put(cpus);
-> >       return found_supported ? 0 : -EINVAL;
-> >   }
-> >
-> > @@ -814,6 +843,7 @@ static const char *config_term_name(enum parse_even=
-ts__term_type term_type)
-> >               [PARSE_EVENTS__TERM_TYPE_RAW]                   =3D "raw"=
-,
-> >               [PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE]          =3D "lega=
-cy-cache",
-> >               [PARSE_EVENTS__TERM_TYPE_HARDWARE]              =3D "hard=
-ware",
-> > +             [PARSE_EVENTS__TERM_TYPE_CPU]                   =3D "cpu"=
-,
-> >       };
-> >       if ((unsigned int)term_type >=3D __PARSE_EVENTS__TERM_TYPE_NR)
-> >               return "unknown term";
-> > @@ -843,6 +873,7 @@ config_term_avail(enum parse_events__term_type term=
-_type, struct parse_events_er
-> >       case PARSE_EVENTS__TERM_TYPE_METRIC_ID:
-> >       case PARSE_EVENTS__TERM_TYPE_SAMPLE_PERIOD:
-> >       case PARSE_EVENTS__TERM_TYPE_PERCORE:
-> > +     case PARSE_EVENTS__TERM_TYPE_CPU:
-> >               return true;
-> >       case PARSE_EVENTS__TERM_TYPE_USER:
-> >       case PARSE_EVENTS__TERM_TYPE_SAMPLE_FREQ:
-> > @@ -986,6 +1017,15 @@ do {                                             =
-                          \
-> >                       return -EINVAL;
-> >               }
-> >               break;
-> > +     case PARSE_EVENTS__TERM_TYPE_CPU:
-> > +             CHECK_TYPE_VAL(NUM);
-> > +             if (term->val.num >=3D (u64)cpu__max_present_cpu().cpu) {
-> > +                     parse_events_error__handle(err, term->err_val,
-> > +                                             strdup("too big"),
-> > +                                             NULL);
-> > +                     return -EINVAL;
-> > +             }
-> > +             break;
-> >       case PARSE_EVENTS__TERM_TYPE_DRV_CFG:
-> >       case PARSE_EVENTS__TERM_TYPE_USER:
-> >       case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
-> > @@ -1112,6 +1152,7 @@ static int config_term_tracepoint(struct perf_eve=
-nt_attr *attr,
-> >       case PARSE_EVENTS__TERM_TYPE_RAW:
-> >       case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
-> >       case PARSE_EVENTS__TERM_TYPE_HARDWARE:
-> > +     case PARSE_EVENTS__TERM_TYPE_CPU:
-> >       default:
-> >               if (err) {
-> >                       parse_events_error__handle(err, term->err_term,
-> > @@ -1243,6 +1284,7 @@ do {                                             =
-               \
-> >               case PARSE_EVENTS__TERM_TYPE_RAW:
-> >               case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
-> >               case PARSE_EVENTS__TERM_TYPE_HARDWARE:
-> > +             case PARSE_EVENTS__TERM_TYPE_CPU:
-> >               default:
-> >                       break;
-> >               }
-> > @@ -1296,6 +1338,7 @@ static int get_config_chgs(struct perf_pmu *pmu, =
-struct parse_events_terms *head
-> >               case PARSE_EVENTS__TERM_TYPE_RAW:
-> >               case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
-> >               case PARSE_EVENTS__TERM_TYPE_HARDWARE:
-> > +             case PARSE_EVENTS__TERM_TYPE_CPU:
-> >               default:
-> >                       break;
-> >               }
-> > @@ -1350,6 +1393,7 @@ static int __parse_events_add_numeric(struct pars=
-e_events_state *parse_state,
-> >       struct perf_event_attr attr;
-> >       LIST_HEAD(config_terms);
-> >       const char *name, *metric_id;
-> > +     struct perf_cpu_map *cpus;
-> >       int ret;
-> >
-> >       memset(&attr, 0, sizeof(attr));
-> > @@ -1371,9 +1415,11 @@ static int __parse_events_add_numeric(struct par=
-se_events_state *parse_state,
-> >
-> >       name =3D get_config_name(head_config);
-> >       metric_id =3D get_config_metric_id(head_config);
-> > +     cpus =3D get_config_cpu(head_config);
-> >       ret =3D __add_event(list, &parse_state->idx, &attr, /*init_attr*/=
-true, name,
-> >                       metric_id, pmu, &config_terms, /*auto_merge_stats=
-=3D*/false,
-> > -                     /*cpu_list=3D*/NULL) ? 0 : -ENOMEM;
-> > +                     cpus) ? 0 : -ENOMEM;
-> > +     perf_cpu_map__put(cpus);
-> >       free_config_terms(&config_terms);
-> >       return ret;
-> >   }
-> > @@ -1440,6 +1486,7 @@ static int parse_events_add_pmu(struct parse_even=
-ts_state *parse_state,
-> >       LIST_HEAD(config_terms);
-> >       struct parse_events_terms parsed_terms;
-> >       bool alias_rewrote_terms =3D false;
-> > +     struct perf_cpu_map *term_cpu =3D NULL;
-> >       int ret =3D 0;
-> >
-> >       if (verbose > 1) {
-> > @@ -1531,6 +1578,12 @@ static int parse_events_add_pmu(struct parse_eve=
-nts_state *parse_state,
-> >               goto out_err;
-> >       }
-> >
-> > +     term_cpu =3D get_config_cpu(&parsed_terms);
-> > +     if (!perf_cpu_map__is_empty(term_cpu)) {
-> > +             perf_cpu_map__put(info.cpus);
-> > +             info.cpus =3D term_cpu;
-> > +             term_cpu =3D NULL;
-> > +     }
-> >       evsel =3D __add_event(list, &parse_state->idx, &attr, /*init_attr=
-=3D*/true,
-> >                           get_config_name(&parsed_terms),
-> >                           get_config_metric_id(&parsed_terms), pmu,
-> > diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-eve=
-nts.h
-> > index e13de2c8b706..b03857499030 100644
-> > --- a/tools/perf/util/parse-events.h
-> > +++ b/tools/perf/util/parse-events.h
-> > @@ -79,7 +79,8 @@ enum parse_events__term_type {
-> >       PARSE_EVENTS__TERM_TYPE_RAW,
-> >       PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE,
-> >       PARSE_EVENTS__TERM_TYPE_HARDWARE,
-> > -#define      __PARSE_EVENTS__TERM_TYPE_NR (PARSE_EVENTS__TERM_TYPE_HAR=
-DWARE + 1)
-> > +     PARSE_EVENTS__TERM_TYPE_CPU,
-> > +#define      __PARSE_EVENTS__TERM_TYPE_NR (PARSE_EVENTS__TERM_TYPE_CPU=
- + 1)
-> >   };
-> >
-> >   struct parse_events_term {
-> > diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-eve=
-nts.l
-> > index 16045c383ada..e06097a62796 100644
-> > --- a/tools/perf/util/parse-events.l
-> > +++ b/tools/perf/util/parse-events.l
-> > @@ -330,6 +330,7 @@ percore                   { return term(yyscanner, =
-PARSE_EVENTS__TERM_TYPE_PERCORE); }
-> >   aux-output          { return term(yyscanner, PARSE_EVENTS__TERM_TYPE_=
-AUX_OUTPUT); }
-> >   aux-sample-size             { return term(yyscanner, PARSE_EVENTS__TE=
-RM_TYPE_AUX_SAMPLE_SIZE); }
-> >   metric-id           { return term(yyscanner, PARSE_EVENTS__TERM_TYPE_=
-METRIC_ID); }
-> > +cpu                  { return term(yyscanner, PARSE_EVENTS__TERM_TYPE_=
-CPU); }
-> >   cpu-cycles|cycles                           { return hw_term(yyscanne=
-r, PERF_COUNT_HW_CPU_CYCLES); }
-> >   stalled-cycles-frontend|idle-cycles-frontend        { return hw_term(=
-yyscanner, PERF_COUNT_HW_STALLED_CYCLES_FRONTEND); }
-> >   stalled-cycles-backend|idle-cycles-backend  { return hw_term(yyscanne=
-r, PERF_COUNT_HW_STALLED_CYCLES_BACKEND); }
-> > diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-> > index 280b2499c861..27e2ff23799e 100644
-> > --- a/tools/perf/util/pmu.c
-> > +++ b/tools/perf/util/pmu.c
-> > @@ -1767,6 +1767,7 @@ int perf_pmu__for_each_format(struct perf_pmu *pm=
-u, void *state, pmu_format_call
-> >               "percore",
-> >               "aux-output",
-> >               "aux-sample-size=3Dnumber",
-> > +             "cpu=3Dnumber",
-> >       };
-> >       struct perf_pmu_format *format;
-> >       int ret;
+	Andrew
 
