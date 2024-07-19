@@ -1,258 +1,122 @@
-Return-Path: <linux-kernel+bounces-256935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B40749372B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 05:22:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D78569372C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 05:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69CEC2825C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 03:22:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 709971F21D47
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 03:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E827210FF;
-	Fri, 19 Jul 2024 03:22:12 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E35E17BA1;
+	Fri, 19 Jul 2024 03:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tu0jvndy"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15D72566;
-	Fri, 19 Jul 2024 03:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F8110A09
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 03:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721359332; cv=none; b=qMyxi8MRr1f+IPZTK7QDHtEN1dIKiO+nCGtXg/e9u++gppsDiqNVqzBux7jMRFjiYS3Efvh4SXTyzcR89HnAsYsK0ubO8JP7vbBfWDO+H8xonj375WN9MosY3gR7IKLMU93TQvu/lGJI+q4BynFr5NlGNawrZiXON5BPIGYkPrs=
+	t=1721359716; cv=none; b=ifO3EPyzU5kFd/f3UTDdLDYnuT6jw4EYrJJ9MM5P1cUIYquxoGp1EDJ9HWiCr9UeiGe8fknvMEQ62lXRBJtgALvJbn/ds2HMUW/FslwXnSOogTJ5h/DixcrVCYsouguum0/hKFw8YX2wulqPtrwVahK0TgviAoKsiF+b+rWtLtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721359332; c=relaxed/simple;
-	bh=/l0yJGO5EBjL933kX1ZtOmzUj71Ck6fbHD/HyU7QBtw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=gCCLPzRAShKHJGmtqDCTrHsPYlhmv/GSOirrA4DZXL6vmTHegHFzMVz78B3+/l3PdhCgMGTuXhodBsFEf/fOMio5hUMKFqDTRNRB+puDyodRjztjt8kPpuoiZHBGazm3iWtYWJMP8pC19wsJEGA7awBbCgIpt/r2M6sk/9rYWMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WQFMg0tRxz4f3lVc;
-	Fri, 19 Jul 2024 11:21:51 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 683F71A08D7;
-	Fri, 19 Jul 2024 11:22:04 +0800 (CST)
-Received: from [10.174.178.46] (unknown [10.174.178.46])
-	by APP4 (Coremail) with SMTP id gCh0CgCHaTfa25lmVg0nAg--.34469S3;
-	Fri, 19 Jul 2024 11:22:04 +0800 (CST)
-Subject: Re: [BUG REPORT] potential deadlock in inode evicting under the inode
- lru traversing context on ext4 and ubifs
-To: Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Christoph Hellwig <hch@infradead.org>,
- linux-mtd <linux-mtd@lists.infradead.org>,
- Richard Weinberger <richard@nod.at>, "zhangyi (F)" <yi.zhang@huawei.com>,
- yangerkun <yangerkun@huawei.com>, "wangzhaolong (A)"
- <wangzhaolong1@huawei.com>
-References: <37c29c42-7685-d1f0-067d-63582ffac405@huaweicloud.com>
- <20240712143708.GA151742@mit.edu> <20240718134031.sxnwwzzj54jxl3e5@quack3>
-From: Zhihao Cheng <chengzhihao@huaweicloud.com>
-Message-ID: <0b0a7b95-f6d0-a56e-5492-b48882d9a35d@huaweicloud.com>
-Date: Fri, 19 Jul 2024 11:21:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	s=arc-20240116; t=1721359716; c=relaxed/simple;
+	bh=jpqLWQGi1R51AMMrM+Fv6wtB6ksjM36mFzPhkNRTKlw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OKz/41y5S2hEikhLVR7eYr+CjLoSHfv9TfKbMJfZ/Q26Jvdg5QFyQvqauC/AAdZ9PMAIfoI8tGD2YUoNLtlkl+9Z2dcw4ASvpuxZQETWd96D8925JD37oPLNpipil3+m+M0e+S9U0A0Nr4MBAGjStR/3NTT/VymDJ0457JIwArA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tu0jvndy; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: linux-kernel@vger.kernel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721359711;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=NKdeifrON+LGBPOD/jY7HSMsQkTavNdc3tFjc22kFHc=;
+	b=tu0jvndy33/2c4zuaKJ/xO9pMbpo0MRL91nAiWYHHf4q44p0ZT013v8nXB4qiA25EC+M2I
+	8mMXxUD3WzZ+oHqsiXaZi1TUwBJIEg2jJw8zYHGD25+NmaYuhz5BjDsMoMY+cozKpGXWIq
+	n50Lq6vJOb6aFmbPZfn3oQjLqy8HJs0=
+X-Envelope-To: x86@kernel.org
+X-Envelope-To: tglx@linutronix.de
+X-Envelope-To: mingo@redhat.com
+X-Envelope-To: bp@alien8.de
+X-Envelope-To: dave.hansen@linux.intel.com
+X-Envelope-To: hpa@zytor.com
+X-Envelope-To: xin3.li@intel.com
+X-Envelope-To: peterz@infradead.org
+X-Envelope-To: vegard.nossum@oracle.com
+X-Envelope-To: tony.luck@intel.com
+X-Envelope-To: pawan.kumar.gupta@linux.intel.com
+X-Envelope-To: rick.p.edgecombe@intel.com
+X-Envelope-To: yuntao.wang@linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yuntao Wang <yuntao.wang@linux.dev>
+To: linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Xin Li <xin3.li@intel.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Yuntao Wang <yuntao.wang@linux.dev>
+Subject: [PATCH] x86/cpu: Use TLS_SIZE instead of open coding it
+Date: Fri, 19 Jul 2024 11:24:37 +0800
+Message-ID: <20240719032437.35258-1-yuntao.wang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240718134031.sxnwwzzj54jxl3e5@quack3>
-Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHaTfa25lmVg0nAg--.34469S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3JrWktr43Xw1DZr18GF4kZwb_yoWxGr4kpF
-	Z2qFyfKr4kJFy0k3s7trs0vrn2kayDtr4UJ348Kw4kZ3Z5JryftF1xGr4ayF98Ar4kCrWj
-	qr4UCrnxCFsIy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
-X-CM-SenderInfo: xfkh0wx2klxt3r6k3tpzhluzxrxghudrp/
+X-Migadu-Flow: FLOW_OUT
 
-Hi, Jan
+Currently, there is already a macro named TLS_SIZE defined in segment.h,
+which is equivalent to 'GDT_ENTRY_TLS_ENTRIES * 8'. Therefore, we can use
+this macro directly in cpu_init() instead of open coding it.
 
-ÔÚ 2024/7/18 21:40, Jan Kara Ð´µÀ:
-> On Fri 12-07-24 10:37:08, Theodore Ts'o wrote:
->> On Fri, Jul 12, 2024 at 02:27:20PM +0800, Zhihao Cheng wrote:
->>> Problem description
->>> ===================
->>>
->>> The inode reclaiming process(See function prune_icache_sb) collects all
->>> reclaimable inodes and mark them with I_FREEING flag at first, at that
->>> time, other processes will be stuck if they try getting these inodes(See
->>> function find_inode_fast), then the reclaiming process destroy the
->>> inodes by function dispose_list().
->>> Some filesystems(eg. ext4 with ea_inode feature, ubifs with xattr) may
->>> do inode lookup in the inode evicting callback function, if the inode
->>> lookup is operated under the inode lru traversing context, deadlock
->>> problems may happen.
->>>
->>> Case 1: In function ext4_evict_inode(), the ea inode lookup could happen
->>> if ea_inode feature is enabled, the lookup process will be stuck under
->>> the evicting context like this:
->>>
->>>   1. File A has inode i_reg and an ea inode i_ea
->>>   2. getfattr(A, xattr_buf) // i_ea is added into lru // lru->i_ea
->>>   3. Then, following three processes running like this:
->>>
->>>      PA                              PB
->>>   echo 2 > /proc/sys/vm/drop_caches
->>>    shrink_slab
->>>     prune_dcache_sb
->>>     // i_reg is added into lru, lru->i_ea->i_reg
->>>     prune_icache_sb
->>>      list_lru_walk_one
->>>       inode_lru_isolate
->>>        i_ea->i_state |= I_FREEING // set inode state
->>>        i_ea->i_state |= I_FREEING // set inode state
->>
->> Um, I don't see how this can happen.  If the ea_inode is in use,
->> i_count will be greater than zero, and hence the inode will never be
->> go down the rest of the path in inode_lru_inode():
->>
->> 	if (atomic_read(&inode->i_count) ||
->> 	    ...) {
->> 		list_lru_isolate(lru, &inode->i_lru);
->> 		spin_unlock(&inode->i_lock);
->> 		this_cpu_dec(nr_unused);
->> 		return LRU_REMOVED;
->> 	}
->>
->> Do you have an actual reproduer which triggers this?  Or would this
->> happen be any chance something that was dreamed up with DEPT?
-> 
-> No, it looks like a real problem and I agree with the analysis. We don't
-> hold ea_inode reference (i.e., ea_inode->i_count) from a normal inode. The
-> normal inode just owns that that special on-disk xattr reference. Standard
-> inode references are acquired and dropped as needed.
-> 
-> And this is exactly the problem: ext4_xattr_inode_dec_ref_all() called from
-> evict() needs to lookup the ea_inode and iget() it. So if we are processing
-> a list of inodes to dispose, all inodes have I_FREEING bit already set and
-> if ea_inode and its parent normal inode are both in the list, then the
-> evict()->ext4_xattr_inode_dec_ref_all()->iget() will deadlock.
+Signed-off-by: Yuntao Wang <yuntao.wang@linux.dev>
+---
+ arch/x86/include/asm/segment.h | 2 +-
+ arch/x86/kernel/cpu/common.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Yes, absolutely right.
-> 
-> Normally we don't hit this path because LRU list walk is not handling
-> inodes with 0 link count. But a race with unlink can make that happen with
-> iput() from inode_lru_isolate().
-
-Another reason is that mapping_empty(&inode->i_data) is consistent with 
-mapping_shrinkable(&inode->i_data) in most cases(CONFIG_HIGHMEM is 
-disabled in default on 64bit platforms, so mapping_shrinkable() hardly 
-returns true if file inode's mapping has pagecahes), the problem path 
-expects that mapping_shrinkable() returns true and mapping_empty() 
-returns false.
-
-Do we have any other methods to replace following if-branch without 
-invoking __iget()?
-
-         /* 
-
-          * On highmem systems, mapping_shrinkable() permits dropping 
-
-          * page cache in order to free up struct inodes: lowmem might 
-
-          * be under pressure before the cache inside the highmem zone. 
-
-          */ 
-
-         if (inode_has_buffers(inode) || !mapping_empty(&inode->i_data)) 
-{
-                 __iget(inode);
-                 ...
-                 iput(inode); 
-
-                 spin_lock(lru_lock); 
-
-                 return LRU_RETRY; 
-
-         }
-> 
-> I'm pondering about the best way to fix this. Maybe we could handle the
-> need for inode pinning in inode_lru_isolate() in a similar way as in
-> writeback code so that last iput() cannot happen from inode_lru_isolate().
-> In writeback we use I_SYNC flag to pin the inode and evict() waits for this
-> flag to clear. I'll probably sleep to it and if I won't find it too
-> disgusting to live tomorrow, I can code it.
-> 
-
-I guess that you may modify like this:
-diff --git a/fs/inode.c b/fs/inode.c
-index f356fe2ec2b6..5b1a9b23f53f 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -457,7 +457,7 @@ EXPORT_SYMBOL(ihold);
-
-  static void __inode_add_lru(struct inode *inode, bool rotate)
-  {
--       if (inode->i_state & (I_DIRTY_ALL | I_SYNC | I_FREEING | 
-I_WILL_FREE))
-+       if (inode->i_state & (I_DIRTY_ALL | I_SYNC | I_FREEING | 
-I_WILL_FREE | I_PINING))
-                 return;
-         if (atomic_read(&inode->i_count))
-                 return;
-@@ -845,7 +845,7 @@ static enum lru_status inode_lru_isolate(struct 
-list_head *item,
-          * be under pressure before the cache inside the highmem zone.
-          */
-         if (inode_has_buffers(inode) || !mapping_empty(&inode->i_data)) {
--               __iget(inode);
-+               inode->i_state |= I_PINING;
-                 spin_unlock(&inode->i_lock);
-                 spin_unlock(lru_lock);
-                 if (remove_inode_buffers(inode)) {
-@@ -857,7 +857,10 @@ static enum lru_status inode_lru_isolate(struct 
-list_head *item,
-                                 __count_vm_events(PGINODESTEAL, reap);
-                         mm_account_reclaimed_pages(reap);
-                 }
--               iput(inode);
-+               spin_lock(&inode->i_lock);
-+               inode->i_state &= ~I_PINING;
-+               wake_up_bit(&inode->i_state, __I_PINING);
-+               spin_unlock(&inode->i_lock);
-                 spin_lock(lru_lock);
-                 return LRU_RETRY;
-         }
-@@ -1772,6 +1775,7 @@ static void iput_final(struct inode *inode)
-                 return;
-         }
-
-+       inode_wait_for_pining(inode);
-         state = inode->i_state;
-         if (!drop) {
-                 WRITE_ONCE(inode->i_state, state | I_WILL_FREE);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index fd34b5755c0b..daf094fff5fe 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2415,6 +2415,8 @@ static inline void kiocb_clone(struct kiocb 
-*kiocb, struct kiocb *kiocb_src,
-  #define I_DONTCACHE            (1 << 16)
-  #define I_SYNC_QUEUED          (1 << 17)
-  #define I_PINNING_NETFS_WB     (1 << 18)
-+#define __I_PINING             19
-+#define I_PINING               (1 << __I_PINING)
-
-  #define I_DIRTY_INODE (I_DIRTY_SYNC | I_DIRTY_DATASYNC)
-  #define I_DIRTY (I_DIRTY_INODE | I_DIRTY_PAGES)
-
-, which means that we will import a new inode state to solve the problem.
+diff --git a/arch/x86/include/asm/segment.h b/arch/x86/include/asm/segment.h
+index 9d6411c65920..c6d710340c02 100644
+--- a/arch/x86/include/asm/segment.h
++++ b/arch/x86/include/asm/segment.h
+@@ -227,7 +227,7 @@
+ 
+ #define GDT_SIZE			(GDT_ENTRIES*8)
+ #define GDT_ENTRY_TLS_ENTRIES		3
+-#define TLS_SIZE			(GDT_ENTRY_TLS_ENTRIES* 8)
++#define TLS_SIZE			(GDT_ENTRY_TLS_ENTRIES*8)
+ 
+ /* Bit size and mask of CPU number stored in the per CPU data (and TSC_AUX) */
+ #define VDSO_CPUNODE_BITS		12
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index d4e539d4e158..08b58de86c45 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -2220,7 +2220,7 @@ void cpu_init(void)
+ 
+ 	if (IS_ENABLED(CONFIG_X86_64)) {
+ 		loadsegment(fs, 0);
+-		memset(cur->thread.tls_array, 0, GDT_ENTRY_TLS_ENTRIES * 8);
++		memset(cur->thread.tls_array, 0, TLS_SIZE);
+ 		syscall_init();
+ 
+ 		wrmsrl(MSR_FS_BASE, 0);
+-- 
+2.45.2
 
 
