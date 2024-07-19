@@ -1,122 +1,139 @@
-Return-Path: <linux-kernel+bounces-257202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0663193769C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:26:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F42893769D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98A87B20ADA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:26:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC88D28191A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6292F839EB;
-	Fri, 19 Jul 2024 10:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7250A83CD7;
+	Fri, 19 Jul 2024 10:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I9SW12+9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="IWt2mv0c"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CAFEEC0;
-	Fri, 19 Jul 2024 10:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554AA81211;
+	Fri, 19 Jul 2024 10:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721384806; cv=none; b=U/NFeqRczSBtWe4BQlppegPmwuRUQoaPQ8k/59pp6rzN6hjM7FOVvo0MYxS5TjwDq9DtkJKXpcRtTInlkVGmDja9t9papCVLBIG/BZXQ/EIycLpRjN4C3aL7bIRZ69HYPUWOepsQ0yr7uaHeLoWeu6wTLlH6hlm/E9gVEerhrCU=
+	t=1721384929; cv=none; b=BYOEckwDKS5gFrp2G/myVMrIO2qFpBEUOB4gGK4UXe/iGsyCl5V9WpNx04MjUY4P2Utrei3tuOlvemMsO16j7Hyp8kwn1bzy13NIlg5RB9545KNnOncP1iFJusuMCMJoaG8ewf9fDiGVvOVZjgZ/haJGW4MgsVJAz2PYLOyAxTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721384806; c=relaxed/simple;
-	bh=aNwTxU96+ZwmKiLWvRO7l2ZzPLTFWz/5G7HpgjGUAOg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=feTQy4VI0j01BGyvZw4NhogNdteVQEOKoDPKKlBm8BhQ+3kXnO/xIriIa92xUqho5dJKhW81ZOL4uAUd4HHQZ4XP6GPHWsMmHT00aZVCwtsd1mcoTKbebgn44N3XTIl57w3I0TC1OlIO4Y9Fw8yhJfxTvdn0MAomegwSV6fMsSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I9SW12+9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7EECC32782;
-	Fri, 19 Jul 2024 10:26:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721384806;
-	bh=aNwTxU96+ZwmKiLWvRO7l2ZzPLTFWz/5G7HpgjGUAOg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=I9SW12+9YDrCMpPaq6rlUHRg2C23GG743yfeXQ794uc0qsrckBrHZrVKDQtqHDbxp
-	 Sm7hXiMPXxtCO4OgT0cNi5YhQvC2vXljrM3xSXmL0lvUNrRNxK7FurYZx/XZjjgP/p
-	 VBV3AxRXwGpY8QO7+nEMcRbFHayiRTOKDQRJojShaVTgb2PRHVBVIsg3+7uwfygJyO
-	 uxcaXpMSj0+04twMUaWtx2yfFNXwPbD05pF+4yE9FyAJWJ0crnC0ikgRDEdTvP2tuA
-	 4GIRiOuuUdf/9OkLrXl/72UaCwyh+9gKzoAwTmqnu891sNlTRravbeyuv3lna4Bu8d
-	 JPz6+YSpFxo9w==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Zheng Yejian <zhengyejian1@huawei.com>,
-	Vincent Donnefort <vdonnefort@google.com>,
-	Huang Yiwei <quic_hyiwei@quicinc.com>,
-	"Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH] tracing/ring-buffer: hide unused last_boot_fops
-Date: Fri, 19 Jul 2024 12:26:33 +0200
-Message-Id: <20240719102640.718554-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1721384929; c=relaxed/simple;
+	bh=/q47iXtzMVfOIcogFFYXMhnPbpkMe3e/B/3kRjnQkaM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kKvti/i8OLVi/3CusvZ+a4lJcK1cQM2FnZTR255Btrsi5Ib6EJbcZnzwdJoVZUDigrGCm7SgcYa9zNvLsRoJUtp3DlM/r5mYMhfMS18NDeCtyGpEyp1VuKVY7AUrtZAaW9itZWQbl2Zw5wpV1/N7w7kMiFqbyCGumEXANKa6LLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=IWt2mv0c; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-157-149-128.elisa-laajakaista.fi [91.157.149.128])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id CDD774AD;
+	Fri, 19 Jul 2024 12:28:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1721384886;
+	bh=/q47iXtzMVfOIcogFFYXMhnPbpkMe3e/B/3kRjnQkaM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IWt2mv0cOy2a3+QRp4dOZE4RUVEMOSLORb6/14zGZ19+LhCpeOVPVrqL4OsMOoQ6w
+	 vs9Guma8emtGwpj4YNJl9Qrc1KUFug050HyTY4NVe6bfLrmUKlddsMa1HAbU411HSQ
+	 g8vsnGpCBPM2pF5b/750BjorhDnMBX8/WXj6SKHY=
+Message-ID: <26af0977-8e38-47d0-a521-c5b1e505d564@ideasonboard.com>
+Date: Fri, 19 Jul 2024 13:28:41 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] media: cadence: csi2rx: Add system PM support
+To: Changhuang Liang <changhuang.liang@starfivetech.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Maxime Ripard <mripard@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Jack Zhu <jack.zhu@starfivetech.com>,
+ Keith Zhao <keith.zhao@starfivetech.com>, Jayshri Pawar
+ <jpawar@cadence.com>, Jai Luthra <j-luthra@ti.com>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-staging@lists.linux.dev
+References: <20240718032834.53876-1-changhuang.liang@starfivetech.com>
+ <20240718032834.53876-3-changhuang.liang@starfivetech.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+In-Reply-To: <20240718032834.53876-3-changhuang.liang@starfivetech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hi,
 
-This variable is used only in an #ifdef, which causes a W=1 warning
-with some compilers:
+On 18/07/2024 06:28, Changhuang Liang wrote:
+> Add system PM support make it stopping streaming at system suspend time,
+> and restarting streaming at system resume time.
+> 
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+> ---
+>   drivers/media/platform/cadence/cdns-csi2rx.c | 32 ++++++++++++++++++++
+>   1 file changed, 32 insertions(+)
+> 
+> diff --git a/drivers/media/platform/cadence/cdns-csi2rx.c b/drivers/media/platform/cadence/cdns-csi2rx.c
+> index 981819adbb3a..81e90b31e9f8 100644
+> --- a/drivers/media/platform/cadence/cdns-csi2rx.c
+> +++ b/drivers/media/platform/cadence/cdns-csi2rx.c
+> @@ -776,8 +776,40 @@ static int csi2rx_runtime_resume(struct device *dev)
+>   	return ret;
+>   }
+>   
+> +static int __maybe_unused csi2rx_suspend(struct device *dev)
+> +{
+> +	struct csi2rx_priv *csi2rx = dev_get_drvdata(dev);
+> +
+> +	mutex_lock(&csi2rx->lock);
+> +	if (csi2rx->count)
+> +		csi2rx_stop(csi2rx);
+> +	mutex_unlock(&csi2rx->lock);
+> +
+> +	pm_runtime_force_suspend(dev);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused csi2rx_resume(struct device *dev)
+> +{
+> +	struct csi2rx_priv *csi2rx = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	ret = pm_runtime_force_resume(dev);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	mutex_lock(&csi2rx->lock);
+> +	if (csi2rx->count)
+> +		csi2rx_start(csi2rx);
+> +	mutex_unlock(&csi2rx->lock);
+> +
+> +	return 0;
+> +}
+> +
+>   static const struct dev_pm_ops csi2rx_pm_ops = {
+>   	SET_RUNTIME_PM_OPS(csi2rx_runtime_suspend, csi2rx_runtime_resume, NULL)
+> +	SET_SYSTEM_SLEEP_PM_OPS(csi2rx_suspend, csi2rx_resume)
+>   };
+>   
+>   static const struct of_device_id csi2rx_of_table[] = {
 
-kernel/trace/trace.c:7570:37: error: 'last_boot_fops' defined but not used [-Werror=unused-const-variable=]
- 7570 | static const struct file_operations last_boot_fops = {
+If I'm not mistaken, this is a subdev driver, and is somewhere in the 
+middle of the pipeline. Afaiu, only the driver that handles the v4l2 
+video devices should have system suspend hooks. The job of that driver 
+is then to disable or enable the pipeline using v4l2 functions, and for 
+the rest of the pipeline system suspend looks just like a normal 
+pipeline disable.
 
-Guard this one with the same #ifdef.
-
-Fixes: 7a1d1e4b9639 ("tracing/ring-buffer: Add last_boot_info file to boot instance")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-Alternatively it could be marked as __maybe_unused, but I tried to follow
-the style used in this file.
----
- kernel/trace/trace.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 5462fb10ff64..6ab24213d496 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -6913,6 +6913,7 @@ tracing_total_entries_read(struct file *filp, char __user *ubuf,
- 	return simple_read_from_buffer(ubuf, cnt, ppos, buf, r);
- }
- 
-+#ifdef CONFIG_TRACER_SNAPSHOT
- static ssize_t
- tracing_last_boot_read(struct file *filp, char __user *ubuf, size_t cnt, loff_t *ppos)
- {
-@@ -6927,6 +6928,7 @@ tracing_last_boot_read(struct file *filp, char __user *ubuf, size_t cnt, loff_t
- 
- 	return simple_read_from_buffer(ubuf, cnt, ppos, buf, seq_buf_used(&seq));
- }
-+#endif
- 
- static int tracing_buffer_meta_open(struct inode *inode, struct file *filp)
- {
-@@ -7567,12 +7569,14 @@ static const struct file_operations trace_time_stamp_mode_fops = {
- 	.release	= tracing_single_release_tr,
- };
- 
-+#ifdef CONFIG_TRACER_SNAPSHOT
- static const struct file_operations last_boot_fops = {
- 	.open		= tracing_open_generic_tr,
- 	.read		= tracing_last_boot_read,
- 	.llseek		= generic_file_llseek,
- 	.release	= tracing_release_generic_tr,
- };
-+#endif
- 
- #ifdef CONFIG_TRACER_SNAPSHOT
- static const struct file_operations snapshot_fops = {
--- 
-2.39.2
+  Tomi
 
 
