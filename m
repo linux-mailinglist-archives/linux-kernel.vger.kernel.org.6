@@ -1,383 +1,205 @@
-Return-Path: <linux-kernel+bounces-257532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03B63937B78
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:17:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A754937B7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76F8A1F22881
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:17:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 282CD1F2284C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2A41465A3;
-	Fri, 19 Jul 2024 17:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7E0146A6C;
+	Fri, 19 Jul 2024 17:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nctoQYRI"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2CirpjcA"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69DB250EC;
-	Fri, 19 Jul 2024 17:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D1913AD22
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 17:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721409468; cv=none; b=gkftNJFCfOCAFAU7SI1uom0MNNxb36caEs0eT64UjqqGg07lPLTIpcUty+2dpW0dCD6hYLS8RABEekoo2RyYrYH5sXKdlFshYPq1y4oxtd/wp61n5WRvAXllUjnVvwpqzOtckhIf50aNFNT8YiGFA3c2v3KOrzVj6YZtk0vQTzU=
+	t=1721409664; cv=none; b=ijtKduP1g4A/Qusgd9qH23K71vFprqEvJ/cVwpuZyZBPYIaStfV/WjeYJbiZnef0EmxNNVKQatSa4n4RUemRMNGcgcL0cgoCT+8pUqzBvEGemb62MT2sgYpb6ada7Ksqg06wwfFre3ynbdOaqE65TY/uPdk8VUFES+8DBQpNVIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721409468; c=relaxed/simple;
-	bh=NjduyhuW31fSKfY4WCEANXEOSHKGhXJJB4YLOZwGlXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=htYUvkRxi3FlDTcaXTA0FsLLeXJH4IK0eZw/+miKii6u1hvsQyk4iF2xSNR0Oznzs6pZv053UIAXR3JAthgV5nYRyh4AAWCScL+kbs7rTuRv9H+HREO05cyKehDiSEE0bLf4647wysK12VQoTLwKGAQnkgzNlJl2N9AT+vvZns0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nctoQYRI; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2cb4c4de4cbso1192428a91.1;
-        Fri, 19 Jul 2024 10:17:45 -0700 (PDT)
+	s=arc-20240116; t=1721409664; c=relaxed/simple;
+	bh=osByLjgR/fd6V0XvMDC5JBZP/STCt/rb3qDyiTeNnK4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=LeCjkUUfCXtfUhDDMBoNUV4L23wNFfEzmBWdsSiDFQ8KHqqXUi9gR5fhlw8gC4cDf1imtWLvr90qwdpfo/gYuQybo4LQZDXwqYMdjc4OygQAPgADqcs6GBHFxKBY81TN6sgLcsLcNtOomFdowgQ2vdW+6ed1qdfk6aqsQEB4S28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2CirpjcA; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-650fccfd1dfso52301227b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 10:21:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721409465; x=1722014265; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lm89hzeWH2A+O41O9cEpxN95xEDBH4dUVAwTIF+qwHw=;
-        b=nctoQYRIrb18gvFrkjMdJo+L0qFiE+Al5ZPh7QaTVofuFhrd4Pb5O755OKp+WsX/fy
-         vjpxRga3ciYlSQAvaK6dtltg/kJUBDYJtnZ6+y8EYRunVFibzaqQwlJ7JXfpHjFG8YYu
-         3lJQN4Vj17HYBBTMuCDNFHXgL9hkdRRZw3oTIWCDxQYFRtRo++PrLs1w+PcTZklZ6Sdc
-         rUIObWoJYmWhXLwDHpWNZ3plvItLX9NvUY7yrG7+l4TsRVgzHkyzczRsnTTNOkyMVPYJ
-         vfUUl/Vj9A8T6maUB9D0e7irQ1Fk2DKDfMlFG9oo1MywCnen/dPjbtUdfynhSCy3gWxQ
-         06Rw==
+        d=google.com; s=20230601; t=1721409662; x=1722014462; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=269jqe/jzjyYpBV+uTwg3PKS+HXAo3qpFrECBrOEtQ8=;
+        b=2CirpjcAoni+MNfKoVFS95lB8VX63EFEZJ9CFhqCUFrkz+MGJE5k5U46PUyRJ6C2fC
+         SgBmOKMKEg0Bb/lNS4zMyR/07kRT6CtR09ng9099LoQZeSIqIhlfxItAyuF/DOcefla+
+         C+PBMNbHUQ//jWAXAvNZbTdQGf9vu8Pq5bMUm0Rc0vwmNYGdM8TtYSm41bXw0DBQPljN
+         qqY6wIY0GOzNZmy+DoXnxj2VHRwiF3vxyUdZledvh/jmLdo27bHGhXCGbVnVGFVGa4L9
+         jB+592E2L7k4+k7H7/m62QPTLO3gU4V+rhM4glm/WeVmb7xYw4dzaO38xCecTm4Gqb3m
+         qmrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721409465; x=1722014265;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lm89hzeWH2A+O41O9cEpxN95xEDBH4dUVAwTIF+qwHw=;
-        b=rM4df4MtaxwQpqwdjv2noI+HLPzw8FlbsxHm/WZJtMsYwgJVIrlKkcWfnV5lldsL7z
-         1EKn/xvgDwzhX9KpHzAhNVNpUIV81Q4SVm3vQu06zzVD2ZUxda2lVJ3IHUxzHBx3vy5a
-         tE1xAgYyPOkvtxmH9dnylSGo95LmqpYTtjJm4zx6N0rhYygQKDRrUWZwPVI92Y2sPCSv
-         /TAwoL9VcnxYWfePokfkRysgleuIKyT24jKdVh0GQ76qqlawNrO/lhTZJgXWIJSuZxb1
-         jtDqtd3D+Wk0Pid+4kV0+jRHPHPX5SVr81B2uxTrmbO8DMk9lJsw2cjMHBKeYu2X/6dQ
-         Xaog==
-X-Forwarded-Encrypted: i=1; AJvYcCXLHUKbTeMiO7XXIJFVsiASZM7/qs3HSQIkhUK2AuyAz1oFiD6JU/y93fKBytBoG5rE3NzTe3akG/G5sZzMvHm2wm7JNIatpQn3qno=
-X-Gm-Message-State: AOJu0YwfTv7MqG6tzz7ehgTdLtrSCc8RZ4CrzQ4mj6NpvDu6MGI44pUU
-	qKi3SkCb/kuoeiuVDvpXbMX2zo9Nh2dfB7p83pMPzYZaPR0YjkWrwYfz/A==
-X-Google-Smtp-Source: AGHT+IGGFSqKGldF08w1uidnrHl3iIK/c/3xLSONnJX8Dm3wQ1joqYuFCqGwO4lmr8N8S1rk/6e4Ng==
-X-Received: by 2002:a17:90a:9af:b0:2c9:752d:c007 with SMTP id 98e67ed59e1d1-2cb527f584amr7078599a91.29.1721409464760;
-        Fri, 19 Jul 2024 10:17:44 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:5a7c:a422:21c9:7dde])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cb772c1ce1sm3155604a91.7.2024.07.19.10.17.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 10:17:44 -0700 (PDT)
-Date: Fri, 19 Jul 2024 10:17:41 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: [git pull] Input updates for v6.11-rc0
-Message-ID: <ZpqftagN_230ClsS@google.com>
+        d=1e100.net; s=20230601; t=1721409662; x=1722014462;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=269jqe/jzjyYpBV+uTwg3PKS+HXAo3qpFrECBrOEtQ8=;
+        b=VsfM4ELDh4YjR/jiPNuDwm26MhrBHyhUY3qfEceK4zFruAY0Tivoi8Sj9NE7QZvufp
+         eid4uSaKdxlgMJNMGobc82A3q3EhqKWECTojuuAMmrhCnzm7/9m/3hvzb+Nr9yathVSa
+         FmFYqt35MQ92UzGbMqjQd07QB0l20Egr2kUFFORRAPsWoKXv2iELcVaeklmFjG7JTjzI
+         3/ohUMPHr6UHbgvZxoR6EpEwo8df7nGLZg68vC+COCa9ZMgMB+jFJ8Q9xIcJrPXsyoSb
+         lfeO3OA1lifmraTAyXPPakw9BX2jEAUOFyIAVPDUygdPdNpE/t+A9DI+Qjw5MeNJxbPY
+         RqJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVx0Z2KPQJdly1elbdpi2ap8DC0K+BwT3O/54t1fcPiFtlpsCK3W42rqCFZK9nuJ8It74M6lNpINJqbQNt0H0kS8KwYJ+MXsJ7WPuc5
+X-Gm-Message-State: AOJu0Yw7Mj+qM8MSQ+F3bHM/2e/IgycgMTncRVYp3mSy26CGS1CDYYAu
+	hgbeM1xMrHeWjg/00mCVk8UxO858gBEvsGDmBVIwuSWied+NOs8f+6PP7mOB64F2JnVl3FXVPMl
+	u5Q==
+X-Google-Smtp-Source: AGHT+IGUzOVThZ8xIg7bwHKaFQkUCNm4Xs+fuFoDhB2WRhkv0OaE4A7mGU07OFxXWS7Ocj7WmHxourXW2n8=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:2d8a:b0:627:a787:abf4 with SMTP id
+ 00721157ae682-66a675dbfdcmr133157b3.3.1721409661902; Fri, 19 Jul 2024
+ 10:21:01 -0700 (PDT)
+Date: Fri, 19 Jul 2024 10:21:00 -0700
+In-Reply-To: <c42bff52-1058-4bff-be90-5bab45ed57be@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+References: <c42bff52-1058-4bff-be90-5bab45ed57be@gmail.com>
+Message-ID: <ZpqgfETiBXfBfFqU@google.com>
+Subject: Re: [BUG] =?utf-8?Q?arch=2Fx86=2Fkvm=2Fvmx?= =?utf-8?Q?=2Fpmu=5Fintel=2Ec=3A54=3A_error=3A_dereference_of_NULL_?=
+ =?utf-8?B?4oCYcG1j4oCZ?= [CWE-476]
+From: Sean Christopherson <seanjc@google.com>
+To: Mirsad Todorovac <mtodorovac69@gmail.com>
+Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, Like Xu <likexu@tencent.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Fri, Jul 19, 2024, Mirsad Todorovac wrote:
+> Hi,
+>=20
+> In the build of 6.10.0 from stable tree, the following error was detected=
+.
+>=20
+> You see that the function get_fixed_pmc() can return NULL pointer as a re=
+sult
+> if msr is outside of [base, base + pmu->nr_arch_fixed_counters) interval.
+>=20
+> kvm_pmu_request_counter_reprogram(pmc) is then called with that NULL poin=
+ter
+> as the argument, which expands to .../pmu.h
+>=20
+> #define pmc_to_pmu(pmc)   (&(pmc)->vcpu->arch.pmu)
+>=20
+> which is a NULL pointer dereference in that speculative case.
 
-Please pull from:
+I'm somewhat confused.  Did you actually hit a BUG() due to a NULL-pointer
+dereference, are you speculating that there's a bug, or did you find some s=
+peculation
+issue with the CPU?
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.11-rc0
+It should be impossible for get_fixed_pmc() to return NULL in this case.  T=
+he
+loop iteration is fully controlled by KVM, i.e. 'i' is guaranteed to be in =
+the
+ranage [0..pmu->nr_arch_fixed_counters).
 
-to receive updates for the input subsystem. You will get:
+And the input @msr is "MSR_CORE_PERF_FIXED_CTR0 +i", so the if-statement ex=
+pands to:
 
-- streamlined logic in input core for handling normal input handlers vs
-  input filters
+	if (MSR_CORE_PERF_FIXED_CTR0 + [0..pmu->nr_arch_fixed_counters) >=3D MSR_C=
+ORE_PERF_FIXED_CTR0 &&
+	    MSR_CORE_PERF_FIXED_CTR0 + [0..pmu->nr_arch_fixed_counters) < MSR_CORE=
+_PERF_FIXED_CTR0 + pmu->nr_arch_fixed_counters)
 
-- updates to input drivers to allocate memory with sizeof(*pointer)
-  instead of sizeof(type)
+i.e. is guaranteed to evaluate true.
 
-- change to ads7846 touchscreen driver to use hsync GPIO instead of
-  requiring platform data with special method (which is not compatible
-  with boards using device tree)
+Am I missing something?
 
-- update to adc-joystick driver to handle inverted axes
-
-- cleanups in various drivers switching them to use the new "guard"
-  and "__free()" facilities
-
-- changes to several drivers (adxl34x, atmel_mxt_ts, ati-remote2,
-  omap-keypad, yealink) to stop creating driver-specific device
-  attributes manually and use driver core facilities for this
-
-- update to Cypress PS/2 protocol driver to properly handle errors
-  from the PS/2 transport as well as other cleanups
-
-- update to edt-ft5x06 driver to support ft5426 variant 
-
-- update to ektf2127 driver to support ektf2232 variant
-
-- update to exc3000 driver to support EXC81W32 variant
-
-- update to imagis driver to support IST3038 variant
-
-- other assorted driver cleanups.  
-
-
-Changelog:
----------
-
-Andreas Kemnade (5):
-      dt-bindings: touchscreen: convert elan,ektf2127 to json-schema
-      dt-bindings: touchscreen: elan,ektf2127: Add EKTF2232
-      Input: ektf2127 - add ektf2232 support
-      dt-bindings: input: touchscreen: edt-ft5x06: Add ft5426
-      Input: edt-ft5x06 - add ft5426
-
-Andrei Lalaev (1):
-      Input: qt1050 - handle CHIP_ID reading error
-
-Andrew Davis (1):
-      dt-bindings: input: ti,nspire-keypad: convert to YAML format
-
-Chris Morgan (1):
-      Input: adc-joystick - handle inverted axes
-
-Dmitry Torokhov (36):
-      linux/interrupt.h: allow "guard" notation to disable and reenable IRQ
-      Input: cap11xx - stop using chip ID when configuring it
-      Input: adxl34x - use device core to create driver-specific device attributes
-      Input: adxl34x - use input_set_capability()
-      Input: adxl34x - switch to using managed resources
-      Input: adxl34x - switch to using "guard" notation
-      Input: ims-pcu - use driver core to instantiate device attributes
-      Input: ims-pcu - switch to using cleanup functions
-      Input: adc-joystick - move axes data into the main structure
-      Input: wacom_w8001 - use "guard" notation when acquiring mutex
-      Input: goodix_berlin - use __free() cleanup in SPI transport
-      Input: rohm_bu21023 - factor out settings update code
-      Input: rohm_bu21023 - switch to using sysfs_emit()
-      Input: rohm_bu21023 - switch to using cleanup functions
-      Input: ili210x - use kvmalloc() to allocate buffer for firmware update
-      Input: ili210x - switch to using cleanup functions in firmware code
-      Input: ili210x - use guard notation when disabling and reenabling IRQ
-      Input: elan_i2c - do not leave interrupt disabled on suspend failure
-      Input: cypress_ps2 - clean up setting reporting rate
-      Input: cypress_ps2 - fix error handling when sending command fails
-      Input: cypress_ps2 - report timeouts when reading command status
-      Input: cypress_ps2 - propagate errors from lower layers
-      Input: cypress_ps2 - use u8 when dealing with byte data
-      Input: evdev - remove ->event() method
-      Input: make sure input handlers define only one processing method
-      Input: make events() method return number of events processed
-      Input: simplify event handling logic
-      Input: rearrange input_alloc_device() to prepare for preallocating of vals
-      Input: preallocate memory to hold event values
-      Input: do not check number of events in input_pass_values()
-      Input: twl4030-pwrbutton - fix kernel-doc warning
-      Input: atmel_mxt_ts - use driver core to instantiate device attributes
-      Input: omap-keypad - use driver core to instantiate device attributes
-      Input: ati-remote2 - use driver core to instantiate device attributes
-      Input: yealink - use driver core to instantiate device attributes
-      Input: yealink - simplify locking in sysfs attribute handling
-
-Erick Archer (8):
-      Input: keyboard - use sizeof(*pointer) instead of sizeof(type)
-      Input: misc - use sizeof(*pointer) instead of sizeof(type)
-      Input: mouse - use sizeof(*pointer) instead of sizeof(type)
-      Input: tablet - use sizeof(*pointer) instead of sizeof(type)
-      Input: serio - use sizeof(*pointer) instead of sizeof(type)
-      Input: gameport - use sizeof(*pointer) instead of sizeof(type)
-      Input: touchscreen - use sizeof(*pointer) instead of sizeof(type)
-      Input: joystick - use sizeof(*pointer) instead of sizeof(type)
-
-Felix Kaechele (5):
-      dt-bindings: input: touchscreen: himax,hx83112b: add HX83100A
-      Input: himax_hx83112b - use more descriptive register defines
-      Input: himax_hx83112b - implement MCU register reading
-      Input: himax_hx83112b - add himax_chip struct for multi-chip support
-      Input: himax_hx83112b - add support for HX83100A
-
-Jason Gerecke (2):
-      Input: wacom_w8001 - simplify device name generation
-      Input: wacom_w8001 - correct device name generation
-
-Javier Carrasco (4):
-      Input: ims-pcu - annotate struct ims_pcu_flash_fmt with __counted_by
-      Input: ims-pcu - drop repeated "input" in error message
-      Input: qt1050 - constify struct regmap_config
-      Input: fsl-imx25-tcq - constify struct regmap_config
-
-Jeff Johnson (1):
-      Input: add missing MODULE_DESCRIPTION() macros
-
-Linus Walleij (2):
-      dt-bindings: ads7846: Add hsync-gpios
-      Input: ads7846 - handle HSYNC GPIO
-
-Philipp Zabel (2):
-      dt-bindings: input: touchscreen: exc3000: add EXC81W32
-      Input: exc3000 - add EXC81W32 support
-
-Raymond Hackley (3):
-      Input: imagis - clarify the usage of protocol_b
-      dt-bindings: input/touchscreen: imagis: Document ist3038
-      Input: imagis - add supports for Imagis IST3038
-
-Diffstat:
---------
-
- .../devicetree/bindings/input/ti,nspire-keypad.txt |  60 ------
- .../bindings/input/ti,nspire-keypad.yaml           |  74 +++++++
- .../bindings/input/touchscreen/ads7846.txt         |   1 +
- .../bindings/input/touchscreen/edt-ft5x06.yaml     |   1 +
- .../bindings/input/touchscreen/eeti,exc3000.yaml   |  12 +-
- .../bindings/input/touchscreen/ektf2127.txt        |  25 ---
- .../bindings/input/touchscreen/elan,ektf2127.yaml  |  58 ++++++
- .../bindings/input/touchscreen/himax,hx83112b.yaml |   1 +
- .../input/touchscreen/imagis,ist3038c.yaml         |   1 +
- drivers/input/evdev.c                              |  16 +-
- drivers/input/gameport/emu10k1-gp.c                |   2 +-
- drivers/input/gameport/fm801-gp.c                  |   2 +-
- drivers/input/gameport/gameport.c                  |   2 +-
- drivers/input/gameport/ns558.c                     |   4 +-
- drivers/input/input.c                              | 230 ++++++++++++++-------
- drivers/input/joystick/a3d.c                       |   2 +-
- drivers/input/joystick/adc-joystick.c              | 130 +++++++-----
- drivers/input/joystick/adi.c                       |   2 +-
- drivers/input/joystick/analog.c                    |   3 +-
- drivers/input/joystick/as5011.c                    |   2 +-
- drivers/input/joystick/cobra.c                     |   2 +-
- drivers/input/joystick/db9.c                       |   2 +-
- drivers/input/joystick/gamecon.c                   |   2 +-
- drivers/input/joystick/gf2k.c                      |   2 +-
- drivers/input/joystick/grip.c                      |   3 +-
- drivers/input/joystick/grip_mp.c                   |   3 +-
- drivers/input/joystick/guillemot.c                 |   2 +-
- drivers/input/joystick/interact.c                  |   2 +-
- drivers/input/joystick/magellan.c                  |   2 +-
- drivers/input/joystick/maplecontrol.c              |   2 +-
- drivers/input/joystick/n64joy.c                    |   2 +-
- drivers/input/joystick/sidewinder.c                |   2 +-
- drivers/input/joystick/spaceball.c                 |   2 +-
- drivers/input/joystick/spaceorb.c                  |   2 +-
- drivers/input/joystick/stinger.c                   |   2 +-
- drivers/input/joystick/tmdc.c                      |   3 +-
- drivers/input/joystick/turbografx.c                |   2 +-
- drivers/input/joystick/twidjoy.c                   |   2 +-
- drivers/input/joystick/warrior.c                   |   2 +-
- drivers/input/joystick/xpad.c                      |   4 +-
- drivers/input/joystick/zhenhua.c                   |   2 +-
- drivers/input/keyboard/atkbd.c                     |   2 +-
- drivers/input/keyboard/cap11xx.c                   | 125 ++++++-----
- drivers/input/keyboard/lkkbd.c                     |   2 +-
- drivers/input/keyboard/locomokbd.c                 |   2 +-
- drivers/input/keyboard/maple_keyb.c                |   2 +-
- drivers/input/keyboard/newtonkbd.c                 |   2 +-
- drivers/input/keyboard/omap-keypad.c               |  21 +-
- drivers/input/keyboard/qt1050.c                    |   9 +-
- drivers/input/keyboard/stowaway.c                  |   2 +-
- drivers/input/keyboard/sunkbd.c                    |   2 +-
- drivers/input/keyboard/xtkbd.c                     |   2 +-
- drivers/input/matrix-keymap.c                      |   1 +
- drivers/input/misc/88pm80x_onkey.c                 |   2 +-
- drivers/input/misc/adxl34x-i2c.c                   |   9 +-
- drivers/input/misc/adxl34x-spi.c                   |   9 +-
- drivers/input/misc/adxl34x.c                       | 159 +++++---------
- drivers/input/misc/adxl34x.h                       |   2 +-
- drivers/input/misc/ati_remote2.c                   |  50 ++---
- drivers/input/misc/cma3000_d0x.c                   |   2 +-
- drivers/input/misc/ims-pcu.c                       | 197 +++++++++---------
- drivers/input/misc/max8997_haptic.c                |   2 +-
- drivers/input/misc/pcap_keys.c                     |   2 +-
- drivers/input/misc/powermate.c                     |   2 +-
- drivers/input/misc/sgi_btns.c                      |   1 +
- drivers/input/misc/soc_button_array.c              |   1 +
- drivers/input/misc/twl4030-pwrbutton.c             |   4 +-
- drivers/input/misc/uinput.c                        |   2 +-
- drivers/input/misc/yealink.c                       |  85 +++-----
- drivers/input/mouse/alps.c                         |   2 +-
- drivers/input/mouse/appletouch.c                   |   2 +-
- drivers/input/mouse/bcm5974.c                      |   2 +-
- drivers/input/mouse/cypress_ps2.c                  | 184 ++++++++---------
- drivers/input/mouse/cypress_ps2.h                  |   6 -
- drivers/input/mouse/elan_i2c_core.c                |   2 +
- drivers/input/mouse/focaltech.c                    |   3 +-
- drivers/input/mouse/hgpk.c                         |   2 +-
- drivers/input/mouse/lifebook.c                     |   2 +-
- drivers/input/mouse/maplemouse.c                   |   2 +-
- drivers/input/mouse/psmouse-base.c                 |   2 +-
- drivers/input/mouse/sentelic.c                     |   2 +-
- drivers/input/mouse/sermouse.c                     |   2 +-
- drivers/input/mouse/synaptics.c                    |   4 +-
- drivers/input/mouse/synaptics_i2c.c                |   2 +-
- drivers/input/mouse/vsxxxaa.c                      |   2 +-
- drivers/input/serio/altera_ps2.c                   |   2 +-
- drivers/input/serio/ambakmi.c                      |   4 +-
- drivers/input/serio/apbps2.c                       |   2 +-
- drivers/input/serio/arc_ps2.c                      |   2 +-
- drivers/input/serio/ct82c710.c                     |   2 +-
- drivers/input/serio/gscps2.c                       |   4 +-
- drivers/input/serio/hyperv-keyboard.c              |   4 +-
- drivers/input/serio/i8042.c                        |   4 +-
- drivers/input/serio/maceps2.c                      |   2 +-
- drivers/input/serio/olpc_apsp.c                    |   4 +-
- drivers/input/serio/parkbd.c                       |   2 +-
- drivers/input/serio/pcips2.c                       |   4 +-
- drivers/input/serio/ps2-gpio.c                     |   4 +-
- drivers/input/serio/ps2mult.c                      |   2 +-
- drivers/input/serio/q40kbd.c                       |   4 +-
- drivers/input/serio/rpckbd.c                       |   2 +-
- drivers/input/serio/sa1111ps2.c                    |   4 +-
- drivers/input/serio/serio.c                        |   2 +-
- drivers/input/serio/serio_raw.c                    |   4 +-
- drivers/input/serio/serport.c                      |   4 +-
- drivers/input/serio/sun4i-ps2.c                    |   4 +-
- drivers/input/serio/userio.c                       |   4 +-
- drivers/input/serio/xilinx_ps2.c                   |   4 +-
- drivers/input/tablet/acecad.c                      |   2 +-
- drivers/input/tablet/aiptek.c                      |   2 +-
- drivers/input/tablet/hanwang.c                     |   2 +-
- drivers/input/tablet/kbtab.c                       |   2 +-
- drivers/input/tablet/wacom_serial4.c               |   2 +-
- drivers/input/tests/input_test.c                   |   1 +
- drivers/input/touchscreen/ads7846.c                |  35 +++-
- drivers/input/touchscreen/atmel_mxt_ts.c           |  16 +-
- drivers/input/touchscreen/cyttsp_i2c_common.c      |   1 +
- drivers/input/touchscreen/da9052_tsi.c             |   2 +-
- drivers/input/touchscreen/dynapro.c                |   2 +-
- drivers/input/touchscreen/edt-ft5x06.c             |   1 +
- drivers/input/touchscreen/egalax_ts_serial.c       |   2 +-
- drivers/input/touchscreen/ektf2127.c               |  36 +++-
- drivers/input/touchscreen/elo.c                    |   2 +-
- drivers/input/touchscreen/exc3000.c                |   7 +
- drivers/input/touchscreen/fsl-imx25-tcq.c          |   2 +-
- drivers/input/touchscreen/fujitsu_ts.c             |   2 +-
- drivers/input/touchscreen/goodix_berlin_spi.c      |  24 ++-
- drivers/input/touchscreen/gunze.c                  |   2 +-
- drivers/input/touchscreen/hampshire.c              |   2 +-
- drivers/input/touchscreen/himax_hx83112b.c         | 135 +++++++++---
- drivers/input/touchscreen/ili210x.c                | 127 ++++++------
- drivers/input/touchscreen/imagis.c                 |  33 ++-
- drivers/input/touchscreen/inexio.c                 |   2 +-
- drivers/input/touchscreen/mtouch.c                 |   2 +-
- drivers/input/touchscreen/penmount.c               |   2 +-
- drivers/input/touchscreen/rohm_bu21023.c           |  95 ++++-----
- drivers/input/touchscreen/sur40.c                  |   2 +-
- drivers/input/touchscreen/touchit213.c             |   2 +-
- drivers/input/touchscreen/touchright.c             |   2 +-
- drivers/input/touchscreen/touchwin.c               |   2 +-
- drivers/input/touchscreen/tsc40.c                  |   2 +-
- drivers/input/touchscreen/usbtouchscreen.c         |  15 +-
- drivers/input/touchscreen/wacom_w8001.c            |  37 ++--
- drivers/input/vivaldi-fmap.c                       |   1 +
- include/linux/input.h                              |   7 +-
- include/linux/interrupt.h                          |   4 +
- 146 files changed, 1236 insertions(+), 1052 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/input/ti,nspire-keypad.txt
- create mode 100644 Documentation/devicetree/bindings/input/ti,nspire-keypad.yaml
- delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/ektf2127.txt
- create mode 100644 Documentation/devicetree/bindings/input/touchscreen/elan,ektf2127.yaml
-
-Thanks.
-
-
--- 
-Dmitry
+> arch/x86/kvm/vmx/pmu_intel.c
+> ----------------------------
+>  37 static void reprogram_fixed_counters(struct kvm_pmu *pmu, u64 data)
+>  38 {
+>  39         struct kvm_pmc *pmc;
+>  40         u64 old_fixed_ctr_ctrl =3D pmu->fixed_ctr_ctrl;
+>  41         int i;
+>  42=20
+>  43         pmu->fixed_ctr_ctrl =3D data;
+>  44         for (i =3D 0; i < pmu->nr_arch_fixed_counters; i++) {
+>  45                 u8 new_ctrl =3D fixed_ctrl_field(data, i);
+>  46                 u8 old_ctrl =3D fixed_ctrl_field(old_fixed_ctr_ctrl, =
+i);
+>  47=20
+>  48                 if (old_ctrl =3D=3D new_ctrl)
+>  49                         continue;
+>  50=20
+>  51 =E2=86=92               pmc =3D get_fixed_pmc(pmu, MSR_CORE_PERF_FIXE=
+D_CTR0 + i);
+>  52=20
+>  53                 __set_bit(KVM_FIXED_PMC_BASE_IDX + i, pmu->pmc_in_use=
+);
+>  54 =E2=86=92               kvm_pmu_request_counter_reprogram(pmc);
+>  55         }
+>  56 }
+> ----------------------------
+>=20
+> arch/x86/kvm/vmx/../pmu.h
+> -------------------------
+>  11 #define pmc_to_pmu(pmc)   (&(pmc)->vcpu->arch.pmu)
+> .
+> .
+> .
+> 152 /* returns fixed PMC with the specified MSR */
+> 153 static inline struct kvm_pmc *get_fixed_pmc(struct kvm_pmu *pmu, u32 =
+msr)
+> 154 {
+> 155         int base =3D MSR_CORE_PERF_FIXED_CTR0;
+> 156=20
+> 157         if (msr >=3D base && msr < base + pmu->nr_arch_fixed_counters=
+) {
+> 158                 u32 index =3D array_index_nospec(msr - base,
+> 159                                                pmu->nr_arch_fixed_cou=
+nters);
+> 160=20
+> 161                 return &pmu->fixed_counters[index];
+> 162         }
+> 163=20
+> 164         return NULL;
+> 165 }
+> .
+> .
+> .
+> 228 static inline void kvm_pmu_request_counter_reprogram(struct kvm_pmc *=
+pmc)
+> 229 {
+> 230         set_bit(pmc->idx, pmc_to_pmu(pmc)->reprogram_pmi);
+> 231         kvm_make_request(KVM_REQ_PMU, pmc->vcpu);
+> 232 }
+> .
+> .
+> .
+> -------------------------
+> 76d287b2342e1
+> Offending commits are: 76d287b2342e1 and 4fa5843d81fdc.
+>=20
+> I am not familiar with this subset of code, so I do not know the right co=
+de to implement
+> for the case get_fixed_pmc(pmu, MSR_CORE_PERF_FIXED_CTR0 + i) returns NUL=
+L.
+>=20
+> Hope this helps.
+>=20
+> Best regards,
+> Mirsad Todorovac
 
