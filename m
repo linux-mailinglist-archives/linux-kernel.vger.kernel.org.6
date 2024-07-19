@@ -1,94 +1,151 @@
-Return-Path: <linux-kernel+bounces-257255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 901E7937772
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:06:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08ED493777F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1CAD1C212E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:06:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 339041C213B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7A412CD88;
-	Fri, 19 Jul 2024 12:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BE612C544;
+	Fri, 19 Jul 2024 12:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lqnAVlI1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="h8kB7BDU"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B83C74079;
-	Fri, 19 Jul 2024 12:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79FE112C814
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 12:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721390765; cv=none; b=p2089ZpIvzMqYuOsa6zNltCy34ou/pH9pg3luUVC/xRuUM5Ja9xGg5o0U4pBMeDmkCg/5zdvObPlqMFMu5WHXDEiJkX/NBKZItgkTKjwjyKWlw5PM3qPrsdOyPbIWxoAz3q3BCdAqVUMFU2ZylzHgxiwDe+SrTYX8mkro2eIJEA=
+	t=1721390994; cv=none; b=h8iOgjhvgfRYCrwCk16CSyzlG2mRUUtSaoMzJgtCWROrsxCSK5u87QCKtEKEomYrlTS2xuYC6gjSpOLWpqTi4GN4UjYwf4oVrEyeDUK49i5IVpt6bqFFxmO6ZetZ7cUtvIFbgx9/JItCaDM8c2M2YcRuVxo/ZKaMBgayPEnLFfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721390765; c=relaxed/simple;
-	bh=pXPmQ5fxWBxZ4qMyWInm6h5U5o+UITisMkLT6dPaUhY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aQFiZpulvQmBmyG8Pc9Br6eNNrwC2rQHeuWwU3/63jgQLlCQG86zipSg1lKrkLRsWHY4h/+hAp8JTyShzWndLFE/PVU0Jqflsh9Gme15u/wUzZInL2b1GAb/OlZwrde2qhCfXaeL5XuH05AlBpF0lj7NAaopVer6hr8PatjYstA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lqnAVlI1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16B0DC32782;
-	Fri, 19 Jul 2024 12:06:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721390764;
-	bh=pXPmQ5fxWBxZ4qMyWInm6h5U5o+UITisMkLT6dPaUhY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lqnAVlI1/tqv71/MPNLPAHxkySX2M9evlLqzm/vfou13owF3zUAaqNgS+EVuka1Vc
-	 i9wRSY1YdDRPbd8oM38z05+FP4PwzTrTQIYAszhGbHNUmRpjIToHy1ybze8sUSZPAr
-	 wZKvHfgnc2q+8U8V9Yw6iMmFiY/Vd46/RBM9sbjpW5ai/es2Z/40htSxKBqJq77hjP
-	 Dmb5VHs+p2FFO4U65JJ5w4PPK/sU8qJ1to3Gw/NZHjDKU/DsbTw+6qqbjtkhtxCWI4
-	 JJoEQuWvZ+zQoj+OCqR9wC/37sQQaZ7xsfGPc6Kc90ecB2EQwOEmTVL2VctdFw7oOx
-	 9ypFrrWeqr2Wg==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	Congjie Zhou <zcjie0802@qq.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz
-Subject: Re: [PATCH v4] vfs: correct the comments of vfs_*() helpers
-Date: Fri, 19 Jul 2024 14:05:56 +0200
-Message-ID: <20240719-kernaufgabe-gediegen-c08676d0c82e@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <tencent_2FCF6CC9E10DC8A27AE58A5A0FE4FCE96D0A@qq.com>
-References: <tencent_3A7366F414667EE52C073850077331ADC709@qq.com> <tencent_2FCF6CC9E10DC8A27AE58A5A0FE4FCE96D0A@qq.com>
+	s=arc-20240116; t=1721390994; c=relaxed/simple;
+	bh=KGT1xetgjj3hkmYa/x+nByR9akz8lXZmdXZcEbp4tw0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=t540yDZDuJST69tH5PHDDYlOWnowwmqKurB2/HAFf6j5JIIkBUY5dtI0FmwXrGX6+wZsAHthp749qLKrddMI1v6adu3gq31w2TlCJ0gq1gds/G7O1pdY/qIUUl7FuDGAsFvhZ1/RvvbcWJK8UxH4V4dRLa0CpEDl+eF8o1QEoHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=h8kB7BDU; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240719120945euoutp02cc9b2a0608cac0835e1f0c40158d51db~jm-sebBsI2292422924euoutp02h
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 12:09:45 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240719120945euoutp02cc9b2a0608cac0835e1f0c40158d51db~jm-sebBsI2292422924euoutp02h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1721390985;
+	bh=2oggq1cJ/h58DEMA1EPnxpHzRV+N2oiFBW83Vf5fiXo=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=h8kB7BDUMPu2jLSJK6dMYh4oT251AmETCSRK+YB3mpLEfO1NWkSTS+XR2e86dWrE1
+	 HPZQwpcLq2Ggz1AsenZgfBot7BOXjoknvBO33koW4AML6nIdzW4KvJNaE2pcLp6IhA
+	 GTRz7uwoZm1oy6PxXDBywlE98TwUuJPUQfvgQRzQ=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240719120945eucas1p1cf150bcfe0c8d6cd7b5d63bbe0ba81d5~jm-sL3Byi0040800408eucas1p1c;
+	Fri, 19 Jul 2024 12:09:45 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id CA.8A.09875.8875A966; Fri, 19
+	Jul 2024 13:09:45 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240719120944eucas1p29318fb588150b15f60f637fbea48271f~jm-rZB7nX0386803868eucas1p2n;
+	Fri, 19 Jul 2024 12:09:44 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240719120944eusmtrp12f10a72f3fb4694ccba8d2e46727ecca~jm-rYPaxe0596405964eusmtrp1O;
+	Fri, 19 Jul 2024 12:09:44 +0000 (GMT)
+X-AuditID: cbfec7f4-11bff70000002693-be-669a57888b3b
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id F9.85.08810.8875A966; Fri, 19
+	Jul 2024 13:09:44 +0100 (BST)
+Received: from AMDC4515.eu.corp.samsungelectronics.net (unknown
+	[106.120.51.28]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240719120943eusmtip16111bf602808784812aeb176aa5561a0~jm-qlF-NG0493704937eusmtip1e;
+	Fri, 19 Jul 2024 12:09:43 +0000 (GMT)
+From: Mateusz Majewski <m.majewski2@samsung.com>
+To: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Mateusz Majewski <m.majewski2@samsung.com>, Bartlomiej Zolnierkiewicz
+	<bzolnier@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob
+	Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim Akhtar
+	<alim.akhtar@samsung.com>
+Subject: [PATCH 0/6] Add initial Exynos 850 support to the thermal driver
+Date: Fri, 19 Jul 2024 14:08:44 +0200
+Message-ID: <20240719120853.1924771-1-m.majewski2@samsung.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=991; i=brauner@kernel.org; h=from:subject:message-id; bh=pXPmQ5fxWBxZ4qMyWInm6h5U5o+UITisMkLT6dPaUhY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTNClu+5f6WM31c8aEb/dOXBM1YIinuOvWwf/Z59/R+b b3KvtZPHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABN5vYGRoc90R7dPlO2Pnfmd 65O1vEw8SkX4GR/f6Q4773NR1JxpMsP/ijjbS+0eD759L/x9a1VkRGOxTc6NAAX/XwobYt75bdz LAgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKKsWRmVeSWpSXmKPExsWy7djP87qd4bPSDFbdZbR4MG8bm8X3LdeZ
+	LNbsPcdkMe+zrMX8I+dYLc6f38BusenxNVaLy7vmsFl87j3CaDHj/D4mi4VNLewWE49NZraY
+	+2Uqs8X/PTvYLZ487GNz4PdYM28No8fOWXfZPRbvecnksWlVJ5vHnWt72Dw2L6n36NuyitHj
+	8ya5AI4oLpuU1JzMstQifbsEroxv6/6zFSxhr3g6o521gbGDrYuRk0NCwETi0uMFQDYXh5DA
+	CkaJJcf3skM4XxglHqxdxwzhfGaUuPT1GVzLp787WSESyxklZu57wQThtDJJPPyyiBGkik3A
+	QOLBm2Vgs0QEFjNKNP54B9bCLDCJWeLgmoVADgeHsICnxL7/XiANLAKqEh++HWcBsXkF7CTO
+	9zxghlgnL9G7v48JIi4ocXLmE7AaZqB489bZYPdJCHzgkFg7bTUTRIOLxL+zp6CahSVeHd/C
+	DmHLSJye3MMCYedLzNj8ngXkBgmBCom7B70gTGuJj2eYQUxmAU2J9bv0IYodJZa/WcMEUcEn
+	ceOtIMQBfBKTtk1nhgjzSnS0CUFUq0oc3zMJar20xJOW21BneUjMvbUUbL2QQKzEpcUT2SYw
+	KsxC8tYsJG/NQrhhASPzKkbx1NLi3PTUYqO81HK94sTc4tK8dL3k/NxNjMCUdvrf8S87GJe/
+	+qh3iJGJg/EQowQHs5IIr9+3mWlCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeVVT5FOFBNITS1Kz
+	U1MLUotgskwcnFINTI7m07fVqMw7OKdkdbyHI2+DG8u6JfsKtvVVGq+wPeL0re99sNiZGZc1
+	v/8se/Ztx8I1s9p3r9ZL8OGprc3a8P+esm2ET9zyj9+Vt6T17mGNEzKes8nma9KUqSJc7kxX
+	DwmWzLGOEvDrjJA+Pe3i29U5CV9zdj2Yb5CwP2Lq8vjjpkaB/zj5t37bdYrnFsuqcvVIGcmY
+	LMYsRuf9CZvKZULPV39aFrZm5nZlpkVbjzyXZ5pWzeOp8UNfN4d9yYW7//Jizp44IuL34Zu+
+	SJOcDYNGreB2ho2FaqXd3ZvbM2J+X9Gbu15QV3lC0AHr1uUH5loG23+4NLGkJ+LsLvGSqMl8
+	X3ZOqWDq+sEneXLXRiWW4oxEQy3mouJEABydUpLYAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDIsWRmVeSWpSXmKPExsVy+t/xu7od4bPSDGYc5bJ4MG8bm8X3LdeZ
+	LNbsPcdkMe+zrMX8I+dYLc6f38BusenxNVaLy7vmsFl87j3CaDHj/D4mi4VNLewWE49NZraY
+	+2Uqs8X/PTvYLZ487GNz4PdYM28No8fOWXfZPRbvecnksWlVJ5vHnWt72Dw2L6n36NuyitHj
+	8ya5AI4oPZui/NKSVIWM/OISW6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9O5uU1JzMstQifbsE
+	vYxv6/6zFSxhr3g6o521gbGDrYuRk0NCwETi09+drF2MXBxCAksZJSbe/cMEkZCWOPxlCjuE
+	LSzx51oXWIOQQDOTxItljiA2m4CBxIM3y8BqRASWM0psbvcAGcQsMItZovfUVMYuRg4OYQFP
+	iX3/vUBqWARUJT58O84CYvMK2Emc73nADDFfXqJ3fx8TRFxQ4uTMJ2A1zEDx5q2zmScw8s1C
+	kpqFJLWAkWkVo0hqaXFuem6xoV5xYm5xaV66XnJ+7iZGYDRtO/Zz8w7Gea8+6h1iZOJgPMQo
+	wcGsJMLr921mmhBvSmJlVWpRfnxRaU5q8SFGU6D7JjJLiSbnA+M5ryTe0MzA1NDEzNLA1NLM
+	WEmc17OgI1FIID2xJDU7NbUgtQimj4mDU6qBaeXaOV85Ok6klV7j33hD6H/vi2IL5m1yix6c
+	llhTEFn7/TzDxl7NXbc1Q+/5iZjHK0kvDKu68q42wz3r4a74715raz9J/JT5oiTk7v2qdoVW
+	wTOT3rS5B991J+kUXczY7HDz/XcPgRS2ou8JNdwlE/yYJbse6v256drU0pPFxthdcePx9Ekh
+	B79fVEw9HTCpOW+VFFPc1aCMLPMQh1XzXnkuXZsc7KG7ZJLsl4P37ee1ZkrprGT8bnPw6dZC
+	9Wmqym6fnYyvnI61TmPfw75mrt+tv95nbXinaxz7e7Fv1fNK67dzX7mVaC5aa+MuuK5C40XE
+	oqmlAu/Xmvw+zfZVaeqeKczWaRE3t6e/7u7TVWIpzkg01GIuKk4EAGFZDXcvAwAA
+X-CMS-MailID: 20240719120944eucas1p29318fb588150b15f60f637fbea48271f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20240719120944eucas1p29318fb588150b15f60f637fbea48271f
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240719120944eucas1p29318fb588150b15f60f637fbea48271f
+References: <CGME20240719120944eucas1p29318fb588150b15f60f637fbea48271f@eucas1p2.samsung.com>
 
-On Fri, 19 Jul 2024 00:25:45 +0800, Congjie Zhou wrote:
-> correct the comments of vfs_*() helpers in fs/namei.c, including:
-> 1. vfs_create()
-> 2. vfs_mknod()
-> 3. vfs_mkdir()
-> 4. vfs_rmdir()
-> 5. vfs_symlink()
-> 
-> [...]
+This series adds initial Exynos 850 support to the thermal driver
+together with its requirements (tmu_temp_mask fix, making data->clk
+optional, adding the new string to dt-bindings), while also cleaning up
+a bit (using DEFINE_SIMPLE_DEV_PM_OPS and removing some outdated
+information from dt-bindings).
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Mateusz Majewski (6):
+  drivers/thermal/exynos: use DEFINE_SIMPLE_DEV_PM_OPS
+  drivers/thermal/exynos: use tmu_temp_mask consistently
+  drivers/thermal/exynos: check IS_ERR(data->clk) consistently
+  dt-bindings: thermal: samsung,exynos: add exynos850-tmu string
+  drivers/thermal/exynos: add initial Exynos 850 support
+  dt-bindings: thermal: samsung,exynos: remove outdated information on
+    trip point count
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+ .../thermal/samsung,exynos-thermal.yaml       |  33 ++-
+ drivers/thermal/samsung/exynos_tmu.c          | 279 +++++++++++++++---
+ 2 files changed, 270 insertions(+), 42 deletions(-)
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+-- 
+2.45.1
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] vfs: correct the comments of vfs_*() helpers
-      https://git.kernel.org/vfs/vfs/c/284004432c83
 
