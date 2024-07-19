@@ -1,141 +1,107 @@
-Return-Path: <linux-kernel+bounces-257340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6F349378C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:52:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F0F69378C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04D9AB2170F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:52:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B0751F227A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8778B1442FB;
-	Fri, 19 Jul 2024 13:52:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B6F144316;
+	Fri, 19 Jul 2024 13:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dvvuwG/c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LMS6fpn7"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5CDB83A19;
-	Fri, 19 Jul 2024 13:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C3225757;
+	Fri, 19 Jul 2024 13:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721397156; cv=none; b=FdYjXiOsqCzhIbc7v/oj0T3YUIdT1+Jzr0UyppjrUvXsaHehqIRs2+MOtHOyp5IFZNgE2MTEieDu3GQ4ENNnIOlTMHnQiW/CrAd1oPX24Oir4XgNteblcQzBMhrjm+Ory6TMc+ciB8pa9YiKM2NGr5Ti3X7c+2QbpWtZpYR08is=
+	t=1721397335; cv=none; b=kDnfpi7tQXsaJxRuR/+R924+peM1GyPs+SgJCqVHC9IasYchyAy6QMCk6gmu8aax/oyzY0YtrFMiHHa0ShmBSQWuJ2NDC5n5wsbDXAvkzwU7WymOe1bc4X9uiwz1flgq6cyJ4/vlW4uR9vLS38Pughjz8Bu5xU1I1arAay/Uc/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721397156; c=relaxed/simple;
-	bh=5m/6tNBOY6VJGkhYsAlnvm2sT/AZ1AzuwTAgZlWDiw4=;
+	s=arc-20240116; t=1721397335; c=relaxed/simple;
+	bh=3nhR39DwmWoTCy8/EM9HP2pdRH10FR7GvM552Rvo/kE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LX8c5JAG0vYIc4SVRZveqlK4hcuAxlhaFE50HX6YttyhsTk6+d4x0jipEInfaArw9gmFhHTaZA055u4i6zGMvn9xnoHd4tc58VLJ4VoX98ROm1hMioRqXFLstujVPN3Pal2qypXWXo8UanidG4/hGKavZAID4Tsa9GCnTRg+6wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dvvuwG/c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89239C32782;
-	Fri, 19 Jul 2024 13:52:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721397156;
-	bh=5m/6tNBOY6VJGkhYsAlnvm2sT/AZ1AzuwTAgZlWDiw4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=DD+dyWF+8pgmCQcrfVcMKipqH93++D/h0WB4H3/rT/SvTtJvIfjwp0uU/InE1Abs+7jxlGV/1L/gbj9saUR+7891YAIvttaohq49Fr0LrPL9HdTw5UNFKSzbThqSDF7hA86wZgkTuHAiGuURbQSxcJFBMtYhIGPzaTMtFBI1ucE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=LMS6fpn7; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 13C15397;
+	Fri, 19 Jul 2024 15:54:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1721397292;
+	bh=3nhR39DwmWoTCy8/EM9HP2pdRH10FR7GvM552Rvo/kE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dvvuwG/cSLij6G6Tyyloq6vZOLDBPwlkLd5DCAmZYxPt88yRChye9N2ar/S/trx2P
-	 v9WB4FfSbaOwMl0cMyrzNz2AYL+/8+TN6NbQw3GorJjYew/XCLo1AliytOAt1NgMUo
-	 EgCW9QZoJFli5BFNZAxIwkR31ttRkPuXUWBXNI0HvTWKsug9stCwUelRDxItnE5JOz
-	 4uBTJfLf6qKM4f487YjTxPLCf9fGSxMZO/0gJlSAY+hFDFhrE+1aablGlr3V2ZhTZJ
-	 95PF7OnKTWnDg55ABCqRXvRm/N9f1hTkiN5TMww2wjMj607AqHTjsysxRUCI9prXTq
-	 rHIsRUkW2MoYw==
-Date: Fri, 19 Jul 2024 15:52:31 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Jiri Kosina <jikos@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org
-Subject: Re: [PATCH] hid: bpf: avoid building struct ops without JIT
-Message-ID: <gf7t6iyj3ueewvbbmqo2ypzitiy6bvnzj2l6tgccvi22xe5fgm@xvlbq3vkndgr>
-References: <20240719095117.3482509-1-arnd@kernel.org>
+	b=LMS6fpn7uYLgKh2xCIXwG5CczqmGw4NtA8TijpJDMpzucLxOuL55Ddc+tbpbT40Gt
+	 usroroUTPeq7YPUFrghmC/HRaI/ZJ7xefld+QbjmXyXm/d1TyIn2z6+1tMsler31l1
+	 v1UcVOEywqiDRGxV/9Tl0Ya4Zbl/Kz7fEhtsdHDM=
+Date: Fri, 19 Jul 2024 16:55:15 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Haibo Chen <haibo.chen@nxp.com>
+Subject: Re: [PATCH v4 3/4] gpio: adp5585: Add Analog Devices ADP5585 support
+Message-ID: <20240719135515.GB637@pendragon.ideasonboard.com>
+References: <20240608141633.2562-1-laurent.pinchart@ideasonboard.com>
+ <20240608141633.2562-4-laurent.pinchart@ideasonboard.com>
+ <ZmcYnDf0YIWA9A85@surfacebook.localdomain>
+ <20240610152555.GV18479@pendragon.ideasonboard.com>
+ <CAHp75Vd-TZYsm+fe+o1XvDYGHO6sDqZhMFqojowRx2scwxEhLw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240719095117.3482509-1-arnd@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75Vd-TZYsm+fe+o1XvDYGHO6sDqZhMFqojowRx2scwxEhLw@mail.gmail.com>
 
-On Jul 19 2024, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+Hello Andy,
+
+On Mon, Jun 10, 2024 at 07:29:09PM +0300, Andy Shevchenko wrote:
+> On Mon, Jun 10, 2024 at 6:26 PM Laurent Pinchart wrote:
+> > On Mon, Jun 10, 2024 at 06:15:40PM +0300, Andy Shevchenko wrote:
+> > > Sat, Jun 08, 2024 at 05:16:32PM +0300, Laurent Pinchart kirjoitti:
 > 
-> The module does not do anything when the JIT is disabled, but instead
-> causes a warning:
+> ...
 > 
-> In file included from include/linux/bpf_verifier.h:7,
->                  from drivers/hid/bpf/hid_bpf_struct_ops.c:10:
-> drivers/hid/bpf/hid_bpf_struct_ops.c: In function 'hid_bpf_struct_ops_init':
-> include/linux/bpf.h:1853:50: error: statement with no effect [-Werror=unused-value]
->  1853 | #define register_bpf_struct_ops(st_ops, type) ({ (void *)(st_ops); 0; })
->       |                                                  ^~~~~~~~~~~~~~~~
-> drivers/hid/bpf/hid_bpf_struct_ops.c:305:16: note: in expansion of macro 'register_bpf_struct_ops'
->   305 |         return register_bpf_struct_ops(&bpf_hid_bpf_ops, hid_bpf_ops);
->       |                ^~~~~~~~~~~~~~~~~~~~~~~
+> > > > +static const struct platform_device_id adp5585_gpio_id_table[] = {
+> > > > +   { "adp5585-gpio" },
+> > >
+> > > > +   { /* Sentinel */ },
+> > >
+> > > Drop the comma.
+> >
+> > I prefer keeping it.
 > 
-> This could be avoided by making HID-BPF just depend on JIT, but that
-> is probably not what we want here. Checking the other users of struct_ops,
-> I see that those just leave out the struct_ops usage, so do the same here.
+> For what reason?
+> The sentinel should be runtime and compile time one. Why should we
+> make our lives worse by neglecting help from a compiler?
 
-Actually, if we make the struct_ops part only depend on JIT HID-BPF is
-kind of moot. All we could do is use HID-BPF to communicate with the
-device, without getting any feedback, so nothing much more than what
-hidraw provides.
+Do you really think there's a risk here and that this will make a
+difference ? I do appreciate most of your review comments, even
+pendantic ones, as they can help making the code better, but we also all
+need a little bit of space to breathe when it comes to coding style.
 
-The only "interesting" bit we could do is inject a new event on a device
-as if it were originated from the device itself, but I really do not see
-the point without the struct_ops hooks.
+> > > > +};
 
-So I think struct_ops is now the base for HID-BPF, and if it's not
-available, we should not have HID-BPF at all.
+-- 
+Regards,
 
-> 
-> Fixes: ebc0d8093e8c ("HID: bpf: implement HID-BPF through bpf_struct_ops")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/hid/bpf/Makefile           | 3 ++-
->  drivers/hid/bpf/hid_bpf_dispatch.h | 6 ++++++
->  2 files changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hid/bpf/Makefile b/drivers/hid/bpf/Makefile
-> index d1f2b81788ca..7566be8eefba 100644
-> --- a/drivers/hid/bpf/Makefile
-> +++ b/drivers/hid/bpf/Makefile
-> @@ -8,4 +8,5 @@ LIBBPF_INCLUDE = $(srctree)/tools/lib
->  obj-$(CONFIG_HID_BPF) += hid_bpf.o
->  CFLAGS_hid_bpf_dispatch.o += -I$(LIBBPF_INCLUDE)
->  CFLAGS_hid_bpf_jmp_table.o += -I$(LIBBPF_INCLUDE)
-
-Unrelated to your patch, but looks like I forgot to remove that entry
-from the Makefile now that hid_bpf_jmp_table.c is not available :)
-
-Cheers,
-Benjamin
-
-> -hid_bpf-objs += hid_bpf_dispatch.o hid_bpf_struct_ops.o
-> +hid_bpf-y += hid_bpf_dispatch.o
-> +hid_bpf-$(CONFIG_BPF_JIT) += hid_bpf_struct_ops.o
-> diff --git a/drivers/hid/bpf/hid_bpf_dispatch.h b/drivers/hid/bpf/hid_bpf_dispatch.h
-> index 44c6ea22233f..577572f41454 100644
-> --- a/drivers/hid/bpf/hid_bpf_dispatch.h
-> +++ b/drivers/hid/bpf/hid_bpf_dispatch.h
-> @@ -14,7 +14,13 @@ struct hid_bpf_ctx_kern {
->  struct hid_device *hid_get_device(unsigned int hid_id);
->  void hid_put_device(struct hid_device *hid);
->  int hid_bpf_allocate_event_data(struct hid_device *hdev);
-> +#ifdef CONFIG_BPF_JIT
->  void __hid_bpf_ops_destroy_device(struct hid_device *hdev);
-> +#else
-> +static inline void __hid_bpf_ops_destroy_device(struct hid_device *hdev)
-> +{
-> +}
-> +#endif
->  int hid_bpf_reconnect(struct hid_device *hdev);
->  
->  struct bpf_prog;
-> -- 
-> 2.39.2
-> 
+Laurent Pinchart
 
