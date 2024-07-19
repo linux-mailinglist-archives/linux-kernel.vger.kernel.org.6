@@ -1,217 +1,529 @@
-Return-Path: <linux-kernel+bounces-257422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 968EE9379AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:13:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D2A79379AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:13:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AC761F214D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:13:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77F101C21105
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE516145A0D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE1C1459FD;
 	Fri, 19 Jul 2024 15:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eGHzC+qR"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eKCkgWXg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30718145346
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 15:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7CE145359;
+	Fri, 19 Jul 2024 15:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721402005; cv=none; b=U/klP1djQAaz2Zhe409I0mnanNKnxBXPdis+EBWz6qw5XweX9Frft2qjhyWUA1+uhVw82y/P2WrdtNmQHwFpyz1p69+tF0qNYKioe0bsorAN75Io/WO0qqzuUVM7o9YHFWVtRglsDgyJ5bYISCZnOfJ+sjsQ4BYJxW2iqFeV1qI=
+	t=1721402003; cv=none; b=Wpmd96LDGtxa5410GRtL4Ns0OrhW9hfmEF8XdbICwenix0n1cxRICu5t0/1P1vqeNeUFVHDSmzCqEuxnna/55Ip9LWY8tq1TrPfEfrdwaB8TnN3sAUrWZAvz0+Tm0p9BwV+UZ17/Z3oP1W5BszPai1Ip/ayK5bfYmyvGfJKkleA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721402005; c=relaxed/simple;
-	bh=cNzYZ/BtYyZDYVyvCWTWgLlzPaAtMCxc6S1Bv8I5Lck=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pEW1gDe89lxykxk2Pua+piYtam7ukt1kPq7PnXQqiVt1vuSdkHgla+Cr8+LNBINL/OrOW8aiGIg4lMq8L3j56FX3UF9yTXeqnsLUjqmU/C3aYIRaQyiQyyywsG9+AegWGpCxLHLkZAWwUurUAgUf5Dr9A8+qP5tgv56FAGcmK6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eGHzC+qR; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5a28b61b880so13252a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 08:13:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721402001; x=1722006801; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DOJZUI+POSTXFSIgNy35weqRERtHN5CsyKdohOMq5CI=;
-        b=eGHzC+qRZmOQB/fKRHa0HbJJphBWSzliEppl0gEZv5iWRzGatbEgb8sCxVbqXYXcqE
-         m/DnQ69JiZszuuA8sycRLvg+/CjdRP88N1VPSR8w/0LMMLZnA6F/8rlKcYwhMyvvST3z
-         uO0GJtRp4E3GHhlnoixg0hgnwI/Oate6jWdRpa3vCdGnoHFzzO08aFu+eRQGLodFkCYc
-         wyfU9ZS6f2lBMbz709xepWAA2pxn49ylK7HZd7W5wQ0O6L8vrH1/RQCG59H50CW5AYcz
-         PuqoXgFL0XwelSuL2MZN6CgdaQ/c1KugoaYyRaoP3jtiBVufpqyYXFQxvIY1qTb8nuzT
-         lebQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721402001; x=1722006801;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DOJZUI+POSTXFSIgNy35weqRERtHN5CsyKdohOMq5CI=;
-        b=q8DgIw5zE/1RJNqy9/OJSLPceqohCO3VTfNmsw6ZRp2Bfcs+LfyaiE3KinuGr/S2jw
-         3TrA7f8o21vC2SRNChJpEwesr7XFwIiTmMf6LNfLpB/S34S+gjvUaHuAdnWV78siWOqT
-         G0mCoYa2cMk+hRUrQjeIkHDfWE1ezeDbnOB6Gzwg8KcZNxtjL+I+rtLdyJjoZrqZusO7
-         ddeF9cxVeTP3IUwVktmHFB1CU0KuDOvwfS7FTj8SDKq51a1sr3x4nIjgemBSkPdyK0Ef
-         C8ngxkjyoY4rfg/xHgxRqT7xOv8VQw2R+IQ7BgWspsNZn3DK1ZLxWg7t7E5gPb6vrB5c
-         xGug==
-X-Forwarded-Encrypted: i=1; AJvYcCWoWwBvyn8JPm7chQ4SS8pNaOq0toAkk87teaz50M9q4clLoY66gekAumtlrhcj2+Rt14ad6FqoQadsbfvJj9gZZCzLEPQN4hIuo1is
-X-Gm-Message-State: AOJu0YwsqZfvcWVJY/k2IHZ84cLDtClw+JgQv3wEX9Qoc+4++ignI9Pl
-	4n3WWRa7IhgDE0YvinXQvJwY50Isy1ye/aZLOwkis1w1ijIn8yFREVpFbTia/Y+rxyY84BcDu/9
-	RySGzscwjIwnfBXj44+ooxADLNkYEXHNv5FL0
-X-Google-Smtp-Source: AGHT+IF8jhfTz4CuviZW9GqUcQNbR2n0XX/TjDOw52cr0zBh16yuWoo/aIR1mpwaKRcfuoy4T/F2djmB2w64vrVE1xU=
-X-Received: by 2002:a05:6402:4405:b0:59e:9fb1:a0dc with SMTP id
- 4fb4d7f45d1cf-5a2cb049fdamr247891a12.6.1721401996282; Fri, 19 Jul 2024
- 08:13:16 -0700 (PDT)
+	s=arc-20240116; t=1721402003; c=relaxed/simple;
+	bh=SzHsVmGv2ZCHpBQMcBNhLyRWHe2AjYTuCw6fHGbthXI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=dyzsLuroZ8fM5qR38omIOV7Vo6WiaM7L40INb6UjMa4PpIUi+xs8ify2TYqdpAWGLF5HE89y2VFG+tCCufVv9KOlYACkGV9qa/9GTwR9yKMLdP1nKeZbYJhWFs/kb4TQ1CiYmWkLi9JCPYSV7TilbjCWz4ZTmexXimULLzQ/Tr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eKCkgWXg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF19CC32782;
+	Fri, 19 Jul 2024 15:13:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721402003;
+	bh=SzHsVmGv2ZCHpBQMcBNhLyRWHe2AjYTuCw6fHGbthXI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=eKCkgWXg9PrWcz29fz0l4y3SdEXww/KbuKstn0tITtj/HckHumsHuNscGWVRPVXH7
+	 Er+G1K9QSnru1p3QIxI8Vskn1Audqzmm8lez2h9++2hvDuvPH/jd+wDP3e+KLcFv5x
+	 TWsNV7ArqAXYeYaSOmcLMxg5dn3gpVMSXR1yuBca3JpKPHBCG68m1TctwZdbVaK+xA
+	 7zb0PbLN+UqcwhElmueVyjQvi7pQghVYwxVXZJY1jXHvXQKUjILWAAAQQ+Pk2Axcxz
+	 gh/LKpvQVwOWEgS+hEUztVo5wBHYgG0VojwZ+99VY4pZruACGTLjEGDMC7oierY8dL
+	 ExIlZ48KLKe3A==
+Date: Fri, 19 Jul 2024 17:13:18 +0200
+From: Wolfram Sang <wsa@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: [PULL REQUEST] i2c-for-6.11-rc1-try2
+Message-ID: <ZpqCjrdsScuA7CgO@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704190137.696169-1-mic@digikod.net> <20240704190137.696169-2-mic@digikod.net>
- <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
- <20240717.neaB5Aiy2zah@digikod.net> <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
- <20240718.kaePhei9Ahm9@digikod.net>
-In-Reply-To: <20240718.kaePhei9Ahm9@digikod.net>
-From: Jeff Xu <jeffxu@google.com>
-Date: Fri, 19 Jul 2024 08:12:37 -0700
-Message-ID: <CALmYWFupWw2_BKu1FF=ooXFpA=GtJr1ehZSK3p+1+1WH34eX=w@mail.gmail.com>
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Paul Moore <paul@paul-moore.com>, "Theodore Ts'o" <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, 
-	Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
-	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
-	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4o8M8B6Lp1KpRl4A"
+Content-Disposition: inline
+
+
+--4o8M8B6Lp1KpRl4A
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 18, 2024 at 5:24=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
->
-> On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
-> > On Wed, Jul 17, 2024 at 3:01=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > >
-> > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
-> > > > On Thu, Jul 4, 2024 at 12:02=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <m=
-ic@digikod.net> wrote:
-> > > > >
-> > > > > Add a new AT_CHECK flag to execveat(2) to check if a file would b=
-e
-> > > > > allowed for execution.  The main use case is for script interpret=
-ers and
-> > > > > dynamic linkers to check execution permission according to the ke=
-rnel's
-> > > > > security policy. Another use case is to add context to access log=
-s e.g.,
-> > > > > which script (instead of interpreter) accessed a file.  As any
-> > > > > executable code, scripts could also use this check [1].
-> > > > >
-> > > > > This is different than faccessat(2) which only checks file access
-> > > > > rights, but not the full context e.g. mount point's noexec, stack=
- limit,
-> > > > > and all potential LSM extra checks (e.g. argv, envp, credentials)=
-.
-> > > > > Since the use of AT_CHECK follows the exact kernel semantic as fo=
-r a
-> > > > > real execution, user space gets the same error codes.
-> > > > >
-> > > > So we concluded that execveat(AT_CHECK) will be used to check the
-> > > > exec, shared object, script and config file (such as seccomp config=
-),
-> > >
-> > > "config file" that contains executable code.
-> > >
-> > Is seccomp config  considered as "contains executable code", seccomp
-> > config is translated into bpf, so maybe yes ? but bpf is running in
-> > the kernel.
->
-> Because seccomp filters alter syscalls, they are similar to code
-> injection.
->
-> >
-> > > > I'm still thinking  execveat(AT_CHECK) vs faccessat(AT_CHECK) in
-> > > > different use cases:
-> > > >
-> > > > execveat clearly has less code change, but that also means: we can'=
-t
-> > > > add logic specific to exec (i.e. logic that can't be applied to
-> > > > config) for this part (from do_execveat_common to
-> > > > security_bprm_creds_for_exec) in future.  This would require some
-> > > > agreement/sign-off, I'm not sure from whom.
-> > >
-> > > I'm not sure to follow. We could still add new flags, but for now I
-> > > don't see use cases.  This patch series is not meant to handle all
-> > > possible "trust checks", only executable code, which makes sense for =
-the
-> > > kernel.
-> > >
-> > I guess the "configfile" discussion is where I get confused, at one
-> > point, I think this would become a generic "trust checks" api for
-> > everything related to "generating executable code", e.g. javascript,
-> > java code, and more.
-> > We will want to clearly define the scope of execveat(AT_CHECK)
->
-> The line between data and code is blurry.  For instance, a configuration
-> file can impact the execution flow of a program.  So, where to draw the
-> line?
->
-> It might makes sense to follow the kernel and interpreter semantic: if a
-> file can be executed by the kernel (e.g. ELF binary, file containing a
-> shebang, or just configured with binfmt_misc), then this should be
-> considered as executable code.  This applies to Bash, Python,
-> Javascript, NodeJS, PE, PHP...  However, we can also make a picture
-> executable with binfmt_misc.  So, again, where to draw the line?
->
-> I'd recommend to think about interaction with the outside, through
-> function calls, IPCs, syscalls...  For instance, "running" an image
-> should not lead to reading or writing to arbitrary files, or accessing
-> the network, but in practice it is legitimate for some file formats...
-> PostScript is a programming language, but mostly used to draw pictures.
-> So, again, where to draw the line?
->
-The javascript is run by browser and java code by java runtime, do
-they meet the criteria? they do not interact with the kernel directly,
-however they might have the same "executable" characteristics and the
-app might not want them to be put into non-exec mount.
+Linus,
 
-If the answer is yes, they can also use execveat(AT_CHECK),  the next
-question is: does it make sense for javacript/java code to go through
-execveat() code path, allocate bprm, etc ? (I don't have answer, maybe
-it is)
+Here is my updated pull request with the summaries of the included
+merges. There will be a trivial merge conflict because 6.10 gained
+bd9f5348089b ("i2c: mark HostNotify target address as used") after rc7.
+The .driver_data field simply needs to go. Please pull.
 
-> We should follow the principle of least astonishment.  What most users
-> would expect?  This should follow the *common usage* of executable
-> files.  At the end, the script interpreters will be patched by security
-> folks for security reasons.  I think the right question to ask should
-> be: could this file format be (ab)used to leak or modify arbitrary
-> files, or to perform arbitrary syscalls?  If the answer is yes, then it
-> should be checked for executability.  Of course, this excludes bugs
-> exploited in the file format parser.
->
-> I'll extend the next patch series with this rationale.
->
+   Wolfram
+
+
+The following changes since commit 256abd8e550ce977b728be79a74e1729438b4948:
+
+  Linux 6.10-rc7 (2024-07-07 14:23:46 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-=
+6.11-rc1-try2
+
+for you to fetch changes up to 5d89b5bdbce3937c86f05ffe19455c3068fd94f7:
+
+  i2c: document new callbacks in i2c_algorithm (2024-07-13 11:11:58 +0200)
+
+----------------------------------------------------------------
+The I2C core gains documentation updates for the testunit, a cleanup
+regarding unneeded 'driver_data' and more sanity checks in the char
+device.
+
+For the host drivers, this release includes significant updates, with
+the primary change being the renaming from "master/slave" to
+"controller/target" to adhere to I2C v7 and SMBus 3.2 standards.
+
+New Support:
+
+ - Added support for Intel Arrow Lake-H.
+ - Added I2C support in the Arioha SoC by linking the Mediatek
+   I2C controller.
+
+Cleanups:
+
+ - Added the MODULE_DESCRIPTION() macro, resolving a modpost
+   warning in the ALi 1563 Southbridge driver.
+ - Constified the regmap_config declaration in the i2c-designware
+   driver.
+ - Improved the coding style in the Renesas R-Car driver by
+   removing unnecessary semicolons after brackets.
+
+General improvements:
+
+ - In the OMAP device, replaced NOIRQ_SYSTEM_SLEEP_PM_OPS with
+   RUNTIME_PM_OPS to enable waking up the controller during
+   suspend() before suspend_noirq() kicks in.
+ - Improved logging in the Xilinx driver.
+ - Added a warning (WARN()) in the Renesas R-Car driver for
+   spurious interrupts.
+
+DTS Changes:
+
+ - Removed address-cell and size-cell from the Atmel at91sam,
+   nVidia Tegra 20, and Samsung S3c2410 devices.
+ - Fixed Texas Instruments OMAP4 I2C controller to comply with
+   the i2c-controller.yaml schema.
+ - Improved indentation in DTS examples for several I2C devices.
+ - Converted the NXP LPC1788 binding to the dt-schema.
+ - Added documentation for the compatible string
+   thead,th1520-i2c.
+ - Added the "power-domains" property for the Meson I2C driver.
+
+AT24 EEPROM driver changes:
+
+ - add support for two new Microchip models
+ - document even more new models in DT bindings (those use fallback
+   compatibles so no code changes)
+
+----------------------------------------------------------------
+Andrei Simion (1):
+      dt-bindings: eeprom: at24: Add Microchip 24AA025E48/24AA025E64
+
+Claudiu Beznea (1):
+      eeprom: at24: Add support for Microchip 24AA025E48/24AA025E64 EEPROMs
+
+Frieder Schrempf (2):
+      dt-bindings: eeprom: at24: Move compatible for Belling BL24C16A to pr=
+oper place
+      dt-bindings: eeprom: at24: Add compatible for ONSemi N24S64B
+
+George Stark (1):
+      dt-bindings: i2c: amlogic,meson6-i2c: add optional power-domains
+
+Jarkko Nikula (1):
+      i2c: i801: Add support for Intel Arrow Lake-H
+
+Javier Carrasco (1):
+      i2c: designware: Constify read-only struct regmap_config
+
+Jean Delvare (1):
+      i2c: dev: Check for I2C_FUNC_I2C before calling i2c_transfer
+
+Jeff Johnson (1):
+      i2c: add missing MODULE_DESCRIPTION() macros
+
+Kanak Shilledar (1):
+      dt-bindings: i2c: nxp,lpc1788-i2c: convert to dt schema
+
+Krzysztof Kozlowski (5):
+      dt-bindings: i2c: atmel,at91sam: drop unneeded address/size-cells
+      dt-bindings: i2c: nvidia,tegra20: drop unneeded address/size-cells
+      dt-bindings: i2c: samsung,s3c2410: drop unneeded address/size-cells
+      dt-bindings: i2c: ti,omap4: reference i2c-controller.yaml schema
+      dt-bindings: i2c: adjust indentation in DTS example to coding style
+
+Lorenzo Bianconi (1):
+      i2c: mt7621: Add Airoha EN7581 i2c support
+
+Marc Ferland (1):
+      i2c: xiic: improve error message when transfer fails to start
+
+Nicolas Ferre (1):
+      dt-bindings: i2c: at91: Add sama7d65 compatible string
+
+Thomas Bonnefille (1):
+      dt-bindings: i2c: dw: Document compatible thead,th1520-i2c
+
+Thomas Richard (2):
+      i2c: omap: switch to NOIRQ_SYSTEM_SLEEP_PM_OPS() and RUNTIME_PM_OPS()
+      i2c: omap: wakeup the controller during suspend() callback
+
+Uwe Kleine-K=C3=B6nig (1):
+      i2c: Drop explicit initialization of struct i2c_device_id::driver_dat=
+a to 0
+
+Wolfram Sang (67):
+      Documentation: i2c: testunit: use proper reST
+      Merge tag 'at24-updates-for-v6.11-rc1' of git://git.kernel.org/pub/sc=
+m/linux/kernel/git/brgl/linux into i2c/for-mergewindow
+      i2c: add debug message for detected HostNotify alerts
+      i2c: rcar: WARN about spurious irqs
+      i2c: rcar: minor changes to adhere to coding style
+      i2c: reword i2c_algorithm according to newest specification
+      i2c: ali15x3: reword according to newest specification
+      i2c: altera: reword according to newest specification
+      i2c: au1550: reword according to newest specification
+      i2c: bcm-kona: reword according to newest specification
+      i2c: bcm2835: reword according to newest specification
+      i2c: brcmstb: reword according to newest specification
+      i2c: cht-wc: reword according to newest specification
+      i2c: cp2615: reword according to newest specification
+      i2c: cros-ec-tunnel: reword according to newest specification
+      i2c: davinci: reword according to newest specification
+      i2c: digicolor: reword according to newest specification
+      i2c: diolan-u2c: reword according to newest specification
+      i2c: dln2: reword according to newest specification
+      i2c: fsi: reword according to newest specification
+      i2c: gpio: reword according to newest specification
+      i2c: highlander: reword according to newest specification
+      i2c: hisi: reword according to newest specification
+      i2c: hix5hd2: reword according to newest specification
+      i2c: i801: reword according to newest specification
+      i2c: ibm_iic: reword according to newest specification
+      i2c: iop3xx: reword according to newest specification
+      i2c: isch: reword according to newest specification
+      i2c: jz4780: reword according to newest specification
+      i2c: kempld: reword according to newest specification
+      i2c: ljca: reword according to newest specification
+      i2c: lpc2k: reword according to newest specification
+      i2c: ls2x: reword according to newest specification
+      i2c: mlxcpld: reword according to newest specification
+      i2c: mpc: reword according to newest specification
+      i2c: mt7621: reword according to newest specification
+      i2c: mv64xxx: reword according to newest specification
+      i2c: ocores: reword according to newest specification
+      i2c: octeon: reword according to newest specification
+      i2c: opal: reword according to newest specification
+      i2c: owl: reword according to newest specification
+      i2c: pasemi: reword according to newest specification
+      i2c: piix4: reword according to newest specification
+      i2c: powermac: reword according to newest specification
+      i2c: pxa-pci: reword according to newest specification
+      i2c: riic: reword according to newest specification
+      i2c: rk3x: reword according to newest specification
+      i2c: robotfuzz-osif: reword according to newest specification
+      i2c: rzv2m: reword according to newest specification
+      i2c: sis5595: reword according to newest specification
+      i2c: sprd: reword according to newest specification
+      i2c: stm32f4: reword according to newest specification
+      i2c: sun6i-p2wi: reword according to newest specification
+      i2c: taos-evm: reword according to newest specification
+      i2c: tegra-bpmp: reword according to newest specification
+      i2c: thunderx-pcidrv: reword according to newest specification
+      i2c: tiny-usb: reword according to newest specification
+      i2c: uniphier-f: reword according to newest specification
+      i2c: uniphier: reword according to newest specification
+      i2c: viperboard: reword according to newest specification
+      i2c: viai2c: reword according to newest specification
+      i2c: nvidia-gpu: reword according to newest specification
+      i2c: virtio: reword according to newest specification
+      i2c: cpm: reword according to newest specification
+      i2c: st: reword according to newest specification
+      Merge tag 'i2c-host-6.11' of git://git.kernel.org/pub/scm/linux/kerne=
+l/git/andi.shyti/linux into i2c/for-mergewindow
+      i2c: document new callbacks in i2c_algorithm
+
+
+with much appreciated quality assurance from
+----------------------------------------------------------------
+Alain Volmat (1):
+      (Rev.) i2c: st: reword according to newest specification
+
+Andi Shyti (62):
+      (Rev.) i2c: st: reword according to newest specification
+      (Rev.) i2c: cpm: reword according to newest specification
+      (Rev.) i2c: virtio: reword according to newest specification
+      (Rev.) i2c: nvidia-gpu: reword according to newest specification
+      (Rev.) i2c: viai2c: reword according to newest specification
+      (Rev.) i2c: viperboard: reword according to newest specification
+      (Rev.) i2c: uniphier: reword according to newest specification
+      (Rev.) i2c: uniphier-f: reword according to newest specification
+      (Rev.) i2c: tiny-usb: reword according to newest specification
+      (Rev.) i2c: thunderx-pcidrv: reword according to newest specification
+      (Rev.) i2c: tegra-bpmp: reword according to newest specification
+      (Rev.) i2c: taos-evm: reword according to newest specification
+      (Rev.) i2c: sun6i-p2wi: reword according to newest specification
+      (Rev.) i2c: stm32f4: reword according to newest specification
+      (Rev.) i2c: sprd: reword according to newest specification
+      (Rev.) i2c: sis5595: reword according to newest specification
+      (Rev.) i2c: rzv2m: reword according to newest specification
+      (Rev.) i2c: robotfuzz-osif: reword according to newest specification
+      (Rev.) i2c: rk3x: reword according to newest specification
+      (Rev.) i2c: riic: reword according to newest specification
+      (Rev.) i2c: pxa-pci: reword according to newest specification
+      (Rev.) i2c: powermac: reword according to newest specification
+      (Rev.) i2c: piix4: reword according to newest specification
+      (Rev.) i2c: pasemi: reword according to newest specification
+      (Rev.) i2c: owl: reword according to newest specification
+      (Rev.) i2c: opal: reword according to newest specification
+      (Rev.) i2c: octeon: reword according to newest specification
+      (Rev.) i2c: ocores: reword according to newest specification
+      (Rev.) i2c: mv64xxx: reword according to newest specification
+      (Rev.) i2c: mt7621: reword according to newest specification
+      (Rev.) i2c: mpc: reword according to newest specification
+      (Rev.) i2c: mlxcpld: reword according to newest specification
+      (Rev.) i2c: ls2x: reword according to newest specification
+      (Rev.) i2c: lpc2k: reword according to newest specification
+      (Rev.) i2c: ljca: reword according to newest specification
+      (Rev.) i2c: kempld: reword according to newest specification
+      (Rev.) i2c: jz4780: reword according to newest specification
+      (Rev.) i2c: isch: reword according to newest specification
+      (Rev.) i2c: iop3xx: reword according to newest specification
+      (Rev.) i2c: ibm_iic: reword according to newest specification
+      (Rev.) i2c: i801: reword according to newest specification
+      (Rev.) i2c: hix5hd2: reword according to newest specification
+      (Rev.) i2c: hisi: reword according to newest specification
+      (Rev.) i2c: highlander: reword according to newest specification
+      (Rev.) i2c: gpio: reword according to newest specification
+      (Rev.) i2c: fsi: reword according to newest specification
+      (Rev.) i2c: dln2: reword according to newest specification
+      (Rev.) i2c: diolan-u2c: reword according to newest specification
+      (Rev.) i2c: digicolor: reword according to newest specification
+      (Rev.) i2c: davinci: reword according to newest specification
+      (Rev.) i2c: cros-ec-tunnel: reword according to newest specification
+      (Rev.) i2c: cht-wc: reword according to newest specification
+      (Rev.) i2c: brcmstb: reword according to newest specification
+      (Rev.) i2c: bcm2835: reword according to newest specification
+      (Rev.) i2c: bcm-kona: reword according to newest specification
+      (Rev.) i2c: au1550: reword according to newest specification
+      (Rev.) i2c: altera: reword according to newest specification
+      (Rev.) i2c: ali15x3: reword according to newest specification
+      (Rev.) i2c: reword i2c_algorithm according to newest specification
+      (Rev.) i2c: add debug message for detected HostNotify alerts
+      (Rev.) i2c: omap: wakeup the controller during suspend() callback
+      (Rev.) i2c: dev: Check for I2C_FUNC_I2C before calling i2c_transfer
+
+AngeloGioacchino Del Regno (2):
+      (Rev.) i2c: mt7621: reword according to newest specification
+      (Rev.) i2c: mt7621: Add Airoha EN7581 i2c support
+
+Baolin Wang (1):
+      (Rev.) i2c: sprd: reword according to newest specification
+
+Chris Packham (1):
+      (Rev.) i2c: mpc: reword according to newest specification
+
+Conor Dooley (6):
+      (Rev.) dt-bindings: i2c: adjust indentation in DTS example to coding =
+style
+      (Rev.) dt-bindings: i2c: ti,omap4: reference i2c-controller.yaml sche=
+ma
+      (Rev.) dt-bindings: i2c: samsung,s3c2410: drop unneeded address/size-=
+cells
+      (Rev.) dt-bindings: i2c: nvidia,tegra20: drop unneeded address/size-c=
+ells
+      (Rev.) dt-bindings: i2c: atmel,at91sam: drop unneeded address/size-ce=
+lls
+      (Rev.) dt-bindings: eeprom: at24: Add Microchip 24AA025E48/24AA025E64
+
+Eddie James (1):
+      (Rev.) i2c: fsi: reword according to newest specification
+
+Florian Fainelli (3):
+      (Rev.) i2c: brcmstb: reword according to newest specification
+      (Rev.) i2c: bcm2835: reword according to newest specification
+      (Rev.) i2c: bcm-kona: reword according to newest specification
+
+Hans de Goede (1):
+      (Rev.) i2c: cht-wc: reword according to newest specification
+
+Heiko Stuebner (1):
+      (Rev.) i2c: rk3x: reword according to newest specification
+
+Jarkko Nikula (1):
+      (Rev.) dt-bindings: i2c: dw: Document compatible thead,th1520-i2c
+
+Krzysztof Kozlowski (1):
+      (Rev.) dt-bindings: i2c: nxp,lpc1788-i2c: convert to dt schema
+
+Neil Armstrong (1):
+      (Rev.) dt-bindings: i2c: amlogic,meson6-i2c: add optional power-domai=
+ns
+
+Ray Liu (1):
+      (Test) i2c: mt7621: Add Airoha EN7581 i2c support
+
+Rob Herring (Arm) (1):
+      (Rev.) dt-bindings: i2c: amlogic,meson6-i2c: add optional power-domai=
+ns
+
+Stefan Roese (1):
+      (Rev.) i2c: mt7621: reword according to newest specification
+
+Tony Lindgren (1):
+      (Rev.) i2c: omap: wakeup the controller during suspend() callback
+
+ Documentation/devicetree/bindings/eeprom/at24.yaml |  18 ++-
+ .../bindings/i2c/amlogic,meson6-i2c.yaml           |   3 +
+ .../devicetree/bindings/i2c/atmel,at91sam-i2c.yaml |  10 +-
+ .../devicetree/bindings/i2c/brcm,brcmstb-i2c.yaml  |  28 ++---
+ .../devicetree/bindings/i2c/i2c-demux-pinctrl.yaml | 112 +++++++++---------
+ .../devicetree/bindings/i2c/i2c-lpc2k.txt          |  33 ------
+ .../bindings/i2c/nvidia,tegra20-i2c.yaml           |   6 -
+ .../devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml   |  54 +++++++++
+ .../devicetree/bindings/i2c/renesas,iic-emev2.yaml |  14 +--
+ .../devicetree/bindings/i2c/renesas,rcar-i2c.yaml  |  20 ++--
+ .../devicetree/bindings/i2c/renesas,riic.yaml      |  34 +++---
+ .../bindings/i2c/renesas,rmobile-iic.yaml          |  24 ++--
+ .../bindings/i2c/samsung,s3c2410-i2c.yaml          |   6 -
+ .../bindings/i2c/snps,designware-i2c.yaml          |   4 +
+ .../devicetree/bindings/i2c/st,stm32-i2c.yaml      |  66 +++++------
+ .../devicetree/bindings/i2c/ti,omap4-i2c.yaml      |  64 +++++------
+ Documentation/i2c/busses/i2c-i801.rst              |   1 +
+ Documentation/i2c/slave-testunit-backend.rst       | 127 ++++++++++++++---=
+----
+ MAINTAINERS                                        |   2 +-
+ drivers/i2c/busses/Kconfig                         |   3 +-
+ drivers/i2c/busses/i2c-ali1563.c                   |   1 +
+ drivers/i2c/busses/i2c-ali15x3.c                   |   2 +-
+ drivers/i2c/busses/i2c-altera.c                    |   4 +-
+ drivers/i2c/busses/i2c-au1550.c                    |  15 ++-
+ drivers/i2c/busses/i2c-bcm-kona.c                  |  13 +--
+ drivers/i2c/busses/i2c-bcm2835.c                   |  10 +-
+ drivers/i2c/busses/i2c-brcmstb.c                   |  11 +-
+ drivers/i2c/busses/i2c-ccgx-ucsi.c                 |   1 +
+ drivers/i2c/busses/i2c-cht-wc.c                    |   8 +-
+ drivers/i2c/busses/i2c-cp2615.c                    |  10 +-
+ drivers/i2c/busses/i2c-cpm.c                       |   4 +-
+ drivers/i2c/busses/i2c-cros-ec-tunnel.c            |   4 +-
+ drivers/i2c/busses/i2c-davinci.c                   |  17 ++-
+ drivers/i2c/busses/i2c-designware-platdrv.c        |   2 +-
+ drivers/i2c/busses/i2c-digicolor.c                 |   6 +-
+ drivers/i2c/busses/i2c-diolan-u2c.c                |   2 +-
+ drivers/i2c/busses/i2c-dln2.c                      |   4 +-
+ drivers/i2c/busses/i2c-fsi.c                       |  56 ++++-----
+ drivers/i2c/busses/i2c-gpio.c                      |   8 +-
+ drivers/i2c/busses/i2c-highlander.c                |   2 +-
+ drivers/i2c/busses/i2c-hisi.c                      |   8 +-
+ drivers/i2c/busses/i2c-hix5hd2.c                   |   6 +-
+ drivers/i2c/busses/i2c-i801.c                      |  15 ++-
+ drivers/i2c/busses/i2c-ibm_iic.c                   |  27 ++---
+ drivers/i2c/busses/i2c-iop3xx.c                    |  15 +--
+ drivers/i2c/busses/i2c-isch.c                      |   2 +-
+ drivers/i2c/busses/i2c-jz4780.c                    |   4 +-
+ drivers/i2c/busses/i2c-kempld.c                    |   4 +-
+ drivers/i2c/busses/i2c-ljca.c                      |  20 ++--
+ drivers/i2c/busses/i2c-lpc2k.c                     |  10 +-
+ drivers/i2c/busses/i2c-ls2x.c                      |  11 +-
+ drivers/i2c/busses/i2c-mlxcpld.c                   |  14 +--
+ drivers/i2c/busses/i2c-mpc.c                       |   4 +-
+ drivers/i2c/busses/i2c-mt7621.c                    |  26 ++---
+ drivers/i2c/busses/i2c-mv64xxx.c                   |  12 +-
+ drivers/i2c/busses/i2c-nvidia-gpu.c                |   7 +-
+ drivers/i2c/busses/i2c-ocores.c                    |   8 +-
+ drivers/i2c/busses/i2c-octeon-core.c               |   6 +-
+ drivers/i2c/busses/i2c-octeon-core.h               |   4 +-
+ drivers/i2c/busses/i2c-octeon-platdrv.c            |   2 +-
+ drivers/i2c/busses/i2c-omap.c                      |  36 ++++--
+ drivers/i2c/busses/i2c-opal.c                      |  10 +-
+ drivers/i2c/busses/i2c-owl.c                       |  12 +-
+ drivers/i2c/busses/i2c-pasemi-core.c               |   6 +-
+ drivers/i2c/busses/i2c-piix4.c                     |   2 +-
+ drivers/i2c/busses/i2c-powermac.c                  |  14 +--
+ drivers/i2c/busses/i2c-pxa-pci.c                   |   2 +-
+ drivers/i2c/busses/i2c-pxa.c                       |   1 +
+ drivers/i2c/busses/i2c-qup.c                       |   1 +
+ drivers/i2c/busses/i2c-rcar.c                      |  13 +--
+ drivers/i2c/busses/i2c-riic.c                      |   8 +-
+ drivers/i2c/busses/i2c-rk3x.c                      |  20 ++--
+ drivers/i2c/busses/i2c-robotfuzz-osif.c            |   4 +-
+ drivers/i2c/busses/i2c-rzv2m.c                     |  12 +-
+ drivers/i2c/busses/i2c-sis5595.c                   |   2 +-
+ drivers/i2c/busses/i2c-sprd.c                      |  16 +--
+ drivers/i2c/busses/i2c-st.c                        |   8 +-
+ drivers/i2c/busses/i2c-stm32f4.c                   |   8 +-
+ drivers/i2c/busses/i2c-sun6i-p2wi.c                |  20 ++--
+ drivers/i2c/busses/i2c-taos-evm.c                  |   2 +-
+ drivers/i2c/busses/i2c-tegra-bpmp.c                |   4 +-
+ drivers/i2c/busses/i2c-thunderx-pcidrv.c           |   2 +-
+ drivers/i2c/busses/i2c-tiny-usb.c                  |   6 +-
+ drivers/i2c/busses/i2c-uniphier-f.c                |  26 ++---
+ drivers/i2c/busses/i2c-uniphier.c                  |  15 ++-
+ drivers/i2c/busses/i2c-viai2c-common.c             |   2 +-
+ drivers/i2c/busses/i2c-viai2c-wmt.c                |   8 +-
+ drivers/i2c/busses/i2c-viai2c-zhaoxin.c            |  12 +-
+ drivers/i2c/busses/i2c-viperboard.c                |  10 +-
+ drivers/i2c/busses/i2c-virtio.c                    |   2 +-
+ drivers/i2c/busses/i2c-xiic.c                      |   9 +-
+ drivers/i2c/i2c-core-base.c                        |   6 +-
+ drivers/i2c/i2c-dev.c                              |  12 ++
+ drivers/i2c/i2c-slave-testunit.c                   |   2 +-
+ drivers/i2c/i2c-smbus.c                            |   2 +-
+ drivers/i2c/muxes/i2c-mux-pca9541.c                |   2 +-
+ drivers/misc/eeprom/at24.c                         |   8 ++
+ include/linux/i2c.h                                |  44 +++++--
+ 98 files changed, 744 insertions(+), 639 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt
+ create mode 100644 Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.y=
+aml
+
+--4o8M8B6Lp1KpRl4A
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaago4ACgkQFA3kzBSg
+KbYJQRAApr9lzEDL2uVfTb9mXzA0ZxGfgi0PmN3S7kC0IB5DCrN9x5N1akkmKG/j
+47d4rl+nzl8aenOGMqYS6iXqJ/og9eD+vTlG8uhcAfH/jEM/dI76R/a2NAUaf3tI
+kZRBXepui1hPONQ+hvZdxT0JT137+QuK+7wWwS8beTJMXBzedeEFSewt4fv/Y9IQ
+ESaJ/7a+YvKR6YNZJFbGgRDBOcF1t+tpFtnkvOHe22SSYeiei6eJpiJK2l92xslZ
+K0LZUbqySngVHD/1k7QIZoe/Csx0uOcLQygKJcs6YYSFucGghqH9XAioTCNi1X2z
+YZx9+Z1oknVJCMtEFtOptbr6Cwzdx0wUQah6mmFmHrGXQJcz4X++8PvrW4seVdpU
+RioBpTfpIW8hJoj5CQAYGuKNrjdDyCMUxfMuGEtBAc0Shw7ScJU+bowSZ1rbOpgj
+0A55/YgFav+T3+DpZSh9HFiXTVB7I2MwmglVVzdb9PMTTF25k/7oYcE+rR70Gey5
+4RfD0NzMY551m9SvClm+MqPe69PNm/bKrRHOjMDAGRhO+Xmnbg0eGetHz1A4HGel
+352CzRCrwByY9TNm5FoPSxGF00mV2HMPfVLIkgajRGwZpdazh7I9Gk9FhaXNWsmp
+qaqKbzaEQuUFU8KJZUg/nCgLuN/fcTE8YY49PAQtFFqvbyf3oPs=
+=Mz0n
+-----END PGP SIGNATURE-----
+
+--4o8M8B6Lp1KpRl4A--
 
