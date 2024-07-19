@@ -1,336 +1,137 @@
-Return-Path: <linux-kernel+bounces-257361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEC90937909
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:15:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE9FB937938
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:32:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 659DB282BB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:15:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A5CA283046
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D6A145A19;
-	Fri, 19 Jul 2024 14:15:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9229C144D37
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 14:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C3D13EFEE;
+	Fri, 19 Jul 2024 14:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Po1GXehA"
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04ED81DDEA;
+	Fri, 19 Jul 2024 14:32:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721398502; cv=none; b=LWSvWJVKhiMiXb59V3KqKBOFx9Vph1eBvpp/32JV9of5XWtouPa8kIMI4KDfcgTxppC8LZW0WN/hs1B4za/mbOpooPxoKMx9ZJLHGCzcjbF92X4fCqiLrK5Y7celaoX+r1FJYH7n+enftGMqfEr7QKU9Vxj6rRynpKRYwBxlpIE=
+	t=1721399545; cv=none; b=CqX0j1vPPPsSWT3ABT0F5hvqzlWLFNcM3GDsuEuIVObmFk7cFIRjAU4Sd4JrSmr6mezvSLwV4aE5/zcDfOWddu9FNWwKS4D5EPUlRk5qadVBZPqwro2ROdIxk/l5JqucJbGxmB9+Yhena+xAzJsG54OOeXjpV6/rqno1m1DcZb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721398502; c=relaxed/simple;
-	bh=Oe7QgutTzGhWUv8KUb0WADWuj0AC3ZfcLzKjmfEvQ3I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eDfIj0CQu1Ec9FIPQM8S1sE9KDkP2n56SzIEl2aUwaypCSATGsvH7Bm26PmtfXsj4Sn3qT1nu/uqqbb4lgCePGpxSrZZHsOknDB9PZyc1cJ92wyvyEb11b4eRIu29GAK/53yg9pDoN7drVxA9OSXSSMUwWQfKf7e/xUSI7e1RyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B21591063;
-	Fri, 19 Jul 2024 07:15:19 -0700 (PDT)
-Received: from [10.1.38.23] (e122027.cambridge.arm.com [10.1.38.23])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 407923F73F;
-	Fri, 19 Jul 2024 07:14:52 -0700 (PDT)
-Message-ID: <367533b5-ba37-4ffe-ae25-79f573d394c2@arm.com>
-Date: Fri, 19 Jul 2024 15:14:52 +0100
+	s=arc-20240116; t=1721399545; c=relaxed/simple;
+	bh=eSNSgiFbmLBeurqiEh72ipXm+lBT2ycrGZa8tUn601Y=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jpwmRuuSCAeDPhlPThM248njHkDgNLlKsRDGboDeIa5RkiVnJixHR2vJhiVR3oayG+2jVjc4rcQfILrVqajlZgyyXkV55hAA8XTM5sD5VSaQmgs5uFpG88KHT/wM80VY+VYcdjmsmxWaLnMrW4pLMhfjCtolLTnxxKqju9dIJm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Po1GXehA; arc=none smtp.client-ip=217.70.178.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay4-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::224])
+	by mslow1.mail.gandi.net (Postfix) with ESMTP id DEF57C3DA3;
+	Fri, 19 Jul 2024 14:15:08 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 618E3E0009;
+	Fri, 19 Jul 2024 14:15:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1721398501;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=tct01ejxcK2T8As8Xqn354fsyLcWnCMauPph/e+Y6fY=;
+	b=Po1GXehAH5rVnYfkVeXnRJmWZgX5YQFERpxSV8tJw2wYg1H0w3ZIv9TwfgseD4uil0e3qq
+	qJ5qgd4ecGflYRp1rX0vXI4HVCWKOcKHvV2hDs5MTbxXt3+LiZbYBbKAVcFQkf5g2qe/Go
+	pGYs4PziGKbIE+5BhEhNQFJAbnmNzLZAjpFEi1gs6zDFHjt6rAGQxTSkt9LvNj8VtBD+vc
+	4gMsxHBh3522vl7ZdNbAvmcG/e4XJk5V29V1757cW/gHJ3O53gtGKApRbjOjZSJhErLfyV
+	tFTk3uNa7KSUZRn5pzWXwnS8XQEcY6mi8j2yqK+Oy7Nh4UQIs5RdY7i3Hyru8g==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+Date: Fri, 19 Jul 2024 16:14:53 +0200
+Subject: [PATCH] MIPS: SMP-CPS: Fix address for GCR_ACCESS register for
+ I6500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] drm/panthor: add DRM fdinfo support
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240716201302.2939894-1-adrian.larumbe@collabora.com>
- <20240716201302.2939894-3-adrian.larumbe@collabora.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240716201302.2939894-3-adrian.larumbe@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20240719-smp_i6500-v1-1-8738e67d4802@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIANx0mmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDc0NL3eLcgvhMM1MDA12L5CQjY2MLc4tkE0MloPqCotS0zAqwWdGxtbU
+ AFCr0hFsAAAA=
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Paul Burton <paulburton@kernel.org>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Gregory CLEMENT <gregory.clement@bootlin.com>
+X-Mailer: b4 0.13.0
+X-GND-Sasl: gregory.clement@bootlin.com
 
-On 16/07/2024 21:11, Adrián Larumbe wrote:
-> Drawing from the FW-calculated values in the previous commit, we can
-> increase the numbers for an open file by collecting them from finished jobs
-> when updating their group synchronisation objects.
-> 
-> Display of fdinfo key-value pairs is governed by a flag that is by default
-> disabled in the present commit, and supporting manual toggle of it will be
-> the matter of a later commit.
-> 
-> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+Unlike most other MIPS CPUs, the I6500 CPUs have different address
+offsets for the Global CSR Access Privilege register. In the "MIPS64
+I6500 Multiprocessing System Programmer's Guide," it is stated that
+"the Global CSR Access Privilege register is located at offset 0x0120"
+in section 5.4.
 
-Reviewed-by: Steven Price <steven.price@arm.com>
+However, this is not the case for other MIPS64 CPUs such as the
+P6600. In the "MIPS64® P6600 Multiprocessing System Software User's
+Guide," section 6.4.2.6 states that the GCR_ACCESS register has an
+offset of 0x0020.
 
-Steve
+This fix allows to use the VP cores in SMP mode.
 
-> ---
->  drivers/gpu/drm/panthor/panthor_devfreq.c | 18 ++++++++-
->  drivers/gpu/drm/panthor/panthor_device.h  | 10 +++++
->  drivers/gpu/drm/panthor/panthor_drv.c     | 33 ++++++++++++++++
->  drivers/gpu/drm/panthor/panthor_sched.c   | 47 +++++++++++++++++++++++
->  4 files changed, 107 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_devfreq.c b/drivers/gpu/drm/panthor/panthor_devfreq.c
-> index c6d3c327cc24..9d0f891b9b53 100644
-> --- a/drivers/gpu/drm/panthor/panthor_devfreq.c
-> +++ b/drivers/gpu/drm/panthor/panthor_devfreq.c
-> @@ -62,14 +62,20 @@ static void panthor_devfreq_update_utilization(struct panthor_devfreq *pdevfreq)
->  static int panthor_devfreq_target(struct device *dev, unsigned long *freq,
->  				  u32 flags)
->  {
-> +	struct panthor_device *ptdev = dev_get_drvdata(dev);
->  	struct dev_pm_opp *opp;
-> +	int err;
->  
->  	opp = devfreq_recommended_opp(dev, freq, flags);
->  	if (IS_ERR(opp))
->  		return PTR_ERR(opp);
->  	dev_pm_opp_put(opp);
->  
-> -	return dev_pm_opp_set_rate(dev, *freq);
-> +	err = dev_pm_opp_set_rate(dev, *freq);
-> +	if (!err)
-> +		ptdev->current_frequency = *freq;
-> +
-> +	return err;
->  }
->  
->  static void panthor_devfreq_reset(struct panthor_devfreq *pdevfreq)
-> @@ -130,6 +136,7 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
->  	struct panthor_devfreq *pdevfreq;
->  	struct dev_pm_opp *opp;
->  	unsigned long cur_freq;
-> +	unsigned long freq = ULONG_MAX;
->  	int ret;
->  
->  	pdevfreq = drmm_kzalloc(&ptdev->base, sizeof(*ptdev->devfreq), GFP_KERNEL);
-> @@ -161,6 +168,7 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
->  		return PTR_ERR(opp);
->  
->  	panthor_devfreq_profile.initial_freq = cur_freq;
-> +	ptdev->current_frequency = cur_freq;
->  
->  	/* Regulator coupling only takes care of synchronizing/balancing voltage
->  	 * updates, but the coupled regulator needs to be enabled manually.
-> @@ -204,6 +212,14 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
->  
->  	dev_pm_opp_put(opp);
->  
-> +	/* Find the fastest defined rate  */
-> +	opp = dev_pm_opp_find_freq_floor(dev, &freq);
-> +	if (IS_ERR(opp))
-> +		return PTR_ERR(opp);
-> +	ptdev->fast_rate = freq;
-> +
-> +	dev_pm_opp_put(opp);
-> +
->  	/*
->  	 * Setup default thresholds for the simple_ondemand governor.
->  	 * The values are chosen based on experiments.
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
-> index 3ede2f80df73..4536fbf43a4e 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.h
-> +++ b/drivers/gpu/drm/panthor/panthor_device.h
-> @@ -163,9 +163,16 @@ struct panthor_device {
->  		struct page *dummy_latest_flush;
->  	} pm;
->  
-> +	unsigned long current_frequency;
-> +	unsigned long fast_rate;
->  	bool profile_mode;
->  };
->  
-> +struct panthor_gpu_usage {
-> +	u64 time;
-> +	u64 cycles;
-> +};
-> +
->  /**
->   * struct panthor_file - Panthor file
->   */
-> @@ -178,6 +185,9 @@ struct panthor_file {
->  
->  	/** @groups: Scheduling group pool attached to this file. */
->  	struct panthor_group_pool *groups;
-> +
-> +	/** @stats: cycle and timestamp measures for job execution. */
-> +	struct panthor_gpu_usage stats;
->  };
->  
->  int panthor_device_init(struct panthor_device *ptdev);
-> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-> index b8a84f26b3ef..6a0c1a06a709 100644
-> --- a/drivers/gpu/drm/panthor/panthor_drv.c
-> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-> @@ -3,12 +3,17 @@
->  /* Copyright 2019 Linaro, Ltd., Rob Herring <robh@kernel.org> */
->  /* Copyright 2019 Collabora ltd. */
->  
-> +#ifdef CONFIG_ARM_ARCH_TIMER
-> +#include <asm/arch_timer.h>
-> +#endif
-> +
->  #include <linux/list.h>
->  #include <linux/module.h>
->  #include <linux/of_platform.h>
->  #include <linux/pagemap.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
-> +#include <linux/time64.h>
->  
->  #include <drm/drm_debugfs.h>
->  #include <drm/drm_drv.h>
-> @@ -1351,6 +1356,32 @@ static int panthor_mmap(struct file *filp, struct vm_area_struct *vma)
->  	return ret;
->  }
->  
-> +static void panthor_gpu_show_fdinfo(struct panthor_device *ptdev,
-> +				    struct panthor_file *pfile,
-> +				    struct drm_printer *p)
-> +{
-> +	if (ptdev->profile_mode) {
-> +#ifdef CONFIG_ARM_ARCH_TIMER
-> +		drm_printf(p, "drm-engine-panthor:\t%llu ns\n",
-> +			   DIV_ROUND_UP_ULL((pfile->stats.time * NSEC_PER_SEC),
-> +					    arch_timer_get_cntfrq()));
-> +#endif
-> +		drm_printf(p, "drm-cycles-panthor:\t%llu\n", pfile->stats.cycles);
-> +	}
-> +	drm_printf(p, "drm-maxfreq-panthor:\t%lu Hz\n", ptdev->fast_rate);
-> +	drm_printf(p, "drm-curfreq-panthor:\t%lu Hz\n", ptdev->current_frequency);
-> +}
-> +
-> +static void panthor_show_fdinfo(struct drm_printer *p, struct drm_file *file)
-> +{
-> +	struct drm_device *dev = file->minor->dev;
-> +	struct panthor_device *ptdev = container_of(dev, struct panthor_device, base);
-> +
-> +	panthor_gpu_show_fdinfo(ptdev, file->driver_priv, p);
-> +
-> +	drm_show_memory_stats(p, file);
-> +}
-> +
->  static const struct file_operations panthor_drm_driver_fops = {
->  	.open = drm_open,
->  	.release = drm_release,
-> @@ -1360,6 +1391,7 @@ static const struct file_operations panthor_drm_driver_fops = {
->  	.read = drm_read,
->  	.llseek = noop_llseek,
->  	.mmap = panthor_mmap,
-> +	.show_fdinfo = drm_show_fdinfo,
->  };
->  
->  #ifdef CONFIG_DEBUG_FS
-> @@ -1378,6 +1410,7 @@ static const struct drm_driver panthor_drm_driver = {
->  			   DRIVER_SYNCOBJ_TIMELINE | DRIVER_GEM_GPUVA,
->  	.open = panthor_open,
->  	.postclose = panthor_postclose,
-> +	.show_fdinfo = panthor_show_fdinfo,
->  	.ioctls = panthor_drm_driver_ioctls,
->  	.num_ioctls = ARRAY_SIZE(panthor_drm_driver_ioctls),
->  	.fops = &panthor_drm_driver_fops,
-> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-> index 6438e5ea1f2b..4fb6fc5c2314 100644
-> --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> @@ -610,6 +610,18 @@ struct panthor_group {
->  		size_t job_times_offset;
->  	} syncobjs;
->  
-> +	/** @fdinfo: Per-file total cycle and timestamp values reference. */
-> +	struct {
-> +		/** @data: Pointer to actual per-file sample data. */
-> +		struct panthor_gpu_usage *data;
-> +
-> +		/**
-> +		 * @lock: Mutex to govern concurrent access from drm file's fdinfo callback
-> +		 * and job post-completion processing function
-> +		 */
-> +		struct mutex lock;
-> +	} fdinfo;
-> +
->  	/** @state: Group state. */
->  	enum panthor_group_state state;
->  
-> @@ -873,6 +885,8 @@ static void group_release_work(struct work_struct *work)
->  						   release_work);
->  	u32 i;
->  
-> +	mutex_destroy(&group->fdinfo.lock);
-> +
->  	for (i = 0; i < group->queue_count; i++)
->  		group_free_queue(group, group->queues[i]);
->  
-> @@ -2795,6 +2809,30 @@ void panthor_sched_post_reset(struct panthor_device *ptdev, bool reset_failed)
->  	}
->  }
->  
-> +static void update_fdinfo_stats(struct panthor_job *job)
-> +{
-> +	struct panthor_group *group = job->group;
-> +	struct panthor_queue *queue = group->queues[job->queue_idx];
-> +	struct panthor_device *ptdev = group->ptdev;
-> +	struct panthor_gpu_usage *fdinfo;
-> +	struct panthor_job_times *times;
-> +
-> +	drm_WARN_ON(&ptdev->base, job->ringbuf_idx >=
-> +		    panthor_kernel_bo_size(queue->ringbuf) / (SLOTSIZE));
-> +
-> +	times = (struct panthor_job_times *)
-> +		((unsigned long)group->syncobjs.bo->kmap + queue->time_offset +
-> +		 (job->ringbuf_idx * sizeof(struct panthor_job_times)));
-> +
-> +	mutex_lock(&group->fdinfo.lock);
-> +	if ((group->fdinfo.data)) {
-> +		fdinfo = group->fdinfo.data;
-> +		fdinfo->cycles += times->cycles.after - times->cycles.before;
-> +		fdinfo->time += times->time.after - times->time.before;
-> +	}
-> +	mutex_unlock(&group->fdinfo.lock);
-> +}
-> +
->  static void group_sync_upd_work(struct work_struct *work)
->  {
->  	struct panthor_group *group =
-> @@ -2830,6 +2868,8 @@ static void group_sync_upd_work(struct work_struct *work)
->  	dma_fence_end_signalling(cookie);
->  
->  	list_for_each_entry_safe(job, job_tmp, &done_jobs, node) {
-> +		if (job->is_profiled)
-> +			update_fdinfo_stats(job);
->  		list_del_init(&job->node);
->  		panthor_job_put(&job->base);
->  	}
-> @@ -3362,6 +3402,9 @@ int panthor_group_create(struct panthor_file *pfile,
->  	}
->  	mutex_unlock(&sched->reset.lock);
->  
-> +	group->fdinfo.data = &pfile->stats;
-> +	mutex_init(&group->fdinfo.lock);
-> +
->  	return gid;
->  
->  err_put_group:
-> @@ -3401,6 +3444,10 @@ int panthor_group_destroy(struct panthor_file *pfile, u32 group_handle)
->  	mutex_unlock(&sched->lock);
->  	mutex_unlock(&sched->reset.lock);
->  
-> +	mutex_lock(&group->fdinfo.lock);
-> +	group->fdinfo.data = NULL;
-> +	mutex_unlock(&group->fdinfo.lock);
-> +
->  	group_put(group);
->  	return 0;
->  }
+Based on the work of Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
+
+Fixes: 859aeb1b0dd1 ("MIPS: Probe the I6500 CPU")
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+---
+ arch/mips/include/asm/mips-cm.h | 4 ++++
+ arch/mips/kernel/smp-cps.c      | 5 ++++-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/arch/mips/include/asm/mips-cm.h b/arch/mips/include/asm/mips-cm.h
+index 3d9efc802e36..41bf9b3a98fb 100644
+--- a/arch/mips/include/asm/mips-cm.h
++++ b/arch/mips/include/asm/mips-cm.h
+@@ -240,6 +240,10 @@ GCR_ACCESSOR_RO(32, 0x0d0, gic_status)
+ GCR_ACCESSOR_RO(32, 0x0f0, cpc_status)
+ #define CM_GCR_CPC_STATUS_EX			BIT(0)
+ 
++/* GCR_ACCESS - Controls core/IOCU access to GCRs */
++GCR_ACCESSOR_RW(32, 0x120, access_i6500)
++#define CM_GCR_ACCESS_ACCESSEN			GENMASK(7, 0)
++
+ /* GCR_L2_CONFIG - Indicates L2 cache configuration when Config5.L2C=1 */
+ GCR_ACCESSOR_RW(32, 0x130, l2_config)
+ #define CM_GCR_L2_CONFIG_BYPASS			BIT(20)
+diff --git a/arch/mips/kernel/smp-cps.c b/arch/mips/kernel/smp-cps.c
+index e074138ffd7f..60590890b6da 100644
+--- a/arch/mips/kernel/smp-cps.c
++++ b/arch/mips/kernel/smp-cps.c
+@@ -325,7 +325,10 @@ static void boot_core(unsigned int core, unsigned int vpe_id)
+ 	write_gcr_co_reset_ext_base(CM_GCR_Cx_RESET_EXT_BASE_UEB);
+ 
+ 	/* Ensure the core can access the GCRs */
+-	set_gcr_access(1 << core);
++	if (current_cpu_type() != CPU_I6500)
++		set_gcr_access(1 << core);
++	else
++		set_gcr_access_i6500(1 << core);
+ 
+ 	if (mips_cpc_present()) {
+ 		/* Reset the core */
+
+---
+base-commit: 9298d51eb3af24f88b211087eb698399f9efa439
+change-id: 20240719-smp_i6500-8cb233878c41
+
+Best regards,
+-- 
+Gregory CLEMENT <gregory.clement@bootlin.com>
 
 
