@@ -1,102 +1,70 @@
-Return-Path: <linux-kernel+bounces-257322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C22DB937875
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:26:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2608D937876
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:27:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D080B20814
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:26:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9A0728112B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4977514534D;
-	Fri, 19 Jul 2024 13:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC001411E7;
+	Fri, 19 Jul 2024 13:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pS0ffJaP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Agu8qZwJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E14143751;
-	Fri, 19 Jul 2024 13:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2778824211;
+	Fri, 19 Jul 2024 13:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721395539; cv=none; b=KJ1mkPRC9fsjZT55svNbldsdbOI/7fnFV8aZTTlOgz7i6YkDSL1BCvoMr+GiltILFzQc2lzXSq2S2nC/Fj62sfu3H11OqNah25NouMLNKPf9Jza5TY+1+tSNTaKt7Iy6KDHH/bBWUQODjmM79HurwdJcGPYy1dMPSbECeT9QlaU=
+	t=1721395552; cv=none; b=LYz/j5J9QNxq7wjPHXrGZg6BIUEsNTf+Ui9Ag3v/z99WJ0GjGuiHH+Aabalvz+DhIJjlT5RDoYPR+CeW9/AJeSKKXnBaFvpLW/XNPyRDtKMk7lNRr4IE8euqVjzleV0v9qP3Y3IO31KYORKXcDVPc6XxVzm70Uw1agSDtZ0Fduc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721395539; c=relaxed/simple;
-	bh=4cAkDIcI+gdctKi3KRbi2FbnJnqrEPOi9gLMxHSHIM8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KRSd+T+BVT6CYabHJDPXBIegGhebQ9AM2GUO/AST4niUvsUZDMqjXYvqfYBaNBHfSz/0T/7lnxciO/ypDRdl7Oya7/m90NhVtAW2CPJIAav+UGuF8IWRUHSSTEEtPwr0dOyqIUZQeQtCTxC9DsK8e1QrxYCTGB/O8BEQr+rk66Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pS0ffJaP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ED6FC4AF0F;
-	Fri, 19 Jul 2024 13:25:39 +0000 (UTC)
+	s=arc-20240116; t=1721395552; c=relaxed/simple;
+	bh=2qmbXe339W3mDTQ41WTqqBuL+WW9E8RQjxj4xyPJh8k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KHSdGyULpiyQlVWDAVUU0Y6uPSkun8q1VLcN1RcLfm6dFAaA8cLzOechrG2UIPJrsh5i7OSA+McML4hIiTyubK3agKtbnRmKhWQNMZ2ZfMmFSCzhmpc9BzIjPgO+xPe+BDeOdITkcE6GX+rtTfM+qRiD+LBpTVJ+wT3nzXdhAdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Agu8qZwJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94829C32782;
+	Fri, 19 Jul 2024 13:25:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721395539;
-	bh=4cAkDIcI+gdctKi3KRbi2FbnJnqrEPOi9gLMxHSHIM8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pS0ffJaPrZLIUCXyh5fulmgMy9ZX7wGlHzAy74C/h73ZCmD6c0MCUeeqKZUyd68iY
-	 N+Ectyw+FOffGUXMaMzUBHDd1tlLZdiy+mnaglI+oCLkOzpWgSojwainQpXsbWyf/+
-	 xb+0WuBvS8e4w8fzFJVORPfDX0JkXq0e3NVazUYb6e9dENDh8JYRN0gJqJ0sLx+8EJ
-	 zgnHROcQp13P/MCrNwqcwVz/I6fmR3X/WJK5pjp+EgzmC9x65zy41etwvAGW366cvw
-	 J54U0wWdcz/AaP9mARaNYhwbyUaCSS0Bj70om85CtRMK8Wd3IfwAira/EG6tlHsc+l
-	 2pGZM9PAEpt6w==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1sUncJ-000000002P7-0SiN;
-	Fri, 19 Jul 2024 15:25:47 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH 4/4] arm64: dts: qcom: sc8280xp-x13s: clean up PCIe2a pinctrl node
-Date: Fri, 19 Jul 2024 15:25:22 +0200
-Message-ID: <20240719132522.9176-5-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.44.2
-In-Reply-To: <20240719132522.9176-1-johan+linaro@kernel.org>
-References: <20240719132522.9176-1-johan+linaro@kernel.org>
+	s=k20201202; t=1721395552;
+	bh=2qmbXe339W3mDTQ41WTqqBuL+WW9E8RQjxj4xyPJh8k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Agu8qZwJxorgTYimHY7Pr5qk8SaCrnMakuHlqrab97LfKJvWlh+R44sHA0pKfiL+F
+	 21ysPZ/kr+8Yamxbh4Fg5QUdemD4gvc/YlR62RLu8wUhzxnsDScj34bDHb8dYkaKGl
+	 ZG+ozgMGDqzpeXL2UXZNtFAAkctoWMPgVeywumYuHMgVQHL4ywKGUzlYtG4trzLUOW
+	 dRZsi9VAqKUNWdDCDf5VZVQQUrVHHBsTeFQc6Zs/2/tdcvxFzWWrvNDB+0Hkl8VT/p
+	 kZxqVXAEaAFb8cQCQTdrjggnJaOXstzXlGtTJhlTJujiiqXaiGvk/tcq3yh7FSC15I
+	 SO7s7Ps0Kd4tA==
+Date: Fri, 19 Jul 2024 06:25:50 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Dominique
+ Martinet <asmadeus@codewreck.org>, v9fs@lists.linux.dev
+Subject: Re: [PATCH] vfs: handle __wait_on_freeing_inode() and evict() race
+Message-ID: <20240719062550.0c132049@kernel.org>
+In-Reply-To: <20240718151838.611807-1-mjguzik@gmail.com>
+References: <20240718151838.611807-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Clean up the PCIe2a pinctrl node indentation which should use tabs only.
+On Thu, 18 Jul 2024 17:18:37 +0200 Mateusz Guzik wrote:
+> Link: https://lore.kernel.org/v9fs/20240717102458.649b60be@kernel.org/
+> Reported-by: Dominique Martinet <asmadeus@codewreck.org>
 
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- .../boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts    | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+=F0=9F=A7=90=EF=B8=8F click on that link... Anyway, can confirm, problem go=
+es away:
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-index 5e5fdb085b88..888f42ca230f 100644
---- a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-+++ b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-@@ -1621,11 +1621,11 @@ perst-n-pins {
- 		};
- 
- 		wake-n-pins {
--		       pins = "gpio145";
--		       function = "gpio";
--		       drive-strength = <2>;
--		       bias-pull-up;
--	       };
-+			pins = "gpio145";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
- 	};
- 
- 	pcie3a_default: pcie3a-default-state {
--- 
-2.44.2
-
+Tested-by: Jakub Kicinski <kuba@kernel.org>
 
