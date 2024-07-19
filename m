@@ -1,135 +1,95 @@
-Return-Path: <linux-kernel+bounces-257039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCFBA93745F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:26:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 692A0937463
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:28:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9888028180F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 07:26:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05813B22391
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 07:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F0754FAD;
-	Fri, 19 Jul 2024 07:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3999158ABC;
+	Fri, 19 Jul 2024 07:28:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KWpT0eZs"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+soXRwa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888F1446CF;
-	Fri, 19 Jul 2024 07:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4FA57C8D
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 07:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721373970; cv=none; b=shl4Iia2hlxe+rc5L88C5nZMelIclV5JqQJr/XIgx3ZNqaiq0A9uUtYXcSi9znFpBhyq8MolTc9rDEh8k7ylCHL1+gsCTEeI30fTNYhuEOqTvsoyW6qBOQYEaKSaf3/ha0uKpnC+CRwwz6VMtQ+EV1QyuBmhD++ZU60xOyAn7f4=
+	t=1721374098; cv=none; b=iWr/TbsOlqt0qy3GSeTlM6D4RkcP0eNNQKTnFYtAkGrwQJYPbmhTgF00BT1I/8rJ6oVSQbv5R/xJLjka64Lp/JfrHfCi1m9Btwia8dZN6WTrSVM0Yp4lfZaJIBgqw7ws15HDNaGprFltYVVpx3Nrg9WPQ7EZx7qE5GivVxKcGbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721373970; c=relaxed/simple;
-	bh=emon+gRNUzFM8ajmHcWHYkAKRaJySl5s5mTztAd7aN0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Irze6egLRyldRbeDCNA8eYA8QDCyrPQDRllIKdxyGx7d42Lop4H6OyEG29XRIaUTc42Jwi6ZMPlN4NlJ1iIju25OAnArliIc6blmNwGIU84Sx28piOAIp1S+BqjDp2WPYUhfB2VL4TvMGCqncLdU3sX6bKrXYCMVd6x0qa5HJg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KWpT0eZs; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46J0u8ua026322;
-	Fri, 19 Jul 2024 07:26:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+s6umawHR0DtsJDzkZcZLE1nHXDf83CbME2iVL0zWN0=; b=KWpT0eZsQiHMlPSX
-	WuCUXWxUqMFvcEJTYVBzkNhUOa3rGNO9t1Iw27XM/sqTnIU1lqh8uSQ/N1hU1p2s
-	vxX+yvHp2FizgFTyzKImyZrhXynDx12cedan6MF+AvRUsqi1ZAD23b6MGnSWeotU
-	CSPZOdpK9qoREoC7xVw4fa91IVFXEXbN+m16/QOMAIzpIp6e7KNRaK2bin/sx7a2
-	rt6YAO+ATx+M/0WsCB9MS9kVNZ+W8bmONBM5nOm+lLrOBv/UvbgDhyN9ftgOxCDK
-	Eha6KoiWR0iyJjykCylIK1HW7gfmE1AmpiFWH1paNXVtglPyiDcPH8vaY/+L/DHW
-	j1W5Dw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40fe1m8n5w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 19 Jul 2024 07:26:02 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46J7Q1Wg031067
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 19 Jul 2024 07:26:01 GMT
-Received: from [10.218.19.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 19 Jul
- 2024 00:25:58 -0700
-Message-ID: <dd588276-8f1c-4389-7b3a-88f483b7072e@quicinc.com>
-Date: Fri, 19 Jul 2024 12:55:54 +0530
+	s=arc-20240116; t=1721374098; c=relaxed/simple;
+	bh=Ui8UaqyBTSE898Dbvr8zLZbCGmxQq7br3UP3Ob3yp5w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MmC27DH9/lW6Z7Gf5Eq1TVzGe+LH0drm7aLujkWzGAP08RUg1oSnRusRkqOfplRCLA0+0QKk9/2+48jm9VA5rDGJp60OJe1ZSqXnlfAwiE1QHftDNtcKeMxJ1qRxdN+4esu86IOrc5PKmqvBr3AfiCFCvyNDVeK3R94XRRdl5Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+soXRwa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFC6FC32782;
+	Fri, 19 Jul 2024 07:28:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721374098;
+	bh=Ui8UaqyBTSE898Dbvr8zLZbCGmxQq7br3UP3Ob3yp5w=;
+	h=From:To:Cc:Subject:Date:From;
+	b=D+soXRwapxApziRw9qYeSuz57yKJml8YKkg1VRGVJXdBGvCMY0tJMLnYeW/Cufrpx
+	 VHs+VAAYJqHq0+H2gxP6MxreLyqjRESDFbujKtuQQRxoq0r4PjivcvXPq0NWq7uaWq
+	 siiYv6rMdOvpYx0zLuKujv9W4VkocztARdYqybe4a//1MlvRGYO59NK+1LB2aIl/iW
+	 Tb2z40+Bz73SBGutptKLLblNsJeBUL0sVaukeREawRFkqzatrEYwLsoApAWCAglrVS
+	 qwz53Y8ofG6Lmt5/XsNnpO46dB8eqeusPZ5eJhBTHhz/HTzywr6049RN3O6V2bLPr/
+	 GJykETdKl74HQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: qcom: don't select HAVE_PWRCTL when PCI=n
+Date: Fri, 19 Jul 2024 09:27:47 +0200
+Message-Id: <20240719072813.1844151-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH] clk: qcom: camcc-sc8280xp: Remove always-on GDSC
- hard-coding
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen
- Boyd <sboyd@kernel.org>
-CC: <dmitry.baryshkov@linaro.org>, <stable@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-v1-1-fadb5d9445c1@linaro.org>
- <f0d4b7a3-2b61-3d42-a430-34b30eeaa644@quicinc.com>
- <86068581-0ce7-47b5-b1c6-fda4f7d1037f@linaro.org>
- <02679111-1a35-b931-fecd-01c952553652@quicinc.com>
- <ce14800d-7411-47c5-ad46-6baa6fb678f4@linaro.org>
-From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-In-Reply-To: <ce14800d-7411-47c5-ad46-6baa6fb678f4@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: WoHaHl_0HFJo8-KG719vUHu_kpQ82CV9
-X-Proofpoint-ORIG-GUID: WoHaHl_0HFJo8-KG719vUHu_kpQ82CV9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-19_04,2024-07-18_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 lowpriorityscore=0 mlxscore=0 mlxlogscore=663
- clxscore=1015 bulkscore=0 phishscore=0 malwarescore=0 priorityscore=1501
- spamscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407190057
+Content-Transfer-Encoding: 8bit
 
+From: Arnd Bergmann <arnd@arndb.de>
 
-On 7/17/2024 4:41 PM, Bryan O'Donoghue wrote:
-> On 17/07/2024 12:08, Satya Priya Kakitapalli (Temp) wrote:
->>> How would it break ?
->>>
->>> We park the clock to XO it never gets turned off this way.
->>>
->>
->> Parking the parent at XO doesn't ensure the branch clock is always 
->> on, it can be disabled by consumers or CCF if modelled.
->>
->> If the CCF disables this clock in late init, then the clock stays in 
->> disabled state until it is enabled again explicitly. Hence it is 
->> recommended to not model such always-on clocks.
->
-> What is the use-case to keep that clock always-on unless/util someone 
-> wants camss ?
->
+The new HAVE_PWRCTL option is defined in the PCI subsystem, so
+selecting it unconditionally when PCI is disabled causes a harmless
+warning:
 
-The clock also has dependency on MMCX rail, this rail anyway will be OFF 
-until there is a use-case. So the clock will also be OFF.
+WARNING: unmet direct dependencies detected for HAVE_PWRCTL
+  Depends on [n]: PCI [=n]
+  Selected by [y]:
+  - ARCH_QCOM [=y]
 
+Add 'if PCI' in the qualcomm platform to hide the warning.
 
-> I've tested this patch on sc8280xp and it works just fine.
->
+Fixes: ed70aaac7c35 ("Kconfig: reduce the amount of power sequencing noise")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm64/Kconfig.platforms | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Is the cam_cc_gdsc_clk clock ON after the boot up?
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 9b62c63781ec..6c6d11536b42 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -266,7 +266,7 @@ config ARCH_QCOM
+ 	bool "Qualcomm Platforms"
+ 	select GPIOLIB
+ 	select PINCTRL
+-	select HAVE_PWRCTL
++	select HAVE_PWRCTL if PCI
+ 	help
+ 	  This enables support for the ARMv8 based Qualcomm chipsets.
+ 
+-- 
+2.39.2
 
-
-> ---
-> bod
 
