@@ -1,96 +1,112 @@
-Return-Path: <linux-kernel+bounces-257115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67E0B937566
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:57:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7FCD93755E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:52:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D0671F220E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 08:57:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A90B628180B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 08:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F237D41D;
-	Fri, 19 Jul 2024 08:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7485C7CF30;
+	Fri, 19 Jul 2024 08:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="ApOmpFly"
-Received: from forward205d.mail.yandex.net (forward205d.mail.yandex.net [178.154.239.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BOTI06hX"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B215579B96;
-	Fri, 19 Jul 2024 08:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B5380026;
+	Fri, 19 Jul 2024 08:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721379423; cv=none; b=WA3vlvr3zCkKrRvNCxuds+5Ec6Dt/yrsNzE7eAdoww2SZ9JBIR6sXS/IMThMix2CA03B8lLtDFlJPOEKFdxQosIUQ2lFu/6OqJdNSffBgsjQgWxOAqo+pGx3POMIcRgJakraOfwoYbtDQuLNIFS3rVrgKUKV8Is0X8h7S+5mf1w=
+	t=1721379125; cv=none; b=id9XGo6ZxQF/5+I1z8MPvAEoCE7dL+fm///rKeir7cpGoX7FoPWr4PDQ5Q9NDFQD7zMXd6+nDppgqq4WXnDoPAW7ao0OtioufbsRDq3rJzAjS5NhH7vox6O1H5gJBuPC93w4MB5g6quSRkJ4JTKGGUTvRZNV0J/I0FcqROjwa2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721379423; c=relaxed/simple;
-	bh=SLTEoIanWY5XtN1aVQbk85fIW9AXREmPvziMz0cN42g=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:Content-Type:
-	 MIME-Version; b=smNbOF48k+tL/fYreg1AeSkIa/HWwmuhucdTYfuyClAIjTxBBix0mYmIpd0qxuSu8sji/ftw7wD8v5Q7dMlTrYXYA3HvqquW3f6OcW+MJGT4esPK3ohTMw+5a0oXfvBM/jt8QQiEGnI8GsyzxPfbC/8I4OG257YomWauWm7XXAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=ApOmpFly; arc=none smtp.client-ip=178.154.239.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
-Received: from forward101d.mail.yandex.net (forward101d.mail.yandex.net [IPv6:2a02:6b8:c41:1300:1:45:d181:d101])
-	by forward205d.mail.yandex.net (Yandex) with ESMTPS id 50DA861BB1;
-	Fri, 19 Jul 2024 11:51:18 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-main-39.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-39.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:4e22:0:640:3724:0])
-	by forward101d.mail.yandex.net (Yandex) with ESMTPS id E30B0609A9;
-	Fri, 19 Jul 2024 11:51:09 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-39.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 2pFgMY1On8c0-UCuAlS9V;
-	Fri, 19 Jul 2024 11:51:08 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
-	t=1721379068; bh=SLTEoIanWY5XtN1aVQbk85fIW9AXREmPvziMz0cN42g=;
-	h=Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
-	b=ApOmpFlyHodXNs2nKBGExgy7/kJQW9Wd3Rc5Roy9paoG/0gRvV9XAMaOn2voIEjcW
-	 Z1rYnyrSNXqtUYsTqbHoQyI0eYyVrnrHlOgpyn62SKe2W/p4lFvbDt8j9VS4oDGeFE
-	 U9fpBiDEdnDcB2xuI1vzTBjqMSvpweEXfxfSgku4=
-Authentication-Results: mail-nwsmtp-smtp-production-main-39.klg.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
-Message-ID: <12bd744ea481c8a3505e6f4869d409d24d3db795.camel@maquefel.me>
-Subject: Re: [PATCH] perf arch events: Fix duplicate RISC-V SBI firmware
- event name
-From: Nikita Shubin <nikita.shubin@maquefel.me>
-To: eric.lin@sifive.com
-Cc: acme@kernel.org, adrian.hunter@intel.com, 
- alexander.shishkin@linux.intel.com, aou@eecs.berkeley.edu,
- dminus@andestech.com,  inochiama@outlook.com, irogers@google.com,
- jisheng.teoh@starfivetech.com,  jolsa@kernel.org,
- kan.liang@linux.intel.com, linux-kernel@vger.kernel.org, 
- linux-perf-users@vger.kernel.org, linux-riscv@lists.infradead.org, 
- locus84@andestech.com, mark.rutland@arm.com, mingo@redhat.com,
- n.shubin@yadro.com,  namhyung@kernel.org, palmer@dabbelt.com,
- peterlin@andestech.com,  peterz@infradead.org, samuel.holland@sifive.com
-Date: Fri, 19 Jul 2024 11:51:06 +0300
-In-Reply-To: <20240718152254.16007-1-eric.lin@sifive.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+	s=arc-20240116; t=1721379125; c=relaxed/simple;
+	bh=r8oFgF9hsmNmGc0Nc9AK6CXg8ie6rgCUDmSyIstaJLA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KR+F+q7aydMcB5R5epoDqeskbLSYunG2sxtwHJEMa/vwagPDnACCpgrHc2G3ED8feqlbORUYIz3kvmyya7CLEdAazjMiv1Qxw9z3WdYrnZ++bGaaESCqkYrfIgxgjYW/3qBng9GBWn8YzrX6PRNpoxr3pz/ziH59dE8El0cSY40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BOTI06hX; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4266eda81c5so11388005e9.0;
+        Fri, 19 Jul 2024 01:52:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721379121; x=1721983921; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r8oFgF9hsmNmGc0Nc9AK6CXg8ie6rgCUDmSyIstaJLA=;
+        b=BOTI06hXktK1P3/+hIDVk5O6W7s2kxCaAcstIxDfPGHTDYU4efF0zUg0Npf3UVNTIB
+         1tCQRrm2ZMDy0Yin+zq+uOm18LdvMTbwj1TEO8CsfBUEUqnK7mLkhdRvUSzhAMGGNdcb
+         MRzflp7pSkY30TcYtohB+XR8ONHPZCLRUvoUnA8EhNyGlHPjmXYUtjx2cpXyExbBXnNl
+         y77WrFO/dqb0RNzjMxVgwvDVKgfeKe+QYknUB/X6aKl4OYx5Xn+vwSSt0loZR+ilv9FF
+         zmfSAG5UKAK0/jSikQJefrizb9SbMhbLplobd9IGmu90Enz+LSoJJnufAfCbjdjmyQQT
+         2tgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721379121; x=1721983921;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r8oFgF9hsmNmGc0Nc9AK6CXg8ie6rgCUDmSyIstaJLA=;
+        b=jYKBySHZWQq2nwTcjrC8dGEQyv7QvfxgULrnweEh6d6Ic39AslCUB7UWQZ92nM92ER
+         JiIcgVAisLO6o7tPWt/GgszeHdzopH0HPUahOeOclxWFTDTKP3xEUaNHiTXYFybfeARo
+         afPknQQjyQgA1NtKVgiBbiUDpG7V+/MbrUUWO3oyIxJ7mPYvW2V/MSNn8Zcr5tpoAbu1
+         bwxCkODN8KnHO26o+4eLGuyyUPzATF5zFIN2KQDMW8OqmCl81tZBpmkMT+nk68Shedlf
+         Rn0XBnk4nKG5J9JwiSGmAVPZFHi6a9BF9lZq8f0sscNmcr1UglpjgRvqmjvljHB7LTV3
+         r8XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV953OrHLH72Q6AGCcX9UWSpf1y+fBfxlysukaz3eshrkjx5I30aYxtV4aAfqn8jcBRAk3GEbrxy7ri1oLvQ1JUqEvrT06YA7f/v4NvXpCmV4UCVRbJGwmbKRkNG1pcLZKZB/ChhrDHVI72Ki0d4Q==
+X-Gm-Message-State: AOJu0YzPONBk5meYMrvewQJcSqWvD8yIN+BkOsVlUsfpChQDXFuqpsmJ
+	cDtGjGZ3AcLAZXQL2NQttZDmjHtLFUaY+jG/hJHGl3BcCXQ6/qP0icqZdKppZTZ3iRlU/o2br1V
+	oQlDoWZfz0841RVErRXiBE0nUuwg=
+X-Google-Smtp-Source: AGHT+IEv3qCK6lAidNklfBcgIVXCYYSmSxxXgW/Dm21GqZIiZZ5HailN4WXo1vsVLga8IxfI0D2fv7nNamOEy/sdeQs=
+X-Received: by 2002:a05:6000:2c8:b0:367:9c46:198 with SMTP id
+ ffacd0b85a97d-368315f1ef5mr6492142f8f.1.1721379120874; Fri, 19 Jul 2024
+ 01:52:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240719-imx_rproc-v2-0-10d0268c7eb1@nxp.com>
+In-Reply-To: <20240719-imx_rproc-v2-0-10d0268c7eb1@nxp.com>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Fri, 19 Jul 2024 11:52:44 +0300
+Message-ID: <CAEnQRZAh1P0i+Uj1+vrvZM4vVuxuYR9tN9FMm+khSSvwyz7hhA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] remoteproc: imx_rproc: various patches for misc
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Daniel Baluta <daniel.baluta@nxp.com>, Iuliana Prodan <iuliana.prodan@nxp.com>, 
+	Marek Vasut <marex@denx.de>, linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Peng Fan <peng.fan@nxp.com>, Terry Lv <terry.lv@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Eric,
+On Fri, Jul 19, 2024 at 11:27=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.c=
+om> wrote:
+>
+> This patchset is to upstream a few patches that in NXP downstream for
+> quite sometime. For patches directly cherry-picked from NXP downstream,
+> I keep the R-b tags.
+>
+> Patch 1 is a minor fix to DDR alias.
+> Patch 2 was sent out before,
+> https://patchwork.kernel.org/project/linux-remoteproc/patch/2022011103333=
+3.403448-1-peng.fan@oss.nxp.com/#25144792
+> this is just a resend
+> Patch 3 is to avoid mu interrupt trigger earlier.
+> Patch 4 is merge small area to support elf that has large section
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Nice catch!
+Neat and clean.
 
-Shouldn't it fix every patch that copied affected 'firmware.json' by
-the way ?
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
 
-Something like:
-
-Fixes: 8f0dcb4e7364 ("perf arch events: riscv sbi firmware std event
-files")
-Fixes: c4f769d4093d ("perf vendor events riscv: add Sifive U74 JSON
-file")
-Fixes: acbf6de674ef ("perf vendor events riscv: Add StarFive Dubhe-80
-JSON file")
-Fixes: 7340c6df49df ("perf vendor events riscv: add T-HEAD C9xx JSON
-file")
-Fixes: f5102e31c209 ("riscv: andes: Support specifying symbolic
-firmware and hardware raw event")
-
-Reviewed-by: Nikita Shubin <n.shubin@yadro.com>
+Thanks Peng!
 
