@@ -1,187 +1,101 @@
-Return-Path: <linux-kernel+bounces-257251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D592937764
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:58:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95508937766
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:59:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8836CB21DD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 11:58:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C690B1C211AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 11:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C071E139D0B;
-	Fri, 19 Jul 2024 11:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eLO0ElYh"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8025612BF32;
+	Fri, 19 Jul 2024 11:58:51 +0000 (UTC)
+Received: from greygoose-centos7.csh.rit.edu (greygoose-centos7.csh.rit.edu [129.21.49.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5210B12CD96;
-	Fri, 19 Jul 2024 11:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB52126F2A;
+	Fri, 19 Jul 2024 11:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.21.49.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721390301; cv=none; b=eHaSGhTyuzjV8+8Dk+y4zhCTvxzLYaPUSKiH5L8ANn7FWTK0dEtW8OzNPjYO2unUIu7cKLQWgS4mwsmboktrBCN0ycN0ckozS5L7xdSJ7wCac2bCYbPqOZ8trkG6yWxxNVUjbfk8X/+iJofCKAzApIPKrIx2SY0HpFFE94JxXyE=
+	t=1721390331; cv=none; b=f1JoFMLP7m6i4O6mv3rZ7jdNTMWKA9dWTNrjRxIr2X1D7bukpy8eCOxIcXyO3ftEE/GZ0IqmbXmIrPL8ehIS4V/A2v8o9LQ/jYzsls4qzlWxPncBnm9+DDenuYSrprDtoyB7rqN9IxJp1ULm/0MRObgXgVCLFFdtuyWgGk1+uQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721390301; c=relaxed/simple;
-	bh=sLHmBEB6uBc7dNYSEPGdj0uIBt0mLK9vw20uIX/LM1U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YUdlfbdGF61zFAujt39+58lt9u/X9aqXMSTztCYC7dWdnSZCdvD8F4nklduZNjHIcPKhBWaW1jchg3S48mOrD6HYvcGMAaytix61B2XZjLco4I3D/H8HnFBB6S9pKK2lR2Aq7WOqo2ASVnpyaJiB20qpmj5xiGS3iMglO2WgQc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eLO0ElYh; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a309d1a788so653352a12.3;
-        Fri, 19 Jul 2024 04:58:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721390297; x=1721995097; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rMZ2vwWWPohWA8coYDDEnLa959ZR+LHUBzwjlRfaBv8=;
-        b=eLO0ElYh1jr/ieef6lvjtsz3QBCFGtH+1Cw9cCY6TATpx0X72UVdTj/Im4JqLFR5Rp
-         OhxfQlunlz4rU0z+Ot15IYRstC+bbjCYUueG9ozwCsQBniG0BiZH8vlaqx8R1AudkWfU
-         kPq2VjM8UVRrNvwNsmB2apr1SEmBzdGxbQFvmsuW2XBQz2OZp7leKZTgnSlo3tys2JAo
-         4tzhByld/lOz6UwOuFoTGvYMrO9V1R77uTjYCpYoRXYokuhXGM5rZ6DRBK86418y2HPd
-         zuuFuDu1YbbVVMN86jpoqIqZpIsX7gQASHudZiuL4N86F1KPyawNTRG3BGtxHc8i/9Tr
-         Xklg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721390297; x=1721995097;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rMZ2vwWWPohWA8coYDDEnLa959ZR+LHUBzwjlRfaBv8=;
-        b=aUdoIOGr42tJHltqXECC1Wuf41yv89TaNi2yRYg7G+kIPlwVf+VTeSHm3pIgbqJo6J
-         bEm6U9Hs7sHBSBwxz8hh/6icqdkVm+O4NrLMbByvn2M4YxebbaUSIlaIQJUID6ErCs+m
-         7RbB0KeYfQ3ZxEhv1wou85K/kPthU7CzGKZUGZY28EseDUK7uRJEassILLbknZPtnMwh
-         T31c47s5BdbreawVP0FabGt0LhBRjpjl/Thj5ku+vLpYLA9AGlB5OE8RRHbKg7TW9gos
-         UZB9eaQEn02W3CC/6hwUy6ieo+39mw9AfoTJ09i1MaNnWtfkwX/paPLGwf2OYNd7quHj
-         3j8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVl4h8dyWiOeDAHQS11copEOD9XXWNAeEDXOPXGjo+Iozy8aE8W4v60swxQThsLnrT5T1uhE5+zdb74Q2VGe3T+Rh76eY1pm3mbf8DyBj7adzIYp519co2teiUUwRjLa5Mx2p42a3KH
-X-Gm-Message-State: AOJu0Yyw1db4NsDnXruUDMNpivYWsfME/oELPhfD3kJPhxyEpO/MEq4i
-	TQnRepH2VCwdA3d9GFtdZkcw5a0tkxt1UJlaw0X60Wfq7tuiJi3J
-X-Google-Smtp-Source: AGHT+IGc6hAXUPZQKnBDnc0052YD3WK67HOr4rBNRgcSsKlruuZpUKTx5cO8Zv4m9lxTucgsDtNcBA==
-X-Received: by 2002:a50:aa98:0:b0:5a1:a447:9f9b with SMTP id 4fb4d7f45d1cf-5a1a447a35bmr2700292a12.27.1721390297463;
-        Fri, 19 Jul 2024 04:58:17 -0700 (PDT)
-Received: from A13PC04R.einet.ad.eivd.ch ([193.134.219.72])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5a30c2f869dsm1093824a12.65.2024.07.19.04.58.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 04:58:17 -0700 (PDT)
-From: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-To: rick.wertenbroek@heig-vd.ch
-Cc: damien.lemoal@kernel.org,
-	alberto.dassatti@heig-vd.ch,
-	Rick Wertenbroek <rick.wertenbroek@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Niklas Cassel <cassel@kernel.org>,
-	Frank Li <Frank.Li@nxp.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] PCI: endpoint: pci-epf-test: Add support for controller with fixed addr BARs
-Date: Fri, 19 Jul 2024 13:57:39 +0200
-Message-Id: <20240719115741.3694893-3-rick.wertenbroek@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240719115741.3694893-1-rick.wertenbroek@gmail.com>
-References: <20240719115741.3694893-1-rick.wertenbroek@gmail.com>
+	s=arc-20240116; t=1721390331; c=relaxed/simple;
+	bh=RUkNIXP4ZZZQU7AmZzUNOsWOiYcu3bUy4EzOO8kC/7I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L/HoXjgewNwO8gf1UPAKFWAQ3CkwfU2DVbKQZQbCFhep7U2VImGDC01UWKh8gt2J8WrhHPpSZpDUUCOlHvOLDl+Edq/+WiCQrMgFffQi6ISj09BgXXXZdKuiA8BQIl1iw8VT5Mbv9puiZDajPyKNFT0lfbZjb8Sg1DoQndaZqPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=freedom.csh.rit.edu; spf=none smtp.mailfrom=freedom.csh.rit.edu; arc=none smtp.client-ip=129.21.49.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=freedom.csh.rit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=freedom.csh.rit.edu
+Received: from localhost (localhost [127.0.0.1])
+	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id A2F9C40D7C9C;
+	Fri, 19 Jul 2024 07:58:41 -0400 (EDT)
+X-Virus-Scanned: amavisd-new at csh.rit.edu
+Received: from greygoose-centos7.csh.rit.edu ([127.0.0.1])
+ by localhost (mail.csh.rit.edu [127.0.0.1]) (amavisd-new, port 10026)
+ with ESMTP id c5mWgwAwWkWi; Fri, 19 Jul 2024 07:58:41 -0400 (EDT)
+Received: from freedom.csh.rit.edu (freedom.csh.rit.edu [129.21.49.182])
+	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTPS id 3A44045735E9;
+	Fri, 19 Jul 2024 07:58:41 -0400 (EDT)
+Date: Fri, 19 Jul 2024 07:58:40 -0400
+From: Mary Strodl <mstrodl@freedom.csh.rit.edu>
+To: Christian Gmeiner <christian.gmeiner@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Mary Strodl <mstrodl@csh.rit.edu>, linux-kernel@vger.kernel.org,
+	urezki@gmail.com, linux-mm@kvack.org, lee@kernel.org,
+	andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
+	s.hauer@pengutronix.de
+Subject: Re: [PATCH 1/3] mm: vmalloc: export __vmalloc_node_range
+Message-ID: <ZppU8FhsFd9cB-Fi@freedom.csh.rit.edu>
+References: <ZpiGIbczW4iItKVx@infradead.org>
+ <ZpkNOyuxuJHaTW35@freedom.csh.rit.edu>
+ <ZpkOV3mdOU1b8vMn@casper.infradead.org>
+ <ZpkPStwq_S3mJYb5@infradead.org>
+ <ZpkQQ5GzJ4atvR6a@casper.infradead.org>
+ <ZpkWj-iFiA-JHbbf@freedom.csh.rit.edu>
+ <20240718143103.82e33c556b2d1b6145ae43e0@linux-foundation.org>
+ <ZpmKho9_t0_MeOP7@casper.infradead.org>
+ <20240718143924.43e22f68cf639b064a83f118@linux-foundation.org>
+ <CAH9NwWf_S-PyY5X_cJGSW-8YDk4-C0VvnPCX8iVuo0FhTqsy2Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAH9NwWf_S-PyY5X_cJGSW-8YDk4-C0VvnPCX8iVuo0FhTqsy2Q@mail.gmail.com>
 
-This patch demonstates how the new 'get_bar' API for fixed address
-PCI BARs is used alongside the previous 'pci_epf_alloa_space' and
-'set_bar'.
+On Fri, Jul 19, 2024 at 08:41:04AM +0200, Christian Gmeiner wrote:
+> This wonderful interface is used in recent products from them too.
+> Adding support for it
+> in an upstream-able way could be still a benefit, as these products
+> are used in different
+> industrial environments running on Linux.
 
-Signed-off-by: Rick Wertenbroek <rick.wertenbroek@gmail.com>
----
- drivers/pci/endpoint/functions/pci-epf-test.c | 38 +++++++++++++++++--
- 1 file changed, 34 insertions(+), 4 deletions(-)
+Just seconding this. The hardware we have here (conga-TCA7) was
+released in 2021. As far as I know, congatec have been using this
+interface for a while and provided a pretty bad out-of-tree driver
+for it that needed a proprietary library in userspace to talk to
+devices instead of actually registering with the kernel facilities
+for i2c, watchdog, backlight, etc.
 
-diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index 7c2ed6eae53a..c6622894091c 100644
---- a/drivers/pci/endpoint/functions/pci-epf-test.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -698,6 +698,9 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
- 		if (!epf_test->reg[bar])
- 			continue;
- 
-+		if (epf_test->epc_features->bar[bar].fixed_addr)
-+			continue;
-+
- 		ret = pci_epc_set_bar(epc, epf->func_no, epf->vfunc_no,
- 				      &epf->bar[bar]);
- 		if (ret) {
-@@ -722,6 +725,9 @@ static void pci_epf_test_clear_bar(struct pci_epf *epf)
- 		if (!epf_test->reg[bar])
- 			continue;
- 
-+		if (epf_test->epc_features->bar[bar].fixed_addr)
-+			continue;
-+
- 		pci_epc_clear_bar(epc, epf->func_no, epf->vfunc_no,
- 				  &epf->bar[bar]);
- 	}
-@@ -829,6 +835,7 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
- 	enum pci_barno bar;
- 	const struct pci_epc_features *epc_features = epf_test->epc_features;
- 	size_t test_reg_size;
-+	int ret;
- 
- 	test_reg_bar_size = ALIGN(sizeof(struct pci_epf_test_reg), 128);
- 
-@@ -840,8 +847,19 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
- 	}
- 	test_reg_size = test_reg_bar_size + msix_table_size + pba_size;
- 
--	base = pci_epf_alloc_space(epf, test_reg_size, test_reg_bar,
--				   epc_features, PRIMARY_INTERFACE);
-+	if (!epc_features->bar[test_reg_bar].fixed_addr)
-+		base = pci_epf_alloc_space(epf, test_reg_size, test_reg_bar,
-+					   epc_features, PRIMARY_INTERFACE);
-+	else {
-+		ret = pci_epc_get_bar(epf->epc, epf->func_no, epf->vfunc_no,
-+				      test_reg_bar, &epf->bar[test_reg_bar]);
-+		if (ret < 0) {
-+			dev_err(dev, "Failed to get fixed address BAR\n");
-+			return ret;
-+		}
-+		base = epf->bar[test_reg_bar].addr;
-+	}
-+
- 	if (!base) {
- 		dev_err(dev, "Failed to allocated register space\n");
- 		return -ENOMEM;
-@@ -856,8 +874,20 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
- 		if (bar == test_reg_bar)
- 			continue;
- 
--		base = pci_epf_alloc_space(epf, bar_size[bar], bar,
--					   epc_features, PRIMARY_INTERFACE);
-+		if (!epc_features->bar[bar].fixed_addr)
-+			base = pci_epf_alloc_space(epf, bar_size[bar], bar,
-+						   epc_features,
-+						   PRIMARY_INTERFACE);
-+		else {
-+			ret = pci_epc_get_bar(epf->epc, epf->func_no,
-+					      epf->vfunc_no, bar,
-+					      &epf->bar[bar]);
-+			if (ret < 0)
-+				base = NULL;
-+			else
-+				base = epf->bar[bar].addr;
-+		}
-+
- 		if (!base)
- 			dev_err(dev, "Failed to allocate space for BAR%d\n",
- 				bar);
--- 
-2.25.1
+I think it's valuable functionality to support, but it'll need to
+happen safely.
 
+Maybe some of the stuff the driver does right now could be moved into
+vmalloc? In other words, we could provide a different function that
+allocates an executable page, copies memory into it, then marks it
+read-only. Would that do better to alleviate concerns?
+
+Not sure what the restrictions on x86 are, but we could also start
+with a writable page, then mark it executable when we un-mark it
+writable.
+
+I think this is good discussion, thanks for sharing your thoughts
+everybody.
 
