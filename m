@@ -1,294 +1,260 @@
-Return-Path: <linux-kernel+bounces-257639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84B79937CEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 21:21:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E533937CEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 21:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A77A21C210C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:21:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE72E282890
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C7A148307;
-	Fri, 19 Jul 2024 19:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC4514831C;
+	Fri, 19 Jul 2024 19:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iD37bt5k"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="i8vsH30t";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="evmpP3uX"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B94383AE
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 19:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0187C147C8B;
+	Fri, 19 Jul 2024 19:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721416906; cv=none; b=XWhc5zUoKDLkGB8fS7FbmmpnD1SSYncHhOih9VAclT0LQUvNDvxWN4Xg9QLEkhZ3oaIrtgxrORR50Zeji0TIWJfzWiwpntD0Hlw3JJjYtLwW1uNEmmPEBvQ7EMFQPcrmTKwYK54I5DRKf04aTaF+QGEp0z+s30atNx8sWJ6jDKc=
+	t=1721416984; cv=none; b=tTaGl8yEMjWq0R454Chej3aJMUVhA1nHV4lKZM+AGyIHOm4o2486WT969+jFOwvbJ+Xkfmfcr5RLDwDVSYRxUqUHBqRIHv46AgkglgtB0LXT9JorLAdlZzboxNz2DS8w1vHPEyrAcmF+5s4q2CPRbX2SWGBxl0faX1QjU94mE/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721416906; c=relaxed/simple;
-	bh=fttys4UjUruzSp1S1pm1WtigWFC4MfU2cuFYKjdhqwo=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=THElLDZK7U+IjE6R2fpbyq+u/0pxvvHoeDMpQL1R66fSj40A3WWsLo5IFW7Vzq/+RhrSCQZ/llEvQNZ5Uj/tvhpw+hbRVHvVxCFd92rbcgGeEL9uthRMel2o4EHEcClQ6uZ9IN6u212N8PPOMsEQpAZ5A0OTD5KMDsMBq5vvHSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iD37bt5k; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721416904; x=1752952904;
-  h=date:from:to:cc:subject:message-id;
-  bh=fttys4UjUruzSp1S1pm1WtigWFC4MfU2cuFYKjdhqwo=;
-  b=iD37bt5kR26vfBQDCLkN1MNiCyUGJa+StXvJPY9XEoOyksaxLAikkYLp
-   qhhBdMZRJ3gB2uIqZxNpeIFPW8DElgnB2ymPdpQZaAyMQUUWlAB+fuEMf
-   7sstFDJhQfT+8RCyYS9Hcnu8ohWt5MAO3sSt8JvQHfPG8qYMRosEqwgz/
-   tdug6GijQeS/6txUEVoXhiCGpsBM9UwV7GAFISwQoz6EnmyHlrdAzqyKr
-   rCM0V5Tdr6k+RixuOnl0ME30LkrXG5odZkuCBEMM/CmeBEC+cdEweYWEv
-   GLZ4LYcCNebx3Q5reT4Qa4bYurzM23HAVE2zRwWzT8Rt4dvQa0zovswBk
-   Q==;
-X-CSE-ConnectionGUID: EXN8DMcLTseArRV1zBZohA==
-X-CSE-MsgGUID: rVGHohkqTjKdEhemlz6pQw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11138"; a="30439368"
-X-IronPort-AV: E=Sophos;i="6.09,221,1716274800"; 
-   d="scan'208";a="30439368"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2024 12:21:44 -0700
-X-CSE-ConnectionGUID: y1q5suyuRy6pc3663VyzNQ==
-X-CSE-MsgGUID: sraYK3oAQgqRnnmeIjssLA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,221,1716274800"; 
-   d="scan'208";a="51841565"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 19 Jul 2024 12:21:42 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sUtAi-000iW8-00;
-	Fri, 19 Jul 2024 19:21:40 +0000
-Date: Sat, 20 Jul 2024 03:21:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:irq/msi] BUILD SUCCESS
- c9b4f313f6b83ac80e9d51845d092c32513efdb4
-Message-ID: <202407200310.h3QFAbDP-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1721416984; c=relaxed/simple;
+	bh=FiB1k7ZW2L9qvrbLzTajYumpfEgNj1qVPCi/WpVMsWA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SgifNhl5tv9u8ZYrgaGAurPw9lax5lFRCrEWEiO6DqwlrO5t9csjz2mnFLq1+vQSKMqukgFp5gwYNT4mv+XV9FhFXDtH2SaPB+YCR+r0AE6UymScFuduuT04pmZ870FZ4inP6fiInUsK9ZR/64C+ijB3UiA2HWYDlibgw2Q3iwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=i8vsH30t; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=evmpP3uX; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4WQfhW6Stwz9sQr;
+	Fri, 19 Jul 2024 21:22:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1721416971;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3ZBvqEenjInpmNIAA4ZKnr+Ec9cxwQRrsbC7X+M+5qI=;
+	b=i8vsH30t6DkZEvleP99CmjQVlNZmGUZGnH+C0xxD5LFR70fsoYFFkX3J2p+cNpA3M7gaTL
+	R4xiM2uvUj02Q6bHhj0eYFAPncPIUklZ5A6Lc8V7z/OVnn4fjgZ+PZsUReib0RnalQEkM9
+	uf+PcdlVpcwg8f5jfmptTI9IFARv0UtMJfFCIJwA5GTMtHmg22jKqO6dxgcVSZXi9ZZ5A/
+	Opj71W+noBjq0t6ymvNA18YiZqPLJa4kkEn8+TyLLsXA8J6YrUV1UviqtMt/9gB0X/lyjl
+	4iSXlc63zWTOyemv+ls/y9VGsWmQwDIFf0aw5atNVp6GOxTssAPyRwDBH1/rsA==
+From: Alex Mantel <alexmantel93@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1721416969;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3ZBvqEenjInpmNIAA4ZKnr+Ec9cxwQRrsbC7X+M+5qI=;
+	b=evmpP3uXBOsM6t88c8+aLBSLPO+BW4YJGC3NcOa+scgXsKibMs14SZxBYGN25oYHKcXWif
+	Db504sZFobJn33B8Rcb6nXVfUFlW9fH6v/G7V2Bl6XEbGfAuLXyFpgHAGbtv8+SmfCktxm
+	Moon17GAI89meOPkV+Y0+jwZ/KMaYFwltnnvaSMcmWAkn1Vt2E5YsqCtxZiBZkfFUlEmpE
+	J/VRJB796Rbb56Z4k+Vi8TPgfrgND+eCQl2yU1dZeo1qzZTKNT11b6sbQBwmXI1n4llPpQ
+	y+ghuZtpWxXSEPCnYK5Jar/drQUFj9CiWvzGvEHXtToMIGfF1WoUkfCtPTf5Tw==
+To: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	wedsonaf@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@samsung.com,
+	aliceryhl@google.com,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Alex Mantel <alexmantel93@mailbox.org>
+Subject: [PATCH v2] rust: Implement the smart pointer `InPlaceInit` for `Arc`
+Date: Fri, 19 Jul 2024 12:22:34 -0700
+Message-Id: <20240719192234.330341-1-alexmantel93@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: 939419403be119f10dd
+X-MBO-RS-META: 4u8x7ejxx5skkou8wmhfr9d4uugg59zi
+X-Rspamd-Queue-Id: 4WQfhW6Stwz9sQr
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/msi
-branch HEAD: c9b4f313f6b83ac80e9d51845d092c32513efdb4  irqchip/gic-v3-its: Correctly fish out the DID for platform MSI
+For pinned and unpinned initialization of structs, a trait named
+`InPlaceInit` exists for uniform access. `Arc` did not implement
+`InPlaceInit` yet, although the functions already existed. The main
+reason for that, was that the trait itself returned a `Pin<Self>`. The
+`Arc` implementation of the kernel is already implicitly pinned.
 
-elapsed time: 1448m
+To enable `Arc` to implement `InPlaceInit` and to have uniform access,
+for in-place and pinned in-place initialization, an associated type is
+introduced for `InPlaceInit`. The new implementation of `InPlaceInit`
+for `Arc` sets `Arc` as the associated type. Older implementations use
+an explicit `Pin<T>` as the associated type. The implemented methods for
+`Arc` are mostly moved from a direct implementation on `Arc`. There
+should be no user impact. The implementation for `ListArc` is omitted,
+because it is not merged yet.
 
-configs tested: 202
-configs skipped: 8
+Link: https://github.com/Rust-for-Linux/linux/issues/1079
+Signed-off-by: Alex Mantel <alexmantel93@mailbox.org>
+---
+Hello again!
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+This is the 2nd version of my very first patch. In comparison to the
+first version, this version changes the format of the commit
+message only, as suggested by Miguel Ojeda. Thank you for taking the
+time. Any further feedback is more than welcome!
 
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-alpha                            allyesconfig   gcc-13.3.0
-alpha                               defconfig   gcc-13.2.0
-arc                              alldefconfig   gcc-13.2.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                          axs101_defconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                   randconfig-001-20240719   gcc-13.2.0
-arc                   randconfig-002-20240719   gcc-13.2.0
-arm                              allmodconfig   gcc-13.2.0
-arm                              allmodconfig   gcc-14.1.0
-arm                               allnoconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-14.1.0
-arm                                 defconfig   gcc-13.2.0
-arm                   randconfig-001-20240719   gcc-13.2.0
-arm                   randconfig-002-20240719   gcc-13.2.0
-arm                   randconfig-003-20240719   gcc-13.2.0
-arm                   randconfig-004-20240719   gcc-13.2.0
-arm                         s3c6400_defconfig   gcc-13.2.0
-arm64                            allmodconfig   clang-19
-arm64                            allmodconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                               defconfig   gcc-13.2.0
-arm64                 randconfig-001-20240719   gcc-13.2.0
-arm64                 randconfig-002-20240719   gcc-13.2.0
-arm64                 randconfig-003-20240719   gcc-13.2.0
-arm64                 randconfig-004-20240719   gcc-13.2.0
-csky                              allnoconfig   gcc-13.2.0
-csky                                defconfig   gcc-13.2.0
-csky                  randconfig-001-20240719   gcc-13.2.0
-csky                  randconfig-002-20240719   gcc-13.2.0
-hexagon                          allmodconfig   clang-19
-hexagon                          allyesconfig   clang-19
-i386                             allmodconfig   clang-18
-i386                             allmodconfig   gcc-13
-i386                              allnoconfig   clang-18
-i386                              allnoconfig   gcc-13
-i386                             allyesconfig   clang-18
-i386                             allyesconfig   gcc-13
-i386         buildonly-randconfig-001-20240719   clang-18
-i386         buildonly-randconfig-002-20240719   clang-18
-i386         buildonly-randconfig-003-20240719   clang-18
-i386         buildonly-randconfig-003-20240719   gcc-10
-i386         buildonly-randconfig-004-20240719   clang-18
-i386         buildonly-randconfig-005-20240719   clang-18
-i386         buildonly-randconfig-005-20240719   gcc-10
-i386         buildonly-randconfig-006-20240719   clang-18
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240719   clang-18
-i386                  randconfig-002-20240719   clang-18
-i386                  randconfig-003-20240719   clang-18
-i386                  randconfig-004-20240719   clang-18
-i386                  randconfig-004-20240719   gcc-13
-i386                  randconfig-005-20240719   clang-18
-i386                  randconfig-006-20240719   clang-18
-i386                  randconfig-011-20240719   clang-18
-i386                  randconfig-012-20240719   clang-18
-i386                  randconfig-013-20240719   clang-18
-i386                  randconfig-014-20240719   clang-18
-i386                  randconfig-015-20240719   clang-18
-i386                  randconfig-015-20240719   gcc-13
-i386                  randconfig-016-20240719   clang-18
-i386                  randconfig-016-20240719   gcc-13
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch                           defconfig   gcc-13.2.0
-loongarch             randconfig-001-20240719   gcc-13.2.0
-loongarch             randconfig-002-20240719   gcc-13.2.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                         amcore_defconfig   gcc-13.2.0
-m68k                                defconfig   gcc-13.2.0
-m68k                          sun3x_defconfig   gcc-13.2.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-mips                         bigsur_defconfig   gcc-13.2.0
-mips                       bmips_be_defconfig   gcc-13.2.0
-mips                      fuloong2e_defconfig   gcc-13.2.0
-mips                           ip28_defconfig   gcc-13.2.0
-mips                      maltaaprp_defconfig   gcc-13.2.0
-mips                        maltaup_defconfig   gcc-13.2.0
-mips                   sb1250_swarm_defconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-13.2.0
-nios2                               defconfig   gcc-13.2.0
-nios2                 randconfig-001-20240719   gcc-13.2.0
-nios2                 randconfig-002-20240719   gcc-13.2.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc                generic-32bit_defconfig   gcc-13.2.0
-parisc                randconfig-001-20240719   gcc-13.2.0
-parisc                randconfig-002-20240719   gcc-13.2.0
-parisc64                            defconfig   gcc-13.2.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   clang-19
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                    amigaone_defconfig   gcc-13.2.0
-powerpc                    gamecube_defconfig   gcc-13.2.0
-powerpc                   lite5200b_defconfig   gcc-13.2.0
-powerpc                 mpc837x_rdb_defconfig   gcc-13.2.0
-powerpc                     powernv_defconfig   gcc-13.2.0
-powerpc                      ppc64e_defconfig   gcc-13.2.0
-powerpc               randconfig-001-20240719   gcc-13.2.0
-powerpc               randconfig-002-20240719   gcc-13.2.0
-powerpc               randconfig-003-20240719   gcc-13.2.0
-powerpc64             randconfig-001-20240719   gcc-13.2.0
-powerpc64             randconfig-002-20240719   gcc-13.2.0
-powerpc64             randconfig-003-20240719   gcc-13.2.0
-riscv                            allmodconfig   clang-19
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   clang-19
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-14.1.0
-riscv             nommu_k210_sdcard_defconfig   gcc-13.2.0
-riscv                 randconfig-001-20240719   gcc-13.2.0
-riscv                 randconfig-002-20240719   gcc-13.2.0
-s390                             allmodconfig   clang-19
-s390                              allnoconfig   clang-19
-s390                              allnoconfig   gcc-14.1.0
-s390                             allyesconfig   clang-19
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   gcc-14.1.0
-s390                  randconfig-001-20240719   gcc-13.2.0
-s390                  randconfig-002-20240719   gcc-13.2.0
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-13.2.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-14.1.0
-sh                ecovec24-romimage_defconfig   gcc-13.2.0
-sh                     magicpanelr2_defconfig   gcc-13.2.0
-sh                          r7785rp_defconfig   gcc-13.2.0
-sh                    randconfig-001-20240719   gcc-13.2.0
-sh                    randconfig-002-20240719   gcc-13.2.0
-sh                           se7705_defconfig   gcc-13.2.0
-sh                           se7712_defconfig   gcc-13.2.0
-sh                        sh7763rdp_defconfig   gcc-13.2.0
-sh                   sh7770_generic_defconfig   gcc-13.2.0
-sh                             shx3_defconfig   gcc-13.2.0
-sh                              ul2_defconfig   gcc-13.2.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-14.1.0
-sparc64               randconfig-001-20240719   gcc-13.2.0
-sparc64               randconfig-002-20240719   gcc-13.2.0
-um                               allmodconfig   clang-19
-um                               allmodconfig   gcc-13.3.0
-um                                allnoconfig   clang-17
-um                                allnoconfig   gcc-14.1.0
-um                               allyesconfig   gcc-13
-um                               allyesconfig   gcc-13.3.0
-um                                  defconfig   gcc-14.1.0
-um                             i386_defconfig   gcc-14.1.0
-um                    randconfig-001-20240719   gcc-13.2.0
-um                    randconfig-002-20240719   gcc-13.2.0
-um                           x86_64_defconfig   gcc-14.1.0
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240719   gcc-13
-x86_64       buildonly-randconfig-002-20240719   gcc-13
-x86_64       buildonly-randconfig-003-20240719   gcc-13
-x86_64       buildonly-randconfig-004-20240719   gcc-13
-x86_64       buildonly-randconfig-005-20240719   gcc-13
-x86_64       buildonly-randconfig-006-20240719   gcc-13
-x86_64                              defconfig   clang-18
-x86_64                              defconfig   gcc-13
-x86_64                                  kexec   clang-18
-x86_64                randconfig-001-20240719   gcc-13
-x86_64                randconfig-002-20240719   gcc-13
-x86_64                randconfig-003-20240719   gcc-13
-x86_64                randconfig-004-20240719   gcc-13
-x86_64                randconfig-005-20240719   gcc-13
-x86_64                randconfig-006-20240719   gcc-13
-x86_64                randconfig-011-20240719   gcc-13
-x86_64                randconfig-012-20240719   gcc-13
-x86_64                randconfig-013-20240719   gcc-13
-x86_64                randconfig-014-20240719   gcc-13
-x86_64                randconfig-015-20240719   gcc-13
-x86_64                randconfig-016-20240719   gcc-13
-x86_64                randconfig-071-20240719   gcc-13
-x86_64                randconfig-072-20240719   gcc-13
-x86_64                randconfig-073-20240719   gcc-13
-x86_64                randconfig-074-20240719   gcc-13
-x86_64                randconfig-075-20240719   gcc-13
-x86_64                randconfig-076-20240719   gcc-13
-x86_64                          rhel-8.3-rust   clang-18
-x86_64                               rhel-8.3   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
-xtensa                randconfig-001-20240719   gcc-13.2.0
-xtensa                randconfig-002-20240719   gcc-13.2.0
-xtensa                         virt_defconfig   gcc-13.2.0
+v1: 
+  * https://lore.kernel.org/rust-for-linux/20240717034801.262343-2-alexmantel93@mailbox.org/
 
+v2: 
+  * remove the `From:` from the patch.
+  * add the prefix `rust: ` to the subject.
+  * Remove the empty line between `Link` and `Signed-off-by`.
+
+
+ rust/kernel/init.rs     | 37 +++++++++++++++++++++++++++++++++----
+ rust/kernel/sync/arc.rs | 25 ++-----------------------
+ 2 files changed, 35 insertions(+), 27 deletions(-)
+
+diff --git a/rust/kernel/init.rs b/rust/kernel/init.rs
+index 68605b633..46f50cf12 100644
+--- a/rust/kernel/init.rs
++++ b/rust/kernel/init.rs
+@@ -213,6 +213,7 @@
+ use crate::{
+     alloc::{box_ext::BoxExt, AllocError, Flags},
+     error::{self, Error},
++    sync::Arc,
+     sync::UniqueArc,
+     types::{Opaque, ScopeGuard},
+ };
+@@ -1112,11 +1113,15 @@ unsafe fn __pinned_init(self, slot: *mut T) -> Result<(), E> {
+ 
+ /// Smart pointer that can initialize memory in-place.
+ pub trait InPlaceInit<T>: Sized {
++    /// A type might be pinned implicitly. An addtional `Pin<ImplicitlyPinned>` is useless. In
++    /// doubt, the type can just be set to `Pin<Self>`.
++    type PinnedResult;
++
+     /// Use the given pin-initializer to pin-initialize a `T` inside of a new smart pointer of this
+     /// type.
+     ///
+     /// If `T: !Unpin` it will not be able to move afterwards.
+-    fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result<Pin<Self>, E>
++    fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result<Self::PinnedResult, E>
+     where
+         E: From<AllocError>;
+ 
+@@ -1124,7 +1129,7 @@ fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result<Pin<Self>,
+     /// type.
+     ///
+     /// If `T: !Unpin` it will not be able to move afterwards.
+-    fn pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> error::Result<Pin<Self>>
++    fn pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> error::Result<Self::PinnedResult>
+     where
+         Error: From<E>,
+     {
+@@ -1153,9 +1158,31 @@ fn init<E>(init: impl Init<T, E>, flags: Flags) -> error::Result<Self>
+     }
+ }
+ 
++impl<T> InPlaceInit<T> for Arc<T> {
++    type PinnedResult = Self;
++
++    #[inline]
++    fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result<Self::PinnedResult, E>
++    where
++        E: From<AllocError>,
++    {
++        UniqueArc::try_pin_init(init, flags).map(|u| u.into())
++    }
++
++    #[inline]
++    fn try_init<E>(init: impl Init<T, E>, flags: Flags) -> Result<Self, E>
++    where
++        E: From<AllocError>,
++    {
++        UniqueArc::try_init(init, flags).map(|u| u.into())
++    }
++}
++
+ impl<T> InPlaceInit<T> for Box<T> {
++    type PinnedResult = Pin<Self>;
++
+     #[inline]
+-    fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result<Pin<Self>, E>
++    fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result<Self::PinnedResult, E>
+     where
+         E: From<AllocError>,
+     {
+@@ -1184,8 +1211,10 @@ fn try_init<E>(init: impl Init<T, E>, flags: Flags) -> Result<Self, E>
+ }
+ 
+ impl<T> InPlaceInit<T> for UniqueArc<T> {
++    type PinnedResult = Pin<Self>;
++
+     #[inline]
+-    fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result<Pin<Self>, E>
++    fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result<Self::PinnedResult, E>
+     where
+         E: From<AllocError>,
+     {
+diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
+index 3673496c2..3021f30fd 100644
+--- a/rust/kernel/sync/arc.rs
++++ b/rust/kernel/sync/arc.rs
+@@ -12,12 +12,13 @@
+ //! 2. It does not support weak references, which allows it to be half the size.
+ //! 3. It saturates the reference count instead of aborting when it goes over a threshold.
+ //! 4. It does not provide a `get_mut` method, so the ref counted object is pinned.
++//! 5. The object in [`Arc`] is pinned implicitly.
+ //!
+ //! [`Arc`]: https://doc.rust-lang.org/std/sync/struct.Arc.html
+ 
+ use crate::{
+     alloc::{box_ext::BoxExt, AllocError, Flags},
+-    error::{self, Error},
++    bindings,
+     init::{self, InPlaceInit, Init, PinInit},
+     try_init,
+     types::{ForeignOwnable, Opaque},
+@@ -209,28 +210,6 @@ pub fn new(contents: T, flags: Flags) -> Result<Self, AllocError> {
+         // `Arc` object.
+         Ok(unsafe { Self::from_inner(Box::leak(inner).into()) })
+     }
+-
+-    /// Use the given initializer to in-place initialize a `T`.
+-    ///
+-    /// If `T: !Unpin` it will not be able to move afterwards.
+-    #[inline]
+-    pub fn pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> error::Result<Self>
+-    where
+-        Error: From<E>,
+-    {
+-        UniqueArc::pin_init(init, flags).map(|u| u.into())
+-    }
+-
+-    /// Use the given initializer to in-place initialize a `T`.
+-    ///
+-    /// This is equivalent to [`Arc<T>::pin_init`], since an [`Arc`] is always pinned.
+-    #[inline]
+-    pub fn init<E>(init: impl Init<T, E>, flags: Flags) -> error::Result<Self>
+-    where
+-        Error: From<E>,
+-    {
+-        UniqueArc::init(init, flags).map(|u| u.into())
+-    }
+ }
+ 
+ impl<T: ?Sized> Arc<T> {
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.2
+
 
