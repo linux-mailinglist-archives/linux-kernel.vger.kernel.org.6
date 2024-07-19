@@ -1,102 +1,109 @@
-Return-Path: <linux-kernel+bounces-257154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A43B59375EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 11:42:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 626879375F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 11:43:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23E18B24ACA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:42:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E45428564A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B80F127E37;
-	Fri, 19 Jul 2024 09:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D12A136E30;
+	Fri, 19 Jul 2024 09:39:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="H5U15b96"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ZImnCz6Q"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD397F487;
-	Fri, 19 Jul 2024 09:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D30823B8
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 09:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721381917; cv=none; b=I3pmOGHXX4OUvtnwdMlz5yxsMPdLZ4xKqhvoa7dBqp0Db2gj1ynByEhPlZpE5fHdu732wp3bMaOLkmANjcI5QnseCPoiVofvTvHPPB+cWtK48z85CueJrXQeNpA+FnBv4fdkiOqAuj9+vKAMJqx2FWBEO+cq8rT2a76zuSl1vDw=
+	t=1721381990; cv=none; b=a3+f8nem8TU0fWPWJwX3Z4zCkp72RPioqBeV2tzc18vF0Im4uZyAh7tbRdKrLkYhFIzBYhcCfOHgSdZPenxcFZdSEHDLFaMA98uCVf/P9OD7eSu9LFEBl/ixMe18Sf7rv7N/ZFXtOK/3SVTDQeToHfhWoF0N9MEtDyrwDllqCYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721381917; c=relaxed/simple;
-	bh=l5EtkbtTmp+QwD/m59M+rHtc9b7+dQo0hYOf5L/2fR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u0K/N8Dqa3nfxiGWNf3tyx1k6lbNffcp8n5gKpEs6g4ngyQ7Zpv8KpMpn6dSmngUd9MPOUQsQ06s5P836ns5S5k8i5ZR3OEHHa9KRiDlFhYfvYNwfhUuzu/kGqCnJHY/Dlb8UTARfNqe54EupnUcwpQ9/qVfcqYBOtTE6dtco78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=H5U15b96; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id CBB8E471;
-	Fri, 19 Jul 2024 11:37:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1721381875;
-	bh=l5EtkbtTmp+QwD/m59M+rHtc9b7+dQo0hYOf5L/2fR4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H5U15b96KUvdWcQKP831UDGXX7yQAmsdbshRTOvwQN8/o7IUio0QYTB7nEN9rmXiI
-	 KBlm5oHiPcCGYwrzlmsO7eAnF5MmHf83t4Ly5EOO7IkVZcuIckWfpDMROA14Qgrilv
-	 q9mOK8uHFKcQoYyjDR6sWuC0XQFEMkFla0FhwgRA=
-Date: Fri, 19 Jul 2024 12:38:19 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Paul Menzel <pmenzel@molgen.mpg.de>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Ricardo Ribalda <ribalda@chromium.org>
-Subject: Re: Linux logs error `Failed to query (GET_CUR) UVC control X on
- unit Y: -75 (exp. 1).` (75 == EOVERFLOW?)
-Message-ID: <20240719093819.GE12656@pendragon.ideasonboard.com>
-References: <af462e20-d158-4c5c-8dae-ce48f4192087@molgen.mpg.de>
- <2024071939-wrought-repackage-f3c5@gregkh>
+	s=arc-20240116; t=1721381990; c=relaxed/simple;
+	bh=ci+KcHwAigtpkpMNemilRAChZcTSbPV2xvcRYGetHnI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T4y1SOYuPa87pE9Pzn65TS+JXFrzVgNelAIKuvjHDmKxa3xv6Uf5Oxqthm6MFDlBv7j4h7H/Z58GD3/g5y2Gbqqkti0UzLbho9Dw3KKj23a6KVKE2Q5A8T6+hBZ+SdJT8zRSD8wB7nw4SGraqUuApbENC43YDXf7i5vWc6U4z+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ZImnCz6Q; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4272738eb9eso10641505e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 02:39:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721381986; x=1721986786; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rEbHlu47gMjntr/0lWZ1HMtnTqXHStCt809hwXsuo8g=;
+        b=ZImnCz6QdOO94SYv+5u/IVcyKMeeqTBSXtCgIJc3gq+EbRk39g5uhO2hPjtLtXqoTZ
+         V6WIUrksnZ8uJ2+MoRJuJP8VU7IAgu8oC/VMH5nILnOHRgV1KArPJ0SHH0gv7FPg/o7d
+         JKVtBaKYT7mz0sOKmbaPrImMQPalRd4kyndrDnl7KBqcAFwRBsLFDDWbmnXdDK9RbY3e
+         iPZTUVutIxqtIoLmr+B0An289Dg4Ehy0oEFHUkw1/s/1AGdU+8TFTBtnZDOa8UwpF4vM
+         CCWi2i8rowy256NEnm2vFYco9YNV3pjiN4Q9f/97zd2WCGf2pJLOAN8V5U4KAOT0fQoM
+         aqDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721381986; x=1721986786;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rEbHlu47gMjntr/0lWZ1HMtnTqXHStCt809hwXsuo8g=;
+        b=HTZIACZXDKxy3HRQLZCqhz14DHCvuHVM/KEjMg9OzFKo6jdUlzBlabDDX9XfRaSudA
+         hijdspy9DFqDwj4hXJg2QxYZfbYXMPW0SIt7rQZUnxA45rRVGyJorlVjqlB6cSFzxDBv
+         ZjcPHtF/q/8qolPIHR/dHA6u0sFPW/7Um3DknaWN79e4w8J7xpEhBjxr6MDAF00WASsn
+         JzlH/0Iq2VxY0Cl38wON63lNg1881mXvA5JEOVd9Oxk9itdTXAoLmjiOKDUcqLIPc8f2
+         MifcoXjHX+ew5c4F8n5cP/Pw7wHpd4lVZzyZpfsMucoETCJXzRWQTlY4lVoxYsYrxSts
+         fODA==
+X-Forwarded-Encrypted: i=1; AJvYcCVj63EGUttkzVw2xkR4k231iqdrLixc0H9kWtcYA7vuFmI2dMcohHrJfKCu+CYoV5eUlmIND21/M97QTYAaOEcoaukFUkxJd2rx4C3B
+X-Gm-Message-State: AOJu0YwOa4kxmyy+tZz3fD4Z0sU1YzRFcorgMV5ufk/GuFzyeJN/IGCp
+	qPnPi4A0V3q58jFhOLBmh8pVyvAyMJdiXYa3bvboCYJerBEdgypcGYWd/nZVPG4=
+X-Google-Smtp-Source: AGHT+IH4BxZr7nNiWWbM+lEJPkijyLd0iYBXu9qVNkbqOH0Fb5f61iPqIYleOo5sy/iDP8q/46Z88A==
+X-Received: by 2002:adf:a112:0:b0:368:71e9:4ee3 with SMTP id ffacd0b85a97d-36871e94f3dmr1106799f8f.18.1721381985670;
+        Fri, 19 Jul 2024 02:39:45 -0700 (PDT)
+Received: from toaster.lan ([2a01:e0a:3c5:5fb1:5ac4:5655:4dfe:ce97])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3687868bc91sm1100956f8f.45.2024.07.19.02.39.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 02:39:45 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: [PATCH 0/3] clk: meson: sm1: add earcrx clocks
+Date: Fri, 19 Jul 2024 11:39:29 +0200
+Message-ID: <20240719093934.3985139-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2024071939-wrought-repackage-f3c5@gregkh>
 
-(CC'ing Ricardo)
+This patchset adds the eARC-Rx clocks on sm1 SoCs.
 
-On Fri, Jul 19, 2024 at 08:05:35AM +0200, Greg KH wrote:
-> On Fri, Jul 19, 2024 at 07:22:54AM +0200, Paul Menzel wrote:
-> > Dear Linux folks,
-> > 
-> > 
-> > Today, starting the Intel Kaby Lake laptop Dell XPS 13 9360/0596KF, BIOS
-> > 2.21.0 06/02/2022 with
-> > 
-> >     Bus 001 Device 004: ID 0c45:670c Microdia Integrated Webcam HD
-> > 
-> > Linux “6.11-rc0” (v6.10-8070-gcb273eb7c839) logged UVC errors:
-> 
-> Does 6.10-final have the same issue?  If not, can you use 'git bisect'
-> to track down the offending commit?
-> 
-> There have not been any USB changes in Linus's tree yet, but there have
-> been a bunch of media changes, so perhaps something in the uvc driver is
-> causing this?
+This pushes the maximum register of the axg-audio controller up
+again so a SoC parameter is inserted to handle that correctly.
 
-We've merged quite a few changes for the uvcvideo driver recently.
-Bisecting the problem would help greatly. It could also be helpful to
-set the uvcvideo module 'trace' parameter to 0xffff (e.g. add
-`uvcvideo.trace=0xffff` to the kernel command line, or unload and reload
-the uvcvideo module with the parameter set to 0xffff) and give us the
-additional messages printed to the kernel log.
+Jerome Brunet (3):
+  dt-bindings: clock: axg-audio: add earcrx clock ids
+  clk: meson: axg-audio: setup regmap max_register based on the SoC
+  clk: meson: axg-audio: add sm1 earcrx clocks
 
-Could you also provide the output of `lsusb -v -d 0c45:670c` (running as
-root if possible) ?
+ drivers/clk/meson/axg-audio.c              | 38 ++++++++++++++++++++--
+ drivers/clk/meson/axg-audio.h              |  2 ++
+ include/dt-bindings/clock/axg-audio-clkc.h |  7 ++++
+ 3 files changed, 45 insertions(+), 2 deletions(-)
 
 -- 
-Regards,
+2.43.0
 
-Laurent Pinchart
 
