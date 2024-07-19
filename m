@@ -1,99 +1,93 @@
-Return-Path: <linux-kernel+bounces-257416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CE399379A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:10:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A6109379A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F2551C22098
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:10:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BB71280AB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D74114532F;
-	Fri, 19 Jul 2024 15:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6BC1459FF;
+	Fri, 19 Jul 2024 15:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pyLN5vAU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DFhE+Oxl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDF55664;
-	Fri, 19 Jul 2024 15:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45F313D63B;
+	Fri, 19 Jul 2024 15:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721401835; cv=none; b=JZkc3UculPRbM9lrUiiDhjFLZMND/ddsHGDUBk20yyo8+86DwP2L+C82ZFFfuvqA81QK8kdj6/83JTGjVFDnOX5+Q3scJZ/j7zb9cHI/uF9z+XBvdbosFl076zHS+psDUQb0pZDZSBzJjCPDumR8n3SZbU2TOAU7QdWYnbgSIYs=
+	t=1721401852; cv=none; b=Cj727+reLIvWMek1LTqPNpwYtz7KHB9Iu7JReQst7KzLJg/BtI7TbOWxZGNjK5e5JvHDt0IELYwtZtfy0IuwzJ9sc3skcyQvDN2CQi1O1BYlLg1pah1mHW3T4AHM6m/azv8Wdn8FEIprbg4Ccx5sh3GuaHUdAM/9n4I5Cpb8DnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721401835; c=relaxed/simple;
-	bh=fgRsB4Q2xXb4zPEviS99iTSMsB0c3TTBmRkQMXlyO/0=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=E4vuWpIGy9JLEF3OqvBmFR4+SxOmUlUZY17pPXypqijcvpBLvZa2z8DAHSo3R4bxftFYAYmyjqaRLBLj444l/RxxwNY13ei+UOgDW7Ahrp8XetNs8SkgCfxfSVhE/H11MfK6VhZLOiStw3kjEA7fFzyN7/JQR1JqJ5lkuX1k8aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pyLN5vAU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5EC1DC32782;
-	Fri, 19 Jul 2024 15:10:34 +0000 (UTC)
+	s=arc-20240116; t=1721401852; c=relaxed/simple;
+	bh=mQRDIAq5XGoSCwO48BwclCvMdi/s9aohyNnVkYCka8E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l2vSOBVsfdpB9daeWRroxPMRF2rAXWaDOpXEfRSnKgMtP5Sx3dnkPnTul1+QWCp79vaf6FY6AH6zifnsRXSPwd2EHRZBqV8he8wihZsQFlk6ZvdPTOx818cqcbhbHZCTTCLqDshxzArty/fRiGi23J9h0p6Aoa98xtTAs4cNKUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DFhE+Oxl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DAE2C32782;
+	Fri, 19 Jul 2024 15:10:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721401834;
-	bh=fgRsB4Q2xXb4zPEviS99iTSMsB0c3TTBmRkQMXlyO/0=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=pyLN5vAU0E5zezTC2iqHAxDFPRKr8Jn0lD6sGTzcxSmyJi+kaqAKH4qBfKK7/pYEH
-	 lHU/dEFgRx0VjL7TouFiAd2+tZ/IB7enUtO3SAstCH782o1VUPlhW5HTxLCuNEgPjq
-	 oERrxQaiQh5hlNvkTsdSCzC3S9Jo3NY0t2thGYyGeXkAygiSRxRlNECcQ58uqfkdtU
-	 uAlEOqJJi2lcEIp9cl7qrwFTVfOxqa2iJxobksRZy8YK6AvX+5o1ozacxi42LMrPHK
-	 RAUsSkUJvpGwZXXagdVoXBmhvUgcvucQ4um93Py0xtuMI/k0QsWuyT6v4gJhksR6Dr
-	 /hBGsMCJAzNbA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 4E1F1C4333D;
-	Fri, 19 Jul 2024 15:10:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1721401852;
+	bh=mQRDIAq5XGoSCwO48BwclCvMdi/s9aohyNnVkYCka8E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DFhE+OxlmgmQ3lPr+DTOfYvoyb9LzuRYka560UgqHi3/n2dcXtE4kBLt6BAbtcghn
+	 HiOfKk8DE9AdS0lcj+0Ll2bFoRVwZMj5hD3ZXPzeC2SO6w+TLVdY4Ch+NP9BFB9Pd7
+	 h7tExb+2G8PDdL05Aw+CjOWrtyX5jvxTAg2+Um0tyd4T0GO2BpyqTmdTyPqwWcjQxE
+	 1RN/zLq2VXaUCmF9SkbiZe+RfcoTY7Lapf6Ykx4MTvFlyJgwZiC+9dpRzFjZBcDtVX
+	 pxIYwZB9s03xZO1yNc2u3g0aL87LVdd9DodhU1NRNO3xHr0R6mAFVH8NQcuL7INONO
+	 vcWvPo1syU9Ew==
+Date: Fri, 19 Jul 2024 16:10:48 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: iio: humidity: add ENS210 sensor
+ family
+Message-ID: <20240719-romp-slouching-b28c35965760@spud>
+References: <20240719-ens21x-v4-0-6044e48a376a@thegoodpenguin.co.uk>
+ <20240719-ens21x-v4-1-6044e48a376a@thegoodpenguin.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v4] Bluetooth: btmtk: Fix btmtk.c undefined reference build
- error
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <172140183431.18849.13794056510473088684.git-patchwork-notify@kernel.org>
-Date: Fri, 19 Jul 2024 15:10:34 +0000
-References: <20240719033019.26767-1-chris.lu@mediatek.com>
-In-Reply-To: <20240719033019.26767-1-chris.lu@mediatek.com>
-To: Chris Lu <chris.lu@mediatek.com>
-Cc: marcel@holtmann.org, johan.hedberg@gmail.com, luiz.dentz@gmail.com,
- sean.wang@mediatek.com, aaron.hou@mediatek.com, steve.lee@mediatek.com,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org
-
-Hello:
-
-This patch was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
-
-On Fri, 19 Jul 2024 11:30:19 +0800 you wrote:
-> MediaTek moved some usb interface related function to btmtk.c which
-> may cause build failed if BT USB Kconfig wasn't enabled.
-> Fix undefined reference by adding config check.
-> 
-> btmtk.c:(.text+0x89c): undefined reference to `usb_alloc_urb'
-> btmtk.c:(.text+0x8e3): undefined reference to `usb_free_urb'
-> btmtk.c:(.text+0x956): undefined reference to `usb_free_urb'
-> btmtk.c:(.text+0xa0e): undefined reference to `usb_anchor_urb'
-> btmtk.c:(.text+0xb43): undefined reference to `usb_autopm_get_interface'
-> btmtk.c:(.text+0xb7e): undefined reference to `usb_autopm_put_interface'
-> btmtk.c:(.text+0xf70): undefined reference to `usb_disable_autosuspend'
-> btmtk.c:(.text+0x133a): undefined reference to `usb_control_msg'
-> 
-> [...]
-
-Here is the summary with links:
-  - [v4] Bluetooth: btmtk: Fix btmtk.c undefined reference build error
-    https://git.kernel.org/bluetooth/bluetooth-next/c/52828ea60dfd
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ShUNuFC495O2T4Gw"
+Content-Disposition: inline
+In-Reply-To: <20240719-ens21x-v4-1-6044e48a376a@thegoodpenguin.co.uk>
 
 
+--ShUNuFC495O2T4Gw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Jul 19, 2024 at 01:50:53PM +0100, Joshua Felmeden wrote:
+> Add device tree documentation for ENS210 family of temperature and
+> humidity sensors
+>=20
+> Signed-off-by: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
+
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+
+--ShUNuFC495O2T4Gw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpqB+AAKCRB4tDGHoIJi
+0mY2AP4lelSzPFN/Jh6n68WOiaDevJ3/DWqRwYkulbWRlIsNygD/RI5FMdDD5FES
+xzIsYyMO3YYjNSQBOwl+URDrOme0pg8=
+=Vkuj
+-----END PGP SIGNATURE-----
+
+--ShUNuFC495O2T4Gw--
 
