@@ -1,64 +1,73 @@
-Return-Path: <linux-kernel+bounces-257213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 754249376C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:48:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 495989376C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 158201F21A0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:48:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AB88B2188C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25597E782;
-	Fri, 19 Jul 2024 10:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA3685628;
+	Fri, 19 Jul 2024 10:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="rZDhHyMu"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GlDZECOz"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D8983CDA
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 10:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606B984A32
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 10:48:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721386099; cv=none; b=tGZQnEuBD1l0tC5Iouz7yPA39Qf6J5bO20frHa9rbnqzirPehunHGZImMddbT1ZqA/L7K7xmFA80jSa/AbH7ZU6WcUe1zqT7Jxnapv1oPZegaHPIYYJXTWd8azKre6G54eEYi0hBR/R4V1dhJ8r8FBgrX5dlI0QH+FdxzNhNslg=
+	t=1721386103; cv=none; b=raNnwU3urWK/8lNSjf7bQPgCx9UMx7aWT53kvm4Mvs2dJQ0VW7p12URxD+Z61UHppfmm2jP+d7DSrK7SJEQzUtv/PE2WyBosz695p3T9Ke16aL/aGcszJcwA3gUjJpVqt0RCXCrMkUjVhXSG9+WubOOoqj4g1gKhrrvQIkJYyqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721386099; c=relaxed/simple;
-	bh=6v9mXPTP2gc6lkDgu/ArdtuvjDBIS/gGTRxcEZCHv1o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=YVEIUQTI0xLZEHcRXamlj+aZqPyBzq7/52F1/cPtLFTSZEA/VdR/wxl+9wcnFJ7OR0CjUbMvP0TLENSKbBQjj2uYY6oJnLCOJOuoPn8j6n9lVIqgA/iX7SUB5xqKMXiitNOdgWW1a7lYbEepszsHe4GLk/N7NOOx4tYUwYxiFDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=rZDhHyMu; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46J9RJFn010370;
-	Fri, 19 Jul 2024 12:48:01 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	6v9mXPTP2gc6lkDgu/ArdtuvjDBIS/gGTRxcEZCHv1o=; b=rZDhHyMun4/53BuU
-	+9QWLUT/eVCruYA4C3tkEraS5AfXQ5pojtaT/hbz9kgsJ/KoUNOF7g2I+keWKUDC
-	/5Sk5Fs3IwMadbzTTJnt4qshuKF3W8QiGCUV7RjztBrpa5H71rAIeohvGMqiEVSf
-	2Hb+27lDCw1mGxsmCwwlFpdAaEqB6njLGEQ8rpl6gZOX8r+PPCj5Es8N+h8INIuV
-	/u9BDXnqqLA8zI5/6FxlidC5nOfT/zGPQMoi+jx7gKL+efxLN2ArKB7jXZDbx6wl
-	1cUwA1OCnyTeE3G4ZkOHB5/PL1vpBm9g1vH0zAh5DJi3heZ7+S9M9qDNoMDJwH9t
-	8XYM4Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 40fe179yuu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 19 Jul 2024 12:48:01 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 261BF4002D;
-	Fri, 19 Jul 2024 12:47:57 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 800D924F390;
-	Fri, 19 Jul 2024 12:47:28 +0200 (CEST)
-Received: from [10.129.178.17] (10.129.178.17) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 19 Jul
- 2024 12:47:25 +0200
-Message-ID: <fca733ed-198a-4aa5-b180-f6746e6e37d8@foss.st.com>
-Date: Fri, 19 Jul 2024 12:47:24 +0200
+	s=arc-20240116; t=1721386103; c=relaxed/simple;
+	bh=MTkLtnrdT1NP01vhZ4e7zwQFJkGZtPhOcNSPQ6LOAZ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H8HN77PWi+ousJStT26AkE0xV4mErBzynrrXXMvgiGEqwjRfpqdBe7ylR6LVu0vnJkbhf+4t8XZWuDDfLxZl7axm/9PRRIxvdBVpazb2qDg1LuS1cCnnFzmxIBtN64DpHa+djddXG+7WrJgmyWXC8FU6Q6aFeSAE2qZYeJM1jEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GlDZECOz; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3686b554cfcso431154f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 03:48:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721386098; x=1721990898; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QT3Oxgygqz6ZnVlMJNzc0vXkjCOv7tAU8CrJxx5mcsc=;
+        b=GlDZECOz1pAjwTIAzKUwxZEiLoL7nSIG5jZhyIVeo4xfPpU8lPfMgqD3aC8QHSWJYp
+         53vtqUHLlW2ZtXT69uNpzOKkTE1kkzyNvJWcOTqiL4klRATG5e/EKCuey4v6pRFzgGdA
+         Iu9tRPc8RA209/CfLzkNy9Z770sZKnAAQWuVk+JiaqlOvXyGne4/qRuWx97ovlmjoAVI
+         K7Z/oP74hwWdoUAe1MlY8KCoJR+b0vw3Cj8MrYCx5N5V5XS1f6iWYM4mltFNaoAqkcSs
+         83Ec9feApAUtdybt5pLXflHfgPAASdf4zw6R16HOsLajfgLC6wdXznGFTqwn0l+GULnj
+         NF6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721386098; x=1721990898;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QT3Oxgygqz6ZnVlMJNzc0vXkjCOv7tAU8CrJxx5mcsc=;
+        b=bV+uAMGyqi76Bp9n/fGeC9Zcs6m/o5NLI66A4kAJ0ohF2Xb/WDZnjo2qzJoPG/cYwo
+         rGBtu/AP6Ty6A3ZrAIZQaQm7jRBaOW3qcsCXJ7PHHX8bkFjiI61z3AHObRhjuESa2uh4
+         DNXOPYGJ2l0iZ2TArsg/QDGS1E9A56akXjQmYelvKfzPdfMlyzZEoQyRbHb+enkSqxxr
+         SQtPZF1vUY4sziGZO94dzs20PKc0GkZ0eCR014YDn0azrxVVNQyrtSglv4DM7lSbe3JQ
+         MW9FLQet4Bc7/FCLU4mhxyrXBegPNTtenmxTNrEaC5G7KeatEsyWVu7SJQD+GcS6spXJ
+         u9YA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0uNTqnEmnNZxe8L8i/jpNDx/EuRvPBKT9Ub3p4c7s7ZsQxZJwxFsRVN302ojVIWnVLOjjJ3reuqL0X/USk49bwgSTV3ZZ9UTY4yh2
+X-Gm-Message-State: AOJu0YzByB4gHnSfrn7l0bFcefemMIk5FfKK/lHXpR/pe5ZupUvDS5r4
+	8XpUy3zMI0uaIStf5c046yL2LlymOUQIjJ+p4SXKqM4T0VZPekmp1THN4dSsUZk=
+X-Google-Smtp-Source: AGHT+IEPLg6lBUWym3tbn1u+RGXEOjf/HSA685NgRWZptIEUhp6cgruntzO8Q2ovSFfYC8ZzHwKZ2g==
+X-Received: by 2002:adf:e386:0:b0:368:87ca:3d85 with SMTP id ffacd0b85a97d-36887ca3dbcmr157013f8f.29.1721386098278;
+        Fri, 19 Jul 2024 03:48:18 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36878694ba0sm1255324f8f.61.2024.07.19.03.48.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Jul 2024 03:48:17 -0700 (PDT)
+Message-ID: <ef5e7351-5f62-444a-b930-4dc2feb9f10d@linaro.org>
+Date: Fri, 19 Jul 2024 11:48:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,46 +75,235 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/stm: ltdc: reset plane transparency after plane
- disable
-To: Yannick Fertre <yannick.fertre@foss.st.com>,
-        Philippe Cornu
-	<philippe.cornu@foss.st.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240712131344.98113-1-yannick.fertre@foss.st.com>
+Subject: Re: [PATCH v5 06/17] perf: cs-etm: Support version 0.1 of HW_ID
+ packets
+To: Mike Leach <mike.leach@linaro.org>
+Cc: coresight@lists.linaro.org, suzuki.poulose@arm.com,
+ gankulkarni@os.amperecomputing.com, leo.yan@linux.dev,
+ anshuman.khandual@arm.com, James Clark <james.clark@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-perf-users@vger.kernel.org
+References: <20240712102029.3697965-1-james.clark@linaro.org>
+ <20240712102029.3697965-7-james.clark@linaro.org>
+ <CAJ9a7Vgz-rP6kGLLo2RR_qSZ3dhBT+=E8S=z1Hj6pfwOYu06Nw@mail.gmail.com>
 Content-Language: en-US
-From: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-In-Reply-To: <20240712131344.98113-1-yannick.fertre@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-19_06,2024-07-18_01,2024-05-17_01
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <CAJ9a7Vgz-rP6kGLLo2RR_qSZ3dhBT+=E8S=z1Hj6pfwOYu06Nw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-On 7/12/24 15:13, Yannick Fertre wrote:
-> The plane's opacity should be reseted while the plane
-> is disabled. It prevents from seeing a possible global
-> or layer background color set earlier.
->
-> Signed-off-by: Yannick Fertre <yannick.fertre@foss.st.com>
 
-Hi Yannick,
+On 18/07/2024 2:24 pm, Mike Leach wrote:
+> On Fri, 12 Jul 2024 at 11:22, James Clark <james.clark@linaro.org> wrote:
+>>
+>> From: James Clark <james.clark@arm.com>
+>>
+>> v0.1 HW_ID packets have a new field that describes which sink each CPU
+>> writes to. Use the sink ID to link trace ID maps to each other so that
+>> mappings are shared wherever the sink is shared.
+>>
+>> Also update the error message to show that overlapping IDs aren't an
+>> error in per-thread mode, just not supported. In the future we can
+>> use the CPU ID from the AUX records, or watch for changing sink IDs on
+>> HW_ID packets to use the correct decoders.
+>>
+>> Signed-off-by: James Clark <james.clark@arm.com>
+>> Signed-off-by: James Clark <james.clark@linaro.org>
+>> ---
+>>   tools/include/linux/coresight-pmu.h |  17 +++--
+>>   tools/perf/util/cs-etm.c            | 100 +++++++++++++++++++++++++---
+>>   2 files changed, 103 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/tools/include/linux/coresight-pmu.h b/tools/include/linux/coresight-pmu.h
+>> index 51ac441a37c3..89b0ac0014b0 100644
+>> --- a/tools/include/linux/coresight-pmu.h
+>> +++ b/tools/include/linux/coresight-pmu.h
+>> @@ -49,12 +49,21 @@
+>>    * Interpretation of the PERF_RECORD_AUX_OUTPUT_HW_ID payload.
+>>    * Used to associate a CPU with the CoreSight Trace ID.
+>>    * [07:00] - Trace ID - uses 8 bits to make value easy to read in file.
+>> - * [59:08] - Unused (SBZ)
+>> - * [63:60] - Version
+>> + * [39:08] - Sink ID - as reported in /sys/bus/event_source/devices/cs_etm/sinks/
+>> + *           Added in minor version 1.
+>> + * [55:40] - Unused (SBZ)
+>> + * [59:56] - Minor Version - previously existing fields are compatible with
+>> + *           all minor versions.
+>> + * [63:60] - Major Version - previously existing fields mean different things
+>> + *           in new major versions.
+>>    */
+>>   #define CS_AUX_HW_ID_TRACE_ID_MASK     GENMASK_ULL(7, 0)
+>> -#define CS_AUX_HW_ID_VERSION_MASK      GENMASK_ULL(63, 60)
+>> +#define CS_AUX_HW_ID_SINK_ID_MASK      GENMASK_ULL(39, 8)
+>>
+>> -#define CS_AUX_HW_ID_CURR_VERSION 0
+>> +#define CS_AUX_HW_ID_MINOR_VERSION_MASK        GENMASK_ULL(59, 56)
+>> +#define CS_AUX_HW_ID_MAJOR_VERSION_MASK        GENMASK_ULL(63, 60)
+>> +
+>> +#define CS_AUX_HW_ID_MAJOR_VERSION 0
+>> +#define CS_AUX_HW_ID_MINOR_VERSION 1
+>>
+>>   #endif
+>> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+>> index 954a6f7bedf3..87e983da19be 100644
+>> --- a/tools/perf/util/cs-etm.c
+>> +++ b/tools/perf/util/cs-etm.c
+>> @@ -118,6 +118,12 @@ struct cs_etm_queue {
+>>          struct cs_etm_traceid_queue **traceid_queues;
+>>          /* Conversion between traceID and metadata pointers */
+>>          struct intlist *traceid_list;
+>> +       /*
+>> +        * Same as traceid_list, but traceid_list may be a reference to another
+>> +        * queue's which has a matching sink ID.
+>> +        */
+>> +       struct intlist *own_traceid_list;
+>> +       u32 sink_id;
+>>   };
+>>
+>>   static int cs_etm__process_timestamped_queues(struct cs_etm_auxtrace *etm);
+>> @@ -142,6 +148,7 @@ static int cs_etm__metadata_set_trace_id(u8 trace_chan_id, u64 *cpu_metadata);
+>>                        (queue_nr << 16 | trace_chan_id)
+>>   #define TO_QUEUE_NR(cs_queue_nr) (cs_queue_nr >> 16)
+>>   #define TO_TRACE_CHAN_ID(cs_queue_nr) (cs_queue_nr & 0x0000ffff)
+>> +#define SINK_UNSET ((u32) -1)
+>>
+>>   static u32 cs_etm__get_v7_protocol_version(u32 etmidr)
+>>   {
+>> @@ -241,7 +248,16 @@ static int cs_etm__insert_trace_id_node(struct cs_etm_queue *etmq,
+>>                  int err;
+>>
+>>                  if (curr_cpu_data[CS_ETM_CPU] != cpu_metadata[CS_ETM_CPU]) {
+>> -                       pr_err("CS_ETM: map mismatch between HW_ID packet CPU and Trace ID\n");
+>> +                       /*
+>> +                        * With > CORESIGHT_TRACE_IDS_MAX ETMs, overlapping IDs
+>> +                        * are expected (but not supported) in per-thread mode,
+>> +                        * rather than signifying an error.
+>> +                        */
+>> +                       if (etmq->etm->per_thread_decoding)
+>> +                               pr_err("CS_ETM: overlapping Trace IDs aren't currently supported in per-thread mode\n");
+>> +                       else
+>> +                               pr_err("CS_ETM: map mismatch between HW_ID packet CPU and Trace ID\n");
+>> +
+>>                          return -EINVAL;
+>>                  }
+>>
+>> @@ -326,6 +342,64 @@ static int cs_etm__process_trace_id_v0(struct cs_etm_auxtrace *etm, int cpu,
+>>          return cs_etm__metadata_set_trace_id(trace_chan_id, cpu_data);
+>>   }
+>>
+>> +static int cs_etm__process_trace_id_v0_1(struct cs_etm_auxtrace *etm, int cpu,
+>> +                                        u64 hw_id)
+>> +{
+>> +       struct cs_etm_queue *etmq = cs_etm__get_queue(etm, cpu);
+>> +       int ret;
+>> +       u64 *cpu_data;
+>> +       u32 sink_id = FIELD_GET(CS_AUX_HW_ID_SINK_ID_MASK, hw_id);
+>> +       u8 trace_id = FIELD_GET(CS_AUX_HW_ID_TRACE_ID_MASK, hw_id);
+>> +
+>> +       /*
+>> +        * Check sink id hasn't changed in per-cpu mode. In per-thread mode,
+>> +        * let it pass for now until an actual overlapping trace ID is hit. In
+>> +        * most cases IDs won't overlap even if the sink changes.
+>> +        */
+>> +       if (!etmq->etm->per_thread_decoding && etmq->sink_id != SINK_UNSET &&
+>> +           etmq->sink_id != sink_id) {
+>> +               pr_err("CS_ETM: mismatch between sink IDs\n");
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       etmq->sink_id = sink_id;
+>> +
+>> +       /* Find which other queues use this sink and link their ID maps */
+>> +       for (unsigned int i = 0; i < etm->queues.nr_queues; ++i) {
+>> +               struct cs_etm_queue *other_etmq = etm->queues.queue_array[i].priv;
+>> +
+>> +               /* Different sinks, skip */
+>> +               if (other_etmq->sink_id != etmq->sink_id)
+>> +                       continue;
+>> +
+>> +               /* Already linked, skip */
+>> +               if (other_etmq->traceid_list == etmq->traceid_list)
+>> +                       continue;
+>> +
+>> +               /* At the point of first linking, this one should be empty */
+>> +               if (!intlist__empty(etmq->traceid_list)) {
+>> +                       pr_err("CS_ETM: Can't link populated trace ID lists\n");
+>> +                       return -EINVAL;
+>> +               }
+>> +
+>> +               etmq->own_traceid_list = NULL;
+>> +               intlist__delete(etmq->traceid_list);
+>> +               etmq->traceid_list = other_etmq->traceid_list;
+>> +               break;
+>> +       }
+>> +
+>> +       cpu_data = get_cpu_data(etm, cpu);
+>> +       ret = cs_etm__insert_trace_id_node(etmq, trace_id, cpu_data);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       ret = cs_etm__metadata_set_trace_id(trace_id, cpu_data);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       return 0;
+>> +}
+>> +
+>>   static int cs_etm__metadata_get_trace_id(u8 *trace_chan_id, u64 *cpu_metadata)
+>>   {
+>>          u64 cs_etm_magic = cpu_metadata[CS_ETM_MAGIC];
+>> @@ -414,10 +488,10 @@ static int cs_etm__process_aux_output_hw_id(struct perf_session *session,
+>>
+>>          /* extract and parse the HW ID */
+>>          hw_id = event->aux_output_hw_id.hw_id;
+>> -       version = FIELD_GET(CS_AUX_HW_ID_VERSION_MASK, hw_id);
+>> +       version = FIELD_GET(CS_AUX_HW_ID_MAJOR_VERSION_MASK, hw_id);
+>>
+>>          /* check that we can handle this version */
+>> -       if (version > CS_AUX_HW_ID_CURR_VERSION) {
+>> +       if (version > CS_AUX_HW_ID_MAJOR_VERSION) {
+>>                  pr_err("CS ETM Trace: PERF_RECORD_AUX_OUTPUT_HW_ID version %d not supported. Please update Perf.\n",
+>>                         version);
+>>                  return -EINVAL;
+>> @@ -442,7 +516,10 @@ static int cs_etm__process_aux_output_hw_id(struct perf_session *session,
+>>                  return -EINVAL;
+>>          }
+>>
+>> -       return cs_etm__process_trace_id_v0(etm, cpu, hw_id);
+> 
+> Perhaps leave this as the final statement of the function
+> 
+>> +       if (FIELD_GET(CS_AUX_HW_ID_MINOR_VERSION_MASK, hw_id) == 0)
+> 
+> this could be moved before and be
+> 
+> if (FIELD_GET(CS_AUX_HW_ID_MINOR_VERSION_MASK, hw_id) == 1)
+>                 return cs_etm__process_trace_id_v0_1(etm, cpu, hw_id);
+> 
+> 
 
-Applied on drm-misc-next.
+Because I was intending minor version changes to be backwards compatible 
+I have it so that any value other than 0 is treated as v0.1. Otherwise 
+version updates will break old versions of Perf. And then if we added a 
+v0.3 it would look like this:
 
-Thanks,
-Raphaël
+  if (FIELD_GET(CS_AUX_HW_ID_MINOR_VERSION_MASK, hw_id) == 0)
+    return cs_etm__process_trace_id_v0(etm, cpu, hw_id);
+  else if (FIELD_GET(CS_AUX_HW_ID_MINOR_VERSION_MASK, hw_id) == 1)
+    return cs_etm__process_trace_id_v0_1(etm, cpu, hw_id);
+  else
+    return cs_etm__process_trace_id_v0_2(etm, cpu, hw_id);
 
+Based on that I'm not sure if you still think it should be changed?
 
