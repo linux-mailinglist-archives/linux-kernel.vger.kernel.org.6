@@ -1,149 +1,228 @@
-Return-Path: <linux-kernel+bounces-257425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F30349379B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:14:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CCCD9379B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:14:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EB231C221E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:14:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22BAB281764
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F861459FD;
-	Fri, 19 Jul 2024 15:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E451448DE;
+	Fri, 19 Jul 2024 15:14:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="G622rTg6"
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="W+w3opSa"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A9728F1;
-	Fri, 19 Jul 2024 15:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80F18C06
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 15:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721402081; cv=none; b=D3Mg+uvGXjxB57c7hJv64lwDROLTn9CK9lfqmq/QQHSv/Aik0cl0cxAXGCr5oDoG44tDSxi1yC72vuaBpJMO2UIjRjUaClVoyEWryepO0Jovf/3rQAo/v8Ojgj44iMygU2FmH1ilb0JjlPf8M+idFrEzThL2l5jKfGg0zfe3ZpQ=
+	t=1721402064; cv=none; b=DNzJQhZ2ZDrYvUmNg5w3ZZ5qjD2UY8ySc8VH53B3DgXmlmOLHKPujJ0/XmB4UY2GS3mK1Jqm8Q1fsL6XKJVd/40qRJyaU85efYH3B6qXAzJbe9HC81EVUHQsJxK0XvIdqrADi3LKUhX/3Rd7U/irmiS3EKLa54Di1VD6R6h73dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721402081; c=relaxed/simple;
-	bh=sROtZYeF8jNHhYcpohB3Gu9/qmli5EL06S8SRkdRgEg=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=leQVo/yF9ncG5gvKQbduyaj31bhi2+XtPHcd+NNt7EdOC4DE51Dvwnea/tTlwt8MJps+F1cbYIhT3ZGLqw4pLE8gSt67o4mF/7eaEtA2KsBVUGJlNYSQ7YbGgu4VfZ6rSUZibjE9SPEf3uY9EyAkV0/uAk1Irvo2bmh5E4Gzdc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=G622rTg6; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=VNjSitXgP63OfLmTByumQf2vJ6HMojY6G0+/pVBAVvE=; b=G622rTg6/sGe6WVEkyZHxCceB4
-	6iEvshpzRyIQnnQl4hIQa2aGNR0217fb9mZIQwKIHi2a3N5URSDIquif641wJ5kdJK+WTDUKbyOiV
-	5cxJ+jhZt0Mm1pQjSVG5JWBbtIIBJ0A7FZ9ZrUfUAyCXYLkkZ5MWQVVYkHk5J6CofN//lkXe8BABM
-	1ApcQOoW7Z4k9XkUyckXrJTFWBdJb+lIskYGPPs7zMU2clRdPrakaaFR7nSaVZ0DL3/4F/jXAwlKj
-	8ckAS0Qph04lcfDj63M7fB7LTPyZwsbjxhEq4dgxvIdwZKrw+ZQyaMmPOmEugvKRKFPlvbdvHqsV8
-	3ok2Bssg==;
-Received: from sslproxy01.your-server.de ([78.46.139.224])
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1sUpJC-000639-AC; Fri, 19 Jul 2024 17:14:10 +0200
-Received: from [178.197.248.43] (helo=linux-2.home)
-	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1sUpJA-000Jmi-2U;
-	Fri, 19 Jul 2024 17:14:08 +0200
-Subject: Re: [PATCH v3 2/2] selftests/bpf: integrate test_xdp_veth into
- test_progs
-To: =?UTF-8?Q?Alexis_Lothor=c3=a9_=28eBPF_Foundation=29?=
- <alexis.lothore@bootlin.com>, Alexei Starovoitov <ast@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
- Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
- Simon Horman <horms@kernel.org>
-Cc: ebpf@linuxfoundation.org, netdev@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20240716-convert_test_xdp_veth-v3-0-7b01389e3cb3@bootlin.com>
- <20240716-convert_test_xdp_veth-v3-2-7b01389e3cb3@bootlin.com>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <3b1949b9-775a-8093-6a14-16dec843a446@iogearbox.net>
-Date: Fri, 19 Jul 2024 17:14:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+	s=arc-20240116; t=1721402064; c=relaxed/simple;
+	bh=1lkKX8+BwLoRY5hauTPKhVnv1tKmPehSClPP1N3QXLk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q3/8OAT9k3EiDh8SVLPumsb39Iy3p5vLLmxkCXnaLArSMUdgiz7DIeN30Pm4fi6ooPB2V+Bdwrz1lE/Gs6wbhc8fsQSjhlyhOmNbikMG3XSFUOLSE4d6S7OKWeWwFfpf4j2GLY5HdKc69+UAQ4zA5SdMuWVQ3l8tiB1VmwJMlRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=W+w3opSa; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-66a048806e6so4279297b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 08:14:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1721402061; x=1722006861; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ep7USquIc8ObqQgurTx1eKeBf6SX6vM17VAQn9SQ8FQ=;
+        b=W+w3opSa/b4WG1WUBExfK4zQP6+nPx7eI/b1bfQFpiTwCW0GgSi54RL5PStwXy3CA9
+         3fs/qCadxOnbKWOowBPs10THTiE97zzkRjd2qdXoa/himqVGQQdQgcCLtp7c+A7v2V5R
+         mxLqSmDyu5y8J/iLr4+JsF1qwtjK8NSPjFMFbDYZ73JkY9N3wEq6KZmp8EEucfIDEvn4
+         7UP/4cyLXJYhJANxN1v1gFNQzro7xri/VmbCjKrYeuEHcwnJGy8biqT55ZGAbPghANAx
+         gvS1Om3L1VuUOKnJxLO4Wqb0WorS1sbBoEW27WjVCTu4YHLp/OS3zaN14pn4owSaw2wP
+         0D5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721402061; x=1722006861;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ep7USquIc8ObqQgurTx1eKeBf6SX6vM17VAQn9SQ8FQ=;
+        b=b992YkHapyOHjextnoz3K0M4pP2emtJPshFALU6OxSMTfJHO3fcFXCNbkObtdxry56
+         IhvsCBksZy5ZIC5s3YU7KYN/ph6HlX1fXJ7aIXw6E44yx6wOfypjSK/hTuF1VgYY7rJ9
+         8ZD8Z8OpoH0pwnThGBMKxJx2n3YQI3TgR6d3HRfFl0rXUgYGvu/VYaTsBreL4Gb/tmyL
+         oKJdLf4KZ99Uxy8Z+vac3UBS0SfaFjXVNAaWHZZKMlRXoi50/qhdKvTll3y6y8F/1GHX
+         IDn5ejeCGPbezzEAlXs3lvlG+SuGBlvaTg8wvHZPyUcJieDRXX4o/XLNHdolXApoBItA
+         LQ0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWoAC9/Y1bamoqLW7IkaiGwLcx57Y2BqnffS54oweSOsaGiwOZ1rroCBO0dYfXhvrnSZme4TgjpsBtYo90BT2E3K3j8LpBeJNV98UA+
+X-Gm-Message-State: AOJu0Yy4RDCLaMMpSgkpyAgDvwZ4Ny0fslC8E0ct37xwrtEODp6ICfPz
+	OmZLyYX0Po/jiP783drRVc0Ja45j94DjnP1Ut9pZccmmUm/Aq/Ajd0IeJ7V2Gqs=
+X-Google-Smtp-Source: AGHT+IG+4qcjwODC/mjEvyVMtdvYVHkfFCV6ubPYqh5WoweDatTqVpmhoXnXig8R9l1fsymD/hQgPQ==
+X-Received: by 2002:a81:8804:0:b0:64a:791b:60ce with SMTP id 00721157ae682-66500574925mr85667487b3.30.1721402061512;
+        Fri, 19 Jul 2024 08:14:21 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44f9cd04062sm8510161cf.40.2024.07.19.08.14.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 08:14:21 -0700 (PDT)
+Date: Fri, 19 Jul 2024 10:14:19 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	samuel.holland@sifive.com, conor.dooley@microchip.com, takakura@valinux.co.jp, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH] RISC-V: Implement kgdb_roundup_cpus() to enable IPI KGDB
+ Roundup
+Message-ID: <20240719-8841a9a99566e15c9bd1ff3d@orel>
+References: <20240719081210.1457512-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240716-convert_test_xdp_veth-v3-2-7b01389e3cb3@bootlin.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27341/Fri Jul 19 10:28:50 2024)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240719081210.1457512-1-ruanjinjie@huawei.com>
 
-On 7/16/24 12:13 PM, Alexis Lothoré (eBPF Foundation) wrote:
-[...]
-> +static int attach_programs_to_veth_pair(struct skeletons *skeletons, int index)
+On Fri, Jul 19, 2024 at 04:12:10PM GMT, Jinjie Ruan wrote:
+> Until now, the generic weak kgdb_roundup_cpus() has been used for kgdb on
+> RISCV. A custom one allows to debug CPUs that are stuck with interrupts
+> disabled.
+
+This confuses me since we're using an IPI for the roundup. How does that
+work on CPUs stuck with interrupts disabled? I think this text comes
+from the commit message for the arm64 patch, but arm64 does the roundup
+with a pseudo-NMI.
+
+> And using an IPI is better than the generic one since it avoids
+> the potential situation described in the generic kgdb_call_nmi_hook().
+
+This is true.
+
+> 
+> After this patch, the kgdb test show that:
+> 	# echo g > /proc/sysrq-trigger
+> 	[2]kdb> btc
+> 	btc: cpu status: Currently on cpu 2
+> 	Available cpus: 0-1(-), 2, 3(-)
+> 	Stack traceback for pid 0
+> 	0xffffffff81c13a40        0        0  1    0   -  0xffffffff81c14510  swapper/0
+> 	CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.10.0-g3120273055b6-dirty #51
+> 	Hardware name: riscv-virtio,qemu (DT)
+> 	Call Trace:
+> 	[<ffffffff80006c48>] dump_backtrace+0x28/0x30
+> 	[<ffffffff80fceb38>] show_stack+0x38/0x44
+> 	[<ffffffff80fe6a04>] dump_stack_lvl+0x58/0x7a
+> 	[<ffffffff80fe6a3e>] dump_stack+0x18/0x20
+> 	[<ffffffff801143fa>] kgdb_cpu_enter+0x682/0x6b2
+> 	[<ffffffff801144ca>] kgdb_nmicallback+0xa0/0xac
+> 	[<ffffffff8000a392>] handle_IPI+0x9c/0x120
+> 	[<ffffffff800a2baa>] handle_percpu_devid_irq+0xa4/0x1e4
+> 	[<ffffffff8009cca8>] generic_handle_domain_irq+0x28/0x36
+> 	[<ffffffff800a9e5c>] ipi_mux_process+0xe8/0x110
+> 	[<ffffffff806e1e30>] imsic_handle_irq+0xf8/0x13a
+> 	[<ffffffff8009cca8>] generic_handle_domain_irq+0x28/0x36
+> 	[<ffffffff806dff12>] riscv_intc_aia_irq+0x2e/0x40
+> 	[<ffffffff80fe6ab0>] handle_riscv_irq+0x54/0x86
+> 	[<ffffffff80ff2e4a>] call_on_irq_stack+0x32/0x40
+> 
+> Rebased on Ryo Takakura's "RISC-V: Enable IPI CPU Backtrace" patch.
+> 
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+>  arch/riscv/kernel/smp.c | 27 +++++++++++++++++++++++++--
+>  1 file changed, 25 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
+> index 9b047899791c..c180a647a30e 100644
+> --- a/arch/riscv/kernel/smp.c
+> +++ b/arch/riscv/kernel/smp.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/interrupt.h>
+>  #include <linux/module.h>
+>  #include <linux/kexec.h>
+> +#include <linux/kgdb.h>
+>  #include <linux/percpu.h>
+>  #include <linux/profile.h>
+>  #include <linux/smp.h>
+> @@ -35,6 +36,7 @@ enum ipi_message_type {
+>  	IPI_IRQ_WORK,
+>  	IPI_TIMER,
+>  	IPI_CPU_BACKTRACE,
+> +	IPI_KGDB_ROUNDUP,
+>  	IPI_MAX
+>  };
+>  
+> @@ -115,6 +117,7 @@ void arch_irq_work_raise(void)
+>  
+>  static irqreturn_t handle_IPI(int irq, void *data)
+>  {
+> +	unsigned int cpu = smp_processor_id();
+>  	int ipi = irq - ipi_virq_base;
+>  
+>  	switch (ipi) {
+> @@ -128,7 +131,7 @@ static irqreturn_t handle_IPI(int irq, void *data)
+>  		ipi_stop();
+>  		break;
+>  	case IPI_CPU_CRASH_STOP:
+> -		ipi_cpu_crash_stop(smp_processor_id(), get_irq_regs());
+> +		ipi_cpu_crash_stop(cpu, get_irq_regs());
+>  		break;
+>  	case IPI_IRQ_WORK:
+>  		irq_work_run();
+> @@ -141,8 +144,11 @@ static irqreturn_t handle_IPI(int irq, void *data)
+>  	case IPI_CPU_BACKTRACE:
+>  		nmi_cpu_backtrace(get_irq_regs());
+>  		break;
+> +	case IPI_KGDB_ROUNDUP:
+> +		kgdb_nmicallback(cpu, get_irq_regs());
+> +		break;
+>  	default:
+> -		pr_warn("CPU%d: unhandled IPI%d\n", smp_processor_id(), ipi);
+> +		pr_warn("CPU%d: unhandled IPI%d\n", cpu, ipi);
+>  		break;
+>  	}
+>  
+> @@ -209,6 +215,7 @@ static const char * const ipi_names[] = {
+>  	[IPI_IRQ_WORK]		= "IRQ work interrupts",
+>  	[IPI_TIMER]		= "Timer broadcast interrupts",
+>  	[IPI_CPU_BACKTRACE]     = "CPU backtrace interrupts",
+> +	[IPI_KGDB_ROUNDUP]	= "KGDB roundup interrupts",
+>  };
+>  
+>  void show_ipi_stats(struct seq_file *p, int prec)
+> @@ -339,3 +346,19 @@ void arch_trigger_cpumask_backtrace(const cpumask_t *mask, int exclude_cpu)
+>  {
+>  	nmi_trigger_cpumask_backtrace(mask, exclude_cpu, riscv_backtrace_ipi);
+>  }
+> +
+> +#ifdef CONFIG_KGDB
+> +void kgdb_roundup_cpus(void)
 > +{
-> +	struct bpf_program *local_prog, *remote_prog;
-> +	struct bpf_link **local_link, **remote_link;
-> +	struct nstoken *nstoken;
-> +	struct bpf_link *link;
-> +	int interface;
+> +	int this_cpu = raw_smp_processor_id();
+> +	int cpu;
 > +
-> +	switch (index) {
-> +	case 0:
-> +		local_prog = skeletons->xdp_redirect_maps->progs.xdp_redirect_map_0;
-> +		local_link = &skeletons->xdp_redirect_maps->links.xdp_redirect_map_0;
-> +		remote_prog = skeletons->xdp_dummy->progs.xdp_dummy_prog;
-> +		remote_link = &skeletons->xdp_dummy->links.xdp_dummy_prog;
-> +		break;
-> +	case 1:
-> +		local_prog = skeletons->xdp_redirect_maps->progs.xdp_redirect_map_1;
-> +		local_link = &skeletons->xdp_redirect_maps->links.xdp_redirect_map_1;
-> +		remote_prog = skeletons->xdp_tx->progs.xdp_tx;
-> +		remote_link = &skeletons->xdp_tx->links.xdp_tx;
-> +		break;
-> +	case 2:
-> +		local_prog = skeletons->xdp_redirect_maps->progs.xdp_redirect_map_2;
-> +		local_link = &skeletons->xdp_redirect_maps->links.xdp_redirect_map_2;
-> +		remote_prog = skeletons->xdp_dummy->progs.xdp_dummy_prog;
-> +		remote_link = &skeletons->xdp_dummy->links.xdp_dummy_prog;
-> +		break;
+> +	for_each_online_cpu(cpu) {
+> +		/* No need to roundup ourselves */
+> +		if (cpu == this_cpu)
+> +			continue;
+> +
+> +		send_ipi_single(cpu, IPI_KGDB_ROUNDUP);
 > +	}
-> +	interface = if_nametoindex(config[index].local_veth);
-> +	if (!ASSERT_NEQ(interface, 0, "non zero interface index"))
-> +		return -1;
-> +	link = bpf_program__attach_xdp(local_prog, interface);
-> +	if (!ASSERT_OK_PTR(link, "attach xdp program to local veth"))
-> +		return -1;
-> +	*local_link = link;
-> +	nstoken = open_netns(config[index].namespace);
-> +	if (!ASSERT_OK_PTR(nstoken, "switch to remote veth namespace"))
-> +		return -1;
-> +	interface = if_nametoindex(config[index].remote_veth);
-> +	if (!ASSERT_NEQ(interface, 0, "non zero interface index"))
-> +		return -1;
-
-Missing `close_netns(nstoken);` in error path here, otherwise looks reasonable to me.
-
-> +	link = bpf_program__attach_xdp(remote_prog, interface);
-> +	*remote_link = link;
-> +	close_netns(nstoken);
-> +	if (!ASSERT_OK_PTR(link, "attach xdp program to remote veth"))
-> +		return -1;
-> +
-> +	return 0;
 > +}
+> +#endif
+> -- 
+> 2.34.1
+>
+
+Other than the commit message, the patch looks good to me, so
+
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+
+but I guess we should extend this and the CPU backtrace support to use
+NMIs when we have support for them.
 
 Thanks,
-Daniel
+drew
 
