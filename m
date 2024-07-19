@@ -1,274 +1,141 @@
-Return-Path: <linux-kernel+bounces-257339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C584B9378BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:51:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6F349378C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AD5CB2148C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:51:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04D9AB2170F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6292A142915;
-	Fri, 19 Jul 2024 13:51:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8778B1442FB;
+	Fri, 19 Jul 2024 13:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XJkeRmjQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dvvuwG/c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02122CA6
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 13:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5CDB83A19;
+	Fri, 19 Jul 2024 13:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721397085; cv=none; b=DlH+GdA416AzwBpRWDq2Mp7H9ZBx0Mh1cg8Q/4zM95qry0oxyT14odVrlxN/PeTUZqEtPqTM8tvUsQxqG1e6EGEsITF/gm785dtoXxvVxB5L7YlzAiynqo989yegBwi58Or1OWjTspSF3KrxeOiPfWdX7K+7E/gh99rgXi+vOw0=
+	t=1721397156; cv=none; b=FdYjXiOsqCzhIbc7v/oj0T3YUIdT1+Jzr0UyppjrUvXsaHehqIRs2+MOtHOyp5IFZNgE2MTEieDu3GQ4ENNnIOlTMHnQiW/CrAd1oPX24Oir4XgNteblcQzBMhrjm+Ory6TMc+ciB8pa9YiKM2NGr5Ti3X7c+2QbpWtZpYR08is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721397085; c=relaxed/simple;
-	bh=V7RyhCA7kxdqTmYk4oWtsYK4yOZzliRKlogs3Ez7hio=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=us0BvWapDNzTy5N4EpR/7snsrlePCYnytm4hqLz/32OD1xYUu5IM7rzlGKqteOBTWG8AkvkWEixrdXnmXgSx0FTIPzubnGvjDdg8/+KHLoRH9cN8ynPfBRj8beEJLuuHFtj3up/l2sqGkNVCbYBaeN0yIi98DkctJ3DBQ3nvXWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XJkeRmjQ; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721397083; x=1752933083;
-  h=date:from:to:cc:subject:message-id;
-  bh=V7RyhCA7kxdqTmYk4oWtsYK4yOZzliRKlogs3Ez7hio=;
-  b=XJkeRmjQ531dgYbCLEXRAqQJtLp5QAES2Qc6xjD4nhibrdieJTX4tibl
-   etSNTJqurse8srK6YX24EZjZXIqRALtM+9B0bYsRcGSEfCrObJaTqKgqf
-   cg+HjrA1A8JxZYxuHCrlxXfSHcpw+KiClNr+ax8625dZa28d/xLBoElqp
-   oZkXYKoeFzv0QaXDm1ECY0JOmUAJELCZSovhBdktWN/ngo5ta6coCnsiC
-   CFEs7RuyhKFbM6Hzs6d/qj5/1E+JIplhBozJQMqdwjDoPGiuSD9b3Td/q
-   6is//axzXOa2VCIOvzdZV4x/VvBpclpcIS+qBz+Kzosu70Sn4gWvoUMax
-   g==;
-X-CSE-ConnectionGUID: Way7xfpfQmqK/KvPnfaqUg==
-X-CSE-MsgGUID: xDclSh7NQCa9jN/zAGDqUA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11138"; a="30390297"
-X-IronPort-AV: E=Sophos;i="6.09,220,1716274800"; 
-   d="scan'208";a="30390297"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2024 06:51:22 -0700
-X-CSE-ConnectionGUID: cChkM09CTAmzgutDJoW69g==
-X-CSE-MsgGUID: 2renN57fSnuH0pWwuJHkuQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,220,1716274800"; 
-   d="scan'208";a="51722390"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 19 Jul 2024 06:51:21 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sUo10-000iDo-1s;
-	Fri, 19 Jul 2024 13:51:18 +0000
-Date: Fri, 19 Jul 2024 21:51:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [paulmck-rcu:dev.2024.07.17a] BUILD SUCCESS
- fe09f037acf7e918b5758f5f63d3fefbc9b66c9e
-Message-ID: <202407192157.MJySfrLU-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1721397156; c=relaxed/simple;
+	bh=5m/6tNBOY6VJGkhYsAlnvm2sT/AZ1AzuwTAgZlWDiw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LX8c5JAG0vYIc4SVRZveqlK4hcuAxlhaFE50HX6YttyhsTk6+d4x0jipEInfaArw9gmFhHTaZA055u4i6zGMvn9xnoHd4tc58VLJ4VoX98ROm1hMioRqXFLstujVPN3Pal2qypXWXo8UanidG4/hGKavZAID4Tsa9GCnTRg+6wY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dvvuwG/c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89239C32782;
+	Fri, 19 Jul 2024 13:52:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721397156;
+	bh=5m/6tNBOY6VJGkhYsAlnvm2sT/AZ1AzuwTAgZlWDiw4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dvvuwG/cSLij6G6Tyyloq6vZOLDBPwlkLd5DCAmZYxPt88yRChye9N2ar/S/trx2P
+	 v9WB4FfSbaOwMl0cMyrzNz2AYL+/8+TN6NbQw3GorJjYew/XCLo1AliytOAt1NgMUo
+	 EgCW9QZoJFli5BFNZAxIwkR31ttRkPuXUWBXNI0HvTWKsug9stCwUelRDxItnE5JOz
+	 4uBTJfLf6qKM4f487YjTxPLCf9fGSxMZO/0gJlSAY+hFDFhrE+1aablGlr3V2ZhTZJ
+	 95PF7OnKTWnDg55ABCqRXvRm/N9f1hTkiN5TMww2wjMj607AqHTjsysxRUCI9prXTq
+	 rHIsRUkW2MoYw==
+Date: Fri, 19 Jul 2024 15:52:31 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Jiri Kosina <jikos@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org
+Subject: Re: [PATCH] hid: bpf: avoid building struct ops without JIT
+Message-ID: <gf7t6iyj3ueewvbbmqo2ypzitiy6bvnzj2l6tgccvi22xe5fgm@xvlbq3vkndgr>
+References: <20240719095117.3482509-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240719095117.3482509-1-arnd@kernel.org>
 
-tree/branch: https://github.com/paulmckrcu/linux dev.2024.07.17a
-branch HEAD: fe09f037acf7e918b5758f5f63d3fefbc9b66c9e  rcuscale: Make rcu_scale_writer() tolerate repeated GFP_KERNEL failure
+On Jul 19 2024, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> The module does not do anything when the JIT is disabled, but instead
+> causes a warning:
+> 
+> In file included from include/linux/bpf_verifier.h:7,
+>                  from drivers/hid/bpf/hid_bpf_struct_ops.c:10:
+> drivers/hid/bpf/hid_bpf_struct_ops.c: In function 'hid_bpf_struct_ops_init':
+> include/linux/bpf.h:1853:50: error: statement with no effect [-Werror=unused-value]
+>  1853 | #define register_bpf_struct_ops(st_ops, type) ({ (void *)(st_ops); 0; })
+>       |                                                  ^~~~~~~~~~~~~~~~
+> drivers/hid/bpf/hid_bpf_struct_ops.c:305:16: note: in expansion of macro 'register_bpf_struct_ops'
+>   305 |         return register_bpf_struct_ops(&bpf_hid_bpf_ops, hid_bpf_ops);
+>       |                ^~~~~~~~~~~~~~~~~~~~~~~
+> 
+> This could be avoided by making HID-BPF just depend on JIT, but that
+> is probably not what we want here. Checking the other users of struct_ops,
+> I see that those just leave out the struct_ops usage, so do the same here.
 
-elapsed time: 1141m
+Actually, if we make the struct_ops part only depend on JIT HID-BPF is
+kind of moot. All we could do is use HID-BPF to communicate with the
+device, without getting any feedback, so nothing much more than what
+hidraw provides.
 
-configs tested: 182
-configs skipped: 4
+The only "interesting" bit we could do is inject a new event on a device
+as if it were originated from the device itself, but I really do not see
+the point without the struct_ops hooks.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+So I think struct_ops is now the base for HID-BPF, and if it's not
+available, we should not have HID-BPF at all.
 
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-alpha                            allyesconfig   gcc-13.3.0
-alpha                               defconfig   gcc-13.2.0
-arc                              alldefconfig   gcc-13.2.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                   randconfig-001-20240719   gcc-13.2.0
-arc                   randconfig-002-20240719   gcc-13.2.0
-arm                              allmodconfig   gcc-13.2.0
-arm                              allmodconfig   gcc-14.1.0
-arm                               allnoconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-14.1.0
-arm                                 defconfig   gcc-13.2.0
-arm                   randconfig-001-20240719   gcc-13.2.0
-arm                   randconfig-002-20240719   gcc-13.2.0
-arm                   randconfig-003-20240719   gcc-13.2.0
-arm                   randconfig-004-20240719   gcc-13.2.0
-arm                         s3c6400_defconfig   gcc-13.2.0
-arm64                            allmodconfig   clang-19
-arm64                            allmodconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                               defconfig   gcc-13.2.0
-arm64                 randconfig-001-20240719   gcc-13.2.0
-arm64                 randconfig-002-20240719   gcc-13.2.0
-arm64                 randconfig-003-20240719   gcc-13.2.0
-arm64                 randconfig-004-20240719   gcc-13.2.0
-csky                              allnoconfig   gcc-13.2.0
-csky                                defconfig   gcc-13.2.0
-csky                  randconfig-001-20240719   gcc-13.2.0
-csky                  randconfig-002-20240719   gcc-13.2.0
-hexagon                          allmodconfig   clang-19
-hexagon                          allyesconfig   clang-19
-i386                             allmodconfig   clang-18
-i386                             allmodconfig   gcc-13
-i386                              allnoconfig   clang-18
-i386                              allnoconfig   gcc-13
-i386                             allyesconfig   clang-18
-i386                             allyesconfig   gcc-13
-i386         buildonly-randconfig-001-20240719   clang-18
-i386         buildonly-randconfig-002-20240719   clang-18
-i386         buildonly-randconfig-003-20240719   clang-18
-i386         buildonly-randconfig-003-20240719   gcc-10
-i386         buildonly-randconfig-004-20240719   clang-18
-i386         buildonly-randconfig-005-20240719   clang-18
-i386         buildonly-randconfig-005-20240719   gcc-10
-i386         buildonly-randconfig-006-20240719   clang-18
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240719   clang-18
-i386                  randconfig-002-20240719   clang-18
-i386                  randconfig-003-20240719   clang-18
-i386                  randconfig-004-20240719   clang-18
-i386                  randconfig-004-20240719   gcc-13
-i386                  randconfig-005-20240719   clang-18
-i386                  randconfig-006-20240719   clang-18
-i386                  randconfig-011-20240719   clang-18
-i386                  randconfig-012-20240719   clang-18
-i386                  randconfig-013-20240719   clang-18
-i386                  randconfig-014-20240719   clang-18
-i386                  randconfig-015-20240719   clang-18
-i386                  randconfig-015-20240719   gcc-13
-i386                  randconfig-016-20240719   clang-18
-i386                  randconfig-016-20240719   gcc-13
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch                           defconfig   gcc-13.2.0
-loongarch             randconfig-001-20240719   gcc-13.2.0
-loongarch             randconfig-002-20240719   gcc-13.2.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                                defconfig   gcc-13.2.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-mips                       bmips_be_defconfig   gcc-13.2.0
-mips                        maltaup_defconfig   gcc-13.2.0
-mips                   sb1250_swarm_defconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-13.2.0
-nios2                               defconfig   gcc-13.2.0
-nios2                 randconfig-001-20240719   gcc-13.2.0
-nios2                 randconfig-002-20240719   gcc-13.2.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc                generic-32bit_defconfig   gcc-13.2.0
-parisc                randconfig-001-20240719   gcc-13.2.0
-parisc                randconfig-002-20240719   gcc-13.2.0
-parisc64                            defconfig   gcc-13.2.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   clang-19
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                    amigaone_defconfig   gcc-13.2.0
-powerpc                    gamecube_defconfig   gcc-13.2.0
-powerpc                 mpc837x_rdb_defconfig   gcc-13.2.0
-powerpc                      ppc64e_defconfig   gcc-13.2.0
-powerpc               randconfig-001-20240719   gcc-13.2.0
-powerpc               randconfig-002-20240719   gcc-13.2.0
-powerpc               randconfig-003-20240719   gcc-13.2.0
-powerpc64             randconfig-001-20240719   gcc-13.2.0
-powerpc64             randconfig-002-20240719   gcc-13.2.0
-powerpc64             randconfig-003-20240719   gcc-13.2.0
-riscv                            allmodconfig   clang-19
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   clang-19
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-14.1.0
-riscv                 randconfig-001-20240719   gcc-13.2.0
-riscv                 randconfig-002-20240719   gcc-13.2.0
-s390                             allmodconfig   clang-19
-s390                              allnoconfig   clang-19
-s390                              allnoconfig   gcc-14.1.0
-s390                             allyesconfig   clang-19
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   gcc-14.1.0
-s390                  randconfig-001-20240719   gcc-13.2.0
-s390                  randconfig-002-20240719   gcc-13.2.0
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-13.2.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-14.1.0
-sh                          r7785rp_defconfig   gcc-13.2.0
-sh                    randconfig-001-20240719   gcc-13.2.0
-sh                    randconfig-002-20240719   gcc-13.2.0
-sh                   sh7770_generic_defconfig   gcc-13.2.0
-sh                             shx3_defconfig   gcc-13.2.0
-sh                              ul2_defconfig   gcc-13.2.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-14.1.0
-sparc64               randconfig-001-20240719   gcc-13.2.0
-sparc64               randconfig-002-20240719   gcc-13.2.0
-um                               allmodconfig   clang-19
-um                                allnoconfig   clang-17
-um                                allnoconfig   gcc-14.1.0
-um                               allyesconfig   gcc-13
-um                                  defconfig   gcc-14.1.0
-um                             i386_defconfig   gcc-14.1.0
-um                    randconfig-001-20240719   gcc-13.2.0
-um                    randconfig-002-20240719   gcc-13.2.0
-um                           x86_64_defconfig   gcc-14.1.0
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240719   gcc-13
-x86_64       buildonly-randconfig-002-20240719   gcc-13
-x86_64       buildonly-randconfig-003-20240719   gcc-13
-x86_64       buildonly-randconfig-004-20240719   gcc-13
-x86_64       buildonly-randconfig-005-20240719   gcc-13
-x86_64       buildonly-randconfig-006-20240719   gcc-13
-x86_64                              defconfig   clang-18
-x86_64                              defconfig   gcc-13
-x86_64                randconfig-001-20240719   gcc-13
-x86_64                randconfig-002-20240719   gcc-13
-x86_64                randconfig-003-20240719   gcc-13
-x86_64                randconfig-004-20240719   gcc-13
-x86_64                randconfig-005-20240719   gcc-13
-x86_64                randconfig-006-20240719   gcc-13
-x86_64                randconfig-011-20240719   gcc-13
-x86_64                randconfig-012-20240719   gcc-13
-x86_64                randconfig-013-20240719   gcc-13
-x86_64                randconfig-014-20240719   gcc-13
-x86_64                randconfig-015-20240719   gcc-13
-x86_64                randconfig-016-20240719   gcc-13
-x86_64                randconfig-071-20240719   gcc-13
-x86_64                randconfig-072-20240719   gcc-13
-x86_64                randconfig-073-20240719   gcc-13
-x86_64                randconfig-074-20240719   gcc-13
-x86_64                randconfig-075-20240719   gcc-13
-x86_64                randconfig-076-20240719   gcc-13
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
-xtensa                randconfig-001-20240719   gcc-13.2.0
-xtensa                randconfig-002-20240719   gcc-13.2.0
+> 
+> Fixes: ebc0d8093e8c ("HID: bpf: implement HID-BPF through bpf_struct_ops")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/hid/bpf/Makefile           | 3 ++-
+>  drivers/hid/bpf/hid_bpf_dispatch.h | 6 ++++++
+>  2 files changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hid/bpf/Makefile b/drivers/hid/bpf/Makefile
+> index d1f2b81788ca..7566be8eefba 100644
+> --- a/drivers/hid/bpf/Makefile
+> +++ b/drivers/hid/bpf/Makefile
+> @@ -8,4 +8,5 @@ LIBBPF_INCLUDE = $(srctree)/tools/lib
+>  obj-$(CONFIG_HID_BPF) += hid_bpf.o
+>  CFLAGS_hid_bpf_dispatch.o += -I$(LIBBPF_INCLUDE)
+>  CFLAGS_hid_bpf_jmp_table.o += -I$(LIBBPF_INCLUDE)
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Unrelated to your patch, but looks like I forgot to remove that entry
+from the Makefile now that hid_bpf_jmp_table.c is not available :)
+
+Cheers,
+Benjamin
+
+> -hid_bpf-objs += hid_bpf_dispatch.o hid_bpf_struct_ops.o
+> +hid_bpf-y += hid_bpf_dispatch.o
+> +hid_bpf-$(CONFIG_BPF_JIT) += hid_bpf_struct_ops.o
+> diff --git a/drivers/hid/bpf/hid_bpf_dispatch.h b/drivers/hid/bpf/hid_bpf_dispatch.h
+> index 44c6ea22233f..577572f41454 100644
+> --- a/drivers/hid/bpf/hid_bpf_dispatch.h
+> +++ b/drivers/hid/bpf/hid_bpf_dispatch.h
+> @@ -14,7 +14,13 @@ struct hid_bpf_ctx_kern {
+>  struct hid_device *hid_get_device(unsigned int hid_id);
+>  void hid_put_device(struct hid_device *hid);
+>  int hid_bpf_allocate_event_data(struct hid_device *hdev);
+> +#ifdef CONFIG_BPF_JIT
+>  void __hid_bpf_ops_destroy_device(struct hid_device *hdev);
+> +#else
+> +static inline void __hid_bpf_ops_destroy_device(struct hid_device *hdev)
+> +{
+> +}
+> +#endif
+>  int hid_bpf_reconnect(struct hid_device *hdev);
+>  
+>  struct bpf_prog;
+> -- 
+> 2.39.2
+> 
 
