@@ -1,97 +1,136 @@
-Return-Path: <linux-kernel+bounces-257512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB96F937B0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:30:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA474937B14
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E40B1F22490
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:30:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 682F3B21A6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BCF9146A9A;
-	Fri, 19 Jul 2024 16:30:29 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94AB1146585;
+	Fri, 19 Jul 2024 16:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Ne6JvRTb"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8624B1459F9;
-	Fri, 19 Jul 2024 16:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F7917BA1;
+	Fri, 19 Jul 2024 16:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721406628; cv=none; b=p4pllCGn0amaYFVrZcfM7DO9TflcFAp1EDO9Lp3nGPQirqbRlcwNl0h+G6oo79x1rYU0f5aF+GnigimEUVz5C+1NaUg+vg0mLXAFwV2obIGI3T05wc3sC2wIFIO90DJTPnWtu2n9Bdduz1pVJqqR2Ksl89ZoQKQDwEamLCAKx7Y=
+	t=1721406785; cv=none; b=ZkIS/MuYY8qDaO4rz2cpOBxjCrpKhomBQKQLY70DPi46Y/yrVBbB0rxbnxoMZJIXZptxV7Hv0anzeS9FDPsncIyw3LunBo7dnqyanf/IVuaqQ27KXX9+Q9hAotc8U9/6nNuBOGW33pl+HMXe3CZd4DY7kCFd7lLIns44sd9+U/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721406628; c=relaxed/simple;
-	bh=apjbNIgzFKzsJkQExYidFUciZLfx74+MuVZgeVEKk40=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ekmLApW2b4//jlZ7idKF3sCVKOehnzKHxueyMJ+BMb5E9Anv+RyKVB6ialxY44b9VPN22Z26rP3IW2GZHgSSMNLiYHn0pqhAaoHsu6We6bvKD0iKqLumgDkKQtbAdEqxWCn3bbT4FiXRTxCSNGUzhz1N8ysOQTncZRoactpaefU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WQZqJ0Xzhz6K6TT;
-	Sat, 20 Jul 2024 00:28:28 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id B243F140C98;
-	Sat, 20 Jul 2024 00:30:22 +0800 (CST)
-Received: from localhost (10.48.157.16) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 19 Jul
- 2024 17:30:16 +0100
-Date: Fri, 19 Jul 2024 17:30:15 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Mike Rapoport <rppt@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, Alexander Gordeev
-	<agordeev@linux.ibm.com>, Andreas Larsson <andreas@gaisler.com>, "Andrew
- Morton" <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, "Borislav
- Petkov" <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>, Christophe
- Leroy <christophe.leroy@csgroup.eu>, Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, David Hildenbrand
-	<david@redhat.com>, "David S. Miller" <davem@davemloft.net>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Heiko Carstens
-	<hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar
-	<mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, "John Paul Adrian
- Glaubitz" <glaubitz@physik.fu-berlin.de>, Michael Ellerman
-	<mpe@ellerman.id.au>, Palmer Dabbelt <palmer@dabbelt.com>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, "Thomas
- Bogendoerfer" <tsbogend@alpha.franken.de>, Thomas Gleixner
-	<tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>, Will Deacon
-	<will@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<loongarch@lists.linux.dev>, <linux-mips@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <linux-riscv@lists.infradead.org>,
-	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>,
-	<sparclinux@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-	<linux-mm@kvack.org>, <x86@kernel.org>
-Subject: Re: [PATCH 07/17] x86/numa: move FAKE_NODE_* defines to numa_emu
-Message-ID: <20240719173015.00002a01@Huawei.com>
-In-Reply-To: <20240716111346.3676969-8-rppt@kernel.org>
-References: <20240716111346.3676969-1-rppt@kernel.org>
-	<20240716111346.3676969-8-rppt@kernel.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1721406785; c=relaxed/simple;
+	bh=vCgDxtM92EMcet/2ODbLilYIezMdoV2VzFsAlpmiByg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rsqRom4vonlzOQkRg5bHxWX2fbDe9xBPmLZN5eAjZa8dcOG6AOORdeZnlnKfwk3gFD42C/z9gAmPi1O8eG19mkkjzdz9FK5LLLieBWYySV4MpSv3pEvkH4u7uYTZckhYAE50bAaZhH3gML+4yQb1d3fV7FidPtoOuGJ+RMTx+z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Ne6JvRTb; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1721406747; x=1722011547; i=markus.elfring@web.de;
+	bh=tKB/9IfmPQhFDUyEYuYxts3W9iVFsm3A7Nr8lOyjDAQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Ne6JvRTbEcEOZwvZlV45xt7xazD8uktJJ6/x8cotkh47eyZHPEKRBLPYmS2s8ZBE
+	 eQ9w+x4hmsfyafJCmLrWyDPN3Nkx5itj8Mxpx7UX6YlI1OEwMAUXYpoZsoIr/eFOA
+	 YXWEOnMh+ITIvkxoUfLRfI3eKEVnyRgbOCsuyA9ZpW2NqCC7nViGdAQbvB3V92UoF
+	 9L1J7umyYkJoKSnnEcUxT0eOfLSsH/V7AzDQOS1UGEBtJ7/+CWxIDW+Hx3AmA1YdD
+	 jAwe9cM7nyGeAPfU4ca5/r46+zeJf2wgL0MQpEeYk18F4afqE9l1bmBSvTTLiQRUq
+	 /SQf58rFx2WdsOV5Ug==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MgRM5-1rpj0u1xiJ-00e50U; Fri, 19
+ Jul 2024 18:32:27 +0200
+Message-ID: <b3943cc3-234f-4789-a894-314a3890ac8e@web.de>
+Date: Fri, 19 Jul 2024 18:32:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf trace: Avoid duplicate code in fprintf_duration()
+To: Christian Heusel <christian@heusel.eu>, linux-perf-users@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
+ Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+ Kan Liang <kan.liang@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>,
+ Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <c564da16-062f-4da6-9021-c68f9c6eab63@web.de>
+ <c105871a-6462-4678-9f0c-b2ed5a254bb1@heusel.eu>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <c105871a-6462-4678-9f0c-b2ed5a254bb1@heusel.eu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:izcLLRtKN2tl5cnMkA2RKDkS0FZOj4kaZVkPTSuhXHCil2apFGj
+ mZDo3OOyNt9/QGuNhDKcUHrz4sQ4JqwjtXfS9Gt7UMUr+9/H+1XlwpCD5xnmu+5+B1nKAB7
+ tKfwCMHmrHpF6l4vm1qKJGpAHXW4RGTUy2hBolcmMyXGc/ZbIf+7Ux3mTrzHJNhQxwWkqt7
+ PMGp66wOR2lbUBoghbIgQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:qdvJeijTlOU=;xLDU+rJhYO3/M+UsHZgEzc29UmV
+ TkjU5Ewn4rgok96ps0o06ljVo124/hLrRJ4oYqok4n1s1IDfackadaxK0kDooufAGcwJMGHZF
+ bPasFyTZ94/AYm/V+uJjJUf7JP0kuSyS4bouIxLVKRtVfqi/SKyy/GMs0bb7pLN7vRj9yAbG+
+ Nkk1IEa6RoEGeqn6J56P5Wq7XklT+rlYjC4No+CujL8bjU6B+2p3f6PU5qEVrZg59igZ0btmE
+ 0VVq/pQxb+PhabFYGg1VA6t3FzGdqq6N3LkPFwo2QT8y4ZuQO+ahFtGlDjSF6HanHxVMHJWeW
+ svu2YcwIGiRZ8h4+qrGZxt5YI2Xh3SGYS8jzXNKRu+x002eBFEPyCLqgD+TM2OWIffMr/jwhc
+ NfmXU9lXzDbG+jwYGTWFCUgx45DfiBDdh+VCO75vYf8HMrxhPHfx7qvRbpjRaOg8sAaH8RiNW
+ bkIRMsvSjrHvh8x4yYX2YAq8l8GQNtkVeLtOBMQow+rqPqpMJDRDbW0PxUOSY57VH0CGbt95t
+ Z9+HiTVf03bNij714zwqIdNvvstLz9dsPG5Q+s6Mo5Wu73AT0UCAQxcNyrHcMjmA99YiN0TDx
+ waW7TRLWxFWoe+0BEtTmF2X1AJwozN1cRqUmMSgAOdx0yV3pn/+Ln2wrKaoZ0XwXqVqdAL2Al
+ WsPZ2UOveqOnn/urbvUbsHCWAGc9LXqnun4NXbdnFZAfa7C4zxcgq+jgQMLuYsIx+C2U7zTD1
+ zdYvK+UF7FaxXl8d41u99xHEtgUBlHYhfW+NEp0zRF0DKNb0NgcJaVrEOiRagBNXB4VqZhMZ8
+ d6xWLCnJSTjCFrqp4JR/bN7Q==
 
-On Tue, 16 Jul 2024 14:13:36 +0300
-Mike Rapoport <rppt@kernel.org> wrote:
+=E2=80=A6
+>> +++ b/tools/perf/builtin-trace.c
+>> @@ -1258,12 +1258,16 @@ static size_t fprintf_duration(unsigned long t,=
+ bool calculated, FILE *fp)
+>>
+>>  	if (!calculated)
+>>  		printed +=3D fprintf(fp, "         ");
+>> -	else if (duration >=3D 1.0)
+>> -		printed +=3D color_fprintf(fp, PERF_COLOR_RED, "%6.3f ms", duration)=
+;
+>> -	else if (duration >=3D 0.01)
+>> -		printed +=3D color_fprintf(fp, PERF_COLOR_YELLOW, "%6.3f ms", durati=
+on);
+>>  	else
+>> -		printed +=3D color_fprintf(fp, PERF_COLOR_NORMAL, "%6.3f ms", durati=
+on);
+>> +		printed +=3D color_fprintf(fp,
+>> +					 (duration >=3D 1.0
+>> +					 ? PERF_COLOR_RED
+>> +					 : (duration >=3D 0.01
+>> +					   ? PERF_COLOR_YELLOW
+>> +					   : PERF_COLOR_NORMAL)),
+>> +					 "%6.3f ms",
+>> +					 duration);
+>
+> Why is this a desirable change?
 
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> 
-> The definitions of FAKE_NODE_MIN_SIZE and FAKE_NODE_MIN_HASH_MASK are
-> only used by numa emulation code, make them local to
-> arch/x86/mm/numa_emulation.c
-> 
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+I find it helpful to specify the affected function call only once
+in such an if branch.
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+>                                 Folding the if-statements into the
+> ternary operator makes the code quite unreadable compared to what it was
+> like before and doesn't give any obvious improvement.
+
+Do you prefer to store the result of the colour determination into another
+local variable so that it can be passed as a separate parameter?
+
+Regards,
+Markus
 
