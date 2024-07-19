@@ -1,101 +1,169 @@
-Return-Path: <linux-kernel+bounces-256895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 074599371F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 03:22:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3D169371F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 03:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A10861F21B4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 01:22:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98E9B1F21ADB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 01:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4376E4404;
-	Fri, 19 Jul 2024 01:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE11B2566;
+	Fri, 19 Jul 2024 01:23:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yipn0unD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bKnmvyUf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5E52566
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 01:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C811388;
+	Fri, 19 Jul 2024 01:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721352115; cv=none; b=Q3734tyeuU5kGmrkzb6X+G10Dzh3GW72qh5kLC/7IpHc/VLbMYbdMWZ7zqULpSae6lx4SGjS3cJiH6ASXxpTHTJgc4HfsXkLoA30aiPlkIBcU3qIdEOpqRWcSNyXCq1s35PYxoUNoxnmda7p5kgUNIqX/GnbgAsVLgY2Hi/KyYA=
+	t=1721352192; cv=none; b=RDkEHHj+GIlzoSEtu6sZ8p3VaLX8wOB9p3EiMHkIg9OumFLQJTxiL+UOS5H1vYVWLko0KdiM6J82igrh2ViKS+19w7Nq+MOZ9qqoz7/MN5cs1fLc/JCquNyG8xUDpRPPWTvy5F+HAwJAUcOIW4LCgIqtXNsfO72S184ZNNvJcDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721352115; c=relaxed/simple;
-	bh=x3kEOynn+qytEGiRnI4FutZo1MBFVOPLc2E5HKN0Tgk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=dADcHXPMSX8EJz5iFRKCJ/9+8WFRRQN54o4GAFjrij6bw3s+bkb5EKPyM0VvngAIbgSpij/qiL0gMGX1Ecy7UUiL/HjmKm8h1fdgXQjnJ/xsPA+ZkLD7R0PHZUiu8eTJoQsWBY8LVTLrnVWL//YXWQkaVEkj5unG2Uaz1fyxStc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yipn0unD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8AEDC4AF09;
-	Fri, 19 Jul 2024 01:21:52 +0000 (UTC)
+	s=arc-20240116; t=1721352192; c=relaxed/simple;
+	bh=TcVAZ4o5JqH+rw1XtKK3khM+41WGsSy3IOlZhc+8zLY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NvbEi0IQ+cv0M0ZV8N4AedCnq8QVCaOqCVA9wJr8O3b8qDgx79uis8wQ93MjkY4xKhmRNSqEzxO0aqLoi9OxPGRGWLjTT0zHQIlXdiF7g9tBaaohWYR+Y26tfWU8q2BLUWbUhiuO/bmsDB2965kd1BiquH9xsxr4/Jc9UGSmKTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bKnmvyUf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DBDFC4AF0E;
+	Fri, 19 Jul 2024 01:23:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721352115;
-	bh=x3kEOynn+qytEGiRnI4FutZo1MBFVOPLc2E5HKN0Tgk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Yipn0unDa4dhXTBt34nlfM703lIJK6NWdRyftjVFgk10WSwEux/sHwz0jCNrP1gHl
-	 TEzmsFRbpC0pLuyq7kEj0DSKhZnso0qDLpI7F2ZrGibRkPQChR7jecsTBUZKdER0wi
-	 1IJATBNUq99MMtfEMBFmaRIGQVFqRsXSdXjukZ5nGJoK9UjnWAZuLq1DMg0QF8Ei2q
-	 MsGl0NgYuAedKcA3HcJDB5uDk+iM+F5ZDYKkWIyt/LIkPJT5StN1/G7xEj4It0nfXV
-	 4O51edTUNQ+fcGJhRYgD1KeI8t8ruLwiqayOrGJIQk1O/pm6yij7hNV8D0bCWgYAz9
-	 RcZy/ZVRjP4mA==
-Date: Fri, 19 Jul 2024 10:21:50 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Andrii Nakryiko
- <andrii@kernel.org>, Jeff Johnson <quic_jjohnson@quicinc.com>, Jiri Olsa
- <jolsa@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] probes: Updates for v6.11
-Message-Id: <20240719102150.197c7fc7459459a8c439d972@kernel.org>
-In-Reply-To: <20240719102824.1e086a40@canb.auug.org.au>
-References: <20240716234445.a17a40e8d3d7b4ba5cef949e@kernel.org>
-	<20240719102824.1e086a40@canb.auug.org.au>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1721352191;
+	bh=TcVAZ4o5JqH+rw1XtKK3khM+41WGsSy3IOlZhc+8zLY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bKnmvyUfjIv97LB/d19T2GocMlByH83H67qBMG5ZIAvtvblyoxlBnWavOcIOu4rTn
+	 e16Z1oTCAgAOYgNX8E4NFIkx6NlnMlo8fcEDqNVcdBNkIdZ6J5BKlKKN16Ov/VyLxN
+	 C1075NNZyqQCNOP1mXplNB9AfS/GJ41cdo+4qWt64bb/83rQhrDNBtH3HBqFuh+wuP
+	 duC5BbJupk5IXvXzdFFHEM0WVQT46ZlZ6mlQQMQ8W51EkIcuDTqUf4rxQ8MdXoet+l
+	 /T+HcBZT4aVHYnCAFwZS8dO15tSLYTIO+xGKwOdXGj061Ya2eawiZ5SbtdSqj2mPIU
+	 QNLxgKewuf+/w==
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5a2ffc34431so78226a12.0;
+        Thu, 18 Jul 2024 18:23:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVPqJ5PA+NK+qwUFNH7VVrfty1CM9G0NRqDGf9umFhYeufMFrSwt9zIcHw00EO5yS5hr2SMbHrFcGpo+ODdrgHcw7SUBkrAGd3hXyW9Y6JCjODCM4kuGjNqGObkXeZamBTzhyUfEH6ZxuxjJNsC
+X-Gm-Message-State: AOJu0YyiyMASOf6uH+5FV0sOjIjIDLL8msgcjvr2MtK4erKqCM6mTCs+
+	dfcUrGaoa1eZHHbWP+AKy/XKIPTfMUYFXr84qawmoUksVFp2PKE3OWevCAR0qfhhJLrP2qNGA28
+	4yupFqP9ayy6xMx3iYOIw8KMPzHs=
+X-Google-Smtp-Source: AGHT+IG+qKjO5YiCC/oG0ujwmVvgw6ET6u//7Pu323EbszO1mAZTdlhl0JlKHspoa2FnkNKrGOS40auZtiTMPAODExI=
+X-Received: by 2002:a50:cd55:0:b0:5a2:2b56:e06e with SMTP id
+ 4fb4d7f45d1cf-5a22b56e48cmr2218940a12.36.1721352190063; Thu, 18 Jul 2024
+ 18:23:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20240718124739.3834489-1-ruanjinjie@huawei.com>
+In-Reply-To: <20240718124739.3834489-1-ruanjinjie@huawei.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Fri, 19 Jul 2024 09:22:56 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H6e8RTU2avkLY7EqO_xJeRdSHm_VzHvTzmqezHQwMSr3g@mail.gmail.com>
+Message-ID: <CAAhV-H6e8RTU2avkLY7EqO_xJeRdSHm_VzHvTzmqezHQwMSr3g@mail.gmail.com>
+Subject: Re: [PATCH] loongarch: Support RANDOMIZE_KSTACK_OFFSET
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: kernel@xen0n.name, kees@kernel.org, gustavoars@kernel.org, arnd@arndb.de, 
+	maobibo@loongson.cn, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 19 Jul 2024 10:28:24 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi, Jinjie,
 
-> Hi Linus,
-> 
-> On Tue, 16 Jul 2024 23:44:45 +0900 Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-> >
-> > Probes updates for v6.11:
-> > 
-> > Uprobes:
-> > - x86/shstk: Make return uprobe work with shadow stack.
-> > - Add uretprobe syscall which speeds up the uretprobe 10-30% faster. This
-> >   syscall is automatically used from user-space trampolines which are
-> >   generated by the uretprobe. If this syscall is used by normal
-> >   user program, it will cause SIGILL. Note that this is currently only
-> >   implemented on x86_64.
-> >   (This also has 2 fixes for adjusting the syscall number to avoid conflict
-> >    with new *attrat syscalls.)
-> 
-> But another fix that I have been carrying was missed:
-> 
-> https://lore.kernel.org/lkml/20240717132155.6ca2ce47@canb.auug.org.au/
-> 
-> Just the added change to scripts/syscall.tbl (and obviously needs
-> adjusting because the *xattrat* syscalss have not been merged yet).
+Thank you for your patch, but I think it is better to use drdtime()
+instead of get_random_u16()? drdtime() is similar to rdtsc() of x86
+which is defined in arch/loongarch/include/asm/loongarch.h.
 
-Ah, I thought that was for helping Linus when he merge the commits.
-And actually, this number is used in other part (e.g. testing), I added it.
-When xattarat syscalls are merged (until -rc1?), this difference is solved,
-isn't it?
+Huacai
 
-Thank you,
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Thu, Jul 18, 2024 at 8:42=E2=80=AFPM Jinjie Ruan <ruanjinjie@huawei.com>=
+ wrote:
+>
+> Add support of kernel stack offset randomization while handling syscall,
+> the offset is defaultly limited by KSTACK_OFFSET_MAX().
+>
+> In order to avoid trigger stack canaries (due to __builtin_alloca) and
+> slowing down the entry path, use __no_stack_protector attribute to
+> disable stack protector for do_syscall() at function level.
+>
+> With this patch, the REPORT_STACK test show that:
+>         `loongarch64 bits of stack entropy: 7`
+>
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+>  arch/loongarch/Kconfig          |  1 +
+>  arch/loongarch/kernel/syscall.c | 16 +++++++++++++++-
+>  2 files changed, 16 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> index ddc042895d01..fcf6451b4e38 100644
+> --- a/arch/loongarch/Kconfig
+> +++ b/arch/loongarch/Kconfig
+> @@ -106,6 +106,7 @@ config LOONGARCH
+>         select HAVE_ARCH_KFENCE
+>         select HAVE_ARCH_KGDB if PERF_EVENTS
+>         select HAVE_ARCH_MMAP_RND_BITS if MMU
+> +       select HAVE_ARCH_RANDOMIZE_KSTACK_OFFSET
+>         select HAVE_ARCH_SECCOMP
+>         select HAVE_ARCH_SECCOMP_FILTER
+>         select HAVE_ARCH_TRACEHOOK
+> diff --git a/arch/loongarch/kernel/syscall.c b/arch/loongarch/kernel/sysc=
+all.c
+> index ec17cd5163b7..a332c6cb76ec 100644
+> --- a/arch/loongarch/kernel/syscall.c
+> +++ b/arch/loongarch/kernel/syscall.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/entry-common.h>
+>  #include <linux/errno.h>
+>  #include <linux/linkage.h>
+> +#include <linux/randomize_kstack.h>
+>  #include <linux/syscalls.h>
+>  #include <linux/unistd.h>
+>
+> @@ -39,7 +40,7 @@ void *sys_call_table[__NR_syscalls] =3D {
+>  typedef long (*sys_call_fn)(unsigned long, unsigned long,
+>         unsigned long, unsigned long, unsigned long, unsigned long);
+>
+> -void noinstr do_syscall(struct pt_regs *regs)
+> +__no_stack_protector void noinstr do_syscall(struct pt_regs *regs)
+>  {
+>         unsigned long nr;
+>         sys_call_fn syscall_fn;
+> @@ -55,11 +56,24 @@ void noinstr do_syscall(struct pt_regs *regs)
+>
+>         nr =3D syscall_enter_from_user_mode(regs, nr);
+>
+> +       add_random_kstack_offset();
+> +
+>         if (nr < NR_syscalls) {
+>                 syscall_fn =3D sys_call_table[nr];
+>                 regs->regs[4] =3D syscall_fn(regs->orig_a0, regs->regs[5]=
+, regs->regs[6],
+>                                            regs->regs[7], regs->regs[8], =
+regs->regs[9]);
+>         }
+>
+> +       /*
+> +        * This value will get limited by KSTACK_OFFSET_MAX(), which is 1=
+0
+> +        * bits. The actual entropy will be further reduced by the compil=
+er
+> +        * when applying stack alignment constraints: 16-byte (i.e. 4-bit=
+)
+> +        * aligned, which will remove the 4 low bits from any entropy cho=
+sen
+> +        * here.
+> +        *
+> +        * The resulting 6 bits of entropy is seen in SP[9:4].
+> +        */
+> +       choose_random_kstack_offset(get_random_u16());
+> +
+>         syscall_exit_to_user_mode(regs);
+>  }
+> --
+> 2.34.1
+>
+>
 
