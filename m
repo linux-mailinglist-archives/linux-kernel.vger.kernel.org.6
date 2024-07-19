@@ -1,161 +1,111 @@
-Return-Path: <linux-kernel+bounces-257415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7A8E93799D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:09:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 368A49379A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:10:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8BA91C21C9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:09:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E75D4281599
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00721145356;
-	Fri, 19 Jul 2024 15:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E1B5664;
+	Fri, 19 Jul 2024 15:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HmgzuFt/"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="SgmMEbZ0"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C88C1A269;
-	Fri, 19 Jul 2024 15:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A63713D63B
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 15:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721401731; cv=none; b=K1NHfMqRl/HbuHz5mvmZQfy7CnwtbwdpXiDw+0n5fa89wVRpR5Pjd9Y1XVbCA6/Hdh81J+hGOhu4GY93N7I3nmYNTRIjoMEirk2CINMpSjStAubMm8bKWhbmLWc+SdmjRx+korCuBRVvrqwDIcYMM8nBmUAEjoDWYjL5lfP9d3g=
+	t=1721401845; cv=none; b=pMObeQFtgAUYVnzfaaWxslIx60ZR/wBirI4JW1LIV8hTgBvYmG9mS6ewcPVYsuE//kC9fzyW+zqKUW3Z0jAAvla3rnbXFltPYiut2KY+qp1Q/AIdN/5v3+bt0znLxAR+9pIwS8vZxOxOxshXLjQ5FOUyxM2apQwS/sObjWFKQWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721401731; c=relaxed/simple;
-	bh=VhPEroq9S3SvZBq0wNrcLsUcqdls8YtNMYLriQuaKFI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PAHYs8g76T2ebKthF0XYv1rc8pRil5gtvvYHMz5TdhpAAufEM8FKwsRdpVoPPSgiZi9Q+t5Vlhgt+L9sTAO6cWnIQyn4oESYZ07hae4Zwtcezv45vrumfpKbelMWpWjIfmVnqCjidXTFabcyFe+/U1nc1QizjRL8HvxTQ9C3/Wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HmgzuFt/; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2eeec60a324so30407321fa.2;
-        Fri, 19 Jul 2024 08:08:49 -0700 (PDT)
+	s=arc-20240116; t=1721401845; c=relaxed/simple;
+	bh=Y8h40+hGzCh1f/VqyHlIyYZ9PFSZTGJrEzS5F3GcZgo=;
+	h=Subject:Date:Message-ID:MIME-Version:Cc:From:To; b=hV8Z8FCoYnFM6+HOP9S1cvy/ax56ISE+1TFhjbaFGmHYY6PJCIELqLiobzaclgH0WxUgxtDdLwjLnoINVjEFb6WNYNAaDrUAeEmu+5xWV4bZpWYtAHYoJ4lAQ0jVQ7T+n1xRWXjeUiEP1T65soxh8AAAWQHKD4AUlTBs6eikbJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=SgmMEbZ0; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70cdc91b227so777545b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 08:10:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721401728; x=1722006528; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pxJdvG4GHPuYd2T0/+njfFwbHisz/VRVz1QjmDGv7Rg=;
-        b=HmgzuFt/X2CI25m5+6rk7cOy2WvDXYe9WUkgkxcez5rsR91TGAiEMESozOj4geaBc5
-         sSvSVPn0vaVb7iS6JN825/iFXd+0HBjGHl0tN5FgKiarDsHY9dj7NjgSwZqcYucddX75
-         5UqQCYcNcG8tNOrc43nK3Go5XnIKtRhn1g825RkPO7tjFwwKTdZwh0ZPAfPNNelvw/u4
-         w3N6XfDY9imyAGULqS2y9UrjqgQ7lETNU1IF5evkywWjQaJWVIhHFCY7vckZDUZfdPPY
-         j1mUfJnNDnusrMvE0/iPHt23gkeV0IAXSIrbmh5xXuXMBpXfowgAIkZqymleQHpDjbu3
-         iKZQ==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721401843; x=1722006643; darn=vger.kernel.org;
+        h=to:from:cc:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:to:cc:subject:date:message-id:reply-to;
+        bh=UANqZqiDc/hObQEPAeTfbPtjoPREHLRh8wuDH4Ya/0Q=;
+        b=SgmMEbZ0F7zXeO8j6NJIlJ5ZEuaALjcpQ0kOBd5EC1BllxKtuW3ULRBDoxomlL/uMq
+         tucWo+OtRrDAotcwgmq4dn49AylOTYx+AsuA8EJaa59Yz+FczeLcthCy4sDzPcH3yJAh
+         AA9QCDPH+jW7vMSd7RrMOFvKoAdhpC7sPaa3NLhLt4DQWcMbPmQmZSZh6TNOUlxVVvJU
+         D0eb8wLCIk/0Om3/5MoJ8gKd6/uOY4d5ZA1VfMRYj5+VWnKTfaTFKwPr5TWOBndafqU9
+         sLmtyrPoU19qSB2KITELOQmUv6mi29VJ2TGceclWXnqVWoIRQCppX5Qq1YD7IgnQpxJ4
+         M5bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721401728; x=1722006528;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pxJdvG4GHPuYd2T0/+njfFwbHisz/VRVz1QjmDGv7Rg=;
-        b=v4JGJZGp8bgMJTyoTCfDk9Ocp4EYl22K1P5mVvqk5PMmBaoMEKFpLQg5rs+8YzTTeS
-         ivhZbXG7mKf/mYhAeQNhLS3cUqgzixfFyLmAT74YOf0cCAwh6Y/+OpxAQ3IKAWFSdoRn
-         ivbFS4s8+v7UBbTSRXfxdnDQLBP95Cmx/S42hxPv0kqjGmSEkcMCrmeCaebmT/Zh0X7n
-         UjwAAYMN3VjaxDr3s03/FZVxnzldzpq4koCIDEHpI907WrPUWwfDbVZefbp5ELjc24K+
-         3kLDCEAEv8N3O2A/uKNqCkIJUFYvwZHoW9ZQj5kOLVePsNbOxFCPuykH0D3put4RvJkd
-         9YBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTVy4zNyLf8h0qHnzQu4HHgxgmuCD0y8QNcK++C8uSGo5944R+q5/aBykY5nI6wEpSj2mj4ndsWnKJAKcLLUOP2CW6nou2PHDerAYjMLS9GkDp3zgIVG9ISxKKrWlOeuAvfGGeqjMkKJhcQ+1Z
-X-Gm-Message-State: AOJu0YzKOJ1zMs58IKBz1KW02h64fhW0ZQhdOTGcEQSd6tom/kW01Rub
-	sRVXM3M+jimq1FTrdBU2j5HW9ntvjHBkqnBIfAyPZVGgVy1TGKh7CZHu8xva2CuBwwCVy4ApnV6
-	9u7avGeL9OXM+IgONWhErw0DPckQ=
-X-Google-Smtp-Source: AGHT+IEKV6/lwbIVyxNP3HduGa6GJ48kF+FAfzn+2GtakQhGWGSSWW/vvNhiHswsej3AtB2nD3zNghHPoKfaW/ZXyxs=
-X-Received: by 2002:a2e:84ca:0:b0:2ee:8f3d:e68d with SMTP id
- 38308e7fff4ca-2ef1685d099mr393111fa.44.1721401727500; Fri, 19 Jul 2024
- 08:08:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721401843; x=1722006643;
+        h=to:from:cc:content-transfer-encoding:mime-version:message-id:date
+         :subject:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UANqZqiDc/hObQEPAeTfbPtjoPREHLRh8wuDH4Ya/0Q=;
+        b=o7uCOY6RSQak3SNo8HWIXLzFr8b7SBSzIXZRDBud9IHRin5gpBkBq9ASyhl4eoDZdT
+         Xc9kL9eroVTohSkSsmqHQTlaYRJL8H1MTVLBAnXlE8QMM0HAGcOK/jFr9oV3qN2rxLLR
+         7kWAK2osvi3KxhNX++UXZxBxYxWLswbmpF2htS5hbAvTqzc1pGDCDVTQHDjC68jinwzE
+         tSAzpyuBndHnxmp/iF1JUs83Vfv67MsFCR0jT9OKtlWmVPVGCnLbJ6tBLjkYpGPug688
+         XF+XblqLB+iNPh4uoEXVTH+i10fRAwepSoRbA5XrtYNLES3GUTJCaqdV925EhmhkArTu
+         6+Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCVOjGyovYYuX2I4rZMRXNjPapxiEoBT+RzT+N74zuw04xNczsPmgyeEUk3ca6bYfovPM/skIfE35s0GesjDgx/MuxVv9+eU9JL8shmQ
+X-Gm-Message-State: AOJu0YyALcrYlQNSyDtXKzBEwjxpfoCXqvQQZlZRaJWYBbIBgs17PNpH
+	kHGQKB+JKuHpwmpw6oJGN4fTcgP8ChXGL4frEtfDmlrL+RI4Ejy9tVJv0h3DWYI=
+X-Google-Smtp-Source: AGHT+IEeLKc62kfiNIHZ+h+BGwnX8isvcMG21ge0LKswp626EPzjMdKnVDYLrVG7yFcOjbwUcbRqMA==
+X-Received: by 2002:a05:6a21:e94:b0:1c4:2151:7276 with SMTP id adf61e73a8af0-1c422857696mr347155637.10.1721401842734;
+        Fri, 19 Jul 2024 08:10:42 -0700 (PDT)
+Received: from localhost ([192.184.165.199])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f319773sm5915795ad.171.2024.07.19.08.10.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 08:10:42 -0700 (PDT)
+Subject: [PATCH] clk: T-Head: Disable on 32-bit Targets
+Date: Fri, 19 Jul 2024 08:10:27 -0700
+Message-ID: <20240719151027.16152-1-palmer@rivosinc.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719100554.4183635-1-arnd@kernel.org>
-In-Reply-To: <20240719100554.4183635-1-arnd@kernel.org>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Fri, 19 Jul 2024 11:08:34 -0400
-Message-ID: <CABBYNZKFD7axR5ZSGJL7mn=_mKufGnxopUeeZhL+AL40jWQjzQ@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: btmtk: add USB dependencies
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Marcel Holtmann <marcel@holtmann.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Sean Wang <sean.wang@mediatek.com>, Arnd Bergmann <arnd@arndb.de>, Sven Peter <sven@svenpeter.dev>, 
-	Tedd Ho-Jeong An <tedd.an@intel.com>, Hector Martin <marcan@marcan.st>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Niklas Schnelle <schnelle@linux.ibm.com>, 
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Cc: mturquette@baylibre.com, jszhang@kernel.org,
+  Palmer Dabbelt <palmer@rivosinc.com>, dfustini@tenstorrent.com, frank.li@vivo.com, linux-clk@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+From: Palmer Dabbelt <palmer@rivosinc.com>
+To: sboyd@kernel.org
 
-Hi Arnd,
+From: Palmer Dabbelt <palmer@rivosinc.com>
 
-On Fri, Jul 19, 2024 at 6:06=E2=80=AFAM Arnd Bergmann <arnd@kernel.org> wro=
-te:
->
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> The mediatek bluetooth drivers have a common portion that is now used for
-> all front-ends (usb, sdio, uart) but that internally relies on USB
-> interface functions:
->
-> ERROR: modpost: "usb_alloc_urb" [drivers/bluetooth/btmtk.ko] undefined!
-> ERROR: modpost: "usb_anchor_urb" [drivers/bluetooth/btmtk.ko] undefined!
-> ERROR: modpost: "usb_submit_urb" [drivers/bluetooth/btmtk.ko] undefined!
-> ERROR: modpost: "usb_free_urb" [drivers/bluetooth/btmtk.ko] undefined!
-> ERROR: modpost: "usb_unanchor_urb" [drivers/bluetooth/btmtk.ko] undefined=
-!
-> ERROR: modpost: "usb_kill_anchored_urbs" [drivers/bluetooth/btmtk.ko] und=
-efined!
-> ERROR: modpost: "usb_set_interface" [drivers/bluetooth/btmtk.ko] undefine=
-d!
-> ERROR: modpost: "usb_control_msg" [drivers/bluetooth/btmtk.ko] undefined!
->
-> It would be possible to split this up further, but in practice anything
-> that uses this driver will have USB enabled anyway and it only matters
-> for build testing, so just go with a much stricter dependency.
->
-> Fixes: f5c3f98946e3 ("Bluetooth: btmtkuart: rely on BT_MTK module")
-> Fixes: 3a722044aacf ("Bluetooth: btmtksido: rely on BT_MTK module")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/bluetooth/Kconfig | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/Kconfig
-> index 44a2de58337b..2894a345562c 100644
-> --- a/drivers/bluetooth/Kconfig
-> +++ b/drivers/bluetooth/Kconfig
-> @@ -21,6 +21,7 @@ config BT_QCA
->
->  config BT_MTK
->         tristate
-> +       depends on USB
->         select FW_LOADER
->
->  config BT_HCIBTUSB
-> @@ -413,6 +414,7 @@ config BT_ATH3K
->  config BT_MTKSDIO
->         tristate "MediaTek HCI SDIO driver"
->         depends on MMC
-> +       depends on USB
->         select BT_MTK
->         help
->           MediaTek Bluetooth HCI SDIO driver.
-> @@ -425,6 +427,7 @@ config BT_MTKSDIO
->  config BT_MTKUART
->         tristate "MediaTek HCI UART driver"
->         depends on SERIAL_DEV_BUS
-> +       depends on USB
->         select BT_MTK
->         help
->           MediaTek Bluetooth HCI UART driver.
-> --
-> 2.39.2
+This fails to build on 32-bit targets because of a missing __udivdi3.
+IIRC the right way to fix that is to avoid the division, but I just want
+a tree that builds and the only real T-Head platforms are 64-bit right
+now.
 
-Thanks for the fix, but we went with a different one:
-https://patchwork.kernel.org/project/bluetooth/patch/20240719033019.26767-1=
--chris.lu@mediatek.com/
+Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+---
+ drivers/clk/thead/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
---=20
-Luiz Augusto von Dentz
+diff --git a/drivers/clk/thead/Kconfig b/drivers/clk/thead/Kconfig
+index 1710d50bf9d4..95e0d9eb965e 100644
+--- a/drivers/clk/thead/Kconfig
++++ b/drivers/clk/thead/Kconfig
+@@ -3,6 +3,7 @@
+ config CLK_THEAD_TH1520_AP
+ 	bool "T-HEAD TH1520 AP clock support"
+ 	depends on ARCH_THEAD || COMPILE_TEST
++	depends on 64BIT
+ 	default ARCH_THEAD
+ 	select REGMAP_MMIO
+ 	help
+-- 
+2.45.2
+
 
