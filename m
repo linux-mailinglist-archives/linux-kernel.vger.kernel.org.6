@@ -1,175 +1,214 @@
-Return-Path: <linux-kernel+bounces-257193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CD3D937677
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:08:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BB2A93767C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:09:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B81FB22E97
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:08:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D16F1C20754
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1BE784A22;
-	Fri, 19 Jul 2024 10:08:26 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46548289E;
+	Fri, 19 Jul 2024 10:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ko4M6Yhs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A617E76F
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 10:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39E57CF39
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 10:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721383706; cv=none; b=dZYciWc+USuy3431jBztqATfR5+WGoWt+MckgnDNO+FXzcdkrDfYFEn837xIAwTeeXjpOKEa7TrQVjuVnYiskRUFp3//9VMRJIbKUIwJvcu/bo6WjAkgcFnCp34NuUyPJW8Dg3+XJuQz6+NknVJiX2WK0+wNN1b/G/eacqINXrg=
+	t=1721383777; cv=none; b=RdKUdhnkuQCtAfAtSWHWIIxzGacccnzBw/xWiWob5mkRGebKivlWOp6Wzsm4fZjw+qaed963khReDfMdQALRriz+Gnhi1HBNQF1CYN2O8uFp07d5gkD/W5jnxySO7n1+vms/gnJ4/adxLvX0ShVks2xs38buYvnYvGnLAXPmcvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721383706; c=relaxed/simple;
-	bh=FhKNfukBE/pSbQV3cgjwp8Qn3uTtqXwLrxdjG4Uj65A=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=H4DGrqIziZdUTGci2qT7CmevXa5T2IJ2j2+vIns84Le02NoSA/JnUsk8TSqTUHt4F/HR7C0AtGuAylL9HLOkBvJxmqAG4Gx+C24Tepxu3G1lCFUydDKKNItjQu8sbahZ/wkifSoMB5ChKpG1uNlOJGAObfyZBL9he3zJMAmK6hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-804888d4610so361550839f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 03:08:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721383703; x=1721988503;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TfmNVPjGxy5MSzYTL9vKwCzc+vRoDpDRSTp6krR1EgY=;
-        b=q+wqYgofCy6MTN6ZVnb1lFVYMhBHusYHdykapGk7Wqp6LsW2jZqZee8Af+y93UI3Ij
-         +LV8LZTGX03DacAfTpheGmxJt17TTvvmZxNofvsR2jezKOy0JcaR+XBEeVw+TeMN0TfJ
-         Qukr0Y76vPw7X4YYQdWOOlLZ65xLZByRC29B/WUWu9DNf9cvyreKLgWRHzUB5GQ14RxO
-         f0WOmxB0XNHWw8zC+xuJ0DqRAWfu+AUOA5noKn5CNYmH8u3JcmfUBhstD1j24yKLYXaK
-         mVr+32LCygrhnVE7fWCyLB3RLN6Z0R3TWxZUiiT5XkdTYPxoKUuQ80Cbf4H6f0HsmtpV
-         gHXA==
-X-Forwarded-Encrypted: i=1; AJvYcCWIdbCewbCENFQumvo5yD5rH/6CXhYaPyGUi5GQn3J77ndL4yBoG/yiVxpfV4rxJpUieOLmgzSLDBBu5+kV7EJBfQ3ZWuw8th1/6ndy
-X-Gm-Message-State: AOJu0YwhWPJut3S/aDAyrM1lzaxr5pgqFRxl3xr0XAPiCu8HUmZISMZO
-	zcyrdD5B3t8J2ZZAurHDROLTnerz9r8APlLzTzaXLstOvC2hOlvSwqnWCNMziJ87+TPzmayW5xW
-	xV4NHYpWsYUCyHgHs3wfsLjYmdJ1f9DPdUEYxzsYs3O6toGAcM21SwPA=
-X-Google-Smtp-Source: AGHT+IH9Myk9sIYPOOOOzjBZplA1xAA2ZpHXKVtEhhTnD2z3crGHkjXG6MH1l2Fhnmj9A15Y+cdcNqTp/nsw/qdjpR8+6h3/6yFK
+	s=arc-20240116; t=1721383777; c=relaxed/simple;
+	bh=LnprOpQKJebgHBLc3MRc+ciaLm/ZxS3i/QrqnzrELrw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oZ2w4dFHLbe2ycxaQzI8sQzouo5Xd6OS8kKrT2m7ss2Zl8B20+m5GKBx85W9hFPjM7LlAFLPcM9/xs3cvtGgnmWeZFQ7ULty9qwD/x3+MKR6HJ+pgfDN/mQXin3e8tw7SUxJuS9JKjxC/lG+ZkLdBNjE08p6lcuOpm2ZfOn6Dsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ko4M6Yhs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65670C32782;
+	Fri, 19 Jul 2024 10:09:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721383777;
+	bh=LnprOpQKJebgHBLc3MRc+ciaLm/ZxS3i/QrqnzrELrw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ko4M6YhsG3I1WkWIGxaERB1sFtkbU4OUzQkOTmCejfMWjmvaWrr7032GvDkSoQi3T
+	 3FZ3nUznUN5+X/HZ2IMKgSnebyYGuJEreAVOlEwpYQJk8xVrcBSV+W/63lsRE62/i2
+	 DO/RUMfSj4mnKOlx89GX/8uSJBmyAqSAFOeHNJxvgywJhj5gztZWSk+6ElyUKdx+ad
+	 6NQF0+ONz71lM/QB3M7XT9z1IjrFeemU5DFOB4xMoQBOqK+uEQJpicdOTdnbp/g0BF
+	 rTVLU5kwiwh9JVWcz+5BCbgh2KRYgoRqEAiFjX8KlLx0OYVdGUc4ex4hjbmluA7Js7
+	 L5pMEMDB1/1zg==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+	Lijo Lazar <lijo.lazar@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
+	Alex Hung <alex.hung@amd.com>,
+	Hamza Mahfooz <hamza.mahfooz@amd.com>,
+	Roman Li <roman.li@amd.com>,
+	Wayne Lin <Wayne.Lin@amd.com>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/amd: Use a constant format string for amdgpu_ucode_request
+Date: Fri, 19 Jul 2024 12:08:28 +0200
+Message-Id: <20240719100929.94365-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:13cd:b0:4b9:ad94:2074 with SMTP id
- 8926c6da1cb9f-4c21fb88eaemr183873173.3.1721383703655; Fri, 19 Jul 2024
- 03:08:23 -0700 (PDT)
-Date: Fri, 19 Jul 2024 03:08:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002dcf3e061d96e0ac@google.com>
-Subject: [syzbot] [gfs2?] kernel BUG in qd_put (3)
-From: syzbot <syzbot+0423714c06c369318794@syzkaller.appspotmail.com>
-To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Arnd Bergmann <arnd@arndb.de>
 
-syzbot found the following issue on:
+Multiple files in amdgpu call amdgpu_ucode_request() with a fw_name
+variable that the compiler cannot check for being a valid format string,
+as seen by enabling the (default-disabled) -Wformat-security option:
 
-HEAD commit:    3fe121b62282 Add linux-next specific files for 20240712
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=14c9152d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=98dd8c4bab5cdce
-dashboard link: https://syzkaller.appspot.com/bug?extid=0423714c06c369318794
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15989efd980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=119e6b9e980000
+drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c: In function 'amdgpu_mes_init_microcode':
+drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c:1517:61: error: format not a string literal and no format arguments [-Werror=format-security]
+ 1517 |         r = amdgpu_ucode_request(adev, &adev->mes.fw[pipe], fw_name);
+      |                                                             ^~~~~~~
+drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c: In function 'amdgpu_uvd_sw_init':
+drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c:263:9: error: format not a string literal and no format arguments [-Werror=format-security]
+  263 |         r = amdgpu_ucode_request(adev, &adev->uvd.fw, fw_name);
+      |         ^
+drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c: In function 'amdgpu_vce_sw_init':
+drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c:161:9: error: format not a string literal and no format arguments [-Werror=format-security]
+  161 |         r = amdgpu_ucode_request(adev, &adev->vce.fw, fw_name);
+      |         ^
+drivers/gpu/drm/amd/amdgpu/amdgpu_umsch_mm.c: In function 'amdgpu_umsch_mm_init_microcode':
+drivers/gpu/drm/amd/amdgpu/amdgpu_umsch_mm.c:590:9: error: format not a string literal and no format arguments [-Werror=format-security]
+  590 |         r = amdgpu_ucode_request(adev, &adev->umsch_mm.fw, fw_name);
+      |         ^
+drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c: In function 'amdgpu_cgs_get_firmware_info':
+drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c:417:72: error: format not a string literal and no format arguments [-Werror=format-security]
+  417 |                         err = amdgpu_ucode_request(adev, &adev->pm.fw, fw_name);
+      |                                                                        ^~~~~~~
+drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c: In function 'load_dmcu_fw':
+drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:2221:9: error: format not a string literal and no format arguments [-Werror=format-security]
+ 2221 |         r = amdgpu_ucode_request(adev, &adev->dm.fw_dmcu, fw_name_dmcu);
+      |         ^
+drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c: In function 'dm_init_microcode':
+drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:5147:9: error: format not a string literal and no format arguments [-Werror=format-security]
+ 5147 |         r = amdgpu_ucode_request(adev, &adev->dm.dmub_fw, fw_name_dmub);
+      |         ^
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/8c6fbf69718d/disk-3fe121b6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/39fc7e43dfc1/vmlinux-3fe121b6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0a78e70e4b4e/bzImage-3fe121b6.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/60f4ea8cd0cc/mount_0.gz
+Change these all to use a "%s" format with the actual name as an argument,
+to let the compiler prove this to be correct.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0423714c06c369318794@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-kernel BUG at fs/gfs2/quota.c:333!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 UID: 0 PID: 5093 Comm: syz-executor256 Not tainted 6.10.0-rc7-next-20240712-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-RIP: 0010:qd_put+0x192/0x1a0 fs/gfs2/quota.c:333
-Code: ef e8 62 f6 17 fe e9 f2 fe ff ff 89 e9 80 e1 07 80 c1 03 38 c1 7c 82 48 89 ef e8 39 f7 17 fe e9 75 ff ff ff e8 2f 70 b0 fd 90 <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc900035dfc08 EFLAGS: 00010293
-RAX: ffffffff83e35ac1 RBX: 00000000ffffff80 RCX: ffff88801a358000
-RDX: 0000000000000000 RSI: 00000000ffffff80 RDI: 0000000000000000
-RBP: ffff88807f3f25b0 R08: ffffffff83e359a1 R09: fffff520006bbf6c
-R10: dffffc0000000000 R11: fffff520006bbf6c R12: ffff88807f3f2540
-R13: ffff88802a2eb800 R14: ffff88807f3f2570 R15: 1ffff1100fe7e4b6
-FS:  0000555576e86380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffed6b8af98 CR3: 000000007942a000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- gfs2_quota_sync+0x41b/0x4a0 fs/gfs2/quota.c:1363
- gfs2_sync_fs+0x4d/0xc0 fs/gfs2/super.c:670
- sync_filesystem+0xed/0x230 fs/sync.c:56
- generic_shutdown_super+0x72/0x2d0 fs/super.c:621
- kill_block_super+0x44/0x90 fs/super.c:1685
- deactivate_locked_super+0xc4/0x130 fs/super.c:473
- cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1372
- task_work_run+0x24f/0x310 kernel/task_work.c:222
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb2335fb597
-Code: 08 00 48 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8
-RSP: 002b:00007ffed6b8b1f8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007fb2335fb597
-RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffed6b8b2b0
-RBP: 00007ffed6b8b2b0 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000202 R12: 00007ffed6b8c320
-R13: 0000555576e876c0 R14: 431bde82d7b634db R15: 00007ffed6b8c340
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:qd_put+0x192/0x1a0 fs/gfs2/quota.c:333
-Code: ef e8 62 f6 17 fe e9 f2 fe ff ff 89 e9 80 e1 07 80 c1 03 38 c1 7c 82 48 89 ef e8 39 f7 17 fe e9 75 ff ff ff e8 2f 70 b0 fd 90 <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc900035dfc08 EFLAGS: 00010293
-
-RAX: ffffffff83e35ac1 RBX: 00000000ffffff80 RCX: ffff88801a358000
-RDX: 0000000000000000 RSI: 00000000ffffff80 RDI: 0000000000000000
-RBP: ffff88807f3f25b0 R08: ffffffff83e359a1 R09: fffff520006bbf6c
-R10: dffffc0000000000 R11: fffff520006bbf6c R12: ffff88807f3f2540
-R13: ffff88802a2eb800 R14: ffff88807f3f2570 R15: 1ffff1100fe7e4b6
-FS:  0000555576e86380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffed6b8af98 CR3: 000000007942a000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
+Fixes: e5a7d047f41b ("drm/amd: Use `amdgpu_ucode_*` helpers for CGS")
+Fixes: 52215e2a5d4a ("drm/amd: Use `amdgpu_ucode_*` helpers for VCE")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c           | 2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c           | 2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_umsch_mm.c      | 2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c           | 2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c           | 2 +-
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 4 ++--
+ 6 files changed, 7 insertions(+), 7 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
+index c3d89088123d..16153d275d7a 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
+@@ -414,7 +414,7 @@ static int amdgpu_cgs_get_firmware_info(struct cgs_device *cgs_device,
+ 				return -EINVAL;
+ 			}
+ 
+-			err = amdgpu_ucode_request(adev, &adev->pm.fw, fw_name);
++			err = amdgpu_ucode_request(adev, &adev->pm.fw, "%s", fw_name);
+ 			if (err) {
+ 				DRM_ERROR("Failed to load firmware \"%s\"", fw_name);
+ 				amdgpu_ucode_release(&adev->pm.fw);
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c
+index e499d6ba306b..5d89a9a6f910 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c
+@@ -1514,7 +1514,7 @@ int amdgpu_mes_init_microcode(struct amdgpu_device *adev, int pipe)
+ 			 pipe == AMDGPU_MES_SCHED_PIPE ? "" : "1");
+ 	}
+ 
+-	r = amdgpu_ucode_request(adev, &adev->mes.fw[pipe], fw_name);
++	r = amdgpu_ucode_request(adev, &adev->mes.fw[pipe], "%s", fw_name);
+ 	if (r && need_retry && pipe == AMDGPU_MES_SCHED_PIPE) {
+ 		dev_info(adev->dev, "try to fall back to %s_mes.bin\n", ucode_prefix);
+ 		r = amdgpu_ucode_request(adev, &adev->mes.fw[pipe],
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_umsch_mm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_umsch_mm.c
+index fbc2852278e1..6162582d0aa2 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_umsch_mm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_umsch_mm.c
+@@ -587,7 +587,7 @@ int amdgpu_umsch_mm_init_microcode(struct amdgpu_umsch_mm *umsch)
+ 		break;
+ 	}
+ 
+-	r = amdgpu_ucode_request(adev, &adev->umsch_mm.fw, fw_name);
++	r = amdgpu_ucode_request(adev, &adev->umsch_mm.fw, "%s", fw_name);
+ 	if (r) {
+ 		release_firmware(adev->umsch_mm.fw);
+ 		adev->umsch_mm.fw = NULL;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
+index 07d930339b07..775c09d57222 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
+@@ -260,7 +260,7 @@ int amdgpu_uvd_sw_init(struct amdgpu_device *adev)
+ 		return -EINVAL;
+ 	}
+ 
+-	r = amdgpu_ucode_request(adev, &adev->uvd.fw, fw_name);
++	r = amdgpu_ucode_request(adev, &adev->uvd.fw, "%s", fw_name);
+ 	if (r) {
+ 		dev_err(adev->dev, "amdgpu_uvd: Can't validate firmware \"%s\"\n",
+ 			fw_name);
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
+index 968ca2c84ef7..51b045de409d 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
+@@ -158,7 +158,7 @@ int amdgpu_vce_sw_init(struct amdgpu_device *adev, unsigned long size)
+ 		return -EINVAL;
+ 	}
+ 
+-	r = amdgpu_ucode_request(adev, &adev->vce.fw, fw_name);
++	r = amdgpu_ucode_request(adev, &adev->vce.fw, "%s", fw_name);
+ 	if (r) {
+ 		dev_err(adev->dev, "amdgpu_vce: Can't validate firmware \"%s\"\n",
+ 			fw_name);
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 7e7929f24ae4..80b7dc651f6b 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -2218,7 +2218,7 @@ static int load_dmcu_fw(struct amdgpu_device *adev)
+ 		return 0;
+ 	}
+ 
+-	r = amdgpu_ucode_request(adev, &adev->dm.fw_dmcu, fw_name_dmcu);
++	r = amdgpu_ucode_request(adev, &adev->dm.fw_dmcu, "%s", fw_name_dmcu);
+ 	if (r == -ENODEV) {
+ 		/* DMCU firmware is not necessary, so don't raise a fuss if it's missing */
+ 		DRM_DEBUG_KMS("dm: DMCU firmware not found\n");
+@@ -5144,7 +5144,7 @@ static int dm_init_microcode(struct amdgpu_device *adev)
+ 		/* ASIC doesn't support DMUB. */
+ 		return 0;
+ 	}
+-	r = amdgpu_ucode_request(adev, &adev->dm.dmub_fw, fw_name_dmub);
++	r = amdgpu_ucode_request(adev, &adev->dm.dmub_fw, "%s", fw_name_dmub);
+ 	return r;
+ }
+ 
+-- 
+2.39.2
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
