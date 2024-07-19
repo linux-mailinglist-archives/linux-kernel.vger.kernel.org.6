@@ -1,207 +1,215 @@
-Return-Path: <linux-kernel+bounces-256944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA0789372E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 05:55:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D9519372E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 05:59:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 173EFB218A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 03:55:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2B571F21F89
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 03:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B55B24A08;
-	Fri, 19 Jul 2024 03:55:41 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE522C697;
+	Fri, 19 Jul 2024 03:59:28 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D06DF71
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 03:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBBD629CE6
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 03:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721361340; cv=none; b=hI0KBDW2bU/8Wylm3SFhB8E5N2V0WMQF2migIMSfurZ8UiUnZu7oZhWhMcj/+LvKynqE3YcEyn3+LnhhdkE7sE77YtJwb5U5TsQddwsYOtbbebRaNFqENLSklpKmzwzVxbjbz7fenj3m7zvKoc5XjIeuxqjHcGOTy83XsELaUZI=
+	t=1721361567; cv=none; b=rlVT/K0QG+WsUi9IsIMenXRkEwCtUSv5PiXT2QI6RP9ClFVKH3NtEOKFRH+Y1JnInSYYNVZKQtpeB8EnZmEUJJY6bgTAxaGT9iUEFjpXbsZ8X8KzOdkuFOC/mQUcA/qHtAEjX64K8ZauYvemWOLaySRlajz1MdAVU6TJRhfY+uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721361340; c=relaxed/simple;
-	bh=kEj0kEpyv/SZuPTxZGlVX965wvoiV0y9G1NvmC+09LM=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=az+/r1iDSRLAyZeajE8wkvO8Uee0CzKpqBO1CpygTLkyy94/tuyzrpBcOIvut0/Vc67mPqd9SWYNhDBfQfLK74bqL7hZMPW9hfq/useWY4879kOW6BUMgGxyk5/vZB/MkvSc+G3VnoHuMwVRKVdNlx8Fg3Jby9OAqiz2BgvTkRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WQG1k6WStzQmDR;
-	Fri, 19 Jul 2024 11:51:22 +0800 (CST)
-Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4C47B180087;
-	Fri, 19 Jul 2024 11:55:28 +0800 (CST)
-Received: from [10.173.127.72] (10.173.127.72) by
- kwepemd200019.china.huawei.com (7.221.188.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 19 Jul 2024 11:55:27 +0800
-Subject: Re: [PATCH] mm/memory-failure: fix VM_BUG_ON_PAGE(PagePoisoned(page))
- when unpoison memory
-To: David Hildenbrand <david@redhat.com>, Andrew Morton
-	<akpm@linux-foundation.org>
-CC: <nao.horiguchi@gmail.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240712064249.3882707-1-linmiaohe@huawei.com>
- <20240712140921.9aa90b18d22e67417d59dfc1@linux-foundation.org>
- <8fe349f9-d3d3-65ab-6045-da0bd19249ea@huawei.com>
- <00e18339-d911-4332-8732-e31bcecbf823@redhat.com>
- <5f8107e2-2b37-d899-f7f2-5a6093d8b089@huawei.com>
- <de73f251-08a0-4122-acfd-1d7fce7540ea@redhat.com>
- <ec6ed1aa-0b6e-df66-1442-93786eabd1ef@huawei.com>
- <dded1b96-8ff3-489a-a92e-b206829feb85@redhat.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <f3aa7133-5754-73f4-9ee1-bff1a8637c07@huawei.com>
-Date: Fri, 19 Jul 2024 11:55:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1721361567; c=relaxed/simple;
+	bh=BYtjMnrg77lwtp/tNpjJPFhBlO3WMLQtQ7fv2/nGYgU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=CG3n36fW1UFYycScQ0s2w98bR0osS+LGt3CtJ3gPi94BI3/RqKxLwRC9WDv7W2adhzPXN6Ve7w3gHg2k0dMvaC35GKBl1u4SOt/FF6ZAug5Dw/q8Mf8b9dQRYERrPn8nNgrmLFEjF50vpTZ6M1T1MGQEcxYOhB2ZAfXq3tzsCxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-396a820a8a3so19516735ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 20:59:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721361565; x=1721966365;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UrK4WYf/uKs8zDYDpmiI5632yMosk+h9POQVGPzsB5s=;
+        b=YtbshqPaWOHnQHJK+3hYxdN7wVWpI0ZukqGXA+0WXVWzpZBP7vJIGkfi3h+Hbr+RUa
+         0uooQUoIDLpf1n/uuB2uv6BB5IlhwWvoCi5vnYh/UvgFq9/S8k+qlsUt7Jcc+Eu8ziYN
+         LZshSb6VnwZezmlLY3gDTY66rbTQsOWDpERPd3geNVOZjaXoDy8zIp5Co/ACB6uagJkc
+         Dh0HtFjjeemi3IWJX0Dmq1y+YBPjmxgC49nINN/lVMB5/Y9oP0+Nmc0MXgBN7TU7ntV5
+         UZfiUUIqjwVpeZs2xSYao4VbH29hIX2IahqG6HgZxKz9kJsmAX0LHjY4lKGBV8yIdf1N
+         OPmw==
+X-Forwarded-Encrypted: i=1; AJvYcCVGO+NlIhur7GjeqCTbagEu2TLckQPxf/JdkszZemvQb9B48lgUAfEG0c8apEcfPPEQE09ggjCd8+6jgCnR9ue9QVzTt2M5r9Lj8oN4
+X-Gm-Message-State: AOJu0YyQG9A5V2EPBS6cexGpWhHhCpGQqMrlNFyqL0Mt1hKy7D5YV7dk
+	Xf7O6J22lSnyXqv8kCEBKMXP6nZWX7gxhjA1Gr6QmgIp7L4y5dA1FrNVV+LYN6PrWVOTCWs9t26
+	FNC93kKRsDESAWlrJM74PImDwnGMi6mYp2XoJ+NRF+dbBvVV3QHL6If8=
+X-Google-Smtp-Source: AGHT+IERhI+Qf5xCGkt6hoxXKWechrHPgrkAWOL7Nr8CIRUnJqmAwc7hDK1I+Vy/hcXMvtrm4Oo6xEiqY6BhTqziDlvkYPJnHKUw
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <dded1b96-8ff3-489a-a92e-b206829feb85@redhat.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemd200019.china.huawei.com (7.221.188.193)
+X-Received: by 2002:a92:d8c2:0:b0:380:e1e4:4ba3 with SMTP id
+ e9e14a558f8ab-3964de98c1dmr791605ab.2.1721361565025; Thu, 18 Jul 2024
+ 20:59:25 -0700 (PDT)
+Date: Thu, 18 Jul 2024 20:59:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009d1d0a061d91b803@google.com>
+Subject: [syzbot] [net?] [bpf?] general protection fault in __dev_flush
+From: syzbot <syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, davem@davemloft.net, eddyz87@gmail.com, 
+	haoluo@google.com, hawk@kernel.org, john.fastabend@gmail.com, 
+	jolsa@kernel.org, kpsingh@kernel.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
+	sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com, 
+	yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/7/18 13:15, David Hildenbrand wrote:
-> On 18.07.24 05:04, Miaohe Lin wrote:
->> On 2024/7/17 17:01, David Hildenbrand wrote:
->>> On 16.07.24 04:34, Miaohe Lin wrote:
->>>> On 2024/7/16 0:16, David Hildenbrand wrote:
->>>>> On 15.07.24 08:23, Miaohe Lin wrote:
->>>>>> On 2024/7/13 5:09, Andrew Morton wrote:
->>>>>>> On Fri, 12 Jul 2024 14:42:49 +0800 Miaohe Lin <linmiaohe@huawei.com> wrote:
->>>>>>>
->>>>>>>> When I did memory failure tests recently, below panic occurs:
->>>>>>>>
->>>>>>>> page dumped because: VM_BUG_ON_PAGE(PagePoisoned(page))
->>>>>>>> kernel BUG at include/linux/page-flags.h:616!
->>>>>>>> Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
->>>>>>>> CPU: 3 PID: 720 Comm: bash Not tainted 6.10.0-rc1-00195-g148743902568 #40
->>>>>>>> RIP: 0010:unpoison_memory+0x2f3/0x590
->>>>>>>> RSP: 0018:ffffa57fc8787d60 EFLAGS: 00000246
->>>>>>>> RAX: 0000000000000037 RBX: 0000000000000009 RCX: ffff9be25fcdc9c8
->>>>>>>> RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff9be25fcdc9c0
->>>>>>>> RBP: 0000000000300000 R08: ffffffffb4956f88 R09: 0000000000009ffb
->>>>>>>> R10: 0000000000000284 R11: ffffffffb4926fa0 R12: ffffe6b00c000000
->>>>>>>> R13: ffff9bdb453dfd00 R14: 0000000000000000 R15: fffffffffffffffe
->>>>>>>> FS:  00007f08f04e4740(0000) GS:ffff9be25fcc0000(0000) knlGS:0000000000000000
->>>>>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>>>>> CR2: 0000564787a30410 CR3: 000000010d4e2000 CR4: 00000000000006f0
->>>>>>>> Call Trace:
->>>>>>>>     <TASK>
->>>>>>>>     unpoison_memory+0x2f3/0x590
->>>>>>>>     simple_attr_write_xsigned.constprop.0.isra.0+0xb3/0x110
->>>>>>>>     debugfs_attr_write+0x42/0x60
->>>>>>>>     full_proxy_write+0x5b/0x80
->>>>>>>>     vfs_write+0xd5/0x540
->>>>>>>>     ksys_write+0x64/0xe0
->>>>>>>>     do_syscall_64+0xb9/0x1d0
->>>>>>>>     entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>>>>>>> RIP: 0033:0x7f08f0314887
->>>>>>>> RSP: 002b:00007ffece710078 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
->>>>>>>> RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f08f0314887
->>>>>>>> RDX: 0000000000000009 RSI: 0000564787a30410 RDI: 0000000000000001
->>>>>>>> RBP: 0000564787a30410 R08: 000000000000fefe R09: 000000007fffffff
->>>>>>>> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000009
->>>>>>>> R13: 00007f08f041b780 R14: 00007f08f0417600 R15: 00007f08f0416a00
->>>>>>>>     </TASK>
->>>>>>>> Modules linked in: hwpoison_inject
->>>>>>>> ---[ end trace 0000000000000000 ]---
->>>>>>>> RIP: 0010:unpoison_memory+0x2f3/0x590
->>>>>>>> RSP: 0018:ffffa57fc8787d60 EFLAGS: 00000246
->>>>>>>> RAX: 0000000000000037 RBX: 0000000000000009 RCX: ffff9be25fcdc9c8
->>>>>>>> RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff9be25fcdc9c0
->>>>>>>> RBP: 0000000000300000 R08: ffffffffb4956f88 R09: 0000000000009ffb
->>>>>>>> R10: 0000000000000284 R11: ffffffffb4926fa0 R12: ffffe6b00c000000
->>>>>>>> R13: ffff9bdb453dfd00 R14: 0000000000000000 R15: fffffffffffffffe
->>>>>>>> FS:  00007f08f04e4740(0000) GS:ffff9be25fcc0000(0000) knlGS:0000000000000000
->>>>>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>>>>> CR2: 0000564787a30410 CR3: 000000010d4e2000 CR4: 00000000000006f0
->>>>>>>> Kernel panic - not syncing: Fatal exception
->>>>>>>> Kernel Offset: 0x31c00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
->>>>>>>> ---[ end Kernel panic - not syncing: Fatal exception ]---
->>>>>>>>
->>>>>>>> The root cause is that unpoison_memory() tries to check the PG_HWPoison
->>>>>>>> flags of an uninitialized page. So VM_BUG_ON_PAGE(PagePoisoned(page)) is
->>>>>>>> triggered.
->>>>>>>
->>>>>>> I'm not seeing the call path.  Is this BUG happening via
->>>>>>>
->>>>>>> static __always_inline void __ClearPage##uname(struct page *page)    \
->>>>>>> {                                    \
->>>>>>>       VM_BUG_ON_PAGE(!Page##uname(page), page);            \
->>>>>>>       page->page_type |= PG_##lname;                    \
->>>>>>> }
->>>>>>>
->>>>>>> ?
->>>>>>>
->>>>>>> If so, where's the callsite?
->>>>>>
->>>>>> It is BUG on PF_ANY():
->>>>>>
->>>>>> PAGEFLAG(HWPoison, hwpoison, PF_ANY)
->>>>>>
->>>>>> #define PF_ANY(page, enforce)    PF_POISONED_CHECK(page)
->>>>>>
->>>>>> #define PF_POISONED_CHECK(page) ({                    \
->>>>>>       VM_BUG_ON_PGFLAGS(PagePoisoned(page), page);        \
->>>>>>       page; })
->>>>>>
->>>>>> #define    PAGE_POISON_PATTERN    -1l
->>>>>> static inline int PagePoisoned(const struct page *page)
->>>>>> {
->>>>>>       return READ_ONCE(page->flags) == PAGE_POISON_PATTERN;
->>>>>> }
->>>>>>
->>>>>> The offlined pages will have page->flags set to PAGE_POISON_PATTERN while pfn is still valid:
->>>>>>
->>>>>> offline_pages
->>>>>>      remove_pfn_range_from_zone
->>>>>>        page_init_poison
->>>>>>          memset(page, PAGE_POISON_PATTERN, size);
->>>>>
->>>>> Worth noting that this happens after __offline_isolated_pages() marked the covering sections as offline.
->>>>>
->>>>> Are we missing a pfn_to_online_page() check somewhere, or are we racing with offlining code that marks the section offline?
->>>>
->>>> I was thinking about to use pfn_to_online_page() instead of pfn_to_page() in unpoison_memory() so we can get rid of offlined pages.
->>>> But there're ZONE_DEVICE pages. They're not-onlined too. And unpoison_memory() should work for them. So we can't simply use
->>>> pfn_to_online_page() in that. Or am I miss something?
->>>
->>> Right, pfn_to_online_page() does not detect ZONE_DEVICE. That has to be handled separately if pfn_to_online_page() would fail.
->>>
->>> ... which is what we do in memory_failure():
->>>
->>> p = pfn_to_online_page(pfn);
->>> if (!p) {
->>>      if (pfn_valid(pfn)) {
->>>          pgmap = get_dev_pagemap(pfn, NULL);
->>>          put_ref_page(pfn, flags);
->>>          if (pgmap) {
->>>              ...
->>>          }
->>>      }
->>>      ...
->>> }
->>
->> Yup, this will be a good alternative. But will it be better to simply check PagePoisoned() instead?
-> 
-> The memmap of offline memory sections shall not be touched, so .... don't touch it ;)
-> 
-> Especially because that PagePoisoned() check is non-sensical without poisoining-during-memmap-init. You would still work with memory in offline sections.
-> 
-> I think the code is even wrong in that regard: we allow for memory offlining to work with HWPoisoned pages, see __offline_isolated_pages(). Staring at unpoison_memory(), we might be putting these pages back to the buddy? Which is completely wrong.
+Hello,
 
-I agree with you. Thanks for detailed explanation. :)
-Thanks David.
-.
+syzbot found the following issue on:
 
+HEAD commit:    68b59730459e Merge tag 'perf-tools-for-v6.11-2024-07-16' o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14cb0ab5980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b6230d83d52af231
+dashboard link: https://syzkaller.appspot.com/bug?extid=44623300f057a28baf1e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8229997a3dbb/disk-68b59730.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fd51823e0836/vmlinux-68b59730.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/01811b27f987/bzImage-68b59730.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com
+
+Oops: general protection fault, probably for non-canonical address 0xfbd5a5d5a0000001: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: maybe wild-memory-access in range [0xdead4ead00000008-0xdead4ead0000000f]
+CPU: 1 PID: 8860 Comm: syz.0.1070 Not tainted 6.10.0-syzkaller-08280-g68b59730459e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:__list_del include/linux/list.h:195 [inline]
+RIP: 0010:__list_del_clearprev include/linux/list.h:209 [inline]
+RIP: 0010:__dev_flush+0xe4/0x160 kernel/bpf/devmap.c:428
+Code: b8 00 00 00 00 00 fc ff df 41 80 7c 05 00 00 49 89 c5 74 08 48 89 df e8 6a c3 3d 00 48 8b 2b 48 8d 5d 08 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 3d c4 3d 00 4c 89 23 4c 89 e0 48
+RSP: 0018:ffffc90000a18af0 EFLAGS: 00010212
+RAX: 1bd5a9d5a0000001 RBX: dead4ead00000008 RCX: 0000000000000000
+RDX: 0000000000000010 RSI: 0000000000000000 RDI: ffff8880b943e868
+RBP: dead4ead00000000 R08: ffff8880b943e867 R09: ffff8880b943e858
+R10: dffffc0000000000 R11: ffffed1017287d0d R12: 00000000ffffffff
+R13: dffffc0000000000 R14: ffff8880b943e848 R15: 1ffff11017287d09
+FS:  00007f33633c96c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffec0000 CR3: 0000000054f40000 CR4: 0000000000350ef0
+Call Trace:
+ <IRQ>
+ xdp_do_check_flushed+0x129/0x240 net/core/filter.c:4300
+ __napi_poll+0xe4/0x490 net/core/dev.c:6774
+ napi_poll net/core/dev.c:6840 [inline]
+ net_rx_action+0x89b/0x1240 net/core/dev.c:6962
+ handle_softirqs+0x2c6/0x970 kernel/softirq.c:554
+ __do_softirq kernel/softirq.c:588 [inline]
+ invoke_softirq kernel/softirq.c:428 [inline]
+ __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
+ irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
+ common_interrupt+0xaa/0xd0 arch/x86/kernel/irq.c:278
+ </IRQ>
+ <TASK>
+ asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
+RIP: 0010:finish_task_switch+0x1ea/0x870 kernel/sched/core.c:5062
+Code: c9 50 e8 19 b6 0b 00 48 83 c4 08 4c 89 f7 e8 7d 38 00 00 e9 de 04 00 00 4c 89 f7 e8 d0 d9 32 0a e8 4b e8 36 00 fb 48 8b 5d c0 <48> 8d bb f8 15 00 00 48 89 f8 48 c1 e8 03 49 be 00 00 00 00 00 fc
+RSP: 0018:ffffc90003a377a8 EFLAGS: 00000286
+RAX: 94ed15acce52c200 RBX: ffff88807e01da00 RCX: ffffffff947db703
+RDX: dffffc0000000000 RSI: ffffffff8bcac9a0 RDI: ffffffff8c205b20
+RBP: ffffc90003a377f0 R08: ffffffff8faec7af R09: 1ffffffff1f5d8f5
+R10: dffffc0000000000 R11: fffffbfff1f5d8f6 R12: 1ffff110172a7ebb
+R13: dffffc0000000000 R14: ffff8880b943e840 R15: ffff8880b953f5d8
+ context_switch kernel/sched/core.c:5191 [inline]
+ __schedule+0x1808/0x4a60 kernel/sched/core.c:6529
+ __schedule_loop kernel/sched/core.c:6606 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6621
+ futex_wait_queue+0x14e/0x1d0 kernel/futex/waitwake.c:370
+ __futex_wait+0x17f/0x320 kernel/futex/waitwake.c:669
+ futex_wait+0x101/0x360 kernel/futex/waitwake.c:697
+ do_futex+0x33b/0x560 kernel/futex/syscalls.c:102
+ __do_sys_futex kernel/futex/syscalls.c:179 [inline]
+ __se_sys_futex+0x3f9/0x480 kernel/futex/syscalls.c:160
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3362575b59
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f33633c90f8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: ffffffffffffffda RBX: 00007f3362705f68 RCX: 00007f3362575b59
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007f3362705f68
+RBP: 00007f3362705f60 R08: 00007f33633c96c0 R09: 00007f33633c96c0
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f3362705f6c
+R13: 000000000000000b R14: 00007ffec9a21080 R15: 00007ffec9a21168
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__list_del include/linux/list.h:195 [inline]
+RIP: 0010:__list_del_clearprev include/linux/list.h:209 [inline]
+RIP: 0010:__dev_flush+0xe4/0x160 kernel/bpf/devmap.c:428
+Code: b8 00 00 00 00 00 fc ff df 41 80 7c 05 00 00 49 89 c5 74 08 48 89 df e8 6a c3 3d 00 48 8b 2b 48 8d 5d 08 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 3d c4 3d 00 4c 89 23 4c 89 e0 48
+RSP: 0018:ffffc90000a18af0 EFLAGS: 00010212
+RAX: 1bd5a9d5a0000001 RBX: dead4ead00000008 RCX: 0000000000000000
+RDX: 0000000000000010 RSI: 0000000000000000 RDI: ffff8880b943e868
+RBP: dead4ead00000000 R08: ffff8880b943e867 R09: ffff8880b943e858
+R10: dffffc0000000000 R11: ffffed1017287d0d R12: 00000000ffffffff
+R13: dffffc0000000000 R14: ffff8880b943e848 R15: 1ffff11017287d09
+FS:  00007f33633c96c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffec0000 CR3: 0000000054f40000 CR4: 0000000000350ef0
+----------------
+Code disassembly (best guess):
+   0:	b8 00 00 00 00       	mov    $0x0,%eax
+   5:	00 fc                	add    %bh,%ah
+   7:	ff                   	(bad)
+   8:	df 41 80             	filds  -0x80(%rcx)
+   b:	7c 05                	jl     0x12
+   d:	00 00                	add    %al,(%rax)
+   f:	49 89 c5             	mov    %rax,%r13
+  12:	74 08                	je     0x1c
+  14:	48 89 df             	mov    %rbx,%rdi
+  17:	e8 6a c3 3d 00       	call   0x3dc386
+  1c:	48 8b 2b             	mov    (%rbx),%rbp
+  1f:	48 8d 5d 08          	lea    0x8(%rbp),%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	48 89 df             	mov    %rbx,%rdi
+  34:	e8 3d c4 3d 00       	call   0x3dc476
+  39:	4c 89 23             	mov    %r12,(%rbx)
+  3c:	4c 89 e0             	mov    %r12,%rax
+  3f:	48                   	rex.W
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
