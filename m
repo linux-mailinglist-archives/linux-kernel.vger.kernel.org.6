@@ -1,339 +1,338 @@
-Return-Path: <linux-kernel+bounces-257264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED11E93779B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:11:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2BF49377C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D4D81C217AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:11:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C70011C2163A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EDE12FB31;
-	Fri, 19 Jul 2024 12:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8AF13212B;
+	Fri, 19 Jul 2024 12:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="3b5IbfSq"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ch1l+0iM"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B71412C814
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 12:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD975F876
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 12:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721391054; cv=none; b=SNKTA8OYyeOmd9eVb3bb8L5IKWPKkgy9w5+C8XmgjXk/otr/bHS8LqfTqgF3VAvM4Tek1p6FzanndOF+eY1tYDGTGpsrsO5gvacpzTeXid61A8YSlmXj+adkNPTHtQUxnQxQRp0PLKrQEXK4FXB8bZbV+S9PtfqtsIhK0IQnJ9I=
+	t=1721392172; cv=none; b=d7hROHNwZQdEEhxUDxY84RMB5RkS4uPgu0SADVUZYUYRIkYEvkxKCMcM7vcGLcDoWrLiB0HkgUdMsk6ALyKADoSNai+T7P5fy7EcUQdVD6TE15WD2fCV7rkXa7ZGnQOhZ/EhGbAsqo5saHqH5pHCqu3J7VaJN+NUqiNuFvMP6ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721391054; c=relaxed/simple;
-	bh=JbKJBnKc8an/mUI5UnL+L24JtO318obtiq5Z8V1gXpY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dZ6TLx27YLGlKDZ4F/JsN24piJXK/0tcLbGifwJBg2GgiJtrvPh0xCoqenq1wOBeEInK/rJdvPGqx5aWsOgfyMcdQ2IJPzIBl/3Ck0BAiiPbJxTFLVLwXl/cij5ehX5KWJ/Fyzu7d8tXOmbCRQkSKF1F0n1+2nS12x7Woo0Af4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=3b5IbfSq; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a77c0b42a8fso488765966b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 05:10:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721391050; x=1721995850; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iDifd/m3fc9gPX6imrbVn+VMbE0v8XYmk4uAGHmy7B8=;
-        b=3b5IbfSq0lT4y98DAkFBmxSqNWjStBkRAaRiWdzUJzJ17Z4qYf++pdpZozpFRDFlfY
-         I61Zq3TM0iexhEmIHsKM7OmJHSMRB+Ay5y3dOMlPKKBU0x6DQ9HsPL0I40PB/l+Sn2KB
-         ke8CNAEHH0+cdm/YAK7cK0x2t7GZG3a2gQPSEoLuzTqN2dahmJGAQEkX790vTTEIbS8h
-         KYdwBghewgBW/2BgcZ2QaqHPQIQSnoWy2wb1bq449PWNXb5yefo+Cwx+0677Jr1goQho
-         hm4Z/CHrb/rOY/QuoBlY5XpQ8rjl8ZlQ3QSKokuajUQpAK0PQt6jvr2Htbk3saoakGQ7
-         M3IA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721391050; x=1721995850;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iDifd/m3fc9gPX6imrbVn+VMbE0v8XYmk4uAGHmy7B8=;
-        b=FJC5APbd+xm2hjzgG08cm30e0iDNpMhTX9sA07kV49TU4MJP7kv3AIB4fwbRt3M2QL
-         +oeyby3OgiV+idibZaD5jvL7uOgy//qOgAGuE4YklXN8Py0r1RC8lysEJyN+5LvHrqVZ
-         oORKiywT82ujYP8s6IUzfrA0ju/HmtoXztOvCOUJC27SmG5CNgupSTtKZGEREvX0CE/Y
-         sdLjOfuP3P5KBmXg0OjCRgC+Z2fuVygfr8DJLXPtkMYOKf88durpcGSL55mKfNFm+Xmn
-         PurB/b70kV+AoxmXsc7GS/YADIFigpxdMS81HqbKv6q6CF7pXCwcJvlVFg1lc9sPWKjI
-         bmXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXcxjf4ZbBKVJnE5YW1X5wg77D2TH2QdYESWcfOIEFaaFhMsSoizHMsl3yZBbORheJsyAfqsgAjO7CVk+o3yeySmpeVSM4vXBmTX85r
-X-Gm-Message-State: AOJu0YwOrFf0CvNDlgGXu6pXJ3yxgkXClRxRs3XfjAgsWQrcI8Uq/22e
-	0AS8I6C2yrkwa15ReuUv76pTSyk7MHHrEuGCssXz70SHy2nBxVWfltQNFx8kuB/UIdJiWPHwkWR
-	FAJrryl1gGtzp3ZROinfap56/htq98yiTxMQojw==
-X-Google-Smtp-Source: AGHT+IFpWHMtPZNOH4GFZ/Qk9RhqcIGXP8rF8MVsaOGeuWjWNRsizmTMZDiNcrwEe6Q/C1QLW0uCCmiX3dfrDXR+uOg=
-X-Received: by 2002:a17:907:101c:b0:a6f:e7a0:91cf with SMTP id
- a640c23a62f3a-a7a0f7754fcmr559028666b.24.1721391050260; Fri, 19 Jul 2024
- 05:10:50 -0700 (PDT)
+	s=arc-20240116; t=1721392172; c=relaxed/simple;
+	bh=pbf7W16ISUH4WBjljL9mJmKqagVW2OI3Z+T+BxxM6HM=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=sI/jkf/dEAeOUFzM/kVke0pxE/WYWvKKu8fZ7K2OCdukaoCYXdxXsnFo3Qnv7hIIhyCKMNH2XWeSXZdOoe9lnW8U6ldZFcgvLfvqiOoZM9aaFK/Gk1TRt2u9pf+ArUBJVMWza+MUFtS4TR05pLQzWqf6rfzZY/pvYe9HSOxv8BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Ch1l+0iM; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240719122926epoutp03518aabcfd1daf1e732b28e8718a1eb6e~jnQ3-QIII0349603496epoutp03I
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 12:29:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240719122926epoutp03518aabcfd1daf1e732b28e8718a1eb6e~jnQ3-QIII0349603496epoutp03I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1721392166;
+	bh=K4D+JRBOZVrOy3NCg2PVJkr8GGWGTuqHachYf3HW+fk=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=Ch1l+0iMzhJEPD0ZWb+1zdt7QzckFsXBngtTw+9zab3k0bcASeBLx1SdCKlmhPUQ+
+	 48aqaJtHCX9JI/vBCReW7UJxXR8T4EYpc3xTSa4S/5T2M1ZZ3mfLKK48+iGnEmVhil
+	 BL+J0G6oaEUKldO5CdN3d0uQnXzcsVdWUaIxWwUI=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240719122925epcas5p34f60a037daa10fa1fbdb628f1486740e~jnQ3OJQVR0356803568epcas5p30;
+	Fri, 19 Jul 2024 12:29:25 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4WQTWR2sc1z4x9Pv; Fri, 19 Jul
+	2024 12:29:23 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	38.91.11095.32C5A966; Fri, 19 Jul 2024 21:29:23 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240719121215epcas5p15b79bb2cd572930cfd622be52442cbee~jnB4oQBIL1591815918epcas5p1Q;
+	Fri, 19 Jul 2024 12:12:15 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240719121215epsmtrp2a1cd3e0d75e459a8daa42d6ebbf9a3f3~jnB4nYO3r2751027510epsmtrp2Y;
+	Fri, 19 Jul 2024 12:12:15 +0000 (GMT)
+X-AuditID: b6c32a49-423b770000012b57-89-669a5c230c82
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A2.B3.29940.F185A966; Fri, 19 Jul 2024 21:12:15 +0900 (KST)
+Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240719121213epsmtip232453a68712b2d46a689948305bb6671~jnB2YYTTd1166811668epsmtip2h;
+	Fri, 19 Jul 2024 12:12:13 +0000 (GMT)
+From: "Shradha Todi" <shradha.t@samsung.com>
+To: "'Jonathan Cameron'" <Jonathan.Cameron@Huawei.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<manivannan.sadhasivam@linaro.org>, <lpieralisi@kernel.org>, <kw@linux.com>,
+	<robh@kernel.org>, <bhelgaas@google.com>, <jingoohan1@gmail.com>,
+	<fancer.lancer@gmail.com>, <yoshihiro.shimoda.uh@renesas.com>,
+	<conor.dooley@microchip.com>, <pankaj.dubey@samsung.com>,
+	<gost.dev@samsung.com>
+In-Reply-To: <20240701120939.00002d76@Huawei.com>
+Subject: RE: [PATCH 2/3] PCI: debugfs: Add support for RASDES framework in
+ DWC
+Date: Fri, 19 Jul 2024 17:42:11 +0530
+Message-ID: <000001dad9d4$e4c8ccf0$ae5a66d0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717084102.150914-1-alexghiti@rivosinc.com> <a28ddc26-d77a-470a-a33f-88144f717e86@sifive.com>
-In-Reply-To: <a28ddc26-d77a-470a-a33f-88144f717e86@sifive.com>
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Fri, 19 Jul 2024 14:10:39 +0200
-Message-ID: <CAHVXubh8Adb4=-vN4cSh0FrZ16TeOKJbLj4AF09QC241bRk1Jg@mail.gmail.com>
-Subject: Re: [PATCH] riscv: patch: Remove redundant functions
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Jason Baron <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ard Biesheuvel <ardb@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, 
-	Pu Lehui <pulehui@huawei.com>, Puranjay Mohan <puranjay@kernel.org>, 
-	Luke Nelson <luke.r.nels@gmail.com>, Xi Wang <xi.wang@gmail.com>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHKwgKyLB2C4lxb4O3ljLqdkJb8HwLRC2EZAqo5aqACiK3TSLHeAaVw
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKJsWRmVeSWpSXmKPExsWy7bCmhq5yzKw0g85f/BZLmjIspmzawW6x
+	oWMOq8XNAzuZLFZ8mclusWrhNTaLhp7frBaXd81hszg77zibRcufFhaLuy2drBaLtn5ht/i/
+	B6jt697PbA58Hjtn3WX3WLCp1KPlyFtWj02rOtk87lzbw+bx5Mp0Jo87P5Yyenw7M5HFo2/L
+	KkaPz5vkAriism0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ0
+	3TJzgB5QUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YWl+al6+WlllgZ
+	GhgYmQIVJmRnTD7+i61giknFtA19zA2MuzS7GDk5JARMJJ4cn8/axcjFISSwm1Hi240eRgjn
+	E6PEh4MboTLfGCVW3jjJBNNy+8JPVhBbSGAvo0TnhEyIoheMEg+brzOCJNgEdCSeXPnDDGKL
+	CJhJ/F32HGwss8BLJokNEy+DdXMKGEpc7dzB0sXIwSEsECDRf7kOJMwioCpxZvclsDm8ApYS
+	Hx98YYawBSVOznzCAmIzC8hLbH87hxniIAWJn0+XsULscpP4/PgbO0SNuMTRnz3MIHslBD5w
+	SNz4MpMRosFF4tytg2wQtrDEq+Nb2CFsKYnP7/ZCxdMlVm6eAbUgR+Lb5iVQ39tLHLgyB+xm
+	ZgFNifW79CHCshJTT61jgtjLJ9H7+wlUOa/EjnkwtrLEl797WCBsSYl5xy6zTmBUmoXktVlI
+	XpuF5IVZCNsWMLKsYpRMLSjOTU8tNi0wzEsth0d4cn7uJkZw+tby3MF498EHvUOMTByMhxgl
+	OJiVRHj9vs1ME+JNSaysSi3Kjy8qzUktPsRoCgzvicxSosn5wAySVxJvaGJpYGJmZmZiaWxm
+	qCTO+7p1boqQQHpiSWp2ampBahFMHxMHp1QDU35KruyH962yuVbzav+kL9y0dwrngfdRz6K7
+	Qy16jt1vPX/y00S2wNzmG+IX2XJYLFa06cbyeN12jV+hPP/Dlq/3thgXHNddEzoxQlGE/02+
+	xeazy16UxycsmxpSvIf1cYuOrKPEi3X7zwrtUjhs9NuRU5bn7TJvx/1PUxb6PY1010v95lz+
+	4+Cz2b2af1MCw+/8+Wq73TXx+A6P95qTSgQL12lPWL1B4r5lmr8bHxtTL9/pn7wb5qj9kj7+
+	zLlNwaSB58/NY5uusOhe+ec0WWvzNpe0c9qTHSsv8N9K1KgVaThhmZRwe+dLlj3v1k/Y0F63
+	tOHesb27l+urfvTS/rJF9d9/wzPhLpun3ty5aJMSS3FGoqEWc1FxIgD8wzd7aAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDIsWRmVeSWpSXmKPExsWy7bCSvK58xKw0gyW3tC2WNGVYTNm0g91i
+	Q8ccVoubB3YyWaz4MpPdYtXCa2wWDT2/WS0u75rDZnF23nE2i5Y/LSwWd1s6WS0Wbf3CbvF/
+	D1Db172f2Rz4PHbOusvusWBTqUfLkbesHptWdbJ53Lm2h83jyZXpTB53fixl9Ph2ZiKLR9+W
+	VYwenzfJBXBFcdmkpOZklqUW6dslcGVMPv6LrWCKScW0DX3MDYy7NLsYOTkkBEwkbl/4ydrF
+	yMUhJLCbUaJ5118miISkxOeL66BsYYmV/56zQxQ9Y5Q4PnkOI0iCTUBH4smVP8wgtoiAmcTf
+	Zc8ZQYqYBb4zSRw6fg2q4xGjxKlT79hBqjgFDCWudu5g6WLk4BAW8JM4NMcNJMwioCpxZvcl
+	sKG8ApYSHx98YYawBSVOznwCVs4soCfRthGshFlAXmL72znMEMcpSPx8uowV4gY3ic+Pv7FD
+	1IhLHP3ZwzyBUXgWkkmzECbNQjJpFpKOBYwsqxglUwuKc9Nziw0LDPNSy/WKE3OLS/PS9ZLz
+	czcxgiNYS3MH4/ZVH/QOMTJxMB5ilOBgVhLh9fs2M02INyWxsiq1KD++qDQntfgQozQHi5I4
+	r/iL3hQhgfTEktTs1NSC1CKYLBMHp1QDk0XvSp/NLpkN2SeYFlx9eLoobsPzFffe33ZiXx5w
+	4V6mx/0Z0cKs/R3KNj91J/WYMG2cJMj77cZb5lLGd1Pe3GaS7wg6u/v2RLGJxkpzeJ1iXn9Z
+	dtVKs87Vrr5o+snDmX8tmrLeOG82EKlgvb5oUeFmHZ/rAsLFO+Yy+hvPc94SciPUTMjg45P3
+	6ZOMLkru9Jrw4tvkr6Ecx4KuRV45eNa2r1t9pmrmDZHAFX9fCbvofs745MHcb3byfWX+l7Pv
+	F04UW1X/4rGtw1VmBxa7HfuFM4y72jbkvJ/SEsf2OHhRw/YV3y+a357jOP1dzOOPN5O6Gvbm
+	q80QYXCRX/qzX8fSSOjd1QeHvCo3pVi9tVRiKc5INNRiLipOBAD6FTZxTwMAAA==
+X-CMS-MailID: 20240719121215epcas5p15b79bb2cd572930cfd622be52442cbee
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240625094443epcas5p3093ac786a7d0f09de5a3bba17bbd4458
+References: <20240625093813.112555-1-shradha.t@samsung.com>
+	<CGME20240625094443epcas5p3093ac786a7d0f09de5a3bba17bbd4458@epcas5p3.samsung.com>
+	<20240625093813.112555-3-shradha.t@samsung.com>
+	<20240701120939.00002d76@Huawei.com>
 
-On Fri, Jul 19, 2024 at 3:56=E2=80=AFAM Samuel Holland
-<samuel.holland@sifive.com> wrote:
->
-> Hi Alex,
->
-> On 2024-07-17 3:41 AM, Alexandre Ghiti wrote:
-> > Commit edf2d546bfd6f5c4 ("riscv: patch: Flush the icache right after
-> > patching to avoid illegal insns") removed the last differences between
-> > patch_text_set_nosync() and patch_insn_set(), and between
-> > patch_text_nosync() and patch_insn_write().
+> -----Original Message-----
+> From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+> Sent: 01 July 2024 16:40
+> To: Shradha Todi <shradha.t@samsung.com>
+> Cc: linux-kernel@vger.kernel.org; linux-pci@vger.kernel.org;
+> manivannan.sadhasivam@linaro.org; lpieralisi@kernel.org; kw@linux.com;
+> robh@kernel.org; bhelgaas@google.com; jingoohan1@gmail.com;
+> fancer.lancer@gmail.com; yoshihiro.shimoda.uh@renesas.com;
+> conor.dooley@microchip.com; pankaj.dubey@samsung.com;
+> gost.dev@samsung.com
+> Subject: Re: [PATCH 2/3] PCI: debugfs: Add support for RASDES framework in DWC
+> 
+> On Tue, 25 Jun 2024 15:08:12 +0530
+> Shradha Todi <shradha.t@samsung.com> wrote:
+> 
+> > Add support to use the RASDES feature of DesignWare PCIe controller
+> > using debugfs entries.
 > >
-> > So remove the redundant *_nosync() functions.
->
-> My understanding was that we would eventually revert that patch, once we =
-are
-> sure we never non-atomically patch the text patching code. So it's helpfu=
-l to
-> keep the semantic distinction between the two sets of functions.
->
-> And looking at this closer, I think the original patch should not have re=
-moved
-> the calls to flush_icache_range() anyway. It replaces a global icache flu=
-sh with
-> a local icache flush, which is wrong if there is more than one CPU online=
-, and
-> there are a couple of places (bpf_jit_core.c, kprobes.c) where those func=
-tions
-> are called at runtime.
+> > RASDES is a vendor specific extended PCIe capability which reads the
+> > current hardware internal state of PCIe device. Following primary
+> > features are provided to userspace via debugfs:
+> > - Debug registers
+> > - Error injection
+> > - Statistical counters
+> >
+> > Signed-off-by: Shradha Todi <shradha.t@samsung.com>
+> 
+> A few minor things inline.
+> 
+> > +
+> > +struct rasdes_info {
+> > +	/* to store rasdes capability offset */
+> > +	u32 ras_cap;
+> > +	struct mutex dbg_mutex;
+> 
+> Add a comment on what data this mutex protects.
+> 
+> > +	struct dentry *rasdes;
+> > +};
+> 
+> > +struct err_inj {
+> Very generic name is likely to bite in future if similar gets defined in a
+header. I'd at
+> least prefix with dw_
+> 
+> > +	const char *name;
+> > +	/* values can be from group 0 - 6 */
+> > +	u32 err_inj_group;
+> > +	/* within each group there can be types */
+> > +	u32 err_inj_type;
+> > +	/* More details about the error */
+> > +	u32 err_inj_12_31;
+> > +};
+> 
+> 
+> > +
+> > +int dwc_pcie_rasdes_debugfs_init(struct dw_pcie *pci) {
+> > +	struct device *dev = pci->dev;
+> > +	int ras_cap;
+> > +	struct rasdes_info *dump_info;
+> > +	char dirname[DWC_DEBUGFS_MAX];
+> > +	struct dentry *dir, *rasdes_debug, *rasdes_err_inj;
+> > +	struct dentry *rasdes_event_counter, *rasdes_events;
+> > +	int i;
+> 
+> Perhaps combine with int ras_cap above.
+> 
+> From a quick look, I think this can get called from resume paths as well as
+initial
+> setup which doesn't look like a safe thing to do.
+> imx6_pcie_resume_irq()
+> dw_pcie_setup_rc()
+> dw_pcie_setup()
+> dwc_pcie_rasdes_debugfs_init()
+> 
+> 
 
-Ouch, thanks for catching this, I agree the global icache flush should
-not have been removed.
+Thanks for review. I'm going to post the next version soon with all your
+comments addressed.
+Yes, I guess this is a fair point that calling it during resume path + setup is
+not a safe thing to do.
+I was thinking we leave it up to  platform drivers to call it and drop patch 3
+altogether as I realised
+that there is also no ep_deinit to call the
+"dwc_pcie_rasdes_debugfs_deinit(pci)" from.
+Would love to know your opinion on this before I proceed to post the changes.
 
-I'll fix that right now,
+> > +	struct rasdes_priv *priv_tmp;
+> > +
+> > +	ras_cap = dw_pcie_find_vsec_capability(pci, DW_PCIE_RAS_DES_CAP);
+> > +	if (!ras_cap) {
+> > +		dev_err(dev, "No RASDES capability available\n");
+> > +		return -ENODEV;
+> > +	}
+> > +
+> > +	dump_info = devm_kzalloc(dev, sizeof(*dump_info), GFP_KERNEL);
+> > +	if (!dump_info)
+> > +		return -ENOMEM;
+> > +
+> > +	/* Create main directory for each platform driver */
+> > +	sprintf(dirname, "pcie_dwc_%s", dev_name(dev));
+> 
+> dev_name could in theory be huge.  I'd use snprintf() and check the result as
+more
+> obviously correct.
+> 
+> > +	dir = debugfs_create_dir(dirname, NULL);
+> 
+> Check for errors in all these.
+> 
+> > +
+> > +	/* Create subdirectories for Debug, Error injection, Statistics */
+> > +	rasdes_debug = debugfs_create_dir("rasdes_debug", dir);
+> > +	rasdes_err_inj = debugfs_create_dir("rasdes_err_inj", dir);
+> > +	rasdes_event_counter = debugfs_create_dir("rasdes_event_counter",
+> > +dir);
+> > +
+> > +	mutex_init(&dump_info->dbg_mutex);
+> > +	dump_info->ras_cap = ras_cap;
+> > +	dump_info->rasdes = dir;
+> > +	pci->dump_info = dump_info;
+> > +
+> > +	/* Create debugfs files for Debug subdirectory */
+> > +	dwc_debugfs_create(lane_detect);
+> > +	dwc_debugfs_create(rx_valid);
+> > +
+> > +	/* Create debugfs files for Error injection subdirectory */
+> > +	for (i = 0; i < ARRAY_SIZE(err_inj_list); i++) {
+> > +		priv_tmp = devm_kzalloc(dev, sizeof(*priv_tmp), GFP_KERNEL);
+> > +		if (!priv_tmp)
+> > +			goto err;
+> > +
+> > +		priv_tmp->idx = i;
+> > +		priv_tmp->pci = pci;
+> > +		debugfs_create_file(err_inj_list[i].name, 0200,
+> > +				    rasdes_err_inj, priv_tmp, &err_inj_ops);
+> > +	}
+> > +
+> > +	/* Create debugfs files for Statistical counter subdirectory */
+> > +	for (i = 0; i < ARRAY_SIZE(event_counters); i++) {
+> > +		priv_tmp = devm_kzalloc(dev, sizeof(*priv_tmp), GFP_KERNEL);
+> > +		if (!priv_tmp)
+> > +			goto err;
+> > +
+> > +		priv_tmp->idx = i;
+> > +		priv_tmp->pci = pci;
+> > +		rasdes_events = debugfs_create_dir(event_counters[i].name,
+> > +						   rasdes_event_counter);
+> > +		if (event_counters[i].group_no == 0) {
+> > +			debugfs_create_file("lane_select", 0644, rasdes_events,
+> > +					    priv_tmp, &cnt_lane_ops);
+> > +		}
+> > +		debugfs_create_file("counter_value", 0444, rasdes_events,
+> priv_tmp,
+> > +				    &cnt_val_ops);
+> > +		debugfs_create_file("counter_enable", 0644, rasdes_events,
+> priv_tmp,
+> > +				    &cnt_en_ops);
+> > +	}
+> > +
+> > +	return 0;
+> > +err:
+> > +	dwc_pcie_rasdes_debugfs_deinit(pci);
+> > +	return -ENOMEM;
+> > +}
+> > diff --git a/drivers/pci/controller/dwc/pcie-designware-debugfs.h
+> > b/drivers/pci/controller/dwc/pcie-designware-debugfs.h
+> > new file mode 100644
+> > index 000000000000..e69de29bb2d1
+> > diff --git a/drivers/pci/controller/dwc/pcie-designware.h
+> > b/drivers/pci/controller/dwc/pcie-designware.h
+> > index 77686957a30d..9fa9f33e4ddb 100644
+> > --- a/drivers/pci/controller/dwc/pcie-designware.h
+> > +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> > @@ -223,6 +223,8 @@
+> >
+> >  #define PCIE_RAS_DES_EVENT_COUNTER_DATA		0xc
+> >
+> > +#define DW_PCIE_RAS_DES_CAP			0x2
+> 
+> I'd be tempted to try and name that in a fashion that makes it clear it is a
+vsec
+> capability ID.  Currently it sounds like a top level capability ID.
+> 
+> > +
+> >  /*
+> >   * The default address offset between dbi_base and atu_base. Root
+controller
+> >   * drivers are not required to initialize atu_base if the offset
+> > matches this @@ -410,6 +412,7 @@ struct dw_pcie {
+> >  	struct reset_control_bulk_data	core_rsts[DW_PCIE_NUM_CORE_RSTS];
+> >  	struct gpio_desc		*pe_rst;
+> >  	bool			suspended;
+> > +	void			*dump_info;
+> >  };
+> 
 
-Thanks,
 
-Alex
-
->
-> Regards,
-> Samuel
->
-> > Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > Closes: https://lore.kernel.org/linux-riscv/CAMuHMdUwx=3DrU2MWhFTE6KhYH=
-m64phxx2Y6u05-aBLGfeG5696A@mail.gmail.com/
-> > Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> > ---
-> >  arch/riscv/errata/sifive/errata.c |  4 ++--
-> >  arch/riscv/errata/thead/errata.c  |  2 +-
-> >  arch/riscv/include/asm/patch.h    |  3 +--
-> >  arch/riscv/kernel/alternative.c   |  4 ++--
-> >  arch/riscv/kernel/cpufeature.c    |  2 +-
-> >  arch/riscv/kernel/jump_label.c    |  2 +-
-> >  arch/riscv/kernel/patch.c         | 24 +-----------------------
-> >  arch/riscv/net/bpf_jit_core.c     |  4 ++--
-> >  8 files changed, 11 insertions(+), 34 deletions(-)
-> >
-> > diff --git a/arch/riscv/errata/sifive/errata.c b/arch/riscv/errata/sifi=
-ve/errata.c
-> > index 716cfedad3a2..5253b205aa17 100644
-> > --- a/arch/riscv/errata/sifive/errata.c
-> > +++ b/arch/riscv/errata/sifive/errata.c
-> > @@ -112,8 +112,8 @@ void sifive_errata_patch_func(struct alt_entry *beg=
-in, struct alt_entry *end,
-> >               tmp =3D (1U << alt->patch_id);
-> >               if (cpu_req_errata & tmp) {
-> >                       mutex_lock(&text_mutex);
-> > -                     patch_text_nosync(ALT_OLD_PTR(alt), ALT_ALT_PTR(a=
-lt),
-> > -                                       alt->alt_len);
-> > +                     patch_insn_write(ALT_OLD_PTR(alt), ALT_ALT_PTR(al=
-t),
-> > +                                      alt->alt_len);
-> >                       mutex_unlock(&text_mutex);
-> >                       cpu_apply_errata |=3D tmp;
-> >               }
-> > diff --git a/arch/riscv/errata/thead/errata.c b/arch/riscv/errata/thead=
-/errata.c
-> > index bf6a0a6318ee..0ce280a190b6 100644
-> > --- a/arch/riscv/errata/thead/errata.c
-> > +++ b/arch/riscv/errata/thead/errata.c
-> > @@ -182,7 +182,7 @@ void thead_errata_patch_func(struct alt_entry *begi=
-n, struct alt_entry *end,
-> >                               memcpy(oldptr, altptr, alt->alt_len);
-> >                       } else {
-> >                               mutex_lock(&text_mutex);
-> > -                             patch_text_nosync(oldptr, altptr, alt->al=
-t_len);
-> > +                             patch_insn_write(oldptr, altptr, alt->alt=
-_len);
-> >                               mutex_unlock(&text_mutex);
-> >                       }
-> >               }
-> > diff --git a/arch/riscv/include/asm/patch.h b/arch/riscv/include/asm/pa=
-tch.h
-> > index 9f5d6e14c405..6b0e9b8a321b 100644
-> > --- a/arch/riscv/include/asm/patch.h
-> > +++ b/arch/riscv/include/asm/patch.h
-> > @@ -6,9 +6,8 @@
-> >  #ifndef _ASM_RISCV_PATCH_H
-> >  #define _ASM_RISCV_PATCH_H
-> >
-> > +int patch_insn_set(void *addr, u8 c, size_t len);
-> >  int patch_insn_write(void *addr, const void *insn, size_t len);
-> > -int patch_text_nosync(void *addr, const void *insns, size_t len);
-> > -int patch_text_set_nosync(void *addr, u8 c, size_t len);
-> >  int patch_text(void *addr, u32 *insns, int ninsns);
-> >
-> >  extern int riscv_patch_in_stop_machine;
-> > diff --git a/arch/riscv/kernel/alternative.c b/arch/riscv/kernel/altern=
-ative.c
-> > index 0128b161bfda..a8b508d99cf8 100644
-> > --- a/arch/riscv/kernel/alternative.c
-> > +++ b/arch/riscv/kernel/alternative.c
-> > @@ -83,7 +83,7 @@ static void riscv_alternative_fix_auipc_jalr(void *pt=
-r, u32 auipc_insn,
-> >       riscv_insn_insert_utype_itype_imm(&call[0], &call[1], imm);
-> >
-> >       /* patch the call place again */
-> > -     patch_text_nosync(ptr, call, sizeof(u32) * 2);
-> > +     patch_insn_write(ptr, call, sizeof(u32) * 2);
-> >  }
-> >
-> >  static void riscv_alternative_fix_jal(void *ptr, u32 jal_insn, int pat=
-ch_offset)
-> > @@ -98,7 +98,7 @@ static void riscv_alternative_fix_jal(void *ptr, u32 =
-jal_insn, int patch_offset)
-> >       riscv_insn_insert_jtype_imm(&jal_insn, imm);
-> >
-> >       /* patch the call place again */
-> > -     patch_text_nosync(ptr, &jal_insn, sizeof(u32));
-> > +     patch_insn_write(ptr, &jal_insn, sizeof(u32));
-> >  }
-> >
-> >  void riscv_alternative_fix_offsets(void *alt_ptr, unsigned int len,
-> > diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeat=
-ure.c
-> > index 5ef48cb20ee1..4c040a857c7e 100644
-> > --- a/arch/riscv/kernel/cpufeature.c
-> > +++ b/arch/riscv/kernel/cpufeature.c
-> > @@ -795,7 +795,7 @@ void __init_or_module riscv_cpufeature_patch_func(s=
-truct alt_entry *begin,
-> >               altptr =3D ALT_ALT_PTR(alt);
-> >
-> >               mutex_lock(&text_mutex);
-> > -             patch_text_nosync(oldptr, altptr, alt->alt_len);
-> > +             patch_insn_write(oldptr, altptr, alt->alt_len);
-> >               riscv_alternative_fix_offsets(oldptr, alt->alt_len, oldpt=
-r - altptr);
-> >               mutex_unlock(&text_mutex);
-> >       }
-> > diff --git a/arch/riscv/kernel/jump_label.c b/arch/riscv/kernel/jump_la=
-bel.c
-> > index e6694759dbd0..74b5ebfacf4a 100644
-> > --- a/arch/riscv/kernel/jump_label.c
-> > +++ b/arch/riscv/kernel/jump_label.c
-> > @@ -36,6 +36,6 @@ void arch_jump_label_transform(struct jump_entry *ent=
-ry,
-> >       }
-> >
-> >       mutex_lock(&text_mutex);
-> > -     patch_text_nosync(addr, &insn, sizeof(insn));
-> > +     patch_insn_write(addr, &insn, sizeof(insn));
-> >       mutex_unlock(&text_mutex);
-> >  }
-> > diff --git a/arch/riscv/kernel/patch.c b/arch/riscv/kernel/patch.c
-> > index ab03732d06c4..bf45b507f900 100644
-> > --- a/arch/riscv/kernel/patch.c
-> > +++ b/arch/riscv/kernel/patch.c
-> > @@ -177,7 +177,7 @@ static int __patch_insn_write(void *addr, const voi=
-d *insn, size_t len)
-> >  NOKPROBE_SYMBOL(__patch_insn_write);
-> >  #endif /* CONFIG_MMU */
-> >
-> > -static int patch_insn_set(void *addr, u8 c, size_t len)
-> > +int patch_insn_set(void *addr, u8 c, size_t len)
-> >  {
-> >       size_t patched =3D 0;
-> >       size_t size;
-> > @@ -198,17 +198,6 @@ static int patch_insn_set(void *addr, u8 c, size_t=
- len)
-> >  }
-> >  NOKPROBE_SYMBOL(patch_insn_set);
-> >
-> > -int patch_text_set_nosync(void *addr, u8 c, size_t len)
-> > -{
-> > -     u32 *tp =3D addr;
-> > -     int ret;
-> > -
-> > -     ret =3D patch_insn_set(tp, c, len);
-> > -
-> > -     return ret;
-> > -}
-> > -NOKPROBE_SYMBOL(patch_text_set_nosync);
-> > -
-> >  int patch_insn_write(void *addr, const void *insn, size_t len)
-> >  {
-> >       size_t patched =3D 0;
-> > @@ -230,17 +219,6 @@ int patch_insn_write(void *addr, const void *insn,=
- size_t len)
-> >  }
-> >  NOKPROBE_SYMBOL(patch_insn_write);
-> >
-> > -int patch_text_nosync(void *addr, const void *insns, size_t len)
-> > -{
-> > -     u32 *tp =3D addr;
-> > -     int ret;
-> > -
-> > -     ret =3D patch_insn_write(tp, insns, len);
-> > -
-> > -     return ret;
-> > -}
-> > -NOKPROBE_SYMBOL(patch_text_nosync);
-> > -
-> >  static int patch_text_cb(void *data)
-> >  {
-> >       struct patch_insn *patch =3D data;
-> > diff --git a/arch/riscv/net/bpf_jit_core.c b/arch/riscv/net/bpf_jit_cor=
-e.c
-> > index 0a96abdaca65..b053ae5c4191 100644
-> > --- a/arch/riscv/net/bpf_jit_core.c
-> > +++ b/arch/riscv/net/bpf_jit_core.c
-> > @@ -226,7 +226,7 @@ void *bpf_arch_text_copy(void *dst, void *src, size=
-_t len)
-> >       int ret;
-> >
-> >       mutex_lock(&text_mutex);
-> > -     ret =3D patch_text_nosync(dst, src, len);
-> > +     ret =3D patch_insn_write(dst, src, len);
-> >       mutex_unlock(&text_mutex);
-> >
-> >       if (ret)
-> > @@ -240,7 +240,7 @@ int bpf_arch_text_invalidate(void *dst, size_t len)
-> >       int ret;
-> >
-> >       mutex_lock(&text_mutex);
-> > -     ret =3D patch_text_set_nosync(dst, 0, len);
-> > +     ret =3D patch_insn_set(dst, 0, len);
-> >       mutex_unlock(&text_mutex);
-> >
-> >       return ret;
->
 
