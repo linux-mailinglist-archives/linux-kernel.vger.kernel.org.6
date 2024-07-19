@@ -1,66 +1,59 @@
-Return-Path: <linux-kernel+bounces-257394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AC90937965
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:56:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF64D937968
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:56:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A7F9282FAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:56:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C02E280F8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021691448F1;
-	Fri, 19 Jul 2024 14:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7871448EE;
+	Fri, 19 Jul 2024 14:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b3vnIZ8m"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k0jemaZP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDBD286A8;
-	Fri, 19 Jul 2024 14:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173CE63D5;
+	Fri, 19 Jul 2024 14:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721400957; cv=none; b=WqA8PqXe8Ol5+xD05WbBfhEVY81rrW0vYsJMsAfpb+G8tZliacyFkqSVow6JWIxF07hGnrG/uG1O6VKWCxgHZBm6V4vLmsBA50p2OYheKph4nFlnrcomsMTU9ge/Oq18V2MJS4XQY912Z024TJi04LRBub4u63otSWbXCWVOUSw=
+	t=1721400984; cv=none; b=UXBE6ctvQWpG2y1zi+/c7/0FEP1B6dZypZh6a4A5GEdtJ6B3KsVINOdZcKEdN+G1jiSru1abk8f2EF02/Znbz/TTUUUgjIivHbyC5v+nJMtq5e2liEe5DM6NRwNbkaIerZfuJC1F94WjGQc6xMFuueG19/zTIInhikAi9FR9wAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721400957; c=relaxed/simple;
-	bh=lu59uYU0WnGy1qbfbU5Y7HhfciugVzMFGwazTtthuG0=;
+	s=arc-20240116; t=1721400984; c=relaxed/simple;
+	bh=O4VyP2W3zOx8GnJ6GGdeDrEQ0pQ9+VnTxkj3ZXK45K4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OQNRANucasTcEowXnyBM7LWjun+L6NO7j7a3he0eTsfjUG3v/00ZJTOSJmOsC1Xwov8bpCuhtd+c62smFcMixl6k9yOZxDD67Zjw32ZKOHFQNbMMhD12RRCEzU3vio0+OoC3ebMPRUtk3c0R9zZEd9F1n6/gdkaJWLaELR75Vp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b3vnIZ8m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7259C32782;
-	Fri, 19 Jul 2024 14:55:52 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fo4dBJ26jXZ2ySB2+B30cN8Il7/VG+MQrOwzJyqlLluHLDg6AfP4HogIAk+73vMq9gQv567YKDaLfG2iuqEe69zMafFoB9YxQ1KRBtgGJE1Sh8D2ocszoYtuGPrFD9dvmDW0xFFBQc9Nqo6aJLvhRjhfXO/03iU03s7h1KVyt3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k0jemaZP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3C00C32782;
+	Fri, 19 Jul 2024 14:56:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721400956;
-	bh=lu59uYU0WnGy1qbfbU5Y7HhfciugVzMFGwazTtthuG0=;
+	s=k20201202; t=1721400983;
+	bh=O4VyP2W3zOx8GnJ6GGdeDrEQ0pQ9+VnTxkj3ZXK45K4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b3vnIZ8md2riZL4osy/8UIw3DsJmyGnM2np2usW2hiUWasZcYLG/82gGHNpHo/oRt
-	 wTCW9+NuJVhNQh5131NeAPKjoIJLQOeXLEw8vPfdiCGWXXpf4xqXm+uz5HLjU1RSGC
-	 QctOByYGuZdlTbsCtuq4AIbwUMHejW60vK3kMInVPZp9Q3QdCXTj6rJriTIUC9enR9
-	 4ich4P54IucgLtiQT/L09Xk7aN/PiP5s3o7v/5Mi9iKPKRNsshlvNQ30g1AoVpipBH
-	 HQMHhTYpE+j4sbmBQtrLUSu9SFR166ln3GOgvVCFDqj/34N655JZNhkJf1t0FIQziG
-	 4aT4dJWneA4GA==
-Date: Fri, 19 Jul 2024 15:55:50 +0100
+	b=k0jemaZP5wjp3mEEiFLCCM/9U+enircAvC6L6HVtSrOSoCYvQ7i1QDvnv54UiqHVj
+	 0uxEoXD0X+wYz7X5xkspXENPNSS6C3c3yVnQ8e2i9I02dFsrEa1y9WuvhhecbWTHuA
+	 hdC8geb0kUyiPaBTTa5BCLwr0uwBWvmUZ+F+7LvZN86X2l5r2KmNRzKx2P5fggiHbU
+	 Fz7f2Q6NJLuRM4aZ3IfqNfvxhSGOeJHX/hv/Je0smz8xbuhcCFRqGq6dWBYEc3Z2/N
+	 0HKQgPPOOOOFcJwNYvCa0c3qn3jqwQyEs9qdKorRzvJxY1F2WyuyTyc9Vc9vL3Ta4Q
+	 7S5hGiyasdHiQ==
+Date: Fri, 19 Jul 2024 15:56:19 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Ayush Singh <ayush@beagleboard.org>
-Cc: jkridner@beagleboard.org, robertcnelson@beagleboard.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>, Johan Hovold <johan@kernel.org>,
-	Alex Elder <elder@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	greybus-dev@lists.linaro.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/3] dt-bindings: net: ti,cc1352p7: Add boot-gpio
-Message-ID: <20240719-scuttle-strongbox-e573441c45e6@spud>
-References: <20240719-beagleplay_fw_upgrade-v1-0-8664d4513252@beagleboard.org>
- <20240719-beagleplay_fw_upgrade-v1-1-8664d4513252@beagleboard.org>
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: clock: axg-audio: add earcrx clock ids
+Message-ID: <20240719-whenever-wanting-bf631afa4663@spud>
+References: <20240719093934.3985139-1-jbrunet@baylibre.com>
+ <20240719093934.3985139-2-jbrunet@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,73 +61,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="tlfsPXEPQCAYZx+O"
+	protocol="application/pgp-signature"; boundary="tN+3GRhTz2+PxInK"
 Content-Disposition: inline
-In-Reply-To: <20240719-beagleplay_fw_upgrade-v1-1-8664d4513252@beagleboard.org>
+In-Reply-To: <20240719093934.3985139-2-jbrunet@baylibre.com>
 
 
---tlfsPXEPQCAYZx+O
+--tN+3GRhTz2+PxInK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 19, 2024 at 03:15:10PM +0530, Ayush Singh wrote:
-> boot-gpio (along with reset-gpio) is used to enable bootloader backdoor
-> for flashing new firmware.
+On Fri, Jul 19, 2024 at 11:39:30AM +0200, Jerome Brunet wrote:
+> Add clock IDs for the eARC Rx device found on sm1 SoCs
 >=20
-> The pin and pin level to enabel bootloader backdoor is configed using
-> the following CCFG variables in cc1352p7:
-> - SET_CCFG_BL_CONFIG_BL_PIN_NO
-> - SET_CCFG_BL_CONFIG_BL_LEVEL
->=20
-> Signed-off-by: Ayush Singh <ayush@beagleboard.org>
-> ---
->  Documentation/devicetree/bindings/net/ti,cc1352p7.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/net/ti,cc1352p7.yaml b/Doc=
-umentation/devicetree/bindings/net/ti,cc1352p7.yaml
-> index 3dde10de4630..a3511bb59b05 100644
-> --- a/Documentation/devicetree/bindings/net/ti,cc1352p7.yaml
-> +++ b/Documentation/devicetree/bindings/net/ti,cc1352p7.yaml
-> @@ -29,6 +29,9 @@ properties:
->    reset-gpios:
->      maxItems: 1
-> =20
-> +  boot-gpios:
-> +    maxItems: 1
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-I think this needs a description that explains what this is actually
-for, and "boot-gpios" is not really an accurate name for what it is used
-for IMO.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-> +
->    vdds-supply: true
-> =20
->  required:
-> @@ -46,6 +49,7 @@ examples:
->          clocks =3D <&sclk_hf 0>, <&sclk_lf 25>;
->          clock-names =3D "sclk_hf", "sclk_lf";
->          reset-gpios =3D <&pio 35 GPIO_ACTIVE_LOW>;
-> +        boot-gpios =3D <&pio 36 GPIO_ACTIVE_LOW>;
->          vdds-supply =3D <&vdds>;
->        };
->      };
->=20
-> --=20
-> 2.45.2
->=20
-
---tlfsPXEPQCAYZx+O
+--tN+3GRhTz2+PxInK
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpp+dgAKCRB4tDGHoIJi
-0ufpAP0f3kcaznt6hfqRUwiDVHor4R4fAC6j0mhDnFjYlGqewwEAq4wwM2CjagGN
-SdeYmNNys2KCWxRyuranV+JMANipHgk=
-=O52J
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpp+kwAKCRB4tDGHoIJi
+0j8WAPwOPdUj59+e34f5LjrClNS9PlsaIwClbL5o8IH1WiCsmgEA6vxkUeYWF2D5
+7qSl94g+GTRwcPCJr3bhHsSBE0J5zwY=
+=lfNB
 -----END PGP SIGNATURE-----
 
---tlfsPXEPQCAYZx+O--
+--tN+3GRhTz2+PxInK--
 
