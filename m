@@ -1,409 +1,135 @@
-Return-Path: <linux-kernel+bounces-257038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD54A937459
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:24:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCFBA93745F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:26:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3345D1F22B22
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 07:24:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9888028180F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 07:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED676502BD;
-	Fri, 19 Jul 2024 07:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F0754FAD;
+	Fri, 19 Jul 2024 07:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DhExahyS"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KWpT0eZs"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A29452F62;
-	Fri, 19 Jul 2024 07:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888F1446CF;
+	Fri, 19 Jul 2024 07:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721373847; cv=none; b=Gz4PIwbn0pIwGf/H3HPehaNJ8Vkf4e69wLt1oRH2UYG509L63vtrfsw0hm+iLk6UK4pc5nLENME7DLzTRkcCgQrfkqAtfu9hEuml7sB33wa3gjKe6Qd9M3j8nO9e4IR0U9jEb1u9Uh16/kAjDo1+J3u1ogg+ZTpz4dr+q4AUzMc=
+	t=1721373970; cv=none; b=shl4Iia2hlxe+rc5L88C5nZMelIclV5JqQJr/XIgx3ZNqaiq0A9uUtYXcSi9znFpBhyq8MolTc9rDEh8k7ylCHL1+gsCTEeI30fTNYhuEOqTvsoyW6qBOQYEaKSaf3/ha0uKpnC+CRwwz6VMtQ+EV1QyuBmhD++ZU60xOyAn7f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721373847; c=relaxed/simple;
-	bh=bcG3iA9CsgccbQzWB6XPsy/r1Fiup6iaI8ERvFUJ6lY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Sdc6lJpCPIOhp76KhGJ7IlFDmOo1lUDhTLVWSSXldU7I4NpPN7Szn8meGyGGMDFlZSv0WBXvFJJrJedX9TqqzROlw3nC/A255liWw/nNpM34JAdUgpciy8mNZSSWvb/eAacLDB/lkAUxyIvWtwHFb64/mMjShaeTykYoEUvR/Vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DhExahyS; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-79f1be45ca8so74095085a.3;
-        Fri, 19 Jul 2024 00:24:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721373845; x=1721978645; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mhwN9PZ1L5w95E9bGybBlfTUDIiZiGAwjTzsjn1o3CE=;
-        b=DhExahySERyzE6tDEB5EzUOmZPCwiPqxIBoYUwgzQ263BvrxPwt5lcn03V9/B3tYzB
-         uU/hY+j2UgK7285uU0m8+b92Dg6FrpzRPCvba0gjYUmYpZC+IAp+rfkJ+Y1/pk8YtSE1
-         5dj0irQyYlKWSlo6HlXe0gC6WyZjqhqHx2wNaMbuDsAFNRuHswLfywg7xypOsXKlGpuq
-         RGc5l3h+iSUKVE1seunEqDpAjZ/iqqmhJmixGfW7/yQaHBGTsbz6gvTP69+Q1Unjb+A9
-         btjz88yrnPaxlUOz+6vQBViKWnjpVykdXTp3seJvioVr62w82R/BcRqqirUF72jwj839
-         ctTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721373845; x=1721978645;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mhwN9PZ1L5w95E9bGybBlfTUDIiZiGAwjTzsjn1o3CE=;
-        b=pWglmq7w4paZY8MetABuzgPQJ0+nfVFRq8zfVumEO/YO160BgRvq2p8ibiEakHUHD8
-         sTOwQBL+3OLU4NDbSq6F6/X+zrI0CVfobV4ajluYCsBi48UYim/WgNd4AQGimDJZu76W
-         CTaxrFgFra94kXnpcx7Tx2aLQGKOFH86ZHUYZo5wazh/5Cc6tCOnRh2x5NLkSVNUtxOV
-         bWL87wZjLjgqf/3IXLzwZmZSnk4PqhlkwUp6LCO4+oyJ+FtC6jHk5hqOSTYE0JS2YMVL
-         zl85aVqsow7bZB4/LoTrvweDeI6pZ5zbTxxRt6lMIe1whH0FO5kd6M/1ArK5sBsfVSmo
-         ZWtw==
-X-Forwarded-Encrypted: i=1; AJvYcCVidB5JnjvluPX5XApHpkrzT/PXglhT972ouKJcm+v0ClprQZXtbv8A17wqaxv5EveLQy3o/jZiMbtoEMAvjacHcp8ykNkpN+ZDOT/PArabR8Mc3cCsbvaPb5E+/MOr/2RQZk8MDHxtkTJaIg==
-X-Gm-Message-State: AOJu0YwtFSyVhvLhnAT/+vog2IPv7nvIquIDQmGB09LXyVEgL2hHp9CZ
-	Fpzn/0hfEk3f3JIo6f9WoHN5lClU5liNuPyMPlvfZvy5LsDy8UHMWaaW1Hs3eOCBYgMkKsKXphl
-	yaf0P4FNk4oXu1olPzGdUk51wTuS1Wd4ioIg=
-X-Google-Smtp-Source: AGHT+IEceFiYaf2uOCjFuiEPhz7R61Azfv4Q4tmWp1KD3dKcXMc7ZY5Jflpwe+ILbQUP11FY5AtCoqQSrJFcyT2fvaI=
-X-Received: by 2002:a05:620a:4102:b0:79d:759d:4016 with SMTP id
- af79cd13be357-7a187446684mr769994585a.11.1721373844691; Fri, 19 Jul 2024
- 00:24:04 -0700 (PDT)
+	s=arc-20240116; t=1721373970; c=relaxed/simple;
+	bh=emon+gRNUzFM8ajmHcWHYkAKRaJySl5s5mTztAd7aN0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Irze6egLRyldRbeDCNA8eYA8QDCyrPQDRllIKdxyGx7d42Lop4H6OyEG29XRIaUTc42Jwi6ZMPlN4NlJ1iIju25OAnArliIc6blmNwGIU84Sx28piOAIp1S+BqjDp2WPYUhfB2VL4TvMGCqncLdU3sX6bKrXYCMVd6x0qa5HJg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KWpT0eZs; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46J0u8ua026322;
+	Fri, 19 Jul 2024 07:26:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+s6umawHR0DtsJDzkZcZLE1nHXDf83CbME2iVL0zWN0=; b=KWpT0eZsQiHMlPSX
+	WuCUXWxUqMFvcEJTYVBzkNhUOa3rGNO9t1Iw27XM/sqTnIU1lqh8uSQ/N1hU1p2s
+	vxX+yvHp2FizgFTyzKImyZrhXynDx12cedan6MF+AvRUsqi1ZAD23b6MGnSWeotU
+	CSPZOdpK9qoREoC7xVw4fa91IVFXEXbN+m16/QOMAIzpIp6e7KNRaK2bin/sx7a2
+	rt6YAO+ATx+M/0WsCB9MS9kVNZ+W8bmONBM5nOm+lLrOBv/UvbgDhyN9ftgOxCDK
+	Eha6KoiWR0iyJjykCylIK1HW7gfmE1AmpiFWH1paNXVtglPyiDcPH8vaY/+L/DHW
+	j1W5Dw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40fe1m8n5w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Jul 2024 07:26:02 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46J7Q1Wg031067
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Jul 2024 07:26:01 GMT
+Received: from [10.218.19.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 19 Jul
+ 2024 00:25:58 -0700
+Message-ID: <dd588276-8f1c-4389-7b3a-88f483b7072e@quicinc.com>
+Date: Fri, 19 Jul 2024 12:55:54 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240718034316.29844-1-feilv@asrmicro.com>
-In-Reply-To: <20240718034316.29844-1-feilv@asrmicro.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 19 Jul 2024 10:23:53 +0300
-Message-ID: <CAOQ4uxgqdOHJOT--sqf-HLtur6uKyk8mh=dkKzmdf8wupCVPhw@mail.gmail.com>
-Subject: Re: [PATCH] ovl: fsync after metadata copy-up via mount option "upsync=strict"
-To: Fei Lv <feilv@asrmicro.com>
-Cc: miklos@szeredi.hu, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lianghuxu@asrmicro.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH] clk: qcom: camcc-sc8280xp: Remove always-on GDSC
+ hard-coding
+Content-Language: en-US
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen
+ Boyd <sboyd@kernel.org>
+CC: <dmitry.baryshkov@linaro.org>, <stable@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-v1-1-fadb5d9445c1@linaro.org>
+ <f0d4b7a3-2b61-3d42-a430-34b30eeaa644@quicinc.com>
+ <86068581-0ce7-47b5-b1c6-fda4f7d1037f@linaro.org>
+ <02679111-1a35-b931-fecd-01c952553652@quicinc.com>
+ <ce14800d-7411-47c5-ad46-6baa6fb678f4@linaro.org>
+From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+In-Reply-To: <ce14800d-7411-47c5-ad46-6baa6fb678f4@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: WoHaHl_0HFJo8-KG719vUHu_kpQ82CV9
+X-Proofpoint-ORIG-GUID: WoHaHl_0HFJo8-KG719vUHu_kpQ82CV9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-19_04,2024-07-18_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 lowpriorityscore=0 mlxscore=0 mlxlogscore=663
+ clxscore=1015 bulkscore=0 phishscore=0 malwarescore=0 priorityscore=1501
+ spamscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407190057
 
-On Thu, Jul 18, 2024 at 6:43=E2=80=AFAM Fei Lv <feilv@asrmicro.com> wrote:
->
-> If a directory only exist in low layer, create a new file in it trigger
-> directory copy-up. Permission lost of the new directory in upper layer
-> was observed during power-cut stress test.
 
-You should specify that this outcome happens on very specific upper fs
-(i.e. ubifs) which does not enforce ordering on storing of metadata
-changes.
+On 7/17/2024 4:41 PM, Bryan O'Donoghue wrote:
+> On 17/07/2024 12:08, Satya Priya Kakitapalli (Temp) wrote:
+>>> How would it break ?
+>>>
+>>> We park the clock to XO it never gets turned off this way.
+>>>
+>>
+>> Parking the parent at XO doesn't ensure the branch clock is always 
+>> on, it can be disabled by consumers or CCF if modelled.
+>>
+>> If the CCF disables this clock in late init, then the clock stays in 
+>> disabled state until it is enabled again explicitly. Hence it is 
+>> recommended to not model such always-on clocks.
+>
+> What is the use-case to keep that clock always-on unless/util someone 
+> wants camss ?
+>
 
+The clock also has dependency on MMCX rail, this rail anyway will be OFF 
+until there is a use-case. So the clock will also be OFF.
+
+
+> I've tested this patch on sc8280xp and it works just fine.
 >
-> Fix by adding new mount opion "upsync=3Dstrict", make sure data/metadata =
-of
-> copied up directory written to disk before renaming from tmp to final
-> destination.
->
-> Signed-off-by: Fei Lv <feilv@asrmicro.com>
+
+Is the cam_cc_gdsc_clk clock ON after the boot up?
+
+
 > ---
-> OPT_sync changed to OPT_upsync since mount option "sync" already used.
-
-I see. I don't like the name "upsync" so much, it has other meanings
-how about using the option "fsync"?
-
-Here is a suggested documentation (which should be accompanied to any patch=
-)
-
-diff --git a/Documentation/filesystems/overlayfs.rst
-b/Documentation/filesystems/overlayfs.rst
-index 165514401441..f8183ddf8c4d 100644
---- a/Documentation/filesystems/overlayfs.rst
-+++ b/Documentation/filesystems/overlayfs.rst
-@@ -742,6 +742,42 @@ controlled by the "uuid" mount option, which
-supports these values:
-     mounted with "uuid=3Don".
-
-
-+Durability and copy up
-+----------------------
-+
-+The fsync(2) and fdatasync(2) system calls ensure that the metadata and da=
-ta
-+of a file, respectively, are safely written to the backing storage, which =
-is
-+expected to guarantee the existence of the information post system crash.
-+
-+Without the fdatasync(2) call, there is no guarantee that the observed dat=
-a
-+after a system crash will be either the old or the new data, but in practi=
-ce,
-+the observed data after crash is often the old or new data or a mix of bot=
-h.
-+
-+When overlayfs file is modified for the first time, copy up will create a =
-copy
-+of the lower file and its parent directories in the upper layer.  In case =
-of a
-+system crash, if fdatasync(2) was not called after the modification, the u=
-pper
-+file could end up with no data at all (i.e. zeros), which would be an unus=
-ual
-+outcome.  To avoid this experience, overlayfs calls fsync(2) on the upper =
-file
-+before completing the copy up with rename(2) to make the copy up "atomic".
-+
-+Depending on the backing filesystem (e.g. ubifs), fsync(2) before rename(2=
-) may
-+not be enough to provide the "atomic" copy up behavior and fsync(2) on the
-+copied up parent directories is required as well.
-+
-+Overlayfs can be tuned to prefer performance or durability when storing to=
- the
-+underlying upper layer.  This is controlled by the "fsync" mount option,
-+which supports these values:
-+
-+- "ordered": (default)
-+    Call fsync(2) on upper file before completion of copy up.
-+- "strict":
-+    Call fsync(2) on upper file and directories before completion of copy =
-up.
-+- "volatile": [*]
-+    Prefer performance over durability (see `Volatile mount`_)
-+
-+[*] The mount option "volatile" is an alias to "fsync=3Dvolatile".
-+
-+
- Volatile mount
- --------------
-
->
->  fs/overlayfs/copy_up.c   | 21 +++++++++++++++++++++
->  fs/overlayfs/ovl_entry.h | 20 ++++++++++++++++++--
->  fs/overlayfs/params.c    | 33 +++++++++++++++++++++++++++++----
->  fs/overlayfs/super.c     |  2 +-
->  4 files changed, 69 insertions(+), 7 deletions(-)
->
-> diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-> index a5ef2005a2cc..b6f021ad7a43 100644
-> --- a/fs/overlayfs/copy_up.c
-> +++ b/fs/overlayfs/copy_up.c
-> @@ -243,6 +243,21 @@ static int ovl_verify_area(loff_t pos, loff_t pos2, =
-loff_t len, loff_t totlen)
->         return 0;
->  }
->
-> +static int ovl_copy_up_sync(struct path *path)
-> +{
-> +       struct file *new_file;
-> +       int err;
-> +
-> +       new_file =3D ovl_path_open(path, O_LARGEFILE | O_WRONLY);
-
-I don't think any of those O_ flags are needed for fsync.
-Can a directory be opened O_WRONLY???
-
-> +       if (IS_ERR(new_file))
-> +               return PTR_ERR(new_file);
-> +
-> +       err =3D vfs_fsync(new_file, 0);
-> +       fput(new_file);
-> +
-> +       return err;
-> +}
-> +
->  static int ovl_copy_up_file(struct ovl_fs *ofs, struct dentry *dentry,
->                             struct file *new_file, loff_t len)
->  {
-> @@ -701,6 +716,9 @@ static int ovl_copy_up_metadata(struct ovl_copy_up_ct=
-x *c, struct dentry *temp)
->                 err =3D ovl_set_attr(ofs, temp, &c->stat);
->         inode_unlock(temp->d_inode);
->
-> +       if (!err && ovl_should_sync_strict(ofs))
-> +               err =3D ovl_copy_up_sync(&upperpath);
-> +
->         return err;
->  }
->
-> @@ -1104,6 +1122,9 @@ static int ovl_copy_up_meta_inode_data(struct ovl_c=
-opy_up_ctx *c)
->         ovl_clear_flag(OVL_HAS_DIGEST, d_inode(c->dentry));
->         ovl_clear_flag(OVL_VERIFIED_DIGEST, d_inode(c->dentry));
->         ovl_set_upperdata(d_inode(c->dentry));
-> +
-> +       if (!err && ovl_should_sync_strict(ofs))
-> +               err =3D ovl_copy_up_sync(&upperpath);
-
-fsync was probably already called in ovl_copy_up_file()
-making this call redundant and fsync of the removal
-of metacopy xattr does not add any safety.
-
->  out_free:
->         kfree(capability);
->  out:
-> diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
-> index cb449ab310a7..4592e6f7dcf7 100644
-> --- a/fs/overlayfs/ovl_entry.h
-> +++ b/fs/overlayfs/ovl_entry.h
-> @@ -5,6 +5,12 @@
->   * Copyright (C) 2016 Red Hat, Inc.
->   */
->
-> +enum {
-> +       OVL_SYNC_DATA,
-> +       OVL_SYNC_STRICT,
-> +       OVL_SYNC_OFF,
-> +};
-> +
->  struct ovl_config {
->         char *upperdir;
->         char *workdir;
-> @@ -18,7 +24,7 @@ struct ovl_config {
->         int xino;
->         bool metacopy;
->         bool userxattr;
-> -       bool ovl_volatile;
-> +       int sync_mode;
->  };
->
->  struct ovl_sb {
-> @@ -120,7 +126,17 @@ static inline struct ovl_fs *OVL_FS(struct super_blo=
-ck *sb)
->
->  static inline bool ovl_should_sync(struct ovl_fs *ofs)
->  {
-> -       return !ofs->config.ovl_volatile;
-> +       return ofs->config.sync_mode =3D=3D OVL_SYNC_DATA;
-
-    return ofs->config.sync_mode !=3D OVL_SYNC_OFF;
-or
-    return ofs->config.sync_mode !=3D OVL_FSYNC_VOLATILE;
-
-> +}
-> +
-> +static inline bool ovl_should_sync_strict(struct ovl_fs *ofs)
-> +{
-> +       return ofs->config.sync_mode =3D=3D OVL_SYNC_STRICT;
-> +}
-> +
-> +static inline bool ovl_is_volatile(struct ovl_config *config)
-> +{
-> +       return config->sync_mode =3D=3D OVL_SYNC_OFF;
->  }
->
->  static inline unsigned int ovl_numlower(struct ovl_entry *oe)
-> diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
-> index 4860fcc4611b..5d5538dd3de7 100644
-> --- a/fs/overlayfs/params.c
-> +++ b/fs/overlayfs/params.c
-> @@ -58,6 +58,7 @@ enum ovl_opt {
->         Opt_xino,
->         Opt_metacopy,
->         Opt_verity,
-> +       Opt_upsync,
->         Opt_volatile,
->  };
->
-> @@ -139,6 +140,23 @@ static int ovl_verity_mode_def(void)
->         return OVL_VERITY_OFF;
->  }
->
-> +static const struct constant_table ovl_parameter_upsync[] =3D {
-> +       { "data",       OVL_SYNC_DATA      },
-> +       { "strict",     OVL_SYNC_STRICT    },
-> +       { "off",        OVL_SYNC_OFF       },
-> +       {}
-> +};
-> +
-> +static const char *ovl_upsync_mode(struct ovl_config *config)
-> +{
-> +       return ovl_parameter_upsync[config->sync_mode].name;
-> +}
-> +
-> +static int ovl_upsync_mode_def(void)
-> +{
-> +       return OVL_SYNC_DATA;
-> +}
-> +
->  const struct fs_parameter_spec ovl_parameter_spec[] =3D {
->         fsparam_string_empty("lowerdir",    Opt_lowerdir),
->         fsparam_string("lowerdir+",         Opt_lowerdir_add),
-> @@ -154,6 +172,7 @@ const struct fs_parameter_spec ovl_parameter_spec[] =
-=3D {
->         fsparam_enum("xino",                Opt_xino, ovl_parameter_xino)=
-,
->         fsparam_enum("metacopy",            Opt_metacopy, ovl_parameter_b=
-ool),
->         fsparam_enum("verity",              Opt_verity, ovl_parameter_ver=
-ity),
-> +       fsparam_enum("upsync",              Opt_upsync, ovl_parameter_ups=
-ync),
->         fsparam_flag("volatile",            Opt_volatile),
->         {}
->  };
-> @@ -617,8 +636,11 @@ static int ovl_parse_param(struct fs_context *fc, st=
-ruct fs_parameter *param)
->         case Opt_verity:
->                 config->verity_mode =3D result.uint_32;
->                 break;
-> +       case Opt_upsync:
-> +               config->sync_mode =3D result.uint_32;
-> +               break;
->         case Opt_volatile:
-> -               config->ovl_volatile =3D true;
-> +               config->sync_mode =3D OVL_SYNC_OFF;
->                 break;
->         case Opt_userxattr:
->                 config->userxattr =3D true;
-> @@ -802,9 +824,9 @@ int ovl_fs_params_verify(const struct ovl_fs_context =
-*ctx,
->                 config->index =3D false;
->         }
->
-> -       if (!config->upperdir && config->ovl_volatile) {
-> +       if (!config->upperdir && ovl_is_volatile(config)) {
->                 pr_info("option \"volatile\" is meaningless in a non-uppe=
-r mount, ignoring it.\n");
-
-This message would be confusing if mount option is "syncup=3Doff"
-but if the option is "fsync=3Dvolatile" I think the message can stay as it =
-is.
-
-Thanks,
-Amir.
-
-> -               config->ovl_volatile =3D false;
-> +               config->sync_mode =3D ovl_upsync_mode_def();
->         }
->
->         if (!config->upperdir && config->uuid =3D=3D OVL_UUID_ON) {
-> @@ -997,8 +1019,11 @@ int ovl_show_options(struct seq_file *m, struct den=
-try *dentry)
->         if (ofs->config.metacopy !=3D ovl_metacopy_def)
->                 seq_printf(m, ",metacopy=3D%s",
->                            ofs->config.metacopy ? "on" : "off");
-> -       if (ofs->config.ovl_volatile)
-> +       if (ovl_is_volatile(&ofs->config))
->                 seq_puts(m, ",volatile");
-> +       else if (ofs->config.sync_mode !=3D ovl_upsync_mode_def())
-> +               seq_printf(m, ",upsync=3D%s",
-> +                          ovl_upsync_mode(&ofs->config));
->         if (ofs->config.userxattr)
->                 seq_puts(m, ",userxattr");
->         if (ofs->config.verity_mode !=3D ovl_verity_mode_def())
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index 06a231970cb5..824cbcf40523 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -750,7 +750,7 @@ static int ovl_make_workdir(struct super_block *sb, s=
-truct ovl_fs *ofs,
->          * For volatile mount, create a incompat/volatile/dirty file to k=
-eep
->          * track of it.
->          */
-> -       if (ofs->config.ovl_volatile) {
-> +       if (ovl_is_volatile(&ofs->config)) {
->                 err =3D ovl_create_volatile_dirty(ofs);
->                 if (err < 0) {
->                         pr_err("Failed to create volatile/dirty file.\n")=
-;
->
-> base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
-> --
-> 2.45.2
->
+> bod
 
