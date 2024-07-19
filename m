@@ -1,197 +1,187 @@
-Return-Path: <linux-kernel+bounces-256928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A613F9372A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 04:59:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96A7E93729F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 04:56:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 246161F21DB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 02:59:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B19C31C20F75
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 02:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB4E171CC;
-	Fri, 19 Jul 2024 02:59:41 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69785F9F8;
+	Fri, 19 Jul 2024 02:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="b1i22ThB"
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7505E24211;
-	Fri, 19 Jul 2024 02:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBFAC147
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 02:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721357981; cv=none; b=ofyU9oCYx/OZg8udg43L0lN/5aS7iREzQfwT+A5e2x2CJEzJ0RrAxapyExNQTh5z5njtYpri6kBGweqH32p9Ml4XodIO6Ea4MdqhyqY6ekd4qcNs2tV19XjyHJGaMhIS3/RlXaORxBvnQWJrPKevc6Xzljpp7ILR4znFEKliYCU=
+	t=1721357757; cv=none; b=bdxE5C2s9lY1ZRzqKdKQmRe7TM9oB7V8wXnom72gxsiu8MX+9w9LiZBtDMSZI+pKDX7G/QxQQb5+EPyE1WCb367X5YSa4BEJAUTCDojPtfGy9ouegPTH8Dk5Cn1laaawwrMC5zEI1imqxZlmV6DI6MH20cyP/d1rlX51uAxlX4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721357981; c=relaxed/simple;
-	bh=eccdJ3dr+zlv4hcLvNsWN68j0hQoNZJlKgq940lStdY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nebezSChf4Yi3/lZF3OlE2AL/zsqP9Fv1bcSnNj5LWCs+gnAClHFuwtHio7fmxyXpYR/QmGVrxLZQkCpfThW8pJQYFT2MFKbJXA8b9zfKnp1uZAi3DwPczztw2EpHp8tbomqlnZOZRt4ZC0vTds6VwUrs2iw0msYmzGVVXSuJE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WQDmK0RMwz1JD4F;
-	Fri, 19 Jul 2024 10:54:41 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 02AAF1800A0;
-	Fri, 19 Jul 2024 10:59:35 +0800 (CST)
-Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Fri, 19 Jul
- 2024 10:59:34 +0800
-From: Chen Ridong <chenridong@huawei.com>
-To: <martin.lau@linux.dev>, <ast@kernel.org>, <daniel@iogearbox.net>,
-	<andrii@kernel.org>, <eddyz87@gmail.com>, <song@kernel.org>,
-	<yonghong.song@linux.dev>, <john.fastabend@gmail.com>, <kpsingh@kernel.org>,
-	<sdf@google.com>, <haoluo@google.com>, <jolsa@kernel.org>, <tj@kernel.org>,
-	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>, <roman.gushchin@linux.dev>
-CC: <bpf@vger.kernel.org>, <cgroups@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH -v2] cgroup: fix deadlock caused by cgroup_mutex and cpu_hotplug_lock
-Date: Fri, 19 Jul 2024 02:52:32 +0000
-Message-ID: <20240719025232.2143638-1-chenridong@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1721357757; c=relaxed/simple;
+	bh=376oq4s/RAHN/ui1eV8N1i/hUAVngv9Xukgp7ciOSJ4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A2uXgc+Ro3e7o0t3+b/1sx8Kh4dYutEImxrfcFbx2vL0Vg7QLOFrH7ZLKMfq5cWrBa6DV1+vWuv20ARf8nFJevzvdRl4FZ3ByU2eBgweuLDa2uuc4jxjmBsdSp9HIP86O1RXVsbaLCW5HOPI/RXBnbydSOFiH8Cd708Xjivb4Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=b1i22ThB; arc=none smtp.client-ip=209.85.217.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-48fde3a2b17so423807137.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 19:55:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1721357754; x=1721962554; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xIhpumDPm4fvOwY3jLHPpABCQS7IJTZrwNfks0Zro8o=;
+        b=b1i22ThBGFOVq6eIw7vNJM+Fy723sAHA4rYJtUh75fmGxWqQempsJja3secg6Xwgy5
+         GNeOQNZV4Ckm4AOWrUPBnOWandujfh5USeb/gDS8VwTd7H/zz5iJUKExUJWqRf/r3DnC
+         GXjbpoEY57JxisbOA9gVXYLQdIiKpANsijzUi86WnqLTkPUXGGVZJYlMaARRQitNwXxg
+         q4u45hPkYmBl3CNv0i+wec2qauDpWiq0qcCywqkMqegcDM5ndvhfSXuubGrZKoRmVEVt
+         jfpopKm8n6MmjS48TEa8LFMgEB7dtT5hq8munwswhuoXVF4jLsY9icomT9+z3APrbK+H
+         TzhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721357754; x=1721962554;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xIhpumDPm4fvOwY3jLHPpABCQS7IJTZrwNfks0Zro8o=;
+        b=JDhtVaMZ8p530R4ZRhBWq9yKb5BnwKi7ALLiZrDw5E5u5bj5lIMGJs57Eiu81pJN0f
+         Bx6lMvauJu8AuYYjttNwEZz3KRjMW0lAEqH1DlWL26rNellgFBiBsxLs23Js6YZ4udFK
+         NhhIxAn7suMYCMbIKuotd3XbdYiZRzgNWCXCgcb7NyY9IFu2Z9Rdv39lJjicbZgNvlgq
+         tZ++SWYVqV8md7Y7px24kAYpXg8EGXH13rGSTwObJLmqbN7jGUNaVFHoYxEVOrseCqbU
+         tzaFRPEKXQT2pNibfxpa4Ovz3jN2x/NGubPm4snX2l/79re1d8jzO3dDGOX1lZqU8A0I
+         J2Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCW7r/FFg5Z9D1KoVpQ29fyStMm6Jnzx0kznvXMU1eKl3Qk84Rp95opqXRebV+QGBpCM8yxT3XOZ5xtShgYbnhlC9s2rZvBts2fn8Ogq
+X-Gm-Message-State: AOJu0YwuYj/yzzOksF1H0n/A89LTmseDdrFfK2FLhvPjtT2YLoo8RAEG
+	+1R+1acHTco+bfQ3D+4HIzhhOyK5Xe6Kbvgky0hucv+GmE6zJa5BM55xPaB4McKKnbclahyO+EJ
+	zPLHj72O+WP+La63D28gYlBpMpcTYt5BaII7c1w==
+X-Google-Smtp-Source: AGHT+IF9USjnlYvphL36rdSXytfyHnoWlCthQOZzmJ7NTCLIEur/EE/+i/CoA2/MuhlEZSKE5A/DrhXQKIDnwO6Rq+4=
+X-Received: by 2002:a05:6102:80a4:b0:48f:df86:db3 with SMTP id
+ ada2fe7eead31-491597faba5mr8705048137.3.1721357754635; Thu, 18 Jul 2024
+ 19:55:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd100013.china.huawei.com (7.221.188.163)
+References: <20240718202611.1695164-1-pasha.tatashin@soleen.com> <2fbbxcsjs7vtzpb6a5wudbppcr2wgc2xwdw3cgs6ejzx6rioze@z2sct6rbulng>
+In-Reply-To: <2fbbxcsjs7vtzpb6a5wudbppcr2wgc2xwdw3cgs6ejzx6rioze@z2sct6rbulng>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 18 Jul 2024 22:55:17 -0400
+Message-ID: <CA+CK2bB4RELLHExbkL444ArTtUnqiYVYKJ1rLQGarLyenY6WxQ@mail.gmail.com>
+Subject: Re: [PATCH v4] vmstat: Kernel stack usage histogram
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: akpm@linux-foundation.org, jpoimboe@kernel.org, kent.overstreet@linux.dev, 
+	peterz@infradead.org, nphamcs@gmail.com, cerasuolodomenico@gmail.com, 
+	surenb@google.com, lizhijian@fujitsu.com, willy@infradead.org, vbabka@suse.cz, 
+	ziy@nvidia.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-We found a hung_task problem as shown below:
+On Thu, Jul 18, 2024 at 7:36=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
+v> wrote:
+>
+> On Thu, Jul 18, 2024 at 08:26:11PM GMT, Pasha Tatashin wrote:
+> [...]
+> > diff --git a/include/linux/sched/task_stack.h b/include/linux/sched/tas=
+k_stack.h
+> > index ccd72b978e1f..65e8c9fb7f9b 100644
+> > --- a/include/linux/sched/task_stack.h
+> > +++ b/include/linux/sched/task_stack.h
+> > @@ -95,9 +95,51 @@ static inline int object_is_on_stack(const void *obj=
+)
+> >  extern void thread_stack_cache_init(void);
+> >
+> >  #ifdef CONFIG_DEBUG_STACK_USAGE
+> > +#ifdef CONFIG_VM_EVENT_COUNTERS
+> > +#include <linux/vm_event_item.h>
+> > +
+> > +/* Count the maximum pages reached in kernel stacks */
+> > +static inline void kstack_histogram(unsigned long used_stack)
+>
+> Any specific reason to add this function in header?
 
-INFO: task kworker/0:0:8 blocked for more than 327 seconds.
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/0:0     state:D stack:13920 pid:8     ppid:2       flags:0x00004000
-Workqueue: events cgroup_bpf_release
-Call Trace:
- <TASK>
- __schedule+0x5a2/0x2050
- ? find_held_lock+0x33/0x100
- ? wq_worker_sleeping+0x9e/0xe0
- schedule+0x9f/0x180
- schedule_preempt_disabled+0x25/0x50
- __mutex_lock+0x512/0x740
- ? cgroup_bpf_release+0x1e/0x4d0
- ? cgroup_bpf_release+0xcf/0x4d0
- ? process_scheduled_works+0x161/0x8a0
- ? cgroup_bpf_release+0x1e/0x4d0
- ? mutex_lock_nested+0x2b/0x40
- ? __pfx_delay_tsc+0x10/0x10
- mutex_lock_nested+0x2b/0x40
- cgroup_bpf_release+0xcf/0x4d0
- ? process_scheduled_works+0x161/0x8a0
- ? trace_event_raw_event_workqueue_execute_start+0x64/0xd0
- ? process_scheduled_works+0x161/0x8a0
- process_scheduled_works+0x23a/0x8a0
- worker_thread+0x231/0x5b0
- ? __pfx_worker_thread+0x10/0x10
- kthread+0x14d/0x1c0
- ? __pfx_kthread+0x10/0x10
- ret_from_fork+0x59/0x70
- ? __pfx_kthread+0x10/0x10
- ret_from_fork_asm+0x1b/0x30
- </TASK>
+For performance reasons to keep it inlined into stack_not_used() which
+is also defined as inline function in this header.
 
-This issue can be reproduced by the following methods:
-1. A large number of cpuset cgroups are deleted.
-2. Set cpu on and off repeatly.
-3. Set watchdog_thresh repeatly.
+>
+> > +{
+> > +     if (used_stack <=3D 1024)
+> > +             this_cpu_inc(vm_event_states.event[KSTACK_1K]);
+>
+> Why not count_vm_event(KSTACK_1K)? Avoiding header include recursion?
 
-The reason for this issue is cgroup_mutex and cpu_hotplug_lock are
-acquired in different tasks, which may lead to deadlock.
-It can lead to a deadlock through the following steps:
-1. A large number of cgroups are deleted, which will put a large
-   number of cgroup_bpf_release works into system_wq. The max_active
-   of system_wq is WQ_DFL_ACTIVE(256). When cgroup_bpf_release can not
-   get cgroup_metux, it may cram system_wq, and it will block work
-   enqueued later.
-2. Setting watchdog_thresh will hold cpu_hotplug_lock.read and put
-   smp_call_on_cpu work into system_wq. However it may be blocked by
-   step 1.
-3. Cpu offline requires cpu_hotplug_lock.write, which is blocked by step 2.
-4. When a cpuset is deleted, cgroup release work is placed on
-   cgroup_destroy_wq, it will hold cgroup_metux and acquire
-   cpu_hotplug_lock.read. Acquiring cpu_hotplug_lock.read is blocked by
-   cpu_hotplug_lock.write as mentioned by step 3. Finally, it forms a
-   loop and leads to a deadlock.
+I could not include "linux/vmstat.h" into "linux/sched/task_stack.h"
+because it introduces some dependencies such linux/mm.h and
+linux/fs.h, uapi/linux/stat.h, and when all of those are added it
+still fails to compile on some architectures, so it was just simpler
+to stop resolving the conflicts and use this_cpu_inc() directly.
 
-cgroup_destroy_wq(step4)	cpu offline(step3)		WatchDog(step2)			system_wq(step1)
-												......
-								__lockup_detector_reconfigure:
-								P(cpu_hotplug_lock.read)
-								...
-				...
-				percpu_down_write:
-				P(cpu_hotplug_lock.write)
-												...256+ works
-												cgroup_bpf_release:
-												P(cgroup_mutex)
-								smp_call_on_cpu:
-								Wait system_wq
-...
-css_killed_work_fn:
-P(cgroup_mutex)
-...
-cpuset_css_offline:
-P(cpu_hotplug_lock.read)
-
-To fix the problem, place cgroup_bpf_release works on cgroup_destroy_wq,
-which can break the loop and solve the problem. System wqs are for misc
-things which shouldn't create a large number of concurrent work items.
-If something is going to generate >WQ_DFL_ACTIVE(256) concurrent work
-items, it should use its own dedicated workqueue.
-
-Fixes: 4bfc0bb2c60e ("bpf: decouple the lifetime of cgroup_bpf from cgroup itself")
-Link: https://lore.kernel.org/cgroups/e90c32d2-2a85-4f28-9154-09c7d320cb60@huawei.com/T/#t
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- kernel/bpf/cgroup.c             | 2 +-
- kernel/cgroup/cgroup-internal.h | 1 +
- kernel/cgroup/cgroup.c          | 2 +-
- 3 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
-index 8ba73042a239..a611a1274788 100644
---- a/kernel/bpf/cgroup.c
-+++ b/kernel/bpf/cgroup.c
-@@ -334,7 +334,7 @@ static void cgroup_bpf_release_fn(struct percpu_ref *ref)
- 	struct cgroup *cgrp = container_of(ref, struct cgroup, bpf.refcnt);
- 
- 	INIT_WORK(&cgrp->bpf.release_work, cgroup_bpf_release);
--	queue_work(system_wq, &cgrp->bpf.release_work);
-+	queue_work(cgroup_destroy_wq, &cgrp->bpf.release_work);
- }
- 
- /* Get underlying bpf_prog of bpf_prog_list entry, regardless if it's through
-diff --git a/kernel/cgroup/cgroup-internal.h b/kernel/cgroup/cgroup-internal.h
-index 520b90dd97ec..9e57f3e9316e 100644
---- a/kernel/cgroup/cgroup-internal.h
-+++ b/kernel/cgroup/cgroup-internal.h
-@@ -13,6 +13,7 @@
- extern spinlock_t trace_cgroup_path_lock;
- extern char trace_cgroup_path[TRACE_CGROUP_PATH_LEN];
- extern void __init enable_debug_cgroup(void);
-+extern struct workqueue_struct *cgroup_destroy_wq;
- 
- /*
-  * cgroup_path() takes a spin lock. It is good practice not to take
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index e32b6972c478..3317e03fe2fb 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -124,7 +124,7 @@ DEFINE_PERCPU_RWSEM(cgroup_threadgroup_rwsem);
-  * destruction work items don't end up filling up max_active of system_wq
-  * which may lead to deadlock.
-  */
--static struct workqueue_struct *cgroup_destroy_wq;
-+struct workqueue_struct *cgroup_destroy_wq;
- 
- /* generate an array of cgroup subsystem pointers */
- #define SUBSYS(_x) [_x ## _cgrp_id] = &_x ## _cgrp_subsys,
--- 
-2.34.1
-
+>
+> > +#if THREAD_SIZE > 1024
+> > +     else if (used_stack <=3D 2048)
+> > +             this_cpu_inc(vm_event_states.event[KSTACK_2K]);
+> > +#endif
+> > +#if THREAD_SIZE > 2048
+> > +     else if (used_stack <=3D 4096)
+> > +             this_cpu_inc(vm_event_states.event[KSTACK_4K]);
+> > +#endif
+> > +#if THREAD_SIZE > 4096
+> > +     else if (used_stack <=3D 8192)
+> > +             this_cpu_inc(vm_event_states.event[KSTACK_8K]);
+> > +#endif
+> > +#if THREAD_SIZE > 8192
+> > +     else if (used_stack <=3D 16384)
+> > +             this_cpu_inc(vm_event_states.event[KSTACK_16K]);
+> > +#endif
+> > +#if THREAD_SIZE > 16384
+> > +     else if (used_stack <=3D 32768)
+> > +             this_cpu_inc(vm_event_states.event[KSTACK_32K]);
+> > +#endif
+> > +#if THREAD_SIZE > 32768
+> > +     else if (used_stack <=3D 65536)
+> > +             this_cpu_inc(vm_event_states.event[KSTACK_64K]);
+> > +#endif
+> > +#if THREAD_SIZE > 65536
+> > +     else
+> > +             this_cpu_inc(vm_event_states.event[KSTACK_REST]);
+> > +#endif
+> > +}
+> > +#else /* !CONFIG_VM_EVENT_COUNTERS */
+> > +static inline void kstack_histogram(unsigned long used_stack) {}
+> > +#endif /* CONFIG_VM_EVENT_COUNTERS */
+> > +
+> >  static inline unsigned long stack_not_used(struct task_struct *p)
+> >  {
+> >       unsigned long *n =3D end_of_stack(p);
+> > +     unsigned long unused_stack;
+> >
+> >       do {    /* Skip over canary */
+> >  # ifdef CONFIG_STACK_GROWSUP
+> > @@ -108,10 +150,13 @@ static inline unsigned long stack_not_used(struct=
+ task_struct *p)
+> >       } while (!*n);
+> >
+> >  # ifdef CONFIG_STACK_GROWSUP
+> > -     return (unsigned long)end_of_stack(p) - (unsigned long)n;
+> > +     unused_stack =3D (unsigned long)end_of_stack(p) - (unsigned long)=
+n;
+> >  # else
+> > -     return (unsigned long)n - (unsigned long)end_of_stack(p);
+> > +     unused_stack =3D (unsigned long)n - (unsigned long)end_of_stack(p=
+);
+> >  # endif
+> > +     kstack_histogram(THREAD_SIZE - unused_stack);
+> > +
+> > +     return unused_stack;
+> >  }
+> >  #endif
+> >  extern void set_task_stack_end_magic(struct task_struct *tsk);
+>
 
