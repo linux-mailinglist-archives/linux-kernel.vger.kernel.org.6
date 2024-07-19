@@ -1,126 +1,105 @@
-Return-Path: <linux-kernel+bounces-257376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 174C693792E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:29:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BF53937933
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 485831C22000
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:29:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 476A328303F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25811422CA;
-	Fri, 19 Jul 2024 14:29:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF261DDEA;
+	Fri, 19 Jul 2024 14:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="IzuBvltr"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="JZZnt0Tb"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE75E128812
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 14:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9AB8494
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 14:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721399369; cv=none; b=uwNbpk1J7CnN+hSKCfSsfK8Ccci6PYq2GXCNlOnNvYe1KnInkXAhuL1X7pt3vVbk/zTjjwMgYsIGxW3km+wLSJ84VIozaBzCvtrs1WVX5mt9UhiJFK2L+iwbfUuhO1PvhhHb645IbkgF4X0+o8uM4h0XkCDbPBWO6So0II/K98g=
+	t=1721399426; cv=none; b=Nb5iGDEoQf8JwwCeTKRbJYQRd8sF697rLEfHrLynrTLQe7SACDxgQctZUrGok80nDGfPNgF7BjJqUFuS2eyUN0vE835FLcFJtLrgWdGEME5knca0L2ZtsoGbrfy7aS4OM/Xc/wArkZODi4Uubfv0KsBmF9iUBkbl0VY4hFqfK1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721399369; c=relaxed/simple;
-	bh=iMZReatiQoXCUCDb4enmqaETvqLaixiQNHffC5I6OHQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TxRKgoTh++2hX9SavXi0OttMh0/ilX0UuVmIY/jO8JxJGqBFrc62J5DrfXXMq0pHA0PCx2+oQMgNkOPQ5Z+dddBjYJNLd8swp/3RR0DQy+7OwWUgNR+DMt1pm5YNoQKOxwyx+HbsZazoV2zLBD+EUfwRTuAT7HTP18AyJNoGY2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=IzuBvltr; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2cb4c51fb41so1003588a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 07:29:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1721399367; x=1722004167; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zBvWWRz+Z0I0p9hXVMaA4ifSvelmfw5OGbtdTZr/O4w=;
-        b=IzuBvltr+EVQKytD3yEAOX5W9aU0NkzTZnWLpF5heaAoino3ZrqZttGK/H9Y6tu8QO
-         dPu+bEEgznWMtxLfx+kf6r8u6edYaqHXG0nIvoGIdWdhJr4APrg/gHwhiK/1k4EPx87K
-         VSTd6do5alMeErlxd8zRWe03gs3TGf431hKT/zz8oeBJ0DzXRf1YlDnPH3xu1A8c7Npn
-         ojI5bBJipWtQtYizL+/rsYm8XqWn3/9RltR763eKDGYlDnFBft0X79XFWqcwX8r58isA
-         gKISXBMz8skpsfcSndGodalT1XB2CQLeLSUsSpqzLToRTxN5URPgA+elyTy1hi543Wrj
-         J2NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721399367; x=1722004167;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zBvWWRz+Z0I0p9hXVMaA4ifSvelmfw5OGbtdTZr/O4w=;
-        b=k1ytox1zC0968mLK/Vn8p2nJIcQiDJ5ArFzeiPrZa3BDWq/ExwcM3cYQzg1/zIO/JK
-         1QJo/f9G4T9XOaLrkNaPewEKlKRRxNestdamKxIAAnWm3fg5Lx+wL+xBUvLQpKDUxyda
-         h699xptYmHzz3iNeNDd5Pg7E4n6QJsQI8AcyIGJRZXMs2tRkGkQ0p57L3D5HxflpPHQn
-         mb9HlDkUIcrlsobTSk7jIZaCB4h83khEnQYNU73vAzODIQG6TcmdyQgqfZTivQZqT6Uf
-         YTxYEOGf2NqF/5k0DxnSBfIe3aCWOAaxa4c1gQOacDW1DD9OTT72BY94wmaf1Ght+vFS
-         ja3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXM3vDWyOuNUe00KrtM3gj8LHcg5knc9r11x3pCqMbZDe863jd8cGMOyli8XqbItFv3OE3aFVnqbDMK/kg8nnMROrGMMh+onOEIHW4y
-X-Gm-Message-State: AOJu0Yw9ISxYtKjfreTotzLqJexFX9q/00pclWnzuHyBU5KM+K4BK4rS
-	y2qpH5xNB/cO7tK2txjLICO0kTB/O7Rgj53qEKXkw+1zJjAS5Y4o2IuGs3xTTNpFgdL8MIwwOu/
-	kor4cTbjb9qvSxVsE9t2pSP5g5szArZ+BqWeGwQ==
-X-Google-Smtp-Source: AGHT+IHqlnH/qq9cgCs0u1oep6yl4EVnty5TdHQ4YvKkwNGd46o0D46seeJ728vOTUuaeVvxAJJMo6Uw7+U7mMdADqE=
-X-Received: by 2002:a17:90a:5e4e:b0:2ca:f755:103c with SMTP id
- 98e67ed59e1d1-2cb52930e7emr6116442a91.31.1721399367196; Fri, 19 Jul 2024
- 07:29:27 -0700 (PDT)
+	s=arc-20240116; t=1721399426; c=relaxed/simple;
+	bh=EV8YF/xZeTMqPh4i7Ghl7fvFLDOerg3p+GeutAZ97hY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z0b63B+td6hNI3BK+Xt+JY5B73i/5nDORoBsue3VntFTFDIZS8l/F8RFaMyNYtno30EhJoWrGPumQOigpkiULJ0aeQseM6VJbdwoTzzBYCfJ5HCLTO87DWqG23+L5N1CfHfnWckx4c+TETLwbpSo5ORoJr/CUwwSrYgD4gx+XJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=JZZnt0Tb; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-115-17.bstnma.fios.verizon.net [173.48.115.17])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 46JEU1dj024673
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Jul 2024 10:30:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1721399403; bh=Wb+H9ac9NfOTm/D/TkgZKLQniLuU6Iek81X6nbJI7o8=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=JZZnt0TbI8sGXvbmWAVm+ekAM73TouWTuItn7jrR/LWHb+UedBHC32A5XupjKVm13
+	 ogIm9Xnc9bA2i0SneLpHYr6BQrXH62O2s/8JKMV9/DUy1iTWyx67iHPoBxL2snBy/g
+	 FNfaSisLwRXGDHGhNyA/wIn+zPwHdweZeHExqWqNUsH9b1cNvD4Tq2mN8OoXJxJroA
+	 kTyMv7L7is8GDKWQB+u9AbtAxdRIF0zDcnl/Xg3bo6kjtrQbQIpY/+kmNOcIOCM4x7
+	 g5Urp2AZLYKOWwetaORsAgY771tViuD662DeocfmZEUaDHf96KA9lozDaU0BHV9Xvf
+	 +33U4OQng/jNw==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 2A1E715C029B; Fri, 19 Jul 2024 10:30:01 -0400 (EDT)
+Date: Fri, 19 Jul 2024 10:30:01 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Waiman Long <longman@redhat.com>, linux-bcachefs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs changes for 6.11
+Message-ID: <20240719143001.GA2333818@mit.edu>
+References: <r75jqqdjp24gikil2l26wwtxdxvqxpgfaixb2rqmuyzxnbhseq@6k34emck64hv>
+ <CAHk-=wigjHuE2OPyuT6GK66BcQSAukSp0sm8vYvVJeB7+V+ecQ@mail.gmail.com>
+ <5ypgzehnp2b3z2e5qfu2ezdtyk4dc4gnlvme54hm77aypl3flj@xlpjs7dbmkwu>
+ <CAHk-=wgzMxdCRi9Fqhq2Si+HzyKgWEvMupq=Q-QRQ1xgD_7n=Q@mail.gmail.com>
+ <4l32ehljkxjavy3d2lwegx3adec25apko3v355tnlnxhrs43r4@efhplbikcoqs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719114650.1551478-1-arnd@kernel.org> <CAMRc=MexLwZqoc-ymuu3OSu5YXcqdmfLuX88kK0uR_6WqHgp_w@mail.gmail.com>
- <6eb7d811-5c0a-4d0a-84f4-57323fd794e0@app.fastmail.com>
-In-Reply-To: <6eb7d811-5c0a-4d0a-84f4-57323fd794e0@app.fastmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 19 Jul 2024 16:29:12 +0200
-Message-ID: <CAMRc=Mdny7t4NvsE3DQCQKs+DWOkp9Ee1XK3XmvVGGhbqQvq4Q@mail.gmail.com>
-Subject: Re: [PATCH] gpio: virtuser: avoid non-constant format string
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Arnd Bergmann <arnd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4l32ehljkxjavy3d2lwegx3adec25apko3v355tnlnxhrs43r4@efhplbikcoqs>
 
-On Fri, Jul 19, 2024 at 4:28=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote=
-:
->
-> On Fri, Jul 19, 2024, at 16:10, Bartosz Golaszewski wrote:
-> >> diff --git a/drivers/gpio/gpio-virtuser.c b/drivers/gpio/gpio-virtuser=
-.c
-> >> index 0e0d55da4f01..c55b72e426c7 100644
-> >> --- a/drivers/gpio/gpio-virtuser.c
-> >> +++ b/drivers/gpio/gpio-virtuser.c
-> >> @@ -805,7 +805,7 @@ static int gpio_virtuser_dbgfs_init_line_attrs(str=
-uct device *dev,
-> >>                 return -ENOMEM;
-> >>
-> >>         data->ad.desc =3D desc;
-> >> -       sprintf(data->consumer, id);
-> >> +       sprintf(data->consumer, "%s", id);
-> >>         atomic_set(&data->irq, 0);
-> >>         atomic_set(&data->irq_count, 0);
-> >>
-> >> --
-> >> 2.39.2
-> >>
-> >
-> > I know this should not happen as the string is checked for length when
-> > it is set over configfs but while we're at it: maybe make it 100%
-> > correct by using snprintf(data->consumer, sizeof(data->consumer), ...?
->
-> Actually I now think this should just be
->
->      strscpy(data->consumer, id);
->
-> There was never a reason to use sprintf() here at all.
-> strscpy() does both the correct size check and avoids
-> treating it as a format string.
->
->       Arnd
+On Thu, Jul 18, 2024 at 06:24:08PM -0400, Kent Overstreet wrote:
+> 
+> I've gotten essentially zero in the way of test feedback from
+> for-next (except from Stephen Rothwell directly, the odd build
+> warning or merge issue, but 0day mostly catches the build stuff
+> before it hits next).
 
-Even better!
+I am currently running regular testing on the new linux-next's fs-next
+branch.  Things which are still blocking me from announcing it are:
 
-Bart
+*) Negotiating with Konstantin about the new lists.linux.dev mailing
+   list.
+
+*) A few minor bug fixes / robustification improves in the
+   "gce-xfstests watch" --- for example, right now if git fetch fails
+   due to load throttling / anti-DOS protections on git.kernel.org
+   trip the git watcher dies.  Obviously, I need to teach it to do
+   exponential backoff retries, because I'm not going to leave my
+   kernel.org credentials on a VM running in the cloud to bypass the
+   kernel.org DOS protections.  :-)
+
+As far as bcachefs is concerned, my xfstests-bld infrastructure isn't
+set up to build rust userspace, and Debian has a very ancient bcachefs
+packages --- the latest version in Debian stable and unstable dates
+from November 2022.  So I haven't enabled bcachefs support in
+gce-xfstests and kvm-xfstests yet.  Patches gratefully accepted.  :-)
+
+In any case, I'm hoping to have some publically accessible regular
+test results of fs-next.  I've just been crazy busy lately....
+
+	     	 				   - Ted
+						   
 
