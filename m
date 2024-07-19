@@ -1,294 +1,132 @@
-Return-Path: <linux-kernel+bounces-257053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D89A8937493
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:52:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 903339374AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14C531C20CBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 07:52:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1EE21C216E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 08:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C465914C;
-	Fri, 19 Jul 2024 07:52:46 +0000 (UTC)
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6798B64A98;
+	Fri, 19 Jul 2024 08:03:45 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BC344C81
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 07:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A43482ED;
+	Fri, 19 Jul 2024 08:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721375565; cv=none; b=PXmJsLBXm8Lz027YT59ofNATYRA+I+RpyLcLHUv9KA67ziSO5F9+xKZioqomSnpko/XzJYHx4+yYNTZbBdQd3z4UdLnh0zSEubu7les26c2KI3otnQYoYOeJw0KFerVfIwW1zPX6RsfqzaSjtWsYvs52bDesZecvA7/zltbm8tE=
+	t=1721376225; cv=none; b=gFOCngTiRzE2SlTC6/n13cK1YX3VJ2/JQX6tf+/lJYPBuDZ/3Fc6V0XYwR9lJT539PASPZiPqe9bQS/7sRpHRjd+9/2LQ0E9klYbODzelQEGCnS6WLTsUnxgIbK0+H3UCuavXVoIBvLEfCHtPaKJ47Ygb9ExKlmg+pCY9EUZukA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721375565; c=relaxed/simple;
-	bh=PtoquHE9H/XWuvAqrk5N1f7n6Y5AC55yD9AEqiJ/DME=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nxpLDhJG7ILlYaNTWZPjl8MakcAM79zlzYJpQC+qzIz5pRLNEcZSqknvADOoGyvOvYSa9dMhCYnJ9HJHMRkzAwMJ27OGKaBe3hVek0tsyergkAuJ2R4rkL4PIORlfCObuSVYj5o8vW7YC1caDradldue50erj/g+DwzB3cL1X8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-4f4d7e7fda5so603772e0c.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 00:52:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721375563; x=1721980363;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9xl2BF9j5KmOhunUwdfCN8P7oaCHLOP0oS6Xt9fJcuk=;
-        b=AfbKqvXEFMsj33rMmM/3WrVbJbR9h88mQ7azNPN6HGor0H+jiEcxFS9Edvr8nxb94F
-         d6N24haLDOmbQTHptrVdJrr2seu4GU8rIG8Hhb3XpQOYgP9tkUkVmTqxzohtL221Y2gp
-         RWwtakWlXy2th5m1IZK2OVjOsT1OJn45f/i434DyMaChfJmXTFiX209go3y2m2ykFnPE
-         iC7W1gto5d9hkLlB7piP5y03cbyN2rMnTdzSCRBeJ5CZrESr8plDhxxLne45/TBHg5PH
-         F3rKic4/e1xi2J+kKCbP5xtfZ5zSuumEHJTSYaJN6TSWsDH+mwOxWzeQmMg8ZzzATE8T
-         qSLg==
-X-Forwarded-Encrypted: i=1; AJvYcCX/TlDGSKSGrN6WJCEC7MLN+1XHFWiaq+fsYR0akHelCV2JTNRmEDUS53Kii0yNFhDrjPEahU027lKYXuyU//MfxxrpareR20WZLoS/
-X-Gm-Message-State: AOJu0Yxlvv2oYtSy6GUXOKtjRtlMoKwFfIDkulKRdW9NuIQg6jyXwYBz
-	juJur/nsZf81gr7k67yetE0iknVYFP52Le+7OxWJ4q7SGnv+AIUlMmWKj/5KzUF7C8CXixEU3Fm
-	dSlEOzy7axgzJ4G5+JA3cSuBOtlU=
-X-Google-Smtp-Source: AGHT+IH9ktg2Fg5gwNnNNy033Oyx54ryUfT96YkbV6E/YeZXj7RltjlfvHpW7ogclmxfCllCy0NVcKMMgOn3F8YrrGo=
-X-Received: by 2002:a05:6122:3283:b0:4f2:e2f7:ed6 with SMTP id
- 71dfb90a1353d-4f4df8c75a1mr9688844e0c.13.1721375562862; Fri, 19 Jul 2024
- 00:52:42 -0700 (PDT)
+	s=arc-20240116; t=1721376225; c=relaxed/simple;
+	bh=bxQpRIxO+p5WkJNaBFEIJKuPh7hpLUGh3Nps12uHS64=;
+	h=From:Subject:To:Date:Message-ID:References:MIME-Version:
+	 Content-Type; b=CcEHNwbQM3BV7bdYxMRcwX1AOmxOCbmtwaEecPDur2hU/xXVpiJFALmNVHEVBO/1GwV2WouklKg3XQhwlUe4tE/w6876ffFxWAdmr9Jyr4yq8ddk5JCpx1xUNr6JU6xWjnzICgQZVDZpnC1F7hq9L5UEfPCywgPWlhwPSiLnFUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: f01a57b445a311ef93f4611109254879-20240719
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:cfb73a9e-d92a-4a1e-87a8-7722a916ee0f,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:82c5f88,CLOUDID:2de2fbe0743d755dfaea168b7386c7cd,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:0,Content:0,EDM:-3,IP:nil,URL:0,F
+	ile:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO
+	,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: f01a57b445a311ef93f4611109254879-20240719
+Received: from mail.kylinos.cn [(10.44.16.189)] by mailgw.kylinos.cn
+	(envelope-from <aichao@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 767770583; Fri, 19 Jul 2024 15:53:08 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 10C6571E859C;
+	Fri, 19 Jul 2024 15:53:08 +0800 (CST)
+Received: by mail.kylinos.cn (NSMail, from userid 0)
+	id EABBF71E859C; Fri, 19 Jul 2024 15:53:07 +0800 (CST)
+From: =?UTF-8?B?6Im+6LaF?= <aichao@kylinos.cn>
+Subject: =?UTF-8?B?W1BBVENIXSBISUQ6IGNvcmU6IEZpeCBwYXJzaW5nIGVycm9yIGZvciBUaGlua2Jvb2sxNiBHNisgSU1I?=
+To: 	=?UTF-8?B?amlrb3M=?= <jikos@kernel.org>,
+	=?UTF-8?B?YmVudGlzcw==?= <bentiss@kernel.org>,
+	=?UTF-8?B?bGludXgtaW5wdXQ=?= <linux-input@vger.kernel.org>,
+	=?UTF-8?B?bGludXgta2VybmVs?= <linux-kernel@vger.kernel.org>,
+Date: Fri, 19 Jul 2024 15:53:07 +0800
+X-Mailer: NSMAIL 7.0.0
+Message-ID: <12vo1pesman-12vrviv1rs0@nsmail7.0.0--kylin--1>
+References: 20240719074809.14892-1-aichao@kylinos.cn
+X-Israising: 0
+X-Seclevel-1: 0
+X-Seclevel: 0
+X-Delaysendtime: Fri, 19 Jul 2024 15:53:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717071257.4141363-1-ryan.roberts@arm.com>
- <20240717071257.4141363-4-ryan.roberts@arm.com> <CAGsJ_4wiZRP9siEk9WpAYRjj-gehxptGY9XWC8k3N4QHBppAhQ@mail.gmail.com>
- <fa5bd4cb-6d5c-4cb7-bb41-3c277e291cd6@arm.com>
-In-Reply-To: <fa5bd4cb-6d5c-4cb7-bb41-3c277e291cd6@arm.com>
-From: Barry Song <baohua@kernel.org>
-Date: Fri, 19 Jul 2024 19:52:32 +1200
-Message-ID: <CAGsJ_4xSDc8pX+-vOUcXtV_ivt0Jc-LECiC=tto9oxYeOtU38Q@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 3/4] mm: Override mTHP "enabled" defaults at kernel cmdline
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	David Hildenbrand <david@redhat.com>, Lance Yang <ioworker0@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Gavin Shan <gshan@redhat.com>, 
-	Pankaj Raghav <kernel@pankajraghav.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary=nsmail-15vx8j1lmg2-15vzseofq3n
+X-ns-mid: webmail-669a1b63-15qodi3q
+X-ope-from: <aichao@kylinos.cn>
 
-On Fri, Jul 19, 2024 at 7:48=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.com>=
- wrote:
->
-> On 19/07/2024 01:46, Barry Song wrote:
-> > On Wed, Jul 17, 2024 at 7:13=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.=
-com> wrote:
-> >>
-> >> Add thp_anon=3D cmdline parameter to allow specifying the default
-> >> enablement of each supported anon THP size. The parameter accepts the
-> >> following format and can be provided multiple times to configure each
-> >> size:
-> >>
-> >> thp_anon=3D<size>[KMG]:<value>
-> >>
-> >> See Documentation/admin-guide/mm/transhuge.rst for more details.
-> >>
-> >> Configuring the defaults at boot time is useful to allow early user
-> >> space to take advantage of mTHP before its been configured through
-> >> sysfs.
-> >
-> > This is exactly what I need and want to implement, as the current behav=
-ior
-> > is problematic. We need to boot up the system and reach the point where
-> > we can set up the sys interfaces to enable mTHP. Many processes miss th=
-e
-> > opportunity to use mTHP.
-> >
-> > On the other hand, userspace might have been tuned to detect that mTHP
-> > is enabled, such as a .so library. However, it turns out we have had
-> > inconsistent settings between the two stages - before and after setting
-> > mTHP enabled by sys interfaces.
->
-> Good feedback - sounds like I should separate out this patch from the res=
-t of
-> the series to get it reviewed and merged faster?
+This message is in MIME format.
 
-+1
+--nsmail-15vx8j1lmg2-15vzseofq3n
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: base64
 
->
-> >
-> >>
-> >> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> >> ---
-> >>  .../admin-guide/kernel-parameters.txt         |  8 +++
-> >>  Documentation/admin-guide/mm/transhuge.rst    | 26 +++++++--
-> >>  mm/huge_memory.c                              | 55 ++++++++++++++++++=
--
-> >>  3 files changed, 82 insertions(+), 7 deletions(-)
-> >>
-> >> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documen=
-tation/admin-guide/kernel-parameters.txt
-> >> index bc55fb55cd26..48443ad12e3f 100644
-> >> --- a/Documentation/admin-guide/kernel-parameters.txt
-> >> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> >> @@ -6592,6 +6592,14 @@
-> >>                         <deci-seconds>: poll all this frequency
-> >>                         0: no polling (default)
-> >>
-> >> +       thp_anon=3D       [KNL]
-> >> +                       Format: <size>[KMG]:always|madvise|never|inher=
-it
-> >> +                       Can be used to control the default behavior of=
- the
-> >> +                       system with respect to anonymous transparent h=
-ugepages.
-> >> +                       Can be used multiple times for multiple anon T=
-HP sizes.
-> >> +                       See Documentation/admin-guide/mm/transhuge.rst=
- for more
-> >> +                       details.
-> >> +
-> >>         threadirqs      [KNL,EARLY]
-> >>                         Force threading of all interrupt handlers exce=
-pt those
-> >>                         marked explicitly IRQF_NO_THREAD.
-> >> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentatio=
-n/admin-guide/mm/transhuge.rst
-> >> index 1aaf8e3a0b5a..f53d43d986e2 100644
-> >> --- a/Documentation/admin-guide/mm/transhuge.rst
-> >> +++ b/Documentation/admin-guide/mm/transhuge.rst
-> >> @@ -311,13 +311,27 @@ performance.
-> >>  Note that any changes to the allowed set of sizes only applies to fut=
-ure
-> >>  file-backed THP allocations.
-> >>
-> >> -Boot parameter
-> >> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >> +Boot parameters
-> >> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>
-> >> -You can change the sysfs boot time defaults of Transparent Hugepage
-> >> -Support by passing the parameter ``transparent_hugepage=3Dalways`` or
-> >> -``transparent_hugepage=3Dmadvise`` or ``transparent_hugepage=3Dnever`=
-`
-> >> -to the kernel command line.
-> >> +You can change the sysfs boot time default for the top-level "enabled=
-"
-> >> +control by passing the parameter ``transparent_hugepage=3Dalways`` or
-> >> +``transparent_hugepage=3Dmadvise`` or ``transparent_hugepage=3Dnever`=
-` to the
-> >> +kernel command line.
-> >> +
-> >> +Alternatively, each supported anonymous THP size can be controlled by
-> >> +passing ``thp_anon=3D<size>[KMG]:<state>``, where ``<size>`` is the T=
-HP size
-> >> +and ``<state>`` is one of ``always``, ``madvise``, ``never`` or
-> >> +``inherit``.
-> >> +
-> >> +For example, the following will set 64K THP to ``always``::
-> >> +
-> >> +       thp_anon=3D64K:always
-> >> +
-> >> +``thp_anon=3D`` may be specified multiple times to configure all THP =
-sizes as
-> >> +required. If ``thp_anon=3D`` is specified at least once, any anon THP=
- sizes
-> >> +not explicitly configured on the command line are implicitly set to
-> >> +``never``.
-> >>
-> >>  Hugepages in tmpfs/shmem
-> >>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-> >> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> >> index 4249c0bc9388..794d2790d90d 100644
-> >> --- a/mm/huge_memory.c
-> >> +++ b/mm/huge_memory.c
-> >> @@ -82,6 +82,7 @@ unsigned long huge_anon_orders_madvise __read_mostly=
-;
-> >>  unsigned long huge_anon_orders_inherit __read_mostly;
-> >>  unsigned long huge_file_orders_always __read_mostly;
-> >>  int huge_file_exec_order __read_mostly =3D -1;
-> >> +static bool anon_orders_configured;
-> >>
-> >>  unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
-> >>                                          unsigned long vm_flags,
-> >> @@ -763,7 +764,10 @@ static int __init hugepage_init_sysfs(struct kobj=
-ect **hugepage_kobj)
-> >>          * disable all other sizes. powerpc's PMD_ORDER isn't a compil=
-e-time
-> >>          * constant so we have to do this here.
-> >>          */
-> >> -       huge_anon_orders_inherit =3D BIT(PMD_ORDER);
-> >> +       if (!anon_orders_configured) {
-> >> +               huge_anon_orders_inherit =3D BIT(PMD_ORDER);
-> >> +               anon_orders_configured =3D true;
-> >> +       }
-> >>
-> >>         /*
-> >>          * For pagecache, default to enabling all orders. powerpc's PM=
-D_ORDER
-> >> @@ -955,6 +959,55 @@ static int __init setup_transparent_hugepage(char=
- *str)
-> >>  }
-> >>  __setup("transparent_hugepage=3D", setup_transparent_hugepage);
-> >>
-> >> +static int __init setup_thp_anon(char *str)
-> >> +{
-> >> +       unsigned long size;
-> >> +       char *state;
-> >> +       int order;
-> >> +       int ret =3D 0;
-> >> +
-> >> +       if (!str)
-> >> +               goto out;
-> >> +
-> >> +       size =3D (unsigned long)memparse(str, &state);
-> >> +       order =3D ilog2(size >> PAGE_SHIFT);
-> >> +       if (*state !=3D ':' || !is_power_of_2(size) || size <=3D PAGE_=
-SIZE ||
-> >> +           !(BIT(order) & THP_ORDERS_ALL_ANON))
-> >> +               goto out;
-> >> +
-> >> +       state++;
-> >> +
-> >> +       if (!strcmp(state, "always")) {
-> >> +               clear_bit(order, &huge_anon_orders_inherit);
-> >> +               clear_bit(order, &huge_anon_orders_madvise);
-> >> +               set_bit(order, &huge_anon_orders_always);
-> >> +               ret =3D 1;
-> >> +       } else if (!strcmp(state, "inherit")) {
-> >> +               clear_bit(order, &huge_anon_orders_always);
-> >> +               clear_bit(order, &huge_anon_orders_madvise);
-> >> +               set_bit(order, &huge_anon_orders_inherit);
-> >> +               ret =3D 1;
-> >> +       } else if (!strcmp(state, "madvise")) {
-> >> +               clear_bit(order, &huge_anon_orders_always);
-> >> +               clear_bit(order, &huge_anon_orders_inherit);
-> >> +               set_bit(order, &huge_anon_orders_madvise);
-> >> +               ret =3D 1;
-> >> +       } else if (!strcmp(state, "never")) {
-> >> +               clear_bit(order, &huge_anon_orders_always);
-> >> +               clear_bit(order, &huge_anon_orders_inherit);
-> >> +               clear_bit(order, &huge_anon_orders_madvise);
-> >> +               ret =3D 1;
-> >> +       }
-> >> +
-> >> +       if (ret)
-> >> +               anon_orders_configured =3D true;
-> >> +out:
-> >> +       if (!ret)
-> >> +               pr_warn("thp_anon=3D%s: cannot parse, ignored\n", str)=
-;
-> >> +       return ret;
-> >> +}
-> >> +__setup("thp_anon=3D", setup_thp_anon);
-> >> +
-> >>  pmd_t maybe_pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
-> >>  {
-> >>         if (likely(vma->vm_flags & VM_WRITE))
-> >> --
-> >> 2.43.0
-> >>
-> >
-> > Thanks
-> > Barry
->
->
+PHA+Rml4IHBhcnNpbmcgZXJyb3IgZm9yIFRoaW5rQm9vazE2IEc2KyBJTUgu
+PC9wPgo8cD5EZXZpY2U6IFRvdWNocGFkIEZYVFA1MTAwPC9wPgo8cD5oaWQt
+Z2VuZXJpYyAwMDE4OjI3QzY6MDFFOS4wMDA0OiBpdGVtIDAgMSAwIDExIHBh
+cnNpbmcgZmFpbGVkPC9wPgo8cD5oaWQtZ2VuZXJpYyAwMDE4OjI3QzY6MDFF
+OS4wMDA0OiBwcm9iZSB3aXRoIGRyaXZlciBoaWQtZ2VuZXJpYyBmYWlsZWQ8
+L3A+CjxwPndpdGggZXJyb3IgLTIyPC9wPgo8cD5oaWQtbXVsdGl0b3VjaCAw
+MDE4OjI3QzY6MDFFOS4wMDA0OiBpdGVtIDAgMSAwIDExIHBhcnNpbmcgZmFp
+bGVkPC9wPgo8cD5oaWQtbXVsdGl0b3VjaCAwMDE4OjI3QzY6MDFFOS4wMDA0
+OiBwcm9iZSB3aXRoIGRyaXZlciBoaWQtZ2VuZXJpYzwvcD4KPHA+ZmFpbGVk
+IHdpdGggZXJyb3IgLTIyPC9wPgo8cD5XaGVuIHRoZSBkcml2ZXIgbG9hZCBh
+bmQgcGFyc2luZyBhIG1haW4gaXRlbSw8L3A+CjxwPnBhcnNlci0mZ3Q7Z2xv
+YmFsLmxvZ2ljYWxfbWluaW11bSBpcyBsYXJnZXIgdGhhbjwvcD4KPHA+cGFy
+c2VyLSZndDtnbG9iYWwubG9naWNhbF9tYXhpbXVtLjwvcD4KPHA+cGFyc2Vy
+LSZndDtnbG9iYWwubG9naWNhbF9taW5pbXVtIGlzIDB4NjQgYW5kPC9wPgo8
+cD5wYXJzZXItJmd0O2dsb2JhbC5sb2dpY2FsX21heGltdW0gaXMgMHgxLjwv
+cD4KPHA+Jm5ic3A7PC9wPgo8cD5DYzogQ2hlbnpoYW5nPC9wPgo8cD5TaWdu
+ZWQtb2ZmLWJ5OiBBaSBDaGFvPC9wPgo8cD4tLS08L3A+CjxwPmRyaXZlcnMv
+aGlkL2hpZC1jb3JlLmMgfCAxNSArKysrKysrKysrKysrKys8L3A+CjxwPjEg
+ZmlsZSBjaGFuZ2VkLCAxNSBpbnNlcnRpb25zKCspPC9wPgo8cD4mbmJzcDs8
+L3A+CjxwPmRpZmYgLS1naXQgYS9kcml2ZXJzL2hpZC9oaWQtY29yZS5jIGIv
+ZHJpdmVycy9oaWQvaGlkLWNvcmUuYzwvcD4KPHA+aW5kZXggOTg4ZDBhY2Jk
+ZjA0Li5jZmRjNGU3N2I4NDYgMTAwNjQ0PC9wPgo8cD4tLS0gYS9kcml2ZXJz
+L2hpZC9oaWQtY29yZS5jPC9wPgo8cD4rKysgYi9kcml2ZXJzL2hpZC9oaWQt
+Y29yZS5jPC9wPgo8cD5AQCAtMjcxLDYgKzI3MSwyMSBAQCBzdGF0aWMgaW50
+IGhpZF9hZGRfZmllbGQoc3RydWN0IGhpZF9wYXJzZXIgKnBhcnNlciwgdW5z
+aWduZWQgcmVwb3J0X3R5cGUsIHVuc2lnbjwvcD4KPHA+cmV0dXJuIC0xOzwv
+cD4KPHA+fTwvcD4KPHA+Jm5ic3A7PC9wPgo8cD4rIC8qPC9wPgo8cD4rICog
+TGVub3ZvIFRoaW5rQm9vazE2IEc2KyBJTUg6PC9wPgo8cD4rICogVG91Y2hw
+YWQgRlhUUDUxMDAgcGFyc2luZyBlcnJvcjwvcD4KPHA+KyAqIDAwMTg6MjdD
+NjowMUU5LjAwMDQ6IGl0ZW0gMCAxIDAgMTEgcGFyc2luZyBmYWlsZWQ8L3A+
+CjxwPisgKi88L3A+CjxwPisgaWYgKHBhcnNlci0mZ3Q7ZGV2aWNlLSZndDt2
+ZW5kb3IgPT0gMHgyN2M2ICZhbXA7JmFtcDs8L3A+CjxwPisgcGFyc2VyLSZn
+dDtkZXZpY2UtJmd0O3Byb2R1Y3QgPT0gMHgwMWU5ICZhbXA7JmFtcDs8L3A+
+CjxwPisgKHBhcnNlci0mZ3Q7Z2xvYmFsLmxvZ2ljYWxfbWluaW11bSAmZ3Q7
+PSAwICZhbXA7JmFtcDs8L3A+CjxwPisgKF9fdTMyKXBhcnNlci0mZ3Q7Z2xv
+YmFsLmxvZ2ljYWxfbWF4aW11bSBnbG9iYWwubG9naWNhbF9taW5pbXVtKSkg
+ezwvcD4KPHA+KyB1c2FnZXMgPSBwYXJzZXItJmd0O2dsb2JhbC5sb2dpY2Fs
+X21pbmltdW07PC9wPgo8cD4rIHBhcnNlci0mZ3Q7Z2xvYmFsLmxvZ2ljYWxf
+bWluaW11bSA9IHBhcnNlci0mZ3Q7Z2xvYmFsLmxvZ2ljYWxfbWF4aW11bTs8
+L3A+CjxwPisgcGFyc2VyLSZndDtnbG9iYWwubG9naWNhbF9tYXhpbXVtID0g
+dXNhZ2VzOzwvcD4KPHA+KyB9PC9wPgo8cD4rPC9wPgo8cD4vKiBIYW5kbGUg
+Ym90aCBzaWduZWQgYW5kIHVuc2lnbmVkIGNhc2VzIHByb3Blcmx5ICovPC9w
+Pgo8cD5pZiAoKHBhcnNlci0mZ3Q7Z2xvYmFsLmxvZ2ljYWxfbWluaW11bSBw
+YXJzZXItJmd0O2dsb2JhbC5sb2dpY2FsX21heGltdW08L3A+CjxkaXYgaWQ9
+InJlIiBzdHlsZT0ibWFyZ2luLWxlZnQ6IDAuNWVtOyBwYWRkaW5nLWxlZnQ6
+IDAuNWVtOyBib3JkZXItbGVmdDogMXB4IHNvbGlkIGdyZWVuOyI+PC9kaXY+
+
+
+--nsmail-15vx8j1lmg2-15vzseofq3n--
 
