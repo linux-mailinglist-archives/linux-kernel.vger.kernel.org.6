@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-257457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CB23937A64
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:09:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 747A5937A66
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:09:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F07581F22C8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:09:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3931B20BE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332C2145FE5;
-	Fri, 19 Jul 2024 16:09:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A62114658F;
+	Fri, 19 Jul 2024 16:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="UABdf/i3"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="BlvwbSJw"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F482CA6
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 16:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0C914601E
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 16:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721405367; cv=none; b=TwE7vxSvHm7a2VaNi74sdKSHbkuWFsrcV0ij51+WZaRZ7XXYLzB+RCM63UGbpiqR+R5qM4GmyIFTlpJG+d9eQtfplYeES5uLuLca1/9qMgl9ZzxJwYkNdEaWmkW/3IOX+WdrRKQi2/Q0Llo1U27mlYx5eiAWbJZ3czNbULf0Bvw=
+	t=1721405370; cv=none; b=cGt31aGXy3AIilfAbQyqtuo2/0KGVbg/EltpyFmsIySJXJa/i2Rh1I1L8oahap96r2FRET/Y3Tb/6szrl7eXnF9oY8UTl7oOY6w/TlqL90d7M7uMVRrw9Xeod5FmFfZ52K1y1lC8swQ+OUlzv6H4vLeGGkVD/pVOkq0gZHskqRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721405367; c=relaxed/simple;
-	bh=hQ3ruD4qAjQfF2Nf3WejfEE5T7kt5QJVJnhVKCdchec=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aCDRBOChBSP2FvGiNiso5mjtvApdXGSYOr3QZf2WICxLtfSSduJ81igiKF4GR54FyGj+TUCdCWZPL9wnFgu9QiifuGTiUUh3me/rxabRXz16CC4+H7zqCpnjtQgWMJtDjTsGopCeSA8t+x1zikDrJZW55r+2hz7jit3UzjN/2fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=UABdf/i3; arc=none smtp.client-ip=209.85.214.174
+	s=arc-20240116; t=1721405370; c=relaxed/simple;
+	bh=bE9VM3napbCXTd+VFzqBz/32jthJiTjrJJrl8O+H0xQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cJ6rk/htyvBTy9Z3zcvWtn1FoacSTgd3AGHKc0MhPbp0p7JcvnS8zfehN2FasvNdKKdkmG3nXqD5hI7Vo3xCWRux/4ASjPnQXqSkKlZfcDFSCK33zypIRkDK8HBhbjGnerYp4sCgoPlyoEki3xLhYIfWwnXejIqcDUW2xy3euzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=BlvwbSJw; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fc56fd4de1so16470995ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 09:09:25 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fc60c3ead4so17011195ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 09:09:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1721405365; x=1722010165; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xYWKSzPxNF1FBMt6vsXOOAcJiLP6695b+s20Dc1fH5Y=;
-        b=UABdf/i3seo97NspoBzODW1tZ5pWY5H96F8qY7sqPwqVD99eNJhbNCt9rdk/8jXkFl
-         oJeg192b1jmRmm7SrOj9MvELLhoQK1QWXQnNl7eO4yy5LJwCzMUF+jjaMQs5DFaDrw5X
-         CnKcJK6U+uMeC5Nc46QYJRm2nCWAc48+SaPkI/8VbxVDjkUIE+so2jZP1gJT5a7XtpuP
-         /AgVJKAGAwYicd9bX+sCYOJabYWMsiLAe9G32hpysxfvik8xVj9DaGfFdEO6uXZmFmlH
-         5oB8AbxxCKAGU2C0QS+i+0f7DMHhLMgDe0ZDfpzeQz1HFJm5bWYRnza7zUZSJx3U/pjk
-         4c1w==
+        d=ventanamicro.com; s=google; t=1721405368; x=1722010168; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4afLvyEEC8RtJCW4UQr1WFckvidc7t8VQbZfjqmPCBw=;
+        b=BlvwbSJwgwJvjmehTbKA5eb15lbDnSObpwh1lFbokC83aYCtiSQhXykDf7zu9N1W1F
+         2gESUKUwuVECik2sb84XZYHvvgvYSuHUYhPm6MnMDMvdjLceFHOJIfw4DYjXN/B9kVUR
+         dUch25Z7AlbUf4GheLtP+hZVQza7384crvY2SyvR38l6t+ZrjvQx2p9QqPBIagVQIrjg
+         OlIFy8joB/xmhk0aH3BQjJ7QiHjnYTkeUoWgXRzGdOSnl8cMz6TGm6eI+6DYZ77Lcjc9
+         Z98LQ+/3sG9iadsoEprRm1SFoIgcYMKQ6BC9BEdBKNhScNsBQ1hw4a8SRKMIxM3fJ4+f
+         2zGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721405365; x=1722010165;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xYWKSzPxNF1FBMt6vsXOOAcJiLP6695b+s20Dc1fH5Y=;
-        b=u1f5s+ZapXiA0uAjFefWbxeU2+49i7FP/Auhs7J74/OyWx/jwsEnQMBlfy/TUZb8b7
-         GRrfHrtRWdEGPrp6GWLjkFFNZqSE5RrN04tW3FAVQsPikPbtSqWEQo+8zZYaejb3oJZE
-         0tGGbuFQfRwCehRwphE0lqGHVEC0Oj9q3pt97mTJtABlOh2/d6OOHjGq9CaGXx5dw0N6
-         Y4YGWJibSW9Zm2jxzpX7xXvsDK87IJhy/axq2GaJZcwn9NtgiJ3CM4jLtTB8Tf7Yo557
-         dLYJi//3DuGVSW33g/07UlRJWRdQA8SQURp3Vvl/mmOluHfZXDD7U0YYQbLAVH6NG1w9
-         s+Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCU2g9vhwtDpIlAZsVOOjaNLzeHh4xIiROvCGttgg9arbVXG9muLdk+QRh+MTdrosBqpoW0wxs7tmRVR67YTDfwjsmm97T7vBPXs5yL3
-X-Gm-Message-State: AOJu0YxtqIIvSB5v9OxG2Iy1FCJxnA2ngI9O20g2grgROO9M37W7clCc
-	rDJ+eM/4ZZGhKUUEju7CQuCPPrfDw9vgoWPfng6FHyXHmCcJ4Nhb5cstm0SSpbw=
-X-Google-Smtp-Source: AGHT+IEDU6P9hJ2nz3TyZ6kiWvc/ZyeAut4s//9AkbdAxAzckMrzsXplgQo8noxdWpSASQCmveYruw==
-X-Received: by 2002:a17:903:98d:b0:1fc:58b7:ae66 with SMTP id d9443c01a7336-1fd74d366dcmr1596895ad.17.1721405364733;
-        Fri, 19 Jul 2024 09:09:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721405368; x=1722010168;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4afLvyEEC8RtJCW4UQr1WFckvidc7t8VQbZfjqmPCBw=;
+        b=rtkUjmMhebiekeq5A2wLOmmOplXpXANAEE1mvmM//K8BPQl7gl4oTZXx34txXgVLxN
+         HF9wltixnnT9S74iccL8w8CC1SKAGphwjAS0/ikIn+SJGIEphwKi6XrlERCu9jvs+CgY
+         wNcaCOQZAX+Lt0I6ODAy4yFheDn/W9AU//hKNgBHQ+MBZmkc4sm1X+66jzgrGxUhuRCQ
+         4O3sHZo6cMD0JdFT5OWx4XLpn8By0RNvPj9ybFkaM1sxBGhITK3KfxMn8JlVrMP4wAgy
+         QQYoYaXlDEGeVOeCW9FE1wfS03mXRLoxiOOGvBHMG8OfMyE9an1Z93lnRkUIPwPsE930
+         Bfwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNP9JZkAVutj7ua+doJ2A3e/1CdynismB7bH5ms6jbr0uAjiKOJD1105Ew4qH0Hqx1+r1JQ6/dXt/S2+dmByHfxQS+kCPCZUp6qg+k
+X-Gm-Message-State: AOJu0YwclvOcFMcjZu748g92ixFnIK/yUAnyCdVX+b4wHw8HToiwMNPh
+	Kgfz7VewSsZQ4Jf4Sghj/2GICtZ2E3NsdQri+//IvYunw9BSMOQgFDCs5aBXRuk=
+X-Google-Smtp-Source: AGHT+IFvnzeRYXUnxpbkoVZbtYpLHtISa8TDnsAJ4DZ27uwiHvkB35LGFVFo5pBDK1eTxYFOHUVg1Q==
+X-Received: by 2002:a17:903:2306:b0:1fb:55da:c3d with SMTP id d9443c01a7336-1fd745637b5mr4123095ad.25.1721405368211;
+        Fri, 19 Jul 2024 09:09:28 -0700 (PDT)
 Received: from anup-ubuntu-vm.localdomain ([223.185.135.236])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f28f518sm6632615ad.69.2024.07.19.09.09.21
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f28f518sm6632615ad.69.2024.07.19.09.09.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 09:09:24 -0700 (PDT)
+        Fri, 19 Jul 2024 09:09:27 -0700 (PDT)
 From: Anup Patel <apatel@ventanamicro.com>
 To: Palmer Dabbelt <palmer@dabbelt.com>,
 	Paul Walmsley <paul.walmsley@sifive.com>
@@ -75,10 +77,12 @@ Cc: Atish Patra <atishp@atishpatra.org>,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH 00/13] Accelerate KVM RISC-V when running as a guest
-Date: Fri, 19 Jul 2024 21:39:00 +0530
-Message-Id: <20240719160913.342027-1-apatel@ventanamicro.com>
+Subject: [PATCH 01/13] RISC-V: KVM: Order the object files alphabetically
+Date: Fri, 19 Jul 2024 21:39:01 +0530
+Message-Id: <20240719160913.342027-2-apatel@ventanamicro.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240719160913.342027-1-apatel@ventanamicro.com>
+References: <20240719160913.342027-1-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,59 +91,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The KVM RISC-V hypervisor might be running as a guest under some other
-host hypervisor in which case the complete H-extension functionality will
-be trap-n-emulated by the host hypervisor. In this case, the KVM RISC-V
-performance can be accelerated using the SBI nested acceleration (NACL)
-extension if the host hypervisor provides it.
+Order the object files alphabetically in the Makefile so that
+it is very predictable inserting new object files in the future.
 
-These series extends KVM RISC-V to use SBI NACL extension whenever
-underlying SBI implementation (aka host hypervisor) provides it.
+Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+---
+ arch/riscv/kvm/Makefile | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
-These patches can also be found in the riscv_sbi_nested_v1 branch at:
-https://github.com/avpatel/linux.git
-
-To test these patches, run KVM RISC-V as Guest under latest Xvisor
-found at: https://github.com/xvisor/xvisor.git
-
-For the steps to test on Xvisor, refer the Xvisor documentation
-<xvisor_source>/docs/riscv/riscv64-qemu.txt with two small changes:
-
-1) In step#11, make sure compressed kvm.ko, guest kernel image, and
-   kvmtool are present in the rootfs.img
-2) In step#14, make sure AIA is available to Xvisor by using
-   "virt,aia=aplic-imsic" as the QEMU machine name.
-
-Anup Patel (13):
-  RISC-V: KVM: Order the object files alphabetically
-  RISC-V: KVM: Save/restore HSTATUS in C source
-  RISC-V: KVM: Save/restore SCOUNTEREN in C source
-  RISC-V: KVM: Break down the __kvm_riscv_switch_to() into macros
-  RISC-V: KVM: Replace aia_set_hvictl() with aia_hvictl_value()
-  RISC-V: KVM: Don't setup SGEI for zero guest external interrupts
-  RISC-V: Add defines for the SBI nested acceleration extension
-  RISC-V: KVM: Add common nested acceleration support
-  RISC-V: KVM: Use nacl_csr_xyz() for accessing H-extension CSRs
-  RISC-V: KVM: Use nacl_csr_xyz() for accessing AIA CSRs
-  RISC-V: KVM: Use SBI sync SRET call when available
-  RISC-V: KVM: Save trap CSRs in kvm_riscv_vcpu_enter_exit()
-  RISC-V: KVM: Use NACL HFENCEs for KVM request based HFENCEs
-
- arch/riscv/include/asm/kvm_nacl.h | 237 ++++++++++++++++++++++++++++++
- arch/riscv/include/asm/sbi.h      | 120 +++++++++++++++
- arch/riscv/kvm/Makefile           |  27 ++--
- arch/riscv/kvm/aia.c              | 114 +++++++++-----
- arch/riscv/kvm/main.c             |  53 ++++++-
- arch/riscv/kvm/mmu.c              |   4 +-
- arch/riscv/kvm/nacl.c             | 152 +++++++++++++++++++
- arch/riscv/kvm/tlb.c              |  57 ++++---
- arch/riscv/kvm/vcpu.c             | 184 +++++++++++++++++------
- arch/riscv/kvm/vcpu_switch.S      | 137 ++++++++++-------
- arch/riscv/kvm/vcpu_timer.c       |  28 ++--
- 11 files changed, 935 insertions(+), 178 deletions(-)
- create mode 100644 arch/riscv/include/asm/kvm_nacl.h
- create mode 100644 arch/riscv/kvm/nacl.c
-
+diff --git a/arch/riscv/kvm/Makefile b/arch/riscv/kvm/Makefile
+index c2cacfbc06a0..c1eac0d093de 100644
+--- a/arch/riscv/kvm/Makefile
++++ b/arch/riscv/kvm/Makefile
+@@ -9,27 +9,29 @@ include $(srctree)/virt/kvm/Makefile.kvm
+ 
+ obj-$(CONFIG_KVM) += kvm.o
+ 
++# Ordered alphabetically
++kvm-y += aia.o
++kvm-y += aia_aplic.o
++kvm-y += aia_device.o
++kvm-y += aia_imsic.o
+ kvm-y += main.o
+-kvm-y += vm.o
+-kvm-y += vmid.o
+-kvm-y += tlb.o
+ kvm-y += mmu.o
++kvm-y += tlb.o
+ kvm-y += vcpu.o
+ kvm-y += vcpu_exit.o
+ kvm-y += vcpu_fp.o
+-kvm-y += vcpu_vector.o
+ kvm-y += vcpu_insn.o
+ kvm-y += vcpu_onereg.o
+-kvm-y += vcpu_switch.o
++kvm-$(CONFIG_RISCV_PMU_SBI) += vcpu_pmu.o
+ kvm-y += vcpu_sbi.o
+-kvm-$(CONFIG_RISCV_SBI_V01) += vcpu_sbi_v01.o
+ kvm-y += vcpu_sbi_base.o
+-kvm-y += vcpu_sbi_replace.o
+ kvm-y += vcpu_sbi_hsm.o
++kvm-$(CONFIG_RISCV_PMU_SBI) += vcpu_sbi_pmu.o
++kvm-y += vcpu_sbi_replace.o
+ kvm-y += vcpu_sbi_sta.o
++kvm-$(CONFIG_RISCV_SBI_V01) += vcpu_sbi_v01.o
++kvm-y += vcpu_switch.o
+ kvm-y += vcpu_timer.o
+-kvm-$(CONFIG_RISCV_PMU_SBI) += vcpu_pmu.o vcpu_sbi_pmu.o
+-kvm-y += aia.o
+-kvm-y += aia_device.o
+-kvm-y += aia_aplic.o
+-kvm-y += aia_imsic.o
++kvm-y += vcpu_vector.o
++kvm-y += vm.o
++kvm-y += vmid.o
 -- 
 2.34.1
 
