@@ -1,259 +1,133 @@
-Return-Path: <linux-kernel+bounces-257363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E83C937910
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:17:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42F23937916
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B5E2282128
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:17:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AFCF1C21B05
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F2F144D15;
-	Fri, 19 Jul 2024 14:17:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFB4142E85;
+	Fri, 19 Jul 2024 14:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YLQ9Rrqk"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="da0DnHkf"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A82B1DFCF
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 14:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CAA145B25;
+	Fri, 19 Jul 2024 14:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721398659; cv=none; b=ZsVyepL9LNczaMo6rgl/aBSi9qTBBqIgFqP6VE2B0xgPAdaWfujcgGsxswbW2G9Uvv8YGqDDTFUb1QLN7OyTb32nceoE0n0vMYs6Kp2lMfFYiLf8IsI4LfYyDX2mM5/aP4ZOp0YF5ZvnY9NW+jTejeSVgQXW3HRHP9SXnpYiBZE=
+	t=1721398671; cv=none; b=Ql+yQv7gz4Cj4Y9COqSuLA5MZLRYNmNllsulb2NjrB8HgGChcn5GCcwcp4v+vPBv3+BroIn89wt+jV107UUGscoz0OX/382eLBQbcynJ0w4RZDOlmGh54WulsA28vOZmOKdiCudsNaRUO9R+v+/HyBhlFP8xzZOi6yo+4fjk6Z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721398659; c=relaxed/simple;
-	bh=4EWpzWGRDEjZbhG0kGkRZIyo4WrdmT6376CHlCk5/pg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GZNB9TIQtx06sBWdcmWv3j1goZsiJ9raWt2BrvPEvHfUbJPFdMS+UkM0fLbnMZySAkgbsc3LA0w6nLH1eVXB6vbbCEP52n6Y0CTF96VpzAPrwKEP1s1XNitOFEE3EDtRISO0bkHSAm+UAqUhSL+HbIfshwodReNH670i5uZzZBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YLQ9Rrqk; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5a18a5dbb23so12633a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 07:17:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721398656; x=1722003456; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o3gGwnKkOxiHuqDBoqHiGOngepHwURq3W8ZE5hfV4/I=;
-        b=YLQ9RrqkSIq6CixGgC31cxVa5rmqGG0jmN2ffnr651EDlxqv0gzIFnjS2dNXV6TE+i
-         QG/hORf+LgIrhuV4CsmUANPhzJRlESFaeWZLftn/0dvk82StxjD0JdSCNyHPIKCFF20h
-         5u5+hI6R2833dRKca62coWdn1ewVDS0+njh4pN1jaNYVN84ZsBNqLKl1uesRCLp1ypi5
-         twnGsDctNHHDCeVhaYrjvY3g9LLQUqrYNqHi9BPpPbrEw3siNoRzvBHE/KcDaS7VI5XB
-         Jn0iZogWOaOGStLLmww9Pi/0XIxxquJRGssySirP61BI1qSD5GqcwuZYVfuk2gO4de6V
-         GvkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721398656; x=1722003456;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o3gGwnKkOxiHuqDBoqHiGOngepHwURq3W8ZE5hfV4/I=;
-        b=ayo7tJQIYYtcK7YtRe4ma3x2HXZH5DsNgTBn6vpw8gZ9GYFM9/IWCZHNIPxQ4ISYkk
-         SsMEelFcwOWREix86RTwBvkMPRS7rgi2tDxXH3Wot9eYcHoULbBCpae9lkt38bT7UT6X
-         S4xBMyI4WBZjwInnZlVV/Cw5SEa6Tt0cN5NAQPA9PSLxysvQppdsEVIk46yvd7sEbLSY
-         7jxUd+pr7+ZUbCwepAZ/7AcfBiVsIOCaU9UaBnzKsm6bq82znbS5d3/NguzGUXdw/GCt
-         anMU420C9l6qh/gZUqyXvMdxiAizD1RgIds1Smtr2lMdLBeBCerPlOHEB33DiKjMyg3w
-         S6Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/bFFVVWoeE5Iqcx+vnpgyjenAE0qNylgi/nfMmquTWY+KMLA69h7QN/sLTCiwUo8bJKA2LOLU206myKjf/LEZAhILK13ppqbwnvzP
-X-Gm-Message-State: AOJu0Yw5itkaDgkF+rLG9yNs9Yt1k7PIC0xeEh947olykFBSw1qcv1fr
-	0xJvVo0TkByTVlCOT6vrZaxZv+sEQMANr+g7qNalTfav8rEP+6JRzKDEk5aFP+c7Zg4VLFrzxNA
-	2MoXhmPhpM2QPvcBWUTsy6IdU6jss2O9QJc/d
-X-Google-Smtp-Source: AGHT+IF76WQ3Sl0kv11m20n2/Esl/cSZDr2M3d5alLDqRF7hKGGW3bWZH0gtFIknuNBESclOnt0Py52fuwxCjdRo6fQ=
-X-Received: by 2002:a05:6402:50c9:b0:57c:c5e2:2c37 with SMTP id
- 4fb4d7f45d1cf-5a2f262b220mr158387a12.3.1721398655421; Fri, 19 Jul 2024
- 07:17:35 -0700 (PDT)
+	s=arc-20240116; t=1721398671; c=relaxed/simple;
+	bh=fjbah7zJIzQI0vVSMZxYxopIs2C046nYcNKjoqlSBB0=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=pZyEzGOOHL0n0V40C4rJOGn8A4Wk9JAu5T+hwQwXqRqTlMwnHA0M7z+pe49Pqq6fUDj/R19ajpZYDAq2jdtG7PyBMtZnK4rDSvtHZ/oBy5hmbUksbzhnsWWsKNHGzROqVBzh6wHOKawrZ5A08OhAUrhnj+HpGQaRYOqx2SJn7xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=da0DnHkf; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1721398640; x=1722003440; i=markus.elfring@web.de;
+	bh=DnJno1zz6dYwMCcnfOctj4gl7uyqZIpfSEdqwRv3a94=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=da0DnHkfp+Rim2Yw108nczJDddGyvMNkkIXLsdbC0UtOVE9WYqs5ezN/YCc1jRMy
+	 KPsP74XGmyZddRcYYpOHhKX7uxnl9fWmeR/mM+0kHhOha/2ldmQGYzBApGa6BY7Of
+	 GueYrRG41eBMCsJHap19DL4QDmIit1P/KREb6FsBo/11hpsp2mhW4MV2zC/0kF5X+
+	 8NwIn3OhHv0arxuFWfk8sD5xOXKb8mHeN09NGpmvodxS1gLxkKyxIX84pPhmmxOBH
+	 8UsXBLOHYXn1m8B++dt7GnfTRMwD6bSpeFTl40vJ1kKEexlvNKagJjEsw4xYNPpDK
+	 NaSXDPuv8alVMkdlmA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M2Pda-1sTAX02zLK-00GOsw; Fri, 19
+ Jul 2024 16:17:20 +0200
+Message-ID: <c564da16-062f-4da6-9021-c68f9c6eab63@web.de>
+Date: Fri, 19 Jul 2024 16:17:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704190137.696169-1-mic@digikod.net> <20240704190137.696169-2-mic@digikod.net>
- <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
- <20240717.neaB5Aiy2zah@digikod.net> <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
- <20240718.kaePhei9Ahm9@digikod.net> <CALmYWFto4sw-Q2+J0Gc54POhnM9C8YpnJ44wMz=fd_K3_+dWmw@mail.gmail.com>
- <20240719.shaeK6PaiSie@digikod.net>
-In-Reply-To: <20240719.shaeK6PaiSie@digikod.net>
-From: Jeff Xu <jeffxu@google.com>
-Date: Fri, 19 Jul 2024 07:16:55 -0700
-Message-ID: <CALmYWFsd-=pOPZZmiKvYJ8pOhACsTvW_d+pRjG_C4jD6+Li0AQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Paul Moore <paul@paul-moore.com>, "Theodore Ts'o" <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, 
-	Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
-	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
-	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
+ Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+ Kan Liang <kan.liang@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>,
+ Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] perf trace: Avoid duplicate code in fprintf_duration()
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:NtSf3baNegENQrN0LKlhchniiNAgegiI88YnOUaDTukO5KvIfk3
+ xBr7eboZ8j70bSwOzSKfqe4jLAfNF9XfYNsQ721iFbGClfsfiz80CIK58QpkdaizlQyD3iU
+ OEzMJzH9CYMSzTdfNOHAwPg7FtIfHYbOaidbULooulPKLPmIqrvI3b3lv4zhGWUtkEHlM6W
+ YQ8qFHz2xOtryVfrNsI4Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:2cLl+oXOD3g=;UBjCj0m0gulsCftlKvw8l++5EP9
+ 8QxixoTpx2v9wifsWOFACdipPf2k+ASUL0Fz1gMaAIuM3cEiIizw8eTgRbBwJWCWeIKqB4KYL
+ JyjpqXD0GaOlLhuzNxvERQqNoy+smIQuAbWp1pSOHNHqtFTZTkWcl0er5d+4CAZg75aHpIdU3
+ j/SHLPbxTcrMloFu9iBmo7GDiT+p9w+ObRK+2ekJoivTID+WajSbpvCNsHJ0LjWfCEUjlE89q
+ U+9rmC7C5ZDTUZKjVDxI5P4iLZkl3Cbzop8KfMA0jBJHzEgepxHBeVO7cqov/qEeg6dLtbwdk
+ 8WZ9TwKtcJJ/WXbzk3FeGNN/kQn4ukixsAjG2aYDKc9I8JtwYBGC07xTaYcOYJQqGAFT8p3Nj
+ F3ypq1y7RF3DNd3928pAQfiSD0P58OQvbbnxbr23QyWBi1yfDjRNk5TuWyaC1b2IvN3Q0Le8n
+ xcUkG9skvg3CufDOTJNfGhEZyw80jSNj0cUCCHXBxHjn4g4jKyyEiM2cH2DrBJ+/F/8Bah2uL
+ u3cbPjGvG3DxFfJ+GLOSdrGwgPtKBq02exvtUGQvyLBVGcwOEqt4LhzlUSIC+Q8JClUbyjtF4
+ 7oqAFZG6OWt5YCi08ZtDPV0b/kPY0QDMiEg4cLGRr6po9MdKlpExUriYq/pDbmzsM/hvJczkF
+ nHIyGZcLwFwakJir5V9G+leq99LdeOTBJPALsevUCzIipijJ5mrrxxqdO0LPj5vd0NrjRGNph
+ JH/haQWdMwkcREAT9thLkJERt9VoUKc0BkGB7uojEJeNvzw3mcpaWX0DYZGgeeB3sdxWslLjg
+ sjNC2SpHI/1+Ohwgn9aoaRKw==
 
-On Fri, Jul 19, 2024 at 1:45=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
->
-> On Thu, Jul 18, 2024 at 06:29:54PM -0700, Jeff Xu wrote:
-> > On Thu, Jul 18, 2024 at 5:24=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > >
-> > > On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
-> > > > On Wed, Jul 17, 2024 at 3:01=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <m=
-ic@digikod.net> wrote:
-> > > > >
-> > > > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
-> > > > > > On Thu, Jul 4, 2024 at 12:02=E2=80=AFPM Micka=C3=ABl Sala=C3=BC=
-n <mic@digikod.net> wrote:
-> > > > > > >
-> > > > > > > Add a new AT_CHECK flag to execveat(2) to check if a file wou=
-ld be
-> > > > > > > allowed for execution.  The main use case is for script inter=
-preters and
-> > > > > > > dynamic linkers to check execution permission according to th=
-e kernel's
-> > > > > > > security policy. Another use case is to add context to access=
- logs e.g.,
-> > > > > > > which script (instead of interpreter) accessed a file.  As an=
-y
-> > > > > > > executable code, scripts could also use this check [1].
-> > > > > > >
-> > > > > > > This is different than faccessat(2) which only checks file ac=
-cess
-> > > > > > > rights, but not the full context e.g. mount point's noexec, s=
-tack limit,
-> > > > > > > and all potential LSM extra checks (e.g. argv, envp, credenti=
-als).
-> > > > > > > Since the use of AT_CHECK follows the exact kernel semantic a=
-s for a
-> > > > > > > real execution, user space gets the same error codes.
-> > > > > > >
-> > > > > > So we concluded that execveat(AT_CHECK) will be used to check t=
-he
-> > > > > > exec, shared object, script and config file (such as seccomp co=
-nfig),
->
-> > > > > > I think binfmt_elf.c in the kernel needs to check the ld.so to =
-make
-> > > > > > sure it passes AT_CHECK, before loading it into memory.
-> > > > >
-> > > > > All ELF dependencies are opened and checked with open_exec(), whi=
-ch
-> > > > > perform the main executability checks (with the __FMODE_EXEC flag=
-).
-> > > > > Did I miss something?
-> > > > >
-> > > > I mean the ld-linux-x86-64.so.2 which is loaded by binfmt in the ke=
-rnel.
-> > > > The app can choose its own dynamic linker path during build, (maybe
-> > > > even statically link one ?)  This is another reason that relying on=
- a
-> > > > userspace only is not enough.
-> > >
-> > > The kernel calls open_exec() on all dependencies, including
-> > > ld-linux-x86-64.so.2, so these files are checked for executability to=
-o.
-> > >
-> > This might not be entirely true. iiuc, kernel  calls open_exec for
-> > open_exec for interpreter, but not all its dependency (e.g. libc.so.6)
->
-> Correct, the dynamic linker is in charge of that, which is why it must
-> be enlighten with execveat+AT_CHECK and securebits checks.
->
-> > load_elf_binary() {
-> >    interpreter =3D open_exec(elf_interpreter);
-> > }
-> >
-> > libc.so.6 is opened and mapped by dynamic linker.
-> > so the call sequence is:
-> >  execve(a.out)
-> >   - open exec(a.out)
-> >   - security_bprm_creds(a.out)
-> >   - open the exec(ld.so)
-> >   - call open_exec() for interruptor (ld.so)
-> >   - call execveat(AT_CHECK, ld.so) <-- do we want ld.so going through
-> > the same check and code path as libc.so below ?
->
-> open_exec() checks are enough.  LSMs can use this information (open +
-> __FMODE_EXEC) if needed.  execveat+AT_CHECK is only a user space
-> request.
->
-Then the ld.so doesn't go through the same security_bprm_creds() check
-as other .so.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 19 Jul 2024 16:12:51 +0200
 
-As my previous email, the ChromeOS LSM restricts executable mfd
-through security_bprm_creds(), the end result is that ld.so can still
-be executable memfd, but not other .so.
+Adjust the colour selection so that a bit of duplicate code can be avoided
+in this function implementation.
 
-One way to address this is to refactor the necessary code from
-execveat() code patch, and make it available to call from both kernel
-and execveat() code paths., but if we do that, we might as well use
-faccessat2(AT_CHECK)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ tools/perf/builtin-trace.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 8449f2beb54d..e29ae5cb95b0 100644
+=2D-- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -1258,12 +1258,16 @@ static size_t fprintf_duration(unsigned long t, bo=
+ol calculated, FILE *fp)
 
-> >   - transfer the control to ld.so)
-> >   - ld.so open (libc.so)
-> >   - ld.so call execveat(AT_CHECK,libc.so) <-- proposed by this patch,
-> > require dynamic linker change.
-> >   - ld.so mmap(libc.so,rx)
->
-> Explaining these steps is useful. I'll include that in the next patch
-> series.
->
-> > > > A detailed user case will help demonstrate the use case for dynamic
-> > > > linker, e.g. what kind of app will benefit from
-> > > > SECBIT_EXEC_RESTRICT_FILE =3D 1, what kind of threat model are we
-> > > > dealing with , what kind of attack chain we blocked as a result.
-> > >
-> > > I explained that in the patches and in the description of these new
-> > > securebits.  Please point which part is not clear.  The full threat
-> > > model is simple: the TCB includes the kernel and system's files, whic=
-h
-> > > are integrity-protected, but we don't trust arbitrary data/scripts th=
-at
-> > > can be written to user-owned files or directly provided to script
-> > > interpreters.  As for the ptrace restrictions, the dynamic linker
-> > > restrictions helps to avoid trivial bypasses (e.g. with LD_PRELOAD)
-> > > with consistent executability checks.
-> > >
-> > On elf loading case, I'm clear after your last email. However, I'm not
-> > sure if everyone else follows,  I will try to summarize here:
-> > - Problem:  ld.so /tmp/a.out will happily pass, even /tmp/a.out is
-> > mounted as non-exec.
-> >   Solution: ld.so call execveat(AT_CHECK) for a.out before mmap a.out
-> > into memory.
-> >
-> > - Problem: a poorly built application (a.out) can have a dependency on
-> > /tmp/a.o, when /tmp/a.o is on non-exec mount,
-> >   Solution: ld.so call execveat(AT_CHECK) for a.o, before mmap a.o into=
- memory.
-> >
-> > - Problem: application can call mmap (/tmp/a.out, rx), where /tmp is
-> > on non-exec mount
->
-> I'd say "malicious or non-enlightened processes" can call mmap without
-> execveat+AT_CHECK...
->
-> >   This is out of scope, i.e. will require enforcement on mmap(), maybe
-> > through LSM
->
-> Cool, I'll include that as well. Thanks.
+ 	if (!calculated)
+ 		printed +=3D fprintf(fp, "         ");
+-	else if (duration >=3D 1.0)
+-		printed +=3D color_fprintf(fp, PERF_COLOR_RED, "%6.3f ms", duration);
+-	else if (duration >=3D 0.01)
+-		printed +=3D color_fprintf(fp, PERF_COLOR_YELLOW, "%6.3f ms", duration)=
+;
+ 	else
+-		printed +=3D color_fprintf(fp, PERF_COLOR_NORMAL, "%6.3f ms", duration)=
+;
++		printed +=3D color_fprintf(fp,
++					 (duration >=3D 1.0
++					 ? PERF_COLOR_RED
++					 : (duration >=3D 0.01
++					   ? PERF_COLOR_YELLOW
++					   : PERF_COLOR_NORMAL)),
++					 "%6.3f ms",
++					 duration);
++
+ 	return printed + fprintf(fp, "): ");
+ }
+
+=2D-
+2.45.2
+
 
