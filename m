@@ -1,263 +1,115 @@
-Return-Path: <linux-kernel+bounces-257623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3290937CC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:55:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A5F9937CC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6FE81C218E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:55:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC100B2150B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697511487E9;
-	Fri, 19 Jul 2024 18:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC585148307;
+	Fri, 19 Jul 2024 18:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UTOPhsM2"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EbDrs4mK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A5514830F;
-	Fri, 19 Jul 2024 18:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292541474BF;
+	Fri, 19 Jul 2024 18:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721415335; cv=none; b=oS/m5t1COEaLo0Vt4C1ZA66KrZwsPUaKXQVNHRhnIwTGT4oA5JfH9Yo0H76h/aWUZCHsjyuMJPPPUojtVg6D2JihFxZB1p/nmF8YEmcsDEvjgObz0XYcJms+DciG5o70LJktKvXtkJ5muGEofMNauUS7Xl9LGbu5RqdxJyZqCwE=
+	t=1721415371; cv=none; b=SvFTeyturrpc2Y+hamehSkuG3X1ucgvOjniQt/DwHyFdZIbbdG0NDRnEZK0qhPcQ1fRSGmk99auqE3FSuiRi1bQNB6DYLk6qYwD0Dl8fuI5TiW/WGatSdJjdEbYM6E8Qj8YXXAHVfvh4Dr3V1f7Ol8m6efAINu2OCzJ7U2hDh/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721415335; c=relaxed/simple;
-	bh=252hIiMFQyNjRymAtvRKZk0dXUoQ/lmkD2ClTFJUt2s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cyO3irdfMDdL91ni4cq1AT3Hiw55ittHtmmBWsjsKFZDQkAE2oa38mch2xH9mPB75NN7+qgCCYaPGauVCRI+WT4MwQCOEvPxARpOCeorOM5OYGplLR811PUYfdQCkpJmG8GBWIzeHQhinLJDRud/ofnvE+rJNdWvQY4wppTQEfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UTOPhsM2; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-75e15a48d6aso1476828a12.0;
-        Fri, 19 Jul 2024 11:55:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721415333; x=1722020133; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wdjMAdiGXFE3E7lg0h/2y80rVQL9E2201XZypo3hCP8=;
-        b=UTOPhsM2a31WDvV09MfLkpDjblcDYUTLS9wzjMVq6wSw222dE6+AW2M8lQwi4fe8+r
-         DjVjmJRYrPc5XIfujO0ldteOHWqgcm+K9u3qp0iW2dCRdUToFeFPVDVFCwBDBaw0GQ7s
-         IccD2AJ3q1m0Y9szhK9p5W/eJa0bNAmKimZ5q/wunw0JX7jN9DnCq5x4bagOOWy1ytiS
-         ZMRds3KDvr0YLYUwFBtqRvdqBpjKEgA2OjpcsTBPXnc4CthjhhmRmDrVtF6btB0AGIJd
-         uOMNDtZUYJIzKsyY+ktSS/ED4TK2sht1eD4P4Pf5JoEN8KPJto2bZ9lBdECino5DOBDy
-         ZK0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721415333; x=1722020133;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wdjMAdiGXFE3E7lg0h/2y80rVQL9E2201XZypo3hCP8=;
-        b=lN383UxTDRJp9wFRvHUTxDkEBtbLHCl6Ja4dXkM+arj1fEuAyA6tPfLlEu5sBQVI3p
-         M4DgGQHymqZ/wvZML0FpXULCiPYIVIeu08Irkcoi6/vWpNB+Mb0GB3dPbvDK7doyXWqg
-         Ggt53dfyweGWyFlJ2pP/j3Zs4VlyXX15vX3zEoaVjklnm8YD5vg9kjQTeBP0RSPzLhXL
-         fG6p0KgaxkkO0asUtB4TG0y19JH8nwOAcNS3IvA9NNO96RD3dj3AwSn+UQp7vVybXSJn
-         ilJJ0MTLKsF6/B8tLw7oanzhCB/L/zKBnw2OOqD7b8fZOadbPUAPw8v2M7gCfr1dYveD
-         OwQw==
-X-Forwarded-Encrypted: i=1; AJvYcCXF01m419gyx0LjO0TlsOXK2iNFwaQpRsSRwheleJk9GmVvGMdzbnmcXb9g3Jjijj1MHJzeigS+Ii/wuAhePAWZHbamzZIYLUbyr7XlHLIIcVnpuKysWp7dKKtNWeE/HubDC+DDfVeMAIoQ2nqVrSnEVUItZTLoKnmOyS0i9Z2hLNYODYdsGX5TAmLIzIWZR6MGvqRDuCDmqhhNjOEv5+8OL+uw4S3z
-X-Gm-Message-State: AOJu0YykpVokMpAmbSPqfnL91vfCSLbjM2JeI9lDdrmanpVYbiq9c6+a
-	8eHBn0+CAmHrjUd7LyTwW9zt99ELHujHGYRJwLv9mPAuZyp2BPQQR1vBxlIiSrWAH4TrASghtmh
-	Kq6ftqZ0D2cMUBKbM6fLfIABvz1M=
-X-Google-Smtp-Source: AGHT+IF3HI5VDylwXI4gV6jZgA1oH8WgU+S0F7KP1w0qZXi39U0IsU4r43nlYEnu5CLQqFxIQ3L31cXlFLSKrsHjA+8=
-X-Received: by 2002:a05:6a20:b598:b0:1c3:3436:a244 with SMTP id
- adf61e73a8af0-1c42285f3b0mr1122705637.1.1721415333107; Fri, 19 Jul 2024
- 11:55:33 -0700 (PDT)
+	s=arc-20240116; t=1721415371; c=relaxed/simple;
+	bh=oZeASFZJtm0saJ5Rkfo1e5GWLBas2u1wYzcmZHteJSQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=b2gDYUZmhsc7wW4zZebG7GJ0CYSSb8uEXKhT0JL0CtKRWPp+mV/qmaVfqH4Gl4wCZOt3/WReIPU1wf/Cxdi6+d2VUtJ76iQha3Zme8/XTSE5hwupSlKEHjT1yKM7mFkcwGR8UsBuqLqhyEcLu8Tv42YBZBArYolPBEPSQVnnH7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EbDrs4mK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EED70C32782;
+	Fri, 19 Jul 2024 18:56:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721415370;
+	bh=oZeASFZJtm0saJ5Rkfo1e5GWLBas2u1wYzcmZHteJSQ=;
+	h=From:Date:Subject:To:Cc:From;
+	b=EbDrs4mKOzktgpRes6xa8wzhFhqygl2yXUwt7Wpob5Nf9a3KWkLYua5JD4fNybIF4
+	 Dps4vUsiEM1JPLXO3WrFA6sFMKig/WwupkfhgxeNrLcb9OSQmLo4UXhdWx9gFvtv9s
+	 co4dUProO0TuTiD9E0r9LYT0lHwoVGvWR9SX+Yh/m2V7E8nH5lLOEL5ZSB9EdMfzUn
+	 FPRBLjbUcOtXRoQiZIUo4U2iRlk+KhcuUe+aMswbD4kpzAo3+clH53FVqgQJXmBlBS
+	 djGfqBijCkWvKgR5zOAxU9olr7liKDpCzwNwkofOXARoaj7D+SOvZg8kDVeTlE5leL
+	 QY8RdaqKTh1TQ==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Fri, 19 Jul 2024 14:55:53 -0400
+Subject: [PATCH] nfsd: don't set SVC_SOCK_ANONYMOUS when creating nfsd
+ sockets
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240718115153.1967859-1-yikai.lin@vivo.com> <20240718115153.1967859-2-yikai.lin@vivo.com>
-In-Reply-To: <20240718115153.1967859-2-yikai.lin@vivo.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 19 Jul 2024 11:55:20 -0700
-Message-ID: <CAEf4BzZsqcnn8cWSig6Yu-RHvpsFVmJfeNT8CmHuHpN_rTrCwg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v1 1/3] bpf: Add bpf_file_d_path helper
-To: Lin Yikai <yikai.lin@vivo.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Mykola Lysenko <mykolal@fb.com>, 
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	opensource.kernel@vivo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240719-nfsd-next-v1-1-b6a9a899a908@kernel.org>
+X-B4-Tracking: v=1; b=H4sIALi2mmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDc0NL3by04hTdvNSKEt0US1MLo0SjZFODZCMloPqCotS0zAqwWdGxtbU
+ A4musjlsAAAA=
+To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+ Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>, Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Steve Dickson <steved@redhat.com>, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1088; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=oZeASFZJtm0saJ5Rkfo1e5GWLBas2u1wYzcmZHteJSQ=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmmrbEmokRUHihWQMfxT4oYNDsIWoD/ozRDHcoY
+ U0MYUs0KB+JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZpq2xAAKCRAADmhBGVaC
+ FaZYD/4lrzX/VvNY+nkN+LFIklNottA2lOoAfeMop7XYtM93dtmdIROUXN7QQB2qVP3D7IaJKIT
+ TOhNorC5iIEO0+5VrhxIS6zE74rNqu7UvPLUghfYW89Si7aRnB0z6+KZaRsdagQo+Lz0wbM5Dpe
+ 8l9Q4AatI9KzZK2aZKlNXr08vI7xAEcsSAi7f1YlGh7gVo0QNdhZ7pVO1CPy7aNyaT54kBX51uW
+ SsdssVYYyf1eXq7ZVoaJUatkiEQ/XR+OFKIMk6HXXa5IaoUDUtCMESz7ZUfejiuegu2MCZYbR+S
+ kBCWHtG2pEOm+JC2ZDUV/euTrSw+1bnV1GFZ14igm8Uzh8Frr5E9IkRr6maevK9V1sslTWbQE7d
+ 0BYaUlxc4CahhqEvs+DEVUlhJKZNyGtUzaiKvDwRHuacbzTzCk7WZTaqgXmU7PCd3mz10IjCeiG
+ 6m+By+5yisF5ssnwRs7l6cS8apeV7pAPjZ/oQ71qYRpxYescI+z4nY8cLkSwAmEBSKw0iY/vyK3
+ VylyFcae1LPoUMWbSDaPRFRMXpTqVKG7hg0hu1pDQLbkZd7ZqirmK9KBH9QPAZ6uBw0IsuXj4+Q
+ JImhVmqXI9kjaC012ga/QfAwpaXKe5qI7CykE8PbmiQG3Yp5rP0+SNSXFfSn/5r0yY8IJsaly+w
+ ldeRFSPvHvD1/cg==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Thu, Jul 18, 2024 at 4:53=E2=80=AFAM Lin Yikai <yikai.lin@vivo.com> wrot=
-e:
->
-> Add the "bpf_file_d_path" helper function
-> to retrieve the path from a struct file object.
-> But there is no need to include vmlinux.h
-> or reference the definition of struct file.
->
-> Additionally, update the bpf.h tools uapi header.
->
-> Signed-off-by: Lin Yikai <yikai.lin@vivo.com>
-> ---
->  include/uapi/linux/bpf.h       | 20 ++++++++++++++++++++
->  kernel/trace/bpf_trace.c       | 34 ++++++++++++++++++++++++++++++++++
->  tools/include/uapi/linux/bpf.h | 20 ++++++++++++++++++++
->  3 files changed, 74 insertions(+)
->
-> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-> index 35bcf52dbc65..7e5cec61a877 100644
-> --- a/include/uapi/linux/bpf.h
-> +++ b/include/uapi/linux/bpf.h
-> @@ -5792,6 +5792,25 @@ union bpf_attr {
->   *             0 on success.
->   *
->   *             **-ENOENT** if the bpf_local_storage cannot be found.
-> + *
-> + * long bpf_file_d_path(void *file, char *dst, u32 size)
-> + *     Description
-> + *             Return full path for the given *file* object.
-> + *
-> + *             In order to solve issues where certain eBPF programs can =
-not include
-> + *             the definition of struct file or vmlinux.h
-> + *             due to their complexity and conflicts on some operating s=
-ystem,
-> + *             the variable *file* here is declared as type void*
-> + *             instead of the traditional struct file*.
-> + *             It will be forcibly converted into type struct file* late=
-r.
-> + *
-> + *             If the path is larger than *size*, then only *size*
-> + *             bytes will be copied to *dst*
-> + *
-> + *     Return
-> + *             On success, the strictly positive length of the string,
-> + *             including the trailing NULL character. On error, a negati=
-ve
-> + *             value.
->   */
->  #define ___BPF_FUNC_MAPPER(FN, ctx...)                 \
->         FN(unspec, 0, ##ctx)                            \
-> @@ -6006,6 +6025,7 @@ union bpf_attr {
->         FN(user_ringbuf_drain, 209, ##ctx)              \
->         FN(cgrp_storage_get, 210, ##ctx)                \
->         FN(cgrp_storage_delete, 211, ##ctx)             \
-> +       FN(file_d_path, 212, ##ctx)                     \
->         /* */
->
->  /* backwards-compatibility macros for users of __BPF_FUNC_MAPPER that do=
-n't
-> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> index cd098846e251..70fde7f20e97 100644
-> --- a/kernel/trace/bpf_trace.c
-> +++ b/kernel/trace/bpf_trace.c
-> @@ -1257,6 +1257,38 @@ static const struct bpf_func_proto bpf_get_func_ar=
-g_cnt_proto =3D {
->         .arg1_type      =3D ARG_PTR_TO_CTX,
->  };
->
-> +BPF_CALL_3(bpf_file_d_path, void *, file, char*, dst, u32, size)
-> +{
-> +       long len;
-> +       struct file copy;
-> +       char *ptr;
-> +
-> +       if (!size)
-> +               return 0;
-> +
-> +       len =3D copy_from_kernel_nofault(&copy, (struct file *)file, size=
-of(struct file));
-> +       if (len < 0)
-> +               return len;
-> +
-> +       ptr =3D d_path(&(copy.f_path), dst, size);
-> +       if (IS_ERR(ptr)) {
-> +               len =3D PTR_ERR(ptr);
-> +       } else {
-> +               len =3D dst + size - ptr;
-> +               memmove(dst, ptr, len);
-> +       }
-> +       return len;
-> +}
-> +
-> +const struct bpf_func_proto bpf_file_d_path_proto =3D {
-> +       .func           =3D bpf_file_d_path,
-> +       .gpl_only       =3D false,
-> +       .ret_type       =3D RET_INTEGER,
-> +       .arg1_type      =3D ARG_ANYTHING,
+When creating nfsd sockets via the netlink interface, we do want to
+register with the portmapper. Don't set SVC_SOCK_ANONYMOUS.
 
-you can't just accept any random value as `struct file *`, this is a
-complete no-go. It will have to accept some sort of PTR_TRUSTED
-argument, be added as kfunc, etc, etc. We had earlier discussion
-around this, I don't remember all the details, but this is definitely
-not the way forward.
+Fixes: 16a471177496 NFSD: add listener-{set,get} netlink command
+Reported-by: Steve Dickson <steved@redhat.com>
+Cc: Lorenzo Bianconi <lorenzo@kernel.org>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/nfsd/nfsctl.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> +       .arg2_type      =3D ARG_PTR_TO_MEM,
-> +       .arg3_type      =3D ARG_CONST_SIZE_OR_ZERO,
-> +};
-> +
->  #ifdef CONFIG_KEYS
->  __bpf_kfunc_start_defs();
->
-> @@ -1629,6 +1661,8 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, co=
-nst struct bpf_prog *prog)
->                 return &bpf_find_vma_proto;
->         case BPF_FUNC_trace_vprintk:
->                 return bpf_get_trace_vprintk_proto();
-> +       case BPF_FUNC_file_d_path:
-> +               return &bpf_file_d_path_proto;
->         default:
->                 return bpf_base_func_proto(func_id, prog);
->         }
-> diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bp=
-f.h
-> index 35bcf52dbc65..7e5cec61a877 100644
-> --- a/tools/include/uapi/linux/bpf.h
-> +++ b/tools/include/uapi/linux/bpf.h
-> @@ -5792,6 +5792,25 @@ union bpf_attr {
->   *             0 on success.
->   *
->   *             **-ENOENT** if the bpf_local_storage cannot be found.
-> + *
-> + * long bpf_file_d_path(void *file, char *dst, u32 size)
-> + *     Description
-> + *             Return full path for the given *file* object.
-> + *
-> + *             In order to solve issues where certain eBPF programs can =
-not include
-> + *             the definition of struct file or vmlinux.h
-> + *             due to their complexity and conflicts on some operating s=
-ystem,
-> + *             the variable *file* here is declared as type void*
-> + *             instead of the traditional struct file*.
-> + *             It will be forcibly converted into type struct file* late=
-r.
-> + *
-> + *             If the path is larger than *size*, then only *size*
-> + *             bytes will be copied to *dst*
-> + *
-> + *     Return
-> + *             On success, the strictly positive length of the string,
-> + *             including the trailing NULL character. On error, a negati=
-ve
-> + *             value.
->   */
->  #define ___BPF_FUNC_MAPPER(FN, ctx...)                 \
->         FN(unspec, 0, ##ctx)                            \
-> @@ -6006,6 +6025,7 @@ union bpf_attr {
->         FN(user_ringbuf_drain, 209, ##ctx)              \
->         FN(cgrp_storage_get, 210, ##ctx)                \
->         FN(cgrp_storage_delete, 211, ##ctx)             \
-> +       FN(file_d_path, 212, ##ctx)                     \
->         /* */
->
->  /* backwards-compatibility macros for users of __BPF_FUNC_MAPPER that do=
-n't
-> --
-> 2.34.1
->
+diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+index 9e0ea6fc2aa3..34eb2c2cbcde 100644
+--- a/fs/nfsd/nfsctl.c
++++ b/fs/nfsd/nfsctl.c
+@@ -2069,8 +2069,7 @@ int nfsd_nl_listener_set_doit(struct sk_buff *skb, struct genl_info *info)
+ 			continue;
+ 		}
+ 
+-		ret = svc_xprt_create_from_sa(serv, xcl_name, net, sa,
+-					      SVC_SOCK_ANONYMOUS,
++		ret = svc_xprt_create_from_sa(serv, xcl_name, net, sa, 0,
+ 					      get_current_cred());
+ 		/* always save the latest error */
+ 		if (ret < 0)
+
+---
+base-commit: 769d20028f45a4f442cfe558a32faba357a7f5e2
+change-id: 20240719-nfsd-next-d9582a2c50c2
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
