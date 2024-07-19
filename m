@@ -1,190 +1,167 @@
-Return-Path: <linux-kernel+bounces-257384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 287C5937948
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:39:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71B5293794A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E0C3B227DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:39:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 641391C20889
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD66213EFEE;
-	Fri, 19 Jul 2024 14:39:00 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FE6383AE;
+	Fri, 19 Jul 2024 14:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bhzS8Y+j"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83C3C2D6;
-	Fri, 19 Jul 2024 14:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C777B1DFC7
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 14:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721399940; cv=none; b=sqp4/0Krl8vwmWTIp6QKtL/SAyfo25kLIr4Y0lbUshfsgbELEEdOvORh1scCnNj3UHbDilVuuihtXLbRdBxH+G+BHGsW3HL19h0NSq7s6pESAmtsEEoeJgSejVEDggS6Ib4lkWerMb4WnE+L7PT+aGp8XjbX4HEF0+078QqsyLQ=
+	t=1721400000; cv=none; b=hA/ShfrELhpKWVO9iAhOLBBqCaAIfApkPSrV4lZRB5mvpCKwdfYSFo6fsn9J8lyhKWVA9cZyjnfyU1bj+O4W6u3or7bqCIySP9+xfgmoNTWTtAQ9R9G62anduSBT9s+OTwsstOVeBZsJ9ndtf4L4ZSNAHxYEx9rDfxL+aFtw2zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721399940; c=relaxed/simple;
-	bh=MthLwAZw/K/pHDsypzwnpxxVpjnrL/t3lpnlDB9Cp0s=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mOAi+7thFhKnKaktgyzcse1NQeHqjm6hDQ8FzbruE/hG3pderNui9BF0sgLil2BSsAy6CWqk35kfL9ypenfiTbhqhwdn/3gsNA9qdSJPlgoY6FKEKUJ/vi07eDJAiUjrrEncJMBqF1PCRQ6vv/hNhVMHAAhn9tRujzFwPmbIGSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WQXMF48rrz6JBjL;
-	Fri, 19 Jul 2024 22:37:29 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id D6E9D140684;
-	Fri, 19 Jul 2024 22:38:53 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 19 Jul
- 2024 15:38:53 +0100
-Date: Fri, 19 Jul 2024 15:38:52 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: David Hildenbrand <david@redhat.com>
-CC: Mike Rapoport <rppt@kernel.org>, <linux-kernel@vger.kernel.org>,
-	"Alexander Gordeev" <agordeev@linux.ibm.com>, Andreas Larsson
-	<andreas@gaisler.com>, Andrew Morton <akpm@linux-foundation.org>, Arnd
- Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>, Catalin Marinas
-	<catalin.marinas@arm.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dan Williams <dan.j.williams@intel.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, "David S. Miller" <davem@davemloft.net>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Heiko Carstens
-	<hca@linux.ibm.com>, "Huacai Chen" <chenhuacai@kernel.org>, Ingo Molnar
-	<mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, John Paul Adrian
- Glaubitz <glaubitz@physik.fu-berlin.de>, Michael Ellerman
-	<mpe@ellerman.id.au>, Palmer Dabbelt <palmer@dabbelt.com>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Thomas
- Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner
-	<tglx@linutronix.de>, "Vasily Gorbik" <gor@linux.ibm.com>, Will Deacon
-	<will@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<loongarch@lists.linux.dev>, <linux-mips@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <linux-riscv@lists.infradead.org>,
-	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>,
-	<sparclinux@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-	<linux-mm@kvack.org>, <x86@kernel.org>
-Subject: Re: [PATCH 02/17] MIPS: sgi-ip27: make NODE_DATA() the same as on
- all other architectures
-Message-ID: <20240719153852.00003f44@Huawei.com>
-In-Reply-To: <e57eca18-b66d-4b5d-9e73-8ab22f6bc747@redhat.com>
-References: <20240716111346.3676969-1-rppt@kernel.org>
-	<20240716111346.3676969-3-rppt@kernel.org>
-	<e57eca18-b66d-4b5d-9e73-8ab22f6bc747@redhat.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1721400000; c=relaxed/simple;
+	bh=nplFswjdkgHLZ7KdvPhLkEoLF8Yc75WWEc2rB9WYX4Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tArCx9MwuZadLEMP/PMVPEPHv0vJgRhvHC9n+juYswPxzIG8F0PSyd+BnMYDcpdb/RGw/Flz78/MoB6S9p3ORDtDJjf4T1QbAnMO/TdjPh8kpAmipgptdMpChAptmp4oiNwqgB+HQjWXQdS+QYhiXx6jVRpKmrPnjOR95VqPlmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bhzS8Y+j; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4266dc7591fso12723455e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 07:39:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721399997; x=1722004797; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=T1FW/V7pDWxiQ2TYaLUH9gtn/5zuS9XpAkNz2yymyxI=;
+        b=bhzS8Y+j2NtzafznrEpP+lPY/JtM/MpptKM9jxD7e10WksW/9gVTpqQq3Nz5vzc0xd
+         eFJl1GCrNi+opa84RgriP56+mvwpG2DFT/C5ZOqBjjc4+ViK0IZshnmW2o1ItnbZsUOs
+         4PUqv8ZSc36h9Zwz9L2RU05nOegKFZg3xybZSdgNJZ9vgyWkmwPUGVE+X1WDRvNfwLZQ
+         fXRdF9FhL7RiBN0OM272eCRiCLwr1v1SaoTG/X4YgL1BU26Y7gIrNygs4D5qojefWmlN
+         mLoeEwipe/Nef9+fcBIL4E044qa2p8zXI50JY21xzeWYCvt67wSuuK9Krkg4Khe/SRuY
+         hzPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721399997; x=1722004797;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T1FW/V7pDWxiQ2TYaLUH9gtn/5zuS9XpAkNz2yymyxI=;
+        b=tdkIacVsFYM9b+NiWCi0u4HsHdnsuAKhsgLh9FrrRkdaIqjnihAJFFfUGVnOL6ErsS
+         vR53VRbYNuxT2W1jX9y+ng/Cgx6F0ARiyjp0IftmjFE6obBNGpod/awfmlPmX5rfzin+
+         +9ILYFFm6irguojKEw++5rg/W4oIk4tibY9EMIDcJJs/aC/blxX1xCMSAWwBRAZE3aIh
+         ssi4sGQiNcV8TCk2qfT3Au/hubEvJKI9D9tqTlUxsaSSY+968g5aLyxOYbD2El2CG1aU
+         Z4W5QjjRAay+KvVbHU9p0aGTJ+XeTRgPVW/MB4D1QxeWlNn4iPSvuS4ifZXW8LmUarRU
+         Sh4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWs/rFPX3EQeAqEyvzxyDHDuM325MsrbijuH/gfZFAOHdGd21cJ2Wj6GpXN4+mrrS17F7GiItLIQtzKSbAr1/FRBt9JgoiqHU5thl4z
+X-Gm-Message-State: AOJu0Yy+IdQIGwFb4A19XH7a2WjG8+oMbw9Y2vTp/Ec/WHhKWeChkr9i
+	D0B1epUnq6ydZGDs8uj4ev0Tpo2YN+1/uJkE68rm297OEFQzV1o3smjnXLcRveNhuxb/CJ0aflW
+	gojc=
+X-Google-Smtp-Source: AGHT+IE3In+JqFkEVwNvElNo9kdVbjvo5k9lB8+QaM+6m56dXxco1vvgKB4IE1JTqCxxdvZ8OFPnSw==
+X-Received: by 2002:a05:600c:1d03:b0:426:5f02:7b05 with SMTP id 5b1f17b1804b1-427c2cade52mr61407375e9.2.1721399997129;
+        Fri, 19 Jul 2024 07:39:57 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d8fbacc8sm14840355e9.28.2024.07.19.07.39.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Jul 2024 07:39:56 -0700 (PDT)
+Message-ID: <7302367c-311f-4655-9a83-3c4034c50086@linaro.org>
+Date: Fri, 19 Jul 2024 15:39:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf scripts python arm-cs-trace-disasm.py: Skip disasm
+ if address continuity is broken
+To: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ james.clark@arm.com, mike.leach@linaro.org, suzuki.poulose@arm.com,
+ Leo Yan <leo.yan@arm.com>
+Cc: acme@redhat.com, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ darren@os.amperecomputing.com, scclevenger@os.amperecomputing.com
+References: <20240719092619.274730-1-gankulkarni@os.amperecomputing.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20240719092619.274730-1-gankulkarni@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Wed, 17 Jul 2024 16:32:59 +0200
-David Hildenbrand <david@redhat.com> wrote:
 
-> On 16.07.24 13:13, Mike Rapoport wrote:
-> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> > 
-> > sgi-ip27 is the only system that defines NODE_DATA() differently than
-> > the rest of NUMA machines.
-> > 
-> > Add node_data array of struct pglist pointers that will point to
-> > __node_data[node]->pglist and redefine NODE_DATA() to use node_data
-> > array.
-> > 
-> > This will allow pulling declaration of node_data to the generic mm code
-> > in the next commit.
-> > 
-> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> > ---
-> >   arch/mips/include/asm/mach-ip27/mmzone.h | 5 ++++-
-> >   arch/mips/sgi-ip27/ip27-memory.c         | 5 ++++-
-> >   2 files changed, 8 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/mips/include/asm/mach-ip27/mmzone.h b/arch/mips/include/asm/mach-ip27/mmzone.h
-> > index 08c36e50a860..629c3f290203 100644
-> > --- a/arch/mips/include/asm/mach-ip27/mmzone.h
-> > +++ b/arch/mips/include/asm/mach-ip27/mmzone.h
-> > @@ -22,7 +22,10 @@ struct node_data {
-> >   
-> >   extern struct node_data *__node_data[];
-> >   
-> > -#define NODE_DATA(n)		(&__node_data[(n)]->pglist)
-> >   #define hub_data(n)		(&__node_data[(n)]->hub)
-> >   
-> > +extern struct pglist_data *node_data[];
-> > +
-> > +#define NODE_DATA(nid)		(node_data[nid])
-> > +
-> >   #endif /* _ASM_MACH_MMZONE_H */
-> > diff --git a/arch/mips/sgi-ip27/ip27-memory.c b/arch/mips/sgi-ip27/ip27-memory.c
-> > index b8ca94cfb4fe..c30ef6958b97 100644
-> > --- a/arch/mips/sgi-ip27/ip27-memory.c
-> > +++ b/arch/mips/sgi-ip27/ip27-memory.c
-> > @@ -34,8 +34,10 @@
-> >   #define SLOT_PFNSHIFT		(SLOT_SHIFT - PAGE_SHIFT)
-> >   #define PFN_NASIDSHFT		(NASID_SHFT - PAGE_SHIFT)
-> >   
-> > -struct node_data *__node_data[MAX_NUMNODES];
-> > +struct pglist_data *node_data[MAX_NUMNODES];
-> > +EXPORT_SYMBOL(node_data);
-> >   
-> > +struct node_data *__node_data[MAX_NUMNODES];
-> >   EXPORT_SYMBOL(__node_data);
-> >   
-> >   static u64 gen_region_mask(void)
-> > @@ -361,6 +363,7 @@ static void __init node_mem_init(nasid_t node)
-> >   	 */
-> >   	__node_data[node] = __va(slot_freepfn << PAGE_SHIFT);
-> >   	memset(__node_data[node], 0, PAGE_SIZE);
-> > +	node_data[node] = &__node_data[node]->pglist;
-> >   
-> >   	NODE_DATA(node)->node_start_pfn = start_pfn;
-> >   	NODE_DATA(node)->node_spanned_pages = end_pfn - start_pfn;  
+
+On 19/07/2024 10:26 am, Ganapatrao Kulkarni wrote:
+> To generate the instruction tracing, script uses 2 contiguous packets
+> address range. If there a continuity brake due to discontiguous branch
+> address, it is required to reset the tracing and start tracing with the
+> new set of contiguous packets.
 > 
-> I was assuming we could get rid of __node_data->pglist.
-> 
-> But now I am confused where that is actually set.
-
-It looks nasty... Cast in arch_refresh_nodedata() takes
-incoming pg_data_t * and casts it to the local version of
-struct node_data * which I think is this one
-
-struct node_data {
-	struct pglist_data pglist; (which is pg_data_t pglist)
-	struct hub_data hub;
-};
-
-https://elixir.bootlin.com/linux/v6.10/source/arch/mips/sgi-ip27/ip27-memory.c#L432
-
-Now that pg_data_t is allocated by 
-arch_alloc_nodedata() which might be fine (though types could be handled in a more
-readable fashion via some container_of() magic.
-https://elixir.bootlin.com/linux/v6.10/source/arch/mips/sgi-ip27/ip27-memory.c#L427
-
-However that call is:
-pg_data_t * __init arch_alloc_nodedata(int nid)
-{
-	return memblock_alloc(sizeof(pg_data_t), SMP_CACHE_BYTES);
-}
-
-So doesn't seem to allocate enough space to me as should be sizeof(struct node_data)
-
-Worth cleaning up whilst here?  Proper handling of types would definitely
-help.
-
-Jonathan
-
-
-> 
-> Anyhow
-> 
-> Reviewed-by: David Hildenbrand <david@redhat.com>
+> Adding change to identify the break and complete the remaining tracing
+> of current packets and restart tracing from new set of packets, if
+> continuity is established.
 > 
 
+Hi Ganapatrao,
+
+Can you add a before and after example of what's changed to the commit 
+message? It wasn't immediately obvious to me if this is adding missing 
+output, or it was correcting the tail end of the output that was 
+previously wrong.
+
+> Signed-off-by: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+> ---
+>   tools/perf/scripts/python/arm-cs-trace-disasm.py | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
+> 
+> diff --git a/tools/perf/scripts/python/arm-cs-trace-disasm.py b/tools/perf/scripts/python/arm-cs-trace-disasm.py
+> index d973c2baed1c..ad10cee2c35e 100755
+> --- a/tools/perf/scripts/python/arm-cs-trace-disasm.py
+> +++ b/tools/perf/scripts/python/arm-cs-trace-disasm.py
+> @@ -198,6 +198,10 @@ def process_event(param_dict):
+>   		cpu_data[str(cpu) + 'addr'] = addr
+>   		return
+>   
+> +	if (cpu_data.get(str(cpu) + 'ip') == None):
+> +		cpu_data[str(cpu) + 'ip'] = ip
+> +
+
+Do you need to write into the global cpu_data here? Doesn't it get 
+overwritten after you load it back into 'prev_ip'
+
+   prev_ip = cpu_data[str(cpu) + 'ip']
+
+   ... then ...
+
+   # Record for previous sample packet
+   cpu_data[str(cpu) + 'addr'] = addr
+   cpu_data[str(cpu) + 'ip'] = stop_addr
+
+Would a local variable not accomplish the same thing?
+
+> +	prev_ip = cpu_data[str(cpu) + 'ip']
+>   
+>   	if (options.verbose == True):
+>   		print("Event type: %s" % name)
+> @@ -243,12 +247,18 @@ def process_event(param_dict):
+>   
+>   	# Record for previous sample packet
+>   	cpu_data[str(cpu) + 'addr'] = addr
+> +	cpu_data[str(cpu) + 'ip'] = stop_addr
+>   
+>   	# Handle CS_ETM_TRACE_ON packet if start_addr=0 and stop_addr=4
+>   	if (start_addr == 0 and stop_addr == 4):
+>   		print("CPU%d: CS_ETM_TRACE_ON packet is inserted" % cpu)
+>   		return
+>   
+> +	if (stop_addr < start_addr):
+> +		# Continuity of the Packets broken, set start_addr to previous
+> +		# packet ip to complete the remaining tracing of the address range.
+> +		start_addr = prev_ip
+> +
+>   	if (start_addr < int(dso_start) or start_addr > int(dso_end)):
+>   		print("Start address 0x%x is out of range [ 0x%x .. 0x%x ] for dso %s" % (start_addr, int(dso_start), int(dso_end), dso))
+>   		return
 
