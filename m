@@ -1,109 +1,217 @@
-Return-Path: <linux-kernel+bounces-257420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F2C9379A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:12:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 968EE9379AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA4B11F2253B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:12:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AC761F214D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A5C1448DE;
-	Fri, 19 Jul 2024 15:12:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE516145A0D;
+	Fri, 19 Jul 2024 15:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x6qyXwMU"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eGHzC+qR"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047FA28F1
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 15:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30718145346
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 15:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721401940; cv=none; b=KWJDAliLPyIbQ8gLYPHC+sAq6Hv8ErabaCLE2duLFogJ470uU3qrCkt6JsqZ1MAlWJwMfTyY2hCuKhaaYE2ZnpDKoapqYQXOZf2XTlUB8DSVoxJLT3JG7ckkcvRzYj/74McNVEyKfaa5kLt7oUJ2mvalHKno/BZ1bCGb+QM+30o=
+	t=1721402005; cv=none; b=U/klP1djQAaz2Zhe409I0mnanNKnxBXPdis+EBWz6qw5XweX9Frft2qjhyWUA1+uhVw82y/P2WrdtNmQHwFpyz1p69+tF0qNYKioe0bsorAN75Io/WO0qqzuUVM7o9YHFWVtRglsDgyJ5bYISCZnOfJ+sjsQ4BYJxW2iqFeV1qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721401940; c=relaxed/simple;
-	bh=ly+G51FtEF4O2iybhM2EuKgqD9C5x0UKIjkARq0Jlxg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tCwhhvKPqX6leXPIBRmMo7JkDH+0ajL8NB68SFONhMcvKcsL5aYUsBeGdbYO/u0ZI0bPYhlSFzARXakaZgFJfB1Us/D5EvZiy/WFqQWvWSeXCnM/At2tGrEPLZnEQrT8cNbDQ/0LO+HoWEob+vBU7syF0B0W4kLK2BLPQPF2dPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x6qyXwMU; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-70388567d24so1024198a34.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 08:12:18 -0700 (PDT)
+	s=arc-20240116; t=1721402005; c=relaxed/simple;
+	bh=cNzYZ/BtYyZDYVyvCWTWgLlzPaAtMCxc6S1Bv8I5Lck=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pEW1gDe89lxykxk2Pua+piYtam7ukt1kPq7PnXQqiVt1vuSdkHgla+Cr8+LNBINL/OrOW8aiGIg4lMq8L3j56FX3UF9yTXeqnsLUjqmU/C3aYIRaQyiQyyywsG9+AegWGpCxLHLkZAWwUurUAgUf5Dr9A8+qP5tgv56FAGcmK6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eGHzC+qR; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5a28b61b880so13252a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 08:13:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721401938; x=1722006738; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NUKibQhbbQSDu6lJSsRxLfvTPZGluvVZnhoqB+ZHNXM=;
-        b=x6qyXwMUyYMR2gAsDBP+0nUmL7Q8SGWmi5TyTdoOL2e1qIdY5TzJ6nnTB+Gw3oYjQo
-         14Eu9P9m7OEUyxZpBciTn3Jb+A9siFovPCXwbtpk9twNAJe8qPRKWxk/X+QEglgtH0r+
-         XWTlj6ZiOvwrir8fRxd8jD7nJ59QbjOfk5SxF0KvOLIStZbQpYlsMKdq7PrevK4bLgyh
-         w+bXDADHfyF9S7fWkBNZ6KICqz2NyY2GPp84g4Nd1s4aY3fmUTvRMDqMY7oGSoss8kS+
-         M90LT/0ki50/HAT1GbAtX3iseMfZZxoX+afNXhHAq70A2AoeO3pAN5F12uh+bcfdmosM
-         q57A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721401938; x=1722006738;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1721402001; x=1722006801; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NUKibQhbbQSDu6lJSsRxLfvTPZGluvVZnhoqB+ZHNXM=;
-        b=sw5Vt58diCK251r4qvw/ign3SDhqhNvyI0Im8mW1w0HWBHEz3a8cXYsv7P4/A6PmhQ
-         OekiMB8xa8DWIpxAvBuqmXKQP9y78L9SCVTZAVmVdvzghd7bj2VjmdAOSDUDQCm9yQhf
-         1smiQZa15VN6C1zi5eil6CC/gUPfWixbJejSpGkEV6C0b12s8yHAUARCFDsLzj5/Flra
-         K4quIbNlECTJAjAU9QCEf286hj7QQfys3CeBD1OxEkeBGYCIYdL/eoV0XIYBGhgHDuTi
-         YgO1PadDAgU6R7wEpZKsXuMR1rPlhaW0HYwE5/KI20iNfjEm2sM6FZdSWDN+4BsEjzuJ
-         5knw==
-X-Forwarded-Encrypted: i=1; AJvYcCVztHpX+huN9FrilCCiBR8XqUZj4104uT4x8BZVh6iodCZxtaRJptM6iQy+qwHz8CH50NAKXUGHcCbaHmFmmDFqJj9T7ZSvV4PRYgF+
-X-Gm-Message-State: AOJu0YwYQFAtYbZCfIRE3Dx2tUBJVKjoXSUSYr8fx7OIw+FxSqR8IAzw
-	aePx9j/uNAHCHj/D4ET5kDQ1H1ntv8CiHG0Cv9j1MtD7iDeZuWptq8D/+iPyIzs=
-X-Google-Smtp-Source: AGHT+IFISp/m0Hqhy/V33S8AQiM2sHc+83bt/bOYNqMFUDPqruVCPYb2fZ0K+iY+wyuavgJiTwC3MA==
-X-Received: by 2002:a05:6830:6606:b0:703:5f4d:a758 with SMTP id 46e09a7af769-708e37965b3mr10070019a34.13.1721401938159;
-        Fri, 19 Jul 2024 08:12:18 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:4528:a9e:1eaf:80c5])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-708f60cafccsm321252a34.29.2024.07.19.08.12.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 08:12:17 -0700 (PDT)
-Date: Fri, 19 Jul 2024 10:12:15 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-	Max Dubois <makemehappy@rocketmail.com>,
-	"ilpo.jarvinen@linux.intel.com" <ilpo.jarvinen@linux.intel.com>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	Dan Carpenter <error27@gmail.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Bug related with a 6.6.24 platform/x86 commit signed by you -
- Enormous memory leak
-Message-ID: <9b0e7f6a-0432-46ba-bd75-7ba324934716@suswa.mountain>
-References: <707784492.392759.1721383145890.ref@mail.yahoo.com>
- <707784492.392759.1721383145890@mail.yahoo.com>
- <3bd6b12c-533c-4b6d-bc91-696db8837b3e@oracle.com>
- <20240719142037-93bd4395-1f6b-490a-8a14-50e7bcc756d1@linutronix.de>
- <f055fd4d-7ee7-40b9-a394-5cc8bfe52c97@suswa.mountain>
+        bh=DOJZUI+POSTXFSIgNy35weqRERtHN5CsyKdohOMq5CI=;
+        b=eGHzC+qRZmOQB/fKRHa0HbJJphBWSzliEppl0gEZv5iWRzGatbEgb8sCxVbqXYXcqE
+         m/DnQ69JiZszuuA8sycRLvg+/CjdRP88N1VPSR8w/0LMMLZnA6F/8rlKcYwhMyvvST3z
+         uO0GJtRp4E3GHhlnoixg0hgnwI/Oate6jWdRpa3vCdGnoHFzzO08aFu+eRQGLodFkCYc
+         wyfU9ZS6f2lBMbz709xepWAA2pxn49ylK7HZd7W5wQ0O6L8vrH1/RQCG59H50CW5AYcz
+         PuqoXgFL0XwelSuL2MZN6CgdaQ/c1KugoaYyRaoP3jtiBVufpqyYXFQxvIY1qTb8nuzT
+         lebQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721402001; x=1722006801;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DOJZUI+POSTXFSIgNy35weqRERtHN5CsyKdohOMq5CI=;
+        b=q8DgIw5zE/1RJNqy9/OJSLPceqohCO3VTfNmsw6ZRp2Bfcs+LfyaiE3KinuGr/S2jw
+         3TrA7f8o21vC2SRNChJpEwesr7XFwIiTmMf6LNfLpB/S34S+gjvUaHuAdnWV78siWOqT
+         G0mCoYa2cMk+hRUrQjeIkHDfWE1ezeDbnOB6Gzwg8KcZNxtjL+I+rtLdyJjoZrqZusO7
+         ddeF9cxVeTP3IUwVktmHFB1CU0KuDOvwfS7FTj8SDKq51a1sr3x4nIjgemBSkPdyK0Ef
+         C8ngxkjyoY4rfg/xHgxRqT7xOv8VQw2R+IQ7BgWspsNZn3DK1ZLxWg7t7E5gPb6vrB5c
+         xGug==
+X-Forwarded-Encrypted: i=1; AJvYcCWoWwBvyn8JPm7chQ4SS8pNaOq0toAkk87teaz50M9q4clLoY66gekAumtlrhcj2+Rt14ad6FqoQadsbfvJj9gZZCzLEPQN4hIuo1is
+X-Gm-Message-State: AOJu0YwsqZfvcWVJY/k2IHZ84cLDtClw+JgQv3wEX9Qoc+4++ignI9Pl
+	4n3WWRa7IhgDE0YvinXQvJwY50Isy1ye/aZLOwkis1w1ijIn8yFREVpFbTia/Y+rxyY84BcDu/9
+	RySGzscwjIwnfBXj44+ooxADLNkYEXHNv5FL0
+X-Google-Smtp-Source: AGHT+IF8jhfTz4CuviZW9GqUcQNbR2n0XX/TjDOw52cr0zBh16yuWoo/aIR1mpwaKRcfuoy4T/F2djmB2w64vrVE1xU=
+X-Received: by 2002:a05:6402:4405:b0:59e:9fb1:a0dc with SMTP id
+ 4fb4d7f45d1cf-5a2cb049fdamr247891a12.6.1721401996282; Fri, 19 Jul 2024
+ 08:13:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f055fd4d-7ee7-40b9-a394-5cc8bfe52c97@suswa.mountain>
+References: <20240704190137.696169-1-mic@digikod.net> <20240704190137.696169-2-mic@digikod.net>
+ <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
+ <20240717.neaB5Aiy2zah@digikod.net> <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
+ <20240718.kaePhei9Ahm9@digikod.net>
+In-Reply-To: <20240718.kaePhei9Ahm9@digikod.net>
+From: Jeff Xu <jeffxu@google.com>
+Date: Fri, 19 Jul 2024 08:12:37 -0700
+Message-ID: <CALmYWFupWw2_BKu1FF=ooXFpA=GtJr1ehZSK3p+1+1WH34eX=w@mail.gmail.com>
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Paul Moore <paul@paul-moore.com>, "Theodore Ts'o" <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, 
+	Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
+	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
+	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 19, 2024 at 10:01:14AM -0500, Dan Carpenter wrote:
-> 
-> The interesting thing about that is the working kernel had tons of these
-> allocation failures as well.
-> https://bugzilla.kernel.org/show_bug.cgi?id=219061
-> See the attachment which called "This is a session with the last WORKING
-> KERNEL 6.6.23, NO ERRORS, everything fine".
+On Thu, Jul 18, 2024 at 5:24=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+>
+> On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
+> > On Wed, Jul 17, 2024 at 3:01=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
+igikod.net> wrote:
+> > >
+> > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
+> > > > On Thu, Jul 4, 2024 at 12:02=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <m=
+ic@digikod.net> wrote:
+> > > > >
+> > > > > Add a new AT_CHECK flag to execveat(2) to check if a file would b=
+e
+> > > > > allowed for execution.  The main use case is for script interpret=
+ers and
+> > > > > dynamic linkers to check execution permission according to the ke=
+rnel's
+> > > > > security policy. Another use case is to add context to access log=
+s e.g.,
+> > > > > which script (instead of interpreter) accessed a file.  As any
+> > > > > executable code, scripts could also use this check [1].
+> > > > >
+> > > > > This is different than faccessat(2) which only checks file access
+> > > > > rights, but not the full context e.g. mount point's noexec, stack=
+ limit,
+> > > > > and all potential LSM extra checks (e.g. argv, envp, credentials)=
+.
+> > > > > Since the use of AT_CHECK follows the exact kernel semantic as fo=
+r a
+> > > > > real execution, user space gets the same error codes.
+> > > > >
+> > > > So we concluded that execveat(AT_CHECK) will be used to check the
+> > > > exec, shared object, script and config file (such as seccomp config=
+),
+> > >
+> > > "config file" that contains executable code.
+> > >
+> > Is seccomp config  considered as "contains executable code", seccomp
+> > config is translated into bpf, so maybe yes ? but bpf is running in
+> > the kernel.
+>
+> Because seccomp filters alter syscalls, they are similar to code
+> injection.
+>
+> >
+> > > > I'm still thinking  execveat(AT_CHECK) vs faccessat(AT_CHECK) in
+> > > > different use cases:
+> > > >
+> > > > execveat clearly has less code change, but that also means: we can'=
+t
+> > > > add logic specific to exec (i.e. logic that can't be applied to
+> > > > config) for this part (from do_execveat_common to
+> > > > security_bprm_creds_for_exec) in future.  This would require some
+> > > > agreement/sign-off, I'm not sure from whom.
+> > >
+> > > I'm not sure to follow. We could still add new flags, but for now I
+> > > don't see use cases.  This patch series is not meant to handle all
+> > > possible "trust checks", only executable code, which makes sense for =
+the
+> > > kernel.
+> > >
+> > I guess the "configfile" discussion is where I get confused, at one
+> > point, I think this would become a generic "trust checks" api for
+> > everything related to "generating executable code", e.g. javascript,
+> > java code, and more.
+> > We will want to clearly define the scope of execveat(AT_CHECK)
+>
+> The line between data and code is blurry.  For instance, a configuration
+> file can impact the execution flow of a program.  So, where to draw the
+> line?
+>
+> It might makes sense to follow the kernel and interpreter semantic: if a
+> file can be executed by the kernel (e.g. ELF binary, file containing a
+> shebang, or just configured with binfmt_misc), then this should be
+> considered as executable code.  This applies to Bash, Python,
+> Javascript, NodeJS, PE, PHP...  However, we can also make a picture
+> executable with binfmt_misc.  So, again, where to draw the line?
+>
+> I'd recommend to think about interaction with the outside, through
+> function calls, IPCs, syscalls...  For instance, "running" an image
+> should not lead to reading or writing to arbitrary files, or accessing
+> the network, but in practice it is legitimate for some file formats...
+> PostScript is a programming language, but mostly used to draw pictures.
+> So, again, where to draw the line?
+>
+The javascript is run by browser and java code by java runtime, do
+they meet the criteria? they do not interact with the kernel directly,
+however they might have the same "executable" characteristics and the
+app might not want them to be put into non-exec mount.
 
-Never mind.  There are a bunch of different reboots in that file with
-different kernels.
+If the answer is yes, they can also use execveat(AT_CHECK),  the next
+question is: does it make sense for javacript/java code to go through
+execveat() code path, allocate bprm, etc ? (I don't have answer, maybe
+it is)
 
-regards,
-dan carpenter
-
+> We should follow the principle of least astonishment.  What most users
+> would expect?  This should follow the *common usage* of executable
+> files.  At the end, the script interpreters will be patched by security
+> folks for security reasons.  I think the right question to ask should
+> be: could this file format be (ab)used to leak or modify arbitrary
+> files, or to perform arbitrary syscalls?  If the answer is yes, then it
+> should be checked for executability.  Of course, this excludes bugs
+> exploited in the file format parser.
+>
+> I'll extend the next patch series with this rationale.
+>
 
