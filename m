@@ -1,168 +1,161 @@
-Return-Path: <linux-kernel+bounces-257198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D6593768D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:18:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06942937696
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:23:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 424BB1C21B54
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:18:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB783282F45
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03058002A;
-	Fri, 19 Jul 2024 10:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TcNXBgzn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F40A83CC7;
+	Fri, 19 Jul 2024 10:23:12 +0000 (UTC)
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78252286A8;
-	Fri, 19 Jul 2024 10:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B2982D69;
+	Fri, 19 Jul 2024 10:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721384279; cv=none; b=P07iSlGhJ+G24dElbjjqAvMggRM0aforQC+f/RVSkRNhbC8xs2f3cwbAQX8kqkA2May1P3BwKzyJ4cy3EhNQi0n3itOyMTEY1tcN1nNWLryTJiZ8X8RXb0g9APPdAmiyezp9VysfBB9pOxPUwyZErngen0lwlc0BYL89Tq9jLIM=
+	t=1721384591; cv=none; b=hoKQV7EmdfS6pFnNZQfrIGEC/nF9rNItiyjc5nRbOBfn2hthXThIssu/FPEmJdp4FNOc6lz1Cc1MNtNlJr+OeP8L0k9OG+TXp5f8IjoYDlhW5kJ8eOKHBbD3tFqulh8J2GKEyR1oYH3+tlGGUR3ZaUMpPbgv3sNBHqK6Oobr0GQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721384279; c=relaxed/simple;
-	bh=ukiKUcHxw6E5rNaEVwCvS99WA1kcaSLZF5/03q4C2lw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nC7ZQilBsjjzJtoZgkfzcvlJ2dEAgVqK72OdslcVJYM7fGPYtBjMQG11lIblQ5unyn37pxUZTpHGpk1eUeAkmkQwsDJ7aDlWZ07Q3NPC5KcCb2XmaBUNeoNEjRsfVsK8zOSn7ANLERG9oU1qAq4kM9DxUWLwCiCju5yuOQeaaVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TcNXBgzn; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721384277; x=1752920277;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ukiKUcHxw6E5rNaEVwCvS99WA1kcaSLZF5/03q4C2lw=;
-  b=TcNXBgznMNPMIZWkNAbKaC1Kc/KfSkKApfEIS0Aow2aaJymWj/M3lJT9
-   2WwcmRqji2xo9Ag7Ch0BrzAkZRB/DlDGuyklOGEHnVltlfKuwy9H3YRjl
-   UafVW2cbGzXO6zOOugOOUHnVOzHDUtKqPCVCY9MB8n9514g2bV4+E9QmV
-   I49tSmh86VQ7laXcd/exOjdPDD7P5VzYl947BJDR+lIWlVBmcjReJD7md
-   ScrRSrT8QqxDydySXa+tzt789j0Xk2p2rgXPJN1hRNEYVaM9+lJUc3awt
-   ASoTAEMyEH3cdrz4Q6ZIV4vr4uFQWcX3aWjx00/1H4JPbXitlJSepaF7U
-   g==;
-X-CSE-ConnectionGUID: KRFjwSp5RteC4HHubD7ceg==
-X-CSE-MsgGUID: DgXLaOn2QkSzQi1hEN0mwg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11137"; a="19125257"
-X-IronPort-AV: E=Sophos;i="6.09,220,1716274800"; 
-   d="scan'208";a="19125257"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2024 03:17:56 -0700
-X-CSE-ConnectionGUID: 9saA8r7wQFWiWAUmTXoXsQ==
-X-CSE-MsgGUID: pAkOsJ74REG3vMffOwQXqw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,220,1716274800"; 
-   d="scan'208";a="74282171"
-Received: from ideak-desk.fi.intel.com ([10.237.72.78])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2024 03:17:52 -0700
-Date: Fri, 19 Jul 2024 13:18:06 +0300
-From: Imre Deak <imre.deak@intel.com>
-To: Jocelyn Falempe <jfalempe@redhat.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Helge Deller <deller@gmx.de>,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Samuel Thibault <samuel.thibault@ens-lyon.org>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH 1/3] drm/panic: Add drm_panic_is_enabled()
-Message-ID: <Zpo9Xv6wLevidsNa@ideak-desk.fi.intel.com>
-Reply-To: imre.deak@intel.com
-References: <20240717090102.968152-1-jfalempe@redhat.com>
- <20240717090102.968152-2-jfalempe@redhat.com>
+	s=arc-20240116; t=1721384591; c=relaxed/simple;
+	bh=odHth/5yAnmmeRVLLttZI54SxLBD/q7eKts+Y63UlPA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cu1XocIvrWuAdK3nnZmfRzSimKwsb4QeGCelBc2L0Dtmv96mSZWZSsI9UCCkupsrEBb0uk6zu7DIfkIN99u+TiR6fpPr3pB4b2U9khanccFEg0hBaB04ixb5BW6+TBEISpDS3j07YMYNEibojeqCML3+mo+R3P7IVBDwp6Dkqmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-1fd69e44596so2008755ad.1;
+        Fri, 19 Jul 2024 03:23:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721384588; x=1721989388;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PzIznD4An+j8MgLPrLcoQQ2kcUvCuZm2sbz2UvLTaEg=;
+        b=n+2I09M8rJdt41yHxamDcbTPQws7ka6FUilJG2YOkPry3n+SxnHkJ56F19H44JG+K3
+         VnUc9DwwlYJrHTg7pXKMqx/P2gzyBrE3G2+zH/Yt8dCBwOfig1nlpukH77akIXrJfe6i
+         swumUnIhz+LQvLoB6+7TRpc02zRKM1aqkHst9v1dHlq7lD43t7rivF60UggUilCLQwWM
+         Ocwi3iRvB3Uu0iqhPn0AzFwRb1QIu8jtFVwvctQi292fWRAL7jpe6Jie3v0taHnIhyyR
+         2ZeFRJN5+AcNKdWODAIkTq1sASL5ifB+fdKTniEuZlr3S9H7VRrAbW3DXzHMGXCYmCoT
+         ASrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYtIZusgMHQML94s+LDqlOC/Gfi8610O6koMxE4DxG8Jqyg7gI1V5lwHXseudakYwikXJPehpN7Z3GrVkE4MF+bbUJPgI14XjZIw7k
+X-Gm-Message-State: AOJu0Yzj0yUVQg7sppnsUbvjvjAB/61xCUx9OIGKwqsOk8CoHQfP5NMq
+	NjOPJNus2DeLsSGg3zLVzgISeDqPcnb0ticm5+YtqwFSB9bod6FA
+X-Google-Smtp-Source: AGHT+IGQdZ21/i2k31nXeNT/Pfe+gBAQu5RhIGS2Ny1Ytvm0dUuQ4Ab4LsjJ+5rrq93gVqf00Rl6SQ==
+X-Received: by 2002:a17:902:da91:b0:1fb:d07c:64cd with SMTP id d9443c01a7336-1fc5b60a90cmr84055805ad.21.1721384588189;
+        Fri, 19 Jul 2024 03:23:08 -0700 (PDT)
+Received: from localhost.localdomain ([111.48.58.10])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f49a218sm1283535ad.298.2024.07.19.03.23.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 03:23:07 -0700 (PDT)
+From: Xueqin Luo <luoxueqin@kylinos.cn>
+To: rafael@kernel.org,
+	pavel@ucw.cz,
+	len.brown@intel.com
+Cc: linux-pm@vger.kernel.org,
+	xiongxin@kylinos.cn,
+	linux-kernel@vger.kernel.org,
+	Xueqin Luo <luoxueqin@kylinos.cn>
+Subject: [PATCH] PM: hibernate: Use sysfs_emit() and sysfs_emit_at() in "show" functions
+Date: Fri, 19 Jul 2024 18:22:12 +0800
+Message-Id: <20240719102212.974245-1-luoxueqin@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240717090102.968152-2-jfalempe@redhat.com>
 
-Hi,
+As Documentation/filesystems/sysfs.rst suggested,
+show() should only use sysfs_emit() or sysfs_emit_at() when formatting
+the value to be returned to user space.
 
-On Wed, Jul 17, 2024 at 10:48:39AM +0200, Jocelyn Falempe wrote:
-> It allows to check if the drm device supports drm_panic.
-> Prepare the work to have better integration with fbcon and vtconsole.
-> 
-> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
-> ---
->  drivers/gpu/drm/drm_panic.c | 20 ++++++++++++++++++++
->  include/drm/drm_panic.h     |  2 ++
->  2 files changed, 22 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
-> index 948aed00595e..d9a25c2d0a65 100644
-> --- a/drivers/gpu/drm/drm_panic.c
-> +++ b/drivers/gpu/drm/drm_panic.c
-> @@ -703,6 +703,26 @@ static void debugfs_register_plane(struct drm_plane *plane, int index)
->  static void debugfs_register_plane(struct drm_plane *plane, int index) {}
->  #endif /* CONFIG_DRM_PANIC_DEBUG */
->  
-> +/**
-> + * drm_panic_is_enabled
-> + * @dev: the drm device that may supports drm_panic
-> + *
-> + * returns true if the drm device supports drm_panic
-> + */
-> +bool drm_panic_is_enabled(struct drm_device *dev)
-> +{
-> +	struct drm_plane *plane;
-> +
-> +	if (!dev->mode_config.num_total_plane)
-> +		return false;
-> +
-> +	drm_for_each_plane(plane, dev)
-> +		if (plane->helper_private && plane->helper_private->get_scanout_buffer)
-> +			return true;
-> +	return false;
-> +}
-> +EXPORT_SYMBOL(drm_panic_is_enabled);
-> +
->  /**
->   * drm_panic_register() - Initialize DRM panic for a device
->   * @dev: the drm device on which the panic screen will be displayed.
-> diff --git a/include/drm/drm_panic.h b/include/drm/drm_panic.h
-> index 73bb3f3d9ed9..c3a358dc3e27 100644
-> --- a/include/drm/drm_panic.h
-> +++ b/include/drm/drm_panic.h
-> @@ -148,11 +148,13 @@ struct drm_scanout_buffer {
->  
->  #ifdef CONFIG_DRM_PANIC
->  
-> +bool drm_panic_is_enabled(struct drm_device *dev);
->  void drm_panic_register(struct drm_device *dev);
->  void drm_panic_unregister(struct drm_device *dev);
->  
->  #else
->  
-> +bool drm_panic_is_enabled(struct drm_device *dev) {return false; }
+No functional change intended.
 
-This was moved to drivers/gpu/drm/drm_crtc_internal.h in the applied
-version and I can't find that version on the mailing list; imo this kind
-of change requires a resend.
+Signed-off-by: Xueqin Luo <luoxueqin@kylinos.cn>
+---
+ kernel/power/hibernate.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
-Also, the above breaks CONFIG_DRM_PANIC=n builds:
+diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+index 0a213f69a9e4..f55648df9b81 100644
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -1123,11 +1123,11 @@ static const char * const hibernation_modes[] = {
+ static ssize_t disk_show(struct kobject *kobj, struct kobj_attribute *attr,
+ 			 char *buf)
+ {
+-	int i;
+-	char *start = buf;
++	int i, pos = 0;
++	ssize_t sz = 0;
+ 
+ 	if (!hibernation_available())
+-		return sprintf(buf, "[disabled]\n");
++		return sysfs_emit(buf, "[disabled]\n");
+ 
+ 	for (i = HIBERNATION_FIRST; i <= HIBERNATION_MAX; i++) {
+ 		if (!hibernation_modes[i])
+@@ -1147,12 +1147,13 @@ static ssize_t disk_show(struct kobject *kobj, struct kobj_attribute *attr,
+ 			continue;
+ 		}
+ 		if (i == hibernation_mode)
+-			buf += sprintf(buf, "[%s] ", hibernation_modes[i]);
++			pos += sysfs_emit_at(buf, sz, "[%s] ", hibernation_modes[i]);
+ 		else
+-			buf += sprintf(buf, "%s ", hibernation_modes[i]);
++			pos += sysfs_emit_at(buf, sz, "%s ", hibernation_modes[i]);
++		sz += pos;
+ 	}
+-	buf += sprintf(buf, "\n");
+-	return buf-start;
++	sz += sysfs_emit_at(buf, sz, "\n");
++	return sz;
+ }
+ 
+ static ssize_t disk_store(struct kobject *kobj, struct kobj_attribute *attr,
+@@ -1210,7 +1211,7 @@ power_attr(disk);
+ static ssize_t resume_show(struct kobject *kobj, struct kobj_attribute *attr,
+ 			   char *buf)
+ {
+-	return sprintf(buf, "%d:%d\n", MAJOR(swsusp_resume_device),
++	return sysfs_emit(buf, "%d:%d\n", MAJOR(swsusp_resume_device),
+ 		       MINOR(swsusp_resume_device));
+ }
+ 
+@@ -1270,7 +1271,7 @@ power_attr(resume);
+ static ssize_t resume_offset_show(struct kobject *kobj,
+ 				  struct kobj_attribute *attr, char *buf)
+ {
+-	return sprintf(buf, "%llu\n", (unsigned long long)swsusp_resume_block);
++	return sysfs_emit(buf, "%llu\n", (unsigned long long)swsusp_resume_block);
+ }
+ 
+ static ssize_t resume_offset_store(struct kobject *kobj,
+@@ -1293,7 +1294,7 @@ power_attr(resume_offset);
+ static ssize_t image_size_show(struct kobject *kobj, struct kobj_attribute *attr,
+ 			       char *buf)
+ {
+-	return sprintf(buf, "%lu\n", image_size);
++	return sysfs_emit(buf, "%lu\n", image_size);
+ }
+ 
+ static ssize_t image_size_store(struct kobject *kobj, struct kobj_attribute *attr,
+@@ -1314,7 +1315,7 @@ power_attr(image_size);
+ static ssize_t reserved_size_show(struct kobject *kobj,
+ 				  struct kobj_attribute *attr, char *buf)
+ {
+-	return sprintf(buf, "%lu\n", reserved_size);
++	return sysfs_emit(buf, "%lu\n", reserved_size);
+ }
+ 
+ static ssize_t reserved_size_store(struct kobject *kobj,
+-- 
+2.25.1
 
-In file included from drivers/gpu/drm/drm_atomic_uapi.c:43:
-drivers/gpu/drm/drm_crtc_internal.h:322:6: error: no previous prototype for ‘drm_panic_is_enabled’ [-Werror=missing-prototypes]
-  322 | bool drm_panic_is_enabled(struct drm_device *dev) {return false; }
-
-Stubs like the above must be an inline function.
-
->  static inline void drm_panic_register(struct drm_device *dev) {}
->  static inline void drm_panic_unregister(struct drm_device *dev) {}
->  
-> -- 
-> 2.45.2
-> 
 
