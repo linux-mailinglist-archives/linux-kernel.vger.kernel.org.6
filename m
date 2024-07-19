@@ -1,285 +1,294 @@
-Return-Path: <linux-kernel+bounces-257638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADDA0937CEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 21:20:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B79937CEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 21:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F03F1F21A8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:20:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A77A21C210C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E527714831F;
-	Fri, 19 Jul 2024 19:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C7A148307;
+	Fri, 19 Jul 2024 19:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FzLnnHVv"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iD37bt5k"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16BE3146D6E;
-	Fri, 19 Jul 2024 19:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B94383AE
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 19:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721416842; cv=none; b=rhf3RLNIg/siJpx2GMdteaGoymJ5fTJQuKeahQVYtjbB4MRFqNCX3rrN/X/q74yff2GLxEUlMCHkiBPVkxFXG7qjhD9w7g1siCXxeVdSTXZwIzmch4NxXWYGh/qzkxL44Y+38F+Xrt/4g/tNPU1wXOX7DzpJAV1F12msBbvfGoY=
+	t=1721416906; cv=none; b=XWhc5zUoKDLkGB8fS7FbmmpnD1SSYncHhOih9VAclT0LQUvNDvxWN4Xg9QLEkhZ3oaIrtgxrORR50Zeji0TIWJfzWiwpntD0Hlw3JJjYtLwW1uNEmmPEBvQ7EMFQPcrmTKwYK54I5DRKf04aTaF+QGEp0z+s30atNx8sWJ6jDKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721416842; c=relaxed/simple;
-	bh=GnosC41aFEorTpqIQg1lkOrmngssg4UGvmMGZ/2iHCg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KgjCnXnd+gdxbC/m6/ZSCEp/5ygR1yHyMfnnGVubsU30tNT9G3nz3hdRRoaDmX7yZRKPugIk6TebsJasV0nKG66FTsPGHrVeWrC1ntp61ybEjaZoKe8FnKLrxg3PK6iHooLNBXTqqO1/HugRQAul9snfuWU3Ac89CcGPMwu7htc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FzLnnHVv; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3685a564bafso811595f8f.3;
-        Fri, 19 Jul 2024 12:20:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721416839; x=1722021639; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kgxIwzDdawq/mE5RHsJXRJiJ+Rr6LD4njCkuzhh9Id0=;
-        b=FzLnnHVvrQy39PjxFTdovoZuyedP3gCy8oqnjw4oflO9tOhLpQ7E2eS026bAHQWiJE
-         EI0TqLwHIzsKIuj7oPcD1RP7T6J5PJdadX0kysb5jAygDU00JMKK1Nk4KKaxP3PkZrn9
-         2K6jbUP1KijcC6jvFB0+IMvdeLo8TFF03uoY7ckaB19RK1JkKP1Jf6W8XoRw8Qe4KKCs
-         NubRQemo5YYZmP8iUc2FdZkcwcoe9eUcYSG+t5qeOGODTuy0CLHtZIQX6OQLhAGghr7v
-         Jui+8Q6LIOq7wl4Wqid9rx6TVo861bJtgcLhcx9LdrPF4rE0JxS2wu6ZUhfhTN+jmopP
-         5Upg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721416839; x=1722021639;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kgxIwzDdawq/mE5RHsJXRJiJ+Rr6LD4njCkuzhh9Id0=;
-        b=IMDdECz/kuPkLx3diI7yhTsOJkbjlf4ssdJ7gFNz+/+Pt7kT6kwH7sjD+Jkn2z6lqC
-         xWz3CMI0XaQkaQqfd4FBhs+7TcpvByy4yB+vt7TdcBPQ0IY1vWqnOiranmtBo8SNeb/2
-         a3btm+oYW4SRPKIv6olMuA5yb2aE93u8ewD7TC+fec4xcvezIfkcjiHZYnAf4PjEDf7A
-         i9PZY/XwZ2K/7XAPrFxC2hi+ZrTBdPfnKWlAKxLcjygv7SUiOFzS3D2Mq7PQPAkpywwM
-         lLIoGELns2IE/O4VNKGDc+bWCn3vPEaNZ+/t/OMKnQEi6l/iw+rnt+ou/j4ol6cBjvkM
-         qfAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVb27Cg8SntGJaDFJmG/XuIakQwW30EcAdvSriMjCoNjYRCMEymXqPoDiVxjww/tICykxqmuUuxpUL+ZysJji5PS4zYomUjGK41HHNi
-X-Gm-Message-State: AOJu0YzSUm2QUMv/GuxVTCb/E3Rpmh9fB+TehRfAb0Fp3kdovJ8W0aDK
-	sUr3JerzZOJUB4ulS9nFtx9H8+2WfZdp+cssNPpdGvjQRiRTvxzy
-X-Google-Smtp-Source: AGHT+IGXSwARzch356MOV1fjUs4D/MMW5BCKmOMFA79g+xuc19LEPF3fkMAVwBiropkV4Kq5bzzpZQ==
-X-Received: by 2002:a5d:6488:0:b0:368:2f3d:ae6c with SMTP id ffacd0b85a97d-368315f2b8cmr6659082f8f.1.1721416839230;
-        Fri, 19 Jul 2024 12:20:39 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-42-168.xnet.hr. [88.207.42.168])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-368787eced0sm2320537f8f.98.2024.07.19.12.20.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Jul 2024 12:20:38 -0700 (PDT)
-Message-ID: <207a5c75-b6ad-4bfb-b436-07d4a3353003@gmail.com>
-Date: Fri, 19 Jul 2024 21:20:34 +0200
+	s=arc-20240116; t=1721416906; c=relaxed/simple;
+	bh=fttys4UjUruzSp1S1pm1WtigWFC4MfU2cuFYKjdhqwo=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=THElLDZK7U+IjE6R2fpbyq+u/0pxvvHoeDMpQL1R66fSj40A3WWsLo5IFW7Vzq/+RhrSCQZ/llEvQNZ5Uj/tvhpw+hbRVHvVxCFd92rbcgGeEL9uthRMel2o4EHEcClQ6uZ9IN6u212N8PPOMsEQpAZ5A0OTD5KMDsMBq5vvHSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iD37bt5k; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721416904; x=1752952904;
+  h=date:from:to:cc:subject:message-id;
+  bh=fttys4UjUruzSp1S1pm1WtigWFC4MfU2cuFYKjdhqwo=;
+  b=iD37bt5kR26vfBQDCLkN1MNiCyUGJa+StXvJPY9XEoOyksaxLAikkYLp
+   qhhBdMZRJ3gB2uIqZxNpeIFPW8DElgnB2ymPdpQZaAyMQUUWlAB+fuEMf
+   7sstFDJhQfT+8RCyYS9Hcnu8ohWt5MAO3sSt8JvQHfPG8qYMRosEqwgz/
+   tdug6GijQeS/6txUEVoXhiCGpsBM9UwV7GAFISwQoz6EnmyHlrdAzqyKr
+   rCM0V5Tdr6k+RixuOnl0ME30LkrXG5odZkuCBEMM/CmeBEC+cdEweYWEv
+   GLZ4LYcCNebx3Q5reT4Qa4bYurzM23HAVE2zRwWzT8Rt4dvQa0zovswBk
+   Q==;
+X-CSE-ConnectionGUID: EXN8DMcLTseArRV1zBZohA==
+X-CSE-MsgGUID: rVGHohkqTjKdEhemlz6pQw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11138"; a="30439368"
+X-IronPort-AV: E=Sophos;i="6.09,221,1716274800"; 
+   d="scan'208";a="30439368"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2024 12:21:44 -0700
+X-CSE-ConnectionGUID: y1q5suyuRy6pc3663VyzNQ==
+X-CSE-MsgGUID: sraYK3oAQgqRnnmeIjssLA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,221,1716274800"; 
+   d="scan'208";a="51841565"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 19 Jul 2024 12:21:42 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sUtAi-000iW8-00;
+	Fri, 19 Jul 2024 19:21:40 +0000
+Date: Sat, 20 Jul 2024 03:21:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:irq/msi] BUILD SUCCESS
+ c9b4f313f6b83ac80e9d51845d092c32513efdb4
+Message-ID: <202407200310.h3QFAbDP-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?Q?Re=3A_=5BBUG=5D_arch/x86/kvm/vmx/vmx=5Fonhyperv=2Eh=3A109?=
- =?UTF-8?B?OjM2OiBlcnJvcjogZGVyZWZlcmVuY2Ugb2YgTlVMTCDigJgw4oCZ?=
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- linux-kernel@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>
-References: <b44227c5-5af6-4243-8ed9-2b8cdc0e5325@gmail.com>
- <Zpq2Lqd5nFnA0VO-@google.com>
-Content-Language: en-US
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-In-Reply-To: <Zpq2Lqd5nFnA0VO-@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/msi
+branch HEAD: c9b4f313f6b83ac80e9d51845d092c32513efdb4  irqchip/gic-v3-its: Correctly fish out the DID for platform MSI
 
+elapsed time: 1448m
 
-On 7/19/24 20:53, Sean Christopherson wrote:
-> On Fri, Jul 19, 2024, Mirsad Todorovac wrote:
->> Hi, all!
->>
->> Here is another potential NULL pointer dereference in kvm subsystem of linux
->> stable vanilla 6.10, as GCC 12.3.0 complains.
->>
->> (Please don't throw stuff at me, I think this is the last one for today :-)
->>
->> arch/x86/include/asm/mshyperv.h
->> -------------------------------
->>   242 static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
->>   243 {
->>   244         if (!hv_vp_assist_page)
->>   245                 return NULL;
->>   246 
->>   247         return hv_vp_assist_page[cpu];
->>   248 }
->>
->> arch/x86/kvm/vmx/vmx_onhyperv.h
->> -------------------------------
->>   102 static inline void evmcs_load(u64 phys_addr)
->>   103 {
->>   104         struct hv_vp_assist_page *vp_ap =
->>   105                 hv_get_vp_assist_page(smp_processor_id());
->>   106 
->>   107         if (current_evmcs->hv_enlightenments_control.nested_flush_hypercall)
->>   108                 vp_ap->nested_control.features.directhypercall = 1;
->>   109         vp_ap->current_nested_vmcs = phys_addr;
->>   110         vp_ap->enlighten_vmentry = 1;
->>   111 }
->>
->> Now, this one is simple:
-> 
-> Nope :-)
-> 
->> hv_vp_assist_page(cpu) can return NULL, and in line 104 it is assigned to
->> wp_ap, which is dereferenced in lines 108, 109, and 110, which is not checked
->> against returning NULL by hv_vp_assist_page().
-> 
-> When enabling eVMCS, and when onlining a CPU with eVMCS enabled, KVM verifies
-> that every CPU has a valid hv_vp_assist_page() and either aborts enabling eVMCS
-> or rejects CPU onlining.  So very subtly, it's impossible for hv_vp_assist_page()
-> to be NULL at evmcs_load().
+configs tested: 202
+configs skipped: 8
 
-I see, however I did not invent it, it broke my build with CONFIG_FORTIFY_SOURCE=y.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-I think I warned that I have little knowledge about the KVM code.
+tested configs:
+alpha                             allnoconfig   gcc-13.2.0
+alpha                            allyesconfig   gcc-13.3.0
+alpha                               defconfig   gcc-13.2.0
+arc                              alldefconfig   gcc-13.2.0
+arc                              allmodconfig   gcc-13.2.0
+arc                               allnoconfig   gcc-13.2.0
+arc                              allyesconfig   gcc-13.2.0
+arc                          axs101_defconfig   gcc-13.2.0
+arc                                 defconfig   gcc-13.2.0
+arc                   randconfig-001-20240719   gcc-13.2.0
+arc                   randconfig-002-20240719   gcc-13.2.0
+arm                              allmodconfig   gcc-13.2.0
+arm                              allmodconfig   gcc-14.1.0
+arm                               allnoconfig   gcc-13.2.0
+arm                              allyesconfig   gcc-13.2.0
+arm                              allyesconfig   gcc-14.1.0
+arm                                 defconfig   gcc-13.2.0
+arm                   randconfig-001-20240719   gcc-13.2.0
+arm                   randconfig-002-20240719   gcc-13.2.0
+arm                   randconfig-003-20240719   gcc-13.2.0
+arm                   randconfig-004-20240719   gcc-13.2.0
+arm                         s3c6400_defconfig   gcc-13.2.0
+arm64                            allmodconfig   clang-19
+arm64                            allmodconfig   gcc-13.2.0
+arm64                             allnoconfig   gcc-13.2.0
+arm64                               defconfig   gcc-13.2.0
+arm64                 randconfig-001-20240719   gcc-13.2.0
+arm64                 randconfig-002-20240719   gcc-13.2.0
+arm64                 randconfig-003-20240719   gcc-13.2.0
+arm64                 randconfig-004-20240719   gcc-13.2.0
+csky                              allnoconfig   gcc-13.2.0
+csky                                defconfig   gcc-13.2.0
+csky                  randconfig-001-20240719   gcc-13.2.0
+csky                  randconfig-002-20240719   gcc-13.2.0
+hexagon                          allmodconfig   clang-19
+hexagon                          allyesconfig   clang-19
+i386                             allmodconfig   clang-18
+i386                             allmodconfig   gcc-13
+i386                              allnoconfig   clang-18
+i386                              allnoconfig   gcc-13
+i386                             allyesconfig   clang-18
+i386                             allyesconfig   gcc-13
+i386         buildonly-randconfig-001-20240719   clang-18
+i386         buildonly-randconfig-002-20240719   clang-18
+i386         buildonly-randconfig-003-20240719   clang-18
+i386         buildonly-randconfig-003-20240719   gcc-10
+i386         buildonly-randconfig-004-20240719   clang-18
+i386         buildonly-randconfig-005-20240719   clang-18
+i386         buildonly-randconfig-005-20240719   gcc-10
+i386         buildonly-randconfig-006-20240719   clang-18
+i386                                defconfig   clang-18
+i386                  randconfig-001-20240719   clang-18
+i386                  randconfig-002-20240719   clang-18
+i386                  randconfig-003-20240719   clang-18
+i386                  randconfig-004-20240719   clang-18
+i386                  randconfig-004-20240719   gcc-13
+i386                  randconfig-005-20240719   clang-18
+i386                  randconfig-006-20240719   clang-18
+i386                  randconfig-011-20240719   clang-18
+i386                  randconfig-012-20240719   clang-18
+i386                  randconfig-013-20240719   clang-18
+i386                  randconfig-014-20240719   clang-18
+i386                  randconfig-015-20240719   clang-18
+i386                  randconfig-015-20240719   gcc-13
+i386                  randconfig-016-20240719   clang-18
+i386                  randconfig-016-20240719   gcc-13
+loongarch                        allmodconfig   gcc-14.1.0
+loongarch                         allnoconfig   gcc-13.2.0
+loongarch                           defconfig   gcc-13.2.0
+loongarch             randconfig-001-20240719   gcc-13.2.0
+loongarch             randconfig-002-20240719   gcc-13.2.0
+m68k                             allmodconfig   gcc-14.1.0
+m68k                              allnoconfig   gcc-13.2.0
+m68k                             allyesconfig   gcc-14.1.0
+m68k                         amcore_defconfig   gcc-13.2.0
+m68k                                defconfig   gcc-13.2.0
+m68k                          sun3x_defconfig   gcc-13.2.0
+microblaze                       allmodconfig   gcc-14.1.0
+microblaze                        allnoconfig   gcc-13.2.0
+microblaze                       allyesconfig   gcc-14.1.0
+microblaze                          defconfig   gcc-13.2.0
+mips                              allnoconfig   gcc-13.2.0
+mips                         bigsur_defconfig   gcc-13.2.0
+mips                       bmips_be_defconfig   gcc-13.2.0
+mips                      fuloong2e_defconfig   gcc-13.2.0
+mips                           ip28_defconfig   gcc-13.2.0
+mips                      maltaaprp_defconfig   gcc-13.2.0
+mips                        maltaup_defconfig   gcc-13.2.0
+mips                   sb1250_swarm_defconfig   gcc-13.2.0
+nios2                             allnoconfig   gcc-13.2.0
+nios2                               defconfig   gcc-13.2.0
+nios2                 randconfig-001-20240719   gcc-13.2.0
+nios2                 randconfig-002-20240719   gcc-13.2.0
+openrisc                          allnoconfig   gcc-14.1.0
+openrisc                         allyesconfig   gcc-14.1.0
+openrisc                            defconfig   gcc-14.1.0
+parisc                           allmodconfig   gcc-14.1.0
+parisc                            allnoconfig   gcc-14.1.0
+parisc                           allyesconfig   gcc-14.1.0
+parisc                              defconfig   gcc-14.1.0
+parisc                generic-32bit_defconfig   gcc-13.2.0
+parisc                randconfig-001-20240719   gcc-13.2.0
+parisc                randconfig-002-20240719   gcc-13.2.0
+parisc64                            defconfig   gcc-13.2.0
+powerpc                          allmodconfig   gcc-14.1.0
+powerpc                           allnoconfig   gcc-14.1.0
+powerpc                          allyesconfig   clang-19
+powerpc                          allyesconfig   gcc-14.1.0
+powerpc                    amigaone_defconfig   gcc-13.2.0
+powerpc                    gamecube_defconfig   gcc-13.2.0
+powerpc                   lite5200b_defconfig   gcc-13.2.0
+powerpc                 mpc837x_rdb_defconfig   gcc-13.2.0
+powerpc                     powernv_defconfig   gcc-13.2.0
+powerpc                      ppc64e_defconfig   gcc-13.2.0
+powerpc               randconfig-001-20240719   gcc-13.2.0
+powerpc               randconfig-002-20240719   gcc-13.2.0
+powerpc               randconfig-003-20240719   gcc-13.2.0
+powerpc64             randconfig-001-20240719   gcc-13.2.0
+powerpc64             randconfig-002-20240719   gcc-13.2.0
+powerpc64             randconfig-003-20240719   gcc-13.2.0
+riscv                            allmodconfig   clang-19
+riscv                            allmodconfig   gcc-14.1.0
+riscv                             allnoconfig   gcc-14.1.0
+riscv                            allyesconfig   clang-19
+riscv                            allyesconfig   gcc-14.1.0
+riscv                               defconfig   gcc-14.1.0
+riscv             nommu_k210_sdcard_defconfig   gcc-13.2.0
+riscv                 randconfig-001-20240719   gcc-13.2.0
+riscv                 randconfig-002-20240719   gcc-13.2.0
+s390                             allmodconfig   clang-19
+s390                              allnoconfig   clang-19
+s390                              allnoconfig   gcc-14.1.0
+s390                             allyesconfig   clang-19
+s390                             allyesconfig   gcc-14.1.0
+s390                                defconfig   gcc-14.1.0
+s390                  randconfig-001-20240719   gcc-13.2.0
+s390                  randconfig-002-20240719   gcc-13.2.0
+sh                               allmodconfig   gcc-14.1.0
+sh                                allnoconfig   gcc-13.2.0
+sh                               allyesconfig   gcc-14.1.0
+sh                                  defconfig   gcc-14.1.0
+sh                ecovec24-romimage_defconfig   gcc-13.2.0
+sh                     magicpanelr2_defconfig   gcc-13.2.0
+sh                          r7785rp_defconfig   gcc-13.2.0
+sh                    randconfig-001-20240719   gcc-13.2.0
+sh                    randconfig-002-20240719   gcc-13.2.0
+sh                           se7705_defconfig   gcc-13.2.0
+sh                           se7712_defconfig   gcc-13.2.0
+sh                        sh7763rdp_defconfig   gcc-13.2.0
+sh                   sh7770_generic_defconfig   gcc-13.2.0
+sh                             shx3_defconfig   gcc-13.2.0
+sh                              ul2_defconfig   gcc-13.2.0
+sparc                            allmodconfig   gcc-14.1.0
+sparc64                             defconfig   gcc-14.1.0
+sparc64               randconfig-001-20240719   gcc-13.2.0
+sparc64               randconfig-002-20240719   gcc-13.2.0
+um                               allmodconfig   clang-19
+um                               allmodconfig   gcc-13.3.0
+um                                allnoconfig   clang-17
+um                                allnoconfig   gcc-14.1.0
+um                               allyesconfig   gcc-13
+um                               allyesconfig   gcc-13.3.0
+um                                  defconfig   gcc-14.1.0
+um                             i386_defconfig   gcc-14.1.0
+um                    randconfig-001-20240719   gcc-13.2.0
+um                    randconfig-002-20240719   gcc-13.2.0
+um                           x86_64_defconfig   gcc-14.1.0
+x86_64                            allnoconfig   clang-18
+x86_64                           allyesconfig   clang-18
+x86_64       buildonly-randconfig-001-20240719   gcc-13
+x86_64       buildonly-randconfig-002-20240719   gcc-13
+x86_64       buildonly-randconfig-003-20240719   gcc-13
+x86_64       buildonly-randconfig-004-20240719   gcc-13
+x86_64       buildonly-randconfig-005-20240719   gcc-13
+x86_64       buildonly-randconfig-006-20240719   gcc-13
+x86_64                              defconfig   clang-18
+x86_64                              defconfig   gcc-13
+x86_64                                  kexec   clang-18
+x86_64                randconfig-001-20240719   gcc-13
+x86_64                randconfig-002-20240719   gcc-13
+x86_64                randconfig-003-20240719   gcc-13
+x86_64                randconfig-004-20240719   gcc-13
+x86_64                randconfig-005-20240719   gcc-13
+x86_64                randconfig-006-20240719   gcc-13
+x86_64                randconfig-011-20240719   gcc-13
+x86_64                randconfig-012-20240719   gcc-13
+x86_64                randconfig-013-20240719   gcc-13
+x86_64                randconfig-014-20240719   gcc-13
+x86_64                randconfig-015-20240719   gcc-13
+x86_64                randconfig-016-20240719   gcc-13
+x86_64                randconfig-071-20240719   gcc-13
+x86_64                randconfig-072-20240719   gcc-13
+x86_64                randconfig-073-20240719   gcc-13
+x86_64                randconfig-074-20240719   gcc-13
+x86_64                randconfig-075-20240719   gcc-13
+x86_64                randconfig-076-20240719   gcc-13
+x86_64                          rhel-8.3-rust   clang-18
+x86_64                               rhel-8.3   clang-18
+xtensa                            allnoconfig   gcc-13.2.0
+xtensa                randconfig-001-20240719   gcc-13.2.0
+xtensa                randconfig-002-20240719   gcc-13.2.0
+xtensa                         virt_defconfig   gcc-13.2.0
 
-Here is the full GCC 12.3.0 report:
-
-------------------------------------------------------------------------------------------------------------------
-In file included from arch/x86/kvm/vmx/vmx_ops.h:9,
-                 from arch/x86/kvm/vmx/vmx.h:15,
-                 from arch/x86/kvm/vmx/hyperv.h:7,
-                 from arch/x86/kvm/vmx/nested.c:11:
-arch/x86/kvm/vmx/vmx_onhyperv.h: In function ‘evmcs_load’:
-arch/x86/kvm/vmx/vmx_onhyperv.h:109:36: error: dereference of NULL ‘0’ [CWE-476] [-Werror=analyzer-null-dereference]
-  109 |         vp_ap->current_nested_vmcs = phys_addr;
-      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
-  ‘nested_release_vmcs12.part.0’: events 1-4
-    |
-    |arch/x86/kvm/vmx/nested.c:5306:20:
-    | 5306 | static inline void nested_release_vmcs12(struct kvm_vcpu *vcpu)
-    |      |                    ^~~~~~~~~~~~~~~~~~~~~
-    |      |                    |
-    |      |                    (1) entry to ‘nested_release_vmcs12.part.0’
-    |......
-    | 5315 |         if (enable_shadow_vmcs) {
-    |      |            ~        
-    |      |            |
-    |      |            (2) following ‘true’ branch...
-    |......
-    | 5318 |                 copy_shadow_to_vmcs12(vmx);
-    |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-    |      |                 |
-    |      |                 (3) ...to here
-    |      |                 (4) calling ‘copy_shadow_to_vmcs12’ from ‘nested_release_vmcs12.part.0’
-    |
-    +--> ‘copy_shadow_to_vmcs12’: events 5-6
-           |
-           | 1565 | static void copy_shadow_to_vmcs12(struct vcpu_vmx *vmx)
-           |      |             ^~~~~~~~~~~~~~~~~~~~~
-           |      |             |
-           |      |             (5) entry to ‘copy_shadow_to_vmcs12’
-           |......
-           | 1573 |         if (WARN_ON(!shadow_vmcs))
-           |      |            ~ 
-           |      |            |
-           |      |            (6) following ‘false’ branch...
-           |
-         ‘copy_shadow_to_vmcs12’: event 7
-           |
-           |./include/linux/preempt.h:214:1:
-           |  214 | do { \
-           |      | ^~
-           |      | |
-           |      | (7) ...to here
-arch/x86/kvm/vmx/nested.c:1576:9: note: in expansion of macro ‘preempt_disable’
-           | 1576 |         preempt_disable();
-           |      |         ^~~~~~~~~~~~~~~
-           |
-         ‘copy_shadow_to_vmcs12’: event 8
-           |
-           | 1578 |         vmcs_load(shadow_vmcs);
-           |      |         ^~~~~~~~~~~~~~~~~~~~~~
-           |      |         |
-           |      |         (8) calling ‘vmcs_load’ from ‘copy_shadow_to_vmcs12’
-           |
-           +--> ‘vmcs_load’: events 9-12
-                  |
-                  |arch/x86/kvm/vmx/vmx_ops.h:294:20:
-                  |  294 | static inline void vmcs_load(struct vmcs *vmcs)
-                  |      |                    ^~~~~~~~~
-                  |      |                    |
-                  |      |                    (9) entry to ‘vmcs_load’
-                  |......
-                  |  298 |         if (kvm_is_using_evmcs())
-                  |      |            ~        
-                  |      |            |
-                  |      |            (10) following ‘true’ branch...
-                  |  299 |                 return evmcs_load(phys_addr);
-                  |      |                 ~~~~~~ ~~~~~~~~~~~~~~~~~~~~~
-                  |      |                 |      |
-                  |      |                 |      (12) calling ‘evmcs_load’ from ‘vmcs_load’
-                  |      |                 (11) ...to here
-                  |
-                  +--> ‘evmcs_load’: event 13
-                         |
-                         |arch/x86/kvm/vmx/vmx_onhyperv.h:102:20:
-                         |  102 | static inline void evmcs_load(u64 phys_addr)
-                         |      |                    ^~~~~~~~~~
-                         |      |                    |
-                         |      |                    (13) entry to ‘evmcs_load’
-                         |
-                       ‘evmcs_load’: event 14
-                         |
-                         |./arch/x86/include/asm/mshyperv.h:244:12:
-                         |  244 |         if (!hv_vp_assist_page)
-                         |      |            ^
-                         |      |            |
-                         |      |            (14) following ‘true’ branch...
-                         |
-                       ‘evmcs_load’: events 15-18
-                         |
-                         |arch/x86/kvm/vmx/vmx_onhyperv.h:105:17:
-                         |  105 |                 hv_get_vp_assist_page(smp_processor_id());
-                         |      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                         |      |                 |
-                         |      |                 (15) ...to here
-                         |  106 | 
-                         |  107 |         if (current_evmcs->hv_enlightenments_control.nested_flush_hypercall)
-                         |      |            ~     
-                         |      |            |
-                         |      |            (16) following ‘false’ branch...
-                         |  108 |                 vp_ap->nested_control.features.directhypercall = 1;
-                         |  109 |         vp_ap->current_nested_vmcs = phys_addr;
-                         |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                         |      |         |                          |
-                         |      |         (17) ...to here            (18) dereference of NULL ‘<unknown>’
-                         |
-cc1: all warnings being treated as errors
------------------------------------------------------------------------------------
-
-GCC 12.3.0 appears unaware of this fact that evmcs_load() cannot be called with hv_vp_assist_page() == NULL.
-
-This, for example, silences the warning and also hardens the code against the "impossible" situations:
-
--------------------><------------------------------------------------------------------
-diff --git a/arch/x86/kvm/vmx/vmx_onhyperv.h b/arch/x86/kvm/vmx/vmx_onhyperv.h
-index eb48153bfd73..8b0e3ffa7fc1 100644
---- a/arch/x86/kvm/vmx/vmx_onhyperv.h
-+++ b/arch/x86/kvm/vmx/vmx_onhyperv.h
-@@ -104,6 +104,11 @@ static inline void evmcs_load(u64 phys_addr)
-        struct hv_vp_assist_page *vp_ap =
-                hv_get_vp_assist_page(smp_processor_id());
- 
-+       if (!vp_ap) {
-+               pr_warn("BUG: hy_get_vp_assist_page(%d) returned NULL.\n", smp_processor_id());
-+               return;
-+       }
-+
-        if (current_evmcs->hv_enlightenments_control.nested_flush_hypercall)
-                vp_ap->nested_control.features.directhypercall = 1;
-        vp_ap->current_nested_vmcs = phys_addr;
---
-
-Best regards,
-Mirsad Todorovac
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
