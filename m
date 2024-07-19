@@ -1,937 +1,307 @@
-Return-Path: <linux-kernel+bounces-257669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 637D2937D3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 22:17:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56E1A937D3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 22:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4E05B2142E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:17:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A2F51C213A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA8D1487F7;
-	Fri, 19 Jul 2024 20:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996DF1482FC;
+	Fri, 19 Jul 2024 20:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v9ynbTbG"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hwgcI3PG"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2085.outbound.protection.outlook.com [40.107.244.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63EB7149013
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 20:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721420216; cv=none; b=cA8fy8t+6lfUeKgCbjgltv8l3ose04S85N3+iMOJhaKYzmHraG4vM1ApMnQDttWsTOD6R7V/+xabVx0YyqmdD7uHuMh6ZD4GuJYMQycDJbmTIQLaY2wL7HwmxCJSl0zjVxkCziYYZekeylFHw+I4AspqF7MhKE6obIJglQkO9Mw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721420216; c=relaxed/simple;
-	bh=2E7d3r8c2xjNka57VU2Q2kVd0EnF/aHjts996VtTrJY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XfvXRDHnHhTpORemRbEpfgGiztoPZN8+hYx0r72hPKe0dRH2tGGclFiyTGs80daC32UlsR8MxJn/EUY7YWKuUk2pksukcw/tBue0+qQjfUI/t0+9tJrTlazVyRsExmEPc+6oqDeDSrBhZSAzMfCsyx7bpadWB8GjZlDCUna1V+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v9ynbTbG; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a77e2f51496so240736066b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 13:16:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721420213; x=1722025013; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4YnJS8N7vLby28BN7jL2sktRCHoGHyjF0KnxBntp3S0=;
-        b=v9ynbTbG+8FHDA50NN0tyKQbEY958MsDECQC7K+ek/b+sbqsPagZ/o0xVSVpdZYkbo
-         /MIMdciv7sj9kHx4DCG55ELlJn3KzYMAdRZA2qHYNe87NS/JdP0v0pS4M2nJsMzMbhrr
-         O17TRvf9LFxnu78CJoYxF30Co0no+IsNySODMXhoXjWzPrDVAxuI2pxIBqPbK6hGry7n
-         y+hL7009Zb+LaoGJHSqnplqLhO71hn2oab3mbSQf1ULWTEZXz6Oa4R8hC8zBOElwGp0L
-         1Isq6Su4whZugE0m3ktETPWM/iTb8dpvAmIYfV7JU3yt2Htt6g8/iRGAoPATbT1TEsBi
-         VXJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721420213; x=1722025013;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4YnJS8N7vLby28BN7jL2sktRCHoGHyjF0KnxBntp3S0=;
-        b=Juov5Q6VEZaH4xW89zEbmiE7VVvUeARQlLUjl4ac+YBeR1JqpkPQXF1Scq1WaHzrj1
-         9mp14oYm92sO5/YqksmcY8CmjHaj/gfGwwNjn5yKkV3bBmkUMLfo5POY+fETnEgJ+X00
-         CjBgmLD/jiz4/gbOkwb9Q3qF/oWLJkDt51ehj4ZEbwMLZwaAi97tQNLisLyhrFD7G7+F
-         8vI3rMF8PsmqsnQoXhwSUiU9aaGF48c0jITikFPvJ09tg3ipj6Xl1Kmg0A6Ptt15wJat
-         wlqrsedVwUOswxXF4z+Ax5zNzEU3F4BFsQptwuAT/9tQ1IfFIBV6NksNoKRUlvwkX+tx
-         2mxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0Yk4+1p0/1xmSlBGxHbEObCepZKnGcy/kbgONLX2brMHfLKymYoKNgAnwRWzuJ8KtD+u3zs2wY62Fg1pvAZxjVRBLmdWQkjJh+alU
-X-Gm-Message-State: AOJu0YwKT4qO6KA0thlj4n4ZZ/TOvV2j2D8/kASla9TslHth7LKUKxFW
-	kQKELYd4BRJettytXUU7Poo19TX1727YFh29Ef0mtc0/Zylu/0w1lgYOzlg98vw=
-X-Google-Smtp-Source: AGHT+IHv9EYe7XVsUqO+hsLawqsPyPb+CNZqkkv9IeAZDvMYBlkhMTL2K9imWrLfKsP7I8cPrBcivQ==
-X-Received: by 2002:a17:906:490d:b0:a77:c0f5:69cc with SMTP id a640c23a62f3a-a7a01352eb4mr632034666b.61.1721420212545;
-        Fri, 19 Jul 2024 13:16:52 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c922b6asm72332266b.172.2024.07.19.13.16.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 13:16:52 -0700 (PDT)
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Fri, 19 Jul 2024 22:16:38 +0200
-Subject: [PATCH 3/3] arm64: dts: qcom: Add X1E78100 ThinkPad T14s Gen 6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5CBE4696
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 20:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721420351; cv=fail; b=NxAXAFnnn/1p10MURODw5/6IL2AkqGMNY5Kk50T0gUvQte8Tsg/B1vFncTPhb9XjlL4Wm6Lt4hU369bu1rPktGRdL0grRUCLlAeHX2JuUwf9DmD0Ja/E+wMYz0hwW1cYEk9JcLltZor3fxMrxr0WnJCRnny/Lg/Gl4EZwi2Umh0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721420351; c=relaxed/simple;
+	bh=E6Y4EUd5hXB1s0kdyNBG1hsriOVc2ifn5WwRu5+GHz0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FaogGdGOGIOwlcbSTwMI0jRJr+iC7npPVb4N9AD32ckkxbtDasrvGIS+QL25QqgrS7kbf+3FoiwMNXvfeKBH9RKPoscW21LdUEO65rhOtyuqDhOzXWzDn2W/bVTx4+CFg3ae2Rlp3wReZkLj3LManCgNeWLKm7P7WuKT6jAEMAk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hwgcI3PG; arc=fail smtp.client-ip=40.107.244.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a++R2t6a2cylB9ILCt57NIag6ISdWiU0iW6BNGv7hfzOzmj10mPc3PAwYTEpJtSWwVDSXYcmc5lULgsJ3EQMLx+SHYa2poV1cmE3dnkcwqNgc8sHCtahqmlCZcL+wuans4drz/cwMQ08kux9AaRDNujKGBhu3C7i72HH4DA3kMbHAL0QNmw8YWO8pWtZ67wGAFJQjSQnoTUy/gLq25QKlzyCHnSVm6J8jINqjeeZN2wNdQmHmOUmWljBEwlMdw6X/sJSo3+EvL8HHo58pddFekN1wUYE86IcqMPs6D/VTcgpxHSS6SYX1Udgz1aWMTMfyU3NuZTbcSm4Ylon4pqeQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RiiQINkT0aVnu4rvbj5qxaENOSjP+sW/vBoCPfKJW2o=;
+ b=ytxtM/LwKC/BJI3ndtMV+Pe4JptwUlhhCSrgBMmCRXoEtDsVTScRgruez1sd/PaCze43+1PtKCoFcQ2JyLjtcpDlyqCBhxIH/HC37rMVS9cZhiEeYIIMxOD4S/FHuN4PP4NjayZBCjldw2N7Xi1dI71LwHfUkx66EqI5Df0ZFOC6pkWjMJ/dyTsB11DxGD0IZTkTBr93g6gVMn0TiATYhXxc5YEZfmiVXY1ebhYG73QWnpqEApChKwpAwztBO4muLH8dwrM1PzWhXvxspzIFw9g3CcRuAGEZymhqTJb27tdF2rTIofmPg1jpw3MwvaTu9Ld4LciaTiy6WlSRbz+hSQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RiiQINkT0aVnu4rvbj5qxaENOSjP+sW/vBoCPfKJW2o=;
+ b=hwgcI3PGPFlA/a4WquWlutwhVg60fbLXOaX59iEqPvh1t7goalblQoGUy4hzlFjcas77pwMbpAfx1gK2TifABswpsVJrat4SpT8KbtC5MT/gbunp3QIJ2DegZ6H7U29xzOL7qsb+HE0IirXCCIS8naHxW7u+fX+E4nbH6Ko1RhsqmzKWr/tVwVdeyVu2wX7VzU36H5rH8/zVnJAFmcy5TpPKfhx0VRnShVe0/ti5RG+cr2YO7BVrgw7VJMbelnYRLUVaxO9Ijdwx6zS9xWnMWzf6MWEdEdnN9/3si4J1dCyxjdkugwz7LIBMmqg1DFEVLJigYxLR0d7voGwSGXko4g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB5744.namprd12.prod.outlook.com (2603:10b6:8:73::18) by
+ DS0PR12MB8018.namprd12.prod.outlook.com (2603:10b6:8:149::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7784.17; Fri, 19 Jul 2024 20:19:07 +0000
+Received: from DS7PR12MB5744.namprd12.prod.outlook.com
+ ([fe80::f018:13a9:e165:6b7e]) by DS7PR12MB5744.namprd12.prod.outlook.com
+ ([fe80::f018:13a9:e165:6b7e%4]) with mapi id 15.20.7784.013; Fri, 19 Jul 2024
+ 20:19:07 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 3/3] mm/migrate: move common code to
+ numa_migrate_check (was numa_migrate_prep)
+Date: Fri, 19 Jul 2024 16:19:04 -0400
+X-Mailer: MailMate (1.14r6052)
+Message-ID: <735B3DEE-5C4A-43BD-B003-17F4B1F0DC98@nvidia.com>
+In-Reply-To: <87zfqfw0yw.fsf@yhuang6-desk2.ccr.corp.intel.com>
+References: <20240712024455.163543-1-zi.yan@sent.com>
+ <20240712024455.163543-4-zi.yan@sent.com>
+ <87zfqfw0yw.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Content-Type: multipart/signed;
+ boundary="=_MailMate_1D2EDF33-5E8B-493C-AD1C-63A53F326647_=";
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+X-ClientProxiedBy: BL0PR02CA0100.namprd02.prod.outlook.com
+ (2603:10b6:208:51::41) To DS7PR12MB5744.namprd12.prod.outlook.com
+ (2603:10b6:8:73::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240719-topic-t14s_upstream-v1-3-d7d97fdebb28@linaro.org>
-References: <20240719-topic-t14s_upstream-v1-0-d7d97fdebb28@linaro.org>
-In-Reply-To: <20240719-topic-t14s_upstream-v1-0-d7d97fdebb28@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
- Johan Hovold <johan@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1721420206; l=19832;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=2E7d3r8c2xjNka57VU2Q2kVd0EnF/aHjts996VtTrJY=;
- b=pLcAOdFQ+IP0IecerK0IZncdTrX+RZChMZb7r6b5ugpICO1MtuM//6+VpPOKgucJajxmlD4Sn
- AvW0Hs+mtlDBGbK09SiwNx5Dd3f7HPPnRV+cjg1MeEAz1t1RT9fdcUG
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB5744:EE_|DS0PR12MB8018:EE_
+X-MS-Office365-Filtering-Correlation-Id: ce8b3040-8176-4b5d-0f0b-08dca8300aad
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Ivzpx5WqNvKMCJ3bBVU0fTPoy3OkursyBQvyDdlr+wxbaELU3MBVDPNGdF+G?=
+ =?us-ascii?Q?UriHc33ZIvnZLtAJACvIz3eV+5xAT3Rhv0ViUOTyG30YJzaB9PG+LJfK8xe6?=
+ =?us-ascii?Q?BltUhfg+jqtRoSuXzTmocS2sqsuH9OtqCuR7wgP9NFU5uRjFVZT9uYQFGe3E?=
+ =?us-ascii?Q?uiHzLUj4TsVwmE605JTutPwMDeVyMO+CQrXIXmeT+Pn0/apS09SIlR1RZkFJ?=
+ =?us-ascii?Q?v46mVp/bDO4zMCseAvpoNUJ/Z+BlXeGs+GOPNvB/khh/50763Ce6TAK3wzP5?=
+ =?us-ascii?Q?yh8+LKeTdj1hpG+62qms3gxCr5HU5QL7T4PdNnGTpOCGyaY3gf/lE2K3NIQE?=
+ =?us-ascii?Q?mU1z+rJZ4IAIbEOOSlyQeo6Sb1LRdxm1xoPJuwKu2qvKonGC7UvZvfQEq4Xz?=
+ =?us-ascii?Q?cZe3ErmuWniTWfTjw+9xjaE0hKlEotR0seRdWOoGZAUbshTlg2JlfbvCdRzm?=
+ =?us-ascii?Q?nc586hjiboSGYBpLtyDx+PUuRx8I5emb096WiTULdx6N2lA372D3v2jNIogT?=
+ =?us-ascii?Q?TFkLk+szcKT3RyQAe2Uv5XwKIqWhwgDL6W5uatji++LysqbG6pUSqD7FsJx0?=
+ =?us-ascii?Q?5RmE75T1nVUBAp8fuOG/asF/BMxwyuip0vYouwxwstFzGuwkiyBA9GZYw6VV?=
+ =?us-ascii?Q?LDMgLRNtXNf4hu8wqfkIaXBCnzln/ihopewgGqt1WLTSjuv/FIGMQD9G4Igc?=
+ =?us-ascii?Q?q+T5N2xs6+Ha3leBIUvKWPQcvlYLXJikhdBsWZ8t3sZaIwtb/8tsvoK6NhdS?=
+ =?us-ascii?Q?ASsGffNrdCjKdArJeUavcQLWlhAYkH5huZ4FiqAjQvIimnKVxz5cp/9+rhFA?=
+ =?us-ascii?Q?ZIhBNBdB+Yp8ckOGrPhtG/x6C4iLg2ydWcVprBXv4tUIV94lI2BXuVaf8/6E?=
+ =?us-ascii?Q?DTu8QsZdh9QEuzpGW/SmXVRu7BX2ji49/3uJhq/j3qXJJ5idzPuOvB7FsUqC?=
+ =?us-ascii?Q?k2lP9CCPcj+MMNKVycZOvCPKsT3oQxHyH0i3+S90Cq54Glt/LHFxhcDBzu71?=
+ =?us-ascii?Q?V1VS967bYymwYSCmEYuzORWUlxqm+i90kzZUJd2hJwFg7y9cHeje9P8LEClE?=
+ =?us-ascii?Q?auB3SAJlb0eFi1FxOLPxB5p1H+sG3jCtv33omKbo+k8/x/XL99Ti5jOW/yRC?=
+ =?us-ascii?Q?D/nMHZy66YdonlzoPOMvN+ySFNoOjpYqeOXdHGSKvvS3Kw5ysOJJPWfabVPR?=
+ =?us-ascii?Q?l5x4UzePUQmZjG3yMi1/0B6dqFsm+G29s3jjAAdXkF36kIHYHCATi/IvFf9z?=
+ =?us-ascii?Q?bOOiFUPUGNVwN3O5r2hZoi0NvE1LDLXtIpD9uTcwwy+yJoY4SYZPpoPjrzqV?=
+ =?us-ascii?Q?IEHHiSvBxE/FChPz4IKlnhPe8lqQ0x9iBukyCTt6Injnuw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB5744.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?9zT2Ft1BNteqwUUayb95Q0fzO/hwdGJ9yZXKrXZro/h+rgm+Y96OVe13ArC2?=
+ =?us-ascii?Q?WQGnUlXyUZTRmdj80jaQWvZ1TR3DwirbUDSfNRq6xDYTRRlryBKtpwyTj3u7?=
+ =?us-ascii?Q?6WmjFwzPbDE9aswgrlMmnu7zNY47L/CeV9YWWx3Q+VfdfuPpbcmWc28Cx6uQ?=
+ =?us-ascii?Q?82MmUrkJALBxKKUZT2P7agrzqk2JYfrpNtIQqQusVDtGQeDHE4p5Nk6Nj1eT?=
+ =?us-ascii?Q?/POCyyn303V0oEXv4KUhOqknaZmY86WoECf6bqxA/ZNkbrzlzEAj5ahuUXDH?=
+ =?us-ascii?Q?C9EUFJ3rBjLCUsSJEsedqLH0gFg8RFyxvuaQ2845W7eUSxURSIwxhbm87C13?=
+ =?us-ascii?Q?7MQtuZ/uRZhJnanoWZFo9fzYX1EAQ97A7u3+jKJmw28rvcrqYRuX71FOckw8?=
+ =?us-ascii?Q?Y5OgcsT2ppwGZdCayNrWwRC2wn6rRTsZ6S7xSuL3mMoI/AO2Sjv75/BrAoZF?=
+ =?us-ascii?Q?2uEpX9ChIALJQ+aSJ0SSGIyr98mzmZyPx2p2l7jHX3gzF48QVLX+aC+rwGgl?=
+ =?us-ascii?Q?YNhZRV2JEubH7yBKwkSxXjJdsZ+jlUuuG2k0mcPNHgsvJzFqKoBdthDQu86K?=
+ =?us-ascii?Q?q8AfodrMMja0bwmK/unfDt5w39i5bAIBKF9EQIhMEv54DRppNl58ZyF5EQcJ?=
+ =?us-ascii?Q?q4iBaQ2xiiTy4aIzpGxJAN6DmTjXLEHIGR44HRA4qJ2qv4LGLB/2CQR9gzQn?=
+ =?us-ascii?Q?v4qsndSgAzK2EMDbsTAirFp+euEQY2zZdK/4KgZv1+gMIjqmfwLPWq/t+I+Z?=
+ =?us-ascii?Q?tolr8l2jRpJ+xDOzvNILCUVyRISyUF2yKh2qBYhtKwNU01S4NHZnlvH75I4x?=
+ =?us-ascii?Q?TdQGhUru0iVNuOaZ/BfYCLAdqeCqWzYvUkRm0RDvtWqyF13OuY7UaFzlH6VD?=
+ =?us-ascii?Q?umxyk5KoKYFxcM2dpZJ+jQqrb6OcAQTOnEHH2NWl7wN7/xkMAYZkBu4uAFUf?=
+ =?us-ascii?Q?yEB3p5gK2UXhL+RBZITdtBV5zjPykA41vWYS+M5yQjjrTlEsNLVUcT0YgrtP?=
+ =?us-ascii?Q?elToi/6jVAfeVx0Etw9cBPV9JihSlLnQkJ9N5xE0MTarcxb+YblSK/uGnPnH?=
+ =?us-ascii?Q?Yz39lB+AlVIi0fRUegfXqxlLb+yeZmhzSRKmD5fRydbEKy+0l/Uy2b4sZbua?=
+ =?us-ascii?Q?jFvFEj5rZ3rPneMusOQp4GV22SVVUrKA9mHAwgl1kF+mpq280ecp+FC8HDQp?=
+ =?us-ascii?Q?Rc8ER229utexQtP+ODRunYU/7Gi0RBPkm+yLBuYSYnVCljY+4zo67sROu7i0?=
+ =?us-ascii?Q?XQ3dG8b+lSVFdJIphde0kUYlyK7hwW2f7ZPyVOFl1SFQRgneDPsMtS0fAR3u?=
+ =?us-ascii?Q?xIN4PW2ZA1SAJOcqpX7wp84HSXZ1gmWIx0rhv/wUMnSNoE2hQYZHdO/rgwJy?=
+ =?us-ascii?Q?YBO9kJtvn02l1Un4v4LmQhTl+mZbibQB86N9EJvt8wKve51L4ZN86xrTkVr8?=
+ =?us-ascii?Q?+N0PGOAylr4ARNpgDniSx127nwyxNreGvwrnD0Utk0SJJtuEuQplxzqAZWAZ?=
+ =?us-ascii?Q?h7O8G/tj/+b304q89iVu6WtnDYH8eDNlS79wlGqrsKQzOXozVJRkOU4NHt7Q?=
+ =?us-ascii?Q?VfXXY5aluQFzpz1uhE4lcrs7r6RWpmX2gcNZGAnt?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce8b3040-8176-4b5d-0f0b-08dca8300aad
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB5744.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2024 20:19:07.1743
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PqaEAPmT/VKZ1TeKf7LCnKdcGQYekNVvkAYAEcJjD0w90NwRYtR6i8YNwDcZbyMb
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8018
 
-Add support for the aforementioned laptop. That includes:
+--=_MailMate_1D2EDF33-5E8B-493C-AD1C-63A53F326647_=
+Content-Type: text/plain
 
-- input methods, incl. lid switch (keyboard needs the pdc
-  wakeup-parent removal hack..)
-- NVMe, WiFi
-- USB-C ports
-- GPU, display
-- DSPs
+On 18 Jul 2024, at 4:36, Huang, Ying wrote:
 
-Notably, the USB-A ports on the side are depenedent on the USB
-multiport controller making it upstream.
+> Zi Yan <zi.yan@sent.com> writes:
+>
+>> From: Zi Yan <ziy@nvidia.com>
+>>
+>> do_numa_page() and do_huge_pmd_numa_page() share a lot of common code. To
+>> reduce redundancy, move common code to numa_migrate_prep() and rename
+>> the function to numa_migrate_check() to reflect its functionality.
+>>
+>> There is some code difference between do_numa_page() and
+>> do_huge_pmd_numa_page() before the code move:
+>>
+>> 1. do_huge_pmd_numa_page() did not check shared folios to set TNF_SHARED.
+>> 2. do_huge_pmd_numa_page() did not check and skip zone device folios.
+>>
+>> Signed-off-by: Zi Yan <ziy@nvidia.com>
+>> ---
+>>  mm/huge_memory.c | 28 ++++++-----------
+>>  mm/internal.h    |  5 +--
+>>  mm/memory.c      | 81 +++++++++++++++++++++++-------------------------
+>>  3 files changed, 52 insertions(+), 62 deletions(-)
+>>
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 8c11d6da4b36..66d67d13e0dc 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -1670,10 +1670,10 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
+>>  	pmd_t pmd;
+>>  	struct folio *folio;
+>>  	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
+>> -	int nid = NUMA_NO_NODE;
+>> -	int target_nid, last_cpupid = (-1 & LAST_CPUPID_MASK);
+>> +	int target_nid = NUMA_NO_NODE;
+>> +	int last_cpupid = (-1 & LAST_CPUPID_MASK);
+>>  	bool writable = false;
+>> -	int flags = 0;
+>> +	int flags = 0, nr_pages;
+>>
+>>  	vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
+>>  	if (unlikely(!pmd_same(oldpmd, *vmf->pmd))) {
+>> @@ -1693,21 +1693,13 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
+>>  		writable = true;
+>>
+>>  	folio = vm_normal_folio_pmd(vma, haddr, pmd);
+>> -	if (!folio)
+>> +	if (!folio || folio_is_zone_device(folio))
+>
+> This change appears unrelated.  Can we put it in a separate patch?
+>
+> IIUC, this isn't necessary even in do_numa_page()?  Because in
+> change_pte_range(), folio_is_zone_device() has been checked already.
+> But It doesn't hurt too.
+>
+>>  		goto out_map;
+>>
+>> -	/* See similar comment in do_numa_page for explanation */
+>> -	if (!writable)
+>> -		flags |= TNF_NO_GROUP;
+>> +	nr_pages = folio_nr_pages(folio);
+>>
+>> -	nid = folio_nid(folio);
+>> -	/*
+>> -	 * For memory tiering mode, cpupid of slow memory page is used
+>> -	 * to record page access time.  So use default value.
+>> -	 */
+>> -	if (folio_has_cpupid(folio))
+>> -		last_cpupid = folio_last_cpupid(folio);
+>> -	target_nid = numa_migrate_prep(folio, vmf, haddr, nid, &flags);
+>> +	target_nid = numa_migrate_check(folio, vmf, haddr, writable,
+>> +			&flags, &last_cpupid);
+>>  	if (target_nid == NUMA_NO_NODE)
+>>  		goto out_map;
+>>  	if (migrate_misplaced_folio_prepare(folio, vma, target_nid)) {
+>> @@ -1720,8 +1712,8 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
+>>
+>>  	if (!migrate_misplaced_folio(folio, vma, target_nid)) {
+>>  		flags |= TNF_MIGRATED;
+>> -		nid = target_nid;
+>>  	} else {
+>> +		target_nid = NUMA_NO_NODE;
+>>  		flags |= TNF_MIGRATE_FAIL;
+>>  		vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
+>>  		if (unlikely(!pmd_same(oldpmd, *vmf->pmd))) {
+>> @@ -1732,8 +1724,8 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
+>>  	}
+>>
+>>  out:
+>> -	if (nid != NUMA_NO_NODE)
+>> -		task_numa_fault(last_cpupid, nid, HPAGE_PMD_NR, flags);
+>> +	if (target_nid != NUMA_NO_NODE)
+>> +		task_numa_fault(last_cpupid, target_nid, nr_pages, flags);
+>
+> This appears a behavior change.  IIUC, there are 2 possible issues.
+>
+> 1) if migrate_misplaced_folio() fails, folio_nid() should be used as
+> nid.  "target_nid" as variable name here is confusing, because
+> folio_nid() is needed in fact.
+>
+> 2) if !pmd_same(), task_numa_fault() should be skipped.  The original
+> code is buggy.
+>
+> Similar issues for do_numa_page().
+>
+> If my understanding were correct, we should implement a separate patch
+> to fix 2) above.  And that may need to be backported.
 
-At least one of the eDP panels used (non-touchscreen) identifies as
-BOE 0x0b66.
+Hmm, the original code seems OK after I checked the implementation.
+There are two possible !pte_same()/!pmd_same() locations:
+1) at the beginning of do_numa_page() and do_huge_pmd_numa_page() and the faulted
+PTE/PMD changed before the folio can be checked, task_numa_fault() should not be
+called.
 
-See below for the hardware description from the OEM.
+2) when migrate_misplaced_folio() failed and the PTE/PMD changed, but the folio
+has been determined and checked. task_numa_fault() should be called even if
+!pte_same()/!pmd_same(),
 
-Link: https://www.lenovo.com/us/en/p/laptops/thinkpad/thinkpadt/lenovo-thinkpad-t14s-gen-6-(14-inch-snapdragon)/len101t0099
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- arch/arm64/boot/dts/qcom/Makefile                  |   1 +
- .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts     | 792 +++++++++++++++++++++
- 2 files changed, 793 insertions(+)
+Let me know if I get this wrong. Thanks.
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 0e5c810304fb..734a05e04c4a 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -261,6 +261,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-hdk-display-card.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-hdk.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-mtp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-qrd.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= x1e78100-lenovo-thinkpad-t14s.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-asus-vivobook-s15.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-crd.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-lenovo-yoga-slim7x.dtb
-diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
-new file mode 100644
-index 000000000000..b12953267505
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
-@@ -0,0 +1,792 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2024, Linaro Limited
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/gpio-keys.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-+
-+#include "x1e80100.dtsi"
-+#include "x1e80100-pmics.dtsi"
-+
-+/ {
-+	model = "Lenovo ThinkPad T14s Gen 6";
-+	compatible = "lenovo,thinkpad-t14s", "qcom,x1e78100", "qcom,x1e80100";
-+
-+	aliases {
-+		serial0 = &uart21;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-0 = <&hall_int_n_default>;
-+		pinctrl-names = "default";
-+
-+		switch-lid {
-+			gpios = <&tlmm 92 GPIO_ACTIVE_LOW>;
-+			linux,input-type = <EV_SW>;
-+			linux,code = <SW_LID>;
-+			wakeup-source;
-+			wakeup-event-action = <EV_ACT_DEASSERTED>;
-+		};
-+	};
-+
-+	pmic-glink {
-+		compatible = "qcom,x1e80100-pmic-glink",
-+			     "qcom,sm8550-pmic-glink",
-+			     "qcom,pmic-glink";
-+		orientation-gpios = <&tlmm 121 GPIO_ACTIVE_HIGH>,
-+				    <&tlmm 123 GPIO_ACTIVE_HIGH>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		/* Display-adjacent port */
-+		connector@0 {
-+			compatible = "usb-c-connector";
-+			reg = <0>;
-+			power-role = "dual";
-+			data-role = "dual";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					pmic_glink_ss0_hs_in: endpoint {
-+						remote-endpoint = <&usb_1_ss0_dwc3_hs>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					pmic_glink_ss0_ss_in: endpoint {
-+						remote-endpoint = <&usb_1_ss0_qmpphy_out>;
-+					};
-+				};
-+			};
-+		};
-+
-+		/* User-adjacent port */
-+		connector@1 {
-+			compatible = "usb-c-connector";
-+			reg = <1>;
-+			power-role = "dual";
-+			data-role = "dual";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					pmic_glink_ss1_hs_in: endpoint {
-+						remote-endpoint = <&usb_1_ss1_dwc3_hs>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					pmic_glink_ss1_ss_in: endpoint {
-+						remote-endpoint = <&usb_1_ss1_qmpphy_out>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+
-+	reserved-memory {
-+		linux,cma {
-+			compatible = "shared-dma-pool";
-+			size = <0x0 0x8000000>;
-+			reusable;
-+			linux,cma-default;
-+		};
-+	};
-+
-+	vreg_edp_3p3: regulator-edp-3p3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_EDP_3P3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&tlmm 70 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&edp_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	vreg_nvme: regulator-nvme {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_NVME_3P3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&tlmm 18 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&nvme_reg_en>;
-+		pinctrl-names = "default";
-+	};
-+
-+	vph_pwr: regulator-vph-pwr {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "vph_pwr";
-+		regulator-min-microvolt = <3700000>;
-+		regulator-max-microvolt = <3700000>;
-+
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+};
-+
-+&apps_rsc {
-+	regulators-0 {
-+		compatible = "qcom,pm8550-rpmh-regulators";
-+		qcom,pmic-id = "b";
-+
-+		vdd-bob1-supply = <&vph_pwr>;
-+		vdd-bob2-supply = <&vph_pwr>;
-+		vdd-l1-l4-l10-supply = <&vreg_s4c_1p8>;
-+		vdd-l2-l13-l14-supply = <&vreg_bob1>;
-+		vdd-l5-l16-supply = <&vreg_bob1>;
-+		vdd-l6-l7-supply = <&vreg_bob2>;
-+		vdd-l8-l9-supply = <&vreg_bob1>;
-+		vdd-l12-supply = <&vreg_s5j_1p2>;
-+		vdd-l15-supply = <&vreg_s4c_1p8>;
-+		vdd-l17-supply = <&vreg_bob2>;
-+
-+		vreg_bob1: bob1 {
-+			regulator-name = "vreg_bob1";
-+			regulator-min-microvolt = <3008000>;
-+			regulator-max-microvolt = <3960000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_bob2: bob2 {
-+			regulator-name = "vreg_bob2";
-+			regulator-min-microvolt = <2504000>;
-+			regulator-max-microvolt = <3008000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l2b_3p0: ldo2 {
-+			regulator-name = "vreg_l2b_3p0";
-+			regulator-min-microvolt = <3072000>;
-+			regulator-max-microvolt = <3072000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l4b_1p8: ldo4 {
-+			regulator-name = "vreg_l4b_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l6b_1p8: ldo6 {
-+			regulator-name = "vreg_l6b_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <2960000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l8b_3p0: ldo8 {
-+			regulator-name = "vreg_l8b_3p0";
-+			regulator-min-microvolt = <3072000>;
-+			regulator-max-microvolt = <3072000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l9b_2p9: ldo9 {
-+			regulator-name = "vreg_l9b_2p9";
-+			regulator-min-microvolt = <2960000>;
-+			regulator-max-microvolt = <2960000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l10b_1p8: ldo10 {
-+			regulator-name = "vreg_l10b_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l12b_1p2: ldo12 {
-+			regulator-name = "vreg_l12b_1p2";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l13b_3p0: ldo13 {
-+			regulator-name = "vreg_l13b_3p0";
-+			regulator-min-microvolt = <3072000>;
-+			regulator-max-microvolt = <3072000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l14b_3p0: ldo14 {
-+			regulator-name = "vreg_l14b_3p0";
-+			regulator-min-microvolt = <3072000>;
-+			regulator-max-microvolt = <3072000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l15b_1p8: ldo15 {
-+			regulator-name = "vreg_l15b_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l17b_2p5: ldo17 {
-+			regulator-name = "vreg_l17b_2p5";
-+			regulator-min-microvolt = <2504000>;
-+			regulator-max-microvolt = <2504000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+
-+	regulators-1 {
-+		compatible = "qcom,pm8550ve-rpmh-regulators";
-+		qcom,pmic-id = "c";
-+
-+		vdd-l1-supply = <&vreg_s5j_1p2>;
-+		vdd-l2-supply = <&vreg_s1f_0p7>;
-+		vdd-l3-supply = <&vreg_s1f_0p7>;
-+		vdd-s4-supply = <&vph_pwr>;
-+
-+		vreg_s4c_1p8: smps4 {
-+			regulator-name = "vreg_s4c_1p8";
-+			regulator-min-microvolt = <1856000>;
-+			regulator-max-microvolt = <2000000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l1c_1p2: ldo1 {
-+			regulator-name = "vreg_l1c_1p2";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l2c_0p8: ldo2 {
-+			regulator-name = "vreg_l2c_0p8";
-+			regulator-min-microvolt = <880000>;
-+			regulator-max-microvolt = <880000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l3c_0p8: ldo3 {
-+			regulator-name = "vreg_l3c_0p8";
-+			regulator-min-microvolt = <912000>;
-+			regulator-max-microvolt = <912000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+
-+	regulators-2 {
-+		compatible = "qcom,pmc8380-rpmh-regulators";
-+		qcom,pmic-id = "d";
-+
-+		vdd-l1-supply = <&vreg_s1f_0p7>;
-+		vdd-l2-supply = <&vreg_s1f_0p7>;
-+		vdd-l3-supply = <&vreg_s4c_1p8>;
-+		vdd-s1-supply = <&vph_pwr>;
-+
-+		vreg_l1d_0p8: ldo1 {
-+			regulator-name = "vreg_l1d_0p8";
-+			regulator-min-microvolt = <880000>;
-+			regulator-max-microvolt = <880000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l2d_0p9: ldo2 {
-+			regulator-name = "vreg_l2d_0p9";
-+			regulator-min-microvolt = <912000>;
-+			regulator-max-microvolt = <912000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l3d_1p8: ldo3 {
-+			regulator-name = "vreg_l3d_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+
-+	regulators-3 {
-+		compatible = "qcom,pmc8380-rpmh-regulators";
-+		qcom,pmic-id = "e";
-+
-+		vdd-l2-supply = <&vreg_s1f_0p7>;
-+		vdd-l3-supply = <&vreg_s5j_1p2>;
-+
-+		vreg_l2e_0p8: ldo2 {
-+			regulator-name = "vreg_l2e_0p8";
-+			regulator-min-microvolt = <880000>;
-+			regulator-max-microvolt = <880000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l3e_1p2: ldo3 {
-+			regulator-name = "vreg_l3e_1p2";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+
-+	regulators-4 {
-+		compatible = "qcom,pmc8380-rpmh-regulators";
-+		qcom,pmic-id = "f";
-+
-+		vdd-l1-supply = <&vreg_s5j_1p2>;
-+		vdd-l2-supply = <&vreg_s5j_1p2>;
-+		vdd-l3-supply = <&vreg_s5j_1p2>;
-+		vdd-s1-supply = <&vph_pwr>;
-+
-+		vreg_s1f_0p7: smps1 {
-+			regulator-name = "vreg_s1f_0p7";
-+			regulator-min-microvolt = <700000>;
-+			regulator-max-microvolt = <1100000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+
-+	regulators-6 {
-+		compatible = "qcom,pm8550ve-rpmh-regulators";
-+		qcom,pmic-id = "i";
-+
-+		vdd-l1-supply = <&vreg_s4c_1p8>;
-+		vdd-l2-supply = <&vreg_s5j_1p2>;
-+		vdd-l3-supply = <&vreg_s1f_0p7>;
-+		vdd-s1-supply = <&vph_pwr>;
-+		vdd-s2-supply = <&vph_pwr>;
-+
-+		vreg_l1i_1p8: ldo1 {
-+			regulator-name = "vreg_l1i_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l2i_1p2: ldo2 {
-+			regulator-name = "vreg_l2i_1p2";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l3i_0p8: ldo3 {
-+			regulator-name = "vreg_l3i_0p8";
-+			regulator-min-microvolt = <880000>;
-+			regulator-max-microvolt = <880000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+
-+	regulators-7 {
-+		compatible = "qcom,pm8550ve-rpmh-regulators";
-+		qcom,pmic-id = "j";
-+
-+		vdd-l1-supply = <&vreg_s1f_0p7>;
-+		vdd-l2-supply = <&vreg_s5j_1p2>;
-+		vdd-l3-supply = <&vreg_s1f_0p7>;
-+		vdd-s5-supply = <&vph_pwr>;
-+
-+		vreg_s5j_1p2: smps5 {
-+			regulator-name = "vreg_s5j_1p2";
-+			regulator-min-microvolt = <1256000>;
-+			regulator-max-microvolt = <1304000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l1j_0p8: ldo1 {
-+			regulator-name = "vreg_l1j_0p8";
-+			regulator-min-microvolt = <912000>;
-+			regulator-max-microvolt = <912000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l2j_1p2: ldo2 {
-+			regulator-name = "vreg_l2j_1p2";
-+			regulator-min-microvolt = <1256000>;
-+			regulator-max-microvolt = <1256000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l3j_0p8: ldo3 {
-+			regulator-name = "vreg_l3j_0p8";
-+			regulator-min-microvolt = <880000>;
-+			regulator-max-microvolt = <880000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+};
-+
-+&gpu {
-+	status = "okay";
-+
-+	zap-shader {
-+		firmware-name = "qcom/x1e80100/LENOVO/21N1/qcdxkmsuc8380.mbn";
-+	};
-+};
-+
-+&i2c0 {
-+	clock-frequency = <400000>;
-+
-+	status = "okay";
-+
-+	/* ELAN06E2 or ELAN06E3 */
-+	touchpad@15 {
-+		compatible = "hid-over-i2c";
-+		reg = <0x15>;
-+
-+		hid-descr-addr = <0x1>;
-+		interrupts-extended = <&tlmm 3 IRQ_TYPE_LEVEL_LOW>;
-+
-+		pinctrl-0 = <&tpad_default>;
-+		pinctrl-names = "default";
-+
-+		wakeup-source;
-+	};
-+
-+	/* TODO: second-sourced SYNA8022 or SYNA8024 touchpad @ 0x2c */
-+
-+	/* ELAN06F1 or SYNA06F2 */
-+	keyboard@3a {
-+		compatible = "hid-over-i2c";
-+		reg = <0x3a>;
-+
-+		hid-descr-addr = <0x1>;
-+		interrupts-extended = <&tlmm 67 IRQ_TYPE_LEVEL_LOW>;
-+
-+		pinctrl-0 = <&kybd_default>;
-+		pinctrl-names = "default";
-+
-+		wakeup-source;
-+	};
-+};
-+
-+&i2c8 {
-+	clock-frequency = <400000>;
-+
-+	status = "okay";
-+
-+	/* ILIT2911 or GTCH1563 */
-+	touchscreen@10 {
-+		compatible = "hid-over-i2c";
-+		reg = <0x10>;
-+
-+		hid-descr-addr = <0x1>;
-+		interrupts-extended = <&tlmm 51 IRQ_TYPE_LEVEL_LOW>;
-+
-+		pinctrl-0 = <&ts0_default>;
-+		pinctrl-names = "default";
-+	};
-+
-+	/* TODO: second-sourced touchscreen @ 0x41 */
-+};
-+
-+&mdss {
-+	status = "okay";
-+};
-+
-+&mdss_dp3 {
-+	compatible = "qcom,x1e80100-dp";
-+	/delete-property/ #sound-dai-cells;
-+
-+	status = "okay";
-+
-+	aux-bus {
-+		panel {
-+			compatible = "edp-panel";
-+			enable-gpios = <&pmc8380_3_gpios 4 GPIO_ACTIVE_HIGH>;
-+			power-supply = <&vreg_edp_3p3>;
-+
-+			pinctrl-0 = <&edp_bl_en>;
-+			pinctrl-names = "default";
-+
-+			port {
-+				edp_panel_in: endpoint {
-+					remote-endpoint = <&mdss_dp3_out>;
-+				};
-+			};
-+		};
-+	};
-+
-+	ports {
-+		port@1 {
-+			reg = <1>;
-+
-+			mdss_dp3_out: endpoint {
-+				data-lanes = <0 1 2 3>;
-+				link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
-+
-+				remote-endpoint = <&edp_panel_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&mdss_dp3_phy {
-+	vdda-phy-supply = <&vreg_l3j_0p8>;
-+	vdda-pll-supply = <&vreg_l2j_1p2>;
-+
-+	status = "okay";
-+};
-+
-+&pcie4 {
-+	status = "okay";
-+};
-+
-+&pcie4_phy {
-+	vdda-phy-supply = <&vreg_l3j_0p8>;
-+	vdda-pll-supply = <&vreg_l3e_1p2>;
-+
-+	status = "okay";
-+};
-+
-+&pcie6a {
-+	perst-gpios = <&tlmm 152 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 154 GPIO_ACTIVE_LOW>;
-+
-+	vddpe-3v3-supply = <&vreg_nvme>;
-+
-+	pinctrl-0 = <&pcie6a_default>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&pcie6a_phy {
-+	vdda-phy-supply = <&vreg_l1d_0p8>;
-+	vdda-pll-supply = <&vreg_l2j_1p2>;
-+
-+	status = "okay";
-+};
-+
-+&pmc8380_3_gpios {
-+	edp_bl_en: edp-bl-en-state {
-+		pins = "gpio4";
-+		function = "normal";
-+		power-source = <1>;
-+		input-disable;
-+		output-enable;
-+	};
-+};
-+
-+&qupv3_0 {
-+	status = "okay";
-+};
-+
-+&qupv3_1 {
-+	status = "okay";
-+};
-+
-+&qupv3_2 {
-+	status = "okay";
-+};
-+
-+&remoteproc_adsp {
-+	firmware-name = "qcom/x1e80100/LENOVO/21N1/qcadsp8380.mbn",
-+			"qcom/x1e80100/LENOVO/21N1/adsp_dtbs.elf";
-+
-+	status = "okay";
-+};
-+
-+&remoteproc_cdsp {
-+	firmware-name = "qcom/x1e80100/LENOVO/21N1/qccdsp8380.mbn",
-+			"qcom/x1e80100/LENOVO/21N1/cdsp_dtbs.elf";
-+
-+	status = "okay";
-+};
-+
-+&smb2360_0_eusb2_repeater {
-+	vdd18-supply = <&vreg_l3d_1p8>;
-+	vdd3-supply = <&vreg_l2b_3p0>;
-+};
-+
-+&smb2360_1_eusb2_repeater {
-+	vdd18-supply = <&vreg_l3d_1p8>;
-+	vdd3-supply = <&vreg_l14b_3p0>;
-+};
-+
-+&tlmm {
-+	gpio-reserved-ranges = <34 2>, /* Unused */
-+			       <44 4>, /* SPI (TPM) */
-+			       <72 2>, /* Secure EC I2C connection (?) */
-+			       <238 1>; /* UFS Reset */
-+
-+	tpad_default: tpad-default-state {
-+		pins = "gpio3";
-+		function = "gpio";
-+		bias-pull-up;
-+	};
-+
-+	nvme_reg_en: nvme-reg-en-state {
-+		pins = "gpio18";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	ts0_default: ts0-default-state {
-+		reset-n-pins {
-+			pins = "gpio48";
-+			function = "gpio";
-+			output-high;
-+			drive-strength = <16>;
-+		};
-+
-+		int-n-pins {
-+			pins = "gpio51";
-+			function = "gpio";
-+			bias-disable;
-+		};
-+	};
-+
-+	kybd_default: kybd-default-state {
-+		pins = "gpio67";
-+		function = "gpio";
-+		bias-disable;
-+	};
-+
-+	edp_reg_en: edp-reg-en-state {
-+		pins = "gpio70";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-pull-up;
-+	};
-+
-+	hall_int_n_default: hall-int-n-state {
-+		pins = "gpio92";
-+		function = "gpio";
-+		bias-disable;
-+	};
-+
-+	pcie6a_default: pcie2a-default-state {
-+		clkreq-n-pins {
-+			pins = "gpio153";
-+			function = "pcie6a_clk";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		perst-n-pins {
-+			pins = "gpio152";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-down;
-+		};
-+
-+		wake-n-pins {
-+			pins = "gpio154";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+	};
-+
-+	wcd_default: wcd-reset-n-active-state {
-+		pins = "gpio191";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-disable;
-+		output-low;
-+	};
-+};
-+
-+&uart21 {
-+	compatible = "qcom,geni-debug-uart";
-+
-+	status = "okay";
-+};
-+
-+&usb_1_ss0_hsphy {
-+	vdd-supply = <&vreg_l3j_0p8>;
-+	vdda12-supply = <&vreg_l2j_1p2>;
-+
-+	phys = <&smb2360_0_eusb2_repeater>;
-+
-+	status = "okay";
-+};
-+
-+&usb_1_ss0_qmpphy {
-+	vdda-phy-supply = <&vreg_l3e_1p2>;
-+	vdda-pll-supply = <&vreg_l1j_0p8>;
-+
-+	status = "okay";
-+};
-+
-+&usb_1_ss0 {
-+	status = "okay";
-+};
-+
-+&usb_1_ss0_dwc3 {
-+	dr_mode = "host";
-+};
-+
-+&usb_1_ss0_dwc3_hs {
-+	remote-endpoint = <&pmic_glink_ss0_hs_in>;
-+};
-+
-+&usb_1_ss0_qmpphy_out {
-+	remote-endpoint = <&pmic_glink_ss0_ss_in>;
-+};
-+
-+&usb_1_ss1_hsphy {
-+	vdd-supply = <&vreg_l3j_0p8>;
-+	vdda12-supply = <&vreg_l2j_1p2>;
-+
-+	phys = <&smb2360_1_eusb2_repeater>;
-+
-+	status = "okay";
-+};
-+
-+&usb_1_ss1_qmpphy {
-+	vdda-phy-supply = <&vreg_l3e_1p2>;
-+	vdda-pll-supply = <&vreg_l2d_0p9>;
-+
-+	status = "okay";
-+};
-+
-+&usb_1_ss1 {
-+	status = "okay";
-+};
-+
-+&usb_1_ss1_dwc3 {
-+	dr_mode = "host";
-+};
-+
-+&usb_1_ss1_dwc3_hs {
-+	remote-endpoint = <&pmic_glink_ss1_hs_in>;
-+};
-+
-+&usb_1_ss1_qmpphy_out {
-+	remote-endpoint = <&pmic_glink_ss1_ss_in>;
-+};
 
--- 
-2.45.2
+Best Regards,
+Yan, Zi
 
+--=_MailMate_1D2EDF33-5E8B-493C-AD1C-63A53F326647_=
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename=signature.asc
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAmaayjkPHHppeUBudmlk
+aWEuY29tAAoJEJ2yUfNrYfqKMb8QAIDdvipth6umDE/fVdBXbD7pnzm/W/ySAJlH
+vhhfg5kiFOGJhcKX2HAH7AwcuUarO4zEp73NIWlQ7CiC3jJdrkeJ7mZ5dCJWXue3
+owzqx3suCqz6f7YO6Z3LnKrcauoWxz9EXpem1FDi/waTdsX5uVf/w7shDJxRP1XH
+T2o5nogsad2FdY4Go9o82cou99YlT78shmQhSStxwSVX+nUB2D7C5teCFYr1falh
+J0fK3PrBCutySvT2Sm79tr7AYiae7FXYm/4YOqF2ERbZFJ/JiC+wX7EMs74CRF1S
+pLUE/HFsiPOVw5gEt7QAM3v/THUP8K2Zwy/X6EGBpHNEncUu4zNgrPG6031tAqAA
+xybkFHFCn+ET1+5Q/6kc6hwdV8OK9m8Ck0nKL6z6q2s4wfeTTzd7b1l2ykMRq4PX
+jPPMdZyo56bjg+bCjg9aU9acE+Aysxx0QZIZZIEeaDiPk4y4KWq56m3KXvEw/e4k
+PfERSoXQFQcrxobqYBbZAapkVn0w7THmoJziGNw/FjI1MXtsVR1bKCwdnLEWhyS4
+Qju5oDrqDwe7BGH5JuLDEILeGwDaA/bRi4/Ge0MKLxd4nqUephUn8NMvKvu0/OwL
+4mflnKrWenTOa45pMGJvNegsZTLl95B1okC8jIsRpMX0sgXanijEp2y+uMJjO+Gt
+kB27XgYK
+=xjU3
+-----END PGP SIGNATURE-----
+
+--=_MailMate_1D2EDF33-5E8B-493C-AD1C-63A53F326647_=--
 
