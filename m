@@ -1,301 +1,182 @@
-Return-Path: <linux-kernel+bounces-257326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49F33937883
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:28:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8559A93787E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:27:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0625B280E78
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:28:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 340772808B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0127F13F435;
-	Fri, 19 Jul 2024 13:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C73140E29;
+	Fri, 19 Jul 2024 13:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Li5odFaE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AJBm/+3Z"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EDD5143751;
-	Fri, 19 Jul 2024 13:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92C913E3F6
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 13:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721395657; cv=none; b=rm/e0y8/xzuPGKWxMTRhJNuufLU0srMfOYfv4q2hWpChafuYhXlDnqrnlausV5T19qQWwGoI1wHa5RZuUuLnWajpgKit2FAPh3U1AVGiDz8YrTGVafuof0hRcsemaLZGwI16ZUSdDl8y3o8NFzbdq3fpqDKyi7SCvdfMWpMeO8o=
+	t=1721395649; cv=none; b=iBde6KF4kE0pck2gxrWp1d5VuyQM8glfZbAsAlT7GsL9++EX0F0c670pCmzgq+46GU0PEADoPWDKcy6jQnjghDpzg7XfQzHx80ioOBYdxmVyPXUsaQXPHRlFa/i3oZrxRic5c8PZ3YIGpVHCI0Lx4utV+52xjY+6koiNCNOyc0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721395657; c=relaxed/simple;
-	bh=qWrQC2n0ZvZXRImue4KV7pofrWCvQumxJsya9a80ssI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c9wU7FDqj4iVogCzSH+w8MRYScgeAJleKbBRtQPEJ/GI+F7LKdMNnUMTp4zd8gk5zblsLpbVdJKYWVWlBTYWAOoPfhztAVfDBfrXTVEUrH8w8721v86TANr4rDxg1bK9Zm5zkfD6840cGlODxl1B7ZNhK1B036jqOcowQFHWKog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Li5odFaE; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721395655; x=1752931655;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=qWrQC2n0ZvZXRImue4KV7pofrWCvQumxJsya9a80ssI=;
-  b=Li5odFaEEWPMB9DcUUuVXUD4PWeR0GsP+4TeUWpxSJOt0YxODs3BHd+8
-   o+Kd+4ebIruc/7DHwASJJE/uc1z8I8ad8WO1o5mBdXogcfD3jOHT+YnTr
-   DNRXPxmbUBTkx037E2D96Bhf/qe3X97x8Zt4LwEO96z8wmEINLPgs0pVA
-   eFFMTwJ+VHFlXGGnUSQailH03D29qx3YVWge98oNk4QpZ/o/SlnsiKkZJ
-   FJROP1DR3FtcQz7KcmNnRsPbU4wKNqbVdsnO432IR6hja+PezdJs0efZ3
-   winjPDiGGtx2yVLt9rTup7+UlbyijrCJfR9b+jyZltbutKyyy4Yqeg9qf
-   A==;
-X-CSE-ConnectionGUID: yjk8NOWiQVOOLxE0OVYeYA==
-X-CSE-MsgGUID: Md0Diq7qRBOlBF+9f9ISqw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11138"; a="22767665"
-X-IronPort-AV: E=Sophos;i="6.09,220,1716274800"; 
-   d="scan'208";a="22767665"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2024 06:27:35 -0700
-X-CSE-ConnectionGUID: H3SF+2b1Tg2MACB+tPiktQ==
-X-CSE-MsgGUID: yJ1jpwpETOOEWLAIImKYlQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,220,1716274800"; 
-   d="scan'208";a="50800457"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.150.149])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2024 06:27:27 -0700
-Message-ID: <4027ee34-8cad-4d0d-9fad-3899056e315b@intel.com>
-Date: Fri, 19 Jul 2024 16:27:19 +0300
+	s=arc-20240116; t=1721395649; c=relaxed/simple;
+	bh=RshbvWEB4HEbBs9aVPc2PyYWzMpcMqNWQjoOUGX448I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cexAdJ02ehcT4reDnpAzj/0K6PLm+PBphziyY1gK+w9NmcmI2F04JtOlQP/ELENfl2OL6f1Afh2MPoXNQh/DbW51dP5rqfGtEkFqzaSnfhj89O64fOYgt16NRgg8aTYIG80VGWrPOoERLepsPWNRyWNkl5Oru8LWHKY0UdX6ktA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AJBm/+3Z; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42666b89057so43615e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 06:27:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721395646; x=1722000446; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=x5Rnu8xhOiOGKULhvQEsLnF6NFu8gN2o/irl+R632WU=;
+        b=AJBm/+3ZjZg7st8GsfP7oaIVPW+WOLX3S968HsVVlPb2LZk9Bxm6HegqlfeqdxERyF
+         bQtXE0VgiOjWhzg2Kn8kH466HaeB4bTksaBO0gVHzLUVOIK7CmvNekijJTxj96wX4iiB
+         iL0rpJ9T+UeECdwVWZVOM7/Nobz8JB+m4FdtkaawlkYYbekl/GuXwc6i/RqbKl/U0RNz
+         XE1UFpZPiy8J9J+07+RrXZ77081JERcIGzSJsH6jVxM5D6+R8oBizu/P5YwB0rt9PDjR
+         f4mYJvk212cyHOBE7kk3gyM2N4wBB0nJOLA96ub5Ehsizms/TMROve+mG2c2bd4rApi/
+         3pQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721395646; x=1722000446;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x5Rnu8xhOiOGKULhvQEsLnF6NFu8gN2o/irl+R632WU=;
+        b=M2ymq0AEe5eLTlK3Y6F29zRZM342OlzpjZzbUSDzAKyDsHzvurZLTDB3xGoHxkkQBR
+         6CpJtwssDPDft3tlkwh5+15XyqZjMdzPLbF6qB5azXEy7ZJWt+7YnF4IyIxsxTEr608s
+         b8t99ZG+Ds245bSI2OcFwcnMReQwChpE5LSakfPWCiX64Q29w+L0Cgm4U80Z9as6IFIa
+         cyx+yEB/tgUU4XQXMo9rJ+E5yqpNeTsWnc0aaMhSmIyBtKDe3tR1CCbdGS8Y9XP0E98I
+         VQTM2UjKigysoUGRFyDaX3TqCG1kAqwCVa/t+h4F8CsMwCSwXaVqVAEooMdgeCRxRssF
+         Jw8w==
+X-Forwarded-Encrypted: i=1; AJvYcCXdgKvEDz+uioFu2NjWw6+XYOHB/Y6kOnVK1kQtDNFGoM8PZPIePo/ZuC40lv5zkIKeNnxpUg8C5jA6QSRdxFbK7ZfIPVgDf6TVj2wK
+X-Gm-Message-State: AOJu0YwDLvvw4M+aR3aVLs20N8LORBSHlPq2FZQI7iR/GqafTrfh5WFr
+	B4jDvSLROz1xy1hNSSHtnPaHGwmxFkoPq+iaEVjYfqUAu8i8UC3Q7TvD+7fBTA==
+X-Google-Smtp-Source: AGHT+IEbXOwh/C+c3oBafmb5O72ZdYCNr8vSQJ5zdk2fN1eXD/y2lF+GXyUY+3bMQVkSL6rtmL4cOQ==
+X-Received: by 2002:a05:600c:1ca2:b0:426:66fd:5fac with SMTP id 5b1f17b1804b1-427d5b43181mr1331635e9.2.1721395645600;
+        Fri, 19 Jul 2024 06:27:25 -0700 (PDT)
+Received: from google.com (49.222.77.34.bc.googleusercontent.com. [34.77.222.49])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3687868b262sm1637346f8f.30.2024.07.19.06.27.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 06:27:25 -0700 (PDT)
+Date: Fri, 19 Jul 2024 13:27:23 +0000
+From: Sebastian Ene <sebastianene@google.com>
+To: Will Deacon <will@kernel.org>
+Cc: akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com,
+	ardb@kernel.org, catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu, james.morse@arm.com,
+	vdonnefort@google.com, mark.rutland@arm.com, maz@kernel.org,
+	oliver.upton@linux.dev, rananta@google.com, ryan.roberts@arm.com,
+	shahuang@redhat.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v7 3/6] arm64: ptdump: Use the mask from the state
+ structure
+Message-ID: <Zpppu5DBmb7MLDXD@google.com>
+References: <20240621123230.1085265-1-sebastianene@google.com>
+ <20240621123230.1085265-4-sebastianene@google.com>
+ <20240705111229.GB9231@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 7/8] mmc: sdhci-of-dwcmshc: Add support for Sophgo
- SG2042
-To: Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu,
- conor+dt@kernel.org, guoren@kernel.org, inochiama@outlook.com,
- jszhang@kernel.org, krzysztof.kozlowski+dt@linaro.org, palmer@dabbelt.com,
- paul.walmsley@sifive.com, robh@kernel.org, ulf.hansson@linaro.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org, linux-riscv@lists.infradead.org,
- chao.wei@sophgo.com, haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com,
- tingzhu.wang@sophgo.com
-Cc: Chen Wang <unicorn_wang@outlook.com>
-References: <cover.1721377374.git.unicorn_wang@outlook.com>
- <0009673a6fc7fd1dcadaaefca83cb27c8444c045.1721377374.git.unicorn_wang@outlook.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <0009673a6fc7fd1dcadaaefca83cb27c8444c045.1721377374.git.unicorn_wang@outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240705111229.GB9231@willie-the-truck>
 
-On 19/07/24 11:47, Chen Wang wrote:
-> From: Chen Wang <unicorn_wang@outlook.com>
+On Fri, Jul 05, 2024 at 12:12:29PM +0100, Will Deacon wrote:
+> On Fri, Jun 21, 2024 at 12:32:27PM +0000, Sebastian Ene wrote:
+> > Printing the descriptor attributes requires accessing a mask which has a
+> > different set of attributes for stage-2. In preparation for adding support
+> > for the stage-2 pagetables dumping, use the mask from the local context
+> > and not from the globally defined pg_level array. Store a pointer to
+> > the pg_level array in the ptdump state structure. This will allow us to
+> > extract the mask which is wrapped in the pg_level array and use it for
+> > descriptor parsing in the note_page.
+> > 
+> > Signed-off-by: Sebastian Ene <sebastianene@google.com>
+> > ---
+> >  arch/arm64/include/asm/ptdump.h |  1 +
+> >  arch/arm64/mm/ptdump.c          | 13 ++++++++-----
+> >  2 files changed, 9 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/arch/arm64/include/asm/ptdump.h b/arch/arm64/include/asm/ptdump.h
+> > index c550b2afcab7..a4125d8d5a32 100644
+> > --- a/arch/arm64/include/asm/ptdump.h
+> > +++ b/arch/arm64/include/asm/ptdump.h
+> > @@ -44,6 +44,7 @@ struct pg_level {
+> >   */
+> >  struct pg_state {
+> >  	struct ptdump_state ptdump;
+> > +	struct pg_level *pg_level;
+> >  	struct seq_file *seq;
+> >  	const struct addr_marker *marker;
+> >  	const struct mm_struct *mm;
+> > diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
+> > index e370b7a945de..9637a6415ea7 100644
+> > --- a/arch/arm64/mm/ptdump.c
+> > +++ b/arch/arm64/mm/ptdump.c
+> > @@ -192,6 +192,7 @@ void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
+> >  	       u64 val)
+> >  {
+> >  	struct pg_state *st = container_of(pt_st, struct pg_state, ptdump);
+> > +	struct pg_level *pg_info = st->pg_level;
+> >  	static const char units[] = "KMGTPE";
+> >  	u64 prot = 0;
+> >  
+> > @@ -201,7 +202,7 @@ void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
+> >  		level = 0;
+> >  
+> >  	if (level >= 0)
+> > -		prot = val & pg_level[level].mask;
+> > +		prot = val & pg_info[level].mask;
 > 
-> Add support for the mmc controller of Sophgo SG2042.
+> If you rename the existing 'pg_level' array to something like
+> 'kernel_pg_levels' then I think your local 'pg_info' variable can be
+> called 'pg_level' and this line doesn't need to change.
 > 
-> SG2042 uses Synopsys PHY the same as TH1520 so we reuse the tuning
-> logic from TH1520. Besides this, this patch implement some SG2042
-> specific work, such as clocks and reset ops.
+
+This is a good ideea, thanks. I applied your suggestion
+
+> >  
+> >  	if (st->level == -1) {
+> >  		st->level = level;
+> > @@ -227,10 +228,10 @@ void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
+> >  			unit++;
+> >  		}
+> >  		pt_dump_seq_printf(st->seq, "%9lu%c %s", delta, *unit,
+> > -				   pg_level[st->level].name);
+> > -		if (st->current_prot && pg_level[st->level].bits)
+> > -			dump_prot(st, pg_level[st->level].bits,
+> > -				  pg_level[st->level].num);
+> > +				   pg_info[st->level].name);
+> > +		if (st->current_prot && pg_info[st->level].bits)
+> > +			dump_prot(st, pg_info[st->level].bits,
+> > +				  pg_info[st->level].num);
 > 
-> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
-> ---
->  drivers/mmc/host/sdhci-of-dwcmshc.c | 130 ++++++++++++++++++++++++++--
->  1 file changed, 123 insertions(+), 7 deletions(-)
+> I think this could then stay as-is too.
 > 
-> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> index 972d03ec60e3..d963b8986182 100644
-> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
-> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> @@ -113,12 +113,15 @@
->  #define DWC_MSHC_PTR_PHY_R	0x300
->  
->  /* PHY general configuration */
-> -#define PHY_CNFG_R		(DWC_MSHC_PTR_PHY_R + 0x00)
-> -#define PHY_CNFG_RSTN_DEASSERT	0x1  /* Deassert PHY reset */
-> -#define PHY_CNFG_PAD_SP_MASK	GENMASK(19, 16) /* bits [19:16] */
-> -#define PHY_CNFG_PAD_SP		0x0c /* PMOS TX drive strength */
-> -#define PHY_CNFG_PAD_SN_MASK	GENMASK(23, 20) /* bits [23:20] */
-> -#define PHY_CNFG_PAD_SN		0x0c /* NMOS TX drive strength */
-> +#define PHY_CNFG_R			(DWC_MSHC_PTR_PHY_R + 0x00)
-> +#define PHY_CNFG_RSTN_DEASSERT		0x1  /* Deassert PHY reset */
-> +#define PHY_CNFG_PHY_PWRGOOD_MASK	BIT_MASK(1) /* bit [1] */
-> +#define PHY_CNFG_PAD_SP_MASK		GENMASK(19, 16) /* bits [19:16] */
-> +#define PHY_CNFG_PAD_SP			0x0c /* PMOS TX drive strength */
-> +#define PHY_CNFG_PAD_SP_SG2042		0x09 /* PMOS TX drive strength for SG2042 */
-> +#define PHY_CNFG_PAD_SN_MASK		GENMASK(23, 20) /* bits [23:20] */
-> +#define PHY_CNFG_PAD_SN			0x0c /* NMOS TX drive strength */
-> +#define PHY_CNFG_PAD_SN_SG2042		0x08 /* NMOS TX drive strength for SG2042 */
->  
->  /* PHY command/response pad settings */
->  #define PHY_CMDPAD_CNFG_R	(DWC_MSHC_PTR_PHY_R + 0x04)
-> @@ -147,10 +150,12 @@
->  #define PHY_PAD_TXSLEW_CTRL_P		0x3 /* Slew control for P-Type pad TX */
->  #define PHY_PAD_TXSLEW_CTRL_N_MASK	GENMASK(12, 9) /* bits [12:9] */
->  #define PHY_PAD_TXSLEW_CTRL_N		0x3 /* Slew control for N-Type pad TX */
-> +#define PHY_PAD_TXSLEW_CTRL_N_SG2042	0x2 /* Slew control for N-Type pad TX for SG2042 */
->  
->  /* PHY CLK delay line settings */
->  #define PHY_SDCLKDL_CNFG_R		(DWC_MSHC_PTR_PHY_R + 0x1d)
-> -#define PHY_SDCLKDL_CNFG_UPDATE	BIT(4) /* set before writing to SDCLKDL_DC */
-> +#define PHY_SDCLKDL_CNFG_EXTDLY_EN	BIT(0)
-> +#define PHY_SDCLKDL_CNFG_UPDATE		BIT(4) /* set before writing to SDCLKDL_DC */
->  
->  /* PHY CLK delay line delay code */
->  #define PHY_SDCLKDL_DC_R		(DWC_MSHC_PTR_PHY_R + 0x1e)
-> @@ -158,10 +163,14 @@
->  #define PHY_SDCLKDL_DC_DEFAULT		0x32 /* default delay code */
->  #define PHY_SDCLKDL_DC_HS400		0x18 /* delay code for HS400 mode */
->  
-> +#define PHY_SMPLDL_CNFG_R		(DWC_MSHC_PTR_PHY_R + 0x20)
-> +#define PHY_SMPLDL_CNFG_BYPASS_EN	BIT(1)
-> +
->  /* PHY drift_cclk_rx delay line configuration setting */
->  #define PHY_ATDL_CNFG_R			(DWC_MSHC_PTR_PHY_R + 0x21)
->  #define PHY_ATDL_CNFG_INPSEL_MASK	GENMASK(3, 2) /* bits [3:2] */
->  #define PHY_ATDL_CNFG_INPSEL		0x3 /* delay line input source */
-> +#define PHY_ATDL_CNFG_INPSEL_SG2042	0x2 /* delay line input source for SG2042 */
->  
->  /* PHY DLL control settings */
->  #define PHY_DLL_CTRL_R			(DWC_MSHC_PTR_PHY_R + 0x24)
-> @@ -1015,6 +1024,90 @@ static int cv18xx_sdhci_execute_tuning(struct sdhci_host *host, u32 opcode)
->  	return ret;
->  }
->  
-> +static inline void sg2042_sdhci_phy_init(struct sdhci_host *host)
-> +{
-> +	u32 val;
-> +
-> +	/* Asset phy reset & set tx drive strength */
-> +	val = sdhci_readl(host, PHY_CNFG_R);
-> +	val &= ~PHY_CNFG_RSTN_DEASSERT;
-> +	val |= FIELD_PREP(PHY_CNFG_PHY_PWRGOOD_MASK, 1);
-> +	val |= FIELD_PREP(PHY_CNFG_PAD_SP_MASK, PHY_CNFG_PAD_SP_SG2042);
-> +	val |= FIELD_PREP(PHY_CNFG_PAD_SN_MASK, PHY_CNFG_PAD_SN_SG2042);
-> +	sdhci_writel(host, val, PHY_CNFG_R);
-> +
-> +	/* Configure phy pads */
-> +	val = PHY_PAD_RXSEL_3V3;
-> +	val |= FIELD_PREP(PHY_PAD_WEAKPULL_MASK, PHY_PAD_WEAKPULL_PULLUP);
-> +	val |= FIELD_PREP(PHY_PAD_TXSLEW_CTRL_P_MASK, PHY_PAD_TXSLEW_CTRL_P);
-> +	val |= FIELD_PREP(PHY_PAD_TXSLEW_CTRL_N_MASK, PHY_PAD_TXSLEW_CTRL_N_SG2042);
-> +	sdhci_writew(host, val, PHY_CMDPAD_CNFG_R);
-> +	sdhci_writew(host, val, PHY_DATAPAD_CNFG_R);
-> +	sdhci_writew(host, val, PHY_RSTNPAD_CNFG_R);
-> +
-> +	val = PHY_PAD_RXSEL_3V3;
-> +	val |= FIELD_PREP(PHY_PAD_TXSLEW_CTRL_P_MASK, PHY_PAD_TXSLEW_CTRL_P);
-> +	val |= FIELD_PREP(PHY_PAD_TXSLEW_CTRL_N_MASK, PHY_PAD_TXSLEW_CTRL_N_SG2042);
-> +	sdhci_writew(host, val, PHY_CLKPAD_CNFG_R);
-> +
-> +	val = PHY_PAD_RXSEL_3V3;
-> +	val |= FIELD_PREP(PHY_PAD_WEAKPULL_MASK, PHY_PAD_WEAKPULL_PULLDOWN);
-> +	val |= FIELD_PREP(PHY_PAD_TXSLEW_CTRL_P_MASK, PHY_PAD_TXSLEW_CTRL_P);
-> +	val |= FIELD_PREP(PHY_PAD_TXSLEW_CTRL_N_MASK, PHY_PAD_TXSLEW_CTRL_N_SG2042);
-> +	sdhci_writew(host, val, PHY_STBPAD_CNFG_R);
-> +
-> +	/* Configure delay line */
-> +	/* Enable fixed delay */
-> +	sdhci_writeb(host, PHY_SDCLKDL_CNFG_EXTDLY_EN, PHY_SDCLKDL_CNFG_R);
-> +	/*
-> +	 * Set delay line.
-> +	 * Its recommended that bit UPDATE_DC[4] is 1 when SDCLKDL_DC is being written.
-> +	 * Ensure UPDATE_DC[4] is '0' when not updating code.
-> +	 */
-> +	val = sdhci_readb(host, PHY_SDCLKDL_CNFG_R);
-> +	val |= PHY_SDCLKDL_CNFG_UPDATE;
-> +	sdhci_writeb(host, val, PHY_SDCLKDL_CNFG_R);
-> +	/* Add 10 * 70ps = 0.7ns for output delay */
-> +	sdhci_writeb(host, 10, PHY_SDCLKDL_DC_R);
-> +	val = sdhci_readb(host, PHY_SDCLKDL_CNFG_R);
-> +	val &= ~(PHY_SDCLKDL_CNFG_UPDATE);
-> +	sdhci_writeb(host, val, PHY_SDCLKDL_CNFG_R);
-> +
-> +	/* Set SMPLDL_CNFG, Bypass */
-> +	sdhci_writeb(host, PHY_SMPLDL_CNFG_BYPASS_EN, PHY_SMPLDL_CNFG_R);
-> +
-> +	/* Set ATDL_CNFG, tuning clk not use for init */
-> +	val = FIELD_PREP(PHY_ATDL_CNFG_INPSEL_MASK, PHY_ATDL_CNFG_INPSEL_SG2042);
-> +	sdhci_writeb(host, val, PHY_ATDL_CNFG_R);
-> +
-> +	/* Deasset phy reset */
-> +	val = sdhci_readl(host, PHY_CNFG_R);
-> +	val |= PHY_CNFG_RSTN_DEASSERT;
-> +	sdhci_writel(host, val, PHY_CNFG_R);
-> +}
-> +
-> +static void sg2042_sdhci_reset(struct sdhci_host *host, u8 mask)
-> +{
-> +	sdhci_reset(host, mask);
-> +
-> +	if (mask & SDHCI_RESET_ALL)
-> +		sg2042_sdhci_phy_init(host);
-> +}
-> +
-> +static int sg2042_init(struct device *dev, struct sdhci_host *host,
-> +		       struct dwcmshc_priv *dwc_priv)
-> +{
-> +	static const char * const clk_ids[] = {"timer"};
-> +	int err;
-> +
-> +	err = dwcmshc_get_enable_other_clks(mmc_dev(host->mmc), dwc_priv,
-> +					    ARRAY_SIZE(clk_ids), clk_ids);
+> >  		pt_dump_seq_puts(st->seq, "\n");
+> >  
+> >  		if (addr >= st->marker[1].start_address) {
+> > @@ -262,6 +263,7 @@ void ptdump_walk(struct seq_file *s, struct ptdump_info *info)
+> >  		.seq = s,
+> >  		.marker = info->markers,
+> >  		.mm = info->mm,
+> > +		.pg_level = &pg_level[0],
+> 
+> Can't this just be '.pg_level = kernel_pg_levels'?
+> 
+> Will
 
-Can be just:
 
-	return dwcmshc_get_enable_other_clks(mmc_dev(host->mmc), dwc_priv,
-					     ARRAY_SIZE(clk_ids), clk_ids);
-
-> +	if (err)
-> +		return err;
-> +
-> +	return 0;
-> +}
-> +
->  static const struct sdhci_ops sdhci_dwcmshc_ops = {
->  	.set_clock		= sdhci_set_clock,
->  	.set_bus_width		= sdhci_set_bus_width,
-> @@ -1056,6 +1149,16 @@ static const struct sdhci_ops sdhci_dwcmshc_cv18xx_ops = {
->  	.platform_execute_tuning = cv18xx_sdhci_execute_tuning,
->  };
->  
-> +static const struct sdhci_ops sdhci_dwcmshc_sg2042_ops = {
-> +	.set_clock		= sdhci_set_clock,
-> +	.set_bus_width		= sdhci_set_bus_width,
-> +	.set_uhs_signaling	= dwcmshc_set_uhs_signaling,
-> +	.get_max_clock		= dwcmshc_get_max_clock,
-> +	.reset			= sg2042_sdhci_reset,
-> +	.adma_write_desc	= dwcmshc_adma_write_desc,
-> +	.platform_execute_tuning = th1520_execute_tuning,
-> +};
-> +
->  static const struct dwcmshc_pltfm_data sdhci_dwcmshc_pdata = {
->  	.pdata = {
->  		.ops = &sdhci_dwcmshc_ops,
-> @@ -1104,6 +1207,15 @@ static const struct dwcmshc_pltfm_data sdhci_dwcmshc_cv18xx_pdata = {
->  	},
->  };
->  
-> +static const struct dwcmshc_pltfm_data sdhci_dwcmshc_sg2042_pdata = {
-> +	.pdata = {
-> +		.ops = &sdhci_dwcmshc_sg2042_ops,
-> +		.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
-> +		.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
-> +	},
-> +	.init = sg2042_init,
-> +};
-> +
->  static const struct cqhci_host_ops dwcmshc_cqhci_ops = {
->  	.enable		= dwcmshc_sdhci_cqe_enable,
->  	.disable	= sdhci_cqe_disable,
-> @@ -1196,6 +1308,10 @@ static const struct of_device_id sdhci_dwcmshc_dt_ids[] = {
->  		.compatible = "thead,th1520-dwcmshc",
->  		.data = &sdhci_dwcmshc_th1520_pdata,
->  	},
-> +	{
-> +		.compatible = "sophgo,sg2042-dwcmshc",
-> +		.data = &sdhci_dwcmshc_sg2042_pdata,
-> +	},
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, sdhci_dwcmshc_dt_ids);
-
+Seb
 
