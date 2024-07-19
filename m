@@ -1,183 +1,94 @@
-Return-Path: <linux-kernel+bounces-257312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7961937855
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:19:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F40E93785C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53E8DB2114E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:19:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46FE51F22C79
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4834E146D49;
-	Fri, 19 Jul 2024 13:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872DA13F458;
+	Fri, 19 Jul 2024 13:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q7zymWPa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ny+7Hlct"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF6E14389E;
-	Fri, 19 Jul 2024 13:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C29610E6
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 13:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721395049; cv=none; b=bujwivRO4ws5cxmqargoGci1zgb2YIPZnNBTCbQbneaxNCcNX/h8px/9MoCHbLKzxfylDgPDNI+dyBb5uFhwGTGqyxdbxbx+HjInTZOXtYLIHnVal1Eb8tH3aC8c+Zmd3L7UkGsqPgusNr7wE8rP+xpOUjL9RXVtMn+lzQaEUf0=
+	t=1721395303; cv=none; b=Da987OXwFlaVzosWBF1p+oV55zRLb7Y18eTNkyduDV8KxGCc0fV2p9uD6MEXVw2FdHsD5pg5LJTrAHx5RcZga7bHM34hthkMcrdfmqEwfsNgSxkHBTJqBN/a46hREgUc5my5oe5gNrP/t+ZIv1vQ45l3I3KOb+osa67CXvwHXEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721395049; c=relaxed/simple;
-	bh=YYH8opMUUd+zWpYKTZwoee7J/eRstD8r4IR+x9aZND8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SUu146M1hM1HMGV9l3FzKCulwvxvIhRaHJkIzqp/HQvEs17IIbq07J93Nocy7M2hKclNSMzL9KwTWs3fSbNAC0R+iLiA8fZds4r8lwmKgxHIoak8JMrcneR3bCKyskXi1sb51JDo2SlYWV3pG+NyjnEi56qjdlD4zCYKr7LABAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q7zymWPa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EECC0C4AF52;
-	Fri, 19 Jul 2024 13:17:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721395049;
-	bh=YYH8opMUUd+zWpYKTZwoee7J/eRstD8r4IR+x9aZND8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=q7zymWPak1EuBtWcl5R94skRGbd47xO3h1/dUU4Zt6Z39wCmrf10INcr++X0FAVkp
-	 p5F/ACUsGHIUn6j2DBVxIBpBNobNgtE0WZqcwUQDOGcwGwMpKmGUci+i4AGQ1XwZMV
-	 Me6gojYV2C2Pl+w/XHOTO130EWl/oecLf26X/EhQBPTmYBTjtm8QP8oePTkzoCsVA9
-	 RJmi6D/PxITLiuVW+j2sUu1ONc7uR7rpaPd/3n8UuyQy74kV1Ai+gIO4XPSXCr224K
-	 p9CWUQn1qY16ps9gJ4W97bWU5meM+Z9maxvCnuiBpHkMf+2l4fhGlGJAJB5QlmUzgJ
-	 shX5XgE7HXrJg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1sUnUO-000000002BQ-3uil;
-	Fri, 19 Jul 2024 15:17:36 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH 7/7] arm64: dts: qcom: x1e80100-crd: enable SDX65 modem
-Date: Fri, 19 Jul 2024 15:17:22 +0200
-Message-ID: <20240719131722.8343-8-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.44.2
-In-Reply-To: <20240719131722.8343-1-johan+linaro@kernel.org>
-References: <20240719131722.8343-1-johan+linaro@kernel.org>
+	s=arc-20240116; t=1721395303; c=relaxed/simple;
+	bh=pBCELV1emGyTdHUUECzmmuBjT1BLgOKgPI0z0ymr6gk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=emimy2SLM23OY22YCDtfBWwBhjOz66qFYg25mAVZE+OM9H1nU/AL0guZIC6VuwSXy7f7UpxkjbkepzqtnrSJr1Lq0TLk+ZlpDeG5qo4oP8GubtVgInlKw05KQN6Gh/+0sz2UyQB4kDws6ThHE2KA+HPKUBNsjwbwWvfW8lMoveY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ny+7Hlct; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-666010fb35cso35157817b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 06:21:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721395301; x=1722000101; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BO/f/Vk8BV7M1BnnRk7syCEofzWPotH46dIzExxE5KM=;
+        b=Ny+7HlctailgVYhXJ6vbaBr3dw0ZsczYJgvBPLuXzCgy/N/JQHa1dS/NRTkxR9g6Rq
+         /lqFljwrXOFdY/jol4KWoNtSZYNhcBd8XnmtbMTWbetbU8MOqx6OfaZXdlfiBti/P+it
+         622H62/n6jFWN711+uSS5yO2QJ3OFeJrM9GDvh18F9katwoqNNL4q+Iw/YrNNQtCuVut
+         NENPHyvxo9B2ZZO2Ww7fMvSXmjQvijD9O35UB01qxIj7u/mMNIDX65eHWI+ZN4D2D9Fp
+         8JEM+K/aetjgQVZE73VwNcLmU1Fms17suWKXMrXj+luCqRtUcjLTugNXfYbP8T2/yeXj
+         R/gQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721395301; x=1722000101;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BO/f/Vk8BV7M1BnnRk7syCEofzWPotH46dIzExxE5KM=;
+        b=pd8DQrC/+mAr7WJ087clVrReRR5prt7NSTP3t+Ce+gGvHS1ZP2t5MsqK0KgToUwkrC
+         NsZWGIG7CuTXjf/ukrVM4PO00LONhny/0hJvDmbXP/ySaqEUf+ljtNHG9+ucmXJNh86+
+         fzXPmW+x3meVpaq+4fb//nmrODxYAnJR4tmYv7SyUy5+5K26MC/AWhDgL1Bf34uVjco1
+         NBNAQvIlr4+flfvbqIDfcEQ3dtXaIefvAoq2HHqPkSRzGb4bHxi6Th1JIe1PFjTsK6nd
+         6WbkNQ0YLVpPyXQQqs2xNV6XfkGahHLXniPsUyoDLSLPT6oZd+L4k4TTmJ/qh/wSeTAe
+         cODg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNvIfiSlXzYwPrjiQXU3a2zECE56058Fkry2pp0RzA8FO3TBkuuGQDxBimN+e8vk3vvAI2gf5xI67A7Qura0PztMw2b9/paNQl0Yjx
+X-Gm-Message-State: AOJu0Yx5NQj/s2o14GGeuIajgzR2BaLTE08sQCnoaJOXVZ7a+Ja2RZjy
+	Ghs6MvrI0hADfDNhyBt62IYPJlMOR0R1n6JCZzLgZ5KOhqLZT8kS4jCiEdpiq77oDh6RORlNBkz
+	wZg==
+X-Google-Smtp-Source: AGHT+IEPtqovB6+nL+dEpY3lKDt9cE/kxszu/7IvqhKdMhwuBfYDyqi39g8sSH2tXQipBPBpmTlSJHz4wXE=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:188f:b0:dfd:da3f:ad1c with SMTP id
+ 3f1490d57ef6-e05ff517e74mr278214276.4.1721395301549; Fri, 19 Jul 2024
+ 06:21:41 -0700 (PDT)
+Date: Fri, 19 Jul 2024 06:21:40 -0700
+In-Reply-To: <20240719134446.440ad28c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240719134446.440ad28c@canb.auug.org.au>
+Message-ID: <ZppoPjq1HX0xnR1s@google.com>
+Subject: Re: linux-next: duplicate patches in the kvm-x86 tree
+From: Sean Christopherson <seanjc@google.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, KVM <kvm@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-Enable PCIe5 and the SDX65 modem.
+On Fri, Jul 19, 2024, Stephen Rothwell wrote:
+> Hi all,
+> 
+> The following commits are also in the kvm-fixes tree as different commits
+> (but the same patches):
+> 
+>   2a2cc315c0ab ("KVM: x86: Introduce kvm_x86_call() to simplify static calls of kvm_x86_ops")
+>   b528de209c85 ("KVM: x86/pmu: Add kvm_pmu_call() to simplify static calls of kvm_pmu_ops")
 
-Note that the modem may need to be flashed with firmware before use.
-
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 65 +++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-index 72d9feec907b..e7bc283a0da9 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-@@ -301,6 +301,22 @@ vreg_nvme: regulator-nvme {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&nvme_reg_en>;
- 	};
-+
-+	vreg_wwan: regulator-wwan {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "SDX_VPH_PWR";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&tlmm 221 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&wwan_sw_en>;
-+
-+		regulator-boot-on;
-+	};
- };
- 
- &apps_rsc {
-@@ -800,6 +816,25 @@ &pcie4_phy {
- 	status = "okay";
- };
- 
-+&pcie5 {
-+	perst-gpios = <&tlmm 149 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 151 GPIO_ACTIVE_LOW>;
-+
-+	vddpe-3v3-supply = <&vreg_wwan>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie5_default>;
-+
-+	status = "okay";
-+};
-+
-+&pcie5_phy {
-+	vdda-phy-supply = <&vreg_l3i_0p8>;
-+	vdda-pll-supply = <&vreg_l3e_1p2>;
-+
-+	status = "okay";
-+};
-+
- &pcie6a {
- 	perst-gpios = <&tlmm 152 GPIO_ACTIVE_LOW>;
- 	wake-gpios = <&tlmm 154 GPIO_ACTIVE_LOW>;
-@@ -1004,6 +1039,29 @@ wake-n-pins {
- 		};
- 	};
- 
-+	pcie5_default: pcie5-default-state {
-+		clkreq-n-pins {
-+			pins = "gpio150";
-+			function = "pcie5_clk";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		perst-n-pins {
-+			pins = "gpio149";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-disable;
-+		};
-+
-+		wake-n-pins {
-+			pins = "gpio151";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+	};
-+
- 	pcie6a_default: pcie6a-default-state {
- 		clkreq-n-pins {
- 			pins = "gpio153";
-@@ -1055,6 +1113,13 @@ wcd_default: wcd-reset-n-active-state {
- 		bias-disable;
- 		output-low;
- 	};
-+
-+	wwan_sw_en: wwan-sw-en-state {
-+		pins = "gpio221";
-+		function = "gpio";
-+		drive-strength = <4>;
-+		bias-disable;
-+	};
- };
- 
- &uart21 {
--- 
-2.44.2
-
+Resolved, thanks for the heads up!
 
