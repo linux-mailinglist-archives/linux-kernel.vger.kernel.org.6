@@ -1,259 +1,194 @@
-Return-Path: <linux-kernel+bounces-257407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE0D893797A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:02:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8B2B93797E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:04:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 998E028526C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:02:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62DF31F231DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C221448F1;
-	Fri, 19 Jul 2024 15:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3721448C9;
+	Fri, 19 Jul 2024 15:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vioc6Xvm"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="b4kakrJ2"
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9265A15E97
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 15:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E4010E6
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 15:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721401328; cv=none; b=RQr8fbxHQ8zMyKrDLe06cttRKKuX9B1HiRAXncI/5Hq2IDZv/Tzp66od3dQz9QmdhU6e8H9TBxWXsXEipXO7Fl1EzJ4/vNQbGp/gxqI5oH9nfIiDlpkOc/NR0ZPxaipkH2wvX/9Np/xOxap736r9JU2Fj6ArkZ9l+ZUz0a1hQG8=
+	t=1721401456; cv=none; b=OXsw42dgfhiwwWvrLJkwQU1Bi99LwubeVkOhDS7zBbt/zBYvSlqCdNT9NnY0xzwwnENabxKrOfvQoWKyYgOIKAqX+IUBOcQxkZTgyVrrhdOCNKkGA87LV6yH/POY8qxkZi6/zr5LVpOJydHYJKqHD7sUiR+41kajWMB/Bx6yljw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721401328; c=relaxed/simple;
-	bh=6feKD/Max3jl/b/lRMm6cPIGSpZCi4RoSPMkciJfpIE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BC/2AV6v3IytilVjN8vw7YFb3QGrENJJnvEvKshsisDIU835EiR5IzU3zXytJKU0vqRmo387JM6dijZduXrgJPBj3MnyNEafJIXjUhcT3MXuvD46ymjxiSb7CnKIw0uz3wXqdFEzXc8m45tWB/QZN5Yd8Zzuw/U3buV+n+opD18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vioc6Xvm; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3815ad8adc9so158935ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 08:02:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721401326; x=1722006126; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LcgTL/z1Zm3KDKhdMJuoH9ZuHCmTJEIzViKk2HTzpDw=;
-        b=vioc6XvmyHcp3mw7/SuPDWtTNcNYIFZuDB6PNIFheoyTi2hsLMMKuFsil/p/e2krWp
-         TnZhaE3auAY1omDs4lw7i+/DgCkNSVo2FLeaUG7FYdiUZ+z6RsXkqewYhVR2cyZ6iSud
-         PVccVSerQPoaFt3ppJw8xcvoeNsYdBsJYHWbWMxFEbC4glZIzc6VOXg6RZVufKsaIhPd
-         65Qqi8bajj+mV0LcAp2zAIZ2U1OaO1J1poUBRqD8RGV+xKSFoP0EYNdVQHbyEf3QBSAI
-         FBPX510nzp7lQB94bBm4q/S2z5v8bIDN8EP/eel7vnz/i86+GwOdtPP4tf5PzkO9MDbR
-         kCqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721401326; x=1722006126;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LcgTL/z1Zm3KDKhdMJuoH9ZuHCmTJEIzViKk2HTzpDw=;
-        b=PmHv1PlUjcD7ydNcI/SfuMXyex29LYYN18vL88R63DCogdpZApw8nUrMcYn83BSCh5
-         yPwIGg/Nfq140srFc++od87kp64fFW4pGnTQC09KM8ZG/jQbKAf+rsyona7SLHMGmX+D
-         evWsiYMroJx6DrfQiaTe4JPNMfhUBf7nz55Pxp2PGSUZlCskxqLZv9vT0MjMhhb+t60N
-         BMWMPi/gyUPwOBGqYr4ouE9zqhP+q8f4jRKL1C3DQC+MFSd4tBGbv8KATNBkWu1XS8Io
-         rowfVgzu9Y0Aelk5u9lDSXiOf7OwE4gLU21lw3wX56CXuFT75kgND0hHj3SImTQfbKX9
-         wcYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXasncv1TdL2y7BoZ+izur3LIAcHQoCkRzJ4JMlpIjRWADbW7STpjHpaez7xz+9Rn0A4hSzodzYLRYGyfpuH2QFqWrwY//KoLx+3PSU
-X-Gm-Message-State: AOJu0Yx7fm3Xzg63ADnHSy5tA8bVnYh3FEK5slxNtBCA9YPNjbTTUowi
-	2quix43//yluVhxtit8D2BVyhfGLj/p/ns8v2pPcRoH7nWQ1OJpZrCQyy7xY+8u/TYoh58JX/k2
-	U5miIhKVFScv68p/gQ7rNf6gOeAKxnhpXCftg
-X-Google-Smtp-Source: AGHT+IHO08aQiRYer1ryQE1O7NX++thQZRWjktai/inshS6zlL+P83/FSDZvAAjfAQgXuc3LzJk93N4Gu+0qV8dWC4A=
-X-Received: by 2002:a05:6e02:156d:b0:375:9e2b:a832 with SMTP id
- e9e14a558f8ab-397e007e7ebmr2302035ab.21.1721401325255; Fri, 19 Jul 2024
- 08:02:05 -0700 (PDT)
+	s=arc-20240116; t=1721401456; c=relaxed/simple;
+	bh=IkerZt4Fxk/+kj7zT55z8pEEfoDcPPMEQB+n7a6GaUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mT3tOFiXQl3YQHDPs7NwsilIRyTtnQt0AbnAzt2UqvfD3W6t6sorShKTWm5mV/gml53bb/Qi92JHGAOZLs5KItxTV7SeW4frXE07JJ+8QhaE+CB6vbgt//DAGzCS6fcM6yyKCSBcgPZrif5X8B4QAH05TLlRzFJJNWuosqEHm2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=b4kakrJ2; arc=none smtp.client-ip=83.166.143.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WQXy011c8zhL1;
+	Fri, 19 Jul 2024 17:04:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1721401447;
+	bh=iO8TtxQIbOnz80RswndwIyTDS+UMf9IftsRCjoUU3os=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b4kakrJ2gEcsh07UAD7jdRnmSpBpScTkTk8IOgBrpODTDzJ2Nw1DRAUDcDp+p0np0
+	 zppIOPLEwPo8uiPxahx62iDnkq36SBKgaaRTzxyDUjLiIbUlQYNZc3TBUf8/fVTn+m
+	 /3a86+glhXe287wY9p8tD+Gq9LxALtGy6QgHjDbI=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WQXxw06kVzs0G;
+	Fri, 19 Jul 2024 17:04:03 +0200 (CEST)
+Date: Fri, 19 Jul 2024 17:04:01 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jeff Xu <jeffxu@google.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
+	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
+	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+Message-ID: <20240719.sah7oeY9pha4@digikod.net>
+References: <20240704190137.696169-1-mic@digikod.net>
+ <20240704190137.696169-2-mic@digikod.net>
+ <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
+ <20240717.neaB5Aiy2zah@digikod.net>
+ <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
+ <20240718.kaePhei9Ahm9@digikod.net>
+ <CALmYWFto4sw-Q2+J0Gc54POhnM9C8YpnJ44wMz=fd_K3_+dWmw@mail.gmail.com>
+ <20240719.shaeK6PaiSie@digikod.net>
+ <CALmYWFsd-=pOPZZmiKvYJ8pOhACsTvW_d+pRjG_C4jD6+Li0AQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240718003025.1486232-1-irogers@google.com> <20240718003025.1486232-7-irogers@google.com>
- <febefab7-7351-4bd5-a6cc-a0116248484f@linux.intel.com> <CAP-5=fUUcehu-C=ytHVVixOpeCYoW4oJkkj6p6W=M0HtQ2wrRA@mail.gmail.com>
- <2e76dd74-b702-4401-ade1-fc1fd1ff40ce@linux.intel.com> <CAP-5=fUEo=EC2iS17_2=1i76ACnHV5PCsA36c3q4TAw3QTvwTQ@mail.gmail.com>
- <803b0b0b-6250-4f63-9b80-8982f74b5ef2@linux.intel.com>
-In-Reply-To: <803b0b0b-6250-4f63-9b80-8982f74b5ef2@linux.intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 19 Jul 2024 08:01:52 -0700
-Message-ID: <CAP-5=fUvA5Lmk16Zs1B6bj1OLHf9NaHhAzx7yZL9S7JGwmO0uw@mail.gmail.com>
-Subject: Re: [PATCH v2 6/6] perf parse-events: Add "cpu" term to set the CPU
- an event is recorded on
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, James Clark <james.clark@arm.com>, 
-	Ravi Bangoria <ravi.bangoria@amd.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, ananth.narayan@amd.com, gautham.shenoy@amd.com, 
-	kprateek.nayak@amd.com, sandipan.das@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALmYWFsd-=pOPZZmiKvYJ8pOhACsTvW_d+pRjG_C4jD6+Li0AQ@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Fri, Jul 19, 2024 at 7:14=E2=80=AFAM Liang, Kan <kan.liang@linux.intel.c=
-om> wrote:
->
->
->
-> On 2024-07-18 5:06 p.m., Ian Rogers wrote:
-> > On Thu, Jul 18, 2024 at 11:03=E2=80=AFAM Liang, Kan <kan.liang@linux.in=
-tel.com> wrote:
-> >>
-> >>
-> >>
-> >> On 2024-07-18 11:12 a.m., Ian Rogers wrote:
-> >>> On Thu, Jul 18, 2024 at 7:41=E2=80=AFAM Liang, Kan <kan.liang@linux.i=
-ntel.com> wrote:
-> >>>>
-> >>>>
-> >>>>
-> >>>> On 2024-07-17 8:30 p.m., Ian Rogers wrote:
-> >>>>> The -C option allows the CPUs for a list of events to be specified =
-but
-> >>>>> its not possible to set the CPU for a single event. Add a term to
-> >>>>> allow this. The term isn't a general CPU list due to ',' already be=
-ing
-> >>>>> a special character in event parsing instead multiple cpu=3D terms =
-may
-> >>>>> be provided and they will be merged/unioned together.
-> >>>>>
-> >>>>> An example of mixing different types of events counted on different=
- CPUs:
-> >>>>> ```
-> >>>>> $ perf stat -A -C 0,4-5,8 -e "instructions/cpu=3D0/,l1d-misses/cpu=
-=3D4,cpu=3D5/,inst_retired.any/cpu=3D8/,cycles" -a sleep 0.1
-> >>>>>
-> >>>>>  Performance counter stats for 'system wide':
-> >>>>>
-> >>>>> CPU0              368,647      instructions/cpu=3D0/              #=
-    0.26  insn per cycle
-> >>>>> CPU4        <not counted>      instructions/cpu=3D0/
-> >>>>> CPU5        <not counted>      instructions/cpu=3D0/
-> >>>>> CPU8        <not counted>      instructions/cpu=3D0/
-> >>>>> CPU0        <not counted>      l1d-misses [cpu]
-> >>>>> CPU4              203,377      l1d-misses [cpu]
-> >>>>> CPU5              138,231      l1d-misses [cpu]
-> >>>>> CPU8        <not counted>      l1d-misses [cpu]
-> >>>>> CPU0        <not counted>      cpu/cpu=3D8/
-> >>>>> CPU4        <not counted>      cpu/cpu=3D8/
-> >>>>> CPU5        <not counted>      cpu/cpu=3D8/
-> >>>>> CPU8              943,861      cpu/cpu=3D8/
-> >>>>> CPU0            1,412,071      cycles
-> >>>>> CPU4           20,362,900      cycles
-> >>>>> CPU5           10,172,725      cycles
-> >>>>> CPU8            2,406,081      cycles
-> >>>>>
-> >>>>>        0.102925309 seconds time elapsed
-> >>>>> ```
-> >>>>>
-> >>>>> Note, the event name of inst_retired.any is missing, reported as
-> >>>>> cpu/cpu=3D8/, as there are unmerged uniquify fixes:
-> >>>>> https://lore.kernel.org/lkml/20240510053705.2462258-3-irogers@googl=
-e.com/
-> >>>>>
-> >>>>> An example of spreading uncore overhead across two CPUs:
-> >>>>> ```
-> >>>>> $ perf stat -A -e "data_read/cpu=3D0/,data_write/cpu=3D1/" -a sleep=
- 0.1
-> >>>>>
-> >>>>>  Performance counter stats for 'system wide':
-> >>>>>
-> >>>>> CPU0               223.65 MiB  uncore_imc_free_running_0/cpu=3D0/
-> >>>>> CPU0               223.66 MiB  uncore_imc_free_running_1/cpu=3D0/
-> >>>>> CPU0        <not counted> MiB  uncore_imc_free_running_0/cpu=3D1/
-> >>>>> CPU1                 5.78 MiB  uncore_imc_free_running_0/cpu=3D1/
-> >>>>> CPU0        <not counted> MiB  uncore_imc_free_running_1/cpu=3D1/
-> >>>>> CPU1                 5.74 MiB  uncore_imc_free_running_1/cpu=3D1/
-> >>>>> ```
-> >>>>>
-> >>>>> Manually fixing the output it should be:
-> >>>>> ```
-> >>>>> CPU0               223.65 MiB  uncore_imc_free_running_0/data_read,=
-cpu=3D0/
-> >>>>> CPU0               223.66 MiB  uncore_imc_free_running_1/data_read,=
-cpu=3D0/
-> >>>>> CPU1                 5.78 MiB  uncore_imc_free_running_0/data_write=
-,cpu=3D1/
-> >>>>> CPU1                 5.74 MiB  uncore_imc_free_running_1/data_write=
-,cpu=3D1/
-> >>>>> ```
-> >>>>>
-> >>>>> That is data_read from 2 PMUs was counted on CPU0 and data_write wa=
-s
-> >>>>> counted on CPU1.
-> >>>>
-> >>>> There was an effort to make the counter access from any CPU of the p=
-ackage.
-> >>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/c=
-ommit/?id=3Dd6a2f9035bfc27d0e9d78b13635dda9fb017ac01
-> >>>>
-> >>>> But now it limits the access from specific CPUs. It sounds like a
-> >>>> regression.
-> >>>
-> >>> Thanks Kan, I'm not sure I understand the comment.
-> >>
-> >> The flag is also applied for the uncore and RAPL.
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/com=
-mit/arch/x86/events/intel/uncore.c?&id=3De64cd6f73ff5a7eb4f8f759049ee24a3fe=
-55e731
-> >>
-> >> So specifying a CPU to an uncore event doesn't make sense. If the
-> >> current CPU is in the same package as the asked CPU. The kernel will
-> >> always choose the current CPU.
+On Fri, Jul 19, 2024 at 07:16:55AM -0700, Jeff Xu wrote:
+> On Fri, Jul 19, 2024 at 1:45 AM Mickaël Salaün <mic@digikod.net> wrote:
 > >
-> > Ugh, that sounds sub-optimal. If I'm monitoring uncore events with
-> > cgroups CPU0 (or the first CPU in a package) is going to be loaded up
-> > with all the events and have all of the rdmsr/wrmsrs in its context
-> > switch. Perhaps we should warn and say to use BPF events.
+> > On Thu, Jul 18, 2024 at 06:29:54PM -0700, Jeff Xu wrote:
+> > > On Thu, Jul 18, 2024 at 5:24 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > >
+> > > > On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
+> > > > > On Wed, Jul 17, 2024 at 3:01 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > >
+> > > > > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
+> > > > > > > On Thu, Jul 4, 2024 at 12:02 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > > > >
+> > > > > > > > Add a new AT_CHECK flag to execveat(2) to check if a file would be
+> > > > > > > > allowed for execution.  The main use case is for script interpreters and
+> > > > > > > > dynamic linkers to check execution permission according to the kernel's
+> > > > > > > > security policy. Another use case is to add context to access logs e.g.,
+> > > > > > > > which script (instead of interpreter) accessed a file.  As any
+> > > > > > > > executable code, scripts could also use this check [1].
+> > > > > > > >
+> > > > > > > > This is different than faccessat(2) which only checks file access
+> > > > > > > > rights, but not the full context e.g. mount point's noexec, stack limit,
+> > > > > > > > and all potential LSM extra checks (e.g. argv, envp, credentials).
+> > > > > > > > Since the use of AT_CHECK follows the exact kernel semantic as for a
+> > > > > > > > real execution, user space gets the same error codes.
+> > > > > > > >
+> > > > > > > So we concluded that execveat(AT_CHECK) will be used to check the
+> > > > > > > exec, shared object, script and config file (such as seccomp config),
 > >
-> > Is there a way through say ioctls to get the CPU an event is on? That
-> > way we could update the `perf stat -A` to accurately report cpus.
-> > There's also the issue that the affinity stuff is going to be off.
+> > > > > > > I think binfmt_elf.c in the kernel needs to check the ld.so to make
+> > > > > > > sure it passes AT_CHECK, before loading it into memory.
+> > > > > >
+> > > > > > All ELF dependencies are opened and checked with open_exec(), which
+> > > > > > perform the main executability checks (with the __FMODE_EXEC flag).
+> > > > > > Did I miss something?
+> > > > > >
+> > > > > I mean the ld-linux-x86-64.so.2 which is loaded by binfmt in the kernel.
+> > > > > The app can choose its own dynamic linker path during build, (maybe
+> > > > > even statically link one ?)  This is another reason that relying on a
+> > > > > userspace only is not enough.
+> > > >
+> > > > The kernel calls open_exec() on all dependencies, including
+> > > > ld-linux-x86-64.so.2, so these files are checked for executability too.
+> > > >
+> > > This might not be entirely true. iiuc, kernel  calls open_exec for
+> > > open_exec for interpreter, but not all its dependency (e.g. libc.so.6)
 > >
->
-> I don't think there is such ioctl.
->
-> Emphasizing the CPU ID for an uncore event seems misleading. The uncore
-> only supports per-socket counter, not per-core counter.
-> Opening/reading an counter from any CPUs on a package should be identical=
-.
-> An accurate report of the `perf stat -A` for an uncore should use "S0".
+> > Correct, the dynamic linker is in charge of that, which is why it must
+> > be enlighten with execveat+AT_CHECK and securebits checks.
+> >
+> > > load_elf_binary() {
+> > >    interpreter = open_exec(elf_interpreter);
+> > > }
+> > >
+> > > libc.so.6 is opened and mapped by dynamic linker.
+> > > so the call sequence is:
+> > >  execve(a.out)
+> > >   - open exec(a.out)
+> > >   - security_bprm_creds(a.out)
+> > >   - open the exec(ld.so)
+> > >   - call open_exec() for interruptor (ld.so)
+> > >   - call execveat(AT_CHECK, ld.so) <-- do we want ld.so going through
+> > > the same check and code path as libc.so below ?
+> >
+> > open_exec() checks are enough.  LSMs can use this information (open +
+> > __FMODE_EXEC) if needed.  execveat+AT_CHECK is only a user space
+> > request.
+> >
+> Then the ld.so doesn't go through the same security_bprm_creds() check
+> as other .so.
 
-I think it is an "elite" level trick to try to do things like balance
-context switch overhead. Putting everything on the first CPU feels
-like a scalability issue for cgroup events. BPF events work around it
-to some degree, but they are still going to put all the work on CPU0
-which could cause performance issues, latency spikes, etc. on it.
+Indeed, but...
 
-Thanks,
-Ian
+> 
+> As my previous email, the ChromeOS LSM restricts executable mfd
+> through security_bprm_creds(), the end result is that ld.so can still
+> be executable memfd, but not other .so.
 
-> Thanks,
-> Kan
->
-> > Thanks,
-> > Ian
+The chromeOS LSM can check that with the security_file_open() hook and
+the __FMODE_EXEC flag, see Landlock's implementation.  I think this
+should be the only hook implementation that chromeOS LSM needs to add.
+
+> 
+> One way to address this is to refactor the necessary code from
+> execveat() code patch, and make it available to call from both kernel
+> and execveat() code paths., but if we do that, we might as well use
+> faccessat2(AT_CHECK)
+
+That's why I think it makes sense to rely on the existing __FMODE_EXEC
+information.
+
+> 
+> 
+> > >   - transfer the control to ld.so)
+> > >   - ld.so open (libc.so)
+> > >   - ld.so call execveat(AT_CHECK,libc.so) <-- proposed by this patch,
+> > > require dynamic linker change.
+> > >   - ld.so mmap(libc.so,rx)
 > >
-> >
-> >> Thanks,
-> >> Kan
-> >>> The overhead I was
-> >>> thinking of here is more along the lines of cgroup context switches
-> >>> (although that isn't in my example). There may be a large number of
-> >>> say memory controller events just by having 2 events for each PMU and
-> >>> then there are 10s of PMUs. By putting half of the events on 1 CPU an=
-d
-> >>> half on another, the context switch overhead is shared. That said, th=
-e
-> >>> counters don't care what cgroup is accessing memory, and users doing
-> >>> this are likely making some kind of error.
-> >>>
-> >>> Thanks,
-> >>> Ian
-> >>>
-> >
+> > Explaining these steps is useful. I'll include that in the next patch
+> > series.
 
