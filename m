@@ -1,86 +1,132 @@
-Return-Path: <linux-kernel+bounces-257288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BACA39377EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:43:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8279C9377EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6395B1F22633
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:43:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E7A4B21ACC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A034313C687;
-	Fri, 19 Jul 2024 12:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AECF13C3D2;
+	Fri, 19 Jul 2024 12:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oy/GDuVV"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pXi0Wi7k"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F407813B295;
-	Fri, 19 Jul 2024 12:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07ADD39FF3;
+	Fri, 19 Jul 2024 12:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721392970; cv=none; b=fDWlTrZlAw+1z3VBH9+5BzY5gMCkaxTf76txWGhLhkdQWaAewBMEmFhk7yenzZLmujeYl1Jx3AwVo7NsX/QymutoxJ85GdkH8OiX46OiVoxT5zLVxz3e9BC2zGIkuKiJSWFOs7gYcoPgCCqXB3a+49vS6LosjgPo6RnhT7RzgFQ=
+	t=1721393283; cv=none; b=MFJMYwg6539F9GOa+A9gdfiVknspGtHWOxPH9TfeR0aIeDzt8bXxRAGb8AgTFBlhb+vhRPOnkMZV0K+h3/qsROd2nR6mEzh/CD066voAqtR+QSOmnQ82msNAUmbClUie67nHik+JtvuJf9D1vhI5R+gPALERZ9vl9Yohf01PZFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721392970; c=relaxed/simple;
-	bh=0lcxL8XNRUEq+vBhcw8R+mdptmkP+8F+zWfDZRL4wBA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A3pIrH1yaecLq5e8Q6LBTjo98BGAJRBAd790QRvfW3vr/QEIADHSm7oO7boIL7+99PNCBENihEisD9jCIyVnoK2Tr0m3moJjwXoW4xeeqlwI/zOhKM/BbmL7DG5ONoJSDSRSfFxMSob3ePkqOy05zj4N3yoDTeJ3Vr8qNI/6rGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oy/GDuVV; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=W3a+XTwexnz8rPMwMCQeFI74MJDMGFFcGv41YRD0k+4=; b=oy/GDuVV2x498dOs09fyfUMYTd
-	ufGTBzQPDaTM1z5OxOe0dNvG20z+0PTekc4GG70tVSMnx/8F4HhQdjjz03zR0NAcfx+pB4ZfzNkzf
-	HCOY7gboZztMflA8wGTSZYxIXPR6Ss84fuygT9xRo2Sh9/m2gM0xYHIfh3bFPF16wOWK3IASHYTQU
-	bI17ywkR2Fcq394BfAKAiQaiK2NTvIZ1rTPHx+/hVyRIsVlWKGj+ImUAMz/0dM995sHC5UcU8Bc0y
-	IrvTNtyi8NJisqN0//o+i9yXZUHlgdvPPe0LBUg/YaKUk2+rCoBkio3UKwKJseOo3XhmrDpNvKS2/
-	vL3zHZzQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sUmwb-0000000330F-0B6j;
-	Fri, 19 Jul 2024 12:42:41 +0000
-Date: Fri, 19 Jul 2024 13:42:40 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Mary Strodl <mstrodl@freedom.csh.rit.edu>
-Cc: Christian Gmeiner <christian.gmeiner@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	Mary Strodl <mstrodl@csh.rit.edu>, linux-kernel@vger.kernel.org,
-	urezki@gmail.com, linux-mm@kvack.org, lee@kernel.org,
-	andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
-	s.hauer@pengutronix.de
-Subject: Re: [PATCH 1/3] mm: vmalloc: export __vmalloc_node_range
-Message-ID: <ZppfQFdwYq-bf9Wv@casper.infradead.org>
-References: <ZpkNOyuxuJHaTW35@freedom.csh.rit.edu>
- <ZpkOV3mdOU1b8vMn@casper.infradead.org>
- <ZpkPStwq_S3mJYb5@infradead.org>
- <ZpkQQ5GzJ4atvR6a@casper.infradead.org>
- <ZpkWj-iFiA-JHbbf@freedom.csh.rit.edu>
- <20240718143103.82e33c556b2d1b6145ae43e0@linux-foundation.org>
- <ZpmKho9_t0_MeOP7@casper.infradead.org>
- <20240718143924.43e22f68cf639b064a83f118@linux-foundation.org>
- <CAH9NwWf_S-PyY5X_cJGSW-8YDk4-C0VvnPCX8iVuo0FhTqsy2Q@mail.gmail.com>
- <ZppU8FhsFd9cB-Fi@freedom.csh.rit.edu>
+	s=arc-20240116; t=1721393283; c=relaxed/simple;
+	bh=lS5+DXt/Ha+/JI2+xDkk3DujgnGSvw8WsiTRVQu7cac=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TnNLck4rzTXowhMG2+c8ePagtxAs8RmDGZlC3vKOLRfLNofFOvUsFqCoYVYydRGQ5uMgOaBJKa1RpCMbcslfLGq0ucsYVnfb/liDhoD/e/otItUJHZV6GvUX8aDV+m5cXgjfkH5s8c61EFh+iK/UZgnEtMBfPEt/Po4aUUmySQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pXi0Wi7k; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721393280;
+	bh=lS5+DXt/Ha+/JI2+xDkk3DujgnGSvw8WsiTRVQu7cac=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=pXi0Wi7kLk7pYItYTR/Iootaqw+OWGomCJC6fR296SD1F0G2qMQDSWkvJlyhTNlju
+	 AMvVVWFSTXr2k1YmDkiaEf8+0ka/IqnVojEISGLiuGY/+JMF8bRPuUj0nqw+xXHOYg
+	 z//ASEHHleuAFiQiSMB47YNO3ePmN00eNIGwCaDUvboD0e5VvZmH5tL6nxhmNgfjmb
+	 AatVrDI668/lLOvJ41W9hE4jTR4u5GXoDmmRz78Fu7PTxEaz2udxkf1Cdy7VlCw6+S
+	 +guZdS8HIxOnuZ/spebVjPkSCzDYZAgH52WI07G8vddLTcNgbxwmV3d3SQ5g57oJZw
+	 WAZx9OTjpS4qg==
+Received: from [100.77.12.232] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: obbardc)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 3DA2F37821DE;
+	Fri, 19 Jul 2024 12:47:59 +0000 (UTC)
+Message-ID: <b1013e9a833cf0fc6ce0bf7d0b69daeaf2938f83.camel@collabora.com>
+Subject: Re: [PATCH v4 1/4] MAINTAINERS: Add entry for Synopsys DesignWare
+ HDMI RX Driver
+From: Christopher Obbard <chris.obbard@collabora.com>
+To: Shreeya Patel <shreeya.patel@collabora.com>, heiko@sntech.de, 
+ mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org,  mturquette@baylibre.com, sboyd@kernel.org,
+ p.zabel@pengutronix.de,  jose.abreu@synopsys.com,
+ nelson.costa@synopsys.com, shawn.wen@rock-chips.com, 
+ nicolas.dufresne@collabora.com, hverkuil@xs4all.nl, hverkuil-cisco@xs4all.nl
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Date: Fri, 19 Jul 2024 13:47:58 +0100
+In-Reply-To: <20240719124032.26852-2-shreeya.patel@collabora.com>
+References: <20240719124032.26852-1-shreeya.patel@collabora.com>
+	 <20240719124032.26852-2-shreeya.patel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZppU8FhsFd9cB-Fi@freedom.csh.rit.edu>
 
-On Fri, Jul 19, 2024 at 07:58:40AM -0400, Mary Strodl wrote:
-> Maybe some of the stuff the driver does right now could be moved into
-> vmalloc? In other words, we could provide a different function that
-> allocates an executable page, copies memory into it, then marks it
-> read-only. Would that do better to alleviate concerns?
+Hi Shreeya,
 
-No.  We are not running arbitrary x86 code.  That is a security
-nightmare.
+On Fri, 2024-07-19 at 18:10 +0530, Shreeya Patel wrote:
+> Add an entry for Synopsys DesignWare HDMI Receiver Controller
+> Driver.
+>=20
+> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+> ---
+>=20
+> Changes in v4 :-
+> =C2=A0 - No change
+>=20
+> Changes in v3 :-
+> =C2=A0 - No change
+>=20
+> Changes in v2 :-
+> =C2=A0 - Add a patch for MAINTAINERS file changes
+>=20
+> =C2=A0MAINTAINERS | 8 ++++++++
+> =C2=A01 file changed, 8 insertions(+)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 1c87b471941c..0f0e1d58abff 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -22138,6 +22138,14 @@ F:	drivers/net/pcs/pcs-xpcs.c
+> =C2=A0F:	drivers/net/pcs/pcs-xpcs.h
+> =C2=A0F:	include/linux/pcs/pcs-xpcs.h
+> =C2=A0
+> +SYNOPSYS DESIGNWARE HDMI RX CONTROLLER DRIVER
+
+Perhaps a more descriptive name could be "SYNOPSYS DESIGNWARE HDMI RECEIVER
+DRIVER" to better match the IP name:
+https://www.synopsys.com/dw/ipdir.php?ds=3Ddwc_hdmi_20_csds_rx
+
+
+> +M:	Shreeya Patel <shreeya.patel@collabora.com
+Should this not be:
+ Shreeya Patel <shreeya.patel@collabora.com>
+
+You seem to be missing the final > at the end of the line ?
+
+
+With the above fixed:
+Reviewed-by: Christopher Obbard <chris.obbard@collabora.com>
+
+> +L:	linux-media@vger.kernel.org
+> +L:	kernel@collabora.com
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
+> +F:	drivers/media/platform/synopsys/hdmirx/*
+> +
+> =C2=A0SYNOPSYS DESIGNWARE I2C DRIVER
+> =C2=A0M:	Jarkko Nikula <jarkko.nikula@linux.intel.com>
+> =C2=A0R:	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
