@@ -1,133 +1,145 @@
-Return-Path: <linux-kernel+bounces-257697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9236D937DB9
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 00:05:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C93A8937DBD
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 00:10:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AF9A1F21B36
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 22:05:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 855A42824F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 22:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3331487EF;
-	Fri, 19 Jul 2024 22:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE34B148FF6;
+	Fri, 19 Jul 2024 22:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Xs3sqVP7"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="czBk/us4"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CF8148832
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 22:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D028F2F34
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 22:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721426700; cv=none; b=QDZiCcJfUVm8wfOyBA3/vntkUHIIc/i2JTamHMwhkGXSj7isXp8Lc0l7ptqS2dD9ZpD0ku3fKnHdzZ2HQ2I1NrkPadaAlINSh5Y2b4ybOz2V1a+gU7xR8aOVTamTQPmEnrOaP2rWGOYWb1O7NQ1dWGnKrXJVt6A4qsxTp2TrBWQ=
+	t=1721426997; cv=none; b=pML8eGk5eKkhZ8Ot0/Id4WuKGdgg/JZDYswuHZAD9SolbbrGsjC1KHAbwjVWuz2IvBhOoy9tKzDAAIsDDpn7dVk7mDyEZTgT2XX524iNQUGi9Gw+7d6okv2bgYejzc5Bsg2Xtit4kHTBYVNqfBSPLuMBdBHrV9svX5V6/NifUmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721426700; c=relaxed/simple;
-	bh=JUPO6eARFcABbF99tiZyanxxjqnwgInQlYtjLK7gX84=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IJu5tkmATtUoBNpz2BjLw1nfoR+2LetEQAeZrau7y9I8iOCXYjXLW61a3rhqMQVeesGcy6OlWHHZ1kH8ziWktGCqOTMo9i74y9WWV/zWp4MHFsOuMANxCmD+lg8LIXnKMcyJA2V56fjdvgMT0OXWUoX2BU4WyJMT5mZrJ+uwBGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Xs3sqVP7; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: pasha.tatashin@soleen.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721426695;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eFYBCysMktN44xqqHXD2HgYrB33axzEkhlU1r9cNdhU=;
-	b=Xs3sqVP7knzwsj8riTanFOj+iXGIURj5hv7DMssgxlexRorRu8eiexkf8UFoRP3yKbcAMf
-	KtafKxcWm8OhyCLNPXHp3idWSPpbfUPM8nE1cHOiiAF4cZv/lFBj3GDW9lDjTcdryYUj2Z
-	JJNt8Ll9dwalECmxFMqLk8Y9OEYivWw=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: jpoimboe@kernel.org
-X-Envelope-To: kent.overstreet@linux.dev
-X-Envelope-To: peterz@infradead.org
-X-Envelope-To: nphamcs@gmail.com
-X-Envelope-To: cerasuolodomenico@gmail.com
-X-Envelope-To: surenb@google.com
-X-Envelope-To: lizhijian@fujitsu.com
-X-Envelope-To: willy@infradead.org
-X-Envelope-To: vbabka@suse.cz
-X-Envelope-To: ziy@nvidia.com
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-mm@kvack.org
-Date: Fri, 19 Jul 2024 15:04:40 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, jpoimboe@kernel.org, 
-	kent.overstreet@linux.dev, peterz@infradead.org, nphamcs@gmail.com, 
-	cerasuolodomenico@gmail.com, surenb@google.com, lizhijian@fujitsu.com, willy@infradead.org, 
-	vbabka@suse.cz, ziy@nvidia.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v4] vmstat: Kernel stack usage histogram
-Message-ID: <ud5csdd23fjb2gin4uuxsocm4hvsy22bk4plfjv5zvqd2egqri@hpavorxrrprw>
-References: <20240718202611.1695164-1-pasha.tatashin@soleen.com>
- <2fbbxcsjs7vtzpb6a5wudbppcr2wgc2xwdw3cgs6ejzx6rioze@z2sct6rbulng>
- <CA+CK2bB4RELLHExbkL444ArTtUnqiYVYKJ1rLQGarLyenY6WxQ@mail.gmail.com>
+	s=arc-20240116; t=1721426997; c=relaxed/simple;
+	bh=M+d+w4Jd+viuql4BdMgmT6M5swLNmrBdggtLJAHua3A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gs7QDZAr5DZeeZpjChiLmehZRcNBhKwZ+n52MAdMiCwkv2PIDyK9ASAh2LXa9F0gafjif/ltGahp1IRe+dTVTk66MgNqHw1qqeNxEFggsLNpc6L1tR+czv8H9w2Gm071CSId8Ihl9c6oGGVT2spCH1PjRsBExr5YPZ350RxTynw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=czBk/us4; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1721426989;
+ bh=jzx7v1yYS7XEcLUo5OWbcCcit0pq0czWKq4AncgrZzs=;
+ b=czBk/us4ImfY7tYAykNB3LaPB7NUlDH7P7AvrqM0Gm8ddEXbmPjM+yRRhBS+azsiysSeAjUXH
+ oJgCd/PV3Da31iXO8wC9zsGXSaTuBwjmlNy1JIC7nRDfxedBHdE++/5A5F3WuBGJ1z6s1zGf/F0
+ x6bOwZXGojTrggwFZ8kJ7uON96GiPPENDu/cMb6JFPv984R3zRz2Kni+IoK3ri+rZDubAabFFlf
+ LNtLyh2g5xAAs3FBq5eqIDK+b74fSmKVudjLi9y3vdfPMvdVFa8vJpsxUiFtjoN2HXHD55DVyQf
+ LuYfULCQRwE+QvDjh6WhPy68k/ZYcRtGD9i/zTQbKG0g==
+Message-ID: <d060ec49-9d48-44a3-8f90-5cee5fe29b75@kwiboo.se>
+Date: Fri, 19 Jul 2024 23:59:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] Enumerate all pixels formats
+To: Nicolas Dufresne <nicolas@ndufresne.ca>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, Hans Verkuil
+ <hverkuil-cisco@xs4all.nl>, mchehab@kernel.org,
+ ezequiel@vanguardiasur.com.ar
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, kernel@collabora.com
+References: <20240717131430.159727-1-benjamin.gaignard@collabora.com>
+ <07f62fbb-d1eb-41c3-86a8-13a082a8374f@xs4all.nl>
+ <743e2589-c0df-461d-97d4-fafe78c334ea@collabora.com>
+ <98f5cd5c-cb9c-45ca-a7c7-a546f525c393@xs4all.nl>
+ <2eec786d-f2b6-4445-87f4-4b6d162a2d9a@collabora.com>
+ <dc423e4144e1c9ea32f6adbaa8319e38f1443896.camel@ndufresne.ca>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <dc423e4144e1c9ea32f6adbaa8319e38f1443896.camel@ndufresne.ca>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+CK2bB4RELLHExbkL444ArTtUnqiYVYKJ1rLQGarLyenY6WxQ@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-ForwardEmail-ID: 669ae1b7e37ad464ebb10862
 
-On Thu, Jul 18, 2024 at 10:55:17PM GMT, Pasha Tatashin wrote:
-> On Thu, Jul 18, 2024 at 7:36 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> >
-> > On Thu, Jul 18, 2024 at 08:26:11PM GMT, Pasha Tatashin wrote:
-> > [...]
-> > > diff --git a/include/linux/sched/task_stack.h b/include/linux/sched/task_stack.h
-> > > index ccd72b978e1f..65e8c9fb7f9b 100644
-> > > --- a/include/linux/sched/task_stack.h
-> > > +++ b/include/linux/sched/task_stack.h
-> > > @@ -95,9 +95,51 @@ static inline int object_is_on_stack(const void *obj)
-> > >  extern void thread_stack_cache_init(void);
-> > >
-> > >  #ifdef CONFIG_DEBUG_STACK_USAGE
-> > > +#ifdef CONFIG_VM_EVENT_COUNTERS
-> > > +#include <linux/vm_event_item.h>
-> > > +
-> > > +/* Count the maximum pages reached in kernel stacks */
-> > > +static inline void kstack_histogram(unsigned long used_stack)
-> >
-> > Any specific reason to add this function in header?
+Hi,
+
+On 2024-07-19 17:36, Nicolas Dufresne wrote:
+> Hi,
 > 
-> For performance reasons to keep it inlined into stack_not_used() which
-> is also defined as inline function in this header.
+> Le vendredi 19 juillet 2024 à 15:47 +0200, Benjamin Gaignard a écrit :
+>>> What exactly is the problem you want to solve? A real-life problem, not a theoretical
+>>> one :-)
+>>
+>> On real-life: on a board with 2 different stateless decoders being able to detect the
+>> one which can decode 10 bits bitstreams without testing all codec-dependent controls.
+> 
+> That leans toward giving an answer for the selected bitstream format though,
+> since the same driver may do 10bit HEVC without 10bit AV1.
+> 
+> For the use case, both Chromium and GStreamer have a need to categorized
+> decoders so that we avoid trying to use decoder that can't do that task. More
+> platforms are getting multiple decoders, and we also need to take into account
+> the available software decoders.
+> 
+> Just looking at the codec specific profile is insufficient since we need two
+> conditions to be met.
+> 
+> 1. The driver must support 10bit for the specific CODEC (for most codec this is
+> profile visible)
+> 2. The produced 10bit color format must be supported by userspace
+> 
+> In today's implementation, in order to test this, we'd need to simulate a 10bit
+> header control, so that when enumerating the formats we get a list of 10bit
+> (optionally 8bit too, since some decoder can downscale colors) and finally
+> verify that these pixel formats are know by userspace. This is not impossible,
+> but very tedious, this proposal we to try and make this easier.
+
+I have also been wondering what the use-case of this would be, and if it
+is something to consider before a FFmpeg v4l2-request hwaccel submission.
+
+I am guessing GStreamer may need to decide what decoder to use prior to
+bitstream parsing/decoding has started?
+
+For my re-worked FFmpeg v4l2-request hwaccel series, should hit
+ffmpeg-devel list any day now, we try to probe each video device one
+by one trying to identify if it will be capable to decode current stream
+into a known/supported capture format [1], this typically happen when
+header for first slice/frame has been parsed and is used to let driver
+select its preferred/optimal capture format. The first device where all
+test passes will be used and if none works FFmpeg video players will
+typically fallback to use software decoding.
+
+This type of probing may be a little bit limiting and depend too heavy
+on the M2M Stateless Video Decoder Interface "It is suggested that the
+driver chooses the preferred/optimal format for the current
+configuration.".
+
+Would you suggest I change how this probing is happening to make some
+more clever detection of what media+video device should be used for a
+specific stream with help of this new flag?
+
+[1] https://github.com/Kwiboo/FFmpeg/blob/v4l2request-2024-v2/libavcodec/v4l2_request_probe.c#L373-L424
+
+Regards,
+Jonas
+
+> 
+> Nicolas
+> 
 > 
 
-Is this really that performance critical?
-
-> >
-> > > +{
-> > > +     if (used_stack <= 1024)
-> > > +             this_cpu_inc(vm_event_states.event[KSTACK_1K]);
-> >
-> > Why not count_vm_event(KSTACK_1K)? Avoiding header include recursion?
-> 
-> I could not include "linux/vmstat.h" into "linux/sched/task_stack.h"
-> because it introduces some dependencies such linux/mm.h and
-> linux/fs.h, uapi/linux/stat.h, and when all of those are added it
-> still fails to compile on some architectures, so it was just simpler
-> to stop resolving the conflicts and use this_cpu_inc() directly.
-> 
-
-The above makes me think it is better to move stack_not_used() and the
-new function to C file unless we can show the negative performance
-impact.
-
-I have another question. At the moment, the metrics are exposed
-conditionally through procfs based on stack size. So, based on the
-kernel config someone may not see kstack_16k. Why not just output all of
-these metrics irrespective of the config?
-
-Shakeel
 
