@@ -1,59 +1,71 @@
-Return-Path: <linux-kernel+bounces-257708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 889B2937DEC
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 00:55:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCCD7937DF0
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 01:02:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6926A1C21392
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 22:55:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 783BB282269
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 23:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF7714882E;
-	Fri, 19 Jul 2024 22:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C327149007;
+	Fri, 19 Jul 2024 23:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kc2HqEj2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="G1mjbLP4"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9999824AE;
-	Fri, 19 Jul 2024 22:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D62145B34
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 23:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721429735; cv=none; b=qp2lM/Ap2GNvFj9qH+eTJkGGfMuBZ4b2sM/hr659fLDpkZNMRV5Nt+fR9lX5djEVtFrdIEtyV4m3qeKd2IWK32z1rec8VI+kUtTN4Skhu8bmS2hqEQuLtmtcIkLm3TXbTRW3HJuinE/Y8w0SO5yXpWiio40g+LI/6nxUIOd+WfA=
+	t=1721430133; cv=none; b=NwccaJeD8lV/5H02pPySUO1Bc30ONzBmIlk86vI+9D8H4xEL3WwZVmuXg4U3YtUNS0ZnSckQlkobzwBVvIROEj2e1TDIO/OT1KuF+vYq/7mPGO5Mo+8absqVO18vtPoftJHA7r3fzjV6OAZHMRD4pTBBTN5kfDeGEwg7mw+YAVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721429735; c=relaxed/simple;
-	bh=v+Z4xYT3kllfu8QjT9K4YASNCAgFD5wlTBeTO/fv904=;
+	s=arc-20240116; t=1721430133; c=relaxed/simple;
+	bh=9W7XgB4rsZGerv02WanbEritEOYoNHH9GxwVAPTgL2g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T6By3EUFQ75KIufXr6/lFM/XaoG/scmEqB6lpf+d2LjHswIVcrscIIEF8nDSX8Ru222UnKDCnPWLwXA9sw4Dyp85hGZv2/18RhtOcsjsivoE4VhedG3BsiUIk3a96uXtiX+JjBq7W4C6Mdv0v/AGgJY7aM23evPh7QALnG6cATI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kc2HqEj2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AEB3C32782;
-	Fri, 19 Jul 2024 22:55:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721429734;
-	bh=v+Z4xYT3kllfu8QjT9K4YASNCAgFD5wlTBeTO/fv904=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Kc2HqEj2TI1wsaMrSCU7kxdUO4YYgSeVd68dM0NUuN0xM/tgTPfawl60LLkYseR0d
-	 ujSYgH4BD+EUrstcIdQyY4fPkBQipUzTCiAw5yP7BGMLmPvQbfdS+ItnniTwRnqqyO
-	 wEM0K76FhzqkLDqg3HClpjXbom/nDf1AamEVKso9S66PJTBeOAK32TTYYpu2Rjcd0Z
-	 qVjpg/wnRhD/3obT+quKkqF+Z3NZ3SHQhuPXvbt73OafkZeS/Qss7dN+xmCfh4geML
-	 b8Aa9gyvw7V1xKE+mjtmQUhyzZPL4sa0ej5ay7S808+ej+hhRFDqDx8n3V9JvTQ1Y8
-	 o9VGGcKbSB2uw==
-Date: Fri, 19 Jul 2024 15:55:32 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jiri Olsa <jolsa@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Brian Norris <briannorris@chromium.org>,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH v2] Makefile: add comment to discourage tools/* addition
- for kernel builds
-Message-ID: <20240719225532.mpm36wh6xa3acl7r@treble>
-References: <20240717182828.1527504-1-masahiroy@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bKn52P4PzKWXDxn+JEyTj5F9PQzSGHvliHxfBCMI9OyJOVsGUD3MWzYCCgaApDyDPa1NOEPgF+R8hgRd6RBCdhol6S2xzmEak9dpWGkAfEnAsZYe++IznMIGFmFZQOEMzbixtA1L9kAcTmYg7BtwlLqizsahhf40Fai9qrNE6Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=G1mjbLP4; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: yosryahmed@google.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721430127;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l0zD0aA4CXe4tpOLD1gGPpbJDDXrQ2vOJBNWM34Kaa0=;
+	b=G1mjbLP4/VizFq7tfwvP/yTuxNlKmKxb/zMUkDEmgh0Dut/p/A99cJkLgmPsjRpMAAfTz+
+	RuI5kSSsMG+YO8hX08qxBK76kQYb1qYKV12vGGahL1BaQXd0W5PR8JdWI7HLP8ITMqNfNo
+	mYs6BDEbF9CXlBYzkMoYw7tpSNzDOF4=
+X-Envelope-To: hawk@kernel.org
+X-Envelope-To: tj@kernel.org
+X-Envelope-To: cgroups@vger.kernel.org
+X-Envelope-To: hannes@cmpxchg.org
+X-Envelope-To: lizefan.x@bytedance.com
+X-Envelope-To: longman@redhat.com
+X-Envelope-To: kernel-team@cloudflare.com
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Date: Fri, 19 Jul 2024 16:01:59 -0700
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Jesper Dangaard Brouer <hawk@kernel.org>, tj@kernel.org, 
+	cgroups@vger.kernel.org, hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com, 
+	kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V7 1/2] cgroup/rstat: Avoid thundering herd problem by
+ kswapd across NUMA nodes
+Message-ID: <mlrz5ek6zx2dyw3kfikv4girua4lqblkl3ri6qbpmpblprx6kc@fflln5bhjbl4>
+References: <172070450139.2992819.13210624094367257881.stgit@firesoul>
+ <a4e67f81-6946-47c0-907e-5431e7e01eb1@kernel.org>
+ <CAJD7tkYV3iwk-ZJcr_==V4e24yH-1NaCYFUL7wDaQEi8ZXqfqQ@mail.gmail.com>
+ <100caebf-c11c-45c9-b864-d8562e2a5ac5@kernel.org>
+ <k3aiufe36mb2re3fyfzam4hqdeshvbqcashxiyb5grn7w2iz2s@2oeaei6klok3>
+ <CAJD7tkZbOf7125mcuN-EQdn6MB=dEasHWpoLmY1p-KCjjRxGXQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,37 +74,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240717182828.1527504-1-masahiroy@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJD7tkZbOf7125mcuN-EQdn6MB=dEasHWpoLmY1p-KCjjRxGXQ@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Jul 18, 2024 at 03:28:19AM +0900, Masahiro Yamada wrote:
-> Kbuild provides scripts/Makefile.host to build host programs used for
-> building the kernel. Unfortunately, there are two exceptions that opt
-> out of Kbuild. The build system under tools/ is a cheesy replica, and
-> cause issues. I was recently poked about a problem in the tools build
-> system, which I do not maintain (and nobody maintains). [1]
+On Thu, Jul 18, 2024 at 08:11:32PM GMT, Yosry Ahmed wrote:
+> On Thu, Jul 18, 2024 at 5:41 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> >
+> > Hi Jesper,
+> >
+> > On Wed, Jul 17, 2024 at 06:36:28PM GMT, Jesper Dangaard Brouer wrote:
+> > >
+> > [...]
+> > >
+> > >
+> > > Looking at the production numbers for the time the lock is held for level 0:
+> > >
+> > > @locked_time_level[0]:
+> > > [4M, 8M)     623 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@               |
+> > > [8M, 16M)    860 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+> > > [16M, 32M)   295 |@@@@@@@@@@@@@@@@@                                   |
+> > > [32M, 64M)   275 |@@@@@@@@@@@@@@@@                                    |
+> > >
+> >
+> > Is it possible to get the above histogram for other levels as well? I
+> > know this is 12 numa node machine, how many total CPUs are there?
+> >
+> > > The time is in nanosec, so M corresponds to ms (milliseconds).
+> > >
+> > > With 36 flushes per second (as shown earlier) this is a flush every
+> > > 27.7ms.  It is not unreasonable (from above data) that the flush time
+> > > also spend 27ms, which means that we spend a full CPU second flushing.
+> > > That is spending too much time flushing.
+> >
+> > One idea to further reduce this time is more fine grained flush
+> > skipping. At the moment we either skip the whole flush or not. How
+> > about we make this decision per-cpu? We already have per-cpu updates
+> > data and if it is less than MEMCG_CHARGE_BATCH, skip flush on that cpu.
 > 
-> Without a comment, people might believe this is the right location
-> because that is where objtool lives, even if a more robust Kbuild
-> syntax satisfies their needs. [2]
+> Good idea.
+> 
+> I think we would need a per-subsystem callback to decide whether we
+> want to flush the cgroup or not. This needs to happen in the core
+> rstat flushing code (not the memcg flushing code), as we need to make
+> sure we do not remove the cgroup from the per-cpu updated tree if we
+> don't flush it.
 
-I think the original idea (from Ingo?) was to make objtool portable so
-it could be easily copied and built separately without getting too
-intertwined with the kernel source.
+Unless we have per-subsystem update tree, I don't think per-subsystem
+callback would work or we would be flushing all if any subsystem wants
+it. Anyways we can discuss when we have data that it really helps.
 
-I think that's still a useful goal.  To my knowledge it's been used in
-at least one other code base and could be used elsewhere going forward
-as much of its functionality might be transferable to other code bases.
+> 
+> More generally, I think we should be able to have a "force" flush API
+> that skips all optimizations and ensures that a flush occurs. I think
+> this will be needed in the cgroup_rstat_exit() path, where stats of a
+> cgroup being freed must be propagated to its parent, no matter how
+> insignificant they may be, to avoid inconsistencies.
 
-Also being in tools helps it shares library code (libsubcmd) and
-synced headers with perf (and others).
-
-If there's some other way to make it portable and allow it to share code
-with other tools that then I wouldn't object to moving it to scripts.
-
-Or, if the main problem is that there are two custom build systems (one
-of them being a cheap knockoff), could kbuild be made portable enough to
-be used in tools?
-
--- 
-Josh
+Agree.
 
