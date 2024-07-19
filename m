@@ -1,313 +1,150 @@
-Return-Path: <linux-kernel+bounces-257114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56F3A937565
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:56:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 362BC93756A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:57:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC9031F21829
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 08:56:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67C201C2164A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 08:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F4D7CF30;
-	Fri, 19 Jul 2024 08:56:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2DA3236
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 08:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2368280046;
+	Fri, 19 Jul 2024 08:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cjOYfvea"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921AE7D095;
+	Fri, 19 Jul 2024 08:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721379403; cv=none; b=HeU6ZzXGxM6mofPjm6sWrRgjjLi6EyBA5Xx/ZkUUC6ENea2t8rsUaQa+uIly7/WXViXwr8FFgZbXNAhchIP8xTDXgwJRF3FPGPdMQWhbs3/bb1r6vTChcXs8fi7C++8gC/Ij0HGWEYvRuSTjr8CDLLJjz6Qn5CJdAK0tOGmsyjI=
+	t=1721379450; cv=none; b=pAHA1NxnCheB3cFnM8GAFE1GnBDh3XyQbcjz2Lpi/AJQgxbJbiu6LlVBfbnw0zbWt/MZfN6xLxv1L7GyXGEzy1xjbQe6JCmo5JNTxGVmFljVOjs4pZivZ/lw2ZNeMvv/zqXaWcxTLhVWqLjETxwUrgn75Ak8inEwgm2bWPavWRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721379403; c=relaxed/simple;
-	bh=/uHY1h/nqn5QYu99ESjDs6FonOEec8RKGoklHW0LIjc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s8Sdc1zCxoIK43dZ3WI1gnFpEzcZ83tpiC6hhmlgtGSdBPBpHXGY+3AKqG1lZQH2CYZWnAVu2Vwi1/vlQWFbpMkkdl0B9ct1Pt4/mtBC9vMpV0yojoM1wuDsL+1g+vI34P4czBj26RZpvcArA9jJYrerLm8pMNphsl5eyFHUDaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DD3091042;
-	Fri, 19 Jul 2024 01:57:04 -0700 (PDT)
-Received: from [10.57.76.151] (unknown [10.57.76.151])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D2DFD3F762;
-	Fri, 19 Jul 2024 01:56:37 -0700 (PDT)
-Message-ID: <223acdf2-ba25-4c31-94df-a212d31bd6c3@arm.com>
-Date: Fri, 19 Jul 2024 09:56:36 +0100
+	s=arc-20240116; t=1721379450; c=relaxed/simple;
+	bh=fm9TEPUA1U2cVfHoKPsMeHb1ZfnnnkWgq5jAwDFl2bM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gjHW3Vzmp98A17WDzdv7S0o5GosLaO17LlxjRCFLmbxiGOp7V28IjtMtX4MKZcDERnKfLtBeR/xUu6zKOzxuK13GV6h7rs6ggJHxL42ttynkF67Y9m4wp2+BRcNsrxAk2ZB9c6jvcoEZN0sENOCNGGBdtC9J9A9ADaaZ5H35CVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cjOYfvea; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46J0xsLn018981;
+	Fri, 19 Jul 2024 08:57:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=P28o/kK9Uj0Z5NKPk0Eu83
+	3pifexu8IhZbiAXudPllQ=; b=cjOYfveaXVH029F14kThW55KqzP5es9rnYuRiR
+	WgkyTO6VB64iiqGVvzlusSTJcs9RQKLTD3WdulfN1xURnhnlIErSD4e04Xm/q+4g
+	XYj71fAyhSmAfR3SmazUCO0spDuRE28JfnSitwMjimeTR4Q172HH+9cNAxuAzCwo
+	i4FKm11Qx/wWH0sa+dG5ji2Qe48SQLY4rUC1C776wJV5hPA3R+41mDsnt6JiGWgx
+	yCJn8rTHX9NODeTLR+iT03HxtR/E/gXj2p1nbpzlPiuzCiYQmL62qJDhtD5sbuaR
+	0P99rH+D6IDrPqLP0x3CwOCIclDMq8r8JzByArPXZcwKfAKg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40fe350u09-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Jul 2024 08:57:20 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46J8vJQM029738
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Jul 2024 08:57:19 GMT
+Received: from hu-ekangupt-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 19 Jul 2024 01:57:16 -0700
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+To: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>
+CC: <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
+        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
+        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>,
+        stable
+	<stable@kernel.org>
+Subject: [PATCH v4] misc: fastrpc: Increase unsigned PD initmem size
+Date: Fri, 19 Jul 2024 14:27:08 +0530
+Message-ID: <20240719085708.1764952-1-quic_ekangupt@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] mm: mTHP stats for pagecache folio allocations
-Content-Language: en-GB
-To: Barry Song <baohua@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
- <hughd@google.com>, Jonathan Corbet <corbet@lwn.net>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- David Hildenbrand <david@redhat.com>, Lance Yang <ioworker0@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Gavin Shan <gshan@redhat.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240716135907.4047689-1-ryan.roberts@arm.com>
- <20240716135907.4047689-4-ryan.roberts@arm.com>
- <CAGsJ_4xfiVNH-cQtD_rMrHvzx1a9Ap6CcqsqbxyAEOTB-9Jvhw@mail.gmail.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <CAGsJ_4xfiVNH-cQtD_rMrHvzx1a9Ap6CcqsqbxyAEOTB-9Jvhw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 30eN70_7MhCOiJu8psYENwLWUp9T2pSx
+X-Proofpoint-ORIG-GUID: 30eN70_7MhCOiJu8psYENwLWUp9T2pSx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-19_05,2024-07-18_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1015
+ mlxscore=0 spamscore=0 adultscore=0 priorityscore=1501 impostorscore=0
+ suspectscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2407190069
 
-On 19/07/2024 01:12, Barry Song wrote:
-> On Wed, Jul 17, 2024 at 1:59 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
->>
->> Expose 3 new mTHP stats for file (pagecache) folio allocations:
->>
->>   /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/file_alloc
->>   /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/file_fallback
->>   /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/file_fallback_charge
->>
->> This will provide some insight on the sizes of large folios being
->> allocated for file-backed memory, and how often allocation is failing.
->>
->> All non-order-0 (and most order-0) folio allocations are currently done
->> through filemap_alloc_folio(), and folios are charged in a subsequent
->> call to filemap_add_folio(). So count file_fallback when allocation
->> fails in filemap_alloc_folio() and count file_alloc or
->> file_fallback_charge in filemap_add_folio(), based on whether charging
->> succeeded or not. There are some users of filemap_add_folio() that
->> allocate their own order-0 folio by other means, so we would not count
->> an allocation failure in this case, but we also don't care about order-0
->> allocations. This approach feels like it should be good enough and
->> doesn't require any (impractically large) refactoring.
->>
->> The existing mTHP stats interface is reused to provide consistency to
->> users. And because we are reusing the same interface, we can reuse the
->> same infrastructure on the kernel side.
->>
->> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->> ---
->>  Documentation/admin-guide/mm/transhuge.rst | 13 +++++++++++++
->>  include/linux/huge_mm.h                    |  3 +++
->>  include/linux/pagemap.h                    | 16 ++++++++++++++--
->>  mm/filemap.c                               |  6 ++++--
->>  mm/huge_memory.c                           |  7 +++++++
->>  5 files changed, 41 insertions(+), 4 deletions(-)
->>
->> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
->> index 058485daf186..d4857e457add 100644
->> --- a/Documentation/admin-guide/mm/transhuge.rst
->> +++ b/Documentation/admin-guide/mm/transhuge.rst
->> @@ -512,6 +512,19 @@ shmem_fallback_charge
->>         falls back to using small pages even though the allocation was
->>         successful.
->>
->> +file_alloc
->> +       is incremented every time a file huge page is successfully
->> +       allocated.
->> +
->> +file_fallback
->> +       is incremented if a file huge page is attempted to be allocated
->> +       but fails and instead falls back to using small pages.
->> +
->> +file_fallback_charge
->> +       is incremented if a file huge page cannot be charged and instead
->> +       falls back to using small pages even though the allocation was
->> +       successful.
->> +
-> 
-> I realized that when we talk about fallback, it doesn't necessarily mean
-> small pages; it could also refer to smaller huge pages.
+For user PD initialization, initmem is allocated and sent to DSP for
+initial memory requirements like shell loading. This size is the shell
+size that is  passed by user space and is checked against a max size.
+For unsigned PD offloading requirement, additional memory is required
+because of additional static heap initialization. Without this
+additional memory, PD initialization would fail. Increase the initmem
+size by 2MB for unsigned PD initmem buffer allocation. Any additional
+memory sent to DSP during PD init is used as the PD heap.
 
-Yes good point, I'll update the documentation to reflect that for all memory types.
+Fixes: 7f1f481263c3 ("misc: fastrpc: check before loading process to the DSP")
+Cc: stable <stable@kernel.org>
+Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+---
+Changes in v2:
+  - Modified commit text.
+  - Removed size check instead of updating max file size.
+Changes in v3:
+  - Added bound check again with a higher max size definition.
+  - Modified commit text accordingly.
+Changes in v4:
+  - Defined new initmem specific MACROs.
+  - Adding extra memory for unsigned PD.
+  - Added comment suggesting the reason for this change.
+  - Modified commit text.
 
-> 
-> anon_fault_alloc
->         is incremented every time a huge page is successfully
->         allocated and charged to handle a page fault.
-> 
-> anon_fault_fallback
->         is incremented if a page fault fails to allocate or charge
->         a huge page and instead falls back to using huge pages with
->         lower orders or small pages.
-> 
-> anon_fault_fallback_charge
->         is incremented if a page fault fails to charge a huge page and
->         instead falls back to using huge pages with lower orders or
->         small pages even though the allocation was successful.
-> 
-> This also applies to files, right?
+ drivers/misc/fastrpc.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-It does in the place you highlight below, but page_cache_ra_order() just falls
-back immediately to order-0. Regardless, I think we should just document the
-user facing docs to allow for a lower high order. That gives the implementation
-more flexibility.
-
-> 
->                 do {
->                         gfp_t alloc_gfp = gfp;
-> 
->                         err = -ENOMEM;
->                         if (order > 0)
->                                 alloc_gfp |= __GFP_NORETRY | __GFP_NOWARN;
->                         folio = filemap_alloc_folio(alloc_gfp, order);
->                         if (!folio)
->                                 continue;
-> 
->                         /* Init accessed so avoid atomic
-> mark_page_accessed later */
->                         if (fgp_flags & FGP_ACCESSED)
->                                 __folio_set_referenced(folio);
-> 
->                         err = filemap_add_folio(mapping, folio, index, gfp);
->                         if (!err)
->                                 break;
->                         folio_put(folio);
->                         folio = NULL;
->                 } while (order-- > 0);
-> 
-> 
->>  split
->>         is incremented every time a huge page is successfully split into
->>         smaller orders. This can happen for a variety of reasons but a
->> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->> index b8c63c3e967f..4f9109fcdded 100644
->> --- a/include/linux/huge_mm.h
->> +++ b/include/linux/huge_mm.h
->> @@ -123,6 +123,9 @@ enum mthp_stat_item {
->>         MTHP_STAT_SHMEM_ALLOC,
->>         MTHP_STAT_SHMEM_FALLBACK,
->>         MTHP_STAT_SHMEM_FALLBACK_CHARGE,
->> +       MTHP_STAT_FILE_ALLOC,
->> +       MTHP_STAT_FILE_FALLBACK,
->> +       MTHP_STAT_FILE_FALLBACK_CHARGE,
->>         MTHP_STAT_SPLIT,
->>         MTHP_STAT_SPLIT_FAILED,
->>         MTHP_STAT_SPLIT_DEFERRED,
->> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
->> index 6e2f72d03176..95a147b5d117 100644
->> --- a/include/linux/pagemap.h
->> +++ b/include/linux/pagemap.h
->> @@ -562,14 +562,26 @@ static inline void *detach_page_private(struct page *page)
->>  }
->>
->>  #ifdef CONFIG_NUMA
->> -struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order);
->> +struct folio *__filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order);
->>  #else
->> -static inline struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
->> +static inline struct folio *__filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
->>  {
->>         return folio_alloc_noprof(gfp, order);
->>  }
->>  #endif
->>
->> +static inline struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
->> +{
->> +       struct folio *folio;
->> +
->> +       folio = __filemap_alloc_folio_noprof(gfp, order);
->> +
->> +       if (!folio)
->> +               count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK);
->> +
->> +       return folio;
->> +}
-> 
-> Do we need to add and export __filemap_alloc_folio_noprof()? 
-
-It is exported. See the below change in filemap.c. Previously
-filemap_alloc_folio_noprof() was exported, but that is now an inline and
-__filemap_alloc_folio_noprof() is exported in its place.
-
-> In any case,
-> we won't call count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK) and
-> will only allocate the folio instead?
-
-Sorry I don't understand what you mean by this?
-
-> 
->> +
->>  #define filemap_alloc_folio(...)                               \
->>         alloc_hooks(filemap_alloc_folio_noprof(__VA_ARGS__))
->>
->> diff --git a/mm/filemap.c b/mm/filemap.c
->> index 53d5d0410b51..131d514fca29 100644
->> --- a/mm/filemap.c
->> +++ b/mm/filemap.c
->> @@ -963,6 +963,8 @@ int filemap_add_folio(struct address_space *mapping, struct folio *folio,
->>         int ret;
->>
->>         ret = mem_cgroup_charge(folio, NULL, gfp);
->> +       count_mthp_stat(folio_order(folio),
->> +               ret ? MTHP_STAT_FILE_FALLBACK_CHARGE : MTHP_STAT_FILE_ALLOC);
->>         if (ret)
->>                 return ret;
-> 
-> Would the following be better?
-> 
->         ret = mem_cgroup_charge(folio, NULL, gfp);
->          if (ret) {
->                  count_mthp_stat(folio_order(folio),
-> MTHP_STAT_FILE_FALLBACK_CHARGE);
->                  return ret;
->          }
->        count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_ALLOC);
-> 
-> Anyway, it's up to you. The code just feels a bit off to me :-)
-
-Yes, agree your version is better. I also noticed that anon and shmem increment
-FALLBACK whenever FALLBACK_CHARGE is incremented so I should apply those same
-semantics here.
-
-Thanks,
-Ryan
-
-
-> 
->>
->> @@ -990,7 +992,7 @@ int filemap_add_folio(struct address_space *mapping, struct folio *folio,
->>  EXPORT_SYMBOL_GPL(filemap_add_folio);
->>
->>  #ifdef CONFIG_NUMA
->> -struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
->> +struct folio *__filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
->>  {
->>         int n;
->>         struct folio *folio;
->> @@ -1007,7 +1009,7 @@ struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
->>         }
->>         return folio_alloc_noprof(gfp, order);
->>  }
->> -EXPORT_SYMBOL(filemap_alloc_folio_noprof);
->> +EXPORT_SYMBOL(__filemap_alloc_folio_noprof);
->>  #endif
->>
->>  /*
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index 578ac212c172..26d558e3e80f 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -608,7 +608,14 @@ static struct attribute_group anon_stats_attr_grp = {
->>         .attrs = anon_stats_attrs,
->>  };
->>
->> +DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
->> +DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
->> +DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_CHARGE);
->> +
->>  static struct attribute *file_stats_attrs[] = {
->> +       &file_alloc_attr.attr,
->> +       &file_fallback_attr.attr,
->> +       &file_fallback_charge_attr.attr,
->>  #ifdef CONFIG_SHMEM
->>         &shmem_alloc_attr.attr,
->>         &shmem_fallback_attr.attr,
->> --
->> 2.43.0
->>
-> 
-> Thanks
-> Barry
+diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+index a7a2bcedb37e..18668b020a87 100644
+--- a/drivers/misc/fastrpc.c
++++ b/drivers/misc/fastrpc.c
+@@ -39,6 +39,8 @@
+ #define FASTRPC_DSP_UTILITIES_HANDLE	2
+ #define FASTRPC_CTXID_MASK (0xFF0)
+ #define INIT_FILELEN_MAX (2 * 1024 * 1024)
++#define FASTRPC_INITLEN_MIN (3 * 1024 * 1024)
++#define FASTRPC_STATIC_HEAP_LEN (2 * 1024 * 1024)
+ #define INIT_FILE_NAMELEN_MAX (128)
+ #define FASTRPC_DEVICE_NAME	"fastrpc"
+ 
+@@ -1410,8 +1412,14 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
+ 			goto err;
+ 	}
+ 
+-	memlen = ALIGN(max(INIT_FILELEN_MAX, (int)init.filelen * 4),
++	/* Allocate buffer in kernel for donating to remote process.
++	 * Unsigned PD requires additional memory because of the
++	 * additional static heap initialized within the process.
++	 */
++	memlen = ALIGN(max(FASTRPC_INITLEN_MIN, (int)init.filelen * 4),
+ 		       1024 * 1024);
++	if (unsigned_module)
++		memlen += FASTRPC_STATIC_HEAP_LEN;
+ 	err = fastrpc_buf_alloc(fl, fl->sctx->dev, memlen,
+ 				&imem);
+ 	if (err)
+-- 
+2.34.1
 
 
