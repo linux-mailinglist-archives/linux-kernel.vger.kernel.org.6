@@ -1,245 +1,98 @@
-Return-Path: <linux-kernel+bounces-257046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E506937483
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:48:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F04F937485
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55916281C26
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 07:48:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFDFA1C21CFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 07:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8C2535D4;
-	Fri, 19 Jul 2024 07:48:12 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252621A269
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 07:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B813A5914A;
+	Fri, 19 Jul 2024 07:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uiip+ivV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00B61A269;
+	Fri, 19 Jul 2024 07:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721375291; cv=none; b=GV2EoL6nYmB+GrLnhR5kJmaH4hT+CzfmEvCIjadryGzgMIbTbgmL5/OAYhS2HO0FHneprBCd8HZ2pWFc5ubqDahFQZr0QWJ/tutyg1iPXydYBWFUCL3SW5cu/0JDlt81tAHCf8nqxnTJobxonH7GhM00OyRtHvu15SD9+drDmMk=
+	t=1721375318; cv=none; b=mtsn4uwjwty/zaHn/U/MaUrvAaEKPy32VVX7nU5LMh8ZCqgt+SbgUZYsEnB1N5UwovQzLonIDdwTK5EgUWic8fFz0wWGxicWJMzcMuX8uUvzUoNXTCSvVq/9pUY0z0X0RfHSU4s5M0l9Gj4t2vP8bTba1YagJAE3oh0ur2N2dRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721375291; c=relaxed/simple;
-	bh=MT+vPkCqOd90vvcBn/pt2lXr7wg5QNgLki4nAIjjJ7I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ati+BpFhvGv6DrDijqu8GI5FH4PS71ZQP/pKMu+F9+xQkWJJFY1qhVG2a+GE4OICGOOqVt1ez1dbtR/Ci49zKCxbJdgh+FT4hMvAb5vHMTclWXxFg5Qxm9nPbrpotdnnWslcIhKrtbD2uP8lRkotIANcIij9zbnBleMHSVhS0l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF8E21042;
-	Fri, 19 Jul 2024 00:48:27 -0700 (PDT)
-Received: from [10.57.76.151] (unknown [10.57.76.151])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 098B23F766;
-	Fri, 19 Jul 2024 00:47:59 -0700 (PDT)
-Message-ID: <fa5bd4cb-6d5c-4cb7-bb41-3c277e291cd6@arm.com>
-Date: Fri, 19 Jul 2024 08:47:58 +0100
+	s=arc-20240116; t=1721375318; c=relaxed/simple;
+	bh=DuBeB9Jo4XDCLdekAEbGjpBDINlXuEmgBBn9z0DQtkc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Yn6gIC1hUhPppRnZw8m68oLM/PLVW1qSJuHRG69Utovkogcaa0PvBe2sIV37zWNePt3gzDwz2BSMrSXsxHSN8GQdLtCUj0hso0NDigTZPV52rG5vQu8nWgRfFZJ06c+o2RPgTJw9xBs35j0WkOg+uxK4uu+rjNhyTyvYCzW+ET4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uiip+ivV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0EBCC32782;
+	Fri, 19 Jul 2024 07:48:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721375317;
+	bh=DuBeB9Jo4XDCLdekAEbGjpBDINlXuEmgBBn9z0DQtkc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Uiip+ivV+oT5r8mssop0C70ck395gOwZWGDRVxM4o7BJM9EiAEYtvcmLW1xlHwwTO
+	 aqDMF/YIr1mcuZ3RxoBtGEcrIvF+I0/lGZrq3NanBn08GZbwJjvh2bMwTzCsbb02KJ
+	 T5OvE9NKQEq2GfFYRVgZyl19If//8JijYJHaEBUf8XVlr4q5zYX1BO+cBY959uynac
+	 Gq+SnY/+W0L8cFwcKefLSG3IClZzVmLfNYufbJVrNSbOc2bgje8UkL7txduetj4C1f
+	 gaDt21ckcm0r4FuSdBBbNpbXexpxM36/O+lRWBJQR0A9RKtMwjbjMPDV99RN4Kqi5K
+	 zVLoplzCB7Bcg==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Mark Brown <broonie@kernel.org>,
+	Mohan Kumar <mkumard@nvidia.com>,
+	Sameer Pujar <spujar@nvidia.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-sound@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: tegra: select CONFIG_SND_SIMPLE_CARD_UTILS
+Date: Fri, 19 Jul 2024 09:48:03 +0200
+Message-Id: <20240719074831.3253995-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 3/4] mm: Override mTHP "enabled" defaults at kernel
- cmdline
-To: Barry Song <baohua@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
- <hughd@google.com>, Jonathan Corbet <corbet@lwn.net>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- David Hildenbrand <david@redhat.com>, Lance Yang <ioworker0@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Gavin Shan <gshan@redhat.com>,
- Pankaj Raghav <kernel@pankajraghav.com>, Daniel Gomez
- <da.gomez@samsung.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240717071257.4141363-1-ryan.roberts@arm.com>
- <20240717071257.4141363-4-ryan.roberts@arm.com>
- <CAGsJ_4wiZRP9siEk9WpAYRjj-gehxptGY9XWC8k3N4QHBppAhQ@mail.gmail.com>
-Content-Language: en-GB
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <CAGsJ_4wiZRP9siEk9WpAYRjj-gehxptGY9XWC8k3N4QHBppAhQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 19/07/2024 01:46, Barry Song wrote:
-> On Wed, Jul 17, 2024 at 7:13 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
->>
->> Add thp_anon= cmdline parameter to allow specifying the default
->> enablement of each supported anon THP size. The parameter accepts the
->> following format and can be provided multiple times to configure each
->> size:
->>
->> thp_anon=<size>[KMG]:<value>
->>
->> See Documentation/admin-guide/mm/transhuge.rst for more details.
->>
->> Configuring the defaults at boot time is useful to allow early user
->> space to take advantage of mTHP before its been configured through
->> sysfs.
-> 
-> This is exactly what I need and want to implement, as the current behavior
-> is problematic. We need to boot up the system and reach the point where
-> we can set up the sys interfaces to enable mTHP. Many processes miss the
-> opportunity to use mTHP.
-> 
-> On the other hand, userspace might have been tuned to detect that mTHP
-> is enabled, such as a .so library. However, it turns out we have had
-> inconsistent settings between the two stages - before and after setting
-> mTHP enabled by sys interfaces.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Good feedback - sounds like I should separate out this patch from the rest of
-the series to get it reviewed and merged faster?
+This I2S client driver now uses functions exported from a helper module
+but fails to link when the helper is disabled:
 
-> 
->>
->> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->> ---
->>  .../admin-guide/kernel-parameters.txt         |  8 +++
->>  Documentation/admin-guide/mm/transhuge.rst    | 26 +++++++--
->>  mm/huge_memory.c                              | 55 ++++++++++++++++++-
->>  3 files changed, 82 insertions(+), 7 deletions(-)
->>
->> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->> index bc55fb55cd26..48443ad12e3f 100644
->> --- a/Documentation/admin-guide/kernel-parameters.txt
->> +++ b/Documentation/admin-guide/kernel-parameters.txt
->> @@ -6592,6 +6592,14 @@
->>                         <deci-seconds>: poll all this frequency
->>                         0: no polling (default)
->>
->> +       thp_anon=       [KNL]
->> +                       Format: <size>[KMG]:always|madvise|never|inherit
->> +                       Can be used to control the default behavior of the
->> +                       system with respect to anonymous transparent hugepages.
->> +                       Can be used multiple times for multiple anon THP sizes.
->> +                       See Documentation/admin-guide/mm/transhuge.rst for more
->> +                       details.
->> +
->>         threadirqs      [KNL,EARLY]
->>                         Force threading of all interrupt handlers except those
->>                         marked explicitly IRQF_NO_THREAD.
->> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
->> index 1aaf8e3a0b5a..f53d43d986e2 100644
->> --- a/Documentation/admin-guide/mm/transhuge.rst
->> +++ b/Documentation/admin-guide/mm/transhuge.rst
->> @@ -311,13 +311,27 @@ performance.
->>  Note that any changes to the allowed set of sizes only applies to future
->>  file-backed THP allocations.
->>
->> -Boot parameter
->> -==============
->> +Boot parameters
->> +===============
->>
->> -You can change the sysfs boot time defaults of Transparent Hugepage
->> -Support by passing the parameter ``transparent_hugepage=always`` or
->> -``transparent_hugepage=madvise`` or ``transparent_hugepage=never``
->> -to the kernel command line.
->> +You can change the sysfs boot time default for the top-level "enabled"
->> +control by passing the parameter ``transparent_hugepage=always`` or
->> +``transparent_hugepage=madvise`` or ``transparent_hugepage=never`` to the
->> +kernel command line.
->> +
->> +Alternatively, each supported anonymous THP size can be controlled by
->> +passing ``thp_anon=<size>[KMG]:<state>``, where ``<size>`` is the THP size
->> +and ``<state>`` is one of ``always``, ``madvise``, ``never`` or
->> +``inherit``.
->> +
->> +For example, the following will set 64K THP to ``always``::
->> +
->> +       thp_anon=64K:always
->> +
->> +``thp_anon=`` may be specified multiple times to configure all THP sizes as
->> +required. If ``thp_anon=`` is specified at least once, any anon THP sizes
->> +not explicitly configured on the command line are implicitly set to
->> +``never``.
->>
->>  Hugepages in tmpfs/shmem
->>  ========================
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index 4249c0bc9388..794d2790d90d 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -82,6 +82,7 @@ unsigned long huge_anon_orders_madvise __read_mostly;
->>  unsigned long huge_anon_orders_inherit __read_mostly;
->>  unsigned long huge_file_orders_always __read_mostly;
->>  int huge_file_exec_order __read_mostly = -1;
->> +static bool anon_orders_configured;
->>
->>  unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
->>                                          unsigned long vm_flags,
->> @@ -763,7 +764,10 @@ static int __init hugepage_init_sysfs(struct kobject **hugepage_kobj)
->>          * disable all other sizes. powerpc's PMD_ORDER isn't a compile-time
->>          * constant so we have to do this here.
->>          */
->> -       huge_anon_orders_inherit = BIT(PMD_ORDER);
->> +       if (!anon_orders_configured) {
->> +               huge_anon_orders_inherit = BIT(PMD_ORDER);
->> +               anon_orders_configured = true;
->> +       }
->>
->>         /*
->>          * For pagecache, default to enabling all orders. powerpc's PMD_ORDER
->> @@ -955,6 +959,55 @@ static int __init setup_transparent_hugepage(char *str)
->>  }
->>  __setup("transparent_hugepage=", setup_transparent_hugepage);
->>
->> +static int __init setup_thp_anon(char *str)
->> +{
->> +       unsigned long size;
->> +       char *state;
->> +       int order;
->> +       int ret = 0;
->> +
->> +       if (!str)
->> +               goto out;
->> +
->> +       size = (unsigned long)memparse(str, &state);
->> +       order = ilog2(size >> PAGE_SHIFT);
->> +       if (*state != ':' || !is_power_of_2(size) || size <= PAGE_SIZE ||
->> +           !(BIT(order) & THP_ORDERS_ALL_ANON))
->> +               goto out;
->> +
->> +       state++;
->> +
->> +       if (!strcmp(state, "always")) {
->> +               clear_bit(order, &huge_anon_orders_inherit);
->> +               clear_bit(order, &huge_anon_orders_madvise);
->> +               set_bit(order, &huge_anon_orders_always);
->> +               ret = 1;
->> +       } else if (!strcmp(state, "inherit")) {
->> +               clear_bit(order, &huge_anon_orders_always);
->> +               clear_bit(order, &huge_anon_orders_madvise);
->> +               set_bit(order, &huge_anon_orders_inherit);
->> +               ret = 1;
->> +       } else if (!strcmp(state, "madvise")) {
->> +               clear_bit(order, &huge_anon_orders_always);
->> +               clear_bit(order, &huge_anon_orders_inherit);
->> +               set_bit(order, &huge_anon_orders_madvise);
->> +               ret = 1;
->> +       } else if (!strcmp(state, "never")) {
->> +               clear_bit(order, &huge_anon_orders_always);
->> +               clear_bit(order, &huge_anon_orders_inherit);
->> +               clear_bit(order, &huge_anon_orders_madvise);
->> +               ret = 1;
->> +       }
->> +
->> +       if (ret)
->> +               anon_orders_configured = true;
->> +out:
->> +       if (!ret)
->> +               pr_warn("thp_anon=%s: cannot parse, ignored\n", str);
->> +       return ret;
->> +}
->> +__setup("thp_anon=", setup_thp_anon);
->> +
->>  pmd_t maybe_pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
->>  {
->>         if (likely(vma->vm_flags & VM_WRITE))
->> --
->> 2.43.0
->>
-> 
-> Thanks
-> Barry
+ERROR: modpost: "simple_util_parse_convert" [sound/soc/tegra/snd-soc-tegra210-i2s.ko] undefined!
+ERROR: modpost: "simple_util_get_sample_fmt" [sound/soc/tegra/snd-soc-tegra210-i2s.ko] undefined!
+
+Add a Kconfig select line to ensure it's always turned on here.
+
+Fixes: 2502f8dd8c30 ("ASoC: tegra: I2S client convert formats handling")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ sound/soc/tegra/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
+index 74effc57a7a0..2463c22e9cf6 100644
+--- a/sound/soc/tegra/Kconfig
++++ b/sound/soc/tegra/Kconfig
+@@ -78,6 +78,7 @@ config SND_SOC_TEGRA210_DMIC
+ 
+ config SND_SOC_TEGRA210_I2S
+ 	tristate "Tegra210 I2S module"
++	select SND_SIMPLE_CARD_UTILS
+ 	help
+ 	  Config to enable the Inter-IC Sound (I2S) Controller which
+ 	  implements full-duplex and bidirectional and single direction
+-- 
+2.39.2
 
 
