@@ -1,210 +1,92 @@
-Return-Path: <linux-kernel+bounces-257471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA5FF937A83
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:14:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76968937A7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 218701C21B17
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:14:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5E811C20D59
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF2C14A4C6;
-	Fri, 19 Jul 2024 16:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="PnYQIHlL"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FE5149C6D;
+	Fri, 19 Jul 2024 16:10:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2556A14A0A2
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 16:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1DF14659B
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 16:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721405413; cv=none; b=DFpsxPZ0v8hgPZ8XthNjLudwf7+2Lo+vE+n8BK8hzCpt/m9E8HvZOouGcnTBy+V0nNOwazXvI8CuDEeXfAZuapVfO2UT67ZbzpIUu5WktdJn6bA65CCYUTUYADWyK4rtCTGhzWHWXnzHLJPlmLFnMXBHzAau7k/C3MJ11izfqxE=
+	t=1721405406; cv=none; b=B3hxGtc3ARZgup76kvhW0/9stqugyZxv3X8Nmqtrx3pbg90H8gMLFJprx+afhLip6mncxzz7GZGXmoFAobVhTq4cbAiYDtft54DDwpG0+fZaSCjmb/El/ZedCzzBImPnqn9r1CGY2c1aW7xEGRcLA47KhSfBuJ7MdgMervqEiHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721405413; c=relaxed/simple;
-	bh=B+1xZ9fR6tSoT6mL74KtYbAEPB8W5QhktsEz3iQNGNQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EOc++uNbhieGEoanPemibqYzh4izGGZbZhzg9oGwt87UADmYp4rM+cLdKux9Wk/y7JnvUwDk3fXryfOC5TY6y20+dVjQ0PbBOzAJrLISD0ZLIcRDz5UenKSGbUyZb/bhz0l0K2XicvTQfFNKv0oDBABfFe11H+TA5H1MRERTkxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=PnYQIHlL; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fb4a807708so19529255ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 09:10:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1721405410; x=1722010210; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qyi9hrGfVRmOD1WpD5vxj3JpORinviXBA5VC8Qc3Jso=;
-        b=PnYQIHlLcEXdgivrQevf6GbVBv4/LmkgKzC+4tOQ0qO8qQ4XdhJZ32iQSmBvrmwpLq
-         5v0q8yu30aS6nGXRFutEQnQKHExmsl7E6fBrhWw5ctrRFdGq/hY2JOlw3KxL6U63Hy8W
-         URi4vc4tA8oEfzfq5PXzBtobGUv4SBrD0FYqZrKw6gCuNsorOwELfyt7KFZHs9do7eS4
-         /qobMZ8Lkl/kvnteYPugdpeVQTLutalfRZRyM+/+VNkGF8EL2MXQriYKaq9szk4pHSBp
-         p07aPww3Nx92eGHm8s85RtF9OGiZ4u/bznWGJbw4k8J8WtBDJMYSR9okhbzfUgJ6fh6H
-         /tMg==
+	s=arc-20240116; t=1721405406; c=relaxed/simple;
+	bh=lDeEEMZ0Kpxwhyf4sKV3soVZgWPwvae7hyUqD0wr5PE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=hmXkKbqzexsVW6WW6BHE0q5Z0BuSJv8i4CivBnOV+TkwLNt3h/7JOCZnNQ+gepcBl8rCa9szmmgxCdwvj3/t0gl8RTI6/xBnt2HXwVDB34Q/Wr6Xi9R53iVL82/ic6k7wSaKPEtr9x1lh8t/mV4KhQ79TaufS61jW7V5mwbLb6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3971269bf67so29104565ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 09:10:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721405410; x=1722010210;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qyi9hrGfVRmOD1WpD5vxj3JpORinviXBA5VC8Qc3Jso=;
-        b=RjzRBKNVgp6HEor8KHkM9m1Tr+kQlWQLkLw5nB9N8A2oaAfdjGrr06Q3x1WF4iog4K
-         G25BdY3V2+WtLu6U46aIqB+IiRzXCjcjZSU0kekBA+WCEPm8EcsMIoSYSB32jwlNREUe
-         xV+gKAmGjuV89W/rDMurUj5yQBiEa2XRGAkmPU2B11L1gTQWzmm/E1H4GmJj+mCniPMn
-         rXrJzIxWLk8QeZ9L+lZTODdJXkKLqAVNGoSHJ6RinVUcpwfJucMQQYUfnLZpJGcRKOe6
-         9o2Xdk+pl1FP/S9ht9LjHL/uo2W5Mf/ksyMXtQjzu7nSq8VYhdWgLKOqlzKZUy8mw+0/
-         uKtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUE0yKd3dtH98qaO7s8KSa+u4QG1k0fh3Kfd31ZK9fv591OHkvXXykKSkKcb8HR8mkPlURy0RYp19qFYegaTHEoOER3javJUOopSobG
-X-Gm-Message-State: AOJu0YyK0HF6SQ+VU9cY4ZU75YvbVbqrfJaYj/S+tzM5GVBOcXCNQXFz
-	3Qox6Izutenp/Pkj3NhJs8x/Iv+4nrrktHv/RWnkQPCcqtc2SV8qFQv+PvBnJuE=
-X-Google-Smtp-Source: AGHT+IFxxJQJMT1yPV9iBgyfcleth8inhyBwlA3lhunIDQ81CpWWGH98IspVcY6bKB19yLGgqpEUJg==
-X-Received: by 2002:a17:902:ecc5:b0:1fb:7978:6b1 with SMTP id d9443c01a7336-1fd74578fb2mr4074945ad.31.1721405410214;
-        Fri, 19 Jul 2024 09:10:10 -0700 (PDT)
-Received: from anup-ubuntu-vm.localdomain ([223.185.135.236])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f28f518sm6632615ad.69.2024.07.19.09.10.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 09:10:09 -0700 (PDT)
-From: Anup Patel <apatel@ventanamicro.com>
-To: Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>
-Cc: Atish Patra <atishp@atishpatra.org>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Anup Patel <anup@brainfault.org>,
-	kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH 13/13] RISC-V: KVM: Use NACL HFENCEs for KVM request based HFENCEs
-Date: Fri, 19 Jul 2024 21:39:13 +0530
-Message-Id: <20240719160913.342027-14-apatel@ventanamicro.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240719160913.342027-1-apatel@ventanamicro.com>
-References: <20240719160913.342027-1-apatel@ventanamicro.com>
+        d=1e100.net; s=20230601; t=1721405403; x=1722010203;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OYTriKvCSORA6mjoEyZ/j31hod0+/l56TzyUyy7BS20=;
+        b=EMyYx3+WbnGjrCzG4OASe4mIjNSbbuxFImP285Fn13T0w4J6a7kpdZFdJnHOdAronB
+         HQHks6OUUEJGIHz/arNKont8nw21hSrF+2W1u0FKD3IMLEjwnW1NCaEXurTQ91oqXen6
+         wx++vm7mrA+RRniTUWHwqmNDblFsQ7Qf+bhUacsPix20M5s951umzRwbzWts3ee4agby
+         gLGREJ9CdTKRlN3jSNkXlPJl20UNbi+6dryc1Wv8+gjoeiCuxrUeMkOF0pA2aH3/IoDU
+         dY2HpK/49dUuIRlpwH943fOEupI/BfgrAkFjpVU8+sY9/+Y0gJSEeFz2OPnzraEAg2g1
+         I6cw==
+X-Forwarded-Encrypted: i=1; AJvYcCXtvs/hzeiQSNYpXv/GPd5hCfARvShCfEZgcUyp4AKCnPiJu8HNRgVVtIJk9HxFQQA7oQg5EdJ9zaUoSE+H6d9KbUKljt/Ch0wAJMW3
+X-Gm-Message-State: AOJu0YyTNe2tVXa1EN4IxK4nIDPNe0U2hzl6RdFBtoy+yzn5O1GTA5KQ
+	o8Y1IaIyBmysE6FbRYbMm4B49iRYeqrKTgtnWSQiQ5yAth6MbWVHWUttBmfENro5dIDynjSzUSn
+	znBejMOBJGXeU//sdCsVnapvvSJwJ77hcAhtnybyrpiMtVKYvln21bOw=
+X-Google-Smtp-Source: AGHT+IF3rcbWSEZyq+y38uvz/jUhjKbV/qZgiis4/0Fdjga073/TguKJYLufFks68w9Ze6uaOVdbTrLSgYtww2YCW/AhXfz9pjBM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1a0d:b0:380:c34a:df56 with SMTP id
+ e9e14a558f8ab-398e81c7e16mr98865ab.6.1721405403495; Fri, 19 Jul 2024 09:10:03
+ -0700 (PDT)
+Date: Fri, 19 Jul 2024 09:10:03 -0700
+In-Reply-To: <000000000000e4d9eb061d719657@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000097148b061d9bed31@google.com>
+Subject: Re: [syzbot] [bcachefs?] general protection fault in bch2_checksum
+From: syzbot <syzbot+dd3d9835055dacb66f35@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, cam.alvarez.i@gmail.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-When running under some other hypervisor, use SBI NACL based HFENCEs
-for TLB shoot-down via KVM requests. This makes HFENCEs faster whenever
-SBI nested acceleration is available.
+syzbot has bisected this issue to:
 
-Signed-off-by: Anup Patel <apatel@ventanamicro.com>
----
- arch/riscv/kvm/tlb.c | 57 +++++++++++++++++++++++++++++++-------------
- 1 file changed, 40 insertions(+), 17 deletions(-)
+commit 03ef80b469d5d83530ce1ce15be78a40e5300f9b
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Sat Sep 23 22:41:51 2023 +0000
 
-diff --git a/arch/riscv/kvm/tlb.c b/arch/riscv/kvm/tlb.c
-index 23c0e82b5103..2f91ea5f8493 100644
---- a/arch/riscv/kvm/tlb.c
-+++ b/arch/riscv/kvm/tlb.c
-@@ -14,6 +14,7 @@
- #include <asm/csr.h>
- #include <asm/cpufeature.h>
- #include <asm/insn-def.h>
-+#include <asm/kvm_nacl.h>
- 
- #define has_svinval()	riscv_has_extension_unlikely(RISCV_ISA_EXT_SVINVAL)
- 
-@@ -186,18 +187,24 @@ void kvm_riscv_fence_i_process(struct kvm_vcpu *vcpu)
- 
- void kvm_riscv_hfence_gvma_vmid_all_process(struct kvm_vcpu *vcpu)
- {
--	struct kvm_vmid *vmid;
-+	struct kvm_vmid *v = &vcpu->kvm->arch.vmid;
-+	unsigned long vmid = READ_ONCE(v->vmid);
- 
--	vmid = &vcpu->kvm->arch.vmid;
--	kvm_riscv_local_hfence_gvma_vmid_all(READ_ONCE(vmid->vmid));
-+	if (kvm_riscv_nacl_available())
-+		nacl_hfence_gvma_vmid_all(nacl_shmem(), vmid);
-+	else
-+		kvm_riscv_local_hfence_gvma_vmid_all(vmid);
- }
- 
- void kvm_riscv_hfence_vvma_all_process(struct kvm_vcpu *vcpu)
- {
--	struct kvm_vmid *vmid;
-+	struct kvm_vmid *v = &vcpu->kvm->arch.vmid;
-+	unsigned long vmid = READ_ONCE(v->vmid);
- 
--	vmid = &vcpu->kvm->arch.vmid;
--	kvm_riscv_local_hfence_vvma_all(READ_ONCE(vmid->vmid));
-+	if (kvm_riscv_nacl_available())
-+		nacl_hfence_vvma_all(nacl_shmem(), vmid);
-+	else
-+		kvm_riscv_local_hfence_vvma_all(vmid);
- }
- 
- static bool vcpu_hfence_dequeue(struct kvm_vcpu *vcpu,
-@@ -251,6 +258,7 @@ static bool vcpu_hfence_enqueue(struct kvm_vcpu *vcpu,
- 
- void kvm_riscv_hfence_process(struct kvm_vcpu *vcpu)
- {
-+	unsigned long vmid;
- 	struct kvm_riscv_hfence d = { 0 };
- 	struct kvm_vmid *v = &vcpu->kvm->arch.vmid;
- 
-@@ -259,26 +267,41 @@ void kvm_riscv_hfence_process(struct kvm_vcpu *vcpu)
- 		case KVM_RISCV_HFENCE_UNKNOWN:
- 			break;
- 		case KVM_RISCV_HFENCE_GVMA_VMID_GPA:
--			kvm_riscv_local_hfence_gvma_vmid_gpa(
--						READ_ONCE(v->vmid),
--						d.addr, d.size, d.order);
-+			vmid = READ_ONCE(v->vmid);
-+			if (kvm_riscv_nacl_available())
-+				nacl_hfence_gvma_vmid(nacl_shmem(), vmid,
-+						      d.addr, d.size, d.order);
-+			else
-+				kvm_riscv_local_hfence_gvma_vmid_gpa(vmid, d.addr,
-+								     d.size, d.order);
- 			break;
- 		case KVM_RISCV_HFENCE_VVMA_ASID_GVA:
- 			kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_HFENCE_VVMA_ASID_RCVD);
--			kvm_riscv_local_hfence_vvma_asid_gva(
--						READ_ONCE(v->vmid), d.asid,
--						d.addr, d.size, d.order);
-+			vmid = READ_ONCE(v->vmid);
-+			if (kvm_riscv_nacl_available())
-+				nacl_hfence_vvma_asid(nacl_shmem(), vmid, d.asid,
-+						      d.addr, d.size, d.order);
-+			else
-+				kvm_riscv_local_hfence_vvma_asid_gva(vmid, d.asid, d.addr,
-+								     d.size, d.order);
- 			break;
- 		case KVM_RISCV_HFENCE_VVMA_ASID_ALL:
- 			kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_HFENCE_VVMA_ASID_RCVD);
--			kvm_riscv_local_hfence_vvma_asid_all(
--						READ_ONCE(v->vmid), d.asid);
-+			vmid = READ_ONCE(v->vmid);
-+			if (kvm_riscv_nacl_available())
-+				nacl_hfence_vvma_asid_all(nacl_shmem(), vmid, d.asid);
-+			else
-+				kvm_riscv_local_hfence_vvma_asid_all(vmid, d.asid);
- 			break;
- 		case KVM_RISCV_HFENCE_VVMA_GVA:
- 			kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_HFENCE_VVMA_RCVD);
--			kvm_riscv_local_hfence_vvma_gva(
--						READ_ONCE(v->vmid),
--						d.addr, d.size, d.order);
-+			vmid = READ_ONCE(v->vmid);
-+			if (kvm_riscv_nacl_available())
-+				nacl_hfence_vvma(nacl_shmem(), vmid,
-+						 d.addr, d.size, d.order);
-+			else
-+				kvm_riscv_local_hfence_vvma_gva(vmid, d.addr,
-+								d.size, d.order);
- 			break;
- 		default:
- 			break;
--- 
-2.34.1
+    bcachefs: Ignore unknown mount options
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=118fe60d980000
+start commit:   0434dbe32053 Merge tag 'linux_kselftest-next-6.11-rc1' of ..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=138fe60d980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=158fe60d980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4b8bd5292e033239
+dashboard link: https://syzkaller.appspot.com/bug?extid=dd3d9835055dacb66f35
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10d9ccb5980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12633a79980000
+
+Reported-by: syzbot+dd3d9835055dacb66f35@syzkaller.appspotmail.com
+Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
