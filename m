@@ -1,309 +1,155 @@
-Return-Path: <linux-kernel+bounces-257214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 495989376C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:48:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDDFC9376C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AB88B2188C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:48:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 735DC282B79
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA3685628;
-	Fri, 19 Jul 2024 10:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GlDZECOz"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D11126F02;
+	Fri, 19 Jul 2024 10:48:27 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606B984A32
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 10:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D9584E15
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 10:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721386103; cv=none; b=raNnwU3urWK/8lNSjf7bQPgCx9UMx7aWT53kvm4Mvs2dJQ0VW7p12URxD+Z61UHppfmm2jP+d7DSrK7SJEQzUtv/PE2WyBosz695p3T9Ke16aL/aGcszJcwA3gUjJpVqt0RCXCrMkUjVhXSG9+WubOOoqj4g1gKhrrvQIkJYyqA=
+	t=1721386106; cv=none; b=qsliY4ibo+Wb4ICPQWdmyE5jOKJDfUeG+wI/TSBeR/2kzoYZGXJesjD2dnQsp5Lgc1t8UcoSU0m/CMTqnEB5quU45W/ajL+rKYddJuah3vYO95Y3hbDPOTkgPcuOjMA5/Z5K82rKqjXguLqK+MjAu4T/8/7l/bdUxxAzs0vNFtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721386103; c=relaxed/simple;
-	bh=MTkLtnrdT1NP01vhZ4e7zwQFJkGZtPhOcNSPQ6LOAZ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H8HN77PWi+ousJStT26AkE0xV4mErBzynrrXXMvgiGEqwjRfpqdBe7ylR6LVu0vnJkbhf+4t8XZWuDDfLxZl7axm/9PRRIxvdBVpazb2qDg1LuS1cCnnFzmxIBtN64DpHa+djddXG+7WrJgmyWXC8FU6Q6aFeSAE2qZYeJM1jEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GlDZECOz; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3686b554cfcso431154f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 03:48:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721386098; x=1721990898; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QT3Oxgygqz6ZnVlMJNzc0vXkjCOv7tAU8CrJxx5mcsc=;
-        b=GlDZECOz1pAjwTIAzKUwxZEiLoL7nSIG5jZhyIVeo4xfPpU8lPfMgqD3aC8QHSWJYp
-         53vtqUHLlW2ZtXT69uNpzOKkTE1kkzyNvJWcOTqiL4klRATG5e/EKCuey4v6pRFzgGdA
-         Iu9tRPc8RA209/CfLzkNy9Z770sZKnAAQWuVk+JiaqlOvXyGne4/qRuWx97ovlmjoAVI
-         K7Z/oP74hwWdoUAe1MlY8KCoJR+b0vw3Cj8MrYCx5N5V5XS1f6iWYM4mltFNaoAqkcSs
-         83Ec9feApAUtdybt5pLXflHfgPAASdf4zw6R16HOsLajfgLC6wdXznGFTqwn0l+GULnj
-         NF6A==
+	s=arc-20240116; t=1721386106; c=relaxed/simple;
+	bh=02FH24jrTBYKtRTAr43pBQ9eN8OwDgj7jhIU3s1Xvuw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=haPkJLw9hnxattCnmRidRGX414wBpfxA+m4HJECtjG8iOLSb/5qa9fEqjIOYZ4oZnEL+6IqEXJF+ardKuSZJ8Q+CP/DeEmdvmiVA882Mq/y6ko9LTfo2Ucp4gc6Hn7CgkXocZYS/Bsjc+HSYOwLsAhF+lA0C/CewhoBNQF0xLYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-37642e69d7eso25424895ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 03:48:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721386098; x=1721990898;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QT3Oxgygqz6ZnVlMJNzc0vXkjCOv7tAU8CrJxx5mcsc=;
-        b=bV+uAMGyqi76Bp9n/fGeC9Zcs6m/o5NLI66A4kAJ0ohF2Xb/WDZnjo2qzJoPG/cYwo
-         rGBtu/AP6Ty6A3ZrAIZQaQm7jRBaOW3qcsCXJ7PHHX8bkFjiI61z3AHObRhjuESa2uh4
-         DNXOPYGJ2l0iZ2TArsg/QDGS1E9A56akXjQmYelvKfzPdfMlyzZEoQyRbHb+enkSqxxr
-         SQtPZF1vUY4sziGZO94dzs20PKc0GkZ0eCR014YDn0azrxVVNQyrtSglv4DM7lSbe3JQ
-         MW9FLQet4Bc7/FCLU4mhxyrXBegPNTtenmxTNrEaC5G7KeatEsyWVu7SJQD+GcS6spXJ
-         u9YA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0uNTqnEmnNZxe8L8i/jpNDx/EuRvPBKT9Ub3p4c7s7ZsQxZJwxFsRVN302ojVIWnVLOjjJ3reuqL0X/USk49bwgSTV3ZZ9UTY4yh2
-X-Gm-Message-State: AOJu0YzByB4gHnSfrn7l0bFcefemMIk5FfKK/lHXpR/pe5ZupUvDS5r4
-	8XpUy3zMI0uaIStf5c046yL2LlymOUQIjJ+p4SXKqM4T0VZPekmp1THN4dSsUZk=
-X-Google-Smtp-Source: AGHT+IEPLg6lBUWym3tbn1u+RGXEOjf/HSA685NgRWZptIEUhp6cgruntzO8Q2ovSFfYC8ZzHwKZ2g==
-X-Received: by 2002:adf:e386:0:b0:368:87ca:3d85 with SMTP id ffacd0b85a97d-36887ca3dbcmr157013f8f.29.1721386098278;
-        Fri, 19 Jul 2024 03:48:18 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36878694ba0sm1255324f8f.61.2024.07.19.03.48.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Jul 2024 03:48:17 -0700 (PDT)
-Message-ID: <ef5e7351-5f62-444a-b930-4dc2feb9f10d@linaro.org>
-Date: Fri, 19 Jul 2024 11:48:16 +0100
+        d=1e100.net; s=20230601; t=1721386104; x=1721990904;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xjd0HawvlrmmXjmsT0jPDTjlvuL96xs/zcnGiggrvQs=;
+        b=myWwAKIiCty8RCph0flFnHw3ir5k0sDLLwIxFM1VH0xmIVOTDk3WfDeODkJFbR0Jc5
+         DkWiZhB3QYgdxW3DCfnm/B9mCFJ/zuk9VUeBr6uBjTUxrjxPE3nHaP12HHi39SDDcZ59
+         RSut9w60/b68doDDeCcnr0TPz3dVSpoE1SSo1AH18odNB9jZgRdg/JRSWt8+cHcC+hn7
+         uwRK7bmK5MxT+cEyulKQGp4snSh9a6btw7Dyxr4m6OU47U4KDUl625LfhszceolYrsLF
+         gKaEJTZWh9BoNLHl7pmd+s9UbvYh8UB5a51rKYwUkOSXb2mK+BkuCDTzoU8i6xvVj9r0
+         w3Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCUVlKFcYGf5y8KBKwqi/Zbca5/QsS/LX9UHdpivfcorIdtPVgQunD0QfkV61dvSvu5avFlN6jBKHw00PcBmRAKpkkRx3sHMvhFToDAB
+X-Gm-Message-State: AOJu0YxCTIjJan1vlXG/8YWzf/WjXqr2QygWR9iXOhkfF8av31HgUNDL
+	TySFgA73nP7SNRX0/z75a7rQBjYtCaCRv/l1hOuHwwqxi5tdaxSLQJ+P6fRMdvHVlM8AnwAm2M7
+	tJ5EmMzxeE2E6u4x6/qpc3aNHhncCo1TtrTjYF0zWC+WUMNVM9R8A32w=
+X-Google-Smtp-Source: AGHT+IHdE/A9JzwF9cRaA+p5kudeLkFC4WzOLCTi/jzjtYopUZwBKcqXHw9T8FdWBiqfdkrer/4mgx4rh7tc/JeBIZZ/kJed+bv4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/17] perf: cs-etm: Support version 0.1 of HW_ID
- packets
-To: Mike Leach <mike.leach@linaro.org>
-Cc: coresight@lists.linaro.org, suzuki.poulose@arm.com,
- gankulkarni@os.amperecomputing.com, leo.yan@linux.dev,
- anshuman.khandual@arm.com, James Clark <james.clark@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-perf-users@vger.kernel.org
-References: <20240712102029.3697965-1-james.clark@linaro.org>
- <20240712102029.3697965-7-james.clark@linaro.org>
- <CAJ9a7Vgz-rP6kGLLo2RR_qSZ3dhBT+=E8S=z1Hj6pfwOYu06Nw@mail.gmail.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <CAJ9a7Vgz-rP6kGLLo2RR_qSZ3dhBT+=E8S=z1Hj6pfwOYu06Nw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:20ea:b0:397:5d37:622e with SMTP id
+ e9e14a558f8ab-3975d376423mr2217495ab.2.1721386104500; Fri, 19 Jul 2024
+ 03:48:24 -0700 (PDT)
+Date: Fri, 19 Jul 2024 03:48:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000047bf6a061d976fdb@google.com>
+Subject: [syzbot] [hfs?] WARNING: ODEBUG bug in hfsplus_fill_super (3)
+From: syzbot <syzbot+dd02382b022192737ea3@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    68b59730459e Merge tag 'perf-tools-for-v6.11-2024-07-16' o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14d065e9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b6230d83d52af231
+dashboard link: https://syzkaller.appspot.com/bug?extid=dd02382b022192737ea3
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8229997a3dbb/disk-68b59730.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fd51823e0836/vmlinux-68b59730.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/01811b27f987/bzImage-68b59730.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+dd02382b022192737ea3@syzkaller.appspotmail.com
+
+hfsplus: b-tree write err: -5, ino 8
+------------[ cut here ]------------
+ODEBUG: free active (active state 0) object: ffff88807bf16a38 object type: timer_list hint: delayed_sync_fs+0x0/0xf0
+WARNING: CPU: 0 PID: 21527 at lib/debugobjects.c:518 debug_print_object+0x17a/0x1f0 lib/debugobjects.c:515
+Modules linked in:
+CPU: 0 PID: 21527 Comm: syz.2.2751 Not tainted 6.10.0-syzkaller-08280-g68b59730459e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:debug_print_object+0x17a/0x1f0 lib/debugobjects.c:515
+Code: e8 eb 1b 44 fd 4c 8b 0b 48 c7 c7 e0 64 20 8c 48 8b 74 24 08 48 89 ea 44 89 e1 4d 89 f8 ff 34 24 e8 db fc 9f fc 48 83 c4 08 90 <0f> 0b 90 90 ff 05 1c 78 f6 0a 48 83 c4 10 5b 41 5c 41 5d 41 5e 41
+RSP: 0018:ffffc900038275b8 EFLAGS: 00010286
+RAX: 07a674bbf3926400 RBX: ffffffff8bccb7a0 RCX: 0000000000040000
+RDX: ffffc9000e1eb000 RSI: 000000000002ed85 RDI: 000000000002ed86
+RBP: ffffffff8c206660 R08: ffffffff81588142 R09: fffffbfff1c39da0
+R10: dffffc0000000000 R11: fffffbfff1c39da0 R12: 0000000000000000
+R13: ffffffff8c206578 R14: dffffc0000000000 R15: ffff88807bf16a38
+FS:  00007f99cdb5a6c0(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007eff0195d430 CR3: 000000005761c000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ __debug_check_no_obj_freed lib/debugobjects.c:990 [inline]
+ debug_check_no_obj_freed+0x45b/0x580 lib/debugobjects.c:1020
+ slab_free_hook mm/slub.c:2163 [inline]
+ slab_free mm/slub.c:4438 [inline]
+ kfree+0x10f/0x360 mm/slub.c:4559
+ hfsplus_fill_super+0xf25/0x1ca0 fs/hfsplus/super.c:618
+ mount_bdev+0x20c/0x2d0 fs/super.c:1668
+ legacy_get_tree+0xf0/0x190 fs/fs_context.c:662
+ vfs_get_tree+0x92/0x2a0 fs/super.c:1789
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3472
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f99ccd7725a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 7e 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f99cdb59e78 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f99cdb59f00 RCX: 00007f99ccd7725a
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f99cdb59ec0
+RBP: 0000000020000000 R08: 00007f99cdb59f00 R09: 0000000002000010
+R10: 0000000002000010 R11: 0000000000000206 R12: 0000000020000100
+R13: 00007f99cdb59ec0 R14: 00000000000006b5 R15: 0000000020000140
+ </TASK>
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 18/07/2024 2:24 pm, Mike Leach wrote:
-> On Fri, 12 Jul 2024 at 11:22, James Clark <james.clark@linaro.org> wrote:
->>
->> From: James Clark <james.clark@arm.com>
->>
->> v0.1 HW_ID packets have a new field that describes which sink each CPU
->> writes to. Use the sink ID to link trace ID maps to each other so that
->> mappings are shared wherever the sink is shared.
->>
->> Also update the error message to show that overlapping IDs aren't an
->> error in per-thread mode, just not supported. In the future we can
->> use the CPU ID from the AUX records, or watch for changing sink IDs on
->> HW_ID packets to use the correct decoders.
->>
->> Signed-off-by: James Clark <james.clark@arm.com>
->> Signed-off-by: James Clark <james.clark@linaro.org>
->> ---
->>   tools/include/linux/coresight-pmu.h |  17 +++--
->>   tools/perf/util/cs-etm.c            | 100 +++++++++++++++++++++++++---
->>   2 files changed, 103 insertions(+), 14 deletions(-)
->>
->> diff --git a/tools/include/linux/coresight-pmu.h b/tools/include/linux/coresight-pmu.h
->> index 51ac441a37c3..89b0ac0014b0 100644
->> --- a/tools/include/linux/coresight-pmu.h
->> +++ b/tools/include/linux/coresight-pmu.h
->> @@ -49,12 +49,21 @@
->>    * Interpretation of the PERF_RECORD_AUX_OUTPUT_HW_ID payload.
->>    * Used to associate a CPU with the CoreSight Trace ID.
->>    * [07:00] - Trace ID - uses 8 bits to make value easy to read in file.
->> - * [59:08] - Unused (SBZ)
->> - * [63:60] - Version
->> + * [39:08] - Sink ID - as reported in /sys/bus/event_source/devices/cs_etm/sinks/
->> + *           Added in minor version 1.
->> + * [55:40] - Unused (SBZ)
->> + * [59:56] - Minor Version - previously existing fields are compatible with
->> + *           all minor versions.
->> + * [63:60] - Major Version - previously existing fields mean different things
->> + *           in new major versions.
->>    */
->>   #define CS_AUX_HW_ID_TRACE_ID_MASK     GENMASK_ULL(7, 0)
->> -#define CS_AUX_HW_ID_VERSION_MASK      GENMASK_ULL(63, 60)
->> +#define CS_AUX_HW_ID_SINK_ID_MASK      GENMASK_ULL(39, 8)
->>
->> -#define CS_AUX_HW_ID_CURR_VERSION 0
->> +#define CS_AUX_HW_ID_MINOR_VERSION_MASK        GENMASK_ULL(59, 56)
->> +#define CS_AUX_HW_ID_MAJOR_VERSION_MASK        GENMASK_ULL(63, 60)
->> +
->> +#define CS_AUX_HW_ID_MAJOR_VERSION 0
->> +#define CS_AUX_HW_ID_MINOR_VERSION 1
->>
->>   #endif
->> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
->> index 954a6f7bedf3..87e983da19be 100644
->> --- a/tools/perf/util/cs-etm.c
->> +++ b/tools/perf/util/cs-etm.c
->> @@ -118,6 +118,12 @@ struct cs_etm_queue {
->>          struct cs_etm_traceid_queue **traceid_queues;
->>          /* Conversion between traceID and metadata pointers */
->>          struct intlist *traceid_list;
->> +       /*
->> +        * Same as traceid_list, but traceid_list may be a reference to another
->> +        * queue's which has a matching sink ID.
->> +        */
->> +       struct intlist *own_traceid_list;
->> +       u32 sink_id;
->>   };
->>
->>   static int cs_etm__process_timestamped_queues(struct cs_etm_auxtrace *etm);
->> @@ -142,6 +148,7 @@ static int cs_etm__metadata_set_trace_id(u8 trace_chan_id, u64 *cpu_metadata);
->>                        (queue_nr << 16 | trace_chan_id)
->>   #define TO_QUEUE_NR(cs_queue_nr) (cs_queue_nr >> 16)
->>   #define TO_TRACE_CHAN_ID(cs_queue_nr) (cs_queue_nr & 0x0000ffff)
->> +#define SINK_UNSET ((u32) -1)
->>
->>   static u32 cs_etm__get_v7_protocol_version(u32 etmidr)
->>   {
->> @@ -241,7 +248,16 @@ static int cs_etm__insert_trace_id_node(struct cs_etm_queue *etmq,
->>                  int err;
->>
->>                  if (curr_cpu_data[CS_ETM_CPU] != cpu_metadata[CS_ETM_CPU]) {
->> -                       pr_err("CS_ETM: map mismatch between HW_ID packet CPU and Trace ID\n");
->> +                       /*
->> +                        * With > CORESIGHT_TRACE_IDS_MAX ETMs, overlapping IDs
->> +                        * are expected (but not supported) in per-thread mode,
->> +                        * rather than signifying an error.
->> +                        */
->> +                       if (etmq->etm->per_thread_decoding)
->> +                               pr_err("CS_ETM: overlapping Trace IDs aren't currently supported in per-thread mode\n");
->> +                       else
->> +                               pr_err("CS_ETM: map mismatch between HW_ID packet CPU and Trace ID\n");
->> +
->>                          return -EINVAL;
->>                  }
->>
->> @@ -326,6 +342,64 @@ static int cs_etm__process_trace_id_v0(struct cs_etm_auxtrace *etm, int cpu,
->>          return cs_etm__metadata_set_trace_id(trace_chan_id, cpu_data);
->>   }
->>
->> +static int cs_etm__process_trace_id_v0_1(struct cs_etm_auxtrace *etm, int cpu,
->> +                                        u64 hw_id)
->> +{
->> +       struct cs_etm_queue *etmq = cs_etm__get_queue(etm, cpu);
->> +       int ret;
->> +       u64 *cpu_data;
->> +       u32 sink_id = FIELD_GET(CS_AUX_HW_ID_SINK_ID_MASK, hw_id);
->> +       u8 trace_id = FIELD_GET(CS_AUX_HW_ID_TRACE_ID_MASK, hw_id);
->> +
->> +       /*
->> +        * Check sink id hasn't changed in per-cpu mode. In per-thread mode,
->> +        * let it pass for now until an actual overlapping trace ID is hit. In
->> +        * most cases IDs won't overlap even if the sink changes.
->> +        */
->> +       if (!etmq->etm->per_thread_decoding && etmq->sink_id != SINK_UNSET &&
->> +           etmq->sink_id != sink_id) {
->> +               pr_err("CS_ETM: mismatch between sink IDs\n");
->> +               return -EINVAL;
->> +       }
->> +
->> +       etmq->sink_id = sink_id;
->> +
->> +       /* Find which other queues use this sink and link their ID maps */
->> +       for (unsigned int i = 0; i < etm->queues.nr_queues; ++i) {
->> +               struct cs_etm_queue *other_etmq = etm->queues.queue_array[i].priv;
->> +
->> +               /* Different sinks, skip */
->> +               if (other_etmq->sink_id != etmq->sink_id)
->> +                       continue;
->> +
->> +               /* Already linked, skip */
->> +               if (other_etmq->traceid_list == etmq->traceid_list)
->> +                       continue;
->> +
->> +               /* At the point of first linking, this one should be empty */
->> +               if (!intlist__empty(etmq->traceid_list)) {
->> +                       pr_err("CS_ETM: Can't link populated trace ID lists\n");
->> +                       return -EINVAL;
->> +               }
->> +
->> +               etmq->own_traceid_list = NULL;
->> +               intlist__delete(etmq->traceid_list);
->> +               etmq->traceid_list = other_etmq->traceid_list;
->> +               break;
->> +       }
->> +
->> +       cpu_data = get_cpu_data(etm, cpu);
->> +       ret = cs_etm__insert_trace_id_node(etmq, trace_id, cpu_data);
->> +       if (ret)
->> +               return ret;
->> +
->> +       ret = cs_etm__metadata_set_trace_id(trace_id, cpu_data);
->> +       if (ret)
->> +               return ret;
->> +
->> +       return 0;
->> +}
->> +
->>   static int cs_etm__metadata_get_trace_id(u8 *trace_chan_id, u64 *cpu_metadata)
->>   {
->>          u64 cs_etm_magic = cpu_metadata[CS_ETM_MAGIC];
->> @@ -414,10 +488,10 @@ static int cs_etm__process_aux_output_hw_id(struct perf_session *session,
->>
->>          /* extract and parse the HW ID */
->>          hw_id = event->aux_output_hw_id.hw_id;
->> -       version = FIELD_GET(CS_AUX_HW_ID_VERSION_MASK, hw_id);
->> +       version = FIELD_GET(CS_AUX_HW_ID_MAJOR_VERSION_MASK, hw_id);
->>
->>          /* check that we can handle this version */
->> -       if (version > CS_AUX_HW_ID_CURR_VERSION) {
->> +       if (version > CS_AUX_HW_ID_MAJOR_VERSION) {
->>                  pr_err("CS ETM Trace: PERF_RECORD_AUX_OUTPUT_HW_ID version %d not supported. Please update Perf.\n",
->>                         version);
->>                  return -EINVAL;
->> @@ -442,7 +516,10 @@ static int cs_etm__process_aux_output_hw_id(struct perf_session *session,
->>                  return -EINVAL;
->>          }
->>
->> -       return cs_etm__process_trace_id_v0(etm, cpu, hw_id);
-> 
-> Perhaps leave this as the final statement of the function
-> 
->> +       if (FIELD_GET(CS_AUX_HW_ID_MINOR_VERSION_MASK, hw_id) == 0)
-> 
-> this could be moved before and be
-> 
-> if (FIELD_GET(CS_AUX_HW_ID_MINOR_VERSION_MASK, hw_id) == 1)
->                 return cs_etm__process_trace_id_v0_1(etm, cpu, hw_id);
-> 
-> 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Because I was intending minor version changes to be backwards compatible 
-I have it so that any value other than 0 is treated as v0.1. Otherwise 
-version updates will break old versions of Perf. And then if we added a 
-v0.3 it would look like this:
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-  if (FIELD_GET(CS_AUX_HW_ID_MINOR_VERSION_MASK, hw_id) == 0)
-    return cs_etm__process_trace_id_v0(etm, cpu, hw_id);
-  else if (FIELD_GET(CS_AUX_HW_ID_MINOR_VERSION_MASK, hw_id) == 1)
-    return cs_etm__process_trace_id_v0_1(etm, cpu, hw_id);
-  else
-    return cs_etm__process_trace_id_v0_2(etm, cpu, hw_id);
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Based on that I'm not sure if you still think it should be changed?
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
