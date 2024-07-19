@@ -1,296 +1,153 @@
-Return-Path: <linux-kernel+bounces-257188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC11693766B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:04:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 43E9A93766C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EB4CB26018
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:04:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 770A9B229A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898DE12C814;
-	Fri, 19 Jul 2024 10:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F8E83A14;
+	Fri, 19 Jul 2024 10:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uZRNO5kB"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BQJNPN6u"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B00029A1
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 10:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C995F8289E
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 10:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721383436; cv=none; b=aQMfqIE9jA0N+1K5YvdrItROcK8wlzosonFTrZYHC/disvsI6dCrIRhoHsWQMLWx/VdhDJ/h26pbsHmY5LooCgM2jalys03MUoHirS9lJ23jqvLqhaCnPVT5hLu7T/bR2PijfKduKH6Sru+2UE3/bfGCxYHQkkPi8nulS7ghRaM=
+	t=1721383462; cv=none; b=HDef+SM1XrtFyJOV/ZbewdM/Hc9KtlX6OebCiMtKPiaudWSQxIPLbLLa982UMJCFMW9MiF33T0gdM5cQHy0q8w8t8xTRaznTViDwCBJQt0QrWX2JgqIKS/nTDpmDKRSMjZqYR8sgNsQHY7Ep2WU9+wiGCbv1haryH4o5W0vR3mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721383436; c=relaxed/simple;
-	bh=JaRdtAmG/aBVVoGezGVY9XvHQEh3BjeMocyDoFnu27k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aNRnjz2lbNAV9je9jx1PIO8r9VOFcJutAiVO88OkCI4wwkOVJGTk03Od6q+A+TtWb8miM8JX54AhM3jAXY2RC6VbrEWueVgNc65FM2ywqDFFxQz1qEJVrknoJOzR+uOM/L2tyqO7AGgm5TOzyw5JRo2J1tJVRRSaw32bt7gKJBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uZRNO5kB; arc=none smtp.client-ip=209.85.208.53
+	s=arc-20240116; t=1721383462; c=relaxed/simple;
+	bh=MagCwnnVPN2/OcKFewMtfZEkar8GKGixE8iE4n7DkHQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ESWOwyFWsRlx2clBvhfyRpOK8E02Fjg4WcaraFwBmXSO/Fv205m9JgJsOs6TfPCWQ1FbX1hhYvZiANCvjhqKI9cI/6bAShNkO7NEtjum2RYrYyaiHtbX7W3qD0t94Jw136xLuwBVWEqXVPUd3d6pYb2AydJeqi4Fpbouz0hz/U4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BQJNPN6u; arc=none smtp.client-ip=209.85.208.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5a1fcb611d9so854546a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 03:03:54 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2eeef45d865so24116781fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 03:04:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721383433; x=1721988233; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ncnxowO0dKQNeRgTlGsuN2AsFIskGsfKL/5xH//5Wcs=;
-        b=uZRNO5kBCsh5bpj6NxS7uz563BazVCrXxVgmMjoG6aueedyExDQBJbL7F1A1ndRFxa
-         mXjKUvANqNJJWdeDpEFFSMzgu/sITL/UHf95x/vANTRMBFWr+9POwDm8lT322QXTo6Gd
-         0C/XMC+8tx+4XOj7VTmLpfxrF9yV7n8lp4oBlhD/TWhdr9HpW1M6BOKYeaPCJWdRdtRa
-         6kktJ916MW8uj1OC/Dx/jud28v+txqZxoksLjUi/Cq93WcJjx68aAaoMhr65WB8yoZZi
-         dzYmHttSPfWwLlQbUIupnGkKZq+zxtn70GN9wrXjWmordn2Npzx9x+sP7eVOh8KNwPQY
-         ejlw==
+        d=linaro.org; s=google; t=1721383459; x=1721988259; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=2R8lwWNbxE3CTlbuNF2fJp+MBVYnCjf/eAucXbCNhZI=;
+        b=BQJNPN6uMo5gWSFllcM7LSPR6AY4wfQhfox5+Gb+/6OWvOOvlprGlJxBsl4mfQsXes
+         +V2/ya0mlu0p43GHKvzzRDUxAc4CGMhDBegH2FHOxs301fnJ+Y7xFyR97UxCUa0XFUVe
+         18HSIrrcV3W1bdSWqRPPZC+pVwitFeeDt+d8edYBQ9DQGLMNR9uBDEObQw67ZTkSk9M7
+         u3Kx3QGPX4iqIEmfPBO3xfxMi1h7F2Y2KXBKAZDVJ1zpdvBVYBP3iLTkgPzAAPyrfD+m
+         TYVOC4piwJBxdM6sl2E17sm/7w7RY0UToFBI3YOJD9KJNloCiVsVqjLjE6iICNgn5C3R
+         WQMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721383433; x=1721988233;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ncnxowO0dKQNeRgTlGsuN2AsFIskGsfKL/5xH//5Wcs=;
-        b=X5iJjrwVAWHKj4ZzjWQgYR+p3sBFkj21CFDD01L8+2XCEwiQQ8f1J8aGOZQAg2T3tm
-         ndhqhL3uPP22T1es2BSApzack23kl7/nB5xZrQWQQhXB42kLUfB/bJyhv26qXQ8o6QRq
-         CeG3jNiq+ydbKiS0McqBYam3qoTOw6lyzOVef8Xjkj65cr/aJeoTO0wW/4+PUWiesyl7
-         kRZA8/4uD3lD1xB+KKGtvmplbKY9J69xay3dnNo52xsyaQ+/wxyWIbKGsnLCMN41TekM
-         01EiBak7yqI/QrCOJSFoDJC7K7IZJCdfiSMgCOTpJ0sSKBZquVqGGZ1UfK30tHsw9blp
-         E0Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCWoMS2DavWYS23pG9BCM657je8Ih4UbjQ6+DwLNqs9SFeJGBpB+q3bb0zxodmRaBJkAf0jKCq9HaBIPdp1WzzzslBagh2krlNTtj1ug
-X-Gm-Message-State: AOJu0Yx0UcfAmKJLLyk64u2X9cUtDIkxhGJ9TMc8rZkFCEIWCkRgHITo
-	1MZynrUCarCj1KwOH/xu7DrRjePvGRTm5sPjkbCe8GwxyTca3BN/kQkw3huPAT0=
-X-Google-Smtp-Source: AGHT+IGrK/LjcvYrCZfPpRzcYpKV89QxZNQN9PbHJitkiyif7HT6hYYn+oRnlJCAfm3lGptaQnl7AA==
-X-Received: by 2002:a50:d7da:0:b0:5a1:bda1:3e23 with SMTP id 4fb4d7f45d1cf-5a1bda13e79mr2627029a12.14.1721383432801;
-        Fri, 19 Jul 2024 03:03:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721383459; x=1721988259;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2R8lwWNbxE3CTlbuNF2fJp+MBVYnCjf/eAucXbCNhZI=;
+        b=YXjDL1rxbh7S+UGjWwGTDKo3/dBidNf4HZ5/fTXehraGEd7p2tLtnjQnvJ1PuzguU9
+         pAQGOsFzVKm3QEtSvF4izVcH5sK/SDFlT/YdJHMLXO4oFTAwlHtVqvJ/40rVRilCevOv
+         7ct6N1gNLDtiHpqI+XMyDWNF3hw8seAgk6PWOfxIj8Z7uNRlra8Q6XDEhnUpkT0vzDCO
+         +6IT5qVJrknlSUOWHJyYqKe31bnXK2Ff0yPcYEEw9YQm0c0PSW7aEPWwVLS91canpl5g
+         G0wmAFZJUqaVr0Hwm09+OJ14ptAH+/qRNlF1Joyirpf77zYPGsC/A+06cFjU9E6mNr1c
+         Q36g==
+X-Forwarded-Encrypted: i=1; AJvYcCVSzv3H6jRxAYCFcZJfKUmsLj/cjwbxBFYe34L0neRgsOwBquiCXe4LjXZvL+1eo3MbcbV9x1f1ryPkZOuPD1jPUbhmGunJznXxXRXk
+X-Gm-Message-State: AOJu0YxLkKcDQF6xiz1Ye36nvPXCvkC4Fp9tUEn+7ga1apr4PvNbCU/D
+	MTlQ4EwqcOed1gsgFnQtHoxcs37IYt2AG4t5vxams89HnkF2/zG1P1qQgER1vLs=
+X-Google-Smtp-Source: AGHT+IGflvGOVmrt+yyMqPoRwhpvc1AwasBJHTHRxQGOWVAjoxYRmZsQ08Db2bB62CSG0A9Ag7vbYA==
+X-Received: by 2002:a2e:9b95:0:b0:2ee:d5c3:3217 with SMTP id 38308e7fff4ca-2ef05d43aeemr35932871fa.47.1721383458735;
+        Fri, 19 Jul 2024 03:04:18 -0700 (PDT)
 Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30aaa31e0sm919984a12.27.2024.07.19.03.03.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 03:03:52 -0700 (PDT)
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Fri, 19 Jul 2024 12:03:30 +0200
-Subject: [PATCH 5/5] drm/msm/a6xx: Add A621 support
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c91db6asm7848266b.148.2024.07.19.03.04.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Jul 2024 03:04:18 -0700 (PDT)
+Message-ID: <a3381f68-35e6-42b2-9628-e0da44374f53@linaro.org>
+Date: Fri, 19 Jul 2024 12:04:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mailbox: qcom-cpucp: fix 64BIT dependency
+To: Arnd Bergmann <arnd@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Sibi Sankar <quic_sibis@quicinc.com>, Bjorn Andersson
+ <andersson@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+References: <20240719100247.4012087-1-arnd@kernel.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240719100247.4012087-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240719-topic-a621-v1-5-850ae5307cf4@linaro.org>
-References: <20240719-topic-a621-v1-0-850ae5307cf4@linaro.org>
-In-Reply-To: <20240719-topic-a621-v1-0-850ae5307cf4@linaro.org>
-To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1721383413; l=7367;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=JaRdtAmG/aBVVoGezGVY9XvHQEh3BjeMocyDoFnu27k=;
- b=ADDODhRNXrzr1tgbQPACCM6K+qdkFVA6ky23/Sj8al4neKyX2odC0vFGSkOxnFYA8Ppu6xyLb
- SKvz9AwlWRvBNYKBR6ZthaHbUNF+WEClZaj1wbjHZaB/sm1MULlOb2E
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-A621 is a clear A662 derivative (same lineage as A650), no explosions
-or sick features, other than a NoC bug which can stall the GPU..
+On 19.07.2024 12:02 PM, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> This newly added driver fails compile testing on 32-bit architectures
+> because it relies on 64-bit MMIO register access:
+> 
+> drivers/mailbox/qcom-cpucp-mbox.c: In function 'qcom_cpucp_mbox_irq_fn':
+> drivers/mailbox/qcom-cpucp-mbox.c:54:18: error: implicit declaration of function 'readq'; did you mean 'readb'? [-Wimplicit-function-declaration]
+>    54 |         status = readq(cpucp->rx_base + APSS_CPUCP_RX_MBOX_STAT);
+>       |                  ^~~~~
+>       |                  readb
+> drivers/mailbox/qcom-cpucp-mbox.c:65:17: error: implicit declaration of function 'writeq'; did you mean 'writeb'? [-Wimplicit-function-declaration]
+>    65 |                 writeq(BIT(i), cpucp->rx_base + APSS_CPUCP_RX_MBOX_CLEAR);
+>       |                 ^~~~~~
+>       |                 writeb
+> 
+> Change the Kconfig dependency to disallow that configuration as well.
+> 
+> Fixes: 0e2a9a03106c ("mailbox: Add support for QTI CPUCP mailbox controller")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-Add support for it.
+Thanks
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 78 ++++++++++++++++++++++++++++++-
- drivers/gpu/drm/msm/adreno/a6xx_gmu.c     | 18 +++++++
- drivers/gpu/drm/msm/adreno/a6xx_gpu.c     |  6 +++
- drivers/gpu/drm/msm/adreno/adreno_gpu.h   |  5 ++
- 4 files changed, 106 insertions(+), 1 deletion(-)
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-index deee0b686962..d9d4a3e821f7 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-@@ -129,6 +129,59 @@ static const struct adreno_reglist a615_hwcg[] = {
- 	{},
- };
- 
-+static const struct adreno_reglist a620_hwcg[] = {
-+	{REG_A6XX_RBBM_CLOCK_CNTL_SP0, 0x02222222},
-+	{REG_A6XX_RBBM_CLOCK_CNTL2_SP0, 0x02222220},
-+	{REG_A6XX_RBBM_CLOCK_DELAY_SP0, 0x00000080},
-+	{REG_A6XX_RBBM_CLOCK_HYST_SP0, 0x0000f3cf},
-+	{REG_A6XX_RBBM_CLOCK_CNTL_TP0, 0x02222222},
-+	{REG_A6XX_RBBM_CLOCK_CNTL2_TP0, 0x22222222},
-+	{REG_A6XX_RBBM_CLOCK_CNTL3_TP0, 0x22222222},
-+	{REG_A6XX_RBBM_CLOCK_CNTL4_TP0, 0x00022222},
-+	{REG_A6XX_RBBM_CLOCK_DELAY_TP0, 0x11111111},
-+	{REG_A6XX_RBBM_CLOCK_DELAY2_TP0, 0x11111111},
-+	{REG_A6XX_RBBM_CLOCK_DELAY3_TP0, 0x11111111},
-+	{REG_A6XX_RBBM_CLOCK_DELAY4_TP0, 0x00011111},
-+	{REG_A6XX_RBBM_CLOCK_HYST_TP0, 0x77777777},
-+	{REG_A6XX_RBBM_CLOCK_HYST2_TP0, 0x77777777},
-+	{REG_A6XX_RBBM_CLOCK_HYST3_TP0, 0x77777777},
-+	{REG_A6XX_RBBM_CLOCK_HYST4_TP0, 0x00077777},
-+	{REG_A6XX_RBBM_CLOCK_CNTL_RB0, 0x22222222},
-+	{REG_A6XX_RBBM_CLOCK_CNTL2_RB0, 0x01002222},
-+	{REG_A6XX_RBBM_CLOCK_CNTL_CCU0, 0x00002220},
-+	{REG_A6XX_RBBM_CLOCK_HYST_RB_CCU0, 0x00040f00},
-+	{REG_A6XX_RBBM_CLOCK_CNTL_RAC, 0x25222022},
-+	{REG_A6XX_RBBM_CLOCK_CNTL2_RAC, 0x00005555},
-+	{REG_A6XX_RBBM_CLOCK_DELAY_RAC, 0x00000011},
-+	{REG_A6XX_RBBM_CLOCK_HYST_RAC, 0x00445044},
-+	{REG_A6XX_RBBM_CLOCK_CNTL_TSE_RAS_RBBM, 0x04222222},
-+	{REG_A6XX_RBBM_CLOCK_MODE_VFD, 0x00002222},
-+	{REG_A6XX_RBBM_CLOCK_MODE_GPC, 0x00222222},
-+	{REG_A6XX_RBBM_CLOCK_DELAY_HLSQ_2, 0x00000002},
-+	{REG_A6XX_RBBM_CLOCK_MODE_HLSQ, 0x00002222},
-+	{REG_A6XX_RBBM_CLOCK_DELAY_TSE_RAS_RBBM, 0x00004000},
-+	{REG_A6XX_RBBM_CLOCK_DELAY_VFD, 0x00002222},
-+	{REG_A6XX_RBBM_CLOCK_DELAY_GPC, 0x00000200},
-+	{REG_A6XX_RBBM_CLOCK_DELAY_HLSQ, 0x00000000},
-+	{REG_A6XX_RBBM_CLOCK_HYST_TSE_RAS_RBBM, 0x00000000},
-+	{REG_A6XX_RBBM_CLOCK_HYST_VFD, 0x00000000},
-+	{REG_A6XX_RBBM_CLOCK_HYST_GPC, 0x04104004},
-+	{REG_A6XX_RBBM_CLOCK_HYST_HLSQ, 0x00000000},
-+	{REG_A6XX_RBBM_CLOCK_CNTL_TEX_FCHE, 0x00000222},
-+	{REG_A6XX_RBBM_CLOCK_DELAY_TEX_FCHE, 0x00000111},
-+	{REG_A6XX_RBBM_CLOCK_HYST_TEX_FCHE, 0x00000777},
-+	{REG_A6XX_RBBM_CLOCK_CNTL_UCHE, 0x22222222},
-+	{REG_A6XX_RBBM_CLOCK_HYST_UCHE, 0x00000004},
-+	{REG_A6XX_RBBM_CLOCK_DELAY_UCHE, 0x00000002},
-+	{REG_A6XX_RBBM_ISDB_CNT, 0x00000182},
-+	{REG_A6XX_RBBM_RAC_THRESHOLD_CNT, 0x00000000},
-+	{REG_A6XX_RBBM_SP_HYST_CNT, 0x00000000},
-+	{REG_A6XX_RBBM_CLOCK_CNTL_GMU_GX, 0x00000222},
-+	{REG_A6XX_RBBM_CLOCK_DELAY_GMU_GX, 0x00000111},
-+	{REG_A6XX_RBBM_CLOCK_HYST_GMU_GX, 0x00000555},
-+	{},
-+};
-+
- static const struct adreno_reglist a630_hwcg[] = {
- 	{REG_A6XX_RBBM_CLOCK_CNTL_SP0, 0x22222222},
- 	{REG_A6XX_RBBM_CLOCK_CNTL_SP1, 0x22222222},
-@@ -490,7 +543,6 @@ static const u32 a630_protect_regs[] = {
- };
- DECLARE_ADRENO_PROTECT(a630_protect, 32);
- 
--/* These are for a620 and a650 */
- static const u32 a650_protect_regs[] = {
- 	A6XX_PROTECT_RDONLY(0x00000, 0x04ff),
- 	A6XX_PROTECT_RDONLY(0x00501, 0x0005),
-@@ -774,6 +826,30 @@ static const struct adreno_info a6xx_gpus[] = {
- 			{ 169, 2 },
- 			{ 180, 1 },
- 		),
-+	}, {
-+		.chip_ids = ADRENO_CHIP_IDS(0x06020100),
-+		.family = ADRENO_6XX_GEN3,
-+		.fw = {
-+			[ADRENO_FW_SQE] = "a650_sqe.fw",
-+			[ADRENO_FW_GMU] = "a621_gmu.bin",
-+		},
-+		.gmem = SZ_512K,
-+		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
-+		.quirks = ADRENO_QUIRK_HAS_CACHED_COHERENT |
-+			  ADRENO_QUIRK_HAS_HW_APRIV,
-+		.init = a6xx_gpu_init,
-+		.zapfw = "a620_zap.mbn",
-+		.a6xx = &(const struct a6xx_info) {
-+			.hwcg = a620_hwcg,
-+			.protect = &a650_protect,
-+			.gmu_cgc_mode = 0x00020200,
-+			.prim_fifo_threshold = 0x00010000,
-+		},
-+		.address_space_size = SZ_16G,
-+		.speedbins = ADRENO_SPEEDBINS(
-+			{ 0, 0 },
-+			{ 137, 1 },
-+		),
- 	}, {
- 		.chip_ids = ADRENO_CHIP_IDS(
- 			0x06030001,
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-index 6f168f1f32d8..37927bdd6fbe 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-@@ -423,6 +423,20 @@ static int a6xx_gmu_gfx_rail_on(struct a6xx_gmu *gmu)
- 	return a6xx_gmu_set_oob(gmu, GMU_OOB_BOOT_SLUMBER);
- }
- 
-+static void a6xx_gemnoc_workaround(struct a6xx_gmu *gmu)
-+{
-+	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
-+	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
-+
-+	/*
-+	 * GEMNoC can power collapse whilst the GPU is being powered down, resulting
-+	 * in the power down sequence not being fully executed. That in turn can
-+	 * prevent CX_GDSC from collapsing. Assert Qactive to avoid this.
-+	 */
-+	if (adreno_is_a621(adreno_gpu) || adreno_is_7c3(adreno_gpu))
-+		gmu_write(gmu, REG_A6XX_GMU_AO_AHB_FENCE_CTRL, BIT(0));
-+}
-+
- /* Let the GMU know that we are about to go into slumber */
- static int a6xx_gmu_notify_slumber(struct a6xx_gmu *gmu)
- {
-@@ -456,6 +470,8 @@ static int a6xx_gmu_notify_slumber(struct a6xx_gmu *gmu)
- 	}
- 
- out:
-+	a6xx_gemnoc_workaround(gmu);
-+
- 	/* Put fence into allow mode */
- 	gmu_write(gmu, REG_A6XX_GMU_AO_AHB_FENCE_CTRL, 0);
- 	return ret;
-@@ -945,6 +961,8 @@ static void a6xx_gmu_force_off(struct a6xx_gmu *gmu)
- 	/* Force off SPTP in case the GMU is managing it */
- 	a6xx_sptprac_disable(gmu);
- 
-+	a6xx_gemnoc_workaround(gmu);
-+
- 	/* Make sure there are no outstanding RPMh votes */
- 	a6xx_gmu_rpmh_off(gmu);
- 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-index 33a319f7d200..f2eca69613af 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-@@ -523,6 +523,12 @@ static void a6xx_calc_ubwc_config(struct adreno_gpu *gpu)
- 	if (adreno_is_a619_holi(gpu))
- 		gpu->ubwc_config.highest_bank_bit = 13;
- 
-+	if (adreno_is_a621(gpu)) {
-+		gpu->ubwc_config.highest_bank_bit = 13;
-+		gpu->ubwc_config.amsbc = 1;
-+		gpu->ubwc_config.uavflagprd_inv = 2;
-+	}
-+
- 	if (adreno_is_a640_family(gpu))
- 		gpu->ubwc_config.amsbc = 1;
- 
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-index 26972b2cc896..ea2c25e007eb 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-+++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-@@ -384,6 +384,11 @@ static inline int adreno_is_a619_holi(const struct adreno_gpu *gpu)
- 	return adreno_is_a619(gpu) && adreno_has_gmu_wrapper(gpu);
- }
- 
-+static inline int adreno_is_a621(const struct adreno_gpu *gpu)
-+{
-+	return gpu->info->chip_ids[0] == 0x06020100;
-+}
-+
- static inline int adreno_is_a630(const struct adreno_gpu *gpu)
- {
- 	return adreno_is_revn(gpu, 630);
-
--- 
-2.45.2
-
+Konrad
 
