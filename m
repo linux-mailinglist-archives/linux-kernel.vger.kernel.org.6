@@ -1,474 +1,294 @@
-Return-Path: <linux-kernel+bounces-257280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C391E9377D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:40:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDA7A9377DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41DDF1F22200
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:40:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0CA21C20999
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0E613B587;
-	Fri, 19 Jul 2024 12:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDACB13BACC;
+	Fri, 19 Jul 2024 12:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="Imll2wMK"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="m5xIESBT"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FAD884D3E;
-	Fri, 19 Jul 2024 12:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172B52E419;
+	Fri, 19 Jul 2024 12:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721392797; cv=none; b=O+d/CfTNiSYw9QsyysebsJFpgX8ucBn9g3Kmk/dj6M0r+/MjCBdkRSf7qcA57KCJe07TL41/Wfew/b1J7bbUdZeFk6fRaCOHoNdNmBA6KveffQn+Y8jgPyou8bIeZ4vAyXn5Ip8kQNuPAWgqFhb7ZqZXA3OvlYyEzOf3rBxLs4M=
+	t=1721392870; cv=none; b=cMcOjtpdB6Y3H8z+PEhLiyGT2Up1nWKPUQ8NIz59eDYTfHH1ZO+RTxuNrzhxXFXlXodCA4MsMq0NCXjzqkQ+lSMTg8BmP7DiQJweNm5Rlqn0LTD3zzdiox2jgw3655vFeGyWMpjKjbPS735A7MC/drF6EenYWtPg3zFp0LwmMqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721392797; c=relaxed/simple;
-	bh=78TqD3O6kzNatjvK85E0ioV49FJmp0SGDTx7IHuzfEQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GipgBs6DEbl1V3z6v9PvBmXBKcIFD/gi+9r0ZTr+v5xcI0PSJIR+zwOs7Y4/ZTp+O34mpUxUqbiZ02tgAWvTJ1wsQaEaBVBuj4vkK0LuUj6e5uG3GWTXP8z0Ixe5jUhiLQLdotdA6HuisJflApGUZsoRk0+G2OYQImQYrQLqzFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=Imll2wMK; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46JBUCcl021411;
-	Fri, 19 Jul 2024 05:39:40 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=6Sto2vACFW4OjbnTsyaxOP9Ia
-	4hUF7CoKat9XLfaWQc=; b=Imll2wMK7aH0NKu6mXUIh+erokzSHhn4MIKRlSuGh
-	yPXFOhL431xucT0YNTQCOhu2bs6NBMTha8fuwHEOZA41OepEwmmdyeAZ2ojF7BZU
-	4N6n5qHVTc69I+SaCCv/YqBXmpfNFlTCp/jl+dNXN8g36EzXkw4l7xhdv2/eNE3e
-	rpjRmmSwogWsdQ4gYq9rBeTGIrgCpEGEdUsyuBU4HlUKNCWHg8Nyg9Xf85EpPOwy
-	nOiY2MAavd/zXpPkDmux/0ShiQoDqKX0BPIsdpcYYqIxy4OTBPof+6hW7sUdtrT+
-	ZLYRax+K+r9BEl/t6SPFCQ4wIa9sQsrV0TpnOChPUeIPw==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 40fe5et4m1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 19 Jul 2024 05:39:39 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 19 Jul 2024 05:39:38 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 19 Jul 2024 05:39:38 -0700
-Received: from test-OptiPlex-Tower-Plus-7010 (unknown [10.29.37.157])
-	by maili.marvell.com (Postfix) with SMTP id B2B553F7052;
-	Fri, 19 Jul 2024 05:39:32 -0700 (PDT)
-Date: Fri, 19 Jul 2024 18:09:31 +0530
-From: Hariprasad Kelam <hkelam@marvell.com>
-To: Ayush Singh <ayush@beagleboard.org>
-CC: <jkridner@beagleboard.org>, <robertcnelson@beagleboard.org>,
-        "David S.
- Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>, Johan Hovold
-	<johan@kernel.org>,
-        Alex Elder <elder@kernel.org>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        <greybus-dev@lists.linaro.org>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 3/3] greybus: gb-beagleplay: Add firmware upload API
-Message-ID: <Zppeg3eKcKEifJNW@test-OptiPlex-Tower-Plus-7010>
-References: <20240719-beagleplay_fw_upgrade-v1-0-8664d4513252@beagleboard.org>
- <20240719-beagleplay_fw_upgrade-v1-3-8664d4513252@beagleboard.org>
+	s=arc-20240116; t=1721392870; c=relaxed/simple;
+	bh=jpW8O/L/herCuHQaX8hjINcDbnq8S2jCguUnnrp6+ws=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RMQoNJImyzCzGBvvy0jkoDOs9Yvmft3fpJ0F61m7qXe545+pn/rzIdN21ohd9xt6lt1jh9o9BRqcvmknytqWrGNbAb8W4/u2OG3Han0Y+mZRp7Q0xaFk1Bm+M8eFtESu26ZYH9w00luFnDdZoTxhOJOpJryZqeaWFib0HCdfCvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=m5xIESBT; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721392867;
+	bh=jpW8O/L/herCuHQaX8hjINcDbnq8S2jCguUnnrp6+ws=;
+	h=From:To:Cc:Subject:Date:From;
+	b=m5xIESBTOe/XpkqaQkzBc8srw76momAYMLAceG9wGMT9Ywiq6B+Uv078PpX03v1Db
+	 g8BJglXBq9L71Yfg2YUSwJqz2FkDiLLiiQrrKOXH2vtwJJdvL9pBC4vg1oC91WIJg1
+	 rRD68s3WlQnBd/7g1enl7QyN1KXNw6iw21c+MBR9zhF51hHwtWgt4aUYMdsgnI1c6M
+	 aou1tR8ByJKFp1rJVMvlef0QvwLafM9PqAEfMWfSZineSLEcjWNGrQvrR/CUgTAUu4
+	 10JX1Yl4CUCyp5SE8AWPh/FEDA9a0R2bjb2m9usJPnvD35gxlnAKHhsmbrFliNCbXo
+	 +9afQp8YYp9KA==
+Received: from shreeya.shreeya (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: shreeya)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id AA74C378215E;
+	Fri, 19 Jul 2024 12:41:02 +0000 (UTC)
+From: Shreeya Patel <shreeya.patel@collabora.com>
+To: heiko@sntech.de,
+	mchehab@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	p.zabel@pengutronix.de,
+	jose.abreu@synopsys.com,
+	nelson.costa@synopsys.com,
+	shawn.wen@rock-chips.com,
+	nicolas.dufresne@collabora.com,
+	hverkuil@xs4all.nl,
+	hverkuil-cisco@xs4all.nl
+Cc: kernel@collabora.com,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Shreeya Patel <shreeya.patel@collabora.com>
+Subject: [PATCH v4 0/4] Add Synopsys DesignWare HDMI RX Controller
+Date: Fri, 19 Jul 2024 18:10:28 +0530
+Message-Id: <20240719124032.26852-1-shreeya.patel@collabora.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240719-beagleplay_fw_upgrade-v1-3-8664d4513252@beagleboard.org>
-X-Proofpoint-GUID: tGX4uRD_WjnLeEuD2y3l-visZJL3i78N
-X-Proofpoint-ORIG-GUID: tGX4uRD_WjnLeEuD2y3l-visZJL3i78N
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-19_06,2024-07-18_01,2024-05-17_01
+Content-Transfer-Encoding: 8bit
 
-On 2024-07-19 at 15:15:12, Ayush Singh (ayush@beagleboard.org) wrote:
-> Register with firmware upload API to allow updating firmware on cc1352p7
-> without resorting to overlay for using the userspace flasher.
-> 
-> Communication with the bootloader can be moved out of gb-beagleplay
-> driver if required, but I am keeping it here since there are no
-> immediate plans to use the on-board cc1352p7 for anything other than
-> greybus (BeagleConnect Technology). Additionally, there do not seem to
-> any other devices using cc1352p7 or it's cousins as a co-processor.
-> 
-> Boot and Reset GPIOs are used to enable cc1352p7 bootloader backdoor for
-> flashing. The delays while starting bootloader are taken from the
-> userspace flasher since the technical specification does not provide
-> sufficient information regarding it.
-> 
-> Flashing is skipped in case we are trying to flash the same
-> image as the one that is currently present. This is determined by CRC32
-> calculation of the supplied firmware and Flash data.
-> 
-> We also do a CRC32 check after flashing to ensure that the firmware was
-> flashed properly.
-> 
-> Link: https://www.ti.com/lit/ug/swcu192/swcu192.pdf Ti CC1352p7 Tecnical Specification
-> Link: https://openbeagle.org/beagleconnect/cc1352-flasher Userspace
-> Flasher
-> 
-> Signed-off-by: Ayush Singh <ayush@beagleboard.org>
-> ---
->  drivers/greybus/Kconfig         |   1 +
->  drivers/greybus/gb-beagleplay.c | 625 +++++++++++++++++++++++++++++++++++++++-
->  2 files changed, 614 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/greybus/Kconfig b/drivers/greybus/Kconfig
-> index ab81ceceb337..d485a99959cb 100644
-> --- a/drivers/greybus/Kconfig
-> +++ b/drivers/greybus/Kconfig
-> @@ -21,6 +21,7 @@ config GREYBUS_BEAGLEPLAY
->  	tristate "Greybus BeaglePlay driver"
->  	depends on SERIAL_DEV_BUS
->  	select CRC_CCITT
-> +	select FW_UPLOAD
->  	help
->  	  Select this option if you have a BeaglePlay where CC1352
->  	  co-processor acts as Greybus SVC.
-> diff --git a/drivers/greybus/gb-beagleplay.c b/drivers/greybus/gb-beagleplay.c
-> index 33f8fad70260..aecbfb5b5eaf 100644
-> --- a/drivers/greybus/gb-beagleplay.c
-> +++ b/drivers/greybus/gb-beagleplay.c
-> @@ -6,21 +6,18 @@
->   * Copyright (c) 2023 BeagleBoard.org Foundation
->   */
->  
-> -#include <linux/gfp.h>
-> +#include <asm-generic/unaligned.h>
-> +#include <linux/crc32.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/firmware.h>
->  #include <linux/greybus.h>
-> -#include <linux/module.h>
-> -#include <linux/of.h>
-> -#include <linux/printk.h>
->  #include <linux/serdev.h>
-> -#include <linux/tty.h>
-> -#include <linux/tty_driver.h>
-> -#include <linux/greybus/hd.h>
-> -#include <linux/init.h>
-> -#include <linux/device.h>
->  #include <linux/crc-ccitt.h>
->  #include <linux/circ_buf.h>
-> -#include <linux/types.h>
-> -#include <linux/workqueue.h>
-> +
-> +#define CC1352_BOOTLOADER_TIMEOUT 2000
-> +#define CC1352_BOOTLOADER_ACK 0xcc
-> +#define CC1352_BOOTLOADER_NACK 0x33
->  
->  #define RX_HDLC_PAYLOAD 256
->  #define CRC_LEN 2
-> @@ -57,6 +54,17 @@
->   * @rx_buffer_len: length of receive buffer filled.
->   * @rx_buffer: hdlc frame receive buffer
->   * @rx_in_esc: hdlc rx flag to indicate ESC frame
-> + *
-> + * @fwl: underlying firmware upload device
-> + * @boot_gpio: cc1352p7 boot gpio
-> + * @rst_gpio: cc1352p7 reset gpio
-> + * @flashing_mode: flag to indicate that flashing is currently in progress
-> + * @fwl_ack_com: completion to signal an Ack/Nack
-> + * @fwl_ack: Ack/Nack byte received
-> + * @fwl_cmd_response_com: completion to signal a bootloader command response
-> + * @fwl_cmd_response: bootloader command response data
-> + * @fwl_crc32: crc32 of firmware to flash
-> + * @fwl_reset_addr: flag to indicate if we need to send COMMAND_DOWNLOAD again
->   */
->  struct gb_beagleplay {
->  	struct serdev_device *sd;
-> @@ -72,6 +80,17 @@ struct gb_beagleplay {
->  	u16 rx_buffer_len;
->  	bool rx_in_esc;
->  	u8 rx_buffer[MAX_RX_HDLC];
-> +
-> +	struct fw_upload *fwl;
-> +	struct gpio_desc *boot_gpio;
-> +	struct gpio_desc *rst_gpio;
-> +	bool flashing_mode;
-> +	struct completion fwl_ack_com;
-> +	u8 fwl_ack;
-> +	struct completion fwl_cmd_response_com;
-> +	u32 fwl_cmd_response;
-> +	u32 fwl_crc32;
-> +	bool fwl_reset_addr;
->  };
->  
->  /**
-> @@ -100,6 +119,69 @@ struct hdlc_greybus_frame {
->  	u8 payload[];
->  } __packed;
->  
-> +/**
-> + * enum cc1352_bootloader_cmd: CC1352 Bootloader Commands
-> + */
-> +enum cc1352_bootloader_cmd {
-> +	COMMAND_DOWNLOAD = 0x21,
-> +	COMMAND_GET_STATUS = 0x23,
-> +	COMMAND_SEND_DATA = 0x24,
-> +	COMMAND_RESET = 0x25,
-> +	COMMAND_CRC32 = 0x27,
-> +	COMMAND_BANK_ERASE = 0x2c,
-> +};
-> +
-> +/**
-> + * enum cc1352_bootloader_status: CC1352 Bootloader COMMAND_GET_STATUS response
-> + */
-> +enum cc1352_bootloader_status {
-> +	COMMAND_RET_SUCCESS = 0x40,
-> +	COMMAND_RET_UNKNOWN_CMD = 0x41,
-> +	COMMAND_RET_INVALID_CMD = 0x42,
-> +	COMMAND_RET_INVALID_ADR = 0x43,
-> +	COMMAND_RET_FLASH_FAIL = 0x44,
-> +};
-> +
-> +/**
-> + * struct cc1352_bootloader_packet: CC1352 Bootloader Request Packet
-> + *
-> + * @len: length of packet + optional request data
-> + * @checksum: 8-bit checksum excluding len
-> + * @cmd: bootloader command
-> + */
-> +struct cc1352_bootloader_packet {
-> +	u8 len;
-> +	u8 checksum;
-> +	u8 cmd;
-> +} __packed;
-> +
-> +#define CC1352_BOOTLOADER_PKT_MAX_SIZE \
-> +	(U8_MAX - sizeof(struct cc1352_bootloader_packet))
-> +
-> +/**
-> + * struct cc1352_bootloader_download_cmd_data: CC1352 Bootloader COMMAND_DOWNLOAD request data
-> + *
-> + * @addr: address to start programming data into
-> + * @size: size of data that will be sent
-> + */
-> +struct cc1352_bootloader_download_cmd_data {
-> +	__be32 addr;
-> +	__be32 size;
-> +} __packed;
-> +
-> +/**
-> + * struct cc1352_bootloader_crc32_cmd_data: CC1352 Bootloader COMMAND_CRC32 request data
-> + *
-> + * @addr: address where crc32 calculation starts
-> + * @size: number of bytes comprised by crc32 calculation
-> + * @read_repeat: number of read repeats for each data location
-> + */
-> +struct cc1352_bootloader_crc32_cmd_data {
-> +	__be32 addr;
-> +	__be32 size;
-> +	__be32 read_repeat;
-> +} __packed;
-> +
->  static void hdlc_rx_greybus_frame(struct gb_beagleplay *bg, u8 *buf, u16 len)
->  {
->  	struct hdlc_greybus_frame *gb_frame = (struct hdlc_greybus_frame *)buf;
-> @@ -331,11 +413,131 @@ static void hdlc_deinit(struct gb_beagleplay *bg)
->  	flush_work(&bg->tx_work);
->  }
->  
-> +/**
-> + * csum8: Calculate 8-bit checksum on data
-> + */
-> +static u8 csum8(const u8 *data, size_t size, u8 base)
-> +{
-> +	size_t i;
-> +	u8 sum = base;
-follow reverse x-mas tree
-> +
-> +	for (i = 0; i < size; ++i)
-> +		sum += data[i];
-> +
-> +	return sum;
-> +}
-> +
-> +static void cc1352_bootloader_send_ack(struct gb_beagleplay *bg)
-> +{
-> +	static const u8 ack[] = { 0x00, CC1352_BOOTLOADER_ACK };
-> +
-> +	serdev_device_write_buf(bg->sd, ack, sizeof(ack));
-> +}
-> +
-> +static void cc1352_bootloader_send_nack(struct gb_beagleplay *bg)
-> +{
-> +	static const u8 nack[] = { 0x00, CC1352_BOOTLOADER_NACK };
-> +
-> +	serdev_device_write_buf(bg->sd, nack, sizeof(nack));
-> +}
-> +
-> +/**
-> + * cc1352_bootloader_pkt_rx: Process a CC1352 Bootloader Packet
-> + *
-> + * @bg: beagleplay greybus driver
-> + * @data: packet buffer
-> + * @count: packet buffer size
-> + *
-> + * @return: number of bytes processed
-> + *
-> + * Here are the steps to successfully receive a packet from cc1352 bootloader
-> + * according to the docs:
-> + * 1. Wait for nonzero data to be returned from the device. This is important
-> + *    as the device may send zero bytes between a sent and a received data
-> + *    packet. The first nonzero byte received is the size of the packet that is
-> + *    being received.
-> + * 2. Read the next byte, which is the checksum for the packet.
-> + * 3. Read the data bytes from the device. During the data phase, packet size
-> + *    minus 2 bytes is sent.
-> + * 4. Calculate the checksum of the data bytes and verify it matches the
-> + *    checksum received in the packet.
-> + * 5. Send an acknowledge byte or a not-acknowledge byte to the device to
-> + *    indicate the successful or unsuccessful reception of the packet.
-> + */
-> +static int cc1352_bootloader_pkt_rx(struct gb_beagleplay *bg, const u8 *data,
-> +				    size_t count)
-> +{
-> +	bool is_valid = false;
-> +
-> +	switch (data[0]) {
-> +	/* Skip 0x00 bytes.  */
-> +	case 0x00:
-> +		return 1;
-> +	case CC1352_BOOTLOADER_ACK:
-> +	case CC1352_BOOTLOADER_NACK:
-> +		WRITE_ONCE(bg->fwl_ack, data[0]);
-> +		complete(&bg->fwl_ack_com);
-> +		return 1;
-> +	case 3:
-> +		if (count < 3)
-> +			return 0;
-> +		is_valid = data[1] == data[2];
-> +		WRITE_ONCE(bg->fwl_cmd_response, (u32)data[2]);
-> +		break;
-> +	case 6:
-> +		if (count < 6)
-> +			return 0;
-> +		is_valid = csum8(&data[2], sizeof(__be32), 0) == data[1];
-> +		WRITE_ONCE(bg->fwl_cmd_response, get_unaligned_be32(&data[2]));
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (is_valid) {
-> +		cc1352_bootloader_send_ack(bg);
-> +		complete(&bg->fwl_cmd_response_com);
-> +	} else {
-> +		dev_warn(&bg->sd->dev,
-> +			 "Dropping bootloader packet with invalid checksum");
-> +		cc1352_bootloader_send_nack(bg);
-> +	}
-> +
-> +	return data[0];
-> +}
-> +
-> +static size_t cc1352_bootloader_rx(struct gb_beagleplay *bg, const u8 *data,
-> +				   size_t count)
-> +{
-> +	int ret;
-> +	size_t off = 0;
-> +
-        Same here
-      
-> +	memcpy(bg->rx_buffer + bg->rx_buffer_len, data, count);
-> +	bg->rx_buffer_len += count;
-> +
-> +	do {
-> +		ret = cc1352_bootloader_pkt_rx(bg, bg->rx_buffer + off,
-> +					       bg->rx_buffer_len - off);
-> +		if (ret < 0)
-> +			return dev_err_probe(&bg->sd->dev, ret,
-> +					     "Invalid Packet");
-> +		off += ret;
-> +	} while (ret > 0 && off < count);
-> +
-> +	bg->rx_buffer_len -= off;
-> +	memmove(bg->rx_buffer, bg->rx_buffer + off, bg->rx_buffer_len);
-> +
-> +	return count;
-> +}
-> +
->  static size_t gb_tty_receive(struct serdev_device *sd, const u8 *data,
->  			     size_t count)
->  {
->  	struct gb_beagleplay *bg = serdev_device_get_drvdata(sd);
->  
-> +	if (READ_ONCE(bg->flashing_mode))
-> +		return cc1352_bootloader_rx(bg, data, count);
-> +
->  	return hdlc_rx(bg, data, count);
->  }
->  
-> @@ -343,7 +545,8 @@ static void gb_tty_wakeup(struct serdev_device *serdev)
->  {
->  	struct gb_beagleplay *bg = serdev_device_get_drvdata(serdev);
->  
-> -	schedule_work(&bg->tx_work);
-> +	if (!READ_ONCE(bg->flashing_mode))
-> +		schedule_work(&bg->tx_work);
->  }
->  
->  static struct serdev_device_ops gb_beagleplay_ops = {
-> @@ -412,6 +615,192 @@ static void gb_beagleplay_stop_svc(struct gb_beagleplay *bg)
->  	hdlc_tx_frames(bg, ADDRESS_CONTROL, 0x03, &payload, 1);
->  }
->  
-> +static int cc1352_bootloader_wait_for_ack(struct gb_beagleplay *bg)
-> +{
-> +	int ret;
-> +
-> +	ret = wait_for_completion_timeout(
-> +		&bg->fwl_ack_com, msecs_to_jiffies(CC1352_BOOTLOADER_TIMEOUT));
-> +	if (ret < 0)
-> +		return dev_err_probe(&bg->sd->dev, ret,
-> +				     "Failed to acquire ack semaphore");
-> +
-> +	switch (READ_ONCE(bg->fwl_ack)) {
-> +	case CC1352_BOOTLOADER_ACK:
-> +		return 0;
-> +	case CC1352_BOOTLOADER_NACK:
-> +		return -EAGAIN;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int cc1352_bootloader_sync(struct gb_beagleplay *bg)
-> +{
-> +	static const u8 sync_bytes[] = { 0x55, 0x55 };
-> +
-> +	serdev_device_write_buf(bg->sd, sync_bytes, sizeof(sync_bytes));
-> +	return cc1352_bootloader_wait_for_ack(bg);
-> +}
-> +
-> +static int cc1352_bootloader_get_status(struct gb_beagleplay *bg)
-> +{
-> +	int ret;
-> +	static const struct cc1352_bootloader_packet pkt = {
-> +		.len = sizeof(pkt),
-> +		.checksum = COMMAND_GET_STATUS,
-> +		.cmd = COMMAND_GET_STATUS
-> +	};
-> +
-     same here. please run checkpatch before submitting to know coding
-     style issues.
+This series implements support for the Synopsys DesignWare
+HDMI RX Controller, being compliant with standard HDMI 1.4b
+and HDMI 2.0.
+
+Features that are currently supported by the HDMI RX driver
+have been tested on rock5b board using a HDMI to micro-HDMI cable.
+It is recommended to use a good quality cable as there were
+multiple issues seen during testing the driver.
+
+Please note the below information :-
+* While testing the driver on rock5b we noticed that the binary BL31
+from Rockchip contains some unknown code to get the HDMI-RX PHY
+access working without any errors.
+With TF-A BL31, the HDMI-RX PHY also works fine but there were no
+interrupts seen for rk_hdmirx-hdmi leading to some errors when
+loading the driver [0]. It doesn't affect the functionality of the
+driver though.
+* We have tested the working of OBS studio with HDMIRX driver and
+there were no issues seen.
+* We also tested and verified the support for interlaced video.
+
+[0] https://gitlab.collabora.com/hardware-enablement/rockchip-3588/trusted-firmware-a/-/issues/1
+
+To test the HDMI RX Controller driver, following example commands can be used :-
+
+root@debian-rockchip-rock5b-rk3588:~# v4l2-ctl --verbose -d /dev/video0 \
+--set-fmt-video=width=1920,height=1080,pixelformat='BGR3' --stream-mmap=4 \
+--stream-skip=3 --stream-count=100 --stream-to=/home/hdmiin4k.raw --stream-poll
+
+root@debian-rockchip-rock5b-rk3588:~# ffmpeg -f rawvideo -vcodec rawvideo \
+-s 1920x1080 -r 60 -pix_fmt bgr24 -i /home/hdmiin4k.raw output.mkv
+
+CEC compliance test results :-
+
+* https://gitlab.collabora.com/-/snippets/381
+* https://gitlab.collabora.com/-/snippets/380
+
+Following is the v4l2-compliance test result :-
+
+root@debian-rockchip-rock5b-rk3588:~# v4l2-compliance -d /dev/video0
+v4l2-compliance 1.27.0-5220, 64 bits, 64-bit time_t
+v4l2-compliance SHA: 8387e3673837 2024-07-01 11:09:32
+
+Compliance test for snps_hdmirx device /dev/video0:
+
+Driver Info:
+	Driver name      : snps_hdmirx
+	Card type        : snps_hdmirx
+	Bus info         : platform:fdee0000.hdmi-receiver
+	Driver version   : 6.10.0
+	Capabilities     : 0x84201000
+		Video Capture Multiplanar
+		Streaming
+		Extended Pix Format
+		Device Capabilities
+	Device Caps      : 0x04201000
+		Video Capture Multiplanar
+		Streaming
+		Extended Pix Format
+
+Required ioctls:
+	test VIDIOC_QUERYCAP: OK
+	test invalid ioctls: OK
+
+Allow for multiple opens:
+	test second /dev/video0 open: OK
+	test VIDIOC_QUERYCAP: OK
+	test VIDIOC_G/S_PRIORITY: OK
+	test for unlimited opens: OK
+
+Debug ioctls:
+	test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+	test VIDIOC_LOG_STATUS: OK
+
+Input ioctls:
+	test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+	test VIDIOC_ENUMAUDIO: OK (Not Supported)
+	test VIDIOC_G/S/ENUMINPUT: OK
+	test VIDIOC_G/S_AUDIO: OK (Not Supported)
+	Inputs: 1 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+	test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+	test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+	Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+	test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+	test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK
+	test VIDIOC_DV_TIMINGS_CAP: OK
+	test VIDIOC_G/S_EDID: OK
+
+Control ioctls (Input 0):
+	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+	test VIDIOC_QUERYCTRL: OK
+	test VIDIOC_G/S_CTRL: OK
+	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+	Standard Controls: 3 Private Controls: 0
+
+Format ioctls (Input 0):
+	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+	test VIDIOC_G/S_PARM: OK
+	test VIDIOC_G_FBUF: OK (Not Supported)
+	test VIDIOC_G_FMT: OK
+	test VIDIOC_TRY_FMT: OK
+	test VIDIOC_S_FMT: OK
+	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+	test Cropping: OK (Not Supported)
+	test Composing: OK (Not Supported)
+	test Scaling: OK (Not Supported)
+
+Codec ioctls (Input 0):
+	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+	test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls (Input 0):
+	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+	test CREATE_BUFS maximum buffers: OK
+	test VIDIOC_REMOVE_BUFS: OK
+	test VIDIOC_EXPBUF: OK
+	test Requests: OK (Not Supported)
+
+Total for snps_hdmirx device /dev/video0: 47, Succeeded: 47, Failed: 0, Warnings: 0
+
+Changes in v4 :-
+  - Remove DTS changes included in the device tree patch
+  - Remove the hdmi rx pin info as it's already present
+    in the rk3588-base-pinctrl.dtsi
+  - Create a separate config option for selecting the EDID
+    and enable it by default
+  - Improve the comment related to DV timings and move it
+    to the side of hdmirx_get_detected_timings
+  - Add 100ms delay before pulling the HPD high
+  - Do not return the detected timings from VIDIOC_G_DV_TIMINGS
+  - Drop the bus info from hdmirx_querycap
+  - If *num_planes != 0 then return 0 in hdmirx_queue_setup
+  - Set queue->min_queued_buffers to 1
+  - Drop q->allow_cache_hints = 0; as it's always 0 by default
+  - Add a comment for q->dma_attrs = DMA_ATTR_FORCE_CONTIGUOUS;
+  - Drop .read = vb2_fop_read as it's not supported by driver
+  - Remove redundant edid_init_data_600M
+  - Make HPD low when driver is loaded
+  - Add support for reading AVI Infoframe
+  - Remove msg_len checks from hdmirx_cec_transmit
+  - Add info about the CEC compliance test in the cover letter
+  - Add arbitration lost status
+  - Validate the physical address inside the EDID
+
+Changes in v3 :-
+  - Use v4l2-common helpers in the HDMIRX driver
+  - Rename cma node and phandle names
+  - Elaborate the comment to explain 160MiB calculation
+  - Move &hdmi_receiver_cma to the rock5b dts file
+  - Add information about interlaced video testing in the
+    cover-letter
+
+Changes in v2 :-
+  - Fix checkpatch --strict warnings
+  - Move the dt-binding include file changes in a separate patch
+  - Add a description for the hardware in the dt-bindings file
+  - Rename resets, vo1 grf and HPD properties
+  - Add a proper description for grf and vo1-grf phandles in the
+    bindings
+  - Rename the HDMI RX node name to hdmi-receiver
+  - Include gpio header file in binding example to fix the
+    dt_binding_check failure
+  - Move hdmirx_cma node to the rk3588.dtsi file
+  - Add an entry to MAINTAINERS file for the HDMIRX driver
+
+Shreeya Patel (4):
+  MAINTAINERS: Add entry for Synopsys DesignWare HDMI RX Driver
+  dt-bindings: media: Document bindings for HDMI RX Controller
+  arm64: dts: rockchip: Add device tree support for HDMI RX Controller
+  media: platform: synopsys: Add support for hdmi input driver
+
+ .../bindings/media/snps,dw-hdmi-rx.yaml       |  132 +
+ MAINTAINERS                                   |    8 +
+ .../dts/rockchip/rk3588-base-pinctrl.dtsi     |   14 +
+ .../arm64/boot/dts/rockchip/rk3588-extra.dtsi |   56 +
+ drivers/media/platform/Kconfig                |    1 +
+ drivers/media/platform/Makefile               |    1 +
+ drivers/media/platform/synopsys/Kconfig       |    3 +
+ drivers/media/platform/synopsys/Makefile      |    2 +
+ .../media/platform/synopsys/hdmirx/Kconfig    |   27 +
+ .../media/platform/synopsys/hdmirx/Makefile   |    4 +
+ .../platform/synopsys/hdmirx/snps_hdmirx.c    | 2763 +++++++++++++++++
+ .../platform/synopsys/hdmirx/snps_hdmirx.h    |  394 +++
+ .../synopsys/hdmirx/snps_hdmirx_cec.c         |  285 ++
+ .../synopsys/hdmirx/snps_hdmirx_cec.h         |   44 +
+ 14 files changed, 3734 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
+ create mode 100644 drivers/media/platform/synopsys/Kconfig
+ create mode 100644 drivers/media/platform/synopsys/Makefile
+ create mode 100644 drivers/media/platform/synopsys/hdmirx/Kconfig
+ create mode 100644 drivers/media/platform/synopsys/hdmirx/Makefile
+ create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+ create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
+ create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.c
+ create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.h
+
+-- 
+2.39.2
 
 
