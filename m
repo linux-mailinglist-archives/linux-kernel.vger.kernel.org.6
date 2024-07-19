@@ -1,209 +1,168 @@
-Return-Path: <linux-kernel+bounces-257481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E736D937AA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:17:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1F19937AA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 578D4B23C22
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:17:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7F4B2872C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19C913F435;
-	Fri, 19 Jul 2024 16:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD832E414;
+	Fri, 19 Jul 2024 16:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RArnkbmf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lme0PJN1"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33B3210FF;
-	Fri, 19 Jul 2024 16:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B45320E
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 16:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721405845; cv=none; b=ZWOpMT/udWDOdFnSBmnEVDxe1BKXXhVPk1TUvnNdwYXYgfsGZjIpxIXs0zEXjPWbrrlqe8Q0cF0V1SU2BtADAboNgxJWxAbhvdslD+cIZtRMokt6As1Hn1O6EIrQnw7nPcUQBA4OCDOTjyZ63E3VMR/IQz4XFsppkA0OSgklwvk=
+	t=1721405936; cv=none; b=rAStZpyA5inkUi/KhXEG08BdlQBfTmc0BUkQ4dhdcrwJ+Y42XpWNhNTgkjH4CitR28c9sOXu1GvvwscemY9CGaRAeR7sM1lNYkxH3rl0iyVFduDlfaZADdjEuYoLaYfADhW6pQjQKWoc8ZaHuqOMRBmvhxcsO2eP7MhX/+TR/Y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721405845; c=relaxed/simple;
-	bh=FBGPPW5pTaEP4QF7BB5oWnaKdqn9hVpVZ+c6VKNI7zI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ZsGzXvNYxmuDvVzdmRiFKiv1JEHu/spwvmsHd8KE5YJ0ygr3PgPtfNLDRPljkKHC/1+TGDUg6qT+bLIAO2UmT9bmQBdvCL98u0TtB7PsFOpYsZfotpXI7UvTxKccHCPClHijsQ/FKtptQEz3ox/ERoj4ReU1R0gCHNFSvaUxrIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RArnkbmf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A5ADC32782;
-	Fri, 19 Jul 2024 16:17:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721405845;
-	bh=FBGPPW5pTaEP4QF7BB5oWnaKdqn9hVpVZ+c6VKNI7zI=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=RArnkbmfZWwFcYPsciTc3fmZqXvpE207P11ONVJD0RkU1xtUDLqpQ4zHsdT7FpFqe
-	 G0JFctY6qbb4+uYm/hCWDG9MyvG2eeEzPtenrnSnxOOFUeUgZN6e0g1U+hH7hoQcwg
-	 +76Lo45Bgzr3LDnfj+ai3CVDIj1sxxv7ouajOVcCrLwU8RNGoXaR0HTFseYr0hdCZt
-	 Ab5/+WP/M/4DIr9Gb1GKeJSGYOXFejvQ35Tbr0jBuCT8YUjEzWakaSZN3rckelc+ND
-	 n6it7nujfGpVGprLWCZbBCTrsYDyjxGTQ/CKzjJhTEdMzEJvQYXFQuyXKKUJNrYvcH
-	 qjt/iW/TRBmpg==
-Message-ID: <fa9bb6d5-7a72-4d77-8862-d8489a759506@kernel.org>
-Date: Fri, 19 Jul 2024 17:17:20 +0100
+	s=arc-20240116; t=1721405936; c=relaxed/simple;
+	bh=BK4vVgXsqd3HSwJZ5+Q5HPLiuoRpZi/LDL+knpfVAjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A6KTA4VGQ4+Bauq37wvEOkpAQexXRNYSQeeWCn1Vd8/w9Pn8WxdKvPXr1ZfhsIFr1i2UvBRpMya9A4ZmEO/Yk2VmAMtqoKs5qPEt/I5iz/P03Gc4kiWBmbjcbvoiaYenFoyA3gXjZLmsTMVVzdlC47lbWKwZEIkOWEay526o7BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lme0PJN1; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-df4d5d0b8d0so1911356276.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 09:18:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721405934; x=1722010734; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=5r9a4XXmQXP73cigBFNiYZaf+OV2yC8N7BDhu611Y0c=;
+        b=lme0PJN1L4q/90vm5ccBr5ajxLC+i+x2ExN3/cWXe9fKzdTOYEk7+1+SGVfwIWb9Af
+         pqbXJdYrMF6Ol67SxDfjuzP+7noXE5YV6PXwHvFDrZJ20xKAc2Z6yPNjXHPY0Qq/9IhC
+         qkxOQRIzVNQPj1vsS6pHKn3tiXa8SuBO2UmssakTzVuxQFWcWBihXGg37/xu3jG/8zrb
+         mu9Vx8PL0FkR4lBTDQubHQ/3hcBeNne6i0Fxi0Bk0iNlzElm4L+DjjmmsYc/TP0am3FT
+         1dyBWsczO12ff0QnoVWAgWhaYrn1vk8yIrs5G59pqYYjLqtxAJy6ufsaMN9RI/g23gHd
+         BmAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721405934; x=1722010734;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5r9a4XXmQXP73cigBFNiYZaf+OV2yC8N7BDhu611Y0c=;
+        b=vIKvhpRGw9zBVRDfY195BrgnJONPUZLTt+i/88V8PH+XkjwOpHeQx/I3VrEv6Q5xOh
+         t5gCNbKNZP/VB3th2SKiNbfsPpcV3mj08O3RUQYBSCbhyLWwteWzwbR/brp4e630G13k
+         q0Lw70FeqBdtjpnGgK2lMBeTcqw6tDd5Tf+txVVm0Emk8uwYk30bracYnYEHdT+q7qqB
+         pMzFIldNub1mgdWaR8VRSxMChsLheEbKN1Xmaac9rV3rk6yODXj7gbgHDmCfllUpU8JP
+         5Qrlqto/u58J4WWAHxz5anR+wNaxEuWVbFVME2djyhiM0hxg0oOJSxOX9AiVara03biS
+         gCuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXJO82QXnPua4vxz+P5uSgQexwUjHoNfer40FFrphexVJ9OdU3/jGx7UOa+4qZ0w6Lq6yzbKB4Aw7T2loEJ3VJk8pHOo6idr0RzaRcv
+X-Gm-Message-State: AOJu0YxOEtD/Q0uHr6UwjRANm+wzeH+cx97ZZLZK/e2J5QXZijrn4ny4
+	PXb8nUlDLsLbGZpebu9ZbzlXRgKLuwcKB/VXPTJTSOy7lwZU03T+1DqGnw==
+X-Google-Smtp-Source: AGHT+IFXKxpJSm+jQINyIdcAS25z6i2t+cVLYvY9NKgzJVylfbWuM2nM12U+0rAKLzTfipaJy/hb5Q==
+X-Received: by 2002:a05:6902:1141:b0:e04:e298:3749 with SMTP id 3f1490d57ef6-e08702a4b92mr142782276.33.1721405933866;
+        Fri, 19 Jul 2024 09:18:53 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b7ac7e77c0sm9169586d6.61.2024.07.19.09.18.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 09:18:53 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 87DC31200070;
+	Fri, 19 Jul 2024 12:18:52 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Fri, 19 Jul 2024 12:18:52 -0400
+X-ME-Sender: <xms:7JGaZlfzebu9VQHP0-3O4_4DmEoJcEJNzaIys-2n1_6ilpxDiC1X6A>
+    <xme:7JGaZjPitnGgL93QGaFIGLcG_FSe-nqZ17v-S4jCRDyp7FFmMxuMkLQl_MvGYEOk2
+    nP4iy2LKuPA-T8s-Q>
+X-ME-Received: <xmr:7JGaZuh5fHKaJId8iyYLbwzIfM8f4l0Hg1fFRCdDZgd8ax1aVNfS2XPzIuo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrhedugddutddtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpeeuohhq
+    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
+    grthhtvghrnhepvefghfeuveekudetgfevudeuudejfeeltdfhgfehgeekkeeigfdukefh
+    gfegleefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedt
+    ieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfh
+    higihmvgdrnhgrmhgv
+X-ME-Proxy: <xmx:7JGaZu_DSWs_avAUtV1Rf3eIpQD3hYYeTGm4BZXKLq7ms8WB_NWOGA>
+    <xmx:7JGaZhvrCBMB2pipCXpRPEw-_XCZGxCfQYB4kfbe_oLBi3nmZ4GNBA>
+    <xmx:7JGaZtH40MWSUV-7PdAMZ-9_MSE2StwFMQhwjoYieJJHpi3AYM88Ow>
+    <xmx:7JGaZoNIzwrFzHenjwnmcTpCEZj9yzlFg8XT_cK3aOFteNRiPljdtw>
+    <xmx:7JGaZqNe3FCovRFxaMJ4nQqnNhI18rLbEyOi0YqVOPwqh_ri9M47QeX6>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 19 Jul 2024 12:18:51 -0400 (EDT)
+Date: Fri, 19 Jul 2024 09:18:42 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: Bibo Mao <maobibo@loongson.cn>, Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Carlos Llamas <cmllamas@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] locking/atomic: scripts: Fix type error in macro
+ try_cmpxchg
+Message-ID: <ZpqR4qkFUNgkJj0x@boqun-archlinux>
+References: <20240719024010.3296488-1-maobibo@loongson.cn>
+ <CAFULd4bt5oiQq4_3jSDe+3P=1xtAhZ=34vLREqPVT9njjdWKSA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Quentin Monnet <qmo@kernel.org>
-Subject: Re: [v2 PATCH bpf-next 2/4] bpftool: add net attach/detach command to
- tcx prog
-To: Tao Chen <chen.dylane@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>
-Cc: Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240717174749.1511366-1-chen.dylane@gmail.com>
-Content-Language: en-GB
-In-Reply-To: <20240717174749.1511366-1-chen.dylane@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFULd4bt5oiQq4_3jSDe+3P=1xtAhZ=34vLREqPVT9njjdWKSA@mail.gmail.com>
 
-On 17/07/2024 18:47, Tao Chen wrote:
-> Now, attach/detach tcx prog supported in libbpf, so we can add new
-> command 'bpftool attach/detach tcx' to attach tcx prog with bpftool
-> for user.
+On Fri, Jul 19, 2024 at 12:15:28PM +0200, Uros Bizjak wrote:
+> On Fri, Jul 19, 2024 at 4:40 AM Bibo Mao <maobibo@loongson.cn> wrote:
+> >
+> > When porting pv spinlock function on LoongArch system, there is
+> > compiling error such as:
+> >                  from linux/include/linux/smp.h:13,
+> >                  from linux/kernel/locking/qspinlock.c:16:
+> > linux/kernel/locking/qspinlock_paravirt.h: In function 'pv_kick_node':
+> > linux/include/linux/atomic/atomic-arch-fallback.h:242:34: error: initialization of 'u8 *' {aka 'unsigned char *'} from incompatible pointer type 'enum vcpu_state *' [-Wincompatible-pointer-types]
+> >   242 |         typeof(*(_ptr)) *___op = (_oldp), ___o = *___op, ___r; \
+> >       |                                  ^
+> > linux/atomic/atomic-instrumented.h:4908:9: note: in expansion of macro 'raw_try_cmpxchg_relaxed'
+> >  4908 |         raw_try_cmpxchg_relaxed(__ai_ptr, __ai_oldp, __VA_ARGS__); \
+> >       |         ^~~~~~~~~~~~~~~~~~~~~~~
+> > linux/kernel/locking/qspinlock_paravirt.h:377:14: note: in expansion of macro 'try_cmpxchg_relaxed'
+> >   377 |         if (!try_cmpxchg_relaxed(&pn->state, &old, vcpu_hashed))
 > 
->  # bpftool prog load tc_prog.bpf.o /sys/fs/bpf/tc_prog
->  # bpftool prog show
-> 	...
-> 	192: sched_cls  name tc_prog  tag 187aeb611ad00cfc  gpl
-> 	loaded_at 2024-07-11T15:58:16+0800  uid 0
-> 	xlated 152B  jited 97B  memlock 4096B  map_ids 100,99,97
-> 	btf_id 260
->  # bpftool net attach tcx_ingress name tc_prog dev lo
->  # bpftool net
-> 	...
-> 	tc:
-> 	lo(1) tcx/ingress tc_prog prog_id 29
+> This points to the mismatch between "pn->state" and "old" variable.
+> The correct fix is:
 > 
->  # bpftool net detach tcx_ingress dev lo
->  # bpftool net
-> 	...
-> 	tc:
->  # bpftool net attach tcx_ingress name tc_prog dev lo
->  # bpftool net
-> 	tc:
-> 	lo(1) tcx/ingress tc_prog prog_id 29
+> --cut here--
+> diff --git a/kernel/locking/qspinlock_paravirt.h
+> b/kernel/locking/qspinlock_paravirt.h
+> index f5a36e67b593..ac2e22502741 100644
+> --- a/kernel/locking/qspinlock_paravirt.h
+> +++ b/kernel/locking/qspinlock_paravirt.h
+> @@ -357,7 +357,7 @@ static void pv_wait_node(struct mcs_spinlock
+> *node, struct mcs_spinlock *prev)
+> static void pv_kick_node(struct qspinlock *lock, struct mcs_spinlock *node)
+> {
+>        struct pv_node *pn = (struct pv_node *)node;
+> -       enum vcpu_state old = vcpu_halted;
+> +       u8 old = vcpu_halted;
+>        /*
+
+Looks reasonable to me, we should also add static_assert() for
+try_cmpxhg_*() to make sure the old has the same size of the cmpxchged
+field.
+
+Regards,
+Boqun
+
+>         * If the vCPU is indeed halted, advance its state to match that of
+>         * pv_wait_node(). If OTOH this fails, the vCPU was running and will
+> --cut here--
 > 
-> Test environment: ubuntu_22_04, 6.7.0-060700-generic
-> 
-> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
-> ---
->  tools/bpf/bpftool/net.c | 43 ++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 42 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/bpf/bpftool/net.c b/tools/bpf/bpftool/net.c
-> index 1b9f4225b394..60b0af40109a 100644
-> --- a/tools/bpf/bpftool/net.c
-> +++ b/tools/bpf/bpftool/net.c
-> @@ -67,6 +67,8 @@ enum net_attach_type {
->  	NET_ATTACH_TYPE_XDP_GENERIC,
->  	NET_ATTACH_TYPE_XDP_DRIVER,
->  	NET_ATTACH_TYPE_XDP_OFFLOAD,
-> +	NET_ATTACH_TYPE_TCX_INGRESS,
-> +	NET_ATTACH_TYPE_TCX_EGRESS,
->  };
->  
->  static const char * const attach_type_strings[] = {
-> @@ -74,6 +76,8 @@ static const char * const attach_type_strings[] = {
->  	[NET_ATTACH_TYPE_XDP_GENERIC]	= "xdpgeneric",
->  	[NET_ATTACH_TYPE_XDP_DRIVER]	= "xdpdrv",
->  	[NET_ATTACH_TYPE_XDP_OFFLOAD]	= "xdpoffload",
-> +	[NET_ATTACH_TYPE_TCX_INGRESS]	= "tcx_ingress",
-> +	[NET_ATTACH_TYPE_TCX_EGRESS]	= "tcx_egress",
->  };
->  
->  static const char * const attach_loc_strings[] = {
-> @@ -647,6 +651,32 @@ static int do_attach_detach_xdp(int progfd, enum net_attach_type attach_type,
->  	return bpf_xdp_attach(ifindex, progfd, flags, NULL);
->  }
->  
-> +static int get_tcx_type(enum net_attach_type attach_type)
-> +{
-> +	switch (attach_type) {
-> +	case NET_ATTACH_TYPE_TCX_INGRESS:
-> +		return BPF_TCX_INGRESS;
-> +	case NET_ATTACH_TYPE_TCX_EGRESS:
-> +		return BPF_TCX_EGRESS;
-> +	default:
-> +		return __MAX_BPF_ATTACH_TYPE;
-
-
-Can we return -1 here instead, please? In the current code, we validate
-the attach_type before entering this function and the "default" case is
-never reached, it's only here to discard compiler's warning. But if we
-ever reuse this function elsewhere, this could cause bugs: if the header
-file used for compiling the bpftool binary is not in sync with the
-header corresponding to the running kernel, __MAX_BPF_ATTACH_TYPE could
-correspond to a newly introduced type, and bpftool/libbpf would try to
-use that to attach the program, instead of detecting an error.
-
-
-> +	}
-> +}
-> +
-> +static int do_attach_tcx(int progfd, enum net_attach_type attach_type, int ifindex)
-> +{
-> +	int type = get_tcx_type(attach_type);
-> +
-> +	return bpf_prog_attach(progfd, ifindex, type, 0);
-> +}
-> +
-> +static int do_detach_tcx(int targetfd, enum net_attach_type attach_type)
-> +{
-> +	int type = get_tcx_type(attach_type);
-> +
-> +	return bpf_prog_detach(targetfd, type);
-> +}
-> +
->  static int do_attach(int argc, char **argv)
->  {
->  	enum net_attach_type attach_type;
-> @@ -692,6 +722,11 @@ static int do_attach(int argc, char **argv)
->  	case NET_ATTACH_TYPE_XDP_OFFLOAD:
->  		err = do_attach_detach_xdp(progfd, attach_type, ifindex, overwrite);
->  		break;
-> +	/* attach tcx prog */
-> +	case NET_ATTACH_TYPE_TCX_INGRESS:
-> +	case NET_ATTACH_TYPE_TCX_EGRESS:
-> +		err = do_attach_tcx(progfd, attach_type, ifindex);
-> +		break;
->  	default:
->  		break;
->  	}
-> @@ -738,6 +773,11 @@ static int do_detach(int argc, char **argv)
->  		progfd = -1;
->  		err = do_attach_detach_xdp(progfd, attach_type, ifindex, NULL);
->  		break;
-> +	/* detach tcx prog */
-> +	case NET_ATTACH_TYPE_TCX_INGRESS:
-> +	case NET_ATTACH_TYPE_TCX_EGRESS:
-> +		err = do_detach_tcx(ifindex, attach_type);
-> +		break;
->  	default:
->  		break;
->  	}
-> @@ -944,7 +984,8 @@ static int do_help(int argc, char **argv)
->  		"       %1$s %2$s help\n"
->  		"\n"
->  		"       " HELP_SPEC_PROGRAM "\n"
-> -		"       ATTACH_TYPE := { xdp | xdpgeneric | xdpdrv | xdpoffload }\n"
-> +		"       ATTACH_TYPE := { xdp | xdpgeneric | xdpdrv | xdpoffload | tcx_ingress\n"
-> +		"			 | tcx_egress }\n"
-
-                 ^^^^^^^^^^^^^^^^^^^^^^^
-This indent space between the quote and the pipe needs to be spaces
-instead of three tabs, please.
-
-The rest of the patches looks good, thank you!
-
-Quentin
-
+> Uros.
 
