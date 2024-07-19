@@ -1,89 +1,107 @@
-Return-Path: <linux-kernel+bounces-257351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C18CB9378E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:06:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED1C19378EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0685E1C2152A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:06:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADD38281771
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F26143C67;
-	Fri, 19 Jul 2024 14:06:50 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92561448F6;
+	Fri, 19 Jul 2024 14:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="VxC4Lmim"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C1682D72
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 14:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709211442FB;
+	Fri, 19 Jul 2024 14:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721398009; cv=none; b=UjzH/MWn9GTU0Ww86OZNimgHTEGZxM9G6jgJJlN+wqGS44lHsRNx+kNL2vsf0yO5Edqi+KLn6YtNypX44pZ/PqGOPgdGbB4iK5fwFVS9OXJ/zLJZvobb1yKPypKf2qk00uFYi41nl0F24PVOsbrWzE6Q2CMFhpySHzn+jDZV5Rs=
+	t=1721398050; cv=none; b=tKgtKHymM54/bnH8fU0gq2n8bxzStzyLhtVIXrQUdJZocCiyAneStSXiM55/XGqbqFZk7k07a3a+Xv+k0LBFdlbFUQ5cbt2NTsZdO6QjgKFQ0CNL8okHewG7VGBwdBFkZhyl49ef6n1mPtealMtzuzyuB8YHFL93aIwaqJbrI1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721398009; c=relaxed/simple;
-	bh=9P0fm4SuIcTiAHWJWxGSCeDY0p23gNKI5fOk1skjMfY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F7NSFrnYVLzu5xVaj701WO7ovl5npCfOH/CmdxNHrzKTCxGDtBs3OznCSf4Ut6XN2I5FDbUpLba7X5Ngo/OIOoljAGleW+hg3s8e1ifmkO+oGVwxfPCs59+J4K+Xg0qMBaIfI4aPoqdboorHT+wRdj+0gsgnM/QlQqrXjLTnm2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDE1DC32782;
-	Fri, 19 Jul 2024 14:06:47 +0000 (UTC)
-Date: Fri, 19 Jul 2024 10:06:45 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML
- <linux-kernel@vger.kernel.org>, "Masami Hiramatsu (Google)"
- <mhiramat@kernel.org>
-Subject: Re: [GIT PULL] ftrace: Rewrite of function graph to allow multiple
- users
-Message-ID: <20240719100645.0c949090@rorschach.local.home>
-In-Reply-To: <ZpptbxWtKrxlNpan@localhost.localdomain>
-References: <20240716162714.48febeaf@rorschach.local.home>
-	<CAHk-=wiJwzMR6mZ8=Mc4bhCA3qRdwo_7NEHU80mSWoaMLTFjqw@mail.gmail.com>
-	<20240718172937.2fb3e91c@rorschach.local.home>
-	<CAHk-=wgQx-BiPQLe0rHLpvn1j89B8EgYPLvw0hGC-AUvF-uE1w@mail.gmail.com>
-	<20240718185547.551f7dc8@gandalf.local.home>
-	<ZpptbxWtKrxlNpan@localhost.localdomain>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721398050; c=relaxed/simple;
+	bh=20zvaO11FrsyesRbtYuAMn98AAwtMwMZY+T2BXR0fPc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pThY70Z9W/iU78+JdWyBFDqx95BAFWuMTAnsqU0sS4utcJJxjLIa9xxasK6gfiD62BOE9KfWtEok7svk9THuG3AEU/L3y8sy9zY5WGyyIgIeePjG4oA9AQeGCSv2ZkvT53HACzeTuHutgSlTlS5T6pmTj0P+50MdQgpV7Q7Vn/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=VxC4Lmim; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 558F8471;
+	Fri, 19 Jul 2024 16:06:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1721398007;
+	bh=20zvaO11FrsyesRbtYuAMn98AAwtMwMZY+T2BXR0fPc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VxC4Lmim/3zV35bA9lJhqOlZXUxGxUNN37T3T8eL040PZajKVEGaFWYg7QJX3vYc8
+	 TbY664n9PNaNs2SpgRe5W2CY7gSYm7VxHmjEZ+lW1IRC4Lv6zvL2SMZaY8d92HR5SH
+	 KK7qaclJr374JAxm/fmcjlZWbX4GFVgvs3rhR+10=
+Date: Fri, 19 Jul 2024 17:07:11 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Clark Wang <xiaoning.wang@nxp.com>, Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v4 4/4] pwm: adp5585: Add Analog Devices ADP5585 support
+Message-ID: <20240719140711.GC637@pendragon.ideasonboard.com>
+References: <20240608141633.2562-1-laurent.pinchart@ideasonboard.com>
+ <20240608141633.2562-5-laurent.pinchart@ideasonboard.com>
+ <ZmcWi08u6-u4MyKu@surfacebook.localdomain>
+ <20240610152833.GW18479@pendragon.ideasonboard.com>
+ <CAHp75VfcTHty-Vzcc+B4iMk33qS_AafvU10Qn3AQftrfQRBebw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75VfcTHty-Vzcc+B4iMk33qS_AafvU10Qn3AQftrfQRBebw@mail.gmail.com>
 
-On Fri, 19 Jul 2024 09:43:11 -0400
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+Hi Andy,
 
-> I see a few possible solutions there:
+(CC'ing Mark)
+
+On Mon, Jun 10, 2024 at 07:31:11PM +0300, Andy Shevchenko wrote:
+> On Mon, Jun 10, 2024 at 6:28 PM Laurent Pinchart wrote:
+> > On Mon, Jun 10, 2024 at 06:06:51PM +0300, Andy Shevchenko wrote:
+> > > Sat, Jun 08, 2024 at 05:16:33PM +0300, Laurent Pinchart kirjoitti:
 > 
-> - We can teach git to know about this "First Last (Employer)" formatting
->   and combine duplicates.
+> ...
 > 
-> - We can move the employer attribution to the email address instead,
->   e.g.: name.corp@kernel.org or name+corp@kernel.org (or whatever we
->   figure out looks OK).
+> > Andy, we're reaching a level of nitpicking and yakshaving that even I
+> > can't deal with. I will have to simply ignore the comments I disagree
+> > with.
 > 
-> Thoughts ?
+> Do you think using bulk APIs is nit-picking?
 
-For now I changed my git config to:
+In this case I do. If we were dealing with more 16-bit registers in this
+driver I would agree with you. This being said, I'd like to get this
+driver merged, and I'll burn some of the mental energy I've recovered
+thanks to the last two weeks of holidays and submit a v5 using the bulk
+API. It's getting mentally exhausting though.
 
-  [author]
-        name = Steven Rostedt
-  [commiter]
-        name = Steven Rostedt
-  [user]
-        name = Steven Rostedt (Google)
-        email = rostedt@goodmis.org
+Overall, I think it would be nice to improve support for variable-length
+register maps, in a similar way as done in include/media/v4l2-cci.h.
+This driver, as well as many other drivers, could really benefit from
+it. Mark, do you have an opinion, is v4l2-cci something that we could
+fold in regmap itself ?
 
-Which makes what shows up in the shortlog with just my name (and git
-blame as well), but the commits still have:
+-- 
+Regards,
 
-  Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
-Which may be a good compromise.
-
--- Steve
+Laurent Pinchart
 
