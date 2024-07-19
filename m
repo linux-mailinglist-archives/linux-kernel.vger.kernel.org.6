@@ -1,183 +1,171 @@
-Return-Path: <linux-kernel+bounces-257316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2A2D937864
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:23:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C30D937865
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:25:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E822282638
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:23:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B59AC282826
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483C613F435;
-	Fri, 19 Jul 2024 13:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9B6142642;
+	Fri, 19 Jul 2024 13:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="afVypRHI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TmDvzfEa";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aE90tDUh";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TmDvzfEa";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aE90tDUh"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E426824211;
-	Fri, 19 Jul 2024 13:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2052A84A28;
+	Fri, 19 Jul 2024 13:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721395428; cv=none; b=kvW2eYQxl2Bw36Dxh1p3y4X0J8C3L9OTCRLYsZQwEBqRUgZmYDN6Qm9ANrJFqjUZDeE8NflrsOpjPQUK/9oEbN/PnK5oXqYGHsagLhwpbmkdEdPFLjgmFQlhRfmUbEtY2tf8DPEga+mfuL9+ncCBMxDHpFxYY4WQ3fAkxS8TchA=
+	t=1721395500; cv=none; b=AQEK6AWabExcaq1WuS4ItCqAKHEagb/T5E4yelif8zSYsbUleWUhCDkx22ikxbMgv7eWsKcd316PdEwNc+cFv0+WIanoU14Z/QmhWmEy1q++LaBo+IEIsp8UK+W1lWZX4Qi/8N0tslepqEFYh4Tj/zct7nkw3KuSfMBq662DeTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721395428; c=relaxed/simple;
-	bh=rL0qQz3bf5sQLGtti36JxstdaTgsUAOfAw64mFDeiLc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a2CY5L0cmxALCqcNwhstTWYzvW7rhxQpbsjGehK02kzFHuyxjhBaOyr0mVvXZH/PQi4s7vMiZEbFgQQ0LSt+MgWjwLoGBgO8cVU5RrfGjTLk2zDTRuj+WfLflFR/l5fgTA47yAzWwzXdHJxK1tVsJeQYaLBPx3yPlSJ3DkO/OP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=afVypRHI; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721395427; x=1752931427;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=rL0qQz3bf5sQLGtti36JxstdaTgsUAOfAw64mFDeiLc=;
-  b=afVypRHI/qGWfpW8vD26M+Ovll+TG/tIM4AyKxKeRtXELKN8G3loxRzn
-   RQfz77jWKE7AYUfKA17m1r2btzaHq6XkoBj8cGJZbZBrBlShtst6fzHSp
-   8iZdXGVn4CtTbTQ7eTBGNT1WZtVip6xtGNWSFmJGOXutTVnJocs+4zrqD
-   d67ICvxknDtnsigUU9zowKB12hnc8zPCMRI6u/aN+BbmqG0f1+3mAvwhE
-   wByaMmV7n+anuDHrwx0fFSd6EV0GkVj2rfRSdOH4Wv03OY3WjSrDYEhSD
-   gva6CIEQVdZjigN3z4MZzwgCznbu6ui+RBJM0xhpbemOHUgiXuL8KevVR
-   g==;
-X-CSE-ConnectionGUID: T3y7IBj9Rnizmlw9lZWsfg==
-X-CSE-MsgGUID: W2eMPoAXTJGAuEKQeWxMsw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11138"; a="30158874"
-X-IronPort-AV: E=Sophos;i="6.09,220,1716274800"; 
-   d="scan'208";a="30158874"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2024 06:23:46 -0700
-X-CSE-ConnectionGUID: R9lYcB/vSpyJrOmZemS+0Q==
-X-CSE-MsgGUID: 9oXb3w/UQze62qk/h+2wcA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,220,1716274800"; 
-   d="scan'208";a="51171213"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.150.149])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2024 06:23:39 -0700
-Message-ID: <9d87c796-ae47-4f5a-8506-f0723be9c989@intel.com>
-Date: Fri, 19 Jul 2024 16:23:32 +0300
+	s=arc-20240116; t=1721395500; c=relaxed/simple;
+	bh=os56SYySxQsyTsYpwGfViqAk/s/Y090K2t740QaMzPo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o6PuZS6/iRhhDreZcaAe0L76/0zEBrAMd7tSWdcr50BN2bE2q+ievcOcxZzEndlLletKeriHRyAbz3S2ZGU8mhusIaRXbHc4dkMmZ3t2Du/eoei17eBDb6t9UPNll1CWs+kVaJWfdk7sc26i3o2LHwyNVED+4O0YNK0vkYKpcLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TmDvzfEa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aE90tDUh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TmDvzfEa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aE90tDUh; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1EBF721262;
+	Fri, 19 Jul 2024 13:24:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721395496;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DOT1jU+rhG7HPwjPdL/URjQ6ObWA2vFSxfE6RPM1NkE=;
+	b=TmDvzfEa++xcGMSYw4DoMtYLmJyZg4ti4whoYojWkknnmvO1GttOypUa15fnUbKXtm0fgW
+	cjWtbIJPuXQ6b7NCkwCW8MAp3FYz57g+ujuCMhRTrorEDdhsIrSxidosEb18JUmaSnTigy
+	8cutnKTMYVhk+AIPhWklgS/13Ww5Azw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721395496;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DOT1jU+rhG7HPwjPdL/URjQ6ObWA2vFSxfE6RPM1NkE=;
+	b=aE90tDUhQDy/8hqeI6qVFHwBdtjYuWe6w/RDc9LeKP/EfnquQmvrS9v0C5w0S/eFSnPIXC
+	GN7+3GzdKVo3zuBw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=TmDvzfEa;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=aE90tDUh
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721395496;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DOT1jU+rhG7HPwjPdL/URjQ6ObWA2vFSxfE6RPM1NkE=;
+	b=TmDvzfEa++xcGMSYw4DoMtYLmJyZg4ti4whoYojWkknnmvO1GttOypUa15fnUbKXtm0fgW
+	cjWtbIJPuXQ6b7NCkwCW8MAp3FYz57g+ujuCMhRTrorEDdhsIrSxidosEb18JUmaSnTigy
+	8cutnKTMYVhk+AIPhWklgS/13Ww5Azw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721395496;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DOT1jU+rhG7HPwjPdL/URjQ6ObWA2vFSxfE6RPM1NkE=;
+	b=aE90tDUhQDy/8hqeI6qVFHwBdtjYuWe6w/RDc9LeKP/EfnquQmvrS9v0C5w0S/eFSnPIXC
+	GN7+3GzdKVo3zuBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F0FB6136F7;
+	Fri, 19 Jul 2024 13:24:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id rGedOidpmmb2DwAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Fri, 19 Jul 2024 13:24:55 +0000
+Date: Fri, 19 Jul 2024 15:24:54 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>,
+	Arnd Bergmann <arnd@arndb.de>, Filipe Manana <fdmanana@suse.com>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+	Anand Jain <anand.jain@oracle.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] btrfs: change mount_opt to u64
+Message-ID: <20240719132454.GL8022@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <20240719103714.1217249-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/8] mmc: sdhci-of-dwcmshc: factor out code into
- dwcmshc_rk35xx_init
-To: Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu,
- conor+dt@kernel.org, guoren@kernel.org, inochiama@outlook.com,
- jszhang@kernel.org, krzysztof.kozlowski+dt@linaro.org, palmer@dabbelt.com,
- paul.walmsley@sifive.com, robh@kernel.org, ulf.hansson@linaro.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org, linux-riscv@lists.infradead.org,
- chao.wei@sophgo.com, haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com,
- tingzhu.wang@sophgo.com
-Cc: Chen Wang <unicorn_wang@outlook.com>
-References: <cover.1721377374.git.unicorn_wang@outlook.com>
- <1bb79db9f05ade17d269acefb6dcdce455236b92.1721377374.git.unicorn_wang@outlook.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <1bb79db9f05ade17d269acefb6dcdce455236b92.1721377374.git.unicorn_wang@outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240719103714.1217249-1-arnd@kernel.org>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_DN_SOME(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:replyto,suse.cz:dkim]
+X-Spam-Flag: NO
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.21
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 1EBF721262
 
-On 19/07/24 11:46, Chen Wang wrote:
-> From: Chen Wang <unicorn_wang@outlook.com>
+On Fri, Jul 19, 2024 at 12:37:06PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Continue factor out code fron probe into dwcmshc_rk35xx_init.
+> The newly added BTRFS_MOUNT_IGNORESUPERFLAGS flag does not fit into a 32-bit
+> flags word, as shown by this warning on 32-bit architectures:
 > 
-> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
-> ---
->  drivers/mmc/host/sdhci-of-dwcmshc.c | 34 ++++++++++++++---------------
->  1 file changed, 16 insertions(+), 18 deletions(-)
+> fs/btrfs/super.c: In function 'btrfs_check_options':
+> fs/btrfs/super.c:666:48: error: conversion from 'enum <anonymous>' to 'long unsigned int' changes value from '4294967296' to '0' [-Werror=overflow]
+>   666 |              check_ro_option(info, *mount_opt, BTRFS_MOUNT_IGNORESUPERFLAGS, "ignoresuperflags")))
+>       |                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
 > 
-> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> index bb0adc2ee325..30e4cea8a058 100644
-> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
-> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> @@ -711,12 +711,22 @@ static void rk35xx_sdhci_reset(struct sdhci_host *host, u8 mask)
->  	sdhci_reset(host, mask);
->  }
->  
-> -static int dwcmshc_rk35xx_init(struct sdhci_host *host, struct dwcmshc_priv *dwc_priv)
-> +static int dwcmshc_rk35xx_init(struct device *dev, struct sdhci_host *host,
-> +			       struct dwcmshc_priv *dwc_priv)
->  {
->  	static const char * const clk_ids[] = {"axi", "block", "timer"};
-> -	struct rk35xx_priv *priv = dwc_priv->priv;
-> +	struct rk35xx_priv *priv;
->  	int err;
->  
-> +	priv = devm_kzalloc(dev, sizeof(struct rk35xx_priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	if (of_device_is_compatible(dev->of_node, "rockchip,rk3588-dwcmshc"))
-> +		priv->devtype = DWCMSHC_RK3588;
-> +	else
-> +		priv->devtype = DWCMSHC_RK3568;
-> +
->  	priv->reset = devm_reset_control_array_get_optional_exclusive(mmc_dev(host->mmc));
->  	if (IS_ERR(priv->reset)) {
->  		err = PTR_ERR(priv->reset);
-> @@ -739,6 +749,8 @@ static int dwcmshc_rk35xx_init(struct sdhci_host *host, struct dwcmshc_priv *dwc
->  	sdhci_writel(host, 0, DWCMSHC_EMMC_DLL_TXCLK);
->  	sdhci_writel(host, 0, DWCMSHC_EMMC_DLL_STRBIN);
->  
-> +	dwc_priv->priv = priv;
-> +
->  	return 0;
->  }
->  
-> @@ -1184,7 +1196,6 @@ static int dwcmshc_probe(struct platform_device *pdev)
->  	struct sdhci_pltfm_host *pltfm_host;
->  	struct sdhci_host *host;
->  	struct dwcmshc_priv *priv;
-> -	struct rk35xx_priv *rk_priv = NULL;
->  	const struct sdhci_pltfm_data *pltfm_data;
->  	int err;
->  	u32 extra, caps;
-> @@ -1241,20 +1252,7 @@ static int dwcmshc_probe(struct platform_device *pdev)
->  	host->mmc_host_ops.execute_tuning = dwcmshc_execute_tuning;
->  
->  	if (pltfm_data == &sdhci_dwcmshc_rk35xx_pdata) {
-> -		rk_priv = devm_kzalloc(&pdev->dev, sizeof(struct rk35xx_priv), GFP_KERNEL);
-> -		if (!rk_priv) {
-> -			err = -ENOMEM;
-> -			goto err_clk;
-> -		}
-> -
-> -		if (of_device_is_compatible(pdev->dev.of_node, "rockchip,rk3588-dwcmshc"))
-> -			rk_priv->devtype = DWCMSHC_RK3588;
-> -		else
-> -			rk_priv->devtype = DWCMSHC_RK3568;
-> -
-> -		priv->priv = rk_priv;
-> -
-> -		err = dwcmshc_rk35xx_init(host, priv);
-> +		err = dwcmshc_rk35xx_init(dev, host, priv);
->  		if (err)
->  			goto err_clk;
->  	}
-> @@ -1290,7 +1288,7 @@ static int dwcmshc_probe(struct platform_device *pdev)
->  		dwcmshc_cqhci_init(host, pdev);
->  	}
->  
-> -	if (rk_priv)
-> +	if (priv->priv)
+> Change all interfaces that deal with mount flags to use a 64-bit type
+> on all architectures instead.
+> 
+> Fixes: 32e6216512b4 ("btrfs: introduce new "rescue=ignoresuperflags" mount option")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ----
+> Please double-check that I got all the instances. I only looked at where the
+> obvious users are, but did not actually try to run this on a 32-bit target
 
-It would be clearer here to use
-
-	if (pltfm_data == &sdhci_dwcmshc_rk35xx_pdata)
-
->  		dwcmshc_rk35xx_postinit(host, priv);
->  
->  	err = __sdhci_add_host(host);
-
+Thanks, the build issue is known and fix will be sent in 2nd pull
+reuqest on Monday.
 
