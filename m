@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-257725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60CE8937E24
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 01:51:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F08AB937E26
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 01:51:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B6FA1F21FE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 23:51:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABCA0281EE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 23:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08021494DF;
-	Fri, 19 Jul 2024 23:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908F8149C74;
+	Fri, 19 Jul 2024 23:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dEK8ZuAl"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OoI3Ey6G"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA3314885E
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 23:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B53A1494D7
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 23:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721433073; cv=none; b=dEm9Uad+OaWaouS7D3N6Y8d73Z/QgUZcadb73SBJazxOyHfPixsEbtSTktWudssSBHwE0LUY2EDaK2qYXvjE+Ig/L1CdvBh/fogsejXPYNzsNFApkawB2XrZhYysGBhBZ7ZYhOnhVxk2CCInXgEBeiydT+7I52+2AjXOwI2VEZE=
+	t=1721433074; cv=none; b=IuEs0/gLO4t1lVF5hBGTGUhlN4Ef8tSXYQKw1wpSf1nY7vAVGLnMo8zL9ikYH1v4PKDEthaN+as9ifB23r7AAOG0I+0qCbZu+V9slggaTJsuxPv9tQ1iBgVU3bkk2hT9NA2qvm/LgywX3Et36uTC3r1f1705SlMPc9OryZhpq+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721433073; c=relaxed/simple;
-	bh=9VC1o23EyPnmCsIUXN13mbYo4nMy/PcXMeGVi57HKHs=;
+	s=arc-20240116; t=1721433074; c=relaxed/simple;
+	bh=Z1cH1V9K2pPOjjICaFF7xPr76fow0RyXynIXQuiRywA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Fc8YA56kHa49YMeILNZl4raDGDRx2I/3U/vUjvIs1nuFQ/FmUe7isqKGMSgmeEnzO6YZ9OgswQ99lqdNQuXyYiCJxQywbDvqKOoHE3PuLzUOSSrcr4WmF0nHXzdji+fQgFNfpq0dTkTT2KCabIdRUXXEAdER8PTC+Oo4o5kf2bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dEK8ZuAl; arc=none smtp.client-ip=209.85.210.201
+	 To:Cc:Content-Type; b=g8+SnH4G3ovzGrxi4SsEPWDsPsxUDx1uHZ3vdO6UJMDVJ2foZUYM7fbIMHeB4DN9g7XRt0r0Ywcuk+Iefb5M18IUe9f81iDt8vgdfjN/fOHPJXMgB1URm/SWDyTmNrkgujhribkh9PeS22w2MUU1UbvMZXHGNvRxT7iohk+M5FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OoI3Ey6G; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-70afd833ba9so974416b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 16:51:11 -0700 (PDT)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-778702b9f8fso1648491a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 16:51:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721433071; x=1722037871; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1721433073; x=1722037873; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q7GRI70QT0vlqusEkjG3FXqYLsYvXxnP78B7joN4qu0=;
-        b=dEK8ZuAldsDEx2w1w+2j1cDUt0l/POihaDi5wQ0aD7+qbKYHvnyKAMX+/pVkgCVUHl
-         mZvtohjQ72zq7kRuEkiq24Ay8xps3o5wgUpD94PPGlILSRh/2GIcHDG5ju0PvVCpWqF+
-         oMCR0xW/s0v22yLCxycYwOSICrae0C1eNpEjlmH/ltmgX41GKnY1d5csVk0xNSBnn1ZZ
-         WD7jMoSPrN/zA50JolEwvym5Su5YhLm0GoQVq6BDBGZTk3DrMVIomfHZkMg5fHDFI8rD
-         AN61pF+JFdFWdI48VE0g/NaPukVM8DbL9FEqqRLlgwLK2LiHIkFpMFze5Ib2S7NS7MY/
-         XoDQ==
+        bh=RdVO46PMlcBgI+ne7j7UwSAA4lN1OIh/NoMWcCiQ7DM=;
+        b=OoI3Ey6GTgrYVKbH5Dz1xQw/VxYVlAZlUJSuCfbXBYjp4p0lHZj37PYNPQOBrsJoTK
+         0CZueGELn7K2s9ongLOoh3i5vJ1vPREDEXwtfaSV9kSL1wBf+T5IPgvsqzG4HvoWuPPL
+         GU2FgT41NNicpd9Oi6z1vQDdfQgkqexjcrofT7CoKP0dLIijEESME+2RwNP0+hlBOf7v
+         sZlIxq361CVmwuWeR4rjmBLhBuprwwR9+W1Q8WEamQt0UDG6z2dIbFINFU4i1bYpNZle
+         adFd0vBObsHgwb4AzUQ+kvYIB0An/9C5ZShJvBdOy6s0XVkqSW1O1hQt35RjQ/b0dnAp
+         YJNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721433071; x=1722037871;
+        d=1e100.net; s=20230601; t=1721433073; x=1722037873;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Q7GRI70QT0vlqusEkjG3FXqYLsYvXxnP78B7joN4qu0=;
-        b=hEgFUO2PCXJifVDfS2fQZO53DK8IDs2B/sKKEz+uFuIRLkoHjBtH7okGPTr+m3+jj2
-         vDLygCRSadPzoFw5HecfCebcaNZjRusx9QOu1ttzE3FLuI7QKdEFN9otqvw3qBb+uklO
-         9V753GguKB4ghv/oJ/0nyB68qv14Ya/ArLImpkh0vFF/na+VN8YBMiGnPXjOwxwRePX/
-         po3D6QbZkPxso+NbZmtZHWGtKgxb8EWu+xXAaQUZys4LZ5N5JyajtTcLo+gc+3lRq/6D
-         OzPpEKV/XB2y16P+XDio5xGN3usWRk6S0ouXVtwJAE2DYjwrZxD3YgszgDFq30HZyoZV
-         nVsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUo+5unfDhkqaPKz5OcuuLwe073xXZdd6/03prMxw+49dQEF/cd125+w886qUHEhGWnbtK+Rm+Fu+y4SdvIHu0CkF03Rvm/QMVwu2Xa
-X-Gm-Message-State: AOJu0Yx/yOIHRr2W6kEB+6BreeWmMRZIBO5VkTQuu61g9l3xwWUL2/Mj
-	6CItvcdRTzyiQ+8aiPG+dO9f/iyhqbKRAG5nxMtsPHaki/AijZHoqNIj7SsH0INluBUo/MAE6qC
-	r8A==
-X-Google-Smtp-Source: AGHT+IGzaPvQY/Gvr64S0cERzYi+DWtBU+TZAqXIrmD6fzYYJUjCv+m+z7gk6KBNOoZyk0taViygByegSz0=
+        bh=RdVO46PMlcBgI+ne7j7UwSAA4lN1OIh/NoMWcCiQ7DM=;
+        b=uTn48kA8TFbHr9eRSDbbSeim0OP8FBdqxq3VNxJyvXbzPIqVhThHJe/ytaaK9PdRYJ
+         OnlO0ea7na9LnJYdHjOqrsMYwG8CTioauh4ziZg6pFFxEz6QyBjh9Ndi3KEc+Gpn9ozQ
+         Fd8dOvGh5bA/dBVeLcBI0kYa5WCeyZfFAZUVqbIekpPBYXkdUuIjo0lHHPFIIaB5zkbi
+         q/QqmtaM8xbbeCHMZ3GsGVnwCta8PJED0WuLM898n98dfPGZpxp1Gm3EUc+b4gcLKPUx
+         ORML7Uez4h7q26J14Am8n2IS+RSFW7H05gNZHzgv0o7X+mxLa2D4OdY2XTxzq60f5Wuu
+         Wsfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUY7ZNBlnP8NKHfecWylpoMTBUrDGFPv35O/CbNU6qKZtOdaNDfFLkJ+fRQ/y1eyd6paZZVLTng4zes3d42624IW48TxQRsDsHvScs/
+X-Gm-Message-State: AOJu0YwHJaMJm9wlWX0PGEkRWp/aGb7/nxlLAIkEg4lT/+B8e1fHoPWH
+	k7ANQpFeOyskCyBUasbGfquW9tgPsd0kLmJLXXfrVRPPPmCfO1NoV16ul8zxjwPV6dZjduqyspL
+	TSQ==
+X-Google-Smtp-Source: AGHT+IGmFkrrWPx3tuEOZ0FODIaBqubff0bPniwUu0Iu1FG6TzHsKKgJswuzEa2qgvqE403sR3EIJhNUJ+w=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:aa7:8e06:0:b0:706:5ca6:1c6b with SMTP id
- d2e1a72fcca58-70d08602774mr4333b3a.1.1721433070968; Fri, 19 Jul 2024 16:51:10
- -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a17:90b:1b0e:b0:2ca:f1a0:8e74 with SMTP id
+ 98e67ed59e1d1-2cd170a5399mr56982a91.2.1721433072795; Fri, 19 Jul 2024
+ 16:51:12 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 19 Jul 2024 16:50:58 -0700
+Date: Fri, 19 Jul 2024 16:50:59 -0700
 In-Reply-To: <20240719235107.3023592-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,53 +75,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240719235107.3023592-1-seanjc@google.com>
 X-Mailer: git-send-email 2.45.2.1089.g2a221341d9-goog
-Message-ID: <20240719235107.3023592-2-seanjc@google.com>
-Subject: [PATCH v2 01/10] KVM: x86: Enforce x2APIC's must-be-zero reserved ICR bits
+Message-ID: <20240719235107.3023592-3-seanjc@google.com>
+Subject: [PATCH v2 02/10] KVM: x86: Move x2APIC ICR helper above kvm_apic_write_nodecode()
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Maxim Levitsky <mlevitsk@redhat.com>, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Inject a #GP on a WRMSR(ICR) that attempts to set any reserved bits that
-are must-be-zero on both Intel and AMD, i.e. any reserved bits other than
-the BUSY bit, which Intel ignores and basically says is undefined.
+Hoist kvm_x2apic_icr_write() above kvm_apic_write_nodecode() so that a
+local helper to _read_ the x2APIC ICR can be added and used in the
+nodecode path without needing a forward declaration.
 
-KVM's xapic_state_test selftest has been fudging the bug since commit
-4b88b1a518b3 ("KVM: selftests: Enhance handling WRMSR ICR register in
-x2APIC mode"), which essentially removed the testcase instead of fixing
-the bug.
-
-WARN if the nodecode path triggers a #GP, as the CPU is supposed to check
-reserved bits for ICR when it's partially virtualized.
+No functional change intended.
 
 Cc: stable@vger.kernel.org
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/lapic.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ arch/x86/kvm/lapic.c | 46 ++++++++++++++++++++++----------------------
+ 1 file changed, 23 insertions(+), 23 deletions(-)
 
 diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index a7172ba59ad2..35c4567567a2 100644
+index 35c4567567a2..d14ef485b0bd 100644
 --- a/arch/x86/kvm/lapic.c
 +++ b/arch/x86/kvm/lapic.c
-@@ -2472,7 +2472,7 @@ void kvm_apic_write_nodecode(struct kvm_vcpu *vcpu, u32 offset)
- 	 * maybe-unecessary write, and both are in the noise anyways.
- 	 */
- 	if (apic_x2apic_mode(apic) && offset == APIC_ICR)
--		kvm_x2apic_icr_write(apic, kvm_lapic_get_reg64(apic, APIC_ICR));
-+		WARN_ON_ONCE(kvm_x2apic_icr_write(apic, kvm_lapic_get_reg64(apic, APIC_ICR)));
- 	else
- 		kvm_lapic_reg_write(apic, offset, kvm_lapic_get_reg(apic, offset));
+@@ -2455,6 +2455,29 @@ void kvm_lapic_set_eoi(struct kvm_vcpu *vcpu)
  }
-@@ -3186,8 +3186,21 @@ int kvm_lapic_set_vapic_addr(struct kvm_vcpu *vcpu, gpa_t vapic_addr)
- 	return 0;
- }
+ EXPORT_SYMBOL_GPL(kvm_lapic_set_eoi);
  
 +#define X2APIC_ICR_RESERVED_BITS (GENMASK_ULL(31, 20) | GENMASK_ULL(17, 16) | BIT(13))
 +
- int kvm_x2apic_icr_write(struct kvm_lapic *apic, u64 data)
- {
++int kvm_x2apic_icr_write(struct kvm_lapic *apic, u64 data)
++{
 +	if (data & X2APIC_ICR_RESERVED_BITS)
 +		return 1;
 +
@@ -133,9 +118,47 @@ index a7172ba59ad2..35c4567567a2 100644
 +	 * behavior will "win".  Arbitrarily clear the BUSY bit, as there is no
 +	 * sane way to provide consistent behavior with respect to hardware.
 +	 */
- 	data &= ~APIC_ICR_BUSY;
++	data &= ~APIC_ICR_BUSY;
++
++	kvm_apic_send_ipi(apic, (u32)data, (u32)(data >> 32));
++	kvm_lapic_set_reg64(apic, APIC_ICR, data);
++	trace_kvm_apic_write(APIC_ICR, data);
++	return 0;
++}
++
+ /* emulate APIC access in a trap manner */
+ void kvm_apic_write_nodecode(struct kvm_vcpu *vcpu, u32 offset)
+ {
+@@ -3186,29 +3209,6 @@ int kvm_lapic_set_vapic_addr(struct kvm_vcpu *vcpu, gpa_t vapic_addr)
+ 	return 0;
+ }
  
- 	kvm_apic_send_ipi(apic, (u32)data, (u32)(data >> 32));
+-#define X2APIC_ICR_RESERVED_BITS (GENMASK_ULL(31, 20) | GENMASK_ULL(17, 16) | BIT(13))
+-
+-int kvm_x2apic_icr_write(struct kvm_lapic *apic, u64 data)
+-{
+-	if (data & X2APIC_ICR_RESERVED_BITS)
+-		return 1;
+-
+-	/*
+-	 * The BUSY bit is reserved on both Intel and AMD in x2APIC mode, but
+-	 * only AMD requires it to be zero, Intel essentially just ignores the
+-	 * bit.  And if IPI virtualization (Intel) or x2AVIC (AMD) is enabled,
+-	 * the CPU performs the reserved bits checks, i.e. the underlying CPU
+-	 * behavior will "win".  Arbitrarily clear the BUSY bit, as there is no
+-	 * sane way to provide consistent behavior with respect to hardware.
+-	 */
+-	data &= ~APIC_ICR_BUSY;
+-
+-	kvm_apic_send_ipi(apic, (u32)data, (u32)(data >> 32));
+-	kvm_lapic_set_reg64(apic, APIC_ICR, data);
+-	trace_kvm_apic_write(APIC_ICR, data);
+-	return 0;
+-}
+-
+ static int kvm_lapic_msr_read(struct kvm_lapic *apic, u32 reg, u64 *data)
+ {
+ 	u32 low;
 -- 
 2.45.2.1089.g2a221341d9-goog
 
