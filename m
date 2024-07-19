@@ -1,286 +1,223 @@
-Return-Path: <linux-kernel+bounces-257642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEEAE937CEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 21:25:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05066937CF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 21:27:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 188651C21663
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:25:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A47F1F21E2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0EA1487D6;
-	Fri, 19 Jul 2024 19:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1589F1487D8;
+	Fri, 19 Jul 2024 19:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Eke+BEVK"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fdjp/qpa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701F414830F;
-	Fri, 19 Jul 2024 19:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F1C148316;
+	Fri, 19 Jul 2024 19:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721417099; cv=none; b=NHPTgedLKatUjqHCc71LFL2g3dVlfxpBlNI4InHd1VS1rbV4o5e7m1aY+KbBfy/m+sS1mekMoIh/tQu0RFVmFrowhoqK6PIZEXaSGaoHLCzoxsaZ6QQdzOkYVXKdOPTq5dC0PmOpKfEUJAUxe2HGi3etUIX5M+NT4of4X5puiL4=
+	t=1721417210; cv=none; b=sg9klwW9EnxsOe16uMHDjMMYxGA/1po/o1qs6NPsusy5fVFnhtyzHctJwgz+EwaeV1xChRh4feB7+dZeZXb3Yi5klvUPFWt9AI2Z0brNtAJewlJPXtNW6+dkbB5yZBTj2KmgJvLoCfEaBAykZ7h3o2QaXe1EWov4zPx2bY6WV3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721417099; c=relaxed/simple;
-	bh=vGeqZIpryEFPDJuT1yJ6W86Uyha0+u0k65cey46kSDI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NTcUl9e34n75GS5YZUGLv9+cafIk9co+5oZZo7xHR24mGW5ou8KWky0v5WkyKW95TM8eHe4WVuNDtB6SdMbpFVAFXa7wy+DKL1FApA+2F8QbZQuEX0SMmT5iqxD15mv1SoXFVyglwvDhod3mOFzrhHICFN3Rk64O3Fg5O3JLyI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Eke+BEVK; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3684e8220f9so656166f8f.1;
-        Fri, 19 Jul 2024 12:24:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721417096; x=1722021896; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XMDExgdXOQloXCqTuckcDxogNNvK+nkowrucWqTTb0w=;
-        b=Eke+BEVKAuzv06eR5SU75Xr6uqEPo5yLBy6uVodJPwnQomeI9pKicZ2D9HKDw2wbP/
-         mRLSpARI2kS9FNw4ZCFD57kUjZ6vP1JUsBKkLMkjbZIV1nuASTZGG6JbxzzdZvKk+cS+
-         ykC4L3UznENOcfHXFWBlGczzV/H2TF4eWCPbZC2oH4QEJLjT3rgvPyb5iV++WoP49WY4
-         W0yYsNraYGwqLEjrgrBxve6TweraNc3qUwEEIOwTjqJ5SgtIE9P14IZgsVWPxh+NjmEZ
-         jnSXcnu4IjXp3gWONLE8xSYnvElmorS4EVtbGh1J5Zjallst1pQpAf/vbjEISttRXWBf
-         C37A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721417096; x=1722021896;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XMDExgdXOQloXCqTuckcDxogNNvK+nkowrucWqTTb0w=;
-        b=ECxAyT+dGVwJYVg7vt/FORfkYyFOoqnJMLdI5lk3Q8ve0uEnyg8Cg9sWUkevWP880k
-         E4ahe9ICkKByP4ukfBGe/+2nQhlZvkVkM2UYe1zAD4GpUDNhD4CI2xuImdqhvRE5zu3m
-         ecT0v0vdQpjCUy2n00gzdp3cKfKzY4mno93UH06fty6PuehAz0iV5dWRuLCUKLqAU6el
-         y3VZW4rb+TNT93CTKAEWtF68AWQ4sQPkp7phxSpLR8Su5ATI6AVpblH9cP0XW0UZnyM3
-         ZdCpF4iqpCDQxaxFCrBHfNnurLU030AJxHEdt30IVmP3OxoAWQaXmgI9x4hWePsjhgoS
-         eoiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+SmiBuy4jaBKF9geFe+CCr6vNL2WUOJ3SpF+mtNV/dh9+UzNaWnqWEn5Pd5AM4GOmHnNcM/JILWFqMGvpW6ik5nluuzY05CPXGN0K
-X-Gm-Message-State: AOJu0YyYPgyeJuZJf+3fsVgYPZL9YcckeZMsDLURFrvf0u0qvV0UOqnb
-	HMjgKgBVanYeAZVkqYxisL1YJmq71+AvnH49xSgZeu5KXGUiy5DG
-X-Google-Smtp-Source: AGHT+IFuhT4nQ/o+RCJyWvzYUED3XY27xOo8ZN8b6KlCp16iABWvCfQKkb/0g4nLF6tAupMUffp33Q==
-X-Received: by 2002:adf:e8ce:0:b0:366:df35:b64f with SMTP id ffacd0b85a97d-36873dc1f38mr2297890f8f.4.1721417095524;
-        Fri, 19 Jul 2024 12:24:55 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-42-168.xnet.hr. [88.207.42.168])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-368786848basm2373461f8f.15.2024.07.19.12.24.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Jul 2024 12:24:55 -0700 (PDT)
-Message-ID: <99010d62-7211-4761-9e18-4ae1632b0d40@gmail.com>
-Date: Fri, 19 Jul 2024 21:24:51 +0200
+	s=arc-20240116; t=1721417210; c=relaxed/simple;
+	bh=GXID7sUUJz5rZS31UruWZvQ5m2atDnWZSGvi6Hj6dI0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Etx6LrqxVxoJozXpWOOuehaU/Zih3+X2ZyFVVgYY2XskCewg/gBl2kYLZHOfP3jNo6lnHZha/onV5qsezjXqaNRm0nsP1K+RkDuXcGOF3Jf2Ez5+iUlcEWeRkMhsLgg7WDuc8khOcjjf7d+u/SlDNmgdy+o6XLIqXHrsMHAs3lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fdjp/qpa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63A42C32782;
+	Fri, 19 Jul 2024 19:26:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721417209;
+	bh=GXID7sUUJz5rZS31UruWZvQ5m2atDnWZSGvi6Hj6dI0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fdjp/qpa9dofertM7AsvUjrc701tNHXdXsMFDwE9mNOsxbAN13Q12T+LxFVeTFZTV
+	 Qbq6P4Zs41ZrIFVwVSnzws0QCaqF5VFjKQ4DJcfIJIq3WC7RtDiDlDg2MN4v6YpeD4
+	 +GlbeKlvthIPV+WNorij4ShEN/mH5ijRt1T2arwLVKa16TyojThOOX8x2xZlhMXecd
+	 dX03BLBPut1V9QVmzEdvto3Uyvbye03VJkRHihzuKTNmaHXA7aWkPqr90PtDvthWTX
+	 23qWlxa9l+5PtxZbGJ7CFXcd6eIIKKqwJQfM/WEj2ksvuUdycJuaBrfvD8Xoehzl0d
+	 GUjnYP0Pf6rSw==
+Date: Fri, 19 Jul 2024 20:26:44 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
+	Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: display: panel: samsung,atna33xc20:
+ Document ATNA45AF01
+Message-ID: <20240719-abnormal-repulsive-fdefb72bdbe3@spud>
+References: <20240715-x1e80100-crd-backlight-v2-0-31b7f2f658a3@linaro.org>
+ <20240715-x1e80100-crd-backlight-v2-1-31b7f2f658a3@linaro.org>
+ <20240715-scorn-canning-a7f23b9e2039@spud>
+ <CAD=FV=U-nOMu-JDQ3T=ZRJ-rZ0BTtyzFVfnzbtCJdbRzAq3YMg@mail.gmail.com>
+ <e017259b-bc62-4b57-9276-b834237225e1@kernel.org>
+ <CAD=FV=VY5Ug3TfUo1RctiVQrHUjuod15HA8BxAyWdd_0bK8_Dw@mail.gmail.com>
+ <20240718-frightful-naturist-a049ea7c0548@spud>
+ <CAD=FV=VaGXMf6Srix6v=Me35BUN4B6ZHwebycka4Dbavqa5Vbw@mail.gmail.com>
+ <CAD=FV=WyDF8LkPeHXTgsyDA74n+AjuHPQ1896ECDE17aYB9rtg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?Q?Re=3A_=5BBUG=5D_arch/x86/kvm/x86=2Ec=3A_In_function_?=
- =?UTF-8?B?4oCYcHJlcGFyZV9lbXVsYXRpb25fZmFpbHVyZV9leGl04oCZOiBlcnJvcjogdXNl?=
- =?UTF-8?Q?_of_NULL_=E2=80=98data=E2=80=99_where_non-null_expected?=
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- linux-kernel@vger.kernel.org, David Edmondson <david.edmondson@oracle.com>
-References: <1eb96f85-edee-45fc-930f-a192cecbf54c@gmail.com>
- <Zpq4B2I1xcMLmuox@google.com>
-Content-Language: en-US
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-In-Reply-To: <Zpq4B2I1xcMLmuox@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="etBnI+HPKfHkVQk5"
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=WyDF8LkPeHXTgsyDA74n+AjuHPQ1896ECDE17aYB9rtg@mail.gmail.com>
 
 
+--etBnI+HPKfHkVQk5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 7/19/24 21:01, Sean Christopherson wrote:
-> On Fri, Jul 19, 2024, Mirsad Todorovac wrote:
->> Hi, all!
->>
->> On linux-stable 6.10 vanilla tree, another NULL pointer is passed, which was detected
->> by the fortify-string.h mechanism.
->>
->> arch/x86/kvm/x86.c
->> ==================
->>
->> 13667 kvm_prepare_emulation_failure_exit(vcpu);
->>
->> calls
->>
->> 8796 __kvm_prepare_emulation_failure_exit(vcpu, NULL, 0);
->>
->> which calls
->>
->> 8790 prepare_emulation_failure_exit(vcpu, data, ndata, NULL, 0);
->>
->> Note here that data == NULL and ndata = 0.
->>
->> again data == NULL and ndata == 0, which passes unchanged all until
->>
->> 8773 memcpy(&run->internal.data[info_start + ARRAY_SIZE(info)], data, ndata * sizeof(data[0]));
-> 
-> My reading of the C99 is that KVM's behavior is fine.
-> 
->   Where an argument declared as size_t n specifies the length of the array for a
->   function, n can have the value zero on a call to that function. Unless explicitly stated
->   otherwise in the description of a particular function in this subclause, pointer arguments
->   on such a call shall still have valid values, as described in 7.1.4. On such a call, a
->   function that locates a character finds no occurrence, a function that compares two
->   character sequences returns zero, and a function that copies characters copies zero
->   characters.
-> 
-> If the function copies zero characters, then there can't be a store to the NULL
-> pointer, and if there's no store, there's no NULL pointer explosion.
-> 
-> I suppose arguably one could argue the builtin memcpy() could deliberately fail
-> on an invalid pointer, but that'd be rather ridiculous.
+On Fri, Jul 19, 2024 at 10:07:29AM -0700, Doug Anderson wrote:
+> Hi,
+>=20
+> On Thu, Jul 18, 2024 at 7:59=E2=80=AFAM Doug Anderson <dianders@chromium.=
+org> wrote:
+> >
+> > Hi,
+> >
+> > On Thu, Jul 18, 2024 at 7:56=E2=80=AFAM Conor Dooley <conor@kernel.org>=
+ wrote:
+> > >
+> > > On Thu, Jul 18, 2024 at 07:45:57AM -0700, Doug Anderson wrote:
+> > > > Hi,
+> > > >
+> > > > On Wed, Jul 17, 2024 at 11:19=E2=80=AFPM Krzysztof Kozlowski <krzk@=
+kernel.org> wrote:
+> > > > >
+> > > > > On 18/07/2024 02:21, Doug Anderson wrote:
+> > > > > > Conor (and/or) Krzysztof and Rob,
+> > > > > >
+> > > > > > On Mon, Jul 15, 2024 at 8:31=E2=80=AFAM Conor Dooley <conor@ker=
+nel.org> wrote:
+> > > > > >>
+> > > > > >> On Mon, Jul 15, 2024 at 02:15:37PM +0200, Stephan Gerhold wrot=
+e:
+> > > > > >>> The Samsung ATNA45AF01 panel is an AMOLED eDP panel that has =
+backlight
+> > > > > >>> control over the DP AUX channel. While it works almost correc=
+tly with the
+> > > > > >>> generic "edp-panel" compatible, the backlight needs special h=
+andling to
+> > > > > >>> work correctly. It is similar to the existing ATNA33XC20 pane=
+l, just with
+> > > > > >>> a larger resolution and size.
+> > > > > >>>
+> > > > > >>> Add a new "samsung,atna45af01" compatible to describe this pa=
+nel in the DT.
+> > > > > >>> Use the existing "samsung,atna33xc20" as fallback compatible =
+since existing
+> > > > > >>> drivers should work as-is, given that resolution and size are=
+ discoverable
+> > > > > >>> through the eDP link.
+> > > > > >>>
+> > > > > >>> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> > > > > >>
+> > > > > >> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> > > > > >
+> > > > > > Can you comment on whether you would consider this bindings a "=
+Fix"
+> > > > > > since it's a dependency for later patches in this series (which=
+ are
+> > > > > > "Fix"es) to pass dtbs_check? See:
+> > > > > >
+> > > > > > https://lore.kernel.org/r/4bca316a-2334-425b-87a6-e1bb241d26b5@=
+linaro.org
+> > > > >
+> > > > > The patch itself is not a fix, for sure, but it might be a depend=
+ency of
+> > > > > a fix (which you wrote above), thus could be pulled to stable as a
+> > > > > dependency.
+> > > > >
+> > > > > I do not care about dtbs_check warnings in stable kernels, mostly
+> > > > > because dtbs_check warnings depend heavily on dtschema and dtsche=
+ma
+> > > > > follows mainline kernel. Basically if you had warnings-free v6.8 =
+but try
+> > > > > to run dtbs_check now with latest dtschema, your results will dif=
+fer.
+> > > > >
+> > > > > At some point in the future, I could imagine "no new dtbs_check w=
+arnings
+> > > > > in stable kernels" requirement or at least preference, but so far=
+ I
+> > > > > don't think there is any benefit.
+> > > >
+> > > > In this case it's not about whether it makes it to the stable kernel
+> > > > but about which main kernel it goes through.
+> > > >
+> > > > If we land the bindings in drm-misc-next right now then it'll be a
+> > > > long time before it makes it into Linus's tree because of the way t=
+hat
+> > > > drm-misc-next merges. It will make it to Linus's tree at 6.12. You =
+can
+> > > > see the drm-misc merging strategy at:
+> > > >
+> > > > https://drm.pages.freedesktop.org/maintainer-tools/drm-misc.html
+> > > >
+> > > > If we land the dts change (a fix) through the Qualcomm tree as a fix
+> > > > then it should target 6.11.
+> > > >
+> > > > This means that the 6.11 tree will have a dtbs_check error because =
+it
+> > > > has the dts change (a fix) but not the bindings change (not a fix).
+> > > >
+> > > > One way to resolve this would be to treat this bindings as a "fix" =
+and
+> > > > land it through "drm-misc-fixes". That would make the bindings and
+> > > > device tree change meet up in Linux 6.11.
+> > > >
+> > > > Did I get that all correct?
+> > >
+> > > Is not not fairly established that a dependency for a fix can go onto=
+ a
+> > > fixes branch even if it is not a fix in and of itself?
+> >
+> > That would certainly be my take on it, but DT folks confirmation was
+> > requested by Neil in:
+> >
+> > https://lore.kernel.org/all/4bca316a-2334-425b-87a6-e1bb241d26b5@linaro=
+=2Eorg/
+>=20
+> FWIW, I'd rather not let this stagnate too long.
 
-Thank you again, Sean, for committing so much attention to this warning.
+I dunno if you were waiting for me (or Krzk/Rob) to reply, but I didn't
+cos I figured I'd already pretty much said there was nothing wrong with
+the prereq being on -fixes too.
 
-Please don't blame it on me.
+> I'm fairly confident
+> in my assertion that this should go into drm-misc-fixes. I'll give it
+> until Monday and then I'm just going to land this bindings change in
+> drm-misc-fixes. Shout soon if you feel strongly that I shouldn't do
+> this. If someone wants to flame me after the fact then so be it.
 
-It would be for the best if I give the full compiler's warning message:
 
-In file included from ./include/linux/string.h:374,
-                 from ./include/linux/bitmap.h:13,
-                 from ./include/linux/cpumask.h:13,
-                 from ./include/linux/alloc_tag.h:13,
-                 from ./include/linux/percpu.h:5,
-                 from ./include/linux/context_tracking_state.h:5,
-                 from ./include/linux/hardirq.h:5,
-                 from ./include/linux/kvm_host.h:7,
-                 from arch/x86/kvm/x86.c:20:
-arch/x86/kvm/x86.c: In function ‘prepare_emulation_failure_exit’:
-./include/linux/fortify-string.h:114:33: error: use of NULL ‘data’ where non-null expected [CWE-476] [-Werror=analyzer-null-argument]
-  114 | #define __underlying_memcpy     __builtin_memcpy
-      |                                 ^
-./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
-  633 |         __underlying_##op(p, q, __fortify_size);                        \
-      |         ^~~~~~~~~~~~~
-./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
-  678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
-      |                          ^~~~~~~~~~~~~~~~~~~~
-arch/x86/kvm/x86.c:8773:9: note: in expansion of macro ‘memcpy’
- 8773 |         memcpy(&run->internal.data[info_start + ARRAY_SIZE(info)], data,
-      |         ^~~~~~
-  ‘kvm_handle_memory_failure’: events 1-4
-    |
-    |13649 | int kvm_handle_memory_failure(struct kvm_vcpu *vcpu, int r,
-    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~
-    |      |     |
-    |      |     (1) entry to ‘kvm_handle_memory_failure’
-    |......
-    |13652 |         if (r == X86EMUL_PROPAGATE_FAULT) {
-    |      |            ~
-    |      |            |
-    |      |            (2) following ‘false’ branch (when ‘r != 2’)...
-    |......
-    |13667 |         kvm_prepare_emulation_failure_exit(vcpu);
-    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    |      |         |
-    |      |         (3) ...to here
-    |      |         (4) calling ‘kvm_prepare_emulation_failure_exit’ from ‘kvm_handle_memory_failure’
-    |
-    +--> ‘kvm_prepare_emulation_failure_exit’: events 5-6
-           |
-           | 8790 |         prepare_emulation_failure_exit(vcpu, data, ndata, NULL, 0);
-           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-           |      |         |
-           |      |         (6) calling ‘prepare_emulation_failure_exit’ from ‘kvm_prepare_emulation_failure_exit’
-           |......
-           | 8794 | void kvm_prepare_emulation_failure_exit(struct kvm_vcpu *vcpu)
-           |      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-           |      |      |
-           |      |      (5) entry to ‘kvm_prepare_emulation_failure_exit’
-           |
-           +--> ‘prepare_emulation_failure_exit’: event 7
-                  |
-                  | 8728 | static void prepare_emulation_failure_exit(struct kvm_vcpu *vcpu, u64 *data,
-                  |      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                  |      |             |
-                  |      |             (7) entry to ‘prepare_emulation_failure_exit’
-                  |
-                ‘prepare_emulation_failure_exit’: event 8
-                  |
-                  |./include/asm-generic/bug.h:112:12:
-                  |  112 |         if (unlikely(__ret_warn_on))                            \
-                  |      |            ^
-                  |      |            |
-                  |      |            (8) following ‘false’ branch...
-arch/x86/kvm/x86.c:8753:13: note: in expansion of macro ‘WARN_ON_ONCE’
-                  | 8753 |         if (WARN_ON_ONCE(ndata > 4))
-                  |      |             ^~~~~~~~~~~~
-                  |
-                ‘prepare_emulation_failure_exit’: events 9-10
-                  |
-                  | 8757 |         info_start = 1;
-                  |      |         ^~~~~~~~~~
-                  |      |         |
-                  |      |         (9) ...to here
-                  |......
-                  | 8760 |         if (insn_size) {
-                  |      |            ~
-                  |      |            |
-                  |      |            (10) following ‘false’ branch (when ‘insn_size == 0’)...
-                  |
-                ‘prepare_emulation_failure_exit’: event 11
-                  |
-                  |./include/linux/fortify-string.h:620:62:
-                  |  620 |                              p_size_field, q_size_field, op) ({         \
-                  |      |                                                              ^
-                  |      |                                                              |
-                  |      |                                                              (11) ...to here
-./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
-                  |  678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
-                  |      |                          ^~~~~~~~~~~~~~~~~~~~
-arch/x86/kvm/x86.c:8772:9: note: in expansion of macro ‘memcpy’
-                  | 8772 |         memcpy(&run->internal.data[info_start], info, sizeof(info));
-                  |      |         ^~~~~~
-                  |
-                ‘prepare_emulation_failure_exit’: events 12-17
-                  |
-                  |./include/linux/fortify-string.h:596:12:
-                  |  596 |         if (p_size != SIZE_MAX && p_size < size)
-                  |      |            ^
-                  |      |            |
-                  |      |            (12) following ‘false’ branch (when ‘__p_size > 39’)...
-                  |      |            (14) following ‘false’ branch (when ‘__fortify_size <= __p_size’)...
-                  |  597 |                 fortify_panic(func, FORTIFY_WRITE, p_size, size, true);
-                  |  598 |         else if (q_size != SIZE_MAX && q_size < size)
-                  |      |              ~~ ~
-                  |      |              |  |
-                  |      |              |  (16) following ‘false’ branch (when ‘__fortify_size <= __q_size’)...
-                  |      |              (13) ...to here
-                  |      |              (15) ...to here
-                  |......
-                  |  612 |         if (p_size_field != SIZE_MAX &&
-                  |      |         ~~  
-                  |      |         |
-                  |      |         (17) ...to here
-                  |
-                ‘prepare_emulation_failure_exit’: event 18
-                  |
-                  |  114 | #define __underlying_memcpy     __builtin_memcpy
-                  |      |                                 ^
-                  |      |                                 |
-                  |      |                                 (18) argument 2 (‘data’) NULL where non-null expected
-./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
-                  |  633 |         __underlying_##op(p, q, __fortify_size);                        \
-                  |      |         ^~~~~~~~~~~~~
-./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
-                  |  678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
-                  |      |                          ^~~~~~~~~~~~~~~~~~~~
-arch/x86/kvm/x86.c:8773:9: note: in expansion of macro ‘memcpy’
-                  | 8773 |         memcpy(&run->internal.data[info_start + ARRAY_SIZE(info)], data,
-                  |      |         ^~~~~~
-                  |
-<built-in>: note: argument 2 of ‘__builtin_memcpy’ must be non-null
-  CC [M]  kernel/kheaders.o
-cc1: all warnings being treated as errors
+--etBnI+HPKfHkVQk5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Hope this helps.
+-----BEGIN PGP SIGNATURE-----
 
-Best regards,
-Mirsad Todorovac
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpq99AAKCRB4tDGHoIJi
+0l0OAQDgDeKH7xkylyak8cTIADfNinnQbAx11DwQn+bi/deCCQEA0wO9wfmFIs+C
+NcBqzAwjH7/KD1GefPSzjhaFBOMX9w4=
+=DvMW
+-----END PGP SIGNATURE-----
+
+--etBnI+HPKfHkVQk5--
 
