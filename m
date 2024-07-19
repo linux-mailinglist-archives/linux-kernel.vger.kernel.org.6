@@ -1,271 +1,182 @@
-Return-Path: <linux-kernel+bounces-257479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FEA6937A99
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:16:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A046A937A9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:17:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93DF81C212FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:16:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EFF828702B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35CB2146A76;
-	Fri, 19 Jul 2024 16:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0420D22331;
+	Fri, 19 Jul 2024 16:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="MwobOj6G"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QPTR0q5j"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9C2146586
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 16:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B5E320E
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 16:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721405745; cv=none; b=gf/hELNwlGNnVjJnojo3egC6gKDAEkT6bvdml+9uJHYL4KiwBMHsHAXMhj/Eg2E9Fn7WxamWkb1iFIwbhmsq7HfkKh105w89aGmg6UEsTKNdQfGlJFLc3f2EMTAWSebd8CdKse9jtk4r8C6JdORqEQXtHNzrNJUe0bJHHRICjwM=
+	t=1721405828; cv=none; b=gEdqgu9U9g3zG74Ji9ZdA9jjT/+7RjZC9QiPoqnR/gpZXUv+f5NZ7pkAV1bqFkWp21s/7reehOmMXbwCCpiLQTtqkj74R8ThqNZybNFJmVCaVJfpB8OG0lyiztWAYWcL8XFDYqZOCA3TYpF/q1xMVqhDtXfFTyTbJs1ClMquRMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721405745; c=relaxed/simple;
-	bh=VELsK6+NYlG6ohY7i8cf0siRJjQKrAmnxmUeW45ryEc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=C4m1D0/etE3LaNqINhQJFHCxbYzI39HuZAPgWD/22QSEBETlQdEwtfyi3dv02DNoPNl7f5G2B9J6MsKIWkzIQqh/a5FvQUSf+qEg+Wpt5I0un8s+soILRCfiPboehmTq7Q7y9RH0aic4OTghpycuvk7yDZpyofUTMVPKzaOGqF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=MwobOj6G; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-656d8b346d2so1372796a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 09:15:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721405743; x=1722010543; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KRRmyx6bhYwfddPBwXx183tDvz43JuYtypdCBENKCpM=;
-        b=MwobOj6Gnj7t1OSREHVD9B7Hmsl8QbpXvh+219JlatByfbuXJ8Cr5jIAKMW8sPu4+o
-         BbXNupCJV4YUeePvfjNg4ftMchVT7LXwplQHbs/Q5/+D2Zm5y33VdP6d0e0RrUkgDN4E
-         BjnGPrYn0+ZAVWiwys7eDicjQ6ET4VbCnwtIVYty4xZaz4wRZW/m4t0nWg6Me5y+c/J0
-         FwMFHtRRu9e2f1c+3gpXHjg3DiScqIuNJRV4/ewZu51GToreEGSyB/jVbFfaeHucw8jN
-         lJFjoIhK+di8qQ22VrfDr+WngVgmeRWOaZJ53cBNqs68vgNgOo9pigICEYyFa8BRFJoz
-         bsDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721405743; x=1722010543;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KRRmyx6bhYwfddPBwXx183tDvz43JuYtypdCBENKCpM=;
-        b=fKRaM4sU9oIK2o+StdtwVCUIfPyFq/oi+/vOO+/IkK0TQ2IrlxTMShd4+Hib8CtnFD
-         KmEfZruRSf0KCYcwofWqzebB0bpCnt5zh9e5kxvKPsCAYD3ue43StDOLrYtLW1vNXR5j
-         MrdLHthSFNsW/GyayZ5L92la5CMcAdNMc0+F1NCPvJfAT+5Scl+DqtazKHRiTwssfPWc
-         EbeaG3m59R2s8llx2XdNAOMAbqORtIxVPojXRoVu9KFeXeMgE7375WDpFnVTMd5c96yC
-         K35FsMxXdmctGu+3NLW7c7gnRC/ueqxyVM0N9n9Vpg6mosBBD+89Wi5x5+1dHqCWWPaB
-         n5gg==
-X-Forwarded-Encrypted: i=1; AJvYcCU63/7JC0r6mkXZWHCU2UDVzLwg4uSYyhmjxeve0ch1bddRRZzP7ruWnxlFJY3r8az3CiPwlXYwki+l9d3/lgnJcxu9crGGkQ9kwTw7
-X-Gm-Message-State: AOJu0Yzx5Z3d+XsJEav6HsLmcAS0pZYi0I1yBeZoxkFpegP42ilzLAKd
-	68FS2Iz0e7r6m0rKurleIJFzJE++eX/pVdamakiAOVPysYJMsy3P6zF3HId/Hn8=
-X-Google-Smtp-Source: AGHT+IEn/cl4Oa98tqZHk9E+jXd2J2XznEyPxdqB5+rcwyJN0sdt94LS9Ixym0GAk7cBek17P2bHaA==
-X-Received: by 2002:a05:6a20:2d10:b0:1c0:eb1e:868e with SMTP id adf61e73a8af0-1c42289e725mr606567637.19.1721405742799;
-        Fri, 19 Jul 2024 09:15:42 -0700 (PDT)
-Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-79f0ad73cc4sm579589a12.29.2024.07.19.09.15.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 09:15:41 -0700 (PDT)
-From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Fri, 19 Jul 2024 09:15:21 -0700
-Subject: [PATCH v3 4/4] riscv: cpufeature: Extract common elements from
- extension checking
+	s=arc-20240116; t=1721405828; c=relaxed/simple;
+	bh=1Jmu67DY2F2hGF9iW1AGo0oLPdevPTotRKVSLBLe1ho=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jDUrcPsheCQReTGrbTjDty0ahgilETJXg+zJQyVTcQRAVj44RvEkjUiGDEhqmSxLH+k0Cjwu1t9wUp8mEszWG2N79cR3KfCA+HMJ1Cv7N1Zg76m5YbGWS7fyrSIqplbT9iXi4YKa3oYokrLwbugS9rgti4sxe2btbVfNP/dOrLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QPTR0q5j; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721405825;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Eph9CwJzf57SdOVK0HqdNZSnk/6hGcQvao+JBlcdGXM=;
+	b=QPTR0q5j1e/yBsZWv6ssO/6KPoc6IoZw/OgyNa08RFjiPCMsSrTxrmShsNXF3pLdh3uroe
+	hdRzj6Dfidz5fFJ9aEOgCcVtwB+AdZ8O79Oxn/tjMq1NP/TRQqG3gRVTJTn6/KpHqeZZyf
+	cOxG8Vkcg0Lo/addY3oGeYPcVPRzAj4=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-509-kBaylKSJPHmViWPsQ0haQA-1; Fri,
+ 19 Jul 2024 12:17:02 -0400
+X-MC-Unique: kBaylKSJPHmViWPsQ0haQA-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 551B6196E09C;
+	Fri, 19 Jul 2024 16:16:56 +0000 (UTC)
+Received: from gerbillo.redhat.com (unknown [10.45.224.105])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3ED761955F65;
+	Fri, 19 Jul 2024 16:16:53 +0000 (UTC)
+From: Paolo Abeni <pabeni@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: kuba@kernel.org,
+	davem@davemloft.net,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Networking for v6.11-rc0
+Date: Fri, 19 Jul 2024 18:16:38 +0200
+Message-ID: <20240719161638.138354-1-pabeni@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240719-support_vendor_extensions-v3-4-0af7587bbec0@rivosinc.com>
-References: <20240719-support_vendor_extensions-v3-0-0af7587bbec0@rivosinc.com>
-In-Reply-To: <20240719-support_vendor_extensions-v3-0-0af7587bbec0@rivosinc.com>
-To: Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Conor Dooley <conor.dooley@microchip.com>, Evan Green <evan@rivosinc.com>, 
- Andy Chiu <andy.chiu@sifive.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Charlie Jenkins <charlie@rivosinc.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1721405735; l=5672;
- i=charlie@rivosinc.com; s=20231120; h=from:subject:message-id;
- bh=VELsK6+NYlG6ohY7i8cf0siRJjQKrAmnxmUeW45ryEc=;
- b=42jxLHbFmX4mjOuT2MtOGGYkWug50AUQUQbg47HIKLnqrEBFZMyPfvTRq083wDRhQJVvHhF8t
- 4R5krn3bediAkRBlQRxvPr/73cBZYgfeMFGv2mISM8ziNCkK7ILNhmx
-X-Developer-Key: i=charlie@rivosinc.com; a=ed25519;
- pk=t4RSWpMV1q5lf/NWIeR9z58bcje60/dbtxxmoSfBEcs=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-The __riscv_has_extension_likely() and __riscv_has_extension_unlikely()
-functions from the vendor_extensions.h can be used to simplify the
-standard extension checking code as well. Migrate those functions to
-cpufeature.h and reorganize the code in the file to use the functions.
+Hi Linus!
 
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-Reviewed-by: Andy Chiu <andy.chiu@sifive.com>
----
- arch/riscv/include/asm/cpufeature.h        | 78 +++++++++++++++++-------------
- arch/riscv/include/asm/vendor_extensions.h | 28 -----------
- 2 files changed, 44 insertions(+), 62 deletions(-)
+Small PR, mainly to unbreak the s390 build. We delayed it a little
+bit to try to catch a last-minute fix, but it will have to wait a
+bit more.
 
-diff --git a/arch/riscv/include/asm/cpufeature.h b/arch/riscv/include/asm/cpufeature.h
-index bfe7c0b881e9..45f9c1171a48 100644
---- a/arch/riscv/include/asm/cpufeature.h
-+++ b/arch/riscv/include/asm/cpufeature.h
-@@ -104,59 +104,66 @@ extern bool riscv_isa_fallback;
- 
- unsigned long riscv_isa_extension_base(const unsigned long *isa_bitmap);
- 
-+#define STANDARD_EXT		0
-+
- bool __riscv_isa_extension_available(const unsigned long *isa_bitmap, unsigned int bit);
- #define riscv_isa_extension_available(isa_bitmap, ext)	\
- 	__riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_##ext)
- 
--static __always_inline bool
--riscv_has_extension_likely(const unsigned long ext)
-+static __always_inline bool __riscv_has_extension_likely(const unsigned long vendor,
-+							 const unsigned long ext)
- {
--	compiletime_assert(ext < RISCV_ISA_EXT_MAX,
--			   "ext must be < RISCV_ISA_EXT_MAX");
--
--	if (IS_ENABLED(CONFIG_RISCV_ALTERNATIVE)) {
--		asm goto(
--		ALTERNATIVE("j	%l[l_no]", "nop", 0, %[ext], 1)
--		:
--		: [ext] "i" (ext)
--		:
--		: l_no);
--	} else {
--		if (!__riscv_isa_extension_available(NULL, ext))
--			goto l_no;
--	}
-+	asm goto(ALTERNATIVE("j	%l[l_no]", "nop", %[vendor], %[ext], 1)
-+	:
-+	: [vendor] "i" (vendor), [ext] "i" (ext)
-+	:
-+	: l_no);
- 
- 	return true;
- l_no:
- 	return false;
- }
- 
--static __always_inline bool
--riscv_has_extension_unlikely(const unsigned long ext)
-+static __always_inline bool __riscv_has_extension_unlikely(const unsigned long vendor,
-+							   const unsigned long ext)
- {
--	compiletime_assert(ext < RISCV_ISA_EXT_MAX,
--			   "ext must be < RISCV_ISA_EXT_MAX");
--
--	if (IS_ENABLED(CONFIG_RISCV_ALTERNATIVE)) {
--		asm goto(
--		ALTERNATIVE("nop", "j	%l[l_yes]", 0, %[ext], 1)
--		:
--		: [ext] "i" (ext)
--		:
--		: l_yes);
--	} else {
--		if (__riscv_isa_extension_available(NULL, ext))
--			goto l_yes;
--	}
-+	asm goto(ALTERNATIVE("nop", "j	%l[l_yes]", %[vendor], %[ext], 1)
-+	:
-+	: [vendor] "i" (vendor), [ext] "i" (ext)
-+	:
-+	: l_yes);
- 
- 	return false;
- l_yes:
- 	return true;
- }
- 
-+static __always_inline bool riscv_has_extension_unlikely(const unsigned long ext)
-+{
-+	compiletime_assert(ext < RISCV_ISA_EXT_MAX, "ext must be < RISCV_ISA_EXT_MAX");
-+
-+	if (IS_ENABLED(CONFIG_RISCV_ALTERNATIVE))
-+		return __riscv_has_extension_unlikely(STANDARD_EXT, ext);
-+
-+	return __riscv_isa_extension_available(NULL, ext);
-+}
-+
-+static __always_inline bool riscv_has_extension_likely(const unsigned long ext)
-+{
-+	compiletime_assert(ext < RISCV_ISA_EXT_MAX, "ext must be < RISCV_ISA_EXT_MAX");
-+
-+	if (IS_ENABLED(CONFIG_RISCV_ALTERNATIVE))
-+		return __riscv_has_extension_likely(STANDARD_EXT, ext);
-+
-+	return __riscv_isa_extension_available(NULL, ext);
-+}
-+
- static __always_inline bool riscv_cpu_has_extension_likely(int cpu, const unsigned long ext)
- {
--	if (IS_ENABLED(CONFIG_RISCV_ALTERNATIVE) && riscv_has_extension_likely(ext))
-+	compiletime_assert(ext < RISCV_ISA_EXT_MAX, "ext must be < RISCV_ISA_EXT_MAX");
-+
-+	if (IS_ENABLED(CONFIG_RISCV_ALTERNATIVE) &&
-+	    __riscv_has_extension_likely(STANDARD_EXT, ext))
- 		return true;
- 
- 	return __riscv_isa_extension_available(hart_isa[cpu].isa, ext);
-@@ -164,7 +171,10 @@ static __always_inline bool riscv_cpu_has_extension_likely(int cpu, const unsign
- 
- static __always_inline bool riscv_cpu_has_extension_unlikely(int cpu, const unsigned long ext)
- {
--	if (IS_ENABLED(CONFIG_RISCV_ALTERNATIVE) && riscv_has_extension_unlikely(ext))
-+	compiletime_assert(ext < RISCV_ISA_EXT_MAX, "ext must be < RISCV_ISA_EXT_MAX");
-+
-+	if (IS_ENABLED(CONFIG_RISCV_ALTERNATIVE) &&
-+	    __riscv_has_extension_unlikely(STANDARD_EXT, ext))
- 		return true;
- 
- 	return __riscv_isa_extension_available(hart_isa[cpu].isa, ext);
-diff --git a/arch/riscv/include/asm/vendor_extensions.h b/arch/riscv/include/asm/vendor_extensions.h
-index 04d72b02ae6b..7437304a71b9 100644
---- a/arch/riscv/include/asm/vendor_extensions.h
-+++ b/arch/riscv/include/asm/vendor_extensions.h
-@@ -48,34 +48,6 @@ bool __riscv_isa_vendor_extension_available(int cpu, unsigned long vendor, unsig
- 	__riscv_isa_vendor_extension_available(VENDOR_EXT_ALL_CPUS, vendor, \
- 					       RISCV_ISA_VENDOR_EXT_##ext)
- 
--static __always_inline bool __riscv_has_extension_likely(const unsigned long vendor,
--							 const unsigned long ext)
--{
--	asm goto(ALTERNATIVE("j	%l[l_no]", "nop", %[vendor], %[ext], 1)
--	:
--	: [vendor] "i" (vendor), [ext] "i" (ext)
--	:
--	: l_no);
--
--	return true;
--l_no:
--	return false;
--}
--
--static __always_inline bool __riscv_has_extension_unlikely(const unsigned long vendor,
--							   const unsigned long ext)
--{
--	asm goto(ALTERNATIVE("nop", "j	%l[l_yes]", %[vendor], %[ext], 1)
--	:
--	: [vendor] "i" (vendor), [ext] "i" (ext)
--	:
--	: l_yes);
--
--	return false;
--l_yes:
--	return true;
--}
--
- static __always_inline bool riscv_has_vendor_extension_likely(const unsigned long vendor,
- 							      const unsigned long ext)
- {
+The following changes since commit 51835949dda3783d4639cfa74ce13a3c9829de00:
 
--- 
-2.44.0
+  Merge tag 'net-next-6.11' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next (2024-07-16 19:28:34 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.11-rc0
+
+for you to fetch changes up to 4359836129d931fc424370249a1fcdec139fe407:
+
+  eth: fbnic: don't build the driver when skb has more than 21 frags (2024-07-19 16:36:34 +0200)
+
+----------------------------------------------------------------
+Notably this includes fixes for a s390 build breakage.
+
+Including fixes from netfilter.
+
+Current release - new code bugs:
+
+  - eth: fbnic: fix s390 build.
+
+  - eth: airoha: fix NULL pointer dereference in airoha_qdma_cleanup_rx_queue()
+
+Previous releases - regressions:
+
+  - flow_dissector: use DEBUG_NET_WARN_ON_ONCE
+
+  - ipv4: fix incorrect TOS in route get reply
+
+  - dsa: fix chip-wide frame size config in some drivers
+
+Previous releases - always broken:
+
+  - netfilter: nf_set_pipapo: fix initial map fill
+
+  - eth: gve: fix XDP TX completion handling when counters overflow
+
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+
+----------------------------------------------------------------
+Chen Hanxiao (1):
+      ipvs: properly dereference pe in ip_vs_add_service
+
+Florian Westphal (2):
+      netfilter: nf_set_pipapo: fix initial map fill
+      selftests: netfilter: add test case for recent mismatch bug
+
+Ido Schimmel (2):
+      ipv4: Fix incorrect TOS in route get reply
+      ipv4: Fix incorrect TOS in fibmatch route get reply
+
+Jack Wu (1):
+      net: wwan: t7xx: add support for Dell DW5933e
+
+Jakub Kicinski (1):
+      eth: fbnic: don't build the driver when skb has more than 21 frags
+
+Joshua Washington (1):
+      gve: Fix XDP TX completion handling when counters overflow
+
+Lorenzo Bianconi (2):
+      net: airoha: fix error branch in airoha_dev_xmit and airoha_set_gdm_ports
+      net: airoha: Fix NULL pointer dereference in airoha_qdma_cleanup_rx_queue()
+
+Martin Willi (2):
+      net: dsa: mv88e6xxx: Limit chip-wide frame size config to CPU ports
+      net: dsa: b53: Limit chip-wide jumbo frame config to CPU ports
+
+Pablo Neira Ayuso (2):
+      netfilter: ctnetlink: use helper function to calculate expect ID
+      net: flow_dissector: use DEBUG_NET_WARN_ON_ONCE
+
+Paolo Abeni (4):
+      eth: fbnic: fix s390 build.
+      Merge branch 'ipv4-fix-incorrect-tos-in-route-get-reply'
+      Merge branch 'net-dsa-fix-chip-wide-frame-size-config-in-some-drivers'
+      Merge tag 'nf-24-07-17' of git://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf
+
+Shay Drory (1):
+      driver core: auxiliary bus: Fix documentation of auxiliary_device
+
+ drivers/net/dsa/b53/b53_common.c                   |  3 +
+ drivers/net/dsa/mv88e6xxx/chip.c                   |  3 +-
+ drivers/net/ethernet/google/gve/gve_tx.c           |  5 +-
+ drivers/net/ethernet/mediatek/airoha_eth.c         | 13 ++--
+ drivers/net/ethernet/meta/Kconfig                  |  2 +
+ drivers/net/wwan/t7xx/t7xx_pci.c                   |  1 +
+ include/linux/auxiliary_bus.h                      |  7 +-
+ include/net/ip_fib.h                               |  1 +
+ net/core/flow_dissector.c                          |  2 +-
+ net/ipv4/fib_trie.c                                |  1 +
+ net/ipv4/route.c                                   | 16 ++---
+ net/netfilter/ipvs/ip_vs_ctl.c                     | 10 +--
+ net/netfilter/nf_conntrack_netlink.c               |  3 +-
+ net/netfilter/nft_set_pipapo.c                     |  4 +-
+ net/netfilter/nft_set_pipapo.h                     | 21 ++++++
+ net/netfilter/nft_set_pipapo_avx2.c                | 10 +--
+ tools/testing/selftests/net/fib_tests.sh           | 24 +++----
+ .../selftests/net/netfilter/nft_concat_range.sh    | 76 +++++++++++++++++++++-
+ 18 files changed, 156 insertions(+), 46 deletions(-)
 
 
