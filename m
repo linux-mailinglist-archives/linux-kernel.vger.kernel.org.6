@@ -1,95 +1,127 @@
-Return-Path: <linux-kernel+bounces-257040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 692A0937463
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:28:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3163937465
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:28:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05813B22391
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 07:28:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76B581F21833
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 07:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3999158ABC;
-	Fri, 19 Jul 2024 07:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84B74F8A0;
+	Fri, 19 Jul 2024 07:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+soXRwa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qXn/z031"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4FA57C8D
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 07:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4804F8BB;
+	Fri, 19 Jul 2024 07:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721374098; cv=none; b=iWr/TbsOlqt0qy3GSeTlM6D4RkcP0eNNQKTnFYtAkGrwQJYPbmhTgF00BT1I/8rJ6oVSQbv5R/xJLjka64Lp/JfrHfCi1m9Btwia8dZN6WTrSVM0Yp4lfZaJIBgqw7ws15HDNaGprFltYVVpx3Nrg9WPQ7EZx7qE5GivVxKcGbI=
+	t=1721374125; cv=none; b=JIH1LY9VuqEiTSZglhizauM1DWOYaz+6WQZdvbUYWyclxvir70rIB/TqmboYkBIUeNLfAMxI2QdtAwHK7FEgU0AfUOD5v5ZnOm0fRgwlHPpgtVTjwz6OYwYXneNW+H+YR6tKzTmK9TxufzxZl3kPpbA0LkdgXExwGbKLjritmbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721374098; c=relaxed/simple;
-	bh=Ui8UaqyBTSE898Dbvr8zLZbCGmxQq7br3UP3Ob3yp5w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MmC27DH9/lW6Z7Gf5Eq1TVzGe+LH0drm7aLujkWzGAP08RUg1oSnRusRkqOfplRCLA0+0QKk9/2+48jm9VA5rDGJp60OJe1ZSqXnlfAwiE1QHftDNtcKeMxJ1qRxdN+4esu86IOrc5PKmqvBr3AfiCFCvyNDVeK3R94XRRdl5Wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+soXRwa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFC6FC32782;
-	Fri, 19 Jul 2024 07:28:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721374098;
-	bh=Ui8UaqyBTSE898Dbvr8zLZbCGmxQq7br3UP3Ob3yp5w=;
-	h=From:To:Cc:Subject:Date:From;
-	b=D+soXRwapxApziRw9qYeSuz57yKJml8YKkg1VRGVJXdBGvCMY0tJMLnYeW/Cufrpx
-	 VHs+VAAYJqHq0+H2gxP6MxreLyqjRESDFbujKtuQQRxoq0r4PjivcvXPq0NWq7uaWq
-	 siiYv6rMdOvpYx0zLuKujv9W4VkocztARdYqybe4a//1MlvRGYO59NK+1LB2aIl/iW
-	 Tb2z40+Bz73SBGutptKLLblNsJeBUL0sVaukeREawRFkqzatrEYwLsoApAWCAglrVS
-	 qwz53Y8ofG6Lmt5/XsNnpO46dB8eqeusPZ5eJhBTHhz/HTzywr6049RN3O6V2bLPr/
-	 GJykETdKl74HQ==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: qcom: don't select HAVE_PWRCTL when PCI=n
-Date: Fri, 19 Jul 2024 09:27:47 +0200
-Message-Id: <20240719072813.1844151-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1721374125; c=relaxed/simple;
+	bh=S4WTKeGm6vBbMkg0pWePfH7h9B2lnOnlmthjWkG3yoM=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Cw/+e5v4AQE/Ms6TZUnrXYJ8NmrUc68LfSe7Mh9TK2++q1GRloVvu7e5xjfLuV/Rt6TqL3fqFr6D89Z48jj4vNvg24qew8qBdFMv8leBhLdqRV+3ZPYBTxXXfXc0k3Rpzp1b0UimSlY4a1nb4VdaPq+qhg98+c13NE43lEul7lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qXn/z031; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721374122;
+	bh=S4WTKeGm6vBbMkg0pWePfH7h9B2lnOnlmthjWkG3yoM=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=qXn/z031gzC4pL1p3VwloFcGf7CklDwmm3qq6MOXYzarJluJSnYyswEcnN6xQzNcx
+	 7uCVCYGk4XcFWGZ8gPLiiNJdY6alX/wpqAgF/ZjSoQUJRP/LnayLUfK5+3++D5baNH
+	 zurj5wh2GbYPYs/9n6y7AGLN/d3Jhu0KBylXHNJzZOLywF3fd/fnw33IS5F1EiJ3e9
+	 wEjz1ortIIG9ZDaaB6asiW+7rq3enyhhoLm7MrSpf/jOYCnlMAhv1Xm/YOAMlgVJyX
+	 IWZ6vCERpy/ejnWfpsCbHF3rQp0pKr2JxSANkDS5rm3O5NR1C+RAor1NUsPsY2pBNb
+	 TlVtfrrsm9I0g==
+Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 7A7C537813E1;
+	Fri, 19 Jul 2024 07:28:39 +0000 (UTC)
+Message-ID: <7677dc6a-3162-4ca8-ab73-f5903ad820c9@collabora.com>
+Date: Fri, 19 Jul 2024 12:28:36 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, kernel@collabora.com,
+ "Chang S . Bae" <chang.seok.bae@intel.com>,
+ Binbin Wu <binbin.wu@linux.intel.com>, Ingo Molnar <mingo@kernel.org>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v3 1/4] selftests: x86: check_initial_reg_state: remove
+ manual counting and increase maintainability
+To: Shuah Khan <skhan@linuxfoundation.org>, Shuah Khan <shuah@kernel.org>,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240718113222.867116-1-usama.anjum@collabora.com>
+ <20240718113222.867116-2-usama.anjum@collabora.com>
+ <6a477f29-3425-434d-88a7-b3d619fef2b8@linuxfoundation.org>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <6a477f29-3425-434d-88a7-b3d619fef2b8@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+On 7/18/24 8:48 PM, Shuah Khan wrote:
+> On 7/18/24 05:32, Muhammad Usama Anjum wrote:
+>> Removes manual counting of pass and fail tests. This increases readability
+>> of tests, but also improves maintainability of the tests. Print logs in
+>> standard format (without [RUN], [OK] tags)
+>>
+>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>> ---
+>> Changes since v1:
+>> - correct description of the patch
+>>
+>> Changes since v2:
+>> - Update description of the patch and add before/after output
+>>
+>> Before:
+>>    # selftests: x86: check_initial_reg_state_32
+>>    # [OK]    All GPRs except SP are 0
+>>    # [OK]    FLAGS is 0x202
+>>    ok 5 selftests: x86: check_initial_reg_state_32
+>>
+>> After:
+>>    # selftests: x86: check_initial_reg_state_32
+>>    # TAP version 13
+>>    # 1..2
+>>    # ok 1 All GPRs except SP are 0
+>>    # ok 2 FLAGS is 0x202
+>>    # # Totals: pass:2 fail:0 xfail:0 xpass:0 skip:0 error:0
+>>    ok 5 selftests: x86: check_initial_reg_state_32
+> 
+> What's the output you see if you were run this as:
+> 
+> make ksefltest TARGETS=x86
+> 
+> How is this different from the output from the above command?
+The above before and after output has been taken by executing this above
+command. I've copy/pasted the snippets for this patch only.
 
-The new HAVE_PWRCTL option is defined in the PCI subsystem, so
-selecting it unconditionally when PCI is disabled causes a harmless
-warning:
+> 
+> Please provide the same information for your other patches in this
+> series
+All other patches have this information already.
 
-WARNING: unmet direct dependencies detected for HAVE_PWRCTL
-  Depends on [n]: PCI [=n]
-  Selected by [y]:
-  - ARCH_QCOM [=y]
 
-Add 'if PCI' in the qualcomm platform to hide the warning.
+> 
+> thanks,
+> -- Shuah
+> 
 
-Fixes: ed70aaac7c35 ("Kconfig: reduce the amount of power sequencing noise")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm64/Kconfig.platforms | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 9b62c63781ec..6c6d11536b42 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -266,7 +266,7 @@ config ARCH_QCOM
- 	bool "Qualcomm Platforms"
- 	select GPIOLIB
- 	select PINCTRL
--	select HAVE_PWRCTL
-+	select HAVE_PWRCTL if PCI
- 	help
- 	  This enables support for the ARMv8 based Qualcomm chipsets.
- 
 -- 
-2.39.2
-
+BR,
+Muhammad Usama Anjum
 
