@@ -1,163 +1,171 @@
-Return-Path: <linux-kernel+bounces-257382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D38A093793C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:35:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D02D93793D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39EC1B20626
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:35:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 585E82828A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A4F1EB40;
-	Fri, 19 Jul 2024 14:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C453F1DDEA;
+	Fri, 19 Jul 2024 14:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ZIA3bthm";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EKMIrVGx"
-Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KA3qfNYF"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE348C06;
-	Fri, 19 Jul 2024 14:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BEC98C06
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 14:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721399709; cv=none; b=RfYNc9jdLj0aYBQGhmTUKlYWtD6Lw1jDxbrWfqHK62xljgU8QLOqE65rLWyUrUgoqVsp/qEcEre9PGEZQj+oRwCpjIG/WU1ysrLYiEW21WsI6RzbeS7wU8ROZdq9OkIs6ZKrQuXyuNqaPzHNBdlD8pOZxvjrY2/2TOW5e8wlcc4=
+	t=1721399772; cv=none; b=obTXniz3izGzZlsfYWQE0Pjpfrykk3B8K5yCh0eYRpqEdtNIsp3obKX21i3z2Q+Q2gcOH28nE78CF6B41LuX67Lo8mYn6hrG5eF6OPeH54JNxNJWu0fnFHa36LulhDk4kdrI/DaI5QxDE3tSqOojVXBogr/pN1Tgv9Mw/ZaT3CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721399709; c=relaxed/simple;
-	bh=tyAQe/EfEJJHcnD5dtL2emqIovHzT7AAIlE7GinW8GU=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=jcUfo17rNfM7ZqUcS9/ixQTi+UAXSiHcL1WohwHoTZL/8G9pjRvMobg71G0vbbSTam1DfyeLOYCQCWf+p2wsnSBIWvKaBjAbw6S05ujOZpkMpXRVlSNHkTLSBsuOEoQAl7pcqOkcRmWG0q7J+Dz7mn7OULihERD6nafhYW9OncE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ZIA3bthm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EKMIrVGx; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 8C1D611401E4;
-	Fri, 19 Jul 2024 10:35:06 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Fri, 19 Jul 2024 10:35:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1721399706; x=1721486106; bh=+pDjJzk46X
-	NCmLJX63+/UBn/1WFcrH3qIe4s6/MvXE4=; b=ZIA3bthmBOxH5lScItSGfzOG8E
-	HlVVQ+dJ6EcOId1ze0fYeTUXpHc9IInafG20JEq16EMYT0mE3dSibNgEbT27FYrn
-	/7x1mgCKnXhEOp2drsflnqpayh3bB+dYYQuly41Li9Vbb5WCY9RwUITOrh6c9/5P
-	hcEAuoclKHBK0FjZOh+Z1+D2Ozt7bPOQlb3RYjJxOml6StldQcdN8E4hHsNKV+ou
-	JdqJgzR2SBS/vYKOyo2WQnJ3RdTWVNFOjjpZVDeOOV6W+AEPQYxoiPzmyw2ij+UE
-	Vmumsh/ensOZB+rV2wZzBgapSMbzcA9PsqLg+NStVMGoqh6vq+HvAeQLausg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1721399706; x=1721486106; bh=+pDjJzk46XNCmLJX63+/UBn/1WFc
-	rH3qIe4s6/MvXE4=; b=EKMIrVGxrjJ1EeLuzMIeie+CqYrd/ObUIBPVQMHOMI9W
-	S5cY9dcT1n3SqmypMHE4ZQI3VkikmQTAK5g8ouLm44qO86fX0G5Khv4fNnvtizh1
-	6Nlo9FIk7DI7okjwIMWHFMvQMND5/UjzneF0lYVSOyoEXpsMT3wMNtkqyzBLVJ8V
-	Mpf0VkZttuGZv7vuBwfIXTYANAeMwhvO4LKTtnKEUr4up5chHoVLg4bHlyaQO9HJ
-	1qGXaUSqiSMAUaeMZfMhefVxIYdoBwQV+y23s9mlaM/hVYpGmUijVeltBjLSnYSY
-	KHCxUDnGeRD84+ktw86fHo3aGuSAKEsqztq0WhiNRA==
-X-ME-Sender: <xms:mnmaZk1iZgV5HcbxaKshfnEqQF2lwb8fnmNo0AKxRNOJwt2rlqMUww>
-    <xme:mnmaZvEk2_XYrjpyu5JyWi-6KKhRYuMwM2j9qe6inEK2WV9i7Hd-lj9pqANjUoD6E
-    Gr1sHSmUNehaJOq2jY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrhedugdejkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
-    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:mnmaZs6YC5We23Gksx7WXlln3ojfmdBr5ID-5daqaSv_v2p-mipEpA>
-    <xmx:mnmaZt2PBKi9bBd5X_NY-KJbopoWXn_1j-fDw5R5KlsSqtjWi85blw>
-    <xmx:mnmaZnGTMSUlKImXy-rE1sunRI7q7NccDkXddWYBYVun7cY6x_3uKA>
-    <xmx:mnmaZm_ppcucO3DYt4H1Okbg2Jji_LNCVa13t41jBFSd9KLSHyM0tA>
-    <xmx:mnmaZs70FEIkW7KrYika46n4gUckf_Eczwwxm-K3yXA8AMtQtmmSW09q>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 25751B6008F; Fri, 19 Jul 2024 10:35:06 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
+	s=arc-20240116; t=1721399772; c=relaxed/simple;
+	bh=mV+54FIRsUg1B7hA4c9KCJ84eNp6NIHFBQlVgTwp1XE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pe5pad7CXayANaHZk6ZEO7EkLvkKC31YX+Notu3AMEU2HAo7v/T2HldsZOIemx+g/o3IgDnRNaxWSGI49i/7Qv1Sgt+/04Y5gwvFt9ka7sJ7vTt/IUSzfHbLanv5lW2q6ebJNueRVRENAK4WZbW+/YLUgBZ6tMQyNxfJIPKwUfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KA3qfNYF; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4279c924ca7so13188955e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 07:36:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721399769; x=1722004569; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XdlmiGKKf4P64YOv5lQSDuR8ybLle1v3kavGCeiCW+U=;
+        b=KA3qfNYFKT1QSvMW5pIv3FbJ3vFasGcGI6cEvWGY8tj9LtibsDCMIL5c8UROfKZB0y
+         R947aeIeq0ktx5NTaQXbi8Fbxidz5cdJZ9571Rdz2Y4euWL2X7Jop3tpxVUDCipHo1Dq
+         UCgpQUvaEL4dZMZvh9GpkPOhL6I+fgoW7h+lzXvNlokMly0qR09RPkTPWtAImRM4Sme+
+         yXuILkkzosUIzLfHMxxEKczgaoMqK3VGJl2jWryzWTdTR7qVPg/qmiIudYuqhkWaa+xj
+         aruY7QIpTtU3U8jCWN3potb3xBejXW1NzlEAJRZkKrft9afW5lpn3yjefwZgRtCHD8cO
+         g2kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721399769; x=1722004569;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XdlmiGKKf4P64YOv5lQSDuR8ybLle1v3kavGCeiCW+U=;
+        b=ELr2Ija8IZpYYibhX/pjAdn+bKTwbAhoPA44TisYpFAM152S/VBEX3eMvEwm5brGCc
+         y5xedcYLZlzWSakaxiivhZxQ16rvNp26qv2JippuNPQROulWUSLBcL2lLaxQrM3CCezT
+         EaVE3kvcBbw4jSBPm4VBi9+6zBQOAAs2eNyjV64lbJ7Gs8GXRT0N+iZ7To7OKKL7tAyU
+         2w7TF0dlfnsp9oNEB1PsSY4i9OmQjcg1Y/vL8oRZutbM2Jb7ialzVsA00MUgqBOsuoLj
+         K9m/0UWYoMu7/BZFST9obXcSKPBAZNI4UzcshO6bKugQ11du+9Lr/Y6ScMyE+xP9YD35
+         Z3mg==
+X-Forwarded-Encrypted: i=1; AJvYcCV7/ngXZpk7P5LQncuvKLWiyjWnCtM+TjzQqtu13J07pcOnZqAGXtAOJ/Cx0gPW/TGNUHzxnPpDZleCcYJnHoP3UTdWpY0PP93McoPB
+X-Gm-Message-State: AOJu0YwaQrov3zD1hwPpt/yannbQRDZJEMy9BJw0RtEq4ygGiLtb8kD6
+	qg7GZnxwm880dNvIdwbJZk7NUoYF2jclXeKQasNCngYS+5mf9Y1D3K6ef7XJUw==
+X-Google-Smtp-Source: AGHT+IFA/wA9e42Kh22TLUFramVCLKGDe8eWOeYO6wA/icFUlL9M4s7EtisnJ7yAOuE2+K35INQfAw==
+X-Received: by 2002:a05:600c:4e90:b0:426:6326:4cec with SMTP id 5b1f17b1804b1-427c2ce8d0emr61277055e9.29.1721399768362;
+        Fri, 19 Jul 2024 07:36:08 -0700 (PDT)
+Received: from google.com (203.75.199.104.bc.googleusercontent.com. [104.199.75.203])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a43034sm54732375e9.3.2024.07.19.07.36.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 07:36:07 -0700 (PDT)
+Date: Fri, 19 Jul 2024 15:36:04 +0100
+From: Vincent Donnefort <vdonnefort@google.com>
+To: Sebastian Ene <sebastianene@google.com>
+Cc: akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com,
+	ardb@kernel.org, catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu, james.morse@arm.com,
+	mark.rutland@arm.com, maz@kernel.org, oliver.upton@linux.dev,
+	rananta@google.com, ryan.roberts@arm.com, shahuang@redhat.com,
+	suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v7 5/6] KVM: arm64: Initialize the ptdump parser with
+ stage-2 attributes
+Message-ID: <Zpp51BYWYFnZHVW1@google.com>
+References: <20240621123230.1085265-1-sebastianene@google.com>
+ <20240621123230.1085265-6-sebastianene@google.com>
+ <ZoJsAyrmtge4mXJY@google.com>
+ <ZoK6v2_pJnc57LHM@google.com>
+ <ZpZEjW1m2LypTHjF@google.com>
+ <Zppzj1oIDivlAFpP@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <96a00b6f-eb81-4c67-8c4b-6b1f3f045034@app.fastmail.com>
-In-Reply-To: 
- <gf7t6iyj3ueewvbbmqo2ypzitiy6bvnzj2l6tgccvi22xe5fgm@xvlbq3vkndgr>
-References: <20240719095117.3482509-1-arnd@kernel.org>
- <gf7t6iyj3ueewvbbmqo2ypzitiy6bvnzj2l6tgccvi22xe5fgm@xvlbq3vkndgr>
-Date: Fri, 19 Jul 2024 16:34:44 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Benjamin Tissoires" <bentiss@kernel.org>,
- "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Jiri Kosina" <jikos@kernel.org>, "Alexei Starovoitov" <ast@kernel.org>,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-Subject: Re: [PATCH] hid: bpf: avoid building struct ops without JIT
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zppzj1oIDivlAFpP@google.com>
 
-On Fri, Jul 19, 2024, at 15:52, Benjamin Tissoires wrote:
-> On Jul 19 2024, Arnd Bergmann wrote:
->> 
->> This could be avoided by making HID-BPF just depend on JIT, but that
->> is probably not what we want here. Checking the other users of struct_ops,
->> I see that those just leave out the struct_ops usage, so do the same here.
->
-> Actually, if we make the struct_ops part only depend on JIT HID-BPF is
-> kind of moot. All we could do is use HID-BPF to communicate with the
-> device, without getting any feedback, so nothing much more than what
-> hidraw provides.
->
-> The only "interesting" bit we could do is inject a new event on a device
-> as if it were originated from the device itself, but I really do not see
-> the point without the struct_ops hooks.
->
-> So I think struct_ops is now the base for HID-BPF, and if it's not
-> available, we should not have HID-BPF at all.
->
+On Fri, Jul 19, 2024 at 02:09:19PM +0000, Sebastian Ene wrote:
+> On Tue, Jul 16, 2024 at 10:59:41AM +0100, Vincent Donnefort wrote:
+> > On Mon, Jul 01, 2024 at 02:18:39PM +0000, Sebastian Ene wrote:
+> > > On Mon, Jul 01, 2024 at 09:42:43AM +0100, Vincent Donnefort wrote:
+> > > > O Fri, Jun 21, 2024 at 12:32:29PM +0000, 'Sebastian Ene' via kernel-team wrote:
+> > > > > Define a set of attributes used by the ptdump parser to display the
+> > > > > properties of a guest memory region covered by a pagetable descriptor.
+> > > > > Build a description of the pagetable levels and initialize the parser
+> > > > > with this configuration.
+> > > > > 
+> > > > > Signed-off-by: Sebastian Ene <sebastianene@google.com>
+> > > > > ---
+> > > > >  arch/arm64/kvm/ptdump.c | 143 ++++++++++++++++++++++++++++++++++++++--
+> > > > >  1 file changed, 137 insertions(+), 6 deletions(-)
+> > > > > 
+> > > > > diff --git a/arch/arm64/kvm/ptdump.c b/arch/arm64/kvm/ptdump.c
+> > > > > index 36dc7662729f..cc1d4fdddc6e 100644
+> > > > > --- a/arch/arm64/kvm/ptdump.c
+> > > > > +++ b/arch/arm64/kvm/ptdump.c
+> > > > > @@ -14,6 +14,61 @@
+> > > > >  #include <kvm_ptdump.h>
+> > > > >  
+> > > > >  
+> > > > > +#define MARKERS_LEN		(2)
+> > > > > +#define KVM_PGTABLE_MAX_LEVELS	(KVM_PGTABLE_LAST_LEVEL + 1)
+> > > > > +
+> > > > > +struct kvm_ptdump_guest_state {
+> > > > > +	struct kvm		*kvm;
+> > > > > +	struct pg_state		parser_state;
+> > > > > +	struct addr_marker	ipa_marker[MARKERS_LEN];
+> > > > > +	struct pg_level		level[KVM_PGTABLE_MAX_LEVELS];
+> > > > > +	struct ptdump_range	range[MARKERS_LEN];
+> > > > > +};
+> > > > > +
+> > > > > +static const struct prot_bits stage2_pte_bits[] = {
+> > > > > +	{
+> > > > > +		.mask	= PTE_VALID,
+> > > > > +		.val	= PTE_VALID,
+> > > > > +		.set	= " ",
+> > > > > +		.clear	= "F",
+> > > > > +	}, {
+> > > > > +		.mask	= KVM_PTE_LEAF_ATTR_HI_S2_XN | PTE_VALID,
+> > > > > +		.val	= KVM_PTE_LEAF_ATTR_HI_S2_XN | PTE_VALID,
+> > 
+> > KVM_PTE_LEAF_ATTR_HI_S2_XN is actually a mask covering 
+> 
+> It is not a mask covering here but in the ACK kernel.
 
-Ok, got it. So my original patch was correct after all.
-I had tried this version and then discarded it.
+You're right, I should have double-checked upstream.
 
-    Arnd
+That said, how about we move this __after__ RW ? and just use "X" on .clear
+so we can have something R W X ?
 
-8<------
-Subject: [PATCH] hid: bpf: add BPF_JIT dependency
-
-The module does not do anything when the JIT is disabled, but instead
-causes a warning:
-
-In file included from include/linux/bpf_verifier.h:7,
-                 from drivers/hid/bpf/hid_bpf_struct_ops.c:10:
-drivers/hid/bpf/hid_bpf_struct_ops.c: In function 'hid_bpf_struct_ops_init':
-include/linux/bpf.h:1853:50: error: statement with no effect [-Werror=unused-value]
- 1853 | #define register_bpf_struct_ops(st_ops, type) ({ (void *)(st_ops); 0; })
-      |                                                  ^~~~~~~~~~~~~~~~
-drivers/hid/bpf/hid_bpf_struct_ops.c:305:16: note: in expansion of macro 'register_bpf_struct_ops'
-  305 |         return register_bpf_struct_ops(&bpf_hid_bpf_ops, hid_bpf_ops);
-      |                ^~~~~~~~~~~~~~~~~~~~~~~
-
-Add a Kconfig dependency to only allow building the HID-BPF support
-when a JIT is enabled.
-
-Fixes: ebc0d8093e8c ("HID: bpf: implement HID-BPF through bpf_struct_ops")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-----
-diff --git a/drivers/hid/bpf/Kconfig b/drivers/hid/bpf/Kconfig
-index 83214bae6768..d65482e02a6c 100644
---- a/drivers/hid/bpf/Kconfig
-+++ b/drivers/hid/bpf/Kconfig
-@@ -3,7 +3,7 @@ menu "HID-BPF support"
- 
- config HID_BPF
-        bool "HID-BPF support"
--       depends on BPF
-+       depends on BPF_JIT
-        depends on BPF_SYSCALL
-        depends on DYNAMIC_FTRACE_WITH_DIRECT_CALLS
-        help
+> 
+> > 
+> > KVM_PTE_LEAF_ATTR_HI_S2_XN_XN, KVM_PTE_LEAF_ATTR_HI_S2_XN_PXN and
+> > KVM_PTE_LEAF_ATTR_HI_S2_XN_UXN. 
+> > 
+> > I believe here what we should do is something like?
+> > 
+> > .val = FIELD_PREP_CONST(KVM_PTE_LEAF_ATTR_HI_S2_XN,
+> > 			KVM_PTE_LEAF_ATTR_HI_S2_XN_XN) | PTE_VALID
+> > 
+> > > > > +		.set	= "XN",
+> > > > > +		.clear	= "  ",
+> > > > > +	}, {
+> > > > > +		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R | PTE_VALID,
+> > > > > +		.val	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R | PTE_VALID,
+> > > > > +		.set	= "R",
+> > > > > +		.clear	= " ",
+> > > > > +	}, {
+> > 
+> > [...]
 
