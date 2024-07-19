@@ -1,123 +1,200 @@
-Return-Path: <linux-kernel+bounces-256893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB339371ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 03:19:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB5DC9371F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 03:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B340B21624
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 01:19:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47D531F219B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 01:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B235515D1;
-	Fri, 19 Jul 2024 01:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B614C85;
+	Fri, 19 Jul 2024 01:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="MX9B/i7B"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H9jYEYUA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9066028E3
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 01:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE702566
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 01:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721351946; cv=none; b=rtbrxRLlyeYQHI2sGXg13wNIS+zAALDDjJLlATiES4J7yscEPWZcbBr2/Hwt7IR4l0ExDNAxjGWrWdmDCZLXPsx+9xzq+MRwCgpQIgtMW85zFxIWqhdbwG3tq9TUtNJhA4p+hKOMSNJ7YXswgPjLOI3tHjwyEgKQ8jImjoTo1Uc=
+	t=1721351991; cv=none; b=D5MCU7VZghu76171RL91BM9SDGSQyUjApbbOxTPqxXFELAZfVqZ3S5meKQzU/16hJvH1piBiy+QPj4fnped08y5f9NAvw4vqbDErFMQ140hS+xKIpB5aGUsogjd4BtzD/4tGbUBWeb91tcDrIP4/hP2YAdIeRyLJMvn0ktuc5RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721351946; c=relaxed/simple;
-	bh=j5tLGDY9gGcd5udPLL80op5rVUZUjouE/1JD3eGh7rQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pWCmdSXnEwQAZZCnEx/ozo9CUNtLeQP3h/T21IOH6i8rG+RKTgAL+nDCfgV0oLEWxD3KNlaJ0pkuT9VXf2Cx0sj6AwmQIdtXi0GAAcQ19hcKuD8aMvBV22UK22ziLuBc+0N+5q/QGNrQjqzEQ0jsplCDyaErhmbCaWCuIoA3SRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=MX9B/i7B; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-80557928673so55711039f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 18:19:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1721351944; x=1721956744; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kitCVRPpRWuruusdc0xZBytLiueygrYSLQr8urocHpw=;
-        b=MX9B/i7BWGtQWRGJ8adnZKH0yaObZVMgaixJ4r/lTGv/559R/2Y3LoqCrMLgfpOuWa
-         ErTlvDM6KTiPwkdML11/iQIqVPmznWwmNJF00d9vjEDIimnD6hPTilhnLe2vxnHkYh3h
-         zZYuODibXVYHl3oxeWXdZc9UnEr7tHpRCxTZRmz8efh4ZyeJJ2pHPFUAsNP89JsBXeFU
-         7vRm9Vbe4ro3WKdI18YHLMfSLbrXrm0aHk+LjFi0gGK8Ty0kfl3H5A+vIga40W1jOuaG
-         BjsLeeFJ+/y06PZYPDY/Ol9Bu6tMW4PNypgrjn2Ko8uFkcxUbYZ9nXF/W868amHwd2JB
-         O/Og==
+	s=arc-20240116; t=1721351991; c=relaxed/simple;
+	bh=93QVP4WJoS9Hpv2j9SWPhGJjYy+NR2J0K6SXL1NRHxI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iFCPz7rhGNP2sFHO1RQB96zbUGKmCuukjmtId4dnIeHtgsY6OD1eWUrkwyrZW9slTLUJVxuC3brop3Oove2HBWyckbzyPVEKk91b3VRxbF2t6u1n6wn4tzmKMjePAdmZKngQx7RfxOwgD7Y1yTxuyE8RHtRuVCquDzrcVfTmstM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H9jYEYUA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721351988;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jwmop9WL4f0jJYAYbZ5p9p7R5dVY3Lpor/+2jEVRnP0=;
+	b=H9jYEYUAt03F3GOZPrAfeMp/DLE9rLbZHSJr0SEXCBGhGJndkPfGXISQ0gOrb/yybTC7rs
+	jT7HK018KyRgM6IKnnp5ptslC7LkR05lG3WO7ZSOSCb669NuGc9So1qm9m1xs4dV4k76Ov
+	y9/Dwmai/dlUnkJC73pvtkix0yd5QSg=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-76-uiUswkt5MECy5M8pO3hopQ-1; Thu, 18 Jul 2024 21:19:47 -0400
+X-MC-Unique: uiUswkt5MECy5M8pO3hopQ-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-427a7a65e7dso4008135e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 18:19:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721351944; x=1721956744;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1721351986; x=1721956786;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kitCVRPpRWuruusdc0xZBytLiueygrYSLQr8urocHpw=;
-        b=jFrtzGQQH5IYHFEvxFt41vh5M85eUoYiwYgKWliR7BvDqvewTPX5FAHGxiEJD/CMy5
-         i9X1kVhiiowyfZsHI0sslQ42/F1jZnR7tOPmUjgsC/TjwFuf8+66ajx5IDxm1r/4DWUJ
-         n0sPJez/VnUWCC9zU3dhZwaecXMCQGo6sCv5DoxdDMd+dP6AV18C/1O/c/1AeElIVLRc
-         thNHWT4WN72M3JE3H8aHU3+ks8bivXuSETIZ99iMZQcMJ9dFLxDmTJKj5ilKdA8Z5J0I
-         9BCUFVP/ScSgwJZfT/OP6QQokx9wQ6x5MUxqtcHW1vBpMpE1UwkbyCbUfeRyiqI7gsiU
-         jQaA==
-X-Gm-Message-State: AOJu0YzeauMYc8YgMyz2enl0nssuThqNVaQ2Zhy98wiFFArHLB3jHSeg
-	GzgbbmCHwgMKAbQzYA52SVKvrDx0WHvmyE9BRdlXpKyAym7NMRVl+3dAawTbuZ0=
-X-Google-Smtp-Source: AGHT+IGfm/S/FHPE7LA6XdxIKq5BMcfnNylk0g5mtJMSuhuINcBoNq6L3E2sbbLECTpJVZZr2PHwmA==
-X-Received: by 2002:a05:6602:6212:b0:807:1908:b095 with SMTP id ca18e2360f4ac-81712003641mr780048939f.13.1721351943793;
-        Thu, 18 Jul 2024 18:19:03 -0700 (PDT)
-Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c234405dd7sm107960173.176.2024.07.18.18.19.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jul 2024 18:19:03 -0700 (PDT)
-Message-ID: <3a7996d6-1137-44b8-b35d-d9c56bd98277@sifive.com>
-Date: Thu, 18 Jul 2024 20:19:01 -0500
+        bh=jwmop9WL4f0jJYAYbZ5p9p7R5dVY3Lpor/+2jEVRnP0=;
+        b=wv46JMsLUhO7gXsD10L6uWgIEnHk7PcH+8w7JzPnwU+020wAQJoKifkmTdr9pG5gA3
+         6EVnL9iC1K15ZzbHUkNlGrYx3z+O2gaJ7aixV6XnsGL45G9OCT78qJDOqDya2fXpWD6a
+         wYMINGB5qbc0kdjCYd1dwVMswCZO9TtL2jJ05GjnUuPv4QL09HS3h7NnZl9YScXl5zc9
+         ZQoy6bmKFf/9qzzDKZkN37iXDtYPEXTklUa75tpwbZJrw2qaFX/nPAfUZ0tLXlWHYpJ9
+         Y6ORXQVUeOU3ETvwsEd6y5e18bPbn0fHOb/gEu7Zg6kWix/mTgLQgsPAppLhnx06jew/
+         N+ew==
+X-Forwarded-Encrypted: i=1; AJvYcCW29FN6awXuqnETPHTLLJfTtCGsQFu4W6SvK73cLHcWtLMjOh0Sbv8XSL+gYKUJ84OzcySg4CWsUXz5P5+eookOc8bRMhe5xiUB7B/c
+X-Gm-Message-State: AOJu0Yy+OSeNOY4rK4KF/Y8UbrwfIQbn9LrWlAl98uI8QwKUrKqk0m1M
+	OiZHzNn5dVdpCo6N1+CABXyaJtp8Z2+K/2aqBzEllPv5xKhX27Vk5l/Bmqsnp635Pl5Zy2hO6aE
+	lmDH2rJFNn9vkS7l1cZtebSkCms9lAXhHXJhd5pms8fJYgcJawlidBDSachk8gw==
+X-Received: by 2002:a5d:69ca:0:b0:360:7856:fa62 with SMTP id ffacd0b85a97d-36873ed7d99mr569860f8f.15.1721351986004;
+        Thu, 18 Jul 2024 18:19:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE9Rox38d1XVqs4VIGXwyGyO0EsaiwHZh55nSHLLk1r/xY/5ex8srk4eo3DwsusIcXSuOqn2Q==
+X-Received: by 2002:a5d:69ca:0:b0:360:7856:fa62 with SMTP id ffacd0b85a97d-36873ed7d99mr569841f8f.15.1721351985275;
+        Thu, 18 Jul 2024 18:19:45 -0700 (PDT)
+Received: from redhat.com (mob-5-90-112-15.net.vodafone.it. [5.90.112.15])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a3b800sm35187425e9.5.2024.07.18.18.19.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jul 2024 18:19:44 -0700 (PDT)
+Date: Thu, 18 Jul 2024 21:19:41 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	Venkat Venkatsubra <venkat.x.venkatsubra@oracle.com>,
+	Gia-Khanh Nguyen <gia-khanh.nguyen@oracle.com>
+Subject: Re: [PATCH net-next v3 3/3] virtio-net: synchronize operstate with
+ admin state on up/down
+Message-ID: <20240718211816-mutt-send-email-mst@kernel.org>
+References: <20240709080214.9790-1-jasowang@redhat.com>
+ <20240709080214.9790-4-jasowang@redhat.com>
+ <20240709090743-mutt-send-email-mst@kernel.org>
+ <CACGkMEv4CVK4YdOvHEbMY3dLc3cxF_tPN8H4YO=0rvFLaK-Upw@mail.gmail.com>
+ <CACGkMEvDiQHfLaBRoaFtpYJHKTqicqbrpeZWzat43YveTa9Wyg@mail.gmail.com>
+ <20240717015904-mutt-send-email-mst@kernel.org>
+ <CACGkMEtntsAyddgrtxrbQe407dZkitac4ogC7cASF=iYgsum_A@mail.gmail.com>
+ <CACGkMEsd63vH3J5m_4srO3ww2MWGOPc31L4171PfQ7uersN7PQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] riscv: dts: add mailbox for Sophgo cv18x SoCs
-To: Yuntao Dai <d1581209858@live.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-riscv@lists.infradead.org, jassisinghbrar@gmail.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, unicorn_wang@outlook.com,
- inochiama@outlook.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu
-References: <SYBP282MB223825D5903777B937A8A377C4A02@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
- <SYBP282MB2238CE3A016F21B632E61219C4A02@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
-Content-Language: en-US
-From: Samuel Holland <samuel.holland@sifive.com>
-In-Reply-To: <SYBP282MB2238CE3A016F21B632E61219C4A02@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACGkMEsd63vH3J5m_4srO3ww2MWGOPc31L4171PfQ7uersN7PQ@mail.gmail.com>
 
-On 2024-07-14 11:36 AM, Yuntao Dai wrote:
-> Add mailbox node for Sophgo cv18x SoCs
+On Fri, Jul 19, 2024 at 09:02:29AM +0800, Jason Wang wrote:
+> On Wed, Jul 17, 2024 at 2:53 PM Jason Wang <jasowang@redhat.com> wrote:
+> >
+> > On Wed, Jul 17, 2024 at 2:00 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+> > >
+> > > On Wed, Jul 17, 2024 at 09:19:02AM +0800, Jason Wang wrote:
+> > > > On Wed, Jul 10, 2024 at 11:03 AM Jason Wang <jasowang@redhat.com> wrote:
+> > > > >
+> > > > > On Tue, Jul 9, 2024 at 9:28 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+> > > > > >
+> > > > > > On Tue, Jul 09, 2024 at 04:02:14PM +0800, Jason Wang wrote:
+> > > > > > > This patch synchronize operstate with admin state per RFC2863.
+> > > > > > >
+> > > > > > > This is done by trying to toggle the carrier upon open/close and
+> > > > > > > synchronize with the config change work. This allows propagate status
+> > > > > > > correctly to stacked devices like:
+> > > > > > >
+> > > > > > > ip link add link enp0s3 macvlan0 type macvlan
+> > > > > > > ip link set link enp0s3 down
+> > > > > > > ip link show
+> > > > > > >
+> > > > > > > Before this patch:
+> > > > > > >
+> > > > > > > 3: enp0s3: <BROADCAST,MULTICAST> mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 1000
+> > > > > > >     link/ether 00:00:05:00:00:09 brd ff:ff:ff:ff:ff:ff
+> > > > > > > ......
+> > > > > > > 5: macvlan0@enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+> > > > > > >     link/ether b2:a9:c5:04:da:53 brd ff:ff:ff:ff:ff:ff
+> > > > > > >
+> > > > > > > After this patch:
+> > > > > > >
+> > > > > > > 3: enp0s3: <BROADCAST,MULTICAST> mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 1000
+> > > > > > >     link/ether 00:00:05:00:00:09 brd ff:ff:ff:ff:ff:ff
+> > > > > > > ...
+> > > > > > > 5: macvlan0@enp0s3: <NO-CARRIER,BROADCAST,MULTICAST,UP,M-DOWN> mtu 1500 qdisc noqueue state LOWERLAYERDOWN mode DEFAULT group default qlen 1000
+> > > > > > >     link/ether b2:a9:c5:04:da:53 brd ff:ff:ff:ff:ff:ff
+> > > > > >
+> > > > > > I think that the commit log is confusing. It seems to say that
+> > > > > > the issue fixed is synchronizing state with hardware
+> > > > > > config change.
+> > > > > > But your example does not show any
+> > > > > > hardware change. Isn't this example really just
+> > > > > > a side effect of setting carrier off on close?
+> > > > >
+> > > > > The main goal for this patch is to make virtio-net follow RFC2863. The
+> > > > > main thing that is missed is to synchronize the operstate with admin
+> > > > > state, if we do this, we get several good results, one of the obvious
+> > > > > one is to allow virtio-net to propagate status to the upper layer, for
+> > > > > example if the admin state of the lower virtio-net is down it should
+> > > > > be propagated to the macvlan on top, so I give the example of using a
+> > > > > stacked device. I'm not we had others but the commit log is probably
+> > > > > too small to say all of it.
+> > > >
+> > > > Michael, any more comments on this?
+> > > >
+> > > > Thans
+> > >
+> > >
+> > > Still don't get it, sorry.
+> > > > > > > This is done by trying to toggle the carrier upon open/close and
+> > > > > > > synchronize with the config change work.
+> > > What does this sentence mean? What is not synchronized with config
+> > > change that needs to be?
+> >
+> > I meant,
+> >
+> > 1) maclvan depends on the linkwatch to transfer operstate from the
+> > lower device to itself.
+> > 2) ndo_open()/close() will not trigger the linkwatch so we need to do
+> > it by ourselves in virtio-net to make sure macvlan get the correct
+> > opersate
+> > 3) consider config change work can change the state so ndo_close()
+> > needs to synchronize with it
+> >
+> > Thanks
 > 
-> Signed-off-by: Yuntao Dai <d1581209858@live.com>
-> ---
->  arch/riscv/boot/dts/sophgo/cv18xx.dtsi | 9 +++++++++
->  1 file changed, 9 insertions(+)
+> Michael, are you fine with the above or I miss something there?
 > 
-> diff --git a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-> index 891932ae4..1c7035737 100644
-> --- a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-> +++ b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-> @@ -310,5 +310,14 @@
->  			reg = <0x74000000 0x10000>;
->  			interrupts-extended = <&cpu0_intc 3>, <&cpu0_intc 7>;
->  		};
-> +
-> +		mailbox: mailbox@1900000 {
+> Thanks
 
-Please keep nodes sorted by unit address.
 
-> +			compatible = "sophgo,cv1800-mailbox";
-> +			reg = <0x01900000 0x1000>;
-> +			interrupts = <101 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "mailbox";
-> +			interrupt-parent = <&plic>;
-> +			#mbox-cells = <2>;
-> +		};
->  	};
->  };
+I don't understand 3. config change can always trigger.
+what I do not like is all these reads from config space
+that now trigger on open/close. previously we did
+read
+- on probe
+- after probe, if config changed
+
+
+and that made sense.
+
+-- 
+MST
 
 
