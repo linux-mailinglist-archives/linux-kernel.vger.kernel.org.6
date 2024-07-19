@@ -1,138 +1,105 @@
-Return-Path: <linux-kernel+bounces-256918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15E68937278
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 04:32:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54373937281
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 04:37:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9061B2147C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 02:32:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E47F2B2179A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 02:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1412BC144;
-	Fri, 19 Jul 2024 02:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ieU/1HHg"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879BE10A09;
+	Fri, 19 Jul 2024 02:37:16 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C6CA20;
-	Fri, 19 Jul 2024 02:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C12A20;
+	Fri, 19 Jul 2024 02:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721356319; cv=none; b=e2YvLbunHHm2yHKgKVu0kh+HR/W6qXG42kT/UScHfCPNeMkKlqrkGuIparBHTJNdx6liyPKEAD0MUipqFrT5vxxcsUj9rgiYI2P8BOM3fb82osxr8/+iGsz+HR3x+gUp9m2zH8IXkR/C3Q3oI/Ll2VaTNM+WePew6AXh47jdLig=
+	t=1721356636; cv=none; b=gIwt9ETZWBdukF9U+55UXOSK3MgmVJrM25Aicbt1cTYkYuoZ+EFmYvcyuqHmgTwWWQ8rc/zJyQWO50mq0wj9Om6rrcqyyGObFkxdmre4MmG0QWVhRHCKacjR5XfhvJZjw4HWeMSH2ga9Ph7ZF4ahVe7w+b8PCiyPliv4XmyHsnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721356319; c=relaxed/simple;
-	bh=1eHruuzyH4lwVbohssPdqsbHPvnfHUhQv4M5I9WgDSg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZsrPgPIWPjd2dFbvk8MEfM/m7FKB4dHNxLDJp4AruVNfTEM3JvOSExqGa3mudI4CvENXwMOy4BkO0aD5P2GtBmjQ1aQTJzsRvZtXNlzykvnZc2xJTVlqETOmrhN5xZejLHJhxoX3fznzgTYNRhjyRifwQdM+CQzikvRevTuOwdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ieU/1HHg; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5a10bb7b237so482987a12.0;
-        Thu, 18 Jul 2024 19:31:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721356316; x=1721961116; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dSfCpRvrtDUA7KWTei+7BsVJMQHuCFn+vDpvi90vOF4=;
-        b=ieU/1HHgpoCNW8E/mF8VVcP8ZPrtvXxpFCXNwt/hSxhzKtmYCO8kNHPEpROwIyDosd
-         wIv9+HRUSYeYE2KthPnV3sAoX8PclEFLR6ncEXyr2mVkoLpV7qK+leAHXVvQg+2S63Z9
-         R0GUd2nQYFRzA6FAzgBUthes4dlpu12YkIUkG8wMhmRQ1PnRj0NU3lpxVpp+K+yH83fy
-         b4hOEXgamBHvnqG4Z8oQs/14UrQ6voPun+wInQhOATJYPfPsXpTWFESw17qpQ3RS/wfw
-         lcbUWVut5JMVj3OQB51ad+B3nN/afBqiW/ZC9lNHCaMrExDqxaToc9fe/ZoqVKHgI8io
-         9CEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721356316; x=1721961116;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dSfCpRvrtDUA7KWTei+7BsVJMQHuCFn+vDpvi90vOF4=;
-        b=SAY3h590U2yZihlufR4OBVFZNcyyOKraihLR9zVaO7xhy6aijCsqa4JaVeE0vW9led
-         nEphEKjKRcbKl2RGv9Z3PIa3cFXJXSqp7gs1X5REohkBmWAY48YSxIGRQtGM48+xgnp5
-         VxLDVJ+H5gky54yn7tfrgkQwgucTfMcZeT70zgZhbUeNkj22i7vJOqJl9rABI83aENZU
-         h5kAfsjvvkJnFH3g9Xi8/qTJR33CzocPleUvNpdqXDYbOms08wXqMeXJX19K7Fyoxuxz
-         XA7e9XeV7iWuiSPZ/zyRswk9jX7qsdGgUJtWGitRhJ7hBw9PnZNXrSohNAigzfuPO/Mp
-         sB7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVil6DulxiCmqfqi7sFRpa2xyJOsNwbctTnLNLJYDzVbjP7JcvinEY7Xa/P88EuIU43K/wXoyQcOcrb81YWshw1jrmvECaWxUtpw6pTAqRZtK0GB8I+fxmTeGfbjyNGHaGOFKGO0Y6Ecw==
-X-Gm-Message-State: AOJu0YzimMabUBfbjTdmFl+gbF2axzFkRq8ImrtMY0KIwxjPQprKbE93
-	HFR3ZxbKoroTeEiXGgoiYJ00zXKG3lk5XpZ8u0WDxy2RQKbKwy/AuWW48CKtR0/NHhb+RXg2hXJ
-	7ZhAIHKDtgjaTCFbHhD2m3J+jvuM=
-X-Google-Smtp-Source: AGHT+IHogwOAWIPKyeUgS3+HdTK+jinx3AZCocYx/Cb3OOAO1gebXjmXvBJXRfrSeVJUQRBwiIx9Hks/wleUwHNi2iU=
-X-Received: by 2002:a50:a693:0:b0:5a1:c43:82ca with SMTP id
- 4fb4d7f45d1cf-5a10c4386fcmr3672605a12.26.1721356315939; Thu, 18 Jul 2024
- 19:31:55 -0700 (PDT)
+	s=arc-20240116; t=1721356636; c=relaxed/simple;
+	bh=zah+9lJ5Df3NcJR2v4cILmzq85sf4M3XoOUY63U2+3o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=l2NkZuSFS+zayhuiqD0ImzgTWG3W+qAv5HGjKMyqKHrrLrR1VEu5O098AWwJ9QD7vnOL/GSpfLuPktzDqTMASXKbOZph7aVOC+BgUlAR7tv3t4QjyyeIHCXRrrpsQH4h5bCFnBI/IOx02ZYFCrNUXTI5z56HrBaZjwnNeIv7X3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WQDMr6RR5z4f3kvn;
+	Fri, 19 Jul 2024 10:36:56 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 34E541A10B7;
+	Fri, 19 Jul 2024 10:37:10 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgDXuzlU0Zlmiw8kAg--.57041S4;
+	Fri, 19 Jul 2024 10:37:09 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: bvanassche@acm.org,
+	jack@suse.cz,
+	hch@infradead.org,
+	tj@kernel.org,
+	josef@toxicpanda.com,
+	axboe@kernel.dk
+Cc: cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH v2 0/3] blk-ioprio: remove per-disk structure
+Date: Fri, 19 Jul 2024 10:34:28 +0800
+Message-Id: <20240719023431.3800647-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240718184434.6307-1-robdclark@gmail.com> <20240718184434.6307-3-robdclark@gmail.com>
- <CAD=FV=UDopTSfpfzjUDPFQKyhUTNOk9z_Q5qnH4Up24M0xZoPQ@mail.gmail.com>
-In-Reply-To: <CAD=FV=UDopTSfpfzjUDPFQKyhUTNOk9z_Q5qnH4Up24M0xZoPQ@mail.gmail.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Thu, 18 Jul 2024 19:31:43 -0700
-Message-ID: <CAF6AEGvz8ZaM7a0_jVqT-zv5QOEznqrOHd_1zQcDQcQ5uM-9UA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: x1e80100-yoga: Update panel bindings
-To: Doug Anderson <dianders@chromium.org>
-Cc: linux-arm-msm@vger.kernel.org, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Abel Vesa <abel.vesa@linaro.org>, 
-	Rob Clark <robdclark@chromium.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDXuzlU0Zlmiw8kAg--.57041S4
+X-Coremail-Antispam: 1UD129KBjvdXoWrGrWfuw1DZrW8Kr1rXw1xuFg_yoWxGFX_AF
+	y8JF95Xrs3Aa1UA3WfAF1aqay09r4DWr4jvFyDtrW7Jw17Xrs5tr43JrWUXr15uF43C34x
+	JryUur18Jr42yjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Thu, Jul 18, 2024 at 4:12=E2=80=AFPM Doug Anderson <dianders@chromium.or=
-g> wrote:
->
-> Hi,
->
-> On Thu, Jul 18, 2024 at 11:44=E2=80=AFAM Rob Clark <robdclark@gmail.com> =
-wrote:
-> >
-> > From: Rob Clark <robdclark@chromium.org>
-> >
-> > Use the correct panel compatible, and wire up enable-gpio.  It is wired
-> > up in the same way as the x1e80100-crd.
-> >
-> > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > ---
-> >  .../boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts   | 13 ++++++++++++-
-> >  1 file changed, 12 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts b=
-/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-> > index f569f0fbd1fc..37ef05f8c7e0 100644
-> > --- a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-> > +++ b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-> > @@ -592,9 +592,13 @@ &mdss_dp3 {
-> >
-> >         aux-bus {
-> >                 panel {
-> > -                       compatible =3D "edp-panel";
-> > +                       compatible =3D "samsung,atna45dc02";
->
-> Instead of the above, I believe you should use:
->
-> compatible =3D "samsung,atna45dc02", "samsung,atna33xc20";
->
-> ...which makes the dts work without any code changes. This is what we
-> decided upon for Stephen's panel [0]
+From: Yu Kuai <yukuai3@huawei.com>
 
-sure, that sounds reasonable.. I only saw the first version because
-that is what is in the x1e80100-next branch atm
+Changes in v2:
+ - add patch 1;
 
-BR,
--R
+The idea is that ioprio doesn't need to access blkg, all it needs is
+blkcg, hence blk_register_policy() is enough, and blk_activate_policy()
+is not needed.
 
-> [0] https://lore.kernel.org/r/20240715-x1e80100-crd-backlight-v2-0-31b7f2=
-f658a3@linaro.org/
->
-> -Doug
->
+Yu Kuai (3):
+  blk-cgroup: check for pd_(alloc|free)_fn in blkcg_activate_policy()
+  blk-ioprio: remove ioprio_blkcg_from_bio()
+  blk-ioprio: remove per-disk structure
+
+ block/blk-cgroup.c | 21 +++++++++--------
+ block/blk-ioprio.c | 57 +---------------------------------------------
+ block/blk-ioprio.h |  9 --------
+ 3 files changed, 13 insertions(+), 74 deletions(-)
+
+-- 
+2.39.2
+
 
