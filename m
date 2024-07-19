@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-257090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F4D293750F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:28:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2EBA937510
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87455B2286C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 08:28:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5C241C22025
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 08:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84D77581B;
-	Fri, 19 Jul 2024 08:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9436F2F1;
+	Fri, 19 Jul 2024 08:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EX1yyxUy"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P3gYQDIs"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEFAC208BA
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 08:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B64E208BA
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 08:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721377697; cv=none; b=hDA9T0BQAgnQlgy25xPmNfzLLHeNFoE+mzwJtcNhjmJBO9dvoRN/ioZum/kFXhgS8q8Y6sm0UDdaD7UGxnozmJU48RgSDyl4YIoXmkJNm5FLz9G0LcNjZ+5tADr6a8tiKU0MaQiMbzSgaaMXDMgqDA8Ma2h7OwI4PihjAoNu+lQ=
+	t=1721377766; cv=none; b=FNRtCbdnI6xXRw1AuZ5eepDTXREUJWsVLTurSQb4bBUX7mq+mTaOkJbs2vF1F+L7Nmyq6k5QyCDR/t8axb+DA18fPad2qrwbAA7nJ94IulKkFsK8fy9z9PpssYCqbah5MJKlTEqwTCEsaU23OQUQU0nqOGozMZgcfGz6qSpMqyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721377697; c=relaxed/simple;
-	bh=uWPARPGNpau4+HY+lZwmXboy9UGPd32fjMChKTLhLKU=;
+	s=arc-20240116; t=1721377766; c=relaxed/simple;
+	bh=Cp5bBf8m9F904HyJxdJVtsAKSI/kT9VMOTCn7szFO0Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SLgUyAq66DNdXelFGZfqonIQdtmidSTfTlAWfXgTW5Bc6wJk7Hwdczv0UyhvY+jww+GtasKfXcuF5e/4pJ9KwDAwEtuETyiEaOLoy//DwHAtJGw4zw9UqmqPQHMcIeGr98KGmxk8PH0gX5oBwlHpqOYJq+AN4tdzhEH+Lguou7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EX1yyxUy; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=jkcTM/PcyyPHkUnpLitPzp0hoovBk0ur1zYAES2PTw+IWA+F6PFJGh6mkiUpaiQN1GFuNQQx3badwvsl4r+gxMhocqF++Hsj+uOamLfcFXnyICIdyBed6dlJuM1Rzu0lm9RVoJsiKOmY/XbSMq7h5GYpu+xLBtXih8zzDa5bkSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P3gYQDIs; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721377695;
+	s=mimecast20190719; t=1721377763;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RRex67Mz8epoWANX5IYCXnoNaj4foCtRpW//w2kagY4=;
-	b=EX1yyxUyBEn9AtMuop9/narqlMreUPa3r5DFr6nHCRJ1YtVP+AF5JSiocYz30xuMTM1NY7
-	FFbm/xwNXpgDOa+fK+fbCxSux4TZPX5oaJYX1CjuSLCif8kSBFpEgkqjuXYfNBHy0JwgCy
-	N1gOEiML+KSS/smYWS/YW58KDJs6Hv4=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=mEvURRuXIQlOojLd3hkXa2g29GkpFSOYGY/bvxncEiI=;
+	b=P3gYQDIsUILwEUr77zY7FRWEEc4ReX/wQ4WbdUyVBOk2LcDOMGatNB6u6qhUJHyFjEireX
+	/6aTRmn0mYjmf05HcuYouzhBI/yEKCx3WnUSHHBvaOWbHPkLLiI7pKn1CF70nPwVVhOa7u
+	HO0S09UEKARykDUw2dEIfO1gdO5Yoz4=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-323-fbfNDR4OOYaCgUKrD8KLNg-1; Fri, 19 Jul 2024 04:28:13 -0400
-X-MC-Unique: fbfNDR4OOYaCgUKrD8KLNg-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4265d3bf59dso10028645e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 01:28:12 -0700 (PDT)
+ us-mta-649-f4x7dTE-PhOhgq_kdcwtFg-1; Fri, 19 Jul 2024 04:29:21 -0400
+X-MC-Unique: f4x7dTE-PhOhgq_kdcwtFg-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4272718b9b0so10727425e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 01:29:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721377692; x=1721982492;
+        d=1e100.net; s=20230601; t=1721377760; x=1721982560;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=RRex67Mz8epoWANX5IYCXnoNaj4foCtRpW//w2kagY4=;
-        b=dKwG+M+iqGVwYGICNXnHDEtQPKSrrV7QNh264Hip0ryUk9skUfXtoKi5nwzmR8vse7
-         37wNEclHrf2YvU8tOdXto9PJkys1NcWM363mlZ+kjMGsxZnckFveBGptABZI8XiVrK74
-         AFWB4g5fUgyexAUiXNnBwi3Zxre9veWmCD1aRRZQkQ5ppZ1szzHbk0XmGNd935t9s2UI
-         Ds9YvUIgPZXc/GvkPYliDrTkj7eTR8LaDWqtsV90pfjtDLhwZ9/6qqQW7Tt/+gJPFjT5
-         rc0p22emOv3fjHTCvbnNYKkt64cqBCUc2pxM6KyykTtDRxNLaJKeIkjLGLcxIzHBL2pG
-         rOpg==
-X-Gm-Message-State: AOJu0YwtiVQx1gZ4Cobdwvmtu46bV4Wvx+M0AIbt/FW9Cn2PVWvNhwof
-	niimaBJXfunh8yJ/Qp+LwDMhXmn4sLeXj5zaf5UcgZQrYVzxteW3HOZIMet2bJPqVcJLk+at/s3
-	VPvvQ2M5/RTC9A5qjsFGp+33fngNJTxSEgjFo1+EI2Qx3/rsyUHQLzNbUF+okbA==
-X-Received: by 2002:a05:600c:1c03:b0:426:668f:5eca with SMTP id 5b1f17b1804b1-427c2c99b70mr47225885e9.7.1721377691929;
-        Fri, 19 Jul 2024 01:28:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF9el61BzvNN7OiAoaIackyBdrRqSv7IvxZKq4Eq22fjV+zSZ1D7W4iI1PPo1840RGDlLtPmg==
-X-Received: by 2002:a05:600c:1c03:b0:426:668f:5eca with SMTP id 5b1f17b1804b1-427c2c99b70mr47225705e9.7.1721377691478;
-        Fri, 19 Jul 2024 01:28:11 -0700 (PDT)
+        bh=mEvURRuXIQlOojLd3hkXa2g29GkpFSOYGY/bvxncEiI=;
+        b=N9YTlh8VXSoS9laqDmmhk9c+NOQegaFhKAXJGza+sLPb9TDkZp/jnlYk/9fQnGRFgh
+         HpKz7Epx/gPLl4HTMkjSljxbJaHVgnK3M00Y7ioEjS9DOpUBVMnG9M4R20NETKHP5EM2
+         u2YN4G3DdfZEEQxWPKyEVhuRJx/EKbfZyRme/vHxHpapoPjTC88CJ6rsONM3gglWytQM
+         9DwEw2BHLSS1G3NWeIyZW78AonO828Ufd2s6Ipa4D/NEPUJaz4RSbA2Txin3iGXA0mCb
+         EMN4I29oOMhcGPpfUuTkXLhTvkC3sXPzhskwnuJMZJgzrv9Z0YDjfCsvbHguNvNFp0e4
+         m4lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXDV2LnCpHZoy2rSQ6kDhY0NamY0tJAEd6RKtlgmiVHwQNc0HcRdFYOyzc/ASdSKpxJ5M1KdT6W5hxTfM6waTequz0RM5EnCbpBgJgS
+X-Gm-Message-State: AOJu0YwPGAhxqF9HC5q++4g1F4a6pmtU/ZB0VCxoEr3vYou4TQukRZWT
+	NXyy7A2+5CA4LiF3nojTnx4dYIU9dhfSTLKONeng9qNXBwPF6u5/G3ul9f79Ztq0PurFC/RnjK+
+	EsHNNO+kIOJWMv0yRJ6r7xZVsxmf+2rO2DJft0u37+kx7v1xgInKR9/kItXnOKHfnmXLVjg==
+X-Received: by 2002:a05:600c:310c:b0:427:9dad:e6ac with SMTP id 5b1f17b1804b1-427c2d0bfccmr55859505e9.34.1721377760450;
+        Fri, 19 Jul 2024 01:29:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE1edBeEIkR/q4EqHK7aqXX0vmgXSP/PkUzbHsdU4iz0wEMQf6PafOjyNLNtMF8SP4cU7eyJw==
+X-Received: by 2002:a05:600c:310c:b0:427:9dad:e6ac with SMTP id 5b1f17b1804b1-427c2d0bfccmr55859385e9.34.1721377760041;
+        Fri, 19 Jul 2024 01:29:20 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c705:1000:c4af:a24f:b8ba:8bbc? (p200300cbc7051000c4afa24fb8ba8bbc.dip0.t-ipconnect.de. [2003:cb:c705:1000:c4af:a24f:b8ba:8bbc])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a3c0fasm44307985e9.7.2024.07.19.01.28.10
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d6936e1esm15687055e9.44.2024.07.19.01.29.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Jul 2024 01:28:11 -0700 (PDT)
-Message-ID: <1a0884cb-39ed-455e-a505-7c1b2a0e5225@redhat.com>
-Date: Fri, 19 Jul 2024 10:28:09 +0200
+        Fri, 19 Jul 2024 01:29:19 -0700 (PDT)
+Message-ID: <3551520d-d81d-40d7-8651-f55e642d24dc@redhat.com>
+Date: Fri, 19 Jul 2024 10:29:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,27 +82,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/x86/pat: Only untrack the pfn range if unmap region
-To: Yan Zhao <yan.y.zhao@intel.com>, Peter Xu <peterx@redhat.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Alex Williamson <alex.williamson@redhat.com>,
- Jason Gunthorpe <jgg@nvidia.com>, Al Viro <viro@zeniv.linux.org.uk>,
- Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski
- <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, "Kirill A . Shutemov"
- <kirill@shutemov.name>, "x86@kernel.org" <x86@kernel.org>,
- "Tian, Kevin" <kevin.tian@intel.com>, Pei Li <peili.dev@gmail.com>,
- David Wang <00107082@163.com>, Bert Karwatzki <spasswolf@web.de>,
- Sergey Senozhatsky <senozhatsky@chromium.org>
-References: <20240712144244.3090089-1-peterx@redhat.com>
- <ZpTLCscCFGtsrEjC@yzhao56-desk> <ZpUyZ9bH1-f5y5XG@x1n>
- <ZpY5uU2NyOoMVu5A@yzhao56-desk> <ZpbDnoQxGubegtu-@x1n>
- <Zpcgmk6wexTKVv2E@yzhao56-desk> <ZpfR_L9wtuXhtSGk@x1n>
- <Zph051h5BsSFMpR6@yzhao56-desk.sh.intel.com> <ZpkglfpbHH7lQSft@x1n>
- <Zpmi2JWirNDiJz+7@yzhao56-desk.sh.intel.com>
+Subject: Re: [RFC PATCH v1 3/4] mm: Override mTHP "enabled" defaults at kernel
+ cmdline
+To: Barry Song <baohua@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
+ <hughd@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Lance Yang <ioworker0@gmail.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Gavin Shan <gshan@redhat.com>,
+ Pankaj Raghav <kernel@pankajraghav.com>, Daniel Gomez
+ <da.gomez@samsung.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20240717071257.4141363-1-ryan.roberts@arm.com>
+ <20240717071257.4141363-4-ryan.roberts@arm.com>
+ <CAGsJ_4wiZRP9siEk9WpAYRjj-gehxptGY9XWC8k3N4QHBppAhQ@mail.gmail.com>
+ <fa5bd4cb-6d5c-4cb7-bb41-3c277e291cd6@arm.com>
+ <CAGsJ_4xSDc8pX+-vOUcXtV_ivt0Jc-LECiC=tto9oxYeOtU38Q@mail.gmail.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -149,44 +144,45 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <Zpmi2JWirNDiJz+7@yzhao56-desk.sh.intel.com>
+In-Reply-To: <CAGsJ_4xSDc8pX+-vOUcXtV_ivt0Jc-LECiC=tto9oxYeOtU38Q@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 19.07.24 01:18, Yan Zhao wrote:
-> On Thu, Jul 18, 2024 at 10:03:01AM -0400, Peter Xu wrote:
->> On Thu, Jul 18, 2024 at 09:50:31AM +0800, Yan Zhao wrote:
->>> Ok. Then if we have two sets of pfns, then we can
->>> 1. Call remap_pfn_range() in mmap() for pfn set 1.
+On 19.07.24 09:52, Barry Song wrote:
+> On Fri, Jul 19, 2024 at 7:48 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
 >>
->> I don't think this will work..  At least from the current implementation,
->> remap_pfn_range() will only reserve the memtype if the range covers the
->> whole vma.
-> Hmm, by referring to pfn set 1 and pfn set 2, I mean that they're both
-> covering the entire vma, but at different times.
+>> On 19/07/2024 01:46, Barry Song wrote:
+>>> On Wed, Jul 17, 2024 at 7:13 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>>>
+>>>> Add thp_anon= cmdline parameter to allow specifying the default
+>>>> enablement of each supported anon THP size. The parameter accepts the
+>>>> following format and can be provided multiple times to configure each
+>>>> size:
+>>>>
+>>>> thp_anon=<size>[KMG]:<value>
+>>>>
+>>>> See Documentation/admin-guide/mm/transhuge.rst for more details.
+>>>>
+>>>> Configuring the defaults at boot time is useful to allow early user
+>>>> space to take advantage of mTHP before its been configured through
+>>>> sysfs.
+>>>
+>>> This is exactly what I need and want to implement, as the current behavior
+>>> is problematic. We need to boot up the system and reach the point where
+>>> we can set up the sys interfaces to enable mTHP. Many processes miss the
+>>> opportunity to use mTHP.
+>>>
+>>> On the other hand, userspace might have been tuned to detect that mTHP
+>>> is enabled, such as a .so library. However, it turns out we have had
+>>> inconsistent settings between the two stages - before and after setting
+>>> mTHP enabled by sys interfaces.
+>>
+>> Good feedback - sounds like I should separate out this patch from the rest of
+>> the series to get it reviewed and merged faster?
 > 
-> To make it more accurately:
-> 
-> Consider this hypothetical scenario (not the same as what's implemented in
-> vfio-pci, but seems plausible):
-> 
-> Suppose we have a vma covering only one page, then
-> (1) Initially, the vma is mapped to pfn1, with remap_pfn_range().
-> (2) Subsequently, unmap_single_vma() is invoked to unmap the entire VMA.
-> (3) The driver then maps the entire vma to pfn2 in fault handler
-> 
-> Given this context, my questions are:
-> 1. How can we reserve the memory type for pfn2? Should we call
->     track_pfn_remap() in mmap() in advance?
-> 2. How do we untrack the memory type for pfn1 and pfn2, considering they
->     belong to the same VMA but mutual exclusively and not concurrently?
+> +1
 
-Do we really have to support such changing PFNs in a VMA? Are there 
-existing use cases that would rely on that?
-
-Would it be a problem if we would merge the mmap+track_pfn_remap, such 
-that such a special VMA can only ever belong to a single PFN range, that 
-is fixed, but PFNs can be faulted in lazily?
+Agreed, this is reasonable to have.
 
 -- 
 Cheers,
