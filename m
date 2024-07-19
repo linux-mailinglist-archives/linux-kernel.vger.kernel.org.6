@@ -1,104 +1,88 @@
-Return-Path: <linux-kernel+bounces-257123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0C6393759C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 11:19:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40C829375A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 11:21:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97DB61F219FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:19:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE27BB20BA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747F880639;
-	Fri, 19 Jul 2024 09:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD6081AB1;
+	Fri, 19 Jul 2024 09:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="ieDns3tY"
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504115914C
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 09:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="E3FymKGd"
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41718B647
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 09:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721380779; cv=none; b=pCGjxhA0uhanHQvukFMBRSohhexmROaLZ8erKeLTVre+S5v/M+3bkVa8PWxv58mXnQ5J0boCObFDScZKh3E6OLM8rbxdDyv1imW67kxvf9q2SqIifhsnjqQhaPMA6Xy42aRAInQ/R69M1h3CNCcyjiIdrmlOp4JvZXyueDs3ou0=
+	t=1721380900; cv=none; b=KCtiaNz0hmspKQlpn2SzR8NatGZsIGVDDlI4NA6CFRbHzskmKRfpQdd2yznQgGQsmHS3+tXhc0uLm50u5XjA5OsDY+1+jQIGlRxNgFXwzRIgdQ40NPBwPRF3CjBDFqqLupFXFQ7wLt7jTyn2KYNEHj/lKtRjgJOTj9gd1pOJjF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721380779; c=relaxed/simple;
-	bh=o2kwGgaG/AZytDFfy9Q1xQTGFvvMz2KClDqfdRfaCpQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EP5VpE8Auq3DTv87DBLcAlazoW2ZI+/zQ6sId05+V7HvZjQBkq23VFP4WNNxWhfzAdIf+6TeLUZ3poVhq0txupGLl5fyVQwS1OyWMcyAAYXlZiISgrbGL08Do36agA5vi4299elGsrvGOOMkZjGT93J0Q53JJWZrMCdSECtx6/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=ieDns3tY; arc=none smtp.client-ip=82.195.75.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:References:In-Reply-To:Date:Cc:To:From:Subject:
-	Message-ID:Reply-To:Content-ID:Content-Description;
-	bh=o2kwGgaG/AZytDFfy9Q1xQTGFvvMz2KClDqfdRfaCpQ=; b=ieDns3tY3kaVHP01xTTdjnwPtp
-	xIBiOWA687sENDLT2xajiRdNx6QA+/MbaolFpWk/YZF+yoK0HonXP2k3sgJEDMkiv+YL0oisR8wQ3
-	wQqVgE3jnoXxcwMjIzButa5kMX79dewW42jE+tFkleG9KJjSYk65Z9k+wa+jS0RLS3Eh0TjDEwPpa
-	sRB7A1jMuI4CyFEQ0F7G5d+RWW4uzIPzbx83PJS9ffe3sZEjCyHVhL6SMAs1ZgisAe1sQvcIF/sFn
-	7V46ffi1o97PfUwfuWD/av4T/ow+B8Wcch6m6nXqqJq0ObJ0oUQrkDvh60ADEoxUNM/zIkdDc5c7q
-	yO0I0iZQ==;
-Received: from authenticated user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.94.2)
-	(envelope-from <corsac@debian.org>)
-	id 1sUjlz-002IAZ-Jf
-	for linux-kernel@vger.kernel.org; Fri, 19 Jul 2024 09:19:31 +0000
-Message-ID: <e4e878901db1336c44ce17939c920119b9912fed.camel@debian.org>
-Subject: Re: [PATCH] mm: huge_memory: use !CONFIG_64BIT to relax huge page
- alignment on 32 bit machines
-From: Yves-Alexis Perez <corsac@debian.org>
-To: Yang Shi <yang@os.amperecomputing.com>, willy@infradead.org, 
-	jirislaby@kernel.org, surenb@google.com, riel@surriel.com, cl@linux.com, 
-	carnil@debian.org, ben@decadent.org.uk, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Date: Fri, 19 Jul 2024 11:19:24 +0200
-In-Reply-To: <20240712155855.1130330-1-yang@os.amperecomputing.com>
-References: <20240712155855.1130330-1-yang@os.amperecomputing.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.52.3-1 
+	s=arc-20240116; t=1721380900; c=relaxed/simple;
+	bh=QkXRAqGqH5C9BtUXUT3ymjEgM3vA6TGf9u2BXIrf0jQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eYAJvZyj4d4EESc00xQ9wTjOY2HTCXV8QLVsaAd+2AEGoJ1GXIXh8WPVhgq6py60/MxlqXWiAFnlXLzSmd3+LM3ATwS0PfxS5h8Tm6q3r9dy4Fz77z5D0jba4GSWNwjF+Uz5bQ9qkzbv4uVJolTuxbogFtT+E+RDO/Q3QR5qzY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=E3FymKGd; arc=none smtp.client-ip=45.254.50.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=eJGke
+	Z+B4lQnntV/5x646tpUJDSE1ijXYU5aHYM3cAY=; b=E3FymKGd8kQl+cVgNa7Qn
+	zymGlkpMU3MqRQia/VfyNrWZ4Th+9McV4tEwKe+oWNuQogIDqcxLW6BBobVQXPjB
+	NDNHSkthi3Q4zXjMO4J213PIfLXZz+TOeBGXDaqe/yPxNnecuje+afdCTLXwsLet
+	S7Jy3zLTJ8t5LrC+x/GOiQ=
+Received: from localhost.localdomain (unknown [223.166.237.249])
+	by gzga-smtp-mta-g0-5 (Coremail) with SMTP id _____wD3T3X7L5pmYK8DAg--.13202S2;
+	Fri, 19 Jul 2024 17:21:00 +0800 (CST)
+From: Ping Gan <jacky_gam_2001@163.com>
+To: hare@suse.de,
+	hch@lst.de,
+	sagi@grimberg.me,
+	kch@nvidia.com,
+	linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: ping.gan@dell.com,
+	Ping Gan <jacky_gam_2001@163.com>
+Subject: [PATCH v3 0/2] nvmet: use unbound_wq for RDMA and TCP by default
+Date: Fri, 19 Jul 2024 17:19:57 +0800
+Message-Id: <20240719091959.17163-1-jacky_gam_2001@163.com>
+X-Mailer: git-send-email 2.26.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Debian-User: corsac
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3T3X7L5pmYK8DAg--.13202S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Xr4kCry8tw47Zr4xtw45Awb_yoWfGrX_CF
+	Z7ursrG3WxWF4DtFWI9a48ZrySyF98X3s7Jw48tF1UKryrZr1UArWDCr95Ga48ZF4kJrnr
+	Xw13J3ySy39IvjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRi1xR7UUUUU==
+X-CM-SenderInfo: 5mdfy55bjdzsisqqiqqrwthudrp/1tbiSAkhKWXAmWHsaQABsQ
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
+When running nvmf on SMP platform, current nvme target's RDMA and
+TCP use bounded workqueue to handle IO, but when there is other high
+workload on the system(eg: kubernetes), the competition between the 
+bounded kworker and other workload is very radical. To decrease the
+resource race of OS among them, this patchset will switch to unbounded
+workqueue for nvmet-rdma and nvmet-tcp; besides that, it can also
+get some performance improvement. And this patchset bases on previous
+discussion from below session.
 
-On Fri, 2024-07-12 at 08:58 -0700, Yang Shi wrote:
-> Yves-Alexis Perez reported commit 4ef9ad19e176 ("mm: huge_memory: don't
-> force huge page alignment on 32 bit") didn't work for x86_32 [1].=C2=A0 I=
-t is
-> because x86_32 uses CONFIG_X86_32 instead of CONFIG_32BIT.
->=20
-> !CONFIG_64BIT should cover all 32 bit machines.
+https://lore.kernel.org/lkml/20240719084953.8050-1-jacky_gam_2001@163.com/
 
-Hi,
+Ping Gan (2):
+  nvmet-tcp: use unbound_wq for nvmet-tcp by default
+  nvmet-rdma: use unbound_wq for nvmet-rdma by default
 
-I've noticed that the patch was integrated into the -mm tree and next/maste=
-r.
-It's not yet in the first half of the merge window for 6.11 but do you know=
- if
-it's scheduled for rc1?
+ drivers/nvme/target/rdma.c | 2 +-
+ drivers/nvme/target/tcp.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Regards,
-- --=20
-Yves-Alexis
------BEGIN PGP SIGNATURE-----
+-- 
+2.26.2
 
-iQEzBAEBCAAdFiEE8vi34Qgfo83x35gF3rYcyPpXRFsFAmaaL5wACgkQ3rYcyPpX
-RFtzIQf8Dn0wqm4ZDeAvoxX+xPTn5Qhu5T1tDZfnryL584DRroe5PyYr5uI+BL7W
-oMfPc+cNYUmGRPc8qmbAhg5K18xlfmPfUDq4idWzLMjpUnmEZflWgrGFvRgJmTo5
-Kq2MRxpLi38M9GTeqG3MKtWxouKilch9n1ukmQhV9H0DUtiiS3EhITt9X7PbJ7Zc
-yvPtdRcdHXRXSl0x/0hztQy4xuKSJxGQULGoSL0HyS8R9OCj+0hDFgEz98YkSbYW
-6pZ8+iZLc+OXEkjKfC3uwI/q0Dw3eZW1zIyPn7ahYteisBr+HfKwoGz7UNzw3aB4
-/BB3VA+A7/ikJ9NIwjgSlGTmZso73A=3D=3D
-=3D1puG
------END PGP SIGNATURE-----
 
