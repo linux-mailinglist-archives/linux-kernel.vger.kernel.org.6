@@ -1,183 +1,125 @@
-Return-Path: <linux-kernel+bounces-257032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B356693743D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:16:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2388D937453
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9D801C21E26
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 07:16:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC4D51F22BFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 07:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A5852F62;
-	Fri, 19 Jul 2024 07:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265E653363;
+	Fri, 19 Jul 2024 07:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bnCIJMII"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="CKwA7xE7"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE594383AE;
-	Fri, 19 Jul 2024 07:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3DA47A66
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 07:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721373382; cv=none; b=ONd2YzjuNuAA959SWWWOGmp9XGI8wHDAswF3o0vpuUalNMe3HGVrSzmjBZFV2/lVIAY2HOYXZ3HopClwPAtJTQ6oPNFVdlQzrpbW8ZsFUwlYav5/x/DizL5SFftr5wtLaHj38gICiJGF8tgkNLi44aVXGeOjGntbYBxCzRfURok=
+	t=1721373648; cv=none; b=YmNJAgGdafCja704w79rxKSK625/Hkv2us+UgTOB8+5JyX24ntpz+sAVoE8EhIgo/fXue+53RV/q1iOj4m6wYWeO0VJwegtAfpuzRiSrmQQM84htYe2ajVclBj/HnpPSaN9u9yhvW1YYbC8/0h+ZfZkaW5YNNB2lWNITmcmQT2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721373382; c=relaxed/simple;
-	bh=Pri28JxsKbTdgBxDah1HX4+gjz3x9JcY8LT5JSPjCEQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iVI0yZ/2B1IJG/UOBjiH3cgSv1cvciHjzdqVXikmBRr0B5/abtWeBvOSeLjDfClMQAmSjEIEISfYC4DmN3OVEVp4a9OKGWjCn3LtjeDNk4fBpsvbzifm2wy1yupPgIeRWouF/cgzX7EkHVwN5G/5yyY+cOguUSEzqSNAiDy6ZHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bnCIJMII; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46J1Boim002461;
-	Fri, 19 Jul 2024 07:16:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	V18CnCDRdByuO0ymYaCTdwRDpiRNMMquhhslWE+RwDU=; b=bnCIJMIIel6X2gkH
-	IqIB/BiCqwouNq2u/cmlqFmLPy847+W84q1FWoYXmS0TrEI8FeeIlT3vs4GfwrA/
-	JAlYt75CgBVkG0/JdVjRpksN4P1FGBbj0BtOGy17CP+kg1pc8rhu8J+fVQfHfYxi
-	maHcNsxDLGK0UpsoNSAe4h0/ICnLgs0Rv9pYliDPF3Ws3GVnexW5nLj8T6TOU/cP
-	N2EN6e1Hyx1AKRdOspH90UeLFli5ZJup6Hureo2jrAQmFDA48dwVYYy8stZhp2yi
-	AdJ4+6FDVYDMAcdCB21ngkfdF5wp6E4fE51jV4M3ystoaq1Q2+ltoTgxmCii5lOl
-	M3Nmhw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40fe94rkce-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 19 Jul 2024 07:16:02 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46J7G1sk006359
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 19 Jul 2024 07:16:01 GMT
-Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 19 Jul
- 2024 00:15:55 -0700
-Message-ID: <ccc981cf-0b75-461d-8440-4b307856e507@quicinc.com>
-Date: Fri, 19 Jul 2024 12:45:52 +0530
+	s=arc-20240116; t=1721373648; c=relaxed/simple;
+	bh=snCOMfSAIZ7BN7SEbXap79VN++oHgdcE3AI+lBWfejI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=At863lWLCrh7a1UqRd1n2cXI+BcGurMPTwYdwDecwzxtu0ORo5t27Iv31o61087EbXsRVwpm6qJHFO+LfzTOyL1ICUrjlOGMPAKutYLunemHsDU+c5734ZKY7boqcSa2B23MhpkzEDaMA5PoAyvAr7BGAhAGpWILxO6lC+GPaxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=CKwA7xE7; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5a3458bf989so228708a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 00:20:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721373644; x=1721978444; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=snCOMfSAIZ7BN7SEbXap79VN++oHgdcE3AI+lBWfejI=;
+        b=CKwA7xE7/Ff/gcwjddW+QvFZ38IRkEJiatecI+IzqMYs0f3/b7sLIxH6TWvuEiX0mS
+         Ytr5+0OM8CEW6WOBz/oUyU6nFm/i3cR/MtiFmj/TQQvmUPHgdusADDIzJKMbuDHd6Ute
+         XRdNosgpmvYeVqyZM2g+67KjHukPvy6EU/wGlYoo8JNaXIEsZkBhAs7FVq7LYmx0akTx
+         2e50+c/MMSIjeAm47Babd1Qzw3Sr94aBqfF0XZkipI/U1iGT8PIO6E+vbw1nTY1FN6j+
+         723YvUPeyPseHkUQZ5SIdTki+czF5jkeLfg0CozCs3CcbTUgze78iSFN9mtWHAXRHso3
+         90cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721373644; x=1721978444;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=snCOMfSAIZ7BN7SEbXap79VN++oHgdcE3AI+lBWfejI=;
+        b=mxfXVGzXH2aYyzdqYu4ujF7dg9p3MAXkAQlrC0hVrDwtJGw/YLrX8bQ7HyOgixmZ0d
+         DQRTbZWV25FgdtTnbKCQoQ57zJxKt/DFme9xIwPrguOLTCD17MQdQuh7J2FhRG+Hh0mM
+         vLt0X+7ppTAz/h031skoFx08kbqlgnQw6/R7DgJbj9ToIB9fR6ZzIqeF6ohzpeEA994z
+         fptE5scFyXEbR2lWirSumPvyJfMcv/tT1PKsxUNFL8ammHVwNzEyuwbnEjvYRX/X9lec
+         2K3nJDdjm8o8UMvL+GdZTK5o/kY4PmOd/njaIchUVHsGUgvs/eMn6nOeX4MnP8jeyBrM
+         KU7g==
+X-Forwarded-Encrypted: i=1; AJvYcCUzFCyyDDmzUmkl7ghz4qUvZhAFZSZRK9B8Bk0uzlKcCsMzh68gSztxPHk6Lq5rlOigHfPyhCAPXT0/fDUeTU8hEpmZbAHYqfpi7BHU
+X-Gm-Message-State: AOJu0YzPkSyV4iki9FrFWxubJHcODguKmXywG72PYNQ2Kopf53Jz08cn
+	OsW792WqSjG5z36EKttguU+hDNZcQj7qiiGvLzPSUOxpkDOcb8fDEY614vCcaWU=
+X-Google-Smtp-Source: AGHT+IHSnMJiPqKXQFc7TqXz25zzG8NVyoXNnDQ32Bkv6V9d4Cr9qVr7e/wI2y2FwvE11QdoZJJXTA==
+X-Received: by 2002:a50:d682:0:b0:57d:46f4:7df5 with SMTP id 4fb4d7f45d1cf-5a05bfaa613mr3897320a12.23.1721373644032;
+        Fri, 19 Jul 2024 00:20:44 -0700 (PDT)
+Received: from localhost (p50915eb1.dip0.t-ipconnect.de. [80.145.94.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30c7d30a0sm669323a12.83.2024.07.19.00.20.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 00:20:43 -0700 (PDT)
+Date: Fri, 19 Jul 2024 09:20:42 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: George Stark <gnstark@salutedevices.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	neil.armstrong@linaro.org, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
+	martin.blumenstingl@googlemail.com, jbrunet@baylibre.com, khilman@baylibre.com, 
+	linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, kernel@salutedevices.com, hkallweit1@gmail.com
+Subject: Re: [PATCH v4 0/3] pwm: meson: add pwm support for A1
+Message-ID: <bp3hbxl6zs6lwomfdj6edhq35pde3gr5i2qizgdf2varke2eai@weeodo6gacd7>
+References: <20240710234116.2370655-1-gnstark@salutedevices.com>
+ <52e2e211-a0b7-47b1-a451-34c304028097@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: qcom: Remove required-opps from
- required list on SM8650
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das
-	<quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        kernel test robot <lkp@intel.com>
-References: <20240708130836.19273-1-quic_jkona@quicinc.com>
- <rbej7rbjiwtgf4reiomtmlv3ef3ljfys5yfzypigrertylucu7@be3v65aeuimb>
-Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <rbej7rbjiwtgf4reiomtmlv3ef3ljfys5yfzypigrertylucu7@be3v65aeuimb>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 2KiNyAUo0-nw64LsjnRv8ojnvWc8ToL_
-X-Proofpoint-ORIG-GUID: 2KiNyAUo0-nw64LsjnRv8ojnvWc8ToL_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-19_04,2024-07-18_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=770 lowpriorityscore=0 bulkscore=0 spamscore=0 impostorscore=0
- adultscore=0 malwarescore=0 clxscore=1015 phishscore=0 mlxscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407190056
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="a4mrqcrkf7uvtgvq"
+Content-Disposition: inline
+In-Reply-To: <52e2e211-a0b7-47b1-a451-34c304028097@salutedevices.com>
 
 
+--a4mrqcrkf7uvtgvq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 7/8/2024 7:32 PM, Dmitry Baryshkov wrote:
-> On Mon, Jul 08, 2024 at 06:38:36PM GMT, Jagadeesh Kona wrote:
->> On SM8650, the minimum voltage corner supported on MMCX from cmd-db is
->> sufficient for clock controllers to operate and there is no need to specify
->> the required-opps. Hence remove the required-opps property from the list of
->> required properties for SM8650 camcc and videocc bindings.
->>
->> This fixes:
->> arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@aaf0000:
->> 'required-opps' is a required property
->>
->> arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@ade0000:
->> 'required-opps' is a required property
->>
->> Fixes: a6a61b9701d1 ("dt-bindings: clock: qcom: Add SM8650 video clock controller")
->> Fixes: 1ae3f0578e0e ("dt-bindings: clock: qcom: Add SM8650 camera clock controller")
->> Reported-by: kernel test robot <lkp@intel.com>
->> Closes: https://lore.kernel.org/oe-kbuild-all/202407070147.C9c3oTqS-lkp@intel.com/
->> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> 
-> You are mentioning just sm8650, but your change applies to other
-> platforms. Could you please check whether other platforms supported by
-> these bindings required the opps or not. Make required: conditional and
-> enabled only for those platforms?
-> 
+Hello George,
 
-Thanks Dmitry for your review.
+On Thu, Jul 18, 2024 at 04:09:04PM +0300, George Stark wrote:
+> Excuse me, should I fix/improve anything on this series?
 
-Yes I will make this conditional. Currently only SM8650 doesn't have the 
-required-opps property in DT, so I will remove the required-opps from 
-required list only for SM8650.
+The known issue with this series is just that it's one of several patch
+series that I didn't come around to review yet. I tackle them one at a
+time, usually in a FIFO order as listed on
+https://patchwork.ozlabs.org/project/linux-pwm/list/ .
 
-Thanks,
-Jagadeesh
+Best regards
+Uwe
 
->> ---
->>   Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml   | 1 -
->>   Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml | 1 -
->>   2 files changed, 2 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
->> index f58edfc10f4c..bd9612d9d7f7 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
->> @@ -57,7 +57,6 @@ required:
->>     - compatible
->>     - clocks
->>     - power-domains
->> -  - required-opps
->>   
->>   unevaluatedProperties: false
->>   
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->> index b2792b4bb554..8a42e2a1a158 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->> @@ -44,7 +44,6 @@ required:
->>     - compatible
->>     - clocks
->>     - power-domains
->> -  - required-opps
->>     - '#power-domain-cells'
->>   
->>   allOf:
->> -- 
->> 2.43.0
->>
-> 
+--a4mrqcrkf7uvtgvq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaaE8cACgkQj4D7WH0S
+/k6nDgf8D5F2Na4nH6HLwiqFon8plnLTpbHNktSH8KoKVdGii8LxI9VwSaFm625x
+7TRIUvuD6Ss2nW8Wyy5XN+Jj7GjFT4l2A6YOTtbPYqpnAKryKUPmu5QPFLE/UrH6
+HqoABIBLJsFFFFLHN8DSJm6EwHOLyfqmhtYt3ReQLYvu9flXIht4E+JCUnZSrxRM
+dw1WSK1yJBMhDcnIMcFZ48C+ymj4t3bzImEt8mjoExdlFC/sUzsZr2853Dme9QJk
+Gqi3tjsgTHFBMq1CpjXdJNBTnQaqRECKVvrEntWW66s8ocdF4Q5Ib3M8TeOY2WLg
+EpCoY/o9x4O2xTSQ0Y0C7kRbNln1rw==
+=tWvy
+-----END PGP SIGNATURE-----
+
+--a4mrqcrkf7uvtgvq--
 
