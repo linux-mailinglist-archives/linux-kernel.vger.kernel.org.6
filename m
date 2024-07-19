@@ -1,338 +1,150 @@
-Return-Path: <linux-kernel+bounces-257587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47F5A937C3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:14:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF64937C4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AFD71C2215C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:14:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBB4B1C2118B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4DF1474AE;
-	Fri, 19 Jul 2024 18:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="OlBdRfZU"
-Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [83.166.143.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3AEA1474B7;
+	Fri, 19 Jul 2024 18:16:09 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F22F146D78
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 18:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5493D43687;
+	Fri, 19 Jul 2024 18:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721412858; cv=none; b=LvCQg3BCcDaBQsqh38Xrw/dPFtWga30EuqgT6Dq1frgI9GhfNq+uq5SXDr+9+LCGTmS4WtiSE5UVA6dxnp79g2PwBowqGZtdqNruScoL9uaKYDWDeM0DnWX8FEkG/9uxyyKFQyB/DDnkR2EPsvOexxFDP20VnR9ImpQ6sJO94oI=
+	t=1721412969; cv=none; b=EY+T6GE36jqi38fmshp/jEiggZBvxfaiFxN9By7kJ+yVXQQZ5wPb+gQCVNfT/0VZkxfpsKl8PM3jABIDpb7kAWl5x1+H9sTAYNBa0O3RIwuvvyuwB3qeT9f/E6LiKhDNTDHtW2ooFcS8LyCkcI4KH/9yMAO4ZMOwsv0IEx8d8ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721412858; c=relaxed/simple;
-	bh=qCrqHdn+cpkWR3yivLl119Ad62YP9Gu7JeJQO9PsfUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZKfWnVZcgQXKpr4JLZH3vcFVJ3GYwQivAjWy/W3V24i1RSr8jVQO+TyTPqyo9jBGxpMC46W4VCKnSJYnU5uDMFQfWK7h+XaQYJ6bMWkW1uDwZ+j+SaJ4+pqV7d2AHy60w8fBaQPMG7dzVPpDSUOh805TnXNNmYPjyIq4GS2vD3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=OlBdRfZU; arc=none smtp.client-ip=83.166.143.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WQd9B1JHSzYJB;
-	Fri, 19 Jul 2024 20:14:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721412846;
-	bh=Sfu7kbVhK7l3nqVtAhoPi7msdo+3IQX+4FwZA44EGgw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OlBdRfZUhd534U/aK4GNrmC8QpD79aZSrAOFi/PqN71269udy5dKni70LUqT1DFMC
-	 ZnNwoZFZrMm8XsVV8cdILIOy3aXHyPj3ON0udSwvLVqTaDCVkPSDWwGW0NbOdFeL0M
-	 AGO05GreLlBAJu28zxT3xOw3yg8ug8T+JKVoxeKc=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WQd990l2Wznlr;
-	Fri, 19 Jul 2024 20:14:05 +0200 (CEST)
-Date: Fri, 19 Jul 2024 20:14:02 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
-	outreachy@lists.linux.dev, netdev@vger.kernel.org
-Subject: Re: [PATCH v7 1/4] Landlock: Add abstract unix socket connect
- restriction
-Message-ID: <20240719.AepeeXeib7sh@digikod.net>
-References: <cover.1721269836.git.fahimitahera@gmail.com>
- <d7bad636c2e3609ade32fd02875fa43ec1b1d526.1721269836.git.fahimitahera@gmail.com>
+	s=arc-20240116; t=1721412969; c=relaxed/simple;
+	bh=qNf5UpMd67REEcicZX3rLO8ek+sXJ1i60zkOjoh4XE8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W0iPIWV7RfXFnfEOdCZFGCKKcODCRuDsOmraAlT9qli8zEhhtBn1XIuRvBX2VmKe+Lc7+KaC/N0mB+F9nlcUqkGQb/NT1iIZname3ayjdkCZhGaa/9udewIn1rReIqbPdo7ZUeOsACOt0SoyyLR7QG9jRR6hhq46rKpSJdnUE6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WQd9q016gz6JBkF;
+	Sat, 20 Jul 2024 02:14:39 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1F7D11408FE;
+	Sat, 20 Jul 2024 02:16:04 +0800 (CST)
+Received: from localhost (10.48.157.16) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 19 Jul
+ 2024 19:16:03 +0100
+Date: Fri, 19 Jul 2024 19:16:02 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mike Rapoport <rppt@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, Alexander Gordeev
+	<agordeev@linux.ibm.com>, Andreas Larsson <andreas@gaisler.com>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, "Borislav
+ Petkov" <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, David Hildenbrand
+	<david@redhat.com>, "David S. Miller" <davem@davemloft.net>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Heiko Carstens
+	<hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar
+	<mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, "John Paul Adrian
+ Glaubitz" <glaubitz@physik.fu-berlin.de>, Michael Ellerman
+	<mpe@ellerman.id.au>, Palmer Dabbelt <palmer@dabbelt.com>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, "Thomas
+ Bogendoerfer" <tsbogend@alpha.franken.de>, Thomas Gleixner
+	<tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>, Will Deacon
+	<will@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<loongarch@lists.linux.dev>, <linux-mips@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <linux-riscv@lists.infradead.org>,
+	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>,
+	<sparclinux@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+	<linux-mm@kvack.org>, <x86@kernel.org>
+Subject: Re: [PATCH 16/17] arch_numa: switch over to numa_memblks
+Message-ID: <20240719191602.000075d2@Huawei.com>
+In-Reply-To: <20240716111346.3676969-17-rppt@kernel.org>
+References: <20240716111346.3676969-1-rppt@kernel.org>
+	<20240716111346.3676969-17-rppt@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d7bad636c2e3609ade32fd02875fa43ec1b1d526.1721269836.git.fahimitahera@gmail.com>
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Wed, Jul 17, 2024 at 10:15:19PM -0600, Tahera Fahimi wrote:
-> The patch introduces a new "scoped" attribute to the
-> landlock_ruleset_attr that can specify "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET"
-> to scope abstract unix sockets from connecting to a process outside of
-> the same landlock domain.
+On Tue, 16 Jul 2024 14:13:45 +0300
+Mike Rapoport <rppt@kernel.org> wrote:
+
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 > 
-> This patch implement two hooks, "unix_stream_connect" and "unix_may_send" to
-> enforce this restriction.
+> Until now arch_numa was directly translating firmware NUMA information
+> to memblock.
 > 
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> Using numa_memblks as an intermediate step has a few advantages:
+> * alignment with more battle tested x86 implementation
+> * availability of NUMA emulation
+> * maintaining node information for not yet populated memory
 > 
-> -------
-
-Only "---"
-
-> v7:
-
-Thanks for the detailed changelog, it helps!
-
->  - Using socket's file credentials for both connected(STREAM) and
->    non-connected(DGRAM) sockets.
->  - Adding "domain_sock_scope" instead of the domain scoping mechanism used in
->    ptrace ensures that if a server's domain is accessible from the client's
->    domain (where the client is more privileged than the server), the client
->    can connect to the server in all edge cases.
->  - Removing debug codes.
-> v6:
->  - Removing curr_ruleset from landlock_hierarchy, and switching back to use
->    the same domain scoping as ptrace.
->  - code clean up.
-> v5:
->  - Renaming "LANDLOCK_*_ACCESS_SCOPE" to "LANDLOCK_*_SCOPE"
->  - Adding curr_ruleset to hierarachy_ruleset structure to have access from
->    landlock_hierarchy to its respective landlock_ruleset.
->  - Using curr_ruleset to check if a domain is scoped while walking in the
->    hierarchy of domains.
->  - Modifying inline comments.
-> V4:
->  - Rebased on Günther's Patch:
->    https://lore.kernel.org/all/20240610082115.1693267-1-gnoack@google.com/
->    so there is no need for "LANDLOCK_SHIFT_ACCESS_SCOPE", then it is removed.
->  - Adding get_scope_accesses function to check all scoped access masks in a ruleset.
->  - Using file's FD credentials instead of credentials stored in peer_cred
->    for datagram sockets. (see discussion in [1])
->  - Modifying inline comments.
-> V3:
->  - Improving commit description.
->  - Introducing "scoped" attribute to landlock_ruleset_attr for IPC scoping
->    purpose, and adding related functions.
->  - Changing structure of ruleset based on "scoped".
->  - Removing rcu lock and using unix_sk lock instead.
->  - Introducing scoping for datagram sockets in unix_may_send.
-> V2:
->  - Removing wrapper functions
+> Replace current functionality related to numa_add_memblk() and
+> __node_distance() with the implementation based on numa_memblks and add
+> functions required by numa_emulation.
 > 
-> [1]https://lore.kernel.org/outreachy/Zmi8Ydz4Z6tYtpY1@tahera-OptiPlex-5000/T/#m8cdf33180d86c7ec22932e2eb4ef7dd4fc94c792
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
+One trivial comment inline,
 
-> -------
-> 
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-
-No need for this hunk.
-
-
-> ---
->  include/uapi/linux/landlock.h |  29 +++++++++
->  security/landlock/limits.h    |   3 +
->  security/landlock/ruleset.c   |   7 ++-
->  security/landlock/ruleset.h   |  23 ++++++-
->  security/landlock/syscalls.c  |  14 +++--
->  security/landlock/task.c      | 112 ++++++++++++++++++++++++++++++++++
->  6 files changed, 181 insertions(+), 7 deletions(-)
-
-> diff --git a/security/landlock/task.c b/security/landlock/task.c
-> index 849f5123610b..597d89e54aae 100644
-> --- a/security/landlock/task.c
-> +++ b/security/landlock/task.c
-> @@ -13,6 +13,8 @@
->  #include <linux/lsm_hooks.h>
->  #include <linux/rcupdate.h>
->  #include <linux/sched.h>
-> +#include <net/sock.h>
-> +#include <net/af_unix.h>
->  
->  #include "common.h"
->  #include "cred.h"
-> @@ -108,9 +110,119 @@ static int hook_ptrace_traceme(struct task_struct *const parent)
->  	return task_ptrace(parent, current);
+Jonathan
+>  /*
+>   * Initialize NODE_DATA for a node on the local memory
+>   */
+> @@ -226,116 +204,9 @@ static void __init setup_node_data(int nid, u64 start_pfn, u64 end_pfn)
+>  	NODE_DATA(nid)->node_spanned_pages = end_pfn - start_pfn;
 >  }
+
 >  
-> +static int walk_and_check(const struct landlock_ruleset *const child,
-> +			  struct landlock_hierarchy **walker, int i, int j,
-
-We don't know what are "i" and "j" are while reading this function's
-signature.  They need a better name.
-
-Also, they are ingegers (signed), whereas l1 and l2 are size_t (unsigned).
-
-> +			  bool check)
-> +{
-> +	if (!child || i < 0)
-> +		return -1;
-> +
-> +	while (i < j && *walker) {
-
-This would be more readable with a for() loop.
-
-> +		if (check && landlock_get_scope_mask(child, j))
-
-This is correct now but it will be a bug when we'll have other scope.
-Instead, you can replace the "check" boolean with a variable containing
-LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET.
-
-> +			return -1;
-> +		*walker = (*walker)->parent;
-> +		j--;
-> +	}
-> +	if (!*walker)
-> +		pr_warn_once("inconsistency in landlock hierarchy and layers");
-
-This must indeed never happen, but WARN_ON_ONCE(!*walker) would be
-better than this check+pr_warn.
-
-Anyway, if this happen this pointer will still be dereferenced in
-domain_sock_scope() right?  This must not be possible.
-
-
-> +	return j;
-
-Because j is now equal to i, no need to return it.  This function can
-return a boolean instead, or a struct landlock_ruleset pointer/NULL to
-avoid the pointer of pointer?
-
-> +}
-> +
-> +/**
-> + * domain_sock_scope - Checks if client domain is scoped in the same
-> + *			domain as server.
-> + *
-> + * @client: Connecting socket domain.
-> + * @server: Listening socket domain.
-> + *
-> + * Checks if the @client domain is scoped, then the server should be
-> + * in the same domain to connect. If not, @client can connect to @server.
-> + */
-> +static bool domain_sock_scope(const struct landlock_ruleset *const client,
-
-This function can have a more generic name if
-LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET is passed as argument.  This could
-be reused as-is for other kind of scope.
-
-> +			      const struct landlock_ruleset *const server)
-> +{
-> +	size_t l1, l2;
-> +	int scope_layer;
-> +	struct landlock_hierarchy *cli_walker, *srv_walker;
-
-We have some room for a bit more characters ;)
-client_walker, server_walker;
-
-> +
-> +	if (!client)
-> +		return true;
-> +
-> +	l1 = client->num_layers - 1;
-
-Please rename variables in a consistent way, in this case something like
-client_layer?
-
-> +	cli_walker = client->hierarchy;
-> +	if (server) {
-> +		l2 = server->num_layers - 1;
-> +		srv_walker = server->hierarchy;
-> +	} else
-> +		l2 = 0;
-> +
-> +	if (l1 > l2)
-> +		scope_layer = walk_and_check(client, &cli_walker, l2, l1, true);
-
-Instead of mixing the layer number with an error code, walk_and_check()
-can return a boolean, take as argument &scope_layer, and update it.
-
-> +	else if (l2 > l1)
-> +		scope_layer =
-> +			walk_and_check(server, &srv_walker, l1, l2, false);
-> +	else
-> +		scope_layer = l1;
-> +
-> +	if (scope_layer == -1)
-> +		return false;
-
-All these domains and layers checks are difficult to review. It needs at
-least some comments, and preferably also some code refactoring to avoid
-potential inconsistencies (checks).
-
-> +
-> +	while (scope_layer >= 0 && cli_walker) {
-
-Why srv_walker is not checked?  Could this happen?  What would be the
-result?
-
-Please also use a for() loop here.
-
-> +		if (landlock_get_scope_mask(client, scope_layer) &
-> +		    LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET) {
-
-The logic needs to be explained.
-
-> +			if (!server)
-> +				return false;
-> +
-> +			if (srv_walker == cli_walker)
-> +				return true;
-> +
-> +			return false;
-> +		}
-> +		cli_walker = cli_walker->parent;
-> +		srv_walker = srv_walker->parent;
-> +		scope_layer--;
-> +	}
-> +	return true;
-> +}
-> +
-> +static bool sock_is_scoped(struct sock *const other)
-> +{
-> +	const struct landlock_ruleset *dom_other;
-> +	const struct landlock_ruleset *const dom =
-> +		landlock_get_current_domain();
-> +
-> +	/* the credentials will not change */
-> +	lockdep_assert_held(&unix_sk(other)->lock);
-> +	dom_other = landlock_cred(other->sk_socket->file->f_cred)->domain;
-> +
-> +	/* other is scoped, they connect if they are in the same domain */
-> +	return domain_sock_scope(dom, dom_other);
-> +}
-> +
-> +static int hook_unix_stream_connect(struct sock *const sock,
-> +				    struct sock *const other,
-> +				    struct sock *const newsk)
-> +{
-> +	if (sock_is_scoped(other))
-> +		return 0;
-> +
-> +	return -EPERM;
-> +}
-> +
-> +static int hook_unix_may_send(struct socket *const sock,
-> +			      struct socket *const other)
-> +{
-> +	if (sock_is_scoped(other->sk))
-> +		return 0;
-> +
-> +	return -EPERM;
-> +}
-> +
->  static struct security_hook_list landlock_hooks[] __ro_after_init = {
->  	LSM_HOOK_INIT(ptrace_access_check, hook_ptrace_access_check),
->  	LSM_HOOK_INIT(ptrace_traceme, hook_ptrace_traceme),
-> +	LSM_HOOK_INIT(unix_stream_connect, hook_unix_stream_connect),
-> +	LSM_HOOK_INIT(unix_may_send, hook_unix_may_send),
->  };
+> @@ -454,3 +321,54 @@ void __init arch_numa_init(void)
 >  
->  __init void landlock_add_task_hooks(void)
-> -- 
-> 2.34.1
-> 
-> 
+>  	numa_init(dummy_numa_init);
+>  }
+> +
+> +#ifdef CONFIG_NUMA_EMU
+> +void __init numa_emu_update_cpu_to_node(int *emu_nid_to_phys,
+> +					unsigned int nr_emu_nids)
+> +{
+> +	int i, j;
+> +
+> +	/*
+> +	 * Transform __apicid_to_node table to use emulated nids by
+
+Comment needs an update seeing as there is no __apicid_to_node table
+here.
+
+> +	 * reverse-mapping phys_nid.  The maps should always exist but fall
+> +	 * back to zero just in case.
+> +	 */
+> +	for (i = 0; i < ARRAY_SIZE(cpu_to_node_map); i++) {
+> +		if (cpu_to_node_map[i] == NUMA_NO_NODE)
+> +			continue;
+> +		for (j = 0; j < nr_emu_nids; j++)
+> +			if (cpu_to_node_map[i] == emu_nid_to_phys[j])
+> +				break;
+> +		cpu_to_node_map[i] = j < nr_emu_nids ? j : 0;
+> +	}
+> +}
+> +
+> +u64 __init numa_emu_dma_end(void)
+> +{
+> +	return PFN_PHYS(memblock_start_of_DRAM() + SZ_4G);
+> +}
+
 
