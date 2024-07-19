@@ -1,174 +1,96 @@
-Return-Path: <linux-kernel+bounces-257305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71DC5937839
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:17:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BC16937854
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:19:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D10C282041
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:17:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E47C1C21A00
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F9A1411E7;
-	Fri, 19 Jul 2024 13:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA86146D51;
+	Fri, 19 Jul 2024 13:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BX2Ysd7H"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dK/4pf1h"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFB229CE6;
-	Fri, 19 Jul 2024 13:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F011143C43;
+	Fri, 19 Jul 2024 13:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721395037; cv=none; b=O9yHBhffb9UJw+dfot70TKGStpONdALFX/2m/eJHEoADEadxfozaJamYMuupq5gc/xdxVIxq1JwzkdD7AlfmEm374OY0D8StHMHn01EZmuYX/FXfvWRg6CAbVIwS7Eaqw5n0q7K7JR9A1plk5aiwXuUgyKDeV6KnA9ZtFoMLHeQ=
+	t=1721395049; cv=none; b=HsygvEAtc2waSwqKZEDKlUm4Y7fOEzSIipVnn0vxt60B/eiTnypo78UUTz63G626nFoDSPndzwYgrjR6fcP3mIos8H2PbhfREno5HWoXmGVzlL5RZaQBWEAiBDxg8YCy+ohrI4ZhY1U30nw5QwF4SriPHfO8Ub2g6r09a/OlG64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721395037; c=relaxed/simple;
-	bh=qtLPFOhjqFSQYLpvCLe3qCCW4Py65LMqZdG1qvlJQ00=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y/MpN1RkVrxuOhm2UYW1vYo9//HFgfno9Mz4gDfOvDRxxAqR5AmzXfsLw/vKx1YNYGg2OgqiY7KRZJAeSJte/zIaaTAD4M4ieuldQsHEjmRO/snP7VIgOTHyJkMXuccUW1FlGO8TfEdl1ZR5sORhT0MYQA8t9adrROXm4+gRlqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BX2Ysd7H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA35AC32782;
-	Fri, 19 Jul 2024 13:17:14 +0000 (UTC)
+	s=arc-20240116; t=1721395049; c=relaxed/simple;
+	bh=GP+A9yKbskhnBiPHxYqK+ArihuCz/xHef1rX97PfIpU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CLSok3Pz6tVuS5Tc5CVj2mfW6+U+aC/fs9kvZFjO+WMCEy1jXgKf0HMbWUaXA5NTRNcMYWfe5KF9RTstkO0I0WaeKvEyXT5yAP8+UtF0SwWs0QfYXk+zaO8D4Cz9sY9ob4evz5UHvDSqPFTpvultnI0XZIQgNJmAtwS2+hK/9zI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dK/4pf1h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFE2DC4AF0E;
+	Fri, 19 Jul 2024 13:17:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721395037;
-	bh=qtLPFOhjqFSQYLpvCLe3qCCW4Py65LMqZdG1qvlJQ00=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BX2Ysd7HikpMDPOtr1h9L5jSD24rg6Ar4jIpudeOW75Ly61bPrVuFM8vH1CYKX6Li
-	 2uJyxkwcqs9OnDeFrBkpahew6+Mie/ztcLEfSa4Dv3EXLvfUHnkEFajzNh5uKBqBni
-	 iJFP0EkMY77o821Fwfkh2xlFsyatrgxuX+Qv/MRRMLJwOBcES5LFBoRG/gCNB6QJq8
-	 WcIutfAiNxcpZU75Qf7cfS1j8EeyoLjrbPDUfxDsW+4vwPGMFldfln9TKqaFiX9Dye
-	 OuLHSRI8uIWoEPoStzlx6ROavXVt9xom8g3hmKL8Ldp0XaXaaXNFlZBOivtfEMyR/s
-	 4lJIYzCFCmJEw==
-Date: Fri, 19 Jul 2024 14:17:12 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Cc: Samuel Holland <samuel.holland@sifive.com>, greentime.hu@sifive.com,
-	vincent.chen@sifive.com, Rob Herring <robh@kernel.org>,
+	s=k20201202; t=1721395048;
+	bh=GP+A9yKbskhnBiPHxYqK+ArihuCz/xHef1rX97PfIpU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dK/4pf1haPKmlpB5uTlTx8s2hKYIHU21a30kNd4YeioychegX2J+5r9KnePSUtdp8
+	 Mp4hZrKeb/nXKQgJJvYlvUPpPYu1JQ2AjhIxt0ocaJzNco++IKJtFaoIPuV23uwKWj
+	 Zb+5qiFxDhbepZ3Z3Ic/bMMh7Da+9oMKVem+PUrIwFd/5lJ6zM55OKQgulatHNaeMm
+	 hQCYa+XJtEO/BYs+rLUExBYBNDe2VoXWMckWtEKKY/BNDrX0xqA246z0X8jU8qnfp+
+	 HsylTTBzthz2IlIJZYvvVjXEHezQndfwc2Iez55L40Q2ypDWQP/LfhfyaiY/enIvW5
+	 dcOw9fewcq6IA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1sUnUN-000000002BA-2dsF;
+	Fri, 19 Jul 2024 15:17:36 +0200
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org
-Subject: Re: [PATCH v7 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
-Message-ID: <20240719-flatten-elixir-d4476977ab95@spud>
-References: <20240712083850.4242-1-yongxuan.wang@sifive.com>
- <20240712083850.4242-3-yongxuan.wang@sifive.com>
- <727b966a-a8c4-4021-acf6-3c031ccd843a@sifive.com>
- <CAMWQL2g-peSYJQaxeJtyOzGdEmDQ6cnkRBdFQvLr2NQA1+mv2g@mail.gmail.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH 0/7] arm64: dts: qcom: x1e80100: PCIe fixes and CRD modem support
+Date: Fri, 19 Jul 2024 15:17:15 +0200
+Message-ID: <20240719131722.8343-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.44.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="FVYN+Rx9CKi55/SI"
-Content-Disposition: inline
-In-Reply-To: <CAMWQL2g-peSYJQaxeJtyOzGdEmDQ6cnkRBdFQvLr2NQA1+mv2g@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+
+This series fixes some issues with the current x1e80100 PCIe support,
+adds the PCIe5 nodes and enables the modem on the CRD.
+
+The fixes should go into 6.11, but the modem support depends on them so
+I decided to send everything in one series.
+
+Johan
 
 
---FVYN+Rx9CKi55/SI
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Johan Hovold (7):
+  arm64: dts: qcom: x1e80100-crd: fix PCIe4 PHY supply
+  arm64: dts: qcom: x1e80100: fix PCIe domain numbers
+  arm64: dts: qcom: x1e80100-crd: fix up PCIe6a pinctrl node
+  arm64: dts: qcom: x1e80100-crd: disable PCIe6A perst pull down
+  arm64: dts: qcom: x1e80100-crd: fix missing PCIe4 gpios
+  arm64: dts: qcom: x1e80100: add PCIe5 nodes
+  arm64: dts: qcom: x1e80100-crd: enable SDX65 modem
 
-On Fri, Jul 19, 2024 at 02:58:59PM +0800, Yong-Xuan Wang wrote:
-> Hi Samuel,
->=20
-> On Fri, Jul 19, 2024 at 7:38=E2=80=AFAM Samuel Holland
-> <samuel.holland@sifive.com> wrote:
-> >
-> > On 2024-07-12 3:38 AM, Yong-Xuan Wang wrote:
-> > > Add entries for the Svade and Svadu extensions to the riscv,isa-exten=
-sions
-> > > property.
-> > >
-> > > Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-> > > ---
-> > >  .../devicetree/bindings/riscv/extensions.yaml | 28 +++++++++++++++++=
-++
-> > >  1 file changed, 28 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml =
-b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > > index 468c646247aa..e91a6f4ede38 100644
-> > > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > > @@ -153,6 +153,34 @@ properties:
-> > >              ratified at commit 3f9ed34 ("Add ability to manually tri=
-gger
-> > >              workflow. (#2)") of riscv-time-compare.
-> > >
-> > > +        - const: svade
-> > > +          description: |
-> > > +            The standard Svade supervisor-level extension for SW-man=
-aged PTE A/D
-> > > +            bit updates as ratified in the 20240213 version of the p=
-rivileged
-> > > +            ISA specification.
-> > > +
-> > > +            Both Svade and Svadu extensions control the hardware beh=
-avior when
-> > > +            the PTE A/D bits need to be set. The default behavior fo=
-r the four
-> > > +            possible combinations of these extensions in the device =
-tree are:
-> > > +            1) Neither Svade nor Svadu present in DT =3D> It is tech=
-nically
-> > > +               unknown whether the platform uses Svade or Svadu. Sup=
-ervisor
-> > > +               software should be prepared to handle either hardware=
- updating
-> > > +               of the PTE A/D bits or page faults when they need upd=
-ated.
-> > > +            2) Only Svade present in DT =3D> Supervisor must assume =
-Svade to be
-> > > +               always enabled.
-> > > +            3) Only Svadu present in DT =3D> Supervisor must assume =
-Svadu to be
-> > > +               always enabled.
-> > > +            4) Both Svade and Svadu present in DT =3D> Supervisor mu=
-st assume
-> > > +               Svadu turned-off at boot time. To use Svadu, supervis=
-or must
-> > > +               explicitly enable it using the SBI FWFT extension.
-> > > +
-> > > +        - const: svadu
-> > > +          description: |
-> > > +            The standard Svadu supervisor-level extension for hardwa=
-re updating
-> > > +            of PTE A/D bits as ratified at commit c1abccf ("Merge pu=
-ll request
-> > > +            #25 from ved-rivos/ratified") of riscv-svadu. Please ref=
-er to Svade
-> >
-> > Should we be referencing the archived riscv-svadu repository now that S=
-vadu has
-> > been merged to the main privileged ISA manual? Either way:
-> >
-> > Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
-> >
->=20
-> Yes, this commit is from the archived riscv-svadu repo. Or should I updat=
-e it to
-> "commit c1abccf ("Merge pull request  #25 from ved-rivos/ratified") of
-> riscvarchive/riscv-svadu."?
+ arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 110 +++++++++++++++++--
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi    | 125 +++++++++++++++++++++-
+ 2 files changed, 224 insertions(+), 11 deletions(-)
 
-I think Samuel was saying that we should use the commit where it was
-merged into riscv-isa-manual instead.
+-- 
+2.44.2
 
---FVYN+Rx9CKi55/SI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZppnRwAKCRB4tDGHoIJi
-0qmzAPwPCohsOIh0JMJTv+r89hx01GSGvJwwS4SEQyLjNq8GTwD/bTyQl6+PLCAD
-n+bWqAgty3EMTJXCctxru5eDIOrN3wU=
-=IM8G
------END PGP SIGNATURE-----
-
---FVYN+Rx9CKi55/SI--
 
