@@ -1,356 +1,186 @@
-Return-Path: <linux-kernel+bounces-257334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 301CF9378AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:45:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FC9F9378B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAB5D28271D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:45:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A94CCB218C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B4A13F458;
-	Fri, 19 Jul 2024 13:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA4614389E;
+	Fri, 19 Jul 2024 13:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z6mRSLNz"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Jb9eS6xt"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6A18288F
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 13:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECF78288F;
+	Fri, 19 Jul 2024 13:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721396750; cv=none; b=iduOAif0ndreKpm580v+kdA1cWR3Py1l42IUe4z6fjFBpG7AsOi6mDKWZMrndReRt3FvldSSMCJVrLBle0H+C+XwEhCYRTK0GsiAnCbrtPOXlEj+TADAvVfwySzl4ZHqiGgSfRG5gAbC6Gx5Siu7Oh/BS7CXy62lRn6jbUNWnH8=
+	t=1721396824; cv=none; b=hR/KPf0P9LrXTRXlePnD4yRqXxBrxf253ZHD7Xt7cd6+i+SZnhicF/Ufy87GT6D5jp40d5uzq99d9KUJkETU8BIdaJ7xgAQ4KLJSCCFVRbNOf9TmZlmgTrS8rJYXWou+DQkAwpKjeTt8lM3kE4m5edkUO6AlxXgPxP3TwFfIWfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721396750; c=relaxed/simple;
-	bh=GjySNPFrKifZ10GOJGBKmNbh/w6vmd7/dNemFTybewA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FbpP0NRxjC6NoZ3utnZEjFlkyoqf0eSFNVjPShS/RdWn+ZZ6+H/xFGri7yNoMuZQn+2pcYkY0J5cHxbr5MBbybHyZhWEPFmBQ8sEqORd8kfyss8vQJw74qrx2KzcQmERjPit5dzDqBQdEJhavVQi5oNwIICrruxAyW4C8IvfgWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z6mRSLNz; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-767506e1136so1430329a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 06:45:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721396748; x=1722001548; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=q6DEEhmg3Ja8v8Rv8CzrLy7ke/9Hd5uw1xozBhzNHkw=;
-        b=Z6mRSLNzZMvFeJBJK10q9jwCzjKzJe/dCx45eEqFtFLNLQwnPAtZkNJ1PXwV20k8zG
-         PZANsfGcU3VM9N2uVc8sNWPn8brYMs8ouuSXSFwl0jPhLPyW8BIgOcZCmI+ZXh8evd7l
-         jbLlJDzdrVmGysD5lfJheR7HqRmwWyE2sklXlOgleVoBP0si9GQzHRTYgfjv4xPqkR2N
-         CW6scUmVNE0wbQFBvomNcT9q2+hmeWb1p8fwwOKiEkxxke3h2s2nNxvohPvuIHZSkDJ/
-         ikJMgKX4tIqoxmmzPNXt1idU2XPveIUzXQwji398w2z97SzCi3apAyAURKrRx1q5D+8m
-         lB6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721396748; x=1722001548;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q6DEEhmg3Ja8v8Rv8CzrLy7ke/9Hd5uw1xozBhzNHkw=;
-        b=EHEvQ32DgMO2rENOiGHVWu+2/C6XWvmcFqrNRRt1o8k/YwKpAzICfVXGOgFJhe0G9X
-         9X66ywnrT2PEL+bw5mLGr2vp+eNPMl/30duhSP7fm8pkZMan/mNx6YvIN7aopfZvXA0/
-         JqtOT1zxK2RBtVoKZ+vMoVCmgrLmsSYgY8tc/kpfumW6Aod4/gY93KlVTzCVZQsvp6wE
-         oJlpo8U9Sjs0904QDmrkNebUVQ9cdEgzIEwGRyOA0eIIs9UdiW343yMGX6R1+75E9ZJT
-         PgodZHKuC+Ab863uc32+KeRFt05OwP5z0dOlpswZ2z5cEPGizKgUWh8qs6uEkPy8bxIX
-         qdeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXz2BU8M/s29LXP558oxdRm32M6oF5BAhNNQlw1kjhQAFeSJRmTFbf8UjvZ0l1VSmKkPfPzSU/nwOcWTYZtbehJxggl7OPQaFo+03kk
-X-Gm-Message-State: AOJu0Ywx2U3kOJzAfWq+7R2EUmKk72BQuLJ4RgLQY4/Hiihl05SmYPUF
-	YmpQug+Jy7FXy3K89SAgVOshzrQIGOuppty5gbqdnCHmKtrltywRrDssMrRXUhRJtWEyIilAUJX
-	70tg/3ggWNp86W0LxvXt6+RwtsqDypA0o69AjJw==
-X-Google-Smtp-Source: AGHT+IHj7uX+1Re/rIAYxBvigyoyeQGRk9F0raS6FKUXjFDmNWxKntMHg6PQf2i+kUZS8oSEapT4/bKdOJe8lE0sWx0=
-X-Received: by 2002:a17:90b:4d84:b0:2c8:f3b5:7dd1 with SMTP id
- 98e67ed59e1d1-2cb779d0b7dmr6684082a91.16.1721396747944; Fri, 19 Jul 2024
- 06:45:47 -0700 (PDT)
+	s=arc-20240116; t=1721396824; c=relaxed/simple;
+	bh=IY4wRPdAXfQMvr8U6r2C6IT9buMDJ+CirgNK6vvN1WY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o89s89VUqrZSMTIsMIqI4S5mlIIzmNDENcN36Tjhyspyh3vh9v3W5xf2VSeEmWdcTlFroUo+FVNhhN5i+TKcJ+vnl8GpABsGwgibF4HBinsWf28uOsIH7ZrRtZXHC4GKGq2zMoCsUOe9yPIriJK2+SvqKTxNG++yp27WaWLUCyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Jb9eS6xt; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721396821;
+	bh=IY4wRPdAXfQMvr8U6r2C6IT9buMDJ+CirgNK6vvN1WY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Jb9eS6xtfEUzTHKktUKSl9Etx/t42vUhyd/bHDFPtS6K4EdWY1VF2jpzN4ThXQXe5
+	 YMMhp2pxgeF3zRpxLdiciAmIqYWgvH+qzRd02s9rkVbH57Qv6WaiwqcXuKkLGWp8gJ
+	 BU/SZIhp4Ptwf7KP7fXt2pGB0maBxF6mcl3JjQMd5aHYq6N8Ijb1eoP/ap/pv+mfnx
+	 ErGdi/bofU0iGJ1Lc09xtoFY29xxkL9144hnu/d1iPLLhv29fHDilrahFEScCyv3DF
+	 dr4NuFr/gf8dS//vtaZS0MJ860zb2TMaKf1Mhi0Y8/jdwtRyoVzzr9i9pEdDuUB8CQ
+	 3WX8lY05D/Syw==
+Received: from [100.93.89.217] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: benjamin.gaignard)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 011FF3780520;
+	Fri, 19 Jul 2024 13:47:00 +0000 (UTC)
+Message-ID: <2eec786d-f2b6-4445-87f4-4b6d162a2d9a@collabora.com>
+Date: Fri, 19 Jul 2024 15:47:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240712102029.3697965-1-james.clark@linaro.org>
- <20240712102029.3697965-7-james.clark@linaro.org> <CAJ9a7Vgz-rP6kGLLo2RR_qSZ3dhBT+=E8S=z1Hj6pfwOYu06Nw@mail.gmail.com>
- <ef5e7351-5f62-444a-b930-4dc2feb9f10d@linaro.org> <26262a1f-de49-41de-85bf-0640c6cc6bd2@linaro.org>
-In-Reply-To: <26262a1f-de49-41de-85bf-0640c6cc6bd2@linaro.org>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Fri, 19 Jul 2024 14:45:36 +0100
-Message-ID: <CAJ9a7VhL18eWFw6T6HdrhbY_v8oeyuzM62D1w1CO1Psumb-EBQ@mail.gmail.com>
-Subject: Re: [PATCH v5 06/17] perf: cs-etm: Support version 0.1 of HW_ID packets
-To: James Clark <james.clark@linaro.org>
-Cc: coresight@lists.linaro.org, suzuki.poulose@arm.com, 
-	gankulkarni@os.amperecomputing.com, leo.yan@linux.dev, 
-	anshuman.khandual@arm.com, James Clark <james.clark@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-
-Fair enough - less worried about the ordering as the final :
-
-else
-     return fn()
-}
-
-where there's no unconditional return at the end of the function. The
-last else looks redundant to me. More a stylistic thing, not sure if
-there is a hard and fast rule either way
-
-Mike
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] Enumerate all pixels formats
+To: Hans Verkuil <hverkuil-cisco@xs4all.nl>, mchehab@kernel.org,
+ ezequiel@vanguardiasur.com.ar
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, kernel@collabora.com
+References: <20240717131430.159727-1-benjamin.gaignard@collabora.com>
+ <07f62fbb-d1eb-41c3-86a8-13a082a8374f@xs4all.nl>
+ <743e2589-c0df-461d-97d4-fafe78c334ea@collabora.com>
+ <98f5cd5c-cb9c-45ca-a7c7-a546f525c393@xs4all.nl>
+Content-Language: en-US
+From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+In-Reply-To: <98f5cd5c-cb9c-45ca-a7c7-a546f525c393@xs4all.nl>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-
-On Fri, 19 Jul 2024 at 11:49, James Clark <james.clark@linaro.org> wrote:
+Le 19/07/2024 à 15:37, Hans Verkuil a écrit :
+> On 19/07/2024 15:15, Benjamin Gaignard wrote:
+>> Le 19/07/2024 à 14:57, Hans Verkuil a écrit :
+>>> On 17/07/2024 15:14, Benjamin Gaignard wrote:
+>>>> The goal of this series is to let userland applications enumerate
+>>>> all the supported pixels formats of a stateless decoder without
+>>>> setting all the possible codec-dependent control.
+>>>> That offer a simplest solution for applications to discover
+>>>> supported pixels formats and possibly let them doing smarter
+>>>> choice between stateless decoders.
+>>>>
+>>>> An example of how it can be used in GStreamer to discover the
+>>>> supported pixels formats for stateless decoder is available here:
+>>>> https://gitlab.freedesktop.org/benjamin.gaignard1/gstreamer/-/commits/v4l2codecs_enum_all_supported_formats?ref_type=heads
+>>> So effectively specifying this flag makes ENUM_FMT also return
+>>> formats that do not match the bit depth.
+>>>
+>>> So the AV1 (for example) compressed video uses e.g. 8 bit depth, but instead of just
+>>> listing only 8 bit uncompressed pixelformats, you want to list them for any
+>>> bit depth.
+>>>
+>>> But what is the point of that if the decoder can't decode 8 bit compressed to,
+>>> say, 10 bit uncompressed video?
+>> No decoder will do 8 bits to 10 bits (as far I knows).
+>> The point is to be able to say that decoder could produce 10 bit frames without
+>> setting a full sps/pps for each case (and for each supported codec).
+>>
+>>> I actually thought that this flag would just list all formats, independent
+>>> of the output format (e.g. AV1, H264, etc.), but that does not appear to be
+>>> the case? I.e., if capture pixelformat X is only available with AV1, will that still
+>>> be listed if the output pixel is set to H264?
+>>>
+>>> I think you need to describe a real use-case here, and I am not convinced about
+>>> the name of the flag either.
+>> I may have miss something but yes the goal is to list all formats independently
+>> of the output format.
+>> When a SoC have multiple decoders for the same codec, knowing the supported formats
+>> is key to select the better one.
+>> Since I will have to do more iteration, feel free to provide a better name for the
+>> flag(s). I'm always bad for naming this kind of thing.
+> That really needs to be clarified, since in patch 1/2 it says:
 >
+> +   * If the ``V4L2_FMT_FLAG_ENUM_ALL_FORMATS`` flag is set the driver must enumerate
+> +     all the supported formats without taking care of codec-dependent controls
+> +     set on the ``OUTPUT`` queue. To indicate that the driver has take care of this
+> +     flag it must set ``V4L2_FMT_FLAG_ALL_FORMATS`` flag for each format while
+> +     enumerating.
 >
+> Here it just talks about 'codec-dependent controls set on the ``OUTPUT`` queue', it
+> doesn't say anything about the compressed pixelformat set for the OUTPUT queue.
 >
-> On 19/07/2024 11:48 am, James Clark wrote:
-> >
-> >
-> > On 18/07/2024 2:24 pm, Mike Leach wrote:
-> >> On Fri, 12 Jul 2024 at 11:22, James Clark <james.clark@linaro.org> wrote:
-> >>>
-> >>> From: James Clark <james.clark@arm.com>
-> >>>
-> >>> v0.1 HW_ID packets have a new field that describes which sink each CPU
-> >>> writes to. Use the sink ID to link trace ID maps to each other so that
-> >>> mappings are shared wherever the sink is shared.
-> >>>
-> >>> Also update the error message to show that overlapping IDs aren't an
-> >>> error in per-thread mode, just not supported. In the future we can
-> >>> use the CPU ID from the AUX records, or watch for changing sink IDs on
-> >>> HW_ID packets to use the correct decoders.
-> >>>
-> >>> Signed-off-by: James Clark <james.clark@arm.com>
-> >>> Signed-off-by: James Clark <james.clark@linaro.org>
-> >>> ---
-> >>>   tools/include/linux/coresight-pmu.h |  17 +++--
-> >>>   tools/perf/util/cs-etm.c            | 100 +++++++++++++++++++++++++---
-> >>>   2 files changed, 103 insertions(+), 14 deletions(-)
-> >>>
-> >>> diff --git a/tools/include/linux/coresight-pmu.h
-> >>> b/tools/include/linux/coresight-pmu.h
-> >>> index 51ac441a37c3..89b0ac0014b0 100644
-> >>> --- a/tools/include/linux/coresight-pmu.h
-> >>> +++ b/tools/include/linux/coresight-pmu.h
-> >>> @@ -49,12 +49,21 @@
-> >>>    * Interpretation of the PERF_RECORD_AUX_OUTPUT_HW_ID payload.
-> >>>    * Used to associate a CPU with the CoreSight Trace ID.
-> >>>    * [07:00] - Trace ID - uses 8 bits to make value easy to read in
-> >>> file.
-> >>> - * [59:08] - Unused (SBZ)
-> >>> - * [63:60] - Version
-> >>> + * [39:08] - Sink ID - as reported in
-> >>> /sys/bus/event_source/devices/cs_etm/sinks/
-> >>> + *           Added in minor version 1.
-> >>> + * [55:40] - Unused (SBZ)
-> >>> + * [59:56] - Minor Version - previously existing fields are
-> >>> compatible with
-> >>> + *           all minor versions.
-> >>> + * [63:60] - Major Version - previously existing fields mean
-> >>> different things
-> >>> + *           in new major versions.
-> >>>    */
-> >>>   #define CS_AUX_HW_ID_TRACE_ID_MASK     GENMASK_ULL(7, 0)
-> >>> -#define CS_AUX_HW_ID_VERSION_MASK      GENMASK_ULL(63, 60)
-> >>> +#define CS_AUX_HW_ID_SINK_ID_MASK      GENMASK_ULL(39, 8)
-> >>>
-> >>> -#define CS_AUX_HW_ID_CURR_VERSION 0
-> >>> +#define CS_AUX_HW_ID_MINOR_VERSION_MASK        GENMASK_ULL(59, 56)
-> >>> +#define CS_AUX_HW_ID_MAJOR_VERSION_MASK        GENMASK_ULL(63, 60)
-> >>> +
-> >>> +#define CS_AUX_HW_ID_MAJOR_VERSION 0
-> >>> +#define CS_AUX_HW_ID_MINOR_VERSION 1
-> >>>
-> >>>   #endif
-> >>> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-> >>> index 954a6f7bedf3..87e983da19be 100644
-> >>> --- a/tools/perf/util/cs-etm.c
-> >>> +++ b/tools/perf/util/cs-etm.c
-> >>> @@ -118,6 +118,12 @@ struct cs_etm_queue {
-> >>>          struct cs_etm_traceid_queue **traceid_queues;
-> >>>          /* Conversion between traceID and metadata pointers */
-> >>>          struct intlist *traceid_list;
-> >>> +       /*
-> >>> +        * Same as traceid_list, but traceid_list may be a reference
-> >>> to another
-> >>> +        * queue's which has a matching sink ID.
-> >>> +        */
-> >>> +       struct intlist *own_traceid_list;
-> >>> +       u32 sink_id;
-> >>>   };
-> >>>
-> >>>   static int cs_etm__process_timestamped_queues(struct
-> >>> cs_etm_auxtrace *etm);
-> >>> @@ -142,6 +148,7 @@ static int cs_etm__metadata_set_trace_id(u8
-> >>> trace_chan_id, u64 *cpu_metadata);
-> >>>                        (queue_nr << 16 | trace_chan_id)
-> >>>   #define TO_QUEUE_NR(cs_queue_nr) (cs_queue_nr >> 16)
-> >>>   #define TO_TRACE_CHAN_ID(cs_queue_nr) (cs_queue_nr & 0x0000ffff)
-> >>> +#define SINK_UNSET ((u32) -1)
-> >>>
-> >>>   static u32 cs_etm__get_v7_protocol_version(u32 etmidr)
-> >>>   {
-> >>> @@ -241,7 +248,16 @@ static int cs_etm__insert_trace_id_node(struct
-> >>> cs_etm_queue *etmq,
-> >>>                  int err;
-> >>>
-> >>>                  if (curr_cpu_data[CS_ETM_CPU] !=
-> >>> cpu_metadata[CS_ETM_CPU]) {
-> >>> -                       pr_err("CS_ETM: map mismatch between HW_ID
-> >>> packet CPU and Trace ID\n");
-> >>> +                       /*
-> >>> +                        * With > CORESIGHT_TRACE_IDS_MAX ETMs,
-> >>> overlapping IDs
-> >>> +                        * are expected (but not supported) in
-> >>> per-thread mode,
-> >>> +                        * rather than signifying an error.
-> >>> +                        */
-> >>> +                       if (etmq->etm->per_thread_decoding)
-> >>> +                               pr_err("CS_ETM: overlapping Trace IDs
-> >>> aren't currently supported in per-thread mode\n");
-> >>> +                       else
-> >>> +                               pr_err("CS_ETM: map mismatch between
-> >>> HW_ID packet CPU and Trace ID\n");
-> >>> +
-> >>>                          return -EINVAL;
-> >>>                  }
-> >>>
-> >>> @@ -326,6 +342,64 @@ static int cs_etm__process_trace_id_v0(struct
-> >>> cs_etm_auxtrace *etm, int cpu,
-> >>>          return cs_etm__metadata_set_trace_id(trace_chan_id, cpu_data);
-> >>>   }
-> >>>
-> >>> +static int cs_etm__process_trace_id_v0_1(struct cs_etm_auxtrace
-> >>> *etm, int cpu,
-> >>> +                                        u64 hw_id)
-> >>> +{
-> >>> +       struct cs_etm_queue *etmq = cs_etm__get_queue(etm, cpu);
-> >>> +       int ret;
-> >>> +       u64 *cpu_data;
-> >>> +       u32 sink_id = FIELD_GET(CS_AUX_HW_ID_SINK_ID_MASK, hw_id);
-> >>> +       u8 trace_id = FIELD_GET(CS_AUX_HW_ID_TRACE_ID_MASK, hw_id);
-> >>> +
-> >>> +       /*
-> >>> +        * Check sink id hasn't changed in per-cpu mode. In
-> >>> per-thread mode,
-> >>> +        * let it pass for now until an actual overlapping trace ID
-> >>> is hit. In
-> >>> +        * most cases IDs won't overlap even if the sink changes.
-> >>> +        */
-> >>> +       if (!etmq->etm->per_thread_decoding && etmq->sink_id !=
-> >>> SINK_UNSET &&
-> >>> +           etmq->sink_id != sink_id) {
-> >>> +               pr_err("CS_ETM: mismatch between sink IDs\n");
-> >>> +               return -EINVAL;
-> >>> +       }
-> >>> +
-> >>> +       etmq->sink_id = sink_id;
-> >>> +
-> >>> +       /* Find which other queues use this sink and link their ID
-> >>> maps */
-> >>> +       for (unsigned int i = 0; i < etm->queues.nr_queues; ++i) {
-> >>> +               struct cs_etm_queue *other_etmq =
-> >>> etm->queues.queue_array[i].priv;
-> >>> +
-> >>> +               /* Different sinks, skip */
-> >>> +               if (other_etmq->sink_id != etmq->sink_id)
-> >>> +                       continue;
-> >>> +
-> >>> +               /* Already linked, skip */
-> >>> +               if (other_etmq->traceid_list == etmq->traceid_list)
-> >>> +                       continue;
-> >>> +
-> >>> +               /* At the point of first linking, this one should be
-> >>> empty */
-> >>> +               if (!intlist__empty(etmq->traceid_list)) {
-> >>> +                       pr_err("CS_ETM: Can't link populated trace ID
-> >>> lists\n");
-> >>> +                       return -EINVAL;
-> >>> +               }
-> >>> +
-> >>> +               etmq->own_traceid_list = NULL;
-> >>> +               intlist__delete(etmq->traceid_list);
-> >>> +               etmq->traceid_list = other_etmq->traceid_list;
-> >>> +               break;
-> >>> +       }
-> >>> +
-> >>> +       cpu_data = get_cpu_data(etm, cpu);
-> >>> +       ret = cs_etm__insert_trace_id_node(etmq, trace_id, cpu_data);
-> >>> +       if (ret)
-> >>> +               return ret;
-> >>> +
-> >>> +       ret = cs_etm__metadata_set_trace_id(trace_id, cpu_data);
-> >>> +       if (ret)
-> >>> +               return ret;
-> >>> +
-> >>> +       return 0;
-> >>> +}
-> >>> +
-> >>>   static int cs_etm__metadata_get_trace_id(u8 *trace_chan_id, u64
-> >>> *cpu_metadata)
-> >>>   {
-> >>>          u64 cs_etm_magic = cpu_metadata[CS_ETM_MAGIC];
-> >>> @@ -414,10 +488,10 @@ static int
-> >>> cs_etm__process_aux_output_hw_id(struct perf_session *session,
-> >>>
-> >>>          /* extract and parse the HW ID */
-> >>>          hw_id = event->aux_output_hw_id.hw_id;
-> >>> -       version = FIELD_GET(CS_AUX_HW_ID_VERSION_MASK, hw_id);
-> >>> +       version = FIELD_GET(CS_AUX_HW_ID_MAJOR_VERSION_MASK, hw_id);
-> >>>
-> >>>          /* check that we can handle this version */
-> >>> -       if (version > CS_AUX_HW_ID_CURR_VERSION) {
-> >>> +       if (version > CS_AUX_HW_ID_MAJOR_VERSION) {
-> >>>                  pr_err("CS ETM Trace: PERF_RECORD_AUX_OUTPUT_HW_ID
-> >>> version %d not supported. Please update Perf.\n",
-> >>>                         version);
-> >>>                  return -EINVAL;
-> >>> @@ -442,7 +516,10 @@ static int
-> >>> cs_etm__process_aux_output_hw_id(struct perf_session *session,
-> >>>                  return -EINVAL;
-> >>>          }
-> >>>
-> >>> -       return cs_etm__process_trace_id_v0(etm, cpu, hw_id);
-> >>
-> >> Perhaps leave this as the final statement of the function
-> >>
-> >>> +       if (FIELD_GET(CS_AUX_HW_ID_MINOR_VERSION_MASK, hw_id) == 0)
-> >>
-> >> this could be moved before and be
-> >>
-> >> if (FIELD_GET(CS_AUX_HW_ID_MINOR_VERSION_MASK, hw_id) == 1)
-> >>                 return cs_etm__process_trace_id_v0_1(etm, cpu, hw_id);
-> >>
-> >>
-> >
-> > Because I was intending minor version changes to be backwards compatible
-> > I have it so that any value other than 0 is treated as v0.1. Otherwise
-> > version updates will break old versions of Perf. And then if we added a
-> > v0.3 it would look like this:
+> And patch 2/2 sets the ignore_depth_match boolean, suggesting also that it is
+> not listing all formats, but just ignoring a specific check.
 >
-> That should have said v0.2 ^
+> But if you list all pixelformats without taking the OUTPUT pixelformat into
+> account, how do you know which pixelformat is valid for which codec?
 >
-> >
-> >   if (FIELD_GET(CS_AUX_HW_ID_MINOR_VERSION_MASK, hw_id) == 0)
-> >     return cs_etm__process_trace_id_v0(etm, cpu, hw_id);
-> >   else if (FIELD_GET(CS_AUX_HW_ID_MINOR_VERSION_MASK, hw_id) == 1)
-> >     return cs_etm__process_trace_id_v0_1(etm, cpu, hw_id);
-> >   else
-> >     return cs_etm__process_trace_id_v0_2(etm, cpu, hw_id);
-> >
-> > Based on that I'm not sure if you still think it should be changed?
+> Say that only MPEG support NV12 (just for the sake of argument), and that's
+> what you want to use, you have no way of knowing that NV12 is specific to MPEG,
+> you would have to try each codec and see if NV12 is supported for that codec.
+>
+> I just don't see how this can be used in practice.
+>
+> What exactly is the problem you want to solve? A real-life problem, not a theoretical
+> one :-)
 
+On real-life: on a board with 2 different stateless decoders being able to detect the
+one which can decode 10 bits bitstreams without testing all codec-dependent controls.
 
+Regards,
+Benjamin
 
--- 
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
+>
+> Regards,
+>
+> 	Hans
+>
+>>
+>>>> changes in version 4:
+>>>> - Explicitly document that the new flags are targeting mem2mem devices.
+>>>>
+>>>> changes in version 3:
+>>>> - Add a flag to inform userspace application that driver
+>>>>     as take care of the flag.
+>>>>
+>>>> changes in version 2:
+>>>> - Clarify documentation.
+>>>> - Only keep V4L2_FMT_FLAG_ALL_FORMATS flag in ioctl.
+>>>>
+>>>> Benjamin
+>>>>
+>>>> Benjamin Gaignard (2):
+>>>>     media: videodev2: Add flags to unconditionnaly enumerate pixels
+>>>>       formats
+>>> I.e.: it is not unconditionally, it still depends on the chosen codec.
+>>>
+>>> Regards,
+>>>
+>>>      Hans
+>>>
+>>>>     media: verisilicon: Use V4L2_FMT_FLAG_ENUM_ALL_FORMATS flag
+>>>>
+>>>>    .../media/v4l/dev-stateless-decoder.rst          |  6 ++++++
+>>>>    .../userspace-api/media/v4l/vidioc-enum-fmt.rst  | 11 +++++++++++
+>>>>    .../media/videodev2.h.rst.exceptions             |  2 ++
+>>>>    drivers/media/platform/verisilicon/hantro_v4l2.c | 16 +++++++++++++---
+>>>>    drivers/media/v4l2-core/v4l2-ioctl.c             |  3 +++
+>>>>    include/uapi/linux/videodev2.h                   |  2 ++
+>>>>    6 files changed, 37 insertions(+), 3 deletions(-)
+>>>>
+>
 
