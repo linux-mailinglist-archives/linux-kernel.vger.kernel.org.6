@@ -1,55 +1,58 @@
-Return-Path: <linux-kernel+bounces-257201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86688937698
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:23:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0663193769C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:26:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21548B222C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:23:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98A87B20ADA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024A183CC1;
-	Fri, 19 Jul 2024 10:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6292F839EB;
+	Fri, 19 Jul 2024 10:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eYw1wIAO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I9SW12+9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421457E0E8;
-	Fri, 19 Jul 2024 10:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CAFEEC0;
+	Fri, 19 Jul 2024 10:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721384606; cv=none; b=c+8xEe31z+5yexKH+a1gix9BUBKkGCES/3fGnmOoENmzmhFkkkf6UH7Y6MeqNrOzZDRzmJA924NhxIDWERzoQgalY0PbK1WyYPTfcq/dVVCTo/zn6owNWBQ5dKwU+PUe6uScHTiXta+z04gGuOuT5x8lX9yLfCrwQS2BWuIPw4U=
+	t=1721384806; cv=none; b=U/NFeqRczSBtWe4BQlppegPmwuRUQoaPQ8k/59pp6rzN6hjM7FOVvo0MYxS5TjwDq9DtkJKXpcRtTInlkVGmDja9t9papCVLBIG/BZXQ/EIycLpRjN4C3aL7bIRZ69HYPUWOepsQ0yr7uaHeLoWeu6wTLlH6hlm/E9gVEerhrCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721384606; c=relaxed/simple;
-	bh=X3Y0SXikaGimQjrn+Q73ANiF++7CpWCqYLupVn6VVT4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SII7rvJYUm9cXhyJmhtBrbcCnYRL5fbBaLhmziTy/gdfrxvew8fsKvPWnyO1TDZPMK4Kc/krtWtlH2Rz4JBO9+u27DlRwUDskceIElwlCGgV397DbIQm4Rp72e3n3TwUb62s9hGUm3/uAcf7lZoKK5OuVUImJr7QYk3Nve7FbBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eYw1wIAO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FD0EC32782;
-	Fri, 19 Jul 2024 10:23:21 +0000 (UTC)
+	s=arc-20240116; t=1721384806; c=relaxed/simple;
+	bh=aNwTxU96+ZwmKiLWvRO7l2ZzPLTFWz/5G7HpgjGUAOg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=feTQy4VI0j01BGyvZw4NhogNdteVQEOKoDPKKlBm8BhQ+3kXnO/xIriIa92xUqho5dJKhW81ZOL4uAUd4HHQZ4XP6GPHWsMmHT00aZVCwtsd1mcoTKbebgn44N3XTIl57w3I0TC1OlIO4Y9Fw8yhJfxTvdn0MAomegwSV6fMsSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I9SW12+9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7EECC32782;
+	Fri, 19 Jul 2024 10:26:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721384603;
-	bh=X3Y0SXikaGimQjrn+Q73ANiF++7CpWCqYLupVn6VVT4=;
+	s=k20201202; t=1721384806;
+	bh=aNwTxU96+ZwmKiLWvRO7l2ZzPLTFWz/5G7HpgjGUAOg=;
 	h=From:To:Cc:Subject:Date:From;
-	b=eYw1wIAO5R/6/5i/KLOmLn3ntcn853suxbFQcCc0V2pPii8cQLTakyojUgabJtfFs
-	 f/3A0xxEGulxgKDSCaOvKMOEaCuQtyCxsy3Qs3wdph4KtCcvjs1N7xEBvUuyKLesIL
-	 JFLHJCCiA/dey61CbGnKiaKKIYCfPzDoOSsO2a71KQ8lLOJfpJIwiNgCeAirOYbSXM
-	 NKRnj/79NUO5K6llLldI+W5/GRsD8ypFS3Co8VffzfPygFwdpkUMlGsOZHrE8mZaY+
-	 Wd145Jx5tIsUHL4eOb9SLAJ9YXGEy144RHRSWH4BdTep0lz0Vi0OKvO9wvP6gViZqP
-	 DdtH/Ycw+4p+w==
+	b=I9SW12+9YDrCMpPaq6rlUHRg2C23GG743yfeXQ794uc0qsrckBrHZrVKDQtqHDbxp
+	 Sm7hXiMPXxtCO4OgT0cNi5YhQvC2vXljrM3xSXmL0lvUNrRNxK7FurYZx/XZjjgP/p
+	 VBV3AxRXwGpY8QO7+nEMcRbFHayiRTOKDQRJojShaVTgb2PRHVBVIsg3+7uwfygJyO
+	 uxcaXpMSj0+04twMUaWtx2yfFNXwPbD05pF+4yE9FyAJWJ0crnC0ikgRDEdTvP2tuA
+	 4GIRiOuuUdf/9OkLrXl/72UaCwyh+9gKzoAwTmqnu891sNlTRravbeyuv3lna4Bu8d
+	 JPz6+YSpFxo9w==
 From: Arnd Bergmann <arnd@kernel.org>
-To: Vinod Koul <vkoul@kernel.org>,
-	Amelie Delaunay <amelie.delaunay@foss.st.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Arnd Bergmann <arnd@arndb.de>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Yajun Deng <yajun.deng@linux.dev>,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dmaengine: avoid non-constant format string
-Date: Fri, 19 Jul 2024 12:23:12 +0200
-Message-Id: <20240719102319.546622-1-arnd@kernel.org>
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Zheng Yejian <zhengyejian1@huawei.com>,
+	Vincent Donnefort <vdonnefort@google.com>,
+	Huang Yiwei <quic_hyiwei@quicinc.com>,
+	"Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH] tracing/ring-buffer: hide unused last_boot_fops
+Date: Fri, 19 Jul 2024 12:26:33 +0200
+Message-Id: <20240719102640.718554-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -61,37 +64,58 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-Using an arbitrary string as a printf-style format can be a security
-problem if that string contains % characters, as the optionalal
--Wformat-security flag points out:
+This variable is used only in an #ifdef, which causes a W=1 warning
+with some compilers:
 
-drivers/dma/dmaengine.c: In function '__dma_async_device_channel_register':
-drivers/dma/dmaengine.c:1073:17: error: format not a string literal and no format arguments [-Werror=format-security]
- 1073 |                 dev_set_name(&chan->dev->device, name);
-      |                 ^~~~~~~~~~~~
+kernel/trace/trace.c:7570:37: error: 'last_boot_fops' defined but not used [-Werror=unused-const-variable=]
+ 7570 | static const struct file_operations last_boot_fops = {
 
-Change this newly added instance to use "%s" as the format instead to
-pass the actual name.
+Guard this one with the same #ifdef.
 
-Fixes: 10b8e0fd3f72 ("dmaengine: add channel device name to channel registration")
+Fixes: 7a1d1e4b9639 ("tracing/ring-buffer: Add last_boot_info file to boot instance")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/dma/dmaengine.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Alternatively it could be marked as __maybe_unused, but I tried to follow
+the style used in this file.
+---
+ kernel/trace/trace.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-index c380a4dda77a..c1357d7f3dc6 100644
---- a/drivers/dma/dmaengine.c
-+++ b/drivers/dma/dmaengine.c
-@@ -1070,7 +1070,7 @@ static int __dma_async_device_channel_register(struct dma_device *device,
- 	if (!name)
- 		dev_set_name(&chan->dev->device, "dma%dchan%d", device->dev_id, chan->chan_id);
- 	else
--		dev_set_name(&chan->dev->device, name);
-+		dev_set_name(&chan->dev->device, "%s", name);
- 	rc = device_register(&chan->dev->device);
- 	if (rc)
- 		goto err_out_ida;
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 5462fb10ff64..6ab24213d496 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -6913,6 +6913,7 @@ tracing_total_entries_read(struct file *filp, char __user *ubuf,
+ 	return simple_read_from_buffer(ubuf, cnt, ppos, buf, r);
+ }
+ 
++#ifdef CONFIG_TRACER_SNAPSHOT
+ static ssize_t
+ tracing_last_boot_read(struct file *filp, char __user *ubuf, size_t cnt, loff_t *ppos)
+ {
+@@ -6927,6 +6928,7 @@ tracing_last_boot_read(struct file *filp, char __user *ubuf, size_t cnt, loff_t
+ 
+ 	return simple_read_from_buffer(ubuf, cnt, ppos, buf, seq_buf_used(&seq));
+ }
++#endif
+ 
+ static int tracing_buffer_meta_open(struct inode *inode, struct file *filp)
+ {
+@@ -7567,12 +7569,14 @@ static const struct file_operations trace_time_stamp_mode_fops = {
+ 	.release	= tracing_single_release_tr,
+ };
+ 
++#ifdef CONFIG_TRACER_SNAPSHOT
+ static const struct file_operations last_boot_fops = {
+ 	.open		= tracing_open_generic_tr,
+ 	.read		= tracing_last_boot_read,
+ 	.llseek		= generic_file_llseek,
+ 	.release	= tracing_release_generic_tr,
+ };
++#endif
+ 
+ #ifdef CONFIG_TRACER_SNAPSHOT
+ static const struct file_operations snapshot_fops = {
 -- 
 2.39.2
 
