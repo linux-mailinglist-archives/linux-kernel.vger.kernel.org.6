@@ -1,107 +1,99 @@
-Return-Path: <linux-kernel+bounces-257341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0F69378C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:55:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C2199378D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:56:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B0751F227A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:55:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 107E9281E27
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B6F144316;
-	Fri, 19 Jul 2024 13:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LMS6fpn7"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8ABF1459FD;
+	Fri, 19 Jul 2024 13:55:38 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C3225757;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4365613D501;
 	Fri, 19 Jul 2024 13:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721397335; cv=none; b=kDnfpi7tQXsaJxRuR/+R924+peM1GyPs+SgJCqVHC9IasYchyAy6QMCk6gmu8aax/oyzY0YtrFMiHHa0ShmBSQWuJ2NDC5n5wsbDXAvkzwU7WymOe1bc4X9uiwz1flgq6cyJ4/vlW4uR9vLS38Pughjz8Bu5xU1I1arAay/Uc/8=
+	t=1721397338; cv=none; b=gqU8PhVEW5t0kUCQ7C+FJgMiOuFVOPr0xiHyA4SXM3vXcPVil+EomItuWQjfToN3Yv52i8tooyuY5CZ5c9uu0FJ1LAELiNKOk9/C9BsKjVdptoT1A8GXv0JYzG1BtKjJPaH42ViB+3sT7HlW5tjfzOwExvfxoD/wF4+UgKoJ+aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721397335; c=relaxed/simple;
-	bh=3nhR39DwmWoTCy8/EM9HP2pdRH10FR7GvM552Rvo/kE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DD+dyWF+8pgmCQcrfVcMKipqH93++D/h0WB4H3/rT/SvTtJvIfjwp0uU/InE1Abs+7jxlGV/1L/gbj9saUR+7891YAIvttaohq49Fr0LrPL9HdTw5UNFKSzbThqSDF7hA86wZgkTuHAiGuURbQSxcJFBMtYhIGPzaTMtFBI1ucE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=LMS6fpn7; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 13C15397;
-	Fri, 19 Jul 2024 15:54:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1721397292;
-	bh=3nhR39DwmWoTCy8/EM9HP2pdRH10FR7GvM552Rvo/kE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LMS6fpn7uYLgKh2xCIXwG5CczqmGw4NtA8TijpJDMpzucLxOuL55Ddc+tbpbT40Gt
-	 usroroUTPeq7YPUFrghmC/HRaI/ZJ7xefld+QbjmXyXm/d1TyIn2z6+1tMsler31l1
-	 v1UcVOEywqiDRGxV/9Tl0Ya4Zbl/Kz7fEhtsdHDM=
-Date: Fri, 19 Jul 2024 16:55:15 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Haibo Chen <haibo.chen@nxp.com>
-Subject: Re: [PATCH v4 3/4] gpio: adp5585: Add Analog Devices ADP5585 support
-Message-ID: <20240719135515.GB637@pendragon.ideasonboard.com>
-References: <20240608141633.2562-1-laurent.pinchart@ideasonboard.com>
- <20240608141633.2562-4-laurent.pinchart@ideasonboard.com>
- <ZmcYnDf0YIWA9A85@surfacebook.localdomain>
- <20240610152555.GV18479@pendragon.ideasonboard.com>
- <CAHp75Vd-TZYsm+fe+o1XvDYGHO6sDqZhMFqojowRx2scwxEhLw@mail.gmail.com>
+	s=arc-20240116; t=1721397338; c=relaxed/simple;
+	bh=ZIiXo2w77qn44BvYh54hr81RAANN7X1cK2LMz7jEDZ0=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=P5h8IbasZTyXiTvLabiaWQbfnfvZ5nORI//sD26X358YJxDjgzWgVg72AbDzO26/X+y/N7Fo3nmZKiyqwMWdALU8V2imJcCCDOM9P48D8h9Cm+xr0aw+Y/RWj4Zx6tScqQwAPkZ27tZCqgOaosOkDWgmE1ZEHGLgEHao1NJaB8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WQWNB0hNYz6K93S;
+	Fri, 19 Jul 2024 21:53:14 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5FB5E140A08;
+	Fri, 19 Jul 2024 21:55:31 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 19 Jul
+ 2024 14:55:30 +0100
+Date: Fri, 19 Jul 2024 14:55:29 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mike Rapoport <rppt@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, Alexander Gordeev
+	<agordeev@linux.ibm.com>, Andreas Larsson <andreas@gaisler.com>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, "Borislav
+ Petkov" <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, David Hildenbrand
+	<david@redhat.com>, "David S. Miller" <davem@davemloft.net>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Heiko Carstens
+	<hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar
+	<mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, "John Paul Adrian
+ Glaubitz" <glaubitz@physik.fu-berlin.de>, Michael Ellerman
+	<mpe@ellerman.id.au>, Palmer Dabbelt <palmer@dabbelt.com>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, "Thomas
+ Bogendoerfer" <tsbogend@alpha.franken.de>, Thomas Gleixner
+	<tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>, Will Deacon
+	<will@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<loongarch@lists.linux.dev>, <linux-mips@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <linux-riscv@lists.infradead.org>,
+	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>,
+	<sparclinux@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+	<linux-mm@kvack.org>, <x86@kernel.org>
+Subject: Re: [PATCH 01/17] mm: move kernel/numa.c to mm/
+Message-ID: <20240719145529.00007542@Huawei.com>
+In-Reply-To: <20240716111346.3676969-2-rppt@kernel.org>
+References: <20240716111346.3676969-1-rppt@kernel.org>
+	<20240716111346.3676969-2-rppt@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75Vd-TZYsm+fe+o1XvDYGHO6sDqZhMFqojowRx2scwxEhLw@mail.gmail.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Hello Andy,
+On Tue, 16 Jul 2024 14:13:30 +0300
+Mike Rapoport <rppt@kernel.org> wrote:
 
-On Mon, Jun 10, 2024 at 07:29:09PM +0300, Andy Shevchenko wrote:
-> On Mon, Jun 10, 2024 at 6:26 PM Laurent Pinchart wrote:
-> > On Mon, Jun 10, 2024 at 06:15:40PM +0300, Andy Shevchenko wrote:
-> > > Sat, Jun 08, 2024 at 05:16:32PM +0300, Laurent Pinchart kirjoitti:
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 > 
-> ...
+> The stub functions in kernel/numa.c belong to mm/ rather than to kernel/
 > 
-> > > > +static const struct platform_device_id adp5585_gpio_id_table[] = {
-> > > > +   { "adp5585-gpio" },
-> > >
-> > > > +   { /* Sentinel */ },
-> > >
-> > > Drop the comma.
-> >
-> > I prefer keeping it.
-> 
-> For what reason?
-> The sentinel should be runtime and compile time one. Why should we
-> make our lives worse by neglecting help from a compiler?
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-Do you really think there's a risk here and that this will make a
-difference ? I do appreciate most of your review comments, even
-pendantic ones, as they can help making the code better, but we also all
-need a little bit of space to breathe when it comes to coding style.
+Makes sense + all arch specific implementations are in arch/*/mm not
+arch/*/kernel so this makes it more consistent with that.
 
-> > > > +};
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
--- 
-Regards,
-
-Laurent Pinchart
 
