@@ -1,216 +1,110 @@
-Return-Path: <linux-kernel+bounces-257574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1918937C0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:07:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45693937C0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:08:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 507911F216A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:07:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01BCD282A56
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D763148851;
-	Fri, 19 Jul 2024 18:06:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB9E146D57;
+	Fri, 19 Jul 2024 18:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SFZQb9lu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="70wCPlc2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z1WPU2EH"
+Received: from mail-il1-f201.google.com (mail-il1-f201.google.com [209.85.166.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6C6147C82;
-	Fri, 19 Jul 2024 18:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837A72CCA3
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 18:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721412378; cv=none; b=ETEz4kMMrsSJdk+Mu7F/RSxc23+/ljz4Xk6F2WfFkO9KR3MUceBvuzljM+f8xU8T4zaKSkKGHE7q9JESArOmlA12gf1tcE6Y2Sf9fCMdMCoNQ23NMeXUVgYA50csGSkDz7/nZAGXX8UFChtbn7ymuVnLNvwugyU/s+oqwyHIOg0=
+	t=1721412398; cv=none; b=aKcp/0CicDkx8o6uwc9bqtCwOc0utUe3y1D1KKRYq9aHjKNWt2KYBNY1ijkHuB/rzVJT3sYe4rx4iZ59E7htGHrtKoTshwaN0+wI51oBMiJY1oNl43xrdVk2qiE1VQFn2EKlBrky64IKn2HIgt4MFwlKlbg69gHpB4gezHa+3zY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721412378; c=relaxed/simple;
-	bh=Djq+EzvVx4ATUt39nB2AZFxraclMZ4eGF4eCfA1IySs=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=DeD0+UuH7cXNN22hK/+RAPpK/DvNm6jS5YHCQnMQVYh5UNGIAS2xMaGLGCTAy8mMZvzbyxhJ2e16M/YwsDsQHiIpYc+0clfvTCsfP8dsWkXrcufq8Y7TqiXdEaY05PrVMBgX5UyPB3Tv0+GxGIfiwx653BGQrD2xLo9dQAZ7msM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SFZQb9lu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=70wCPlc2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 19 Jul 2024 18:06:13 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1721412373;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mSE5vSqTXRV39jVSArqOPLScFvUWl5xiTgggSVcj1u4=;
-	b=SFZQb9lupGuVoI7muDMsSbFsXmRUqD88OGTpYxn6L1RK9oScZt8jExhYTrwwJPobkR52v5
-	fzSwzv1k8bw6CSMRd6XT7znQQKjMoUI2tbmRS8VLMbl7uvFqTYXOshHnyE8ulRG4PwCjNb
-	7fkLXtOCWG5jUmtpjhgL8MaXMuqzMdKRU9xcASISTobnyZTZOFz4CpmuolO2xJodyNDu0A
-	7jcr5fqUTqpTQMk61yRxQbMt9zbW49RblPb1DbR1AX9a1jF93YeaAuysLysiKUNldd+PYv
-	2VC5EeXoGI0baL5svF1lmiyoZArNLA9zFspMCnlJ/CGXIJideGbAxCV7ANXbVA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1721412373;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mSE5vSqTXRV39jVSArqOPLScFvUWl5xiTgggSVcj1u4=;
-	b=70wCPlc25Ri4GAkGyTNUbZ2oB9maLwpRieEPzn5GFYWjARApCvSGOhzzNSJCHestEz4noq
-	+WxIfzlaLd/3DdCg==
-From: "tip-bot2 for Anna-Maria Behnsen" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: timers/urgent] timers/migration: Do not rely always on group->parent
-Cc: Borislav Petkov <bp@alien8.de>,
- "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
- Thomas Gleixner <tglx@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240716-tmigr-fixes-v4-1-757baa7803fe@linutronix.de>
-References: <20240716-tmigr-fixes-v4-1-757baa7803fe@linutronix.de>
+	s=arc-20240116; t=1721412398; c=relaxed/simple;
+	bh=3JxKCWFIJO1l5j07YlTQzhG4WIh9B48kwEXBnpUCFmY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=IFSIgR6qEUPL5X0mooauB6MqLHbkFUdEdzzbSUwUylJkx+/YRMebaUfK4aHlMqwo+bK8aP5At2OJH+FhbLTTu57hYfIfodnuiOb/vdWctzfAxQRvsbdHHDlsRcfdFiVPDt1Nz7f5GtpVWCN6yXkFnvbL7cdYzHJOWzDChvpfupM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z1WPU2EH; arc=none smtp.client-ip=209.85.166.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com
+Received: by mail-il1-f201.google.com with SMTP id e9e14a558f8ab-398602ba734so8145945ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 11:06:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721412396; x=1722017196; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RKoiDVkQ6yJoRSxu2Az1hfMJ9PYb+MfDy6ZbgIGOeQ8=;
+        b=z1WPU2EHr8FkVKOOs4Eav5mi6BuwuKKSF4jRfZow/Vj8jQkqEve5UQRhr87fzg5Ho1
+         tkLWEOTztY5MnaJY9+UJr5IlJ2qQPqudnZnStqBWD7KGvF+mdoUsWmwXgkgevOSm2R3T
+         DQ/bFyBbC9rp/an7p6y7h8qNOzbq2gsg88VuGPxrdTfxf0rTHQ1j8fAstliT9COIh9oq
+         3KHV+GPi9SR+vGeCydXBbghFWjv2cr9KxjQzGq5oZiMIh+LmPl1vEcSi5O03m8i5aVGD
+         yuNHXGK6N2lkd3WPywaOumTkthGaQDpqSxYpnRdMstvjQYyj+Dd0qLBctHumamPctpR4
+         HujA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721412396; x=1722017196;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RKoiDVkQ6yJoRSxu2Az1hfMJ9PYb+MfDy6ZbgIGOeQ8=;
+        b=Hr7HjiflSePpcR9iHlZS9IZeMaxBYMljaOEPPt3Ohu7JIclN52X0vuoT+2cf3vGYfT
+         7kFOyhLjT28iaFTO0ZVTEtqg16TAk4K79i8co3+VJBXWRhFLgEA5KqWsz/sdnP4WA8Ns
+         gQRsrG112yV2eg9FPIYf3uHFISZvoOaXsxAFsToAEyWuGxD1glvQ0vmYReewaJBEw2Q9
+         CMiWTDS4Hel/3b1W24gVNRS2A5AwS/WTK2oWHTfXe9SstzSaD3e9noeB1oi07kqNHKR1
+         CHLlutOwac2VB9x5Pkyosxxzfm9PMSvhKJCQ7+EoCYLF5zv338U2sLH8FN2IIbKdqARV
+         mk7A==
+X-Gm-Message-State: AOJu0Yz0n67gngjEQQHQeQgWqUUPz3DTkh0eli0lXH21Dv4paPGB6AuV
+	R2rw9C/M+ceexBgVaNuyOqcqUVa2dGSbV10c+Z/B9F5+9w3ov4sjpEmNtCm6BiZWO1LAPbtFcYu
+	oFHK/8qkn1XGYpUhZzjQ/R19sKrx4V7ZMRoezDTmh9LcEH5uuz7kqAlHfX6opy+HpSEJyL7PYl0
+	lXYuO1d/XR9MR78u4Pwb5O7kcNFS2Gqvwzgkb6K7yEBJZhpw==
+X-Google-Smtp-Source: AGHT+IFVTUFvNALMgY3b9kcnWsE89uLmyXszuB6EAU/KaJQ5m1VY84UAMpSmm+EP8KMJBYzhbB/2Z2Zq74qG
+X-Received: from dynamight.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:17a])
+ (user=jdenose job=sendgmr) by 2002:a05:6e02:1fef:b0:380:fd76:29e4 with SMTP
+ id e9e14a558f8ab-398e706f258mr245725ab.4.1721412395708; Fri, 19 Jul 2024
+ 11:06:35 -0700 (PDT)
+Date: Fri, 19 Jul 2024 18:06:15 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <172141237300.2215.7567023447286814502.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.1089.g2a221341d9-goog
+Message-ID: <20240719180612.1.Ib652dd808c274076f32cd7fc6c1160d2cf71753b@changeid>
+Subject: [PATCH] Input: synaptics - enable SMBus for HP Elitebook 840 G2
+From: Jonathan Denose <jdenose@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Jonathan Denose <jdenose@google.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Jeffery Miller <jefferymiller@google.com>, 
+	"=?UTF-8?q?Jos=C3=A9=20Pekkarinen?=" <jose.pekkarinen@foxhound.fi>, Sasha Levin <sashal@kernel.org>, 
+	linux-input@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The following commit has been merged into the timers/urgent branch of tip:
+The kernel reports that the touchpad for this device can support a
+different bus.
 
-Commit-ID:     0b706a14f6bd1d129c5b6d069e95306b1e72211c
-Gitweb:        https://git.kernel.org/tip/0b706a14f6bd1d129c5b6d069e95306b1e72211c
-Author:        Anna-Maria Behnsen <anna-maria@linutronix.de>
-AuthorDate:    Tue, 16 Jul 2024 16:19:19 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 19 Jul 2024 19:58:01 +02:00
+With SMBus enabled the touchpad movement is smoother and three-finger
+gestures are recognized.
 
-timers/migration: Do not rely always on group->parent
-
-When reading group->parent without holding the group lock it is racy
-against CPUs coming online the first time and thereby creating another
-level of the hierarchy. This is not a problem when this value is read once
-to decide whether to abort a propagation or not. The worst outcome is an
-unnecessary/early CPU wake up. But it is racy when reading it several times
-during a single 'action' (like activation, deactivation, checking for
-remote timer expiry,...) and relying on the consitency of this value
-without holding the lock. This happens at the moment e.g. in
-tmigr_inactive_up() which is also calling tmigr_udpate_events(). Code relys
-on group->parent not to change during this 'action'.
-
-Update parent struct member description to explain the above only
-once. Remove parent pointer checks when they are not mandatory (like update
-of data->childmask). Remove a warning, which would be nice but the trigger
-of this warning is not reliable and add expand the data structure member
-description instead. Expand a comment, why it is safe to rely on parent
-pointer here (inside hierarchy update).
-
-Fixes: 7ee988770326 ("timers: Implement the hierarchical pull model")
-Reported-by: Borislav Petkov <bp@alien8.de>
-Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-Link: https://lore.kernel.org/r/20240716-tmigr-fixes-v4-1-757baa7803fe@linutronix.de
-
+Signed-off-by: Jonathan Denose <jdenose@google.com>
 ---
- kernel/time/timer_migration.c | 33 +++++++++++++++------------------
- kernel/time/timer_migration.h | 12 +++++++++++-
- 2 files changed, 26 insertions(+), 19 deletions(-)
 
-diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
-index 8441311..d91efe1 100644
---- a/kernel/time/timer_migration.c
-+++ b/kernel/time/timer_migration.c
-@@ -507,7 +507,14 @@ static void walk_groups(up_f up, void *data, struct tmigr_cpu *tmc)
-  *			(get_next_timer_interrupt())
-  * @firstexp:		Contains the first event expiry information when last
-  *			active CPU of hierarchy is on the way to idle to make
-- *			sure CPU will be back in time.
-+ *			sure CPU will be back in time. It is updated in top
-+ *			level group only. Be aware, there could occur a new top
-+ *			level of the hierarchy between the 'top level call' in
-+ *			tmigr_update_events() and the check for the parent group
-+ *			in walk_groups(). Then @firstexp might contain a value
-+ *			!= KTIME_MAX even if it was not the final top
-+ *			level. This is not a problem, as the worst outcome is a
-+ *			CPU which might wake up a little early.
-  * @evt:		Pointer to tmigr_event which needs to be queued (of idle
-  *			child group)
-  * @childmask:		childmask of child group
-@@ -649,7 +656,7 @@ static bool tmigr_active_up(struct tmigr_group *group,
+ drivers/input/mouse/synaptics.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptics.c
+index 7a303a9d6bf72..9df0224867649 100644
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -193,6 +193,7 @@ static const char * const smbus_pnp_ids[] = {
+ 	"SYN3221", /* HP 15-ay000 */
+ 	"SYN323d", /* HP Spectre X360 13-w013dx */
+ 	"SYN3257", /* HP Envy 13-ad105ng */
++	"SYN3015", /* HP EliteBook 840 G2 */
+ 	NULL
+ };
  
- 	} while (!atomic_try_cmpxchg(&group->migr_state, &curstate.state, newstate.state));
- 
--	if ((walk_done == false) && group->parent)
-+	if (walk_done == false)
- 		data->childmask = group->childmask;
- 
- 	/*
-@@ -1317,20 +1324,9 @@ static bool tmigr_inactive_up(struct tmigr_group *group,
- 	/* Event Handling */
- 	tmigr_update_events(group, child, data);
- 
--	if (group->parent && (walk_done == false))
-+	if (walk_done == false)
- 		data->childmask = group->childmask;
- 
--	/*
--	 * data->firstexp was set by tmigr_update_events() and contains the
--	 * expiry of the first global event which needs to be handled. It
--	 * differs from KTIME_MAX if:
--	 * - group is the top level group and
--	 * - group is idle (which means CPU was the last active CPU in the
--	 *   hierarchy) and
--	 * - there is a pending event in the hierarchy
--	 */
--	WARN_ON_ONCE(data->firstexp != KTIME_MAX && group->parent);
--
- 	trace_tmigr_group_set_cpu_inactive(group, newstate, childmask);
- 
- 	return walk_done;
-@@ -1552,10 +1548,11 @@ static void tmigr_connect_child_parent(struct tmigr_group *child,
- 		data.childmask = child->childmask;
- 
- 		/*
--		 * There is only one new level per time. When connecting the
--		 * child and the parent and set the child active when the parent
--		 * is inactive, the parent needs to be the uppermost
--		 * level. Otherwise there went something wrong!
-+		 * There is only one new level per time (which is protected by
-+		 * tmigr_mutex). When connecting the child and the parent and
-+		 * set the child active when the parent is inactive, the parent
-+		 * needs to be the uppermost level. Otherwise there went
-+		 * something wrong!
- 		 */
- 		WARN_ON(!tmigr_active_up(parent, child, &data) && parent->parent);
- 	}
-diff --git a/kernel/time/timer_migration.h b/kernel/time/timer_migration.h
-index 6c37d94..494f68c 100644
---- a/kernel/time/timer_migration.h
-+++ b/kernel/time/timer_migration.h
-@@ -22,7 +22,17 @@ struct tmigr_event {
-  * struct tmigr_group - timer migration hierarchy group
-  * @lock:		Lock protecting the event information and group hierarchy
-  *			information during setup
-- * @parent:		Pointer to the parent group
-+ * @parent:		Pointer to the parent group. Pointer is updated when a
-+ *			new hierarchy level is added because of a CPU coming
-+ *			online the first time. Once it is set, the pointer will
-+ *			not be removed or updated. When accessing parent pointer
-+ *			lock less to decide whether to abort a propagation or
-+ *			not, it is not a problem. The worst outcome is an
-+ *			unnecessary/early CPU wake up. But do not access parent
-+ *			pointer several times in the same 'action' (like
-+ *			activation, deactivation, check for remote expiry,...)
-+ *			without holding the lock as it is not ensured that value
-+ *			will not change.
-  * @groupevt:		Next event of the group which is only used when the
-  *			group is !active. The group event is then queued into
-  *			the parent timer queue.
+-- 
+2.45.2.1089.g2a221341d9-goog
+
 
