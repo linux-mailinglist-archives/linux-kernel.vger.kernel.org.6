@@ -1,103 +1,221 @@
-Return-Path: <linux-kernel+bounces-257682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ABB4937D6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 22:49:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0603C937D6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 22:51:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89D6C1C20FD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:49:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C85B1F222B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908931487D4;
-	Fri, 19 Jul 2024 20:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DFA148312;
+	Fri, 19 Jul 2024 20:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ARw3dmiL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KADZ7bGN"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E851B86EC;
-	Fri, 19 Jul 2024 20:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6879F1B86EC;
+	Fri, 19 Jul 2024 20:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721422171; cv=none; b=F5wCDIsuhEUoFLsUP9pL/DIRBTFJfX43oK2fCH72REH7TKbmoMJ1VDwbVwWqBnWL3QQoKvQE0coxUWG6pLCjk4P87L/JDh4DmZKK7Za7lUdQnUl79fUs+IbFmSqDHuWvQ1rB/42Y+wEwjfKPZcXXmgWZZbbZRyqISPmXtOyZtnU=
+	t=1721422278; cv=none; b=T3LPCCXiD2jaRBKwgyVlUpQjoHbOMWfuFSZnLDOz9sM4Z9pknXascDqIlyfrXMeiPdgqFbrCnzUjq9QfMtvqjTZiYsZeGfOF4FhsKMSsotPBNkR6G6g4mSi2k2E4Kl6MEzC9TEDs8uJ2OT9BbRu6rhv720xA1M/DZfQoXnajqTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721422171; c=relaxed/simple;
-	bh=wyRlpQ4hI7FapDcQRHRoxYiLS9yDAfcb74CF9XRKd/U=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=tIInE/6tmkug9xqJaWkAt8T16DdAew6NvYfuMhCTlJEB69hXjhybTr2/9qSVi0hzTH5cal9/FwWoHI9A8vhJ42zU+zCzechCLkdAcz5AzJHgMnj0VKF+l7GB5UAYOC7HbfZJk0ZgeJpAubJXxYIUA7g/JQyn/0zUAtVW2qHx3TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ARw3dmiL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE586C32782;
-	Fri, 19 Jul 2024 20:49:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1721422171;
-	bh=wyRlpQ4hI7FapDcQRHRoxYiLS9yDAfcb74CF9XRKd/U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ARw3dmiLOIKrSELhjaymX8Ec0t62FW/yv2qGsNLIVnTEY0ad7MRuqYkOp7g7WUQhO
-	 IHJqeQHpq7Y+ohflT/VP9f9vl0SaEwBdlMxn3PXXb+bF7+pCyBfWp0nsTUI0jmEQjH
-	 INORm0NlZBmMiRKWKzLbWhkR7de52He+LJ0JBis8=
-Date: Fri, 19 Jul 2024 13:49:30 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>, Matthew Wilcox
- <willy@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
- Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Eric Biederman
- <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, Suren Baghdasaryan
- <surenb@google.com>, SeongJae Park <sj@kernel.org>, Shuah Khan
- <shuah@kernel.org>, Brendan Higgins <brendanhiggins@google.com>, David Gow
- <davidgow@google.com>, Rae Moar <rmoar@google.com>
-Subject: Re: [PATCH v2 0/7] Make core VMA operations internal and testable
-Message-Id: <20240719134930.db9f6ce24a52b9bd6416e688@linux-foundation.org>
-In-Reply-To: <8768fe2a-e4f7-4831-b608-cb3d21556534@lucifer.local>
-References: <cover.1720121068.git.lorenzo.stoakes@oracle.com>
-	<8a2e590e-ff4c-4906-b229-269cd7c99948@lucifer.local>
-	<20240710195408.c14d80b73e58af6b73be6376@linux-foundation.org>
-	<3sdist4b5ojz2iyatqgtngilrkudb63i7b6kp3aeeufl3vrnt6@p4icz5igbsix>
-	<8768fe2a-e4f7-4831-b608-cb3d21556534@lucifer.local>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721422278; c=relaxed/simple;
+	bh=8oxTPFuB/qY+8a8IQ1CWy2LI/me2zWEKXQ5cSIHx5Hw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XxUWrttIYcjBNxKrswvTfS97zM5iQA9dktA6jkyrUmQKfEmfxKw/GQ7QAN4IJ2uSPLsw9H6rz8Lv3sVEPStQKygKWJFk+qBy95rRTB+3RmBrvjRcJrLlKqBlvigXHVpYwYN/52/688SfDTp1ozwzujlgI4rayLlttqnO9Ko3Pmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KADZ7bGN; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-368584f9e36so937236f8f.2;
+        Fri, 19 Jul 2024 13:51:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721422275; x=1722027075; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0CFHn6Wu32vFr5LZh8Mesp3cm8j3Wz+OTXQhTF7EJnQ=;
+        b=KADZ7bGN72qkkqwrW96EnTXQ4BdbjhcGHKyFlRo4TsofD4GZjKI4gAtgJk7Z3tTsz8
+         GRAUg+lAQbGU4845QwlIya+P/OkijthpL3e/Gzm488MFbgG19WSmit2P7zpwb3oyKIad
+         6k6h1M5mL66ZoLiSGk+Fjp+ii7unT6b4LO975yyJpuPp/p7uDhkEDJrBuxOtKA+gFwQZ
+         6HEVw050KaOkvriG7ADZDef3jKyCKqJHYwfei2CnvDKChcWNs6DuCQKeRtcrQPlR3h8d
+         CKa94axi0mBM1r9zrD5WPy6ossj3H5SeXuGRXE7+50TNWs3KO11abk81ilNQ67SuT5+e
+         4jtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721422275; x=1722027075;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0CFHn6Wu32vFr5LZh8Mesp3cm8j3Wz+OTXQhTF7EJnQ=;
+        b=LPlXPIFGenauPOzdBWIuSmq1LqCoSWIjSQccnNWPqHwyIR19IVHRqeNYcfAsuFcbnj
+         kbZzVXbfJmazMaQmVtwZtLMvofW+6Zn6rNX7Fm4mWgT8+ThlLc9NV9MHp3Jv3rERNmeq
+         5Q5d+GUnBWplnaSEX0z+FN06vduMBiXa7WbstRDwA/nFR0xxR07OCx/GJRHT9q/Zxm0G
+         +TRCeNMv9WGp9jxOUdtU26R2Ib0VI+YO+bs3n1TXCcUruyMGXzH2ygXdjueswezwHZev
+         zzP7BwR59HPueUo93fMEAWDvTLmcqCPTKT8VMdgwUcdt/rv9IxNhl96wlR628V07gry9
+         FGfA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqNutWfrr2PQsGZEUHCH3Jhe8jVUJyVH0JA19OBu+bGAUPHbMryIPyd+vFWNSa4mOQu7a+cvJBbAMSaBL6hYtRUEShiwLTT8l2xw8xmWM=
+X-Gm-Message-State: AOJu0YwW3ySiuZJ9pwFeoah+LC6tusC2TRIpnrLLwz8s9d3L/xpFEK2Y
+	rJaNNZhdw3cKX2IYwH1bg31MHiFhSx/cJDkdWbN/82jq1Ly2sLsq
+X-Google-Smtp-Source: AGHT+IEWY7bsu3Bhb+bWavd5JlwwyDzl+3bvZRG9h3qhyOHQWRfn9gBEuRGthGQeJ87U2FLDK8BLzQ==
+X-Received: by 2002:a5d:5006:0:b0:368:714e:5a59 with SMTP id ffacd0b85a97d-368714e5bd6mr2617514f8f.11.1721422274664;
+        Fri, 19 Jul 2024 13:51:14 -0700 (PDT)
+Received: from [192.168.178.20] (dh207-42-168.xnet.hr. [88.207.42.168])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3687868423bsm2498649f8f.14.2024.07.19.13.51.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Jul 2024 13:51:14 -0700 (PDT)
+Message-ID: <42924f6d-32e3-4519-9616-5438e6527e90@gmail.com>
+Date: Fri, 19 Jul 2024 22:51:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: =?UTF-8?Q?Re=3A_=5BPROBLEM_linux-next=5D_fs/reiserfs/do=5Fbalan=2Ec?=
+ =?UTF-8?B?OjExNDc6MTM6IGVycm9yOiB2YXJpYWJsZSDigJhsZWFmX21p4oCZIHNldCBidXQg?=
+ =?UTF-8?Q?not_used_=5B-Werror=3Dunused-but-set-variable=5D?=
+To: Jan Kara <jack@suse.cz>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, Kees Cook <kees@kernel.org>,
+ Christian Brauner <brauner@kernel.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@kernel.org>,
+ reiserfs-devel@vger.kernel.org
+References: <39591663-9151-42f9-9906-4684acaa685c@gmail.com>
+ <20240715172826.wbmlg52ckdxze7sg@quack3>
+ <9aec9df8-ca82-4b2f-b227-5e318c66b97e@gmail.com>
+ <20240717154434.jba66jupaf566tes@quack3>
+ <83c22d71-8706-4779-8d20-6b18a75c95a5@gmail.com>
+ <20240718093943.qtyc2bdt4oerjuek@quack3>
+Content-Language: en-US
+From: Mirsad Todorovac <mtodorovac69@gmail.com>
+In-Reply-To: <20240718093943.qtyc2bdt4oerjuek@quack3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 19 Jul 2024 11:52:00 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
-
-> > > It's really big and it's quite new and it's really late.  I think it best to await the
-> > > next -rc cycle, see how much grief it all causes.
-> >
-> > Yes, this patch set is huge.
-> >
-> > It is, however, extremely necessary to get to the point where we can
-> > test things better than full system tests (and then wait for a distro to
-> > rebuild all their rpms and find a missed issue).  I know a lot of people
-> > would rather see everything in a kunit test, but the reality is that, at
-> > this level in the kernel, we cannot test as well as we can with the
-> > userspace approach.
-> >
-> > With the scope of the change, it will be a lot of work to develop in
-> > parallel and rebase on top of the moving of this code.  I'm wondering if
-> > you can provide some more information on your plan?  Will this be the
-> > first series in your mm-unstable branch after the release? iow, should I
-> > be developing on top of the code moving around for my future work?  I am
-> > happy enough to rebase my in-flight MAP_FIXED patches on top of this set
-> > if that helps things along.
-> >
-> > Thanks,
-> > Liam
+On 7/18/24 11:39, Jan Kara wrote:
+> On Thu 18-07-24 00:14:24, Mirsad Todorovac wrote:
+>>
+>>
+>> On 7/17/24 17:44, Jan Kara wrote:
+>>> On Tue 16-07-24 19:17:05, Mirsad Todorovac wrote:
+>>>> On 7/15/24 19:28, Jan Kara wrote:
+>>>>> Hello Mirsad!
+>>>>>
+>>>>> On Wed 10-07-24 20:09:27, Mirsad Todorovac wrote:
+>>>>>> On the linux-next vanilla next-20240709 tree, I have attempted the seed KCONFIG_SEED=0xEE7AB52F
+>>>>>> which was known from before to trigger various errors in compile and build process.
+>>>>>>
+>>>>>> Though this might seem as contributing to channel noise, Linux refuses to build this config,
+>>>>>> treating warnings as errors, using this build line:
+>>>>>>
+>>>>>> $ time nice make W=1 -k -j 36 |& tee ../err-next-20230709-01a.log; date
+>>>>>>
+>>>>>> As I know that the Chief Penguin doesn't like warnings, but I am also aware that there are plenty
+>>>>>> left, there seems to be more tedious work ahead to make the compilers happy.
+>>>>>>
+>>>>>> The compiler output is:
+>>>>>>
+>>>>>> ---------------------------------------------------------------------------------------------------------
+>>>>>> fs/reiserfs/do_balan.c: In function ‘balance_leaf_new_nodes_paste_whole’:
+>>>>>> fs/reiserfs/do_balan.c:1147:13: error: variable ‘leaf_mi’ set but not used [-Werror=unused-but-set-variable]
+>>>>>>  1147 |         int leaf_mi;
+>>>>>>       |             ^~~~~~~
+>>>>>
+>>>>> Frankly, I wouldn't bother with reiserfs. The warning is there for ages,
+>>>>> the code is going to get removed in two releases, so I guess we can live
+>>>>> with these warnings for a few more months...
+>>>>
+>>>> In essence I agree with you, but for sentimental reasons I would like to
+>>>> keep it because it is my first journaling Linux system on Knoppix 🙂
+>>>
+>>> As much as I understand your sentiment (I have a bit of history with that
+>>> fs as well) the maintenance cost isn't really worth it and most fs folks
+>>> will celebrate when it's removed. We have already announced the removal
+>>> year and half ago and I'm fully for executing that plan at the end of this
+>>> year.
+>>>
+>>>> Patch is also simple and a no-brainer, as proposed by Mr. Cook:
+>>>>
+>>>> -------------------------------><------------------------------------------
+>>>> diff --git a/fs/reiserfs/do_balan.c b/fs/reiserfs/do_balan.c
+>>>> index 5129efc6f2e6..fbe73f267853 100644
+>>>> --- a/fs/reiserfs/do_balan.c
+>>>> +++ b/fs/reiserfs/do_balan.c
+>>>> @@ -1144,7 +1144,9 @@ static void balance_leaf_new_nodes_paste_whole(struct tree_balance *tb,
+>>>>  {
+>>>>  	struct buffer_head *tbS0 = PATH_PLAST_BUFFER(tb->tb_path);
+>>>>  	int n = B_NR_ITEMS(tbS0);
+>>>> +#ifdef CONFIG_REISERFS_CHECK
+>>>>  	int leaf_mi;
+>>>> +#endif
+>>>
+>>> Well, I would not like this even for actively maintained code ;) If you
+>>> want to silence these warnings in this dead code, then I could live with
+>>> something like:
+>>>
+>>> #if defined( CONFIG_REISERFS_CHECK )
+>>> #define RFALSE(cond, format, args...) __RASSERT(!(cond), ....)
+>>> #else
+>>> - #define RFALSE( cond, format, args... ) do {;} while( 0 )
+>>> + #define RFALSE( cond, format, args... ) do { (void)cond; } while( 0 )
+>>> #endif
+>>
+>> Yes, one line change is much smarter than 107 line patch of mine :-)
+>>
+>> Verified, and this line solved all the warnings:
+>>
+>>   CC      fs/reiserfs/bitmap.o
+>>   CC      fs/reiserfs/do_balan.o
+>>   CC      fs/reiserfs/namei.o
+>>   CC      fs/reiserfs/inode.o
+>>   CC      fs/reiserfs/file.o
+>>   CC      fs/reiserfs/dir.o
+>>   CC      fs/reiserfs/fix_node.o
+>>   CC      fs/reiserfs/super.o
+>>   CC      fs/reiserfs/prints.o
+>>   CC      fs/reiserfs/objectid.o
+>>   CC      fs/reiserfs/lbalance.o
+>>   CC      fs/reiserfs/ibalance.o
+>>   CC      fs/reiserfs/stree.o
+>>   CC      fs/reiserfs/hashes.o
+>>   CC      fs/reiserfs/tail_conversion.o
+>>   CC      fs/reiserfs/journal.o
+>>   CC      fs/reiserfs/resize.o
+>>   CC      fs/reiserfs/item_ops.o
+>>   CC      fs/reiserfs/ioctl.o
+>>   CC      fs/reiserfs/xattr.o
+>>   CC      fs/reiserfs/lock.o
+>>   CC      fs/reiserfs/procfs.o
+>>   AR      fs/reiserfs/built-in.a
+>>
+>> Just FWIW, back then in year 2000/2001 a journaling file system on my
+>> Knoppix box was a quantum leap - it would simply replay the journal if
+>> there was a power loss before shutdown. No several minutes of fsck.
 > 
-> Thanks Liam!
+> Well, there was also ext3 at that time already :-) That's where I became
+> familiar with the idea of journalling. Reiserfs was interesting to me
+> because of completely different approach to on-disk format (b-tree with
+> formatted items), packing of small files / file tails (interesting in 2000,
+> not so much 20 years later) and reasonable scalability for large
+> directories.
 > 
-> I think best way forward unless you feel we should take a different
-> approach Andrew is for me to simply wait until the end of the merge window
-> and at the start of the week after rebase on 6.11-rc1 and do a resend?
+>> I think your idea is great and if you wish a patch could be submitted
+>> after the merge window.
+> 
+> I'll leave it up to you. If the warnings annoy you, send the patch along
+> the lines I've proposed (BTW (void)cond should better be (void)(cond) for
+> macro safety) and I'll push it to Linus.
+> 
+> 								Honza
 
-How about you send out a version early next week and I'll aim to send
-it in to Linus late in this merge window?
+Sure thing. Yes, (ovid)(cond) makes much more sense against i.e.
+expanding RFALSE(a + b, ...).
+
+Best regards,
+Mirsad Todorovac
 
