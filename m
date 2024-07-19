@@ -1,205 +1,124 @@
-Return-Path: <linux-kernel+bounces-257665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FFB5937D2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 22:15:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F7DA937D32
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 22:17:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 932991C210C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:15:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ACD12820C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0BB14885B;
-	Fri, 19 Jul 2024 20:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CCBD147C80;
+	Fri, 19 Jul 2024 20:16:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yAmp35b/"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BOnoWbJX"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A34148837
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 20:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013A2146D51
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 20:16:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721420104; cv=none; b=HDvh6etz1v1mcclSpI/UlAzonLfMV0iPGn0EOuqrMPLmGow5wmUvEpvskh96NNZAF9fWNc6pCdbO5EbyYxFWSkt3w4yAII7eoqdFn/iUkKOjA7TWql/aP0Sole60YTB7S07gi4RFP6LGRIaH52vweCfyx2rGOM9EQU1aWbh9zXU=
+	t=1721420211; cv=none; b=e6p7r8rWYfGq2gRyMPHGueSMiEnUTOx8fYuDBawG8HmNd/alL0DsbwijVXZFn5tGAamL/coPjCIleOWIqk0qPENBCUqiG6tL7mhmmFwYrMiSKdDa7oOKuGKaMphko0akdvau1+YTWJPmBePc5P0+PcSwbrbR7YwjOOzXcszBw5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721420104; c=relaxed/simple;
-	bh=hrVOSBAPxCjK3O4kjJZDIYEe2p6huW8SI+6E7CjOWL8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rvPnXK0BXaDuMjHvjwA6uqyTZuGT3H3szV2Aj29RdrNTCRVYdTP2HMI/Z2VDOIREBoFCFfwM36faC/LWIK+nVz/TnRvNthbBC0sbl4MZ39Uc6Fp9lnqt2/m2/ewvxSiFcvgJpJOfS9X80C3dhlSb6gLsC6gxprVYm52GCK345eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yAmp35b/; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fd7509397bso72195ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 13:15:02 -0700 (PDT)
+	s=arc-20240116; t=1721420211; c=relaxed/simple;
+	bh=6Ep5Eh95oEtiJ9dGPzkROTBHO/Fj2MksWUgLjyCTjj8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eL1g5YCj+gthndwvMeT8t4Ljm86dk1yMnqEWuqK/cugJadoC49ONKPqsECbCO4F2LaJEK591JB8qrvH/n+Uqzla/DuOCYxIaJsogzmwVnf6sx4rH8+LN3nMWhRlB5WyIjryDhf63fCrxoHP//ov9pJ3KfiOCgr+zvGx1qioIdso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BOnoWbJX; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2eeef45d865so32932121fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 13:16:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721420102; x=1722024902; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zWJCFjgtMNgtozAYiAr2A+KBfeO3km1iv1DnIaZsGgQ=;
-        b=yAmp35b/rML78mnEthxIJE/0E237s/daf0h0N3q4wVDIj3IBf+tl3+9gvr8UHJtoFW
-         jQU3rI4ZIpQ8sCMU4zvZxwH5SJuKn3gVAQGcJEF3OxOWMf/xs1ox4q+bM0LtQom1AUws
-         Edd4meie33u1fcJhpkUVvTb12AvvSg3XMeLNEkinVpDmHlA1s5UzxJCs93CwIL+f0Lfo
-         jLNVSTCclNjiUZ8RgyS+kAci2jNO0CDKNcYq+QcqqR5pFHkhyAeyHOs3OI7PlzBdgcB/
-         1+6Go1+RYdGmhPfpx3v/XskVZj7pEiFTcRuRmHU/weDM6umbjhBMghTA7xOoEw+rfxCe
-         zrbQ==
+        d=linaro.org; s=google; t=1721420208; x=1722025008; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tj3pbaM3Bp6ECZfeKLVwMuqmXQLFLWkJ9K5YKhSksnY=;
+        b=BOnoWbJXeOds/MXCf8jKgmVREEoPHKEcfyh43vPuAvn+pqwUtYp2dzf+ozncXumhQi
+         hVfCMO/EMpiolBQy8lbBiqhGGQux441gFTT3LKImdmOon9zQyF2QDYnKiqHSU0Lu7pJI
+         RfEttmhF++FOl7VWvUOKV6JvRBw0BPIXyYz0QtiRmn9W/46VPCkhBVEH3qmfCEhbVI4M
+         ZVfyQKmHkgXhsWikmH8taSjsD299FMdmiRGZ5WE/6nHA6RTW5G/VEL7JuORlspm81HKp
+         Khj+FkW/YPrpp8pX542ILmpfC/yejhFso6iulG6HQpUr6WF05D+3E0cNvsKqRJUrlCL7
+         spXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721420102; x=1722024902;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zWJCFjgtMNgtozAYiAr2A+KBfeO3km1iv1DnIaZsGgQ=;
-        b=crU/YgA9tSP371KHDHSyWpojKpz1M4486X0LJTnfhy5HILNPgi2S+OKVE+I976FPyI
-         vDmwy5Cu6t9B+UiVhJSEKpcxbERYTxCRVsDCO1EqCmZJfddpknqjOi/inScxpPAYGTCH
-         GczzxwqRdvvUIfLo6VVzgTA+2JStG9ntoBo6VlCSp5uh18H/ZyUll/N3mSAo5AA9Q4hJ
-         QrK8eTJY6Szc9v3/eMS8eFt58jreqnTpl/m/1FiAUwFyfslwc9lLWO8yeYVCQfgNFzj0
-         ZkAjEaqZiWhplcs35RZpdCaOQ1u1XFS1fPB4UKTWYiA5m0UjNLJD+bjTB0TPkqSEl5Ry
-         Xs0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVIdscAZ5ZhTJtVuFVBjGen+KXv8MRDKJ9bKgdnWn3gUZXJiGvweNC8UxQnoZW3AnceS4dQAXbbsMXxgsqwKYFX2/GPgHNT539U31bT
-X-Gm-Message-State: AOJu0YxwtygnZkgnxFePavCEBqAinBgVDf9iIj8WD1cRNL0aaW1SpHtP
-	H/lnT04KJrftc+A4Qx9CvYL3/VuwwSR8ST5b4aa9hPCrfQaeWF1moLevJJpdLTK4HcCWq9w+zbY
-	UMkQ3vGYKk6oNoW7tQGyNlJ9wCg+H64CEJaM6
-X-Google-Smtp-Source: AGHT+IHIbP8sgONKGNJNBiPGGkEdodEy9wXP050Dq8z3mdpSj/m//1k3YPuQ9qvpkgcfyQA3sY6joJjCnk+Lc7L7jWY=
-X-Received: by 2002:a17:902:dac8:b0:1fd:7664:d875 with SMTP id
- d9443c01a7336-1fd7664dc73mr593255ad.22.1721420101515; Fri, 19 Jul 2024
- 13:15:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721420208; x=1722025008;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tj3pbaM3Bp6ECZfeKLVwMuqmXQLFLWkJ9K5YKhSksnY=;
+        b=ZPwv71Gz/Np7l3qrpLZgP19YLul6yHoRR7xT88VSArhBQuoJlpkB9UKcnNSDXYWABe
+         BmXIjr872rAhtWcm4Thu6fd1/+L9eqVVP9NiuUvBvjjZUUIKStNGj8mIxPGaJrUeNhbi
+         WIZkR1DIp4X+bVyVdQ7zf+ERicJDi8xFMfk6Za1TJrFNIfsrRpMHdoiAO/33OXZVdJOp
+         KPOVxGc/MWvl1xi03IvX6PGidCKf2uFdzUOcizFdwlAu4K2Bo4DEwtNCp1I/b4crAkuN
+         thaZBQ3AdpxyaDPAmUxTbNZQVNu983HbagjfYxa+hkLzSDZzaYqYzfOn+WES0IinPJ0w
+         ug3g==
+X-Forwarded-Encrypted: i=1; AJvYcCXVjJDfj6xY8U+zS+Qt01M2U2eUE9RIlV8HotyWZDzguFYCvv1uShx7i34FGxb8gfUQX3WA9o45rag2sxad+XsmxTUoUztRNgN2TOsL
+X-Gm-Message-State: AOJu0YyTaDrngTjsFChi6WNMxeYpLU9O9FriGltgXp82qtLF2otXTNFp
+	DlCyFlAedMQGdb6Oees8k+vlBp9OCdHg+GLi6oNRsjWCOjhMx29kHm9npZPYL2w=
+X-Google-Smtp-Source: AGHT+IGmhDEAuzeZy9PshTtTNQy3yNIfPVgPaNvhnDFetXscXSUQX0rZLnVBkPkviRu0nYgP6BGPpQ==
+X-Received: by 2002:a2e:bea4:0:b0:2ef:1c0f:a0f3 with SMTP id 38308e7fff4ca-2ef1c0fa26dmr210531fa.6.1721420207834;
+        Fri, 19 Jul 2024 13:16:47 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c922b6asm72332266b.172.2024.07.19.13.16.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 13:16:47 -0700 (PDT)
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: [PATCH 0/3] ThinkPad T14s Gen 6 support
+Date: Fri, 19 Jul 2024 22:16:35 +0200
+Message-Id: <20240719-topic-t14s_upstream-v1-0-d7d97fdebb28@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <c42bff52-1058-4bff-be90-5bab45ed57be@gmail.com>
- <ZpqgfETiBXfBfFqU@google.com> <70137930-fea1-4d45-b453-e6ae984c4b2b@gmail.com>
- <Zpq9Bp7T_AdbVhmP@google.com> <824a0819-a09d-40ac-820c-f7975aee1dae@gmail.com>
-In-Reply-To: <824a0819-a09d-40ac-820c-f7975aee1dae@gmail.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Fri, 19 Jul 2024 13:14:50 -0700
-Message-ID: <CALMp9eStzLK7kQY41b37zvZuR7UVzOD+W7vDPhyKXYPDhUww0g@mail.gmail.com>
-Subject: =?UTF-8?B?UmU6IFtCVUddIGFyY2gveDg2L2t2bS92bXgvcG11X2ludGVsLmM6NTQ6IGVycm9yOiBkZQ==?=
-	=?UTF-8?B?cmVmZXJlbmNlIG9mIE5VTEwg4oCYcG1j4oCZIFtDV0UtNDc2XQ==?=
-To: Mirsad Todorovac <mtodorovac69@gmail.com>
-Cc: Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, Like Xu <likexu@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKTJmmYC/x3MQQqAIBBA0avErBPUiqirRISMU82iEsciiO6et
+ HyL/x8QikwCffFApIuFjz3DlAXg6vaFFPtssNrWujWdSkdgVMnUMp1BUiS3KWqqGb1G9NZBLkO
+ kme//Oozv+wHTftFwZQAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
+ Johan Hovold <johan@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1721420206; l=933;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=6Ep5Eh95oEtiJ9dGPzkROTBHO/Fj2MksWUgLjyCTjj8=;
+ b=1x8U23Ffz66m6qfocXm6DoW5a5GcIeTeeFAgddxqY4GMTuItUThqLYvP68apl43+iQ3MluIi3
+ wZvQ5XM5HM9AMrD1KWsAcblUFEKu0YBnrSCU1soteXFdCxnNfWn5MDG
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On Fri, Jul 19, 2024 at 12:41=E2=80=AFPM Mirsad Todorovac
-<mtodorovac69@gmail.com> wrote:
->
->
->
-> On 7/19/24 21:22, Sean Christopherson wrote:
-> > On Fri, Jul 19, 2024, Mirsad Todorovac wrote:
-> >> On 7/19/24 19:21, Sean Christopherson wrote:
-> >>> On Fri, Jul 19, 2024, Mirsad Todorovac wrote:
-> >>>> Hi,
-> >>>>
-> >>>> In the build of 6.10.0 from stable tree, the following error was det=
-ected.
-> >>>>
-> >>>> You see that the function get_fixed_pmc() can return NULL pointer as=
- a result
-> >>>> if msr is outside of [base, base + pmu->nr_arch_fixed_counters) inte=
-rval.
-> >>>>
-> >>>> kvm_pmu_request_counter_reprogram(pmc) is then called with that NULL=
- pointer
-> >>>> as the argument, which expands to .../pmu.h
-> >>>>
-> >>>> #define pmc_to_pmu(pmc)   (&(pmc)->vcpu->arch.pmu)
-> >>>>
-> >>>> which is a NULL pointer dereference in that speculative case.
-> >>>
-> >>> I'm somewhat confused.  Did you actually hit a BUG() due to a NULL-po=
-inter
-> >>> dereference, are you speculating that there's a bug, or did you find =
-some speculation
-> >>> issue with the CPU?
-> >>>
-> >>> It should be impossible for get_fixed_pmc() to return NULL in this ca=
-se.  The
-> >>> loop iteration is fully controlled by KVM, i.e. 'i' is guaranteed to =
-be in the
-> >>> ranage [0..pmu->nr_arch_fixed_counters).
-> >>>
-> >>> And the input @msr is "MSR_CORE_PERF_FIXED_CTR0 +i", so the if-statem=
-ent expands to:
-> >>>
-> >>>     if (MSR_CORE_PERF_FIXED_CTR0 + [0..pmu->nr_arch_fixed_counters) >=
-=3D MSR_CORE_PERF_FIXED_CTR0 &&
-> >>>         MSR_CORE_PERF_FIXED_CTR0 + [0..pmu->nr_arch_fixed_counters) <=
- MSR_CORE_PERF_FIXED_CTR0 + pmu->nr_arch_fixed_counters)
-> >>>
-> >>> i.e. is guaranteed to evaluate true.
-> >>>
-> >>> Am I missing something?
-> >>
-> >> Hi Sean,
-> >>
-> >> Thank you for replying promptly.
-> >>
-> >> Perhaps I should have provided the GCC error report in the first place=
-.
-> >
-> > Yes, though the report itself is somewhat secondary, what matters the m=
-ost is how
-> > you found the bug and how to reproduce the failure.  Critically, IIUC, =
-this requires
-> > analyzer-null-dereference, which AFAIK isn't even enabled by W=3D1, let=
- alone a base
-> > build.
-> >
-> > Please see the 0-day bot's reports[*] for a fantastic example of how to=
- report
-> > things that are found by non-standard (by kernel standards) means.
-> >
-> > In general, I suspect that analyzer-null-dereference will generate a _l=
-ot_ of
-> > false positives, and is probably not worth reporting unless you are abs=
-olutely
-> > 100% certain there's a real bug.  I (and most maintainers) am happy to =
-deal with
-> > false positives here and there _if_ the signal to noise ratio is high. =
- But if
-> > most reports are false positives, they'll likely all end up getting ign=
-ored.
-> >
-> > [*] https://lore.kernel.org/all/202406111250.d8XtA9SC-lkp@intel.com
->
-> I think I understood the meaning between the lines.
->
-> However, to repeat the obvious, reducing the global dependencies simplifi=
-es the readability
-> and the logical proof of the code. :-/
+As good as the other X1 laptops
 
-Comments would also help. :)
+See this page for more hw info:
 
-> Needless to say, dividing into pure functions and const functions reduces=
- the number of
-> dependencies, as it is N =C3=97 (N - 1), sqr (N).
->
-> For example, if a condition is always true, but the compiler cannot deduc=
-e it from code,
-> there is something odd.
->
-> CONCLUSION: If this generated 5 out of 5 false positives, then I might be=
- giving up on this
-> as a waste of your time.
->
-> However, it was great fun analysing x86 KVM code. :-)
+https://www.lenovo.com/us/en/p/laptops/thinkpad/thinkpadt/lenovo-thinkpad-t14s-gen-6-(14-inch-snapdragon)/len101t0099
 
-I assure you that there are plenty of actual bugs in KVM. This tool
-just isn't finding them.
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+Konrad Dybcio (3):
+      dt-bindings: arm: qcom: Add Lenovo ThinkPad T14s Gen 6
+      firmware: qcom: scm: Allow QSEECOM on ThinkPad T14s
+      arm64: dts: qcom: Add X1E78100 ThinkPad T14s Gen 6
 
-> Sort of cool that you guys on Google consider bug report from nobody admi=
-ns from the
-> universities ;-)
->
-> Best regards,
-> Mirsad Todorovac
->
+ Documentation/devicetree/bindings/arm/qcom.yaml    |   6 +
+ arch/arm64/boot/dts/qcom/Makefile                  |   1 +
+ .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts     | 792 +++++++++++++++++++++
+ drivers/firmware/qcom/qcom_scm.c                   |   1 +
+ 4 files changed, 800 insertions(+)
+---
+base-commit: 523b23f0bee3014a7a752c9bb9f5c54f0eddae88
+change-id: 20240719-topic-t14s_upstream-e53fcd0ccd2a
+
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@linaro.org>
+
 
