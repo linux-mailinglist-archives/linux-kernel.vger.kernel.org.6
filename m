@@ -1,137 +1,78 @@
-Return-Path: <linux-kernel+bounces-257653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81B37937D0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 21:54:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D2E8937D0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 21:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8101B21A61
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:54:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DC391C212DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BBB1482E4;
-	Fri, 19 Jul 2024 19:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64031487D8;
+	Fri, 19 Jul 2024 19:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N0kTCGtH"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hZjY2RQc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C311487F1;
-	Fri, 19 Jul 2024 19:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CB31482E4;
+	Fri, 19 Jul 2024 19:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721418833; cv=none; b=DGQRN4hl8giSWlCSCu7tXowTwNsVUGqwZYB4CqCfsRZOgcjInLwqbfvXuJfIj4Cr44Nxb2R34g/UcTGlrPlV3oNCSYLs6cishVcvRP+qx2tXyVy1jbAcI5wsZ13mnXZMV5K1KFk4hroNQ3KR6YYUV3ekRObYqeK5DznQ7dAdXH8=
+	t=1721418877; cv=none; b=NDIpvJSWi8KN83rZ8BIRlPLSR7H6G7yiKwLEGZNlSr5RTaaxsMaNmCtudg928XwH9jVFi2kTQgrnd8Nkznrc1sNqMGBbfNQQ0VRJNas8BbBelGjS8oUFg64gTO7p19omtuXGC6UJjZOMFCbCys4a06NKZumYINeIcd8RSqHEQSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721418833; c=relaxed/simple;
-	bh=rUI+qgAOd9BowtuDHfNlCfq6XCoT8b7C5dx5ncMEzx4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dpgxoIThHL8YVBSGj9C27n3FCiV+cuEB1BoKkqI9Hb68KbPkexON3WY0eQ4xHHo9wm3mvV/Uv/StLEuCEgnAUVK/UB6sKG9mbzE1NpEHZ85yg+ZwFLH+KJ16NYvQZwxhknda/TZeQI6PuF3aM9aQOXRF0zM/PINUJbhbapF2KLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N0kTCGtH; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42793fc0a6dso15122595e9.0;
-        Fri, 19 Jul 2024 12:53:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721418830; x=1722023630; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=m2IyIXWoKx6fDvJL6nxBVnD8PzsEDnvKkwVMwJXl3HA=;
-        b=N0kTCGtHJqPgqkkrBrrz3lF//NyZWFyaON3LL4B4hChTmO8c4Yusmke8wYdm46hsCG
-         0PNY8a4lILhAPgWF7BfqzQziQtbQseeR/1Z/lgLVD3g5VRqQjqc7LWo+B/P/Y2o7SQMW
-         pkCzyEZE3LjkoDdip1RclSiA8+UkRs4x4ql1KyjoySJNBOJ7nebMtmXtwSTnV4VyFU0c
-         C0ckPT9L4tzNgLG/+OSbr60zufFJp8CutIHXXicNs1IAWPX1F1e+iWDQPIh09mZ+ufLU
-         Q6y2oyRFT9NZbUcZvKnEXU4dF+I4J8CRdlj6YagxDHKnQTwmmtXCYjJMDTyX4hI7Ivb1
-         9RgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721418830; x=1722023630;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m2IyIXWoKx6fDvJL6nxBVnD8PzsEDnvKkwVMwJXl3HA=;
-        b=JTaxbLPBObN1OWNH5CURTFKtRk8xedbehDxjSjPB9YiG7T4EcvLdCqq4dYdDhCreIR
-         Se0twLUqsUSwR9PpCypX+/l5fBkqinRAFHfPzKsK3Zhebl9JpprSLUu1rQikWoteN0Vt
-         ogLX0GzzJbFNtfdGcTjYFZkg/JrSTKAhs/ZbxhdofhlYQOl0epvJODEUzEo+ZD1DCPzC
-         IWgQT+jga2mAYOyOsjQhr2wHZ9lOi+at6ed1oaNs52+f20xACoEtsqsljiPJEjDNWkA4
-         HpP4vo42ttIxsdApu8RLzJouM1RFIGqlb4Ut4uNxrohblw7Btm23MUmP43uczUyn5mQD
-         YAaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXsa5f10r+HvM9wqWhbalTSnckAY2hDNALAQrICfdQuAGx9SbMK1A6/0PdfjeUBXoMaiLgeWz2YmT3utMXHF1ZQi1usHgpQOk/C9Soh
-X-Gm-Message-State: AOJu0YxMMFHeLbZYY6NycWo3nZgzrqd/vQzCXpOy1vhbZk4rBSIARuaR
-	ul6egq0TFhhTmILPjKmMx++smVBtx99fRsGp9xVAKop/WxjcnAr9
-X-Google-Smtp-Source: AGHT+IE/V4elTCmzvBJrrmAwUSHtd0h8tGxEmWptTjSXbpMzkcUKFFPNNWkHnfQpfriG3m/j1Jjj9Q==
-X-Received: by 2002:a05:600c:1f0e:b0:426:60e4:c691 with SMTP id 5b1f17b1804b1-427c2cb36b1mr63660105e9.11.1721418829804;
-        Fri, 19 Jul 2024 12:53:49 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-42-168.xnet.hr. [88.207.42.168])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d68fa493sm36214095e9.10.2024.07.19.12.53.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Jul 2024 12:53:49 -0700 (PDT)
-Message-ID: <34df3c7d-9f39-4878-80a9-72f5d2d858db@gmail.com>
-Date: Fri, 19 Jul 2024 21:53:45 +0200
+	s=arc-20240116; t=1721418877; c=relaxed/simple;
+	bh=VNM01rkeSr+xN3jpmM8tVqea1oaq/uzNvbrgTNEMPtU=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=a5cyo5uV1oeIou7w27eCLyTWFQEmWFy9z7LlpXNPiSR126vHKn1yaPc+SYU+zDt/xqXpbzKsgvp2yuFn01zsgNpuBmTURj2IpmGRbMlxb8sNCAYEIMdOyhwZ2UsJCxswAgpSlLEm1CkqGokJPtxxUEU3T8h9KUX02JiVBy/WXM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hZjY2RQc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C27BEC32782;
+	Fri, 19 Jul 2024 19:54:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721418876;
+	bh=VNM01rkeSr+xN3jpmM8tVqea1oaq/uzNvbrgTNEMPtU=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=hZjY2RQcQwaasTNVAHO7i78Yh/C6o0aaiqi0WvK8eRhMVvmpQvX9Tud7qvaVTA9nY
+	 38kJrnUGsxGmxDj8KUPs04OOjjwmxBX3C74J/fO6bISb8sne/0blNqjyF7aCcgrd98
+	 YCcGdcF+tEvKhusQzwHu/tJHt+/IMB2aeXJGt3qXQuhwTcZmD2uyBwRHIy0YS0eQnX
+	 Mmzl2mkObAk/nbXAsv8gDr4evHDdDYwIKOHv3BPnzqx6sT+yIVLX6uFPuFc0A4OEej
+	 XAZGlYQVdOI/vvod/qtoqimkrw3PX+In0URA2rq2oZbzM/Il6uFJjP6QJ13DP/i79i
+	 rlLgzI5B071dQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B9335C43335;
+	Fri, 19 Jul 2024 19:54:36 +0000 (UTC)
+Subject: Re: [GIT PULL] sound updates for 6.11-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <87v811u95j.wl-tiwai@suse.de>
+References: <87v811u95j.wl-tiwai@suse.de>
+X-PR-Tracked-List-Id: <linux-sound.vger.kernel.org>
+X-PR-Tracked-Message-Id: <87v811u95j.wl-tiwai@suse.de>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.11-rc1
+X-PR-Tracked-Commit-Id: 4594d26fca91fab0e1621d2ab196f3f9bab96bc8
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 12cc3d5389f313f07222b000fefa2cd8fc98c4f8
+Message-Id: <172141887674.7828.13718589694542145906.pr-tracker-bot@kernel.org>
+Date: Fri, 19 Jul 2024 19:54:36 +0000
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?Q?Re=3A_=5BBUG=5D_6=2E10_stable=3A_arch/x86/kvm/xen=2Ec=3A1?=
- =?UTF-8?Q?486=3A44=3A_error=3A_use_of_uninitialized_value_=E2=80=98port?=
- =?UTF-8?B?4oCZIFtDV0UtNDU3XQ==?=
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- linux-kernel@vger.kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>
-References: <7b47f4b7-eda8-40e2-883c-6d6c539a4649@gmail.com>
- <ZpqiyxAuobYjkjC-@google.com>
-Content-Language: en-US
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-In-Reply-To: <ZpqiyxAuobYjkjC-@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
+The pull request you sent on Fri, 19 Jul 2024 09:35:04 +0200:
 
+> git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.11-rc1
 
-On 7/19/24 19:30, Sean Christopherson wrote:
-> On Fri, Jul 19, 2024, Mirsad Todorovac wrote:
->> Hi, all,
->>
->> While building stable tree version of 6.10, the following error occurred:
->>
->> In line 1421 defines:
->>
->> 1421        evtchn_port_t port, *ports;
->>
->> The ports becomes &port in line 1470, but neither port nor *ports is assigned a value
->> until line 1486 where port is used:
->>
->> 1485         if (sched_poll.nr_ports == 1)
->> 1486 →               vcpu->arch.xen.poll_evtchn = port;
->>
->> The visual inspection proves that the compiler is again right (GCC 12.3.0).
-> 
-> Nope, the compiler is wrong.  If sched_poll.nr_ports > 0, then kvm_read_guest_virt()
-> will fill ports[sched_poll.nr_ports].  If kvm_read_guest_virt() fails to do so,
-> it will return an error and the above code will never be reached.
-> 
-> 	if (kvm_read_guest_virt(vcpu, (gva_t)sched_poll.ports, ports,
-> 				sched_poll.nr_ports * sizeof(*ports), &e)) {
-> 		*r = -EFAULT;
-> 		return true;
-> 	}
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/12cc3d5389f313f07222b000fefa2cd8fc98c4f8
 
-Hi again,
+Thank you!
 
-I see what you mean.
-
-Apparently, this dependency is not visible by the compiler, and this makes static analysers of
-dubious value ...
-
-I might need some advice on how to contribute to the Q/A of the kernel proper and testing suite
-...
-
-Best regards,
-Mirsad Todorovac
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
