@@ -1,160 +1,155 @@
-Return-Path: <linux-kernel+bounces-257617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 779AC937CB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:48:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2228937CB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:51:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 022BD1F21A3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:48:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F144B2106E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA3D147C87;
-	Fri, 19 Jul 2024 18:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984C5148304;
+	Fri, 19 Jul 2024 18:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="duoWER4E"
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fG05yJP0"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B261474A8
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 18:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACB21465B7;
+	Fri, 19 Jul 2024 18:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721414906; cv=none; b=TCXfqIaOUIrGYRrY9vEKMZE7yVr5Q0BnG2iugIA39G1WWdsTWnaVp3uD3PadEfwg97Zaw7Q7155sSxS3ApQZsc5OoWD/cE86dx3bxffjvsFCAZme5dBpO4rDAAYGuG42aS2maFyQrTpiBffhy9CDDiJCpylbKPso2ecCq2KTeTA=
+	t=1721415059; cv=none; b=RCiUtJrCpnbrowAFkoT4ZZbWZawST1rSTWian1ygEKqDZvpntRYR6wNNgulMpTo5yMwfIoODH3nV9Ogtw06C77ApTwwV0x+jJXLmc24O8FqBRO/Qaku+HBdnF1bOVjTsTHCeKoeEC7ZRrNLNPU/VzCAPk45BTJLJBYDMfXxl1k0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721414906; c=relaxed/simple;
-	bh=KSP3qFQimIB/KWgpWhEu0lTlpGLv27AIGOdpzPyZz9Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Cb6efg3dzTmQTJvG5+52ITYQ2fX1rv6D9ELADM0Ci/y9CAnLMCuMuDJZ262Nbsa2WiS1UCkpes5FSOHIRhGjbmhy7ueWlLupGKt9As9Vo9tTvhIyMQ611sdkzxsYPFZzTlUJ1WbbQ9mc8RR4FVYZ8aHXogRQjQ/gKO9uw/cg7lI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=duoWER4E; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3d96365dc34so1283381b6e.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 11:48:24 -0700 (PDT)
+	s=arc-20240116; t=1721415059; c=relaxed/simple;
+	bh=Ee9ro+8W2ACQUh4oM+H8UjzP/GPKGir4IM61B80FmYw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=sWw/FgozCpYLpsxVTxDp8ZVOjovGjJRe+nkOcwFbsB1pf49flr6qnYOrjUSLq/EhxMHT7DDgK1dQDtplttqJ2LMKWLtB/h6+UUpoF2+K0Pon/FFXblStrgtjBVWVS/3483DfsM2AKMEtUfnCxySB/tlptX5KconTph8iNYDZHow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fG05yJP0; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2cb4c584029so1174563a91.3;
+        Fri, 19 Jul 2024 11:50:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721414904; x=1722019704; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ukG7Uje2tjlYAEnwiivgrAC4JGlADujKudhRv8xZLpk=;
-        b=duoWER4ETLyOtzvtx3pESFee5UbZGzZdZ4QNrp8o8xPVJ010+G3kbX96zMFLVBfCKD
-         xPlo9rfLmvlrhv2GoHc+HM9vYiwdWeGQbgQFXwudCThREFbmOvODa9n/3J3+CZUk6GYM
-         80yWo/Xclr2mqRGOcmC6/18yBNBXArzpd5UpRlzI8CGjh0Vj9dzeZyC8r7tqIBXXVMF7
-         yRtIGVBF21ZByypqjLGaUlKLKa5XLOYqBb0/g6lLsUqP1P37gCzXQliA21HwPQfnGZxy
-         L1fsNTbc8Y9Rh7gaswpvOEqAWmtoF7hW4bS0qpMF9ZXZ4jIFd2II6Q9fn5pEVc00Ap4T
-         3oQw==
+        d=gmail.com; s=20230601; t=1721415058; x=1722019858; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RAEv+MGhyDj802ZNnZVlhgfJ7rM5mroogx7bWE9X/x4=;
+        b=fG05yJP0GBXcFl+lgsGDE0haIeiL+JIS43RKgzQt5ppejpU5r+qRYXj/ZyJT7G9A+G
+         m5vMN+LrmNsF1fS8so0EqTKIpgiXE9ZqUDdLNooKXgSxdb4JsMF2jDUjeFWvkbfXPQkd
+         7xCjpLLCc0z0PlYRmi10ZdSoD8DS7GBE+YQJ8vrxc55UHLf6miN4jy7mQjFtiJbKZU0l
+         Rb2nKETISWa7e+NE0kizCAz47brAbiX8ZnHFLMYHBf+5bZJ+Ao5X0T5V0p92hZN7JeuM
+         2PIM4p3Zr50PJ3jxG7ehdNfmcXLb/6d+xtdC72Vm5+n/d9EDsracFh2+QZkwgF/ozMKe
+         /rzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721414904; x=1722019704;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ukG7Uje2tjlYAEnwiivgrAC4JGlADujKudhRv8xZLpk=;
-        b=Z57L45jvu+RAVVM+5k5CSVOPOyAS/WFeRRMtzJ21EjCdw5cdeAzh8uUAUcUL8dFait
-         6lQo//NiPkuqCQ2yf982zdIqJ/Yagq5r87RNF/yNZ8f5p+6FpSrHN7Bl2ixYinkP6gyk
-         6ogzjth4E7Q07Wbap+g72ANJjjBZmzXh919OaLcLX4Gi5JjP8/OYht+2gE1Zc+N5N8i1
-         jxesycXi32VBRROtmA7I9QdWEW0dImA1Ta1x+U2Et3TO4vD9V7CKo6RBEDo5cgagHfjh
-         9AcxiyhlYnX4nQ22Oot07HlqhbbXai8ipUSWjPSDigBQMJYPk8/rg/A3gUBuQF4/d1oc
-         wKXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPo2wks1gAN1ar0Q8TSRnF0iB8wRLoKsSYM0lHLe5qNYNfGRq/jO60c2gKfzO2M+oqZTiRbU5IlsaiJzjwMsflcNF7J7CuKvZ4IYfI
-X-Gm-Message-State: AOJu0YzM7LRJd3TpP8zrT7gZwuropSFQJ7/ugDwPYIQ8mST1/rkAziXZ
-	mSn4s8+1kYjs6UNpb4QMb+VUXMiproQ1QihmFUwDRCxEgS2n/A/AegnQMF+f7T4=
-X-Google-Smtp-Source: AGHT+IFUGjfozpT7NMN/T1JZs9styGTo80iaJ/5feWyL+K6jzfZXUSsuGczjQ3mCsZm/CiHApe701Q==
-X-Received: by 2002:a05:6808:1b20:b0:3d2:1fdd:286f with SMTP id 5614622812f47-3dad1f7c310mr8527058b6e.49.1721414904156;
-        Fri, 19 Jul 2024 11:48:24 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:4528:a9e:1eaf:80c5])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3dae09cf1ffsm386578b6e.36.2024.07.19.11.48.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 11:48:23 -0700 (PDT)
-Date: Fri, 19 Jul 2024 13:48:21 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Sunyeal Hong <sunyeal.hong@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Sunyeal Hong <sunyeal.hong@samsung.com>
-Subject: Re: [PATCH v2 3/4] clk: samsung: clk-pll: Add support for pll_531x
-Message-ID: <a82340ab-a1db-4089-a804-acf9882782f4@suswa.mountain>
+        d=1e100.net; s=20230601; t=1721415058; x=1722019858;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RAEv+MGhyDj802ZNnZVlhgfJ7rM5mroogx7bWE9X/x4=;
+        b=jAOsCTNQCgyMgjB92VpKgXPT7C8SUWFpJubClmIxULfAW0D5SUz1PDIxI7W0BX4qsY
+         3AyY/93/6D3RplnTuHFeNYqbggVSYorh6HD4OJCBHqwiL7qcMQVSVH7OFir9fMf+FzbS
+         tAWHz9mogZExxD/jatAB5/wtw7G7EoaMUA7fgM762JT1+uX3deL0RYZKkO9e/MbdtfrR
+         rxYaXpKUmFyXbi1y/xfaJn1c90HbzHGz+I7VprUdbktoFF2tgTVfGT/9I3e3v0mW6856
+         TIrqcDSD8Vemn79OpeJOcEEHyXFEWxgWOI1s2/OJ13Ls3w/FugOzNr9CtzLm8nQBa7Vn
+         yDdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXhe0FMrwQgpHDbQxCtFHOtvE6krEWoGUO1HMeGxnPhN3nP3AQEyZsw8Zk5zbEQGcA+UY/ACqw4MnauDRdknZcFRIxVSODbiGseXT6+yDjPhEMbhkPph3oWFpDERcJETZM47A4KJR64LpaNOfw=
+X-Gm-Message-State: AOJu0Yyg4Txs/3jI7Hr0wcOlLf7gEQXVL3IooCErmxjSl49eX5LwtSUu
+	rPh4wC1N7jHwQzIpEyaOGH/jzOvwMpoI56Aibeysd0cWk4em7Zr5
+X-Google-Smtp-Source: AGHT+IGbL5E/MFEgPWn06cYckxokoAX5eI4e0D2YJL6S5zac/xTsDRmKykBaYUraPNM6HMn49Mj4Qg==
+X-Received: by 2002:a17:90a:fd0d:b0:2cb:5134:562a with SMTP id 98e67ed59e1d1-2cb5246a16bmr6746195a91.7.1721415057638;
+        Fri, 19 Jul 2024 11:50:57 -0700 (PDT)
+Received: from [192.168.179.119] ([131.107.174.134])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cb7750688esm3143801a91.37.2024.07.19.11.50.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Jul 2024 11:50:57 -0700 (PDT)
+Message-ID: <0bad8507-22f3-38d2-5724-0aa6433990cc@gmail.com>
+Date: Fri, 19 Jul 2024 11:50:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240707231331.3433340-4-sunyeal.hong@samsung.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v4 0/4] drm/panic: Add a QR code panic screen
+Content-Language: en-US
+To: Jocelyn Falempe <jfalempe@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
+ <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ Bjorn Roy Baron <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl
+ <aliceryhl@google.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
+ Danilo Krummrich <dakr@redhat.com>
+References: <20240717142644.1106060-1-jfalempe@redhat.com>
+From: Mitchell Levy <levymitchell0@gmail.com>
+In-Reply-To: <20240717142644.1106060-1-jfalempe@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Sunyeal,
+I am trying to test this patchset on my setup, but I cannot get it 
+working. In case it's relevant, I'm running under HyperV. Any 
+troubleshooting steps/suggestions would definitely be appreciated.
 
-kernel test robot noticed the following build warnings:
+Thanks!
+Mitchell
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Sunyeal-Hong/dt-bindings-clock-add-Exynos-Auto-v920-SoC-CMU-bindings/20240708-072150
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240707231331.3433340-4-sunyeal.hong%40samsung.com
-patch subject: [PATCH v2 3/4] clk: samsung: clk-pll: Add support for pll_531x
-config: arc-randconfig-r071-20240719 (https://download.01.org/0day-ci/archive/20240720/202407200028.5AADGhmj-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202407200028.5AADGhmj-lkp@intel.com/
-
-smatch warnings:
-drivers/clk/samsung/clk-pll.c:1292 samsung_pll531x_recalc_rate() warn: mask and shift to zero: expr='fdiv >> 31'
-
-vim +1292 drivers/clk/samsung/clk-pll.c
-
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1277  static unsigned long samsung_pll531x_recalc_rate(struct clk_hw *hw,
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1278  						 unsigned long parent_rate)
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1279  {
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1280  	struct samsung_clk_pll *pll = to_clk_pll(hw);
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1281  	u32 mdiv, pdiv, sdiv, pll_con0, pll_con8;
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1282  	s32 fdiv;
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1283  	u64 fout = parent_rate;
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1284  
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1285  	pll_con0 = readl_relaxed(pll->con_reg);
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1286  	pll_con8 = readl_relaxed(pll->con_reg + 20);
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1287  	mdiv = (pll_con0 >> PLL531X_MDIV_SHIFT) & PLL531X_MDIV_MASK;
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1288  	pdiv = (pll_con0 >> PLL531X_PDIV_SHIFT) & PLL531X_PDIV_MASK;
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1289  	sdiv = (pll_con0 >> PLL531X_SDIV_SHIFT) & PLL531X_SDIV_MASK;
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1290  	fdiv = (s32)(pll_con8 & PLL531X_FDIV_MASK);
-
-PLL531X_FDIV_MASK is 0xffff.  Was this supposed to be a cast to s16
-instead of s32?  Why is fdiv signed?  Shifting negative values is
-undefined in C.
-
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1291  
-5c788df7a25de7 Sunyeal Hong 2024-07-08 @1292  	if (fdiv >> 31)
-
-It's really unclear what's happening here.  If I had to guess, I'd say
-that this was testing to see if fdiv was negative.
-
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1293  		mdiv--;
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1294  
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1295  	fout *= ((u64)mdiv << 24) + (fdiv >> 8);
-                                                                             ^^^^^^^^^
-More shifting.
-
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1296  	do_div(fout, (pdiv << sdiv));
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1297  	fout >>= 24;
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1298  
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1299  	return (unsigned long)fout;
-5c788df7a25de7 Sunyeal Hong 2024-07-08  1300  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+On 7/17/2024 7:24 AM, Jocelyn Falempe wrote:
+> This series adds a new panic screen, with the kmsg data embedded in a QR code.
+>
+> The main advantage of QR code, is that you can copy/paste the debug data to a bug report.
+>
+> The QR code encoder is written in rust, and is very specific to drm panic.
+> The reason is that it is called in a panic handler, and thus can't allocate memory, or use locking.
+> The rust code uses a few rust core API, and provides only two C entry points.
+> There is no particular reason to do it in rust, I just wanted to learn rust, and see if it can work in the kernel.
+>
+> If you want to see what it looks like, I've put a few screenshots here:
+> https://github.com/kdj0c/panic_report/issues/1
+>
+> v2:
+>   * Rewrite the rust comments with Markdown (Alice Ryhl)
+>   * Mark drm_panic_qr_generate() as unsafe (Alice Ryhl)
+>   * Use CStr directly, and remove the call to as_str_unchecked()
+>     (Alice Ryhl)
+>   * Add a check for data_len <= data_size (Greg KH)
+>
+> v3:
+>   * Fix all rust comments (typo, punctuation) (Miguel Ojeda)
+>   * Change the wording of safety comments (Alice Ryhl)
+>   * Add a link to the javascript decoder in the Kconfig (Greg KH)
+>   * Fix data_size and tmp_size check in drm_panic_qr_generate()
+>   
+>   v4:
+>   * Fix the logic to find next line and skip the '\n' (Alice Ryhl)
+>   * Remove __LOG_PREFIX as it's not used (Alice Ryhl)
+>
+> Jocelyn Falempe (4):
+>    drm/panic: Add integer scaling to blit()
+>    drm/rect: Add drm_rect_overlap()
+>    drm/panic: Simplify logo handling
+>    drm/panic: Add a QR code panic screen
+>
+>   drivers/gpu/drm/Kconfig         |   31 +
+>   drivers/gpu/drm/Makefile        |    1 +
+>   drivers/gpu/drm/drm_drv.c       |    3 +
+>   drivers/gpu/drm/drm_panic.c     |  340 +++++++++--
+>   drivers/gpu/drm/drm_panic_qr.rs | 1003 +++++++++++++++++++++++++++++++
+>   include/drm/drm_panic.h         |    4 +
+>   include/drm/drm_rect.h          |   15 +
+>   7 files changed, 1358 insertions(+), 39 deletions(-)
+>   create mode 100644 drivers/gpu/drm/drm_panic_qr.rs
+>
+>
+> base-commit: e1a261ba599eec97e1c5c7760d5c3698fc24e6a6
 
