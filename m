@@ -1,48 +1,53 @@
-Return-Path: <linux-kernel+bounces-257329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3AB2937896
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:38:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2361993789F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:39:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F4FD282974
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:38:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2EFA1F220E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58EB142E60;
-	Fri, 19 Jul 2024 13:38:23 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C91143723;
+	Fri, 19 Jul 2024 13:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iK1P8Lv0"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA721E489;
-	Fri, 19 Jul 2024 13:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F2E13F458;
+	Fri, 19 Jul 2024 13:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721396303; cv=none; b=BPDvp8CD8hUnEnmGWEn95MLD0dqRlA4s16x1JW6mIDKjjkRhmwdgnvXWjIrHIM2FjeHfLm+bcqPgZwv5m752dxoLuPqaDTgZ14ME5JWEwOIQ7sZY2LTpapMRvE56Yyfvv6KB35z1ZRERWaKkfphxnR8PyS8nk+oeadc2O+CyBa0=
+	t=1721396331; cv=none; b=FAojtHEgMZvRBxVF1MT8zKU3c8fy9HPYXEwtjO33wi2jPgbLsRZWVL2tpiTqCv6fjsOA8m37PodpHdHLBD0qfSKPDu8aE6qnVTyvZ4iwv5kBnrFJTmlU3oMFwl/hebLTmFCOWKHwTfW1I8NWhiMrX2xzmPA8DUsFizLsX1R/a+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721396303; c=relaxed/simple;
-	bh=bq/Aaeq5qWGCzxVVlQSS2IYQdraah38J4uDOEBoV858=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=opt2We44LRBGSaLzJcX2sc/NhrkQJb0Vli0ucz3noxhBUz3ql8oNfaRxkULp5Mali8THAC6bFkeK3Tt3IIuoGIoZK8ZzFdCdIC4iMvrS9gv63Pyy3TMNGNAMBrYQvo4B2q047frutOtcTidWMmLZJ00eHjHmDtYqkes96670r34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav117.sakura.ne.jp (fsav117.sakura.ne.jp [27.133.134.244])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 46JDbmgg087373;
-	Fri, 19 Jul 2024 22:37:48 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav117.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav117.sakura.ne.jp);
- Fri, 19 Jul 2024 22:37:48 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav117.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 46JDbll1087368
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 19 Jul 2024 22:37:47 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <a11e31ab-6ffc-453f-ba6a-b7f6e512c55e@I-love.SAKURA.ne.jp>
-Date: Fri, 19 Jul 2024 22:37:47 +0900
+	s=arc-20240116; t=1721396331; c=relaxed/simple;
+	bh=hYm0+Gc/4820hUi3b/qjBW/E/nlsvhfdp460SR6KPfs=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=mtFj9gUB94c2RM1crXVg0VSe83iXyV+YIOCLIYe82MrdIClyHJDYm3HELuHQ9A3r04Jr+s+6TlVRVdOD61WQDXsXAHMTRLvkXpoaO4BoUcdUH6aB9O4HK3e3e4SAnhiJd83LtftOVP3O4FrJ9Wg9P6kMP1+FX6br/tNEm1cUDzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iK1P8Lv0; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1721396297; x=1722001097; i=markus.elfring@web.de;
+	bh=Nvp33d300YqX0N1vR8LPcXTZPzXdHadX2ynJNuJ4AJM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=iK1P8Lv0vRGyQhWaZp4lqZN01zBuTF+XKFjc1dH1fufRyCfWCUE2hUXQng5poy8T
+	 fvQohhNtYL3ZxscNonGHDW67pIaydWuZ7EA0zuBr+Ejsur39c2BJ/ErdSd4+GWH0j
+	 mkWK9q6uUzgZMtKmWRiWOBlOtm0kRs2mPpkKesAGLM/5I8c5IjiJBB4GgnUgf9q5m
+	 BakvAxS3rOnCHVKRZUBnC+AyIy0morloPiyrCursnwMg8SQO8t/4cS67P9uF7pnJC
+	 rbUkt9GgTdGK6oORV0o/mpacHZ61wCwrdGt2w9h2383X9+aogR1C8AklPtqUa176p
+	 KUzZnj8JNfuG9aa6cA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N2BI2-1sKNRX21ra-00yI1m; Fri, 19
+ Jul 2024 15:38:17 +0200
+Message-ID: <fcc9ebe9-e4a0-4395-b3f0-8c6d5fba56f2@web.de>
+Date: Fri, 19 Jul 2024 15:38:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,139 +55,136 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        linux-serial <linux-serial@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [PATCH] tty: tty_io: fix race between tty_fops and hung_up_tty_fops
+To: linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
+ Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+ Kan Liang <kan.liang@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>,
+ Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@inria.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] perf: Optimise format string selections in three functions
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:JRd9oP5K2pJo4gOj2zTHo1CxRuaY9GB517rk431Il04gVRO6ctk
+ JFNLg7HSapN8h1kSqwqwzZWN1uV1yPL4e/KlJeSa90qQMSpj7Ft8lc/d2YUQsto0Uv98Oab
+ ikTINY1n/GvYhkO278y/478UrM6JiYkVQsvLURNKrEjtXrszNHEXdbggtoSEZ88W8c7aC5+
+ peZnt+x8D9vj0eVrvXosg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:0vVQUbzDQ0Q=;9EiJVL6xEZcbkBJj0Vg2qvbTk5v
+ qjqZ/aUD6OQl3W27o94QWV+wvnm9WrI1nANnUM+hZV+VNn83FVzDjCBYZLzZM0lQFTHjypiws
+ bco7BrhbNd7e11lT28A8hLyVWhenaCIv2SkC1cAovxxSHIDdeRZU92DjBzWnybbOeLMgexiIn
+ KXM+SIVEdJR/1Ln+A6//JLeaIEw4BQvsjQnGMgNZsgvXfb8SpAx7HTlA+eKlNEXPiRL6UJJmT
+ Y30vzcxpQKOblwLCVkIlm47OoJhvCR1kfu9Q3OaC/sco5ttkd2bDuLEA6b6/MLfo4zHJaTRoD
+ Aowi5nTfqw5KNVoefwmps2qpp+NGNR3kn/V94x5cSbtRn61odsgU9yr3v2KUa8aZDOF3O/awg
+ ejSmBvuLapHFaNFgsgVqEDhYrEVMNVJQfuwqwsNkt+ABT94xt8uFyAHb8WqbBdL4yL3EEBhkT
+ zYSLhVIPXSgqockYzbXf17hZafLTzTAHDE8VagOWQyx/U6F8nUumHgeGzhMGbKBDOeESCaWPD
+ NqZr0PpeSN/iys9TGAliQ0ySnF9g+kVUxBRtzPL8wsGPztcczvmprMX/8loUDaajkLpnebTRK
+ dphwANuoVMCtlX15uF8hYU+QG1dYoZhDuoojL3g+KxitU3xo8+hDpMg9JiCdGUU/bppLzlUDR
+ 51VOffalgEpsVHe7vnq3K0HaV9sjprvXXi/9/birzPzBG9j2BRA/cD3aHovXxyjdpAkzq24yk
+ sPi07WE+O/INs20GX/YrT9022XvgGgWFBgtpe7f4ubb1uX3EgTVzkElvRwOuX8tkXP2NoGM7p
+ mwj19Elh7rkcIa3arq+4+a5g==
 
-syzbot is reporting data race between __tty_hangup() and __fput(), and
-Dmitry Vyukov mentioned that this race has possibility of NULL pointer
-dereference, for tty_fops implements e.g. splice_read callback whereas
-hung_up_tty_fops does not.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 19 Jul 2024 15:30:26 +0200
 
-  CPU0                                  CPU1
-  ----                                  ----
-  do_splice_read() {
-                                        __tty_hangup() {
-    // f_op->splice_read was copy_splice_read
-    if (unlikely(!in->f_op->splice_read))
-      return warn_unsupported(in, "read");
-                                          filp->f_op = &hung_up_tty_fops;
-    // f_op->splice_read is now NULL
-    return in->f_op->splice_read(in, ppos, pipe, len, flags);
-                                        }
-  }
+Adjust source code in three function implementations so that duplicate cod=
+e
+can be avoided for a few format string selections.
 
-Fix possibility of NULL pointer dereference by implementing missing
-callbacks, and suppress KCSAN messages by adding __data_racy qualifier
-to "struct file"->f_op .
+This issue was transformed by using the Coccinelle software.
 
-Reported-by: syzbot <syzbot+b7c3ba8cdc2f6cf83c21@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=b7c3ba8cdc2f6cf83c21
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Marco Elver <elver@google.com>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
-This patch has been tested using linux-next tree via my tomoyo tree since 20240611,
-and there was no response on
-  [fs] Are you OK with updating "struct file"->f_op value dynamically?
-at https://lkml.kernel.org/r/b221d2cf-7dc0-4624-a040-85c131ed72a1@I-love.SAKURA.ne.jp .
-Thus, I guess we can go with this approach.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ tools/perf/builtin-script.c | 29 +++++++++++++----------------
+ tools/perf/ui/stdio/hist.c  | 11 +++--------
+ 2 files changed, 16 insertions(+), 24 deletions(-)
 
- drivers/tty/tty_io.c | 34 ++++++++++++++++++++++++++++++++++
- include/linux/fs.h   |  2 +-
- 2 files changed, 35 insertions(+), 1 deletion(-)
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index c16224b1fef3..ec6807f00c54 100644
+=2D-- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -796,16 +796,16 @@ static int perf_sample__fprintf_start(struct perf_sc=
+ript *script,
+ 	if (PRINT_FIELD(VCPU) && sample->machine_pid)
+ 		printed +=3D fprintf(fp, "VCPU:%03d ", sample->vcpu);
 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index 407b0d87b7c1..bc9aebcb873f 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -430,6 +430,24 @@ static ssize_t hung_up_tty_write(struct kiocb *iocb, struct iov_iter *from)
- 	return -EIO;
- }
- 
-+static ssize_t hung_up_copy_splice_read(struct file *in, loff_t *ppos,
-+					struct pipe_inode_info *pipe,
-+					size_t len, unsigned int flags)
-+{
-+	return -EINVAL;
-+}
+-	if (PRINT_FIELD(COMM)) {
+-		const char *comm =3D thread ? thread__comm_str(thread) : ":-1";
+-
+-		if (latency_format)
+-			printed +=3D fprintf(fp, "%8.8s ", comm);
+-		else if (PRINT_FIELD(IP) && evsel__has_callchain(evsel) && symbol_conf.=
+use_callchain)
+-			printed +=3D fprintf(fp, "%s ", comm);
+-		else
+-			printed +=3D fprintf(fp, "%16s ", comm);
+-	}
++	if (PRINT_FIELD(COMM))
++		printed +=3D fprintf(fp,
++				   (latency_format
++				   ? "%8.8s "
++				   : ((PRINT_FIELD(IP) &&
++				     evsel__has_callchain(evsel) &&
++				     symbol_conf.use_callchain)
++				     ? "%s "
++				     : "%16s ")),
++				   (thread ? thread__comm_str(thread) : ":-1"));
+
+ 	if (PRINT_FIELD(PID) && PRINT_FIELD(TID))
+ 		printed +=3D fprintf(fp, "%7d/%-7d ", sample->pid, sample->tid);
+@@ -814,12 +814,9 @@ static int perf_sample__fprintf_start(struct perf_scr=
+ipt *script,
+ 	else if (PRINT_FIELD(TID))
+ 		printed +=3D fprintf(fp, "%7d ", sample->tid);
+
+-	if (PRINT_FIELD(CPU)) {
+-		if (latency_format)
+-			printed +=3D fprintf(fp, "%3d ", sample->cpu);
+-		else
+-			printed +=3D fprintf(fp, "[%03d] ", sample->cpu);
+-	}
++	if (PRINT_FIELD(CPU))
++		printed +=3D fprintf(fp, (latency_format ? "%3d " : "[%03d] "),
++				   sample->cpu);
+
+ 	if (PRINT_FIELD(MISC)) {
+ 		int ret =3D 0;
+diff --git a/tools/perf/ui/stdio/hist.c b/tools/perf/ui/stdio/hist.c
+index 9372e8904d22..899019e8aab8 100644
+=2D-- a/tools/perf/ui/stdio/hist.c
++++ b/tools/perf/ui/stdio/hist.c
+@@ -37,10 +37,7 @@ static size_t ipchain__fprintf_graph_line(FILE *fp, int=
+ depth, int depth_mask,
+ 	size_t ret =3D callchain__fprintf_left_margin(fp, left_margin);
+
+ 	for (i =3D 0; i < depth; i++)
+-		if (depth_mask & (1 << i))
+-			ret +=3D fprintf(fp, "|          ");
+-		else
+-			ret +=3D fprintf(fp, "           ");
++		ret +=3D fprintf(fp, ((depth_mask & (1 << i)) ? "|          " : "      =
+     "));
+
+ 	ret +=3D fprintf(fp, "\n");
+
+@@ -60,10 +57,8 @@ static size_t ipchain__fprintf_graph(FILE *fp, struct c=
+allchain_node *node,
+
+ 	ret +=3D callchain__fprintf_left_margin(fp, left_margin);
+ 	for (i =3D 0; i < depth; i++) {
+-		if (depth_mask & (1 << i))
+-			ret +=3D fprintf(fp, "|");
+-		else
+-			ret +=3D fprintf(fp, " ");
++		ret +=3D fprintf(fp, ((depth_mask & (1 << i)) ? "|" : " "));
 +
-+static ssize_t hung_up_iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
-+					      loff_t *ppos, size_t len, unsigned int flags)
-+{
-+	return -EINVAL;
-+}
-+
-+static int hung_up_no_open(struct inode *inode, struct file *file)
-+{
-+	return -ENXIO;
-+}
-+
- /* No kernel lock held - none needed ;) */
- static __poll_t hung_up_tty_poll(struct file *filp, poll_table *wait)
- {
-@@ -462,6 +480,12 @@ static void tty_show_fdinfo(struct seq_file *m, struct file *file)
- }
- 
- static const struct file_operations tty_fops = {
-+	/*
-+	 * WARNING: You must implement all callbacks defined in tty_fops in
-+	 * hung_up_tty_fops, for tty_fops and hung_up_tty_fops are toggled
-+	 * after "struct file" is published. Failure to synchronize has a risk
-+	 * of NULL pointer dereference bug.
-+	 */
- 	.llseek		= no_llseek,
- 	.read_iter	= tty_read,
- 	.write_iter	= tty_write,
-@@ -491,14 +515,24 @@ static const struct file_operations console_fops = {
- };
- 
- static const struct file_operations hung_up_tty_fops = {
-+	/*
-+	 * WARNING: You must implement all callbacks defined in hung_up_tty_fops
-+	 * in tty_fops, for tty_fops and hung_up_tty_fops are toggled after
-+	 * "struct file" is published. Failure to synchronize has a risk of
-+	 * NULL pointer dereference bug.
-+	 */
- 	.llseek		= no_llseek,
- 	.read_iter	= hung_up_tty_read,
- 	.write_iter	= hung_up_tty_write,
-+	.splice_read    = hung_up_copy_splice_read,
-+	.splice_write   = hung_up_iter_file_splice_write,
- 	.poll		= hung_up_tty_poll,
- 	.unlocked_ioctl	= hung_up_tty_ioctl,
- 	.compat_ioctl	= hung_up_tty_compat_ioctl,
-+	.open           = hung_up_no_open,
- 	.release	= tty_release,
- 	.fasync		= hung_up_tty_fasync,
-+	.show_fdinfo    = tty_show_fdinfo,
- };
- 
- static DEFINE_SPINLOCK(redirect_lock);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 0283cf366c2a..636bcc59a3f5 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1008,7 +1008,7 @@ struct file {
- 	struct file_ra_state	f_ra;
- 	struct path		f_path;
- 	struct inode		*f_inode;	/* cached value */
--	const struct file_operations	*f_op;
-+	const struct file_operations	*__data_racy f_op;
- 
- 	u64			f_version;
- #ifdef CONFIG_SECURITY
--- 
-2.43.5
+ 		if (!period && i =3D=3D depth - 1) {
+ 			ret +=3D fprintf(fp, "--");
+ 			ret +=3D callchain_node__fprintf_value(node, fp, total_samples);
+=2D-
+2.45.2
 
 
