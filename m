@@ -1,313 +1,221 @@
-Return-Path: <linux-kernel+bounces-257577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79982937C19
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:09:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1810937C10
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:08:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E3951C21969
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:09:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10BE41C218E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD173148FE1;
-	Fri, 19 Jul 2024 18:07:46 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA2301487E1;
+	Fri, 19 Jul 2024 18:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fezrGU08"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515421487CE;
-	Fri, 19 Jul 2024 18:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721412466; cv=none; b=CeVJcK2ulX6saykFgzi4fh0x4AXlVFow2ua7TAH9UXp8kIRClTR5jN33HFRRgq8QgcbmI8Epv9NpeZnVc+arzVTYJbiuotr81y1BkSFgiE1HnR9SbJYJEkqbFBsz49wLaaKmWjDlnwBWWBfIGQd9MkDDxNIgyTv3svOlVu5PdLM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721412466; c=relaxed/simple;
-	bh=VYYO9yL9Y+3oobIhLlnYMHDDAC1M+HqX2gKIZzK/63E=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jbzsggS34Hhn6sCV6uN8eh9y8F/XhMBkDJyTCi124wU7ionq+PykMgru/KqJMfE6/536KCzMV+SX5RB7lrZbbm+2pWswuvXvQFGOYqa1NqwL52LVoWtYScXJANQjXVl3NFVV0wZzHKzioQSZN+z/KIzAn62cCg8eEy8ZIUoD0fY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WQczd6dCfz6J9r5;
-	Sat, 20 Jul 2024 02:05:49 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9EC131408FE;
-	Sat, 20 Jul 2024 02:07:14 +0800 (CST)
-Received: from localhost (10.48.157.16) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 19 Jul
- 2024 19:07:13 +0100
-Date: Fri, 19 Jul 2024 19:07:12 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Mike Rapoport <rppt@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, Alexander Gordeev
-	<agordeev@linux.ibm.com>, Andreas Larsson <andreas@gaisler.com>, "Andrew
- Morton" <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, "Borislav
- Petkov" <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>, Christophe
- Leroy <christophe.leroy@csgroup.eu>, Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, David Hildenbrand
-	<david@redhat.com>, "David S. Miller" <davem@davemloft.net>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Heiko Carstens
-	<hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar
-	<mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, "John Paul Adrian
- Glaubitz" <glaubitz@physik.fu-berlin.de>, Michael Ellerman
-	<mpe@ellerman.id.au>, Palmer Dabbelt <palmer@dabbelt.com>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, "Thomas
- Bogendoerfer" <tsbogend@alpha.franken.de>, Thomas Gleixner
-	<tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>, Will Deacon
-	<will@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<loongarch@lists.linux.dev>, <linux-mips@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <linux-riscv@lists.infradead.org>,
-	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>,
-	<sparclinux@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-	<linux-mm@kvack.org>, <x86@kernel.org>
-Subject: Re: [PATCH 15/17] mm: make numa_memblks more self-contained
-Message-ID: <20240719190712.00001307@Huawei.com>
-In-Reply-To: <20240716111346.3676969-16-rppt@kernel.org>
-References: <20240716111346.3676969-1-rppt@kernel.org>
-	<20240716111346.3676969-16-rppt@kernel.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767941487C1
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 18:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721412463; cv=fail; b=Lb5PFhVb7daDVlsHEe1D3doSHf9Dg9usOpiB9oCqrmBhu2tY3ehxehkjfbq8QB2Hf6Yp748bH91BPvrYp3gPf/viTszU1VtbWgx0DqTabZ7Rrw+9ruJ2eQ7KsuSvYTu/bpLNvJ93zmHLEuiG8V6xcRvlxvm0xsoG2j3pnJMGF+g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721412463; c=relaxed/simple;
+	bh=v0mEYwUd2DR/MrI1ZOjVLV4QY5t791MekodYI1EvJbE=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Fs/5XQunSksWv6oKgmTGagGkf5FVf3MonBYtduPDKXsRt6kSzHFnwyhtTNpNc03yhqcniwjYow0cRleWR95FMU/ip+ftNRiWvlAlCkWiGLmCP0dlAnhwT4UV21eB3FSaAhdmwmhDu/5ZLiEJq7viPilBDDX9oHaj1WFm+yW9NPk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fezrGU08; arc=fail smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721412461; x=1752948461;
+  h=from:to:subject:date:message-id:
+   content-transfer-encoding:mime-version;
+  bh=v0mEYwUd2DR/MrI1ZOjVLV4QY5t791MekodYI1EvJbE=;
+  b=fezrGU08Ub+FTYqHfjTLxsPkJNY+41JXeRhlxxWUGD262KGT9tTEc3yG
+   0er1yPk7PvO84rScOOfiu8tpQ3nPnyFAMBQOjGJsCaXV4RL4SsjG6EOnJ
+   nK9Q8Jp/W3L9jxUUbnybq4eqwaus0BbEbHqCETmL5dVR9q9S0wyLccFLS
+   IDqLT3anBjfXnyxpep9C5/ZaqE+RtgA9d1e7GJCUTyCe2dA1ORXqH0i8c
+   SSshao4VilLPb7Nk6q9YS8A5w7nTnvJujVLNkvPLjxamEq6bqItc0d8n3
+   LweI0TW67ftvefyPt2ioUviZOibsgl807ZTY3SLkBP+uc/4AUyfgU+JaQ
+   g==;
+X-CSE-ConnectionGUID: h9XziSwlTk+M6tPxcBkmGA==
+X-CSE-MsgGUID: O6R4Fr+4Te6lFjiguQ5Tmg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11138"; a="29703518"
+X-IronPort-AV: E=Sophos;i="6.09,221,1716274800"; 
+   d="scan'208";a="29703518"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2024 11:07:32 -0700
+X-CSE-ConnectionGUID: Z8vaq9eLQn2mI6q7FlrHWg==
+X-CSE-MsgGUID: FSQ/i+eURSqlDgRu3QnsuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,221,1716274800"; 
+   d="scan'208";a="51092188"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 19 Jul 2024 11:07:32 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 19 Jul 2024 11:07:31 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 19 Jul 2024 11:07:31 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 19 Jul 2024 11:07:31 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.41) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 19 Jul 2024 11:07:30 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZR/GixCU562k8S0OkN+/ri25p668Py3wr41QEdYYb5u62kFoVqvMGWytBjKKcxmfV2yVilTDLA1Agcs+0oK2SFMlIegow+eH281eX4ZqdQkaFy7QhKpokACNzM+HvPQXLjZGPjui17AS3qcvHyCjQT85BVJfSSMVy4ppCUaaF4L2jeR2l1oDuEnMycDkM5oIW9xeDMCm4sQ2ThJVfESE5R8NE8Q7aRZIsT8pcjuDofmwxVgxVC4p59HBeUmUwDOi9YoIZk+MtdMA2+qnteVEN3E0QOEsjm79YU5uSQA0odJz0CkkimC5zqsHL3gyMUWxJ3zoG+I4yxKVz7LSTKLeGg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fLg+okIL06DzEz5FTkykO+hT4NRO1/PwV880QW8VbZA=;
+ b=EmDbe6cdH5of8gR+0eux/SQrv510nz4I38ImM2d3yuZB+Pn6LuJuiSHvkJvqoxmrMqhS5g+j1BBPRY9aBvbU7VZsj0RFaUy4nhlq3n7EUa3ms5/x7fg6DgPS2pK1jnQLlsvQlrJftZfv70aTd0JDEwWBlMTqqCWWQl9ro7Xz60o93lgSIC3koVSzhQ1LJRMHpPatsmFJc2WVzObTLaj8VHTKbdIUJYTfH8JD4u/PiejNGSPoXx90POwFACKap7Jq4EK9VvY6B9QwjsmReMFNhTbzJQ4V9Vs8Q/0Xx2wg+OHukwnI0ZaHr2kqZoa87+DEoCNWZj1ARJwCellPBruuzg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from PH7PR11MB6523.namprd11.prod.outlook.com (2603:10b6:510:211::10)
+ by SJ0PR11MB5152.namprd11.prod.outlook.com (2603:10b6:a03:2ae::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Fri, 19 Jul
+ 2024 18:07:28 +0000
+Received: from PH7PR11MB6523.namprd11.prod.outlook.com
+ ([fe80::fffc:36ac:37ac:1547]) by PH7PR11MB6523.namprd11.prod.outlook.com
+ ([fe80::fffc:36ac:37ac:1547%5]) with mapi id 15.20.7784.016; Fri, 19 Jul 2024
+ 18:07:28 +0000
+From: "Preble, Adam C" <adam.c.preble@intel.com>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: What is an objtool recipe to solve the unpatched kernel thunk
+ warnings in out-of-tree modules?
+Thread-Topic: What is an objtool recipe to solve the unpatched kernel thunk
+ warnings in out-of-tree modules?
+Thread-Index: AdraBPI7Dz/1rUhsSB2UPBYKCwz34g==
+Date: Fri, 19 Jul 2024 18:07:28 +0000
+Message-ID: <PH7PR11MB6523524C9B34ACA312FB0148A9AD2@PH7PR11MB6523.namprd11.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH7PR11MB6523:EE_|SJ0PR11MB5152:EE_
+x-ms-office365-filtering-correlation-id: 0d1b58d1-63b8-4db1-cefa-08dca81da6c8
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?rXzFFvHwpYYLcRPZTEjL3+fdXhJgU8Uc9ktCKf22m0c53GDDGKMDw1ZJgLb7?=
+ =?us-ascii?Q?hJQ7eImoczCCUmugz9VH4xbrQvjnQFhBDEaXQm7ApymWYsLtYH6C0HCdGENQ?=
+ =?us-ascii?Q?e5UYQD0lyOZ4SZRN+XhQLSwrbfjbbGoYxpPKn9sPdf+wSeSVesD54578UIte?=
+ =?us-ascii?Q?ILHewzLZ24/repy6PBCyTNTehlXmgK3lyy9NRY46KeNVBcrPsz/Vr1Esjj2w?=
+ =?us-ascii?Q?gRvkQ19qwwbSt+fU5UnHJjAM3YxgyWjPSd+TB6UJw0ZZpuIbp9q4R7b/n1n7?=
+ =?us-ascii?Q?OECZHL8o5dZJLme4pHiGYtYEw4p46EI9yaU179w2SHKhcSR04lGb2z/9zn+5?=
+ =?us-ascii?Q?h31It0d/on3I3Oj4aQs3AiACEgFxNOwzeNSFVtpws6j1oqdryUtVjsO2f7Ma?=
+ =?us-ascii?Q?t9UNjVusi8PXZQM+26o6XS9qMalbW4ysWrBkdSKnZrK+VfInIJfU2GIPZxpp?=
+ =?us-ascii?Q?po/IP4OZCLJbkD5tqxX0Uyy6M2Aal+hjMeR6o16ua5NhrUTr05EFpIXZaLz6?=
+ =?us-ascii?Q?ZAelGCVd2OgKqNEGAwKAwKi5oMwpjkr8yYInP9tc/jXRksr/mUfjieQNlmFb?=
+ =?us-ascii?Q?uPNshLw4ez/cttpl7nX+mTzpWz40KwNhRQSVp0BD/ht6PDAv8ddwKeJOCSk1?=
+ =?us-ascii?Q?ioV3va8DbZBvc1KfTBq5vyhj1YTodfnaa8oRmps9/oLunGnBekmE3NhRBiQQ?=
+ =?us-ascii?Q?2O2kfplgUYDXeYzpM0iusoDgZbpRx30tJDg0S3fc23xGm/3cXjDZQBGzVRFU?=
+ =?us-ascii?Q?KYyRkLn6xbYdcfM9wQb7hmeDhKZZdHGl9zvr0k1JtRGVkefZkhveXEpuTNwZ?=
+ =?us-ascii?Q?G5A39N9SPaDEwfBKalUsnjSUnShqDVHcJKk3glZjYhk6iDTx9M88uPhwScBQ?=
+ =?us-ascii?Q?JqcZlqn35/pSU0OiX4HFX0M/W4CK1iRVAPF3BzZS2djk8NAbrFjq+cslJ6PT?=
+ =?us-ascii?Q?aF8/yG8X62F832W1L+jbo/Cbui3moacG/SSz/Jgd2VFZ58VcN1ocsazG2joQ?=
+ =?us-ascii?Q?60Id25OKbIbVD1iONw8Hslq6k/Kp1Bi56ljL294fzjdomeY9YHhf/Q/skTPL?=
+ =?us-ascii?Q?RS4zrbfiEqHYWENf8b1r0peZaYlOOD1pLyB/jjuiswOPv/2pBW4Up1ov0Idv?=
+ =?us-ascii?Q?yq+gV23gtcf1UdQx1MAmyL5c0c/62pcxlOUkv8epPf+Kjl5l8UolWj0y17AT?=
+ =?us-ascii?Q?jtOVz5t63r9b4/etglFhbiL12sx/HrCTolsP+y/X+FqlpYxsO7NwxjqczaP3?=
+ =?us-ascii?Q?+VnzXggqZ+P0kPWSW7SQvY54mZBf8rfknuN1NERM2F5i6MFJsSX/kjW8HvOS?=
+ =?us-ascii?Q?wsKeDZBRSyFWMC3NP5RyYqQUyZRck5Rp/FlGkd+DVhh92EimsphlRR+FqLdx?=
+ =?us-ascii?Q?/WXWkef+X/zyxiPV4pNe4JOvepLsemgMwS3ixtqSwv4dX+4rnQ=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6523.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?j5sNxsgApnR1DewpBw4jq++TG1HS3aBLwaYfcgpqUU48k8fT/zWSnUl0WMtb?=
+ =?us-ascii?Q?x0A7ReWZG6H5FLrTJ4oe9Z1QNHKz3WOIOHb3a9ZnZMBDcCLAHsNNpev717Vf?=
+ =?us-ascii?Q?kXkL4Hn9w56h5TDsTIj7qZ5PfcY974kBLwyoTGxcvAZaeK+pWIAqiQntdy0w?=
+ =?us-ascii?Q?mjoEedZCTTIcPf5IXX7j2y0NT3RPLLCaGGFnr5ijWU6+1drEj0XNNKjJa6Y7?=
+ =?us-ascii?Q?C2ng55PVnvK8bbQjibhG9rQN8PKsS25H5vCOL0f96b6WBs5wbNspfmcD4Cz/?=
+ =?us-ascii?Q?tQpcnrU2OuhIY6AqbrTc89yUYMXvFclhzEVjEytX3nLQAmY2K0peKOHyXisU?=
+ =?us-ascii?Q?3ekOarW8K1taBOeZETI6fCRsDS5D2VhDRHBAYPouif4MUoPKDA1T1oIRjVe1?=
+ =?us-ascii?Q?CGlyDFx2nxy2WXVDyE31F0cnLe1RvBu+TylbadpXA3hj7pVBk58LJx1Mt99H?=
+ =?us-ascii?Q?QozjA4tuhl4U042DhzWZ+SHMK8xjCxQOpVOuxaJ6j/VnjQArtiWXINf5DCGF?=
+ =?us-ascii?Q?SyIYmpz98pe+2zrsLEEuIDuiuSdsLtiuBcmg38i7ZpTNnWb5IxZ0lkSaDYKv?=
+ =?us-ascii?Q?RJ1WWzq+lNi90hhJjsWb0sHzKufZFfTcXv4yPgkWJaDHygq0icBgkB8JMr5W?=
+ =?us-ascii?Q?SCMXoMpkgenloKPbEdyPSzI5QH+hqfzo6sTtD/RFFjvpbu08oP2pPMUhgsId?=
+ =?us-ascii?Q?BFu/pAtfEUJ1SUDBWpLZhkbpJsnCGMLIeZJ6b8gSq1aN9B1G2hx9rf7uWRKd?=
+ =?us-ascii?Q?xm9jsAedNFUa7E3TmSV6CMO6xs8bEkFBYhNu4hf6Ya4OZlofs9yDI4A5zkcR?=
+ =?us-ascii?Q?yEu7+1zKcZPpUytx0r+ibPBKYGIuOTPHgGl3ZWwek6fs3qdFn8j30CcJFyZP?=
+ =?us-ascii?Q?6Zm370EZmV9x9PwZ/Ft/qv27btnEQVjH24eZRlaw/H33LAO5ViDFXPrhAc5x?=
+ =?us-ascii?Q?8z75m/YvsIIBMDs7c1No+SvuHv5Y/JcZbIvJM1JrJDIE7Xw9+2EOtYxVuHZV?=
+ =?us-ascii?Q?5ePeT0GHyJADkKBfP0QCgSF2p7ndkKHuWDT8N+asnyGj7eIUTU+YIpJ/TCFa?=
+ =?us-ascii?Q?t49E72WF8Ds1dXEmapTSdOrvoFqeVgTO5LsWCbCJp30j/P1rVt/Nl4NSJTde?=
+ =?us-ascii?Q?Rb8EzDABmvfZ06IFwqLGZCVPnYl/UyaHrZBn+s81nswtY2qfEbQb+rJda+BF?=
+ =?us-ascii?Q?OSzB+5XRoz3yjozhQRQPHgcG7QH0aooMsrYfjnfJPbMtN7QILo4cYFTvIzmx?=
+ =?us-ascii?Q?lByP0vjIdtlK9/1ZX/RHUdKMCBw2xdJVI/UdujpzZT5VW/GDsZObpvTq4bax?=
+ =?us-ascii?Q?1S13dcV5yYfpiwq5wUCMwEQYSpGJ+XcQfdqiQ5f9R6hVoALGzpssjJ2A4Xib?=
+ =?us-ascii?Q?/Qit3l9m8xaAtmccQCFn0vXEu+kHhZIs3fabv6W9pYr5+fYQC66VVEYiUi3o?=
+ =?us-ascii?Q?w55z0xWM7MWZhfeXwcIG7WKKxYjopo8xuxZiR/hXg50zqmfhabxls0O1O49C?=
+ =?us-ascii?Q?AlYcp2mfMurdXPEq607TPkaKNAsgBGI3qNWs/GtU5ZvIJJn+bwSDZ4xSMVWG?=
+ =?us-ascii?Q?S1YuluAcIzLnPS58xPh2mHaJdCPXCVyW28xC8tPB?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6523.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d1b58d1-63b8-4db1-cefa-08dca81da6c8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jul 2024 18:07:28.5008
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ghCQ84ERknUoPgy13R1MxkSSgIEtqI5m3Np59Vo7nIIOM6aPYKs4uJNqBRSExtaopPe+eLjTX3hubkeqo0PxDQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5152
+X-OriginatorOrg: intel.com
 
-On Tue, 16 Jul 2024 14:13:44 +0300
-Mike Rapoport <rppt@kernel.org> wrote:
+We've seen some of those "Unpatched return thunk in use. This should not ha=
+ppen!" warnings in some out-of-tree code and I'm trying to figure out how t=
+o modify the binaries instead of just disabling CONFIG_MITIGATIONS_RETHUNK.=
+ I've looked at a few recent commits going back to April where some fixes w=
+ere done in-tree and followed some of the QEMU conversations over the same =
+warning. It sounds like I need to look at how objtool is munging my generat=
+ed code.
 
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> 
-> Introduce numa_memblks_init() and move some code around to avoid several
-> global variables in numa_memblks.
+A common fix I've seen was to strip OBJECT_FILES_NON_STANDARD_[some object =
+here] clauses from Makefiles. As I understand it, their existence suppresse=
+s objtool from running on the files. I could set OBJECT_FILES_NON_STANDARD =
+to 'y' and just completely shut off objtool, but I want the opposite. I did=
+n't have any of those in the first place. For giggles, I tried setting it t=
+o 'n' explicitly, but that didn't help. I'm not surprised since I expect th=
+at's the default.
 
-Hi Mike,
+Failing having anything else I've explicitly done, I figure I should just p=
+aste what objtool currently is doing with each module:
 
-Adding the effectively always on memblock_force_top_down
-deserves a comment on why. I assume because you are going to do
-something with it later? 
+./tools/objtool/objtool --hacks=3Djump_label --hacks=3Dnoinstr --hacks=3Dsk=
+ylake --retpoline --rethunk --stackval --static-call --uaccess --prefix=3D1=
+6   --module [path to .o here]
 
-There also seems to be more going on in here such as the change to
-get_pfn_range_for_nid()  Perhaps break this up so each
-change can have an explanation. 
+Does anything look amiss?
 
+There could be an X-instead-of-Y here with my objtool fascination. Other th=
+reads seemed to steer this way. I'd rather be specific, find out that was a=
+ misunderstanding, and perish that thought first instead of going a few rou=
+nds over a more general approach where objtool nags at me.
 
-> 
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> ---
->  arch/x86/mm/numa.c           | 53 ++++---------------------
->  include/linux/numa_memblks.h |  9 +----
->  mm/numa_memblks.c            | 77 +++++++++++++++++++++++++++---------
->  3 files changed, 68 insertions(+), 71 deletions(-)
-> 
-> diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
-> index 3848e68d771a..16bc703c9272 100644
-> --- a/arch/x86/mm/numa.c
-> +++ b/arch/x86/mm/numa.c
-> @@ -115,30 +115,19 @@ void __init setup_node_to_cpumask_map(void)
->  	pr_debug("Node to cpumask map for %u nodes\n", nr_node_ids);
->  }
->  
-> -static int __init numa_register_memblks(struct numa_meminfo *mi)
-> +static int __init numa_register_nodes(void)
->  {
-> -	int i, nid, err;
-> -
-> -	err = numa_register_meminfo(mi);
-> -	if (err)
-> -		return err;
-> +	int nid;
->  
->  	if (!memblock_validate_numa_coverage(SZ_1M))
->  		return -EINVAL;
->  
->  	/* Finally register nodes. */
->  	for_each_node_mask(nid, node_possible_map) {
-> -		u64 start = PFN_PHYS(max_pfn);
-> -		u64 end = 0;
-> -
-> -		for (i = 0; i < mi->nr_blks; i++) {
-> -			if (nid != mi->blk[i].nid)
-> -				continue;
-> -			start = min(mi->blk[i].start, start);
-> -			end = max(mi->blk[i].end, end);
-> -		}
-> +		unsigned long start_pfn, end_pfn;
->  
-> -		if (start >= end)
-> +		get_pfn_range_for_nid(nid, &start_pfn, &end_pfn);
-
-It's not immediately obvious to me that this code is equivalent so I'd
-prefer it in a separate patch with some description of why
-it is a valid change.
-
-> +		if (start_pfn >= end_pfn)
->  			continue;
->  
->  		alloc_node_data(nid);
-> @@ -178,39 +167,11 @@ static int __init numa_init(int (*init_func)(void))
->  	for (i = 0; i < MAX_LOCAL_APIC; i++)
->  		set_apicid_to_node(i, NUMA_NO_NODE);
->  
-> -	nodes_clear(numa_nodes_parsed);
-> -	nodes_clear(node_possible_map);
-> -	nodes_clear(node_online_map);
-> -	memset(&numa_meminfo, 0, sizeof(numa_meminfo));
-> -	WARN_ON(memblock_set_node(0, ULLONG_MAX, &memblock.memory,
-> -				  NUMA_NO_NODE));
-> -	WARN_ON(memblock_set_node(0, ULLONG_MAX, &memblock.reserved,
-> -				  NUMA_NO_NODE));
-> -	/* In case that parsing SRAT failed. */
-> -	WARN_ON(memblock_clear_hotplug(0, ULLONG_MAX));
-> -	numa_reset_distance();
-> -
-> -	ret = init_func();
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	/*
-> -	 * We reset memblock back to the top-down direction
-> -	 * here because if we configured ACPI_NUMA, we have
-> -	 * parsed SRAT in init_func(). It is ok to have the
-> -	 * reset here even if we did't configure ACPI_NUMA
-> -	 * or acpi numa init fails and fallbacks to dummy
-> -	 * numa init.
-> -	 */
-> -	memblock_set_bottom_up(false);
-> -
-> -	ret = numa_cleanup_meminfo(&numa_meminfo);
-> +	ret = numa_memblks_init(init_func, /* memblock_force_top_down */ true);
-The comment in parameter list seems unnecessary.
-Maybe add a comment above the call instead if need to call that out?
-
->  	if (ret < 0)
->  		return ret;
->  
-> -	numa_emulation(&numa_meminfo, numa_distance_cnt);
-> -
-> -	ret = numa_register_memblks(&numa_meminfo);
-> +	ret = numa_register_nodes();
->  	if (ret < 0)
->  		return ret;
->  
-
-> diff --git a/mm/numa_memblks.c b/mm/numa_memblks.c
-> index e0039549aaac..640f3a3ce0ee 100644
-> --- a/mm/numa_memblks.c
-> +++ b/mm/numa_memblks.c
-> @@ -7,13 +7,27 @@
->  #include <linux/numa.h>
->  #include <linux/numa_memblks.h>
->  
-
-> +/*
-> + * Set nodes, which have memory in @mi, in *@nodemask.
-> + */
-> +static void __init numa_nodemask_from_meminfo(nodemask_t *nodemask,
-> +					      const struct numa_meminfo *mi)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(mi->blk); i++)
-> +		if (mi->blk[i].start != mi->blk[i].end &&
-> +		    mi->blk[i].nid != NUMA_NO_NODE)
-> +			node_set(mi->blk[i].nid, *nodemask);
-> +}
-
-The code move doesn't have an obvious purpose. Maybe call that
-out in the patch description if it is needed for a future patch.
-Or do it in two goes so first just adds the static, 2nd shuffles
-the code.
-
->  
->  /**
->   * numa_reset_distance - Reset NUMA distance table
-> @@ -287,20 +301,6 @@ int __init numa_cleanup_meminfo(struct numa_meminfo *mi)
->  	return 0;
->  }
->  
-> -/*
-> - * Set nodes, which have memory in @mi, in *@nodemask.
-> - */
-> -void __init numa_nodemask_from_meminfo(nodemask_t *nodemask,
-> -				       const struct numa_meminfo *mi)
-> -{
-> -	int i;
-> -
-> -	for (i = 0; i < ARRAY_SIZE(mi->blk); i++)
-> -		if (mi->blk[i].start != mi->blk[i].end &&
-> -		    mi->blk[i].nid != NUMA_NO_NODE)
-> -			node_set(mi->blk[i].nid, *nodemask);
-> -}
-> -
->  /*
->   * Mark all currently memblock-reserved physical memory (which covers the
->   * kernel's own memory ranges) as hot-unswappable.
-> @@ -368,7 +368,7 @@ static void __init numa_clear_kernel_node_hotplug(void)
->  	}
->  }
->  
-> -int __init numa_register_meminfo(struct numa_meminfo *mi)
-> +static int __init numa_register_meminfo(struct numa_meminfo *mi)
->  {
->  	int i;
->  
-> @@ -412,6 +412,47 @@ int __init numa_register_meminfo(struct numa_meminfo *mi)
->  	return 0;
->  }
->  
-> +int __init numa_memblks_init(int (*init_func)(void),
-> +			     bool memblock_force_top_down)
-> +{
-> +	int ret;
-> +
-> +	nodes_clear(numa_nodes_parsed);
-> +	nodes_clear(node_possible_map);
-> +	nodes_clear(node_online_map);
-> +	memset(&numa_meminfo, 0, sizeof(numa_meminfo));
-> +	WARN_ON(memblock_set_node(0, ULLONG_MAX, &memblock.memory,
-> +				  NUMA_NO_NODE));
-> +	WARN_ON(memblock_set_node(0, ULLONG_MAX, &memblock.reserved,
-> +				  NUMA_NO_NODE));
-> +	/* In case that parsing SRAT failed. */
-> +	WARN_ON(memblock_clear_hotplug(0, ULLONG_MAX));
-> +	numa_reset_distance();
-> +
-> +	ret = init_func();
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/*
-> +	 * We reset memblock back to the top-down direction
-> +	 * here because if we configured ACPI_NUMA, we have
-> +	 * parsed SRAT in init_func(). It is ok to have the
-> +	 * reset here even if we did't configure ACPI_NUMA
-> +	 * or acpi numa init fails and fallbacks to dummy
-> +	 * numa init.
-> +	 */
-> +	if (memblock_force_top_down)
-> +		memblock_set_bottom_up(false);
-> +
-> +	ret = numa_cleanup_meminfo(&numa_meminfo);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	numa_emulation(&numa_meminfo, numa_distance_cnt);
-> +
-> +	return numa_register_meminfo(&numa_meminfo);
-> +}
-> +
->  static int __init cmp_memblk(const void *a, const void *b)
->  {
->  	const struct numa_memblk *ma = *(const struct numa_memblk **)a;
-
+[PS I'd also gobble up any summaries on all of these workarounds for variou=
+s side-channel speculation attacks because they bite me from time to time a=
+nd I need to level up on them]
 
