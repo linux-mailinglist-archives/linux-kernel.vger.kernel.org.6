@@ -1,375 +1,159 @@
-Return-Path: <linux-kernel+bounces-257560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 247BA937BED
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:52:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5FA5937BF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1BE11F22DC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:52:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41FFBB21A25
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441E414882E;
-	Fri, 19 Jul 2024 17:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1D91474AD;
+	Fri, 19 Jul 2024 17:53:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="SQ3VNrfm"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2041.outbound.protection.outlook.com [40.107.243.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KYWJACLW"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A519147C80
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 17:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721411495; cv=fail; b=NpuTlYyZL3elOSBLK+niAKMOfKh9+7McKgMFtJZ2pO9e2Y9+vOntaSz3r0T0uFgqQjCMi+xwz9VxfsSmTVAex2RyB57qBxKJ4aebTQlCx3mgbEVp4qeP6Ie6WElYABwXWOxnF1J3wNwNfvb3d3Pvw8X7FA9FeRNsenpVMuD1bXA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721411495; c=relaxed/simple;
-	bh=ocudzm3K3EMoOJFOkqvsY/nuXJp0ZuakIa6B8QOzKTc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QjUtgmGMRcrU3U44lJe7juCq1Jy5iSBjN2O3ozMdj9iIANOXpYUwH+L8LIzE6BtQ+RjJ/f5JxCFG/rYay36Bj8cR2QCmxebz/GwzARqSU++jcqU3KgULRMLIfQhfJgva2LBpy3OjlEDITINZsIZ+WAr9wgwR0yZ+1z2iU/EZck4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=SQ3VNrfm; arc=fail smtp.client-ip=40.107.243.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JyhFW/XAxsWretousikam80XSizYAtKwlZiY5bnlWAWG3W5oPx38T+MQwapi7xnYGkXfeAEotxon25tXPiNFSB3358f830IFO82+WAmCoeLlE+1JgdVipoYdU0xM+TNk2g7Q0PzNnxbClC4evovmpJFBWFVGf/W6uhgyUnQpak0vyBRtPIDZ3NNi3BpNDwTqbBV58lk5xFQAQ58bjLrPvc/uU09WBpgh3K9ocSLBVkwMrLcNNnHEZdsIj/Jq//p7Y90iWy7BDrY1cDXxkmf8jyEFq9l0Gn4HWowwFlLe4zhXO0x6RFV4fJmKF6aqRtIrL9syXxPCpHO4RACBDgSbsQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C/eoMf8+7xWDdqqK7qvxcabWDXwjjQtnl0zJKNLJ4p8=;
- b=V2F13s//f3w8PIo+16//b6QyytV7564cNB9cuV5XO8FwwsB9E/vCOX23nU7+HasxLBrFZZQNPHxsTbyNgaNHWB/1rMpq2B8o+pPigXkrlQPm2gczZpvDK6eYxcKE77qjcnG61oBjnr/9br6a/J6bvJeAJiBHBnris9FmwECklm4Rg1aG2TvbgJFXHwy/E3uJesAZzh3wENrJBFwRQkmRC8buzcdtyFrOZytm8GInK/gX2QgSJjus0YePxe2QjQ7YfJDSl+A9CUqCWkKCgW08RAkwiFXkxaq7NW6OyPeyOpVM5UcvWeU+0IjqYgZkI8dB3FlxthCNWbOcE+kUJ8Sjnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C/eoMf8+7xWDdqqK7qvxcabWDXwjjQtnl0zJKNLJ4p8=;
- b=SQ3VNrfmRIDkN4yat4HchFr4k7UFpBqQZQdMA/111ngHxj0DVt1Bz+a+WUVHD4661UkGDBKk9KEaDOrtNRzpP6CD+TrwmGv0uZv22ohQ9omdGcTCKnFNDN3Z9bMe26dSQo4KAxja7Vi192c+sXihAqEM133gu1ubbe8vg2ObUgo=
-Received: from SJ2PR07CA0010.namprd07.prod.outlook.com (2603:10b6:a03:505::27)
- by CY8PR12MB8068.namprd12.prod.outlook.com (2603:10b6:930:75::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.17; Fri, 19 Jul
- 2024 17:51:30 +0000
-Received: from SJ1PEPF000023D3.namprd21.prod.outlook.com
- (2603:10b6:a03:505:cafe::ad) by SJ2PR07CA0010.outlook.office365.com
- (2603:10b6:a03:505::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.18 via Frontend
- Transport; Fri, 19 Jul 2024 17:51:30 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF000023D3.mail.protection.outlook.com (10.167.244.68) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7784.5 via Frontend Transport; Fri, 19 Jul 2024 17:51:29 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 19 Jul
- 2024 12:51:29 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 19 Jul
- 2024 12:51:28 -0500
-Received: from xsjlizhih51.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Fri, 19 Jul 2024 12:51:28 -0500
-From: Lizhi Hou <lizhi.hou@amd.com>
-To: <ogabbay@kernel.org>, <dri-devel@lists.freedesktop.org>
-CC: Lizhi Hou <lizhi.hou@amd.com>, <linux-kernel@vger.kernel.org>,
-	<min.ma@amd.com>, <max.zhen@amd.com>, <sonal.santan@amd.com>
-Subject: [PATCH V1 10/10] accel/amdxdna: Add firmware debug buffer support
-Date: Fri, 19 Jul 2024 10:51:28 -0700
-Message-ID: <20240719175128.2257677-11-lizhi.hou@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240719175128.2257677-1-lizhi.hou@amd.com>
-References: <20240719175128.2257677-1-lizhi.hou@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455541465A8;
+	Fri, 19 Jul 2024 17:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721411597; cv=none; b=eLmkm5iowYzccxt2x/jnca8mqV1AfqnWM6s/PJrzcEMmBmjENlU1nhcNnAAfPtiIMxYr9gaTjiTRLIcHnw/CMAVWbFfrll13xxCye6MkLKEz4W3HtlSlhi2KkE1N4CVcZE08jsQOjQBdKfOGfvbfEYJjIL/zxwiCK7uCFeWhXGE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721411597; c=relaxed/simple;
+	bh=D1wxxplXZk96khvpp/PN3Ku5ytPBuQTMbzsgvqqzpj8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RlEUMuP6wS8qK40xeWu/+7Y1intvbUbIT7vRewStRU+6r6tN616l+We2BLozhm51lkzzln/9mxtaGQcQdufISjlVuMfjcxHdl85ONIB0nXn+f2R7QbRUjv9zD8iJz1if7f8Ryz/d+BWDZfp2b/ktFbHw/jYTEdCiCi6287/X2P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KYWJACLW; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a79f9a72a99so599827466b.0;
+        Fri, 19 Jul 2024 10:53:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721411594; x=1722016394; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qy8NAhkcqX2WgaFdfiUNXOc3h3r+y63jz4sEBx8rqjk=;
+        b=KYWJACLWgBsH2Lmvet9nVPlHc+nNrw9BeOFcMPyZ3k3N49RcG4Psn7NQl02OFdvFpG
+         be8ejT+vW6Jzw7+vbtHkxwxJ2Go5Ps2FsIjcmgfpe1jWqHihQcZd6mPBbG9+BzXMbsTO
+         UeJIZyXukIsqMymB2WnC2KKcmvRCld6x7v8sXc5WWBEbB32iDM6amSCSXK8C2JwiobvC
+         bXmTwSfmq48S17qCos0hjmFYSosp7ygbF7I/4RCHD2sDxbjJWVhMcspOu+3FjUPsHSeS
+         e2XDyKDTlPovu6OLu3rlGE6TnnHIMYq+4A10ZQeF6iRPFMekPgqJW7XFIkdCWhHSVSeU
+         Ihuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721411594; x=1722016394;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qy8NAhkcqX2WgaFdfiUNXOc3h3r+y63jz4sEBx8rqjk=;
+        b=Oc3RtdzFRg3ysApoU44FynNLalq1C5sDOs/kqNHv6TJRYGigq7j5veqnp8okRYJM7k
+         u6dTSechD7kMF4arAUDPfnC7+mTOX+d87LTaQvejB5aK990Kckm6LRg+bfBJyU9dgrX7
+         iZC/bWicH+ROo6JXmuhoSA8m+EEXnAOeLfMB3xVmTqg8F2WN2ZDFmuq88VFXi2oiTLY8
+         283A7L0D5OTcsH5cY/vudhTYgPjo1t6UbrKKBxDnlkwRoBsMIk0d67tAnkwJ36CNFywt
+         dzT73OE4ohel/xFzugH7l5tQAgwAaqqEsG0GCHP6JAJK1/6aGFzuQEE6J7a7dgYiGwBa
+         PSEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWcSmaIBsmGcEGFKrwH5IJ8geQquTKR0YtuYUHL8KbgyBN/5J/S+33/3yk6YkG8aZsD4/K18UtdRIu2AMOmP6NgCSuXvQ0KyzSRMkfwzf+k/R+lSECDsSAiKf5K2glD9Q9SdCGRvLbecpslTA==
+X-Gm-Message-State: AOJu0Yxm4qezSN0IgyQhCv8vXe3A/OmgxWOMwhj8yJ4/VKJxM9+AtN0s
+	PJ4pXry/k2o+SoczYqrvR5ceQ8iDadsWXhd2E6QLNJ7m//aHICN5HzuttL1TVOB2QASYZBkiV4Y
+	3h4Yks/z/XK79J7s2FLxqySeYy9o=
+X-Google-Smtp-Source: AGHT+IGSaMKODxUsrFCUt1HnQNY2uoBofnpURBnFZMpfztI1ZyT3mZwxaTYFG6j8i5pedcaQipiQ2eXOfkpmTCNpeII=
+X-Received: by 2002:a17:906:4bd5:b0:a6f:a2aa:a4c7 with SMTP id
+ a640c23a62f3a-a7a0f0c4850mr701989466b.3.1721411594340; Fri, 19 Jul 2024
+ 10:53:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB05.amd.com: lizhi.hou@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D3:EE_|CY8PR12MB8068:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9e99ce86-3852-48b6-8e14-08dca81b6b82
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?8cyUDV/+K4XVCIAvfOn5Ru8tSFnhsKnbTdCKEXELuttpRvuoJiSP0LzyWw4l?=
- =?us-ascii?Q?Td+eFSRR4DF6x18yWhllzpXf8D574NDhV2ZTkY46z0wXxeL1fSM8tTJfWk2+?=
- =?us-ascii?Q?fNtLjg0tNRTPpJOwK6C2rt58dhBuAyPgn+5U7n5TzbihC2qVvaiV1fhpath5?=
- =?us-ascii?Q?r0gsKbm6f72fNgfD363/YzgAl34GtjYgT24ZAJlEQZwKuP3h/qx/VtsUtHQ6?=
- =?us-ascii?Q?sKO7iRl4pDHLs1pRsnMIabGo+ZrJ25qKmoC28bix/TtfPKbeu9l7ajfgxfVf?=
- =?us-ascii?Q?3RJF3j0tEwP3Q/T9AEP9fxAcPAC50TQgVWGcGeQWkuAAdNZw5IaHNEgmyevx?=
- =?us-ascii?Q?PVWim0zc2ayrfF8TiK3v6A3ZpNP5Y8nrMtg+2MwyoyVjZBbMA224NQtcPapR?=
- =?us-ascii?Q?koNtTHg3glYul0Ph1X1sxuudKAxxAS9V2u6AcXoCxQGj6R/TuhY+hnvhwa7W?=
- =?us-ascii?Q?DHXCKLb2GqrNSJEShI9DAMxFWWga7s78/1LPkGiLD0YeI8OaDxVljKYkcf8e?=
- =?us-ascii?Q?PMy1ll8bk246ObF4W8ecBbY2gLgc+5EgLLbabwhnDTZoFzXdsXqe9gdueHtX?=
- =?us-ascii?Q?cP+O75QVGFzG8zXGXTFWcwBTuMPl8hbh8MqHaFN9s0xeRWgdoBDvPcDxBLiV?=
- =?us-ascii?Q?n+d76rPdnXCTK8GB5L68V9jx2ygUTnmj99l/V0j3dQ7XAZYacrx5P2TDmMyi?=
- =?us-ascii?Q?vHAaGG+muVMCvl+i2B3tCXckNS4lDPJRiQb7LF+aTU7a+5OAtJsxGMUx/GF7?=
- =?us-ascii?Q?4m0s1FCAkgRa6vdX4DsRumZaAlXaBdgN2KE8VfmgeHlU2GWj6xDGlsuuSO7t?=
- =?us-ascii?Q?5ypV5GBKk3NQkHfyGB0YLjytVUWA/UXbdZP78VrYdbMW/XtvxomMKJD5FjJv?=
- =?us-ascii?Q?0qflvpWgnQxAkR8TmbkORE070CoX/WxxOBb/Uj/uBbM6cV1MYbPHfgz8Q4vJ?=
- =?us-ascii?Q?99rhxbYJ6R75yER0/37FR+o8VrDvXIDCWU2zWz3JKbB6rkXpudeIdB7+AnKe?=
- =?us-ascii?Q?2GptlArCHm9dYG1sGCYFXHJGDdJMvuRipPolQmNjZmWv6cu3D742s4KAbavp?=
- =?us-ascii?Q?iR5NKsEEyV6K/xmghEQ6wkEwuPLlOIASdumzFCuvBeriklNYeymeRTB8iIth?=
- =?us-ascii?Q?dTyYOsBe4JUwciJ+3M7lhNqDM8fmkI6EeVpX8oq2zZksKqDDnIwV/9iCxStJ?=
- =?us-ascii?Q?67NiZSxiT3EkEUsFLZjC//8n3aAljoBOjArJiILCP68i1f3T7ZDQOkNakowM?=
- =?us-ascii?Q?xWbDjKYGpn5425XXrr0+ygPKUpuSpI3W5OQDwj8ueaxoP/Ku+YDyAJIY3fXN?=
- =?us-ascii?Q?bETGZdRwRwVUSEfQoNL/SnE3Nz0rqWhtWbnxvDqw7aKFeaVjCui+FWrZGPFQ?=
- =?us-ascii?Q?WF8sVaSIFMzj6pobxuPrZsySYoj2rbnnjCAw2qDxz8BUytVCtC6tS1KQydYq?=
- =?us-ascii?Q?ZAUPpPyBKmgqX5HqVdTgLD55cQvrNifE?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2024 17:51:29.9506
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e99ce86-3852-48b6-8e14-08dca81b6b82
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023D3.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8068
+References: <20240614163416.728752-1-yu.ma@intel.com> <20240717145018.3972922-1-yu.ma@intel.com>
+ <20240717145018.3972922-4-yu.ma@intel.com>
+In-Reply-To: <20240717145018.3972922-4-yu.ma@intel.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Fri, 19 Jul 2024 19:53:01 +0200
+Message-ID: <CAGudoHHQSjbeuSevyL=W=fhjOOo=bCjq4ixHfEMN_XdRLLdPbQ@mail.gmail.com>
+Subject: Re: [PATCH v5 3/3] fs/file.c: add fast path in find_next_fd()
+To: Yu Ma <yu.ma@intel.com>
+Cc: brauner@kernel.org, jack@suse.cz, edumazet@google.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com, 
+	tim.c.chen@linux.intel.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-User application may allocate a debug buffer and attach it to an NPU
-context through the driver. Then the NPU firmware prints its debug
-information to this buffer for debugging.
+On Wed, Jul 17, 2024 at 4:24=E2=80=AFPM Yu Ma <yu.ma@intel.com> wrote:
+>
+> Skip 2-levels searching via find_next_zero_bit() when there is free slot =
+in the
+> word contains next_fd, as:
+> (1) next_fd indicates the lower bound for the first free fd.
+> (2) There is fast path inside of find_next_zero_bit() when size<=3D64 to =
+speed up
+> searching.
 
-Co-developed-by: Min Ma <min.ma@amd.com>
-Signed-off-by: Min Ma <min.ma@amd.com>
-Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
----
- drivers/accel/amdxdna/aie2_ctx.c    | 45 +++++++++++++++-
- drivers/accel/amdxdna/amdxdna_ctx.c |  1 +
- drivers/accel/amdxdna/amdxdna_ctx.h |  1 +
- drivers/accel/amdxdna/amdxdna_gem.c | 81 +++++++++++++++++++++++++++++
- drivers/accel/amdxdna/amdxdna_gem.h |  4 ++
- 5 files changed, 131 insertions(+), 1 deletion(-)
+this is stale -- now the fast path searches up to 64 fds in the lower bitma=
+p
 
-diff --git a/drivers/accel/amdxdna/aie2_ctx.c b/drivers/accel/amdxdna/aie2_ctx.c
-index a392cc2b9237..310a9b63024f 100644
---- a/drivers/accel/amdxdna/aie2_ctx.c
-+++ b/drivers/accel/amdxdna/aie2_ctx.c
-@@ -708,6 +708,48 @@ static int aie2_hwctx_cu_config(struct amdxdna_hwctx *hwctx, void *buf, u32 size
- 	return ret;
- }
- 
-+static int aie2_hwctx_attach_debug_bo(struct amdxdna_hwctx *hwctx, u32 bo_hdl)
-+{
-+	struct amdxdna_client *client = hwctx->client;
-+	struct amdxdna_dev *xdna = client->xdna;
-+	struct amdxdna_gem_obj *abo;
-+	int ret;
-+
-+	abo = amdxdna_gem_get_obj(client, bo_hdl, AMDXDNA_BO_DEV);
-+	if (!abo) {
-+		XDNA_ERR(xdna, "Get bo %d failed", bo_hdl);
-+		ret = -EINVAL;
-+		goto err_out;
-+	}
-+
-+	ret = amdxdna_gem_set_assigned_hwctx(client, bo_hdl, hwctx->id);
-+	if (ret) {
-+		XDNA_ERR(xdna, "Failed to attach debug BO %d to %s: %d", bo_hdl, hwctx->name, ret);
-+		goto put_obj;
-+	}
-+	XDNA_DBG(xdna, "Attached debug BO %d to %s", bo_hdl, hwctx->name);
-+
-+put_obj:
-+	amdxdna_gem_put_obj(abo);
-+err_out:
-+	return ret;
-+}
-+
-+static int aie2_hwctx_detach_debug_bo(struct amdxdna_hwctx *hwctx, u32 bo_hdl)
-+{
-+	struct amdxdna_client *client = hwctx->client;
-+	struct amdxdna_dev *xdna = client->xdna;
-+
-+	if (amdxdna_gem_get_assigned_hwctx(client, bo_hdl) != hwctx->id) {
-+		XDNA_ERR(xdna, "Debug BO %d isn't attached to %s", bo_hdl, hwctx->name);
-+		return -EINVAL;
-+	}
-+
-+	amdxdna_gem_clear_assigned_hwctx(client, bo_hdl);
-+	XDNA_DBG(xdna, "Detached debug BO %d from %s", bo_hdl, hwctx->name);
-+	return 0;
-+}
-+
- int aie2_hwctx_config(struct amdxdna_hwctx *hwctx, u32 type, u64 value, void *buf, u32 size)
- {
- 	struct amdxdna_dev *xdna = hwctx->client->xdna;
-@@ -717,8 +759,9 @@ int aie2_hwctx_config(struct amdxdna_hwctx *hwctx, u32 type, u64 value, void *bu
- 	case DRM_AMDXDNA_HWCTX_CONFIG_CU:
- 		return aie2_hwctx_cu_config(hwctx, buf, size);
- 	case DRM_AMDXDNA_HWCTX_ASSIGN_DBG_BUF:
-+		return aie2_hwctx_attach_debug_bo(hwctx, (u32)value);
- 	case DRM_AMDXDNA_HWCTX_REMOVE_DBG_BUF:
--		return -EOPNOTSUPP;
-+		return aie2_hwctx_detach_debug_bo(hwctx, (u32)value);
- 	default:
- 		XDNA_DBG(xdna, "Not supported type %d", type);
- 		return -EOPNOTSUPP;
-diff --git a/drivers/accel/amdxdna/amdxdna_ctx.c b/drivers/accel/amdxdna/amdxdna_ctx.c
-index bafca7f0415f..174bad2efc33 100644
---- a/drivers/accel/amdxdna/amdxdna_ctx.c
-+++ b/drivers/accel/amdxdna/amdxdna_ctx.c
-@@ -143,6 +143,7 @@ int amdxdna_drm_create_hwctx_ioctl(struct drm_device *dev, void *data, struct dr
- 	hwctx->num_tiles = args->num_tiles;
- 	hwctx->mem_size = args->mem_size;
- 	hwctx->max_opc = args->max_opc;
-+	hwctx->log_buf_bo = args->log_buf_bo;
- 	mutex_lock(&client->hwctx_lock);
- 	ret = idr_alloc_cyclic(&client->hwctx_idr, hwctx, 0, MAX_HWCTX_ID, GFP_KERNEL);
- 	if (ret < 0) {
-diff --git a/drivers/accel/amdxdna/amdxdna_ctx.h b/drivers/accel/amdxdna/amdxdna_ctx.h
-index 1a42964a2f87..895450d9923c 100644
---- a/drivers/accel/amdxdna/amdxdna_ctx.h
-+++ b/drivers/accel/amdxdna/amdxdna_ctx.h
-@@ -80,6 +80,7 @@ struct amdxdna_hwctx {
- 	u32				*col_list;
- 	u32				start_col;
- 	u32				num_col;
-+	u32				log_buf_bo;
- #define HWCTX_STAT_INIT  0
- #define HWCTX_STAT_READY 1
- #define HWCTX_STAT_STOP  2
-diff --git a/drivers/accel/amdxdna/amdxdna_gem.c b/drivers/accel/amdxdna/amdxdna_gem.c
-index 77224adbc77f..a12e885f0628 100644
---- a/drivers/accel/amdxdna/amdxdna_gem.c
-+++ b/drivers/accel/amdxdna/amdxdna_gem.c
-@@ -584,10 +584,12 @@ int amdxdna_drm_get_bo_info_ioctl(struct drm_device *dev, void *data, struct drm
- int amdxdna_drm_sync_bo_ioctl(struct drm_device *dev,
- 			      void *data, struct drm_file *filp)
- {
-+	struct amdxdna_client *client = filp->driver_priv;
- 	struct amdxdna_dev *xdna = to_xdna_dev(dev);
- 	struct amdxdna_drm_sync_bo *args = data;
- 	struct amdxdna_gem_obj *abo;
- 	struct drm_gem_object *gobj;
-+	u32 hwctx_hdl;
- 	int ret;
- 
- 	gobj = drm_gem_object_lookup(filp, args->handle);
-@@ -610,6 +612,28 @@ int amdxdna_drm_sync_bo_ioctl(struct drm_device *dev,
- 
- 	amdxdna_gem_unpin(abo);
- 
-+	if (abo->assigned_hwctx != AMDXDNA_INVALID_CTX_HANDLE &&
-+	    args->direction == SYNC_DIRECT_FROM_DEVICE) {
-+		u64 seq;
-+
-+		hwctx_hdl = amdxdna_gem_get_assigned_hwctx(client, args->handle);
-+		if (hwctx_hdl == AMDXDNA_INVALID_CTX_HANDLE ||
-+		    args->direction != SYNC_DIRECT_FROM_DEVICE) {
-+			XDNA_ERR(xdna, "Sync failed, dir %d", args->direction);
-+			ret = -EINVAL;
-+			goto put_obj;
-+		}
-+
-+		ret = amdxdna_cmd_submit(client, AMDXDNA_INVALID_BO_HANDLE,
-+					 &args->handle, 1, hwctx_hdl, &seq);
-+		if (ret) {
-+			XDNA_ERR(xdna, "Submit command failed");
-+			goto put_obj;
-+		}
-+
-+		ret = amdxdna_cmd_wait(client, hwctx_hdl, seq, 3000 /* ms */);
-+	}
-+
- 	XDNA_DBG(xdna, "Sync bo %d offset 0x%llx, size 0x%llx\n",
- 		 args->handle, args->offset, args->size);
- 
-@@ -617,3 +641,60 @@ int amdxdna_drm_sync_bo_ioctl(struct drm_device *dev,
- 	drm_gem_object_put(gobj);
- 	return ret;
- }
-+
-+u32 amdxdna_gem_get_assigned_hwctx(struct amdxdna_client *client, u32 bo_hdl)
-+{
-+	struct amdxdna_gem_obj *abo = amdxdna_gem_get_obj(client, bo_hdl, AMDXDNA_BO_INVALID);
-+	u32 ctxid;
-+
-+	if (!abo) {
-+		XDNA_DBG(client->xdna, "Get bo %d failed", bo_hdl);
-+		return AMDXDNA_INVALID_CTX_HANDLE;
-+	}
-+
-+	mutex_lock(&abo->lock);
-+	ctxid = abo->assigned_hwctx;
-+	if (!idr_find(&client->hwctx_idr, ctxid))
-+		ctxid = AMDXDNA_INVALID_CTX_HANDLE;
-+	mutex_unlock(&abo->lock);
-+
-+	amdxdna_gem_put_obj(abo);
-+	return ctxid;
-+}
-+
-+int amdxdna_gem_set_assigned_hwctx(struct amdxdna_client *client, u32 bo_hdl, u32 ctxid)
-+{
-+	struct amdxdna_gem_obj *abo = amdxdna_gem_get_obj(client, bo_hdl, AMDXDNA_BO_INVALID);
-+	int ret = 0;
-+
-+	if (!abo) {
-+		XDNA_DBG(client->xdna, "Get bo %d failed", bo_hdl);
-+		return -EINVAL;
-+	}
-+
-+	mutex_lock(&abo->lock);
-+	if (!idr_find(&client->hwctx_idr, abo->assigned_hwctx))
-+		abo->assigned_hwctx = ctxid;
-+	else if (ctxid != abo->assigned_hwctx)
-+		ret = -EBUSY;
-+	mutex_unlock(&abo->lock);
-+
-+	amdxdna_gem_put_obj(abo);
-+	return ret;
-+}
-+
-+void amdxdna_gem_clear_assigned_hwctx(struct amdxdna_client *client, u32 bo_hdl)
-+{
-+	struct amdxdna_gem_obj *abo = amdxdna_gem_get_obj(client, bo_hdl, AMDXDNA_BO_INVALID);
-+
-+	if (!abo) {
-+		XDNA_DBG(client->xdna, "Get bo %d failed", bo_hdl);
-+		return;
-+	}
-+
-+	mutex_lock(&abo->lock);
-+	abo->assigned_hwctx = AMDXDNA_INVALID_CTX_HANDLE;
-+	mutex_unlock(&abo->lock);
-+
-+	amdxdna_gem_put_obj(abo);
-+}
-diff --git a/drivers/accel/amdxdna/amdxdna_gem.h b/drivers/accel/amdxdna/amdxdna_gem.h
-index fe5d1142c904..a1ec1415e74b 100644
---- a/drivers/accel/amdxdna/amdxdna_gem.h
-+++ b/drivers/accel/amdxdna/amdxdna_gem.h
-@@ -62,6 +62,10 @@ int amdxdna_gem_pin_nolock(struct amdxdna_gem_obj *abo);
- int amdxdna_gem_pin(struct amdxdna_gem_obj *abo);
- void amdxdna_gem_unpin(struct amdxdna_gem_obj *abo);
- 
-+u32 amdxdna_gem_get_assigned_hwctx(struct amdxdna_client *client, u32 bo_hdl);
-+int amdxdna_gem_set_assigned_hwctx(struct amdxdna_client *client, u32 bo_hdl, u32 ctx_hdl);
-+void amdxdna_gem_clear_assigned_hwctx(struct amdxdna_client *client, u32 bo_hdl);
-+
- int amdxdna_drm_create_bo_ioctl(struct drm_device *dev, void *data, struct drm_file *filp);
- int amdxdna_drm_get_bo_info_ioctl(struct drm_device *dev, void *data, struct drm_file *filp);
- int amdxdna_drm_sync_bo_ioctl(struct drm_device *dev, void *data, struct drm_file *filp);
--- 
-2.34.1
+> (3) After fdt is expanded (the bitmap size doubled for each time of expan=
+sion),
+> it would never be shrunk. The search size increases but there are few ope=
+n fds
+> available here.
+>
 
+> This fast path is proposed by Mateusz Guzik <mjguzik@gmail.com>, and agre=
+ed by
+> Jan Kara <jack@suse.cz>, which is more generic and scalable than previous
+> versions.
+
+I think this paragraph is droppable. You already got an ack from Jan
+below, so stating he agrees with the patch is redundant. As for me I
+don't think this warrants mentioning. Just remove it, perhaps
+Christian will be willing to massage it by himself to avoid another
+series posting.
+
+> And on top of patch 1 and 2, it improves pts/blogbench-1.1.0 read by
+> 8% and write by 4% on Intel ICX 160 cores configuration with v6.10-rc7.
+>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+> Signed-off-by: Yu Ma <yu.ma@intel.com>
+> ---
+>  fs/file.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/fs/file.c b/fs/file.c
+> index 1be2a5bcc7c4..729c07a4fc28 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -491,6 +491,15 @@ static unsigned int find_next_fd(struct fdtable *fdt=
+, unsigned int start)
+>         unsigned int maxfd =3D fdt->max_fds; /* always multiple of BITS_P=
+ER_LONG */
+>         unsigned int maxbit =3D maxfd / BITS_PER_LONG;
+>         unsigned int bitbit =3D start / BITS_PER_LONG;
+> +       unsigned int bit;
+> +
+> +       /*
+> +        * Try to avoid looking at the second level bitmap
+> +        */
+> +       bit =3D find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_LONG,
+> +                                start & (BITS_PER_LONG - 1));
+> +       if (bit < BITS_PER_LONG)
+> +               return bit + bitbit * BITS_PER_LONG;
+>
+>         bitbit =3D find_next_zero_bit(fdt->full_fds_bits, maxbit, bitbit)=
+ * BITS_PER_LONG;
+>         if (bitbit >=3D maxfd)
+> --
+> 2.43.0
+>
+
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
