@@ -1,163 +1,145 @@
-Return-Path: <linux-kernel+bounces-257600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA2CA937C7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:33:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 101F9937C81
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:34:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF4A2282E8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:33:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 338C71C21376
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F301F1474C5;
-	Fri, 19 Jul 2024 18:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11992147C82;
+	Fri, 19 Jul 2024 18:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="awsykAAc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hObPZZq6"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3466E14601E
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 18:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17CEC146A77
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 18:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721413998; cv=none; b=MHNozgmBUlLp9b4kH1X0nh/8EayuJeYO/Qvjude/nbNnvTzsd9jXdPwpMdYGKlbs0Zc2bDepJWr5toU1sh7/UUEU7ix00ijhk72tUMxa6w5FmSvj3TwH1UWIoEkn83pm584spskmZuR+uC3S3yWH/k3ua0QEYzD3euThbYtqd+M=
+	t=1721414074; cv=none; b=lN7sMtZ8+SDtOpIRQ+OqiVpeLGRsP1VReTLCRbxCW+3501lVVtrydJrk3Isqz/EK+3bkS6Vzr3+8y/0a5eZTPv9DgPy1vS1PjelvY0TGltqjZtKo2ABQEDl3/KCc3qObk5Iva0CKlXmDDqhqy0d5mcqZBivaSzQ9eVptIZ/vBR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721413998; c=relaxed/simple;
-	bh=IkzcR7VWO+DKOmGz9vouLtnCJPTsLZ70oeegNUwvCJ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CZsyvVVZnanuuM2wJpGADaEa6fxNIII+Q/gW78XMDUE2zBXNjg3JJaGbPePbczttSkuHvVnBLYFN9mAyeUqIsWfDxW+nPyW7ZkDX34G61MbhvWn8oAyJxxIaVXqUzzJaLkHlBGKKdhTvbFszoCyutKZlRf8hN731it3Vx723htA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=awsykAAc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53CB4C32782;
-	Fri, 19 Jul 2024 18:33:17 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="awsykAAc"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1721413995;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0TqnwIchdJwFEi/bgRiz9oojlT0Jv9SMShO3MysI85I=;
-	b=awsykAAcrlL0bWP0XpcEQV/z2HyT4b7gl41bZ+MgG3RBND7UiwE/tsY89TO9OEsgInXGPq
-	GHNPTvjBghJltElFWN/YSXSSUth/CopzEiSI6Ansnfq/SmX7FFPazFjU44JQGIAE27ZCof
-	h+7ow2HsJ4zsG8v0l6zglpwYzfhrBJE=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 88533201 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Fri, 19 Jul 2024 18:33:15 +0000 (UTC)
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [GIT PULL] random number generator updates for 6.11-rc1
-Date: Fri, 19 Jul 2024 20:33:08 +0200
-Message-ID: <20240719183308.1472668-1-Jason@zx2c4.com>
-In-Reply-To: <ZpqwFK5hgU2gOA7y@zx2c4.com>
-References: <ZpqwFK5hgU2gOA7y@zx2c4.com>
+	s=arc-20240116; t=1721414074; c=relaxed/simple;
+	bh=Eoh6Aq1gvb9UVPn3lR/rBomqqw573VWDNiA8yB3phcY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YGnlsY+2Oxl79q2qe2QxYmOlppBPsA64xuLkNt9LjbyFImZCkqQ9Ow+BJNGqKMC24QGGWgZj8cmyyyjMCH6MPLNjEw6lUYUeUqMBykxi8YGSlyRRH7DUll++V+nosejhyf1qXuLU6j8SE0XmXs8nhDGIkqYdjbwsHqiC5kSogjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hObPZZq6; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6fd513f18bso243339266b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 11:34:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721414070; x=1722018870; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=hs0XOIz2by5Qi8Z6C39BHeWCTQEj8qFbH9F6RrOljtk=;
+        b=hObPZZq6BgEHMlg6nweNtkMrWOKyaXb+7M7J1JR8vMItMdomecCzazqoeMsdQi5SX9
+         Tji4nwqjL1AIphZzpxtPaPW4JIhTXm3F446HU0DBo5ah6yGFz8bJub8tQ33BSwlI+Ksp
+         2oY36w9l1DXxZzIoeId74j+UlE+r6XCKJlFTAZunDzGZrswiOZmgmi8awv3uvQDrRchT
+         UcXfehjPwWODWlg58wcIF43WA5zAVukYAVnxQwleuJy8SQKYIGK8ubbJ7pZoJ3nzPZ31
+         zww4yk2k/cOCDj3JCSJ+CuFdRQAhcoBSs+qux7Tr8olxU6edC5FbXImRjA4ZojvPVO1P
+         suYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721414070; x=1722018870;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hs0XOIz2by5Qi8Z6C39BHeWCTQEj8qFbH9F6RrOljtk=;
+        b=rpIKclQsqTp7siUuPibBMsU/J5A6E4/y0DJj6BlsZ1Y7Vj0T80bFC0nSw5XD+RntGM
+         nfTZHkcE8ExGP94/sLUAqPlbYtbTEVDUDCM1gRaZe9wgD84EcMqzVz+AvikHezHU6swZ
+         oq//GX2qUAnYLJwNdMaXhCd+wU+DjrSuoJ+8cETxXDRqapmzwGAkJ9vaItC/o1c20V8j
+         XQaJoiIeHpYuKrYBsy8T6369iJeaXt6OU2dgmQEpvz88iTY4N8imnQMx1jnVWavI8zAU
+         wFrMLDJK5SEtCw+DSBFAEK0S8ZwZfF+aFKyvOP8+eWmbduGr/8tpo7WwACHhtOnaCdO/
+         UFew==
+X-Forwarded-Encrypted: i=1; AJvYcCVY0A5BWFMd4xgAoM9ag2qgK5TaKiZSSFd+9fP1vJ/x3nY+Q+3CV9I6giO53BktpdmIs7jQ3eRzgjTr6sOB/D9o+Jf6Rt6z/cFhDWFW
+X-Gm-Message-State: AOJu0YxdHwMNuIaWolSSyK7Y2ab7gb9vYiiURYiCkTYLjkyBLuKdVg6z
+	y6MDTl9dKXbzcytYxV5WbrL0IBw4wlefpsRYYbOKoXtxkW5jXpdAUfpCux63JVGTMrPSGmgO1YL
+	X
+X-Google-Smtp-Source: AGHT+IGL/8xmEg4f78v9lpdI6TbTW3HfZ4KukHLxpgWri/nzzX48d6LEwWn2aA/S1gsK0/kdwB6+VA==
+X-Received: by 2002:a17:906:4550:b0:a72:6375:5fc4 with SMTP id a640c23a62f3a-a7a011177b7mr522091066b.11.1721414070194;
+        Fri, 19 Jul 2024 11:34:30 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c7bde59sm63194166b.74.2024.07.19.11.34.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Jul 2024 11:34:29 -0700 (PDT)
+Message-ID: <aa099580-c0d6-401e-9956-be4a6b595dcf@linaro.org>
+Date: Fri, 19 Jul 2024 20:34:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/7] arm64: dts: qcom: x1e80100-crd: fix PCIe4 PHY supply
+To: Johan Hovold <johan+linaro@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>,
+ Abel Vesa <abel.vesa@linaro.org>, Rajendra Nayak <quic_rjendra@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20240719131722.8343-1-johan+linaro@kernel.org>
+ <20240719131722.8343-2-johan+linaro@kernel.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240719131722.8343-2-johan+linaro@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+On 19.07.2024 3:17 PM, Johan Hovold wrote:
+> The PCIe4 PHY is powered by vreg_l3i (not vreg_l3j).
+> 
+> Fixes: d7e03cce0400 ("arm64: dts: qcom: x1e80100-crd: Enable more support")
+> Cc: stable@vger.kernel.org	# 6.9
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
 
-Here's the vDSO getrandom() work we've been discussing for the last few weeks.
-Thank you very much for your input on this and for working with me to get this
-where it is. I'm happy with the set of compromises, and I think this wound up
-in a decent place. A blurb for the merge message:
+Mind fixing that up on all laptops?
 
-This is a short pull adding getrandom() support to the vDSO. First, it adds a
-new kind of mapping to mmap(2), MAP_DROPPABLE, which lets the kernel zero out
-pages anytime under memory pressure, which enables allocating memory that never
-gets swapped to disk but also doesn't count as being mlocked. Then, the vDSO
-implementation of getrandom() is introduced in a generic manner and hooked into
-random.c. Next, this is implemented on x86. (Also, though it's not ready for
-this pull, somebody has begun an arm64 implementation already.) Finally, two
-vDSO selftests are added.
+Most of them are 80-85% CRD copypaste designs and regulators for
+precise things like PHYs are generally predefined for a set of PMICs
 
-There are also two housekeeping cleanup commits.
-
-Each version of this series has been in linux-next for a little bit, and there
-are no major reported issues, though there is a easy merge conflict in
-mm/rmap.c and a trivial one in tools/testing/selftests/mm/Makefile, both of
-which have resolutions in linux-next.
-
-Please pull, and thanks again for your input on this.
-
-Thanks,
-Jason
-
-The following changes since commit 8a18fda0febb7790de20ec1c3b4522ce026be1c6:
-
-  Merge tag 'spi-fix-v6.10-rc7' of git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi (2024-07-11 12:07:50 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/crng/random.git tags/random-6.11-rc1-for-linus
-
-for you to fetch changes up to ad8070cb1b4bd40aa19a5e3f7c24d7f62c71b382:
-
-  MAINTAINERS: add random.h headers to RNG subsection (2024-07-19 20:23:12 +0200)
-
-----------------------------------------------------------------
-Random number generator updates for Linux 6.11-rc1.
-----------------------------------------------------------------
-
-Jason A. Donenfeld (6):
-      mm: add MAP_DROPPABLE for designating always lazily freeable mappings
-      random: introduce generic vDSO getrandom() implementation
-      x86: vdso: Wire up getrandom() vDSO implementation
-      selftests/vDSO: add tests for vgetrandom
-      random: note that RNDGETPOOL was removed in 2.6.9-rc2
-      MAINTAINERS: add random.h headers to RNG subsection
-
- MAINTAINERS                                        |   6 +
- arch/x86/Kconfig                                   |   1 +
- arch/x86/entry/vdso/Makefile                       |   3 +-
- arch/x86/entry/vdso/vdso.lds.S                     |   2 +
- arch/x86/entry/vdso/vgetrandom-chacha.S            | 178 +++++++++++++
- arch/x86/entry/vdso/vgetrandom.c                   |  17 ++
- arch/x86/include/asm/vdso/getrandom.h              |  55 ++++
- arch/x86/include/asm/vdso/vsyscall.h               |   2 +
- arch/x86/include/asm/vvar.h                        |  16 ++
- drivers/char/random.c                              |  18 +-
- fs/proc/task_mmu.c                                 |   1 +
- include/linux/mm.h                                 |   7 +
- include/linux/userfaultfd_k.h                      |   3 +
- include/trace/events/mmflags.h                     |   7 +
- include/uapi/linux/mman.h                          |   1 +
- include/uapi/linux/random.h                        |  17 +-
- include/vdso/datapage.h                            |  11 +
- include/vdso/getrandom.h                           |  46 ++++
- lib/vdso/Kconfig                                   |   5 +
- lib/vdso/getrandom.c                               | 251 ++++++++++++++++++
- mm/ksm.c                                           |   2 +-
- mm/madvise.c                                       |   5 +-
- mm/memory.c                                        |  13 +
- mm/mempolicy.c                                     |   3 +
- mm/mlock.c                                         |   2 +-
- mm/mmap.c                                          |  30 +++
- mm/rmap.c                                          |  22 +-
- mm/vmscan.c                                        |   9 -
- tools/include/asm/rwonce.h                         |   0
- tools/include/uapi/linux/mman.h                    |   1 +
- tools/testing/selftests/mm/.gitignore              |   1 +
- tools/testing/selftests/mm/Makefile                |   1 +
- tools/testing/selftests/mm/droppable.c             |  53 ++++
- tools/testing/selftests/vDSO/.gitignore            |   2 +
- tools/testing/selftests/vDSO/Makefile              |  18 ++
- tools/testing/selftests/vDSO/vdso_test_chacha.c    |  43 +++
- tools/testing/selftests/vDSO/vdso_test_getrandom.c | 288 +++++++++++++++++++++
- 37 files changed, 1122 insertions(+), 18 deletions(-)
- create mode 100644 arch/x86/entry/vdso/vgetrandom-chacha.S
- create mode 100644 arch/x86/entry/vdso/vgetrandom.c
- create mode 100644 arch/x86/include/asm/vdso/getrandom.h
- create mode 100644 include/vdso/getrandom.h
- create mode 100644 lib/vdso/getrandom.c
- create mode 100644 tools/include/asm/rwonce.h
- create mode 100644 tools/testing/selftests/mm/droppable.c
- create mode 100644 tools/testing/selftests/vDSO/vdso_test_chacha.c
- create mode 100644 tools/testing/selftests/vDSO/vdso_test_getrandom.c
+Konrad
 
