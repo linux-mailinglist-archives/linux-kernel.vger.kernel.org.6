@@ -1,133 +1,131 @@
-Return-Path: <linux-kernel+bounces-257438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1992D937A0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:40:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6DB4937A12
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C23701F224C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:40:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BB4B2813C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A098145FF5;
-	Fri, 19 Jul 2024 15:39:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B746145A09;
+	Fri, 19 Jul 2024 15:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="HqXa6066"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b="e9VrrzST"
+Received: from sonic301-31.consmr.mail.ne1.yahoo.com (sonic301-31.consmr.mail.ne1.yahoo.com [66.163.184.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAA41459F7
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 15:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FDAD1E4AD
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 15:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721403596; cv=none; b=mYdwvZ+4Hed/03VDMi5Sy1mYTKjNT6p7lwIxwu7U+VMGsjNcIf2kRYQMfIXV4BafSeV5omjWVO1hN/sC7pKapYWG7utdTMXpKwVmFDmQ0T0sUMFNadJzcMtR2WloUOQNNvogDZx5AIi+tUaLwXZSw2MAk1xjXJusjg2SuR5qq7E=
+	t=1721403680; cv=none; b=EF4lM8CFmeoQqP3s8+E8uxgkhIT6VoVHEX5ghkpZGWUZNn6vA3XULOWYVsNQLlVxF9PksqkCfq+8Q1QChyK85wk/hq6UAPxfZCawEz5fE0bKOdLxEua+vC2pNhHcYuVABFWx0UApvME3pP//LK5efIp7nj+8LeJSBAbhRgIjYVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721403596; c=relaxed/simple;
-	bh=IIaXFQKJGp42/A/dmLPrjhTC6nOpGBrYODeUe5ulqfQ=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=GStfqIFysZLzM1YjsDOS2s+akRV65G45MZ9CZ3F3zIouLRNbO5sDFdnLcvEIzMbA5sOiTFDQDrFusn4SHMtfbMzZBCuHUUv5NVk02REm144dCjN5jovH0Cm8H40HVG8X0cWpkavvO9hHpcp4lzWdEffl6WeQ6zG5EXgIsC+OP7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=HqXa6066; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2cb80633dcfso201130a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 08:39:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1721403594; x=1722008394; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vmjqiBmJBVEyMGIx8VEZyQ8Uzo0U1Uz6G0w5deMZhXg=;
-        b=HqXa6066EoA/mWUPpr/ntMkZtIXmwMSxBC04erA7Kw9nwD31+lD10wCsRwSsNAcbOR
-         U2t4RRkTnUE6W/2BllOXRbmSNaBZAcaK6Mfviletd0yWx8p+rcWPNbOic3Yk7M/mFAI6
-         yWk7ZfE82k2PNmHlFqg3vqObAgSvEFy0wJI4E6nY7j9kugpnf7L9ad27Ks7FBWbxPzIv
-         b6I+0MCU4N2Fol+XLFL4tDD0a5aH6VGmN60uEe+M8fyI5QUb2sfkrsmpr46Ly3RimpMa
-         iny1TGdDbJsXuGmYB/CAqhfWeASdjutowRg/gH9zagW4cfvyoVyBUn613B6BtCoXG003
-         XVJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721403594; x=1722008394;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vmjqiBmJBVEyMGIx8VEZyQ8Uzo0U1Uz6G0w5deMZhXg=;
-        b=p193KUQWkTR8QTzxrWwvF7OFJ5Di9D84XioGcuWUCaoDFUWYmj7o/iOz6oQ25+4/Gb
-         9cfCoVg14fgZoHWelIe91DpcI3PAqkQH0d+FVVDobBAoQ1hVCgg3Hnd7ErUdORac2QQq
-         s7G/N6uk0o7LSrHCDtNH9XpJaChwh9E/5WzJmJazel86CCsQjMz4+PlUQEY7vzxMu1zC
-         54ciBH+rW+IpeSpfYu0GUbepFV+tZu+YxRV6joMDQWpQK5d/p30p1qoociZURWS3tQd/
-         qnNxzHUpqqwGZqMGqUlw/U4kDK+rVRhwE3SZ2VSgpEL1B+e/JhZtg0OZ9mxYGrZjlpa6
-         SX1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXmCui3I/9j8pyInonGe9/7SbmooBK4S7nPeqRm53JdKTZUKb5uUOTojs1s1w9g8OnzL68SJP9GddtZSpLtA/UuXaghmAdSNg3Ni0qZ
-X-Gm-Message-State: AOJu0Yxh0pAqHVLSKuK5cB3uzmUF9Ng/66b8HEbFKPbZEx/FLNI29FR2
-	Z1kVp1gVH8hPutaLLkFvITOoOM6cuQPcWoIS2W6tZJdjHLL+9lfxA+h2jH12JEU=
-X-Google-Smtp-Source: AGHT+IFfdFIdvCQWYQsXxU7377pA+fday1SiLgfXjmmVtbpGtZn0yHIIPC0G5TMUvwt6xM8uW3a92g==
-X-Received: by 2002:a05:6a21:10b:b0:1c0:f1cb:c4b0 with SMTP id adf61e73a8af0-1c42298cd9dmr242511637.6.1721403594600;
-        Fri, 19 Jul 2024 08:39:54 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cb773411basm2968003a91.30.2024.07.19.08.39.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 08:39:54 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Bart Van Assche <bvanassche@acm.org>, 
- Andrew Morton <akpm@linux-foundation.org>, Ming Lei <ming.lei@redhat.com>, 
- Omar Sandoval <osandov@fb.com>, linux-kernel@vger.kernel.org, 
- linux-block@vger.kernel.org, Yang Yang <yang.yang@vivo.com>
-In-Reply-To: <20240716082644.659566-1-yang.yang@vivo.com>
-References: <20240716082644.659566-1-yang.yang@vivo.com>
-Subject: Re: [PATCH v8] sbitmap: fix io hung due to race on
- sbitmap_word::cleared
-Message-Id: <172140359332.12097.1558892281494577679.b4-ty@kernel.dk>
-Date: Fri, 19 Jul 2024 09:39:53 -0600
+	s=arc-20240116; t=1721403680; c=relaxed/simple;
+	bh=eRaEN1aOt+u7nKXrm295ulDxCo9yBZlHmbdL0KgunG4=;
+	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
+	 Cc:In-Reply-To:To; b=Py7bzM5uVRtyYCHl1oi98cFYefkOtXf6/Z/MvEnIWwDzNrX04k0Ia9HmNu7AP3qUFBxY4sTpfzdeg9WQ+BH0/fmX2jsXOPrGKsAEnsZDWCyi96KWNyBig3uWOEnBjj38D1MgQnW5QlD/WbRrK33QP9lVNt9lrCha7iwrGA9Lrk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com; spf=pass smtp.mailfrom=rocketmail.com; dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b=e9VrrzST; arc=none smtp.client-ip=66.163.184.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rocketmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rocketmail.com; s=s2048; t=1721403677; bh=vUeE/GAwsERwc9DA8t3B+A8RkXjckadWum8zOaM3JUs=; h=From:Subject:Date:References:Cc:In-Reply-To:To:From:Subject:Reply-To; b=e9VrrzSTcGzF5d3APLzPr312egbvMqgLIXIQLR0OkHe96aTqxNaIpTgaPOSCjk6pmEcPG0XKIEhykQ5oe0+pmX/ekoY8XXY/rqVkunz0r649TZoRi4insUVXoM++JEu4lqNQyoClxcLcjnwVeWpV7wP2NJ15LrQzyycNPWHXy39k84V/Fo5u+e23tyObbsifxin5S9B91c4sDTcvoLIz0ok6qsFPgUGhQSNCuqV1BU65ZkLSE1PVi4yephH82YTffbsmbyFkl7Hif/6RxcRT735vx7ELdW9vWgui18rJMoqYq6mVvMOukzDVhOBamzhwAy326fFqwl4wKDImCWEgRg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1721403677; bh=WKL6HzKrpW5T7NAbViDXniYak6U8dU+XgrdgQviNTtf=; h=X-Sonic-MF:From:Subject:Date:To:From:Subject; b=Fd5DqhkaDc8ct476/EKYuehBLK19KZqxWRRnjspXQ2v1paMWlFWSFVI+MlErxs19apP7pqQfrZj/URPfUrzTGkvTPSeUUBsOc1hpXVMtf6FnlAj+zoeuoTBznIIk3qSHdR81sqax5f93txNQKszDpjLr4yJm1NF+FWvXcdfy7Mv4fdI3TJVfdtaVm5y9zByQAeYFgB3qDBw1rAliQcFaOeAWO1TdovHwVlP03AezSAoJM3iCTNKTEyLbeG4WVJwW4jzqLKdnIDBSmXiw2ohukYaa0QkHz2SLFNZ4faDetpNVAAVJfrS+5hv6eFc6VIyICkp0SzKjJ1qPoVsjoG3CYA==
+X-YMail-OSG: pXZDVZwVM1lbER2c9CpZKTZDn105YRK79WOZzhE5Ki6Tm3WQCKmgxFrofa1X2Bm
+ xiL0Q8aFtA.TvB6IAA38jZ4VOFW1feE.Mwt9GAqQ5cVWDCONMtcuVksIleohiKtXCh.sQAFHHonN
+ yYmHp9BhyIFcnr3cGonzAPrr59DLFHKX5Bmh1fqlvofvZjp5zuSF71AWIXSvTqLluu6jFWEnva.s
+ f7DTNzvze8FQtALdmHOmelJo2X8cybRVUycZjzddxlTwJkVnIuCOaOfivbzBveWzmBeU8af7x1I0
+ 2Lzbr9x0txHNdVzBwo.zTj_rkkI97FjeHg976Jip5fomUdP6lQpQc93PaMp5FxvxDNM3qQEBLvRG
+ KhnBxngb8D_EN75T5ZlOLDYTrh1Bgl_2N9Rck59gcomwcv.CIniSHSMdy0INlh7xvZj5GXS71VE2
+ YpIqDY0LH9ZtFLnX6JSMBXFi2fbT7N_0wiZJb_1pgOVXkIyNav2I6NU1kxi98_s2rUoHfZeDMlNv
+ Sjb0LSK1tulNW2BlMnSYpjtimuc_y4EyDXREhvlwbdAm.0MZIUQQ.zVr.F3_zpYdOMAGPhT.ir_W
+ cjrSaxf0UhLe4hPKx15w.HqsH.0RARs5MvLBh6qRZFV2MPUiPjxbY08MaI_kRgYJDNJrIblclYGz
+ .uqfCBnwEID7uSZ3Oe4rUlWtYMOKY1jZrshk_.T9VDp10gxB_BXBZqFSkazyHMFbMeZ4cpy79XZB
+ fgiBKsY0Dm4JCUl6LZWqLI4GTCco0oXVmWvsMVyMRrdIep3B7OivK3mEJHMYfbCku4xrYjsG.mWC
+ 239uUtgfRGwiW_7W94x0rcEVpDVTaECuY4aAbe1emc3z9fPXl78tmcItNPFYJUuikAOuEyPPuCwf
+ .zbEUespKzMnbdSPZR8YeCkd2a1oFyjQm8MTjXv47KE6TO8EBafbGN6NXUfHAoPlzGuNbT.1oqW6
+ ZyLVFwtb39B_R62iTmEbPKgGtW5MfAMrxQIIyS1LBlHS3TB27Udtb3CIvc2CidzZAunidJKG9Yxu
+ OXB5yoUVTnejZyByAPUopWG.XIcxv5UPMz8leNLkk2CwQyF_Rp6C9WyVT4qewnvPYx5HPmt_zjWv
+ rr0ccJPHiX7HsG0IStrXTrEpB5WNOBfkE9rBGRx4lI76qUwL8QtagmNyzmq3RRlLwTJRLTYMbcK_
+ OjYsh06Z7KtFU0FCRhlcTHUwbO.uy5qq0GM1yCH_xfsDfaWnVnkP7rkmMecd9txbIuVecd5B4L7w
+ T3lqNoX5NLljY591c2NlS1aI.MvlLxRjM4NCVBORVi93AHTZTK_5vi7Rz7laR__Lg.wTAFtjx_Ds
+ soOBUCvutLQulvUC_cPP5MO1a4ms9FuCjU9a5ta1OLGjUT.wYXyO3o2K5mTPZ7lM.hyz8omdo2aW
+ 4anVulOx_HqT9v268vtz7_JAfHdHtvUSvK3g877nyun98ojpf93CLQpw4gdF38uGjhOei023kH82
+ yAFWp48PzR.nzpZOnl6sAwRT_GcfrIH1nYxdOVnA8rwkj2VA.MEyjjlgbg_r4sa.u3VWBfFPUOm0
+ DLOIMabwwyIdKwBt1wb0sHH5nU3ySTaWMfaRwNN7zGlRXdf2h1QUMQEcMUKmBHM.BcFdR4zNLOyC
+ QROazo3rebqTgUHzOSRjdTFOHo3YHQ5w8yWUBUizQFAiq_ioaH3JIbIQlk0c8b9Z.iwKOiFeKqWL
+ zrz09Dr26RWv3_KS7DHt2bCsUCYv7Twd9G.9DS_7WDB7.US6GytngH_offKdDSy4MXNlJiyOPKQY
+ _l5t1z7EGzCvASmzx20V0oeBb1s.wSUfkFwcIDjEAsaBv39Wozz6w4eWAPyHbovH8od9jSags4sY
+ pkSk6sbD3l6V_ng5rTHV2JfY2FKtvKyVjxfys9RdUttvWYsjYLeMq_s6rx5lJe2bG_kpTRRCUkUi
+ UQ7qRaJgpr8Rx5faKFepHHd4ZmrK8rEJXXUJyi1x01k5GKA2iJeVFfoXMnqqSE4VhU4vtKO3X2gm
+ 9joGHSp1GTuKGlCzR6NxjJTl4lHFfbTGfyQ8u.urnx1fEgRy1TeytzUp5fls2OEOR00mHVznUAbZ
+ .anYdQknIuYaedfggKm8381Dy2n1OhSBhvyeDji8eBzQG_7.dtW0JcsqkcLY4NVKT_GIWlYQKfSN
+ 2O2bp28nRWTmbtIE8St_AUYIovsSDAFAruXtIkuD3LuanzNH76FrZdU2s3DMfPZ5anOdq7Pci00l
+ hCfVIqXVX5nmn6TalBgubWtyRq6Lmq4snTjQ3xqMsNG0-
+X-Sonic-MF: <makemehappy@rocketmail.com>
+X-Sonic-ID: ba846122-2fe9-4f3e-8fb6-67a1abcc5cea
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Fri, 19 Jul 2024 15:41:17 +0000
+Received: by hermes--production-ir2-57d49df6b5-m9r8s (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID fb3d04436797f3f06ac410f0d79e8a07;
+          Fri, 19 Jul 2024 15:41:14 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From: Max Dubois <makemehappy@rocketmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0
+Mime-Version: 1.0 (1.0)
+Subject: Re: Bug related with a 6.6.24 platform/x86 commit signed by you - Enormous memory leak
+Date: Fri, 19 Jul 2024 17:40:59 +0200
+Message-Id: <CBDDDC2F-34FC-42B3-84EF-5F3BEA5AC480@rocketmail.com>
+References: <9b0e7f6a-0432-46ba-bd75-7ba324934716@suswa.mountain>
+Cc: =?utf-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+ ilpo.jarvinen@linux.intel.com, gregkh@linuxfoundation.org,
+ Dan Carpenter <error27@gmail.com>, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <9b0e7f6a-0432-46ba-bd75-7ba324934716@suswa.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+X-Mailer: iPhone Mail (21F90)
+
+I=E2=80=99m sorry, yes that file i called =E2=80=98working=E2=80=99 contain m=
+ultiple kernels instances becouae I had to do a path to find out the crash h=
+appened at 6.6.24 level and that the last working kernel was 6.6.23. So I di=
+d a try to a lot of kernels over and under 6.6.24 to isolate the problem to 6=
+.6.24 and everything after.
 
 
-On Tue, 16 Jul 2024 16:26:27 +0800, Yang Yang wrote:
-> Configuration for sbq:
->   depth=64, wake_batch=6, shift=6, map_nr=1
-> 
-> 1. There are 64 requests in progress:
->   map->word = 0xFFFFFFFFFFFFFFFF
-> 2. After all the 64 requests complete, and no more requests come:
->   map->word = 0xFFFFFFFFFFFFFFFF, map->cleared = 0xFFFFFFFFFFFFFFFF
-> 3. Now two tasks try to allocate requests:
->   T1:                                       T2:
->   __blk_mq_get_tag                          .
->   __sbitmap_queue_get                       .
->   sbitmap_get                               .
->   sbitmap_find_bit                          .
->   sbitmap_find_bit_in_word                  .
->   __sbitmap_get_word  -> nr=-1              __blk_mq_get_tag
->   sbitmap_deferred_clear                    __sbitmap_queue_get
->   /* map->cleared=0xFFFFFFFFFFFFFFFF */     sbitmap_find_bit
->     if (!READ_ONCE(map->cleared))           sbitmap_find_bit_in_word
->       return false;                         __sbitmap_get_word -> nr=-1
->     mask = xchg(&map->cleared, 0)           sbitmap_deferred_clear
->     atomic_long_andnot()                    /* map->cleared=0 */
->                                               if (!(map->cleared))
->                                                 return false;
->                                      /*
->                                       * map->cleared is cleared by T1
->                                       * T2 fail to acquire the tag
->                                       */
-> 
-> [...]
+If needed I can try to isolate the instance of the working 6.6.23 and I can=E2=
+=80=99t confirm it does NO ERRORS at all like the kernels before it.
 
-Applied, thanks!
+Buggy 6.6.24 log it is corrrext, the real 6.6.24 log with buga on vmalloc.
 
-[1/1] sbitmap: fix io hung due to race on sbitmap_word::cleared
-      commit: 72d04bdcf3f7d7e07d82f9757946f68802a7270a
-
-Best regards,
--- 
-Jens Axboe
+If needed I can confirm I can test any possible fix and/or patch against 6.6=
+.24.
 
 
+Thank you
+
+MD
+Inviato da iPhone
+
+> Il giorno 19 lug 2024, alle ore 17:12, Dan Carpenter <dan.carpenter@linaro=
+.org> ha scritto:
+>=20
+> =EF=BB=BFOn Fri, Jul 19, 2024 at 10:01:14AM -0500, Dan Carpenter wrote:
+>>=20
+>> The interesting thing about that is the working kernel had tons of these
+>> allocation failures as well.
+>> https://bugzilla.kernel.org/show_bug.cgi?id=3D219061
+>> See the attachment which called "This is a session with the last WORKING
+>> KERNEL 6.6.23, NO ERRORS, everything fine".
+>=20
+> Never mind.  There are a bunch of different reboots in that file with
+> different kernels.
+>=20
+> regards,
+> dan carpenter
+>=20
 
 
