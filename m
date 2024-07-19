@@ -1,199 +1,189 @@
-Return-Path: <linux-kernel+bounces-257433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 643589379EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:31:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F12E9379FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:38:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 950FC1C211CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:31:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02C44B21F93
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9EF01459F8;
-	Fri, 19 Jul 2024 15:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA351145B01;
+	Fri, 19 Jul 2024 15:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="lB77K14i"
-Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DlreXkvj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D58957CBC
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 15:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6FD71459EA;
+	Fri, 19 Jul 2024 15:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721403077; cv=none; b=cSPO9yDB+lTzzAYPBXGzz54w9xUEmff6wRaYT/m0Oqu8/Rcm94pjbzUi3dX/chNONQAGeAHaA6PjXoyP8xyn7cdHPBjrmWpMKu5nO8RAXCaL5RzjKiwjdI1zIzudzpsS3cFOdMvL1YtbMxCalNIlxAU5Bu/ZQSQh+Y9keoAP2Tg=
+	t=1721403480; cv=none; b=NushCDfDpwr/UqawLpkzd5HLBhg48rf1iRMpamI9MIwPQg6zoo1WhnJM0YxhTSpPKGqo3Hu0zZSIf9/vIo0fSx+wPgsLVJS9vNJhSD+Sbc5uWnQBmrnomRdpjrmESUKbvqnVuYdHzYe1dZ/49ZoDXJXJMz6yxWquXAdxV2KQ6gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721403077; c=relaxed/simple;
-	bh=wd5RLE2IVNe8j0OkYgGaQ/CCPH8OsAp0/QhvVtCAKD8=;
+	s=arc-20240116; t=1721403480; c=relaxed/simple;
+	bh=tVgNxMmAQWvU1FxBOgdFor7NMUPhhxY2uJhGjcWiisk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l9YSTGBZOcjQ4glTgB5pkQ+e6QOC8zbVpziI9zYDcm757pp5ic8+hERcUeO+g4nK2btubsRUvsGIvbhxdShLynp9HBQOKdTCt41mI6kagCMvnyhaiBhO7wt1Mxm/JYN1RE9LAC1iLWTZAszAnjsRHJnRWTdQ3k8ObYNNBr8B338=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=lB77K14i; arc=none smtp.client-ip=45.157.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WQYYD6S51zbQg;
-	Fri, 19 Jul 2024 17:31:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721403072;
-	bh=Un40jjD+8GvfPwjqSPOKrq30Me1og5PadVGfj4QH6kY=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oaqb61O4FiRH9IDNjHTi+k1+8KLFe4d/u6aFzUTigNk9vG2vYV73fluWnNq4NwWs6wo6Ms7WdfC5grAjyYgK1WBO7Jw9QAegX7C10Rd9YousA4RSTZLKOhw3FohmpeALkeD6D18LiGeOHr/7xTh/brPTxdh4XasjwuhJ9Ae+v64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DlreXkvj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A13C5C32782;
+	Fri, 19 Jul 2024 15:37:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721403479;
+	bh=tVgNxMmAQWvU1FxBOgdFor7NMUPhhxY2uJhGjcWiisk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lB77K14iswxUkMLiWMQR/OqP1CUhz8X8GwZqB9CtcDBo75tvJfB77127QpOpNwBaP
-	 7EoqwUR1lneJ3TlU7kjlL8eN4IRNJJmky2RERsSojlBt2Rhz1QmHm2yKFb3pIU++Wf
-	 ukEouG+wAac+WvB8gW+E6zX5Jmw8sqmzYta1rvX4=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WQYY72PSTz667;
-	Fri, 19 Jul 2024 17:31:07 +0200 (CEST)
-Date: Fri, 19 Jul 2024 17:31:04 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jeff Xu <jeffxu@google.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
-	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-Message-ID: <20240719.Ooxeithah8Sh@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-2-mic@digikod.net>
- <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
- <20240717.neaB5Aiy2zah@digikod.net>
- <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
- <20240718.kaePhei9Ahm9@digikod.net>
- <CALmYWFupWw2_BKu1FF=ooXFpA=GtJr1ehZSK3p+1+1WH34eX=w@mail.gmail.com>
+	b=DlreXkvjsjdzHII3wrHEJX7xIvJtPh9sNl+PiEO4zziJHXT5L7qnqPt0W8Df87Z3f
+	 68krH52A7kA5g1aa2XJv0roBndIEDg+cY8XsA+iWOIUm0CIjdZSUm1/AIR5wTZqSFF
+	 ZPu7x311PvUpqpHwS7LKafCeg27rQek1LBnjCMCamVxdVjcv8NtScBCUdOQzaiCEoR
+	 BqTsYabPbb92QT7cEQlh1F4nxwrHD6TrQWmcHk+zGXys8vhSWoRgXRyJExhg3qYStE
+	 9kFSfb2sX7fKVVh0sACIwo3xjKCXDs62FfEmcrj+oNSNOGhNW1e1gj4yvau1AjZlG4
+	 IOqx+qPRg9jcQ==
+Date: Fri, 19 Jul 2024 18:34:54 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vasily Gorbik <gor@linux.ibm.com>, Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
+	nvdimm@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH 05/17] arch, mm: pull out allocation of NODE_DATA to
+ generic code
+Message-ID: <ZpqHniqaMxj-iDfw@kernel.org>
+References: <20240716111346.3676969-1-rppt@kernel.org>
+ <20240716111346.3676969-6-rppt@kernel.org>
+ <220da8ed-337a-4b1e-badf-2bff1d36e6c3@redhat.com>
+ <Zpi-HAb7EBxrZBtK@kernel.org>
+ <96850252-a49f-4d78-a94b-a9a25e3f2bd5@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALmYWFupWw2_BKu1FF=ooXFpA=GtJr1ehZSK3p+1+1WH34eX=w@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <96850252-a49f-4d78-a94b-a9a25e3f2bd5@redhat.com>
 
-On Fri, Jul 19, 2024 at 08:12:37AM -0700, Jeff Xu wrote:
-> On Thu, Jul 18, 2024 at 5:24 AM Mickaël Salaün <mic@digikod.net> wrote:
-> >
-> > On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
-> > > On Wed, Jul 17, 2024 at 3:01 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > >
-> > > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
-> > > > > On Thu, Jul 4, 2024 at 12:02 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > >
-> > > > > > Add a new AT_CHECK flag to execveat(2) to check if a file would be
-> > > > > > allowed for execution.  The main use case is for script interpreters and
-> > > > > > dynamic linkers to check execution permission according to the kernel's
-> > > > > > security policy. Another use case is to add context to access logs e.g.,
-> > > > > > which script (instead of interpreter) accessed a file.  As any
-> > > > > > executable code, scripts could also use this check [1].
-> > > > > >
-> > > > > > This is different than faccessat(2) which only checks file access
-> > > > > > rights, but not the full context e.g. mount point's noexec, stack limit,
-> > > > > > and all potential LSM extra checks (e.g. argv, envp, credentials).
-> > > > > > Since the use of AT_CHECK follows the exact kernel semantic as for a
-> > > > > > real execution, user space gets the same error codes.
-> > > > > >
-> > > > > So we concluded that execveat(AT_CHECK) will be used to check the
-> > > > > exec, shared object, script and config file (such as seccomp config),
-> > > >
-> > > > "config file" that contains executable code.
-> > > >
-> > > Is seccomp config  considered as "contains executable code", seccomp
-> > > config is translated into bpf, so maybe yes ? but bpf is running in
-> > > the kernel.
-> >
-> > Because seccomp filters alter syscalls, they are similar to code
-> > injection.
-> >
-> > >
-> > > > > I'm still thinking  execveat(AT_CHECK) vs faccessat(AT_CHECK) in
-> > > > > different use cases:
-> > > > >
-> > > > > execveat clearly has less code change, but that also means: we can't
-> > > > > add logic specific to exec (i.e. logic that can't be applied to
-> > > > > config) for this part (from do_execveat_common to
-> > > > > security_bprm_creds_for_exec) in future.  This would require some
-> > > > > agreement/sign-off, I'm not sure from whom.
-> > > >
-> > > > I'm not sure to follow. We could still add new flags, but for now I
-> > > > don't see use cases.  This patch series is not meant to handle all
-> > > > possible "trust checks", only executable code, which makes sense for the
-> > > > kernel.
-> > > >
-> > > I guess the "configfile" discussion is where I get confused, at one
-> > > point, I think this would become a generic "trust checks" api for
-> > > everything related to "generating executable code", e.g. javascript,
-> > > java code, and more.
-> > > We will want to clearly define the scope of execveat(AT_CHECK)
-> >
-> > The line between data and code is blurry.  For instance, a configuration
-> > file can impact the execution flow of a program.  So, where to draw the
-> > line?
-> >
-> > It might makes sense to follow the kernel and interpreter semantic: if a
-> > file can be executed by the kernel (e.g. ELF binary, file containing a
-> > shebang, or just configured with binfmt_misc), then this should be
-> > considered as executable code.  This applies to Bash, Python,
-> > Javascript, NodeJS, PE, PHP...  However, we can also make a picture
-> > executable with binfmt_misc.  So, again, where to draw the line?
-> >
-> > I'd recommend to think about interaction with the outside, through
-> > function calls, IPCs, syscalls...  For instance, "running" an image
-> > should not lead to reading or writing to arbitrary files, or accessing
-> > the network, but in practice it is legitimate for some file formats...
-> > PostScript is a programming language, but mostly used to draw pictures.
-> > So, again, where to draw the line?
-> >
-> The javascript is run by browser and java code by java runtime, do
-> they meet the criteria? they do not interact with the kernel directly,
-> however they might have the same "executable" characteristics and the
-> app might not want them to be put into non-exec mount.
+On Fri, Jul 19, 2024 at 05:07:35PM +0200, David Hildenbrand wrote:
+> > > > -	 * Allocate node data.  Try node-local memory and then any node.
+> > > > -	 * Never allocate in DMA zone.
+> > > > -	 */
+> > > > -	nd_pa = memblock_phys_alloc_try_nid(nd_size, SMP_CACHE_BYTES, nid);
+> > > > -	if (!nd_pa) {
+> > > > -		pr_err("Cannot find %zu bytes in any node (initial node: %d)\n",
+> > > > -		       nd_size, nid);
+> > > > -		return;
+> > > > -	}
+> > > > -	nd = __va(nd_pa);
+> > > > -
+> > > > -	/* report and initialize */
+> > > > -	printk(KERN_INFO "NODE_DATA(%d) allocated [mem %#010Lx-%#010Lx]\n", nid,
+> > > > -	       nd_pa, nd_pa + nd_size - 1);
+> > > > -	tnid = early_pfn_to_nid(nd_pa >> PAGE_SHIFT);
+> > > > -	if (tnid != nid)
+> > > > -		printk(KERN_INFO "    NODE_DATA(%d) on node %d\n", nid, tnid);
+> > > > -
+> > > > -	node_data[nid] = nd;
+> > > > -	memset(NODE_DATA(nid), 0, sizeof(pg_data_t));
+> > > > -
+> > > > -	node_set_online(nid);
+> > > > -}
+> > > > -
+> > > >    /**
+> > > >     * numa_cleanup_meminfo - Cleanup a numa_meminfo
+> > > >     * @mi: numa_meminfo to clean up
+> > > > @@ -571,6 +538,7 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+> > > >    			continue;
+> > > >    		alloc_node_data(nid);
+> > > > +		node_set_online(nid);
+> > > >    	}
+> > > 
+> > > I can spot that we only remove a single node_set_online() call from x86.
+> > > 
+> > > What about all the other architectures? Will there be any change in behavior
+> > > for them? Or do we simply set the nodes online later once more?
+> > 
+> > On x86 node_set_online() was a part of alloc_node_data() and I moved it
+> > outside so it's called right after alloc_node_data(). On other
+> > architectures the allocation didn't include that call, so there should be
+> > no difference there.
 > 
-> If the answer is yes, they can also use execveat(AT_CHECK),  the next
-> question is: does it make sense for javacript/java code to go through
-> execveat() code path, allocate bprm, etc ? (I don't have answer, maybe
-> it is)
-
-Java and NodeJS can do arbitrary syscalls (through their runtime) and
-they can access arbitrary files, so according to my below comment, yes
-they should be managed as potentially dangerous executable code.
-
-The question should be: is this code trusted? Most of the time it is
-not, hence the security model of web browser and their heavy use of
-sandboxing.  So no, I don't think it would make sense to check this kind
-of code more than what the browser already do.
-
-I'll talk about this use case in the next patch series.
-
+> But won't their arch code try setting the nodes online at a later stage?
 > 
-> > We should follow the principle of least astonishment.  What most users
-> > would expect?  This should follow the *common usage* of executable
-> > files.  At the end, the script interpreters will be patched by security
-> > folks for security reasons.  I think the right question to ask should
-> > be: could this file format be (ab)used to leak or modify arbitrary
-> > files, or to perform arbitrary syscalls?  If the answer is yes, then it
-> > should be checked for executability.  Of course, this excludes bugs
-> > exploited in the file format parser.
-> >
-> > I'll extend the next patch series with this rationale.
-> >
+> And I think, some architectures only set nodes online conditionally
+> (see most other node_set_online() calls).
 > 
+> Sorry if I'm confused here, but with now unconditional node_set_online(), won't
+> we change the behavior of other architectures?
+
+The generic alloc_node_data() does not set the node online:
+
++/* Allocate NODE_DATA for a node on the local memory */
++void __init alloc_node_data(int nid)
++{
++	const size_t nd_size = roundup(sizeof(pg_data_t), PAGE_SIZE);
++	u64 nd_pa;
++	void *nd;
++	int tnid;
++
++	/* Allocate node data.  Try node-local memory and then any node. */
++	nd_pa = memblock_phys_alloc_try_nid(nd_size, SMP_CACHE_BYTES, nid);
++	if (!nd_pa)
++		panic("Cannot allocate %zu bytes for node %d data\n",
++		      nd_size, nid);
++	nd = __va(nd_pa);
++
++	/* report and initialize */
++	pr_info("NODE_DATA(%d) allocated [mem %#010Lx-%#010Lx]\n", nid,
++		nd_pa, nd_pa + nd_size - 1);
++	tnid = early_pfn_to_nid(nd_pa >> PAGE_SHIFT);
++	if (tnid != nid)
++		pr_info("    NODE_DATA(%d) on node %d\n", nid, tnid);
++
++	node_data[nid] = nd;
++	memset(NODE_DATA(nid), 0, sizeof(pg_data_t));
++}
+
+I might have missed some architecture except x86 that calls
+node_set_online() in its alloc_node_data(), but the intention was to leave
+that call outside the alloc and explicitly add it after the call to
+alloc_node_data() if needed like in x86.
+
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
