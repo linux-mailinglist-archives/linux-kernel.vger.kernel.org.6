@@ -1,214 +1,251 @@
-Return-Path: <linux-kernel+bounces-257227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06891937701
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:10:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A3569376FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:06:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87AD61F220A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 11:10:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7F41282B1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 11:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DC084D0E;
-	Fri, 19 Jul 2024 11:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20F4583CD7;
+	Fri, 19 Jul 2024 11:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="moKWrtoP"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="b/vXZ66u"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8641B86D2
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 11:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721387433; cv=none; b=A3BcBS4AsKrpKS6wG9RT6q655q/buNRNtglYRSde4GjgJWKFnSrSvAAb+KyozbOLm8qSe0gWtwBLUQKMnR57y2l59zvx7ord4nG12NyQJzd0iQWyr83UsOWKp8xWVVE9okeYvlaLiR+OQJLukJaXKh3VKlAIOspPfnedfuP0hBM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721387433; c=relaxed/simple;
-	bh=FLpC8utwEIJQLiEshcqIPSR5PVM/wZvPxXyaAC6uHsc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=FeHJjTTEdopJXZYtHxIrKVb0yzMiMvFqJndJR9f6iBBhVeYxd07qFe+HbtOc2YZ98/xKAjLfbryp6WQlArsYWHpviptFyZ+ISrGtYU19AcpvNGPtjqevvWHgpTD4f9pRcWFFA3yCRc5dt4wYf8z1CRnU+kHX1vSUWAYuvQlFOew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=moKWrtoP; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240719110234epoutp03d85840b2be49e4a2e8e0e58c32c30a7d~jmFCTkZQO2891428914epoutp03Y
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 11:02:34 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240719110234epoutp03d85840b2be49e4a2e8e0e58c32c30a7d~jmFCTkZQO2891428914epoutp03Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1721386954;
-	bh=tcuRRKl9VdtIuqpxCnve4eFVQA4up3PEYahY4FJVRzI=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=moKWrtoPH7Rxg8mbqoMZBa35TA6D5e0xzBFWbXvQj98N7sGTZu+/sleo5x4h+AwT2
-	 SUl3KTnKah/NWdHIqrM4AeIgsSGgxF9wYQqWTcsvcx9sAvWsbsvihmOb2p6U0cZ+D7
-	 tFo0FuEXlGENDOPpySnFAeT5W2Y4YWD1tVqygAAA=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240719110234epcas5p38d1d74df6ad45f6e034449db901cd3ee~jmFB7KYtE0712207122epcas5p3a;
-	Fri, 19 Jul 2024 11:02:34 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4WQRbD5sMnz4x9Pr; Fri, 19 Jul
-	2024 11:02:32 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	E8.7C.09989.8C74A966; Fri, 19 Jul 2024 20:02:32 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240719110149epcas5p3dd468685a095c094ed2e540279bf3ec2~jmEYmHhz02242422424epcas5p34;
-	Fri, 19 Jul 2024 11:01:49 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240719110149epsmtrp25c08edf6ec93b393aa106dc5111b81b6~jmEYkGekN1989019890epsmtrp2i;
-	Fri, 19 Jul 2024 11:01:49 +0000 (GMT)
-X-AuditID: b6c32a4a-bffff70000002705-0c-669a47c80f32
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	E5.84.07412.D974A966; Fri, 19 Jul 2024 20:01:49 +0900 (KST)
-Received: from INBRO002811.samsungds.net (unknown [107.122.5.126]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240719110146epsmtip2d040cbc2bf24a38e8310d9f22193ebb0~jmEVwip5h0667406674epsmtip2J;
-	Fri, 19 Jul 2024 11:01:46 +0000 (GMT)
-From: Selvarasu Ganesan <selvarasu.g@samsung.com>
-To: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: jh0801.jung@samsung.com, dh10.jung@samsung.com, naushad@samsung.com,
-	akash.m5@samsung.com, rc93.raju@samsung.com, taehyun.cho@samsung.com,
-	hongpooh.kim@samsung.com, eomji.oh@samsung.com, shijie.cai@samsung.com,
-	Selvarasu Ganesan <selvarasu.g@samsung.com>
-Subject: [PATCH] usb: dwc3: Potential fix of possible dwc3 interrupt storm
-Date: Fri, 19 Jul 2024 16:30:55 +0530
-Message-ID: <20240719110100.329-1-selvarasu.g@samsung.com>
-X-Mailer: git-send-email 2.45.2.windows.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001F41B86D2
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 11:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.156.173
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721387185; cv=fail; b=qwiKXK/QZOPJQ4wnWfx6BR4s1CbPpGl5+Q8VZpL7390dLdF2zxNbkb9Wm0VSox0ZmFLm1eNNxYwr7CtpQI1mTS6tUDhDRXev+TBNtL/4Edn53nsQEyNjhS+NuwGAxzBKCxYT7TYyK/u4WciLpI35+eQ/Bl7bFrUr+coozIYJ/j8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721387185; c=relaxed/simple;
+	bh=CVORpr9tOA4lMZkIR6X8W+z9Lb5sEm7zW/kLysDBbss=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=hf5jpehnj+7Sw+zAbzZPuEpU9cgItJKoFIJWo5nBiaJ5R7jBptDbFXLgCj92S9utxEjCnn8c3du1hbOavtq6K3ZzoahZHe7rMsq5TAKq2tnF5MPTXyiJqthFf7Ut46KSCqYw1oH24pPtzJGDnVXrexNdCW/8iGSahD2A6nGwOKc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=fail (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=b/vXZ66u reason="signature verification failed"; arc=fail smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46J149Wx026962;
+	Fri, 19 Jul 2024 04:05:13 -0700
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2176.outbound.protection.outlook.com [104.47.55.176])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 40fe5esqe0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Jul 2024 04:05:12 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wRXdWIIR/Hw1xAXO8mGlTCmwOjDsHnC5nec1jP6Mc+LxCGSEx3aMyR03Eyu+IMUx+v/hSX0NGyicvY1dB2icxQODdqxccKtBsvK9kdKtYHLVgItVD5GH6/BoFqAXSswZkbzm3ua0bc178Yn8oKY59RUXvOEBMv0KCnzrlexh2ATT26dpj0HyzmgKwEw9pYdtXkbPdMs9WaouAWf0Y3oQF5kg6zni4NqnGKrjTZvBHVUiiy4zlooMZJJJuj/aPwqP0RWR8ItV3rX/w7QqASKwtMluWzgXl17xHeziqM+Fc9qp0Yv3hQQv4Sln0l2kn83pb/U40aCz51TWQCltNqpe4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aD3HleeM2mAu8j8SM7nCxw7WwcC0wVh8vX5mfYJXXzo=;
+ b=y5Ng3piutHz3RULvN/UB12l7sf0BPhkdWxcrA1kLV+7Wag+X5MkzixTf1fMP1RxGxKdil5mA+qtLf/wBLIVNUj/tuSfHvPrMh7rmFa09WCYaVklX4miNAh5liJZOqOcVyV0HAYeyIpBJsNOwIWFtqgsetz4IAZ5vmUYSSsfXgLdNhPhcuTOHMIhk47zizm0688z3uicf2lLfR02OSzeRq8pjjG9J6ovAdenGUSDbQ98lgP6sZxgxcUuLp661CX1TCTBsJcLX+0Xbn9S5tfYeZuIuvN+382UKMWIPcSFx+SvSF+qooAUNSDdAcDfEBl22tUqiJIDX5iNjraiOhUBltw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aD3HleeM2mAu8j8SM7nCxw7WwcC0wVh8vX5mfYJXXzo=;
+ b=b/vXZ66uLNTHfVHXenpDfre7sMwl9R9Am6y0EoPbvVnaPsBfsHQd7OCfVJRAhlQC+uTx8/3bxXijH179QaHMIQ2kPxn/QcEDMKEnWa9LZ3qjubMRW6r6jZ5nJCqyKllfpYNb4uyS5yZy8pa9OT7gtVYup4roeS6ytq1uWlK0Z6g=
+Received: from MW4PR18MB5244.namprd18.prod.outlook.com (2603:10b6:303:1e0::16)
+ by PH8PR18MB5383.namprd18.prod.outlook.com (2603:10b6:510:256::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14; Fri, 19 Jul
+ 2024 11:05:08 +0000
+Received: from MW4PR18MB5244.namprd18.prod.outlook.com
+ ([fe80::52f3:9792:ee42:90b]) by MW4PR18MB5244.namprd18.prod.outlook.com
+ ([fe80::52f3:9792:ee42:90b%3]) with mapi id 15.20.7784.016; Fri, 19 Jul 2024
+ 11:05:08 +0000
+From: Vamsi Krishna Attunuru <vattunuru@marvell.com>
+To: Arnd Bergmann <arnd@kernel.org>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>
+CC: Arnd Bergmann <arnd@arndb.de>, Srujana Challa <schalla@marvell.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [EXTERNAL] [PATCH] misc: mrvl-cn10k-dpi: add PCI_IOV dependency
+Thread-Topic: [EXTERNAL] [PATCH] misc: mrvl-cn10k-dpi: add PCI_IOV dependency
+Thread-Index: AQHa2cfoJFmylqezGEGOpChYQ9I8pbH94iPA
+Date: Fri, 19 Jul 2024 11:05:08 +0000
+Message-ID:
+ <MW4PR18MB52447C6B97263C4790C66E22A6AD2@MW4PR18MB5244.namprd18.prod.outlook.com>
+References: <20240719103858.1292094-1-arnd@kernel.org>
+In-Reply-To: <20240719103858.1292094-1-arnd@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MW4PR18MB5244:EE_|PH8PR18MB5383:EE_
+x-ms-office365-filtering-correlation-id: 21e757a5-2848-41aa-4a2c-08dca7e2a6f4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?dFlITWdiMVUyU3gzYnRmWW1NRmRwZzErMUczQUZreUVKa3B2SUpQRkgrblFl?=
+ =?utf-8?B?bHhOa0Z1eDZINlZ5dkx5d3lHVjN1TGY4eFFudGdpSGYxdExYZE9EZnZsWVdn?=
+ =?utf-8?B?UUluQ0dCTGxHMCs0UnhuczFSLy9EYzdEM1VCOGVDMFhjU3M4Y1BQWGRMK0xz?=
+ =?utf-8?B?UHF6bXhiVjh3S3FiWURLZm5nbDdUYnA3MFliajV5WXlLd3YxYVhQNW5qVkVq?=
+ =?utf-8?B?NUpUMSs2ZUY5TFVaWFlYVXhqYmtteFNUUmpTOXAxN3UwZVIvNk54WmVpUExX?=
+ =?utf-8?B?RXdxSUtqaXN1ajJCcmJyc29tS3RzZEJCWHY2MFdBQTEzWDdNTm81R20xWUpM?=
+ =?utf-8?B?TW5jbi9vSGZLV2NEaEM5V1QrbTJNOXlERm4wTlFFcnhxbC93VjBXS2xBZUFO?=
+ =?utf-8?B?K3BWb3hBaEVJYXJncWs0OENwcDEva3NCMzdDTldob3poNHY2ZUpvSjc5Mlpy?=
+ =?utf-8?B?U3BwdVhndVp6a2tFdHlDZkhiRlhCU0JNY3NVNU16YjFTTk9OYjNrVGMwZ24r?=
+ =?utf-8?B?ck9HVnBpeXVMWFFZektuOWRmSTcyT2RYdmx2cnNVK29WRFZNMWZHWUhKTUJw?=
+ =?utf-8?B?R0VnMWhHcW1iT09IMW1aMUpkL005cEc1ZVU0aXViUzl2djJKZGtxRHVUVFY3?=
+ =?utf-8?B?NktHV2pSVXkrNTB0Y0F6Rkt0bmUzQWlTL1JFSGQ5LzRKbkNJTlJ6eGZiSkQx?=
+ =?utf-8?B?UzRDekpHUXR1R3RmaEUxZ21GMjhWcHI0L25sUVREUWlrcU1TZjRHRk5VK21C?=
+ =?utf-8?B?N2w1TVBHTXdKbWNwR3BZdmd5d0NqOE0yNCszT3ZoZktZSEQvZXQ0aTE0Zmwr?=
+ =?utf-8?B?Zlc3eGhLQzE4dUpyK3BvRFZUS1FLMXY5aFc2WkNGbitWWXJYUjJuclp0bmM0?=
+ =?utf-8?B?MnJXcnZZKy9IMG93TXBGQ3psYlFVamN1WUhYaVJLRHU2SmxBSkxJYnNvTmhr?=
+ =?utf-8?B?aTA5cHU1YVlzTGxPQkFKKzhKOEx2eU1LT3d0cThGaEZiaW4wZ2tlUHV3UnNU?=
+ =?utf-8?B?UWpUaHR5N3RzaHAxcUpOUFNjWllET3FxZkJ5dTh1MExQYlBsbjdYQWhmUGtq?=
+ =?utf-8?B?aDZGbHdXMExxL0tJRXNvaWQyZTh1cGhyaGIrdHZPS0ovbzlRZ3o2ak5nYmIz?=
+ =?utf-8?B?c3NSSXd1YTBRWFlnUUZjSnk0dWMxdi84UG5kZHh5N0JneG5lOGtsRmtGRnhv?=
+ =?utf-8?B?QjE3cTA0UEdGaWlac0czRHMxL083VkliQUdKcGZ1M3Q1L0xGNWFla3l2V3hO?=
+ =?utf-8?B?RHdycFV2VGhocVFaa085MXd4QkZzVFl6MkNUOXp2TFV0TDFkdU1QYllPdXZo?=
+ =?utf-8?B?RWluTnQ1QjdnRGRzNlBmTmxQNUc4TUYycjNuRE5HNEtIQ2h1aGJ3akxLdlEw?=
+ =?utf-8?B?N0tPSGlLc1FtMGVSUVpyaENneXRML3BsNkpzL2Y4NW1IbDlmdWpwSnQyYjky?=
+ =?utf-8?B?cjFBdDMyckRVaHVkRHZQNUdreEJ5N0lpT1hUREFhZ1NKOWxkanVxTFdkY3lE?=
+ =?utf-8?B?RW5TU0F0K1REVjkvUnpYczU3S3M1VVRxbEE0RlAvd1lycUU5dGRCdHhKT0Jm?=
+ =?utf-8?B?K21xQ1pYam9TTUVEZG9qemtDcTJBUlQ5UDdEOGlETHQwR2tZZ1BWKzU0ejlz?=
+ =?utf-8?B?SE40TVVqK2Z5alVYajl4bk5TK1p6Nkw1Q3lFNHdDUjl6OEUxUXBua3duS3ZF?=
+ =?utf-8?B?bTAxODFPdGJXVnA4ZHZaS0dqQjF3QThUK3dXR0E2OVYvcEZmcWtpSzJlSmdP?=
+ =?utf-8?B?L0VVUkltL3pRUWRpc1VjK1dHSWhKVXRTWjdVaXhid3NWVGJ5WjJQWWFvc3RQ?=
+ =?utf-8?B?SFI3UFNDaUZYNStpRktBQXlTajJtVWt0K2dLSUJwUjAxOUtIKzdWYVljS1Vo?=
+ =?utf-8?B?QmZ2aUZZanVEMGdlNmRGbDROY2kwSlFkTXZucXhOcVNEV2c9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR18MB5244.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?b3VabWFBdlRZUCtHR2JnWGZBT3pHWHpyZFRpYXUxKzEzcXhvNTRBN3NJbjNH?=
+ =?utf-8?B?bTgrVkFPZFlnUXo2UVpXZlVuMEpoVGxUU2tZT0JiVXg3Y3dJc0JjajkrQ291?=
+ =?utf-8?B?QVBpMTZTd0xLWFI3MlRWUEpKUjlFbSs3RFhNVTVQMXpIbXA4bmMwNENaVmpQ?=
+ =?utf-8?B?QUdBNXJYUXhZd05JQm9PKzF2L1E0a28xNTMxUW83R1lFb2lLUXhTRkVlZTEr?=
+ =?utf-8?B?a3NZY3VxWVB3bmdLOVhJbUU4eTA2U1d5TmJmRXZUOFh5U2wzVlJsa1h1Wkk5?=
+ =?utf-8?B?c2N0RC9abnc5U1ZLY0dWNEpoZDlEcVZQTmY2bXR5UzlHbHBmc0pqdXpiaUVa?=
+ =?utf-8?B?SEd5YVl2Q0QzaGpQZmpicm0wdkNtcUdrK2tCL1ZYZk4yK0ZxR29zck5HYjR2?=
+ =?utf-8?B?Ny83c3hKekhHRVByOGRCTGRLdE5IRUFXU2h1d3VvYTgzQ1dEaHpRMkRLb1ZZ?=
+ =?utf-8?B?RUtEUzQwRFBadWZHNWlzWDdiWE5UUU13WC8wdUxicGY4b3lKemxDQ1JCdnQ5?=
+ =?utf-8?B?REtFZVNsSUVsd1RiVUZSUitYQXc1YWh0cXBreGtQVWM3NGRQSkhnb04zb0xK?=
+ =?utf-8?B?TEtvWHBLRkdlUkZFS0NEckFVS3hHc080VEZaUWVuVXlOQ0ZiWVdKNERYbGhQ?=
+ =?utf-8?B?OXhSNFlVd3BPK3hpdlNFVU1NaGMySmYvOWVXZ3V3TVRtRTNLRkxpYVUxelJh?=
+ =?utf-8?B?UUZUQVpzakZxWEt5d0czTG4wSUc5R3ZlUFhLOVkrTW5XZUxVM2RwMW0wSHNJ?=
+ =?utf-8?B?eldYSEZDNld2TmNLZjJZcStHWDJ2MDRPYlBkU3B1SlVGVWd5SjdLeXd3TDd0?=
+ =?utf-8?B?QUhuQmdNL1Vyb09UZlVBclE2RlFPUlkyVVdnUTFNVUlyai9xM0FhMTRhVnk0?=
+ =?utf-8?B?d0xIVFBwdnFYV0YrcDZzdmNpRVk2TU5jbUlXTzFCUVFMek10alc3WlFXclFT?=
+ =?utf-8?B?VXpXNGNSTjNNVTlNeEJ2WXovTHpBT0pTbkZwUU1iaDd4d3RXL0ticGFpS0di?=
+ =?utf-8?B?empoMWg1TzBRNWFienluOFBGbVJHWWF6d1AwS2svM1ZjbFA3eWFZU2RPSWNK?=
+ =?utf-8?B?Vjl6MnBaNFdvd3lrWk0wczRPVWxCRC9Ld3ZXTTMrUE0rdE5sOXRkcXhsK1pJ?=
+ =?utf-8?B?WHpXRUpXRmE3aVBaV0k0eXJmdUJrRDFwMEs5cXBuSENxUG9ZWEFwNEt5TkZM?=
+ =?utf-8?B?Y25CRHhLRVdFNlk5UFo0Ui9PVmVWR2F4Mnp3WGZSVGRGMXNTNnpvbkF1aUtk?=
+ =?utf-8?B?U2t2d1o5SWM4blNwejBuNGZjWXpzS2hBRzVaTitCdHdrcjI2V2hCOUZlM1Zj?=
+ =?utf-8?B?bzZoc0xIL0VjaWNRYllwelJOR016QzZNdWg4UFpGQ2tjYWlIMHRUdkREazZ6?=
+ =?utf-8?B?NlFrRjBEMGdpR25qZUh1ZlVOdk5SY1ZuejR0Z0oxZzNvNFlLdXpjcVZxT3hq?=
+ =?utf-8?B?aDBSZXoxWXhJTGdadXkzcWVNME5WQWVVL3ZBWC9ramNKbU5aOUJobXM4QkVl?=
+ =?utf-8?B?Z3A4R3Z3NzRJRy9VSzlGeTBtV09hUDFuc3Vuejh3MmZXQ0p6NU9mWitxSHdo?=
+ =?utf-8?B?ZWlrQkZXc3NnS1hocFpLbnkxOU5keDJmdkhJQStJL28xV3hwSmZpL21Rc1Ez?=
+ =?utf-8?B?QTAwenJVYnVvMDVHWFU0ZzdBOWlrZG5IUE1ReE1jZytlcUVxYWlYcVFWQWl5?=
+ =?utf-8?B?bEJCZGdOYXROeSsyRjM5RVJraHdWR1pFUDZQSFlRZ3VxbXhrVC8wdHlmU2E0?=
+ =?utf-8?B?Zk1FTit6bGtsc2lxREJmRjFlN1JBaHYrY2RaaG9YSnBiTVB2aFNRVXNFODYx?=
+ =?utf-8?B?ZFpDVzA3Q2srWnNpUllDU3ZSMjJmTndZYzJIcVl4SjE4dVJjUHVweStqOFE0?=
+ =?utf-8?B?eVROa1k3ZDI1R0ZYNG9WLzB2K2lOckNOY0toaHBUSWsvQUpyYUhKemRNTjZE?=
+ =?utf-8?B?dXdNdy9TckU2UWJZYzRqR3ZYWVJEMkZLdzBYNXRYY3N4TmhjOXRrdWdlZVov?=
+ =?utf-8?B?bUU4Z3RjK1k1MWtkRjQ4SDJVNGVMbEt0UWVDc1VDWXJVNEFrSm1PdGRBMUpI?=
+ =?utf-8?B?c09hTDZYYS84UmErbUwzTUJva3FaN3liSW81YWFEUFEwY1dKenVHM0cyaG9v?=
+ =?utf-8?Q?NYfA1zuTnOhbn8OdgMKX4jO0H?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIJsWRmVeSWpSXmKPExsWy7bCmuu4J91lpBks/qlm8ubqK1eLOgmlM
-	FqeWL2SyaF68ns1i0p6tLBZ3H/5gsbi8aw6bxaJlrcwWn47+Z7VY1TmHxeLI8o9MFpe/72S2
-	mHRQ1GLVggPsDnwe++euYffo27KK0WPL/s+MHp83yQWwRGXbZKQmpqQWKaTmJeenZOal2yp5
-	B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl5gDdqKRQlphTChQKSCwuVtK3synKLy1JVcjI
-	Ly6xVUotSMkpMCnQK07MLS7NS9fLSy2xMjQwMDIFKkzIzvh3didzwVTJimvdJ1kbGH8IdTFy
-	ckgImEhMm9DJ2sXIxSEksJtRYuaGxcwQzidGiQuzTjFCON8YJVpXnmKCaZnxsoMdIrGXUeLk
-	3tVQzndGiYstq4BaODjYBAwlnp2wAWkQESiRuPR2IxNIDbNAB5NE57IHrCAJYQEviQ1LNrOD
-	2CwCqhLr1n5kBLF5BawkJrdMZIHYpinxZ8VeFoi4oMTJmU/AbGYBeYnmrbPBbpUQ+Msu0d65
-	gw2iwUVizo41UM3CEq+Ob2GHsKUkPr/bC1VTLbH6zkc2iOYWRonDT75BFdlLPD76iBnkA2ag
-	zet36UOEZSWmnlrHBLGYT6L39xNoUPBK7JgHY6tKnGq8DDVfWuLekmusELaHxKQn21lARgoJ
-	xEq0XtaYwCg/C8k7s5C8Mwth8QJG5lWMkqkFxbnpqcWmBUZ5qeXwmE3Oz93ECE6rWl47GB8+
-	+KB3iJGJg/EQowQHs5IIr9+3mWlCvCmJlVWpRfnxRaU5qcWHGE2BYTyRWUo0OR+Y2PNK4g1N
-	LA1MzMzMTCyNzQyVxHlft85NERJITyxJzU5NLUgtgulj4uCUamCStF3T1OShNuNrX3jLHZOn
-	18Sfct35W+m6aevytetZX+oquH0652tyv9Us1ehGxGPlV/2mHHnpPK/MT05+z7uw69uSXxEr
-	S6ZJ7Swxz40R5OZbpWHnwHG/W1ab2+WIoKMXF7P1lB8az83+lnO5J7k6LX4f+m5Jm0pbC8+0
-	GvcPnTXBiyxfyWefqrHZvT688M3KtBcM198nOdXNnrBY/9jnJ+UPzZTzzetvHqg/3FPt6e83
-	+dzvdt+VJSGVS3+7BNabz7mz4N324k19f2KZWudl9Jcl+YnP2CWQ7v7dK2zlopcWqkIpriGH
-	rM8sm5TdWctYtlqwd5eCglVtvgGbuZ3WmYexUlNCuae1Ok/uUmIpzkg01GIuKk4EAPW+Kss0
-	BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDLMWRmVeSWpSXmKPExsWy7bCSvO5c91lpBot2yFq8ubqK1eLOgmlM
-	FqeWL2SyaF68ns1i0p6tLBZ3H/5gsbi8aw6bxaJlrcwWn47+Z7VY1TmHxeLI8o9MFpe/72S2
-	mHRQ1GLVggPsDnwe++euYffo27KK0WPL/s+MHp83yQWwRHHZpKTmZJalFunbJXBl/Du7k7lg
-	qmTFte6TrA2MP4S6GDk5JARMJGa87GDvYuTiEBLYzSjR/+0eO0RCWuL1rC5GCFtYYuW/51BF
-	Xxklmjs72LoYOTjYBAwlnp2wAakREaiQeLxwBgtIDbPAFCaJBdMOsoAkhAW8JDYs2Qw2lEVA
-	VWLd2o9gQ3kFrCQmt0xkgVigKfFnxV4WiLigxMmZT8BsZgF5ieats5knMPLNQpKahSS1gJFp
-	FaNkakFxbnpusmGBYV5quV5xYm5xaV66XnJ+7iZGcIBraexgvDf/n94hRiYOxkOMEhzMSiK8
-	ft9mpgnxpiRWVqUW5ccXleakFh9ilOZgURLnNZwxO0VIID2xJDU7NbUgtQgmy8TBKdXAFC9Q
-	zCx86t6bo8/0X3syRjbKtCxaUFietyjm+ntei3P7zunXCqr+dVrm+YDBKfHDKs+vuhMe6whF
-	ibxjNp7N8Pzlhc7tvjo7DVp0JYPsl8Ux1HJVZOvVaWdOdri94eTPnUqF0+6/f9Wzp/ii4fOb
-	H1cGKlWVbhQt6+tR09Ff4/Bs5Vt2jf9dPQ/8P4WdnsEuNuNvkOdLMeXJrDsaOS48K/xvfPeU
-	BceqZ4q/O11FvZT0n8zv/sDHuvGu0JqTU2YvN0210wlMPMMklL8zZM4t1c4+/iWV8SVNwVJb
-	uOK2iMcte9ek/v344wr+85IfZ/3t33vm2aoib9tLGuceaIQskXsb8/72WYm5DM+uHF73Qoml
-	OCPRUIu5qDgRAJBasAzfAgAA
-X-CMS-MailID: 20240719110149epcas5p3dd468685a095c094ed2e540279bf3ec2
-X-Msg-Generator: CA
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR18MB5244.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21e757a5-2848-41aa-4a2c-08dca7e2a6f4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jul 2024 11:05:08.4822
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: XyNmsNUJ6wH4Pk2MMIe25fvcW266JNve3wdF++J127+293IEuqgg650vtkWaqGkmRmORnBy2Drl9x3iOMnsSKA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR18MB5383
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240719110149epcas5p3dd468685a095c094ed2e540279bf3ec2
-References: <CGME20240719110149epcas5p3dd468685a095c094ed2e540279bf3ec2@epcas5p3.samsung.com>
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-GUID: CnEXPOzvyV8WsocW3JLs-_71KoYyv1N3
+X-Proofpoint-ORIG-GUID: CnEXPOzvyV8WsocW3JLs-_71KoYyv1N3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-19_06,2024-07-18_01,2024-05-17_01
 
-In certain scenarios, there is a chance that the CPU may not be
-scheduled the bottom half of dwc3 interrupt. This is because the CPU
-may hang up where any work queue lockup has happened for the same CPU
-that is trying to schedule the dwc3 thread interrupt. In this scenario,
-the USB can enter runtime suspend as the bus may idle for a longer time
-, or user can reconnect the USB cable. Then, the dwc3 event interrupt
-can be enabled when runtime resume is happening with regardless of the
-previous event status. This can lead to a dwc3 IRQ storm due to the
-return from the interrupt handler by checking only the evt->flags as
-DWC3_EVENT_PENDING, where the same flag was set as DWC3_EVENT_PENDING
-in previous work queue lockup.
-Let's consider the following sequences in this scenario,
 
-Call trace of dwc3 IRQ after workqueue lockup scenario
-======================================================
-IRQ #1:
-->dwc3_interrupt()
-  ->dwc3_check_event_buf()
-        ->if (evt->flags & DWC3_EVENT_PENDING)
-                     return IRQ_HANDLED;
-        ->evt->flags |= DWC3_EVENT_PENDING;
-        ->/* Disable interrupt by setting DWC3_GEVNTSIZ_INTMASK  in
-                                                        DWC3_GEVNTSIZ
-        ->return IRQ_WAKE_THREAD; // No workqueue scheduled for dwc3
-                                     thread_fu due to workqueue lockup
-                                     even after return IRQ_WAKE_THREAD
-                                     from top-half.
 
-Thread #2:
-->dwc3_runtime_resume()
- ->dwc3_resume_common()
-   ->dwc3_gadget_resume()
-      ->dwc3_gadget_soft_connect()
-        ->dwc3_event_buffers_setup()
-           ->/*Enable interrupt by clearing  DWC3_GEVNTSIZ_INTMASK in
-                                                        DWC3_GEVNTSIZ*/
+>-----Original Message-----
+>From: Arnd Bergmann <arnd@kernel.org>
+>Sent: Friday, July 19, 2024 4:08 PM
+>To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>Cc: Arnd Bergmann <arnd@arndb.de>; Vamsi Krishna Attunuru
+><vattunuru@marvell.com>; Srujana Challa <schalla@marvell.com>; linux-
+>kernel@vger.kernel.org
+>Subject: [EXTERNAL] [PATCH] misc: mrvl-cn10k-dpi: add PCI_IOV dependency
+>
+>From: Arnd Bergmann <arnd@=E2=80=8Aarndb.=E2=80=8Ade> I found one more mis=
+sing
+>dependency in the new driver: when building without CONFIG_PCI_IOV,
+>pci_sriov_configure_simple() cannot be called directly:
+>drivers/misc/mrvl_cn10k_dpi.=E2=80=8Ac: In function 'dpi_remove':
+>
+>From: Arnd Bergmann <arnd@arndb.de>
+>
+>I found one more missing dependency in the new driver: when building
+>without CONFIG_PCI_IOV, pci_sriov_configure_simple() cannot be called
+>directly:
+>
+>drivers/misc/mrvl_cn10k_dpi.c: In function 'dpi_remove':
+>include/linux/stddef.h:9:14: error: called object is not a function or fun=
+ction
+>pointer
+>    9 | #define NULL ((void *)0)
+>      |              ^
+>include/linux/pci.h:2416:41: note: in expansion of macro 'NULL'
+> 2416 | #define pci_sriov_configure_simple      NULL
+>      |                                         ^~~~
+>drivers/misc/mrvl_cn10k_dpi.c:652:9: note: in expansion of macro
+>'pci_sriov_configure_simple'
+>  652 |         pci_sriov_configure_simple(pdev, 0);
+>
+>Add this to the Kconfig file as well.
+>
+>Fixes: 5f67eef6dff3 ("misc: mrvl-cn10k-dpi: add Octeon CN10K DPI
+>administrative driver")
+>Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>---
+> drivers/misc/Kconfig | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig index
+>a1ae3f9c0707..b6f5733a6ee2 100644
+>--- a/drivers/misc/Kconfig
+>+++ b/drivers/misc/Kconfig
+>@@ -589,7 +589,7 @@ config NSM
+>
+> config MARVELL_CN10K_DPI
+> 	tristate "Octeon CN10K DPI driver"
+>-	depends on PCI
+>+	depends on PCI && PCI_IOV
+> 	depends on ARCH_THUNDER || (COMPILE_TEST && 64BIT)
+> 	help
+> 	  Enables Octeon CN10K DMA packet interface (DPI) driver which
+>--
+>2.39.2
 
-Start IRQ Storming after enable dwc3 event in resume path
-=========================================================
-CPU0: IRQ
-dwc3_interrupt()
- dwc3_check_event_buf()
-        if (evt->flags & DWC3_EVENT_PENDING)
-         return IRQ_HANDLED;
+Ohk, my apologies for that. Arnd, thank you for the solution.
 
-CPU0: IRQ
-dwc3_interrupt()
- dwc3_check_event_buf()
-        if (evt->flags & DWC3_EVENT_PENDING)
-         return IRQ_HANDLED;
-..
-..
-
-To fix this issue by avoiding enabling of the dwc3 event interrupt in
-the runtime resume path if dwc3 event processing is in progress.
-
-Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
----
- drivers/usb/dwc3/core.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index cb82557678dd..610792a70805 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -549,8 +549,12 @@ int dwc3_event_buffers_setup(struct dwc3 *dwc)
- 			lower_32_bits(evt->dma));
- 	dwc3_writel(dwc->regs, DWC3_GEVNTADRHI(0),
- 			upper_32_bits(evt->dma));
--	dwc3_writel(dwc->regs, DWC3_GEVNTSIZ(0),
--			DWC3_GEVNTSIZ_SIZE(evt->length));
-+
-+	/* Skip enable dwc3 event interrupt if event is processing in middle */
-+	if (!(evt->flags & DWC3_EVENT_PENDING))
-+		dwc3_writel(dwc->regs, DWC3_GEVNTSIZ(0),
-+				DWC3_GEVNTSIZ_SIZE(evt->length));
-+
- 	dwc3_writel(dwc->regs, DWC3_GEVNTCOUNT(0), 0);
- 
- 	return 0;
--- 
-2.17.1
+Tested-by: Vamsi Attunuru <vattunuru@marvell.com>
 
 
