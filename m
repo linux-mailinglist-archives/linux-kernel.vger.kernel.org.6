@@ -1,83 +1,74 @@
-Return-Path: <linux-kernel+bounces-257584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33B97937C29
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:11:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E5A5937C28
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92738B20CA7
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E5F11C21FC6
 	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0CD14AD17;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D7C14AD1B;
 	Fri, 19 Jul 2024 18:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G33LoK3y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZ21i7eK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51B414A60F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D127114A61E;
 	Fri, 19 Jul 2024 18:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721412580; cv=none; b=Zm1YRaLnglkJIz6Zc9k7fSAO6MJx7lFE1/S4TxCrUMI8GXq3NL5ztWL32RAsTRpXaHOg8fS+KYblqtAXCA+VlveMCSZQldGy2tIRgsGcZkFUVtZCzc2FMkEjVj9cBofNL7hfQSvqPe+nXqwTyUJdlAZ3r/YeG78MqpyeI1hu5G4=
+	t=1721412580; cv=none; b=JWNvSqJno0cOiytdNnvrw4tby3VqcnRkntridrhdonRQHtjB8mn/aKOm6nyfeWnCCvykwWfZsZv61mq+gb735ie7IVOBpa0cWgwKq6PS4/c5/iXWPfcD6UHv1O7cnBoT+s6cjRW5XFTbbop6iC2rqH6g9MtRj4fOqaUR3/QJC7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721412580; c=relaxed/simple;
-	bh=8zheA4hE/fXlFCGnvo4NtcqKaIf499iKmfrOqpWKo6o=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=aPQjVmKOxI5mu5AfIM3MJnLBqLmNRLE7XYiqq8MMlz8JcSemam+EViTMKBvUNfXixL3WjnqpP99lbm/0yLAvxo8St919UKh7gO2Qc+Zql3Z1hebwISywpyyJNV1dtMIzuUIagSdeqLBXZotsQH687hJPzi1Q57pOIJ3halVpz8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G33LoK3y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 999E5C4AF0B;
+	bh=P1Yl3eAUgRP0gXTMeChxQhYlpE5I23QjdR3j1FvwWNs=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=cmmdR5bkpKYwWc1iH3hARQWyx0Vgu5aJXCBYeagtAaZH1FS4xUjuGaYiljXDPfXkU93ngYtWX7N6TwycVv9UGVlBJU+nWJSqIuwJ1k75QAulAt2LogxBN+ldD00hBs2UWi95HqX9GMzQ7nyP1xw6Fm2uHfot3XKj4CH13RxBMkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZ21i7eK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5B030C32782;
 	Fri, 19 Jul 2024 18:09:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1721412580;
-	bh=8zheA4hE/fXlFCGnvo4NtcqKaIf499iKmfrOqpWKo6o=;
+	bh=P1Yl3eAUgRP0gXTMeChxQhYlpE5I23QjdR3j1FvwWNs=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=G33LoK3yTm9wzy7n4Dx55EPgSTDCInO1lc5ANAmja+8773gBar/LrWRffbASQ8PTS
-	 v1kUZEuDjGwwNdeYbaG6WPQz4nrNEznkLhs1FAz7QE+MNclMz3xB7Lrvdd/GPm4tg5
-	 FGp42EF7GuEjDbMy6TJ6lc7Yqr/DoJLF79YUY9uKLw9vQWoaghFj0KrkLmO4GUpCdJ
-	 TDiFgW5tRZ91QnKJA24KbFHh3dc/s698vyTUZJq0AOlObPFP+bjO1yiDRw4oTwdcjx
-	 JnpYGH5nZRMujiL6a114q9MNjFuRQxBSXDc9iebjBpoxbDCPKJttCDA2vDkIAqzgzp
-	 LGNwfmnCYxRYA==
+	b=DZ21i7eKRQ8IrhwFbkdoBKIw7ULtx5QoEsmFXZw4UyJXRIkWTRZwlQr0f/o54SW5U
+	 ysHkyUr1ABqiwnWvoUpOMtNNmKT6iN+WQgtNE8VkFscjwNmk+xT+SF6/xBaZZig3sk
+	 9jBXQ8Kwr0bsPF4OFtXBg+2UJQddCPCT74PzoXot1ki2xCHNKf2LHNwTPkl1uiHUf4
+	 4e3PB13UeW3LNLkHz45O6LSZ6IDfgjHqQHEfXCpb9voRUqh92Z15HVNIMBJGrO6ZnF
+	 EKkiZWzSyNms7MzXutb5EmKfPinrU3v9uE3r8K2iyegFUmaO53Kpwe785iIYCnGkjd
+	 ZgcFVhbPfEP5g==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9024EC4332D;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 50577C4332D;
 	Fri, 19 Jul 2024 18:09:40 +0000 (UTC)
-Subject: Re: [GIT PULL] Crypto Update for 6.11
+Subject: Re: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-6.11-rc1-roundtwo
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <ZpkdZopjF9/9/Njx@gondor.apana.org.au>
-References: <Yzv0wXi4Uu2WND37@gondor.apana.org.au>
- <Y5mGGrBJaDL6mnQJ@gondor.apana.org.au>
- <Y/MDmL02XYfSz8XX@gondor.apana.org.au>
- <ZEYLC6QsKnqlEQzW@gondor.apana.org.au>
- <ZJ0RSuWLwzikFr9r@gondor.apana.org.au>
- <ZOxnTFhchkTvKpZV@gondor.apana.org.au>
- <ZUNIBcBJ0VeZRmT9@gondor.apana.org.au>
- <ZZ3F/Pp1pxkdqfiD@gondor.apana.org.au>
- <ZfO6zKtvp2jSO4vF@gondor.apana.org.au>
- <ZkGN64ulwzPVvn6-@gondor.apana.org.au> <ZpkdZopjF9/9/Njx@gondor.apana.org.au>
+In-Reply-To: <D2RU88JYHTMN.14YA4E5BCVG0L@kernel.org>
+References: <D2RU88JYHTMN.14YA4E5BCVG0L@kernel.org>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ZpkdZopjF9/9/Njx@gondor.apana.org.au>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git v6.11-p1
-X-PR-Tracked-Commit-Id: df1e9791998a92fe9f1e7d3f031b34daaad39e2f
+X-PR-Tracked-Message-Id: <D2RU88JYHTMN.14YA4E5BCVG0L@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-6.11-rc1-roundtwo
+X-PR-Tracked-Commit-Id: 7dc357d343f134bf59815ff6098b93503ec8a23b
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c434e25b62f8efcfbb6bf1f7ce55960206c1137e
-Message-Id: <172141258057.2862.10259587371562814962.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 07e773db19f16f4111795b658c4748da22c927bb
+Message-Id: <172141258032.2862.1798136753529017652.pr-tracker-bot@kernel.org>
 Date: Fri, 19 Jul 2024 18:09:40 +0000
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Fri, 19 Jul 2024 01:49:26 +1200:
+The pull request you sent on Wed, 17 Jul 2024 16:11:04 +0300:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git v6.11-p1
+> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-6.11-rc1-roundtwo
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c434e25b62f8efcfbb6bf1f7ce55960206c1137e
+https://git.kernel.org/torvalds/c/07e773db19f16f4111795b658c4748da22c927bb
 
 Thank you!
 
