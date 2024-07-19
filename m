@@ -1,60 +1,53 @@
-Return-Path: <linux-kernel+bounces-257206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17DC59376B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:37:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBD3B9376B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:39:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F2781F21689
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:37:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E620282191
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2257284A32;
-	Fri, 19 Jul 2024 10:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6789F83CA1;
+	Fri, 19 Jul 2024 10:39:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gGjia7ad"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WZCVtwrc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58949C147;
-	Fri, 19 Jul 2024 10:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD07A42076
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 10:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721385440; cv=none; b=N2r3hSyvIRh7+Xu3vHYGpJ73sjnhgNuxN1e9LTcFNG63e9H5E7MsKLj32VdbNmKjx8ZFgG7JmLlxkLCLlXIlaMLkEm5OtusLCGYz9wcsaDgpVYmz+tb9tT7FaFhwqsBKkaWy4jut6nXKh7eTaw7gPiPY80cQOAxm2stx3OATW/w=
+	t=1721385545; cv=none; b=ggbLuqIIccD67b/O3hdNBFddy5r1rXBd3BMQmUEy9XscLOAkyIp8EaYg6mOsACIrIVktwqUrUrB+afDjNl0nyw1g0lH4HyXHhUXdTB6eiiGxKc6TZXdRvHsUFnh9hK94HQUuiwX58oAqk4KyXDxXNLKMzd4IsyF5p9OJpHwr06A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721385440; c=relaxed/simple;
-	bh=CDdBLp0TuwU0W0IpZjdDO83n/+Ak65R0sjY7wZeSO4c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aZOmwwjqddM/OzzIzVV9uua23gnILyx+ONqnjdRcNNmASkns9BbaCAVs8lQ20IQR2LRYoEXcJfHYDxXCGBFLHe0z9tHXv3/3Q75yuEZspB+V5Q73t4wT6j5ap44bcYP8Au5fdqWwlAIGADdrKyKZuQYDrFRaEFdqSviYVwJA9mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gGjia7ad; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E125C32782;
-	Fri, 19 Jul 2024 10:37:17 +0000 (UTC)
+	s=arc-20240116; t=1721385545; c=relaxed/simple;
+	bh=QFesLS2O5rXs/N1VZ3M0QyMhYMOiUCtsT0sfodgKZxs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=i6xAjYaZrwfrKi3svLJoZojaDmSaXtBeRzV0svf3BVep1CiSefuiyrSexxdiuLca0v+NPFmv3AKTJ7DgCvUuphgbaGijITPPdu2BOWsnHWoM3w1wSESi5T1MH0I63fYxc9tapOOfqZDf+ovYsN8FNCTbvdhucN37fwlOBEKireU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WZCVtwrc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC439C4AF09;
+	Fri, 19 Jul 2024 10:39:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721385440;
-	bh=CDdBLp0TuwU0W0IpZjdDO83n/+Ak65R0sjY7wZeSO4c=;
+	s=k20201202; t=1721385545;
+	bh=QFesLS2O5rXs/N1VZ3M0QyMhYMOiUCtsT0sfodgKZxs=;
 	h=From:To:Cc:Subject:Date:From;
-	b=gGjia7adp4WT2sTWe0P/MwUbNV1GtSzpxgpg9zyg+ecuGRZm+vtu90QQUuZmNGoe2
-	 XQ42FzP25AGegnCK6tIT/jnYLyC/PwLB4RXVNUz9GN73Dc61MpqiL5LO97IcjfyPm+
-	 +UTqD6J4dI3cD1R5Zp/m3wBVqxJLkf9060Ex/N0qBEOnLv7w3EWtRHl3f9K37oeDbT
-	 8OlzLsIFlvMBz1JcGM9I4cOV9iCfIjfSaiziYh+KG7UXwJRxEl3eJyfP+75s68Zp2C
-	 IWPr4p7PbieT8OQB3JTZiVXIFBZeHbVU4/suG3DIwS95Q1+GGmKMjLpaRq/oV5yEO5
-	 JUhihSSiOrZcQ==
+	b=WZCVtwrcfysoH4dYvw1sI7RILTIwDfwJ7/25y8nMLafuHOvJlDuSQE6gvYAkBr06D
+	 f3ulHyemsBE7GeOAXh7n7Sa/Mm8YEk1yfzMT5qVyCtqQhF+iuPhkE78oL/fqISics6
+	 jfI4I9N4uierqtMvA3uh/9nNqoMfnAcN/1Eg/mV/Ywp5w/g22FOTCCwrJcAv5/qetu
+	 o9BaqXvJlQcN4mHljzNxiH7JQe5gceCVvITRTl32xQFEIUoL9/gP9BO0oCdgShfGPP
+	 4QZF6K82j1ZRPSrSEIoQSIqgg+d3EK3G+1Tro73YnIwhTmoeZaujy9FF3T0ye5ckQJ
+	 UpXGLIciioDlQ==
 From: Arnd Bergmann <arnd@kernel.org>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	Qu Wenruo <wqu@suse.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Arnd Bergmann <arnd@arndb.de>,
-	Filipe Manana <fdmanana@suse.com>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-	Anand Jain <anand.jain@oracle.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Naohiro Aota <naohiro.aota@wdc.com>,
-	linux-btrfs@vger.kernel.org,
+	Vamsi Attunuru <vattunuru@marvell.com>,
+	Srujana Challa <schalla@marvell.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] btrfs: change mount_opt to u64
-Date: Fri, 19 Jul 2024 12:37:06 +0200
-Message-Id: <20240719103714.1217249-1-arnd@kernel.org>
+Subject: [PATCH] misc: mrvl-cn10k-dpi: add PCI_IOV dependency
+Date: Fri, 19 Jul 2024 12:38:23 +0200
+Message-Id: <20240719103858.1292094-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -66,122 +59,41 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-The newly added BTRFS_MOUNT_IGNORESUPERFLAGS flag does not fit into a 32-bit
-flags word, as shown by this warning on 32-bit architectures:
+I found one more missing dependency in the new driver: when building
+without CONFIG_PCI_IOV, pci_sriov_configure_simple() cannot be
+called directly:
 
-fs/btrfs/super.c: In function 'btrfs_check_options':
-fs/btrfs/super.c:666:48: error: conversion from 'enum <anonymous>' to 'long unsigned int' changes value from '4294967296' to '0' [-Werror=overflow]
-  666 |              check_ro_option(info, *mount_opt, BTRFS_MOUNT_IGNORESUPERFLAGS, "ignoresuperflags")))
-      |                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/misc/mrvl_cn10k_dpi.c: In function 'dpi_remove':
+include/linux/stddef.h:9:14: error: called object is not a function or function pointer
+    9 | #define NULL ((void *)0)
+      |              ^
+include/linux/pci.h:2416:41: note: in expansion of macro 'NULL'
+ 2416 | #define pci_sriov_configure_simple      NULL
+      |                                         ^~~~
+drivers/misc/mrvl_cn10k_dpi.c:652:9: note: in expansion of macro 'pci_sriov_configure_simple'
+  652 |         pci_sriov_configure_simple(pdev, 0);
 
-Change all interfaces that deal with mount flags to use a 64-bit type
-on all architectures instead.
+Add this to the Kconfig file as well.
 
-Fixes: 32e6216512b4 ("btrfs: introduce new "rescue=ignoresuperflags" mount option")
+Fixes: 5f67eef6dff3 ("misc: mrvl-cn10k-dpi: add Octeon CN10K DPI administrative driver")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-----
-Please double-check that I got all the instances. I only looked at where the
-obvious users are, but did not actually try to run this on a 32-bit target
 ---
- fs/btrfs/fs.h    | 2 +-
- fs/btrfs/super.c | 6 +++---
- fs/btrfs/super.h | 2 +-
- fs/btrfs/zoned.c | 2 +-
- fs/btrfs/zoned.h | 4 ++--
- 5 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/misc/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/fs.h b/fs/btrfs/fs.h
-index 1b2a7aa0af36..20900c7cc35d 100644
---- a/fs/btrfs/fs.h
-+++ b/fs/btrfs/fs.h
-@@ -481,7 +481,7 @@ struct btrfs_fs_info {
- 	 * required instead of the faster short fsync log commits
- 	 */
- 	u64 last_trans_log_full_commit;
--	unsigned long mount_opt;
-+	u64 mount_opt;
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index a1ae3f9c0707..b6f5733a6ee2 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -589,7 +589,7 @@ config NSM
  
- 	unsigned long compress_type:4;
- 	unsigned int compress_level;
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index 43052acd7a48..ea7141330e87 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -82,7 +82,7 @@ struct btrfs_fs_context {
- 	u32 commit_interval;
- 	u32 metadata_ratio;
- 	u32 thread_pool_size;
--	unsigned long mount_opt;
-+	u64 mount_opt;
- 	unsigned long compress_type:4;
- 	unsigned int compress_level;
- 	refcount_t refs;
-@@ -642,7 +642,7 @@ static void btrfs_clear_oneshot_options(struct btrfs_fs_info *fs_info)
- }
- 
- static bool check_ro_option(const struct btrfs_fs_info *fs_info,
--			    unsigned long mount_opt, unsigned long opt,
-+			    u64 mount_opt, u64 opt,
- 			    const char *opt_name)
- {
- 	if (mount_opt & opt) {
-@@ -653,7 +653,7 @@ static bool check_ro_option(const struct btrfs_fs_info *fs_info,
- 	return false;
- }
- 
--bool btrfs_check_options(const struct btrfs_fs_info *info, unsigned long *mount_opt,
-+bool btrfs_check_options(const struct btrfs_fs_info *info, u64 *mount_opt,
- 			 unsigned long flags)
- {
- 	bool ret = true;
-diff --git a/fs/btrfs/super.h b/fs/btrfs/super.h
-index d2b8ebb46bc6..98e2444c0d82 100644
---- a/fs/btrfs/super.h
-+++ b/fs/btrfs/super.h
-@@ -10,7 +10,7 @@
- struct super_block;
- struct btrfs_fs_info;
- 
--bool btrfs_check_options(const struct btrfs_fs_info *info, unsigned long *mount_opt,
-+bool btrfs_check_options(const struct btrfs_fs_info *info, u64 *mount_opt,
- 			 unsigned long flags);
- int btrfs_sync_fs(struct super_block *sb, int wait);
- char *btrfs_get_subvol_name_from_objectid(struct btrfs_fs_info *fs_info,
-diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-index df7733044f7e..debab1ab9e71 100644
---- a/fs/btrfs/zoned.c
-+++ b/fs/btrfs/zoned.c
-@@ -767,7 +767,7 @@ int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info)
- 	return 0;
- }
- 
--int btrfs_check_mountopts_zoned(const struct btrfs_fs_info *info, unsigned long *mount_opt)
-+int btrfs_check_mountopts_zoned(const struct btrfs_fs_info *info, u64 *mount_opt)
- {
- 	if (!btrfs_is_zoned(info))
- 		return 0;
-diff --git a/fs/btrfs/zoned.h b/fs/btrfs/zoned.h
-index d66d00c08001..037697878b2a 100644
---- a/fs/btrfs/zoned.h
-+++ b/fs/btrfs/zoned.h
-@@ -58,7 +58,7 @@ int btrfs_get_dev_zone_info(struct btrfs_device *device, bool populate_cache);
- void btrfs_destroy_dev_zone_info(struct btrfs_device *device);
- struct btrfs_zoned_device_info *btrfs_clone_dev_zone_info(struct btrfs_device *orig_dev);
- int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info);
--int btrfs_check_mountopts_zoned(const struct btrfs_fs_info *info, unsigned long *mount_opt);
-+int btrfs_check_mountopts_zoned(const struct btrfs_fs_info *info, u64 *mount_opt);
- int btrfs_sb_log_location_bdev(struct block_device *bdev, int mirror, int rw,
- 			       u64 *bytenr_ret);
- int btrfs_sb_log_location(struct btrfs_device *device, int mirror, int rw,
-@@ -130,7 +130,7 @@ static inline int btrfs_check_zoned_mode(const struct btrfs_fs_info *fs_info)
- }
- 
- static inline int btrfs_check_mountopts_zoned(const struct btrfs_fs_info *info,
--					      unsigned long *mount_opt)
-+					      u64 *mount_opt)
- {
- 	return 0;
- }
+ config MARVELL_CN10K_DPI
+ 	tristate "Octeon CN10K DPI driver"
+-	depends on PCI
++	depends on PCI && PCI_IOV
+ 	depends on ARCH_THUNDER || (COMPILE_TEST && 64BIT)
+ 	help
+ 	  Enables Octeon CN10K DMA packet interface (DPI) driver which
 -- 
 2.39.2
 
