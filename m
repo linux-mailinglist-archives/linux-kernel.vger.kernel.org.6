@@ -1,200 +1,321 @@
-Return-Path: <linux-kernel+bounces-257101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5321E93753B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:45:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2845937540
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:45:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 070C11F2212E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 08:45:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 014511C21446
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 08:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7DE7BAF7;
-	Fri, 19 Jul 2024 08:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9448380623;
+	Fri, 19 Jul 2024 08:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="EHXhfzo2"
-Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZfdTX2FW"
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5139379B8E
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 08:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFD28002A;
+	Fri, 19 Jul 2024 08:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721378713; cv=none; b=ZqtSmJvX2SFowXHFlmXvK7kJgwXSm3zUlcxQHlpK2rQCB5IJiAbT8SPuC2yxDWKOVdnaH3PIeMR6HAEJ2/LfLuocoOA6lIMnwGte1hzx62AzXMAr65pTZkF4+52t5jWGbO2qT6q5NnEDIyKN1znksWGvG0gdT31LdI94FcTxMvI=
+	t=1721378716; cv=none; b=f9F4hKk6gVABMwAOA+jrwr1MxpVB/kSODeCdeNHiTlw9G/kmmC+rVcRzNGYNet3tdkD4LpMckat5jh4PY1B3BUhsVKFi6Gz3xuZl/dYCnLZAs/F034JZGZjD5kr5ABaH/GuNhP3KuX7TUIKsqMJMeDqaLlKcDIY5W6pWBJ+H1R0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721378713; c=relaxed/simple;
-	bh=9TVMUdV79yx08Oir54aiTDR0gVmSjoHl2tYGjglb9VU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sHq3fw5s2xaj85hZPq5iXX9TNp58R0RR5LKe3fXzNVWHiWE+sxcEpUKzkqYucC0ACkd5jBbUH16zlxS/+TeVo0BZpupVIoB31oEG16+f+PA1Epfoxjg/W5rUJ02zQsz6Tja5I4uC5vpEJCklaBSrHrx/EmNI+9rmmECpLRhPxOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=EHXhfzo2; arc=none smtp.client-ip=84.16.66.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WQNXf6yX6z3ZM;
-	Fri, 19 Jul 2024 10:45:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721378706;
-	bh=D77b+j+Z1jLOY8IPK59eCXt1xDHUtrJGP6+Y0dvzShE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EHXhfzo2I2JDYI5qE9CxmPPNE6gpt2J8KhR+cCzMHYjjH2fwMmVM+PHEN/DbNnqM9
-	 mtqkTTjUwJMsBcZQuV+UjKMG0w4K31OBZzi+rBj3+YBsumqOzkhcwAX7nu2z7Qrtfd
-	 XK9+OPyVWbcYEkJ/Igx9U3zHvqUfzlRRESQQyIi4=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WQNXX1tprzMyn;
-	Fri, 19 Jul 2024 10:45:00 +0200 (CEST)
-Date: Fri, 19 Jul 2024 10:44:58 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jeff Xu <jeffxu@google.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
-	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-Message-ID: <20240719.shaeK6PaiSie@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-2-mic@digikod.net>
- <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
- <20240717.neaB5Aiy2zah@digikod.net>
- <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
- <20240718.kaePhei9Ahm9@digikod.net>
- <CALmYWFto4sw-Q2+J0Gc54POhnM9C8YpnJ44wMz=fd_K3_+dWmw@mail.gmail.com>
+	s=arc-20240116; t=1721378716; c=relaxed/simple;
+	bh=ckOGdbz8CF8OKFi17EcSClrEZ5EoMu1Hq0cV2/kx5+Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=RRaMxTX/HGTl6GsKRhHIoKEtrisDd+2MKlcfQYuBhqk9JjKQbMM9PUOuJ2pqrq1yIx+/CGc2yyOr7JHfCyxkHt/49jJZOAigYG8b+RP1ZxnY3RN43VFiTF9zNB2Qug6xcBvHCmt7VucFVywmr7+uQZ1iTeEm1rTIo26J0VR9G+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZfdTX2FW; arc=none smtp.client-ip=209.85.161.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5c6924f2383so800397eaf.2;
+        Fri, 19 Jul 2024 01:45:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721378714; x=1721983514; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sELq+pnUeocm+uKlZ5dgRG6XUZ8Z2pYFiswc3B/vsIc=;
+        b=ZfdTX2FW3e8y3FaI63W6q3xnu5lOaswi0r3WRahEEjMjyCAxMxU8XI7pB/EGlbngPs
+         w3X17wn9bbuGMAnCdd76OrS4V4PH+kZlwNlwPp2KSQMw0LKLKYRXjKmrQ3mD+BnlIA6K
+         LyFAVZCnDIOGJwi5EnNrBNnoxvoORykiPOg+Sk0qfeB5DQkhMpzxQITmuRSi8phvzKT7
+         /kX9yuSlYtj3DZYr/IqYdxydjyv5MhEqLwnJkARYJTUICmOxnRo9/wh6OWxv5dprt/yv
+         qMqv0ssU31shgfwzlpy7ll0/fLBziuzNytLNOd69efGMQXG4fAWnQHxDC3rf8tfhBUgi
+         cUeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721378714; x=1721983514;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sELq+pnUeocm+uKlZ5dgRG6XUZ8Z2pYFiswc3B/vsIc=;
+        b=bNcfvnYKel1TbewGOHFOjCVtqMMfmfzMytYYFHli5MYDF9wm0m2sHPMNfFoAlFzzOV
+         6xvFvHhw6Oz37VOyJqJ535lbH0B8CVYjAKdMw/ksg+W1/2NEg5TpcOD9rU5oonjylyZO
+         697Bh+g2BbstvDDmIMlg6LJLHlhQEfjboMQMuXoQiIEOrxu9alew/aBmj+rmR2yT5xc4
+         5mWr0Vny/Xvoq7RE2jrCGyus6MCQMwo4hdo6DmXhSvOj6ESVjsttfZIpC9szni3rLonm
+         9mSs6g7usIAibZYsRzyVWTID+CIrx7m1zu5X8UyPnIkzBJFnoztt9aGj79IwO3ZkEJvJ
+         gMrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJoKxkkpoLA/OzHdPRqIWYwILtYMDd5/yGFmAjxVGRTVNwNsRXDgxFX4HLMQxs2//+X0EEj1XY5P+08Ot8bpXBAQMqG1tIzv2AP1oSOUH5fpCOAjGpb8Ir6y5a1MTCNakQ7cbXpTWwNVUEOc8QlxRN90qG1KWBz03hesvaYioA/daUbA==
+X-Gm-Message-State: AOJu0YxMazmSo8k/34ZKcoMLYrahEDdX5qst8EmiD/JdZjB3ISIRGmwk
+	GrQvBbHYLaVSMEAosrzSvlcKAl8lTpFVumNt5quqoe3A8e4CUZEz
+X-Google-Smtp-Source: AGHT+IGOQXJd+89L2geGpYfPlq1f04pQ5M8BxLCVshzWe/3mlon4W0Wf3vA0TEKVNMoepz+AwfvC7w==
+X-Received: by 2002:a05:6820:1e81:b0:5c6:9293:ed8a with SMTP id 006d021491bc7-5d41c219082mr9049921eaf.6.1721378714072;
+        Fri, 19 Jul 2024 01:45:14 -0700 (PDT)
+Received: from localhost.localdomain ([122.8.183.87])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5d55a855091sm171342eaf.20.2024.07.19.01.45.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 01:45:13 -0700 (PDT)
+From: Chen Wang <unicornxw@gmail.com>
+To: adrian.hunter@intel.com,
+	aou@eecs.berkeley.edu,
+	conor+dt@kernel.org,
+	guoren@kernel.org,
+	inochiama@outlook.com,
+	jszhang@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com,
+	robh@kernel.org,
+	ulf.hansson@linaro.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	chao.wei@sophgo.com,
+	haijiao.liu@sophgo.com,
+	xiaoguang.xing@sophgo.com,
+	tingzhu.wang@sophgo.com
+Cc: Chen Wang <unicorn_wang@outlook.com>
+Subject: [PATCH v5 1/8] mmc: sdhci-of-dwcmshc: add common bulk optional clocks support
+Date: Fri, 19 Jul 2024 16:45:06 +0800
+Message-Id: <e6d09bb8f0b02843967cd5c6d378ce5adbbf661f.1721377374.git.unicorn_wang@outlook.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1721377374.git.unicorn_wang@outlook.com>
+References: <cover.1721377374.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALmYWFto4sw-Q2+J0Gc54POhnM9C8YpnJ44wMz=fd_K3_+dWmw@mail.gmail.com>
-X-Infomaniak-Routing: alpha
 
-On Thu, Jul 18, 2024 at 06:29:54PM -0700, Jeff Xu wrote:
-> On Thu, Jul 18, 2024 at 5:24 AM Mickaël Salaün <mic@digikod.net> wrote:
-> >
-> > On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
-> > > On Wed, Jul 17, 2024 at 3:01 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > >
-> > > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
-> > > > > On Thu, Jul 4, 2024 at 12:02 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > >
-> > > > > > Add a new AT_CHECK flag to execveat(2) to check if a file would be
-> > > > > > allowed for execution.  The main use case is for script interpreters and
-> > > > > > dynamic linkers to check execution permission according to the kernel's
-> > > > > > security policy. Another use case is to add context to access logs e.g.,
-> > > > > > which script (instead of interpreter) accessed a file.  As any
-> > > > > > executable code, scripts could also use this check [1].
-> > > > > >
-> > > > > > This is different than faccessat(2) which only checks file access
-> > > > > > rights, but not the full context e.g. mount point's noexec, stack limit,
-> > > > > > and all potential LSM extra checks (e.g. argv, envp, credentials).
-> > > > > > Since the use of AT_CHECK follows the exact kernel semantic as for a
-> > > > > > real execution, user space gets the same error codes.
-> > > > > >
-> > > > > So we concluded that execveat(AT_CHECK) will be used to check the
-> > > > > exec, shared object, script and config file (such as seccomp config),
+From: Chen Wang <unicorn_wang@outlook.com>
 
-> > > > > I think binfmt_elf.c in the kernel needs to check the ld.so to make
-> > > > > sure it passes AT_CHECK, before loading it into memory.
-> > > >
-> > > > All ELF dependencies are opened and checked with open_exec(), which
-> > > > perform the main executability checks (with the __FMODE_EXEC flag).
-> > > > Did I miss something?
-> > > >
-> > > I mean the ld-linux-x86-64.so.2 which is loaded by binfmt in the kernel.
-> > > The app can choose its own dynamic linker path during build, (maybe
-> > > even statically link one ?)  This is another reason that relying on a
-> > > userspace only is not enough.
-> >
-> > The kernel calls open_exec() on all dependencies, including
-> > ld-linux-x86-64.so.2, so these files are checked for executability too.
-> >
-> This might not be entirely true. iiuc, kernel  calls open_exec for
-> open_exec for interpreter, but not all its dependency (e.g. libc.so.6)
+In addition to the required core clock and optional
+bus clock, the soc will expand its own clocks, so
+the bulk clock mechanism is abstracted.
 
-Correct, the dynamic linker is in charge of that, which is why it must
-be enlighten with execveat+AT_CHECK and securebits checks.
+Note, I call the bulk clocks as "other clocks" due
+to the bus clock has been called as "optional".
 
-> load_elf_binary() {
->    interpreter = open_exec(elf_interpreter);
-> }
-> 
-> libc.so.6 is opened and mapped by dynamic linker.
-> so the call sequence is:
->  execve(a.out)
->   - open exec(a.out)
->   - security_bprm_creds(a.out)
->   - open the exec(ld.so)
->   - call open_exec() for interruptor (ld.so)
->   - call execveat(AT_CHECK, ld.so) <-- do we want ld.so going through
-> the same check and code path as libc.so below ?
+Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+---
+ drivers/mmc/host/sdhci-of-dwcmshc.c | 91 ++++++++++++++++-------------
+ 1 file changed, 49 insertions(+), 42 deletions(-)
 
-open_exec() checks are enough.  LSMs can use this information (open +
-__FMODE_EXEC) if needed.  execveat+AT_CHECK is only a user space
-request.
+diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
+index e79aa4b3b6c3..fb4076c19ed5 100644
+--- a/drivers/mmc/host/sdhci-of-dwcmshc.c
++++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
+@@ -108,7 +108,6 @@
+ #define DLL_LOCK_WO_TMOUT(x) \
+ 	((((x) & DWCMSHC_EMMC_DLL_LOCKED) == DWCMSHC_EMMC_DLL_LOCKED) && \
+ 	(((x) & DWCMSHC_EMMC_DLL_TIMEOUT) == 0))
+-#define RK35xx_MAX_CLKS 3
+ 
+ /* PHY register area pointer */
+ #define DWC_MSHC_PTR_PHY_R	0x300
+@@ -199,23 +198,54 @@ enum dwcmshc_rk_type {
+ };
+ 
+ struct rk35xx_priv {
+-	/* Rockchip specified optional clocks */
+-	struct clk_bulk_data rockchip_clks[RK35xx_MAX_CLKS];
+ 	struct reset_control *reset;
+ 	enum dwcmshc_rk_type devtype;
+ 	u8 txclk_tapnum;
+ };
+ 
++#define DWCMSHC_MAX_OTHER_CLKS 3
++
+ struct dwcmshc_priv {
+ 	struct clk	*bus_clk;
+ 	int vendor_specific_area1; /* P_VENDOR_SPECIFIC_AREA1 reg */
+ 	int vendor_specific_area2; /* P_VENDOR_SPECIFIC_AREA2 reg */
+ 
++	int num_other_clks;
++	struct clk_bulk_data other_clks[DWCMSHC_MAX_OTHER_CLKS];
++
+ 	void *priv; /* pointer to SoC private stuff */
+ 	u16 delay_line;
+ 	u16 flags;
+ };
+ 
++static int dwcmshc_get_enable_other_clks(struct device *dev,
++					 struct dwcmshc_priv *priv,
++					 int num_clks,
++					 const char * const clk_ids[])
++{
++	int err;
++
++	if (num_clks > DWCMSHC_MAX_OTHER_CLKS)
++		return -EINVAL;
++
++	for (int i = 0; i < num_clks; i++)
++		priv->other_clks[i].id = clk_ids[i];
++
++	err = devm_clk_bulk_get_optional(dev, num_clks, priv->other_clks);
++	if (err) {
++		dev_err(dev, "failed to get clocks %d\n", err);
++		return err;
++	}
++
++	err = clk_bulk_prepare_enable(num_clks, priv->other_clks);
++	if (err)
++		dev_err(dev, "failed to enable clocks %d\n", err);
++
++	priv->num_other_clks = num_clks;
++
++	return err;
++}
++
+ /*
+  * If DMA addr spans 128MB boundary, we split the DMA transfer into two
+  * so that each DMA transfer doesn't exceed the boundary.
+@@ -1036,8 +1066,9 @@ static void dwcmshc_cqhci_init(struct sdhci_host *host, struct platform_device *
+ 
+ static int dwcmshc_rk35xx_init(struct sdhci_host *host, struct dwcmshc_priv *dwc_priv)
+ {
+-	int err;
++	static const char * const clk_ids[] = {"axi", "block", "timer"};
+ 	struct rk35xx_priv *priv = dwc_priv->priv;
++	int err;
+ 
+ 	priv->reset = devm_reset_control_array_get_optional_exclusive(mmc_dev(host->mmc));
+ 	if (IS_ERR(priv->reset)) {
+@@ -1046,21 +1077,10 @@ static int dwcmshc_rk35xx_init(struct sdhci_host *host, struct dwcmshc_priv *dwc
+ 		return err;
+ 	}
+ 
+-	priv->rockchip_clks[0].id = "axi";
+-	priv->rockchip_clks[1].id = "block";
+-	priv->rockchip_clks[2].id = "timer";
+-	err = devm_clk_bulk_get_optional(mmc_dev(host->mmc), RK35xx_MAX_CLKS,
+-					 priv->rockchip_clks);
+-	if (err) {
+-		dev_err(mmc_dev(host->mmc), "failed to get clocks %d\n", err);
+-		return err;
+-	}
+-
+-	err = clk_bulk_prepare_enable(RK35xx_MAX_CLKS, priv->rockchip_clks);
+-	if (err) {
+-		dev_err(mmc_dev(host->mmc), "failed to enable clocks %d\n", err);
++	err = dwcmshc_get_enable_other_clks(mmc_dev(host->mmc), dwc_priv,
++					    ARRAY_SIZE(clk_ids), clk_ids);
++	if (err)
+ 		return err;
+-	}
+ 
+ 	if (of_property_read_u8(mmc_dev(host->mmc)->of_node, "rockchip,txclk-tapnum",
+ 				&priv->txclk_tapnum))
+@@ -1280,9 +1300,8 @@ static int dwcmshc_probe(struct platform_device *pdev)
+ err_clk:
+ 	clk_disable_unprepare(pltfm_host->clk);
+ 	clk_disable_unprepare(priv->bus_clk);
+-	if (rk_priv)
+-		clk_bulk_disable_unprepare(RK35xx_MAX_CLKS,
+-					   rk_priv->rockchip_clks);
++	if (priv->num_other_clks)
++		clk_bulk_disable_unprepare(priv->num_other_clks, priv->other_clks);
+ free_pltfm:
+ 	sdhci_pltfm_free(pdev);
+ 	return err;
+@@ -1304,7 +1323,6 @@ static void dwcmshc_remove(struct platform_device *pdev)
+ 	struct sdhci_host *host = platform_get_drvdata(pdev);
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+ 	struct dwcmshc_priv *priv = sdhci_pltfm_priv(pltfm_host);
+-	struct rk35xx_priv *rk_priv = priv->priv;
+ 
+ 	pm_runtime_get_sync(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+@@ -1316,9 +1334,7 @@ static void dwcmshc_remove(struct platform_device *pdev)
+ 
+ 	clk_disable_unprepare(pltfm_host->clk);
+ 	clk_disable_unprepare(priv->bus_clk);
+-	if (rk_priv)
+-		clk_bulk_disable_unprepare(RK35xx_MAX_CLKS,
+-					   rk_priv->rockchip_clks);
++	clk_bulk_disable_unprepare(priv->num_other_clks, priv->other_clks);
+ 	sdhci_pltfm_free(pdev);
+ }
+ 
+@@ -1328,7 +1344,6 @@ static int dwcmshc_suspend(struct device *dev)
+ 	struct sdhci_host *host = dev_get_drvdata(dev);
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+ 	struct dwcmshc_priv *priv = sdhci_pltfm_priv(pltfm_host);
+-	struct rk35xx_priv *rk_priv = priv->priv;
+ 	int ret;
+ 
+ 	pm_runtime_resume(dev);
+@@ -1347,9 +1362,7 @@ static int dwcmshc_suspend(struct device *dev)
+ 	if (!IS_ERR(priv->bus_clk))
+ 		clk_disable_unprepare(priv->bus_clk);
+ 
+-	if (rk_priv)
+-		clk_bulk_disable_unprepare(RK35xx_MAX_CLKS,
+-					   rk_priv->rockchip_clks);
++	clk_bulk_disable_unprepare(priv->num_other_clks, priv->other_clks);
+ 
+ 	return ret;
+ }
+@@ -1359,7 +1372,6 @@ static int dwcmshc_resume(struct device *dev)
+ 	struct sdhci_host *host = dev_get_drvdata(dev);
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+ 	struct dwcmshc_priv *priv = sdhci_pltfm_priv(pltfm_host);
+-	struct rk35xx_priv *rk_priv = priv->priv;
+ 	int ret;
+ 
+ 	ret = clk_prepare_enable(pltfm_host->clk);
+@@ -1372,29 +1384,24 @@ static int dwcmshc_resume(struct device *dev)
+ 			goto disable_clk;
+ 	}
+ 
+-	if (rk_priv) {
+-		ret = clk_bulk_prepare_enable(RK35xx_MAX_CLKS,
+-					      rk_priv->rockchip_clks);
+-		if (ret)
+-			goto disable_bus_clk;
+-	}
++	ret = clk_bulk_prepare_enable(priv->num_other_clks, priv->other_clks);
++	if (ret)
++		goto disable_bus_clk;
+ 
+ 	ret = sdhci_resume_host(host);
+ 	if (ret)
+-		goto disable_rockchip_clks;
++		goto disable_other_clks;
+ 
+ 	if (host->mmc->caps2 & MMC_CAP2_CQE) {
+ 		ret = cqhci_resume(host->mmc);
+ 		if (ret)
+-			goto disable_rockchip_clks;
++			goto disable_other_clks;
+ 	}
+ 
+ 	return 0;
+ 
+-disable_rockchip_clks:
+-	if (rk_priv)
+-		clk_bulk_disable_unprepare(RK35xx_MAX_CLKS,
+-					   rk_priv->rockchip_clks);
++disable_other_clks:
++	clk_bulk_disable_unprepare(priv->num_other_clks, priv->other_clks);
+ disable_bus_clk:
+ 	if (!IS_ERR(priv->bus_clk))
+ 		clk_disable_unprepare(priv->bus_clk);
+-- 
+2.34.1
 
->   - transfer the control to ld.so)
->   - ld.so open (libc.so)
->   - ld.so call execveat(AT_CHECK,libc.so) <-- proposed by this patch,
-> require dynamic linker change.
->   - ld.so mmap(libc.so,rx)
-
-Explaining these steps is useful. I'll include that in the next patch
-series.
-
-> > > A detailed user case will help demonstrate the use case for dynamic
-> > > linker, e.g. what kind of app will benefit from
-> > > SECBIT_EXEC_RESTRICT_FILE = 1, what kind of threat model are we
-> > > dealing with , what kind of attack chain we blocked as a result.
-> >
-> > I explained that in the patches and in the description of these new
-> > securebits.  Please point which part is not clear.  The full threat
-> > model is simple: the TCB includes the kernel and system's files, which
-> > are integrity-protected, but we don't trust arbitrary data/scripts that
-> > can be written to user-owned files or directly provided to script
-> > interpreters.  As for the ptrace restrictions, the dynamic linker
-> > restrictions helps to avoid trivial bypasses (e.g. with LD_PRELOAD)
-> > with consistent executability checks.
-> >
-> On elf loading case, I'm clear after your last email. However, I'm not
-> sure if everyone else follows,  I will try to summarize here:
-> - Problem:  ld.so /tmp/a.out will happily pass, even /tmp/a.out is
-> mounted as non-exec.
->   Solution: ld.so call execveat(AT_CHECK) for a.out before mmap a.out
-> into memory.
-> 
-> - Problem: a poorly built application (a.out) can have a dependency on
-> /tmp/a.o, when /tmp/a.o is on non-exec mount,
->   Solution: ld.so call execveat(AT_CHECK) for a.o, before mmap a.o into memory.
-> 
-> - Problem: application can call mmap (/tmp/a.out, rx), where /tmp is
-> on non-exec mount
-
-I'd say "malicious or non-enlightened processes" can call mmap without
-execveat+AT_CHECK...
-
->   This is out of scope, i.e. will require enforcement on mmap(), maybe
-> through LSM
-
-Cool, I'll include that as well. Thanks.
 
