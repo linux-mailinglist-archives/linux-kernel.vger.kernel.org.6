@@ -1,171 +1,190 @@
-Return-Path: <linux-kernel+bounces-257383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D02D93793D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:36:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 287C5937948
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 585E82828A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:36:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E0C3B227DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C453F1DDEA;
-	Fri, 19 Jul 2024 14:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KA3qfNYF"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD66213EFEE;
+	Fri, 19 Jul 2024 14:39:00 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BEC98C06
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 14:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83C3C2D6;
+	Fri, 19 Jul 2024 14:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721399772; cv=none; b=obTXniz3izGzZlsfYWQE0Pjpfrykk3B8K5yCh0eYRpqEdtNIsp3obKX21i3z2Q+Q2gcOH28nE78CF6B41LuX67Lo8mYn6hrG5eF6OPeH54JNxNJWu0fnFHa36LulhDk4kdrI/DaI5QxDE3tSqOojVXBogr/pN1Tgv9Mw/ZaT3CU=
+	t=1721399940; cv=none; b=sqp4/0Krl8vwmWTIp6QKtL/SAyfo25kLIr4Y0lbUshfsgbELEEdOvORh1scCnNj3UHbDilVuuihtXLbRdBxH+G+BHGsW3HL19h0NSq7s6pESAmtsEEoeJgSejVEDggS6Ib4lkWerMb4WnE+L7PT+aGp8XjbX4HEF0+078QqsyLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721399772; c=relaxed/simple;
-	bh=mV+54FIRsUg1B7hA4c9KCJ84eNp6NIHFBQlVgTwp1XE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pe5pad7CXayANaHZk6ZEO7EkLvkKC31YX+Notu3AMEU2HAo7v/T2HldsZOIemx+g/o3IgDnRNaxWSGI49i/7Qv1Sgt+/04Y5gwvFt9ka7sJ7vTt/IUSzfHbLanv5lW2q6ebJNueRVRENAK4WZbW+/YLUgBZ6tMQyNxfJIPKwUfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KA3qfNYF; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4279c924ca7so13188955e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 07:36:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721399769; x=1722004569; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XdlmiGKKf4P64YOv5lQSDuR8ybLle1v3kavGCeiCW+U=;
-        b=KA3qfNYFKT1QSvMW5pIv3FbJ3vFasGcGI6cEvWGY8tj9LtibsDCMIL5c8UROfKZB0y
-         R947aeIeq0ktx5NTaQXbi8Fbxidz5cdJZ9571Rdz2Y4euWL2X7Jop3tpxVUDCipHo1Dq
-         UCgpQUvaEL4dZMZvh9GpkPOhL6I+fgoW7h+lzXvNlokMly0qR09RPkTPWtAImRM4Sme+
-         yXuILkkzosUIzLfHMxxEKczgaoMqK3VGJl2jWryzWTdTR7qVPg/qmiIudYuqhkWaa+xj
-         aruY7QIpTtU3U8jCWN3potb3xBejXW1NzlEAJRZkKrft9afW5lpn3yjefwZgRtCHD8cO
-         g2kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721399769; x=1722004569;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XdlmiGKKf4P64YOv5lQSDuR8ybLle1v3kavGCeiCW+U=;
-        b=ELr2Ija8IZpYYibhX/pjAdn+bKTwbAhoPA44TisYpFAM152S/VBEX3eMvEwm5brGCc
-         y5xedcYLZlzWSakaxiivhZxQ16rvNp26qv2JippuNPQROulWUSLBcL2lLaxQrM3CCezT
-         EaVE3kvcBbw4jSBPm4VBi9+6zBQOAAs2eNyjV64lbJ7Gs8GXRT0N+iZ7To7OKKL7tAyU
-         2w7TF0dlfnsp9oNEB1PsSY4i9OmQjcg1Y/vL8oRZutbM2Jb7ialzVsA00MUgqBOsuoLj
-         K9m/0UWYoMu7/BZFST9obXcSKPBAZNI4UzcshO6bKugQ11du+9Lr/Y6ScMyE+xP9YD35
-         Z3mg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7/ngXZpk7P5LQncuvKLWiyjWnCtM+TjzQqtu13J07pcOnZqAGXtAOJ/Cx0gPW/TGNUHzxnPpDZleCcYJnHoP3UTdWpY0PP93McoPB
-X-Gm-Message-State: AOJu0YwaQrov3zD1hwPpt/yannbQRDZJEMy9BJw0RtEq4ygGiLtb8kD6
-	qg7GZnxwm880dNvIdwbJZk7NUoYF2jclXeKQasNCngYS+5mf9Y1D3K6ef7XJUw==
-X-Google-Smtp-Source: AGHT+IFA/wA9e42Kh22TLUFramVCLKGDe8eWOeYO6wA/icFUlL9M4s7EtisnJ7yAOuE2+K35INQfAw==
-X-Received: by 2002:a05:600c:4e90:b0:426:6326:4cec with SMTP id 5b1f17b1804b1-427c2ce8d0emr61277055e9.29.1721399768362;
-        Fri, 19 Jul 2024 07:36:08 -0700 (PDT)
-Received: from google.com (203.75.199.104.bc.googleusercontent.com. [104.199.75.203])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a43034sm54732375e9.3.2024.07.19.07.36.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 07:36:07 -0700 (PDT)
-Date: Fri, 19 Jul 2024 15:36:04 +0100
-From: Vincent Donnefort <vdonnefort@google.com>
-To: Sebastian Ene <sebastianene@google.com>
-Cc: akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com,
-	ardb@kernel.org, catalin.marinas@arm.com,
-	christophe.leroy@csgroup.eu, james.morse@arm.com,
-	mark.rutland@arm.com, maz@kernel.org, oliver.upton@linux.dev,
-	rananta@google.com, ryan.roberts@arm.com, shahuang@redhat.com,
-	suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com,
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v7 5/6] KVM: arm64: Initialize the ptdump parser with
- stage-2 attributes
-Message-ID: <Zpp51BYWYFnZHVW1@google.com>
-References: <20240621123230.1085265-1-sebastianene@google.com>
- <20240621123230.1085265-6-sebastianene@google.com>
- <ZoJsAyrmtge4mXJY@google.com>
- <ZoK6v2_pJnc57LHM@google.com>
- <ZpZEjW1m2LypTHjF@google.com>
- <Zppzj1oIDivlAFpP@google.com>
+	s=arc-20240116; t=1721399940; c=relaxed/simple;
+	bh=MthLwAZw/K/pHDsypzwnpxxVpjnrL/t3lpnlDB9Cp0s=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mOAi+7thFhKnKaktgyzcse1NQeHqjm6hDQ8FzbruE/hG3pderNui9BF0sgLil2BSsAy6CWqk35kfL9ypenfiTbhqhwdn/3gsNA9qdSJPlgoY6FKEKUJ/vi07eDJAiUjrrEncJMBqF1PCRQ6vv/hNhVMHAAhn9tRujzFwPmbIGSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WQXMF48rrz6JBjL;
+	Fri, 19 Jul 2024 22:37:29 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id D6E9D140684;
+	Fri, 19 Jul 2024 22:38:53 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 19 Jul
+ 2024 15:38:53 +0100
+Date: Fri, 19 Jul 2024 15:38:52 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: David Hildenbrand <david@redhat.com>
+CC: Mike Rapoport <rppt@kernel.org>, <linux-kernel@vger.kernel.org>,
+	"Alexander Gordeev" <agordeev@linux.ibm.com>, Andreas Larsson
+	<andreas@gaisler.com>, Andrew Morton <akpm@linux-foundation.org>, Arnd
+ Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>, Catalin Marinas
+	<catalin.marinas@arm.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dan Williams <dan.j.williams@intel.com>, Dave Hansen
+	<dave.hansen@linux.intel.com>, "David S. Miller" <davem@davemloft.net>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Heiko Carstens
+	<hca@linux.ibm.com>, "Huacai Chen" <chenhuacai@kernel.org>, Ingo Molnar
+	<mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, John Paul Adrian
+ Glaubitz <glaubitz@physik.fu-berlin.de>, Michael Ellerman
+	<mpe@ellerman.id.au>, Palmer Dabbelt <palmer@dabbelt.com>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Thomas
+ Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner
+	<tglx@linutronix.de>, "Vasily Gorbik" <gor@linux.ibm.com>, Will Deacon
+	<will@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<loongarch@lists.linux.dev>, <linux-mips@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <linux-riscv@lists.infradead.org>,
+	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>,
+	<sparclinux@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+	<linux-mm@kvack.org>, <x86@kernel.org>
+Subject: Re: [PATCH 02/17] MIPS: sgi-ip27: make NODE_DATA() the same as on
+ all other architectures
+Message-ID: <20240719153852.00003f44@Huawei.com>
+In-Reply-To: <e57eca18-b66d-4b5d-9e73-8ab22f6bc747@redhat.com>
+References: <20240716111346.3676969-1-rppt@kernel.org>
+	<20240716111346.3676969-3-rppt@kernel.org>
+	<e57eca18-b66d-4b5d-9e73-8ab22f6bc747@redhat.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zppzj1oIDivlAFpP@google.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Fri, Jul 19, 2024 at 02:09:19PM +0000, Sebastian Ene wrote:
-> On Tue, Jul 16, 2024 at 10:59:41AM +0100, Vincent Donnefort wrote:
-> > On Mon, Jul 01, 2024 at 02:18:39PM +0000, Sebastian Ene wrote:
-> > > On Mon, Jul 01, 2024 at 09:42:43AM +0100, Vincent Donnefort wrote:
-> > > > O Fri, Jun 21, 2024 at 12:32:29PM +0000, 'Sebastian Ene' via kernel-team wrote:
-> > > > > Define a set of attributes used by the ptdump parser to display the
-> > > > > properties of a guest memory region covered by a pagetable descriptor.
-> > > > > Build a description of the pagetable levels and initialize the parser
-> > > > > with this configuration.
-> > > > > 
-> > > > > Signed-off-by: Sebastian Ene <sebastianene@google.com>
-> > > > > ---
-> > > > >  arch/arm64/kvm/ptdump.c | 143 ++++++++++++++++++++++++++++++++++++++--
-> > > > >  1 file changed, 137 insertions(+), 6 deletions(-)
-> > > > > 
-> > > > > diff --git a/arch/arm64/kvm/ptdump.c b/arch/arm64/kvm/ptdump.c
-> > > > > index 36dc7662729f..cc1d4fdddc6e 100644
-> > > > > --- a/arch/arm64/kvm/ptdump.c
-> > > > > +++ b/arch/arm64/kvm/ptdump.c
-> > > > > @@ -14,6 +14,61 @@
-> > > > >  #include <kvm_ptdump.h>
-> > > > >  
-> > > > >  
-> > > > > +#define MARKERS_LEN		(2)
-> > > > > +#define KVM_PGTABLE_MAX_LEVELS	(KVM_PGTABLE_LAST_LEVEL + 1)
-> > > > > +
-> > > > > +struct kvm_ptdump_guest_state {
-> > > > > +	struct kvm		*kvm;
-> > > > > +	struct pg_state		parser_state;
-> > > > > +	struct addr_marker	ipa_marker[MARKERS_LEN];
-> > > > > +	struct pg_level		level[KVM_PGTABLE_MAX_LEVELS];
-> > > > > +	struct ptdump_range	range[MARKERS_LEN];
-> > > > > +};
-> > > > > +
-> > > > > +static const struct prot_bits stage2_pte_bits[] = {
-> > > > > +	{
-> > > > > +		.mask	= PTE_VALID,
-> > > > > +		.val	= PTE_VALID,
-> > > > > +		.set	= " ",
-> > > > > +		.clear	= "F",
-> > > > > +	}, {
-> > > > > +		.mask	= KVM_PTE_LEAF_ATTR_HI_S2_XN | PTE_VALID,
-> > > > > +		.val	= KVM_PTE_LEAF_ATTR_HI_S2_XN | PTE_VALID,
+On Wed, 17 Jul 2024 16:32:59 +0200
+David Hildenbrand <david@redhat.com> wrote:
+
+> On 16.07.24 13:13, Mike Rapoport wrote:
+> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 > > 
-> > KVM_PTE_LEAF_ATTR_HI_S2_XN is actually a mask covering 
+> > sgi-ip27 is the only system that defines NODE_DATA() differently than
+> > the rest of NUMA machines.
+> > 
+> > Add node_data array of struct pglist pointers that will point to
+> > __node_data[node]->pglist and redefine NODE_DATA() to use node_data
+> > array.
+> > 
+> > This will allow pulling declaration of node_data to the generic mm code
+> > in the next commit.
+> > 
+> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> > ---
+> >   arch/mips/include/asm/mach-ip27/mmzone.h | 5 ++++-
+> >   arch/mips/sgi-ip27/ip27-memory.c         | 5 ++++-
+> >   2 files changed, 8 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/mips/include/asm/mach-ip27/mmzone.h b/arch/mips/include/asm/mach-ip27/mmzone.h
+> > index 08c36e50a860..629c3f290203 100644
+> > --- a/arch/mips/include/asm/mach-ip27/mmzone.h
+> > +++ b/arch/mips/include/asm/mach-ip27/mmzone.h
+> > @@ -22,7 +22,10 @@ struct node_data {
+> >   
+> >   extern struct node_data *__node_data[];
+> >   
+> > -#define NODE_DATA(n)		(&__node_data[(n)]->pglist)
+> >   #define hub_data(n)		(&__node_data[(n)]->hub)
+> >   
+> > +extern struct pglist_data *node_data[];
+> > +
+> > +#define NODE_DATA(nid)		(node_data[nid])
+> > +
+> >   #endif /* _ASM_MACH_MMZONE_H */
+> > diff --git a/arch/mips/sgi-ip27/ip27-memory.c b/arch/mips/sgi-ip27/ip27-memory.c
+> > index b8ca94cfb4fe..c30ef6958b97 100644
+> > --- a/arch/mips/sgi-ip27/ip27-memory.c
+> > +++ b/arch/mips/sgi-ip27/ip27-memory.c
+> > @@ -34,8 +34,10 @@
+> >   #define SLOT_PFNSHIFT		(SLOT_SHIFT - PAGE_SHIFT)
+> >   #define PFN_NASIDSHFT		(NASID_SHFT - PAGE_SHIFT)
+> >   
+> > -struct node_data *__node_data[MAX_NUMNODES];
+> > +struct pglist_data *node_data[MAX_NUMNODES];
+> > +EXPORT_SYMBOL(node_data);
+> >   
+> > +struct node_data *__node_data[MAX_NUMNODES];
+> >   EXPORT_SYMBOL(__node_data);
+> >   
+> >   static u64 gen_region_mask(void)
+> > @@ -361,6 +363,7 @@ static void __init node_mem_init(nasid_t node)
+> >   	 */
+> >   	__node_data[node] = __va(slot_freepfn << PAGE_SHIFT);
+> >   	memset(__node_data[node], 0, PAGE_SIZE);
+> > +	node_data[node] = &__node_data[node]->pglist;
+> >   
+> >   	NODE_DATA(node)->node_start_pfn = start_pfn;
+> >   	NODE_DATA(node)->node_spanned_pages = end_pfn - start_pfn;  
 > 
-> It is not a mask covering here but in the ACK kernel.
+> I was assuming we could get rid of __node_data->pglist.
+> 
+> But now I am confused where that is actually set.
 
-You're right, I should have double-checked upstream.
+It looks nasty... Cast in arch_refresh_nodedata() takes
+incoming pg_data_t * and casts it to the local version of
+struct node_data * which I think is this one
 
-That said, how about we move this __after__ RW ? and just use "X" on .clear
-so we can have something R W X ?
+struct node_data {
+	struct pglist_data pglist; (which is pg_data_t pglist)
+	struct hub_data hub;
+};
+
+https://elixir.bootlin.com/linux/v6.10/source/arch/mips/sgi-ip27/ip27-memory.c#L432
+
+Now that pg_data_t is allocated by 
+arch_alloc_nodedata() which might be fine (though types could be handled in a more
+readable fashion via some container_of() magic.
+https://elixir.bootlin.com/linux/v6.10/source/arch/mips/sgi-ip27/ip27-memory.c#L427
+
+However that call is:
+pg_data_t * __init arch_alloc_nodedata(int nid)
+{
+	return memblock_alloc(sizeof(pg_data_t), SMP_CACHE_BYTES);
+}
+
+So doesn't seem to allocate enough space to me as should be sizeof(struct node_data)
+
+Worth cleaning up whilst here?  Proper handling of types would definitely
+help.
+
+Jonathan
+
 
 > 
-> > 
-> > KVM_PTE_LEAF_ATTR_HI_S2_XN_XN, KVM_PTE_LEAF_ATTR_HI_S2_XN_PXN and
-> > KVM_PTE_LEAF_ATTR_HI_S2_XN_UXN. 
-> > 
-> > I believe here what we should do is something like?
-> > 
-> > .val = FIELD_PREP_CONST(KVM_PTE_LEAF_ATTR_HI_S2_XN,
-> > 			KVM_PTE_LEAF_ATTR_HI_S2_XN_XN) | PTE_VALID
-> > 
-> > > > > +		.set	= "XN",
-> > > > > +		.clear	= "  ",
-> > > > > +	}, {
-> > > > > +		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R | PTE_VALID,
-> > > > > +		.val	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R | PTE_VALID,
-> > > > > +		.set	= "R",
-> > > > > +		.clear	= " ",
-> > > > > +	}, {
-> > 
-> > [...]
+> Anyhow
+> 
+> Reviewed-by: David Hildenbrand <david@redhat.com>
+> 
+
 
