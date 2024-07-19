@@ -1,72 +1,74 @@
-Return-Path: <linux-kernel+bounces-257610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E47A2937C9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:42:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7554E937CA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:42:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A14AA281717
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:42:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAAE11F21BA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0A6147C80;
-	Fri, 19 Jul 2024 18:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791361482E1;
+	Fri, 19 Jul 2024 18:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jxGK+R1e"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y/tfv/JC"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E20F12D76F;
-	Fri, 19 Jul 2024 18:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C11147C82
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 18:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721414515; cv=none; b=CHH+fr9rFG9qdOGH2eBsJ7PZ31k/UpGa3DuP1q+49P4aRfjAFV4kkIpopxBxf/IYvtoiwEg+DiLG14iYKBpGcWTZfm3REdXsWaI2Uacaq3OjXau7TykNQOtBLG7Ej5AQFOPkAAtnqdqT3b9hnhY6ZK2SnSAls0RgkbPU44oPhhA=
+	t=1721414535; cv=none; b=dt6xmIO4pfHA7vBhDjp534nivsiV0gsCG38K8gncyLNdhWZhCm0QL7x2TJvj3kFGi2a4F9fTvTiGY5RoYjzXWZoeUfFwmLfc8QCB6QJkzcL2DeTxm/uMKaTZEUqfvMhy4+kZjm9uvHWJNsN9oNvySGsXY0JYy+BLFnNvrLG88Pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721414515; c=relaxed/simple;
-	bh=e3cnJ9xrMQgxBOt27OhwCdqyj2Rl3b1CwhJlmsuVUfM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=Mjt6tiIVXS1ZTYWRb7BD/EfMIibFJoTLv0WFMcsWfENxbAHTgKkdgKuyJLCvjVgSSGJvYBudpupihOoEDyXK5zDySaxb3Ma5U2udM3vwLfOrGiRqLN2MOqKRjnx++mzRrJC4hLAn39KwiBEzTM8Zk0SgC3LIBhQ4iXm6YV3wOhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jxGK+R1e; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-368557c9e93so793054f8f.2;
-        Fri, 19 Jul 2024 11:41:53 -0700 (PDT)
+	s=arc-20240116; t=1721414535; c=relaxed/simple;
+	bh=oltVxzNyvv77lf/BW3tNvz5FdxtrRpL5oGQZxptXz3c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IsY6JDEMGuSBImGcP1Ct5uzxSfnoDeYsuSZfCrEVdXiGc4OK/1g8Q8Z6DfWn9vdlSeFVTQjzOqPIu9mo6HrPUTtMaV6JcP+bJEtQ8stnsnqInTahg94LaLS/eijXAcTN9hxf3BC1e+JrCtZH5orbRoz/acmoRValomVph6Q6PNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y/tfv/JC; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52e9944764fso2272640e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 11:42:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721414511; x=1722019311; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u0iaRWSdXWUNnZ+fVmGuUdLWev/rZhsvGTanSK8paG8=;
-        b=jxGK+R1ev9jH5lCtelFpzJi64e1/PEP6Kit9Ruw7EvXGqwns9MR0fRjArIS4u+Ut2o
-         fWgaljnPqiID1xKPh2npORCz1PhM9EKFeU/iLUZiq7xwfQwZWpGn0OMBCZegRLP+PdiF
-         /llmXMruLmTjgHd+DbVLDElWJclR8Upe9vfcVY0YgugGLNZSLxna3pbJjnrrqg0AcFeM
-         hWvGeTBUMJiqxaVdSHCLFhARb8h/N54KseQLQIe811STRS5uwsW0/19NSnVGq4mjTDwQ
-         xnpAKtAnGbmdJ1z1oH2kmInr0cl1EyHhYrrI8TbbK1arO17sbiqdBMRfuciMDskUsd+T
-         t2Nw==
+        d=linaro.org; s=google; t=1721414531; x=1722019331; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=EMLi4/RLuYJzBVsjdG68JYfnV4VRSle+/uP4y/1zEDQ=;
+        b=Y/tfv/JCmThpVTxSNDhYhAwrQcUYzkZkTog2k00AWOc0sKiVbV6W3bXHHA2pSQVOYG
+         KFoswiMTnR5IRUk8315Q0T56UfSe7QK9hf7VcqFnbjTcwE2IfiqqBoM4EbGQj6Jt435M
+         j2T9rAFIDFeY4w8vtRMVcUPfu52OGGprhJy8guvY5K1UwBFHYgYYYr7MHOBlYaYmfgVA
+         +fIozHwpKwyAKKMDahNU/SmiGPcTxClI67HIh1ttPriguHI6F2dmCF0NFgk2PvaCXq0q
+         UX04HDk0xu7bJShMwsHYp5XaTqyRFZwm7MupIDpJcuLq96BdKhC1fdRRjroen1kiQ8md
+         walA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721414511; x=1722019311;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=u0iaRWSdXWUNnZ+fVmGuUdLWev/rZhsvGTanSK8paG8=;
-        b=TkEZZ9iaN61rEvK3JBt0TFAcFt+l3ftuNEVqbtFDTpHcVSZug+2WW0Gdgkp74gq/qD
-         /DL1e0zdsnYYq8r2Z1EPf2X/W/k/uydzoHZt86Yl4v6cKsh+ZapeqvmuAfYQhR6lujXr
-         hhO8bnfl4VPiFlHPuk3HsfdXG1VwU7eQFRP5CIKCkcU9/ZLEJnpqQ7XyTO04CHNZtcFc
-         bPKGuI2mmJV+F+6qRe6oMdY+bx6QpkSm3Zr3vmMncY2hMJ/PzexuLr1tRtr4RRUMRHxG
-         FY6jsJsHN3qiCBgRkuhsixAP01EuW4IuigY5FtvH4F5P6Ef+Y5ffyeZPkgXKyPPzUjvT
-         DLPg==
-X-Forwarded-Encrypted: i=1; AJvYcCWe0hJRlYdFjIfXjYcf22JXmtCMNJS+I3Jc3xTSmmUS0xD3aJrPkQJuWf5YJM+Gek7V5GmMvwTKAeKBpYdX+HIcDLttvImtHwjEa99e
-X-Gm-Message-State: AOJu0YxGEDWzRLnSg7pPs/DoiCgbvb/l5NS0rFmo6DFyal97t8pf7Ufe
-	64dxigAz71MA23vkkNsZ/RZF2D4F+9VgSgbV1YMZMYhzbvXtU2ZQaqdq6ybw
-X-Google-Smtp-Source: AGHT+IF4giFfBkDbzlGg+1z9xTX2s1adg7P6ePcRpCqpJd/FFpIIoa4Zxa4QuUmdHFKzR7ODEm3FXQ==
-X-Received: by 2002:adf:9b9e:0:b0:366:e9f9:99c1 with SMTP id ffacd0b85a97d-3683171dc1bmr4914287f8f.53.1721414511399;
-        Fri, 19 Jul 2024 11:41:51 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-42-168.xnet.hr. [88.207.42.168])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3687868477fsm2300867f8f.12.2024.07.19.11.41.50
+        d=1e100.net; s=20230601; t=1721414531; x=1722019331;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EMLi4/RLuYJzBVsjdG68JYfnV4VRSle+/uP4y/1zEDQ=;
+        b=Y+Gnf/tqjW/o95uCjK/tz5IyaSOkrCszsoGkbRgm0JsNtOY2SQwvMfE56YhPauXroP
+         oS1BPhYGR5lu3DU9YCDum3ckLh+/hKfPm2hO5P/nX02dyLM/nWYoXcExPwaCglgA9wAb
+         K1Jmk6BmrlQbHDfBISNd6sw73SucoS4AgB0c0Wh5o+tMBFLzQiQxx6rEi/ECEm2Axk9C
+         WO/bdC3nT7NRh4htp38MLIEFr1zreUU+s6QBCh53dMNZW9J5Ci8W2QZchssI9nrpvh4l
+         AmZnM6lN50Cpg5tM0/uzdgbJM2kdrm1ExUYxZlFqF54KmViUyDNX9AgPxLEA30jgsdsd
+         IGqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWdNOmeQMJY4V+WztxtbH1SvXLyCjx/gHgCbWGBs65blrd5w/jnYlKQ3X0GCPVfvUt5dpr4kyoA4a0v5ORGsXYqM+FZKJeqaFitwpHk
+X-Gm-Message-State: AOJu0YzeBho1z/vhgUdkeny1/vv9ZDmucdlk7l61uWu/xND9BTN9k7mp
+	XlrFlk/WtkDrydw9mhf3weOcXoLeodxNtXWtxceS4XbvjH/yHTNQ7BNC0q5DC8U=
+X-Google-Smtp-Source: AGHT+IGjgUc8q8CuJVc2puKr/aAWGj5LpuLQMgFlj2AU5AveDFbYtHWsax9LqLtyeDndamYLDvFT6g==
+X-Received: by 2002:a05:6512:23a1:b0:52e:97dd:327b with SMTP id 2adb3069b0e04-52ee53b2ae5mr6943763e87.23.1721414531266;
+        Fri, 19 Jul 2024 11:42:11 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c8beb09sm63341666b.135.2024.07.19.11.42.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Jul 2024 11:41:51 -0700 (PDT)
-Message-ID: <b44227c5-5af6-4243-8ed9-2b8cdc0e5325@gmail.com>
-Date: Fri, 19 Jul 2024 20:41:47 +0200
+        Fri, 19 Jul 2024 11:42:10 -0700 (PDT)
+Message-ID: <4bf8bf1a-a63d-4674-856b-f66e9eacb09c@linaro.org>
+Date: Fri, 19 Jul 2024 20:42:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,58 +76,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/7] arm64: dts: qcom: x1e80100: fix PCIe domain numbers
+To: Johan Hovold <johan+linaro@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>,
+ Abel Vesa <abel.vesa@linaro.org>, Rajendra Nayak <quic_rjendra@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20240719131722.8343-1-johan+linaro@kernel.org>
+ <20240719131722.8343-3-johan+linaro@kernel.org>
 Content-Language: en-US
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-Subject: =?UTF-8?Q?=5BBUG=5D_arch/x86/kvm/vmx/vmx=5Fonhyperv=2Eh=3A109=3A36?=
- =?UTF-8?B?OiBlcnJvcjogZGVyZWZlcmVuY2Ugb2YgTlVMTCDigJgw4oCZ?=
-To: kvm@vger.kernel.org
-Cc: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
- Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
+ BB/OmIWU6X+LZW6P88ZmHe+KeyABLMP5s1tJNK1j4ntT7mECcWZDzafPWF4F6m4WJOG27kTJ
+ HGWdmtO+RvadOVi6CoUDqALsmfS3MUG5Pj2Ne9+0jRg4hEnB92AyF9rW2G3qisFcwPgvatt7
+ TXD5E38mLyOPOUyXNj9XpDbt1hNwKQfiidmPh5e7VNAWRnW1iCMMoKqzM1Anzq7e5Afyeifz
+ zRcQPLaqrPjnKqZGL2BKQSZDh6NkI5ZLRhhHQf61fkWcUpTp1oDC6jWVfT7hwRVIQLrrNj9G
+ MpPzrlN4YuAqKeIer1FMt8cq64ifgTzxHzXsMcUdclzq2LTk2RXaPl6Jg/IXWqUClJHbamSk
+ t1bfif3SnmhA6TiNvEpDKPiT3IDs42THU6ygslrBxyROQPWLI9IL1y8S6RtEh8H+NZQWZNzm
+ UQ3imZirlPjxZtvz1BtnnBWS06e7x/UEAguj7VHCuymVgpl2Za17d1jj81YN5Rp5L9GXxkV1
+ aUEwONM3eCI3qcYm5JNc5X+JthZOWsbIPSC1Rhxz3JmWIwP1udr5E3oNRe9u2LIEq+wH/toH
+ kpPDhTeMkvt4KfE5m5ercid9+ZXAqoaYLUL4HCEw+HW0DXcKDwARAQABzShLb25yYWQgRHli
+ Y2lvIDxrb25yYWQuZHliY2lvQGxpbmFyby5vcmc+wsGOBBMBCAA4FiEEU24if9oCL2zdAAQV
+ R4cBcg5dfFgFAmQ5bqwCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQR4cBcg5dfFjO
+ BQ//YQV6fkbqQCceYebGg6TiisWCy8LG77zV7DB0VMIWJv7Km7Sz0QQrHQVzhEr3trNenZrf
+ yy+o2tQOF2biICzbLM8oyQPY8B///KJTWI2khoB8IJSJq3kNG68NjPg2vkP6CMltC/X3ohAo
+ xL2UgwN5vj74QnlNneOjc0vGbtA7zURNhTz5P/YuTudCqcAbxJkbqZM4WymjQhe0XgwHLkiH
+ 5LHSZ31MRKp/+4Kqs4DTXMctc7vFhtUdmatAExDKw8oEz5NbskKbW+qHjW1XUcUIrxRr667V
+ GWH6MkVceT9ZBrtLoSzMLYaQXvi3sSAup0qiJiBYszc/VOu3RbIpNLRcXN3KYuxdQAptacTE
+ mA+5+4Y4DfC3rUSun+hWLDeac9z9jjHm5rE998OqZnOU9aztbd6zQG5VL6EKgsVXAZD4D3RP
+ x1NaAjdA3MD06eyvbOWiA5NSzIcC8UIQvgx09xm7dThCuQYJR4Yxjd+9JPJHI6apzNZpDGvQ
+ BBZzvwxV6L1CojUEpnilmMG1ZOTstktWpNzw3G2Gis0XihDUef0MWVsQYJAl0wfiv/0By+XK
+ mm2zRR+l/dnzxnlbgJ5pO0imC2w0TVxLkAp0eo0LHw619finad2u6UPQAkZ4oj++iIGrJkt5
+ Lkn2XgB+IW8ESflz6nDY3b5KQRF8Z6XLP0+IEdLOOARkOW7yEgorBgEEAZdVAQUBAQdAwmUx
+ xrbSCx2ksDxz7rFFGX1KmTkdRtcgC6F3NfuNYkYDAQgHwsF2BBgBCAAgFiEEU24if9oCL2zd
+ AAQVR4cBcg5dfFgFAmQ5bvICGwwACgkQR4cBcg5dfFju1Q//Xta1ShwL0MLSC1KL1lXGXeRM
+ 8arzfyiB5wJ9tb9U/nZvhhdfilEDLe0jKJY0RJErbdRHsalwQCrtq/1ewQpMpsRxXzAjgfRN
+ jc4tgxRWmI+aVTzSRpywNahzZBT695hMz81cVZJoZzaV0KaMTlSnBkrviPz1nIGHYCHJxF9r
+ cIu0GSIyUjZ/7xslxdvjpLth16H27JCWDzDqIQMtg61063gNyEyWgt1qRSaK14JIH/DoYRfn
+ jfFQSC8bffFjat7BQGFz4ZpRavkMUFuDirn5Tf28oc5ebe2cIHp4/kajTx/7JOxWZ80U70mA
+ cBgEeYSrYYnX+UJsSxpzLc/0sT1eRJDEhI4XIQM4ClIzpsCIN5HnVF76UQXh3a9zpwh3dk8i
+ bhN/URmCOTH+LHNJYN/MxY8wuukq877DWB7k86pBs5IDLAXmW8v3gIDWyIcgYqb2v8QO2Mqx
+ YMqL7UZxVLul4/JbllsQB8F/fNI8AfttmAQL9cwo6C8yDTXKdho920W4WUR9k8NT/OBqWSyk
+ bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
+ nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
+ izWDgYvmBE8=
+In-Reply-To: <20240719131722.8343-3-johan+linaro@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi, all!
+On 19.07.2024 3:17 PM, Johan Hovold wrote:
+> The current PCIe domain numbers are off by one and do not match the
+> numbers that the UEFI firmware (and Windows) uses.
+> 
+> Fixes: 5eb83fc10289 ("arm64: dts: qcom: x1e80100: Add PCIe nodes")
+> Cc: stable@vger.kernel.org	# 6.9
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
 
-Here is another potential NULL pointer dereference in kvm subsystem of linux stable vanilla 6.10,
-as GCC 12.3.0 complains.
+can confirm dsdt calls them this
 
-(Please don't throw stuff at me, I think this is the last one for today :-)
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-arch/x86/include/asm/mshyperv.h
--------------------------------
-  242 static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
-  243 {
-  244         if (!hv_vp_assist_page)
-  245                 return NULL;
-  246 
-  247         return hv_vp_assist_page[cpu];
-  248 }
-
-arch/x86/kvm/vmx/vmx_onhyperv.h
--------------------------------
-  102 static inline void evmcs_load(u64 phys_addr)
-  103 {
-  104         struct hv_vp_assist_page *vp_ap =
-  105                 hv_get_vp_assist_page(smp_processor_id());
-  106 
-  107         if (current_evmcs->hv_enlightenments_control.nested_flush_hypercall)
-  108                 vp_ap->nested_control.features.directhypercall = 1;
-  109         vp_ap->current_nested_vmcs = phys_addr;
-  110         vp_ap->enlighten_vmentry = 1;
-  111 }
-
-Now, this one is simple: hv_vp_assist_page(cpu) can return NULL, and in line 104 it is assigned
-to wp_ap, which is dereferenced in lines 108, 109, and 110, which is not checked against returning
-NULL by hv_vp_assist_page().
-
-Commits 50a82b0eb88c1 and a46d15cc1ae5a are related to the issue.
-
-Hope this helps.
-
-Best regards,
-Mirsad Todorovac
+Konrad
 
