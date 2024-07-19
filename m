@@ -1,956 +1,220 @@
-Return-Path: <linux-kernel+bounces-257017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E8D93740C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 08:33:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCCF5937411
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 08:38:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A08F41F21988
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 06:33:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93FD2281F60
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 06:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA50C43AD7;
-	Fri, 19 Jul 2024 06:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78BC4A9B0;
+	Fri, 19 Jul 2024 06:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="ihVFNIL3"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="H5trdwzc"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2068.outbound.protection.outlook.com [40.107.243.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCCB374C4
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 06:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721370809; cv=none; b=fC1ViAa4XG1C/timsrr/OwaytLnSie/iAqFX21VS4Yn5DN7Z+r36ndW3LQZ2DUj7RA5JdZ/7JYo2chFS6IqMSzbI/K2vKzl2akiNCEdppEyDQvvTdIa+peN1G4Qy1f23D3O1Y61maGW5Q0Lcl5ALeu1RsoFtEVGrAOPi8EwrDW8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721370809; c=relaxed/simple;
-	bh=00BTB1zDKOqZ9MO33Ee0LgPjLVsUhzoC8G9c9gQAe2Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g9XSnnKcJaQI0Zepf5AmGc9Y1+4G+vyIgTwDH8q8qLKIs+B6va5EiazhrY2+NoqcTzMM8IHc5u6MGehqd0CEqBgCgwaKt1xaEhomk1ZmbuKeUfnlEUiNf4TIzKU+fYEaUnOsp/zRFnShUcsYnAwxReKYUhurLfBCWZsoIGu/isY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=ihVFNIL3; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7f6e9662880so63977139f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 23:33:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1721370805; x=1721975605; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g28joi+JxJhlBlHO1ZSGbEwfIwqGeoouz9evpM2n3vc=;
-        b=ihVFNIL33lEDxFO0K5OFU9kleCBT7KW0qGvqyhKu8FSxVnt9/6WKj3zLd4WM184Dz8
-         EMjiBHzJmoVbgONZt7qmTVXeUqVJG1TcEsyqxWbKHXk6fgpzvByHbBkT6QO9pbvEuAkv
-         byKnGtrnkt8GMWn/SdY69U0DOjWydNbew6WHF+5+5liu5w3Wsj3WvbO9hbmCCvDnVE9e
-         JhS1BNTI6mnooKJnevd433XU2SlWFtZSSxTo+wwp8X9Q24Og2BTWbjlQY8rN9NFYlVpM
-         dXd2nZn9Z4lzEaBL0VPk4p8pIgtI1o7Z/K9ldpmOcX+kqXd3l4yqx257WGdaS0smU4GH
-         UQ3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721370805; x=1721975605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g28joi+JxJhlBlHO1ZSGbEwfIwqGeoouz9evpM2n3vc=;
-        b=GWjRpVTGuuWDvfEpcFAYQ4Zgw64ie9Ff5tWuzz1WRg+58Y+xcEUv8JO8a5uHIYb0oQ
-         y/f1JeABlyTEBTcZ75O4aCWanQIUIVnbOKC+dufxhgv03NkgAM5dg9Ow9KhdYiKqSUQM
-         Qnt9wvtbkj/3L/sAe3qmdqiC7pAS7cF40SThjwps4zcS4AwPwceWXp/ja5Qw6OTQlzLI
-         AreWEEB4+kQM8eywc8EGRmoYazc1Tz8bDrA7V0NyuXDehrMiEkYLCTBze7LWN0bszNbS
-         oBNlF58mjh03o0uox40/jMZk8jv/fKUX50Ss5yMAf/ATdMYGyd3eMOKC/LaQqf4g2pKT
-         Zcgg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMN99dNJjS43mqUqvm52ThmgSoVnuqovuy9K4fG4OO/nMQNxasmtpBPhSxq2GeLiKO+jQtTz7juCNl4AP9EJbId0R/wCnoy6y1kNS5
-X-Gm-Message-State: AOJu0Yz+SZtdyAblOBXUEN6+xTYGHyEA43jeK4CzxQsXI7FnZyjxcCUD
-	R+v4cuidz2nhYPV/cHfalrt8Wh+k+WS3EqIFUBcaFFBu77lNcYwYO6vuXRVbqL6sHH9c+kcE6YE
-	O1QCBd/iUaeEKekvpgh3DOOZnz23VnUlcC3H9mg==
-X-Google-Smtp-Source: AGHT+IEaXlA5IopI29EACV1fijT953kqODbjYMQ8yJsJkRlhwWNkxcZ95BVrHfdCm1t/7rc1NcwjVNtHnEjNdtccRSw=
-X-Received: by 2002:a05:6602:2cd2:b0:805:2e94:f21f with SMTP id
- ca18e2360f4ac-81710137c53mr919379139f.2.1721370804459; Thu, 18 Jul 2024
- 23:33:24 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F958383A5;
+	Fri, 19 Jul 2024 06:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721371116; cv=fail; b=Np0B3KA35K9Q9N5jgKk+QrLmG8FvCTzVaSdDzaqE50DBNsB4DmTj83Qp+ZnMN7GX4GNeBDkFNFwqtJW4GHdvoivYHeNEPNsFzN0xuqW6CUzeQgRUYunDDkMikB+hB6Jw6gJuut00xCAU3mPVTrBK0GpALd6CDtUNPsf4qs7WY8w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721371116; c=relaxed/simple;
+	bh=+TyZcD8yLRJhUGPnuMVXCiombwUo6N9FIErpeUSmFZA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=jfjtqRi/Qt0QAS0JFLMCeup8TkUy0uvY0e3YgqHcRVFrTztAX2nsUXFvFDYwGPs5j2Zr98Xx9PvYTRI94i/Bmp1a/5pPE86o60eQqjQW5Lq4nF7elT5t9W5T72aeil4q+mrwt75StIk987IuC3G5lDsLvvLpBxhl82/KUlCA0rc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=H5trdwzc; arc=fail smtp.client-ip=40.107.243.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vdnKOthcTMKtRf7Z9+Niwio4HbBOITjJDhr6gKlZtg7AH0S6uZbyZuMQN6gSaFiRMntrYz00HGTZxoBUJ2u/XUaRtIUS2ULSlCDCgH9DfVK2Iu80qo/jMbNgvtDZAoQxjAtH8+aNOI49ShsvshFlOOVpSd+Fv8BtMzjrCxEoBd6TCy8L5NBXToJ9im6Gw/EGRA39yLCpt0MZkCeN8XqH67vFulAKyrKYQi0kpbOp9BMq5jCRpeiPr0TQbTErupFbc7RNecnTrMUDklqucAB77hRrB9cSRv9xTzGVZRmYJMTVWBThCuznrvmFMIdW6vOw7RVg+mFEcu3iwTjUqaBxSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0rT6Bkp5H4rxnMjW4pAFgkycP/m37dorYQEgaKfgIwU=;
+ b=Dkhun0rvvOIwK/qKpbVPiJAKzH2uoc3o/WD79tIBWMtY4b68+D2Y8tQPgpZAFq+8ercJBEqaubAh8Xm52/q8T2Ytf4K1gd6YggvpMYpi14Tl+2XDzVgF+TKsHzqJApAt9A1V5ovjwDqCQX0j5dyOlHoMI/pj4gcGF4E0+vGS9i3UTLfY2R13T29MoL8QNlhIIOQ94NvJubjB3GOiw2PcufSPxOYZPnjVFfyij+iGs2F2Tby8PPcPEvWls0c6At2gOTBmdXXo4LQMcFEm6/OM+j1nfZHBy1/zNt32mvFNTzcq01EO6GNw5jbexsVUCbz6rjNO8NbfiEGCsHub6WV2bA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0rT6Bkp5H4rxnMjW4pAFgkycP/m37dorYQEgaKfgIwU=;
+ b=H5trdwzcIOah3/zMvCaWSC6xb/8Wuvt4Zm7nhvrWRP3y/nPpjWlXiCChUP4ame0X173AsqvU323IrEQPMWumlXJXktOeOQaleBOG5DUoixCitCA6FtMcMcnUc8qSZnU8ZiFNHXP40ny34uQ5UB+M7bfA7xRS5C8F7j1veQ4Z8/I=
+Received: from CYYPR12MB8655.namprd12.prod.outlook.com (2603:10b6:930:c4::19)
+ by DS7PR12MB5743.namprd12.prod.outlook.com (2603:10b6:8:72::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16; Fri, 19 Jul
+ 2024 06:38:30 +0000
+Received: from CYYPR12MB8655.namprd12.prod.outlook.com
+ ([fe80::7fa2:65b3:1c73:cdbf]) by CYYPR12MB8655.namprd12.prod.outlook.com
+ ([fe80::7fa2:65b3:1c73:cdbf%5]) with mapi id 15.20.7784.016; Fri, 19 Jul 2024
+ 06:38:30 +0000
+From: "Yuan, Perry" <Perry.Yuan@amd.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: "Huang, Ray" <Ray.Huang@amd.com>, "Shenoy, Gautham Ranjal"
+	<gautham.shenoy@amd.com>, "Limonciello, Mario" <Mario.Limonciello@amd.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar
+	<viresh.kumar@linaro.org>, "linux-pm@vger.kernel.org"
+	<linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org"
+	<kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH] cpufreq: amd-pstate: Fix uninitialized variable in
+ amd_pstate_cpu_boost_update()
+Thread-Topic: [PATCH] cpufreq: amd-pstate: Fix uninitialized variable in
+ amd_pstate_cpu_boost_update()
+Thread-Index: AQHa2U5KukeeSWwdckWWUCvkFE++B7H9mZUA
+Date: Fri, 19 Jul 2024 06:38:30 +0000
+Message-ID:
+ <CYYPR12MB8655D6D2630692790CCDEBE99CAD2@CYYPR12MB8655.namprd12.prod.outlook.com>
+References: <7ff53543-6c04-48a0-8d99-7dc010b93b3a@stanley.mountain>
+In-Reply-To: <7ff53543-6c04-48a0-8d99-7dc010b93b3a@stanley.mountain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=f6e8f3d5-b6f8-4d4e-a27a-f4446e409ed0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
+ Internal Distribution
+ Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2024-07-19T06:37:16Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CYYPR12MB8655:EE_|DS7PR12MB5743:EE_
+x-ms-office365-filtering-correlation-id: fe9e2006-d07a-40d6-62f6-08dca7bd6774
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?cWlmiC/229cP9x2P/MvDJUasY0K8quTfLVundGsm4cUge0cv4WmGpNayPwMa?=
+ =?us-ascii?Q?jEn4TZ+XK1UXnBXb7ONI4n9wK9oZs2feYQabBejp8wvzD+ksnQpKWto+lPcP?=
+ =?us-ascii?Q?tp7VQoGtIplFOJRMvXPKqBJ1sQtER5LrdN2Gkz3jcOLpylwiNiMWHUoPOJao?=
+ =?us-ascii?Q?oiMaM+M0VYAG1BUG5zo0xqVBkKNe2TZyTU/T6To53rdNzvK/gf3Mz/aoM7py?=
+ =?us-ascii?Q?29xNIdaQ6lMOMpub79RLsay9dey5A5hyxag+Sii+C6cSlZEbsMwuD7SpyMCk?=
+ =?us-ascii?Q?KTsVqCi8Zqp1BefpSQ6IolwTyuFMpHrvbeNFJJ3iZheFCx8nB6m+jcVdn38J?=
+ =?us-ascii?Q?ntwHvFprOU5daJytWzM8Pg/dEm2do45X2A8eCFzgPr04aHU+qgH9ImCnUvkc?=
+ =?us-ascii?Q?H3iudFUz4A70SM5GdJha5GW9Fh2Y0YnKDSrdiI0kthqyhh/tPNFFkhfuE/2Q?=
+ =?us-ascii?Q?iLE7LPvNwQ9dZD4a1hkzsvKHnphlVUN8ClT7S5JwPoNMXMOx2rcYWdI1aFhs?=
+ =?us-ascii?Q?kyttucBh75q7pxWSF0NzE+VQFR940w0GLQ9BWSe1GIY/QkbVMFwHaFwAP7oJ?=
+ =?us-ascii?Q?xlW6DtpIV32J+WBv3TD78fEHKo8DB221pDFL9bHdRwT3TE5HDrEPxOXFuzD0?=
+ =?us-ascii?Q?XeqeMIy6IWjMxnyEMJIBXxxtis/HZZtxien+suGgdqQZj+YxZ74KAJ0JoZGY?=
+ =?us-ascii?Q?pLoRiaJ+UPsC3bor56o6tbNQqhB+b8yhgXa3cQ67+6KWhh4g7UFn2TrgiJmc?=
+ =?us-ascii?Q?99qiRJgioxqX6930p6LCi01otQpXHwFkCHkIayJdgy5pZ0Mac/JNpewLyLw0?=
+ =?us-ascii?Q?tn497NgymNtLA23Gf1XB4/Ps68ouH3TkrFPZ6DHvHbO5W/jODYs3H9UWUbAx?=
+ =?us-ascii?Q?NaHtVEtsGzjnzW3X64NECu47Qwro50pketnt9EH4YUzpinzB9bbk5hHJOpN+?=
+ =?us-ascii?Q?G0Nw5y8p3T+xCxdHBIkRomidH7vYB/n9kmphVIws9wOemYbA92tSToJF6cjN?=
+ =?us-ascii?Q?UaYINTBt3bqB4qTMVUcYEWZcmibGH0EZPfCTf4RmvuxUGEt3A5HKm1aEOO56?=
+ =?us-ascii?Q?fY7u1+r0VcKYK8biLkbC980OVbMoXvn/RIeNcGSjkkrWRQVD/ATpa03fSRuY?=
+ =?us-ascii?Q?F9UvnUZmjloiCgvWRbTObcjtGwtvsEHZf2bCRj+FqoNBBZHJMvwmGpYqV4k1?=
+ =?us-ascii?Q?o876nUKvGBFYeHMxaaqQlT8LZFRk2fGxOr1ZYWc7SQGagyd6YRt/SzM06798?=
+ =?us-ascii?Q?0VNtr/NhmQoFSJdmqXKcZZnhozgGU3/nz3MAes0F6TOdGpWZBerYikl+6hMw?=
+ =?us-ascii?Q?ju9ZyNLp+jrUwSc08l3A15Zqe/Ji7I98NcH/mCKUT3/M0IprtPz7tK+sqc8l?=
+ =?us-ascii?Q?iEvxGDBR/wxXNmTXHLEvYFQCKAzbg6p8b6erg5paPGE7TjtwXQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8655.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?si/nlGcgp40OiW9CEsK6voK7sAKezJoeKhVBqQ0R1QfpGsDNTldczlPX5Y6K?=
+ =?us-ascii?Q?x1JnVNDgcQBWmK1ykvqj49MVc9OnUYbf9obCwqxeVVfH8o369/hECt/ZmYrg?=
+ =?us-ascii?Q?9ZwEyroM65vUtbLvE6XPBSbboDYP3tdPkmtscbdJBfwq9gnrMA4wIwlBwxCF?=
+ =?us-ascii?Q?M7NU5FkAyJrmKxS7XXnTSfd++bjEwRG5cE/uOJ+Kp3fseaNdusqivS54YNhw?=
+ =?us-ascii?Q?0lBBGhdXsJ+ey1jGk6YtGK9hGWvH1Z3D1a9HPHUp/p6Adl+zVUcw8BmRd2x8?=
+ =?us-ascii?Q?AnJZ5Nj1WoNw8Oj9HDiaElyS8Z1gHZGah2JDXzd/qXrWYF0e6GM3NnmGPcbJ?=
+ =?us-ascii?Q?WhJtcyGlpuhv5aYryP1cTr5yTeYmk0E+jywDGemTTi7uSgLylVmbetVPf1TW?=
+ =?us-ascii?Q?F1hoE5Xh1yVY5JX79uayoQH0M30FWdkt4iv68jAzugiQ5YA8IjQpsCAOSgAu?=
+ =?us-ascii?Q?9os62+yBSW6FdmbPuu9HBgH3LgiTpshJleajK2+ezlMXpCPF20x/h+fslGYF?=
+ =?us-ascii?Q?S4e5QMzy5Ljtd8rSJpW8OViA48HUA7wYE2vWSQL5JQhrqxpNU6OwbY0oe2D6?=
+ =?us-ascii?Q?tNaY7QGQSBbiL3rL+BY6KLLaGG4wvvhpmI6JMmUyVdp+KhBKwzC9w9gPQ0BB?=
+ =?us-ascii?Q?T1s6ffzI4pOn7fobS8WDp0V0ahuvxCsv8hFnTSoPlMEYAooeIwSNXg8pIJxM?=
+ =?us-ascii?Q?gZJuQj5SfDFznYEJyT/rAR5zWtvIT3HGMmBLpJ6Tavh1//vIY3WxYfXOARmH?=
+ =?us-ascii?Q?ey7zIZo8boSxtPKEWbsip+0xcfBx2xtXtO8mPb/UGPh71YF1LT1dUI2wgRPd?=
+ =?us-ascii?Q?aojdGZCwWCYCwxOl3951yU7m1EezMOMMM149GZSeiFD7SNrG1tbROQQAkzFe?=
+ =?us-ascii?Q?LhLstI+e66VLaIpUKh6BO5ZK8ru7fa189qd8ZZoAeD5R+iwPjEm+4TQWsn55?=
+ =?us-ascii?Q?O2EsI3chKHuGr1IbwsyCUmDj51731XJkny2i1WDRItEbvrCPB+qKIPrGh0Pz?=
+ =?us-ascii?Q?9GCcMFQviSCWjiyCOulkZ2zKYN1iCvvMsRtJaex+UcRGcErGqHQXar5h0ZTz?=
+ =?us-ascii?Q?X8d7FHcQGn4udUoYS6W6QeMcGD0tSraBDaid+F6fT2Btjt942wILFCqzIaM1?=
+ =?us-ascii?Q?/i1FUMkzuNcZInnjNfjSUH0i1TSkGgtCPBRb3kE3GqTsqnbSYmzHCETdmXKs?=
+ =?us-ascii?Q?cCd5+OGLYCZG5bjvVzVUVhC5Ys0zf2kJGYOkA6YZwQJOsKGI5AKXcOyU53Ev?=
+ =?us-ascii?Q?7KCLXSdJAdMltMh+M3ttt7a0f4r21he7B7x/1it57DHC3U/PFrOap7rSr4Mi?=
+ =?us-ascii?Q?RtCPMWTtQSld5+2YLD0EJApEVHKG5hzjtlLBdWqGzQfLInz6QtI+2eTy5DDv?=
+ =?us-ascii?Q?f7I8fzr5pGxsJFWaxyvDRitCHXjWLBvZqN5eTRaGD7F2uWrGgxN8N81OL7Qd?=
+ =?us-ascii?Q?4Mxv9BIImHolA3Rl489ABKuBnD3mkHn2MgwSwgJ9TgrRPTzZVaRsWMWXdqs+?=
+ =?us-ascii?Q?TiYAG82fHUt1r7bKrAvKCfvf49sldJQoGVMlvlgeXHNxWjgBsZA1CQUO5Ys6?=
+ =?us-ascii?Q?dJxKCdes5Otp4phagXc=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1718388908.git.tjeznach@rivosinc.com> <bdd1e0547e01d012bf40c5e33b752e77c6663c90.1718388909.git.tjeznach@rivosinc.com>
-In-Reply-To: <bdd1e0547e01d012bf40c5e33b752e77c6663c90.1718388909.git.tjeznach@rivosinc.com>
-From: Zong Li <zong.li@sifive.com>
-Date: Fri, 19 Jul 2024 14:33:13 +0800
-Message-ID: <CANXhq0rpX=+YZLfzLcBmHPUxBpo+xWPY9XaNkV0eQAX72KCFKw@mail.gmail.com>
-Subject: Re: [PATCH v8 7/7] iommu/riscv: Paging domain support
-To: Tomasz Jeznach <tjeznach@rivosinc.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Anup Patel <apatel@ventanamicro.com>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Nick Kossifidis <mick@ics.forth.gr>, Sebastien Boeuf <seb@rivosinc.com>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	iommu@lists.linux.dev, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux@rivosinc.com, 
-	Lu Baolu <baolu.lu@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8655.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe9e2006-d07a-40d6-62f6-08dca7bd6774
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jul 2024 06:38:30.5505
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: QH/5Ah1YfE2TsPxTjacda91pUwKgT7kDAq0WqL9CEXYem81gcS+jpcQXwj79S6TKEyTXvu3qb9jKsavt8m3Fvg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5743
 
-On Sat, Jun 15, 2024 at 1:28=E2=80=AFPM Tomasz Jeznach <tjeznach@rivosinc.c=
-om> wrote:
+[AMD Official Use Only - AMD Internal Distribution Only]
+
+Hi Dan,
+
+> -----Original Message-----
+> From: Dan Carpenter <dan.carpenter@linaro.org>
+> Sent: Friday, July 19, 2024 4:09 AM
+> To: Yuan, Perry <Perry.Yuan@amd.com>
+> Cc: Huang, Ray <Ray.Huang@amd.com>; Shenoy, Gautham Ranjal
+> <gautham.shenoy@amd.com>; Limonciello, Mario
+> <Mario.Limonciello@amd.com>; Yuan, Perry <Perry.Yuan@amd.com>; Rafael
+> J. Wysocki <rafael@kernel.org>; Viresh Kumar <viresh.kumar@linaro.org>;
+> linux-pm@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-
+> janitors@vger.kernel.org
+> Subject: [PATCH] cpufreq: amd-pstate: Fix uninitialized variable in
+> amd_pstate_cpu_boost_update()
 >
-> Introduce first-stage address translation support.
+> Smatch complains that "ret" could be uninitialized:
 >
-> Page table configured by the IOMMU driver will use the highest mode
-> implemented by the hardware, unless not known at the domain allocation
-> time falling back to the CPU=E2=80=99s MMU page mode.
+>   drivers/cpufreq/amd-pstate.c:734 amd_pstate_cpu_boost_update()
+>   error: uninitialized symbol 'ret'.
 >
-> This change introduces IOTINVAL.VMA command, required to invalidate
-> any cached IOATC entries after mapping is updated and/or removed from
-> the paging domain.  Invalidations for the non-leaf page entries use
-> IOTINVAL for all addresses assigned to the protection domain for
-> hardware not supporting more granular non-leaf page table cache
-> invalidations.
+> This seems like it probably is a real issue.  Initialize "ret" to zero to=
+ be safe.
 >
-> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Reviewed-by: Zong Li <zong.li@sifive.com>
-> Signed-off-by: Tomasz Jeznach <tjeznach@rivosinc.com>
+> Fixes: c8c68c38b56f ("cpufreq: amd-pstate: initialize core precision boos=
+t
+> state")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  drivers/iommu/riscv/iommu.c | 642 +++++++++++++++++++++++++++++++++++-
->  1 file changed, 639 insertions(+), 3 deletions(-)
+>  drivers/cpufreq/amd-pstate.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
-> index a00396a61439..859cdd455576 100644
-> --- a/drivers/iommu/riscv/iommu.c
-> +++ b/drivers/iommu/riscv/iommu.c
-> @@ -41,6 +41,10 @@
->  #define dev_to_iommu(dev) \
->         iommu_get_iommu_dev(dev, struct riscv_iommu_device, iommu)
+> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+> index 68c616b572f2..358bd88cd0c5 100644
+> --- a/drivers/cpufreq/amd-pstate.c
+> +++ b/drivers/cpufreq/amd-pstate.c
+> @@ -692,7 +692,7 @@ static int amd_pstate_cpu_boost_update(struct
+> cpufreq_policy *policy, bool on)
+>       struct amd_cpudata *cpudata =3D policy->driver_data;
+>       struct cppc_perf_ctrls perf_ctrls;
+>       u32 highest_perf, nominal_perf, nominal_freq, max_freq;
+> -     int ret;
+> +     int ret =3D 0;
 >
-> +/* IOMMU PSCID allocation namespace. */
-> +static DEFINE_IDA(riscv_iommu_pscids);
-> +#define RISCV_IOMMU_MAX_PSCID          (BIT(20) - 1)
-> +
->  /* Device resource-managed allocations */
->  struct riscv_iommu_devres {
->         void *addr;
-> @@ -779,6 +783,197 @@ static int riscv_iommu_iodir_set_mode(struct riscv_=
-iommu_device *iommu,
->         return 0;
->  }
->
-> +/* This struct contains protection domain specific IOMMU driver data. */
-> +struct riscv_iommu_domain {
-> +       struct iommu_domain domain;
-> +       struct list_head bonds;
-> +       spinlock_t lock;                /* protect bonds list updates. */
-> +       int pscid;
-> +       int amo_enabled:1;
-> +       int numa_node;
-> +       unsigned int pgd_mode;
-> +       unsigned long *pgd_root;
-> +};
-> +
-> +#define iommu_domain_to_riscv(iommu_domain) \
-> +       container_of(iommu_domain, struct riscv_iommu_domain, domain)
-> +
-> +/* Private IOMMU data for managed devices, dev_iommu_priv_* */
-> +struct riscv_iommu_info {
-> +       struct riscv_iommu_domain *domain;
-> +};
-> +
-> +/*
-> + * Linkage between an iommu_domain and attached devices.
-> + *
-> + * Protection domain requiring IOATC and DevATC translation cache invali=
-dations,
-> + * should be linked to attached devices using a riscv_iommu_bond structu=
-re.
-> + * Devices should be linked to the domain before first use and unlinked =
-after
-> + * the translations from the referenced protection domain can no longer =
-be used.
-> + * Blocking and identity domains are not tracked here, as the IOMMU hard=
-ware
-> + * does not cache negative and/or identity (BARE mode) translations, and=
- DevATC
-> + * is disabled for those protection domains.
-> + *
-> + * The device pointer and IOMMU data remain stable in the bond struct af=
-ter
-> + * _probe_device() where it's attached to the managed IOMMU, up to the
-> + * completion of the _release_device() call. The release of the bond str=
-ucture
-> + * is synchronized with the device release.
-> + */
-> +struct riscv_iommu_bond {
-> +       struct list_head list;
-> +       struct rcu_head rcu;
-> +       struct device *dev;
-> +};
-> +
-> +static int riscv_iommu_bond_link(struct riscv_iommu_domain *domain,
-> +                                struct device *dev)
-> +{
-> +       struct riscv_iommu_device *iommu =3D dev_to_iommu(dev);
-> +       struct riscv_iommu_bond *bond;
-> +       struct list_head *bonds;
-> +
-> +       bond =3D kzalloc(sizeof(*bond), GFP_KERNEL);
-> +       if (!bond)
-> +               return -ENOMEM;
-> +       bond->dev =3D dev;
-> +
-> +       /*
-> +        * List of devices attached to the domain is arranged based on
-> +        * managed IOMMU device.
-> +        */
-> +
-> +       spin_lock(&domain->lock);
-> +       list_for_each(bonds, &domain->bonds)
-> +               if (dev_to_iommu(list_entry(bonds, struct riscv_iommu_bon=
-d, list)->dev) =3D=3D iommu)
-> +                       break;
-> +       list_add_rcu(&bond->list, bonds);
-> +       spin_unlock(&domain->lock);
-> +
-> +       /* Synchronize with riscv_iommu_iotlb_inval() sequence. See comme=
-nt below. */
-> +       smp_mb();
-> +
-> +       return 0;
-> +}
-> +
-> +static void riscv_iommu_bond_unlink(struct riscv_iommu_domain *domain,
-> +                                   struct device *dev)
-> +{
-> +       struct riscv_iommu_device *iommu =3D dev_to_iommu(dev);
-> +       struct riscv_iommu_bond *bond, *found =3D NULL;
-> +       struct riscv_iommu_command cmd;
-> +       int count =3D 0;
-> +
-> +       if (!domain)
-> +               return;
-> +
-> +       spin_lock(&domain->lock);
-> +       list_for_each_entry(bond, &domain->bonds, list) {
-> +               if (found && count)
-> +                       break;
-> +               else if (bond->dev =3D=3D dev)
-> +                       found =3D bond;
-> +               else if (dev_to_iommu(bond->dev) =3D=3D iommu)
-> +                       count++;
-> +       }
-> +       if (found)
-> +               list_del_rcu(&found->list);
-> +       spin_unlock(&domain->lock);
-> +       kfree_rcu(found, rcu);
-> +
-> +       /*
-> +        * If this was the last bond between this domain and the IOMMU
-> +        * invalidate all cached entries for domain's PSCID.
-> +        */
-> +       if (!count) {
-> +               riscv_iommu_cmd_inval_vma(&cmd);
-> +               riscv_iommu_cmd_inval_set_pscid(&cmd, domain->pscid);
-> +               riscv_iommu_cmd_send(iommu, &cmd);
-> +
-> +               riscv_iommu_cmd_sync(iommu, RISCV_IOMMU_IOTINVAL_TIMEOUT)=
-;
-> +       }
-> +}
-> +
-> +/*
-> + * Send IOTLB.INVAL for whole address space for ranges larger than 2MB.
-> + * This limit will be replaced with range invalidations, if supported by
-> + * the hardware, when RISC-V IOMMU architecture specification update for
-> + * range invalidations update will be available.
-> + */
-> +#define RISCV_IOMMU_IOTLB_INVAL_LIMIT  (2 << 20)
-> +
-> +static void riscv_iommu_iotlb_inval(struct riscv_iommu_domain *domain,
-> +                                   unsigned long start, unsigned long en=
-d)
-> +{
-> +       struct riscv_iommu_bond *bond;
-> +       struct riscv_iommu_device *iommu, *prev;
-> +       struct riscv_iommu_command cmd;
-> +       unsigned long len =3D end - start + 1;
-> +       unsigned long iova;
-> +
-> +       /*
-> +        * For each IOMMU linked with this protection domain (via bonds->=
-dev),
-> +        * an IOTLB invaliation command will be submitted and executed.
-> +        *
-> +        * Possbile race with domain attach flow is handled by sequencing
-> +        * bond creation - riscv_iommu_bond_link(), and device directory
-> +        * update - riscv_iommu_iodir_update().
-> +        *
-> +        * PTE Update / IOTLB Inval           Device attach & directory u=
-pdate
-> +        * --------------------------         --------------------------
-> +        * update page table entries          add dev to the bond list
-> +        * FENCE RW,RW                        FENCE RW,RW
-> +        * For all IOMMUs: (can be empty)     Update FSC/PSCID
-> +        *   FENCE IOW,IOW                      FENCE IOW,IOW
-> +        *   IOTLB.INVAL                        IODIR.INVAL
-> +        *   IOFENCE.C
-> +        *
-> +        * If bond list is not updated with new device, directory context=
- will
-> +        * be configured with already valid page table content. If an IOM=
-MU is
-> +        * linked to the protection domain it will receive invalidation
-> +        * requests for updated page table entries.
-> +        */
-> +       smp_mb();
-> +
-> +       rcu_read_lock();
-> +
-> +       prev =3D NULL;
-> +       list_for_each_entry_rcu(bond, &domain->bonds, list) {
-> +               iommu =3D dev_to_iommu(bond->dev);
-> +
-> +               /*
-> +                * IOTLB invalidation request can be safely omitted if al=
-ready sent
-> +                * to the IOMMU for the same PSCID, and with domain->bond=
-s list
-> +                * arranged based on the device's IOMMU, it's sufficient =
-to check
-> +                * last device the invalidation was sent to.
-> +                */
-> +               if (iommu =3D=3D prev)
-> +                       continue;
-> +
-> +               riscv_iommu_cmd_inval_vma(&cmd);
-> +               riscv_iommu_cmd_inval_set_pscid(&cmd, domain->pscid);
-> +               if (len && len < RISCV_IOMMU_IOTLB_INVAL_LIMIT) {
-> +                       for (iova =3D start; iova < end; iova +=3D PAGE_S=
-IZE) {
-> +                               riscv_iommu_cmd_inval_set_addr(&cmd, iova=
-);
-> +                               riscv_iommu_cmd_send(iommu, &cmd);
-> +                       }
-> +               } else {
-> +                       riscv_iommu_cmd_send(iommu, &cmd);
-> +               }
-> +               prev =3D iommu;
-> +       }
-> +
-> +       prev =3D NULL;
-> +       list_for_each_entry_rcu(bond, &domain->bonds, list) {
-> +               iommu =3D dev_to_iommu(bond->dev);
-> +               if (iommu =3D=3D prev)
-> +                       continue;
-> +
-> +               riscv_iommu_cmd_sync(iommu, RISCV_IOMMU_IOTINVAL_TIMEOUT)=
-;
-> +               prev =3D iommu;
-> +       }
-> +       rcu_read_unlock();
-> +}
-> +
->  #define RISCV_IOMMU_FSC_BARE 0
->
->  /*
-> @@ -798,10 +993,28 @@ static void riscv_iommu_iodir_update(struct riscv_i=
-ommu_device *iommu,
->  {
->         struct iommu_fwspec *fwspec =3D dev_iommu_fwspec_get(dev);
->         struct riscv_iommu_dc *dc;
-> +       struct riscv_iommu_command cmd;
-> +       bool sync_required =3D false;
->         u64 tc;
->         int i;
->
-> -       /* Device context invalidation ignored for now. */
-> +       for (i =3D 0; i < fwspec->num_ids; i++) {
-> +               dc =3D riscv_iommu_get_dc(iommu, fwspec->ids[i]);
-> +               tc =3D READ_ONCE(dc->tc);
-> +               if (!(tc & RISCV_IOMMU_DC_TC_V))
-> +                       continue;
-> +
-> +               WRITE_ONCE(dc->tc, tc & ~RISCV_IOMMU_DC_TC_V);
-> +
-> +               /* Invalidate device context cached values */
-> +               riscv_iommu_cmd_iodir_inval_ddt(&cmd);
-> +               riscv_iommu_cmd_iodir_set_did(&cmd, fwspec->ids[i]);
-> +               riscv_iommu_cmd_send(iommu, &cmd);
-> +               sync_required =3D true;
-> +       }
-> +
-> +       if (sync_required)
-> +               riscv_iommu_cmd_sync(iommu, RISCV_IOMMU_IOTINVAL_TIMEOUT)=
-;
->
->         /*
->          * For device context with DC_TC_PDTV =3D 0, translation attribut=
-es valid bit
-> @@ -817,15 +1030,416 @@ static void riscv_iommu_iodir_update(struct riscv=
-_iommu_device *iommu,
->                 /* Update device context, write TC.V as the last step. */
->                 dma_wmb();
->                 WRITE_ONCE(dc->tc, tc);
-> +
-> +               /* Invalidate device context after update */
-> +               riscv_iommu_cmd_iodir_inval_ddt(&cmd);
-> +               riscv_iommu_cmd_iodir_set_did(&cmd, fwspec->ids[i]);
-> +               riscv_iommu_cmd_send(iommu, &cmd);
-> +       }
-> +
-> +       riscv_iommu_cmd_sync(iommu, RISCV_IOMMU_IOTINVAL_TIMEOUT);
-> +}
-> +
-> +/*
-> + * IOVA page translation tree management.
-> + */
-> +
-> +#define IOMMU_PAGE_SIZE_4K     BIT_ULL(12)
-> +#define IOMMU_PAGE_SIZE_2M     BIT_ULL(21)
-> +#define IOMMU_PAGE_SIZE_1G     BIT_ULL(30)
-> +#define IOMMU_PAGE_SIZE_512G   BIT_ULL(39)
-> +
-> +#define PT_SHIFT (PAGE_SHIFT - ilog2(sizeof(pte_t)))
-> +
-> +static void riscv_iommu_iotlb_flush_all(struct iommu_domain *iommu_domai=
-n)
-> +{
-> +       struct riscv_iommu_domain *domain =3D iommu_domain_to_riscv(iommu=
-_domain);
-> +
-> +       riscv_iommu_iotlb_inval(domain, 0, ULONG_MAX);
-> +}
-> +
-> +static void riscv_iommu_iotlb_sync(struct iommu_domain *iommu_domain,
-> +                                  struct iommu_iotlb_gather *gather)
-> +{
-> +       struct riscv_iommu_domain *domain =3D iommu_domain_to_riscv(iommu=
-_domain);
-> +
-> +       riscv_iommu_iotlb_inval(domain, gather->start, gather->end);
-> +}
-> +
-> +static inline size_t get_page_size(size_t size)
-> +{
-> +       if (size >=3D IOMMU_PAGE_SIZE_512G)
-> +               return IOMMU_PAGE_SIZE_512G;
-> +       if (size >=3D IOMMU_PAGE_SIZE_1G)
-> +               return IOMMU_PAGE_SIZE_1G;
-> +       if (size >=3D IOMMU_PAGE_SIZE_2M)
-> +               return IOMMU_PAGE_SIZE_2M;
-> +       return IOMMU_PAGE_SIZE_4K;
-> +}
-> +
-> +#define _io_pte_present(pte)   ((pte) & (_PAGE_PRESENT | _PAGE_PROT_NONE=
-))
-> +#define _io_pte_leaf(pte)      ((pte) & _PAGE_LEAF)
-> +#define _io_pte_none(pte)      ((pte) =3D=3D 0)
-> +#define _io_pte_entry(pn, prot)        ((_PAGE_PFN_MASK & ((pn) << _PAGE=
-_PFN_SHIFT)) | (prot))
-> +
-> +static void riscv_iommu_pte_free(struct riscv_iommu_domain *domain,
-> +                                unsigned long pte, struct list_head *fre=
-elist)
-> +{
-> +       unsigned long *ptr;
-> +       int i;
-> +
-> +       if (!_io_pte_present(pte) || _io_pte_leaf(pte))
-> +               return;
-> +
-> +       ptr =3D (unsigned long *)pfn_to_virt(__page_val_to_pfn(pte));
-> +
-> +       /* Recursively free all sub page table pages */
-> +       for (i =3D 0; i < PTRS_PER_PTE; i++) {
-> +               pte =3D READ_ONCE(ptr[i]);
-> +               if (!_io_pte_none(pte) && cmpxchg_relaxed(ptr + i, pte, 0=
-) =3D=3D pte)
-> +                       riscv_iommu_pte_free(domain, pte, freelist);
-> +       }
-> +
-> +       if (freelist)
-> +               list_add_tail(&virt_to_page(ptr)->lru, freelist);
-> +       else
-> +               iommu_free_page(ptr);
-> +}
-> +
-> +static unsigned long *riscv_iommu_pte_alloc(struct riscv_iommu_domain *d=
-omain,
-> +                                           unsigned long iova, size_t pg=
-size,
-> +                                           gfp_t gfp)
-> +{
-> +       unsigned long *ptr =3D domain->pgd_root;
-> +       unsigned long pte, old;
-> +       int level =3D domain->pgd_mode - RISCV_IOMMU_DC_FSC_IOSATP_MODE_S=
-V39 + 2;
-> +       void *addr;
-> +
-> +       do {
-> +               const int shift =3D PAGE_SHIFT + PT_SHIFT * level;
-> +
-> +               ptr +=3D ((iova >> shift) & (PTRS_PER_PTE - 1));
-> +               /*
-> +                * Note: returned entry might be a non-leaf if there was
-> +                * existing mapping with smaller granularity. Up to the c=
-aller
-> +                * to replace and invalidate.
-> +                */
-> +               if (((size_t)1 << shift) =3D=3D pgsize)
-> +                       return ptr;
-> +pte_retry:
-> +               pte =3D READ_ONCE(*ptr);
-> +               /*
-> +                * This is very likely incorrect as we should not be addi=
-ng
-> +                * new mapping with smaller granularity on top
-> +                * of existing 2M/1G mapping. Fail.
-> +                */
-> +               if (_io_pte_present(pte) && _io_pte_leaf(pte))
-> +                       return NULL;
-> +               /*
-> +                * Non-leaf entry is missing, allocate and try to add to =
-the
-> +                * page table. This might race with other mappings, retry=
-.
-> +                */
-> +               if (_io_pte_none(pte)) {
-> +                       addr =3D iommu_alloc_page_node(domain->numa_node,=
- gfp);
-> +                       if (!addr)
-> +                               return NULL;
-> +                       old =3D pte;
-> +                       pte =3D _io_pte_entry(virt_to_pfn(addr), _PAGE_TA=
-BLE);
-> +                       if (cmpxchg_relaxed(ptr, old, pte) !=3D old) {
-> +                               iommu_free_page(addr);
-> +                               goto pte_retry;
-> +                       }
-> +               }
-> +               ptr =3D (unsigned long *)pfn_to_virt(__page_val_to_pfn(pt=
-e));
-> +       } while (level-- > 0);
-> +
-> +       return NULL;
-> +}
-> +
-> +static unsigned long *riscv_iommu_pte_fetch(struct riscv_iommu_domain *d=
-omain,
-> +                                           unsigned long iova, size_t *p=
-te_pgsize)
-> +{
-> +       unsigned long *ptr =3D domain->pgd_root;
-> +       unsigned long pte;
-> +       int level =3D domain->pgd_mode - RISCV_IOMMU_DC_FSC_IOSATP_MODE_S=
-V39 + 2;
-> +
-> +       do {
-> +               const int shift =3D PAGE_SHIFT + PT_SHIFT * level;
-> +
-> +               ptr +=3D ((iova >> shift) & (PTRS_PER_PTE - 1));
-> +               pte =3D READ_ONCE(*ptr);
-> +               if (_io_pte_present(pte) && _io_pte_leaf(pte)) {
-> +                       *pte_pgsize =3D (size_t)1 << shift;
-> +                       return ptr;
-> +               }
-> +               if (_io_pte_none(pte))
-> +                       return NULL;
-> +               ptr =3D (unsigned long *)pfn_to_virt(__page_val_to_pfn(pt=
-e));
-> +       } while (level-- > 0);
-> +
-> +       return NULL;
-> +}
-> +
-> +static int riscv_iommu_map_pages(struct iommu_domain *iommu_domain,
-> +                                unsigned long iova, phys_addr_t phys,
-> +                                size_t pgsize, size_t pgcount, int prot,
-> +                                gfp_t gfp, size_t *mapped)
-> +{
-> +       struct riscv_iommu_domain *domain =3D iommu_domain_to_riscv(iommu=
-_domain);
-> +       size_t size =3D 0;
-> +       size_t page_size =3D get_page_size(pgsize);
-> +       unsigned long *ptr;
-> +       unsigned long pte, old, pte_prot;
-> +       int rc =3D 0;
-> +       LIST_HEAD(freelist);
-> +
-> +       if (!(prot & IOMMU_WRITE))
-> +               pte_prot =3D _PAGE_BASE | _PAGE_READ;
-> +       else if (domain->amo_enabled)
-> +               pte_prot =3D _PAGE_BASE | _PAGE_READ | _PAGE_WRITE;
-> +       else
-> +               pte_prot =3D _PAGE_BASE | _PAGE_READ | _PAGE_WRITE | _PAG=
-E_DIRTY;
-> +
-> +       while (pgcount) {
-> +               ptr =3D riscv_iommu_pte_alloc(domain, iova, page_size, gf=
-p);
-> +               if (!ptr) {
-> +                       rc =3D -ENOMEM;
-> +                       break;
-> +               }
-> +
-> +               old =3D READ_ONCE(*ptr);
-> +               pte =3D _io_pte_entry(phys_to_pfn(phys), pte_prot);
-> +               if (cmpxchg_relaxed(ptr, old, pte) !=3D old)
-> +                       continue;
-> +
-> +               riscv_iommu_pte_free(domain, old, &freelist);
-> +
-> +               size +=3D page_size;
-> +               iova +=3D page_size;
-> +               phys +=3D page_size;
-> +               --pgcount;
-> +       }
-> +
-> +       *mapped =3D size;
-> +
-> +       if (!list_empty(&freelist)) {
-> +               /*
-> +                * In 1.0 spec version, the smallest scope we can use to
-> +                * invalidate all levels of page table (i.e. leaf and non=
--leaf)
-> +                * is an invalidate-all-PSCID IOTINVAL.VMA with AV=3D0.
-> +                * This will be updated with hardware support for
-> +                * capability.NL (non-leaf) IOTINVAL command.
-> +                */
-> +               riscv_iommu_iotlb_inval(domain, 0, ULONG_MAX);
-> +               iommu_put_pages_list(&freelist);
-> +       }
-> +
-> +       return rc;
-> +}
-> +
-> +static size_t riscv_iommu_unmap_pages(struct iommu_domain *iommu_domain,
-> +                                     unsigned long iova, size_t pgsize,
-> +                                     size_t pgcount,
-> +                                     struct iommu_iotlb_gather *gather)
-> +{
-> +       struct riscv_iommu_domain *domain =3D iommu_domain_to_riscv(iommu=
-_domain);
-> +       size_t size =3D pgcount << __ffs(pgsize);
-> +       unsigned long *ptr, old;
-> +       size_t unmapped =3D 0;
-> +       size_t pte_size;
-> +
-> +       while (unmapped < size) {
-> +               ptr =3D riscv_iommu_pte_fetch(domain, iova, &pte_size);
-> +               if (!ptr)
-> +                       return unmapped;
-> +
-> +               /* partial unmap is not allowed, fail. */
-> +               if (iova & (pte_size - 1))
-> +                       return unmapped;
-> +
-> +               old =3D READ_ONCE(*ptr);
-> +               if (cmpxchg_relaxed(ptr, old, 0) !=3D old)
-> +                       continue;
-> +
-> +               iommu_iotlb_gather_add_page(&domain->domain, gather, iova=
-,
-> +                                           pte_size);
-> +
-> +               iova +=3D pte_size;
-> +               unmapped +=3D pte_size;
-> +       }
-> +
-> +       return unmapped;
-> +}
-> +
-> +static phys_addr_t riscv_iommu_iova_to_phys(struct iommu_domain *iommu_d=
-omain,
-> +                                           dma_addr_t iova)
-> +{
-> +       struct riscv_iommu_domain *domain =3D iommu_domain_to_riscv(iommu=
-_domain);
-> +       unsigned long pte_size;
-> +       unsigned long *ptr;
-> +
-> +       ptr =3D riscv_iommu_pte_fetch(domain, iova, &pte_size);
-> +       if (_io_pte_none(*ptr) || !_io_pte_present(*ptr))
-> +               return 0;
-> +
-> +       return pfn_to_phys(__page_val_to_pfn(*ptr)) | (iova & (pte_size -=
- 1));
-> +}
-> +
-> +static void riscv_iommu_free_paging_domain(struct iommu_domain *iommu_do=
-main)
-> +{
-> +       struct riscv_iommu_domain *domain =3D iommu_domain_to_riscv(iommu=
-_domain);
-> +       const unsigned long pfn =3D virt_to_pfn(domain->pgd_root);
-> +
-> +       WARN_ON(!list_empty(&domain->bonds));
-
-Hi Tomasz,
-I recently hit the issue here when I removed a device. I think we need
-to unlink the device's bond in domain before releasing domain.
-Do you mind pick the following modification in this patch? Thanks.
-
-diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
-index 859cdd455576..f0707147e706 100644
---- a/drivers/iommu/riscv/iommu.c
-+++ b/drivers/iommu/riscv/iommu.c
-@@ -1541,6 +1541,8 @@ static void riscv_iommu_release_device(struct device =
-*dev)
- {
-        struct riscv_iommu_info *info =3D dev_iommu_priv_get(dev);
-
-+       riscv_iommu_bond_unlink(info->domain, dev);
-+
-        synchronize_rcu();
-        kfree(info);
- }
-
-> +
-> +       if ((int)domain->pscid > 0)
-> +               ida_free(&riscv_iommu_pscids, domain->pscid);
-> +
-> +       riscv_iommu_pte_free(domain, _io_pte_entry(pfn, _PAGE_TABLE), NUL=
-L);
-> +       kfree(domain);
-> +}
-> +
-> +static bool riscv_iommu_pt_supported(struct riscv_iommu_device *iommu, i=
-nt pgd_mode)
-> +{
-> +       switch (pgd_mode) {
-> +       case RISCV_IOMMU_DC_FSC_IOSATP_MODE_SV39:
-> +               return iommu->caps & RISCV_IOMMU_CAPABILITIES_SV39;
-> +
-> +       case RISCV_IOMMU_DC_FSC_IOSATP_MODE_SV48:
-> +               return iommu->caps & RISCV_IOMMU_CAPABILITIES_SV48;
-> +
-> +       case RISCV_IOMMU_DC_FSC_IOSATP_MODE_SV57:
-> +               return iommu->caps & RISCV_IOMMU_CAPABILITIES_SV57;
->         }
-> +       return false;
-> +}
-> +
-> +static int riscv_iommu_attach_paging_domain(struct iommu_domain *iommu_d=
-omain,
-> +                                           struct device *dev)
-> +{
-> +       struct riscv_iommu_domain *domain =3D iommu_domain_to_riscv(iommu=
-_domain);
-> +       struct riscv_iommu_device *iommu =3D dev_to_iommu(dev);
-> +       struct riscv_iommu_info *info =3D dev_iommu_priv_get(dev);
-> +       u64 fsc, ta;
-> +
-> +       if (!riscv_iommu_pt_supported(iommu, domain->pgd_mode))
-> +               return -ENODEV;
-> +
-> +       fsc =3D FIELD_PREP(RISCV_IOMMU_PC_FSC_MODE, domain->pgd_mode) |
-> +             FIELD_PREP(RISCV_IOMMU_PC_FSC_PPN, virt_to_pfn(domain->pgd_=
-root));
-> +       ta =3D FIELD_PREP(RISCV_IOMMU_PC_TA_PSCID, domain->pscid) |
-> +            RISCV_IOMMU_PC_TA_V;
-> +
-> +       if (riscv_iommu_bond_link(domain, dev))
-> +               return -ENOMEM;
-> +
-> +       riscv_iommu_iodir_update(iommu, dev, fsc, ta);
-> +       riscv_iommu_bond_unlink(info->domain, dev);
-> +       info->domain =3D domain;
-> +
-> +       return 0;
-> +}
-> +
-> +static const struct iommu_domain_ops riscv_iommu_paging_domain_ops =3D {
-> +       .attach_dev =3D riscv_iommu_attach_paging_domain,
-> +       .free =3D riscv_iommu_free_paging_domain,
-> +       .map_pages =3D riscv_iommu_map_pages,
-> +       .unmap_pages =3D riscv_iommu_unmap_pages,
-> +       .iova_to_phys =3D riscv_iommu_iova_to_phys,
-> +       .iotlb_sync =3D riscv_iommu_iotlb_sync,
-> +       .flush_iotlb_all =3D riscv_iommu_iotlb_flush_all,
-> +};
-> +
-> +static struct iommu_domain *riscv_iommu_alloc_paging_domain(struct devic=
-e *dev)
-> +{
-> +       struct riscv_iommu_domain *domain;
-> +       struct riscv_iommu_device *iommu;
-> +       unsigned int pgd_mode;
-> +       int va_bits;
-> +
-> +       iommu =3D dev ? dev_to_iommu(dev) : NULL;
-> +
-> +       /*
-> +        * In unlikely case when dev or iommu is not known, use system
-> +        * SATP mode to configure paging domain radix tree depth.
-> +        * Use highest available if actual IOMMU hardware capabilities
-> +        * are known here.
-> +        */
-> +       if (!iommu) {
-> +               pgd_mode =3D satp_mode >> SATP_MODE_SHIFT;
-> +               va_bits =3D VA_BITS;
-> +       } else if (iommu->caps & RISCV_IOMMU_CAPABILITIES_SV57) {
-> +               pgd_mode =3D RISCV_IOMMU_DC_FSC_IOSATP_MODE_SV57;
-> +               va_bits =3D 57;
-> +       } else if (iommu->caps & RISCV_IOMMU_CAPABILITIES_SV48) {
-> +               pgd_mode =3D RISCV_IOMMU_DC_FSC_IOSATP_MODE_SV48;
-> +               va_bits =3D 48;
-> +       } else if (iommu->caps & RISCV_IOMMU_CAPABILITIES_SV39) {
-> +               pgd_mode =3D RISCV_IOMMU_DC_FSC_IOSATP_MODE_SV39;
-> +               va_bits =3D 39;
-> +       } else {
-> +               dev_err(dev, "cannot find supported page table mode\n");
-> +               return ERR_PTR(-ENODEV);
-> +       }
-> +
-> +       domain =3D kzalloc(sizeof(*domain), GFP_KERNEL);
-> +       if (!domain)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       INIT_LIST_HEAD_RCU(&domain->bonds);
-> +       spin_lock_init(&domain->lock);
-> +       domain->numa_node =3D NUMA_NO_NODE;
-> +
-> +       if (iommu) {
-> +               domain->numa_node =3D dev_to_node(iommu->dev);
-> +               domain->amo_enabled =3D !!(iommu->caps & RISCV_IOMMU_CAPA=
-BILITIES_AMO_HWAD);
-> +       }
-> +
-> +       domain->pgd_mode =3D pgd_mode;
-> +       domain->pgd_root =3D iommu_alloc_page_node(domain->numa_node,
-> +                                                GFP_KERNEL_ACCOUNT);
-> +       if (!domain->pgd_root) {
-> +               kfree(domain);
-> +               return ERR_PTR(-ENOMEM);
-> +       }
-> +
-> +       domain->pscid =3D ida_alloc_range(&riscv_iommu_pscids, 1,
-> +                                       RISCV_IOMMU_MAX_PSCID, GFP_KERNEL=
-);
-> +       if (domain->pscid < 0) {
-> +               iommu_free_page(domain->pgd_root);
-> +               kfree(domain);
-> +               return ERR_PTR(-ENOMEM);
-> +       }
-> +
-> +       /*
-> +        * Note: RISC-V Privilege spec mandates that virtual addresses
-> +        * need to be sign-extended, so if (VA_BITS - 1) is set, all
-> +        * bits >=3D VA_BITS need to also be set or else we'll get a
-> +        * page fault. However the code that creates the mappings
-> +        * above us (e.g. iommu_dma_alloc_iova()) won't do that for us
-> +        * for now, so we'll end up with invalid virtual addresses
-> +        * to map. As a workaround until we get this sorted out
-> +        * limit the available virtual addresses to VA_BITS - 1.
-> +        */
-> +       domain->domain.geometry.aperture_start =3D 0;
-> +       domain->domain.geometry.aperture_end =3D DMA_BIT_MASK(va_bits - 1=
-);
-> +       domain->domain.geometry.force_aperture =3D true;
-> +
-> +       domain->domain.ops =3D &riscv_iommu_paging_domain_ops;
-> +
-> +       return &domain->domain;
->  }
->
->  static int riscv_iommu_attach_blocking_domain(struct iommu_domain *iommu=
-_domain,
->                                               struct device *dev)
->  {
->         struct riscv_iommu_device *iommu =3D dev_to_iommu(dev);
-> +       struct riscv_iommu_info *info =3D dev_iommu_priv_get(dev);
->
-> +       /* Make device context invalid, translation requests will fault w=
-/ #258 */
->         riscv_iommu_iodir_update(iommu, dev, RISCV_IOMMU_FSC_BARE, 0);
-> +       riscv_iommu_bond_unlink(info->domain, dev);
-> +       info->domain =3D NULL;
->
->         return 0;
->  }
-> @@ -841,8 +1455,11 @@ static int riscv_iommu_attach_identity_domain(struc=
-t iommu_domain *iommu_domain,
->                                               struct device *dev)
->  {
->         struct riscv_iommu_device *iommu =3D dev_to_iommu(dev);
-> +       struct riscv_iommu_info *info =3D dev_iommu_priv_get(dev);
->
->         riscv_iommu_iodir_update(iommu, dev, RISCV_IOMMU_FSC_BARE, RISCV_=
-IOMMU_PC_TA_V);
-> +       riscv_iommu_bond_unlink(info->domain, dev);
-> +       info->domain =3D NULL;
->
->         return 0;
->  }
-> @@ -856,7 +1473,7 @@ static struct iommu_domain riscv_iommu_identity_doma=
-in =3D {
->
->  static int riscv_iommu_device_domain_type(struct device *dev)
->  {
-> -       return IOMMU_DOMAIN_IDENTITY;
-> +       return 0;
->  }
->
->  static struct iommu_group *riscv_iommu_device_group(struct device *dev)
-> @@ -875,6 +1492,7 @@ static struct iommu_device *riscv_iommu_probe_device=
-(struct device *dev)
->  {
->         struct iommu_fwspec *fwspec =3D dev_iommu_fwspec_get(dev);
->         struct riscv_iommu_device *iommu;
-> +       struct riscv_iommu_info *info;
->         struct riscv_iommu_dc *dc;
->         u64 tc;
->         int i;
-> @@ -893,6 +1511,9 @@ static struct iommu_device *riscv_iommu_probe_device=
-(struct device *dev)
->         if (iommu->ddt_mode <=3D RISCV_IOMMU_DDTP_IOMMU_MODE_BARE)
->                 return ERR_PTR(-ENODEV);
->
-> +       info =3D kzalloc(sizeof(*info), GFP_KERNEL);
-> +       if (!info)
-> +               return ERR_PTR(-ENOMEM);
->         /*
->          * Allocate and pre-configure device context entries in
->          * the device directory. Do not mark the context valid yet.
-> @@ -902,24 +1523,39 @@ static struct iommu_device *riscv_iommu_probe_devi=
-ce(struct device *dev)
->                 tc |=3D RISCV_IOMMU_DC_TC_SADE;
->         for (i =3D 0; i < fwspec->num_ids; i++) {
->                 dc =3D riscv_iommu_get_dc(iommu, fwspec->ids[i]);
-> -               if (!dc)
-> +               if (!dc) {
-> +                       kfree(info);
->                         return ERR_PTR(-ENODEV);
-> +               }
->                 if (READ_ONCE(dc->tc) & RISCV_IOMMU_DC_TC_V)
->                         dev_warn(dev, "already attached to IOMMU device d=
-irectory\n");
->                 WRITE_ONCE(dc->tc, tc);
->         }
->
-> +       dev_iommu_priv_set(dev, info);
-> +
->         return &iommu->iommu;
->  }
->
-> +static void riscv_iommu_release_device(struct device *dev)
-> +{
-> +       struct riscv_iommu_info *info =3D dev_iommu_priv_get(dev);
-> +
-> +       synchronize_rcu();
-> +       kfree(info);
-> +}
-> +
->  static const struct iommu_ops riscv_iommu_ops =3D {
-> +       .pgsize_bitmap =3D SZ_4K,
->         .of_xlate =3D riscv_iommu_of_xlate,
->         .identity_domain =3D &riscv_iommu_identity_domain,
->         .blocked_domain =3D &riscv_iommu_blocking_domain,
->         .release_domain =3D &riscv_iommu_blocking_domain,
-> +       .domain_alloc_paging =3D riscv_iommu_alloc_paging_domain,
->         .def_domain_type =3D riscv_iommu_device_domain_type,
->         .device_group =3D riscv_iommu_device_group,
->         .probe_device =3D riscv_iommu_probe_device,
-> +       .release_device =3D riscv_iommu_release_device,
->  };
->
->  static int riscv_iommu_init_check(struct riscv_iommu_device *iommu)
+>       highest_perf =3D READ_ONCE(cpudata->highest_perf);
+>       nominal_perf =3D READ_ONCE(cpudata->nominal_perf);
 > --
-> 2.34.1
->
+> 2.43.0
+
+Thanks for the fix.
+LGTM
+Reviewed-by: Perry Yuan <perry.yuan@amd.com>
 
