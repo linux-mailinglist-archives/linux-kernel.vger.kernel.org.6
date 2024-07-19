@@ -1,65 +1,65 @@
-Return-Path: <linux-kernel+bounces-256965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E91AC93734E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 07:34:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCA49937353
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 07:34:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A10F328343A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 05:34:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 775ED283432
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 05:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8124043144;
-	Fri, 19 Jul 2024 05:33:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E676552F70;
+	Fri, 19 Jul 2024 05:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="nAgy2Wyx"
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="px0qfYkG"
 Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728AC4776E;
-	Fri, 19 Jul 2024 05:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1661647A4C;
+	Fri, 19 Jul 2024 05:33:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721367229; cv=none; b=QKcP/+JvUujCU3QmwJgp/IUXDy+mXK7vIXKtrSq1PjLxQjuA5Nt+BbtvR0tm3fAd0FZxr3zh7wybKHG/VhHFFTWgWbxvMmRexBWjTeTgKVxEwmMNGycapK5vMXvX5fzcYi+nxXwopZmTHW4Rvgc84nYWJESQ+m+1CwgBg5P6BVU=
+	t=1721367231; cv=none; b=WCItxIQ3FShoHlcNsHgd9n0BWQBkfpAwPFP95+WpU473k5u2vZS9XuCFWR9u66ADVWBHYswuSUqNjJT8RXzcv8DVxd3X0WwjnSmeA7QO2wofVt7pgWpVfTUv2BfqpaUTI54HFk3TlgK4WI/PdigxZjEsBfjkDBz58wwEQwmqsU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721367229; c=relaxed/simple;
-	bh=dl0QUWK3QTDbPixrI8aQO7THm5bx5rlBeqEnBnLZRj0=;
+	s=arc-20240116; t=1721367231; c=relaxed/simple;
+	bh=EKC8vxwZdPdFVnf/xaq9SKigBmIV5g23J/ARvrurlpE=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sClSNBxbxlpsXshWraLyb2AGvE5U+v6x0B6kWdKvCil72rH6dxo2KUz7NwuGVEuR1h20cnXbVWu8j1wExBoXChjARoQya2jLCA4psVTxxAF02UWAkPHSVtjCT2cdWXlCbYJdPETTO0fizdHc+X4alxKGFFZvO9DOQ7Bx0RzrTqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=nAgy2Wyx; arc=none smtp.client-ip=211.75.126.72
+	 MIME-Version:Content-Type; b=E8PP5Qywxt2w0abCUuM1qLzc1Rub7zS3sf8XsBypCaFElObEhIfzZNk2MNtFKRdaA5lWxGxypZ4F0vszFZmVSZciqfUic8slTwthKAU1QDTdPtqHVUoc7QUhQzn1Pd7rT8Ty4gXUzE4NQLGXP1BIjWsu+2No9/bq6PnCoscPkIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=px0qfYkG; arc=none smtp.client-ip=211.75.126.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 46J5XSHw8148394, This message is accepted by code: ctloc85258
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 46J5XV5M0148411, This message is accepted by code: ctloc85258
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1721367208; bh=dl0QUWK3QTDbPixrI8aQO7THm5bx5rlBeqEnBnLZRj0=;
+	t=1721367211; bh=EKC8vxwZdPdFVnf/xaq9SKigBmIV5g23J/ARvrurlpE=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=nAgy2Wyxq2SINUZ959x4wPdBbwovwrzknmfEeiY737gdXd2+hHxP5zPHRxe6uRXQb
-	 J97cIKKEraLIhMxMNMgUmuGDC8mL4TDRtba0Zc6EhtkcmxtBiF1B3bx1apYFR8Vk8+
-	 ldyy4O9qxPfPfSJji9coKW46XEFKTqpRwfRKameGgghvS7lahWZi1Nj3VaV4X74lfh
-	 IG4msc7Tyr+AL5yzCKKj6jDzDPWu3exIxQlVGGGYFz+OA327NFDRYCSzSfxBQ8fZ7n
-	 7jeICMEjOXqlEz6su7L6QaecnUlfVD7PPsqy8oXNSIRLwKkMzXZ98nhXDxAOb5Gnwy
-	 rBGlT0vm++J8g==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 46J5XSHw8148394
+	b=px0qfYkGLokDDTfT6Al7u4JUV21kvnxNZ+klMw/9MJXsCm3s4nkIbFFisZaAk8UFe
+	 Ys5GJlUvr98Kti3suJL2072qeC0Sl3FxZvr9Mmr4nkkF/g47MDY1OVXoVPu4B+WFjw
+	 tHolYOcycjhLT2kULioN5OBguh0QJOzgufUwxousuoKWeD295cBt3rlWYJ3vP1B3ml
+	 cTUJpi1329B+/00N5lXq+QMmmDleU2C+5PzYgjqcAzE0ZkbSnNsLVWdfOHEEDJdlQ1
+	 d4VguPvXzEb9dPuSra3GSuGxBcXrYTb7rtS35V0SmKn2TlSoUWupV6HKOt7mofLRgh
+	 PnL6sl96Qi21g==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 46J5XV5M0148411
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 19 Jul 2024 13:33:28 +0800
+	Fri, 19 Jul 2024 13:33:31 +0800
 Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 19 Jul 2024 13:33:29 +0800
+ 15.1.2507.39; Fri, 19 Jul 2024 13:33:32 +0800
 Received: from localhost (172.22.81.102) by RTEXMBS01.realtek.com.tw
  (172.21.6.94) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Fri, 19 Jul
- 2024 13:33:28 +0800
+ 2024 13:33:31 +0800
 From: Ricky Wu <ricky_wu@realtek.com>
 To: <ricky_wu@realtek.com>, <ulf.hansson@linaro.org>,
         <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <ricardo@marliere.net>, <gregkh@linuxfoundation.org>, <arnd@arndb.de>
-Subject: [PATCH 2/4] mmc: core: add SDUC init rw erase flow to mmc
-Date: Fri, 19 Jul 2024 13:33:12 +0800
-Message-ID: <20240719053314.1636649-3-ricky_wu@realtek.com>
+Subject: [PATCH 3/4] mmc: rtsx: make Realtek sdmmc to support SDUC
+Date: Fri, 19 Jul 2024 13:33:13 +0800
+Message-ID: <20240719053314.1636649-4-ricky_wu@realtek.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240719053314.1636649-1-ricky_wu@realtek.com>
 References: <20240719053314.1636649-1-ricky_wu@realtek.com>
@@ -78,262 +78,59 @@ X-KSE-AntiSpam-Interceptor-Info: fallback
 X-KSE-Antivirus-Interceptor-Info: fallback
 X-KSE-AntiSpam-Interceptor-Info: fallback
 
-According SD spec (5.2[2]) to do SDUC support
-1)Mutual identification of SDUC in ACMD41 initialization (5.2.1[2])
-sd.c
-mmc_sd_get_cid():
-if the host support SDUC set HO2T to ocr
-mmc_sd_init_card():
-if the card rsp support SDUC by CO2T, do mmc_card_set_ultra_capacity()
-2)SDUC card user area capacity calculation (5.2.2[2])
-sd.c
-mmc_decode_csd():
-Add the SDUC card csd parser
-3)Memory read/write commands sequence (5.2.3[2])
-block.c
-mmc_blk_rw_rq_prep():
-Prepare CMD22 for the SDUC card R/W
-4)Erase Commands Sequence (5.2.4[2])
-core.c
-Add CMD22 to erase flow for the SDUC card
-5)Card type
-bus.c
-mmc_add_card():
-Add SDUC to type if the card is SDUC card
+Add Realtek sdmmc host to support SDUC
+Send CMD22 before normal read/write when the card is SDUC card
+Add MMC_CAP2_SDUC to caps2
 
 Signed-off-by: Ricky Wu <ricky_wu@realtek.com>
 ---
- drivers/mmc/core/block.c | 13 +++++++++--
- drivers/mmc/core/bus.c   |  4 +++-
- drivers/mmc/core/core.c  | 38 ++++++++++++++++++++++----------
- drivers/mmc/core/sd.c    | 47 ++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 88 insertions(+), 14 deletions(-)
+ drivers/mmc/host/rtsx_pci_sdmmc.c | 6 ++++++
+ include/linux/rtsx_pci.h          | 1 +
+ 2 files changed, 7 insertions(+)
 
-diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-index 367509b5b646..45c06055882a 100644
---- a/drivers/mmc/core/block.c
-+++ b/drivers/mmc/core/block.c
-@@ -1153,7 +1153,7 @@ static void mmc_blk_issue_erase_rq(struct mmc_queue *mq, struct request *req,
- {
- 	struct mmc_blk_data *md = mq->blkdata;
- 	struct mmc_card *card = md->queue.card;
--	unsigned int from, nr;
-+	unsigned long long from, nr;
- 	int err = 0;
- 	blk_status_t status = BLK_STS_OK;
- 
-@@ -1208,7 +1208,7 @@ static void mmc_blk_issue_secdiscard_rq(struct mmc_queue *mq,
- {
- 	struct mmc_blk_data *md = mq->blkdata;
- 	struct mmc_card *card = md->queue.card;
--	unsigned int from, nr, arg;
-+	unsigned long long from, nr, arg;
- 	int err = 0, type = MMC_BLK_SECDISCARD;
- 	blk_status_t status = BLK_STS_OK;
- 
-@@ -1713,6 +1713,15 @@ static void mmc_blk_rw_rq_prep(struct mmc_queue_req *mqrq,
- 		brq->sbc.flags = MMC_RSP_R1 | MMC_CMD_AC;
- 		brq->mrq.sbc = &brq->sbc;
- 	}
-+
-+	if (mmc_card_ultra_capacity(card)) {
-+		brq->ae.opcode = SD_ADDR_EXT;
-+		brq->ae.arg = (blk_rq_pos(req) >> 32) & 0x3F;
-+		brq->ae.flags = MMC_RSP_R1 | MMC_CMD_AC;
-+		brq->mrq.ae = &brq->ae;
-+	} else {
-+		brq->mrq.ae = NULL;
-+	}
- }
- 
- #define MMC_MAX_RETRIES		5
-diff --git a/drivers/mmc/core/bus.c b/drivers/mmc/core/bus.c
-index 0ddaee0eae54..2356f404374c 100644
---- a/drivers/mmc/core/bus.c
-+++ b/drivers/mmc/core/bus.c
-@@ -321,7 +321,9 @@ int mmc_add_card(struct mmc_card *card)
- 	case MMC_TYPE_SD:
- 		type = "SD";
- 		if (mmc_card_blockaddr(card)) {
--			if (mmc_card_ext_capacity(card))
-+			if (mmc_card_ultra_capacity(card))
-+				type = "SDUC";
-+			else if (mmc_card_ext_capacity(card))
- 				type = "SDXC";
- 			else
- 				type = "SDHC";
-diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index a8c17b4cd737..23effc691833 100644
---- a/drivers/mmc/core/core.c
-+++ b/drivers/mmc/core/core.c
-@@ -1598,8 +1598,8 @@ static unsigned int mmc_erase_timeout(struct mmc_card *card,
- 		return mmc_mmc_erase_timeout(card, arg, qty);
- }
- 
--static int mmc_do_erase(struct mmc_card *card, unsigned int from,
--			unsigned int to, unsigned int arg)
-+static int mmc_do_erase(struct mmc_card *card, unsigned long long from,
-+			unsigned long long to, unsigned int arg)
- {
- 	struct mmc_command cmd = {};
- 	unsigned int qty = 0, busy_timeout = 0;
-@@ -1638,6 +1638,14 @@ static int mmc_do_erase(struct mmc_card *card, unsigned int from,
- 		to <<= 9;
+diff --git a/drivers/mmc/host/rtsx_pci_sdmmc.c b/drivers/mmc/host/rtsx_pci_sdmmc.c
+index 7dfe7c4e0077..919aa0454345 100644
+--- a/drivers/mmc/host/rtsx_pci_sdmmc.c
++++ b/drivers/mmc/host/rtsx_pci_sdmmc.c
+@@ -839,6 +839,8 @@ static void sd_request(struct work_struct *work)
+ 	if (!data_size) {
+ 		sd_send_cmd_get_rsp(host, cmd);
+ 	} else if (sd_rw_cmd(cmd) || sdio_extblock_cmd(cmd, data)) {
++		if (mrq->ae)
++			sd_send_cmd_get_rsp(host, mrq->ae);
+ 		cmd->error = sd_rw_multi(host, mrq);
+ 		if (!host->using_cookie)
+ 			sdmmc_post_req(host->mmc, host->mrq, 0);
+@@ -846,6 +848,8 @@ static void sd_request(struct work_struct *work)
+ 		if (mmc_op_multi(cmd->opcode) && mrq->stop)
+ 			sd_send_cmd_get_rsp(host, mrq->stop);
+ 	} else {
++		if (mrq->ae)
++			sd_send_cmd_get_rsp(host, mrq->ae);
+ 		sd_normal_rw(host, mrq);
  	}
  
-+	if (mmc_card_ultra_capacity(card)) {
-+		cmd.opcode = SD_ADDR_EXT;
-+		cmd.arg = (from >> 32) & 0x3F;
-+		cmd.flags = MMC_RSP_R1 | MMC_CMD_AC;
-+		err = mmc_wait_for_cmd(card->host, &cmd, 0);
-+	}
-+
-+	memset(&cmd, 0, sizeof(struct mmc_command));
- 	if (mmc_card_sd(card))
- 		cmd.opcode = SD_ERASE_WR_BLK_START;
- 	else
-@@ -1652,6 +1660,14 @@ static int mmc_do_erase(struct mmc_card *card, unsigned int from,
- 		goto out;
- 	}
- 
-+	memset(&cmd, 0, sizeof(struct mmc_command));
-+	if (mmc_card_ultra_capacity(card)) {
-+		cmd.opcode = SD_ADDR_EXT;
-+		cmd.arg = (to >> 32) & 0x3F;
-+		cmd.flags = MMC_RSP_R1 | MMC_CMD_AC;
-+		err = mmc_wait_for_cmd(card->host, &cmd, 0);
-+	}
-+
- 	memset(&cmd, 0, sizeof(struct mmc_command));
- 	if (mmc_card_sd(card))
- 		cmd.opcode = SD_ERASE_WR_BLK_END;
-@@ -1700,18 +1716,18 @@ static int mmc_do_erase(struct mmc_card *card, unsigned int from,
+@@ -1445,6 +1449,8 @@ static void init_extra_caps(struct realtek_pci_sdmmc *host)
+ 		mmc->caps2 |= MMC_CAP2_NO_MMC;
+ 	if (pcr->extra_caps & EXTRA_CAPS_SD_EXPRESS)
+ 		mmc->caps2 |= MMC_CAP2_SD_EXP | MMC_CAP2_SD_EXP_1_2V;
++	if (pcr->extra_caps & EXTRA_CAPS_SDUC)
++		mmc->caps2 |= MMC_CAP2_SDUC;
  }
  
- static unsigned int mmc_align_erase_size(struct mmc_card *card,
--					 unsigned int *from,
--					 unsigned int *to,
--					 unsigned int nr)
-+					 unsigned long long *from,
-+					 unsigned long long *to,
-+					 unsigned long long nr)
- {
--	unsigned int from_new = *from, nr_new = nr, rem;
-+	unsigned long long from_new = *from, nr_new = nr, rem;
+ static void realtek_init_host(struct realtek_pci_sdmmc *host)
+diff --git a/include/linux/rtsx_pci.h b/include/linux/rtsx_pci.h
+index 4612ef09a0c7..a36c87a52f39 100644
+--- a/include/linux/rtsx_pci.h
++++ b/include/linux/rtsx_pci.h
+@@ -1228,6 +1228,7 @@ struct rtsx_pcr {
+ #define EXTRA_CAPS_MMC_8BIT		(1 << 5)
+ #define EXTRA_CAPS_NO_MMC		(1 << 7)
+ #define EXTRA_CAPS_SD_EXPRESS		(1 << 8)
++#define EXTRA_CAPS_SDUC				(1 << 9)
+ 	u32				extra_caps;
  
- 	/*
- 	 * When the 'card->erase_size' is power of 2, we can use round_up/down()
- 	 * to align the erase size efficiently.
- 	 */
- 	if (is_power_of_2(card->erase_size)) {
--		unsigned int temp = from_new;
-+		unsigned long long temp = from_new;
- 
- 		from_new = round_up(temp, card->erase_size);
- 		rem = from_new - temp;
-@@ -1756,10 +1772,10 @@ static unsigned int mmc_align_erase_size(struct mmc_card *card,
-  *
-  * Caller must claim host before calling this function.
-  */
--int mmc_erase(struct mmc_card *card, unsigned int from, unsigned int nr,
-+int mmc_erase(struct mmc_card *card, unsigned long long from, unsigned long long nr,
- 	      unsigned int arg)
- {
--	unsigned int rem, to = from + nr;
-+	unsigned long long rem, to = from + nr;
- 	int err;
- 
- 	if (!(card->csd.cmdclass & CCC_ERASE))
-@@ -1863,8 +1879,8 @@ int mmc_can_secure_erase_trim(struct mmc_card *card)
- }
- EXPORT_SYMBOL(mmc_can_secure_erase_trim);
- 
--int mmc_erase_group_aligned(struct mmc_card *card, unsigned int from,
--			    unsigned int nr)
-+int mmc_erase_group_aligned(struct mmc_card *card, unsigned long long from,
-+			    unsigned long long nr)
- {
- 	if (!card->erase_size)
- 		return 0;
-diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
-index 1c8148cdda50..7eacfd912dff 100644
---- a/drivers/mmc/core/sd.c
-+++ b/drivers/mmc/core/sd.c
-@@ -121,6 +121,12 @@ static int mmc_decode_csd(struct mmc_card *card)
- 
- 	csd_struct = UNSTUFF_BITS(resp, 126, 2);
- 
-+	if (csd_struct != 2 && mmc_card_ultra_capacity(card)) {
-+		pr_err("%s: invalid CSD structure version %d on SDUC\n",
-+			mmc_hostname(card->host), csd_struct);
-+		return -EINVAL;
-+	}
-+
- 	switch (csd_struct) {
- 	case 0:
- 		m = UNSTUFF_BITS(resp, 115, 4);
-@@ -190,6 +196,35 @@ static int mmc_decode_csd(struct mmc_card *card)
- 		csd->write_partial = 0;
- 		csd->erase_size = 1;
- 
-+		if (UNSTUFF_BITS(resp, 13, 1))
-+			mmc_card_set_readonly(card);
-+		break;
-+	case 2:
-+		/*
-+		 * This is a block-addressed SDUC card.
-+		 */
-+		mmc_card_set_blockaddr(card);
-+
-+		csd->taac_ns	 = 0; /* Unused */
-+		csd->taac_clks	 = 0; /* Unused */
-+
-+		m = UNSTUFF_BITS(resp, 99, 4);
-+		e = UNSTUFF_BITS(resp, 96, 3);
-+		csd->max_dtr	  = tran_exp[e] * tran_mant[m];
-+		csd->cmdclass	  = UNSTUFF_BITS(resp, 84, 12);
-+		csd->c_size	  = UNSTUFF_BITS(resp, 48, 28);
-+		m = UNSTUFF_BITS(resp, 48, 28);
-+		csd->capacity     = (unsigned long long)(1 + m) << 10;
-+
-+		csd->read_blkbits = 9;
-+		csd->read_partial = 0;
-+		csd->write_misalign = 0;
-+		csd->read_misalign = 0;
-+		csd->r2w_factor = 4; /* Unused */
-+		csd->write_blkbits = 9;
-+		csd->write_partial = 0;
-+		csd->erase_size = 1;
-+
- 		if (UNSTUFF_BITS(resp, 13, 1))
- 			mmc_card_set_readonly(card);
- 		break;
-@@ -859,6 +894,14 @@ int mmc_sd_get_cid(struct mmc_host *host, u32 ocr, u32 *cid, u32 *rocr)
- 	if (max_current > 150)
- 		ocr |= SD_OCR_XPC;
- 
-+	/*
-+	 * To avoid data corruption via address space mismatch, mutual
-+	 * recognition mechanism is implemented via ACMD41 initialization,
-+	 * If the host support SDUC card, HO2T should be set to 1.
-+	 */
-+	if (mmc_host_sduc(host))
-+		ocr |= SD_OCR_HO2T;
-+
- 	err = mmc_send_app_op_cond(host, ocr, rocr);
- 	if (err)
- 		return err;
-@@ -1433,6 +1476,10 @@ static int mmc_sd_init_card(struct mmc_host *host, u32 ocr,
- 
- 		card->ocr = ocr;
- 		card->type = MMC_TYPE_SD;
-+
-+		if (!mmc_host_is_spi(host) && (rocr & SD_ROCR_CO2T))
-+			mmc_card_set_ultra_capacity(card);
-+
- 		memcpy(card->raw_cid, cid, sizeof(card->raw_cid));
- 	}
- 
+ #define IC_VER_A			0
 -- 
 2.25.1
 
