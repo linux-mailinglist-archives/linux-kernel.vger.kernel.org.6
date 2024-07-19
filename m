@@ -1,105 +1,116 @@
-Return-Path: <linux-kernel+bounces-257378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BF53937933
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:30:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14D76937931
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:30:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 476A328303F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:30:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF07A1F23174
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF261DDEA;
-	Fri, 19 Jul 2024 14:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2B2F1B86DD;
+	Fri, 19 Jul 2024 14:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="JZZnt0Tb"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TmH7rFo7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9AB8494
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 14:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E8D1B86D3;
+	Fri, 19 Jul 2024 14:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721399426; cv=none; b=Nb5iGDEoQf8JwwCeTKRbJYQRd8sF697rLEfHrLynrTLQe7SACDxgQctZUrGok80nDGfPNgF7BjJqUFuS2eyUN0vE835FLcFJtLrgWdGEME5knca0L2ZtsoGbrfy7aS4OM/Xc/wArkZODi4Uubfv0KsBmF9iUBkbl0VY4hFqfK1E=
+	t=1721399415; cv=none; b=S0u0fQoexuCpBerdX8hSiYuhHxAq2fW5kx2QmK+OI4CnZJg1YEyqX4ll5xH7LMBl01+KeMerZnhuADaFiBU8POVnLk1iK5sZJ9lHoLUuvzu2vsIjOiD/QYpbYamO1IYZEAo/rzJV2ino28ECP48ysdnp2bDkl1D085pg4VvAA/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721399426; c=relaxed/simple;
-	bh=EV8YF/xZeTMqPh4i7Ghl7fvFLDOerg3p+GeutAZ97hY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z0b63B+td6hNI3BK+Xt+JY5B73i/5nDORoBsue3VntFTFDIZS8l/F8RFaMyNYtno30EhJoWrGPumQOigpkiULJ0aeQseM6VJbdwoTzzBYCfJ5HCLTO87DWqG23+L5N1CfHfnWckx4c+TETLwbpSo5ORoJr/CUwwSrYgD4gx+XJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=JZZnt0Tb; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-115-17.bstnma.fios.verizon.net [173.48.115.17])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 46JEU1dj024673
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 19 Jul 2024 10:30:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1721399403; bh=Wb+H9ac9NfOTm/D/TkgZKLQniLuU6Iek81X6nbJI7o8=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=JZZnt0TbI8sGXvbmWAVm+ekAM73TouWTuItn7jrR/LWHb+UedBHC32A5XupjKVm13
-	 ogIm9Xnc9bA2i0SneLpHYr6BQrXH62O2s/8JKMV9/DUy1iTWyx67iHPoBxL2snBy/g
-	 FNfaSisLwRXGDHGhNyA/wIn+zPwHdweZeHExqWqNUsH9b1cNvD4Tq2mN8OoXJxJroA
-	 kTyMv7L7is8GDKWQB+u9AbtAxdRIF0zDcnl/Xg3bo6kjtrQbQIpY/+kmNOcIOCM4x7
-	 g5Urp2AZLYKOWwetaORsAgY771tViuD662DeocfmZEUaDHf96KA9lozDaU0BHV9Xvf
-	 +33U4OQng/jNw==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 2A1E715C029B; Fri, 19 Jul 2024 10:30:01 -0400 (EDT)
-Date: Fri, 19 Jul 2024 10:30:01 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Waiman Long <longman@redhat.com>, linux-bcachefs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs changes for 6.11
-Message-ID: <20240719143001.GA2333818@mit.edu>
-References: <r75jqqdjp24gikil2l26wwtxdxvqxpgfaixb2rqmuyzxnbhseq@6k34emck64hv>
- <CAHk-=wigjHuE2OPyuT6GK66BcQSAukSp0sm8vYvVJeB7+V+ecQ@mail.gmail.com>
- <5ypgzehnp2b3z2e5qfu2ezdtyk4dc4gnlvme54hm77aypl3flj@xlpjs7dbmkwu>
- <CAHk-=wgzMxdCRi9Fqhq2Si+HzyKgWEvMupq=Q-QRQ1xgD_7n=Q@mail.gmail.com>
- <4l32ehljkxjavy3d2lwegx3adec25apko3v355tnlnxhrs43r4@efhplbikcoqs>
+	s=arc-20240116; t=1721399415; c=relaxed/simple;
+	bh=aj1KRRyV+w/R5nRB18d4Jl7irUsZTzLb0TZ50Ul/0mE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gsH41TrBW/kXBLlPtNrV25wQLePpRzAZ8XQmUe+ZmMqyrWBC7iGNar6TbfH1CyLX1lO3MWEVZ3TSr/4P2Hfj3aQ+VxRSxRizpzuYIQFSJIowuecAoKSLupFDFT1KvGk/wwljnXNa/40t74SPxJmN1JHg8R0qyZiCYQFmiKnrhTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TmH7rFo7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7E863C32782;
+	Fri, 19 Jul 2024 14:30:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721399414;
+	bh=aj1KRRyV+w/R5nRB18d4Jl7irUsZTzLb0TZ50Ul/0mE=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=TmH7rFo7S+6gBqNSejWRSqQaitkuFLMBctgeYXDSa2eFgOgeaFJJ8xa6pCzHNTgRu
+	 xB0n7rjItBHhyl7kSqgN4IvuqnWAiYihttpslLHw+CM1OsFF8Dqqih3weAU9iu+Z9z
+	 MGm34AgYsv70O85MfV9y5zEj6xcA709zX6USTE2SUxEm7I/0xLXLkTHepUCeLn013w
+	 ZxAVMVXkW+2u479H04Urpzr7bbdjBgYHOhHKyTLf1EkWV1N1fJvBSGWq/aNXTM0RBf
+	 DHod++umBnGQa+8poccsxvg84JKTd1uvEDDuoI7z7kyBeB8ZjnmQwkM3vLa3VWyjHB
+	 BHUWsLDF2jXJg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A066C3DA5D;
+	Fri, 19 Jul 2024 14:30:14 +0000 (UTC)
+From: Nikita Shubin via B4 Relay <devnull+n.shubin.yadro.com@kernel.org>
+Date: Fri, 19 Jul 2024 17:30:16 +0300
+Subject: [PATCH v2] workqueue: doc: Fix function name, remove markers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4l32ehljkxjavy3d2lwegx3adec25apko3v355tnlnxhrs43r4@efhplbikcoqs>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240719-fix_doc-v2-1-a5cbeb46e0cc@yadro.com>
+X-B4-Tracking: v=1; b=H4sIAHd4mmYC/2WMQQ7CIBBFr9LMWkyHEimuvIdpDIWpnYWlAUNsG
+ u4uduvy/f/ydkgUmRJcmx0iZU4clgry1ICb7fIkwb4yyFaqVqMRE38ePjihyHktx8mYTkG110j
+ 1Okr3ofLM6R3idoQz/tb/RkaBwnjUF+r60Zr+tlkfw9mFFwyllC/7FNp3ngAAAA==
+To: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+ Jonathan Corbet <corbet@lwn.net>
+Cc: nikita.shubin@maquefel.me, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux@yadro.com, 
+ Nikita Shubin <n.shubin@yadro.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1721399417; l=1221;
+ i=n.shubin@yadro.com; s=20230718; h=from:subject:message-id;
+ bh=J54vi+EARiXY1qbZRDNxODuY2S1a3C8+8h3B7EsXh9E=;
+ b=3zYY9q2uPCLsBhaWI1jbMjaRHDeT4Bbh0astcXoZ+T7SGfSAWvSKMXhN3YShfyYZfo9YtoIHL3BH
+ 6oJnv1TLAyrLZyIJunvLThv2KCGVWoBUVx2ziTpD/VvytzlVx+S4
+X-Developer-Key: i=n.shubin@yadro.com; a=ed25519;
+ pk=vqf5YIUJ7BJv3EJFaNNxWZgGuMgDH6rwufTLflwU9ac=
+X-Endpoint-Received: by B4 Relay for n.shubin@yadro.com/20230718 with
+ auth_id=161
+X-Original-From: Nikita Shubin <n.shubin@yadro.com>
+Reply-To: n.shubin@yadro.com
 
-On Thu, Jul 18, 2024 at 06:24:08PM -0400, Kent Overstreet wrote:
-> 
-> I've gotten essentially zero in the way of test feedback from
-> for-next (except from Stephen Rothwell directly, the odd build
-> warning or merge issue, but 0day mostly catches the build stuff
-> before it hits next).
+From: Nikita Shubin <n.shubin@yadro.com>
 
-I am currently running regular testing on the new linux-next's fs-next
-branch.  Things which are still blocking me from announcing it are:
+- s/alloc_ordered_queue()/alloc_ordered_workqueue()/
+- remove markers to convert it into a link.
 
-*) Negotiating with Konstantin about the new lists.linux.dev mailing
-   list.
+Signed-off-by: Nikita Shubin <n.shubin@yadro.com>
+---
+Changes in v2:
+Matthew Wilcox:
+- No problem removed `` markers
+- Link to v1: https://lore.kernel.org/r/20240719-fix_doc-v1-1-9d176e38ba98@yadro.com
+---
+ Documentation/core-api/workqueue.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-*) A few minor bug fixes / robustification improves in the
-   "gce-xfstests watch" --- for example, right now if git fetch fails
-   due to load throttling / anti-DOS protections on git.kernel.org
-   trip the git watcher dies.  Obviously, I need to teach it to do
-   exponential backoff retries, because I'm not going to leave my
-   kernel.org credentials on a VM running in the cloud to bypass the
-   kernel.org DOS protections.  :-)
+diff --git a/Documentation/core-api/workqueue.rst b/Documentation/core-api/workqueue.rst
+index bcc370c876be..16f861c9791e 100644
+--- a/Documentation/core-api/workqueue.rst
++++ b/Documentation/core-api/workqueue.rst
+@@ -260,7 +260,7 @@ Some users depend on strict execution ordering where only one work item
+ is in flight at any given time and the work items are processed in
+ queueing order. While the combination of ``@max_active`` of 1 and
+ ``WQ_UNBOUND`` used to achieve this behavior, this is no longer the
+-case. Use ``alloc_ordered_queue()`` instead.
++case. Use alloc_ordered_workqueue() instead.
+ 
+ 
+ Example Execution Scenarios
 
-As far as bcachefs is concerned, my xfstests-bld infrastructure isn't
-set up to build rust userspace, and Debian has a very ancient bcachefs
-packages --- the latest version in Debian stable and unstable dates
-from November 2022.  So I haven't enabled bcachefs support in
-gce-xfstests and kvm-xfstests yet.  Patches gratefully accepted.  :-)
+---
+base-commit: 080402007007ca1bed8bcb103625137a5c8446c6
+change-id: 20240719-fix_doc-4ecd72bf9934
 
-In any case, I'm hoping to have some publically accessible regular
-test results of fs-next.  I've just been crazy busy lately....
+Best regards,
+-- 
+Nikita Shubin <n.shubin@yadro.com>
 
-	     	 				   - Ted
-						   
+
 
