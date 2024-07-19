@@ -1,87 +1,205 @@
-Return-Path: <linux-kernel+bounces-257644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4E1C937CF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 21:27:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C14C937CF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 21:28:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AD2F2827D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:27:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E60FF282878
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47831487D6;
-	Fri, 19 Jul 2024 19:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48FCC1487D1;
+	Fri, 19 Jul 2024 19:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="jMnqP5b7"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aATqaNws"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD0D146D49;
-	Fri, 19 Jul 2024 19:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED4B148827;
+	Fri, 19 Jul 2024 19:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721417249; cv=none; b=P26PMFxldd2aegcq1mbeJ5eTt6nw1G+QNwvqtL1IBgLaTiM79eZG4H1PcLYBwhEllWWTeJ7WfCIAv5yR692qQKo9E+St44g33oSy4Zwmpsrjy7Ee4gBDQpNpQLSLdMtbOsiOO5XyjIIkdsYdIIY8nmUkDq+6dnqtuySJN3IWAk0=
+	t=1721417272; cv=none; b=nXnZnRHeNB0ENecvDXDzw8I9+nTUx1r2vGyXhalNYcN7CAlgkTjDFjYEqtSHFANb1Kv7cm87l2Wzdw0w+5VjRmxKTCZCxwb7SnF2pITmxx+AXsaFTInvev19RFPuWmy2QUR/lz2a5e4t1pc8xUBxlqJEv+RkLIU+JdKsWCoiugU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721417249; c=relaxed/simple;
-	bh=xYsG16WrIP5O2lgGjunZ6hEDI+iT8N9gWTWllXnRowI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UPV72w0ZfF/y5a4ihjQFdonO92maMw75RsdokVx+7KW/Wnbm2UEw2N0F4dbWPyDR2AFBc5IK82wGVRdcR1U7ByOlWSTTS2HJdDd4j+lESj0vaEtKci4PRG/BDlnzNI7tH2eO5FUSRivrzXt6TwTn3boXxpQM95bhFTKA36CNvps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=jMnqP5b7; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4WQfnl2WN8z9sRx;
-	Fri, 19 Jul 2024 21:27:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1721417243;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Dq0N8Y09218mTmvFklX6gEY2lUcoEvpqU2QroNsXU5w=;
-	b=jMnqP5b7VpImKQA2w28h7MI4vo25P2XJaNuJZ5zRNwDz1JYW7f35zLOYHl8xkO1UPd3n0t
-	oqHBBHcoSZEByz+DU/x67JiULi/Rwvxd+lSAc9E8fTQ81okWSXI5JaLvu5qtcXpAtIk6KL
-	zd4qtvd6e0g1gKmJWeF/vPM6GhX7eAHAIA/UDcJh3q7VBZWNhzVZCLAQEucztIyOthCYFZ
-	xqr2VhQ2SQ+MGETfm++GuHqxDIgUA52LuZ1uoacboX5tpcljIJuPh/pFWwfB6miO0IyGJk
-	WLtLLVD6O1iNq5pWfUKkRznf5/84mNGa5PFRbf9jsM8pu7siYfi7at3gFdGStQ==
-Message-ID: <56576cc5-7880-4914-a9b8-d021a239de3c@mailbox.org>
-Date: Fri, 19 Jul 2024 12:27:15 -0700
+	s=arc-20240116; t=1721417272; c=relaxed/simple;
+	bh=PEDczIo+N1zc3HDWBH6pVQlbE4VTMIsKTmLki2Kgujg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k0IaZWkefACu64VVeLmb2NzwJuFRxk2XW6UVH/oh/CP6K6qG+TcYWfxgTvFL8cOtviZdsnHpa4gEhvIfM+KjkW/NU3f/9plRJh/0n7wVw9800VZ6Yx7sAawBgcBCjMQRV94Q66ITmgh+et1g6mnaTPnAPZr7Pwaz9/2rbPmXRoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aATqaNws; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEC5DC32782;
+	Fri, 19 Jul 2024 19:27:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721417271;
+	bh=PEDczIo+N1zc3HDWBH6pVQlbE4VTMIsKTmLki2Kgujg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=aATqaNwsw7zUhMSCxIzcS+PaFt7EMdmq6f1ISFbvRp9EinIRdkadj3apjqOBPt8H2
+	 mM0qZAaRZoW5GGrFgw5BDjxaIEdA+kbr/XkWb35AhKJvwa4bTteCdgeDzoZhyRMGIT
+	 y/z/SlqoLUFgV6a1ZbQpcGlrV/AiQMHHmrNiEQH5OzHBAOTEfp0ECgFNmbl3E6W8ZW
+	 FcYOWtx3rfm0p4Ftko/7YNZZ3CTMrX10LY5lt0STJ7XD4QG+hL8f9qOXm34N4YWWTO
+	 nmtdVtY27l1/HNFMGfZR4MxORr/Ax0LSVDPkhAB4TV+EQBB+t7xl/V7TGhLSYlTkEp
+	 ATOrwcoqPg1/g==
+From: Kees Cook <kees@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Kees Cook <kees@kernel.org>,
+	Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Jann Horn <jannh@google.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Marco Elver <elver@google.com>,
+	linux-mm@kvack.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] slab: Introduce kmalloc_obj() and family
+Date: Fri, 19 Jul 2024 12:27:48 -0700
+Message-Id: <20240719192744.work.264-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: My first patch: Implement InPlaceInit for Arc
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
- boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
- benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240717034801.262343-1-alexmantel93@mailbox.org>
- <CANiq72mwTq4m-u0QO2tdF5Z8++xnepgtG_dALwq7ar5JOkwuVg@mail.gmail.com>
-Content-Language: en-US, de-DE
-From: Alex Mantel <alexmantel93@mailbox.org>
-In-Reply-To: <CANiq72mwTq4m-u0QO2tdF5Z8++xnepgtG_dALwq7ar5JOkwuVg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-ID: 254032fcfb9365bfb46
-X-MBO-RS-META: tzqwiuw494rppbbprk16sjon3y9j4sxn
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4424; i=kees@kernel.org; h=from:subject:message-id; bh=PEDczIo+N1zc3HDWBH6pVQlbE4VTMIsKTmLki2Kgujg=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmmr4zWEhFKb72H7UArt9Y4HKLkvwrT5DByCcol rkyOA/7hJOJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZpq+MwAKCRCJcvTf3G3A JkwGEACSNPqi1z0Rbac2tYergCeVTF0BJw90KpQW+JJlLlAtU2q0NcSYmIby+hoV48sYHqwXx2A Te/n3DVId2VY9yV5H9HxORKzXngzVwqHW8L99nwMOPI3ejdy6RGIIg91yLUlDbxY+Ay53ZdFOTF kbFwFSdV7axOIGilb4VWMUJuzG7ioL71ugBTnHfFYEUE2Uw8ssVP0YmAS21oG9XF+wPtOKBisXu PDhtf3/qjvmz6JJcuvNYgb/dig0DqpCxltP+WHVkRzqMgwgxMiTRO6MPJW19yi9CF4aQQtn9JMy 9dvAJ4HhfPfqreSBv9YYMbfapsqqz0X8SKSK+hqtMBFycURsav39aRivbGwi35G+yLFqRXOo8yw ImlwApj+1gUMDuHRwjmMxURyz3pQ1Vtsgwh0MXaNpCiohe5cy9vlhFfvEq86Z/9i4Rh1uRfGyMZ hrpNwb5SIdfzUzGRQs5MNOynY7gCryY+X4ph1qHv0KIXIfEmDhSJSquyoqrstq+SI1sJbJKhSyH kF7p6SDPe8nbj8MmNLMY8Wmpg4Vcujj9MUnuxhIYAwRhn5rY9Mqlf6S43rJ2uMHez4lx99rkaWv YGY4rn/XKmx3u9FzS4N4kQfcDNmLevNyvlVy+QxnEYxSKwxXcrrYjZ/AcrrrHzjSD9UK/n/r4ig gahzpHb6u7Elb
+ 0w==
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
+Introduce type-aware kmalloc-family helpers to replace the common
+idioms for single, array, and flexible object allocations:
 
+	ptr = kmalloc(sizeof(*ptr), gfp);
+	ptr = kcalloc(count, sizeof(*ptr), gfp);
+	ptr = kmalloc_array(count, sizeof(*ptr), gfp);
+	ptr = kcalloc(count, sizeof(*ptr), gfp);
+	ptr = kmalloc(struct_size(ptr, flex_member, count), gfp);
 
-On 17.07.24 01:52, Miguel Ojeda wrote:
-> A few notes and nits:
-> 
- > [...]
-> 
-> I hope that helps, thanks for the patch, and welcome!
+These become, respectively:
 
-Thanks, very kind! I applied your suggestions on a v2 patch:
+	kmalloc_obj(p, gfp);
+	kzalloc_obj(p, count, gfp);
+	kmalloc_obj(p, count, gfp);
+	kzalloc_obj(p, count, gfp);
+	kmalloc_obj(p, flex_member, count, gfp);
 
-https://lore.kernel.org/all/20240719192234.330341-1-alexmantel93@mailbox.org/
+These each return the size of the allocation, so that other common
+idioms can be converted easily as well. For example:
+
+	info->size = struct_size(ptr, flex_member, count);
+	ptr = kmalloc(info->size, gfp);
+
+becomes:
+
+	info->size = kmalloc_obj(ptr, flex_member, count, gfp);
+
+Internal introspection of allocated type also becomes possible, allowing
+for alignment-aware choices and future hardening work. For example,
+adding __alignof(*ptr) as an argument to the internal allocators so that
+appropriate/efficient alignment choices can be made, or being able to
+correctly choose per-allocation offset randomization within a bucket
+that does not break alignment requirements.
+
+Additionally, once __builtin_set_counted_by() (or equivalent) is added
+by GCC and Clang, it will be possible to automatically set the counted
+member of a struct with a counted_by FAM, further eliminating open-coded
+redundant initializations:
+
+	info->size = struct_size(ptr, flex_member, count);
+	ptr = kmalloc(info->size, gfp);
+	ptr->flex_count = count;
+
+becomes (i.e. unchanged from earlier example):
+
+	info->size = kmalloc_obj(ptr, flex_member, count, gfp);
+
+Replacing all existing simple code patterns via Coccinelle[1] shows what
+could be replaced immediately (saving roughly 1,500 lines):
+
+ 7040 files changed, 14128 insertions(+), 15557 deletions(-)
+
+Link: https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/kmalloc_obj-assign-size.cocci [1]
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Cc: Gustavo A. R. Silva <gustavoars@kernel.org>
+Cc: Bill Wendling <morbo@google.com>
+Cc: Justin Stitt <justinstitt@google.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: Marco Elver <elver@google.com>
+Cc: linux-mm@kvack.org
+---
+ include/linux/slab.h | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index 7247e217e21b..3817554f2d51 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -665,6 +665,44 @@ static __always_inline __alloc_size(1) void *kmalloc_noprof(size_t size, gfp_t f
+ }
+ #define kmalloc(...)				alloc_hooks(kmalloc_noprof(__VA_ARGS__))
+ 
++#define __alloc_obj3(ALLOC, P, COUNT, FLAGS)			\
++({								\
++	size_t __obj_size = size_mul(sizeof(*P), COUNT);	\
++	void *__obj_ptr;					\
++	(P) = __obj_ptr = ALLOC(__obj_size, FLAGS);		\
++	if (!__obj_ptr)						\
++		__obj_size = 0;					\
++	__obj_size;						\
++})
++
++#define __alloc_obj2(ALLOC, P, FLAGS)	__alloc_obj3(ALLOC, P, 1, FLAGS)
++
++#define __alloc_obj4(ALLOC, P, FAM, COUNT, FLAGS)		\
++({								\
++	size_t __obj_size = struct_size(P, FAM, COUNT);		\
++	void *__obj_ptr;					\
++	(P) = __obj_ptr = ALLOC(__obj_size, FLAGS);		\
++	if (!__obj_ptr)						\
++		__obj_size = 0;					\
++	__obj_size;						\
++})
++
++#define kmalloc_obj(...)					\
++	CONCATENATE(__alloc_obj,				\
++		    COUNT_ARGS(__VA_ARGS__))(kmalloc, __VA_ARGS__)
++
++#define kzalloc_obj(...)					\
++	CONCATENATE(__alloc_obj,				\
++		    COUNT_ARGS(__VA_ARGS__))(kzalloc, __VA_ARGS__)
++
++#define kvmalloc_obj(...)					\
++	CONCATENATE(__alloc_obj,				\
++		    COUNT_ARGS(__VA_ARGS__))(kvmalloc, __VA_ARGS__)
++
++#define kvzalloc_obj(...)					\
++	CONCATENATE(__alloc_obj,				\
++		    COUNT_ARGS(__VA_ARGS__))(kvzalloc, __VA_ARGS__)
++
+ static __always_inline __alloc_size(1) void *kmalloc_node_noprof(size_t size, gfp_t flags, int node)
+ {
+ 	if (__builtin_constant_p(size) && size) {
+-- 
+2.34.1
+
 
