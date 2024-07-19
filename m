@@ -1,208 +1,138 @@
-Return-Path: <linux-kernel+bounces-257331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D31529378A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:42:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DDC939378A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:43:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 605FD1F226DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:42:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 819AB1F225E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DD9142E79;
-	Fri, 19 Jul 2024 13:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE8B14388F;
+	Fri, 19 Jul 2024 13:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FQUVh+xh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8SgVdwys";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ld+U4fD0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="28zOF9C0"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="katqSECl"
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC1910E6;
-	Fri, 19 Jul 2024 13:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F4413F458
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 13:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721396557; cv=none; b=jHfNAQIa7UW6svNX1bLMpVVbTHwqMK3VEZul9pki2VRSpAerqp1OAcj1J20SKNvCEvEH1EUtYBcI3OjsK0bh+u31nklgPsVCkX1q0iSn9/3r2sn3Q9ZzvDDloHnA6D13NuhvYgdbn+ABHRLFiSKW3Pr1NXy8WMs4c0ooLbtZYV8=
+	t=1721396576; cv=none; b=iCebo7GEdbr/lQPbnmn9+vokFbYZW0OgWzBicBgRNMCwp/zPNJsssEiPH+kD2/VMLZyyNyfsZXh2oVi4BsnhWdGl44QkwjG0+3PcmjPJUnmr0HzBb7X2quX+vqZFRSiKC0bxWC000EGzTK01CVoRja9BLOFfjJ93BlCMmMONXoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721396557; c=relaxed/simple;
-	bh=xuqB6xK3CyfuUlLUm9eYl2GLbx8buMvoTqZw8s8DX44=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xnr9CVjJID4WOFnZDVj7/4XSL3TOfsyPbXkGgJSb719p3pi74E0LvBiITp+kmx2kukkXw5okwj+C0DAqUmEf8uKVdkB7o44tD0Z5NfONE+Hm2QGyLYluSeg/14IMDQAm1LU/ZIAtMZRJDUZrXpd2grHmyGrYXFb48Ty0n+iji6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FQUVh+xh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8SgVdwys; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ld+U4fD0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=28zOF9C0; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A05FE219CF;
-	Fri, 19 Jul 2024 13:42:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721396553;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ibP3ajFY7VoDlJs/ObXG0yOj7xySN7nYaNLmFXNseaY=;
-	b=FQUVh+xhV1alqJvZihIWUbGSISejdYr3vidHvH5JdRGElvwRxeXxRqlphcEZr/dy5MieGQ
-	2YsdEjrJP0QqsknuvelY72MfRepuidSqpv9kloupGlw1GETE2hXUF6p4QzEi2yLFyhAtN8
-	5WeBEMxZ+OITnCqMYQMwTdTLa+6cvAE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721396553;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ibP3ajFY7VoDlJs/ObXG0yOj7xySN7nYaNLmFXNseaY=;
-	b=8SgVdwysxcR7apNXS9OKh9Z4WDJysErG0jvhx5oMzJlPh7qpT4a4R8Sr/k+xSTEADXXQ9l
-	Bs/AEPVO+C1cVFDg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Ld+U4fD0;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=28zOF9C0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721396552;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ibP3ajFY7VoDlJs/ObXG0yOj7xySN7nYaNLmFXNseaY=;
-	b=Ld+U4fD0mOigTGvd8mGbePrUKz0jJgh1CDWOc67m0CFD1xXfCAKRJ5kmy4jR1MuNhlP9kV
-	wQg4euDZWj8eoYjY5+2BDqSQFf9BKEeAccvncjjcSaKt7ssSi1Ssq6cvokvV6phwNiZv00
-	nJBwDE2kSVlabeIjY01qVLy52kyVrKo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721396552;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ibP3ajFY7VoDlJs/ObXG0yOj7xySN7nYaNLmFXNseaY=;
-	b=28zOF9C0+H/ciiKlEI+cq3iRMaGlNIOIbkJxK3yaLnybcTEzf5qOzD1xz3TkyL8+o9crux
-	vv4TFqHr90po1SCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7EB3E136F7;
-	Fri, 19 Jul 2024 13:42:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wIuNHkhtmmY0FQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Fri, 19 Jul 2024 13:42:32 +0000
-Date: Fri, 19 Jul 2024 15:42:16 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: David Sterba <dsterba@suse.com>, torvalds@linux-foundation.org,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] Btrfs updates for 6.11
-Message-ID: <20240719134216.GM8022@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <cover.1721066206.git.dsterba@suse.com>
- <CAMuHMdURvTtambJKd2uYqbRFYO_oBSsFHBunaXNfzvzqbPqbxQ@mail.gmail.com>
- <CAMuHMdVW7NZJhsxnp71Fc9=RQR=gXtOXPkSxreR3ZuMDbVxnjw@mail.gmail.com>
+	s=arc-20240116; t=1721396576; c=relaxed/simple;
+	bh=OObjBT5+tmi8SJwD/vGEg0LnoSk/hpHy9nJZqdaQsvM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nV5fwTgxd0BOy6mKHHCT+MkSi4XBshuJXxnHFDQi8ocEycDdI7opz5FCK16Y7rVUCb/n/QupTnSehdlCH1cpOMFiKXIW1D/pbj/wlXBX444UBhmmAbFnQl6/m0NwQO5O4KCMWNdVsbipmd4uY/Z4fSfTd4blaZ0PNEZDxo5p1Rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=katqSECl; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-260e5b2dfb5so1075847fac.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 06:42:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721396574; x=1722001374; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6zxRHXX1Q8OwMxEpYD1fuoDQoSBRUnmedwW5/qepIyg=;
+        b=katqSEClNIYlnTIRHm7sdp859uGyzunL0Xk06UYblNyzq40EnSXhFkK2BQtziulcFQ
+         GnksgOQZ1hzDEF5lSKdSe2Jm9WgyMNQKbk8+HwbLK9yIKUqdKytgHSbYFHQwX/JraxZJ
+         1dOWE/HQrGdlNjqa/z+aQAR11RA7ym4zMGgVBmVinbnb+ZtSZaoaZf1uin8XgpoAgjTu
+         johMrUWct23ZKd67sYqdX5ssZTX5FSiZLNU2E56yamIzbeXS+/YL8mgholDLWt2DelGl
+         Dc7RA0d73rSod873Lvtiorti+JuRkP+wroT6am0oow8jXa/sdSaRkF5Q1pdpMrZVsu1J
+         9CFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721396574; x=1722001374;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6zxRHXX1Q8OwMxEpYD1fuoDQoSBRUnmedwW5/qepIyg=;
+        b=OFrtV79Qih0CrLEPxM/c8EGh04zziTd7vBYiaXTc7W4Y/Akr9NGlYKyxcmSSMjjp18
+         JHTxAxcQ3fRbG33MfPEarLN1sx7b1c+MB0XMjoNbd1QlpqcjvWWa+A5AXnjkafW1VF21
+         7b2E5x6i2LKia6yKoDdaLwm5hY5RCVSoFCID5OXeH6/Fu81tzCoVWpUNYjOS9UG84+2V
+         KfZnHAIhb28sIcoebo7U945julmAWL2wajfT1os32O5lXFPAOyenYgzMALVmP+jwhEmP
+         33NW4g219uIXVQ9fF8mo4wfuhkk/n5pa4uEX7AygoapIOkprAJuAyGbxzBUH8nGeqxSE
+         0rLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGs4N9GS3Dn7fe1W/6cVs1Eh2eNJ38CFsdjlzCiLYmVii2HeFX6oCFsuIEpPB+SnHGGRNk4rGV/5A/muXE24Rtq52+veK5FvM3g+Qm
+X-Gm-Message-State: AOJu0YxAefDxS33qCC4g2uyYoglbV3gSubfwuRkPf6IIFMIZTzuYG4yl
+	eY3/VzR43mOG2obxY6FiQnhRSrDq5gM8LZEV+p7iVGwDcmCPFtlxNxHPd4BAeg==
+X-Google-Smtp-Source: AGHT+IF797ziqOa4665rJuAHn4nLvwBl+NHT4V9kt7EP7l5a0fsyXgWUeyDot8Xa9UiXgvgE7Xem3w==
+X-Received: by 2002:a05:6870:8998:b0:261:164d:6854 with SMTP id 586e51a60fabf-261164dbbe6mr817994fac.54.1721396573901;
+        Fri, 19 Jul 2024 06:42:53 -0700 (PDT)
+Received: from localhost.localdomain ([120.60.142.236])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70cff491088sm1190212b3a.41.2024.07.19.06.42.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 06:42:53 -0700 (PDT)
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: andersson@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	stable@vger.kernel.org
+Subject: [PATCH] clk: qcom: gcc-sm8250: Do not turn off PCIe GDSCs during gdsc_disable()
+Date: Fri, 19 Jul 2024 19:12:38 +0530
+Message-Id: <20240719134238.312191-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdVW7NZJhsxnp71Fc9=RQR=gXtOXPkSxreR3ZuMDbVxnjw@mail.gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Flag: NO
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.21
-X-Spam-Level: 
-X-Rspamd-Queue-Id: A05FE219CF
 
-On Fri, Jul 19, 2024 at 01:35:53PM +0200, Geert Uytterhoeven wrote:
-> Hi David,
-> 
-> On Fri, Jul 19, 2024 at 1:25 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > On Mon, Jul 15, 2024 at 8:12 PM David Sterba <dsterba@suse.com> wrote:
-> > > please pull the changes described below. The hilights are new logic
-> > > behind background block group reclaim, automatic removal of qgroup
-> > > after removing a subvolume and new 'rescue=' mount options. The rest is
-> > > optimizations, cleanups and refactoring.
-> > >
-> > > There's a merge conflict caused by the latency fixes from last week in
-> > > extent_map.c:btrfs_scan_inode(), related commits 4e660ca3a98d931809734
-> > > and b3ebb9b7e92a928344a. Resolved in branch for-6.11-merged and that's
-> > > been in linux-next for a few days.
-> >
-> > FTR, this is broken on 32-bit (doesn't build, good ;-) and on big-endian
-> > (compiler warnings, no idea how it behaves :-(, so you better don't
-> > trust your data to it in the latter case...
+With PWRSTS_OFF_ON, PCIe GDSCs are turned off during gdsc_disable(). This
+can happen during scenarios such as system suspend and breaks the resume
+of PCIe controllers from suspend.
 
-Internet forums are full of such quick and wrong conclusions, you don't
-need to write more.
+So use PWRSTS_RET_ON to indicate the GDSC driver to not turn off the GDSCs
+during gdsc_disable() and allow the hardware to transition the GDSCs to
+retention when the parent domain enters low power state during system
+suspend.
 
-> I cannot find any other report of this, and don't know yet where it
-> was introduced, but the bots started reporting this last May:
-> 
->     3    fs/btrfs/inode.c:5711:5: warning: ‘location.type’ may be used
-> uninitialized in this function [-Wmaybe-uninitialized]
->     3    fs/btrfs/inode.c:5640:9: warning: ‘location.objectid’ may be
-> used uninitialized in this function [-Wmaybe-uninitialized]
-> 
-> https://lore.kernel.org/all/6655b55f.170a0220.406f9.2e0e@mx.google.com/
-> 
-> and I'm seeing failures in e.g. my m68k allmodconfig builds with
-> gcc 9.5 due to CONFIG_WERROR=y.
+Cc: stable@vger.kernel.org # 5.7
+Fixes: 3e5770921a88 ("clk: qcom: gcc: Add global clock controller driver for SM8250")
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/clk/qcom/gcc-sm8250.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Older compilers like 9.5 could not be able to reason about variable
-validity in case it's passed by address, as is in this case:
+diff --git a/drivers/clk/qcom/gcc-sm8250.c b/drivers/clk/qcom/gcc-sm8250.c
+index 991cd8b8d597..1c59d70e0f96 100644
+--- a/drivers/clk/qcom/gcc-sm8250.c
++++ b/drivers/clk/qcom/gcc-sm8250.c
+@@ -3226,7 +3226,7 @@ static struct gdsc pcie_0_gdsc = {
+ 	.pd = {
+ 		.name = "pcie_0_gdsc",
+ 	},
+-	.pwrsts = PWRSTS_OFF_ON,
++	.pwrsts = PWRSTS_RET_ON,
+ };
+ 
+ static struct gdsc pcie_1_gdsc = {
+@@ -3234,7 +3234,7 @@ static struct gdsc pcie_1_gdsc = {
+ 	.pd = {
+ 		.name = "pcie_1_gdsc",
+ 	},
+-	.pwrsts = PWRSTS_OFF_ON,
++	.pwrsts = PWRSTS_RET_ON,
+ };
+ 
+ static struct gdsc pcie_2_gdsc = {
+@@ -3242,7 +3242,7 @@ static struct gdsc pcie_2_gdsc = {
+ 	.pd = {
+ 		.name = "pcie_2_gdsc",
+ 	},
+-	.pwrsts = PWRSTS_OFF_ON,
++	.pwrsts = PWRSTS_RET_ON,
+ };
+ 
+ static struct gdsc ufs_card_gdsc = {
+-- 
+2.25.1
 
- 5707         ret = btrfs_inode_by_name(BTRFS_I(dir), dentry, &location, &di_type);
- 5708         if (ret < 0)
- 5709                 return ERR_PTR(ret);
-
-and btrfs_inode_by_name() returns either a valid 'location' or an error that
-the caller handles and does not use the variable.
-
-> I suspect the big-endian accessors in fs/btrfs/accessors.h lack some
-> initializations?
-
-There are no special accessors on big endian hosts, same code, same
-bytes in memory only a different order.
-
-We fix warnings caused -Wmaybe-uninitialized even if it's because of old
-compilers, but it's hard to notice reports if they're burried in some
-mailinglist.
-
-I do read your build reports after each -rcN but there are only some
-modpost warnings in 6.10-rc7
-
-https://lore.kernel.org/all/20240710083744.2885335-1-geert@linux-m68k.org/
 
