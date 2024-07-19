@@ -1,131 +1,147 @@
-Return-Path: <linux-kernel+bounces-257056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C30F0937499
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:55:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94D7293749E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 838122840A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 07:55:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FE572848F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 07:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A50D5FB95;
-	Fri, 19 Jul 2024 07:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3716154765;
+	Fri, 19 Jul 2024 07:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mD9d6Un5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b="XuT+Zi/c"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749892C80;
-	Fri, 19 Jul 2024 07:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3305A4AEEA
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 07:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721375740; cv=none; b=Ai5SlMf+cuOcU+i4/d1Olax4KO4JSJZ2CDewcrqF6RxPkpy7YQQT1HGBGx5wY5MXwyVpSLbfGxIXewz7rEtI7Fjjts8GnPbf7M5OPVtP2H32+eZqiBH7XsaKEY+69vAuERCFVaz7J28QiJl6rKL4dBbaMoZO7r0xKGkmAIf7MKs=
+	t=1721375967; cv=none; b=TuuKMFKU04Myl/cmE+deih+486/WYx2dItxk2bL5vA0hEmE1jTgQRKqA79lbKPemhKuRJBbF1lnyMkEs4JkyvMrZ5CIiQtoR96AqKNuRnX9qx3bvAKky1/yituJrVa1jKrIo1JyqO5DhQcQ9YU9lFAgCECb3Ad4SziH3P4zpZsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721375740; c=relaxed/simple;
-	bh=6Ay4p6jJCBni9LRzuGT1socEKkaxV4GanP/ZK2W/s/k=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sP6L3RGIPn2BlqZgH5WvjqlK5Z2XXbB7Be7IBUE1awwTjWECCxnUBExjtHxEA8JuO2d2zszQxPrIy0Mc0qpANA39WxdJ+0CxVBGXKPqyx0yewtDDYxevqMIVimbrsD9qIm5MeXtRwoR9zn+DJpYXTcPRjiZh0BR5PpWa/LrWxDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mD9d6Un5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1038C32782;
-	Fri, 19 Jul 2024 07:55:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721375740;
-	bh=6Ay4p6jJCBni9LRzuGT1socEKkaxV4GanP/ZK2W/s/k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mD9d6Un588NMRY1s1nwglMIEvLYOQdfQuvFjOLyw+e3BbuDaEHoznlFOY8BTFG9x+
-	 XlrNqf6L7MPwF1P0I2qHmWWn2to9Nd8NIalDngtAfJv8YBomn04yaJYclcjfDqXbY5
-	 LzFSu3pEZlnDUaXHSrO61rxhk6qEBmPcrQxwn70+UV4li4O4Hu0Bbf9mdUA9cOvvwx
-	 q2RYEdBmApwd+rUdqSrW9NnCh9q60H/3qbRWI4z/k1oGzOhcEVRMKHYXgdRPmxXdBK
-	 /tp1QQmT2AF0QQsjI96XB074W12Nuwy/k1r1/4oQB/2Fkudye/bdOzMuBpOQMFYpoN
-	 UYc27cbUrUMhw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sUiSn-00De84-D8;
-	Fri, 19 Jul 2024 08:55:37 +0100
-Date: Fri, 19 Jul 2024 08:55:37 +0100
-Message-ID: <86ikx13jeu.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Raghavendra Rao Ananta <rananta@google.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
+	s=arc-20240116; t=1721375967; c=relaxed/simple;
+	bh=dG95QewEG8mN5e80OJowMbRNCEU8UUwID07dkXmIk7M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=UuhC62Zf2Kb172Kwana0Qtpksl9/bYhyzBO4wypDTbrqkO9wHNdBEPLs7NLoqSDglZeJRVz32BFDUzrZ/jyOcShAejk5fNzgUmyYr9166hZUzF2BwwKGi0U4eE1YpdLhqINmgvZDcx734LVCvgj4qTBm243dOY4JRYM5mBEZw3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org; spf=pass smtp.mailfrom=endlessos.org; dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b=XuT+Zi/c; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=endlessos.org
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2cb63ceff6dso778566a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 00:59:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessos.org; s=google; t=1721375964; x=1721980764; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VDVxrTlyCYmX4gNYVSGtw5JAwr1I2e12lJyeUPu4kzA=;
+        b=XuT+Zi/cLpndpMZ2iySVTEU3bPXCaEJtuxNmJjnW5abmjg7fQFnMmNorS1wEUjAL8H
+         UbEh5k2STottJzn6MxgrJgAoz2SyfGm1iZyrufPsSzvQvV+b1rAWa0Sm4hCXo07OHLyk
+         A0uYdebLJWP7GX4+7B6iL1ngcqJd6OZZUwVKv+mRbGd6SjPvMU+18502PZ88OfwSvlcD
+         71ErcaUnVLRDjI8cm0Ao6Jph0z3IFRkjZ5Y/4xJKi16ng/h72ORMkXenGH0CR2UGD1Sd
+         QRMHYW2oUwHCkKMFnVwhJ7OmNVyA5ADgQ+pQmCahkddN3s8mn1/R/wc0hL65zb4wOwqx
+         D0AA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721375964; x=1721980764;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VDVxrTlyCYmX4gNYVSGtw5JAwr1I2e12lJyeUPu4kzA=;
+        b=byCDvIYDjujMa6jwHVgx5WhHoqpT5Ka0HxcRyl63okZY/0J9+V9vCSvTOJpqxp7fvF
+         OEl3/bG5YWSpVv4yUhZaQ2UtGyHLMtmpDiomZKrA/+KSKWUsha3/51LkrBcWnQTy2kro
+         1oT5KYeUMdlVJNOuJcWfEeA0y3is3Vr5eCpkb+gh6HwnWX80MqSD0jbFXHTWf+I84oFV
+         i7bC97S9Ht6wHDk0UeGy3VSYMg9UidS4aBPUNYf9TiwVoevnGRpj5/LlR4iObM66Mgh5
+         bzHUtr6Hgshpb4/DKdZVcsHi4QCv8Iv/r8U+aH3+t4k40ePByu5c+CrZsiPD+AECyem5
+         QGUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtDfUIDXW8JYhTWn9ympgt4uEJkaPhbSsQwCEyMAEYsHfn65ANWUrwy81DIodC1XVJf6uMY/HbwBDa3bnjAasWSHgjf7qA7e4HHoJU
+X-Gm-Message-State: AOJu0Yw8abWaZo0YXMmSLA1pG4OwU47SAqzL57cGuk/ufN7ZUp7rC0PP
+	0cDR+S/n8Vk+amYO89RjxpC8cw3Sn6sKwN5Z3FwFMFvBsYuiHer+kskq6a5B65U=
+X-Google-Smtp-Source: AGHT+IHT+6quf4rYKsrBUnn6NfLGKfmvUAKKbfARVQXy1NR/Ekq0ZjIfo2ufGSrvu2kO1esvs/I7NA==
+X-Received: by 2002:a17:90a:d181:b0:2c9:7fba:d890 with SMTP id 98e67ed59e1d1-2cb5294bf43mr5302138a91.43.1721375964348;
+        Fri, 19 Jul 2024 00:59:24 -0700 (PDT)
+Received: from localhost.localdomain ([123.51.167.56])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2cb7750674csm2058112a91.43.2024.07.19.00.59.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 00:59:24 -0700 (PDT)
+From: Jian-Hong Pan <jhp@endlessos.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>,
+	David Box <david.e.box@linux.intel.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Jonathan Derrick <jonathan.derrick@linux.dev>,
+	linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: Re: [PATCH] arm64/sysreg: Correct the values for GICv4.1
-In-Reply-To: <20240718215532.616447-1-rananta@google.com>
-References: <20240718215532.616447-1-rananta@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	linux@endlessos.org,
+	Jian-Hong Pan <jhp@endlessos.org>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH v8 2/4] PCI/ASPM: Add notes about enabling PCI-PM L1SS to pci_enable_link_state(_locked)
+Date: Fri, 19 Jul 2024 15:57:54 +0800
+Message-ID: <20240719075752.10883-3-jhp@endlessos.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240719075200.10717-2-jhp@endlessos.org>
+References: <20240719075200.10717-2-jhp@endlessos.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: rananta@google.com, oliver.upton@linux.dev, catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 18 Jul 2024 22:55:32 +0100,
-Raghavendra Rao Ananta <rananta@google.com> wrote:
-> 
-> Currently, sysreg has value as 0b0010 for the presence of GICv4.1 in
-> ID_PFR1_EL1 and ID_AA64PFR0_EL1, instead of 0b0011 as per ARM ARM.
-> Hence, correct them to reflect ARM ARM.
-> 
-> Signed-off-by: Raghavendra Rao Ananta <rananta@google.com>
-> ---
->  arch/arm64/tools/sysreg | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
-> index a4c1dd4741a47..7ceaa1e0b4bc2 100644
-> --- a/arch/arm64/tools/sysreg
-> +++ b/arch/arm64/tools/sysreg
-> @@ -149,7 +149,7 @@ Res0	63:32
->  UnsignedEnum	31:28	GIC
->  	0b0000	NI
->  	0b0001	GICv3
-> -	0b0010	GICv4p1
-> +	0b0011	GICv4p1
->  EndEnum
->  UnsignedEnum	27:24	Virt_frac
->  	0b0000	NI
-> @@ -903,7 +903,7 @@ EndEnum
->  UnsignedEnum	27:24	GIC
->  	0b0000	NI
->  	0b0001	IMP
-> -	0b0010	V4P1
-> +	0b0011	V4P1
+According to "PCIe r6.0, sec 5.5.4", add note about D0 requirement in
+pci_enable_link_state() kernel-doc.
 
-I wonder why we have different naming schemes for the same feature...
+Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+---
+v3:
+- Fix as readable comments
 
->  EndEnum
->  SignedEnum	23:20	AdvSIMD
->  	0b0000	IMP
-> 
+v4:
+- The same
 
-Yup, this looks correct and checks out against revision H.b of the GICv3
-spec, revision K.a of the ARM ARM, and even I.a (which the original
-patches were referencing).
+v5:
+- Tweak and simplify the commit message
 
-Once more, it shows that these dumps should be automatically generated
-from the XML instead of (creatively) hand-written.
+v6~8:
+- The same
 
-Reviewed-by: Marc Zyngier <maz@kernel.org>
+ drivers/pci/pcie/aspm.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-	M.
-
+diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+index cee2365e54b8..bd0a8a05647e 100644
+--- a/drivers/pci/pcie/aspm.c
++++ b/drivers/pci/pcie/aspm.c
+@@ -1442,6 +1442,9 @@ static int __pci_enable_link_state(struct pci_dev *pdev, int state, bool locked)
+  * touch the LNKCTL register. Also note that this does not enable states
+  * disabled by pci_disable_link_state(). Return 0 or a negative errno.
+  *
++ * Note: Ensure devices are in D0 before enabling PCI-PM L1 PM Substates, per
++ * PCIe r6.0, sec 5.5.4.
++ *
+  * @pdev: PCI device
+  * @state: Mask of ASPM link states to enable
+  */
+@@ -1458,6 +1461,9 @@ EXPORT_SYMBOL(pci_enable_link_state);
+  * can't touch the LNKCTL register. Also note that this does not enable states
+  * disabled by pci_disable_link_state(). Return 0 or a negative errno.
+  *
++ * Note: Ensure devices are in D0 before enabling PCI-PM L1 PM Substates, per
++ * PCIe r6.0, sec 5.5.4.
++ *
+  * @pdev: PCI device
+  * @state: Mask of ASPM link states to enable
+  *
 -- 
-Without deviation from the norm, progress is not possible.
+2.45.2
+
 
