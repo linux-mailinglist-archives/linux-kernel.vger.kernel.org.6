@@ -1,47 +1,79 @@
-Return-Path: <linux-kernel+bounces-257413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94AC1937992
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:08:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8071B93799C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 214E21F232B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:08:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A469E1C20F7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C0F14659D;
-	Fri, 19 Jul 2024 15:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125C0145B0F;
+	Fri, 19 Jul 2024 15:07:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AuSyW/Ds"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PYz8FSmT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF5C13C9A9;
-	Fri, 19 Jul 2024 15:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDCF145A12
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 15:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721401625; cv=none; b=OpJbwMicCSyHbNHH5xZQ75hwmREnqLwExLiQRuTbVULrclT5eMNgl7A67ccP5JwxSPbVZHiYK/qAJwktlRO2XM/lBamHCT5+POJH4ig2KDBIBtQX67o3xTTZFk/j4eGs0GkwkDAHPwmzG9l7sEttvIivvefcr3G2JmuBa790KlM=
+	t=1721401666; cv=none; b=HXLbdnRw7g0bmS0u1gIsssvBCiJGWxjU1akU7seaWiflgsXOi7FR813xf23af/rcsJn2/WOawRxk3MWXR7jx8mgWSjMsgM1+isZlYcLKYKjbrpCofDMOq7t5r7EtVDhAXI8A1v9bfcZX2qm9AE8khZXmkkPnX8jnNAvYSZD8amY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721401625; c=relaxed/simple;
-	bh=x04UtHiRnBmbGEix0/mydpwkC0IHcU9T1GhoF957Vmc=;
+	s=arc-20240116; t=1721401666; c=relaxed/simple;
+	bh=x74t0FO6EnAFkdZO0g+pbMZIBzD6UwTLnWZfNaslDZ4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=prwJXm1Mq6jZ7gQVjGoXkCRpMC4wYP4P1YO1GoLWFbkQVOKv5+tUOaenNmeWynbrovRGFAcc8WDBqGEyonHdNLKaUgFNG2eQugPU6/DVr03wai5qy5/lCMT3WwY7icFeLAt0qdIlzmh0uWkoYQgkM5KLlwGzNkjirRjKEGu7GWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AuSyW/Ds; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A262CC32782;
-	Fri, 19 Jul 2024 15:07:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721401624;
-	bh=x04UtHiRnBmbGEix0/mydpwkC0IHcU9T1GhoF957Vmc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AuSyW/DsXnC3QKZ+0iOmvBiMeLVrz3Pw4vL/gsgBpkKpBiEPTuumYbYNNemIo/jLl
-	 sag+tTgidEcB1JX7nfTbvxbyXhoaBuOFt6X/zsfSC4bR7Nw8fd1weqlxbT/CwoJVZ1
-	 Tbcud/Iy+8seN7hOp5NTOSIYQrqdxvVLtIPxwEEIftGEr2KWLajvIdrq55bcmPAJ7I
-	 gLdUuZlvf1CzpORzVdRZ9AMItAUBEQQ8SdUJ3S3zTiJUVZ/4MSc/0wpCqw4/YVM/Oo
-	 d6Gi02q2OUqP4VA305fuw3Hx7S4iKfxxQDFIUeql+o2LzlCp9MRvCfjp/04RwAnR1d
-	 NZ17/7lOgN5aA==
-Message-ID: <2794de3c-673b-45ea-8897-df1ada9c6717@kernel.org>
-Date: Fri, 19 Jul 2024 17:07:01 +0200
+	 In-Reply-To:Content-Type; b=NfgwPIrqWswP7AjRZV6MWLXNAMOWgM5kR5eQCpXLKuxeLKKcRDqeCMM0DVZJdoh3akIFAxLiXXqSufCWmwvzVJhkIpA/sk4nKp59kpkL7JN3RSkxvP+I6kLrIdCdSwv5q2v7jwLIajyj8QvJgHXn6GuzZgiLOPT5AQcib9YXYF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PYz8FSmT; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721401663;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+Hqez4+gddnelY4DOtO/pf2QUbb3lrjCJ7TtxZBjoRk=;
+	b=PYz8FSmThfuYcVFWO/6n8QFkv5O30Cq+LXevgRbSK9HisE3TOza7zR6kXB27sbcSm9aAJ2
+	+86uepRKSIiCc1PdXI+2tokfcsMj7aDPzjVztNEBtOeL9QlZcXHdOrN2u+ODTCu3sfqXDM
+	lUMvk5UILQ+sBNB7uNzfJTaOvke29BU=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-472-w0aoZi6VOg6P-0sfRMk7yQ-1; Fri, 19 Jul 2024 11:07:40 -0400
+X-MC-Unique: w0aoZi6VOg6P-0sfRMk7yQ-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3687f5a2480so458285f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 08:07:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721401659; x=1722006459;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+Hqez4+gddnelY4DOtO/pf2QUbb3lrjCJ7TtxZBjoRk=;
+        b=OVfI2LCk8Czkj80tC4RIfEm+8rAbJuqVhaET37HDsAmAzRpXxnKkm+R5xtpK0ujAQh
+         +2Ol2FSb55qqJuXoDrNeWuMiFXog179a53G1akGZyQ3EJQcQGsqCQCtPtOuOQVJuDrIn
+         XDobKnD0dyTocyOLbxR5lO0nYxLejuLo9iB/t2dRgZBhMv2yJbonuvB9SbTDGryElOC5
+         wLpjj9Clp/zm+IAshtHvTwZGyUEl/Pl+Q8VH9wze59mNJABc2wmYadsoI5KZNLfqs17O
+         u+Ppa8Oj4PVzZtrphTRsYt04aBUUKhaiQ6LgXS2l7LIGmp9eAQRH28d+fdgjYzMrj8vP
+         jUoQ==
+X-Gm-Message-State: AOJu0Yx/B2BjyXYcolMZdWim4T1mjeEt3HmwGd9TbIjeEkQP58gooc8n
+	wKftIGHGNnW/XzAqgdq76jL4dtHlWGUxnElWkuDHdLVspJrCmQUWws4c4Z8UcrHETrRevBn24FR
+	IIfYYe0ghJ8oY89NFSyBf79KqpWDumIYifERpvgnq5wU6YDspTx+/CFE05+YOOA==
+X-Received: by 2002:adf:f6c8:0:b0:367:96b9:760a with SMTP id ffacd0b85a97d-3683171fa20mr5351651f8f.41.1721401658860;
+        Fri, 19 Jul 2024 08:07:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH3kf0+DVAX3s8AIoi07dbvv+TNfmFDQl0q2xJMZuXjXyMFfWvqwQOQgw4uRzUtRYfwr43y2A==
+X-Received: by 2002:adf:f6c8:0:b0:367:96b9:760a with SMTP id ffacd0b85a97d-3683171fa20mr5351603f8f.41.1721401658315;
+        Fri, 19 Jul 2024 08:07:38 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c705:1000:c4af:a24f:b8ba:8bbc? (p200300cbc7051000c4afa24fb8ba8bbc.dip0.t-ipconnect.de. [2003:cb:c705:1000:c4af:a24f:b8ba:8bbc])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-368785c58e7sm1876063f8f.0.2024.07.19.08.07.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Jul 2024 08:07:37 -0700 (PDT)
+Message-ID: <96850252-a49f-4d78-a94b-a9a25e3f2bd5@redhat.com>
+Date: Fri, 19 Jul 2024 17:07:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,195 +81,143 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V7 1/2] cgroup/rstat: Avoid thundering herd problem by
- kswapd across NUMA nodes
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: tj@kernel.org, cgroups@vger.kernel.org, shakeel.butt@linux.dev,
- hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com,
- kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <172070450139.2992819.13210624094367257881.stgit@firesoul>
- <CAJD7tkYFwz_=kxCk-Tp4QfwKgK0C26+QzZQvbVxkAx8m9CLSFg@mail.gmail.com>
+Subject: Re: [PATCH 05/17] arch, mm: pull out allocation of NODE_DATA to
+ generic code
+To: Mike Rapoport <rppt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
+ Borislav Petkov <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Heiko Carstens <hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Palmer Dabbelt <palmer@dabbelt.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Thomas Gleixner <tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>,
+ Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org,
+ x86@kernel.org
+References: <20240716111346.3676969-1-rppt@kernel.org>
+ <20240716111346.3676969-6-rppt@kernel.org>
+ <220da8ed-337a-4b1e-badf-2bff1d36e6c3@redhat.com>
+ <Zpi-HAb7EBxrZBtK@kernel.org>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <CAJD7tkYFwz_=kxCk-Tp4QfwKgK0C26+QzZQvbVxkAx8m9CLSFg@mail.gmail.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Zpi-HAb7EBxrZBtK@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-
-
-On 17/07/2024 02.30, Yosry Ahmed wrote:
-> On Thu, Jul 11, 2024 at 6:28 AM Jesper Dangaard Brouer <hawk@kernel.org> wrote:
+>>> -	 * Allocate node data.  Try node-local memory and then any node.
+>>> -	 * Never allocate in DMA zone.
+>>> -	 */
+>>> -	nd_pa = memblock_phys_alloc_try_nid(nd_size, SMP_CACHE_BYTES, nid);
+>>> -	if (!nd_pa) {
+>>> -		pr_err("Cannot find %zu bytes in any node (initial node: %d)\n",
+>>> -		       nd_size, nid);
+>>> -		return;
+>>> -	}
+>>> -	nd = __va(nd_pa);
+>>> -
+>>> -	/* report and initialize */
+>>> -	printk(KERN_INFO "NODE_DATA(%d) allocated [mem %#010Lx-%#010Lx]\n", nid,
+>>> -	       nd_pa, nd_pa + nd_size - 1);
+>>> -	tnid = early_pfn_to_nid(nd_pa >> PAGE_SHIFT);
+>>> -	if (tnid != nid)
+>>> -		printk(KERN_INFO "    NODE_DATA(%d) on node %d\n", nid, tnid);
+>>> -
+>>> -	node_data[nid] = nd;
+>>> -	memset(NODE_DATA(nid), 0, sizeof(pg_data_t));
+>>> -
+>>> -	node_set_online(nid);
+>>> -}
+>>> -
+>>>    /**
+>>>     * numa_cleanup_meminfo - Cleanup a numa_meminfo
+>>>     * @mi: numa_meminfo to clean up
+>>> @@ -571,6 +538,7 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+>>>    			continue;
+>>>    		alloc_node_data(nid);
+>>> +		node_set_online(nid);
+>>>    	}
 >>
->> Avoid lock contention on the global cgroup rstat lock caused by kswapd
->> starting on all NUMA nodes simultaneously. At Cloudflare, we observed
->> massive issues due to kswapd and the specific mem_cgroup_flush_stats()
->> call inlined in shrink_node, which takes the rstat lock.
+>> I can spot that we only remove a single node_set_online() call from x86.
 >>
->> On our 12 NUMA node machines, each with a kswapd kthread per NUMA node,
->> we noted severe lock contention on the rstat lock. This contention
->> causes 12 CPUs to waste cycles spinning every time kswapd runs.
->> Fleet-wide stats (/proc/N/schedstat) for kthreads revealed that we are
->> burning an average of 20,000 CPU cores fleet-wide on kswapd, primarily
->> due to spinning on the rstat lock.
->>
->> Help reviewers follow code: __alloc_pages_slowpath calls wake_all_kswapds
->> causing all kswapdN threads to wake up simultaneously. The kswapd thread
->> invokes shrink_node (via balance_pgdat) triggering the cgroup rstat flush
->> operation as part of its work. This results in kernel self-induced rstat
->> lock contention by waking up all kswapd threads simultaneously. Leveraging
->> this detail: balance_pgdat() have NULL value in target_mem_cgroup, this
->> cause mem_cgroup_flush_stats() to do flush with root_mem_cgroup.
->>
->> To avoid this kind of thundering herd problem, kernel previously had a
->> "stats_flush_ongoing" concept, but this was removed as part of commit
->> 7d7ef0a4686a ("mm: memcg: restore subtree stats flushing"). This patch
->> reintroduce and generalized the concept to apply to all users of cgroup
->> rstat, not just memcg.
->>
->> If there is an ongoing rstat flush, and current cgroup is a descendant,
->> then it is unnecessary to do the flush. For callers to still see updated
->> stats, wait for ongoing flusher to complete before returning, but add
->> timeout as stats are already inaccurate given updaters keeps running.
->>
->> Fixes: 7d7ef0a4686a ("mm: memcg: restore subtree stats flushing").
->> Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
+>> What about all the other architectures? Will there be any change in behavior
+>> for them? Or do we simply set the nodes online later once more?
 > 
-> Thanks for working on this, Jesper! I love the data you collected here!
-> 
-> I think the commit subject and message should be changed to better
-> describe the patch. This is a patch that exclusively modifies cgroup
-> code, yet the subject is about kswapd. This change affects all users
-> of rstat flushing.
-> 
-> I think a better subject would be:
-> "cgroup/rstat: avoid flushing if there is an ongoing overlapping
-> flush" or similar.
-> 
+> On x86 node_set_online() was a part of alloc_node_data() and I moved it
+> outside so it's called right after alloc_node_data(). On other
+> architectures the allocation didn't include that call, so there should be
+> no difference there.
 
-Took this for V8.
- 
-https://lore.kernel.org/all/172139415725.3084888.13770938453137383953.stgit@firesoul
+But won't their arch code try setting the nodes online at a later stage?
 
-> The commit message should first describe the cgroup change, and then
-> use kswapd as a brief example/illustration of how the problem
-> manifests in practice. You should also include a brief summary of the
-> numbers you collected from prod.
-> 
+And I think, some architectures only set nodes online conditionally
+(see most other node_set_online() calls).
 
-Update desc in V8
+Sorry if I'm confused here, but with now unconditional node_set_online(), won't
+we change the behavior of other architectures?
 
->> ---
->> V6: https://lore.kernel.org/all/172052399087.2357901.4955042377343593447.stgit@firesoul/
->> V5: https://lore.kernel.org/all/171956951930.1897969.8709279863947931285.stgit@firesoul/
->> V4: https://lore.kernel.org/all/171952312320.1810550.13209360603489797077.stgit@firesoul/
->> V3: https://lore.kernel.org/all/171943668946.1638606.1320095353103578332.stgit@firesoul/
->> V2: https://lore.kernel.org/all/171923011608.1500238.3591002573732683639.stgit@firesoul/
->> V1: https://lore.kernel.org/all/171898037079.1222367.13467317484793748519.stgit@firesoul/
->> RFC: https://lore.kernel.org/all/171895533185.1084853.3033751561302228252.stgit@firesoul/
->>
->>   include/linux/cgroup-defs.h |    2 +
->>   kernel/cgroup/rstat.c       |   95 ++++++++++++++++++++++++++++++++++++++-----
->>   2 files changed, 85 insertions(+), 12 deletions(-)
->>
->> diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
-[...]
->> diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
->> index fb8b49437573..fe2a81a310bb 100644
->> --- a/kernel/cgroup/rstat.c
->> +++ b/kernel/cgroup/rstat.c
-[...]
->>   static inline void __cgroup_rstat_unlock(struct cgroup *cgrp, int cpu_in_loop)
->> @@ -299,6 +316,53 @@ static inline void __cgroup_rstat_unlock(struct cgroup *cgrp, int cpu_in_loop)
->>          spin_unlock_irq(&cgroup_rstat_lock);
->>   }
->>
->> +#define MAX_WAIT       msecs_to_jiffies(100)
->> +/* Trylock helper that also checks for on ongoing flusher */
->> +static bool cgroup_rstat_trylock_flusher(struct cgroup *cgrp)
->> +{
->> +       struct cgroup *ongoing;
->> +       bool locked;
->> +
->> +       /* Check if ongoing flusher is already taking care of this, if
-> 
-> nit: I think commonly the comment would start on a new line after /*.
-> 
+-- 
+Cheers,
 
-We use this comment style in networking code.
-I've updated it to follow this subsystem.
+David / dhildenb
 
-
->> +        * we are a descendant skip work, but wait for ongoing flusher
->> +        * to complete work.
->> +        */
->> +retry:
->> +       ongoing = READ_ONCE(cgrp_rstat_ongoing_flusher);
->> +       if (ongoing && cgroup_is_descendant(cgrp, ongoing)) {
->> +               wait_for_completion_interruptible_timeout(
->> +                       &ongoing->flush_done, MAX_WAIT);
->> +               /* TODO: Add tracepoint here */
->> +               return false;
->> +       }
->> +
->> +       locked = __cgroup_rstat_trylock(cgrp, -1);
->> +       if (!locked) {
->> +               /* Contended: Handle loosing race for ongoing flusher */
-> 
-> nit: losing
->
-
-Thanks for catching this subtle wording issue.
-
-
->> +               if (!ongoing && READ_ONCE(cgrp_rstat_ongoing_flusher))
->> +                       goto retry;
->> +
->> +               __cgroup_rstat_lock(cgrp, -1, false);
->> +       }
->> +       /* Obtained lock, record this cgrp as the ongoing flusher */
-> 
-> Do we want a comment here to explain why there could be an existing
-> ongoing flusher (i.e. due to multiple ongoing flushers)? I think it's
-> not super obvious.
-
-Extended this in V8.
-
-> 
->> +       ongoing = READ_ONCE(cgrp_rstat_ongoing_flusher);
->> +       if (!ongoing) {
->> +               reinit_completion(&cgrp->flush_done);
->> +               WRITE_ONCE(cgrp_rstat_ongoing_flusher, cgrp);
->> +       }
->> +       return true; /* locked */
-> 
-> Would it be better to explain the return value of the function in the
-> comment above it?
-> 
-
-Fixed this in V8.
-
->> +}
->> +
->> +static void cgroup_rstat_unlock_flusher(struct cgroup *cgrp)
->> +{
->> +       /* Detect if we are the ongoing flusher */
-> 
-> I think this is a bit obvious.
-> 
-
-True, removed comment.
-
->> +       if (cgrp == READ_ONCE(cgrp_rstat_ongoing_flusher)) {
->> +               WRITE_ONCE(cgrp_rstat_ongoing_flusher, NULL);
->> +               complete_all(&cgrp->flush_done);
->> +       }
->> +       __cgroup_rstat_unlock(cgrp, -1);
->> +}
->> +
-[...]
-
-
-Thanks for going through and commenting on the code! :-)
-
---Jesper
 
