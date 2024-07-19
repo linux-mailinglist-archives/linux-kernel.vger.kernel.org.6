@@ -1,223 +1,110 @@
-Return-Path: <linux-kernel+bounces-257536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6556937B8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:23:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 867B1937B8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:24:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C70A31C21CDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:23:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B79E71C21FDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57BF183A19;
-	Fri, 19 Jul 2024 17:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0A9146D40;
+	Fri, 19 Jul 2024 17:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q1eMF8bA"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lTAmH6EU"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA72146000;
-	Fri, 19 Jul 2024 17:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D53783A19;
+	Fri, 19 Jul 2024 17:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721409814; cv=none; b=Dt/FNtWm0VxRtOqKgCPW3IoL2qGjUImX7dX5g3+dalrhNmfEKLdTA/8jLoVJ/TUvFgt378QFB9sDZ3eS9/oLX4dxWwGUDFd1XM4FEHZoj7+dxcZcczlHqjTVvXl2fLNjGoO06PMYtcoZQzmc065iOmMs+rKga6YMqxEthumxtU8=
+	t=1721409836; cv=none; b=LrEoRtLBsfJm/ZvVNc4HOorVPjxHwbmMOsvVkKQar0JTFt/9U47vnoLSx3fMrudjwPSFJAJVQP60n1Aa+Wyiu+ySqiG4GtyRpQdu54KJnNiDyOg4m5ftx0iMdBnAE4mvVf7dM5eIL/CwjxnuKh0FuL0esf2FesumE20KhlZ0HY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721409814; c=relaxed/simple;
-	bh=UXCKipdFlwMdRUwucvJL8Bya4SjYc+dZ3uARKiGiV8A=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=ifFZzVepl5HY7qA1rkkwNexg/xW6T4EwFGT1Yp1hqzln2hQs6i2yFHdvEoqFDcicJQA8vWvKNPzw8gDv2LaxJcH/JXD1OrRNxc/y2UYwwvOqFNy/BxJg1i/8eUr9LEIvZIxK/OTqjokpYYktVwt33mCPPRmlQpcM9QxIpOPP6ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q1eMF8bA; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1721409836; c=relaxed/simple;
+	bh=TB7I4linzNl4RNrfp2dWbMAJboA3F2yr1iWc1mqD2hs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GMZbrfufgnBIfV8zaIKkPN9GiA5EIuiwi5UZCfdC771EbbHb1KjptLhcphB2ETyo5IEwi0rUE0I7KA1/kf0l9LEGroYowWXSMXeydc0wd6Lp2R4uv2OOc73DVKo0LrXAuchZSJr+v6cS+95df695kI9DR51vXMvF+wgFiRVvOy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lTAmH6EU; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3683f56b9bdso821167f8f.1;
-        Fri, 19 Jul 2024 10:23:32 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70af8128081so904411b3a.1;
+        Fri, 19 Jul 2024 10:23:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721409811; x=1722014611; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3D7gCYvX5ilEs+y7to+huBD1nfxBILfrqUmhg1XR50Y=;
-        b=Q1eMF8bAzcPWrYenUoV/zLRw1sMmnheelx8qpRpFP1O8+TrRX1VV8Irieiec24THCz
-         ah1FEYcxAxUhp7rmJMiOVQV+JLbvTTWGpSRtGLVcmHfYsMsQr3sgfm2ACTLFiJWqj3RC
-         TEsjAtGIZ4dodkRaVO5D2F7m7LKYr7oOMv/ncKr77ZKurKIfb+ITCETVGOZ1yvwkneTY
-         GVHiGkbhkVng5W7+UtbtxnYCAGTO3xHnMprrudojcVa1RQZgJ7EPyf37vvpOWgQXTbSE
-         MfdxxxAOLN7DBiurNcO/7PbT49LBAeoozOpl2m4ZEEFf3tzSZvGCAnqd2xWgcYBAzmZk
-         g2OA==
+        d=gmail.com; s=20230601; t=1721409834; x=1722014634; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TkS//gCMVMuBRd9EzWV7Fa9nwlOYfQmq2cQD6cBevW8=;
+        b=lTAmH6EUrS9B4myZ69j7fz8O6AsFlQKfwm7fpwc4+WUeW/cnI6pGEmFgvnSUwESFAq
+         IhQGc02KmBdwgSmC1tmcWtUTXRhO9iLKtBIYOxXawIwSAQgTuRMV3gAo/nc8RcklQvBu
+         J4ET9X6Vh1ZlljE91hSDrUdeSCWn7K1nP5ZEwHfpy8CnPkjYNq+7FuhhjW+v3WWpHAu9
+         TDI0hhScvvP8VrkRUsdsJ0L+vobtpNRuQGXHn48cpfzwVwST2lSXL0zfQ6zYk3nOSGYv
+         7ud40uF6mBbNy+VC2E9QFp1zVaPHUNHXrLgVJbcJyGabvDjhjHbI2ApshuU9xnLazB20
+         Qpbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721409811; x=1722014611;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3D7gCYvX5ilEs+y7to+huBD1nfxBILfrqUmhg1XR50Y=;
-        b=JEV5JHcWJO0w0fElmMYvMCpbGY/6rZbNjp0RsdX5SgBaxkRoMMajJiObqYiWtJoKfK
-         1pZisyX1AJC8ywiIaKRCP9dbWfRBo1rfbq32vGXv6FRE7HhdEcOtaHj+q6+Cbi22u4K5
-         HvQUr+a8kgFGuKX9G5UqluqAjXtT85hJpmqglSb/k8xDCENai/bDXsA09BHNwA+QLFPN
-         RbJkXEf27GGAjCDtNLcF4meGVQL4WzLkFiD2iWxKgj6xR/rxD2toLboizuxaN4dGluCr
-         cA3DFSSjL8dlRBTTCsjDW/OIPq398KeXoapCTa8aGZdrS0d6+qgx4i/4114I4Uwoh+cf
-         2bCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWj0NZ+o12vIR89hRwnkPbM8LlPQQIYCLBEU2YTqNyS1mq3X/94fnCYIjNQSiX/YkWGQn1cSTV55YxEf/OxhTKl0jH8dpmf+TL8RCgV
-X-Gm-Message-State: AOJu0YwnXPAyWQ0rlF1DCXBRritkj9kh53JWUv4Xfdm+lmxwVVmzNpX2
-	0/7KYjYj6AqXQsUgGUWa5DpGFeMnrpjSpAc9ofzrHmuvHj1L5WoyHLziBWVk
-X-Google-Smtp-Source: AGHT+IEFy047yyAQYFdhs0ROo/KVifb7T3OSL82wgg7ujUQXuC676ePxxqXah0xuOS40HgN9/6lL8A==
-X-Received: by 2002:a05:6000:e4d:b0:367:99fd:d7bb with SMTP id ffacd0b85a97d-368317bca52mr5516011f8f.63.1721409810777;
-        Fri, 19 Jul 2024 10:23:30 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-42-168.xnet.hr. [88.207.42.168])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d6937e81sm31736055e9.47.2024.07.19.10.23.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Jul 2024 10:23:30 -0700 (PDT)
-Message-ID: <7b47f4b7-eda8-40e2-883c-6d6c539a4649@gmail.com>
-Date: Fri, 19 Jul 2024 19:23:26 +0200
+        d=1e100.net; s=20230601; t=1721409834; x=1722014634;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TkS//gCMVMuBRd9EzWV7Fa9nwlOYfQmq2cQD6cBevW8=;
+        b=eVL2EQnjhmTQpmUohB6+ITqaBR0HZ8TAGh2hFY8stWeecguUwEfuxff+mYbkKPqpty
+         9cXSKdud2QbP52ihm2rFTJXr9S4m3Lc6WgHib6OxSguuUd1z67MjpvYR1E0p4EbWO0VD
+         LzF39wcAWfDz+Q3n2HO7uAkCWXuAbwNTGgbai9ADCif9HdjmsFPHXgAAG+t6rC2IQ4t/
+         2HerXKKuoZyt+c/jMm8AkjJZVrd4OSYsmSvdSdQ/fJLlslWxvbT9mXqVSbO2RPG7k5OO
+         kvxbixb2CzkRM6RyVe5+LBer5vRIpngWsBBYHAzuV20TNjTgnNTl4ZtXFQkflWKV/qka
+         2YEw==
+X-Forwarded-Encrypted: i=1; AJvYcCVN7rgSA4Eh64rrN3Mfbyh40D6cTjNUNWitFAjZkLFWZjJFRbDpaz50riSUdVpCQ+Mv7zAtYs05ZFFvjcstMgECw4+DAc3ZKaBIBTw5nYaNlAg1ESbxn/PkqdksNRLFGCMOuT/T3cUkTxsw94CPUFocxDufDwbm0xIxyvcJKDwQy483
+X-Gm-Message-State: AOJu0YxAKmdDqkljEq4imUjAKXgnAFbXgwktTX6tT8BfXYCkdg1DWZhr
+	XK/1OCxwhnKBpmoOSD5z+SrTRAn0nRq7FpgmM95BRELM2H6Td2BQ
+X-Google-Smtp-Source: AGHT+IF7KMOYvFx0j/Hy6EqPeJ3AWYuSWiqTT7/jmWqFIV32BOgWFqRronPaPlsoWkYe/Dp2WeEozw==
+X-Received: by 2002:a05:6a20:8410:b0:1c3:a411:dc49 with SMTP id adf61e73a8af0-1c3fdddad7emr10734374637.51.1721409833778;
+        Fri, 19 Jul 2024 10:23:53 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f4313f8sm7223305ad.189.2024.07.19.10.23.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 10:23:53 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Fri, 19 Jul 2024 07:23:52 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: hch@infradead.org, bvanassche@acm.org, jack@suse.cz,
+	josef@toxicpanda.com, axboe@kernel.dk, cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v3 3/3] blk-ioprio: remove per-disk structure
+Message-ID: <ZpqhKAvTD2z00kyy@slm.duckdns.org>
+References: <20240719071506.158075-1-yukuai1@huaweicloud.com>
+ <20240719071506.158075-4-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-Subject: =?UTF-8?Q?=5BBUG=5D_6=2E10_stable=3A_arch/x86/kvm/xen=2Ec=3A1486=3A?=
- =?UTF-8?Q?44=3A_error=3A_use_of_uninitialized_value_=E2=80=98port=E2=80=99_?=
- =?UTF-8?B?W0NXRS00NTdd?=
-To: kvm@vger.kernel.org
-Cc: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240719071506.158075-4-yukuai1@huaweicloud.com>
 
-Hi, all,
+On Fri, Jul 19, 2024 at 03:15:06PM +0800, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> ioprio works on the blk-cgroup level, all disks in the same cgroup
+> are the same, and the struct ioprio_blkg doesn't have anything in it.
+> Hence register the policy is enough, because cpd_alloc/free_fn will
+> be handled for each blk-cgroup, and there is no need to activate the
+> policy for disk. Hence remove blk_ioprio_init/exit and
+> ioprio_alloc/free_pd.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-While building stable tree version of 6.10, the following error occurred:
+Acked-by: Tejun Heo <tj@kernel.org>
 
-In line 1421 defines:
+Thanks.
 
-1421        evtchn_port_t port, *ports;
-
-The ports becomes &port in line 1470, but neither port nor *ports is assigned a value
-until line 1486 where port is used:
-
-1485         if (sched_poll.nr_ports == 1)
-1486 →               vcpu->arch.xen.poll_evtchn = port;
-
-The visual inspection proves that the compiler is again right (GCC 12.3.0).
-
-The linux-next and kvm trees contained the same error.
-
-In line 1507 this error is rectified by setting vcpu->arch.xen.poll_evtchn = 0,
-but compiler still prevents build with -Werror.
-
-I don't have familiarity with this section of code.
-
-"arch/x86/kvm/xen.c"
---------------------
-1417 static bool kvm_xen_schedop_poll(struct kvm_vcpu *vcpu, bool longmode,
-1418                                  u64 param, u64 *r)
-1419 {
-1420         struct sched_poll sched_poll;
-1421 →       evtchn_port_t port, *ports;
-1422         struct x86_exception e;
-1423         int i;
-1424 
-1425         if (!lapic_in_kernel(vcpu) ||
-1426             !(vcpu->kvm->arch.xen_hvm_config.flags & KVM_XEN_HVM_CONFIG_EVTCHN_SEND))
-1427                 return false;
-1428 
-1429         if (IS_ENABLED(CONFIG_64BIT) && !longmode) {
-1430                 struct compat_sched_poll sp32;
-1431 
-1432                 /* Sanity check that the compat struct definition is correct */
-1433                 BUILD_BUG_ON(sizeof(sp32) != 16);
-1434 
-1435                 if (kvm_read_guest_virt(vcpu, param, &sp32, sizeof(sp32), &e)) {
-1436                         *r = -EFAULT;
-1437                         return true;
-1438                 }
-1439 
-1440                 /*
-1441                  * This is a 32-bit pointer to an array of evtchn_port_t which
-1442                  * are uint32_t, so once it's converted no further compat
-1443                  * handling is needed.
-1444                  */
-1445                 sched_poll.ports = (void *)(unsigned long)(sp32.ports);
-1446                 sched_poll.nr_ports = sp32.nr_ports;
-1447                 sched_poll.timeout = sp32.timeout;
-1448         } else {
-1449                 if (kvm_read_guest_virt(vcpu, param, &sched_poll,
-1450                                         sizeof(sched_poll), &e)) {
-1451                         *r = -EFAULT;
-1452                         return true;
-1453                 }
-1454         }
-1455 
-1456         if (unlikely(sched_poll.nr_ports > 1)) {
-1457                 /* Xen (unofficially) limits number of pollers to 128 */
-1458                 if (sched_poll.nr_ports > 128) {
-1459                         *r = -EINVAL;
-1460                         return true;
-1461                 }
-1462 
-1463                 ports = kmalloc_array(sched_poll.nr_ports,
-1464                                       sizeof(*ports), GFP_KERNEL);
-1465                 if (!ports) {
-1466                         *r = -ENOMEM;
-1467                         return true;
-1468                 }
-1469         } else
-1470 →                ports = &port;
-1471 
-1472         if (kvm_read_guest_virt(vcpu, (gva_t)sched_poll.ports, ports,
-1473                                 sched_poll.nr_ports * sizeof(*ports), &e)) {
-1474                 *r = -EFAULT;
-1475                 return true;
-1476         }
-1477 
-1478         for (i = 0; i < sched_poll.nr_ports; i++) {
-1479                 if (ports[i] >= max_evtchn_port(vcpu->kvm)) {
-1480                         *r = -EINVAL;
-1481                         goto out;
-1482                 }
-1483         }
-1484 
-1485         if (sched_poll.nr_ports == 1)
-1486 →               vcpu->arch.xen.poll_evtchn = port;
-1487         else
-1488                 vcpu->arch.xen.poll_evtchn = -1;
-1489 
-1490         set_bit(vcpu->vcpu_idx, vcpu->kvm->arch.xen.poll_mask);
-1491 
-1492         if (!wait_pending_event(vcpu, sched_poll.nr_ports, ports)) {
-1493                 vcpu->arch.mp_state = KVM_MP_STATE_HALTED;
-1494 
-1495                 if (sched_poll.timeout)
-1496                         mod_timer(&vcpu->arch.xen.poll_timer,
-1497                                   jiffies + nsecs_to_jiffies(sched_poll.timeout));
-1498 
-1499                 kvm_vcpu_halt(vcpu);
-1500 
-1501                 if (sched_poll.timeout)
-1502                         del_timer(&vcpu->arch.xen.poll_timer);
-1503 
-1504                 vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
-1505         }
-1506 
-1507 →       vcpu->arch.xen.poll_evtchn = 0;
-1508         *r = 0;
-1509 out:
-1510         /* Really, this is only needed in case of timeout */
-1511         clear_bit(vcpu->vcpu_idx, vcpu->kvm->arch.xen.poll_mask);
-1512 
-1513         if (unlikely(sched_poll.nr_ports > 1))
-1514                 kfree(ports);
-1515         return true;
-1516 }
---------------------
-
-Hope this helps.
-
-Best regards,
-Mirsad Todorovac
+-- 
+tejun
 
