@@ -1,35 +1,49 @@
-Return-Path: <linux-kernel+bounces-257303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC15E937835
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:16:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94011937837
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:17:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B3541C2151A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:16:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49C721F22239
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A6713F435;
-	Fri, 19 Jul 2024 13:16:00 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A55513C67D;
+	Fri, 19 Jul 2024 13:17:07 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B43713D53F;
-	Fri, 19 Jul 2024 13:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FE624211
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 13:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721394959; cv=none; b=on/YuuIrCGg5df3ViR/I9MvKmYuX03SFGvXNFmLWB4lqXGxuw+AVih7Pfwr61cMl0Ah3C+BNf7XFZtX3ATMd3v1nRbd4il/tI/iv/V3nby6XXtihsUNMb+c9725eb1DvUerv+wfBzJyivIq1BEhBPmoXysggbdwOXIDJnOT/kME=
+	t=1721395027; cv=none; b=BSNQZ5k7BmCQY6vGb4qH6ND4OHKma4uLilCu45tFkPymSWNzHwljtDjdOhBBzZmnPiiv++/GG7cZ+kQuQvgl40EM8cpCO7kiDey12zclCFIkkb9bm4glpSc9g8WF6z/ySqpV0greWBiw0TjD9QhL5zljMH76wIcmPyqfmOoPAto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721394959; c=relaxed/simple;
-	bh=rOUgxd8Uy6crBySTQi2YIVxdHp1OO++OYTAj1UApaR4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fEgMJJsPw9tcZ0E2bXP6ksvMBCcYd6Sg3ud6ionOXPThl9naK7hHNSi+XGUhGDsWZ3VNev2AVkTuqrdi6D1/c9A8C+nBFhvmGV6dpfTLoRBvJi8A1RxlDfpNLXT8hBs6/SFBmd96kQFiPnUqBS/P/NoDf8C536WJYXwbK61UiLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FE79C32782;
-	Fri, 19 Jul 2024 13:15:57 +0000 (UTC)
-Message-ID: <91c2843f-b8e9-42cb-b4e9-fe7b13df9f53@xs4all.nl>
-Date: Fri, 19 Jul 2024 15:15:56 +0200
+	s=arc-20240116; t=1721395027; c=relaxed/simple;
+	bh=6Yf1a4CqCvgyHibq+QJ66enVOigVRsT4lUW7P+j1EnE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=bgWM9h4BOg7Daw3W1qQKkCfiTtrXKT0CNteqLHBInlIH7/xk1xGoM4cfKQmGnu5wMhi9wr5K5UoICSTo0soCKU8l35bWMB+Iw+YpGgAgBs3hdhVCn1Sf7oRVTbEyWEQacbxWO7WPIuayFH+NJAYHLeuDc/KxiNFzCXxL2BCbTbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav412.sakura.ne.jp (fsav412.sakura.ne.jp [133.242.250.111])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 46JDH2Fn077284;
+	Fri, 19 Jul 2024 22:17:02 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav412.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav412.sakura.ne.jp);
+ Fri, 19 Jul 2024 22:17:02 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav412.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 46JDH1Qj077278
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 19 Jul 2024 22:17:01 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <94c1499a-2325-4bbf-b7bc-04a1e9090488@I-love.SAKURA.ne.jp>
+Date: Fri, 19 Jul 2024 22:17:01 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -37,169 +51,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] media: videodev2: Add flags to unconditionnaly
- enumerate pixels formats
-To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, mchehab@kernel.org,
- ezequiel@vanguardiasur.com.ar
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com
-References: <20240717131430.159727-1-benjamin.gaignard@collabora.com>
- <20240717131430.159727-2-benjamin.gaignard@collabora.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <20240717131430.159727-2-benjamin.gaignard@collabora.com>
+Subject: [PATCH (repost)] sched/core: defer printk() while rq lock is held
+To: syzbot <syzbot+18cfb7f63482af8641df@syzkaller.appspotmail.com>,
+        syzkaller-bugs@googlegroups.com, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+References: <0000000000008881c5061d28e041@google.com>
+Content-Language: en-US
+Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, mhiramat@kernel.org,
+        netdev@vger.kernel.org, andrii@kernel.org, ast@kernel.org,
+        bpf@vger.kernel.org, daniel@iogearbox.net,
+        Steven Rostedt <rostedt@goodmis.org>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <0000000000008881c5061d28e041@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/07/2024 15:14, Benjamin Gaignard wrote:
-> Add new flags to enumerate all pixels formats when calling VIDIOC_ENUM_FMT ioctl.
-> When this V4L2_FMT_FLAG_ENUM_ALL_FORMATS flag is set drivers must
-> ignore the configuration and return the hardware supported pixel
-> formats for the specified queue.
-> To distinguish this particular enumeration case V4L2_FMT_FLAG_ALL_FORMATS
-> flag must be set by the drivers to highlight support of this feature
-> to user space applications.
-> This will permit to discover which pixel formats are supported
-> without setting codec-specific information so userland can more easily
-> know if the driver suits its needs well.
-> The main target are stateless decoders so update the documentation
-> about how to use this flag.
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-> ---
-> changes in version 4:
-> - Explicitly document that the new flags are targeting mem2mem devices.
-> 
->  .../userspace-api/media/v4l/dev-stateless-decoder.rst |  6 ++++++
->  .../userspace-api/media/v4l/vidioc-enum-fmt.rst       | 11 +++++++++++
->  .../userspace-api/media/videodev2.h.rst.exceptions    |  2 ++
->  drivers/media/v4l2-core/v4l2-ioctl.c                  |  3 +++
->  include/uapi/linux/videodev2.h                        |  2 ++
->  5 files changed, 24 insertions(+)
-> 
-> diff --git a/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst b/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst
-> index 35ed05f2695e..b0b657de910d 100644
-> --- a/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst
-> +++ b/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst
-> @@ -58,6 +58,12 @@ Querying capabilities
->       default values for these controls being used, and a returned set of formats
->       that may not be usable for the media the client is trying to decode.
->  
-> +   * If the ``V4L2_FMT_FLAG_ENUM_ALL_FORMATS`` flag is set the driver must enumerate
-> +     all the supported formats without taking care of codec-dependent controls
-> +     set on the ``OUTPUT`` queue. To indicate that the driver has take care of this
-> +     flag it must set ``V4L2_FMT_FLAG_ALL_FORMATS`` flag for each format while
-> +     enumerating.
-> +
->  3. The client may use :c:func:`VIDIOC_ENUM_FRAMESIZES` to detect supported
->     resolutions for a given format, passing desired pixel format in
->     :c:type:`v4l2_frmsizeenum`'s ``pixel_format``.
-> diff --git a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
-> index 3adb3d205531..15bc2f59c05a 100644
-> --- a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
-> +++ b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
-> @@ -234,6 +234,17 @@ the ``mbus_code`` field is handled differently:
->  	valid. The buffer consists of ``height`` lines, each having ``width``
->  	Data Units of data and the offset (in bytes) between the beginning of
->  	each two consecutive lines is ``bytesperline``.
-> +    * - ``V4L2_FMT_FLAG_ENUM_ALL_FORMATS``
-> +      - 0x0400
-> +      - Set by userland applications to enumerate all possible pixel formats
-> +        without taking care of any OUTPUT or CAPTURE queue configuration.
-> +        This flag is relevant only for mem2mem devices.
-> +    * - ``V4L2_FMT_FLAG_ALL_FORMATS``
-> +      - 0x0800
-> +      - Set by the driver to indicated that format have been enumerated because
-> +        :ref:`V4L2_FMT_FLAG_ENUM_ALL_FORMATS <v4l2-pix-fmt-flag-set-csc>` has
-> +        been set by the userland application.
-> +        This flag is relevant only for mem2mem devices.
->  
->  Return Value
->  ============
-> diff --git a/Documentation/userspace-api/media/videodev2.h.rst.exceptions b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
-> index bdc628e8c1d6..7a3a1e9dc055 100644
-> --- a/Documentation/userspace-api/media/videodev2.h.rst.exceptions
-> +++ b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
-> @@ -216,6 +216,8 @@ replace define V4L2_FMT_FLAG_CSC_YCBCR_ENC fmtdesc-flags
->  replace define V4L2_FMT_FLAG_CSC_HSV_ENC fmtdesc-flags
->  replace define V4L2_FMT_FLAG_CSC_QUANTIZATION fmtdesc-flags
->  replace define V4L2_FMT_FLAG_META_LINE_BASED fmtdesc-flags
-> +replace define V4L2_FMT_FLAG_ENUM_ALL_FORMATS fmtdesc-flags
-> +replace define V4L2_FMT_FLAG_ALL_FORMATS fmtdesc-flags
->  
->  # V4L2 timecode types
->  replace define V4L2_TC_TYPE_24FPS timecode-type
-> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-> index 4c76d17b4629..5785a98b6ba2 100644
-> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
-> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-> @@ -1569,6 +1569,7 @@ static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
->  	int ret = check_fmt(file, p->type);
->  	u32 mbus_code;
->  	u32 cap_mask;
-> +	u32 flags;
->  
->  	if (ret)
->  		return ret;
-> @@ -1578,8 +1579,10 @@ static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
->  		p->mbus_code = 0;
->  
->  	mbus_code = p->mbus_code;
-> +	flags = p->flags & V4L2_FMT_FLAG_ENUM_ALL_FORMATS;
->  	memset_after(p, 0, type);
->  	p->mbus_code = mbus_code;
-> +	p->flags = flags;
->  
->  	switch (p->type) {
->  	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index fe6b67e83751..b6a5da79ba21 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -886,6 +886,8 @@ struct v4l2_fmtdesc {
->  #define V4L2_FMT_FLAG_CSC_HSV_ENC		V4L2_FMT_FLAG_CSC_YCBCR_ENC
->  #define V4L2_FMT_FLAG_CSC_QUANTIZATION		0x0100
->  #define V4L2_FMT_FLAG_META_LINE_BASED		0x0200
-> +#define V4L2_FMT_FLAG_ENUM_ALL_FORMATS		0x0400
-> +#define V4L2_FMT_FLAG_ALL_FORMATS		0x0800
+syzbot is reporting circular locking dependency inside __bpf_prog_run()
+when trace_sched_switch() hook is called from __schedule(), for fault
+injection calls printk() despite rq lock is already held.
 
-For reasons mentioned earlier, you cannot make the flags field an input to the
-driver, that will almost certainly break some applications that do not zero
-the flags field today, since they expect it to be set by the driver.
+Since any debugging functionality such as lockdep, fault injection,
+KASAN/KCSAN/KMSAN etc. might call printk(), guard the whole section
+between raw_spin_rq_{lock,lock_nested,trylock}() and raw_spin_rq_unlock()
+using printk_deferred_{enter,exit}().
 
-What probably will work is to add a flag to the index field: this would be
-similar to what I do in VIDIOC_QUERYCTRL where you can OR the id field with
-V4L2_CTRL_FLAG_NEXT_CTRL to modify the behavior.
+Reported-by: syzbot <syzbot+18cfb7f63482af8641df@syzkaller.appspotmail.com>
+Closes: https://syzkaller.appspot.com/bug?extid=18cfb7f63482af8641df
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+This is a repost of https://lkml.kernel.org/r/b55e5f24-01ad-4a3d-94dc-e8a6bc15ac42@I-love.SAKURA.ne.jp .
+Scheduler developers, can you agree with addressing this problem at locations where rq lock is held?
 
-It is perfectly fine to use the top bits of the index for this.
+ kernel/sched/core.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Drivers that do not support this will just fail with EINVAL, and drivers that
-do support this will return a proper format.
-
-Applications can easily test support for this by just calling ENUM_FMT with 0
-ORed with the new flag: if it is supported, then it will return 0, otherwise
--EINVAL.
-
-With this scheme I think you can also drop the proposed V4L2_FMT_FLAG_ALL_FORMATS
-flag.
-
-But as I mentioned in my reply to the cover letter of this series, I am not
-convinced we really need this, and if we do, then I am not convinced about
-the name of the flag.
-
-And I would also like to know if such a feature can be used by m2m drivers
-that are not codecs (e.g. scalers, csc converters), and if that would impact
-the name/description of the flag.
-
-It is currently very specific for decoders, but I prefer to see a more general
-solution, not just for one specific corner case.
-
-Regards,
-
-	Hans
-
->  
->  	/* Frame Size and frame rate enumeration */
->  /*
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index bcf2c4cc0522..134f5196b9c4 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -559,6 +559,7 @@ void raw_spin_rq_lock_nested(struct rq *rq, int subclass)
+ 		raw_spin_lock_nested(&rq->__lock, subclass);
+ 		/* preempt_count *MUST* be > 1 */
+ 		preempt_enable_no_resched();
++		printk_deferred_enter();
+ 		return;
+ 	}
+ 
+@@ -568,6 +569,7 @@ void raw_spin_rq_lock_nested(struct rq *rq, int subclass)
+ 		if (likely(lock == __rq_lockp(rq))) {
+ 			/* preempt_count *MUST* be > 1 */
+ 			preempt_enable_no_resched();
++			printk_deferred_enter();
+ 			return;
+ 		}
+ 		raw_spin_unlock(lock);
+@@ -584,6 +586,8 @@ bool raw_spin_rq_trylock(struct rq *rq)
+ 	if (sched_core_disabled()) {
+ 		ret = raw_spin_trylock(&rq->__lock);
+ 		preempt_enable();
++		if (ret)
++			printk_deferred_enter();
+ 		return ret;
+ 	}
+ 
+@@ -592,6 +596,8 @@ bool raw_spin_rq_trylock(struct rq *rq)
+ 		ret = raw_spin_trylock(lock);
+ 		if (!ret || (likely(lock == __rq_lockp(rq)))) {
+ 			preempt_enable();
++			if (ret)
++				printk_deferred_enter();
+ 			return ret;
+ 		}
+ 		raw_spin_unlock(lock);
+@@ -600,6 +606,7 @@ bool raw_spin_rq_trylock(struct rq *rq)
+ 
+ void raw_spin_rq_unlock(struct rq *rq)
+ {
++	printk_deferred_exit();
+ 	raw_spin_unlock(rq_lockp(rq));
+ }
+ 
+-- 
+2.43.0
 
 
