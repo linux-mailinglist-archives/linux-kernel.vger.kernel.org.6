@@ -1,146 +1,181 @@
-Return-Path: <linux-kernel+bounces-257276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 448C49377BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:28:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 447539377C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:32:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E319B1F22747
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:27:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1AF11F22189
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED9B1339B1;
-	Fri, 19 Jul 2024 12:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NupWd8eo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9606313AD22;
+	Fri, 19 Jul 2024 12:31:59 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC7F5F876;
-	Fri, 19 Jul 2024 12:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAA7127B56;
+	Fri, 19 Jul 2024 12:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721392073; cv=none; b=A9qNhE5iOaku568a5JygnydSB/jVWOT7Ww8xkdZerBG5lmqTyloSsq/R9xI3IDz/CIy+uyp7rex4GlKyNH0Jszq/yx/hWLGFGi6qQ2/LNZY9FgbVYHe24t0NPN5oF6wwd5WrlswLSAuoiNfoZs78LkaFkWmFdXLm4/B2pN+8g7I=
+	t=1721392319; cv=none; b=qM5x4eJCgPlLLSNMSbrq02o3l5i6QFhNP58HUu3cBJMGFYcptaetBLB77zgBOeZYCGnQBewQ6R3XpBuzwQZnWcojGIkXQakkbRia9cKxL4kfoZrQJnAsbe/MiucSu2eDKbLiIviLh1lbhfNU1rDwA8oF8HtBOK2oiUL2ZiP2pms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721392073; c=relaxed/simple;
-	bh=mwqPKZVN/GAHYJhSrkcOfprKnitWhdw76fnKlbvm3ow=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=E4snTaU9+YFsHWCbLg+Y5lOgbmlz0bB6IDhqTrWfE9mJOA28ygkwcR1lcR2w79c6ddVbIn1jYbfE0wgAlipTAYbn3cQK97gX77W6je1wNosrmpUcpf4K+dJ/uBKiJDAwFL5XdBgnraFXtTQvb0+dzAaALrreI7FHutxU12gHfwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NupWd8eo; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721392072; x=1752928072;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=mwqPKZVN/GAHYJhSrkcOfprKnitWhdw76fnKlbvm3ow=;
-  b=NupWd8eo50EcJ/RG1EIn/lptQ0vAabktUVrQzH5nI6f6zSqJKMeso5cN
-   gMNOsTx/ptG7/PQRO/Oo+dOiDATlqfZeI7/eWbkPuj1xa/DPmNkTZAxbC
-   4T1j3ZuZLoXeMPq/jih2MNgGCKAS4wj/EJFbRbvt0p6KXf+dNpc6inb+B
-   81TrO6CWhCetNTqfoNW+1JibY3QNd4uJTWmiScP2zst5/UR3+kO/L8Mt3
-   5N7qZA1dnT5mSCOpNzc7Q7a8YcMmFquaUT+8ZlvF4yBy2MJT0xb/N/0tD
-   2q+OtrNMrc0VGCtoC3nr3OKCpWoJbJHNKUahoERAKDrvpSzjgRmvC8hAR
-   Q==;
-X-CSE-ConnectionGUID: MxCQgFAwSOSXRAUHYh6//A==
-X-CSE-MsgGUID: YmBE9xEwT86QB39sP36KAw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11138"; a="41524364"
-X-IronPort-AV: E=Sophos;i="6.09,220,1716274800"; 
-   d="scan'208";a="41524364"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2024 05:27:51 -0700
-X-CSE-ConnectionGUID: GEn9wxRGRm2VrVs86mk26w==
-X-CSE-MsgGUID: 9HRGTw8eRHKg69qjeGjCKw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,220,1716274800"; 
-   d="scan'208";a="50789648"
-Received: from kkgame1-x299-aorus-gaming-3-pro.itwn.intel.com ([10.225.75.93])
-  by fmviesa006.fm.intel.com with ESMTP; 19 Jul 2024 05:27:49 -0700
-From: Kane Chen <kane.chen@intel.com>
-To: kane.chen@intel.com,
-	linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	ilpo.jarvinen@linux.intel.com
-Subject: [PATCH 1/1] platform/x86/intel/pmc: Show live substate requirements
-Date: Fri, 19 Jul 2024 20:28:07 +0800
-Message-Id: <20240719122807.3853292-1-kane.chen@intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1721392319; c=relaxed/simple;
+	bh=WMBUqQCYMwP3xZyQaOz6+ylqD28wFZLdaxROs3OTmQk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=OZeZAeMPbzXNojFjj27pSPkrkc7DpqAmJHjmKCzsfVmTcNgMM78nNhnMfyCpc2aU01PXhrGXLxLH8jY5lO+3OHtPIVyi3Z8E8cnmyOo1yNtfsjNkA1xJJispSCfcaqoim2OucGITAxJr2+TLPS5BA3kkpriAqKmcPUY8bvInBjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.220.45] (g45.guest.molgen.mpg.de [141.14.220.45])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 3CA0461E5FE01;
+	Fri, 19 Jul 2024 14:31:33 +0200 (CEST)
+Message-ID: <518cd6b4-68a8-4895-b8fc-97d4dae1ddc4@molgen.mpg.de>
+Date: Fri, 19 Jul 2024 14:31:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Linux logs error `Failed to query (GET_CUR) UVC control X on unit
+ Y: -75 (exp. 1).` (75 == EOVERFLOW?)
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Greg KH <gregkh@linuxfoundation.org>, Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+ linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ regressions@lists.linux.dev
+References: <af462e20-d158-4c5c-8dae-ce48f4192087@molgen.mpg.de>
+ <2024071939-wrought-repackage-f3c5@gregkh>
+ <20240719093819.GE12656@pendragon.ideasonboard.com>
+ <2a2cac3c-f9cd-4b20-ae53-9e6963c7889f@molgen.mpg.de>
+Content-Language: en-US
+In-Reply-To: <2a2cac3c-f9cd-4b20-ae53-9e6963c7889f@molgen.mpg.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-While debugging runtime s0ix, we do need to check which required IPs
-are not power gated. This patch adds code to show live substate status
-vs requirements in sys/kernel/debug/pmc_core/substate_requirements to
-help runtime s0ix debug.
+#regzbot ^introduced: b2b5fcb1c5b645d5177ef3e3f41c7a706fc2688d
 
-Signed-off-by: Kane Chen <kane.chen@intel.com>
----
- drivers/platform/x86/intel/pmc/core.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Dear Laurent, dear Greg, dear Ricardo,
 
-diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
-index 2ad2f8753e5d4..b93ecc5169745 100644
---- a/drivers/platform/x86/intel/pmc/core.c
-+++ b/drivers/platform/x86/intel/pmc/core.c
-@@ -791,13 +791,15 @@ static void pmc_core_substate_req_header_show(struct seq_file *s, int pmc_index)
- 	pmc_for_each_mode(i, mode, pmcdev)
- 		seq_printf(s, " %9s |", pmc_lpm_modes[mode]);
- 
--	seq_printf(s, " %9s |\n", "Status");
-+	seq_printf(s, " %9s |", "Status");
-+	seq_printf(s, " %11s |\n", "Live Status");
- }
- 
- static int pmc_core_substate_req_regs_show(struct seq_file *s, void *unused)
- {
- 	struct pmc_dev *pmcdev = s->private;
- 	u32 sts_offset;
-+	u32 sts_offset_live;
- 	u32 *lpm_req_regs;
- 	int num_maps, mp, pmc_index;
- 
-@@ -811,6 +813,7 @@ static int pmc_core_substate_req_regs_show(struct seq_file *s, void *unused)
- 		maps = pmc->map->lpm_sts;
- 		num_maps = pmc->map->lpm_num_maps;
- 		sts_offset = pmc->map->lpm_status_offset;
-+		sts_offset_live = pmc->map->lpm_live_status_offset;
- 		lpm_req_regs = pmc->lpm_req_regs;
- 
- 		/*
-@@ -828,6 +831,7 @@ static int pmc_core_substate_req_regs_show(struct seq_file *s, void *unused)
- 		for (mp = 0; mp < num_maps; mp++) {
- 			u32 req_mask = 0;
- 			u32 lpm_status;
-+			u32 lpm_status_live;
- 			const struct pmc_bit_map *map;
- 			int mode, idx, i, len = 32;
- 
-@@ -842,6 +846,9 @@ static int pmc_core_substate_req_regs_show(struct seq_file *s, void *unused)
- 			/* Get the last latched status for this map */
- 			lpm_status = pmc_core_reg_read(pmc, sts_offset + (mp * 4));
- 
-+			/* Get the runtime status for this map */
-+			lpm_status_live = pmc_core_reg_read(pmc, sts_offset_live + (mp * 4));
-+
- 			/*  Loop over elements in this map */
- 			map = maps[mp];
- 			for (i = 0; map[i].name && i < len; i++) {
-@@ -868,6 +875,9 @@ static int pmc_core_substate_req_regs_show(struct seq_file *s, void *unused)
- 				/* In Status column, show the last captured state of this agent */
- 				seq_printf(s, " %9s |", lpm_status & bit_mask ? "Yes" : " ");
- 
-+				/* In Live status column, show the live state of this agent */
-+				seq_printf(s, " %11s |", lpm_status_live & bit_mask ? "Yes" : " ");
-+
- 				seq_puts(s, "\n");
- 			}
- 		}
--- 
-2.34.1
 
+Am 19.07.24 um 13:33 schrieb Paul Menzel:
+
+
+> Am 19.07.24 um 11:38 schrieb Laurent Pinchart:
+>> (CC'ing Ricardo)
+>>
+>> On Fri, Jul 19, 2024 at 08:05:35AM +0200, Greg KH wrote:
+>>> On Fri, Jul 19, 2024 at 07:22:54AM +0200, Paul Menzel wrote:
+> 
+>>>> Today, starting the Intel Kaby Lake laptop Dell XPS 13 9360/0596KF, 
+>>>> BIOS
+>>>> 2.21.0 06/02/2022 with
+>>>>
+>>>>      Bus 001 Device 004: ID 0c45:670c Microdia Integrated Webcam HD
+>>>>
+>>>> Linux “6.11-rc0” (v6.10-8070-gcb273eb7c839) logged UVC errors:
+>>>
+>>> Does 6.10-final have the same issue?
+> 
+> No, it does not. Linux 6.10-04829-ge2f710f97f35 (Merge tag 'ata-6.11-rc1' of 
+> git://git.kernel.org/pub/scm/linux/kernel/git/libata/linux) does also 
+> not show this, and 6.10-rc3-00148-g8676a5e796fa (media: uvcvideo: Fix 
+> integer overflow calculating timestamp) neither.
+> 
+>>> If not, can you use 'git bisect' to track down the offending commit?
+> 
+> I am on it. I tried to pass the USB device through to a VM and try to 
+> reproduce there. Thank you for the comment, that reloading the module is 
+> (of course) also possible. That avoids rebooting the system.
+
+The hard way found commit:
+
+commit b2b5fcb1c5b645d5177ef3e3f41c7a706fc2688d
+Author: Ricardo Ribalda <ribalda@chromium.org>
+Date:   Mon Jun 10 23:09:54 2024 +0000
+
+     media: uvcvideo: Probe the PLF characteristics
+
+     The UVC 1.5 standard defines 4 values for the PLF control: Off, 50Hz,
+     60Hz and Auto. But it does not clearly define if all the values must be
+     implemented or not.
+
+     Instead of just using the UVC version to determine what the PLF control
+     can do, probe it.
+
+     Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+     Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+     Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+     Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+     Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
+
+Looking at it, it’s plausible as new `uvc_query_ctrl()` calls are added.
+
+>>> There have not been any USB changes in Linus's tree yet, but there have
+>>> been a bunch of media changes, so perhaps something in the uvc driver is
+>>> causing this?
+>>
+>> We've merged quite a few changes for the uvcvideo driver recently.
+>> Bisecting the problem would help greatly. It could also be helpful to
+>> set the uvcvideo module 'trace' parameter to 0xffff (e.g. add
+>> `uvcvideo.trace=0xffff` to the kernel command line, or unload and reload
+>> the uvcvideo module with the parameter set to 0xffff) and give us the
+>> additional messages printed to the kernel log.
+> 
+> ```
+> [   10.688580] usb 1-5: Adding mapping 'Brightness' to control 00000000-0000-0000-0000-000000000101/2
+> [   10.689134] usb 1-5: Failed to query (GET_CUR) UVC control 2 on unit 2: -75 (exp. 1).
+> [   10.689209] usb 1-5: Added control 00000000-0000-0000-0000-000000000101/3 to device 5 entity 2
+> [   10.691085] usb 1-5: Adding mapping 'Contrast' to control 00000000-0000-0000-0000-000000000101/3
+> [   10.691645] usb 1-5: Failed to query (GET_CUR) UVC control 3 on unit 2: -75 (exp. 1).
+> [   10.691709] usb 1-5: Added control 00000000-0000-0000-0000-000000000101/6 to device 5 entity 2
+> [   10.692729] usb 1-5: Adding mapping 'Hue' to control 00000000-0000-0000-0000-000000000101/6
+> [   10.693530] usb 1-5: Failed to query (GET_CUR) UVC control 6 on unit 2: -75 (exp. 1).
+> [   10.693604] usb 1-5: Added control 00000000-0000-0000-0000-000000000101/7 to device 5 entity 2
+> [   10.698164] usb 1-5: Adding mapping 'Saturation' to control 00000000-0000-0000-0000-000000000101/7
+> [   10.699621] usb 1-5: Failed to query (GET_CUR) UVC control 7 on unit 2: -75 (exp. 1).
+> [   10.699708] usb 1-5: Added control 00000000-0000-0000-0000-000000000101/8 to device 5 entity 2
+> [   10.700676] usb 1-5: Adding mapping 'Sharpness' to control 00000000-0000-0000-0000-000000000101/8
+> [   10.701263] usb 1-5: Failed to query (GET_CUR) UVC control 8 on unit 2: -75 (exp. 1).
+> [   10.701325] usb 1-5: Added control 00000000-0000-0000-0000-000000000101/9 to device 5 entity 2
+> [   10.702991] usb 1-5: Adding mapping 'Gamma' to control 00000000-0000-0000-0000-000000000101/9
+> [   10.705787] usb 1-5: Failed to query (GET_CUR) UVC control 9 on unit 2: -75 (exp. 1).
+> [   10.705860] usb 1-5: Added control 00000000-0000-0000-0000-000000000101/10 to device 5 entity 2
+> [   10.707036] usb 1-5: Adding mapping 'White Balance Temperature' to control 00000000-0000-0000-0000-000000000101/10
+> [   10.708098] usb 1-5: Failed to query (GET_CUR) UVC control 10 on unit 2: -75 (exp. 1).
+> [   10.708150] usb 1-5: Added control 00000000-0000-0000-0000-000000000101/1 to device 5 entity 2
+> [   10.709279] usb 1-5: Adding mapping 'Backlight Compensation' to control 00000000-0000-0000-0000-000000000101/1
+> [   10.710748] usb 1-5: Failed to query (GET_CUR) UVC control 1 on unit 2: -75 (exp. 1).
+> [   10.711147] usb 1-5: Added control 00000000-0000-0000-0000-000000000101/4 to device 5 entity 2
+> [   10.713670] usb 1-5: Adding mapping 'Gain' to control 00000000-0000-0000-0000-000000000101/4
+> [   10.714623] usb 1-5: Failed to query (GET_CUR) UVC control 4 on unit 2: -75 (exp. 1).
+> [   10.715104] usb 1-5: Added control 00000000-0000-0000-0000-000000000101/5 to device 5 entity 2
+> [   10.803567] usb 1-5: Adding mapping 'Power Line Frequency' to control 00000000-0000-0000-0000-000000000101/5
+> [   10.803573] usb 1-5: Added control 00000000-0000-0000-0000-000000000101/11 to device 5 entity 2
+> [   10.804683] usb 1-5: Adding mapping 'White Balance, Automatic' to control 00000000-0000-0000-0000-000000000101/11
+> ```
+> 
+> Full log attached.
+> 
+>> Could you also provide the output of `lsusb -v -d 0c45:670c` (running as
+>> root if possible) ?
+> 
+> Attached.
+
+
+Kind regards,
+
+Paul
+
+
+[1]: 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=b2b5fcb1c5b645d5177ef3e3f41c7a706fc2688d
 
