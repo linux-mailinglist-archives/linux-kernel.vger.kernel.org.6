@@ -1,142 +1,130 @@
-Return-Path: <linux-kernel+bounces-257620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 039A6937CBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:53:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19E53937CBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3471F1C2145B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:53:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B938F1F21BF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BFC1487DF;
-	Fri, 19 Jul 2024 18:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276C8148307;
+	Fri, 19 Jul 2024 18:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UqiHl+bL"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yDYLUd0p"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08351148316;
-	Fri, 19 Jul 2024 18:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080461474C8
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 18:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721415185; cv=none; b=aUBJJD01rJqGNIsRnsrhXH9opnCfaAGzTG2ocajCYfeaYCyVDnzWZ5gcZeqeR17GX7Tm/l6LFDexV/9juDnWtbyrrdb6hJZ/B/lJSX7f7gYRBh19UuqOZsy5PKIMGO574mGXHSj3nu9BTFtPaB3nYgZmuv9TS0inzTWNf55+FM4=
+	t=1721415218; cv=none; b=U7MAQjxsD4/i6tJravkEPCkUYqW/XicocsxxUJfEcEmK0LcXkdXkXDJSxX43i4ga0iB9lLcpgzr6zB5gMhVN2DDszfY3KmzlJqwMowSfi0+8L6Sc3tEPJcFV9bPuy0uCmtolSoUWmxz7zMPm9NcVtFkM9X2xnW2qX343j18YRCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721415185; c=relaxed/simple;
-	bh=sA2Te0wySkcv9R67I+V+nrhPN+SJSYf6KzI4u6YKWMc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pSWnt8c1psxrBKMe2Hi/QeMDZwEWGd0e1MwNj5O1EZ1r8Q+CmZi3WQdEZIm3GeFnIcAlba4xkIFzkMzKABEgfHnHQ/ZusaTBHtVmtN7xuF/84eFERUq3qEE1b8bVCjFT/+EVPO3fH0K034RHZ3DNStJVe1V1AEKCHuVoWGc0PMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UqiHl+bL; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fc66fc35f2so14269685ad.0;
-        Fri, 19 Jul 2024 11:53:03 -0700 (PDT)
+	s=arc-20240116; t=1721415218; c=relaxed/simple;
+	bh=+kLJ84rOPDfadAIu/tPqOjfvEHdaowyp5cRy2Wb9NJM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=obhr7B/+VkeWGC1f7Ga1Zc9wRWrCY6OF4XTBdGu0iVpeD7zQeUnuRDI1W5lWFCqTrCV/2hoofV+XgekkZKRt/GDX5LsWI2Tx31jnDJ//Q8tLknU5iCWG9wffiaq0yZaD4eop0map1R3o7FqdyMOw7P2tLXuraUydNAd1WUryw7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yDYLUd0p; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-65026e6285eso56373747b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 11:53:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721415183; x=1722019983; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tJXJPAJ6qeai6g7MHlvto65MwlAA7XvrgpR3SSHoifM=;
-        b=UqiHl+bLNBbx1oXVtx3l1ogpL1HQfPzFS3tTuaLZntWlglddV8CASOGxqOFXVNX1sg
-         K5UdMKck9Ct1xcn9E/KMgjlytf5PWsAwdMa4S7alXpTzReRWsffuxo4MINh6Utr3p/T1
-         i/At5IIkSDifnhFywHmgxottXB3Gu/0hYtDugvdKiM2wE3qLG7rZqKsMMWeh6V1l55AX
-         TYSB5vhLrTDxjc+N3Qe+tkuwXeQwWFRu3VbFGNK3kmSsoFaQiCH8LV2nRpaSU4bT4v3T
-         z7fyWxgmmbr8t7uXRsUesmOPPV4fyhqh/fInkaXd1zxvuQqIXY7aHXR4M8cuPuQW9CHs
-         5Ybg==
+        d=google.com; s=20230601; t=1721415216; x=1722020016; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/YfiZYPFH3Xc3TdmGdnSOvHRo3erOgTPXdxqXA3ySl0=;
+        b=yDYLUd0pmCS0b8xW2unoongoql/ETAdtFzXazCmoklyadgMOXqXn/QnU17DWVodKlP
+         3VaQ/+pcyaQCysaAhWY8Np8oLDBoIQSpJhrpFwlSBJppS2PUvOVYn8DHYlKzIXQvLQ2F
+         rDRA25BBvBgNNO3+kFzbZ0HvYclm0e7Q8xfNbb/z9mFMkCK7kyIhrUlc6ZBNW5IxFwVG
+         QegTpVHP1YmKS9ev3mXEG7KXQbJrWiwXHeE3ro1GaXRCCyKTrbj95nClzlROKoCxS5Yf
+         xLIO8mojKVOvkAAkpPYO5FD75bsraKkHK072BSUgICQWkmuJjFXNxbsTCspPB8SUcz06
+         NL0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721415183; x=1722019983;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tJXJPAJ6qeai6g7MHlvto65MwlAA7XvrgpR3SSHoifM=;
-        b=UTVda26xclpyLa23VTGTB0K2l3qFXGxoJ4evbS/5KjcmiZVxTXwcsgr/If9TkZd0HK
-         tuVB7N2PGCZ8LbnoYhuZUoyaXO4Abp6qJIdyMz5lhHnmKylfcLTAa30Bf0bCfig8u8U7
-         JfGhLS1OiqYdBsX1wl/mav6JDLN5W96KJQzR3iWHtGlkq+PRRhnQjxFernlsU9BfUziS
-         M0wtEGmbeUieZld2MgjeinSrukm5GqLzGjFUuD8yY3UAG1rF+oSXavEEGS2nHVoP+zVG
-         nVuHzAQ5TnD5PapHgYW7lUKJAOusBguSzAK97+6E6denNUPAVl9NzLDwgVAY9y4qNqXG
-         GCZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXqdoa0v/zoLLVwn0tZtTJAPwKvtQQSejSwc/oOjirDwONUmpwSEoV1eBHRojRqxNwb/G7g8+dswJBGYaMipWTgyU4d5BQq5iiT798dmExWUA5Q7ziRJupljWzmJz73DSwWJycY8i9luA==
-X-Gm-Message-State: AOJu0Yw7bq5VYtk/DJlNP72bK6O0B07Uu0GG/z0Ba5WLDRr1iUPPpwFj
-	9mvqRx4FJKHEpAbL2YCsIw0Nhn6O6ktW5E9byhI46g8pL3rCtxI9X/WaHg==
-X-Google-Smtp-Source: AGHT+IGVarVLbfPkNwMnpHQvy8AxhW+eRxt1CZVPGxTIrFpjhflM9x36Mcrv04X8vdb8+1KLyhcKUQ==
-X-Received: by 2002:a17:902:eb90:b0:1fb:129e:69fc with SMTP id d9443c01a7336-1fc5b5b84c5mr83286585ad.16.1721415182608;
-        Fri, 19 Jul 2024 11:53:02 -0700 (PDT)
-Received: from localhost ([2a00:79e1:2e00:1301:3279:d3cd:5dde:c799])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f48875esm7921215ad.287.2024.07.19.11.53.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 11:53:02 -0700 (PDT)
-From: Rob Clark <robdclark@gmail.com>
-To: linux-arm-msm@vger.kernel.org
-Cc: Doug Anderson <dianders@chromium.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Rob Clark <robdclark@chromium.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 2/2] arm64: dts: qcom: x1e80100-yoga: Update panel bindings
-Date: Fri, 19 Jul 2024 11:52:50 -0700
-Message-ID: <20240719185250.4877-2-robdclark@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240719185250.4877-1-robdclark@gmail.com>
-References: <20240719185250.4877-1-robdclark@gmail.com>
+        d=1e100.net; s=20230601; t=1721415216; x=1722020016;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/YfiZYPFH3Xc3TdmGdnSOvHRo3erOgTPXdxqXA3ySl0=;
+        b=MNYp4W6pn68KL9uIfzc7+6wpW6EHDzaiXqYF3MCkyGP8/Vvw/Ub+Ub6SteMZM6O4kC
+         DeHmakCDKKB4vS6OvmzuVsdcuaxD92bVwzOQYKeF9H74+js3GOzMv2uEud3TMzm+ENY3
+         GIYmxV9SglmcC58Uc17PLGobmnFSBqSl4kHcjs7pMmOFblRdm6BKCZfupkq3BbHDDeKP
+         +iBOTeg6r8MxK6D00lU+p5rzt5hBpb8lrkaUxzs5tr4dS4lvHPVRm8jfVq6z89Cn0K1I
+         IJdSoNziJsyWPLPj9V7pXtIXQs4ZZX0KibpOtnZaf3SC2fwKcPFwlKx9PFxt21d5Jez7
+         V3cA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsyhcNQYBOu7wyu8cjKLvupuANpcpuwi7fX9icFBZLzkCNnSSC8CnbPgUI39Kj9o98V4+pVYSlwV7DHzvxyfArSnplDLPkXX9xjfsv
+X-Gm-Message-State: AOJu0Yx15Ajj6/SiyI0lPI0OPleREwYcG1kG0hsHemUHXLSSK/4N9e6w
+	bfLjlDjXClDMPK/gFczJhkvIINAQspoLFO3Z0ykVpHwZ0b32HalP9qcThcZuB1sbRtOvSG8zuUy
+	lHA==
+X-Google-Smtp-Source: AGHT+IFF/pVsJU+8/j16/MKkG1plwBz2/9GAQe2lj6JtMKqZQMhQL6o1VVB1Jy4v/044+B+FL3kjuTOTck4=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:298:b0:64a:d8f6:b9ed with SMTP id
+ 00721157ae682-66a66e0debbmr143307b3.9.1721415215999; Fri, 19 Jul 2024
+ 11:53:35 -0700 (PDT)
+Date: Fri, 19 Jul 2024 11:53:34 -0700
+In-Reply-To: <b44227c5-5af6-4243-8ed9-2b8cdc0e5325@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <b44227c5-5af6-4243-8ed9-2b8cdc0e5325@gmail.com>
+Message-ID: <Zpq2Lqd5nFnA0VO-@google.com>
+Subject: Re: [BUG] =?utf-8?Q?arch=2Fx86=2Fkvm=2Fvmx?= =?utf-8?Q?=2Fvmx=5Fonhyperv=2Eh=3A109=3A36=3A_error=3A_dereference_of_NUL?=
+ =?utf-8?B?TCDigJgw4oCZ?=
+From: Sean Christopherson <seanjc@google.com>
+To: Mirsad Todorovac <mtodorovac69@gmail.com>
+Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, 
+	Vitaly Kuznetsov <vkuznets@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
 
-From: Rob Clark <robdclark@chromium.org>
+On Fri, Jul 19, 2024, Mirsad Todorovac wrote:
+> Hi, all!
+> 
+> Here is another potential NULL pointer dereference in kvm subsystem of linux
+> stable vanilla 6.10, as GCC 12.3.0 complains.
+> 
+> (Please don't throw stuff at me, I think this is the last one for today :-)
+> 
+> arch/x86/include/asm/mshyperv.h
+> -------------------------------
+>   242 static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
+>   243 {
+>   244         if (!hv_vp_assist_page)
+>   245                 return NULL;
+>   246 
+>   247         return hv_vp_assist_page[cpu];
+>   248 }
+> 
+> arch/x86/kvm/vmx/vmx_onhyperv.h
+> -------------------------------
+>   102 static inline void evmcs_load(u64 phys_addr)
+>   103 {
+>   104         struct hv_vp_assist_page *vp_ap =
+>   105                 hv_get_vp_assist_page(smp_processor_id());
+>   106 
+>   107         if (current_evmcs->hv_enlightenments_control.nested_flush_hypercall)
+>   108                 vp_ap->nested_control.features.directhypercall = 1;
+>   109         vp_ap->current_nested_vmcs = phys_addr;
+>   110         vp_ap->enlighten_vmentry = 1;
+>   111 }
+> 
+> Now, this one is simple:
 
-Use the correct panel compatible, and wire up enable-gpio.  It is wired
-up in the same way as the x1e80100-crd.
+Nope :-)
 
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
- .../boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts   | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+> hv_vp_assist_page(cpu) can return NULL, and in line 104 it is assigned to
+> wp_ap, which is dereferenced in lines 108, 109, and 110, which is not checked
+> against returning NULL by hv_vp_assist_page().
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-index f569f0fbd1fc..28a6ea5a24fd 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-@@ -592,9 +592,13 @@ &mdss_dp3 {
- 
- 	aux-bus {
- 		panel {
--			compatible = "edp-panel";
-+			compatible = "samsung,atna45dc02", "samsung,atna33xc20";
-+			enable-gpios = <&pmc8380_3_gpios 4 GPIO_ACTIVE_HIGH>;
- 			power-supply = <&vreg_edp_3p3>;
- 
-+			pinctrl-0 = <&edp_bl_en>;
-+			pinctrl-names = "default";
-+
- 			port {
- 				edp_panel_in: endpoint {
- 					remote-endpoint = <&mdss_dp3_out>;
-@@ -663,6 +667,13 @@ &pcie6a_phy {
- 	status = "okay";
- };
- 
-+&pmc8380_3_gpios {
-+	edp_bl_en: edp-bl-en-state {
-+		pins = "gpio4";
-+		function = "normal";
-+	};
-+};
-+
- &qupv3_0 {
- 	status = "okay";
- };
--- 
-2.45.2
-
+When enabling eVMCS, and when onlining a CPU with eVMCS enabled, KVM verifies
+that every CPU has a valid hv_vp_assist_page() and either aborts enabling eVMCS
+or rejects CPU onlining.  So very subtly, it's impossible for hv_vp_assist_page()
+to be NULL at evmcs_load().
 
