@@ -1,205 +1,110 @@
-Return-Path: <linux-kernel+bounces-257533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A754937B7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:21:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A4F4937B85
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:22:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 282CD1F2284C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:21:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B60021C21BE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7E0146A6C;
-	Fri, 19 Jul 2024 17:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE1B146A98;
+	Fri, 19 Jul 2024 17:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2CirpjcA"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LqT3KPww"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D1913AD22
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 17:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB58413A276;
+	Fri, 19 Jul 2024 17:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721409664; cv=none; b=ijtKduP1g4A/Qusgd9qH23K71vFprqEvJ/cVwpuZyZBPYIaStfV/WjeYJbiZnef0EmxNNVKQatSa4n4RUemRMNGcgcL0cgoCT+8pUqzBvEGemb62MT2sgYpb6ada7Ksqg06wwfFre3ynbdOaqE65TY/uPdk8VUFES+8DBQpNVIc=
+	t=1721409741; cv=none; b=c8hPV0gUXtxnaQAx9VY+gtKfj942D03Ai1XuNf2eCfSbsn883xDQW5DrL6qkfA03ep1TMLitKdoZKe/fdcQkFqpGxlb6a6IYEBBi53rPL3CocZbiN/UvIYj26w1utjKs316PnUfh71QFh2ordEWLnTGDO1aEGgl7ECWsI/xY6Y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721409664; c=relaxed/simple;
-	bh=osByLjgR/fd6V0XvMDC5JBZP/STCt/rb3qDyiTeNnK4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LeCjkUUfCXtfUhDDMBoNUV4L23wNFfEzmBWdsSiDFQ8KHqqXUi9gR5fhlw8gC4cDf1imtWLvr90qwdpfo/gYuQybo4LQZDXwqYMdjc4OygQAPgADqcs6GBHFxKBY81TN6sgLcsLcNtOomFdowgQ2vdW+6ed1qdfk6aqsQEB4S28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2CirpjcA; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-650fccfd1dfso52301227b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 10:21:02 -0700 (PDT)
+	s=arc-20240116; t=1721409741; c=relaxed/simple;
+	bh=75TilRr4eqURd4BYhRdC+4i5DBcTEC8oQUDTsnw8sMo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BpQBxBC1clNu8UHoaXBcdkHcRPaIbRCaR25FJWjYQObHR0j9VPRrpUCUFMikg6H3t/ZKEGXnjghGKpR9spgyjdhnMp/LyHbB6hTaYixr+T9t0byE2B6uTA59fh5z9aosJDzVn2q65repY9Kwoh5jx5I7nnAo2hzQoVXmRaWkVv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LqT3KPww; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70af5fbf0d5so814548b3a.1;
+        Fri, 19 Jul 2024 10:22:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721409662; x=1722014462; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1721409739; x=1722014539; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=269jqe/jzjyYpBV+uTwg3PKS+HXAo3qpFrECBrOEtQ8=;
-        b=2CirpjcAoni+MNfKoVFS95lB8VX63EFEZJ9CFhqCUFrkz+MGJE5k5U46PUyRJ6C2fC
-         SgBmOKMKEg0Bb/lNS4zMyR/07kRT6CtR09ng9099LoQZeSIqIhlfxItAyuF/DOcefla+
-         C+PBMNbHUQ//jWAXAvNZbTdQGf9vu8Pq5bMUm0Rc0vwmNYGdM8TtYSm41bXw0DBQPljN
-         qqY6wIY0GOzNZmy+DoXnxj2VHRwiF3vxyUdZledvh/jmLdo27bHGhXCGbVnVGFVGa4L9
-         jB+592E2L7k4+k7H7/m62QPTLO3gU4V+rhM4glm/WeVmb7xYw4dzaO38xCecTm4Gqb3m
-         qmrw==
+        bh=egpF0SEnIXYb7MnIEEOBfEQ/CaSDz8TBIJfjNcsV5l0=;
+        b=LqT3KPwwUgiWMDW3ynrPPsYhkwTMYPiF6QoLKZHYB/PnCBleI0AA16BR1c9QphdQ8U
+         DfFIC0oeNjAMQrucr92tFA4mSxCZCZHZxoM7/Wz945k9K2Ot3yhePUHbQEapRlADtw2z
+         O5e75ue29vuDejNMEjX8BzSVNWSRBIN2pYlgTwwr4GH/HUO7/ZdEOmGMwQ0QvyF2UdSt
+         UrNmRg2iq3A0TTufOtM3S3ku7W6HhEsNpNyrjad2mBdnGdbzJAzBiKTEfIfvtx9LFqc3
+         NvtKo6I7vt4PfDDo/8g4WoAjhel5vQGy2YJ3M11TgEaDMeq7JBplX5To+xVsWmqZZfKN
+         crVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721409662; x=1722014462;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=269jqe/jzjyYpBV+uTwg3PKS+HXAo3qpFrECBrOEtQ8=;
-        b=VsfM4ELDh4YjR/jiPNuDwm26MhrBHyhUY3qfEceK4zFruAY0Tivoi8Sj9NE7QZvufp
-         eid4uSaKdxlgMJNMGobc82A3q3EhqKWECTojuuAMmrhCnzm7/9m/3hvzb+Nr9yathVSa
-         FmFYqt35MQ92UzGbMqjQd07QB0l20Egr2kUFFORRAPsWoKXv2iELcVaeklmFjG7JTjzI
-         3/ohUMPHr6UHbgvZxoR6EpEwo8df7nGLZg68vC+COCa9ZMgMB+jFJ8Q9xIcJrPXsyoSb
-         lfeO3OA1lifmraTAyXPPakw9BX2jEAUOFyIAVPDUygdPdNpE/t+A9DI+Qjw5MeNJxbPY
-         RqJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVx0Z2KPQJdly1elbdpi2ap8DC0K+BwT3O/54t1fcPiFtlpsCK3W42rqCFZK9nuJ8It74M6lNpINJqbQNt0H0kS8KwYJ+MXsJ7WPuc5
-X-Gm-Message-State: AOJu0Yw7Mj+qM8MSQ+F3bHM/2e/IgycgMTncRVYp3mSy26CGS1CDYYAu
-	hgbeM1xMrHeWjg/00mCVk8UxO858gBEvsGDmBVIwuSWied+NOs8f+6PP7mOB64F2JnVl3FXVPMl
-	u5Q==
-X-Google-Smtp-Source: AGHT+IGUzOVThZ8xIg7bwHKaFQkUCNm4Xs+fuFoDhB2WRhkv0OaE4A7mGU07OFxXWS7Ocj7WmHxourXW2n8=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:2d8a:b0:627:a787:abf4 with SMTP id
- 00721157ae682-66a675dbfdcmr133157b3.3.1721409661902; Fri, 19 Jul 2024
- 10:21:01 -0700 (PDT)
-Date: Fri, 19 Jul 2024 10:21:00 -0700
-In-Reply-To: <c42bff52-1058-4bff-be90-5bab45ed57be@gmail.com>
+        d=1e100.net; s=20230601; t=1721409739; x=1722014539;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=egpF0SEnIXYb7MnIEEOBfEQ/CaSDz8TBIJfjNcsV5l0=;
+        b=sxWSzF5wR2iLtLKQy0V4kmu/suGqUaQzl77DMtpQBDXdSOOMML6ntWJt9mrjSk0sfy
+         EQf1eZSzD3QtAoTDYwclD8B30xlDDj3Or8oW/Bpy7bubUp4r2sXTZglcELrjI+r7q3i7
+         AQCibL0CdJK6fLh63NriFHtUeMn0V+4IZSmyYzqiG7pkmLU8T2OCzP2MKJ2x+6h9s94j
+         2GzF5YcBOFTCBCY8VbF9uqxTu8GLE+YQPseA8Wa/FA5jp0S0N4lJCfFLs6FgdZNFOqIg
+         gv5VLjCAxvkw7YoQZhIbzGp9pbpRb6XsszY2ZSzO5cxRaFRmdV89lTKJQX5q0g6UwT02
+         k8Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCVXaQqYfTv+FQSxLXggCHs6LIaA7NkQb1qpmoOaP86Gl1dqWMUUA8gnq/5ASI4sXxRbTemqPsQjMWbrVu8nsd4GF1DGrcVDqPpzSKcqIEszO9m2EvAnD51tm8+5Aw1Ah5N1s2l2JzWvR1SGtrBh6VqnqR44bcqzX0hK9PStF50h3t6r
+X-Gm-Message-State: AOJu0YxR1/vXUwFuxtWjmOOKOjzKFNAdn948U+kLh24Ab/vMECT7mrug
+	GMTs5x8zGU0Ali+YmUmUdpd/A5kSBuOksNuu6s4InOFqrySMl3Lu
+X-Google-Smtp-Source: AGHT+IEeNgTrAkzxHGoPidL1EgMwE+24N/lIEMV3sziwJeEce9gTRudT1TJSTYzrYKkBc2+BS6ympQ==
+X-Received: by 2002:aa7:88c2:0:b0:706:5daf:efa5 with SMTP id d2e1a72fcca58-70cfd51f315mr5762976b3a.9.1721409738838;
+        Fri, 19 Jul 2024 10:22:18 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70cff491217sm1429064b3a.30.2024.07.19.10.22.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 10:22:18 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Fri, 19 Jul 2024 07:22:16 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: hch@infradead.org, bvanassche@acm.org, jack@suse.cz,
+	josef@toxicpanda.com, axboe@kernel.dk, cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v3 1/3] blk-cgroup: check for pd_(alloc|free)_fn in
+ blkcg_activate_policy()
+Message-ID: <ZpqgyCEhr6s4pXDc@slm.duckdns.org>
+References: <20240719071506.158075-1-yukuai1@huaweicloud.com>
+ <20240719071506.158075-2-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <c42bff52-1058-4bff-be90-5bab45ed57be@gmail.com>
-Message-ID: <ZpqgfETiBXfBfFqU@google.com>
-Subject: Re: [BUG] =?utf-8?Q?arch=2Fx86=2Fkvm=2Fvmx?= =?utf-8?Q?=2Fpmu=5Fintel=2Ec=3A54=3A_error=3A_dereference_of_NULL_?=
- =?utf-8?B?4oCYcG1j4oCZ?= [CWE-476]
-From: Sean Christopherson <seanjc@google.com>
-To: Mirsad Todorovac <mtodorovac69@gmail.com>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, Like Xu <likexu@tencent.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240719071506.158075-2-yukuai1@huaweicloud.com>
 
-On Fri, Jul 19, 2024, Mirsad Todorovac wrote:
-> Hi,
->=20
-> In the build of 6.10.0 from stable tree, the following error was detected=
-.
->=20
-> You see that the function get_fixed_pmc() can return NULL pointer as a re=
-sult
-> if msr is outside of [base, base + pmu->nr_arch_fixed_counters) interval.
->=20
-> kvm_pmu_request_counter_reprogram(pmc) is then called with that NULL poin=
-ter
-> as the argument, which expands to .../pmu.h
->=20
-> #define pmc_to_pmu(pmc)   (&(pmc)->vcpu->arch.pmu)
->=20
-> which is a NULL pointer dereference in that speculative case.
+On Fri, Jul 19, 2024 at 03:15:04PM +0800, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> Currently all policies implement pd_(alloc|free)_fn, however, this is
+> not necessary for ioprio that only works for blkcg, not blkg.
+> 
+> There are no functional changes, prepare to cleanup activating ioprio
+> policy.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-I'm somewhat confused.  Did you actually hit a BUG() due to a NULL-pointer
-dereference, are you speculating that there's a bug, or did you find some s=
-peculation
-issue with the CPU?
+Acked-by: Tejun Heo <tj@kernel.org>
 
-It should be impossible for get_fixed_pmc() to return NULL in this case.  T=
-he
-loop iteration is fully controlled by KVM, i.e. 'i' is guaranteed to be in =
-the
-ranage [0..pmu->nr_arch_fixed_counters).
+Thanks.
 
-And the input @msr is "MSR_CORE_PERF_FIXED_CTR0 +i", so the if-statement ex=
-pands to:
-
-	if (MSR_CORE_PERF_FIXED_CTR0 + [0..pmu->nr_arch_fixed_counters) >=3D MSR_C=
-ORE_PERF_FIXED_CTR0 &&
-	    MSR_CORE_PERF_FIXED_CTR0 + [0..pmu->nr_arch_fixed_counters) < MSR_CORE=
-_PERF_FIXED_CTR0 + pmu->nr_arch_fixed_counters)
-
-i.e. is guaranteed to evaluate true.
-
-Am I missing something?
-
-> arch/x86/kvm/vmx/pmu_intel.c
-> ----------------------------
->  37 static void reprogram_fixed_counters(struct kvm_pmu *pmu, u64 data)
->  38 {
->  39         struct kvm_pmc *pmc;
->  40         u64 old_fixed_ctr_ctrl =3D pmu->fixed_ctr_ctrl;
->  41         int i;
->  42=20
->  43         pmu->fixed_ctr_ctrl =3D data;
->  44         for (i =3D 0; i < pmu->nr_arch_fixed_counters; i++) {
->  45                 u8 new_ctrl =3D fixed_ctrl_field(data, i);
->  46                 u8 old_ctrl =3D fixed_ctrl_field(old_fixed_ctr_ctrl, =
-i);
->  47=20
->  48                 if (old_ctrl =3D=3D new_ctrl)
->  49                         continue;
->  50=20
->  51 =E2=86=92               pmc =3D get_fixed_pmc(pmu, MSR_CORE_PERF_FIXE=
-D_CTR0 + i);
->  52=20
->  53                 __set_bit(KVM_FIXED_PMC_BASE_IDX + i, pmu->pmc_in_use=
-);
->  54 =E2=86=92               kvm_pmu_request_counter_reprogram(pmc);
->  55         }
->  56 }
-> ----------------------------
->=20
-> arch/x86/kvm/vmx/../pmu.h
-> -------------------------
->  11 #define pmc_to_pmu(pmc)   (&(pmc)->vcpu->arch.pmu)
-> .
-> .
-> .
-> 152 /* returns fixed PMC with the specified MSR */
-> 153 static inline struct kvm_pmc *get_fixed_pmc(struct kvm_pmu *pmu, u32 =
-msr)
-> 154 {
-> 155         int base =3D MSR_CORE_PERF_FIXED_CTR0;
-> 156=20
-> 157         if (msr >=3D base && msr < base + pmu->nr_arch_fixed_counters=
-) {
-> 158                 u32 index =3D array_index_nospec(msr - base,
-> 159                                                pmu->nr_arch_fixed_cou=
-nters);
-> 160=20
-> 161                 return &pmu->fixed_counters[index];
-> 162         }
-> 163=20
-> 164         return NULL;
-> 165 }
-> .
-> .
-> .
-> 228 static inline void kvm_pmu_request_counter_reprogram(struct kvm_pmc *=
-pmc)
-> 229 {
-> 230         set_bit(pmc->idx, pmc_to_pmu(pmc)->reprogram_pmi);
-> 231         kvm_make_request(KVM_REQ_PMU, pmc->vcpu);
-> 232 }
-> .
-> .
-> .
-> -------------------------
-> 76d287b2342e1
-> Offending commits are: 76d287b2342e1 and 4fa5843d81fdc.
->=20
-> I am not familiar with this subset of code, so I do not know the right co=
-de to implement
-> for the case get_fixed_pmc(pmu, MSR_CORE_PERF_FIXED_CTR0 + i) returns NUL=
-L.
->=20
-> Hope this helps.
->=20
-> Best regards,
-> Mirsad Todorovac
+-- 
+tejun
 
