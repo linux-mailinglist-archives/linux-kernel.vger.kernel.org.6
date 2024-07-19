@@ -1,149 +1,114 @@
-Return-Path: <linux-kernel+bounces-256932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14ADD9372AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 05:10:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC51D9372AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 05:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E6D21C210CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 03:10:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53CA01F21FC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 03:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF36171C9;
-	Fri, 19 Jul 2024 03:09:54 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1155017C61;
+	Fri, 19 Jul 2024 03:15:31 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6892F30;
-	Fri, 19 Jul 2024 03:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83AA623B0;
+	Fri, 19 Jul 2024 03:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721358593; cv=none; b=u5J45H+lQTbMI/cKFS8VNQ4XK+KSHjiUxYxg9dC9FGWrYKzg1rdK8L/bNZsL0+eFTQqrlGQ89dpqWq22rvUTKcD1Tyxs+q3OpmEAiYzi0Tb3wejDJeO6db+OSk2rfjrPzuLsmGaOadn/GKtKedyEimSuA2rzmBJbiJhi8abx8K0=
+	t=1721358930; cv=none; b=kOH31KRHPSySvIdcvgTjg2j8SFgy+bjqVQIcMnAsT9TQwfY4PEJHcLjUQL+a9fGM/R5QmM756nuDJO4Jnk2KPnt+JBU/B6AF7kfiLikdg/rArjE/MSeH3t7OJWcXgYPyd4UGbYNrfEj1k5+jDnLC+7cHrVQQU/EcvBaLFid1eL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721358593; c=relaxed/simple;
-	bh=0NipiEREOOjna/QPiVAGaJs9rCAbwvD6mTE4Or+JFkk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FQbjQgFmoUZxKc0XV63kauQGUqJ6cyQdC8oTTzghtk6gTYWDCNoee1QQl2IDxJKY98aj3VW3fLLeso1SJiw4y4IKxNayNBs/ncpfqeYSatiuZxxWkgWauzoosCOtEsa66bNeUwQkg3CELpvFRYP5RRXrzX6nTp46nNEy636HQvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WQF4z5DqZznbfc;
-	Fri, 19 Jul 2024 11:09:07 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6F8E9180106;
-	Fri, 19 Jul 2024 11:09:33 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
- (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 19 Jul
- 2024 11:09:32 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <chenhuacai@kernel.org>, <kernel@xen0n.name>, <kees@kernel.org>,
-	<gustavoars@kernel.org>, <arnd@arndb.de>, <maobibo@loongson.cn>,
-	<loongarch@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<linux-hardening@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH v2] loongarch: Support RANDOMIZE_KSTACK_OFFSET
-Date: Fri, 19 Jul 2024 11:14:27 +0800
-Message-ID: <20240719031427.119274-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1721358930; c=relaxed/simple;
+	bh=9r9VaX7WBj33b5Ca1NQAzQZ6oU1wOpuKr2v2zJYbabs=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=DEekYo2AvblGgq5CJNogknS5OcItqjx+WAKmTjJ44Q99eQ9yRayFLZUnKpNhRNnExwZkaUsOL04lcGJw0Wf6fNiWIGrK1cMN6BKOQEuuIwK0BkL4kkliz+mymSmgP0jqWrrXh7MT1pRLiHS0jtlbORM1TDcAFVBxhVaZmIvzcd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WQFCy5R2Pz4f3kw9;
+	Fri, 19 Jul 2024 11:15:10 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 130071A0F49;
+	Fri, 19 Jul 2024 11:15:24 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgCHazlK2plmtZ4mAg--.58042S3;
+	Fri, 19 Jul 2024 11:15:23 +0800 (CST)
+Subject: Re: [PATCH] block: fix deadlock between sd_remove & sd_release
+To: Bart Van Assche <bvanassche@acm.org>, YangYang <yang.yang@vivo.com>,
+ Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "yukuai (C)" <yukuai3@huawei.com>
+References: <20240716083801.809763-1-yang.yang@vivo.com>
+ <1859a975-8c53-140c-f5b5-898ad5e7f653@huaweicloud.com>
+ <451c8746-5260-4be6-b78d-54305c94ef73@vivo.com>
+ <a81cdd5b-d6ad-2a4f-0f6d-40e9db6233cd@huaweicloud.com>
+ <51411297-f579-4229-a72c-c5bd5f27df34@vivo.com>
+ <e7c95d49-d279-451c-9bd0-3f4009c7afcd@acm.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <331c036b-322e-0658-ff88-4cce080c5aba@huaweicloud.com>
+Date: Fri, 19 Jul 2024 11:15:22 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <e7c95d49-d279-451c-9bd0-3f4009c7afcd@acm.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+X-CM-TRANSID:gCh0CgCHazlK2plmtZ4mAg--.58042S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7GrWUXry7Gr4xGrykXF1kXwb_yoW3trc_uw
+	1Yqr1DGa48ZF1vqrsIkw18GryUCa1fKF4xu3yvqFs8JFyxXwn8Zw4rGrZ09r1qqa1IvwnI
+	gr4rWFWUKry7ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
+	Y487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+	b7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
+	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUbSfO7UUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Add support of kernel stack offset randomization while handling syscall,
-the offset is defaultly limited by KSTACK_OFFSET_MAX().
 
-In order to avoid trigger stack canaries (due to __builtin_alloca) and
-slowing down the entry path, use __no_stack_protector attribute to
-disable stack protector for do_syscall() at function level.
 
-With this patch, the REPORT_STACK test show that:
-	`loongarch64 bits of stack entropy: 7`
+在 2024/07/18 0:23, Bart Van Assche 写道:
+> On 7/17/24 3:15 AM, YangYang wrote:
+>> These sysfs nodes are in different directories, the scsi node located
+>> at /sys/bus/scsi/devices/0:0:0:0 and the gendisk node located at
+>> /sys/block/sda. Would it be necessary to wait for the completion of
+>> the scsi sysfs nodes' read/write operations before removing the
+>> gendisk sysfs node?
+> 
+> No. sysfs_remove_files() waits for pending read and write operations to
+> complete.
+> 
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-Suggested-by: Huacai Chen <chenhuacai@kernel.org>
----
-v2:
-- get_random_u16() -> drdtime().
-- Add Suggested-by.
----
- arch/loongarch/Kconfig          |  1 +
- arch/loongarch/kernel/syscall.c | 17 ++++++++++++++++-
- 2 files changed, 17 insertions(+), 1 deletion(-)
+So I check this and actually gendisk kobject is a child of scsi disk
+kobject, not the other way. sda/device is just a symbol link.
 
-diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-index ddc042895d01..fcf6451b4e38 100644
---- a/arch/loongarch/Kconfig
-+++ b/arch/loongarch/Kconfig
-@@ -106,6 +106,7 @@ config LOONGARCH
- 	select HAVE_ARCH_KFENCE
- 	select HAVE_ARCH_KGDB if PERF_EVENTS
- 	select HAVE_ARCH_MMAP_RND_BITS if MMU
-+	select HAVE_ARCH_RANDOMIZE_KSTACK_OFFSET
- 	select HAVE_ARCH_SECCOMP
- 	select HAVE_ARCH_SECCOMP_FILTER
- 	select HAVE_ARCH_TRACEHOOK
-diff --git a/arch/loongarch/kernel/syscall.c b/arch/loongarch/kernel/syscall.c
-index ec17cd5163b7..9df81197a09b 100644
---- a/arch/loongarch/kernel/syscall.c
-+++ b/arch/loongarch/kernel/syscall.c
-@@ -9,11 +9,13 @@
- #include <linux/entry-common.h>
- #include <linux/errno.h>
- #include <linux/linkage.h>
-+#include <linux/randomize_kstack.h>
- #include <linux/syscalls.h>
- #include <linux/unistd.h>
- 
- #include <asm/asm.h>
- #include <asm/exception.h>
-+#include <asm/loongarch.h>
- #include <asm/signal.h>
- #include <asm/switch_to.h>
- #include <asm-generic/syscalls.h>
-@@ -39,7 +41,7 @@ void *sys_call_table[__NR_syscalls] = {
- typedef long (*sys_call_fn)(unsigned long, unsigned long,
- 	unsigned long, unsigned long, unsigned long, unsigned long);
- 
--void noinstr do_syscall(struct pt_regs *regs)
-+__no_stack_protector void noinstr do_syscall(struct pt_regs *regs)
- {
- 	unsigned long nr;
- 	sys_call_fn syscall_fn;
-@@ -55,11 +57,24 @@ void noinstr do_syscall(struct pt_regs *regs)
- 
- 	nr = syscall_enter_from_user_mode(regs, nr);
- 
-+	add_random_kstack_offset();
-+
- 	if (nr < NR_syscalls) {
- 		syscall_fn = sys_call_table[nr];
- 		regs->regs[4] = syscall_fn(regs->orig_a0, regs->regs[5], regs->regs[6],
- 					   regs->regs[7], regs->regs[8], regs->regs[9]);
- 	}
- 
-+	/*
-+	 * This value will get limited by KSTACK_OFFSET_MAX(), which is 10
-+	 * bits. The actual entropy will be further reduced by the compiler
-+	 * when applying stack alignment constraints: 16-byte (i.e. 4-bit)
-+	 * aligned, which will remove the 4 low bits from any entropy chosen
-+	 * here.
-+	 *
-+	 * The resulting 6 bits of entropy is seen in SP[9:4].
-+	 */
-+	choose_random_kstack_offset(drdtime());
-+
- 	syscall_exit_to_user_mode(regs);
- }
--- 
-2.34.1
+sda/device -> ../../../14:2:0:0.
+
+So, the sysfs api for gendisk itself doesn't issue IO, and as long as
+related driver doesn't create new such api under gendisk, this won't
+be a problem.
+
+Thanks,
+Kuai
+> Bart.
+> 
+> .
+> 
 
 
