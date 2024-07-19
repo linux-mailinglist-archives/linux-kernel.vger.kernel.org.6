@@ -1,66 +1,132 @@
-Return-Path: <linux-kernel+bounces-256963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A8A937349
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 07:31:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1BF93734C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 07:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 184691C21BA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 05:31:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BACD9282EB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 05:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A5C3A8E4;
-	Fri, 19 Jul 2024 05:31:25 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9533FB30;
+	Fri, 19 Jul 2024 05:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="F5cZU+8P"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4DF2A1DC
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 05:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7285A46434;
+	Fri, 19 Jul 2024 05:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721367085; cv=none; b=EXHUWYMrT4pPh5wWRm8zuL56dKpsa/g3cEHgpdFudMdP83idjOQw2ziBWr0uwbsBGHlVeijuCb/N+lOi0p0jDZn0VL+WFeTocoe34uy28ZkaWnHTB5BZ0Ut7uFfYHom7YX2XgjTrQ3x/+Fwcmd4893WcTE+Dyq9VcjAJq/gLyY0=
+	t=1721367229; cv=none; b=DFvsDZZYRW0Rho5bVOd6LU5ANP+38B6sPgUUQdbN2hjN/63eXwSXAkJ5Nm4ODGAZpKOuaXMEGt6nWGdBZJPMJ7CO7jbFVvcbxFdwxu8UBiECDQgaKPJGK9RoSi1xuvcnB4NtQ5puY9XtwBznia2EnlfBJe/dQRooyQRHpWIWJhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721367085; c=relaxed/simple;
-	bh=ZE5EojKxUAjvISgGJyNlirn7RmotoRr27lG9mVhGVJI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=px+N9BdaFZixOMCCrUSbicpGkE9M48SZq3jFq8PSpZQ1tri2i7PS3p1+5OMPe7WPkRN+Sir4bkJz3JU0BynJM4WHl3UaqWx5hK+0UsMnI2bZh2epKIbmnhj4+DXJm6WyZNyqSJmLEc5LTdLgXIw6ksaZTdYfKTZc1HO63G8aKIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 0286768BFE; Fri, 19 Jul 2024 07:31:16 +0200 (CEST)
-Date: Fri, 19 Jul 2024 07:31:16 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Ping Gan <jacky_gam_2001@163.com>
-Cc: hare@suse.de, sagi@grimberg.me, hch@lst.de, kch@nvidia.com,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-	ping.gan@dell.com
-Subject: Re: [PATCH v2 0/2] nvmet: support unbound_wq for RDMA and TCP
-Message-ID: <20240719053116.GA21474@lst.de>
-References: <20240717091451.111158-1-jacky_gam_2001@163.com>
+	s=arc-20240116; t=1721367229; c=relaxed/simple;
+	bh=IXINu2CBzjud7p80mQWRPpw54y7xsaLZ0272piMASJo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H3a1IvLwovKWT/Q1uzdYHfDQ2PVZLQJXUGl6K3mZuctx8nvy+/KoC6HN99bwBWxJNdgrU7MS1LPtL7X73TDFdBdGzi9Q3Ldw5LhptB5MPdzFfSj/hd8Pxf1wTd4clfmZUqKRCg4XlfVvZjVnf3MGjAoakW1t7Evxg6MzupAm7Zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=F5cZU+8P; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 46J5XLzuC148356, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1721367201; bh=IXINu2CBzjud7p80mQWRPpw54y7xsaLZ0272piMASJo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=F5cZU+8P2C8qkfWRyfrhOyQUv6Y+lo+RlmV7+2ChqoHC6Wq5xyoH9ZRS6H3/p+A2K
+	 bXhx2RHyAF63pZYwo78xes0FdmB4EZ2DirpGCiZf5c84ChZ0aU8ARViJwIResSkVrR
+	 mUjYIoF6i1hpckry3SLKrnPmqUvou6yA6lNstkaznuQgazjVtkqiYdYHFG066bVcD3
+	 P8suTuGs+Et89gzRZ/TKVfxSQ1yZ0VUREoGV72XJ5wq97sw2zv/iykQ3HBW9wL3LCn
+	 HZz4iPtw/BEfFTEea/mJjku3fefkgKcE84BRrWcG05WJfhvmYzFLjWO5xk71Oli6Gb
+	 rSob1TUkMmsag==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 46J5XLzuC148356
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 19 Jul 2024 13:33:21 +0800
+Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 19 Jul 2024 13:33:21 +0800
+Received: from localhost (172.22.81.102) by RTEXMBS01.realtek.com.tw
+ (172.21.6.94) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Fri, 19 Jul
+ 2024 13:33:21 +0800
+From: Ricky Wu <ricky_wu@realtek.com>
+To: <ricky_wu@realtek.com>, <ulf.hansson@linaro.org>,
+        <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <ricardo@marliere.net>, <gregkh@linuxfoundation.org>, <arnd@arndb.de>
+Subject: [PATCH 0/4] Add support SDUC for Realtek card readers
+Date: Fri, 19 Jul 2024 13:33:10 +0800
+Message-ID: <20240719053314.1636649-1-ricky_wu@realtek.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240717091451.111158-1-jacky_gam_2001@163.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: RTEXH36505.realtek.com.tw (172.21.6.25) To
+ RTEXMBS01.realtek.com.tw (172.21.6.94)
+X-KSE-ServerInfo: RTEXMBS01.realtek.com.tw, 9
+X-KSE-AntiSpam-Interceptor-Info: fallback
+X-KSE-Antivirus-Interceptor-Info: fallback
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
-On Wed, Jul 17, 2024 at 05:14:49PM +0800, Ping Gan wrote:
-> When running nvmf on SMP platform, current nvme target's RDMA and
-> TCP use bounded workqueue to handle IO, but when there is other high
-> workload on the system(eg: kubernetes), the competition between the 
-> bounded kworker and other workload is very radical. To decrease the
-> resource race of OS among them, this patchset will enable unbounded
-> workqueue for nvmet-rdma and nvmet-tcp; besides that, it can also
-> get some performance improvement. And this patchset bases on previous
-> discussion from below session.
+Summary:
+this patch is for mmc to support SDUC(Secure Digital Ultra Capacity)
+and add Realtek Cardreaders to support it 
 
-So why aren't we using unbound workqueues by default?  Who makea the
-policy decision and how does anyone know which one to chose?
+About SDUC:
+SDUC is defined in SD7.0 spec, it support the max capacity is 128TB[1]
 
+Roughly implemented functions by this patch:
+1.Mutual identification of SDUC in ACMD41 initialization (5.2.1[2])
+2.SDUC card user area capacity calculation (5.2.2[2])
+3.Memory read/write commands sequence (5.2.3[2])
+4.Erase Commands Sequence (5.2.4[2])
+
+patches:
+patch#1: Defined functions and modified some type of parameter
+patch#2: For mmc to support SDUC
+patch#3: Add Realtek sdmmc host to support SDUC
+patch#4: Add Realtek card readers to support SDUC 
+
+Reference:
+[1] SD Specifications Part 1 Physical Layer Specification Version 7.00
+[2] SD Specifications SDUC Host Implementation Guideline Version 1.00
+
+Ricky Wu(4):
+ mmc: core: some definitions and type modifications for SDUC
+ mmc: core: add SDUC init rw erase flow to mmc
+ mmc: rtsx: make Realtek sdmmc to support SDUC
+ misc: rtsx: add Realtek card readers to support SDUC
+
+ drivers/misc/cardreader/rts5227.c |  1 +
+ drivers/misc/cardreader/rts5228.c |  1 +
+ drivers/misc/cardreader/rts5249.c |  1 +
+ drivers/misc/cardreader/rts5260.c |  1 +
+ drivers/misc/cardreader/rts5261.c |  1 +
+ drivers/misc/cardreader/rts5264.c |  2 +-
+ drivers/mmc/core/block.c          | 13 +++++++--
+ drivers/mmc/core/bus.c            |  4 ++-
+ drivers/mmc/core/card.h           |  3 ++
+ drivers/mmc/core/core.c           | 38 +++++++++++++++++--------
+ drivers/mmc/core/core.h           |  6 ++--
+ drivers/mmc/core/host.h           |  5 ++++
+ drivers/mmc/core/queue.h          |  1 +
+ drivers/mmc/core/sd.c             | 47 +++++++++++++++++++++++++++++++
+ drivers/mmc/host/rtsx_pci_sdmmc.c |  6 ++++
+ include/linux/mmc/card.h          |  2 +-
+ include/linux/mmc/core.h          |  1 +
+ include/linux/mmc/host.h          |  1 +
+ include/linux/mmc/sd.h            |  5 ++++
+ include/linux/rtsx_pci.h          |  1 +
+ 20 files changed, 121 insertions(+), 19 deletions(-)
+
+
+-- 
+2.25.1
 
