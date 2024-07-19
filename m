@@ -1,110 +1,313 @@
-Return-Path: <linux-kernel+bounces-257575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45693937C0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:08:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79982937C19
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01BCD282A56
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:08:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E3951C21969
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB9E146D57;
-	Fri, 19 Jul 2024 18:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z1WPU2EH"
-Received: from mail-il1-f201.google.com (mail-il1-f201.google.com [209.85.166.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD173148FE1;
+	Fri, 19 Jul 2024 18:07:46 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837A72CCA3
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 18:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515421487CE;
+	Fri, 19 Jul 2024 18:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721412398; cv=none; b=aKcp/0CicDkx8o6uwc9bqtCwOc0utUe3y1D1KKRYq9aHjKNWt2KYBNY1ijkHuB/rzVJT3sYe4rx4iZ59E7htGHrtKoTshwaN0+wI51oBMiJY1oNl43xrdVk2qiE1VQFn2EKlBrky64IKn2HIgt4MFwlKlbg69gHpB4gezHa+3zY=
+	t=1721412466; cv=none; b=CeVJcK2ulX6saykFgzi4fh0x4AXlVFow2ua7TAH9UXp8kIRClTR5jN33HFRRgq8QgcbmI8Epv9NpeZnVc+arzVTYJbiuotr81y1BkSFgiE1HnR9SbJYJEkqbFBsz49wLaaKmWjDlnwBWWBfIGQd9MkDDxNIgyTv3svOlVu5PdLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721412398; c=relaxed/simple;
-	bh=3JxKCWFIJO1l5j07YlTQzhG4WIh9B48kwEXBnpUCFmY=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=IFSIgR6qEUPL5X0mooauB6MqLHbkFUdEdzzbSUwUylJkx+/YRMebaUfK4aHlMqwo+bK8aP5At2OJH+FhbLTTu57hYfIfodnuiOb/vdWctzfAxQRvsbdHHDlsRcfdFiVPDt1Nz7f5GtpVWCN6yXkFnvbL7cdYzHJOWzDChvpfupM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z1WPU2EH; arc=none smtp.client-ip=209.85.166.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com
-Received: by mail-il1-f201.google.com with SMTP id e9e14a558f8ab-398602ba734so8145945ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 11:06:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721412396; x=1722017196; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=RKoiDVkQ6yJoRSxu2Az1hfMJ9PYb+MfDy6ZbgIGOeQ8=;
-        b=z1WPU2EHr8FkVKOOs4Eav5mi6BuwuKKSF4jRfZow/Vj8jQkqEve5UQRhr87fzg5Ho1
-         tkLWEOTztY5MnaJY9+UJr5IlJ2qQPqudnZnStqBWD7KGvF+mdoUsWmwXgkgevOSm2R3T
-         DQ/bFyBbC9rp/an7p6y7h8qNOzbq2gsg88VuGPxrdTfxf0rTHQ1j8fAstliT9COIh9oq
-         3KHV+GPi9SR+vGeCydXBbghFWjv2cr9KxjQzGq5oZiMIh+LmPl1vEcSi5O03m8i5aVGD
-         yuNHXGK6N2lkd3WPywaOumTkthGaQDpqSxYpnRdMstvjQYyj+Dd0qLBctHumamPctpR4
-         HujA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721412396; x=1722017196;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RKoiDVkQ6yJoRSxu2Az1hfMJ9PYb+MfDy6ZbgIGOeQ8=;
-        b=Hr7HjiflSePpcR9iHlZS9IZeMaxBYMljaOEPPt3Ohu7JIclN52X0vuoT+2cf3vGYfT
-         7kFOyhLjT28iaFTO0ZVTEtqg16TAk4K79i8co3+VJBXWRhFLgEA5KqWsz/sdnP4WA8Ns
-         gQRsrG112yV2eg9FPIYf3uHFISZvoOaXsxAFsToAEyWuGxD1glvQ0vmYReewaJBEw2Q9
-         CMiWTDS4Hel/3b1W24gVNRS2A5AwS/WTK2oWHTfXe9SstzSaD3e9noeB1oi07kqNHKR1
-         CHLlutOwac2VB9x5Pkyosxxzfm9PMSvhKJCQ7+EoCYLF5zv338U2sLH8FN2IIbKdqARV
-         mk7A==
-X-Gm-Message-State: AOJu0Yz0n67gngjEQQHQeQgWqUUPz3DTkh0eli0lXH21Dv4paPGB6AuV
-	R2rw9C/M+ceexBgVaNuyOqcqUVa2dGSbV10c+Z/B9F5+9w3ov4sjpEmNtCm6BiZWO1LAPbtFcYu
-	oFHK/8qkn1XGYpUhZzjQ/R19sKrx4V7ZMRoezDTmh9LcEH5uuz7kqAlHfX6opy+HpSEJyL7PYl0
-	lXYuO1d/XR9MR78u4Pwb5O7kcNFS2Gqvwzgkb6K7yEBJZhpw==
-X-Google-Smtp-Source: AGHT+IFVTUFvNALMgY3b9kcnWsE89uLmyXszuB6EAU/KaJQ5m1VY84UAMpSmm+EP8KMJBYzhbB/2Z2Zq74qG
-X-Received: from dynamight.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:17a])
- (user=jdenose job=sendgmr) by 2002:a05:6e02:1fef:b0:380:fd76:29e4 with SMTP
- id e9e14a558f8ab-398e706f258mr245725ab.4.1721412395708; Fri, 19 Jul 2024
- 11:06:35 -0700 (PDT)
-Date: Fri, 19 Jul 2024 18:06:15 +0000
+	s=arc-20240116; t=1721412466; c=relaxed/simple;
+	bh=VYYO9yL9Y+3oobIhLlnYMHDDAC1M+HqX2gKIZzK/63E=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jbzsggS34Hhn6sCV6uN8eh9y8F/XhMBkDJyTCi124wU7ionq+PykMgru/KqJMfE6/536KCzMV+SX5RB7lrZbbm+2pWswuvXvQFGOYqa1NqwL52LVoWtYScXJANQjXVl3NFVV0wZzHKzioQSZN+z/KIzAn62cCg8eEy8ZIUoD0fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WQczd6dCfz6J9r5;
+	Sat, 20 Jul 2024 02:05:49 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9EC131408FE;
+	Sat, 20 Jul 2024 02:07:14 +0800 (CST)
+Received: from localhost (10.48.157.16) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 19 Jul
+ 2024 19:07:13 +0100
+Date: Fri, 19 Jul 2024 19:07:12 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mike Rapoport <rppt@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, Alexander Gordeev
+	<agordeev@linux.ibm.com>, Andreas Larsson <andreas@gaisler.com>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, "Borislav
+ Petkov" <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, David Hildenbrand
+	<david@redhat.com>, "David S. Miller" <davem@davemloft.net>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Heiko Carstens
+	<hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar
+	<mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, "John Paul Adrian
+ Glaubitz" <glaubitz@physik.fu-berlin.de>, Michael Ellerman
+	<mpe@ellerman.id.au>, Palmer Dabbelt <palmer@dabbelt.com>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, "Thomas
+ Bogendoerfer" <tsbogend@alpha.franken.de>, Thomas Gleixner
+	<tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>, Will Deacon
+	<will@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<loongarch@lists.linux.dev>, <linux-mips@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <linux-riscv@lists.infradead.org>,
+	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>,
+	<sparclinux@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+	<linux-mm@kvack.org>, <x86@kernel.org>
+Subject: Re: [PATCH 15/17] mm: make numa_memblks more self-contained
+Message-ID: <20240719190712.00001307@Huawei.com>
+In-Reply-To: <20240716111346.3676969-16-rppt@kernel.org>
+References: <20240716111346.3676969-1-rppt@kernel.org>
+	<20240716111346.3676969-16-rppt@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.1089.g2a221341d9-goog
-Message-ID: <20240719180612.1.Ib652dd808c274076f32cd7fc6c1160d2cf71753b@changeid>
-Subject: [PATCH] Input: synaptics - enable SMBus for HP Elitebook 840 G2
-From: Jonathan Denose <jdenose@google.com>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Jonathan Denose <jdenose@google.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Jeffery Miller <jefferymiller@google.com>, 
-	"=?UTF-8?q?Jos=C3=A9=20Pekkarinen?=" <jose.pekkarinen@foxhound.fi>, Sasha Levin <sashal@kernel.org>, 
-	linux-input@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-The kernel reports that the touchpad for this device can support a
-different bus.
+On Tue, 16 Jul 2024 14:13:44 +0300
+Mike Rapoport <rppt@kernel.org> wrote:
 
-With SMBus enabled the touchpad movement is smoother and three-finger
-gestures are recognized.
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> 
+> Introduce numa_memblks_init() and move some code around to avoid several
+> global variables in numa_memblks.
 
-Signed-off-by: Jonathan Denose <jdenose@google.com>
----
+Hi Mike,
 
- drivers/input/mouse/synaptics.c | 1 +
- 1 file changed, 1 insertion(+)
+Adding the effectively always on memblock_force_top_down
+deserves a comment on why. I assume because you are going to do
+something with it later? 
 
-diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptics.c
-index 7a303a9d6bf72..9df0224867649 100644
---- a/drivers/input/mouse/synaptics.c
-+++ b/drivers/input/mouse/synaptics.c
-@@ -193,6 +193,7 @@ static const char * const smbus_pnp_ids[] = {
- 	"SYN3221", /* HP 15-ay000 */
- 	"SYN323d", /* HP Spectre X360 13-w013dx */
- 	"SYN3257", /* HP Envy 13-ad105ng */
-+	"SYN3015", /* HP EliteBook 840 G2 */
- 	NULL
- };
- 
--- 
-2.45.2.1089.g2a221341d9-goog
+There also seems to be more going on in here such as the change to
+get_pfn_range_for_nid()  Perhaps break this up so each
+change can have an explanation. 
+
+
+> 
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> ---
+>  arch/x86/mm/numa.c           | 53 ++++---------------------
+>  include/linux/numa_memblks.h |  9 +----
+>  mm/numa_memblks.c            | 77 +++++++++++++++++++++++++++---------
+>  3 files changed, 68 insertions(+), 71 deletions(-)
+> 
+> diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
+> index 3848e68d771a..16bc703c9272 100644
+> --- a/arch/x86/mm/numa.c
+> +++ b/arch/x86/mm/numa.c
+> @@ -115,30 +115,19 @@ void __init setup_node_to_cpumask_map(void)
+>  	pr_debug("Node to cpumask map for %u nodes\n", nr_node_ids);
+>  }
+>  
+> -static int __init numa_register_memblks(struct numa_meminfo *mi)
+> +static int __init numa_register_nodes(void)
+>  {
+> -	int i, nid, err;
+> -
+> -	err = numa_register_meminfo(mi);
+> -	if (err)
+> -		return err;
+> +	int nid;
+>  
+>  	if (!memblock_validate_numa_coverage(SZ_1M))
+>  		return -EINVAL;
+>  
+>  	/* Finally register nodes. */
+>  	for_each_node_mask(nid, node_possible_map) {
+> -		u64 start = PFN_PHYS(max_pfn);
+> -		u64 end = 0;
+> -
+> -		for (i = 0; i < mi->nr_blks; i++) {
+> -			if (nid != mi->blk[i].nid)
+> -				continue;
+> -			start = min(mi->blk[i].start, start);
+> -			end = max(mi->blk[i].end, end);
+> -		}
+> +		unsigned long start_pfn, end_pfn;
+>  
+> -		if (start >= end)
+> +		get_pfn_range_for_nid(nid, &start_pfn, &end_pfn);
+
+It's not immediately obvious to me that this code is equivalent so I'd
+prefer it in a separate patch with some description of why
+it is a valid change.
+
+> +		if (start_pfn >= end_pfn)
+>  			continue;
+>  
+>  		alloc_node_data(nid);
+> @@ -178,39 +167,11 @@ static int __init numa_init(int (*init_func)(void))
+>  	for (i = 0; i < MAX_LOCAL_APIC; i++)
+>  		set_apicid_to_node(i, NUMA_NO_NODE);
+>  
+> -	nodes_clear(numa_nodes_parsed);
+> -	nodes_clear(node_possible_map);
+> -	nodes_clear(node_online_map);
+> -	memset(&numa_meminfo, 0, sizeof(numa_meminfo));
+> -	WARN_ON(memblock_set_node(0, ULLONG_MAX, &memblock.memory,
+> -				  NUMA_NO_NODE));
+> -	WARN_ON(memblock_set_node(0, ULLONG_MAX, &memblock.reserved,
+> -				  NUMA_NO_NODE));
+> -	/* In case that parsing SRAT failed. */
+> -	WARN_ON(memblock_clear_hotplug(0, ULLONG_MAX));
+> -	numa_reset_distance();
+> -
+> -	ret = init_func();
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	/*
+> -	 * We reset memblock back to the top-down direction
+> -	 * here because if we configured ACPI_NUMA, we have
+> -	 * parsed SRAT in init_func(). It is ok to have the
+> -	 * reset here even if we did't configure ACPI_NUMA
+> -	 * or acpi numa init fails and fallbacks to dummy
+> -	 * numa init.
+> -	 */
+> -	memblock_set_bottom_up(false);
+> -
+> -	ret = numa_cleanup_meminfo(&numa_meminfo);
+> +	ret = numa_memblks_init(init_func, /* memblock_force_top_down */ true);
+The comment in parameter list seems unnecessary.
+Maybe add a comment above the call instead if need to call that out?
+
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	numa_emulation(&numa_meminfo, numa_distance_cnt);
+> -
+> -	ret = numa_register_memblks(&numa_meminfo);
+> +	ret = numa_register_nodes();
+>  	if (ret < 0)
+>  		return ret;
+>  
+
+> diff --git a/mm/numa_memblks.c b/mm/numa_memblks.c
+> index e0039549aaac..640f3a3ce0ee 100644
+> --- a/mm/numa_memblks.c
+> +++ b/mm/numa_memblks.c
+> @@ -7,13 +7,27 @@
+>  #include <linux/numa.h>
+>  #include <linux/numa_memblks.h>
+>  
+
+> +/*
+> + * Set nodes, which have memory in @mi, in *@nodemask.
+> + */
+> +static void __init numa_nodemask_from_meminfo(nodemask_t *nodemask,
+> +					      const struct numa_meminfo *mi)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(mi->blk); i++)
+> +		if (mi->blk[i].start != mi->blk[i].end &&
+> +		    mi->blk[i].nid != NUMA_NO_NODE)
+> +			node_set(mi->blk[i].nid, *nodemask);
+> +}
+
+The code move doesn't have an obvious purpose. Maybe call that
+out in the patch description if it is needed for a future patch.
+Or do it in two goes so first just adds the static, 2nd shuffles
+the code.
+
+>  
+>  /**
+>   * numa_reset_distance - Reset NUMA distance table
+> @@ -287,20 +301,6 @@ int __init numa_cleanup_meminfo(struct numa_meminfo *mi)
+>  	return 0;
+>  }
+>  
+> -/*
+> - * Set nodes, which have memory in @mi, in *@nodemask.
+> - */
+> -void __init numa_nodemask_from_meminfo(nodemask_t *nodemask,
+> -				       const struct numa_meminfo *mi)
+> -{
+> -	int i;
+> -
+> -	for (i = 0; i < ARRAY_SIZE(mi->blk); i++)
+> -		if (mi->blk[i].start != mi->blk[i].end &&
+> -		    mi->blk[i].nid != NUMA_NO_NODE)
+> -			node_set(mi->blk[i].nid, *nodemask);
+> -}
+> -
+>  /*
+>   * Mark all currently memblock-reserved physical memory (which covers the
+>   * kernel's own memory ranges) as hot-unswappable.
+> @@ -368,7 +368,7 @@ static void __init numa_clear_kernel_node_hotplug(void)
+>  	}
+>  }
+>  
+> -int __init numa_register_meminfo(struct numa_meminfo *mi)
+> +static int __init numa_register_meminfo(struct numa_meminfo *mi)
+>  {
+>  	int i;
+>  
+> @@ -412,6 +412,47 @@ int __init numa_register_meminfo(struct numa_meminfo *mi)
+>  	return 0;
+>  }
+>  
+> +int __init numa_memblks_init(int (*init_func)(void),
+> +			     bool memblock_force_top_down)
+> +{
+> +	int ret;
+> +
+> +	nodes_clear(numa_nodes_parsed);
+> +	nodes_clear(node_possible_map);
+> +	nodes_clear(node_online_map);
+> +	memset(&numa_meminfo, 0, sizeof(numa_meminfo));
+> +	WARN_ON(memblock_set_node(0, ULLONG_MAX, &memblock.memory,
+> +				  NUMA_NO_NODE));
+> +	WARN_ON(memblock_set_node(0, ULLONG_MAX, &memblock.reserved,
+> +				  NUMA_NO_NODE));
+> +	/* In case that parsing SRAT failed. */
+> +	WARN_ON(memblock_clear_hotplug(0, ULLONG_MAX));
+> +	numa_reset_distance();
+> +
+> +	ret = init_func();
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/*
+> +	 * We reset memblock back to the top-down direction
+> +	 * here because if we configured ACPI_NUMA, we have
+> +	 * parsed SRAT in init_func(). It is ok to have the
+> +	 * reset here even if we did't configure ACPI_NUMA
+> +	 * or acpi numa init fails and fallbacks to dummy
+> +	 * numa init.
+> +	 */
+> +	if (memblock_force_top_down)
+> +		memblock_set_bottom_up(false);
+> +
+> +	ret = numa_cleanup_meminfo(&numa_meminfo);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	numa_emulation(&numa_meminfo, numa_distance_cnt);
+> +
+> +	return numa_register_meminfo(&numa_meminfo);
+> +}
+> +
+>  static int __init cmp_memblk(const void *a, const void *b)
+>  {
+>  	const struct numa_memblk *ma = *(const struct numa_memblk **)a;
 
 
