@@ -1,248 +1,242 @@
-Return-Path: <linux-kernel+bounces-257451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EA2B937A54
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:06:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F45A937A5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:08:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C86392829BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:06:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55A65282BBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83220145B28;
-	Fri, 19 Jul 2024 16:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2638146A69;
+	Fri, 19 Jul 2024 16:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GuksSN/A";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="G2PTHp0o";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GuksSN/A";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="G2PTHp0o"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WgVL0ES9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984D72CA6
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 16:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1148F146587
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 16:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721405199; cv=none; b=dGGIM6XZYWvCZ9tQ9xPqrj69Z8SnPuB/3EZwfmMWDo9wQPVDSNO9NtkAuxHDABMVej86ZlTz6xytXMx0RxvEuGTjANLy2fxWJ5QK1wq+G5dd/nLP1xp+YXQbXB5tuBngUsOo1pL+5Hur2DPSGpv9zaQSgNkFK0Xp0l98xA1mczA=
+	t=1721405262; cv=none; b=d+1Vko32YjKDDnLXFq7hJq8z9KU+Wt8rVTGNvv7I4K4CLwh5oBGbGSmSNn34xUKGvabF6emKSS5C701zBaVgExmvANqjFgs+51AEV4KFHod14fTH9qs6CTr6tcuZroCZIS9ZpbEFlgicqvi12IVjqx+t4dr6KFSfv5HhVgBvhps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721405199; c=relaxed/simple;
-	bh=N9ikjv8nlCsUDD+kFGy+dOFLLsoIRaRFd/BqgpCx/Es=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k1JFNL9IpnyT+4z716VTcFWCp76fTUgl69IIoCSPvPVVwnQ2yiLYEVUxog4qq4D/kFK4HCJ7o45pBdkMpF2O0gZfDFgXrVkjEXDUQlm3eS/bOBG/K/pw2UeqM5kzzer/a4SJw1HIRuPpgIJGv2zbV8QXS+9v9ip1bU25LkAm8KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GuksSN/A; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=G2PTHp0o; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GuksSN/A; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=G2PTHp0o; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AE93921195;
-	Fri, 19 Jul 2024 16:06:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721405194; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/H93cFyUfCuxRcjvdGlgdf3FPdOykcZU4faiSSn7exo=;
-	b=GuksSN/ACzX0MAc+q7DDgh4n7vrgV6r4nS5ZUeTrebX35YmNk+DYXpRwoxxQkN5ooLoA6e
-	33Cksqku0uApBfqKc21pkOuEDjlHWp95jqM6VUT3USnZrZeMdmOUYmz1cNY7XBmp8HDSu6
-	A/pD1sex72m8pgfCgHDmW8jKW0rSV8M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721405194;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/H93cFyUfCuxRcjvdGlgdf3FPdOykcZU4faiSSn7exo=;
-	b=G2PTHp0oBcqKdtUqL5TT2fDZ/xdZr5KVu0X0hon/WQZ9cTBB1Vbotnbx1p67CPCXPdywju
-	gc+uuoH+//z5xbBA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="GuksSN/A";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=G2PTHp0o
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721405194; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/H93cFyUfCuxRcjvdGlgdf3FPdOykcZU4faiSSn7exo=;
-	b=GuksSN/ACzX0MAc+q7DDgh4n7vrgV6r4nS5ZUeTrebX35YmNk+DYXpRwoxxQkN5ooLoA6e
-	33Cksqku0uApBfqKc21pkOuEDjlHWp95jqM6VUT3USnZrZeMdmOUYmz1cNY7XBmp8HDSu6
-	A/pD1sex72m8pgfCgHDmW8jKW0rSV8M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721405194;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/H93cFyUfCuxRcjvdGlgdf3FPdOykcZU4faiSSn7exo=;
-	b=G2PTHp0oBcqKdtUqL5TT2fDZ/xdZr5KVu0X0hon/WQZ9cTBB1Vbotnbx1p67CPCXPdywju
-	gc+uuoH+//z5xbBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 68BF013808;
-	Fri, 19 Jul 2024 16:06:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id pS5fGAqPmmYdEgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 19 Jul 2024 16:06:34 +0000
-Date: Fri, 19 Jul 2024 18:07:07 +0200
-Message-ID: <875xt1s6vo.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: wangdicheng <wangdich9700@163.com>
-Cc: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org,
-	wangdicheng <wangdicheng@kylinos.cn>
-Subject: Re: [PATCH v3] ALSA: usb-audio: Fix microphone sound on HD webcam.
-In-Reply-To: <20240719020906.8078-1-wangdich9700@163.com>
-References: <20240719020906.8078-1-wangdich9700@163.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1721405262; c=relaxed/simple;
+	bh=T6Eo6M1NADRiMLtxoykwJ1wI3LfkaAr2/9cfROjZwWA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rD4HUSskowYy62BnpRCmzAx1PgVuI8TvXhIIcBAfwUO5rjdy2Eft33agKf56y+KuQ72PESP2WS4eeK97eZ6AOg8eP+yxzQgPe2QvCeDQh/kXxjeEgAvZMd8riBMwOgGmVKj0JWRKSZohzJUqLoh49TdlLCEnfWPUHP9vEry+FH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WgVL0ES9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721405259;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=pZli1ZWS65IADc0MuGEmad+VYY75q1/RVf/I8f/0nkc=;
+	b=WgVL0ES9Q6sFg+Jrh8Q0OpQukGh7M9D+Emwq7TyvrrIcy0B0a08H3Eu4h7HRQhdT/lrgYx
+	rXmTSAEzMDS+im4sLoGJitMTDldWZfmy0KiXa8J0U8UP/JonBZIT4z8S+MGHqkOZcMfKHG
+	7HsqnHVPL+3tliC+PLHmM6lbQ4Dubqg=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-404-R1gH8oyFMGKPBq_VsIoTbg-1; Fri, 19 Jul 2024 12:07:37 -0400
+X-MC-Unique: R1gH8oyFMGKPBq_VsIoTbg-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3686d709f6dso822554f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 09:07:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721405256; x=1722010056;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=pZli1ZWS65IADc0MuGEmad+VYY75q1/RVf/I8f/0nkc=;
+        b=FLfecXwKPxJZf84wCOSO0Wpc2MTj9FpmrVREBtHUCjQ64f+VrI/3q32dlxuQVM/HQ5
+         DFp1UMzpn6ip1SfnFH4Sauz+FloITPQewHa1vOZCnYNtvWOIhRWSzLw9nmHDRAu77D90
+         pCJJV0hKQExpn7zZOCr6tMSvrBbm5TRaNRRdwrH6Oo8xrqPiIdv59CiC3mdRqgTJAcmv
+         GxTCsbiIRWa8Ah3cjbGlGCTaCLn6X6IIVbF+y1aKOgDC4Yhmky/icJyzrkWR4Nr73nHj
+         rDXCR4uUMAlRj1zWtyigY8BlJhKh4Om7xXCuE91iXJ5j/4pibSjMbNmocy7GB3fCUtm2
+         IAuw==
+X-Forwarded-Encrypted: i=1; AJvYcCXUGPw1TvAiHwNTCLyuSUDWd/8PygHTx06ZFaSEor+i50mwVU9xrC8asDcp+Q3MqHM+BTtQEdWdi55TqNGtNnkfTLAVrsbelFLrd4xf
+X-Gm-Message-State: AOJu0Yw89V+ZqDbbXlfaQ6fZuI0CXlekf7Axrb87eK7lGGZo05ExwM6+
+	Jk/Rd+gqdSKaHUV5s0jh2XUEqHdnbn7j0lF7YxXIqkYbkNG2m3QxBjq94K1K8YCyrzOoHrp+AkE
+	kxHs/Yk6YqzvfGfyTYebnBeklsmFX1Nkmi21wO+txvGg1p2iahMN89AN4t0h4xg==
+X-Received: by 2002:a05:6000:1f8a:b0:368:3f6a:1de8 with SMTP id ffacd0b85a97d-3683f6a1fd3mr6197196f8f.11.1721405256406;
+        Fri, 19 Jul 2024 09:07:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE7LRUztVUaQBN7s/nxE6MGqv+dWgvzusQE14jyzDq7GxIcTp7Je/ha3vehB6s5hU+vze0vHQ==
+X-Received: by 2002:a05:6000:1f8a:b0:368:3f6a:1de8 with SMTP id ffacd0b85a97d-3683f6a1fd3mr6197181f8f.11.1721405255968;
+        Fri, 19 Jul 2024 09:07:35 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c705:1000:c4af:a24f:b8ba:8bbc? (p200300cbc7051000c4afa24fb8ba8bbc.dip0.t-ipconnect.de. [2003:cb:c705:1000:c4af:a24f:b8ba:8bbc])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3687868bc2csm1983265f8f.47.2024.07.19.09.07.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Jul 2024 09:07:35 -0700 (PDT)
+Message-ID: <892d0dab-f9db-481c-a3f6-ac3e2bda9b6e@redhat.com>
+Date: Fri, 19 Jul 2024 18:07:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-0.31 / 50.00];
-	MID_CONTAINS_FROM(1.00)[];
-	DWL_DNSWL_LOW(-1.00)[suse.de:dkim];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[163.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
-	FREEMAIL_CC(0.00)[gmail.com,kernel.org,perex.cz,suse.com,vger.kernel.org,alsa-project.org,lists.infradead.org,kylinos.cn];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim]
-X-Spam-Level: 
-X-Rspamd-Queue-Id: AE93921195
-X-Spam-Score: -0.31
-X-Spam-Flag: NO
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Bar: /
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/17] arch, mm: pull out allocation of NODE_DATA to
+ generic code
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
+ Borislav Petkov <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Heiko Carstens <hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Michael Ellerman <mpe@ellerman.id.au>, Palmer Dabbelt <palmer@dabbelt.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Thomas Gleixner <tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>,
+ Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org,
+ x86@kernel.org
+References: <20240716111346.3676969-1-rppt@kernel.org>
+ <20240716111346.3676969-6-rppt@kernel.org>
+ <220da8ed-337a-4b1e-badf-2bff1d36e6c3@redhat.com>
+ <Zpi-HAb7EBxrZBtK@kernel.org>
+ <96850252-a49f-4d78-a94b-a9a25e3f2bd5@redhat.com>
+ <20240719165143.0000002e@Huawei.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240719165143.0000002e@Huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 19 Jul 2024 04:09:06 +0200,
-wangdicheng wrote:
+On 19.07.24 17:51, Jonathan Cameron wrote:
+> On Fri, 19 Jul 2024 17:07:35 +0200
+> David Hildenbrand <david@redhat.com> wrote:
 > 
-> From: wangdicheng <wangdicheng@kylinos.cn>
-> 
-> I own an external usb Webcam, HD webcam, which had low mic volume and
-> inconsistent sound quality. Video works as expected.
-> 
-> (snip)
-> [   95.473820][ 1] [   T73] usb 5-2.2: new high-speed USB device number 7 using xhci_hcd
-> [   95.773974][ 1] [   T73] usb 5-2.2: New USB device found, idVendor=1bcf, idProduct=2281, bcdDevice= 0.05
-> [   95.783445][ 1] [   T73] usb 5-2.2: New USB device strings: Mfr=1, Product=2, SerialNumber=3
-> [   95.791872][ 1] [   T73] usb 5-2.2: Product: HD webcam
-> [   95.797001][ 1] [   T73] usb 5-2.2: Manufacturer: Sunplus IT Co
-> [   95.802996][ 1] [   T73] usb 5-2.2: SerialNumber: 20200513
-> [   96.092610][ 2] [ T3680] usb 5-2.2: Warning! Unlikely big volume range (=4096), cval->res is probably wrong.
-> [   96.102436][ 2] [ T3680] usb 5-2.2: [5] FU [Mic Capture Volume] ch = 1, val = 0/4096/1
-> 
-> Set up quirk cval->res to 16 for 256 levels,
-> Set GET_SAMPLE_RATE quirk flag to stop trying to get the sample rate.
-> Confirmed that happened anyway later due to the backoff mechanism,
-> After 3 failures.
-> 
-> All audio stream on device interfaces share the same values,
-> apart from wMaxPacketSize and tSamFreq :
-> 
->       bLength                 9
->       bDescriptorType         4
->       bInterfaceNumber        3
->       bAlternateSetting       4
->       bNumEndpoints           1
->       bInterfaceClass         1 Audio
-> 
-> Interface Descriptor:
->   bLength                 9
->   bDescriptorType         4
->   bInterfaceNumber        3
->   bAlternateSetting       4
->   bNumEndpoints           1
->   bInterfaceClass         1 Audio
->   bInterfaceSubClass      2 Streaming
->   bInterfaceProtocol      0
->   iInterface              0
->   AudioStreaming Interface Descriptor:
->     bLength                 7
->     bDescriptorType        36
->     bDescriptorSubtype      1 (AS_GENERAL)
->     bTerminalLink           3
->     bDelay                  1 frames
->     wFormatTag         0x0001 PCM
->   AudioStreaming Interface Descriptor:
->     bLength                11
->     bDescriptorType        36
->     bDescriptorSubtype      2 (FORMAT_TYPE)
->     bFormatType             1 (FORMAT_TYPE_I)
->     bNrChannels             1
->     bSubframeSize           2
->     bBitResolution         16
->     bSamFreqType            1 Discrete
->     tSamFreq[ 0]        48000
->   Endpoint Descriptor:
->     bLength                 9
->     bDescriptorType         5
->     bEndpointAddress     0x86  EP 6 IN
->     bmAttributes            5
->       Transfer Type            Isochronous
->       Synch Type               Asynchronous
->       Usage Type               Data
->     wMaxPacketSize     0x0064  1x 100 bytes
->     bInterval               4
->     bRefresh                0
->     bSynchAddress           0
->     AudioStreaming Endpoint Descriptor:
->       bLength                 7
->       bDescriptorType        37
->       bDescriptorSubtype      1 (EP_GENERAL)
->       bmAttributes         0x01
->         Sampling Frequency
->       bLockDelayUnits         0 Undefined
->       wLockDelay         0x0000
-> (snip)
-> 
-> Testing patch provides consistent good sound recording quality and volume range.
-> 
-> (snip)
-> [   95.473820][ 1] [   T73] usb 5-2.2: new high-speed USB device number 7 using xhci_hcd
-> [   95.773974][ 1] [   T73] usb 5-2.2: New USB device found, idVendor=1bcf, idProduct=2281, bcdDevice= 0.05
-> [   95.783445][ 1] [   T73] usb 5-2.2: New USB device strings: Mfr=1, Product=2, SerialNumber=3
-> [   95.791872][ 1] [   T73] usb 5-2.2: Product: HD webcam
-> [   95.797001][ 1] [   T73] usb 5-2.2: Manufacturer: Sunplus IT Co
-> [   95.802996][ 1] [   T73] usb 5-2.2: SerialNumber: 20200513
-> [   96.110630][ 3] [ T3680] usbcore: registered new interface driver snd-usb-audio
-> [   96.114329][ 7] [ T3677] usb 5-2.2: Found UVC 1.00 device HD webcam (1bcf:2281)
-> [   96.167555][ 7] [ T3677] usbcore: registered new interface driver uvcvideo
-> 
-> Signed-off-by: wangdicheng <wangdicheng@kylinos.cn>
-> ---
-> v2 -> v3: make the mail address of Signed-off-by  consistent with the From address
-> V1 -> V2: align the space,Update code to v6.8-rc3,and make modifications based on it
+>>>>> -	 * Allocate node data.  Try node-local memory and then any node.
+>>>>> -	 * Never allocate in DMA zone.
+>>>>> -	 */
+>>>>> -	nd_pa = memblock_phys_alloc_try_nid(nd_size, SMP_CACHE_BYTES, nid);
+>>>>> -	if (!nd_pa) {
+>>>>> -		pr_err("Cannot find %zu bytes in any node (initial node: %d)\n",
+>>>>> -		       nd_size, nid);
+>>>>> -		return;
+>>>>> -	}
+>>>>> -	nd = __va(nd_pa);
+>>>>> -
+>>>>> -	/* report and initialize */
+>>>>> -	printk(KERN_INFO "NODE_DATA(%d) allocated [mem %#010Lx-%#010Lx]\n", nid,
+>>>>> -	       nd_pa, nd_pa + nd_size - 1);
+>>>>> -	tnid = early_pfn_to_nid(nd_pa >> PAGE_SHIFT);
+>>>>> -	if (tnid != nid)
+>>>>> -		printk(KERN_INFO "    NODE_DATA(%d) on node %d\n", nid, tnid);
+>>>>> -
+>>>>> -	node_data[nid] = nd;
+>>>>> -	memset(NODE_DATA(nid), 0, sizeof(pg_data_t));
+>>>>> -
+>>>>> -	node_set_online(nid);
+>>>>> -}
+>>>>> -
+>>>>>     /**
+>>>>>      * numa_cleanup_meminfo - Cleanup a numa_meminfo
+>>>>>      * @mi: numa_meminfo to clean up
+>>>>> @@ -571,6 +538,7 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+>>>>>     			continue;
+>>>>>     		alloc_node_data(nid);
+>>>>> +		node_set_online(nid);
+>>>>>     	}
+>>>>
+>>>> I can spot that we only remove a single node_set_online() call from x86.
+>>>>
+>>>> What about all the other architectures? Will there be any change in behavior
+>>>> for them? Or do we simply set the nodes online later once more?
+>>>
+>>> On x86 node_set_online() was a part of alloc_node_data() and I moved it
+>>> outside so it's called right after alloc_node_data(). On other
+>>> architectures the allocation didn't include that call, so there should be
+>>> no difference there.
+>>
+>> But won't their arch code try setting the nodes online at a later stage?
+>>
+>> And I think, some architectures only set nodes online conditionally
+>> (see most other node_set_online() calls).
+>>
+>> Sorry if I'm confused here, but with now unconditional node_set_online(), won't
+>> we change the behavior of other architectures?
+> This is moving x86 code to x86 code, not a generic location
+> so how would that affect anyone else? Their onlining should be same as
+> before.
 
-Thanks, applied now.
+Yes, see my reply to Mike.
 
+> 
+> The node onlining difference are a pain (I recall that fun from adding
+> generic initiators) as different ordering on x86 and arm64 at least.
 
-Takashi
+That's part of the reason I was confused, because I remember some nasty 
+inconsistency.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
