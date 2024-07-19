@@ -1,172 +1,146 @@
-Return-Path: <linux-kernel+bounces-257453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43F28937A56
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:07:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CB23937A64
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C467E1F22CB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:07:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F07581F22C8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3EF146017;
-	Fri, 19 Jul 2024 16:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332C2145FE5;
+	Fri, 19 Jul 2024 16:09:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hkPwG17Y";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MiIaMDML";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hkPwG17Y";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MiIaMDML"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="UABdf/i3"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC422CA6;
-	Fri, 19 Jul 2024 16:07:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F482CA6
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 16:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721405239; cv=none; b=Ww18zKDqzYgf39LJ0Fkna6qTTuAQQerQFpkF1dpmmMakn11WpRC5L4SnQkkjVwZEANZWhPrzUDAza0XRMOjMm/X6YmPCn/sWKRGuDOlCdtv9fjdpuJu3Uhj3kpsjzPhc8Dp2WWGhvE9f8mNZzJbQaU95woZlPaLe2R4eSFtvusM=
+	t=1721405367; cv=none; b=TwE7vxSvHm7a2VaNi74sdKSHbkuWFsrcV0ij51+WZaRZ7XXYLzB+RCM63UGbpiqR+R5qM4GmyIFTlpJG+d9eQtfplYeES5uLuLca1/9qMgl9ZzxJwYkNdEaWmkW/3IOX+WdrRKQi2/Q0Llo1U27mlYx5eiAWbJZ3czNbULf0Bvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721405239; c=relaxed/simple;
-	bh=5yJ1aJIFRAYnggNnRm7jwL4IZa1qbw9Jiq7PbL7HYD8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KHVSMb9E5lvy5EZRa9iRJvoa98wP/UuwBMzSKsFPcmfWCyueDeP6fARd4kZ4V3R1ndjYtXNs6z1H6Tocu1bAU898UxvVroBne/QWOLRFUWB2FiE5lXlU3AUydudx022MHbveeQ2VQuhFOsv5VnruGS5OzJgk5E0t2C9yvmWtTbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hkPwG17Y; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MiIaMDML; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hkPwG17Y; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MiIaMDML; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C370121198;
-	Fri, 19 Jul 2024 16:07:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721405235; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o5kDd9HhVtKwrV15n8k1AAZB865njtt6+Ye5ZgRQqDA=;
-	b=hkPwG17Yb8b6LqIjT50sH4qRk1G8Ufks0RFuhAotwBdD64P0VW4hwMB0gGuBBzcwTd6ngg
-	+RvfGIuiFFsUAKeH47fLFQHwwrSI77yGDeb3cCTz6I0I8ozPh0zd0hJy+RP4l6/kTfNpFq
-	ZSeDYADseYCm7A4IWbisWvWpbaRxNgw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721405235;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o5kDd9HhVtKwrV15n8k1AAZB865njtt6+Ye5ZgRQqDA=;
-	b=MiIaMDMLj+MHaIuHUqFRCI4vGFmlTYCL8GRU7v+hVKogNOXlL1KMuhC/PQ8CJ0VmIiJZZq
-	nroi6cKpwxI53iCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=hkPwG17Y;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=MiIaMDML
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721405235; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o5kDd9HhVtKwrV15n8k1AAZB865njtt6+Ye5ZgRQqDA=;
-	b=hkPwG17Yb8b6LqIjT50sH4qRk1G8Ufks0RFuhAotwBdD64P0VW4hwMB0gGuBBzcwTd6ngg
-	+RvfGIuiFFsUAKeH47fLFQHwwrSI77yGDeb3cCTz6I0I8ozPh0zd0hJy+RP4l6/kTfNpFq
-	ZSeDYADseYCm7A4IWbisWvWpbaRxNgw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721405235;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o5kDd9HhVtKwrV15n8k1AAZB865njtt6+Ye5ZgRQqDA=;
-	b=MiIaMDMLj+MHaIuHUqFRCI4vGFmlTYCL8GRU7v+hVKogNOXlL1KMuhC/PQ8CJ0VmIiJZZq
-	nroi6cKpwxI53iCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6760513808;
-	Fri, 19 Jul 2024 16:07:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GgbEFzOPmmZLEgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 19 Jul 2024 16:07:15 +0000
-Date: Fri, 19 Jul 2024 18:07:49 +0200
-Message-ID: <8734o5s6ui.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Shenghao Ding <shenghao-ding@ti.com>,
-	Kevin Lu <kevin-lu@ti.com>,
-	Baojun Xu <baojun.xu@ti.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Gergo Koteles <soyer@irl.hu>,
-	Mark Brown <broonie@kernel.org>,
-	alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sound: hda: tas2781: mark const variables as __maybe_unused
-In-Reply-To: <20240719095640.3741247-1-arnd@kernel.org>
-References: <20240719095640.3741247-1-arnd@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1721405367; c=relaxed/simple;
+	bh=hQ3ruD4qAjQfF2Nf3WejfEE5T7kt5QJVJnhVKCdchec=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aCDRBOChBSP2FvGiNiso5mjtvApdXGSYOr3QZf2WICxLtfSSduJ81igiKF4GR54FyGj+TUCdCWZPL9wnFgu9QiifuGTiUUh3me/rxabRXz16CC4+H7zqCpnjtQgWMJtDjTsGopCeSA8t+x1zikDrJZW55r+2hz7jit3UzjN/2fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=UABdf/i3; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fc56fd4de1so16470995ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 09:09:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1721405365; x=1722010165; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xYWKSzPxNF1FBMt6vsXOOAcJiLP6695b+s20Dc1fH5Y=;
+        b=UABdf/i3seo97NspoBzODW1tZ5pWY5H96F8qY7sqPwqVD99eNJhbNCt9rdk/8jXkFl
+         oJeg192b1jmRmm7SrOj9MvELLhoQK1QWXQnNl7eO4yy5LJwCzMUF+jjaMQs5DFaDrw5X
+         CnKcJK6U+uMeC5Nc46QYJRm2nCWAc48+SaPkI/8VbxVDjkUIE+so2jZP1gJT5a7XtpuP
+         /AgVJKAGAwYicd9bX+sCYOJabYWMsiLAe9G32hpysxfvik8xVj9DaGfFdEO6uXZmFmlH
+         5oB8AbxxCKAGU2C0QS+i+0f7DMHhLMgDe0ZDfpzeQz1HFJm5bWYRnza7zUZSJx3U/pjk
+         4c1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721405365; x=1722010165;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xYWKSzPxNF1FBMt6vsXOOAcJiLP6695b+s20Dc1fH5Y=;
+        b=u1f5s+ZapXiA0uAjFefWbxeU2+49i7FP/Auhs7J74/OyWx/jwsEnQMBlfy/TUZb8b7
+         GRrfHrtRWdEGPrp6GWLjkFFNZqSE5RrN04tW3FAVQsPikPbtSqWEQo+8zZYaejb3oJZE
+         0tGGbuFQfRwCehRwphE0lqGHVEC0Oj9q3pt97mTJtABlOh2/d6OOHjGq9CaGXx5dw0N6
+         Y4YGWJibSW9Zm2jxzpX7xXvsDK87IJhy/axq2GaJZcwn9NtgiJ3CM4jLtTB8Tf7Yo557
+         dLYJi//3DuGVSW33g/07UlRJWRdQA8SQURp3Vvl/mmOluHfZXDD7U0YYQbLAVH6NG1w9
+         s+Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2g9vhwtDpIlAZsVOOjaNLzeHh4xIiROvCGttgg9arbVXG9muLdk+QRh+MTdrosBqpoW0wxs7tmRVR67YTDfwjsmm97T7vBPXs5yL3
+X-Gm-Message-State: AOJu0YxtqIIvSB5v9OxG2Iy1FCJxnA2ngI9O20g2grgROO9M37W7clCc
+	rDJ+eM/4ZZGhKUUEju7CQuCPPrfDw9vgoWPfng6FHyXHmCcJ4Nhb5cstm0SSpbw=
+X-Google-Smtp-Source: AGHT+IEDU6P9hJ2nz3TyZ6kiWvc/ZyeAut4s//9AkbdAxAzckMrzsXplgQo8noxdWpSASQCmveYruw==
+X-Received: by 2002:a17:903:98d:b0:1fc:58b7:ae66 with SMTP id d9443c01a7336-1fd74d366dcmr1596895ad.17.1721405364733;
+        Fri, 19 Jul 2024 09:09:24 -0700 (PDT)
+Received: from anup-ubuntu-vm.localdomain ([223.185.135.236])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f28f518sm6632615ad.69.2024.07.19.09.09.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 09:09:24 -0700 (PDT)
+From: Anup Patel <apatel@ventanamicro.com>
+To: Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Atish Patra <atishp@atishpatra.org>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Anup Patel <anup@brainfault.org>,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Anup Patel <apatel@ventanamicro.com>
+Subject: [PATCH 00/13] Accelerate KVM RISC-V when running as a guest
+Date: Fri, 19 Jul 2024 21:39:00 +0530
+Message-Id: <20240719160913.342027-1-apatel@ventanamicro.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -3.31
-X-Rspamd-Action: no action
-X-Spam-Level: 
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: C370121198
-X-Spamd-Result: default: False [-3.31 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_LOW(-1.00)[suse.de:dkim];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[arndb.de:email,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Flag: NO
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 19 Jul 2024 11:56:34 +0200,
-Arnd Bergmann wrote:
-> 
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> An earlier patch changed the DECLARE_TLV_DB_SCALE declaration, but
-> now there are additional static const variables that cause
-> the same build warnings:
-> 
-> In file included from sound/pci/hda/tas2781_hda_i2c.c:23:
-> include/sound/tas2781-tlv.h:23:28: error: 'tas2563_dvc_table' defined but not used [-Werror=unused-const-variable=]
->    23 | static const unsigned char tas2563_dvc_table[][4] = {
->       |                            ^~~~~~~~~~~~~~~~~
-> In file included from include/sound/tlv.h:10,
->                  from sound/pci/hda/tas2781_hda_i2c.c:22:
-> include/sound/tas2781-tlv.h:20:35: error: 'tas2563_dvc_tlv' defined but not used [-Werror=unused-const-variable=]
->    20 | static const DECLARE_TLV_DB_SCALE(tas2563_dvc_tlv, -12150, 50, 1);
->       |                                   ^~~~~~~~~~~~~~~
-> 
-> Mark them all as unused as well.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+The KVM RISC-V hypervisor might be running as a guest under some other
+host hypervisor in which case the complete H-extension functionality will
+be trap-n-emulated by the host hypervisor. In this case, the KVM RISC-V
+performance can be accelerated using the SBI nested acceleration (NACL)
+extension if the host hypervisor provides it.
 
-Thanks, applied now.
+These series extends KVM RISC-V to use SBI NACL extension whenever
+underlying SBI implementation (aka host hypervisor) provides it.
 
+These patches can also be found in the riscv_sbi_nested_v1 branch at:
+https://github.com/avpatel/linux.git
 
-Takashi
+To test these patches, run KVM RISC-V as Guest under latest Xvisor
+found at: https://github.com/xvisor/xvisor.git
+
+For the steps to test on Xvisor, refer the Xvisor documentation
+<xvisor_source>/docs/riscv/riscv64-qemu.txt with two small changes:
+
+1) In step#11, make sure compressed kvm.ko, guest kernel image, and
+   kvmtool are present in the rootfs.img
+2) In step#14, make sure AIA is available to Xvisor by using
+   "virt,aia=aplic-imsic" as the QEMU machine name.
+
+Anup Patel (13):
+  RISC-V: KVM: Order the object files alphabetically
+  RISC-V: KVM: Save/restore HSTATUS in C source
+  RISC-V: KVM: Save/restore SCOUNTEREN in C source
+  RISC-V: KVM: Break down the __kvm_riscv_switch_to() into macros
+  RISC-V: KVM: Replace aia_set_hvictl() with aia_hvictl_value()
+  RISC-V: KVM: Don't setup SGEI for zero guest external interrupts
+  RISC-V: Add defines for the SBI nested acceleration extension
+  RISC-V: KVM: Add common nested acceleration support
+  RISC-V: KVM: Use nacl_csr_xyz() for accessing H-extension CSRs
+  RISC-V: KVM: Use nacl_csr_xyz() for accessing AIA CSRs
+  RISC-V: KVM: Use SBI sync SRET call when available
+  RISC-V: KVM: Save trap CSRs in kvm_riscv_vcpu_enter_exit()
+  RISC-V: KVM: Use NACL HFENCEs for KVM request based HFENCEs
+
+ arch/riscv/include/asm/kvm_nacl.h | 237 ++++++++++++++++++++++++++++++
+ arch/riscv/include/asm/sbi.h      | 120 +++++++++++++++
+ arch/riscv/kvm/Makefile           |  27 ++--
+ arch/riscv/kvm/aia.c              | 114 +++++++++-----
+ arch/riscv/kvm/main.c             |  53 ++++++-
+ arch/riscv/kvm/mmu.c              |   4 +-
+ arch/riscv/kvm/nacl.c             | 152 +++++++++++++++++++
+ arch/riscv/kvm/tlb.c              |  57 ++++---
+ arch/riscv/kvm/vcpu.c             | 184 +++++++++++++++++------
+ arch/riscv/kvm/vcpu_switch.S      | 137 ++++++++++-------
+ arch/riscv/kvm/vcpu_timer.c       |  28 ++--
+ 11 files changed, 935 insertions(+), 178 deletions(-)
+ create mode 100644 arch/riscv/include/asm/kvm_nacl.h
+ create mode 100644 arch/riscv/kvm/nacl.c
+
+-- 
+2.34.1
+
 
