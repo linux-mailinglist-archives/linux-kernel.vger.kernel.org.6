@@ -1,131 +1,159 @@
-Return-Path: <linux-kernel+bounces-257439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6DB4937A12
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:41:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93884937A38
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BB4B2813C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:41:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D47B1F22A75
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B746145A09;
-	Fri, 19 Jul 2024 15:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51840145B28;
+	Fri, 19 Jul 2024 15:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b="e9VrrzST"
-Received: from sonic301-31.consmr.mail.ne1.yahoo.com (sonic301-31.consmr.mail.ne1.yahoo.com [66.163.184.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="Z76MWWVD"
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FDAD1E4AD
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 15:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7431B86D5;
+	Fri, 19 Jul 2024 15:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721403680; cv=none; b=EF4lM8CFmeoQqP3s8+E8uxgkhIT6VoVHEX5ghkpZGWUZNn6vA3XULOWYVsNQLlVxF9PksqkCfq+8Q1QChyK85wk/hq6UAPxfZCawEz5fE0bKOdLxEua+vC2pNhHcYuVABFWx0UApvME3pP//LK5efIp7nj+8LeJSBAbhRgIjYVY=
+	t=1721404586; cv=none; b=KuodtNtv8WKxCG03aCSFSp1lqBCnXXbYL8gnLocsZ8H05Xx2UCbyOJjQriJwH3LcuzYfPeTJ0fiFKwKIF9kps31JvTxcZ9QzLYyh6152fJkFPlMz0M0+1b7hPev+Q4wPgf3igZFJNr5ocVL3YTQsFJBcLCdP9xzazC3sN+KC4Ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721403680; c=relaxed/simple;
-	bh=eRaEN1aOt+u7nKXrm295ulDxCo9yBZlHmbdL0KgunG4=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=Py7bzM5uVRtyYCHl1oi98cFYefkOtXf6/Z/MvEnIWwDzNrX04k0Ia9HmNu7AP3qUFBxY4sTpfzdeg9WQ+BH0/fmX2jsXOPrGKsAEnsZDWCyi96KWNyBig3uWOEnBjj38D1MgQnW5QlD/WbRrK33QP9lVNt9lrCha7iwrGA9Lrk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com; spf=pass smtp.mailfrom=rocketmail.com; dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b=e9VrrzST; arc=none smtp.client-ip=66.163.184.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rocketmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rocketmail.com; s=s2048; t=1721403677; bh=vUeE/GAwsERwc9DA8t3B+A8RkXjckadWum8zOaM3JUs=; h=From:Subject:Date:References:Cc:In-Reply-To:To:From:Subject:Reply-To; b=e9VrrzSTcGzF5d3APLzPr312egbvMqgLIXIQLR0OkHe96aTqxNaIpTgaPOSCjk6pmEcPG0XKIEhykQ5oe0+pmX/ekoY8XXY/rqVkunz0r649TZoRi4insUVXoM++JEu4lqNQyoClxcLcjnwVeWpV7wP2NJ15LrQzyycNPWHXy39k84V/Fo5u+e23tyObbsifxin5S9B91c4sDTcvoLIz0ok6qsFPgUGhQSNCuqV1BU65ZkLSE1PVi4yephH82YTffbsmbyFkl7Hif/6RxcRT735vx7ELdW9vWgui18rJMoqYq6mVvMOukzDVhOBamzhwAy326fFqwl4wKDImCWEgRg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1721403677; bh=WKL6HzKrpW5T7NAbViDXniYak6U8dU+XgrdgQviNTtf=; h=X-Sonic-MF:From:Subject:Date:To:From:Subject; b=Fd5DqhkaDc8ct476/EKYuehBLK19KZqxWRRnjspXQ2v1paMWlFWSFVI+MlErxs19apP7pqQfrZj/URPfUrzTGkvTPSeUUBsOc1hpXVMtf6FnlAj+zoeuoTBznIIk3qSHdR81sqax5f93txNQKszDpjLr4yJm1NF+FWvXcdfy7Mv4fdI3TJVfdtaVm5y9zByQAeYFgB3qDBw1rAliQcFaOeAWO1TdovHwVlP03AezSAoJM3iCTNKTEyLbeG4WVJwW4jzqLKdnIDBSmXiw2ohukYaa0QkHz2SLFNZ4faDetpNVAAVJfrS+5hv6eFc6VIyICkp0SzKjJ1qPoVsjoG3CYA==
-X-YMail-OSG: pXZDVZwVM1lbER2c9CpZKTZDn105YRK79WOZzhE5Ki6Tm3WQCKmgxFrofa1X2Bm
- xiL0Q8aFtA.TvB6IAA38jZ4VOFW1feE.Mwt9GAqQ5cVWDCONMtcuVksIleohiKtXCh.sQAFHHonN
- yYmHp9BhyIFcnr3cGonzAPrr59DLFHKX5Bmh1fqlvofvZjp5zuSF71AWIXSvTqLluu6jFWEnva.s
- f7DTNzvze8FQtALdmHOmelJo2X8cybRVUycZjzddxlTwJkVnIuCOaOfivbzBveWzmBeU8af7x1I0
- 2Lzbr9x0txHNdVzBwo.zTj_rkkI97FjeHg976Jip5fomUdP6lQpQc93PaMp5FxvxDNM3qQEBLvRG
- KhnBxngb8D_EN75T5ZlOLDYTrh1Bgl_2N9Rck59gcomwcv.CIniSHSMdy0INlh7xvZj5GXS71VE2
- YpIqDY0LH9ZtFLnX6JSMBXFi2fbT7N_0wiZJb_1pgOVXkIyNav2I6NU1kxi98_s2rUoHfZeDMlNv
- Sjb0LSK1tulNW2BlMnSYpjtimuc_y4EyDXREhvlwbdAm.0MZIUQQ.zVr.F3_zpYdOMAGPhT.ir_W
- cjrSaxf0UhLe4hPKx15w.HqsH.0RARs5MvLBh6qRZFV2MPUiPjxbY08MaI_kRgYJDNJrIblclYGz
- .uqfCBnwEID7uSZ3Oe4rUlWtYMOKY1jZrshk_.T9VDp10gxB_BXBZqFSkazyHMFbMeZ4cpy79XZB
- fgiBKsY0Dm4JCUl6LZWqLI4GTCco0oXVmWvsMVyMRrdIep3B7OivK3mEJHMYfbCku4xrYjsG.mWC
- 239uUtgfRGwiW_7W94x0rcEVpDVTaECuY4aAbe1emc3z9fPXl78tmcItNPFYJUuikAOuEyPPuCwf
- .zbEUespKzMnbdSPZR8YeCkd2a1oFyjQm8MTjXv47KE6TO8EBafbGN6NXUfHAoPlzGuNbT.1oqW6
- ZyLVFwtb39B_R62iTmEbPKgGtW5MfAMrxQIIyS1LBlHS3TB27Udtb3CIvc2CidzZAunidJKG9Yxu
- OXB5yoUVTnejZyByAPUopWG.XIcxv5UPMz8leNLkk2CwQyF_Rp6C9WyVT4qewnvPYx5HPmt_zjWv
- rr0ccJPHiX7HsG0IStrXTrEpB5WNOBfkE9rBGRx4lI76qUwL8QtagmNyzmq3RRlLwTJRLTYMbcK_
- OjYsh06Z7KtFU0FCRhlcTHUwbO.uy5qq0GM1yCH_xfsDfaWnVnkP7rkmMecd9txbIuVecd5B4L7w
- T3lqNoX5NLljY591c2NlS1aI.MvlLxRjM4NCVBORVi93AHTZTK_5vi7Rz7laR__Lg.wTAFtjx_Ds
- soOBUCvutLQulvUC_cPP5MO1a4ms9FuCjU9a5ta1OLGjUT.wYXyO3o2K5mTPZ7lM.hyz8omdo2aW
- 4anVulOx_HqT9v268vtz7_JAfHdHtvUSvK3g877nyun98ojpf93CLQpw4gdF38uGjhOei023kH82
- yAFWp48PzR.nzpZOnl6sAwRT_GcfrIH1nYxdOVnA8rwkj2VA.MEyjjlgbg_r4sa.u3VWBfFPUOm0
- DLOIMabwwyIdKwBt1wb0sHH5nU3ySTaWMfaRwNN7zGlRXdf2h1QUMQEcMUKmBHM.BcFdR4zNLOyC
- QROazo3rebqTgUHzOSRjdTFOHo3YHQ5w8yWUBUizQFAiq_ioaH3JIbIQlk0c8b9Z.iwKOiFeKqWL
- zrz09Dr26RWv3_KS7DHt2bCsUCYv7Twd9G.9DS_7WDB7.US6GytngH_offKdDSy4MXNlJiyOPKQY
- _l5t1z7EGzCvASmzx20V0oeBb1s.wSUfkFwcIDjEAsaBv39Wozz6w4eWAPyHbovH8od9jSags4sY
- pkSk6sbD3l6V_ng5rTHV2JfY2FKtvKyVjxfys9RdUttvWYsjYLeMq_s6rx5lJe2bG_kpTRRCUkUi
- UQ7qRaJgpr8Rx5faKFepHHd4ZmrK8rEJXXUJyi1x01k5GKA2iJeVFfoXMnqqSE4VhU4vtKO3X2gm
- 9joGHSp1GTuKGlCzR6NxjJTl4lHFfbTGfyQ8u.urnx1fEgRy1TeytzUp5fls2OEOR00mHVznUAbZ
- .anYdQknIuYaedfggKm8381Dy2n1OhSBhvyeDji8eBzQG_7.dtW0JcsqkcLY4NVKT_GIWlYQKfSN
- 2O2bp28nRWTmbtIE8St_AUYIovsSDAFAruXtIkuD3LuanzNH76FrZdU2s3DMfPZ5anOdq7Pci00l
- hCfVIqXVX5nmn6TalBgubWtyRq6Lmq4snTjQ3xqMsNG0-
-X-Sonic-MF: <makemehappy@rocketmail.com>
-X-Sonic-ID: ba846122-2fe9-4f3e-8fb6-67a1abcc5cea
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Fri, 19 Jul 2024 15:41:17 +0000
-Received: by hermes--production-ir2-57d49df6b5-m9r8s (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID fb3d04436797f3f06ac410f0d79e8a07;
-          Fri, 19 Jul 2024 15:41:14 +0000 (UTC)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From: Max Dubois <makemehappy@rocketmail.com>
+	s=arc-20240116; t=1721404586; c=relaxed/simple;
+	bh=+BKBZ5774TCOg+pY5eqYS7Hi4ZyfCyYXwJoDM5g0gJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nL3/ItaGpFZGP6VWcaYbhSZLETBlCzFkhN5sIFT008p9iaQ22MKRtjz3PnfI4G0ADrRld/isBgpFI6Tneq80QnYiJrLqGhQgrUU+gGIMHUMEL/efjYSepDYcKLCnvJzU+lVmSBwMcWxj9z5P5JgUp5abDMvugXyRZmikzVti97Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=Z76MWWVD; arc=none smtp.client-ip=217.72.192.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1721404566; x=1722009366; i=christian@heusel.eu;
+	bh=md4fxjDvoKtJafsGWHVwyEzKIUIHCFn+YAHjG3lWpNY=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Z76MWWVDNC4MgnLRiOFas+zmlUZnLvowhk7sP2S/dzDdwUTCEOtoHqT1yaRflszo
+	 3Wd+wUsw6tBtohJ90j+W6xqIey52uKnrg+boCBprWZ+Tg947lRZnRHZorr/JKfFfX
+	 a5wkvW9fC/FlYNmbPqXSv9TO3MyMW5RzJ/mIhJsa8oWc9ctrmJh2Dx1zujzxGcij3
+	 b30ukM2SFBkZqyknfuRD7QQwtG7nq+DuxeFky8eIDp354r11MzlZ7Hk+Y/37pKfBy
+	 7kfusBWAYsm+OBdoRfaP11DfnwZy+9Aq/L+609kxfaxA2TrkewW0nkR8P+k8Avh3j
+	 7nw+sxoFBsLBu1JtDA==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([80.187.66.79]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MN4ux-1snsaA29bx-00JylW; Fri, 19 Jul 2024 17:41:12 +0200
+Date: Fri, 19 Jul 2024 17:41:04 +0200
+From: Christian Heusel <christian@heusel.eu>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	Adrian Hunter <adrian.hunter@intel.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Mark Rutland <mark.rutland@arm.com>, Namhyung Kim <namhyung@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] perf trace: Avoid duplicate code in fprintf_duration()
+Message-ID: <c105871a-6462-4678-9f0c-b2ed5a254bb1@heusel.eu>
+References: <c564da16-062f-4da6-9021-c68f9c6eab63@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: Bug related with a 6.6.24 platform/x86 commit signed by you - Enormous memory leak
-Date: Fri, 19 Jul 2024 17:40:59 +0200
-Message-Id: <CBDDDC2F-34FC-42B3-84EF-5F3BEA5AC480@rocketmail.com>
-References: <9b0e7f6a-0432-46ba-bd75-7ba324934716@suswa.mountain>
-Cc: =?utf-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
- ilpo.jarvinen@linux.intel.com, gregkh@linuxfoundation.org,
- Dan Carpenter <error27@gmail.com>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <9b0e7f6a-0432-46ba-bd75-7ba324934716@suswa.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-X-Mailer: iPhone Mail (21F90)
-
-I=E2=80=99m sorry, yes that file i called =E2=80=98working=E2=80=99 contain m=
-ultiple kernels instances becouae I had to do a path to find out the crash h=
-appened at 6.6.24 level and that the last working kernel was 6.6.23. So I di=
-d a try to a lot of kernels over and under 6.6.24 to isolate the problem to 6=
-.6.24 and everything after.
-
-
-If needed I can try to isolate the instance of the working 6.6.23 and I can=E2=
-=80=99t confirm it does NO ERRORS at all like the kernels before it.
-
-Buggy 6.6.24 log it is corrrext, the real 6.6.24 log with buga on vmalloc.
-
-If needed I can confirm I can test any possible fix and/or patch against 6.6=
-.24.
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="m7hjjenmd5vtslfv"
+Content-Disposition: inline
+In-Reply-To: <c564da16-062f-4da6-9021-c68f9c6eab63@web.de>
+X-Provags-ID: V03:K1:w0MOn1nMqBRpHJaCJc/YCa5vMWdqSfo+968q2TPjOYF3YjA+9WW
+ /YaHWWZkzkD7vvU3AW4VfaVJTZW0/sY7CBZZqdxcCnxNHd7i0nErKkAkDy66zVOAkgf92aC
+ nNbCll3ka3leKQk6hnGZwWImwwnze6II4LaKzYAzINrc9Q9m1hhxzpO6TZ5tBic+r+KP2Aj
+ CAaKANLOh13j1ODjZJVBg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:UmgJgDO60jE=;cWfsEGS7l1zjyRmFumVdbAO+qte
+ agUfXjuXDUT/7BRPuMDCYkuNqWOpXesRhnKnE4kZ+r4odc1qrfwKzSuIwJSEN2vWBl7w6e9lm
+ GV8DjXtPQJLA4vihIvyfp3mnbkhDDvabl7Yntl1NVJbg4PYYj9s7l8yZB4BqWpLNXDYVI+rE+
+ zrQm3htVfiaeC5JR86kzUmPqVNyXK2H1ymEAt0R0Nt1+Cw+7oZlu+DdRWWgEZELC6nFuo1zxU
+ GlcDTdoE6wzjSrc5URiWuXeF0OZbl2e6HDasNXRNfPiMaCZDilAcgyJ0oUJKEhT81jwj0M6fs
+ 6MKhFvn/jxUbN7G4Ys1+8OOXppAlhlQRBJk04GrQmQdP7J8OsD9ewTM0+vyXVVTrch1sLyM9l
+ 380UmzXJlAtyxTmmu6Fo2xe9GUJru2Jn42S3jnJUfEJd6Z/4fdnDxZOBY48IEw+OCbkuDA+4x
+ nHylyHMRP345V0FnwizgJ6DBzqrb226WFwsn96wg1cN9Di17OcItUWDC8s63Bq/5aYj3LCVbd
+ sc+0cJpxXbB6HZa0/1Xhz3wmU9zsVoPSyQ6Xp4lhM18zOXYVn/cvS4O+0hr62Nxxjp/FRz7bh
+ gH7OteNoOePQwOKns5xUvqZjlOsfv2R1tOlXtBpTZNaCg5geXlxnwS4SkPMkOoukibCr155kP
+ bs9XuJXA1f8J0kILW20aoIi42JyGy8uLW0tZFpRXoZJ0mFVzqGOFO/ghZQ4TeAEkDuYxfWwoK
+ GPaJD8PdrrhTd+sBOkFoExUSksbRZe6Gg==
 
 
-Thank you
+--m7hjjenmd5vtslfv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-MD
-Inviato da iPhone
-
-> Il giorno 19 lug 2024, alle ore 17:12, Dan Carpenter <dan.carpenter@linaro=
-.org> ha scritto:
+On 24/07/19 04:17PM, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 19 Jul 2024 16:12:51 +0200
 >=20
-> =EF=BB=BFOn Fri, Jul 19, 2024 at 10:01:14AM -0500, Dan Carpenter wrote:
->>=20
->> The interesting thing about that is the working kernel had tons of these
->> allocation failures as well.
->> https://bugzilla.kernel.org/show_bug.cgi?id=3D219061
->> See the attachment which called "This is a session with the last WORKING
->> KERNEL 6.6.23, NO ERRORS, everything fine".
+> Adjust the colour selection so that a bit of duplicate code can be avoided
+> in this function implementation.
 >=20
-> Never mind.  There are a bunch of different reboots in that file with
-> different kernels.
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  tools/perf/builtin-trace.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
 >=20
-> regards,
-> dan carpenter
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index 8449f2beb54d..e29ae5cb95b0 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -1258,12 +1258,16 @@ static size_t fprintf_duration(unsigned long t, b=
+ool calculated, FILE *fp)
 >=20
+>  	if (!calculated)
+>  		printed +=3D fprintf(fp, "         ");
+> -	else if (duration >=3D 1.0)
+> -		printed +=3D color_fprintf(fp, PERF_COLOR_RED, "%6.3f ms", duration);
+> -	else if (duration >=3D 0.01)
+> -		printed +=3D color_fprintf(fp, PERF_COLOR_YELLOW, "%6.3f ms", duration=
+);
+>  	else
+> -		printed +=3D color_fprintf(fp, PERF_COLOR_NORMAL, "%6.3f ms", duration=
+);
+> +		printed +=3D color_fprintf(fp,
+> +					 (duration >=3D 1.0
+> +					 ? PERF_COLOR_RED
+> +					 : (duration >=3D 0.01
+> +					   ? PERF_COLOR_YELLOW
+> +					   : PERF_COLOR_NORMAL)),
+> +					 "%6.3f ms",
+> +					 duration);
 
+Why is this a desirable change? Folding the if-statements into the
+ternary operator makes the code quite unreadable compared to what it was
+like before and doesn't give any obvious improvement.
+
+--m7hjjenmd5vtslfv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmaaiRAACgkQwEfU8yi1
+JYU8NBAAinnuFkU8WOl3M81bwuAkgGxtxgB1MZssGbfl1Yp2IyKks5DcDfX+oLnR
+EwgU2oNvSM3ty47sdSWIbu/SXDTcVN1FDdjDSQnPL9ZB6+P9eux3KuJlEHZOyvmW
+1bYy1NCSsJ18pPKwNhG8khcpwsgC70/AUk1IQ/xv26ZERiddhvrd7+RIJl4Y6wCn
+B7MKoMFNLjrvCPco9TtaL01r93jL74fC31qThuIF2qKZen04Pkl3cET11HG/dyt3
+tBkkZu36Tdj36NBM5lWzf4ehxYLcf6KI/OL8MInwLhoJb15lbq3AgTNBo2xlFyhX
+Tk8PYCNxFxqeIhXMrn9ARErYRBiUWMr0d8csdSyyALi1R7opXxmK3JzigPgpz6Jl
+MXjzt3oLQ/WfzYSahpfhK9vQAB6O/I1d/fdN3RVJ1i1iQV/nbJvG1Ll0eUjo9ZTM
+9E8XWZdpGdY/gWXYn1cVD8YZojNlucCYNT+ZUc+VREl3IdskvA6aghJCzzOXt5Pt
+6/FWWKQmw+5xxcQRjIV5MUvx2KvxoL8qTQDBlVs64uDXj96ts968w3sP5S5io2C4
+Okw19vJyMqXxeMHBLNLBeAW0/RtmHW3dha9RFjCWLJXTCq0ii6DbLO3XbMGTrchd
+iOh11k6SlXLCfLmz8ahiGGH1P5GouBv5U9G8tpaUHY1/Qml3nYM=
+=6fHp
+-----END PGP SIGNATURE-----
+
+--m7hjjenmd5vtslfv--
 
