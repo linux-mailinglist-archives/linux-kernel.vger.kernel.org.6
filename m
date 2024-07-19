@@ -1,155 +1,233 @@
-Return-Path: <linux-kernel+bounces-257448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C912A937A43
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:01:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4B97937A47
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:03:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 056551C21784
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:01:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 954452817FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0FA13EFEE;
-	Fri, 19 Jul 2024 16:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B292145B29;
+	Fri, 19 Jul 2024 16:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="EtYYieva"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I0PlEMtb"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133CB13E028;
-	Fri, 19 Jul 2024 16:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40E9443D;
+	Fri, 19 Jul 2024 16:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721404907; cv=none; b=RA/pouPl40XNTNj+U7PzqNDn48h8G8tZ7/jB7UqRDa45X5oYCriCgeFsL03j0hJN66EG6xDKF70S5Im96OQF0D0yoOyLW/fr3dHhue4hf1pzzk0wYvawI8FYTKsUeNUjhV9P2EE52Txpa1hZoEjaxNFoViTFDt4a3iCUdMwsED0=
+	t=1721404979; cv=none; b=DhQSEyaTLUOlNCPz8i6ygnuvWG8BF39pyZx2HrrG7lfkcLhwwlbwVUTlaiNG4DPEWYoRCadqn7FrE0Eq/ZcYkDxqJwhIujHDjdz62Da/SUn+sB8hKg+iMgkXIVA0/7NeNllO760qRid0Hg4snNEmwYl7DX9wTfDzM6gG/e4aHQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721404907; c=relaxed/simple;
-	bh=psli4UncC3WvmggqIhvRFMI0Cs3vf8hV1EnlkaizWyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VOBuJ50/sPXGR4yJdA6FPzpQzXdMzL01bjHnEZRFtJ3jKKkyUevUdEmedwy3aA3bs4CKJJXjodLzERRMVvCwD0SzsdHZdCG/NVr3w1WB6Nkh/OX6CtF8T79ITFT73HbQcyouCSblbGf5CoTnq2APF+R1e+8tD/3ZHrYoMttrd7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=EtYYieva; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=uI/ysXcd1nUGjt6va7huqR0znM/Rt3MKLTngWzkAIF8=; b=EtYYievaX9axGU33
-	OVWZ9KTVX3mx7AKY5AmhS9gK1V0naGVKpg31+waWH/oGm0DPtyPDHYDXbXLPmnGCVOh0pGEaP8Vxw
-	pUZrIEHARMl3Ki1r9e9D6kIV2VJ4RwbiAjSFTlzUMsNd/b6WoT6rverNx4/9A0y7imaweIo1KBhCi
-	Zu9cHTX1MDpMfS/sPuT7LKpS4HF8cX7GvnaYQAIddgiGjbjQPJm841NZBp+Ng/3e9uMzBHcLLV129
-	WBGpF4Z1Zb22PyfjZmpVHKPmThzR6kuGe2iLpmorxEwXGEQQSjsFZ0Uf82liWe5wzVJlgMvg4hK5B
-	u3rqfHe6vfJMXzlXHA==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sUq37-00CSxQ-37;
-	Fri, 19 Jul 2024 16:01:37 +0000
-Date: Fri, 19 Jul 2024 16:01:37 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: "Li, Fei1" <fei1.li@intel.com>, tglx@linutronix.de
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>
-Subject: Re: [PATCH] virt: acrn: Remove unusted list 'acrn_irqfd_clients'
-Message-ID: <ZpqN4ehTSm4f1c46@gallifrey>
-References: <20240504174725.93495-1-linux@treblig.org>
- <ZkfyfrDysJ2WnSZq@gallifrey>
- <Zkq183IzBA6cV9FE@louislifei-OptiPlex-7090>
- <ZplUWugKFu37t3PF@gallifrey>
- <SJ1PR11MB615385A66E65F156BE177D20BFAD2@SJ1PR11MB6153.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1721404979; c=relaxed/simple;
+	bh=xyf5t5DYMcXFWBOn8t+457VrYylNBONEjjhrzva6Rb4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=frlUdBbeBvwD//PqWvwQBu67/7SHUCSeG6NsdBkEUAbuidcOF2dSXhoRwXv7e524rRc+MhBv01nuxXcSiJ4vlwiEAgDGsYHcJDKRN6NU9ClS/U5DHzDePSs4FL8Bb6uDm8wsOEZfHDG9Q0ObktH+EBDhKd1vt/3h0vJU/F5af7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I0PlEMtb; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2eee083c044so24584781fa.3;
+        Fri, 19 Jul 2024 09:02:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721404976; x=1722009776; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HaB0iGzq6RUpv6NX934es+Rd+TyRUjeRwJAupwsTKns=;
+        b=I0PlEMtbW8kh6gYkt7hbKE9RB2Jrx9RNlxgwl48KvaGEsmHruKdaI2G2v8O4qdZVIZ
+         KPrn/tqXamNmh6TTxgRJ/NWWdBnO+LUdJq0GdkvriONo9y/YRB/FFGb+HEsHzaoXFqaI
+         3wVCd+enWhp8Yn2BM3Y+WFcLkIgo07/IUyXRT2vHN89koY1OXdMYAgF++XmtvJjcBYHF
+         zSKWpSCM7v1HHJ1M1Ng5WhIPcrPBRSMMbYrGa7SoqhEoDmBFIJv7vSp1RVhTSE2uBwSa
+         l7qUF47TXrAxPwdYfUp6evc0xnHXcYvFRzv3WulUmjuTM7LSuRSWKRmlO0D7HXiLPrIE
+         H1Ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721404976; x=1722009776;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HaB0iGzq6RUpv6NX934es+Rd+TyRUjeRwJAupwsTKns=;
+        b=DMGTQX57A3P+EdX6Mn8C1zecJMjhkxlMCb1YrTJLR+ghTwCVoSM8LoyrMaeNqUMPfB
+         wLfR7gaABTwUN+eztNeBW4BO/ZA16s5CcK6Eup335S8Eis0P9h3gIas0gLcjOjSG7swT
+         oI9xLPK7zVEN2miuT6GWYrpbwJ5P4fDmkSkui+hr93StE3SA8H1NLN6j9MiIF4+LYWM3
+         vmo25e+x2vjzDs8PlGLzabv2LL/qf16L7trq1s2CmC6iAI6Astsic+b6eyp9jmDlCxm6
+         GS5ixoHcV7j8w5zMqGp0CtI/JJdIWT9sRs8DXdLbsNOZCujwTMIGdhFs8x9l0OLOn8gX
+         jpYg==
+X-Forwarded-Encrypted: i=1; AJvYcCWDYbB+pEaeyOy3/JGflVs/Rgr74yzvft0y4a/dx21hRSk+QMTkNxMKf451aHfwVcYnX/FC2tvz3bdgL6yiVPRM8dqRF7Mz6i2TqCi54Nj/ZjHtmsv0BpbAkWUKL9uVW9IAgcUytQ==
+X-Gm-Message-State: AOJu0Yx11h5T/vJ20zFjp9DZDLndOT0fD7c0QXjOCgZ3dXpZ5YA86doN
+	cje4o9Z1xkQlz4CssaOAP8eYekoQXMEsDbcc50mGfm5yOU95Lyyt
+X-Google-Smtp-Source: AGHT+IEjOeTjmTYH881C/sqCw+ii4oMQtQBcTy78cOCGWHk7TqsLcCJMcfqRjXfK1zPz9WCx/FymAg==
+X-Received: by 2002:a2e:9f48:0:b0:2ee:bcf3:2686 with SMTP id 38308e7fff4ca-2ef167a2c59mr1424531fa.21.1721404957558;
+        Fri, 19 Jul 2024 09:02:37 -0700 (PDT)
+Received: from ?IPV6:2a02:8389:41cf:e200:a592:c0b4:f0d9:922c? (2a02-8389-41cf-e200-a592-c0b4-f0d9-922c.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:a592:c0b4:f0d9:922c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a8e47csm56284435e9.29.2024.07.19.09.02.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Jul 2024 09:02:37 -0700 (PDT)
+Message-ID: <2505dee2-c503-4566-a4ef-73103da9479d@gmail.com>
+Date: Fri, 19 Jul 2024 18:02:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <SJ1PR11MB615385A66E65F156BE177D20BFAD2@SJ1PR11MB6153.namprd11.prod.outlook.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 16:00:52 up 72 days,  3:14,  1 user,  load average: 0.00, 0.00, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 2/2] iio: light: ROHM BH1745 colour sensor
+To: Mudit Sharma <muditsharma.info@gmail.com>, jic23@kernel.org,
+ lars@metafoo.de, krzk+dt@kernel.org, conor+dt@kernel.org, robh@kernel.org
+Cc: linux-kernel@vger.kernel.org, mazziesaccount@gmail.com,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ Ivan Orlov <ivan.orlov0322@gmail.com>
+References: <20240718220208.331942-1-muditsharma.info@gmail.com>
+ <20240718220208.331942-2-muditsharma.info@gmail.com>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <20240718220208.331942-2-muditsharma.info@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-* Li, Fei1 (fei1.li@intel.com) wrote:
-> > -----Original Message-----
-> > From: Dr. David Alan Gilbert <linux@treblig.org>
-> > Sent: Friday, July 19, 2024 1:44 AM
-> > To: Li, Fei1 <fei1.li@intel.com>
-> > Cc: linux-kernel@vger.kernel.org; virtualization@lists.linux.dev
-> > Subject: Re: [PATCH] virt: acrn: Remove unusted list 'acrn_irqfd_clients'
-> > 
-> > * Fei Li (fei1.li@intel.com) wrote:
-> > > On 2024-05-18 at 00:12:46 +0000, Dr. David Alan Gilbert wrote:
-> > > > * linux@treblig.org (linux@treblig.org) wrote:
-> > > > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > > > >
-> > > > > It doesn't look like this was ever used.
-> > > > >
-> > > > > Build tested only.
-> > > > >
-> > > > > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> > > >
-> > > > Ping
-> > >
-> > > Acked-by: Fei Li <fei1.li@intel.com>
-> > 
-> > Hi Fei,
-> >   Do you know which way this is likely to get picked up?
-> > (I don't see it in -next)
-> > 
-> >  Thanks,
-> > 
-> > Dave
-> > 
-> > > Thanks.
+On 19/07/2024 00:02, Mudit Sharma wrote:
+> Add support for BH1745, which is an I2C colour sensor with red, green,
+> blue and clear channels. It has a programmable active low interrupt
+> pin. Interrupt occurs when the signal from the selected interrupt
+> source channel crosses set interrupt threshold high or low level.
 > 
-> Hi Dave
+> Interrupt source for the device can be configured by enabling the
+> corresponding event. Interrupt latch is always enabled when setting
+> up interrupt.
 > 
-> For this patch, you could refer to https://lore.kernel.org/all/20210910094708.3430340-1-bigeasy@linutronix.de/ to cc Thomas Gleixner <tglx@linutronix.de> to help review.
+> Add myself as the maintainer for this driver in MAINTAINERS.
+> 
+> Signed-off-by: Mudit Sharma <muditsharma.info@gmail.com>
+> Reviewed-by: Ivan Orlov <ivan.orlov0322@gmail.com>
+> Reviewed-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-OK, I've added Thomas to the To: on this mail;
-note he's not listed in Maintainers for drivers/virt/acrn
+Hi Mudit,
 
-Dave
+a couple of nitpicks inline.
 
-> Thanks.
+...
+
+
+> +static int bh1745_set_int_time(struct bh1745_data *data, int val, int val2)
+> +{
+> +	struct device *dev = data->dev;
+> +	int ret;
+> +	int value;
+> +	int current_int_time, current_hwgain_sel, current_hwgain;
+> +	int new_hwgain, new_hwgain_sel, new_int_time_sel;
+> +	int req_int_time = (1000000 * val) + val2;
+> +
+> +	if (!iio_gts_valid_time(&data->gts, req_int_time)) {
+> +		dev_dbg(dev, "Unsupported integration time requested: %d\n",
+> +			req_int_time);
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = bh1745_get_int_time(data, &current_int_time);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (current_int_time == req_int_time)
+> +		return 0;
+> +
+> +	ret = regmap_read(data->regmap, BH1745_MODE_CTRL2, &value);
+> +	if (ret)
+> +		return ret;
+> +
+> +	current_hwgain_sel = FIELD_GET(BH1745_CTRL2_ADC_GAIN_MASK, value);
+> +	current_hwgain = iio_gts_find_gain_by_sel(&data->gts, current_hwgain_sel);
+> +	ret = iio_gts_find_new_gain_by_old_gain_time(&data->gts, current_hwgain,
+> +						     current_int_time, req_int_time,
+> +						     &new_hwgain);
+> +	if (new_hwgain < 0) {
+
+Typo in debug message: corresponding. I would recommend you to pass
+codespell to checkpatch. It will often catch such things.
+
+> +		dev_dbg(dev, "No corrosponding gain for requested integration time\n");
+> +		return ret;
+> +	}
+> +
+
+...
+
+> +static int bh1745_write_raw_get_fmt(struct iio_dev *indio_dev,
+
+Nit: the alignment seems to be a bit off here.
+
+> +				      struct iio_chan_spec const *chan,
+> +				      long mask)
+> +{
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_SCALE:
+> +		return IIO_VAL_INT;
+> +
+> +	case IIO_CHAN_INFO_INT_TIME:
+> +		return IIO_VAL_INT_PLUS_MICRO;
+> +
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+
+...
+
+
+> +static int bh1745_write_event_config(struct iio_dev *indio_dev,
+> +				     const struct iio_chan_spec *chan,
+> +				     enum iio_event_type type,
+> +				     enum iio_event_direction dir, int state)
+> +{
+> +	struct bh1745_data *data = iio_priv(indio_dev);
+> +	int value;
+> +
+> +	if (state == 0)
+> +		return regmap_clear_bits(data->regmap, BH1745_INTR, BH1745_INTR_ENABLE);
+> +
+> +	if (state == 1) {
+
+Nit: empty line at the beginning of the scope.
+
+> +
+> +		/* Latch is always enabled when enabling interrupt */
+> +		value = BH1745_INTR_ENABLE;
+> +
+> +		switch (chan->channel2) {
+> +		case IIO_MOD_LIGHT_RED:
+> +			return regmap_write(data->regmap, BH1745_INTR,
+> +					    value | FIELD_PREP(BH1745_INTR_SOURCE_MASK,
+> +							       BH1745_INTR_SOURCE_RED));
+> +
+> +		case IIO_MOD_LIGHT_GREEN:
+> +			return regmap_write(data->regmap, BH1745_INTR,
+> +					    value | FIELD_PREP(BH1745_INTR_SOURCE_MASK,
+> +							       BH1745_INTR_SOURCE_GREEN));
+> +
+> +		case IIO_MOD_LIGHT_BLUE:
+> +			return regmap_write(data->regmap, BH1745_INTR,
+> +					    value | FIELD_PREP(BH1745_INTR_SOURCE_MASK,
+> +							       BH1745_INTR_SOURCE_BLUE));
+> +
+> +		case IIO_MOD_LIGHT_CLEAR:
+> +			return regmap_write(data->regmap, BH1745_INTR,
+> +					    value | FIELD_PREP(BH1745_INTR_SOURCE_MASK,
+> +							       BH1745_INTR_SOURCE_CLEAR));
+> +
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
 > 
-> > >
-> > > >
-> > > > > ---
-> > > > >  drivers/virt/acrn/irqfd.c | 2 --
-> > > > >  1 file changed, 2 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/virt/acrn/irqfd.c b/drivers/virt/acrn/irqfd.c
-> > > > > index d4ad211dce7a3..346cf0be4aac7 100644
-> > > > > --- a/drivers/virt/acrn/irqfd.c
-> > > > > +++ b/drivers/virt/acrn/irqfd.c
-> > > > > @@ -16,8 +16,6 @@
-> > > > >
-> > > > >  #include "acrn_drv.h"
-> > > > >
-> > > > > -static LIST_HEAD(acrn_irqfd_clients);
-> > > > > -
-> > > > >  /**
-> > > > >   * struct hsm_irqfd - Properties of HSM irqfd
-> > > > >   * @vm:		Associated VM pointer
-> > > > > --
-> > > > > 2.45.0
-> > > > >
-> > > > --
-> > > >  -----Open up your eyes, open up your mind, open up your code -------
-> > > > / Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \
-> > > > \        dave @ treblig.org |                               | In Hex /
-> > > >  \ _________________________|_____ http://www.treblig.org   |_______/
-> > > >
-> > >
-> > --
-> >  -----Open up your eyes, open up your mind, open up your code -------
-> > / Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \
-> > \        dave @ treblig.org |                               | In Hex /
-> >  \ _________________________|_____ http://www.treblig.org   |_______/
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+
+Best regards,
+Javier Carrasco
 
