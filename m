@@ -1,227 +1,413 @@
-Return-Path: <linux-kernel+bounces-257286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 673C19377E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:42:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C68329377D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:38:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B6931C2169A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:42:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A2031F21190
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE934137775;
-	Fri, 19 Jul 2024 12:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49AF613A899;
+	Fri, 19 Jul 2024 12:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jMmiKiUo";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qBkT/KiN"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="F5cBH+Cb"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BA713D258
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 12:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB06384D3E;
+	Fri, 19 Jul 2024 12:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721392933; cv=none; b=Tp6B2lgP5fXBoHEMyfDQVp99ChI5oTRRCPVKsvJOBrUku5G3TNZ4iJaNndsLNlgJ22eAnM9qRCLBcYAYsTKofcSpkw/Ig7GHuwGiXMMeZahSV96Hkx5gIbpj5sxCTxWQ7kay6UHMqrvqm6fGY8xiEuIUvRbxpqiHxu1BPF+IAms=
+	t=1721392730; cv=none; b=i/erks3Yh8uHsKt0t8yFfE1cytBbfvh18PNlTwN1fUTbrKFVs08FvoGPUQFdjh2AbCXa5QF6yRl2ptlCdoVRXPVdJ6ayV7Eik5Aj1kKMsUPIRetV6AxeLYbGMW0wb1dlxf3gHH6tmvYbOU4D2vup0l/Fkie+kiusv/loCO5fQEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721392933; c=relaxed/simple;
-	bh=zDpYpXf0b6/7HUxDF3pGT/bOuDplYUNarjq9dlLn31A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RxnqYVnE3BSE566PlMSyyuyrKpg05UcFHE0EU1yLBaW40VOI+aScjJEnoUX2W4wCcKvp2N+eJcNBrw6DUzz67LtAvEL0/bmieQKLYMwtC9AgVW43gYh1218wCGBI7nX994NZxRr6x1hsE0itmEmoDLT/eR7tMLrk5Oo1HJgDCdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jMmiKiUo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qBkT/KiN; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 19 Jul 2024 14:32:15 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1721392336;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DS4ZTh/uFKxJ48RV9PLv7ODWrh+ofREviOBi8urmijA=;
-	b=jMmiKiUoV6++pAFv+F1rxYL0YRIzmgtDSNJw27bD8Z7XBpGX2EQEJNS0DIZrhy8CC/TauP
-	sVvq8AYo5nsR7gsyd4ThBVoF9SFxmAwMx6S+65cumYduDBp7PM8EsYELsvWz2y8OhA4JWx
-	49gWt8Uuu1sTNXyQiHapmM2U0omk9A4t6SA6jS9AEXRVcgnuRSiblUoqMmucXxpmGAqbXP
-	B1NxP/AhRB7fbyA1CAT+EoGgz5rIvxXQLWm8XIrDLCH5brA4sxAAFUyQuD3ao55v/PbN/G
-	zpyRUwY6W/PfKxvy3DuUKtSVfKobLAOead4TD6WPXwnIUjbH08rVyR8luLIaeg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1721392336;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DS4ZTh/uFKxJ48RV9PLv7ODWrh+ofREviOBi8urmijA=;
-	b=qBkT/KiNuXbuznKdCkljo1TmRbPD6Xoizsu7kW+SJQ4WYCfRY9J3Ksb7aXFy1NeQ6Hehzm
-	TSU+XdBdGh6ev/DQ==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc: Max Dubois <makemehappy@rocketmail.com>, 
-	"ilpo.jarvinen@linux.intel.com" <ilpo.jarvinen@linux.intel.com>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
-	Dan Carpenter <error27@gmail.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Bug related with a 6.6.24 platform/x86 commit signed by you -
- Enormous memory leak
-Message-ID: <20240719142037-93bd4395-1f6b-490a-8a14-50e7bcc756d1@linutronix.de>
-References: <707784492.392759.1721383145890.ref@mail.yahoo.com>
- <707784492.392759.1721383145890@mail.yahoo.com>
- <3bd6b12c-533c-4b6d-bc91-696db8837b3e@oracle.com>
+	s=arc-20240116; t=1721392730; c=relaxed/simple;
+	bh=dkl0nmiSSuuHXGUZAQSFRkEXXt4SyFK6o4BT5Uam6v8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=T1R3qVF6C9LiL6ZX/rV20SDEyt2/XhELqDWs1KHP1fy1do/UdpDA6J8H2TIXvXBa87kptj7ghe1QPwlaq47NpkI6RRvQUvNFemVXvgzbAMmkinIvSr00HRzbvM5s3ZImlYhRowdMxriwHCvbq1WxLDk0jemaQajONYSMpZLzsAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=F5cBH+Cb; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46JCQuMo026232;
+	Fri, 19 Jul 2024 12:38:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Hf8mLurASjSW5HTS6sTQcRFKjx2FXMOgDWpuHPgX0VI=; b=F5cBH+CbtCLrMSPL
+	3V7vu10lHTMpnhx6xSuns7tNSGYCBg0OdOsV3eaFP5ccKexwTdoGUi2a74hSOXAn
+	Bio4Ej8+qZhIG+qtQreWumrqXRC3gSYv6OpHQURZT4MN8/EV5vxgSveNSbJ2B7bC
+	3b30fYwCKWd58EvxN1XkdlZq2M08lOPnTKE8rkpNzwOgVjR7GJQltAvzxRqrpZGm
+	360ni+L7f8lQjAYDVTWBMOEHX3iIc2JX3zojcqQj/+MFImvwyQy3hfhHOKF8xPmj
+	g56dsW6fT0QA2bGgaRlhaXOUADBsfoKqOIkGJaQ4pXZM/WXrtIBBeT1DRxydJfOS
+	pOD6LA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40fe1m9bf5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Jul 2024 12:38:27 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46JCcPnd011094
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Jul 2024 12:38:25 GMT
+Received: from [10.214.66.253] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 19 Jul
+ 2024 05:38:18 -0700
+Message-ID: <5790afa3-f9c0-4720-9804-8a7ff3d91854@quicinc.com>
+Date: Fri, 19 Jul 2024 18:08:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 6/6] iommu/arm-smmu: add support for PRR bit setup
+To: Rob Clark <robdclark@gmail.com>
+CC: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+        <jgg@ziepe.ca>, <jsnitsel@redhat.com>, <robh@kernel.org>,
+        <krzysztof.kozlowski@linaro.org>, <quic_c_gdjako@quicinc.com>,
+        <dmitry.baryshkov@linaro.org>, <konrad.dybcio@linaro.org>,
+        <iommu@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        "Rob
+ Clark" <robdclark@chromium.org>
+References: <20240628140435.1652374-1-quic_bibekkum@quicinc.com>
+ <20240628140435.1652374-7-quic_bibekkum@quicinc.com>
+ <CAF6AEGvroi8rJimFv95tkWmRFa5_aTpBJ7GFcRAuZpLGdSyEYQ@mail.gmail.com>
+ <0650ba0a-4453-4e2d-8a76-0f396ac1999c@quicinc.com>
+ <CAF6AEGv_9e-TDW1r0N4-db6pY_aV_EZFqrpNbATVS5Vy6+fs1g@mail.gmail.com>
+ <4a5f54c7-120e-427d-8a0a-9fb83e13a72e@quicinc.com>
+ <CAF6AEGtrtFNxDWtuADA4oOHhZJ=dJZcGaJ1XLFJt4fe4Xp=pTA@mail.gmail.com>
+ <3b7c05b1-8f36-4c81-a55c-dbb467314099@quicinc.com>
+ <CAF6AEGuRKU+DkL0-b3xdR1R45_MiiKQYRRXEXYz-xohu8rUaEQ@mail.gmail.com>
+ <CAF6AEGtbw06-gOSvX9gAbi=SA801gmD3_8c5xkOU-G9g2qKptQ@mail.gmail.com>
+ <9509f256-04a4-4907-98fc-148c5087d74d@quicinc.com>
+ <CAF6AEGuLwZ0yFGWMKX-O1VjQB2M57K+CsyJ=7PCKXE=b=VsSNg@mail.gmail.com>
+ <3382aaca-4ca1-46e5-a445-dcb115ff206f@quicinc.com>
+ <CAF6AEGu0uH7GuNb3SJVk0cPDUwkYZ6NTG1ze+wmc1OjsaownwA@mail.gmail.com>
+ <3c3456bc-0f79-4a17-9614-f3b32b6ed30a@quicinc.com>
+ <CAF6AEGvZWdN+CC9O3tq7kjYPq424U6__KgAnFNCV0bCqE8wPuQ@mail.gmail.com>
+Content-Language: en-US
+From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+In-Reply-To: <CAF6AEGvZWdN+CC9O3tq7kjYPq424U6__KgAnFNCV0bCqE8wPuQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3bd6b12c-533c-4b6d-bc91-696db8837b3e@oracle.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6w-E2XXAm71EPi3EcTHLU8B--8wlApNU
+X-Proofpoint-ORIG-GUID: 6w-E2XXAm71EPi3EcTHLU8B--8wlApNU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-19_06,2024-07-18_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 lowpriorityscore=0 mlxscore=0 mlxlogscore=999
+ clxscore=1015 bulkscore=0 phishscore=0 malwarescore=0 priorityscore=1501
+ spamscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407190096
 
-On Fri, Jul 19, 2024 at 05:34:23PM GMT, Harshit Mogalapalli wrote:
-> Hi Max,
+
+
+On 7/17/2024 8:30 PM, Rob Clark wrote:
+> On Wed, Jul 17, 2024 at 3:27â€¯AM Bibek Kumar Patro
+> <quic_bibekkum@quicinc.com> wrote:
+>>
+>>
+>>
+>> On 7/16/2024 1:37 AM, Rob Clark wrote:
+>>> On Mon, Jul 15, 2024 at 4:00â€¯AM Bibek Kumar Patro
+>>> <quic_bibekkum@quicinc.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 7/10/2024 10:31 PM, Rob Clark wrote:
+>>>>> On Tue, Jul 9, 2024 at 12:43â€¯PM Bibek Kumar Patro
+>>>>> <quic_bibekkum@quicinc.com> wrote:
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> On 7/4/2024 9:28 PM, Rob Clark wrote:
+>>>>>>> On Thu, Jul 4, 2024 at 7:46â€¯AM Rob Clark <robdclark@gmail.com> wrote:
+>>>>>>>>
+>>>>>>>> On Wed, Jul 3, 2024 at 4:38â€¯AM Bibek Kumar Patro
+>>>>>>>> <quic_bibekkum@quicinc.com> wrote:
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> On 7/2/2024 2:01 AM, Rob Clark wrote:
+>>>>>>>>>> On Mon, Jul 1, 2024 at 4:01â€¯AM Bibek Kumar Patro
+>>>>>>>>>> <quic_bibekkum@quicinc.com> wrote:
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> On 6/28/2024 9:14 PM, Rob Clark wrote:
+>>>>>>>>>>>> On Fri, Jun 28, 2024 at 8:10â€¯AM Bibek Kumar Patro
+>>>>>>>>>>>> <quic_bibekkum@quicinc.com> wrote:
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> On 6/28/2024 7:47 PM, Rob Clark wrote:
+>>>>>>>>>>>>>> On Fri, Jun 28, 2024 at 7:05â€¯AM Bibek Kumar Patro
+>>>>>>>>>>>>>> <quic_bibekkum@quicinc.com> wrote:
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Add an adreno-smmu-priv interface for drm/msm to call
+>>>>>>>>>>>>>>> into arm-smmu-qcom and initiate the PRR bit setup or reset
+>>>>>>>>>>>>>>> sequence as per request.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> This will be used by GPU to setup the PRR bit and related
+>>>>>>>>>>>>>>> configuration registers through adreno-smmu private
+>>>>>>>>>>>>>>> interface instead of directly poking the smmu hardware.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Suggested-by: Rob Clark <robdclark@gmail.com>
+>>>>>>>>>>>>>>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+>>>>>>>>>>>>>>> ---
+>>>>>>>>>>>>>>>         drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 23 ++++++++++++++++++++++
+>>>>>>>>>>>>>>>         drivers/iommu/arm/arm-smmu/arm-smmu.h      |  2 ++
+>>>>>>>>>>>>>>>         include/linux/adreno-smmu-priv.h           |  6 +++++-
+>>>>>>>>>>>>>>>         3 files changed, 30 insertions(+), 1 deletion(-)
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>>>>>>>>>>>>> index bd101a161d04..64571a1c47b8 100644
+>>>>>>>>>>>>>>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>>>>>>>>>>>>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>>>>>>>>>>>>> @@ -28,6 +28,7 @@
+>>>>>>>>>>>>>>>         #define PREFETCH_SHALLOW       (1 << PREFETCH_SHIFT)
+>>>>>>>>>>>>>>>         #define PREFETCH_MODERATE      (2 << PREFETCH_SHIFT)
+>>>>>>>>>>>>>>>         #define PREFETCH_DEEP          (3 << PREFETCH_SHIFT)
+>>>>>>>>>>>>>>> +#define GFX_ACTLR_PRR          (1 << 5)
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>         static const struct actlr_config sc7280_apps_actlr_cfg[] = {
+>>>>>>>>>>>>>>>                { 0x0800, 0x04e0, PREFETCH_DEFAULT | CMTLB },
+>>>>>>>>>>>>>>> @@ -235,6 +236,27 @@ static void qcom_adreno_smmu_resume_translation(const void *cookie, bool termina
+>>>>>>>>>>>>>>>                arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_RESUME, reg);
+>>>>>>>>>>>>>>>         }
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> +static void qcom_adreno_smmu_set_prr(const void *cookie, phys_addr_t page_addr, bool set)
+>>>>>>>>>>>>>>> +{
+>>>>>>>>>>>>>>> +       struct arm_smmu_domain *smmu_domain = (void *)cookie;
+>>>>>>>>>>>>>>> +       struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
+>>>>>>>>>>>>>>> +       struct arm_smmu_device *smmu = smmu_domain->smmu;
+>>>>>>>>>>>>>>> +       u32 reg = 0;
+>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>> +       writel_relaxed(lower_32_bits(page_addr),
+>>>>>>>>>>>>>>> +                               smmu->base + ARM_SMMU_GFX_PRR_CFG_LADDR);
+>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>> +       writel_relaxed(upper_32_bits(page_addr),
+>>>>>>>>>>>>>>> +                               smmu->base + ARM_SMMU_GFX_PRR_CFG_UADDR);
+>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>> +       reg =  arm_smmu_cb_read(smmu, cfg->cbndx, ARM_SMMU_CB_ACTLR);
+>>>>>>>>>>>>>>> +       reg &= ~GFX_ACTLR_PRR;
+>>>>>>>>>>>>>>> +       if (set)
+>>>>>>>>>>>>>>> +               reg |= FIELD_PREP(GFX_ACTLR_PRR, 1);
+>>>>>>>>>>>>>>> +       arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_ACTLR, reg);
+>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> nit, extra line
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Ack, will remove this. Thanks for pointing out.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>> Also, if you passed a `struct page *` instead, then you could drop the
+>>>>>>>>>>>>>> bool param, ie. passing NULL for the page would disable PRR.  But I
+>>>>>>>>>>>>>> can go either way if others have a strong preference for phys_addr_t.
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Oh okay, this looks simple to reset the prr bit.
+>>>>>>>>>>>>> But since this page is allocated and is used inside gfx driver
+>>>>>>>>>>>>> before being utilized for prr bit operation, would it be safe for
+>>>>>>>>>>>>> drm/gfx driver to keep a reference to this page in smmu driver?
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Since we only need the page address for configuring the
+>>>>>>>>>>>>> CFG_UADDR/CFG_LADDR registers so passed the phys_addr_t.
+>>>>>>>>>>>>
+>>>>>>>>>>>> I don't think the smmu driver needs to keep a reference to the page..
+>>>>>>>>>>>> we can just say it is the responsibility of the drm driver to call
+>>>>>>>>>>>> set_prr(NULL) before freeing the page
+>>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> That makes sense. If we go by this NULL page method to disable the PRR,
+>>>>>>>>>>> we would have to set the address registers to reset value as well.
+>>>>>>>>>>>
+>>>>>>>>>>> The sequence would be like the following as per my understaning:
+>>>>>>>>>>> - Check if it's NULL page
+>>>>>>>>>>> - Set the PRR_CFG_UADDR/PRR_CFG_LADDR to reset values i.e - 0x0 for
+>>>>>>>>>>>         these registers
+>>>>>>>>>>> - Reset the PRR bit in actlr register
+>>>>>>>>>>>
+>>>>>>>>>>> Similar to this snippet:
+>>>>>>>>>>>
+>>>>>>>>>>> #PRR_RESET_ADDR 0x0
+>>>>>>>>>>>
+>>>>>>>>>>> --------------
+>>>>>>>>>>> reg =  arm_smmu_cb_read(smmu, cfg->cbndx, ARM_SMMU_CB_ACTLR);
+>>>>>>>>>>> reg &= ~GFX_ACTLR_PRR;
+>>>>>>>>>>> arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_ACTLR, reg);
+>>>>>>>>>>>
+>>>>>>>>>>> if (!prr_page) {
+>>>>>>>>>>>              writel_relaxed(PRR_RESET_ADDR,
+>>>>>>>>>>>                              smmu->base + ARM_SMMU_GFX_PRR_CFG_LADDR);
+>>>>>>>>>>>              writel_relaxed(PRR_RESET_ADDR),
+>>>>>>>>>>>                               smmu->base + ARM_SMMU_GFX_PRR_CFG_UADDR);
+>>>>>>>>>>>              return;
+>>>>>>>>>>> }
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> writel_relaxed(lower_32_bits(page_to_phys(prr_page)),
+>>>>>>>>>>>                      smmu->base + ARM_SMMU_GFX_PRR_CFG_LADDR);
+>>>>>>>>>>>
+>>>>>>>>>>> writel_relaxed(upper_32_bits(page_to_phys(prr_page)),
+>>>>>>>>>>>                      smmu->base + ARM_SMMU_GFX_PRR_CFG_UADDR);
+>>>>>>>>>>>
+>>>>>>>>>>> reg |= FIELD_PREP(GFX_ACTLR_PRR, 1);
+>>>>>>>>>>> arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_ACTLR, reg);
+>>>>>>>>>>> -----------------
+>>>>>>>>>>>
+>>>>>>>>>>> If looks good, will implement the same in next version.
+>>>>>>>>>>
+>>>>>>>>>> yeah, that looks like it could work..
+>>>>>>>>>>
+>>>>>>>>>> you probably don't need to zero out the PRR_CFG_*ADDR when disabling,
+>>>>>>>>>> and probably could avoid double writing ACTLR, but that is getting
+>>>>>>>>>> into bikeshedding
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> Actually Rob, since you rightly pointed this out.
+>>>>>>>>> I crosschecked again on these registers.
+>>>>>>>>> PRR_CFG_*ADDR is a global register in SMMU space but
+>>>>>>>>> ACTLR register including PRR bit is a per-domain register.
+>>>>>>>>> There might also be a situation where PRR feature need to be
+>>>>>>>>> disabled or enabled separately for each domain.
+>>>>>>>>> So I think it would be cleaner to have two apis, set_prr_addr(),
+>>>>>>>>> set_prr_bit().
+>>>>>>>>> set_prr_addr() will be used only to set this PRR_CFG_*ADDR
+>>>>>>>>> register by passing a 'struct page *'
+>>>>>>>>> set_prr_bit() will be used as a switch for PRR feature,
+>>>>>>>>> where required smmu_domain will be passed along with
+>>>>>>>>> the bool value to set/reset the PRR bit depending on which this
+>>>>>>>>> feature will be enabled/disabled for the selected domain.
+>>>>>>>>
+>>>>>>>> on a related note, adreno has been using arm-smmu for a number of
+>>>>>>>> generations, I guess not all support PRR?  The drm driver will need to
+>>>>>>>> know whether PRR is supported (and expose that to userspace to let the
+>>>>>>>> UMD know whether to expose certain extensions).  How should this work?
+>>>>>>>
+>>>>>>> So, I noticed in the x1e80100.dtsi that there is a gpu_prr_mem
+>>>>>>> reserved section..  maybe we should be connecting this to the smmu
+>>>>>>> driver in dt, and using that to detect presence of PRR?  Ie. the smmu
+>>>>>>> driver would configure PRR_CFG_*ADDR based on the reserved mem, and
+>>>>>>> the interface to drm would just be to enable/disable PRR, returning an
+>>>>>>> error code if the reserved mem section isn't there.
+>>>>>>>
+>>>>>>> This simplifies the interface, and handles the question of how to
+>>>>>>> detect if PRR is supported.
+>>>>>>>
+>>>>>>> BR,
+>>>>>>> -R
+>>>>>>>
+>>>>>>
+>>>>>> As I checked gpu_prr_mem reserved mem section is not used for mobile
+>>>>>> targets hence not present for other DT only compute targets like
+>>>>>> x1e80100.dtsi has the same. PRR looks to be smmu version specific
+>>>>>> property.
+>>>>>
+>>>>> I only see it in gpu_prr_mem in x1e80100.dtsi, but not documented
+>>>>> anywhere.  I'm only assuming based on the name that it is intended to
+>>>>> be for PRR (but not sure why it is larger than 0x1000).  Are the
+>>>>> PRR_CFG_*ADDR regs programmed by the fw (and access blocked in EL1) on
+>>>>> this device?
+>>>>>
+>>>>
+>>>> As I checked, if the drm/gfx driver allocates the page for drm, then
+>>>> this reserved-memory region is not required.
+>>>>
+>>>> PRR_CFG_*ADDR regs have read and write access in EL1 only for this
+>>>> device, behavior is same as other devices as well. These are not
+>>>> programmed by fw.
+>>>
+>>> If there is any device which _doesn't_ have EL1 access to these regs,
+>>> I think going the reserved memory route seems more future proof > Otherwise we later on have to deal with two different ways to do
+>>> things.  But I'm not sure if there is any such device or risk.
+>>>
+>>
+>> PRR is a bit in ACTLR register which is in SMMU space,
+>> so is the PRR_CFG_*ADDR registers - with EL1 having access
+>> to both the registers in all targets released till now with MMU-500.
+>> It's unlikely that this design would change in future
+>> for MMU-500 based targets, so I feel this risk is somewhat negligible.
 > 
+> I wasn't worried about the ACTLR register, but the PRR_CFG_*ADDR regs ;-)
 > 
-> On 19/07/24 15:29, Max Dubois wrote:
-> > Hello,
-> > 
-> > I write to you becouse you signed off this buggy commitment long ago.
-> > 
-> > I don't know how to report it. This is a nasty bug and I think it is
-> > related to this committed on 6.6.24 and it is still present from that
-> > kernel to even 6.6.10 only in 32 Linux machines with over 32 bit kernels
-> > (tested by me on virtualbox and Vmware guests, I don't have real 32 bit
-> > machines to test it):
-> > 
-> > commit 9a98ab01e3acba830cb0917296a13192fd23f305
-> > Author: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-> > Date:   Mon Nov 13 12:07:39 2023 -0800
-> > 
-> >      platform/x86: hp-bioscfg: Fix error handling in
-> > hp_add_other_attributes()
-> > 
-> >      commit f40f939917b2b4cbf18450096c0ce1c58ed59fae upstream.
-> > 
-> >      'attr_name_kobj' is allocated using kzalloc, but on all the error paths
-> >      it is not freed, hence we have a memory leak.
-> > 
-> >      Fix the error path before kobject_init_and_add() by adding kfree().
-> > 
-> >      kobject_put() must be always called after passing the object to
-> >      kobject_init_and_add(). Only the error path which is immediately next
-> >      to kobject_init_and_add() calls kobject_put() and not any other error
-> >      path after it.
-> > 
-> >      Fix the error handling after kobject_init_and_add() by moving the
-> >      kobject_put() into the goto label err_other_attr_init that is already
-> >      used by all the error paths after kobject_init_and_add().
-> > 
-> >      Fixes: a34fc329b189 ("platform/x86: hp-bioscfg: bioscfg")
-> >      Cc: stable@vger.kernel.org # 6.6.x: c5dbf0416000: platform/x86:
-> > hp-bioscfg: Simplify return check in hp_add_other_attributes()
-> >      Cc: stable@vger.kernel.org # 6.6.x: 5736aa9537c9: platform/x86:
-> > hp-bioscfg: move mutex_lock() down in hp_add_other_attributes()
-> >      Reported-by: kernel test robot <lkp@intel.com>
-> >      Reported-by: Dan Carpenter <error27@gmail.com>
-> >      Closes: https://lore.kernel.org/r/202309201412.on0VXJGo-lkp@intel.com/
-> >      Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-> >      [ij: Added the stable dep tags]
-> >      Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> >      Link: https://lore.kernel.org/r/20231113200742.3593548-3-harshit.m.mogalapalli@oracle.com
-> >      Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> >      Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > 
-> > I reported this on Gentoo forums in this discussion:
-> > 
-> > https://forums.gentoo.org/viewtopic-p-8834077.html#8834077
-> > <https://forums.gentoo.org/viewtopic-p-8834077.html#8834077>
-> > 
-> > In this days 32 bit machines are pretty much unused and I think this is
-> > the reason becouse no one reported it.
-> > 
-> > The bug wasn't present in kernels before 6.6.24 (example: 6.6.23 is ok).
-> > 
+> IIRC those were in the SMMU global space, why hyp tends to like to own.
 > 
-> Thanks for reporting and sendine me an email.
+
+Yes correct, those are in SMMU global space which hyp likes to own, and
+read/write access are avaialble by design for EL1.
+
+>> Also would the reserved memory route look a bit hackish?
+>> Because, since this reserved-memory node is not used when page is
+>> allocated through drm - so it might turn out to be redundant.
+>> If we are aiming for a device-tree handle/node for reference then I
+>> think a better way would be to create a bool parameter inside smmu-node
+>> indicating presence of PRR ?
 > 
-> The commit you pointed out which is authored by me is in:
+> tbh, I don't think there is anything better or worse about having the
+> reserved-memory node vs dynamically allocating it.  (If we dynamically
+> allocate, we should remove the reserved memory node from
+> x1e80100.dtsi)
 > 
-> v6.6.4   - 9a98ab01e3ac platform/x86: hp-bioscfg: Fix error handling in
-> hp_add_other_attributes()
+
+Right, if the page is dynamically allocated then this reserved memory 
+node should be removed as it will stay as an unused region in DDR acting 
+as a deadweight. I checked the history on this region for x1e80100 and 
+it went as a part of platform upstreaming - we can remove the same.
+
+> The thing I was more concerned about was whether there was any chance
+> that some existing or future SoC+fw combo _relied_ on a reserved
+> memory node and the fw programming PRR_CFG_*ADDR. If there was any > chance of that, and we went the dynamic allocation route, then we'd
+> have some devices with a reserved memory node, and some without.  That
+> seems a bit ugly to me.
+
+Agree on the concern, that would surely look a bit ugly - with different 
+targets having these allocation differently and having this 
+reserved-memory node
+
+But as far as I checked the targets present with MMU-500, none of them 
+is relying on reserved-memory node yet.
+And the chances are negligible in future targets as well.
+Since FW is not setting up these registers - so this reserved region
+should not be considered as per me.
+Also since in our api we are only taking the address of the prr page to 
+setup these registers, so even if client chooses any page allocation 
+method <not surely from firmware as per design> then the same api 
+smmu-driver is exposing would still work indentical.
+
+
+> If there is no chance of this, then we can go either route.
 > 
-> So you should have seen this in 6.6.4 as well ?
+>> Personally,I feel since the PRR enablement mechanism is same for all
+>> MMU-500 targets - compat string would be a robust approach.
 > 
-> > The bug wasn't present in kernels before 6.6.24 (example: 6.6.23 is ok).
+> I guess if it is all mmu-500, then we can just pick based on compat
+> string.  If it turns out some subset of smmu-v2 have PRR, we can just
+> have a list of compat strings in arm-smmu-qcom.c.. there would only be
+> a finite # of them ;-)
 > 
-> This confused me, as the commit that you pointed out is present since 6.6.4
 
-Given that the commit under discussion is for a HP BIOS driver and the
-issue is reproducible in a VM guest without that hardware,
-I'd argue it's highly unlikely that this commit is the culprit.
-(Or has anything to do with the issue for that matter)
-
-> > I tested it in various VMware and Virtualbox guests and it is very easy
-> > to reproduce it.
-> > 
-> > You just need a VM with x86 emulated processor, over 1 GB of RAM and run
-> > some applications like few terminals, a web browser and audio player.
-> > 
-> > In the log you will see a lot of complains related to vmalloc
-> > allocations not present on working kernels before 6.6.24 and this
-> > commitment.
-> > 
-> > Increasing vmalloc like suggested in the log, doesn't help.
-> > 
-> > Starting from this point the VM become unresponsive, it close apps, in
-> > doesn't open others, terminals can't execute simple commands. Sometimes
-> > you are even unable to reboot and sometimes the machines freeze,
-> > sometimes they go in total kernel exception.
-> > 
-> > This happen 100 per 100 of the time, it is easy to reproduce it
-> > everytime on any kernel 6.6.24 or more (6.7, 6.8, 6.9 and 6.10 are all
-> > affected).
-> > 
-> > Considering the kernel is supposed to support 32 bit I think this is
-> > something to fix it then I don't know how and to who point this bug too.
-
-The reporting really should figure out which specific release or commit
-is introducing the issue. And if mainline or 6.6.41 are also affected.
-
-The linked gentoo forum thread has some actual kernel logs:
-
-Jul 16 00:01:10 [kernel] alloc_vmap_area: 133 callbacks suppressed
-Jul 16 00:01:10 [kernel] vmap allocation for size 20480 failed: use vmalloc=<size> to increase size
-                - Last output repeated 9 times -
-Jul 16 00:01:15 [kernel] alloc_vmap_area: 240 callbacks suppressed
-Jul 16 00:01:15 [kernel] vmap allocation for size 20480 failed: use vmalloc=<size> to increase size
-                - Last output repeated 9 times -
-Jul 16 00:01:17 [kernel] warn_alloc: 3 callbacks suppressed
-Jul 16 00:01:17 [kernel] Web Content: vmalloc error: size 8192, vm_struct allocation failed, mode:0xdc0(GFP_KERNEL|__GFP_ZERO), nodemask=(null),cpuset=/,mems_allowed=0
-Jul 16 00:01:17 [kernel] CPU: 1 PID: 2761 Comm: Web Content Not tainted 6.6.38-gentoo #1
-Jul 16 00:01:17 [kernel] Hardware name: VMware, Inc. VMware20,1/440BX Desktop Reference Platform, BIOS VMW201.00V.21805430.B32.2305221830 05/22/2023
-Jul 16 00:01:17 [kernel] Call Trace:
-Jul 16 00:01:17 [kernel]  dump_stack_lvl+0x32/0x41
-Jul 16 00:01:17 [kernel]  dump_stack+0xd/0x10
-Jul 16 00:01:17 [kernel]  warn_alloc+0xab/0x111
-Jul 16 00:01:17 [kernel]  __vmalloc_node_range+0x73/0x345
-Jul 16 00:01:17 [kernel]  __vmalloc_node+0x55/0x5d
-Jul 16 00:01:17 [kernel]  ? bpf_prog_alloc_no_stats+0x1f/0xcd
-Jul 16 00:01:17 [kernel]  __vmalloc+0x14/0x16
-Jul 16 00:01:17 [kernel]  ? bpf_prog_alloc_no_stats+0x1f/0xcd
-Jul 16 00:01:17 [kernel]  bpf_prog_alloc_no_stats+0x1f/0xcd
-Jul 16 00:01:17 [kernel]  bpf_prog_alloc+0x13/0x9f
-Jul 16 00:01:17 [kernel]  bpf_prog_create_from_user+0x47/0xbd
-Jul 16 00:01:17 [kernel]  ? kprobe_free_init_mem+0x4c/0x4c
-Jul 16 00:01:17 [kernel]  do_seccomp+0x176/0x7ac
-Jul 16 00:01:17 [kernel]  ? __ia32_sys_prctl+0x47/0x5bf
-Jul 16 00:01:17 [kernel]  __ia32_sys_seccomp+0x10/0x12
-Jul 16 00:01:17 [kernel]  ia32_sys_call+0xd09/0x1063
-Jul 16 00:01:17 [kernel]  __do_fast_syscall_32+0x7a/0x99
-Jul 16 00:01:17 [kernel]  do_fast_syscall_32+0x29/0x5b
-Jul 16 00:01:17 [kernel]  do_SYSENTER_32+0x15/0x17
-Jul 16 00:01:17 [kernel]  entry_SYSENTER_32+0x98/0xf8
-Jul 16 00:01:17 [kernel] EIP: 0xb7fc856d
-
-The lines with "size 20480" repeat *a lot*, it could be the issue.
+Yes right, atleast one thing which we can conclude is - in
+MMU-500 version the PRR enablement steps are same from SMMU block and
+driver perspective <i.e configure the PRR_CFG_*ADDR regs and set PRR bit
+in ACTLR>. So all targets on MMU-500 - we would do the same steps.
+Hence under MMU-500 compat string we can keep this.
+Agree on the smmu-v2 part as well.
 
 
-Thomas
+Thanks & regards,
+Bibek
+
+> BR,
+> -R
 
