@@ -1,221 +1,159 @@
-Return-Path: <linux-kernel+bounces-257683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0603C937D6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 22:51:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BAA40937D75
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 23:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C85B1F222B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:51:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FF1C1F2179F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 21:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DFA148312;
-	Fri, 19 Jul 2024 20:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3AD1147C74;
+	Fri, 19 Jul 2024 21:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KADZ7bGN"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="crAyKRMF"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12olkn2016.outbound.protection.outlook.com [40.92.23.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6879F1B86EC;
-	Fri, 19 Jul 2024 20:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721422278; cv=none; b=T3LPCCXiD2jaRBKwgyVlUpQjoHbOMWfuFSZnLDOz9sM4Z9pknXascDqIlyfrXMeiPdgqFbrCnzUjq9QfMtvqjTZiYsZeGfOF4FhsKMSsotPBNkR6G6g4mSi2k2E4Kl6MEzC9TEDs8uJ2OT9BbRu6rhv720xA1M/DZfQoXnajqTo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721422278; c=relaxed/simple;
-	bh=8oxTPFuB/qY+8a8IQ1CWy2LI/me2zWEKXQ5cSIHx5Hw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XxUWrttIYcjBNxKrswvTfS97zM5iQA9dktA6jkyrUmQKfEmfxKw/GQ7QAN4IJ2uSPLsw9H6rz8Lv3sVEPStQKygKWJFk+qBy95rRTB+3RmBrvjRcJrLlKqBlvigXHVpYwYN/52/688SfDTp1ozwzujlgI4rayLlttqnO9Ko3Pmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KADZ7bGN; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-368584f9e36so937236f8f.2;
-        Fri, 19 Jul 2024 13:51:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721422275; x=1722027075; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0CFHn6Wu32vFr5LZh8Mesp3cm8j3Wz+OTXQhTF7EJnQ=;
-        b=KADZ7bGN72qkkqwrW96EnTXQ4BdbjhcGHKyFlRo4TsofD4GZjKI4gAtgJk7Z3tTsz8
-         GRAUg+lAQbGU4845QwlIya+P/OkijthpL3e/Gzm488MFbgG19WSmit2P7zpwb3oyKIad
-         6k6h1M5mL66ZoLiSGk+Fjp+ii7unT6b4LO975yyJpuPp/p7uDhkEDJrBuxOtKA+gFwQZ
-         6HEVw050KaOkvriG7ADZDef3jKyCKqJHYwfei2CnvDKChcWNs6DuCQKeRtcrQPlR3h8d
-         CKa94axi0mBM1r9zrD5WPy6ossj3H5SeXuGRXE7+50TNWs3KO11abk81ilNQ67SuT5+e
-         4jtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721422275; x=1722027075;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0CFHn6Wu32vFr5LZh8Mesp3cm8j3Wz+OTXQhTF7EJnQ=;
-        b=LPlXPIFGenauPOzdBWIuSmq1LqCoSWIjSQccnNWPqHwyIR19IVHRqeNYcfAsuFcbnj
-         kbZzVXbfJmazMaQmVtwZtLMvofW+6Zn6rNX7Fm4mWgT8+ThlLc9NV9MHp3Jv3rERNmeq
-         5Q5d+GUnBWplnaSEX0z+FN06vduMBiXa7WbstRDwA/nFR0xxR07OCx/GJRHT9q/Zxm0G
-         +TRCeNMv9WGp9jxOUdtU26R2Ib0VI+YO+bs3n1TXCcUruyMGXzH2ygXdjueswezwHZev
-         zzP7BwR59HPueUo93fMEAWDvTLmcqCPTKT8VMdgwUcdt/rv9IxNhl96wlR628V07gry9
-         FGfA==
-X-Forwarded-Encrypted: i=1; AJvYcCXqNutWfrr2PQsGZEUHCH3Jhe8jVUJyVH0JA19OBu+bGAUPHbMryIPyd+vFWNSa4mOQu7a+cvJBbAMSaBL6hYtRUEShiwLTT8l2xw8xmWM=
-X-Gm-Message-State: AOJu0YwW3ySiuZJ9pwFeoah+LC6tusC2TRIpnrLLwz8s9d3L/xpFEK2Y
-	rJaNNZhdw3cKX2IYwH1bg31MHiFhSx/cJDkdWbN/82jq1Ly2sLsq
-X-Google-Smtp-Source: AGHT+IEWY7bsu3Bhb+bWavd5JlwwyDzl+3bvZRG9h3qhyOHQWRfn9gBEuRGthGQeJ87U2FLDK8BLzQ==
-X-Received: by 2002:a5d:5006:0:b0:368:714e:5a59 with SMTP id ffacd0b85a97d-368714e5bd6mr2617514f8f.11.1721422274664;
-        Fri, 19 Jul 2024 13:51:14 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-42-168.xnet.hr. [88.207.42.168])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3687868423bsm2498649f8f.14.2024.07.19.13.51.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Jul 2024 13:51:14 -0700 (PDT)
-Message-ID: <42924f6d-32e3-4519-9616-5438e6527e90@gmail.com>
-Date: Fri, 19 Jul 2024 22:51:09 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6A5768EF
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 21:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.23.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721424033; cv=fail; b=sQ6cyQnkImIBV+pUoMYv67NkbltsE+gVxLapPg3c14QKcwpModR5Yb795eY26gvwHaUo/PtkXCPRN87b8UPf2ZzgYRRGu2m9QxHk+NWLJRXFkfIBpa1OUXtweely+OV5SvOm5yokpWWhZp/cJiJDeohM+06UGcfZIXaeL6JzlG0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721424033; c=relaxed/simple;
+	bh=jl2JdP/auPVW6V1hUWQ41Cx3aPM+rjd31m/7R3gRrBE=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=t4XnOT/iscqVWwn6Bx1AbtWxvbtOHrTM/2h2At+ErK2PHc0Kq+2dP++MwpQFKTckiUJjkebhb6wW34KvCPFJvxyl0+a8mKfjP9EYcumZsfyUEfe/N0xF/jDI0UrAo330vtQeTqlEEn7lxHlUStZgDB0IIe1x8zMHpRD8AF1An7o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=crAyKRMF; arc=fail smtp.client-ip=40.92.23.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YjNsmT9eLevnPu0piwr7IlPqDeO83mDI8/4iX/Xb3Ewm+hVv9IBxgEe4tUlpAxpEe0kMYRzV7XvGlr1r4AqH4h5J8wuHftrRnnz/evZ5ZwkWTsEcxFx2twamxMFaH7vryRGeBxleJdE2kWa8zfoXNzZUGhmkzjeFY0k45XfksuE4P6dXkylP8chVBYGEylwmQIycs32+7ZEAUohKZeUd1OsXC7T7plcJ2prpxitEOrqpHbryuXu8airGvpDdgDCSD7y5t43V8M13BA3pqiJ8EMgPsFCN4/doRdkb+bPbslYT7BYx6jTYPxzlJiWb9zh4NFt0LVHJpyA1PN9C2xS6vQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nb7Y/Fn6bkOY/TcMy36WIugL8swNEczva9mvOlIcu+Y=;
+ b=XwYHZQrjXrTdapYV0RekHT5Ro4+YsSzgk2DpmS8oNW/jD8H1fcmm7uRuCI44QKF3T+khalWOmVDRfVkUM2dr7Aq4SPo8lHGbWO6LRdmabQ1/AnoqoVlw/hVNX4nqlVj9OOWcN31a0uOjelqwTzOHd+xSVG2AtIR9FS+ozWOLWAGBbqt5fl3rlh2wimLEaYRFeiMJyGiZOS/LvIZ6NWMJf9+VyfVrHYA4pXHSLUFGdUeyMxqbFlevXZHpPfTYOEFjd8yyMc4P47AJHhvbT4syrax9EoZz6ISvQozjirLFrsK2kw4gDF5xL6r4QA9YmH6z0b4zxj7dINbzaTG0nwX87w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nb7Y/Fn6bkOY/TcMy36WIugL8swNEczva9mvOlIcu+Y=;
+ b=crAyKRMFPERAuBjmYIGJVmLEBJBb1376VGK4ot/sBVJWtslqGzY8W5uEsPCuEXm2iM5Sx+OtjARlVXe3pzaM3u+dereJyXkOpRahAnIAkkQy667QN9MrJplt/g8xu30parvO6j8wEGERvYMtEuMLzxm2Wt/3uDY3OjCBhxTJqiE7eFS7LnjqhAuQDzGaKpahhRJIUTnPhCwIYeaBQC3mVXc1ucDG5P9x/Y9SYfb6Hw2kJonSTcklLA2HCMlmrl3xItPa+vDEr7OK43uXrbvSRqB9KOEoF3Z2eKFNt1jWMKGK4hQMC7jjr41FMzWNT+qRov1Hn8AQ9Fo1BI4ONvQqkw==
+Received: from SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM (2603:10b6:a03:570::8)
+ by PH7P223MB0843.NAMP223.PROD.OUTLOOK.COM (2603:10b6:510:310::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28; Fri, 19 Jul
+ 2024 21:20:29 +0000
+Received: from SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
+ ([fe80::b5cd:c37a:bd3e:e3fd]) by SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
+ ([fe80::b5cd:c37a:bd3e:e3fd%2]) with mapi id 15.20.7762.030; Fri, 19 Jul 2024
+ 21:20:29 +0000
+From: Steven Davis <goldside000@outlook.com>
+To: gregkh@linuxfoundation.org,
+	christian.gromm@microchip.com,
+	parthiban.veerasooran@microchip.com
+Cc: linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Steven Davis <goldside000@outlook.com>
+Subject: [PATCH] Made the error messages a tad easier to read
+Date: Fri, 19 Jul 2024 17:19:36 -0400
+Message-ID:
+ <SJ2P223MB1026BF236AA81666C823E947F7AD2@SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM>
+X-Mailer: git-send-email 2.45.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [GFVszrtzb9HnVSUh/uYK/CMlASjnFobC]
+X-ClientProxiedBy: CH2PR04CA0013.namprd04.prod.outlook.com
+ (2603:10b6:610:52::23) To SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:a03:570::8)
+X-Microsoft-Original-Message-ID:
+ <20240719211936.5923-1-goldside000@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?Q?Re=3A_=5BPROBLEM_linux-next=5D_fs/reiserfs/do=5Fbalan=2Ec?=
- =?UTF-8?B?OjExNDc6MTM6IGVycm9yOiB2YXJpYWJsZSDigJhsZWFmX21p4oCZIHNldCBidXQg?=
- =?UTF-8?Q?not_used_=5B-Werror=3Dunused-but-set-variable=5D?=
-To: Jan Kara <jack@suse.cz>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, Kees Cook <kees@kernel.org>,
- Christian Brauner <brauner@kernel.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Al Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@kernel.org>,
- reiserfs-devel@vger.kernel.org
-References: <39591663-9151-42f9-9906-4684acaa685c@gmail.com>
- <20240715172826.wbmlg52ckdxze7sg@quack3>
- <9aec9df8-ca82-4b2f-b227-5e318c66b97e@gmail.com>
- <20240717154434.jba66jupaf566tes@quack3>
- <83c22d71-8706-4779-8d20-6b18a75c95a5@gmail.com>
- <20240718093943.qtyc2bdt4oerjuek@quack3>
-Content-Language: en-US
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-In-Reply-To: <20240718093943.qtyc2bdt4oerjuek@quack3>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2P223MB1026:EE_|PH7P223MB0843:EE_
+X-MS-Office365-Filtering-Correlation-Id: 41b4e4e6-2071-4e6b-1f43-08dca8389d13
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|8060799006|461199028|19110799003|3412199025|440099028|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	D6mIk7KGDNTC7aESVeT2idF3DoulzZsbmvSTq9MDqmRJtu/5cEqDBUe4t4IFJ09GbfWNJ2kpNqcMFZ+vHck5iugpSckoS9RpC2oNYnDM9BdbaOyQ99MaG1fl+xgvJmGFwpKkupZphRc0dMLB66uyQQx3xIUyyLPbjYKLhU+tU2RmTuSolWqm/vnm8IbJEQc4Z/dncwfPs6W8D3/QMoxYCCv8nCF9V24K+LjOu22J+M+NklSeWHNWD/Ux/cC5yJVRTYQVdPcg7hsrYbnXeElgu1mMrdAC2SYffgyEOs+AE0ePMEJajVL/At4A+wEqgYWJ9VHAlGTbqyCfDxYYr3BBJCL+YMIGuBcILXfBnWAIzmnLquxqlwKlfvxO6nWOF7Yb0c23pRSGT8IpEvGqEoj1pAOXXssjumSyKOhlGTl/V7jjYZep1Nt8vE8q5q9n4xjmqmCj8ZC6pUvKv/fnoumcRQv/yYAl5iyCsmQfihDnwJad8P9tWjwQ/C2ECll3eFzIDcVdPKNPg6d+gVBJ16Lq7N+dp0BuR8iXAlC5ZE3bn/2WEnH1HmCNW1YDori0bjX06ZiwH2rrP2S1dulwCwWydc0xf4vbkuQN3Z8ttN4ehGJOnO6i2c2CgF9zkGwcxT9SNq66Fp1pXyGAewMKIdLW4UnrjssBiCEWHWkqZ4GZZ4vhYThX+EPYW/128NnYIAJM
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?CPWGTixCto8lLTaPXdMEPt7ngYKnYpOHQuulEx/nnTT+yH8lMoQIrseDJkrS?=
+ =?us-ascii?Q?vZWH+3w32qX5VCmqXLoUNMTg+yr2Ldf2Y5BYf0cLbUi5Jc23sMvTZTpmxq4p?=
+ =?us-ascii?Q?vbDahs9dlyyu0HAXRuYjmOhYZi+dR9SJdnLU3ioOa77wulBGB4JzGHH9gF8t?=
+ =?us-ascii?Q?kYRDPnlS86j6LPgqdGv4YRnFnmvb723W8Vuf38aIqnUo9kY9gcHDB6/HUQ2Z?=
+ =?us-ascii?Q?O+tUATpjbL3e9YFCLGIoFqVlOaFosYP5mB4Fwb1GieVTQpeL0AFCZja0UOTH?=
+ =?us-ascii?Q?KhIF7ebIZyL6vWnXFf0PdjgDKW9ug4KxxzU5kRt8KP5pScxyvzBYlM5uhpo3?=
+ =?us-ascii?Q?Q2e9/0lnaI2eTT/BRduIlFpmr89xJyfXWieWbFuUIFu3XfONAwFP7SPcNDTl?=
+ =?us-ascii?Q?bMARPDsduCevyf9MRp20ezlt5OjBqmpA6rrTRKpKeA/Cs8Sn5vqQ/ewtNhqW?=
+ =?us-ascii?Q?QByx3vl20GkJyU2je2hHI8MPPUUMNMo7KYd/L8v9xj9Prgd/uHSCilYmyEiE?=
+ =?us-ascii?Q?WtcnU7idU8PAKi4zxmdpTRy+QRFIus4MWi/hgntapqQkjWpmv95wtIt+r3P3?=
+ =?us-ascii?Q?nQJN6rpq0SI3/0ZuJTH1sca275XUyMvGt83e/YU4v5pUIaXgGT9Ii0Jjsb9+?=
+ =?us-ascii?Q?dC71KHKrbC+e0UpLpXUIiBLEuUiEqctC/MSCCquyxysKXsgmsfxpNIld0QYs?=
+ =?us-ascii?Q?wh+clo/igy9FPJHRx/vGTvPpRznZDGNuvjhP7drVpqWdrkbWRzuVLT3Qgpa1?=
+ =?us-ascii?Q?iaWwAsvS+ReWHatV2WNoZvzHk8dWnHkwRv48FYNYQP7y5Pi3AWazKCagMj6m?=
+ =?us-ascii?Q?9szzCbzrrTvmzDoAQ8hKFP7PPH1fXAaEeiY3rPPqUm6CWigLFTv8zkbqmATt?=
+ =?us-ascii?Q?iXFCIxNJ0WW7ndYX/2H8SySG9PJi35L5KZtDOrS6LQ5b3AQlOfMkYz0iGEAm?=
+ =?us-ascii?Q?ZlfKgKiYTG0FxYy4CgHj6RIdx/s6gjRflncis4ebGTCiDVO+2t0LWZhJSXMJ?=
+ =?us-ascii?Q?TRErlvBQADq9+DLpcQKi2TXJsksqMrznrogksmI/aP2T+E1eDKEYL0skMoax?=
+ =?us-ascii?Q?bok2sU4l5CexmBQRrCugUSBftgdPsUF3WsDji2UWtI45xsmnA3De7oaNA0cG?=
+ =?us-ascii?Q?3Hn2c3aqzJB11u5Yic82UJoF1ks+TXOdiQk3P+sRFeJkFVh1UTzZseW0/VXW?=
+ =?us-ascii?Q?3uNxlLNu7G/UAqN39fwySwpsAFG2glAcfjL4prjizV7K5g2Qq7Do4dYzpApU?=
+ =?us-ascii?Q?wlNqLgvsreci38jhsk2N?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 41b4e4e6-2071-4e6b-1f43-08dca8389d13
+X-MS-Exchange-CrossTenant-AuthSource: SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2024 21:20:28.9386
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7P223MB0843
 
-On 7/18/24 11:39, Jan Kara wrote:
-> On Thu 18-07-24 00:14:24, Mirsad Todorovac wrote:
->>
->>
->> On 7/17/24 17:44, Jan Kara wrote:
->>> On Tue 16-07-24 19:17:05, Mirsad Todorovac wrote:
->>>> On 7/15/24 19:28, Jan Kara wrote:
->>>>> Hello Mirsad!
->>>>>
->>>>> On Wed 10-07-24 20:09:27, Mirsad Todorovac wrote:
->>>>>> On the linux-next vanilla next-20240709 tree, I have attempted the seed KCONFIG_SEED=0xEE7AB52F
->>>>>> which was known from before to trigger various errors in compile and build process.
->>>>>>
->>>>>> Though this might seem as contributing to channel noise, Linux refuses to build this config,
->>>>>> treating warnings as errors, using this build line:
->>>>>>
->>>>>> $ time nice make W=1 -k -j 36 |& tee ../err-next-20230709-01a.log; date
->>>>>>
->>>>>> As I know that the Chief Penguin doesn't like warnings, but I am also aware that there are plenty
->>>>>> left, there seems to be more tedious work ahead to make the compilers happy.
->>>>>>
->>>>>> The compiler output is:
->>>>>>
->>>>>> ---------------------------------------------------------------------------------------------------------
->>>>>> fs/reiserfs/do_balan.c: In function ‘balance_leaf_new_nodes_paste_whole’:
->>>>>> fs/reiserfs/do_balan.c:1147:13: error: variable ‘leaf_mi’ set but not used [-Werror=unused-but-set-variable]
->>>>>>  1147 |         int leaf_mi;
->>>>>>       |             ^~~~~~~
->>>>>
->>>>> Frankly, I wouldn't bother with reiserfs. The warning is there for ages,
->>>>> the code is going to get removed in two releases, so I guess we can live
->>>>> with these warnings for a few more months...
->>>>
->>>> In essence I agree with you, but for sentimental reasons I would like to
->>>> keep it because it is my first journaling Linux system on Knoppix 🙂
->>>
->>> As much as I understand your sentiment (I have a bit of history with that
->>> fs as well) the maintenance cost isn't really worth it and most fs folks
->>> will celebrate when it's removed. We have already announced the removal
->>> year and half ago and I'm fully for executing that plan at the end of this
->>> year.
->>>
->>>> Patch is also simple and a no-brainer, as proposed by Mr. Cook:
->>>>
->>>> -------------------------------><------------------------------------------
->>>> diff --git a/fs/reiserfs/do_balan.c b/fs/reiserfs/do_balan.c
->>>> index 5129efc6f2e6..fbe73f267853 100644
->>>> --- a/fs/reiserfs/do_balan.c
->>>> +++ b/fs/reiserfs/do_balan.c
->>>> @@ -1144,7 +1144,9 @@ static void balance_leaf_new_nodes_paste_whole(struct tree_balance *tb,
->>>>  {
->>>>  	struct buffer_head *tbS0 = PATH_PLAST_BUFFER(tb->tb_path);
->>>>  	int n = B_NR_ITEMS(tbS0);
->>>> +#ifdef CONFIG_REISERFS_CHECK
->>>>  	int leaf_mi;
->>>> +#endif
->>>
->>> Well, I would not like this even for actively maintained code ;) If you
->>> want to silence these warnings in this dead code, then I could live with
->>> something like:
->>>
->>> #if defined( CONFIG_REISERFS_CHECK )
->>> #define RFALSE(cond, format, args...) __RASSERT(!(cond), ....)
->>> #else
->>> - #define RFALSE( cond, format, args... ) do {;} while( 0 )
->>> + #define RFALSE( cond, format, args... ) do { (void)cond; } while( 0 )
->>> #endif
->>
->> Yes, one line change is much smarter than 107 line patch of mine :-)
->>
->> Verified, and this line solved all the warnings:
->>
->>   CC      fs/reiserfs/bitmap.o
->>   CC      fs/reiserfs/do_balan.o
->>   CC      fs/reiserfs/namei.o
->>   CC      fs/reiserfs/inode.o
->>   CC      fs/reiserfs/file.o
->>   CC      fs/reiserfs/dir.o
->>   CC      fs/reiserfs/fix_node.o
->>   CC      fs/reiserfs/super.o
->>   CC      fs/reiserfs/prints.o
->>   CC      fs/reiserfs/objectid.o
->>   CC      fs/reiserfs/lbalance.o
->>   CC      fs/reiserfs/ibalance.o
->>   CC      fs/reiserfs/stree.o
->>   CC      fs/reiserfs/hashes.o
->>   CC      fs/reiserfs/tail_conversion.o
->>   CC      fs/reiserfs/journal.o
->>   CC      fs/reiserfs/resize.o
->>   CC      fs/reiserfs/item_ops.o
->>   CC      fs/reiserfs/ioctl.o
->>   CC      fs/reiserfs/xattr.o
->>   CC      fs/reiserfs/lock.o
->>   CC      fs/reiserfs/procfs.o
->>   AR      fs/reiserfs/built-in.a
->>
->> Just FWIW, back then in year 2000/2001 a journaling file system on my
->> Knoppix box was a quantum leap - it would simply replay the journal if
->> there was a power loss before shutdown. No several minutes of fsck.
-> 
-> Well, there was also ext3 at that time already :-) That's where I became
-> familiar with the idea of journalling. Reiserfs was interesting to me
-> because of completely different approach to on-disk format (b-tree with
-> formatted items), packing of small files / file tails (interesting in 2000,
-> not so much 20 years later) and reasonable scalability for large
-> directories.
-> 
->> I think your idea is great and if you wish a patch could be submitted
->> after the merge window.
-> 
-> I'll leave it up to you. If the warnings annoy you, send the patch along
-> the lines I've proposed (BTW (void)cond should better be (void)(cond) for
-> macro safety) and I'll push it to Linus.
-> 
-> 								Honza
+Signed-off-by: Steven Davis <goldside000@outlook.com>
+---
+ drivers/staging/most/video/video.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Sure thing. Yes, (ovid)(cond) makes much more sense against i.e.
-expanding RFALSE(a + b, ...).
+diff --git a/drivers/staging/most/video/video.c b/drivers/staging/most/video/video.c
+index 6254a5df2502..2b3cdb1ce140 100644
+--- a/drivers/staging/most/video/video.c
++++ b/drivers/staging/most/video/video.c
+@@ -454,18 +454,18 @@ static int comp_probe_channel(struct most_interface *iface, int channel_idx,
+ 	struct most_video_dev *mdev = get_comp_dev(iface, channel_idx);
+ 
+ 	if (mdev) {
+-		pr_err("channel already linked\n");
++		pr_err("Channel already linked\n");
+ 		return -EEXIST;
+ 	}
+ 
+ 	if (ccfg->direction != MOST_CH_RX) {
+-		pr_err("wrong direction, expect rx\n");
++		pr_err("Wrong direction, expected rx\n");
+ 		return -EINVAL;
+ 	}
+ 
+ 	if (ccfg->data_type != MOST_CH_SYNC &&
+ 	    ccfg->data_type != MOST_CH_ISOC) {
+-		pr_err("wrong channel type, expect sync or isoc\n");
++		pr_err("Wrong channel type, expected sync or isoc\n");
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.45.2
 
-Best regards,
-Mirsad Todorovac
 
