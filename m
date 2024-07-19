@@ -1,516 +1,151 @@
-Return-Path: <linux-kernel+bounces-257160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B01EE937600
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 11:44:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A8BF937605
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 11:45:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A6CC1F2264E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:44:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EAAA1F227F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADCE284A3F;
-	Fri, 19 Jul 2024 09:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF11A82877;
+	Fri, 19 Jul 2024 09:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="25lllP7s"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="NCuJuHvK"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AABC2AF11
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 09:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA42624A08
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 09:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721382162; cv=none; b=EBIx9WiXOFvinrbuKn1lybajyS2Uvq09WTOKoxPgvHcycGW2OY/HonmkkeqcdCXPCiyTB4CLVGA1avW7UHxmCON0D4ynZrxsGb5ocgbdTrlLOuyrVLKRzfDSW8x/euq1grSZmIvswMICwO/+YvBcP6M9K3YiAihIvzLdgPPaTa0=
+	t=1721382335; cv=none; b=NLuw8ikQdiLqNBfumQz+SHAyPq+NcL+inaFVp3ufSU/aTLsjDrJIm6cBxoiXnaBsMKMeBP3Qjqs1umvZB8rdVvrLsTbWbfbHShDeAZaTAhn9e/eJFOetXNhksA4e7j+R5MZvBFrLdUHRSE266jZdBmygDhoSjwyF6KCzRM9J/Cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721382162; c=relaxed/simple;
-	bh=RWcGlFeX3JqpN95vgpyd7uatbbUShimFGCoyEPui7ns=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D0Cw8omhmIo5SD9FP/6A0D7l8MmsdcoDcOv71DOKDIXwjMqtW6FFsKDiSnpKSfmK5xjdPG2BL9DVlagDIDvQjUJqMKVZH3DOQ7lSGFQel0Eu2XwYd4wBlMl0boFnn3Y1g2N3CpUuALiHyrhB3mWqbw4HQLPAt5WNa6/UAiyJ+tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=25lllP7s; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4272738eb9eso10661565e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 02:42:39 -0700 (PDT)
+	s=arc-20240116; t=1721382335; c=relaxed/simple;
+	bh=wvQcdEWQ3/kLHsxtgCGRA9jYHsgJ/xrav2Xn7haRcMU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qsNvFgPwHIRgzvkFSW3uvzbBpBlmye4d+j9I4WrAs3BDIe6QYBO1wRqNrYGxwG4BKw5NNkPlnmwIajTf/Bqw+UTl4+AD/ZalcpfE79jVfqfmmbIYAVgIFSTimZcOHHxwmbeTZp5FdCMDJ4FtA4V0SelpJEOFXBZjE4uUxhUw/A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=NCuJuHvK; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fc5c0c65bcso1623385ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 02:45:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721382158; x=1721986958; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=absASMJWiUMJNRR/W+ONHnqy1vIsoCnEdvZkyAg2UEM=;
-        b=25lllP7sZ+g8ejTkYgopX1u489VfGvA684HD/+ZagEjwb1jiCOvaCCFLfH/d9xw/dB
-         sHdDzULWBDV7NdKOaXcNsiNNwCzY72o3k6bvGBJiL7vZvw9RqmE/u6Wp/CSTFe6Lx+0e
-         9RJEBiCN1MttExNszrzPcGzJWlanvyQ/JEXeaUxOYnnE4fewDs93vxlTIwt8ysXai3eV
-         9ks8YVB17F1ZEP3OXJfLGocXjBgW/1kGhyBl7irt+8x2GVx6aJnO2PUP0dieDAcu0dOR
-         lK2rt4zusg56/VY7AowOZ60tlBk9n6fHE5M9U7DIxs6vFbt6vkZc0pS0HF5J9+W2CTVr
-         R60w==
+        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1721382332; x=1721987132; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DTIjdju0ng5SZUR/ZVbr+pjq8z5bsP/PxolugfMqbFg=;
+        b=NCuJuHvKq9YHT3W6tARyzFYG7j7joVlBvGUbhlkYbRpaISOVCJJpTmPv0Imma1QWeP
+         vPtN9bbkKUbYA4O/qt+zmYKIyxewfrfW/R8vOuTdoD56zLi2YfGGRejdpknpM/ygZhem
+         sM00TefJ3xEW4+bQAnwLl1ZciTsHh6qM/eOC4fPP1vqqRWb043oZVgBO4dL3p31btvlD
+         NA6O0SdqijSlpJjbamSi/fOJmSLpmGB3z+Kk99Hkw/4SI7c+QIhsU0oJEzay5LPa0Q5S
+         EqjgDFrvp1SrGcyHoLMHj71PZW82TOogC4NQ03tUNVUAd4KjWsRzyHOJhyBOTbomTo0P
+         eElQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721382158; x=1721986958;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1721382332; x=1721987132;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=absASMJWiUMJNRR/W+ONHnqy1vIsoCnEdvZkyAg2UEM=;
-        b=nsnkRsdHTASCRMI08Ng0BAyy/pLuP1VGLvyUnNUCOgCsq42uKv5l16tB9hytsX1jIA
-         G8KCtbI/YRZe86vo9F6blXFdDTAnhkvDTmxPFtqlS3gvucYGKIYy2Vj3ItEVcxqzpqKi
-         450QsY8Pn61GwY0WMl2yQ8pC9P/eZVkw/zEnGcIZHM7bvLUbZFx8QfCwvUOKmkhTSFLT
-         GoTFeYJM7avJRGFnwJGFDC3dRJj8uMnDzg0JNRyhAmxZosscTkvezJmzk1ZEsIyllZNL
-         wUNHYlHvV1xhX99Z63BTSmuYSdwVhlkzdBoY+RweVNGJEXJZvyLBU+Hc3LPYmqy7SBoA
-         jYNA==
-X-Forwarded-Encrypted: i=1; AJvYcCXC+tOPcg1lBhs2PRkgkbhbwGgQdo9Jh2A+Iv6tLrZwmAvHlUUNpmLNfxINeb6I0eC+qCPFRF+xpq2qNuiZnHr2YvYa6u6zSWUs78oK
-X-Gm-Message-State: AOJu0YwhGh+ijXZloeqSj/O7OsViL68RFXKkeIqxwaDFQRAuplKX2bWp
-	jf/n4sHuLFzewRyBFjVauQGEt7xIu8INwJLaVNH4jzrgMELf+Wd5tM1j+WYre4c=
-X-Google-Smtp-Source: AGHT+IG4v/ss+PiQLQnGGLGki6lPDQZENxCTZpG5h6RbskU4SnVGhhGFRVioB37Y3ZMtMayAAwk6sA==
-X-Received: by 2002:a05:600c:4e92:b0:426:5c34:b19b with SMTP id 5b1f17b1804b1-427c2cc33damr46088045e9.20.1721382157653;
-        Fri, 19 Jul 2024 02:42:37 -0700 (PDT)
-Received: from toaster.lan ([2a01:e0a:3c5:5fb1:5ac4:5655:4dfe:ce97])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-427d2a8d988sm45267445e9.34.2024.07.19.02.42.36
+        bh=DTIjdju0ng5SZUR/ZVbr+pjq8z5bsP/PxolugfMqbFg=;
+        b=GgCyPuQ0VsEwbHFkOJeGeYq0S9Ezul166Ca4lY/8lC7xrEbUcfVEPHzqYPe3ovts/g
+         0LzI5eCO3TM+TFzqBij9bfGUYUFlcOcygrs0FE78zzE6ekId449gcAlZJ1sU4na1ZG+S
+         t7hgTUM02mAE0OOmPl6h8Zi8/jwR7cW3pbRJggFv3TCbdh3noJSoP2uhvODhIQMfItzU
+         PRd6/8utnHpAaj3YSYLyOOGWt60nwTvWu6iYnJH9ranyd+dZZWbye9wAP7lCpN0vR8xs
+         /sDpOKXdRNXcdU5ptCzh/XyGptjyyy3YJJS4EPyNtYkxTpgcdKRz3o2tkQ/isdYdwi8j
+         L+OA==
+X-Forwarded-Encrypted: i=1; AJvYcCUa4G71yB6aoqZY+R7w6iXzW/Dx5X5ZeKB3Dui+b406oc0IbeBEqPFex3mjZ9DYcWdxkWVW5ixpGpMjLIL4782HtQVGSnlGIYR0tU18
+X-Gm-Message-State: AOJu0YzSWqzCQkjhx2NcNm1YZhqtqXjmhciB/vHZlxLSMrRBoGm2YH9+
+	JFhTAwCU8+nQEIWp0IUasjD+AL42xClRvWDO+/j5ewtlV6q2u0AZlcgMi1p7Mw==
+X-Google-Smtp-Source: AGHT+IEVyJea5xxoF0+wpJnzDjtXmvoUTHSZX9gEcY2eBSEdaXs1ZKnuf11e4P64seyMGkI+54GAPA==
+X-Received: by 2002:a17:902:e74e:b0:1f3:10e8:1e0 with SMTP id d9443c01a7336-1fd5ec5b9b6mr14469455ad.2.1721382331995;
+        Fri, 19 Jul 2024 02:45:31 -0700 (PDT)
+Received: from [127.0.0.1] ([2401:4900:8899:6437:d031:b9ec:7ff1:6aa1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f28f67esm819025ad.96.2024.07.19.02.45.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 02:42:37 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: meson: introduce symbol namespace for amlogic clocks
-Date: Fri, 19 Jul 2024 11:42:26 +0200
-Message-ID: <20240719094228.3985595-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.43.0
+        Fri, 19 Jul 2024 02:45:31 -0700 (PDT)
+From: Ayush Singh <ayush@beagleboard.org>
+Subject: [PATCH 0/3] Add Firmware Upload support for beagleplay cc1352
+Date: Fri, 19 Jul 2024 15:15:09 +0530
+Message-Id: <20240719-beagleplay_fw_upgrade-v1-0-8664d4513252@beagleboard.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKU1mmYC/x3MSwqAIBRG4a3EHSfYG9pKRJj+2YUoUXoR7T1p+
+ A3OeSjAMwK1yUMeBwfe1ogsTUjParUQbKIpl3kpm6wSI5Rd4BZ1D9M57M56ZSDKArXWGKUpDMX
+ WeUx8/d+uf98PcDP+bGcAAAA=
+To: jkridner@beagleboard.org, robertcnelson@beagleboard.org, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
+ Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: greybus-dev@lists.linaro.org, netdev@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, Ayush Singh <ayush@beagleboard.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1752; i=ayush@beagleboard.org;
+ h=from:subject:message-id; bh=wvQcdEWQ3/kLHsxtgCGRA9jYHsgJ/xrav2Xn7haRcMU=;
+ b=owEBbQKS/ZANAwAIAQXO9ceJ5Vp0AcsmYgBmmjW1PzBconUuwkgIXGlPw5RQUNQ8xbEm8UvkG
+ 6vloBiAU6CJAjMEAAEIAB0WIQTfzBMe8k8tZW+lBNYFzvXHieVadAUCZpo1tQAKCRAFzvXHieVa
+ dCbpD/9aS52VevnNnvYRJQyq7QU3ADVpxmVpEeUX0SJrQSzSqlAch4f6iGxAxvwIWQOGfdDYMev
+ 7Kv6067Fj0544qQ+4t9iLZWeVxlYk7iZ/gisW9y+ZqF+sdywHAkWqXaC9lmJGu+WOn3FbG0kxJ7
+ oXdyLbG8dSUpceaPFgd3b43qoBx1v/BBRCM+CWGMsw7DoooGlChFT7Fbn3rc0B8fPOiv7wViorG
+ p+Tgxu9k/tFdSZ3hOagYhnB5hXNzdjfN5siI1XWSKNbV/6tjT3nhpvez7qFouoJChkdSDfSecSl
+ JPcdNuwuWwcXNI45FthqCWrN/Txmxi0ym0dylq4b/vilWjcMV8iuXBrayPksG9oHjdNb5PnXvlE
+ soQx7bJMsnFWm9bBX2VYkkHPvLmuMb99OxgrrUnG7IY2jEB4qhAzRP9urvGcBquduTsHrHKZ+A5
+ Q5s6eNy0iRJwsZyp+zrLtD2wloyh8eEtHYq4v1f4FK1Hy0lHZTb+sffErg2EixdSk2zvLukrqbo
+ EyiSBvxpRLef2fG88rg+ZaSVYiXNjiHB2VhzHt2RMfZ2aNZ9qi+KmqpiIQmSI+Svqh0y9D/3wIF
+ UPYuppPh5mZmvDy0evdrAFReqQAlyLwDM9Rxp3x5UZHoFWpw7k/l+P89kGCPhKtrqk6Rr9juzW+
+ 9JY/V43A9FwOH+Q==
+X-Developer-Key: i=ayush@beagleboard.org; a=openpgp;
+ fpr=DFCC131EF24F2D656FA504D605CEF5C789E55A74
 
-Symbols exported by the Amlogic clock modules are only meant to be used by
-Amlogic clock controller drivers. Using a dedicated symbols namespace make
-that clear and help clean the global namespace of symbols other modules do
-no need.
+Adds support for beagleplay cc1352 co-processor firmware upgrade using
+kernel Firmware Upload API. Uses ROM based bootloader present in
+cc13x2x7 and cc26x2x7 platforms for flashing over UART. 
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Communication with the bootloader can be moved out of gb-beagleplay
+driver if required, but I am keeping it here since there are no
+immediate plans to use the on-board cc1352p7 for anything other than
+greybus (BeagleConnect Technology). Additionally, there do not seem to
+any other devices using cc1352p7 or it's cousins as a co-processor.
+
+Boot and Reset GPIOs are used to enable cc1352p7 bootloader backdoor for
+flashing. Flashing is skipped in case we are trying to flash the same
+image as the one that is currently present. This is determined by CRC32
+calculation of the supplied firmware and Flash data.
+
+We also do a CRC32 check after flashing to ensure that the firmware was
+flashed properly.
+
+Link: https://www.ti.com/lit/ug/swcu192/swcu192.pdf Ti CC1352p7 Tecnical Specification
+
+Signed-off-by: Ayush Singh <ayush@beagleboard.org>
 ---
- drivers/clk/meson/a1-peripherals.c   |  1 +
- drivers/clk/meson/a1-pll.c           |  1 +
- drivers/clk/meson/axg-aoclk.c        |  1 +
- drivers/clk/meson/axg-audio.c        |  1 +
- drivers/clk/meson/axg.c              |  1 +
- drivers/clk/meson/c3-peripherals.c   |  1 +
- drivers/clk/meson/c3-pll.c           |  1 +
- drivers/clk/meson/clk-cpu-dyndiv.c   |  3 ++-
- drivers/clk/meson/clk-dualdiv.c      |  5 +++--
- drivers/clk/meson/clk-mpll.c         |  5 +++--
- drivers/clk/meson/clk-phase.c        |  8 ++++----
- drivers/clk/meson/clk-pll.c          |  7 ++++---
- drivers/clk/meson/clk-regmap.c       | 13 +++++++------
- drivers/clk/meson/g12a-aoclk.c       |  1 +
- drivers/clk/meson/g12a.c             |  1 +
- drivers/clk/meson/gxbb-aoclk.c       |  1 +
- drivers/clk/meson/gxbb.c             |  1 +
- drivers/clk/meson/meson-aoclk.c      |  3 ++-
- drivers/clk/meson/meson-clkc-utils.c |  3 ++-
- drivers/clk/meson/meson-eeclk.c      |  3 ++-
- drivers/clk/meson/s4-peripherals.c   |  1 +
- drivers/clk/meson/s4-pll.c           |  1 +
- drivers/clk/meson/sclk-div.c         |  3 ++-
- drivers/clk/meson/vclk.c             |  5 +++--
- drivers/clk/meson/vid-pll-div.c      |  3 ++-
- 25 files changed, 49 insertions(+), 25 deletions(-)
+Ayush Singh (3):
+      dt-bindings: net: ti,cc1352p7: Add boot-gpio
+      arm64: dts: ti: k3-am625-beagleplay: Add boot-gpios to cc1352p7
+      greybus: gb-beagleplay: Add firmware upload API
 
-diff --git a/drivers/clk/meson/a1-peripherals.c b/drivers/clk/meson/a1-peripherals.c
-index 99b5bc450446..53ffbc1cd6f4 100644
---- a/drivers/clk/meson/a1-peripherals.c
-+++ b/drivers/clk/meson/a1-peripherals.c
-@@ -2246,3 +2246,4 @@ MODULE_DESCRIPTION("Amlogic A1 Peripherals Clock Controller driver");
- MODULE_AUTHOR("Jian Hu <jian.hu@amlogic.com>");
- MODULE_AUTHOR("Dmitry Rokosov <ddrokosov@sberdevices.ru>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
-index a16e537d139a..5236821bc3bc 100644
---- a/drivers/clk/meson/a1-pll.c
-+++ b/drivers/clk/meson/a1-pll.c
-@@ -360,3 +360,4 @@ MODULE_DESCRIPTION("Amlogic S4 PLL Clock Controller driver");
- MODULE_AUTHOR("Jian Hu <jian.hu@amlogic.com>");
- MODULE_AUTHOR("Dmitry Rokosov <ddrokosov@sberdevices.ru>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
-index fa1dcb7f91e4..1dabc81535a6 100644
---- a/drivers/clk/meson/axg-aoclk.c
-+++ b/drivers/clk/meson/axg-aoclk.c
-@@ -342,3 +342,4 @@ module_platform_driver(axg_aoclkc_driver);
- 
- MODULE_DESCRIPTION("Amlogic AXG Always-ON Clock Controller driver");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
-index 06dc1e1f45e5..beda86349389 100644
---- a/drivers/clk/meson/axg-audio.c
-+++ b/drivers/clk/meson/axg-audio.c
-@@ -1912,3 +1912,4 @@ module_platform_driver(axg_audio_driver);
- MODULE_DESCRIPTION("Amlogic AXG/G12A/SM1 Audio Clock driver");
- MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index 065b5f198297..757c7a28c53d 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -2187,3 +2187,4 @@ module_platform_driver(axg_driver);
- 
- MODULE_DESCRIPTION("Amlogic AXG Main Clock Controller driver");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/c3-peripherals.c b/drivers/clk/meson/c3-peripherals.c
-index 56b33d23c317..dae80943a6c7 100644
---- a/drivers/clk/meson/c3-peripherals.c
-+++ b/drivers/clk/meson/c3-peripherals.c
-@@ -2364,3 +2364,4 @@ module_platform_driver(c3_peripherals_driver);
- MODULE_DESCRIPTION("Amlogic C3 Peripherals Clock Controller driver");
- MODULE_AUTHOR("Chuan Liu <chuan.liu@amlogic.com>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/c3-pll.c b/drivers/clk/meson/c3-pll.c
-index 6d5271c61d14..5ff409e89cd2 100644
---- a/drivers/clk/meson/c3-pll.c
-+++ b/drivers/clk/meson/c3-pll.c
-@@ -745,3 +745,4 @@ module_platform_driver(c3_pll_driver);
- MODULE_DESCRIPTION("Amlogic C3 PLL Clock Controller driver");
- MODULE_AUTHOR("Chuan Liu <chuan.liu@amlogic.com>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/clk-cpu-dyndiv.c b/drivers/clk/meson/clk-cpu-dyndiv.c
-index aa824b030cb8..6c1f58826e24 100644
---- a/drivers/clk/meson/clk-cpu-dyndiv.c
-+++ b/drivers/clk/meson/clk-cpu-dyndiv.c
-@@ -65,8 +65,9 @@ const struct clk_ops meson_clk_cpu_dyndiv_ops = {
- 	.determine_rate = meson_clk_cpu_dyndiv_determine_rate,
- 	.set_rate = meson_clk_cpu_dyndiv_set_rate,
- };
--EXPORT_SYMBOL_GPL(meson_clk_cpu_dyndiv_ops);
-+EXPORT_SYMBOL_NS_GPL(meson_clk_cpu_dyndiv_ops, CLK_MESON);
- 
- MODULE_DESCRIPTION("Amlogic CPU Dynamic Clock divider");
- MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/clk-dualdiv.c b/drivers/clk/meson/clk-dualdiv.c
-index d46c02b51be5..913bf25d3771 100644
---- a/drivers/clk/meson/clk-dualdiv.c
-+++ b/drivers/clk/meson/clk-dualdiv.c
-@@ -130,14 +130,15 @@ const struct clk_ops meson_clk_dualdiv_ops = {
- 	.determine_rate	= meson_clk_dualdiv_determine_rate,
- 	.set_rate	= meson_clk_dualdiv_set_rate,
- };
--EXPORT_SYMBOL_GPL(meson_clk_dualdiv_ops);
-+EXPORT_SYMBOL_NS_GPL(meson_clk_dualdiv_ops, CLK_MESON);
- 
- const struct clk_ops meson_clk_dualdiv_ro_ops = {
- 	.recalc_rate	= meson_clk_dualdiv_recalc_rate,
- };
--EXPORT_SYMBOL_GPL(meson_clk_dualdiv_ro_ops);
-+EXPORT_SYMBOL_NS_GPL(meson_clk_dualdiv_ro_ops, CLK_MESON);
- 
- MODULE_DESCRIPTION("Amlogic dual divider driver");
- MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
- MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
-index eae9b7dc5a6c..f639d56f0fd3 100644
---- a/drivers/clk/meson/clk-mpll.c
-+++ b/drivers/clk/meson/clk-mpll.c
-@@ -165,7 +165,7 @@ const struct clk_ops meson_clk_mpll_ro_ops = {
- 	.recalc_rate	= mpll_recalc_rate,
- 	.determine_rate	= mpll_determine_rate,
- };
--EXPORT_SYMBOL_GPL(meson_clk_mpll_ro_ops);
-+EXPORT_SYMBOL_NS_GPL(meson_clk_mpll_ro_ops, CLK_MESON);
- 
- const struct clk_ops meson_clk_mpll_ops = {
- 	.recalc_rate	= mpll_recalc_rate,
-@@ -173,8 +173,9 @@ const struct clk_ops meson_clk_mpll_ops = {
- 	.set_rate	= mpll_set_rate,
- 	.init		= mpll_init,
- };
--EXPORT_SYMBOL_GPL(meson_clk_mpll_ops);
-+EXPORT_SYMBOL_NS_GPL(meson_clk_mpll_ops, CLK_MESON);
- 
- MODULE_DESCRIPTION("Amlogic MPLL driver");
- MODULE_AUTHOR("Michael Turquette <mturquette@baylibre.com>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/clk-phase.c b/drivers/clk/meson/clk-phase.c
-index ff3f0b1a3ed1..c1526fbfb6c4 100644
---- a/drivers/clk/meson/clk-phase.c
-+++ b/drivers/clk/meson/clk-phase.c
-@@ -61,7 +61,7 @@ const struct clk_ops meson_clk_phase_ops = {
- 	.get_phase	= meson_clk_phase_get_phase,
- 	.set_phase	= meson_clk_phase_set_phase,
- };
--EXPORT_SYMBOL_GPL(meson_clk_phase_ops);
-+EXPORT_SYMBOL_NS_GPL(meson_clk_phase_ops, CLK_MESON);
- 
- /*
-  * This is a special clock for the audio controller.
-@@ -123,7 +123,7 @@ const struct clk_ops meson_clk_triphase_ops = {
- 	.get_phase	= meson_clk_triphase_get_phase,
- 	.set_phase	= meson_clk_triphase_set_phase,
- };
--EXPORT_SYMBOL_GPL(meson_clk_triphase_ops);
-+EXPORT_SYMBOL_NS_GPL(meson_clk_triphase_ops, CLK_MESON);
- 
- /*
-  * This is a special clock for the audio controller.
-@@ -178,9 +178,9 @@ const struct clk_ops meson_sclk_ws_inv_ops = {
- 	.get_phase	= meson_sclk_ws_inv_get_phase,
- 	.set_phase	= meson_sclk_ws_inv_set_phase,
- };
--EXPORT_SYMBOL_GPL(meson_sclk_ws_inv_ops);
--
-+EXPORT_SYMBOL_NS_GPL(meson_sclk_ws_inv_ops, CLK_MESON);
- 
- MODULE_DESCRIPTION("Amlogic phase driver");
- MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 467dc8b61a37..bc570a2ff3a3 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -472,7 +472,7 @@ const struct clk_ops meson_clk_pcie_pll_ops = {
- 	.enable		= meson_clk_pcie_pll_enable,
- 	.disable	= meson_clk_pll_disable
- };
--EXPORT_SYMBOL_GPL(meson_clk_pcie_pll_ops);
-+EXPORT_SYMBOL_NS_GPL(meson_clk_pcie_pll_ops, CLK_MESON);
- 
- const struct clk_ops meson_clk_pll_ops = {
- 	.init		= meson_clk_pll_init,
-@@ -483,15 +483,16 @@ const struct clk_ops meson_clk_pll_ops = {
- 	.enable		= meson_clk_pll_enable,
- 	.disable	= meson_clk_pll_disable
- };
--EXPORT_SYMBOL_GPL(meson_clk_pll_ops);
-+EXPORT_SYMBOL_NS_GPL(meson_clk_pll_ops, CLK_MESON);
- 
- const struct clk_ops meson_clk_pll_ro_ops = {
- 	.recalc_rate	= meson_clk_pll_recalc_rate,
- 	.is_enabled	= meson_clk_pll_is_enabled,
- };
--EXPORT_SYMBOL_GPL(meson_clk_pll_ro_ops);
-+EXPORT_SYMBOL_NS_GPL(meson_clk_pll_ro_ops, CLK_MESON);
- 
- MODULE_DESCRIPTION("Amlogic PLL driver");
- MODULE_AUTHOR("Carlo Caione <carlo@endlessm.com>");
- MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
-index ad116d24f700..07f7e441b916 100644
---- a/drivers/clk/meson/clk-regmap.c
-+++ b/drivers/clk/meson/clk-regmap.c
-@@ -49,12 +49,12 @@ const struct clk_ops clk_regmap_gate_ops = {
- 	.disable = clk_regmap_gate_disable,
- 	.is_enabled = clk_regmap_gate_is_enabled,
- };
--EXPORT_SYMBOL_GPL(clk_regmap_gate_ops);
-+EXPORT_SYMBOL_NS_GPL(clk_regmap_gate_ops, CLK_MESON);
- 
- const struct clk_ops clk_regmap_gate_ro_ops = {
- 	.is_enabled = clk_regmap_gate_is_enabled,
- };
--EXPORT_SYMBOL_GPL(clk_regmap_gate_ro_ops);
-+EXPORT_SYMBOL_NS_GPL(clk_regmap_gate_ro_ops, CLK_MESON);
- 
- static unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
- 						unsigned long prate)
-@@ -125,13 +125,13 @@ const struct clk_ops clk_regmap_divider_ops = {
- 	.determine_rate = clk_regmap_div_determine_rate,
- 	.set_rate = clk_regmap_div_set_rate,
- };
--EXPORT_SYMBOL_GPL(clk_regmap_divider_ops);
-+EXPORT_SYMBOL_NS_GPL(clk_regmap_divider_ops, CLK_MESON);
- 
- const struct clk_ops clk_regmap_divider_ro_ops = {
- 	.recalc_rate = clk_regmap_div_recalc_rate,
- 	.determine_rate = clk_regmap_div_determine_rate,
- };
--EXPORT_SYMBOL_GPL(clk_regmap_divider_ro_ops);
-+EXPORT_SYMBOL_NS_GPL(clk_regmap_divider_ro_ops, CLK_MESON);
- 
- static u8 clk_regmap_mux_get_parent(struct clk_hw *hw)
- {
-@@ -174,13 +174,14 @@ const struct clk_ops clk_regmap_mux_ops = {
- 	.set_parent = clk_regmap_mux_set_parent,
- 	.determine_rate = clk_regmap_mux_determine_rate,
- };
--EXPORT_SYMBOL_GPL(clk_regmap_mux_ops);
-+EXPORT_SYMBOL_NS_GPL(clk_regmap_mux_ops, CLK_MESON);
- 
- const struct clk_ops clk_regmap_mux_ro_ops = {
- 	.get_parent = clk_regmap_mux_get_parent,
- };
--EXPORT_SYMBOL_GPL(clk_regmap_mux_ro_ops);
-+EXPORT_SYMBOL_NS_GPL(clk_regmap_mux_ro_ops, CLK_MESON);
- 
- MODULE_DESCRIPTION("Amlogic regmap backed clock driver");
- MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/g12a-aoclk.c b/drivers/clk/meson/g12a-aoclk.c
-index a5f4d15d8396..f0a18d8c9fc2 100644
---- a/drivers/clk/meson/g12a-aoclk.c
-+++ b/drivers/clk/meson/g12a-aoclk.c
-@@ -477,3 +477,4 @@ module_platform_driver(g12a_aoclkc_driver);
- 
- MODULE_DESCRIPTION("Amlogic G12A Always-ON Clock Controller driver");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index ec3b61686770..3c01b395205d 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -5616,3 +5616,4 @@ module_platform_driver(g12a_driver);
- 
- MODULE_DESCRIPTION("Amlogic G12/SM1 Main Clock Controller driver");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
-index 33fafbdf65c4..83b034157b35 100644
---- a/drivers/clk/meson/gxbb-aoclk.c
-+++ b/drivers/clk/meson/gxbb-aoclk.c
-@@ -303,3 +303,4 @@ module_platform_driver(gxbb_aoclkc_driver);
- 
- MODULE_DESCRIPTION("Amlogic GXBB Always-ON Clock Controller driver");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index d3175e4335bb..f071faad1ebb 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -3571,3 +3571,4 @@ module_platform_driver(gxbb_driver);
- 
- MODULE_DESCRIPTION("Amlogic GXBB Main Clock Controller driver");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/meson-aoclk.c b/drivers/clk/meson/meson-aoclk.c
-index 2dd064201fae..053940ee8940 100644
---- a/drivers/clk/meson/meson-aoclk.c
-+++ b/drivers/clk/meson/meson-aoclk.c
-@@ -88,7 +88,8 @@ int meson_aoclkc_probe(struct platform_device *pdev)
- 
- 	return devm_of_clk_add_hw_provider(dev, meson_clk_hw_get, (void *)&data->hw_clks);
- }
--EXPORT_SYMBOL_GPL(meson_aoclkc_probe);
-+EXPORT_SYMBOL_NS_GPL(meson_aoclkc_probe, CLK_MESON);
- 
- MODULE_DESCRIPTION("Amlogic Always-ON Clock Controller helpers");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/meson-clkc-utils.c b/drivers/clk/meson/meson-clkc-utils.c
-index 4dd5948b7ae4..a8cd2c21fab7 100644
---- a/drivers/clk/meson/meson-clkc-utils.c
-+++ b/drivers/clk/meson/meson-clkc-utils.c
-@@ -20,7 +20,8 @@ struct clk_hw *meson_clk_hw_get(struct of_phandle_args *clkspec, void *clk_hw_da
- 
- 	return data->hws[idx];
- }
--EXPORT_SYMBOL_GPL(meson_clk_hw_get);
-+EXPORT_SYMBOL_NS_GPL(meson_clk_hw_get, CLK_MESON);
- 
- MODULE_DESCRIPTION("Amlogic Clock Controller Utilities");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/meson-eeclk.c b/drivers/clk/meson/meson-eeclk.c
-index 570992eece86..66f79e384fe5 100644
---- a/drivers/clk/meson/meson-eeclk.c
-+++ b/drivers/clk/meson/meson-eeclk.c
-@@ -57,7 +57,8 @@ int meson_eeclkc_probe(struct platform_device *pdev)
- 
- 	return devm_of_clk_add_hw_provider(dev, meson_clk_hw_get, (void *)&data->hw_clks);
- }
--EXPORT_SYMBOL_GPL(meson_eeclkc_probe);
-+EXPORT_SYMBOL_NS_GPL(meson_eeclkc_probe, CLK_MESON);
- 
- MODULE_DESCRIPTION("Amlogic Main Clock Controller Helpers");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
-index 130c50554290..ee01e6839f38 100644
---- a/drivers/clk/meson/s4-peripherals.c
-+++ b/drivers/clk/meson/s4-peripherals.c
-@@ -3814,3 +3814,4 @@ module_platform_driver(s4_driver);
- MODULE_DESCRIPTION("Amlogic S4 Peripherals Clock Controller driver");
- MODULE_AUTHOR("Yu Tu <yu.tu@amlogic.com>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/s4-pll.c b/drivers/clk/meson/s4-pll.c
-index c2afade24f9f..d679ee8f85fd 100644
---- a/drivers/clk/meson/s4-pll.c
-+++ b/drivers/clk/meson/s4-pll.c
-@@ -873,3 +873,4 @@ module_platform_driver(s4_driver);
- MODULE_DESCRIPTION("Amlogic S4 PLL Clock Controller driver");
- MODULE_AUTHOR("Yu Tu <yu.tu@amlogic.com>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/sclk-div.c b/drivers/clk/meson/sclk-div.c
-index 987f5b06587c..ae03b048182f 100644
---- a/drivers/clk/meson/sclk-div.c
-+++ b/drivers/clk/meson/sclk-div.c
-@@ -247,8 +247,9 @@ const struct clk_ops meson_sclk_div_ops = {
- 	.set_duty_cycle = sclk_div_set_duty_cycle,
- 	.init		= sclk_div_init,
- };
--EXPORT_SYMBOL_GPL(meson_sclk_div_ops);
-+EXPORT_SYMBOL_NS_GPL(meson_sclk_div_ops, CLK_MESON);
- 
- MODULE_DESCRIPTION("Amlogic Sample divider driver");
- MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/vclk.c b/drivers/clk/meson/vclk.c
-index e886df55d6e3..36f637d2d01b 100644
---- a/drivers/clk/meson/vclk.c
-+++ b/drivers/clk/meson/vclk.c
-@@ -49,7 +49,7 @@ const struct clk_ops meson_vclk_gate_ops = {
- 	.disable = meson_vclk_gate_disable,
- 	.is_enabled = meson_vclk_gate_is_enabled,
- };
--EXPORT_SYMBOL_GPL(meson_vclk_gate_ops);
-+EXPORT_SYMBOL_NS_GPL(meson_vclk_gate_ops, CLK_MESON);
- 
- /* The VCLK Divider has supplementary reset & enable bits */
- 
-@@ -134,8 +134,9 @@ const struct clk_ops meson_vclk_div_ops = {
- 	.disable = meson_vclk_div_disable,
- 	.is_enabled = meson_vclk_div_is_enabled,
- };
--EXPORT_SYMBOL_GPL(meson_vclk_div_ops);
-+EXPORT_SYMBOL_NS_GPL(meson_vclk_div_ops, CLK_MESON);
- 
- MODULE_DESCRIPTION("Amlogic vclk clock driver");
- MODULE_AUTHOR("Neil Armstrong <neil.armstrong@linaro.org>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
-diff --git a/drivers/clk/meson/vid-pll-div.c b/drivers/clk/meson/vid-pll-div.c
-index ee129f86794d..486cf68fc97a 100644
---- a/drivers/clk/meson/vid-pll-div.c
-+++ b/drivers/clk/meson/vid-pll-div.c
-@@ -92,8 +92,9 @@ static unsigned long meson_vid_pll_div_recalc_rate(struct clk_hw *hw,
- const struct clk_ops meson_vid_pll_div_ro_ops = {
- 	.recalc_rate	= meson_vid_pll_div_recalc_rate,
- };
--EXPORT_SYMBOL_GPL(meson_vid_pll_div_ro_ops);
-+EXPORT_SYMBOL_NS_GPL(meson_vid_pll_div_ro_ops, CLK_MESON);
- 
- MODULE_DESCRIPTION("Amlogic video pll divider driver");
- MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
+ .../devicetree/bindings/net/ti,cc1352p7.yaml       |   4 +
+ arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts     |   3 +-
+ drivers/greybus/Kconfig                            |   1 +
+ drivers/greybus/gb-beagleplay.c                    | 625 ++++++++++++++++++++-
+ 4 files changed, 620 insertions(+), 13 deletions(-)
+---
+base-commit: f76698bd9a8ca01d3581236082d786e9a6b72bb7
+change-id: 20240715-beagleplay_fw_upgrade-43e6cceb0d3d
+
+Best regards,
 -- 
-2.43.0
+Ayush Singh <ayush@beagleboard.org>
 
 
