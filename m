@@ -1,148 +1,83 @@
-Return-Path: <linux-kernel+bounces-257010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE289373E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 08:08:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 790979373E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 08:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 485FE283348
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 06:08:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01BF5285998
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 06:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2CA4F883;
-	Fri, 19 Jul 2024 06:05:19 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20455BAF0;
+	Fri, 19 Jul 2024 06:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="uLnUz3+c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FAE46426
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 06:05:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBDAC481D5;
+	Fri, 19 Jul 2024 06:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721369119; cv=none; b=KJTQKde0dUx48at80MP+gZalJZaLhFd5VxGbDq01qlnsFTZ3krmXOpBzwtXEbsNI82L2L3nHe9+Ni5FiDp+1KmEzb6PSo9+1yNRNcQQ0AF1LSI5+GbZ7gTHc0oVUv/b6xVU9Jxx6CL2PT7TdqTgJDxbyVu5YC1lhlZ2GM0vZDSk=
+	t=1721369139; cv=none; b=nG1MNMPIfG6q4+Gogxn3RZ3ypBCEo8si36GYjE/Y4qYZmVZHOd9irk/2EVUu1cOEE/3rFTT7Fi6TUOIAZMFLk2KcGFE5VRFUKg9jeZUR7Niq1CyOBlM3mdCIgG9F6vbe+Qhc/NHWATXD6ic/bDh+LsPQmaxl0CeJhHfeVdAHd7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721369119; c=relaxed/simple;
-	bh=ybK4WiHeRrPgRlhiRBN0yKW8AYVzYoZMH2BWTeOihLQ=;
+	s=arc-20240116; t=1721369139; c=relaxed/simple;
+	bh=yr62qP012G17l338zFPCJQtHh3KR+qKnHgkq5gNUZL0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uP2gObhZByTY84LTNiQpx/pQBnY73OwGGl5dUrYZ7XsDFmaxrL7DrFHC4ZQeR/Gaf0wLgNRlQGkl3LgD3RtU7dJ2fcxpruJTkK/5WHZ+9E0r50itZmrssN07VNkJqeRGAHz/CMoRAIbWlVaMOC9cQjfPhfza9ty+UnvpkaJI5KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sUgjl-0005Ez-4x; Fri, 19 Jul 2024 08:05:01 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sUgjk-000cSF-0m; Fri, 19 Jul 2024 08:05:00 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sUgjj-005qk2-2x;
-	Fri, 19 Jul 2024 08:04:59 +0200
-Date: Fri, 19 Jul 2024 08:04:59 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Francesco Dolcini <francesco@dolcini.it>, Kalle Valo <kvalo@kernel.org>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v2 2/2] wifi: mwifiex: add support for WPA-PSK-SHA256
-Message-ID: <ZpoCC042qMcOQ83N@pengutronix.de>
-References: <20240717-mwifiex-wpa-psk-sha256-v2-0-eb53d5082b62@pengutronix.de>
- <20240717-mwifiex-wpa-psk-sha256-v2-2-eb53d5082b62@pengutronix.de>
- <ZpmdVq2CkxRcLxvO@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dRn6LVUhSN2vZeM09oP8xnFto6+n1ZNWsb8IJfijcdxNstzJHBXOF2J0xeyqvapc2/3QFdujaTEBdKjLmEH8j+GV+8l9yfOh56hG0OdK+bIXQnQEcK+CkmG0zQg00q+kDc5ESblNO56iRlPYCaIfxPCinwUP6is+yuw51ezxPio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=uLnUz3+c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF350C4AF0D;
+	Fri, 19 Jul 2024 06:05:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1721369138;
+	bh=yr62qP012G17l338zFPCJQtHh3KR+qKnHgkq5gNUZL0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uLnUz3+c4GsBoNAgQ+yt5T1CGGtX8b/hlxorutvGy0TXpSxI/z8y7HXKFkOOO7jg+
+	 slojyY357TbBcw5B5/7agI4UueS9ECIboMBpWFyFzQK4aKXI0BT5zSUnjsRqHtzCgX
+	 Z5Kb5Ecr1h5XODKP02IJrP2ULCLa92WynTc5TELY=
+Date: Fri, 19 Jul 2024 08:05:35 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: Linux logs error `Failed to query (GET_CUR) UVC control X on
+ unit Y: -75 (exp. 1).` (75 == EOVERFLOW?)
+Message-ID: <2024071939-wrought-repackage-f3c5@gregkh>
+References: <af462e20-d158-4c5c-8dae-ce48f4192087@molgen.mpg.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZpmdVq2CkxRcLxvO@google.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <af462e20-d158-4c5c-8dae-ce48f4192087@molgen.mpg.de>
 
-On Thu, Jul 18, 2024 at 03:55:18PM -0700, Brian Norris wrote:
-> Hi Sascha,
+On Fri, Jul 19, 2024 at 07:22:54AM +0200, Paul Menzel wrote:
+> Dear Linux folks,
 > 
-> On Wed, Jul 17, 2024 at 10:30:08AM +0200, Sascha Hauer wrote:
-> > This adds support for the WPA-PSK AKM suite with SHA256 as hashing
-> > method (WPA-PSK-SHA256). Tested with a wpa_supplicant provided AP
-> > using key_mgmt=WPA-PSK-SHA256.
-> > 
-> > Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> > ---
-> >  drivers/net/wireless/marvell/mwifiex/fw.h      | 1 +
-> >  drivers/net/wireless/marvell/mwifiex/uap_cmd.c | 3 +++
-> >  2 files changed, 4 insertions(+)
-> > 
-> > diff --git a/drivers/net/wireless/marvell/mwifiex/fw.h b/drivers/net/wireless/marvell/mwifiex/fw.h
-> > index 3adc447b715f6..1c76754b616ff 100644
-> > --- a/drivers/net/wireless/marvell/mwifiex/fw.h
-> > +++ b/drivers/net/wireless/marvell/mwifiex/fw.h
-> > @@ -415,6 +415,7 @@ enum MWIFIEX_802_11_PRIVACY_FILTER {
-> >  #define KEY_MGMT_NONE               0x04
-> >  #define KEY_MGMT_PSK                0x02
-> >  #define KEY_MGMT_EAP                0x01
-> > +#define KEY_MGMT_PSK_SHA256         0x100
-> >  #define CIPHER_TKIP                 0x04
-> >  #define CIPHER_AES_CCMP             0x08
-> >  #define VALID_CIPHER_BITMAP         0x0c
-> > diff --git a/drivers/net/wireless/marvell/mwifiex/uap_cmd.c b/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-> > index 7f822660fd955..c055fdc7114ba 100644
-> > --- a/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-> > +++ b/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-> > @@ -60,6 +60,9 @@ int mwifiex_set_secure_params(struct mwifiex_private *priv,
-> >  		case WLAN_AKM_SUITE_PSK:
-> >  			bss_config->key_mgmt = KEY_MGMT_PSK;
-> >  			break;
-> > +		case WLAN_AKM_SUITE_PSK_SHA256:
-> > +			bss_config->key_mgmt = KEY_MGMT_PSK_SHA256;
-> > +			break;
 > 
-> I feel like this relates to previous questions you've had [1], and while
-> I think the answer at the time made sense to me (basically, EAP and PSK
-> are mutually exclusive), it makes less sense to me here that PSK-SHA256
-> is mutually exclusive with PSK. And in particular, IIUC, this means that
-> the ordering in a wpa_supplicant.conf line like
+> Today, starting the Intel Kaby Lake laptop Dell XPS 13 9360/0596KF, BIOS
+> 2.21.0 06/02/2022 with
 > 
->   key_mgmt=WPA-PSK WPA-PSK-SHA256
+>     Bus 001 Device 004: ID 0c45:670c Microdia Integrated Webcam HD
 > 
-> matters -- only the latter will actually be in use.
-> 
-> Is that intended? Is this really a single-value field, and not a
-> multiple-option bitfield?
+> Linux “6.11-rc0” (v6.10-8070-gcb273eb7c839) logged UVC errors:
 
-It seems that when only the KEY_MGMT_PSK_SHA256 is set, then
-KEY_MGMT_PSK also works. Likewise, when only KEY_MGMT_SAE is set, then
-also KEY_MGMT_PSK_SHA256 and KEY_MGMT_PSK work.
-I gave it a test and also was surprised to see that we only have to set
-the "most advanced" bit which then includes the "less advanced" features
-automatically.
+Does 6.10-final have the same issue?  If not, can you use 'git bisect'
+to track down the offending commit?
 
-I could change setting the key_mgmt bits to |= as it feels more natural
-and raises less eyebrows, but in my testing it didn't make a difference.
+There have not been any USB changes in Linus's tree yet, but there have
+been a bunch of media changes, so perhaps something in the uvc driver is
+causing this?
 
-BTW wpa_supplicant parses the key_mgmt options into a bitfield which is
-then evaluated elsewhere, so the order the AKM suites are passed to the
-kernel is always the same, regardless of the order they appear in the
-config.
+thanks,
 
-Sascha
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+greg k-h
 
