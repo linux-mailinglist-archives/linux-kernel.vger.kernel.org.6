@@ -1,35 +1,48 @@
-Return-Path: <linux-kernel+bounces-257328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 384D4937894
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:37:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3AB2937896
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:38:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 695D01C217E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:37:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F4FD282974
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7122B1422D1;
-	Fri, 19 Jul 2024 13:37:17 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58EB142E60;
+	Fri, 19 Jul 2024 13:38:23 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0262A1E489;
-	Fri, 19 Jul 2024 13:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA721E489;
+	Fri, 19 Jul 2024 13:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721396237; cv=none; b=rDRQ61BE2UeppZKy16RXvjHvGPezc8utEmi8aWQkz5b5btWi+rCktz0zJpl3FCvZzob4eOYCYAbHapnt5xUC/Cg0+c9DQJNfmgc10tlQEkzXT83WFllLxZGh3dJPTCOdcyQ1QHf6YkGtP2Lb+85uwCFAXrlVKZalnKJWyedBEWI=
+	t=1721396303; cv=none; b=BPDvp8CD8hUnEnmGWEn95MLD0dqRlA4s16x1JW6mIDKjjkRhmwdgnvXWjIrHIM2FjeHfLm+bcqPgZwv5m752dxoLuPqaDTgZ14ME5JWEwOIQ7sZY2LTpapMRvE56Yyfvv6KB35z1ZRERWaKkfphxnR8PyS8nk+oeadc2O+CyBa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721396237; c=relaxed/simple;
-	bh=MG1Wb8BUciLNMbxSZvs3dEYg0gH8n2QrccD504GNswY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=shtupyLVB5oiZjKe9yfCsTXO01V7FTD6f7r2ivP6Xk5nh6oAk6pdSbR8D1Tcmk+sDhFiy/LPyBcTC4DfB0cE5HQi4ABMnqflsVwqsu/AdfgUlOKee2UJSgm/4dCuW2RUmBhwMSjYGx7YhtuTFcSy9MoJUgjpZgaWUVOchas077I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 038C4C32782;
-	Fri, 19 Jul 2024 13:37:14 +0000 (UTC)
-Message-ID: <98f5cd5c-cb9c-45ca-a7c7-a546f525c393@xs4all.nl>
-Date: Fri, 19 Jul 2024 15:37:13 +0200
+	s=arc-20240116; t=1721396303; c=relaxed/simple;
+	bh=bq/Aaeq5qWGCzxVVlQSS2IYQdraah38J4uDOEBoV858=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=opt2We44LRBGSaLzJcX2sc/NhrkQJb0Vli0ucz3noxhBUz3ql8oNfaRxkULp5Mali8THAC6bFkeK3Tt3IIuoGIoZK8ZzFdCdIC4iMvrS9gv63Pyy3TMNGNAMBrYQvo4B2q047frutOtcTidWMmLZJ00eHjHmDtYqkes96670r34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav117.sakura.ne.jp (fsav117.sakura.ne.jp [27.133.134.244])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 46JDbmgg087373;
+	Fri, 19 Jul 2024 22:37:48 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav117.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav117.sakura.ne.jp);
+ Fri, 19 Jul 2024 22:37:48 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav117.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 46JDbll1087368
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 19 Jul 2024 22:37:47 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <a11e31ab-6ffc-453f-ba6a-b7f6e512c55e@I-love.SAKURA.ne.jp>
+Date: Fri, 19 Jul 2024 22:37:47 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -37,130 +50,139 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/2] Enumerate all pixels formats
-To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, mchehab@kernel.org,
- ezequiel@vanguardiasur.com.ar
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com
-References: <20240717131430.159727-1-benjamin.gaignard@collabora.com>
- <07f62fbb-d1eb-41c3-86a8-13a082a8374f@xs4all.nl>
- <743e2589-c0df-461d-97d4-fafe78c334ea@collabora.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <743e2589-c0df-461d-97d4-fafe78c334ea@collabora.com>
+Content-Language: en-US
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        linux-serial <linux-serial@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH] tty: tty_io: fix race between tty_fops and hung_up_tty_fops
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 19/07/2024 15:15, Benjamin Gaignard wrote:
-> 
-> Le 19/07/2024 à 14:57, Hans Verkuil a écrit :
->> On 17/07/2024 15:14, Benjamin Gaignard wrote:
->>> The goal of this series is to let userland applications enumerate
->>> all the supported pixels formats of a stateless decoder without
->>> setting all the possible codec-dependent control.
->>> That offer a simplest solution for applications to discover
->>> supported pixels formats and possibly let them doing smarter
->>> choice between stateless decoders.
->>>
->>> An example of how it can be used in GStreamer to discover the
->>> supported pixels formats for stateless decoder is available here:
->>> https://gitlab.freedesktop.org/benjamin.gaignard1/gstreamer/-/commits/v4l2codecs_enum_all_supported_formats?ref_type=heads
->> So effectively specifying this flag makes ENUM_FMT also return
->> formats that do not match the bit depth.
->>
->> So the AV1 (for example) compressed video uses e.g. 8 bit depth, but instead of just
->> listing only 8 bit uncompressed pixelformats, you want to list them for any
->> bit depth.
->>
->> But what is the point of that if the decoder can't decode 8 bit compressed to,
->> say, 10 bit uncompressed video?
-> 
-> No decoder will do 8 bits to 10 bits (as far I knows).
-> The point is to be able to say that decoder could produce 10 bit frames without
-> setting a full sps/pps for each case (and for each supported codec).
-> 
->>
->> I actually thought that this flag would just list all formats, independent
->> of the output format (e.g. AV1, H264, etc.), but that does not appear to be
->> the case? I.e., if capture pixelformat X is only available with AV1, will that still
->> be listed if the output pixel is set to H264?
->>
->> I think you need to describe a real use-case here, and I am not convinced about
->> the name of the flag either.
-> 
-> I may have miss something but yes the goal is to list all formats independently
-> of the output format.
-> When a SoC have multiple decoders for the same codec, knowing the supported formats
-> is key to select the better one.
-> Since I will have to do more iteration, feel free to provide a better name for the
-> flag(s). I'm always bad for naming this kind of thing.
+syzbot is reporting data race between __tty_hangup() and __fput(), and
+Dmitry Vyukov mentioned that this race has possibility of NULL pointer
+dereference, for tty_fops implements e.g. splice_read callback whereas
+hung_up_tty_fops does not.
 
-That really needs to be clarified, since in patch 1/2 it says:
+  CPU0                                  CPU1
+  ----                                  ----
+  do_splice_read() {
+                                        __tty_hangup() {
+    // f_op->splice_read was copy_splice_read
+    if (unlikely(!in->f_op->splice_read))
+      return warn_unsupported(in, "read");
+                                          filp->f_op = &hung_up_tty_fops;
+    // f_op->splice_read is now NULL
+    return in->f_op->splice_read(in, ppos, pipe, len, flags);
+                                        }
+  }
 
-+   * If the ``V4L2_FMT_FLAG_ENUM_ALL_FORMATS`` flag is set the driver must enumerate
-+     all the supported formats without taking care of codec-dependent controls
-+     set on the ``OUTPUT`` queue. To indicate that the driver has take care of this
-+     flag it must set ``V4L2_FMT_FLAG_ALL_FORMATS`` flag for each format while
-+     enumerating.
+Fix possibility of NULL pointer dereference by implementing missing
+callbacks, and suppress KCSAN messages by adding __data_racy qualifier
+to "struct file"->f_op .
 
-Here it just talks about 'codec-dependent controls set on the ``OUTPUT`` queue', it
-doesn't say anything about the compressed pixelformat set for the OUTPUT queue.
+Reported-by: syzbot <syzbot+b7c3ba8cdc2f6cf83c21@syzkaller.appspotmail.com>
+Closes: https://syzkaller.appspot.com/bug?extid=b7c3ba8cdc2f6cf83c21
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Marco Elver <elver@google.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+This patch has been tested using linux-next tree via my tomoyo tree since 20240611,
+and there was no response on
+  [fs] Are you OK with updating "struct file"->f_op value dynamically?
+at https://lkml.kernel.org/r/b221d2cf-7dc0-4624-a040-85c131ed72a1@I-love.SAKURA.ne.jp .
+Thus, I guess we can go with this approach.
 
-And patch 2/2 sets the ignore_depth_match boolean, suggesting also that it is
-not listing all formats, but just ignoring a specific check.
+ drivers/tty/tty_io.c | 34 ++++++++++++++++++++++++++++++++++
+ include/linux/fs.h   |  2 +-
+ 2 files changed, 35 insertions(+), 1 deletion(-)
 
-But if you list all pixelformats without taking the OUTPUT pixelformat into
-account, how do you know which pixelformat is valid for which codec?
-
-Say that only MPEG support NV12 (just for the sake of argument), and that's
-what you want to use, you have no way of knowing that NV12 is specific to MPEG,
-you would have to try each codec and see if NV12 is supported for that codec.
-
-I just don't see how this can be used in practice.
-
-What exactly is the problem you want to solve? A real-life problem, not a theoretical
-one :-)
-
-Regards,
-
-	Hans
-
-> 
-> 
->>
->>> changes in version 4:
->>> - Explicitly document that the new flags are targeting mem2mem devices.
->>>
->>> changes in version 3:
->>> - Add a flag to inform userspace application that driver
->>>    as take care of the flag.
->>>
->>> changes in version 2:
->>> - Clarify documentation.
->>> - Only keep V4L2_FMT_FLAG_ALL_FORMATS flag in ioctl.
->>>
->>> Benjamin
->>>
->>> Benjamin Gaignard (2):
->>>    media: videodev2: Add flags to unconditionnaly enumerate pixels
->>>      formats
->> I.e.: it is not unconditionally, it still depends on the chosen codec.
->>
->> Regards,
->>
->>     Hans
->>
->>>    media: verisilicon: Use V4L2_FMT_FLAG_ENUM_ALL_FORMATS flag
->>>
->>>   .../media/v4l/dev-stateless-decoder.rst          |  6 ++++++
->>>   .../userspace-api/media/v4l/vidioc-enum-fmt.rst  | 11 +++++++++++
->>>   .../media/videodev2.h.rst.exceptions             |  2 ++
->>>   drivers/media/platform/verisilicon/hantro_v4l2.c | 16 +++++++++++++---
->>>   drivers/media/v4l2-core/v4l2-ioctl.c             |  3 +++
->>>   include/uapi/linux/videodev2.h                   |  2 ++
->>>   6 files changed, 37 insertions(+), 3 deletions(-)
->>>
->>
-> 
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 407b0d87b7c1..bc9aebcb873f 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -430,6 +430,24 @@ static ssize_t hung_up_tty_write(struct kiocb *iocb, struct iov_iter *from)
+ 	return -EIO;
+ }
+ 
++static ssize_t hung_up_copy_splice_read(struct file *in, loff_t *ppos,
++					struct pipe_inode_info *pipe,
++					size_t len, unsigned int flags)
++{
++	return -EINVAL;
++}
++
++static ssize_t hung_up_iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
++					      loff_t *ppos, size_t len, unsigned int flags)
++{
++	return -EINVAL;
++}
++
++static int hung_up_no_open(struct inode *inode, struct file *file)
++{
++	return -ENXIO;
++}
++
+ /* No kernel lock held - none needed ;) */
+ static __poll_t hung_up_tty_poll(struct file *filp, poll_table *wait)
+ {
+@@ -462,6 +480,12 @@ static void tty_show_fdinfo(struct seq_file *m, struct file *file)
+ }
+ 
+ static const struct file_operations tty_fops = {
++	/*
++	 * WARNING: You must implement all callbacks defined in tty_fops in
++	 * hung_up_tty_fops, for tty_fops and hung_up_tty_fops are toggled
++	 * after "struct file" is published. Failure to synchronize has a risk
++	 * of NULL pointer dereference bug.
++	 */
+ 	.llseek		= no_llseek,
+ 	.read_iter	= tty_read,
+ 	.write_iter	= tty_write,
+@@ -491,14 +515,24 @@ static const struct file_operations console_fops = {
+ };
+ 
+ static const struct file_operations hung_up_tty_fops = {
++	/*
++	 * WARNING: You must implement all callbacks defined in hung_up_tty_fops
++	 * in tty_fops, for tty_fops and hung_up_tty_fops are toggled after
++	 * "struct file" is published. Failure to synchronize has a risk of
++	 * NULL pointer dereference bug.
++	 */
+ 	.llseek		= no_llseek,
+ 	.read_iter	= hung_up_tty_read,
+ 	.write_iter	= hung_up_tty_write,
++	.splice_read    = hung_up_copy_splice_read,
++	.splice_write   = hung_up_iter_file_splice_write,
+ 	.poll		= hung_up_tty_poll,
+ 	.unlocked_ioctl	= hung_up_tty_ioctl,
+ 	.compat_ioctl	= hung_up_tty_compat_ioctl,
++	.open           = hung_up_no_open,
+ 	.release	= tty_release,
+ 	.fasync		= hung_up_tty_fasync,
++	.show_fdinfo    = tty_show_fdinfo,
+ };
+ 
+ static DEFINE_SPINLOCK(redirect_lock);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 0283cf366c2a..636bcc59a3f5 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1008,7 +1008,7 @@ struct file {
+ 	struct file_ra_state	f_ra;
+ 	struct path		f_path;
+ 	struct inode		*f_inode;	/* cached value */
+-	const struct file_operations	*f_op;
++	const struct file_operations	*__data_racy f_op;
+ 
+ 	u64			f_version;
+ #ifdef CONFIG_SECURITY
+-- 
+2.43.5
 
 
