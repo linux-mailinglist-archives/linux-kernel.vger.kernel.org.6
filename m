@@ -1,410 +1,164 @@
-Return-Path: <linux-kernel+bounces-257050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81F1893748E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:51:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABE4293748A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1100E281F18
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 07:51:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68FBB281CF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 07:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF9C6214D;
-	Fri, 19 Jul 2024 07:50:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE3D58AC4;
+	Fri, 19 Jul 2024 07:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="mCceScxE"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010051.outbound.protection.outlook.com [52.101.69.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ICPgcfjS"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF1B77109;
-	Fri, 19 Jul 2024 07:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721375458; cv=fail; b=PrpMtg+c2dNL7LWWaw3Q9yJl1OzsYuyEqbxqOX1n5gW0KjciTcC+eSvGB9P/25q5mSXHdjpxOe38VJxY3Gjr7LVOVuA76mHyRLtMDNovZ26Mdu3ZQKUSWxCnvCuU7UDa+A0uaPPrAoXDyf8sELrX09hERfK4OeTqaqwjiMABc8o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721375458; c=relaxed/simple;
-	bh=Oop76aR9p9vlrwLahGwMcIpl/dGvcKoySnZLM1aJJVs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=j8UVuXCdzTXfBQ5MccKK5fJb8bWh6WFqOLrvTD5ndJWxiwPu8VndecBKfFyVUG4gePxmFTiE9W9eENn/v6cMV7vTH92zm5Kj5ixikLTQXFoEShE6GmB35PlM014OO9v5tARYpvIIC4jGMAaYSwbXYscqpBSF+3qDZJfdppAylcg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=mCceScxE; arc=fail smtp.client-ip=52.101.69.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=N6m4E23wHOiJC35odVmp/TTvVdVwsB+4D4IBZIKmsl2TnJC6m1GRRTbrFRQlitnvjF5ZwLjcWVf6gNyZ570NoEyTXYxWa/jICqG92EFfyEbcz5oq379sBCQH78DBLjUb0ZCr5aHU2NoMIxWE00QdA26RBkSUt6DpIVzUV23peC9Y7+ufnRuZD7lm8ETn9Yvxt56yglroO74ybNvrrt58XZLVe1Plf/Fi0oxfz0+WWkGhB+dFjF71FBO37fu5T8TxktB9R2yyX3qPISPShZc3h/ub5d2jx9LY8302FSGTHcI6lPZA6DIhhgzaLHnzDcK9Upx6IVNlRCCLmTrkCDwWDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8tksjlkC2qYUPNV8qBJuLmInrtcjTgRVbapRbRxFOuM=;
- b=uuOT4qu0Xoi3bhwQDv7u68och7OJLQwCGqFr7Cy/hkUmyU459y9DTqh/xuaYKNPg6E4MP3/tQeyd4KFLDE5iaS7E7Czihsotmm3X400X0dtV7U/lLgnbhANkPYVLAWqQg+5n6bXb/wEdvWe4XHucQ0OzVg5KW1KhwVhcjfhpRg/VEt4/LJrSroGqOQohC8aOBRtkhLDdFkHy3EQTGOitDbFelq6RURm8UbSdlFaGg8Vo4U6XUOg/oG15HYxIkX0D3bkxVZTv/6HkZjBY/2MlwWWyy3piMhtOp/nEWOSpVILXcQnAa8GZqEnuE1nPVwN8ibZdNyXkKzKupkDAlSF/LA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8tksjlkC2qYUPNV8qBJuLmInrtcjTgRVbapRbRxFOuM=;
- b=mCceScxEamy/tBFAVu72Rpe6AUY5jujP4jkp5wgHmWt9WP803Q9BCmdeZ6miQA8GbzMbCavONR7f1xLKQDcJVGDRXffyWnwXe6uVJXONTJV6YCe6cq9kxk/SmOkbmJm2JaDJHTWRzpDgsLPR3kqLuYNijd/3TV5pYOLivBLtBYQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB8254.eurprd04.prod.outlook.com (2603:10a6:102:1cd::24)
- by VI1PR04MB6912.eurprd04.prod.outlook.com (2603:10a6:803:134::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16; Fri, 19 Jul
- 2024 07:50:39 +0000
-Received: from PAXPR04MB8254.eurprd04.prod.outlook.com
- ([fe80::2755:55ac:5d6f:4f87]) by PAXPR04MB8254.eurprd04.prod.outlook.com
- ([fe80::2755:55ac:5d6f:4f87%5]) with mapi id 15.20.7784.017; Fri, 19 Jul 2024
- 07:50:39 +0000
-From: Ming Qian <ming.qian@nxp.com>
-To: mchehab@kernel.org,
-	hverkuil-cisco@xs4all.nl
-Cc: nicolas@ndufresne.ca,
-	shawnguo@kernel.org,
-	robh+dt@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	linux-imx@nxp.com,
-	xiahong.bao@nxp.com,
-	eagle.zhou@nxp.com,
-	tao.jiang_2@nxp.com,
-	ming.qian@oss.nxp.com,
-	imx@lists.linux.dev,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] media: amphion: Add H264 and HEVC profile and level control
-Date: Fri, 19 Jul 2024 16:50:07 +0900
-Message-ID: <20240719075007.384342-2-ming.qian@nxp.com>
-X-Mailer: git-send-email 2.43.0-rc1
-In-Reply-To: <20240719075007.384342-1-ming.qian@nxp.com>
-References: <20240719075007.384342-1-ming.qian@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0036.apcprd02.prod.outlook.com
- (2603:1096:4:1f6::20) To PAXPR04MB8254.eurprd04.prod.outlook.com
- (2603:10a6:102:1cd::24)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E231C44C81;
+	Fri, 19 Jul 2024 07:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721375437; cv=none; b=BKNn2r2qgpe9fD9n3i7Ih6cxXBDdK/pLiAe7uTbbfw0FHwJJgNC3vAt1Sz0oKBVO/WC9d+mfqhEtG5Fxh1BsaNojsz0qT4kdGCniX+retgrKIOS4vU35GdGZCYym0L/TQJJKjkbABlS7iB4DTBSngHWbdK/+inH9tH3Mtbehuso=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721375437; c=relaxed/simple;
+	bh=6U6NvOSkC8C59/JMyqKN4L4RgtHGHT7QgPMlgHn0nzM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EZu1PVC2AZjgt5mUBiF6b6F0UQsWAGtRS3pzp615oE55dKl8QCthVtWPnmE/TFh2APxsFbfxDCAtRZ8OdjB39kS+ZsaZ+Y+h0LgdQ53dKCyt9//uhPBY+FdIsdd8syLsu2Xutlij6itEKklo8vi3YSnxz0Kv2EHsqwDPgwACnqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ICPgcfjS; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4266fd39527so9924495e9.1;
+        Fri, 19 Jul 2024 00:50:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721375434; x=1721980234; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xUt11Ucr8oA7ZjPMc4FTL3rN5QlM3txPngNirdWjMlg=;
+        b=ICPgcfjSQqIua0nsICnWrgnT6H6QSaucJNgRpTM+lahiCnrZX8pkTkkr93yjv3w5CQ
+         zIZo1dS5Ku9T0Vgszs1GShyT9i79fgEoUBM9JBIRJpFDCisObm3ioCw1wYT4bbSSPW7F
+         yHMVacYMYhLW6LjvgZbXh1R+PiyT5Rj3f9Z1ddmaOI9V9lxaINBljweDYVd5yvh16QxE
+         Zp/IPI8DPvsnqKqw7ovPti0sQwuPOz0ZTKyaWrcVsQCtJkrpO1LPtWG5xOvvxpnDIwxr
+         RIBxEH7msmJgD6DcPmYEkkexnLo6rkeP4sg8b85CXuTTAcFQz/BuWZfdNBmCv52qI9Y4
+         F+fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721375434; x=1721980234;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xUt11Ucr8oA7ZjPMc4FTL3rN5QlM3txPngNirdWjMlg=;
+        b=TlJWNMH1daBU5qcKx9a/nVes88vwjYUOLsVUMVC6qwXDo/2VUZ4R8g3JYQ0yjrSMC5
+         /SRWA8hc5XpaJVQClkslqgKVQCz1Rd/Ewoqp00k2khbXmYexFbt1yUfNpRQ0s2WgFvsL
+         Kbq9exN20RwO37PJ78P6B0TMik2lBc2HMKb8c9jAI+K4bYUId/9Ks3BwrY+VkePuru1y
+         L/UMnsRrKTOIRpMhMUf902+2PVbDHi+a5/a0ftFsRL/Wa44qoqKluH7sF9dmlUyR/yIp
+         /NWNdjWbPYaS1goaDCdxe5CBl/Xtbki8/dy8CFlsoSDBLdPnelDxOp73VGO73Is8Rtlp
+         rmVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVN7w6wu366qU/WAyBOcPlh9dvRnl6XzcuzhP/eir+Lcj/Xofxi0qTTn++nEKvCFEcWPQSwqiSlw9SXdJCl7eTqL4DsZmG/fqsCkcBZmHlOmXp6lMCILqHVZJasMtC+/Pkoe/zJAnyZ2aBr
+X-Gm-Message-State: AOJu0YzOCUj+5C216Jk/hqQnIyFtma+4MZ932IgjhrVHoEAfJhWNaxXc
+	ZmPdoohumSxQxDehMQi+V75tuVTdVls2vmXxOIVcM15jgpKAYLG/1TwxYQ/T
+X-Google-Smtp-Source: AGHT+IEh69/KRVJkX3qYNlaIzON/M9t/vn4EwJjqds+o6503mst40YvKVkM58M163szWYTei5KZYwg==
+X-Received: by 2002:a05:600c:1f82:b0:426:66a2:b200 with SMTP id 5b1f17b1804b1-427c2c0fa9dmr55593315e9.0.1721375433923;
+        Fri, 19 Jul 2024 00:50:33 -0700 (PDT)
+Received: from hometw-NUC11PAHi5.locataire.student-village.local ([185.25.192.3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d69071c5sm14771145e9.27.2024.07.19.00.50.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 00:50:33 -0700 (PDT)
+From: Chun-Hung Tseng <henrybear327@gmail.com>
+To: luc.vanoostenryck@gmail.com,
+	arnd@arndb.de,
+	keescook@chromium.org,
+	rostedt@goodmis.org,
+	linux-sparse@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Chun-Hung Tseng <henrybear327@gmail.com>,
+	Jim Huang <jserv@ccns.ncku.edu.tw>
+Subject: [PATCH] compiler.h: Improve __branch_check__ by using __UNIQUE_ID()
+Date: Fri, 19 Jul 2024 09:50:13 +0200
+Message-Id: <20240719075013.6600-1-henrybear327@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8254:EE_|VI1PR04MB6912:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6de516a7-390a-45dd-2375-08dca7c77b54
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?S+Gn+5tlkZDapFkMA64nS4EoZTo4K5ai9QmMGCEUhmQsL+/J675NH0NHgDE3?=
- =?us-ascii?Q?wGR4dCpS8827eTgtSSTPw0i8ysS0DAlOqaUnSAem/ksrC15VfetM9KWpxmRk?=
- =?us-ascii?Q?G9mbwiba1kzmcSAfzq6rVuTKlcxjNzsPPCJc0YFH0miwJBDoql8NoLcKJQ/e?=
- =?us-ascii?Q?9z6irSj2ohLrmU2SMekP4HKlolC7qifn7oQUXFgzMH/ewdTqYvgtZqbSdPMQ?=
- =?us-ascii?Q?0mVB3CjFxUqRGNl7UjLJ+7uo5wfgUq0iXaldekBP4vH/eib5DuZCvbWiV0zN?=
- =?us-ascii?Q?Ae1k9XICB0Oa8CKQQjCPnlDHqlTB4j0TvFRnvOTi5FofzKseodsyjv89bxCh?=
- =?us-ascii?Q?IjEOD7rq/xv9D0QPP+vxb8KcbKsthUstxeys2v/Z7D6CcJpDdn3AsO+fGOzy?=
- =?us-ascii?Q?5nvKVQ6kHKuVIx4T0l2Zj4sCbsrrXcJLaknryyvvYFNB2slgULfaFufI/n0t?=
- =?us-ascii?Q?+KsW+bYv6kaPj3WLfMrcS8wJF87HWVJQlO7q7BHQkRYFL0uW4oYaCb2U3NcM?=
- =?us-ascii?Q?b4JaTouEx8Z7tagnvb/383RCAJdkbbKENlUl0A1ORlzQFzle8AUcAEBoMFlY?=
- =?us-ascii?Q?jMIhDXMPyNJvD85S3S5SkI578RDvjV5VDAHSUd4v0O9K+K+PPJR/5OG/tcaY?=
- =?us-ascii?Q?g4LxuGbIKv7WbxhxdJ3AflA3JUbVJO2kfEepvZ+GzuqG6vcMHAj4K2pMJukX?=
- =?us-ascii?Q?9oGvidJ8nHXZ1M057WfUX0ypg96po5eTqHnzLoSsf/rqqBCV1bK3+CbSLnzx?=
- =?us-ascii?Q?u3Th/OEDx5TRHJoL9mUklAb4S5rKK6Kaqq5FIkXv6AcSXDjSLPhYRjIEXjls?=
- =?us-ascii?Q?6y7be6GNZuOfT4olSypw42qeqoiSuGv7Vgb2F1Dqa1D50F20Ln6JtfT7RnEB?=
- =?us-ascii?Q?6pp+qI7fPpGS5D3aNjiUVrdEWR4cQREb1hhN1DfjTUkeHYT17WYLh4tAz43M?=
- =?us-ascii?Q?txwT58mrIHeASqWU0xh0vClppv3+N5RftGXs8Weu7annuhOmRpoQrqHm7nrL?=
- =?us-ascii?Q?RD0edQrKTVCTyOcpvmSEpwi6uUnm2HKYYg68pVj6tduQJDTF0ZwyFh8gAetI?=
- =?us-ascii?Q?SQDCDJq3mSbRp6C4oEOeM/+IhZwLGbKGfoeMm71TyP7EXRBumLJ8L1Qb7FuR?=
- =?us-ascii?Q?HfBcM5TIee6aYP5QMBh4E6L3GqZbdG/DFf/P0bzd+MyuSC/5zRUoV4uql5Mv?=
- =?us-ascii?Q?6m2He/bVZRyapr5ZKoTOG4/fYC4fP4+8a7hTmTg+c44x6VuKLEbLRcUgT7yA?=
- =?us-ascii?Q?xk/3YAVGmCq1BI8Z+NzSFBN/jXR/73ux9053AO6OSgI/M/fSERIE3ngx82p0?=
- =?us-ascii?Q?wRuDe1PKDFioGgzMurKUnsHXxUjsW5fe4i4Gi91+vI7ajwRGuMGkTizNrVoy?=
- =?us-ascii?Q?MUGzvT/f2Pg9C/EHQwvaVUVtB2tOCBXujdjuMer6tyi8EtK4VA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8254.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?vK+Mk/UGUtB9U/ZtMd7Qb2sliax9p+Saqip6YH4gkeo3ax6kna3dJ62LmagX?=
- =?us-ascii?Q?Xjk3pEowwYElwlv84SpM9/h4DG9Qtjsso83TKR6HikBX8GpU0Fis8XVj7g10?=
- =?us-ascii?Q?lm3c7yHvGkPtXfKUSBxH/F+GZAIQszgZu/Cy2nSGL3R0Cux3LZzwQwphZOua?=
- =?us-ascii?Q?C1ixDzg7v/XLiPEORAy6kKLd05BWSIApZDmlQOxBMEyH0MluCLnsfcT78H1r?=
- =?us-ascii?Q?QR54dmGL3Ut9BEHyTBj+VUWDJDEgDtT+ZfJatRDdAr2JDf4bsR0zMDXbRd2B?=
- =?us-ascii?Q?+8Pi8l2NJNSh+3/EWCDKJhw5kO4Qkqk13EewdCPv2YlRoIFgG48a4wksJ2Yd?=
- =?us-ascii?Q?PII7Y+FC90Nie0FM6Bv4KfUsJnWLdz8PA1hlmfvrQI+V0tcU2BGgJE8FhfZL?=
- =?us-ascii?Q?si71wMahdMQOk9SQyuYgJ7ceZKejW7qZQ99gC9YAvorsp8hDwmtNRtBVNUi9?=
- =?us-ascii?Q?lYR8P2GC7RizXeJIyteqeLH/EJ91yKUZKj7dD1EMFLs96ietGZBxTnguGOHp?=
- =?us-ascii?Q?ScOShxidQkkbmuFnC+yIn5KGX0C1I0QmU/vjS8BHv/p4MyCusA4GS4OLpcUq?=
- =?us-ascii?Q?R5HJx5SKjwC16BdkaEtaL/+Mg6hRIcu9lJ3DMKqokMjFnlBG0MzPPBgRzyd1?=
- =?us-ascii?Q?vSQpvEEVoHfFngzym/sLtkJpK14k62ga56Gv0Xxx+CccxNlQBCldjqxmdio5?=
- =?us-ascii?Q?InA/xZNHXvkDJBg+dW5yDR+JvSRYmM3lKJN6DvkZYXVhAULEVCT7RZimsImV?=
- =?us-ascii?Q?acGtyLE2BQViZEo4lhIz6eFVn1wKumh+PikE8u8z2QvYMriTAsddbDC5L7cS?=
- =?us-ascii?Q?3Md84OnXzc1DAh8p1KAC4zebv5iQWXI4ip7o7MFmJ0gIZjp+kM2zrhKwx1XV?=
- =?us-ascii?Q?5YxxyCuuhYh2/Z4gG7XuqkJ2o3zzTzc12WvIihYLK4L94EOJxnvEPXbEGRPi?=
- =?us-ascii?Q?aaC7ON+bZxbYoFsKqp6A3PLCEf8Exg7Ba/U2yV9owUhA7nzMUcNsohIh5TwK?=
- =?us-ascii?Q?PE7+mSVhhBZVDxTtV6LElY7iDS90ErzPVWxTPm5btfKN0RU+ZleF1q0+xMMk?=
- =?us-ascii?Q?9xGXVadgBxO5QIj2UD7Z5UqB7Dzo+4IPRaMZIRWCUZH7DBEbzMgosAF3GeOl?=
- =?us-ascii?Q?NF+x2QvUyveeNbRgNgZwNYk8hxxwZP3QYg7Vcg1NSrlX37gRQxv3QVOENAjl?=
- =?us-ascii?Q?nwiCQXz1HATKJmsZdCK4UNSHEQedSf5rT1onb5Aj/hV2h92QNivK4+1pfRUv?=
- =?us-ascii?Q?UJNSzNkh0A53C79SarTyMfwfTZbecyBQMyhUWnxCetT/wJwLoGZvd47bGFTK?=
- =?us-ascii?Q?Lot5mYhCYX6frLv7qGeyK/nIWj6ewnao3cNALvNGhu2k2yErYPQQHUlRSQKA?=
- =?us-ascii?Q?boJ5ATM6LYMqhw82sQ7WcCzypUVPty4CXMTc/utKgZ+DeJGa956V0U+bBjix?=
- =?us-ascii?Q?3OiXiREfu9xN0loWolY8NQAFmGaA5Z7FrzGEUn+ygD3h2GVzYh4o1p8omkAI?=
- =?us-ascii?Q?FDjCoAg3WlquH9TZoDNuPIijMTQVo0q/RwoV9DIoNkSQ6Ys8CXQfQ87mnI03?=
- =?us-ascii?Q?LwyakHqs6NJLwF8RfrQJR02/qAzD6RvqwzvVEohx?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6de516a7-390a-45dd-2375-08dca7c77b54
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8254.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2024 07:50:39.0933
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6BRMS5lNvf56Wg4Nj+iZGusFE0O3AxhGqEdpxeyG9rT8gWgpTURxvxxBT3VyUoYeYgmvfUgqV2c5zf6adZJu4g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6912
+Content-Transfer-Encoding: 8bit
 
-For format H264 and HEVC, the firmware can report the parsed profile idc
-and level idc to driver, there information may be useful.
-Implement the H264 and HEVC profile and level control to report them.
+This commit replaced two hard-to-distinguish variables ______r and
+______f to improve code readability and reduce variable name shadowing
+issue.
 
-Signed-off-by: Ming Qian <ming.qian@nxp.com>
+______r is renamed by leveraging __UNIQUE_ID(branch_check) in
+___branch_check__, and callers of the affected macros are adjusted.
+
+__UNIQUE_ID(branch_check) will generate unique variable names during
+compilation, which eliminates the need for ______r. This avoids the
+variable name shadowing issue, or at least makes those wishing to cause
+shadowing problems work much harder to do so.
+
+______f in ftrace_likely_data struct is renamed using
+__UNIQUE_ID(branch_check_data), following the same rationale above.
+
+The same idea is used for the commit 589a9785ee3a ("min/max: remove sparse
+warnings when they're nested"), and commit 24ba53017e18 ("rcu: Replace
+________p1 and _________p1 with __UNIQUE_ID(rcu)").
+
+Signed-off-by: Chun-Hung Tseng <henrybear327@gmail.com>
+Signed-off-by: Jim Huang <jserv@ccns.ncku.edu.tw>
 ---
- drivers/media/platform/amphion/vdec.c        | 60 +++++++++++++
- drivers/media/platform/amphion/vpu_defs.h    |  1 +
- drivers/media/platform/amphion/vpu_helpers.c | 93 ++++++++++++++++++++
- drivers/media/platform/amphion/vpu_helpers.h |  5 ++
- drivers/media/platform/amphion/vpu_malone.c  |  3 +-
- 5 files changed, 161 insertions(+), 1 deletion(-)
+ include/linux/compiler.h | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/platform/amphion/vdec.c b/drivers/media/platform/amphion/vdec.c
-index ca8f7319503a..e414d1b56133 100644
---- a/drivers/media/platform/amphion/vdec.c
-+++ b/drivers/media/platform/amphion/vdec.c
-@@ -232,6 +232,36 @@ static int vdec_ctrl_init(struct vpu_inst *inst)
- 			  V4L2_CID_MPEG_VIDEO_DEC_DISPLAY_DELAY_ENABLE,
- 			  0, 1, 1, 0);
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 8c252e073bd8..b95e0990d52f 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -19,20 +19,20 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+ #define likely_notrace(x)	__builtin_expect(!!(x), 1)
+ #define unlikely_notrace(x)	__builtin_expect(!!(x), 0)
  
-+	v4l2_ctrl_new_std_menu(&inst->ctrl_handler, NULL,
-+			       V4L2_CID_MPEG_VIDEO_H264_PROFILE,
-+			       V4L2_MPEG_VIDEO_H264_PROFILE_MULTIVIEW_HIGH,
-+			       ~((1 << V4L2_MPEG_VIDEO_H264_PROFILE_BASELINE) |
-+				 (1 << V4L2_MPEG_VIDEO_H264_PROFILE_MAIN) |
-+				 (1 << V4L2_MPEG_VIDEO_H264_PROFILE_EXTENDED) |
-+				 (1 << V4L2_MPEG_VIDEO_H264_PROFILE_HIGH) |
-+				 (1 << V4L2_MPEG_VIDEO_H264_PROFILE_MULTIVIEW_HIGH) |
-+				 (1 << V4L2_MPEG_VIDEO_H264_PROFILE_STEREO_HIGH)),
-+			       V4L2_MPEG_VIDEO_H264_PROFILE_BASELINE);
-+
-+	v4l2_ctrl_new_std_menu(&inst->ctrl_handler, NULL,
-+			       V4L2_CID_MPEG_VIDEO_H264_LEVEL,
-+			       V4L2_MPEG_VIDEO_H264_LEVEL_6_2,
-+			       0,
-+			       V4L2_MPEG_VIDEO_H264_LEVEL_4_0);
-+
-+	v4l2_ctrl_new_std_menu(&inst->ctrl_handler, NULL,
-+			       V4L2_CID_MPEG_VIDEO_HEVC_PROFILE,
-+			       V4L2_MPEG_VIDEO_HEVC_PROFILE_MAIN_10,
-+			       ~((1 << V4L2_MPEG_VIDEO_HEVC_PROFILE_MAIN) |
-+				 (1 << V4L2_MPEG_VIDEO_HEVC_PROFILE_MAIN_10)),
-+			       V4L2_MPEG_VIDEO_HEVC_PROFILE_MAIN);
-+
-+	v4l2_ctrl_new_std_menu(&inst->ctrl_handler, NULL,
-+			       V4L2_CID_MPEG_VIDEO_HEVC_LEVEL,
-+			       V4L2_MPEG_VIDEO_HEVC_LEVEL_6_2,
-+			       0,
-+			       V4L2_MPEG_VIDEO_HEVC_LEVEL_4);
-+
- 	ctrl = v4l2_ctrl_new_std(&inst->ctrl_handler, &vdec_ctrl_ops,
- 				 V4L2_CID_MIN_BUFFERS_FOR_CAPTURE, 1, 32, 1, 2);
- 	if (ctrl)
-@@ -1166,6 +1196,35 @@ static void vdec_clear_slots(struct vpu_inst *inst)
- 	}
- }
+-#define __branch_check__(x, expect, is_constant) ({			\
+-			long ______r;					\
++#define __branch_check__(x, local, local_data, expect, is_constant) ({	\
++			long local;					\
+ 			static struct ftrace_likely_data		\
+ 				__aligned(4)				\
+ 				__section("_ftrace_annotated_branch")	\
+-				______f = {				\
++				local_data = {				\
+ 				.data.func = __func__,			\
+ 				.data.file = __FILE__,			\
+ 				.data.line = __LINE__,			\
+ 			};						\
+-			______r = __builtin_expect(!!(x), expect);	\
+-			ftrace_likely_update(&______f, ______r,		\
++			local = __builtin_expect(!!(x), expect);	\
++			ftrace_likely_update(&local_data, local,	\
+ 					     expect, is_constant);	\
+-			______r;					\
++			local;						\
+ 		})
  
-+static void vdec_update_v4l2_ctrl(struct vpu_inst *inst, u32 id, u32 val)
-+{
-+	struct v4l2_ctrl *ctrl = v4l2_ctrl_find(&inst->ctrl_handler, id);
-+
-+	if (ctrl)
-+		v4l2_ctrl_s_ctrl(ctrl, val);
-+}
-+
-+static void vdec_update_v4l2_profile_level(struct vpu_inst *inst, struct vpu_dec_codec_info *hdr)
-+{
-+	switch (inst->out_format.pixfmt) {
-+	case V4L2_PIX_FMT_H264:
-+	case V4L2_PIX_FMT_H264_MVC:
-+		vdec_update_v4l2_ctrl(inst, V4L2_CID_MPEG_VIDEO_H264_PROFILE,
-+				      vpu_get_h264_v4l2_profile(hdr->profile_idc));
-+		vdec_update_v4l2_ctrl(inst, V4L2_CID_MPEG_VIDEO_H264_LEVEL,
-+				      vpu_get_h264_v4l2_level(hdr->level_idc));
-+		break;
-+	case V4L2_PIX_FMT_HEVC:
-+		vdec_update_v4l2_ctrl(inst, V4L2_CID_MPEG_VIDEO_HEVC_PROFILE,
-+				      vpu_get_hevc_v4l2_profile(hdr->profile_idc));
-+		vdec_update_v4l2_ctrl(inst, V4L2_CID_MPEG_VIDEO_HEVC_LEVEL,
-+				      vpu_get_hevc_v4l2_level(hdr->level_idc));
-+		break;
-+	default:
-+		return;
-+	}
-+}
-+
- static void vdec_event_seq_hdr(struct vpu_inst *inst, struct vpu_dec_codec_info *hdr)
- {
- 	struct vdec_t *vdec = inst->priv;
-@@ -1189,6 +1248,7 @@ static void vdec_event_seq_hdr(struct vpu_inst *inst, struct vpu_dec_codec_info
- 	vdec_init_crop(inst);
- 	vdec_init_mbi(inst);
- 	vdec_init_dcp(inst);
-+	vdec_update_v4l2_profile_level(inst, hdr);
- 	if (!vdec->seq_hdr_found) {
- 		vdec->seq_tag = vdec->codec_info.tag;
- 		if (vdec->is_source_changed) {
-diff --git a/drivers/media/platform/amphion/vpu_defs.h b/drivers/media/platform/amphion/vpu_defs.h
-index 428d988cf2f7..606f9d61a265 100644
---- a/drivers/media/platform/amphion/vpu_defs.h
-+++ b/drivers/media/platform/amphion/vpu_defs.h
-@@ -134,6 +134,7 @@ struct vpu_dec_codec_info {
- 	u32 decoded_height;
- 	struct v4l2_fract frame_rate;
- 	u32 dsp_asp_ratio;
-+	u32 profile_idc;
- 	u32 level_idc;
- 	u32 bit_depth_luma;
- 	u32 bit_depth_chroma;
-diff --git a/drivers/media/platform/amphion/vpu_helpers.c b/drivers/media/platform/amphion/vpu_helpers.c
-index d12310af9ebc..108b75ceb4ae 100644
---- a/drivers/media/platform/amphion/vpu_helpers.c
-+++ b/drivers/media/platform/amphion/vpu_helpers.c
-@@ -509,3 +509,96 @@ const char *vpu_codec_state_name(enum vpu_codec_state state)
- 	}
- 	return "<unknown>";
- }
-+
-+struct codec_id_mapping {
-+	u32 id;
-+	u32 v4l2_id;
-+};
-+
-+static struct codec_id_mapping h264_profiles[] = {
-+	{66,  V4L2_MPEG_VIDEO_H264_PROFILE_BASELINE},
-+	{77,  V4L2_MPEG_VIDEO_H264_PROFILE_MAIN},
-+	{88,  V4L2_MPEG_VIDEO_H264_PROFILE_EXTENDED},
-+	{100, V4L2_MPEG_VIDEO_H264_PROFILE_HIGH},
-+	{118, V4L2_MPEG_VIDEO_H264_PROFILE_MULTIVIEW_HIGH},
-+	{128, V4L2_MPEG_VIDEO_H264_PROFILE_STEREO_HIGH}
-+};
-+
-+static struct codec_id_mapping h264_levels[] = {
-+	{10,  V4L2_MPEG_VIDEO_H264_LEVEL_1_0},
-+	{9,   V4L2_MPEG_VIDEO_H264_LEVEL_1B},
-+	{11,  V4L2_MPEG_VIDEO_H264_LEVEL_1_1},
-+	{12,  V4L2_MPEG_VIDEO_H264_LEVEL_1_2},
-+	{13,  V4L2_MPEG_VIDEO_H264_LEVEL_1_3},
-+	{20,  V4L2_MPEG_VIDEO_H264_LEVEL_2_0},
-+	{21,  V4L2_MPEG_VIDEO_H264_LEVEL_2_1},
-+	{22,  V4L2_MPEG_VIDEO_H264_LEVEL_2_2},
-+	{30,  V4L2_MPEG_VIDEO_H264_LEVEL_3_0},
-+	{31,  V4L2_MPEG_VIDEO_H264_LEVEL_3_1},
-+	{32,  V4L2_MPEG_VIDEO_H264_LEVEL_3_2},
-+	{40,  V4L2_MPEG_VIDEO_H264_LEVEL_4_0},
-+	{41,  V4L2_MPEG_VIDEO_H264_LEVEL_4_1},
-+	{42,  V4L2_MPEG_VIDEO_H264_LEVEL_4_2},
-+	{50,  V4L2_MPEG_VIDEO_H264_LEVEL_5_0},
-+	{51,  V4L2_MPEG_VIDEO_H264_LEVEL_5_1},
-+	{52,  V4L2_MPEG_VIDEO_H264_LEVEL_5_2},
-+	{60,  V4L2_MPEG_VIDEO_H264_LEVEL_6_0},
-+	{61,  V4L2_MPEG_VIDEO_H264_LEVEL_6_1},
-+	{62,  V4L2_MPEG_VIDEO_H264_LEVEL_6_2}
-+};
-+
-+static struct codec_id_mapping hevc_profiles[] = {
-+	{1,   V4L2_MPEG_VIDEO_HEVC_PROFILE_MAIN},
-+	{2,   V4L2_MPEG_VIDEO_HEVC_PROFILE_MAIN_10}
-+};
-+
-+static struct codec_id_mapping hevc_levels[] = {
-+	{30,  V4L2_MPEG_VIDEO_HEVC_LEVEL_1},
-+	{60,  V4L2_MPEG_VIDEO_HEVC_LEVEL_2},
-+	{63,  V4L2_MPEG_VIDEO_HEVC_LEVEL_2_1},
-+	{90,  V4L2_MPEG_VIDEO_HEVC_LEVEL_3},
-+	{93,  V4L2_MPEG_VIDEO_HEVC_LEVEL_3_1},
-+	{120, V4L2_MPEG_VIDEO_HEVC_LEVEL_4},
-+	{123, V4L2_MPEG_VIDEO_HEVC_LEVEL_4_1},
-+	{150, V4L2_MPEG_VIDEO_HEVC_LEVEL_5},
-+	{153, V4L2_MPEG_VIDEO_HEVC_LEVEL_5_1},
-+	{156, V4L2_MPEG_VIDEO_HEVC_LEVEL_5_2},
-+	{180, V4L2_MPEG_VIDEO_HEVC_LEVEL_6},
-+	{183, V4L2_MPEG_VIDEO_HEVC_LEVEL_6_1},
-+	{186, V4L2_MPEG_VIDEO_HEVC_LEVEL_6_2}
-+};
-+
-+static u32 vpu_find_v4l2_id(u32 id, struct codec_id_mapping *array, u32 array_sz)
-+{
-+	u32 i;
-+
-+	if (!array || !array_sz)
-+		return 0;
-+
-+	for (i = 0; i < array_sz; i++) {
-+		if (id == array[i].id)
-+			return array[i].v4l2_id;
-+	}
-+
-+	return 0;
-+}
-+
-+u32 vpu_get_h264_v4l2_profile(u32 idc)
-+{
-+	return vpu_find_v4l2_id(idc, h264_profiles, ARRAY_SIZE(h264_profiles));
-+}
-+
-+u32 vpu_get_h264_v4l2_level(u32 idc)
-+{
-+	return vpu_find_v4l2_id(idc, h264_levels, ARRAY_SIZE(h264_levels));
-+}
-+
-+u32 vpu_get_hevc_v4l2_profile(u32 idc)
-+{
-+	return vpu_find_v4l2_id(idc, hevc_profiles, ARRAY_SIZE(hevc_profiles));
-+}
-+
-+u32 vpu_get_hevc_v4l2_level(u32 idc)
-+{
-+	return vpu_find_v4l2_id(idc, hevc_levels, ARRAY_SIZE(hevc_levels));
-+}
-diff --git a/drivers/media/platform/amphion/vpu_helpers.h b/drivers/media/platform/amphion/vpu_helpers.h
-index 0eaddb07190d..dc5fb1ca2d33 100644
---- a/drivers/media/platform/amphion/vpu_helpers.h
-+++ b/drivers/media/platform/amphion/vpu_helpers.h
-@@ -70,4 +70,9 @@ int vpu_color_get_default(u32 primaries, u32 *ptransfers, u32 *pmatrix, u32 *pfu
+ /*
+@@ -41,10 +41,14 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+  * written by Daniel Walker.
+  */
+ # ifndef likely
+-#  define likely(x)	(__branch_check__(x, 1, __builtin_constant_p(x)))
++#  define likely(x)	(__branch_check__(x, __UNIQUE_ID(branch_check), \
++			__UNIQUE_ID(branch_check_data), 1,		\
++			__builtin_constant_p(x)))
+ # endif
+ # ifndef unlikely
+-#  define unlikely(x)	(__branch_check__(x, 0, __builtin_constant_p(x)))
++#  define unlikely(x)	(__branch_check__(x, __UNIQUE_ID(branch_check), \
++			__UNIQUE_ID(branch_check_data), 0,		\
++			__builtin_constant_p(x)))
+ # endif
  
- int vpu_find_dst_by_src(struct vpu_pair *pairs, u32 cnt, u32 src);
- int vpu_find_src_by_dst(struct vpu_pair *pairs, u32 cnt, u32 dst);
-+
-+u32 vpu_get_h264_v4l2_profile(u32 idc);
-+u32 vpu_get_h264_v4l2_level(u32 idc);
-+u32 vpu_get_hevc_v4l2_profile(u32 idc);
-+u32 vpu_get_hevc_v4l2_level(u32 idc);
- #endif
-diff --git a/drivers/media/platform/amphion/vpu_malone.c b/drivers/media/platform/amphion/vpu_malone.c
-index 4769c053c6c2..5c6b2a841b6f 100644
---- a/drivers/media/platform/amphion/vpu_malone.c
-+++ b/drivers/media/platform/amphion/vpu_malone.c
-@@ -889,7 +889,8 @@ static void vpu_malone_unpack_seq_hdr(struct vpu_rpc_event *pkt,
- 	info->frame_rate.numerator = 1000;
- 	info->frame_rate.denominator = pkt->data[8];
- 	info->dsp_asp_ratio = pkt->data[9];
--	info->level_idc = pkt->data[10];
-+	info->profile_idc = (pkt->data[10] >> 8) & 0xff;
-+	info->level_idc = pkt->data[10] & 0xff;
- 	info->bit_depth_luma = pkt->data[13];
- 	info->bit_depth_chroma = pkt->data[14];
- 	info->chroma_fmt = pkt->data[15];
+ #ifdef CONFIG_PROFILE_ALL_BRANCHES
 -- 
-2.43.0-rc1
+2.34.1
 
 
