@@ -1,74 +1,64 @@
-Return-Path: <linux-kernel+bounces-257636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5749937CE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 21:19:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 441FC937CE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 21:20:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6143E2824B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:19:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D39C52825EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416A3148307;
-	Fri, 19 Jul 2024 19:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C596148316;
+	Fri, 19 Jul 2024 19:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OB7DTclo"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nQBQbope"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043B1383AE
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 19:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E50383AE;
+	Fri, 19 Jul 2024 19:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721416783; cv=none; b=W4QpcCpBPU4c+++cT5nHU+QZbI3LPcmCjHP6BQzH77O+L+icQ2Snu8cdjhtRbUFJ12OkGQojFvaJVZM+Uu6CwiSocbwDlG8m8GtZI2obU7AqC29G2E3mYu89MUTais9NXPuSb2dffxsZzZECHo4lonTf0XyVX6BvllYwe+xydPE=
+	t=1721416827; cv=none; b=P3j7p/4dozfCdGXb9r95JZm8NFd6wyJj6rMo3mmcNzrY7fmUKc7tskqbA4d3YhFqp/7KwNRsiVNQptBW1GW+i9aAjADF1SJZ76yVXGAvIsWctWN7Q+SHXOW2OgN8nYGiPTPtx9b+l8pg5qFHM8jndaarruJMaC73ApthxZKkqG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721416783; c=relaxed/simple;
-	bh=eLzkmFgwPauQGZVcZaK/SPCAmIOt1kxVkchzfbCtLjE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PWGh6Mfmj5xgT1yS51h0M+8ebkOWa9UyHQCMsh6nHUoeyEpyKQB0/jOLQkRkVoDl4Elsk3b2KTXTTwzGaaWsjG0v6She+G44E5SIQwvNSKl29teNmJCGb0hIZMe3y7g9RHej3lyyq9/JknuiP+ah7yQWRLEijktrkkoCwjyaD+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OB7DTclo; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5a156557026so1511407a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 12:19:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721416780; x=1722021580; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xr67dPq3inIYvgWnXjgECbHqLz3vjOh1UP/5FEOx4hI=;
-        b=OB7DTcloc2Urf90+un2PYineY5kTP169Ay+XZRGHemnrCNhI1PntaLnbqZcr6ZWXQc
-         5p5lxNsxYThJ2Nwc4dJTAH2OqjofTT4QlnYtsmmAM3BD9BGhu8+6+Jm8xh6UF1sWP1Hw
-         F4gAM4TukHJcqQFAeFx/qIuqQGrTrkC0pDc0f5TjmvIA/XXGPwUpfVXue7x7QvVDrc1n
-         OAIcVNFzQkcZSCeNWBi12cMML7rpIWQSghY76vNSeaPq7UmTvSVaZiYm+By3gwAoRKi1
-         OORKuneHasPtKBcWy6nGbmMa31hvev2OH5bNqoX+MIfyJ0nwv1g+UlxKyg7Rk4gZNmKd
-         J0bQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721416780; x=1722021580;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xr67dPq3inIYvgWnXjgECbHqLz3vjOh1UP/5FEOx4hI=;
-        b=uicXcohRSk5wznL69pgTrTf/9Sv9b3kty9ObvPmbeF49Btfai3+PSYvzv2PQvF28qo
-         rEBkysJ+Yh+omUlj4DES3jp8ygMzAfbLiE5bZ2Kc2bgKrYK0dVMnegQetn7fvRz1Thwd
-         ega9FymwUoOGIppyupeNEtoQ3IRz2+vtMb4sVuXUD7yxBRNRtwM1pfROznm2DX0lrlWn
-         F/nZNDUyjpOOS8+JaJQ2PEvBcl4fnllDXyQOv7bhZtAF6xCzJMjmuI5Y7DhumBCgVKZw
-         l2FMCbQn8TjUTMKA4eqk1z4uAtjKfEfiIdkr1wNTetPeGUCsmBG0AIskXwy2yBr/7gNN
-         3DjQ==
-X-Gm-Message-State: AOJu0YwUYG8A6GMggLUgp5/UXt7CxU3Z0emPKtv3egMOzSTKqd5Fbr/h
-	JnHyHnrxBgWSQ5GweZEzUEkC+GkDkmcht07qKeLgmKsXoX+zTtppjeb2
-X-Google-Smtp-Source: AGHT+IFKqJBfi3I+iwdmOoR/cOWkIvm2HnKhm/LEVlXYNSWs2rWoDSVMUk72bOTM+6S0wFY7DmrYuw==
-X-Received: by 2002:a05:6402:3481:b0:57c:6d1c:3cee with SMTP id 4fb4d7f45d1cf-5a05b7edf58mr8060800a12.14.1721416779950;
-        Fri, 19 Jul 2024 12:19:39 -0700 (PDT)
-Received: from p183 ([46.53.253.212])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30aaa32bdsm1588090a12.26.2024.07.19.12.19.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 12:19:39 -0700 (PDT)
-Date: Fri, 19 Jul 2024 22:19:37 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com
-Subject: [PATCH] simplify container_of_const()
-Message-ID: <a088c95b-53d2-42ea-9eb3-ae81fbd07c1b@p183>
+	s=arc-20240116; t=1721416827; c=relaxed/simple;
+	bh=CEWqSygAKH9ACrMNsXOlxzuZ9KSCSifLeDh3gU6Y12Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C75kQi3txAjrLa+ac8CzAOK3AXOgvv7he4J16nd0AQFldrO6FUArAK/hRVU+nNN8H9WwYE1jtwX/DFgs/T3h3gCzDFK7KetSXFFn3G3r41TaGfc1Z7jGGZyinn/ezSNlG+pDtGeyXKdvpMZ8rRV1mj0RmPmc590HIOg2nq/vSQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nQBQbope; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A3B5C32782;
+	Fri, 19 Jul 2024 19:20:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721416827;
+	bh=CEWqSygAKH9ACrMNsXOlxzuZ9KSCSifLeDh3gU6Y12Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nQBQbope4oCHits71W7SPkK0aF3yHcjBzdufqlJPKdJtLIAAl+Us0f8oXc2dV9jwH
+	 2RDyAZ4W6v1ADQkIXWpgrQsW/52YCVGaiFKXcFF0K0dM2lLxuRh0ua0JaXXNDd5Hu1
+	 ErDRBhggUZqyMIdJI1UL5qRf2WAUpgcDNntJOM7eJTgVryfs4punZ80SpGnnMeBCUi
+	 YdH4Clnxf1QhdQ1CPE9YVKb2NHP7LG8lTacfopnVQOS0j9hHerxTsJWcCALW9UN66J
+	 Y5m2u9hiCIOxuZ3GRpkAGlIEFxUZ6jUDbWNJdDBSw3vc0m9u2jqjU+mKn1Ewa+GAMM
+	 S5vPsrqMMjsNw==
+Date: Fri, 19 Jul 2024 21:20:15 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Benno Lossin <benno.lossin@proton.me>, Jonathan Corbet <corbet@lwn.net>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [RFC PATCH 1/5] doc: rust: create safety standard
+Message-ID: <Zpq8b0I2kYeAh2qm@pollux>
+References: <20240717221133.459589-1-benno.lossin@proton.me>
+ <20240717221133.459589-2-benno.lossin@proton.me>
+ <99DF6A0F-BAE9-4341-8B42-6C1F1C69E2C6@collabora.com>
+ <ZpqeEywGic4nIEL8@pollux>
+ <5E1B12C1-1ACD-4A26-AC89-CC32327B51F5@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,40 +67,99 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5E1B12C1-1ACD-4A26-AC89-CC32327B51F5@collabora.com>
 
-* add necessary parenthesis so that
+On Fri, Jul 19, 2024 at 03:09:09PM -0300, Daniel Almeida wrote:
+> Hi Danilo,
+> 
+> 
+> > 
+> > We can easily build abstractions that ensure that the address a driver is trying
+> > to access is mapped properly, such that you can't have accidential out-of-bound
+> > accesses.
+> > 
+> > Those can be implemented by the corresponding subsystem / bus that the resource
+> > originates from.
+> > 
+> > In fact, we already have abstractions for that on the way, a generic I/O
+> > abstraction [1] as base implementation and a specific abstraction for PCI bars
+> > [2].
+> > 
+> > Of course, if the MMIO region comes from let's say the device tree, we still
+> > have to assume that the information in the DT is correct, but the driver does
+> > not need unsafe code for this.
+> > 
+> > [1] https://lore.kernel.org/rust-for-linux/20240618234025.15036-8-dakr@redhat.com/
+> > [2] https://lore.kernel.org/rust-for-linux/20240618234025.15036-11-dakr@redhat.com/
+> > 
+> 
+> Thanks for pointing that out. So from this:
+> 
+> +impl<const SIZE: usize> Io<SIZE> {
+> + ///
+> + ///
+> + /// # Safety
+> + ///
+> + /// Callers must ensure that `addr` is the start of a valid I/O mapped memory region of size
+> + /// `maxsize`.
+> + pub unsafe fn new(addr: usize, maxsize: usize) -> Result<Self> {
+> + if maxsize < SIZE {
+> + return Err(EINVAL);
+> + }
+> +
+> + Ok(Self { addr, maxsize })
+> + }
+> 
+> It looks like one can do this:
+> 
+> let io = unsafe { Io::new(<some address>, <some size>)? }; 
+> let value = io.readb(<some offset>)?;
+> 
+> Where <some address> has already been mapped for <some size> at an earlier point?
 
-	container_of_const((expr1, expr2), T, member)
+Yes, but (at least for full Rust drivers) this shouldn't be called by the driver
+directly, but the corresponding subsystem / bus should provide a `Devres`
+wrapped `Io` instance, like the PCI abstraction in [2] does.
 
-  compiles without warnings,
+Example:
 
-* delete unnecessary parenthesis,
+```
+// Get a `Devres` managed PCI bar mapping
+let bar: Devres<pci::Bar> = pdev.iomap_region(0);
 
-* delete unnecessary cast:
+let reg = bar.try_readl(0x42)?;
+```
+You can also let the driver assert that the requested resource must have a
+minimum size:
 
-	container_of(ptr, T, member)
+```
+// Only succeeds if the PCI bar has at least a size of 0x1000
+let bar = pdev.iomap_region_size::<0x1000>(0);
 
-  has type "T*" and doesn't need any more casts.
+// Note: `readl` does not need to return a `Result`, since the boundary checks
+// can be done on compile time due to the driver specified minimal mapping size.
+let reg = bar.readl(0x42);
+```
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
-
- include/linux/container_of.h |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
---- a/include/linux/container_of.h
-+++ b/include/linux/container_of.h
-@@ -30,9 +30,9 @@
-  * @member:		the name of the member within the struct.
-  */
- #define container_of_const(ptr, type, member)				\
--	_Generic(ptr,							\
--		const typeof(*(ptr)) *: ((const type *)container_of(ptr, type, member)),\
--		default: ((type *)container_of(ptr, type, member))	\
-+	_Generic((ptr),							\
-+		const typeof(*(ptr)) *: (const type *)container_of(ptr, type, member),\
-+		default: container_of(ptr, type, member)		\
- 	)
- 
- #endif	/* _LINUX_CONTAINER_OF_H */
+> 
+> That’s fine, as I said, if an abstraction makes sense, I have nothing
+> against it. My point is more that we shouldn’t enact a blanket ban on
+> 'unsafe' in drivers because corner cases do exist. But it’s good to know that this
+> particular example I gave does not apply.
+> 
+> 
+> >> 
+> >> If a driver is written partially in Rust, and partially in C, and it gets a
+> >> pointer to some kcalloc’d memory in C, should It be forbidden to use unsafe
+> >> in order to build a slice from that pointer? How can you possibly design a
+> >> general abstraction for something that is, essentially, a driver-internal API?
+> > 
+> > That sounds perfectly valid to me.
+> > 
+> 
+> 
+> — Daniel
+> 
+> 
 
