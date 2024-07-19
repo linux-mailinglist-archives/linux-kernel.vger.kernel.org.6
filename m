@@ -1,228 +1,268 @@
-Return-Path: <linux-kernel+bounces-256870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09FF693719B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 02:45:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F2AC93719E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 02:46:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3690E1C20C03
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 00:45:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D868B215C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 00:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD60517C9;
-	Fri, 19 Jul 2024 00:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="C6iHg04D"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A3F1C32;
+	Fri, 19 Jul 2024 00:46:48 +0000 (UTC)
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F1010FF
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 00:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0F0184D
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 00:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721349934; cv=none; b=pih+Qv9hidrrbv+mOrFx8rUHZNwkxKyLLBfF6QwqO1yMxbyeSb4lJ89s4J0A507n9uDtbfwg9mdbyVp67c0zPnuJJUJTazvqDAH71dFTLGC8IFnNqWfK9EE2YHXaem15tk0hW5w6etAkI0ZWSWXufLz3BE5xcbm5/skm5s0JWHk=
+	t=1721350007; cv=none; b=iso2qmvbi5qADrDiEh1pm+8COsCY4pSpEAtkMNQsqDaTDD5dpIqxJLTnD64hDmIZ6eloEMNgFt/rK+1Vqveys+IOVPLIyhkECD92PcG+iWFXbvZGqmeamTnNZI6ecifFkRE1Zc7Y+UpyCYqqfC5bnUw01GMHB+ZVxX8EFrVBcAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721349934; c=relaxed/simple;
-	bh=z/zS3Y5rfZMuLrJMQXIl2kf1D/5slkoZWN1HnqZpQRE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=kkEv/VohHsBfKewHOx+VAxywn5jZsQFcqLbg69jm1EtJ6NOSYf1qB8xDEZpMoq1XkPTFp9+25IBmcYNymf5zirTw5Oim/1pCoTrW8U77GZ8wd0r8hhRRBiMu4tdJYhozagVovUka126aHVef1Flg8N9GSyS6FMBXHyxFtVyHdEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=C6iHg04D; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7f97e794f34so55822239f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 17:45:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1721349930; x=1721954730; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:cc:content-language:from
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Q4gn1KUCdzhlOEmQvR/nJMiqTBzLCbx9aL8Fd1UdpzI=;
-        b=C6iHg04D331Fp+nUMGm1cZExFzhUPfY8tyKqj/fSBbo9Ia8lD+UsmqlQ2VzOBEV7f2
-         4jkTNNJmWX10ju7XBfT08wtmHJ+ZPGYx0UaqCIuXVMGeiyD5F1driX0Hv+zJX57hdrzN
-         UHLJlkEZsf26HqQrJOUnQUXeWeXeYYcw2wakuFfbPiXw6RpfQARQ11AXyUTnCrdAu/h3
-         Oig9aXLZW+MYeRU/6KXnCQGpKuS1lpsiRigo++a/Cd7+hc2Rjl2sDuftjnqfM8Wbep//
-         QtXMto+8ASzdT/p7I0S09hcWRtnc0pgzHjNx5g/VLrLbuvMOaTWpIxzI0yeyjtkVxw4B
-         6NiA==
+	s=arc-20240116; t=1721350007; c=relaxed/simple;
+	bh=9SUohBpJUeqg24Mdd8wtr2AafpRDkgxuJjdcNwzUNEU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sWB+A8U4nJblXk48z+BKD2WHHu+/FGN+AHn0QWGNrmYvUKjFKVwqXZJkUtKFmKeD3l8vPTCF+ei1jdOSlDPuqUDmV/U2zmHRbn7XdVRRNxGUzmYAcMCQ5nbH4ASNNvI6qMy94+BHhQXdWRdjZyjyaTK4miztK9J9GjiWGXGk324=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-822eb80f6e4so369318241.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 17:46:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721349930; x=1721954730;
-        h=content-transfer-encoding:in-reply-to:cc:content-language:from
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q4gn1KUCdzhlOEmQvR/nJMiqTBzLCbx9aL8Fd1UdpzI=;
-        b=Zodk2GKENB+u2aPQ6eCp5TNedwevvruSJy1DTAici9I9TpqTApdQmn99xjw6CYRbE3
-         Vzh3NPGSG3SsaOGZEmiM4dFO2WHTV1mi8jnZBtlL2OlZ1HhUanozKa1r6cjTKed6lb/K
-         ykXCbWsYeLekvTBwYuiidScW9NOwFbJz62wO8AYqPK2nImKwcmXBF5+UjPafKbGL/7KE
-         jkZhw0D2mH6rXqaPwYldYjgY6n+i5v/wlnexXZPR5fewqKyMHdrXwBL2dVt6KnUK9ap/
-         +5X3jsSXoc+n/rQjjxWxk6Ei+HeuGeCJ6m5dC1NhMlQOAyi8EZ/QlkMYP4s/4lWjiCjt
-         oAJw==
-X-Forwarded-Encrypted: i=1; AJvYcCW59kDQtwu05JO1UhfXD+3rgE+qPUyzjtjHRm+UkMgVNT9+OKdDNF9DakoZLOWLWr/Qixq6OJKfa5LrQehXlNzJlr2MrnO2yjaYa8Sv
-X-Gm-Message-State: AOJu0Yyy4qZYv2Qq6AHm8XqX32NkgetlTX/qEL7ZTWYYmm1Wyp2AYAZi
-	LEPKYu9T9yjQFJ5CJRtWkvF+JncwL3UnW9Tso7Q2JlW8RV/b6ljq5wOkSQdz+20=
-X-Google-Smtp-Source: AGHT+IFweNJHVvrorFY+uYyttwMC6ZoZLYaj3XeQfMP5ro0QTdnF+Urlbs7Do8mCw9GvM/skm4WFGw==
-X-Received: by 2002:a05:6602:1412:b0:803:c955:eda8 with SMTP id ca18e2360f4ac-8171051114bmr866519339f.6.1721349930521;
-        Thu, 18 Jul 2024 17:45:30 -0700 (PDT)
-Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c2342bf2cfsm102163173.8.2024.07.18.17.45.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jul 2024 17:45:30 -0700 (PDT)
-Message-ID: <8de44944-62b4-44df-88e1-bcf7417fea6e@sifive.com>
-Date: Thu, 18 Jul 2024 19:45:28 -0500
+        d=1e100.net; s=20230601; t=1721350005; x=1721954805;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GXQ+IO8iuumbpDwvRCDXC4/iQuI0xJQGtKu8Dv5HDVs=;
+        b=sA8ViQQOspRXQuSDveJ4XZDYuRrSwQfhiGNBXYZk/WjE068VuOYEk64RH6UE+w5n0i
+         FkBKFNgf8VZX/3h9HrIuiD1s0srnoPtnHKzXenmQfWxAr6LzVquqFgbo42axePZ41sP1
+         oVu9yS9ro5tU0S63yvIkn4wbHIyPE9p4F5ObSvBdT5wdMehWQFAyOTsWZPxIKpM++YuV
+         IQE5Wrc/p0lBHbbk99/TbUF2ioihsXwPHq2DOGcMPLAP/4xZrE+u3eGY8C+PeOsuAOEn
+         /zxwi8imhul9Gmre85ieFuB4gypLXkJwOfT2KxR4q1qlfbAsrgQ17udZLouTly284B7R
+         s8ow==
+X-Forwarded-Encrypted: i=1; AJvYcCUCvcFreHkRn6D8a8peJXyM+f1lYy2byF2ytp07Vh/g+e4RD0wBXkwRMDGvXfXhdsz99hDmw9Y3JK8A8qzkVFiQewC94K5Xu0w5b26t
+X-Gm-Message-State: AOJu0Yy6Up0cdpywwnB0b6Vgm7ohLH+5LZIpr3A1HM5lpn5qo/qDSp4A
+	UTYEZlg8+jkTH2NaiE858y/GC4/3w6g+4awpI/RnlaRCA29oAblcqVqfdzyEBCTUKcyGotdPAGr
+	NXVmamChjwKGJ2tUvgZ3h0Q3vjtA=
+X-Google-Smtp-Source: AGHT+IFT7TFRyWG+4EjCRpKUw7n6DPN0+TItRo/kZEQUnluoetN3fJUk0pXIeT7pPSnPEG51sD9+mp57BP2qUJ66a0g=
+X-Received: by 2002:a67:e709:0:b0:48f:3e67:78d2 with SMTP id
+ ada2fe7eead31-49159901cd2mr8312047137.26.1721350004799; Thu, 18 Jul 2024
+ 17:46:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/11] riscv: Implement cmpxchg32/64() using Zacas
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-References: <20240717061957.140712-1-alexghiti@rivosinc.com>
- <20240717061957.140712-2-alexghiti@rivosinc.com>
-From: Samuel Holland <samuel.holland@sifive.com>
-Content-Language: en-US
-Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Andrea Parri <parri.andrea@gmail.com>, Nathan Chancellor
- <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
- Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
- Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
- Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-arch@vger.kernel.org
-In-Reply-To: <20240717061957.140712-2-alexghiti@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240717071257.4141363-1-ryan.roberts@arm.com> <20240717071257.4141363-4-ryan.roberts@arm.com>
+In-Reply-To: <20240717071257.4141363-4-ryan.roberts@arm.com>
+From: Barry Song <baohua@kernel.org>
+Date: Fri, 19 Jul 2024 12:46:33 +1200
+Message-ID: <CAGsJ_4wiZRP9siEk9WpAYRjj-gehxptGY9XWC8k3N4QHBppAhQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 3/4] mm: Override mTHP "enabled" defaults at kernel cmdline
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	David Hildenbrand <david@redhat.com>, Lance Yang <ioworker0@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Gavin Shan <gshan@redhat.com>, 
+	Pankaj Raghav <kernel@pankajraghav.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Alex,
+On Wed, Jul 17, 2024 at 7:13=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.com>=
+ wrote:
+>
+> Add thp_anon=3D cmdline parameter to allow specifying the default
+> enablement of each supported anon THP size. The parameter accepts the
+> following format and can be provided multiple times to configure each
+> size:
+>
+> thp_anon=3D<size>[KMG]:<value>
+>
+> See Documentation/admin-guide/mm/transhuge.rst for more details.
+>
+> Configuring the defaults at boot time is useful to allow early user
+> space to take advantage of mTHP before its been configured through
+> sysfs.
 
-On 2024-07-17 1:19 AM, Alexandre Ghiti wrote:
-> This adds runtime support for Zacas in cmpxchg operations.
-> 
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+This is exactly what I need and want to implement, as the current behavior
+is problematic. We need to boot up the system and reach the point where
+we can set up the sys interfaces to enable mTHP. Many processes miss the
+opportunity to use mTHP.
+
+On the other hand, userspace might have been tuned to detect that mTHP
+is enabled, such as a .so library. However, it turns out we have had
+inconsistent settings between the two stages - before and after setting
+mTHP enabled by sys interfaces.
+
+>
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 > ---
->  arch/riscv/Kconfig               | 17 +++++++++++++++++
->  arch/riscv/Makefile              |  3 +++
->  arch/riscv/include/asm/cmpxchg.h | 26 +++++++++++++++++++++++---
->  3 files changed, 43 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 05ccba8ca33a..1caaedec88c7 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -596,6 +596,23 @@ config RISCV_ISA_V_PREEMPTIVE
->  	  preemption. Enabling this config will result in higher memory
->  	  consumption due to the allocation of per-task's kernel Vector context.
->  
-> +config TOOLCHAIN_HAS_ZACAS
-> +	bool
-> +	default y
-> +	depends on !64BIT || $(cc-option,-mabi=lp64 -march=rv64ima_zacas)
-> +	depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32ima_zacas)
-> +	depends on AS_HAS_OPTION_ARCH
+>  .../admin-guide/kernel-parameters.txt         |  8 +++
+>  Documentation/admin-guide/mm/transhuge.rst    | 26 +++++++--
+>  mm/huge_memory.c                              | 55 ++++++++++++++++++-
+>  3 files changed, 82 insertions(+), 7 deletions(-)
+>
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentat=
+ion/admin-guide/kernel-parameters.txt
+> index bc55fb55cd26..48443ad12e3f 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -6592,6 +6592,14 @@
+>                         <deci-seconds>: poll all this frequency
+>                         0: no polling (default)
+>
+> +       thp_anon=3D       [KNL]
+> +                       Format: <size>[KMG]:always|madvise|never|inherit
+> +                       Can be used to control the default behavior of th=
+e
+> +                       system with respect to anonymous transparent huge=
+pages.
+> +                       Can be used multiple times for multiple anon THP =
+sizes.
+> +                       See Documentation/admin-guide/mm/transhuge.rst fo=
+r more
+> +                       details.
 > +
-> +config RISCV_ISA_ZACAS
-> +	bool "Zacas extension support for atomic CAS"
-> +	depends on TOOLCHAIN_HAS_ZACAS
-> +	default y
-> +	help
-> +	  Enable the use of the Zacas ISA-extension to implement kernel atomic
-> +	  cmpxchg operations when it is detected at boot.
+>         threadirqs      [KNL,EARLY]
+>                         Force threading of all interrupt handlers except =
+those
+>                         marked explicitly IRQF_NO_THREAD.
+> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/a=
+dmin-guide/mm/transhuge.rst
+> index 1aaf8e3a0b5a..f53d43d986e2 100644
+> --- a/Documentation/admin-guide/mm/transhuge.rst
+> +++ b/Documentation/admin-guide/mm/transhuge.rst
+> @@ -311,13 +311,27 @@ performance.
+>  Note that any changes to the allowed set of sizes only applies to future
+>  file-backed THP allocations.
+>
+> -Boot parameter
+> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +Boot parameters
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> -You can change the sysfs boot time defaults of Transparent Hugepage
+> -Support by passing the parameter ``transparent_hugepage=3Dalways`` or
+> -``transparent_hugepage=3Dmadvise`` or ``transparent_hugepage=3Dnever``
+> -to the kernel command line.
+> +You can change the sysfs boot time default for the top-level "enabled"
+> +control by passing the parameter ``transparent_hugepage=3Dalways`` or
+> +``transparent_hugepage=3Dmadvise`` or ``transparent_hugepage=3Dnever`` t=
+o the
+> +kernel command line.
 > +
-> +	  If you don't know what to do here, say Y.
+> +Alternatively, each supported anonymous THP size can be controlled by
+> +passing ``thp_anon=3D<size>[KMG]:<state>``, where ``<size>`` is the THP =
+size
+> +and ``<state>`` is one of ``always``, ``madvise``, ``never`` or
+> +``inherit``.
 > +
->  config TOOLCHAIN_HAS_ZBB
->  	bool
->  	default y
-> diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-> index 06de9d365088..9fd13d7a9cc6 100644
-> --- a/arch/riscv/Makefile
-> +++ b/arch/riscv/Makefile
-> @@ -85,6 +85,9 @@ endif
->  # Check if the toolchain supports Zihintpause extension
->  riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZIHINTPAUSE) := $(riscv-march-y)_zihintpause
->  
-> +# Check if the toolchain supports Zacas
-> +riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZACAS) := $(riscv-march-y)_zacas
+> +For example, the following will set 64K THP to ``always``::
 > +
->  # Remove F,D,V from isa string for all. Keep extensions between "fd" and "v" by
->  # matching non-v and non-multi-letter extensions out with the filter ([^v_]*)
->  KBUILD_CFLAGS += -march=$(shell echo $(riscv-march-y) | sed -E 's/(rv32ima|rv64ima)fd([^v_]*)v?/\1\2/')
-> diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cmpxchg.h
-> index 808b4c78462e..5d38153e2f13 100644
-> --- a/arch/riscv/include/asm/cmpxchg.h
-> +++ b/arch/riscv/include/asm/cmpxchg.h
-> @@ -9,6 +9,7 @@
->  #include <linux/bug.h>
->  
->  #include <asm/fence.h>
-> +#include <asm/alternative.h>
->  
->  #define __arch_xchg_masked(sc_sfx, prepend, append, r, p, n)		\
->  ({									\
-> @@ -134,21 +135,40 @@
->  	r = (__typeof__(*(p)))((__retx & __mask) >> __s);		\
->  })
->  
-> -#define __arch_cmpxchg(lr_sfx, sc_sfx, prepend, append, r, p, co, o, n)	\
-> +#define __arch_cmpxchg(lr_sfx, sc_cas_sfx, prepend, append, r, p, co, o, n)	\
->  ({									\
-> +	__label__ no_zacas, end;					\
->  	register unsigned int __rc;					\
->  									\
-> +	if (IS_ENABLED(CONFIG_RISCV_ISA_ZACAS)) {			\
-> +		asm goto(ALTERNATIVE("j %[no_zacas]", "nop", 0,		\
-> +				     RISCV_ISA_EXT_ZACAS, 1)		\
-> +			 : : : : no_zacas);				\
-> +									\
-> +		__asm__ __volatile__ (					\
-> +			prepend						\
-> +			"	amocas" sc_cas_sfx " %0, %z2, %1\n"	\
-> +			append						\
-> +			: "+&r" (r), "+A" (*(p))			\
-> +			: "rJ" (n)					\
-> +			: "memory");					\
-> +		goto end;						\
-> +	}								\
-> +									\
-> +no_zacas:								\
->  	__asm__ __volatile__ (						\
->  		prepend							\
->  		"0:	lr" lr_sfx " %0, %2\n"				\
->  		"	bne  %0, %z3, 1f\n"				\
-> -		"	sc" sc_sfx " %1, %z4, %2\n"			\
-> +		"	sc" sc_cas_sfx " %1, %z4, %2\n"			\
->  		"	bnez %1, 0b\n"					\
->  		append							\
+> +       thp_anon=3D64K:always
+> +
+> +``thp_anon=3D`` may be specified multiple times to configure all THP siz=
+es as
+> +required. If ``thp_anon=3D`` is specified at least once, any anon THP si=
+zes
+> +not explicitly configured on the command line are implicitly set to
+> +``never``.
+>
+>  Hugepages in tmpfs/shmem
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 4249c0bc9388..794d2790d90d 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -82,6 +82,7 @@ unsigned long huge_anon_orders_madvise __read_mostly;
+>  unsigned long huge_anon_orders_inherit __read_mostly;
+>  unsigned long huge_file_orders_always __read_mostly;
+>  int huge_file_exec_order __read_mostly =3D -1;
+> +static bool anon_orders_configured;
+>
+>  unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+>                                          unsigned long vm_flags,
+> @@ -763,7 +764,10 @@ static int __init hugepage_init_sysfs(struct kobject=
+ **hugepage_kobj)
+>          * disable all other sizes. powerpc's PMD_ORDER isn't a compile-t=
+ime
+>          * constant so we have to do this here.
+>          */
+> -       huge_anon_orders_inherit =3D BIT(PMD_ORDER);
+> +       if (!anon_orders_configured) {
+> +               huge_anon_orders_inherit =3D BIT(PMD_ORDER);
+> +               anon_orders_configured =3D true;
+> +       }
+>
+>         /*
+>          * For pagecache, default to enabling all orders. powerpc's PMD_O=
+RDER
+> @@ -955,6 +959,55 @@ static int __init setup_transparent_hugepage(char *s=
+tr)
+>  }
+>  __setup("transparent_hugepage=3D", setup_transparent_hugepage);
+>
+> +static int __init setup_thp_anon(char *str)
+> +{
+> +       unsigned long size;
+> +       char *state;
+> +       int order;
+> +       int ret =3D 0;
+> +
+> +       if (!str)
+> +               goto out;
+> +
+> +       size =3D (unsigned long)memparse(str, &state);
+> +       order =3D ilog2(size >> PAGE_SHIFT);
+> +       if (*state !=3D ':' || !is_power_of_2(size) || size <=3D PAGE_SIZ=
+E ||
+> +           !(BIT(order) & THP_ORDERS_ALL_ANON))
+> +               goto out;
+> +
+> +       state++;
+> +
+> +       if (!strcmp(state, "always")) {
+> +               clear_bit(order, &huge_anon_orders_inherit);
+> +               clear_bit(order, &huge_anon_orders_madvise);
+> +               set_bit(order, &huge_anon_orders_always);
+> +               ret =3D 1;
+> +       } else if (!strcmp(state, "inherit")) {
+> +               clear_bit(order, &huge_anon_orders_always);
+> +               clear_bit(order, &huge_anon_orders_madvise);
+> +               set_bit(order, &huge_anon_orders_inherit);
+> +               ret =3D 1;
+> +       } else if (!strcmp(state, "madvise")) {
+> +               clear_bit(order, &huge_anon_orders_always);
+> +               clear_bit(order, &huge_anon_orders_inherit);
+> +               set_bit(order, &huge_anon_orders_madvise);
+> +               ret =3D 1;
+> +       } else if (!strcmp(state, "never")) {
+> +               clear_bit(order, &huge_anon_orders_always);
+> +               clear_bit(order, &huge_anon_orders_inherit);
+> +               clear_bit(order, &huge_anon_orders_madvise);
+> +               ret =3D 1;
+> +       }
+> +
+> +       if (ret)
+> +               anon_orders_configured =3D true;
+> +out:
+> +       if (!ret)
+> +               pr_warn("thp_anon=3D%s: cannot parse, ignored\n", str);
+> +       return ret;
+> +}
+> +__setup("thp_anon=3D", setup_thp_anon);
+> +
+>  pmd_t maybe_pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
+>  {
+>         if (likely(vma->vm_flags & VM_WRITE))
+> --
+> 2.43.0
+>
 
-This would probably be a good place to use inline ALTERNATIVE instead of an asm
-goto. It saves overall code size, and a jump in the non-Zacas case, at the cost
-of 3 nops in the Zacas case. (And all the nops can go after the amocas, where
-they will likely be hidden by the amocas latency.)
-
-Regards,
-Samuel
-
->  		"1:\n"							\
->  		: "=&r" (r), "=&r" (__rc), "+A" (*(p))			\
->  		: "rJ" (co o), "rJ" (n)					\
->  		: "memory");						\
-> +									\
-> +end:;									\
->  })
->  
->  #define _arch_cmpxchg(ptr, old, new, sc_sfx, prepend, append)		\
-> @@ -156,7 +176,7 @@
->  	__typeof__(ptr) __ptr = (ptr);					\
->  	__typeof__(*(__ptr)) __old = (old);				\
->  	__typeof__(*(__ptr)) __new = (new);				\
-> -	__typeof__(*(__ptr)) __ret;					\
-> +	__typeof__(*(__ptr)) __ret = (old);				\
->  									\
->  	switch (sizeof(*__ptr)) {					\
->  	case 1:								\
-
+Thanks
+Barry
 
