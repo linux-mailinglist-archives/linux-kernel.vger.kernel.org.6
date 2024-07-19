@@ -1,177 +1,109 @@
-Return-Path: <linux-kernel+bounces-257629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66D93937CD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 21:05:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C075937CD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 21:05:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B0D11C217D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:05:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C101AB21D1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B10148315;
-	Fri, 19 Jul 2024 19:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD8B148308;
+	Fri, 19 Jul 2024 19:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WjKCmP3O"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jGBOiDuo"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CAD51482F0
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 19:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803461482F3
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 19:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721415907; cv=none; b=rDyhGQ5Mzo/y7N9jLpTxfXMBvt16NZOHFDO8fZswgPqTNB8e7CcWqP5qCF20jYiRpkQNrhvtPaDvxgqkHe3hyv8IOcyC+Ia4WEWVEdZ+fjsVJZiy5EHgJOWNj2ZjhuCVH4AfPh6bgZ69TBg8eOzyXyyd67CjlE7sSjEAjTe0iPw=
+	t=1721415914; cv=none; b=dpUcjZaFRhaNY7grOyaDoo4cz4RA3W0D4X3zsd+aeUjb1UkCjMtFN6/ODKC7pdHgeOV9uenfrpeHWzhEvxHHGxtsKqOV0VJ2BbW59/E28+uciUQN0OOq+oG0DF/AY70E4mbWwW2PqnOJANCHBwl06A4QUHgAmPjscfuAba3EsVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721415907; c=relaxed/simple;
-	bh=J0iZWzPv9tuzSn96jNkzFCrECkH9O3OQra/Km6dfIS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y9KlD7+1Y+kiPiGZIR5ELUj0SvqetZDWglOhsbQZVn3U50mFIMe5VZTTHtPma2gyIQazkjgnZ8Q5LD50fpq1vPBUUepnOfVBXqPxMwnUyfb/y+WLux2ikZ/VEnwZuf4osC4N0mMDLTkAazIV5P61KxvwU4SuDrzGvgcrRCMGdiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WjKCmP3O; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70afe18837cso886864b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 12:05:05 -0700 (PDT)
+	s=arc-20240116; t=1721415914; c=relaxed/simple;
+	bh=yBKphk+kO34RoHjQgFpte2hSaIa0wA3auRo+TLhJx8o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rt+0OtEqE8aHa6KTKa0Cuj5ogFQoGX8lJWhz4Nqacta1gxE93biBuOnLMSnAffC/p8cR7svcBZGXsZ5JpLWGD9ufmrR18rK/SMvLuWk+cRBeK4RbL2BA+8gjWpJH6uo3EQzZLJF4t6625gV4mUw2HIyFBpvKcW9LnDlP8XmxhJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=jGBOiDuo; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-72703dd2b86so293893a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 12:05:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1721415905; x=1722020705; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RKleR+lXMztIafiPT9HsuWNtnPTeHMXhs4SK2dagfFE=;
-        b=WjKCmP3OGTf05ADpfhDOcYl3iU3lN30CHEHYozL76G8moh2DXP9hPnPkWNl/DHjitl
-         A82wJIdKMvZ3K2B/3IBF9JstHtxob2uQ3l8AsSoUzFFXtO1MfLekm0RojOtpfO0+0+gC
-         seMhew3f1s1ZhuiYSG3HiQc+mzu5JMz3YZxqk=
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1721415912; x=1722020712; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+nx9OdCwMEY2JRvD0bOdHslpOXnBey2t65szlXZcXug=;
+        b=jGBOiDuoRicy9n9YSOQdMhAhSmdJViuPq/z1Wri3hDJPCOaUnIWinuw3Rs+UneidjC
+         Y48jRZUDk3/pHgqLMHZcvekr0/WXPTmdkeI03oq8qQFAyMj4Y4cA8IMJOthhyv08aOh5
+         AWgWLR5ihs7XmQgrrIiXPBEC2CdwTGNWzJecfbhNdQZJFF2eeqwXXZ0MR1Tt7ImsC6My
+         atRt4QzH7ozr4pCmVrPDcyNBeympt5r1yzHd5G5PQnyis0WWbEhHQIdw1h4o0QZ9ijaX
+         aEfOH3hx+l3N4YnyMZnTTcCi8GmggfxLuG4VWCi7g3hVsH+Ge7aSe9JNgn/GMD7I1DPV
+         y7Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721415905; x=1722020705;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RKleR+lXMztIafiPT9HsuWNtnPTeHMXhs4SK2dagfFE=;
-        b=lGuEOxGaX72712Mb5acJ4puJsRGidh6N6gdv1oZcoFDZxJSf9CrPhcAj09DESfsfIy
-         iLOiBNzZNM370PpAlwzNhPlVUCuhv2AakXeGkmUTUInO/gxzJcwXDIoGD5bSVQlwcJxv
-         ghG2hFbncy4OqiKLCIVJsEZilOg/0jlSPQxoHNKlkZXTCR2i8/KfFbe6MtZw7xjj+E8C
-         jKO2DaJ1NNXYOR9uP0EXBORyGs/lZu7WqJRdELmiMqRIoFtwaP4x9AU69BG8jFoOsTva
-         jZjBqt3hiPhcyk83Q89z5ZxxLJnHYWIHLu3qqfCsW+SrWIOMxzLGzIeCCwszgNMyJ1SV
-         M80w==
-X-Forwarded-Encrypted: i=1; AJvYcCVJJQ9MNthLupBu38amWuzIwjGYHg0pIR6L+z9wf+7IbgrIuROD4oQBTwEvtRGJ76ne6KJ1tJ+zesBI07EVonLdmQtyO8ZfOca/stWZ
-X-Gm-Message-State: AOJu0YxPlGeqIT/8lxmloXeKDs1xE1M2NEcEtqEv03c2Ln5COZbkhZtn
-	T9OmMMFejCvFFaKzUJ10MePr0ERfx6XXsYAquhI7F3ME/7kQYzLs6wwmgDr0Tg==
-X-Google-Smtp-Source: AGHT+IEbkQzzNCnmyDj+uI6xoOE+O1v8XWzQ5R3YOoTXExBP8AHsDBfBXCO/euBcJOYg+9/xxZwilw==
-X-Received: by 2002:a05:6a00:b49:b0:70b:1811:3efa with SMTP id d2e1a72fcca58-70ce507e02dmr11257102b3a.22.1721415904520;
-        Fri, 19 Jul 2024 12:05:04 -0700 (PDT)
-Received: from localhost ([2620:15c:9d:2:bc77:954b:4e8f:b43d])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-70cff59e2d7sm1552552b3a.170.2024.07.19.12.05.03
+        d=1e100.net; s=20230601; t=1721415912; x=1722020712;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+nx9OdCwMEY2JRvD0bOdHslpOXnBey2t65szlXZcXug=;
+        b=Uc/WK3pdsZQCwqMesRRTWvF9OGXZR2Ch8QOEqArB7vg1gv8NwHKwR4OUuxNd4uHn5d
+         qqck9ZNLWhoTBDOn+Ahq5bHzyo7ChzjnDwvBOsPkVFZZ71AxQT6PLdOjVYvIVj7NK3vn
+         uuC3S7ufHzHk6Q2iXmOBCYFRzPQBW/G2xNIJb3GNVIY8LG88ATd1jk/AGFL81iJfXZDN
+         8vAKxEPcfN55KYNz9gcQ/wCWxr/i0ceRtpYc+4bLo48u0+mWUSNo0I9UKjcQOlLnV0/9
+         pDlIItlahfGrNuFeNtnMx3itpdLfiuB2LCFTFP8xUqc7ObgIUCkKMDcT6prA8q8u8yAB
+         EyXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYAaiHDfxEKAunriPi24S7PubYKdt/Z1P2WuMgMZJ91z1RgeIB7YJlBqRxGQW3t0aKs9T1qJhMgbt+6nkfcnReJmMDDR/RsUb54g61
+X-Gm-Message-State: AOJu0YyleksieoM7LIsN9f+L9b2+xYt95kIk5WnQlwZNpfKu0gUiejv/
+	7th0TePSgTK+x2kpScImM5HTtdLEzugwoSlNN0L2gOcUXL3SZO1czzD1vKoybsw=
+X-Google-Smtp-Source: AGHT+IGdhsJWDxm7pZKeryvCYAK1+cTyIo63zWdJkrvVVhI7KSLmqHOJHPUVumTVMUg6S1EE6FkwVw==
+X-Received: by 2002:a17:902:cecb:b0:1fd:6d4c:24cf with SMTP id d9443c01a7336-1fd74573b0amr5601685ad.5.1721415911589;
+        Fri, 19 Jul 2024 12:05:11 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f299651sm8374115ad.104.2024.07.19.12.05.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Jul 2024 12:05:03 -0700 (PDT)
-Date: Fri, 19 Jul 2024 12:05:01 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Francesco Dolcini <francesco@dolcini.it>, Kalle Valo <kvalo@kernel.org>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	David Lin <yu-hao.lin@nxp.com>
-Subject: Re: [PATCH v2 2/2] wifi: mwifiex: add support for WPA-PSK-SHA256
-Message-ID: <Zpq43ZxnICn5vEIu@google.com>
-References: <20240717-mwifiex-wpa-psk-sha256-v2-0-eb53d5082b62@pengutronix.de>
- <20240717-mwifiex-wpa-psk-sha256-v2-2-eb53d5082b62@pengutronix.de>
- <ZpmdVq2CkxRcLxvO@google.com>
- <ZpoCC042qMcOQ83N@pengutronix.de>
+        Fri, 19 Jul 2024 12:05:10 -0700 (PDT)
+Message-ID: <5aeac0c6-9658-4845-81bf-8bede181767d@kernel.dk>
+Date: Fri, 19 Jul 2024 13:05:09 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZpoCC042qMcOQ83N@pengutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V6] io_uring: releasing CPU resources when polling
+To: hexue <xue01.he@samsung.com>
+Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240709092944.3208051-1-xue01.he@samsung.com>
+ <CGME20240718100113epcas5p255acf51a58cf410d5d0e8cffbca41994@epcas5p2.samsung.com>
+ <20240718100107.1135964-1-xue01.he@samsung.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240718100107.1135964-1-xue01.he@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-[ +CC David, in case he has thoughts ]
-
-On Fri, Jul 19, 2024 at 08:04:59AM +0200, Sascha Hauer wrote:
-> On Thu, Jul 18, 2024 at 03:55:18PM -0700, Brian Norris wrote:
-> > On Wed, Jul 17, 2024 at 10:30:08AM +0200, Sascha Hauer wrote:
-> > > This adds support for the WPA-PSK AKM suite with SHA256 as hashing
-> > > method (WPA-PSK-SHA256). Tested with a wpa_supplicant provided AP
-> > > using key_mgmt=WPA-PSK-SHA256.
-> > > 
-> > > Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> > > ---
-> > >  drivers/net/wireless/marvell/mwifiex/fw.h      | 1 +
-> > >  drivers/net/wireless/marvell/mwifiex/uap_cmd.c | 3 +++
-> > >  2 files changed, 4 insertions(+)
-> > > 
-> > > diff --git a/drivers/net/wireless/marvell/mwifiex/fw.h b/drivers/net/wireless/marvell/mwifiex/fw.h
-> > > index 3adc447b715f6..1c76754b616ff 100644
-> > > --- a/drivers/net/wireless/marvell/mwifiex/fw.h
-> > > +++ b/drivers/net/wireless/marvell/mwifiex/fw.h
-> > > @@ -415,6 +415,7 @@ enum MWIFIEX_802_11_PRIVACY_FILTER {
-> > >  #define KEY_MGMT_NONE               0x04
-> > >  #define KEY_MGMT_PSK                0x02
-> > >  #define KEY_MGMT_EAP                0x01
-> > > +#define KEY_MGMT_PSK_SHA256         0x100
-> > >  #define CIPHER_TKIP                 0x04
-> > >  #define CIPHER_AES_CCMP             0x08
-> > >  #define VALID_CIPHER_BITMAP         0x0c
-> > > diff --git a/drivers/net/wireless/marvell/mwifiex/uap_cmd.c b/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-> > > index 7f822660fd955..c055fdc7114ba 100644
-> > > --- a/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-> > > +++ b/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-> > > @@ -60,6 +60,9 @@ int mwifiex_set_secure_params(struct mwifiex_private *priv,
-> > >  		case WLAN_AKM_SUITE_PSK:
-> > >  			bss_config->key_mgmt = KEY_MGMT_PSK;
-> > >  			break;
-> > > +		case WLAN_AKM_SUITE_PSK_SHA256:
-> > > +			bss_config->key_mgmt = KEY_MGMT_PSK_SHA256;
-> > > +			break;
-> > 
-> > I feel like this relates to previous questions you've had [1], and while
-> > I think the answer at the time made sense to me (basically, EAP and PSK
-> > are mutually exclusive), it makes less sense to me here that PSK-SHA256
-> > is mutually exclusive with PSK. And in particular, IIUC, this means that
-> > the ordering in a wpa_supplicant.conf line like
-> > 
-> >   key_mgmt=WPA-PSK WPA-PSK-SHA256
-> > 
-> > matters -- only the latter will actually be in use.
-> > 
-> > Is that intended? Is this really a single-value field, and not a
-> > multiple-option bitfield?
+On 7/18/24 4:01 AM, hexue wrote:
+> On 09/07/24 9:29AM, hexue wrote:
+>> io_uring use polling mode could improve the IO performence, but it will
+>> spend 100% of CPU resources to do polling.
+>>
+>> This set a signal "IORING_SETUP_HY_POLL" to application, aim to provide
+>> a interface for user to enable a new hybrid polling at io_uring level.
 > 
-> It seems that when only the KEY_MGMT_PSK_SHA256 is set, then
-> KEY_MGMT_PSK also works. Likewise, when only KEY_MGMT_SAE is set, then
-> also KEY_MGMT_PSK_SHA256 and KEY_MGMT_PSK work.
-> I gave it a test and also was surprised to see that we only have to set
-> the "most advanced" bit which then includes the "less advanced" features
-> automatically.
+> Hi, just a gentle ping. Any coments on this patch?
 
-Huh, that's interesting. So these KEY_MGMT* flags don't really mean what
-they say. It might be nice to have some additional commentary in the
-driver in that case.
+It's merge window and vacation time, and related to the former of those
+two, any changes for this would have to be targeted to the next kernel
+release. So it'll get looked at once things settle a bit, there's no
+rush as the 6.11 merge window is already in progress.
 
-> I could change setting the key_mgmt bits to |= as it feels more natural
-> and raises less eyebrows, but in my testing it didn't make a difference.
+-- 
+Jens Axboe
 
-That would make sense to me, but I think that's in conflict with what
-David Lin said here:
-
-https://lore.kernel.org/all/PA4PR04MB9638B7F0F4E49F79057C15FBD1CD2@PA4PR04MB9638.eurprd04.prod.outlook.com/
-
-"Firmware can only support one of WLAN_AKM_SUITE_8021X,
-WLAN_AKM_SUITE_PSK, or WLAN_AKM_SUITE_SAE."
-
-If that's true, then it seems like we need some kind of priority
-conditions here (e.g., if PSK is provided, but then we see PSK_SHA256,
-let PSK_SHA256 override -- but not vice versa). That might be pretty
-ugly though.
-
-> BTW wpa_supplicant parses the key_mgmt options into a bitfield which is
-> then evaluated elsewhere, so the order the AKM suites are passed to the
-> kernel is always the same, regardless of the order they appear in the
-> config.
-
-I hear you, but that's not really how we define kernel APIs -- by the
-particular implementation of a single commonly-used user space.
-
-Brian
 
