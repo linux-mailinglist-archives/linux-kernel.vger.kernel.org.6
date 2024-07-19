@@ -1,286 +1,441 @@
-Return-Path: <linux-kernel+bounces-257238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B74D5937735
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:40:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 448B1937746
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:44:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D2A328134E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 11:40:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 879BBB214EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 11:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A22185931;
-	Fri, 19 Jul 2024 11:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VqEkCpBM"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628DC8624A;
+	Fri, 19 Jul 2024 11:44:06 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC2F1E871
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 11:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951AFDDB1
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 11:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721389227; cv=none; b=R9NLrXa3lxRolpMlcw/xwoc2qhRsS4YCUMxKyQ1lBDLgQq9TTXtX8VaGS5sjLb9p/w2Q1Qkl35vfXN+ufC+FX9O9bozecBxi2yigcqreWCgR0ov3Yy4vb5ca6DCV4GidbjyHvxyk7KzJj+XIJy1jnAlxta1eHmg+43u8S0Tcy78=
+	t=1721389445; cv=none; b=VZH8iGnjcfUFjokOI8VcfBooYarMObv9eb7GP0F9QvZngm11Z11d6uiNWw9HqHGxcZqB0rKJpnDvjv/QV7weXtE4mP6/2gDLSYXXSaTqHY77rAQ7x9MBN0HmnloO+3JgQ1kmM2a3nLCxH0vF0hHve0G7JIrpWA6cMdt5G/GnKsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721389227; c=relaxed/simple;
-	bh=89lTWvaLveT0gvr93j+TT0paAF2UU7nSEFpzgG3+tVM=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PMam4nETTUVfrhjcm31/dnK0CZXcvj4tjA+faw7ejdR5glWyR03/hjrUq6S7DdlZBHnARFwTVWc/IfyE2sBzAyQ83jQUkQMWjzZR68+0ByjodiiYaF1mQ/5t9OV2lcJ0Es/M6j4SyiKCZbEsJGdyIez/CE6N+I9BP+KbKFzpe74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VqEkCpBM; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52ea5dc3c66so2633972e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 04:40:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721389223; x=1721994023; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YWGL3RxSq4udT3Nqs0+/yHvDYhzpyGYDeqTroSQKvWY=;
-        b=VqEkCpBM0B5YldMgfds75Ne2uxKlKzF8f5E5yUY3+vB4b3l/z8NSLMc4qdf/uupXov
-         sw6Shxd+kXdK1RvT4KZpTIGmrClF+xY4JafShKvRHF+cB2T3PRXefxaeQwZ3ANiJJ202
-         Wucjb44ex5uYB3XBKTgL1apdqfwRFShPVOthrzaHE6N0oOBu/VxqKU0prfudy0TrbJkA
-         FklISKJVRIfVdFDQFEa5bIQSi3QIrcDXsLP+BQ00DTUpDdUJx5cdzIwTgRVXpHshBgcq
-         UjJCTvI1/c/ZHoskPF3sr2Y8g/ST3QgKOm8fRvM7A4V+h5Ck9gt2jydOd0OXlhZkzbi8
-         kSbQ==
+	s=arc-20240116; t=1721389445; c=relaxed/simple;
+	bh=arru+STp00rsh0zwnzFhwNpQ4Iws+hFSyEYBoJdTcYI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=BnbCTINMsasDQeo7eCw8CBSyYYXhIJanAbZgo9RuFt8vzP11KgAX1t03VsE057mJbYNGcx72FUzqGFFNzZtleLRBjJElH6XTjFYmE/EdTPkY/uuwsniAcLqD35Utkq9iCkzbTuuFdowsFHKT7qmPr2X5lnZyqHduLJ2nXIRQSSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81258697716so278354139f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 04:44:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721389223; x=1721994023;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1721389443; x=1721994243;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YWGL3RxSq4udT3Nqs0+/yHvDYhzpyGYDeqTroSQKvWY=;
-        b=QU8sGqvO3m/ClTcWiT2OOW1yOULyqDCHBF1PEAZIKByK2x2AH7v4pna2el4KlZAZ+z
-         FDeQDGwKRb+rpt2pNtbJk0GGkcPu/1oAoXzOJ3dXe2vPhoqcOhvXyI9DRcPuWVUJwunL
-         XbHqv9Qarz2Y+/z6K8uqCqDIDpI3zzt2Tj+tUI5dG67eC7YxsP5Ln4lV4E5gwZrtTxPN
-         JDUmi1YgP/FpXF+R6oUtPrglRYhGDmS2vN0YVwi19Pm6N0URhPPfpYyy+6plmpTuKCQJ
-         876MrfXfKfffDB8zzAoRAg86J0qNuYgn1SM+QpqJmlhTwcpXZOJG58qq10K7OVvghT5m
-         EAsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVasjekrVVpmxx3497mBKoiZUTjfbv/+Vk/BI041sY02n8gOy/P1Mrz8yPZ/ZOjftLSjyy+xdsFJR928ibZ3M8ciRhAA8xBnnIGPLJB
-X-Gm-Message-State: AOJu0YzkKdT3uTcN8ZYmToWfkg/G5ThqSrBJ8jqVTsWkrMpOrTBcNeTu
-	ZLFXkwaUR1WkOdfNu94/ScDtJKJo6Lw2LJJEY8vWe5MBLod0tQwS
-X-Google-Smtp-Source: AGHT+IFbWxz+q5vCx0cJwZz/HbRLZ1t7Y4HNWMmmj2I/P8Ew8HRzWFHEX0BvEAr5jiiNBxfeIaYqGw==
-X-Received: by 2002:a05:6512:6cf:b0:52c:905b:ea5f with SMTP id 2adb3069b0e04-52ee545400amr7351906e87.63.1721389222840;
-        Fri, 19 Jul 2024 04:40:22 -0700 (PDT)
-Received: from pc636 (host-90-233-210-135.mobileonline.telia.com. [90.233.210.135])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ef5577e26sm174543e87.288.2024.07.19.04.40.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 04:40:22 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Fri, 19 Jul 2024 13:40:19 +0200
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Adrian Huang12 <ahuang12@lenovo.com>,
-	Adrian Huang <adrianhuang0701@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Jiwei JW10 Sun <sunjw10@lenovo.com>
-Subject: Re: [External] Re: [PATCH 1/1] mm/vmalloc: Add preempt point in
- purge_vmap_node() when enabling kasan
-Message-ID: <ZppQo7Biyg5Yc0Ai@pc636>
-References: <20240705130808.1581-1-ahuang12@lenovo.com>
- <ZogS_04dP5LlRlXN@pc636>
- <TYZPR03MB619290520C6552B540870C32B3DA2@TYZPR03MB6192.apcprd03.prod.outlook.com>
- <ZowOnkxaFbqxv6sW@pc636>
+        bh=ByDAahjmD/BBCe1O8DnoyGtSX9VJzNFyBdWAC8WFGKg=;
+        b=Qt6LlfRvyefcqPGH43fj64FmaW7zNCezX8kUmqtA4octUt+05zZEm5sQZKweKXnSlL
+         l/XghRJpm5BsneZD6hD2VAIRsjAsd++izShuzyXj6ORyQRlM6ntcuXUYa+RJnLkyUELd
+         sjohOKdAcdhjQ17oxiGhG638WZm7lF1KEXP2c+I6Xp/kjNePOWttAhriWE/PKO5plT+s
+         emFh0VECZcdHEMGcGUHEbWMvDK4/sLfmLymkWxAxXO/zVt0DMmSaFKv66+D4AIWT4Zx7
+         n+qZlafgf0l0QuUHzVZBzeieVhuidMSJXW2z0NryfHqbCve19pvMNFAz3L3Y9sHkyDTT
+         NSpw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsQ76NusgKqR2os9UFRMZRIvRzBjRjf8uJ82IGBfdluG5pgeKyIBJM1cBNDEeFyXAOKKGCR41hj7bCwNcfil4V6rw7W3n2GzG9NhE1
+X-Gm-Message-State: AOJu0Yzpnz/dnUjRy5lR7BKWF4TMj+1JBJvwVQUY22I3XX+5ZZDBTymJ
+	2nBXh3GPDY/a3ZfZy2lnYE2uqRFqE7Pdg5pjDFIHe1gg4qBVxF5CrZ7lWg5YABsASmzD+VgXiXM
+	jKDuAKc8J7cZQEpp1/gnn5PMd3mlrAUZryIwwxcKYzzrRpzHvI4yGxao=
+X-Google-Smtp-Source: AGHT+IH31x3vtCIizKBqg37Yv7ZZR+n6p2ls0u43h/d/plQuzChRNhwmHyehnlxzHwpgoxRr9VAh1wCMgQX7P4AAuhz+ztYYYOYi
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZowOnkxaFbqxv6sW@pc636>
+X-Received: by 2002:a05:6e02:1a21:b0:396:dc3a:72f2 with SMTP id
+ e9e14a558f8ab-396dc3a7867mr2359375ab.3.1721389442658; Fri, 19 Jul 2024
+ 04:44:02 -0700 (PDT)
+Date: Fri, 19 Jul 2024 04:44:02 -0700
+In-Reply-To: <20240719110705.1508-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004003fe061d98360f@google.com>
+Subject: Re: [syzbot] [mm?] BUG: Bad page map (8)
+From: syzbot <syzbot+ec4b7d82bb051330f15a@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello, Peter!
+Hello,
 
-Could you please support here? See below:
+syzbot tried to test the proposed patch but the build/boot failed:
 
-> On Mon, Jul 08, 2024 at 01:39:57PM +0000, Adrian Huang12 wrote:
-> > Hi,
-> > 
-> > > Could you please test it:
-> > > 
-> > > <snip>
-> > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c index 03b82fb8ecd3..6dc204b8495a
-> > > 100644
-> > > --- a/mm/vmalloc.c
-> > > +++ b/mm/vmalloc.c
-> > > @@ -2190,10 +2190,12 @@ static void purge_vmap_node(struct work_struct
-> > > *work)  {
-> > >  	struct vmap_node *vn = container_of(work,
-> > >  		struct vmap_node, purge_work);
-> > > +	unsigned long resched_threshold;
-> > >  	struct vmap_area *va, *n_va;
-> > >  	LIST_HEAD(local_list);
-> > > 
-> > >  	vn->nr_purged = 0;
-> > > +	resched_threshold = lazy_max_pages() << 1;
-> > > 
-> > >  	list_for_each_entry_safe(va, n_va, &vn->purge_list, list) {
-> > >  		unsigned long nr = (va->va_end - va->va_start) >> PAGE_SHIFT; @@
-> > > -2210,6 +2212,9 @@ static void purge_vmap_node(struct work_struct *work)
-> > >  		atomic_long_sub(nr, &vmap_lazy_nr);
-> > >  		vn->nr_purged++;
-> > > 
-> > > +		if (atomic_long_read(&vmap_lazy_nr) < resched_threshold)
-> > > +			cond_resched();
-> > > +
-> > >  		if (is_vn_id_valid(vn_id) && !vn->skip_populate)
-> > >  			if (node_pool_add_va(vn, va))
-> > >  				continue;
-> > > <snip>
-> > 
-> > This patch can fix the issue. Feel free to add my tested-by.
-> > Tested-by: Adrian Huang <ahuang12@lenovo.com>
-> > 
-> Thank you. I will add you tested-by!
-> 
-I tried to simulate the reported splat and i can reproduce it with KASAN
-enabled. I use qemu on my 64-core system, it allows me to specify 255
-cores while running VM. The kernel is 6.10.0-rc5.
+e: registered new interface driver legousbtower
+[   14.297706][    T1] usbcore: registered new interface driver usbtest
+[   14.301236][    T1] usbcore: registered new interface driver usb_ehset_t=
+est
+[   14.304304][    T1] usbcore: registered new interface driver trancevibra=
+tor
+[   14.307099][    T1] usbcore: registered new interface driver uss720
+[   14.308543][    T1] uss720: USB Parport Cable driver for Cables using th=
+e Lucent Technologies USS720 Chip
+[   14.309426][    T1] uss720: NOTE: this is a special purpose driver to al=
+low nonstandard
+[   14.310212][    T1] uss720: protocols (eg. bitbang) over USS720 usb to p=
+arallel cables
+[   14.317207][    T1] uss720: If you just want to connect to a printer, us=
+e usblp instead
+[   14.320387][    T1] usbcore: registered new interface driver usbsevseg
+[   14.325623][    T1] usbcore: registered new interface driver yurex
+[   14.346261][    T1] usbcore: registered new interface driver chaoskey
+[   14.349153][    T1] usbcore: registered new interface driver sisusb
+[   14.357883][    T1] usbcore: registered new interface driver lvs
+[   14.363246][    T1] usbcore: registered new device driver onboard-usb-de=
+v
+[   14.435704][    T1] dummy_hcd dummy_hcd.0: USB Host+Gadget Emulator, dri=
+ver 02 May 2005
+[   14.438586][    T1] dummy_hcd dummy_hcd.0: Dummy host controller
+[   14.452253][    T1] dummy_hcd dummy_hcd.0: new USB bus registered, assig=
+ned bus number 1
+[   14.478915][    T1] usb usb1: New USB device found, idVendor=3D1d6b, idP=
+roduct=3D0002, bcdDevice=3D 6.10
+[   14.480377][    T1] usb usb1: New USB device strings: Mfr=3D3, Product=
+=3D2, SerialNumber=3D1
+[   14.482305][    T1] usb usb1: Product: Dummy host controller
+[   14.483107][    T1] usb usb1: Manufacturer: Linux 6.10.0-rc7-syzkaller-0=
+0266-g4d145e3f830b-dirty dummy_hcd
+[   14.484296][    T1] usb usb1: SerialNumber: dummy_hcd.0
+[   14.523742][    T1] hub 1-0:1.0: USB hub found
+[   14.527088][    T1] hub 1-0:1.0: 1 port detected
+[   14.618793][    T1] gadgetfs: USB Gadget filesystem, version 24 Aug 2004
+[   14.704674][    T1] mousedev: PS/2 mouse device common for all mice
+[   14.725075][    T1] usbcore: registered new interface driver iforce
+[   14.733727][    T1] usbcore: registered new interface driver xpad
+[   14.736935][    T1] usbcore: registered new interface driver ati_remote2
+[   14.737869][    T1] cm109: Keymap for Komunikate KIP1000 phone loaded
+[   14.741372][    T1] usbcore: registered new interface driver cm109
+[   14.743785][    T1] cm109: CM109 phone driver: 20080805 (C) Alfred E. He=
+ggestad
+[   14.746244][    T1] usbcore: registered new interface driver ims_pcu
+[   14.748144][    T1] usbcore: registered new interface driver keyspan_rem=
+ote
+[   14.815429][    T1] rtc-pl031 9010000.pl031: registered as rtc0
+[   14.829699][    T1] i2c_dev: i2c /dev entries driver
+[   14.835787][    T1] usbcore: registered new interface driver i2c-tiny-us=
+b
+[   14.894702][    T1] device-mapper: core: CONFIG_IMA_DISABLE_HTABLE is di=
+sabled. Duplicate IMA measurements will not be recorded in the IMA log.
+[   14.895758][    T1] device-mapper: uevent: version 1.0.3
+[   14.909774][    T1] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) init=
+ialised: dm-devel@lists.linux.dev
+[   14.923944][    T1] device-mapper: multipath round-robin: version 1.2.0 =
+loaded
+[   14.924551][    T1] device-mapper: multipath queue-length: version 0.2.0=
+ loaded
+[   14.925504][    T1] device-mapper: multipath service-time: version 0.3.0=
+ loaded
+[   14.964334][    T1] ledtrig-cpu: registered to indicate activity on CPUs
+[   14.996590][    T1] iscsi: registered transport (iser)
+[   15.005451][    T1] SoftiWARP attached
+[   15.044338][    T1] hid: raw HID events driver (C) Jiri Kosina
+[   15.052186][    T1] usbcore: registered new interface driver usbhid
+[   15.052623][    T1] usbhid: USB HID core driver
+[   15.082727][    T1] usbcore: registered new interface driver es2_ap_driv=
+er
+[   15.084118][    T1] greybus: registered new driver hid
+[   15.086685][    T1] greybus: registered new driver gbphy
+[   15.088955][    T1] gb_gbphy: registered new driver usb
+[   15.138911][    T1] hw perfevents: enabled with armv8_pmuv3 PMU driver, =
+7 counters available
+[   15.179956][    T1]  cs_system_cfg: CoreSight Configuration manager init=
+ialised
+[   15.293156][    T1] gnss: GNSS driver registered with major 495
+[   15.885241][    T1] usbcore: registered new interface driver snd-usb-aud=
+io
+[   15.887644][    T1] usbcore: registered new interface driver snd-ua101
+[   15.890191][    T1] usbcore: registered new interface driver snd-usb-cai=
+aq
+[   15.893217][    T1] usbcore: registered new interface driver snd-usb-6fi=
+re
+[   15.895807][    T1] usbcore: registered new interface driver snd-usb-hif=
+ace
+[   15.898509][    T1] usbcore: registered new interface driver snd-bcd2000
+[   15.903568][    T1] usbcore: registered new interface driver snd_usb_pod
+[   15.906285][    T1] usbcore: registered new interface driver snd_usb_pod=
+hd
+[   15.909046][    T1] usbcore: registered new interface driver snd_usb_ton=
+eport
+[   15.911554][    T1] usbcore: registered new interface driver snd_usb_var=
+iax
+[   16.087511][    T1] NET: Registered PF_LLC protocol family
+[   16.089481][    T1] GACT probability on
+[   16.090238][    T1] Mirror/redirect action on
+[   16.092998][    T1] Simple TC action Loaded
+[   16.122423][    T1] netem: version 1.3
+[   16.124519][    T1] u32 classifier
+[   16.125078][    T1]     Performance counters on
+[   16.125772][    T1]     input device check on
+[   16.126376][    T1]     Actions configured
+[   16.179092][    T1] xt_time: kernel timezone is -0000
+[   16.181605][    T1] ipip: IPv4 and MPLS over IPv4 tunneling driver
+[   16.203257][    T1] gre: GRE over IPv4 demultiplexor driver
+[   16.204163][    T1] ip_gre: GRE over IPv4 tunneling driver
+[   16.264721][    T1] IPv4 over IPsec tunneling driver
+[   16.294064][    T1] Initializing XFRM netlink socket
+[   16.297117][    T1] IPsec XFRM device driver
+[   16.303386][    T1] NET: Registered PF_INET6 protocol family
+[   16.418730][    T1] Segment Routing with IPv6
+[   16.419572][    T1] RPL Segment Routing with IPv6
+[   16.424115][    T1] In-situ OAM (IOAM) with IPv6
+[   16.428352][    T1] mip6: Mobile IPv6
+[   16.466648][    T1] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+[   16.529372][    T1] ip6_gre: GRE over IPv6 tunneling driver
+[   16.558126][    T1] NET: Registered PF_PACKET protocol family
+[   16.559607][    T1] NET: Registered PF_KEY protocol family
+[   16.566730][    T1] can: controller area network core
+[   16.568802][    T1] NET: Registered PF_CAN protocol family
+[   16.569250][    T1] can: raw protocol
+[   16.569733][    T1] can: broadcast manager protocol
+[   16.570472][    T1] can: netlink gateway - max_hops=3D1
+[   16.573717][    T1] can: SAE J1939
+[   16.574698][    T1] can: isotp protocol (max_pdu_size 8300)
+[   16.582209][    T1] NET: Registered PF_KCM protocol family
+[   16.590346][    T1] l2tp_core: L2TP core driver, V2.0
+[   16.593329][    T1] l2tp_ip: L2TP IP encapsulation support (L2TPv3)
+[   16.594457][    T1] l2tp_netlink: L2TP netlink interface
+[   16.597132][    T1] l2tp_eth: L2TP ethernet pseudowire support (L2TPv3)
+[   16.598043][    T1] l2tp_ip6: L2TP IP encapsulation support for IPv6 (L2=
+TPv3)
+[   16.599157][    T1] 8021q: 802.1Q VLAN Support v1.8
+[   16.607654][    T1] sctp: Hash tables configured (bind 256/256)
+[   16.622478][    T1] NET: Registered PF_RDS protocol family
+[   16.629612][    T1] Registered RDS/infiniband transport
+[   16.642670][    T1] Registered RDS/tcp transport
+[   16.648213][    T1] NET: Registered PF_SMC protocol family
+[   16.649869][    T1] 9pnet: Installing 9P2000 support
+[   16.653711][    T1] Key type dns_resolver registered
+[   16.654882][    T1] Key type ceph registered
+[   16.659347][    T1] libceph: loaded (mon/osd proto 15/24)
+[   16.668663][    T1] NET: Registered PF_VSOCK protocol family
+[   20.295912][    T1] Timer migration: 1 hierarchy levels; 8 children per =
+group; 1 crossnode level
+[   20.309756][    T1] registered taskstats version 1
+[   20.321210][    T1] Loading compiled-in X.509 certificates
+[   20.369974][    T1] Loaded X.509 cert 'Build time autogenerated kernel k=
+ey: 6c63633801075204133449b0eb59bc21f2576981'
+[   21.380327][    T1] zswap: loaded using pool lzo/zsmalloc
+[   21.402152][    T1] Demotion targets for Node 0: null
+[   21.411574][    T1] Key type .fscrypt registered
+[   21.412362][    T1] Key type fscrypt-provisioning registered
+[   21.424092][    T1] Key type big_key registered
+[   21.425656][    T1] Key type encrypted registered
+[   21.427809][    T1] ima: No TPM chip found, activating TPM-bypass!
+[   21.428900][    T1] Loading compiled-in module X.509 certificates
+[   21.472947][    T1] Loaded X.509 cert 'Build time autogenerated kernel k=
+ey: 6c63633801075204133449b0eb59bc21f2576981'
+[   21.475516][    T1] ima: Allocated hash algorithm: sha256
+[   21.484104][    T1] ima: No architecture policies found
+[   21.490290][    T1] evm: Initialising EVM extended attributes:
+[   21.491927][    T1] evm: security.selinux (disabled)
+[   21.492648][    T1] evm: security.SMACK64
+[   21.493207][    T1] evm: security.SMACK64EXEC
+[   21.493811][    T1] evm: security.SMACK64TRANSMUTE
+[   21.494403][    T1] evm: security.SMACK64MMAP
+[   21.494964][    T1] evm: security.apparmor (disabled)
+[   21.495611][    T1] evm: security.ima
+[   21.496119][    T1] evm: security.capability
+[   21.496682][    T1] evm: HMAC attrs: 0x1
+[   21.536239][    T1] printk: legacy console [netcon0] enabled
+[   21.537332][    T1] netconsole: network logging started
+[   21.543371][    T1] gtp: GTP module loaded (pdp ctx size 128 bytes)
+[   21.572025][    T1] input: gpio-keys as /devices/platform/gpio-keys/inpu=
+t/input0
+[   21.608832][    T1] rdma_rxe: loaded
+[   21.626032][    T1] clk: Disabling unused clocks
+[   21.626755][    T1] PM: genpd: Disabling unused power domains
+[   21.627535][    T1] ALSA device list:
+[   21.627890][    T1]   #0: Dummy 1
+[   21.628215][    T1]   #1: Loopback 1
+[   21.628521][    T1]   #2: Virtual MIDI Card 1
+[   21.650309][    T1] md: Skipping autodetection of RAID arrays. (raid=3Da=
+utodetect will force)
+[   21.843600][    T1] EXT4-fs (vda): mounted filesystem 126e38a5-b482-40da=
+-8f06-bd78886e02c1 ro with ordered data mode. Quota mode: none.
+[   21.846818][    T1] VFS: Mounted root (ext4 filesystem) readonly on devi=
+ce 253:0.
+[   21.863144][    T1] devtmpfs: mounted
+[   22.026437][    T1] Freeing unused kernel memory: 1472K
+[   22.034062][    T1] Run /sbin/init as init process
+[   22.160148][    T1] ------------[ cut here ]------------
+[   22.167295][    T1] kernel BUG at mm/rmap.c:1152!
+[   22.168319][    T1] Internal error: Oops - BUG: 00000000f2000800 [#1] PR=
+EEMPT SMP
+[   22.169624][    T1] Modules linked in:
+[   22.171306][    T1] CPU: 1 PID: 1 Comm: init Not tainted 6.10.0-rc7-syzk=
+aller-00266-g4d145e3f830b-dirty #0
+[   22.172600][    T1] Hardware name: linux,dummy-virt (DT)
+[   22.173409][    T1] pstate: 01400009 (nzcv daif +PAN -UAO -TCO +DIT -SSB=
+S BTYPE=3D--)
+[   22.174329][    T1] pc : folio_add_file_rmap_ptes+0x188/0x18c
+[   22.176361][    T1] lr : set_pte_range+0xc8/0x204
+[   22.176910][    T1] sp : ffff80008297bb10
+[   22.177404][    T1] x29: ffff80008297bb10 x28: 0000000000000000 x27: fff=
+fc1ffc009fcc0
+[   22.178589][    T1] x26: 0000000000000000 x25: ffffc1ffc009fcc0 x24: fbf=
+0000003783d80
+[   22.179678][    T1] x23: ffffc1ffc009fcc0 x22: 0000ffff8aaa7000 x21: 000=
+0000000000001
+[   22.180638][    T1] x20: ffff80008297bd08 x19: ffffc1ffc009fcc0 x18: fff=
+fffffffffffff
+[   22.181621][    T1] x17: 0000000000000000 x16: 1e1e000000906d61 x15: 000=
+0000000000001
+[   22.182685][    T1] x14: ffffffffffffffff x13: 0000000000000000 x12: fff=
+f800081e6a3e8
+[   22.183750][    T1] x11: 0000000000000001 x10: fff00000061ad538 x9 : f0f=
+0000004836b00
+[   22.184873][    T1] x8 : 0000000000000010 x7 : 000000000000001f x6 : fff=
+fc1ffc0000000
+[   22.185831][    T1] x5 : 0000000000000000 x4 : 0000ffff8aaa7000 x3 : fbf=
+0000003783d80
+[   22.186755][    T1] x2 : 0000000000000001 x1 : ffffc1ffc009fcc0 x0 : 000=
+00000ffffffff
+[   22.188006][    T1] Call trace:
+[   22.188634][    T1]  folio_add_file_rmap_ptes+0x188/0x18c
+[   22.189523][    T1]  set_pte_range+0xc8/0x204
+[   22.190194][    T1]  filemap_map_pages+0x1c8/0x69c
+[   22.190782][    T1]  __handle_mm_fault+0xd20/0x1b30
+[   22.191394][    T1]  handle_mm_fault+0x68/0x280
+[   22.191967][    T1]  do_page_fault+0xf8/0x480
+[   22.192558][    T1]  do_translation_fault+0xac/0xbc
+[   22.193144][    T1]  do_mem_abort+0x44/0x94
+[   22.193801][    T1]  el0_ia+0xa4/0x118
+[   22.194388][    T1]  el0t_64_sync_handler+0xd0/0x12c
+[   22.195034][    T1]  el0t_64_sync+0x19c/0x1a0
+[   22.196199][    T1] Code: 52800022 52800241 9401cc4e 17ffffd3 (d4210000)=
+=20
+[   22.197334][    T1] ---[ end trace 0000000000000000 ]---
+[   22.198247][    T1] Kernel panic - not syncing: Oops - BUG: Fatal except=
+ion
+[   22.199304][    T1] SMP: stopping secondary CPUs
+[   22.200826][    T1] Kernel Offset: disabled
+[   22.201438][    T1] CPU features: 0x00,00000006,8f17bd7c,1767f6bf
+[   22.202609][    T1] Memory Limit: none
+[   22.203551][    T1] Rebooting in 86400 seconds..
 
-The kernel should be built with CONFIG_KASAN=y and CONFIG_KASAN_VMALLOC=y
 
-The "soft lockup" can be triggered when the kernel is compiled within a
-VM using 256 jobs and preemption is disabled:
+syzkaller build log:
+go env (err=3D<nil>)
+GO111MODULE=3D'auto'
+GOARCH=3D'amd64'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFLAGS=3D''
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMODCACHE=3D'/syzkaller/jobs/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/usr/local/go'
+GOSUMDB=3D'sum.golang.org'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.21.4'
+GCCGO=3D'gccgo'
+GOAMD64=3D'v1'
+AR=3D'ar'
+CC=3D'gcc'
+CXX=3D'g++'
+CGO_ENABLED=3D'1'
+GOMOD=3D'/syzkaller/jobs/linux/gopath/src/github.com/google/syzkaller/go.mo=
+d'
+GOWORK=3D''
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+PKG_CONFIG=3D'pkg-config'
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build1339368986=3D/tmp/go-build -gno-record-gc=
+c-switches'
 
-echo none > /sys/kernel/debug/sched/preempt
-make -C coding/linux.git/ -j256 bzImage
+git status (err=3D<nil>)
+HEAD detached at eaeb5c15a
+nothing to commit, working tree clean
 
-<snip>
-watchdog: BUG: soft lockup - CPU#28 stuck for 22s! [kworker/28:1:1760]
-CPU: 28 PID: 1760 Comm: kworker/28:1 Kdump: loaded Not tainted 6.10.0-rc5 #95
-Workqueue: events drain_vmap_area_work
-RIP: 0010:smp_call_function_many_cond+0x1d8/0xbb0
-...
-<snip>
 
-(See the full splat in the beginning of this email-thread). 
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
+s/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+bin/syz-sysgen
+go fmt ./sys/... >/dev/null
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Darm64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3Deaeb5c15ad704753a93bc8f8c7fc422d2a189581 -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20240711-172551'" "-tags=
+=3Dsyz_target syz_os_linux syz_arch_arm64 " -o ./bin/linux_arm64/syz-execpr=
+og github.com/google/syzkaller/tools/syz-execprog
+mkdir -p ./bin/linux_arm64
+aarch64-linux-gnu-g++ -o ./bin/linux_arm64/syz-executor executor/executor.c=
+c \
+	-O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wframe-l=
+arger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-format-ove=
+rflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -stati=
+c-pie -std=3Dc++17 -I. -Iexecutor/_include -fpermissive -w -DGOOS_linux=3D1=
+ -DGOARCH_arm64=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"eaeb5c15ad704753a93bc8f8c7fc422d2a=
+189581\"
+/usr/lib/gcc-cross/aarch64-linux-gnu/12/../../../../aarch64-linux-gnu/bin/l=
+d: /tmp/cc8XHKWX.o: in function `test_cover_filter()':
+executor.cc:(.text+0xfabc): warning: the use of `tempnam' is dangerous, bet=
+ter use `mkstemp'
+/usr/lib/gcc-cross/aarch64-linux-gnu/12/../../../../aarch64-linux-gnu/bin/l=
+d: /tmp/cc8XHKWX.o: in function `Connection::Connect(char const*, char cons=
+t*)':
+executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
+KcS1_]+0x148): warning: Using 'gethostbyname' in statically linked applicat=
+ions requires at runtime the shared libraries from the glibc version used f=
+or linking
 
-After some debugging, i figured out that a CSD lock is taken and not released
-for too long. To debug this the kernel should be compiled with CONFIG_CSD_LOCK_WAIT_DEBUG.
-The /sys/module/smp/parameters/csd_lock_timeout i set to 1000, i.e. 1 second.
 
-See below the CSD-lock debug-info during running the compiling test:
+Error text is too large and was truncated, full error text is at:
+https://syzkaller.appspot.com/x/error.txt?x=3D142afab5980000
 
-<snip>
-[  163.697057] smp: csd: Detected non-responsive CSD lock (#1) on CPU#206, waiting 1000000292 ns for CPU#17 do_kernel_range_flush+0x0/0xb0(0xffff888dfd943d80).
-[  163.697165] smp:     csd: CSD lock (#1) unresponsive.
-[  163.697198] Sending NMI from CPU 206 to CPUs 17:
-[  163.697214] NMI backtrace for cpu 17
-[  163.697223] CPU: 17 PID: 36681 Comm: as Kdump: loaded Tainted: G             L     6.10.0-rc5-00019-g4236f0255ea8-dirty #3439
-[  163.697228] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-[  163.697231] RIP: 0010:native_queued_spin_lock_slowpath+0x2b9/0xae0
-[  163.697241] Code: 40 ba 01 00 00 00 ..............<cut>...............
-[  163.697244] RSP: 0018:ffffc900396afb98 EFLAGS: 00000002
-[  163.697248] RAX: 0000000000000001 RBX: ffffffffb6e0a084 RCX: ffffffffb5eff77c
-[  163.697250] RDX: fffffbfff6dc1411 RSI: 0000000000000004 RDI: ffffffffb6e0a084
-[  163.697252] RBP: 0000000000000001 R08: 0000000000000000 R09: fffffbfff6dc1410
-[  163.697254] R10: ffffffffb6e0a087 R11: ffffffffb80f8112 R12: 1ffff920072d5f75
-[  163.697255] R13: 0000000000000007 R14: fffffbfff6dc1410 R15: ffffc900396afbd8
-[  163.697260] FS:  0000000000000000(0000) GS:ffff888df7a80000(0000) knlGS:0000000000000000
-[  163.697263] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  163.697266] CR2: 00007f354595c3e8 CR3: 0000000088a44000 CR4: 00000000000006f0
-[  163.697268] Call Trace:
-[  163.697270]  <NMI>
-[  163.697272]  ? nmi_cpu_backtrace+0xd1/0x190
-[  163.697277]  ? nmi_cpu_backtrace_handler+0x11/0x20
-[  163.697282]  ? nmi_handle+0xb7/0x2a0
-[  163.697288]  ? default_do_nmi+0x45/0x110
-[  163.697292]  ? exc_nmi+0x104/0x190
-[  163.697295]  ? end_repeat_nmi+0xf/0x53
-[  163.697299]  ? native_queued_spin_lock_slowpath+0xbc/0xae0
-[  163.697303]  ? native_queued_spin_lock_slowpath+0x2b9/0xae0
-[  163.697306]  ? native_queued_spin_lock_slowpath+0x2b9/0xae0
-[  163.697308]  ? native_queued_spin_lock_slowpath+0x2b9/0xae0
-[  163.697311]  </NMI>
-[  163.697312]  <TASK>
-[  163.697313]  ? __pfx_native_queued_spin_lock_slowpath+0x10/0x10
-[  163.697317]  queued_write_lock_slowpath+0x3c6/0x440
-[  163.697321]  ? __pfx_queued_write_lock_slowpath+0x10/0x10
-[  163.697324]  ? task_rq_lock+0xd0/0x390
-[  163.697327]  ? perf_lock_task_context+0x106/0x310
-[  163.697333]  _raw_write_lock_irq+0xcf/0xe0
-[  163.697335]  ? __pfx__raw_write_lock_irq+0x10/0x10
-[  163.697339]  exit_notify+0x86/0x780
-[  163.697342]  ? __pfx_exit_notify+0x10/0x10
-[  163.697345]  ? exit_tasks_rcu_start+0x173/0x230
-[  163.697350]  do_exit+0x707/0xcb0
-[  163.697352]  ? __count_memcg_events+0xe1/0x340
-[  163.697357]  ? __pfx_do_exit+0x10/0x10
-[  163.697359]  ? _raw_spin_lock_irq+0x86/0xe0
-[  163.697361]  ? __pfx__raw_spin_lock_irq+0x10/0x10
-[  163.697364]  ? handle_mm_fault+0x150/0x740
-[  163.697368]  do_group_exit+0xac/0x230
-[  163.697371]  __x64_sys_exit_group+0x3e/0x50
-[  163.697374]  do_syscall_64+0x5f/0x170
-[  163.697377]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[  163.697381] RIP: 0033:0x7f35457aa349
-[  163.697384] Code: Unable to access opcode bytes at 0x7f35457aa31f.
-[  163.697385] RSP: 002b:00007ffce767e198 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-[  163.697388] RAX: ffffffffffffffda RBX: 00007f35458a49e0 RCX: 00007f35457aa349
-[  163.697390] RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-[  163.697392] RBP: 0000000000000000 R08: ffffffffffffff80 R09: 00007ffce767e0af
-[  163.697394] R10: 00007ffce767e010 R11: 0000000000000246 R12: 00007f35458a49e0
-[  163.697395] R13: 00007f35458aa2e0 R14: 0000000000000001 R15: 00007f35458aa2c8
-[  163.697399]  </TASK>
-<snip>
 
-i see that CPU_17 does not respond waiting in the do_exit() trying to grab
-a writing lock. Below one:
+Tested on:
 
-<snip>
-static void exit_notify(struct task_struct *tsk, int group_dead)
-{
-	bool autoreap;
-	struct task_struct *p, *n;
-	LIST_HEAD(dead);
+commit:         4d145e3f Merge tag 'i2c-for-6.10-rc8' of git://git.ker..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/li=
+nux.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D6b5a15443200e31
+dashboard link: https://syzkaller.appspot.com/bug?extid=3Dec4b7d82bb051330f=
+15a
+compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GN=
+U Binutils for Debian) 2.40
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D15d65ab59800=
+00
 
-	write_lock_irq(&tasklist_lock);
-...
-<snip>
-
-As i see it disables interrupts and tries to acquire the rw-lock. In
-order to debug this further i built the kernel with CONFIG_LOCK_STAT
-to see the contention and waiting time on it:
-
-echo 0 > /proc/lock_stat; echo 1 > /proc/sys/kernel/lock_stat; make -C coding/linux.git/ -j256 bzImage > /dev/null; echo 0 > /proc/sys/kernel/lock_stat;
-
-<snip>
-...
-class name    con-bounces    contentions   waittime-min   waittime-max waittime-total   waittime-avg    acq-bounces   acquisitions   holdtime-min   holdtime-max holdtime-total   holdtime-avg
-...
-tasklist_lock-W:         56291          56830           0.23     3352084.59  3191025005.50       56150.36          86555         110489           0.60       65916.78    50226089.66         454.58
-tasklist_lock-R:         40925          40987           0.23     3450788.93  2149685495.54       52447.98          73248          88581           0.09       32061.59      237549.19           2.68
-     ---------------
-     tasklist_lock          21879          [<000000004337def3>] exit_notify+0x86/0x790
-     tasklist_lock          40987          [<000000008c6daba0>] __do_wait+0xdc/0x700
-     tasklist_lock          17632          [<00000000c86b4505>] release_task+0x106/0x470
-     tasklist_lock          17319          [<000000004c9a1afc>] copy_process+0x2a1b/0x4b00
-     ---------------
-     tasklist_lock          73231          [<000000004337def3>] exit_notify+0x86/0x790
-     tasklist_lock          15082          [<00000000c86b4505>] release_task+0x106/0x470
-     tasklist_lock           4233          [<000000004c9a1afc>] copy_process+0x2a1b/0x4b00
-     tasklist_lock           5271          [<000000008c6daba0>] __do_wait+0xdc/0x700
-...
-<snip>
-
-A waiting time can be quite long on a kernel built with KASAN. If i
-interpret it correctly, the time is in microseconds, so we have 3.3
-seconds as a maximum waiting time on the "tasklist_lock.
-
-Since it disables interrupts on a current CPU, do_kernel_range_flush()
-on that CPU is delayed thus it delays kworker which does TLB flushing.
-
-Could you please comment on it? Maybe you can give some good input about
-long wait on the tasklist_lock(it disables IRQs also) when KASAN is enabled.
-
-Is that something which is expectable for debug kernel?
-
-Thank you in advance!
-
---
-Uladzislau Rezki
 
