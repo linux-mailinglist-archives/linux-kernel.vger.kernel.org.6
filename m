@@ -1,189 +1,138 @@
-Return-Path: <linux-kernel+bounces-257435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F12E9379FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:38:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 406CB9379F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02C44B21F93
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:38:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7D4D281C88
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA351145B01;
-	Fri, 19 Jul 2024 15:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FDE1459FE;
+	Fri, 19 Jul 2024 15:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DlreXkvj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="omhslDwU"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6FD71459EA;
-	Fri, 19 Jul 2024 15:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C865C8E0
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 15:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721403480; cv=none; b=NushCDfDpwr/UqawLpkzd5HLBhg48rf1iRMpamI9MIwPQg6zoo1WhnJM0YxhTSpPKGqo3Hu0zZSIf9/vIo0fSx+wPgsLVJS9vNJhSD+Sbc5uWnQBmrnomRdpjrmESUKbvqnVuYdHzYe1dZ/49ZoDXJXJMz6yxWquXAdxV2KQ6gs=
+	t=1721403372; cv=none; b=k3WDSVTkjq1qifjtr68zY36+WLPF2okyYHeUsU2B7rIgfVUbYyMYGpquXnwM0gGqXMfRoQeLd6rfxpUEp5xuTCjQsqzaU1zPTHfHCSficd8ARqtIPm4sFrItCw0zaYiWnnU+ZLN97D4eslEqGSFcwIRkOfiId+S01M1dQYZLje8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721403480; c=relaxed/simple;
-	bh=tVgNxMmAQWvU1FxBOgdFor7NMUPhhxY2uJhGjcWiisk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oaqb61O4FiRH9IDNjHTi+k1+8KLFe4d/u6aFzUTigNk9vG2vYV73fluWnNq4NwWs6wo6Ms7WdfC5grAjyYgK1WBO7Jw9QAegX7C10Rd9YousA4RSTZLKOhw3FohmpeALkeD6D18LiGeOHr/7xTh/brPTxdh4XasjwuhJ9Ae+v64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DlreXkvj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A13C5C32782;
-	Fri, 19 Jul 2024 15:37:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721403479;
-	bh=tVgNxMmAQWvU1FxBOgdFor7NMUPhhxY2uJhGjcWiisk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DlreXkvjsjdzHII3wrHEJX7xIvJtPh9sNl+PiEO4zziJHXT5L7qnqPt0W8Df87Z3f
-	 68krH52A7kA5g1aa2XJv0roBndIEDg+cY8XsA+iWOIUm0CIjdZSUm1/AIR5wTZqSFF
-	 ZPu7x311PvUpqpHwS7LKafCeg27rQek1LBnjCMCamVxdVjcv8NtScBCUdOQzaiCEoR
-	 BqTsYabPbb92QT7cEQlh1F4nxwrHD6TrQWmcHk+zGXys8vhSWoRgXRyJExhg3qYStE
-	 9kFSfb2sX7fKVVh0sACIwo3xjKCXDs62FfEmcrj+oNSNOGhNW1e1gj4yvau1AjZlG4
-	 IOqx+qPRg9jcQ==
-Date: Fri, 19 Jul 2024 18:34:54 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vasily Gorbik <gor@linux.ibm.com>, Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
-	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
-	nvdimm@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-Subject: Re: [PATCH 05/17] arch, mm: pull out allocation of NODE_DATA to
- generic code
-Message-ID: <ZpqHniqaMxj-iDfw@kernel.org>
-References: <20240716111346.3676969-1-rppt@kernel.org>
- <20240716111346.3676969-6-rppt@kernel.org>
- <220da8ed-337a-4b1e-badf-2bff1d36e6c3@redhat.com>
- <Zpi-HAb7EBxrZBtK@kernel.org>
- <96850252-a49f-4d78-a94b-a9a25e3f2bd5@redhat.com>
+	s=arc-20240116; t=1721403372; c=relaxed/simple;
+	bh=2/0klvuVGtgDS9abJE4lmmD+PAfbpXL+FKyhH3c98Sg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=g8we3o0pdulqRWq9gJF5zvRkSOE6E/vxB6pyjQHiLtG1KxmZiWBti/Ca+5+i8iD2SHCEgGADEZay3n2zG056liZWhrnkrTmOYK3sHOecXjonXTOu+kLacbns1whSb8b/p6ZWvNyqDFy6pAJzHt6gDvbQuyxpbVMMMoU5RZfNBKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=omhslDwU; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4494d41090bso8333911cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 08:36:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1721403369; x=1722008169; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2/0klvuVGtgDS9abJE4lmmD+PAfbpXL+FKyhH3c98Sg=;
+        b=omhslDwUMpBEgOcZln436AtMrxjNgnRVLBtVC77F5XRBCoWutgcMBXu4MVDEOuFAaK
+         NZjy1pI5B5FVJ0BE/EjCPJBFOYtfUFdtyQRiayp4vwgGnYa4qeulYRisDY5P425gGxKD
+         e9WkKxawcpOPT0wvCCAPf/FlSSKIOMLr4t88SplPsarvEieSY4eQSNfdHswW+ft+rjEM
+         4vJVIhftR5VPBEsff7Mn0OveHn78Wq8seeO7DcAxgmUXj5kmCExwEPDwR67wK+2CpeyC
+         IHjNCFzvO7vp8sArDNyiMx6WALfxp+dmD3YY32HMIrLOBNuDk+MAC+uQt22Vd8S8xzZ1
+         vsKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721403369; x=1722008169;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2/0klvuVGtgDS9abJE4lmmD+PAfbpXL+FKyhH3c98Sg=;
+        b=LUMg6AB9zhbNYfdEh3rVUsR/kpm7Ih9Q+QvC86H14u5rfpb1TVQH+qpD6TnS6VeZGL
+         xmx2waSt6f87s/H/oVlxl49ykbvcMaI/0YNCi5MlE2a1Svw75JARNA8rNcr265BiFEn0
+         +8LZJ+fU0MNC8AwpOKLd0eaZQdx5xvZgkTJBd2crcaevA+yYlkUHXDJClKJ+Nl+TFK7/
+         QcPmR2RVs3YyY7isjD9HSDnDqpV3fI4XRryxGsbR1Ag/RAg7NcVBHPXqHv/ru8AEXUgg
+         uOJPtGT1NwMmD6BOdUohyRU8Esd5rfOf/SjSHM7P649n/s6vSSoFc0rGJ+52JXyRhOgH
+         vZBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUE9+CITMadmi8GI0kF0TUQ/TB48ujgY13HV0hBoafx2bKy2dmXcsCpsql93Zd3V8WzOuS8KAp1D9StRSWsD9IyGe1PVfrgAXyDzKr9
+X-Gm-Message-State: AOJu0Ywfg+ess3cMUFaIfOkEjPXrFxvoC/jih9cq08WA17jG0WTc7L3G
+	XPYdHlrE/rMHGGM638y5haJ+PQ3A1skv8w8cosKzn9ZGM/49Ix70Yav4ztplpUwgUEycg8W/ASA
+	D
+X-Google-Smtp-Source: AGHT+IHZp7BNDj9fxW/zyyX66aytU/LYHM1rzrFkUbWiel/Oy5IwtNqagwykSB1duU9OlITraqO8YQ==
+X-Received: by 2002:ac8:5d8b:0:b0:446:5d60:5cf3 with SMTP id d75a77b69052e-44fa52616d2mr2072161cf.6.1721403368697;
+        Fri, 19 Jul 2024 08:36:08 -0700 (PDT)
+Received: from nicolas-tpx395.lan ([2606:6d00:15:6720::7a9])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44f9cda3513sm8509791cf.66.2024.07.19.08.36.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 08:36:08 -0700 (PDT)
+Message-ID: <dc423e4144e1c9ea32f6adbaa8319e38f1443896.camel@ndufresne.ca>
+Subject: Re: [PATCH v4 0/2] Enumerate all pixels formats
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, Hans Verkuil
+ <hverkuil-cisco@xs4all.nl>, mchehab@kernel.org,
+ ezequiel@vanguardiasur.com.ar
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, kernel@collabora.com
+Date: Fri, 19 Jul 2024 11:36:07 -0400
+In-Reply-To: <2eec786d-f2b6-4445-87f4-4b6d162a2d9a@collabora.com>
+References: <20240717131430.159727-1-benjamin.gaignard@collabora.com>
+	 <07f62fbb-d1eb-41c3-86a8-13a082a8374f@xs4all.nl>
+	 <743e2589-c0df-461d-97d4-fafe78c334ea@collabora.com>
+	 <98f5cd5c-cb9c-45ca-a7c7-a546f525c393@xs4all.nl>
+	 <2eec786d-f2b6-4445-87f4-4b6d162a2d9a@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <96850252-a49f-4d78-a94b-a9a25e3f2bd5@redhat.com>
 
-On Fri, Jul 19, 2024 at 05:07:35PM +0200, David Hildenbrand wrote:
-> > > > -	 * Allocate node data.  Try node-local memory and then any node.
-> > > > -	 * Never allocate in DMA zone.
-> > > > -	 */
-> > > > -	nd_pa = memblock_phys_alloc_try_nid(nd_size, SMP_CACHE_BYTES, nid);
-> > > > -	if (!nd_pa) {
-> > > > -		pr_err("Cannot find %zu bytes in any node (initial node: %d)\n",
-> > > > -		       nd_size, nid);
-> > > > -		return;
-> > > > -	}
-> > > > -	nd = __va(nd_pa);
-> > > > -
-> > > > -	/* report and initialize */
-> > > > -	printk(KERN_INFO "NODE_DATA(%d) allocated [mem %#010Lx-%#010Lx]\n", nid,
-> > > > -	       nd_pa, nd_pa + nd_size - 1);
-> > > > -	tnid = early_pfn_to_nid(nd_pa >> PAGE_SHIFT);
-> > > > -	if (tnid != nid)
-> > > > -		printk(KERN_INFO "    NODE_DATA(%d) on node %d\n", nid, tnid);
-> > > > -
-> > > > -	node_data[nid] = nd;
-> > > > -	memset(NODE_DATA(nid), 0, sizeof(pg_data_t));
-> > > > -
-> > > > -	node_set_online(nid);
-> > > > -}
-> > > > -
-> > > >    /**
-> > > >     * numa_cleanup_meminfo - Cleanup a numa_meminfo
-> > > >     * @mi: numa_meminfo to clean up
-> > > > @@ -571,6 +538,7 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
-> > > >    			continue;
-> > > >    		alloc_node_data(nid);
-> > > > +		node_set_online(nid);
-> > > >    	}
-> > > 
-> > > I can spot that we only remove a single node_set_online() call from x86.
-> > > 
-> > > What about all the other architectures? Will there be any change in behavior
-> > > for them? Or do we simply set the nodes online later once more?
-> > 
-> > On x86 node_set_online() was a part of alloc_node_data() and I moved it
-> > outside so it's called right after alloc_node_data(). On other
-> > architectures the allocation didn't include that call, so there should be
-> > no difference there.
-> 
-> But won't their arch code try setting the nodes online at a later stage?
-> 
-> And I think, some architectures only set nodes online conditionally
-> (see most other node_set_online() calls).
-> 
-> Sorry if I'm confused here, but with now unconditional node_set_online(), won't
-> we change the behavior of other architectures?
+Hi,
 
-The generic alloc_node_data() does not set the node online:
+Le vendredi 19 juillet 2024 =C3=A0 15:47 +0200, Benjamin Gaignard a =C3=A9c=
+rit=C2=A0:
+> > What exactly is the problem you want to solve? A real-life problem, not=
+ a theoretical
+> > one :-)
+>=20
+> On real-life: on a board with 2 different stateless decoders being able t=
+o detect the
+> one which can decode 10 bits bitstreams without testing all codec-depende=
+nt controls.
 
-+/* Allocate NODE_DATA for a node on the local memory */
-+void __init alloc_node_data(int nid)
-+{
-+	const size_t nd_size = roundup(sizeof(pg_data_t), PAGE_SIZE);
-+	u64 nd_pa;
-+	void *nd;
-+	int tnid;
-+
-+	/* Allocate node data.  Try node-local memory and then any node. */
-+	nd_pa = memblock_phys_alloc_try_nid(nd_size, SMP_CACHE_BYTES, nid);
-+	if (!nd_pa)
-+		panic("Cannot allocate %zu bytes for node %d data\n",
-+		      nd_size, nid);
-+	nd = __va(nd_pa);
-+
-+	/* report and initialize */
-+	pr_info("NODE_DATA(%d) allocated [mem %#010Lx-%#010Lx]\n", nid,
-+		nd_pa, nd_pa + nd_size - 1);
-+	tnid = early_pfn_to_nid(nd_pa >> PAGE_SHIFT);
-+	if (tnid != nid)
-+		pr_info("    NODE_DATA(%d) on node %d\n", nid, tnid);
-+
-+	node_data[nid] = nd;
-+	memset(NODE_DATA(nid), 0, sizeof(pg_data_t));
-+}
+That leans toward giving an answer for the selected bitstream format though=
+,
+since the same driver may do 10bit HEVC without 10bit AV1.
 
-I might have missed some architecture except x86 that calls
-node_set_online() in its alloc_node_data(), but the intention was to leave
-that call outside the alloc and explicitly add it after the call to
-alloc_node_data() if needed like in x86.
+For the use case, both Chromium and GStreamer have a need to categorized
+decoders so that we avoid trying to use decoder that can't do that task. Mo=
+re
+platforms are getting multiple decoders, and we also need to take into acco=
+unt
+the available software decoders.
 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
-> 
+Just looking at the codec specific profile is insufficient since we need tw=
+o
+conditions to be met.
 
--- 
-Sincerely yours,
-Mike.
+1. The driver must support 10bit for the specific CODEC (for most codec thi=
+s is
+profile visible)
+2. The produced 10bit color format must be supported by userspace
+
+In today's implementation, in order to test this, we'd need to simulate a 1=
+0bit
+header control, so that when enumerating the formats we get a list of 10bit
+(optionally 8bit too, since some decoder can downscale colors) and finally
+verify that these pixel formats are know by userspace. This is not impossib=
+le,
+but very tedious, this proposal we to try and make this easier.
+
+Nicolas
+
 
