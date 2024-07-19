@@ -1,182 +1,209 @@
-Return-Path: <linux-kernel+bounces-257480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A046A937A9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:17:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E736D937AA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:17:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EFF828702B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:17:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 578D4B23C22
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0420D22331;
-	Fri, 19 Jul 2024 16:17:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19C913F435;
+	Fri, 19 Jul 2024 16:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QPTR0q5j"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RArnkbmf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B5E320E
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 16:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33B3210FF;
+	Fri, 19 Jul 2024 16:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721405828; cv=none; b=gEdqgu9U9g3zG74Ji9ZdA9jjT/+7RjZC9QiPoqnR/gpZXUv+f5NZ7pkAV1bqFkWp21s/7reehOmMXbwCCpiLQTtqkj74R8ThqNZybNFJmVCaVJfpB8OG0lyiztWAYWcL8XFDYqZOCA3TYpF/q1xMVqhDtXfFTyTbJs1ClMquRMY=
+	t=1721405845; cv=none; b=ZWOpMT/udWDOdFnSBmnEVDxe1BKXXhVPk1TUvnNdwYXYgfsGZjIpxIXs0zEXjPWbrrlqe8Q0cF0V1SU2BtADAboNgxJWxAbhvdslD+cIZtRMokt6As1Hn1O6EIrQnw7nPcUQBA4OCDOTjyZ63E3VMR/IQz4XFsppkA0OSgklwvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721405828; c=relaxed/simple;
-	bh=1Jmu67DY2F2hGF9iW1AGo0oLPdevPTotRKVSLBLe1ho=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jDUrcPsheCQReTGrbTjDty0ahgilETJXg+zJQyVTcQRAVj44RvEkjUiGDEhqmSxLH+k0Cjwu1t9wUp8mEszWG2N79cR3KfCA+HMJ1Cv7N1Zg76m5YbGWS7fyrSIqplbT9iXi4YKa3oYokrLwbugS9rgti4sxe2btbVfNP/dOrLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QPTR0q5j; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721405825;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Eph9CwJzf57SdOVK0HqdNZSnk/6hGcQvao+JBlcdGXM=;
-	b=QPTR0q5j1e/yBsZWv6ssO/6KPoc6IoZw/OgyNa08RFjiPCMsSrTxrmShsNXF3pLdh3uroe
-	hdRzj6Dfidz5fFJ9aEOgCcVtwB+AdZ8O79Oxn/tjMq1NP/TRQqG3gRVTJTn6/KpHqeZZyf
-	cOxG8Vkcg0Lo/addY3oGeYPcVPRzAj4=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-509-kBaylKSJPHmViWPsQ0haQA-1; Fri,
- 19 Jul 2024 12:17:02 -0400
-X-MC-Unique: kBaylKSJPHmViWPsQ0haQA-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 551B6196E09C;
-	Fri, 19 Jul 2024 16:16:56 +0000 (UTC)
-Received: from gerbillo.redhat.com (unknown [10.45.224.105])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3ED761955F65;
-	Fri, 19 Jul 2024 16:16:53 +0000 (UTC)
-From: Paolo Abeni <pabeni@redhat.com>
-To: torvalds@linux-foundation.org
-Cc: kuba@kernel.org,
-	davem@davemloft.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Networking for v6.11-rc0
-Date: Fri, 19 Jul 2024 18:16:38 +0200
-Message-ID: <20240719161638.138354-1-pabeni@redhat.com>
+	s=arc-20240116; t=1721405845; c=relaxed/simple;
+	bh=FBGPPW5pTaEP4QF7BB5oWnaKdqn9hVpVZ+c6VKNI7zI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZsGzXvNYxmuDvVzdmRiFKiv1JEHu/spwvmsHd8KE5YJ0ygr3PgPtfNLDRPljkKHC/1+TGDUg6qT+bLIAO2UmT9bmQBdvCL98u0TtB7PsFOpYsZfotpXI7UvTxKccHCPClHijsQ/FKtptQEz3ox/ERoj4ReU1R0gCHNFSvaUxrIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RArnkbmf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A5ADC32782;
+	Fri, 19 Jul 2024 16:17:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721405845;
+	bh=FBGPPW5pTaEP4QF7BB5oWnaKdqn9hVpVZ+c6VKNI7zI=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=RArnkbmfZWwFcYPsciTc3fmZqXvpE207P11ONVJD0RkU1xtUDLqpQ4zHsdT7FpFqe
+	 G0JFctY6qbb4+uYm/hCWDG9MyvG2eeEzPtenrnSnxOOFUeUgZN6e0g1U+hH7hoQcwg
+	 +76Lo45Bgzr3LDnfj+ai3CVDIj1sxxv7ouajOVcCrLwU8RNGoXaR0HTFseYr0hdCZt
+	 Ab5/+WP/M/4DIr9Gb1GKeJSGYOXFejvQ35Tbr0jBuCT8YUjEzWakaSZN3rckelc+ND
+	 n6it7nujfGpVGprLWCZbBCTrsYDyjxGTQ/CKzjJhTEdMzEJvQYXFQuyXKKUJNrYvcH
+	 qjt/iW/TRBmpg==
+Message-ID: <fa9bb6d5-7a72-4d77-8862-d8489a759506@kernel.org>
+Date: Fri, 19 Jul 2024 17:17:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Quentin Monnet <qmo@kernel.org>
+Subject: Re: [v2 PATCH bpf-next 2/4] bpftool: add net attach/detach command to
+ tcx prog
+To: Tao Chen <chen.dylane@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>
+Cc: Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240717174749.1511366-1-chen.dylane@gmail.com>
+Content-Language: en-GB
+In-Reply-To: <20240717174749.1511366-1-chen.dylane@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: 7bit
 
-Hi Linus!
+On 17/07/2024 18:47, Tao Chen wrote:
+> Now, attach/detach tcx prog supported in libbpf, so we can add new
+> command 'bpftool attach/detach tcx' to attach tcx prog with bpftool
+> for user.
+> 
+>  # bpftool prog load tc_prog.bpf.o /sys/fs/bpf/tc_prog
+>  # bpftool prog show
+> 	...
+> 	192: sched_cls  name tc_prog  tag 187aeb611ad00cfc  gpl
+> 	loaded_at 2024-07-11T15:58:16+0800  uid 0
+> 	xlated 152B  jited 97B  memlock 4096B  map_ids 100,99,97
+> 	btf_id 260
+>  # bpftool net attach tcx_ingress name tc_prog dev lo
+>  # bpftool net
+> 	...
+> 	tc:
+> 	lo(1) tcx/ingress tc_prog prog_id 29
+> 
+>  # bpftool net detach tcx_ingress dev lo
+>  # bpftool net
+> 	...
+> 	tc:
+>  # bpftool net attach tcx_ingress name tc_prog dev lo
+>  # bpftool net
+> 	tc:
+> 	lo(1) tcx/ingress tc_prog prog_id 29
+> 
+> Test environment: ubuntu_22_04, 6.7.0-060700-generic
+> 
+> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+> ---
+>  tools/bpf/bpftool/net.c | 43 ++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 42 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/bpf/bpftool/net.c b/tools/bpf/bpftool/net.c
+> index 1b9f4225b394..60b0af40109a 100644
+> --- a/tools/bpf/bpftool/net.c
+> +++ b/tools/bpf/bpftool/net.c
+> @@ -67,6 +67,8 @@ enum net_attach_type {
+>  	NET_ATTACH_TYPE_XDP_GENERIC,
+>  	NET_ATTACH_TYPE_XDP_DRIVER,
+>  	NET_ATTACH_TYPE_XDP_OFFLOAD,
+> +	NET_ATTACH_TYPE_TCX_INGRESS,
+> +	NET_ATTACH_TYPE_TCX_EGRESS,
+>  };
+>  
+>  static const char * const attach_type_strings[] = {
+> @@ -74,6 +76,8 @@ static const char * const attach_type_strings[] = {
+>  	[NET_ATTACH_TYPE_XDP_GENERIC]	= "xdpgeneric",
+>  	[NET_ATTACH_TYPE_XDP_DRIVER]	= "xdpdrv",
+>  	[NET_ATTACH_TYPE_XDP_OFFLOAD]	= "xdpoffload",
+> +	[NET_ATTACH_TYPE_TCX_INGRESS]	= "tcx_ingress",
+> +	[NET_ATTACH_TYPE_TCX_EGRESS]	= "tcx_egress",
+>  };
+>  
+>  static const char * const attach_loc_strings[] = {
+> @@ -647,6 +651,32 @@ static int do_attach_detach_xdp(int progfd, enum net_attach_type attach_type,
+>  	return bpf_xdp_attach(ifindex, progfd, flags, NULL);
+>  }
+>  
+> +static int get_tcx_type(enum net_attach_type attach_type)
+> +{
+> +	switch (attach_type) {
+> +	case NET_ATTACH_TYPE_TCX_INGRESS:
+> +		return BPF_TCX_INGRESS;
+> +	case NET_ATTACH_TYPE_TCX_EGRESS:
+> +		return BPF_TCX_EGRESS;
+> +	default:
+> +		return __MAX_BPF_ATTACH_TYPE;
 
-Small PR, mainly to unbreak the s390 build. We delayed it a little
-bit to try to catch a last-minute fix, but it will have to wait a
-bit more.
 
-The following changes since commit 51835949dda3783d4639cfa74ce13a3c9829de00:
+Can we return -1 here instead, please? In the current code, we validate
+the attach_type before entering this function and the "default" case is
+never reached, it's only here to discard compiler's warning. But if we
+ever reuse this function elsewhere, this could cause bugs: if the header
+file used for compiling the bpftool binary is not in sync with the
+header corresponding to the running kernel, __MAX_BPF_ATTACH_TYPE could
+correspond to a newly introduced type, and bpftool/libbpf would try to
+use that to attach the program, instead of detecting an error.
 
-  Merge tag 'net-next-6.11' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next (2024-07-16 19:28:34 -0700)
 
-are available in the Git repository at:
+> +	}
+> +}
+> +
+> +static int do_attach_tcx(int progfd, enum net_attach_type attach_type, int ifindex)
+> +{
+> +	int type = get_tcx_type(attach_type);
+> +
+> +	return bpf_prog_attach(progfd, ifindex, type, 0);
+> +}
+> +
+> +static int do_detach_tcx(int targetfd, enum net_attach_type attach_type)
+> +{
+> +	int type = get_tcx_type(attach_type);
+> +
+> +	return bpf_prog_detach(targetfd, type);
+> +}
+> +
+>  static int do_attach(int argc, char **argv)
+>  {
+>  	enum net_attach_type attach_type;
+> @@ -692,6 +722,11 @@ static int do_attach(int argc, char **argv)
+>  	case NET_ATTACH_TYPE_XDP_OFFLOAD:
+>  		err = do_attach_detach_xdp(progfd, attach_type, ifindex, overwrite);
+>  		break;
+> +	/* attach tcx prog */
+> +	case NET_ATTACH_TYPE_TCX_INGRESS:
+> +	case NET_ATTACH_TYPE_TCX_EGRESS:
+> +		err = do_attach_tcx(progfd, attach_type, ifindex);
+> +		break;
+>  	default:
+>  		break;
+>  	}
+> @@ -738,6 +773,11 @@ static int do_detach(int argc, char **argv)
+>  		progfd = -1;
+>  		err = do_attach_detach_xdp(progfd, attach_type, ifindex, NULL);
+>  		break;
+> +	/* detach tcx prog */
+> +	case NET_ATTACH_TYPE_TCX_INGRESS:
+> +	case NET_ATTACH_TYPE_TCX_EGRESS:
+> +		err = do_detach_tcx(ifindex, attach_type);
+> +		break;
+>  	default:
+>  		break;
+>  	}
+> @@ -944,7 +984,8 @@ static int do_help(int argc, char **argv)
+>  		"       %1$s %2$s help\n"
+>  		"\n"
+>  		"       " HELP_SPEC_PROGRAM "\n"
+> -		"       ATTACH_TYPE := { xdp | xdpgeneric | xdpdrv | xdpoffload }\n"
+> +		"       ATTACH_TYPE := { xdp | xdpgeneric | xdpdrv | xdpoffload | tcx_ingress\n"
+> +		"			 | tcx_egress }\n"
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.11-rc0
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+This indent space between the quote and the pipe needs to be spaces
+instead of three tabs, please.
 
-for you to fetch changes up to 4359836129d931fc424370249a1fcdec139fe407:
+The rest of the patches looks good, thank you!
 
-  eth: fbnic: don't build the driver when skb has more than 21 frags (2024-07-19 16:36:34 +0200)
-
-----------------------------------------------------------------
-Notably this includes fixes for a s390 build breakage.
-
-Including fixes from netfilter.
-
-Current release - new code bugs:
-
-  - eth: fbnic: fix s390 build.
-
-  - eth: airoha: fix NULL pointer dereference in airoha_qdma_cleanup_rx_queue()
-
-Previous releases - regressions:
-
-  - flow_dissector: use DEBUG_NET_WARN_ON_ONCE
-
-  - ipv4: fix incorrect TOS in route get reply
-
-  - dsa: fix chip-wide frame size config in some drivers
-
-Previous releases - always broken:
-
-  - netfilter: nf_set_pipapo: fix initial map fill
-
-  - eth: gve: fix XDP TX completion handling when counters overflow
-
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-
-----------------------------------------------------------------
-Chen Hanxiao (1):
-      ipvs: properly dereference pe in ip_vs_add_service
-
-Florian Westphal (2):
-      netfilter: nf_set_pipapo: fix initial map fill
-      selftests: netfilter: add test case for recent mismatch bug
-
-Ido Schimmel (2):
-      ipv4: Fix incorrect TOS in route get reply
-      ipv4: Fix incorrect TOS in fibmatch route get reply
-
-Jack Wu (1):
-      net: wwan: t7xx: add support for Dell DW5933e
-
-Jakub Kicinski (1):
-      eth: fbnic: don't build the driver when skb has more than 21 frags
-
-Joshua Washington (1):
-      gve: Fix XDP TX completion handling when counters overflow
-
-Lorenzo Bianconi (2):
-      net: airoha: fix error branch in airoha_dev_xmit and airoha_set_gdm_ports
-      net: airoha: Fix NULL pointer dereference in airoha_qdma_cleanup_rx_queue()
-
-Martin Willi (2):
-      net: dsa: mv88e6xxx: Limit chip-wide frame size config to CPU ports
-      net: dsa: b53: Limit chip-wide jumbo frame config to CPU ports
-
-Pablo Neira Ayuso (2):
-      netfilter: ctnetlink: use helper function to calculate expect ID
-      net: flow_dissector: use DEBUG_NET_WARN_ON_ONCE
-
-Paolo Abeni (4):
-      eth: fbnic: fix s390 build.
-      Merge branch 'ipv4-fix-incorrect-tos-in-route-get-reply'
-      Merge branch 'net-dsa-fix-chip-wide-frame-size-config-in-some-drivers'
-      Merge tag 'nf-24-07-17' of git://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf
-
-Shay Drory (1):
-      driver core: auxiliary bus: Fix documentation of auxiliary_device
-
- drivers/net/dsa/b53/b53_common.c                   |  3 +
- drivers/net/dsa/mv88e6xxx/chip.c                   |  3 +-
- drivers/net/ethernet/google/gve/gve_tx.c           |  5 +-
- drivers/net/ethernet/mediatek/airoha_eth.c         | 13 ++--
- drivers/net/ethernet/meta/Kconfig                  |  2 +
- drivers/net/wwan/t7xx/t7xx_pci.c                   |  1 +
- include/linux/auxiliary_bus.h                      |  7 +-
- include/net/ip_fib.h                               |  1 +
- net/core/flow_dissector.c                          |  2 +-
- net/ipv4/fib_trie.c                                |  1 +
- net/ipv4/route.c                                   | 16 ++---
- net/netfilter/ipvs/ip_vs_ctl.c                     | 10 +--
- net/netfilter/nf_conntrack_netlink.c               |  3 +-
- net/netfilter/nft_set_pipapo.c                     |  4 +-
- net/netfilter/nft_set_pipapo.h                     | 21 ++++++
- net/netfilter/nft_set_pipapo_avx2.c                | 10 +--
- tools/testing/selftests/net/fib_tests.sh           | 24 +++----
- .../selftests/net/netfilter/nft_concat_range.sh    | 76 +++++++++++++++++++++-
- 18 files changed, 156 insertions(+), 46 deletions(-)
+Quentin
 
 
