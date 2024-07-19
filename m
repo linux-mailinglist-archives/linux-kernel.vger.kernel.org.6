@@ -1,344 +1,472 @@
-Return-Path: <linux-kernel+bounces-257216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C309376CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:49:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55AAF9376CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70CFF282B81
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:49:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4A42B21800
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED4C84A32;
-	Fri, 19 Jul 2024 10:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3484984A46;
+	Fri, 19 Jul 2024 10:51:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JqxaiNVi"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Z3HBXcph";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iDmpZHFk"
+Received: from flow4-smtp.messagingengine.com (flow4-smtp.messagingengine.com [103.168.172.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE9E7CF18
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 10:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F9777107;
+	Fri, 19 Jul 2024 10:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721386162; cv=none; b=iaAdUxmkqt7Ey75oq2KUrtVPGUVYNPuUNuBnSkcOPZjctUiSo4h5PnlW7KZcoLjWpd3UyRwR7NQOSPm4J8Zb9/tkeUaKD6P6QTMJOvTQ3vNfBFMsAP6vQoSFKY+8yHNQq09Gko3UfH4Up+L6uXpCgbK3PoWP9eJ3Ne50zKbYX/U=
+	t=1721386308; cv=none; b=plbq9FJWxRnc/vjhWT46y+H0a/59iiiqCWd5TZKODIj1PV+x4rNkbLMeDmUa76z2HGMvsUK9NfIcMYT10/DGgLbD4BDlJRdv/QTW1/FlRDyz+QGRT7wtQflAX/Mw2vLtfuXAXWLSArDjqDLntj46A7IUoLPpxXQbYdsggTZ9u6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721386162; c=relaxed/simple;
-	bh=63/UiEcrKRTGvbeha8Yi9JnSS+2P44c9xvzt2bmeEi8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=L9H3egunrMW2dsYX4BgiTeBVSivLiuVNc06FJV4oskZieBVilceNTytTPdfd67ToJDquC3Qn5P4HcVoRUet1b4gZpuM5H3O+wtjl16rJWUqcsIOHe3Bmz6TyOMsvZNNvbPXbcoZGcvsOZZnVJNiA8zWDcNWbggWdxxYkypOFVIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JqxaiNVi; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42797bcfc77so11664205e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 03:49:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721386159; x=1721990959; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=MR1nNJwEx0Ncv0OjFeMZT+1maG8vE5Sihuegti2P7uo=;
-        b=JqxaiNViV5rdPiyXypniRMJGQRVtvmvA4C8DZ3yImgcTMhky0FXzSHCFueizyXyegq
-         ssd1UYOEK5jmYQ1s8wR0zJc99ay7g893dSWEKiarl4a1H5MsPDfVoVQtEA6wCawQmgHa
-         /ExGdyCqeRzzLIumzXB33sEC2lfVRiVAe2kQzTD5G1pOoEFAGIt/krTF73YeDYnM/Tmh
-         pFLjEPzWwUDu4dvNTwhXkJ3lAk9AWt79wPvhfuUArMHo23COnp9sJwHy6AZy2GH1lbKC
-         MW/7DwI3iqLfN3cehvdHPYBITImgmDF0KEWnaYDOEESVwqUKUXrqkfPwB+zvBEu1S/qI
-         /eFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721386159; x=1721990959;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MR1nNJwEx0Ncv0OjFeMZT+1maG8vE5Sihuegti2P7uo=;
-        b=BC+uxBjKz6g+qXenybyctamX6NB+L2eeK0bE3GFQi/M2eJRstfx0yu9UHtGGXm5lSS
-         B4oqRFvBUeOfNMLL0VpGak+3qoeI3ijTiiNz0twnhXoZF8Wyq14v8nQV0KgSDRsZ7Uqq
-         K4SZdU86PUQfzMnY3Uv/a1u5BvrcLLbhwOhedfmSfo4dkkoIbK61YPUHsMlwk6+SzcmY
-         Z6GwT1x1Ce74SHnqY52z5a4gRlvV3Uz5U+PNuJae1212BpKYwgDpog2efbTx6v3lpdcl
-         IfSOfcEm8XK3x3BanuzGSZVmR1siBZ+h1Co3josHq9XNh0Czrb744Fb2xXx+lSXKgfML
-         p/6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUel/vCr88jqOdAqEEXeet8D3tlG+ngaefkCF7T/wj82aZiB65OJs+3xwTqUIb/A/+0lX2M0i7mD8axTqejNA/oyWmy8nkdW61QSswt
-X-Gm-Message-State: AOJu0YyUiGcN/H7GF4O4qEJqW0xoyBOGoFtCRM43ZUhjuKEWevo3ap9w
-	dOh/+wg9c0Yu85A2VWDRBlSeixHGjmrRD1FmW1CXBXjS+iqMvE62xza19IFpo8s=
-X-Google-Smtp-Source: AGHT+IGSqGYMg1gMwCDpi4ynTGwlmP5ZaQazBLsPaVqrVPIrE/EA+mkS/S9m12GX65ty/Yq4oVn5LA==
-X-Received: by 2002:a05:600c:3556:b0:426:59ad:bbb3 with SMTP id 5b1f17b1804b1-427c2d42a0amr55242215e9.32.1721386159024;
-        Fri, 19 Jul 2024 03:49:19 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d6901a35sm19693625e9.19.2024.07.19.03.49.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Jul 2024 03:49:18 -0700 (PDT)
-Message-ID: <26262a1f-de49-41de-85bf-0640c6cc6bd2@linaro.org>
-Date: Fri, 19 Jul 2024 11:49:17 +0100
+	s=arc-20240116; t=1721386308; c=relaxed/simple;
+	bh=UykTFXBXSeN2FHoxIZ5+bRknSsY4BwftZQIXhRBSmcs=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=pHZZM/hMaJq3vJj1wKwyo18DHserTKHd5FYtwEQpt68nsAAgaY8g2d2owJW1qSXdXeS90kNbqcVmXxzJ1NUhNrshhI8pfPJ7MSS3oQEV2XtP2kzhWvFXVtjnthbitcE2UGNwpZLtxydHJlBYSVbqBSmbNiwkjY8Rladpqt8Pz44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Z3HBXcph; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iDmpZHFk; arc=none smtp.client-ip=103.168.172.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailflow.nyi.internal (Postfix) with ESMTP id 742BC2000B7;
+	Fri, 19 Jul 2024 06:51:44 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Fri, 19 Jul 2024 06:51:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1721386304; x=1721393504; bh=snau8pjlrT
+	IlBYFHhAeSm3IIl4Zf9EVnI+lPjH52Fu8=; b=Z3HBXcphBEQWb//NJQ9l+W9ZKW
+	OBbnK3/+rwK9uI9pZK2nNHelXW9Z/bP/2wc4cgqUZITmr3BEbz/AiTo1oel3VMYZ
+	EhRdEg0y0lFwUP3JsjGiFJE9n1FY+3JZjsnar4Gq2DASAxHTxH0wFcZKlBvAWQOi
+	6JGlpMBAlUwNOEv3LRbM0Thg49CI3/scGsj9NYb+RfAhR4tzGo4hTt8yiNV9pYqg
+	/gVPs4jaKoWaWeFyj19MPUde/6cSqmN8BGA+ZDn/x8jS6uEhRRVfOOBpfvblySTX
+	1GG3dxs8IrT3y4ExPdf9JbR9lLhO4bZEXY/He9NFRUJT8mTM/QW9jJdL1mwg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1721386304; x=1721393504; bh=snau8pjlrTIlBYFHhAeSm3IIl4Zf
+	9EVnI+lPjH52Fu8=; b=iDmpZHFky5pw44gpAg4Nr9919985laOcKHe8ogNwz0Fd
+	s0QxxQN8D4T7pggLmcsFvB/cDQHc+6pkCu5jCEuxyo/PwfbLPLo5ld3x4hNwpi9f
+	DJaVjItVrdrDQOECI7xiE4uRYd8wAuW9+YN1XdptlRDHtjbda1A6qbiIZ6/EhIHC
+	e5CZ/eWUGmOpRXWdDHxN0iq7mNx/dytP2QbAZaRAp9sRzYcrMasBOkPGEBt+9z1o
+	gfDA9+kEZ5Ws1+1G621TWWnk5/NXKFBR65HudNcUFH7bYO4ahCDbLJJeEYELHqUK
+	U+A4Q2kIHoCMeEmDxHVMxqPdHP/lcqxCIYOCIByKwg==
+X-ME-Sender: <xms:PkWaZkUfMylc-zbGdOQK5o5U9dbqz1uSPC1Kt9DaWahtWKT2YSrcbA>
+    <xme:PkWaZolqbmoxSS4rWWa08il_02Fr9pXYSFc9A37FWdNUQsG_sum3kqEuB1JqB9xFM
+    6-BnbVoikKioTBby4c>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrhedugdeffecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeevhfffledtgeehfeffhfdtgedvheejtdfgkeeuvefgudffteettdekkeeufeeh
+    udenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:PkWaZobKZoAh34lEbgvtOaX5PBuGJaCUpADltnho3RXCI-M7t992Nw>
+    <xmx:PkWaZjULJDIp92lesbHoZeYSuI_5ii7kPw-pW_lZyrRKjssWI3Cl2A>
+    <xmx:PkWaZuknikK5YKCAOAmhIOFH4tkk3_YKlbZ5oSOzRHdlaABGT-h1jg>
+    <xmx:PkWaZofwYM6FaYpVY0p5h3VQ0qhBNYUJj-2qqkMVMolTlytnxvHKRg>
+    <xmx:QEWaZsuF_FJxQqbOfqieUqN9wrqpH8vTypvvs7J5CxPEbxs95fcjscV0>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 7A275B6008D; Fri, 19 Jul 2024 06:51:42 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/17] perf: cs-etm: Support version 0.1 of HW_ID
- packets
-From: James Clark <james.clark@linaro.org>
-To: Mike Leach <mike.leach@linaro.org>
-Cc: coresight@lists.linaro.org, suzuki.poulose@arm.com,
- gankulkarni@os.amperecomputing.com, leo.yan@linux.dev,
- anshuman.khandual@arm.com, James Clark <james.clark@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-perf-users@vger.kernel.org
-References: <20240712102029.3697965-1-james.clark@linaro.org>
- <20240712102029.3697965-7-james.clark@linaro.org>
- <CAJ9a7Vgz-rP6kGLLo2RR_qSZ3dhBT+=E8S=z1Hj6pfwOYu06Nw@mail.gmail.com>
- <ef5e7351-5f62-444a-b930-4dc2feb9f10d@linaro.org>
-Content-Language: en-US
-In-Reply-To: <ef5e7351-5f62-444a-b930-4dc2feb9f10d@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-Id: <bdac7f10-4c65-4be2-952b-aed1af04e2c9@app.fastmail.com>
+In-Reply-To: <2d168cf9-e456-4262-b276-95e992b8eac7@quicinc.com>
+References: <2d168cf9-e456-4262-b276-95e992b8eac7@quicinc.com>
+Date: Fri, 19 Jul 2024 12:51:21 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jeff Johnson" <quic_jjohnson@quicinc.com>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Cc: "Russell King" <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org,
+ "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+ linux-stm32@st-md-mailman.stormreply.com,
+ "Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Steven Rostedt" <rostedt@goodmis.org>,
+ "Masami Hiramatsu" <mhiramat@kernel.org>,
+ "Karol Herbst" <karolherbst@gmail.com>,
+ "Pekka Paalanen" <ppaalanen@gmail.com>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "Andy Lutomirski" <luto@kernel.org>, "Peter Zijlstra" <peterz@infradead.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Maxime Coquelin" <mcoquelin.stm32@gmail.com>,
+ "Alexandre Torgue" <alexandre.torgue@foss.st.com>
+Subject: Re: MODULE_DESCRIPTION() patches with no maintainer action
+Content-Type: text/plain
 
+On Sun, Jul 14, 2024, at 23:46, Jeff Johnson wrote:
+> Andrew & Greg,
+>
+> I hate to bother you with such mundane patches, but the following have been
+> posted for a while without any maintainer or reviewer comment or action, and
+> they have not yet landed in linux-next.
+>
+> What is the path forward to have these MODULE_DESCRIPTION() warnings fixed?
+>
+> arch/arm/probes/kprobes/
+> https://lore.kernel.org/all/20240622-md-arm-arch-arm-probes-kprobes-v1-1-0832bd6e45db@quicinc.com/
+>
+> arch/x86/mm/
+> https://lore.kernel.org/all/20240515-testmmiotrace-md-v1-1-10919a8b2842@quicinc.com/
+>
+> drivers/spmi/
+> https://lore.kernel.org/all/20240609-md-drivers-spmi-v1-1-f1d5b24e7a66@quicinc.com/
+>
+> (note that beyond these 3 patches I still have an additional 13 patches which
+> need to land in order to fix these warnings tree-wide, but those 13 patches
+> have had recent maintainer or reviewer action so I'm not seeking your help at
+> this time).
 
+Hi Jeff,
 
-On 19/07/2024 11:48 am, James Clark wrote:
-> 
-> 
-> On 18/07/2024 2:24 pm, Mike Leach wrote:
->> On Fri, 12 Jul 2024 at 11:22, James Clark <james.clark@linaro.org> wrote:
->>>
->>> From: James Clark <james.clark@arm.com>
->>>
->>> v0.1 HW_ID packets have a new field that describes which sink each CPU
->>> writes to. Use the sink ID to link trace ID maps to each other so that
->>> mappings are shared wherever the sink is shared.
->>>
->>> Also update the error message to show that overlapping IDs aren't an
->>> error in per-thread mode, just not supported. In the future we can
->>> use the CPU ID from the AUX records, or watch for changing sink IDs on
->>> HW_ID packets to use the correct decoders.
->>>
->>> Signed-off-by: James Clark <james.clark@arm.com>
->>> Signed-off-by: James Clark <james.clark@linaro.org>
->>> ---
->>>   tools/include/linux/coresight-pmu.h |  17 +++--
->>>   tools/perf/util/cs-etm.c            | 100 +++++++++++++++++++++++++---
->>>   2 files changed, 103 insertions(+), 14 deletions(-)
->>>
->>> diff --git a/tools/include/linux/coresight-pmu.h 
->>> b/tools/include/linux/coresight-pmu.h
->>> index 51ac441a37c3..89b0ac0014b0 100644
->>> --- a/tools/include/linux/coresight-pmu.h
->>> +++ b/tools/include/linux/coresight-pmu.h
->>> @@ -49,12 +49,21 @@
->>>    * Interpretation of the PERF_RECORD_AUX_OUTPUT_HW_ID payload.
->>>    * Used to associate a CPU with the CoreSight Trace ID.
->>>    * [07:00] - Trace ID - uses 8 bits to make value easy to read in 
->>> file.
->>> - * [59:08] - Unused (SBZ)
->>> - * [63:60] - Version
->>> + * [39:08] - Sink ID - as reported in 
->>> /sys/bus/event_source/devices/cs_etm/sinks/
->>> + *           Added in minor version 1.
->>> + * [55:40] - Unused (SBZ)
->>> + * [59:56] - Minor Version - previously existing fields are 
->>> compatible with
->>> + *           all minor versions.
->>> + * [63:60] - Major Version - previously existing fields mean 
->>> different things
->>> + *           in new major versions.
->>>    */
->>>   #define CS_AUX_HW_ID_TRACE_ID_MASK     GENMASK_ULL(7, 0)
->>> -#define CS_AUX_HW_ID_VERSION_MASK      GENMASK_ULL(63, 60)
->>> +#define CS_AUX_HW_ID_SINK_ID_MASK      GENMASK_ULL(39, 8)
->>>
->>> -#define CS_AUX_HW_ID_CURR_VERSION 0
->>> +#define CS_AUX_HW_ID_MINOR_VERSION_MASK        GENMASK_ULL(59, 56)
->>> +#define CS_AUX_HW_ID_MAJOR_VERSION_MASK        GENMASK_ULL(63, 60)
->>> +
->>> +#define CS_AUX_HW_ID_MAJOR_VERSION 0
->>> +#define CS_AUX_HW_ID_MINOR_VERSION 1
->>>
->>>   #endif
->>> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
->>> index 954a6f7bedf3..87e983da19be 100644
->>> --- a/tools/perf/util/cs-etm.c
->>> +++ b/tools/perf/util/cs-etm.c
->>> @@ -118,6 +118,12 @@ struct cs_etm_queue {
->>>          struct cs_etm_traceid_queue **traceid_queues;
->>>          /* Conversion between traceID and metadata pointers */
->>>          struct intlist *traceid_list;
->>> +       /*
->>> +        * Same as traceid_list, but traceid_list may be a reference 
->>> to another
->>> +        * queue's which has a matching sink ID.
->>> +        */
->>> +       struct intlist *own_traceid_list;
->>> +       u32 sink_id;
->>>   };
->>>
->>>   static int cs_etm__process_timestamped_queues(struct 
->>> cs_etm_auxtrace *etm);
->>> @@ -142,6 +148,7 @@ static int cs_etm__metadata_set_trace_id(u8 
->>> trace_chan_id, u64 *cpu_metadata);
->>>                        (queue_nr << 16 | trace_chan_id)
->>>   #define TO_QUEUE_NR(cs_queue_nr) (cs_queue_nr >> 16)
->>>   #define TO_TRACE_CHAN_ID(cs_queue_nr) (cs_queue_nr & 0x0000ffff)
->>> +#define SINK_UNSET ((u32) -1)
->>>
->>>   static u32 cs_etm__get_v7_protocol_version(u32 etmidr)
->>>   {
->>> @@ -241,7 +248,16 @@ static int cs_etm__insert_trace_id_node(struct 
->>> cs_etm_queue *etmq,
->>>                  int err;
->>>
->>>                  if (curr_cpu_data[CS_ETM_CPU] != 
->>> cpu_metadata[CS_ETM_CPU]) {
->>> -                       pr_err("CS_ETM: map mismatch between HW_ID 
->>> packet CPU and Trace ID\n");
->>> +                       /*
->>> +                        * With > CORESIGHT_TRACE_IDS_MAX ETMs, 
->>> overlapping IDs
->>> +                        * are expected (but not supported) in 
->>> per-thread mode,
->>> +                        * rather than signifying an error.
->>> +                        */
->>> +                       if (etmq->etm->per_thread_decoding)
->>> +                               pr_err("CS_ETM: overlapping Trace IDs 
->>> aren't currently supported in per-thread mode\n");
->>> +                       else
->>> +                               pr_err("CS_ETM: map mismatch between 
->>> HW_ID packet CPU and Trace ID\n");
->>> +
->>>                          return -EINVAL;
->>>                  }
->>>
->>> @@ -326,6 +342,64 @@ static int cs_etm__process_trace_id_v0(struct 
->>> cs_etm_auxtrace *etm, int cpu,
->>>          return cs_etm__metadata_set_trace_id(trace_chan_id, cpu_data);
->>>   }
->>>
->>> +static int cs_etm__process_trace_id_v0_1(struct cs_etm_auxtrace 
->>> *etm, int cpu,
->>> +                                        u64 hw_id)
->>> +{
->>> +       struct cs_etm_queue *etmq = cs_etm__get_queue(etm, cpu);
->>> +       int ret;
->>> +       u64 *cpu_data;
->>> +       u32 sink_id = FIELD_GET(CS_AUX_HW_ID_SINK_ID_MASK, hw_id);
->>> +       u8 trace_id = FIELD_GET(CS_AUX_HW_ID_TRACE_ID_MASK, hw_id);
->>> +
->>> +       /*
->>> +        * Check sink id hasn't changed in per-cpu mode. In 
->>> per-thread mode,
->>> +        * let it pass for now until an actual overlapping trace ID 
->>> is hit. In
->>> +        * most cases IDs won't overlap even if the sink changes.
->>> +        */
->>> +       if (!etmq->etm->per_thread_decoding && etmq->sink_id != 
->>> SINK_UNSET &&
->>> +           etmq->sink_id != sink_id) {
->>> +               pr_err("CS_ETM: mismatch between sink IDs\n");
->>> +               return -EINVAL;
->>> +       }
->>> +
->>> +       etmq->sink_id = sink_id;
->>> +
->>> +       /* Find which other queues use this sink and link their ID 
->>> maps */
->>> +       for (unsigned int i = 0; i < etm->queues.nr_queues; ++i) {
->>> +               struct cs_etm_queue *other_etmq = 
->>> etm->queues.queue_array[i].priv;
->>> +
->>> +               /* Different sinks, skip */
->>> +               if (other_etmq->sink_id != etmq->sink_id)
->>> +                       continue;
->>> +
->>> +               /* Already linked, skip */
->>> +               if (other_etmq->traceid_list == etmq->traceid_list)
->>> +                       continue;
->>> +
->>> +               /* At the point of first linking, this one should be 
->>> empty */
->>> +               if (!intlist__empty(etmq->traceid_list)) {
->>> +                       pr_err("CS_ETM: Can't link populated trace ID 
->>> lists\n");
->>> +                       return -EINVAL;
->>> +               }
->>> +
->>> +               etmq->own_traceid_list = NULL;
->>> +               intlist__delete(etmq->traceid_list);
->>> +               etmq->traceid_list = other_etmq->traceid_list;
->>> +               break;
->>> +       }
->>> +
->>> +       cpu_data = get_cpu_data(etm, cpu);
->>> +       ret = cs_etm__insert_trace_id_node(etmq, trace_id, cpu_data);
->>> +       if (ret)
->>> +               return ret;
->>> +
->>> +       ret = cs_etm__metadata_set_trace_id(trace_id, cpu_data);
->>> +       if (ret)
->>> +               return ret;
->>> +
->>> +       return 0;
->>> +}
->>> +
->>>   static int cs_etm__metadata_get_trace_id(u8 *trace_chan_id, u64 
->>> *cpu_metadata)
->>>   {
->>>          u64 cs_etm_magic = cpu_metadata[CS_ETM_MAGIC];
->>> @@ -414,10 +488,10 @@ static int 
->>> cs_etm__process_aux_output_hw_id(struct perf_session *session,
->>>
->>>          /* extract and parse the HW ID */
->>>          hw_id = event->aux_output_hw_id.hw_id;
->>> -       version = FIELD_GET(CS_AUX_HW_ID_VERSION_MASK, hw_id);
->>> +       version = FIELD_GET(CS_AUX_HW_ID_MAJOR_VERSION_MASK, hw_id);
->>>
->>>          /* check that we can handle this version */
->>> -       if (version > CS_AUX_HW_ID_CURR_VERSION) {
->>> +       if (version > CS_AUX_HW_ID_MAJOR_VERSION) {
->>>                  pr_err("CS ETM Trace: PERF_RECORD_AUX_OUTPUT_HW_ID 
->>> version %d not supported. Please update Perf.\n",
->>>                         version);
->>>                  return -EINVAL;
->>> @@ -442,7 +516,10 @@ static int 
->>> cs_etm__process_aux_output_hw_id(struct perf_session *session,
->>>                  return -EINVAL;
->>>          }
->>>
->>> -       return cs_etm__process_trace_id_v0(etm, cpu, hw_id);
->>
->> Perhaps leave this as the final statement of the function
->>
->>> +       if (FIELD_GET(CS_AUX_HW_ID_MINOR_VERSION_MASK, hw_id) == 0)
->>
->> this could be moved before and be
->>
->> if (FIELD_GET(CS_AUX_HW_ID_MINOR_VERSION_MASK, hw_id) == 1)
->>                 return cs_etm__process_trace_id_v0_1(etm, cpu, hw_id);
->>
->>
-> 
-> Because I was intending minor version changes to be backwards compatible 
-> I have it so that any value other than 0 is treated as v0.1. Otherwise 
-> version updates will break old versions of Perf. And then if we added a 
-> v0.3 it would look like this:
+For completeness, this is a patch that I have in my local
+test tree now after I addressed the build issues for all
+randconfig builds on arm, arm64 and x86.
 
-That should have said v0.2 ^
+I assume you already a version of most of these,
+but please have a look in case there are some still
+missing.
 
-> 
->   if (FIELD_GET(CS_AUX_HW_ID_MINOR_VERSION_MASK, hw_id) == 0)
->     return cs_etm__process_trace_id_v0(etm, cpu, hw_id);
->   else if (FIELD_GET(CS_AUX_HW_ID_MINOR_VERSION_MASK, hw_id) == 1)
->     return cs_etm__process_trace_id_v0_1(etm, cpu, hw_id);
->   else
->     return cs_etm__process_trace_id_v0_2(etm, cpu, hw_id);
-> 
-> Based on that I'm not sure if you still think it should be changed?
+   Arnd 
+
+ arch/arm/lib/xor-neon.c                         | 1 +
+ arch/x86/mm/testmmiotrace.c                     | 1 +
+ drivers/fpga/tests/fpga-bridge-test.c           | 1 +
+ drivers/fpga/tests/fpga-mgr-test.c              | 1 +
+ drivers/fpga/tests/fpga-region-test.c           | 1 +
+ drivers/fsi/fsi-core.c                          | 1 +
+ drivers/fsi/fsi-master-aspeed.c                 | 2 ++
+ drivers/fsi/fsi-master-ast-cf.c                 | 1 +
+ drivers/fsi/fsi-master-gpio.c                   | 1 +
+ drivers/fsi/fsi-master-hub.c                    | 1 +
+ drivers/fsi/fsi-scom.c                          | 1 +
+ drivers/xen/xenbus/xenbus_probe_frontend.c      | 1 +
+ fs/adfs/super.c                                 | 2 ++
+ fs/exportfs/expfs.c                             | 1 +
+ kernel/locking/test-ww_mutex.c                  | 1 +
+ lib/asn1_decoder.c                              | 1 +
+ lib/slub_kunit.c                                | 1 +
+ lib/ucs2_string.c                               | 1 +
+ lib/zlib_inflate/inflate_syms.c                 | 1 +
+ mm/kasan/kasan_test.c                           | 1 +
+ mm/kasan/kasan_test_module.c                    | 1 +
+ samples/livepatch/livepatch-callbacks-busymod.c | 1 +
+ samples/livepatch/livepatch-callbacks-demo.c    | 1 +
+ samples/livepatch/livepatch-callbacks-mod.c     | 1 +
+ samples/livepatch/livepatch-sample.c            | 1 +
+ samples/livepatch/livepatch-shadow-fix1.c       | 1 +
+ samples/livepatch/livepatch-shadow-fix2.c       | 1 +
+ security/apparmor/policy_unpack_test.c          | 1 +
+ 28 files changed, 30 insertions(+)
+
+diff --git a/arch/arm/lib/xor-neon.c b/arch/arm/lib/xor-neon.c
+index 522510baed49..fae19167ae0a 100644
+--- a/arch/arm/lib/xor-neon.c
++++ b/arch/arm/lib/xor-neon.c
+@@ -8,6 +8,7 @@
+ #include <linux/raid/xor.h>
+ #include <linux/module.h>
+ 
++MODULE_DESCRIPTION("NEON accelerated block XOR function");
+ MODULE_LICENSE("GPL");
+ 
+ #ifndef __ARM_NEON__
+diff --git a/arch/x86/mm/testmmiotrace.c b/arch/x86/mm/testmmiotrace.c
+index bda73cb7a044..ccafab530b1e 100644
+--- a/arch/x86/mm/testmmiotrace.c
++++ b/arch/x86/mm/testmmiotrace.c
+@@ -143,4 +143,5 @@ static void __exit cleanup(void)
+ 
+ module_init(init);
+ module_exit(cleanup);
++MODULE_DESCRIPTION("Test module for memory mapped I/O tracing");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/fpga/tests/fpga-bridge-test.c b/drivers/fpga/tests/fpga-bridge-test.c
+index 2f7a24f23808..3a28f3cc7089 100644
+--- a/drivers/fpga/tests/fpga-bridge-test.c
++++ b/drivers/fpga/tests/fpga-bridge-test.c
+@@ -173,4 +173,5 @@ static struct kunit_suite fpga_bridge_suite = {
+ 
+ kunit_test_suite(fpga_bridge_suite);
+ 
++MODULE_DESCRIPTION("KUnit test for the FPGA Bridge");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/fpga/tests/fpga-mgr-test.c b/drivers/fpga/tests/fpga-mgr-test.c
+index 125b3a4d43c6..50419ba66667 100644
+--- a/drivers/fpga/tests/fpga-mgr-test.c
++++ b/drivers/fpga/tests/fpga-mgr-test.c
+@@ -324,4 +324,5 @@ static struct kunit_suite fpga_mgr_suite = {
+ 
+ kunit_test_suite(fpga_mgr_suite);
+ 
++MODULE_DESCRIPTION("KUnit test for the FPGA Manager");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/fpga/tests/fpga-region-test.c b/drivers/fpga/tests/fpga-region-test.c
+index bcf0651df261..b2ddd1f73d07 100644
+--- a/drivers/fpga/tests/fpga-region-test.c
++++ b/drivers/fpga/tests/fpga-region-test.c
+@@ -207,4 +207,5 @@ static struct kunit_suite fpga_region_suite = {
+ 
+ kunit_test_suite(fpga_region_suite);
+ 
++MODULE_DESCRIPTION("KUnit test for the FPGA Region");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
+index 46ac5a8beab7..e2e1e9df6115 100644
+--- a/drivers/fsi/fsi-core.c
++++ b/drivers/fsi/fsi-core.c
+@@ -1444,5 +1444,6 @@ static void fsi_exit(void)
+ }
+ module_exit(fsi_exit);
+ module_param(discard_errors, int, 0664);
++MODULE_DESCRIPTION("FSI core driver");
+ MODULE_LICENSE("GPL");
+ MODULE_PARM_DESC(discard_errors, "Don't invoke error handling on bus accesses");
+diff --git a/drivers/fsi/fsi-master-aspeed.c b/drivers/fsi/fsi-master-aspeed.c
+index b0b624c3717b..a75cb8c8bace 100644
+--- a/drivers/fsi/fsi-master-aspeed.c
++++ b/drivers/fsi/fsi-master-aspeed.c
+@@ -670,4 +670,6 @@ static struct platform_driver fsi_master_aspeed_driver = {
+ };
+ 
+ module_platform_driver(fsi_master_aspeed_driver);
++
++MODULE_DESCRIPTION("FSI master driver for AST2600");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/fsi/fsi-master-ast-cf.c b/drivers/fsi/fsi-master-ast-cf.c
+index f8c776ce1b56..aecaafaae8de 100644
+--- a/drivers/fsi/fsi-master-ast-cf.c
++++ b/drivers/fsi/fsi-master-ast-cf.c
+@@ -1438,5 +1438,6 @@ static struct platform_driver fsi_master_acf = {
+ };
+ 
+ module_platform_driver(fsi_master_acf);
++MODULE_DESCRIPTION("FSI master controller, using ASpeed Corefire microcontroller");
+ MODULE_LICENSE("GPL");
+ MODULE_FIRMWARE(FW_FILE_NAME);
+diff --git a/drivers/fsi/fsi-master-gpio.c b/drivers/fsi/fsi-master-gpio.c
+index 10fc344b6b22..371810cdcd27 100644
+--- a/drivers/fsi/fsi-master-gpio.c
++++ b/drivers/fsi/fsi-master-gpio.c
+@@ -892,4 +892,5 @@ static struct platform_driver fsi_master_gpio_driver = {
+ };
+ 
+ module_platform_driver(fsi_master_gpio_driver);
++MODULE_DESCRIPTION("FSI master controller, using a simple GPIO bit-banging interface");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/fsi/fsi-master-hub.c b/drivers/fsi/fsi-master-hub.c
+index 6d8b6e8854e5..6568fed7db3c 100644
+--- a/drivers/fsi/fsi-master-hub.c
++++ b/drivers/fsi/fsi-master-hub.c
+@@ -295,4 +295,5 @@ static struct fsi_driver hub_master_driver = {
+ };
+ 
+ module_fsi_driver(hub_master_driver);
++MODULE_DESCRIPTION("FSI hub master driver");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/fsi/fsi-scom.c b/drivers/fsi/fsi-scom.c
+index 61dbda9dbe2b..411ddc018cd8 100644
+--- a/drivers/fsi/fsi-scom.c
++++ b/drivers/fsi/fsi-scom.c
+@@ -625,4 +625,5 @@ static void scom_exit(void)
+ 
+ module_init(scom_init);
+ module_exit(scom_exit);
++MODULE_DESCRIPTION("SCOM FSI Client device driver");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/xen/xenbus/xenbus_probe_frontend.c b/drivers/xen/xenbus/xenbus_probe_frontend.c
+index fcb335bb7b18..8b75f8234baf 100644
+--- a/drivers/xen/xenbus/xenbus_probe_frontend.c
++++ b/drivers/xen/xenbus/xenbus_probe_frontend.c
+@@ -513,4 +513,5 @@ static int __init boot_wait_for_devices(void)
+ late_initcall(boot_wait_for_devices);
+ #endif
+ 
++MODULE_DESCRIPTION("Frontend for Xen bus probe");
+ MODULE_LICENSE("GPL");
+diff --git a/fs/adfs/super.c b/fs/adfs/super.c
+index 9354b14bbfe3..ea4488b1f234 100644
+--- a/fs/adfs/super.c
++++ b/fs/adfs/super.c
+@@ -491,4 +491,6 @@ static void __exit exit_adfs_fs(void)
+ 
+ module_init(init_adfs_fs)
+ module_exit(exit_adfs_fs)
++
++MODULE_DESCRIPTION("Acorn Disc Filing System");
+ MODULE_LICENSE("GPL");
+diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
+index 4f2dd4ab4486..002599bfbe8d 100644
+--- a/fs/exportfs/expfs.c
++++ b/fs/exportfs/expfs.c
+@@ -597,4 +597,5 @@ struct dentry *exportfs_decode_fh(struct vfsmount *mnt, struct fid *fid,
+ }
+ EXPORT_SYMBOL_GPL(exportfs_decode_fh);
+ 
++MODULE_DESCRIPTION("Code mapping from inodes to NFS file handles");
+ MODULE_LICENSE("GPL");
+diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
+index 78719e1ef1b1..2de48f8aa58e 100644
+--- a/kernel/locking/test-ww_mutex.c
++++ b/kernel/locking/test-ww_mutex.c
+@@ -695,5 +695,6 @@ static void __exit test_ww_mutex_exit(void)
+ module_init(test_ww_mutex_init);
+ module_exit(test_ww_mutex_exit);
+ 
++MODULE_DESCRIPTION("Module-based API test facility for ww_mutexes");
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Intel Corporation");
+diff --git a/lib/asn1_decoder.c b/lib/asn1_decoder.c
+index 13da529e2e72..5738ae286b41 100644
+--- a/lib/asn1_decoder.c
++++ b/lib/asn1_decoder.c
+@@ -518,4 +518,5 @@ int asn1_ber_decoder(const struct asn1_decoder *decoder,
+ }
+ EXPORT_SYMBOL_GPL(asn1_ber_decoder);
+ 
++MODULE_DESCRIPTION("Decoder for ASN.1 BER/DER/CER encoded bytestream");
+ MODULE_LICENSE("GPL");
+diff --git a/lib/slub_kunit.c b/lib/slub_kunit.c
+index e6667a28c014..2404e37633ab 100644
+--- a/lib/slub_kunit.c
++++ b/lib/slub_kunit.c
+@@ -187,4 +187,5 @@ static struct kunit_suite test_suite = {
+ };
+ kunit_test_suite(test_suite);
+ 
++MODULE_DESCRIPTION("Kunit tests for slub allocator");
+ MODULE_LICENSE("GPL");
+diff --git a/lib/ucs2_string.c b/lib/ucs2_string.c
+index 9308bcfb2ad5..dfb4f2358cab 100644
+--- a/lib/ucs2_string.c
++++ b/lib/ucs2_string.c
+@@ -165,4 +165,5 @@ ucs2_as_utf8(u8 *dest, const ucs2_char_t *src, unsigned long maxlength)
+ }
+ EXPORT_SYMBOL(ucs2_as_utf8);
+ 
++MODULE_DESCRIPTION("UCS2 string handling");
+ MODULE_LICENSE("GPL v2");
+diff --git a/lib/zlib_inflate/inflate_syms.c b/lib/zlib_inflate/inflate_syms.c
+index 9720114c0672..b8996d90e8bc 100644
+--- a/lib/zlib_inflate/inflate_syms.c
++++ b/lib/zlib_inflate/inflate_syms.c
+@@ -18,4 +18,5 @@ EXPORT_SYMBOL(zlib_inflateEnd);
+ EXPORT_SYMBOL(zlib_inflateReset);
+ EXPORT_SYMBOL(zlib_inflateIncomp); 
+ EXPORT_SYMBOL(zlib_inflate_blob);
++MODULE_DESCRIPTION("Data decompression using the deflation algorithm");
+ MODULE_LICENSE("GPL");
+diff --git a/mm/kasan/kasan_test.c b/mm/kasan/kasan_test.c
+index 7b32be2a3cf0..88b717ba34e8 100644
+--- a/mm/kasan/kasan_test.c
++++ b/mm/kasan/kasan_test.c
+@@ -1984,4 +1984,5 @@ static struct kunit_suite kasan_kunit_test_suite = {
+ 
+ kunit_test_suite(kasan_kunit_test_suite);
+ 
++MODULE_DESCRIPTION("kunit test case for kasan");
+ MODULE_LICENSE("GPL");
+diff --git a/mm/kasan/kasan_test_module.c b/mm/kasan/kasan_test_module.c
+index 27ec22767e42..f3f62c90df3e 100644
+--- a/mm/kasan/kasan_test_module.c
++++ b/mm/kasan/kasan_test_module.c
+@@ -78,4 +78,5 @@ static int __init kasan_test_module_init(void)
+ }
+ 
+ module_init(kasan_test_module_init);
++MODULE_DESCRIPTION("test module for KASAN");
+ MODULE_LICENSE("GPL");
+diff --git a/samples/livepatch/livepatch-callbacks-busymod.c b/samples/livepatch/livepatch-callbacks-busymod.c
+index 378e2d40271a..4f9cb3de59f0 100644
+--- a/samples/livepatch/livepatch-callbacks-busymod.c
++++ b/samples/livepatch/livepatch-callbacks-busymod.c
+@@ -57,4 +57,5 @@ static void livepatch_callbacks_mod_exit(void)
+ 
+ module_init(livepatch_callbacks_mod_init);
+ module_exit(livepatch_callbacks_mod_exit);
++MODULE_DESCRIPTION("Live patching demo for (un)patching callbacks");
+ MODULE_LICENSE("GPL");
+diff --git a/samples/livepatch/livepatch-callbacks-demo.c b/samples/livepatch/livepatch-callbacks-demo.c
+index 11c3f4357812..9e69d9caed25 100644
+--- a/samples/livepatch/livepatch-callbacks-demo.c
++++ b/samples/livepatch/livepatch-callbacks-demo.c
+@@ -192,5 +192,6 @@ static void livepatch_callbacks_demo_exit(void)
+ 
+ module_init(livepatch_callbacks_demo_init);
+ module_exit(livepatch_callbacks_demo_exit);
++MODULE_DESCRIPTION("Live patching demo for (un)patching callbacks");
+ MODULE_LICENSE("GPL");
+ MODULE_INFO(livepatch, "Y");
+diff --git a/samples/livepatch/livepatch-callbacks-mod.c b/samples/livepatch/livepatch-callbacks-mod.c
+index 2a074f422a51..d1851b471ad9 100644
+--- a/samples/livepatch/livepatch-callbacks-mod.c
++++ b/samples/livepatch/livepatch-callbacks-mod.c
+@@ -38,4 +38,5 @@ static void livepatch_callbacks_mod_exit(void)
+ 
+ module_init(livepatch_callbacks_mod_init);
+ module_exit(livepatch_callbacks_mod_exit);
++MODULE_DESCRIPTION("Live patching demo for (un)patching callbacks, support module");
+ MODULE_LICENSE("GPL");
+diff --git a/samples/livepatch/livepatch-sample.c b/samples/livepatch/livepatch-sample.c
+index cd76d7ebe598..5263a2f31c48 100644
+--- a/samples/livepatch/livepatch-sample.c
++++ b/samples/livepatch/livepatch-sample.c
+@@ -66,5 +66,6 @@ static void livepatch_exit(void)
+ 
+ module_init(livepatch_init);
+ module_exit(livepatch_exit);
++MODULE_DESCRIPTION("Kernel Live Patching Sample Module");
+ MODULE_LICENSE("GPL");
+ MODULE_INFO(livepatch, "Y");
+diff --git a/samples/livepatch/livepatch-shadow-fix1.c b/samples/livepatch/livepatch-shadow-fix1.c
+index 6701641bf12d..25a03cca79c0 100644
+--- a/samples/livepatch/livepatch-shadow-fix1.c
++++ b/samples/livepatch/livepatch-shadow-fix1.c
+@@ -169,5 +169,6 @@ static void livepatch_shadow_fix1_exit(void)
+ 
+ module_init(livepatch_shadow_fix1_init);
+ module_exit(livepatch_shadow_fix1_exit);
++MODULE_DESCRIPTION("Live patching demo for shadow variables");
+ MODULE_LICENSE("GPL");
+ MODULE_INFO(livepatch, "Y");
+diff --git a/samples/livepatch/livepatch-shadow-fix2.c b/samples/livepatch/livepatch-shadow-fix2.c
+index 361046a4f10c..b99122cb221f 100644
+--- a/samples/livepatch/livepatch-shadow-fix2.c
++++ b/samples/livepatch/livepatch-shadow-fix2.c
+@@ -128,5 +128,6 @@ static void livepatch_shadow_fix2_exit(void)
+ 
+ module_init(livepatch_shadow_fix2_init);
+ module_exit(livepatch_shadow_fix2_exit);
++MODULE_DESCRIPTION("Live patching demo for shadow variables");
+ MODULE_LICENSE("GPL");
+ MODULE_INFO(livepatch, "Y");
+diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
+index 5c9bde25e56d..874fcf97794e 100644
+--- a/security/apparmor/policy_unpack_test.c
++++ b/security/apparmor/policy_unpack_test.c
+@@ -604,4 +604,5 @@ static struct kunit_suite apparmor_policy_unpack_test_module = {
+ 
+ kunit_test_suite(apparmor_policy_unpack_test_module);
+ 
++MODULE_DESCRIPTION("KUnit tests for AppArmor's policy unpack");
+ MODULE_LICENSE("GPL");
 
