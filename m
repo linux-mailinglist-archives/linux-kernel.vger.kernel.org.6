@@ -1,467 +1,142 @@
-Return-Path: <linux-kernel+bounces-256876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DEAF9371A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 02:52:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70A1C9371AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 02:53:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5B3E1F21C2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 00:52:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 258811F21B1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 00:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50258C07;
-	Fri, 19 Jul 2024 00:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BD61388;
+	Fri, 19 Jul 2024 00:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hyCQ+qo0"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Sn2I95Uu"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8083C39
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 00:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BC8137E
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 00:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721350302; cv=none; b=m4S9m77RGMJZxj35AmFnyc7/vx6sQDMn0mMMKdYbLIDkm8eNvcVw1/bNwIJ7qqarHu1re7+a+kVOuEV9zHxoPtnyzI2PHsNTKPMk664xWc6r7kcX4bzlagBZ+w17mn/Vrez43yJbG30Rf+7x6oweCKrPeVcTzM45HkiFR28XLRI=
+	t=1721350396; cv=none; b=bsruDRh+8dGCnldsyzL+MhpjTqzTa6GxuoMjTTGt78CkUSt49VvzZmPa/C0yGSnCZLu1CSbNoqync8QEZyb7iafEXnR6Szen0ZmzRcGR4GTFJxJwlw5oSNI9XaWT0qdlhbkCAmatDl4wgcKNeVV1DpZ8CnzqlwsHgpCdpUCp/Kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721350302; c=relaxed/simple;
-	bh=qiZox51DGBS2qMiOoTjlhNjpZ4ULnupvB7GAExfwAAw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Xf9uXNuiEiCKBBiKtwKpdImkheXIG7/JhDflxkgOFDlyrhTBaVxC+iEbjVXHfQ5g7QGF3kzvtwuJEoUVImbVpTc2G85LScBMPokzZ9m/+ctF52i72KJAFuePgxdgFqA7782hb+EdgIOUN6VfS1Y7QD0XX3oL8E442o4aVerZDEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hyCQ+qo0; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2cb682fb0cdso661310a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 17:51:40 -0700 (PDT)
+	s=arc-20240116; t=1721350396; c=relaxed/simple;
+	bh=RnoOrTDqYMwqmgyBL997j2WfnbhFEDox1ALgKaUqHuU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=ORvNU4HANLpLD8XA+yHhhLKtxg4nlcLmAqDFaIme/54S/u0F5K+vbhqVb7usafGSgLx8906LOpUqGoxqT3cT/vEM5tDSFKKERj5YjhGFNUWVnMOaEeSr0f5OyqaQBVwJN7rYUeKu42nGL4aaCy2n8JNQpmaa4IaHmybINCAzxaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Sn2I95Uu; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3856b7be480so5454995ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 17:53:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1721350300; x=1721955100; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N+il5TBCbKPADDYuyA31kaFvQuyqKF3Hw67HCUliJLk=;
-        b=hyCQ+qo0v70b3hZeEoDEW9ul8SX42ENykw6NdS1gkbf04lmMSFnWpg1ToyjZ5PHXPK
-         PvtYohP6hIkNU2l/X1VyhEjEJPaBkRiNf6M2YwT6GQPQX0tLRKiMGYYJ3bC0GP5LTCg+
-         PQbtzrC2zlwnPzuFeclHVSR/1AJCA7C37d0cA=
+        d=sifive.com; s=google; t=1721350394; x=1721955194; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:cc:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=CNAPVnBxs50FSqQ39oQ/X0NdsaUWEkhbtljgwA0dK+M=;
+        b=Sn2I95UuUc1Z1VLFwESxfN4bG9UYWvNIkgHVpubVF5jr8Ky/BGxrk07t2KU0KYRexx
+         dIpoWbrb3NAAkQE/Znd9/p9td5WtnBHMEhZGURIzSuvmwsCJCWcDYVGKoH4gnaj6l0Qr
+         e8CEo8qM52EHLIZpdg3YNiAJAWQ2kl9g3l+IPTyJMenKelo6vl6HachLbX7hAgiy7lne
+         oIKVV/HRruWdu6GHlUfYTuLNEccpVnw1Eyi8mEwTBG5Lnv3Wnzu1xuyKX4Cj+WLarnnK
+         s3ZcA+ANdDSbV9aWfJQkLq6jD5cNE/Uxo0St8qfBgOJsW6sEd33p7CiAnfb3z68NUbRK
+         CzOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721350300; x=1721955100;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N+il5TBCbKPADDYuyA31kaFvQuyqKF3Hw67HCUliJLk=;
-        b=uWfRvst+JsZJZgTYSRUgolgiSqImLxQh7XmytsIw67azRIAod+mn75FIP2XVCnR0Lm
-         wrVm1JryHoLJXG9l1GrHK3X8WOV6oHHA/7CP9Jr1/FdPsFuLdQidsp4+dWElYim6ua0g
-         BWCLf3hdahx2Qa9npZxg4j7XdakTrCyf383L7wYe+AqC40L4T5pdsUDvusB/we4/haSa
-         4JBVy+1Nadh4jIvT9D0fmaqpN2icxmqxF/1eHbGQtSKnA1wVVOZH1W/3YgFsA8ORhXf1
-         Du3OFZJftC6LAPJLksMnAy2WhqqyYRhnj3NYFqGoo9Dri1amQchIeHma2Hpgn/pHdhUo
-         kYeA==
-X-Gm-Message-State: AOJu0YykPbp5l1Q6+pRkLzTkpKHQ0ILrPme8JOwzO2OOmjz2ST6Fpe7k
-	MUg1FZjzDNWKLA/rzjysHjfc1x7cNq3V+sqYvu8zLC/z9sM2Hq3ndT5FARPULw==
-X-Google-Smtp-Source: AGHT+IFN2viMYNu3ga063nvQxfoJJltCNTXu0gxArU22Q4+5wrgtOa9pod59jNBJ+wyjlm9V//fY3Q==
-X-Received: by 2002:a17:90a:fa03:b0:2c9:7e6e:3578 with SMTP id 98e67ed59e1d1-2cb52431900mr4919172a91.7.1721350299799;
-        Thu, 18 Jul 2024 17:51:39 -0700 (PDT)
-Received: from localhost ([2620:15c:9d:2:35aa:f87d:7549:3938])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2cb77504fadsm1393633a91.45.2024.07.18.17.51.38
+        d=1e100.net; s=20230601; t=1721350394; x=1721955194;
+        h=content-transfer-encoding:in-reply-to:cc:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CNAPVnBxs50FSqQ39oQ/X0NdsaUWEkhbtljgwA0dK+M=;
+        b=L22saXtrO9lX7YaS3PBeeltTQxqfBDd0ToPhHLaEDc5ihw6oqH3x+TSOheevIrVxOy
+         bZqz5a3kwECewQcisumumQnWQSTOWGFUQuCb7CwpH1URMmQLOtdhozRZj6TF8K6YlZ1Y
+         HOG1J9mIgRG3qNNvY9rJn/sSyl1SwG7QeQTYMkAGeMJZm7SHtnFyHb/wLi4CwHd30Bq9
+         ZTB1W1hQgqRu17UQz/7PH+L400rbxzC+aFcAioU+8sRdkHGWtlp0FN6gSnl27v+Cftlw
+         Hdg6FMkdwFf+VM0g/xsSS4rcjETjXDSePLIMtecKceu/ut30FAi8mCacQuMYjxg5yTVA
+         cDKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmHO5xl9JEyiaXwHn34l19wM0FxdmK8M83v6VBhxjnwlVnQMNlCkx0qMOa4RpictR7/HJO8/2ZAdN9WKO0D1HQ5W8CuDtkomnJtPfq
+X-Gm-Message-State: AOJu0YyZL9uwnAAjEKjmcWZTstoQMeAYfjVqzR//230hEM5uG7Cmon7V
+	Lelkj76QBDYAeBJve3fZYm3lokbMnzvOc6YRVw3WhLTUslyvgpgAYXb+ZDEzq4Q=
+X-Google-Smtp-Source: AGHT+IF5soNWoBfxIJAzPM7ulE2ztXx3R64HiLhLbDOWs9lCmTj3XqnA7S+bNE2jbslzIWMskkLVPA==
+X-Received: by 2002:a05:6e02:b2d:b0:396:4314:2bcf with SMTP id e9e14a558f8ab-39643142de5mr67747935ab.19.1721350394158;
+        Thu, 18 Jul 2024 17:53:14 -0700 (PDT)
+Received: from [100.64.0.1] ([147.124.94.167])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-397f60fc088sm897415ab.50.2024.07.18.17.53.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jul 2024 17:51:39 -0700 (PDT)
-From: Brian Norris <briannorris@chromium.org>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	Bill Wendling <morbo@google.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Justin Stitt <justinstitt@google.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	llvm@lists.linux.dev,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Brian Norris <briannorris@chromium.org>,
-	Kees Cook <kees@kernel.org>
-Subject: [PATCH v3 4/4] nodemask: Switch from inline to __always_inline
-Date: Thu, 18 Jul 2024 17:50:40 -0700
-Message-ID: <20240719005127.2449328-4-briannorris@chromium.org>
-X-Mailer: git-send-email 2.45.2.1089.g2a221341d9-goog
-In-Reply-To: <20240719005127.2449328-1-briannorris@chromium.org>
-References: <20240719005127.2449328-1-briannorris@chromium.org>
+        Thu, 18 Jul 2024 17:53:13 -0700 (PDT)
+Message-ID: <da5ba38a-8848-439e-b80a-3d6584111a78@sifive.com>
+Date: Thu, 18 Jul 2024 19:53:11 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 09/11] riscv: Add ISA extension parsing for Ziccrse
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+References: <20240717061957.140712-1-alexghiti@rivosinc.com>
+ <20240717061957.140712-10-alexghiti@rivosinc.com>
+Content-Language: en-US
+From: Samuel Holland <samuel.holland@sifive.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Andrea Parri <parri.andrea@gmail.com>, Nathan Chancellor
+ <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+ Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
+ Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-arch@vger.kernel.org
+In-Reply-To: <20240717061957.140712-10-alexghiti@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Yury Norov <yury.norov@gmail.com>
+Hi Alex,
 
-'inline' keyword is only a recommendation for compiler. If it decides to
-not inline nodemask functions, the whole small_const_nbits() machinery
-doesn't work.
+On 2024-07-17 1:19 AM, Alexandre Ghiti wrote:
+> Add support to parse the Ziccrse string in the riscv,isa string.
+> 
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> ---
+>  arch/riscv/include/asm/hwcap.h | 1 +
+>  arch/riscv/kernel/cpufeature.c | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
+> index f71ddd2ca163..863b9b7d4a4f 100644
+> --- a/arch/riscv/include/asm/hwcap.h
+> +++ b/arch/riscv/include/asm/hwcap.h
+> @@ -82,6 +82,7 @@
+>  #define RISCV_ISA_EXT_ZACAS		73
+>  #define RISCV_ISA_EXT_XANDESPMU		74
+>  #define RISCV_ISA_EXT_ZABHA		75
+> +#define RISCV_ISA_EXT_ZICCRSE		76
+>  
+>  #define RISCV_ISA_EXT_XLINUXENVCFG	127
+>  
+> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+> index c125d82c894b..93d8cc7e232c 100644
+> --- a/arch/riscv/kernel/cpufeature.c
+> +++ b/arch/riscv/kernel/cpufeature.c
+> @@ -306,6 +306,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
+>  	__RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
+>  	__RISCV_ISA_EXT_DATA(svpbmt, RISCV_ISA_EXT_SVPBMT),
+>  	__RISCV_ISA_EXT_DATA(xandespmu, RISCV_ISA_EXT_XANDESPMU),
+> +	__RISCV_ISA_EXT_DATA(ziccrse, RISCV_ISA_EXT_ZICCRSE),
 
-This is how a standard GCC 11.3.0 does for my x86_64 build now. This patch
-replaces 'inline' directive with unconditional '__always_inline' to make
-sure that there's always a chance for compile-time optimization. It doesn't
-change size of kernel image, according to bloat-o-meter.
+Please sort this entry per the comment at the beginning of the array.
 
-[[ Brian: split out from:
-      Subject: [PATCH 1/3] bitmap: switch from inline to __always_inline
-      https://lore.kernel.org/all/20221027043810.350460-2-yury.norov@gmail.com/
-   But rewritten, as there were too many conflicts. ]]
+Regards,
+Samuel
 
-Signed-off-by: Yury Norov <yury.norov@gmail.com>
-Co-developed-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Reviewed-by: Kees Cook <kees@kernel.org>
----
-
-Changes in v3:
- - newly split out in v3
-
- include/linux/nodemask.h | 86 ++++++++++++++++++++--------------------
- 1 file changed, 43 insertions(+), 43 deletions(-)
-
-diff --git a/include/linux/nodemask.h b/include/linux/nodemask.h
-index b61438313a73..9fd7a0ce9c1a 100644
---- a/include/linux/nodemask.h
-+++ b/include/linux/nodemask.h
-@@ -107,11 +107,11 @@ extern nodemask_t _unused_nodemask_arg_;
-  */
- #define nodemask_pr_args(maskp)	__nodemask_pr_numnodes(maskp), \
- 				__nodemask_pr_bits(maskp)
--static inline unsigned int __nodemask_pr_numnodes(const nodemask_t *m)
-+static __always_inline unsigned int __nodemask_pr_numnodes(const nodemask_t *m)
- {
- 	return m ? MAX_NUMNODES : 0;
- }
--static inline const unsigned long *__nodemask_pr_bits(const nodemask_t *m)
-+static __always_inline const unsigned long *__nodemask_pr_bits(const nodemask_t *m)
- {
- 	return m ? m->bits : NULL;
- }
-@@ -132,19 +132,19 @@ static __always_inline void __node_set(int node, volatile nodemask_t *dstp)
- }
- 
- #define node_clear(node, dst) __node_clear((node), &(dst))
--static inline void __node_clear(int node, volatile nodemask_t *dstp)
-+static __always_inline void __node_clear(int node, volatile nodemask_t *dstp)
- {
- 	clear_bit(node, dstp->bits);
- }
- 
- #define nodes_setall(dst) __nodes_setall(&(dst), MAX_NUMNODES)
--static inline void __nodes_setall(nodemask_t *dstp, unsigned int nbits)
-+static __always_inline void __nodes_setall(nodemask_t *dstp, unsigned int nbits)
- {
- 	bitmap_fill(dstp->bits, nbits);
- }
- 
- #define nodes_clear(dst) __nodes_clear(&(dst), MAX_NUMNODES)
--static inline void __nodes_clear(nodemask_t *dstp, unsigned int nbits)
-+static __always_inline void __nodes_clear(nodemask_t *dstp, unsigned int nbits)
- {
- 	bitmap_zero(dstp->bits, nbits);
- }
-@@ -154,14 +154,14 @@ static inline void __nodes_clear(nodemask_t *dstp, unsigned int nbits)
- 
- #define node_test_and_set(node, nodemask) \
- 			__node_test_and_set((node), &(nodemask))
--static inline bool __node_test_and_set(int node, nodemask_t *addr)
-+static __always_inline bool __node_test_and_set(int node, nodemask_t *addr)
- {
- 	return test_and_set_bit(node, addr->bits);
- }
- 
- #define nodes_and(dst, src1, src2) \
- 			__nodes_and(&(dst), &(src1), &(src2), MAX_NUMNODES)
--static inline void __nodes_and(nodemask_t *dstp, const nodemask_t *src1p,
-+static __always_inline void __nodes_and(nodemask_t *dstp, const nodemask_t *src1p,
- 					const nodemask_t *src2p, unsigned int nbits)
- {
- 	bitmap_and(dstp->bits, src1p->bits, src2p->bits, nbits);
-@@ -169,7 +169,7 @@ static inline void __nodes_and(nodemask_t *dstp, const nodemask_t *src1p,
- 
- #define nodes_or(dst, src1, src2) \
- 			__nodes_or(&(dst), &(src1), &(src2), MAX_NUMNODES)
--static inline void __nodes_or(nodemask_t *dstp, const nodemask_t *src1p,
-+static __always_inline void __nodes_or(nodemask_t *dstp, const nodemask_t *src1p,
- 					const nodemask_t *src2p, unsigned int nbits)
- {
- 	bitmap_or(dstp->bits, src1p->bits, src2p->bits, nbits);
-@@ -177,7 +177,7 @@ static inline void __nodes_or(nodemask_t *dstp, const nodemask_t *src1p,
- 
- #define nodes_xor(dst, src1, src2) \
- 			__nodes_xor(&(dst), &(src1), &(src2), MAX_NUMNODES)
--static inline void __nodes_xor(nodemask_t *dstp, const nodemask_t *src1p,
-+static __always_inline void __nodes_xor(nodemask_t *dstp, const nodemask_t *src1p,
- 					const nodemask_t *src2p, unsigned int nbits)
- {
- 	bitmap_xor(dstp->bits, src1p->bits, src2p->bits, nbits);
-@@ -185,7 +185,7 @@ static inline void __nodes_xor(nodemask_t *dstp, const nodemask_t *src1p,
- 
- #define nodes_andnot(dst, src1, src2) \
- 			__nodes_andnot(&(dst), &(src1), &(src2), MAX_NUMNODES)
--static inline void __nodes_andnot(nodemask_t *dstp, const nodemask_t *src1p,
-+static __always_inline void __nodes_andnot(nodemask_t *dstp, const nodemask_t *src1p,
- 					const nodemask_t *src2p, unsigned int nbits)
- {
- 	bitmap_andnot(dstp->bits, src1p->bits, src2p->bits, nbits);
-@@ -193,7 +193,7 @@ static inline void __nodes_andnot(nodemask_t *dstp, const nodemask_t *src1p,
- 
- #define nodes_complement(dst, src) \
- 			__nodes_complement(&(dst), &(src), MAX_NUMNODES)
--static inline void __nodes_complement(nodemask_t *dstp,
-+static __always_inline void __nodes_complement(nodemask_t *dstp,
- 					const nodemask_t *srcp, unsigned int nbits)
- {
- 	bitmap_complement(dstp->bits, srcp->bits, nbits);
-@@ -201,7 +201,7 @@ static inline void __nodes_complement(nodemask_t *dstp,
- 
- #define nodes_equal(src1, src2) \
- 			__nodes_equal(&(src1), &(src2), MAX_NUMNODES)
--static inline bool __nodes_equal(const nodemask_t *src1p,
-+static __always_inline bool __nodes_equal(const nodemask_t *src1p,
- 					const nodemask_t *src2p, unsigned int nbits)
- {
- 	return bitmap_equal(src1p->bits, src2p->bits, nbits);
-@@ -209,7 +209,7 @@ static inline bool __nodes_equal(const nodemask_t *src1p,
- 
- #define nodes_intersects(src1, src2) \
- 			__nodes_intersects(&(src1), &(src2), MAX_NUMNODES)
--static inline bool __nodes_intersects(const nodemask_t *src1p,
-+static __always_inline bool __nodes_intersects(const nodemask_t *src1p,
- 					const nodemask_t *src2p, unsigned int nbits)
- {
- 	return bitmap_intersects(src1p->bits, src2p->bits, nbits);
-@@ -217,33 +217,33 @@ static inline bool __nodes_intersects(const nodemask_t *src1p,
- 
- #define nodes_subset(src1, src2) \
- 			__nodes_subset(&(src1), &(src2), MAX_NUMNODES)
--static inline bool __nodes_subset(const nodemask_t *src1p,
-+static __always_inline bool __nodes_subset(const nodemask_t *src1p,
- 					const nodemask_t *src2p, unsigned int nbits)
- {
- 	return bitmap_subset(src1p->bits, src2p->bits, nbits);
- }
- 
- #define nodes_empty(src) __nodes_empty(&(src), MAX_NUMNODES)
--static inline bool __nodes_empty(const nodemask_t *srcp, unsigned int nbits)
-+static __always_inline bool __nodes_empty(const nodemask_t *srcp, unsigned int nbits)
- {
- 	return bitmap_empty(srcp->bits, nbits);
- }
- 
- #define nodes_full(nodemask) __nodes_full(&(nodemask), MAX_NUMNODES)
--static inline bool __nodes_full(const nodemask_t *srcp, unsigned int nbits)
-+static __always_inline bool __nodes_full(const nodemask_t *srcp, unsigned int nbits)
- {
- 	return bitmap_full(srcp->bits, nbits);
- }
- 
- #define nodes_weight(nodemask) __nodes_weight(&(nodemask), MAX_NUMNODES)
--static inline int __nodes_weight(const nodemask_t *srcp, unsigned int nbits)
-+static __always_inline int __nodes_weight(const nodemask_t *srcp, unsigned int nbits)
- {
- 	return bitmap_weight(srcp->bits, nbits);
- }
- 
- #define nodes_shift_right(dst, src, n) \
- 			__nodes_shift_right(&(dst), &(src), (n), MAX_NUMNODES)
--static inline void __nodes_shift_right(nodemask_t *dstp,
-+static __always_inline void __nodes_shift_right(nodemask_t *dstp,
- 					const nodemask_t *srcp, int n, int nbits)
- {
- 	bitmap_shift_right(dstp->bits, srcp->bits, n, nbits);
-@@ -251,7 +251,7 @@ static inline void __nodes_shift_right(nodemask_t *dstp,
- 
- #define nodes_shift_left(dst, src, n) \
- 			__nodes_shift_left(&(dst), &(src), (n), MAX_NUMNODES)
--static inline void __nodes_shift_left(nodemask_t *dstp,
-+static __always_inline void __nodes_shift_left(nodemask_t *dstp,
- 					const nodemask_t *srcp, int n, int nbits)
- {
- 	bitmap_shift_left(dstp->bits, srcp->bits, n, nbits);
-@@ -261,13 +261,13 @@ static inline void __nodes_shift_left(nodemask_t *dstp,
-           > MAX_NUMNODES, then the silly min_ts could be dropped. */
- 
- #define first_node(src) __first_node(&(src))
--static inline unsigned int __first_node(const nodemask_t *srcp)
-+static __always_inline unsigned int __first_node(const nodemask_t *srcp)
- {
- 	return min_t(unsigned int, MAX_NUMNODES, find_first_bit(srcp->bits, MAX_NUMNODES));
- }
- 
- #define next_node(n, src) __next_node((n), &(src))
--static inline unsigned int __next_node(int n, const nodemask_t *srcp)
-+static __always_inline unsigned int __next_node(int n, const nodemask_t *srcp)
- {
- 	return min_t(unsigned int, MAX_NUMNODES, find_next_bit(srcp->bits, MAX_NUMNODES, n+1));
- }
-@@ -277,7 +277,7 @@ static inline unsigned int __next_node(int n, const nodemask_t *srcp)
-  * the first node in src if needed.  Returns MAX_NUMNODES if src is empty.
-  */
- #define next_node_in(n, src) __next_node_in((n), &(src))
--static inline unsigned int __next_node_in(int node, const nodemask_t *srcp)
-+static __always_inline unsigned int __next_node_in(int node, const nodemask_t *srcp)
- {
- 	unsigned int ret = __next_node(node, srcp);
- 
-@@ -286,7 +286,7 @@ static inline unsigned int __next_node_in(int node, const nodemask_t *srcp)
- 	return ret;
- }
- 
--static inline void init_nodemask_of_node(nodemask_t *mask, int node)
-+static __always_inline void init_nodemask_of_node(nodemask_t *mask, int node)
- {
- 	nodes_clear(*mask);
- 	node_set(node, *mask);
-@@ -304,7 +304,7 @@ static inline void init_nodemask_of_node(nodemask_t *mask, int node)
- })
- 
- #define first_unset_node(mask) __first_unset_node(&(mask))
--static inline unsigned int __first_unset_node(const nodemask_t *maskp)
-+static __always_inline unsigned int __first_unset_node(const nodemask_t *maskp)
- {
- 	return min_t(unsigned int, MAX_NUMNODES,
- 			find_first_zero_bit(maskp->bits, MAX_NUMNODES));
-@@ -338,21 +338,21 @@ static inline unsigned int __first_unset_node(const nodemask_t *maskp)
- 
- #define nodemask_parse_user(ubuf, ulen, dst) \
- 		__nodemask_parse_user((ubuf), (ulen), &(dst), MAX_NUMNODES)
--static inline int __nodemask_parse_user(const char __user *buf, int len,
-+static __always_inline int __nodemask_parse_user(const char __user *buf, int len,
- 					nodemask_t *dstp, int nbits)
- {
- 	return bitmap_parse_user(buf, len, dstp->bits, nbits);
- }
- 
- #define nodelist_parse(buf, dst) __nodelist_parse((buf), &(dst), MAX_NUMNODES)
--static inline int __nodelist_parse(const char *buf, nodemask_t *dstp, int nbits)
-+static __always_inline int __nodelist_parse(const char *buf, nodemask_t *dstp, int nbits)
- {
- 	return bitmap_parselist(buf, dstp->bits, nbits);
- }
- 
- #define node_remap(oldbit, old, new) \
- 		__node_remap((oldbit), &(old), &(new), MAX_NUMNODES)
--static inline int __node_remap(int oldbit,
-+static __always_inline int __node_remap(int oldbit,
- 		const nodemask_t *oldp, const nodemask_t *newp, int nbits)
- {
- 	return bitmap_bitremap(oldbit, oldp->bits, newp->bits, nbits);
-@@ -360,7 +360,7 @@ static inline int __node_remap(int oldbit,
- 
- #define nodes_remap(dst, src, old, new) \
- 		__nodes_remap(&(dst), &(src), &(old), &(new), MAX_NUMNODES)
--static inline void __nodes_remap(nodemask_t *dstp, const nodemask_t *srcp,
-+static __always_inline void __nodes_remap(nodemask_t *dstp, const nodemask_t *srcp,
- 		const nodemask_t *oldp, const nodemask_t *newp, int nbits)
- {
- 	bitmap_remap(dstp->bits, srcp->bits, oldp->bits, newp->bits, nbits);
-@@ -368,7 +368,7 @@ static inline void __nodes_remap(nodemask_t *dstp, const nodemask_t *srcp,
- 
- #define nodes_onto(dst, orig, relmap) \
- 		__nodes_onto(&(dst), &(orig), &(relmap), MAX_NUMNODES)
--static inline void __nodes_onto(nodemask_t *dstp, const nodemask_t *origp,
-+static __always_inline void __nodes_onto(nodemask_t *dstp, const nodemask_t *origp,
- 		const nodemask_t *relmapp, int nbits)
- {
- 	bitmap_onto(dstp->bits, origp->bits, relmapp->bits, nbits);
-@@ -376,7 +376,7 @@ static inline void __nodes_onto(nodemask_t *dstp, const nodemask_t *origp,
- 
- #define nodes_fold(dst, orig, sz) \
- 		__nodes_fold(&(dst), &(orig), sz, MAX_NUMNODES)
--static inline void __nodes_fold(nodemask_t *dstp, const nodemask_t *origp,
-+static __always_inline void __nodes_fold(nodemask_t *dstp, const nodemask_t *origp,
- 		int sz, int nbits)
- {
- 	bitmap_fold(dstp->bits, origp->bits, sz, nbits);
-@@ -418,22 +418,22 @@ enum node_states {
- extern nodemask_t node_states[NR_NODE_STATES];
- 
- #if MAX_NUMNODES > 1
--static inline int node_state(int node, enum node_states state)
-+static __always_inline int node_state(int node, enum node_states state)
- {
- 	return node_isset(node, node_states[state]);
- }
- 
--static inline void node_set_state(int node, enum node_states state)
-+static __always_inline void node_set_state(int node, enum node_states state)
- {
- 	__node_set(node, &node_states[state]);
- }
- 
--static inline void node_clear_state(int node, enum node_states state)
-+static __always_inline void node_clear_state(int node, enum node_states state)
- {
- 	__node_clear(node, &node_states[state]);
- }
- 
--static inline int num_node_state(enum node_states state)
-+static __always_inline int num_node_state(enum node_states state)
- {
- 	return nodes_weight(node_states[state]);
- }
-@@ -443,11 +443,11 @@ static inline int num_node_state(enum node_states state)
- 
- #define first_online_node	first_node(node_states[N_ONLINE])
- #define first_memory_node	first_node(node_states[N_MEMORY])
--static inline unsigned int next_online_node(int nid)
-+static __always_inline unsigned int next_online_node(int nid)
- {
- 	return next_node(nid, node_states[N_ONLINE]);
- }
--static inline unsigned int next_memory_node(int nid)
-+static __always_inline unsigned int next_memory_node(int nid)
- {
- 	return next_node(nid, node_states[N_MEMORY]);
- }
-@@ -455,13 +455,13 @@ static inline unsigned int next_memory_node(int nid)
- extern unsigned int nr_node_ids;
- extern unsigned int nr_online_nodes;
- 
--static inline void node_set_online(int nid)
-+static __always_inline void node_set_online(int nid)
- {
- 	node_set_state(nid, N_ONLINE);
- 	nr_online_nodes = num_node_state(N_ONLINE);
- }
- 
--static inline void node_set_offline(int nid)
-+static __always_inline void node_set_offline(int nid)
- {
- 	node_clear_state(nid, N_ONLINE);
- 	nr_online_nodes = num_node_state(N_ONLINE);
-@@ -469,20 +469,20 @@ static inline void node_set_offline(int nid)
- 
- #else
- 
--static inline int node_state(int node, enum node_states state)
-+static __always_inline int node_state(int node, enum node_states state)
- {
- 	return node == 0;
- }
- 
--static inline void node_set_state(int node, enum node_states state)
-+static __always_inline void node_set_state(int node, enum node_states state)
- {
- }
- 
--static inline void node_clear_state(int node, enum node_states state)
-+static __always_inline void node_clear_state(int node, enum node_states state)
- {
- }
- 
--static inline int num_node_state(enum node_states state)
-+static __always_inline int num_node_state(enum node_states state)
- {
- 	return 1;
- }
-@@ -502,7 +502,7 @@ static inline int num_node_state(enum node_states state)
- 
- #endif
- 
--static inline int node_random(const nodemask_t *maskp)
-+static __always_inline int node_random(const nodemask_t *maskp)
- {
- #if defined(CONFIG_NUMA) && (MAX_NUMNODES > 1)
- 	int w, bit;
--- 
-2.45.2.1089.g2a221341d9-goog
+>  };
+>  
+>  const size_t riscv_isa_ext_count = ARRAY_SIZE(riscv_isa_ext);
 
 
