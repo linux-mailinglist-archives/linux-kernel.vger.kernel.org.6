@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-257186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BAEE937667
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:04:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D0B4937669
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:04:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEEB81F26BED
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:04:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A8DD1F26C38
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E42185654;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E61823AF;
 	Fri, 19 Jul 2024 10:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v6ZfgPdV"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AWlt/1fv"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D5A82C8E
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 10:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CF884A51
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 10:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721383434; cv=none; b=eEt0/+4QzJLxXvsJV0XvxYMK3OgisMKGObxe0Q7tV6mtRDG751N6EFjxYb04j+v58kPcsR/mk7bBZ36GUtPypriIdpNoFf4rAy468BqBYb2MCc3U2h3dYznCoHmTPUFPPoFpO8QXmmoNQj1QQthF+hjD3IoW/yFBJR9dDDytR0k=
+	t=1721383435; cv=none; b=h8OjES3J3Js02lsjK6J92OdBj3/UB6uUoVxBelp7eHZy9DCPDMZJBWN2kbm2T6kPWe2u8bLaBjyxUIknjhhdYO9+sCWmC0++VkhzczwUF8c9sZrLD5+HkmBp+PGw7FN/3N9RZV/MXvw6oZrDO1WKIRckbBnRthqMAC/uM6ELKfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721383434; c=relaxed/simple;
-	bh=IY5qNV2nX79fB2nRPkwck6ZxJ6ElFtG6EG/Rm+ZMVHc=;
+	s=arc-20240116; t=1721383435; c=relaxed/simple;
+	bh=O84FzyjB2Eyhi66LD4wz7IxJGuAWHj3uy6YrALAP+Mg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HgvJiFVNLFJO6L6Z+B+uyuUQhmBxpVjx8iXyl7Og9htusQiRfk/+OEoFbKME2B0kM9U25dHASmi2WTmAT1lYHkTr82cKiKIhwX8qr1i/HKoqCY59g+a6ojD1UXaIvudfNgWJ4LvQ7gm1Xv7ZBeCi+E7+71BmXdBTRQ2PYKWezBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v6ZfgPdV; arc=none smtp.client-ip=209.85.167.41
+	 In-Reply-To:To:Cc; b=f2BLIPG8m1RwJbAqf+fSxFWrl65n1ELQq3+eyjjBQ8ThRtdG3c8LI8blB7MNbUSTcO0qlX33C14zHV7/vk4WMSi/PBxjNWGxY61gKWh12ayIU2e92qm6qFy3Zne1/gWNpo45/IeMwMXrY5n3lCTyxQNaXuMef9SbqMtCtAtleG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AWlt/1fv; arc=none smtp.client-ip=209.85.208.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52e97e5a84bso2046778e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 03:03:51 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2eec7e431d9so27306151fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 03:03:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721383430; x=1721988230; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1721383432; x=1721988232; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=nauN0LUF6s5oCDx7BxqJdst/ffLcWF+2dEZ0vDL/Inw=;
-        b=v6ZfgPdVVdI1Bf2iB0E13ct4FVNQHmpqc0ljgZIwGCDRq8zVeQKZLi4jln2la4jwgJ
-         i1cduAf6Q1gPAZ5Zts0u+6Kk7s/cZWjlWcohSV8XA986EIE/M6fLUwOzvsCQaybF5Qh+
-         9sy5W0NLx5pxX+PbGwKF1WqYY6D0Qn7jYMQxkCPYFc2p3MTi9BBdGSwV9UaRriJIPRaZ
-         LG5ft8BnQNBZfPfKYtihm3eav056c1hRrxYBy9sgq1zgraU/HYpLC5yQmwkmP3wfeP9p
-         Otwoxn1zg1/9/42t+0WzKA6Uo+dwdfPXFQEd8+vPKQI9hpkQN/ul03KZt/+zTtBYP1wX
-         F1yw==
+        bh=sJ7jGok25wqCohKFmjM2Uxuf4408Pvnq3D5lzo9Msgk=;
+        b=AWlt/1fvOJO2rYApR9RiAzDeXGYj1nOhZjZ+zcRb+w7Aaixww+U6oGUJuitobZ/4L4
+         bRwyCWC+OyHBj/zNAc1ZLj/NkQwtbcsZDVD8v/NvhnZNhwLArzb2ly8AkS+TWtsDhr4S
+         DsNMVsyrAIV8WUCSgsLeGeJrqPS3cqHm5UBIK/rK21RkIgX3cF6vor5qUK37pyTQVUuB
+         rItr3gsYpWFAi4pfUOVNWslBC68rAAgmVdO2mP7NXqPOT+ugOGPGs+Yqt+yZovckaJV2
+         dtDipIeKc6Bt0f8ae0vkLxs0ndy27utA403tIZ2Sfvjx/8qPGq407hF8gfWmpqqjTC6N
+         oSiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721383430; x=1721988230;
+        d=1e100.net; s=20230601; t=1721383432; x=1721988232;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nauN0LUF6s5oCDx7BxqJdst/ffLcWF+2dEZ0vDL/Inw=;
-        b=GOsosnxwhp5GAAGUI3bkmoXnSwgIHyqqbtFyq/Kp/wzwKc623O27ZdZT5W+T8he/Qf
-         R6s2E1WXVu3vS7IZSZbOVWSLvXS0gRNMkYtQiNuHW33lGsVJOFHBh3OcIxKZ6YkQnIsq
-         cOqMRb/SIRBPXcLWbnUuzQp4iqqzH1aPVhAuiCw1zMuSDcG3oDRYzXSQAbRZEeCJep5m
-         N3C6I1IzLwwvDSCo0Aup8HOqeUD4uEY9cJarZJ5E1kNc0EDL7qsoOCrj18pPFKEILVLF
-         N65qo0I89bCS5Q18d7+6mY9QszrDA21s8+QUB89u+P0n97XPNQnZYvZ1QycV3FbxalPr
-         DX6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVQGHzXUCuA+6Bl1ap+yrl0gXWFre0q3JpvJipxcCqt7C6HCWhWhmcyS0a8K1n9qlG6WG8J4zznpp4HWH7fhnm8/us294txwuyh9jAF
-X-Gm-Message-State: AOJu0YwgHTFWNB4+vE6/Bl9/H1hM3LsLbeeotv7LKRKZsK6O1jHdRGg7
-	1/lXqsYn6TIeBNBxAk9H6Ma4kTHglMKsKM8Ti3HsAw2f77eglabxL5EVz4Tb/H+lawOMkOFIikj
-	v
-X-Google-Smtp-Source: AGHT+IEe9HbLr10nAhJHotiJHTC1frkIzKcXeB0pExbTPdwM8B9FTG1lqNq7cQ8A4NbjjPwjfcbtfQ==
-X-Received: by 2002:a2e:9b95:0:b0:2ee:d5c3:3217 with SMTP id 38308e7fff4ca-2ef05d43aeemr35918621fa.47.1721383429921;
-        Fri, 19 Jul 2024 03:03:49 -0700 (PDT)
+        bh=sJ7jGok25wqCohKFmjM2Uxuf4408Pvnq3D5lzo9Msgk=;
+        b=gVGKl/puKm1H47M7B3ji1DfFN7kazcXvY5sSd0wCMR2E5D6qQrDlUTnkieVNsIzjqe
+         P0yhMgnrlIcEmtlVCafztQI2hPJl9YfpNSA0VwEMFMWq0mS/RD47z3MC+FRgjFPO794v
+         /pDZBqTpUhgy6nnvAPEs7Hq7gawNluy78le8iCXGhU4oO2Tl8d6bfgKTE4tEpclSi9wz
+         1vwTmmNi2DmLjhYToQMQ9eglACgnBny6MKgdFSwk5iPJtbcS7B+N1eS87G408pwkhHPg
+         zJcIQ98YJHKCkTfWagSbeWdH8HpkekWYbgZC+7PH03xx3BRdBpMbrJOaHkZvGe1p2Ibn
+         kGBw==
+X-Forwarded-Encrypted: i=1; AJvYcCVq+y7tCzrlAPVp8zJQIll2p1GeLITDu8T9pKM6Jm3mxkdBYsksECJxdDk7Rp+PyCGZikheH9j75v2yEpZ41fe9NxPiYqyNdr2M7Ezh
+X-Gm-Message-State: AOJu0YyOFlzB/rTkuXn/g7L7W62V+V+cg+2HlXdwq3RZ1QB21bVf3ECD
+	3dirCQVI1kgUr62tgqi3AebtfK8ibeNp5UsAo0gF3iD2oYc0DQvENSDARKMPobc=
+X-Google-Smtp-Source: AGHT+IH8l/ppqpwuc0EDxTBACl80JK0PwE7h+5Db4+LmrW0cD8ffIzSXVpqM8mNVlc5/xi2veXyoUg==
+X-Received: by 2002:a2e:998c:0:b0:2ec:1dfc:45bf with SMTP id 38308e7fff4ca-2ef05d4d44emr31816751fa.42.1721383431508;
+        Fri, 19 Jul 2024 03:03:51 -0700 (PDT)
 Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30aaa31e0sm919984a12.27.2024.07.19.03.03.48
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30aaa31e0sm919984a12.27.2024.07.19.03.03.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 03:03:49 -0700 (PDT)
+        Fri, 19 Jul 2024 03:03:51 -0700 (PDT)
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Fri, 19 Jul 2024 12:03:28 +0200
-Subject: [PATCH 3/5] drm/msm/a6xx: Store gmu_cgc_mode in struct a6xx_info
+Date: Fri, 19 Jul 2024 12:03:29 +0200
+Subject: [PATCH 4/5] drm/msm/a6xx: Set GMU CGC properties on a6xx too
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240719-topic-a621-v1-3-850ae5307cf4@linaro.org>
+Message-Id: <20240719-topic-a621-v1-4-850ae5307cf4@linaro.org>
 References: <20240719-topic-a621-v1-0-850ae5307cf4@linaro.org>
 In-Reply-To: <20240719-topic-a621-v1-0-850ae5307cf4@linaro.org>
 To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
@@ -90,217 +89,77 @@ Cc: Marijn Suijten <marijn.suijten@somainline.org>,
  freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1721383413; l=7380;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1721383413; l=2625;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=IY5qNV2nX79fB2nRPkwck6ZxJ6ElFtG6EG/Rm+ZMVHc=;
- b=6y9Innit2xFlEH62+2TpCxA+gp2Eng3+iZZePtu05iML77armQgelT1KldFIXtFoeHJT+W37N
- zOn+eDjBzDCB017FBCU20RKRKSQIVObUUefXf7JVByfFeSbjNsm9PXB
+ bh=O84FzyjB2Eyhi66LD4wz7IxJGuAWHj3uy6YrALAP+Mg=;
+ b=1ZwfQLvOrlfwRBd+kJWRxJFSJphLbrCDE9sDQrNr9Pk9pBIzAo4MOlf4BGjKxEgYSadu2S5x+
+ iofpPsoNnDKDt7pGAdtbcK9zW/BCkGXokeSNHg9Vz7b2NjnoJqlClAz
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-This was apparently almost never set on a6xx.. move the existing values
-and fill out the remaining ones within the catalog.
+This was apparently never done before.. Program the expected values.
 
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 19 ++++++++++++++++++-
- drivers/gpu/drm/msm/adreno/a6xx_gpu.c     |  6 ++----
- drivers/gpu/drm/msm/adreno/a6xx_gpu.h     |  1 +
- 3 files changed, 21 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c   | 18 ++++++++++--------
+ drivers/gpu/drm/msm/adreno/adreno_gpu.h |  8 +++++++-
+ 2 files changed, 17 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-index 1ea535960f32..deee0b686962 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-@@ -448,7 +448,6 @@ static const struct adreno_reglist a690_hwcg[] = {
- 	{REG_A6XX_RBBM_CLOCK_CNTL_GMU_GX, 0x00000222},
- 	{REG_A6XX_RBBM_CLOCK_DELAY_GMU_GX, 0x00000111},
- 	{REG_A6XX_RBBM_CLOCK_HYST_GMU_GX, 0x00000555},
--	{REG_A6XX_GPU_GMU_AO_GMU_CGC_MODE_CNTL, 0x20200},
- 	{REG_A6XX_GPU_GMU_AO_GMU_CGC_DELAY_CNTL, 0x10111},
- 	{REG_A6XX_GPU_GMU_AO_GMU_CGC_HYST_CNTL, 0x5555},
- 	{}
-@@ -636,6 +635,7 @@ static const struct adreno_info a6xx_gpus[] = {
- 		.a6xx = &(const struct a6xx_info) {
- 			.hwcg = a612_hwcg,
- 			.protect = &a630_protect,
-+			.gmu_cgc_mode = 0x00020202,
- 			.prim_fifo_threshold = 0x00080000,
- 		},
- 		/*
-@@ -668,6 +668,7 @@ static const struct adreno_info a6xx_gpus[] = {
- 		.a6xx = &(const struct a6xx_info) {
- 			.hwcg = a615_hwcg,
- 			.protect = &a630_protect,
-+			.gmu_cgc_mode = 0x00000222,
- 			.prim_fifo_threshold = 0x00180000,
- 		},
- 		.speedbins = ADRENO_SPEEDBINS(
-@@ -691,6 +692,7 @@ static const struct adreno_info a6xx_gpus[] = {
- 		.init = a6xx_gpu_init,
- 		.a6xx = &(const struct a6xx_info) {
- 			.protect = &a630_protect,
-+			.gmu_cgc_mode = 0x00000222,
- 			.prim_fifo_threshold = 0x00180000,
- 		},
- 		.speedbins = ADRENO_SPEEDBINS(
-@@ -714,6 +716,7 @@ static const struct adreno_info a6xx_gpus[] = {
- 		.a6xx = &(const struct a6xx_info) {
- 			.hwcg = a615_hwcg,
- 			.protect = &a630_protect,
-+			.gmu_cgc_mode = 0x00000222,
- 			.prim_fifo_threshold = 0x00018000,
- 		},
- 		.speedbins = ADRENO_SPEEDBINS(
-@@ -737,6 +740,7 @@ static const struct adreno_info a6xx_gpus[] = {
- 		.a6xx = &(const struct a6xx_info) {
- 			.hwcg = a615_hwcg,
- 			.protect = &a630_protect,
-+			.gmu_cgc_mode = 0x00000222,
- 			.prim_fifo_threshold = 0x00018000,
- 		},
- 		.speedbins = ADRENO_SPEEDBINS(
-@@ -760,6 +764,7 @@ static const struct adreno_info a6xx_gpus[] = {
- 		.a6xx = &(const struct a6xx_info) {
- 			.hwcg = a615_hwcg,
- 			.protect = &a630_protect,
-+			.gmu_cgc_mode = 0x00000222,
- 			.prim_fifo_threshold = 0x00018000,
- 		},
- 		.speedbins = ADRENO_SPEEDBINS(
-@@ -788,6 +793,7 @@ static const struct adreno_info a6xx_gpus[] = {
- 		.a6xx = &(const struct a6xx_info) {
- 			.hwcg = a630_hwcg,
- 			.protect = &a630_protect,
-+			.gmu_cgc_mode = 0x00020202,
- 			.prim_fifo_threshold = 0x00180000,
- 		},
- 	}, {
-@@ -806,6 +812,7 @@ static const struct adreno_info a6xx_gpus[] = {
- 		.a6xx = &(const struct a6xx_info) {
- 			.hwcg = a640_hwcg,
- 			.protect = &a630_protect,
-+			.gmu_cgc_mode = 0x00020202,
- 			.prim_fifo_threshold = 0x00180000,
- 		},
- 		.speedbins = ADRENO_SPEEDBINS(
-@@ -829,6 +836,7 @@ static const struct adreno_info a6xx_gpus[] = {
- 		.a6xx = &(const struct a6xx_info) {
- 			.hwcg = a650_hwcg,
- 			.protect = &a650_protect,
-+			.gmu_cgc_mode = 0x00020202,
- 			.prim_fifo_threshold = 0x00300200,
- 		},
- 		.address_space_size = SZ_16G,
-@@ -855,6 +863,7 @@ static const struct adreno_info a6xx_gpus[] = {
- 		.a6xx = &(const struct a6xx_info) {
- 			.hwcg = a660_hwcg,
- 			.protect = &a660_protect,
-+			.gmu_cgc_mode = 0x00020000,
- 			.prim_fifo_threshold = 0x00300200,
- 		},
- 		.address_space_size = SZ_16G,
-@@ -874,6 +883,7 @@ static const struct adreno_info a6xx_gpus[] = {
- 		.a6xx = &(const struct a6xx_info) {
- 			.hwcg = a660_hwcg,
- 			.protect = &a660_protect,
-+			.gmu_cgc_mode = 0x00020202,
- 			.prim_fifo_threshold = 0x00200200,
- 		},
- 		.address_space_size = SZ_16G,
-@@ -899,6 +909,7 @@ static const struct adreno_info a6xx_gpus[] = {
- 		.a6xx = &(const struct a6xx_info) {
- 			.hwcg = a640_hwcg,
- 			.protect = &a630_protect,
-+			.gmu_cgc_mode = 0x00020202,
- 			.prim_fifo_threshold = 0x00200200,
- 		},
- 	}, {
-@@ -917,6 +928,7 @@ static const struct adreno_info a6xx_gpus[] = {
- 		.a6xx = &(const struct a6xx_info) {
- 			.hwcg = a690_hwcg,
- 			.protect = &a690_protect,
-+			.gmu_cgc_mode = 0x00020200,
- 			.prim_fifo_threshold = 0x00800200,
- 		},
- 		.address_space_size = SZ_16G,
-@@ -1178,6 +1190,7 @@ static const struct adreno_info a7xx_gpus[] = {
- 		.a6xx = &(const struct a6xx_info) {
- 			.hwcg = a702_hwcg,
- 			.protect = &a650_protect,
-+			.gmu_cgc_mode = 0x00020202,
- 			.prim_fifo_threshold = 0x0000c000,
- 		},
- 		.speedbins = ADRENO_SPEEDBINS(
-@@ -1202,6 +1215,7 @@ static const struct adreno_info a7xx_gpus[] = {
- 		.a6xx = &(const struct a6xx_info) {
- 			.hwcg = a730_hwcg,
- 			.protect = &a730_protect,
-+			.gmu_cgc_mode = 0x00020000,
- 		},
- 		.address_space_size = SZ_16G,
- 	}, {
-@@ -1221,6 +1235,7 @@ static const struct adreno_info a7xx_gpus[] = {
- 			.hwcg = a740_hwcg,
- 			.protect = &a730_protect,
- 			.gmu_chipid = 0x7020100,
-+			.gmu_cgc_mode = 0x00020202,
- 		},
- 		.address_space_size = SZ_16G,
- 	}, {
-@@ -1239,6 +1254,7 @@ static const struct adreno_info a7xx_gpus[] = {
- 			.hwcg = a740_hwcg,
- 			.protect = &a730_protect,
- 			.gmu_chipid = 0x7050001,
-+			.gmu_cgc_mode = 0x00020202,
- 		},
- 		.address_space_size = SZ_256G,
- 	}, {
-@@ -1257,6 +1273,7 @@ static const struct adreno_info a7xx_gpus[] = {
- 		.a6xx = &(const struct a6xx_info) {
- 			.protect = &a730_protect,
- 			.gmu_chipid = 0x7090100,
-+			.gmu_cgc_mode = 0x00020202,
- 		},
- 		.address_space_size = SZ_16G,
- 	}
 diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-index aaeb1161f90d..871452daa189 100644
+index 871452daa189..33a319f7d200 100644
 --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
 +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-@@ -402,7 +402,7 @@ static void a6xx_set_hwcg(struct msm_gpu *gpu, bool state)
+@@ -402,6 +402,7 @@ static void a6xx_set_hwcg(struct msm_gpu *gpu, bool state)
  	struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
  	const struct adreno_reglist *reg;
  	unsigned int i;
--	u32 val, clock_cntl_on, cgc_mode;
-+	u32 val, clock_cntl_on;
++	u32 cgc_delay, cgc_hyst;
+ 	u32 val, clock_cntl_on;
  
  	if (!(adreno_gpu->info->a6xx->hwcg || adreno_is_a7xx(adreno_gpu)))
- 		return;
-@@ -417,10 +417,8 @@ static void a6xx_set_hwcg(struct msm_gpu *gpu, bool state)
+@@ -416,14 +417,15 @@ static void a6xx_set_hwcg(struct msm_gpu *gpu, bool state)
+ 	else
  		clock_cntl_on = 0x8aa8aa82;
  
- 	if (adreno_is_a7xx(adreno_gpu)) {
--		cgc_mode = adreno_is_a740_family(adreno_gpu) ? 0x20222 : 0x20000;
--
- 		gmu_write(&a6xx_gpu->gmu, REG_A6XX_GPU_GMU_AO_GMU_CGC_MODE_CNTL,
--			  state ? cgc_mode : 0);
-+			  state ? adreno_gpu->info->a6xx->gmu_cgc_mode : 0);
- 		gmu_write(&a6xx_gpu->gmu, REG_A6XX_GPU_GMU_AO_GMU_CGC_DELAY_CNTL,
- 			  state ? 0x10111 : 0);
- 		gmu_write(&a6xx_gpu->gmu, REG_A6XX_GPU_GMU_AO_GMU_CGC_HYST_CNTL,
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
-index bc37bd8c7f65..0fb7febf70e7 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
-@@ -22,6 +22,7 @@ struct a6xx_info {
- 	const struct adreno_reglist *hwcg;
- 	const struct adreno_protect *protect;
- 	u32 gmu_chipid;
-+	u32 gmu_cgc_mode;
- 	u32 prim_fifo_threshold;
- };
+-	if (adreno_is_a7xx(adreno_gpu)) {
+-		gmu_write(&a6xx_gpu->gmu, REG_A6XX_GPU_GMU_AO_GMU_CGC_MODE_CNTL,
+-			  state ? adreno_gpu->info->a6xx->gmu_cgc_mode : 0);
+-		gmu_write(&a6xx_gpu->gmu, REG_A6XX_GPU_GMU_AO_GMU_CGC_DELAY_CNTL,
+-			  state ? 0x10111 : 0);
+-		gmu_write(&a6xx_gpu->gmu, REG_A6XX_GPU_GMU_AO_GMU_CGC_HYST_CNTL,
+-			  state ? 0x5555 : 0);
+-	}
++	cgc_delay = adreno_is_a615_family(adreno_gpu) ? 0x111 : 0x10111;
++	cgc_hyst = adreno_is_a615_family(adreno_gpu) ? 0x555 : 0x5555;
++
++	gmu_write(&a6xx_gpu->gmu, REG_A6XX_GPU_GMU_AO_GMU_CGC_MODE_CNTL,
++			state ? adreno_gpu->info->a6xx->gmu_cgc_mode : 0);
++	gmu_write(&a6xx_gpu->gmu, REG_A6XX_GPU_GMU_AO_GMU_CGC_DELAY_CNTL,
++			state ? cgc_delay : 0);
++	gmu_write(&a6xx_gpu->gmu, REG_A6XX_GPU_GMU_AO_GMU_CGC_HYST_CNTL,
++			state ? cgc_hyst : 0);
  
+ 	if (!adreno_gpu->info->a6xx->hwcg) {
+ 		gpu_write(gpu, REG_A7XX_RBBM_CLOCK_CNTL_GLOBAL, 1);
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+index 1ab523a163a0..26972b2cc896 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
++++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+@@ -433,7 +433,13 @@ static inline int adreno_is_a610_family(const struct adreno_gpu *gpu)
+ 	return adreno_is_a610(gpu) || adreno_is_a702(gpu);
+ }
+ 
+-/* check for a615, a616, a618, a619 or any a630 derivatives */
++/* TODO: 615/616 */
++static inline int adreno_is_a615_family(const struct adreno_gpu *gpu)
++{
++	return adreno_is_a618(gpu) ||
++	       adreno_is_a619(gpu);
++}
++
+ static inline int adreno_is_a630_family(const struct adreno_gpu *gpu)
+ {
+ 	if (WARN_ON_ONCE(!gpu->info))
 
 -- 
 2.45.2
