@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-257409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45708937986
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:07:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58927937987
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:07:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A226FB20CBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:06:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8980A1C20E7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC38A1448C9;
-	Fri, 19 Jul 2024 15:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B451459FD;
+	Fri, 19 Jul 2024 15:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="IOdqrYHk"
-Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="zZl6K+7K"
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E98B13D63B
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 15:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851701A269
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 15:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721401611; cv=none; b=thM9dHH97v6ASWu8ekQIRn2HacCxphPcEA8A/UgToDNUEABxaprysMXWLvlF5G70btsU434SZedu+lBHlC4kUZEzpuLeh4CLKAxrEEK4Xx0q0tmjUTTTjnvIBYgyQaCK8U6mqzdkkCtum/S45GZ2F5QQX5bZvHuVLp0EKQw9K4A=
+	t=1721401613; cv=none; b=t4qTi0AQgVU8BpsjvmkhTLpqCQp+VgX3wryXQOj7MszSkWbm+ao1Hk01PDgNxSgsO1NQ+Gkn2ZZSoPP5a/UVyYJKavQ9h8Nh/eWECmGQD0Il7n3NWExmz9y973kfnMOVMQQfca7dt8KK0vTwrhRDqY1ZVW+lEjfuaYx+NCa8piw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721401611; c=relaxed/simple;
-	bh=PcyCIGOY6B9EKh/dirdA/OiOx2pplkP5HcNfj4y1MNo=;
+	s=arc-20240116; t=1721401613; c=relaxed/simple;
+	bh=1VRgN9E20Mz0E1cuuygk/Vt16CkssBzZL4IMwdHn5A8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XHDx4aHV24rfHHr93GyzjNF0rX9T7TEYcSaePITqRttn8YK7zfyA6z7vXffdAmOfVoJhc2LGw5y8qPqVp/HlfsAM+wBn9A8Svt7NcUT3CFCLyl/6sJIdQYDvOhhBtGq48GOpEzSI1v7bbhJGvnH4q9TqPq0ZWTzIBRZ55ntoxWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=IOdqrYHk; arc=none smtp.client-ip=83.166.143.170
+	 MIME-Version:Content-Type; b=nw1ZwX4IZm6ObB5YKhaYMi6FgcGOkjvvkk6hYKC3cZb/UZ+3IKdPo2fAI6Xs1nnrPRelipHLV1bwQxjXmKKFQUTKVtSzMK3curHKPzpnzkerVCJnQ5nGC5/cpvvz4mg9kwnTvp1G8AxENlPMdpm2gI5DmU7FLbElWcTCtr8NUbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=zZl6K+7K; arc=none smtp.client-ip=45.157.188.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WQY123KLczhNp;
-	Fri, 19 Jul 2024 17:06:46 +0200 (CEST)
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WQY132qxMzcBS;
+	Fri, 19 Jul 2024 17:06:47 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721401606;
-	bh=C4QufuQSQWKLaXnsSOFxYv1MHT16Z/NZ1G5g6Fkr0f0=;
+	s=20191114; t=1721401607;
+	bh=OBPsO/SKaEeE/YlM+it8OhWEccms0c50naVM5DXA5DM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IOdqrYHkIcVtfZw6cakd92SDVMHoLd/gtP1EKw1esgZm9PC2TV1YpEujcP8Q9JAvL
-	 fY4YcrXe+5v+eM1qmf9TYlGNDR5MfiURvQCIiyVi+Bzx7yBX5RrbzJzace/ifSPe6p
-	 Y0GlTdPeNN1UhZy+Zmq39xWoDq3RMyYTMjD/GM08=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WQY116SdDzssk;
-	Fri, 19 Jul 2024 17:06:45 +0200 (CEST)
+	b=zZl6K+7KhAbi7bYpDROj72Z4n5CgbrmipVkvzgc99i6WI8wepLoaj7q4hywJa494g
+	 KAM8GT55IEH4ZTwDLJe1cqODQ0Nzt+HRzalIKzn1xbQhq2k0s2HoT6H6pWxSLVbV77
+	 Z7E1pqLCdCPFCaZS+mUZ4S3Fs1D7cvlIKCJvo350=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WQY126cp3ztZT;
+	Fri, 19 Jul 2024 17:06:46 +0200 (CEST)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
 	Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>,
@@ -55,11 +55,10 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	Shervin Oloumi <enlightened@chromium.org>,
 	Tahera Fahimi <fahimitahera@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [RFC PATCH v1 2/3] selftests/landlock: Add test for socket's domain
-Date: Fri, 19 Jul 2024 17:06:17 +0200
-Message-ID: <20240719150618.197991-3-mic@digikod.net>
+	linux-security-module@vger.kernel.org
+Subject: [RFC PATCH v1 3/3] landlock: Document network restrictions tied to sockets
+Date: Fri, 19 Jul 2024 17:06:18 +0200
+Message-ID: <20240719150618.197991-4-mic@digikod.net>
 In-Reply-To: <20240719150618.197991-1-mic@digikod.net>
 References: <20240719150618.197991-1-mic@digikod.net>
 Precedence: bulk
@@ -72,65 +71,35 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-This new ipv4_tcp.socket_domain test checks that the restrictions are
-tied to the socket at creation time, but not tied to the thread
-requesting a bind action.
-
-Properly close file descriptor in ipv4.with_fs test.
+The Landlock domain used to restrict operations on a socket is the
+domain from the thread that created this socket.
 
 Cc: Günther Noack <gnoack@google.com>
 Cc: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
 Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
 Cc: Paul Moore <paul@paul-moore.com>
 Cc: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: stable@vger.kernel.org
-Fixes: a549d055a22e ("selftests/landlock: Add network tests")
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20240719150618.197991-3-mic@digikod.net
+Link: https://lore.kernel.org/r/20240719150618.197991-4-mic@digikod.net
 ---
- tools/testing/selftests/landlock/net_test.c | 29 +++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ Documentation/userspace-api/landlock.rst | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
-index f21cfbbc3638..79251e27d26d 100644
---- a/tools/testing/selftests/landlock/net_test.c
-+++ b/tools/testing/selftests/landlock/net_test.c
-@@ -1579,6 +1579,35 @@ TEST_F(ipv4_tcp, with_fs)
- 	bind_fd = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
- 	ASSERT_LE(0, bind_fd);
- 	EXPECT_EQ(-EACCES, bind_variant(bind_fd, &self->srv1));
-+	EXPECT_EQ(0, close(bind_fd));
-+}
-+
-+TEST_F(ipv4_tcp, socket_domain)
-+{
-+	const struct landlock_ruleset_attr ruleset_attr = {
-+		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP,
-+	};
-+	int ruleset_fd, bind_fd;
-+
-+	/* Creates socket before sandboxing. */
-+	bind_fd = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
-+	ASSERT_LE(0, bind_fd);
-+
-+	ruleset_fd =
-+		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-+	ASSERT_LE(0, ruleset_fd);
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	EXPECT_EQ(0, close(ruleset_fd));
-+
-+	/* Tests port binding with unsandboxed socket. */
-+	EXPECT_EQ(0, bind_variant(bind_fd, &self->srv1));
-+	EXPECT_EQ(0, close(bind_fd));
-+
-+	/* Tests port binding with new sandboxed socket. */
-+	bind_fd = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
-+	ASSERT_LE(0, bind_fd);
-+	EXPECT_EQ(-EACCES, bind_variant(bind_fd, &self->srv1));
-+	EXPECT_EQ(0, close(bind_fd));
- }
+diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+index 37dafce8038b..4a9bfff575d5 100644
+--- a/Documentation/userspace-api/landlock.rst
++++ b/Documentation/userspace-api/landlock.rst
+@@ -529,7 +529,9 @@ Network support (ABI < 4)
+ Starting with the Landlock ABI version 4, it is now possible to restrict TCP
+ bind and connect actions to only a set of allowed ports thanks to the new
+ ``LANDLOCK_ACCESS_NET_BIND_TCP`` and ``LANDLOCK_ACCESS_NET_CONNECT_TCP``
+-access rights.
++access rights.  These restrictions are tied to a socket and are inherited from
++the sandboxed thread that created this socket.  Hence, sockets created before
++sandboxing are not restricted.
  
- FIXTURE(port_specific)
+ IOCTL (ABI < 5)
+ ---------------
 -- 
 2.45.2
 
