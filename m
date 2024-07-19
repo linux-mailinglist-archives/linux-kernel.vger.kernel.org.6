@@ -1,131 +1,227 @@
-Return-Path: <linux-kernel+bounces-257564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D60E937BF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:57:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AB1F937BFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CD03B20D5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:57:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 034BF282994
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9ED146D6A;
-	Fri, 19 Jul 2024 17:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B7A146587;
+	Fri, 19 Jul 2024 18:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R+++FU7i"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ogeL58es"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214998F6C;
-	Fri, 19 Jul 2024 17:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251BD2746B
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 18:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721411830; cv=none; b=uGRcnZX3DnINxpbZqnWP+3UlgE7NryZNUL5ULOSL81/PPNAhIMBhK+FeqGQXacKoj+pj0Iol7ITksMCdBNT9P1MFc34NrTAaRsPn6Ti+ul3PEbpexFqOKmu6ZDSf+tdDi44myyDWs7YxR5QN8LqnbT8OqFxjSgLCO0r5oUwKd+k=
+	t=1721412163; cv=none; b=L32Vf3fRvYox7FpU4DShJ44FpWrOC5Bviz7FMsatBWNXgWSXqczt2Jdy4c8cj+OgenfanTJRrRKlM9i/sv5S8y2fZvmN2ey/ZDR32eKEQREncJ6pEhnEHe7aS5s/hB0Y6F0RgXAnJ2vVvINbevsOJvd/yD7AC4Wgm/JVulhWQTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721411830; c=relaxed/simple;
-	bh=sZe5NICJxBIGGwfdVZnIvSZPHbG9mAj2IyGZX+wRGn4=;
+	s=arc-20240116; t=1721412163; c=relaxed/simple;
+	bh=n1FqbzjvL4oeiSE+vq0cxm8HZQx17StXvNMY2i+PePY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P3C2xdIuLcmlvomajRsdR7cVpZFLzqL7oSXqvodv25ltwYUnAQjnxm6U6J/p0mr0IYz3zbytwbhiBMzhneIPMUv1MFgfj1VlTiSJGCZlEJxlaIGsno2TqIifiXOy3srGsvqel2ZtIeW/AgzGxrpAmkSNLrz664c2OlZeAZcZcPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R+++FU7i; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2cb5243766dso1194057a91.0;
-        Fri, 19 Jul 2024 10:57:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721411828; x=1722016628; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sZe5NICJxBIGGwfdVZnIvSZPHbG9mAj2IyGZX+wRGn4=;
-        b=R+++FU7iPt/dkN2fZJMo3f/OjzkItEjYMB82FkrnQ5VIOu1X9kEeKznTBy9FQEFlrT
-         X2Qnl5Jxl3b0i/xhuFLI3ST0sKexIPTjMHzJHvyOkNiHWjhTZoLlEO/3BmfA2M6pwy8o
-         NAjf9IQZstIOzYj9bn3USkOBfhAXnXsirJSgW5hLbFC94QkbPZ5z/y+rmIbNyPywYna8
-         nXzsC0b9kZUU8wGZS52I0FpK8hrkC2zSbpCa3YGtixD9Q0DQNVPy8/T6J1jmvyjzZCIL
-         GbpeQOd+gdtcga0DiaqsUcCkwwsPXoIVTyVLEvXtr8gi+X3Q0GvbXVTCHr044m7Rwg3p
-         cRMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721411828; x=1722016628;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sZe5NICJxBIGGwfdVZnIvSZPHbG9mAj2IyGZX+wRGn4=;
-        b=dcdZg/2Wn6QI2FUaFzrlrA2aV2PdRQ7WWyB/Ia3Ei89J2pHoHR3JEmqfJ+8KW3jIyE
-         S4220clrhctK8U/GXfn5lc/PvwOIUMmc/XAhAngImQGBq9zH6kprRpTlkEs+7SqxuNWr
-         spNrPA5asTZcUjErPkFtuxlI5ZqqFQ0GhaVd9GMMdwmKM/szldxanYX9Y4t+ys53GnJj
-         sHhSZNe12rJjU21nBWheaoEyFjle/us+JbdMlhn0TRyRftD24rIgzZ2hTk6GrsKW1nIF
-         hfqweiDzbVaiJ+VrSQfbrADsTEcw6jvErWkH8CNnso4+dy6i8IRUzIhQu9ThjW335qC4
-         g6YA==
-X-Forwarded-Encrypted: i=1; AJvYcCWqkrQPD0ntY5btwQcRBui9YRk4h53i43cBNroodTvV4EY0Uc6pgJZT/3HNyafKAOpEjNI/xOL5IfcXpXSdzEFmAelv5PKgMmqElO2o2t1/qx9UWqwHz5lQ2jCEQc8MscDYu5li6+VjDoRl/WMK0Qx4OF95xMVpbtX+1661liEE+OFECFNhoLA=
-X-Gm-Message-State: AOJu0YxdpOF3dlVkHVVBjow3FIBqf69wIBoOC/lRjfeczTvr+O+2K0jg
-	IG4OGzh24UwdCKY5Cq5K5pklBo61CnUCXyNubpZvb4uvOcbrP59Ogbd6sxPM2GO7A8fey9/P4ZO
-	7Dc7vY97sJmlSHsVSs5bW0V6Srl4=
-X-Google-Smtp-Source: AGHT+IFdQbIKZHZdwaeAZpiKJ1fWp0z5cxKOJoEPlBAQ1p3COkCo6uTqU0nJ9ai8Rg+c8DpWWgW4HSrNMdJlTNXYIxQ=
-X-Received: by 2002:a17:90a:c28c:b0:2c9:5f45:5d2a with SMTP id
- 98e67ed59e1d1-2cd1604d7acmr669732a91.12.1721411828356; Fri, 19 Jul 2024
- 10:57:08 -0700 (PDT)
+	 To:Cc:Content-Type; b=PkumLHFdxEa+jTDE5anbHeVKgVdqHy3KKXmRVaSusJWh8Z2fpWD9BQQkUiB4N7GscWOuDKrERbrmScXWZ+nyZYavKZv/4L/9Cbvtyhga9oTSBpx2Iz+GdvVvF0FlMW4lz/ZwnvA3gAWNBCegGe72flt/8CgyLLlJPko+OFHhwsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ogeL58es; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6DB7C4AF0A
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 18:02:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721412162;
+	bh=n1FqbzjvL4oeiSE+vq0cxm8HZQx17StXvNMY2i+PePY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ogeL58esXl77oq2Zo5Pekycl0w01K+pGYBajI2l2WC/MF2JKvXu849ERSxJm2fe1x
+	 LGGZad1Js+G7NFQGe/bpxrAfTYAE6C8tiVOq6ZukWwZ+7YDz4HfM6y2V+3YLLo75pt
+	 70jcMtIqeAHLPJkw0SN0k2nXR5+WkhsHD7yBfE6zQ728W9J/mCG56m3STAWH2qbtdy
+	 Z/yiCYIodH3DWHd1EGH4CWa4GoomfOlA+V3oA7tasoAVzPdAwoGpoUE3ROHKH6u5rf
+	 cxDF5x3Zu8Zb8owLmQAKEKWrVTAU43gZyEMaapQQDpEunzSiOk/BhXAlAM50eX8njk
+	 9tN8mdPpybD3A==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52ea5dc3c79so2553986e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 11:02:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWrpttpcvdZcclVjeCKqjOfghlUyiTnsZXBbL5yQcQe5lDt+ZjzUqfUqAbqN2FG4yBCSMOJr14jIugl45VLV/x/eW7m3k52q4jWFbLY
+X-Gm-Message-State: AOJu0Ywo1Reys3DWIkxILfgogj3gJFjX1lm+/WC5dmgpenNnrPqSiJF0
+	GgqyGMFDWzKkYaoJr/2TjVNu1/KwaboNrpVe/N4fiIVWPklX5AqzCKPMtzkMBqsjsv2WmywAxNu
+	qyFJCpKIA6RM0INfNThSD+0nZgjY=
+X-Google-Smtp-Source: AGHT+IHdVWJSMOJxE8p+Abn2JQ25UNR6Oqo7buQXEDwsnwYETG8oBRMNNZyFdqWYUNefLoY1WYzkR1+tJv19zPWkQoQ=
+X-Received: by 2002:a2e:8ed2:0:b0:2ec:543a:b629 with SMTP id
+ 38308e7fff4ca-2ef168268d8mr3248841fa.34.1721412161045; Fri, 19 Jul 2024
+ 11:02:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717221133.459589-1-benno.lossin@proton.me>
- <20240717221133.459589-2-benno.lossin@proton.me> <99DF6A0F-BAE9-4341-8B42-6C1F1C69E2C6@collabora.com>
-In-Reply-To: <99DF6A0F-BAE9-4341-8B42-6C1F1C69E2C6@collabora.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 19 Jul 2024 19:56:56 +0200
-Message-ID: <CANiq72mxh-7sSj9kTVGENWbcJtbrbzSfksYhKPOap2UrvgZ47A@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/5] doc: rust: create safety standard
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Benno Lossin <benno.lossin@proton.me>, Jonathan Corbet <corbet@lwn.net>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	=?UTF-8?B?Q2hhcG90IENsw6ltZW50IChNLik=?= <clement.chapot@polytechnique.edu>, 
-	Baptiste Lepers <baptiste.lepers@gmail.com>
+References: <50360968-13fb-4e6f-8f52-1725b3177215@asahilina.net> <20240718131428.GA21243@willie-the-truck>
+In-Reply-To: <20240718131428.GA21243@willie-the-truck>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 19 Jul 2024 11:02:29 -0700
+X-Gmail-Original-Message-ID: <CAMj1kXFi0sRVMRNhMVEnYBrLT4DycPoDMUa9VkP8wqqdf59eeA@mail.gmail.com>
+Message-ID: <CAMj1kXFi0sRVMRNhMVEnYBrLT4DycPoDMUa9VkP8wqqdf59eeA@mail.gmail.com>
+Subject: Re: LPA2 on non-LPA2 hardware broken with 16K pages
+To: Will Deacon <will@kernel.org>
+Cc: Asahi Lina <lina@asahilina.net>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	Catalin Marinas <catalin.marinas@arm.com>, ryan.roberts@arm.com, mark.rutland@arm.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 19, 2024 at 6:24=E2=80=AFPM Daniel Almeida
-<daniel.almeida@collabora.com> wrote:
+On Thu, 18 Jul 2024 at 06:14, Will Deacon <will@kernel.org> wrote:
 >
-> For these corner cases, a simple safety comment should suffice. By all me=
-ans,
-> let's strive to push as much of the unsafe bits into the kernel crate. Bu=
-t,
-> IMHO, we shouldn=E2=80=99t treat Rust drivers as some unprivileged entity=
-, they=E2=80=99re
-> also kernel code, after all.
+> Hi Lina, [+Ard, Mark and Ryan],
+>
+> On Thu, Jul 18, 2024 at 06:39:10PM +0900, Asahi Lina wrote:
+> > I ran into this with the Asahi Linux downstream kernel, based on v6.9.9,
+> > but I believe the problem is also still upstream. The issue seems to be
+> > an interaction between folding one page table level at compile time and
+> > another one at runtime.
+>
+> Thanks for reporting this!
+>
+> > With this config, we have:
+> >
+> > CONFIG_PGTABLE_LEVELS=4
+> > PAGE_SHIFT=14
+> > PMD_SHIFT=25
+> > PUD_SHIFT=36
+> > PGDIR_SHIFT=47
+> > pgtable_l5_enabled() == false (compile time)
+> > pgtable_l4_enabled() == false (runtime, due to no LPA2)
+>
+> I think this is 'defconfig' w/ 16k pages, although I wasn't able to
+> trigger the issue quickly under QEMU with that. Your analysis looks
+> correct, however.
+>
+> > With p4d folded at compile-time, and pud folded at runtime when LPA2 is
+> > not supported.
+> >
+> > With this setup, pgd_offset() is broken since the pgd is actually
+> > supposed to become a pud but the shift is wrong, as it is set at compile
+> > time:
+> >
+> > #define pgd_index(a)  (((a) >> PGDIR_SHIFT) & (PTRS_PER_PGD - 1))
+> >
+> > static inline pgd_t *pgd_offset_pgd(pgd_t *pgd, unsigned long address)
+> > {
+> >         return (pgd + pgd_index(address));
+> > };
+> >
+> > Then we follow the gup logic (abbreviated):
+> >
+> > gup_pgd_range:
+> >     pgdp = pgd_offset(current->mm, addr);
+> >     pgd_t pgd = READ_ONCE(*pgdp);
+> >
+> > At this point, pgd is just the 0th entry of the top level page table
+> > (since those extra address bits will always be 0 for valid 47-bit user
+> > addresses).
+> >
+> > p4d then gets folded via pgtable-nop4d.h:
+> >
+> > gup_p4d_range:
+> >     p4dp = p4d_offset_lockless(pgdp, pgd, addr);
+> >          = p4d_offset(&(pgd), address)
+> >          = &pgd
+> >     p4d_t p4d = READ_ONCE(*p4dp);
+> >
+> > Now we have p4dp = stack address of pgd, and p4d = pgd.
+> >
+> > gup_pud_range:
+> >     pudp = pud_offset_lockless(p4dp, p4d, addr);
+> >          -> if (!pgtable_l4_enabled())
+> >            = p4d_to_folded_pud(p4dp, addr);
+> >            = (pud_t *)PTR_ALIGN_DOWN(p4dp, PAGE_SIZE) + pud_index(addr);
+> >     pud_t pud = READ_ONCE(*pudp);
+> >
+> > Which is bad pointer math because it only works if p4dp points to a real
+> > page table entry inside a page table, not a single u64 stack address.
+>
+> Cheers for the explanation; I agree that 6.10 looks like it's affected
+> in the same way, even though I couldn't reproduce the crash. I think the
+> root of the problem is that p4d_offset_lockless() returns a stack
+> address when the p4d level is folded. I wondered about changing the
+> dummy pXd_offset_lockless() definitions in linux/pgtable.h to pass the
+> real pointer through instead of the address of the local, but then I
+> suppose _most_ pXd_offset() implementations are going to dereference
+> that and it would break the whole point of having _lockless routines
+> to start with.
+>
+> What if we provided our own implementation of p4d_offset_lockless()
+> for the folding case, which could just propagate the page-table pointer?
+> Diff below.
+>
+> > This causes random oopses in internal_get_user_pages_fast and related
+> > codepaths.
+>
+> Do you have a reliable way to trigger those? I tried doing some GUPpy
+> things like strace (access_process_vm()) but it all seemed fine.
+>
 
-The intention has never been to forbid unsafe blocks, but rather to
-minimize the amount of unsafe code as much as possible.
+Thanks for the cc, and thanks to Lina for the excellent diagnosis -
+this is really helpful.
 
-That is why mixing Rust and C in ways that make the amount of unsafe
-blocks increase a lot may not be the best approaches. Sometimes it may
-be needed nevertheless, i.e. there is no hard rule here.
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index f8efbc128446..3afe624a39e1 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -1065,6 +1065,13 @@ static inline bool pgtable_l5_enabled(void) { return false; }
+>
+>  #define p4d_offset_kimg(dir,addr)      ((p4d_t *)dir)
+>
+> +static inline
+> +p4d_t *p4d_offset_lockless(pgd_t *pgdp, pgd_t pgd, unsigned long addr)
 
-Relatedly, on the topic of drivers being "unprivileged" entities:
-anything we can do to make any code as "unprivileged" as possible (in
-"number of unsafe blocks" or other ways) is likely a good thing, as
-long as it does not detract from what actually needs to be done and is
-not too onerous.
+This is in the wrong place, I think - we already define this for the
+5-level case (around line 1760).
 
-In other words, part of the idea of using Rust has always been trying
-to see how much we could tight things up while still making things
-work in practice.
+We'll need to introduce another version for the 4-level case, so
+perhaps, to reduce the risk of confusion, we might define it as
 
-For instance, other ways to tight things up would be disallowing to
-call certain APIs/subsystems/... (i.e. visibility, which we will add),
-marking certain crates as `#![deny(unsafe_code)]` or other lints, or
-verification of certain properties (there are researchers looking into
-this).
+static inline
+p4d_t *p4d_offset_lockless_folded(pgd_t *pgdp, pgd_t pgd, unsigned long addr)
+{
+...
+}
+#ifdef __PAGETABLE_P4D_FOLDED
+#define p4d_offset_lockless p4d_offset_lockless_folded
+#endif
 
-But, yeah, I agree it will be one of the interesting discussions at
-Kangrejos... :)
 
-Cheers,
-Miguel
+> +{
+
+We might add
+
+if (pgtable_l4_enabled())
+    pgdp = &pgd;
+
+here to preserve the existing 'lockless' behavior when PUDs are not folded.
+
+
+> +       return p4d_offset(pgdp, addr);
+> +}
+> +#define p4d_offset_lockless p4d_offset_lockless
+> +
+>  #endif  /* CONFIG_PGTABLE_LEVELS > 4 */
+>
+
+I suggest we also add something like the below so we can catch these
+issues more easily
+
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -874,9 +874,26 @@ static inline phys_addr_t p4d_page_paddr(p4d_t p4d)
+
+ static inline pud_t *p4d_to_folded_pud(p4d_t *p4dp, unsigned long addr)
+ {
++       /*
++        * The transformation below does not work correctly for descriptors
++        * copied to the stack.
++        */
++       VM_WARN_ON((u64)p4dp >= VMALLOC_START && !__is_kernel((u64)p4dp));
++
+        return (pud_t *)PTR_ALIGN_DOWN(p4dp, PAGE_SIZE) + pud_index(addr);
+ }
 
