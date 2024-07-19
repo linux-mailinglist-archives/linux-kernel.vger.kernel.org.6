@@ -1,162 +1,160 @@
-Return-Path: <linux-kernel+bounces-257616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F3F937CB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:45:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 779AC937CB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:48:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4AE4B20D56
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:45:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 022BD1F21A3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97DF91482F6;
-	Fri, 19 Jul 2024 18:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA3D147C87;
+	Fri, 19 Jul 2024 18:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j5vvIx0o"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="duoWER4E"
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795FA14600C;
-	Fri, 19 Jul 2024 18:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B261474A8
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 18:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721414688; cv=none; b=Mr6ZyXDu2dbsKxlzV4JGgvdgUesmt5Mb77qBE8x3PY7CJ/wfNkJWOu63wFeA32j5VqhRKu+JeUH3mdKEwQgpq+a1jsnHNN/aE0a++pz3Eg4hA3Q4xYNGxoFTpid6c3j20aNMCIXovC7J43b4Zd3/H4WDthjdtfb13mOy5Dt3vy8=
+	t=1721414906; cv=none; b=TCXfqIaOUIrGYRrY9vEKMZE7yVr5Q0BnG2iugIA39G1WWdsTWnaVp3uD3PadEfwg97Zaw7Q7155sSxS3ApQZsc5OoWD/cE86dx3bxffjvsFCAZme5dBpO4rDAAYGuG42aS2maFyQrTpiBffhy9CDDiJCpylbKPso2ecCq2KTeTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721414688; c=relaxed/simple;
-	bh=7wp5/fw5rQWFvxZqvgGU+qhYZpRQhMB/Ij0okkHEhyA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XOKS0ehyWuC3+4ps2eoW5ESVf7Zu8p1wbzHnAx/NlGbmBwinHv/wozFcysFEnTig6qM3Qt3NQFx7LMLIDUK0asFPKojNHLfbPefiY90UyeGbw8k43ue5hbXlXuki6dTI8By2Ro6PIhHM57JBTIz04tCSJV2mXAhIq9+AQrnstuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j5vvIx0o; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70d01e4f7fcso544965b3a.1;
-        Fri, 19 Jul 2024 11:44:47 -0700 (PDT)
+	s=arc-20240116; t=1721414906; c=relaxed/simple;
+	bh=KSP3qFQimIB/KWgpWhEu0lTlpGLv27AIGOdpzPyZz9Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Cb6efg3dzTmQTJvG5+52ITYQ2fX1rv6D9ELADM0Ci/y9CAnLMCuMuDJZ262Nbsa2WiS1UCkpes5FSOHIRhGjbmhy7ueWlLupGKt9As9Vo9tTvhIyMQ611sdkzxsYPFZzTlUJ1WbbQ9mc8RR4FVYZ8aHXogRQjQ/gKO9uw/cg7lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=duoWER4E; arc=none smtp.client-ip=209.85.167.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3d96365dc34so1283381b6e.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 11:48:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721414687; x=1722019487; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YYfSr5eumI646hntPDiuA/JnzYVv0u0szIwQZoo/i2I=;
-        b=j5vvIx0oH0L7Fq+KyHZ5Z+S7ErJ/g5R8gfmtq16AeurIoArMMyhJxHjGNJWOeO0kmj
-         1GVCLKnvDQeDbtw2Mf2PM5eVNnl5GQIuSxxAJ4wKNSE87pm4NnouSIdg0FLZerEN6yiN
-         Xi/Pl2LW0N5nthjcW1e1wcP5paeOubTuK1f+WsDHYUyiwZjVTROwmC09GmUIPhWAEJ6C
-         +EewoELAou7Xv6eUOb9BRAx8YZAvJ4c69gfXYSNLIfw18ptBBVqKnBO3AjKLSruX/Y/z
-         VubsdJYAqwMRzhYRTpH96eTvybVsmhXExUmmeApMbuVbzBvtGLhpc+PEJ3x1JGlYxgcj
-         CUCg==
+        d=linaro.org; s=google; t=1721414904; x=1722019704; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ukG7Uje2tjlYAEnwiivgrAC4JGlADujKudhRv8xZLpk=;
+        b=duoWER4ETLyOtzvtx3pESFee5UbZGzZdZ4QNrp8o8xPVJ010+G3kbX96zMFLVBfCKD
+         xPlo9rfLmvlrhv2GoHc+HM9vYiwdWeGQbgQFXwudCThREFbmOvODa9n/3J3+CZUk6GYM
+         80yWo/Xclr2mqRGOcmC6/18yBNBXArzpd5UpRlzI8CGjh0Vj9dzeZyC8r7tqIBXXVMF7
+         yRtIGVBF21ZByypqjLGaUlKLKa5XLOYqBb0/g6lLsUqP1P37gCzXQliA21HwPQfnGZxy
+         L1fsNTbc8Y9Rh7gaswpvOEqAWmtoF7hW4bS0qpMF9ZXZ4jIFd2II6Q9fn5pEVc00Ap4T
+         3oQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721414687; x=1722019487;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YYfSr5eumI646hntPDiuA/JnzYVv0u0szIwQZoo/i2I=;
-        b=tM0n8hjcKU3pBOdfd186ZZPzOcksTEbbO94bBRt7zSNP+qa7HO0j1yGKSrQxDFEeyE
-         bG1KWNeQj2BMFVRowcmVKE5ikWyc7RciSvl/RMhFJHBvh532XL3di/u7ZOR+dqULfIDv
-         C8eYtN4tNOvRRE9mjb9NEtMskrxOILiF/ORefdDFetitJ+RwuW/4v+S+EOgwB+sz3S+Q
-         ef1Na02jwHU4RaAlokHc4BHltS40sB3klgviaVZ1GKJ1MF/br+T2sQf0KD50MaYeFzOr
-         Z2qDXHjrGqNogEtdnNSyiUOSM0eeBgv+RomDIl3xYaX60iiY9r3eo0wj72wvORMkOMM4
-         omNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWy0/beDcZrYsozlrm4AZ7SfCn/VbXigY53PCmnwdQJfzDFBABQCKFWqlHoqD9zXesUyrtnZF/RGljReyyq60y/0rmZO042Mw/L01aBUen8Mb2CVy2nvC72ppVvxvGhilIRppMI5WVSvRNA3fJHBiRpcABW74h5KeQM
-X-Gm-Message-State: AOJu0YyNw+Znbb8IUrphToGgGY2R0zEsxP1xhHukUw+xWcGngS+iBEH2
-	QYaFYOOQ5iVdOcdkjxbhEA0RE9dKYQMb0JkrXEmg4w9+ArIo+FzfUoxYz3Z6FqetfnAS3JJg8zm
-	B+uLXsI3RP8kR8I5nXEUWA4n54Ts=
-X-Google-Smtp-Source: AGHT+IHStgLwmAPDB44UyOfvI6437sWYw7wRuQrtEDN1HhgslEJsoQB/I2A4zYoWXiRfqE7oL+j7u3VFYz91Q12fxbw=
-X-Received: by 2002:a05:6a00:3a0f:b0:706:a87f:98ae with SMTP id
- d2e1a72fcca58-70ce4f1c984mr10279689b3a.24.1721414686779; Fri, 19 Jul 2024
- 11:44:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721414904; x=1722019704;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ukG7Uje2tjlYAEnwiivgrAC4JGlADujKudhRv8xZLpk=;
+        b=Z57L45jvu+RAVVM+5k5CSVOPOyAS/WFeRRMtzJ21EjCdw5cdeAzh8uUAUcUL8dFait
+         6lQo//NiPkuqCQ2yf982zdIqJ/Yagq5r87RNF/yNZ8f5p+6FpSrHN7Bl2ixYinkP6gyk
+         6ogzjth4E7Q07Wbap+g72ANJjjBZmzXh919OaLcLX4Gi5JjP8/OYht+2gE1Zc+N5N8i1
+         jxesycXi32VBRROtmA7I9QdWEW0dImA1Ta1x+U2Et3TO4vD9V7CKo6RBEDo5cgagHfjh
+         9AcxiyhlYnX4nQ22Oot07HlqhbbXai8ipUSWjPSDigBQMJYPk8/rg/A3gUBuQF4/d1oc
+         wKXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPo2wks1gAN1ar0Q8TSRnF0iB8wRLoKsSYM0lHLe5qNYNfGRq/jO60c2gKfzO2M+oqZTiRbU5IlsaiJzjwMsflcNF7J7CuKvZ4IYfI
+X-Gm-Message-State: AOJu0YzM7LRJd3TpP8zrT7gZwuropSFQJ7/ugDwPYIQ8mST1/rkAziXZ
+	mSn4s8+1kYjs6UNpb4QMb+VUXMiproQ1QihmFUwDRCxEgS2n/A/AegnQMF+f7T4=
+X-Google-Smtp-Source: AGHT+IFUGjfozpT7NMN/T1JZs9styGTo80iaJ/5feWyL+K6jzfZXUSsuGczjQ3mCsZm/CiHApe701Q==
+X-Received: by 2002:a05:6808:1b20:b0:3d2:1fdd:286f with SMTP id 5614622812f47-3dad1f7c310mr8527058b6e.49.1721414904156;
+        Fri, 19 Jul 2024 11:48:24 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:4528:a9e:1eaf:80c5])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3dae09cf1ffsm386578b6e.36.2024.07.19.11.48.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 11:48:23 -0700 (PDT)
+Date: Fri, 19 Jul 2024 13:48:21 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Sunyeal Hong <sunyeal.hong@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Sunyeal Hong <sunyeal.hong@samsung.com>
+Subject: Re: [PATCH v2 3/4] clk: samsung: clk-pll: Add support for pll_531x
+Message-ID: <a82340ab-a1db-4089-a804-acf9882782f4@suswa.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240718143122.2230780-1-asavkov@redhat.com> <005ef8ac-d48e-304f-65c5-97a17d83fd86@iogearbox.net>
- <CAADnVQKjgQg9Y=VxHL9jrkNdT6UKMbaFEOfjNFG_w_M=GgaRjQ@mail.gmail.com>
-In-Reply-To: <CAADnVQKjgQg9Y=VxHL9jrkNdT6UKMbaFEOfjNFG_w_M=GgaRjQ@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 19 Jul 2024 11:44:34 -0700
-Message-ID: <CAEf4BzbgeCo09sfrQVgBHJJ-=uZEEm287xXkjoLMrUkcLN6VMQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] selftests/bpf: fix compilation failure when CONFIG_NET_FOU!=y
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, Artem Savkov <asavkov@redhat.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Network Development <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240707231331.3433340-4-sunyeal.hong@samsung.com>
 
-On Fri, Jul 19, 2024 at 10:09=E2=80=AFAM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Fri, Jul 19, 2024 at 8:45=E2=80=AFAM Daniel Borkmann <daniel@iogearbox=
-.net> wrote:
-> >
-> > Hi Artem,
-> >
-> > On 7/18/24 4:31 PM, Artem Savkov wrote:
-> > > Without CONFIG_NET_FOU bpf selftests are unable to build because of
-> > > missing definitions. Add ___local versions of struct bpf_fou_encap an=
-d
-> > > enum bpf_fou_encap_type to fix the issue.
-> > >
-> > > Signed-off-by: Artem Savkov <asavkov@redhat.com>
-> >
-> > This breaks BPF CI, ptal:
-> >
-> > https://github.com/kernel-patches/bpf/actions/runs/9999691294/job/27641=
-198557
-> >
-> >    [...]
-> >      CLNG-BPF [test_maps] btf__core_reloc_existence___wrong_field_defs.=
-bpf.o
-> >      CLNG-BPF [test_maps] verifier_bswap.bpf.o
-> >      CLNG-BPF [test_maps] test_core_reloc_existence.bpf.o
-> >      CLNG-BPF [test_maps] test_global_func8.bpf.o
-> >      CLNG-BPF [test_maps] verifier_bitfield_write.bpf.o
-> >      CLNG-BPF [test_maps] local_storage_bench.bpf.o
-> >      CLNG-BPF [test_maps] verifier_runtime_jit.bpf.o
-> >      CLNG-BPF [test_maps] test_pkt_access.bpf.o
-> >    progs/test_tunnel_kern.c:39:5: error: conflicting types for 'bpf_skb=
-_set_fou_encap'
-> >       39 | int bpf_skb_set_fou_encap(struct __sk_buff *skb_ctx,
-> >          |     ^
-> >    /tmp/work/bpf/bpf/tools/testing/selftests/bpf/tools/include/vmlinux.=
-h:107714:12: note: previous declaration is here
-> >     107714 | extern int bpf_skb_set_fou_encap(struct __sk_buff *skb_ctx=
-, struct bpf_fou_encap *encap, int type) __weak __ksym;
-> >            |            ^
-> >    progs/test_tunnel_kern.c:41:5: error: conflicting types for 'bpf_skb=
-_get_fou_encap'
-> >       41 | int bpf_skb_get_fou_encap(struct __sk_buff *skb_ctx,
-> >          |     ^
-> >    /tmp/work/bpf/bpf/tools/testing/selftests/bpf/tools/include/vmlinux.=
-h:107715:12: note: previous declaration is here
-> >     107715 | extern int bpf_skb_get_fou_encap(struct __sk_buff *skb_ctx=
-, struct bpf_fou_encap *encap) __weak __ksym;
-> >            |            ^
-> >      CLNG-BPF [test_maps] verifier_typedef.bpf.o
-> >      CLNG-BPF [test_maps] user_ringbuf_fail.bpf.o
-> >      CLNG-BPF [test_maps] verifier_map_in_map.bpf.o
-> >    progs/test_tunnel_kern.c:782:35: error: incompatible pointer types p=
-assing 'struct bpf_fou_encap___local *' to parameter of type 'struct bpf_fo=
-u_encap *' [-Werror,-Wincompatible-pointer-types]
-> >      782 |         ret =3D bpf_skb_set_fou_encap(skb, &encap, FOU_BPF_E=
-NCAP_GUE___local);
-> >          |                                          ^~~~~~
-> >    /tmp/work/bpf/bpf/tools/testing/selftests/bpf/tools/include/vmlinux.=
-h:107714:83: note: passing argument to parameter 'encap' here
-> >     107714 | extern int bpf_skb_set_fou_encap(struct __sk_buff *skb_ctx=
-, struct bpf_fou_encap *encap, int type) __weak __ksym;
->
-> It's a good idea to introduce struct bpf_fou_encap___local
-> for !FOU builds, but kfunc signature needs to stay and
-> __local variable needs to be type casted to (struct bpf_fou_encap *)
-> when calling kfunc.
+Hi Sunyeal,
 
-Given we specify
+kernel test robot noticed the following build warnings:
 
-CONFIG_NET_FOU=3Dy (not =3Dm)
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-in selftests/bpf/config, do we really need to work around this? I bet
-we have a bunch of other missing types if we don't set all the
-settings as required by selftests/bpf/config.
+url:    https://github.com/intel-lab-lkp/linux/commits/Sunyeal-Hong/dt-bindings-clock-add-Exynos-Auto-v920-SoC-CMU-bindings/20240708-072150
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
+patch link:    https://lore.kernel.org/r/20240707231331.3433340-4-sunyeal.hong%40samsung.com
+patch subject: [PATCH v2 3/4] clk: samsung: clk-pll: Add support for pll_531x
+config: arc-randconfig-r071-20240719 (https://download.01.org/0day-ci/archive/20240720/202407200028.5AADGhmj-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202407200028.5AADGhmj-lkp@intel.com/
+
+smatch warnings:
+drivers/clk/samsung/clk-pll.c:1292 samsung_pll531x_recalc_rate() warn: mask and shift to zero: expr='fdiv >> 31'
+
+vim +1292 drivers/clk/samsung/clk-pll.c
+
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1277  static unsigned long samsung_pll531x_recalc_rate(struct clk_hw *hw,
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1278  						 unsigned long parent_rate)
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1279  {
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1280  	struct samsung_clk_pll *pll = to_clk_pll(hw);
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1281  	u32 mdiv, pdiv, sdiv, pll_con0, pll_con8;
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1282  	s32 fdiv;
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1283  	u64 fout = parent_rate;
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1284  
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1285  	pll_con0 = readl_relaxed(pll->con_reg);
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1286  	pll_con8 = readl_relaxed(pll->con_reg + 20);
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1287  	mdiv = (pll_con0 >> PLL531X_MDIV_SHIFT) & PLL531X_MDIV_MASK;
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1288  	pdiv = (pll_con0 >> PLL531X_PDIV_SHIFT) & PLL531X_PDIV_MASK;
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1289  	sdiv = (pll_con0 >> PLL531X_SDIV_SHIFT) & PLL531X_SDIV_MASK;
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1290  	fdiv = (s32)(pll_con8 & PLL531X_FDIV_MASK);
+
+PLL531X_FDIV_MASK is 0xffff.  Was this supposed to be a cast to s16
+instead of s32?  Why is fdiv signed?  Shifting negative values is
+undefined in C.
+
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1291  
+5c788df7a25de7 Sunyeal Hong 2024-07-08 @1292  	if (fdiv >> 31)
+
+It's really unclear what's happening here.  If I had to guess, I'd say
+that this was testing to see if fdiv was negative.
+
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1293  		mdiv--;
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1294  
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1295  	fout *= ((u64)mdiv << 24) + (fdiv >> 8);
+                                                                             ^^^^^^^^^
+More shifting.
+
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1296  	do_div(fout, (pdiv << sdiv));
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1297  	fout >>= 24;
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1298  
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1299  	return (unsigned long)fout;
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1300  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
