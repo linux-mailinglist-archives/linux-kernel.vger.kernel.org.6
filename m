@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-256947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACF649372FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 06:15:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EF719372F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 06:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2EDCB21083
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C30E1F21F31
 	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 04:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698F037703;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6279A376E7;
 	Fri, 19 Jul 2024 04:15:20 +0000 (UTC)
-Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A4BB1CA9C;
-	Fri, 19 Jul 2024 04:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [52.237.72.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B093236;
+	Fri, 19 Jul 2024 04:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.237.72.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721362519; cv=none; b=kvAXtzyCcU/mwuKL8jaiwz7Q/JZ4LwiJS5/7M62p1WlpJS+yqK1Muu1q0JhybAg6KVsRiy36D3a9FFYccFwM/bs27CCpRcPXR+Atr0nhgUKTQG0Yh24s50ExsXkiSrTCIDHYl2kAbY4WevM6hcdyT15nydJDSmj8KJGGdyXElU8=
+	t=1721362519; cv=none; b=ohOmq5bHDHQ8GlgK5l/bfmlDrokB9+xox57gWY7dVxiDRAXsSDDpJn9slGAPmRH0u23uWq4FMd1b5z5/Ga4KROAuAZQEqm7a6YTLJ422vPBXPKQrnGGHQLLW0bTMRwLTF/N16e046VR8PlwAaZeT5MOMa++u+kir0RKLGugfEro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721362519; c=relaxed/simple;
-	bh=6Pov9ydxUCi6zoPvZB68QjCxberBXnnTl0s211O6YHM=;
+	bh=ewcG7xqXr6f2MmXfeYswZvnssTP40xufMckIKbFuPx4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=n5zyCMmNJpksV/rAf43kZxxRkxe9wbg9sMWcyaJJ+FmBWRwVlYDo98j93uzQ6BY3I1zfkIdSeblZJRRM36BJAkZ6wSIG75ve8RydTFIk1/Sase2doIONEvNPR3uhlK4Bvrq+i/ESMjzvmUDFSP6ve8+PvnMq34c/DxN+HJqecdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=162.243.161.220
+	 MIME-Version:Content-Type; b=Ujm6X6T8nbk/mOVJj+y1/HvTvVUBYq/Dp1GhdxzNFCXen3J/yb1J+U9LSX/5DJS3VMuZEjb2YHfZyKFwwdY6RoYLIRke0QSzgdd9X9Ox6uwzRvYkUWwSJqV9a9vztlc2LaqPWnw+ylVaoAtDUNXGItcbwEEEClvoopOGNLH4bzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=52.237.72.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
 Received: from hust.edu.cn (unknown [172.16.0.50])
-	by app1 (Coremail) with SMTP id HgEQrAAHaG0c6JlmaGt4AQ--.44406S2;
-	Fri, 19 Jul 2024 12:14:20 +0800 (CST)
+	by app1 (Coremail) with SMTP id HgEQrACnrn4v6JlmkWx4AQ--.34901S2;
+	Fri, 19 Jul 2024 12:14:39 +0800 (CST)
 Received: from pride-PowerEdge-R740.. (unknown [222.20.126.129])
-	by gateway (Coremail) with SMTP id _____wAnhh4I6JlmCSoKAA--.20209S3;
-	Fri, 19 Jul 2024 12:14:18 +0800 (CST)
+	by gateway (Coremail) with SMTP id _____wAnhh4I6JlmCSoKAA--.20209S4;
+	Fri, 19 Jul 2024 12:14:38 +0800 (CST)
 From: Dongliang Mu <dzm91@hust.edu.cn>
 To: chengziqiu@hust.edu.cn,
-	Dongliang Mu <dzm91@hust.edu.cn>,
-	Yanteng Si <siyanteng@loongson.cn>,
 	Jonathan Corbet <corbet@lwn.net>,
-	Alex Shi <alexs@kernel.org>
+	Alex Shi <alexs@kernel.org>,
+	Yanteng Si <siyanteng@loongson.cn>,
+	Dongliang Mu <dzm91@hust.edu.cn>
 Cc: linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/2] scripts: fix all issues reported by pylint
-Date: Fri, 19 Jul 2024 12:13:33 +0800
-Message-ID: <20240719041400.3909775-2-dzm91@hust.edu.cn>
+Subject: [PATCH v3 2/2] doc-guide: add help documentation checktransupdate.rst
+Date: Fri, 19 Jul 2024 12:13:34 +0800
+Message-ID: <20240719041400.3909775-3-dzm91@hust.edu.cn>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240719041400.3909775-1-dzm91@hust.edu.cn>
 References: <20240719041400.3909775-1-dzm91@hust.edu.cn>
@@ -52,13 +52,14 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HgEQrAAHaG0c6JlmaGt4AQ--.44406S2
+X-CM-TRANSID:HgEQrACnrn4v6JlmkWx4AQ--.34901S2
 Authentication-Results: app1; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvJXoW3CF4UJry5JrWfKFykWr4rXwb_yoWkJF1kpa
-	4rGF4xArW5JFWjyrn7Jw4UuFy3Ar97JrWUXry2vr97ArnrKasY9F42k34SvrZ7WF1fXaya
-	qFWYkryYvr1UuaDanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUQ2b7Iv0xC_Kw4lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
+X-Coremail-Antispam: 1UD129KBjvJXoW3Gw1kGw1kuw4UtrW5ZFWrXwb_yoW7CFWxpa
+	4YkFyxW3Z7Kw13Ar1fKa4DZr13AFyxCa15KF1xt3ZYvFn8tw4vqr43ta4rKFWDJrWrZay5
+	XFWYkrWI9rWFvaUanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUQIb7Iv0xC_Zr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
 	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
 	v20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vE
 	x4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAaw2AFwI0_Jr
@@ -69,347 +70,169 @@ X-Coremail-Antispam: 1UD129KBjvJXoW3CF4UJry5JrWfKFykWr4rXwb_yoWkJF1kpa
 	xK82IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VW8uFyUJr1UMxC20s026xCaFVCjc4AY
 	6r1j6r4UMxCIbckI1I0E14v26r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
 	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUqb4SDUUUU
+	jxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1Eks3UUUUU==
 X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-This patch 1) fixes all the issues (not most) reported by pylint,
-2) add the functionability to tackle documents that need translation,
-3) add logging to adjust the logging level and log file
+This commit adds help documents - doc-guide/checktransupdate.rst
+and zh_CN/doc-guide/checktransupdate.rst for scripts/checktransupdate.py
+, including English and Chinese versions
 
 Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
 ---
- scripts/checktransupdate.py | 214 ++++++++++++++++++++++++------------
- 1 file changed, 141 insertions(+), 73 deletions(-)
+ Documentation/doc-guide/checktransupdate.rst  | 53 ++++++++++++++++++
+ Documentation/doc-guide/index.rst             |  1 +
+ .../zh_CN/doc-guide/checktransupdate.rst      | 55 +++++++++++++++++++
+ .../translations/zh_CN/doc-guide/index.rst    |  1 +
+ 4 files changed, 110 insertions(+)
+ create mode 100644 Documentation/doc-guide/checktransupdate.rst
+ create mode 100644 Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
 
-diff --git a/scripts/checktransupdate.py b/scripts/checktransupdate.py
-index 5a0fc99e3f93..578c3fecfdfd 100755
---- a/scripts/checktransupdate.py
-+++ b/scripts/checktransupdate.py
-@@ -10,31 +10,28 @@ differences occur, report the file and commits that need to be updated.
- 
- The usage is as follows:
- - ./scripts/checktransupdate.py -l zh_CN
--This will print all the files that need to be updated in the zh_CN locale.
-+This will print all the files that need to be updated or translated in the zh_CN locale.
- - ./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-tools/testing-overview.rst
- This will only print the status of the specified file.
- 
- The output is something like:
--Documentation/translations/zh_CN/dev-tools/testing-overview.rst (1 commits)
-+Documentation/dev-tools/kfence.rst
-+No translation in the locale of zh_CN
+diff --git a/Documentation/doc-guide/checktransupdate.rst b/Documentation/doc-guide/checktransupdate.rst
+new file mode 100644
+index 000000000000..dabbf9ecd187
+--- /dev/null
++++ b/Documentation/doc-guide/checktransupdate.rst
+@@ -0,0 +1,53 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
-+Documentation/translations/zh_CN/dev-tools/testing-overview.rst
- commit 42fb9cfd5b18 ("Documentation: dev-tools: Add link to RV docs")
-+1 commits needs resolving in total
- """
- 
- import os
--from argparse import ArgumentParser, BooleanOptionalAction
-+import time
-+import logging
-+from argparse import ArgumentParser, ArgumentTypeError, BooleanOptionalAction
- from datetime import datetime
- 
--flag_p_c = False
--flag_p_uf = False
--flag_debug = False
--
--
--def dprint(*args, **kwargs):
--    if flag_debug:
--        print("[DEBUG] ", end="")
--        print(*args, **kwargs)
--
- 
- def get_origin_path(file_path):
-+    """Get the origin path from the translation path"""
-     paths = file_path.split("/")
-     tidx = paths.index("translations")
-     opaths = paths[:tidx]
-@@ -43,17 +40,16 @@ def get_origin_path(file_path):
- 
- 
- def get_latest_commit_from(file_path, commit):
--    command = "git log --pretty=format:%H%n%aD%n%cD%n%n%B {} -1 -- {}".format(
--        commit, file_path
--    )
--    dprint(command)
-+    """Get the latest commit from the specified commit for the specified file"""
-+    command = f"git log --pretty=format:%H%n%aD%n%cD%n%n%B {commit} -1 -- {file_path}"
-+    logging.debug(command)
-     pipe = os.popen(command)
-     result = pipe.read()
-     result = result.split("\n")
-     if len(result) <= 1:
-         return None
- 
--    dprint("Result: {}".format(result[0]))
-+    logging.debug("Result: %s", result[0])
- 
-     return {
-         "hash": result[0],
-@@ -64,17 +60,19 @@ def get_latest_commit_from(file_path, commit):
- 
- 
- def get_origin_from_trans(origin_path, t_from_head):
-+    """Get the latest origin commit from the translation commit"""
-     o_from_t = get_latest_commit_from(origin_path, t_from_head["hash"])
-     while o_from_t is not None and o_from_t["author_date"] > t_from_head["author_date"]:
-         o_from_t = get_latest_commit_from(origin_path, o_from_t["hash"] + "^")
-     if o_from_t is not None:
--        dprint("tracked origin commit id: {}".format(o_from_t["hash"]))
-+        logging.debug("tracked origin commit id: %s", o_from_t["hash"])
-     return o_from_t
- 
- 
- def get_commits_count_between(opath, commit1, commit2):
--    command = "git log --pretty=format:%H {}...{} -- {}".format(commit1, commit2, opath)
--    dprint(command)
-+    """Get the commits count between two commits for the specified file"""
-+    command = f"git log --pretty=format:%H {commit1}...{commit2} -- {opath}"
-+    logging.debug(command)
-     pipe = os.popen(command)
-     result = pipe.read().split("\n")
-     # filter out empty lines
-@@ -83,50 +81,120 @@ def get_commits_count_between(opath, commit1, commit2):
- 
- 
- def pretty_output(commit):
--    command = "git log --pretty='format:%h (\"%s\")' -1 {}".format(commit)
--    dprint(command)
-+    """Pretty print the commit message"""
-+    command = f"git log --pretty='format:%h (\"%s\")' -1 {commit}"
-+    logging.debug(command)
-     pipe = os.popen(command)
-     return pipe.read()
- 
- 
-+def valid_commit(commit):
-+    """Check if the commit is valid or not"""
-+    msg = pretty_output(commit)
-+    return "Merge tag" not in msg
++Check translation update
 +
- def check_per_file(file_path):
-+    """Check the translation status for the specified file"""
-     opath = get_origin_path(file_path)
++This script helps track the translation status of the documentation in
++different locales, i.e., whether the documentation is up-to-date with
++the English counterpart.
++
++How it works
++------------
++
++It uses ``git log`` command to track the latest English commit from the
++translation commit (order by author date) and the latest English commits
++from HEAD. If any differences occur, the file is considered as out-of-date,
++then commits that need to be updated will be collected and reported.
++
++Features implemented
++
++-  check all files in a certain locale
++-  check a single file or a set of files
++-  provide options to change output format
++-  track the translation status of files that have no translation
++
++Usage
++-----
++
++::
++
++   ./scripts/checktransupdate.py --help
++
++Please refer to the output of argument parser for usage details.
++
++Samples
++
++-  ``./scripts/checktransupdate.py -l zh_CN``
++   This will print all the files that need to be updated in the zh_CN locale.
++-  ``./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-tools/testing-overview.rst``
++   This will only print the status of the specified file.
++
++Then the output is something like:
++
++::
++
++    Documentation/dev-tools/kfence.rst
++    No translation in the locale of zh_CN
++
++    Documentation/translations/zh_CN/dev-tools/testing-overview.rst
++    commit 42fb9cfd5b18 ("Documentation: dev-tools: Add link to RV docs")
++    1 commits needs resolving in total
++
++Features to be implemented
++
++- files can be a folder instead of only a file
+diff --git a/Documentation/doc-guide/index.rst b/Documentation/doc-guide/index.rst
+index 7c7d97784626..24d058faa75c 100644
+--- a/Documentation/doc-guide/index.rst
++++ b/Documentation/doc-guide/index.rst
+@@ -12,6 +12,7 @@ How to write kernel documentation
+    parse-headers
+    contributing
+    maintainer-profile
++   checktransupdate
  
-     if not os.path.isfile(opath):
--        dprint("Error: Cannot find the origin path for {}".format(file_path))
-+        logging.error("Cannot find the origin path for {file_path}")
-         return
+ .. only::  subproject and html
  
-     o_from_head = get_latest_commit_from(opath, "HEAD")
-     t_from_head = get_latest_commit_from(file_path, "HEAD")
+diff --git a/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst b/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
+new file mode 100644
+index 000000000000..d20b4ce66b9f
+--- /dev/null
++++ b/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
+@@ -0,0 +1,55 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++.. include:: ../disclaimer-zh_CN.rst
++
++:Original: Documentation/doc-guide/checktransupdate.rst
++
++:译者: 慕冬亮 Dongliang Mu <dzm91@hust.edu.cn>
++
++检查翻译更新
++
++这个脚本帮助跟踪不同语言的文档翻译状态，即文档是否与对应的英文版本保持更新。
++
++工作原理
++------------
++
++它使用 ``git log`` 命令来跟踪翻译提交的最新英文提交（按作者日期排序）和英文文档的
++最新提交。如果有任何差异，则该文件被认为是过期的，然后需要更新的提交将被收集并报告。
++
++实现的功能
++
++- 检查特定语言中的所有文件
++- 检查单个文件或一组文件
++- 提供更改输出格式的选项
++- 跟踪没有翻译过的文件的翻译状态
++
++用法
++-----
++
++::
++
++    ./scripts/checktransupdate.py --help
++
++具体用法请参考参数解析器的输出
++
++示例
++
++-  ``./scripts/checktransupdate.py -l zh_CN``
++   这将打印 zh_CN 语言中需要更新的所有文件。
++-  ``./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-tools/testing-overview.rst``
++   这将只打印指定文件的状态。
++
++然后输出类似如下的内容：
++
++::
++
++    Documentation/dev-tools/kfence.rst
++    No translation in the locale of zh_CN
++
++    Documentation/translations/zh_CN/dev-tools/testing-overview.rst
++    commit 42fb9cfd5b18 ("Documentation: dev-tools: Add link to RV docs")
++    1 commits needs resolving in total
++
++待实现的功能
++
++- 文件参数可以是文件夹而不仅仅是单个文件
+diff --git a/Documentation/translations/zh_CN/doc-guide/index.rst b/Documentation/translations/zh_CN/doc-guide/index.rst
+index 78c2e9a1697f..0ac1fc9315ea 100644
+--- a/Documentation/translations/zh_CN/doc-guide/index.rst
++++ b/Documentation/translations/zh_CN/doc-guide/index.rst
+@@ -18,6 +18,7 @@
+    parse-headers
+    contributing
+    maintainer-profile
++   checktransupdate
  
-     if o_from_head is None or t_from_head is None:
--        print("Error: Cannot find the latest commit for {}".format(file_path))
-+        logging.error("Cannot find the latest commit for %s", file_path)
-         return
+ .. only::  subproject and html
  
-     o_from_t = get_origin_from_trans(opath, t_from_head)
- 
-     if o_from_t is None:
--        print("Error: Cannot find the latest origin commit for {}".format(file_path))
-+        logging.error("Error: Cannot find the latest origin commit for %s", file_path)
-         return
- 
-     if o_from_head["hash"] == o_from_t["hash"]:
--        if flag_p_uf:
--            print("No update needed for {}".format(file_path))
--        return
-+        logging.debug("No update needed for %s", file_path)
-     else:
--        print("{}".format(file_path), end="\t")
-+        logging.info(file_path)
-         commits = get_commits_count_between(
-             opath, o_from_t["hash"], o_from_head["hash"]
-         )
--        print("({} commits)".format(len(commits)))
--        if flag_p_c:
--            for commit in commits:
--                msg = pretty_output(commit)
--                if "Merge tag" not in msg:
--                    print("commit", msg)
-+        count = 0
-+        for commit in commits:
-+            if valid_commit(commit):
-+                logging.info("commit %s", pretty_output(commit))
-+                count += 1
-+        logging.info("%d commits needs resolving in total\n", count)
-+
-+
-+def valid_locales(locale):
-+    """Check if the locale is valid or not"""
-+    script_path = os.path.dirname(os.path.abspath(__file__))
-+    linux_path = os.path.join(script_path, "..")
-+    if not os.path.isdir(f"{linux_path}/Documentation/translations/{locale}"):
-+        raise ArgumentTypeError("Invalid locale: {locale}")
-+    return locale
-+
-+
-+def list_files_with_excluding_folders(folder, exclude_folders, include_suffix):
-+    """List all files with the specified suffix in the folder and its subfolders"""
-+    files = []
-+    stack = [folder]
-+
-+    while stack:
-+        pwd = stack.pop()
-+        # filter out the exclude folders
-+        if os.path.basename(pwd) in exclude_folders:
-+            continue
-+        # list all files and folders
-+        for item in os.listdir(pwd):
-+            ab_item = os.path.join(pwd, item)
-+            if os.path.isdir(ab_item):
-+                stack.append(ab_item)
-+            else:
-+                if ab_item.endswith(include_suffix):
-+                    files.append(ab_item)
-+
-+    return files
-+
-+
-+class DmesgFormatter(logging.Formatter):
-+    """Custom dmesg logging formatter"""
-+    def format(self, record):
-+        timestamp = time.time()
-+        formatted_time = f"[{timestamp:>10.6f}]"
-+        log_message = f"{formatted_time} {record.getMessage()}"
-+        return log_message
-+
-+
-+def config_logging(log_level, log_file="checktransupdate.log"):
-+    """configure logging based on the log level"""
-+    # set up the root logger
-+    logger = logging.getLogger()
-+    logger.setLevel(log_level)
-+
-+    # Create console handler
-+    console_handler = logging.StreamHandler()
-+    console_handler.setLevel(log_level)
-+
-+    # Create file handler
-+    file_handler = logging.FileHandler(log_file)
-+    file_handler.setLevel(log_level)
-+
-+    # Create formatter and add it to the handlers
-+    formatter = DmesgFormatter()
-+    console_handler.setFormatter(formatter)
-+    file_handler.setFormatter(formatter)
-+
-+    # Add the handler to the logger
-+    logger.addHandler(console_handler)
-+    logger.addHandler(file_handler)
- 
- 
- def main():
-+    """Main function of the script"""
-     script_path = os.path.dirname(os.path.abspath(__file__))
-     linux_path = os.path.join(script_path, "..")
- 
-@@ -134,62 +202,62 @@ def main():
-     parser.add_argument(
-         "-l",
-         "--locale",
-+        default="zh_CN",
-+        type=valid_locales,
-         help="Locale to check when files are not specified",
-     )
-+
-     parser.add_argument(
--        "--print-commits",
-+        "--print-missing-translations",
-         action=BooleanOptionalAction,
-         default=True,
--        help="Print commits between the origin and the translation",
-+        help="Print files that do not have translations",
-     )
- 
-     parser.add_argument(
--        "--print-updated-files",
--        action=BooleanOptionalAction,
--        default=False,
--        help="Print files that do no need to be updated",
--    )
-+        '--log',
-+        default='INFO',
-+        choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
-+        help='Set the logging level')
- 
-     parser.add_argument(
--        "--debug",
--        action=BooleanOptionalAction,
--        help="Print debug information",
--        default=False,
--    )
-+        '--logfile',
-+        default='checktransupdate.log',
-+        help='Set the logging file (default: checktransupdate.log)')
- 
-     parser.add_argument(
-         "files", nargs="*", help="Files to check, if not specified, check all files"
-     )
-     args = parser.parse_args()
- 
--    global flag_p_c, flag_p_uf, flag_debug
--    flag_p_c = args.print_commits
--    flag_p_uf = args.print_updated_files
--    flag_debug = args.debug
-+    # Configure logging based on the --log argument
-+    log_level = getattr(logging, args.log.upper(), logging.INFO)
-+    config_logging(log_level)
- 
--    # get files related to linux path
-+    # Get files related to linux path
-     files = args.files
-     if len(files) == 0:
--        if args.locale is not None:
--            files = (
--                os.popen(
--                    "find {}/Documentation/translations/{} -type f".format(
--                        linux_path, args.locale
--                    )
--                )
--                .read()
--                .split("\n")
--            )
--        else:
--            files = (
--                os.popen(
--                    "find {}/Documentation/translations -type f".format(linux_path)
--                )
--                .read()
--                .split("\n")
--            )
--
--    files = list(filter(lambda x: x != "", files))
-+        offical_files = list_files_with_excluding_folders(
-+            os.path.join(linux_path, "Documentation"), ["translations", "output"], "rst"
-+        )
-+
-+        for file in offical_files:
-+            # split the path into parts
-+            path_parts = file.split(os.sep)
-+            # find the index of the "Documentation" directory
-+            kindex = path_parts.index("Documentation")
-+            # insert the translations and locale after the Documentation directory
-+            new_path_parts = path_parts[:kindex + 1] + ["translations", args.locale] \
-+                           + path_parts[kindex + 1 :]
-+            # join the path parts back together
-+            new_file = os.sep.join(new_path_parts)
-+            if os.path.isfile(new_file):
-+                files.append(new_file)
-+            else:
-+                if args.print_missing_translations:
-+                    logging.info(os.path.relpath(os.path.abspath(file), linux_path))
-+                    logging.info("No translation in the locale of %s\n", args.locale)
-+
-     files = list(map(lambda x: os.path.relpath(os.path.abspath(x), linux_path), files))
- 
-     # cd to linux root directory
 -- 
 2.43.0
 
