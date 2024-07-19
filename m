@@ -1,206 +1,86 @@
-Return-Path: <linux-kernel+bounces-257287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E90389377E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:43:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BACA39377EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:43:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18DBB1C21585
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:43:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6395B1F22633
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4430713AD26;
-	Fri, 19 Jul 2024 12:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A034313C687;
+	Fri, 19 Jul 2024 12:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="f4Kq8w3L"
-Received: from ms11p00im-qufo17291201.me.com (ms11p00im-qufo17291201.me.com [17.58.38.41])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oy/GDuVV"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3547A2E419
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 12:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.38.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F407813B295;
+	Fri, 19 Jul 2024 12:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721392957; cv=none; b=qjJAO3MwFTBA4hX9YOuSRgOzGNUjutnJ8R771yV3SPDjBdHMQD35TnOiFmK0JfvwBgIF3H9NzTa9bml2GP1avycJjK04oQcZqCGfHbb4wy1e2b3N1xg8+e4ro+kameQYEq+6QxZune2RQ8T5FvVqCtnceRvCXUEwhikw2CCve4g=
+	t=1721392970; cv=none; b=fDWlTrZlAw+1z3VBH9+5BzY5gMCkaxTf76txWGhLhkdQWaAewBMEmFhk7yenzZLmujeYl1Jx3AwVo7NsX/QymutoxJ85GdkH8OiX46OiVoxT5zLVxz3e9BC2zGIkuKiJSWFOs7gYcoPgCCqXB3a+49vS6LosjgPo6RnhT7RzgFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721392957; c=relaxed/simple;
-	bh=mwzUxrsk/9rScZ1wWwFH1uGFUegCvA3Id5pUCFAbeic=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bLqEkrVsm2oEioQWO9xpzoymCpB4Nu4lYxqmxcijc9KuuLmQL9bbqjEaTPwk6vchOAlmNGc3WLKB1+yiMPnGgep30RdgIe1PXl2VdsY5V3lvIYOXo/0RNKEGTFpnUs9KgfSZ/jbEWMTqxQulYVaxAT2lVmjL+eap9tHeV6uox9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=f4Kq8w3L; arc=none smtp.client-ip=17.58.38.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1721392955;
-	bh=exqzxrKJuQHr8RJcwLZ7c+564S4prGSgbviUlFL3wsU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=f4Kq8w3LFjI+6Vg/KIEPH0AcB08rsfyqsGhIT791aI3cDD3O5MIJTBU0xHAAr6Xix
-	 rN28TuymuOy8NvpmeN6QCW6Q9hNO61wlk5qR6gbe08rzCPMYNenVtfqkNrE7079fVV
-	 Qbi0xGybJPD6ckUnVY5rKjC6uDuOGATEHEbEssM74aOLj6R52aUt6OW84L0GrelY9r
-	 lA6ryqNm5qtih5td43X47/Yp4bvW4WxLoRTkCkK35on3BbuEkZ1nMKHj6L2eEGDbGg
-	 iMvPKFjhvpE7R8osO76bSQVaX0shDpzh0navQdzruf/Z5faLLaEnZeNBdRCn4qzDjW
-	 zBcS8KhSjkx5Q==
-Received: from [192.168.1.26] (ms11p00im-dlb-asmtpmailmevip.me.com [17.57.154.19])
-	by ms11p00im-qufo17291201.me.com (Postfix) with ESMTPSA id 48013C801BA;
-	Fri, 19 Jul 2024 12:42:30 +0000 (UTC)
-Message-ID: <7ee69110-733e-4c43-83bc-65347d3cd270@icloud.com>
-Date: Fri, 19 Jul 2024 20:42:23 +0800
+	s=arc-20240116; t=1721392970; c=relaxed/simple;
+	bh=0lcxL8XNRUEq+vBhcw8R+mdptmkP+8F+zWfDZRL4wBA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A3pIrH1yaecLq5e8Q6LBTjo98BGAJRBAd790QRvfW3vr/QEIADHSm7oO7boIL7+99PNCBENihEisD9jCIyVnoK2Tr0m3moJjwXoW4xeeqlwI/zOhKM/BbmL7DG5ONoJSDSRSfFxMSob3ePkqOy05zj4N3yoDTeJ3Vr8qNI/6rGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oy/GDuVV; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=W3a+XTwexnz8rPMwMCQeFI74MJDMGFFcGv41YRD0k+4=; b=oy/GDuVV2x498dOs09fyfUMYTd
+	ufGTBzQPDaTM1z5OxOe0dNvG20z+0PTekc4GG70tVSMnx/8F4HhQdjjz03zR0NAcfx+pB4ZfzNkzf
+	HCOY7gboZztMflA8wGTSZYxIXPR6Ss84fuygT9xRo2Sh9/m2gM0xYHIfh3bFPF16wOWK3IASHYTQU
+	bI17ywkR2Fcq394BfAKAiQaiK2NTvIZ1rTPHx+/hVyRIsVlWKGj+ImUAMz/0dM995sHC5UcU8Bc0y
+	IrvTNtyi8NJisqN0//o+i9yXZUHlgdvPPe0LBUg/YaKUk2+rCoBkio3UKwKJseOo3XhmrDpNvKS2/
+	vL3zHZzQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sUmwb-0000000330F-0B6j;
+	Fri, 19 Jul 2024 12:42:41 +0000
+Date: Fri, 19 Jul 2024 13:42:40 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Mary Strodl <mstrodl@freedom.csh.rit.edu>
+Cc: Christian Gmeiner <christian.gmeiner@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Mary Strodl <mstrodl@csh.rit.edu>, linux-kernel@vger.kernel.org,
+	urezki@gmail.com, linux-mm@kvack.org, lee@kernel.org,
+	andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
+	s.hauer@pengutronix.de
+Subject: Re: [PATCH 1/3] mm: vmalloc: export __vmalloc_node_range
+Message-ID: <ZppfQFdwYq-bf9Wv@casper.infradead.org>
+References: <ZpkNOyuxuJHaTW35@freedom.csh.rit.edu>
+ <ZpkOV3mdOU1b8vMn@casper.infradead.org>
+ <ZpkPStwq_S3mJYb5@infradead.org>
+ <ZpkQQ5GzJ4atvR6a@casper.infradead.org>
+ <ZpkWj-iFiA-JHbbf@freedom.csh.rit.edu>
+ <20240718143103.82e33c556b2d1b6145ae43e0@linux-foundation.org>
+ <ZpmKho9_t0_MeOP7@casper.infradead.org>
+ <20240718143924.43e22f68cf639b064a83f118@linux-foundation.org>
+ <CAH9NwWf_S-PyY5X_cJGSW-8YDk4-C0VvnPCX8iVuo0FhTqsy2Q@mail.gmail.com>
+ <ZppU8FhsFd9cB-Fi@freedom.csh.rit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] driver core: Fix error handling in driver API
- device_rename()
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Benjamin Thery <benjamin.thery@bull.net>,
- "Eric W. Biederman" <ebiederm@xmission.com>,
- Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org,
- Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20240717-device_rename_fix-v1-1-54d85024518f@quicinc.com>
- <2024071756-uproot-relieve-6e27@gregkh>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <2024071756-uproot-relieve-6e27@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 62_sPECnq4TmNCqmf52j84geIkQ4AMzI
-X-Proofpoint-ORIG-GUID: 62_sPECnq4TmNCqmf52j84geIkQ4AMzI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-19_06,2024-07-18_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 bulkscore=0
- adultscore=0 spamscore=0 suspectscore=0 clxscore=1015 malwarescore=0
- mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2407190097
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZppU8FhsFd9cB-Fi@freedom.csh.rit.edu>
 
-On 2024/7/17 23:03, Greg Kroah-Hartman wrote:
-> On Wed, Jul 17, 2024 at 10:50:05PM +0800, Zijun Hu wrote:
->> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>
->> Call failure of device_rename(@dev, @new_name) maybe unexpectedly change
->> link name within @dev's class directory to @new_name, fixed by correcting
->> error handling for the API.
-> 
-> I'm sorry, but I don't understand the text here, what exactly are you
-> doing?
-> 
+On Fri, Jul 19, 2024 at 07:58:40AM -0400, Mary Strodl wrote:
+> Maybe some of the stuff the driver does right now could be moved into
+> vmalloc? In other words, we could provide a different function that
+> allocates an executable page, copies memory into it, then marks it
+> read-only. Would that do better to alleviate concerns?
 
-let me explain what is the issue by inline comments within present code
-firstly, i will make commit message clear for v2 when necessary
-
-@@ -4528,29 +4528,30 @@ int device_rename(struct device *dev, const char
-*new_name)
-                goto out;
-        }
-
-        if (dev->class) {
-                struct subsys_private *sp = class_to_subsys(dev->class);
-
-                if (!sp) {
-                        error = -EINVAL;
-                        goto out;
-                }
--
-+               /* 1) rename the link name to new name */
-                error = sysfs_rename_link_ns(&sp->subsys.kobj, kobj,
-old_device_name,
-                                             new_name,
-kobject_namespace(kobj));
-                subsys_put(sp);
-                if (error)
-                        goto out;
-        }
-
-        error = kobject_rename(kobj, new_name);
-+       /* but forget to revert the jobs done by 1) if below error
-really happens */
-        if (error)
-                goto out;
-
- out:
-        put_device(dev);
-
-        kfree(old_device_name);
-
-        return error;
- }
-
-
-what i am doing is to undo the 1) job when the given error happens.
-
->> Fixes: f349cf34731c ("driver core: Implement ns directory support for device classes.")
->> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
->> ---
->>  drivers/base/core.c | 17 +++++++++++------
->>  1 file changed, 11 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/base/core.c b/drivers/base/core.c
->> index 2b4c0624b704..a05b7186cf33 100644
->> --- a/drivers/base/core.c
->> +++ b/drivers/base/core.c
->> @@ -4512,9 +4512,11 @@ EXPORT_SYMBOL_GPL(device_destroy);
->>   */
->>  int device_rename(struct device *dev, const char *new_name)
->>  {
->> +	struct subsys_private *sp = NULL;
->>  	struct kobject *kobj = &dev->kobj;
->>  	char *old_device_name = NULL;
->>  	int error;
->> +	bool is_link_renamed = false;
->>  
->>  	dev = get_device(dev);
->>  	if (!dev)
->> @@ -4529,7 +4531,7 @@ int device_rename(struct device *dev, const char *new_name)
->>  	}
->>  
->>  	if (dev->class) {
->> -		struct subsys_private *sp = class_to_subsys(dev->class);
->> +		sp = class_to_subsys(dev->class);
->>  
->>  		if (!sp) {
->>  			error = -EINVAL;
->> @@ -4537,17 +4539,20 @@ int device_rename(struct device *dev, const char *new_name)
->>  		}
->>  
->>  		error = sysfs_rename_link_ns(&sp->subsys.kobj, kobj, old_device_name,
->> -					     new_name, kobject_namespace(kobj));
->> -		subsys_put(sp);
->> +				new_name, kobject_namespace(kobj));
-> 
-> Why did you change the indentation here?
-> 
-
-it is caused by that my ~/.vim/plugin/linuxsty.vim is broken, it is a
-link but the target is loss.
-will fix this indentation issue within v2.
-
->>  		if (error)
->>  			goto out;
->> +
->> +		is_link_renamed = true;
->>  	}
->>  
->>  	error = kobject_rename(kobj, new_name);
->> -	if (error)
->> -		goto out;
->> -
->>  out:
->> +	if (error && is_link_renamed)
->> +		sysfs_rename_link_ns(&sp->subsys.kobj, kobj, new_name,
->> +				old_device_name, kobject_namespace(kobj));
->> +	subsys_put(sp);
-> 
-> How was this found?  What in-kernel code causes this problem?  And how
-> was this tested?
-> 
-find it by reading code, no other in-kernel code cause this issue but
-the API itself, i wrote a simple code to test it.
-> thanks,
-> 
-> greg k-h
-
+No.  We are not running arbitrary x86 code.  That is a security
+nightmare.
 
