@@ -1,78 +1,58 @@
-Return-Path: <linux-kernel+bounces-257208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0FE59376B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:40:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDE2C9376B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E8D4B2195D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:40:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93BA01F216AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C1883CA1;
-	Fri, 19 Jul 2024 10:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E33483CA1;
+	Fri, 19 Jul 2024 10:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TgHXLqJo"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gqUEIEKr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42E942076
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 10:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4404548F7
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 10:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721385593; cv=none; b=ZVQXbMa0bzp/yMZ1lkHnImLyVfJsIvGy3Ww1cXjyFAwqBMtFwCgWz/tcWRmsC9ZhTJnAkKtfIDzmz8/HTe3i6QV9yG6txCapwQL0PWIKV53Kb3nHVUppXwbKYljjwhPS8A+GR5bhlvlUYWRL9LStgur9cyu4WKaU1KJ3kaZvVjM=
+	t=1721385636; cv=none; b=jEZEVRBs4kLPsmvcRPwu7QMprz5zArJrsq0qmk/UIe85FA/s/xIYezw/lVz6f+YtQJDptUEoSI6zCSl/QIspRl6knxhu05RaFg+rYvpKKwsKF04p9FBJt5OLlNVF7s4ONvMsCHAeYOH25xWgdfJT2BM2gUzV63V6H06oa/GVb4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721385593; c=relaxed/simple;
-	bh=bN//6Jro62xaWG8EqO5gnjBdZk65GZ7aAczPnCTO820=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NbB9PukdVkSJneLsnnlLG7NXuMm+SXQhKwIyQ1XQPWFrGPtFLOPiaFFCr/cSqa4PGHzV61zUN2J4tbiZBfLRCTA+4iUa5KjrbSSolaYZ8hW1S34bOaZdJYn9Lh07JB/LYUnzdbkDw6pxsF62Ahq/eTKQkqFA2B8PoFaePB8WiFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TgHXLqJo; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2eeb2d60efbso27662031fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 03:39:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721385590; x=1721990390; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=igSaV7XZ3Cr6vZxP+aTe+2LlltaNI5nN7ttSrnUQLKQ=;
-        b=TgHXLqJonNsectpkNoVw7aWoNE00G/QVJ4CVpnWfkEgEP7vb3d6BA6Z8rTPszJvYMu
-         uNG9rjukrJALtkMKWOuz30uzIss+x2aNzQz3TDAz87FCiMlPb/BbVkqx07mbz3AWqirl
-         IY87oRpvfwsY2rGlOt9h2j1AfNH0FV853AI/EWhdxttDBfdjwwEGnRsz8RhJLgA+T0r9
-         RbKQ8aYxJ9UkVPtKjB44e9R1ehn+/E7EpU/Cl5+8fTMIR4AM4harRU4iEVmGToNVVz+7
-         iW1z8BzHU8SjJ4wmUCMqVCbrOMSl7mkmMYewAzD3VszuVhHwGI1jdS857/fFK8wBIU8s
-         dkyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721385590; x=1721990390;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=igSaV7XZ3Cr6vZxP+aTe+2LlltaNI5nN7ttSrnUQLKQ=;
-        b=SegOzFzpM/rgP5HzN/L+G2l2A26iYMRklgEjQ5bMTj36M/kZKu00+DU/A8QnN2Jm9D
-         NHaO1x7JpK+M74eesGivRmKdY9xK19MkrzUgzJmwfAkAv6EYULCWDMYF75fqPH50Y79s
-         ntTMrUbw05N4i7ArgcM9mzsMNuq3XMI5oNYRlKZVzoVVn0Zmh+hddyKpwVaec1EtTsgv
-         n0F/Vs01t7JW/7nOw7iFdNqMDInTX0LWuxTzyPNds4p9wWPFmmhHpzf+ZVjVzJtVdfFE
-         A39uBjJaDgsETLU3r1nolnBk/HDFKEzM/cRoNu59b+R1Q/PNhR/Bk1NM456XC7YWcYni
-         9/HA==
-X-Forwarded-Encrypted: i=1; AJvYcCULa1tTdt6gk/fW2Reh2gvhp4ZzEYjs6r9qD5wEnmvOC8G0dmxGMhpBYq7QNWeeycJPzhRx0m0Kd8ygFuIFnPnOrOSFmd0kwXSQKkHd
-X-Gm-Message-State: AOJu0Yy27v3iD69ZZ9A1f1Oiw7jIlSpvgi2H+I3zibdI2v1dBqBOG9zt
-	dUQlhNLA0vURUULdTwp4Pu4v9qyYkUmX0PRdwOIlHrXESylkl7U0
-X-Google-Smtp-Source: AGHT+IGDMZz5Ed0SYJ86pWbecobgjSLO1BwlQZsL9m550SurHJlk/eyq8D+wFwn/pahNaIpsuWzXZg==
-X-Received: by 2002:a2e:6a18:0:b0:2eb:f31e:9e7b with SMTP id 38308e7fff4ca-2ef05c78c4amr33331211fa.14.1721385589731;
-        Fri, 19 Jul 2024 03:39:49 -0700 (PDT)
-Received: from localhost.localdomain ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30aaa247dsm969213a12.22.2024.07.19.03.39.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 03:39:49 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: kexec@lists.infradead.org,
+	s=arc-20240116; t=1721385636; c=relaxed/simple;
+	bh=otxByGRbgGXdSpNWhBDtrzaTFR9ycy2O/8HXktzpNT4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eVmf5PHUQvj0H02zrLO0zOOEid0b3XYc3bODe/tPXZ6i7CZAqPmBtZm1Z9WVCEstgI8Vx3D8hQVNWqCYKaPE4tZv4Qe8W+5s+jDiBHqXM/iy+0Ep6a7I8zHiVDS2e0SV2z9ea7ootUJmntJz2FQyQc/V0BVDnjACT6vSRBMeMtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gqUEIEKr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EAF8C32782;
+	Fri, 19 Jul 2024 10:40:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721385635;
+	bh=otxByGRbgGXdSpNWhBDtrzaTFR9ycy2O/8HXktzpNT4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=gqUEIEKrMOZCFW19LLfOjJHCoNWDEXfSQeea3GB39/clLHY5NwVj9A4+onFIYH7/B
+	 pzj6xfwc3bs51mmyy+FJQb0ucRkVdt2OG8oK6cGTjJKRkt/KaCGxZiuOfy5vfjbsgl
+	 qz+/Zvrj5D9Y5FxmSEUa4ZyX5nqhPHOPjHKYb5nRql1OuuqZAqEFlj7MnOSpDUdPKP
+	 I5UbGAeL4giKIP2E/zduDmIR4Q7U8pYnx/QKfgCDNTBNEPDGhLUMRl9Z+HXFQLIPvr
+	 HW5MZG+DG+26I9hMpgUsXQGzPuG04v2mJ7Ma+ed8HATCku/NfgSP9jd8lvabzfpRyQ
+	 Z6FKFawPW3F/w==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Eric Biederman <ebiederm@xmission.com>
-Subject: [PATCH] kexec: Use atomic_try_cmpxchg_acquire() in kexec_trylock()
-Date: Fri, 19 Jul 2024 12:38:52 +0200
-Message-ID: <20240719103937.53742-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.42.0
+Subject: [PATCH] regmap: maple: work around gcc-14.1 false-positive warning
+Date: Fri, 19 Jul 2024 12:40:24 +0200
+Message-Id: <20240719104030.1382465-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,32 +61,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use atomic_try_cmpxchg_acquire(*ptr, &old, new) instead of
-atomic_cmpxchg_acquire(*ptr, old, new) == old in kexec_trylock().
-x86 CMPXCHG instruction returns success in ZF flag, so
-this change saves a compare after cmpxchg.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Eric Biederman <ebiederm@xmission.com>
+With gcc-14.1, there is a false-postive -Wuninitialized warning in
+regcache_maple_drop:
+
+drivers/base/regmap/regcache-maple.c: In function 'regcache_maple_drop':
+drivers/base/regmap/regcache-maple.c:113:23: error: 'lower_index' is used uninitialized [-Werror=uninitialized]
+  113 |         unsigned long lower_index, lower_last;
+      |                       ^~~~~~~~~~~
+drivers/base/regmap/regcache-maple.c:113:36: error: 'lower_last' is used uninitialized [-Werror=uninitialized]
+  113 |         unsigned long lower_index, lower_last;
+      |                                    ^~~~~~~~~~
+
+I've created a reduced test case to see if this needs to be reported
+as a gcc, but it appears that the gcc-14.x branch already has a change
+that turns this into a more sensible -Wmaybe-uninitialized warning, so
+I ended up not reporting it so far.
+
+The reduced test case also produces a warning for gcc-13 and gcc-12
+but I don't see that with the version in the kernel.
+
+Link: https://godbolt.org/z/oKbohKqd3
+Link: https://lore.kernel.org/all/CAMuHMdWj=FLmkazPbYKPevDrcym2_HDb_U7Mb9YE9ovrP0jJfA@mail.gmail.com/
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- kernel/kexec_internal.h | 3 ++-
+I'm still not convinced that this is the best solution, but I had no
+other ideas here.
+---
+ drivers/base/regmap/regcache-maple.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/kexec_internal.h b/kernel/kexec_internal.h
-index 2595defe8c0d..d35d9792402d 100644
---- a/kernel/kexec_internal.h
-+++ b/kernel/kexec_internal.h
-@@ -23,7 +23,8 @@ int kimage_is_destination_range(struct kimage *image,
- extern atomic_t __kexec_lock;
- static inline bool kexec_trylock(void)
- {
--	return atomic_cmpxchg_acquire(&__kexec_lock, 0, 1) == 0;
-+	int old = 0;
-+	return atomic_try_cmpxchg_acquire(&__kexec_lock, &old, 1);
- }
- static inline void kexec_unlock(void)
- {
+diff --git a/drivers/base/regmap/regcache-maple.c b/drivers/base/regmap/regcache-maple.c
+index f0df2da6d522..2dea9d259c49 100644
+--- a/drivers/base/regmap/regcache-maple.c
++++ b/drivers/base/regmap/regcache-maple.c
+@@ -110,7 +110,8 @@ static int regcache_maple_drop(struct regmap *map, unsigned int min,
+ 	struct maple_tree *mt = map->cache;
+ 	MA_STATE(mas, mt, min, max);
+ 	unsigned long *entry, *lower, *upper;
+-	unsigned long lower_index, lower_last;
++	/* initialized to work around false-positive -Wuninitialized warning */
++	unsigned long lower_index = 0, lower_last = 0;
+ 	unsigned long upper_index, upper_last;
+ 	int ret = 0;
+ 
 -- 
-2.42.0
+2.39.2
 
 
