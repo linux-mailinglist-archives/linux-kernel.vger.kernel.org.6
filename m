@@ -1,119 +1,153 @@
-Return-Path: <linux-kernel+bounces-257443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83FE4937A2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:49:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FA44937A35
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:52:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 379DB1F22989
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:49:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BBD12828DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831571459F8;
-	Fri, 19 Jul 2024 15:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FpxXGO0L"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5A2145FE5;
+	Fri, 19 Jul 2024 15:51:52 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511871B86D5;
-	Fri, 19 Jul 2024 15:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83141B86D5;
+	Fri, 19 Jul 2024 15:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721404189; cv=none; b=X/ymdSTr0lO5oMktlZcWyCjOMqnh3EZhDfQH3Usl+Fs/Vk8BUDvrnozyIa0dLhfvjo1k+y5aaRBoEvHVTH4ghjYY0UptQq4G3riCGhZZrehT/MObN4Ua57DzztUPFR8rICouNVI+hTfp3QQan3Ox/GLzkyxJ/VH3IGxgjY/0whU=
+	t=1721404312; cv=none; b=NlkCBFxFr+WW6RMCXTdwnq/O4AxgjJHp5B2n4jGGLHQxxg/ptC+d1nI4LbYSKrwefaOWA2rgjuhtowlufWT6z1dIvop1U4AMh6j5oV1D5eALpJ8tWMaFg/NZd0eqNa/22oUHIUyKa7kmPS8kcAdFxLkvqI1fZtNIiLyZvahCsYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721404189; c=relaxed/simple;
-	bh=m/ltgYfftuqmFEerL6nx6AdLrB3L89t/KVEPllQcGnE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DAi8/3WvPKoKyJz/2gaqT4aZlX/924UTxdsN38iQF+SyOlC7/pXpQ8aZZ/60QLmOIFFSx6ttSQGi+KXO7LSZCeWbv2jOXati3vEU+QGhbjmD2MFlercKm4vbBqDPy1P4safEPDhTQe8DrkDEkxHCaR5pWnktCJm7OWw8BCVgn50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FpxXGO0L; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721404189; x=1752940189;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=m/ltgYfftuqmFEerL6nx6AdLrB3L89t/KVEPllQcGnE=;
-  b=FpxXGO0Lw9SNJFeQW1eWMmTVKvAuZy6NVszJQiFZyOcGfgzDEL8UegyI
-   QSTkD9VrJxA+QN3m+sarL2JNRoy/LRr0+n6xh73rmE6OE37BVT5Fj7YKS
-   9khtujZv9WWNHa7/AcKuFRNExGUMuUWJJPyZeNdPusrS6IiI0mECAiM91
-   SNfuZTwN49Ga6EpwgmZgmSpm0EFfy/fKS1JnDRRCD0sjLM7cGXbvEl7D/
-   LvVdSf9DARtW1vz9YB01kxrk1+uqPm56evIOHixqgurfZL0YaeVak97jQ
-   pEim2YA6rb+px8BZhnWAtkCaa3hBqtXHmlKXEB1UA+9PiEm2D4Ayo5Mz7
-   w==;
-X-CSE-ConnectionGUID: 3M2Jtet+TVmilLXrYOU+UA==
-X-CSE-MsgGUID: C0ZGotjEQoKX1eyeBDMW/g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11138"; a="44448001"
-X-IronPort-AV: E=Sophos;i="6.09,220,1716274800"; 
-   d="scan'208";a="44448001"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2024 08:49:48 -0700
-X-CSE-ConnectionGUID: tI/3CPMhR0O6P93n/7ONDA==
-X-CSE-MsgGUID: iXdOuqlwThyUV0Bj8WKXvw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,220,1716274800"; 
-   d="scan'208";a="55699181"
-Received: from djiang5-mobl3.amr.corp.intel.com (HELO [10.125.109.46]) ([10.125.109.46])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2024 08:49:47 -0700
-Message-ID: <8ad5a485-6803-495a-98ee-9f7ad3e85946@intel.com>
-Date: Fri, 19 Jul 2024 08:49:46 -0700
+	s=arc-20240116; t=1721404312; c=relaxed/simple;
+	bh=AlQm9yZ2sFI01jHgI7WArkoI84hOnV0JYdzW/8DBq5k=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L21f8rchkOuk+7SDWprPMSywKoyI+itAYQYjkZwLSmFozI7XUzJ6K7vnMFuq7H6Q0oSi07KjrfrL1Z6vx84tYadluAoD/eXf8vLis80DPF+Q4D7VvG6VmMQMu/fyf5JSP8PAxX4wWGVilikR52SmWSdud3/HFNDf6gevr7GWgqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WQYyl1P08z6J67T;
+	Fri, 19 Jul 2024 23:49:51 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id BC470140517;
+	Fri, 19 Jul 2024 23:51:45 +0800 (CST)
+Received: from localhost (10.48.157.16) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 19 Jul
+ 2024 16:51:44 +0100
+Date: Fri, 19 Jul 2024 16:51:43 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: David Hildenbrand <david@redhat.com>
+CC: Mike Rapoport <rppt@kernel.org>, <linux-kernel@vger.kernel.org>,
+	"Alexander Gordeev" <agordeev@linux.ibm.com>, Andreas Larsson
+	<andreas@gaisler.com>, Andrew Morton <akpm@linux-foundation.org>, Arnd
+ Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>, Catalin Marinas
+	<catalin.marinas@arm.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dan Williams <dan.j.williams@intel.com>, Dave Hansen
+	<dave.hansen@linux.intel.com>, "David S. Miller" <davem@davemloft.net>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Heiko Carstens
+	<hca@linux.ibm.com>, "Huacai Chen" <chenhuacai@kernel.org>, Ingo Molnar
+	<mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, John Paul Adrian
+ Glaubitz <glaubitz@physik.fu-berlin.de>, Michael Ellerman
+	<mpe@ellerman.id.au>, Palmer Dabbelt <palmer@dabbelt.com>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Thomas
+ Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner
+	<tglx@linutronix.de>, "Vasily Gorbik" <gor@linux.ibm.com>, Will Deacon
+	<will@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<loongarch@lists.linux.dev>, <linux-mips@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <linux-riscv@lists.infradead.org>,
+	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>,
+	<sparclinux@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+	<linux-mm@kvack.org>, <x86@kernel.org>
+Subject: Re: [PATCH 05/17] arch, mm: pull out allocation of NODE_DATA to
+ generic code
+Message-ID: <20240719165143.0000002e@Huawei.com>
+In-Reply-To: <96850252-a49f-4d78-a94b-a9a25e3f2bd5@redhat.com>
+References: <20240716111346.3676969-1-rppt@kernel.org>
+	<20240716111346.3676969-6-rppt@kernel.org>
+	<220da8ed-337a-4b1e-badf-2bff1d36e6c3@redhat.com>
+	<Zpi-HAb7EBxrZBtK@kernel.org>
+	<96850252-a49f-4d78-a94b-a9a25e3f2bd5@redhat.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dmaengine: avoid non-constant format string
-To: Arnd Bergmann <arnd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Amelie Delaunay <amelie.delaunay@foss.st.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Yajun Deng <yajun.deng@linux.dev>,
- dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240719102319.546622-1-arnd@kernel.org>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20240719102319.546622-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
+On Fri, 19 Jul 2024 17:07:35 +0200
+David Hildenbrand <david@redhat.com> wrote:
 
+> >>> -	 * Allocate node data.  Try node-local memory and then any node.
+> >>> -	 * Never allocate in DMA zone.
+> >>> -	 */
+> >>> -	nd_pa = memblock_phys_alloc_try_nid(nd_size, SMP_CACHE_BYTES, nid);
+> >>> -	if (!nd_pa) {
+> >>> -		pr_err("Cannot find %zu bytes in any node (initial node: %d)\n",
+> >>> -		       nd_size, nid);
+> >>> -		return;
+> >>> -	}
+> >>> -	nd = __va(nd_pa);
+> >>> -
+> >>> -	/* report and initialize */
+> >>> -	printk(KERN_INFO "NODE_DATA(%d) allocated [mem %#010Lx-%#010Lx]\n", nid,
+> >>> -	       nd_pa, nd_pa + nd_size - 1);
+> >>> -	tnid = early_pfn_to_nid(nd_pa >> PAGE_SHIFT);
+> >>> -	if (tnid != nid)
+> >>> -		printk(KERN_INFO "    NODE_DATA(%d) on node %d\n", nid, tnid);
+> >>> -
+> >>> -	node_data[nid] = nd;
+> >>> -	memset(NODE_DATA(nid), 0, sizeof(pg_data_t));
+> >>> -
+> >>> -	node_set_online(nid);
+> >>> -}
+> >>> -
+> >>>    /**
+> >>>     * numa_cleanup_meminfo - Cleanup a numa_meminfo
+> >>>     * @mi: numa_meminfo to clean up
+> >>> @@ -571,6 +538,7 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+> >>>    			continue;
+> >>>    		alloc_node_data(nid);
+> >>> +		node_set_online(nid);
+> >>>    	}  
+> >>
+> >> I can spot that we only remove a single node_set_online() call from x86.
+> >>
+> >> What about all the other architectures? Will there be any change in behavior
+> >> for them? Or do we simply set the nodes online later once more?  
+> > 
+> > On x86 node_set_online() was a part of alloc_node_data() and I moved it
+> > outside so it's called right after alloc_node_data(). On other
+> > architectures the allocation didn't include that call, so there should be
+> > no difference there.  
+> 
+> But won't their arch code try setting the nodes online at a later stage?
+> 
+> And I think, some architectures only set nodes online conditionally
+> (see most other node_set_online() calls).
+> 
+> Sorry if I'm confused here, but with now unconditional node_set_online(), won't
+> we change the behavior of other architectures?
+This is moving x86 code to x86 code, not a generic location
+so how would that affect anyone else? Their onlining should be same as
+before.
 
-On 7/19/24 3:23 AM, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Using an arbitrary string as a printf-style format can be a security
-> problem if that string contains % characters, as the optionalal
-> -Wformat-security flag points out:
-> 
-> drivers/dma/dmaengine.c: In function '__dma_async_device_channel_register':
-> drivers/dma/dmaengine.c:1073:17: error: format not a string literal and no format arguments [-Werror=format-security]
->  1073 |                 dev_set_name(&chan->dev->device, name);
->       |                 ^~~~~~~~~~~~
-> 
-> Change this newly added instance to use "%s" as the format instead to
-> pass the actual name.
-> 
-> Fixes: 10b8e0fd3f72 ("dmaengine: add channel device name to channel registration")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+The node onlining difference are a pain (I recall that fun from adding
+generic initiators) as different ordering on x86 and arm64 at least.
 
-> ---
->  drivers/dma/dmaengine.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Jonathan
+
 > 
-> diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-> index c380a4dda77a..c1357d7f3dc6 100644
-> --- a/drivers/dma/dmaengine.c
-> +++ b/drivers/dma/dmaengine.c
-> @@ -1070,7 +1070,7 @@ static int __dma_async_device_channel_register(struct dma_device *device,
->  	if (!name)
->  		dev_set_name(&chan->dev->device, "dma%dchan%d", device->dev_id, chan->chan_id);
->  	else
-> -		dev_set_name(&chan->dev->device, name);
-> +		dev_set_name(&chan->dev->device, "%s", name);
->  	rc = device_register(&chan->dev->device);
->  	if (rc)
->  		goto err_out_ida;
+
 
