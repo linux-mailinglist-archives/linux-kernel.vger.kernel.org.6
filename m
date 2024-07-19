@@ -1,257 +1,304 @@
-Return-Path: <linux-kernel+bounces-256907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0512693721E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 03:54:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 776FE937220
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 03:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A95E1F21A59
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 01:54:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2A7E1F2186C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 01:56:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0875664;
-	Fri, 19 Jul 2024 01:54:28 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042E93C39;
+	Fri, 19 Jul 2024 01:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="EJvTscGN"
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA37A32
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 01:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5863B15D1
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 01:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721354067; cv=none; b=dke2KF6seNiKyzvjD4Y0FCBgPCgDAE4p9OmtI9pVf3ZVSUJW7kPvEkiV3mO45odxLG7JVKMRH7L1imjkStXylo/DX96LQdDEuKu6YNIvgY0jsURy3x9fRrxuNTvABhCYMMrqjl5EMcI4Rlig41UeVfYcarRUO/I8vt2/GPgJzxM=
+	t=1721354164; cv=none; b=uptzD3oo/yYqKIgfQ+02KAUNI0i5h30uNeDDQVuSMbimd8nkM33awpHYTQvjlZaaj75Vv/6xg14jNKMwayqJudNR6NWLvqF0xMksiThio9KNzL3050leXvU7OrAAiSn4JI5V15UgMKQF9A92hWHtcoT5vViouvSFfbIk8LLxbbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721354067; c=relaxed/simple;
-	bh=kd3wmFbKJVYxwhUOTg8Vfk/WV7R7F8FS5dSYpuwdOaY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=kHNTQKyjRnfEY6WTkoCqI1OZ+88cmgehaJfCVQWIxPo0O6TXPhRleyZd2wrwAQoON5tvY2xrSV3IC+pVpOLwgoA3W50ERJY3cn2dtwPxPY1HjKO9iQgwYzZlTi6Xg99/b7f0uzzxv1LeZ8Q4X3ka1Aj5C9Bfji/jRxIZkYJLDPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-37642e69d7eso20287705ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 18:54:25 -0700 (PDT)
+	s=arc-20240116; t=1721354164; c=relaxed/simple;
+	bh=S9XvNO5ImX+pLgU29r+6NFx5Ta4huWYgZm7RlPFFY+A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JEmyR7gFgBmuXGrEETKNlxbrswQGoQvkjTcfH2Abygd/go+KqfkHo53Tf6bpeAdNNskCPU6N1fjBDkev7/TWVa0z9eg6OkIyvRHpX/ewd9y8DyWX8rfF6OCNs6en8KzGYiJnfiWnZ7kxYl+m4owgbV7G3bbkIGPsvmjf20t7WFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=EJvTscGN; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-8076cee8088so46817839f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 18:56:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1721354161; x=1721958961; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BBMoNxUmM+zvCwOfsVSk2SpUB5b5ZDpmyE9LlBQJw9Q=;
+        b=EJvTscGNPlpSCnWzgP2GymJeMPzM7pdBypCZqZWX/uli3YrtPKsor3vSYm2wGMBDwi
+         6bDXV8RtyJEprhtEDMk31/YBy3hcOk+kQeu3W72eSQP794t78Jdx8b08X1W8TxvmWP6X
+         T2CByomBzwxSwZy4cdp/1ZMeYsssCjjiodhMsWuitOetsriNGSdKbFC44AgWAzeOW0/r
+         3oACKReDDY907jZNmQqqgRDZm/HouP8Zi5aKeuwxcUYJ2WZAkm8M8irz+Vu3H3O87g9m
+         j/2KwH6UfiFxUa5/B/I8dEZJf0E0hgr40vvXe+MhwoNKDOlfatdkbvV6O6Ffmx9gG0iT
+         Pfag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721354065; x=1721958865;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1721354161; x=1721958961;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CAWnVNVq8zhws9asOND3xzdeoSUIjq4eLZc2q9S0e1E=;
-        b=uo0j1mBtfOVv/cCIxS2AwExtbIywibLkOzYawBZiNM4a50Wq+qTzlgt6C2EekX9Wp6
-         8akX5wM8mWyYSKyg8mQ8KxToDntdv+YlYyV+go/jkVsE+sVIbypE8HyyPo/iKPR5ZCqH
-         1zqT9PRaqnvHGiw11CMJWLBIQjw+0blkflXkRQ+W6bWLeDXS3O90gMfDw1/iCmFubPo2
-         Q4MfeQpek7LqAA1ZpIwPpoorpsuI3DOVfkI79o1emxSAsxk90/wHyETjKNDI9EMGWEVw
-         ehsvQrs2AxPuB1Ne1Dp5DbXib1dRTBJUOBqwut8w4KYSb7FcO817rlrwPVBTSj5mIdxT
-         7kDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWPfiLLc5+60Gi2gviPJZ/mFDv2vN87/zC6osFLk8BouGrkXSIetuFEmHvt6jb6DgQeRytSdAtW4MWCunoMv74qOUbrVyWPx55TvUWH
-X-Gm-Message-State: AOJu0YzGy1M8wwHbLaBlE0jBfuDv78hJDfgDAhG0DtzHzMpENBf0Ph06
-	yivZKWvjj89k75XmIB2AR//9MxsCu+r/jm/PZPk2XGI4PBh4sliKq2o6PWQQx4mcxUu8EuA2pd4
-	GPoz5wLKdTggg3vyNr5OLMJoWe1f4svjrIBjEGrEI4NohEepB0oPw+PM=
-X-Google-Smtp-Source: AGHT+IGv3Wku2HeDgQSqHGrDSGp0QzLbQvxMQqZY88opyjWPEiCXio21XaYcLgQj6fa8LGt9fZv1Wr8sciD9NUeJfodW9YITa40e
+        bh=BBMoNxUmM+zvCwOfsVSk2SpUB5b5ZDpmyE9LlBQJw9Q=;
+        b=RUou7QzrLeEgBZHqfGGEgaR6b/yuX+FvgQFq3FYW7vKKgWysDtr+M7ps/r9bKzTG8d
+         GbDMNsV9Lg+qI7lhwnbGiBqcm+iGCq+dY+ILy7RellbIJeGbYbziRJRoGgcKXT3E5usy
+         gWXM8sDREWo7BSKoC/bS+juPDHiAG40ampjXmcSsQIH4pr76rMvkcxvkWp3TjCXa7+Ow
+         660FRQVksCtxJz5zlnt+EMrf+jvH59f0jGiycHlu6pmTCpmic87Je8WwZDsa6jp4Rhgy
+         9scglhePSneRFZ61u1fa7FyE4pPWqg6nNry6+B+qvH3hBUP+D9BsJmmC8164XnqJxl8n
+         I6+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVYmIY6+6Duz/PkVBelnxcssg7X8OSv6T3i9YEJj6+9Bs/Fqs2Yw6OGXgOg12yVFVIALrltuozeGVv9G14z04Dz8BM8aukiTWUeImdO
+X-Gm-Message-State: AOJu0YysnRJjdNx7h4iYWr/h6ZrZ4ewQJQaC45Y9pNfMzQvFu81ajZ6L
+	OG74xnqxrdjB9esTUM7n1dbeiMTwUq8zh6EftYQMZbCUVG/TlLPz15C1wVCTBiVnzHxe8+BYlek
+	8VRI=
+X-Google-Smtp-Source: AGHT+IG2CoPSYAyYkOoMBa2c9qiOtGSDneT6EFNBl+4SSwvbjQ9YO4XF8yNAxCBa+piiQdYwhgiz9A==
+X-Received: by 2002:a05:6602:6d8d:b0:813:f74:e6e6 with SMTP id ca18e2360f4ac-81711e18cd9mr843812239f.15.1721354161352;
+        Thu, 18 Jul 2024 18:56:01 -0700 (PDT)
+Received: from [100.64.0.1] ([147.124.94.167])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c2342bf2cfsm124927173.8.2024.07.18.18.55.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Jul 2024 18:56:00 -0700 (PDT)
+Message-ID: <a28ddc26-d77a-470a-a33f-88144f717e86@sifive.com>
+Date: Thu, 18 Jul 2024 20:55:58 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d0d:b0:376:46d5:6583 with SMTP id
- e9e14a558f8ab-39558298e7dmr3515495ab.5.1721354064881; Thu, 18 Jul 2024
- 18:54:24 -0700 (PDT)
-Date: Thu, 18 Jul 2024 18:54:24 -0700
-In-Reply-To: <0000000000005c8adb0619b025aa@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000091fc6d061d8ff9ee@google.com>
-Subject: Re: [syzbot] [mm?] possible deadlock in try_to_wake_up (5)
-From: syzbot <syzbot+4970d08867f5a5b0bb78@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: patch: Remove redundant functions
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jason Baron <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Ard Biesheuvel <ardb@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@kernel.org>, Pu Lehui <pulehui@huawei.com>,
+ Puranjay Mohan <puranjay@kernel.org>, Luke Nelson <luke.r.nels@gmail.com>,
+ Xi Wang <xi.wang@gmail.com>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+References: <20240717084102.150914-1-alexghiti@rivosinc.com>
+From: Samuel Holland <samuel.holland@sifive.com>
+Content-Language: en-US
+In-Reply-To: <20240717084102.150914-1-alexghiti@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-syzbot has found a reproducer for the following issue on:
+Hi Alex,
 
-HEAD commit:    6caf9efaa169 selftests/bpf: Test sockmap redirect for AF_U..
-git tree:       bpf
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1686bf4e980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8e5f5ae13ab96e5e
-dashboard link: https://syzkaller.appspot.com/bug?extid=4970d08867f5a5b0bb78
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1110fe79980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11bc4a1d980000
+On 2024-07-17 3:41 AM, Alexandre Ghiti wrote:
+> Commit edf2d546bfd6f5c4 ("riscv: patch: Flush the icache right after
+> patching to avoid illegal insns") removed the last differences between
+> patch_text_set_nosync() and patch_insn_set(), and between
+> patch_text_nosync() and patch_insn_write().
+> 
+> So remove the redundant *_nosync() functions.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/77deed4d9ec3/disk-6caf9efa.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/70989dddc43c/vmlinux-6caf9efa.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/16716af60ed3/bzImage-6caf9efa.xz
+My understanding was that we would eventually revert that patch, once we are
+sure we never non-atomically patch the text patching code. So it's helpful to
+keep the semantic distinction between the two sets of functions.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4970d08867f5a5b0bb78@syzkaller.appspotmail.com
+And looking at this closer, I think the original patch should not have removed
+the calls to flush_icache_range() anyway. It replaces a global icache flush with
+a local icache flush, which is wrong if there is more than one CPU online, and
+there are a couple of places (bpf_jit_core.c, kprobes.c) where those functions
+are called at runtime.
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.10.0-syzkaller-04482-g6caf9efaa169 #0 Not tainted
-------------------------------------------------------
-syz-executor195/5341 is trying to acquire lock:
-ffff88801728e418 (&p->pi_lock){-.-.}-{2:2}, at: class_raw_spinlock_irqsave_constructor include/linux/spinlock.h:551 [inline]
-ffff88801728e418 (&p->pi_lock){-.-.}-{2:2}, at: try_to_wake_up+0xb0/0x1470 kernel/sched/core.c:4051
+Regards,
+Samuel
 
-but task is already holding lock:
-ffff8880b9438798 (lock#9){+.+.}-{2:2}, at: local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
-ffff8880b9438798 (lock#9){+.+.}-{2:2}, at: __mmap_lock_do_trace_acquire_returned+0x8f/0x630 mm/mmap_lock.c:237
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Closes: https://lore.kernel.org/linux-riscv/CAMuHMdUwx=rU2MWhFTE6KhYHm64phxx2Y6u05-aBLGfeG5696A@mail.gmail.com/
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> ---
+>  arch/riscv/errata/sifive/errata.c |  4 ++--
+>  arch/riscv/errata/thead/errata.c  |  2 +-
+>  arch/riscv/include/asm/patch.h    |  3 +--
+>  arch/riscv/kernel/alternative.c   |  4 ++--
+>  arch/riscv/kernel/cpufeature.c    |  2 +-
+>  arch/riscv/kernel/jump_label.c    |  2 +-
+>  arch/riscv/kernel/patch.c         | 24 +-----------------------
+>  arch/riscv/net/bpf_jit_core.c     |  4 ++--
+>  8 files changed, 11 insertions(+), 34 deletions(-)
+> 
+> diff --git a/arch/riscv/errata/sifive/errata.c b/arch/riscv/errata/sifive/errata.c
+> index 716cfedad3a2..5253b205aa17 100644
+> --- a/arch/riscv/errata/sifive/errata.c
+> +++ b/arch/riscv/errata/sifive/errata.c
+> @@ -112,8 +112,8 @@ void sifive_errata_patch_func(struct alt_entry *begin, struct alt_entry *end,
+>  		tmp = (1U << alt->patch_id);
+>  		if (cpu_req_errata & tmp) {
+>  			mutex_lock(&text_mutex);
+> -			patch_text_nosync(ALT_OLD_PTR(alt), ALT_ALT_PTR(alt),
+> -					  alt->alt_len);
+> +			patch_insn_write(ALT_OLD_PTR(alt), ALT_ALT_PTR(alt),
+> +					 alt->alt_len);
+>  			mutex_unlock(&text_mutex);
+>  			cpu_apply_errata |= tmp;
+>  		}
+> diff --git a/arch/riscv/errata/thead/errata.c b/arch/riscv/errata/thead/errata.c
+> index bf6a0a6318ee..0ce280a190b6 100644
+> --- a/arch/riscv/errata/thead/errata.c
+> +++ b/arch/riscv/errata/thead/errata.c
+> @@ -182,7 +182,7 @@ void thead_errata_patch_func(struct alt_entry *begin, struct alt_entry *end,
+>  				memcpy(oldptr, altptr, alt->alt_len);
+>  			} else {
+>  				mutex_lock(&text_mutex);
+> -				patch_text_nosync(oldptr, altptr, alt->alt_len);
+> +				patch_insn_write(oldptr, altptr, alt->alt_len);
+>  				mutex_unlock(&text_mutex);
+>  			}
+>  		}
+> diff --git a/arch/riscv/include/asm/patch.h b/arch/riscv/include/asm/patch.h
+> index 9f5d6e14c405..6b0e9b8a321b 100644
+> --- a/arch/riscv/include/asm/patch.h
+> +++ b/arch/riscv/include/asm/patch.h
+> @@ -6,9 +6,8 @@
+>  #ifndef _ASM_RISCV_PATCH_H
+>  #define _ASM_RISCV_PATCH_H
+>  
+> +int patch_insn_set(void *addr, u8 c, size_t len);
+>  int patch_insn_write(void *addr, const void *insn, size_t len);
+> -int patch_text_nosync(void *addr, const void *insns, size_t len);
+> -int patch_text_set_nosync(void *addr, u8 c, size_t len);
+>  int patch_text(void *addr, u32 *insns, int ninsns);
+>  
+>  extern int riscv_patch_in_stop_machine;
+> diff --git a/arch/riscv/kernel/alternative.c b/arch/riscv/kernel/alternative.c
+> index 0128b161bfda..a8b508d99cf8 100644
+> --- a/arch/riscv/kernel/alternative.c
+> +++ b/arch/riscv/kernel/alternative.c
+> @@ -83,7 +83,7 @@ static void riscv_alternative_fix_auipc_jalr(void *ptr, u32 auipc_insn,
+>  	riscv_insn_insert_utype_itype_imm(&call[0], &call[1], imm);
+>  
+>  	/* patch the call place again */
+> -	patch_text_nosync(ptr, call, sizeof(u32) * 2);
+> +	patch_insn_write(ptr, call, sizeof(u32) * 2);
+>  }
+>  
+>  static void riscv_alternative_fix_jal(void *ptr, u32 jal_insn, int patch_offset)
+> @@ -98,7 +98,7 @@ static void riscv_alternative_fix_jal(void *ptr, u32 jal_insn, int patch_offset)
+>  	riscv_insn_insert_jtype_imm(&jal_insn, imm);
+>  
+>  	/* patch the call place again */
+> -	patch_text_nosync(ptr, &jal_insn, sizeof(u32));
+> +	patch_insn_write(ptr, &jal_insn, sizeof(u32));
+>  }
+>  
+>  void riscv_alternative_fix_offsets(void *alt_ptr, unsigned int len,
+> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+> index 5ef48cb20ee1..4c040a857c7e 100644
+> --- a/arch/riscv/kernel/cpufeature.c
+> +++ b/arch/riscv/kernel/cpufeature.c
+> @@ -795,7 +795,7 @@ void __init_or_module riscv_cpufeature_patch_func(struct alt_entry *begin,
+>  		altptr = ALT_ALT_PTR(alt);
+>  
+>  		mutex_lock(&text_mutex);
+> -		patch_text_nosync(oldptr, altptr, alt->alt_len);
+> +		patch_insn_write(oldptr, altptr, alt->alt_len);
+>  		riscv_alternative_fix_offsets(oldptr, alt->alt_len, oldptr - altptr);
+>  		mutex_unlock(&text_mutex);
+>  	}
+> diff --git a/arch/riscv/kernel/jump_label.c b/arch/riscv/kernel/jump_label.c
+> index e6694759dbd0..74b5ebfacf4a 100644
+> --- a/arch/riscv/kernel/jump_label.c
+> +++ b/arch/riscv/kernel/jump_label.c
+> @@ -36,6 +36,6 @@ void arch_jump_label_transform(struct jump_entry *entry,
+>  	}
+>  
+>  	mutex_lock(&text_mutex);
+> -	patch_text_nosync(addr, &insn, sizeof(insn));
+> +	patch_insn_write(addr, &insn, sizeof(insn));
+>  	mutex_unlock(&text_mutex);
+>  }
+> diff --git a/arch/riscv/kernel/patch.c b/arch/riscv/kernel/patch.c
+> index ab03732d06c4..bf45b507f900 100644
+> --- a/arch/riscv/kernel/patch.c
+> +++ b/arch/riscv/kernel/patch.c
+> @@ -177,7 +177,7 @@ static int __patch_insn_write(void *addr, const void *insn, size_t len)
+>  NOKPROBE_SYMBOL(__patch_insn_write);
+>  #endif /* CONFIG_MMU */
+>  
+> -static int patch_insn_set(void *addr, u8 c, size_t len)
+> +int patch_insn_set(void *addr, u8 c, size_t len)
+>  {
+>  	size_t patched = 0;
+>  	size_t size;
+> @@ -198,17 +198,6 @@ static int patch_insn_set(void *addr, u8 c, size_t len)
+>  }
+>  NOKPROBE_SYMBOL(patch_insn_set);
+>  
+> -int patch_text_set_nosync(void *addr, u8 c, size_t len)
+> -{
+> -	u32 *tp = addr;
+> -	int ret;
+> -
+> -	ret = patch_insn_set(tp, c, len);
+> -
+> -	return ret;
+> -}
+> -NOKPROBE_SYMBOL(patch_text_set_nosync);
+> -
+>  int patch_insn_write(void *addr, const void *insn, size_t len)
+>  {
+>  	size_t patched = 0;
+> @@ -230,17 +219,6 @@ int patch_insn_write(void *addr, const void *insn, size_t len)
+>  }
+>  NOKPROBE_SYMBOL(patch_insn_write);
+>  
+> -int patch_text_nosync(void *addr, const void *insns, size_t len)
+> -{
+> -	u32 *tp = addr;
+> -	int ret;
+> -
+> -	ret = patch_insn_write(tp, insns, len);
+> -
+> -	return ret;
+> -}
+> -NOKPROBE_SYMBOL(patch_text_nosync);
+> -
+>  static int patch_text_cb(void *data)
+>  {
+>  	struct patch_insn *patch = data;
+> diff --git a/arch/riscv/net/bpf_jit_core.c b/arch/riscv/net/bpf_jit_core.c
+> index 0a96abdaca65..b053ae5c4191 100644
+> --- a/arch/riscv/net/bpf_jit_core.c
+> +++ b/arch/riscv/net/bpf_jit_core.c
+> @@ -226,7 +226,7 @@ void *bpf_arch_text_copy(void *dst, void *src, size_t len)
+>  	int ret;
+>  
+>  	mutex_lock(&text_mutex);
+> -	ret = patch_text_nosync(dst, src, len);
+> +	ret = patch_insn_write(dst, src, len);
+>  	mutex_unlock(&text_mutex);
+>  
+>  	if (ret)
+> @@ -240,7 +240,7 @@ int bpf_arch_text_invalidate(void *dst, size_t len)
+>  	int ret;
+>  
+>  	mutex_lock(&text_mutex);
+> -	ret = patch_text_set_nosync(dst, 0, len);
+> +	ret = patch_insn_set(dst, 0, len);
+>  	mutex_unlock(&text_mutex);
+>  
+>  	return ret;
 
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (lock#9){+.+.}-{2:2}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5753
-       local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
-       __mmap_lock_do_trace_acquire_returned+0xa8/0x630 mm/mmap_lock.c:237
-       __mmap_lock_trace_acquire_returned include/linux/mmap_lock.h:36 [inline]
-       mmap_read_trylock include/linux/mmap_lock.h:164 [inline]
-       stack_map_get_build_id_offset+0x9af/0x9d0 kernel/bpf/stackmap.c:141
-       __bpf_get_stack+0x4ad/0x5a0 kernel/bpf/stackmap.c:449
-       ____bpf_get_stack_raw_tp kernel/trace/bpf_trace.c:1997 [inline]
-       bpf_get_stack_raw_tp+0x1a3/0x240 kernel/trace/bpf_trace.c:1987
-       0xffffffffa0001d8e
-       bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
-       __bpf_prog_run include/linux/filter.h:691 [inline]
-       bpf_prog_run include/linux/filter.h:698 [inline]
-       __bpf_trace_run kernel/trace/bpf_trace.c:2406 [inline]
-       bpf_trace_run2+0x2ec/0x540 kernel/trace/bpf_trace.c:2447
-       trace_tlb_flush+0x118/0x140 include/trace/events/tlb.h:38
-       switch_mm_irqs_off+0x7cb/0xae0
-       context_switch kernel/sched/core.c:5172 [inline]
-       __schedule+0x1079/0x4a60 kernel/sched/core.c:6529
-       preempt_schedule_common+0x84/0xd0 kernel/sched/core.c:6708
-       preempt_schedule+0xe1/0xf0 kernel/sched/core.c:6732
-       preempt_schedule_thunk+0x1a/0x30 arch/x86/entry/thunk.S:12
-       __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:160 [inline]
-       _raw_spin_unlock_irq+0x44/0x50 kernel/locking/spinlock.c:202
-       spin_unlock_irq include/linux/spinlock.h:401 [inline]
-       ptrace_resume kernel/ptrace.c:866 [inline]
-       ptrace_request+0x102d/0x2690 kernel/ptrace.c:1199
-       arch_ptrace+0x2a4/0x3f0 arch/x86/kernel/ptrace.c:848
-       __do_sys_ptrace kernel/ptrace.c:1285 [inline]
-       __se_sys_ptrace+0x164/0x450 kernel/ptrace.c:1258
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&rq->__lock){-.-.}-{2:2}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5753
-       _raw_spin_lock_nested+0x31/0x40 kernel/locking/spinlock.c:378
-       raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:560
-       raw_spin_rq_lock kernel/sched/sched.h:1415 [inline]
-       rq_lock kernel/sched/sched.h:1714 [inline]
-       task_fork_fair+0x61/0x1e0 kernel/sched/fair.c:12710
-       sched_cgroup_fork+0x37c/0x410 kernel/sched/core.c:4633
-       copy_process+0x2217/0x3dc0 kernel/fork.c:2482
-       kernel_clone+0x226/0x8f0 kernel/fork.c:2780
-       user_mode_thread+0x132/0x1a0 kernel/fork.c:2858
-       rest_init+0x23/0x300 init/main.c:712
-       start_kernel+0x47a/0x500 init/main.c:1103
-       x86_64_start_reservations+0x2a/0x30 arch/x86/kernel/head64.c:507
-       x86_64_start_kernel+0x99/0xa0 arch/x86/kernel/head64.c:488
-       common_startup_64+0x13e/0x147
-
--> #0 (&p->pi_lock){-.-.}-{2:2}:
-       check_prev_add kernel/locking/lockdep.c:3133 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
-       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
-       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5136
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5753
-       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-       _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
-       class_raw_spinlock_irqsave_constructor include/linux/spinlock.h:551 [inline]
-       try_to_wake_up+0xb0/0x1470 kernel/sched/core.c:4051
-       rcu_read_unlock_special+0x3db/0x550 kernel/rcu/tree_plugin.h:665
-       __rcu_read_unlock+0xa1/0x110 kernel/rcu/tree_plugin.h:436
-       __mmap_lock_do_trace_acquire_returned+0x1f9/0x630 mm/mmap_lock.c:237
-       __mmap_lock_trace_acquire_returned include/linux/mmap_lock.h:36 [inline]
-       mmap_read_trylock include/linux/mmap_lock.h:164 [inline]
-       vmf_anon_prepare mm/memory.c:3234 [inline]
-       do_anonymous_page mm/memory.c:4451 [inline]
-       do_pte_missing mm/memory.c:3895 [inline]
-       handle_pte_fault+0x6f58/0x7090 mm/memory.c:5381
-       __handle_mm_fault mm/memory.c:5524 [inline]
-       handle_mm_fault+0x10df/0x1ba0 mm/memory.c:5689
-       do_user_addr_fault arch/x86/mm/fault.c:1338 [inline]
-       handle_page_fault arch/x86/mm/fault.c:1481 [inline]
-       exc_page_fault+0x459/0x8c0 arch/x86/mm/fault.c:1539
-       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-
-other info that might help us debug this:
-
-Chain exists of:
-  &p->pi_lock --> &rq->__lock --> lock#9
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(lock#9);
-                               lock(&rq->__lock);
-                               lock(lock#9);
-  lock(&p->pi_lock);
-
- *** DEADLOCK ***
-
-3 locks held by syz-executor195/5341:
- #0: ffff888025543580 (&vma->vm_lock->lock){++++}-{3:3}, at: vma_start_read include/linux/mm.h:683 [inline]
- #0: ffff888025543580 (&vma->vm_lock->lock){++++}-{3:3}, at: lock_vma_under_rcu+0x2f9/0x6e0 mm/memory.c:5845
- #1: ffff8880121da798 (&mm->mmap_lock){++++}-{3:3}, at: mmap_read_trylock include/linux/mmap_lock.h:163 [inline]
- #1: ffff8880121da798 (&mm->mmap_lock){++++}-{3:3}, at: vmf_anon_prepare mm/memory.c:3234 [inline]
- #1: ffff8880121da798 (&mm->mmap_lock){++++}-{3:3}, at: do_anonymous_page mm/memory.c:4451 [inline]
- #1: ffff8880121da798 (&mm->mmap_lock){++++}-{3:3}, at: do_pte_missing mm/memory.c:3895 [inline]
- #1: ffff8880121da798 (&mm->mmap_lock){++++}-{3:3}, at: handle_pte_fault+0x57ad/0x7090 mm/memory.c:5381
- #2: ffff8880b9438798 (lock#9){+.+.}-{2:2}, at: local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
- #2: ffff8880b9438798 (lock#9){+.+.}-{2:2}, at: __mmap_lock_do_trace_acquire_returned+0x8f/0x630 mm/mmap_lock.c:237
-
-stack backtrace:
-CPU: 0 PID: 5341 Comm: syz-executor195 Not tainted 6.10.0-syzkaller-04482-g6caf9efaa169 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2186
- check_prev_add kernel/locking/lockdep.c:3133 [inline]
- check_prevs_add kernel/locking/lockdep.c:3252 [inline]
- validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
- __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5136
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5753
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
- _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
- class_raw_spinlock_irqsave_constructor include/linux/spinlock.h:551 [inline]
- try_to_wake_up+0xb0/0x1470 kernel/sched/core.c:4051
- rcu_read_unlock_special+0x3db/0x550 kernel/rcu/tree_plugin.h:665
- __rcu_read_unlock+0xa1/0x110 kernel/rcu/tree_plugin.h:436
- __mmap_lock_do_trace_acquire_returned+0x1f9/0x630 mm/mmap_lock.c:237
- __mmap_lock_trace_acquire_returned include/linux/mmap_lock.h:36 [inline]
- mmap_read_trylock include/linux/mmap_lock.h:164 [inline]
- vmf_anon_prepare mm/memory.c:3234 [inline]
- do_anonymous_page mm/memory.c:4451 [inline]
- do_pte_missing mm/memory.c:3895 [inline]
- handle_pte_fault+0x6f58/0x7090 mm/memory.c:5381
- __handle_mm_fault mm/memory.c:5524 [inline]
- handle_mm_fault+0x10df/0x1ba0 mm/memory.c:5689
- do_user_addr_fault arch/x86/mm/fault.c:1338 [inline]
- handle_page_fault arch/x86/mm/fault.c:1481 [inline]
- exc_page_fault+0x459/0x8c0 arch/x86/mm/fault.c:1539
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-RIP: 0033:0x7f16433ef7aa
-Code: 5c 07 00 00 ba 12 00 00 00 bf 01 00 00 00 48 8d 35 a6 a8 07 00 e8 36 0a 03 00 b8 80 01 00 20 31 d2 66 0f ef c0 48 89 c7 31 c0 <c7> 04 25 c0 00 00 20 11 00 00 00 48 8d 35 bc a8 07 00 c7 04 25 c4
-RSP: 002b:00007fff5d7914c0 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f16434201e0
-RDX: 0000000000000000 RSI: 00007f164346a03b RDI: 0000000020000180
-RBP: 00000000000f4240 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 000000000000fa81
-R13: 00007fff5d7914cc R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
