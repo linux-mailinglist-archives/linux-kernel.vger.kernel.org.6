@@ -1,875 +1,264 @@
-Return-Path: <linux-kernel+bounces-257164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECF09937610
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 11:46:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4385C937618
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 11:48:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C0161C22079
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:46:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73014B22BB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657CC824AF;
-	Fri, 19 Jul 2024 09:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D675824AF;
+	Fri, 19 Jul 2024 09:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="yZpwc+xG"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hAQ1ih3j"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34EB42076
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 09:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CBB12AF11
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 09:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721382353; cv=none; b=R5EjCi4jbDKT1bcYuNTbDkh4SdyZCD5wHCUQVF+TigzTssMZbrzBz8sz7rhjwqwmgKjFasrI5cxfTOTvv9R3cI6k2IVcVEwiQD0X97cl9ZmgCASa07zt4d8Q1V2nNklrNlYAYIAjQlw5g9F4ACsrzlvGvyZmMOCaD3rY8wf4lAI=
+	t=1721382496; cv=none; b=u7e7LEiTzRFV2wvWkwFkd0CT+2QiyUXi3gyOT7W4G+yqPEt80v/npOFlOtsNUrF/cBgo3QpMtmesh3O1mcadW7/pHNU1gOIhd9rp6DDwxWTyEP5tjcz+tvOwFtXhbtTeWuXqQEAvHLC6o3XcyvTMK3N81UWgdbwp94XwXvMk8Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721382353; c=relaxed/simple;
-	bh=eOUi0IeBTEWZ4LJ6rjK5a0xfGZiaGzvCtL140SVme1k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=p2bAkHn5wVYCHxkEJwICzidZ6HH/3Y54zS7igFF46XDq+0kbnb0fhT1Uozc1A0zKn0f6Xe70ntD7RKuwKjrjTQLO17sm6C/WJ5CjGRZP1YOwYHLXVAf33Txi0se1d1slFCRHGwFwZ3/9jpPO6p3ojTXUB5nasiPjBLGQR3jakbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=yZpwc+xG; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fc47aef524so1526415ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 02:45:50 -0700 (PDT)
+	s=arc-20240116; t=1721382496; c=relaxed/simple;
+	bh=TqsMnjBVIE3aetou6qz8juMwfKHAkCPRtLAKXnghObc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YfZ3zSGfysh7ZTIqsfgKJ8z9Rr+hXwANVCQLk7DqJzzdP6l6nPuK/PwqwAH15nBgCbHfAmZyrqodzdpwHwLd4Y/L7RlDZYnzT2jekrwkRn5dxKKXSUQ1v9r4nLkfwxNCKEB/Hyuu0j58kCZRd5qMGm+a/g7eo5KXufzJ7xgox50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hAQ1ih3j; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70af2b1a35aso530252b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 02:48:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1721382350; x=1721987150; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jyc63DhAsds9my1u5jTRhwrkGNr3acmqIU9G65AUunw=;
-        b=yZpwc+xGVLHXdUVsXylH0112wTt6XBUgxQn/VOqmexfhV4FWApxIY6nNuvtfGVq7z+
-         ePIIWYaBuWfVS0yLM5GZGg7m3kC5tN26cp2zaWSljLf7D/EJvtggRPhv1oSojqBZbiMc
-         kuTdNOP6K6tMlGOx+9Kz87foHQLWFSi+b+g0PTbEdMHeBX3C3LR0wcpYsXU3/naCMP3X
-         +KBuCGZ0kkENvWB1btQ7itolb3Bihghb/7doZwAA4ydao5coriW+DODjmpyyXTelkgXm
-         eqMeCHYc7EIKFubyy7oI8esV3SNWl1FEXXgkRv2kmwBGe2GH7tJ9NDyHSXwNQX6BqWyn
-         ZfYw==
+        d=linaro.org; s=google; t=1721382494; x=1721987294; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=VhF0cG7sJRagtSnZoHiXdHI0K7iHrCSIlDJ8BuG+ZkI=;
+        b=hAQ1ih3jsvY15kf/oq3yefTK3j7lMtjmSrXx7UspLVC4u/C8iPb4tdu4y7bbV1Ppm8
+         D5TOmTmoUhiGkMv0X6cdzd/lgYVVTRk32UKMXprxvSUTQElv8EG+b7Zq84/Am2GL+Ngz
+         pGdVrEGseIoLzQE5qklBCGUR7fGYuZV+L9gQ/6F+XyNzYGztcUCKomykFePXi9YnPRLh
+         DF9hTnBD+W5DbpGSX8yO0F07EHczCPNycf3OE2I67zMSxKlPcKbTRE2v4dw7IflD2vBn
+         UqGFrbZRWyaisX7M5Bivr80aLMhJJPZ0Fw142MIYYAy5d4KLy1uhNauUTpI+A6vvKexC
+         Jtmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721382350; x=1721987150;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jyc63DhAsds9my1u5jTRhwrkGNr3acmqIU9G65AUunw=;
-        b=gyLeQr7dbzuJEaS1H94SBrh0sxU6e9VVgz14cSGepk6y57jyS/5AxdZ873KZdfTT3z
-         mltKD9QCfTHY5tVgUY+Z35C2Y4RsApp6wJs/9ekxSUk4WQcz7k1WApEotpszHQqXb5c9
-         V9uJO4/Rd1wSgBis+7OkZTWw78rYhVf8JYobS5K5CcEnIMn66XkaBO2xm0wq7lKs89NZ
-         n2ABm8s5UrX7RJJoCMrRTgRUCugweOZOsvd89461ymRsYzE/ws2SgIyqDakGKIf/NsKV
-         7ETGZcyIWeH+TTcQ3lMlF4Au5zK/zvUeVwJ3V2YRy5KBeSdZdYfpn+16cYAs26gSyrLE
-         wJ3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUGF7rYxR/LsnPL0zNX0GKSq/RSSukOMqvz34NtTFPDtRzzGVQV4YinF8WldRaNusG7TlIoADi7GMEatbQz5O9K6+0jnt0uTWGIIAHk
-X-Gm-Message-State: AOJu0YwMi+LxRA6uTbbhP1Il+HJj9f2zIZ64ZhlYAMNV4NGuTKgCLI7l
-	cGMi7XN44Q+VYwACntSColtn6n9AX4L0SUTHN6CAenMZgn9Hc/zSuNTUsLZgvQ==
-X-Google-Smtp-Source: AGHT+IFD+1RXHKvtuvKKKF/QwlGwVg9eb2+NGk8HQJO77F0F9d1lDyN6BKrBBr9122fyEql2L5Y+xA==
-X-Received: by 2002:a17:902:d50a:b0:1fc:5b41:bac9 with SMTP id d9443c01a7336-1fd5ecadd1cmr14605685ad.7.1721382350211;
-        Fri, 19 Jul 2024 02:45:50 -0700 (PDT)
-Received: from [127.0.0.1] ([2401:4900:8899:6437:d031:b9ec:7ff1:6aa1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f28f67esm819025ad.96.2024.07.19.02.45.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 02:45:49 -0700 (PDT)
-From: Ayush Singh <ayush@beagleboard.org>
-Date: Fri, 19 Jul 2024 15:15:12 +0530
-Subject: [PATCH 3/3] greybus: gb-beagleplay: Add firmware upload API
+        d=1e100.net; s=20230601; t=1721382494; x=1721987294;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VhF0cG7sJRagtSnZoHiXdHI0K7iHrCSIlDJ8BuG+ZkI=;
+        b=WsdxL1TZYrIUMkI45niIHUPtIzXIj2SCi/iISKM16l9zFY5QzuxrLyTcKM4peCuy5g
+         NRA3OkPOsk9AVJ8e5+lJCqplTi/aELPMdK2JZpJ2EAXh/EQmAoBRRpCvykZs0Rm4PpvG
+         tMLs1Qx8JBm4GX3Q9q2pBi4bGZVRcOCjwkZZY0kY59jWER5E5ar4NnHIR32g1pH4JOIB
+         tgN6zW9LI6ydC+7UP2UqFrtzrzkFekU2SF7hqf2Ek1pDJ89gHxyoR96YohcHoLlx2nwm
+         OdNKr7N/M1EU6UR6VfH+9YDcnyxtjo4VJpcpFFZbCN8qiFdSsNCYbrK1V/ypFxZ6dqIl
+         pPxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhD3x6bYITyfxPW6aKad9XBM4gG6Eby4ypvAj6h6Ro0zP+rcRu5AmxV9jd5/rPWuEXf3bvN1oHUuZYKRsSj/3TNxh80AXrh6/eOG/p
+X-Gm-Message-State: AOJu0YyAkfERU4kqBGP+fIXJWWuv7BGEtV/GJ1BA4+5EqV0Y/AOLx3Zl
+	tf9wdM/Ju30M6Lay2EQOl8/UZpPVafJR/osxsRHIU1a8UZq2jLfcwoN6yRJY6rd7u5y8/ELq24I
+	HoAGfX+7BnCMQcgKer1mENGvZTE/q6cjhWFyIaw==
+X-Google-Smtp-Source: AGHT+IHcgE/Y9hI4BdyGlcUQ74l1W4Cc3qlxjGfyBSOFidXWRgWEk1+LeD0CU6f5+lT4z1P3UEG/is9BsEE60bvH2tc=
+X-Received: by 2002:a05:6a00:17a1:b0:70b:1c7e:829a with SMTP id
+ d2e1a72fcca58-70ce503ea93mr9291348b3a.32.1721382493696; Fri, 19 Jul 2024
+ 02:48:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240719-beagleplay_fw_upgrade-v1-3-8664d4513252@beagleboard.org>
-References: <20240719-beagleplay_fw_upgrade-v1-0-8664d4513252@beagleboard.org>
-In-Reply-To: <20240719-beagleplay_fw_upgrade-v1-0-8664d4513252@beagleboard.org>
-To: jkridner@beagleboard.org, robertcnelson@beagleboard.org, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>, 
- Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
- Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: greybus-dev@lists.linaro.org, netdev@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, Ayush Singh <ayush@beagleboard.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=21532;
- i=ayush@beagleboard.org; h=from:subject:message-id;
- bh=eOUi0IeBTEWZ4LJ6rjK5a0xfGZiaGzvCtL140SVme1k=;
- b=owEBbQKS/ZANAwAIAQXO9ceJ5Vp0AcsmYgBmmjW2RHOknJtQK3mgmQZ3YNy8KKpPiv5QLGsA8
- p+Vi1E3ciGJAjMEAAEIAB0WIQTfzBMe8k8tZW+lBNYFzvXHieVadAUCZpo1tgAKCRAFzvXHieVa
- dAK2D/9ao/TkUA+2zVFxh+ewWL10zeq7rbjISlUTfhfbXWnhT39PXHgVuM2RvgGOmNsGF34jJF1
- K6QRZ8UrrJW3eXxnyG//I5zw+Vr3utk7767IYwrsLErVAlrh4VTSZNWWjlTAtO8wBJuUPSIB2Ij
- IXvvOwKt2yuiYUXjqb/h8R202gdIYmZiJIqCDjKtDMBproWkXZ9Mh4vKRog1HKRsazPNLJCVm9D
- 0UnEr/Y9DlXP+jSYtKz4Ibz3bW1yDyEja30ggtHvZtNFgxHx+XWciozfXQCBXtJ8meTAc5QVYny
- VQYAwacLoMC1+FbIwYg44qeJV1HuQRYqHMytH+5OMbK8blgqR1UoNiXR7j8PMXzeiAK4TbET+Q0
- nFFTHXmn4jPEgBhBx1jdoSjohPAb1NAfF3b/rpLXk4Gx3wjKW3ep6e7IkwU3ttV88A/h7MleVU1
- Nm2juXftukQnGm4emuQPc1V86bpbm1v8L0dbCtJos8Z5UmZWurQnDeRW1cstVbJyX0b0CSD2n/f
- xj1c4+AovaqerOXD2U8hQHyzptFR9uhPTgBZ4bUOIN4Un5TsWLUUZDJOePGsO7exA5nHhA/ZGcc
- X59QFtKvg0oxDB1/PR44xz1+UG+nDZ/bOTkS4IdiJIkhimQb/pQ8JjFw9HfCVZ2EpQoXYDyWMdU
- IKkzyEOEseguBYw==
-X-Developer-Key: i=ayush@beagleboard.org; a=openpgp;
- fpr=DFCC131EF24F2D656FA504D605CEF5C789E55A74
+References: <20240712102029.3697965-1-james.clark@linaro.org>
+ <20240712102029.3697965-17-james.clark@linaro.org> <CAJ9a7ViwpDSpEv0niuF=wWpp4497Yp5AcnMSeh_SamWnK1QQtw@mail.gmail.com>
+ <3b2285e0-3ac2-448a-8a53-c1bb6ead78b8@linaro.org>
+In-Reply-To: <3b2285e0-3ac2-448a-8a53-c1bb6ead78b8@linaro.org>
+From: Mike Leach <mike.leach@linaro.org>
+Date: Fri, 19 Jul 2024 10:48:02 +0100
+Message-ID: <CAJ9a7VgQ5JfxObZpxbQdiEciOjkuijH98HFfdFVK4qkn7qbNUQ@mail.gmail.com>
+Subject: Re: [PATCH v5 16/17] coresight: Emit sink ID in the HW_ID packets
+To: James Clark <james.clark@linaro.org>
+Cc: coresight@lists.linaro.org, suzuki.poulose@arm.com, 
+	gankulkarni@os.amperecomputing.com, leo.yan@linux.dev, 
+	anshuman.khandual@arm.com, James Clark <james.clark@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Register with firmware upload API to allow updating firmware on cc1352p7
-without resorting to overlay for using the userspace flasher.
+Indeed! missed out the:
 
-Communication with the bootloader can be moved out of gb-beagleplay
-driver if required, but I am keeping it here since there are no
-immediate plans to use the on-board cc1352p7 for anything other than
-greybus (BeagleConnect Technology). Additionally, there do not seem to
-any other devices using cc1352p7 or it's cousins as a co-processor.
+Reviewed-by: Mike Leach <mike.leach@linaro.org>
 
-Boot and Reset GPIOs are used to enable cc1352p7 bootloader backdoor for
-flashing. The delays while starting bootloader are taken from the
-userspace flasher since the technical specification does not provide
-sufficient information regarding it.
+On Fri, 19 Jul 2024 at 10:29, James Clark <james.clark@linaro.org> wrote:
+>
+>
+>
+> On 17/07/2024 4:03 pm, Mike Leach wrote:
+> > On Fri, 12 Jul 2024 at 11:23, James Clark <james.clark@linaro.org> wrote:
+> >>
+> >> From: James Clark <james.clark@arm.com>
+> >>
+> >> For Perf to be able to decode when per-sink trace IDs are used, emit the
+> >> sink that's being written to for each ETM.
+> >>
+> >> Perf currently errors out if it sees a newer packet version so instead
+> >> of bumping it, add a new minor version field. This can be used to
+> >> signify new versions that have backwards compatible fields. Considering
+> >> this change is only for high core count machines, it doesn't make sense
+> >> to make a breaking change for everyone.
+> >>
+> >> Signed-off-by: James Clark <james.clark@arm.com>
+> >> Signed-off-by: James Clark <james.clark@linaro.org>
+> >> ---
+> >>   drivers/hwtracing/coresight/coresight-core.c  | 26 ++++++++++---------
+> >>   .../hwtracing/coresight/coresight-etm-perf.c  | 16 ++++++++----
+> >>   drivers/hwtracing/coresight/coresight-priv.h  |  1 +
+> >>   include/linux/coresight-pmu.h                 | 17 +++++++++---
+> >>   4 files changed, 39 insertions(+), 21 deletions(-)
+> >>
+> >> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+> >> index faf560ba8d64..c427e9344a84 100644
+> >> --- a/drivers/hwtracing/coresight/coresight-core.c
+> >> +++ b/drivers/hwtracing/coresight/coresight-core.c
+> >> @@ -487,23 +487,25 @@ struct coresight_device *coresight_get_sink(struct list_head *path)
+> >>          return csdev;
+> >>   }
+> >>
+> >> +u32 coresight_get_sink_id(struct coresight_device *csdev)
+> >> +{
+> >> +       if (!csdev->ea)
+> >> +               return 0;
+> >> +
+> >> +       /*
+> >> +        * See function etm_perf_add_symlink_sink() to know where
+> >> +        * this comes from.
+> >> +        */
+> >> +       return (u32) (unsigned long) csdev->ea->var;
+> >> +}
+> >> +
+> >>   static int coresight_sink_by_id(struct device *dev, const void *data)
+> >>   {
+> >>          struct coresight_device *csdev = to_coresight_device(dev);
+> >> -       unsigned long hash;
+> >>
+> >>          if (csdev->type == CORESIGHT_DEV_TYPE_SINK ||
+> >> -            csdev->type == CORESIGHT_DEV_TYPE_LINKSINK) {
+> >> -
+> >> -               if (!csdev->ea)
+> >> -                       return 0;
+> >> -               /*
+> >> -                * See function etm_perf_add_symlink_sink() to know where
+> >> -                * this comes from.
+> >> -                */
+> >> -               hash = (unsigned long)csdev->ea->var;
+> >> -
+> >> -               if ((u32)hash == *(u32 *)data)
+> >> +           csdev->type == CORESIGHT_DEV_TYPE_LINKSINK) {
+> >> +               if (coresight_get_sink_id(csdev) == *(u32 *)data)
+> >>                          return 1;
+> >>          }
+> >>
+> >> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> >> index 70c99f0409b2..ad6a8f4b70b6 100644
+> >> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+> >> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> >> @@ -460,6 +460,7 @@ static void etm_event_start(struct perf_event *event, int flags)
+> >>          struct coresight_device *sink, *csdev = per_cpu(csdev_src, cpu);
+> >>          struct list_head *path;
+> >>          u64 hw_id;
+> >> +       u8 trace_id;
+> >>
+> >>          if (!csdev)
+> >>                  goto fail;
+> >> @@ -512,11 +513,16 @@ static void etm_event_start(struct perf_event *event, int flags)
+> >>           */
+> >>          if (!cpumask_test_cpu(cpu, &event_data->aux_hwid_done)) {
+> >>                  cpumask_set_cpu(cpu, &event_data->aux_hwid_done);
+> >> -               hw_id = FIELD_PREP(CS_AUX_HW_ID_VERSION_MASK,
+> >> -                                  CS_AUX_HW_ID_CURR_VERSION);
+> >> -               hw_id |= FIELD_PREP(CS_AUX_HW_ID_TRACE_ID_MASK,
+> >> -                                   coresight_trace_id_read_cpu_id_map(cpu,
+> >> -                                                                      &sink->perf_sink_id_map));
+> >> +
+> >> +               trace_id = coresight_trace_id_read_cpu_id_map(cpu, &sink->perf_sink_id_map);
+> >> +
+> >> +               hw_id = FIELD_PREP(CS_AUX_HW_ID_MAJOR_VERSION_MASK,
+> >> +                               CS_AUX_HW_ID_MAJOR_VERSION);
+> >> +               hw_id |= FIELD_PREP(CS_AUX_HW_ID_MINOR_VERSION_MASK,
+> >> +                               CS_AUX_HW_ID_MINOR_VERSION);
+> >> +               hw_id |= FIELD_PREP(CS_AUX_HW_ID_TRACE_ID_MASK, trace_id);
+> >> +               hw_id |= FIELD_PREP(CS_AUX_HW_ID_SINK_ID_MASK, coresight_get_sink_id(sink));
+> >> +
+> >>                  perf_report_aux_output_id(event, hw_id);
+> >>          }
+> >>
+> >> diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
+> >> index 61a46d3bdcc8..05f891ca6b5c 100644
+> >> --- a/drivers/hwtracing/coresight/coresight-priv.h
+> >> +++ b/drivers/hwtracing/coresight/coresight-priv.h
+> >> @@ -148,6 +148,7 @@ int coresight_make_links(struct coresight_device *orig,
+> >>                           struct coresight_device *target);
+> >>   void coresight_remove_links(struct coresight_device *orig,
+> >>                              struct coresight_connection *conn);
+> >> +u32 coresight_get_sink_id(struct coresight_device *csdev);
+> >>
+> >>   #if IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM3X)
+> >>   extern int etm_readl_cp14(u32 off, unsigned int *val);
+> >> diff --git a/include/linux/coresight-pmu.h b/include/linux/coresight-pmu.h
+> >> index 51ac441a37c3..89b0ac0014b0 100644
+> >> --- a/include/linux/coresight-pmu.h
+> >> +++ b/include/linux/coresight-pmu.h
+> >> @@ -49,12 +49,21 @@
+> >>    * Interpretation of the PERF_RECORD_AUX_OUTPUT_HW_ID payload.
+> >>    * Used to associate a CPU with the CoreSight Trace ID.
+> >>    * [07:00] - Trace ID - uses 8 bits to make value easy to read in file.
+> >> - * [59:08] - Unused (SBZ)
+> >> - * [63:60] - Version
+> >> + * [39:08] - Sink ID - as reported in /sys/bus/event_source/devices/cs_etm/sinks/
+> >> + *           Added in minor version 1.
+> >> + * [55:40] - Unused (SBZ)
+> >> + * [59:56] - Minor Version - previously existing fields are compatible with
+> >> + *           all minor versions.
+> >> + * [63:60] - Major Version - previously existing fields mean different things
+> >> + *           in new major versions.
+> >>    */
+> >>   #define CS_AUX_HW_ID_TRACE_ID_MASK     GENMASK_ULL(7, 0)
+> >> -#define CS_AUX_HW_ID_VERSION_MASK      GENMASK_ULL(63, 60)
+> >> +#define CS_AUX_HW_ID_SINK_ID_MASK      GENMASK_ULL(39, 8)
+> >>
+> >> -#define CS_AUX_HW_ID_CURR_VERSION 0
+> >> +#define CS_AUX_HW_ID_MINOR_VERSION_MASK        GENMASK_ULL(59, 56)
+> >> +#define CS_AUX_HW_ID_MAJOR_VERSION_MASK        GENMASK_ULL(63, 60)
+> >> +
+> >> +#define CS_AUX_HW_ID_MAJOR_VERSION 0
+> >> +#define CS_AUX_HW_ID_MINOR_VERSION 1
+> >>
+> >>   #endif
+> >> --
+> >> 2.34.1
+> >>
+> >
+> >
+> > --
+> > Mike Leach
+> > Principal Engineer, ARM Ltd.
+> > Manchester Design Centre. UK
+>
+> Hi Mike,
+>
+> I think you miss-sent this one
+>
 
-Flashing is skipped in case we are trying to flash the same
-image as the one that is currently present. This is determined by CRC32
-calculation of the supplied firmware and Flash data.
-
-We also do a CRC32 check after flashing to ensure that the firmware was
-flashed properly.
-
-Link: https://www.ti.com/lit/ug/swcu192/swcu192.pdf Ti CC1352p7 Tecnical Specification
-Link: https://openbeagle.org/beagleconnect/cc1352-flasher Userspace
-Flasher
-
-Signed-off-by: Ayush Singh <ayush@beagleboard.org>
----
- drivers/greybus/Kconfig         |   1 +
- drivers/greybus/gb-beagleplay.c | 625 +++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 614 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/greybus/Kconfig b/drivers/greybus/Kconfig
-index ab81ceceb337..d485a99959cb 100644
---- a/drivers/greybus/Kconfig
-+++ b/drivers/greybus/Kconfig
-@@ -21,6 +21,7 @@ config GREYBUS_BEAGLEPLAY
- 	tristate "Greybus BeaglePlay driver"
- 	depends on SERIAL_DEV_BUS
- 	select CRC_CCITT
-+	select FW_UPLOAD
- 	help
- 	  Select this option if you have a BeaglePlay where CC1352
- 	  co-processor acts as Greybus SVC.
-diff --git a/drivers/greybus/gb-beagleplay.c b/drivers/greybus/gb-beagleplay.c
-index 33f8fad70260..aecbfb5b5eaf 100644
---- a/drivers/greybus/gb-beagleplay.c
-+++ b/drivers/greybus/gb-beagleplay.c
-@@ -6,21 +6,18 @@
-  * Copyright (c) 2023 BeagleBoard.org Foundation
-  */
- 
--#include <linux/gfp.h>
-+#include <asm-generic/unaligned.h>
-+#include <linux/crc32.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/firmware.h>
- #include <linux/greybus.h>
--#include <linux/module.h>
--#include <linux/of.h>
--#include <linux/printk.h>
- #include <linux/serdev.h>
--#include <linux/tty.h>
--#include <linux/tty_driver.h>
--#include <linux/greybus/hd.h>
--#include <linux/init.h>
--#include <linux/device.h>
- #include <linux/crc-ccitt.h>
- #include <linux/circ_buf.h>
--#include <linux/types.h>
--#include <linux/workqueue.h>
-+
-+#define CC1352_BOOTLOADER_TIMEOUT 2000
-+#define CC1352_BOOTLOADER_ACK 0xcc
-+#define CC1352_BOOTLOADER_NACK 0x33
- 
- #define RX_HDLC_PAYLOAD 256
- #define CRC_LEN 2
-@@ -57,6 +54,17 @@
-  * @rx_buffer_len: length of receive buffer filled.
-  * @rx_buffer: hdlc frame receive buffer
-  * @rx_in_esc: hdlc rx flag to indicate ESC frame
-+ *
-+ * @fwl: underlying firmware upload device
-+ * @boot_gpio: cc1352p7 boot gpio
-+ * @rst_gpio: cc1352p7 reset gpio
-+ * @flashing_mode: flag to indicate that flashing is currently in progress
-+ * @fwl_ack_com: completion to signal an Ack/Nack
-+ * @fwl_ack: Ack/Nack byte received
-+ * @fwl_cmd_response_com: completion to signal a bootloader command response
-+ * @fwl_cmd_response: bootloader command response data
-+ * @fwl_crc32: crc32 of firmware to flash
-+ * @fwl_reset_addr: flag to indicate if we need to send COMMAND_DOWNLOAD again
-  */
- struct gb_beagleplay {
- 	struct serdev_device *sd;
-@@ -72,6 +80,17 @@ struct gb_beagleplay {
- 	u16 rx_buffer_len;
- 	bool rx_in_esc;
- 	u8 rx_buffer[MAX_RX_HDLC];
-+
-+	struct fw_upload *fwl;
-+	struct gpio_desc *boot_gpio;
-+	struct gpio_desc *rst_gpio;
-+	bool flashing_mode;
-+	struct completion fwl_ack_com;
-+	u8 fwl_ack;
-+	struct completion fwl_cmd_response_com;
-+	u32 fwl_cmd_response;
-+	u32 fwl_crc32;
-+	bool fwl_reset_addr;
- };
- 
- /**
-@@ -100,6 +119,69 @@ struct hdlc_greybus_frame {
- 	u8 payload[];
- } __packed;
- 
-+/**
-+ * enum cc1352_bootloader_cmd: CC1352 Bootloader Commands
-+ */
-+enum cc1352_bootloader_cmd {
-+	COMMAND_DOWNLOAD = 0x21,
-+	COMMAND_GET_STATUS = 0x23,
-+	COMMAND_SEND_DATA = 0x24,
-+	COMMAND_RESET = 0x25,
-+	COMMAND_CRC32 = 0x27,
-+	COMMAND_BANK_ERASE = 0x2c,
-+};
-+
-+/**
-+ * enum cc1352_bootloader_status: CC1352 Bootloader COMMAND_GET_STATUS response
-+ */
-+enum cc1352_bootloader_status {
-+	COMMAND_RET_SUCCESS = 0x40,
-+	COMMAND_RET_UNKNOWN_CMD = 0x41,
-+	COMMAND_RET_INVALID_CMD = 0x42,
-+	COMMAND_RET_INVALID_ADR = 0x43,
-+	COMMAND_RET_FLASH_FAIL = 0x44,
-+};
-+
-+/**
-+ * struct cc1352_bootloader_packet: CC1352 Bootloader Request Packet
-+ *
-+ * @len: length of packet + optional request data
-+ * @checksum: 8-bit checksum excluding len
-+ * @cmd: bootloader command
-+ */
-+struct cc1352_bootloader_packet {
-+	u8 len;
-+	u8 checksum;
-+	u8 cmd;
-+} __packed;
-+
-+#define CC1352_BOOTLOADER_PKT_MAX_SIZE \
-+	(U8_MAX - sizeof(struct cc1352_bootloader_packet))
-+
-+/**
-+ * struct cc1352_bootloader_download_cmd_data: CC1352 Bootloader COMMAND_DOWNLOAD request data
-+ *
-+ * @addr: address to start programming data into
-+ * @size: size of data that will be sent
-+ */
-+struct cc1352_bootloader_download_cmd_data {
-+	__be32 addr;
-+	__be32 size;
-+} __packed;
-+
-+/**
-+ * struct cc1352_bootloader_crc32_cmd_data: CC1352 Bootloader COMMAND_CRC32 request data
-+ *
-+ * @addr: address where crc32 calculation starts
-+ * @size: number of bytes comprised by crc32 calculation
-+ * @read_repeat: number of read repeats for each data location
-+ */
-+struct cc1352_bootloader_crc32_cmd_data {
-+	__be32 addr;
-+	__be32 size;
-+	__be32 read_repeat;
-+} __packed;
-+
- static void hdlc_rx_greybus_frame(struct gb_beagleplay *bg, u8 *buf, u16 len)
- {
- 	struct hdlc_greybus_frame *gb_frame = (struct hdlc_greybus_frame *)buf;
-@@ -331,11 +413,131 @@ static void hdlc_deinit(struct gb_beagleplay *bg)
- 	flush_work(&bg->tx_work);
- }
- 
-+/**
-+ * csum8: Calculate 8-bit checksum on data
-+ */
-+static u8 csum8(const u8 *data, size_t size, u8 base)
-+{
-+	size_t i;
-+	u8 sum = base;
-+
-+	for (i = 0; i < size; ++i)
-+		sum += data[i];
-+
-+	return sum;
-+}
-+
-+static void cc1352_bootloader_send_ack(struct gb_beagleplay *bg)
-+{
-+	static const u8 ack[] = { 0x00, CC1352_BOOTLOADER_ACK };
-+
-+	serdev_device_write_buf(bg->sd, ack, sizeof(ack));
-+}
-+
-+static void cc1352_bootloader_send_nack(struct gb_beagleplay *bg)
-+{
-+	static const u8 nack[] = { 0x00, CC1352_BOOTLOADER_NACK };
-+
-+	serdev_device_write_buf(bg->sd, nack, sizeof(nack));
-+}
-+
-+/**
-+ * cc1352_bootloader_pkt_rx: Process a CC1352 Bootloader Packet
-+ *
-+ * @bg: beagleplay greybus driver
-+ * @data: packet buffer
-+ * @count: packet buffer size
-+ *
-+ * @return: number of bytes processed
-+ *
-+ * Here are the steps to successfully receive a packet from cc1352 bootloader
-+ * according to the docs:
-+ * 1. Wait for nonzero data to be returned from the device. This is important
-+ *    as the device may send zero bytes between a sent and a received data
-+ *    packet. The first nonzero byte received is the size of the packet that is
-+ *    being received.
-+ * 2. Read the next byte, which is the checksum for the packet.
-+ * 3. Read the data bytes from the device. During the data phase, packet size
-+ *    minus 2 bytes is sent.
-+ * 4. Calculate the checksum of the data bytes and verify it matches the
-+ *    checksum received in the packet.
-+ * 5. Send an acknowledge byte or a not-acknowledge byte to the device to
-+ *    indicate the successful or unsuccessful reception of the packet.
-+ */
-+static int cc1352_bootloader_pkt_rx(struct gb_beagleplay *bg, const u8 *data,
-+				    size_t count)
-+{
-+	bool is_valid = false;
-+
-+	switch (data[0]) {
-+	/* Skip 0x00 bytes.  */
-+	case 0x00:
-+		return 1;
-+	case CC1352_BOOTLOADER_ACK:
-+	case CC1352_BOOTLOADER_NACK:
-+		WRITE_ONCE(bg->fwl_ack, data[0]);
-+		complete(&bg->fwl_ack_com);
-+		return 1;
-+	case 3:
-+		if (count < 3)
-+			return 0;
-+		is_valid = data[1] == data[2];
-+		WRITE_ONCE(bg->fwl_cmd_response, (u32)data[2]);
-+		break;
-+	case 6:
-+		if (count < 6)
-+			return 0;
-+		is_valid = csum8(&data[2], sizeof(__be32), 0) == data[1];
-+		WRITE_ONCE(bg->fwl_cmd_response, get_unaligned_be32(&data[2]));
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	if (is_valid) {
-+		cc1352_bootloader_send_ack(bg);
-+		complete(&bg->fwl_cmd_response_com);
-+	} else {
-+		dev_warn(&bg->sd->dev,
-+			 "Dropping bootloader packet with invalid checksum");
-+		cc1352_bootloader_send_nack(bg);
-+	}
-+
-+	return data[0];
-+}
-+
-+static size_t cc1352_bootloader_rx(struct gb_beagleplay *bg, const u8 *data,
-+				   size_t count)
-+{
-+	int ret;
-+	size_t off = 0;
-+
-+	memcpy(bg->rx_buffer + bg->rx_buffer_len, data, count);
-+	bg->rx_buffer_len += count;
-+
-+	do {
-+		ret = cc1352_bootloader_pkt_rx(bg, bg->rx_buffer + off,
-+					       bg->rx_buffer_len - off);
-+		if (ret < 0)
-+			return dev_err_probe(&bg->sd->dev, ret,
-+					     "Invalid Packet");
-+		off += ret;
-+	} while (ret > 0 && off < count);
-+
-+	bg->rx_buffer_len -= off;
-+	memmove(bg->rx_buffer, bg->rx_buffer + off, bg->rx_buffer_len);
-+
-+	return count;
-+}
-+
- static size_t gb_tty_receive(struct serdev_device *sd, const u8 *data,
- 			     size_t count)
- {
- 	struct gb_beagleplay *bg = serdev_device_get_drvdata(sd);
- 
-+	if (READ_ONCE(bg->flashing_mode))
-+		return cc1352_bootloader_rx(bg, data, count);
-+
- 	return hdlc_rx(bg, data, count);
- }
- 
-@@ -343,7 +545,8 @@ static void gb_tty_wakeup(struct serdev_device *serdev)
- {
- 	struct gb_beagleplay *bg = serdev_device_get_drvdata(serdev);
- 
--	schedule_work(&bg->tx_work);
-+	if (!READ_ONCE(bg->flashing_mode))
-+		schedule_work(&bg->tx_work);
- }
- 
- static struct serdev_device_ops gb_beagleplay_ops = {
-@@ -412,6 +615,192 @@ static void gb_beagleplay_stop_svc(struct gb_beagleplay *bg)
- 	hdlc_tx_frames(bg, ADDRESS_CONTROL, 0x03, &payload, 1);
- }
- 
-+static int cc1352_bootloader_wait_for_ack(struct gb_beagleplay *bg)
-+{
-+	int ret;
-+
-+	ret = wait_for_completion_timeout(
-+		&bg->fwl_ack_com, msecs_to_jiffies(CC1352_BOOTLOADER_TIMEOUT));
-+	if (ret < 0)
-+		return dev_err_probe(&bg->sd->dev, ret,
-+				     "Failed to acquire ack semaphore");
-+
-+	switch (READ_ONCE(bg->fwl_ack)) {
-+	case CC1352_BOOTLOADER_ACK:
-+		return 0;
-+	case CC1352_BOOTLOADER_NACK:
-+		return -EAGAIN;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int cc1352_bootloader_sync(struct gb_beagleplay *bg)
-+{
-+	static const u8 sync_bytes[] = { 0x55, 0x55 };
-+
-+	serdev_device_write_buf(bg->sd, sync_bytes, sizeof(sync_bytes));
-+	return cc1352_bootloader_wait_for_ack(bg);
-+}
-+
-+static int cc1352_bootloader_get_status(struct gb_beagleplay *bg)
-+{
-+	int ret;
-+	static const struct cc1352_bootloader_packet pkt = {
-+		.len = sizeof(pkt),
-+		.checksum = COMMAND_GET_STATUS,
-+		.cmd = COMMAND_GET_STATUS
-+	};
-+
-+	serdev_device_write_buf(bg->sd, (const u8 *)&pkt, sizeof(pkt));
-+	ret = cc1352_bootloader_wait_for_ack(bg);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = wait_for_completion_timeout(
-+		&bg->fwl_cmd_response_com,
-+		msecs_to_jiffies(CC1352_BOOTLOADER_TIMEOUT));
-+	if (ret < 0)
-+		return dev_err_probe(&bg->sd->dev, ret,
-+				     "Failed to acquire last status semaphore");
-+
-+	switch (READ_ONCE(bg->fwl_cmd_response)) {
-+	case COMMAND_RET_SUCCESS:
-+		return 0;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int cc1352_bootloader_erase(struct gb_beagleplay *bg)
-+{
-+	int ret;
-+	static const struct cc1352_bootloader_packet pkt = {
-+		.len = sizeof(pkt),
-+		.checksum = COMMAND_BANK_ERASE,
-+		.cmd = COMMAND_BANK_ERASE
-+	};
-+
-+	serdev_device_write_buf(bg->sd, (const u8 *)&pkt, sizeof(pkt));
-+
-+	ret = cc1352_bootloader_wait_for_ack(bg);
-+	if (ret < 0)
-+		return ret;
-+
-+	return cc1352_bootloader_get_status(bg);
-+}
-+
-+static int cc1352_bootloader_reset(struct gb_beagleplay *bg)
-+{
-+	static const struct cc1352_bootloader_packet pkt = {
-+		.len = sizeof(pkt),
-+		.checksum = COMMAND_RESET,
-+		.cmd = COMMAND_RESET
-+	};
-+
-+	serdev_device_write_buf(bg->sd, (const u8 *)&pkt, sizeof(pkt));
-+
-+	return cc1352_bootloader_wait_for_ack(bg);
-+}
-+
-+/**
-+ * cc1352_bootloader_empty_pkt: Calculate the number of empty bytes in the current packet
-+ */
-+static size_t cc1352_bootloader_empty_pkt(const u8 *data, size_t size)
-+{
-+	size_t i;
-+
-+	for (i = 0; i < size && data[i] == 0xff; ++i)
-+		continue;
-+
-+	return i;
-+}
-+
-+static int cc1352_bootloader_crc32(struct gb_beagleplay *bg, u32 *crc32)
-+{
-+	int ret;
-+	static const struct cc1352_bootloader_crc32_cmd_data cmd_data = {
-+		.addr = 0, .size = cpu_to_be32(704 * 1024), .read_repeat = 0
-+	};
-+	const struct cc1352_bootloader_packet pkt = {
-+		.len = sizeof(pkt) + sizeof(cmd_data),
-+		.checksum = csum8((const void *)&cmd_data, sizeof(cmd_data),
-+				  COMMAND_CRC32),
-+		.cmd = COMMAND_CRC32
-+	};
-+
-+	serdev_device_write_buf(bg->sd, (const u8 *)&pkt, sizeof(pkt));
-+	serdev_device_write_buf(bg->sd, (const u8 *)&cmd_data,
-+				sizeof(cmd_data));
-+
-+	ret = cc1352_bootloader_wait_for_ack(bg);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = wait_for_completion_timeout(
-+		&bg->fwl_cmd_response_com,
-+		msecs_to_jiffies(CC1352_BOOTLOADER_TIMEOUT));
-+	if (ret < 0)
-+		return dev_err_probe(&bg->sd->dev, ret,
-+				     "Failed to acquire last status semaphore");
-+
-+	*crc32 = READ_ONCE(bg->fwl_cmd_response);
-+
-+	return 0;
-+}
-+
-+static int cc1352_bootloader_download(struct gb_beagleplay *bg, u32 size,
-+				      u32 addr)
-+{
-+	int ret;
-+	const struct cc1352_bootloader_download_cmd_data cmd_data = {
-+		.addr = cpu_to_be32(addr),
-+		.size = cpu_to_be32(size),
-+	};
-+	const struct cc1352_bootloader_packet pkt = {
-+		.len = sizeof(pkt) + sizeof(cmd_data),
-+		.checksum = csum8((const void *)&cmd_data, sizeof(cmd_data),
-+				  COMMAND_DOWNLOAD),
-+		.cmd = COMMAND_DOWNLOAD
-+	};
-+
-+	serdev_device_write_buf(bg->sd, (const u8 *)&pkt, sizeof(pkt));
-+	serdev_device_write_buf(bg->sd, (const u8 *)&cmd_data,
-+				sizeof(cmd_data));
-+
-+	ret = cc1352_bootloader_wait_for_ack(bg);
-+	if (ret < 0)
-+		return ret;
-+
-+	return cc1352_bootloader_get_status(bg);
-+}
-+
-+static int cc1352_bootloader_send_data(struct gb_beagleplay *bg, const u8 *data,
-+				       size_t size)
-+{
-+	int ret, rem = min(size, CC1352_BOOTLOADER_PKT_MAX_SIZE);
-+	const struct cc1352_bootloader_packet pkt = {
-+		.len = sizeof(pkt) + rem,
-+		.checksum = csum8(data, rem, COMMAND_SEND_DATA),
-+		.cmd = COMMAND_SEND_DATA
-+	};
-+
-+	serdev_device_write_buf(bg->sd, (const u8 *)&pkt, sizeof(pkt));
-+	serdev_device_write_buf(bg->sd, data, rem);
-+
-+	ret = cc1352_bootloader_wait_for_ack(bg);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = cc1352_bootloader_get_status(bg);
-+	if (ret < 0)
-+		return ret;
-+
-+	return rem;
-+}
-+
- static void gb_greybus_deinit(struct gb_beagleplay *bg)
- {
- 	gb_hd_del(bg->gb_hd);
-@@ -442,6 +831,154 @@ static int gb_greybus_init(struct gb_beagleplay *bg)
- 	return ret;
- }
- 
-+static enum fw_upload_err cc1352_prepare(struct fw_upload *fw_upload,
-+					 const u8 *data, u32 size)
-+{
-+	int ret;
-+	u32 curr_crc32;
-+	struct gb_beagleplay *bg = fw_upload->dd_handle;
-+
-+	dev_info(&bg->sd->dev, "CC1352 Start Flashing...");
-+
-+	/* Might involve network calls */
-+	gb_greybus_deinit(bg);
-+	msleep(5 * MSEC_PER_SEC);
-+
-+	gb_beagleplay_stop_svc(bg);
-+	msleep(200);
-+	flush_work(&bg->tx_work);
-+
-+	serdev_device_wait_until_sent(bg->sd, CC1352_BOOTLOADER_TIMEOUT);
-+
-+	WRITE_ONCE(bg->flashing_mode, true);
-+
-+	gpiod_direction_output(bg->boot_gpio, 0);
-+	gpiod_direction_output(bg->rst_gpio, 0);
-+	msleep(200);
-+
-+	gpiod_set_value(bg->rst_gpio, 1);
-+	msleep(200);
-+
-+	gpiod_set_value(bg->boot_gpio, 1);
-+	msleep(200);
-+
-+	gpiod_direction_input(bg->boot_gpio);
-+	gpiod_direction_input(bg->rst_gpio);
-+
-+	ret = cc1352_bootloader_sync(bg);
-+	if (ret < 0)
-+		return dev_err_probe(&bg->sd->dev, FW_UPLOAD_ERR_HW_ERROR,
-+				     "Failed to sync");
-+
-+	ret = cc1352_bootloader_crc32(bg, &curr_crc32);
-+	if (ret < 0)
-+		return dev_err_probe(&bg->sd->dev, FW_UPLOAD_ERR_HW_ERROR,
-+				     "Failed to fetch crc32");
-+
-+	bg->fwl_crc32 = crc32(0xffffffff, data, size) ^ 0xffffffff;
-+
-+	/* Check if attempting to reflash same firmware */
-+	if (bg->fwl_crc32 == curr_crc32) {
-+		dev_warn(&bg->sd->dev, "Skipping reflashing same image");
-+		cc1352_bootloader_reset(bg);
-+		WRITE_ONCE(bg->flashing_mode, false);
-+		msleep(200);
-+		gb_greybus_init(bg);
-+		gb_beagleplay_start_svc(bg);
-+		return FW_UPLOAD_ERR_FW_INVALID;
-+	}
-+
-+	ret = cc1352_bootloader_erase(bg);
-+	if (ret < 0)
-+		return dev_err_probe(&bg->sd->dev, FW_UPLOAD_ERR_HW_ERROR,
-+				     "Failed to erase");
-+
-+	bg->fwl_reset_addr = true;
-+
-+	return FW_UPLOAD_ERR_NONE;
-+}
-+
-+static void cc1352_cleanup(struct fw_upload *fw_upload)
-+{
-+	struct gb_beagleplay *bg = fw_upload->dd_handle;
-+
-+	WRITE_ONCE(bg->flashing_mode, false);
-+}
-+
-+static enum fw_upload_err cc1352_write(struct fw_upload *fw_upload,
-+				       const u8 *data, u32 offset, u32 size,
-+				       u32 *written)
-+{
-+	int ret;
-+	size_t empty_bytes;
-+	struct gb_beagleplay *bg = fw_upload->dd_handle;
-+
-+	/* Skip 0xff packets. Significant performance improvement */
-+	empty_bytes = cc1352_bootloader_empty_pkt(data + offset, size);
-+	if (empty_bytes >= CC1352_BOOTLOADER_PKT_MAX_SIZE) {
-+		bg->fwl_reset_addr = true;
-+		*written = empty_bytes;
-+		return FW_UPLOAD_ERR_NONE;
-+	}
-+
-+	if (bg->fwl_reset_addr) {
-+		ret = cc1352_bootloader_download(bg, size, offset);
-+		if (ret < 0)
-+			return dev_err_probe(&bg->sd->dev,
-+					     FW_UPLOAD_ERR_HW_ERROR,
-+					     "Failed to send download cmd");
-+
-+		bg->fwl_reset_addr = false;
-+	}
-+
-+	ret = cc1352_bootloader_send_data(bg, data + offset, size);
-+	if (ret < 0)
-+		return dev_err_probe(&bg->sd->dev, FW_UPLOAD_ERR_HW_ERROR,
-+				     "Failed to flash firmware");
-+	*written = ret;
-+
-+	return FW_UPLOAD_ERR_NONE;
-+}
-+
-+static enum fw_upload_err cc1352_poll_complete(struct fw_upload *fw_upload)
-+{
-+	u32 curr_crc32;
-+	struct gb_beagleplay *bg = fw_upload->dd_handle;
-+
-+	if (cc1352_bootloader_crc32(bg, &curr_crc32) < 0)
-+		return dev_err_probe(&bg->sd->dev, FW_UPLOAD_ERR_HW_ERROR,
-+				     "Failed to fetch crc32");
-+
-+	if (bg->fwl_crc32 != curr_crc32)
-+		return dev_err_probe(&bg->sd->dev, FW_UPLOAD_ERR_FW_INVALID,
-+				     "Invalid CRC32");
-+
-+	if (cc1352_bootloader_reset(bg) < 0)
-+		return dev_err_probe(&bg->sd->dev, FW_UPLOAD_ERR_HW_ERROR,
-+				     "Failed to reset");
-+
-+	dev_info(&bg->sd->dev, "CC1352 Flashing Successful");
-+	WRITE_ONCE(bg->flashing_mode, false);
-+	msleep(200);
-+
-+	if (gb_greybus_init(bg) < 0)
-+		return dev_err_probe(&bg->sd->dev, FW_UPLOAD_ERR_RW_ERROR,
-+				     "Failed to initialize greybus");
-+
-+	gb_beagleplay_start_svc(bg);
-+
-+	return FW_UPLOAD_ERR_NONE;
-+}
-+
-+static void cc1352_cancel(struct fw_upload *fw_upload)
-+{
-+	struct gb_beagleplay *bg = fw_upload->dd_handle;
-+
-+	dev_info(&bg->sd->dev, "CC1352 Bootloader Cancel");
-+
-+	cc1352_bootloader_reset(bg);
-+}
-+
- static void gb_serdev_deinit(struct gb_beagleplay *bg)
- {
- 	serdev_device_close(bg->sd);
-@@ -463,6 +1000,65 @@ static int gb_serdev_init(struct gb_beagleplay *bg)
- 	return 0;
- }
- 
-+static const struct fw_upload_ops cc1352_bootloader_ops = {
-+	.prepare = cc1352_prepare,
-+	.write = cc1352_write,
-+	.poll_complete = cc1352_poll_complete,
-+	.cancel = cc1352_cancel,
-+	.cleanup = cc1352_cleanup
-+};
-+
-+static int gb_fw_init(struct gb_beagleplay *bg)
-+{
-+	int ret;
-+	struct fw_upload *fwl;
-+	struct gpio_desc *desc;
-+
-+	bg->fwl = NULL;
-+	bg->boot_gpio = NULL;
-+	bg->rst_gpio = NULL;
-+	bg->flashing_mode = false;
-+	bg->fwl_cmd_response = 0;
-+	bg->fwl_ack = 0;
-+	init_completion(&bg->fwl_ack_com);
-+	init_completion(&bg->fwl_cmd_response_com);
-+
-+	desc = devm_gpiod_get(&bg->sd->dev, "boot", GPIOD_IN);
-+	if (IS_ERR(desc))
-+		return PTR_ERR(fwl);
-+	bg->boot_gpio = desc;
-+
-+	desc = devm_gpiod_get(&bg->sd->dev, "reset", GPIOD_IN);
-+	if (IS_ERR(desc)) {
-+		ret = PTR_ERR(desc);
-+		goto free_boot;
-+	}
-+	bg->rst_gpio = desc;
-+
-+	fwl = firmware_upload_register(THIS_MODULE, &bg->sd->dev, "cc1352p7",
-+				       &cc1352_bootloader_ops, bg);
-+	if (IS_ERR(fwl)) {
-+		ret = PTR_ERR(fwl);
-+		goto free_reset;
-+	}
-+	bg->fwl = fwl;
-+
-+	return 0;
-+
-+free_reset:
-+	devm_gpiod_put(&bg->sd->dev, bg->rst_gpio);
-+	bg->rst_gpio = NULL;
-+free_boot:
-+	devm_gpiod_put(&bg->sd->dev, bg->boot_gpio);
-+	bg->boot_gpio = NULL;
-+	return ret;
-+}
-+
-+static void gb_fw_deinit(struct gb_beagleplay *bg)
-+{
-+	firmware_upload_unregister(bg->fwl);
-+}
-+
- static int gb_beagleplay_probe(struct serdev_device *serdev)
- {
- 	int ret = 0;
-@@ -481,6 +1077,10 @@ static int gb_beagleplay_probe(struct serdev_device *serdev)
- 	if (ret)
- 		goto free_serdev;
- 
-+	ret = gb_fw_init(bg);
-+	if (ret)
-+		goto free_hdlc;
-+
- 	ret = gb_greybus_init(bg);
- 	if (ret)
- 		goto free_hdlc;
-@@ -500,6 +1100,7 @@ static void gb_beagleplay_remove(struct serdev_device *serdev)
- {
- 	struct gb_beagleplay *bg = serdev_device_get_drvdata(serdev);
- 
-+	gb_fw_deinit(bg);
- 	gb_greybus_deinit(bg);
- 	gb_beagleplay_stop_svc(bg);
- 	hdlc_deinit(bg);
 
 -- 
-2.45.2
-
+Mike Leach
+Principal Engineer, ARM Ltd.
+Manchester Design Centre. UK
 
