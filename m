@@ -1,55 +1,64 @@
-Return-Path: <linux-kernel+bounces-257210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89FA69376BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:41:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92CAA9376C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 12:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 397DC282320
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:41:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4103F1F218D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B6F84A32;
-	Fri, 19 Jul 2024 10:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86CC7E782;
+	Fri, 19 Jul 2024 10:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="oPs7BJzM"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="lrTrJsCq"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C7F1B86D0;
-	Fri, 19 Jul 2024 10:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E59E8F77
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 10:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721385691; cv=none; b=VdSr7U1XHPvK/aK6sGAOBiTwGFcfJOumWs1pzbcamlyTRQwRVBPD0hsZufAj3RC10SiYW+K/cbzslsZjbXJ/Zl2q0cQJE1JSbJRAhIID68fr6vAVBZ+8IOiudw5QejI6WfWpXfVGevM5b+Zxy8TA0uuCPlFs4LXrA5cgeTFtHA8=
+	t=1721386071; cv=none; b=f7jfxVdTCF+hhHwErMBQA5zIvZeb0tg5MwDIe8YqnqU+OG0TQItT4X7SRKyzRvPHH6rKTri3+tDBHnXZRnQeW4HwDq+frB5S7KrsqTmoTsaTSQsB5iVRkFeuXVZ9CANswfZMwSCJ9R8Y3lGqBUALHxG2Uwgdgz6LqWlaVxe39H4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721385691; c=relaxed/simple;
-	bh=ZgMp5cuDFw3DXewym2g+tiW5b3FZsxoqsVfhwlTi1Ck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JjJM8QFpD3aYTBGnQvEKflmSKb+7IpGHlz4h2N6gbdvwmRtmbQqf5twdUAdKMHoQPIXQE747dCbGZ+bS4xwNeLmi7Co6z9DGKGLvRmcKS2uSSBm6rxXS4j4Tu6Vu/W61/DgaN47bEVp4fkezLwy6mMCH9cjG5OCxVAly9wz479g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=oPs7BJzM; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1721385655; x=1721990455; i=quwenruo.btrfs@gmx.com;
-	bh=iRAnJbABmOvnI0EeTu+SsdoZh7IsuUMi38MT5s2W0PA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=oPs7BJzM9G1fAwRcCO11ZZgVMHJ+1WtNz5Beg0/8S45zqnDFs1jPbMIdi55PETJM
-	 ZPhm6sNwWYnBKeFSr0dDLEAwojH0/JPzzKFwMH1jazYaa7vPo2BAnyRINhM8xJZt2
-	 RS3g+ir39eAfwOPfNWgbWaLpvse+tu4LbmKXKkhVteHObRRDX1qK2u8H3pjhDvQ3i
-	 eidpFFIc5v4iBoXr22MSC79HqeAHseEejlBRmbQC3Y6J5Bcx8pyRAOuaq+7p17kfs
-	 2CVHWGj/S4fyHDH0HnhCmMuX5ujwm9HAYfxHJTImZMiHD89iEcUz9sycVjA+KR3zJ
-	 rkIhUc1bUwikkOek+g==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1N3KPq-1sLVcC3W1y-00vKX4; Fri, 19
- Jul 2024 12:40:55 +0200
-Message-ID: <c51c0e6d-c1ca-4fc0-a0d7-4a1468b137fd@gmx.com>
-Date: Fri, 19 Jul 2024 20:10:48 +0930
+	s=arc-20240116; t=1721386071; c=relaxed/simple;
+	bh=RZzj3xHQgxgU107La7qjlbXpfm5eUgRVHoyUDQSd6KY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=E0KkjB01NfKFMUI+1/ArBqtZ+xlROeP3Nz9HImAsbCRIiDRMxbkXs/78Xkn25wlYgifcXs/yaUq6BIsyIExDR4V0oUErz50mOXF6yjQGfwCWoqoNpLlhOQqXuuNRM3cKxRqVu1vfVZzwOKnD97fl1WnykH7Qoap5Bd2eYTRzpXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=lrTrJsCq; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46J9Zwhn029511;
+	Fri, 19 Jul 2024 12:47:12 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	RZzj3xHQgxgU107La7qjlbXpfm5eUgRVHoyUDQSd6KY=; b=lrTrJsCqgSQle2Om
+	LxEWA/Dt+ATafATyv5hLaZbFZR3reM+Ko2Z9BRsI2p2Ao+7Kf0D77m1zJpUkF1FV
+	k9FAJj3J/S4hH91GMKvolG9y6o6nHTGaFPDkmrniQ3lgAllZt/27OJ/vhD05/NUO
+	z6wLI/952vYK/8Q0QVyu2jhUVkNj5D5wfZUV1z4BFa+obDN750zZLkhQtdpFX0jq
+	/3OD3f8q/9YO9nNLdyTJmFPOVW/0oHc/0cQhJ9FMZVE3QuuxoMwe4dd31noSLRuw
+	371mcc5TbZX9nTkRGgLvJbuZVZHJ6SP/BU9+Ek9EBRpzRXorLANtEEnQmB3jW02z
+	BQUapw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 40fe1nhyx2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Jul 2024 12:47:12 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D0C4340044;
+	Fri, 19 Jul 2024 12:47:05 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3173C24DCA3;
+	Fri, 19 Jul 2024 12:46:22 +0200 (CEST)
+Received: from [10.129.178.17] (10.129.178.17) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 19 Jul
+ 2024 12:46:21 +0200
+Message-ID: <2e47028a-fc8c-40d6-a69a-4b7bc3464974@foss.st.com>
+Date: Fri, 19 Jul 2024 12:46:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,217 +66,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] btrfs: change mount_opt to u64
-To: Arnd Bergmann <arnd@kernel.org>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- Qu Wenruo <wqu@suse.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Filipe Manana <fdmanana@suse.com>,
- Johannes Thumshirn <johannes.thumshirn@wdc.com>,
- Anand Jain <anand.jain@oracle.com>, Christian Brauner <brauner@kernel.org>,
- Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240719103714.1217249-1-arnd@kernel.org>
+Subject: Re: [PATCH] drm/stm: ltdc: remove reload interrupt
+To: Yannick Fertre <yannick.fertre@foss.st.com>,
+        Philippe Cornu
+	<philippe.cornu@foss.st.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240712131453.98597-1-yannick.fertre@foss.st.com>
 Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
- pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
- BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
- XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
- jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
- LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
- mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
- CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
- tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
- INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
- DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
- iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
-In-Reply-To: <20240719103714.1217249-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:xC0xeYGd42CosbZthSxexjOzDUZsGBNE91kikSnpaMi/ubu+3vh
- +JYd7r7IMMsYvmXujR+0t+hLbNlr3ciz/CaaZBvylP63YS9ds+1+cnVG2/17789Q/HMxCby
- S8JI3WTmFZXVBCJ1LFZoSMKQkc4STnRp/i6FN7N8FjOh7TnTSA2+SQyRoM6jlFG0RZV2/HS
- IZebOVr9JVzQj+Lo5fh8A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:JvTEarlGdps=;WN0QydAJQJiszELovm2RUNRESy/
- SDZFDlFE4oCpI/4MLycjd4PKklWPsRq3xusRaJuoeeRPsXFUbKJS2HvpQsAgK5GQu9GB20gSN
- KHs+uqigDBt7TsbPs6FE5+IQxYIUl1bwOadTUZ0eyDpj0jqawTbFdnPqeElpIjOH6ZnOj/Dws
- jhVM0Mwn1y+uudXABcWyD+XR3Srh4k4iVRNQpm0uuOABTjAAZCoy4uAXSEfkW1/PiJUGhs18/
- LUoMxDHChoa82P9XiyEwI6qmr7CDjAV35KymYmch3ypTqvnFJvWZdTx64EgwIPDUcOJCsV7Fw
- 7XdeoR3ZmEex8IEWL93oIR69ttP2jAZ+ixrQcXT5ucfRZWp0rZt7E2CrTJ6dZtBxQcGSMayVI
- 4E0rWSuf4OMvn18xqAqd2D6w5C4RwUl37oS4RuvIGnDiWfPigRgguoW0Xc7mwTZWfvdkFRB6v
- VjLuVt34Jc+w9IYFEpw0+Ski3GFaqQyHHoxtSCZk0rTdTjJIbuBX/p+KqwMmzdY3IEGsjQdc5
- weCjGMbcy6eiTs6+JoLD52qhY6i0lSTxo1C4e1/xqyzRtOBLNSct6GHf9swmn7OY3U9djuq1n
- D5ZA1O1/9YNK1G2+XS/Q+tKlK8C3Jhs9bq7WXuotoFHXNhvlUU2b+8AAw21XZFujFt/EhQYBP
- N2Y101iJUB5J1gEPaFh90ud4fuGk84CxtFdUZDPu0L6+i/nnBuPLLCsNHII9yizGZhMYU7/J6
- r0x2bNQqLd0Eoi2zbrD3oDcsWHrxh1KFVbIxKUzloSSBx/lbnV3qpl9eXkGBgfghbA3ZfGYui
- prfv7VbzjfCoY+/u3+nUAO7A==
+From: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+In-Reply-To: <20240712131453.98597-1-yannick.fertre@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-19_06,2024-07-18_01,2024-05-17_01
 
 
-
-=E5=9C=A8 2024/7/19 20:07, Arnd Bergmann =E5=86=99=E9=81=93:
-> From: Arnd Bergmann <arnd@arndb.de>
+On 7/12/24 15:14, Yannick Fertre wrote:
+> The reload interrupt is not used by the driver. To avoid
+> unnecessary calls of the interrupt routine, don't enable it.
+> Solve small typo and add mask to simplify the driver.
 >
-> The newly added BTRFS_MOUNT_IGNORESUPERFLAGS flag does not fit into a 32=
--bit
-> flags word, as shown by this warning on 32-bit architectures:
->
-> fs/btrfs/super.c: In function 'btrfs_check_options':
-> fs/btrfs/super.c:666:48: error: conversion from 'enum <anonymous>' to 'l=
-ong unsigned int' changes value from '4294967296' to '0' [-Werror=3Doverfl=
-ow]
->    666 |              check_ro_option(info, *mount_opt, BTRFS_MOUNT_IGNO=
-RESUPERFLAGS, "ignoresuperflags")))
->        |                                                ^~~~~~~~~~~~~~~~=
-~~~~~~~~~~~~
->
-> Change all interfaces that deal with mount flags to use a 64-bit type
-> on all architectures instead.
->
-> Fixes: 32e6216512b4 ("btrfs: introduce new "rescue=3Dignoresuperflags" m=
-ount option")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Yannick Fertre <yannick.fertre@foss.st.com>
 
-There is already a patch submitted:
 
-https://lore.kernel.org/linux-btrfs/0955d2c5675a7fe3146292aaa766755f22bcd9=
-4b.1720865683.git.wqu@suse.com/
+Hi Yannick,
+
+Applied on drm-misc-next.
 
 Thanks,
-Qu
-> ----
-> Please double-check that I got all the instances. I only looked at where=
- the
-> obvious users are, but did not actually try to run this on a 32-bit targ=
-et
-> ---
->   fs/btrfs/fs.h    | 2 +-
->   fs/btrfs/super.c | 6 +++---
->   fs/btrfs/super.h | 2 +-
->   fs/btrfs/zoned.c | 2 +-
->   fs/btrfs/zoned.h | 4 ++--
->   5 files changed, 8 insertions(+), 8 deletions(-)
->
-> diff --git a/fs/btrfs/fs.h b/fs/btrfs/fs.h
-> index 1b2a7aa0af36..20900c7cc35d 100644
-> --- a/fs/btrfs/fs.h
-> +++ b/fs/btrfs/fs.h
-> @@ -481,7 +481,7 @@ struct btrfs_fs_info {
->   	 * required instead of the faster short fsync log commits
->   	 */
->   	u64 last_trans_log_full_commit;
-> -	unsigned long mount_opt;
-> +	u64 mount_opt;
->
->   	unsigned long compress_type:4;
->   	unsigned int compress_level;
-> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-> index 43052acd7a48..ea7141330e87 100644
-> --- a/fs/btrfs/super.c
-> +++ b/fs/btrfs/super.c
-> @@ -82,7 +82,7 @@ struct btrfs_fs_context {
->   	u32 commit_interval;
->   	u32 metadata_ratio;
->   	u32 thread_pool_size;
-> -	unsigned long mount_opt;
-> +	u64 mount_opt;
->   	unsigned long compress_type:4;
->   	unsigned int compress_level;
->   	refcount_t refs;
-> @@ -642,7 +642,7 @@ static void btrfs_clear_oneshot_options(struct btrfs=
-_fs_info *fs_info)
->   }
->
->   static bool check_ro_option(const struct btrfs_fs_info *fs_info,
-> -			    unsigned long mount_opt, unsigned long opt,
-> +			    u64 mount_opt, u64 opt,
->   			    const char *opt_name)
->   {
->   	if (mount_opt & opt) {
-> @@ -653,7 +653,7 @@ static bool check_ro_option(const struct btrfs_fs_in=
-fo *fs_info,
->   	return false;
->   }
->
-> -bool btrfs_check_options(const struct btrfs_fs_info *info, unsigned lon=
-g *mount_opt,
-> +bool btrfs_check_options(const struct btrfs_fs_info *info, u64 *mount_o=
-pt,
->   			 unsigned long flags)
->   {
->   	bool ret =3D true;
-> diff --git a/fs/btrfs/super.h b/fs/btrfs/super.h
-> index d2b8ebb46bc6..98e2444c0d82 100644
-> --- a/fs/btrfs/super.h
-> +++ b/fs/btrfs/super.h
-> @@ -10,7 +10,7 @@
->   struct super_block;
->   struct btrfs_fs_info;
->
-> -bool btrfs_check_options(const struct btrfs_fs_info *info, unsigned lon=
-g *mount_opt,
-> +bool btrfs_check_options(const struct btrfs_fs_info *info, u64 *mount_o=
-pt,
->   			 unsigned long flags);
->   int btrfs_sync_fs(struct super_block *sb, int wait);
->   char *btrfs_get_subvol_name_from_objectid(struct btrfs_fs_info *fs_inf=
-o,
-> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-> index df7733044f7e..debab1ab9e71 100644
-> --- a/fs/btrfs/zoned.c
-> +++ b/fs/btrfs/zoned.c
-> @@ -767,7 +767,7 @@ int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_=
-info)
->   	return 0;
->   }
->
-> -int btrfs_check_mountopts_zoned(const struct btrfs_fs_info *info, unsig=
-ned long *mount_opt)
-> +int btrfs_check_mountopts_zoned(const struct btrfs_fs_info *info, u64 *=
-mount_opt)
->   {
->   	if (!btrfs_is_zoned(info))
->   		return 0;
-> diff --git a/fs/btrfs/zoned.h b/fs/btrfs/zoned.h
-> index d66d00c08001..037697878b2a 100644
-> --- a/fs/btrfs/zoned.h
-> +++ b/fs/btrfs/zoned.h
-> @@ -58,7 +58,7 @@ int btrfs_get_dev_zone_info(struct btrfs_device *devic=
-e, bool populate_cache);
->   void btrfs_destroy_dev_zone_info(struct btrfs_device *device);
->   struct btrfs_zoned_device_info *btrfs_clone_dev_zone_info(struct btrfs=
-_device *orig_dev);
->   int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info);
-> -int btrfs_check_mountopts_zoned(const struct btrfs_fs_info *info, unsig=
-ned long *mount_opt);
-> +int btrfs_check_mountopts_zoned(const struct btrfs_fs_info *info, u64 *=
-mount_opt);
->   int btrfs_sb_log_location_bdev(struct block_device *bdev, int mirror, =
-int rw,
->   			       u64 *bytenr_ret);
->   int btrfs_sb_log_location(struct btrfs_device *device, int mirror, int=
- rw,
-> @@ -130,7 +130,7 @@ static inline int btrfs_check_zoned_mode(const struc=
-t btrfs_fs_info *fs_info)
->   }
->
->   static inline int btrfs_check_mountopts_zoned(const struct btrfs_fs_in=
-fo *info,
-> -					      unsigned long *mount_opt)
-> +					      u64 *mount_opt)
->   {
->   	return 0;
->   }
+Raphaël
+
 
