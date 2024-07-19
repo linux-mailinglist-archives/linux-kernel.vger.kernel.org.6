@@ -1,113 +1,225 @@
-Return-Path: <linux-kernel+bounces-257024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7812993741E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 08:51:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C01F937420
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 08:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24A721F22A11
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 06:51:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD92CB215F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 06:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160D1482C8;
-	Fri, 19 Jul 2024 06:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A78C4DA13;
+	Fri, 19 Jul 2024 06:52:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pz7B43s3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="U7/v25jE"
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5712E3D984
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 06:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84B33D984
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 06:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721371882; cv=none; b=AdVJce98qKQ+G9oJJf/7U1LZY9w9jyNKLT594/RsAHO3rZQYGXsPCWmHh70pu/2IPPYrK9mOwlF7bOWP4bGpGWzT/Q/2W7cfhuBmMEJh84K2Le9bzU0CFiFKDzhZXA1ODHdXliK9f4XJCS1V3Nv9k8z1g5EEdst++Gr2vmFQ9m8=
+	t=1721371920; cv=none; b=D/fdu1VlDj54/LptI1pAg1a2ayc8HDcnbhXLAnaDjBazSRYVQsTunegsFH5vYTA7H6aFtfQc0S3Dl+KWFZdRyWPL2b84WnZAjmqTZO3pHAagxkS81F+UWSja+W27MnXgFJRHBn/D2u6PXemMkrX9vYSXCr95lLV2XiTSQHNPrUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721371882; c=relaxed/simple;
-	bh=uAxe6CNjhk8IDZzG2Y+gccM8KHLz+eXU/ZRenoIBiTU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ajUXTN3eFBnuSa/OSsNe23f6zNZqgjs2ROoaoQIw+wIJ51ttWBNYJ0LLQN1YbP4mV4TzjhspUOTqbrQ16hYlnF5VIjPxp7aDtc2K0I3j+Oz99u1b9aOl2R2/Dy8oShofk4vpsWCWMQMRCjKroOim/hXL/01uTHICzK4P7HQKVYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pz7B43s3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDB61C4AF0A;
-	Fri, 19 Jul 2024 06:51:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721371881;
-	bh=uAxe6CNjhk8IDZzG2Y+gccM8KHLz+eXU/ZRenoIBiTU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pz7B43s3+U5RU2/v06QkGl3KkGrtbwDQ+iTX1XQMT4KGnZFZORTDpVRwSzerzdn4R
-	 4aSmanKy7kC12+9oV0ZcMZXjolsz8vCbzijU5xYJ2K2XkhNBAX4sJWEc0wJie7dOTp
-	 ue2t6q1T2R8T6Ykz2jjhkQo/M5XB2QL6P1rEEy7OmU9Tj7dx+nT3rJ+5675TyP1zFc
-	 r4rDo0HCcSFzO8ooGkptbXylVCYHOc9DeMXYoJkd2C8Vzuh2IJ+lHyFNxfR3EaRQWG
-	 p/vwpBk1vzxPidxz66CUXr1+XEnlGb3qCtpxXDheuspJGeuqO2/7S7d3CYDHM68+dX
-	 3t7sdU5cp+IRA==
-Date: Fri, 19 Jul 2024 15:51:17 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andrii Nakryiko
- <andrii@kernel.org>, Jeff Johnson <quic_jjohnson@quicinc.com>, Jiri Olsa
- <jolsa@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] probes: Updates for v6.11
-Message-Id: <20240719155117.9f0266e3b3e6d186c35359d3@kernel.org>
-In-Reply-To: <20240719144455.5db778b3@canb.auug.org.au>
-References: <20240716234445.a17a40e8d3d7b4ba5cef949e@kernel.org>
-	<20240719102824.1e086a40@canb.auug.org.au>
-	<20240719105242.e3c76c4d7958b73ca3428603@kernel.org>
-	<20240719144455.5db778b3@canb.auug.org.au>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721371920; c=relaxed/simple;
+	bh=X8aR3NZARekWwvqLtr0gf1GfRURNkTJpTQz/Gq9Rk7k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X+Nc1KtQSkEzXqwmZGdTtPcKtRfcB5VtFRSzwxz1AbrSLcxsusjd/nGI4Xx8hfqqgv7TUuhEZ5W5zOY9y1vkjqufMyuYLG3LWf08SCt204cCeZhFNY3rNT9QK3l6fR6OC9EK4qzjqjStzgENXm0x0PFbGydKPvgd/MFdZhL/jKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=U7/v25jE; arc=none smtp.client-ip=209.85.167.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3d94293f12fso932773b6e.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 23:51:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1721371917; x=1721976717; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zOrnXxWvbVRsS08Q5SrQnWsHda2iVamAcSxg6GkGdcw=;
+        b=U7/v25jEaR/k3EKnpkTCi02Xm1IHFmnGrrKr44y2IvWNe7NU3tpovIGKpQRpPiOS8t
+         2bGZRIoGKJvVOt1fYODfebAznH2rrHstsJycKHIqesgmy8LpcQROH1meC0LnMe9QT90v
+         yVNS4boIZ6N2iLeKfMyH/oIAH+6MvRYJHEsEjePw6ntxdhe2XZFiBTUomnhPqgXvYO56
+         Zt+PdGO3wg8wMrnENcZEOkcYfUpjkz7wl2g1Wxs5aeXeVOXR94jfISRpxAAjpK5KgY62
+         TnBz6XRJXoq0tA617ZZyv4nWvCyt4/7YgmkrD+JeM7mRxfLI4XA3R4JGjhygb/8KB1tc
+         nEfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721371917; x=1721976717;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zOrnXxWvbVRsS08Q5SrQnWsHda2iVamAcSxg6GkGdcw=;
+        b=Cpw8Tm8Po4PK63ZrIyd4pCMEr6K87pEEnnRQZhhD5+qUpvpjwmuVRy89Hdqrv8sBEK
+         OpLK0KU/3OGQ02ZZaUptOytB4mYpj197lbC+H3RZ84WkXjecI0mibCCemDplrNuqlajf
+         6gm6XSIpxiL0ON+gho/W9m9/S9zG9WZk7Dom9gpnBsNjEO6q7jZGHmxltDASuvgaGwAg
+         pqNt1QEUSveh8akDAU59a2S4t5JobF2yTUUj53puP781EAovwvjbDgFy76roCC685Rp6
+         RXHH6UqCDY1y0TpZbgE8rPcvIdLG2q+cW4lw/+ruso3zMzcdiLwoF+GT1DjjdvgPLmqH
+         pCXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYGf2MG4rU8wyhR1e4h2c7KPHTzCc1z62wJo37YbmF0UpuDfetegZXqvzS++lFVyn7F/K16+oaH47LbGchpK72+kUVuBoB0nvDOFcq
+X-Gm-Message-State: AOJu0YxAsdc6sVmoM0TPVxwJj1LYujoHoGWCN7R+9S1Msb+wj10RunI5
+	XXsL1qK6DEdTOAKaAOd7arneEKcCpnT0JFHEODBtOFQqXBNf/oEI6Y8hQt7vErjYyytwwC+vaiP
+	DWvRCDkke2mUlQsY2wuN7/cDonL1amY4NqNNATA==
+X-Google-Smtp-Source: AGHT+IHbQam/E7zhkcddpAOBTeSvSJMP46EYDtweZ41PTxcwvfNsqz0vSMmC/XB0/o5+90ZNsqHlqdZ0Awb+viDokRc=
+X-Received: by 2002:a05:6808:1301:b0:3d9:3a3e:48b9 with SMTP id
+ 5614622812f47-3dad7792029mr6306813b6e.45.1721371916843; Thu, 18 Jul 2024
+ 23:51:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20240712083850.4242-1-yongxuan.wang@sifive.com>
+ <20240712083850.4242-4-yongxuan.wang@sifive.com> <60555952-7307-41ed-bd6f-17a179089596@sifive.com>
+In-Reply-To: <60555952-7307-41ed-bd6f-17a179089596@sifive.com>
+From: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Date: Fri, 19 Jul 2024 14:51:46 +0800
+Message-ID: <CAMWQL2hCkEeTOqk5tHhhmsxKNknzGfLq=UOQ3Xx94L59YyA_WQ@mail.gmail.com>
+Subject: Re: [PATCH v7 3/4] RISC-V: KVM: Add Svade and Svadu Extensions
+ Support for Guest/VM
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: greentime.hu@sifive.com, vincent.chen@sifive.com, 
+	Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org, 
+	kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 19 Jul 2024 14:44:55 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Samuel,
 
-> Hi Masami,
-> 
-> On Fri, 19 Jul 2024 10:52:42 +0900 Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+On Fri, Jul 19, 2024 at 8:22=E2=80=AFAM Samuel Holland
+<samuel.holland@sifive.com> wrote:
+>
+> Hi Yong-Xuan,
+>
+> On 2024-07-12 3:38 AM, Yong-Xuan Wang wrote:
+> > We extend the KVM ISA extension ONE_REG interface to allow VMM tools to
+> > detect and enable Svade and Svadu extensions for Guest/VM. Since the
+> > henvcfg.ADUE is read-only zero if the menvcfg.ADUE is zero, the Svadu
+> > extension is available for Guest/VM and the Svade extension is allowed
+> > to disabledonly when arch_has_hw_pte_young() is true.
 > >
-> > Ah, I missed "script/syscall.tbl". Yes, I need to update it to reserve
-> > the syscall number on it. (But that did not exist on my tree...) I'll send
-> > a fix. BTW should I wait for xattrat series being merged?
-> 
-> No need to wait.  At worst it will cause a minor conflict.
+> > Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+> > Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+> > ---
+> >  arch/riscv/include/uapi/asm/kvm.h |  2 ++
+> >  arch/riscv/kvm/vcpu.c             |  3 +++
+> >  arch/riscv/kvm/vcpu_onereg.c      | 15 +++++++++++++++
+> >  3 files changed, 20 insertions(+)
+> >
+> > diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uap=
+i/asm/kvm.h
+> > index e878e7cc3978..a5e0c35d7e9a 100644
+> > --- a/arch/riscv/include/uapi/asm/kvm.h
+> > +++ b/arch/riscv/include/uapi/asm/kvm.h
+> > @@ -168,6 +168,8 @@ enum KVM_RISCV_ISA_EXT_ID {
+> >       KVM_RISCV_ISA_EXT_ZTSO,
+> >       KVM_RISCV_ISA_EXT_ZACAS,
+> >       KVM_RISCV_ISA_EXT_SSCOFPMF,
+> > +     KVM_RISCV_ISA_EXT_SVADE,
+> > +     KVM_RISCV_ISA_EXT_SVADU,
+> >       KVM_RISCV_ISA_EXT_MAX,
+> >  };
+> >
+> > diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
+> > index 17e21df36cc1..64a15af459e0 100644
+> > --- a/arch/riscv/kvm/vcpu.c
+> > +++ b/arch/riscv/kvm/vcpu.c
+> > @@ -540,6 +540,9 @@ static void kvm_riscv_vcpu_setup_config(struct kvm_=
+vcpu *vcpu)
+> >       if (riscv_isa_extension_available(isa, ZICBOZ))
+> >               cfg->henvcfg |=3D ENVCFG_CBZE;
+> >
+> > +     if (riscv_isa_extension_available(isa, SVADU))
+> > +             cfg->henvcfg |=3D ENVCFG_ADUE;
+>
+> This is correct for now because patch 1 ensures the host (and therefore a=
+lso the
+> guest) never has both Svade and Svadu available. When that changes, this =
+check
+> will need to add an "&& !riscv_isa_extension_available(isa, SVADE)" condi=
+tion so
+> it matches the behavior described in the DT binding. There's no need to r=
+esend
+> to make this addition, but if you do, it wouldn't hurt to include it so i=
+t's not
+> forgotten later. (It looks maybe like v6 only partially implemented Andre=
+w's
+> suggestion?)
+>
+> Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+>
 
-OK, here is the fix.
+Yeah, since the PATCH1 can ensure that only Svade or Svadu will be used, so=
+ I
+removed the Svade checking there. I will add it back in the next version. T=
+hank
+you!
 
-From 5c28424e9a348f95e3c634fe2ed6da8af29cc870 Mon Sep 17 00:00:00 2001
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Date: Fri, 19 Jul 2024 14:35:51 +0900
-Subject: [PATCH] syscalls: Fix to add sys_uretprobe to syscall.tbl
+Regards,
+Yong-Xuan
 
-Add sys_uretprobe entry to scripts/syscall.tbl as same as
-arch/x86/entry/syscalls/syscall_64.tbl.
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/all/20240719102824.1e086a40@canb.auug.org.au/
-Fixes: 63ded110979b ("uprobe: Change uretprobe syscall scope and number")
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- scripts/syscall.tbl | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/scripts/syscall.tbl b/scripts/syscall.tbl
-index 797e20ea99a2..591d85e8ca7e 100644
---- a/scripts/syscall.tbl
-+++ b/scripts/syscall.tbl
-@@ -402,3 +402,4 @@
- 460	common	lsm_set_self_attr		sys_lsm_set_self_attr
- 461	common	lsm_list_modules		sys_lsm_list_modules
- 462	common	mseal				sys_mseal
-+467	common	uretprobe			sys_uretprobe
--- 
-2.34.1
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > +
+> >       if (riscv_has_extension_unlikely(RISCV_ISA_EXT_SMSTATEEN)) {
+> >               cfg->hstateen0 |=3D SMSTATEEN0_HSENVCFG;
+> >               if (riscv_isa_extension_available(isa, SSAIA))
+> > diff --git a/arch/riscv/kvm/vcpu_onereg.c b/arch/riscv/kvm/vcpu_onereg.=
+c
+> > index 62874fbca29f..474fdeafe9fe 100644
+> > --- a/arch/riscv/kvm/vcpu_onereg.c
+> > +++ b/arch/riscv/kvm/vcpu_onereg.c
+> > @@ -15,6 +15,7 @@
+> >  #include <asm/cacheflush.h>
+> >  #include <asm/cpufeature.h>
+> >  #include <asm/kvm_vcpu_vector.h>
+> > +#include <asm/pgtable.h>
+> >  #include <asm/vector.h>
+> >
+> >  #define KVM_RISCV_BASE_ISA_MASK              GENMASK(25, 0)
+> > @@ -38,6 +39,8 @@ static const unsigned long kvm_isa_ext_arr[] =3D {
+> >       KVM_ISA_EXT_ARR(SSAIA),
+> >       KVM_ISA_EXT_ARR(SSCOFPMF),
+> >       KVM_ISA_EXT_ARR(SSTC),
+> > +     KVM_ISA_EXT_ARR(SVADE),
+> > +     KVM_ISA_EXT_ARR(SVADU),
+> >       KVM_ISA_EXT_ARR(SVINVAL),
+> >       KVM_ISA_EXT_ARR(SVNAPOT),
+> >       KVM_ISA_EXT_ARR(SVPBMT),
+> > @@ -105,6 +108,12 @@ static bool kvm_riscv_vcpu_isa_enable_allowed(unsi=
+gned long ext)
+> >               return __riscv_isa_extension_available(NULL, RISCV_ISA_EX=
+T_SSAIA);
+> >       case KVM_RISCV_ISA_EXT_V:
+> >               return riscv_v_vstate_ctrl_user_allowed();
+> > +     case KVM_RISCV_ISA_EXT_SVADU:
+> > +             /*
+> > +              * The henvcfg.ADUE is read-only zero if menvcfg.ADUE is =
+zero.
+> > +              * Guest OS can use Svadu only when host os enable Svadu.
+> > +              */
+> > +             return arch_has_hw_pte_young();
+> >       default:
+> >               break;
+> >       }
+> > @@ -167,6 +176,12 @@ static bool kvm_riscv_vcpu_isa_disable_allowed(uns=
+igned long ext)
+> >       /* Extensions which can be disabled using Smstateen */
+> >       case KVM_RISCV_ISA_EXT_SSAIA:
+> >               return riscv_has_extension_unlikely(RISCV_ISA_EXT_SMSTATE=
+EN);
+> > +     case KVM_RISCV_ISA_EXT_SVADE:
+> > +             /*
+> > +              * The henvcfg.ADUE is read-only zero if menvcfg.ADUE is =
+zero.
+> > +              * Svade is not allowed to disable when the platform use =
+Svade.
+> > +              */
+> > +             return arch_has_hw_pte_young();
+> >       default:
+> >               break;
+> >       }
+>
 
