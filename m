@@ -1,115 +1,128 @@
-Return-Path: <linux-kernel+bounces-257624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A5F9937CC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:56:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40ADD937CCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 21:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC100B2150B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:56:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE17E1F21BD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC585148307;
-	Fri, 19 Jul 2024 18:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42FD148319;
+	Fri, 19 Jul 2024 19:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EbDrs4mK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GOu0Xztr"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292541474BF;
-	Fri, 19 Jul 2024 18:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F96B8C06
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 19:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721415371; cv=none; b=SvFTeyturrpc2Y+hamehSkuG3X1ucgvOjniQt/DwHyFdZIbbdG0NDRnEZK0qhPcQ1fRSGmk99auqE3FSuiRi1bQNB6DYLk6qYwD0Dl8fuI5TiW/WGatSdJjdEbYM6E8Qj8YXXAHVfvh4Dr3V1f7Ol8m6efAINu2OCzJ7U2hDh/M=
+	t=1721415691; cv=none; b=tgTlkNqy2Um/Dz2ffl3gOGGr6dRl0mYk1wwm9nlSjVHoO1EFmGFm/nFs+HW303cbwcxlEwEcid2GM9awcc6yi9IlZ4wolrdaBQ8729jfXcIInjLmc6Ff/P0hPnMGQWvMl127vxjWKUpNtjBUq7hdgqPct63Ry6+5Ah+H6nyypHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721415371; c=relaxed/simple;
-	bh=oZeASFZJtm0saJ5Rkfo1e5GWLBas2u1wYzcmZHteJSQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=b2gDYUZmhsc7wW4zZebG7GJ0CYSSb8uEXKhT0JL0CtKRWPp+mV/qmaVfqH4Gl4wCZOt3/WReIPU1wf/Cxdi6+d2VUtJ76iQha3Zme8/XTSE5hwupSlKEHjT1yKM7mFkcwGR8UsBuqLqhyEcLu8Tv42YBZBArYolPBEPSQVnnH7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EbDrs4mK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EED70C32782;
-	Fri, 19 Jul 2024 18:56:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721415370;
-	bh=oZeASFZJtm0saJ5Rkfo1e5GWLBas2u1wYzcmZHteJSQ=;
-	h=From:Date:Subject:To:Cc:From;
-	b=EbDrs4mKOzktgpRes6xa8wzhFhqygl2yXUwt7Wpob5Nf9a3KWkLYua5JD4fNybIF4
-	 Dps4vUsiEM1JPLXO3WrFA6sFMKig/WwupkfhgxeNrLcb9OSQmLo4UXhdWx9gFvtv9s
-	 co4dUProO0TuTiD9E0r9LYT0lHwoVGvWR9SX+Yh/m2V7E8nH5lLOEL5ZSB9EdMfzUn
-	 FPRBLjbUcOtXRoQiZIUo4U2iRlk+KhcuUe+aMswbD4kpzAo3+clH53FVqgQJXmBlBS
-	 djGfqBijCkWvKgR5zOAxU9olr7liKDpCzwNwkofOXARoaj7D+SOvZg8kDVeTlE5leL
-	 QY8RdaqKTh1TQ==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Fri, 19 Jul 2024 14:55:53 -0400
-Subject: [PATCH] nfsd: don't set SVC_SOCK_ANONYMOUS when creating nfsd
- sockets
+	s=arc-20240116; t=1721415691; c=relaxed/simple;
+	bh=Gg6INx0MEXAjT2LzKZUyPAqI1dMbmA4J0mTophETl7Y=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=s+dMxaxNqb4H82P0mrfEJMUulL31tAFCvGdvBUsRlxeIPVTRLwhMtGZ8WCy9We1BuVt6Dp0AaSLHGeTZMgXSgD0vPRp6/DD7CUEgSOgfIX2idj3qpFAFdqVPahDNEFMpcD5pqUYJx2j8Da7G9A84J1LL+X2Vzd+S5462HkggG1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GOu0Xztr; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1fc5652f7d4so21607655ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 12:01:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721415689; x=1722020489; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OM4td61TX/rzKbok6j5iyLHkRN3YiQLaYhOn9MCeYqE=;
+        b=GOu0XztrVhZQfIKd4Wp89Z5B1Ym5SYzLu90AfIvFhjXo2xQEQD4PXNMjJN+Zgf/Euk
+         h0frsCLBpXzOTs4DmCLn1XPl2OoHE4CksBTlqiLNlp7JbXWkoB4eyRQr3T11XJm0Niu0
+         Aa3ux/xUpcCR25clV9ors0kQ5ozYgmV9cSTJrsl8Fj5qGHnopjWoiSzrv/8HIT+XAzsp
+         TJIv5Gk+COzuyllkkkH8IxHyyzJ10i8+FEB5O8D5b3CKtACHmYhdOtQBuwshjNROaGAg
+         XahXiKJitbW+dJnvvHrMozzKurw5tlWHcWaIWzOlv7PsFk/1Az8/Aws9FD2pTVDxks2o
+         IDyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721415689; x=1722020489;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OM4td61TX/rzKbok6j5iyLHkRN3YiQLaYhOn9MCeYqE=;
+        b=gJ5EALPJlo04vYiZc9YrTG1afETh1q9QhMNqbBATLOP13/wb3KmXQTVNlf899vVm73
+         zZeW+acflhKePe/53nVAP1vzBtb6Z8dxmb/LxwPjZigXghnlh9mdSb62RMBp8xnEu+kq
+         fglif/qP4rXXmQ8vRhkDhmZuuYhcwM8BH49v/ZiyHT8W0H2fQ6MvpNM7R9i/7xdrkGRC
+         MNPaKWZovOuMpB8MuX/agD14jFN7XH+dap3jyySHsLBZ2a8to3dlaw4LMrPPMssHBBUS
+         7RxJqcgxHCQpYshOZi9hJ1hqqHf/2/8jP2JQMhyQzRYjLQ4fzQgYsDmwtxcbie/jd0+G
+         WPJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXnUG41WeW916qgzK6LiMBlqzVpZ4Mg+vkdL29N3v/sl6xi+6USUcK136fGXeMJrX7vxy8IhxbILLkYLllVnK/Y/n/pK/QakXcnc9va
+X-Gm-Message-State: AOJu0Yzxlzj2SXAd9hf2vkKXnWG2W0MxzO3wHCfyJD1dTWjq7/Lkf2xJ
+	uPgwA7bpZtDyalwqNAYhVPGy7ziozzStepMPhb356MOq2I/wdAWeejPqwCuiKIoMHDkiCiP/xZa
+	3zQ==
+X-Google-Smtp-Source: AGHT+IGOpDdfnJiDu/5vSzdBdD/CewLyKCGvGPYzKJDAh6d1yeR+iW+Lm8Gcv2AaajmD9LK3arNE+M59oao=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:e885:b0:1fb:67cb:809f with SMTP id
+ d9443c01a7336-1fd74607f99mr622305ad.12.1721415688856; Fri, 19 Jul 2024
+ 12:01:28 -0700 (PDT)
+Date: Fri, 19 Jul 2024 12:01:27 -0700
+In-Reply-To: <1eb96f85-edee-45fc-930f-a192cecbf54c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240719-nfsd-next-v1-1-b6a9a899a908@kernel.org>
-X-B4-Tracking: v=1; b=H4sIALi2mmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDc0NL3by04hTdvNSKEt0US1MLo0SjZFODZCMloPqCotS0zAqwWdGxtbU
- A4musjlsAAAA=
-To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
- Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>, Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Steve Dickson <steved@redhat.com>, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1088; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=oZeASFZJtm0saJ5Rkfo1e5GWLBas2u1wYzcmZHteJSQ=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmmrbEmokRUHihWQMfxT4oYNDsIWoD/ozRDHcoY
- U0MYUs0KB+JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZpq2xAAKCRAADmhBGVaC
- FaZYD/4lrzX/VvNY+nkN+LFIklNottA2lOoAfeMop7XYtM93dtmdIROUXN7QQB2qVP3D7IaJKIT
- TOhNorC5iIEO0+5VrhxIS6zE74rNqu7UvPLUghfYW89Si7aRnB0z6+KZaRsdagQo+Lz0wbM5Dpe
- 8l9Q4AatI9KzZK2aZKlNXr08vI7xAEcsSAi7f1YlGh7gVo0QNdhZ7pVO1CPy7aNyaT54kBX51uW
- SsdssVYYyf1eXq7ZVoaJUatkiEQ/XR+OFKIMk6HXXa5IaoUDUtCMESz7ZUfejiuegu2MCZYbR+S
- kBCWHtG2pEOm+JC2ZDUV/euTrSw+1bnV1GFZ14igm8Uzh8Frr5E9IkRr6maevK9V1sslTWbQE7d
- 0BYaUlxc4CahhqEvs+DEVUlhJKZNyGtUzaiKvDwRHuacbzTzCk7WZTaqgXmU7PCd3mz10IjCeiG
- 6m+By+5yisF5ssnwRs7l6cS8apeV7pAPjZ/oQ71qYRpxYescI+z4nY8cLkSwAmEBSKw0iY/vyK3
- VylyFcae1LPoUMWbSDaPRFRMXpTqVKG7hg0hu1pDQLbkZd7ZqirmK9KBH9QPAZ6uBw0IsuXj4+Q
- JImhVmqXI9kjaC012ga/QfAwpaXKe5qI7CykE8PbmiQG3Yp5rP0+SNSXFfSn/5r0yY8IJsaly+w
- ldeRFSPvHvD1/cg==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Mime-Version: 1.0
+References: <1eb96f85-edee-45fc-930f-a192cecbf54c@gmail.com>
+Message-ID: <Zpq4B2I1xcMLmuox@google.com>
+Subject: Re: [BUG] arch/x86/kvm/x86.c: =?utf-8?Q?In?= =?utf-8?Q?_function_=E2=80=98prepare=5Femulation=5Ffailure=5Fexit?=
+ =?utf-8?B?4oCZOiBlcnJvcjogdXNlIG9mIE5VTEwg4oCYZGF0YQ==?= =?utf-8?B?4oCZ?=
+ where non-null expected
+From: Sean Christopherson <seanjc@google.com>
+To: Mirsad Todorovac <mtodorovac69@gmail.com>
+Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, 
+	David Edmondson <david.edmondson@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
 
-When creating nfsd sockets via the netlink interface, we do want to
-register with the portmapper. Don't set SVC_SOCK_ANONYMOUS.
+On Fri, Jul 19, 2024, Mirsad Todorovac wrote:
+> Hi, all!
+> 
+> On linux-stable 6.10 vanilla tree, another NULL pointer is passed, which was detected
+> by the fortify-string.h mechanism.
+> 
+> arch/x86/kvm/x86.c
+> ==================
+> 
+> 13667 kvm_prepare_emulation_failure_exit(vcpu);
+> 
+> calls
+> 
+> 8796 __kvm_prepare_emulation_failure_exit(vcpu, NULL, 0);
+> 
+> which calls
+> 
+> 8790 prepare_emulation_failure_exit(vcpu, data, ndata, NULL, 0);
+> 
+> Note here that data == NULL and ndata = 0.
+> 
+> again data == NULL and ndata == 0, which passes unchanged all until
+> 
+> 8773 memcpy(&run->internal.data[info_start + ARRAY_SIZE(info)], data, ndata * sizeof(data[0]));
 
-Fixes: 16a471177496 NFSD: add listener-{set,get} netlink command
-Reported-by: Steve Dickson <steved@redhat.com>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/nfsd/nfsctl.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+My reading of the C99 is that KVM's behavior is fine.
 
-diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-index 9e0ea6fc2aa3..34eb2c2cbcde 100644
---- a/fs/nfsd/nfsctl.c
-+++ b/fs/nfsd/nfsctl.c
-@@ -2069,8 +2069,7 @@ int nfsd_nl_listener_set_doit(struct sk_buff *skb, struct genl_info *info)
- 			continue;
- 		}
- 
--		ret = svc_xprt_create_from_sa(serv, xcl_name, net, sa,
--					      SVC_SOCK_ANONYMOUS,
-+		ret = svc_xprt_create_from_sa(serv, xcl_name, net, sa, 0,
- 					      get_current_cred());
- 		/* always save the latest error */
- 		if (ret < 0)
+  Where an argument declared as size_t n specifies the length of the array for a
+  function, n can have the value zero on a call to that function. Unless explicitly stated
+  otherwise in the description of a particular function in this subclause, pointer arguments
+  on such a call shall still have valid values, as described in 7.1.4. On such a call, a
+  function that locates a character finds no occurrence, a function that compares two
+  character sequences returns zero, and a function that copies characters copies zero
+  characters.
 
----
-base-commit: 769d20028f45a4f442cfe558a32faba357a7f5e2
-change-id: 20240719-nfsd-next-d9582a2c50c2
+If the function copies zero characters, then there can't be a store to the NULL
+pointer, and if there's no store, there's no NULL pointer explosion.
 
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
-
+I suppose arguably one could argue the builtin memcpy() could deliberately fail
+on an invalid pointer, but that'd be rather ridiculous.
 
