@@ -1,140 +1,174 @@
-Return-Path: <linux-kernel+bounces-257304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94011937837
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:17:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71DC5937839
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:17:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49C721F22239
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:17:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D10C282041
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A55513C67D;
-	Fri, 19 Jul 2024 13:17:07 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F9A1411E7;
+	Fri, 19 Jul 2024 13:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BX2Ysd7H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FE624211
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 13:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFB229CE6;
+	Fri, 19 Jul 2024 13:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721395027; cv=none; b=BSNQZ5k7BmCQY6vGb4qH6ND4OHKma4uLilCu45tFkPymSWNzHwljtDjdOhBBzZmnPiiv++/GG7cZ+kQuQvgl40EM8cpCO7kiDey12zclCFIkkb9bm4glpSc9g8WF6z/ySqpV0greWBiw0TjD9QhL5zljMH76wIcmPyqfmOoPAto=
+	t=1721395037; cv=none; b=O9yHBhffb9UJw+dfot70TKGStpONdALFX/2m/eJHEoADEadxfozaJamYMuupq5gc/xdxVIxq1JwzkdD7AlfmEm374OY0D8StHMHn01EZmuYX/FXfvWRg6CAbVIwS7Eaqw5n0q7K7JR9A1plk5aiwXuUgyKDeV6KnA9ZtFoMLHeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721395027; c=relaxed/simple;
-	bh=6Yf1a4CqCvgyHibq+QJ66enVOigVRsT4lUW7P+j1EnE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=bgWM9h4BOg7Daw3W1qQKkCfiTtrXKT0CNteqLHBInlIH7/xk1xGoM4cfKQmGnu5wMhi9wr5K5UoICSTo0soCKU8l35bWMB+Iw+YpGgAgBs3hdhVCn1Sf7oRVTbEyWEQacbxWO7WPIuayFH+NJAYHLeuDc/KxiNFzCXxL2BCbTbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav412.sakura.ne.jp (fsav412.sakura.ne.jp [133.242.250.111])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 46JDH2Fn077284;
-	Fri, 19 Jul 2024 22:17:02 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav412.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav412.sakura.ne.jp);
- Fri, 19 Jul 2024 22:17:02 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav412.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 46JDH1Qj077278
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 19 Jul 2024 22:17:01 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <94c1499a-2325-4bbf-b7bc-04a1e9090488@I-love.SAKURA.ne.jp>
-Date: Fri, 19 Jul 2024 22:17:01 +0900
+	s=arc-20240116; t=1721395037; c=relaxed/simple;
+	bh=qtLPFOhjqFSQYLpvCLe3qCCW4Py65LMqZdG1qvlJQ00=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y/MpN1RkVrxuOhm2UYW1vYo9//HFgfno9Mz4gDfOvDRxxAqR5AmzXfsLw/vKx1YNYGg2OgqiY7KRZJAeSJte/zIaaTAD4M4ieuldQsHEjmRO/snP7VIgOTHyJkMXuccUW1FlGO8TfEdl1ZR5sORhT0MYQA8t9adrROXm4+gRlqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BX2Ysd7H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA35AC32782;
+	Fri, 19 Jul 2024 13:17:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721395037;
+	bh=qtLPFOhjqFSQYLpvCLe3qCCW4Py65LMqZdG1qvlJQ00=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BX2Ysd7HikpMDPOtr1h9L5jSD24rg6Ar4jIpudeOW75Ly61bPrVuFM8vH1CYKX6Li
+	 2uJyxkwcqs9OnDeFrBkpahew6+Mie/ztcLEfSa4Dv3EXLvfUHnkEFajzNh5uKBqBni
+	 iJFP0EkMY77o821Fwfkh2xlFsyatrgxuX+Qv/MRRMLJwOBcES5LFBoRG/gCNB6QJq8
+	 WcIutfAiNxcpZU75Qf7cfS1j8EeyoLjrbPDUfxDsW+4vwPGMFldfln9TKqaFiX9Dye
+	 OuLHSRI8uIWoEPoStzlx6ROavXVt9xom8g3hmKL8Ldp0XaXaaXNFlZBOivtfEMyR/s
+	 4lJIYzCFCmJEw==
+Date: Fri, 19 Jul 2024 14:17:12 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Cc: Samuel Holland <samuel.holland@sifive.com>, greentime.hu@sifive.com,
+	vincent.chen@sifive.com, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org
+Subject: Re: [PATCH v7 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
+Message-ID: <20240719-flatten-elixir-d4476977ab95@spud>
+References: <20240712083850.4242-1-yongxuan.wang@sifive.com>
+ <20240712083850.4242-3-yongxuan.wang@sifive.com>
+ <727b966a-a8c4-4021-acf6-3c031ccd843a@sifive.com>
+ <CAMWQL2g-peSYJQaxeJtyOzGdEmDQ6cnkRBdFQvLr2NQA1+mv2g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH (repost)] sched/core: defer printk() while rq lock is held
-To: syzbot <syzbot+18cfb7f63482af8641df@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-References: <0000000000008881c5061d28e041@google.com>
-Content-Language: en-US
-Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org, mhiramat@kernel.org,
-        netdev@vger.kernel.org, andrii@kernel.org, ast@kernel.org,
-        bpf@vger.kernel.org, daniel@iogearbox.net,
-        Steven Rostedt <rostedt@goodmis.org>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <0000000000008881c5061d28e041@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="FVYN+Rx9CKi55/SI"
+Content-Disposition: inline
+In-Reply-To: <CAMWQL2g-peSYJQaxeJtyOzGdEmDQ6cnkRBdFQvLr2NQA1+mv2g@mail.gmail.com>
 
-syzbot is reporting circular locking dependency inside __bpf_prog_run()
-when trace_sched_switch() hook is called from __schedule(), for fault
-injection calls printk() despite rq lock is already held.
 
-Since any debugging functionality such as lockdep, fault injection,
-KASAN/KCSAN/KMSAN etc. might call printk(), guard the whole section
-between raw_spin_rq_{lock,lock_nested,trylock}() and raw_spin_rq_unlock()
-using printk_deferred_{enter,exit}().
+--FVYN+Rx9CKi55/SI
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reported-by: syzbot <syzbot+18cfb7f63482af8641df@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=18cfb7f63482af8641df
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
-This is a repost of https://lkml.kernel.org/r/b55e5f24-01ad-4a3d-94dc-e8a6bc15ac42@I-love.SAKURA.ne.jp .
-Scheduler developers, can you agree with addressing this problem at locations where rq lock is held?
+On Fri, Jul 19, 2024 at 02:58:59PM +0800, Yong-Xuan Wang wrote:
+> Hi Samuel,
+>=20
+> On Fri, Jul 19, 2024 at 7:38=E2=80=AFAM Samuel Holland
+> <samuel.holland@sifive.com> wrote:
+> >
+> > On 2024-07-12 3:38 AM, Yong-Xuan Wang wrote:
+> > > Add entries for the Svade and Svadu extensions to the riscv,isa-exten=
+sions
+> > > property.
+> > >
+> > > Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+> > > ---
+> > >  .../devicetree/bindings/riscv/extensions.yaml | 28 +++++++++++++++++=
+++
+> > >  1 file changed, 28 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml =
+b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > index 468c646247aa..e91a6f4ede38 100644
+> > > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > @@ -153,6 +153,34 @@ properties:
+> > >              ratified at commit 3f9ed34 ("Add ability to manually tri=
+gger
+> > >              workflow. (#2)") of riscv-time-compare.
+> > >
+> > > +        - const: svade
+> > > +          description: |
+> > > +            The standard Svade supervisor-level extension for SW-man=
+aged PTE A/D
+> > > +            bit updates as ratified in the 20240213 version of the p=
+rivileged
+> > > +            ISA specification.
+> > > +
+> > > +            Both Svade and Svadu extensions control the hardware beh=
+avior when
+> > > +            the PTE A/D bits need to be set. The default behavior fo=
+r the four
+> > > +            possible combinations of these extensions in the device =
+tree are:
+> > > +            1) Neither Svade nor Svadu present in DT =3D> It is tech=
+nically
+> > > +               unknown whether the platform uses Svade or Svadu. Sup=
+ervisor
+> > > +               software should be prepared to handle either hardware=
+ updating
+> > > +               of the PTE A/D bits or page faults when they need upd=
+ated.
+> > > +            2) Only Svade present in DT =3D> Supervisor must assume =
+Svade to be
+> > > +               always enabled.
+> > > +            3) Only Svadu present in DT =3D> Supervisor must assume =
+Svadu to be
+> > > +               always enabled.
+> > > +            4) Both Svade and Svadu present in DT =3D> Supervisor mu=
+st assume
+> > > +               Svadu turned-off at boot time. To use Svadu, supervis=
+or must
+> > > +               explicitly enable it using the SBI FWFT extension.
+> > > +
+> > > +        - const: svadu
+> > > +          description: |
+> > > +            The standard Svadu supervisor-level extension for hardwa=
+re updating
+> > > +            of PTE A/D bits as ratified at commit c1abccf ("Merge pu=
+ll request
+> > > +            #25 from ved-rivos/ratified") of riscv-svadu. Please ref=
+er to Svade
+> >
+> > Should we be referencing the archived riscv-svadu repository now that S=
+vadu has
+> > been merged to the main privileged ISA manual? Either way:
+> >
+> > Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+> >
+>=20
+> Yes, this commit is from the archived riscv-svadu repo. Or should I updat=
+e it to
+> "commit c1abccf ("Merge pull request  #25 from ved-rivos/ratified") of
+> riscvarchive/riscv-svadu."?
 
- kernel/sched/core.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+I think Samuel was saying that we should use the commit where it was
+merged into riscv-isa-manual instead.
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index bcf2c4cc0522..134f5196b9c4 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -559,6 +559,7 @@ void raw_spin_rq_lock_nested(struct rq *rq, int subclass)
- 		raw_spin_lock_nested(&rq->__lock, subclass);
- 		/* preempt_count *MUST* be > 1 */
- 		preempt_enable_no_resched();
-+		printk_deferred_enter();
- 		return;
- 	}
- 
-@@ -568,6 +569,7 @@ void raw_spin_rq_lock_nested(struct rq *rq, int subclass)
- 		if (likely(lock == __rq_lockp(rq))) {
- 			/* preempt_count *MUST* be > 1 */
- 			preempt_enable_no_resched();
-+			printk_deferred_enter();
- 			return;
- 		}
- 		raw_spin_unlock(lock);
-@@ -584,6 +586,8 @@ bool raw_spin_rq_trylock(struct rq *rq)
- 	if (sched_core_disabled()) {
- 		ret = raw_spin_trylock(&rq->__lock);
- 		preempt_enable();
-+		if (ret)
-+			printk_deferred_enter();
- 		return ret;
- 	}
- 
-@@ -592,6 +596,8 @@ bool raw_spin_rq_trylock(struct rq *rq)
- 		ret = raw_spin_trylock(lock);
- 		if (!ret || (likely(lock == __rq_lockp(rq)))) {
- 			preempt_enable();
-+			if (ret)
-+				printk_deferred_enter();
- 			return ret;
- 		}
- 		raw_spin_unlock(lock);
-@@ -600,6 +606,7 @@ bool raw_spin_rq_trylock(struct rq *rq)
- 
- void raw_spin_rq_unlock(struct rq *rq)
- {
-+	printk_deferred_exit();
- 	raw_spin_unlock(rq_lockp(rq));
- }
- 
--- 
-2.43.0
+--FVYN+Rx9CKi55/SI
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZppnRwAKCRB4tDGHoIJi
+0qmzAPwPCohsOIh0JMJTv+r89hx01GSGvJwwS4SEQyLjNq8GTwD/bTyQl6+PLCAD
+n+bWqAgty3EMTJXCctxru5eDIOrN3wU=
+=IM8G
+-----END PGP SIGNATURE-----
+
+--FVYN+Rx9CKi55/SI--
 
