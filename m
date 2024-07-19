@@ -1,225 +1,141 @@
-Return-Path: <linux-kernel+bounces-257398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1039E937970
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:59:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABABD937972
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F6CAB21FA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:59:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DA6FB21E85
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA1F144D10;
-	Fri, 19 Jul 2024 14:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089CB1459EF;
+	Fri, 19 Jul 2024 14:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hqcu5kTg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="h1qbZChk"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F24113D63B;
-	Fri, 19 Jul 2024 14:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63921143745
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 14:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721401173; cv=none; b=qvrkxhf3C9gi6MV1qKc8qRjvDVeIsbljuHCwIe4v46e+a+SNsCDFNp2CI2Zx9lRox9q5+S1cBMelYx+52/MV1JOGmFQNfmcgVkedXxzH4KJZFORoaPSO1wpPkpJZW+rksZygUSO4ZJXgAK7CHFG+4eiWeqhwZ7XoetfskgMK+3U=
+	t=1721401182; cv=none; b=tYtFR2ePhEI8v+85xFnT06i3i37XKoTuGteYbQHKW0Wc3bySzrF2nWLOXv0zcjc9ObO1XwQma4D6tGxDYXBcBy9mBF2NUMIW+pf/8TjIcZ8qZxKWpSUwJGQm6FWD9fMN5Sfag7lGt3zYnAlGZS/o/uTR8E1btNEvCIbrDQLgSpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721401173; c=relaxed/simple;
-	bh=riKWNj9ymyyL39s71PP994WyzSU+759xl9rDSHnUAF8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uv4QKm/JChaHT/KZPx3YBBcUaiv/q+XcfeayD9zXJ1j6ct4BtfUQRQsSVjd+5ikXf10oOKeUmsHc/SOD6WuoS1RlyMAgQIXQcfP8Yo35g86XIULsFx2qG9o/FyyctbBSU9TjmF2Cq/UenQcjBMbVE1B8sdqcqJQKxS4T6z212L8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hqcu5kTg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3AEFC32782;
-	Fri, 19 Jul 2024 14:59:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721401172;
-	bh=riKWNj9ymyyL39s71PP994WyzSU+759xl9rDSHnUAF8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hqcu5kTgtqSNGXwpr+rLf04U8saJ0oT+7KTOqaK5tIjgB49z7iYXDKoh002v28T47
-	 KHyA5ZaXNQsi2hio+QNnXJ8uwE6iQppaC9K+BWrJQhHPfQnyGq3KC3s5pkiMo8dRiE
-	 RFplIazgJJqcuOewPcVf8x7dtkusX1kR6fsneJl3lRbSyTyzXgXvxrWZamOk6hqoNk
-	 m1wTGrmoVGkd27pfCG1MUL9lGyTfUwcjb9LqCSzpWsAwp9D2nt5HgS/QvlaLEebiBa
-	 6NOf4oUk6/EdVNVJ7XcCGHbqilRXLwYCwdm4i7yUI/13ZUPJGF+/wV9tnCX/OlNNDe
-	 lkl4tuS9RJjTQ==
-Date: Fri, 19 Jul 2024 15:59:26 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Chen Wang <unicornxw@gmail.com>
-Cc: adrian.hunter@intel.com, aou@eecs.berkeley.edu, conor+dt@kernel.org,
-	guoren@kernel.org, inochiama@outlook.com, jszhang@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, palmer@dabbelt.com,
-	paul.walmsley@sifive.com, robh@kernel.org, ulf.hansson@linaro.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-riscv@lists.infradead.org,
-	chao.wei@sophgo.com, haijiao.liu@sophgo.com,
-	xiaoguang.xing@sophgo.com, tingzhu.wang@sophgo.com,
-	Chen Wang <unicorn_wang@outlook.com>
-Subject: Re: [PATCH v5 6/8] dt-bindings: mmc: sdhci-of-dwcmhsc: Add Sophgo
- SG2042 support
-Message-ID: <20240719-catnip-pushup-81d3e104de7b@spud>
-References: <cover.1721377374.git.unicorn_wang@outlook.com>
- <55bc60606bc9b2558eeddb00fd8b659d3fcd69ff.1721377374.git.unicorn_wang@outlook.com>
+	s=arc-20240116; t=1721401182; c=relaxed/simple;
+	bh=1PJRt/I+M1/50MiURrjddfN0VS0fOCHmuyFSssHB+eA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bGEYGNY1OL/MdeKsmjYyKzkxHwpwdMvQxP166nOJhGC/C/iL9Qxij/hN71ZO+0gwReAcTTz34jLFzesIJUzA50lvC4cpY4xo8cejCHjVGvNSisSkg5sXbbpfFZgrX6SPdBeauH+7eG0JKHgKAFTHSqH/D8VA1MM1sKDLOz9eNas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=h1qbZChk; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1721401178;
+	bh=1PJRt/I+M1/50MiURrjddfN0VS0fOCHmuyFSssHB+eA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=h1qbZChkKLg/BUhaeHE4ogZZ8ai7fvzjVZTQfZeeJGJH7Ykaann0iyVtPNr9BFiru
+	 hCWY6BexDhJCepZ7C2u6uSOI1jGLn3xXEx/36djrWFSD3bSk3CK8a8lPCKgY8C8d3y
+	 pkS4ykrS6sS8uRLG4fW4t8ZUR8kxyDMMhhCsRYuSAutsbEhdPZlShdTRTZXBayRhL/
+	 5/7/Sq8GROxp5mSvMGFRnNMMnWmIzsfVOhunDrz6jyOlsa4RSzzHcPSXq71NB6WB0h
+	 EHKkSppdIJSSmtrbXY5B22t/NGE6o7UuCv2l00HXBMZ/yNwNPPQkLQANYbJdQZxaIF
+	 JovQC9pE2R9aQ==
+Received: from [172.16.0.134] (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4WQXrn6zCBz1D7p;
+	Fri, 19 Jul 2024 10:59:37 -0400 (EDT)
+Message-ID: <7e29c303-c91f-4229-9b9d-b60d8a60c38b@efficios.com>
+Date: Fri, 19 Jul 2024 10:59:37 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="mebK71Pev/WbD3jG"
-Content-Disposition: inline
-In-Reply-To: <55bc60606bc9b2558eeddb00fd8b659d3fcd69ff.1721377374.git.unicorn_wang@outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] ring-buffer: Updates for 6.11
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Thorsten Blum <thorsten.blum@toblux.com>
+References: <20240716155118.152dea35@rorschach.local.home>
+ <a71100aa-ffe4-477e-814a-1564e00cb067@efficios.com>
+ <20240719103218.6c1eedfc@rorschach.local.home>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20240719103218.6c1eedfc@rorschach.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 2024-07-19 10:32, Steven Rostedt wrote:
+> On Tue, 16 Jul 2024 16:05:26 -0400
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+> 
+>> On 2024-07-16 15:51, Steven Rostedt wrote:
+>>>
+>>>
+>>> Linus,
+>>>
+>>> tracing/ring-buffer: Have persistent buffer across reboots
+>>
+>> Hi Steven,
+>>
+>> Perhaps I'm missing something here, but we discussed previously that
+>> you would document the fact that users of this feature are expected
+>> to run the same kernel before/after reboot.
+>>
+>> Looking at this PR, I fail to find that documentation, or in fact
+>> any documentation at all. Is this something that was overlooked ?
+> 
+> So I went to update this, and realized there's no place that actually
+> mentions anything about this being used across reboots (besides in the
+> change logs). The only documentation is in kernel-parameters.txt:
+> 
+>                          If memory has been reserved (see memmap for x86), the instance
+>                          can use that memory:
+>                          
+>                                  memmap=12M$0x284500000 trace_instance=boot_map@0x284500000:12M
+> 
+>                          The above will create a "boot_map" instance that uses the physical
+>                          memory at 0x284500000 that is 12Megs. The per CPU buffers of that
+>                          instance will be split up accordingly.
+> 
+> I do plan on adding more documentation on the use cases of this, but I
+> was planning on doing that in the next merge window when the
+> reserve_mem kernel parameter can be used. Right now, we only document
+> what it does, and not what it is used for.
+> 
+> Do you still have an issue with that part missing? No where does it
+> mention that this is used across boots. There is a file created in the
+> boot mapped instance directory that hints to the usage
+> (last_boot_info), but still there's no assumptions made.
+> 
+> In other words, why document a restriction on something that hasn't
+> been documented?
 
---mebK71Pev/WbD3jG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+AFAIU the intended use of this feature is to convey trace buffer
+data from one kernel to the next across a reboot, which makes it
+a whole different/new kind of ABI.
 
-On Fri, Jul 19, 2024 at 04:46:50PM +0800, Chen Wang wrote:
-> From: Chen Wang <unicorn_wang@outlook.com>
->=20
-> SG2042 use Synopsys dwcnshc IP for SD/eMMC controllers.
->=20
-> SG2042 defines 3 clocks for SD/eMMC controllers.
-> - EMMC_100M/SD_100M for cclk(Card clocks in DWC_mshc), so reuse
->   existing "core".
-> - AXI_EMMC/AXI_SD for aclk/hclk(Bus interface clocks in DWC_mshc)
->   and blck(Core Base Clock in DWC_mshc), these 3 clocks share one
->   source, so reuse existing "bus".
-> - 100K_EMMC/100K_SD for cqetmclk(Timer clocks in DWC_mshc), so reuse
->   existing "timer" which was added for rockchip specified.
->=20
-> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
-> ---
->  .../bindings/mmc/snps,dwcmshc-sdhci.yaml      | 60 +++++++++++++------
->  1 file changed, 43 insertions(+), 17 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yam=
-l b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-> index 4d3031d9965f..80d50178d2e3 100644
-> --- a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-> @@ -10,9 +10,6 @@ maintainers:
->    - Ulf Hansson <ulf.hansson@linaro.org>
->    - Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> =20
-> -allOf:
-> -  - $ref: mmc-controller.yaml#
-> -
->  properties:
->    compatible:
->      enum:
-> @@ -21,6 +18,7 @@ properties:
->        - snps,dwcmshc-sdhci
->        - sophgo,cv1800b-dwcmshc
->        - sophgo,sg2002-dwcmshc
-> +      - sophgo,sg2042-dwcmshc
->        - thead,th1520-dwcmshc
-> =20
->    reg:
-> @@ -31,22 +29,11 @@ properties:
-> =20
->    clocks:
->      minItems: 1
-> -    items:
-> -      - description: core clock
-> -      - description: bus clock for optional
-> -      - description: axi clock for rockchip specified
-> -      - description: block clock for rockchip specified
-> -      - description: timer clock for rockchip specified
+Having no documentation will not stop anyone from using this new
+feature and make assumptions about ABI guarantees. I am concerned
+that this ABI ends up being defined by accident/misuses rather than
+by design if it is merged without documentation.
 
-Does anyone know what "for rockchip specified" means? Is meant to be "for
-rockchip specifically"? If it is, should probably be actually
-constrained! Patch itself seems fine though and I don't think it's your
-responsibility to fix that, so
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Very often when I find myself documenting a feature, I look back at
+the user-facing result and modify the ABI where it does not make
+sense. Merging this ABI without documentation prevents that.
 
-Cheers,
-Conor.
+So if you ask my honest opinion there, I would say that merging this
+ABI without documentation feels rushed.
 
-> -
-> +    maxItems: 5
-> =20
->    clock-names:
->      minItems: 1
-> -    items:
-> -      - const: core
-> -      - const: bus
-> -      - const: axi
-> -      - const: block
-> -      - const: timer
-> +    maxItems: 5
-> =20
->    resets:
->      maxItems: 5
-> @@ -63,7 +50,6 @@ properties:
->      description: Specify the number of delay for tx sampling.
->      $ref: /schemas/types.yaml#/definitions/uint8
-> =20
-> -
->  required:
->    - compatible
->    - reg
-> @@ -71,6 +57,46 @@ required:
->    - clocks
->    - clock-names
-> =20
-> +allOf:
-> +  - $ref: mmc-controller.yaml#
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: sophgo,sg2042-dwcmshc
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: core clock
-> +            - description: bus clock
-> +            - description: timer clock
-> +        clock-names:
-> +          items:
-> +            - const: core
-> +            - const: bus
-> +            - const: timer
-> +    else:
-> +      properties:
-> +        clocks:
-> +          minItems: 1
-> +          items:
-> +            - description: core clock
-> +            - description: bus clock for optional
-> +            - description: axi clock for rockchip specified
-> +            - description: block clock for rockchip specified
-> +            - description: timer clock for rockchip specified
-> +        clock-names:
-> +          minItems: 1
-> +          items:
-> +            - const: core
-> +            - const: bus
-> +            - const: axi
-> +            - const: block
-> +            - const: timer
-> +
->  unevaluatedProperties: false
-> =20
->  examples:
-> --=20
-> 2.34.1
->=20
+Thanks,
 
---mebK71Pev/WbD3jG
-Content-Type: application/pgp-signature; name="signature.asc"
+Mathieu
 
------BEGIN PGP SIGNATURE-----
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpp/TgAKCRB4tDGHoIJi
-0qRSAQCcxNgXXQFBflYmeBWap/fYoOK6l9k5GvMV4TcSeNbazAEAt9rJueFEhCG0
-M64Ytc4yOLvPk7XxHj6Mt7x1DATCXg8=
-=+Shv
------END PGP SIGNATURE-----
-
---mebK71Pev/WbD3jG--
 
