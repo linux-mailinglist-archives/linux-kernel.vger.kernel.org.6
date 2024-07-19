@@ -1,144 +1,263 @@
-Return-Path: <linux-kernel+bounces-257542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 216BB937B9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:32:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FEDB937BAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:36:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1849281A13
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:32:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0FAE1F22A79
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28490146A9B;
-	Fri, 19 Jul 2024 17:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69446146D68;
+	Fri, 19 Jul 2024 17:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gQHGVkWw"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Bc4EzXyo"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17250146A72;
-	Fri, 19 Jul 2024 17:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A84146596
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 17:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721410317; cv=none; b=J8OA4QF4eLv5IuzECrfdOzWGwkjK3ClE0z9Pm8Ky1gS4LwWgHcju8IzcFY7V5Oj7ntBgnMG52STycJEMRX6HeqCrSTsUff2Vm7/i2r7gPBTfFbW3vnAMSyACaZJJkEhpajIufZTIlecKXx3bGRIr/0e4mqu/Kp1bkBZPeDWrDyA=
+	t=1721410603; cv=none; b=DYW+3dBWetIK/oPcA3F5no8DrVFuOIjLUQaUPBj9YGXLMDDYLxZMApXCe06qnG2MaCZGbabqdLIGGcyJoORHGMzrSVw4liL95hOp2bLDrPty/YJXiucg3vyv6hjlvQHTQx9XHlSKmK1J8gO7RQnhRe/hDcL7PDLPezCw6RHCYlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721410317; c=relaxed/simple;
-	bh=kwetyPKGOW4u/OrTUJz8Yw6DPPnSPhY2KQ5TC6vHHeA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JQnw1ae6m1Qb6pwGddeMy3paTvQxF8GKCOAEe/mMYjM5iQV5GrI03Tji/WCsGJ5YNRSqm6gYHvMWv6gnN7k6na7Ojm7H67iih6aYp5EVZDVUVsXb0c4kizNPKPGsf0n+FWycaFqPolc22uK71IL72vCoEw7nroSMC+10QuzGmXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gQHGVkWw; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1fc65329979so15664585ad.0;
-        Fri, 19 Jul 2024 10:31:55 -0700 (PDT)
+	s=arc-20240116; t=1721410603; c=relaxed/simple;
+	bh=r2TgkQQ1TiEBP4njd4pK6Y/f/PNkwRoyR1bmLuxOhCM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iwimiQfPv2Ov4O7DC1ElPcjOB7WqfihfZsuwxjdc5HkCuiNVJ3j7sJhL+rCR8QpySlI3oVyAU+YExgmRJNUCtsuUnrK5y3iBgLFYx//tfr2+ZfFA9c21n5Tbin1kUAAvCDpi7eibtZMiP8/rPgx27ECntnkWCa5r6uWf/LqB36Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Bc4EzXyo; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso20113a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 10:36:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721410315; x=1722015115; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6ZbMHz0p5DWuVseBb2N8rhX28Nxn5bBUC6D+VNe4hHM=;
-        b=gQHGVkWwSp8T6LffMGm2bRwfKY/sSdMkSP1Vi37rK6A1voQnOfLQ7mZEXAxXmkuGNI
-         9nkFaE6hsez2Oa+taaKGUBB6jtSCVXWvwUdoE7tioR0poQN7NJPEkkOJ4QKiLfcOmoZk
-         zyYHyrdr1dmmGPBafg1+RClwxnMKj7bNFObxdaGrnZiEK7zH4SChyI0yPtMWYAZ6SLXn
-         aO7206XkSapP4sxIDBrQXsbPGhHe47TVMcEBAIvHnpPvuZK9M034lR7DTfMe3zFNjwst
-         c8/UR52Hvto1sXJPpt0xVtRdhxQlqzQmlhn/wgiGUp/dB7M3Y53rq4wbR5R3UngLMIbx
-         9KJg==
+        d=google.com; s=20230601; t=1721410600; x=1722015400; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EQxa6F8cq8HJ6XeW+Qq3Pxl6kdGNSanFrttFIpHCBuk=;
+        b=Bc4EzXyo2Ddeo/9dz+lgYCUe9P2URijQhxnYAEUGK6TMHhfAU1JoWIPkKhfY7f8OfK
+         b3D/POKxbYlNU5O0fHQUHWbG1S4d02Dk8fZiN5lAb0WiBXMV/sIdfuc3bZyZJ1n+Wr0R
+         FdUNhip9YVb8DRcjSgvLiDzBR5Rj6wGBL8EQ1/nqvI97eATLxILFxKs2HIUQI0Ci9mqN
+         okZRzEKNHMlpbHZt8NORDXDiwmaqMK9qhoq8A1hcLAvTGpLhQGIpVPYmK01dLipwN+9j
+         GXw2YEJvJJUwZcL9VQFgyzBy6THvIoBvmf0j3J2oZ1jwZzhwFiY/jDVUtbb2IhtYpOI6
+         zk2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721410315; x=1722015115;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6ZbMHz0p5DWuVseBb2N8rhX28Nxn5bBUC6D+VNe4hHM=;
-        b=bartIFUSmJGSxk5AUlA5Z572/eQpfWr5aeu+kKtKmlFOm/dF9kMRVAxA6N6++rit6v
-         m3wvW6Le9JK4etlvie+bhJO9SuVVYCLsM0xOUYxqLqtCZJasKziEelwzPO/iSPJZY2ze
-         B1rHtm2QGjdKm/foEO92fEcfbDnftgrviPxR7TWi29biKa7KcUfZ4eM95IDfG+wgYob2
-         4Jz9jJRRkEzf/OI9EupI7/KJqNI6dhQslBGmWf8sQ3TEnnHzMAWXmNUQZyCe0QI+Ki8O
-         DEumr1AfL99nAxFfyLvbXE66Ewc/Sr+s1O6khzO6QydMCNDPPR7CL3bLkQwiZuqq5D0n
-         nT1g==
-X-Forwarded-Encrypted: i=1; AJvYcCW4pap9c4JCK3nX8l1rHJunix4w9hDK8Xa1E1mjqOhXyW5YE00I81Z6pFl+W+GMLcLuu4lFGZRTzF/CRfRKKwcKrd6y3+Yoj8q/owlURXjY16QwNB1UwdyyDH1wWb9v/22FIT7sZR1M9xxyZvfAoFbXGGPM5tfKb4yJga5bCM8HAoxj
-X-Gm-Message-State: AOJu0YwHmMens86LZ9hERJtxwn+4IAdQBjWKAKINgfUao8aLB/uFgxiO
-	XOLpvtvzBz05HGv/rNimpRgrOeBEVYVYuuSSOYJybTGUSRHb9XHhrQqTRA==
-X-Google-Smtp-Source: AGHT+IFsThoFkOXcqDTCyPseR9byS+0442uGUbWIB1NvdVDLi0q/DrexI8yvkm4IqTHzGS1Ss2DQJQ==
-X-Received: by 2002:a17:902:ec91:b0:1f9:d0da:5b2f with SMTP id d9443c01a7336-1fd745879femr4471445ad.39.1721410315354;
-        Fri, 19 Jul 2024 10:31:55 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f48875esm7196225ad.287.2024.07.19.10.31.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 10:31:54 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Fri, 19 Jul 2024 07:31:53 -1000
-From: "tj@kernel.org" <tj@kernel.org>
-To: Boy Wu =?utf-8?B?KOWQs+WLg+iqvCk=?= <Boy.Wu@mediatek.com>
-Cc: "boris@bur.io" <boris@bur.io>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"axboe@kernel.dk" <axboe@kernel.dk>,
-	Iverlin Wang =?utf-8?B?KOeOi+iLs+mclik=?= <Iverlin.Wang@mediatek.com>,
-	"josef@toxicpanda.com" <josef@toxicpanda.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v4] blk-cgroup: Replace u64 sync with spinlock for iostat
-Message-ID: <ZpqjCVxSAV-Q7Yhy@slm.duckdns.org>
-References: <20240718084112.12202-1-boy.wu@mediatek.com>
- <ZpmF8HJsuefjC7Xr@slm.duckdns.org>
- <00c595a16b4e96ae56973ac2ce586f6ad736059f.camel@mediatek.com>
+        d=1e100.net; s=20230601; t=1721410600; x=1722015400;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EQxa6F8cq8HJ6XeW+Qq3Pxl6kdGNSanFrttFIpHCBuk=;
+        b=LYJLCzQ6Hkl5Qc6znMRdM5K3BYCYgY7dN2YI/INTI+tN9HcYL2Btn3W1m9c9sHCPMK
+         Dg8mvKF7KDBuP8IvGYQumQVZiA23xdOyvYqUCrvyEJf3q+i/7okiQOV46QfOafJEzZgb
+         KqSmTR+9haigcGHCHXNl8ueNUo+Rwqoy+Jl5g9IF1n9W5H3J5Y/9XiTM8AwTFX5uCY7+
+         TEoyZnUK80qkzrXc4WKCIQGRYEmSrTcDbweH5GSwtcrwu3d47agfJfo1vuV82FKNjjqj
+         ac4rpb1zrPpbVRewgJaFWhpdwuAPmMyYtw/s/VRVq2E/i0krD/K/7L2GInn97t/jueJH
+         oBnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUm3mRfxKrs8veRhHDA0wfWXANPJnh2J2zpr7xG3WzjCoXT/6mhhhKyuBBoD7RlOeLH5BEPqiVDeKVabzu8yJzb5QSHRmwiGRatN4eU
+X-Gm-Message-State: AOJu0YwbCTQzZy10C+MEQhsyEekai4XieoCTvrYv3a7eHOxV/UjghuwB
+	BGb8OlbHkz6KMIt5y5JGDohx3Bws6iLu3kcj4VTUdrEm9OQUHQ3xh2dEFFSzsBPiyCA+hBRsZxu
+	+J3RA8dlS5/H3xV8aMTPqVvgb57bOG8ucbSbZ
+X-Google-Smtp-Source: AGHT+IFr4UIuqcny8oT4n2XXdl09/DOiKufPDz2G3bvU5/ew23N51/0PqyyCDErT88IT6yxGc42B0HWdEq3lgXzUvuc=
+X-Received: by 2002:a05:6402:51cd:b0:57d:32ff:73ef with SMTP id
+ 4fb4d7f45d1cf-5a2cae572bbmr285073a12.6.1721410599538; Fri, 19 Jul 2024
+ 10:36:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <00c595a16b4e96ae56973ac2ce586f6ad736059f.camel@mediatek.com>
+References: <20240704190137.696169-1-mic@digikod.net> <20240704190137.696169-2-mic@digikod.net>
+ <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
+ <20240717.neaB5Aiy2zah@digikod.net> <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
+ <20240718.kaePhei9Ahm9@digikod.net> <CALmYWFupWw2_BKu1FF=ooXFpA=GtJr1ehZSK3p+1+1WH34eX=w@mail.gmail.com>
+ <20240719.Ooxeithah8Sh@digikod.net>
+In-Reply-To: <20240719.Ooxeithah8Sh@digikod.net>
+From: Jeff Xu <jeffxu@google.com>
+Date: Fri, 19 Jul 2024 10:36:01 -0700
+Message-ID: <CALmYWFsR+fWVuPLCoNhisTV5Lviv_dzb=5ajoKs0LaHsei9qTQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Paul Moore <paul@paul-moore.com>, "Theodore Ts'o" <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, 
+	Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
+	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
+	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello, Boy.
+On Fri, Jul 19, 2024 at 8:31=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+>
+> On Fri, Jul 19, 2024 at 08:12:37AM -0700, Jeff Xu wrote:
+> > On Thu, Jul 18, 2024 at 5:24=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
+igikod.net> wrote:
+> > >
+> > > On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
+> > > > On Wed, Jul 17, 2024 at 3:01=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <m=
+ic@digikod.net> wrote:
+> > > > >
+> > > > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
+> > > > > > On Thu, Jul 4, 2024 at 12:02=E2=80=AFPM Micka=C3=ABl Sala=C3=BC=
+n <mic@digikod.net> wrote:
+> > > > > > >
+> > > > > > > Add a new AT_CHECK flag to execveat(2) to check if a file wou=
+ld be
+> > > > > > > allowed for execution.  The main use case is for script inter=
+preters and
+> > > > > > > dynamic linkers to check execution permission according to th=
+e kernel's
+> > > > > > > security policy. Another use case is to add context to access=
+ logs e.g.,
+> > > > > > > which script (instead of interpreter) accessed a file.  As an=
+y
+> > > > > > > executable code, scripts could also use this check [1].
+> > > > > > >
+> > > > > > > This is different than faccessat(2) which only checks file ac=
+cess
+> > > > > > > rights, but not the full context e.g. mount point's noexec, s=
+tack limit,
+> > > > > > > and all potential LSM extra checks (e.g. argv, envp, credenti=
+als).
+> > > > > > > Since the use of AT_CHECK follows the exact kernel semantic a=
+s for a
+> > > > > > > real execution, user space gets the same error codes.
+> > > > > > >
+> > > > > > So we concluded that execveat(AT_CHECK) will be used to check t=
+he
+> > > > > > exec, shared object, script and config file (such as seccomp co=
+nfig),
+> > > > >
+> > > > > "config file" that contains executable code.
+> > > > >
+> > > > Is seccomp config  considered as "contains executable code", seccom=
+p
+> > > > config is translated into bpf, so maybe yes ? but bpf is running in
+> > > > the kernel.
+> > >
+> > > Because seccomp filters alter syscalls, they are similar to code
+> > > injection.
+> > >
+> > > >
+> > > > > > I'm still thinking  execveat(AT_CHECK) vs faccessat(AT_CHECK) i=
+n
+> > > > > > different use cases:
+> > > > > >
+> > > > > > execveat clearly has less code change, but that also means: we =
+can't
+> > > > > > add logic specific to exec (i.e. logic that can't be applied to
+> > > > > > config) for this part (from do_execveat_common to
+> > > > > > security_bprm_creds_for_exec) in future.  This would require so=
+me
+> > > > > > agreement/sign-off, I'm not sure from whom.
+> > > > >
+> > > > > I'm not sure to follow. We could still add new flags, but for now=
+ I
+> > > > > don't see use cases.  This patch series is not meant to handle al=
+l
+> > > > > possible "trust checks", only executable code, which makes sense =
+for the
+> > > > > kernel.
+> > > > >
+> > > > I guess the "configfile" discussion is where I get confused, at one
+> > > > point, I think this would become a generic "trust checks" api for
+> > > > everything related to "generating executable code", e.g. javascript=
+,
+> > > > java code, and more.
+> > > > We will want to clearly define the scope of execveat(AT_CHECK)
+> > >
+> > > The line between data and code is blurry.  For instance, a configurat=
+ion
+> > > file can impact the execution flow of a program.  So, where to draw t=
+he
+> > > line?
+> > >
+> > > It might makes sense to follow the kernel and interpreter semantic: i=
+f a
+> > > file can be executed by the kernel (e.g. ELF binary, file containing =
+a
+> > > shebang, or just configured with binfmt_misc), then this should be
+> > > considered as executable code.  This applies to Bash, Python,
+> > > Javascript, NodeJS, PE, PHP...  However, we can also make a picture
+> > > executable with binfmt_misc.  So, again, where to draw the line?
+> > >
+> > > I'd recommend to think about interaction with the outside, through
+> > > function calls, IPCs, syscalls...  For instance, "running" an image
+> > > should not lead to reading or writing to arbitrary files, or accessin=
+g
+> > > the network, but in practice it is legitimate for some file formats..=
+.
+> > > PostScript is a programming language, but mostly used to draw picture=
+s.
+> > > So, again, where to draw the line?
+> > >
+> > The javascript is run by browser and java code by java runtime, do
+> > they meet the criteria? they do not interact with the kernel directly,
+> > however they might have the same "executable" characteristics and the
+> > app might not want them to be put into non-exec mount.
+> >
+> > If the answer is yes, they can also use execveat(AT_CHECK),  the next
+> > question is: does it make sense for javacript/java code to go through
+> > execveat() code path, allocate bprm, etc ? (I don't have answer, maybe
+> > it is)
+>
+> Java and NodeJS can do arbitrary syscalls (through their runtime) and
+> they can access arbitrary files, so according to my below comment, yes
+> they should be managed as potentially dangerous executable code.
+>
+> The question should be: is this code trusted? Most of the time it is
+> not, hence the security model of web browser and their heavy use of
+> sandboxing.  So no, I don't think it would make sense to check this kind
+> of code more than what the browser already do.
+>
 
-On Fri, Jul 19, 2024 at 01:47:35AM +0000, Boy Wu (吳勃誼) wrote:
-...
-> If it is for readability, I think keeping using u64 sync instead of
-> replacing it with spinlock is better, because what u64 sync protects is
-> 64-bit data for 32-bit systems, while spinlock can be used for many
-> other reasons. The root cause of this issue is just the incorrect use
+If I understand you correctly, Java/NodeJS won't use
+execveat(AT_CHECK), we will leave that work to the web browser/java
+runtime's sandboxer.
+This is good because the scope is more narrow/clear.
 
-Yeah, but it can't be used when there are multiple updaters.
+Thanks
+-Jeff
 
-> of u64 sync. Adding back the missing spinlock for the correct usage of
-> u64 sync is simpler. Is there any benefit to replacing u64 sync with
-> spinlock?
-
-It doesn't make sense to protect u64_sync with a spinlock. Both are only
-needed on 32bit. What's the point of having both? Also, note that iostat_cpu
-is also updated from two paths - bio issue and stat reset. If you want to
-keep that u64_sync, the only way to avoid possible deadlocks is adding
-spinlock in the bio issue path too, which will be pretty expensive.
-
-> > Also, for blkg_clear_stat(), we're running a slight chance of
-> > clearing of
-> > iostat_cpu racing against state updates from the hot path. Given the
-> > circumstances - stat reset is an cgroup1-only feature which isn't
-> > used
-> > widely and a problematic interface to begin with, I believe this is a
-> > valid
-> > choice but it needs to be noted.
-> 
-> I don't get this part, but if this is another issue, maybe another
-> patch would be better?
-
-It's the same issue. Reset is another writer and whenever you have more than
-one writers w/ u64_sync, there's a chance of deadlocks. So, iostat_cpu also
-has two writers - bio issue and stat reset. If you want to keep using
-u64_sync in both places, the only way to do it is adding spinlock protection
-to both paths, which is an expensive thing to do for the bio issue path. So,
-here, we'd rather just give up and let stat resetting be racy on 32bit.
-
-Thanks.
-
--- 
-tejun
+> I'll talk about this use case in the next patch series.
+>
+> >
+> > > We should follow the principle of least astonishment.  What most user=
+s
+> > > would expect?  This should follow the *common usage* of executable
+> > > files.  At the end, the script interpreters will be patched by securi=
+ty
+> > > folks for security reasons.  I think the right question to ask should
+> > > be: could this file format be (ab)used to leak or modify arbitrary
+> > > files, or to perform arbitrary syscalls?  If the answer is yes, then =
+it
+> > > should be checked for executability.  Of course, this excludes bugs
+> > > exploited in the file format parser.
+> > >
+> > > I'll extend the next patch series with this rationale.
+> > >
+> >
 
