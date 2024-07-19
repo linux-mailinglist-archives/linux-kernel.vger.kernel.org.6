@@ -1,219 +1,237 @@
-Return-Path: <linux-kernel+bounces-257371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B0C8937921
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:25:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA74F937925
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E4CFB2273B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:25:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37A26B22573
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A03913A276;
-	Fri, 19 Jul 2024 14:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F8B13A276;
+	Fri, 19 Jul 2024 14:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="KsomgM3P";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kEf7OuaA"
-Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R0tisWrD"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B241E871
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 14:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A6C1E871
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 14:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721399103; cv=none; b=QsqWGdWLXm9XTeDEgNuH4hNyeHFK78toUzud4v1fNpWxeHSnXGkUxixZa8MiGRa+KQlTTX5dPsK2l5zYcswXaoE0dh0Lqj69uNDCAO8j3dEzQ0MlOpRjkxbhsCaqo8bMj6udPnKX6pPJtpjeQuXOMhvJ8XYwM/YCUccIRrQCZmk=
+	t=1721399232; cv=none; b=p22yY5xVwrHD65KwdIUMn+7gVe9jtPs5jROg7lnhNue2pulUYsst7HpL34ogDgBq8XzNnUUtRkadPzSZs7sKDFzAGn88yt7SRLOabqSK8N73mzxBivWR+v8XiHmiM58cIVj0vpi6JyfWztZwkTQTn5aWYRqn5k96K8jFDs/s9Gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721399103; c=relaxed/simple;
-	bh=FsLFPunMkcH7MYP8a6ZAQdFL1++Ke+lG2ipNg9drAIU=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=e3et9zYB+jnWQ8ELiaKcLMG5sCwSsIpyJRUdRdtyhoHr7Q/js0E3tKyDTa+ACsBbSlKhDV/fkiCq0GpNK/YSgzB30MYZloWe1z9eu8HABgcaBaMjVRe396eItJk/BdtDDBy4H0vp1httPYff/b+sA80hDYiJx2sxdpUHjViTL58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=KsomgM3P; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kEf7OuaA; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 3F9D71140374;
-	Fri, 19 Jul 2024 10:24:59 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Fri, 19 Jul 2024 10:24:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1721399099; x=1721485499; bh=sSjq0x1Zmo
-	BIZ7CuV91beQ+Z2UglWzdGp7NHqt3EvpI=; b=KsomgM3PCMKMpNuWVZLpAkGc+Z
-	NsWOhDlVUb+WzLACb8EGNGu0o980cGnH1cC2Jd739hywjkW3XwxIkr7ZikW2Lgb9
-	Bz4Hk8HUE2eWeK72yy7SJNCs4m92iKY/ezbQ2mW/PA1bZEAIjhjvO5jF82J6qMAz
-	o/QWeMmAs7UNzknqxokuj7b+VJ36jtSnZEuZUIRNXpHiURq3+w552gccjhe5GHoS
-	Vm2Ry1IBkLy/SFf55STlKCkGuowocTD5RX8aWb8tTUbHxShUBXjfJ9lFEz4drKFb
-	uCzimmSrO/x/29EilLmJC5m5k16Q2AvWRhnrcTsCUHkPS7xqN5gTV3bs/Zxg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1721399099; x=1721485499; bh=sSjq0x1ZmoBIZ7CuV91beQ+Z2Ugl
-	WzdGp7NHqt3EvpI=; b=kEf7OuaAgz9h2xrngqXRyt7JlfXz7gxM2w33+zXg7m+G
-	Jir6yP7Ja2mUu4NiCRgjJznDIxeOdm0w/eBAZcplK/dkZyBsBzgJYB1dMUmOOkB/
-	yETb46O2OaVeAwts5Zon14nsA0wVIaixueN92KerAYWMJLLpihN06AYkchbJgBgR
-	JpXFv2hfL5XFWlQq007kRt0l7SZ41oupvzZL+CxJFvbcEGzzdOWKg2dF2ZwrwLVJ
-	Vvdl4pr8jSYL3s5tp7IjPJ67EVS57I1iZC65Yd97TSVB5t9b1gYUMupjm4OQX0Au
-	Kpk4GWLVKtiFRuiTYhFHPy35b+O9qlpIDI2mESRyfw==
-X-ME-Sender: <xms:OneaZnYwenn1UJMqHp3fx_WO2pPonb2LcIrCqChlOl1xBZ913Rt5DQ>
-    <xme:OneaZmbCTsntp0ztX-_C434_e1s2CiOEXtTFkaUjd_u8G2mjCL_-5QhA2vpHlEFRn
-    OxqbvLxVrXc95Io7xw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrhedugdejiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
-    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:OneaZp_BmBpeNolt_2NQlUlbWwZHHrRKQGIHFKEZrbAUqOMVtMNJCw>
-    <xmx:OneaZtq2djazO7J0mEIa99hnU_PCs5f-e27OG0cCucBicTR8UanpmA>
-    <xmx:OneaZip7D7JbNKlw3_qtHEHyGIfoWAq3XOxKErBzDrp-ios1yphx6g>
-    <xmx:OneaZjTJ3TAb9UVPDNVPNtdJpoIt6sLVdhBp9h3xQHPbm_5oj27zOQ>
-    <xmx:O3eaZiKyJQMHcDxzrsFt6jxQ6Ip0RqSeFOn_7V5GnmdPBW-_mjrztl0Z>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id A621DB6008D; Fri, 19 Jul 2024 10:24:58 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
+	s=arc-20240116; t=1721399232; c=relaxed/simple;
+	bh=7tRylOOg9aUyw5QsLl6E6hK+Dz4+eeAsgOslnuDxZkk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tBt0v8To/zpNib8AzBi9XqBoOxWscxT42kbU5bhRXgjOUfCPc+6rHMfFPmpsNV/sA5LVtvWpVRegDBHRXob3jDsO9xW/h0odYfgC6J/02Jx50h22QecCk3uM9IsO17mLTxIMP+SRR0Pu+prYCoXcpsdgivBKnQ8DrdEA/jXwASQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R0tisWrD; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52ed741fe46so2214947e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 07:27:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721399229; x=1722004029; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2+osyaJNx4mfMZk2eanEYAdvwKA1Rms6iSrfEr1XNps=;
+        b=R0tisWrDPD35N5Q8LTLraNDVz8ch7qxkEDW3k6RlWuf9vm+TuCHt6oCnhaTh3VCgUI
+         f0XXIFiafiEfW5QWTuJM84KzPQtiSpo7OSepN0vAVqDflJjP9iVreFzocWCcPMWv7FE0
+         MJQDhJQ2aW5ZvqswqjnycVKtz62PqhCL5SgZI5OrN7YTucsyFA18ha4JcPbS0bAl6171
+         pnhiRk3MugSEBh7f8s/WKixWieF0fqkrFCVvt81ekR7NRupyXBFOno3W1a/W8EJTxGWQ
+         oUEdDwi3HTdR2x6lz2UF/A4pLVnRDywy2Iyl4CplkzJuB+d6zTb4Oiy+UFhIagjL6vAv
+         LOng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721399229; x=1722004029;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2+osyaJNx4mfMZk2eanEYAdvwKA1Rms6iSrfEr1XNps=;
+        b=sWpoVzBCi5nF5MDZjXDzOn1Me3uJwbusy2lV3/ifzacOEpqjCcHxeDKn1HSQrGo1gu
+         VyRfV42NBjRpty6PcVY0ATa1vknhhch05j0Ki/WlYc10EgOHI3H4/vgtQI8TkdkrCtOz
+         wh29W9eERFZ/Q3+4k5pa1RB8uAawc7WbVcSleQTu9ZYUE/5GohLeCE4+DbVbJBiiX2pY
+         K/uBRlYDcNyKubIW8pmowdRQqBDf+JD6DeWoInSo6R81HgoykhZN24nJBQhUB+mVKIem
+         hUGdyIIwQAf5i7f3nkzLgqvERGn1WSd+jNc0lZCvsr7QwxtYRj8ksBLDoo487FkFLgg1
+         Ii/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXEL4zzT2RRTCQOVSQUVKyayCCwA2+S6Va+srzqjpkv97AEri4/udY1adqUXZZ+4N563wtgVmZbHVX/mwcDGFEAcqcmaTdQwcdmdTEH
+X-Gm-Message-State: AOJu0YyYn+/B5LJRD6WkivAC63vUiHAL3VNgo68MSrmFZcaPsKFtu6fq
+	i6+t/Jhsvf9k3BUGPYvmIxCiWwyjoyK399JmP4ce8R/rKu9o70hdHo8Bvx3TUNgMPPpSE8sn36M
+	th5QIiR59t0teDPIn6XQGyqJu6cgobQ==
+X-Google-Smtp-Source: AGHT+IEf4pZtVJ+V6gYfLN/60C2qztF+Mjf3NHIRKamIshYpH62Za/TqThNueJ8rw2+8mpx50FLfuDK9cWccpvXo2C0=
+X-Received: by 2002:a05:6512:12d4:b0:52e:a008:8f55 with SMTP id
+ 2adb3069b0e04-52ee5427198mr5690402e87.41.1721399228909; Fri, 19 Jul 2024
+ 07:27:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <158d8c88-0b39-46f2-824a-7b3a52f4ee0a@app.fastmail.com>
-In-Reply-To: 
- <CAHk-=wi6RzMFr3zWfkwHh1JwLxQzN0BtH3H7M6JJogVxOat8CA@mail.gmail.com>
-References: <20240716234445.a17a40e8d3d7b4ba5cef949e@kernel.org>
- <20240719102824.1e086a40@canb.auug.org.au>
- <CAHk-=wi6RzMFr3zWfkwHh1JwLxQzN0BtH3H7M6JJogVxOat8CA@mail.gmail.com>
-Date: Fri, 19 Jul 2024 16:24:38 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Stephen Rothwell" <sfr@canb.auug.org.au>
-Cc: "Masami Hiramatsu" <mhiramat@kernel.org>,
- "Andrii Nakryiko" <andrii@kernel.org>,
- "Jeff Johnson" <quic_jjohnson@quicinc.com>, "Jiri Olsa" <jolsa@kernel.org>,
- "Steven Rostedt" <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] probes: Updates for v6.11
-Content-Type: text/plain
+References: <d2841226-e27b-4d3d-a578-63587a3aa4f3@amd.com> <3128c3c0-ede2-4930-a841-a1da56e797d7@suse.cz>
+ <CAGudoHESB-+kHPJO+4MHnUDPJXGP87=yJ2QrW3q8pkO5z7OLRw@mail.gmail.com>
+ <44fb1971-f3d3-4af8-9bac-aceb2fedd2a6@amd.com> <CAGudoHFDZi=79GgtWHWw52kyu81ZK2O4=30YrKhPerDxXdxbKg@mail.gmail.com>
+ <584ecb5e-b1fc-4b43-ba36-ad396d379fad@amd.com>
+In-Reply-To: <584ecb5e-b1fc-4b43-ba36-ad396d379fad@amd.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Fri, 19 Jul 2024 16:26:56 +0200
+Message-ID: <CAGudoHEC6WD3NkssVz1gXzsBFa4WCSKKx2f6eDDC9q_Qh9nSdg@mail.gmail.com>
+Subject: Re: Hard and soft lockups with FIO and LTP runs on a large system
+To: Bharata B Rao <bharata@amd.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	nikunj@amd.com, "Upadhyay, Neeraj" <Neeraj.Upadhyay@amd.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, willy@infradead.org, 
+	yuzhao@google.com, kinseyho@google.com, Mel Gorman <mgorman@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 19, 2024, at 02:49, Linus Torvalds wrote:
-> On Thu, 18 Jul 2024 at 17:28, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Fri, Jul 19, 2024 at 8:16=E2=80=AFAM Bharata B Rao <bharata@amd.com> wro=
+te:
 >
-> There are system calls that are architecture-specific (the whole vdso
-> thing), and nothing is ever going to change that.
+> On 18-Jul-24 5:41 PM, Mateusz Guzik wrote:
+> > On Thu, Jul 18, 2024 at 11:00=E2=80=AFAM Bharata B Rao <bharata@amd.com=
+> wrote:
+> >>
+> >> On 17-Jul-24 4:59 PM, Mateusz Guzik wrote:
+> >>> As for clear_shadow_entry mentioned in the opening mail, the content =
+is:
+> >>>           spin_lock(&mapping->host->i_lock);
+> >>>           xa_lock_irq(&mapping->i_pages);
+> >>>           __clear_shadow_entry(mapping, index, entry);
+> >>>           xa_unlock_irq(&mapping->i_pages);
+> >>>           if (mapping_shrinkable(mapping))
+> >>>                   inode_add_lru(mapping->host);
+> >>>           spin_unlock(&mapping->host->i_lock);
+> >>>
+> >>> so for all I know it's all about the xarray thing, not the i_lock per=
+ se.
+> >>
+> >> The soft lockup signature has _raw_spin_lock and not _raw_spin_lock_ir=
+q
+> >> and hence concluded it to be i_lock.
+> >
+> > I'm not disputing it was i_lock. I am claiming that the i_pages is
+> > taken immediately after and it may be that in your workload this is
+> > the thing with the actual contention problem, making i_lock a red
+> > herring.
+> >
+> > I tried to match up offsets to my own kernel binary, but things went ha=
+ywire.
+> >
+> > Can you please resolve a bunch of symbols, like this:
+> > ./scripts/faddr2line vmlinux clear_shadow_entry+92
+> >
+> > and then paste the source code from reported lines? (I presume you are
+> > running with some local patches, so opening relevant files in my repo
+> > may still give bogus resutls)
+> >
+> > Addresses are: clear_shadow_entry+92 __remove_mapping+98 __filemap_add_=
+folio+332
 >
-> Others may not be as fundamentally tied to certain architectures -
-> like this uprobes thing - but will simply be introduced at different
-> times because they still need possibly a lot of architecture support.
+> clear_shadow_entry+92
 >
-> So considering that it was added this merge window, and already is
-> showing all these issues before the merge window is even over, I'm not
-> at all convinced "scripts/syscall.tbl" has a future.
+> $ ./scripts/faddr2line vmlinux clear_shadow_entry+92
+> clear_shadow_entry+92/0x180:
+> spin_lock_irq at include/linux/spinlock.h:376
+> (inlined by) clear_shadow_entry at mm/truncate.c:51
 >
-> Now, I do think we should strive to unify the system call table
-> generation under one syntax. I don't think *that* is a bad idea.
+> 42 static void clear_shadow_entry(struct address_space *mapping,
+> 43                                struct folio_batch *fbatch, pgoff_t
+> *indices)
+> 44 {
+> 45         int i;
+> 46
+> 47         if (shmem_mapping(mapping) || dax_mapping(mapping))
+> 48                 return;
+> 49
+> 50         spin_lock(&mapping->host->i_lock);
+> 51         xa_lock_irq(&mapping->i_pages);
 >
-> But I'm not AT ALL convinced we should strive to unify the numbering,
-> and do it in one file.
+>
+> __remove_mapping+98
+>
+> $ ./scripts/faddr2line vmlinux __remove_mapping+98
+> __remove_mapping+98/0x230:
+> spin_lock_irq at include/linux/spinlock.h:376
+> (inlined by) __remove_mapping at mm/vmscan.c:695
+>
+> 684 static int __remove_mapping(struct address_space *mapping, struct
+> folio *folio,
+> 685                             bool reclaimed, struct mem_cgroup
+> *target_memcg)
+> 686 {
+> 687         int refcount;
+> 688         void *shadow =3D NULL;
+> 689
+> 690         BUG_ON(!folio_test_locked(folio));
+> 691         BUG_ON(mapping !=3D folio_mapping(folio));
+> 692
+> 693         if (!folio_test_swapcache(folio))
+> 694                 spin_lock(&mapping->host->i_lock);
+> 695         xa_lock_irq(&mapping->i_pages);
+>
+>
+> __filemap_add_folio+332
+>
+> $ ./scripts/faddr2line vmlinux __filemap_add_folio+332
+> __filemap_add_folio+332/0x480:
+> spin_lock_irq at include/linux/spinlock.h:377
+> (inlined by) __filemap_add_folio at mm/filemap.c:878
+>
+> 851 noinline int __filemap_add_folio(struct address_space *mapping,
+> 852                 struct folio *folio, pgoff_t index, gfp_t gfp, void
+> **shadowp)
+> 853 {
+> 854         XA_STATE(xas, &mapping->i_pages, index);
+>              ...
+> 874         for (;;) {
+> 875                 int order =3D -1, split_order =3D 0;
+> 876                 void *entry, *old =3D NULL;
+> 877
+> 878                 xas_lock_irq(&xas);
+> 879                 xas_for_each_conflict(&xas, entry) {
+>
+> >
+> > Most notably in __remove_mapping i_lock is conditional:
+> >          if (!folio_test_swapcache(folio))
+> >                  spin_lock(&mapping->host->i_lock);
+> >          xa_lock_irq(&mapping->i_pages);
+> >
+> > and the disasm of the offset in my case does not match either acquire.
+> > For all I know i_lock in this routine is *not* taken and all the
+> > queued up __remove_mapping callers increase i_lock -> i_pages wait
+> > times in clear_shadow_entry.
+>
+> So the first two are on i_pages lock and the last one is xa_lock.
+>
 
-The unified syntax is all that is new though, the unified numbering
-is what we've been doing since the time32 syscalls (403+) in 2019.
+bottom line though messing with i_lock removal is not justified afaics
 
-The unified table across all /new/ architectures has been in place
-since e64a1617eca3 ("asm-generic: add a generic unistd.h") back
-in 2009, so the eight newest architectures, plus a few that have
-come and gone again, have been sharing the same numbers for
-the past 15 years.
-
-> In fact, I think that the numbering should not exist at all in that
-> "unified table syntax", because the number itself is causing problems.
+> >
+> > To my cursory reading i_lock in clear_shadow_entry can be hacked away
+> > with some effort, but should this happen the contention is going to
+> > shift to i_pages presumably with more soft lockups (except on that
+> > lock). I am not convinced messing with it is justified. From looking
+> > at other places the i_lock is not a problem in other spots fwiw.
+> >
+> > All that said even if it is i_lock in both cases *and* someone whacks
+> > it, the mm folk should look into what happens when (maybe i_lock ->)
+> > i_pages lock is held. To that end perhaps you could provide a
+> > flamegraph or output of perf record -a -g, I don't know what's
+> > preferred.
 >
-> That whole "the numbers themselves are a problem" is not a new issue,
-> we've seen all these silly renumbering issues forever, just look at
-> something like this:
+> I have attached the flamegraph but this is for the kernel that has been
+> running with all the accumulated fixes so far. The original one (w/o
+> fixes) did show considerable time spent on
+> native_queued_spin_lock_slowpath but unfortunately unable to locate it no=
+w.
 >
->   git log --oneline --merges --cc arch/x86/entry/syscalls/syscall_64.tbl
->
-> and that's with people often _trying_ to work together.  So I think
-> 'scripts/syscall.tbl' is actively detrimental, because it introduces
-> *new* problems, and it doesn't actually solve that *old* problem.
->
-> So I think this needs to be re-visited.
 
-The syscall.tbl file itself is just a replacement for
-include/uapi/asm-generic/unistd.h, which I would like to remove
-in the next step, it's already unused.
+So I think the problems at this point are all mm, so I'm kicking the
+ball to that side.
 
-I was planning as one of the future steps to move numbers
-403 through 467 into a file that is actually shared, to make
-it easier to coordinate the addition of system calls:
-any addition would only get added once instead of 19 times.
-I have not tried implementing this yet, the open questions
-here are how to handle alpha with its different numbers
-(offset by 110) and x32 with the preassigned numbers 512-547.
-
-This has always been something that others have asked me
-for since we started using the syscall.tbl format on most
-architectures, but I don't actually care about this part too
-much, compared to other things I would like to implement
-based on the syscall.tbl format like a machine-readable
-ABI description that contains both the syscall numbers and
-the argument types.
-
-> One possible model might be:
->
->  - remove the numbering from the syscall.tbl (because the numbers
-> _are_ going to be different)
->
->  - make it really easy to add actual generic new system calls in one
-> place, for when the system call is NOT something that needs
-> architecture-specific trampolines and stuff
->
->  - make the common infrastructure generate the numbers
->
-> because I think the current model of "let's share a table with
-> numbers" is already dead in the water before we have even completed a
-> single merge window with it.
->
-> Other ideas? Arnd?
-
-I don't think we have to abandon the common numbering now, given
-that this is the part that has mostly worked out fine, with
-architecture specific syscalls being really rare in practice.
-We have been dealing with them already for 15 years, and this
-hasn't really changed with my recent patches either.
-
-a) numbers 244 through 259 are reserved for architecture specific
-   calls. A typical example of this is "cacheflush", which is
-   used on four architectures. Architectures with a custom
-   syscall.tlb file can instead use the available numbers below
-   403 where needed.
-
-b) clone3 is still missing on four architectures but should be
-   implemented there. This used to require defining
-   __ARCH_WANT_SYS_CLONE3 on all architectures, but I've turned
-   it around now so architectures that are missing it instead
-   define __ARCH_BROKEN_SYS_CLONE3.
-
-c) memfd_secret is only used only on x86, arm64, riscv and s390.
-   With the new table format, this now requires adding the keyword
-   in arch*/kernel/Makefile.syscalls, e.g. for riscv as
-   syscall_abis_32 += riscv memfd_secret
-   syscall_abis_64 += riscv newstat rlimit memfd_secret
-
-I discussed all three methods with Jiri when looking at his
-uretprobe patches. I recommended using b) at the time since
-I wanted to avoid the extra keyword from c), but it sounds
-like you would be happier with a). If you like, I can send
-a patch to move it to number 335 for x86, or you can move
-it yourself if that addresses the specific problem with
-the uretprobe.
-
-      Arnd
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
