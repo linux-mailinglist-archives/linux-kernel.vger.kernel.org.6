@@ -1,124 +1,109 @@
-Return-Path: <linux-kernel+bounces-257232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC4FC93771B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:22:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F62A93771C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 13:26:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90CA71F2276B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 11:22:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBC89280A9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 11:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB5486131;
-	Fri, 19 Jul 2024 11:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="QTTQpw/g"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D39686131;
+	Fri, 19 Jul 2024 11:26:03 +0000 (UTC)
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB68284E14;
-	Fri, 19 Jul 2024 11:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597A67E1;
+	Fri, 19 Jul 2024 11:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721388149; cv=none; b=fy8hyO2pj/CtIKEvQB22Y/ev0NSS1qBHrlbtS9zbC71JT4FIuQIg/kd/CN+a0eTkjSBhv3fakIsA2xZxlCem0cbBMzB2iuR5HjQr4x+r6ovhXcAQGRx6hMhVf6uATpDuPb2geSZ0LgFiXIq91fLVS9toP8Ek3+TDHj10TO/HScE=
+	t=1721388362; cv=none; b=Efg1DEVQV+79Zjh7AyDtRnK70Bo4A9QDvK9OmvmlV0WAfpVXOL0fxtzD7i3MCU0djAqddn1IkCH0lDiX9iGnBtACc7eE7pe/iZp30D9PTJb78Pj70wZFy/oN356IpSsJ8cXstq60Iya58laqjW71+0KL2iuaXMtRbMZTFVoeps0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721388149; c=relaxed/simple;
-	bh=gCBf+KZT1rBru5MYqeke41rALdRkuIZfrNphkR+xKtg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=B9HZ6clHdmR+oWwlNljU4QcdkUDAhhpIQ/cNBodcDz+tWibri7MK5hAzJlgX/GCG/wtkvOn//Zt6y+y4Xw7brbNLRURCrdyHzP6GYgJTm2Sg1bduuHc2QXMXTS/lLouHDUk28jDfDNDn/a6ikp7TBRODpCiz0+3L9GWLBY2GCXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=QTTQpw/g; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 259E7100004;
-	Fri, 19 Jul 2024 14:22:21 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 259E7100004
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1721388141;
-	bh=llE/44dMTNKnUSBmsfPJUwp9Lmbr3Wo7lWfPjeUVyzU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=QTTQpw/go/CMBjRenn7SNcC23QGqsmSYiuUPI8srwMrN8+2P0zG2EUB5hJxOGbrmV
-	 7KhTiw486GV1jubtq7EO5aQ7HFhWLRoVppGn6NiQqQA2t7eCcOnJcNyvReNjQBmq90
-	 3TUqsbL9mRLWXECK0eQFw6tIwLi64vLdEQ/hhCs2wjG3g9L7xgeSWSyiVN6djx6nhP
-	 2j/exCVIRf5SK+TjMxg+Z0qKjFNYUid0Vlvx+gsCZC/2Pxqfez75R7RzWX+4NNbVMB
-	 nC903xNilBhW6Rn08tnib6G93bKjl4FLhS5T5yThA0SMJR8VghD3lucHdpkExQ1QAn
-	 ZWcYzscBCgnEA==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Fri, 19 Jul 2024 14:22:20 +0300 (MSK)
-Received: from [192.168.1.143] (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Fri, 19 Jul 2024 14:22:20 +0300
-Message-ID: <dbb4be50-4793-40ab-b362-6c9a6dd87324@salutedevices.com>
-Date: Fri, 19 Jul 2024 14:22:20 +0300
+	s=arc-20240116; t=1721388362; c=relaxed/simple;
+	bh=yIsOSUBsBAYRwfD1x6imO6+HBI+qJAWJRLOhxKoLMwI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cz3O/mWTTvcVc55DRELyoN/pe5E0LM8IpZmw99ZlvcWrH2cj1KW3Aj9SM94rG2DZMmVGWdwiu9nCCW0gfeTqWU9OY47+IN9v/KvPjz/zr3ghZnEwyh0Ohal8ZStpRdEWxbcIIsN1wN3BxhnNf2NtiOggtN4OQXxdnqLHHD9HPpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-64b29539d86so17614157b3.2;
+        Fri, 19 Jul 2024 04:26:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721388360; x=1721993160;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qeRKx7HuMSLsGy/oXdGTsw0hVo+ExRNmTFMMWWZzJGM=;
+        b=LrSFPCn5SGl0bOZZUL4hbHPEtywhTPzpDXgMp3ERYfK8tz4p7NCUxb8swySYBL44hF
+         PJKTjSEdsj/go81y9RiI+Uzrk+jHDJDt4o6nGD+mQybIttk5K20ou9M34k6fPIH3UOvP
+         tZHJ8XuEE07itGHC1Bd3HAsBpf3LbPcc0/oOVwXUxAydnwQb4xnCYKp/RX2E5IQxoTGK
+         KvlquiBq5bLJy7LaAw4KBq/0v8ARw6qDIq2ner8Zpl1R30ssgNeURzJYYHpJXlT4vTYk
+         K+c/KAWU/L98001RG4IRB08y6lzWPz/duOS+OTTywtFRhImENJ0i7V3nnPSS2d1jNLuO
+         ZHvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWTcCad0rBmlhER0XlGYHPhOYRHPlILlVTQwaLipz9pmKQzNH9W/X9QlE4GbEgIUn3SUI5UETi+ppDtULYAgO1lXraRGTFoVguv8IKv15uHhEg2L9eDkMeGClFdvY+3KcuH8vZjRkbnF5E=
+X-Gm-Message-State: AOJu0YxoGP5owHU2qVYosDW3RcK1bVSfWUR4L/yc6tKBSxwIhK+oSjYy
+	AA6wFsMUtyd0uiFzD/J6Af6QQ48VQfRfo2N0o/ftHE525vZ5TN0CSTeILp6Y
+X-Google-Smtp-Source: AGHT+IFpTfRTuozm/XvRUkchrKtveL1T/wZyssOlaFU7B2c1TAa3F+BMltpl8KZCh5HCHNfW5r4aPQ==
+X-Received: by 2002:a05:690c:310a:b0:62f:b282:9f02 with SMTP id 00721157ae682-666040cb87amr63857837b3.21.1721388359681;
+        Fri, 19 Jul 2024 04:25:59 -0700 (PDT)
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-669541bb90asm4137967b3.117.2024.07.19.04.25.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Jul 2024 04:25:59 -0700 (PDT)
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-65fc94099a6so18436337b3.1;
+        Fri, 19 Jul 2024 04:25:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVFTRUHxVf94Czg2UkU6Exjc9BCA4BsPOB1cMr+jR2fDj+kh9sBQQwDnVmZ7OwhvgmzaBvdIxHx1zrHXKsmgIs2ZT5HerNCAlDRvhwfqFIwM2CPXma0abLHEARGpnQcnoNWmAbVNSXG9co=
+X-Received: by 2002:a05:690c:4702:b0:650:9e71:bde7 with SMTP id
+ 00721157ae682-666044add08mr67281727b3.26.1721388359253; Fri, 19 Jul 2024
+ 04:25:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/3] pwm: meson: add pwm support for A1
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<neil.armstrong@linaro.org>, <linux-pwm@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <martin.blumenstingl@googlemail.com>,
-	<jbrunet@baylibre.com>, <khilman@baylibre.com>,
-	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <kernel@salutedevices.com>,
-	<hkallweit1@gmail.com>
-References: <20240710234116.2370655-1-gnstark@salutedevices.com>
- <52e2e211-a0b7-47b1-a451-34c304028097@salutedevices.com>
- <bp3hbxl6zs6lwomfdj6edhq35pde3gr5i2qizgdf2varke2eai@weeodo6gacd7>
-Content-Language: en-US
-From: George Stark <gnstark@salutedevices.com>
-In-Reply-To: <bp3hbxl6zs6lwomfdj6edhq35pde3gr5i2qizgdf2varke2eai@weeodo6gacd7>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186588 [Jul 18 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_arrow_text}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/07/18 08:50:00
-X-KSMG-LinksScanning: Clean, bases: 2024/07/18 08:50:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/18 08:29:00 #26061289
-X-KSMG-AntiVirus-Status: Clean, skipped
+References: <cover.1721066206.git.dsterba@suse.com>
+In-Reply-To: <cover.1721066206.git.dsterba@suse.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 19 Jul 2024 13:25:47 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdURvTtambJKd2uYqbRFYO_oBSsFHBunaXNfzvzqbPqbxQ@mail.gmail.com>
+Message-ID: <CAMuHMdURvTtambJKd2uYqbRFYO_oBSsFHBunaXNfzvzqbPqbxQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Btrfs updates for 6.11
+To: David Sterba <dsterba@suse.com>
+Cc: torvalds@linux-foundation.org, linux-btrfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jul 15, 2024 at 8:12=E2=80=AFPM David Sterba <dsterba@suse.com> wro=
+te:
+> please pull the changes described below. The hilights are new logic
+> behind background block group reclaim, automatic removal of qgroup
+> after removing a subvolume and new 'rescue=3D' mount options. The rest is
+> optimizations, cleanups and refactoring.
+>
+> There's a merge conflict caused by the latency fixes from last week in
+> extent_map.c:btrfs_scan_inode(), related commits 4e660ca3a98d931809734
+> and b3ebb9b7e92a928344a. Resolved in branch for-6.11-merged and that's
+> been in linux-next for a few days.
 
+FTR, this is broken on 32-bit (doesn't build, good ;-) and on big-endian
+(compiler warnings, no idea how it behaves :-(, so you better don't
+trust your data to it in the latter case...
 
-On 7/19/24 10:20, Uwe Kleine-König wrote:
-> Hello George,
-> 
-> On Thu, Jul 18, 2024 at 04:09:04PM +0300, George Stark wrote:
->> Excuse me, should I fix/improve anything on this series?
-> 
-> The known issue with this series is just that it's one of several patch
-> series that I didn't come around to review yet. I tackle them one at a
-> time, usually in a FIFO order as listed on
-> https://patchwork.ozlabs.org/project/linux-pwm/list/ .
-> 
-> Best regards
-> Uwe
+Gr{oetje,eeting}s,
 
-Hello Uwe
+                        Geert
 
-Ok, no problem. Thanks for letting me know.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
--- 
-Best regards
-George
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
