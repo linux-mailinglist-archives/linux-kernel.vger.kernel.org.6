@@ -1,191 +1,132 @@
-Return-Path: <linux-kernel+bounces-256890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C66B9371D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 03:08:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57C9D9371E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 03:14:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E21581F21B0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 01:08:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1966B28236C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 01:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F3923A0;
-	Fri, 19 Jul 2024 01:08:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5EB528F1;
+	Fri, 19 Jul 2024 01:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sdCtC4eS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SL1+xeZ/"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68A41362;
-	Fri, 19 Jul 2024 01:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86831362;
+	Fri, 19 Jul 2024 01:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721351318; cv=none; b=XVRSSWYP8tdfo4fOAOugpl4YzgnMLhEuuYun29qskGtZpus03UxBH494aVVtvquAWaQq0owC86A29qJYTpMqCuF+hk+bsXV3yfquWcF07dVPzP7U5AQAqOZU2SNumrtUfvnD9QT+PGH+Y3pJtMOZdFKPMHDMh3KS+jCTFLFnA9g=
+	t=1721351680; cv=none; b=T7AKWsfIG9OpuS7ImfZ/pKUrfF4xDIQi9TWi9jI1kO9zB3aGozcuDpebphKc9hqlIO9mTef66K9JSPhKZMgkvwAz5mhr3uaIflJ5RlRbJ3MyzgCI9NgPNw9SebPZUJDJrpuj0Utu8pPAL76L6Hv2aPEYKsk4YbFq7zwO89q7VqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721351318; c=relaxed/simple;
-	bh=laS8KpgNXmOqI9x98Dwxup3xExT3T+m9nrqsUudLSkM=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=tYB0rIcWM2XWDUsdisX+tGlIdMIlpiQdv9essyuF4AdyXC/UrDEL5eKjNn8e2H1z7F8msyOt+sMZaEkLDvO8lVvQ+E2HFOhpT10Of/5ODEvWnGRWpB5y3n5xM7jTZyXtHxre8Qk1tz5iQ7V6TZw1mxvRstmWYosIy/3UpGxcTwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sdCtC4eS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49016C4AF0A;
-	Fri, 19 Jul 2024 01:08:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721351318;
-	bh=laS8KpgNXmOqI9x98Dwxup3xExT3T+m9nrqsUudLSkM=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=sdCtC4eSieRC9x78sjYCL0fnKGAAWqdI91XAtQUnF1kM1oGRqoIilMk7dkjiI3MWE
-	 9FafSd2Ha/z7nDvcjtcYtMMee3E1H/oNyFMA5aQ3om6f/2yb4C08UG5kEejNym0CCc
-	 GfLAskHC8xD9H5t0VTpNSapSFavTlmtPauXLBsvwSNlnY+K0xjCNyLklERZyjGb8wT
-	 p21WQe32xyS4PR0ec0RPf8RaoL1nLJXkwrFNYjns7MrXp51Wc7NFlhIbGCclA8pagM
-	 uB5ZxxCJ018QcKgfV0xgMWggjoM97NtKcbEMu36esUlRfAs//FW0SGpA+2jevyYEF5
-	 y0IPM+BoanGJw==
-Message-ID: <ad8037bca3a99de58c4ef251d3288c15.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1721351680; c=relaxed/simple;
+	bh=XjHOvf7TF7Hp4p0Tj7h7XcREL2bteBJdvDn/I8O+zkA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=kBklc+Luh1Qz7h8O8OHri2og4siIZdpIB8YNYfhb3OlscNpdXeEjrWqYNkg3qTTm0cuRwT0g1Wd+bnUo2uja2itf6hgcDo9PhtUJm0G0/o7a/MM+QHrn6osq6tavlTGIS9a6XJPCJJVgkh/8yNNIbdgjME7P2xUZtKw4nUCSiYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SL1+xeZ/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46J0xWXq017355;
+	Fri, 19 Jul 2024 01:14:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=zHbhBFyOllyjuCCAoTfJqv
+	bJVQQNgmBpoTjvwW2kojM=; b=SL1+xeZ/TLoJ42dJK3+7PKiiUcdiGJrJyMPO+O
+	VJV3ufsk8ZXdvaOa3dmlPb5Ie1SREOXZnJ0MAbhrxY12vIn+CfSpnsyRAgXQQdzP
+	F2MGTVAmqNYCnxMrjaMGiiW+LZXHopuU0s35LrLJtQlpJTLO1D5FkWSH7eUdqyzu
+	ph1BPXFgI6/41jteKodVNGEDqlAjZYSZsrcEBDeLh8VBj1ACBi6YoF5cGazrcpi8
+	l9aascroSiNrIG3oNrds/cJd4j26UWzJJCk2eGhmPDhvmYW6fIQAI/g6fKXV9ukv
+	3mTYSruBw8DIAGFlqP8Axm8gOR76U6nwhnQlGXjL4wTozLkQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40fe33g0r3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Jul 2024 01:14:19 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46J1EIhK017016
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Jul 2024 01:14:18 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 18 Jul
+ 2024 18:14:18 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Thu, 18 Jul 2024 18:14:18 -0700
+Subject: [PATCH] crypto: ppc/curve25519 - add missing MODULE_DESCRIPTION()
+ macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <fd8078cb-fe1c-4aef-9e83-be2baa529720@tuxon.dev>
-References: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com> <20240716103025.1198495-4-claudiu.beznea.uj@bp.renesas.com> <2abcd440664067d95b1ac0e765ad55a3.sboyd@kernel.org> <e3103f07-ce8a-4c34-af5c-bb271c7ec99a@tuxon.dev> <4cacf090dc56c3ffd15bccd960065769.sboyd@kernel.org> <fd8078cb-fe1c-4aef-9e83-be2baa529720@tuxon.dev>
-Subject: Re: [PATCH v2 03/11] clk: renesas: clk-vbattb: Add VBATTB clock driver
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-To: alexandre.belloni@bootlin.com, claudiu beznea <claudiu.beznea@tuxon.dev>, conor+dt@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org, lee@kernel.org, magnus.damm@gmail.com, mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org
-Date: Thu, 18 Jul 2024 18:08:36 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240718-md-powerpc-arch-powerpc-crypto-v1-1-b23a1989248e@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAOm9mWYC/z3NQQ6CMBCF4auQWTtJKUbRqxgXw3SwXdA2U4IYw
+ t2txrj8Fu9/GxTRIAWuzQYqSyghxYr20AB7ig/B4KrBGns057bHyWFOT9HMSMr+D9ZXnhNavpy
+ 63jojNEKNZJUxrN+D2716oCI4KEX2n+xvNVGZRWHf3wtmQyOQAAAA
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin
+	<npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        "Naveen
+ N. Rao" <naveen.n.rao@linux.ibm.com>,
+        Danny Tsen <dtsen@linux.ibm.com>
+CC: <linux-crypto@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: AHCmfBGGce-eTHgTuaMnKcweacq8a52Y
+X-Proofpoint-GUID: AHCmfBGGce-eTHgTuaMnKcweacq8a52Y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-18_18,2024-07-18_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ lowpriorityscore=0 clxscore=1015 mlxscore=0 bulkscore=0 priorityscore=1501
+ impostorscore=0 spamscore=0 suspectscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2407190007
 
-Quoting claudiu beznea (2024-07-18 07:41:03)
->=20
->=20
-> On 18.07.2024 03:39, Stephen Boyd wrote:
-> >=20
-> > Sort of. Ignoring the problem with the subnode for the clk driver, I
-> > don't really like having clock-names that don't match the hardware pin
-> > names. From the diagram you provided, it looks like clock-names should
-> > be "bclk" and "rtxin" for the bus clock and the rtxin signal. Then the
-> > clock-cells should be "1" instead of "0", and the mux should be one of
-> > those provided clks and "xc" and "xbyp" should be the other two. If that
-> > was done, then assigned-clocks could be used to assign the parent of the
-> > mux.
-> >=20
-> > #define VBATTBCLK          0
-> > #define VBATTB_XBYP        1
-> > #define VBATTB_XC          2
-> >=20
-> >     vbattb: vbattb@1005c000 {
-> >         compatible =3D "renesas,r9a08g045-vbattb";
-> >         reg =3D <0x1005c000 0x1000>;
-> >         ranges =3D <0 0 0x1005c000 0 0x1000>;
-> >         interrupts =3D <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
-> >         interrupt-names =3D "tampdi";
-> >         clocks =3D <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&ext_clk>;
-> >         clock-names =3D "bclk", "rtxin";
-> >         power-domains =3D <&cpg>;
-> >         resets =3D <&cpg R9A08G045_VBAT_BRESETN>;
-> >         #clock-cells =3D <1>;
-> >         assigned-clocks =3D <&vbattb VBATTBCLK>;
-> >       assigned-clock-parents =3D <&vbattb VBATTB_XBYP>;
-> >         renesas,vbattb-load-nanofarads =3D <12500>;
-> >     };
->=20
-> I think I got it now. Thank you for the detailed explanation.
->=20
-> >=20
-> > One last thing that I don't really understand is why this needs to be a
-> > clk provider. In the diagram, the RTC is also part of vbattb, so it
-> > looks odd to have this node be a clk provider with #clock-cells at all.
->=20
-> I did it like this because the RTC is a different IP mapped at it's own
-> address and considering the other VBATTB functionalities (tamper, SRAM)
-> might be implemented at some point.
->=20
-> I also failed to notice that RTC might not work w/o bclk being enabled
-> (thanks for pointing it).
+Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
+description is missing"), a module without a MODULE_DESCRIPTION() will
+result in a warning with make W=1. The following warning is being
+observed when building ppc64le with CRYPTO_CURVE25519_PPC64=m:
 
->=20
-> I saw that diagram more like describing the always-on power domain
-> (PD_VBATTB) where the VBATTB logic and RTC resides. That power domain is
-> backed by battery. From HW manual [1]: "PD_VBATT domain is the area where
-> the RTC/backup register is located, works on battery power when the power
-> of PD_VCC and PD_ISOVCC domain are turned off."
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/crypto/curve25519-ppc64le.o
 
-Ah ok, so PD_VBATTB is like a power domain/wrapper and not an IP block
-mapped on the bus at the same address as the RTC that it wraps. That
-changes things a bit.
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
->=20
-> [1]
-> https://www.renesas.com/us/en/products/microcontrollers-microprocessors/r=
-z-mpus/rzg3s-general-purpose-microprocessors-single-core-arm-cortex-a55-11-=
-ghz-cpu-and-dual-core-cortex-m33-250
->=20
-> > Is it the case that if the rtxin pin is connected, you mux that over,
-> > and if the pin is disconnected you mux over the internal oscillator?=20
->=20
-> From the description here at [2] I'm getting that the "32-KHz clock
-> oscillator" block is used when crystal oscillator is connected to RTXIN,
-> RTXOUT pins and it is skipped if external clock device is connected.
->=20
-> [2] https://i2.paste.pics/RFKJ0.png?rand=3DXq8w1RLDvZ
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ arch/powerpc/crypto/curve25519-ppc64le-core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-It looks like in both cases something is connected to the pins. XC is to
-use an external crystal connected to both pins and XBYP is to use a
-single clk. Given that, perhaps naming the clk "rtx" is simplest and
-then using assigned-clock-parents is most direct because there's only
-really one "logical" clk input for this device. That means the XC and
-XBYP clks have the same parent, "rtx", and the XC clk is a gateable
-fixed rate clk while the XBYP clk is a fixed factor clk that does
-nothing besides pass on the rate of the "rtx" clk.
+diff --git a/arch/powerpc/crypto/curve25519-ppc64le-core.c b/arch/powerpc/crypto/curve25519-ppc64le-core.c
+index 4e3e44ea4484..f7810be0b292 100644
+--- a/arch/powerpc/crypto/curve25519-ppc64le-core.c
++++ b/arch/powerpc/crypto/curve25519-ppc64le-core.c
+@@ -295,5 +295,6 @@ module_exit(curve25519_mod_exit);
+ 
+ MODULE_ALIAS_CRYPTO("curve25519");
+ MODULE_ALIAS_CRYPTO("curve25519-ppc64le");
++MODULE_DESCRIPTION("PPC64le Curve25519 scalar multiplication with 51 bits limbs");
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Danny Tsen <dtsen@us.ibm.com>");
 
->=20
-> > I'm
-> > really wondering why a clk provider is implemented at all. Why not just
-> > hit the registers directly from the RTC driver depending on a
-> > devm_clk_get_optional() call?
->=20
-> I did it like this because the RTC is a different IP mapped at it's own
-> address with it's own interrupts, clock, power domain and considering that
-> the other VBATTB functionalities (tamper, SRAM) might be used at some poi=
-nt
-> in future. At the same time I failed to noticed the VBATTB clock might be
-> needed for RTC.
+---
+base-commit: df1e9791998a92fe9f1e7d3f031b34daaad39e2f
+change-id: 20240718-md-powerpc-arch-powerpc-crypto-2c96382d0eaf
 
-The docs say VBATT in some places. Not sure if you want to rename it to
-vbatt and drop the extra b which probably stands for "backup"?
-
->=20
-> Do you consider better to just take a regmap to VBATTB from RTC driver and
-> set the VBATTB from RTC driver itself?
-
-No, don't do that. The only change from the above DT node is that the
-assigned-clocks and assigned-clock-parents property should be moved to
-the RTC node.
-
-
-     vbattb: vbattb@1005c000 {
-         compatible =3D "renesas,r9a08g045-vbattb";
-         reg =3D <0x1005c000 0x1000>;
-         ranges =3D <0 0 0x1005c000 0 0x1000>;
-         interrupts =3D <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
-         interrupt-names =3D "tampdi";
-         clocks =3D <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&ext_clk>;
-         clock-names =3D "bclk", "rtx";
-         power-domains =3D <&cpg>;
-         resets =3D <&cpg R9A08G045_VBAT_BRESETN>;
-         #clock-cells =3D <1>;
-         renesas,vbattb-load-nanofarads =3D <12500>;
-     };
-
-     rtc@1004ec00 {
-         compatible =3D "renesas,r9a08g045-rtc";
-         reg =3D <0x1004ec00 0x400>;
-         clocks =3D <&vbattb VBATTBCLK>;
-         assigned-clocks =3D <&vbattb VBATTBCLK>;
-         assigned-clock-parents =3D <&vbattb VBATTB_XBYP>; // Or VBATTB_XC =
-if external crystal connected
-     };
 
