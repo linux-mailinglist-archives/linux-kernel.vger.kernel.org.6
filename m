@@ -1,153 +1,174 @@
-Return-Path: <linux-kernel+bounces-257444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FA44937A35
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:52:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34C7F937A3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:59:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BBD12828DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:52:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFF12282E7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5A2145FE5;
-	Fri, 19 Jul 2024 15:51:52 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9E8145FE3;
+	Fri, 19 Jul 2024 15:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aouf/E/9"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83141B86D5;
-	Fri, 19 Jul 2024 15:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB764C69
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 15:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721404312; cv=none; b=NlkCBFxFr+WW6RMCXTdwnq/O4AxgjJHp5B2n4jGGLHQxxg/ptC+d1nI4LbYSKrwefaOWA2rgjuhtowlufWT6z1dIvop1U4AMh6j5oV1D5eALpJ8tWMaFg/NZd0eqNa/22oUHIUyKa7kmPS8kcAdFxLkvqI1fZtNIiLyZvahCsYw=
+	t=1721404745; cv=none; b=g9+8z8PhHu8O+3wc4J0ON2YtU6DFH8FYvHGGm+T9J0QHAeZNi9FUCGvvpxNVl2Tm7TbsthY3b2DWZcJ8+3poMuYzwstqBnna7UMReUUTy74fwLveghLjoILYbcrLhVogGOBu6LdogsMkzcaLiOoZ4/gGBFeV6FxqCeDg+Rp5q7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721404312; c=relaxed/simple;
-	bh=AlQm9yZ2sFI01jHgI7WArkoI84hOnV0JYdzW/8DBq5k=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L21f8rchkOuk+7SDWprPMSywKoyI+itAYQYjkZwLSmFozI7XUzJ6K7vnMFuq7H6Q0oSi07KjrfrL1Z6vx84tYadluAoD/eXf8vLis80DPF+Q4D7VvG6VmMQMu/fyf5JSP8PAxX4wWGVilikR52SmWSdud3/HFNDf6gevr7GWgqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WQYyl1P08z6J67T;
-	Fri, 19 Jul 2024 23:49:51 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id BC470140517;
-	Fri, 19 Jul 2024 23:51:45 +0800 (CST)
-Received: from localhost (10.48.157.16) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 19 Jul
- 2024 16:51:44 +0100
-Date: Fri, 19 Jul 2024 16:51:43 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: David Hildenbrand <david@redhat.com>
-CC: Mike Rapoport <rppt@kernel.org>, <linux-kernel@vger.kernel.org>,
-	"Alexander Gordeev" <agordeev@linux.ibm.com>, Andreas Larsson
-	<andreas@gaisler.com>, Andrew Morton <akpm@linux-foundation.org>, Arnd
- Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>, Catalin Marinas
-	<catalin.marinas@arm.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dan Williams <dan.j.williams@intel.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, "David S. Miller" <davem@davemloft.net>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Heiko Carstens
-	<hca@linux.ibm.com>, "Huacai Chen" <chenhuacai@kernel.org>, Ingo Molnar
-	<mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, John Paul Adrian
- Glaubitz <glaubitz@physik.fu-berlin.de>, Michael Ellerman
-	<mpe@ellerman.id.au>, Palmer Dabbelt <palmer@dabbelt.com>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Thomas
- Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner
-	<tglx@linutronix.de>, "Vasily Gorbik" <gor@linux.ibm.com>, Will Deacon
-	<will@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<loongarch@lists.linux.dev>, <linux-mips@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <linux-riscv@lists.infradead.org>,
-	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>,
-	<sparclinux@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-	<linux-mm@kvack.org>, <x86@kernel.org>
-Subject: Re: [PATCH 05/17] arch, mm: pull out allocation of NODE_DATA to
- generic code
-Message-ID: <20240719165143.0000002e@Huawei.com>
-In-Reply-To: <96850252-a49f-4d78-a94b-a9a25e3f2bd5@redhat.com>
-References: <20240716111346.3676969-1-rppt@kernel.org>
-	<20240716111346.3676969-6-rppt@kernel.org>
-	<220da8ed-337a-4b1e-badf-2bff1d36e6c3@redhat.com>
-	<Zpi-HAb7EBxrZBtK@kernel.org>
-	<96850252-a49f-4d78-a94b-a9a25e3f2bd5@redhat.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1721404745; c=relaxed/simple;
+	bh=S6gA3Pky3kRLWgK4099csZaRIGqlKAMPaKHzObsFk4A=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=plnCB2E33+etupCol0twNf2+9elNoE6Sktdurc5OUzT1yfML31g0zssqKQWJRHPf/8NO6J1XioyVy7oCXPH8bdcUTL7wEkGnHJ/m9lzCDFdXrAEggd2dXYX1w98Wppqz3FrcOd4JyzuzhhFfX/hhzMeLwUb5B/G4bnjDMPEG/vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aouf/E/9; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e036440617fso5063422276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 08:59:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721404742; x=1722009542; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hmVLmXG6HUEZ1zgQ+Jo6sV2CT1wbQkb6tcz4M5bcpCY=;
+        b=aouf/E/9E4Ri8oCj1ZuzrffA5K4UHrrHMfyFMzseXcKnahwdZYIsBWsh/SXgn2Sv3o
+         Qprc7KNA6bMINzwZrfu5W2fD65E0KQ7ElwopVSlGedZH4RJ2u32dSHTBQpmzkt1J9YeB
+         Afbj/V14ksvd+lygVbawphe3RtpaCGPB5puHI7M5jS7zcKMx4kCVy+Ue5LYrlmqv803y
+         wYdzRIA1Khh+z4DzbpEOaBkcWH878WETOcGj3KULf8223SGini0WuvQrb+YlqKjtY5gl
+         R8mnE3A0yna9a+wPb3hOJZJ32VdllhYXZj532xAWH1yM2PEVfD223dH0uj11aYYYftmM
+         zY3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721404742; x=1722009542;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hmVLmXG6HUEZ1zgQ+Jo6sV2CT1wbQkb6tcz4M5bcpCY=;
+        b=KgtMWp64FR9hsrZi8o9E6B7WYoS+MNpcyNRalOZQaYm7Eb795JqpdNrnEIp6yjvkbj
+         KovJVwrV5m4NoY8ES9/UK8mR6Qg3UmHac+vDhaSDibvARcgXzL1HIU8IERH/CTsPOspH
+         1mGaEtVasKoQzSRzraQf557/CMN4VjKOblNCGvUOWmYyLyDS04iKER52Se7NVFzUL+8r
+         FOFsCIxq+5tRuLFRIerM4AQu3u3J9ngDR+FLPSWFSc8q7GFDDQQ6mBUjM58OgiboYr2s
+         70eMxLjxlrM6hXbjtuyg7cMr2fhlqnbv+Js3TEg9ausN2JAYCY9/T8+qAFP+f+J2P06+
+         hPrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWdmyQarsRrH+WusLH0zCJgX+DVrwCGSBipneS71udb+UUF5I/ee9EOOTnqw/w2bjsrCyfw01LzhhbXCVER+VhupY9UeManNnydIn5F
+X-Gm-Message-State: AOJu0Yw4spEhj9iuS2wk7odzRTPK9P9t+OHc0U42S2mfnUy75bVEencL
+	2M9xPJq1YEUGAuGWZew+dBTCrj+C6u/jfc06Qq8uu1quBrNFLLUUuaCGSwvCoay/xi1fJq1ltRC
+	YHw==
+X-Google-Smtp-Source: AGHT+IEpJ18W6MbHK885Kx8gIxJoghb67upLSE4Rrad0klqxY1BrfqtTnDl4Xu8dBPLpSgMh4ccA4wiMAMM=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:114b:b0:e05:6532:166 with SMTP id
+ 3f1490d57ef6-e086fdea67cmr166276.1.1721404741724; Fri, 19 Jul 2024 08:59:01
+ -0700 (PDT)
+Date: Fri, 19 Jul 2024 08:59:00 -0700
+In-Reply-To: <099D0BF1-BDC6-489F-B780-174AFEE8F491@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Mime-Version: 1.0
+References: <20240207172646.3981-1-xin3.li@intel.com> <20240207172646.3981-10-xin3.li@intel.com>
+ <ZmoYvcbFBPJ5ARma@google.com> <SA1PR11MB67348BD07CCCF8D52FCAC8FEA8A42@SA1PR11MB6734.namprd11.prod.outlook.com>
+ <ZpFH86n_YY5ModwK@google.com> <099D0BF1-BDC6-489F-B780-174AFEE8F491@zytor.com>
+Message-ID: <ZpqNREwyn4LzN2tp@google.com>
+Subject: Re: [PATCH v2 09/25] KVM: VMX: Switch FRED RSP0 between host and guest
+From: Sean Christopherson <seanjc@google.com>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Xin3 Li <xin3.li@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "corbet@lwn.net" <corbet@lwn.net>, 
+	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"shuah@kernel.org" <shuah@kernel.org>, "vkuznets@redhat.com" <vkuznets@redhat.com>, 
+	"peterz@infradead.org" <peterz@infradead.org>, Ravi V Shankar <ravi.v.shankar@intel.com>, 
+	"xin@zytor.com" <xin@zytor.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, 19 Jul 2024 17:07:35 +0200
-David Hildenbrand <david@redhat.com> wrote:
-
-> >>> -	 * Allocate node data.  Try node-local memory and then any node.
-> >>> -	 * Never allocate in DMA zone.
-> >>> -	 */
-> >>> -	nd_pa = memblock_phys_alloc_try_nid(nd_size, SMP_CACHE_BYTES, nid);
-> >>> -	if (!nd_pa) {
-> >>> -		pr_err("Cannot find %zu bytes in any node (initial node: %d)\n",
-> >>> -		       nd_size, nid);
-> >>> -		return;
-> >>> -	}
-> >>> -	nd = __va(nd_pa);
-> >>> -
-> >>> -	/* report and initialize */
-> >>> -	printk(KERN_INFO "NODE_DATA(%d) allocated [mem %#010Lx-%#010Lx]\n", nid,
-> >>> -	       nd_pa, nd_pa + nd_size - 1);
-> >>> -	tnid = early_pfn_to_nid(nd_pa >> PAGE_SHIFT);
-> >>> -	if (tnid != nid)
-> >>> -		printk(KERN_INFO "    NODE_DATA(%d) on node %d\n", nid, tnid);
-> >>> -
-> >>> -	node_data[nid] = nd;
-> >>> -	memset(NODE_DATA(nid), 0, sizeof(pg_data_t));
-> >>> -
-> >>> -	node_set_online(nid);
-> >>> -}
-> >>> -
-> >>>    /**
-> >>>     * numa_cleanup_meminfo - Cleanup a numa_meminfo
-> >>>     * @mi: numa_meminfo to clean up
-> >>> @@ -571,6 +538,7 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
-> >>>    			continue;
-> >>>    		alloc_node_data(nid);
-> >>> +		node_set_online(nid);
-> >>>    	}  
-> >>
-> >> I can spot that we only remove a single node_set_online() call from x86.
-> >>
-> >> What about all the other architectures? Will there be any change in behavior
-> >> for them? Or do we simply set the nodes online later once more?  
-> > 
-> > On x86 node_set_online() was a part of alloc_node_data() and I moved it
-> > outside so it's called right after alloc_node_data(). On other
-> > architectures the allocation didn't include that call, so there should be
-> > no difference there.  
+On Thu, Jul 18, 2024, H. Peter Anvin wrote:
+> On July 12, 2024 8:12:51 AM PDT, Sean Christopherson <seanjc@google.com> wrote:
+> >On Wed, Jul 10, 2024, Xin3 Li wrote:
+> >> > On Wed, Feb 07, 2024, Xin Li wrote:
+> >> > > Switch MSR_IA32_FRED_RSP0 between host and guest in
+> >> > > vmx_prepare_switch_to_{host,guest}().
+> >> > >
+> >> > > MSR_IA32_FRED_RSP0 is used during ring 3 event delivery only, thus
+> >> > > KVM, running on ring 0, can run safely with guest FRED RSP0, i.e., no
+> >> > > need to switch between host/guest FRED RSP0 during VM entry and exit.
+> >> > >
+> >> > > KVM should switch to host FRED RSP0 before returning to user level,
+> >> > > and switch to guest FRED RSP0 before entering guest mode.
+> >> > 
+> >> > Heh, if only KVM had a framework that was specifically designed for context
+> >> > switching MSRs on return to userspace.  Translation: please use the
+> >> > user_return_msr() APIs.
+> >> 
+> >> IIUC the user return MSR framework works for MSRs that are per CPU
+> >> constants, but like MSR_KERNEL_GS_BASE, MSR_IA32_FRED_RSP0 is a per
+> >> *task* constant, thus we can't use it.
+> >
+> >Ah, in that case, the changelog is very misleading and needs to be fixed.
+> >Alternatively, is the desired RSP0 value tracked anywhere other than the MSR?
+> >E.g. if it's somewhere in task_struct, then kvm_on_user_return() would restore
+> >the current task's desired RSP0.  Even if we don't get fancy, avoiding the RDMSR
+> >to get the current task's value would be nice.
 > 
-> But won't their arch code try setting the nodes online at a later stage?
-> 
-> And I think, some architectures only set nodes online conditionally
-> (see most other node_set_online() calls).
-> 
-> Sorry if I'm confused here, but with now unconditional node_set_online(), won't
-> we change the behavior of other architectures?
-This is moving x86 code to x86 code, not a generic location
-so how would that affect anyone else? Their onlining should be same as
-before.
+> Hm, perhaps the right thing to do is to always invoke this function before a
+> context switch happens if that happens before return to user space?
 
-The node onlining difference are a pain (I recall that fun from adding
-generic initiators) as different ordering on x86 and arm64 at least.
+Actually, if the _TIF_NEED_RSP0_LOAD doesn't provide a meaningful benefit (or
+y'all just don't want it :-) ), what KVM could do is restore MSR_IA32_FRED_RSP0
+when putting the vCPU and the vCPU is not being scheduled out, i.e. if and only
+if KVM can't guarantee a context switch.
 
-Jonathan
+If the vCPU/task is being scheduled out, update_task_stack() is guaranteed to
+write MSR_IA32_FRED_RSP0 with the new task's value.
 
-> 
+On top of kvm/next, which adds the necessary vcpu->scheduled_out:
+
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 5c6bb26463e8..4532ae943f2a 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -1338,15 +1338,9 @@ void vmx_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
+ 
+        wrmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
+ 
+-       if (guest_can_use(vcpu, X86_FEATURE_FRED)) {
+-               /*
+-                * MSR_IA32_FRED_RSP0 is top of task stack, which never changes.
+-                * Thus it should be initialized only once.
+-                */
+-               if (unlikely(vmx->msr_host_fred_rsp0 == 0))
+-                       vmx->msr_host_fred_rsp0 = read_msr(MSR_IA32_FRED_RSP0);
+-               wrmsrl(MSR_IA32_FRED_RSP0, vmx->msr_guest_fred_rsp0);
+-       }
++       if (cpu_feature_enabled(X86_FEATURE_FRED) &&
++           guest_can_use(vcpu, X86_FEATURE_FRED))
++               wrmsrns(MSR_IA32_FRED_RSP0, vmx->msr_guest_fred_rsp0);
+ #else
+        savesegment(fs, fs_sel);
+        savesegment(gs, gs_sel);
+@@ -1392,9 +1386,13 @@ static void vmx_prepare_switch_to_host(struct vcpu_vmx *vmx)
+ #ifdef CONFIG_X86_64
+        wrmsrl(MSR_KERNEL_GS_BASE, vmx->msr_host_kernel_gs_base);
+ 
+-       if (guest_can_use(&vmx->vcpu, X86_FEATURE_FRED)) {
++       if (cpu_feature_enabled(X86_FEATURE_FRED) &&
++           guest_can_use(&vmx->vcpu, X86_FEATURE_FRED)) {
+                vmx->msr_guest_fred_rsp0 = read_msr(MSR_IA32_FRED_RSP0);
+-               wrmsrl(MSR_IA32_FRED_RSP0, vmx->msr_host_fred_rsp0);
++
++               if (!vcpu->scheduled_out)
++                       wrmsrns(MSR_IA32_FRED_RSP0,
++                                (unsigned long)task_stack_page(task) + THREAD_SIZE);
+        }
+ #endif
+        load_fixmap_gdt(raw_smp_processor_id());
 
 
