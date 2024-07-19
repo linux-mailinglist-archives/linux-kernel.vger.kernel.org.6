@@ -1,205 +1,200 @@
-Return-Path: <linux-kernel+bounces-257100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A428937536
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:45:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5321E93753B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 10:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D09481F21999
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 08:44:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 070C11F2212E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 08:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990D37BB17;
-	Fri, 19 Jul 2024 08:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7DE7BAF7;
+	Fri, 19 Jul 2024 08:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i37XtB3P"
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="EHXhfzo2"
+Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489F957CBA;
-	Fri, 19 Jul 2024 08:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5139379B8E
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 08:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721378688; cv=none; b=h80ac5EFtQwyJSUUKM3BqEpC2NVq+cGgA9/YQdhn9UsEDP+xQCzn1h4cDUPNGcbBkBfTkf/t/Fb+YqmCB8zLYNgT5vvAE3i2fy7rZfR8xP9S6PGLinPNQch5G97GpYpjNaL91131xg6QvsbHVR80HEAG3wAiAVDVY0mBL7fE8Ag=
+	t=1721378713; cv=none; b=ZqtSmJvX2SFowXHFlmXvK7kJgwXSm3zUlcxQHlpK2rQCB5IJiAbT8SPuC2yxDWKOVdnaH3PIeMR6HAEJ2/LfLuocoOA6lIMnwGte1hzx62AzXMAr65pTZkF4+52t5jWGbO2qT6q5NnEDIyKN1znksWGvG0gdT31LdI94FcTxMvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721378688; c=relaxed/simple;
-	bh=PpFsMykj2rMA155uFBm0+rZUiyDQ+1ebRKvd+Xi1cVI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZSQQnhWB7oIABhKGlBn0yNRtM3VPg1Qn3s5Sro63hOi1ZSoDtl6SeWjlkDjxtX0aV53hCDS21eDL35MB8kcHC2Ze85J40qWr2M2ceyM8JcWDw12KUCf4KrLjABnzIfHhvxmF4ly9VaAZte8nk+ciGufZ6imthx2BJYhbYRoT4As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i37XtB3P; arc=none smtp.client-ip=209.85.161.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5d4fb707895so964941eaf.0;
-        Fri, 19 Jul 2024 01:44:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721378686; x=1721983486; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qqWzTgIPyPc3kjOh738BaLUwdtHiWUrZxYzCR8XzUmI=;
-        b=i37XtB3PM2fy9ICULge1nIemNDVNjoIVIb8FCZ+GORsCIW6A89lg9g1EEMkGalomHM
-         HMI+Py4FOlxlULWTwEVTJ5egqUCQMKlZQTwloWUlw3SP1EM5d+Tr+p6s9HKEpA6wA4Zq
-         fES+PZP/YwRpQvMZWbwnb2Kt66pdo4H2NV9otOuVxajEn0PXyRAOa2KQmoRIP6dQfYPC
-         iP8brDoLiwtZOqjLROjyRs46Ne9amJYYn8uuSoftNSNDPHGOJ7BJeLhue8zGyTrt5wlc
-         0BlWWikZI/CSoZXBs119tKxcy55/Spau9EGC62QlfkokCgYT/J9PHfBQyUFyJfUGgoRA
-         x4zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721378686; x=1721983486;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qqWzTgIPyPc3kjOh738BaLUwdtHiWUrZxYzCR8XzUmI=;
-        b=FlpqFsnNeSyhrFJfMR6jxL8pdyyuI7kzeQRUdIjIATurUJPOIklpjVNN8+cL6grh0T
-         WONXvUzm1lhnbD9fP38OZksRBw8fJJcqyv2mYWkT1ftw0vphduTmwFb+K9lx+PPlNBHo
-         dHIhvFJkwy/x0nmqVJAIYD1X6JfF5q3vdfxL3PeDYt6k7XdijANwaw/aac7sW/z9Bnkq
-         CuCVjUaajKKkF9jSqKelBKldQ/jBT2quiNBpzBCLWRgkkEF37yzxYFnhCv8Fqw5U4lgj
-         rOGGUgP28X/s9MQpZn454ypQm8SYru0w7nNUICoCgyWOzVSWD7FI5NN9S9I86DsBJat1
-         7Z4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWWSSJHqAZNP3U3zVEEQqyN3RwxJ5a7wKQxGSTD4LR3Jj/9ZvCQflkOIuJ0nESPln3Zm2VuvHJkLRO/IKBwbLRytqCO/s+XJj3wp7YYLgaL4XF9kSocVb/z5xnh++sVbM9LT17qpfiRjsquLqCZpI/rJwasAG+KiOCsZQr3WZ++LwhkvQ==
-X-Gm-Message-State: AOJu0Yw8ZUn41GUPv+8zWCvwoO/qVpvx3/wIRaMNLVQjfacyUfKHQrdY
-	GRr2gi5GurruqV7GTW/alpA0IT08ZZ1MvqJO84cdKeHX5HLokPJV
-X-Google-Smtp-Source: AGHT+IGU3zGdzTzo6n56ZVu275VrbT2ZJepaZOccFd487bTwWFRutlJaZP+B20zx67pngOdZbMRwmQ==
-X-Received: by 2002:a05:6820:1a0d:b0:5c6:9293:ed9d with SMTP id 006d021491bc7-5d41bf30324mr9004479eaf.4.1721378686237;
-        Fri, 19 Jul 2024 01:44:46 -0700 (PDT)
-Received: from localhost.localdomain ([122.8.183.87])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5d55a7fa3b1sm171808eaf.7.2024.07.19.01.44.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 01:44:45 -0700 (PDT)
-From: Chen Wang <unicornxw@gmail.com>
-To: adrian.hunter@intel.com,
-	aou@eecs.berkeley.edu,
-	conor+dt@kernel.org,
-	guoren@kernel.org,
-	inochiama@outlook.com,
-	jszhang@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	robh@kernel.org,
-	ulf.hansson@linaro.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	chao.wei@sophgo.com,
-	haijiao.liu@sophgo.com,
-	xiaoguang.xing@sophgo.com,
-	tingzhu.wang@sophgo.com
-Cc: Chen Wang <unicorn_wang@outlook.com>
-Subject: [PATCH v5 0/8] mmc: sdhci-of-dwcmshc: Add Sophgo SG2042 support
-Date: Fri, 19 Jul 2024 16:44:38 +0800
-Message-Id: <cover.1721377374.git.unicorn_wang@outlook.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1721378713; c=relaxed/simple;
+	bh=9TVMUdV79yx08Oir54aiTDR0gVmSjoHl2tYGjglb9VU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sHq3fw5s2xaj85hZPq5iXX9TNp58R0RR5LKe3fXzNVWHiWE+sxcEpUKzkqYucC0ACkd5jBbUH16zlxS/+TeVo0BZpupVIoB31oEG16+f+PA1Epfoxjg/W5rUJ02zQsz6Tja5I4uC5vpEJCklaBSrHrx/EmNI+9rmmECpLRhPxOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=EHXhfzo2; arc=none smtp.client-ip=84.16.66.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WQNXf6yX6z3ZM;
+	Fri, 19 Jul 2024 10:45:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1721378706;
+	bh=D77b+j+Z1jLOY8IPK59eCXt1xDHUtrJGP6+Y0dvzShE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EHXhfzo2I2JDYI5qE9CxmPPNE6gpt2J8KhR+cCzMHYjjH2fwMmVM+PHEN/DbNnqM9
+	 mtqkTTjUwJMsBcZQuV+UjKMG0w4K31OBZzi+rBj3+YBsumqOzkhcwAX7nu2z7Qrtfd
+	 XK9+OPyVWbcYEkJ/Igx9U3zHvqUfzlRRESQQyIi4=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WQNXX1tprzMyn;
+	Fri, 19 Jul 2024 10:45:00 +0200 (CEST)
+Date: Fri, 19 Jul 2024 10:44:58 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jeff Xu <jeffxu@google.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
+	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
+	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+Message-ID: <20240719.shaeK6PaiSie@digikod.net>
+References: <20240704190137.696169-1-mic@digikod.net>
+ <20240704190137.696169-2-mic@digikod.net>
+ <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
+ <20240717.neaB5Aiy2zah@digikod.net>
+ <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
+ <20240718.kaePhei9Ahm9@digikod.net>
+ <CALmYWFto4sw-Q2+J0Gc54POhnM9C8YpnJ44wMz=fd_K3_+dWmw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALmYWFto4sw-Q2+J0Gc54POhnM9C8YpnJ44wMz=fd_K3_+dWmw@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-From: Chen Wang <unicorn_wang@outlook.com>
+On Thu, Jul 18, 2024 at 06:29:54PM -0700, Jeff Xu wrote:
+> On Thu, Jul 18, 2024 at 5:24 AM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
+> > > On Wed, Jul 17, 2024 at 3:01 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > >
+> > > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
+> > > > > On Thu, Jul 4, 2024 at 12:02 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > >
+> > > > > > Add a new AT_CHECK flag to execveat(2) to check if a file would be
+> > > > > > allowed for execution.  The main use case is for script interpreters and
+> > > > > > dynamic linkers to check execution permission according to the kernel's
+> > > > > > security policy. Another use case is to add context to access logs e.g.,
+> > > > > > which script (instead of interpreter) accessed a file.  As any
+> > > > > > executable code, scripts could also use this check [1].
+> > > > > >
+> > > > > > This is different than faccessat(2) which only checks file access
+> > > > > > rights, but not the full context e.g. mount point's noexec, stack limit,
+> > > > > > and all potential LSM extra checks (e.g. argv, envp, credentials).
+> > > > > > Since the use of AT_CHECK follows the exact kernel semantic as for a
+> > > > > > real execution, user space gets the same error codes.
+> > > > > >
+> > > > > So we concluded that execveat(AT_CHECK) will be used to check the
+> > > > > exec, shared object, script and config file (such as seccomp config),
 
-This patchset is composed of two parts:
-- one is the improvement of the sdhci-of-dwcmshc framework,
-- the other is the support for sg2042 based on the improvement of the
-  framework.
-The reason for merging the two parts into one patchset is mainly to
-facilitate review, especially to facilitate viewing why we need to
-improve the framework and what benefits it will bring to us.
+> > > > > I think binfmt_elf.c in the kernel needs to check the ld.so to make
+> > > > > sure it passes AT_CHECK, before loading it into memory.
+> > > >
+> > > > All ELF dependencies are opened and checked with open_exec(), which
+> > > > perform the main executability checks (with the __FMODE_EXEC flag).
+> > > > Did I miss something?
+> > > >
+> > > I mean the ld-linux-x86-64.so.2 which is loaded by binfmt in the kernel.
+> > > The app can choose its own dynamic linker path during build, (maybe
+> > > even statically link one ?)  This is another reason that relying on a
+> > > userspace only is not enough.
+> >
+> > The kernel calls open_exec() on all dependencies, including
+> > ld-linux-x86-64.so.2, so these files are checked for executability too.
+> >
+> This might not be entirely true. iiuc, kernel  calls open_exec for
+> open_exec for interpreter, but not all its dependency (e.g. libc.so.6)
 
-When I tried to add a new soc(SG2042) to sdhci-of-dwcmshc, I found
-that the existing driver code could be optimized to facilitate expansion
-for the new soc. Patch 1 ~ Patch 5 is for this.
+Correct, the dynamic linker is in charge of that, which is why it must
+be enlighten with execveat+AT_CHECK and securebits checks.
 
-Patch 6 ~ 7 are adding support for the mmc controller for Sophgo SG2042.
-Adding corresponding new compatible strings, and implement
-custom callbacks for SG2042 based on new framework.
+> load_elf_binary() {
+>    interpreter = open_exec(elf_interpreter);
+> }
+> 
+> libc.so.6 is opened and mapped by dynamic linker.
+> so the call sequence is:
+>  execve(a.out)
+>   - open exec(a.out)
+>   - security_bprm_creds(a.out)
+>   - open the exec(ld.so)
+>   - call open_exec() for interruptor (ld.so)
+>   - call execveat(AT_CHECK, ld.so) <-- do we want ld.so going through
+> the same check and code path as libc.so below ?
 
-Patch 8 is the change for DTS.
+open_exec() checks are enough.  LSMs can use this information (open +
+__FMODE_EXEC) if needed.  execveat+AT_CHECK is only a user space
+request.
 
-By the way, although I believe this patch only optimizes the framework
-of the code and does not change the specific logic, simple verification
-is certainly better. Since I don't have rk35xx/th1520 related hardware,
-it would be greatly appreciated if someone could help verify it.
-Note, the DTS change has dependency on clock changes for SG2042, which
-has not been merged in master/upstream, so if you want to test this
-new sdhci-of-dwcmshc driver for other hardware except SG2042, don't
-pick patch 8.
+>   - transfer the control to ld.so)
+>   - ld.so open (libc.so)
+>   - ld.so call execveat(AT_CHECK,libc.so) <-- proposed by this patch,
+> require dynamic linker change.
+>   - ld.so mmap(libc.so,rx)
 
-Clocks changes for SG2042 are expected to be in 6.11-rc1 soon, I will
-do catch up with that when it is relased and provide a new revision,
-but anyway please feel free review this version and welcome your comments.
+Explaining these steps is useful. I'll include that in the next patch
+series.
 
----
+> > > A detailed user case will help demonstrate the use case for dynamic
+> > > linker, e.g. what kind of app will benefit from
+> > > SECBIT_EXEC_RESTRICT_FILE = 1, what kind of threat model are we
+> > > dealing with , what kind of attack chain we blocked as a result.
+> >
+> > I explained that in the patches and in the description of these new
+> > securebits.  Please point which part is not clear.  The full threat
+> > model is simple: the TCB includes the kernel and system's files, which
+> > are integrity-protected, but we don't trust arbitrary data/scripts that
+> > can be written to user-owned files or directly provided to script
+> > interpreters.  As for the ptrace restrictions, the dynamic linker
+> > restrictions helps to avoid trivial bypasses (e.g. with LD_PRELOAD)
+> > with consistent executability checks.
+> >
+> On elf loading case, I'm clear after your last email. However, I'm not
+> sure if everyone else follows,  I will try to summarize here:
+> - Problem:  ld.so /tmp/a.out will happily pass, even /tmp/a.out is
+> mounted as non-exec.
+>   Solution: ld.so call execveat(AT_CHECK) for a.out before mmap a.out
+> into memory.
+> 
+> - Problem: a poorly built application (a.out) can have a dependency on
+> /tmp/a.o, when /tmp/a.o is on non-exec mount,
+>   Solution: ld.so call execveat(AT_CHECK) for a.o, before mmap a.o into memory.
+> 
+> - Problem: application can call mmap (/tmp/a.out, rx), where /tmp is
+> on non-exec mount
 
-Changes in v5:
+I'd say "malicious or non-enlightened processes" can call mmap without
+execveat+AT_CHECK...
 
-  The patch series is based on latest 'next' branch of [mmc-git].
+>   This is out of scope, i.e. will require enforcement on mmap(), maybe
+> through LSM
 
-  - Based on Adrian's suggestion, split the first part of the patch into 5.
-  - Updated bindings and DTS as per suggestion from Krzysztof, Jisheng and Conor.
-
-Changes in v4:
-
-  The patch series is based on latest 'next' branch of [mmc-git]. You can simply
-  review or test the patches at the link [4].
-
-  Improved the dirvier code as per comments from Adrian Hunter, drop moving
-  position and renaming for some helper functions.
-
-  Put the sg2042 support as part of this series, improve the bindings and code
-  as per comments from last review.
-
-Changes in v3:
-  
-  The patch series is based on latest 'next' branch of [mmc-git]. You can simply
-  review or test the patches at the link [3].
-
-  Improved the dirvier code as per comments from Adrian Hunter.
-  Define new structure for dwcmshc platform data/ops. In addition, I organized
-  the code and classified the helper functions.
-
-  Since the file changes were relatively large (though the functional logic did
-  not change much), I split the original patch into four for the convenience of
-  review.
-
-Changes in v2:
-
-  Rebased on latest 'next' branch of [mmc-git]. You can simply review or test the
-  patches at the link [2].
-
-Changes in v1:
-
-  The patch series is based on v6.9-rc1. You can simply review or test the
-  patches at the link [1].
-
-Link: git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git [mmc-git]
-Link: https://lore.kernel.org/linux-mmc/cover.1713257181.git.unicorn_wang@outlook.com/ [1]
-Link: https://lore.kernel.org/linux-mmc/cover.1714270290.git.unicorn_wang@outlook.com/ [2]
-Link: https://lore.kernel.org/linux-mmc/cover.1718241495.git.unicorn_wang@outlook.com/ [3]
-Link: https://lore.kernel.org/linux-mmc/cover.1718697954.git.unicorn_wang@outlook.com/ [4]
-
----
-
-Chen Wang (8):
-  mmc: sdhci-of-dwcmshc: add common bulk optional clocks support
-  mmc: sdhci-of-dwcmshc: move two rk35xx functions
-  mmc: sdhci-of-dwcmshc: factor out code for th1520_init()
-  mmc: sdhci-of-dwcmshc: factor out code into dwcmshc_rk35xx_init
-  mmc: sdhci-of-dwcmshc: add dwcmshc_pltfm_data
-  dt-bindings: mmc: sdhci-of-dwcmhsc: Add Sophgo SG2042 support
-  mmc: sdhci-of-dwcmshc: Add support for Sophgo SG2042
-  riscv: sophgo: dts: add mmc controllers for SG2042 SoC
-
- .../bindings/mmc/snps,dwcmshc-sdhci.yaml      |  60 ++-
- .../boot/dts/sophgo/sg2042-milkv-pioneer.dts  |  17 +
- arch/riscv/boot/dts/sophgo/sg2042.dtsi        |  28 ++
- drivers/mmc/host/sdhci-of-dwcmshc.c           | 459 ++++++++++++------
- 4 files changed, 391 insertions(+), 173 deletions(-)
-
-
-base-commit: b85e021853976aaebd3788e7e721020570754199
--- 
-2.34.1
-
+Cool, I'll include that as well. Thanks.
 
