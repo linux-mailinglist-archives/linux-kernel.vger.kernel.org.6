@@ -1,142 +1,117 @@
-Return-Path: <linux-kernel+bounces-256877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70A1C9371AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 02:53:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 794089371B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 02:57:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 258811F21B1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 00:53:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EF91282125
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 00:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BD61388;
-	Fri, 19 Jul 2024 00:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6A328F4;
+	Fri, 19 Jul 2024 00:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Sn2I95Uu"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VXRXVLFC"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BC8137E
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 00:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6AB10FF
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 00:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721350396; cv=none; b=bsruDRh+8dGCnldsyzL+MhpjTqzTa6GxuoMjTTGt78CkUSt49VvzZmPa/C0yGSnCZLu1CSbNoqync8QEZyb7iafEXnR6Szen0ZmzRcGR4GTFJxJwlw5oSNI9XaWT0qdlhbkCAmatDl4wgcKNeVV1DpZ8CnzqlwsHgpCdpUCp/Kk=
+	t=1721350641; cv=none; b=fO7VzEyLPvNYcG2B3gYvWIw/SXDVf81ZZa/PzJE/Q9xkhsnr+RnCEh5Hby9ecSh7syTuOue+KEVMFoxtVRscizcSP+6ocb+uduxdoi5psfccQXK7pP0R0Jmp1foiNEUU9b6LN0Yn9dMFQhypXPdKH6cj1xPlUv5CzVrJMAXNrUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721350396; c=relaxed/simple;
-	bh=RnoOrTDqYMwqmgyBL997j2WfnbhFEDox1ALgKaUqHuU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=ORvNU4HANLpLD8XA+yHhhLKtxg4nlcLmAqDFaIme/54S/u0F5K+vbhqVb7usafGSgLx8906LOpUqGoxqT3cT/vEM5tDSFKKERj5YjhGFNUWVnMOaEeSr0f5OyqaQBVwJN7rYUeKu42nGL4aaCy2n8JNQpmaa4IaHmybINCAzxaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Sn2I95Uu; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3856b7be480so5454995ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 17:53:14 -0700 (PDT)
+	s=arc-20240116; t=1721350641; c=relaxed/simple;
+	bh=bxkdekVSQ2JTN1XHhSUQWYFzQO1BovRjn57ADm1tuOg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EuYIZH2ecKHdQZT4UYCwpOOl7xppUvjZwRdlYWbQzXcZIEEeTJp6uBGXKy7y70lZH3gOBnuRnkgt4TXOVYw0l1dyopA7wYHwh2dAvLw5kR74FlXLZAgCiSMgPI1to1hcoMet6BFYQG3lc0opxnNBT8EdSXgsvL6JBLfVzvdwX6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VXRXVLFC; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2eedebccfa4so15854431fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 17:57:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1721350394; x=1721955194; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:cc:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=CNAPVnBxs50FSqQ39oQ/X0NdsaUWEkhbtljgwA0dK+M=;
-        b=Sn2I95UuUc1Z1VLFwESxfN4bG9UYWvNIkgHVpubVF5jr8Ky/BGxrk07t2KU0KYRexx
-         dIpoWbrb3NAAkQE/Znd9/p9td5WtnBHMEhZGURIzSuvmwsCJCWcDYVGKoH4gnaj6l0Qr
-         e8CEo8qM52EHLIZpdg3YNiAJAWQ2kl9g3l+IPTyJMenKelo6vl6HachLbX7hAgiy7lne
-         oIKVV/HRruWdu6GHlUfYTuLNEccpVnw1Eyi8mEwTBG5Lnv3Wnzu1xuyKX4Cj+WLarnnK
-         s3ZcA+ANdDSbV9aWfJQkLq6jD5cNE/Uxo0St8qfBgOJsW6sEd33p7CiAnfb3z68NUbRK
-         CzOA==
+        d=linux-foundation.org; s=google; t=1721350638; x=1721955438; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bXMULHl1GDf0VFRHpPP3P720vcqt+kXwj4ZhGAYzGRE=;
+        b=VXRXVLFCQ36MGuTauiRidczstMqpHWmlajONj1bfOAccrsWvFY5gLstVV6JNoKF7Q1
+         yAlB3+eqJS31b4Je3tUurktmYDfs04oyyU0pcT0aJ9VJyydbI2yXqXlbENXRHT39JSvZ
+         urbriE0jXJamWpcahPr5Ezu8+0V9zli5wbeJw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721350394; x=1721955194;
-        h=content-transfer-encoding:in-reply-to:cc:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CNAPVnBxs50FSqQ39oQ/X0NdsaUWEkhbtljgwA0dK+M=;
-        b=L22saXtrO9lX7YaS3PBeeltTQxqfBDd0ToPhHLaEDc5ihw6oqH3x+TSOheevIrVxOy
-         bZqz5a3kwECewQcisumumQnWQSTOWGFUQuCb7CwpH1URMmQLOtdhozRZj6TF8K6YlZ1Y
-         HOG1J9mIgRG3qNNvY9rJn/sSyl1SwG7QeQTYMkAGeMJZm7SHtnFyHb/wLi4CwHd30Bq9
-         ZTB1W1hQgqRu17UQz/7PH+L400rbxzC+aFcAioU+8sRdkHGWtlp0FN6gSnl27v+Cftlw
-         Hdg6FMkdwFf+VM0g/xsSS4rcjETjXDSePLIMtecKceu/ut30FAi8mCacQuMYjxg5yTVA
-         cDKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmHO5xl9JEyiaXwHn34l19wM0FxdmK8M83v6VBhxjnwlVnQMNlCkx0qMOa4RpictR7/HJO8/2ZAdN9WKO0D1HQ5W8CuDtkomnJtPfq
-X-Gm-Message-State: AOJu0YyZL9uwnAAjEKjmcWZTstoQMeAYfjVqzR//230hEM5uG7Cmon7V
-	Lelkj76QBDYAeBJve3fZYm3lokbMnzvOc6YRVw3WhLTUslyvgpgAYXb+ZDEzq4Q=
-X-Google-Smtp-Source: AGHT+IF5soNWoBfxIJAzPM7ulE2ztXx3R64HiLhLbDOWs9lCmTj3XqnA7S+bNE2jbslzIWMskkLVPA==
-X-Received: by 2002:a05:6e02:b2d:b0:396:4314:2bcf with SMTP id e9e14a558f8ab-39643142de5mr67747935ab.19.1721350394158;
-        Thu, 18 Jul 2024 17:53:14 -0700 (PDT)
-Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-397f60fc088sm897415ab.50.2024.07.18.17.53.12
+        d=1e100.net; s=20230601; t=1721350638; x=1721955438;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bXMULHl1GDf0VFRHpPP3P720vcqt+kXwj4ZhGAYzGRE=;
+        b=USKLJ3MxWwoiKZkg96Fde19NTgRr8Q32LmNbn70v2OyXuDi7+hdwUMQwY9j9UUZZca
+         sPYvDRtE9+j9z5F8fIQ1w2sahIrgLnFu2dgdcIud+AN037JhBTp/D/pDBI8z4UcsxHUo
+         +tD7mmMvHanlIfI/waevNSXugVZJIN532ANaWiMy3GE6ser1eEctTg7tRu6l624nl7LC
+         YZF2u6HcDK3Mg66OGUVA0nZNHgfj+EQu9KL3BtQk0n7HZOBCqrWFdrrDtTDNbgSxQKJX
+         w3yfSvZGc6OU/nv9i7TN3VeBLfnJ1vZTPZMVa6n75rPbdmRr4Er/ELG49fXWKM5w65Jj
+         K7eg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ6Ix7vPbtl6KszFRY++jyn6bXhmZg3PRl29jJU0aj94lse8DW2nPZWxoiBTLF6F50BX3DwmqdM5KgkgvnQTeGwICbn2UoHgX+YY5U
+X-Gm-Message-State: AOJu0Yxy6FHFAg2SlXRbpOImVUtDNONZtZKbb3IKdO3TaOr7Yufwq6Jq
+	qSr1IQJc7lAEpiFuGVasseIsu2Vt/VzloZLFi2yNAYnsDBqnXYK3AJymjqPg6STBouThCFeY9gS
+	4oqTcyQ==
+X-Google-Smtp-Source: AGHT+IEgs2Afd29c44kkI7H+mmL7gM+p0W/GbwRAKTEfNw/tvDgsgaGDruv4Pd8GmrVdhYx3/X+jtA==
+X-Received: by 2002:a2e:b1c4:0:b0:2eb:2e0b:72c with SMTP id 38308e7fff4ca-2ef05c7515amr29429941fa.16.1721350637650;
+        Thu, 18 Jul 2024 17:57:17 -0700 (PDT)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30aaa254asm198119a12.29.2024.07.18.17.57.16
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jul 2024 17:53:13 -0700 (PDT)
-Message-ID: <da5ba38a-8848-439e-b80a-3d6584111a78@sifive.com>
-Date: Thu, 18 Jul 2024 19:53:11 -0500
+        Thu, 18 Jul 2024 17:57:16 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5a2ffc3447fso152440a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2024 17:57:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWOBK3CGlghTyOkaIuV2igYrfHhUgOID97txJd+cXA6AT4ZFr8jdOclZLHgjgd2uaIwwEsA+kAbu1m+TlJq6FSUgF2VgzX70+mISUdq
+X-Received: by 2002:a50:8d51:0:b0:5a1:3b03:d0cb with SMTP id
+ 4fb4d7f45d1cf-5a13b03d7b5mr2914519a12.32.1721350636369; Thu, 18 Jul 2024
+ 17:57:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/11] riscv: Add ISA extension parsing for Ziccrse
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-References: <20240717061957.140712-1-alexghiti@rivosinc.com>
- <20240717061957.140712-10-alexghiti@rivosinc.com>
-Content-Language: en-US
-From: Samuel Holland <samuel.holland@sifive.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Andrea Parri <parri.andrea@gmail.com>, Nathan Chancellor
- <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
- Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
- Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
- Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-arch@vger.kernel.org
-In-Reply-To: <20240717061957.140712-10-alexghiti@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240716234445.a17a40e8d3d7b4ba5cef949e@kernel.org>
+ <20240719102824.1e086a40@canb.auug.org.au> <CAHk-=wi6RzMFr3zWfkwHh1JwLxQzN0BtH3H7M6JJogVxOat8CA@mail.gmail.com>
+In-Reply-To: <CAHk-=wi6RzMFr3zWfkwHh1JwLxQzN0BtH3H7M6JJogVxOat8CA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 18 Jul 2024 17:56:59 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whN7k41rOGfGA+SBS-A07p5BcncgvLNLXVk-C6aa4tRdQ@mail.gmail.com>
+Message-ID: <CAHk-=whN7k41rOGfGA+SBS-A07p5BcncgvLNLXVk-C6aa4tRdQ@mail.gmail.com>
+Subject: Re: [GIT PULL] probes: Updates for v6.11
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>
+Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	Jeff Johnson <quic_jjohnson@quicinc.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Alex,
+On Thu, 18 Jul 2024 at 17:49, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> One possible model might be:
+>
+>  - remove the numbering from the syscall.tbl (because the numbers
+> _are_ going to be different)
 
-On 2024-07-17 1:19 AM, Alexandre Ghiti wrote:
-> Add support to parse the Ziccrse string in the riscv,isa string.
-> 
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> ---
->  arch/riscv/include/asm/hwcap.h | 1 +
->  arch/riscv/kernel/cpufeature.c | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
-> index f71ddd2ca163..863b9b7d4a4f 100644
-> --- a/arch/riscv/include/asm/hwcap.h
-> +++ b/arch/riscv/include/asm/hwcap.h
-> @@ -82,6 +82,7 @@
->  #define RISCV_ISA_EXT_ZACAS		73
->  #define RISCV_ISA_EXT_XANDESPMU		74
->  #define RISCV_ISA_EXT_ZABHA		75
-> +#define RISCV_ISA_EXT_ZICCRSE		76
->  
->  #define RISCV_ISA_EXT_XLINUXENVCFG	127
->  
-> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-> index c125d82c894b..93d8cc7e232c 100644
-> --- a/arch/riscv/kernel/cpufeature.c
-> +++ b/arch/riscv/kernel/cpufeature.c
-> @@ -306,6 +306,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
->  	__RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
->  	__RISCV_ISA_EXT_DATA(svpbmt, RISCV_ISA_EXT_SVPBMT),
->  	__RISCV_ISA_EXT_DATA(xandespmu, RISCV_ISA_EXT_XANDESPMU),
-> +	__RISCV_ISA_EXT_DATA(ziccrse, RISCV_ISA_EXT_ZICCRSE),
+Just to clarify: the way I envision this "remove the numbering" is to
+just make the numbering itself be the result of running scripts on the
+system call table files.
 
-Please sort this entry per the comment at the beginning of the array.
+And then different architectures could have different areas for "these
+are the generic system calls" (and some kind of support to 'include' a
+common file listing those), and the "these are my own system calls"
+area.
 
-Regards,
-Samuel
+x86 kind of has some of that kind of thing with the whole "system
+calls above 512 are magic for x32".
 
->  };
->  
->  const size_t riscv_isa_ext_count = ARRAY_SIZE(riscv_isa_ext);
+Of course, *that* then failed too, but I don't think the concept is
+necessarily completely broken.
 
+             Linus
 
