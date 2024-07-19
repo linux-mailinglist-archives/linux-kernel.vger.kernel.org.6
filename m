@@ -1,112 +1,120 @@
-Return-Path: <linux-kernel+bounces-257540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 426BF937B97
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:30:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94BC9937B98
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 19:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86E2CB21CA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:30:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FB271F219A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0D8146A99;
-	Fri, 19 Jul 2024 17:30:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DBA4146A8E;
+	Fri, 19 Jul 2024 17:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="grEa504E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TsXPnnJq"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B94145B39;
-	Fri, 19 Jul 2024 17:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8806528F1
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 17:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721410210; cv=none; b=SWh4KyNRNvswNSOnR6s3Enb/9Q8xwMJ2dLXQmgnCoc00mhrAtxln5xtZNVBxq9Irf/o6kVY+V5IDCNyQyXj7aiYpwXX7l6OhH8kvf0yVToywqg3AlQHMgfBwc+QmZmS4zocW1uL/a6kqpES23/sf7DYHGYgz4nsnjKa2cwEecIw=
+	t=1721410254; cv=none; b=dbUJtljG/8tEknT5OPXP4Tcbj1QjBl0b83yK7pH3jDNClpkOxmOUd0XdN/oXvk2ntoFgcP0VTHIReBGX+EjzbhSSepd3xeFxpOTVFkWKYDnBMJ4e9VkrGrvu9Pdc4d4I2iIn20jeUAs8wjflajFQ/5pRIf2ORJSgLfiksVyJnqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721410210; c=relaxed/simple;
-	bh=4NkRW9YdVT+ay+RfdaFb6xC9m/ZBT/pHcIOtHEw7Gk0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YzQi4UHpBlWq5HG1AfyOOBWXUMx50jQrk+L7UCxWl9WxKkxVNuhDOFGySGYOYL1Lt4ldTMZi1+OxPYvhHbBR/mVYM28qGbvTFbz4Xkf0zQF4DYyJu91OZQWIPlNp6wpJFHipACT4SulFphepSvC0cDwhCuZHtmboeEtVD7QQ2js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=grEa504E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5042C32782;
-	Fri, 19 Jul 2024 17:30:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721410209;
-	bh=4NkRW9YdVT+ay+RfdaFb6xC9m/ZBT/pHcIOtHEw7Gk0=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=grEa504E+hzwBFlqpZVLcePSjfBWHI7Y4plD9pW8TAvxXxZ2p0EVSLewiKEZo68uu
-	 9V9trhwY0rriRo2tk/AqqNw/Hrzpuv5uD0wkYcAm/ADiDq7N8D2J3+Ke3n8ObR47Yp
-	 BaEyXnkppTX82SQf8/orFpE1Bj3/zvwF1nwjRh5dMwepWzo0QtF9ZjjctuUE6tlgnn
-	 b9dlc/Xv5CWxxisnppAsJ1TOVD88U6t9EdP3ZgBTbHEWWRMFU7PixJk8fYS6mlE/dO
-	 wcR2gV97jvd5bsmjRBUxNzz0tvu3WQ2EeoJpipaw0VpzXGEeYfneL/oa2YRzILU83F
-	 dETduaF7aRsGw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 71D1DCE09EA; Fri, 19 Jul 2024 10:30:09 -0700 (PDT)
-Date: Fri, 19 Jul 2024 10:30:09 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 00/11] rcu/nocb: (De-)offloading on offline CPUs
-Message-ID: <c3b486c6-c0f1-404c-839c-7ebdc396824d@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240530134552.5467-1-frederic@kernel.org>
+	s=arc-20240116; t=1721410254; c=relaxed/simple;
+	bh=GMspW2YoqcOva052wx35RklyGV4RoHqvWFzeKJ1omDE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=cO4GwAYzggNTjTIkbZSeP6x4kARMuoxWpdqDzwASIqZM60bL83qcXlh6nsacI3ryH9RZiSMfwXFQ4aFUo9i5BKJEg3YfRvqZZlw6/Q4P36UxN8hJ+iLoUZqM+sxVap7/YeLS7oP12WF0c8Vz8GkdrW5jC9JGgLCHTatCWiJqPIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TsXPnnJq; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e05d5633db4so4900639276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 10:30:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721410252; x=1722015052; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gP6+VmSPHcYMxQS0JnsLJu5q9rtZVq5bNy3SOvLjfEg=;
+        b=TsXPnnJqssPQQtvLTq+m6Rg0ZKhHaX5iojv7v0L3gQUFGumjZL5QBTAtDhzDoBnm06
+         RvJo+bJI06KWzj115NsGOVxAFGEXT3Y1X5owMus1xusaQLEdJ55MOmDHi7MFH+0heBsW
+         x7lUnVi/ulfLA7haXlGCFPAFWzhZAR/svZgH6timYOddZPkhVC9KkORF2lZcSqcYCb6j
+         7dNZGzurgSFAFV7QpFxsLaVosW/9XkUWVVGmMFN1wvt61OcNsfIRzwZTkn3Msr5L1V7j
+         owMYEUK20D+YuN3SiK95UesjbozJ8hszDn+nLKTg0m6PWS+pMOxL8ZwkFj0aM+Xr5Ns7
+         t3pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721410252; x=1722015052;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gP6+VmSPHcYMxQS0JnsLJu5q9rtZVq5bNy3SOvLjfEg=;
+        b=eaxMBlhgweT4W7BzB2ObkuWLlIeakATg6Vwvt1AMD/RBmY3xV6KDV/JyIxna/hA5Sd
+         amvb+LyZxOwTnzkhsuhM+sDOtDYpXOg0qIbQcCuvoEz2yq7BcKSaQj5ofDOaGkHow1Re
+         pMg7EcTY3nvamD7mMXNeXv1igOKlHr/szX7cQX92z/pinizz+1e9d3Qg7VFDfzT3BfeO
+         Wt1dXL/Kaac526wwpe/pvse5okmK4wk4kaUPALt9S59DDGRVfAUBKMj5RCvh2lXJpDY9
+         WBXjcah8BDZXhrvkNRbFf9Hrft5qo495mBEMVnD/DekUHdcq2py44J7RaZYrYVMVCym+
+         7TEg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkx0pDjqwvuTnsPDSMH/rM1aLNTVIckXK3cLWR4s2SpUBa89YgHqaGT6lBfhpwHqPzzUNzmOSeB9wxmIJiCAjrTk12f5yciQnKnqAw
+X-Gm-Message-State: AOJu0Yx3BUnmdDb/267X472gYt1AkU+b0lcYtNZgl3C5KldPWrQd4zcX
+	S98nIKE2cwMXXR6eM5UTj8Uc1IL+urumtNfTNq9B6LRUcmvUJjU8n0fPNRPT//qpvjsr7nxpykx
+	Rng==
+X-Google-Smtp-Source: AGHT+IF8y/u83nNvL3CbDE2OIMPQWlC17/lwUgB7FErVL+rh23Nj07seTNkwISxUuE1vxNR+9m/V/KKNbRc=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:1891:b0:e03:2217:3c8f with SMTP id
+ 3f1490d57ef6-e086fe4020amr908276.2.1721410252464; Fri, 19 Jul 2024 10:30:52
+ -0700 (PDT)
+Date: Fri, 19 Jul 2024 10:30:51 -0700
+In-Reply-To: <7b47f4b7-eda8-40e2-883c-6d6c539a4649@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240530134552.5467-1-frederic@kernel.org>
+Mime-Version: 1.0
+References: <7b47f4b7-eda8-40e2-883c-6d6c539a4649@gmail.com>
+Message-ID: <ZpqiyxAuobYjkjC-@google.com>
+Subject: Re: [BUG] 6.10 stable: =?utf-8?Q?arch=2Fx8?= =?utf-8?Q?6=2Fkvm=2Fxen=2Ec=3A1486=3A44=3A_error=3A_use_of_uninitialized_?=
+ =?utf-8?B?dmFsdWUg4oCYcG9ydOKAmQ==?= [CWE-457]
+From: Sean Christopherson <seanjc@google.com>
+To: Mirsad Todorovac <mtodorovac69@gmail.com>
+Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, 
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 30, 2024 at 03:45:41PM +0200, Frederic Weisbecker wrote:
-> Last LPC's debates seem to have raised general agreement that nohz_full
-> cpusets interface should operate on offline CPUs to simplify the picture.
-> And since the only known future user of NOCB (de-)offloading is going
-> to be nohz_full cpusets, its transitions need to operate on offline
-> CPUs as well.
-> 
-> The good news is that it simplifies a bit the (de-)offloading code, as
-> the diffstat testifies.
+On Fri, Jul 19, 2024, Mirsad Todorovac wrote:
+> Hi, all,
+>=20
+> While building stable tree version of 6.10, the following error occurred:
+>=20
+> In line 1421 defines:
+>=20
+> 1421        evtchn_port_t port, *ports;
+>=20
+> The ports becomes &port in line 1470, but neither port nor *ports is assi=
+gned a value
+> until line 1486 where port is used:
+>=20
+> 1485         if (sched_poll.nr_ports =3D=3D 1)
+> 1486 =E2=86=92               vcpu->arch.xen.poll_evtchn =3D port;
+>=20
+> The visual inspection proves that the compiler is again right (GCC 12.3.0=
+).
 
-Good stuf!!!
+Nope, the compiler is wrong.  If sched_poll.nr_ports > 0, then kvm_read_gue=
+st_virt()
+will fill ports[sched_poll.nr_ports].  If kvm_read_guest_virt() fails to do=
+ so,
+it will return an error and the above code will never be reached.
 
-For the series:
-
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
-
-> Thanks.
-> 
-> Frederic Weisbecker (11):
->   rcu/nocb: Introduce RCU_NOCB_LOCKDEP_WARN()
->   rcu/nocb: Move nocb field at the end of state struct
->   rcu/nocb: Assert no callbacks while nocb kthread allocation fails
->   rcu/nocb: Introduce nocb mutex
->   rcu/nocb: (De-)offload callbacks on offline CPUs only
->   rcu/nocb: Remove halfway (de-)offloading handling from bypass
->   rcu/nocb: Remove halfway (de-)offloading handling from rcu_core()'s QS
->     reporting
->   rcu/nocb: Remove halfway (de-)offloading handling from rcu_core
->   rcu/nocb: Remove SEGCBLIST_RCU_CORE
->   rcu/nocb: Remove SEGCBLIST_KTHREAD_CB
->   rcu/nocb: Simplify (de-)offloading state machine
-> 
->  include/linux/rcu_segcblist.h |   6 +-
->  include/linux/rcupdate.h      |   7 +
->  kernel/rcu/rcu_segcblist.c    |  11 --
->  kernel/rcu/rcu_segcblist.h    |  11 +-
->  kernel/rcu/tree.c             |  45 +-----
->  kernel/rcu/tree.h             |   6 +-
->  kernel/rcu/tree_nocb.h        | 266 +++++++++++++---------------------
->  kernel/rcu/tree_plugin.h      |   5 +-
->  8 files changed, 122 insertions(+), 235 deletions(-)
-> 
-> -- 
-> 2.45.1
-> 
+	if (kvm_read_guest_virt(vcpu, (gva_t)sched_poll.ports, ports,
+				sched_poll.nr_ports * sizeof(*ports), &e)) {
+		*r =3D -EFAULT;
+		return true;
+	}
 
