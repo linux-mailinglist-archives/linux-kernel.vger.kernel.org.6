@@ -1,114 +1,116 @@
-Return-Path: <linux-kernel+bounces-257396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E81A493796B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:58:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C553693796C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:59:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24E3F1C20958
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:58:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFD681C21D61
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 14:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70CF1448DE;
-	Fri, 19 Jul 2024 14:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0931448F6;
+	Fri, 19 Jul 2024 14:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="CmuOcrsT"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eLErxwio"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966DF286A8
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 14:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88DB7286A8;
+	Fri, 19 Jul 2024 14:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721401104; cv=none; b=UP4Fca9I+6UXxtzbVTrLf/jl1zr2xlHECXTvPGdKKjyC6siQnvZHEXU179uq+UJfMQADenfijH24dNfy6aBHPbgNsTZoq6T5wRqviOUcYIiqW4WEVfa9ZWUAO/22qcIA3kUhcPAOVTl/YbObCRiqUNXCAn9QwcxVXbdtctQAQiQ=
+	t=1721401137; cv=none; b=ZNSF23s/vIIj6cHkESI60N7nTC8h3iLHNW3BnjuuPH0ATiVrJSyecNY6Ee7XFjuEXgbT7FtXonD/1p6lQmGe2CY8MoTJDm1L9SCsGtWs6bsfWwdElvmU9S42iHMOsR1t+prJ75Td6WfXkCr/D+ODYv0J9osv4E7BCT3joqvSu+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721401104; c=relaxed/simple;
-	bh=/L0E1OFBSqZHyMIzxrDbyrO/QpR+srDPOrCtc9hLQS4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oXMJ/iEjqKaRFLeTOP40QNLgMZ+6xsAOFUZIEcQMThptHIRY/JhlBLHIuIFIg1b1sY4zMpEDo3u6OdPoNZba8/f91FIPZ0TkaPvrkzUqZ1VYKaDVfCU9IguHUjAcH1hDD0VI74vOD36Mn3rMe1QUTcy2otnxfpoYZwoMVHLE4UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=CmuOcrsT; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4266182a9d7so11830415e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 07:58:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1721401101; x=1722005901; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IQHOTm7Y3ccV/j/KO9p8hVujVUcq/9bgQV6XKF7Ad4o=;
-        b=CmuOcrsTDrwAh+n2VSbkagxBqMHCsMg+FX9ycXfIPAVFr3BTp/5++c2OH2quHYmcgh
-         0aoRkkUfa5GjBYu+vT3F/yunayqZhKnuf9log3ek2UlGXIhgYBnRamTfVpPLXVCvRg6l
-         GeRj0ww0ugEjT4ZTJ3KtJBzgVx9/VLDhG9dJJC9NYYwxvJiMcgY2PlWquenrMIegZ5mu
-         WQq1Q2sY3FvzNAMaY7zxavIlqRrhkq/mhbiCcgVrHdGivgCkTvk8KKu3pBHMBmLb/xJ4
-         AXswolIhTywnNyz/ZPibVDeNkA/wi/ysVgq2EB2YIobJSsD+qR08fHz/dPeE7sKyYma2
-         NTag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721401101; x=1722005901;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IQHOTm7Y3ccV/j/KO9p8hVujVUcq/9bgQV6XKF7Ad4o=;
-        b=WpKN79y7t32tMMbjW/k08a3NgYFSRCTbYzsMJgrX9ZCR2uwVl5Trlt/EU4HOLPX3Ux
-         ubsqWFpgq4tEE7FkVoiuQbu99fJOU9l5JyVVcQ+NTzQ4SuHUP29X8xHPC50OLVLlALCC
-         Wa8mutNpiYDhtlF0l7+Knhs1USh+R50rTneDJKYnBQYGg3XbP9VhumJ0DtXfgXBkBhjU
-         w3ELbOwy6XT2VSoTR1mnQ2Nj4RbqPfBL//a7HyRiCN6ea7lWwbHvP6r5MgBf5yNLeaTr
-         0J5vYp6IWV5NdbbBgexmay0bOEe+lGB/4C0z4RaFCy5/0tPkY89ZzY+gpd8u9M5eZ9Wv
-         tudw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOPpzL/tIb/SM28mPChCwMJUZrZKAITrkWgEfjn0NLSERJMNPEtbHduHdPLwVmYhXAGm+C49QUru4C/JGuhebd/uvHpCk3hnmiec3s
-X-Gm-Message-State: AOJu0YyAE5wWiGiW57wTffFc2OyHX4LpKZ7RiTuTWOS3hiPFc1UiOjso
-	O3rajaCmzLtMGFdWGAgfVH792UPGfenyRiv9ghyPmwazAsT+F96qUraJBeDf9es=
-X-Google-Smtp-Source: AGHT+IGntyXO3e7z599v/iJ4YjoQgBgO1EK3mOJ9D514vnBqigaXjO+6vlCUfj0E/lsC2S8/XF8d9Q==
-X-Received: by 2002:a05:600c:15cb:b0:426:58cb:8ca3 with SMTP id 5b1f17b1804b1-427d7293d49mr14411955e9.21.1721401100858;
-        Fri, 19 Jul 2024 07:58:20 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:2aee:948:fb51:d5a7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a8e436sm53905425e9.33.2024.07.19.07.58.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 07:58:19 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Arnd Bergmann <arnd@kernel.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [v2] gpio: virtuser: avoid non-constant format string
-Date: Fri, 19 Jul 2024 16:58:18 +0200
-Message-ID: <172140109528.139764.1997443396332853714.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240719144422.2082394-1-arnd@kernel.org>
-References: <20240719144422.2082394-1-arnd@kernel.org>
+	s=arc-20240116; t=1721401137; c=relaxed/simple;
+	bh=5y3aMdrz73UFJ48GfmtyrJi/HKGoasQoG92KFO9KEyY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NqpTP4eeN2ZFU1GhuNKsTfvTW5+39UR8ftQWrZDq5Ps+xEhZxXE97tCdwRPjF+Y2fWtswnkicfCIrosh5Cm/ReDNHlDjcZKzMNjXMPAkhpXRGgGy85CD1yw9AhduJ9uTkmlmGAYUtbb/OCOgmcM/G0erXdJUfyERhbpZV2H3lbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eLErxwio; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6AB6C32782;
+	Fri, 19 Jul 2024 14:58:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721401137;
+	bh=5y3aMdrz73UFJ48GfmtyrJi/HKGoasQoG92KFO9KEyY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eLErxwio5Fg9lxA3hFdMteSJWFKJ9k5GZXqYiVuga9G6XmXPmBJoK0wNT00AwfozD
+	 n6mI6mef5613sWsYWhWGbBSL3VBoyrLOk60egfU1tJGggtefB4HroSiHYaV+KFkZ2d
+	 +KHzgIU8r0yW0FloFCdPa6bVnDqpilm16lyHdSWKisaKfT5RxF3yR4rvMUm5kD3KnI
+	 vrHYuYUv/3cgWWK41sLROJXNCDrPMBe8X5Lz9hKhidKeHXXtGlvi1Gtk1ymQeRVf8v
+	 SBLsATQ4xAwxmmeqSouqsiwrTP6RymOI6L+SrjVruX4GuTpupM3hNzKpk9PyqPbGsQ
+	 fPhq6RWHYnLZQ==
+Date: Fri, 19 Jul 2024 15:58:51 +0100
+From: Will Deacon <will@kernel.org>
+To: Colton Lewis <coltonlewis@google.com>
+Cc: kvm@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, ricarkol@google.com
+Subject: Re: [PATCH] KVM: arm64: Move data barrier to end of split walk
+Message-ID: <20240719145851.GA23182@willie-the-truck>
+References: <20240718223519.1673835-1-coltonlewis@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240718223519.1673835-1-coltonlewis@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+[+Ricardo, as he wrote the original split walker]
 
-
-On Fri, 19 Jul 2024 16:44:10 +0200, Arnd Bergmann wrote:
-> Using a string variable as an sprintf format is potentially
-> dangerous, and gcc can warn about this:
+On Thu, Jul 18, 2024 at 10:35:19PM +0000, Colton Lewis wrote:
+> Moving the data barrier from stage2_split_walker to after the walk is
+> finished in kvm_pgtable_stage2_split results in a roughly 70%
+> reduction in Clear Dirty Log Time in dirty_log_perf_test (modified to
+> use eager page splitting) when using huge pages. This gain holds
+> steady through a range of vcpus used (tested 1-64) and memory
+> used (tested 1-64GB).
 > 
-> drivers/gpio/gpio-virtuser.c: In function 'gpio_virtuser_dbgfs_init_line_attrs':
-> drivers/gpio/gpio-virtuser.c:808:9: error: format not a string literal and no format arguments [-Werror=format-security]
->   808 |         sprintf(data->consumer, id);
->       |         ^~~~~~~
+> This is safe to do because nothing else is using the page tables while
+> they are still being mapped and this is how other page table walkers
+> already function. None of them have a data barrier in the walker
+> itself.
 > 
-> [...]
+> Signed-off-by: Colton Lewis <coltonlewis@google.com>
+> ---
+>  arch/arm64/kvm/hyp/pgtable.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
+> index 9e2bbee77491..9788af2ca8c0 100644
+> --- a/arch/arm64/kvm/hyp/pgtable.c
+> +++ b/arch/arm64/kvm/hyp/pgtable.c
+> @@ -1547,7 +1547,6 @@ static int stage2_split_walker(const struct kvm_pgtable_visit_ctx *ctx,
+>  	 */
+>  	new = kvm_init_table_pte(childp, mm_ops);
+>  	stage2_make_pte(ctx, new);
+> -	dsb(ishst);
+>  	return 0;
+>  }
+>  
+> @@ -1559,8 +1558,11 @@ int kvm_pgtable_stage2_split(struct kvm_pgtable *pgt, u64 addr, u64 size,
+>  		.flags	= KVM_PGTABLE_WALK_LEAF,
+>  		.arg	= mc,
+>  	};
+> +	int ret;
+>  
+> -	return kvm_pgtable_walk(pgt, addr, size, &walker);
+> +	ret = kvm_pgtable_walk(pgt, addr, size, &walker);
+> +	dsb(ishst);
+> +	return ret;
+>  }
 
-Applied, thanks!
+This looks ok to me, but it would be great if Ricardo could have a look
+as well.
 
-[1/1] gpio: virtuser: avoid non-constant format string
-      commit: 3ae08e47742eeebf2190900d31ddac53fdd13a5b
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Will
 
