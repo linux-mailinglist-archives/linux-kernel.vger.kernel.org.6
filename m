@@ -1,99 +1,182 @@
-Return-Path: <linux-kernel+bounces-257518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EB96937B2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:39:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4D7B937B2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:40:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FADCB214FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:39:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D23071C21C52
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B6F1465A1;
-	Fri, 19 Jul 2024 16:39:06 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D091146585;
+	Fri, 19 Jul 2024 16:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PIPqtdqI"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6471B86D9;
-	Fri, 19 Jul 2024 16:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188A7145FF4
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 16:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721407146; cv=none; b=Pe4uyIG41c/rwlLU1mDfUhqu1vOMPfKJOyjxGQlnTqBQ6UvRS6VnT3EQS3aSawJQTm5YRXQdzzfBVLDUCG+ZFpSILYplZRxxERsAXpck3DWYcFfjyj7MC2aEBoWqf06cFsEqr7TXeMBC1Z05ykSMnraqlW3sgOwE8yfF6iihU4E=
+	t=1721407249; cv=none; b=LrlBsM7IngGE1kVAhIE7MyBj4hhc0rYbPix9Ao3MNEkzh7McSt4v1zwAeYP9HymvcTBwF/rDUxB49Qzla1K0dLzp6fIaGUzGVHlFl9mGyeL3CmaPmpMbSYZ+5LeMiae5ciwEiOwk9nSh790Ssy+Y9X5P1TnT5gfKjgHSq4ujbMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721407146; c=relaxed/simple;
-	bh=VpRjTTVsoB19qADBnkSclAP5d15vCF4RdPq8cv7AYBc=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mPbU4g6DxsuKpkby0M7MZKlwnp8SiuksdSO/ed/x0Vn5uSYyNbM+sJr6W265JFuF8jBh82ilA3qvUCxobvv6QAv9B/AR5wBpxRldt0qPSn5xSEnYu70wFPGrpwl+pC3oYG0W6QMZ3k/9ceRHe46+EYVqjssIzgFx5cIUI/1TVV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WQb1q2xppz6JBgm;
-	Sat, 20 Jul 2024 00:37:35 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id EE605140517;
-	Sat, 20 Jul 2024 00:38:59 +0800 (CST)
-Received: from localhost (10.48.157.16) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 19 Jul
- 2024 17:38:58 +0100
-Date: Fri, 19 Jul 2024 17:38:49 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Mike Rapoport <rppt@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, Alexander Gordeev
-	<agordeev@linux.ibm.com>, Andreas Larsson <andreas@gaisler.com>, "Andrew
- Morton" <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, "Borislav
- Petkov" <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>, Christophe
- Leroy <christophe.leroy@csgroup.eu>, Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, David Hildenbrand
-	<david@redhat.com>, "David S. Miller" <davem@davemloft.net>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Heiko Carstens
-	<hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar
-	<mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, "John Paul Adrian
- Glaubitz" <glaubitz@physik.fu-berlin.de>, Michael Ellerman
-	<mpe@ellerman.id.au>, Palmer Dabbelt <palmer@dabbelt.com>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, "Thomas
- Bogendoerfer" <tsbogend@alpha.franken.de>, Thomas Gleixner
-	<tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>, Will Deacon
-	<will@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<loongarch@lists.linux.dev>, <linux-mips@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <linux-riscv@lists.infradead.org>,
-	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>,
-	<sparclinux@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-	<linux-mm@kvack.org>, <x86@kernel.org>
-Subject: Re: [PATCH 08/17] x86/numa_emu: simplify allocation of phys_dist
-Message-ID: <20240719173849.00007c51@Huawei.com>
-In-Reply-To: <20240716111346.3676969-9-rppt@kernel.org>
-References: <20240716111346.3676969-1-rppt@kernel.org>
-	<20240716111346.3676969-9-rppt@kernel.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1721407249; c=relaxed/simple;
+	bh=KudrRUmsxMvKCQV4i8wyzYeY65FnFpwKhaoFkFBDhJI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nlefuplgYiUqAz6c4sAlwBBPyheDoAcwKnzD7opp+9TwMgaxpKIvMrwum5M3mKZkELxt4kdsmqrawh8JRqGvE9+PwDGxJCyo6om8ONGUgyWj/jjrME81Z75oN5ZTBGQ22GsCu3GSzzaDcGesX0SgbIRbRA2C73bQqVlSUwelbEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PIPqtdqI; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-804bc63afe2so9614939f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 09:40:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1721407247; x=1722012047; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HUVPkIYnRSgT8B0c+qK6jydiuc8GVJVQqbsYt4DVIKU=;
+        b=PIPqtdqINjqfKzVtA/wqeMN5TBoo+JoFMUPq2aVgKDXrsNDFUcdJpTkxepLuuEM0Co
+         +nIlB7BoKJaZug8WgO3x0eQi6PFs+312wy6I19T4hYz4C3Cr+0Y/z6RGWhf1BgavLZqi
+         ee/3MLW2r38cVJZQiEXU5Co2zI99HAJXeN2bk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721407247; x=1722012047;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HUVPkIYnRSgT8B0c+qK6jydiuc8GVJVQqbsYt4DVIKU=;
+        b=M4HCtwoxAtsMkcScKROgMBEV5xrpLmI+VTb0MQCEUQJYyH2KrvYdym0F87YLLt66mK
+         icJAPyEQTwJMzujLtAOR3q4rMK0kwcXWF9QZvJvrH9lALgKtRwo0JcVJdb2DimuE/GIN
+         4UqKCKvTOhqHQnU+kCs0sRKo14EMmXxAyW/mibX2HQjHQ1B3olHJM5FGuRxHAlJ/uN6Z
+         +bRxX+1GpuBrwlC9Pbkj+d3p77WSumVdmYxhKNO+GLNccCfWLfQwYbalAk3vHQxgaOrV
+         mBCqmmcpNRZRwB4d/AyKy1/KOcACxF+SeZ8Ff2IFdcymjFn2i/mZ++1Tzy1lGMn5+Vw1
+         scPg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+f6D98gCi1RJUvo0FArg97dD96qKAnEkIoiBRbiVQsBDctun7MTQRH+5+1avg/o0LeXmvMo7+CWD9x3niXICGRANmY4sADmNz5cKA
+X-Gm-Message-State: AOJu0YxVBVXILPmizDp1ISI1olDLy5/imsGaqhIeDSpVOidyDmcUEGdD
+	JrlVHA0E49BWs9XsteTZFpaWTLHyJEDTbgyjwJ6+dOxdIRUixe8LvMKjOIn2vu4=
+X-Google-Smtp-Source: AGHT+IG2bPp6ViogdgM8RoPbzjqSqGQtdTTcKNMf4jiu3HHo9MSqNp+frnbk9LMTyer6MQWkqVPC1Q==
+X-Received: by 2002:a5e:890f:0:b0:7f9:3fd9:cbd with SMTP id ca18e2360f4ac-81aa223c98amr35894339f.0.1721407247126;
+        Fri, 19 Jul 2024 09:40:47 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c2343d50c1sm386196173.149.2024.07.19.09.40.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Jul 2024 09:40:46 -0700 (PDT)
+Message-ID: <9cf7f693-bc6a-415b-99c3-f6c59b871c4f@linuxfoundation.org>
+Date: Fri, 19 Jul 2024 10:40:45 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] selftests: x86: vdso_restorer: remove manual counting
+ of pass/fail tests
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Shuah Khan <shuah@kernel.org>
+Cc: kernel@collabora.com, "Chang S . Bae" <chang.seok.bae@intel.com>,
+ Binbin Wu <binbin.wu@linux.intel.com>, Ingo Molnar <mingo@kernel.org>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240712073045.110014-1-usama.anjum@collabora.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240712073045.110014-1-usama.anjum@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Tue, 16 Jul 2024 14:13:37 +0300
-Mike Rapoport <rppt@kernel.org> wrote:
+On 7/12/24 01:30, Muhammad Usama Anjum wrote:
+> Use kselftest wrapper to mark tests pass/fail instead of manually
+> counting.
 
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+You care combining two changes in the patch.
+
+This is needed to return correct exit status. This also
+> improves readability and mainability.
+
+Spelling - "mainability" - checkpatch would have helped you
+catch this.
+
+The change to return the correct error fine and but not the
+change thaT ADDS DUPLICATE tap header.
+
 > 
-> By the time numa_emulation() is called, all physical memory is already
-> mapped in the direct map and there is no need to define limits for
-> memblock allocation.
+
+
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+>   tools/testing/selftests/x86/vdso_restorer.c | 20 +++++++-------------
+>   1 file changed, 7 insertions(+), 13 deletions(-)
 > 
-> Replace memblock_phys_alloc_range() with memblock_alloc().
-> 
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-Indeed seems to be after mapping physical memory, so this looks fine.
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> diff --git a/tools/testing/selftests/x86/vdso_restorer.c b/tools/testing/selftests/x86/vdso_restorer.c
+> index fe99f24341554..8e173d71291f6 100644
+> --- a/tools/testing/selftests/x86/vdso_restorer.c
+> +++ b/tools/testing/selftests/x86/vdso_restorer.c
+> @@ -21,6 +21,7 @@
+>   #include <unistd.h>
+>   #include <syscall.h>
+>   #include <sys/syscall.h>
+> +#include "../kselftest.h"
+>   
+>   /* Open-code this -- the headers are too messy to easily use them. */
+>   struct real_sigaction {
+> @@ -44,9 +45,10 @@ static void handler_without_siginfo(int sig)
+>   
+>   int main()
+>   {
+> -	int nerrs = 0;
+>   	struct real_sigaction sa;
+>   
+> +	ksft_print_header();
+
+The problem with adding this header here is when
+make kselftest TARGETS=vDSO is run there will be
+duplicate TAP 13 headers.
+
+
+> +
+>   	void *vdso = dlopen("linux-vdso.so.1",
+>   			    RTLD_LAZY | RTLD_LOCAL | RTLD_NOLOAD);
+>   	if (!vdso)
+> @@ -57,6 +59,8 @@ int main()
+>   		return 0;
+>   	}
+>   
+> +	ksft_set_plan(2);
+> +
+>   	memset(&sa, 0, sizeof(sa));
+>   	sa.handler = handler_with_siginfo;
+>   	sa.flags = SA_SIGINFO;
+> @@ -69,12 +73,7 @@ int main()
+>   
+>   	raise(SIGUSR1);
+>   
+> -	if (handler_called) {
+> -		printf("[OK]\tSA_SIGINFO handler returned successfully\n");
+> -	} else {
+> -		printf("[FAIL]\tSA_SIGINFO handler was not called\n");
+> -		nerrs++;
+> -	}
+> +	ksft_test_result(handler_called, "SA_SIGINFO handler returned\n");
+>   
+>   	printf("[RUN]\tRaise a signal, !SA_SIGINFO, sa.restorer == NULL\n");
+>   
+> @@ -86,10 +85,5 @@ int main()
+>   
+>   	raise(SIGUSR1);
+>   
+> -	if (handler_called) {
+> -		printf("[OK]\t!SA_SIGINFO handler returned successfully\n");
+> -	} else {
+> -		printf("[FAIL]\t!SA_SIGINFO handler was not called\n");
+> -		nerrs++;
+> -	}
+> +	ksft_test_result(handler_called, "SA_SIGINFO handler returned\n");
+>   }
+
+thanks,
+-- Shuah
 
