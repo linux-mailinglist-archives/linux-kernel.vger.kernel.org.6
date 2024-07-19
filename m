@@ -1,140 +1,294 @@
-Return-Path: <linux-kernel+bounces-257052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23F72937492
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:52:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D89A8937493
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4CEDB22639
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 07:52:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14C531C20CBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 07:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EE059168;
-	Fri, 19 Jul 2024 07:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b="pg0YvKPy"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C465914C;
+	Fri, 19 Jul 2024 07:52:46 +0000 (UTC)
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D2657C8D
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 07:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BC344C81
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 07:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721375554; cv=none; b=et3oiSTWfNpNzBfzRplfgKPeZxdv8rutNVmvs724JkubGfiRyi4pwOgK7q0TboIhm5HlPBFxmFTCHBzXNOxVDjBoX9q3p39HSj0YTsqPsIkJf3ll85lIQMiFBoTaiYYeMbSYH5Jpe0rGPndI0BBW4PyXA6pS61JpS0m+aI6hahA=
+	t=1721375565; cv=none; b=PXmJsLBXm8Lz027YT59ofNATYRA+I+RpyLcLHUv9KA67ziSO5F9+xKZioqomSnpko/XzJYHx4+yYNTZbBdQd3z4UdLnh0zSEubu7les26c2KI3otnQYoYOeJw0KFerVfIwW1zPX6RsfqzaSjtWsYvs52bDesZecvA7/zltbm8tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721375554; c=relaxed/simple;
-	bh=qP6PS8j+5yMOFD4CbCQZisOY5HUz99JCpst3NMXxIhk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H+9Z7NLi/aUw0Fal4L0FAoD1Y1Pfs0KwgsAWI7j2yzcjC+1c/cnAZrn6eaGz+RKxzYGG/cHyPOktDjiISH6yYPvBz++9Ybr7L+tdx+rCt9ZiOng0rn15ji3MbTQHgsYPwrGVtPFsetEKQiQzoWYNw+514XsuYKCLYguF6uACtns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org; spf=pass smtp.mailfrom=endlessos.org; dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b=pg0YvKPy; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=endlessos.org
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e026a2238d8so1682383276.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 00:52:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessos.org; s=google; t=1721375550; x=1721980350; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=55aXfChwRcmllhGH8VjIHFF0gPthm76qm4vIrxGKr+I=;
-        b=pg0YvKPyXVYpACTRg6GdUHfIf3moMja8XFenxtfsPEtg9el4V5F0RFGf0rbHXqFjVD
-         Mf9p7FSYAB76hTDaaC6KHe5nTgwVDucEW8dsVyiE35UvUgWKx/kkbojw78GIA8o0YF3k
-         T046qv7BO9m+N2+ERbaqZz/KHSj6DqSdTJAulO+tw2+0ziguqDvLuhBSZh0Rq0FDzAGy
-         ot3C2tzR75sZqdEhtGO0PrWD5C64GdJ4o1Oswipk4tjQnrdG1x+jhWJSlBVMKKMz9H9s
-         MNBxVxnoNNt3IMAMHgggA2TW+T26gGzOJ6avJyHquloHbTi5byOz29durTfJmJXfBH6u
-         sR6w==
+	s=arc-20240116; t=1721375565; c=relaxed/simple;
+	bh=PtoquHE9H/XWuvAqrk5N1f7n6Y5AC55yD9AEqiJ/DME=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nxpLDhJG7ILlYaNTWZPjl8MakcAM79zlzYJpQC+qzIz5pRLNEcZSqknvADOoGyvOvYSa9dMhCYnJ9HJHMRkzAwMJ27OGKaBe3hVek0tsyergkAuJ2R4rkL4PIORlfCObuSVYj5o8vW7YC1caDradldue50erj/g+DwzB3cL1X8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-4f4d7e7fda5so603772e0c.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 00:52:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721375550; x=1721980350;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=55aXfChwRcmllhGH8VjIHFF0gPthm76qm4vIrxGKr+I=;
-        b=JY0ZsbQdS45yVXkn8uyOPPtHrAodlDEq4JpEexNMiBbRQpnfsKcrPlEOK+awn4Nxu5
-         8O0YkdzQ0ZMfi+8khBwWR5ZR3YzHmQ3q3yrcHGHsr5Olfgfrlk82CCeNPP61iIomCUFW
-         TMaFEozOa6SAfwSasZdL2YAHmST6BK97oXy/cJ3NfuSu+9INzsv6NLMLjYHqHE1ukM9+
-         LQ4Tc11PYGtw92JN9O+thPI3dViR4gj/O7DH4ldiaHtGKLow9FOdGjMM/EwydENdt83z
-         2n0Z+8LcAvHW80u/C6pO87L1WAztzDPkcUPVMrt/ZhaNGEQtPZbm2hunVVRvzSwe4Bbk
-         MpqA==
-X-Forwarded-Encrypted: i=1; AJvYcCW1jse4bqMn6cpBxXJ5rzfuCUMVTi+wmOdKD8HVNkb4a+Gzxtj3Pr3C01HF/R8/FKcBsLB4gwYFVtNvuJlLiTUAhZvyG+QLRV6dkZ0x
-X-Gm-Message-State: AOJu0YyJJrlULbxEVrYPc9FnLchdh/Y5mwcjuH0JsIU05Fam/ajYnpg+
-	gvsFCDyu7Dm55mjqmqx2BOteuenTCqfqFO9RertaDeveqLHmpZs8A3MMEXisMebuNP55Bfn3WLt
-	FMsU=
-X-Google-Smtp-Source: AGHT+IGmB1lgAWBoLGChS81Kvh4nHyCJovCQaeGnWYLxM/BVslhDq5ar7EVQGbKHOwQE0Um/ZCVzmA==
-X-Received: by 2002:a05:6902:a85:b0:dfb:6ff:403e with SMTP id 3f1490d57ef6-e05feadc1b5mr6417137276.13.1721375550471;
-        Fri, 19 Jul 2024 00:52:30 -0700 (PDT)
-Received: from localhost.localdomain ([123.51.167.56])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-79db6cba71bsm577428a12.40.2024.07.19.00.52.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 00:52:30 -0700 (PDT)
-From: Jian-Hong Pan <jhp@endlessos.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>,
-	David Box <david.e.box@linux.intel.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Jonathan Derrick <jonathan.derrick@linux.dev>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@endlessos.org,
-	Jian-Hong Pan <jhp@endlessos.org>
-Subject: [PATCH v8 0/4] PCI: vmd: Enable PCI PM's L1 substates of remapped PCIe Root Port and NVMe
-Date: Fri, 19 Jul 2024 15:52:01 +0800
-Message-ID: <20240719075200.10717-2-jhp@endlessos.org>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1721375563; x=1721980363;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9xl2BF9j5KmOhunUwdfCN8P7oaCHLOP0oS6Xt9fJcuk=;
+        b=AfbKqvXEFMsj33rMmM/3WrVbJbR9h88mQ7azNPN6HGor0H+jiEcxFS9Edvr8nxb94F
+         d6N24haLDOmbQTHptrVdJrr2seu4GU8rIG8Hhb3XpQOYgP9tkUkVmTqxzohtL221Y2gp
+         RWwtakWlXy2th5m1IZK2OVjOsT1OJn45f/i434DyMaChfJmXTFiX209go3y2m2ykFnPE
+         iC7W1gto5d9hkLlB7piP5y03cbyN2rMnTdzSCRBeJ5CZrESr8plDhxxLne45/TBHg5PH
+         F3rKic4/e1xi2J+kKCbP5xtfZ5zSuumEHJTSYaJN6TSWsDH+mwOxWzeQmMg8ZzzATE8T
+         qSLg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/TlDGSKSGrN6WJCEC7MLN+1XHFWiaq+fsYR0akHelCV2JTNRmEDUS53Kii0yNFhDrjPEahU027lKYXuyU//MfxxrpareR20WZLoS/
+X-Gm-Message-State: AOJu0Yxlvv2oYtSy6GUXOKtjRtlMoKwFfIDkulKRdW9NuIQg6jyXwYBz
+	juJur/nsZf81gr7k67yetE0iknVYFP52Le+7OxWJ4q7SGnv+AIUlMmWKj/5KzUF7C8CXixEU3Fm
+	dSlEOzy7axgzJ4G5+JA3cSuBOtlU=
+X-Google-Smtp-Source: AGHT+IH9ktg2Fg5gwNnNNy033Oyx54ryUfT96YkbV6E/YeZXj7RltjlfvHpW7ogclmxfCllCy0NVcKMMgOn3F8YrrGo=
+X-Received: by 2002:a05:6122:3283:b0:4f2:e2f7:ed6 with SMTP id
+ 71dfb90a1353d-4f4df8c75a1mr9688844e0c.13.1721375562862; Fri, 19 Jul 2024
+ 00:52:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240717071257.4141363-1-ryan.roberts@arm.com>
+ <20240717071257.4141363-4-ryan.roberts@arm.com> <CAGsJ_4wiZRP9siEk9WpAYRjj-gehxptGY9XWC8k3N4QHBppAhQ@mail.gmail.com>
+ <fa5bd4cb-6d5c-4cb7-bb41-3c277e291cd6@arm.com>
+In-Reply-To: <fa5bd4cb-6d5c-4cb7-bb41-3c277e291cd6@arm.com>
+From: Barry Song <baohua@kernel.org>
+Date: Fri, 19 Jul 2024 19:52:32 +1200
+Message-ID: <CAGsJ_4xSDc8pX+-vOUcXtV_ivt0Jc-LECiC=tto9oxYeOtU38Q@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 3/4] mm: Override mTHP "enabled" defaults at kernel cmdline
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	David Hildenbrand <david@redhat.com>, Lance Yang <ioworker0@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Gavin Shan <gshan@redhat.com>, 
+	Pankaj Raghav <kernel@pankajraghav.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Notice the VMD remapped PCIe Root Port and NVMe have PCI PM L1 substates
-capability, but they are disabled originally.
+On Fri, Jul 19, 2024 at 7:48=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.com>=
+ wrote:
+>
+> On 19/07/2024 01:46, Barry Song wrote:
+> > On Wed, Jul 17, 2024 at 7:13=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.=
+com> wrote:
+> >>
+> >> Add thp_anon=3D cmdline parameter to allow specifying the default
+> >> enablement of each supported anon THP size. The parameter accepts the
+> >> following format and can be provided multiple times to configure each
+> >> size:
+> >>
+> >> thp_anon=3D<size>[KMG]:<value>
+> >>
+> >> See Documentation/admin-guide/mm/transhuge.rst for more details.
+> >>
+> >> Configuring the defaults at boot time is useful to allow early user
+> >> space to take advantage of mTHP before its been configured through
+> >> sysfs.
+> >
+> > This is exactly what I need and want to implement, as the current behav=
+ior
+> > is problematic. We need to boot up the system and reach the point where
+> > we can set up the sys interfaces to enable mTHP. Many processes miss th=
+e
+> > opportunity to use mTHP.
+> >
+> > On the other hand, userspace might have been tuned to detect that mTHP
+> > is enabled, such as a .so library. However, it turns out we have had
+> > inconsistent settings between the two stages - before and after setting
+> > mTHP enabled by sys interfaces.
+>
+> Good feedback - sounds like I should separate out this patch from the res=
+t of
+> the series to get it reviewed and merged faster?
 
-Here is a failed example on ASUS B1400CEAE with enabled VMD:
++1
 
-10000:e0:06.0 PCI bridge: Intel Corporation 11th Gen Core Processor PCIe Controller (rev 01) (prog-if 00 [Normal decode])
-    ...
-    Capabilities: [200 v1] L1 PM Substates
-        L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Substates+
-                  PortCommonModeRestoreTime=45us PortTPowerOnTime=50us
-        L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-                   T_CommonMode=45us LTR1.2_Threshold=101376ns
-        L1SubCtl2: T_PwrOn=50us
-
-10000:e1:00.0 Non-Volatile memory controller: Sandisk Corp WD Blue SN550 NVMe SSD (rev 01) (prog-if 02 [NVM Express])
-    ...
-    Capabilities: [900 v1] L1 PM Substates
-        L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Substates+
-                  PortCommonModeRestoreTime=32us PortTPowerOnTime=10us
-        L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-                   T_CommonMode=0us LTR1.2_Threshold=0ns
-        L1SubCtl2: T_PwrOn=10us
-
-According to "PCIe r6.0, sec 5.5.4", to config the link between the PCIe
-Root Port and the child device correctly:
-* Ensure both devices are in D0 before enabling PCI-PM L1 PM Substates.
-* Ensure L1.2 parameters: Common_Mode_Restore_Times, T_POWER_ON and
-  LTR_L1.2_THRESHOLD are programmed properly on both devices before enable
-  bits for L1.2.
-
-Prepare this series to fix that.
-
-Jian-Hong Pan (4):
-  PCI: vmd: Set PCI devices to D0 before enable PCI PM's L1 substates
-  PCI/ASPM: Add notes about enabling PCI-PM L1SS to
-    pci_enable_link_state(_locked)
-  PCI/ASPM: Introduce aspm_get_l1ss_cap()
-  PCI/ASPM: Fix L1.2 parameters when enable link state
-
- drivers/pci/controller/vmd.c | 13 +++++++----
- drivers/pci/pcie/aspm.c      | 44 ++++++++++++++++++++++++++++--------
- 2 files changed, 44 insertions(+), 13 deletions(-)
-
--- 
-2.45.2
-
+>
+> >
+> >>
+> >> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> >> ---
+> >>  .../admin-guide/kernel-parameters.txt         |  8 +++
+> >>  Documentation/admin-guide/mm/transhuge.rst    | 26 +++++++--
+> >>  mm/huge_memory.c                              | 55 ++++++++++++++++++=
+-
+> >>  3 files changed, 82 insertions(+), 7 deletions(-)
+> >>
+> >> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documen=
+tation/admin-guide/kernel-parameters.txt
+> >> index bc55fb55cd26..48443ad12e3f 100644
+> >> --- a/Documentation/admin-guide/kernel-parameters.txt
+> >> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> >> @@ -6592,6 +6592,14 @@
+> >>                         <deci-seconds>: poll all this frequency
+> >>                         0: no polling (default)
+> >>
+> >> +       thp_anon=3D       [KNL]
+> >> +                       Format: <size>[KMG]:always|madvise|never|inher=
+it
+> >> +                       Can be used to control the default behavior of=
+ the
+> >> +                       system with respect to anonymous transparent h=
+ugepages.
+> >> +                       Can be used multiple times for multiple anon T=
+HP sizes.
+> >> +                       See Documentation/admin-guide/mm/transhuge.rst=
+ for more
+> >> +                       details.
+> >> +
+> >>         threadirqs      [KNL,EARLY]
+> >>                         Force threading of all interrupt handlers exce=
+pt those
+> >>                         marked explicitly IRQF_NO_THREAD.
+> >> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentatio=
+n/admin-guide/mm/transhuge.rst
+> >> index 1aaf8e3a0b5a..f53d43d986e2 100644
+> >> --- a/Documentation/admin-guide/mm/transhuge.rst
+> >> +++ b/Documentation/admin-guide/mm/transhuge.rst
+> >> @@ -311,13 +311,27 @@ performance.
+> >>  Note that any changes to the allowed set of sizes only applies to fut=
+ure
+> >>  file-backed THP allocations.
+> >>
+> >> -Boot parameter
+> >> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >> +Boot parameters
+> >> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>
+> >> -You can change the sysfs boot time defaults of Transparent Hugepage
+> >> -Support by passing the parameter ``transparent_hugepage=3Dalways`` or
+> >> -``transparent_hugepage=3Dmadvise`` or ``transparent_hugepage=3Dnever`=
+`
+> >> -to the kernel command line.
+> >> +You can change the sysfs boot time default for the top-level "enabled=
+"
+> >> +control by passing the parameter ``transparent_hugepage=3Dalways`` or
+> >> +``transparent_hugepage=3Dmadvise`` or ``transparent_hugepage=3Dnever`=
+` to the
+> >> +kernel command line.
+> >> +
+> >> +Alternatively, each supported anonymous THP size can be controlled by
+> >> +passing ``thp_anon=3D<size>[KMG]:<state>``, where ``<size>`` is the T=
+HP size
+> >> +and ``<state>`` is one of ``always``, ``madvise``, ``never`` or
+> >> +``inherit``.
+> >> +
+> >> +For example, the following will set 64K THP to ``always``::
+> >> +
+> >> +       thp_anon=3D64K:always
+> >> +
+> >> +``thp_anon=3D`` may be specified multiple times to configure all THP =
+sizes as
+> >> +required. If ``thp_anon=3D`` is specified at least once, any anon THP=
+ sizes
+> >> +not explicitly configured on the command line are implicitly set to
+> >> +``never``.
+> >>
+> >>  Hugepages in tmpfs/shmem
+> >>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+> >> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> >> index 4249c0bc9388..794d2790d90d 100644
+> >> --- a/mm/huge_memory.c
+> >> +++ b/mm/huge_memory.c
+> >> @@ -82,6 +82,7 @@ unsigned long huge_anon_orders_madvise __read_mostly=
+;
+> >>  unsigned long huge_anon_orders_inherit __read_mostly;
+> >>  unsigned long huge_file_orders_always __read_mostly;
+> >>  int huge_file_exec_order __read_mostly =3D -1;
+> >> +static bool anon_orders_configured;
+> >>
+> >>  unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+> >>                                          unsigned long vm_flags,
+> >> @@ -763,7 +764,10 @@ static int __init hugepage_init_sysfs(struct kobj=
+ect **hugepage_kobj)
+> >>          * disable all other sizes. powerpc's PMD_ORDER isn't a compil=
+e-time
+> >>          * constant so we have to do this here.
+> >>          */
+> >> -       huge_anon_orders_inherit =3D BIT(PMD_ORDER);
+> >> +       if (!anon_orders_configured) {
+> >> +               huge_anon_orders_inherit =3D BIT(PMD_ORDER);
+> >> +               anon_orders_configured =3D true;
+> >> +       }
+> >>
+> >>         /*
+> >>          * For pagecache, default to enabling all orders. powerpc's PM=
+D_ORDER
+> >> @@ -955,6 +959,55 @@ static int __init setup_transparent_hugepage(char=
+ *str)
+> >>  }
+> >>  __setup("transparent_hugepage=3D", setup_transparent_hugepage);
+> >>
+> >> +static int __init setup_thp_anon(char *str)
+> >> +{
+> >> +       unsigned long size;
+> >> +       char *state;
+> >> +       int order;
+> >> +       int ret =3D 0;
+> >> +
+> >> +       if (!str)
+> >> +               goto out;
+> >> +
+> >> +       size =3D (unsigned long)memparse(str, &state);
+> >> +       order =3D ilog2(size >> PAGE_SHIFT);
+> >> +       if (*state !=3D ':' || !is_power_of_2(size) || size <=3D PAGE_=
+SIZE ||
+> >> +           !(BIT(order) & THP_ORDERS_ALL_ANON))
+> >> +               goto out;
+> >> +
+> >> +       state++;
+> >> +
+> >> +       if (!strcmp(state, "always")) {
+> >> +               clear_bit(order, &huge_anon_orders_inherit);
+> >> +               clear_bit(order, &huge_anon_orders_madvise);
+> >> +               set_bit(order, &huge_anon_orders_always);
+> >> +               ret =3D 1;
+> >> +       } else if (!strcmp(state, "inherit")) {
+> >> +               clear_bit(order, &huge_anon_orders_always);
+> >> +               clear_bit(order, &huge_anon_orders_madvise);
+> >> +               set_bit(order, &huge_anon_orders_inherit);
+> >> +               ret =3D 1;
+> >> +       } else if (!strcmp(state, "madvise")) {
+> >> +               clear_bit(order, &huge_anon_orders_always);
+> >> +               clear_bit(order, &huge_anon_orders_inherit);
+> >> +               set_bit(order, &huge_anon_orders_madvise);
+> >> +               ret =3D 1;
+> >> +       } else if (!strcmp(state, "never")) {
+> >> +               clear_bit(order, &huge_anon_orders_always);
+> >> +               clear_bit(order, &huge_anon_orders_inherit);
+> >> +               clear_bit(order, &huge_anon_orders_madvise);
+> >> +               ret =3D 1;
+> >> +       }
+> >> +
+> >> +       if (ret)
+> >> +               anon_orders_configured =3D true;
+> >> +out:
+> >> +       if (!ret)
+> >> +               pr_warn("thp_anon=3D%s: cannot parse, ignored\n", str)=
+;
+> >> +       return ret;
+> >> +}
+> >> +__setup("thp_anon=3D", setup_thp_anon);
+> >> +
+> >>  pmd_t maybe_pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
+> >>  {
+> >>         if (likely(vma->vm_flags & VM_WRITE))
+> >> --
+> >> 2.43.0
+> >>
+> >
+> > Thanks
+> > Barry
+>
+>
 
