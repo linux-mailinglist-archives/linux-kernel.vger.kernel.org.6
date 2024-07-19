@@ -1,368 +1,128 @@
-Return-Path: <linux-kernel+bounces-257136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0C59375BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 11:36:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCDA19375BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 11:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39B182827C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:36:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 937101F223E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 09:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50A381AB4;
-	Fri, 19 Jul 2024 09:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E89C82C63;
+	Fri, 19 Jul 2024 09:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n0LrH7mX"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="erHejICu"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB3479FE
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 09:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6163579FE
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 09:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721381776; cv=none; b=BdKLdi/CCBJIYNa4COCu24Z+k6RGDAnmi10Q72NEz3YFH09STomKYaLoZHpk00jEpmZFtI/FIzunGRRlmH4x29IR6Nh6mEOEuGMgdZS9GAk5xVy618nwkF4+9ouMV96BzJo7z/GqJDl/pKoS+tULIPRw19/rv/HWyYrbepbPp/4=
+	t=1721381785; cv=none; b=XJRUz5pCd4+Sx3opMlgdFPk31MXi+bZcpksJSEmIk4lPIsNkngPQxLKqPox9eqTeg82/1+XBjXqPpsYYlMKptk3x0euh2nFe4S3egPr9F/kysYLwn2+1HXnb3j83mxC+yw8s4pUh5QP5KZ6td+zqERhlt/pqwUu5eUGTU4aWpxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721381776; c=relaxed/simple;
-	bh=DnZeCmqI2dyzpeY2FjAbXFvocOkEz76+OxjwEMKGOI8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NWAZsBwFZTxWnya8swe7FwBXLtIJnlMJGFsIWIuFDXbwasePIIH+nA/8Lb3aVdkxD0f+rc8dqZuE/kXWI2tbFpwCBA0iZELjnZ+70DkyZjyO+N3pSoY1gY+lXgrj5kNRQu95lHJC1hc6Ev3hzZecatYJMq2XZKjAj7IkAHaf8Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n0LrH7mX; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52ea3e499b1so1599579e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 02:36:13 -0700 (PDT)
+	s=arc-20240116; t=1721381785; c=relaxed/simple;
+	bh=tdk84TAQOJyGZ8fYKBiIUqc9KGVWzsHWO1h34z466G4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=goni4qvrvNGmT6uCygl9sTT0+VYRHwmq5RNZlKMI+qBj3q03gIrWosYzSwXYgtCCdxeIhvNSW1np8xC0PDoKkUa4QO7ka3P/sQlJx2UgJvooo4t10SQLmJ5KjeD1HEkrQ+Bwfrm0NBnhFqoP2xCRNZH5TWaaO+QaJvMqpKU6CLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=erHejICu; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3685b3dbcdcso531649f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 02:36:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721381772; x=1721986572; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DsZBXW6WgrAGryG7gkuIwjrF77KOyGscbpByOvNZN18=;
-        b=n0LrH7mXaEaP+0YmEERB093KTwPECOs2JpsXDBTCz57AH1YzNkJUsuGtRbtdX/sRmY
-         S+WvdTfT+sxZ70BdPWQRGOuiWaI8wSdBNeahTnM6GgoBn2QPcdwQtyPGvHK+5x0MP8Zi
-         p00rEqQ2wMl2JhINodIZussILmT7Z2U5iabUfdLWU6dTDv6qBQ2tchSQFMcW+NCDpfV1
-         DnRHILWSB/Rb/JEdS7HWN/2dDN+4HNGKRDbmodzVgyvJOn6eCgQn2lBKWdq79Zsn4AJ+
-         ru2THjLNgG2S7yIvJqJ2f86TpcgWENXiAyWJ1Y3hr7OrDsXR4xMwx1n+angYJhOMR40V
-         Etgw==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1721381782; x=1721986582; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cdgwK3eQK6TzCDKCXBvtv5JzZ8fbzZuuyV7JfbDIf/M=;
+        b=erHejICu9e3IC7cBXI/vph46SIamCBIMZadTaLFIWr7GquL6xgCLlTvohB667TVTQA
+         by97iSZ6jrvvochPDK8FWVNSSoWkVQSnQGygk2U1eeNw1LEDJpqCwzalXhN00i8HLYU9
+         35Yrf5yckgdulB3wAXFD3jRRh8bd057caEVcA+en7xsW3aZTLhZVlrL5rqJSbe8IALQn
+         foGuqAoT05EFuc3lxKICNTwofzNa7Gb2A7DzamXfMyf1jJTrEhDcgxzH97xRoR1+wsQW
+         diAhofKD4sYiqRhIffcazj9CVGrJ+JyrNBcT/H70oOEXKvyVUSI8s/rh9MAiK4oumSzF
+         DJpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721381772; x=1721986572;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DsZBXW6WgrAGryG7gkuIwjrF77KOyGscbpByOvNZN18=;
-        b=j7VUnFyeWtsdGdcEplrEUvUTkGrVqNp2oIYuYRGkOmCWRq8kmCVqsIxlzM8+vBb2OV
-         ARfac9lyx4z6WWd6s29D24BePt7yUfJZVgQueCy1XojsGBc08CtfSXQzHVlX/3OBnhBM
-         Dr1ksj1CUoeQgAP0XKEc/NRoEH2qz4jh/Mi6kA9Uq97xxLhvH0A8xqKeuqfKAQlHl3ek
-         gnn6VHbUXsHXwJNceNTimjb9sD/lcU3BTYchG5cpNg3JCmJj+OevXsvyZzA64daoFajA
-         x3aRg+mnOoKdhXCQy/Etp5ELvFONu5ByQrabum7pTs3yCKX1geUSHGfeAw9TeQlrEUR4
-         QIhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXUVnADkowmE0KT+o7/qyTxsfCdce9OiINsZEmfQlAtOV3h2Pivk59LPyALqNzy7fftUnpQo81UERCFf1hTOhvFI3hM5zLq2YQOeO4G
-X-Gm-Message-State: AOJu0YxwJd7on6AMCR/08YhtTZqGVOtCkcaGjzRQqBh/PiWHmCAlc2Q/
-	2ma0n7BLBY0mt8vj/HN+tlzcqBoCXKuNj88R8iY4VEgt5pIvLRVg4D+SF57MeNY=
-X-Google-Smtp-Source: AGHT+IGMi/4+EVLJ8XGN6IcunIoRlm0OtHgjmb84ebMvmTR6Z4ZDK8fU6GgHxIBYoARE+eaGq8AJIA==
-X-Received: by 2002:a05:6512:6c4:b0:52c:825e:3b1c with SMTP id 2adb3069b0e04-52eeaeac222mr3722744e87.26.1721381772158;
-        Fri, 19 Jul 2024 02:36:12 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a8e47csm44243675e9.29.2024.07.19.02.36.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Jul 2024 02:36:11 -0700 (PDT)
-Message-ID: <e355cee6-92a7-4265-ac59-731e1adee970@linaro.org>
-Date: Fri, 19 Jul 2024 10:36:10 +0100
+        d=1e100.net; s=20230601; t=1721381782; x=1721986582;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cdgwK3eQK6TzCDKCXBvtv5JzZ8fbzZuuyV7JfbDIf/M=;
+        b=kt2BveuMmeUGPrn7fVQ2cT4LQlFjvobM73hC0QEhs5tDb5DdlQMcchLx/2QylNB8c5
+         eftQfJwMr9rwwYakunZG/gGt6PMb92LWEiZv8o2WE0+txIpnRpnWTyALzLCCUm31qKPj
+         GScK/9hFXm+aUXIaBrI95dQITNIT88JtDDuZQDX6LzHDQ+dXzPF9GxTVeqIhYAkEZyrz
+         7ciSgwbCS0mlUE5ovTX+Ctnt068oiykkBjHTNkKgBqnR8CLKUnTbdL3wDavRf+jFnaLB
+         iP8mLEkI5/sDidgx2+eXvhItBMssSmdO+yDwAPcyQgUDArNM4kMaaiHpBxAxMW/Dy84a
+         Me/w==
+X-Forwarded-Encrypted: i=1; AJvYcCXZVrbXPdLCd7ja9wDC5I+RYVoYfJbGKv5qVZZNuV/NYQ3CkCmmRf38CQonfzeCSQw1COOcntllml2iKVnn8NvANFC+ed4tmjJ9vsmz
+X-Gm-Message-State: AOJu0Yzpi7VVZueajOVZiE8wNfVyeBSJjvyVY7iPRhKheobSCxtLy6nK
+	b5LcAxW/0DyQ+LU9VKbaOyTM4D/xC180JmuXbqjygCwFFP3Co57pqyD7xybeqHkUBZZSHkFHjm0
+	W
+X-Google-Smtp-Source: AGHT+IERJ5CVIKajqquihn6NE/XmMlyxafe6ckVtPVAUC0vybHV46jG9oDc6VlL6RYybBbU9nX5pbA==
+X-Received: by 2002:a5d:56ce:0:b0:367:9877:750e with SMTP id ffacd0b85a97d-36831605880mr4408312f8f.25.1721381781590;
+        Fri, 19 Jul 2024 02:36:21 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:2aee:948:fb51:d5a7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3687868b7d9sm1102859f8f.42.2024.07.19.02.36.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 02:36:21 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] power sequencing fixes for v6.11-rc1
+Date: Fri, 19 Jul 2024 11:36:11 +0200
+Message-ID: <20240719093611.29244-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 02/17] perf: cs-etm: Allocate queues for all CPUs
-To: Mike Leach <mike.leach@linaro.org>
-Cc: coresight@lists.linaro.org, suzuki.poulose@arm.com,
- gankulkarni@os.amperecomputing.com, leo.yan@linux.dev,
- anshuman.khandual@arm.com, James Clark <james.clark@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-perf-users@vger.kernel.org
-References: <20240712102029.3697965-1-james.clark@linaro.org>
- <20240712102029.3697965-3-james.clark@linaro.org>
- <CAJ9a7VgUXpOo7we8v8mCMDWNtCGsHmBi5tk8YA-MeNhHk59zLg@mail.gmail.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <CAJ9a7VgUXpOo7we8v8mCMDWNtCGsHmBi5tk8YA-MeNhHk59zLg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
+Linus,
 
-On 18/07/2024 2:24 pm, Mike Leach wrote:
-> Hi James
-> 
-> On Fri, 12 Jul 2024 at 11:22, James Clark <james.clark@linaro.org> wrote:
->>
->> From: James Clark <james.clark@arm.com>
->>
->> Make cs_etm__setup_queue() setup a queue even if it's empty, and
->> pre-allocate queues based on the max CPU that was recorded. In per-CPU
->> mode aux queues are indexed based on CPU ID even if all CPUs aren't
->> recorded, sparse queue arrays aren't used.
->>
->> This will allow HW_IDs to be saved even if no aux data was received in
->> that queue without having to call cs_etm__setup_queue() from two
->> different places.
->>
->> Signed-off-by: James Clark <james.clark@arm.com>
->> Signed-off-by: James Clark <james.clark@linaro.org>
->> ---
->>   tools/perf/util/cs-etm.c | 76 +++++++++++++++++++++-------------------
->>   1 file changed, 40 insertions(+), 36 deletions(-)
->>
->> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
->> index f09004c4ba44..1a95c4bb898f 100644
->> --- a/tools/perf/util/cs-etm.c
->> +++ b/tools/perf/util/cs-etm.c
->> @@ -97,13 +97,19 @@ struct cs_etm_traceid_queue {
->>          struct cs_etm_packet_queue packet_queue;
->>   };
->>
->> +enum cs_etm_format {
->> +       UNSET,
->> +       FORMATTED,
->> +       UNFORMATTED
->> +};
->> +
-> 
-> Minor Nit: Could this...
-> 
->>   struct cs_etm_queue {
->>          struct cs_etm_auxtrace *etm;
->>          struct cs_etm_decoder *decoder;
->>          struct auxtrace_buffer *buffer;
->>          unsigned int queue_nr;
->>          u8 pending_timestamp_chan_id;
->> -       bool formatted;
->> +       enum cs_etm_format format;
-> 
-> and this be introduced in the previous set? Avoid a bit of churn?
-> 
+Please pull the following set of fixes for power sequencing. There's one
+fix for an invalid pointer dereference in error path reported by smatch
+and two patches that address the noisy config choices you reported earlier
+this week.
 
-Yep, I'll move it
+Bartosz
 
->>          u64 offset;
->>          const unsigned char *buf;
->>          size_t buf_len, buf_used;
->> @@ -697,7 +703,7 @@ static void cs_etm__set_trace_param_ete(struct cs_etm_trace_params *t_params,
->>
->>   static int cs_etm__init_trace_params(struct cs_etm_trace_params *t_params,
->>                                       struct cs_etm_auxtrace *etm,
->> -                                    bool formatted,
->> +                                    enum cs_etm_format format,
->>                                       int sample_cpu,
->>                                       int decoders)
->>   {
->> @@ -706,7 +712,7 @@ static int cs_etm__init_trace_params(struct cs_etm_trace_params *t_params,
->>          u64 architecture;
->>
->>          for (t_idx = 0; t_idx < decoders; t_idx++) {
->> -               if (formatted)
->> +               if (format == FORMATTED)
->>                          m_idx = t_idx;
->>                  else {
->>                          m_idx = get_cpu_data_idx(etm, sample_cpu);
->> @@ -749,7 +755,7 @@ static int cs_etm__init_decoder_params(struct cs_etm_decoder_params *d_params,
->>          d_params->packet_printer = cs_etm__packet_dump;
->>          d_params->operation = mode;
->>          d_params->data = etmq;
->> -       d_params->formatted = etmq->formatted;
->> +       d_params->formatted = etmq->format == FORMATTED;
->>          d_params->fsyncs = false;
->>          d_params->hsyncs = false;
->>          d_params->frame_aligned = true;
->> @@ -1056,16 +1062,11 @@ static struct cs_etm_queue *cs_etm__alloc_queue(void)
->>
->>   static int cs_etm__setup_queue(struct cs_etm_auxtrace *etm,
->>                                 struct auxtrace_queue *queue,
->> -                              unsigned int queue_nr, bool formatted)
->> +                              unsigned int queue_nr)
->>   {
->>          struct cs_etm_queue *etmq = queue->priv;
->>
->> -       if (etmq && formatted != etmq->formatted) {
->> -               pr_err("CS_ETM: mixed formatted and unformatted trace not supported\n");
->> -               return -EINVAL;
->> -       }
->> -
->> -       if (list_empty(&queue->head) || etmq)
->> +       if (etmq)
->>                  return 0;
->>
->>          etmq = cs_etm__alloc_queue();
->> @@ -1078,7 +1079,6 @@ static int cs_etm__setup_queue(struct cs_etm_auxtrace *etm,
->>          etmq->queue_nr = queue_nr;
->>          queue->cpu = queue_nr; /* Placeholder, may be reset to -1 in per-thread mode */
->>          etmq->offset = 0;
->> -       etmq->formatted = formatted;
->>
->>          return 0;
->>   }
->> @@ -2791,17 +2791,6 @@ static int cs_etm__process_auxtrace_event(struct perf_session *session,
->>                  if (err)
->>                          return err;
->>
->> -               /*
->> -                * Knowing if the trace is formatted or not requires a lookup of
->> -                * the aux record so only works in non-piped mode where data is
->> -                * queued in cs_etm__queue_aux_records(). Always assume
->> -                * formatted in piped mode (true).
->> -                */
->> -               err = cs_etm__setup_queue(etm, &etm->queues.queue_array[idx],
->> -                                         idx, true);
->> -               if (err)
->> -                       return err;
->> -
->>                  if (dump_trace)
->>                          if (auxtrace_buffer__get_data(buffer, fd)) {
->>                                  cs_etm__dump_event(etm->queues.queue_array[idx].priv, buffer);
->> @@ -2918,8 +2907,7 @@ static int cs_etm__queue_aux_fragment(struct perf_session *session, off_t file_o
->>          struct perf_record_auxtrace *auxtrace_event;
->>          union perf_event auxtrace_fragment;
->>          __u64 aux_offset, aux_size;
->> -       __u32 idx;
->> -       bool formatted;
->> +       enum cs_etm_format format;
->>
->>          struct cs_etm_auxtrace *etm = container_of(session->auxtrace,
->>                                                     struct cs_etm_auxtrace,
->> @@ -2985,6 +2973,8 @@ static int cs_etm__queue_aux_fragment(struct perf_session *session, off_t file_o
->>
->>          if (aux_offset >= auxtrace_event->offset &&
->>              aux_offset + aux_size <= auxtrace_event->offset + auxtrace_event->size) {
->> +               struct cs_etm_queue *etmq = etm->queues.queue_array[auxtrace_event->idx].priv;
->> +
->>                  /*
->>                   * If this AUX event was inside this buffer somewhere, create a new auxtrace event
->>                   * based on the sizes of the aux event, and queue that fragment.
->> @@ -3001,10 +2991,14 @@ static int cs_etm__queue_aux_fragment(struct perf_session *session, off_t file_o
->>                  if (err)
->>                          return err;
->>
->> -               idx = auxtrace_event->idx;
->> -               formatted = !(aux_event->flags & PERF_AUX_FLAG_CORESIGHT_FORMAT_RAW);
->> -
->> -               return cs_etm__setup_queue(etm, &etm->queues.queue_array[idx], idx, formatted);
->> +               format = (aux_event->flags & PERF_AUX_FLAG_CORESIGHT_FORMAT_RAW) ?
->> +                               UNFORMATTED : FORMATTED;
->> +               if (etmq->format != UNSET && format != etmq->format) {
->> +                       pr_err("CS_ETM: mixed formatted and unformatted trace not supported\n");
->> +                       return -EINVAL;
->> +               }
->> +               etmq->format = format;
->> +               return 0;
->>          }
->>
->>          /* Wasn't inside this buffer, but there were no parse errors. 1 == 'not found' */
->> @@ -3200,7 +3194,7 @@ static int cs_etm__create_queue_decoders(struct cs_etm_queue *etmq)
->>           * Each queue can only contain data from one CPU when unformatted, so only one decoder is
->>           * needed.
->>           */
->> -       int decoders = etmq->formatted ? etmq->etm->num_cpu : 1;
->> +       int decoders = etmq->format == FORMATTED ? etmq->etm->num_cpu : 1;
->>
->>          /* Use metadata to fill in trace parameters for trace decoder */
->>          struct cs_etm_trace_params  *t_params = zalloc(sizeof(*t_params) * decoders);
->> @@ -3208,7 +3202,7 @@ static int cs_etm__create_queue_decoders(struct cs_etm_queue *etmq)
->>          if (!t_params)
->>                  goto out_free;
->>
->> -       if (cs_etm__init_trace_params(t_params, etmq->etm, etmq->formatted,
->> +       if (cs_etm__init_trace_params(t_params, etmq->etm, etmq->format,
->>                                        etmq->queue_nr, decoders))
->>                  goto out_free;
->>
->> @@ -3256,6 +3250,7 @@ static int cs_etm__create_decoders(struct cs_etm_auxtrace *etm)
->>                   * Don't create decoders for empty queues, mainly because
->>                   * etmq->formatted is unknown for empty queues.
->>                   */
->> +               assert(empty == (etmq->format == UNSET));
->>                  if (empty)
->>                          continue;
->>
->> @@ -3275,10 +3270,10 @@ int cs_etm__process_auxtrace_info_full(union perf_event *event,
->>          int event_header_size = sizeof(struct perf_event_header);
->>          int total_size = auxtrace_info->header.size;
->>          int priv_size = 0;
->> -       int num_cpu;
->> +       int num_cpu, max_cpu = 0;
->>          int err = 0;
->>          int aux_hw_id_found;
->> -       int i, j;
->> +       int i;
->>          u64 *ptr = NULL;
->>          u64 **metadata = NULL;
->>
->> @@ -3309,7 +3304,7 @@ int cs_etm__process_auxtrace_info_full(union perf_event *event,
->>           * required by the trace decoder to properly decode the trace due
->>           * to its highly compressed nature.
->>           */
->> -       for (j = 0; j < num_cpu; j++) {
->> +       for (int j = 0; j < num_cpu; j++) {
->>                  if (ptr[i] == __perf_cs_etmv3_magic) {
->>                          metadata[j] =
->>                                  cs_etm__create_meta_blk(ptr, &i,
->> @@ -3333,6 +3328,9 @@ int cs_etm__process_auxtrace_info_full(union perf_event *event,
->>                          err = -ENOMEM;
->>                          goto err_free_metadata;
->>                  }
->> +
->> +               if ((int) metadata[j][CS_ETM_CPU] > max_cpu)
->> +                       max_cpu = metadata[j][CS_ETM_CPU];
->>          }
->>
->>          /*
->> @@ -3362,10 +3360,16 @@ int cs_etm__process_auxtrace_info_full(union perf_event *event,
->>           */
->>          etm->pid_fmt = cs_etm__init_pid_fmt(metadata[0]);
->>
->> -       err = auxtrace_queues__init(&etm->queues);
->> +       err = auxtrace_queues__init_nr(&etm->queues, max_cpu + 1);
->>          if (err)
->>                  goto err_free_etm;
->>
->> +       for (unsigned int j = 0; j < etm->queues.nr_queues; ++j) {
->> +               err = cs_etm__setup_queue(etm, &etm->queues.queue_array[j], j);
->> +               if (err)
->> +                       goto err_free_queues;
->> +       }
->> +
->>          if (session->itrace_synth_opts->set) {
->>                  etm->synth_opts = *session->itrace_synth_opts;
->>          } else {
->> @@ -3487,7 +3491,7 @@ int cs_etm__process_auxtrace_info_full(union perf_event *event,
->>          zfree(&etm);
->>   err_free_metadata:
->>          /* No need to check @metadata[j], free(NULL) is supported */
->> -       for (j = 0; j < num_cpu; j++)
->> +       for (int j = 0; j < num_cpu; j++)
->>                  zfree(&metadata[j]);
->>          zfree(&metadata);
->>   err_free_traceid_list:
->> --
->> 2.34.1
->>
-> 
-> Reviewed-by: Mike Leach <mike.leach@linaro.org>
-> 
-> 
-> --
-> Mike Leach
-> Principal Engineer, ARM Ltd.
-> Manchester Design Centre. UK
+The following changes since commit e763c9ec71dd462337d0b671ec5014b737c5342e:
+
+  Merge tag 'pwrseq-updates-for-v6.11-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux (2024-07-15 17:34:31 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/pwrseq-fixes-for-v6.11-rc1
+
+for you to fetch changes up to 1a8c67a8b21e26843d5641c55f48130b3e323ce8:
+
+  arm64: qcom: don't select HAVE_PWRCTL when PCI=n (2024-07-19 09:49:24 +0200)
+
+----------------------------------------------------------------
+power sequencing fixes for v6.11-rc1
+
+- fix an invalid pointer dereference in error path in pwrseq core
+- reduce the Kconfig noise from PCI pwrctl choices
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      arm64: qcom: don't select HAVE_PWRCTL when PCI=n
+
+Bartosz Golaszewski (2):
+      power: sequencing: fix an invalid pointer dereference in error path
+      Kconfig: reduce the amount of power sequencing noise
+
+ arch/arm64/Kconfig.platforms            |  1 +
+ drivers/net/wireless/ath/ath11k/Kconfig |  1 +
+ drivers/net/wireless/ath/ath12k/Kconfig |  1 +
+ drivers/pci/pwrctl/Kconfig              | 11 +++--------
+ drivers/power/sequencing/core.c         |  3 ++-
+ 5 files changed, 8 insertions(+), 9 deletions(-)
 
