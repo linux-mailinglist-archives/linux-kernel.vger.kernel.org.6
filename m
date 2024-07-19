@@ -1,118 +1,118 @@
-Return-Path: <linux-kernel+bounces-257672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05231937D4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 22:34:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B03C3937D4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 22:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 946671F21AFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:34:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 610B52824D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 20:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39960147C82;
-	Fri, 19 Jul 2024 20:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915301487E3;
+	Fri, 19 Jul 2024 20:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mXBttteO"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="Uc4bYMIV"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2179F59168
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 20:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F97F59168;
+	Fri, 19 Jul 2024 20:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721421264; cv=none; b=beUQEuABbEzp6nKX3raIuDx5eqbtwbbyMaa2tcjFfcZL+Le0MLwLQLy1oAv/CRHWSRlmXoguo/e4aXJ0FSQMrBph2AR/Ui4ZPamOlJHVUnd8h5KVzgkN7wBxABYx88iQbApNMLUf0ZaCjEZMx0f+pxolmByFYZ5pyzRRTun9Y3w=
+	t=1721421451; cv=none; b=eV1evtHHT8+e3gGy35b3QkbPoSuA63GwLe5Gu/yMelJ5VTJBv8/8DRp1GQWgBpyJmQBvEGhQCcB1vXoKsap0yRpBHcRhmFsrJl44mN05eXc0qwEcTy1AcLztQuMMBs24mfPGkOiwpew1B+0xfg0mnujh384a47xSmkJV97jH/9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721421264; c=relaxed/simple;
-	bh=Ac9SXmSv9BsgH64Y8UQDr2unEgLUtz8gJKOfNFLyV5Q=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=tLo2UI3D0886Tf+fCw0fe1ij/87k/nui/EKkKe9Gr0jJ1siua7TO7u7D/o2xrFnlqQSiBDDdRRiw77TUIfNlQOs13vRNbJlAK1tvKpYDbP0TlSKm8zoRaXYatKQsXurrRn7wPqcklCl14kBUdC8GKV3L+3FeMyhQMa4twg2jewY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mXBttteO; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721421236; x=1722026036; i=markus.elfring@web.de;
-	bh=PukH2qFKFXa2q7NpTYxCFyDmx5ddZ3D4vxBVtVFhw7k=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	s=arc-20240116; t=1721421451; c=relaxed/simple;
+	bh=zhWRHgnHuwV/l/mbk02OZ3eImJEQQ1aOLWOTcfjzHWA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ICzPsmIINtO9L0inpTYOkayA6scCJZ6VB8XGYgj/4G5CcfQ+BXk14gQWOuRiVASR0X6DsXQG6/eDepjD4RTHQx4p8bZiiY7e1rsXqdz6kABXKCfwRMtfhDoVEChicEjjXbwMl1AUuEQw/r+RQRoJ4vSDlBJzuIMK8bDojJKIzIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=Uc4bYMIV; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1721421429; x=1722026229; i=w_armin@gmx.de;
+	bh=JzkrddmU1/BMgLEAoo1h+oYv4fNeYIF3jP8yDToxero=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=mXBttteOGXocaTLgoIKNri+abgQrTQC76NQSbNfbbkxb1QY4hvrrzB5InVwDoPby
-	 HkxY9w06hgyGNCBdbkmrKFHnfd/oD/0Xtz8/fnCnErv4Evp2fnuJ0XOdiABL/CMss
-	 7xmyCAsGJgEXawmSGipm0tmLE95FI+Feru1qyQXl7vq8j+jREe5XiZ/vmHGDzEv2N
-	 punlbhh3ktZ59jZWA5eRcQOpJf3SvKLLT+S4NGd57V7ZaMfRY8iia3H+SJ9pFskYC
-	 Cvc27NT5oHDwoZfjUmQnPnmmWzOuENb/1sLeqNvKnwGQGg7iLjZ8aHZ+S+GyRfirl
-	 Z/px0zY4Cry6Tuh41A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MKdHC-1slKBs1r24-00LGh6; Fri, 19
- Jul 2024 22:33:56 +0200
-Message-ID: <717a8269-95f5-4aae-913b-0108c6dac70e@web.de>
-Date: Fri, 19 Jul 2024 22:33:55 +0200
+	b=Uc4bYMIVbzfUGTH58tGbAlldmGXs6pfiHI9IqlGedhKWm1tZLTv5bAipkBUpHsNb
+	 E8u/MSFxgacnO1wJkzQXFmRfwwId9txS4E7y4Xej8g+Q8OX2RwHuSW5YT8txe9SSA
+	 qikhX2AeIsnfmIqhw3fegXLc8IILsgdYN7zvU5w0Jo3E9GpYyGQqBanlzPrl6Rswi
+	 5KkN/jZ2fnBiG0YehVbVQ5Grhb3Yx7FMP1qtH75jzNfzJG5gBImdYG/TPa2eefAQt
+	 4U0c12rL/6B7HjYiDNGCXhpx+MPC6wemLWjgvSchvt9CRlAHobWExzuzZpKP+mJJW
+	 mHwpTpYWd0zN5guu5Q==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from mx-amd-b650.users.agdsn.de ([141.30.226.129]) by mail.gmx.net
+ (mrgmx105 [212.227.17.168]) with ESMTPSA (Nemesis) id
+ 1MJVHU-1skEHM3lhw-00Tdfb; Fri, 19 Jul 2024 22:37:08 +0200
+From: Armin Wolf <W_Armin@gmx.de>
+To: pali@kernel.org
+Cc: jdelvare@suse.com,
+	linux@roeck-us.net,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] hwmon: (dell-smm) Add Dell Latitude 7320 to fan control whitelist
+Date: Fri, 19 Jul 2024 22:37:06 +0200
+Message-Id: <20240719203706.19466-1-W_Armin@gmx.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: George Yang <George.Yang@amd.com>, Lizhi Hou <lizhi.hou@amd.com>,
- Min Ma <min.ma@amd.com>, Narendra Gutta
- <VenkataNarendraKumar.Gutta@amd.com>, dri-devel@lists.freedesktop.org,
- Oded Gabbay <ogabbay@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Max Zhen <max.zhen@amd.com>,
- Sonal Santan <sonal.santan@amd.com>
-References: <20240719175128.2257677-2-lizhi.hou@amd.com>
-Subject: Re: [PATCH 01/10] accel/amdxdna: Add a new driver for AMD AI Engine
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240719175128.2257677-2-lizhi.hou@amd.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:kKNMDZqIip+Hff6rrnmybURwGR/5xjlOIrFZOVFzSdr9YobNnSp
- ndqc/GyrDdD2WIe5Ra+7bUTj37meM5oH5US4C64IgmaaBbuBdydxmpcrr/3RIfX1dy2hrr5
- PTUS+rGhNxvJP8dTWYyDcXPcVSlMkgS+Km0pL/YpYR/RnKsXWVwvs4EKjNEkC5gmUABcNaY
- o405sLDzyYUb2fQxwyykA==
+X-Provags-ID: V03:K1:SYxTOHjVLvmV/gfVShGuiF4q6t/sVnjtpHSOV3MRBbFr+Dy++zY
+ 9XeGBVICVS/BzT5GvrbBYEiM7/nEQOGsXMeiuZiXm31S8dLyawJy6C6nhKe1Q67UBUWou1S
+ 66UrSfQwzEOo1H+/p9WFOmv0Sukbrue11AaytdSRagYZZa0iMGDmvzEi//N5+2W8ZBA4Ke8
+ T3/9kUOma/EDvN4TsKFdg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:N1p+GKVthvM=;CWF0JvLNwGvSsJUrVG8Y0AIbpaI
- AxXaeVkr+UndlCWofOfFkYccNcJ0Dhqm7kiPrjUIQ8gOXk2dL6oiJxMv5J7TdiA5BaLRU1Vhe
- MX28HqAMBKi/NfyO/+XKfY2SIRgUP6cVsKcgBkcF5oCu2D7/g5ImJMKPlryjgB6+0HVuWjGa3
- b3i9CaxCUH/oh0RYClr5ngS4g0V4ODYt3yivU/fF0h3JZgnj68eiL3DpAC6C+IT4AjvcfYQUm
- qraW3Z+CrCDflnBIoJQbkeJZie4IBX+5vVGqulFPTdam1Ganogj5+yBxj1mQIMHnDmE9+AqqO
- 9Fbt6fr+5fo6rblO0TI4avzOiGfseiJe6JubV0KtkxSTytmvdd9/ISYVr3eaQgTjjuBTDn4UR
- JUgyy0BjeMqZZwVoKx8g1PA6vIkKmN9ibhSDwaFFKo91QmSrRLv6nT0xpBHCHi8TBU/unJjLN
- wcVjrdF1tzPwwNPMH4VmNG8zoGotIg4kVWuy46zhZOPqHJAhYThlW0PTplDlwQpYCmg1OPQIH
- ku/nLOyu4LL1D7JSWkA1SOLTZ6a01b4NYF5QcmmjWG2CdoEkN2pSsT0tzZ/Hn8NKD9zJTfy7q
- RdYBU4yerrol2VPDKygw6BkHz2GYGe53vZm5VC5gBabc65ZJVM5PndiuOvfyOAC1som4gmWGq
- GxmmuKL872Cpq92Xjk4NlGWLd25r6BJdz3Vbwf13MzUTTCGyd4YVV9Ry6NjH15jesFkQ+PAA5
- YMStiw96smBnpf68pmSfFrCNp8hByL8DHpEgNqzIOGqONORW4fdhF0Mc3KJgICQg+X6kEx+sB
- 2DABJ130sO8UBt4zdh7D+Mmg==
+UI-OutboundReport: notjunk:1;M01:P0:E9QEDZz01j4=;7lZ66irtTqbAOPfdPFFE9j6ksrW
+ g6KAoLnh6ptkUvuhGoej7YPgSf0E202vVViybp9HwLts/2F+JdoB3wxM8l8+vup7JQCaAyhcx
+ uf75pWBYHVzevY651GxiJlA0VOsQfOoKU09r8sMH6qxBHay1Apy3wj+698t86PMTzbuLzXJQA
+ 2EdDQwpqkohh6WrGQwzwQTXeSvXw1+QN3Hln+qLQVSVWXYy/9df4h4pqzhDdMSYIVuGnEF/pI
+ T3cqTwTKueNr0KMEBmcqrPzV+I6qFCbt7AoffBqug3RT2V9Ln1gTk9xWu9W4GXKT4sZKvsupy
+ ANo6oaL/fmMbX5zKChYYr/YOMfX6AbgEff3mh1FqOb4VYsKrYxc5TQiuENJY6LUePJTmP59tq
+ an4evYYE2M8b4aGyPNnWWGMZHoGSqCzYy5atVKtJ3Wsu0j1ne26eBW1rycoXXn3Le21qpXVL5
+ vbfl/iMW/j1pOVDHIpzIVIZcPCsELLCyyxFOE3qIL7v8bPr+cy/9mKw8fNX7Wb4G1WpSIgxxs
+ O/me2K+1CqzN+3xgnOKuAD0gz+hC2kiUyJ4MG31SMMlBvGCyUBtvXUXufVErk71v//hH2e7Qa
+ OOnYwEpD7Iaai+Ki4qYkx88BxzSZQoahyLcZllPaH+OwFHbCTJt9MnwtP/jIp9yqTJ475/xDI
+ IRjR38aMsexyNnuGXCZ6gjTjrJSUhSzeLUscoDrg8aBwa/K3XtT2GHUQn1DSxxI2KczVSn/p4
+ mVrcZ5jyODmRiruPVqF8t8V8vDLLJ/3uF/Q7BXPS0613jnvZq+UYXILKV5mwcjA3z1KOFVtjr
+ 8HKtPdepj83fswZj0yX2SraA==
 
-=E2=80=A6
-> +++ b/drivers/accel/amdxdna/aie2_pci.c
-> @@ -0,0 +1,182 @@
-=E2=80=A6
-> +static int aie2_init(struct amdxdna_dev *xdna)
-> +{
-=E2=80=A6
-> +	release_firmware(fw);
-> +	return 0;
+Add the Dell Latitude 7320 to the fan control whitelist to allow
+for manual fan control.
 
-I find the following statements more appropriate here
-(so that a bit of redundant code can be avoided).
+Closes: https://github.com/Wer-Wolf/i8kutils/issues/8
+Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+=2D--
+ drivers/hwmon/dell-smm-hwmon.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-	ret =3D 0;
-	goto release_fw;
+diff --git a/drivers/hwmon/dell-smm-hwmon.c b/drivers/hwmon/dell-smm-hwmon=
+.c
+index c75bfe93f2f6..ac4484bd949b 100644
+=2D-- a/drivers/hwmon/dell-smm-hwmon.c
++++ b/drivers/hwmon/dell-smm-hwmon.c
+@@ -1488,6 +1488,14 @@ static const struct dmi_system_id i8k_whitelist_fan=
+_control[] __initconst =3D {
+ 		},
+ 		.driver_data =3D (void *)&i8k_fan_control_data[I8K_FAN_34A3_35A3],
+ 	},
++	{
++		.ident =3D "Dell Latitude 7320",
++		.matches =3D {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Latitude 7320"),
++		},
++		.driver_data =3D (void *)&i8k_fan_control_data[I8K_FAN_30A3_31A3],
++	},
+ 	{
+ 		.ident =3D "Dell Latitude E6440",
+ 		.matches =3D {
+=2D-
+2.39.2
 
-=E2=80=A6
-> +release_fw:
-> +	release_firmware(fw);
-> +
-> +	return ret;
-> +}
-=E2=80=A6
-
-
-Regards,
-Markus
 
