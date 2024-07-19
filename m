@@ -1,174 +1,87 @@
-Return-Path: <linux-kernel+bounces-257446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34C7F937A3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 17:59:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AC51937A40
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 18:01:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFF12282E7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 15:59:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EC6E282E46
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 16:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9E8145FE3;
-	Fri, 19 Jul 2024 15:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D874D145B0C;
+	Fri, 19 Jul 2024 16:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aouf/E/9"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HfYqpGRV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB764C69
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 15:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F328443D;
+	Fri, 19 Jul 2024 16:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721404745; cv=none; b=g9+8z8PhHu8O+3wc4J0ON2YtU6DFH8FYvHGGm+T9J0QHAeZNi9FUCGvvpxNVl2Tm7TbsthY3b2DWZcJ8+3poMuYzwstqBnna7UMReUUTy74fwLveghLjoILYbcrLhVogGOBu6LdogsMkzcaLiOoZ4/gGBFeV6FxqCeDg+Rp5q7s=
+	t=1721404885; cv=none; b=TGSAQUj/sP978Uf7XkV13MgxpkPU/kpsJnP5Irc3T2G3iwXt6lCPmg0M4l9SJ5mgZAbl14PjWe58PVvksVk5MD4bppquIor2W2CX3L4UkWDW8Es/ya2Y5GTcvhhXjaRZepijKuINjECN1y/VgeXnqTqEGSVLbDZ+PJ7Z69386D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721404745; c=relaxed/simple;
-	bh=S6gA3Pky3kRLWgK4099csZaRIGqlKAMPaKHzObsFk4A=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=plnCB2E33+etupCol0twNf2+9elNoE6Sktdurc5OUzT1yfML31g0zssqKQWJRHPf/8NO6J1XioyVy7oCXPH8bdcUTL7wEkGnHJ/m9lzCDFdXrAEggd2dXYX1w98Wppqz3FrcOd4JyzuzhhFfX/hhzMeLwUb5B/G4bnjDMPEG/vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aouf/E/9; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e036440617fso5063422276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 08:59:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721404742; x=1722009542; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hmVLmXG6HUEZ1zgQ+Jo6sV2CT1wbQkb6tcz4M5bcpCY=;
-        b=aouf/E/9E4Ri8oCj1ZuzrffA5K4UHrrHMfyFMzseXcKnahwdZYIsBWsh/SXgn2Sv3o
-         Qprc7KNA6bMINzwZrfu5W2fD65E0KQ7ElwopVSlGedZH4RJ2u32dSHTBQpmzkt1J9YeB
-         Afbj/V14ksvd+lygVbawphe3RtpaCGPB5puHI7M5jS7zcKMx4kCVy+Ue5LYrlmqv803y
-         wYdzRIA1Khh+z4DzbpEOaBkcWH878WETOcGj3KULf8223SGini0WuvQrb+YlqKjtY5gl
-         R8mnE3A0yna9a+wPb3hOJZJ32VdllhYXZj532xAWH1yM2PEVfD223dH0uj11aYYYftmM
-         zY3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721404742; x=1722009542;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hmVLmXG6HUEZ1zgQ+Jo6sV2CT1wbQkb6tcz4M5bcpCY=;
-        b=KgtMWp64FR9hsrZi8o9E6B7WYoS+MNpcyNRalOZQaYm7Eb795JqpdNrnEIp6yjvkbj
-         KovJVwrV5m4NoY8ES9/UK8mR6Qg3UmHac+vDhaSDibvARcgXzL1HIU8IERH/CTsPOspH
-         1mGaEtVasKoQzSRzraQf557/CMN4VjKOblNCGvUOWmYyLyDS04iKER52Se7NVFzUL+8r
-         FOFsCIxq+5tRuLFRIerM4AQu3u3J9ngDR+FLPSWFSc8q7GFDDQQ6mBUjM58OgiboYr2s
-         70eMxLjxlrM6hXbjtuyg7cMr2fhlqnbv+Js3TEg9ausN2JAYCY9/T8+qAFP+f+J2P06+
-         hPrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWdmyQarsRrH+WusLH0zCJgX+DVrwCGSBipneS71udb+UUF5I/ee9EOOTnqw/w2bjsrCyfw01LzhhbXCVER+VhupY9UeManNnydIn5F
-X-Gm-Message-State: AOJu0Yw4spEhj9iuS2wk7odzRTPK9P9t+OHc0U42S2mfnUy75bVEencL
-	2M9xPJq1YEUGAuGWZew+dBTCrj+C6u/jfc06Qq8uu1quBrNFLLUUuaCGSwvCoay/xi1fJq1ltRC
-	YHw==
-X-Google-Smtp-Source: AGHT+IEpJ18W6MbHK885Kx8gIxJoghb67upLSE4Rrad0klqxY1BrfqtTnDl4Xu8dBPLpSgMh4ccA4wiMAMM=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:114b:b0:e05:6532:166 with SMTP id
- 3f1490d57ef6-e086fdea67cmr166276.1.1721404741724; Fri, 19 Jul 2024 08:59:01
- -0700 (PDT)
-Date: Fri, 19 Jul 2024 08:59:00 -0700
-In-Reply-To: <099D0BF1-BDC6-489F-B780-174AFEE8F491@zytor.com>
+	s=arc-20240116; t=1721404885; c=relaxed/simple;
+	bh=p94O4KFwhP6QRgPpW/E+AEjxs45NbRS4KUZpfxl0EpE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WwzIddx445KCB3Kv7/dLHLdA2Nk6fidS7a6DoLtBPwSISfekVe5NE+NmBfBmzo9Q3FyqGl8D7YPt1U64wg1yx48TZsewXSxbNQlUW5N4xH9mqY9AyrRg3NSzcg8ER5eXm1SAnlk0dlgaBLb9BiecrShCyUETRuHqNCLK2cuW3PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HfYqpGRV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1DA9C32782;
+	Fri, 19 Jul 2024 16:01:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721404884;
+	bh=p94O4KFwhP6QRgPpW/E+AEjxs45NbRS4KUZpfxl0EpE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HfYqpGRVvdRSqdfowho0xqO+1L3x2Xj/AEV9Twi30Em3fHz8gr1bmmIKxmCAnE//B
+	 GRWB5IgPGV+v0HmgizldGBkAmc9J7AD+x9f2TJu/U/eFy2EYpNJf4Bkttpu8CLPV93
+	 Cke7sMkN5Q0PTe3jpvJlHmL3x3lSU3PPovF7NN6Q20leaGdTMiNYrXJ1o1Nn8Y7h8n
+	 +YzRnyAnqxrwCL0zn8ogAqaYSNgvtb6Or2MkMzppzuJAUAknuh77bITL5Qor000K38
+	 ZnR0+PZZcQ6yB8mQoTH356KAu1Kme91edCQCWu5QB3D1iTmHM7NHRig/gF97ZwirmW
+	 RIyw36h6jMR0g==
+Date: Fri, 19 Jul 2024 09:01:23 -0700
+From: Kees Cook <kees@kernel.org>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: chenhuacai@kernel.org, kernel@xen0n.name, gustavoars@kernel.org,
+	arnd@arndb.de, maobibo@loongson.cn, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] loongarch: Support RANDOMIZE_KSTACK_OFFSET
+Message-ID: <202407190858.3097E9AF98@keescook>
+References: <20240719031427.119274-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240207172646.3981-1-xin3.li@intel.com> <20240207172646.3981-10-xin3.li@intel.com>
- <ZmoYvcbFBPJ5ARma@google.com> <SA1PR11MB67348BD07CCCF8D52FCAC8FEA8A42@SA1PR11MB6734.namprd11.prod.outlook.com>
- <ZpFH86n_YY5ModwK@google.com> <099D0BF1-BDC6-489F-B780-174AFEE8F491@zytor.com>
-Message-ID: <ZpqNREwyn4LzN2tp@google.com>
-Subject: Re: [PATCH v2 09/25] KVM: VMX: Switch FRED RSP0 between host and guest
-From: Sean Christopherson <seanjc@google.com>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Xin3 Li <xin3.li@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "corbet@lwn.net" <corbet@lwn.net>, 
-	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"shuah@kernel.org" <shuah@kernel.org>, "vkuznets@redhat.com" <vkuznets@redhat.com>, 
-	"peterz@infradead.org" <peterz@infradead.org>, Ravi V Shankar <ravi.v.shankar@intel.com>, 
-	"xin@zytor.com" <xin@zytor.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240719031427.119274-1-ruanjinjie@huawei.com>
 
-On Thu, Jul 18, 2024, H. Peter Anvin wrote:
-> On July 12, 2024 8:12:51 AM PDT, Sean Christopherson <seanjc@google.com> wrote:
-> >On Wed, Jul 10, 2024, Xin3 Li wrote:
-> >> > On Wed, Feb 07, 2024, Xin Li wrote:
-> >> > > Switch MSR_IA32_FRED_RSP0 between host and guest in
-> >> > > vmx_prepare_switch_to_{host,guest}().
-> >> > >
-> >> > > MSR_IA32_FRED_RSP0 is used during ring 3 event delivery only, thus
-> >> > > KVM, running on ring 0, can run safely with guest FRED RSP0, i.e., no
-> >> > > need to switch between host/guest FRED RSP0 during VM entry and exit.
-> >> > >
-> >> > > KVM should switch to host FRED RSP0 before returning to user level,
-> >> > > and switch to guest FRED RSP0 before entering guest mode.
-> >> > 
-> >> > Heh, if only KVM had a framework that was specifically designed for context
-> >> > switching MSRs on return to userspace.  Translation: please use the
-> >> > user_return_msr() APIs.
-> >> 
-> >> IIUC the user return MSR framework works for MSRs that are per CPU
-> >> constants, but like MSR_KERNEL_GS_BASE, MSR_IA32_FRED_RSP0 is a per
-> >> *task* constant, thus we can't use it.
-> >
-> >Ah, in that case, the changelog is very misleading and needs to be fixed.
-> >Alternatively, is the desired RSP0 value tracked anywhere other than the MSR?
-> >E.g. if it's somewhere in task_struct, then kvm_on_user_return() would restore
-> >the current task's desired RSP0.  Even if we don't get fancy, avoiding the RDMSR
-> >to get the current task's value would be nice.
+On Fri, Jul 19, 2024 at 11:14:27AM +0800, Jinjie Ruan wrote:
+> Add support of kernel stack offset randomization while handling syscall,
+> the offset is defaultly limited by KSTACK_OFFSET_MAX().
 > 
-> Hm, perhaps the right thing to do is to always invoke this function before a
-> context switch happens if that happens before return to user space?
+> In order to avoid trigger stack canaries (due to __builtin_alloca) and
+> slowing down the entry path, use __no_stack_protector attribute to
+> disable stack protector for do_syscall() at function level.
+> 
+> With this patch, the REPORT_STACK test show that:
+> 	`loongarch64 bits of stack entropy: 7`
 
-Actually, if the _TIF_NEED_RSP0_LOAD doesn't provide a meaningful benefit (or
-y'all just don't want it :-) ), what KVM could do is restore MSR_IA32_FRED_RSP0
-when putting the vCPU and the vCPU is not being scheduled out, i.e. if and only
-if KVM can't guarantee a context switch.
+I suspect this will report the correct "6" after now that this commit
+has landed:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=872bb37f6829d4f7f3ed5afe2786add3d4384b4b
 
-If the vCPU/task is being scheduled out, update_task_stack() is guaranteed to
-write MSR_IA32_FRED_RSP0 with the new task's value.
+> 
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> Suggested-by: Huacai Chen <chenhuacai@kernel.org>
 
-On top of kvm/next, which adds the necessary vcpu->scheduled_out:
+Thanks for adding this and getting it tested!
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 5c6bb26463e8..4532ae943f2a 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -1338,15 +1338,9 @@ void vmx_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
- 
-        wrmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
- 
--       if (guest_can_use(vcpu, X86_FEATURE_FRED)) {
--               /*
--                * MSR_IA32_FRED_RSP0 is top of task stack, which never changes.
--                * Thus it should be initialized only once.
--                */
--               if (unlikely(vmx->msr_host_fred_rsp0 == 0))
--                       vmx->msr_host_fred_rsp0 = read_msr(MSR_IA32_FRED_RSP0);
--               wrmsrl(MSR_IA32_FRED_RSP0, vmx->msr_guest_fred_rsp0);
--       }
-+       if (cpu_feature_enabled(X86_FEATURE_FRED) &&
-+           guest_can_use(vcpu, X86_FEATURE_FRED))
-+               wrmsrns(MSR_IA32_FRED_RSP0, vmx->msr_guest_fred_rsp0);
- #else
-        savesegment(fs, fs_sel);
-        savesegment(gs, gs_sel);
-@@ -1392,9 +1386,13 @@ static void vmx_prepare_switch_to_host(struct vcpu_vmx *vmx)
- #ifdef CONFIG_X86_64
-        wrmsrl(MSR_KERNEL_GS_BASE, vmx->msr_host_kernel_gs_base);
- 
--       if (guest_can_use(&vmx->vcpu, X86_FEATURE_FRED)) {
-+       if (cpu_feature_enabled(X86_FEATURE_FRED) &&
-+           guest_can_use(&vmx->vcpu, X86_FEATURE_FRED)) {
-                vmx->msr_guest_fred_rsp0 = read_msr(MSR_IA32_FRED_RSP0);
--               wrmsrl(MSR_IA32_FRED_RSP0, vmx->msr_host_fred_rsp0);
-+
-+               if (!vcpu->scheduled_out)
-+                       wrmsrns(MSR_IA32_FRED_RSP0,
-+                                (unsigned long)task_stack_page(task) + THREAD_SIZE);
-        }
- #endif
-        load_fixmap_gdt(raw_smp_processor_id());
+Reviewed-by: Kees Cook <kees@kernel.org>
 
+-- 
+Kees Cook
 
