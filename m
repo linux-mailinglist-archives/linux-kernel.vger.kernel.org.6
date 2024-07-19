@@ -1,49 +1,92 @@
-Return-Path: <linux-kernel+bounces-256923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-256924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D11493728F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 04:40:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C11A8937297
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 04:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 408B41C20D45
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 02:40:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1C8E1C211AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2024 02:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65532168D0;
-	Fri, 19 Jul 2024 02:40:18 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D395111AD
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 02:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D056C171CC;
+	Fri, 19 Jul 2024 02:47:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZbHJdevf"
+Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70E2C13B;
+	Fri, 19 Jul 2024 02:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721356817; cv=none; b=m02Sa+IlId3kiWxysB6QIfvsNXcRUf5mrVB3j5pbwqs/IJ0GlJlwwr20gamMu+TEcv4433kb6sSOYQ8mSFJvTXwWLzw6VzpY53+BhaEAQ0KX7cLyzvbJaiFkIGRC+tr630z6cFfF8hkkr9sA89EyuIiY+cWcAuDtEZGsWfF1Ej0=
+	t=1721357225; cv=none; b=rHRJYuCjRNJ+ya4tFMiZkJfRm/x3MIhXlGD+JAW+TOtLuvZlO7Jq5GOEouq5tot3bIRD6+qapiKc1TdnTL9Ldgl8t9NknutyBYNMmkAn9m4FxyLXNSLWGw2sPsaVZJOHKaHvHX93onMjLQ0gPt7j5U1yDeZGNwreGd/DAHz/fUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721356817; c=relaxed/simple;
-	bh=9PGdc9yXjqr5VPvJBiRp7h/ChaUGFUYpjrxTkEGeAFo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=antZNSPtPqzfoZfy2JgE2zziuDbeRwJiJLOMeU/eDhnAAFHqApy8I55QI8tsazYtjgFl0iS+7k1Ydr1bQy25CVWT6uj7NNfL7Z7hngolf+pVRcCZm69Dtd7A9FCaj71mOAEx37JV0lCKjUXx+RFQ6e2nsHcLpZQw91hOXq3pEtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8Ax3eoM0plm+d8AAA--.4571S3;
-	Fri, 19 Jul 2024 10:40:12 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8BxWcYL0plmiutOAA--.45516S2;
-	Fri, 19 Jul 2024 10:40:11 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] locking/atomic: scripts: Fix type error in macro try_cmpxchg
-Date: Fri, 19 Jul 2024 10:40:10 +0800
-Message-Id: <20240719024010.3296488-1-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1721357225; c=relaxed/simple;
+	bh=09oA/1MGILVHtDLQKLMrs4vatq7Tvf0hfrVKuBV/mLY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=KNbFMShRqQCKM9vhLuky4eSOu8Kd4IVSi/iQrnCtYVgHttbWlnwIOXTH77ZLRjL1e4V5sOLJMRumG89+w5OlPxtd9MU0btzOyc0DUU+NbJheXxmXzT9HoTvieKaAWr22U5EnIixzzz9FzZQpQarvs9Y3JWpAg8OYjtokMUpk8nQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZbHJdevf; arc=none smtp.client-ip=209.85.210.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-70cdc91b227so400695b3a.2;
+        Thu, 18 Jul 2024 19:47:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721357223; x=1721962023; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bBtl8tqIPwr4kM7w/vnxS7d5O+npgCgYI2eDxbd6XM4=;
+        b=ZbHJdevfgVJNwfLYZa2rkZ+Bh3U4sMCMzXztuzL6xPuUCp25BUmPUTNhMJIpLESQPg
+         hbVnBuLqsDXtn5cXarX6VwPiJE4T4td/HfPxwGgonA1eLclVViReYzgojO7/930w4OTD
+         9MA7FWIJeYeF5mwF/U4n1HVz5AVaRDGXa34J1OYeg4ZO6P7NU35Q7ecXBcOe+He74ys/
+         ObZWtjUutyD+DivenXl4EB+Yf7CRMWizWkMzfWwy4JcZV7XL34QTcRU3k97pbC0VqmVp
+         4w2C7hfPbSPRJ2DMaGV+EnfPwMTcEwZPRbqNM/xBlIqHppImfRJuJz0G3Go91qwYyyK9
+         D/8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721357223; x=1721962023;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bBtl8tqIPwr4kM7w/vnxS7d5O+npgCgYI2eDxbd6XM4=;
+        b=qNNl2PsDugDdLFQwa9tdaHjrAcW7h43VsbUfHgnW4XVVLdEMPudsOXE223YL8LXL+y
+         RdtmK8IYBJdnJT1R+P4GwmYzSNFOdqDztSHjZbQq0Em4a67KvIo43UrnnqEHGzVt4FSc
+         F4IocsAPR82q3OFEFxkRscy+puU/RTXTwJMOTImP1XzLS/h/4Sh/4AlggoxLWkbrcsFX
+         Hi7oPLAIjULoE5nBZvwqHJJ5SoPg2WvmYbyZwCbasfBeX2HOkA87oPh4JYtqUL+BcKxr
+         nfhHQwfmvEtZEYENRfwK+nJUEJ7Jvx6mIrb/1LaQiUU2JcsCvVQ5zWikaqz8LhC2W1vd
+         QZiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcX4f3w8unL8POVOHNtIp7tNGwkjrnTesnTWs4iHT1C/q+4/+kr7DFEv0FWMVNIpuQqNwHnCvJxx+YITIEjoutnDa7hDcHlJiKRtr3++XTfpnUklFD1kJlDoYprJGb7AZH5gEXRVBQUOyfcYWtG2F8n5vtKKHEnVFw
+X-Gm-Message-State: AOJu0YxwgNReaCwI0OsLY4uadJllEWsGbaiQIZv33Z7Bqg1NQoCjgoxL
+	gNHp63CamXGzKNa4N30p3k68gF/yRzdwFnDN/r29NAa5aEbsyNmvGCqExZZHSR4=
+X-Google-Smtp-Source: AGHT+IGQ/kwJ7FXSWT/EKM6eyqwOSgULG11mnTX4v7BiH0egzCFmJPIlmTX8dyx2+auRzoNxSNI8Rw==
+X-Received: by 2002:a05:6a20:d50c:b0:1c0:eabc:86a8 with SMTP id adf61e73a8af0-1c3fdc6f592mr7952542637.5.1721357222916;
+        Thu, 18 Jul 2024 19:47:02 -0700 (PDT)
+Received: from localhost.localdomain ([240e:604:203:6020:208b:a5de:1b8b:3692])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd64d073c8sm2974995ad.178.2024.07.18.19.46.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jul 2024 19:47:02 -0700 (PDT)
+From: Fred Li <dracodingfly@gmail.com>
+To: willemdebruijn.kernel@gmail.com
+Cc: andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	daniel@iogearbox.net,
+	dracodingfly@gmail.com,
+	herbert@gondor.apana.org.au,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	song@kernel.org,
+	yonghong.song@linux.dev
+Subject: [PATCH v4] bpf: Fixed a segment issue when downgrade gso_size
+Date: Fri, 19 Jul 2024 10:46:53 +0800
+Message-Id: <20240719024653.77006-1-dracodingfly@gmail.com>
+X-Mailer: git-send-email 2.32.1 (Apple Git-133)
+In-Reply-To: <6689541517901_12869e29412@willemb.c.googlers.com.notmuch>
+References: <6689541517901_12869e29412@willemb.c.googlers.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,229 +94,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8BxWcYL0plmiutOAA--.45516S2
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
 
-When porting pv spinlock function on LoongArch system, there is
-compiling error such as:
-                 from linux/include/linux/smp.h:13,
-                 from linux/kernel/locking/qspinlock.c:16:
-linux/kernel/locking/qspinlock_paravirt.h: In function 'pv_kick_node':
-linux/include/linux/atomic/atomic-arch-fallback.h:242:34: error: initialization of 'u8 *' {aka 'unsigned char *'} from incompatible pointer type 'enum vcpu_state *' [-Wincompatible-pointer-types]
-  242 |         typeof(*(_ptr)) *___op = (_oldp), ___o = *___op, ___r; \
-      |                                  ^
-linux/atomic/atomic-instrumented.h:4908:9: note: in expansion of macro 'raw_try_cmpxchg_relaxed'
- 4908 |         raw_try_cmpxchg_relaxed(__ai_ptr, __ai_oldp, __VA_ARGS__); \
-      |         ^~~~~~~~~~~~~~~~~~~~~~~
-linux/kernel/locking/qspinlock_paravirt.h:377:14: note: in expansion of macro 'try_cmpxchg_relaxed'
-  377 |         if (!try_cmpxchg_relaxed(&pn->state, &old, vcpu_hashed))
-      |              ^~~~~~~~~~~~~~~~~~~
-In file included from linux/kernel/locking/qspinlock.c:583:
-linux/kernel/locking/qspinlock_paravirt.h: At top level:
-linux/kernel/locking/qspinlock_paravirt.h:499:1: warning: no previous prototype for '__pv_queued_spin_unlock_slowpath' [-Wmissing-prototypes]
-  499 | __pv_queued_spin_unlock_slowpath(struct qspinlock *lock, u8 locked)
+Linearizing skb when downgrade gso_size because it may
+trigger the BUG_ON when segment skb as described in [1].
 
-Macro try_cmpxchg_relaxed() is used by paravirt qspinlock, on LoongArch
-it is defined as raw_try_cmpxchg_relaxed(). And there is different type
-conversion in marco raw_try_cmpxchg_relaxed(). Here type declaration is
-added beore type conversion.
+v4 changes:
+  add fixed tag.
 
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+v3 changes:
+  linearize skb if having frag_list as Willem de Bruijn suggested[2].
+
+[1] https://lore.kernel.org/all/20240626065555.35460-2-dracodingfly@gmail.com/
+[2] https://lore.kernel.org/all/668d5cf1ec330_1c18c32947@willemb.c.googlers.com.notmuch/
+
+Fixes: 2be7e212d5419 ("bpf: add bpf_skb_adjust_room helper")
+Signed-off-by: Fred Li <dracodingfly@gmail.com>
 ---
- include/linux/atomic/atomic-arch-fallback.h | 50 ++++++++++++++-------
- scripts/atomic/gen-atomic-fallback.sh       |  3 +-
- 2 files changed, 35 insertions(+), 18 deletions(-)
+ net/core/filter.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/atomic/atomic-arch-fallback.h b/include/linux/atomic/atomic-arch-fallback.h
-index 2f9d36b72bd8..8273c53321c3 100644
---- a/include/linux/atomic/atomic-arch-fallback.h
-+++ b/include/linux/atomic/atomic-arch-fallback.h
-@@ -188,7 +188,8 @@ extern void raw_cmpxchg128_relaxed_not_implemented(void);
- #else
- #define raw_try_cmpxchg(_ptr, _oldp, _new) \
- ({ \
--	typeof(*(_ptr)) *___op = (_oldp), ___o = *___op, ___r; \
-+	typeof((_ptr)) ___op = (typeof((_ptr)))(_oldp); \
-+	typeof(*(_ptr)) ___o = *___op, ___r; \
- 	___r = raw_cmpxchg((_ptr), ___o, (_new)); \
- 	if (unlikely(___r != ___o)) \
- 		*___op = ___r; \
-@@ -206,7 +207,8 @@ extern void raw_cmpxchg128_relaxed_not_implemented(void);
- #else
- #define raw_try_cmpxchg_acquire(_ptr, _oldp, _new) \
- ({ \
--	typeof(*(_ptr)) *___op = (_oldp), ___o = *___op, ___r; \
-+	typeof((_ptr)) ___op = (typeof((_ptr)))(_oldp); \
-+	typeof(*(_ptr)) ___o = *___op, ___r; \
- 	___r = raw_cmpxchg_acquire((_ptr), ___o, (_new)); \
- 	if (unlikely(___r != ___o)) \
- 		*___op = ___r; \
-@@ -224,7 +226,8 @@ extern void raw_cmpxchg128_relaxed_not_implemented(void);
- #else
- #define raw_try_cmpxchg_release(_ptr, _oldp, _new) \
- ({ \
--	typeof(*(_ptr)) *___op = (_oldp), ___o = *___op, ___r; \
-+	typeof((_ptr)) ___op = (typeof((_ptr)))(_oldp); \
-+	typeof(*(_ptr)) ___o = *___op, ___r; \
- 	___r = raw_cmpxchg_release((_ptr), ___o, (_new)); \
- 	if (unlikely(___r != ___o)) \
- 		*___op = ___r; \
-@@ -239,7 +242,8 @@ extern void raw_cmpxchg128_relaxed_not_implemented(void);
- #else
- #define raw_try_cmpxchg_relaxed(_ptr, _oldp, _new) \
- ({ \
--	typeof(*(_ptr)) *___op = (_oldp), ___o = *___op, ___r; \
-+	typeof((_ptr)) ___op = (typeof((_ptr)))(_oldp); \
-+	typeof(*(_ptr)) ___o = *___op, ___r; \
- 	___r = raw_cmpxchg_relaxed((_ptr), ___o, (_new)); \
- 	if (unlikely(___r != ___o)) \
- 		*___op = ___r; \
-@@ -255,7 +259,8 @@ extern void raw_cmpxchg128_relaxed_not_implemented(void);
- #else
- #define raw_try_cmpxchg64(_ptr, _oldp, _new) \
- ({ \
--	typeof(*(_ptr)) *___op = (_oldp), ___o = *___op, ___r; \
-+	typeof((_ptr)) ___op = (typeof((_ptr)))(_oldp); \
-+	typeof(*(_ptr)) ___o = *___op, ___r; \
- 	___r = raw_cmpxchg64((_ptr), ___o, (_new)); \
- 	if (unlikely(___r != ___o)) \
- 		*___op = ___r; \
-@@ -273,7 +278,8 @@ extern void raw_cmpxchg128_relaxed_not_implemented(void);
- #else
- #define raw_try_cmpxchg64_acquire(_ptr, _oldp, _new) \
- ({ \
--	typeof(*(_ptr)) *___op = (_oldp), ___o = *___op, ___r; \
-+	typeof((_ptr)) ___op = (typeof((_ptr)))(_oldp); \
-+	typeof(*(_ptr)) ___o = *___op, ___r; \
- 	___r = raw_cmpxchg64_acquire((_ptr), ___o, (_new)); \
- 	if (unlikely(___r != ___o)) \
- 		*___op = ___r; \
-@@ -291,7 +297,8 @@ extern void raw_cmpxchg128_relaxed_not_implemented(void);
- #else
- #define raw_try_cmpxchg64_release(_ptr, _oldp, _new) \
- ({ \
--	typeof(*(_ptr)) *___op = (_oldp), ___o = *___op, ___r; \
-+	typeof((_ptr)) ___op = (typeof((_ptr)))(_oldp); \
-+	typeof(*(_ptr)) ___o = *___op, ___r; \
- 	___r = raw_cmpxchg64_release((_ptr), ___o, (_new)); \
- 	if (unlikely(___r != ___o)) \
- 		*___op = ___r; \
-@@ -306,7 +313,8 @@ extern void raw_cmpxchg128_relaxed_not_implemented(void);
- #else
- #define raw_try_cmpxchg64_relaxed(_ptr, _oldp, _new) \
- ({ \
--	typeof(*(_ptr)) *___op = (_oldp), ___o = *___op, ___r; \
-+	typeof((_ptr)) ___op = (typeof((_ptr)))(_oldp); \
-+	typeof(*(_ptr)) ___o = *___op, ___r; \
- 	___r = raw_cmpxchg64_relaxed((_ptr), ___o, (_new)); \
- 	if (unlikely(___r != ___o)) \
- 		*___op = ___r; \
-@@ -322,7 +330,8 @@ extern void raw_cmpxchg128_relaxed_not_implemented(void);
- #else
- #define raw_try_cmpxchg128(_ptr, _oldp, _new) \
- ({ \
--	typeof(*(_ptr)) *___op = (_oldp), ___o = *___op, ___r; \
-+	typeof((_ptr)) ___op = (typeof((_ptr)))(_oldp); \
-+	typeof(*(_ptr)) ___o = *___op, ___r; \
- 	___r = raw_cmpxchg128((_ptr), ___o, (_new)); \
- 	if (unlikely(___r != ___o)) \
- 		*___op = ___r; \
-@@ -340,7 +349,8 @@ extern void raw_cmpxchg128_relaxed_not_implemented(void);
- #else
- #define raw_try_cmpxchg128_acquire(_ptr, _oldp, _new) \
- ({ \
--	typeof(*(_ptr)) *___op = (_oldp), ___o = *___op, ___r; \
-+	typeof((_ptr)) ___op = (typeof((_ptr)))(_oldp); \
-+	typeof(*(_ptr)) ___o = *___op, ___r; \
- 	___r = raw_cmpxchg128_acquire((_ptr), ___o, (_new)); \
- 	if (unlikely(___r != ___o)) \
- 		*___op = ___r; \
-@@ -358,7 +368,8 @@ extern void raw_cmpxchg128_relaxed_not_implemented(void);
- #else
- #define raw_try_cmpxchg128_release(_ptr, _oldp, _new) \
- ({ \
--	typeof(*(_ptr)) *___op = (_oldp), ___o = *___op, ___r; \
-+	typeof((_ptr)) ___op = (typeof((_ptr)))(_oldp); \
-+	typeof(*(_ptr)) ___o = *___op, ___r; \
- 	___r = raw_cmpxchg128_release((_ptr), ___o, (_new)); \
- 	if (unlikely(___r != ___o)) \
- 		*___op = ___r; \
-@@ -373,7 +384,8 @@ extern void raw_cmpxchg128_relaxed_not_implemented(void);
- #else
- #define raw_try_cmpxchg128_relaxed(_ptr, _oldp, _new) \
- ({ \
--	typeof(*(_ptr)) *___op = (_oldp), ___o = *___op, ___r; \
-+	typeof((_ptr)) ___op = (typeof((_ptr)))(_oldp); \
-+	typeof(*(_ptr)) ___o = *___op, ___r; \
- 	___r = raw_cmpxchg128_relaxed((_ptr), ___o, (_new)); \
- 	if (unlikely(___r != ___o)) \
- 		*___op = ___r; \
-@@ -388,7 +400,8 @@ extern void raw_cmpxchg128_relaxed_not_implemented(void);
- #else
- #define raw_try_cmpxchg_local(_ptr, _oldp, _new) \
- ({ \
--	typeof(*(_ptr)) *___op = (_oldp), ___o = *___op, ___r; \
-+	typeof((_ptr)) ___op = (typeof((_ptr)))(_oldp); \
-+	typeof(*(_ptr)) ___o = *___op, ___r; \
- 	___r = raw_cmpxchg_local((_ptr), ___o, (_new)); \
- 	if (unlikely(___r != ___o)) \
- 		*___op = ___r; \
-@@ -403,7 +416,8 @@ extern void raw_cmpxchg128_relaxed_not_implemented(void);
- #else
- #define raw_try_cmpxchg64_local(_ptr, _oldp, _new) \
- ({ \
--	typeof(*(_ptr)) *___op = (_oldp), ___o = *___op, ___r; \
-+	typeof((_ptr)) ___op = (typeof((_ptr)))(_oldp); \
-+	typeof(*(_ptr)) ___o = *___op, ___r; \
- 	___r = raw_cmpxchg64_local((_ptr), ___o, (_new)); \
- 	if (unlikely(___r != ___o)) \
- 		*___op = ___r; \
-@@ -418,7 +432,8 @@ extern void raw_cmpxchg128_relaxed_not_implemented(void);
- #else
- #define raw_try_cmpxchg128_local(_ptr, _oldp, _new) \
- ({ \
--	typeof(*(_ptr)) *___op = (_oldp), ___o = *___op, ___r; \
-+	typeof((_ptr)) ___op = (typeof((_ptr)))(_oldp); \
-+	typeof(*(_ptr)) ___o = *___op, ___r; \
- 	___r = raw_cmpxchg128_local((_ptr), ___o, (_new)); \
- 	if (unlikely(___r != ___o)) \
- 		*___op = ___r; \
-@@ -433,7 +448,8 @@ extern void raw_cmpxchg128_relaxed_not_implemented(void);
- #else
- #define raw_sync_try_cmpxchg(_ptr, _oldp, _new) \
- ({ \
--	typeof(*(_ptr)) *___op = (_oldp), ___o = *___op, ___r; \
-+	typeof((_ptr)) ___op = (typeof((_ptr)))(_oldp); \
-+	typeof(*(_ptr)) ___o = *___op, ___r; \
- 	___r = raw_sync_cmpxchg((_ptr), ___o, (_new)); \
- 	if (unlikely(___r != ___o)) \
- 		*___op = ___r; \
-@@ -4690,4 +4706,4 @@ raw_atomic64_dec_if_positive(atomic64_t *v)
- }
+diff --git a/net/core/filter.c b/net/core/filter.c
+index df4578219e82..71396ecfc574 100644
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -3525,13 +3525,21 @@ static int bpf_skb_net_grow(struct sk_buff *skb, u32 off, u32 len_diff,
+ 	if (skb_is_gso(skb)) {
+ 		struct skb_shared_info *shinfo = skb_shinfo(skb);
  
- #endif /* _LINUX_ATOMIC_FALLBACK_H */
--// b565db590afeeff0d7c9485ccbca5bb6e155749f
-+// 7b23ddca3c50c5869e68ded50748ffe111123156
-diff --git a/scripts/atomic/gen-atomic-fallback.sh b/scripts/atomic/gen-atomic-fallback.sh
-index f80d69cfeb1f..f3a9b084a176 100755
---- a/scripts/atomic/gen-atomic-fallback.sh
-+++ b/scripts/atomic/gen-atomic-fallback.sh
-@@ -230,7 +230,8 @@ gen_try_cmpxchg_fallback()
- cat <<EOF
- #define raw_${prefix}try_${cmpxchg}${suffix}(_ptr, _oldp, _new) \\
- ({ \\
--	typeof(*(_ptr)) *___op = (_oldp), ___o = *___op, ___r; \\
-+	typeof((_ptr)) ___op = (typeof((_ptr)))(_oldp); \\
-+	typeof(*(_ptr)) ___o = *___op, ___r; \\
- 	___r = raw_${prefix}${cmpxchg}${suffix}((_ptr), ___o, (_new)); \\
- 	if (unlikely(___r != ___o)) \\
- 		*___op = ___r; \\
-
-base-commit: 720261cfc7329406a50c2a8536e0039b9dd9a4e5
+-		/* Due to header grow, MSS needs to be downgraded. */
+-		if (!(flags & BPF_F_ADJ_ROOM_FIXED_GSO))
+-			skb_decrease_gso_size(shinfo, len_diff);
+-
+ 		/* Header must be checked, and gso_segs recomputed. */
+ 		shinfo->gso_type |= gso_type;
+ 		shinfo->gso_segs = 0;
++
++		/* Due to header grow, MSS needs to be downgraded.
++		 * There is BUG_ON when segment the frag_list with
++		 * head_frag true so linearize skb after downgrade
++		 * the MSS.
++		 */
++		if (!(flags & BPF_F_ADJ_ROOM_FIXED_GSO)) {
++			skb_decrease_gso_size(shinfo, len_diff);
++			if (shinfo->frag_list)
++				return skb_linearize(skb);
++		}
++
+ 	}
+ 
+ 	return 0;
 -- 
-2.39.3
+2.33.0
 
 
