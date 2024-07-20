@@ -1,149 +1,182 @@
-Return-Path: <linux-kernel+bounces-257751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9756937E6B
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 02:08:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0BAC937E73
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 02:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 534291F25D90
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 00:08:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C49891C2142E
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 00:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66576EDE;
-	Sat, 20 Jul 2024 00:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nIPt5FH1"
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E08F322E;
+	Sat, 20 Jul 2024 00:16:25 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7093201;
-	Sat, 20 Jul 2024 00:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15881EDE
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 00:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721434032; cv=none; b=jybI+l8rsYIaIp+HYpyoks5SSAYnoROrPjWN6ugcXmnkzBEMBoM1vbY9mA0EGXbpKHEnPZQ/gYmFx9eVx3jjm+f0teG9K8hVC+AiQPtJJT7dAl1UI4pChPhySW/cUCRAOAny+CULDRp42h8LT4IGzNM581LxyrJq6bjaIEisxE8=
+	t=1721434584; cv=none; b=Q+TNlk4G1WuExJyo6+2t6Ct0BHp4P66krsXJDEwa1UMUDszKsB/xLzl+NWovrqPLVEIXTCv+RmWtSLx7I0ViBQ0gRW/Gei36HeafLjlP6t/SlE6duHvivyeStyDHRFJkJIwDX4i5cZ4ditQbgZX9706gfPeBQf4Y+kv8nNIdnyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721434032; c=relaxed/simple;
-	bh=k3hBCtkSebA8AJGEiTfejozm3uyEXASbHLVBRsrHJSQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aB2HoT3J4i2mPLBaVawRp5KALxJhNZ4c0I7dxM27WdtCbA1Beqa7ZVQGGBds2jg+I9YN/w+tr4oL3Zw3T9hbJdG3Qmt9dvqWmnEyHKl3kaaj1xSeO4XjK02pP5/sMHpqk6hUh+aAgDeV7ZOxoEIhzBtJkuTPT25ZXpymZ5ovBCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nIPt5FH1; arc=none smtp.client-ip=209.85.160.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-25e3bc751daso1249413fac.3;
-        Fri, 19 Jul 2024 17:07:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721434030; x=1722038830; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZuvNILcrHmZjVuCm63Mu8D6irELlymR43t41iUuR3/0=;
-        b=nIPt5FH1JiXzelGySuhqniPX+dVipI3PpoBVKWlwHGqNQROeDVeV+NzqtcOBuTowXL
-         UxNMlMfILJ1BK7STT7xMkhoTfpF+DvD5GoT+pZmriUsbz2Pyh8l7QDxWQM0BPDnau16X
-         kE9QJQsDPGmlapqAmialg8zBV+fWRfzuRB4v/R42SAXX7OLkPCFd674MzEcT6263+S3R
-         u+S2+jBpPaM1DZfXifgcZTI1fLBoZKoqnnCZgFqoolWh/xnn93nUj5GXx/8O2gWOEJkQ
-         DyIAz1BFltOcxkd4Vn+e+3k/czfzm1MXr32XhJlWvuz8cm0cRNXjaikf7Uk5Sxc985Jr
-         gffw==
+	s=arc-20240116; t=1721434584; c=relaxed/simple;
+	bh=yFfE89JWHCRn5Pg/GYd/oTSbs92w+tBYWZ59G+0LYEA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=R3qVAdDcedliRvWjkfTJqH9QQaxerZTeJng4V346MNyqDMwaXt9xEo4c1PSB/P5LwwB5b8Lne0ZsRRu8p0u/Dhqdfx1VPRHkHUSK3v7KRGVtWK+ZrFQUqjcMnu+txx4oobmxO17AfyGTbFvQx3eebG3cb7hWNpdmxP+AVK3HwJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-8050ce2fd57so406958639f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 17:16:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721434030; x=1722038830;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1721434582; x=1722039382;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZuvNILcrHmZjVuCm63Mu8D6irELlymR43t41iUuR3/0=;
-        b=hdHpjKtFvN9K8ye9bGd3NIpMP14SA4+S0ULzdng4fEmlQLL3JgQmZj33/fd73Gvj1l
-         j0P77u/FXF3J5HrHEHR9JPBWAQAFlgHSRsJ4XLZPnyRwGMsPHa30VhVRY8AbhTMAo9pv
-         RTrIkIKLDBb7JWvAqH6kJPSPpMa99KzieWTpK6nBq776GGucDQXxv2EKC4YRhdtPFzTE
-         CeAFjbOl/SaC01Pe9P5UjdkUKwzxUiFvSWjh3egUkjbJgksb7RmlEbybH7TFNt1k8uRy
-         K1bnELElgP1AZSYJDocshqJvkoIFrcmzU1x16jaqJSmU/iruu538F+eaWwz0+fHfBToJ
-         CWyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyXlGJKjnoH52mS/8GQugluwyHyjwyB/rhxJM05CsYsThR2vwQk3sAa5Wh52es/xUchsp4SAU+XuaEO4T9VXHfiYKdg8nrwhVj5W5rD32J9vn/dMiToplZ8kFJu20xYuMxego4vp8m
-X-Gm-Message-State: AOJu0Yw49MdcWXi3vurtxwV8uSKGKOtXCK4CuNPEsgbK9uXOrMnaJY3C
-	Qkt8PSHEpdemqUgdD+U6xN/ohIvngIqSY4j7OKVHoYBty4oicD1Q
-X-Google-Smtp-Source: AGHT+IGswl4b/RLWR3aV8ZSPIJWzAyWE1Vi1y7/s9z4GFnEpVS6pXmbk8+gCTcqsD1JycoFXVtoNPQ==
-X-Received: by 2002:a05:6870:9613:b0:254:b337:eebc with SMTP id 586e51a60fabf-261215e714fmr1159283fac.35.1721434030220;
-        Fri, 19 Jul 2024 17:07:10 -0700 (PDT)
-Received: from ?IPV6:2603:8080:2300:de:3d70:f8:6869:93de? ([2603:8080:2300:de:3d70:f8:6869:93de])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-708f60a582fsm526556a34.12.2024.07.19.17.07.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Jul 2024 17:07:09 -0700 (PDT)
-Message-ID: <55674f3f-30d5-4da4-8fe2-0efafec5d3bb@gmail.com>
-Date: Fri, 19 Jul 2024 19:07:08 -0500
+        bh=w3f8fiUb/1e0isq2qYD5vOSUdPdevzcO7aUauU++Wsg=;
+        b=CuQ+e5wNnzd4i3hxomY32S88Y0edhosCpLp4epb5brRxxLeOmdbIjrQ+ddtcLnBHnV
+         3CsrGVgE76KnL4w4mD8kgPz44D26kTzsuyzm2PB4icAm0voSqbYMvN5vqbqE63qBjV8K
+         MMRQN6IJrzV7PvurrX6ZqwJo/cXM02oGhHyhrIxthoLkSYu9DhtuOK9Hg6Hpc+rtQqFd
+         TOLLM4SDFeVJfHwl2BMUFYAIWiFvsB0MuAoFRikNKpuDFuJvCkjZLLCmmOqlzvgEKRrs
+         PC1SjhlS9QeXXBgnUOH3bgUx7gFIGeSeJ1ri8WUxwllS98AAUHpp/crWX2XYZGg29oAG
+         oibw==
+X-Forwarded-Encrypted: i=1; AJvYcCUAlY0JXWNMAegM8FAj51JcyQRtKoM9nWqBy/eLb9H7iGUnAKSTV2XAqC0rrnOcaaHSRrdxYPGI1rUvI7AmiQqD+KomZVr6c2RFhMVY
+X-Gm-Message-State: AOJu0YwFq+8D5XV8Dxl75dM14hyC8f4SR1ND0l8+XD8G4qS8EF6XNEVR
+	pUQnSsMxV/QfHjtA6Zg5KtixCdqMEyryIe/Iq/vkr0s2Aoeqg89B1ifWL3u7gCzgOYm0jz9Imj5
+	5vpVYnU5SPyidFtFlPY9UHV+vNqrtMX+MRXqaOJ7pgPd34jMCjB4jjYk=
+X-Google-Smtp-Source: AGHT+IEhVky9gVVBl4vehk6StGC4USpYibqa4QqoBDdnT0yWEFWMLvfyvxi1KujjOZzF/iezaHnx1iyL5dw7o2ZUHLeKPBk/63Sh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] docs: scheduler: Start documenting the EEVDF
- scheduler
-To: Jonathan Corbet <corbet@lwn.net>, sergio.collado@gmail.com,
- peterz@infradead.org, rdunlap@infradead.org
-Cc: bilbao@vt.edu, jembid@ucm.es, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-References: <20240713140455.4072847-1-carlos.bilbao.osdev@gmail.com>
- <20240713140455.4072847-2-carlos.bilbao.osdev@gmail.com>
- <878qy1uvyw.fsf@trenco.lwn.net>
-Content-Language: en-US
-From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-In-Reply-To: <878qy1uvyw.fsf@trenco.lwn.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:8522:b0:4b9:ad20:51ff with SMTP id
+ 8926c6da1cb9f-4c23fc73789mr67570173.1.1721434582238; Fri, 19 Jul 2024
+ 17:16:22 -0700 (PDT)
+Date: Fri, 19 Jul 2024 17:16:22 -0700
+In-Reply-To: <000000000000a8bd7b060f8ce57d@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c758e1061da2b880@google.com>
+Subject: Re: [syzbot] [jfs?] general protection fault in diRead (2)
+From: syzbot <syzbot+8f731999dc47797f064f@syzkaller.appspotmail.com>
+To: brauner@kernel.org, eadavis@qq.com, jack@suse.cz, 
+	jfs-discussion@lists.sourceforge.net, jlayton@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	samsun1006219@gmail.com, shaggy@kernel.org, syzkaller-bugs@googlegroups.com, 
+	xrivendell7@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/16/24 11:45, Jonathan Corbet wrote:
+syzbot has found a reproducer for the following issue on:
 
-> Carlos Bilbao <carlos.bilbao.osdev@gmail.com> writes:
->
->> Add some documentation regarding the newly introduced scheduler EEVDF.
-> A nit, but one I wish more people would make note of...
->
-> [...]
->
->> --- a/Documentation/scheduler/sched-design-CFS.rst
->> +++ b/Documentation/scheduler/sched-design-CFS.rst
->> @@ -8,10 +8,12 @@ CFS Scheduler
->>  1.  OVERVIEW
->>  ============
->>  
->> -CFS stands for "Completely Fair Scheduler," and is the new "desktop" process
->> -scheduler implemented by Ingo Molnar and merged in Linux 2.6.23.  It is the
->> -replacement for the previous vanilla scheduler's SCHED_OTHER interactivity
->> -code.
->> +CFS stands for "Completely Fair Scheduler," and is the "desktop" process
->> +scheduler implemented by Ingo Molnar and merged in Linux 2.6.23. When
->> +originally merged, it was the replacement for the previous vanilla
->> +scheduler's SCHED_OTHER interactivity code. Nowadays, CFS is making room
->> +for EEVDF, for which documentation can be found in
->> +:ref:`sched_design_EEVDF`.
-> If, here, you just say "can be found in
-> Documentation/scheduler/sched-eevdf.rst", the right cross-reference will
-> be created and ...
->
->>  80% of CFS's design can be summed up in a single sentence: CFS basically models
->>  an "ideal, precise multi-tasking CPU" on real hardware.
->> diff --git a/Documentation/scheduler/sched-eevdf.rst b/Documentation/scheduler/sched-eevdf.rst
->> new file mode 100644
->> index 000000000000..019327da333a
->> --- /dev/null
->> +++ b/Documentation/scheduler/sched-eevdf.rst
->> @@ -0,0 +1,44 @@
->> +.. _sched_design_EEVDF:
-> ...you can take out this unnecessary label.
+HEAD commit:    4305ca0087dd Merge tag 'scsi-misc' of git://git.kernel.org..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=119980b1980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dfaf0ab1b18403fe
+dashboard link: https://syzkaller.appspot.com/bug?extid=8f731999dc47797f064f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14d09349980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1748fa5e980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/dd4bd188fcdc/disk-4305ca00.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d60a35331483/vmlinux-4305ca00.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8a5740b15da1/bzImage-4305ca00.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/fb21716fe5a7/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8f731999dc47797f064f@syzkaller.appspotmail.com
+
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fff9841c06c
+R13: 0000000000000001 R14: 431bde82d7b634db R15: 00007fff9841c0b0
+ </TASK>
+read_mapping_page failed!
+jfs_mount_rw: diMount failed!
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000104: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000820-0x0000000000000827]
+CPU: 0 PID: 5094 Comm: syz-executor169 Not tainted 6.10.0-syzkaller-09061-g4305ca0087dd #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:diIAGRead fs/jfs/jfs_imap.c:2662 [inline]
+RIP: 0010:diRead+0x158/0xae0 fs/jfs/jfs_imap.c:316
+Code: 8d 5d 80 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 a9 e5 d7 fe 4c 8b 2b 49 8d 9d 20 08 00 00 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 89 e5 d7 fe 4c 8b 3b 49 8d 5f 28
+RSP: 0018:ffffc900020bf738 EFLAGS: 00010202
+RAX: 0000000000000104 RBX: 0000000000000820 RCX: 0000000000000001
+RDX: 0000000000000001 RSI: 0000000000000008 RDI: 0000000000000001
+RBP: ffff88805a2bcdf0 R08: ffff88805a2bca97 R09: 1ffff1100b457952
+R10: dffffc0000000000 R11: ffffed100b457953 R12: 0000000000000004
+R13: 0000000000000000 R14: ffff88805a2bca88 R15: dffffc0000000000
+FS:  00005555843c1380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f13f837b0f8 CR3: 000000005a8e8000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ jfs_iget+0x8c/0x3b0 fs/jfs/inode.c:35
+ jfs_lookup+0x226/0x410 fs/jfs/namei.c:1469
+ __lookup_slow+0x28c/0x3f0 fs/namei.c:1718
+ lookup_slow+0x53/0x70 fs/namei.c:1735
+ walk_component+0x2e1/0x410 fs/namei.c:2039
+ lookup_last fs/namei.c:2542 [inline]
+ path_lookupat+0x16f/0x450 fs/namei.c:2566
+ filename_lookup+0x256/0x610 fs/namei.c:2595
+ user_path_at+0x3a/0x60 fs/namei.c:3002
+ do_mount fs/namespace.c:3809 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x297/0x3c0 fs/namespace.c:3997
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f13f8304bd9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 01 1b 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff9841c048 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007fff9841c070 RCX: 00007f13f8304bd9
+RDX: 0000000000000000 RSI: 0000000020000380 RDI: 0000000000000000
+RBP: 0000000000000001 R08: 0000000000000000 R09: 00007fff9841c090
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fff9841c06c
+R13: 0000000000000001 R14: 431bde82d7b634db R15: 00007fff9841c0b0
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:diIAGRead fs/jfs/jfs_imap.c:2662 [inline]
+RIP: 0010:diRead+0x158/0xae0 fs/jfs/jfs_imap.c:316
+Code: 8d 5d 80 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 a9 e5 d7 fe 4c 8b 2b 49 8d 9d 20 08 00 00 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 89 e5 d7 fe 4c 8b 3b 49 8d 5f 28
+RSP: 0018:ffffc900020bf738 EFLAGS: 00010202
+RAX: 0000000000000104 RBX: 0000000000000820 RCX: 0000000000000001
+RDX: 0000000000000001 RSI: 0000000000000008 RDI: 0000000000000001
+RBP: ffff88805a2bcdf0 R08: ffff88805a2bca97 R09: 1ffff1100b457952
+R10: dffffc0000000000 R11: ffffed100b457953 R12: 0000000000000004
+R13: 0000000000000000 R14: ffff88805a2bca88 R15: dffffc0000000000
+FS:  00005555843c1380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f13f837b0f8 CR3: 000000005a8e8000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	8d 5d 80             	lea    -0x80(%rbp),%ebx
+   3:	48 89 d8             	mov    %rbx,%rax
+   6:	48 c1 e8 03          	shr    $0x3,%rax
+   a:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1)
+   f:	74 08                	je     0x19
+  11:	48 89 df             	mov    %rbx,%rdi
+  14:	e8 a9 e5 d7 fe       	call   0xfed7e5c2
+  19:	4c 8b 2b             	mov    (%rbx),%r13
+  1c:	49 8d 9d 20 08 00 00 	lea    0x820(%r13),%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	48 89 df             	mov    %rbx,%rdi
+  34:	e8 89 e5 d7 fe       	call   0xfed7e5c2
+  39:	4c 8b 3b             	mov    (%rbx),%r15
+  3c:	49 8d 5f 28          	lea    0x28(%r15),%rbx
 
 
-Love it! Labels are a source of warnings.
-
-Sending v3 now.
-
-
->
-> Thanks,
->
-> jon
-
-
-Thanks,
-
-Carlos
-
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
