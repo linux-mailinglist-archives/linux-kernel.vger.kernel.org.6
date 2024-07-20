@@ -1,117 +1,112 @@
-Return-Path: <linux-kernel+bounces-257867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CF69937FEF
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 10:06:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 605DA937FF6
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 10:08:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1990D1F21D29
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 08:06:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 918A91C215F0
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 08:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2652836A;
-	Sat, 20 Jul 2024 08:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pyt5pvMJ"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10933BBE0;
+	Sat, 20 Jul 2024 08:08:42 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836EC22F14
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 08:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A84122F14;
+	Sat, 20 Jul 2024 08:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721462774; cv=none; b=tn0jTCeJ0LTLn/SdDlilKDiiYU13BOGErDboCM1fskCYuHJDdvsRsWNlflcpmUzy13pPMV3I/t/u1PsB0doaTg06yreI5LGBo0pPD4eQwVB6lDYwJ9SbQBoIIE6AJux22wjgZreEkAYRhJKceIyBrctZwUdXpAQNrVEzvU9PbtU=
+	t=1721462922; cv=none; b=i2ZKMY00L2tqUkp0L2VNM/nJ0l8jZlx797Pi/0/WMtQjTQUIIup9aT9H8I9h9zBmkR/ds0TOD3pnEDEkXiJ8rMsPWuwbkb1k6qp6KbHdVeC1Unc3heHe9aW6H49v/7pgQIAJTswdUzsLCtVRjnIO154fstqP/peq17RL3Bc4IbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721462774; c=relaxed/simple;
-	bh=PHVSl/wshCNA9Yqywyo0gnla7YSzfoEEf4udZoPcDCM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=RJORxjcgc7UrTv/n6qkzrf9N4ySEC7JDQRaGtNuILFsMLDfWS6vcqkqMyTTVa0iVKvwGUNwMphEUmAPU62o2/8+izU1MKuvYYmeoPJvnCvGPzx+USULEpBbSoLV5K3v2C1pTcKM5563ISoYfZc8gQcmeTBmlyJBfNn0rGz7gBuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pyt5pvMJ; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721462759; x=1722067559; i=markus.elfring@web.de;
-	bh=J2t61GWW3REmuis12f1LLVLCFhXcXognXwQFM1bnBwo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=pyt5pvMJRTCMuUKVWUSV/4gAq9BQ9UzappHUjzh0NuaVbKRF/LpQTujSpqGBoysp
-	 buS9phH+qdZ4LnIfkn06z8y3/8PVA3G3SuAqZ1Cq5AXIPKSuN88fWd5BGTdw+GRxM
-	 0XzGW9bqYaWkfRH1WIn0Ug/Q8Kit1rjV27+IVi2bLWJz9MpILX2QL9PtWZDL+UuwM
-	 p6fW2SLtjYlZSUzZHvzU+zdQqJokQ9CXLnqxwhgSuQ4/JJVpZ66ZosW53rsySQs58
-	 dOM47ND350xFNtkehiRjeB7OeIFZ+ruFnxUAaRuJH4tJkU+hx1fXit9gUwltAejD0
-	 Zgi3NqCzX25W0dldow==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MHmqC-1sa0Vl050Y-00FVi0; Sat, 20
- Jul 2024 10:05:59 +0200
-Message-ID: <f9100627-ada0-4d78-8b98-15d6aef64d9a@web.de>
-Date: Sat, 20 Jul 2024 10:05:58 +0200
+	s=arc-20240116; t=1721462922; c=relaxed/simple;
+	bh=uJ4nfxr/PYV9M9WCplar+NquJmoPtx8qBsxRlGDXkjI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dyeU/3qB/Evsx84eqU1CRmxj8rQQLcYggqf6q8XhGuzSP/ENmIM3VOvAqOD6B67IuHU1wRiov2tpeJ12w8DJBNsDAgt72P7vRR+UUD+VWv+qqEqu+usKtZ4z6630qYM/mw5+woFMi3TQu6NXVuOQyAVsO7NHptFeXDdmYx4u1zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 86CFA300002AE;
+	Sat, 20 Jul 2024 10:08:28 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 70AA21C83D; Sat, 20 Jul 2024 10:08:28 +0200 (CEST)
+Date: Sat, 20 Jul 2024 10:08:28 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Wei Huang <wei.huang2@amd.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
+	Jonathan.Cameron@huawei.com, helgaas@kernel.org, corbet@lwn.net,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, alex.williamson@redhat.com, gospo@broadcom.com,
+	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
+	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
+	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
+	vadim.fedorenko@linux.dev, horms@kernel.org, bagasdotme@gmail.com,
+	bhelgaas@google.com, Paul Luse <paul.e.luse@intel.com>,
+	Jing Liu <jing2.liu@intel.com>
+Subject: Re: [PATCH V3 00/10] PCIe TPH and cache direct injection support
+Message-ID: <ZptwfEGaI1NNQYZf@wunner.de>
+References: <20240717205511.2541693-1-wei.huang2@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: George Yang <George.Yang@amd.com>, Lizhi Hou <lizhi.hou@amd.com>,
- Min Ma <min.ma@amd.com>, Narendra Gutta
- <VenkataNarendraKumar.Gutta@amd.com>, dri-devel@lists.freedesktop.org,
- Oded Gabbay <ogabbay@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Max Zhen <max.zhen@amd.com>,
- Sonal Santan <sonal.santan@amd.com>
-References: <20240719175128.2257677-3-lizhi.hou@amd.com>
-Subject: Re: [PATCH 02/10] accel/amdxdna: Support hardware mailbox
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240719175128.2257677-3-lizhi.hou@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:57w+CsTSOckOVyVlPWbbo/hHQqSD4779xgQm/wtX026ldaAtQHa
- p+5z0cgDngoSWBXCiH+8UbYObfT/HS+9slm3t+Uuxz/jPd3OozKpVI8Z//ZFbw1xeiYw5yD
- t13pWIwlbDDsJyrMPGm90u0Z8fnRHOO7lsDTmJ3SCN73zDzkZOYE8v1M3bcP84ElFDo9TjJ
- IaXEzxZMDfQkrJPOjFQUQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:KJTEVVoI8C8=;O7kiy57ni35JuLZLXdN4Y7sRIyo
- bSetC+tCsvX/9Ceqb3mj2UTlQSek9e6Gmlr3KFgEJ3Psc6lziyw4CiC1CLPG8UuHF0Y7kXs8f
- fIWYeRuYkEo5DpjKXRuyK2oYU7ub0+oD2zvpFIabTJYU1VrCxYu13qN9x5xwTiHOampYO4f9b
- spnZ9bovEHPzqxs1v44Txwm7AloOm8XXdTlCh0gVBM+dhGb6bx3MpEMG6vX1PXiA/22eRijq8
- yJY3tm5O6bGEiGuHKOszIgoacoE2JNDyCQaPwMEvjG2/OJacoGq9LrCBJJmnQEGfPMBfWIvMn
- Q4O+z9dl86T3iiJokjFhAioCnCgzqn9G6Et/CNlu8sam28vDo8fM7H4OKCjY/PFzJjHw4ZL1e
- ZYRtvCh2VrDbg5csPNj3I1CXjFK1x1IU2ESWBIa/hbnmf9GU8i4MmfJlO+tmtrKnTCvCycnoB
- DP055aIJtF3OosXkMH3ybT0HnvUt6FOFmWZFa2ku9wcdt7hY+3czmgY4ewT3y+9MA52uTNQ0u
- mjL+U7u39MrIgGJrJNQkM86NO7r4hwxWWm0aY1CW4jWrDmDNMAXRIIL5oIj9CHN3pyW0hCSPg
- 46Y80IsRI86xM/obGhFW5pUszraPnAehykBUMNtbDFnbQyMAwDHiVMHi2asjHoM7LNx+6EZm9
- +IsQzy4BbVFeZFp7754eoVacvd+QFFw3D2MxyKPmBHbl7i8VIjd3m7UTdBwozPhHbAvg7s0Wn
- UG4B9YYJWO5p7YT9pbo7T5zlqEAq4YebGTMLYTORamKh2d4WpoenEB14RqDCKA7b7k6bLXTOQ
- 4RxdP9ujtXBIMyroFrBIm2Zg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240717205511.2541693-1-wei.huang2@amd.com>
 
-=E2=80=A6
-> +++ b/drivers/accel/amdxdna/amdxdna_mailbox.c
-> @@ -0,0 +1,582 @@
-=E2=80=A6
-> +int xdna_mailbox_send_msg(struct mailbox_channel *mb_chann,
-> +			  const struct xdna_mailbox_msg *msg, u64 tx_timeout)
-> +{
-> +	struct xdna_msg_header *header;
-> +	struct mailbox_msg *mb_msg;
+[cc += Paul Luse, Jing Liu]
 
-I propose to take another software design option better into account
-also according to the application of scope-based resource management.
+On Wed, Jul 17, 2024 at 03:55:01PM -0500, Wei Huang wrote:
+> TPH (TLP Processing Hints) is a PCIe feature that allows endpoint devices to
+> provide optimization hints for requests that target memory space. These hints,
+> in a format called steering tag (ST), are provided in the requester's TLP
+> headers and allow the system hardware, including the Root Complex, to
+> optimize the utilization of platform resources for the requests.
+[...]
+> This series introduces generic TPH support in Linux, allowing STs to be
+> retrieved from ACPI _DSM (as defined by ACPI) and used by PCIe endpoint
+> drivers as needed. As a demonstration, it includes an example usage in the
+> Broadcom BNXT driver. When running on Broadcom NICs with the appropriate
+> firmware, Cache Injection shows substantial memory bandwidth savings and
+> better network bandwidth using real-world benchmarks. This solution is
+> vendor-neutral, as both TPH and ACPI _DSM are industry standards.
 
-* You may reduce the scopes of such local variables.
+I think you need to add support for saving and restoring TPH registers,
+otherwise the changes you make to those registers may not survive
+reset recovery or system sleep.  Granted, system sleep may not be
+relevant for servers (which I assume you're targeting with your patches),
+but reset recovery very much is.
 
-* Would you like to use the attribute =E2=80=9C__free(kfree)=E2=80=9D acco=
-rdingly?
-  https://elixir.bootlin.com/linux/v6.10/source/include/linux/slab.h#L282
+Paul Luse submitted a patch two years ago to save and restore
+TPH registers, perhaps you can include it in your patch set?
 
-=E2=80=A6
-> +	mb_msg =3D kzalloc(sizeof(*mb_msg) + pkg_size, GFP_KERNEL);
-=E2=80=A6
+https://lore.kernel.org/all/20220712123641.2319-1-paul.e.luse@intel.com/
 
+Bjorn left some comments on Paul's patch:
 
-Regards,
-Markus
+https://lore.kernel.org/all/20220912214516.GA538566@bhelgaas/
+
+In particular, Bjorn asked for shared infrastructure to access
+TPH registers (which you're adding in your patch set) and spotted
+several nits (which should be easy to address).  So I think you may
+be able to integrate Paul's patch into your series without too much
+effort.
+
+However note that when writing to TPH registers through the API you're
+introducing, you also need to update the saved register state so that
+those changes aren't lost upon a subsequent reset recovery.
+
+Thanks,
+
+Lukas
 
