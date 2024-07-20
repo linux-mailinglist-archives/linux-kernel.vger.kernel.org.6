@@ -1,117 +1,190 @@
-Return-Path: <linux-kernel+bounces-257812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5226D937F2C
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 08:23:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60834937F2E
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 08:24:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D19C31F21A90
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 06:23:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2179D280F31
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 06:24:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26DA14A90;
-	Sat, 20 Jul 2024 06:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70098171BA;
+	Sat, 20 Jul 2024 06:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="LQX8MGY8"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KqKxPUIf"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803D3D51C
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 06:23:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42094101E4;
+	Sat, 20 Jul 2024 06:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721456624; cv=none; b=kqLMkHVp6FbrT/AMWZzyE5gVIStfqAV1KJC0YjxuDsj8B7wmAbSvh0lOLwfKeR6Xrr+jknQl03q5TZ5aB9TZPfkwVhGLPuQDmxf7ypkuqP029cUvqdi8ZHFT9f8cD4sJykkbFOXKST3mRhx9ffkO5sDKlYqUAc3Xckl/RchApcs=
+	t=1721456645; cv=none; b=Sss7Ibwme6ZwX+Vq0M3kTett3/sXtwH739z064tPcx9COadKuO0q0CjkZs/jv0zQ2jtlHELCoxvFVb2pf7BvCLq56VfkQdcKKgwCVGUc3B/3wIZlxD8Pb89zPsd0Uf32yue2A0qSGEDqcAoMSkZTSKXG0dW2nQWu9xnjQgy3NCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721456624; c=relaxed/simple;
-	bh=RqhUFzx0R0DJTBuTrGUN47Du1aedUUH+nlpRyBEUV4E=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=m16NQ4YN2rSBTcDxhPRzDoQ8ukDGLQGldbpO5KkvaDEJIGM4sa22qSwSPzCb5fr8ZqVRqm8O+fqc5Ptd2GEYQvBcAGsFiTb/3Xq02iQ2hEBTqJsw1NLqHZMOM6SaN2NoLBheBxeaV4KgCn+MEwJxWP//+kInWhYdpmKJ5LphHN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=LQX8MGY8; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721456599; x=1722061399; i=markus.elfring@web.de;
-	bh=UpSvj01b19X5A/DIUDVFYuoBfOsri08u957KIo0j9bQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=LQX8MGY8nDELeCsfAlLlJ30/bxlh6YRa2WuVM6DxL/kpLoQkYIIO70wLGzKleJJN
-	 /AR048UnNAFyQgfwo8ww31cnYXtcwoe4K4SY5X0PDzLYreWyXAxBkntoKcTotxCPM
-	 p3ie/O4cC54Xpb6RWgKh31Osh1n0k8CukhmvlQkchOugmHRdYQhX6/U11w6CDBrp2
-	 5WABPd3BGOBROeDOtn3Cm3/cV27BYMQuU592vG6a2W6xhuHAKVsxnTBGUO/RWpMIG
-	 EU20OJBdtRdvvMhalXu0lnkud7DLvWz1/1+3zXeCL4dcKgr064QS6+ARHqxZ4YxSm
-	 acv06IqyMSTgtZyLSg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M76bb-1sOiN61sDf-00Bjr1; Sat, 20
- Jul 2024 08:23:19 +0200
-Message-ID: <87db1a67-ede6-4da5-89b9-a75a67770edd@web.de>
-Date: Sat, 20 Jul 2024 08:23:09 +0200
+	s=arc-20240116; t=1721456645; c=relaxed/simple;
+	bh=ABFFQyOvcAbcL/9vHAth0uUvpw04dcoWOHmYRhVX414=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=mM7uvyib9zPNjsYTsiRk0+/TWJunvT5bRXtIhAMZ10rpxt07VNDznagnAT+pkgX+HhcyeG3nJcr+yGli5s/yGfZLVX1F4sCJEEiUagGn4jC4gEOhVvkUNck9wVY6Vygh4me+plTX0pmZDtuVX5uPbjcDyTMdUhissXacZicZm40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KqKxPUIf; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-793a3a79a83so1852166a12.3;
+        Fri, 19 Jul 2024 23:24:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721456643; x=1722061443; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VpCn/mWH5TzSp63PGOtUfTbjWm1JkGA80503IC3g9Zg=;
+        b=KqKxPUIfHhTxyUpZJzzRavyICyyfGefcxlIaxLHGDx645zicYwlhN+GMI+7zTxYMSv
+         6CHSFEEaluAqEhZkTGiDK9TNgpQ++a9XzXetKs0KN46GbA7MGXwb68Z3LmaPFaXZwtSb
+         GebvfMS40vRzizGNSQOXH/T8ISFOKZxnCXSdB+xFSiqV6TAMTlixgSBC/FEBDF2PWkoE
+         o46GsdigHrhBqyqdDe4bjnhe7j5x9Ml8nh3AxkLoiu9riQlHmFig1U0T1HyxS75aU5fp
+         09CKRd+yeQFVSFEnMKFvuLm5eujgrukq6Cfwl6FtZmEcA2ggysifVY7gr/dkzyi9fzSc
+         rIxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721456643; x=1722061443;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VpCn/mWH5TzSp63PGOtUfTbjWm1JkGA80503IC3g9Zg=;
+        b=kaRM4SCvlmAVuVqIWWLkV08kxRLeHE4CKQf4JB/ThobJRi86dPsqe8vRseN56NveST
+         SQROxodyo9FfdlTX/0AwxYkPzwNLevRrak3FE9VpEahnVNctUiiGLq2v7yVFFXSVGJwv
+         /mUtjd4m8LCOxSKGLF2o9jDQtqiUF0d1PyjsI5Li3ZRTtvvdbCxCuGL/jUCNHuoD0wcK
+         EId24tTCKUYrSLxBn283VeCKPKzTbyu9ngZv3AAzIAoy6MNgU7LnP/vftIOAbfJFHuhD
+         8ElBX+E20OF9LadyWGamhjTQH9KpOQPUVJWqyGcehfPJXzVMEoY/02ijs6x07+vvfPIk
+         Y3IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGBYT+UIcIXstlHK4kuEvXkD1gOKNi12sDFcY4ZTkTuxHnLiH2qPKO9aZigkRctteQlYt8WUwQ/cGHt9NfhkONJanNnNi1f57gSmmJ
+X-Gm-Message-State: AOJu0YyJ7aJm0W5LZNbDxjpdoN2yvCjyUweHW2Re23JT9EW+lvHo/hpY
+	WfLTMtEziNLX8NGpGstQSGACORDJlJF09xLfNJBXHLMRs5D3slHosAfbD8fE
+X-Google-Smtp-Source: AGHT+IH0OOURIiJkFea9+K5qVD9E5ZNSiXSN0Ez46BlB47ILGI5gGSeRROi6DL8ysbNUPqNwRi3qcA==
+X-Received: by 2002:a05:6a21:3102:b0:1c0:f1cb:c4ad with SMTP id adf61e73a8af0-1c422857757mr2078581637.2.1721456643421;
+        Fri, 19 Jul 2024 23:24:03 -0700 (PDT)
+Received: from localhost.localdomain ([163.53.18.10])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ccf7c76fe7sm2755125a91.33.2024.07.19.23.24.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 23:24:03 -0700 (PDT)
+From: zhangshida <starzhangzsd@gmail.com>
+X-Google-Original-From: zhangshida <zhangshida@kylinos.cn>
+To: tytso@mit.edu,
+	jack@suse.com
+Cc: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhangshida@kylinos.cn,
+	starzhangzsd@gmail.com,
+	Baolin Liu <liubaolin@kylinos.cn>
+Subject: [RFC PATCH] jbd2: fix a potential assertion failure due to improperly dirtied buffer
+Date: Sat, 20 Jul 2024 14:23:56 +0800
+Message-Id: <20240720062356.2522658-1-zhangshida@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: George Yang <George.Yang@amd.com>, Lizhi Hou <lizhi.hou@amd.com>,
- Min Ma <min.ma@amd.com>, Narendra Gutta
- <VenkataNarendraKumar.Gutta@amd.com>, dri-devel@lists.freedesktop.org,
- Oded Gabbay <ogabbay@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Max Zhen <max.zhen@amd.com>,
- Sonal Santan <sonal.santan@amd.com>
-References: <20240719175128.2257677-2-lizhi.hou@amd.com>
-Subject: Re: [PATCH 01/10] accel/amdxdna: Add a new driver for AMD AI Engine
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240719175128.2257677-2-lizhi.hou@amd.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:zknNjj64JrPzCZ9PYSi5tKcntdHJfVxeMZ0wDiU5fUX5IAwdCfA
- 3REEX20OTKUls5BUUTM+vu+SdU+Y7o08f4NN6f/pzD1KBmhffvXo5Cka8yhYtXFxQREF//A
- rQtRyFGjBp3YYaPkKTaBbbnW3vmLRmTVIJASCJE8satSSFQTgorOY3zHbgeJ1FOU011XnS7
- Ez4hw4cUn7CRB3lt+dM8w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:tOyPzbQ6Sjc=;sM5sJ5awRw1TpQT0gQlvUM6N+vD
- RTev1gg32T8iqkqUGwj4GbsxebpODAfIghdxd07fIxsRRxe8HC11e5kujTbOTT2Pfmyy5vP1W
- FW3Oy/bs0Qw+dv5lKIDCxcKPFz8IbE+FumVMFg49pMZjPia+AoqEsYR+eq+He9MysOQVcJO59
- 5Vc+lREQUIrtlvOOd2HPqSg16+vR7TXogK/rx47jB9XsCV9F9eAbNdrU4BVBokgxx6tilt/ov
- 2nmHTX+2x4zDZzA6kkOA0hF3K8rTlYCOy3//UYHQhR3YaCLm+uGHV5lnxeZviZ7r9KvqPssuA
- QJGoqOplqmAqgcpxcavQC+w+NwNxF5g8GQg1HXOpNdWCFjmMHQU3j9tsfbo7WdMad+kjNxSyA
- HEcizX5ShNz3MQSF6qN4uzyiLi75k1K8WadOX/WpZeDH33h4BeI4U5dHAe85WHdMj+TqYcroI
- 0W1/91s+slsXAret6xoIgCUn/+5by767eia/M+FvvzaAE8IbWfsZlWYqucnC3013ZhwUhS1ZL
- ApZR5Q0BX09mnDX6zroU8ygcbhYnDl55TKpKVpBcUCgwEhBZzzMQoxNis54i9MnVcLUTZEora
- BogKwi/FdTL3xs+nEYWO7v8LP1TkvlTtudhyhnrSqGyDQWsQ2CdW38XUT6dIWa1eZYt0QmnbR
- vc9n2wCSwYTLEPHnLWz1BDE11SuqmBo+N2KITy063DzGgcRFs0N3QMYNaBDaVmXajyc/IlM14
- YqFOHZnrIXHP85xoybbcYrtw75bko+RDP4v0PCjeszHUztU1IAvYnBAC8Nhvkvk3YvUK31zvu
- VSt7dWaP6iZb7InBUv5syxPQ==
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> +++ b/drivers/accel/amdxdna/aie2_pci.c
-> @@ -0,0 +1,182 @@
-=E2=80=A6
-> +static int aie2_init(struct amdxdna_dev *xdna)
-> +{
-=E2=80=A6
-> +	const struct firmware *fw;
+From: Shida Zhang <zhangshida@kylinos.cn>
 
-I suggest to take another software design option better into account
-also according to the application of scope-based resource management.
+On an old kernel version(4.19, ext3, journal=data, pagesize=64k),
+an assertion failure will occasionally be triggered by the line below:
 
-* You may reduce the scope of such a local variable.
+jbd2_journal_commit_transaction
+{
+...
+J_ASSERT_BH(bh, !buffer_dirty(bh));
+/*
+* The buffer on BJ_Forget list and not jbddirty means
+...
+}
 
-* How do you think about to use the attribute =E2=80=9C__free(firmware)=E2=
-=80=9D?
-  https://elixir.bootlin.com/linux/v6.10/source/include/linux/firmware.h#L=
-202
+AFAIC, that's how the problem works:
+--------
+journal_unmap_buffer
+jbd2_journal_invalidatepage
+__ext4_journalled_invalidatepage
+ext4_journalled_invalidatepage
+do_invalidatepage
+truncate_inode_pages_range
+truncate_inode_pages
+truncate_pagecache
+ext4_setattr
+--------
+First try to truncate and invalidate the page.
+Sometimes the buffer and the page won't be freed immediately.
+the buffer will be sent to the BJ_Forget list of the currently
+committing transaction. Maybe the transaction knows when and how
+to free the buffer better.
+The buffer's states now: !jbd_dirty !mapped !dirty
 
-=E2=80=A6
-> +	ret =3D request_firmware(&fw, ndev->priv->fw_path, &pdev->dev);
-=E2=80=A6
+Then jbd2_journal_commit_transaction(）will try to iterate over the
+BJ_Forget list:
+--------
+jbd2_journal_commit_transaction()
+	while (commit_transaction->t_forget) {
+	...
+	}
+--------
 
+At this exact moment, another write comes:
+--------
+mark_buffer_dirty
+__block_write_begin_int
+__block_write_begin
+ext4_write_begin
+--------
+it sees a unmapped new buffer, and marks it as dirty.
 
-Regards,
-Markus
+Finally, jbd2_journal_commit_transaction(）will trip over the assertion
+during the BJ_Forget list iteration.
+
+After an code analysis, it seems that nothing can prevent the
+__block_write_begin() from dirtying the buffer at this very moment.
+
+The same condition may also be applied to the lattest kernel version.
+
+To fix it:
+Add some checks to see if it is the case dirtied by __block_write_begin().
+if yes, it's okay and just let it go. The one who dirtied it and the
+jbd2_journal_commit_transaction() will know how to cooperate together and
+deal with it in a proper manner.
+if no, try to complain as we normally will do.
+
+Reported-by: Baolin Liu <liubaolin@kylinos.cn>
+Signed-off-by: Shida Zhang <zhangshida@kylinos.cn>
+---
+ fs/jbd2/commit.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
+index 75ea4e9a5cab..2c13d0af92d8 100644
+--- a/fs/jbd2/commit.c
++++ b/fs/jbd2/commit.c
+@@ -1023,7 +1023,20 @@ void jbd2_journal_commit_transaction(journal_t *journal)
+ 			if (is_journal_aborted(journal))
+ 				clear_buffer_jbddirty(bh);
+ 		} else {
+-			J_ASSERT_BH(bh, !buffer_dirty(bh));
++			bool try_to_complain = 1;
++			struct folio *folio = NULL;
++
++			folio = bh->b_folio;
++			/*
++			 * Try not to complain about the dirty buffer marked dirty
++			 * by __block_write_begin().
++			 */
++			if (buffer_dirty(bh) && folio && folio->mapping
++			    && folio_test_locked(folio))
++				try_to_complain = 0;
++
++			if (try_to_complain)
++				J_ASSERT_BH(bh, !buffer_dirty(bh));
+ 			/*
+ 			 * The buffer on BJ_Forget list and not jbddirty means
+ 			 * it has been freed by this transaction and hence it
+-- 
+2.33.0
+
 
