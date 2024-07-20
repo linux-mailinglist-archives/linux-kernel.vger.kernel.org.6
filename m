@@ -1,136 +1,528 @@
-Return-Path: <linux-kernel+bounces-257933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E579380FE
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 13:32:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF426938101
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 13:34:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1685B1C21261
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 11:32:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C94028297D
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 11:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2121684A52;
-	Sat, 20 Jul 2024 11:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3696D12C470;
+	Sat, 20 Jul 2024 11:33:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AQOZVR4u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yandex.com header.i=@yandex.com header.b="gS3ykZPi"
+Received: from forward501b.mail.yandex.net (forward501b.mail.yandex.net [178.154.239.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619D9B646;
-	Sat, 20 Jul 2024 11:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52A8B646;
+	Sat, 20 Jul 2024 11:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721475117; cv=none; b=No2eMLvExAT1GwiTIYR5QwCztAKm3lwe4Cgi0W34WggUFGWJFNeLwbUEmd4BUk2V9sAyNh7z1o5To9NZhxHwKgmZKJEGFi6mhMa4gqW4z7VW5xYiEalvYRRCvtPjhuJq0QzPfM0/ky975z1SdE7Bwqn/fj+NkxKcjC73FCVKX28=
+	t=1721475233; cv=none; b=FZt3EZ+Rl57+nxZ8Fh7MB9Z5AeD3P9a87omfU/3p9L5UjVS45u7LyPQinu3icM6Jc2YMShVCpwYQr2lJEMczRQCBUZNnUESYQqgK1NTvu0X+Al4l+jRnID/iqD6na2e4YvAbIMJRPfSWeCLXVZ8O/lvh9QKmXeBAfDhi40uv+ZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721475117; c=relaxed/simple;
-	bh=E2Ts6Cizss4QEjk4HAFdSy6yPFt87VYmfpjuaEPGsbo=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TZ8feOroBLa2lctbhGtJEIbMwUd0/XjlQRpa9VMq+1QWXk9kYY7zHEaf88mwUTrSyNyfsE9sp9tnWXyCideyL6V5fN3GpQI9isnSpYKThYt/iGFvmkU2RIeH7u8nxTOvQTBYjdWUP33TjJoukoZBp1MElKGi2WlQycbjNTVR5fU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AQOZVR4u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70A4FC2BD10;
-	Sat, 20 Jul 2024 11:31:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721475116;
-	bh=E2Ts6Cizss4QEjk4HAFdSy6yPFt87VYmfpjuaEPGsbo=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=AQOZVR4uYYRu/5dNYJlGYZmRC6vMG3CY3VHuvu1L4HGl+y5LsYmClnDg915jiySan
-	 Cnnvwg4HBSZsYmHa5VzThhIHOSlooHOkCraAeDP3MNWz8h1NghztV4o7iOdFzKHbs0
-	 ArLko6COAKHpi5ma8/1CB4MDX0Xw6PxpN5LmMnBn/DtWb0Qgz0hffjoeamQ4/SwtYM
-	 pV/YfKCklNl33wcEr1ek0hDlhjKZbBbva779oYW4d3Ymkc7YxtRy1g9sJskVdCrLbd
-	 l8K5dzSOMUOQFShjxCv7dChw/KhyY5APhCHRfNW7l+2wstvHm728GqcNg/V+00l7nw
-	 +7ulZnPQ+ztHA==
-Date: Sat, 20 Jul 2024 13:31:53 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	linux-i2c <linux-i2c@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] i2c-host for v6.11 - part 2
-Message-ID: <fg2byff6apqkdztjmql4x7eknpxdokjpwne6zwyrrfdpjugcr6@joo4vdlvgb56>
-References: <csu2tvshcxyz7yib2mrcczxa345m2qu6lavngulzq35b2hi7bz@ao5p3do67q7p>
- <ZpudPAKFtrIszTMS@shikoro>
+	s=arc-20240116; t=1721475233; c=relaxed/simple;
+	bh=epD57hJgsAYYcQLu8ayhIFh2ElYvhE51OmCmSk8QBeY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gz33mdN8b8RO/aUDFeVDFI7e+Yg84Et9VjxoIsk98eewofT2QcfhRYcM+uOyA6eezaQbBWY/hhK1LybPZzS3u11Hh1po98pd6mKrznJJW/aRWKACLLHJ7xcviqpguID29ordNAOviN4V6xQjzEVk8hLN3YNjbYOKAFzOUZktMFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.com; spf=pass smtp.mailfrom=yandex.com; dkim=pass (1024-bit key) header.d=yandex.com header.i=@yandex.com header.b=gS3ykZPi; arc=none smtp.client-ip=178.154.239.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.com
+Received: from mail-nwsmtp-smtp-production-canary-88.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-canary-88.sas.yp-c.yandex.net [IPv6:2a02:6b8:c14:3483:0:640:1715:0])
+	by forward501b.mail.yandex.net (Yandex) with ESMTPS id 5272960DEC;
+	Sat, 20 Jul 2024 14:33:46 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-canary-88.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id fXJd7fFm4Sw0-N2IjXqhy;
+	Sat, 20 Jul 2024 14:33:45 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.com; s=mail;
+	t=1721475225; bh=AOlsoPkReRmqiSS47kGKmnkW038lQcq/Grefo+iL3lA=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=gS3ykZPi8Y2j50cJH7I5GIMRzDa3u2GENm72Ep7ZruK8kYsHBQr3udXF99v9pzs/k
+	 B7S+s4Syn4e1nJ5y2nFXAE6FlY/BVk0f/0Qi1sdj5XcWP6GvrP+2Ik0PEXITkpHiVR
+	 IFQuuB19kol8f9CY+TCsJZW5EnlpJKsndFWWE/2E=
+Authentication-Results: mail-nwsmtp-smtp-production-canary-88.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.com
+Message-ID: <2044f205-60d1-40b3-a7d7-4be7526669a3@yandex.com>
+Date: Sat, 20 Jul 2024 13:33:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZpudPAKFtrIszTMS@shikoro>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/4] media: platform: synopsys: Add support for hdmi
+ input driver
+To: Shreeya Patel <shreeya.patel@collabora.com>, heiko@sntech.de,
+ mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ p.zabel@pengutronix.de, jose.abreu@synopsys.com, nelson.costa@synopsys.com,
+ shawn.wen@rock-chips.com, nicolas.dufresne@collabora.com,
+ hverkuil@xs4all.nl, hverkuil-cisco@xs4all.nl
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ Dmitry Osipenko <dmitry.osipenko@collabora.com>
+References: <20240719124032.26852-1-shreeya.patel@collabora.com>
+ <20240719124032.26852-5-shreeya.patel@collabora.com>
+Content-Language: en-US
+From: Johan Jonker <jbx6244@yandex.com>
+In-Reply-To: <20240719124032.26852-5-shreeya.patel@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Wolfram,
 
-On Sat, Jul 20, 2024 at 01:19:24PM GMT, Wolfram Sang wrote:
+
+On 7/19/24 14:40, Shreeya Patel wrote:
+> Add initial support for the Synopsys DesignWare HDMI RX
+> Controller Driver used by Rockchip RK3588. The driver
+> supports:
+>  - HDMI 1.4b and 2.0 modes (HDMI 4k@60Hz)
+>  - RGB888, YUV422, YUV444 and YCC420 pixel formats
+>  - CEC
+>  - EDID configuration
 > 
-> >       i2c: piix4: Register SPDs
+> The hardware also has Audio and HDCP capabilities, but these are
+> not yet supported by the driver.
 > 
-> I just saw that this patch has:
+> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> Tested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> Co-developed-by: Dingxian Wen <shawn.wen@rock-chips.com>
+> Signed-off-by: Dingxian Wen <shawn.wen@rock-chips.com>
+> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+> ---
 > 
->     Reviewed-by: Guenter Roeck <linux@roeck-us.net>
->     Tested-by: Guenter Roeck <linux@roeck-us.net>
->     Reviewed-and-tested-by: Guenter Roeck <linux@roeck-us.net>
+> Changes in v4 :-
+>   - Create a separate config option for selecting the EDID
+>     and enable it by default
+>   - Improve the comment related to DV timings and move it
+>     to the side of hdmirx_get_detected_timings
+>   - Add 100ms delay before pulling the HPD high
+>   - Do not return the detected timings from VIDIOC_G_DV_TIMINGS
+>   - Drop the bus info from hdmirx_querycap
+>   - If *num_planes != 0 then return 0 in hdmirx_queue_setup
+>   - Set queue->min_queued_buffers to 1
+>   - Drop q->allow_cache_hints = 0; as it's always 0 by default
+>   - Add a comment for q->dma_attrs = DMA_ATTR_FORCE_CONTIGUOUS;
+>   - Drop .read = vb2_fop_read as it's not supported by driver
+>   - Remove redundant edid_init_data_600M
+>   - Make HPD low when driver is loaded
+>   - Add support for reading AVI Infoframe
+>   - Remove msg_len checks from hdmirx_cec_transmit
+>   - Add info about the CEC compliance test in the cover letter
+>   - Add arbitration lost status
+>   - Validate the physical address inside the EDID
 > 
-> So, that's doubled. Could you kindly fix it?
+> Changes in v3 :-
+>   - Use v4l2-common helper functions
+> 
+> Changes in v2 :-
+>   - Fix checkpatch --strict warnings
+>   - Rename resets, vo1-grf and HPD node names as per the DT changes
+> 
+>  drivers/media/platform/Kconfig                |    1 +
+>  drivers/media/platform/Makefile               |    1 +
+>  drivers/media/platform/synopsys/Kconfig       |    3 +
+>  drivers/media/platform/synopsys/Makefile      |    2 +
+>  .../media/platform/synopsys/hdmirx/Kconfig    |   27 +
+>  .../media/platform/synopsys/hdmirx/Makefile   |    4 +
+>  .../platform/synopsys/hdmirx/snps_hdmirx.c    | 2763 +++++++++++++++++
+>  .../platform/synopsys/hdmirx/snps_hdmirx.h    |  394 +++
+>  .../synopsys/hdmirx/snps_hdmirx_cec.c         |  285 ++
+>  .../synopsys/hdmirx/snps_hdmirx_cec.h         |   44 +
+>  10 files changed, 3524 insertions(+)
+>  create mode 100644 drivers/media/platform/synopsys/Kconfig
+>  create mode 100644 drivers/media/platform/synopsys/Makefile
+>  create mode 100644 drivers/media/platform/synopsys/hdmirx/Kconfig
+>  create mode 100644 drivers/media/platform/synopsys/hdmirx/Makefile
+>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
+>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.c
+>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.h
+> 
+> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
+> index 85d2627776b6..9287faafdce5 100644
+> --- a/drivers/media/platform/Kconfig
+> +++ b/drivers/media/platform/Kconfig
+> @@ -85,6 +85,7 @@ source "drivers/media/platform/rockchip/Kconfig"
+>  source "drivers/media/platform/samsung/Kconfig"
+>  source "drivers/media/platform/st/Kconfig"
+>  source "drivers/media/platform/sunxi/Kconfig"
+> +source "drivers/media/platform/synopsys/Kconfig"
+>  source "drivers/media/platform/ti/Kconfig"
+>  source "drivers/media/platform/verisilicon/Kconfig"
+>  source "drivers/media/platform/via/Kconfig"
+> diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
+> index ace4e34483dd..6fd7db0541c7 100644
+> --- a/drivers/media/platform/Makefile
+> +++ b/drivers/media/platform/Makefile
+> @@ -28,6 +28,7 @@ obj-y += rockchip/
+>  obj-y += samsung/
+>  obj-y += st/
+>  obj-y += sunxi/
+> +obj-y += synopsys/
+>  obj-y += ti/
+>  obj-y += verisilicon/
+>  obj-y += via/
+> diff --git a/drivers/media/platform/synopsys/Kconfig b/drivers/media/platform/synopsys/Kconfig
+> new file mode 100644
+> index 000000000000..4fd521f78425
+> --- /dev/null
+> +++ b/drivers/media/platform/synopsys/Kconfig
+> @@ -0,0 +1,3 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +
+> +source "drivers/media/platform/synopsys/hdmirx/Kconfig"
+> diff --git a/drivers/media/platform/synopsys/Makefile b/drivers/media/platform/synopsys/Makefile
+> new file mode 100644
+> index 000000000000..3b12c574dd67
+> --- /dev/null
+> +++ b/drivers/media/platform/synopsys/Makefile
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +obj-y += hdmirx/
+> diff --git a/drivers/media/platform/synopsys/hdmirx/Kconfig b/drivers/media/platform/synopsys/hdmirx/Kconfig
+> new file mode 100644
+> index 000000000000..ab569e59300f
+> --- /dev/null
+> +++ b/drivers/media/platform/synopsys/hdmirx/Kconfig
+> @@ -0,0 +1,27 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +config VIDEO_SYNOPSYS_HDMIRX
+> +	tristate "Synopsys DesignWare HDMI Receiver driver"
+> +	depends on VIDEO_DEV
+> +	depends on ARCH_ROCKCHIP
+> +	select MEDIA_CONTROLLER
+> +	select VIDEO_V4L2_SUBDEV_API
+> +	select VIDEOBUF2_DMA_CONTIG
+> +	select CEC_CORE
+> +	select CEC_NOTIFIER
+> +	select HDMI
+> +	help
+> +	  Support for Synopsys HDMI HDMI RX Controller.
+> +	  This driver supports HDMI 2.0 version.
+> +
+> +	  To compile this driver as a module, choose M here. The module
+> +	  will be called synopsys_hdmirx.
+> +
+> +config HDMIRX_LOAD_DEFAULT_EDID
+> +	bool "Load default EDID"
+> +	depends on VIDEO_SYNOPSYS_HDMIRX
+> +	default "y"
+> +	help
+> +	  Preload the default EDID (Extended Display Identification Data).
+> +	  EDID contains information about the capabilities of the display,
+> +	  such as supported resolutions, refresh rates, and audio formats.
+> diff --git a/drivers/media/platform/synopsys/hdmirx/Makefile b/drivers/media/platform/synopsys/hdmirx/Makefile
+> new file mode 100644
+> index 000000000000..2fa2d9e25300
+> --- /dev/null
+> +++ b/drivers/media/platform/synopsys/hdmirx/Makefile
+> @@ -0,0 +1,4 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +synopsys-hdmirx-objs := snps_hdmirx.o snps_hdmirx_cec.o
+> +
+> +obj-$(CONFIG_VIDEO_SYNOPSYS_HDMIRX) += synopsys-hdmirx.o
+> diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
 
-Oh, yes, I wanted to separate the Reviewed-and-tested-by, but
-then I forgot to remove it.
+[..]
 
-Thanks for checking it. I updated the branch and the tag. I'm
-pasting the git-request-pull output as a reference.
+For FTRACE it is needed that all functions start with the same function prefix.
 
-Thank you Wolfram!
-Andi
+> +static bool tx_5v_power_present(struct snps_hdmirx_dev *hdmirx_dev)
 
-The following changes since commit 8e5c0abfa02d85b9cd2419567ad2d73ed8fe4b74:
+> +static bool signal_not_lock(struct snps_hdmirx_dev *hdmirx_dev)
 
-  Merge tag 'input-for-v6.11-rc0' of git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input (2024-07-19 16:51:39 -0700)
+> +static bool port_no_link(struct snps_hdmirx_dev *hdmirx_dev)
 
-are available in the Git repository at:
+> +static int wait_reg_bit_status(struct snps_hdmirx_dev *hdmirx_dev, u32 reg,
+> +			       u32 bit_mask, u32 expect_val, bool is_grf,
+> +			       u32 ms)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-6.11-part-2
+> +static void return_all_buffers(struct hdmirx_stream *stream,
+> +			       enum vb2_buffer_state state)
 
-for you to fetch changes up to de4f2f52f93257433c9029ba2b4044cd9f029b21:
+> +static void process_signal_change(struct snps_hdmirx_dev *hdmirx_dev)
 
-  i2c: piix4: Register SPDs (2024-07-20 13:29:10 +0200)
+> +static void avpunit_0_int_handler(struct snps_hdmirx_dev *hdmirx_dev,
+> +				  int status, bool *handled)
 
-----------------------------------------------------------------
-Added descriptions in the DTS for the Qualcomm SM8650 and SM8550
-Camera Control Interface (CCI).
+> +static void avpunit_1_int_handler(struct snps_hdmirx_dev *hdmirx_dev,
+> +				  int status, bool *handled)
 
-Added support for the "settle-time-us" property, which allows the
-gpio-mux device to switch from one bus to another with a
-configurable delay. The time can be set in the DTS.
+> +static void mainunit_0_int_handler(struct snps_hdmirx_dev *hdmirx_dev,
+> +				   int status, bool *handled)
 
-The latest change also includes file sorting.
+> +static void mainunit_2_int_handler(struct snps_hdmirx_dev *hdmirx_dev,
+> +				   int status, bool *handled)
 
-Fixed slot numbering in the SMBus framework to prevent failures
-when more than 8 slots are occupied. It now enforces a a maximum
-of 8 slots to be used. This ensures that the Intel PIIX4 device
-can register the SPDs correctly without failure, even if other
-slots are populated but not used.
+> +static void pkt_2_int_handler(struct snps_hdmirx_dev *hdmirx_dev,
+> +			      int status, bool *handled)
 
-----------------------------------------------------------------
-Bastien Curutchet (3):
-      dt-bindings: i2c: mux-gpio: Add 'settle-time-us' property
-      i2c: mux: gpio: Re-order #include to match alphabetic order
-      i2c: mux: gpio: Add support for the 'settle-time-us' property
+> +static void scdc_int_handler(struct snps_hdmirx_dev *hdmirx_dev,
+> +			     int status, bool *handled)
 
-Thomas Weißschuh (2):
-      i2c: smbus: remove i801 assumptions from SPD probing
-      i2c: piix4: Register SPDs
+> +static void dma_idle_int_handler(struct snps_hdmirx_dev *hdmirx_dev,
+> +				 bool *handled)
 
-Vladimir Zapolskiy (2):
-      dt-bindings: i2c: qcom-cci: Document sm8550 compatible
-      dt-bindings: i2c: qcom-cci: Document sm8650 compatible
+> +static void line_flag_int_handler(struct snps_hdmirx_dev *hdmirx_dev,
+> +				  bool *handled)
 
- Documentation/devicetree/bindings/i2c/i2c-mux-gpio.yaml |  3 +++
- Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml | 20 ++++++++++++++++++++
- drivers/i2c/busses/Kconfig                              |  1 +
- drivers/i2c/busses/i2c-piix4.c                          |  9 +++++++++
- drivers/i2c/i2c-smbus.c                                 | 15 ++++-----------
- drivers/i2c/muxes/i2c-mux-gpio.c                        | 14 ++++++++++----
- include/linux/platform_data/i2c-mux-gpio.h              |  2 ++
- 7 files changed, 49 insertions(+), 15 deletions(-)
+[..]
 
+> +static int hdmirx_setup_irq(struct snps_hdmirx_dev *hdmirx_dev,
+> +			    struct platform_device *pdev)
+> +{
+> +	struct device *dev = hdmirx_dev->dev;
+> +	int ret, irq;
+> +
+> +	irq = platform_get_irq_byname(pdev, "hdmi");
+> +	if (irq < 0) {
+> +		dev_err_probe(dev, irq, "failed to get hdmi irq\n");
+> +		return irq;
+> +	}
+> +
+> +	irq_set_status_flags(irq, IRQ_NOAUTOEN);
+> +
+> +	hdmirx_dev->hdmi_irq = irq;
+> +	ret = devm_request_irq(dev, irq, hdmirx_hdmi_irq_handler, 0,
+> +			       "rk_hdmirx-hdmi", hdmirx_dev);
+> +	if (ret) {
+> +		dev_err_probe(dev, ret, "failed to request hdmi irq\n");
+> +		return ret;
+> +	}
+> +
+> +	irq = platform_get_irq_byname(pdev, "dma");
+> +	if (irq < 0) {
+> +		dev_err_probe(dev, irq, "failed to get dma irq\n");
+> +		return irq;
+> +	}
+> +
+> +	irq_set_status_flags(irq, IRQ_NOAUTOEN);
+> +
+> +	hdmirx_dev->dma_irq = irq;
+> +	ret = devm_request_threaded_irq(dev, irq, NULL, hdmirx_dma_irq_handler,
+> +					IRQF_ONESHOT, "rk_hdmirx-dma",
+> +					hdmirx_dev);
+> +	if (ret) {
+> +		dev_err_probe(dev, ret, "failed to request dma irq\n");
+> +		return ret;
+> +	}
+> +
+> +	irq = gpiod_to_irq(hdmirx_dev->detect_5v_gpio);
+> +	if (irq < 0) {
+> +		dev_err_probe(dev, irq, "failed to get hdmirx-5v irq\n");
+> +		return irq;
+> +	}
+> +
+> +	irq_set_status_flags(irq, IRQ_NOAUTOEN);
+> +
+> +	hdmirx_dev->det_irq = irq;
+> +	ret = devm_request_irq(dev, irq, hdmirx_5v_det_irq_handler,
+> +			       IRQF_TRIGGER_FALLING | IRQF_TRIGGER_RISING,
+> +			       "rk_hdmirx-5v", hdmirx_dev);
+> +	if (ret) {
+> +		dev_err_probe(dev, ret, "failed to request hdmirx-5v irq\n");
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int hdmirx_register_cec(struct snps_hdmirx_dev *hdmirx_dev,
+> +			       struct platform_device *pdev)
+> +{
+> +	struct device *dev = hdmirx_dev->dev;
+> +	struct hdmirx_cec_data cec_data;
+> +	int irq;
+> +
+> +	irq = platform_get_irq_byname(pdev, "cec");
+> +	if (irq < 0) {
+> +		dev_err_probe(dev, irq, "failed to get cec irq\n");
+> +		return irq;
+> +	}
+> +
+> +	hdmirx_dev->cec_notifier = cec_notifier_conn_register(dev, NULL, NULL);
+> +	if (!hdmirx_dev->cec_notifier)
+> +		return -EINVAL;
+> +
+> +	cec_data.hdmirx = hdmirx_dev;
+> +	cec_data.dev = hdmirx_dev->dev;
+> +	cec_data.ops = &hdmirx_cec_ops;
+> +	cec_data.irq = irq;
+> +
+> +	hdmirx_dev->cec = snps_hdmirx_cec_register(&cec_data);
+> +	if (!hdmirx_dev->cec) {
+> +		cec_notifier_conn_unregister(hdmirx_dev->cec_notifier);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int hdmirx_probe(struct platform_device *pdev)
+> +{
+> +	struct snps_hdmirx_dev *hdmirx_dev;
+> +	struct device *dev = &pdev->dev;
+> +	struct v4l2_ctrl_handler *hdl;
+> +	struct hdmirx_stream *stream;
+> +	struct v4l2_device *v4l2_dev;
+> +	int ret;
+> +
+> +	hdmirx_dev = devm_kzalloc(dev, sizeof(*hdmirx_dev), GFP_KERNEL);
+> +	if (!hdmirx_dev)
+> +		return -ENOMEM;
+> +
+> +	ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
+> +	if (ret)
+> +		return ret;
+> +
+> +	hdmirx_dev->dev = dev;
+> +	dev_set_drvdata(dev, hdmirx_dev);
+> +
+> +	ret = hdmirx_parse_dt(hdmirx_dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = hdmirx_setup_irq(hdmirx_dev, pdev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	hdmirx_dev->regs = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(hdmirx_dev->regs))
+> +		return dev_err_probe(dev, PTR_ERR(hdmirx_dev->regs),
+> +				     "failed to remap regs resource\n");
+> +
+> +	mutex_init(&hdmirx_dev->stream_lock);
+> +	mutex_init(&hdmirx_dev->work_lock);
+> +	spin_lock_init(&hdmirx_dev->rst_lock);
+> +
+> +	init_completion(&hdmirx_dev->cr_write_done);
+> +	init_completion(&hdmirx_dev->timer_base_lock);
+> +	init_completion(&hdmirx_dev->avi_pkt_rcv);
+> +
+> +	INIT_WORK(&hdmirx_dev->work_wdt_config, hdmirx_work_wdt_config);
+> +	INIT_DELAYED_WORK(&hdmirx_dev->delayed_work_hotplug,
+> +			  hdmirx_delayed_work_hotplug);
+> +	INIT_DELAYED_WORK(&hdmirx_dev->delayed_work_res_change,
+> +			  hdmirx_delayed_work_res_change);
+> +	INIT_DELAYED_WORK(&hdmirx_dev->delayed_work_heartbeat,
+> +			  hdmirx_delayed_work_heartbeat);
+> +
+> +	hdmirx_dev->cur_fmt_fourcc = V4L2_PIX_FMT_BGR24;
+> +	hdmirx_dev->timings = cea640x480;
+> +
+> +	hdmirx_enable(dev);
+> +	hdmirx_init(hdmirx_dev);
+> +
+> +	v4l2_dev = &hdmirx_dev->v4l2_dev;
+> +	strscpy(v4l2_dev->name, dev_name(dev), sizeof(v4l2_dev->name));
+> +
+> +	hdl = &hdmirx_dev->hdl;
+> +	v4l2_ctrl_handler_init(hdl, 1);
+> +
+> +	hdmirx_dev->detect_tx_5v_ctrl = v4l2_ctrl_new_std(hdl, NULL,
+> +							  V4L2_CID_DV_RX_POWER_PRESENT,
+> +							  0, 1, 0, 0);
+> +
+> +	hdmirx_dev->rgb_range = v4l2_ctrl_new_std_menu(hdl, 0,
+> +						       V4L2_CID_DV_RX_RGB_RANGE,
+> +						       V4L2_DV_RGB_RANGE_FULL, 0,
+> +						       V4L2_DV_RGB_RANGE_AUTO);
+> +
+> +	hdmirx_dev->rgb_range->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+> +
+> +	if (hdl->error) {
+> +		dev_err(dev, "v4l2 ctrl handler init failed\n");
+> +		ret = hdl->error;
+> +		goto err_pm;
+> +	}
+> +	hdmirx_dev->v4l2_dev.ctrl_handler = hdl;
+> +
+> +	ret = v4l2_device_register(dev, &hdmirx_dev->v4l2_dev);
+> +	if (ret < 0) {
+> +		dev_err(dev, "register v4l2 device failed\n");
+> +		goto err_hdl;
+> +	}
+> +
+> +	stream = &hdmirx_dev->stream;
+> +	stream->hdmirx_dev = hdmirx_dev;
+> +	ret = hdmirx_register_stream_vdev(stream);
+> +	if (ret < 0) {
+> +		dev_err(dev, "register video device failed\n");
+> +		goto err_unreg_v4l2_dev;
+> +	}
+> +
+> +	ret = hdmirx_register_cec(hdmirx_dev, pdev);
+> +	if (ret)
+> +		goto err_unreg_video_dev;
+> +
+> +	hdmirx_load_default_edid(hdmirx_dev);
+> +
+> +	hdmirx_enable_irq(dev);
+> +
+> +	return 0;
+> +
+> +err_unreg_video_dev:
+> +	video_unregister_device(&hdmirx_dev->stream.vdev);
+> +err_unreg_v4l2_dev:
+> +	v4l2_device_unregister(&hdmirx_dev->v4l2_dev);
+> +err_hdl:
+> +	v4l2_ctrl_handler_free(&hdmirx_dev->hdl);
+> +err_pm:
+> +	hdmirx_disable(dev);
+> +
+> +	return ret;
+> +}
+> +
+> +static void hdmirx_remove(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct snps_hdmirx_dev *hdmirx_dev = dev_get_drvdata(dev);
+> +
+> +	snps_hdmirx_cec_unregister(hdmirx_dev->cec);
+> +	cec_notifier_conn_unregister(hdmirx_dev->cec_notifier);
+> +
+> +	hdmirx_disable_irq(dev);
+> +
+> +	video_unregister_device(&hdmirx_dev->stream.vdev);
+> +	v4l2_ctrl_handler_free(&hdmirx_dev->hdl);
+> +	v4l2_device_unregister(&hdmirx_dev->v4l2_dev);
+> +
+> +	hdmirx_disable(dev);
+> +
+> +	reset_control_bulk_assert(HDMIRX_NUM_RST, hdmirx_dev->resets);
+> +
+> +	of_reserved_mem_device_release(dev);
+> +}
+> +
+> +static const struct of_device_id hdmirx_id[] = {
+> +	{ .compatible = "rockchip,rk3588-hdmirx-ctrler" },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, hdmirx_id);
+> +
+> +static struct platform_driver hdmirx_driver = {
+> +	.probe = hdmirx_probe,
+> +	.remove = hdmirx_remove,
+> +	.driver = {
+> +		.name = "snps_hdmirx",
+> +		.of_match_table = hdmirx_id,
+> +		.pm = &snps_hdmirx_pm_ops,
+> +	}
+> +};
+> +module_platform_driver(hdmirx_driver);
+> +
+> +MODULE_DESCRIPTION("Rockchip HDMI Receiver Driver");
+
+While the file is called snps_hdmirx.c and the driver name is "snps_hdmirx" the module description calls it a Rockchip driver.
+This patch serie somewhat hints at the use of multiple SoCs and possible multiple brands then a more clear separation between common snps and Rockchip (rk3588) SoC specific is needed?
+
+Johan
+
+> +MODULE_AUTHOR("Dingxian Wen <shawn.wen@rock-chips.com>");
+> +MODULE_AUTHOR("Shreeya Patel <shreeya.patel@collabora.com>");
+> +MODULE_LICENSE("GPL");
 
