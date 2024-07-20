@@ -1,57 +1,59 @@
-Return-Path: <linux-kernel+bounces-257958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0141B938172
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 15:22:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E800A938177
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 15:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86A6B281C98
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 13:22:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20EC81C21064
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 13:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CBB212E1DC;
-	Sat, 20 Jul 2024 13:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01CF312E1E0;
+	Sat, 20 Jul 2024 13:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c7AK963A"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P7rI6qyN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00F128EB;
-	Sat, 20 Jul 2024 13:22:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BFFFF9F0;
+	Sat, 20 Jul 2024 13:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721481764; cv=none; b=KC/c+L/v4uB9OJPcYuiJ7hOQnGTS+v7HKf03QQLbgXi8MtnmMgy9oCTmaY1s0o3BoKj21xsevzPwhM5FPKVPBu3T7fUcR1kkm4rmrFtNe0ri8Wt43c9PJz3HSGGNeFMmmTWBM2+lc2ztb9nM0RdpSoWxLRZLbQUFfAYYKZulmZY=
+	t=1721482236; cv=none; b=Rloj1s0nKIVFDqgpQCDR2iQp5X9f4kipCdPKzazUZbX2q/9PyotvNNmFUYbTMjuw14ohmEo18fuR8uiOGRAMXeq4IH7u68AwSfw4EGVMGnnCEhhve3KcUNxghXyyjbBYDrR2f0RmAqWQNDnsgWWHNk+H4X2gHGud1Ps4UY/f3o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721481764; c=relaxed/simple;
-	bh=t5Vr1EhrfEYVc9b45fKg74aiDdG1fj0P7Fuf5jkhOuM=;
+	s=arc-20240116; t=1721482236; c=relaxed/simple;
+	bh=OOexEYQ1IyCyOGLORJ0/sryzKNTKc6hzBQlhJB3Pu+c=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bbOgMMj2gf/rlqpQzECbL2pd15y8Q/xS1KEToStNdetJp9q8pjYPw8MIYp7KVatX+FsYE12qELfg43V5OYqXZPpl46iurLfXQPoCvCL/Q7XJ7sgfVrsSpYo+a9vZSulfqYaW/tQ03i3wANPyOdNq0r9+PXXDYNOmVuSq6I6fvNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c7AK963A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2A06C2BD10;
-	Sat, 20 Jul 2024 13:22:39 +0000 (UTC)
+	 MIME-Version:Content-Type; b=dlt7GXtlVPMARlbMiuILfigjVTFIc30bpGh9S1P1L4c7PioKodXvZjp4XZTG4VH8tfS/Ee4n4MZwXFngpWiL5egT7NClUTlaUPYOqCWTLLCLWrBQuK5j3uXa4PDiUS40zrPQEuKOF1ulIJJaP3BKmuM465QPehyn3YkwKE75DYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P7rI6qyN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAE9DC2BD10;
+	Sat, 20 Jul 2024 13:30:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721481763;
-	bh=t5Vr1EhrfEYVc9b45fKg74aiDdG1fj0P7Fuf5jkhOuM=;
+	s=k20201202; t=1721482235;
+	bh=OOexEYQ1IyCyOGLORJ0/sryzKNTKc6hzBQlhJB3Pu+c=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=c7AK963Ak8uD/tL2b0Tu+jP5pS9eCRjOCteiMMWlinkUL2Avkg12TdCFfBI608DWv
-	 HKIjnWxItG55INvNV1tWVnBo1WHfH2QHBs4WBXYwUR9+lneD2E64IThSEzhLbYbzZm
-	 ke3KJQHJ7gdYi78MM9HIioLVao1EpXu5xT2xGYh5iM/fuwenxSjOMk7Pkj/5jCVB6K
-	 8062aQcVzxDorD2Z91OiAKNuPZC4AFr1xTH/PUPKI19LqiTMpTFzbWtGDqTfCZQvfI
-	 HU1EHFP+pg1oIYyLFd0iEYPuOXkm5yHp4VVhRnkkTRDws1d8eG21tVyYefbB5MP5Q6
-	 RLlojqmYFwfBg==
-Date: Sat, 20 Jul 2024 14:22:36 +0100
+	b=P7rI6qyNtZDuH+u1aGcBzGVB0brjjFrasYoKZkAVFa1ucUArpW3vnEUFEIA/f2QaF
+	 SJrXDpjjirPGqJmCCVcTDrygYY+vIXUcFRNDLS8D36frW4gGF7xJWW7JRR0jFo/EyL
+	 1OX1FtmmHvRXIvDbn9ygJJ/FYfPwD4XphkWp9+uXCRjmLgnMCKIgx9+mZLOtzdieqG
+	 AukKosbc05rEgu0qZ/CO7iHajNsqoZGOeVwixAoE5mSHZtNFlmqGRhY2nNvq7CFfrt
+	 ufOL6xxjoycMQ/6Qe3k9fTCbJzK8Xpdt7r2yNCwfSVSDqTcNnLoJADy3GB7NLSiGJ9
+	 YVd/7++xPvlpw==
+Date: Sat, 20 Jul 2024 14:30:27 +0100
 From: Jonathan Cameron <jic23@kernel.org>
-To: Shreeya Patel <shreeya.patel@collabora.com>
-Cc: lars@metafoo.de, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@collabora.com, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Marek Vasut
- <marex@denx.de>, Andy Shevchenko  <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH] iio: light: ltrf216a: Document the device name
-Message-ID: <20240720142236.22f8dbb2@jic23-huawei>
-In-Reply-To: <20240714193709.543509-1-shreeya.patel@collabora.com>
-References: <20240714193709.543509-1-shreeya.patel@collabora.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Rayyan Ansari <rayyan.ansari@linaro.org>, devicetree@vger.kernel.org,
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: iio: magnetometer: bmc150: Document
+ mount-matrix
+Message-ID: <20240720143027.2253d858@jic23-huawei>
+In-Reply-To: <20240716-constant-underline-b6ad3e2cb571@spud>
+References: <20240716132512.80337-1-rayyan.ansari@linaro.org>
+	<20240716-constant-underline-b6ad3e2cb571@spud>
 X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -62,58 +64,16 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Mon, 15 Jul 2024 01:07:09 +0530
-Shreeya Patel <shreeya.patel@collabora.com> wrote:
+On Tue, 16 Jul 2024 17:28:27 +0100
+Conor Dooley <conor@kernel.org> wrote:
 
-> Compatible 'ltr,ltrf216a' is used by Valve's Steamdeck device
-> via the ACPI + PRP0001 mechanism.
-> Document the device name alognside the compatible.
+> On Tue, Jul 16, 2024 at 02:25:09PM +0100, Rayyan Ansari wrote:
+> > Document the mount-matrix property, which is used in device trees such
+> > as msm8916-samsung-fortuna-common.dtsi, and supported by the driver.
+> > 
+> > Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>  
 > 
-> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
-Hi Shreeya,
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-I'm guessing you used get_maintainers for this.  Always check that there
-isn't anyone else who should be added.
-
-Given the root of this was the discussion about dropping this undocumented
-binding the DT maintainers and list should definitely be CC'd + Marek
-who was part of the earlier discussion.
-
-The fact that this isn't a typical ID from a Windows consumer device does
-change things a little, but I'd imagine a firmware update for the steamdeck
-is equally unlikely to happen in order to fix the vendor-id.
-(I was surprised to discover they provide windows drivers for it but
-not seeing the light sensor in the list)
-
-So my opinion is that we should keep this ID in place with an enhanced
-description.
-
-The other suggestion from the Krzysztof's thread was the risk of this getting
-abused.  Perhaps we should specifically fail to probe if that ID is used and
-it's not an ACPI firmware?
-
-
-> ---
->  drivers/iio/light/ltrf216a.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/light/ltrf216a.c b/drivers/iio/light/ltrf216a.c
-> index 68dc48420a88..e97ff8f7ecd0 100644
-> --- a/drivers/iio/light/ltrf216a.c
-> +++ b/drivers/iio/light/ltrf216a.c
-> @@ -528,7 +528,7 @@ MODULE_DEVICE_TABLE(i2c, ltrf216a_id);
->  
->  static const struct of_device_id ltrf216a_of_match[] = {
->  	{ .compatible = "liteon,ltrf216a" },
-> -	{ .compatible = "ltr,ltrf216a" },
-> +	{ .compatible = "ltr,ltrf216a" }, /* For Valve's Steamdeck device */
-
-Add that the steamdeck is an ACPI platform using PRP0001 as that's
-the key part that is different from a normal 'wrong' of_device_id.
-
-
->  	{}
->  };
->  MODULE_DEVICE_TABLE(of, ltrf216a_of_match);
-
+Applied. Thanks
 
