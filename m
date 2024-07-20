@@ -1,111 +1,107 @@
-Return-Path: <linux-kernel+bounces-257771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD444937EC4
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 04:52:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49664937EC9
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 04:58:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 200CC2822DF
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 02:52:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0408628180E
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 02:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C578B661;
-	Sat, 20 Jul 2024 02:52:20 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB06BA33;
+	Sat, 20 Jul 2024 02:57:52 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7DF7E1;
-	Sat, 20 Jul 2024 02:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227568830;
+	Sat, 20 Jul 2024 02:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721443939; cv=none; b=SFz2ZSH8V063y5zQjiWGVvizIhOdLQDmm4OY5IYeGbXi9p6ZgpyfF1vUWM5DYXB6DIF888UoIWOkq7uHB65kVpt9BZlvFVBBucj5m/vJD1qRsnWdKbWCllbqQeyzuZqLmDrrUoxJ4VKI+X++twknUSqgpP/mCxUvZN3lLOTuMTw=
+	t=1721444272; cv=none; b=KQ+RPo6gG5h2MlXHS+spQq7j55LOESpyCwYqDWL+gR/G3LFdKDit10NPBP42Cx2KRu8YlnrYO7qQ8shgAdM/pmZDC4MBz62FDFxz3wKf0DVrz4Q5x5Ndj63yxPOnKoOvoWLkpfShdtQFqseam+JJvpA9uwRMXoWWoKeiplVEAJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721443939; c=relaxed/simple;
-	bh=rXWQ+aYhcvCvsxoqQktWoi6QYVfimbAyisHo0NWeYk8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PYklG3Bddza5C/PwHSdSrAux9h/UfzhDwAKbNT3bkdifhDKtkm0JqctysyYnWwNs8hmALtjJjgbKCcuGqqbpKVooGcDd/MFWuWJdZGyCfEyG16DufI2B0HHpYyTeI15qWvsQdU457zqEDxhxWSLOjakLBcnTe3a3a2hO08ydWUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+	s=arc-20240116; t=1721444272; c=relaxed/simple;
+	bh=MC4bMLPFkaOEMEV4qvxoaeENxoAtQaY147/btmWjftQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ezCE3X7D3XzBvWSzvqeM0W19u5kvMyD9NRjK63p2bPc9WMwU+r/bez4dpg8uvN+BMD+nEjgHVaKsmV1/r5BQ4KwojRuXBPEkV4dsAnsM9oi3wzWg+A+NzTZFSDx0jeWI/kS7663zDQoORuH745RNtNiuQ9dVC3+dn4+lVEwvvOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WQrYQ30XvzyN2x;
-	Sat, 20 Jul 2024 10:47:22 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 38353140121;
-	Sat, 20 Jul 2024 10:52:08 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sat, 20 Jul 2024 10:52:07 +0800
-Message-ID: <a654c7e2-929c-cbeb-cfd5-b8bbb00845d2@huawei.com>
-Date: Sat, 20 Jul 2024 10:52:06 +0800
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WQrhh5g74zQm0h;
+	Sat, 20 Jul 2024 10:53:40 +0800 (CST)
+Received: from dggpeml100021.china.huawei.com (unknown [7.185.36.148])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4063D140121;
+	Sat, 20 Jul 2024 10:57:47 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.174) by dggpeml100021.china.huawei.com
+ (7.185.36.148) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Sat, 20 Jul
+ 2024 10:57:46 +0800
+Message-ID: <3dfcb3d0-0461-42c8-a60d-5bfa4b65026a@huawei.com>
+Date: Sat, 20 Jul 2024 10:57:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v2] loongarch: Support RANDOMIZE_KSTACK_OFFSET
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] kernel BUG in ext4_do_writepages
+To: syzbot <syzbot+d1da16f03614058fdc48@syzkaller.appspotmail.com>,
+	<adilger.kernel@dilger.ca>, <jack@suse.cz>, <linux-ext4@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>,
+	<tytso@mit.edu>, Baokun Li <libaokun1@huawei.com>
+References: <00000000000038105d061d9bf215@google.com>
 Content-Language: en-US
-To: Kees Cook <kees@kernel.org>
-CC: <chenhuacai@kernel.org>, <kernel@xen0n.name>, <gustavoars@kernel.org>,
-	<arnd@arndb.de>, <maobibo@loongson.cn>, <loongarch@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-hardening@vger.kernel.org>
-References: <20240719031427.119274-1-ruanjinjie@huawei.com>
- <202407190858.3097E9AF98@keescook>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <202407190858.3097E9AF98@keescook>
-Content-Type: text/plain; charset="UTF-8"
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <00000000000038105d061d9bf215@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpeml100021.china.huawei.com (7.185.36.148)
 
+On 2024/7/20 0:11, syzbot wrote:
+> This bug is marked as fixed by commit:
+> ext4: fix race condition between buffer write and page_mkwrite
+>
+> But I can't find it in the tested trees[1] for more than 90 days.
+> Is it a correct commit?
+Sorry for the confusion！
 
+This issue does not have an available solution so far, so as Honza
+mentioned before, mark it as unfixed.
 
-On 2024/7/20 0:01, Kees Cook wrote:
-> On Fri, Jul 19, 2024 at 11:14:27AM +0800, Jinjie Ruan wrote:
->> Add support of kernel stack offset randomization while handling syscall,
->> the offset is defaultly limited by KSTACK_OFFSET_MAX().
->>
->> In order to avoid trigger stack canaries (due to __builtin_alloca) and
->> slowing down the entry path, use __no_stack_protector attribute to
->> disable stack protector for do_syscall() at function level.
->>
->> With this patch, the REPORT_STACK test show that:
->> 	`loongarch64 bits of stack entropy: 7`
-> 
-> I suspect this will report the correct "6" after now that this commit
-> has landed:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=872bb37f6829d4f7f3ed5afe2786add3d4384b4b
+#syz unfix
 
-Hi, Kees
-
-I noticed your patch, and I reconfirm that I have updated to the latest
-mainline and that your patch is in the code.
-
-However，the following REPORT_STACK test of your below script has the
-same result (run multiple times).
-
-And riscv64, arm64, x86 also has the 7 bit  of stack entropy.
-
-for i in $(seq 1 1000); do
-	echo "REPORT_STACK" >/sys/kernel/debug/provoke-crash/DIRECT
-done
-offsets=$(dmesg | grep 'Stack offset' | cut -d: -f3 | sort | uniq -c |
-sort -n | wc -l)
-echo "$(uname -m) bits of stack entropy: $(echo "obase=2; $offsets" | bc
-| wc -L)"
-
-> 
->>
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> Suggested-by: Huacai Chen <chenhuacai@kernel.org>
-> 
-> Thanks for adding this and getting it tested!
-> 
-> Reviewed-by: Kees Cook <kees@kernel.org>
-> 
+Regards,
+Baokun
+> Please update it by replying:
+>
+> #syz fix: exact-commit-title
+>
+> Until then the bug is still considered open and new crashes with
+> the same signature are ignored.
+>
+> Kernel: Linux
+> Dashboard link: https://syzkaller.appspot.com/bug?extid=d1da16f03614058fdc48
+>
+> ---
+> [1] I expect the commit to be present in:
+>
+> 1. for-kernelci branch of
+> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+>
+> 2. master branch of
+> git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
+>
+> 3. master branch of
+> git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
+>
+> 4. main branch of
+> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+>
+> The full list of 10 trees can be found at
+> https://syzkaller.appspot.com/upstream/repos
+>
 
