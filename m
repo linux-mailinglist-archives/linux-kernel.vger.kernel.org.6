@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-257783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A133937EE3
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 06:02:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E302937EE4
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 06:06:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB8A51F22072
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 04:02:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2A12B212CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 04:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611D6C157;
-	Sat, 20 Jul 2024 04:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E0AC147;
+	Sat, 20 Jul 2024 04:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vH8iopwz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1Ky+EPc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFFFD50F;
-	Sat, 20 Jul 2024 04:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339FE3D6D
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 04:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721448113; cv=none; b=Z+Sr2QHcKNDuUMWSlsQF8rWmcsywZZTEOubI6EhFgj7SLvjjOcrE98lpWkjxiM7GVYUnFHHPWinRUmRXtc6ZcJzNDamKkc5s+IdPQdyG4TB9F5gIk/Ng6qihc6pVLP8TVTrGKt3XGw2U84NfpNDdnHFprnoEe/Nq1xjhfMrNZSU=
+	t=1721448375; cv=none; b=QqV3cF10oQwnT1BcWQ6XMs7B2c6HKLaTZYttCd9g2ZY6atFlu/kFb827nAqn0Oc7dfXXDOBzXBJ/2b+eiJie4Plj+3zeE8QMM1oVTXs/v9AkLNIsn/bphnSO9QJJUVb/xSTcVfyuE9ec2nZBZN8pwUB6WJP/PJ3Dgv2u1xkvU0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721448113; c=relaxed/simple;
-	bh=O8rs9AUKGCGMRHdgSeel3BwU4fyso7HvNCUBJOKsFbk=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=D4zogzGXV37ors9vYZpp1XoRKAE4gq4Rf6Miu+k0i4lXsBGmwC/u+piLPZ9OR6A1TjKkB22fdoeQ+8CLashJvYdzFTwRQy9/Xb+i/ReYo2VZRLEFJaZmHe2t/9I0X8GiLtAJbKW/RW8xifYrx1uuUgCV9v4s1MD69/Pn+KpU7sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vH8iopwz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 751AFC4AF0B;
-	Sat, 20 Jul 2024 04:01:53 +0000 (UTC)
+	s=arc-20240116; t=1721448375; c=relaxed/simple;
+	bh=dePqgPJklE6B+tcqbhCdwhuy7pE8RF7XDTTIGqN3qTo=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=K44FJjHLUPXM4nQoe8bveZ9a+tFCoEVnG/oG+UbsWEvef4Bj+FAGM67ojRiYnG69lePqwdEjhb63AEzdJd5kaM2/WLxJSSKrWDg1voNWvoApwAJKeJMdG7+q5e8x0Afb7JjnYg2fyCoXg26d+QrWuMrJEWAzzK1gOlg6YYk17pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u1Ky+EPc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 08EEEC4AF0C;
+	Sat, 20 Jul 2024 04:06:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721448113;
-	bh=O8rs9AUKGCGMRHdgSeel3BwU4fyso7HvNCUBJOKsFbk=;
+	s=k20201202; t=1721448375;
+	bh=dePqgPJklE6B+tcqbhCdwhuy7pE8RF7XDTTIGqN3qTo=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=vH8iopwzaV8tIXCcj9ddBsNIkb7I3JFkkYT/b24+JZGJYDKjP4wbV3tlQZTBQ5HoI
-	 iz5XvjET0nk3lR/3/nzaWEnoSRACU/+v932GJ8WCB1UHO11hxvoYy0ZbkZ1CSGbHQp
-	 6Kwa+HidrxoTlV33s1FUwTZWxL3QAs2pUoRavXkYatww4bK0RGbAWd0W18wNNNFAh5
-	 LLXObgNCDwe9kjv8yfhfbRRHU5w1mtbQLWGn0w1m2IVJfRjw0XlVhYOq9Dk7yLWffa
-	 8sa8FwE5LUb7d/iOR9hSAoD4mp8YxkiX71WNvoT8VESekRxwOg2cPOSssuZE+ugXRc
-	 qZLY1NgQI8k4g==
+	b=u1Ky+EPcWmMYIT5gwoOalj1K4PtX/DDl1NNG3sAcM04Ng/on1srPnoIG1QmqFwnhK
+	 laW9jD3JgqcBeKOGeogC9BAOvRTAkr5h7nrrfdmirPtfuO5cn7zpYs6EHwrPbPkKkD
+	 qCadDU3YcRbfqwpDWcz4sQzl2iY3sVR1bz4YeYaKbS+EHla6ajh7vIbwNr8Vx6093G
+	 MAB7imCmd+Szp3tAvvEJvAKj8tlJ2UX484/nS8UUshMpQPZK70/BP1enO8v8mYDQcU
+	 xTd7uVwaVub51bGM2EbhCn9eRTEMmTj7pe0w/sya9l8gysx6WAinQ9330ptXOHWDl+
+	 3q+JPX6+13I3A==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 69DFEC43335;
-	Sat, 20 Jul 2024 04:01:53 +0000 (UTC)
-Subject: Re: [GIT PULL] PCI changes for v6.11
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id EDBA7C43335;
+	Sat, 20 Jul 2024 04:06:14 +0000 (UTC)
+Subject: Re: [GIT PULL] Please pull powerpc/linux.git powerpc-6.11-1 tag
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240719224454.GA657774@bhelgaas>
-References: <20240719224454.GA657774@bhelgaas>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240719224454.GA657774@bhelgaas>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.11-changes
-X-PR-Tracked-Commit-Id: 45659274e60864f9acabba844468e405362bdc8c
+In-Reply-To: <87h6clwnc1.fsf@mail.lhotse>
+References: <87h6clwnc1.fsf@mail.lhotse>
+X-PR-Tracked-List-Id: Linux on PowerPC Developers Mail List <linuxppc-dev.lists.ozlabs.org>
+X-PR-Tracked-Message-Id: <87h6clwnc1.fsf@mail.lhotse>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.11-1
+X-PR-Tracked-Commit-Id: 9ff0251b2eb54d17fbe4f6aff50f6edfd837adb6
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 3f386cb8ee9f04ff4be164ca7a1d0ef3f81f7374
-Message-Id: <172144811341.25819.5089141357087238880.pr-tracker-bot@kernel.org>
-Date: Sat, 20 Jul 2024 04:01:53 +0000
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+X-PR-Merge-Commit-Id: 3c3ff7be9729959699eb6cbc7fd7303566d74069
+Message-Id: <172144837495.29552.14084356407244348768.pr-tracker-bot@kernel.org>
+Date: Sat, 20 Jul 2024 04:06:14 +0000
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, sbhat@linux.ibm.com, anjalik@linux.ibm.com, coelacanthushex@gmail.com, robh@kernel.org, gautam@linux.ibm.com, nilay@linux.ibm.com, haren@linux.ibm.com, christophe.leroy@csgroup.eu, nbowler@draconx.ca, krishnak@linux.ibm.com, nathanl@linux.ibm.com, naveen@kernel.org, u.kleine-koenig@baylibre.com, bhelgaas@google.com, hbathini@linux.ibm.com, linuxppc-dev@lists.ozlabs.org, asavkov@redhat.com, linux-kernel@vger.kernel.org, sourabhjain@linux.ibm.com, gbatra@linux.ibm.com, quic_jjohnson@quicinc.com, esben@geanix.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Fri, 19 Jul 2024 17:44:54 -0500:
+The pull request you sent on Fri, 19 Jul 2024 22:58:06 +1000:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.11-changes
+> https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.11-1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/3f386cb8ee9f04ff4be164ca7a1d0ef3f81f7374
+https://git.kernel.org/torvalds/c/3c3ff7be9729959699eb6cbc7fd7303566d74069
 
 Thank you!
 
