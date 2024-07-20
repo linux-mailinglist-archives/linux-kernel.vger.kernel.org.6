@@ -1,193 +1,178 @@
-Return-Path: <linux-kernel+bounces-257774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1389937ECD
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 05:13:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A449937ED0
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 05:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FA571F211E5
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 03:13:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EDDF2821BC
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 03:19:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5CDB661;
-	Sat, 20 Jul 2024 03:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1433B661;
+	Sat, 20 Jul 2024 03:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="hbK7Sl4V";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QaSgcaH9"
-Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="iB/L+OOO"
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2F88F59;
-	Sat, 20 Jul 2024 03:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BF1B64A
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 03:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721445218; cv=none; b=hOJ+iOiFpm/+N1Mixqjy4rkvhuD03HbMDIrYu1T7XMHZYEX5zd96Y7vHAr/nBH/wSC3oLDI8we8UoNZmaCwnIMuiey2jIvrt0s/u1LQpxHG47R6IINOw+nGcI6KMl3inzu3bMOCMTT+wTP4a2fP+tdFBVjcJ0OpGOVRfpOCRN78=
+	t=1721445580; cv=none; b=YAZo3brs5Ycknbc+tSb+Ef9etokCWi5fYEQGv4DH/ef//VA28RJ9HLLWzBFUEdmJ+0Jgmda3mIerP9jT7ekgVHixdLp5nQE1Eky7O/SljFw1Nh7iLP/Z5ZvOUjkWbAf/pUAZYnPlSHO5sv1ZFALCketEUijsOzWUMK1d/5az03U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721445218; c=relaxed/simple;
-	bh=2ZilqTLkTvzRAGRV71O4njOlNtRmotDkZ7EUQaeKXGE=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=iKdVp/B+PTuojpfRE76zfVR9z0jh5LC7hT4Tzptbe1yFviLMtI8M1sn4hMJwOS9yOPibL7Tm0uMCo5/MwgGCawvXi+BfUfbrcR/VZwdxeyZ8LyZKSj7orlTIN7xWNa17gl2bGMLpm//qqqe/QT4MCSVqTz/aXK3pxTyKqbgQ7RQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=hbK7Sl4V; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QaSgcaH9; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 929F713801E8;
-	Fri, 19 Jul 2024 23:13:34 -0400 (EDT)
-Received: from wimap26 ([10.202.2.86])
-  by compute1.internal (MEProxy); Fri, 19 Jul 2024 23:13:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1721445214;
-	 x=1721531614; bh=2U6BMTxf8tCK9CNUiA58/32vLWBP+Uq0Adano3nAte4=; b=
-	hbK7Sl4VWiqmvzRIId22NUM8pPvULZYTD0EFBxTqG0Shcm9IF5vDtZWmUubRh9px
-	Y5y2RQWp5sCp9cMDpX+ira+wrGOIjA+GTHy9FxAj3c7X4uECufgUbSl2/uyDxaSW
-	VhM/FGMRi40avCGLdPhpabYLJQlh8mgRCy46MEEubB68rj+IDv79QnNJjiqpPet6
-	bbj41M5SwtBg0E8m5VvTeKLxAiWAALk7oS2iKwliBBccoLyQd/nVHsMs/YWGoCVE
-	otZfAq63h98CRBkwPNoU39xpcA4PT0qcENlftv+B3ILP50PsBL3HDqjZaqkYu+fC
-	HjqpqNowhCCCdUZYjiD7Sw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1721445214; x=
-	1721531614; bh=2U6BMTxf8tCK9CNUiA58/32vLWBP+Uq0Adano3nAte4=; b=Q
-	aSgcaH9+sVvH1vs6BuNicf90MrFQhvvk5AnOxUeP1aisBZC1URHJ2J8P3rZ46+oo
-	vIrgVZNNoSIOuLMS4pimXd40bdNhTRSH9TZp/S4fHpJQANeHTxufC0yeleZtznCr
-	VADpVoAosr+Q6xH58SZGWlc4LhwFgfNCpH/nHscj/ForN7m8e4Sstn3MAeVhLrQr
-	xyxon63GEYOhL9lGVAF2Ck13NdHuf6LcBNBz6oPqJyKnEOdX9/QavnDbjiUXwQ9i
-	znQBqCUvondt8E5tG03HYspuJPo6QHfnNDdpchYFytf2v+Ns3bXeUeclr8/7bcFP
-	p+9lSgYAOtRPOZoD7gUEA==
-X-ME-Sender: <xms:XSubZrwhbaEc973HxgDX17lfnsbDfd4LorehqGKN4VB_O_KMbtO_BQ>
-    <xme:XSubZjRhDDGdCK1cJdjH49FKWEy5GG4NSm1jw8qm903NrSfXEoBm65E3ZkP4E98Lb
-    r9N80Stf-AkmZ564zM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrhedvgdejtdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedflfhi
-    rgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-    eqnecuggftrfgrthhtvghrnhepudefgeeftedugeehffdtheefgfevffelfefghefhjeeu
-    geevtefhudduvdeihefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-X-ME-Proxy: <xmx:XSubZlVz6qyJ_W3ycQzdr0yjtmcTzW2-fa4ibvl3hNLsheuJnclY7g>
-    <xmx:XSubZljlsJAb2yPMHEBh3RziSQfjwsCK8C-N9Wi7idhmnHaIuIuY7A>
-    <xmx:XSubZtB6woKyP9sORnjAMnQ5qgxcEl81ruMHXZII5aWjPGarhfzqYw>
-    <xmx:XSubZuLGy39xHSw5pVSLSBywHS4xocpZP-Jji6Fd5tv5ResFmVRa1g>
-    <xmx:XiubZh3boBZtvylGVV8Y-qZWEm3xKGBzAQrx5xyf9z8eUop5WQbRvZnQ>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id C446819C0069; Fri, 19 Jul 2024 23:13:33 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
+	s=arc-20240116; t=1721445580; c=relaxed/simple;
+	bh=l0YyvpX6gPXn8QMPeNLGqHic3iXodSpJnIFU3H51hNQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sQMXRtTDdocDn9ZxPbNk/tMsc+0DaSIIgG4zOcc44wAxOMjaueX6ISd+IcXdp1NtrHbusob1m6qooefWeyGjBdONcDrp8o4xyBYl05MrE/qCLEASivoLl864tz9v8gwdua3Id5UlnVN4PmhJxxeBIhfjCYMPp48G3P6Na7BihrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=iB/L+OOO; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-4f2fad3fb8eso910989e0c.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 20:19:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1721445577; x=1722050377; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7mqj8DEKN2mFZRfvnvF9eQtq4AnQU8mkl96+n6nhcaI=;
+        b=iB/L+OOOQKSzlqyOjWHJstqiYidwUzcpg5+LNEPYh8AuMjlZ1cQcyxzYOlMVB8bfbp
+         4OooxO3mamtCO/dAuHPCVPWgCnYMWFRtAmCJXT/Uqhe3e8GI2b2NfKxOjGufXLQjk0QN
+         eatwA+3+7ZK5h3iW+cBRl1NExiHHyOUwN/Dz8xcVAZheWUXhS1uhPNBPG0G0lm+5I/oU
+         Pwh0j79p5dqVp4/trIn4vbDsnevklxUMhryhjBWTe3c/bycoKm0wx4yVbO561qwYtCgc
+         r4JbedIcFknWISYuICD7EF7qQ4z4flhU7ymk1dVP/BGTCJKb5+P8Lb9YjY55qGt+SLeY
+         nWOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721445577; x=1722050377;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7mqj8DEKN2mFZRfvnvF9eQtq4AnQU8mkl96+n6nhcaI=;
+        b=LGvm8N5tYiqH56LwztdAcX3o5epyyHeZn/arltGPNPkwU55jAAulI2Tm21bKwTvgCH
+         nT1PcE2sVg117z6A6hCT0jqDP/kDqDcqQIE+ncslGdwIM0tzQuw8dkx812C7s8zL47Cs
+         PzpHjJZjH3FuT9zJ9wXzzuHtMOJjcVUmuO5ZwMe6tvK8wAQ39oGWVr/jwVSxV5SXEOOf
+         Vj3Qbx4nivLAAyTnthV0EHb6Duu1CLM0Cte6UyHdHQF3/MHwZE8U8A+lT5LOA4HthJnt
+         wltb+hlkpzvsouywHNm8KaoCLNAjHYUxZtvcVi6n8cX34ou0mLdVlJ/HwuohHbsD+R+j
+         ZUdg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+OmTiGNz25jHaEU6s5Obec2t6LUtRY4uLWUt1iCo799mOcWEFLyf3i/eVrwHxCZq3nB4WrFA1TguiRRcTojsdO381mjxqZrkHXsgs
+X-Gm-Message-State: AOJu0YxDaUj4igNKZMiSpXtbffniqHGGKLcQ2lRFDiA8PXrZYFvXk1CF
+	TNKCeARSENvrAslwiTY+nPV0+J9sw+dYv36+fjExcHELCR9f/uOe0feMMbYl6QPaYW46np5Jh8s
+	uZiY=
+X-Google-Smtp-Source: AGHT+IGbAWWEtwmG7vvsYPmqUafT5XyU/xjLRWog2vXKMzgygYvIYhEvxnhMgFVwZheYMrwxbEVW3g==
+X-Received: by 2002:a67:e7c3:0:b0:48f:dec0:b6bf with SMTP id ada2fe7eead31-49283dc4267mr2312248137.4.1721445577629;
+        Fri, 19 Jul 2024 20:19:37 -0700 (PDT)
+Received: from n37-019-243.byted.org ([180.184.84.173])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ccf7c5391bsm2507784a91.24.2024.07.19.20.19.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 20:19:37 -0700 (PDT)
+From: Chuyi Zhou <zhouchuyi@bytedance.com>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com
+Cc: chengming.zhou@linux.dev,
+	linux-kernel@vger.kernel.org,
+	Chuyi Zhou <zhouchuyi@bytedance.com>,
+	Vishal Chourasia <vishalc@linux.ibm.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>
+Subject: [PATCH v3] sched/fair: Remove cfs_rq::nr_spread_over and cfs_rq::exec_clock
+Date: Sat, 20 Jul 2024 11:19:28 +0800
+Message-Id: <20240720031928.406540-1-zhouchuyi@bytedance.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <302ca8fb-0185-4872-9d82-d472854e5a43@app.fastmail.com>
-In-Reply-To: <20240719-smp_i6500-v1-1-8738e67d4802@bootlin.com>
-References: <20240719-smp_i6500-v1-1-8738e67d4802@bootlin.com>
-Date: Sat, 20 Jul 2024 11:13:12 +0800
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Gregory CLEMENT" <gregory.clement@bootlin.com>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "paulburton@kernel.org" <paulburton@kernel.org>
-Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
- "Tawfik Bayouk" <tawfik.bayouk@mobileye.com>,
- "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH] MIPS: SMP-CPS: Fix address for GCR_ACCESS register for I6500
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
+nr_spread_over tracks the number of instances where the difference
+between a scheduling entity's virtual runtime and the minimum virtual
+runtime in the runqueue exceeds three times the scheduler latency,
+indicating significant disparity in task scheduling.
+Commit 5e963f2bd465 ("sched/fair: Commit to EEVDF") removed its usage.
 
+cfs_rq->exec_clock was used to account for time spent executing tasks.
+Commit 5d69eca542ee ("sched: Unify runtime accounting across classes")
+removed its usage.
 
-=E5=9C=A82024=E5=B9=B47=E6=9C=8819=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=E5=
-=8D=8810:14=EF=BC=8CGregory CLEMENT=E5=86=99=E9=81=93=EF=BC=9A
-> Unlike most other MIPS CPUs, the I6500 CPUs have different address
-> offsets for the Global CSR Access Privilege register. In the "MIPS64
-> I6500 Multiprocessing System Programmer's Guide," it is stated that
-> "the Global CSR Access Privilege register is located at offset 0x0120"
-> in section 5.4.
->
-> However, this is not the case for other MIPS64 CPUs such as the
-> P6600. In the "MIPS64=C2=AE P6600 Multiprocessing System Software User=
-'s
-> Guide," section 6.4.2.6 states that the GCR_ACCESS register has an
-> offset of 0x0020.
+cfs_rq::nr_spread_over and cfs_rq::exec_clock are not used anymore in
+eevdf. Remove them from struct cfs_rq.
 
-Hi Gregory,
+Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
+Acked-by: Vishal Chourasia <vishalc@linux.ibm.com>
+Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
+Reviewed-by: K Prateek Nayak <kprateek.nayak@amd.com>
+---
+Changes in v3:
+Fix the commit description style suggested by Prateek.
 
-I confirmed this is a CM3 feature rather than CPU core (Samruai) feature.
+Changes in v2:
+Add more description of nr_spread_over and exec_clock
+suggested by Vishal.
+---
+ kernel/sched/debug.c | 4 ----
+ kernel/sched/sched.h | 6 ------
+ 2 files changed, 10 deletions(-)
 
-Please use CM version to select register region.
-(And perhaps Cc stable for this patch?)
+diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+index c1eb9a1afd13..90c4a9998377 100644
+--- a/kernel/sched/debug.c
++++ b/kernel/sched/debug.c
+@@ -641,8 +641,6 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
+ 	SEQ_printf(m, "\n");
+ 	SEQ_printf(m, "cfs_rq[%d]:\n", cpu);
+ #endif
+-	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "exec_clock",
+-			SPLIT_NS(cfs_rq->exec_clock));
+ 
+ 	raw_spin_rq_lock_irqsave(rq, flags);
+ 	root = __pick_root_entity(cfs_rq);
+@@ -669,8 +667,6 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
+ 			SPLIT_NS(right_vruntime));
+ 	spread = right_vruntime - left_vruntime;
+ 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "spread", SPLIT_NS(spread));
+-	SEQ_printf(m, "  .%-30s: %d\n", "nr_spread_over",
+-			cfs_rq->nr_spread_over);
+ 	SEQ_printf(m, "  .%-30s: %d\n", "nr_running", cfs_rq->nr_running);
+ 	SEQ_printf(m, "  .%-30s: %d\n", "h_nr_running", cfs_rq->h_nr_running);
+ 	SEQ_printf(m, "  .%-30s: %d\n", "idle_nr_running",
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 4c36cc680361..8a071022bdec 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -599,7 +599,6 @@ struct cfs_rq {
+ 	s64			avg_vruntime;
+ 	u64			avg_load;
+ 
+-	u64			exec_clock;
+ 	u64			min_vruntime;
+ #ifdef CONFIG_SCHED_CORE
+ 	unsigned int		forceidle_seq;
+@@ -619,10 +618,6 @@ struct cfs_rq {
+ 	struct sched_entity	*curr;
+ 	struct sched_entity	*next;
+ 
+-#ifdef	CONFIG_SCHED_DEBUG
+-	unsigned int		nr_spread_over;
+-#endif
+-
+ #ifdef CONFIG_SMP
+ 	/*
+ 	 * CFS load tracking
+@@ -1158,7 +1153,6 @@ struct rq {
+ 	/* latency stats */
+ 	struct sched_info	rq_sched_info;
+ 	unsigned long long	rq_cpu_time;
+-	/* could above be rq->cfs_rq.exec_clock + rq->rt_rq.rt_runtime ? */
+ 
+ 	/* sys_sched_yield() stats */
+ 	unsigned int		yld_count;
+-- 
+2.20.1
 
-Thanks
-- Jiaxun
-
->
-> This fix allows to use the VP cores in SMP mode.
->
-> Based on the work of Vladimir Kondratiev <vladimir.kondratiev@mobileye=
-.com>
->
-> Fixes: 859aeb1b0dd1 ("MIPS: Probe the I6500 CPU")
-> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-> ---
->  arch/mips/include/asm/mips-cm.h | 4 ++++
->  arch/mips/kernel/smp-cps.c      | 5 ++++-
->  2 files changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/mips/include/asm/mips-cm.h b/arch/mips/include/asm/m=
-ips-cm.h
-> index 3d9efc802e36..41bf9b3a98fb 100644
-> --- a/arch/mips/include/asm/mips-cm.h
-> +++ b/arch/mips/include/asm/mips-cm.h
-> @@ -240,6 +240,10 @@ GCR_ACCESSOR_RO(32, 0x0d0, gic_status)
->  GCR_ACCESSOR_RO(32, 0x0f0, cpc_status)
->  #define CM_GCR_CPC_STATUS_EX			BIT(0)
->=20
-> +/* GCR_ACCESS - Controls core/IOCU access to GCRs */
-> +GCR_ACCESSOR_RW(32, 0x120, access_i6500)
-> +#define CM_GCR_ACCESS_ACCESSEN			GENMASK(7, 0)
-> +
->  /* GCR_L2_CONFIG - Indicates L2 cache configuration when Config5.L2C=3D=
-1=20
-> */
->  GCR_ACCESSOR_RW(32, 0x130, l2_config)
->  #define CM_GCR_L2_CONFIG_BYPASS			BIT(20)
-> diff --git a/arch/mips/kernel/smp-cps.c b/arch/mips/kernel/smp-cps.c
-> index e074138ffd7f..60590890b6da 100644
-> --- a/arch/mips/kernel/smp-cps.c
-> +++ b/arch/mips/kernel/smp-cps.c
-> @@ -325,7 +325,10 @@ static void boot_core(unsigned int core, unsigned=20
-> int vpe_id)
->  	write_gcr_co_reset_ext_base(CM_GCR_Cx_RESET_EXT_BASE_UEB);
->=20
->  	/* Ensure the core can access the GCRs */
-> -	set_gcr_access(1 << core);
-> +	if (current_cpu_type() !=3D CPU_I6500)
-> +		set_gcr_access(1 << core);
-> +	else
-> +		set_gcr_access_i6500(1 << core);
->=20
->  	if (mips_cpc_present()) {
->  		/* Reset the core */
->
-> ---
-> base-commit: 9298d51eb3af24f88b211087eb698399f9efa439
-> change-id: 20240719-smp_i6500-8cb233878c41
->
-> Best regards,
-> --=20
-> Gregory CLEMENT <gregory.clement@bootlin.com>
-
---=20
-- Jiaxun
 
