@@ -1,178 +1,212 @@
-Return-Path: <linux-kernel+bounces-257775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A449937ED0
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 05:19:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C81C8937ED2
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 05:27:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EDDF2821BC
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 03:19:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79E90282052
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 03:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1433B661;
-	Sat, 20 Jul 2024 03:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE63DB67D;
+	Sat, 20 Jul 2024 03:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="iB/L+OOO"
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="sTOV2TeJ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="smY5ENRb"
+Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BF1B64A
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 03:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D609C8F44;
+	Sat, 20 Jul 2024 03:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721445580; cv=none; b=YAZo3brs5Ycknbc+tSb+Ef9etokCWi5fYEQGv4DH/ef//VA28RJ9HLLWzBFUEdmJ+0Jgmda3mIerP9jT7ekgVHixdLp5nQE1Eky7O/SljFw1Nh7iLP/Z5ZvOUjkWbAf/pUAZYnPlSHO5sv1ZFALCketEUijsOzWUMK1d/5az03U=
+	t=1721446056; cv=none; b=aUepH4JkRN8WKDOgWzrYteeU3aCwkzxTHCgDKnJVVUCUBH1+M232ykMh7Hpu31yyx0e43BssHoF+HN3p9IVG9kkM54kp/J6qXu2dVcNPZLNwaaOhY0tD54JqAMfLZTDTloCAD5OZHLt33MvFVvirteJa9SBO97l5FYREmCR0jZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721445580; c=relaxed/simple;
-	bh=l0YyvpX6gPXn8QMPeNLGqHic3iXodSpJnIFU3H51hNQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sQMXRtTDdocDn9ZxPbNk/tMsc+0DaSIIgG4zOcc44wAxOMjaueX6ISd+IcXdp1NtrHbusob1m6qooefWeyGjBdONcDrp8o4xyBYl05MrE/qCLEASivoLl864tz9v8gwdua3Id5UlnVN4PmhJxxeBIhfjCYMPp48G3P6Na7BihrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=iB/L+OOO; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-4f2fad3fb8eso910989e0c.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 20:19:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1721445577; x=1722050377; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7mqj8DEKN2mFZRfvnvF9eQtq4AnQU8mkl96+n6nhcaI=;
-        b=iB/L+OOOQKSzlqyOjWHJstqiYidwUzcpg5+LNEPYh8AuMjlZ1cQcyxzYOlMVB8bfbp
-         4OooxO3mamtCO/dAuHPCVPWgCnYMWFRtAmCJXT/Uqhe3e8GI2b2NfKxOjGufXLQjk0QN
-         eatwA+3+7ZK5h3iW+cBRl1NExiHHyOUwN/Dz8xcVAZheWUXhS1uhPNBPG0G0lm+5I/oU
-         Pwh0j79p5dqVp4/trIn4vbDsnevklxUMhryhjBWTe3c/bycoKm0wx4yVbO561qwYtCgc
-         r4JbedIcFknWISYuICD7EF7qQ4z4flhU7ymk1dVP/BGTCJKb5+P8Lb9YjY55qGt+SLeY
-         nWOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721445577; x=1722050377;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7mqj8DEKN2mFZRfvnvF9eQtq4AnQU8mkl96+n6nhcaI=;
-        b=LGvm8N5tYiqH56LwztdAcX3o5epyyHeZn/arltGPNPkwU55jAAulI2Tm21bKwTvgCH
-         nT1PcE2sVg117z6A6hCT0jqDP/kDqDcqQIE+ncslGdwIM0tzQuw8dkx812C7s8zL47Cs
-         PzpHjJZjH3FuT9zJ9wXzzuHtMOJjcVUmuO5ZwMe6tvK8wAQ39oGWVr/jwVSxV5SXEOOf
-         Vj3Qbx4nivLAAyTnthV0EHb6Duu1CLM0Cte6UyHdHQF3/MHwZE8U8A+lT5LOA4HthJnt
-         wltb+hlkpzvsouywHNm8KaoCLNAjHYUxZtvcVi6n8cX34ou0mLdVlJ/HwuohHbsD+R+j
-         ZUdg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+OmTiGNz25jHaEU6s5Obec2t6LUtRY4uLWUt1iCo799mOcWEFLyf3i/eVrwHxCZq3nB4WrFA1TguiRRcTojsdO381mjxqZrkHXsgs
-X-Gm-Message-State: AOJu0YxDaUj4igNKZMiSpXtbffniqHGGKLcQ2lRFDiA8PXrZYFvXk1CF
-	TNKCeARSENvrAslwiTY+nPV0+J9sw+dYv36+fjExcHELCR9f/uOe0feMMbYl6QPaYW46np5Jh8s
-	uZiY=
-X-Google-Smtp-Source: AGHT+IGbAWWEtwmG7vvsYPmqUafT5XyU/xjLRWog2vXKMzgygYvIYhEvxnhMgFVwZheYMrwxbEVW3g==
-X-Received: by 2002:a67:e7c3:0:b0:48f:dec0:b6bf with SMTP id ada2fe7eead31-49283dc4267mr2312248137.4.1721445577629;
-        Fri, 19 Jul 2024 20:19:37 -0700 (PDT)
-Received: from n37-019-243.byted.org ([180.184.84.173])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ccf7c5391bsm2507784a91.24.2024.07.19.20.19.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 20:19:37 -0700 (PDT)
-From: Chuyi Zhou <zhouchuyi@bytedance.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com
-Cc: chengming.zhou@linux.dev,
-	linux-kernel@vger.kernel.org,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Vishal Chourasia <vishalc@linux.ibm.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>
-Subject: [PATCH v3] sched/fair: Remove cfs_rq::nr_spread_over and cfs_rq::exec_clock
-Date: Sat, 20 Jul 2024 11:19:28 +0800
-Message-Id: <20240720031928.406540-1-zhouchuyi@bytedance.com>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1721446056; c=relaxed/simple;
+	bh=eyyKxiv8OoFiRWvDhU7i8Vf5kY78HuB4iIxFhQRztE8=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=AWLfqrHLovBeZYUCgU6kh1gfMaYUIquTj0wDGtE95hsg9TsHxpfe3FntEyffJYVtTUsEOWfy2vlzZbP3RQo65nUkZw5lfdgODmRziQTBpRvMjFeCI4u069EjCMz8htfk+9eOKeJ6jMdjIGgWwCfUFMOINxAHWLyOmPNXjxthnHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=sTOV2TeJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=smY5ENRb; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+	by mailfout.nyi.internal (Postfix) with ESMTP id D41AD138024D;
+	Fri, 19 Jul 2024 23:27:33 -0400 (EDT)
+Received: from wimap26 ([10.202.2.86])
+  by compute1.internal (MEProxy); Fri, 19 Jul 2024 23:27:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1721446053;
+	 x=1721532453; bh=+5jghaF7ZlUhd5Q7RAo+GoMD2gAgdTxfIOe3hBMMz2A=; b=
+	sTOV2TeJYFMZRnc1LVOSBi8Xfz6wzTNZ4Y5m2hTAIa0F7ucFQvNK3rcjOaGmoInJ
+	z1KcigPdbuulhXGnzJpTYKhkDXyuUWWXBlvBb6s4IJ/eXKqUmudAoa20R/473yqB
+	y1XYfKrZPN80VSg0THmSrZLfumqvKXT39Lqhfi9FUYRzEiwJB7MxrhmTIdVQIr1g
+	sE4A5IUrTOmnBzciSZngJF63NTr7RsFqr6Xx2U17hgZID4XcNCDTYeEbuV3p12E+
+	iWY3KBN7/taGafyRm62MWeyzR1xF3LRyiW0IwsDRQsNvPXmhE3eNyGgyINmpSBRN
+	0aHFcQI8GFiy80l6lwra/Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1721446053; x=
+	1721532453; bh=+5jghaF7ZlUhd5Q7RAo+GoMD2gAgdTxfIOe3hBMMz2A=; b=s
+	mY5ENRbM2Z/1us/fsDgWeMG7ggQa5dQNzT2WcrwgSFtO9FGBXVdUpHY20RJq6uBd
+	4xZ3MIweY0yfFuUggF+g81gh5cnjjZEoKYUfW9l13ji7NJnkGVppSdYYLDuPoaul
+	yvNFzgGIN5o3vbFEnKWzFzd8cGV3H/Si721NUpbNiD57hYUU5gNCzFoIk2h+ClDW
+	8+70LTFCiSlgkXXXrRx/sVIHNBgnL86UHGPcltbrhEY6dE95RyjK6pnjxe3s0j5u
+	tOIseEXVszHatTOrWzPpjkL16yrGkyGmmtCraXHjmmjX/W21aNW7KCzIwSNPf7tL
+	ycCw/Ob1MJR34bzmMcAag==
+X-ME-Sender: <xms:pS6bZqxZtnFv69xFCniZngFvF-5HIIFqhAspJ6BAchAmLOiMB0YC6Q>
+    <xme:pS6bZmTSulkIaDIIb_RWUWdQX2EhPk6qAdApSyGFmj4TcGFMBbp-JLnrZt1aT5jv8
+    IxImk5_tEmsO9mwzb4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrhedvgdejvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedflfhi
+    rgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
+    eqnecuggftrfgrthhtvghrnhepudefgeeftedugeehffdtheefgfevffelfefghefhjeeu
+    geevtefhudduvdeihefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
+    hilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
+X-ME-Proxy: <xmx:pS6bZsXEIbGX1r1inwJpj7i4QI3uUOutidS1RXepOk5JUzsf87O6Hw>
+    <xmx:pS6bZggyqUJZvm2RPChbTyocxZf4Dh84IJowGJDjqtjdyAtSn4Um5A>
+    <xmx:pS6bZsBBobBovCGJ1DYTn3LiRx6mCs2vngmDD44AfXOiekplgIFciA>
+    <xmx:pS6bZhIborMJWAEpAaP-p_9QM7rlj8U_fy3JIhYeU_yDGP8TfgBfeQ>
+    <xmx:pS6bZo1oD37u0qjYgzCNuBtezulq-rsclvAIfmTy5G_TLmTbXPE2e5Dj>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 7AE3F19C0069; Fri, 19 Jul 2024 23:27:33 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-Id: <6cbe8375-c11d-4fbf-8e4f-b15828ac3480@app.fastmail.com>
+In-Reply-To: <302ca8fb-0185-4872-9d82-d472854e5a43@app.fastmail.com>
+References: <20240719-smp_i6500-v1-1-8738e67d4802@bootlin.com>
+ <302ca8fb-0185-4872-9d82-d472854e5a43@app.fastmail.com>
+Date: Sat, 20 Jul 2024 11:27:12 +0800
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Gregory CLEMENT" <gregory.clement@bootlin.com>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "paulburton@kernel.org" <paulburton@kernel.org>
+Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
+ "Tawfik Bayouk" <tawfik.bayouk@mobileye.com>,
+ "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH] MIPS: SMP-CPS: Fix address for GCR_ACCESS register for I6500
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-nr_spread_over tracks the number of instances where the difference
-between a scheduling entity's virtual runtime and the minimum virtual
-runtime in the runqueue exceeds three times the scheduler latency,
-indicating significant disparity in task scheduling.
-Commit 5e963f2bd465 ("sched/fair: Commit to EEVDF") removed its usage.
 
-cfs_rq->exec_clock was used to account for time spent executing tasks.
-Commit 5d69eca542ee ("sched: Unify runtime accounting across classes")
-removed its usage.
 
-cfs_rq::nr_spread_over and cfs_rq::exec_clock are not used anymore in
-eevdf. Remove them from struct cfs_rq.
+=E5=9C=A82024=E5=B9=B47=E6=9C=8820=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8A=E5=
+=8D=8811:13=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
+> =E5=9C=A82024=E5=B9=B47=E6=9C=8819=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=
+=E5=8D=8810:14=EF=BC=8CGregory CLEMENT=E5=86=99=E9=81=93=EF=BC=9A
+>> Unlike most other MIPS CPUs, the I6500 CPUs have different address
+>> offsets for the Global CSR Access Privilege register. In the "MIPS64
+>> I6500 Multiprocessing System Programmer's Guide," it is stated that
+>> "the Global CSR Access Privilege register is located at offset 0x0120"
+>> in section 5.4.
+>>
+>> However, this is not the case for other MIPS64 CPUs such as the
+>> P6600. In the "MIPS64=C2=AE P6600 Multiprocessing System Software Use=
+r's
+>> Guide," section 6.4.2.6 states that the GCR_ACCESS register has an
+>> offset of 0x0020.
+>
+> Hi Gregory,
+>
+> I confirmed this is a CM3 feature rather than CPU core (Samruai) featu=
+re.
 
-Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
-Acked-by: Vishal Chourasia <vishalc@linux.ibm.com>
-Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
-Reviewed-by: K Prateek Nayak <kprateek.nayak@amd.com>
----
-Changes in v3:
-Fix the commit description style suggested by Prateek.
+Oh I=E2=80=99m not really sure if it=E2=80=99s CM 3.5 only.
 
-Changes in v2:
-Add more description of nr_spread_over and exec_clock
-suggested by Vishal.
----
- kernel/sched/debug.c | 4 ----
- kernel/sched/sched.h | 6 ------
- 2 files changed, 10 deletions(-)
+Let me check this Monday once I can checkout old design database for I64=
+00.
 
-diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-index c1eb9a1afd13..90c4a9998377 100644
---- a/kernel/sched/debug.c
-+++ b/kernel/sched/debug.c
-@@ -641,8 +641,6 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
- 	SEQ_printf(m, "\n");
- 	SEQ_printf(m, "cfs_rq[%d]:\n", cpu);
- #endif
--	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "exec_clock",
--			SPLIT_NS(cfs_rq->exec_clock));
- 
- 	raw_spin_rq_lock_irqsave(rq, flags);
- 	root = __pick_root_entity(cfs_rq);
-@@ -669,8 +667,6 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
- 			SPLIT_NS(right_vruntime));
- 	spread = right_vruntime - left_vruntime;
- 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "spread", SPLIT_NS(spread));
--	SEQ_printf(m, "  .%-30s: %d\n", "nr_spread_over",
--			cfs_rq->nr_spread_over);
- 	SEQ_printf(m, "  .%-30s: %d\n", "nr_running", cfs_rq->nr_running);
- 	SEQ_printf(m, "  .%-30s: %d\n", "h_nr_running", cfs_rq->h_nr_running);
- 	SEQ_printf(m, "  .%-30s: %d\n", "idle_nr_running",
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 4c36cc680361..8a071022bdec 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -599,7 +599,6 @@ struct cfs_rq {
- 	s64			avg_vruntime;
- 	u64			avg_load;
- 
--	u64			exec_clock;
- 	u64			min_vruntime;
- #ifdef CONFIG_SCHED_CORE
- 	unsigned int		forceidle_seq;
-@@ -619,10 +618,6 @@ struct cfs_rq {
- 	struct sched_entity	*curr;
- 	struct sched_entity	*next;
- 
--#ifdef	CONFIG_SCHED_DEBUG
--	unsigned int		nr_spread_over;
--#endif
--
- #ifdef CONFIG_SMP
- 	/*
- 	 * CFS load tracking
-@@ -1158,7 +1153,6 @@ struct rq {
- 	/* latency stats */
- 	struct sched_info	rq_sched_info;
- 	unsigned long long	rq_cpu_time;
--	/* could above be rq->cfs_rq.exec_clock + rq->rt_rq.rt_runtime ? */
- 
- 	/* sys_sched_yield() stats */
- 	unsigned int		yld_count;
--- 
-2.20.1
+Hardware resets GCR_ACCESS to the most permissive value so I assume it=E2=
+=80=99s your bootloader doing wired hacks.
 
+Thanks
+
+>
+> Please use CM version to select register region.
+> (And perhaps Cc stable for this patch?)
+>
+> Thanks
+> - Jiaxun
+>
+>>
+>> This fix allows to use the VP cores in SMP mode.
+>>
+>> Based on the work of Vladimir Kondratiev <vladimir.kondratiev@mobiley=
+e.com>
+>>
+>> Fixes: 859aeb1b0dd1 ("MIPS: Probe the I6500 CPU")
+>> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+>> ---
+>>  arch/mips/include/asm/mips-cm.h | 4 ++++
+>>  arch/mips/kernel/smp-cps.c      | 5 ++++-
+>>  2 files changed, 8 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/mips/include/asm/mips-cm.h b/arch/mips/include/asm/=
+mips-cm.h
+>> index 3d9efc802e36..41bf9b3a98fb 100644
+>> --- a/arch/mips/include/asm/mips-cm.h
+>> +++ b/arch/mips/include/asm/mips-cm.h
+>> @@ -240,6 +240,10 @@ GCR_ACCESSOR_RO(32, 0x0d0, gic_status)
+>>  GCR_ACCESSOR_RO(32, 0x0f0, cpc_status)
+>>  #define CM_GCR_CPC_STATUS_EX			BIT(0)
+>>=20
+>> +/* GCR_ACCESS - Controls core/IOCU access to GCRs */
+>> +GCR_ACCESSOR_RW(32, 0x120, access_i6500)
+>> +#define CM_GCR_ACCESS_ACCESSEN			GENMASK(7, 0)
+>> +
+>>  /* GCR_L2_CONFIG - Indicates L2 cache configuration when Config5.L2C=
+=3D1=20
+>> */
+>>  GCR_ACCESSOR_RW(32, 0x130, l2_config)
+>>  #define CM_GCR_L2_CONFIG_BYPASS			BIT(20)
+>> diff --git a/arch/mips/kernel/smp-cps.c b/arch/mips/kernel/smp-cps.c
+>> index e074138ffd7f..60590890b6da 100644
+>> --- a/arch/mips/kernel/smp-cps.c
+>> +++ b/arch/mips/kernel/smp-cps.c
+>> @@ -325,7 +325,10 @@ static void boot_core(unsigned int core, unsigne=
+d=20
+>> int vpe_id)
+>>  	write_gcr_co_reset_ext_base(CM_GCR_Cx_RESET_EXT_BASE_UEB);
+>>=20
+>>  	/* Ensure the core can access the GCRs */
+>> -	set_gcr_access(1 << core);
+>> +	if (current_cpu_type() !=3D CPU_I6500)
+>> +		set_gcr_access(1 << core);
+>> +	else
+>> +		set_gcr_access_i6500(1 << core);
+>>=20
+>>  	if (mips_cpc_present()) {
+>>  		/* Reset the core */
+>>
+>> ---
+>> base-commit: 9298d51eb3af24f88b211087eb698399f9efa439
+>> change-id: 20240719-smp_i6500-8cb233878c41
+>>
+>> Best regards,
+>> --=20
+>> Gregory CLEMENT <gregory.clement@bootlin.com>
+>
+> --=20
+> - Jiaxun
+
+--=20
+- Jiaxun
 
