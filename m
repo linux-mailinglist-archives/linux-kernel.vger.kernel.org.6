@@ -1,126 +1,86 @@
-Return-Path: <linux-kernel+bounces-257761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81A64937E90
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 03:05:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25E9B937E93
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 03:10:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B728A1C21328
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 01:05:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 612561C21360
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 01:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94336FCB;
-	Sat, 20 Jul 2024 01:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LG4U+UXE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A61523D;
+	Sat, 20 Jul 2024 01:10:04 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0014F1C14;
-	Sat, 20 Jul 2024 01:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF418F44
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 01:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721437499; cv=none; b=OsSWNMXkT/9Gb35TYyUB8tBSfRKy+sbEEW78fATWS0xCNI5zneY7RJ5QybrbEfFzMCDhVQqNpZdk0bt0Q+cGtux12B9FCJBbzIyaifF9Bvo6SkFAjEmkT2psDGxK4pAnthdrhsKP+ZEM01F8s2j4OVfYG6Oc2YAmUKzl2HespRg=
+	t=1721437804; cv=none; b=esEKJwoErLRlBnFKpAWapIflG5w04q20CrjPfBOgIkVSqah3ziounZTRp5+IzeWEfBfth5DsGnpkEox+AbirFeDiMtVnLslOcltlnlAujNSDrYYIp1+C/N/fiYxbMa5WdJpe2hlBMKXSxaY+dEPYdLv5JHFYVsgtXneAEg6R/Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721437499; c=relaxed/simple;
-	bh=KSb83U1YtutdXTUH57iqsroyMV6ULQqkxWoZRbDKQMU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=EGxfmv/McG9hX9CRfSx67Ed0LXaLe3W0WqgxVno0HFucsfbA3IEQ0hgEJbWgGUxs4yUQkvtQXWCBsXQW/6rkHrzKY7iDeYwHVbUjH42Vn7LA5i7lASORmpW1JdmZdM4mLO4XYYTpS30mNZtei+qku7eK0/S6Q9BTXI9qg79tjzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LG4U+UXE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6967C4AF09;
-	Sat, 20 Jul 2024 01:04:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721437498;
-	bh=KSb83U1YtutdXTUH57iqsroyMV6ULQqkxWoZRbDKQMU=;
-	h=From:Date:Subject:To:Cc:From;
-	b=LG4U+UXEkwxMUoUajM/s0+YWtt13jZZ+fmeGqqBuzajmyEGJHcyfUU1qXFpFu9O7K
-	 86RbPKJnd/pGbNElAxP4PEry7eFmzwDHj5QukirQ2zbKEtN4wQVsgme5+jO9ZFPpeu
-	 upHhoPQ2o81QXfrYJXo9TKDeWffZ3nEjrMV08BHVJh1M2ojEci9XVydtNjPOtmVXMz
-	 Rbq0YHP8LWtYeHvJ0CRT8LDf2NeftGm6IWtJE4696a9se/qWf9skro9gFTWPzqaeYF
-	 x1QLJgSL+p1BI19iAhb7nyYDczC6o9XMXff6zTsScxVk+qIouCjur8hHgpiexjg5yq
-	 SYCuaK8yOewGA==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Fri, 19 Jul 2024 18:04:25 -0700
-Subject: [PATCH v2] ACPI: HMAT: Mark hmat_set_default_dram_perf() as __init
+	s=arc-20240116; t=1721437804; c=relaxed/simple;
+	bh=UX3eDEBF1HDYmxDewJkblwQtFyE2LWxmOoe6/JWWBn0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=l6hHLKMDEsT1zHm2Kg5oHrwhcFeUJSLottvL+s8lpO6nivslgQAwnvHjc7OdLVRzBXfM+iP3a9lF9diBA6HFpwZwvQjPm85oQhUMtNVpgXzsgwkJVTKI3pZne0tH+uXoir8PzWcLZlA7V0Jb56rx9+BdCMyTLBp8MlUO+LpENUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39642f5482eso32457725ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 18:10:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721437802; x=1722042602;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P7xcq0cU5b4LgYfk9M080gIhfi4XtY6sseXnSbkcfUU=;
+        b=THUZEYZ3dziEbg3PltQ80X7WAoQwkSsCfZc1AmaW88uGIDaiKjk/pMZRprVwVK4i6o
+         jUgZ8pZfJ3FYWfTHXLyGNzkC4wFFxd7vNGC7YQpsFP7qTT2UO2weO2VqkGKbIKhylVQz
+         ftLu6+wl/9mjI818A1+fssUWCRg/PzqBYSiAtTBaBYTCrEfGuF+Qgc0uN3WAyfhYnfrY
+         nBoWzNZ2CeWwr2LsPvgCnF2e+aN7+E3Sw1bW5V2KaewrCWkBcvR/C1phSk10PlQIF3rn
+         ouadRWl2Iyvd9vS3XGIu/5mVTyttgd9/wfH+g70egJuVR2ACwkwdajx0XdAk5Rjj9DuR
+         Fh5g==
+X-Gm-Message-State: AOJu0YzLyNdjBDLr0iDQg+QE4PzaKyj0Tgjgc3nFTnqnstCQtnBZeE/X
+	lZ0Jley7qO+fIbOdQ21ombSviqM+6Z15psKWa9LNphVIfyF453ZsJmkDu5njitPW/GC28yr2VC6
+	WfHqIuANNitjD9VZEi3Sp7t/gkWHk6z+DC+sMjzbtvHFK8wl6iOboUkk=
+X-Google-Smtp-Source: AGHT+IFvRueDzK3W7Ykjt4vWjXHjwMAngasZ+LxAYnyCOStOn6Q+As1KG46x78t6yjGVAQ86rnwUnSbveTkAenXmNGeZarGcu5sO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240719-fix-modpost-warning-default_dram_nodes-v2-1-792ff57a50b0@kernel.org>
-X-B4-Tracking: v=1; b=H4sIABgNm2YC/5WNQQ6CMBBFr0K6dgwtiMjKexhCKjOFRmjJFFFDu
- LuVG7h8P/nvrSIQWwqiSlbBtNhgvYugDoloe+06AouRhUpVnp5lCsa+YfQ4+TDDS7OzrgMko5/
- D3CDrsXEeKUBW3gujjaEMtYiyiSk+99CtjtzbMHv+7N1F/ta/E4sECeWlkPkpa9tS4fVB7Gg4e
- u5EvW3bF52q/djdAAAA
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
- Ho-Ren Chuang <horen.chuang@linux.dev>, 
- "Huang, Ying" <ying.huang@intel.com>, 
- Jonathan Cameron <Jonathan.Cameron@Huawei.com>, linux-acpi@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>, 
- Nathan Chancellor <nathan@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2066; i=nathan@kernel.org;
- h=from:subject:message-id; bh=KSb83U1YtutdXTUH57iqsroyMV6ULQqkxWoZRbDKQMU=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDGmzeS03fo0xqDEQWvVx/pWN3c/X6MTlrwowVvvZ+GCS0
- JrLM5YydJSyMIhxMciKKbJUP1Y9bmg45yzjjVOTYOawMoEMYeDiFICJ8B9nZJjIfcPvlEflIofz
- L9l+fDB7Xby4wSmFbVXWGyXpYs35Z9cwMtwsnLV6h6D0sU1Tfmu/uyXZfIRL7WWIz9wnaRNX5DH
- WTWMDAA==
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
+X-Received: by 2002:a05:6e02:1383:b0:395:fa9a:3187 with SMTP id
+ e9e14a558f8ab-398ee03ea4bmr876045ab.3.1721437801824; Fri, 19 Jul 2024
+ 18:10:01 -0700 (PDT)
+Date: Fri, 19 Jul 2024 18:10:01 -0700
+In-Reply-To: <e47662b096f45fbdfa3e6ad9959bfb2bf3148bc4.camel@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ae50ee061da3785b@google.com>
+Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in hfsplus_delete_cat
+From: syzbot <syzbot+fdedff847a0e5e84c39f@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, simeddon@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-After commit 823430c8e9d9 ("memory tier: consolidate the initialization
-of memory tiers"), there is a modpost warning when
-hmat_set_default_dram_perf() is not inlined into its callsite, as it
-appears that default_dram_nodes may be accessed after its memory has
-been freed.
+Hello,
 
-  WARNING: modpost: vmlinux: section mismatch in reference: hmat_set_default_dram_perf+0x18 (section: .text) -> default_dram_nodes (section: .init.data)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-The single callsite, hmat_init(), is __init, so this warning is not a
-problem in reality but it is easily solvable by marking
-hmat_set_default_dram_perf() as __init, which should have been done when
-this function was added in commit 3718c02dbd4c ("acpi, hmat: calculate
-abstract distance with HMAT").
+Reported-by: syzbot+fdedff847a0e5e84c39f@syzkaller.appspotmail.com
+Tested-by: syzbot+fdedff847a0e5e84c39f@syzkaller.appspotmail.com
 
-Fixes: 823430c8e9d9 ("memory tier: consolidate the initialization of memory tiers")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202406292310.hlRATeZJ-lkp@intel.com/
-Reviewed-by: Huang, Ying <ying.huang@intel.com>
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
-Changes in v2:
-- The problematic change appears to be merged into mm-stable, so I added
-  a fixes tag and updated the commit message with the stable hash.
-- Add Ying's reviewed-by tag.
-- Link to v1: https://lore.kernel.org/r/20240710-fix-modpost-warning-default_dram_nodes-v1-1-8961453cc82d@kernel.org
----
- drivers/acpi/numa/hmat.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Tested on:
 
-diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
-index a2f9e7a4b479..ca0c0ea3e1ef 100644
---- a/drivers/acpi/numa/hmat.c
-+++ b/drivers/acpi/numa/hmat.c
-@@ -933,7 +933,7 @@ static int hmat_callback(struct notifier_block *self,
- 	return NOTIFY_OK;
- }
- 
--static int hmat_set_default_dram_perf(void)
-+static __init int hmat_set_default_dram_perf(void)
- {
- 	int rc;
- 	int nid, pxm;
+commit:         8e5c0abf Merge tag 'input-for-v6.11-rc0' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15c10195980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5bdc5cf430cf80c7
+dashboard link: https://syzkaller.appspot.com/bug?extid=fdedff847a0e5e84c39f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11d0a8b1980000
 
----
-base-commit: 30d77b7eef019fa4422980806e8b7cdc8674493e
-change-id: 20240710-fix-modpost-warning-default_dram_nodes-38b6faffe3da
-
-Best regards,
--- 
-Nathan Chancellor <nathan@kernel.org>
-
+Note: testing is done by a robot and is best-effort only.
 
