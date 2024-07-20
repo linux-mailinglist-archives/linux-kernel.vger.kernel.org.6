@@ -1,163 +1,193 @@
-Return-Path: <linux-kernel+bounces-257773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD51937ECA
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 05:00:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1389937ECD
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 05:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C93A1F21878
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 03:00:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FA571F211E5
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 03:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABF8BA33;
-	Sat, 20 Jul 2024 03:00:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5CDB661;
+	Sat, 20 Jul 2024 03:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="hbK7Sl4V";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QaSgcaH9"
+Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B9B8F68
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 03:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2F88F59;
+	Sat, 20 Jul 2024 03:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721444406; cv=none; b=VG0SyV5NE2rgg187HIAD9HGcKqbzfQEtAwVk/0B89qjMbnxrybRI3cl/YLlngqqQhXYV/XBSAInS4ROsuGwxJfpUlfzbS4rwLg3BX49zXyp/uc63BAUlHlJ4CvlYNrW8fsqWsOQThdcOrZwS82Inv5dgySFfC16+eXXRdAbywCM=
+	t=1721445218; cv=none; b=hOJ+iOiFpm/+N1Mixqjy4rkvhuD03HbMDIrYu1T7XMHZYEX5zd96Y7vHAr/nBH/wSC3oLDI8we8UoNZmaCwnIMuiey2jIvrt0s/u1LQpxHG47R6IINOw+nGcI6KMl3inzu3bMOCMTT+wTP4a2fP+tdFBVjcJ0OpGOVRfpOCRN78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721444406; c=relaxed/simple;
-	bh=xcKIbvGuiuA/N9SD/WHV2+IWuEk2Y5lFCVYPx1OlJkI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=WlpwH3nVXKv8j3FFy0OghHWzbeXEuhscx6UZLYnGuvAJCkXAA/LeRx5nHkUJIfHJtu1dlUenMJri17JiiKqzpeKErCAuNb0EtZ9iU4YmNXuCQjCYE9O5AhDBgn6EbqIMsQOv/u7rQ3RwK0QCIVJS+EDpKTpk6bWuK3E/mcDKZJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-802d5953345so356543639f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 20:00:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721444404; x=1722049204;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TEoGyHkKKTp4hZk8msAkRbaz7NRXUIhTQApJK1opyY8=;
-        b=r2oUR788Mx58e0UrReH+w3r7m/Ghz8BlQCzNQ027eVbNMLRMOT1NRiyeEFzTsYC+Lt
-         rw+0hmoswCmi8XKZe6bKbYrqws/LZprZ66cqCo9VItqBPDpJS8mnF0HjjikL+G5o2a5E
-         8nMEw4aySK9BJoeHZy2e6wK6myUQZ0n4rvecCOrOFuZuowVL5yUkzHg60aafNEMpCEUs
-         FPrGK2e/lpbKyDbdzXukixUjdc3FanKI2rwHt/cwNgO0jb5dOOilFg9ih/ZaJBuxmD9P
-         F7ef2ofeZfSAzXjkYZD/pFUOFCtfEpaQlmu79tGP9A2wKuFtg55dfDIE6Ey6zf+R+Q9T
-         rDzg==
-X-Forwarded-Encrypted: i=1; AJvYcCXin0TumZGHoNy4IFi9PYs+/JqMF+/bCQfO1pFg07Mw7s24vFkVcio5od1MnDP1Ehd/YP7WcZxXROJLpEy07CJf0Kl9UQWrV2xNvZ+3
-X-Gm-Message-State: AOJu0YyaQGBzTavpMqghr0G6spXQyWzspU2gEiBpiTGepasT+BHVrLlF
-	GWfdMfvY9K2LE3JK3iAjg16eTigo8lZuKfpE5Xg8il5bGTJzJa3DdNi4CpCaKnsAPJ66is+3n4r
-	PSbcXB/uFQM1tkkUq61yeJ3f8u850mtAWfTbxcHFXN6p1pvArWppllqo=
-X-Google-Smtp-Source: AGHT+IHnCehqFhrU1rhB05RxKmxP7q95OQ1TyeJ7G3MTkmlkQIur7Z5Ft5CVJXVRO/kgGvZnG9B6C+FgD8LcXuheaoM3l4uAwLiH
+	s=arc-20240116; t=1721445218; c=relaxed/simple;
+	bh=2ZilqTLkTvzRAGRV71O4njOlNtRmotDkZ7EUQaeKXGE=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=iKdVp/B+PTuojpfRE76zfVR9z0jh5LC7hT4Tzptbe1yFviLMtI8M1sn4hMJwOS9yOPibL7Tm0uMCo5/MwgGCawvXi+BfUfbrcR/VZwdxeyZ8LyZKSj7orlTIN7xWNa17gl2bGMLpm//qqqe/QT4MCSVqTz/aXK3pxTyKqbgQ7RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=hbK7Sl4V; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QaSgcaH9; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 929F713801E8;
+	Fri, 19 Jul 2024 23:13:34 -0400 (EDT)
+Received: from wimap26 ([10.202.2.86])
+  by compute1.internal (MEProxy); Fri, 19 Jul 2024 23:13:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1721445214;
+	 x=1721531614; bh=2U6BMTxf8tCK9CNUiA58/32vLWBP+Uq0Adano3nAte4=; b=
+	hbK7Sl4VWiqmvzRIId22NUM8pPvULZYTD0EFBxTqG0Shcm9IF5vDtZWmUubRh9px
+	Y5y2RQWp5sCp9cMDpX+ira+wrGOIjA+GTHy9FxAj3c7X4uECufgUbSl2/uyDxaSW
+	VhM/FGMRi40avCGLdPhpabYLJQlh8mgRCy46MEEubB68rj+IDv79QnNJjiqpPet6
+	bbj41M5SwtBg0E8m5VvTeKLxAiWAALk7oS2iKwliBBccoLyQd/nVHsMs/YWGoCVE
+	otZfAq63h98CRBkwPNoU39xpcA4PT0qcENlftv+B3ILP50PsBL3HDqjZaqkYu+fC
+	HjqpqNowhCCCdUZYjiD7Sw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1721445214; x=
+	1721531614; bh=2U6BMTxf8tCK9CNUiA58/32vLWBP+Uq0Adano3nAte4=; b=Q
+	aSgcaH9+sVvH1vs6BuNicf90MrFQhvvk5AnOxUeP1aisBZC1URHJ2J8P3rZ46+oo
+	vIrgVZNNoSIOuLMS4pimXd40bdNhTRSH9TZp/S4fHpJQANeHTxufC0yeleZtznCr
+	VADpVoAosr+Q6xH58SZGWlc4LhwFgfNCpH/nHscj/ForN7m8e4Sstn3MAeVhLrQr
+	xyxon63GEYOhL9lGVAF2Ck13NdHuf6LcBNBz6oPqJyKnEOdX9/QavnDbjiUXwQ9i
+	znQBqCUvondt8E5tG03HYspuJPo6QHfnNDdpchYFytf2v+Ns3bXeUeclr8/7bcFP
+	p+9lSgYAOtRPOZoD7gUEA==
+X-ME-Sender: <xms:XSubZrwhbaEc973HxgDX17lfnsbDfd4LorehqGKN4VB_O_KMbtO_BQ>
+    <xme:XSubZjRhDDGdCK1cJdjH49FKWEy5GG4NSm1jw8qm903NrSfXEoBm65E3ZkP4E98Lb
+    r9N80Stf-AkmZ564zM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrhedvgdejtdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedflfhi
+    rgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
+    eqnecuggftrfgrthhtvghrnhepudefgeeftedugeehffdtheefgfevffelfefghefhjeeu
+    geevtefhudduvdeihefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
+    hilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
+X-ME-Proxy: <xmx:XSubZlVz6qyJ_W3ycQzdr0yjtmcTzW2-fa4ibvl3hNLsheuJnclY7g>
+    <xmx:XSubZljlsJAb2yPMHEBh3RziSQfjwsCK8C-N9Wi7idhmnHaIuIuY7A>
+    <xmx:XSubZtB6woKyP9sORnjAMnQ5qgxcEl81ruMHXZII5aWjPGarhfzqYw>
+    <xmx:XSubZuLGy39xHSw5pVSLSBywHS4xocpZP-Jji6Fd5tv5ResFmVRa1g>
+    <xmx:XiubZh3boBZtvylGVV8Y-qZWEm3xKGBzAQrx5xyf9z8eUop5WQbRvZnQ>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id C446819C0069; Fri, 19 Jul 2024 23:13:33 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a5e:9812:0:b0:804:bfc0:382e with SMTP id
- ca18e2360f4ac-81aa7cf6b47mr1176439f.4.1721444403568; Fri, 19 Jul 2024
- 20:00:03 -0700 (PDT)
-Date: Fri, 19 Jul 2024 20:00:03 -0700
-In-Reply-To: <tencent_DC67EC3CBB36D2971037E24A78740777C909@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002cf2f7061da5029b@google.com>
-Subject: Re: [syzbot] [jfs?] INFO: task hung in txBegin
-From: syzbot <syzbot+eda89a33c5856f66f823@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-BUG: sleeping function called from invalid context in wb_writeback
-
-sb: ffff88802058c000, wb_writeback
-BUG: sleeping function called from invalid context at kernel/locking/rwsem.c:1578
-in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 2837, name: kworker/u8:7
-preempt_count: 1, expected: 0
-RCU nest depth: 0, expected: 0
-3 locks held by kworker/u8:7/2837:
- #0: ffff8880186ea948 ((wq_completion)writeback){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
- #0: ffff8880186ea948 ((wq_completion)writeback){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
- #1: ffffc90009a67d00 ((work_completion)(&(&wb->dwork)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
- #1: ffffc90009a67d00 ((work_completion)(&(&wb->dwork)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
- #2: ffff888020b920d8 (&wb->list_lock){+.+.}-{2:2}, at: spin_lock include/linux/spinlock.h:351 [inline]
- #2: ffff888020b920d8 (&wb->list_lock){+.+.}-{2:2}, at: wb_writeback+0x29e/0xdb0 fs/fs-writeback.c:2106
-Preemption disabled at:
-[<0000000000000000>] 0x0
-CPU: 1 PID: 2837 Comm: kworker/u8:7 Not tainted 6.10.0-rc4-syzkaller-00148-g50736169ecc8-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Workqueue: writeback wb_workfn (flush-7:0)
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- __might_resched+0x5d4/0x780 kernel/sched/core.c:10196
- down_write+0x19/0x50 kernel/locking/rwsem.c:1578
- wb_writeback+0x836/0xdb0 fs/fs-writeback.c:2128
- wb_do_writeback fs/fs-writeback.c:2278 [inline]
- wb_workfn+0x410/0x1090 fs/fs-writeback.c:2318
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-=============================
-[ BUG: Invalid wait context ]
-6.10.0-rc4-syzkaller-00148-g50736169ecc8-dirty #0 Tainted: G        W         
------------------------------
-kworker/u8:7/2837 is trying to lock:
-ffff88802058c0e0 (&type->s_umount_key#52){+.+.}-{3:3}, at: wb_writeback+0x836/0xdb0 fs/fs-writeback.c:2128
-other info that might help us debug this:
-context-{4:4}
-3 locks held by kworker/u8:7/2837:
- #0: ffff8880186ea948 ((wq_completion)writeback){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
- #0: ffff8880186ea948 ((wq_completion)writeback){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
- #1: ffffc90009a67d00 ((work_completion)(&(&wb->dwork)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
- #1: ffffc90009a67d00 ((work_completion)(&(&wb->dwork)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
- #2: ffff888020b920d8 (&wb->list_lock){+.+.}-{2:2}, at: spin_lock include/linux/spinlock.h:351 [inline]
- #2: ffff888020b920d8 (&wb->list_lock){+.+.}-{2:2}, at: wb_writeback+0x29e/0xdb0 fs/fs-writeback.c:2106
-stack backtrace:
-CPU: 1 PID: 2837 Comm: kworker/u8:7 Tainted: G        W          6.10.0-rc4-syzkaller-00148-g50736169ecc8-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Workqueue: writeback wb_workfn (flush-7:0)
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- print_lock_invalid_wait_context kernel/locking/lockdep.c:4751 [inline]
- check_wait_context kernel/locking/lockdep.c:4821 [inline]
- __lock_acquire+0x1507/0x1fd0 kernel/locking/lockdep.c:5087
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
- down_write+0x3a/0x50 kernel/locking/rwsem.c:1579
- wb_writeback+0x836/0xdb0 fs/fs-writeback.c:2128
- wb_do_writeback fs/fs-writeback.c:2278 [inline]
- wb_workfn+0x410/0x1090 fs/fs-writeback.c:2318
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-BUG: scheduling while atomic: kworker/u8:7/2837/0x00000002
-INFO: lockdep is turned off.
-Modules linked in:
-Preemption disabled at:
-[<0000000000000000>] 0x0
+Message-Id: <302ca8fb-0185-4872-9d82-d472854e5a43@app.fastmail.com>
+In-Reply-To: <20240719-smp_i6500-v1-1-8738e67d4802@bootlin.com>
+References: <20240719-smp_i6500-v1-1-8738e67d4802@bootlin.com>
+Date: Sat, 20 Jul 2024 11:13:12 +0800
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Gregory CLEMENT" <gregory.clement@bootlin.com>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "paulburton@kernel.org" <paulburton@kernel.org>
+Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
+ "Tawfik Bayouk" <tawfik.bayouk@mobileye.com>,
+ "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH] MIPS: SMP-CPS: Fix address for GCR_ACCESS register for I6500
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
-Tested on:
 
-commit:         50736169 Merge tag 'for-6.10-rc4-tag' of git://git.ker..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=1212f7a5980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=12f98862a3c0c799
-dashboard link: https://syzkaller.appspot.com/bug?extid=eda89a33c5856f66f823
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1442b72d980000
+=E5=9C=A82024=E5=B9=B47=E6=9C=8819=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=E5=
+=8D=8810:14=EF=BC=8CGregory CLEMENT=E5=86=99=E9=81=93=EF=BC=9A
+> Unlike most other MIPS CPUs, the I6500 CPUs have different address
+> offsets for the Global CSR Access Privilege register. In the "MIPS64
+> I6500 Multiprocessing System Programmer's Guide," it is stated that
+> "the Global CSR Access Privilege register is located at offset 0x0120"
+> in section 5.4.
+>
+> However, this is not the case for other MIPS64 CPUs such as the
+> P6600. In the "MIPS64=C2=AE P6600 Multiprocessing System Software User=
+'s
+> Guide," section 6.4.2.6 states that the GCR_ACCESS register has an
+> offset of 0x0020.
 
+Hi Gregory,
+
+I confirmed this is a CM3 feature rather than CPU core (Samruai) feature.
+
+Please use CM version to select register region.
+(And perhaps Cc stable for this patch?)
+
+Thanks
+- Jiaxun
+
+>
+> This fix allows to use the VP cores in SMP mode.
+>
+> Based on the work of Vladimir Kondratiev <vladimir.kondratiev@mobileye=
+.com>
+>
+> Fixes: 859aeb1b0dd1 ("MIPS: Probe the I6500 CPU")
+> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+> ---
+>  arch/mips/include/asm/mips-cm.h | 4 ++++
+>  arch/mips/kernel/smp-cps.c      | 5 ++++-
+>  2 files changed, 8 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/mips/include/asm/mips-cm.h b/arch/mips/include/asm/m=
+ips-cm.h
+> index 3d9efc802e36..41bf9b3a98fb 100644
+> --- a/arch/mips/include/asm/mips-cm.h
+> +++ b/arch/mips/include/asm/mips-cm.h
+> @@ -240,6 +240,10 @@ GCR_ACCESSOR_RO(32, 0x0d0, gic_status)
+>  GCR_ACCESSOR_RO(32, 0x0f0, cpc_status)
+>  #define CM_GCR_CPC_STATUS_EX			BIT(0)
+>=20
+> +/* GCR_ACCESS - Controls core/IOCU access to GCRs */
+> +GCR_ACCESSOR_RW(32, 0x120, access_i6500)
+> +#define CM_GCR_ACCESS_ACCESSEN			GENMASK(7, 0)
+> +
+>  /* GCR_L2_CONFIG - Indicates L2 cache configuration when Config5.L2C=3D=
+1=20
+> */
+>  GCR_ACCESSOR_RW(32, 0x130, l2_config)
+>  #define CM_GCR_L2_CONFIG_BYPASS			BIT(20)
+> diff --git a/arch/mips/kernel/smp-cps.c b/arch/mips/kernel/smp-cps.c
+> index e074138ffd7f..60590890b6da 100644
+> --- a/arch/mips/kernel/smp-cps.c
+> +++ b/arch/mips/kernel/smp-cps.c
+> @@ -325,7 +325,10 @@ static void boot_core(unsigned int core, unsigned=20
+> int vpe_id)
+>  	write_gcr_co_reset_ext_base(CM_GCR_Cx_RESET_EXT_BASE_UEB);
+>=20
+>  	/* Ensure the core can access the GCRs */
+> -	set_gcr_access(1 << core);
+> +	if (current_cpu_type() !=3D CPU_I6500)
+> +		set_gcr_access(1 << core);
+> +	else
+> +		set_gcr_access_i6500(1 << core);
+>=20
+>  	if (mips_cpc_present()) {
+>  		/* Reset the core */
+>
+> ---
+> base-commit: 9298d51eb3af24f88b211087eb698399f9efa439
+> change-id: 20240719-smp_i6500-8cb233878c41
+>
+> Best regards,
+> --=20
+> Gregory CLEMENT <gregory.clement@bootlin.com>
+
+--=20
+- Jiaxun
 
