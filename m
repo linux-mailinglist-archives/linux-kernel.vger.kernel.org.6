@@ -1,123 +1,189 @@
-Return-Path: <linux-kernel+bounces-257979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C703C9381AC
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 16:23:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630CD9381AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 16:22:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03F851C21E6B
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 14:23:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 945ED1C21E88
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 14:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9853712F386;
-	Sat, 20 Jul 2024 14:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5849113213D;
+	Sat, 20 Jul 2024 14:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b3GY37St"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bcI5PRq7"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50B81803D;
-	Sat, 20 Jul 2024 14:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF511803D;
+	Sat, 20 Jul 2024 14:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721485371; cv=none; b=bOsOTRG23WqrlrmBHoR6ipAQdqBLWi5X2dBw0v9WYQJY3bjJg18JABKfh15a6Nt2Jk/okHZg6kocTs+D2ed0RkEzDQzH3rwBJ5cHo6Kfwudjfy0kIapve0iiQZzdb3QFjcmdW7UKKfTVhmZALWi+/xpV7Gw9sXcMm688OVWP7nE=
+	t=1721485363; cv=none; b=exdVqj3Dr4C6Eb1uWtDTxdDmA1ErL5NUk2e8YDfTT3VQiD0bQ5nayfwcQIAWCD2K04YVIR96SvIhdfVAZUsPScBlaRsrL8LddfkAxkvIhZjCu+KOk13v4NOOOaksxspUSYtYteBYeoGiHkHtUg8or6PwpdYKMgvSVOrvTMNoanI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721485371; c=relaxed/simple;
-	bh=BFFdj8rml5KMT9lI7+PpLPgk2mOydB0xDmtRUFZdFvY=;
+	s=arc-20240116; t=1721485363; c=relaxed/simple;
+	bh=GEuFJYrJmfemuiN66s3JBd2h6xdt9JYlsMWU8bKymxs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tB25YieDM+qm1zpvur6Wy0BCQGbY3g7d211+AmQz3TbjBDDp0PUTEn3xNn6ONJNHYWNZRlbp0g8pLwCtu8bw2JURL3xLmFPjTS+LLwqn94dHfBjZnmGbq0NuU+rKxWvK8fzI4f17rhDWaMmqiFvLRrfB2Y3Vfxa/48rxhyYIqwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b3GY37St; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CB3CC4AF0D;
-	Sat, 20 Jul 2024 14:22:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721485371;
-	bh=BFFdj8rml5KMT9lI7+PpLPgk2mOydB0xDmtRUFZdFvY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=b3GY37Stifxp41cyDk7J+6XPzXLHx6axVSEzFgfmRkhiIDsnBxL5XS5w3FEh64cvN
-	 oDqKX7X1IhqW5fdG0lRzeNuoEebNSTrLU3LLjkFIsSt/6yOXZFnHMTcgcxPeseB1pl
-	 rXO4OLmcB6gJZogpFhk2GkQLrHsAQX40c0rSpa0+lfW2EGAxT/Ij21rqWRk4LdNa7m
-	 mqz47vR3L/3Lk3FYY4xE4vaELwlaJANkuRz+eH1Rk7uvYno/VUN0CCkRqJNLyIUU54
-	 3/IIX3WetZp6hPn/xxGI+l75st3hzUJnPpAPMgK2c/BVfjxRxKdAEgoW9mEzNre2Al
-	 lgYsFO+4cI4iA==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52e98087e32so2827482e87.2;
-        Sat, 20 Jul 2024 07:22:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVezBTlUn5I4zFHz+x9m21i3Hr0eIw6DNr8StK+nrO4T+aR195Kh5VL1zi/VSBkiDE2tFYS8Y3liIH/GGVDk1f7Gdtyjya8mLCD4EPp
-X-Gm-Message-State: AOJu0YwhBNBGQ/lNyG1O1cb92Z/jm3EwETHhVclSuxngViexsT/669D8
-	ZUcbX/vBcOYN3Y9v6HB4GI1kZUNAY4uEHYUjejOO2WXDRSsBmsbXr9VlYMSuSo7mwTnjnzLPkJu
-	XNjDz70wS2YnubfCEX6j2KwvbR00=
-X-Google-Smtp-Source: AGHT+IFX1L8e02GeGVW4uAFzmZyKN3UH/7/oceJxrgszVutP0SJ2ukqjO/ZQfk1adnnIlV83PbubkHG1mGh2LyX9rDw=
-X-Received: by 2002:a05:6512:39c7:b0:52e:9df2:7de0 with SMTP id
- 2adb3069b0e04-52ee54272c4mr8503003e87.40.1721485370059; Sat, 20 Jul 2024
- 07:22:50 -0700 (PDT)
+	 To:Cc:Content-Type; b=E4sDrygUOZLDU+bwiw9M/iI2j2B6X1Z+2iFQD4tesm8MB2o37M6Otr9/25Hj11Z7zHlp9jnrJzSaQ4Xd08EpjLH11hIfNSn4BVIntPVM4E8H4bPjlVgh6fMGp5NZqXXXpxfitRRTqCqPoW2MB4AfH+QlJ76obGOl5wfCgH1egDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bcI5PRq7; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3683f56b9bdso1243732f8f.1;
+        Sat, 20 Jul 2024 07:22:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721485360; x=1722090160; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mlwhLGoXMRrfdZQAkxdZajfwEHhGebnvpcGXSKSVCSM=;
+        b=bcI5PRq7ao7JGyX7CJNe8hjJqA3Iof3nQIsDlxSRkKXGcY7h2KFFgVBRbL4kDv4aEZ
+         M5asmgnU/I7oO6aG6VBCQruSE9qSrD68R21izmjtBqUDJlGZ9bG7qS93UpQ+ReEH1i2b
+         Kn28K0dPZ/dXzdVJ6NVB10qXChjTakpTduL+ZRaZDMeVl+SeBVIRWz349eqPLWWO4m2H
+         m8ufJgnXbcsL/7JvwpS2GPyUL85c/6xqfuNgGILXqYYr9rIafyX/XPxoy9vhXRbR+GsI
+         sZBaCkZsGJ0ZmAq+UEf2eRL0AngvvMiC8FyjP/RjUnn1OqHVPI9vf71IRsUEQ7I7Y7po
+         FT2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721485360; x=1722090160;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mlwhLGoXMRrfdZQAkxdZajfwEHhGebnvpcGXSKSVCSM=;
+        b=mfg2v3qV/YdQQGZdokj8q0CX4DQkGof8Tv/3cHKs1M2w6S0XR5lVO6wyddkqI/KCOE
+         izJB+1rrIs9SrZUoaigQ1RLit0oKRWAXt8Zv9vtx55rgbMiIyjgOudz1N9uBQ1VIp+Qz
+         acrR0KbX5sRbOOgWoWSMdd5m2GXoh3uZqoVhXt7Jk7c8EG+mhas5uXfYdkEluDCji2rP
+         QLqZUSekKt2fU/EWX770eaqbavoDXA7GjOMKVMRr7Gvtzin8itTtdVhAqJexWQ9DKzI3
+         iafxAYcY3b6FVsUMpLma4GxvjJVN/hW310wiSlFpXur+PbUvnUYufxg//Hh3gU2piq6V
+         yG6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVa/e3BCTlmzdaWaUf/TJqaktFyTq2oXG+3awzWXZHdMp8WPB6MUPp3FN/+64pStF/GJj7NMIzJja82wyPSQ/VaM4iIp0lOJsF50969b5au8tEGtixu2HwItJL7TkjM3l2njnURTNIUO+dbGQ==
+X-Gm-Message-State: AOJu0YxYLKjR/fekXV6m0BB2euMTSHM+G6O05egsgoJeuIL7ACbrDVwN
+	giuOVpgG8fbvnDSllyUuuWMnWJQEpltO16pKhvgUb9j6Aa0XgRfpPACqRha4mqVtNiRQ0kKtUCf
+	0d4ZU2KSGawpZoZL2ZTKehjqReJg=
+X-Google-Smtp-Source: AGHT+IH+aA7myg45AHgdzlVEabeSdItEvQYf5tM9D3qjznL5cMhs+vwvd1ZfMUd/pZ7QhyxRAiDsTSwuI6Ji++UmJSU=
+X-Received: by 2002:adf:ed0a:0:b0:368:5a8c:580b with SMTP id
+ ffacd0b85a97d-369bbbbdcd5mr816352f8f.19.1721485359917; Sat, 20 Jul 2024
+ 07:22:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717182828.1527504-1-masahiroy@kernel.org> <20240719225532.mpm36wh6xa3acl7r@treble>
-In-Reply-To: <20240719225532.mpm36wh6xa3acl7r@treble>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 20 Jul 2024 23:22:13 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARkW74PP73oGLUaPhYvOcku39qNRr-0U6kwEUr6b9b5UQ@mail.gmail.com>
-Message-ID: <CAK7LNARkW74PP73oGLUaPhYvOcku39qNRr-0U6kwEUr6b9b5UQ@mail.gmail.com>
-Subject: Re: [PATCH v2] Makefile: add comment to discourage tools/* addition
- for kernel builds
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jiri Olsa <jolsa@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Brian Norris <briannorris@chromium.org>, Nathan Chancellor <nathan@kernel.org>
+References: <20240614163416.728752-1-yu.ma@intel.com> <20240717145018.3972922-1-yu.ma@intel.com>
+ <20240717145018.3972922-4-yu.ma@intel.com> <CAGudoHHQSjbeuSevyL=W=fhjOOo=bCjq4ixHfEMN_XdRLLdPbQ@mail.gmail.com>
+ <2365dcaf-95d4-462b-9614-83ee9f7c12f6@intel.com>
+In-Reply-To: <2365dcaf-95d4-462b-9614-83ee9f7c12f6@intel.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Sat, 20 Jul 2024 16:22:27 +0200
+Message-ID: <CAGudoHGCZZwQ9EC3aW5bS4Vur7-UHgubLvTQuZa8ct=+m8-fTg@mail.gmail.com>
+Subject: Re: [PATCH v5 3/3] fs/file.c: add fast path in find_next_fd()
+To: "Ma, Yu" <yu.ma@intel.com>
+Cc: brauner@kernel.org, jack@suse.cz, edumazet@google.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com, 
+	tim.c.chen@linux.intel.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 20, 2024 at 7:55=E2=80=AFAM Josh Poimboeuf <jpoimboe@kernel.org=
-> wrote:
+I think this is getting too much fluff traffic at this point, which is
+partially my fault.
+
+I'm buggering off.
+
+Overall the patchset looks good, I don't see any technical reasons to
+avoid merging it.
+
+On Sat, Jul 20, 2024 at 2:57=E2=80=AFPM Ma, Yu <yu.ma@intel.com> wrote:
 >
-> On Thu, Jul 18, 2024 at 03:28:19AM +0900, Masahiro Yamada wrote:
-> > Kbuild provides scripts/Makefile.host to build host programs used for
-> > building the kernel. Unfortunately, there are two exceptions that opt
-> > out of Kbuild. The build system under tools/ is a cheesy replica, and
-> > cause issues. I was recently poked about a problem in the tools build
-> > system, which I do not maintain (and nobody maintains). [1]
+>
+> On 7/20/2024 1:53 AM, Mateusz Guzik wrote:
+> > On Wed, Jul 17, 2024 at 4:24=E2=80=AFPM Yu Ma <yu.ma@intel.com> wrote:
+> >> Skip 2-levels searching via find_next_zero_bit() when there is free sl=
+ot in the
+> >> word contains next_fd, as:
+> >> (1) next_fd indicates the lower bound for the first free fd.
+> >> (2) There is fast path inside of find_next_zero_bit() when size<=3D64 =
+to speed up
+> >> searching.
+> > this is stale -- now the fast path searches up to 64 fds in the lower b=
+itmap
+>
+> Nope, this is still valid, as the searching size of the fast path inside
+> of find_next_fd() is always 64, it will execute the fast path inside of
+> find_next_zero_bit().
+>
+>
 > >
-> > Without a comment, people might believe this is the right location
-> > because that is where objtool lives, even if a more robust Kbuild
-> > syntax satisfies their needs. [2]
+> >> (3) After fdt is expanded (the bitmap size doubled for each time of ex=
+pansion),
+> >> it would never be shrunk. The search size increases but there are few =
+open fds
+> >> available here.
+> >>
+> >> This fast path is proposed by Mateusz Guzik <mjguzik@gmail.com>, and a=
+greed by
+> >> Jan Kara <jack@suse.cz>, which is more generic and scalable than previ=
+ous
+> >> versions.
+> > I think this paragraph is droppable. You already got an ack from Jan
+> > below, so stating he agrees with the patch is redundant. As for me I
+> > don't think this warrants mentioning. Just remove it, perhaps
+> > Christian will be willing to massage it by himself to avoid another
+> > series posting.
 >
-> I think the original idea (from Ingo?) was to make objtool portable so
-> it could be easily copied and built separately without getting too
-> intertwined with the kernel source.
+> The idea of fast path for the word contains next_fd is from you,
+> although this patch is small, I think it is reasonable to record here
+> out of my respect. Appreciate for your guide and comments on this patch,
+> I've learned a lot on the way of resolving problems :)
 >
-> I think that's still a useful goal.  To my knowledge it's been used in
-> at least one other code base and could be used elsewhere going forward
-> as much of its functionality might be transferable to other code bases.
 >
-> Also being in tools helps it shares library code (libsubcmd) and
-> synced headers with perf (and others).
+> Regards
 >
-> If there's some other way to make it portable and allow it to share code
-> with other tools that then I wouldn't object to moving it to scripts.
+> Yu
 >
-> Or, if the main problem is that there are two custom build systems (one
-> of them being a cheap knockoff), could kbuild be made portable enough to
-> be used in tools?
+> >> And on top of patch 1 and 2, it improves pts/blogbench-1.1.0 read by
+> >> 8% and write by 4% on Intel ICX 160 cores configuration with v6.10-rc7=
+.
+> >>
+> >> Reviewed-by: Jan Kara <jack@suse.cz>
+> >> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+> >> Signed-off-by: Yu Ma <yu.ma@intel.com>
+> >> ---
+> >>   fs/file.c | 9 +++++++++
+> >>   1 file changed, 9 insertions(+)
+> >>
+> >> diff --git a/fs/file.c b/fs/file.c
+> >> index 1be2a5bcc7c4..729c07a4fc28 100644
+> >> --- a/fs/file.c
+> >> +++ b/fs/file.c
+> >> @@ -491,6 +491,15 @@ static unsigned int find_next_fd(struct fdtable *=
+fdt, unsigned int start)
+> >>          unsigned int maxfd =3D fdt->max_fds; /* always multiple of BI=
+TS_PER_LONG */
+> >>          unsigned int maxbit =3D maxfd / BITS_PER_LONG;
+> >>          unsigned int bitbit =3D start / BITS_PER_LONG;
+> >> +       unsigned int bit;
+> >> +
+> >> +       /*
+> >> +        * Try to avoid looking at the second level bitmap
+> >> +        */
+> >> +       bit =3D find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_LO=
+NG,
+> >> +                                start & (BITS_PER_LONG - 1));
+> >> +       if (bit < BITS_PER_LONG)
+> >> +               return bit + bitbit * BITS_PER_LONG;
+> >>
+> >>          bitbit =3D find_next_zero_bit(fdt->full_fds_bits, maxbit, bit=
+bit) * BITS_PER_LONG;
+> >>          if (bitbit >=3D maxfd)
+> >> --
+> >> 2.43.0
+> >>
+> >
 
-
-I checked Debian and Fedora, but I did not find such a package that provide=
-s
-objtool as a standalone tool.
-
-In reality, objtool is tightly bound to the kernel source.
-If people had thought it useful outside the kernel tree,
-such a disto package would have been widely available.
-
-I do not think there is a good reason to complicate Kbuild
-based on the hypothetical statement.
 
 
 --=20
-Best Regards
-Masahiro Yamada
+Mateusz Guzik <mjguzik gmail.com>
 
