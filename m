@@ -1,89 +1,109 @@
-Return-Path: <linux-kernel+bounces-257819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C977D937F5E
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 09:01:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC451937F61
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 09:03:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3A691C21227
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 07:01:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8699FB215D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 07:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B4917597;
-	Sat, 20 Jul 2024 07:01:07 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59070179AB;
+	Sat, 20 Jul 2024 07:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BWouzIlP"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8011323D
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 07:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3593F15AE0
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 07:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721458867; cv=none; b=qpV07vuGr6UiyLC/+b9sp86bstVL2V5I+5zyIAxkibdqCmjDlYtNYjvV5DeOn1Mq1YsIQjG7xTVF8iIhpl8re3q42Mgkv4AHNxmxNzDgZQAbk634Sh6dabiYIIYajmOfJXAKtTx8Smk7KhQgsECkUDstDZ2TVKN97vGLqh553GU=
+	t=1721458999; cv=none; b=oFlZ/RquWL0oe+3Tu2B/uGLkzOa4X29To8i4b6leAKtLNEX1UUPe9dutG+lXcz0qGpJIkYgpgEvEEhfDbkqVEA+vLw5ZzvoiUJab+BZvGKS8hrBnckchHol3dtCXWz3Wzzy7KvBbIZt9m95CHhGgX0wgHMOAyf1eQ2TjS2aS4HA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721458867; c=relaxed/simple;
-	bh=Yz1O2g221nEwW1ySzr2gAc3UEWukWUaHJd2+GJti/Ko=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=hNh5ZMnLqqrAn9aDsZ7orIbcvKNg/t/ZiSoLhMEF3Y81YI00rhRZ06EpGw06CBHQ6oFLzFyqMiElQzTYU1PxurOIX3hiv68/N5hkI7XSUnqHXg9CW5i4NbC0fl4uTfV07he6bJpfy+QbCJ5PYNrOXKB4Nl5B5NTcmqkc82V0EzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39794551bfbso28540945ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 00:01:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721458865; x=1722063665;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tRtgiKoJlbWVewhYHDKUC7MKTzVRf15AxwXYdDy3neo=;
-        b=XzKtFKX4lZSjs/G7kOgqgdsGmLgO9HiXoUFgyj023jLffKYFtODzDmOyLfnin2sQRd
-         2Tqx6qHqiljdz+7cCa8WhdMkjDyn9mZRhO4/NBAoRL3NBOvbuhveJxUpsM7dIepv9koS
-         gcRxK4YmG3Av7BhxoIsie5bHgTlCOR1Fq2NAU5FxJ9DiaF1JudhVCKMk1Pg+IRhfpXrF
-         KVAJ33dJWxAcCj/830B1In5SvqGyHTLv5nyWhrARiQ/K3whB/DoxVtM3min3WV8dggDr
-         UtphuDYtmYehNH5JWYWuXJujXuZReLKmOd9QERvdfZXHOTOx0V4L+mn6up7C81TX7tmS
-         sDGw==
-X-Forwarded-Encrypted: i=1; AJvYcCXOaOG/BemRVnPTpIUFmBudHafVu+AtPQfi8p8TDy4oZ9CKY6ypWYx9bRUDouTMC/SF+2yJ447iUJfr5V5i+1qOk2SeT3LwobJHgA6E
-X-Gm-Message-State: AOJu0YwvFk4CEyeE9gu5LrUWX+BsStPdJbSqRWdCjCWAzy7I87ZZVqLF
-	aCpwd4xg6a3P2ebUTn+LnqPWiwxUeaz7OXayhiNEAGxoORvwARKuFn/BeibxVNVnRVoNqn9XeRQ
-	8S6nVRz5N6RM0HZkQuSpAo6nZuzfUAfnQKl6Rn8MIKdLDhkIWuOgQJ4U=
-X-Google-Smtp-Source: AGHT+IGEDJnDkvcwBjRxRpWrrnKr1Drq+P8VhRF0N5HOYOyde1q36FZz6i6zquqfCx3x8mAPqg+di33554zDN7Pka/y+bTP7g9dD
+	s=arc-20240116; t=1721458999; c=relaxed/simple;
+	bh=1d4rj1ENyT2bE7yRVA3GEiplBLH4UjpvL5h5t1+rrxo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Xr06/Pg3/fguV1lud/ec19nLur34szm8oifnr1I951x0cnNhODT3wh25+rDYjJsmI9+jrrQBucIEqQiT9QGkATjaobxISbW8V/HLi20FF7oisurGyKMak1RaPXVyYq4AWCdExhKrKJQGaqmy0x4bpKtKUir86sBTVIfXbex0s7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BWouzIlP; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1721458985; x=1722063785; i=markus.elfring@web.de;
+	bh=1d4rj1ENyT2bE7yRVA3GEiplBLH4UjpvL5h5t1+rrxo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=BWouzIlPeq87F7WCF9/+ASx0EnDi9C3aJTt38NAQmOwgDj09i4rkQ2QCsWq66In0
+	 +3S1cKWB5yEMLDzQVretIBxMe1BIo7AszE10TfvB7vUg5/7IJe700cIqev65GoAFs
+	 Wjv3J2yg+PCpKmcgMEY4CT9Tb+i216jYbs6AbJ2O9TUE2f66BO2lzDoMEbru63VHp
+	 AOMPdxwwCNx9u1ITCE0ZBvtBDPrWA+pdz2dDhBNqm75+s5jMIJBqeO5uRNTgfWCOS
+	 algHj/gem+jvQHL3/EUP6t+/P4+HIBq7kmlKCaqyYoLEVjppRPiNuVYX5GxVKtUCJ
+	 w9CMSa4mdahsk4+Cog==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Ma0Pm-1ss5BF0Dsi-00WHCF; Sat, 20
+ Jul 2024 09:03:05 +0200
+Message-ID: <af131c5b-2aeb-4875-82c2-e033d8250685@web.de>
+Date: Sat, 20 Jul 2024 09:03:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c28:b0:395:fa9a:318e with SMTP id
- e9e14a558f8ab-398e17ab520mr1930185ab.0.1721458864742; Sat, 20 Jul 2024
- 00:01:04 -0700 (PDT)
-Date: Sat, 20 Jul 2024 00:01:04 -0700
-In-Reply-To: <IA0PR11MB7185B8D0CCCC219FDA647325F8AE2@IA0PR11MB7185.namprd11.prod.outlook.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000020f6f8061da86023@google.com>
-Subject: Re: [syzbot] [mm?] BUG: Bad page map (8)
-From: syzbot <syzbot+ec4b7d82bb051330f15a@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, hughd@google.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, 
-	vivek.kasireddy@intel.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: George Yang <George.Yang@amd.com>, Lizhi Hou <lizhi.hou@amd.com>,
+ Min Ma <min.ma@amd.com>, Narendra Gutta
+ <VenkataNarendraKumar.Gutta@amd.com>, dri-devel@lists.freedesktop.org,
+ Oded Gabbay <ogabbay@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Max Zhen <max.zhen@amd.com>,
+ Sonal Santan <sonal.santan@amd.com>
+References: <20240719175128.2257677-2-lizhi.hou@amd.com>
+Subject: Re: [PATCH 01/10] accel/amdxdna: Add a new driver for AMD AI Engine
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240719175128.2257677-2-lizhi.hou@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Nj8xCOuGKQDF5HRs1OkgnCh0D2KadxhyvD5PueweTe8eLSCtTyz
+ 5R0K2KI3rpa3H4JKkzDFi1IkLRZrOt73DLgjElGZe5kFoLJesuFrP+tV+70StpCf59Rtkqd
+ raP1OK24w5ZwZt+TkuKSWtijfIoOrLE433/08n7WKSmwFbfzaoblFUHzlt7lNwGv0fZr5yt
+ Giv4I7cQHJ7ZsHIujkIpg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:cWiOIh88dwM=;qRaFtUxJO3Cur7t1GgjTJCq5Gis
+ MFQAkdwzK9VvmSJCg203JfGdp9OvclCIJQze7Qx29UduMDUN4DhheM/BPj5WW9EbVKqB4h3jZ
+ lXBRVmx7+xT98LYEh369k7zLqzy8c5HzwDdUBGjcmdh4jOEaCNp1eSpGiSbQfw4pttdBMUVoF
+ fbXk0ng1ZYwGMXNqTl3oeNqYpvUey/f0pBGRwsf8rEr7CFjvigRV4+R32w0m85Pj9GKJTaNzg
+ WqxbaCZ5PT5K/9CZRMrx7DLuyYoer3oBpFd12ZqgqnbFGmpSzbJ4ztUmnMZjpfqm+QUF02Q6+
+ sit3wWDDmwXKujMda5hgqtRX45knBRRLH5VCIpm//XEJySfteGDS4GjLUui1607Ld0xNz0V2c
+ 3jRenHDXAYr1Dv8rqRh9nYavE6d6wnzQC4d1904e3ZNW1ORvQse08KvDuXJdF55ThG76IIpjC
+ lU7z/L8q6N5D2CUN2DjtrsC3x4Tx+U6pXXmJljeYCsmi8G3XjGLEDR3SB04+mXhb3PyruAJQN
+ /YQkw+tNNPGjIkTgpltCMAaKcrPHS1ZlJbd1lnbNlH7l4oZUAeAxeVgglokzWSl1fUe7yJj2b
+ 6KpaAplvLtOAi9XFkZo4dgl6+BAbrk96xoG8iOEl4ZOLwAaw4ulLs4k02ZOcP7AScF2Ec5WWS
+ AuEKAyBfUkiXbOGVcz6HIQirBAt/3qePKwOa6VXdZdTB7BqhMIu6nL3qdMJw5NWW4qRLkyUQA
+ cZY6pwyWEw4fQeWUpf4YMJof8Pnp/iWOE25NMub3JjNRTpDJtDmr0BcPkKZxZOXJhS9pBbGiX
+ +6gO/e/WYK3jLq+VN8eXvWGA==
 
-Hello,
+=E2=80=A6
+> +++ b/drivers/accel/amdxdna/aie2_pci.h
+> @@ -0,0 +1,144 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2023-2024, Advanced Micro Devices, Inc.
+> + */
+> +
+> +#ifndef _AIE2_PCI_H_
+> +#define _AIE2_PCI_H_
+=E2=80=A6
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Please omit leading underscores from such identifiers.
+https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+d=
+efine+a+reserved+identifier
 
-Reported-by: syzbot+ec4b7d82bb051330f15a@syzkaller.appspotmail.com
-Tested-by: syzbot+ec4b7d82bb051330f15a@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         581a87b1 fixup! mm/gup: introduce memfd_pin_folios() f..
-git tree:       https://gitlab.freedesktop.org/Vivek/drm-tip.git syzbot_fix_remove_inode
-console output: https://syzkaller.appspot.com/x/log.txt?x=142f1179980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=16fdddce5d38a1c8
-dashboard link: https://syzkaller.appspot.com/bug?extid=ec4b7d82bb051330f15a
-compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+Regards,
+Markus
 
