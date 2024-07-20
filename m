@@ -1,394 +1,123 @@
-Return-Path: <linux-kernel+bounces-258031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFE8B93824F
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 19:35:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E949938250
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 19:38:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 566D7B21167
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 17:35:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF9A41C20F2A
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 17:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E1B1482F2;
-	Sat, 20 Jul 2024 17:35:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1691482F2;
+	Sat, 20 Jul 2024 17:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iP1FWdw+"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="nJBVhH0K"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32E713C90E
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 17:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A642BCF4
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 17:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721496949; cv=none; b=buCbQ7VIqFGHd9e2voC/lzyk7N18bXKvNLvwxwx2k9ObG6GxkHyn6d+kj0pBiJlOu5Bc5qfHxGiK0hU+6t94nCQLAguNNbQL1q4jRmbY35a5dw3Az8WdBkPqnhv9Td2cbGoe3BFUS7XzqCLIE7OyAAO3l0fZ0JGkPLW11ZWPCO0=
+	t=1721497099; cv=none; b=SGPo38Z+26QA+RQf3mHTgwjMsRCvRLsKSeMdBnucLTsk1vhnk88aQV0yYeV6v2QQmux7oUoJCK4b1YIP3AQJKy1AFCs24tcqUb4I5aJc+2GjzRC1JiWmAzl5gG7C5x1UOzydzqy2sYOHp3+PUjzl/38OF4Pfw+4JZKN2BvBf1/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721496949; c=relaxed/simple;
-	bh=LvRSHwLdgeGqyQRCJRuAKoBoowAcwZfAq3RdDO2MjII=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=K7dgGvxvffepwOTXjxDi/AZwMSkBAlr5/6p/TtbNcNmVJnQc8TDIMPBTINQ9zQBQNqtfzFtCvHHpKIFCDnIQmI7bpwB3yzcVZNRIQSQ5k5oCBf9Y2LkAMIMKjg4txN+7XxBDOAPs99/EekyhUg79x9ZDbykwalKKhBjYLdagfXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jglisse.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iP1FWdw+; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jglisse.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e033e353528so5559505276.0
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 10:35:47 -0700 (PDT)
+	s=arc-20240116; t=1721497099; c=relaxed/simple;
+	bh=tE3tp8gaxhwp2gKoWeh8kQuL//yIMJqCdlXobYU4jTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GN13wpwnIPmWkZCuZNRv/kKBUh2o3zJwjuPcNChwQd7vLfJD7vOHodvJuF+VidAlkf3dxz3suozb0QMAjh6phCdRyVZWkD1al1g0tLx5Y9fGbZqXODTeHMdye7sF5Ta1umWff8ytcLapC4dXQAjFuACCgHr4v2+FXSZbRI8nxIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=nJBVhH0K; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70b1207bc22so1483914b3a.3
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 10:38:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721496946; x=1722101746; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jSTDR4P/Fbj8rjRW35CmYmprz89sVj3I9HRlwsNtEQw=;
-        b=iP1FWdw+vsA89XCJm27Tkf/0pvllo8VsxxmZztBmhcbQLk7eXpIZhvh2Rbc3+dq7QY
-         M/WmljA7Bpj6z3MiBxoSJikfd5Lvb11gM+ZmMHrMY1sNdRwLoobtem647zGvk4JoPhNX
-         pyRPSluUafEtQRj4TMji1GFYIekxfH2J8Y88n+KzH8ug3I1vMfSnoXtVGE648/isrALN
-         Xq74xVGS2ItqomttHU9C2/IerJc4k4uJV3n/BqqthsWaiuclcaCkinC4gnyZULMOiQiE
-         UjyfQ4m1zRzgEDE/eELnvliwkqk0Z+1OyNkuJtQ5hOgfW27y5F3O8d8gmGKHxGilTiWh
-         msbg==
+        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1721497097; x=1722101897; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sWCpCh1RT5YH2JXj048b4CuDC0szEul1kcrCj/vFPLU=;
+        b=nJBVhH0KNsK7pgmuTgmT4SaW3nBO0Kip5u5Tc9FmUXIRpongXy0+nrX8TxlgaH3BER
+         SxeO5poQ49EXDXPJS3qnXzUWUNwQZ7thGTcx/n1x8ex5m/ALJuBQza944KSqRI+brC4B
+         +W5U8Xd/Ue8iMCmxCVaOw3uwCb8K2jE3qB80sCSDfjRHTmdPCm4nuFwvq+60IQrEVldZ
+         N7vdGPPs6Kd1gQVIoGNE29cBeX5PVm2I5tximXlXOsiZL2QxlGCemrrORSLA+4OqTpRV
+         G7wa3/GU0tPIX4809opnjUr8f7gjInmMtWDtOScjtmpmQD3dfiM9oHXpQ274l7kTgkQZ
+         F8Tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721496946; x=1722101746;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1721497097; x=1722101897;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jSTDR4P/Fbj8rjRW35CmYmprz89sVj3I9HRlwsNtEQw=;
-        b=fXAY+pSug8f/7b5vClcSMac8sU7DEkO7U4Qy2tR6iEDpaOldLIlO54KjJu/0v89nk7
-         qvu9P5ksIQQ9E2JOVzRjJ38AJMuupTmkg4QCsY6Vq2xFFN94JE0wKRFptJzDLcCnd3Fa
-         c/HN1XpEdih51THo0YHZ7mWkc33HDdKIvFavQQkieRbHl/iQZVQ+nlDEfaWSgiDyAqZC
-         Gou3e8OonXqQLorTW4NW8hbnJJXPKyoMKAx2zau2b+DxmAHq58iGdXVQiMr9hBjFiXRB
-         DgANg1tqkmaiMuG8VVqOnF1/OyOdPFooIKc0aoO6hXGiiQn0/1L642t0s/31T1ZpUxR3
-         QQJA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7qXGo+aqgAXLd1Ei/2yfhyJeRhzkCIPiQ/xWIH2bv0mo/mjRVnghd6XfEui2/2fLmJ5YEhKtg4cRQwgFqWksc6fRxFvuah5dTAz4S
-X-Gm-Message-State: AOJu0YyQ6O7cnUL/kWorHOAPn6hrW83OUEcy+gKkg5Fphp8qRuHnVwNi
-	qDcM1YF10Aqx/w5R2CRcC93JU/x+3E6+aKb7OyPklL9vZ/Xj3FBsYWd3XK3kWK7uBHpED4ztCSI
-	XHTOv1w==
-X-Google-Smtp-Source: AGHT+IHzHGE+4Mf1AVi4KXPPKK23kOipnaPWrS8JnK0Wo6p7UpxnYoWF5JzEWZ4ozvZkdPd2aV+vcVPXamGR
-X-Received: from jglisse-desktop.svl.corp.google.com ([2620:15c:2a3:200:5d5c:1221:33d8:1aa1])
- (user=jglisse job=sendgmr) by 2002:a05:6902:1109:b0:e02:5b08:d3a with SMTP id
- 3f1490d57ef6-e086fcb109emr25253276.0.1721496946462; Sat, 20 Jul 2024 10:35:46
- -0700 (PDT)
-Date: Sat, 20 Jul 2024 10:35:43 -0700
+        bh=sWCpCh1RT5YH2JXj048b4CuDC0szEul1kcrCj/vFPLU=;
+        b=F9cb9LqeZ1DHUu93eywmZ2one5MTXtgQVuVUyzBxcrnwXp73pAgOrZJ06Bi3crHaTI
+         ChTFhmQ3/Dp2QCPu4g6sNMud7ZMUyQBWXr3Cgw69Soe6HLs0zsxGT2bBJapM5dHnlp9W
+         /qwsfeU8aAEQHCEpc9YB6cmE1f5jyNtSbSqV/gvstq/4i/KfsHzXmhvAwoE5m/aaLsHu
+         0vwOYLg4x74TuJ4FkpVza+6j2iTeavFwB05Ys7QWmRC2BURDwgrEDUwK/axmd5n1PfZI
+         8pgxOPAqextjECmP4uE0Bqlaky9X3/t8PokxSMew+2byiL4CF3NgLdmj9Byh2kJk/bCa
+         NgYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXU7cZXfCkz2diWglsVvAHr1FpCRsXZ9qTURoTWwyVjWAzrSexHl2CXBkKzr0+UyrNUVs8J1Qarst5VLwMEGs81M4MVXZBoC/5gvJgp
+X-Gm-Message-State: AOJu0YzZ65y/S5o3Rxuyhffh3e2NKr3K+3PQxNf4ukMfAeSwjfkkB0gO
+	VJTlsFZrCY0PWgZtHBW7fpJ8VV2PfSHeJ8fqdHFV5Lk1BW5UaDFJsf8TKQ02zy5BoA8ZlNpBSux
+	q
+X-Google-Smtp-Source: AGHT+IEZBuHQCUjuHktI2zZF92KPVH9iMx+hzhdgFbNzWtZpsCoZ0ZRMaTcAb2VDQAUawu8u74y0Qg==
+X-Received: by 2002:a05:6a00:3e21:b0:70b:2ffd:424f with SMTP id d2e1a72fcca58-70d084f41bamr4758393b3a.15.1721497097427;
+        Sat, 20 Jul 2024 10:38:17 -0700 (PDT)
+Received: from x1 ([2601:1c2:1802:170:9097:70ec:aab6:b6a8])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70d19312aa1sm388877b3a.121.2024.07.20.10.38.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 20 Jul 2024 10:38:17 -0700 (PDT)
+Date: Sat, 20 Jul 2024 10:38:14 -0700
+From: Drew Fustini <drew@pdp7.com>
+To: Palmer Dabbelt <palmer@rivosinc.com>
+Cc: sboyd@kernel.org, mturquette@baylibre.com, jszhang@kernel.org,
+	dfustini@tenstorrent.com, frank.li@vivo.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: T-Head: Disable on 32-bit Targets
+Message-ID: <Zpv2Btw3dUXaJxp9@x1>
+References: <20240719151027.16152-1-palmer@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.1089.g2a221341d9-goog
-Message-ID: <20240720173543.897972-1-jglisse@google.com>
-Subject: [PATCH] mm: fix maxnode for mbind(), set_mempolicy() and migrate_pages()
-From: Jerome Glisse <jglisse@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc: Jerome Glisse <jglisse@google.com>, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240719151027.16152-1-palmer@rivosinc.com>
 
-Because maxnode bug there is no way to bind or migrate_pages to the
-last node in multi-node NUMA system unless you lie about maxnodes
-when making the mbind, set_mempolicy or migrate_pages syscall.
+On Fri, Jul 19, 2024 at 08:10:27AM -0700, Palmer Dabbelt wrote:
+> From: Palmer Dabbelt <palmer@rivosinc.com>
+> 
+> This fails to build on 32-bit targets because of a missing __udivdi3.
+> IIRC the right way to fix that is to avoid the division, but I just want
+> a tree that builds and the only real T-Head platforms are 64-bit right
+> now.
+> 
+> Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+> ---
+>  drivers/clk/thead/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/thead/Kconfig b/drivers/clk/thead/Kconfig
+> index 1710d50bf9d4..95e0d9eb965e 100644
+> --- a/drivers/clk/thead/Kconfig
+> +++ b/drivers/clk/thead/Kconfig
+> @@ -3,6 +3,7 @@
+>  config CLK_THEAD_TH1520_AP
+>  	bool "T-HEAD TH1520 AP clock support"
+>  	depends on ARCH_THEAD || COMPILE_TEST
+> +	depends on 64BIT
+>  	default ARCH_THEAD
+>  	select REGMAP_MMIO
+>  	help
+> -- 
+> 2.45.2
+> 
 
-Manpage for those syscall describe maxnodes as the number of bits in
-the node bitmap ("bit mask of nodes containing up to maxnode bits").
-Thus if maxnode is n then we expect to have a n bit(s) bitmap which
-means that the mask of valid bits is ((1 << n) - 1). The get_nodes()
-decrement lead to the mask being ((1 << (n - 1)) - 1).
+Acked-by: Drew Fustini <drew@pdp7.com>
 
-The three syscalls use a common helper get_nodes() and first things
-this helper do is decrement maxnode by 1 which leads to using n-1 bits
-in the provided mask of nodes (see get_bitmap() an helper function to
-get_nodes()).
+Sorry about that. This patch makes sense as the TH1520 SoC is 64-bit
+and I see no valid use case to run a 32-bit kernel on it.
 
-The lead to two bugs, either the last node in the bitmap provided will
-not be use in either of the three syscalls, or the syscalls will error
-out and return EINVAL if the only bit set in the bitmap was the last
-bit in the mask of nodes (which is ignored because of the bug and an
-empty mask of nodes is an invalid argument).
-
-I am surprised this bug was never caught ... it has been in the kernel
-since forever.
-
-People can use the following function to detect if the kernel has the
-bug:
-
-bool kernel_has_maxnodes_bug(void)
-{
-    unsigned long nodemask =3D 1;
-    bool has_bug;
-    long res;
-
-    res =3D set_mempolicy(MPOL_BIND, &nodemask, 1);
-    has_bug =3D res && (errno =3D=3D EINVAL);
-    set_mempolicy(MPOL_DEFAULT, NULL, 0);
-    return has_bug;
-}
-
-You can tested with any of the three program below:
-
-gcc mbind.c -o mbind -lnuma
-gcc set_mempolicy.c -o set_mempolicy -lnuma
-gcc migrate_pages.c -o migrate_pages -lnuma
-
-First argument is maxnode, second argument is the bit index to set in
-the mask of node (0 set the first bit, 1 the second bit, ...).
-
-./mbind 2 1 & sleep 2 && numastat -n -p `pidof mbind` && fg
-./set_mempolicy 2 1 & sleep 2 && numastat -n -p `pidof set_mempolicy` && fg
-./migrate_pages 2 1 & sleep 2 && numastat -n -p `pidof migrate_pages` && fg
-
-mbind.c %< ----------------------------------------------------------
-
-void *anon_mem(size_t size)
-{
-    void *ret;
-
-    ret =3D mmap(NULL, size, PROT_READ|
-               PROT_WRITE, MAP_PRIVATE|
-               MAP_ANON, -1, 0);
-    return ret =3D=3D MAP_FAILED ? NULL : ret;
-}
-
-unsigned long mround(unsigned long v, unsigned long m)
-{
-    if (m =3D=3D 0) {
-        return v;
-    }
-
-    return v + m - (v % m);
-}
-
-void bitmap_set(void *_bitmap, unsigned long b)
-{
-    uint8_t *bitmap =3D _bitmap;
-
-    bitmap[b >> 3] |=3D (1 << (b & 7));
-}
-
-int main(int argc, char *argv[])
-{
-    unsigned long *nodemask, maxnode, node, i;
-    size_t bytes;
-    int8_t *mem;
-    long res;
-
-    if (argv[1] =3D=3D NULL || argv[2] =3D=3D NULL) {
-        printf("missing argument: %s maxnodes node\n", argv[0]);
-        return -1;
-    }
-    maxnode =3D atoi(argv[1]);
-    node =3D atoi(argv[2]);
-
-    bytes =3D mround(mround(maxnode, 8) >> 3,
-                   sizeof(unsigned long));
-    nodemask =3D calloc(bytes, 1);
-    mem =3D anon_mem(NPAGES << 12);
-    if (!mem || !nodemask) {
-        return -1;
-    }
-
-    // Try to bind memory to node
-    bitmap_set(nodemask, node);
-    res =3D mbind(mem, NPAGES << 12, MPOL_BIND,
-                nodemask, maxnode, 0);
-    if (res) {
-        printf("mbind(mem, NPAGES << 12, MPOL_BIND, "
-               "nodemask, %d, 0) failed with %d\n",
-               maxnode, errno);
-        return -1;
-    }
-
-    // Write something to breakup from the zero page
-    for (unsigned i =3D 0; i < NPAGES; i++) {
-        mem[i << 12] =3D i + 1;
-    }
-
-    // Allow numastats to gather statistics
-    getchar();
-
-    return 0;
-}
-
-set_mempolicy %< ----------------------------------------------------
-
-void *anon_mem(size_t size)
-{
-    void *ret;
-
-    ret =3D mmap(NULL, size, PROT_READ|
-               PROT_WRITE, MAP_PRIVATE|
-               MAP_ANON, -1, 0);
-    return ret =3D=3D MAP_FAILED ? NULL : ret;
-}
-
-unsigned long mround(unsigned long v, unsigned long m)
-{
-    if (m =3D=3D 0) {
-        return v;
-    }
-
-    return v + m - (v % m);
-}
-
-void bitmap_set(void *_bitmap, unsigned long b)
-{
-    uint8_t *bitmap =3D _bitmap;
-
-    bitmap[b >> 3] |=3D (1 << (b & 7));
-}
-
-int main(int argc, char *argv[])
-{
-    unsigned long *nodemask, maxnode, node, i;
-    size_t bytes;
-    int8_t *mem;
-    long res;
-
-    if (argv[1] =3D=3D NULL || argv[2] =3D=3D NULL) {
-        printf("missing argument: %s maxnodes node\n", argv[0]);
-        return -1;
-    }
-    maxnode =3D atoi(argv[1]);
-    node =3D atoi(argv[2]);
-
-    // bind memory to node 0 ...
-    i =3D 1;
-    res =3D set_mempolicy(MPOL_BIND, i, 2);
-    if (res) {
-        printf("set_mempolicy(MPOL_BIND, []=3D1, %d) "
-               "failed with %d\n", maxnode, errno);
-        return -1;
-    }
-
-    bytes =3D mround(mround(maxnode, 8) >> 3,
-                   sizeof(unsigned long));
-    nodemask =3D calloc(bytes, 1);
-    mem =3D anon_mem(NPAGES << 12);
-    if (!mem || !nodemask) {
-        return -1;
-    }
-
-    // Try to bind memory to node
-    bitmap_set(nodemask, node);
-    res =3D set_mempolicy(MPOL_BIND, nodemask, maxnode);
-    if (res) {
-        printf("set_mempolicy(MPOL_BIND, nodemask, %d) "
-               "failed with %d\n", maxnode, errno);
-        return -1;
-    }
-
-    // Write something to breakup from the zero page
-    for (unsigned i =3D 0; i < NPAGES; i++) {
-        mem[i << 12] =3D i + 1;
-    }
-
-    // Allow numastats to gather statistics
-    getchar();
-
-    return 0;
-}
-
-migrate_pages %< ----------------------------------------------------
-
-void *anon_mem(size_t size)
-{
-    void *ret;
-
-    ret =3D mmap(NULL, size, PROT_READ|
-               PROT_WRITE, MAP_PRIVATE|
-               MAP_ANON, -1, 0);
-    return ret =3D=3D MAP_FAILED ? NULL : ret;
-}
-
-unsigned long mround(unsigned long v, unsigned long m)
-{
-    if (m =3D=3D 0) {
-        return v;
-    }
-
-    return v + m - (v % m);
-}
-
-void bitmap_set(void *_bitmap, unsigned long b)
-{
-    uint8_t *bitmap =3D _bitmap;
-
-    bitmap[b >> 3] |=3D (1 << (b & 7));
-}
-
-int main(int argc, char *argv[])
-{
-    unsigned long *old_nodes, *new_nodes, maxnode, node, i;
-    size_t bytes;
-    int8_t *mem;
-    long res;
-
-    if (argv[1] =3D=3D NULL || argv[2] =3D=3D NULL) {
-        printf("missing argument: %s maxnodes node\n", argv[0]);
-        return -1;
-    }
-    maxnode =3D atoi(argv[1]);
-    node =3D atoi(argv[2]);
-
-    // bind memory to node 0 ...
-    i =3D 1;
-    res =3D set_mempolicy(MPOL_BIND, &i, 2);
-    if (res) {
-        printf("set_mempolicy(MPOL_BIND, []=3D1, %d) "
-               "failed with %d\n", maxnode, errno);
-        return -1;
-    }
-
-    bytes =3D mround(mround(maxnode, 8) >> 3,
-                   sizeof(unsigned long));
-    old_nodes =3D calloc(bytes, 1);
-    new_nodes =3D calloc(bytes, 1);
-    mem =3D anon_mem(NPAGES << 12);
-    if (!mem || !new_nodes || !old_nodes) {
-        return -1;
-    }
-
-    // Write something to breakup from the zero page
-    for (unsigned i =3D 0; i < NPAGES; i++) {
-        mem[i << 12] =3D i + 1;
-    }
-
-    // Try to bind memory to node
-    bitmap_set(old_nodes, 0);
-    bitmap_set(new_nodes, node);
-    res =3D migrate_pages(getpid(), maxnode,
-                        old_nodes, new_nodes);
-    if (res) {
-        printf("migrate_pages(pid, %d, old_nodes, "
-               "new_nodes) failed with %d\n",
-               maxnode, errno);
-        return -1;
-    }
-
-    // Allow numastats to gather statistics
-    getchar();
-
-    return 0;
-}
-
-Signed-off-by: J=C3=A9r=C3=B4me Glisse <jglisse@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-To: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
----
- mm/mempolicy.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index aec756ae5637..658e5366d266 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -1434,7 +1434,6 @@ static int get_bitmap(unsigned long *mask, const unsi=
-gned long __user *nmask,
- static int get_nodes(nodemask_t *nodes, const unsigned long __user *nmask,
- 		     unsigned long maxnode)
- {
--	--maxnode;
- 	nodes_clear(*nodes);
- 	if (maxnode =3D=3D 0 || !nmask)
- 		return 0;
---=20
-2.45.2.1089.g2a221341d9-goog
-
+Drew
 
