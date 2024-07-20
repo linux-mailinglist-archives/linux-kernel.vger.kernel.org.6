@@ -1,266 +1,351 @@
-Return-Path: <linux-kernel+bounces-257891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA18493802B
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 11:18:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D58793802D
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 11:18:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DA431F21620
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 09:18:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF33C1C217BB
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 09:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA3043AB5;
-	Sat, 20 Jul 2024 09:18:31 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5650140847;
-	Sat, 20 Jul 2024 09:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981F545014;
+	Sat, 20 Jul 2024 09:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="i3P6y2Ys"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFC92C861;
+	Sat, 20 Jul 2024 09:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721467111; cv=none; b=qrRV1Q96B1n0DM7nVyb/jGcYIHLUdXLH/BULAS9K7ErTD/KZF2tg8ZFeyxIXA3C+EwfkigJeF4Pb99nx2ykDi26Qf0FE1rGUBf7NMMwH92wORroVbXVFONrERxVPtfKqK/Bw1etMX7D3qO/XxJbAZJwQStnHLoFe9iA5PP0gBC8=
+	t=1721467130; cv=none; b=Jo6E0rDDJStKTRXkPlmBlbW9f+1AabuTXDjQuEjVDukpUJTFuEKdKS+Q9wZ4H0oKDsA8+oLmJ8DZRPiE7I4Hfwmlk3ePJoozCA8YH4bLhl5ttoC+w0o+55QD8U2eVwA+75H+UCzvQXdmu70JclkoFR2Vp2xZZIY0arK0c4Unabw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721467111; c=relaxed/simple;
-	bh=RPwyQbwqvRgBP+VveXrsTKNEFUjAr7zvvqPcMpNTUSc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PmOZhyakC8IDOPgqnCVOjBo2/CQ+Zmbo/Aa891OzyzeseNpGfhPJeLigfqXY9/XzUa8Dv0gCXUuaE5p0WFhBG9Vr2mIwRzsiOtBWMJa3eTqafbZ+WiPR47C/OASt31hmmmv5ILm0Vakk8Jh0NMwMB6KOvBmLCg10w887Qc72Aec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1sV6EJ-0005Xm-00; Sat, 20 Jul 2024 11:18:15 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 7903CC0814; Sat, 20 Jul 2024 11:18:03 +0200 (CEST)
-Date: Sat, 20 Jul 2024 11:18:03 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: torvalds@linux-foundation.org
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] MIPS changes for v6.11
-Message-ID: <ZpuAyzljTBjd6a7g@alpha.franken.de>
+	s=arc-20240116; t=1721467130; c=relaxed/simple;
+	bh=UVsVuDZbuz1kAPYLhkCeq4nQvmEnZlZzbe3SI6brpcg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rgWg9t5cNgNL0qSWkbIlisyciz1v2OPdkH07kMsOpA7GEIyBALPRcMd89BiOyhv3VywI+986jonKYFq6WnsMEJqJl6et2qLpH5N2X+lv6MP8EPuCCLGYfHHdy1Bf7TxRcpQdDDMV6UfBDvySpzobiqY67LRSicKqGQl1v7HMZEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=i3P6y2Ys; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1721467124;
+	bh=UVsVuDZbuz1kAPYLhkCeq4nQvmEnZlZzbe3SI6brpcg=;
+	h=From:Date:Subject:To:Cc:From;
+	b=i3P6y2YsEErqtYuEmlzramccZGvAOTzgARI51+ekQ+Aa9LcwlVLjOpCxR00yIgo1a
+	 qDBzO2wGHbIz6AzdmrSg105Y6nPlXYjS8Bb7tiKK6Vym1xXXtyOblhysgCgYMPA6ap
+	 ADTaOMPPFcNbdTTrHaQrQaIzrjCn+zes3KdHXe0Y=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Sat, 20 Jul 2024 11:18:12 +0200
+Subject: [PATCH v7] kbuild: add script and target to generate pacman
+ package
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20240720-kbuild-pacman-pkg-v7-1-74a79b4401d2@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIANOAm2YC/23Qy07DMBAF0F+pvMZo7PErrPgPxMLPxiqkUdwGU
+ JV/xy2bSMzyjjRnRvfGWl5qbuzlcGNLXmur56kH+3RgcfTTMfOaemYSpAIjNT+Fa/1IfPbx009
+ 8Ph15UMXZLIYEaFjfm5dc6vfDfHvveaztcl5+HidWcZ/+aRYUoa2CC+6jLAaLLt6G169cW2txv
+ I7PU76wO7nKPWMoRnbGCFRSekBvPcngnnEUg51xTqeCMUSrgGTUjhFAMaozGmwIOtghSPobvWf
+ IbnRnQA9OGQhxEI5kzJ4huzGdSehBZQQHAv8x27b9An9++pQaAgAA
+To: Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
+Cc: "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>, 
+ Christian Heusel <christian@heusel.eu>, linux-kernel@vger.kernel.org, 
+ linux-kbuild@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1721467096; l=9442;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=UVsVuDZbuz1kAPYLhkCeq4nQvmEnZlZzbe3SI6brpcg=;
+ b=cDMI/xeiE48qhwhTvi4LT14RY4e5cv84llM1/ZjVPjctw2UU7FaZ/GtTNntJPCoT3jDnCG/S0
+ 0PyYm7vz6jtCNObBusYEY0Fa5RFRHIAyrVOJP2LIsnk/a2RuNSJEoh+
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-The following changes since commit 0d5679a0aae2d8cda72169452c32e5cb88a7ab33:
+pacman is the package manager used by Arch Linux and its derivates.
+Creating native packages from the kernel tree has multiple advantages:
 
-  mips: fix compat_sys_lseek syscall (2024-06-21 10:16:34 +0200)
+* The package triggers the correct hooks for initramfs generation and
+  bootloader configuration
+* Uninstallation is complete and also invokes the relevant hooks
+* New UAPI headers can be installed without any manual bookkeeping
 
-are available in the Git repository at:
+The PKGBUILD file is a modified version of the one used for the
+downstream Arch Linux "linux" package.
+Extra steps that should not be necessary for a development kernel have
+been removed and an UAPI header package has been added.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git/ tags/mips_6.11
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Changes in v7:
+- Make pkgbase configurable
+- Add more information to pkgdesc
+- Drop base-devel from makedepends
+- Drop now unneeded "chmod"
+- Make sure KERNELRELEASE and KBUILD_BUILD_VERSION are correct
+- Add MAINTAINERS entry
+- Use absolute path to BUILDDIR again, as makepkg doesn't work otherwise
+- Drop Reviewed-by and Tested-by as a fair amount of changes has been
+  done since
+- Link to v6: https://lore.kernel.org/r/20240716-kbuild-pacman-pkg-v6-1-d3a04e308013@weissschuh.net
 
-for you to fetch changes up to bb2d63500b5c8fd1ea425caffe2d44c931fefc6b:
+Changes in v6:
+- Drop reference to srctree/Makefile
+- Drop $(realpath $(srctree))
+- Make use of the fact that $(objtree) is always "."
+- Align coding style to kernel and drop vim config line
+- Drop indirection through `$MAKE run-command`
+- Unify shell variable syntax to "${var}"
+- Add explanations to custom variables
+- Add makedepends
+- Link to v5: https://lore.kernel.org/r/20240714-kbuild-pacman-pkg-v5-1-0598460bc918@weissschuh.net
 
-  MIPS: config: Add ip30_defconfig (2024-07-15 18:17:34 +0200)
+Changes in v5:
+- Rebase onto kbuild/for-next
+- Use new path to build-version script (from kbuild/for-next)
+- Ensure submake jobserver delegation works
+- Simplify $modulesdir/pkgbase file creation
+- Add Reviewed-by from Nicolas
+- Link to v4: https://lore.kernel.org/r/20240710-kbuild-pacman-pkg-v4-1-507bb5b79b2a@weissschuh.net
 
-----------------------------------------------------------------
-- added support for Realtek RTL9302C
-- added support for Mobileye EyeQ6H
-- added support for Mobileye EyeQ OLB system controller
-- improved r4k clocksource
-- added mode for emulating ieee754 NAN2008
-- rework for BMIPS CBR address handling
-- fixes for Loongson 2K1000
-- defconfig updates
-- cleanups and fixes
+Changes in v4:
+- Update MRPROPER_FILES
+- Unify shell variable syntax
+- Link to v3: https://lore.kernel.org/r/20240708-kbuild-pacman-pkg-v3-1-885df3cbc740@weissschuh.net
 
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      MIPS: Alchemy: Switch to use kmemdup_array()
+Changes in v3:
+- Enforce matching architectures for installation
+- Add Reviewed-by and Tested-by from Nathan
+- Link to v2: https://lore.kernel.org/r/20240706-kbuild-pacman-pkg-v2-1-613422a03a7a@weissschuh.net
 
-Celeste Liu (1):
-      mips: defconfig: drop RT_GROUP_SCHED=y from generic/db1xxx/eyeq5
+Changes in v2:
+- Replace ${MAKE} with $MAKE for consistency with other variables
+- Use $MAKE for "-s image_name"
+- Avoid permission warnings from build directory
+- Clarify reason for /build symlink removal
+- Install System.map and config
+- Install dtbs where available
+- Allow cross-build through arch=any
+- Sort Contributor/Maintainer chronologically
+- Disable some unneeded makepkg options
+- Use DEPMOD=true for consistency with rpm-package
+- Link to v1: https://lore.kernel.org/r/20240704-kbuild-pacman-pkg-v1-1-ac2f63f5fa7b@weissschuh.net
+---
+ .gitignore               |   6 +++
+ MAINTAINERS              |   7 +++
+ Makefile                 |   2 +-
+ scripts/Makefile.package |  14 ++++++
+ scripts/package/PKGBUILD | 108 +++++++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 136 insertions(+), 1 deletion(-)
 
-Chris Packham (8):
-      mips: dts: realtek: use "serial" instead of "uart" in node name
-      mips: dts: realtek: add device_type property to cpu node
-      dt-bindings: vendor-prefixes: Add Cameo Communications
-      dt-bindings: mips: realtek: Add rtl930x-soc compatible
-      dt-bindings: interrupt-controller: realtek,rtl-intc: Add rtl9300-intc
-      mips: select REALTEK_OTTO_TIMER for Realtek platforms
-      mips: generic: add fdt fixup for Realtek reference board
-      mips: dts: realtek: Add RTL9302C board
+diff --git a/.gitignore b/.gitignore
+index c59dc60ba62e..7902adf4f7f1 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -92,6 +92,12 @@ modules.order
+ #
+ /tar-install/
+ 
++#
++# pacman files (make pacman-pkg)
++#
++/PKGBUILD
++/pacman/
++
+ #
+ # We don't want to ignore the following even if they are dot-files
+ #
+diff --git a/MAINTAINERS b/MAINTAINERS
+index da5352dbd4f3..16f8e13aa4c6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11997,6 +11997,13 @@ F:	include/uapi/linux/nfsd/
+ F:	include/uapi/linux/sunrpc/
+ F:	net/sunrpc/
+ 
++KERNEL PACMAN PACKAGING (in addition to generic KERNEL BUILD)
++M:	Thomas Weißschuh <linux@weissschuh.net>
++R:	Christian Heusel <christian@heusel.eu>
++R:	Nathan Chancellor <nathan@kernel.org>
++S:	Maintained
++F:	scripts/package/PKGBUILD
++
+ KERNEL REGRESSIONS
+ M:	Thorsten Leemhuis <linux@leemhuis.info>
+ L:	regressions@lists.linux.dev
+diff --git a/Makefile b/Makefile
+index c97d6404b891..943899656977 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1487,7 +1487,7 @@ CLEAN_FILES += vmlinux.symvers modules-only.symvers \
+ # Directories & files removed with 'make mrproper'
+ MRPROPER_FILES += include/config include/generated          \
+ 		  arch/$(SRCARCH)/include/generated .objdiff \
+-		  debian snap tar-install \
++		  debian snap tar-install PKGBUILD pacman \
+ 		  .config .config.old .version \
+ 		  Module.symvers \
+ 		  certs/signing_key.pem \
+diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+index bf016af8bf8a..94357f47d2fa 100644
+--- a/scripts/Makefile.package
++++ b/scripts/Makefile.package
+@@ -141,6 +141,19 @@ snap-pkg:
+ 	cd $(objtree)/snap && \
+ 	snapcraft --target-arch=$(UTS_MACHINE)
+ 
++# pacman-pkg
++# ---------------------------------------------------------------------------
++
++PHONY += pacman-pkg
++pacman-pkg:
++	@ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
++	+objtree="$(realpath $(objtree))" \
++		BUILDDIR="$(realpath pacman)" \
++		CARCH="$(UTS_MACHINE)" \
++		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
++		KBUILD_REVISION="$(shell $(srctree)/scripts/build-version)" \
++		makepkg
++
+ # dir-pkg tar*-pkg - tarball targets
+ # ---------------------------------------------------------------------------
+ 
+@@ -221,6 +234,7 @@ help:
+ 	@echo '  bindeb-pkg          - Build only the binary kernel deb package'
+ 	@echo '  snap-pkg            - Build only the binary kernel snap package'
+ 	@echo '                        (will connect to external hosts)'
++	@echo '  pacman-pkg          - Build only the binary kernel pacman package'
+ 	@echo '  dir-pkg             - Build the kernel as a plain directory structure'
+ 	@echo '  tar-pkg             - Build the kernel as an uncompressed tarball'
+ 	@echo '  targz-pkg           - Build the kernel as a gzip compressed tarball'
+diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+new file mode 100644
+index 000000000000..663ce300dd06
+--- /dev/null
++++ b/scripts/package/PKGBUILD
+@@ -0,0 +1,108 @@
++# SPDX-License-Identifier: GPL-2.0-only
++# Maintainer: Thomas Weißschuh <linux@weissschuh.net>
++# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
++
++pkgbase=${PACMAN_PKGBASE:-linux-upstream}
++pkgname=("${pkgbase}" "${pkgbase}-api-headers")
++if grep -q CONFIG_MODULES=y include/config/auto.conf; then
++	pkgname+=("${pkgbase}-headers")
++fi
++pkgver="${KERNELRELEASE//-/_}"
++# The PKGBUILD is evaluated multiple times.
++# Running scripts/build-version from here would introduce inconsistencies.
++pkgrel="${KBUILD_REVISION}"
++pkgdesc='Upstream Linux'
++url='https://www.kernel.org/'
++# Enable flexible cross-compilation
++arch=(${CARCH})
++license=(GPL-2.0-only)
++makedepends=(
++	bc
++	bison
++	cpio
++	flex
++	gettext
++	kmod
++	libelf
++	openssl
++	pahole
++	perl
++	python
++	rsync
++	tar
++)
++options=(!debug !strip !buildflags !makeflags)
++
++build() {
++	# MAKEFLAGS from makepkg.conf override the ones inherited from kbuild.
++	# Bypass this override with a custom variable.
++	export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
++	cd "${objtree}"
++
++	${MAKE} KERNELRELEASE="${KERNELRELEASE}" KBUILD_BUILD_VERSION="${pkgrel}"
++}
++
++_package() {
++	pkgdesc="The ${pkgdesc} kernel and modules"
++
++	export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
++	cd "${objtree}"
++	local modulesdir="${pkgdir}/usr/${MODLIB}"
++
++	echo "Installing boot image..."
++	# systemd expects to find the kernel here to allow hibernation
++	# https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
++	install -Dm644 "$(${MAKE} -s image_name)" "${modulesdir}/vmlinuz"
++
++	# Used by mkinitcpio to name the kernel
++	echo "${pkgbase}" > "${modulesdir}/pkgbase"
++
++	echo "Installing modules..."
++	${MAKE} INSTALL_MOD_PATH="${pkgdir}/usr" INSTALL_MOD_STRIP=1 \
++		DEPMOD=true modules_install
++
++	if [ -d "${srctree}/arch/${SRCARCH}/boot/dts" ]; then
++		echo "Installing dtbs..."
++		${MAKE} INSTALL_DTBS_PATH="${modulesdir}/dtb" dtbs_install
++	fi
++
++	# remove build link, will be part of -headers package
++	rm -f "${modulesdir}/build"
++}
++
++_package-headers() {
++	pkgdesc="Headers and scripts for building modules for the ${pkgdesc} kernel"
++
++	export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
++	cd "${objtree}"
++	local builddir="${pkgdir}/usr/${MODLIB}/build"
++
++	echo "Installing build files..."
++	"${srctree}/scripts/package/install-extmod-build" "${builddir}"
++
++	echo "Installing System.map and config..."
++	cp System.map "${builddir}/System.map"
++	cp .config "${builddir}/.config"
++
++	echo "Adding symlink..."
++	mkdir -p "${pkgdir}/usr/src"
++	ln -sr "${builddir}" "${pkgdir}/usr/src/${pkgbase}"
++}
++
++_package-api-headers() {
++	pkgdesc="Kernel headers sanitized for use in userspace"
++	provides=(linux-api-headers)
++	conflicts=(linux-api-headers)
++
++	export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
++	cd "${objtree}"
++
++	${MAKE} headers_install INSTALL_HDR_PATH="${pkgdir}/usr"
++}
++
++for _p in "${pkgname[@]}"; do
++	eval "package_$_p() {
++		$(declare -f "_package${_p#$pkgbase}")
++		_package${_p#$pkgbase}
++	}"
++done
 
-Christian Marangi (3):
-      mips: bmips: rework and cache CBR addr handling
-      dt-bindings: mips: brcm: Document brcm,bmips-cbr-reg property
-      mips: bmips: setup: make CBR address configurable
+---
+base-commit: 6e6ef2da3a28f3e02fd204b4f8821030b61f8cd4
+change-id: 20240625-kbuild-pacman-pkg-b4f87e19d036
 
-Daniel Gonz�lez Cabanelas (1):
-      mips: bmips: enable RAC on BMIPS4350
-
-Dmitry Torokhov (1):
-      MIPS: Alchemy: switch to use software nodes for GPIOs
-
-Dominique Martinet (1):
-      MIPS: Octeron: remove source file executable bit
-
-Genjian Zhang (2):
-      MIPS: sgi-ip22: Add prototypes for several functions to header
-      MIPS: ip22-gio: Make ip22_gio_set_64bit() and ip22_gio_init() static
-
-Gregory CLEMENT (3):
-      dt-bindings: mips: Add bindings for a new Mobileye SoC EyeQ6H
-      MIPS: mobileye: Add EyeQ6H device tree
-      MIPS: mobileye: Add EyeQ6H support
-
-Hauke Mehrtens (1):
-      MIPS: lantiq: improve USB initialization
-
-Jeff Johnson (1):
-      crypto: mips/poly1305 - add missing MODULE_DESCRIPTION() macro
-
-Jiaxun Yang (29):
-      MIPS: asm/pm.h: Use platform agnostic macros
-      MIPS: select CPU_PM with SUSPEND
-      MIPS: Loongson64: Implement PM suspend for LEFI firmware
-      MIPS: kvm: Declare prototype for kvm_init_loongson_ipi
-      MIPS: Loongson64: Include bootinfo.h in dma.c
-      MIPS: Loongson64: DTS: Fix msi node for ls7a
-      MIPS: Loongson64: DTS: Fix PCIe port nodes for ls7a
-      MIPS: ip30: ip30-console: Add missing include
-      MIPS: Loongson64: Remove memory node for builtin-dtb
-      MIPS: dts: loongson: Fix liointc IRQ polarity
-      MIPS: dts: loongson: Fix ls2k1000-rtc interrupt
-      MIPS: dts: loongson: Fix GMAC phy node
-      MIPS: dts: loongson: Add ISA node
-      MIPS: Loongson64: Test register availability before use
-      platform: mips: cpu_hwmon: Disable driver on unsupported hardware
-      MIPS: Loongson64: reset: Prioritise firmware service
-      MIPS: Loongson64: sleeper: Pass ra and sp as arguments
-      MIPS: Loongson64: env: Hook up Loongsson-2K
-      MIPS: csrc-r4k: Refine rating computation
-      MIPS: csrc-r4k: Apply verification clocksource flags
-      MIPS: csrc-r4k: Select HAVE_UNSTABLE_SCHED_CLOCK if SMP && 64BIT
-      MIPS: csrc-r4k: Don't register as sched_clock if unfit
-      MIPS: sync-r4k: Rework based on x86 tsc_sync
-      MIPS: Implement ieee754 NAN2008 emulation mode
-      MIPS: Fix fallback march for SB1
-      MIPS: config: Enable MSA and virtualization for MIPS64R6
-      MIPS: config: generic: Add board-litex
-      MIPS: config: lemote2f: Regenerate defconfig
-      MIPS: config: Add ip30_defconfig
-
-Maxime Ripard (1):
-      mips: configs: ci20: Enable DRM_DW_HDMI
-
-Paul Burton (2):
-      MIPS: CPS: Add a couple of multi-cluster utility functions
-      MIPS: GIC: Generate redirect block accessors
-
-Thomas Bogendoerfer (1):
-      Merge branch 'mips-fixes' into mips-next
-
-Th�o Lebrun (3):
-      dt-bindings: soc: mobileye: add EyeQ OLB system controller
-      MIPS: mobileye: eyeq5: add OLB system-controller node
-      MAINTAINERS: Mobileye: add OLB drivers and dt-bindings
-
- Documentation/admin-guide/kernel-parameters.txt    |   4 +-
- .../interrupt-controller/realtek,rtl-intc.yaml     |  20 +-
- .../devicetree/bindings/mips/brcm/soc.yaml         |  24 ++
- .../devicetree/bindings/mips/mobileye.yaml         |   5 +
- .../devicetree/bindings/mips/realtek-rtl.yaml      |   4 +
- .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  | 374 +++++++++++++++++++++
- .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
- MAINTAINERS                                        |   5 +
- arch/mips/Kbuild.platforms                         |   2 +-
- arch/mips/Kconfig                                  |  11 +-
- arch/mips/Makefile                                 |   2 +-
- arch/mips/alchemy/common/platform.c                |   8 +-
- arch/mips/alchemy/devboards/db1000.c               |  80 ++---
- arch/mips/bcm47xx/prom.c                           |   3 +
- arch/mips/bcm47xx/setup.c                          |   8 +
- arch/mips/bcm63xx/prom.c                           |   3 +
- arch/mips/bcm63xx/setup.c                          |   8 +
- arch/mips/bmips/dma.c                              |   2 +-
- arch/mips/bmips/setup.c                            |  35 +-
- arch/mips/boot/dts/Makefile                        |   2 +-
- arch/mips/boot/dts/loongson/loongson64-2k1000.dtsi | 102 +++---
- .../boot/dts/loongson/loongson64g_4core_ls7a.dts   |   1 +
- arch/mips/boot/dts/mobileye/Makefile               |   1 +
- .../{eyeq5-fixed-clocks.dtsi => eyeq5-clocks.dtsi} |  54 +--
- arch/mips/boot/dts/mobileye/eyeq5-pins.dtsi        | 125 +++++++
- arch/mips/boot/dts/mobileye/eyeq5.dtsi             |  22 +-
- arch/mips/boot/dts/mobileye/eyeq6h-epm6.dts        |  22 ++
- .../boot/dts/mobileye/eyeq6h-fixed-clocks.dtsi     |  52 +++
- arch/mips/boot/dts/mobileye/eyeq6h-pins.dtsi       |  88 +++++
- arch/mips/boot/dts/mobileye/eyeq6h.dtsi            |  98 ++++++
- arch/mips/boot/dts/realtek/Makefile                |   1 +
- .../dts/realtek/cameo-rtl9302c-2x-rtl8224-2xge.dts |  73 ++++
- arch/mips/boot/dts/realtek/rtl838x.dtsi            |   1 +
- arch/mips/boot/dts/realtek/rtl83xx.dtsi            |   4 +-
- arch/mips/boot/dts/realtek/rtl930x.dtsi            |  79 +++++
- arch/mips/configs/ci20_defconfig                   |   1 +
- arch/mips/configs/db1xxx_defconfig                 |   1 -
- arch/mips/configs/eyeq5_defconfig                  |   2 +-
- arch/mips/configs/eyeq6_defconfig                  | 111 ++++++
- arch/mips/configs/generic/64r6.config              |   2 +
- arch/mips/configs/generic/board-litex.config       |   8 +
- arch/mips/configs/generic_defconfig                |   1 -
- arch/mips/configs/ip30_defconfig                   | 183 ++++++++++
- arch/mips/configs/lemote2f_defconfig               |  54 ++-
- arch/mips/crypto/poly1305-glue.c                   |   1 +
- arch/mips/generic/Makefile                         |   1 +
- arch/mips/generic/board-realtek.c                  |  79 +++++
- arch/mips/include/asm/bmips.h                      |   1 +
- arch/mips/include/asm/fpu.h                        |  15 +
- arch/mips/include/asm/mach-loongson64/boot_param.h |   2 +
- arch/mips/include/asm/mips-cps.h                   |  39 +++
- arch/mips/include/asm/mips-gic.h                   |  50 ++-
- arch/mips/include/asm/pm.h                         |  22 +-
- arch/mips/include/asm/r4k-timer.h                  |   5 -
- arch/mips/include/asm/sgi/ip22.h                   |   3 +
- arch/mips/kernel/csrc-r4k.c                        |  24 +-
- arch/mips/kernel/elf.c                             |   4 +
- arch/mips/kernel/fpu-probe.c                       |   9 +-
- arch/mips/kernel/mips-cm.c                         |  37 ++
- arch/mips/kernel/smp-bmips.c                       |  22 +-
- arch/mips/kernel/smp.c                             |   2 -
- arch/mips/kernel/sync-r4k.c                        | 281 +++++++++++-----
- arch/mips/kvm/interrupt.h                          |   4 +
- arch/mips/kvm/loongson_ipi.c                       |   2 +
- arch/mips/kvm/mips.c                               |   2 -
- arch/mips/lantiq/xway/sysctrl.c                    |  20 ++
- arch/mips/loongson64/Makefile                      |   2 +-
- arch/mips/loongson64/dma.c                         |   1 +
- arch/mips/loongson64/env.c                         |   8 +
- arch/mips/loongson64/pm.c                          |  88 +----
- arch/mips/loongson64/reset.c                       |  38 +--
- arch/mips/loongson64/sleeper.S                     |  21 ++
- arch/mips/loongson64/smp.c                         |  23 +-
- arch/mips/mobileye/Kconfig                         |  26 ++
- arch/mips/mobileye/Platform                        |   1 +
- arch/mips/pci/pcie-octeon.c                        |   0
- arch/mips/sgi-ip22/ip22-gio.c                      |   4 +-
- arch/mips/sgi-ip22/ip22-int.c                      |   2 -
- arch/mips/sgi-ip22/ip22-setup.c                    |   2 -
- arch/mips/sgi-ip30/ip30-console.c                  |   1 +
- drivers/platform/mips/cpu_hwmon.c                  |   3 +
- 81 files changed, 2141 insertions(+), 392 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml
- rename arch/mips/boot/dts/mobileye/{eyeq5-fixed-clocks.dtsi => eyeq5-clocks.dtsi} (88%)
- create mode 100644 arch/mips/boot/dts/mobileye/eyeq5-pins.dtsi
- create mode 100644 arch/mips/boot/dts/mobileye/eyeq6h-epm6.dts
- create mode 100644 arch/mips/boot/dts/mobileye/eyeq6h-fixed-clocks.dtsi
- create mode 100644 arch/mips/boot/dts/mobileye/eyeq6h-pins.dtsi
- create mode 100644 arch/mips/boot/dts/mobileye/eyeq6h.dtsi
- create mode 100644 arch/mips/boot/dts/realtek/cameo-rtl9302c-2x-rtl8224-2xge.dts
- create mode 100644 arch/mips/boot/dts/realtek/rtl930x.dtsi
- create mode 100644 arch/mips/configs/eyeq6_defconfig
- create mode 100644 arch/mips/configs/generic/board-litex.config
- create mode 100644 arch/mips/configs/ip30_defconfig
- create mode 100644 arch/mips/generic/board-realtek.c
- create mode 100644 arch/mips/loongson64/sleeper.S
- create mode 100644 arch/mips/mobileye/Kconfig
- mode change 100755 => 100644 arch/mips/pci/pcie-octeon.c
-
+Best regards,
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+Thomas Weißschuh <linux@weissschuh.net>
+
 
