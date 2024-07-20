@@ -1,128 +1,285 @@
-Return-Path: <linux-kernel+bounces-257778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A77A937ED8
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 05:42:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 428E9937EDA
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 05:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C50111C2128A
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 03:42:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9E9D282334
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 03:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4171BA29;
-	Sat, 20 Jul 2024 03:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FypLg8ez"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077F1D28D;
+	Sat, 20 Jul 2024 03:42:29 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F48372
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 03:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F059B64A
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 03:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721446919; cv=none; b=bHTIQAj2kkbI9TA1JGrA6lohLi7/w034oR1WFciMZVtSkyZySr+LBykwLgFpWfsM2q2v8kdzzL0oiLtkIv7TutzUi3CzWHOxor09AWa9o0nQ/KrQDtm6cQRDqRmmm7b5Usb/f0GIS1Z/NTxoPoC+84sdYnaurxcqqyADwLU65Bs=
+	t=1721446948; cv=none; b=BjLnDY0ktIArMkutAWQERJAjnioFj0DTqtBQ/AV3YnGZfmhhLcVHtyv2hg64Ko0xGOSinko96xEVANxva/dIndybocROStZJ/veKnI+EYnsu5W+cUI4jrEdPVguuar4wWQYrFMpX1OUM+v8rcKoVjfiodIST7kcd8fi/IGN0SQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721446919; c=relaxed/simple;
-	bh=c+IDvkezVP4bl/CQyLxM0sQAlZG3MoahgJFUM00006Q=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=E2RsFqZit8KlnnujKooAfabyAcCVL9YfGI+RyfjyQHlZD2Srr2/M3lwKgvwjvng5CGEOP11DvABbNCnR5C38TZHJbRA6Q05ropnf+xY9THyWIT7brPu9uy8omw6DAEeJti8nWaaAlqPHppliyG7hSMARvVpZPnJJDFlwUYhtB58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FypLg8ez; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fd657c9199so270205ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 20:41:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721446917; x=1722051717; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hA28LeSjbZup5ALMxE294YbllnKvicLer46RDpBm6UA=;
-        b=FypLg8ezueE8HU8Ad7i2uvJLInm7Pd+q5jzfxnHjLRtRWPbvSxKblS5JODyQrU2Zvo
-         I/7VnL02HuQtbBDv2y7Opqppa7TpdsKOgFIUBg3/rtQmUEFgFD0wIYJi881irw4uJx31
-         lSnf7jLs3Lkn64CmkQ8/X3Bw7czeCVlz5n1QXtDOK3VErdI+irp7Rl8plpak9HYGhllj
-         wSOKjZorGJw8ecGc6w9e/hnjp1Bzj7u0GoXej+t3JkKQ6S5WynMQjMIPDMXQIRa7TO38
-         m2ZURRQxPilGSQ0skwBk5THTy2N1WmcKgUe5Rnt0A2S1WWJtuH0AGXyDYUFNLn1uWSv0
-         Yvmw==
+	s=arc-20240116; t=1721446948; c=relaxed/simple;
+	bh=guYrTLv+K78nckAMU0MP6YEyW3ITecKrCZuyWXJx33M=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=tyOIo/xS5H+6yyspWCLuHi4yzVhldbaOpknZGGRzePmAZXFqJZROwbLed8FoPFZCqd5DwoCAFDvKHGpsdVHek4BHZCJHnruhDt/PS/imgjMpAreWjSwFEUyoDoxL8J28XLoTI/wyMJmx2LGUjWCdRfXNylr5TsAJNy6MYDCrZSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39794551bfbso26663235ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 20:42:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721446917; x=1722051717;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hA28LeSjbZup5ALMxE294YbllnKvicLer46RDpBm6UA=;
-        b=nT672f9QeAswUvPZb3E6FX6CpkvvQPqA+ivNAhQYZW/tf/mBib/Vqa0OFT0iYE4e63
-         6vKp8hgXiJLrA8ktl99npzFNKohme/hVnWldPwT7lF0JqHjcgLT4IPbSKJ7bCC/C5Ru8
-         21ZJNvcOVsAWeH/+aMZRPZHf7DRSf5CwT48bOI0VvdRHAmOIf2uvRqual+1009pEdtMc
-         eNg84qIbreRf3QEO54Hie4PeAWbS+tJDIa9t6pRsidIPl8ypnHroQDVQYC45jjOG6LMH
-         m63I9+LASfrgRqPmUjqqziZtYO7J42HfSZKNOh2HkfJQihgkjq74fdsJzuP3w/Hiln/j
-         ajwg==
-X-Forwarded-Encrypted: i=1; AJvYcCUm4SwPTz86FE1bffDkOKLNFAP4tPvI67DYRvaUl31qZzt5i00HbwB+p6/DUzuPu9u0hi5QCnxb5rqadYssI6k/wM76xuERylTX8fSS
-X-Gm-Message-State: AOJu0Yw+4DfuAMmoz7pmk9tCiHir7dCZFqvlMuBcquq1UeMvMRGnd6M4
-	7VKAyhAI9cNbBY+Wo70hZ+WjxPMYv/Hq2+OMWfyDTZQWerLuP7ZpMv5TV+j6kA==
-X-Google-Smtp-Source: AGHT+IGV++E5gqPS9iW9+LLQOn6LEUwO0Bx+NPoKj6GsnOlt4C6jIAUZQTJVBE99ylc8GwERwxBKyA==
-X-Received: by 2002:a17:903:6c8:b0:1fc:6166:da4c with SMTP id d9443c01a7336-1fd7ff6667bmr49255ad.27.1721446916553;
-        Fri, 19 Jul 2024 20:41:56 -0700 (PDT)
-Received: from [2620:0:1008:15:652e:fdf2:c177:d5b1] ([2620:0:1008:15:652e:fdf2:c177:d5b1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f316be5sm12318395ad.146.2024.07.19.20.41.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 20:41:55 -0700 (PDT)
-Date: Fri, 19 Jul 2024 20:41:55 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-cc: Shakeel Butt <shakeel.butt@linux.dev>, akpm@linux-foundation.org, 
-    jpoimboe@kernel.org, kent.overstreet@linux.dev, peterz@infradead.org, 
-    nphamcs@gmail.com, cerasuolodomenico@gmail.com, surenb@google.com, 
-    lizhijian@fujitsu.com, willy@infradead.org, vbabka@suse.cz, ziy@nvidia.com, 
-    linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v3] vmstat: Kernel stack usage histogram
-In-Reply-To: <CA+CK2bAWRN7-UHc0C1u6UAqT82tQXgO6a4AnHEHWN-qqij1LQQ@mail.gmail.com>
-Message-ID: <9f044745-aa8f-5fff-66c6-4b24521967c8@google.com>
-References: <20240530170259.852088-1-pasha.tatashin@soleen.com> <cq7537bswpnbsmeiw3rh4ffrgqky4iufsaurukpk2flxts6jcu@6ctttkclvf3f> <CA+CK2bCuiDAv05Xu6OuKB=gqJ5NM20F_uUyJV8E=XH=r47ik=Q@mail.gmail.com> <i66bzhgnbql7bvuteqttpijml3ze3nngxapv32k7paqv25c5th@wd37oaastkvz>
- <usfcwyq76np42s5b2rpzgjrvvtdpwakaum7ayy4zumaa73ke3u@txbukb2464bl> <CA+CK2bBm4COW+jZifyjFEyJNcW1cAXWYzCpuO81jL3YziKxfRw@mail.gmail.com> <dz2ryasq3bbshlayah4dja3esvpwu5hzftgaapzbmjf42n7gzk@qs4wfnuuixtu>
- <CA+CK2bAWRN7-UHc0C1u6UAqT82tQXgO6a4AnHEHWN-qqij1LQQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1721446945; x=1722051745;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QdgbSaDFt/8em2ssKTDecqY+AcN3CHgxbXb4CDFUPVQ=;
+        b=GDgXomKfsAFZliXttuCclfY8QONOrq7Smh+GHrKUENXt66mPe6sasF3L368xxH9WgH
+         4oTY5/MqkEEGq0n8jnbK3mrgfaARNwD6xhfZAPWxswGcM/U/CHU2UrTTwwxgKhSvmXY+
+         C4za+Cxk0BNKOt+xbyBQxkKZBOIpPw8cCKw/mRSzr/+w/TLHh2KpC44MQD0xdMuFLaet
+         2sjDlWBF00dN9+3Q8n6+RkEiEayY41xSDSc0je+ZU/4nchJxDICyhnM2/CjQRPQO1i6/
+         omTbqY880zRGFazIiItEEfvsaWb2CrtwGBnJ18V//+4Oz1ryYcIDWrNqxPATCIi9hlNw
+         202w==
+X-Forwarded-Encrypted: i=1; AJvYcCWtX1hBRCosNOkg5vWQjv0fOEiC2gRUuC2+xQ9RQUF2z4tCiov7awNdiXl0T6ffNckdy8kDdiu00h7gbVAQCMwQbWqsRcd+87ydr+pe
+X-Gm-Message-State: AOJu0Yy7FmQ6zX9EKNVr1ybs7IGwJiJYfYbghxtN0CP5EeMNbpiHjIHm
+	mRfdB6q6u2kopuzOz91jk02zoW5dgnNWeErcGq0+nO4CCg1/2ZniWASqCi/HvsNBojjmjSzqT4m
+	7GGkiQ85rocMiD9srhnELOJdvTyyms9cqlA9ZXotzFxlg4fIzSq4Rnwg=
+X-Google-Smtp-Source: AGHT+IFv4U3XE9O/BUGFEhRcdJsNGtLd3wkfh8OJdTtuO4peqbwrkbLEHtqwA4bBjMwjuJnxRSlgNuGaHOgGYVhbuNWdW4fP1kxV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="2003064516-483020861-1721446915=:3457478"
+X-Received: by 2002:a05:6e02:218d:b0:381:c14:70cf with SMTP id
+ e9e14a558f8ab-398e420e366mr975355ab.1.1721446944754; Fri, 19 Jul 2024
+ 20:42:24 -0700 (PDT)
+Date: Fri, 19 Jul 2024 20:42:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a461bd061da59915@google.com>
+Subject: [syzbot] [net?] WARNING in hsr_netdev_notify
+From: syzbot <syzbot+f62f559357490e4f015b@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hello,
 
---2003064516-483020861-1721446915=:3457478
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+syzbot found the following issue on:
 
-On Thu, 18 Jul 2024, Pasha Tatashin wrote:
+HEAD commit:    0c3836482481 Linux 6.10
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10a5ea79980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4beb7abb485abb7b
+dashboard link: https://syzkaller.appspot.com/bug?extid=f62f559357490e4f015b
+compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
 
-> On Thu, Jul 18, 2024 at 7:19 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> >
-> > Hi Pasha,
-> >
-> > On Wed, Jul 17, 2024 at 12:50:00PM GMT, Pasha Tatashin wrote:
-> > > On Wed, Jun 12, 2024 at 2:50 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> > > >
-> > [...]
-> > > > >
-> > > > > One more question: Is there any concern in making
-> > > > > CONFIG_DEBUG_STACK_USAGE not a debug feature i.e. enable in default
-> > > > > kernels instead of just debug kernels?
-> > >
-> > > We enabled it in Google ProdKernel. There is some overhead when
-> > > threads are exiting, because we are looking for the first non-zero
-> > > byte, but that is minimal. We haven't observed any performance impact
-> > > on our fleet.
-> > >
-> >
-> > So, you would support making CONFIG_DEBUG_STACK_USAGE enabled by
-> > default, right?
-> 
-> Right, I see nothing wrong with having this enabled by default.
-> 
+Unfortunately, I don't have any reproducer for this issue yet.
 
-The benefits of enabling CONFIG_DEBUG_STACK_USAGE by default would 
-certainly outweigh any theoretical performance downside, I strongly favor 
-enabling it by default and was surprised to find it hidden behind 
-debugging when I enabled it in Google's production fleet.
---2003064516-483020861-1721446915=:3457478--
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/384ffdcca292/non_bootable_disk-0c383648.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/724e4d62dcb4/vmlinux-0c383648.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c77816774342/Image-0c383648.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f62f559357490e4f015b@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+RTNL: assertion failed at net/hsr/hsr_slave.h (24)
+WARNING: CPU: 0 PID: 2102 at net/hsr/hsr_slave.h:24 hsr_port_get_rtnl net/hsr/hsr_slave.h:24 [inline]
+WARNING: CPU: 0 PID: 2102 at net/hsr/hsr_slave.h:24 hsr_netdev_notify+0x2e0/0x354 net/hsr/hsr_main.c:42
+Modules linked in:
+CPU: 0 PID: 2102 Comm: kworker/u8:13 Not tainted 6.10.0-syzkaller #0
+Hardware name: linux,dummy-virt (DT)
+Workqueue: bond0 bond_mii_monitor
+pstate: 61400009 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+pc : hsr_port_get_rtnl net/hsr/hsr_slave.h:24 [inline]
+pc : hsr_netdev_notify+0x2e0/0x354 net/hsr/hsr_main.c:42
+lr : hsr_port_get_rtnl net/hsr/hsr_slave.h:24 [inline]
+lr : hsr_netdev_notify+0x2e0/0x354 net/hsr/hsr_main.c:42
+sp : ffff8000881e3b40
+x29: ffff8000881e3b40 x28: 0000000000000003 x27: 0000000000000001
+x26: 0000000000000000 x25: 0000000000000000 x24: ffff800082944d60
+x23: f6f0000006dca600 x22: ffff8000881e3b88 x21: f6f0000006dca000
+x20: 00000000ffffffc8 x19: 0000000000000004 x18: ffffffffffffffff
+x17: 0000000000000000 x16: 0000000000000000 x15: ffff8000881e3570
+x14: 0000000000000000 x13: ffff80008263b080 x12: 0000000000001c08
+x11: 0000000000000958 x10: ffff8000826eb080 x9 : ffff80008263b080
+x8 : 00000000ffffdfff x7 : ffff8000826eb080 x6 : 80000000ffffe000
+x5 : fff000007f8cbf48 x4 : 0000000000000000 x3 : fff07ffffd2e9000
+x2 : 0000000000000000 x1 : 0000000000000000 x0 : f2f000000572ed80
+Call trace:
+ hsr_port_get_rtnl net/hsr/hsr_slave.h:24 [inline]
+ hsr_netdev_notify+0x2e0/0x354 net/hsr/hsr_main.c:42
+ notifier_call_chain kernel/notifier.c:93 [inline]
+ raw_notifier_call_chain+0x54/0x74 kernel/notifier.c:461
+ call_netdevice_notifiers_info+0x58/0xa4 net/core/dev.c:1992
+ netdev_state_change net/core/dev.c:1374 [inline]
+ netdev_state_change+0x68/0x8c net/core/dev.c:1367
+ linkwatch_do_dev+0x80/0xec net/core/link_watch.c:177
+ linkwatch_sync_dev+0x8c/0xc8 net/core/link_watch.c:263
+ ethtool_op_get_link+0x18/0x34 net/ethtool/ioctl.c:62
+ bond_check_dev_link+0x68/0x154 drivers/net/bonding/bond_main.c:757
+ bond_miimon_inspect drivers/net/bonding/bond_main.c:2604 [inline]
+ bond_mii_monitor+0x110/0x91c drivers/net/bonding/bond_main.c:2826
+ process_one_work+0x164/0x2a8 kernel/workqueue.c:3248
+ process_scheduled_works kernel/workqueue.c:3329 [inline]
+ worker_thread+0x268/0x378 kernel/workqueue.c:3409
+ kthread+0x114/0x118 kernel/kthread.c:389
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+RTNL: assertion failed at net/core/rtnetlink.c (1823)
+WARNING: CPU: 0 PID: 2102 at net/core/rtnetlink.c:1823 rtnl_fill_ifinfo.constprop.0+0x9a8/0x1210 net/core/rtnetlink.c:1823
+Modules linked in:
+CPU: 0 PID: 2102 Comm: kworker/u8:13 Tainted: G        W          6.10.0-syzkaller #0
+Hardware name: linux,dummy-virt (DT)
+Workqueue: bond0 bond_mii_monitor
+pstate: 61400009 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+pc : rtnl_fill_ifinfo.constprop.0+0x9a8/0x1210 net/core/rtnetlink.c:1823
+lr : rtnl_fill_ifinfo.constprop.0+0x9a8/0x1210 net/core/rtnetlink.c:1823
+sp : ffff8000881e3a30
+x29: ffff8000881e3a30 x28: 0000000000000000 x27: 0000000000000000
+x26: 0000000000000010 x25: 0000000000000000 x24: 0000000000000000
+x23: 0000000000000000 x22: 0000000000000000 x21: ffff80008282be48
+x20: f6f0000006dca000 x19: f4f0000006c2f600 x18: ffffffffffffffff
+x17: 0000000000000000 x16: 0000000000000000 x15: ffff8000881e3460
+x14: 0000000000000000 x13: ffff80008263b080 x12: 0000000000001c74
+x11: 000000000000097c x10: ffff8000826eb080 x9 : ffff80008263b080
+x8 : 00000000ffffdfff x7 : ffff8000826eb080 x6 : 80000000ffffe000
+x5 : 0000000000017ff4 x4 : 0000000000000000 x3 : 0000000000000000
+x2 : 0000000000000000 x1 : 0000000000000000 x0 : f2f000000572ed80
+Call trace:
+ rtnl_fill_ifinfo.constprop.0+0x9a8/0x1210 net/core/rtnetlink.c:1823
+ rtmsg_ifinfo_build_skb+0xc4/0x13c net/core/rtnetlink.c:4073
+ rtmsg_ifinfo_event net/core/rtnetlink.c:4107 [inline]
+ rtmsg_ifinfo_event net/core/rtnetlink.c:4097 [inline]
+ rtmsg_ifinfo+0x64/0xc4 net/core/rtnetlink.c:4116
+ netdev_state_change net/core/dev.c:1376 [inline]
+ netdev_state_change+0x84/0x8c net/core/dev.c:1367
+ linkwatch_do_dev+0x80/0xec net/core/link_watch.c:177
+ linkwatch_sync_dev+0x8c/0xc8 net/core/link_watch.c:263
+ ethtool_op_get_link+0x18/0x34 net/ethtool/ioctl.c:62
+ bond_check_dev_link+0x68/0x154 drivers/net/bonding/bond_main.c:757
+ bond_miimon_inspect drivers/net/bonding/bond_main.c:2604 [inline]
+ bond_mii_monitor+0x110/0x91c drivers/net/bonding/bond_main.c:2826
+ process_one_work+0x164/0x2a8 kernel/workqueue.c:3248
+ process_scheduled_works kernel/workqueue.c:3329 [inline]
+ worker_thread+0x268/0x378 kernel/workqueue.c:3409
+ kthread+0x114/0x118 kernel/kthread.c:389
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+RTNL: assertion failed at net/devlink/port.c (1595)
+WARNING: CPU: 0 PID: 2102 at net/devlink/port.c:1595 devlink_compat_phys_port_name_get+0x250/0x2c4 net/devlink/port.c:1595
+Modules linked in:
+CPU: 0 PID: 2102 Comm: kworker/u8:13 Tainted: G        W          6.10.0-syzkaller #0
+Hardware name: linux,dummy-virt (DT)
+Workqueue: bond0 bond_mii_monitor
+pstate: 61400009 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+pc : devlink_compat_phys_port_name_get+0x250/0x2c4 net/devlink/port.c:1595
+lr : devlink_compat_phys_port_name_get+0x250/0x2c4 net/devlink/port.c:1595
+sp : ffff8000881e39c0
+x29: ffff8000881e39c0 x28: 0000000000000000 x27: 0000000000000000
+x26: 0000000000000010 x25: 0000000000000000 x24: f4f00000051ab000
+x23: ffff8000881e3ae7 x22: 0000000000000000 x21: f6f0000006dca000
+x20: ffff8000881e3b18 x19: 0000000000000010 x18: ffffffffffffffff
+x17: 0000000000000000 x16: 0000000000000000 x15: ffff8000881e33f0
+x14: 0000000000000000 x13: ffff80008263b080 x12: 0000000000001ce0
+x11: 00000000000009a0 x10: ffff8000826eb080 x9 : ffff80008263b080
+x8 : 00000000ffffdfff x7 : ffff8000826eb080 x6 : 80000000ffffe000
+x5 : 0000000000017ff4 x4 : 0000000000000000 x3 : 0000000000000000
+x2 : 0000000000000000 x1 : 0000000000000000 x0 : f2f000000572ed80
+Call trace:
+ devlink_compat_phys_port_name_get+0x250/0x2c4 net/devlink/port.c:1595
+ dev_get_phys_port_name+0x5c/0x70 net/core/dev.c:9146
+ rtnl_phys_port_name_fill net/core/rtnetlink.c:1225 [inline]
+ rtnl_fill_ifinfo.constprop.0+0x5d4/0x1210 net/core/rtnetlink.c:1903
+ rtmsg_ifinfo_build_skb+0xc4/0x13c net/core/rtnetlink.c:4073
+ rtmsg_ifinfo_event net/core/rtnetlink.c:4107 [inline]
+ rtmsg_ifinfo_event net/core/rtnetlink.c:4097 [inline]
+ rtmsg_ifinfo+0x64/0xc4 net/core/rtnetlink.c:4116
+ netdev_state_change net/core/dev.c:1376 [inline]
+ netdev_state_change+0x84/0x8c net/core/dev.c:1367
+ linkwatch_do_dev+0x80/0xec net/core/link_watch.c:177
+ linkwatch_sync_dev+0x8c/0xc8 net/core/link_watch.c:263
+ ethtool_op_get_link+0x18/0x34 net/ethtool/ioctl.c:62
+ bond_check_dev_link+0x68/0x154 drivers/net/bonding/bond_main.c:757
+ bond_miimon_inspect drivers/net/bonding/bond_main.c:2604 [inline]
+ bond_mii_monitor+0x110/0x91c drivers/net/bonding/bond_main.c:2826
+ process_one_work+0x164/0x2a8 kernel/workqueue.c:3248
+ process_scheduled_works kernel/workqueue.c:3329 [inline]
+ worker_thread+0x268/0x378 kernel/workqueue.c:3409
+ kthread+0x114/0x118 kernel/kthread.c:389
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+RTNL: assertion failed at net/core/dev.c (7045)
+WARNING: CPU: 0 PID: 2102 at net/core/dev.c:7045 netdev_master_upper_dev_get+0x90/0x98 net/core/dev.c:7045
+Modules linked in:
+CPU: 0 PID: 2102 Comm: kworker/u8:13 Tainted: G        W          6.10.0-syzkaller #0
+Hardware name: linux,dummy-virt (DT)
+Workqueue: bond0 bond_mii_monitor
+pstate: 61400009 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+pc : netdev_master_upper_dev_get+0x90/0x98 net/core/dev.c:7045
+lr : netdev_master_upper_dev_get+0x90/0x98 net/core/dev.c:7045
+sp : ffff8000881e3a10
+x29: ffff8000881e3a10 x28: 0000000000000000 x27: ffff80008228a3a0
+x26: f4f00000051ab000 x25: ffff8000827a94c8 x24: f4f00000051ab000
+x23: f4f00000051ab248 x22: 0000000000000000 x21: ffff80008282be48
+x20: f6f0000006dca000 x19: f6f0000006dca000 x18: ffffffffffffffff
+x17: 0000000000000000 x16: 0000000000000000 x15: ffff8000881e3440
+x14: 0000000000000000 x13: ffff80008263b080 x12: 0000000000001d52
+x11: 00000000000009c6 x10: ffff8000826eb080 x9 : ffff80008263b080
+x8 : 00000000ffffdfff x7 : ffff8000826eb080 x6 : 80000000ffffe000
+x5 : 0000000000017ff4 x4 : 0000000000000000 x3 : 0000000000000000
+x2 : 0000000000000000 x1 : 0000000000000000 x0 : f2f000000572ed80
+Call trace:
+ netdev_master_upper_dev_get+0x90/0x98 net/core/dev.c:7045
+ rtnl_link_slave_info_fill net/core/rtnetlink.c:655 [inline]
+ rtnl_link_fill net/core/rtnetlink.c:724 [inline]
+ rtnl_fill_ifinfo.constprop.0+0xaf0/0x1210 net/core/rtnetlink.c:1922
+ rtmsg_ifinfo_build_skb+0xc4/0x13c net/core/rtnetlink.c:4073
+ rtmsg_ifinfo_event net/core/rtnetlink.c:4107 [inline]
+ rtmsg_ifinfo_event net/core/rtnetlink.c:4097 [inline]
+ rtmsg_ifinfo+0x64/0xc4 net/core/rtnetlink.c:4116
+ netdev_state_change net/core/dev.c:1376 [inline]
+ netdev_state_change+0x84/0x8c net/core/dev.c:1367
+ linkwatch_do_dev+0x80/0xec net/core/link_watch.c:177
+ linkwatch_sync_dev+0x8c/0xc8 net/core/link_watch.c:263
+ ethtool_op_get_link+0x18/0x34 net/ethtool/ioctl.c:62
+ bond_check_dev_link+0x68/0x154 drivers/net/bonding/bond_main.c:757
+ bond_miimon_inspect drivers/net/bonding/bond_main.c:2604 [inline]
+ bond_mii_monitor+0x110/0x91c drivers/net/bonding/bond_main.c:2826
+ process_one_work+0x164/0x2a8 kernel/workqueue.c:3248
+ process_scheduled_works kernel/workqueue.c:3329 [inline]
+ worker_thread+0x268/0x378 kernel/workqueue.c:3409
+ kthread+0x114/0x118 kernel/kthread.c:389
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+---[ end trace 0000000000000000 ]---
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
