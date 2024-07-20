@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-258029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8E3E93824A
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 19:28:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 012C293824B
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 19:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56C551F21407
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 17:28:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0A56281CEA
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 17:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54D1149C6C;
-	Sat, 20 Jul 2024 17:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED49149E00;
+	Sat, 20 Jul 2024 17:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mo1NidTg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Re7GD1nJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27160149C59
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 17:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A63149DE3
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 17:27:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721496421; cv=none; b=Ou2mu+zUyOidKoKcaxNmElGW4p6aM8FoF0snZ+3h7XDVoqxvIBGTuqxQufAxpm6SY6MTh5lKU7Z8Y3htBESuhp8UugYCPG2Xa1DDSXq44IJv6/nANvOiqjcwXJvQbKN5cIY7mlj133xmoe23WVsYuTary6J9TdjxcmMkdnaddjg=
+	t=1721496423; cv=none; b=bOqTEKh3ginlksFMMRqqXIoHzNN9g5+bI4BJ7+XQIOIFnPctV61AZa5Sp5YXZSmNQB6U3DTKmkXtXkMcdz0ZLztShh9tN9x8lR979CFrznG0woN4qFiHBYPsgkkulCdSvxjhak3YX30TxhSlMZyXgF2oDa3FPDMW93k2PzUzcZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721496421; c=relaxed/simple;
-	bh=Y6v1+nAyzX6PLWXUQO4fYkr+VRI6pL0daNUbphTp9Ls=;
+	s=arc-20240116; t=1721496423; c=relaxed/simple;
+	bh=8YWEf7rK4+5tGsSPanUmb4XQE9I8vrOKfPCp7u9NCeA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RCh0+j4b4qenlPET4HywE/7Qh8+yR9YUDKQ3CHX5dxQmSyHXONRpJbwPl/+kKFCXMDIvRacWrAS+ebr7ENaBwaM47ecYpsSZcTa9/0/RYhSYgouAZnhS1KoIg+tmmpeV6EZJke8pUK8MpEisxDcNSu+NH5maOZvOHcuFoDKX5ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mo1NidTg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AE32C4AF0A;
-	Sat, 20 Jul 2024 17:26:59 +0000 (UTC)
+	 MIME-Version; b=Lb2066Le2Kne+Fdu1RivPyfRMTc4/TBU7lOBk/4wjURmrd3OyLwXOxjOMj7dXiQpG9t6xcLy19teyGpT8dHI8EB44AEF6hnV7Lg6QPn/vLVejJSY3DinZOYxKMHTbHAd74SCtdGK5lpDgE+aY20pKXWDcSBPdelOafVB9YI1gSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Re7GD1nJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DCEFC2BD10;
+	Sat, 20 Jul 2024 17:27:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721496421;
-	bh=Y6v1+nAyzX6PLWXUQO4fYkr+VRI6pL0daNUbphTp9Ls=;
+	s=k20201202; t=1721496422;
+	bh=8YWEf7rK4+5tGsSPanUmb4XQE9I8vrOKfPCp7u9NCeA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mo1NidTgWe4gaqa1uhLGqnaHg5Lw0GfB7cXA2DLf78lDSt9LMzySiZAzXFuGsfTu9
-	 FDnJOOoFjIyPazatV3Ug8h0PqPHAkHPAcbvSGjrokipmTMPAQPnsJNRxgmP9G3jtKp
-	 MIKNSf0+s9SB+anrQYQRRYASrqCfnBEjAQRZiEeXxxfhsWctjs48eSrv2aVoiQNa/z
-	 5dWVUwW5P89QqGsHHrOtoPHWxsR2Hhz7Hfzc2PYU4YNM+wPvG7RrCNXi5myMqD4Q1T
-	 DoGnsRlzagv7bVnSzB5Yv4w0Mbd7pmz1IgPTotQOcVwqR/3+BHuCm5OYoOX91TtLSn
-	 Hdvj0BPDY6Ofg==
+	b=Re7GD1nJZkP6/TKDh5zaK6UJbwlRjD13WrXU+U/uWsoCTIPCz+KkS+FWe8qzlMP59
+	 wlaMSl5RD1er1zJPgMqSYWPvsRLTM2wGkplZ1jJf3w9Yv4HlMpoV9jdkNRSlb1bdiS
+	 W0Z/iKOvCHmdepNmvdU10tVh0iDJuzMb4asXBIb36F+00MK6omqL5EqD3KHJ3eG9M6
+	 Ib8eUV8z3NHnirkWteJ6P3BCBfD2UasMSk6lEjEzNX/qKJYolpbyxvDk1QsCPgq1jX
+	 WZx2mswB0I3ykRY//D+kMEiNz+QxYkm6s7EEKaloqxysN9SlVnZ8impwwvBZnQAzL2
+	 yz5VoNN3s1ktw==
 From: Jisheng Zhang <jszhang@kernel.org>
 To: Paul Walmsley <paul.walmsley@sifive.com>,
 	Palmer Dabbelt <palmer@dabbelt.com>,
@@ -49,9 +49,9 @@ To: Paul Walmsley <paul.walmsley@sifive.com>,
 	Clement Leger <cleger@rivosinc.com>
 Cc: linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/7] riscv: staticalize and remove asmlinkage from updated functions
-Date: Sun, 21 Jul 2024 01:12:31 +0800
-Message-ID: <20240720171232.1753-7-jszhang@kernel.org>
+Subject: [PATCH v2 7/7] riscv: traps: mark do_irq() as __always_inline
+Date: Sun, 21 Jul 2024 01:12:32 +0800
+Message-ID: <20240720171232.1753-8-jszhang@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240720171232.1753-1-jszhang@kernel.org>
 References: <20240720171232.1753-1-jszhang@kernel.org>
@@ -63,139 +63,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Now that the callers of these functions have moved into C, they
-are only called in trap.c and no longer need the asmlinkage
-annotation. So make them static and remove asmlinkage from them.
+Since do_irq() is only called in traps.c, so mark it as __always_inline
+this will allow the compiler to get rid of the stack setup/tear down
+code and eliminate a handful of instructions.
 
 Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 ---
- arch/riscv/include/asm/asm-prototypes.h | 19 +------------------
- arch/riscv/kernel/kernel_mode_vector.c  |  2 +-
- arch/riscv/kernel/traps.c               | 16 ++++++++--------
- 3 files changed, 10 insertions(+), 27 deletions(-)
+ arch/riscv/kernel/traps.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/riscv/include/asm/asm-prototypes.h b/arch/riscv/include/asm/asm-prototypes.h
-index c6691e9032dd..067e93e3b400 100644
---- a/arch/riscv/include/asm/asm-prototypes.h
-+++ b/arch/riscv/include/asm/asm-prototypes.h
-@@ -31,30 +31,13 @@ void xor_regs_5_(unsigned long bytes, unsigned long *__restrict p1,
- 		 const unsigned long *__restrict p5);
- 
- #ifdef CONFIG_RISCV_ISA_V_PREEMPTIVE
--asmlinkage void riscv_v_context_nesting_start(struct pt_regs *regs);
-+void riscv_v_context_nesting_start(struct pt_regs *regs);
- asmlinkage void riscv_v_context_nesting_end(struct pt_regs *regs);
- #endif /* CONFIG_RISCV_ISA_V_PREEMPTIVE */
- 
- #endif /* CONFIG_RISCV_ISA_V */
- 
--#define DECLARE_DO_ERROR_INFO(name)	asmlinkage void name(struct pt_regs *regs)
--
--DECLARE_DO_ERROR_INFO(do_trap_unknown);
--DECLARE_DO_ERROR_INFO(do_trap_insn_misaligned);
--DECLARE_DO_ERROR_INFO(do_trap_insn_fault);
--DECLARE_DO_ERROR_INFO(do_trap_insn_illegal);
--DECLARE_DO_ERROR_INFO(do_trap_load_fault);
--DECLARE_DO_ERROR_INFO(do_trap_load_misaligned);
--DECLARE_DO_ERROR_INFO(do_trap_store_misaligned);
--DECLARE_DO_ERROR_INFO(do_trap_store_fault);
--DECLARE_DO_ERROR_INFO(do_trap_ecall_u);
--DECLARE_DO_ERROR_INFO(do_trap_ecall_s);
--DECLARE_DO_ERROR_INFO(do_trap_ecall_m);
--DECLARE_DO_ERROR_INFO(do_trap_break);
--
- asmlinkage void handle_bad_stack(struct pt_regs *regs);
--asmlinkage void do_page_fault(struct pt_regs *regs);
--asmlinkage void do_irq(struct pt_regs *regs);
- asmlinkage void do_traps(struct pt_regs *regs, unsigned long cause);
- 
- #endif /* _ASM_RISCV_PROTOTYPES_H */
-diff --git a/arch/riscv/kernel/kernel_mode_vector.c b/arch/riscv/kernel/kernel_mode_vector.c
-index 6afe80c7f03a..a6995429ddf5 100644
---- a/arch/riscv/kernel/kernel_mode_vector.c
-+++ b/arch/riscv/kernel/kernel_mode_vector.c
-@@ -152,7 +152,7 @@ static int riscv_v_start_kernel_context(bool *is_nested)
- }
- 
- /* low-level V context handling code, called with irq disabled */
--asmlinkage void riscv_v_context_nesting_start(struct pt_regs *regs)
-+void riscv_v_context_nesting_start(struct pt_regs *regs)
- {
- 	int depth;
- 
 diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-index 3eaa7c72f2be..dc1bc84cfe15 100644
+index dc1bc84cfe15..030c50cb4e78 100644
 --- a/arch/riscv/kernel/traps.c
 +++ b/arch/riscv/kernel/traps.c
-@@ -147,7 +147,7 @@ static void do_trap_error(struct pt_regs *regs, int signo, int code,
- #define __trap_section noinstr
- #endif
- #define DO_ERROR_INFO(name, signo, code, str)					\
--asmlinkage __trap_section void name(struct pt_regs *regs)			\
-+static __trap_section void name(struct pt_regs *regs)				\
- {										\
- 	if (user_mode(regs)) {							\
- 		irqentry_enter_from_user_mode(regs);				\
-@@ -167,7 +167,7 @@ DO_ERROR_INFO(do_trap_insn_misaligned,
- DO_ERROR_INFO(do_trap_insn_fault,
- 	SIGSEGV, SEGV_ACCERR, "instruction access fault");
- 
--asmlinkage __trap_section void do_trap_insn_illegal(struct pt_regs *regs)
-+static __trap_section void do_trap_insn_illegal(struct pt_regs *regs)
- {
- 	bool handled;
- 
-@@ -198,7 +198,7 @@ asmlinkage __trap_section void do_trap_insn_illegal(struct pt_regs *regs)
- DO_ERROR_INFO(do_trap_load_fault,
- 	SIGSEGV, SEGV_ACCERR, "load access fault");
- 
--asmlinkage __trap_section void do_trap_load_misaligned(struct pt_regs *regs)
-+static __trap_section void do_trap_load_misaligned(struct pt_regs *regs)
- {
- 	if (user_mode(regs)) {
- 		irqentry_enter_from_user_mode(regs);
-@@ -219,7 +219,7 @@ asmlinkage __trap_section void do_trap_load_misaligned(struct pt_regs *regs)
- 	}
- }
- 
--asmlinkage __trap_section void do_trap_store_misaligned(struct pt_regs *regs)
-+static __trap_section void do_trap_store_misaligned(struct pt_regs *regs)
- {
- 	if (user_mode(regs)) {
- 		irqentry_enter_from_user_mode(regs);
-@@ -294,7 +294,7 @@ static void handle_break(struct pt_regs *regs)
- 		die(regs, "Kernel BUG");
- }
- 
--asmlinkage __trap_section void do_trap_break(struct pt_regs *regs)
-+static __trap_section void do_trap_break(struct pt_regs *regs)
- {
- 	if (user_mode(regs)) {
- 		irqentry_enter_from_user_mode(regs);
-@@ -311,7 +311,7 @@ asmlinkage __trap_section void do_trap_break(struct pt_regs *regs)
- 	}
- }
- 
--asmlinkage __trap_section  __no_stack_protector
-+static __trap_section  __no_stack_protector
- void do_trap_ecall_u(struct pt_regs *regs)
- {
- 	if (user_mode(regs)) {
-@@ -355,7 +355,7 @@ void do_trap_ecall_u(struct pt_regs *regs)
- }
- 
- #ifdef CONFIG_MMU
--asmlinkage noinstr void do_page_fault(struct pt_regs *regs)
-+static noinstr void do_page_fault(struct pt_regs *regs)
- {
- 	irqentry_state_t state = irqentry_enter(regs);
- 
 @@ -378,7 +378,7 @@ static void noinstr handle_riscv_irq(struct pt_regs *regs)
  	irq_exit_rcu();
  }
  
--asmlinkage void noinstr do_irq(struct pt_regs *regs)
-+static void noinstr do_irq(struct pt_regs *regs)
+-static void noinstr do_irq(struct pt_regs *regs)
++static __always_inline void do_irq(struct pt_regs *regs)
  {
  	irqentry_state_t state = irqentry_enter(regs);
  
