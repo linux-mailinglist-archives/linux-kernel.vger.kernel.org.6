@@ -1,158 +1,78 @@
-Return-Path: <linux-kernel+bounces-258008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C45E938219
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 18:29:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5D5D93821B
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 18:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 579B4281D09
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 16:29:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF3261C203DB
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 16:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F53148310;
-	Sat, 20 Jul 2024 16:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04BA145FEA;
+	Sat, 20 Jul 2024 16:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pPISnTN1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ChjvQB4p"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FB4146A9A;
-	Sat, 20 Jul 2024 16:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164ED839F4;
+	Sat, 20 Jul 2024 16:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721492986; cv=none; b=SESatU+AkrGxyDlQBStyFaoVmQybvKUplUsWshGH2VJ0PfmMXbiSSnNwQxbQd1lx7ctf61zAQipeVbEpfeh8AWgO7w9oP+NkIEMYZHHbbghAsrPjteLGOCO71Q4LT1Asr3xhe+deQyGXRH/aAQKKT9RayDqv2V+qADd8rwN0710=
+	t=1721493007; cv=none; b=XZmVwsRLT16dLBz/C2SKUG2Yw1oOAdjV5JCM3W8DPaYzp0fZyRWpxPrHoL4J0zniy7/F614PuMKWmoelqMh8kxuj6tLuTIxu1LF/iUiyk3+ZBMS/+3pTGk+S/QSzP/maZQIGOy4SVjfPbohl7JmXolC/5xIX8EhYt/VU2KgxM34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721492986; c=relaxed/simple;
-	bh=gQAyzRDNgGMdptTRgt7JqtA/m21hfwIwvqB/asm9gPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LxwGTII3RPJx/4ahtLPf0s9KWigA/hp/wZ9NSm/yGhVvjcqYXHI+O7//HP/5WW6/EaRAzvS70oYw7p8Pc54LidZlM7TuQzClzoPOdkw47JOsplmBsBNd42Ke+Ud5P+PlHFVdtVPWtmvQT+/fMqt7XxoTgjTWST25rPjPEEUFbLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pPISnTN1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36A0EC4AF0C;
-	Sat, 20 Jul 2024 16:29:40 +0000 (UTC)
+	s=arc-20240116; t=1721493007; c=relaxed/simple;
+	bh=KIoBv0mUNTIiDCkYr2P7wrcJt+BJf6AKRSVpD38GZDM=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=nR5bUe9VU+GzAC3VTmEfYTN1SF6LXdpdrzbsncHZGZNJzKMyVB6GS8vImHR5Fodx+MHLNW5zH3Db8tl18n6fEfpfhboAxsctg/cHJ6dGgqtMjHWWE7YEWgdXtdVta6Gdje8NHLoaZmjJcYcCR9WfOPXa2mrxY0BP/QtUhyHyAes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ChjvQB4p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E5D13C2BD10;
+	Sat, 20 Jul 2024 16:30:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721492985;
-	bh=gQAyzRDNgGMdptTRgt7JqtA/m21hfwIwvqB/asm9gPU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pPISnTN14Noih2Eq5pVeHCeJ1Pg5g7/z5MbscLsRKkxXlezJPBt6VWnrAh1MSwZNb
-	 TwxLi8VDZ9CGpVHttsP+ef2EE342WErTJ4HDEX8ixnNHdFnMoWT7IkOFp6Y+rp+jOF
-	 dXMt4//umlv1Bn8rRE2p0IsZpLWL/EjQXFWN6x4ky+qNdabLB9g3mchcxj/K9Rppxo
-	 68f3niYsToE7o/ORMeTsB/W6DmHPCQsTK2zQxQTJAaciNefXWykHMFNqrhIS7jwCDf
-	 y+HzbIw9T7RmPEHlins+MCfp9p+10maCCz9OvwG66IseAM24JjnuANXtTrraoipwqN
-	 tdIxuDD7fBSmw==
-Date: Sat, 20 Jul 2024 17:29:36 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Mudit Sharma <muditsharma.info@gmail.com>
-Cc: lars@metafoo.de, krzk+dt@kernel.org, conor+dt@kernel.org,
- robh@kernel.org, linux-kernel@vger.kernel.org, mazziesaccount@gmail.com,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org, Ivan Orlov
- <ivan.orlov0322@gmail.com>, Javier Carrasco
- <javier.carrasco.cruz@gmail.com>
-Subject: Re: [PATCH v8 2/2] iio: light: ROHM BH1745 colour sensor
-Message-ID: <20240720172936.3a406f0c@jic23-huawei>
-In-Reply-To: <20240718220208.331942-2-muditsharma.info@gmail.com>
-References: <20240718220208.331942-1-muditsharma.info@gmail.com>
-	<20240718220208.331942-2-muditsharma.info@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=k20201202; t=1721493006;
+	bh=KIoBv0mUNTIiDCkYr2P7wrcJt+BJf6AKRSVpD38GZDM=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=ChjvQB4pFghZ2ioGcsaV0u/FZBorx9LVaYELdn8RUganK317b4gBWueEzoPS482mw
+	 u4hXMkx2VvbZod0kZDLANTkd2ToKUtov0FKZJ42i8ozrbeH2ySjm9g7ptn8xjemMQY
+	 UFjHQdcRmGtOqwfbq1aelHXW92StJZsebgyR4zqHvqVSSX8cYOkaeHs2qqgjEon77I
+	 1pS6eHWZDWmsRLWmsJOKzZEa/PSDPcOOL0edTMMs9Z0DYmmgITlVzBNWqsjaDafdv6
+	 Y+FqAMTgxzxUmf9eQRD6QbEwG2L9ZAg5K0Btq4JY9DENuAyawLwKI0DW+RrTkzDfUN
+	 vs+8uTb76LSjg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id CF286C43335;
+	Sat, 20 Jul 2024 16:30:06 +0000 (UTC)
+Subject: Re: [GIT PULL] MIPS changes for v6.11
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <ZpuAyzljTBjd6a7g@alpha.franken.de>
+References: <ZpuAyzljTBjd6a7g@alpha.franken.de>
+X-PR-Tracked-List-Id: <linux-mips.vger.kernel.org>
+X-PR-Tracked-Message-Id: <ZpuAyzljTBjd6a7g@alpha.franken.de>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git/ tags/mips_6.11
+X-PR-Tracked-Commit-Id: bb2d63500b5c8fd1ea425caffe2d44c931fefc6b
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: d2be38b9a5514dbc7dc0c96a2a7f619fcddce00d
+Message-Id: <172149300683.5957.11683807145930968401.pr-tracker-bot@kernel.org>
+Date: Sat, 20 Jul 2024 16:30:06 +0000
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: torvalds@linux-foundation.org, linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Thu, 18 Jul 2024 23:02:06 +0100
-Mudit Sharma <muditsharma.info@gmail.com> wrote:
+The pull request you sent on Sat, 20 Jul 2024 11:18:03 +0200:
 
-> Add support for BH1745, which is an I2C colour sensor with red, green,
-> blue and clear channels. It has a programmable active low interrupt
-> pin. Interrupt occurs when the signal from the selected interrupt
-> source channel crosses set interrupt threshold high or low level.
-> 
-> Interrupt source for the device can be configured by enabling the
-> corresponding event. Interrupt latch is always enabled when setting
-> up interrupt.
-> 
-> Add myself as the maintainer for this driver in MAINTAINERS.
-> 
-> Signed-off-by: Mudit Sharma <muditsharma.info@gmail.com>
-> Reviewed-by: Ivan Orlov <ivan.orlov0322@gmail.com>
-> Reviewed-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git/ tags/mips_6.11
 
-Hi Mudit.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/d2be38b9a5514dbc7dc0c96a2a7f619fcddce00d
 
-Rather than go around again, I've applied a few things I noticed
-and changes Javier suggests whilst picking this up.
+Thank you!
 
-I also tweaked a few long lines.
-
-Anyhow, applied to the testing branch of iio.git which will be rebased
-on rc1 once available and pushed out as togreg for linux-next to
-pick up.
-
-Thanks,
-
-Jonathan
-
-
-> +
-> +static irqreturn_t bh1745_trigger_handler(int interrupt, void *p)
-> +{
-> +	struct iio_poll_func *pf = p;
-> +	struct iio_dev *indio_dev = pf->indio_dev;
-> +	struct bh1745_data *data = iio_priv(indio_dev);
-> +	struct {
-> +		u16 chans[4];
-> +		s64 timestamp __aligned(8);
-> +	} scan;
-> +	u16 value;
-> +	int ret;
-> +	int i;
-> +	int j = 0;
-> +
-> +	for_each_set_bit(i, indio_dev->active_scan_mask, indio_dev->masklength) {
-
-Nuno's new helper iio_for_each_active_channel()
-cleans this up. I'll switch to that whilst applying rather than adding another driver
-for him to convert over.
-
-
-> +		ret = regmap_bulk_read(data->regmap, BH1745_RED_LSB + 2 * i, &value, 2);
-> +		if (ret)
-> +			goto err;
-> +
-> +		scan.chans[j++] = value;
-> +	}
-> +
-> +	iio_push_to_buffers_with_timestamp(indio_dev, &scan, iio_get_time_ns(indio_dev));
-> +
-> +err:
-> +	iio_trigger_notify_done(indio_dev->trig);
-> +
-> +	return IRQ_HANDLED;
-> +}
-
-> +
-> +static int bh1745_probe(struct i2c_client *client)
-> +{
-> +	int ret;
-> +	int value;
-> +	int part_id;
-> +	struct bh1745_data *data;
-> +	struct iio_dev *indio_dev;
-> +	struct device *dev = &client->dev;
-> +
-> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	i2c_set_clientdata(client, indio_dev);
-Trivial, but is this ever used?  I couldn't figure out where it if is.
-So I've dropped it. Shout if it needs to be here.
-
-Jonathan
-
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
