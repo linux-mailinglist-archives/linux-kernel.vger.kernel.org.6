@@ -1,204 +1,128 @@
-Return-Path: <linux-kernel+bounces-257876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3B17938003
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 10:35:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD0B937FF7
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 10:12:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75DBD1F21E37
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 08:35:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF14F281A99
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 08:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225AD38398;
-	Sat, 20 Jul 2024 08:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AFOpsB4l"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA83F2E62B;
+	Sat, 20 Jul 2024 08:11:58 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4BF2AE66;
-	Sat, 20 Jul 2024 08:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B8A1A291
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 08:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721464509; cv=none; b=K7OI5d+mBEOrYhA5wZlbpt1S80R6LAzKSngcE3iRIhFvycFbsGEXjwNNSPInT3GNRgHKiOHqb7zebhIrl+mgKymIBBwpKBir7e/+Ad52YOUFM7E1oJShVlzOR/lHTv9x7F7UotOTKiyjV8kH85E1tCd7IiZCxA/rsoApJwnX11g=
+	t=1721463118; cv=none; b=DIIEz8pMc8cHqjXFZLAem4jtdO+Ci5ggOUUYSK7ob9Lwt4GWecdkpkSZKK+bofDiVjPqUcaq/pDdyQQFWj3Gb5DfUXljZHTlYGg5HKyqDRGyRweYuDYKxjm6MUwgQWt31o44eHVXMsPmuNTLmPpZl2WInaKooGnDUGjTAusWAIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721464509; c=relaxed/simple;
-	bh=GDCswwZ3H6I9fVzq00wGUmivOr1Aqnil1dVgdZeaD5g=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=airLQ3dbAACT+jahafW/2pOfZXnuRdqP6cgqIyHorHLyu9TXc9EOa38RVkPX8onUIi61v+bLEYw/F42tcRrUscNwu0t+0q38ZXqM2Gl8FDrFyjTRtBhOlBY6x7B24jgsES0PVzuenCSBsyU8cagiW9AqLhsomCgcEvppnRT81Q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AFOpsB4l; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46K8TF2p000568;
-	Sat, 20 Jul 2024 08:34:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-type:mime-version:subject:from:in-reply-to:date:cc
-	:content-transfer-encoding:message-id:references:to; s=pp1; bh=z
-	Zchxu4XLpL2mSRCqdmQcK3h6G3JuMmYv+otXvOO7ac=; b=AFOpsB4lAC33yNllg
-	YcNZ1gX0f4t/fxbcI0RrcX5griFwY8Khu2lD6A3dOshIIIbGfHsEWFk7oml9G7Cc
-	iE8pmG3NaQRFxRdMvaUzPdRZRM9WGul6t97R8txAhtITA3UQn+VXpWdW8vcgpY0P
-	VZ2Zcwl9aOmXQI6HSVOU41VsYI+18b85uOFwGJ06S0EAB+mYU2lPJ+GYepDNdAon
-	sgZv/RtG1Q6LDz+EGp/OEptsfKasQWJ+W1hEihiqwtpg1BYn0F3J1JntaaFPYVY7
-	EjuAbnSbi/MJw6QlV2nRUyaeUwrgYzZPfIDN/vzsNcgDiTPWImmDIwrB4zFeLg9A
-	rcR5g==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40g9rn006v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 20 Jul 2024 08:34:43 +0000 (GMT)
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46K8YgDk008989;
-	Sat, 20 Jul 2024 08:34:42 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40g9rn006s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 20 Jul 2024 08:34:42 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46K8GtbP012992;
-	Sat, 20 Jul 2024 08:34:41 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 40g5rjrw80-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 20 Jul 2024 08:34:41 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46K8YbNK21496362
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 20 Jul 2024 08:34:39 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 114D020145;
-	Sat, 20 Jul 2024 08:08:47 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2DC4120143;
-	Sat, 20 Jul 2024 08:08:44 +0000 (GMT)
-Received: from smtpclient.apple (unknown [9.43.87.100])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Sat, 20 Jul 2024 08:08:43 +0000 (GMT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1721463118; c=relaxed/simple;
+	bh=wwdFiKdlkSc5q80BLYxYF2U+lKcoCHfh2eNCUDS2Rxo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GO/Q21IR5PiCOGkwHwvMp6SHeu9Rt6nHr6I94YKJ30hRYYIMreVgAvvhP3fnFWeeJOlHvz3IiZ87J0sTl0OGVv++qjHPI6z85dVS2KVpp3BCh/vdo/zerYuqUF/ijdR/qIzZVu+ztdk1eAYxoOO7JVH99PEinnmnYyARnYjk92o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WQzf846hyzlXjK;
+	Sat, 20 Jul 2024 16:06:56 +0800 (CST)
+Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
+	by mail.maildlp.com (Postfix) with ESMTPS id 55F2F1800A4;
+	Sat, 20 Jul 2024 16:11:52 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 20 Jul 2024 16:11:51 +0800
+Message-ID: <f4ae2c9c-fe40-4807-bdb2-64cf2d716c1a@huawei.com>
+Date: Sat, 20 Jul 2024 16:11:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [PATCH] perf pmus: Fix duplicate events caused segfault
-From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-In-Reply-To: <20240719081651.24853-1-eric.lin@sifive.com>
-Date: Sat, 20 Jul 2024 13:38:29 +0530
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        James Clark <james.clark@arm.com>,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, vincent.chen@sifive.com,
-        greentime.hu@sifive.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <2C7FF61F-2165-47D4-83A4-B0230D50844D@linux.vnet.ibm.com>
-References: <20240719081651.24853-1-eric.lin@sifive.com>
-To: Eric Lin <eric.lin@sifive.com>
-X-Mailer: Apple Mail (2.3774.600.62)
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 2lrzAoEmrKtjPRizi6AfHKsVw0Z0w4My
-X-Proofpoint-ORIG-GUID: L5hdSVftiMQdyi3MiEApUuo3rYk8W0uP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-20_05,2024-07-18_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=999 priorityscore=1501 clxscore=1011 adultscore=0 spamscore=0
- impostorscore=0 mlxscore=0 bulkscore=0 lowpriorityscore=0 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407200060
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] memory tiering: read last_cpupid correctly in
+ do_huge_pmd_numa_page()
+Content-Language: en-US
+To: Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>,
+	<linux-mm@kvack.org>
+CC: David Hildenbrand <david@redhat.com>, "Huang, Ying"
+	<ying.huang@intel.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+	<linux-kernel@vger.kernel.org>
+References: <20240719144306.258018-1-ziy@nvidia.com>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <20240719144306.258018-1-ziy@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemf100008.china.huawei.com (7.185.36.138)
 
 
 
-> On 19 Jul 2024, at 1:46=E2=80=AFPM, Eric Lin <eric.lin@sifive.com> =
-wrote:
->=20
-> Currently, if vendor JSON files have two duplicate event names,
-> the "perf list" command will trigger a segfault.
->=20
-> In commit e6ff1eed3584 ("perf pmu: Lazily add JSON events"),
-> pmu_events_table__num_events() gets the number of JSON events
-> from table_pmu->num_entries, which includes duplicate events
-> if there are duplicate event names in the JSON files.
+On 2024/7/19 22:43, Zi Yan wrote:
+> last_cpupid is only available when memory tiering is off or the folio
+> is in toptier node. Complete the check to read last_cpupid when it is
+> available.
+> 
+> Before the fix, the default last_cpupid will be used even if memory
+> tiering mode is turned off at runtime instead of the actual value. This
+> can prevent task_numa_fault() from getting right numa fault stats, but
+> should not cause any crash. User might see performance changes after the
+> fix.
+> 
+> Reported-by: David Hildenbrand <david@redhat.com>
+> Closes: https://lore.kernel.org/linux-mm/9af34a6b-ca56-4a64-8aa6-ade65f109288@redhat.com/
+> Fixes: 33024536bafd ("memory tiering: hot page selection with hint page fault latency")
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
+> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Acked-by: David Hildenbrand <david@redhat.com>
 
-Hi Eric,
+Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 
-Let us consider there are duplicate event names in the JSON files, say :
+and we better to check numabalance mode in migrate_misplaced_folio()?
 
-metric.json with: EventName as pmu_cache_miss, EventCode as 0x1
-cache.json with:  EventName as pmu_cache_miss, EventCode as 0x2
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -2630,7 +2630,8 @@ int migrate_misplaced_folio(struct folio *folio, 
+struct vm_area_struct *vma,
+                 putback_movable_pages(&migratepages);
+         if (nr_succeeded) {
+                 count_vm_numa_events(NUMA_PAGE_MIGRATE, nr_succeeded);
+-               if (!node_is_toptier(folio_nid(folio)) && 
+node_is_toptier(node))
++               if ((sysctl_numa_balancing_mode & 
+NUMA_BALANCING_MEMORY_TIERING)
++                   &&!node_is_toptier(folio_nid(folio)) && 
+node_is_toptier(node))
+                         mod_node_page_state(pgdat, PGPROMOTE_SUCCESS,
+                                             nr_succeeded);
+         }
 
-If we fix the segfault and proceed, still =E2=80=9Cperf list=E2=80=9D =
-will list only one entry for pmu_cache_miss with may be 0x1/0x2 as event =
-code ?
-Can you check the result to confirm what =E2=80=9Cperf list=E2=80=9D =
-will list in this case ? If it=E2=80=99s going to have only one entry in =
-perf list, does it mean there are two event codes for pmu_cache_miss and =
-it can work with either of the event code ?
 
-If it happens to be a mistake in json file to have duplicate entry with =
-different event code (ex: with some broken commit), I am thinking if the =
-better fix is to keep only the valid entry in json file ?
 
-Thanks
-Athira
-
->=20
-> perf_pmu__for_each_event() adds JSON events to the pmu->alias
-> list and copies sevent data to the aliases array. However, the
-> pmu->alias list does not contain duplicate events, as
-> perf_pmu__new_alias() checks if the name was already created.
->=20
-> When sorting the alias data, if there are two duplicate events,
-> it causes a segfault in cmp_sevent() due to invalid aliases in
-> the aliases array.
->=20
-> To avoid such segfault caused by duplicate event names in the
-> JSON files, the len should be updated before sorting the aliases.
->=20
-> Fixes: e6ff1eed3584 ("perf pmu: Lazily add JSON events")
-> Signed-off-by: Eric Lin <eric.lin@sifive.com>
 > ---
-> tools/perf/util/pmus.c | 5 +++--
-> 1 file changed, 3 insertions(+), 2 deletions(-)
->=20
-> diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
-> index b9b4c5eb5002..e38c3fd4d1ff 100644
-> --- a/tools/perf/util/pmus.c
-> +++ b/tools/perf/util/pmus.c
-> @@ -443,7 +443,7 @@ void perf_pmus__print_pmu_events(const struct =
-print_callbacks *print_cb, void *p
-> {
-> struct perf_pmu *pmu;
-> int printed =3D 0;
-> - int len;
-> + size_t len, j;
-> struct sevent *aliases;
-> struct events_callback_state state;
-> bool skip_duplicate_pmus =3D =
-print_cb->skip_duplicate_pmus(print_state);
-> @@ -474,8 +474,9 @@ void perf_pmus__print_pmu_events(const struct =
-print_callbacks *print_cb, void *p
-> perf_pmu__for_each_event(pmu, skip_duplicate_pmus, &state,
-> perf_pmus__print_pmu_events__callback);
-> }
-> + len =3D state.index;
-> qsort(aliases, len, sizeof(struct sevent), cmp_sevent);
-> - for (int j =3D 0; j < len; j++) {
-> + for (j =3D 0; j < len; j++) {
-> /* Skip duplicates */
-> if (j > 0 && pmu_alias_is_duplicate(&aliases[j], &aliases[j - 1]))
-> continue;
-> --=20
-> 2.43.2
->=20
->=20
-
+>   mm/huge_memory.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index f4be468e06a4..825317aee88e 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -1712,7 +1712,8 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
+>   	 * For memory tiering mode, cpupid of slow memory page is used
+>   	 * to record page access time.  So use default value.
+>   	 */
+> -	if (node_is_toptier(nid))
+> +	if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING) ||
+> +	    node_is_toptier(nid))
+>   		last_cpupid = folio_last_cpupid(folio);
+>   	target_nid = numa_migrate_prep(folio, vmf, haddr, nid, &flags);
+>   	if (target_nid == NUMA_NO_NODE)
 
