@@ -1,102 +1,108 @@
-Return-Path: <linux-kernel+bounces-257817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CBAD937F59
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 08:52:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 057FB937F5C
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 08:58:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 081C0B212C0
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 06:52:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 363D01C211C7
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 06:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC89116419;
-	Sat, 20 Jul 2024 06:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00EF179AF;
+	Sat, 20 Jul 2024 06:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jnBVTdbV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b="GlS3pVWe"
+Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B34812E61
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 06:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BEC912E61;
+	Sat, 20 Jul 2024 06:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.87.146.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721458325; cv=none; b=uXkN6YWLVZn3uswLKOuxfI8lDuhLIkzp9f0KvJvuT3GLyjCpgDUROXgsyzjK3wCWM+ETTN27wG0ultbg3o4XIPJiXzTvJj770do4ApOHDyIf5pGRry3O7h5+beAw7eQ9PQWkEg5C19RN/RuYk3zBXDAwDr7vGt20iMa4g2voxPQ=
+	t=1721458694; cv=none; b=CgK3zLaXOi3m6OPAUoPPrguaXllCDIO4j0sVW54XMeTREpQjpwYr4K5ref5VIPDNrQFAEp2ak86uS5jjOHxRIwNq8d2F+22383xobjFyyO2I6rXl3NqaHTVrRN9kXh+pQRCwmQ2gBP0IzEEm4kz3VWGaDcdcXqGJlzWdDhXvL5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721458325; c=relaxed/simple;
-	bh=iW4xld3yqHSHc0UfuFsGiSyCvDgQzg1uUU4yj5DjdUo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=iVdeu+Fzs6mcir4+b/y7nQJPVdA/8uGaiTdo5t0yX4KfkA1XYK87TcVMKw43q6ZgEHX1pTfavFUBElMr5st+6cVz1pxvOo+Ir9eJwXNsxeANaqA4aBnBlR7s6RW9K5qxFHuDo4UBUrvgl0FmryAgk5i34XIkLlLjoi6Jsf6khUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jnBVTdbV; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721458324; x=1752994324;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=iW4xld3yqHSHc0UfuFsGiSyCvDgQzg1uUU4yj5DjdUo=;
-  b=jnBVTdbVrABBMPUBuXkSZ7SwqAZeKXBU5r9+271uCUR/GWvfHkZLSpwK
-   RS3zhZTeH/P0zyAJdudhwfpdT49ketVGPGx/g7YodaFj3PbxvNmxBb+Kf
-   S8z6FHIfVdOKwGWVevW4k0iHRJz1Ohyf2Ds9INK7R/G2bJ777RKpfX4Sp
-   8oJe+8GGRKlN/Yh0+xOHbvyP2tR/Tw17cFV4aPdlGYkh4tbNXn/YdBf7H
-   /CPMLAwRjLxXWyw/SNGN2iJtfLvOrxq6RseXwgFCJKSAGibypLNRyJy+N
-   1ay9tbOT5I2lbpgpMyMKsI3RFL/gD2rbJSP0r176FYN7kObzD4YuSE+cq
-   A==;
-X-CSE-ConnectionGUID: Q6eztGKxSkCzeHqltHsuXg==
-X-CSE-MsgGUID: OZcXFStgQsWBMWJV0TutXQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11138"; a="21985555"
-X-IronPort-AV: E=Sophos;i="6.09,223,1716274800"; 
-   d="scan'208";a="21985555"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2024 23:52:03 -0700
-X-CSE-ConnectionGUID: v2cbz/24REaMOwWbk5Jddg==
-X-CSE-MsgGUID: ViP3wWV9QlmCmx9RBT+L8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,223,1716274800"; 
-   d="scan'208";a="56171196"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 19 Jul 2024 23:52:02 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sV3wk-000iwE-2v;
-	Sat, 20 Jul 2024 06:51:58 +0000
-Date: Sat, 20 Jul 2024 14:51:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Luiz Angelo Daros de Luca <luizluca@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: s390-linux-ld: drivers/net/dsa/realtek/rtl8366rb.c:980:undefined
- reference to `devm_led_classdev_register_ext'
-Message-ID: <202407201701.nkpQZJZw-lkp@intel.com>
+	s=arc-20240116; t=1721458694; c=relaxed/simple;
+	bh=M5L6dWDAc1ou/EhVWLIU6nU2qw5ijq61Yo/lqnsud80=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=MJayc/KjitXwkqY18Zxee1mp4y1f7uT2oJtp5GPKKD2vSkhbOUOPywKOnIDbMy/iYw3ZLdQU6Sdlqrz3iJUKrTuhz9R9DKvR5dI+SCkEUa4Vehq7gA4SEgdrlcaZkzpF2SUBuNuE4OzaZt/HU8rdU5Icg31EHecm3dWoqr1F8P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru; spf=pass smtp.mailfrom=trvn.ru; dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b=GlS3pVWe; arc=none smtp.client-ip=194.87.146.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trvn.ru
+Received: from authenticated-user (box.trvn.ru [194.87.146.52])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by box.trvn.ru (Postfix) with ESMTPSA id 8016C401C4;
+	Sat, 20 Jul 2024 11:57:59 +0500 (+05)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
+	t=1721458680; bh=M5L6dWDAc1ou/EhVWLIU6nU2qw5ijq61Yo/lqnsud80=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GlS3pVWedP+ZRBjFW6aR/R6nayB6owCO3ITEjaNzTuyK+BMu5OUL8X1KcbKoS+3KO
+	 fbiULf8HGAHrT8lAtvcwanWuf7YQcS9jp4GfVIRlcfzrl1wWPvQ4//KffnarmPtR8H
+	 gOcCISUwAFhKoxL7J4BSAxJiaVWMDoX+/IxesaPT8jibYmJqxABEev+saM3n2KKv1C
+	 kt0FieLInXflBF/UxntpkR+XDodPxD5ioHc98u/C2JnWqOzXCf+QWRh0F7eA8H91cn
+	 CEHtFD/DW7hoqaI2HkVVXTAUDBaUnxgpqDxlsoJCpEdJP+6rCZkFFeqyb3Ww52ip6O
+	 boh40a6kCxVtw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Date: Sat, 20 Jul 2024 11:57:44 +0500
+From: Nikita Travkin <nikita@trvn.ru>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ Michael Srba <Michael.Srba@seznam.cz>, Linus Walleij
+ <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, linux-input@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/2] input: zinitix: Add touchkey support
+In-Reply-To: <ZpsE8mQpahxBQRE-@google.com>
+References: <20240717-zinitix-tkey-v5-0-52ea4cd4bd50@trvn.ru>
+ <20240717-zinitix-tkey-v5-2-52ea4cd4bd50@trvn.ru>
+ <ZpsE8mQpahxBQRE-@google.com>
+Message-ID: <b0b86f2f6f315d791e7e0391142720b9@trvn.ru>
+X-Sender: nikita@trvn.ru
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   3c3ff7be9729959699eb6cbc7fd7303566d74069
-commit: 32d617005475a71ebcc4ec8b2791e8d1481e9a10 net: dsa: realtek: add LED drivers for rtl8366rb
-date:   3 months ago
-config: s390-randconfig-s033-20221201 (https://download.01.org/0day-ci/archive/20240720/202407201701.nkpQZJZw-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240720/202407201701.nkpQZJZw-lkp@intel.com/reproduce)
+Dmitry Torokhov писал(а) 20.07.2024 05:29:
+> On Wed, Jul 17, 2024 at 06:55:34PM +0500, Nikita Travkin wrote:
+>> Zinitix touch controllers can use some of the sense lines for virtual
+>> keys (like those found on many phones). Add support for those keys.
+>>
+>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+> 
+> Applied, thank you. However:
+> 
+>> -->
+>> +	if (le16_to_cpu(touch_event.status) & BIT_ICON_EVENT) {
+>> +		error = zinitix_read_data(bt541->client, ZINITIX_ICON_STATUS_REG,
+>> +					  &icon_events, sizeof(icon_events));
+>> +		if (error) {
+>> +			dev_err(&client->dev, "Failed to read icon events\n");
+>> +			goto out;
+>> +		}
+> 
+> I wonder, would it make sense (and be more efficient) to issue a single
+> read of size sizeof(struct touch_event) + sizeof(icon_events) and the
+> parse the data based on touch_event.status?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407201701.nkpQZJZw-lkp@intel.com/
+Maybe, but I would be really hesitant to such a change: Original driver
+also makes a dedicated read for the "icon" data and per my understanding,
+those "register reads" may also not be really "register" based but rather
+kind of "command" based, where controller will start streaming the data
+based on the request for the specific "register". In this case i'd prefer
+to not accidentally confuse the touch firmware by over-reading the data,
+if its somehow firmware-version-defined.
 
-All errors (new ones prefixed by >>):
+Thanks for giving it a look and picking this up!
+Nikita
 
-   s390-linux-ld: drivers/net/dsa/realtek/rtl8366rb.o: in function `rtl8366rb_setup_led':
-   drivers/net/dsa/realtek/rtl8366rb.c:953:(.text+0x2e30): undefined reference to `led_init_default_state_get'
->> s390-linux-ld: drivers/net/dsa/realtek/rtl8366rb.c:980:(.text+0x30ba): undefined reference to `devm_led_classdev_register_ext'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+> Thanks.
 
