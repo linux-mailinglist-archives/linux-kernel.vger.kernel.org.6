@@ -1,242 +1,235 @@
-Return-Path: <linux-kernel+bounces-257898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D400938086
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 11:48:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AB2993808D
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 11:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C8E91C20DAB
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 09:48:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D479628230C
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 09:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311807D41D;
-	Sat, 20 Jul 2024 09:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HqpdbsPZ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81167E574;
+	Sat, 20 Jul 2024 09:53:47 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0AF29A2;
-	Sat, 20 Jul 2024 09:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D8C4CE09;
+	Sat, 20 Jul 2024 09:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721468899; cv=none; b=E6W+VzOvcDgtXXud6PlasKu1BB0u8pWcX4ZaA+NR6VrdpVc8D7GYpnN0ekkYYbqfCfZeqwWUQTKvXub/5muOy+FzjnQ9xLOk/GgFzB2LppiJtlu0Jqw84Zh8Pp7+eJv1n5x1bq8SiVj22MLDwjwSeUhOecpcjpIvX6Y21li0UbY=
+	t=1721469227; cv=none; b=tkXJLWlH6RxPAtXcgQjvLRwV6LXnT8E+RGQktOr3dcbYdkLEuWm6SMhcHlqW+junXSk9vpoKbckQxnbX8YQb8vUPGSO++p4hfNqUFwtCUURcQT5RNsUt4D9JvlKD3m88/gOSe+TCjMwcEqeoKxftLdiDr465eAEW3M7dFYV8ifc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721468899; c=relaxed/simple;
-	bh=4IKGPDVuFgKuZVzXlHbzBkSmBTT6vlW1VYxodSF1Ewg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L2NtWITqaZ8K61YxzTFjqjQoZ2eeCQbSiywDa/A25l4aTSwp/2OjzN3zHwYavcPCzJ0qKO4Ng6kw3KCv/+m3uQeV3Z9WJ/c1n0gMYHYx0iB0eLtW/+puk7Gqp+jXh8kLs10br2SsAAVPhpL8Wv/TUDNmu/kvpU19un4tPhNfNCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HqpdbsPZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A9C5C2BD10;
-	Sat, 20 Jul 2024 09:48:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721468898;
-	bh=4IKGPDVuFgKuZVzXlHbzBkSmBTT6vlW1VYxodSF1Ewg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HqpdbsPZdEN7Ru8PbvORVTYX/XbkUSJarMsG8mNokq6BouS0kCf7XQvfr8KsRRVRz
-	 yzBo6W9Ep43AmDWnawKfc12tBDSWlF7z7fd24DjD7Kx2ae84EaRfZbi536CZ9pdvwm
-	 rZATTzqHM4JiNueGfv8JpN1yTLKWiqG9mP/j38sXUJbNjMtB3WjOUU1voTfdGcqEzo
-	 9xZdC+wlspEz/KsEI0rHpcp9tAniq5sCYSRRVKdy+ED4UXQruMC+c38JSiZi99RbCY
-	 ns1mvlWZV5qSK88FkJ3X16PtE1x/6wkZxAMrCEKuOmIv9qBXq6UPnXmD6UJVxiD9z0
-	 8xsK6Ir+/az8A==
-Date: Sat, 20 Jul 2024 10:48:12 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matteo Martelli <matteomartelli3@gmail.com>
-Cc: Marius.Cristea@microchip.com, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, robh@kernel.org, lars@metafoo.de,
- linux-kernel@vger.kernel.org, krzk+dt@kernel.org,
- Jonathan.Cameron@Huawei.com, conor+dt@kernel.org
-Subject: Re: [PATCH v2 2/2] iio: adc: add support for pac1921
-Message-ID: <20240720104812.5d59e91a@jic23-huawei>
-In-Reply-To: <6697d3b0d33f6_1fc333707f@njaxe.notmuch>
-References: <20240704-iio-pac1921-v2-0-0deb95a48409@gmail.com>
-	<20240704-iio-pac1921-v2-2-0deb95a48409@gmail.com>
-	<20240707160442.6bab64c9@jic23-huawei>
-	<668bec2a8b23a_6e037017@njaxe.notmuch>
-	<20240708173439.000070b4@Huawei.com>
-	<668cf2f3ece62_1f6ba37012@njaxe.notmuch>
-	<20240713112153.3576fc2a@jic23-huawei>
-	<66963b764ac3c_706370bd@njaxe.notmuch>
-	<483de34b3a74a2981fac89a8232e3ef2448f57ef.camel@microchip.com>
-	<20240716180004.606006d0@jic23-huawei>
-	<6697d3b0d33f6_1fc333707f@njaxe.notmuch>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721469227; c=relaxed/simple;
+	bh=xhomw79Be/HCpaE2/rtrJWGC2ErE93REQWlELmL6Few=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jvbMeGrEiiuBm78OqT+QptZg9LgY3NYiqcvoCRmdd/tXr8e64Gxi/DYgQOCKBjI2iRQQlntUEg+hwHnhxqU8rL3UlC8dzil5hNG8k3QA2LBZBEu4Tb4TXjcVje/3u7tmwuyn1yYpOhj2V3Sxfjmf2T3ViZmRk23W6W8BOLPgHII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F29CAC2BD10;
+	Sat, 20 Jul 2024 09:53:39 +0000 (UTC)
+Message-ID: <a6a7a9c8-7406-4e69-a5cf-08cf06c7793d@xs4all.nl>
+Date: Sat, 20 Jul 2024 11:53:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 02/28] v4l2: handle restricted memory flags in queue
+ setup
+To: Yunfei Dong <yunfei.dong@mediatek.com>,
+ Jeffrey Kardatzke <jkardatzke@google.com>,
+ =?UTF-8?Q?N=C3=ADcolas_F_=2E_R_=2E_A_=2E_Prado?= <nfraprado@collabora.com>,
+ Nathan Hebert <nhebert@chromium.org>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,
+ Tomasz Figa <tfiga@chromium.org>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>, Yong Wu <yong.wu@mediatek.com>,
+ Hsin-Yi Wang <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>,
+ Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>,
+ Sumit Semwal <sumit.semwal@linaro.org>, Brian Starkey
+ <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
+ "T . J . Mercier" <tjmercier@google.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20240720071606.27930-1-yunfei.dong@mediatek.com>
+ <20240720071606.27930-3-yunfei.dong@mediatek.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <20240720071606.27930-3-yunfei.dong@mediatek.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-On Wed, 17 Jul 2024 16:22:40 +0200
-Matteo Martelli <matteomartelli3@gmail.com> wrote:
+On 20/07/2024 09:15, Yunfei Dong wrote:
+> From: Jeffrey Kardatzke <jkardatzke@google.com>
+> 
+> Validates the restricted memory flags when setting up a queue and
+> ensures the queue has the proper capability.
+> 
+> Signed-off-by: Jeffrey Kardatzke <jkardatzke@google.com>
+> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
+> [Yunfei: Change reviewer's comments]
+> ---
+>  .../media/common/videobuf2/videobuf2-core.c   | 29 +++++++++++++++++++
+>  .../media/common/videobuf2/videobuf2-v4l2.c   |  4 ++-
+>  2 files changed, 32 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
+> index 0217392fcc0d..44080121f37e 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-core.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-core.c
+> @@ -830,6 +830,23 @@ static bool verify_coherency_flags(struct vb2_queue *q, bool non_coherent_mem)
+>  	return true;
+>  }
+>  
+> +static bool verify_restricted_mem_flags(struct vb2_queue *q, bool restricted_mem)
+> +{
+> +	if (restricted_mem != q->restricted_mem) {
+> +		dprintk(q, 1, "restricted memory model mismatch\n");
+> +		return false;
+> +	}
+> +
+> +	return true;
+> +}
+> +
+> +static inline int restricted_mem_mismatch(bool restricted_mem, struct vb2_queue *q,
+> +					  enum vb2_memory memory)
+> +{
+> +	return restricted_mem && (!q->allow_restricted_mem || memory != VB2_MEMORY_DMABUF) ?
+> +	       -1 : 0;
+> +}
+> +
+>  static int vb2_core_allocated_buffers_storage(struct vb2_queue *q)
+>  {
+>  	if (!q->bufs)
+> @@ -863,6 +880,7 @@ int vb2_core_reqbufs(struct vb2_queue *q, enum vb2_memory memory,
+>  	unsigned int q_num_bufs = vb2_get_num_buffers(q);
+>  	unsigned plane_sizes[VB2_MAX_PLANES] = { };
+>  	bool non_coherent_mem = flags & V4L2_MEMORY_FLAG_NON_COHERENT;
+> +	bool restricted_mem = flags & V4L2_MEMORY_FLAG_RESTRICTED;
+>  	unsigned int i, first_index;
+>  	int ret = 0;
+>  
+> @@ -906,6 +924,9 @@ int vb2_core_reqbufs(struct vb2_queue *q, enum vb2_memory memory,
+>  			return 0;
+>  	}
+>  
+> +	if (restricted_mem_mismatch(restricted_mem, q, memory))
+> +		return -EINVAL;
+> +
+>  	/*
+>  	 * Make sure the requested values and current defaults are sane.
+>  	 */
+> @@ -923,6 +944,7 @@ int vb2_core_reqbufs(struct vb2_queue *q, enum vb2_memory memory,
+>  	if (ret)
+>  		return ret;
+>  	set_queue_coherency(q, non_coherent_mem);
+> +	q->restricted_mem = restricted_mem;
+>  
+>  	/*
+>  	 * Ask the driver how many buffers and planes per buffer it requires.
+> @@ -1031,6 +1053,7 @@ int vb2_core_create_bufs(struct vb2_queue *q, enum vb2_memory memory,
+>  	unsigned plane_sizes[VB2_MAX_PLANES] = { };
+>  	bool non_coherent_mem = flags & V4L2_MEMORY_FLAG_NON_COHERENT;
+>  	unsigned int q_num_bufs = vb2_get_num_buffers(q);
+> +	bool restricted_mem = flags & V4L2_MEMORY_FLAG_RESTRICTED;
+>  	bool no_previous_buffers = !q_num_bufs;
+>  	int ret = 0;
+>  
+> @@ -1039,6 +1062,9 @@ int vb2_core_create_bufs(struct vb2_queue *q, enum vb2_memory memory,
+>  		return -ENOBUFS;
+>  	}
+>  
+> +	if (restricted_mem_mismatch(restricted_mem, q, memory))
+> +		return -EINVAL;
+> +
+>  	if (no_previous_buffers) {
+>  		if (q->waiting_in_dqbuf && *count) {
+>  			dprintk(q, 1, "another dup()ped fd is waiting for a buffer\n");
+> @@ -1057,6 +1083,7 @@ int vb2_core_create_bufs(struct vb2_queue *q, enum vb2_memory memory,
+>  			return ret;
+>  		q->waiting_for_buffers = !q->is_output;
+>  		set_queue_coherency(q, non_coherent_mem);
+> +		q->restricted_mem = restricted_mem;
+>  	} else {
+>  		if (q->memory != memory) {
+>  			dprintk(q, 1, "memory model mismatch\n");
+> @@ -1064,6 +1091,8 @@ int vb2_core_create_bufs(struct vb2_queue *q, enum vb2_memory memory,
+>  		}
+>  		if (!verify_coherency_flags(q, non_coherent_mem))
+>  			return -EINVAL;
+> +		if (!verify_restricted_mem_flags(q, restricted_mem))
+> +			return -EINVAL;
+>  	}
+>  
+>  	num_buffers = min(*count, q->max_num_buffers - q_num_bufs);
+> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> index 293f3d5f1c4e..9ee24e537e0c 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> @@ -682,7 +682,7 @@ static void vb2_set_flags_and_caps(struct vb2_queue *q, u32 memory,
+>  		*flags = 0;
 
-> Jonathan Cameron wrote:
+Hmm, unless I am mistaken, this clears all flags. So if memory is DMABUF, then
+the V4L2_MEMORY_FLAG_RESTRICTED is just overwritten with 0. And that's what will
+be passed to vb2_core_reqbufs.
 
-Oddly I thought I'd replied to this already but my email client says not...
-I guess maybe I have a stray draft on another computer. Anyhow, let's
-try again!
+So how can this work? I'm not sure how you can have tested this.
 
-> > > >=20
-> > > > * If for instance the generalized ABI unit is going to be Ohms,
-> > > > should I still
-> > > > remove the entry from the pac1934 even though it would not be fully
-> > > > compliant
-> > > > with the generalized ABI?
-> > > >=20
-> > > > * To cover the current exposed attributes, the "What" fields would
-> > > > look like:
-> > > > from max9611:
-> > > > What:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /sys/.../iio:=
-deviceX/in_current_shunt_resistor
-> > > > What:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /sys/.../iio:=
-deviceX/in_power_shunt_resistor
-> > > > from ina2xx:
-> > > > What:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /sys/.../iio:=
-deviceX/in_shunt_resistor
-> > > > from pac1934:
-> > > > What:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /sys/.../iio:=
-deviceX/in_shunt_resistorY =20
-> >=20
-> > This one is a bit odd in that it describes it if it were a measurable
-> > channel in of itself but we probably couldn't figure out a better way
-> > to scope it to a specific channel.
-> >  =20
-> > > > Does this look correct? I think that for the first two drivers the
-> > > > shunt_resistor can be considered as a channel info property, shared
-> > > > by type for
-> > > > max9611 case and shared by direction for ina2xx case (maybe better =
-to
-> > > > remove
-> > > > "in_" from the What field if the type is not specified?). =20
-> >=20
-> > Keep it consistent.  It's valid to provide the in_ and in general
-> > over restrict channel attributes, even if not strictly necessary.
-> >  =20
-> > > > What seems odd to me is the pac1934 case, since it doesn't fit in t=
-he
-> > > > format
-> > > > <type>[Y_]shunt_resistor referred in many other attributes (where I
-> > > > assume
-> > > > <type> is actually [dir_][type_]?).
-> > > > Doesn't it look like pac1934 is exposing additional input channels,
-> > > > that are
-> > > > also writeable? Maybe such case would more clear if the shunt
-> > > > resistor would be
-> > > > an info property of specific channels? For example:
-> > > > in_currentY_shunt_resistor,
-> > > > in_powerY_shunt_resistor and in_engergyY_shunt_resitor. =20
-> >  =20
-> > > >    =20
-> > >=20
-> > > I don't think it will be a good idea to duplicate the same information
-> > > into multiple attributes like: in_currentY_shunt_resistor,
-> > > in_powerY_shunt_resistor and in_engergyY_shunt_resitor.
-> > >=20
-> > > The pac1934 device could be viewed like 4 devices that have only one
-> > > measurement hardware. Changing the shunt for a hardware channel will
-> > > impact multiple software measurements for that particular channel. =20
-> > Yup. You've  =20
->=20
-> Sorry Jonathan, is there anything missing in this sentence? Looks like
-> unintentionally truncated: You've ...
+In any case, this function should change and do this instead:
 
-Bad editing of my reply!. Ignore that.
+        /* Clear all unknown flags. */
+         *flags &= V4L2_MEMORY_FLAG_NON_COHERENT | V4L2_MEMORY_FLAG_RESTRICTED;
 
->=20
-> > >=20
-> > > For example "sampling_frequency" is only one property per device and
-> > > not one property per channel. =20
-> >=20
-> > Not necessarily.  If it varies per channel it is
-> > in_voltageX_sampling_frequency etc
-> > That is rare, but we have specific text to cover it in the ABI docs.
-> >=20
-> > What:		/sys/bus/iio/devices/iio:deviceX/in_voltageX_sampling_frequency
-> > What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_sampling_frequency
-> > What:		/sys/bus/iio/devices/iio:deviceX/in_currentZ_sampling_frequency
-> > KernelVersion:	5.20
-> > Contact:	linux-iio@vger.kernel.org
-> > Description:
-> > 		Some devices have separate controls of sampling frequency for
-> > 		individual channels. If multiple channels are enabled in a scan,
-> > 		then the sampling_frequency of the scan may be computed from the
-> > 		per channel sampling frequencies.
-> >  =20
-> > >=20
-> > > Also I'm not felling comfortable to remove the [dir_] from the name,
-> > > because this value is dependent of the hardware and we can't have a
-> > > "available" properties for it. =20
-> > Removing the dir is unnecessary.  Just leave that in place.
-> > Note we can't change existing ABI of drivers for this sort of thing
-> > that wasn't standardized (as we can't argue they break ABI) so
-> > they are stuck as they stand.
-> >=20
-> > Unfortunately the most consistent path is probably to treat it as a
-> > normal attribute, even if that generates a bunch of silly duplication
-> > if there is more than one shunt_resistance.
-> > I agree it's ugly but it's not the only case of this sort of duplicatio=
-n.
-> > It happens for that sampling_frequency case in a few corners were there=
- is
-> > on channel that is sampled different from all the others.
-> >=20
-> > So I think
-> > in_powerY_shut_resistor and in_energyY_shunt_resistor is
-> > most consistent with existing 'standard' ABI.
-> >=20
-> > This is one where I didn't do a great job in review unfortunately
-> > so the one with the index on the end got through.
-> >=20
-> > I'm not hugely worried about this mess though as runtime shunt resistor
-> > calibration is not that common.  If people want good measurements they
-> > tend to build their circuit with good components / PCB tracks etc.
-> >  =20
->=20
-> From your comments I get that in_shunt_resistorY should be added in the
-> generalized ABI (as in the example above) since it is already used and ca=
-n't be
-> changed. Is this correct?
-No. for the one that isn't compliant with our generalization, just leave
-it where it is in a per device doc.
+        if (!q->allow_cache_hints || memory != V4L2_MEMORY_MMAP)
+		*flags &= ~V4L2_MEMORY_FLAG_NON_COHERENT;
 
->=20
-> I am still not sure whether in_currentY_shunt_resistor,
-> in_powerY_shunt_resistor and in_energyY_shunt_resistor, should be added o=
-r not
-> until a new driver using it comes through.
+I considered whether V4L2_MEMORY_FLAG_RESTRICTED should be cleared if memory
+wasn't DMABUF, but I don't think that is right: you want to see an error
+returned if you try such a combination.
 
-Ah. I wasn't paying attention to what was needed here. If you don't need th=
-em
-then no need to define them.
+>  	} else {
+>  		/* Clear all unknown flags. */
+> -		*flags &= V4L2_MEMORY_FLAG_NON_COHERENT;
+> +		*flags &= V4L2_MEMORY_FLAG_NON_COHERENT | V4L2_MEMORY_FLAG_RESTRICTED;
+>  	}
+>  
+>  	*caps |= V4L2_BUF_CAP_SUPPORTS_ORPHANED_BUFS;
+> @@ -698,6 +698,8 @@ static void vb2_set_flags_and_caps(struct vb2_queue *q, u32 memory,
+>  		*caps |= V4L2_BUF_CAP_SUPPORTS_MMAP_CACHE_HINTS;
+>  	if (q->supports_requests)
+>  		*caps |= V4L2_BUF_CAP_SUPPORTS_REQUESTS;
+> +	if (q->allow_restricted_mem && q->io_modes & VB2_DMABUF)
+> +		*caps |= V4L2_BUF_CAP_SUPPORTS_RESTRICTED_MEM;
+>  	if (max_num_bufs) {
+>  		*max_num_bufs = q->max_num_buffers;
+>  		*caps |= V4L2_BUF_CAP_SUPPORTS_MAX_NUM_BUFFERS;
 
->=20
-> Regarding pac1921, would it be more clear to expose a single in_shunt_res=
-istor
-> (keeping [dir_] for consistency as you suggested) as it is for ina2xx or
-> in_current_shunt_resistor plus in_power_shunt_resistor as it is for max96=
-11? I
-> agree that just exposing it once would be more clear for the user, so I w=
-ould
-> go for the first case but maybe I am missing something.
-It's an interesting question.  Is it obvious enough that the shut resistor
-affects both current and power measurements?
+What appears to be missing in this patch is what happens if you pass unrestricted
+memory to a queue that is configured for restricted memory: there does not appear
+to be a check for that. Or is that allowed? If so, that should be documented.
 
-I think it is and in general shunt resistor tuning is fairly uncommon
-thing so just in_current_shunt_resistor sounds fine to me.
+And what happens if you pass a dmabuf for restricted memory to a queue that expects
+unrestricted memory? You want to get a nice error code for that (EACCES/EPERM, I
+never quite know which is the right one for that). That would apply to VIDIOC_QBUF
+and VIDIOC_PREPARE_BUF. This assumes you can easily query a dmabuf fd to see whether
+it is in restricted memory or not. I'm not sure if that is the case today.
 
-Jonathan
+I also think that it would be useful to add a V4L2_BUF_FLAG_RESTRICTED_MEM flag
+that vb2 will return to userspace if the queue is configured for restricted memory.
 
->=20
-> >=20
-> > Thanks,
-> >=20
-> > Jonathan
-> >  =20
->=20
-> Thanks,
-> Matteo
+That will indicate to the application that the buffer indeed represents a buffer
+in restricted memory.
+
+Regards,
+
+	Hans
 
