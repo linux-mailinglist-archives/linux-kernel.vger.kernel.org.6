@@ -1,1622 +1,402 @@
-Return-Path: <linux-kernel+bounces-257989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA6D89381D4
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 17:34:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B82DD9381D7
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 17:41:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F22328183F
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 15:34:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CEC8281CD4
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 15:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F641422CE;
-	Sat, 20 Jul 2024 15:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB9613E881;
+	Sat, 20 Jul 2024 15:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FWoz6d8K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=dell.com header.i=@dell.com header.b="REHY56e9"
+Received: from mx0a-00154904.pphosted.com (mx0a-00154904.pphosted.com [148.163.133.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E80982D7F;
-	Sat, 20 Jul 2024 15:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721489690; cv=none; b=ZifoWDZA1gd2ygfB9CqiH3ytqNJJD67ZgRKpAdePmYfoyT17fObmyLIaRq4LukXe7A7FnA8y7WXG2lxcd0ugrZmfZLI5NZsuEt/5N5YtLgCZLjUsCUaUUJWL2M5htg3JGch5bxmgqAN4VcOlE9io3Bqz0Vji+XzzbQC0ixeT474=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721489690; c=relaxed/simple;
-	bh=yp1wIxp6bEzkxVkD6OIJwK+tqkT3vSVfjyDiVmYyE7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LGozpVXt8aoyLBNSwOC6XuIjvIspEqzJ8rsmC2+7adSBpCfFeRL9QIQg9zZnjwXG8Sp15W3nmaUCiria5N6RSLP7aP/lAzRGTRzigZ572fFghQQ/8aio0JYtrD698YzEm1fNSfT0+ZCMU+rUevjI19PmC8pnkz8ftxsiiceq1r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FWoz6d8K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91DC4C2BD10;
-	Sat, 20 Jul 2024 15:34:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721489689;
-	bh=yp1wIxp6bEzkxVkD6OIJwK+tqkT3vSVfjyDiVmYyE7g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FWoz6d8KsOh8TKJprhtwvSv2mLMNvvedHpHH/TgA4b+wRwuxY+Cz1ozs6DoR1MSv0
-	 A3DRYMa/sWA07BtDrdn8OKaHgoyPziSlsnX26W4T5KHC2pawD1NVakhAMzAkiavVht
-	 EFyhGYYIIWa9NR1gTuZcL1QhNgv4v+fDnsdNUF9UyB+Qt+9FrG9rKAWlCYgIjpL5Q7
-	 pAxTml5lRZDFf97UOEX4GhHgAVCWzP2FhKoJnVwhNYjdu8jlx50gI6QcLIiBOMyM1b
-	 SsKqZce6ovpSHmelov3i9104lUSW1IEdPM2OL9o5U2YtYfqPzBYfzLs8PJFU2XARrm
-	 GHydB0so6B5IQ==
-Date: Sat, 20 Jul 2024 16:34:40 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: <Jianping.Shen@de.bosch.com>
-Cc: <lars@metafoo.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
- <conor+dt@kernel.org>, <dima.fedrau@gmail.com>,
- <marcelo.schmitt1@gmail.com>, <linux-iio@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <Christian.Lorenz3@de.bosch.com>, <Ulrike.Frauendorf@de.bosch.com>,
- <Kai.Dolde@de.bosch.com>
-Subject: Re: [PATCH] drivers: Bosch SMI240 IMU Driver
-Message-ID: <20240720163440.03c713dc@jic23-huawei>
-In-Reply-To: <20240718122449.7607-1-Jianping.Shen@de.bosch.com>
-References: <20240718122449.7607-1-Jianping.Shen@de.bosch.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B1713D8B0;
+	Sat, 20 Jul 2024 15:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.133.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721490076; cv=fail; b=CEMMBdetwPp08UaZZHVGUwOO+hydrnylls043dQRYPiwY5jPpfRUl73wnXKc11jcoY7EN5pda7QtaNRcjQQsFI04KvN2RdSiRkl9xwJ3MCPPDUjoLXJhEBUJnafKvzyWIF+hU0RMjO+0or0MIEZrwazAajH4isKsbs3MmNW6k/Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721490076; c=relaxed/simple;
+	bh=7Wk6Eyhw3JCHpXcwjVQE6xP6cXVSylqTKwuyiG3ROm4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=FnNdwhT0AoUA9LlVWIYEboccLuU4ahO7W803SkwvB9MVDJRAR6l1KDgPopOJaF8nmQRztG7YGGOrY6qXaR29389NFzmOEnwGpzCyPS0d6mXKWuW+1eccKh/U2dcJd2vNmB8ZA9sGmX2AzuN+OUBHGnM5znCHXN/muqa3eE16K/Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=Dell.com; spf=pass smtp.mailfrom=dell.com; dkim=pass (2048-bit key) header.d=dell.com header.i=@dell.com header.b=REHY56e9; arc=fail smtp.client-ip=148.163.133.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=Dell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dell.com
+Received: from pps.filterd (m0170393.ppops.net [127.0.0.1])
+	by mx0a-00154904.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46K77G4O024009;
+	Sat, 20 Jul 2024 11:40:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from
+	:to:cc:subject:date:message-id:references:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=
+	smtpout1; bh=7Wk6Eyhw3JCHpXcwjVQE6xP6cXVSylqTKwuyiG3ROm4=; b=REH
+	Y56e9vFKF9FbHm3pbiHny+49VWQmyzKYM9jaqG8m+8JDYiA2w+HaPdWKN0jrIpyl
+	lFKMUsvscPx9wVOOsnxzVhmqL3DGDwsiQSqT4ueCBMSHXIKRuPKU6RthrT4qqlUE
+	MlP1AsAr3QDnICVKTeZxNnsF7XBLARPQlGMg3EbQoQ/6W5uXppg1ERYFsBYIlIvA
+	KTt56bmDwgGo4j9YRqfrBjveP39JrOcLvMz0qdeWpT8UIJXbbV2k8lSteR4TfBq1
+	eNgpecEC+HtIUJLrn5/FvC2ue8qXOL+xnU0KMba2zUW10w5q7O+cotVeuHbZRM4U
+	V1AXX43XkuH7PAM7cJw==
+Received: from mx0a-00154901.pphosted.com (mx0a-00154901.pphosted.com [67.231.149.39])
+	by mx0a-00154904.pphosted.com (PPS) with ESMTPS id 40g8jh8w5m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 20 Jul 2024 11:40:29 -0400 (EDT)
+Received: from pps.filterd (m0134746.ppops.net [127.0.0.1])
+	by mx0a-00154901.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 46KFT8V6019275;
+	Sat, 20 Jul 2024 11:40:18 -0400
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2041.outbound.protection.outlook.com [104.47.51.41])
+	by mx0a-00154901.pphosted.com (PPS) with ESMTPS id 40g73vm1ta-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 20 Jul 2024 11:40:17 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JcACYZ9yGbrpzQykJLoW90y7Gi1898EAev60InSsViGqAUNrVDwvk1CqqFlkznlhskUfwWHCn2Ojm28t9K55YUm8+TTfCoabqMrtZvJMOUldiHWwDOqxtfIkVd5nvs0cEklb/X0A9eCZvz/GCpMTfuHGhQe8XwTOjjgp+XZqLrkx2BV5P6fnNbO9F71hQDfXGGybz4IUf3ShesVmBuLCIjZhbHNDt122OszJr4llwWTqY6v5XmDc3QnuXxvMc1KjNgIAEtKSNq64u8XhsNpcVQdyukf7pnvA64w3xM0MzcvCcvI6bOIRR5MD8ozWVeOCyJMbp4zAz4/uR6e2qLOCRg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7Wk6Eyhw3JCHpXcwjVQE6xP6cXVSylqTKwuyiG3ROm4=;
+ b=C9BkeZdCqmNb70tUKOk38Y100F8CQ2FxsI31pooiXjMNloZ7NOVQXxSiTCfDReEDPin6xKGXhUvBabEDbRH6rz3iLWAwcNy9mBGSIb7WHjx3Dxr4EAe6/881KALf4kQgZrk+ym+mxLrjzB3WhBRP5S5owUpCx5BzXc8sLg+PN7RM3tmSXR7D+Ic07NDZuuCe+xihnD9F8UGr2EXGZIj24P2gf9KPwH1kxj3mF5OJhsWyQIejpIq3iB+Ie/IZhCPwHopQt+NJQsVFND9lfXeJKs5bGRRrknO+qBsWANtn4/ij2agCfBSBSyaqkFOhfIhy1ZfKgtAboFyZyArrr41ZFQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=dell.com; dmarc=pass action=none header.from=dell.com;
+ dkim=pass header.d=dell.com; arc=none
+Received: from DS7PR19MB5709.namprd19.prod.outlook.com (2603:10b6:8:70::15) by
+ SA0PR19MB4505.namprd19.prod.outlook.com (2603:10b6:806:b2::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7762.28; Sat, 20 Jul 2024 15:40:13 +0000
+Received: from DS7PR19MB5709.namprd19.prod.outlook.com
+ ([fe80::3d06:d879:7717:36e0]) by DS7PR19MB5709.namprd19.prod.outlook.com
+ ([fe80::3d06:d879:7717:36e0%5]) with mapi id 15.20.7784.016; Sat, 20 Jul 2024
+ 15:40:12 +0000
+From: "Shao, Marshall" <Marshall.Shao@Dell.com>
+To: Ard Biesheuvel <ardb@kernel.org>
+CC: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>,
+        "bp@alien8.de" <bp@alien8.de>, "mingo@redhat.com" <mingo@redhat.com>,
+        "tglx@linutronix.de"
+	<tglx@linutronix.de>,
+        "Mishra, Ashish" <Ashish.Mishra4@dell.com>,
+        "Chia, Jia
+ Yuan" <JiaYuan.Chia@dell.com>,
+        "Dion, Christopher"
+	<Christopher.Dion@dell.com>,
+        "Caisse, Joe" <Joe.Caisse@dell.com>,
+        "Mukundan,
+ Govind" <Govind.Mukundan@dell.com>
+Subject: RE: [Patch] Do not clear BSS region in x86 stub
+Thread-Topic: [Patch] Do not clear BSS region in x86 stub
+Thread-Index: AdrYGyaFCseU4QE3SCibBf0Ev6R9+wAQOiGAAABrtYAAlzZgQA==
+Date: Sat, 20 Jul 2024 15:40:12 +0000
+Message-ID:
+ <DS7PR19MB5709B39C90153DAA27DA122D8BAE2@DS7PR19MB5709.namprd19.prod.outlook.com>
+References:
+ <DS7PR19MB570996A580C6F5D2C9CACCE48BA32@DS7PR19MB5709.namprd19.prod.outlook.com>
+ <DS7PR19MB5709B2A263E769B461091B0D8BA32@DS7PR19MB5709.namprd19.prod.outlook.com>
+ <CAMj1kXHBSNxrzbQoaDea7HFcjN9HHk5==tXg1WLHDzW61aj4cg@mail.gmail.com>
+In-Reply-To:
+ <CAMj1kXHBSNxrzbQoaDea7HFcjN9HHk5==tXg1WLHDzW61aj4cg@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_dad3be33-4108-4738-9e07-d8656a181486_ActionId=85329588-8859-4762-9b9c-9aad7096b925;MSIP_Label_dad3be33-4108-4738-9e07-d8656a181486_ContentBits=0;MSIP_Label_dad3be33-4108-4738-9e07-d8656a181486_Enabled=true;MSIP_Label_dad3be33-4108-4738-9e07-d8656a181486_Method=Privileged;MSIP_Label_dad3be33-4108-4738-9e07-d8656a181486_Name=Public
+ No Visual
+ Label;MSIP_Label_dad3be33-4108-4738-9e07-d8656a181486_SetDate=2024-07-20T15:36:44Z;MSIP_Label_dad3be33-4108-4738-9e07-d8656a181486_SiteId=945c199a-83a2-4e80-9f8c-5a91be5752dd;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DS7PR19MB5709:EE_|SA0PR19MB4505:EE_
+x-ms-office365-filtering-correlation-id: 2642cc1a-f6b3-41b3-1995-08dca8d23ebd
+x-exotenant: 2khUwGVqB6N9v58KS13ncyUmMJd8q4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?bEtTWXVyZkNqZFUyMXdNYUpwcjRldTB5VDBITGljazFOUUhadklyYWFHc0Vh?=
+ =?utf-8?B?L2p6TEhBSHFEbE9aY0RjbUxkN21ZZ2pYMkNSdUVoR3FsRzhHQS9rdWYvc1J3?=
+ =?utf-8?B?Smg1VlhpK1ZZOW0vWGRmOEhYMU9RZmJHb2U0UXJROHZRMXRySlJnek9FZVY5?=
+ =?utf-8?B?eDY2djBwcW9nYVR0dnNTUGJqc2pLM3ZtbUF4NldyVVRQeE5HTGtOc2FZMWdk?=
+ =?utf-8?B?b3hHWUFTN0tVOTJvZEpYMEl0aTRJYUR4T0dFWWpyd2w4dGRuL1hrQUE1aTRQ?=
+ =?utf-8?B?Y2VpalFoSXM4ODhKTkJJZEE4cjcrZXFmME9lTm5vaGhSeDEyYXZZaVJRZVNv?=
+ =?utf-8?B?MVdRdmlDNVdlZ3V4ZytYOGhJdHVxdUo4V1FRQ1U5VGxMb0NUbDJFT0VPZDV3?=
+ =?utf-8?B?TkUya1Q3V0pKV0xMQmxvQkNKbWE3UHhXQmtNL1NjNTE2eXdDRzVZRnFRSCsz?=
+ =?utf-8?B?UWJyU1ZiS3RGeEovTDF2UFRzWDBNa2lmamxHdzNUcUIzY3ozVG16NUpBNDlj?=
+ =?utf-8?B?VThDcjZOb3RmeWxzVEFINm82Zlg5RG05a3JmSk9iYTlJSXpJY0hUL2c5NnBh?=
+ =?utf-8?B?TldWbVI2N2d5bzBBUWc1UG5kQWNqKzErOTJuZDRmRDJLMVZnTjJub2tPVmFp?=
+ =?utf-8?B?Y3QwckFmNVZyanRTV0o4VXRMSENmd2ppTEVZUHhPa0lOZ08xekFveWFXNktR?=
+ =?utf-8?B?d1lRUS9aQXBMREswSmNVSWhiRmJMYWRIWjVWS3pBYWprcU1TUkJ3UVJqNFFI?=
+ =?utf-8?B?WWM2bVZ3RW00bHBpcjlndlBhUjZyMlVnUnJQRHZNdXNHRzZ4VXJ5dmR3NytZ?=
+ =?utf-8?B?V0Y2Wnk0aFRlRUh3M3U3eWdOY1RIcmZtZ1Y4d0N5bGxkQlhVQzVqelo1SHJI?=
+ =?utf-8?B?eGhwRUp3bUo3d213MUVldW9GMFhHRnIrWG0yOWtxZEFWWHQ4Y1hzWUtsbTNW?=
+ =?utf-8?B?cE40OE1LOFVJRmo0WHRTWXlXSlNwSUVITCtReGFNYkYwSU1kRHhmbEpyZlll?=
+ =?utf-8?B?ekF3bERDY3Y4WnR5Q0VuKzhxajR0TExxSEtPTk84NDBnRC8xaUJ5b2wyN1lS?=
+ =?utf-8?B?VGxBcWREVmZTUlpaWWRsd2JTaDR0VkF2YnluWHl0bFVhUzNJdENzOEpVcWdz?=
+ =?utf-8?B?VnZ3VXI2Q0FNOTVuM0JmR21JSFJZbnYxZkFMaWlGblRRd2FveE9IdDliRjFB?=
+ =?utf-8?B?WWh5azZRdDV5WlNZSnRwMktlTnA3dTFGejBNTTJqeEFNcHFUZlFzTzBPR0FR?=
+ =?utf-8?B?akdCZ09OdnBxNldvT3NWajF4UUZUVGpRd2FWS2pIQ3BKVHNSbDU1cUpIMnlM?=
+ =?utf-8?B?WW5IQU8vbGxtY2xNY3NNbnZodk1MOFN6WjlnZndLbXNwSS9YeUZjYzUrZkJT?=
+ =?utf-8?B?bXpaZGJmLzIrbksrYkgxTC82cGhieE1OOE9ibllxME0waVRXamdrK25tMGMr?=
+ =?utf-8?B?M1d5YzdScUp3RURKbHFQQlNBT3cvU3pSb0tkYUlRNHlaVmxvOGU4cnVnSkp3?=
+ =?utf-8?B?dHI3ZEoveWdXKzVZbTVTZmZSdXVBU3pCSnZVZEc4a1FRZHVtQjNtZFdzbU1R?=
+ =?utf-8?B?QjJ5VEVxTVVITnF4ZWZGVmhmMWxrSkZ3bGhqV1k1Rjc2WElRWlVzdXRmRHZM?=
+ =?utf-8?B?ZVdsTEZGUVJJZmk1em9mRHdQV040bmlPN2c4VDNpUEtQTURrZUQ0cU92S0FH?=
+ =?utf-8?B?SS9Kd3VVdGhWY0JYQ3MvVUlDT2g4TFJ1a0RmZERLc2d5WEUrWHpoQnI0U1Rl?=
+ =?utf-8?B?aFpkVk9weS96WWFSU0w0SWVtU3VxRWdlREE5WFVkS1FGeFpMODNpRzVkcDJI?=
+ =?utf-8?B?ZDdoRUxjK0ZEL3djUWVTSlNjdkJVaGFkc0dQRExvVGRXZHJmekhScnBWK1pL?=
+ =?utf-8?B?RXFjTEdEbmRoakJTL3RXVG1WanJoai9BYm9IaWZyKzdDUEE9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR19MB5709.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?K0o1UG4rM2hJMytQZSs5UVJERlRMQkJjNmY1NFp5TUNQOGZpR0FNR2VnSElw?=
+ =?utf-8?B?WVdJT0pGWkMxMWp0WEFJOVFyMEhsaDhNekJMQk5nZktLSTlpTzd5SklWZGFw?=
+ =?utf-8?B?MGdyRDJ4R3YvTmVmenYwNzdWTldGTGtlS2h1VDJvQjBqMHliRkdRTzlhVFZE?=
+ =?utf-8?B?MnFWS0ZOcVNseU9wWFZmZHZqTWVNY1dzNUpLN0lJRldTMjlST0JYSUN1bzlP?=
+ =?utf-8?B?ZnUrVnhqWmRpWDlOYlQ4aC9mcHpIVmI2SVRab0hTb1gzY0x4KzRONnZQMnhY?=
+ =?utf-8?B?NWlQZHUwVDVjc0pjQTdRdVhwcFRTbDVZMkpuZDBvV3owVERTT3BkOStVSWpk?=
+ =?utf-8?B?VC9mQk1sbGZYMWtEZlZhT0RKUE15NEd2ZkgzMlJZYWJTL3ZjbnlGY2UzRStr?=
+ =?utf-8?B?TE51aVRkMUlUSHZITy8vQndLK2FpZkt3M3VCSDVHNnIxaWlnc2UrRXFJWkVm?=
+ =?utf-8?B?cWxhZ3k0b1hhSHhMVkY3ZXB5WkRhdkdBa1hRRU5zRlF4aDJvQlVDZzEyZFpD?=
+ =?utf-8?B?SXR2N2hJWHEzeG1OUkZUeEJJQ0NaSGZwczZwRXJocysrZnBjRDdLQTVMZ21O?=
+ =?utf-8?B?Tkp1VUE1VUE1Y3hLOExEZ0ZPbGVSKzlSZUpqelZZYzRlNmIvUDQwdm54OWU3?=
+ =?utf-8?B?enptZVlTUDhQNHlLMGFJb04xV1hyT1psdmo2YnNsdEsrTUtZYU9Hb1dDYkYr?=
+ =?utf-8?B?Tyt3ZWdqa0lSaVphdGNQNzZoSW4zRDQvOUlQVUhsUk9hRkZRQlR0SmRFc0ph?=
+ =?utf-8?B?THdyc3pyM0U2MzFwWUQ0a05jdXFkS0dUQ0d4NHNnWUp3S2xIdEYrV3l2bkpi?=
+ =?utf-8?B?SnpGMzRHd01MSkdnWWlkSEMzVHhJMkpSMlJ1RkJZWGZSZFdGbWMxUFV3TjVF?=
+ =?utf-8?B?am13bHFlU1NETW9YZVl1YWY4Q2J1d0NrSWFMODVMTmN3Ym5uak9YcGZjS2hB?=
+ =?utf-8?B?cnptRkFUQStOdXdYVnMxaCtJWUVmQWcwb09SR3liWHJ4cmh5S2FkaXpyVnh4?=
+ =?utf-8?B?Rm5jY01aYkhJN2grckd5REFaaFhEWEtaVVZ0RWdtRWppZTh0eFEwYVpUOStx?=
+ =?utf-8?B?dHUzdy9id3JvUXRWUGtZOExTTHNNUnhHTUdjU0VvaWJtSm1wNVdVNlBMOXhV?=
+ =?utf-8?B?aXEyeXUvSmNnQ0loM0RnUmo2a3NKaGh0di9vR2I4T2JoTHNqZHZlckg4SlFl?=
+ =?utf-8?B?OVFiRENHcVBqSDJMN0hRQTkyNnVLKzFPdkEybFUxeUlYa1c0ZnJJWkpkVS96?=
+ =?utf-8?B?MnB5dkdoZ3NJbW5XcTZIODBmaHRJV3ZsTThOWlhCb0JBRWpFbjZUQUZ4OFgz?=
+ =?utf-8?B?TGh4dTBzWFNkQ0NBQ1Rzb0lQeHR1SHNUM09JeHNaQkF2RzlEdlRnVVNRdkhT?=
+ =?utf-8?B?T0QxMTZjVkFCMlJ3TmdiM3M5OHIrZ0NRM3AyT2FUUEpTbXcxMFlFQk9TSkR3?=
+ =?utf-8?B?ZlpTaFhESmRONkFNdmJXL2FxeHY3aGZDdHFhb0Iya3BlWXpiUlNxWHd6QmlP?=
+ =?utf-8?B?U3NkemdCWHp6Y1p1cU0rVVdyVjlTTmtrL1FCd1R0MDhGNThjblFGcUJGNjFk?=
+ =?utf-8?B?dW14RC9TTXl0L3dIME1HdWNWczVESzFWUzhxelBCNHpvVURZQU5DMWxkOFky?=
+ =?utf-8?B?aUpmRWszeEthNVZJRjNsem5PQWJmSTRVUWV6a0Q2U3V2L1UvK2tNcXZkWVVK?=
+ =?utf-8?B?U0lpcGpMK0dhRnF6N3o0THNZNDdnM2dBMnRvUDZYZWJ4aUQvSDhwTEtnU0Ev?=
+ =?utf-8?B?K2doVGk1Nkt3NkVNby9mRmtYWEF0N1h4RXJjZFc3N0pJNkVEdk4wVU5hVGV4?=
+ =?utf-8?B?UTQvN2d0MmkwbmdkcjdtRTlkUi83TVpKbVhCbTBMY0xtc1luUDZtajY3YkdY?=
+ =?utf-8?B?TnkvU1o0OG4wMFIyNGIrOE1oVldQVTh3Y0lvbXRjMmlGL3NhTUVJYzNyUnhX?=
+ =?utf-8?B?MTZyUXBMT0xnM2ZZWDhrSHZ6bE1ycVpaVkMrWnZNZ1dTVEVtWnpjV05hTzgv?=
+ =?utf-8?B?dGU2bHFvblRIWGdIejZqazB3SlN2eDF2Qm5UTHRDTXp4b2kwajFWTXJWeG8v?=
+ =?utf-8?B?WUNhdFBnZzVWdDMyL096RUdiOTA0RFBwanY4NGhBSEpnM0pLdjFFb3k3RHBE?=
+ =?utf-8?Q?gODzGCi5HRfA4qQTnMOnGi9uL?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-
-On Thu, 18 Jul 2024 14:24:49 +0200
-<Jianping.Shen@de.bosch.com> wrote:
-
-> From: "Shen Jianping (ME-SE/EAD2)" <she2rt@LR-C-0008DVM.rt.de.bosch.com>
-> 
-> Add Bosch SMI240 IMU IIO Driver to iio-for-6.10b
-> 
-> Signed-off-by: Shen Jianping (ME-SE/EAD2) <she2rt@LR-C-0008DVM.rt.de.bosch.com>
-Hi Shen Jiangping,
-
-Welcome to IIO.
-
-Having reviewed this driver, I would encourage you to look at a number of other
-recent drivers and familiarize yourself with how things are done.
-If a new driver looks substantially different in style, or approach from those
-then consider if that is the right way to go.
-
-A lot of comments inline that you would have avoided via such a comparison.
-
-I'm going to make the assumption this device has a very different interface to
-the bosch IMUs we already support.
-
-Anyhow, comments inline - feel free to ask questions as I'm sure I've
-been overly brief on some of them!
-
-Jonathan
-
-> ---
->  .../bindings/iio/imu/bosch,smi240.yaml        |  45 +
->  drivers/iio/imu/Kconfig                       |   2 +
->  drivers/iio/imu/Makefile                      |   1 +
->  drivers/iio/imu/smi240/Kconfig                |  30 +
->  drivers/iio/imu/smi240/Makefile               |   8 +
->  drivers/iio/imu/smi240/smi240.h               |  31 +
->  drivers/iio/imu/smi240/smi240_core.c          | 814 ++++++++++++++++++
->  drivers/iio/imu/smi240/smi240_spi.c           | 153 ++++
->  8 files changed, 1084 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml
->  create mode 100644 drivers/iio/imu/smi240/Kconfig
->  create mode 100644 drivers/iio/imu/smi240/Makefile
->  create mode 100644 drivers/iio/imu/smi240/smi240.h
->  create mode 100644 drivers/iio/imu/smi240/smi240_core.c
->  create mode 100644 drivers/iio/imu/smi240/smi240_spi.c
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml b/Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml
-> new file mode 100644
-> index 00000000000..972819cacff
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml
-> @@ -0,0 +1,45 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/imu/bosch,smi240.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: BOSCH SMI240
-> +
-> +maintainers:
-> +  - unknown
-Needs one or it won't merge. Hopefully you can list yourself here.
-> +
-> +description: |
-> +  Inertial Measurement Unit with Accelerometer, Gyroscope 
-> +  https://www.bosch-semiconductors.com/mems-sensors/highly-automated-driving/smi240/
-Ah well, a more or less information free link so we are guessing here.
-However, there are some obvious missing elements.
-
-Good to have a little more information on the device here to provide the
-background a reader might need.  What sort of IMU, what channels etc?
-
-> +
-> +properties:
-> +  compatible:
-> +    const: BOSCH,SMI240
-Look at what makes an acceptable compatible and fix this.
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-IMUs need power.  So should be at least one
--supply: true entry that is also listed in required.
-
-Rare IMU that doesn't have at least one interrupt. So add that as well.
-
-> +required:
-> +  - compatible
-> +  - spi-max-frequency
-> +  - reg
-> +
-> +allOf:
-> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    // Example
-> +    spi {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        smi240@0 {
-> +            compatible = "BOSCH,SMI240";
-> +            spi-max-frequency = <10000000>;
-> +            reg = <0>;
-> +        };
-> +    };
-
-
-> diff --git a/drivers/iio/imu/Kconfig b/drivers/iio/imu/Kconfig
-> index 52a155ff325..2c348ad686a 100644
-> --- a/drivers/iio/imu/Kconfig
-> +++ b/drivers/iio/imu/Kconfig
-> @@ -96,6 +96,8 @@ config KMX61
->  
->  source "drivers/iio/imu/inv_icm42600/Kconfig"
->  source "drivers/iio/imu/inv_mpu6050/Kconfig"
-> +source "/home/she2rt/dev/smi240-linux-driver-iio/drivers/iio/imu/smi240/Kconfig"
-
-Delete this... I guess left over from some earlier debugging?
-
-> +source "drivers/iio/imu/smi240/Kconfig"
->  source "drivers/iio/imu/st_lsm6dsx/Kconfig"
->  source "drivers/iio/imu/st_lsm9ds0/Kconfig"
->  
-> diff --git a/drivers/iio/imu/Makefile b/drivers/iio/imu/Makefile
-> index 7e2d7d5c3b7..b6f162ae4ed 100644
-> --- a/drivers/iio/imu/Makefile
-> +++ b/drivers/iio/imu/Makefile
-> @@ -27,5 +27,6 @@ obj-y += inv_mpu6050/
->  
->  obj-$(CONFIG_KMX61) += kmx61.o
->  
-> +obj-y += smi240/
->  obj-y += st_lsm6dsx/
->  obj-y += st_lsm9ds0/
-> diff --git a/drivers/iio/imu/smi240/Kconfig b/drivers/iio/imu/smi240/Kconfig
-> new file mode 100644
-> index 00000000000..7114c941cc3
-> --- /dev/null
-> +++ b/drivers/iio/imu/smi240/Kconfig
-> @@ -0,0 +1,30 @@
-> +config SMI240
-> +	tristate "Bosch Sensor SMI240 Inertial Measurement Unit"
-> +	depends on SPI_MASTER
-> +	select IIO_BUFFER
-> +	select IIO_TRIGGERED_BUFFER
-Why? There isn't any buffered support in here as far as I can see.
-
-> +	help
-> +	  Build driver
-> +	  for Bosch
-> +	  SMI240 6-axis IMU
-> +	  sensor.
-Why the very very short wrap?  Provide more information on this
-device in the help text.
-
-> +
-> +config SMI240_MAX_BUFFER_LEN
-> +	depends on SMI240
-> +	int "configue read buffer size"
-> +	default "1024"
-> +	help
-> +	  1024 bytes are big
-> +	  enough for most cases.
-> +	  Do not change this value
-> +	  if not sure.
-Don't provide an interface to change it!  The driver should be able to figure out
-an appropriate size and regsiter that.
-
-> +
-> +config SMI240_UNIT_TEST
-Doesn't seem to do anything.
-> +	tristate "Unit Test for SMI240"
-> +	depends on KUNIT=y
-> +	help
-> +	  Build Unit Test
-> +	  for Bosch
-> +	  SMI240 6-axis
-> +	  IMU sensor.
-> +
-> diff --git a/drivers/iio/imu/smi240/Makefile b/drivers/iio/imu/smi240/Makefile
-> new file mode 100644
-> index 00000000000..394eaecf5f3
-> --- /dev/null
-> +++ b/drivers/iio/imu/smi240/Makefile
-> @@ -0,0 +1,8 @@
-> +#
-> +# Makefile for Bosch SMI240
-> +#
-> +
-> +obj-$(CONFIG_SMI240) += smi240.o
-> +smi240-objs := smi240_core.o
-> +smi240-objs += smi240_spi.o
-Do you plan to add other bus support?  If not, squash the files together
-to simplify things.
-
-> +
-> diff --git a/drivers/iio/imu/smi240/smi240.h b/drivers/iio/imu/smi240/smi240.h
-> new file mode 100644
-> index 00000000000..5167b25fe44
-> --- /dev/null
-> +++ b/drivers/iio/imu/smi240/smi240.h
-> @@ -0,0 +1,31 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0 */
-> +/*
-> + * Copyright (c) 2024 Robert Bosch GmbH.
-> + *
-No blank line here. It doesn't add anything useful.
-
-> + */
-> +
-> +#ifndef _SMI240_H
-> +#define _SMI240_H
-> +
-> +#define SENSOR_NAME    "SMI240"
-> +#define DRIVER_VERSION "1.0.0"
-Modern Linux drives do not provide a driver version.
-The guarantees never to break ABI make it unnecessary.
-
-> +
-> +#define SET_BITS(reg_var, bitname, val)                                        \
-> +	(((reg_var) & ~(bitname##_MASK)) |                                     \
-> +	 (((val) << bitname##_POS) & bitname##_MASK))
-> +
-> +#define GET_BITS(reg_var, bitname)                                             \
-> +	(((reg_var) & (bitname##_MASK)) >> (bitname##_POS))
-FIELD_GET() / FIELD_PREP()
-Don't invent your own equivalent functions.
-
-> +
-> +struct smi240_device {
-
-This belongs in the structure you allocate via devm_iio_device_alloc()
-and get to via iio_priv()
-
-> +	uint16_t accel_filter_freq;
-> +	uint16_t anglvel_filter_freq;
-> +	uint16_t sign_of_channels;
-> +	uint8_t bite_reps;
-> +	int8_t (*xfer)(uint32_t request, uint32_t *data);
-> +};
-> +
-> +int smi240_probe(struct device *dev, struct smi240_device *smi240_dev);
-> +int smi240_remove(struct device *dev);
-as below. Remove is unnecessary - drop it.
-
-> +
-> +#endif /* _SMI240_H */
-> diff --git a/drivers/iio/imu/smi240/smi240_core.c b/drivers/iio/imu/smi240/smi240_core.c
-> new file mode 100644
-> index 00000000000..786cc3064ef
-> --- /dev/null
-> +++ b/drivers/iio/imu/smi240/smi240_core.c
-> @@ -0,0 +1,814 @@
-> +// SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
-> +/*
-> + * Copyright (c) 2024 Robert Bosch GmbH.
-> + *
-No blank line here.
-
-> + */
-> +
-> +#include <linux/delay.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/iio/sysfs.h>
-> +#include <linux/string.h>
-That's a very short list of includes.  Looks to see if there are any others
-you should have here.
-
-> +
-> +#include "smi240.h"
-> +
-> +enum {
-> +	SMI240_ACC_X_AND_Y_AND_Z,
-> +	SMI240_GYRO_X_AND_Y_AND_Z,
-> +	SMI240_TEMP_OBJECT,
-> +	SMI240_TIMESTAMP,
-As below - timestamp doesn't make sense yet as no buffered support
-(so nothing useful to timestamp).
-
-> +};
-> +
-> +#define SMI240_CHIP_ID 0x0024
-> +
-> +#define SMI240_CRC_INIT 0x05
-> +#define SMI240_CRC_POLY 0x0B
-> +#define SMI240_BUS_ID	0x00
-> +
-> +#define SMI240_SD_BIT_MASK 0x80000000
-> +#define SMI240_SD_BIT_POS  31
-> +#define SMI240_CS_BIT_MASK 0x00000008
-> +#define SMI240_CS_BIT_POS  3
-> +
-> +#define SMI240_WRITE_ADDR_MASK 0x3FC00000
-Use GENMASK() for all contiguous field masks.
-
-> +#define SMI240_WRITE_ADDR_POS  22
-Provide only the mask. Then use FIELD_GET / FIELD_PREP()
-which will extract the shifts from the mask.
-
-That avoids replication of information in these defines.
-
-> +#define SMI240_WRITE_BIT_MASK  0x00200000
-> +#define SMI240_WRITE_BIT_POS   21
-> +#define SMI240_WRITE_DATA_MASK 0x0007FFF8
-> +#define SMI240_WRITE_DATA_POS  3
-> +#define SMI240_CAP_BIT_MASK    0x00100000
-> +#define SMI240_CAP_BIT_POS     20
-> +#define SMI240_READ_DATA_MASK  0x000FFFF0
-> +#define SMI240_READ_DATA_POS   4
-> +
-> +#define SMI240_GYR_BW_MASK    0x0002
-> +#define SMI240_GYR_BW_POS     1
-> +#define SMI240_ACC_BW_MASK    0x0004
-> +#define SMI240_ACC_BW_POS     2
-> +#define SMI240_BITE_AUTO_MASK 0x0008
-> +#define SMI240_BITE_AUTO_POS  3
-> +#define SMI240_BITE_REP_MASK  0x0070
-> +#define SMI240_BITE_REP_POS   4
-> +
-> +#define SMI240_GYR_INVERTX_MASK 0x01
-Field mask definitions should indicate which register
-they are in.  Here I think it's SIGN_SFT_CFG
-
-Maybe
-#define SMI240_SIGN_SFT_GYR_INVX_MSK 
-would work here.
-
-> +#define SMI240_GYR_INVERTX_POS	0
-> +#define SMI240_GYR_INVERTY_MASK 0x02
-> +#define SMI240_GYR_INVERTY_POS	1
-> +#define SMI240_GYR_INVERTZ_MASK 0x04
-> +#define SMI240_GYR_INVERTZ_POS	2
-> +#define SMI240_ACC_INVERTX_MASK 0x08
-> +#define SMI240_ACC_INVERTX_POS	3
-> +#define SMI240_ACC_INVERTY_MASK 0x10
-> +#define SMI240_ACC_INVERTY_POS	4
-> +#define SMI240_ACC_INVERTZ_MASK 0x20
-> +#define SMI240_ACC_INVERTZ_POS	5
-> +
-> +#define SMI240_CHIP_ID_REG	0x00
-Start with the register definitions then provide
-the field definitions.
-Naming should connect the two so it's obvious if
-we are applying a mask to the wrong register value
-
-
-> +#define SMI240_SOFT_CONFIG_REG	0x0A
-> +#define SMI240_SIGN_SFT_CFG_REG 0x0B
-> +#define SMI240_TEMP_CUR_REG	0x10
-> +#define SMI240_ACCEL_X_CUR_REG	0x11
-> +#define SMI240_ACCEL_Y_CUR_REG	0x12
-> +#define SMI240_ACCEL_Z_CUR_REG	0x13
-> +#define SMI240_GYRO_X_CUR_REG	0x14
-> +#define SMI240_GYRO_Y_CUR_REG	0x15
-> +#define SMI240_GYRO_Z_CUR_REG	0x16
-> +
-> +#define SMI240_TEMP_CAP_REG    0x17
-> +#define SMI240_ACCEL_X_CAP_REG 0x18
-> +#define SMI240_ACCEL_Y_CAP_REG 0x19
-> +#define SMI240_ACCEL_Z_CAP_REG 0x1A
-> +#define SMI240_GYRO_X_CAP_REG  0x1B
-> +#define SMI240_GYRO_Y_CAP_REG  0x1C
-> +#define SMI240_GYRO_Z_CAP_REG  0x1D
-> +
-> +#define SMI240_CMD_REG	    0x2F
-> +#define SMI240_BITE_CMD_REG 0x36
-> +
-> +#define SMI240_SOFT_RESET_CMD 0xB6
-> +#define SMI240_BITE_CMD	      0xB17E
-> +
-> +#define SMI240_BITE_SEQUENCE_DELAY   140
-> +#define SMI240_FILTER_FLUSH_DELAY    60
-> +#define SMI240_DIGITAL_STARTUP_DELAY 120
-> +#define SMI240_MECH_STARTUP_DELAY    100
-> +
-> +#define SMI240_MIN_BITE_REPS 1
-> +#define SMI240_MAX_BITE_REPS 8
-Good to use nam
-> +
-> +#define SMI240_TEMPERATURE_BASE	 25
-Fixed offset?  If so provide the _offset sysfs file and let userspace do
-the maths.  If the transformation needed is linear we almost always leave
-it to userspace which can do maths more easily than the kernel as it has
-floating point etc without jumping through a lot of hoops (which we don't
-do for IIO driverS)
-
-> +#define SMI240_TEMPERATURE_SHIFT 8
-Provide masks and use FIELD_GET() to extract values.
- 
-> +
-> +#define SMI240_DATA_CHANNEL(_type, _axis, _index)                              \
-> +	{                                                                      \
-> +		.type = _type, .modified = 1, .channel2 = IIO_MOD_##_axis,     \
-> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),                  \
-> +		.info_mask_shared_by_type =                                    \
-> +			BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY),      \
-> +		.info_mask_shared_by_type_available =                          \
-> +			BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY),      \
-> +		.scan_index = _index,                                          \
-> +		.scan_type = {                                                 \
-> +			.sign = 's',                                           \
-> +			.realbits = 16,                                        \
-> +			.storagebits = 16,                                     \
-> +			.endianness = IIO_LE,                                  \
-> +		},                                                             \
-> +	}
-> +
-> +#define SMI240_TEMP_CHANNEL(_index)                                            \
-> +	{                                                                      \
-> +		.type = IIO_TEMP, .modified = 1,                               \
-> +		.channel2 = IIO_MOD_TEMP_OBJECT,                               \
-> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),                  \
-> +		.scan_index = _index,                                          \
-> +		.scan_type = {                                                 \
-> +			.sign = 's',                                           \
-> +			.realbits = 16,                                        \
-> +			.storagebits = 16,                                     \
-> +			.endianness = IIO_LE,                                  \
-
-You aren't yet registering a buffered interface so this stuff is probably unused.
-Bring it in when you add that support, not before that.
-
-> +		},                                                             \
-> +	}
-> +
-> +static const int smi240_low_pass_freqs[] = { 50, 400 };
-> +
-> +static const struct iio_chan_spec smi240_channels[] = {
-> +	SMI240_DATA_CHANNEL(IIO_ACCEL, X_AND_Y_AND_Z, SMI240_ACC_X_AND_Y_AND_Z),
-> +	SMI240_DATA_CHANNEL(IIO_ANGL_VEL, X_AND_Y_AND_Z,
-> +			    SMI240_GYRO_X_AND_Y_AND_Z),
-
-As below, this is not how modifiers work it the IIO ABI.
-You need one channel per axis.
-If you need to read a set together implement the triggered buffer interfaces
-which I'd expect to see an IMU anyway because they 
-
-> +	SMI240_TEMP_CHANNEL(SMI240_TEMP_OBJECT),
-> +	IIO_CHAN_SOFT_TIMESTAMP(SMI240_TIMESTAMP),
-This timestamp doesn't makes sense until you add buffered support. Bring it
-back when you do.
-
-> +};
-> +
-> +static uint8_t smi240_crc3(uint32_t data, uint8_t init, uint8_t poly)
-> +{
-> +	uint8_t crc = init;
-> +	uint8_t do_xor;
-> +	int8_t i = 31;
-> +
-> +	do {
-> +		do_xor = crc & 0x04;
-> +		crc <<= 1;
-> +		crc |= 0x01 & (data >> i);
-> +		if (do_xor)
-> +			crc ^= poly;
-> +
-> +		crc &= 0x07;
-> +	} while (--i >= 0);
-> +
-> +	return crc;
-
-Doesn't match one of the standard crc calculations in the kernel?
-That would be very unusual.
-
-> +}
-> +
-> +static bool smi240_sensor_data_is_valid(uint32_t data)
-> +{
-> +	if (smi240_crc3(data, SMI240_CRC_INIT, SMI240_CRC_POLY))
-> +		return false;
-> +
-> +	if (GET_BITS(data, SMI240_SD_BIT) & GET_BITS(data, SMI240_CS_BIT))
-FIELD_GET() on both.
-> +		return false;
-> +
-> +	return true;
-> +}
-> +
-> +static int8_t smi240_get_regs(uint8_t reg_addr, uint16_t *reg_data,
-> +			      uint16_t len, uint8_t capture,
-> +			      const struct smi240_device *dev)
-> +{
-> +	int ret, i;
-> +	uint8_t cap;
-> +	uint32_t request, response;
-> +
-> +	for (i = 0; i < len; i++) {
-> +		cap = capture && (i == 0);
-> +		request = SMI240_BUS_ID << 30;
-> +		request = SET_BITS(request, SMI240_CAP_BIT, cap);
-> +		request = SET_BITS(request, SMI240_WRITE_ADDR, reg_addr + i);
-FIELD_PREP() for all these.
-
-> +		request |=
-> +			smi240_crc3(request, SMI240_CRC_INIT, SMI240_CRC_POLY);
-> +
-> +		ret = dev->xfer(request, &response);
-> +
-check ret.
-
-> +		if (i > 0) {
-> +			if (!smi240_sensor_data_is_valid(response))
-> +				return -EIO;
-> +
-> +			reg_data[i - 1] = GET_BITS(response, SMI240_READ_DATA);
-FIELD_GET()
-
-> +		}
-> +	}
-> +
-> +	ret = dev->xfer(0x0, &response);
-check ret  here.
-
-> +	if (!smi240_sensor_data_is_valid(response))
-> +		return -EIO;
-> +
-> +	reg_data[i - 1] = GET_BITS(response, SMI240_READ_DATA);
-
-FIELD_GET()
-
-> +
-> +	return ret;
-When you get here, 
-	return 0; as all is good.
-
-> +}
-> +
-> +static int8_t smi240_set_regs(uint8_t reg_addr, uint16_t *reg_data,
-> +			      uint16_t len, const struct smi240_device *dev)
-> +{
-> +	int ret;
-> +	int i;
-> +	uint32_t data;
-> +
-> +	for (i = 0; i < len; i++) {
-> +		data = SMI240_BUS_ID << 30;
-> +		data = SET_BITS(data, SMI240_WRITE_BIT, 1);
-> +		data = SET_BITS(data, SMI240_WRITE_ADDR, reg_addr + i);
-> +		data = SET_BITS(data, SMI240_WRITE_DATA, reg_data[i]);
-FIELD_PREP() for those.
-
-> +		data |= smi240_crc3(data, SMI240_CRC_INIT, SMI240_CRC_POLY);
-> +		ret = dev->xfer(data, NULL);
-	check ret here.
-
-> +	}
-> +	return ret;
-If you get here
-	return 0;
-> +}
-> +
-> +static void smi240_delay(uint32_t msec)
-> +{
-> +	if (msec <= 100)
-> +		mdelay(msec);
-> +	else
-> +		msleep(msec);
-
-fsleep() in place of this function.
-The trade off is a little different but is consistent across the kernel.
-
-
-> +}
-> +
-> +static int smi240_self_test(struct smi240_device *dev)
-> +{
-> +	int ret;
-> +	uint16_t response[7];
-> +	uint16_t request = SMI240_BITE_CMD;
-> +
-> +	ret = smi240_set_regs(SMI240_BITE_CMD_REG, &request, 1, dev);
-> +	smi240_delay(dev->bite_reps * SMI240_BITE_SEQUENCE_DELAY +
-> +		     SMI240_FILTER_FLUSH_DELAY);
-> +	if (ret) {
-> +		pr_err("Sending BITE command failed.");
-> +		return -EIO;
-> +	}
-> +
-> +	/* Reading from all 7 sensor data capture registers w/o error
-> +	 * makes sure all channels are valid.
-> +	 */
-IIO (and most of kernel) uses 
-	/* 
-	 * Reading from all...	
-	 * makes..
-	 */
-syntax for multiline comments.
-
-Basically look at local style and match that of the appropriate subsystem.
-
-> +	return smi240_get_regs(SMI240_TEMP_CAP_REG, response, 7, 1, dev);
-> +}
-> +
-> +static int smi240_soft_reset(struct smi240_device *dev)
-> +{
-> +	int ret;
-> +	uint16_t data = SMI240_SOFT_RESET_CMD;
-> +
-> +	ret = smi240_set_regs(SMI240_CMD_REG, &data, 1, dev);
-> +	smi240_delay(SMI240_DIGITAL_STARTUP_DELAY);
-> +	return ret;
-If ret says it failed, not point in delaying as chip is dead. So
-check it before the delay.
-
-> +}
-> +
-> +static int smi240_soft_config(struct smi240_device *dev)
-> +{
-> +	int ret;
-> +	uint8_t acc_bw, gyr_bw;
-> +	uint16_t request = 0x1;
-> +
-> +	switch (dev->accel_filter_freq) {
-> +	case 50:
-> +		acc_bw = 0x1;
-> +		break;
-> +	case 400:
-> +		acc_bw = 0x0;
-> +		break;
-> +	default:
-> +		pr_err("Soft Config: invalid ACC_BW.");
-
-dev_err()
-
-> +		return -EINVAL;
-> +	}
-> +
-> +	switch (dev->anglvel_filter_freq) {
-> +	case 50:
-> +		gyr_bw = 0x1;
-> +		break;
-> +	case 400:
-> +		gyr_bw = 0x0;
-> +		break;
-> +	default:
-> +		pr_err("Soft Config: invalid GYR_BW.");
-dev_err()
-
-> +		return -EINVAL;
-> +	}
-> +
-> +	request = SET_BITS(request, SMI240_GYR_BW, gyr_bw);
-> +	request = SET_BITS(request, SMI240_ACC_BW, acc_bw);
-> +	request = SET_BITS(request, SMI240_BITE_AUTO, 1);
-> +	request = SET_BITS(request, SMI240_BITE_REP, dev->bite_reps - 1);
-FIELD_PREP() for all of these with appropriate request |= 
-> +
-> +	ret = smi240_set_regs(SMI240_SIGN_SFT_CFG_REG, &(dev->sign_of_channels),
-> +			      1, dev);
-As elsewhere - handle each error, not sets of them.
-
-> +	ret |= smi240_set_regs(SMI240_SOFT_CONFIG_REG, &request, 1, dev);
-> +	if (ret)
-> +		pr_err("Soft Config: IO error.");
-> +
-> +	smi240_delay(SMI240_MECH_STARTUP_DELAY +
-> +		     dev->bite_reps * SMI240_BITE_SEQUENCE_DELAY +
-> +		     SMI240_FILTER_FLUSH_DELAY);
-> +	return ret;
-> +}
-> +
-> +static int smi240_read_raw_multi(struct iio_dev *indio_dev,
-> +				 struct iio_chan_spec const *chan, int max_len,
-> +				 int *vals, int *val_len, long mask)
-> +{
-> +	int ret = 0;
-> +	int16_t data[3];
-> +	struct smi240_device *dev = iio_device_get_drvdata(indio_dev);
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		if (chan->channel2 == IIO_MOD_X_AND_Y_AND_Z) {
-We don't provide multi channel read of raw data. It is not part of
-the standard ABI and that's not what MOD_X_AND_Y_AND_Z is for
-(it's for a particular weird form of threshold detector).
-
-The only exception to this (kind of) is for quaternions where they
-have no meaning unless we get all the components.
-The rule for sysfs is one file one thing. This is multiple things
-so not acceptable (there are other corners where it is fine to
-have multiple values, such listing what is available but in that
-case it's still considered one thing, just in the form of a list of
-options).
-
-Just handle one channel at a time for each sysfs file.
-
-Likely your applications need a scan of all channels - we do that
-via the buffered interfaces not sysfs.
-
-> +			if (chan->type == IIO_ACCEL)
-> +				ret = smi240_get_regs(SMI240_ACCEL_X_CAP_REG,
-> +						      data, 3, 1, dev);
-> +			else if (chan->type == IIO_ANGL_VEL)
-> +				ret = smi240_get_regs(SMI240_GYRO_X_CAP_REG,
-> +						      data, 3, 1, dev);
-> +			else
-> +				return -EINVAL;
-> +
-> +			if (ret)
-> +				return -EIO;
-> +
-> +			*val_len = 3;
-> +			vals[0] = data[0];
-> +			vals[1] = data[1];
-> +			vals[2] = data[2];
-> +		} else if (chan->channel2 == IIO_MOD_TEMP_OBJECT) {
-> +			ret = smi240_get_regs(SMI240_TEMP_CUR_REG, data, 1, 0,
-> +					      dev);
-> +
-> +			if (ret)
-> +				return -EIO;
-> +
-> +			data[0] >>= SMI240_TEMPERATURE_SHIFT;
-> +			data[0] += SMI240_TEMPERATURE_BASE;
-> +
-> +			*val_len = 1;
-> +			vals[0] = data[0];
-> +		} else
-> +			return -EINVAL;
-> +
-> +		return IIO_VAL_INT_MULTIPLE;
-> +
-> +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-> +		ret = smi240_get_regs(SMI240_SOFT_CONFIG_REG, data, 1, 0, dev);
-> +		if (ret)
-> +			return -EIO;
-> +
-> +		switch (chan->type) {
-> +		case IIO_ACCEL:
-> +			switch (GET_BITS(data[0], SMI240_ACC_BW)) {
-> +			case 0:
-> +				dev->accel_filter_freq = 400;
-> +				break;
-> +			case 1:
-> +				dev->accel_filter_freq = 50;
-> +				break;
-> +			}
-> +
-> +			vals[0] = dev->accel_filter_freq;
-> +			break;
-> +		case IIO_ANGL_VEL:
-> +			switch (GET_BITS(data[0], SMI240_GYR_BW)) {
-> +			case 0:
-> +				dev->anglvel_filter_freq = 400;
-> +				break;
-> +			case 1:
-> +				dev->anglvel_filter_freq = 50;
-> +				break;
-> +			}
-> +
-> +			vals[0] = dev->anglvel_filter_freq;
-> +			break;
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +
-> +		*val_len = 1;
-Use read_raw rather than the multi version as you don't need the
-extra complexity as your multi channel read approach is not part of
-the IIO ABI.
-
-Then return IIO_VAL_INT instead of breaking out above.
-
-> +		return IIO_VAL_INT;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> 
-> +}
-> +
-> +static int smi240_write_raw(struct iio_dev *indio_dev,
-> +			    struct iio_chan_spec const *chan, int val, int val2,
-> +			    long mask)
-> +{
-> +	int ret, i;
-> +	bool valid = false;
-> +	struct smi240_device *dev = iio_device_get_drvdata(indio_dev);
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-> +		for (i = 0; i < ARRAY_SIZE(smi240_low_pass_freqs); ++i) {
-i++ preferred. Makes not real difference but is more common in kernel.
-
-> +			if (val == smi240_low_pass_freqs[i]) {
-> +				valid = true;
-> +				break;
-> +			}
-> +		}
-> +
-> +		if (!valid)
-Can check if i == ARRAY_SIZE() to get same result I think and avoid
-need for the boolean.
-
-> +			return -EINVAL;
-> +
-> +		switch (chan->type) {
-> +		case IIO_ACCEL:
-> +			dev->accel_filter_freq = val;
-> +			break;
-> +		case IIO_ANGL_VEL:
-> +			dev->anglvel_filter_freq = val;
-> +			break;
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = smi240_soft_reset(dev);
-Don't eat or combine errors.
-If this soft reset is not very light weight it isn't really appropriate
-for a filter change.   Normal assumption is that if someone is messing
-with filters, they can wait for the data to stabilise with new values.
-Is the reset really required?
-
-> +	ret |= smi240_soft_config(dev);
-> +	if (ret)
-> +		ret = -EIO;
-> +
-> +	return ret;
-> +}
-> +
-> +static int smi240_init(struct smi240_device *dev)
-> +{
-> +	int ret;
-> +
-> +	dev->accel_filter_freq = 400;
-> +	dev->anglvel_filter_freq = 400;
-> +	dev->sign_of_channels = 0x00;
-> +	dev->bite_reps = 3;
-> +
-> +	ret = smi240_soft_config(dev);
-> +	if (ret)
-> +		pr_info("Soft Config failed.");
-As everywhere else dev_err()
-
-
-> +
-> +	return ret;
-> +}
-> +
-> +static ssize_t in_temp_accel_anglvel_capture_show(struct device *dev,
-> +						  struct device_attribute *attr,
-> +						  char *buf)
-> +{
-> +	int ret;
-> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> +	struct smi240_device *smi240_dev = iio_device_get_drvdata(indio_dev);
-> +	int16_t data[7];
-> +
-> +	ret = smi240_get_regs(SMI240_TEMP_CAP_REG, data, 7, 1, smi240_dev);
-> +
-> +	data[0] >>= SMI240_TEMPERATURE_SHIFT;
-> +	data[0] += SMI240_TEMPERATURE_BASE;
-> +
-> +	return snprintf(buf, PAGE_SIZE, "%hd %hd %hd %hd %hd %hd %hd\n",
-> +			data[0], data[1], data[2], data[3], data[4], data[5],
-> +			data[6]);
-This looks like a multichannel read if so, we won't accept it.
-If you need to do near simultaneous reads of multiple channel look
-at the triggered buffer infrastructure.  That provides the reads via a character
-device with a software fifo behind it.  It's a much lighter weight path than a sysfs
-file and more suited to high speed data capture.
-
-> +}
-> +
-> +static ssize_t self_test_show(struct device *dev, struct device_attribute *atrr,
-> +			      char *buf)
-> +{
-> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> +	struct smi240_device *smi240_dev = iio_device_get_drvdata(indio_dev);
-> +
-> +	if (smi240_self_test(smi240_dev))
-> +		return snprintf(buf, PAGE_SIZE, "self test fail.\n");
-> +	else
-> +		return snprintf(buf, PAGE_SIZE, "self test success.\n");
-
-Similar to reset.  We normally just make this something that happens in probe()
-and so don't need a userspace interface. Is that sufficient here?
-
-> +}
-> +
-> +static ssize_t soft_reset_show(struct device *dev,
-> +			       struct device_attribute *attr, char *buf)
-> +{
-> +	int ret;
-> +	bool success = true;
-> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> +	struct smi240_device *smi240_dev = iio_device_get_drvdata(indio_dev);
-> +
-> +	ret = smi240_soft_reset(smi240_dev);
-Firstly as stated below, we don't provide interfaces for this because
-it's a heavy weight process that is most of the effort of unbinding and
-rebinding the driver. So if you need to reset, do that.
-
-> +	if (ret) {
-> +		dev_err(dev, "Soft reset failed.");
-> +		success = false;
-> +	}
-> +
-> +	ret = smi240_init(smi240_dev);
-> +	if (ret) {
-> +		dev_err(dev, "Device initialization failed.");
-> +		success = false;
-> +	}
-> +
-> +	if (!success)
-> +		return snprintf(buf, PAGE_SIZE, "soft reset failed.\n");
-> +	else
-> +		return snprintf(buf, PAGE_SIZE, "soft reset performed.\n");
-Reset via a read sysfs file is bad.  Permissions are usually more relaxed
-for reading as it's expected to have no side effects.
-
-So if we were going to support this it would need to be a write triggered
-activity and success or not would be reported via count, or error code.
-
-> +}
-> +
-> +static ssize_t sign_of_channels_show(struct device *dev,
-> +				     struct device_attribute *attr, char *buf)
-> +{
-> +	int ret;
-> +	uint16_t data;
-> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> +	struct smi240_device *smi240_dev = iio_device_get_drvdata(indio_dev);
-> +
-> +	ret = smi240_get_regs(SMI240_SIGN_SFT_CFG_REG, &data, 1, 0, smi240_dev);
-> +	if (ret)
-> +		return -EIO;
-> +
-> +	smi240_dev->sign_of_channels = data;
-> +
-> +	return snprintf(
-> +		buf, PAGE_SIZE, "ax:%d,ay:%d,az:%d,gx:%d,gy:%d,gz:%d\n",
-> +		GET_BITS(smi240_dev->sign_of_channels, SMI240_ACC_INVERTX),
-> +		GET_BITS(smi240_dev->sign_of_channels, SMI240_ACC_INVERTY),
-> +		GET_BITS(smi240_dev->sign_of_channels, SMI240_ACC_INVERTZ),
-> +		GET_BITS(smi240_dev->sign_of_channels, SMI240_GYR_INVERTX),
-> +		GET_BITS(smi240_dev->sign_of_channels, SMI240_GYR_INVERTY),
-> +		GET_BITS(smi240_dev->sign_of_channels, SMI240_GYR_INVERTZ));
-
-So I guess this is a device that provides a per channel invert.
-I don't see any reason why a Linux driver should support this as it's trivial
-for userspace to flip channels as needed.
-My guess is this is to support the fact that microsoft and google disagree
-on left vs right handed sensors.   Check out 
-https://www.kernel.org/doc/Documentation/devicetree/bindings/iio/mount-matrix.txt
-for what Linux uses and provide a suitable mount matrix and default
-settings of these invert bits to get there.
-Whether the channels are inverted or not isn't of interest to userspace
-which just cares about how to get screen orientation etc.
-
-
-> +}
-> +
-> +static uint16_t calculate_sign_of_channels(const char *buf,
-> +					   const uint16_t register_val,
-> +					   size_t count)
-> +{
-> +	uint16_t sign_of_channels = register_val;
-> +	char *sep = ",";
-> +	char *config;
-> +	char data[32];
-> +
-> +	char *input = data;
-> +	char *sep2 = ":";
-> +	char *value;
-> +	char *channel;
-> +
-> +	if (count <= 30) {
-> +		memset(data, 0, sizeof(data));
-> +		memcpy(data, buf, count);
-> +
-> +		if (data[strlen(data) - 1] == '\n')
-> +			data[strlen(data) - 1] = '\0';
-> +
-> +		config = strsep(&input, sep);
-> +		while (config != NULL) {
-> +			channel = strsep(&config, sep2);
-> +			if (channel != NULL && strcmp(channel, "ax") == 0) {
-> +				value = strsep(&config, sep2);
-> +				if (value != NULL && strcmp(value, "0") == 0) {
-> +					sign_of_channels =
-> +						SET_BITS(sign_of_channels,
-> +							 SMI240_ACC_INVERTX, 0);
-> +				}
-> +				if (value != NULL && strcmp(value, "1") == 0) {
-> +					sign_of_channels =
-> +						SET_BITS(sign_of_channels,
-> +							 SMI240_ACC_INVERTX, 1);
-> +				}
-> +			}
-> +			if (channel != NULL && strcmp(channel, "ay") == 0) {
-> +				value = strsep(&config, sep2);
-> +				if (value != NULL && strcmp(value, "0") == 0) {
-> +					sign_of_channels =
-> +						SET_BITS(sign_of_channels,
-> +							 SMI240_ACC_INVERTY, 0);
-> +				}
-> +				if (value != NULL && strcmp(value, "1") == 0) {
-> +					sign_of_channels =
-> +						SET_BITS(sign_of_channels,
-> +							 SMI240_ACC_INVERTY, 1);
-> +				}
-> +			}
-> +			if (channel != NULL && strcmp(channel, "az") == 0) {
-> +				value = strsep(&config, sep2);
-> +				if (value != NULL && strcmp(value, "0") == 0) {
-> +					sign_of_channels =
-> +						SET_BITS(sign_of_channels,
-> +							 SMI240_ACC_INVERTZ, 0);
-> +				}
-> +				if (value != NULL && strcmp(value, "1") == 0) {
-> +					sign_of_channels =
-> +						SET_BITS(sign_of_channels,
-> +							 SMI240_ACC_INVERTZ, 1);
-> +				}
-> +			}
-> +			if (channel != NULL && strcmp(channel, "gx") == 0) {
-> +				value = strsep(&config, sep2);
-> +				if (value != NULL && strcmp(value, "0") == 0) {
-> +					sign_of_channels =
-> +						SET_BITS(sign_of_channels,
-> +							 SMI240_GYR_INVERTX, 0);
-> +				}
-> +				if (value != NULL && strcmp(value, "1") == 0) {
-> +					sign_of_channels =
-> +						SET_BITS(sign_of_channels,
-> +							 SMI240_GYR_INVERTX, 1);
-> +				}
-> +			}
-> +			if (channel != NULL && strcmp(channel, "gy") == 0) {
-> +				value = strsep(&config, sep2);
-> +				if (value != NULL && strcmp(value, "0") == 0) {
-> +					sign_of_channels =
-> +						SET_BITS(sign_of_channels,
-> +							 SMI240_GYR_INVERTY, 0);
-> +				}
-> +				if (value != NULL && strcmp(value, "1") == 0) {
-> +					sign_of_channels =
-> +						SET_BITS(sign_of_channels,
-> +							 SMI240_GYR_INVERTY, 1);
-> +				}
-> +			}
-> +			if (channel != NULL && strcmp(channel, "gz") == 0) {
-> +				value = strsep(&config, sep2);
-> +				if (value != NULL && strcmp(value, "0") == 0) {
-> +					sign_of_channels =
-> +						SET_BITS(sign_of_channels,
-> +							 SMI240_GYR_INVERTZ, 0);
-> +				}
-> +				if (value != NULL && strcmp(value, "1") == 0) {
-> +					sign_of_channels =
-> +						SET_BITS(sign_of_channels,
-> +							 SMI240_GYR_INVERTZ, 1);
-> +				}
-> +			}
-> +			config = strsep(&input, sep);
-> +		}
-> +	}
-> +	return sign_of_channels;
-> +}
-> +
-> +static ssize_t sign_of_channels_store(struct device *dev,
-> +				      struct device_attribute *attr,
-> +				      const char *buf, size_t count)
-> +{
-> +	int ret;
-> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> +	struct smi240_device *smi240_dev = iio_device_get_drvdata(indio_dev);
-> +
-> +	if (count > 30)
-> +		return -EINVAL;
-> +
-> +	smi240_dev->sign_of_channels = calculate_sign_of_channels(
-> +		buf, smi240_dev->sign_of_channels, count);
-	smi240_dev->sign_of_channels =
-		calculate_sign_of_channels(buf, smi240_dev->sign_of_channels,
-					   count);
-
-would be a preferred wrapping.
-
-> +
-> +	ret = smi240_soft_reset(smi240_dev);
-> +	if (ret) {
-> +		pr_err("Soft Reset failed.");
-> +		return -EIO;
-> +	}
-> +
-> +	ret = smi240_soft_config(smi240_dev);
-> +	if (ret) {
-> +		pr_err("Soft Config failed.");
-dev_err() always - so we know which device is reporting the error.
-
-> +		return -EIO;
-> +	}
-> +
-> +	return count;
-> +}
-> +
-> +static ssize_t bite_repetitions_show(struct device *dev,
-> +				     struct device_attribute *attr, char *buf)
-> +{
-> +	int ret;
-> +	uint16_t data;
-> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> +	struct smi240_device *smi240_dev = iio_device_get_drvdata(indio_dev);
-
-Better to get this via iio_priv() and a suitable dev pointer in that structure.
-
-> +
-> +	ret = smi240_get_regs(SMI240_SOFT_CONFIG_REG, &data, 1, 0, smi240_dev);
-> +	if (ret)
-> +		return -EIO;
-> +
-> +	smi240_dev->bite_reps = GET_BITS(data, SMI240_BITE_REP) + 1;
-FIELD_GET()
-
-> +
-> +	return snprintf(buf, PAGE_SIZE, "%d\n", smi240_dev->bite_reps);
-> +}
-> +
-> +static ssize_t bite_repetitions_store(struct device *dev,
-> +				      struct device_attribute *attr,
-> +				      const char *buf, size_t count)
-> +{
-> +	int ret;
-> +	uint8_t bite_reps;
-> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> +	struct smi240_device *smi240_dev = iio_device_get_drvdata(indio_dev);
-> +
-> +	ret = kstrtou8(buf, 10, &bite_reps);
-> +	if (ret || bite_reps < SMI240_MIN_BITE_REPS ||
-Always return ret if it is set as that may provide more useful debug
-information than switching it to -EINVAL in all cases.
-
-> +	    bite_reps > SMI240_MAX_BITE_REPS)
-> +		return -EINVAL;
-> +
-> +	smi240_dev->bite_reps = bite_reps;
-> +
-> +	ret = smi240_soft_reset(smi240_dev);
-Check each ret and return it if set.  
-> +	ret |= smi240_soft_config(smi240_dev);
-> +	if (ret)
-Don't eat return values.
-
-> +		return -EIO;
-> +
-> +	return count;
-> +}
-> +
-> +static IIO_DEVICE_ATTR_RO(in_temp_accel_anglvel_capture, 0);
-> +static IIO_DEVICE_ATTR_RO(self_test, 0);
-> +static IIO_DEVICE_ATTR_RO(soft_reset, 0);
-> +static IIO_DEVICE_ATTR_RW(sign_of_channels, 0);
-> +static IIO_DEVICE_ATTR_RW(bite_repetitions, 0);
-> +
-> +static struct attribute *smi240_attrs[] = {
-> +	&iio_dev_attr_in_temp_accel_anglvel_capture.dev_attr.attr,
-No idea what this one is.
-
-> +	&iio_dev_attr_self_test.dev_attr.attr,
-> +	&iio_dev_attr_soft_reset.dev_attr.attr,
-If the device needs a reset, unbind it and rebind it.
-Same for self test assuming that doesn't require physical actions (putting
-device a particular way up.   Just run a self test on every probe.
-
-> +	&iio_dev_attr_sign_of_channels.dev_attr.attr,
-> +	&iio_dev_attr_bite_repetitions.dev_attr.attr,
-No idea what these might be.
-
-Custom ABI must be documented.  Note that it is very hard to get it accepted
-because custom ABI is effectively ABI that doesn't work for any standard userspace
-tooling so isn't used.
-
-If you really really need it to support something new then add a new file under
-Documentation/ABI/testing/sysfs-bus-iio-smi240
-
-
-> +	NULL,
-> +};
-> +
-> +static const struct attribute_group smi240_attrs_group = {
-> +	.attrs = smi240_attrs,
-> +};
-> +
-> +static const struct iio_info smi240_info = {
-> +	.read_raw_multi = smi240_read_raw_multi,
-> +	.read_avail = smi240_read_avail,
-> +	.write_raw = smi240_write_raw,
-> +	.attrs = &smi240_attrs_group,
-> +};
-> +
-> +int smi240_probe(struct device *dev, struct smi240_device *smi240_dev)
-> +{
-> +	int ret;
-> +	int16_t response;
-> +	struct iio_dev *indio_dev;
-> +
-> +	ret = smi240_get_regs(SMI240_CHIP_ID_REG, &response, 1, 0, smi240_dev);
-> +	if (ret) {
-> +		pr_err("Read chip id failed.");
-> +		return ret;
-> +	}
-> +
-> +	if (response == SMI240_CHIP_ID) {
-> +		pr_info("SMI240 Chip ID: 0x%04x", response);
-Too noisy.
-
-> +	} else {
-> +		pr_err("Unexpected Chip ID for SMI240: 0x%04x", response);
-> +		return -ENODEV;
-
-So we have this wrong in a lot of old drivers, but today the view is we never
-fail a probe on a failure to match a who am I / chip ID value.
-The reason is that it breaks typical use of fallback device tree compatible
-entries that are used to allow an older kernel to support a compatible device
-that was released after that kernel was released.
-
-dev_info() to say it's not one we know about is fine then carry on anyway.
-
-
-> +	}
-> +
-> +	ret = smi240_soft_reset(smi240_dev);
-> +	if (ret) {
-> +		pr_err("Soft Reset failed.");
-
-return dev_err_probe(dev, ret, "Soft Reset Failed.\n");
-
-Similar in any other cases where you return on error in probe and want to
-print a message.
-
-> +		return ret;
-> +	}
-> +
-> +	ret = smi240_init(smi240_dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	indio_dev = devm_iio_device_alloc(dev, 0);
-Provide a structure per device which you access via iio_priv() and provide
-the size of here.  This is how we get from iio_dev to data the driver is associating
-with that iio device.   Things like the spi->dev, and the tx and rx buffers belong
-in there.
-
-There are a lot of drivers in the upstream kernel and only a couple of them have
-0 size here (for various complex reasons that don't apply here!)
-
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	iio_device_set_drvdata(indio_dev, smi240_dev);
-> +	dev_set_drvdata(dev, indio_dev);
-This is a sign that your code is bouncing back and forwards between
-devices. If you need to get form iio_dev to your spi dev or similar
-add a field to your iio_priv() structure.
-
-> +
-> +	indio_dev->dev.parent = dev;
-Set by the core - don't do it again.
-
-> +	indio_dev->channels = smi240_channels;
-> +	indio_dev->num_channels = ARRAY_SIZE(smi240_channels);
-> +	indio_dev->name = SENSOR_NAME;
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->info = &smi240_info;
-> +
-> +	ret = devm_iio_device_register(dev, indio_dev);
-> +	if (ret) {
-> +		dev_err(dev, "Register IIO device failed");
-> +		goto exit_failure;
-return dev_err_probe()
-> +	}
-> +
-> +	return ret;
-> +
-> +exit_failure:
-> +	smi240_remove(dev);
-> +	return ret;
-> +}
-> +
-> +int smi240_remove(struct device *dev)
-> +{
-> +	dev_info(dev, "unregister SMI240");
-This is debug stuff that does not belong in an upstream driver.
-Please make sure to cleanup before submitting.
-
-> +	return 0;
-> +}
-> diff --git a/drivers/iio/imu/smi240/smi240_spi.c b/drivers/iio/imu/smi240/smi240_spi.c
-> new file mode 100644
-> index 00000000000..2be6320eaba
-> --- /dev/null
-> +++ b/drivers/iio/imu/smi240/smi240_spi.c
-> @@ -0,0 +1,153 @@
-> +// SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
-> +/*
-> + * Copyright (c) 2024 Robert Bosch GmbH.
-> + *
-No need for this empty line.
-
-> + */
-> +
-> +#include <linux/module.h>
-#include <linux/mod_devicetable.h>
-
-Maybe others are needed - I haven't checked closely.
-> +#include <linux/spi/spi.h>
-> +#include <linux/types.h>
-> +#include <generated/uapi/linux/version.h>
-
-A linux driver module should never care what linux version is.
-So we should never see this include.
-
-> +
-> +#include "smi240.h"
-> +
-> +#define SMI240_SPI_MAX_BUFFER_SIZE 32
-
-What is this for?
-
-> +
-> +static uint8_t *rx_buf;
-> +static uint8_t *tx_buf;
-> +static struct spi_device *smi240_spi_dev;
-> +static struct smi240_device smi240_dev;
-These globals tend to break the case where you have multiple IMUs attached
-to one host so look at how all the other drivers avoid this sort
-of thing. All data needs to either be const or scoped to a single instance.
-You can use a constant template that is copied into per instance cases
-though if that reduces complexity of configuration.
-
-> +
-> +static int8_t smi240_spi_transfer(uint32_t request, uint32_t *response)
-> +{
-> +	int8_t ret;
-> +	struct spi_message msg;
-> +	struct spi_transfer xfer = {
-> +		.tx_buf = tx_buf, .rx_buf = rx_buf, .len = 4,
-> +		//.bits_per_word = 32,
-commented out code does not belong in an upstream driver.
-
-Also format as
-	struct spi_transfer xfer = {
-		.tx_buf = tx_buf,
-		.rx_buf = rx_buf,
-		.len = 4,
-	};
-Note that as this is an spi driver you will need DMA safe buffers
-and given they can't have global scope (see above) you will need to
-either allocate them and store them in iio_priv() or use the
-__aligned(IIO_DMA_MINALIGN) marking that you will find in many other IIO drivers.
-
-
-> +	};
-> +
-> +	if (smi240_spi_dev == NULL)
-> +		return -ENODEV;
-Pass this in from wherever the call is made.
-> +
-> +	tx_buf[0] = request >> 24;
-> +	tx_buf[1] = request >> 16;
-> +	tx_buf[2] = request >> 8;
-> +	tx_buf[3] = request;
-
-put_unaligned_be32() into a suitable __be32 that you then
-pass to spi_write.  Though then you should use
-cpu_to_be32() to fill it as it will be aligned.
-
-
-
-> +
-> +	spi_message_init(&msg);
-> +	spi_message_add_tail(&xfer, &msg);
-> +	ret = spi_sync(smi240_spi_dev, &msg);
-
-spi_write()
-
-> +
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (response != NULL)
-> +		*response = (rx_buf[0] << 24) | (rx_buf[1] << 16) |
-> +			    (rx_buf[2] << 8) | rx_buf[3];
-> +
-get_unaligned_be32() or if you read into a __be32 (which you should)
-be32_to_cpu()
-
-> +	return ret;
-> +}
-> +
-> +static int smi240_spi_probe(struct spi_device *device)
-> +{
-> +	int err;
-> +
-> +	device->bits_per_word = 8;
-> +	device->max_speed_hz = 10000000;
-> +	device->mode = SPI_MODE_0;
-> +
-> +	err = spi_setup(device);
-> +	if (err < 0) {
-> +		pr_err("spi_setup err!\n");
-> +		return err;
-> +	}
-> +
-> +	if (rx_buf == NULL)
-> +		rx_buf = kmalloc(4, GFP_KERNEL);
-> +	if (!rx_buf)
-> +		return -ENOMEM;
-> +
-> +	if (tx_buf == NULL)
-> +		tx_buf = kmalloc(4, GFP_KERNEL);
-> +	if (!tx_buf)
-didn't free rx_buf.  Anyhow this code is going away based on other suggestions.
-> +		return -ENOMEM;
-
-As elsewhere these need to be per device instance. Put some space
-for them in iio_priv(). They aren't so big that we care if another
-bus support driver doesn't use them.
-
-> +
-> +	smi240_spi_dev = device;
-> +
-> +	err = smi240_probe(&device->dev, &smi240_dev);
-> +	if (err) {
-> +		kfree(rx_buf);
-> +		rx_buf = NULL;
-> +		kfree(tx_buf);
-> +		tx_buf = NULL;
-You won't need to do most of this after the suggested changes to wehre they
-are but if you did, use a goto.
-
-> +		smi240_spi_dev = NULL;
-> +		dev_err(&device->dev,
-> +			"Bosch Sensor Device %s initialization failed %d",
-> +			SENSOR_NAME, err);
-> +	} else
-> +		dev_info(&device->dev, "Bosch Sensor Device %s initialized",
-> +			 SENSOR_NAME);
-
-Too noisy. dev_dbg() at most.
-
-> +
-> +	return err;
-> +}
-> +
-> +static void smi240_spi_remove(struct spi_device *device)
-> +{
-> +	if (rx_buf != NULL) {
-> +		kfree(rx_buf);
-> +		rx_buf = NULL;
-> +	}
-> +
-> +	if (tx_buf != NULL) {
-> +		kfree(tx_buf);
-> +		tx_buf = NULL;
-When you have these all per device as they must be, then either they will
-get cleared up via the existing cleanup of the iio device (if in iio_priv())
-or use devm_kzalloc() so they are scoped to the device driver being removed.
-
-> +	}
-> +	smi240_remove(&device->dev);
-As above, get rid of this function. It does nothing useful.
-
-> +}
-> +
-> +static const struct spi_device_id smi240_id[] = { { SENSOR_NAME, 0 }, {} };
-Format of naming in spi_device_id is not the same as of_match.
-Don't use a define for either. I want to see the actual strings here.
-
-Style wise match hwo other drivers do it.
-static const struct spi_device_id smi240_id[] = {
-	{ SENSOR_NAME, 0 },
-	{ }
-};
-
-> +
-> +MODULE_DEVICE_TABLE(spi, smi240_id);
-> +
-> +static const struct of_device_id smi240_of_match[] = {
-> +	{
-> +		.compatible = SENSOR_NAME,
-> +	},
-> +	{}
-trivial: Prefer space between {}
-> +};
-> +
-> +MODULE_DEVICE_TABLE(of, smi240_of_match);
-> +
-> +static struct spi_driver smi240_driver = {
-> +	.driver = {
-> +		   .owner = THIS_MODULE,
-
-The registration code handles this so you don't need
-to set it manually.
-See:
-https://elixir.bootlin.com/linux/v6.10/source/include/linux/spi/spi.h#L375
-
-> +		   .name = SENSOR_NAME,
-String here as well..
-> +		   .of_match_table = smi240_of_match,
-> +		    },
-	},
-not over where you have it.
-
-> +	.id_table = smi240_id,
-> +	.probe = smi240_spi_probe,
-> +	.remove = smi240_spi_remove,
-> +};
-> +
-> +static int __init smi240_module_init(void)
-> +{
-> +	int err = 0;
-> +
-> +	smi240_dev.xfer = smi240_spi_transfer;
-> +
-> +	err |= spi_register_driver(&smi240_driver);
-check each error after the call. Never or them together
-as information is lost.  Linux kernel error codes are not
-a bitmask.
-
-However, given you shouldn't have that global use
-the module_spi_driver() macro to get rid of this.
-
-
-
-> +	return err;
-> +}
-> +
-> +static void __exit smi240_module_exit(void)
-> +{
-> +	spi_unregister_driver(&smi240_driver);
-> +}
-> +
-> +module_init(smi240_module_init);
-> +module_exit(smi240_module_exit);
-> +
-> +MODULE_DESCRIPTION("SMI240 IMU SENSOR DRIVER");
-
-Author?
-
-> +MODULE_LICENSE("Dual BSD/GPL");
-> +MODULE_VERSION(DRIVER_VERSION);
-
+X-OriginatorOrg: Dell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR19MB5709.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2642cc1a-f6b3-41b3-1995-08dca8d23ebd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jul 2024 15:40:12.8773
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 945c199a-83a2-4e80-9f8c-5a91be5752dd
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: h8PmKT+MCAWkZqslitYgP5zM0kPBCR3zVF29obewWBDgxAuDfwsHdTl+jkn15r/0Koc6uROHyblF0/56CQmieg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR19MB4505
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-20_12,2024-07-18_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ bulkscore=0 clxscore=1015 malwarescore=0 mlxscore=0 phishscore=0
+ suspectscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2407110000 definitions=main-2407200113
+X-Proofpoint-ORIG-GUID: JEeqrmNMAEfZlXfsOz9n8oexvFaaVTXP
+X-Proofpoint-GUID: JEeqrmNMAEfZlXfsOz9n8oexvFaaVTXP
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 adultscore=0
+ phishscore=0 priorityscore=1501 clxscore=1015 malwarescore=0
+ suspectscore=0 spamscore=0 bulkscore=0 mlxlogscore=999 impostorscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407200113
+
+SGkgQXJkLA0KDQpUaGFua3MgZm9yIHlvdXIgcmVwbHkuIEhlcmUgaXMgdGhlIHByb2JsZW0gSSBl
+bmNvdW50ZXJlZCwgYW5kIHRoZSBwcm9ibGVtDQpzdGlsbCBleGlzdHMgaW4gdGhlIG1haW5saW5l
+Og0KDQpGaXJtd2FyZTogVUVGSSAyLjQsDQpFRkkgbG9hZGVyOiBzeXN0ZW1kLWJvb3QNCg0KV2hl
+biBJIHVwZGF0ZSBteSBrZXJuZWwgZnJvbSBMVFMgdjYuMS54IHRvIHY2LjYueCwgdGhlIGtlcm5l
+bCBmYWlscyB0bw0KIGJvb3Qgd2hlbiBpdCBqdW1wcyBmcm9tIHRoZSBoYW5kb3ZlciBwcm90b2Nv
+bC4gQW5kIGl0IGZhaWxzIG9ubHkgb24gYW4NCm9sZCBGaXJtd2FyZSB0aGF0IE1lbW9yeU92ZXJ3
+cml0ZVJlcXVlc3RDb250cm9sKE1PUikgYml0IGlzIHNldCB0byAxLg0KDQpBY2NvcmRpbmcgdG8g
+dGhlIFRDRyBSZXNldCBBdHRhY2sgTWl0aWdhdGlvbiBTcGVjLCBhIE1lbW9yeSBDbGVhciBNZXRo
+b2QNCndpbGwgYmUgbG9hZGVkIGluIHRoZSBtZW1vcnkgb24gYm9vdCwgYW5kIHRoaXMgY2F1c2Vz
+IHRoZSBFRkkgbG9hZGVyDQphbmQgT1MgbWVtb3J5IGFkZHJlc3MgdG8gc2hpZnQuIEFub3RoZXIg
+aW1wb3J0YW50IGZhY3RvciBpcyB0aGF0IG15IA0KQlNTIHJlZ2lvbiBhbmQgYm9vdF9pZHQgZW50
+cmllcyBhcmUgbm90IGFzIGNsZWFuIGFzIHRob3NlIGluIFFFTVUgYW5kIA0Kb3RoZXIgcGxhdGZv
+cm1zLiANCg0KVGhpcyBtZWFucyB0aGF0IGNsZWFyaW5nIEJTUyBpbiB0aGUgaGFuZG92ZXIgZnVu
+Y3Rpb24gY2FuIGNhdXNlIHRoZSANCmZpcm13YXJlJ3MgSURUL0dEVCBjb3JydXB0aW9uLCBhcyB5
+b3UgbWVudGlvbmVkIGhlcmUgY29tbWl0IDw3Yjg0MzliMDM2OWI+IA0KKHg4Ni9lZmlzdHViOiBE
+cm9wIHJlZHVuZGFudCBjbGVhcmluZyBvZiBCU1MpLiBJIG5vdGljZWQgdGhhdCBtb3N0IG9mIA0K
+dmFyaWFibGVzIGluIEJTUyB3aWxsIGJlIGluaXRpYWxpemVkIGJlZm9yZSBhY2Nlc3NpbmcsIGFu
+ZCBvbmx5IGEgZmV3IGFyZSANCm5vdCwgdGhhdCdzIHdoeSBJIHJlbW92ZWQgbWVtc2V0IHBhcnQg
+aW4gaGFuZG92ZXIgZW50cnkgcG9pbnQuDQoNCkluIHRlcm1zIG9mIHRoZSBCT09UX1NUQUNLX1NJ
+WkUsIEkgZm91bmQgb3V0IHRoYXQgdGhlIGJvb3Rfc3RhY2sgcmVnaW9uIGlzDQp1c2VkIGluIHRo
+aXMgY2FzZSAoYXQgdGhlIGJlZ2lubmluZyBvZiBfYnNzKSwgYW5kIDB4NDAwMCBpcyBub3Qgc3Vm
+ZmljaWVudCANCnRvIGNvdmVyIHRoaXMgaXNzdWUgc2luY2UgdGhlIGRhdGEgaW4gYm9vdF9oZWFw
+IHdpbGwgYmUgb3ZlcndyaXR0ZW4gZHVyaW5nDQpkZWNvbXByZXNzaW9uLiBQcmlvciB0byBpbWFn
+ZSBkZWNvbXByZXNzaW9uIGluIEVGSSBzdHViLCBpdCB3YXMgb2suDQoNCjAwMDAwMDAwMDA4ZmMw
+MDAgZyAgICAgICAuYnNzICAgMDAwMDAwMDAwMDAwMDAwMCAuaGlkZGVuIF9ic3MgICAgICAgICAg
+ICAgIA0KMDAwMDAwMDAwMDhmYzAwMCBsICAgICBPIC5ic3MgICAwMDAwMDAwMDAwMDA0MDAwIGJv
+b3Rfc3RhY2sgICAgICAgICAgICAgICAgDQowMDAwMDAwMDAwOTAwMDAwIGcgICAgIE8gLmJzcyAg
+IDAwMDAwMDAwMDAwMDAwMDQgLmhpZGRlbiBzcHVyaW91c19ubWlfY291bnQNCjAwMDAwMDAwMDA5
+MDAwMDAgbCAgICAgTyAuYnNzICAgMDAwMDAwMDAwMDAwMDAwMCBib290X3N0YWNrX2VuZCAgICAg
+ICAgICAgIA0KMDAwMDAwMDAwMDkwMDAxMCBnICAgICBPIC5ic3MgICAwMDAwMDAwMDAwMDAwMDE4
+IC5oaWRkZW4gcGlvX29wcyAgICAgICAgICAgDQowMDAwMDAwMDAwOTAwMDI4IGcgICAgIE8gLmJz
+cyAgIDAwMDAwMDAwMDAwMDAwMDggLmhpZGRlbiBib290X3BhcmFtc19wdHIgICANCjAwMDAwMDAw
+MDA5MDAwNDAgbCAgICAgTyAuYnNzICAgMDAwMDAwMDAwMDAwMTAwMCBzY3JhdGNoLjAgICAgICAg
+ICAgICAgICAgIA0KMDAwMDAwMDAwMDkwMTA0MCBsICAgICBPIC5ic3MgICAwMDAwMDAwMDAwMDEw
+MDAwIGJvb3RfaGVhcCAgICAgICAgDQoNCk15IHRob3VnaHQgd2FzIHRoYXQgaW5jcmVhc2luZyB0
+aGUgc2l6ZSBvZiBib290X3N0YWNrIHNob3VsZCBiZSBoYXJtbGVzcy4NCkFzIGZvciB0aGUgbWVt
+c2V0IHBhcnQsIHRoZXJlIGNvdWxkIGJlIGFuIGFsdGVybmF0aXZlIHdheSwgYWx0aG91Z2h0IGl0
+IA0KbG9va3MgYSBiaXQgdWdseS4NCg0KbWVtc2V0KF9ic3MrMHgxMDAwMCwgMCwgX2Vic3MgLSBf
+YnNzIC0gMHgxMDAwMCkNCg0KSG93ZXZlciwgSSd2ZSB1cGRhdGVkIHRoZSBkaWZmLCBpZiB5b3Ug
+dGhpbmsgdGhpcyBpcyBtb3JlIGxpa2UgYSANCndvcmthcm91bmQsIHBsZWFzZSB0YWtlIHRoaXMg
+dGhyZWFkIGFzIGEgYnVnIHJlcG9ydC4gVGhhbmtzIQ0KDQpSZWdhcmRzLA0KDQpNYXJzaGFsbCBT
+aGFvDQoNCg0KU2lnbmVkLW9mZi1ieTogTWFyc2hhbGwgU2hhbyA8bWFyc2hhbGwuc2hhb0BkZWxs
+LmNvbT4NCi0tLQ0KIGFyY2gveDg2L2Jvb3QvY29tcHJlc3NlZC9taXNjLmMgICAgICAgICB8IDQg
+KystLQ0KIGFyY2gveDg2L2luY2x1ZGUvYXNtL2Jvb3QuaCAgICAgICAgICAgICB8IDIgKy0NCiBk
+cml2ZXJzL2Zpcm13YXJlL2VmaS9saWJzdHViL3g4Ni01bHZsLmMgfCAyICstDQogZHJpdmVycy9m
+aXJtd2FyZS9lZmkvbGlic3R1Yi94ODYtc3R1Yi5jIHwgMiAtLQ0KIGluY2x1ZGUvbGludXgvZGVj
+b21wcmVzcy9tbS5oICAgICAgICAgICB8IDIgKy0NCiA1IGZpbGVzIGNoYW5nZWQsIDUgaW5zZXJ0
+aW9ucygrKSwgNyBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2FyY2gveDg2L2Jvb3QvY29t
+cHJlc3NlZC9taXNjLmMgYi9hcmNoL3g4Ni9ib290L2NvbXByZXNzZWQvbWlzYy5jDQppbmRleCA5
+NDQ0NTQzMDZlZjQuLjQ5YjY4ZjU3ZGQxOCAxMDA2NDQNCi0tLSBhL2FyY2gveDg2L2Jvb3QvY29t
+cHJlc3NlZC9taXNjLmMNCisrKyBiL2FyY2gveDg2L2Jvb3QvY29tcHJlc3NlZC9taXNjLmMNCkBA
+IC01MCw4ICs1MCw4IEBAIHN0cnVjdCBib290X3BhcmFtcyAqYm9vdF9wYXJhbXNfcHRyOw0KIA0K
+IHN0cnVjdCBwb3J0X2lvX29wcyBwaW9fb3BzOw0KIA0KLW1lbXB0ciBmcmVlX21lbV9wdHI7DQot
+bWVtcHRyIGZyZWVfbWVtX2VuZF9wdHI7DQorbWVtcHRyIGZyZWVfbWVtX3B0ciBfX3NlY3Rpb24o
+Ii5kYXRhIik7DQorbWVtcHRyIGZyZWVfbWVtX2VuZF9wdHIgIF9fc2VjdGlvbigiLmRhdGEiKTsN
+CiBpbnQgc3B1cmlvdXNfbm1pX2NvdW50Ow0KIA0KIHN0YXRpYyBjaGFyICp2aWRtZW07DQpkaWZm
+IC0tZ2l0IGEvYXJjaC94ODYvaW5jbHVkZS9hc20vYm9vdC5oIGIvYXJjaC94ODYvaW5jbHVkZS9h
+c20vYm9vdC5oDQppbmRleCAzZTViMTExZTYxOWQuLjMxMmJjODdhYjAyNyAxMDA2NDQNCi0tLSBh
+L2FyY2gveDg2L2luY2x1ZGUvYXNtL2Jvb3QuaA0KKysrIGIvYXJjaC94ODYvaW5jbHVkZS9hc20v
+Ym9vdC5oDQpAQCAtMzMsNyArMzMsNyBAQA0KICNlbmRpZg0KIA0KICNpZmRlZiBDT05GSUdfWDg2
+XzY0DQotIyBkZWZpbmUgQk9PVF9TVEFDS19TSVpFCTB4NDAwMA0KKyMgZGVmaW5lIEJPT1RfU1RB
+Q0tfU0laRQkweDEwMDAwDQogDQogLyoNCiAgKiBVc2VkIGJ5IGRlY29tcHJlc3NvcidzIHN0YXJ0
+dXBfMzIoKSB0byBhbGxvY2F0ZSBwYWdlIHRhYmxlcyBmb3IgaWRlbnRpdHkNCmRpZmYgLS1naXQg
+YS9kcml2ZXJzL2Zpcm13YXJlL2VmaS9saWJzdHViL3g4Ni01bHZsLmMgYi9kcml2ZXJzL2Zpcm13
+YXJlL2VmaS9saWJzdHViL3g4Ni01bHZsLmMNCmluZGV4IDc3MzU5ZTgwMjE4MS4uYmViYWU0ZmRm
+YjkzIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9maXJtd2FyZS9lZmkvbGlic3R1Yi94ODYtNWx2bC5j
+DQorKysgYi9kcml2ZXJzL2Zpcm13YXJlL2VmaS9saWJzdHViL3g4Ni01bHZsLmMNCkBAIC0xMCw3
+ICsxMCw3IEBADQogDQogYm9vbCBlZmlfbm81bHZsOw0KIA0KLXN0YXRpYyB2b2lkICgqbGE1N190
+b2dnbGUpKHZvaWQgKmNyMyk7DQorc3RhdGljIHZvaWQgKCpsYTU3X3RvZ2dsZSkodm9pZCAqY3Iz
+KSBfX3NlY3Rpb24oIi5kYXRhIik7DQogDQogc3RhdGljIGNvbnN0IHN0cnVjdCBkZXNjX3N0cnVj
+dCBnZHRbXSA9IHsNCiAJW0dEVF9FTlRSWV9LRVJORUwzMl9DU10gPSBHRFRfRU5UUllfSU5JVChE
+RVNDX0NPREUzMiwgMCwgMHhmZmZmZiksDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9maXJtd2FyZS9l
+ZmkvbGlic3R1Yi94ODYtc3R1Yi5jIGIvZHJpdmVycy9maXJtd2FyZS9lZmkvbGlic3R1Yi94ODYt
+c3R1Yi5jDQppbmRleCAwNzgwNTViMDU0ZTMuLmZmYzYyYWY1MDY2OSAxMDA2NDQNCi0tLSBhL2Ry
+aXZlcnMvZmlybXdhcmUvZWZpL2xpYnN0dWIveDg2LXN0dWIuYw0KKysrIGIvZHJpdmVycy9maXJt
+d2FyZS9lZmkvbGlic3R1Yi94ODYtc3R1Yi5jDQpAQCAtMjEsNyArMjEsNiBAQA0KICNpbmNsdWRl
+ICJlZmlzdHViLmgiDQogI2luY2x1ZGUgIng4Ni1zdHViLmgiDQogDQotZXh0ZXJuIGNoYXIgX2Jz
+c1tdLCBfZWJzc1tdOw0KIA0KIGNvbnN0IGVmaV9zeXN0ZW1fdGFibGVfdCAqZWZpX3N5c3RlbV90
+YWJsZTsNCiBjb25zdCBlZmlfZHhlX3NlcnZpY2VzX3RhYmxlX3QgKmVmaV9keGVfdGFibGU7DQpA
+QCAtMTA1OSw3ICsxMDU4LDYgQEAgdm9pZCBfX25vcmV0dXJuIGVmaV9zdHViX2VudHJ5KGVmaV9o
+YW5kbGVfdCBoYW5kbGUsDQogdm9pZCBlZmlfaGFuZG92ZXJfZW50cnkoZWZpX2hhbmRsZV90IGhh
+bmRsZSwgZWZpX3N5c3RlbV90YWJsZV90ICpzeXNfdGFibGVfYXJnLA0KIAkJCXN0cnVjdCBib290
+X3BhcmFtcyAqYm9vdF9wYXJhbXMpDQogew0KLQltZW1zZXQoX2JzcywgMCwgX2Vic3MgLSBfYnNz
+KTsNCiAJZWZpX3N0dWJfZW50cnkoaGFuZGxlLCBzeXNfdGFibGVfYXJnLCBib290X3BhcmFtcyk7
+DQogfQ0KIA0KZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvZGVjb21wcmVzcy9tbS5oIGIvaW5j
+bHVkZS9saW51eC9kZWNvbXByZXNzL21tLmgNCmluZGV4IGFjODYyNDIyZGYxNS4uNjJjMDQ2OTFj
+ODk4IDEwMDY0NA0KLS0tIGEvaW5jbHVkZS9saW51eC9kZWNvbXByZXNzL21tLmgNCisrKyBiL2lu
+Y2x1ZGUvbGludXgvZGVjb21wcmVzcy9tbS5oDQpAQCAtMzYsNyArMzYsNyBAQA0KIC8qIEEgdHJp
+dmlhbCBtYWxsb2MgaW1wbGVtZW50YXRpb24sIGFkYXB0ZWQgZnJvbQ0KICAqICBtYWxsb2MgYnkg
+SGFubnUgU2F2b2xhaW5lbiAxOTkzIGFuZCBNYXR0aGlhcyBVcmxpY2hzIDE5OTQNCiAgKi8NCi1T
+VEFUSUNfUldfREFUQSB1bnNpZ25lZCBsb25nIG1hbGxvY19wdHI7DQorU1RBVElDX1JXX0RBVEEg
+dW5zaWduZWQgbG9uZyBtYWxsb2NfcHRyICBfX3NlY3Rpb24oIi5kYXRhIik7DQogU1RBVElDX1JX
+X0RBVEEgaW50IG1hbGxvY19jb3VudDsNCiANCiBNQUxMT0NfVklTSUJMRSB2b2lkICptYWxsb2Mo
+aW50IHNpemUpDQotLSANCjIuMzQuMQ0KDQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpG
+cm9tOiBBcmQgQmllc2hldXZlbCA8YXJkYkBrZXJuZWwub3JnPiANClNlbnQ6IFdlZG5lc2RheSwg
+SnVseSAxNywgMjAyNCAxMToyNyBQTQ0KVG86IFNoYW8sIE1hcnNoYWxsIDxNYXJzaGFsbC5TaGFv
+QERlbGwuY29tPg0KQ2M6IGxpbnV4LWVmaUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2
+Z2VyLmtlcm5lbC5vcmc7IGhwYUB6eXRvci5jb207IGRhdmUuaGFuc2VuQGxpbnV4LmludGVsLmNv
+bTsgYnBAYWxpZW44LmRlOyBtaW5nb0ByZWRoYXQuY29tOyB0Z2x4QGxpbnV0cm9uaXguZGUNClN1
+YmplY3Q6IFJlOiBbUGF0Y2hdIERvIG5vdCBjbGVhciBCU1MgcmVnaW9uIGluIHg4NiBzdHViDQoN
+Cg0KW0VYVEVSTkFMIEVNQUlMXSANCg0KT24gV2VkLCAxNyBKdWwgMjAyNCBhdCAwODoxNywgU2hh
+bywgTWFyc2hhbGwgPE1hcnNoYWxsLlNoYW9AZGVsbC5jb20+IHdyb3RlOg0KPg0KPiBDbGVhcmlu
+ZyB0aGUgQlNTIHJlZ2lvbiBtYXkgY2F1c2UgdGhlIFVFRkkgZmlybXdhcmUgdG8gbWFsZnVuY3Rp
+b24gDQo+IGR1cmluZyBib290Lg0KPg0KPiBXaGVuIGJvb3RpbmcgdGhlIGtlcm5lbCBmcm9tIGFu
+IG9sZGVyIGZpcm13YXJlIHZlcnNpb24gdGhhdCBoYXMgVFBNIA0KPiBlbmFibGVkIGFuZCB0aGUg
+TWVtb3J5T3ZlcndyaXRlUmVxdWVzdENvbnRyb2wgYml0IHNldCB0byAxLCB0aGUgDQo+IGZpcm13
+YXJlJ3MgYm9vdCBzZXJ2aWNlIG1pZ2h0IGVuY291bnRlciBhbiBleGNlcHRpb24gaWYgaXQgYXR0
+ZW1wdHMgdG8gDQo+IGluaXRpYWxpemUgdGhlIEJTUyByZWdpb24gd2l0aGluIHRoZSB4ODYgc3R1
+Yi4NCj4NCj4gVG8gY2lyY3VtdmVudCB0aGUgZmlybXdhcmUgZXhjZXB0aW9uLCBpdCBpcyBhZHZp
+c2FibGUgdG8gZW5sYXJnZSB0aGUgDQo+IEJPT1RfU1RBQ0tfU0laRSBhbmQgdG8gcGVyZm9ybSB0
+aGUgaW5pdGlhbGl6YXRpb24gb2Ygc3RhdGljIHZhcmlhYmxlcyANCj4gcHJpb3IgdG8gdGhlIGRl
+Y29tcHJlc3Npb24gb2YgdGhlIGJ6SW1hZ2UuDQo+DQoNCldoYXQgZG9lcyAnYWR2aXNhYmxlJyBt
+ZWFuPyBUaGlzIHBhdGNoIGxvb2tzIGxpa2UgYSBmZXcgaGFja3MgdGhyb3duIHRvZ2V0aGVyIHRo
+YXQgaGFwcGVuIHRvIHdvcmsgYXJvdW5kIHNvbWUgaXNzdWUgaW4gY29tYmluYXRpb24uDQoNClBs
+ZWFzZSBleHBsYWluIHdoYXQgdGhlIGV4YWN0IHByb2JsZW0gaXMsIGFuZCBob3cgdGhpcyBwYXRj
+aCBmaXhlcyBpdC4NCg0KSWYgeW91IGRvbid0IGtub3cgd2hhdCB0aGUgZXhhY3QgcHJvYmxlbSBp
+cywgcGxlYXNlIHNheSBzby4NCg0KDQo+IFNpZ25lZC1vZmYtYnk6IE1hcnNoYWxsIFNoYW8gPG1h
+cnNoYWxsLnNoYW9AZGVsbC5jb20+DQo+IC0tLQ0KPiAgYXJjaC94ODYvYm9vdC9jb21wcmVzc2Vk
+L21pc2MuYyAgICAgICAgIHwgOCArKystLS0tLQ0KPiAgYXJjaC94ODYvaW5jbHVkZS9hc20vYm9v
+dC5oICAgICAgICAgICAgIHwgMiArLQ0KPiAgZHJpdmVycy9maXJtd2FyZS9lZmkvbGlic3R1Yi94
+ODYtc3R1Yi5jIHwgNSAtLS0tLQ0KPiAgMyBmaWxlcyBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyks
+IDExIGRlbGV0aW9ucygtKQ0KPg0KPiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYvYm9vdC9jb21wcmVz
+c2VkL21pc2MuYyANCj4gYi9hcmNoL3g4Ni9ib290L2NvbXByZXNzZWQvbWlzYy5jIGluZGV4IGI3
+MGU0YTIxYzE1Zi4uYmFjNWEzYzU1YzJjIA0KPiAxMDA2NDQNCj4gLS0tIGEvYXJjaC94ODYvYm9v
+dC9jb21wcmVzc2VkL21pc2MuYw0KPiArKysgYi9hcmNoL3g4Ni9ib290L2NvbXByZXNzZWQvbWlz
+Yy5jDQo+IEBAIC0zNTYsMTEgKzM1Niw5IEBAIHVuc2lnbmVkIGxvbmcgZGVjb21wcmVzc19rZXJu
+ZWwodW5zaWduZWQgY2hhciAqb3V0YnVmLCB1bnNpZ25lZCBsb25nIHZpcnRfYWRkciwNCj4gICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICB2b2lkICgqZXJyb3IpKGNoYXIgKngpKSAgew0K
+PiAgICAgICAgIHVuc2lnbmVkIGxvbmcgZW50cnk7DQo+IC0NCj4gLSAgICAgICBpZiAoIWZyZWVf
+bWVtX3B0cikgew0KPiAtICAgICAgICAgICAgICAgZnJlZV9tZW1fcHRyICAgICA9ICh1bnNpZ25l
+ZCBsb25nKWJvb3RfaGVhcDsNCj4gLSAgICAgICAgICAgICAgIGZyZWVfbWVtX2VuZF9wdHIgPSAo
+dW5zaWduZWQgbG9uZylib290X2hlYXAgKyBzaXplb2YoYm9vdF9oZWFwKTsNCj4gLSAgICAgICB9
+DQo+ICsgICAgICAgZnJlZV9tZW1fcHRyICAgICA9ICh1bnNpZ25lZCBsb25nKWJvb3RfaGVhcDsN
+Cj4gKyAgICAgICBmcmVlX21lbV9lbmRfcHRyID0gKHVuc2lnbmVkIGxvbmcpYm9vdF9oZWFwICsg
+c2l6ZW9mKGJvb3RfaGVhcCk7DQo+ICsgICAgICAgbWFsbG9jX3B0ciA9IGZyZWVfbWVtX3B0cjsN
+Cj4NCg0KVGhpcyBpcyBub3Qgc2FmZS4gVGhpcyByZWluaXRpYWxpemVzIHRoZSBoZWFwIGFmdGVy
+IGFsbG9jYXRpb25zIGhhdmUgYmVlbiBtYWRlIGFscmVhZHkuDQoNCkl0IHdvdWxkIGJlIGJldHRl
+ciB0byBhbm5vdGF0ZSBmcmVlX21lbV9wdHIgYXMgX19zZWN0aW9uKCIuZGF0YSIpIHRvIGVuc3Vy
+ZSB0aGF0IGl0IGlzIHplcm9lZCBldmVuIGlmIEJTUyBpcyBub3QgY2xlYXJlZC4NCg0KPiAgICAg
+ICAgIGlmIChfX2RlY29tcHJlc3MoaW5wdXRfZGF0YSwgaW5wdXRfbGVuLCBOVUxMLCBOVUxMLCBv
+dXRidWYsIG91dHB1dF9sZW4sDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICBOVUxMLCBlcnJv
+cikgPCAwKSBkaWZmIC0tZ2l0IA0KPiBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL2Jvb3QuaCBiL2Fy
+Y2gveDg2L2luY2x1ZGUvYXNtL2Jvb3QuaCBpbmRleCANCj4gM2U1YjExMWU2MTlkLi4zMTJiYzg3
+YWIwMjcgMTAwNjQ0DQo+IC0tLSBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL2Jvb3QuaA0KPiArKysg
+Yi9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9ib290LmgNCj4gQEAgLTMzLDcgKzMzLDcgQEANCj4gICNl
+bmRpZg0KPg0KPiAgI2lmZGVmIENPTkZJR19YODZfNjQNCj4gLSMgZGVmaW5lIEJPT1RfU1RBQ0tf
+U0laRSAgICAgICAweDQwMDANCj4gKyMgZGVmaW5lIEJPT1RfU1RBQ0tfU0laRSAgICAgICAweDEw
+MDAwDQo+DQoNCldoeSBpcyB0aGlzIG5lY2Vzc2FyeT8gRUZJIGJvb3QgZG9lcyBub3QgdXNlIHRo
+aXMgc3RhY2ssIG9ubHkgbGVnYWN5IGJvb3QgdmlhIHRoZSBkZWNvbXByZXNzb3IuDQoNCg0KPiAg
+LyoNCj4gICAqIFVzZWQgYnkgZGVjb21wcmVzc29yJ3Mgc3RhcnR1cF8zMigpIHRvIGFsbG9jYXRl
+IHBhZ2UgdGFibGVzIGZvciANCj4gaWRlbnRpdHkgZGlmZiAtLWdpdCBhL2RyaXZlcnMvZmlybXdh
+cmUvZWZpL2xpYnN0dWIveDg2LXN0dWIuYyANCj4gYi9kcml2ZXJzL2Zpcm13YXJlL2VmaS9saWJz
+dHViL3g4Ni1zdHViLmMNCj4gaW5kZXggMTk4M2ZkM2JmMzkyLi5kOTJkMmNjYzcwOWIgMTAwNjQ0
+DQo+IC0tLSBhL2RyaXZlcnMvZmlybXdhcmUvZWZpL2xpYnN0dWIveDg2LXN0dWIuYw0KPiArKysg
+Yi9kcml2ZXJzL2Zpcm13YXJlL2VmaS9saWJzdHViL3g4Ni1zdHViLmMNCj4gQEAgLTIxLDcgKzIx
+LDYgQEANCj4gICNpbmNsdWRlICJlZmlzdHViLmgiDQo+ICAjaW5jbHVkZSAieDg2LXN0dWIuaCIN
+Cj4NCj4gLWV4dGVybiBjaGFyIF9ic3NbXSwgX2Vic3NbXTsNCj4NCj4gIGNvbnN0IGVmaV9zeXN0
+ZW1fdGFibGVfdCAqZWZpX3N5c3RlbV90YWJsZTsgIGNvbnN0IA0KPiBlZmlfZHhlX3NlcnZpY2Vz
+X3RhYmxlX3QgKmVmaV9keGVfdGFibGU7IEBAIC00NzYsOSArNDc1LDYgQEAgDQo+IGVmaV9zdGF0
+dXNfdCBfX2VmaWFwaSBlZmlfcGVfZW50cnkoZWZpX2hhbmRsZV90IGhhbmRsZSwNCj4gICAgICAg
+ICBlZmlfc3RhdHVzX3Qgc3RhdHVzOw0KPiAgICAgICAgIGNoYXIgKmNtZGxpbmVfcHRyOw0KPg0K
+PiAtICAgICAgIGlmIChlZmlfaXNfbmF0aXZlKCkpDQo+IC0gICAgICAgICAgICAgICBtZW1zZXQo
+X2JzcywgMCwgX2Vic3MgLSBfYnNzKTsNCj4gLQ0KDQpUaGlzIGJpdCBoYXMgYWxyZWFkeSBiZWVu
+IHJlbW92ZWQgaW4gbWFpbmxpbmUuDQoNCj4gICAgICAgICBlZmlfc3lzdGVtX3RhYmxlID0gc3lz
+X3RhYmxlX2FyZzsNCj4NCj4gICAgICAgICAvKiBDaGVjayBpZiB3ZSB3ZXJlIGJvb3RlZCBieSB0
+aGUgRUZJIGZpcm13YXJlICovIEBAIC0xMDAwLDcgDQo+ICs5OTYsNiBAQCB2b2lkIF9fbm9yZXR1
+cm4gZWZpX3N0dWJfZW50cnkoZWZpX2hhbmRsZV90IGhhbmRsZSwgIHZvaWQgDQo+IGVmaV9oYW5k
+b3Zlcl9lbnRyeShlZmlfaGFuZGxlX3QgaGFuZGxlLCBlZmlfc3lzdGVtX3RhYmxlX3QgKnN5c190
+YWJsZV9hcmcsDQo+ICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBib290X3BhcmFtcyAq
+Ym9vdF9wYXJhbXMpICB7DQo+IC0gICAgICAgbWVtc2V0KF9ic3MsIDAsIF9lYnNzIC0gX2Jzcyk7
+DQoNClJlbW92aW5nIHRoaXMgaXMgbm90IHNhZmUuIGZyZWVfbWVtX3B0ciBpcyBub3QgdGhlIG9u
+bHkgZ2xvYmFsIHZhcmlhYmxlIGluIEJTUyB0aGF0IG5lZWRzIHRvIGJlIHplcm9lZCwgdGhlcmUg
+YXJlIG90aGVycyB0b28uDQoNCj4gICAgICAgICBlZmlfc3R1Yl9lbnRyeShoYW5kbGUsIHN5c190
+YWJsZV9hcmcsIGJvb3RfcGFyYW1zKTsgIH0NCj4NCj4gLS0NCj4gMi4zNC4xDQo+DQo=
 
