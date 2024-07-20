@@ -1,220 +1,514 @@
-Return-Path: <linux-kernel+bounces-257843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47C16937FAE
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 09:27:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38B1B937FB0
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 09:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6E36281580
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 07:27:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7D71281EC8
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 07:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5481D1A291;
-	Sat, 20 Jul 2024 07:27:13 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25EC41C686;
+	Sat, 20 Jul 2024 07:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FHU9noTN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23453179AF
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 07:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94A7179AF;
+	Sat, 20 Jul 2024 07:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721460432; cv=none; b=UPnQ1EQxQpr2ZbyhQwy64r2qoCvBI19m6B9gQmjfr+iKa3TgFBCPm/tODu/Erex7cmvYY62l7jKCUxQvXGOKBJXHqB3x0aVmAzTBvKPqSXyp5WQ0c9NO2Av8hzS4IO967HtNymN9AbwK6BAj4ZGHmGWM11I4lN10Z5VIcMgPV1k=
+	t=1721460510; cv=none; b=AnX7bzljQM/4Kw5A5CCC8vb8bIP0joazmrq6Flq4FB7VZ+aaDo5JEAUbRIEv6uyNs2ZKeRpaUClWExz43Q7jhCkrZw58bz8wgn1l6JOimpnDbGgbOczZntl4RkHaqluvaFtrU2h8uYlFkgBdB5jjpcTjt+zWi73youFEB3ccm9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721460432; c=relaxed/simple;
-	bh=vlAW6jzj+hzXVNMF2IJqVyIhFQdoiwyb5tZUUbGiNZE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Mu1H+dGQdHwo7y2zH7JKZKHS4LBfRTIZFgwWc2SXiLJ4Q0mNfuxdc0cszi/lOlenMGcg6TNRUD+qS6gc5rHgbEs2WCX9n6vG3frC3SVv3dGi2yZjx4Zs8ocLXca72tTjGoutkXNt53moW7QboDO241klNbw+3nhLcOmNwyHOK0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WQyfT5Cv8z1JCmb;
-	Sat, 20 Jul 2024 15:22:09 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 42F49180104;
-	Sat, 20 Jul 2024 15:26:50 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sat, 20 Jul 2024 15:26:49 +0800
-Message-ID: <333494b6-b128-3804-b8f7-03f61dbca9d7@huawei.com>
-Date: Sat, 20 Jul 2024 15:26:48 +0800
+	s=arc-20240116; t=1721460510; c=relaxed/simple;
+	bh=7J6mnaHOJ8JK7N4UckzSzLMo6ZznVBPZ8MuFBV06wJE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=at/WU9jq3nBHbUOuqq+mQHOdFtvXbHPkmZQYBmki8njT73w5mWRV/vLyYD30B+xMYw4lJPaVQlCokcaZMitHbO3dlHQ04f55DR3Y2nwLtzXKP7e+5duui3uAssqJWYZeNcjJAHmR2mnjyrYrz0c6u+AU8zuZyFki9S/TANduV5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FHU9noTN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 643BBC2BD10;
+	Sat, 20 Jul 2024 07:28:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721460509;
+	bh=7J6mnaHOJ8JK7N4UckzSzLMo6ZznVBPZ8MuFBV06wJE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FHU9noTNRUhKjGMf9d8vEWgKKGFUjpfQV3Xskscm0ernCuUs7XHv4Lxk2Bo70TVgo
+	 mQk/T1/kbVVTumdA7Q6ENO8gmVt/Cli9L8feeeXL8a8LTnJcs7RxySbngikSPNoDWA
+	 eZkYXcS1kMgxUWXqWo3mHKrPzpfDRQKLxTnGi4YxsB5BiUALLGpL8g1E0HJ4kbapjd
+	 JUJrLRuALzavn95NI3PuhneFBZtihXV4MGqUmNWBuEKAVlA8x9AAV+lL0Ri6ZICFN0
+	 Y5L/b0cvXhG5/CTaaHu2DdzVbtMJQKS/hy18f/nWwvavC+9l2vidzJOUqdZ2jqlC0g
+	 uwpV5j45cCGRg==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>
+Subject: [PATCH 1/2] kbuild: move some helper headers from scripts/kconfig/ to scripts/include/
+Date: Sat, 20 Jul 2024 16:27:38 +0900
+Message-ID: <20240720072750.2840541-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH] RISC-V: Implement kgdb_roundup_cpus() to enable IPI KGDB
- Roundup
-Content-Language: en-US
-To: Andrew Jones <ajones@ventanamicro.com>
-CC: <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
-	<samuel.holland@sifive.com>, <conor.dooley@microchip.com>,
-	<takakura@valinux.co.jp>, <linux-kernel@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>
-References: <20240719081210.1457512-1-ruanjinjie@huawei.com>
- <20240719-8841a9a99566e15c9bd1ff3d@orel>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <20240719-8841a9a99566e15c9bd1ff3d@orel>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+Content-Transfer-Encoding: 8bit
 
+Move array_size.h, hashtable.h, list.h, list_types.h from scripts/kconfig/
+to scripts/include/.
 
+These headers will be useful for other host programs.
 
-On 2024/7/19 23:14, Andrew Jones wrote:
-> On Fri, Jul 19, 2024 at 04:12:10PM GMT, Jinjie Ruan wrote:
->> Until now, the generic weak kgdb_roundup_cpus() has been used for kgdb on
->> RISCV. A custom one allows to debug CPUs that are stuck with interrupts
->> disabled.
-> 
-> This confuses me since we're using an IPI for the roundup. How does that
-> work on CPUs stuck with interrupts disabled? I think this text comes
-> from the commit message for the arm64 patch, but arm64 does the roundup
-> with a pseudo-NMI.
+Remove scripts/mod/list.h.
 
-Sorry, you are right, this commit message is indeed from arm64, and it
-will be more useful with IPI as NMI support, where it will work on CPUs
-stuck with interrupts disabled.
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
-> 
->> And using an IPI is better than the generic one since it avoids
->> the potential situation described in the generic kgdb_call_nmi_hook().
-> 
-> This is true.
-> 
->>
->> After this patch, the kgdb test show that:
->> 	# echo g > /proc/sysrq-trigger
->> 	[2]kdb> btc
->> 	btc: cpu status: Currently on cpu 2
->> 	Available cpus: 0-1(-), 2, 3(-)
->> 	Stack traceback for pid 0
->> 	0xffffffff81c13a40        0        0  1    0   -  0xffffffff81c14510  swapper/0
->> 	CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.10.0-g3120273055b6-dirty #51
->> 	Hardware name: riscv-virtio,qemu (DT)
->> 	Call Trace:
->> 	[<ffffffff80006c48>] dump_backtrace+0x28/0x30
->> 	[<ffffffff80fceb38>] show_stack+0x38/0x44
->> 	[<ffffffff80fe6a04>] dump_stack_lvl+0x58/0x7a
->> 	[<ffffffff80fe6a3e>] dump_stack+0x18/0x20
->> 	[<ffffffff801143fa>] kgdb_cpu_enter+0x682/0x6b2
->> 	[<ffffffff801144ca>] kgdb_nmicallback+0xa0/0xac
->> 	[<ffffffff8000a392>] handle_IPI+0x9c/0x120
->> 	[<ffffffff800a2baa>] handle_percpu_devid_irq+0xa4/0x1e4
->> 	[<ffffffff8009cca8>] generic_handle_domain_irq+0x28/0x36
->> 	[<ffffffff800a9e5c>] ipi_mux_process+0xe8/0x110
->> 	[<ffffffff806e1e30>] imsic_handle_irq+0xf8/0x13a
->> 	[<ffffffff8009cca8>] generic_handle_domain_irq+0x28/0x36
->> 	[<ffffffff806dff12>] riscv_intc_aia_irq+0x2e/0x40
->> 	[<ffffffff80fe6ab0>] handle_riscv_irq+0x54/0x86
->> 	[<ffffffff80ff2e4a>] call_on_irq_stack+0x32/0x40
->>
->> Rebased on Ryo Takakura's "RISC-V: Enable IPI CPU Backtrace" patch.
->>
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> ---
->>  arch/riscv/kernel/smp.c | 27 +++++++++++++++++++++++++--
->>  1 file changed, 25 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
->> index 9b047899791c..c180a647a30e 100644
->> --- a/arch/riscv/kernel/smp.c
->> +++ b/arch/riscv/kernel/smp.c
->> @@ -13,6 +13,7 @@
->>  #include <linux/interrupt.h>
->>  #include <linux/module.h>
->>  #include <linux/kexec.h>
->> +#include <linux/kgdb.h>
->>  #include <linux/percpu.h>
->>  #include <linux/profile.h>
->>  #include <linux/smp.h>
->> @@ -35,6 +36,7 @@ enum ipi_message_type {
->>  	IPI_IRQ_WORK,
->>  	IPI_TIMER,
->>  	IPI_CPU_BACKTRACE,
->> +	IPI_KGDB_ROUNDUP,
->>  	IPI_MAX
->>  };
->>  
->> @@ -115,6 +117,7 @@ void arch_irq_work_raise(void)
->>  
->>  static irqreturn_t handle_IPI(int irq, void *data)
->>  {
->> +	unsigned int cpu = smp_processor_id();
->>  	int ipi = irq - ipi_virq_base;
->>  
->>  	switch (ipi) {
->> @@ -128,7 +131,7 @@ static irqreturn_t handle_IPI(int irq, void *data)
->>  		ipi_stop();
->>  		break;
->>  	case IPI_CPU_CRASH_STOP:
->> -		ipi_cpu_crash_stop(smp_processor_id(), get_irq_regs());
->> +		ipi_cpu_crash_stop(cpu, get_irq_regs());
->>  		break;
->>  	case IPI_IRQ_WORK:
->>  		irq_work_run();
->> @@ -141,8 +144,11 @@ static irqreturn_t handle_IPI(int irq, void *data)
->>  	case IPI_CPU_BACKTRACE:
->>  		nmi_cpu_backtrace(get_irq_regs());
->>  		break;
->> +	case IPI_KGDB_ROUNDUP:
->> +		kgdb_nmicallback(cpu, get_irq_regs());
->> +		break;
->>  	default:
->> -		pr_warn("CPU%d: unhandled IPI%d\n", smp_processor_id(), ipi);
->> +		pr_warn("CPU%d: unhandled IPI%d\n", cpu, ipi);
->>  		break;
->>  	}
->>  
->> @@ -209,6 +215,7 @@ static const char * const ipi_names[] = {
->>  	[IPI_IRQ_WORK]		= "IRQ work interrupts",
->>  	[IPI_TIMER]		= "Timer broadcast interrupts",
->>  	[IPI_CPU_BACKTRACE]     = "CPU backtrace interrupts",
->> +	[IPI_KGDB_ROUNDUP]	= "KGDB roundup interrupts",
->>  };
->>  
->>  void show_ipi_stats(struct seq_file *p, int prec)
->> @@ -339,3 +346,19 @@ void arch_trigger_cpumask_backtrace(const cpumask_t *mask, int exclude_cpu)
->>  {
->>  	nmi_trigger_cpumask_backtrace(mask, exclude_cpu, riscv_backtrace_ipi);
->>  }
->> +
->> +#ifdef CONFIG_KGDB
->> +void kgdb_roundup_cpus(void)
->> +{
->> +	int this_cpu = raw_smp_processor_id();
->> +	int cpu;
->> +
->> +	for_each_online_cpu(cpu) {
->> +		/* No need to roundup ourselves */
->> +		if (cpu == this_cpu)
->> +			continue;
->> +
->> +		send_ipi_single(cpu, IPI_KGDB_ROUNDUP);
->> +	}
->> +}
->> +#endif
->> -- 
->> 2.34.1
->>
-> 
-> Other than the commit message, the patch looks good to me, so
-> 
-> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
-> 
-> but I guess we should extend this and the CPU backtrace support to use
-> NMIs when we have support for them.
+ MAINTAINERS                               |   1 +
+ Makefile                                  |   6 +-
+ scripts/{kconfig => include}/array_size.h |   0
+ scripts/{kconfig => include}/hashtable.h  |   0
+ scripts/{kconfig => include}/list.h       |   0
+ scripts/{kconfig => include}/list_types.h |   0
+ scripts/kconfig/expr.h                    |   3 +-
+ scripts/kconfig/internal.h                |   2 +-
+ scripts/kconfig/mconf.c                   |   2 +-
+ scripts/kconfig/menu.c                    |   2 +-
+ scripts/kconfig/mnconf-common.c           |   2 +-
+ scripts/kconfig/mnconf-common.h           |   2 +
+ scripts/kconfig/nconf.c                   |   2 +-
+ scripts/kconfig/preprocess.c              |   4 +-
+ scripts/kconfig/util.c                    |   2 +-
+ scripts/mod/list.h                        | 213 ----------------------
+ scripts/mod/modpost.c                     |   2 +
+ scripts/mod/modpost.h                     |   2 +-
+ 18 files changed, 19 insertions(+), 226 deletions(-)
+ rename scripts/{kconfig => include}/array_size.h (100%)
+ rename scripts/{kconfig => include}/hashtable.h (100%)
+ rename scripts/{kconfig => include}/list.h (100%)
+ rename scripts/{kconfig => include}/list_types.h (100%)
+ delete mode 100644 scripts/mod/list.h
 
-Yes, arm64 has done what you said, now both CPU Backtrace and KGDB
-Roundup on arm64 have swiched to NMI smoothly.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index da5352dbd4f3..0fe40cf1929f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11943,6 +11943,7 @@ F:	scripts/Makefile*
+ F:	scripts/basic/
+ F:	scripts/clang-tools/
+ F:	scripts/dummy-tools/
++F:	scripts/include/
+ F:	scripts/mk*
+ F:	scripts/mod/
+ F:	scripts/package/
+diff --git a/Makefile b/Makefile
+index c97d6404b891..cbad2bbe4561 100644
+--- a/Makefile
++++ b/Makefile
+@@ -458,8 +458,10 @@ export rust_common_flags := --edition=2021 \
+ 			    -Dclippy::no_mangle_with_rust_abi \
+ 			    -Wclippy::dbg_macro
+ 
+-KBUILD_HOSTCFLAGS   := $(KBUILD_USERHOSTCFLAGS) $(HOST_LFS_CFLAGS) $(HOSTCFLAGS)
+-KBUILD_HOSTCXXFLAGS := -Wall -O2 $(HOST_LFS_CFLAGS) $(HOSTCXXFLAGS)
++KBUILD_HOSTCFLAGS   := $(KBUILD_USERHOSTCFLAGS) $(HOST_LFS_CFLAGS) \
++		       $(HOSTCFLAGS) -I $(srctree)/scripts/include
++KBUILD_HOSTCXXFLAGS := -Wall -O2 $(HOST_LFS_CFLAGS) $(HOSTCXXFLAGS) \
++		       -I $(srctree)/scripts/include
+ KBUILD_HOSTRUSTFLAGS := $(rust_common_flags) -O -Cstrip=debuginfo \
+ 			-Zallow-features= $(HOSTRUSTFLAGS)
+ KBUILD_HOSTLDFLAGS  := $(HOST_LFS_LDFLAGS) $(HOSTLDFLAGS)
+diff --git a/scripts/kconfig/array_size.h b/scripts/include/array_size.h
+similarity index 100%
+rename from scripts/kconfig/array_size.h
+rename to scripts/include/array_size.h
+diff --git a/scripts/kconfig/hashtable.h b/scripts/include/hashtable.h
+similarity index 100%
+rename from scripts/kconfig/hashtable.h
+rename to scripts/include/hashtable.h
+diff --git a/scripts/kconfig/list.h b/scripts/include/list.h
+similarity index 100%
+rename from scripts/kconfig/list.h
+rename to scripts/include/list.h
+diff --git a/scripts/kconfig/list_types.h b/scripts/include/list_types.h
+similarity index 100%
+rename from scripts/kconfig/list_types.h
+rename to scripts/include/list_types.h
+diff --git a/scripts/kconfig/expr.h b/scripts/kconfig/expr.h
+index 6e47e0ad6e6e..2bc96cd28253 100644
+--- a/scripts/kconfig/expr.h
++++ b/scripts/kconfig/expr.h
+@@ -12,12 +12,11 @@ extern "C" {
+ 
+ #include <assert.h>
+ #include <stdio.h>
+-#include "list_types.h"
+ #ifndef __cplusplus
+ #include <stdbool.h>
+ #endif
+ 
+-#include "list_types.h"
++#include <list_types.h>
+ 
+ typedef enum tristate {
+ 	no, mod, yes
+diff --git a/scripts/kconfig/internal.h b/scripts/kconfig/internal.h
+index 6c721c4cfd72..02106eb7815e 100644
+--- a/scripts/kconfig/internal.h
++++ b/scripts/kconfig/internal.h
+@@ -2,7 +2,7 @@
+ #ifndef INTERNAL_H
+ #define INTERNAL_H
+ 
+-#include "hashtable.h"
++#include <hashtable.h>
+ 
+ #define SYMBOL_HASHSIZE		(1U << 14)
+ 
+diff --git a/scripts/kconfig/mconf.c b/scripts/kconfig/mconf.c
+index 4a0a97bb342f..3887eac75289 100644
+--- a/scripts/kconfig/mconf.c
++++ b/scripts/kconfig/mconf.c
+@@ -19,7 +19,7 @@
+ #include <signal.h>
+ #include <unistd.h>
+ 
+-#include "list.h"
++#include <list.h>
+ #include "lkc.h"
+ #include "lxdialog/dialog.h"
+ #include "mnconf-common.h"
+diff --git a/scripts/kconfig/menu.c b/scripts/kconfig/menu.c
+index cd34cc5aefcf..323cc0b62be6 100644
+--- a/scripts/kconfig/menu.c
++++ b/scripts/kconfig/menu.c
+@@ -8,9 +8,9 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
++#include <list.h>
+ #include "lkc.h"
+ #include "internal.h"
+-#include "list.h"
+ 
+ static const char nohelp_text[] = "There is no help available for this option.";
+ 
+diff --git a/scripts/kconfig/mnconf-common.c b/scripts/kconfig/mnconf-common.c
+index 18cb9a6c5aaa..8e24b07121df 100644
+--- a/scripts/kconfig/mnconf-common.c
++++ b/scripts/kconfig/mnconf-common.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
++#include <list.h>
+ #include "expr.h"
+-#include "list.h"
+ #include "mnconf-common.h"
+ 
+ int jump_key_char;
+diff --git a/scripts/kconfig/mnconf-common.h b/scripts/kconfig/mnconf-common.h
+index ab6292cc4bf2..53bd7292e931 100644
+--- a/scripts/kconfig/mnconf-common.h
++++ b/scripts/kconfig/mnconf-common.h
+@@ -4,6 +4,8 @@
+ 
+ #include <stddef.h>
+ 
++#include <list_types.h>
++
+ struct search_data {
+ 	struct list_head *head;
+ 	struct menu *target;
+diff --git a/scripts/kconfig/nconf.c b/scripts/kconfig/nconf.c
+index 1456e24969aa..b91ca47e9e9a 100644
+--- a/scripts/kconfig/nconf.c
++++ b/scripts/kconfig/nconf.c
+@@ -11,7 +11,7 @@
+ #include <strings.h>
+ #include <stdlib.h>
+ 
+-#include "list.h"
++#include <list.h>
+ #include "lkc.h"
+ #include "mnconf-common.h"
+ #include "nconf.h"
+diff --git a/scripts/kconfig/preprocess.c b/scripts/kconfig/preprocess.c
+index f0a4a218c4a5..67d1fb95c491 100644
+--- a/scripts/kconfig/preprocess.c
++++ b/scripts/kconfig/preprocess.c
+@@ -9,9 +9,9 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
+-#include "array_size.h"
++#include <array_size.h>
++#include <list.h>
+ #include "internal.h"
+-#include "list.h"
+ #include "lkc.h"
+ #include "preprocess.h"
+ 
+diff --git a/scripts/kconfig/util.c b/scripts/kconfig/util.c
+index 1ea78927121d..696ff477671e 100644
+--- a/scripts/kconfig/util.c
++++ b/scripts/kconfig/util.c
+@@ -8,7 +8,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
+-#include "hashtable.h"
++#include <hashtable.h>
+ #include "lkc.h"
+ 
+ unsigned int strhash(const char *s)
+diff --git a/scripts/mod/list.h b/scripts/mod/list.h
+deleted file mode 100644
+index a924a6c4aa4d..000000000000
+--- a/scripts/mod/list.h
++++ /dev/null
+@@ -1,213 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef LIST_H
+-#define LIST_H
+-
+-#include <stdbool.h>
+-#include <stddef.h>
+-
+-/* Are two types/vars the same type (ignoring qualifiers)? */
+-#define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
+-
+-/**
+- * container_of - cast a member of a structure out to the containing structure
+- * @ptr:	the pointer to the member.
+- * @type:	the type of the container struct this is embedded in.
+- * @member:	the name of the member within the struct.
+- *
+- */
+-#define container_of(ptr, type, member) ({				\
+-	void *__mptr = (void *)(ptr);					\
+-	_Static_assert(__same_type(*(ptr), ((type *)0)->member) ||	\
+-		      __same_type(*(ptr), void),			\
+-		      "pointer type mismatch in container_of()");	\
+-	((type *)(__mptr - offsetof(type, member))); })
+-
+-#define LIST_POISON1  ((void *) 0x100)
+-#define LIST_POISON2  ((void *) 0x122)
+-
+-/*
+- * Circular doubly linked list implementation.
+- *
+- * Some of the internal functions ("__xxx") are useful when
+- * manipulating whole lists rather than single entries, as
+- * sometimes we already know the next/prev entries and we can
+- * generate better code by using them directly rather than
+- * using the generic single-entry routines.
+- */
+-
+-struct list_head {
+-	struct list_head *next, *prev;
+-};
+-
+-#define LIST_HEAD_INIT(name) { &(name), &(name) }
+-
+-#define LIST_HEAD(name) \
+-	struct list_head name = LIST_HEAD_INIT(name)
+-
+-/**
+- * INIT_LIST_HEAD - Initialize a list_head structure
+- * @list: list_head structure to be initialized.
+- *
+- * Initializes the list_head to point to itself.  If it is a list header,
+- * the result is an empty list.
+- */
+-static inline void INIT_LIST_HEAD(struct list_head *list)
+-{
+-	list->next = list;
+-	list->prev = list;
+-}
+-
+-/*
+- * Insert a new entry between two known consecutive entries.
+- *
+- * This is only for internal list manipulation where we know
+- * the prev/next entries already!
+- */
+-static inline void __list_add(struct list_head *new,
+-			      struct list_head *prev,
+-			      struct list_head *next)
+-{
+-	next->prev = new;
+-	new->next = next;
+-	new->prev = prev;
+-	prev->next = new;
+-}
+-
+-/**
+- * list_add - add a new entry
+- * @new: new entry to be added
+- * @head: list head to add it after
+- *
+- * Insert a new entry after the specified head.
+- * This is good for implementing stacks.
+- */
+-static inline void list_add(struct list_head *new, struct list_head *head)
+-{
+-	__list_add(new, head, head->next);
+-}
+-
+-/**
+- * list_add_tail - add a new entry
+- * @new: new entry to be added
+- * @head: list head to add it before
+- *
+- * Insert a new entry before the specified head.
+- * This is useful for implementing queues.
+- */
+-static inline void list_add_tail(struct list_head *new, struct list_head *head)
+-{
+-	__list_add(new, head->prev, head);
+-}
+-
+-/*
+- * Delete a list entry by making the prev/next entries
+- * point to each other.
+- *
+- * This is only for internal list manipulation where we know
+- * the prev/next entries already!
+- */
+-static inline void __list_del(struct list_head *prev, struct list_head *next)
+-{
+-	next->prev = prev;
+-	prev->next = next;
+-}
+-
+-static inline void __list_del_entry(struct list_head *entry)
+-{
+-	__list_del(entry->prev, entry->next);
+-}
+-
+-/**
+- * list_del - deletes entry from list.
+- * @entry: the element to delete from the list.
+- * Note: list_empty() on entry does not return true after this, the entry is
+- * in an undefined state.
+- */
+-static inline void list_del(struct list_head *entry)
+-{
+-	__list_del_entry(entry);
+-	entry->next = LIST_POISON1;
+-	entry->prev = LIST_POISON2;
+-}
+-
+-/**
+- * list_is_head - tests whether @list is the list @head
+- * @list: the entry to test
+- * @head: the head of the list
+- */
+-static inline int list_is_head(const struct list_head *list, const struct list_head *head)
+-{
+-	return list == head;
+-}
+-
+-/**
+- * list_empty - tests whether a list is empty
+- * @head: the list to test.
+- */
+-static inline int list_empty(const struct list_head *head)
+-{
+-	return head->next == head;
+-}
+-
+-/**
+- * list_entry - get the struct for this entry
+- * @ptr:	the &struct list_head pointer.
+- * @type:	the type of the struct this is embedded in.
+- * @member:	the name of the list_head within the struct.
+- */
+-#define list_entry(ptr, type, member) \
+-	container_of(ptr, type, member)
+-
+-/**
+- * list_first_entry - get the first element from a list
+- * @ptr:	the list head to take the element from.
+- * @type:	the type of the struct this is embedded in.
+- * @member:	the name of the list_head within the struct.
+- *
+- * Note, that list is expected to be not empty.
+- */
+-#define list_first_entry(ptr, type, member) \
+-	list_entry((ptr)->next, type, member)
+-
+-/**
+- * list_next_entry - get the next element in list
+- * @pos:	the type * to cursor
+- * @member:	the name of the list_head within the struct.
+- */
+-#define list_next_entry(pos, member) \
+-	list_entry((pos)->member.next, typeof(*(pos)), member)
+-
+-/**
+- * list_entry_is_head - test if the entry points to the head of the list
+- * @pos:	the type * to cursor
+- * @head:	the head for your list.
+- * @member:	the name of the list_head within the struct.
+- */
+-#define list_entry_is_head(pos, head, member)				\
+-	(&pos->member == (head))
+-
+-/**
+- * list_for_each_entry - iterate over list of given type
+- * @pos:	the type * to use as a loop cursor.
+- * @head:	the head for your list.
+- * @member:	the name of the list_head within the struct.
+- */
+-#define list_for_each_entry(pos, head, member)				\
+-	for (pos = list_first_entry(head, typeof(*pos), member);	\
+-	     !list_entry_is_head(pos, head, member);			\
+-	     pos = list_next_entry(pos, member))
+-
+-/**
+- * list_for_each_entry_safe - iterate over list of given type. Safe against removal of list entry
+- * @pos:	the type * to use as a loop cursor.
+- * @n:		another type * to use as temporary storage
+- * @head:	the head for your list.
+- * @member:	the name of the list_head within the struct.
+- */
+-#define list_for_each_entry_safe(pos, n, head, member)			\
+-	for (pos = list_first_entry(head, typeof(*pos), member),	\
+-		n = list_next_entry(pos, member);			\
+-	     !list_entry_is_head(pos, head, member);			\
+-	     pos = n, n = list_next_entry(n, member))
+-
+-#endif /* LIST_H */
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index 3e5313ed6065..9eade18b4388 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -20,6 +20,8 @@
+ #include <limits.h>
+ #include <stdbool.h>
+ #include <errno.h>
++
++#include <list.h>
+ #include "modpost.h"
+ #include "../../include/linux/license.h"
+ 
+diff --git a/scripts/mod/modpost.h b/scripts/mod/modpost.h
+index ee43c7950636..58197b34a3c8 100644
+--- a/scripts/mod/modpost.h
++++ b/scripts/mod/modpost.h
+@@ -13,7 +13,7 @@
+ #include <elf.h>
+ #include "../../include/linux/module_symbol.h"
+ 
+-#include "list.h"
++#include <list_types.h>
+ #include "elfconfig.h"
+ 
+ /* On BSD-alike OSes elf.h defines these according to host's word size */
+-- 
+2.43.0
 
-> 
-> Thanks,
-> drew
 
