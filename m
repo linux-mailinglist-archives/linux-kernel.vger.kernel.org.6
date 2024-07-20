@@ -1,112 +1,158 @@
-Return-Path: <linux-kernel+bounces-258007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C0F1938214
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 18:21:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C45E938219
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 18:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8E211F216C8
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 16:21:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 579B4281D09
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 16:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021F61474B6;
-	Sat, 20 Jul 2024 16:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F53148310;
+	Sat, 20 Jul 2024 16:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gjRFI2oO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pPISnTN1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A71146A96;
-	Sat, 20 Jul 2024 16:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FB4146A9A;
+	Sat, 20 Jul 2024 16:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721492503; cv=none; b=gRXNoOaugSamCsg+qXKJcVCO1jg9+ziT3Er2owAbeRufpAsoRZG/afaeTV5i2P4srrnWQR+9uXL9Zfl68H6PHNCPFIJs6zkkuQ78XVfI66YdGD3azKnpVnWU4i9wRiGbrf8r8jFbiZd+JUuCYXXNfn3KPGJZR/bkI1B8kvxWYaU=
+	t=1721492986; cv=none; b=SESatU+AkrGxyDlQBStyFaoVmQybvKUplUsWshGH2VJ0PfmMXbiSSnNwQxbQd1lx7ctf61zAQipeVbEpfeh8AWgO7w9oP+NkIEMYZHHbbghAsrPjteLGOCO71Q4LT1Asr3xhe+deQyGXRH/aAQKKT9RayDqv2V+qADd8rwN0710=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721492503; c=relaxed/simple;
-	bh=vL3miUANwmXmD+NJf1Syoh2nk+z/Q2eiOhWN7u9K1m4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bWEt7tWVfNaK1oFQVBrF54Mh3V1x39NDHXTabOKVRvVSKKuoI7AnlOMyexy8qUskxU8ji4NZcrFd8kLZFxvutVFB2sS2ii0ZMDNj9LfWmPHVqAj8KAzUl4uybjtqfoT6Jgkzen6OTWDWFnQRekU0Z9vSR9DrW5UsZRpRRr0jRag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gjRFI2oO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4B9FC4AF09;
-	Sat, 20 Jul 2024 16:21:41 +0000 (UTC)
+	s=arc-20240116; t=1721492986; c=relaxed/simple;
+	bh=gQAyzRDNgGMdptTRgt7JqtA/m21hfwIwvqB/asm9gPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LxwGTII3RPJx/4ahtLPf0s9KWigA/hp/wZ9NSm/yGhVvjcqYXHI+O7//HP/5WW6/EaRAzvS70oYw7p8Pc54LidZlM7TuQzClzoPOdkw47JOsplmBsBNd42Ke+Ud5P+PlHFVdtVPWtmvQT+/fMqt7XxoTgjTWST25rPjPEEUFbLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pPISnTN1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36A0EC4AF0C;
+	Sat, 20 Jul 2024 16:29:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721492502;
-	bh=vL3miUANwmXmD+NJf1Syoh2nk+z/Q2eiOhWN7u9K1m4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gjRFI2oOTJvpOhsjAzkxsugqhtMdy2Vuh0s+6OLbsjyLkuMmFgbs/x319HZ+B7OwT
-	 HUo07x/81SxI2Wv9XHKuiSSS7+QfA/OXUHSYUX9bdtD80ARw8muRJdZ15gMDNlJrSb
-	 37EpkM2gvNnZtAXKa57+nmaBqlsa7sfJcEG5tZx/ZVtF3Xuca6nylT4KbQmtS+J6pu
-	 a/cyXI0ZNvquL49NMM+FJdzYOwlTdH3WSgRYi3JgBQLt6qGjlIw3qlUEMJt+N2N6ID
-	 rLy8jNa1hkVJnL62z+j1VX9jS/meFFF5KaGFrfd14H6dsLRdPRHIctPqz9O86Peql/
-	 rkj34p+/2e2/Q==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: [PATCH 2/2] kallsyms: change sym_entry::percpu_absolute to bool type
-Date: Sun, 21 Jul 2024 01:21:14 +0900
-Message-ID: <20240720162136.111898-2-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240720162136.111898-1-masahiroy@kernel.org>
-References: <20240720162136.111898-1-masahiroy@kernel.org>
+	s=k20201202; t=1721492985;
+	bh=gQAyzRDNgGMdptTRgt7JqtA/m21hfwIwvqB/asm9gPU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=pPISnTN14Noih2Eq5pVeHCeJ1Pg5g7/z5MbscLsRKkxXlezJPBt6VWnrAh1MSwZNb
+	 TwxLi8VDZ9CGpVHttsP+ef2EE342WErTJ4HDEX8ixnNHdFnMoWT7IkOFp6Y+rp+jOF
+	 dXMt4//umlv1Bn8rRE2p0IsZpLWL/EjQXFWN6x4ky+qNdabLB9g3mchcxj/K9Rppxo
+	 68f3niYsToE7o/ORMeTsB/W6DmHPCQsTK2zQxQTJAaciNefXWykHMFNqrhIS7jwCDf
+	 y+HzbIw9T7RmPEHlins+MCfp9p+10maCCz9OvwG66IseAM24JjnuANXtTrraoipwqN
+	 tdIxuDD7fBSmw==
+Date: Sat, 20 Jul 2024 17:29:36 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Mudit Sharma <muditsharma.info@gmail.com>
+Cc: lars@metafoo.de, krzk+dt@kernel.org, conor+dt@kernel.org,
+ robh@kernel.org, linux-kernel@vger.kernel.org, mazziesaccount@gmail.com,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org, Ivan Orlov
+ <ivan.orlov0322@gmail.com>, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>
+Subject: Re: [PATCH v8 2/2] iio: light: ROHM BH1745 colour sensor
+Message-ID: <20240720172936.3a406f0c@jic23-huawei>
+In-Reply-To: <20240718220208.331942-2-muditsharma.info@gmail.com>
+References: <20240718220208.331942-1-muditsharma.info@gmail.com>
+	<20240718220208.331942-2-muditsharma.info@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-This field is boolean.
+On Thu, 18 Jul 2024 23:02:06 +0100
+Mudit Sharma <muditsharma.info@gmail.com> wrote:
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+> Add support for BH1745, which is an I2C colour sensor with red, green,
+> blue and clear channels. It has a programmable active low interrupt
+> pin. Interrupt occurs when the signal from the selected interrupt
+> source channel crosses set interrupt threshold high or low level.
+> 
+> Interrupt source for the device can be configured by enabling the
+> corresponding event. Interrupt latch is always enabled when setting
+> up interrupt.
+> 
+> Add myself as the maintainer for this driver in MAINTAINERS.
+> 
+> Signed-off-by: Mudit Sharma <muditsharma.info@gmail.com>
+> Reviewed-by: Ivan Orlov <ivan.orlov0322@gmail.com>
+> Reviewed-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
- scripts/kallsyms.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Hi Mudit.
 
-diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
-index 9a0535c59702..0ed873491bf5 100644
---- a/scripts/kallsyms.c
-+++ b/scripts/kallsyms.c
-@@ -36,7 +36,7 @@ struct sym_entry {
- 	unsigned long long addr;
- 	unsigned int len;
- 	unsigned int seq;
--	unsigned int percpu_absolute;
-+	bool percpu_absolute;
- 	unsigned char sym[];
- };
- 
-@@ -181,7 +181,7 @@ static struct sym_entry *read_symbol(FILE *in, char **buf, size_t *buf_len)
- 	sym->len = len;
- 	sym->sym[0] = type;
- 	strcpy(sym_name(sym), name);
--	sym->percpu_absolute = 0;
-+	sym->percpu_absolute = false;
- 
- 	return sym;
- }
-@@ -339,7 +339,7 @@ static int expand_symbol(const unsigned char *data, int len, char *result)
- 	return total;
- }
- 
--static int symbol_absolute(const struct sym_entry *s)
-+static bool symbol_absolute(const struct sym_entry *s)
- {
- 	return s->percpu_absolute;
- }
-@@ -781,7 +781,7 @@ static void make_percpus_absolute(void)
- 			 * versions of this tool.
- 			 */
- 			table[i]->sym[0] = 'A';
--			table[i]->percpu_absolute = 1;
-+			table[i]->percpu_absolute = true;
- 		}
- }
- 
--- 
-2.43.0
+Rather than go around again, I've applied a few things I noticed
+and changes Javier suggests whilst picking this up.
+
+I also tweaked a few long lines.
+
+Anyhow, applied to the testing branch of iio.git which will be rebased
+on rc1 once available and pushed out as togreg for linux-next to
+pick up.
+
+Thanks,
+
+Jonathan
+
+
+> +
+> +static irqreturn_t bh1745_trigger_handler(int interrupt, void *p)
+> +{
+> +	struct iio_poll_func *pf = p;
+> +	struct iio_dev *indio_dev = pf->indio_dev;
+> +	struct bh1745_data *data = iio_priv(indio_dev);
+> +	struct {
+> +		u16 chans[4];
+> +		s64 timestamp __aligned(8);
+> +	} scan;
+> +	u16 value;
+> +	int ret;
+> +	int i;
+> +	int j = 0;
+> +
+> +	for_each_set_bit(i, indio_dev->active_scan_mask, indio_dev->masklength) {
+
+Nuno's new helper iio_for_each_active_channel()
+cleans this up. I'll switch to that whilst applying rather than adding another driver
+for him to convert over.
+
+
+> +		ret = regmap_bulk_read(data->regmap, BH1745_RED_LSB + 2 * i, &value, 2);
+> +		if (ret)
+> +			goto err;
+> +
+> +		scan.chans[j++] = value;
+> +	}
+> +
+> +	iio_push_to_buffers_with_timestamp(indio_dev, &scan, iio_get_time_ns(indio_dev));
+> +
+> +err:
+> +	iio_trigger_notify_done(indio_dev->trig);
+> +
+> +	return IRQ_HANDLED;
+> +}
+
+> +
+> +static int bh1745_probe(struct i2c_client *client)
+> +{
+> +	int ret;
+> +	int value;
+> +	int part_id;
+> +	struct bh1745_data *data;
+> +	struct iio_dev *indio_dev;
+> +	struct device *dev = &client->dev;
+> +
+> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	i2c_set_clientdata(client, indio_dev);
+Trivial, but is this ever used?  I couldn't figure out where it if is.
+So I've dropped it. Shout if it needs to be here.
+
+Jonathan
+
 
 
