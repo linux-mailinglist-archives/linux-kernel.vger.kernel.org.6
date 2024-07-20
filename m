@@ -1,184 +1,326 @@
-Return-Path: <linux-kernel+bounces-257767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03095937EB5
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 04:06:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB3F7937EC0
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 04:19:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0A841C21437
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 02:06:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ADAE281FA9
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 02:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A800E8F5D;
-	Sat, 20 Jul 2024 02:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E258B8BE2;
+	Sat, 20 Jul 2024 02:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QrsCedGT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GOKDaF1s";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="PE2b7H19"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E6DB66E
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 02:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721441202; cv=none; b=ng1Bgv1COyzmlmaKWtZamTz5LrP6wDGAVTOk8T2Y00oBCxRljUpH8pYxo/881T4h/+8nHjngZupqowFRg7uN29BF+8OlRMmsqo/zowj1QcRkvyFjGMG7pjX4zou0KctHvE/GgKiAmH3sU+S/pvE3HIkryPwVXsDcYbDHQ9jEb28=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721441202; c=relaxed/simple;
-	bh=RciFmK44iR676vaABoiPoYwcBAbrdfd3PEX82KG4l8U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cMOjHsWMM2BdjlqMy0LjZOea6NbfQpyQbtYjwhU2CnLDLhdzZFuzlRoWaGuyAx/k85VyzDKWDVQlGK2bZzBSiFrWFEGXPm5BYisLoqTOikoFJ5SUX1SkwD8w9h2qfV2jUhEZjD/M/0JcnXGDAXCtgR91OvbVh7zbBEjOf9G2zoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QrsCedGT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94EF0C4AF1C
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 02:06:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721441202;
-	bh=RciFmK44iR676vaABoiPoYwcBAbrdfd3PEX82KG4l8U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=QrsCedGTVxe+iDnPUWk6xAelt9mFI7vKqsz/GR1LA6lHCDCCWygaLcgk9VvepJx9o
-	 xyKNOXO4dXXavZPvfYnY5c35UP39m8axcv0gN3TgfZdNg8MhF3MyGhMGznvIwp3QjD
-	 N7GrHzIokrbvdkvokFMbDkFEWaPVlRAsztsgXtW/YC2AusqVrH+SkWAq69Sl3ykUML
-	 olNG5BMMVJ5COXN9ThPbCIK6MSBUaloskcE5hbX44zlWa+cYB78KnOT3hVbArIbxPt
-	 9G0mVzs1bTMlcWAdXDGYBYhLpF71P1teKw6PIG/hX8cPF+Hi9M5Wf9fjTt5BuMlq0I
-	 Mi5o93qhSS/Gg==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2eede876fccso30960011fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 19:06:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXWj0wIzxwTeob57IjJ+mJqwR/5CpOI9Itojwzs7qJ0G7rfcPKpI5FHDDnmsNU5rwIbYldqJBJj3Bthce7+u9AXhmt7HEZejHrztcUn
-X-Gm-Message-State: AOJu0Yw4uWcaUaO0ouD80K5eiLjwAb29PUFYPr+8PH0lkygKiiTeaziu
-	gyKSiyo5rQ+rnrWqnPooy0kKf5Yu2ToqPUTVZmtQAbHY/P8QCGVEZnwwmqWkMc9EUDBTHCGAe3w
-	rvAIzVUdq8nQzlFX9Cljj/qFeX0Q7E94mBoT8
-X-Google-Smtp-Source: AGHT+IHgzEfq9gWNLivtDbIs32oK+ER2ycN/f4x58j48rMybvJMw2/ovcOqVDJx4CrlD3KPoqQiFRAIqqcnsvk1G7w4=
-X-Received: by 2002:a2e:a7d6:0:b0:2ee:7b7d:66df with SMTP id
- 38308e7fff4ca-2ef16738291mr9561611fa.9.1721441200032; Fri, 19 Jul 2024
- 19:06:40 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE325C82
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 02:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721441954; cv=fail; b=DCS1372IlflLHK/TAf3k+uvAN2Mn2TuE8Qaywr85NlDZcvahZjLjjeeQD7i6O4aYk+5+a/aKba1UmOwFlk7N6u1nO+hfy//G55/IU/i/8qhQXXwlA0NGo6bw2QeqUYF1GEpRu6A0ikkdsmC8Angtp3L6q29V5UezL/u1TU1uMtc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721441954; c=relaxed/simple;
+	bh=Z4kUEg0NiYZ3t+XVGSbQNzmXG/18+NsUXoaGmQnidOM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=g4gYDkRt1/jXZde+fS/UB8hr6oLqRg0BUlaphcWbzse/tAdIfJbfZLoLizA7DguRP8cFoeO0oW00LH0zKgQXwuDGWBZHyjypTz0cqL1egO9tgJIpilZjD0nlLUFcbtB6ItL+q7eVZiOuQ/kO5BKdrE4cHTV8sj+kC+pkutPMGkA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=GOKDaF1s; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=PE2b7H19; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46K2GGuL014924;
+	Sat, 20 Jul 2024 02:18:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=fzYMReHpkxB/NHU
+	t8Zv8x6Huq0btmvmzGiiFxiSv7UY=; b=GOKDaF1sBiPTi+7AVjnQf/TdLz8IG/p
+	aRiDlcg+VSqzpuwOadvBugQeoySiYHXE2sR/UFgQ/e7Qn00i5OSjou+GqUCwDqon
+	AJeAFS1sdHH7/EU6+2BDb0wTg3vLJlvWOX5ktkGrzKi5pp2ALgEUtYFNiljtYbh0
+	yZYghKoP48Gj6K0vVIZd+BIAv+OoaBq4UitJgTbu7lYgQos1ekJpggY9BwsfpP71
+	0b3oHZcyTJKrNVz+1P7zwij/MMSOV3wxGL3+E5EMOU3ByNJdPI6lqLYVV6TJLYfz
+	r+2SJrXJCH3XZmZn6BcFsxJdqdIFisyQ9tPNCA5YBn3g2OkGfbqhJ3Q==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40g49t002g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 20 Jul 2024 02:18:24 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46K1YIw6034068;
+	Sat, 20 Jul 2024 02:18:22 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2101.outbound.protection.outlook.com [104.47.58.101])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40g3pb8k2u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 20 Jul 2024 02:18:22 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=piV0mR25Xfs/h0rwfnrB36nB9P1SnkA3wkha60970gdiEwe5Xq26aG5Gm55ShJc6wUTE8cgRqYSE3b9lkEhjEx6D+hg3qdriHrIbrE4o+04V+YOdGQmxcOQV2NwxLiwgl1jqMSaBH67hifsMBF+1qAou3cO0GYZa0lDV5AeyQZgibbw74jxU+FzWttqt/wSKGhmSMYphAtWgmsFtT6s/UfKYEWje21RHWBJ662zDBXIZYPct2cT0UOobSpT1GYRSOnHVEiLKgc7nnLgzUf1r5qFFt9x51G4SR7ZPLpqtbca6u8ZaTUaqtX+PIaSOtbVvBaRV//KcrU1G5MrTiKfrEQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fzYMReHpkxB/NHUt8Zv8x6Huq0btmvmzGiiFxiSv7UY=;
+ b=TZcAyrdl8MJPJeglCtPuCmo1vbqgb7NpxAMrAH6O5ztiC2EaHy5wn70gSAdKSkuX3WREKzNiu3thuZCdwXSc4sbTsjzX8wKA/qtPaLUHrabGn2diq/ypDx26VQwCtpy4XNtfu3LwBxCo8ZkguQUZTGurZHP/dAspS5utJhT5JSyNLawD069x63LeAJF/XB01xUEs6zBS1VRXuV8M87af67ind6ofIssjKZ0aBPbv8PzDz8/VWtgePceT8+ChEBTYOyJ9uOWNdRiDvAw85dbgFJCBNdkR99Jxibgi87sRk45FRYzkEV/UuvbYYwn9OJcGxriAjGbcJBG+Oq+vUHKr6g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fzYMReHpkxB/NHUt8Zv8x6Huq0btmvmzGiiFxiSv7UY=;
+ b=PE2b7H19/9g17IAx/6gCIStE1s3rFvrj0PPMeogh43Mpj5bZuln3rMNQc0ZyDS9a0UWXY/OiSGfjU+J4fVGwO6LW9t6Roey2obR9AudurPkGBYbB58ErqAv7eJczKRx6EgyQDmUjGTldG7mKourCVBF+EulzEQysr5vRcmtBKaI=
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
+ by PH8PR10MB6647.namprd10.prod.outlook.com (2603:10b6:510:221::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Sat, 20 Jul
+ 2024 02:18:15 +0000
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490%3]) with mapi id 15.20.7784.016; Sat, 20 Jul 2024
+ 02:18:14 +0000
+Date: Fri, 19 Jul 2024 22:18:12 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Peter Xu <peterx@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>, x86@kernel.org,
+        Yan Zhao <yan.y.zhao@intel.com>, Kevin Tian <kevin.tian@intel.com>,
+        Pei Li <peili.dev@gmail.com>, David Hildenbrand <david@redhat.com>,
+        David Wang <00107082@163.com>, Bert Karwatzki <spasswolf@web.de>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH] mm/x86/pat: Only untrack the pfn range if unmap region
+Message-ID: <t7q4s4rktcjkrtmr7l2zffpthxis5bmafhae7aaxxekyyp75ev@x4dshxdx3jpo>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Alex Williamson <alex.williamson@redhat.com>, 
+	Jason Gunthorpe <jgg@nvidia.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	"Kirill A . Shutemov" <kirill@shutemov.name>, x86@kernel.org, Yan Zhao <yan.y.zhao@intel.com>, 
+	Kevin Tian <kevin.tian@intel.com>, Pei Li <peili.dev@gmail.com>, 
+	David Hildenbrand <david@redhat.com>, David Wang <00107082@163.com>, Bert Karwatzki <spasswolf@web.de>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+References: <20240712144244.3090089-1-peterx@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240712144244.3090089-1-peterx@redhat.com>
+User-Agent: NeoMutt/20240425
+X-ClientProxiedBy: YT4PR01CA0428.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:10b::20) To DS0PR10MB7933.namprd10.prod.outlook.com
+ (2603:10b6:8:1b8::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704190137.696169-1-mic@digikod.net> <20240704190137.696169-3-mic@digikod.net>
-In-Reply-To: <20240704190137.696169-3-mic@digikod.net>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Sat, 20 Jul 2024 10:06:28 +0800
-X-Gmail-Original-Message-ID: <CALCETrWpk5Es9GPoAdDD=m_vgSePm=cA16zCor_aJV0EPXBw1A@mail.gmail.com>
-Message-ID: <CALCETrWpk5Es9GPoAdDD=m_vgSePm=cA16zCor_aJV0EPXBw1A@mail.gmail.com>
-Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
- SHOULD_EXEC_RESTRICT securebits
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Paul Moore <paul@paul-moore.com>, "Theodore Ts'o" <tytso@mit.edu>, 
-	Alejandro Colomar <alx.manpages@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
-	Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
-	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
-	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|PH8PR10MB6647:EE_
+X-MS-Office365-Filtering-Correlation-Id: c18e7895-d8ac-471f-5608-08dca8623617
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?OlhR3k15o/kOI3ZnqWXsIsYuvbMDVDdOWxYK7MBroxVryW/4CEDpDi69JyNM?=
+ =?us-ascii?Q?Nmh+AKskgsv/27ChkuILtiW0seXdqrdOpHN9jgPyogZutaMCJwPqkwxae7mT?=
+ =?us-ascii?Q?VAEZrBqgsx94CzrUvtpllwzdJ567jnLBLZIKO7FinbHQiBErR7uALZe5ZWGV?=
+ =?us-ascii?Q?E/ld/yW3wcrdkgncw+VBaJpyoFvKa2PXDF7gD1g3mKMMJRaDTK+WF/C7ilCu?=
+ =?us-ascii?Q?TCTjOxpp9fMTzKiEb/pXjNHz2Rbr/MWUEU4W/lNLpngsnF+GDIcetij+Ks1k?=
+ =?us-ascii?Q?Mp4CXNVzxogfeB2TicHThhC9uSooDIFzXsU2YndIeiqt2JePIcSo+rKw/EjN?=
+ =?us-ascii?Q?OwHyFgioYwWhdyxwSNL3WyqUqVhvvS5yvPBvw3Ba2u/cN+TR4Y5pajUxjGFH?=
+ =?us-ascii?Q?droqRDfhiBtscAbAlrY1+CCRg3RVGuUB+y7fWG8LgPtiRSNQIEK/jHgRYrlV?=
+ =?us-ascii?Q?tcJQqhbCAOmm0JeJVeOFgljhQz2RgKBbc9OH8PnFXWi6uCf7eo19d/W4My7F?=
+ =?us-ascii?Q?NBZFfy99BCwmAaB8KBx4o0e+TDGNXX872MtmW4b1nYjFMYWueayNDjBTQKRT?=
+ =?us-ascii?Q?9BV7JZ+PkV95vG4Ch1Wq7yL1F2uw9AVGG/uZo16JPkNlCrvXZaUYwamPUhV5?=
+ =?us-ascii?Q?ozY0tpeO1DKDs9QpOax1GsSnMrPPt9vx+P4IRN+KE2i8uO/56oHTB9OWiFUp?=
+ =?us-ascii?Q?p4QHN4COs6cWpCT6UNPQ5jD4hVVIngAaXOxwebivmyleSQyRBDCr9BbOX/QV?=
+ =?us-ascii?Q?+ColThz7wO/1sqhQinPvUnsWjtxuLk+66/VjAVL69v6OHldmgalxXdCs/z2d?=
+ =?us-ascii?Q?glHKMq9GDzxOE0knMCxU6q/4gpePKh7tbKDwPAcZER0w6OXrpFZ3nMm/DqpI?=
+ =?us-ascii?Q?DVtyjHa7gNXOrm4VvEvFyeymhVirfz+MfgeKZP/l0+/u7PKbv07IoiHFa7Yy?=
+ =?us-ascii?Q?5lspOyqFehkWH4UYYKXEGjaUl3U2lJj2a4uTw5R1eeceOu2083nCnc8yq+fD?=
+ =?us-ascii?Q?m4ujVOWdOKK8lBM4XH6x461us55+zbQQpUnKIc9elzbS0ptIGfIPRmIQFcTx?=
+ =?us-ascii?Q?2aI5302U7ShkAu3cxaXv/0ExcqQZ2oXFbh2fgFQ01oAjG8Q6MuOSphFMy9xa?=
+ =?us-ascii?Q?91Oh82MqNw8MPas0PHuw+7U9dmGJF0SX9p0QrF5IPCtR2Szgx1ume5llHrca?=
+ =?us-ascii?Q?tdlO7A+sYOfVpOX9UdPVMg7l/kUOg1oQ1/dJenMkHYgLHgk5btRK2pDlhb0R?=
+ =?us-ascii?Q?vlk5Zl0DpxezIyIspujEDbyGERPncWU83ql3QbIIv0hMt2CyGfCuW0TrV2yZ?=
+ =?us-ascii?Q?T9k=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?GCocZB+30fdvUUgLWWaFooy9W+BNpUDs15cwUGhWf4rSsZhDXfteIEpqoUD2?=
+ =?us-ascii?Q?Fa2Mo/6Ux/cNYwDx0EA1OOsWjDYaosokUslss6f78JSsjuHFdCcymR7zJdLu?=
+ =?us-ascii?Q?BP59mi5Of9qA+b03bDaojTEQsr1Q3kiKIFqdn3Od8/+6T6pzi8ype/kyx27g?=
+ =?us-ascii?Q?ugtQuZm4O/wyfdudVsD5mGXHoYsKvHlaMzYt3X+gWU789PMlo/aUxyDHWRTR?=
+ =?us-ascii?Q?jZLopN8pZoYp7nUiqwzUkp+2IqnZl0ywOYabnfHvzias8grXXBACXtdokLhH?=
+ =?us-ascii?Q?ucj6S/KspRkZgfTb+z/j6gEnzXklpU6Tt1d7wILCKVsJ0rUdYLVAtfURSCxR?=
+ =?us-ascii?Q?c0B28w5HgqHzBIdk30HyKko3b8R/uQjfn9OM4QmImSejqZnQKUplalx8xZ8R?=
+ =?us-ascii?Q?M77CqfnyfGC2pkPIxfRZOQbb9WnNZHB72yJdOluYiy5VZd34abnQQdF13M7g?=
+ =?us-ascii?Q?+1dBS5krywAhbCRSEpV6x4/F0gStvyTJ4qxX/KJSz2tTWXI5k6ghGP6majVW?=
+ =?us-ascii?Q?nlirwjAdA4CF8KhjByM+5iFq3bRRj1+sQ2G9GvAPF/hr55BfyPbqv40b8oY6?=
+ =?us-ascii?Q?vl+5wtZyznx7nN8jAcoXvE5WkthFMJ8ss2Q/Lb/X5FyGMLM6KGpkQBxAQ+8X?=
+ =?us-ascii?Q?hQkdUzOmHGJD0AqfwppGh94moyMbHujIyizf8pqQUP1U3oYf8EAbmYaNc+WL?=
+ =?us-ascii?Q?IgQV1VtHfZGVoLcBn/5Rpz51SXhrpTsXqVOOVab7TmoXs06UtfaAnY9k5s3Q?=
+ =?us-ascii?Q?n9gxK3fJrPeAaIHcl4TSNdHiYJjgsIvrKJMBFGlKfYWZ6itD7DJ+zv0uRaoU?=
+ =?us-ascii?Q?VaQ8UfLjw9oFolzGNrJ06yAMvTdUve+9J5pP8DZesI7tpcA2bpojVBcrKgNc?=
+ =?us-ascii?Q?aEv7kEDb9uIipUXJOXyoJLhUVbKvK13LYF+dC8SRe+/dDfn1Z8A93D+dcQ+n?=
+ =?us-ascii?Q?ec0QThLLWbx35Jj22CZe+qIrgPv4jR3PmZXsR5AS/DGQkLenMnxXsK4pIPLY?=
+ =?us-ascii?Q?KhM1Qbj00K3YebX/s/37RfQP9+ofQaBH5Yq2QeSQq2pmKQq02eQNXuIGyEtD?=
+ =?us-ascii?Q?DkoR2xWDdehnI7kthRplxrLsIQW9BtuGhix/ySIY4ZKM8OBSQJvzJ4x7/oU9?=
+ =?us-ascii?Q?E+sZ93IIr21nuZIFyTMUO39GJPiuipJqgAko88FrgxuBeJwqS13rA3J47sWX?=
+ =?us-ascii?Q?qBK1JwE533ymY6Poli1nUSxBG2hVXsTeEIzcZWEFn+R3meKy43C5vXUPXbou?=
+ =?us-ascii?Q?R0ocG/2mvb0Vhtjjqi8HiNgn2AWwfwY6WFR6ADkY/Te4yTHBL0knprbiXM/B?=
+ =?us-ascii?Q?+vgCDyeZ72GmowDsD3LG2U1/zS3+lvOYVae1FR/RXfg6aMKHkfeQMtzirN1t?=
+ =?us-ascii?Q?7kEjP5w3Bnki1Juzchi5DApaExf8xXwo1Q9zH3D3b4qKCPCjALNl7AvknRvM?=
+ =?us-ascii?Q?KjEjymZOO/RxFnl4MRrR3CeY6AGPbYzWtaC6nhbT5NMjPrwPSXJN4+U9T++6?=
+ =?us-ascii?Q?1R9zRb4gUoFVYueabyOe8V9SZixu75J3vNOw2WSDjEUTYDvY+aTMVEf8jjwW?=
+ =?us-ascii?Q?cFjeOIOiL/GY+xw0GQc0KOzZ4cl2L8SD9DFiNe4+?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	RfPuG9fVxLYVmgyeB3G8CafNRoIDo+QDXUSwi4pkAYEHqpi33YjovGfYmR+Co0XTj0xOGYyuN2b1QqPIfPWGSvAEBQUVHm3SbWtJws7olyUv0iD7LhEKdC4HjtUiOdgp5Ypgknc8pazaiYlcy0c5YRSul4VgbbHQ7sjWEdWzE3Jnq2vIlECNMBZzOeNUWWs4mcj+zF5Dhu3ae7yGNs4sV4irNIfu9YLXOPUeQroJh6FDCc697AIMlf8uhhrccTvbwqYpPbB58E1Yw12KOzyKckLCJCe9KUcIeY0Tj681k8Eu9CS7JKLVx7YSfLf2Bqqgk1Xx6cFnaEfsCJYrNGNp8ZbsYW9qZcyKFtDNVehLo4fdjJqUNWr/6paOYBYOJ35Azc9SeH8Hto3s2fK8LoYpWCjWezBHjJotKboFKVDK7WzVGBNrwIJ17BbwwpNdrKTsO67LYW7bWTgeJ0fZ7bRm1gKRUmcnEh8HapfdftSbSUSO/+Djb/Xq60gxyMTZw8ZoavNf3DLylbwu0rl+10zTdMQLknXUveFappmcVJP+leePJZiQ+M5bhRo5aQ8FObZKcfhyUdjNSVlJLoA8jtjbcMVJhkCtdaZ7plmghVAhlt4=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c18e7895-d8ac-471f-5608-08dca8623617
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jul 2024 02:18:14.9000
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aystoyRj4FwAHZUeZQT7DxX08mPoP/5WWSqdKjeUFgamPUwlxS6BedhlwcZazKhEOilRW9pB3dPXX2/0D2M16w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR10MB6647
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-20_01,2024-07-18_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 bulkscore=0 spamscore=0
+ mlxscore=0 mlxlogscore=999 adultscore=0 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2407200016
+X-Proofpoint-ORIG-GUID: Yq-ZeNqwapPlYfzREQxY5_WFSgvQ4b58
+X-Proofpoint-GUID: Yq-ZeNqwapPlYfzREQxY5_WFSgvQ4b58
 
-On Fri, Jul 5, 2024 at 3:02=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
-d.net> wrote:
->
-> These new SECBIT_SHOULD_EXEC_CHECK, SECBIT_SHOULD_EXEC_RESTRICT, and
-> their *_LOCKED counterparts are designed to be set by processes setting
-> up an execution environment, such as a user session, a container, or a
-> security sandbox.  Like seccomp filters or Landlock domains, the
-> securebits are inherited across proceses.
->
-> When SECBIT_SHOULD_EXEC_CHECK is set, programs interpreting code should
-> check executable resources with execveat(2) + AT_CHECK (see previous
-> patch).
->
-> When SECBIT_SHOULD_EXEC_RESTRICT is set, a process should only allow
-> execution of approved resources, if any (see SECBIT_SHOULD_EXEC_CHECK).
+* Peter Xu <peterx@redhat.com> [240712 10:43]:
+> This patch is one patch of an old series [1] that got reposted standalone
+> here, with the hope to fix some reported untrack_pfn() issues reported
+> recently [2,3], where there used to be other fix [4] but unfortunately
+> which looks like to cause other issues.  The hope is this patch can fix it
+> the right way.
+> 
+> X86 uses pfn tracking to do pfnmaps.  AFAICT, the tracking should normally
+> start at mmap() of device drivers, then untracked when munmap().  However
+> in the current code the untrack is done in unmap_single_vma().  This might
+> be problematic.
+> 
+> For example, unmap_single_vma() can be used nowadays even for zapping a
+> single page rather than the whole vmas.  It's very confusing to do whole
+> vma untracking in this function even if a caller would like to zap one
+> page.  It could simply be wrong.
+> 
+> Such issue won't be exposed by things like MADV_DONTNEED won't ever work
+> for pfnmaps and it'll fail the madvise() already before reaching here.
+> However looks like it can be triggered like what was reported where invoked
+> from an unmap request from a file vma.
+> 
+> There's also work [5] on VFIO (merged now) to allow tearing down MMIO
+> pgtables before an munmap(), in which case we may not want to untrack the
+> pfns if we're only tearing down the pgtables.  IOW, we may want to keep the
+> pfn tracking information as those pfn mappings can be restored later with
+> the same vma object.  Currently it's not an immediate problem for VFIO, as
+> VFIO uses UC- by default, but it looks like there's plan to extend that in
+> the near future.
+> 
+> IIUC, this was overlooked when zap_page_range_single() was introduced,
+> while in the past it was only used in the munmap() path which wants to
+> always unmap the region completely.  E.g., commit f5cc4eef9987 ("VM: make
+> zap_page_range() callers that act on a single VMA use separate helper") is
+> the initial commit that introduced unmap_single_vma(), in which the chunk
+> of untrack_pfn() was moved over from unmap_vmas().
+> 
+> Recover that behavior to untrack pfnmap only when unmap regions.
+> 
+> [1] https://lore.kernel.org/r/20240523223745.395337-1-peterx@redhat.com
+> [2] https://groups.google.com/g/syzkaller-bugs/c/FeQZvSbqWbQ/m/tHFmoZthAAAJ
+> [3] https://lore.kernel.org/r/20240712131931.20207-1-00107082@163.com
+> [4] https://lore.kernel.org/all/20240710-bug12-v1-1-0e5440f9b8d3@gmail.com/
+> [5] https://lore.kernel.org/r/20240523195629.218043-1-alex.williamson@redhat.com
+> 
+> Cc: Alex Williamson <alex.williamson@redhat.com>
+> Cc: Jason Gunthorpe <jgg@nvidia.com>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Kirill A. Shutemov <kirill@shutemov.name>
+> Cc: x86@kernel.org
+> Cc: Yan Zhao <yan.y.zhao@intel.com>
+> Cc: Kevin Tian <kevin.tian@intel.com>
+> Cc: Pei Li <peili.dev@gmail.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: David Wang <00107082@163.com>
+> Cc: Bert Karwatzki <spasswolf@web.de>
+> Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+> Signed-off-by: Peter Xu <peterx@redhat.com>
+> ---
+> 
+> NOTE: I massaged the commit message comparing to the rfc post [1], the
+> patch itself is untouched.  Also removed rfc tag, and added more people
+> into the loop. Please kindly help test this patch if you have a reproducer,
+> as I can't reproduce it myself even with the syzbot reproducer on top of
+> mm-unstable.  Instead of further check on the reproducer, I decided to send
+> this out first as we have a bunch of reproducers on the list now..
+> ---
+>  mm/memory.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 4bcd79619574..f57cc304b318 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -1827,9 +1827,6 @@ static void unmap_single_vma(struct mmu_gather *tlb,
+>  	if (vma->vm_file)
+>  		uprobe_munmap(vma, start, end);
+>  
+> -	if (unlikely(vma->vm_flags & VM_PFNMAP))
+> -		untrack_pfn(vma, 0, 0, mm_wr_locked);
+> -
+>  	if (start != end) {
+>  		if (unlikely(is_vm_hugetlb_page(vma))) {
+>  			/*
+> @@ -1894,6 +1891,8 @@ void unmap_vmas(struct mmu_gather *tlb, struct ma_state *mas,
+>  		unsigned long start = start_addr;
+>  		unsigned long end = end_addr;
+>  		hugetlb_zap_begin(vma, &start, &end);
+> +		if (unlikely(vma->vm_flags & VM_PFNMAP))
+> +			untrack_pfn(vma, 0, 0, mm_wr_locked);
+>  		unmap_single_vma(tlb, vma, start, end, &details,
+>  				 mm_wr_locked);
+>  		hugetlb_zap_end(vma, &details);
+> -- 
+> 2.45.0
 
-I read this twice, slept on it, read them again, and I *still* can't
-understand it.  See below...
 
-> The only restriction enforced by the kernel is the right to ptrace
-> another process.  Processes are denied to ptrace less restricted ones,
-> unless the tracer has CAP_SYS_PTRACE.  This is mainly a safeguard to
-> avoid trivial privilege escalations e.g., by a debugging process being
-> abused with a confused deputy attack.
+...Trying to follow this discussion across several threads and bug
+reports.   I was looped in when syzbot found that the [4] fix was a
+deadlock.
 
-What's the actual issue?  And why can't I, as root, do, in a carefully
-checked, CHECK'd and RESTRICT'd environment, # gdb -p <pid>?  Adding
-weird restrictions to ptrace can substantially *weaken* security
-because it forces people to do utterly daft things to work around the
-restrictions.
+How are we reaching unmap_vmas() without the mmap lock held in any mode?
+We must be holding the read or write lock - otherwise the vma pointer is
+unsafe...?
 
-...
+In any case, since this will just keep calling unmap_single_vma() it has
+to be an incomplete fix?
 
-> +/*
-> + * When SECBIT_SHOULD_EXEC_CHECK is set, a process should check all exec=
-utable
-> + * files with execveat(2) + AT_CHECK.  However, such check should only b=
-e
-> + * performed if all to-be-executed code only comes from regular files.  =
-For
-> + * instance, if a script interpreter is called with both a script snippe=
-d as
-
-s/snipped/snippet/
-
-> + * argument and a regular file, the interpreter should not check any fil=
-e.
-> + * Doing otherwise would mislead the kernel to think that only the scrip=
-t file
-> + * is being executed, which could for instance lead to unexpected permis=
-sion
-> + * change and break current use cases.
-
-This is IMO not nearly clear enough to result in multiple user
-implementations and a kernel implementation and multiple LSM
-implementations and LSM policy authors actually agreeing as to what
-this means.
-
-I also think it's wrong to give user code instructions about what
-kernel checks it should do.  Have the user code call the kernel and
-have the kernel implement the policy.
-
-> +/*
-> + * When SECBIT_SHOULD_EXEC_RESTRICT is set, a process should only allow
-> + * execution of approved files, if any (see SECBIT_SHOULD_EXEC_CHECK).  =
-For
-> + * instance, script interpreters called with a script snippet as argumen=
-t
-> + * should always deny such execution if SECBIT_SHOULD_EXEC_RESTRICT is s=
-et.
-> + * However, if a script interpreter is called with both
-> + * SECBIT_SHOULD_EXEC_CHECK and SECBIT_SHOULD_EXEC_RESTRICT, they should
-> + * interpret the provided script files if no unchecked code is also prov=
-ided
-> + * (e.g. directly as argument).
-
-I think you're trying to say that this is like (the inverse of)
-Content-Security-Policy: unsafe-inline.  In other words, you're saying
-that, if RESTRICT is set, then programs should not execute code-like
-text that didn't come from a file.  Is that right?
-
-I feel like it would be worth looking at the state of the art of
-Content-Security-Policy and all the lessons people have learned from
-it.  Whatever the result is should be at least as comprehensible and
-at least as carefully engineered as Content-Security-Policy.
-
---Andy
+Thanks,
+Liam
 
