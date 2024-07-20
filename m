@@ -1,142 +1,167 @@
-Return-Path: <linux-kernel+bounces-258014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64EBE938224
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 18:44:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 727BD938227
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 18:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98BE21C20D1D
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 16:44:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E7061F21678
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 16:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C6B145B34;
-	Sat, 20 Jul 2024 16:44:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016131474CE;
+	Sat, 20 Jul 2024 16:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i/sZqTPX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dWG0EF1i"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D55145FEA;
-	Sat, 20 Jul 2024 16:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921C62B2CC;
+	Sat, 20 Jul 2024 16:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721493858; cv=none; b=sprfYuDEbWCzqVCskjxbo+AXezWd59psp35a6Fvojo6NYWJ4exApF+C3IJEtD26r9L72YRU3mlQm1pIGIal0RDg/PbVmKXRFOBiyktIqTPY8VJqQ4IyJkNqQXmr2aoYDHb5Cm+nKJCkZl32hbpcNiWqempOIi2/43y9AheuMHhA=
+	t=1721494015; cv=none; b=fD59GLOb7QnkVWuEJsiFo7D2DoeC9vcEv4of3IUG/iU0VJBRWHzKlkki6QJ5a5wt6uh8cIASVXy5gJ0oib0v+wng5+yyk7B+daUeyMEf6IdH0ar4lqUEBBeX1n9WMomAAq5jurxdMDYaw6lZokDWfAEeAYcJBCmLti1mattfya8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721493858; c=relaxed/simple;
-	bh=co3eFJoJmB8r16P3eCUweHLirAF/oqq5JYSMK7J3rvI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MBtuYwTk/HS0v//mk++8Z0qTtyw4EQH7ed/KlkL6HDjE3aKISTwzLZF40freJgIWCdS09gfSQzm93d5urozI4uJY/3bjkD87A0x9VXegxJYEFpXyKR+tO69Nw4cZBpnb4CvqD9ABUqPe3bH/tmygf6Idxumgsq6Wi/71GT3BwUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i/sZqTPX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86282C2BD10;
-	Sat, 20 Jul 2024 16:44:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721493857;
-	bh=co3eFJoJmB8r16P3eCUweHLirAF/oqq5JYSMK7J3rvI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i/sZqTPXVLOFI6rgsgCp/etM54zIrGYuMA3K+hWkWKK2kCBwgFYsHvPq/YP34/b5o
-	 SIB0Ooco5ZznJM9uWe2WEaz1xLnyx+qYzp8ZmqvZrYz9FwYcHppEHcZzUavksQRF1L
-	 rGGsS2oC3xr0T74mxTkyacLGmi6isLALLSPV8BboHdVlCaok8yYm37k7x2OvsMWz2x
-	 YYKsaC1Nr1j+b24GxTGXLDBTIyfH6zk3arY0HG7K7odOXhMsR86vj6/Zpal4chbLHh
-	 iq81QIv6RbT+IwYcaGkxMWzjvPldkWcGqhfN1RJOqdxs11gK1NtDcOxE+8Zxu0ceVQ
-	 H6mn3KAEv3Mdw==
-Date: Sat, 20 Jul 2024 09:44:17 -0700
-From: Kees Cook <kees@kernel.org>
-To: David Rientjes <rientjes@google.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Jann Horn <jannh@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Marco Elver <elver@google.com>, linux-mm@kvack.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] slab: Introduce kmalloc_obj() and family
-Message-ID: <202407200942.ECB06F1@keescook>
-References: <20240719192744.work.264-kees@kernel.org>
- <cd446dfc-d6b6-781f-3a07-5af1edbf2230@google.com>
+	s=arc-20240116; t=1721494015; c=relaxed/simple;
+	bh=8dqSyfOZbflIwM35rZGKAyMZYEYJN0/dCBhKuEnbGMg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oHmJ3JzfRMpSlKBX9OAT/an7vwjWY7qiiQeQNA13779DjMYiuCYtWSDl4ih4qZeifsM81dRYCRjY6xOKgg3BByX7NK0NHMCs1vQHZT4oTGe7+hh+svoYkZ0gBuTgehtbK/81rDYf+3FtbRyYipq4JaebZRoo6hde0SqGj/iF5JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dWG0EF1i; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-368663d7f80so1252821f8f.3;
+        Sat, 20 Jul 2024 09:46:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721494012; x=1722098812; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=l6XmwiNF0U9ALABlmqNHLWtjd5nTEgsEVV0Hcqvx7zs=;
+        b=dWG0EF1iI1d8pdYln2AntC1GftrEMe0CalfeYuhLScQRcSCHLbVEBg3qBoCWWa2Ozu
+         PkW1/01eI/Tjm0bxkw6ZxZsbt2ctIDxkwCoAcPXo/cyTOFS6vqDYFJV2fNv3X9Brmqcu
+         Q2+J4X9OGB19/k5gmxs+R59nxfp78AWe/yDMcbbzOZqRmDbOLCDPZVyfHWsw5EzRvzXW
+         Dae9xiWKc9B6sDR5LakzwGOQNuRn67OCiFCa8sGMN+N9BLD5nrryxvVlhr5DuhNkCT1d
+         pOg9JDzGnDD7uY1OEOjvNB+lLsPXWEtTp2euU6U778hwM5xqgc6MeccomyhErMRXxtVo
+         /8sA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721494012; x=1722098812;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=l6XmwiNF0U9ALABlmqNHLWtjd5nTEgsEVV0Hcqvx7zs=;
+        b=lbZkTWeNPodZvQH/nPLLsgeji33nUA4LpFIiBAultS0mnL6tDoUtjIAt8l7BCSPlo6
+         G0JkR+Itg56pPgi7xc0r58Gwho8yW70amDUDV0sxZzge17xlvH3KRzyPD232ulsp1mzM
+         TPx7gcZJgtWmzCgQaOl0erVYrz0vEzaifrk2TTGPmhl2z7MGuhP079q/0kPRcMvBFIgS
+         Fg1Z+dIc1ZoB9055RG1KHLcP526zxKfuusE/HE8odznd4wfrzU22yj86MWiDziYmw7CW
+         w3grrDm/gn7gNqLzYmizRr+xvmwgjIRtAeploY6wkOAG0mUQ9EIp8YyuQO3G8kxJf8hA
+         tGow==
+X-Forwarded-Encrypted: i=1; AJvYcCUwDWOe471GMctEbl7cOOfYM+QZAk6gGZB8OSn77OgglbSt+mqia02MuntGRNeLx+y7qPPUR9ZJB0Ov+ElcKorxI9ZySQb8jFRp6nVbbg/4d3uiyTvGS2O5LF+eurJl107nx5X/Kpdv+WllOakQjTRXxhA/2Vx6Hnwn
+X-Gm-Message-State: AOJu0YzzFWyevaTM9Ui+urD6FcrgHX4667S/2KRKFd8BpTqM2bUlyVft
+	ud6ylY2PQi5XcHAix84fGPviTv9md/6AYsScBSLxsDAg8NxjBRjn
+X-Google-Smtp-Source: AGHT+IE5Pz7ugxkqfgR4dRjntSLua/ddvvNazQUyapOJH+FfafymKxtCwgQeo94JmRGb5cwc1ufI9w==
+X-Received: by 2002:adf:a15a:0:b0:367:4dce:1ff5 with SMTP id ffacd0b85a97d-369bae50e74mr1120538f8f.32.1721494011616;
+        Sat, 20 Jul 2024 09:46:51 -0700 (PDT)
+Received: from yifee.lan ([176.230.105.233])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-368787eda2fsm4293616f8f.108.2024.07.20.09.46.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 20 Jul 2024 09:46:51 -0700 (PDT)
+From: Elad Yifee <eladwf@gmail.com>
+To: 
+Cc: eladwf@gmail.com,
+	daniel@makrotopia.org,
+	Felix Fietkau <nbd@nbd.name>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Mark Lee <Mark-MC.Lee@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	bpf@vger.kernel.org
+Subject: [PATCH net-next RFC] net: ethernet: mtk_eth_soc: use prefetch methods
+Date: Sat, 20 Jul 2024 19:46:18 +0300
+Message-ID: <20240720164621.1983-1-eladwf@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cd446dfc-d6b6-781f-3a07-5af1edbf2230@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 19, 2024 at 08:50:41PM -0700, David Rientjes wrote:
-> On Fri, 19 Jul 2024, Kees Cook wrote:
-> 
-> > diff --git a/include/linux/slab.h b/include/linux/slab.h
-> > index 7247e217e21b..3817554f2d51 100644
-> > --- a/include/linux/slab.h
-> > +++ b/include/linux/slab.h
-> > @@ -665,6 +665,44 @@ static __always_inline __alloc_size(1) void *kmalloc_noprof(size_t size, gfp_t f
-> >  }
-> >  #define kmalloc(...)				alloc_hooks(kmalloc_noprof(__VA_ARGS__))
-> >  
-> > +#define __alloc_obj3(ALLOC, P, COUNT, FLAGS)			\
-> > +({								\
-> > +	size_t __obj_size = size_mul(sizeof(*P), COUNT);	\
-> > +	void *__obj_ptr;					\
-> > +	(P) = __obj_ptr = ALLOC(__obj_size, FLAGS);		\
-> > +	if (!__obj_ptr)						\
-> > +		__obj_size = 0;					\
-> > +	__obj_size;						\
-> > +})
-> > +
-> > +#define __alloc_obj2(ALLOC, P, FLAGS)	__alloc_obj3(ALLOC, P, 1, FLAGS)
-> > +
-> > +#define __alloc_obj4(ALLOC, P, FAM, COUNT, FLAGS)		\
-> > +({								\
-> > +	size_t __obj_size = struct_size(P, FAM, COUNT);		\
-> > +	void *__obj_ptr;					\
-> > +	(P) = __obj_ptr = ALLOC(__obj_size, FLAGS);		\
-> > +	if (!__obj_ptr)						\
-> > +		__obj_size = 0;					\
-> > +	__obj_size;						\
-> > +})
-> > +
-> > +#define kmalloc_obj(...)					\
-> > +	CONCATENATE(__alloc_obj,				\
-> > +		    COUNT_ARGS(__VA_ARGS__))(kmalloc, __VA_ARGS__)
-> > +
-> > +#define kzalloc_obj(...)					\
-> > +	CONCATENATE(__alloc_obj,				\
-> > +		    COUNT_ARGS(__VA_ARGS__))(kzalloc, __VA_ARGS__)
-> > +
-> > +#define kvmalloc_obj(...)					\
-> > +	CONCATENATE(__alloc_obj,				\
-> > +		    COUNT_ARGS(__VA_ARGS__))(kvmalloc, __VA_ARGS__)
-> > +
-> > +#define kvzalloc_obj(...)					\
-> > +	CONCATENATE(__alloc_obj,				\
-> > +		    COUNT_ARGS(__VA_ARGS__))(kvzalloc, __VA_ARGS__)
-> > +
-> >  static __always_inline __alloc_size(1) void *kmalloc_node_noprof(size_t size, gfp_t flags, int node)
-> >  {
-> >  	if (__builtin_constant_p(size) && size) {
-> 
-> I'm supportive of this especially because it will pave a pathway toward 
-> future hardening work.  Request: could we get an addition to 
+Utilize kernel prefetch methods for faster cache line access.
+This change boosts driver performance,
+allowing the CPU to handle about 5% more packets/sec.
 
-Thanks!
+Signed-off-by: Elad Yifee <eladwf@gmail.com>
+---
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-> Documentation/ that explains how common idioms today can be converted to 
-> these new macros for future users?  The above makes sense only when 
-> accompanied by your commit description :)
-
-Oh, yes. Very good point! I will figure out a place to add this. I'm not
-sure if kerndoc would be best here.
-
+diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+index 0cc2dd85652f..1a0704166103 100644
+--- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
++++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+@@ -1963,6 +1963,7 @@ static u32 mtk_xdp_run(struct mtk_eth *eth, struct mtk_rx_ring *ring,
+ 	if (!prog)
+ 		goto out;
+ 
++	prefetchw(xdp->data_hard_start);
+ 	act = bpf_prog_run_xdp(prog, xdp);
+ 	switch (act) {
+ 	case XDP_PASS:
+@@ -2039,7 +2040,7 @@ static int mtk_poll_rx(struct napi_struct *napi, int budget,
+ 		idx = NEXT_DESP_IDX(ring->calc_idx, ring->dma_size);
+ 		rxd = ring->dma + idx * eth->soc->rx.desc_size;
+ 		data = ring->data[idx];
+-
++		prefetch(rxd);
+ 		if (!mtk_rx_get_desc(eth, &trxd, rxd))
+ 			break;
+ 
+@@ -2105,6 +2106,7 @@ static int mtk_poll_rx(struct napi_struct *napi, int budget,
+ 			if (ret != XDP_PASS)
+ 				goto skip_rx;
+ 
++			net_prefetch(xdp.data_meta);
+ 			skb = build_skb(data, PAGE_SIZE);
+ 			if (unlikely(!skb)) {
+ 				page_pool_put_full_page(ring->page_pool,
+@@ -2113,6 +2115,7 @@ static int mtk_poll_rx(struct napi_struct *napi, int budget,
+ 				goto skip_rx;
+ 			}
+ 
++			prefetchw(skb->data);
+ 			skb_reserve(skb, xdp.data - xdp.data_hard_start);
+ 			skb_put(skb, xdp.data_end - xdp.data);
+ 			skb_mark_for_recycle(skb);
+@@ -2143,6 +2146,7 @@ static int mtk_poll_rx(struct napi_struct *napi, int budget,
+ 			dma_unmap_single(eth->dma_dev, ((u64)trxd.rxd1 | addr64),
+ 					 ring->buf_size, DMA_FROM_DEVICE);
+ 
++			net_prefetch(data);
+ 			skb = build_skb(data, ring->frag_size);
+ 			if (unlikely(!skb)) {
+ 				netdev->stats.rx_dropped++;
+@@ -2150,6 +2154,7 @@ static int mtk_poll_rx(struct napi_struct *napi, int budget,
+ 				goto skip_rx;
+ 			}
+ 
++			prefetchw(skb->data);
+ 			skb_reserve(skb, NET_SKB_PAD + NET_IP_ALIGN);
+ 			skb_put(skb, pktlen);
+ 		}
 -- 
-Kees Cook
+2.45.2
+
 
