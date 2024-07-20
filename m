@@ -1,151 +1,152 @@
-Return-Path: <linux-kernel+bounces-258036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C2FC938267
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 20:12:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA6F893826C
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 20:23:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 951DAB21615
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 18:12:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B08951F214F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 18:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088C414882D;
-	Sat, 20 Jul 2024 18:12:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB6E1487F6;
+	Sat, 20 Jul 2024 18:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AB84Dxvy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZYVO6mr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382107462;
-	Sat, 20 Jul 2024 18:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606313D66;
+	Sat, 20 Jul 2024 18:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721499135; cv=none; b=Wjf+Dwb8byvtoAiKr5To46jc0OKwnrvewVM1mxuQTN8W9QemNxOCuiGuPzL04B8oIEJ/ggZlYpnfn9dfsMjo0KXobn7iX3yHOAz2wC9eBEzoCT5fY8poqm38LDY5rXH42DUBQLum4Qg222WZ+fRnmqsjXapPKxocVt/ki0NBJXY=
+	t=1721499796; cv=none; b=Od2pXY9JrS4NsHSF8JxUpoonyDf0FGjzceMBqNML123jLfJ8uTvAqycHwIK5sUpe9pMcGuPXStIJBF7dulEH6Qrk87HRe+AeT4vMUuVu4PTYdqGOasXKZWTvP19Rm5hO8j0Msoie43xhtIJrmmrqESmSKpekMLvqcvV+L8tNXRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721499135; c=relaxed/simple;
-	bh=xvGkl/Q5RZm1OHzjC1CEvaV9TM/ddsiXIvui9kZdAxA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BrD7yhSI1NJK+oMZLyXTfYxaYqZIPCNafYB4p114k7jbjTOCsHhn9/1GVycH+rvhK99e6Vzck2mNNOY+TS8epAX915O7ht+fg3Ql1OD+NzNLgmUJ4B9kgzk6b5T5orf0vyLmV1o9azm8XOnrrVAv0ko3mGcV/vHBm/7z9D0Vt90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AB84Dxvy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC4EDC2BD10;
-	Sat, 20 Jul 2024 18:12:14 +0000 (UTC)
+	s=arc-20240116; t=1721499796; c=relaxed/simple;
+	bh=GGD7e1WPDlKXCrtZ5zhf0FpwK1+55QyJ/frvI+THLkA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ecded8N4/4eIkUQIR0F/WTOV53evWWRCfB3rzKjMrbKJXsTxZ66X1mS/3HwmHRZb2EHevFd/+JwLhHvXIiFQSTql0V3iVwPrEqYZgMJsuTe5JGkqEgCZnknw9VnRxY+/FUuJXHvE0jAbQab/FzSBYYCZ2tKkBAkCaSF4Awriag0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZYVO6mr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FE98C2BD10;
+	Sat, 20 Jul 2024 18:23:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721499134;
-	bh=xvGkl/Q5RZm1OHzjC1CEvaV9TM/ddsiXIvui9kZdAxA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AB84DxvybDZU1PPp2G3mtE1hLs6HalMqgJQo3syRQHPW0Y9ZIBZbxd5UBGB+EO+fV
-	 bLWmVNVu510YlPs+0CmS5T54l3N1yjyJLZqdJCwcgetS1l6xcaQ1xh1u50sLiyWUqW
-	 SJrkzgli6EDFqXuw37oCKl2Z1asL+623EADegqDWmdnahmHjqUlj2pMx5ZSPFg8B9d
-	 eNrA6GFh1Cek1YPtzejqdgyDUzODIyz0mBLoMRJM9jlpzEqlhJcRJg1ibl8Kmgc2oZ
-	 mx/bZnh8Wr6U6OLO3Dd89t9vGKO64J2UdA7LLTJ4GxuJF21VEh1UZFlB8E6xcG2bf+
-	 5UryfthWGMyJw==
-Date: Sat, 20 Jul 2024 11:12:14 -0700
-From: Kees Cook <kees@kernel.org>
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: David Gow <davidgow@google.com>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	Rae Moar <rmoar@google.com>, Jonathan Corbet <corbet@lwn.net>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] Documentation: KUnit: Update filename best practices
-Message-ID: <202407201111.C5DE72A11C@keescook>
-References: <20240720165441.it.320-kees@kernel.org>
- <c9613b11-5751-400f-ae83-4590d4593ab4@nvidia.com>
+	s=k20201202; t=1721499795;
+	bh=GGD7e1WPDlKXCrtZ5zhf0FpwK1+55QyJ/frvI+THLkA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZZYVO6mrSUpPMavfPhY/ZBIZM/HE7dSxINWhEQkbg+mTpfjsGM38b20kZszA1SLJJ
+	 96OCnKRujwHWeXJtjzMUHOo2LfOF0WyxCvQtSHGI2Fsh2sU+cKHwkIABifVpbnkrv1
+	 RT5FVURlgoDiclNQTNuFtfMgeYD11ezxaJ1/G1mD2OufOp++zWIEpI2UQC8eWQnrdt
+	 jIcNT9Vy8/UGX5v0eqFyrDA6rzJDJSlGxJ0glPnMju4bOkrAASXLgHJQZRN+7rHrxO
+	 6sRv/XXSwaW5D6RnrqQAHIEMg+QhSqiNcxvHE7SZDbDvRBcJ+GTgR61Qc+l+pi4p+w
+	 g084DiCEF7xGA==
+Message-ID: <a88faea2-662c-4c19-96b5-bfa423cd826c@kernel.org>
+Date: Sat, 20 Jul 2024 20:23:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c9613b11-5751-400f-ae83-4590d4593ab4@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 2/4] arm: dts: marvell: armada-38x: add description
+ for usb phys
+To: Josua Mayer <josua@solid-run.com>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+ Gregory Clement <gregory.clement@bootlin.com>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Yazan Shhady <yazan.shhady@solid-run.com>,
+ "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <20240716-a38x-utmi-phy-v2-0-dae3a9c6ca3e@solid-run.com>
+ <20240716-a38x-utmi-phy-v2-2-dae3a9c6ca3e@solid-run.com>
+ <44ce546d-c043-44ad-9e2c-eaf052e5531b@kernel.org>
+ <2a7936ef-3a50-49df-b6a9-337b38d33c57@solid-run.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <2a7936ef-3a50-49df-b6a9-337b38d33c57@solid-run.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Jul 20, 2024 at 10:59:10AM -0700, John Hubbard wrote:
-> On 7/20/24 9:54 AM, Kees Cook wrote:
-> > Based on feedback from Linus[1] and follow-up discussions, change the
-> > suggested file naming for KUnit tests.
-> > 
-> > Link: https://lore.kernel.org/lkml/CAHk-=wgim6pNiGTBMhP8Kd3tsB7_JTAuvNJ=XYd3wPvvk=OHog@mail.gmail.com/ [1]
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> > ---
-> > Cc: David Gow <davidgow@google.com>
-> > Cc: Brendan Higgins <brendan.higgins@linux.dev>
-> > Cc: Rae Moar <rmoar@google.com>
-> > Cc: John Hubbard <jhubbard@nvidia.com>
-> > Cc: Jonathan Corbet <corbet@lwn.net>
-> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> > Cc: linux-kselftest@vger.kernel.org
-> > Cc: kunit-dev@googlegroups.com
-> > Cc: linux-doc@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Cc: linux-hardening@vger.kernel.org
-> > ---
-> >   Documentation/dev-tools/kunit/style.rst | 25 +++++++++++++++----------
-> >   1 file changed, 15 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/Documentation/dev-tools/kunit/style.rst b/Documentation/dev-tools/kunit/style.rst
-> > index b6d0d7359f00..1538835cd0e2 100644
-> > --- a/Documentation/dev-tools/kunit/style.rst
-> > +++ b/Documentation/dev-tools/kunit/style.rst
-> > @@ -188,15 +188,20 @@ For example, a Kconfig entry might look like:
-> >   Test File and Module Names
-> >   ==========================
-> > -KUnit tests can often be compiled as a module. These modules should be named
-> > -after the test suite, followed by ``_test``. If this is likely to conflict with
-> > -non-KUnit tests, the suffix ``_kunit`` can also be used.
-> > -
-> > -The easiest way of achieving this is to name the file containing the test suite
-> > -``<suite>_test.c`` (or, as above, ``<suite>_kunit.c``). This file should be
-> > -placed next to the code under test.
-> > +Whether a KUnit test is compiled as a separate module or via an
-> > +``#include`` in a core kernel source file, the file should be named
-> > +after the test suite, followed by ``_kunit``, and live in a ``tests``
-> > +subdirectory to avoid conflicting with regular modules (e.g. if "foobar"
-> > +is the core module, then "foobar_kunit" is the KUnit test module) or the
-> > +core kernel source file names (e.g. for tab-completion). Many existing
-> > +tests use a ``_test`` suffix, but this is considered deprecated.
-> 
-> For this paragraph, may I suggest this wording below? It attempts to
-> explain the _kunit a bit (without leaving anything behind that would need
-> to be changed later, if/when people rename things from _test.c to _kunit.c),
-> as well as fixing up the sentence structure slightly:
-> 
-> 
-> Whether a KUnit test is compiled as a separate module or via an
-> ``#include`` in a core kernel source file, the file should be named
-> after the test suite, followed by ``_kunit``, and live in a ``tests``
-> subdirectory. This is to avoid conflicting with regular modules (e.g. if
-> "foobar" is the core module, then "foobar_kunit" is the KUnit test
-> module) or with the core kernel source file names (e.g. for
-> tab-completion). The ``_kunit`` suffix was chosen over the older (and
-> now deprecated) ``_test`` suffix, because KUnit behavior is sufficiently
-> distinct that it is worth identifying at file name level.
+On 20/07/2024 15:19, Josua Mayer wrote:
+> Am 17.07.24 um 14:04 schrieb Krzysztof Kozlowski:
+>> On 16/07/2024 22:52, Josua Mayer wrote:
+>>> Armada 38x has 3x USB-2.0 utmi phys. They are almost identical to the 2x
+>>> utmi phys on armada 8k.
+>>>
+>>> Add descriptions for all 3 phy ports.
+>>>
+>>> Signed-off-by: Josua Mayer <josua@solid-run.com>
+>>> ---
+>>>  arch/arm/boot/dts/marvell/armada-38x.dtsi | 29 +++++++++++++++++++++++++++++
+>>>  1 file changed, 29 insertions(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/marvell/armada-38x.dtsi b/arch/arm/boot/dts/marvell/armada-38x.dtsi
+>>> index 446861b6b17b..701a1c0c19ad 100644
+>>> --- a/arch/arm/boot/dts/marvell/armada-38x.dtsi
+>>> +++ b/arch/arm/boot/dts/marvell/armada-38x.dtsi
+>>> @@ -392,6 +392,11 @@ comphy5: phy@5 {
+>>>  				};
+>>>  			};
+>>>  
+>>> +			syscon0: system-controller@18400 {
+>>> +				compatible = "syscon", "simple-mfd";
+>> That's not a valid pair. They cannot be alone.
+> Curious! I have seen it in armada-cp11x.dtsi.
 
-Sure! I like that.
+Old code, I don't think anyone is working on armada and other Marvell
+chips, so by copying old code you will copy bugs or wrong designs. I can
+only suggest to work on recent platform where such oddities are fixed...
 
-> > +
-> > +So for the common case, name the file containing the test suite
-> > +``tests/<suite>_kunit.c``. The ``tests`` directory should be placed at
-> > +the same level as the code under test. For example, tests for
-> > +``lib/string.c`` live in ``lib/tests/string_kunit.c``.
-> >   If the suite name contains some or all of the name of the test's parent
-> > -directory, it may make sense to modify the source filename to reduce redundancy.
-> > -For example, a ``foo_firmware`` suite could be in the ``foo/firmware_test.c``
-> > -file.
-> > +directory, it may make sense to modify the source filename to reduce
-> > +redundancy. For example, a ``foo_firmware`` suite could be in the
-> > +``tests/foo/firmware_kunit.c`` file.
-> 
-> Whether you use that wording or not, this looks good, so:
-> 
-> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+Best regards,
+Krzysztof
 
-Thanks!
-
--- 
-Kees Cook
 
