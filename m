@@ -1,488 +1,125 @@
-Return-Path: <linux-kernel+bounces-257785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ABFD937EEB
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 06:25:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCAB4937EEC
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 06:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA6F31C20FF2
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 04:25:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7B901C21243
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 04:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C611ADDCB;
-	Sat, 20 Jul 2024 04:25:27 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B403BD30B;
+	Sat, 20 Jul 2024 04:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CBICqFhy"
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1148BE4E
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 04:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D88917FD
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 04:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721449526; cv=none; b=BmgFHiq51Wss3u7hSbHzrDRtZS29Ta+pDTifh+HkbZPtl3/ewTlziHlzgDfhX7camoGGXYi1bvAn1IH868jocz6wihmC4gFSjNEucmCiDj3Z8brguxxP3aczYN+4627ZP4to5Bjw4wb11qBTn++TUGu3/7KRq4ftL3nOrUBilMU=
+	t=1721450498; cv=none; b=LZiOeskAd2z2afR7LBaVEqyCweWVbCwLvVWBrrwog5HIF/cNhshDTWU8EGFU0Yl0Ueh218k3+qaxXZFca7mvWEpdmG6wrXF9a6pUfIDPJI8CwFVWVWnDliohcfXd55MHzpkKC0eJS6u0h9/4xn6fMIVr5kpFFX2N2/CY7Y66ERg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721449526; c=relaxed/simple;
-	bh=n2M18e4aU5nuk5q4mIz1jDkWB/NkOP5uiYQT5HKab88=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=u0CdvBzsi6OtJOPCnY1jieFgefhK5yBjztB4vkOGLRRaKZTmGAITBImDYmCO9O0JfOx/m99615zMcWRfn/MZF1uKDpWEdULqr5lg7cnbSOZKqT1VCngmQzT7mZRVP3aOalF02XAL4nABDYsKM2kB8dVrkZFDJXLxl02I39vDudY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-397810ad718so26832415ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 21:25:24 -0700 (PDT)
+	s=arc-20240116; t=1721450498; c=relaxed/simple;
+	bh=s5tMGJSw+PmyLmw+DJ4FYIqzjhsgNktnj1ofxvzPq4E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rZwKtiCAXvGZwqPoqRuUUDRYIcrvTZMrppfH9e5Gx7VjS4puqXvOOgb11p0kM/3IYpq3tTsZiF1VPXhMnHPio4PW9ZLPpS4D06wuPod2s5EqoQSgQK3+Q6CTZ3B7yOOolGfMvpKn55JVHMYDKA0hONIU7aiUPtNq8aCTLsZOuAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CBICqFhy; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3d9e13ef8edso1570788b6e.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 21:41:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721450495; x=1722055295; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TazlOyBq9n8e3ZgcH3KBbY9Dk+2vyIhBQceuB/M1KFA=;
+        b=CBICqFhy+cpI2M8B9F8tIKUoVrUz76qJbTOcCdy6eWVMbR35BZSHBYCyJUZg4XQBUG
+         l7XD3qWBDGlO0TvVIKJSOBE7FSLb2N+/x5dYfJgRILtWXGdssMC9vwcYx5ECe/UBslk+
+         D44pWVrsE0iFP9yJSytfeillm+p0d5k4ifRrmG3vrjqb3x9s6dYp5zSyoOfJe6H1YnoR
+         fIwa0gK3a9SYFMrv3+croj2eOWSIYZaeK71HuNffiqyhXXQs1jj2v81iIqSB7Ro4b40s
+         iOhMdON+Q2SlgXIRWHBSrpSMgZyLTCGCbLZoa4ldAgXPv9bEIE9dKIs9JpdYeHXeMhcL
+         aiBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721449524; x=1722054324;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ByxoOSv5pN+8lSoVGtQj3lO5NsPmZ9BaCam6ItAw7rQ=;
-        b=mYMQZxNPZ2AdAdzmB9ltQO9p36M+v0LRWMCLrBONDQrunuJB6LBmqgGK5+6vYi6wOB
-         RYR45D7Q0hf4XIyTOqaznCdQb7VuLnJNQTBeO5zuIHImgLGdcvsM/KcmA1Q9ImX0R6JO
-         QJSEzvYpjAh18CT6CV2c2r0sTED9tQLfWnMAcfcMZycWYf7JYbUQHfS+7JGiNgjQyJoR
-         3ksMsnA6DpZny4fhXC8Un/8cFBpwzJeJap+IyKVKWUCluu4z9zK/kFqe0NaAUgUudCKF
-         /ElYzZaBu0bwoGVFl4twMB+sh5XWaRCVZF8OpD6sldUCEfDrpOuWfUl7Rvd+eGHQAo50
-         U2Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCVPfMOCFMeUV1cn/auLQIx7LyuN78+oXDtfsCmFz7dGOBnIj5EvNRnXsoFmn69eJvvvh/Gpf/Emrk87QRQ84FhYpEJ2IQvWUord8e9r
-X-Gm-Message-State: AOJu0YzjfAYSWtfYSsgpUobhSFRh2nyYs7OONnz15oTLQx5Sv2z3gtQY
-	c66L7hzbZxICf1rd/Zg/5tpvkLLBlz3MmzV97ZtRQ1R0Ori6Bp7dN1GqLcs8C4jJmbY+S3QErRz
-	aI58Qf1W1KZsRHmSoLftXmxrEJ1hPthjeWlf+M120Kpveo4B/EwGsGnc=
-X-Google-Smtp-Source: AGHT+IEeVPzmVefnGchE5YFftqNMZuiRIBoXpbxhcxLCihohAXRwJq+zjSaXpISQNVhfuEDtcdGMasFiAsaz9W+Spg8/T2tQ/Ek2
+        d=1e100.net; s=20230601; t=1721450495; x=1722055295;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TazlOyBq9n8e3ZgcH3KBbY9Dk+2vyIhBQceuB/M1KFA=;
+        b=p0NQ/68yqkpSLuaKcz8WZe1IS0G1fs1ijFJYdhG49l9oIi46MdKDKbrcSCvHrNGL/7
+         g69f2s6U9TtKVyoqlk/P/SjKSqIqi3ncbxjEIrfr5kUaeoGWw0WwcUgWE3AJnFU5hcUn
+         FPwcRF08wSKL0aAcEVM3KJ++dMsmfAysQtkM93y5atyMhDsuTUee3/7zoC0ilFhFUT13
+         TpsjNuuF7Z+vneR7R+oPktrJrepRve7DkidBj9Ehmr4HkFP3BZoGQmvVu0VZMelAlXf+
+         ur22tt8xA6ftmgVgOcKuvf2TC0LXM4bz7C20nA49FhEsVVH7frUaTrWeX1CrjlE4Pv8l
+         ROJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXzgymle+AzfBpnPpjHyHD7xtyZKrSDrNHfZMfLUPJG4YGebUojzwEPSsmqATUt9sMA4U4zO4H5gmh2Fc8SZtsZ3zus8Ks4aNplMr6P
+X-Gm-Message-State: AOJu0YwByRWUWa7siPigT4Ti2Vsd0oQ8OelfwQRAIDCGtgq53kg3FWSU
+	ap11FBv2OybnnQsIRGtmqlM8+kR86pL1vtL1G495LlSRv4ZiLHz/
+X-Google-Smtp-Source: AGHT+IEQTgYsXPO4r/PNUv8ffc7ODyfYPBm5tDS4j4swPzpIs3ZqD+AJtllRuvQV+fjq4BAIx5ShFA==
+X-Received: by 2002:a05:6808:1a01:b0:3d9:2562:7541 with SMTP id 5614622812f47-3dae62e9898mr1980921b6e.24.1721450495625;
+        Fri, 19 Jul 2024 21:41:35 -0700 (PDT)
+Received: from cbuild.incus (h101-111-009-128.hikari.itscom.jp. [101.111.9.128])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f315c11sm13023465ad.125.2024.07.19.21.41.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 21:41:35 -0700 (PDT)
+From: Takero Funaki <flintglass@gmail.com>
+To: Johannes Weiner <hannes@cmpxchg.org>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Takero Funaki <flintglass@gmail.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] mm: zswap: fixes for global shrinker
+Date: Sat, 20 Jul 2024 04:41:23 +0000
+Message-ID: <20240720044127.508042-1-flintglass@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aae:b0:397:7dd7:bea5 with SMTP id
- e9e14a558f8ab-398e17ac737mr1615815ab.0.1721449523918; Fri, 19 Jul 2024
- 21:25:23 -0700 (PDT)
-Date: Fri, 19 Jul 2024 21:25:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005f49c2061da633f4@google.com>
-Subject: [syzbot] [net?] INFO: rcu detected stall in lapb_t1timer_expiry (2)
-From: syzbot <syzbot+0ad4cda8077288e1b15d@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, jhs@mojatatu.com, 
-	jiri@resnulli.us, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
-	xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+This series addresses issues in the zswap global shrinker that could not
+shrink stored pages. With this series, the shrinker continues to shrink
+pages until it reaches the accept threshold more reliably.
 
-syzbot found the following issue on:
+These patches were extracted and updated from the original patch series
+v2 (mm: zswap: global shrinker fix and proactive shrink):
+https://lore.kernel.org/linux-mm/20240706022523.1104080-1-flintglass@gmail.com/
 
-HEAD commit:    5e0497553643 Merge branch 'link_path_walk'
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=167a7149980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b459dd7449326b1f
-dashboard link: https://syzkaller.appspot.com/bug?extid=0ad4cda8077288e1b15d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=116f0be1980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=117a7149980000
+Changes in v3:
+- Extract fixes for shrinker as a separate patch series.
+- Fix comments and commit messages. (Chengming, Yosry)
+- Drop logic to detect rare doubly advancing cursor. (Yosry)
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/8379effc488a/disk-5e049755.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/15d272e97422/vmlinux-5e049755.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/35ecaef6865c/bzImage-5e049755.xz
+Changes in v2:
+mm: zswap: fix global shrinker memcg iteration:
+- Change the loop style (Yosry, Nhat, Shakeel)
+mm: zswap: fix global shrinker error handling logic:
+- Change error code for no-writeback memcg. (Yosry)
+- Use nr_scanned to check if lru is empty. (Yosry)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0ad4cda8077288e1b15d@syzkaller.appspotmail.com
-
-rcu: INFO: rcu_preempt detected expedited stalls on CPUs/tasks: {
- 1-.... } 2664 jiffies s: 601 root: 0x2/.
-rcu: blocking rcu_node structures (internal RCU debug):
-Sending NMI from CPU 0 to CPUs 1:
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-NMI backtrace for cpu 1
-CPU: 1 PID: 1671 Comm: kworker/1:2 Not tainted 6.10.0-syzkaller-00017-g5e0497553643 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Workqueue: events request_firmware_work_func
-RIP: 0010:number+0x313/0xf90 lib/vsprintf.c:500
-Code: 03 42 0f b6 04 28 84 c0 4c 8b 74 24 30 0f 85 0f 0c 00 00 88 9c 24 80 00 00 00 41 bc 01 00 00 00 e9 3d 01 00 00 bf 0a 00 00 00 <89> de e8 16 0f 1f f6 83 fb 0a 75 23 e8 cc 0a 1f f6 48 8d 9c 24 80
-RSP: 0018:ffffc90000a17340 EFLAGS: 00000002
-RAX: 0000000000010505 RBX: 000000000000000a RCX: ffff888024388000
-RDX: 0000000000010505 RSI: 000000000000000a RDI: 000000000000000a
-RBP: ffffc90000a17450 R08: ffffffff8b771d69 R09: 0000000000000000
-R10: ffffc90000a173c0 R11: fffff52000142e7b R12: 00000000ffff0a00
-R13: dffffc0000000000 R14: 000000000000008d R15: ffffc90000a177a1
-FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f0ee01f60f0 CR3: 000000007c4b8000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <NMI>
- </NMI>
- <IRQ>
- vsnprintf+0x1542/0x1da0 lib/vsprintf.c:2890
- sprintf+0xda/0x120 lib/vsprintf.c:3028
- print_time kernel/printk/printk.c:1330 [inline]
- info_print_prefix+0x16b/0x310 kernel/printk/printk.c:1356
- record_print_text kernel/printk/printk.c:1405 [inline]
- printk_get_next_message+0x6da/0xbe0 kernel/printk/printk.c:2840
- console_emit_next_record kernel/printk/printk.c:2880 [inline]
- console_flush_all+0x410/0xfd0 kernel/printk/printk.c:2979
- console_unlock+0x13b/0x4d0 kernel/printk/printk.c:3048
- vprintk_emit+0x5a6/0x770 kernel/printk/printk.c:2348
- _printk+0xd5/0x120 kernel/printk/printk.c:2373
- int_irq+0x1bd/0x250 drivers/media/usb/gspca/gspca.c:104
- __usb_hcd_giveback_urb+0x42c/0x6e0 drivers/usb/core/hcd.c:1650
- dummy_timer+0x830/0x45d0 drivers/usb/gadget/udc/dummy_hcd.c:1987
- __run_hrtimer kernel/time/hrtimer.c:1689 [inline]
- __hrtimer_run_queues+0x59b/0xd50 kernel/time/hrtimer.c:1753
- hrtimer_interrupt+0x396/0x990 kernel/time/hrtimer.c:1815
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1032 [inline]
- __sysvec_apic_timer_interrupt+0x110/0x3f0 arch/x86/kernel/apic/apic.c:1049
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0x52/0xc0 arch/x86/kernel/apic/apic.c:1043
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:check_kcov_mode kernel/kcov.c:173 [inline]
-RIP: 0010:__sanitizer_cov_trace_pc+0x2f/0x70 kernel/kcov.c:207
-Code: 8b 04 24 65 48 8b 0c 25 80 d4 03 00 65 8b 15 c0 ab 6d 7e f7 c2 00 01 ff 00 74 11 f7 c2 00 01 00 00 74 35 83 b9 1c 16 00 00 00 <74> 2c 8b 91 f8 15 00 00 83 fa 02 75 21 48 8b 91 00 16 00 00 48 8b
-RSP: 0018:ffffc90000a185f8 EFLAGS: 00000246
-RAX: ffffffff894e6502 RBX: 0000000000000001 RCX: ffff888024388000
-RDX: 0000000000000504 RSI: ffffffff8c1f5520 RDI: ffffffff8c1f54e0
-RBP: ffff8880222d6000 R08: ffffffff894e64f0 R09: 1ffffffff25eecb0
-R10: dffffc0000000000 R11: fffffbfff25eecb1 R12: ffff888015b55dc0
-R13: dffffc0000000000 R14: ffff8880222d6008 R15: 0000000000000000
- rcu_read_lock include/linux/rcupdate.h:782 [inline]
- dev_queue_xmit_nit+0x72/0xc10 net/core/dev.c:2292
- xmit_one net/core/dev.c:3574 [inline]
- dev_hard_start_xmit+0x15f/0x7e0 net/core/dev.c:3594
- sch_direct_xmit+0x2b6/0x5f0 net/sched/sch_generic.c:343
- __dev_xmit_skb net/core/dev.c:3807 [inline]
- __dev_queue_xmit+0x1a24/0x3d30 net/core/dev.c:4359
- lapb_data_transmit+0x91/0xb0 net/lapb/lapb_iface.c:447
- lapb_transmit_buffer+0x168/0x1f0 net/lapb/lapb_out.c:149
- lapb_t1timer_expiry+0x6b8/0xb20
- call_timer_fn+0x18e/0x650 kernel/time/timer.c:1792
- expire_timers kernel/time/timer.c:1843 [inline]
- __run_timers kernel/time/timer.c:2417 [inline]
- __run_timer_base+0x66a/0x8e0 kernel/time/timer.c:2428
- run_timer_base kernel/time/timer.c:2437 [inline]
- run_timer_softirq+0xb7/0x170 kernel/time/timer.c:2447
- handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:console_flush_all+0xaad/0xfd0 kernel/printk/printk.c:2985
-Code: ff ff e8 b6 ce 1f 00 90 0f 0b 90 e9 d8 f8 ff ff e8 a8 ce 1f 00 e8 c3 4c 07 0a 4d 85 f6 74 b6 e8 99 ce 1f 00 fb 48 8b 44 24 70 <42> 0f b6 04 38 84 c0 48 8b 7c 24 30 0f 85 22 02 00 00 0f b6 1f 31
-RSP: 0018:ffffc90004daf5a0 EFLAGS: 00000293
-RAX: 1ffff920009b5f00 RBX: 0000000000000000 RCX: ffff888024388000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90004daf750 R08: ffffffff817659b4 R09: 1ffffffff25eecc2
-R10: dffffc0000000000 R11: fffffbfff25eecc3 R12: ffffffff8eb13378
-R13: ffffffff8eb13320 R14: 0000000000000200 R15: dffffc0000000000
- console_unlock+0x13b/0x4d0 kernel/printk/printk.c:3048
- vprintk_emit+0x5a6/0x770 kernel/printk/printk.c:2348
- _printk+0xd5/0x120 kernel/printk/printk.c:2373
- regdb_fw_cb+0x19f/0x1c0
- request_firmware_work_func+0x1a4/0x280 drivers/base/firmware_loader/main.c:1167
- process_one_work kernel/workqueue.c:3248 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3329
- worker_thread+0x86d/0xd50 kernel/workqueue.c:3409
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 4.311 msecs
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_main: Resubmit URB failed with error -19
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_main: Resubmit URB failed with error -19
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_main: Resubmit URB failed with error -19
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_main: Resubmit URB failed with error -19
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_pac7302 1-1:0.0: URB error -71, resubmitting
-gspca_main: Resubmit URB failed with error -19
-
+Changes in v1:
+mm: zswap: fix global shrinker memcg iteration:
+- Drop and reacquire spinlock before skipping a memcg.
+- Add some comment to clarify the locking mechanism.
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Takero Funaki (2):
+  mm: zswap: fix global shrinker memcg iteration
+  mm: zswap: fix global shrinker error handling logic
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+ mm/zswap.c | 100 ++++++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 73 insertions(+), 27 deletions(-)
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+-- 
+2.43.0
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
