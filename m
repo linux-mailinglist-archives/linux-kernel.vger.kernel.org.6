@@ -1,128 +1,96 @@
-Return-Path: <linux-kernel+bounces-257870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CD0B937FF7
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 10:12:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9ED4937FF9
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 10:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF14F281A99
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 08:12:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95BDC2819EF
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 08:18:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA83F2E62B;
-	Sat, 20 Jul 2024 08:11:58 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA41328DB;
+	Sat, 20 Jul 2024 08:18:10 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B8A1A291
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 08:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FE61803D
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 08:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721463118; cv=none; b=DIIEz8pMc8cHqjXFZLAem4jtdO+Ci5ggOUUYSK7ob9Lwt4GWecdkpkSZKK+bofDiVjPqUcaq/pDdyQQFWj3Gb5DfUXljZHTlYGg5HKyqDRGyRweYuDYKxjm6MUwgQWt31o44eHVXMsPmuNTLmPpZl2WInaKooGnDUGjTAusWAIc=
+	t=1721463489; cv=none; b=bjvZ9AuSGANfo14NJeDo+dZCWoiJC+NgbN33XWp4uhy+Stlz40z3cpvOhXV6fExxPWusDZ1g30ihCB2ZVtnUVy3C3aeNzvs5acSfRDxHrKfLnhYbDdpV4lQI2lX1QXuaCZCGtTE2+QOWxeczAqQREemZK0Jl6Wuxr3saeLSAmDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721463118; c=relaxed/simple;
-	bh=wwdFiKdlkSc5q80BLYxYF2U+lKcoCHfh2eNCUDS2Rxo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GO/Q21IR5PiCOGkwHwvMp6SHeu9Rt6nHr6I94YKJ30hRYYIMreVgAvvhP3fnFWeeJOlHvz3IiZ87J0sTl0OGVv++qjHPI6z85dVS2KVpp3BCh/vdo/zerYuqUF/ijdR/qIzZVu+ztdk1eAYxoOO7JVH99PEinnmnYyARnYjk92o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WQzf846hyzlXjK;
-	Sat, 20 Jul 2024 16:06:56 +0800 (CST)
-Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
-	by mail.maildlp.com (Postfix) with ESMTPS id 55F2F1800A4;
-	Sat, 20 Jul 2024 16:11:52 +0800 (CST)
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 20 Jul 2024 16:11:51 +0800
-Message-ID: <f4ae2c9c-fe40-4807-bdb2-64cf2d716c1a@huawei.com>
-Date: Sat, 20 Jul 2024 16:11:51 +0800
+	s=arc-20240116; t=1721463489; c=relaxed/simple;
+	bh=eGq3lGqKaXEBbWNmvq6EoaVTxMPneuYAgTEBPybs3Zg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=C92J3ApiCvqD+n0vT+3pu7O1wJO4ZqFdApi7lOXa4jpKcideFcKRDUiKPseZuSCOJUa5dYZR/e1O4w1/RsQLKctj+L/FGBIqBh7v69MnQ7rL8VVC4EpTGvFpWQ7O+nZcCyt3pl8vSCjXN+YXSpVebTSmY1mV2BC5geR8QMu2vwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-396fa3fe46cso40361645ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 01:18:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721463487; x=1722068287;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YHpc9iNmXjDqLhEZLHYoT0SqXGs6tsOGHhQPx17dpRY=;
+        b=Ni0EuUTbbSIF6kNQtX3zgLIE1821x9Z3VNHIJH48DNAN+VVfMZ9Q/bo+E5ZVNyGcOW
+         2mAZorBirJ5mVDlL53vwjHxmI6Wpp3HwxsenFV1WtCvA+IlnT0g3o9wW8qkKXpBzyv8d
+         PWNyKGGc9Zv1T66yMNNf4NyqOvBBaHLzvk6PTiEv8oFvKyRJzziQn725pORXI9jJ/ZcV
+         IDUYP/4vRjAiQtQeBpPe3Pr+eo92VKKaeGPm3I0IeoFi4K/YHg6q766yZOpaTlRUVItc
+         feb19PaW6DcbbhRfzmlXRHqSf+Ri0ZhxkEdMkh5Fkihm64Y4ARuDY1cBo+HE0ZG1Z8Kc
+         hBug==
+X-Gm-Message-State: AOJu0YygQ13i5kgShkRwqUJI++802fJL5yiEhS6toV5NKwqytotRGS5/
+	2dSsacwWiUHtrp2EdGAc8AP/sZjtz/2fXNmUlpBfm4rEm5ZREwBwNgCr9dEBvZkq/QkWH1/8r2l
+	siH3WJ1iuPUGfZ3YeBJmRTqZrfT7c1dgIn2hd4xdyIxSby39meEITTR8=
+X-Google-Smtp-Source: AGHT+IHO4bdzwuFDLfN0iXgPheARn8Vb51fjmNO6NzKaRh+GxVsAwCWKcwEFh/jb35xilrSsYF99jq4EbPZh4ArRdbqLGQq97R21
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] memory tiering: read last_cpupid correctly in
- do_huge_pmd_numa_page()
-Content-Language: en-US
-To: Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>,
-	<linux-mm@kvack.org>
-CC: David Hildenbrand <david@redhat.com>, "Huang, Ying"
-	<ying.huang@intel.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
-	<linux-kernel@vger.kernel.org>
-References: <20240719144306.258018-1-ziy@nvidia.com>
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <20240719144306.258018-1-ziy@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemf100008.china.huawei.com (7.185.36.138)
+X-Received: by 2002:a05:6e02:1d15:b0:398:770d:1fc0 with SMTP id
+ e9e14a558f8ab-398e509bce1mr908385ab.2.1721463487736; Sat, 20 Jul 2024
+ 01:18:07 -0700 (PDT)
+Date: Sat, 20 Jul 2024 01:18:07 -0700
+In-Reply-To: <0000000000004a86bf0616571fc7@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ae3dfd061da973b5@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [net?] KMSAN: uninit-value in hsr_get_node (3)
+From: syzbot <syzbot+a81f2759d022496b40ab@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
+***
 
-On 2024/7/19 22:43, Zi Yan wrote:
-> last_cpupid is only available when memory tiering is off or the folio
-> is in toptier node. Complete the check to read last_cpupid when it is
-> available.
-> 
-> Before the fix, the default last_cpupid will be used even if memory
-> tiering mode is turned off at runtime instead of the actual value. This
-> can prevent task_numa_fault() from getting right numa fault stats, but
-> should not cause any crash. User might see performance changes after the
-> fix.
-> 
-> Reported-by: David Hildenbrand <david@redhat.com>
-> Closes: https://lore.kernel.org/linux-mm/9af34a6b-ca56-4a64-8aa6-ade65f109288@redhat.com/
-> Fixes: 33024536bafd ("memory tiering: hot page selection with hint page fault latency")
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
+Subject: Re: [syzbot] [net?] KMSAN: uninit-value in hsr_get_node (3)
+Author: aha310510@gmail.com
 
-Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
-and we better to check numabalance mode in migrate_misplaced_folio()?
+---
+ net/hsr/hsr_framereg.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -2630,7 +2630,8 @@ int migrate_misplaced_folio(struct folio *folio, 
-struct vm_area_struct *vma,
-                 putback_movable_pages(&migratepages);
-         if (nr_succeeded) {
-                 count_vm_numa_events(NUMA_PAGE_MIGRATE, nr_succeeded);
--               if (!node_is_toptier(folio_nid(folio)) && 
-node_is_toptier(node))
-+               if ((sysctl_numa_balancing_mode & 
-NUMA_BALANCING_MEMORY_TIERING)
-+                   &&!node_is_toptier(folio_nid(folio)) && 
-node_is_toptier(node))
-                         mod_node_page_state(pgdat, PGPROMOTE_SUCCESS,
-                                             nr_succeeded);
-         }
-
-
-
-> ---
->   mm/huge_memory.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index f4be468e06a4..825317aee88e 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -1712,7 +1712,8 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
->   	 * For memory tiering mode, cpupid of slow memory page is used
->   	 * to record page access time.  So use default value.
->   	 */
-> -	if (node_is_toptier(nid))
-> +	if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING) ||
-> +	    node_is_toptier(nid))
->   		last_cpupid = folio_last_cpupid(folio);
->   	target_nid = numa_migrate_prep(folio, vmf, haddr, nid, &flags);
->   	if (target_nid == NUMA_NO_NODE)
+diff --git a/net/hsr/hsr_framereg.c b/net/hsr/hsr_framereg.c
+index 73bc6f659812..b7d5b9da881a 100644
+--- a/net/hsr/hsr_framereg.c
++++ b/net/hsr/hsr_framereg.c
+@@ -224,6 +224,9 @@ struct hsr_node *hsr_get_node(struct hsr_port *port, struct list_head *node_db,
+ 	if (!skb_mac_header_was_set(skb))
+ 		return NULL;
+ 
++	if (skb->max_len < sizeof(struct ethhdr))
++		return NULL;
++
+ 	ethhdr = (struct ethhdr *)skb_mac_header(skb);
+ 
+ 	list_for_each_entry_rcu(node, node_db, mac_list) {
+--
 
