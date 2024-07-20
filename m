@@ -1,135 +1,88 @@
-Return-Path: <linux-kernel+bounces-257920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 041CF9380DB
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 13:00:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ACD09380DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 13:04:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A37BA1F2208B
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 11:00:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E88CD281EA4
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 11:04:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418F984DE9;
-	Sat, 20 Jul 2024 10:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B388526A;
+	Sat, 20 Jul 2024 11:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lngDg7eb"
-Received: from msa.smtpout.orange.fr (msa-212.smtpout.orange.fr [193.252.23.212])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/r1gg2Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38A583A19;
-	Sat, 20 Jul 2024 10:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDA0376E5;
+	Sat, 20 Jul 2024 11:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721473192; cv=none; b=WprnkzgVET4/cQRFY1Xd+TP1l94C5p2my3xcCbgqOwxQR63SvEpJiwyI4RxFmA9nLHeWwmiVcwc6BkPtN3il401NlKeqVzw+KkZM3Vhz+dSWlky31tyZgh4uwlhNe1q65yPhB0ASccV7hA0JMajLukZog9BXBFiny79w6ns8LiM=
+	t=1721473477; cv=none; b=UK0au9qEEYxvbs4BEFesrOIm6oAuXY0fIa9X4IiKAfw6FOk6UD0tyRbsGzOLYkxdhHv8HK1B02ZEgbci0cRwgn74YIht9pZSP0O7FhN9yqJPmqJJxTikq7S/j9srm3Clwj95T5lFyrNd8QIPVb2CJ9nW2t5hV7u174XFLX+NDbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721473192; c=relaxed/simple;
-	bh=3eJP5D2gLY2qGLsJ+PSb5K2vvmVn2tcyQqDbjoG+glw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jj12rP/MEnegDMP97gSDFgnz/QCLZtid1pMOy+hR8Vbn4yDjT6WLPUtEwfgAsSfjkDfYzGQHfOhtOYXNeabo+VEth5rJU2eYlT+T5M+5uSMlSC6qIYsS3F5ig7aZFG2rdYwRsSZwVzXmAIOu0rRmToaAQCoterVKH8V7+CMnWTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lngDg7eb; arc=none smtp.client-ip=193.252.23.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id V7oSskCfXOGeaV7oSswaIZ; Sat, 20 Jul 2024 12:59:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1721473182;
-	bh=/Oc6zHUJ3PsZDwx3kEOlE52feOVHzNSUSRVZP+ZoPqE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=lngDg7ebFxzciPH9gWGq9jkDnDew+kqNbMu28oDWUv1HQe3IN0S9BsCR/+QTtMeY8
-	 EoKSnB367Ck8ERNoIVnSt1oBAJYVGpDGjEojaOYuspkdHrXTOwl7lAsehu/V07s/Yf
-	 X2/H5N1Mh2gWqdf2drbimqHXj1KKSAjUMfRPyMvF1eIuk1Y47ITg2tjJ44l5ghYcKL
-	 QJGxSn3RiBCvt+o4hEhx/dyn0Ta5EAW7GXBGhrPIyob/Bax9L0Qgg92+84lVOu7lNu
-	 FuksPrBHgG3C4Bv1IFGdfyN1PdEM702c3n5d5lO4vI7LelG9o9Ct/cvguEhYT5rlJz
-	 dTttig84WNQeA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 20 Jul 2024 12:59:42 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Jon Mason <jdmason@kudzu.us>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Allen Hubbe <allenbh@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	ntb@lists.linux.dev
-Subject: [PATCH] ntb: Constify struct bus_type
-Date: Sat, 20 Jul 2024 12:59:36 +0200
-Message-ID: <50a28f39b1f0d0201b2645d2a8239e1819dc924b.1721473166.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1721473477; c=relaxed/simple;
+	bh=TrhzxeHjudHiGp22YEXDuaPYucVMuwE1JHaOyZaFXck=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=r/Z69NEJFg1nik1NcH/4qLlpR0ae3HYa/Klnymbgc/+ebrtm2n6cCPJGR29UNSRWbcja1Skk+st1mbKFb5t5hyox29aqiARJscBhc3gIG0TOx0h2hofQhDD8PaW5zL5bVIiFmfS7B8N4Ng4yMPmFmMg7xwWHJI3U8u8Bh/83NoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/r1gg2Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F105C2BD10;
+	Sat, 20 Jul 2024 11:04:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721473477;
+	bh=TrhzxeHjudHiGp22YEXDuaPYucVMuwE1JHaOyZaFXck=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=F/r1gg2QChWWxTSDXrHe/IlcAgdjpMEHwAYda/nvH7mcvunFzAwAeE3zeS6HK4sgK
+	 oiBXbmsXSFP03zwKYrKG5RXrxicmcgad4dqBy+8wMOvZlBtczwAeLVSQ0n8grQW4UX
+	 T5C2l3IsPPzzSbFXc8/33CA92Hfhm8sNb48hLZuCbWc11rvWIonJPvNpD72A5Xhpz6
+	 3YK2h8c6w9t6e3SuuBDQhVnO8XrL1x+h42HEc6bNUA1XTFqm3nFlzqTBa9B9cgMb4q
+	 9BGGO5St1JywEj4aldYTZSdYpIxNUgQWlhvtQWuRRphED3vf1bsW7wMDKd4pfIjJeQ
+	 +pwF7zqcpeHqA==
+Date: Sat, 20 Jul 2024 12:04:29 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
+ ang.iglesiasg@gmail.com, linus.walleij@linaro.org,
+ biju.das.jz@bp.renesas.com, javier.carrasco.cruz@gmail.com,
+ semen.protsenko@linaro.org, 579lpy@gmail.com, ak@it-klinger.de,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 01/10] iio: pressure: bmp280: Fix regmap for BMP280
+ device
+Message-ID: <20240720120429.46aea886@jic23-huawei>
+In-Reply-To: <20240711211558.106327-2-vassilisamir@gmail.com>
+References: <20240711211558.106327-1-vassilisamir@gmail.com>
+	<20240711211558.106327-2-vassilisamir@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-'struct bus_type' is not modified in this driver.
+On Thu, 11 Jul 2024 23:15:49 +0200
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security, especially when the structure holds some
-function pointers.
+> Up to now, the BMP280 device is using the regmap of the BME280 which
+> has registers that exist only in the BME280 device.
+> 
+> Fixes: 14e8015f8569 ("iio: pressure: bmp280: split driver in logical parts")
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+This fix is for an ancient issue (2016) so I'm not going to rush it in
+but will mark it for stable inclusion.  Advantage of taking this through
+the main tree is we can move faster with the rest of the series.
+So applied to the testing branch of iio.git which will be rebase on rc1
+when available and become togreg for this cycle.
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  69682	   4593	    152	  74427	  122bb	drivers/ntb/ntb_transport.o
-   5847	    448	     32	   6327	   18b7	drivers/ntb/core.o
+Thanks,
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  69858	   4433	    152	  74443	  122cb	drivers/ntb/ntb_transport.o
-   6007	    288	     32	   6327	   18b7	drivers/ntb/core.o
+Jonathan
 
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only.
----
- drivers/ntb/core.c          | 4 ++--
- drivers/ntb/ntb_transport.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/ntb/core.c b/drivers/ntb/core.c
-index d702bee78082..ed6f4adc6130 100644
---- a/drivers/ntb/core.c
-+++ b/drivers/ntb/core.c
-@@ -72,7 +72,7 @@ MODULE_VERSION(DRIVER_VERSION);
- MODULE_AUTHOR(DRIVER_AUTHOR);
- MODULE_DESCRIPTION(DRIVER_DESCRIPTION);
- 
--static struct bus_type ntb_bus;
-+static const struct bus_type ntb_bus;
- static void ntb_dev_release(struct device *dev);
- 
- int __ntb_register_client(struct ntb_client *client, struct module *mod,
-@@ -298,7 +298,7 @@ static void ntb_dev_release(struct device *dev)
- 	complete(&ntb->released);
- }
- 
--static struct bus_type ntb_bus = {
-+static const struct bus_type ntb_bus = {
- 	.name = "ntb",
- 	.probe = ntb_probe,
- 	.remove = ntb_remove,
-diff --git a/drivers/ntb/ntb_transport.c b/drivers/ntb/ntb_transport.c
-index 77e55debeed6..a79f68e18d3f 100644
---- a/drivers/ntb/ntb_transport.c
-+++ b/drivers/ntb/ntb_transport.c
-@@ -314,7 +314,7 @@ static void ntb_transport_bus_remove(struct device *dev)
- 	put_device(dev);
- }
- 
--static struct bus_type ntb_transport_bus = {
-+static const struct bus_type ntb_transport_bus = {
- 	.name = "ntb_transport",
- 	.match = ntb_transport_bus_match,
- 	.probe = ntb_transport_bus_probe,
--- 
-2.45.2
 
 
