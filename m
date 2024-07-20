@@ -1,96 +1,124 @@
-Return-Path: <linux-kernel+bounces-257874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70DA5937FFE
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 10:30:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 190B4938002
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 10:34:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E143281D8B
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 08:30:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8385B2154F
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 08:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54AEE288A4;
-	Sat, 20 Jul 2024 08:30:45 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A8626AEC;
+	Sat, 20 Jul 2024 08:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CQsGO5AB"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802698830
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 08:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910798F59
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 08:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721464244; cv=none; b=BvpUu0Bo0T4AkNL2dIi3qv15ENFOMGpC9A9j0nLavCLCH+Aud4EPPpG/V1Eca+aFxo9Sa29IYM2llKa2JJdc0177eF0oM6gDdfCV9tltPfDCqiyhejqqvTIf9K8JGMmdyzT3Xj3c3S/vHmhB+0x0PlXqjmfQTv8R2Qty5d8DqnU=
+	t=1721464428; cv=none; b=dB5HoXe/3rclHoIPDoH7XqfefmjIR28fIFxlVKhbNK8SwHu1bC7PgjvmVVVhJNNmhKeCmXd89hkhXXbzvKAoqYll7+RZWPD166N7pq/IyxfD1wlWYXEewltS1RdhJ47gKOGN/p/VgdiGqQjgkL8EWzBishfc/t+dte3dwHoVe08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721464244; c=relaxed/simple;
-	bh=rYSMhlcYUfuUJmk7W0A2GRupXQQQxzarnjBcJ2gBuJs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fJIrI9ivTUEbukBgl1TLy48nSn0MX5QvqoXDjWzM2zZrkdLRCS0SVnKSOKtycTE+GmsHo3WbKh3phRGHKBGum3nfjiful5KWQeavYtDqcD3mQS+c/lpqG8RM2pEkaprQfbU/KLjIpLrquiMCKB71emZAqpdadHd0lwbZOLw99cU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7f682fb3b16so442870539f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 01:30:43 -0700 (PDT)
+	s=arc-20240116; t=1721464428; c=relaxed/simple;
+	bh=nqrWYQU7W5hDIjZF3fNUNbhLlw4BjHaXyoW1VQG/clE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qvIMyYZZqbZTa2BIB25EESsLITUM5ps0Z1t4XGe8JWSrTklQF83JYJV2/7SHc+aCtT9PX8wjfqHEcHc7yDgZbQMmIt2kSEBOkxm8ONVmIlQLh50eoxAaOFkHCMDWhZ1EjBluAUDU3TToFBY+8ntAkgqgEnMv8d0HaBfCKSyeEmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CQsGO5AB; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a79f9a72a99so673885866b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 01:33:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721464425; x=1722069225; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SafSONIEoJzZyDytK/reQ3AEKLpvdJTl/uNZNxo24nw=;
+        b=CQsGO5ABN7KRj+1n4i7pnhDOQLY/v6YPoEdu8SpL8TiIK7ZU04ArYIQO4EfNPWB1Id
+         /AieuwQa6mEPdSihtAhjIYSwlYdw/j9YEfptF6ApytMlGKdXW8d09U1ZXuQREC1ZLQHo
+         TtRe/y7Vz7EEpOglVenlhdUUzWheVI+urDGMikYfaaLyoRemu4E8TYUJpVe8w+/6rtHc
+         1PlThJYH/bcc5TmfSNjjuQZ7NE9eR9HsN08+z3qXsmoNKbMDup868N0jLqVdsNRnGPIa
+         p1cYsUIxjKkpEmlGC7JHieWq1jXqA2qPpxLRwqM2gCuL2laH+8JQKY7bzA90tWtn+Tge
+         fOcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721464242; x=1722069042;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1721464425; x=1722069225;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N/8XzY4rPxD3nry/QyJLQA7kZA0p4z0MbynfkV9ZB1I=;
-        b=LpGoBYMfjrFg4bxxgJc5JXnwsj9KiCkC1UZhFyldnD4r8HwzwPaPvWA546MRO5aRqO
-         U/3xme15ZjcoZ4AV6Ssh5zOSyMOmzUEZkRZfTf3ck6hMCdQbDNiwWOdb49fgDNmEBkzM
-         hm8996EwBEGk0Z/JWSyoEmzEZPbHsOs6XVrurQ18FfQrIizX2SKyW5H+PsHbmjl3KAvz
-         b0M6ea8G7MUHXOi338fNlo3bfd7MtgySw5QDjuP3JCGfDofpB8bZUNnHPiOUP+Yh8Kz3
-         5sPAjQ+j8XTMt5lcywn2wvvuplQefLofzDNe9G+49Vu2o9v3SBJ84KZ9sWucfFSPT3TM
-         h+xw==
-X-Gm-Message-State: AOJu0Yy31ibF1+2PsrDx57s6QkruiQuKi+9v+Tt+Sp6gMAiRyL49c0Ca
-	+CkkotMO3hi2GckQ3NI0IH81HtC0tc+jFuYscWqt79+hDaXpAqLX8b8BywvLR8x2sMuWJjZDgJ+
-	5c1ACVVFVNAFKjbjBdCRqaVXn32LzsiFqGwww5xF5u0TAxEM58jamWqc=
-X-Google-Smtp-Source: AGHT+IFf0VD/zQW37S2mTPNPUWsT+NA4vqq2N2Q++KYyXyfjoP0usWqfLL0khkBLt/lYTetDnjbJ+fQ8m9bzDUMrpIY4FMVgdy7V
+        bh=SafSONIEoJzZyDytK/reQ3AEKLpvdJTl/uNZNxo24nw=;
+        b=jzKPBVchutkQlZ73YOXiKm01W4IcVIXy8MZODM4KfheY7RRM8sSeQUyVZrjI8r9p80
+         tGu5l9lR2WeRCyj3cH4ih9ax5rSgdB5lmtFi6cha/2t/LPCje/bwyJub+MPWDJnroKWv
+         1T8mjtJYhPunbewbg/K6B06DDkt5AlJVRIZbY+Bsy1J43RbyS8XoGRnnT6OChfvUwwp3
+         sQ1Z1nE2u3tkBnNaljDJPIcbfusuJA6drWr5ANJpHuogDKbIrmTxzctm4dkEMjwJHXRq
+         lo8bEdffo3xyYl4+IRUYEiMZA8euQlm/r/z7IgmH4v4gPyxPRYeLWwusUnR+qxQEfFm2
+         elNA==
+X-Forwarded-Encrypted: i=1; AJvYcCXU8pfLZWpIe7OaRSTcTu7mHgMRPbaQZ7JRv4sLMdEGVNOfPMPj6gDpBTwWRsLqjEeJgFh+hUM8nD4ayKjKx4+184QbBtlnOKhjdDvj
+X-Gm-Message-State: AOJu0Ywv7IsuV6mm5pvF1aUmEZ12tod1eMDyYXAFGfyejEwFFy8Iqn1W
+	M+aDvR/BX0UEzQ+FEw4Ij75hX0qk/0XtPGtylr7kGacCg+2bOQo8vdIFqvZboPg=
+X-Google-Smtp-Source: AGHT+IEA12YF0QSCvG5aEc6J8CnkmX3qbqj58vcHZA5t9dq9xmvvs/1oXFehHPsfv4jKAUtnSblLnQ==
+X-Received: by 2002:a17:906:4686:b0:a72:afd9:6109 with SMTP id a640c23a62f3a-a7a0f13cb46mr841839266b.16.1721464424948;
+        Sat, 20 Jul 2024 01:33:44 -0700 (PDT)
+Received: from [192.168.0.3] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30a4d7265sm2587562a12.9.2024.07.20.01.33.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 20 Jul 2024 01:33:44 -0700 (PDT)
+Message-ID: <610efa39-e476-45ae-bd2b-3a0b8ea485dc@linaro.org>
+Date: Sat, 20 Jul 2024 09:33:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:22c2:b0:4c0:9a3e:c263 with SMTP id
- 8926c6da1cb9f-4c23fae6db7mr132849173.0.1721464242742; Sat, 20 Jul 2024
- 01:30:42 -0700 (PDT)
-Date: Sat, 20 Jul 2024 01:30:42 -0700
-In-Reply-To: <0000000000004a86bf0616571fc7@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000aeb998061da9a010@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [net?] KMSAN: uninit-value in hsr_get_node (3)
-From: syzbot <syzbot+a81f2759d022496b40ab@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: camcc-sc8280xp: Remove always-on GDSC
+ hard-coding
+To: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: dmitry.baryshkov@linaro.org, stable@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-v1-1-fadb5d9445c1@linaro.org>
+ <f0d4b7a3-2b61-3d42-a430-34b30eeaa644@quicinc.com>
+ <86068581-0ce7-47b5-b1c6-fda4f7d1037f@linaro.org>
+ <02679111-1a35-b931-fecd-01c952553652@quicinc.com>
+ <ce14800d-7411-47c5-ad46-6baa6fb678f4@linaro.org>
+ <dd588276-8f1c-4389-7b3a-88f483b7072e@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <dd588276-8f1c-4389-7b3a-88f483b7072e@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On 19/07/2024 08:25, Satya Priya Kakitapalli (Temp) wrote:
+>>
+>> What is the use-case to keep that clock always-on unless/util someone 
+>> wants camss ?
+>>
+> 
+> The clock also has dependency on MMCX rail, this rail anyway will be OFF 
+> until there is a use-case. So the clock will also be OFF.
 
-***
+arch/arm64/boot/dts/qcom/sc8280xp.dtsi
 
-Subject: Re: [syzbot] [net?] KMSAN: uninit-value in hsr_get_node (3)
-Author: aha310510@gmail.com
+camcc: clock-controller@ad00000 {
+     power-domains = <&rpmhpd SC8280XP_MMCX>;
+};
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> 
+> 
+>> I've tested this patch on sc8280xp and it works just fine.
+>>
+> 
+> Is the cam_cc_gdsc_clk clock ON after the boot up?
+
+I have no idea. Why does it matter ?
 
 ---
- net/hsr/hsr_framereg.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/net/hsr/hsr_framereg.c b/net/hsr/hsr_framereg.c
-index 73bc6f659812..1c492146594c 100644
---- a/net/hsr/hsr_framereg.c
-+++ b/net/hsr/hsr_framereg.c
-@@ -224,6 +224,9 @@ struct hsr_node *hsr_get_node(struct hsr_port *port, struct list_head *node_db,
- 	if (!skb_mac_header_was_set(skb))
- 		return NULL;
- 
-+	if (skb->mac_len < sizeof(struct ethhdr))
-+		return NULL;
-+
- 	ethhdr = (struct ethhdr *)skb_mac_header(skb);
- 
- 	list_for_each_entry_rcu(node, node_db, mac_list) {
---
+bod
 
