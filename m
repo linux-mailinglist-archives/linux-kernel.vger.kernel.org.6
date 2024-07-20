@@ -1,149 +1,191 @@
-Return-Path: <linux-kernel+bounces-257877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF1EB938004
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 10:36:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5988938005
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 10:38:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AEFB1F22131
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 08:36:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52BD0282215
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 08:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298F22C1AC;
-	Sat, 20 Jul 2024 08:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gqb+l858"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B5F2C1AC;
+	Sat, 20 Jul 2024 08:38:08 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCC310A0C
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 08:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E08F10A0C
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 08:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721464556; cv=none; b=n8BwSL6xUThS8PDVqnj7qQ7SNxr8x/xlOGvfM4poZMiIY5zxyKfE+yTreYPL49e2XSWs9dAjyHxHJgMYNaIyD6q1B3ll3yntA4e7b/LZ7TD0YXBBKbhDJVWgq1Vi2t5f3XXu1CAMA1rZGBYC6ffnD4rirolBvmg6MSjc4NrQ+aU=
+	t=1721464687; cv=none; b=GDJ1RpZwGvajxdpnUXHFpNirxODqo0c7wyJdhiHp9F6r6W5b7riUH3cFaEpqiBaVakxjkM1Vbj2skfG8jFrzWdL1jlHNH/LXBWIx+FYuL0f8hoGxMZLodub3X4SXzNrYdT+tCWDRogxGNduTJk75CsXjQuq62Gsds1YxESg+nI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721464556; c=relaxed/simple;
-	bh=d/LB1GIRHiVxnj8ccpWKQLKhVIgY3GB3xVo7jOT/wc8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rHANIX9G0DYCxEZmKLaAbBmtf4Xg7qxN3dZ9pHwc22pqjWTlV+EgfGCYaRNMehu6HpfjeVJTlSonh+f8aNZGn+Aa4fuC8GcWVEZ9zvzHkwqtMncQv73/NQs+SkwNbNZwRFZhZn2Y7RX1tHSOVTvuTYp4r2e8tyfaT4P9mDgr8cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gqb+l858; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ee920b0781so31783691fa.1
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 01:35:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721464552; x=1722069352; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hGCfDhWrSDDF6efXxgbMZtz6I8URiVFJKbg5WVY54Jw=;
-        b=gqb+l858RXfE+g0mAuP7qXDsybPUcBaEI+9bjuAx40TCYyG57RIgNQimCY6LYXk7lp
-         iT7n2hBZ7Tom0sOkKNM7mzLjiSkM7TW3Kj40OfKsugCSau27uj9vIOpbJwNrG1rFPagq
-         HPU2nAujupTAgqHVdCXkrC4e8JVUtGM93tc1WVffZWkY2dWglN2iFMb6CnSwlyRl3sAd
-         WZCKMypqS208Xhfbi/KsCe3cZP8463sE9WbAJvW7cGe9gk9/J39TX/1MURsJU3DWbr53
-         uDpSACftSq4K8pQ7T/4PDqawqYH1aVJtorzXGbFTGCWGLqrrbmjbcPsmjxiFp5C4pb3B
-         al3Q==
+	s=arc-20240116; t=1721464687; c=relaxed/simple;
+	bh=PPmHwjNaNbD135zyDMwBrlY5SQVjMzjEC0VZ261wjQI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=jxhWWxTyVIQ8s/V8De92HLBdozKi2+Br6+QYux3TbKcKzzquYbR3UrGznc87zokMD7b3WZBI5PuvgoWs+6OGk24QetFYwpJ6ruZ9bxq8aI2bCHFgH3OZHcpyECXxd0gY3BJBppRdGq0hiXmLXAHz7Q9Vl4h6b1PfmMW5ziuSWMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7f66b3d69a8so397369739f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 01:38:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721464552; x=1722069352;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hGCfDhWrSDDF6efXxgbMZtz6I8URiVFJKbg5WVY54Jw=;
-        b=Hx+OKf6CmwyfdujYBZkKsbKPy7qIxMVJDCgLmf29Kjd3c2Kiz7fsf5horBA8BtyqbA
-         m8tlpK+YN+WPq+AqRhUrW9lI5I/XvEHBNqJflm6nBX37xVByLgXV5inwN/nVFsDDgCIg
-         sbRiwUEo/w3pQn8qjc/5sXBOLuLmSITw2Xwo5v0SJ3c89fcxJfEdt9HNo7zPuHssTUxz
-         xg/RVKb99KfleF1++6pEjVPSAxQ/MP9cJGKzDeKA5iNR0GKMtWUnykRdhvniU+N1hzI3
-         Wi2rCbZrgku/3OF1lWX+K6tWe8sWNwnHtq3JHti73tdI7uCwbmvy1QYbG8534JNcdv+e
-         lBCw==
-X-Forwarded-Encrypted: i=1; AJvYcCXtmOlJOKX2Rgd7VJHc5ObwycuMO3UE3kWOjc34w0zrOyxF8waoAxg3EZOeLnHu0shCZWABETC2ubfPKIDomMlmTh/cjK85u9fa8Glr
-X-Gm-Message-State: AOJu0Yy5KFldFQBY87m2w8vq7HzLrwvG4uS1UvYg0QaNMVDtSJhZCf1B
-	7rVsboLVpVO5zbbD1TmmCFdiD5mB8B1THWQxo7LF7EcyYJg7st6iJb1bjE93kgXtk/qASqIUPME
-	5wgFn787mbGnNwAaoZnASlUBDsEg=
-X-Google-Smtp-Source: AGHT+IGZfwSxTifh+IgNYvv24Guo5bdu3tFRoSAUxT8/Jsc3/A9WuULPFlkDX46SQeRL5Vo5WjxBWkN8bR/OVN5QUgs=
-X-Received: by 2002:a2e:978a:0:b0:2ec:541b:4b4e with SMTP id
- 38308e7fff4ca-2ef1684d49bmr12269411fa.32.1721464552221; Sat, 20 Jul 2024
- 01:35:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721464685; x=1722069485;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+/fIlFkyCDCTgXqs1kavVI5fT8kKDWlN2ouFnaHUJtE=;
+        b=pG4xtOl7f6oYuP2JOU8eBZsGq97mALW0M5IeT0c9h+b5hZ+S03FHA9rKMf1q8X55aL
+         Rt5SG+pSU8/Wtk1IBvTjA2RQgbQLc3oL1n3MMm1KlMG+odggmxVNKrjtG0Lnu/xWkJUY
+         GkQxrRwvzfyhXZsNZdxW+djZytwDQe6N5FzSceSMa7xOyhS6vB9se1btedHBwY1C2qh5
+         NCj7+QkmU6ShLeq43QX+BiyVVtRQ+m/LpRVoQC+l4S7m44qZXlmJkfvAIW6/tZHuuOWH
+         6fYuVwwVSo0X8LzQtgXkQRg6l/1CrbRBHoCTnK1Uh0ooaMdDq2WX9zG2lEnfgyI6vHtw
+         LgGw==
+X-Forwarded-Encrypted: i=1; AJvYcCWRN6ugW+MI4ZGfJIUHMwa3E1IXXD5sDXFUk6lEE8bQ8cLXU7uj5aR8OlBahwSxePHnxDeWvQlI2wAbRlfWa4iwhgeMjEnAuZaexcX5
+X-Gm-Message-State: AOJu0YyFe9IKaRX4oU3zjuz/l9sEMcncXOxeaVy5e7xzBUDlEdg/zwpu
+	1XDkc7cRULN27vjyoGayDAKbXHt/aVTLGuWuUKJMPO2d5vTKolG8i4ALisaZAYx9LF2Ntx//GVe
+	X56BlHJ7ZTH9wOSHd8kn+55D883dX8qISTD/EhDAa4VPKpBFV4fIk6gQ=
+X-Google-Smtp-Source: AGHT+IE4gGaLkNmz/P+T+TIxzZNtzwRQS0bUYu3TjXs6wNCof2UsUDstPq9OkYp5l8s+R3zdpYj7Z1Wakz6+G7s9UNnHmegaXNNd
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719024010.3296488-1-maobibo@loongson.cn> <CAFULd4bt5oiQq4_3jSDe+3P=1xtAhZ=34vLREqPVT9njjdWKSA@mail.gmail.com>
- <ZpqR4qkFUNgkJj0x@boqun-archlinux>
-In-Reply-To: <ZpqR4qkFUNgkJj0x@boqun-archlinux>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Sat, 20 Jul 2024 10:35:52 +0200
-Message-ID: <CAFULd4aUoQf5CmUVEg5A7vKMz0CjrgSyZj=GyuhLkFviOPbGpg@mail.gmail.com>
-Subject: Re: [PATCH] locking/atomic: scripts: Fix type error in macro try_cmpxchg
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Bibo Mao <maobibo@loongson.cn>, Will Deacon <will@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	"Paul E . McKenney" <paulmck@kernel.org>, Carlos Llamas <cmllamas@google.com>, linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6638:25c9:b0:4bb:ae73:2783 with SMTP id
+ 8926c6da1cb9f-4c23fdae429mr54514173.2.1721464685509; Sat, 20 Jul 2024
+ 01:38:05 -0700 (PDT)
+Date: Sat, 20 Jul 2024 01:38:05 -0700
+In-Reply-To: <023c2035-91d2-4e0d-a2ce-7aacd763ac0d@paragon-software.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000012c98e061da9bb98@google.com>
+Subject: Re: [syzbot] [ntfs3?] possible deadlock in ni_fiemap
+From: syzbot <syzbot+c300ab283ba3bc072439@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 19, 2024 at 6:18=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
-rote:
->
-> On Fri, Jul 19, 2024 at 12:15:28PM +0200, Uros Bizjak wrote:
-> > On Fri, Jul 19, 2024 at 4:40=E2=80=AFAM Bibo Mao <maobibo@loongson.cn> =
-wrote:
-> > >
-> > > When porting pv spinlock function on LoongArch system, there is
-> > > compiling error such as:
-> > >                  from linux/include/linux/smp.h:13,
-> > >                  from linux/kernel/locking/qspinlock.c:16:
-> > > linux/kernel/locking/qspinlock_paravirt.h: In function 'pv_kick_node'=
-:
-> > > linux/include/linux/atomic/atomic-arch-fallback.h:242:34: error: init=
-ialization of 'u8 *' {aka 'unsigned char *'} from incompatible pointer type=
- 'enum vcpu_state *' [-Wincompatible-pointer-types]
-> > >   242 |         typeof(*(_ptr)) *___op =3D (_oldp), ___o =3D *___op, =
-___r; \
-> > >       |                                  ^
-> > > linux/atomic/atomic-instrumented.h:4908:9: note: in expansion of macr=
-o 'raw_try_cmpxchg_relaxed'
-> > >  4908 |         raw_try_cmpxchg_relaxed(__ai_ptr, __ai_oldp, __VA_ARG=
-S__); \
-> > >       |         ^~~~~~~~~~~~~~~~~~~~~~~
-> > > linux/kernel/locking/qspinlock_paravirt.h:377:14: note: in expansion =
-of macro 'try_cmpxchg_relaxed'
-> > >   377 |         if (!try_cmpxchg_relaxed(&pn->state, &old, vcpu_hashe=
-d))
-> >
-> > This points to the mismatch between "pn->state" and "old" variable.
-> > The correct fix is:
-> >
-> > --cut here--
-> > diff --git a/kernel/locking/qspinlock_paravirt.h
-> > b/kernel/locking/qspinlock_paravirt.h
-> > index f5a36e67b593..ac2e22502741 100644
-> > --- a/kernel/locking/qspinlock_paravirt.h
-> > +++ b/kernel/locking/qspinlock_paravirt.h
-> > @@ -357,7 +357,7 @@ static void pv_wait_node(struct mcs_spinlock
-> > *node, struct mcs_spinlock *prev)
-> > static void pv_kick_node(struct qspinlock *lock, struct mcs_spinlock *n=
-ode)
-> > {
-> >        struct pv_node *pn =3D (struct pv_node *)node;
-> > -       enum vcpu_state old =3D vcpu_halted;
-> > +       u8 old =3D vcpu_halted;
-> >        /*
->
-> Looks reasonable to me, we should also add static_assert() for
-> try_cmpxhg_*() to make sure the old has the same size of the cmpxchged
-> field.
+Hello,
 
-This is what -Wincompatible-pointer-types should detect, and it does
-for the LoongArch target. Apparently, x86_64 targets use
--fshort-enums, so the mismatch was not detected on this particular
-target.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+possible deadlock in attr_data_get_block
 
-Bibo Mao, does the proposed change works for you, so I can propose a
-formal patch submission with the fix?
+======================================================
+WARNING: possible circular locking dependency detected
+6.10.0-rc1-syzkaller-00035-gd57431c6f511 #0 Not tainted
+------------------------------------------------------
+syz-executor.0/5470 is trying to acquire lock:
+ffff88807655e840 (&ni->ni_lock/4){+.+.}-{3:3}, at: ni_lock fs/ntfs3/ntfs_fs.h:1107 [inline]
+ffff88807655e840 (&ni->ni_lock/4){+.+.}-{3:3}, at: attr_data_get_block+0x463/0x2ff0 fs/ntfs3/attrib.c:917
 
-Thanks,
-Uros.
+but task is already holding lock:
+ffff88807e94ea18 (&mm->mmap_lock){++++}-{3:3}, at: mmap_write_lock_killable include/linux/mmap_lock.h:122 [inline]
+ffff88807e94ea18 (&mm->mmap_lock){++++}-{3:3}, at: vm_mmap_pgoff+0x17c/0x3d0 mm/util.c:571
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&mm->mmap_lock){++++}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __might_fault+0xc6/0x120 mm/memory.c:6233
+       _copy_to_user+0x2a/0xb0 lib/usercopy.c:41
+       copy_to_user include/linux/uaccess.h:191 [inline]
+       fiemap_fill_next_extent+0x235/0x410 fs/ioctl.c:145
+       ni_fiemap+0x4f5/0x1910 fs/ntfs3/frecord.c:1993
+       ntfs_fiemap+0x132/0x180 fs/ntfs3/file.c:1213
+       ioctl_fiemap fs/ioctl.c:220 [inline]
+       do_vfs_ioctl+0x1c07/0x2e50 fs/ioctl.c:841
+       __do_sys_ioctl fs/ioctl.c:905 [inline]
+       __se_sys_ioctl+0x81/0x170 fs/ioctl.c:893
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&ni->ni_lock/4){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
+       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       ni_lock fs/ntfs3/ntfs_fs.h:1107 [inline]
+       attr_data_get_block+0x463/0x2ff0 fs/ntfs3/attrib.c:917
+       ntfs_file_mmap+0x50e/0x860 fs/ntfs3/file.c:294
+       call_mmap include/linux/fs.h:2107 [inline]
+       mmap_region+0xe8f/0x2090 mm/mmap.c:2886
+       do_mmap+0x8ad/0xfa0 mm/mmap.c:1397
+       vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:573
+       ksys_mmap_pgoff+0x4f1/0x720 mm/mmap.c:1443
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&mm->mmap_lock);
+                               lock(&ni->ni_lock/4);
+                               lock(&mm->mmap_lock);
+  lock(&ni->ni_lock/4);
+
+ *** DEADLOCK ***
+
+1 lock held by syz-executor.0/5470:
+ #0: ffff88807e94ea18 (&mm->mmap_lock){++++}-{3:3}, at: mmap_write_lock_killable include/linux/mmap_lock.h:122 [inline]
+ #0: ffff88807e94ea18 (&mm->mmap_lock){++++}-{3:3}, at: vm_mmap_pgoff+0x17c/0x3d0 mm/util.c:571
+
+stack backtrace:
+CPU: 0 PID: 5470 Comm: syz-executor.0 Not tainted 6.10.0-rc1-syzkaller-00035-gd57431c6f511 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
+ __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+ ni_lock fs/ntfs3/ntfs_fs.h:1107 [inline]
+ attr_data_get_block+0x463/0x2ff0 fs/ntfs3/attrib.c:917
+ ntfs_file_mmap+0x50e/0x860 fs/ntfs3/file.c:294
+ call_mmap include/linux/fs.h:2107 [inline]
+ mmap_region+0xe8f/0x2090 mm/mmap.c:2886
+ do_mmap+0x8ad/0xfa0 mm/mmap.c:1397
+ vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:573
+ ksys_mmap_pgoff+0x4f1/0x720 mm/mmap.c:1443
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2f0687dea9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f2f075d70c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 00007f2f069abf80 RCX: 00007f2f0687dea9
+RDX: 00000000027fffff RSI: 0000000000600000 RDI: 0000000020000000
+RBP: 00007f2f068ca4a4 R08: 0000000000000004 R09: 0000000000000000
+R10: 0000000004002011 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007f2f069abf80 R15: 00007ffd044d5088
+ </TASK>
+
+
+Tested on:
+
+commit:         d57431c6 fs/ntfs3: Do copy_to_user out of run_lock
+git tree:       https://github.com/Paragon-Software-Group/linux-ntfs3.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=17849349980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=47d282ddffae809f
+dashboard link: https://syzkaller.appspot.com/bug?extid=c300ab283ba3bc072439
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
 
