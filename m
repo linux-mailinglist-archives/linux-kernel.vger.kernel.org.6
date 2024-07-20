@@ -1,239 +1,211 @@
-Return-Path: <linux-kernel+bounces-257893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D0A1938030
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 11:20:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA3B938033
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 11:20:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDE7FB21650
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 09:20:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 513B61C208BC
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 09:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5DF55C08;
-	Sat, 20 Jul 2024 09:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fLxixCzt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF70155C08;
+	Sat, 20 Jul 2024 09:20:45 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636C622F14;
-	Sat, 20 Jul 2024 09:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304A126AEC;
+	Sat, 20 Jul 2024 09:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721467210; cv=none; b=R/sFvk3whNxUe7/mKJBy9ot7KKhMNxny87lbKNVMXmVwgtdRqFOqTL4fn+E2LNFwpg4urO6VcSW/ISSah/LuZ7RW3/kpfCjWp+rdn/ejCOWhcsqNeDCwXRbkrRNSHXUXhTTll9ppeJPwhWWOCZ5GQtkJsdH9AzLvgjGpUKrV0yQ=
+	t=1721467245; cv=none; b=qeVs9ET5sz1Omb+igeHXvPhJiKj+CqPkIW0tjdaTDXUmbdMnpovyF9U52o61WUTp1PhGpUPWAkqQuZ55z1ziZpNzXGSvLOcYldrTXDnpggI0elf4Uy0lS3OkhmTrmAM2cLrvyhH818ZxHRRmK6GNL17FqQgDiXvhWzaWfPfjpw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721467210; c=relaxed/simple;
-	bh=aXf0RhYpLwGl1ZpQsVRJ9rreF9cvCbgkrqqIYoZ7O5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WmavjY0oNbkvdPjKGgIhF0Kjaj8hq0CyW4fSAc1DTqL541VMJuga/3L/676/huLszr2aEi7TbgG8W1GxyDrCM5PU6F5sG8J2p7h3lV6IRluDb3BwC+2kTFO+OtvI2mTVCSbdkufknr74YWcVOeHSxOAi0vgJeU5yC+NM2MT1RCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fLxixCzt; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721467209; x=1753003209;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=aXf0RhYpLwGl1ZpQsVRJ9rreF9cvCbgkrqqIYoZ7O5Y=;
-  b=fLxixCztyMD9w4BXcsHCVCkYAKQ33rBFWhLeRdnWobgdS9HO1Bv6i5ne
-   re9XpiGdD8cmnusTyCgYGhFvOdNZHy86ad1/na7+zNVLNZfRTrl6Qgtzg
-   m51Spqg8jlisAl3ymwlOfxD9RULMDn4l150lVpeWHFazPm6oKgSvFs0SL
-   BSic6LMKweDIUUua0AELDEC/wOGS8sM358wTf8cEahm98h1TpAEqsAvUx
-   GVO5zoZWQxRtsRGkuqKsGjrTEkPUSIucL+yyx0+j3sz+o885BtYr7qY9s
-   rpctcB3EFbcYXTStEc0AxBv/5M/bDw0xmg7pruBSPBy4Y38jxspvklweb
-   A==;
-X-CSE-ConnectionGUID: QWF25M8ySMSmyvMVIYREaQ==
-X-CSE-MsgGUID: 4/Fk0t5FQOSq+CHUBGjSzg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11138"; a="19222250"
-X-IronPort-AV: E=Sophos;i="6.09,223,1716274800"; 
-   d="scan'208";a="19222250"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2024 02:20:08 -0700
-X-CSE-ConnectionGUID: yNJE7YUMRpCngUiVF5Hzxw==
-X-CSE-MsgGUID: IQjQqnNGT4SONSZt/20sDg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,223,1716274800"; 
-   d="scan'208";a="74586696"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 20 Jul 2024 02:20:05 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sV6G3-000j3x-09;
-	Sat, 20 Jul 2024 09:20:03 +0000
-Date: Sat, 20 Jul 2024 17:19:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] iio: humidity: Add support for ENS210
-Message-ID: <202407201602.KrJ889wu-lkp@intel.com>
-References: <20240719-ens21x-v4-2-6044e48a376a@thegoodpenguin.co.uk>
+	s=arc-20240116; t=1721467245; c=relaxed/simple;
+	bh=N2GUkSpMaQLEjR1yDxf2Z4Eu+HVxp5irZFFqIRgh0DU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hBrjoL1I21Iqm9pR05ywstW4TYO8uc1uX1sUvbZ4pfr2iskaUxY+HM3JyhfH8bcKXrxkOaio57U11/NIAYyfYpKjxekeCxxZ7fbtsPvQqA6pfrgBU9BVD8j2FOzdZhf24xE/YTSF/+KIXSwCBOGkhBOJGLth2x32VeIQDQndoLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BB5EC2BD10;
+	Sat, 20 Jul 2024 09:20:38 +0000 (UTC)
+Message-ID: <0aea8161-4288-45b9-a834-a0ebb4904a8c@xs4all.nl>
+Date: Sat, 20 Jul 2024 11:20:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240719-ens21x-v4-2-6044e48a376a@thegoodpenguin.co.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 02/28] v4l2: handle restricted memory flags in queue
+ setup
+To: Yunfei Dong <yunfei.dong@mediatek.com>,
+ Jeffrey Kardatzke <jkardatzke@google.com>,
+ =?UTF-8?Q?N=C3=ADcolas_F_=2E_R_=2E_A_=2E_Prado?= <nfraprado@collabora.com>,
+ Nathan Hebert <nhebert@chromium.org>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,
+ Tomasz Figa <tfiga@chromium.org>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>, Yong Wu <yong.wu@mediatek.com>,
+ Hsin-Yi Wang <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>,
+ Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>,
+ Sumit Semwal <sumit.semwal@linaro.org>, Brian Starkey
+ <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
+ "T . J . Mercier" <tjmercier@google.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20240720071606.27930-1-yunfei.dong@mediatek.com>
+ <20240720071606.27930-3-yunfei.dong@mediatek.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <20240720071606.27930-3-yunfei.dong@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Joshua,
+On 20/07/2024 09:15, Yunfei Dong wrote:
+> From: Jeffrey Kardatzke <jkardatzke@google.com>
+> 
+> Validates the restricted memory flags when setting up a queue and
+> ensures the queue has the proper capability.
+> 
+> Signed-off-by: Jeffrey Kardatzke <jkardatzke@google.com>
+> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
+> [Yunfei: Change reviewer's comments]
+> ---
+>  .../media/common/videobuf2/videobuf2-core.c   | 29 +++++++++++++++++++
+>  .../media/common/videobuf2/videobuf2-v4l2.c   |  4 ++-
+>  2 files changed, 32 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
+> index 0217392fcc0d..44080121f37e 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-core.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-core.c
+> @@ -830,6 +830,23 @@ static bool verify_coherency_flags(struct vb2_queue *q, bool non_coherent_mem)
+>  	return true;
+>  }
+>  
+> +static bool verify_restricted_mem_flags(struct vb2_queue *q, bool restricted_mem)
+> +{
+> +	if (restricted_mem != q->restricted_mem) {
+> +		dprintk(q, 1, "restricted memory model mismatch\n");
+> +		return false;
+> +	}
+> +
+> +	return true;
+> +}
+> +
+> +static inline int restricted_mem_mismatch(bool restricted_mem, struct vb2_queue *q,
+> +					  enum vb2_memory memory)
+> +{
+> +	return restricted_mem && (!q->allow_restricted_mem || memory != VB2_MEMORY_DMABUF) ?
+> +	       -1 : 0;
 
-kernel test robot noticed the following build warnings:
+Returning -1 is odd, just return a bool here.
 
-[auto build test WARNING on 1ebab783647a9e3bf357002d5c4ff060c8474a0a]
+> +}
+> +
+>  static int vb2_core_allocated_buffers_storage(struct vb2_queue *q)
+>  {
+>  	if (!q->bufs)
+> @@ -863,6 +880,7 @@ int vb2_core_reqbufs(struct vb2_queue *q, enum vb2_memory memory,
+>  	unsigned int q_num_bufs = vb2_get_num_buffers(q);
+>  	unsigned plane_sizes[VB2_MAX_PLANES] = { };
+>  	bool non_coherent_mem = flags & V4L2_MEMORY_FLAG_NON_COHERENT;
+> +	bool restricted_mem = flags & V4L2_MEMORY_FLAG_RESTRICTED;
+>  	unsigned int i, first_index;
+>  	int ret = 0;
+>  
+> @@ -906,6 +924,9 @@ int vb2_core_reqbufs(struct vb2_queue *q, enum vb2_memory memory,
+>  			return 0;
+>  	}
+>  
+> +	if (restricted_mem_mismatch(restricted_mem, q, memory))
+> +		return -EINVAL;
+> +
+>  	/*
+>  	 * Make sure the requested values and current defaults are sane.
+>  	 */
+> @@ -923,6 +944,7 @@ int vb2_core_reqbufs(struct vb2_queue *q, enum vb2_memory memory,
+>  	if (ret)
+>  		return ret;
+>  	set_queue_coherency(q, non_coherent_mem);
+> +	q->restricted_mem = restricted_mem;
+>  
+>  	/*
+>  	 * Ask the driver how many buffers and planes per buffer it requires.
+> @@ -1031,6 +1053,7 @@ int vb2_core_create_bufs(struct vb2_queue *q, enum vb2_memory memory,
+>  	unsigned plane_sizes[VB2_MAX_PLANES] = { };
+>  	bool non_coherent_mem = flags & V4L2_MEMORY_FLAG_NON_COHERENT;
+>  	unsigned int q_num_bufs = vb2_get_num_buffers(q);
+> +	bool restricted_mem = flags & V4L2_MEMORY_FLAG_RESTRICTED;
+>  	bool no_previous_buffers = !q_num_bufs;
+>  	int ret = 0;
+>  
+> @@ -1039,6 +1062,9 @@ int vb2_core_create_bufs(struct vb2_queue *q, enum vb2_memory memory,
+>  		return -ENOBUFS;
+>  	}
+>  
+> +	if (restricted_mem_mismatch(restricted_mem, q, memory))
+> +		return -EINVAL;
+> +
+>  	if (no_previous_buffers) {
+>  		if (q->waiting_in_dqbuf && *count) {
+>  			dprintk(q, 1, "another dup()ped fd is waiting for a buffer\n");
+> @@ -1057,6 +1083,7 @@ int vb2_core_create_bufs(struct vb2_queue *q, enum vb2_memory memory,
+>  			return ret;
+>  		q->waiting_for_buffers = !q->is_output;
+>  		set_queue_coherency(q, non_coherent_mem);
+> +		q->restricted_mem = restricted_mem;
+>  	} else {
+>  		if (q->memory != memory) {
+>  			dprintk(q, 1, "memory model mismatch\n");
+> @@ -1064,6 +1091,8 @@ int vb2_core_create_bufs(struct vb2_queue *q, enum vb2_memory memory,
+>  		}
+>  		if (!verify_coherency_flags(q, non_coherent_mem))
+>  			return -EINVAL;
+> +		if (!verify_restricted_mem_flags(q, restricted_mem))
+> +			return -EINVAL;
+>  	}
+>  
+>  	num_buffers = min(*count, q->max_num_buffers - q_num_bufs);
+> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> index 293f3d5f1c4e..9ee24e537e0c 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> @@ -682,7 +682,7 @@ static void vb2_set_flags_and_caps(struct vb2_queue *q, u32 memory,
+>  		*flags = 0;
+>  	} else {
+>  		/* Clear all unknown flags. */
+> -		*flags &= V4L2_MEMORY_FLAG_NON_COHERENT;
+> +		*flags &= V4L2_MEMORY_FLAG_NON_COHERENT | V4L2_MEMORY_FLAG_RESTRICTED;
+>  	}
+>  
+>  	*caps |= V4L2_BUF_CAP_SUPPORTS_ORPHANED_BUFS;
+> @@ -698,6 +698,8 @@ static void vb2_set_flags_and_caps(struct vb2_queue *q, u32 memory,
+>  		*caps |= V4L2_BUF_CAP_SUPPORTS_MMAP_CACHE_HINTS;
+>  	if (q->supports_requests)
+>  		*caps |= V4L2_BUF_CAP_SUPPORTS_REQUESTS;
+> +	if (q->allow_restricted_mem && q->io_modes & VB2_DMABUF)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Joshua-Felmeden/dt-bindings-iio-humidity-add-ENS210-sensor-family/20240719-210648
-base:   1ebab783647a9e3bf357002d5c4ff060c8474a0a
-patch link:    https://lore.kernel.org/r/20240719-ens21x-v4-2-6044e48a376a%40thegoodpenguin.co.uk
-patch subject: [PATCH v4 2/2] iio: humidity: Add support for ENS210
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20240720/202407201602.KrJ889wu-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project ad154281230d83ee551e12d5be48bb956ef47ed3)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240720/202407201602.KrJ889wu-lkp@intel.com/reproduce)
+I think this io_modes test can be dropped.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407201602.KrJ889wu-lkp@intel.com/
+But it might be useful to add a WARN_ON in vb2_core_queue_init where
+this is checked. The WARN_ONs in that function really protect against
+driver bugs, making sure the driver doesn't pass incompatible combinations.
 
-All warnings (new ones prefixed by >>):
+Regards,
 
-   In file included from drivers/iio/humidity/ens210.c:19:
-   In file included from include/linux/i2c.h:13:
-   In file included from include/linux/acpi.h:14:
-   In file included from include/linux/device.h:32:
-   In file included from include/linux/device/driver.h:21:
-   In file included from include/linux/module.h:19:
-   In file included from include/linux/elf.h:6:
-   In file included from arch/s390/include/asm/elf.h:173:
-   In file included from arch/s390/include/asm/mmu_context.h:11:
-   In file included from arch/s390/include/asm/pgalloc.h:18:
-   In file included from include/linux/mm.h:2258:
-   include/linux/vmstat.h:500:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     500 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     501 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:507:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     507 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     508 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:519:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     519 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     520 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:528:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     528 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     529 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
->> drivers/iio/humidity/ens210.c:252:4: warning: format specifies type 'unsigned long' but the argument has underlying type 'unsigned int' [-Wformat]
-     251 |                         "Part ID does not match (0x%04x != 0x%04lx)\n", part_id,
-         |                                                              ~~~~~
-         |                                                              %04x
-     252 |                         data->chip_info->part_id);
-         |                         ^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:160:67: note: expanded from macro 'dev_info'
-     160 |         dev_printk_index_wrap(_dev_info, KERN_INFO, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                                                  ~~~     ^~~~~~~~~~~
-   include/linux/dev_printk.h:110:23: note: expanded from macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                              ~~~    ^~~~~~~~~~~
-   drivers/iio/humidity/ens210.c:200:30: warning: unused variable 'id' [-Wunused-variable]
-     200 |         const struct i2c_device_id *id = i2c_client_get_device_id(client);
-         |                                     ^~
-   7 warnings generated.
+	Hans
 
+> +		*caps |= V4L2_BUF_CAP_SUPPORTS_RESTRICTED_MEM;
+>  	if (max_num_bufs) {
+>  		*max_num_bufs = q->max_num_buffers;
+>  		*caps |= V4L2_BUF_CAP_SUPPORTS_MAX_NUM_BUFFERS;
 
-vim +252 drivers/iio/humidity/ens210.c
-
-   197	
-   198	static int ens210_probe(struct i2c_client *client)
-   199	{
-   200		const struct i2c_device_id *id = i2c_client_get_device_id(client);
-   201		struct ens210_data *data;
-   202		struct iio_dev *indio_dev;
-   203		uint16_t part_id;
-   204		int ret;
-   205	
-   206		if (!i2c_check_functionality(client->adapter,
-   207				I2C_FUNC_SMBUS_WRITE_BYTE_DATA |
-   208				I2C_FUNC_SMBUS_WRITE_BYTE |
-   209				I2C_FUNC_SMBUS_READ_I2C_BLOCK)) {
-   210			dev_err_probe(&client->dev, -EOPNOTSUPP,
-   211				"adapter does not support some i2c transactions\n");
-   212			return -EOPNOTSUPP;
-   213		}
-   214	
-   215		indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
-   216		if (!indio_dev)
-   217			return -ENOMEM;
-   218	
-   219		data = iio_priv(indio_dev);
-   220		i2c_set_clientdata(client, indio_dev);
-   221		data->client = client;
-   222		mutex_init(&data->lock);
-   223		data->chip_info = i2c_get_match_data(client);
-   224	
-   225		ret = devm_regulator_get_enable(&client->dev, "vdd");
-   226		if (ret)
-   227			return ret;
-   228	
-   229		/* reset device */
-   230		ret = i2c_smbus_write_byte_data(client, ENS210_REG_SYS_CTRL,
-   231						ENS210_SYS_CTRL_SYS_RESET);
-   232		if (ret)
-   233			return ret;
-   234	
-   235		/* wait for device to become active */
-   236		usleep_range(4000, 5000);
-   237	
-   238		/* disable low power mode */
-   239		ret = i2c_smbus_write_byte_data(client, ENS210_REG_SYS_CTRL, 0x00);
-   240		if (ret)
-   241			return ret;
-   242	
-   243		/* wait for device to finish */
-   244		usleep_range(4000, 5000);
-   245	
-   246		/* get part_id */
-   247		part_id = i2c_smbus_read_word_data(client, ENS210_REG_PART_ID);
-   248	
-   249		if (part_id != data->chip_info->part_id) {
-   250			dev_info(&client->dev,
-   251				"Part ID does not match (0x%04x != 0x%04lx)\n", part_id,
- > 252				data->chip_info->part_id);
-   253		}
-   254	
-   255		/* reenable low power */
-   256		ret = i2c_smbus_write_byte_data(client, ENS210_REG_SYS_CTRL,
-   257						ENS210_SYS_CTRL_LOW_POWER_ENABLE);
-   258		if (ret)
-   259			return ret;
-   260	
-   261		indio_dev->name = data->chip_info->name;
-   262		indio_dev->modes = INDIO_DIRECT_MODE;
-   263		indio_dev->channels = ens210_channels;
-   264		indio_dev->num_channels = ARRAY_SIZE(ens210_channels);
-   265		indio_dev->info = &ens210_info;
-   266	
-   267		return devm_iio_device_register(&client->dev, indio_dev);
-   268	}
-   269	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
