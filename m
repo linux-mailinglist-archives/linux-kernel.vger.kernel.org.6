@@ -1,102 +1,158 @@
-Return-Path: <linux-kernel+bounces-257953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86EB0938161
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 14:50:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8426938163
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 14:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F43F1F21C19
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 12:50:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A1821F218A0
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 12:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954DD8564A;
-	Sat, 20 Jul 2024 12:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBD212E1F9;
+	Sat, 20 Jul 2024 12:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lBgL4kS0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c2PHlcKe"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D276C1DA24;
-	Sat, 20 Jul 2024 12:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565E53211;
+	Sat, 20 Jul 2024 12:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721479840; cv=none; b=VnBgAiNdnB1TjP3O88SYee4a2Ng9wUZ+gtiMyjeGGTBvfUU8yE2phESMIMhj9NPemxO89dQ9ODhP4thi70kz0mwrISIkDYYaFFaflSP/is8Uv53xxvBxdkRb+fv4xbOQaVJrcU+Z+aIiavUR+JsthcM89al0eIdk6fj66FAtKVY=
+	t=1721480235; cv=none; b=uxSv0utn+Kp/pa7HGl7Pnxgf4/snFqCTSJTcPMTXKHkz2dC6gssKrvecVX+r0j7tS2AS7leIBV6EFR3qHgwY2an9zQBD6kifsUaqJE7bL6PDEYrt81Zy5xhNOcay9p2XEADBEJ/YEdiw4lDP46a23jaqgK2Nxi8FXrtF3Wlgwec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721479840; c=relaxed/simple;
-	bh=HV17yG5auF5MNPa0mLRfliQ7owI1hS8cyrzvOwmA8rE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WnUVHVF4vTP7J1Gd/RHrWfQfAkg4no5KkELtu+bl0R5RqdF+Zed6lZeQ7MPRBoptSDk54q4yXNPWKZXf5nq/7iEjmAot155N4mvlgzrfnCd/qMNoFlCyLqYWcJ/6658TDoxARQjP2OLYPSPvwcvcEg05bNCA0Q+IUFRro5JmlLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lBgL4kS0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43D30C2BD10;
-	Sat, 20 Jul 2024 12:50:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721479840;
-	bh=HV17yG5auF5MNPa0mLRfliQ7owI1hS8cyrzvOwmA8rE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lBgL4kS0qUW/RuLubjbG4iN1cuXqgXr57oSsozlsos1cpvGRCjc0zn6onM7/KocXz
-	 fGDc2vCLx1Gt3wjdRx0e1nCWszJDA4QvmQO+RiunBHYjHNoEgKY4rxqe5R7a70pVq8
-	 5ibN+vf0Whq0IjfuS4gavWYG4AZv26ewmYICOMncR4BRg4aSY1yJggSOOY4ScbzUrY
-	 f5yffC0LQDEMiihc0OPwvX/Nn4KY/9IPPc0AZRlD74dws1XqdCIYdsEgMx8nuLxAsA
-	 5opVhD6C/pvzwGqJFgVo9aOCmNah28NWGjRqcORZ+U2elKn9oG0OMj5P9S/6dTutvm
-	 HCf7Dc+rhEBjw==
-Date: Sat, 20 Jul 2024 13:50:33 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Marius Cristea <marius.cristea@microchip.com>, Marcus Folkesson
- <marcus.folkesson@gmail.com>, Kent Gustavsson <kent@minoris.se>, Liam
- Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/6] iio: use devm_regulator_get_enable_read_voltage
- round 3
-Message-ID: <20240720135033.3399e83e@jic23-huawei>
-In-Reply-To: <20240712-iio-regulator-refactor-round-3-v1-0-835017bae43d@baylibre.com>
-References: <20240712-iio-regulator-refactor-round-3-v1-0-835017bae43d@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721480235; c=relaxed/simple;
+	bh=QwEtKFRATlp+e1LcTO7aIl4RD58sCciZspqxiFvD23s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QIKkxhrYeoe30zCvf3hkHatleEoyMwoCsBUZqFOsY1hH0NhNmWzAL7C8GhXp6G+sGhd305PSZ/KrX/H8QlPmj/SvICPBF3Z3tsGqYWzN16ILxd71ifMnRFXqHyoBzprLHnMtcikZB+jgrBhdz77aSE9owchL7KEGGzIcxb3K8Es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c2PHlcKe; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721480233; x=1753016233;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=QwEtKFRATlp+e1LcTO7aIl4RD58sCciZspqxiFvD23s=;
+  b=c2PHlcKe7/ffg2Kv5JyMxqek2Cu7OU4hrGKQX5v2wu72TtsNyFLYilOq
+   TqG+VFLL/FpNZVC/cZlj/0mCQOhuzYPlgnTaKAicrys/uEckYLdmLveKH
+   CH9txogR3lj6yf/OAYU8G8NgGWzKwaXzYUJeX5Bo1YkeRg86R5r8PVpqw
+   JQeIzEm4d6qYGkBfKxx26366ASXzxa/LtrtXrT12dtGn6ZoEf12wFgj+9
+   Eil0+qe/IBjf3Ov3uCs8fsgsHV/MzRd2cyk4kHel8WDvhZO38AGHgBGNz
+   Q4a3kbgaoKquft1nYaLYppTLQoinzWJG7pkQmYPek6OtSqEN59EwaPvPt
+   g==;
+X-CSE-ConnectionGUID: yo3GPYKcS7OOIyOwkIW0zg==
+X-CSE-MsgGUID: BVDGKOUISFSYcfj1j2xpZQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11139"; a="30485691"
+X-IronPort-AV: E=Sophos;i="6.09,223,1716274800"; 
+   d="scan'208";a="30485691"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2024 05:57:13 -0700
+X-CSE-ConnectionGUID: wzXV+QDSQOmuD+lW9pWbwQ==
+X-CSE-MsgGUID: X1buisiQScCvH+2eHfbpjQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,223,1716274800"; 
+   d="scan'208";a="51458615"
+Received: from wenjun3x-mobl1.ccr.corp.intel.com (HELO [10.124.232.196]) ([10.124.232.196])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2024 05:57:09 -0700
+Message-ID: <2365dcaf-95d4-462b-9614-83ee9f7c12f6@intel.com>
+Date: Sat, 20 Jul 2024 20:57:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] fs/file.c: add fast path in find_next_fd()
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, edumazet@google.com,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com,
+ tim.c.chen@linux.intel.com, viro@zeniv.linux.org.uk, yu.ma@intel.com
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240717145018.3972922-1-yu.ma@intel.com>
+ <20240717145018.3972922-4-yu.ma@intel.com>
+ <CAGudoHHQSjbeuSevyL=W=fhjOOo=bCjq4ixHfEMN_XdRLLdPbQ@mail.gmail.com>
+From: "Ma, Yu" <yu.ma@intel.com>
+Content-Language: en-US
+In-Reply-To: <CAGudoHHQSjbeuSevyL=W=fhjOOo=bCjq4ixHfEMN_XdRLLdPbQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, 12 Jul 2024 11:03:51 -0500
-David Lechner <dlechner@baylibre.com> wrote:
 
-> This is the third round of patches to convert IIO drivers to use the
-> new devm_regulator_get_enable_read_voltage() helper function.
-> 
-> This time, we are converting some Microchip drivers. These weren't as
-> trivial as some other drivers because of nested functions that need
-> to know info about the reference voltage, but for the most part, should
-> be fairly straightforward. And there is a bonus to remove a remove()
-> callback in one of the drivers.
-Applied 1-4 and 6. Comment outstanding on 5 so I'm assuming I'll see
-a v2 of just that patch at somepoint.
+On 7/20/2024 1:53 AM, Mateusz Guzik wrote:
+> On Wed, Jul 17, 2024 at 4:24 PM Yu Ma <yu.ma@intel.com> wrote:
+>> Skip 2-levels searching via find_next_zero_bit() when there is free slot in the
+>> word contains next_fd, as:
+>> (1) next_fd indicates the lower bound for the first free fd.
+>> (2) There is fast path inside of find_next_zero_bit() when size<=64 to speed up
+>> searching.
+> this is stale -- now the fast path searches up to 64 fds in the lower bitmap
 
-Thanks,
+Nope, this is still valid, as the searching size of the fast path inside 
+of find_next_fd() is always 64, it will execute the fast path inside of 
+find_next_zero_bit().
 
-Jonathan
 
-> 
-> ---
-> David Lechner (6):
->       iio: dac: mcp4728: rename err to ret in probe function
->       iio: dac: mcp4728: use devm_regulator_get_enable_read_voltage()
->       iio: dac: mcp4922: use devm_regulator_get_enable_read_voltage()
->       iio: dac: mcp4922: drop remove() callback
->       iio: adc: mcp3564: use devm_regulator_get_enable_read_voltage()
->       iio: adc: mcp3911: use devm_regulator_get_enable_read_voltage()
-> 
->  drivers/iio/adc/mcp3564.c | 54 +++++++++++++------------------------------
->  drivers/iio/adc/mcp3911.c | 59 +++++++++++++----------------------------------
->  drivers/iio/dac/mcp4728.c | 45 +++++++++++-------------------------
->  drivers/iio/dac/mcp4922.c | 47 ++++++-------------------------------
->  4 files changed, 52 insertions(+), 153 deletions(-)
-> ---
-> base-commit: 986da024b99a72e64f6bdb3f3f0e52af024b1f50
-> change-id: 20240712-iio-regulator-refactor-round-3-17f2a82d2181
+>
+>> (3) After fdt is expanded (the bitmap size doubled for each time of expansion),
+>> it would never be shrunk. The search size increases but there are few open fds
+>> available here.
+>>
+>> This fast path is proposed by Mateusz Guzik <mjguzik@gmail.com>, and agreed by
+>> Jan Kara <jack@suse.cz>, which is more generic and scalable than previous
+>> versions.
+> I think this paragraph is droppable. You already got an ack from Jan
+> below, so stating he agrees with the patch is redundant. As for me I
+> don't think this warrants mentioning. Just remove it, perhaps
+> Christian will be willing to massage it by himself to avoid another
+> series posting.
 
+The idea of fast path for the word contains next_fd is from you, 
+although this patch is small, I think it is reasonable to record here 
+out of my respect. Appreciate for your guide and comments on this patch, 
+I've learned a lot on the way of resolving problems :)
+
+
+Regards
+
+Yu
+
+>> And on top of patch 1 and 2, it improves pts/blogbench-1.1.0 read by
+>> 8% and write by 4% on Intel ICX 160 cores configuration with v6.10-rc7.
+>>
+>> Reviewed-by: Jan Kara <jack@suse.cz>
+>> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+>> Signed-off-by: Yu Ma <yu.ma@intel.com>
+>> ---
+>>   fs/file.c | 9 +++++++++
+>>   1 file changed, 9 insertions(+)
+>>
+>> diff --git a/fs/file.c b/fs/file.c
+>> index 1be2a5bcc7c4..729c07a4fc28 100644
+>> --- a/fs/file.c
+>> +++ b/fs/file.c
+>> @@ -491,6 +491,15 @@ static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start)
+>>          unsigned int maxfd = fdt->max_fds; /* always multiple of BITS_PER_LONG */
+>>          unsigned int maxbit = maxfd / BITS_PER_LONG;
+>>          unsigned int bitbit = start / BITS_PER_LONG;
+>> +       unsigned int bit;
+>> +
+>> +       /*
+>> +        * Try to avoid looking at the second level bitmap
+>> +        */
+>> +       bit = find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_LONG,
+>> +                                start & (BITS_PER_LONG - 1));
+>> +       if (bit < BITS_PER_LONG)
+>> +               return bit + bitbit * BITS_PER_LONG;
+>>
+>>          bitbit = find_next_zero_bit(fdt->full_fds_bits, maxbit, bitbit) * BITS_PER_LONG;
+>>          if (bitbit >= maxfd)
+>> --
+>> 2.43.0
+>>
+>
 
