@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-258061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 246EC9382DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 23:09:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB049382DE
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 23:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD817B2123C
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 21:09:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77B2B1F21E24
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 21:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3436149C62;
-	Sat, 20 Jul 2024 21:09:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8908B14A089;
+	Sat, 20 Jul 2024 21:09:12 +0000 (UTC)
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C2314884B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F1214885B
 	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 21:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721509751; cv=none; b=hEAN9LbnQ7lR7gf1eaMExJ/+pfLnCd3kUcJhfcx/Kk0ItcFaOKH8d1V2nRE9BNanc18FkS7WLH1Ey9xo7xGRDxzYb/Il22xABHkFEIBP6IfBg5OBj60RgAFYEIB/vuQHMh8G1RkyRiAC1UB+ttaqMna1I6gyd+v9LCy+XBsQTRs=
+	t=1721509751; cv=none; b=bIq1n33tGYLEngnLBK0gDXYwPEYV48DGbTP7JRD0xovoosyA9V48QApFnRBGl+0LiOUKVyVD6SQHedMSaNrq9ZSVwBtzEXuE8S0yLDzIuYE6OEkSkvVF6j08DnFIDISPqzNcxJqlRvOrV1EyUhTrV1xNzNbowtNw2/gRZUIEfWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721509751; c=relaxed/simple;
-	bh=sz5yj5AOlKeZgmgQkO3DUP7uSd5qOr/naVxfGyfufMs=;
+	bh=kkLbfVuLYs5yXNPqZVZgl4VzVvH4mKaZXdACFwCo9D0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cU9C8tU8p+ah+ZoPjdpjiDrx44PV3mu0YcwMUAr2Cdh4Wg7vO04sTVCDn4w7CcdOXfxzUj5K0JDUAxP6HgGyyO4wHulEkoaIjNq+EFEocgHvQqdT35fpeJQy4hGb103b9Ux6lsh5QSc048AKpFeXe+wESJjTBroP3VJxDo0FYOo=
+	 MIME-Version; b=XQwvOrrJlSFo/IC1nJOuGdPgoESJexVU7A3ZMXMHWbQkX/+O5NtvUvINBakdzstyU10wWe07UJdXclHeI9/GsN78oxWI5UxSbClgp87kqnXRpKh5QNwL+dmNLBWAEwTvbHadCaBzSGhrSfzyzztUsUNueoG/qfaW2JLeLWgFNo8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
@@ -32,16 +32,16 @@ Received: from i5e860cd3.versanet.de ([94.134.12.211] helo=phil.lan)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1sVHKC-00061D-M8; Sat, 20 Jul 2024 23:09:04 +0200
+	id 1sVHKC-00061D-V4; Sat, 20 Jul 2024 23:09:05 +0200
 From: Heiko Stuebner <heiko@sntech.de>
 To: heiko@sntech.de
 Cc: ukleinek@debian.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/8] arm64: dts: rockchip: enable usb ports on qnap ts433
-Date: Sat, 20 Jul 2024 23:08:51 +0200
-Message-Id: <20240720210856.778014-6-heiko@sntech.de>
+Subject: [PATCH 4/8] arm64: dts: rockchip: enable usb ports on Qnap-TS433
+Date: Sat, 20 Jul 2024 23:08:52 +0200
+Message-Id: <20240720210856.778014-7-heiko@sntech.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240720210856.778014-1-heiko@sntech.de>
 References: <20240720210856.778014-1-heiko@sntech.de>
@@ -54,7 +54,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 Enable usb controllers and phys and add regulator infrastructure for the
-usb ports on the ts433.
+usb ports on the TS433.
 
 Of course there are no schematics available for the device, so the
 regulator information comes from the vendor-devicetree with unknown
