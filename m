@@ -1,108 +1,89 @@
-Return-Path: <linux-kernel+bounces-257818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 057FB937F5C
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 08:58:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C977D937F5E
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 09:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 363D01C211C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 06:58:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3A691C21227
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 07:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00EF179AF;
-	Sat, 20 Jul 2024 06:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b="GlS3pVWe"
-Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B4917597;
+	Sat, 20 Jul 2024 07:01:07 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BEC912E61;
-	Sat, 20 Jul 2024 06:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.87.146.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8011323D
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 07:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721458694; cv=none; b=CgK3zLaXOi3m6OPAUoPPrguaXllCDIO4j0sVW54XMeTREpQjpwYr4K5ref5VIPDNrQFAEp2ak86uS5jjOHxRIwNq8d2F+22383xobjFyyO2I6rXl3NqaHTVrRN9kXh+pQRCwmQ2gBP0IzEEm4kz3VWGaDcdcXqGJlzWdDhXvL5Q=
+	t=1721458867; cv=none; b=qpV07vuGr6UiyLC/+b9sp86bstVL2V5I+5zyIAxkibdqCmjDlYtNYjvV5DeOn1Mq1YsIQjG7xTVF8iIhpl8re3q42Mgkv4AHNxmxNzDgZQAbk634Sh6dabiYIIYajmOfJXAKtTx8Smk7KhQgsECkUDstDZ2TVKN97vGLqh553GU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721458694; c=relaxed/simple;
-	bh=M5L6dWDAc1ou/EhVWLIU6nU2qw5ijq61Yo/lqnsud80=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=MJayc/KjitXwkqY18Zxee1mp4y1f7uT2oJtp5GPKKD2vSkhbOUOPywKOnIDbMy/iYw3ZLdQU6Sdlqrz3iJUKrTuhz9R9DKvR5dI+SCkEUa4Vehq7gA4SEgdrlcaZkzpF2SUBuNuE4OzaZt/HU8rdU5Icg31EHecm3dWoqr1F8P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru; spf=pass smtp.mailfrom=trvn.ru; dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b=GlS3pVWe; arc=none smtp.client-ip=194.87.146.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trvn.ru
-Received: from authenticated-user (box.trvn.ru [194.87.146.52])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	by box.trvn.ru (Postfix) with ESMTPSA id 8016C401C4;
-	Sat, 20 Jul 2024 11:57:59 +0500 (+05)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
-	t=1721458680; bh=M5L6dWDAc1ou/EhVWLIU6nU2qw5ijq61Yo/lqnsud80=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GlS3pVWedP+ZRBjFW6aR/R6nayB6owCO3ITEjaNzTuyK+BMu5OUL8X1KcbKoS+3KO
-	 fbiULf8HGAHrT8lAtvcwanWuf7YQcS9jp4GfVIRlcfzrl1wWPvQ4//KffnarmPtR8H
-	 gOcCISUwAFhKoxL7J4BSAxJiaVWMDoX+/IxesaPT8jibYmJqxABEev+saM3n2KKv1C
-	 kt0FieLInXflBF/UxntpkR+XDodPxD5ioHc98u/C2JnWqOzXCf+QWRh0F7eA8H91cn
-	 CEHtFD/DW7hoqaI2HkVVXTAUDBaUnxgpqDxlsoJCpEdJP+6rCZkFFeqyb3Ww52ip6O
-	 boh40a6kCxVtw==
+	s=arc-20240116; t=1721458867; c=relaxed/simple;
+	bh=Yz1O2g221nEwW1ySzr2gAc3UEWukWUaHJd2+GJti/Ko=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=hNh5ZMnLqqrAn9aDsZ7orIbcvKNg/t/ZiSoLhMEF3Y81YI00rhRZ06EpGw06CBHQ6oFLzFyqMiElQzTYU1PxurOIX3hiv68/N5hkI7XSUnqHXg9CW5i4NbC0fl4uTfV07he6bJpfy+QbCJ5PYNrOXKB4Nl5B5NTcmqkc82V0EzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39794551bfbso28540945ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 00:01:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721458865; x=1722063665;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tRtgiKoJlbWVewhYHDKUC7MKTzVRf15AxwXYdDy3neo=;
+        b=XzKtFKX4lZSjs/G7kOgqgdsGmLgO9HiXoUFgyj023jLffKYFtODzDmOyLfnin2sQRd
+         2Tqx6qHqiljdz+7cCa8WhdMkjDyn9mZRhO4/NBAoRL3NBOvbuhveJxUpsM7dIepv9koS
+         gcRxK4YmG3Av7BhxoIsie5bHgTlCOR1Fq2NAU5FxJ9DiaF1JudhVCKMk1Pg+IRhfpXrF
+         KVAJ33dJWxAcCj/830B1In5SvqGyHTLv5nyWhrARiQ/K3whB/DoxVtM3min3WV8dggDr
+         UtphuDYtmYehNH5JWYWuXJujXuZReLKmOd9QERvdfZXHOTOx0V4L+mn6up7C81TX7tmS
+         sDGw==
+X-Forwarded-Encrypted: i=1; AJvYcCXOaOG/BemRVnPTpIUFmBudHafVu+AtPQfi8p8TDy4oZ9CKY6ypWYx9bRUDouTMC/SF+2yJ447iUJfr5V5i+1qOk2SeT3LwobJHgA6E
+X-Gm-Message-State: AOJu0YwvFk4CEyeE9gu5LrUWX+BsStPdJbSqRWdCjCWAzy7I87ZZVqLF
+	aCpwd4xg6a3P2ebUTn+LnqPWiwxUeaz7OXayhiNEAGxoORvwARKuFn/BeibxVNVnRVoNqn9XeRQ
+	8S6nVRz5N6RM0HZkQuSpAo6nZuzfUAfnQKl6Rn8MIKdLDhkIWuOgQJ4U=
+X-Google-Smtp-Source: AGHT+IGEDJnDkvcwBjRxRpWrrnKr1Drq+P8VhRF0N5HOYOyde1q36FZz6i6zquqfCx3x8mAPqg+di33554zDN7Pka/y+bTP7g9dD
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sat, 20 Jul 2024 11:57:44 +0500
-From: Nikita Travkin <nikita@trvn.ru>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- Michael Srba <Michael.Srba@seznam.cz>, Linus Walleij
- <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, linux-input@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] input: zinitix: Add touchkey support
-In-Reply-To: <ZpsE8mQpahxBQRE-@google.com>
-References: <20240717-zinitix-tkey-v5-0-52ea4cd4bd50@trvn.ru>
- <20240717-zinitix-tkey-v5-2-52ea4cd4bd50@trvn.ru>
- <ZpsE8mQpahxBQRE-@google.com>
-Message-ID: <b0b86f2f6f315d791e7e0391142720b9@trvn.ru>
-X-Sender: nikita@trvn.ru
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1c28:b0:395:fa9a:318e with SMTP id
+ e9e14a558f8ab-398e17ab520mr1930185ab.0.1721458864742; Sat, 20 Jul 2024
+ 00:01:04 -0700 (PDT)
+Date: Sat, 20 Jul 2024 00:01:04 -0700
+In-Reply-To: <IA0PR11MB7185B8D0CCCC219FDA647325F8AE2@IA0PR11MB7185.namprd11.prod.outlook.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000020f6f8061da86023@google.com>
+Subject: Re: [syzbot] [mm?] BUG: Bad page map (8)
+From: syzbot <syzbot+ec4b7d82bb051330f15a@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, hughd@google.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, 
+	vivek.kasireddy@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-Dmitry Torokhov писал(а) 20.07.2024 05:29:
-> On Wed, Jul 17, 2024 at 06:55:34PM +0500, Nikita Travkin wrote:
->> Zinitix touch controllers can use some of the sense lines for virtual
->> keys (like those found on many phones). Add support for those keys.
->>
->> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
-> 
-> Applied, thank you. However:
-> 
->> -->
->> +	if (le16_to_cpu(touch_event.status) & BIT_ICON_EVENT) {
->> +		error = zinitix_read_data(bt541->client, ZINITIX_ICON_STATUS_REG,
->> +					  &icon_events, sizeof(icon_events));
->> +		if (error) {
->> +			dev_err(&client->dev, "Failed to read icon events\n");
->> +			goto out;
->> +		}
-> 
-> I wonder, would it make sense (and be more efficient) to issue a single
-> read of size sizeof(struct touch_event) + sizeof(icon_events) and the
-> parse the data based on touch_event.status?
+Hello,
 
-Maybe, but I would be really hesitant to such a change: Original driver
-also makes a dedicated read for the "icon" data and per my understanding,
-those "register reads" may also not be really "register" based but rather
-kind of "command" based, where controller will start streaming the data
-based on the request for the specific "register". In this case i'd prefer
-to not accidentally confuse the touch firmware by over-reading the data,
-if its somehow firmware-version-defined.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Thanks for giving it a look and picking this up!
-Nikita
+Reported-by: syzbot+ec4b7d82bb051330f15a@syzkaller.appspotmail.com
+Tested-by: syzbot+ec4b7d82bb051330f15a@syzkaller.appspotmail.com
 
-> 
-> Thanks.
+Tested on:
+
+commit:         581a87b1 fixup! mm/gup: introduce memfd_pin_folios() f..
+git tree:       https://gitlab.freedesktop.org/Vivek/drm-tip.git syzbot_fix_remove_inode
+console output: https://syzkaller.appspot.com/x/log.txt?x=142f1179980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=16fdddce5d38a1c8
+dashboard link: https://syzkaller.appspot.com/bug?extid=ec4b7d82bb051330f15a
+compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
