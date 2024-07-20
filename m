@@ -1,235 +1,453 @@
-Return-Path: <linux-kernel+bounces-257899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AB2993808D
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 11:53:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33837938090
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 11:55:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D479628230C
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 09:53:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD8352825E0
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 09:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81167E574;
-	Sat, 20 Jul 2024 09:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E4A7E58D;
+	Sat, 20 Jul 2024 09:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2YLhcuz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D8C4CE09;
-	Sat, 20 Jul 2024 09:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CEF5474A;
+	Sat, 20 Jul 2024 09:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721469227; cv=none; b=tkXJLWlH6RxPAtXcgQjvLRwV6LXnT8E+RGQktOr3dcbYdkLEuWm6SMhcHlqW+junXSk9vpoKbckQxnbX8YQb8vUPGSO++p4hfNqUFwtCUURcQT5RNsUt4D9JvlKD3m88/gOSe+TCjMwcEqeoKxftLdiDr465eAEW3M7dFYV8ifc=
+	t=1721469312; cv=none; b=XURfxpXHSNJgHcMZ8HKJxW6QDM3mszabFzN6pE9abomoeK2ocQt2kZ1g1KH3Y8xwLcWtjr4HXluI5AyRg/ymSeYNCat2LHfJNmTYxJJYGH1XIR5hWUN1RdpZRKP6OPiP9oKtj5pW1xydR4Tvs7M46165m3rQfdlToHTFKuDLwFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721469227; c=relaxed/simple;
-	bh=xhomw79Be/HCpaE2/rtrJWGC2ErE93REQWlELmL6Few=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jvbMeGrEiiuBm78OqT+QptZg9LgY3NYiqcvoCRmdd/tXr8e64Gxi/DYgQOCKBjI2iRQQlntUEg+hwHnhxqU8rL3UlC8dzil5hNG8k3QA2LBZBEu4Tb4TXjcVje/3u7tmwuyn1yYpOhj2V3Sxfjmf2T3ViZmRk23W6W8BOLPgHII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F29CAC2BD10;
-	Sat, 20 Jul 2024 09:53:39 +0000 (UTC)
-Message-ID: <a6a7a9c8-7406-4e69-a5cf-08cf06c7793d@xs4all.nl>
-Date: Sat, 20 Jul 2024 11:53:38 +0200
+	s=arc-20240116; t=1721469312; c=relaxed/simple;
+	bh=Wu5UFeumOWtWcFpQjS3yFFfzrB2TMfTN7C1LyRPLT8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BTb1yD4xZLL2a5MVwsx3MFEzHdLt/C7LKB4welhjmh5F0w/fBaYnFpiFeLcU3oE6KAj2z5RNdNjwa9ELWZWCY3GQDngG/yURz1+/9w3NHZUV9VEW/jSKcp4SBjpgEKDsuqGpEDynAJvXSBlHor954cAsoPd+8HcRDOyBshEs/Wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m2YLhcuz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E727BC2BD10;
+	Sat, 20 Jul 2024 09:55:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721469312;
+	bh=Wu5UFeumOWtWcFpQjS3yFFfzrB2TMfTN7C1LyRPLT8M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m2YLhcuzuvpG5Gmb6hnvUQYlRuoWmj+rC3ymrDjbv+3Q4d1Yo2kPaG6aisR+jz/Da
+	 HHLfX8Ktt8uGZpZ+nD3NbYKU1jHj4R0UDCFJP0YY3nRlvR2CSRx229Mr0hxKMI5Dcx
+	 N4n8eCznvVhRE9e3eRlui4O9yc6hg12xsrtfHUpAUY6qJd97i5W5O9WxiaYTFbAvc8
+	 jr40fIkjooG0YTr9jqwEG7HZJdACGtfWExO6WQA6Xru6DM0JkKC4UlBPi3FZPtRC7h
+	 7Qnk/cs4MkuCEST2blPWfY5Vix2Vni8RSPke/Mh8q2TCJBra2A5RIXWw8ylqSuDUl7
+	 YzigxlXhQTo2Q==
+Received: by pali.im (Postfix)
+	id 020258A0; Sat, 20 Jul 2024 11:55:07 +0200 (CEST)
+Date: Sat, 20 Jul 2024 11:55:07 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Andres Salomon <dilinger@queued.net>
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+	Matthew Garrett <mjg59@srcf.ucam.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	linux-pm@vger.kernel.org, Dell.Client.Kernel@dell.com,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH] platform/x86:dell-laptop: Add knobs to change battery
+ charge settings
+Message-ID: <20240720095507.uyaotkofkyasdgbd@pali>
+References: <20240720012220.26d62a54@5400>
+ <20240720084019.hrnd4wgt4muorydp@pali>
+ <20240720052419.73b1415a@5400>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 02/28] v4l2: handle restricted memory flags in queue
- setup
-To: Yunfei Dong <yunfei.dong@mediatek.com>,
- Jeffrey Kardatzke <jkardatzke@google.com>,
- =?UTF-8?Q?N=C3=ADcolas_F_=2E_R_=2E_A_=2E_Prado?= <nfraprado@collabora.com>,
- Nathan Hebert <nhebert@chromium.org>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- Tomasz Figa <tfiga@chromium.org>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>, Yong Wu <yong.wu@mediatek.com>,
- Hsin-Yi Wang <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>,
- Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>,
- Sumit Semwal <sumit.semwal@linaro.org>, Brian Starkey
- <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
- "T . J . Mercier" <tjmercier@google.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Matthias Brugger <matthias.bgg@gmail.com>, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20240720071606.27930-1-yunfei.dong@mediatek.com>
- <20240720071606.27930-3-yunfei.dong@mediatek.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <20240720071606.27930-3-yunfei.dong@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240720052419.73b1415a@5400>
+User-Agent: NeoMutt/20180716
 
-On 20/07/2024 09:15, Yunfei Dong wrote:
-> From: Jeffrey Kardatzke <jkardatzke@google.com>
+On Saturday 20 July 2024 05:24:19 Andres Salomon wrote:
+> Thanks for the quick feedback! Responses below.
 > 
-> Validates the restricted memory flags when setting up a queue and
-> ensures the queue has the proper capability.
+> On Sat, 20 Jul 2024 10:40:19 +0200
+> Pali Rohár <pali@kernel.org> wrote:
 > 
-> Signed-off-by: Jeffrey Kardatzke <jkardatzke@google.com>
-> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
-> [Yunfei: Change reviewer's comments]
-> ---
->  .../media/common/videobuf2/videobuf2-core.c   | 29 +++++++++++++++++++
->  .../media/common/videobuf2/videobuf2-v4l2.c   |  4 ++-
->  2 files changed, 32 insertions(+), 1 deletion(-)
+> > Hello,
+> > 
+> > I looked at your patch. I wrote some comments below. The main issue is
+> > how to correctly interpret read token values.
+> >
+> [...]
 > 
-> diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
-> index 0217392fcc0d..44080121f37e 100644
-> --- a/drivers/media/common/videobuf2/videobuf2-core.c
-> +++ b/drivers/media/common/videobuf2/videobuf2-core.c
-> @@ -830,6 +830,23 @@ static bool verify_coherency_flags(struct vb2_queue *q, bool non_coherent_mem)
->  	return true;
->  }
+> > 
+> > dell_send_request() returns negative value on error. As the read value
+> > seems to be always non-negative number, you can change API of the
+> > dell_battery_read_req() function to have read value in the return value
+> > (instead of in *val pointer). E.g.
+> > 
+> > static int dell_battery_read_req(const int type)
+> > {
+> > 	...
+> > 	err = dell_send_request(&buffer, CLASS_TOKEN_READ, SELECT_TOKEN_STD);
+> > 	if (err)
+> > 		return err;
+> > 
+> > 	return buffer.output[1];
+> > }
+> > 
+> 
+> Good call, I'll change that.
+> 
+> 
+> > > +
+> > > +static int dell_battery_write_req(const int type, int val)
+> > > +{
+> > > +	struct calling_interface_buffer buffer;
+> > > +	struct calling_interface_token *token;
+> > > +
+> > > +	token = dell_smbios_find_token(type);
+> > > +	if (!token)
+> > > +		return -ENODEV;
+> > > +
+> > > +	dell_fill_request(&buffer, token->location, val, 0, 0);
+> > > +	return dell_send_request(&buffer,
+> > > +			CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
+> > > +}
+> > > +
+> > > +/* The rules: the minimum start charging value is 50%. The maximum
+> > > + * start charging value is 95%. The minimum end charging value is
+> > > + * 55%. The maximum end charging value is 100%. And finally, there
+> > > + * has to be at least a 5% difference between start & end values.
+> > > + */
+> > > +#define CHARGE_START_MIN	50
+> > > +#define CHARGE_START_MAX	95
+> > > +#define CHARGE_END_MIN		55
+> > > +#define CHARGE_END_MAX		100
+> > > +#define CHARGE_MIN_DIFF		5
+> > > +
+> > > +static int dell_battery_custom_set(const int type, int val)
+> > > +{
+> > > +	if (type == BAT_CUSTOM_CHARGE_START) {
+> > > +		int end = CHARGE_END_MAX;
+> > > +
+> > > +		if (val < CHARGE_START_MIN)
+> > > +			val = CHARGE_START_MIN;
+> > > +		else if (val > CHARGE_START_MAX)
+> > > +			val = CHARGE_START_MAX;
+> > > +
+> > > +		dell_battery_read_req(BAT_CUSTOM_CHARGE_END, &end);  
+> > 
+> > Missing check for failure of dell_battery_read_req.
+> 
+> This is intentional; it's just a sanity check, we don't need to bail
+> if we hit a failure. I'll change the code to make that explicit
+> though, as it's not currently clear.
+> 
+> 
+> 
+> > 
+> > > +		if ((end - val) < CHARGE_MIN_DIFF)
+> > > +			val = end - CHARGE_MIN_DIFF;
+> > > +	} else if (type == BAT_CUSTOM_CHARGE_END) {
+> > > +		int start = CHARGE_START_MIN;
+> > > +
+> > > +		if (val < CHARGE_END_MIN)
+> > > +			val = CHARGE_END_MIN;
+> > > +		else if (val > CHARGE_END_MAX)
+> > > +			val = CHARGE_END_MAX;
+> > > +
+> > > +		dell_battery_read_req(BAT_CUSTOM_CHARGE_START, &start);  
+> > 
+> > Missing check for failure of dell_battery_read_req.
+> > 
+> 
+> Ditto.
+> 
+> 
+> > > +		if ((val - start) < CHARGE_MIN_DIFF)
+> > > +			val = start + CHARGE_MIN_DIFF;
+> > > +	}
+> > > +
+> > > +	return dell_battery_write_req(type, val);
+> > > +}
+> > > +
+> > > +static int battery_charging_mode_set(enum battery_charging_mode mode)
+> > > +{
+> > > +	int err;
+> > > +
+> > > +	switch (mode) {
+> > > +	case DELL_BAT_MODE_STANDARD:
+> > > +		err = dell_battery_write_req(BAT_STANDARD_MODE_TOKEN, mode);
+> > > +		break;
+> > > +	case DELL_BAT_MODE_EXPRESS:
+> > > +		err = dell_battery_write_req(BAT_EXPRESS_MODE_TOKEN, mode);
+> > > +		break;
+> > > +	case DELL_BAT_MODE_PRIMARILY_AC:
+> > > +		err = dell_battery_write_req(BAT_PRI_AC_MODE_TOKEN, mode);
+> > > +		break;
+> > > +	case DELL_BAT_MODE_ADAPTIVE:
+> > > +		err = dell_battery_write_req(BAT_ADAPTIVE_MODE_TOKEN, mode);
+> > > +		break;
+> > > +	case DELL_BAT_MODE_CUSTOM:
+> > > +		err = dell_battery_write_req(BAT_CUSTOM_MODE_TOKEN, mode);
+> > > +		break;
+> > > +	default:
+> > > +		err = -EINVAL;
+> > > +	}
+> > > +
+> > > +	return err;
+> > > +}  
+> > 
+> > You can make whole function smaller by avoiding err variable:
+> > 
+> > static int battery_charging_mode_set(enum battery_charging_mode mode)
+> > {
+> > 	switch (mode) {
+> > 	case DELL_BAT_MODE_STANDARD:
+> > 		return dell_battery_write_req(BAT_STANDARD_MODE_TOKEN, mode);
+> > 	case DELL_BAT_MODE_EXPRESS:
+> > 		return dell_battery_write_req(BAT_EXPRESS_MODE_TOKEN, mode);
+> > 	case DELL_BAT_MODE_PRIMARILY_AC:
+> > 		return dell_battery_write_req(BAT_PRI_AC_MODE_TOKEN, mode);
+> > 	case DELL_BAT_MODE_ADAPTIVE:
+> > 		return dell_battery_write_req(BAT_ADAPTIVE_MODE_TOKEN, mode);
+> > 	case DELL_BAT_MODE_CUSTOM:
+> > 		return dell_battery_write_req(BAT_CUSTOM_MODE_TOKEN, mode);
+> > 	default:
+> > 		return -EINVAL;
+> > 	}
+> > }
+> >
+> 
+> Okay, I'll change it.
+> 
 >  
-> +static bool verify_restricted_mem_flags(struct vb2_queue *q, bool restricted_mem)
-> +{
-> +	if (restricted_mem != q->restricted_mem) {
-> +		dprintk(q, 1, "restricted memory model mismatch\n");
-> +		return false;
-> +	}
-> +
-> +	return true;
-> +}
-> +
-> +static inline int restricted_mem_mismatch(bool restricted_mem, struct vb2_queue *q,
-> +					  enum vb2_memory memory)
-> +{
-> +	return restricted_mem && (!q->allow_restricted_mem || memory != VB2_MEMORY_DMABUF) ?
-> +	       -1 : 0;
-> +}
-> +
->  static int vb2_core_allocated_buffers_storage(struct vb2_queue *q)
->  {
->  	if (!q->bufs)
-> @@ -863,6 +880,7 @@ int vb2_core_reqbufs(struct vb2_queue *q, enum vb2_memory memory,
->  	unsigned int q_num_bufs = vb2_get_num_buffers(q);
->  	unsigned plane_sizes[VB2_MAX_PLANES] = { };
->  	bool non_coherent_mem = flags & V4L2_MEMORY_FLAG_NON_COHERENT;
-> +	bool restricted_mem = flags & V4L2_MEMORY_FLAG_RESTRICTED;
->  	unsigned int i, first_index;
->  	int ret = 0;
->  
-> @@ -906,6 +924,9 @@ int vb2_core_reqbufs(struct vb2_queue *q, enum vb2_memory memory,
->  			return 0;
->  	}
->  
-> +	if (restricted_mem_mismatch(restricted_mem, q, memory))
-> +		return -EINVAL;
-> +
->  	/*
->  	 * Make sure the requested values and current defaults are sane.
->  	 */
-> @@ -923,6 +944,7 @@ int vb2_core_reqbufs(struct vb2_queue *q, enum vb2_memory memory,
->  	if (ret)
->  		return ret;
->  	set_queue_coherency(q, non_coherent_mem);
-> +	q->restricted_mem = restricted_mem;
->  
->  	/*
->  	 * Ask the driver how many buffers and planes per buffer it requires.
-> @@ -1031,6 +1053,7 @@ int vb2_core_create_bufs(struct vb2_queue *q, enum vb2_memory memory,
->  	unsigned plane_sizes[VB2_MAX_PLANES] = { };
->  	bool non_coherent_mem = flags & V4L2_MEMORY_FLAG_NON_COHERENT;
->  	unsigned int q_num_bufs = vb2_get_num_buffers(q);
-> +	bool restricted_mem = flags & V4L2_MEMORY_FLAG_RESTRICTED;
->  	bool no_previous_buffers = !q_num_bufs;
->  	int ret = 0;
->  
-> @@ -1039,6 +1062,9 @@ int vb2_core_create_bufs(struct vb2_queue *q, enum vb2_memory memory,
->  		return -ENOBUFS;
->  	}
->  
-> +	if (restricted_mem_mismatch(restricted_mem, q, memory))
-> +		return -EINVAL;
-> +
->  	if (no_previous_buffers) {
->  		if (q->waiting_in_dqbuf && *count) {
->  			dprintk(q, 1, "another dup()ped fd is waiting for a buffer\n");
-> @@ -1057,6 +1083,7 @@ int vb2_core_create_bufs(struct vb2_queue *q, enum vb2_memory memory,
->  			return ret;
->  		q->waiting_for_buffers = !q->is_output;
->  		set_queue_coherency(q, non_coherent_mem);
-> +		q->restricted_mem = restricted_mem;
->  	} else {
->  		if (q->memory != memory) {
->  			dprintk(q, 1, "memory model mismatch\n");
-> @@ -1064,6 +1091,8 @@ int vb2_core_create_bufs(struct vb2_queue *q, enum vb2_memory memory,
->  		}
->  		if (!verify_coherency_flags(q, non_coherent_mem))
->  			return -EINVAL;
-> +		if (!verify_restricted_mem_flags(q, restricted_mem))
-> +			return -EINVAL;
->  	}
->  
->  	num_buffers = min(*count, q->max_num_buffers - q_num_bufs);
-> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> index 293f3d5f1c4e..9ee24e537e0c 100644
-> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> @@ -682,7 +682,7 @@ static void vb2_set_flags_and_caps(struct vb2_queue *q, u32 memory,
->  		*flags = 0;
+> > > +
+> > > +static ssize_t charge_type_show(struct device *dev,
+> > > +		struct device_attribute *attr,
+> > > +		char *buf)
+> > > +{
+> > > +	enum battery_charging_mode mode;
+> > > +	ssize_t count = 0;
+> > > +
+> > > +	for (mode = DELL_BAT_MODE_STANDARD; mode < DELL_BAT_MODE_MAX; mode++) {
+> > > +		if (battery_state[mode]) {
+> > > +			count += sysfs_emit_at(buf, count,
+> > > +				mode == bat_chg_current ? "[%s] " : "%s ",
+> > > +				battery_state[mode]);
+> > > +		}
+> > > +	}
+> > > +
+> > > +	/* convert the last space to a newline */
+> > > +	count--;
+> > > +	count += sysfs_emit_at(buf, count, "\n");  
+> > 
+> > Here is missing protection in the case when number of valid modes is
+> > zero, so count is 0 and buf was untouched.
+> > 
+> 
+> This will never be zero (based on the hardcoded value of DELL_BAT_MODE_MAX),
 
-Hmm, unless I am mistaken, this clears all flags. So if memory is DMABUF, then
-the V4L2_MEMORY_FLAG_RESTRICTED is just overwritten with 0. And that's what will
-be passed to vb2_core_reqbufs.
+Now I see. You are iterating over members of constant array battery_state[].
+I overlooked it and I thought that this iteration over mode values.
 
-So how can this work? I'm not sure how you can have tested this.
+What about writing the for- conditions to be visible that you are
+iterating over the array? E.g.
 
-In any case, this function should change and do this instead:
+	size_t i;
+	...
+	for (i = 0; i < ARRAY_SIZE(battery_state); i++) {
+		if (!battery_state[i])
+			continue;
+		count += sysfs_emit_at(buf, count, i == bat_chg_current ? "[%s] " : "%s ", battery_state[i]);
+	}
+	...
 
-        /* Clear all unknown flags. */
-         *flags &= V4L2_MEMORY_FLAG_NON_COHERENT | V4L2_MEMORY_FLAG_RESTRICTED;
+This has an advantage that you do not depend on DELL_BAT_MODE_MAX value,
+compiler will calculate upper bound automatically.
 
-        if (!q->allow_cache_hints || memory != V4L2_MEMORY_MMAP)
-		*flags &= ~V4L2_MEMORY_FLAG_NON_COHERENT;
+Or another way. You can define array of tokens, like it is done for
+keyboard backlight. See how the array kbd_tokens[] is used.
 
-I considered whether V4L2_MEMORY_FLAG_RESTRICTED should be cleared if memory
-wasn't DMABUF, but I don't think that is right: you want to see an error
-returned if you try such a combination.
+With this approach you can completely get rid of the DELL_BAT_MODE_MAX.
 
->  	} else {
->  		/* Clear all unknown flags. */
-> -		*flags &= V4L2_MEMORY_FLAG_NON_COHERENT;
-> +		*flags &= V4L2_MEMORY_FLAG_NON_COHERENT | V4L2_MEMORY_FLAG_RESTRICTED;
->  	}
->  
->  	*caps |= V4L2_BUF_CAP_SUPPORTS_ORPHANED_BUFS;
-> @@ -698,6 +698,8 @@ static void vb2_set_flags_and_caps(struct vb2_queue *q, u32 memory,
->  		*caps |= V4L2_BUF_CAP_SUPPORTS_MMAP_CACHE_HINTS;
->  	if (q->supports_requests)
->  		*caps |= V4L2_BUF_CAP_SUPPORTS_REQUESTS;
-> +	if (q->allow_restricted_mem && q->io_modes & VB2_DMABUF)
-> +		*caps |= V4L2_BUF_CAP_SUPPORTS_RESTRICTED_MEM;
->  	if (max_num_bufs) {
->  		*max_num_bufs = q->max_num_buffers;
->  		*caps |= V4L2_BUF_CAP_SUPPORTS_MAX_NUM_BUFFERS;
+> but perhaps a static_assert or BUILD_BUG_ON to verify that the number of
+> modes > 0?
 
-What appears to be missing in this patch is what happens if you pass unrestricted
-memory to a queue that is configured for restricted memory: there does not appear
-to be a check for that. Or is that allowed? If so, that should be documented.
+I think it is not needed.
 
-And what happens if you pass a dmabuf for restricted memory to a queue that expects
-unrestricted memory? You want to get a nice error code for that (EACCES/EPERM, I
-never quite know which is the right one for that). That would apply to VIDIOC_QBUF
-and VIDIOC_PREPARE_BUF. This assumes you can easily query a dmabuf fd to see whether
-it is in restricted memory or not. I'm not sure if that is the case today.
+>   
+> > > +
+> > > +	return count;
+> > > +}
+> > > +
+> > > +static ssize_t charge_type_store(struct device *dev,
+> > > +		struct device_attribute *attr,
+> > > +		const char *buf, size_t size)
+> > > +{
+> > > +	enum battery_charging_mode mode;
+> > > +	const char *label;
+> > > +	int ret = -EINVAL;
+> > > +
+> > > +	for (mode = DELL_BAT_MODE_STANDARD; mode < DELL_BAT_MODE_MAX; mode++) {
+> > > +		label = battery_state[mode];
+> > > +		if (label && sysfs_streq(label, buf))
+> > > +			break;
+> > > +	}
+> > > +
+> > > +	if (mode > DELL_BAT_MODE_NONE && mode < DELL_BAT_MODE_MAX) {
+> > > +		ret = battery_charging_mode_set(mode);
+> > > +		if (!ret) {
+> > > +			bat_chg_current = mode;
+> > > +			ret = size;
+> > > +		}
+> > > +	}
+> > > +
+> > > +	return ret;
+> > > +}
+> > > +
+> > > +static ssize_t charge_control_start_threshold_show(struct device *dev,
+> > > +		struct device_attribute *attr,
+> > > +		char *buf)
+> > > +{
+> > > +	int ret, start;
+> > > +
+> > > +	ret = dell_battery_read_req(BAT_CUSTOM_CHARGE_START, &start);
+> > > +	if (!ret)
+> > > +		ret = sysfs_emit(buf, "%d\n", start);
+> > > +
+> > > +	return ret;
+> > > +}  
+> > 
+> > This function and also following 3 functions have unusual error
+> > handling. Normally error handling is done by early return, as:
+> > 
+> >     ret = func1();
+> >     if (ret)
+> >         return ret;
+> > 
+> >     ret = func2();
+> >     if (ret)
+> >         return ret;
+> > 
+> >     return 0;
+> > 
+> > You can change it something like:
+> > 
+> > {
+> > 	int ret, start;
+> > 
+> > 	ret = dell_battery_read_req(BAT_CUSTOM_CHARGE_START, &start);
+> > 	if (ret)
+> > 		return ret;
+> > 
+> > 	return sysfs_emit(buf, "%d\n", start);
+> > }
+> > 
+> 
+> Okay.
+> 
+> 
+> > > +static ssize_t charge_control_start_threshold_store(struct device *dev,
+> > > +		struct device_attribute *attr,
+> > > +		const char *buf, size_t size)
+> > > +{
+> [...]
+> 
+> > > +
+> > > +static void __init dell_battery_init(struct device *dev)
+> > > +{
+> > > +	enum battery_charging_mode current_mode = DELL_BAT_MODE_NONE;
+> > > +
+> > > +	dell_battery_read_req(BAT_CUSTOM_MODE_TOKEN, (int *) &current_mode);
+> > > +	if (current_mode != DELL_BAT_MODE_NONE) {  
+> > 
+> > I quite do not understand how is this code suppose to work.
+> > 
+> > Why is there mix of custom kernel enum battery_charging_mode and return
+> > value from Dell's API?
+> 
+> This is from the original patch from Dell; tbh, I'm not sure. It does
+> work, though. That is, current_mode ends up holding the correct value
+> based on what was previously set, even if the charging mode is set from
+> the BIOS.
+> 
+> I just scanned through the libsmbios code to see what it's doing, and
+> it appears to loop through every charging mode to check if its active.
+> I'm not really sure that makes much more sense, so I'll try some more
+> tests.
 
-I also think that it would be useful to add a V4L2_BUF_FLAG_RESTRICTED_MEM flag
-that vb2 will return to userspace if the queue is configured for restricted memory.
+Keyboard backlight code (kbd_get_first_active_token_bit) is doing also
+this type scan. If I remember correctly, for every keyboard backlight
+token we just know the boolean value - if the token is set or not.
 
-That will indicate to the application that the buffer indeed represents a buffer
-in restricted memory.
+It would really nice to see what (raw) value is returned by the
+dell_battery_read_req(token) function for every battery token and for
+every initial state.
 
-Regards,
+Because it is really suspicious if dell_battery_read_req() would return
+value of the enum battery_charging_mode (as this is kernel enum).
 
-	Hans
+
+Also another important thing. In past it was possible to buy from Dell
+special batteries with long warranty (3+ years). I'm not sure if these
+batteries are still available for end-user customers. With this type of
+battery, it was not possible to change charging mode to ExpressCharge
+(bios option was fade-out). I do not have such battery anymore, but I
+would expect that the firmware disabled BAT_EXPRESS_MODE_TOKEN as mark
+it as unavailable.
+
+I think that we should scan list of available tokens, like it is done
+for keyboard backlight in kbd_init_tokens(). And export via sysfs only
+those battery modes for which there is available token.
+
+> 
+> > 
+> > My feeling is that dell_battery_read_req(BAT_CUSTOM_MODE_TOKEN) checks
+> > if the token BAT_CUSTOM_MODE_TOKEN is set or not.
+> > 
+> > Could you please check what is stored in every BAT_*_MODE_TOKEN token at
+> > this init stage?
+> > 
+> > I think it should work similarly, like keyboard backlight tokens as
+> > implemented in functions: kbd_set_token_bit, kbd_get_token_bit,
+> > kbd_get_first_active_token_bit.
+> > 
+> > > +		bat_chg_current = current_mode;
+> > > +		battery_hook_register(&dell_battery_hook);
+> > > +	}
+> > > +}
+> > > +
+> [...]
+> 
+> > >  #define GLOBAL_MUTE_ENABLE	0x058C
+> > >  #define GLOBAL_MUTE_DISABLE	0x058D
+> > >  
+> > > +enum battery_charging_mode {
+> > > +	DELL_BAT_MODE_NONE = 0,
+> > > +	DELL_BAT_MODE_STANDARD,
+> > > +	DELL_BAT_MODE_EXPRESS,
+> > > +	DELL_BAT_MODE_PRIMARILY_AC,
+> > > +	DELL_BAT_MODE_ADAPTIVE,
+> > > +	DELL_BAT_MODE_CUSTOM,
+> > > +	DELL_BAT_MODE_MAX,
+> > > +};
+> > > +  
+> > 
+> > I think that this is just an internal driver enum, not Dell API. So this
+> > enum should be in the dell-laptop.c file.
+> > 
+> 
+> Agreed, I'll change it.
+> 
+> 
+> 
+> 
+> -- 
+> I'm available for contract & employment work, see:
+> https://spindle.queued.net/~dilinger/resume-tech.pdf
 
