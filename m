@@ -1,138 +1,163 @@
-Return-Path: <linux-kernel+bounces-257795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A4F2937F01
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 07:18:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 844D5937F03
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 07:19:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4386E1F2177D
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 05:18:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A89B71C212C8
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 05:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52ABCDDB3;
-	Sat, 20 Jul 2024 05:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E35D52A;
+	Sat, 20 Jul 2024 05:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IXe8D3gI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J1EFcswW"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F02B64A;
-	Sat, 20 Jul 2024 05:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95500B64A
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 05:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721452679; cv=none; b=mbGGx8l2hjCKWIoUufz6YGBOP/YbtOOc7mhW57fEMdeyCHdwoRnMg1heslO0C6fxHZ2gZujM2ZG3tMh9twVRjGz4Jg0clF74i8OGJ6pAt+BaunIzdzblAXx98RUoPBlAnna3gpVt9XkXuIrfnirvNCFNzMhEEyGzaZTeZhY0bek=
+	t=1721452756; cv=none; b=KisQXIYdvF9Y/9mYNxjqLHJbcwU+1xuGlB4cX7tFn8Tk6R5Xa6PkiT4Iu1cmkZcjV+MTXkDZBmnMXF5PPspcJDKVKx7P2F/mEgORQ12EuWBKJRox/a4XMe0U8PCdOTFDktwxodV2Slew0lC9rCm8OhFUhePvCUdnrqcO4iqssfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721452679; c=relaxed/simple;
-	bh=Co/fIU3+hK9yPLq9c9sahxECZ0uQvje2TgCbgIgsiK4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lm1pO2S8iF0pHY04x5Q+2wVjK9NbNcqpqTMuur+D80lH+/8eu/MH2YUjDLPDWIz5QZaZqnwzJoXg+zO9UGbyjaxDCRc4TEeH9hFkgsmWwiM7Q3a1cyBTYpbrsyIj5wv3rvHTMBsDRE3BElI7O3MW8IoKeKIZcdNWSPQKeD+ODbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IXe8D3gI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D506C2BD10;
-	Sat, 20 Jul 2024 05:17:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721452678;
-	bh=Co/fIU3+hK9yPLq9c9sahxECZ0uQvje2TgCbgIgsiK4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IXe8D3gIjUhFYFC5tpcDA3CPQKf0rbvp5xi2H8AS5g11tK8esdN8u6ajwCY2pzyWN
-	 QzCdmtOzxu09MM9b8rWhiVnznjQxHHCJzaUHv4LHJzkcD0Kb/MI1fCeCB2vHhuOJM/
-	 FVLqBQLKnctiMw5pr2M29LTwFSRLqqY4x4tIl0vQ=
-Date: Sat, 20 Jul 2024 07:17:55 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Keith Busch <kbusch@meta.com>
-Cc: rafael@kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, bhelgaas@google.com, lukas@wunner.de,
-	Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCH] driver core: get kobject ref when accessing dev_attrs
-Message-ID: <2024072058-dork-ferret-71d5@gregkh>
-References: <20240719185513.3376321-1-kbusch@meta.com>
+	s=arc-20240116; t=1721452756; c=relaxed/simple;
+	bh=xFER1jozDQSLZGm/yKa6R0PGj8cG316/fvTzPJ1qcEg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o3SDVoJ68qFqG+0237gXuYDhMXxhws42tss69mmY7NsWux2x3sXn/mc/iF1ZA9nTPa85Y8K0GdcG/epDWZ+GR0XpdmdlkDsIY1Gz4JCl07Y2DGpXKZ+DCo/X2plSUg66ABQAAfuibU5UGV/KgVieI3LhR52bWpBvzn7THvxlA2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J1EFcswW; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-6bce380eb9bso1674010a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 22:19:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721452754; x=1722057554; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PAqlDIeAXRO1DBTVpb7ic/6UZGkH7oIIoVxSBFI42TI=;
+        b=J1EFcswWRwi6RX7oAqzLOuW0lzMNE5JGVg904+EV+c+B6u+HxKsWastPqSkzaADizk
+         1gNwk5WV0XPeUKjVV4OOY9ff2kytTL+ghTBXDb+TiofEtqDWH+f7XIHs8YIMdiKxu490
+         ylRvvviZYk2sl8+8aB8feg8EePqJVNgYZ9Qxnhvi4OP3635NOgii6T8jNAxmlL7F3mto
+         vgo4Mqxm6Q/LsIUCyxuDwkgYIpPU3a4X4o3bsR6hdMvlYgp7/bXJCyY7CUDSoR/ezo50
+         k66GF4NnIqsPpJyo6fbnX5ouOYNLv05bCNUL+I3s23+YI3zZMWWCZRndC47SNk6bFRKc
+         icbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721452754; x=1722057554;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PAqlDIeAXRO1DBTVpb7ic/6UZGkH7oIIoVxSBFI42TI=;
+        b=oc3wdPfVQsqq74DmA7WN9xxLsKeCUxhDDvjOQiCEVGHUUs4QLxZqK17/q/+IMuju/7
+         /GlIJFANqnmm7oAnPd7rEjXm+cjMDT8Dea6g8/cOxcMdHsOw4zLTHoMIvtqu9hGAUf0Z
+         yTV+c137dECXvhnWEcg5oZSv+C88sbR9yn50ffXRTNfghEWv+96CounpNSTDQyRuooME
+         Hb2pNUj6eHsJ0hGdM6PhgHdeEyVe7md9wiMiw1+BxvsSkOQD4uJpwhZXAyyuleM3luKi
+         PeMSGw58ZgXSFb+tfhGgFIPenDQoBeYc2s8OhWwXGrW6IAiuazPl8soJ1vDnZi4UwPDd
+         Ht7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUcearCHEYWvb9Rgl2G7538knr53+rDryAU4pwB19t+ERrLKwAh7c5JcFVY5VG94vQm0wPfyQwk/NsA6nXjGPn14zqkOPrlC/sZl5bD
+X-Gm-Message-State: AOJu0YwAskIJiL3YKRU75z2E9va5TptMnYcMKvoAEDnPiD1lq2sGm56u
+	5O8dz9yx3Pp85d6GZays7mZKxcyoJe2MDLmCmPFEHOnFkyiz/JRQ
+X-Google-Smtp-Source: AGHT+IHRJ62D0AptfuP97fRJQS436WZ8onKwfDqm1vbVFDNJT6EXmzULExUMAm1nN/hVDRAgkmPaqw==
+X-Received: by 2002:a05:6a21:8ccc:b0:1c2:9208:3421 with SMTP id adf61e73a8af0-1c4228cecc2mr2539274637.28.1721452753702;
+        Fri, 19 Jul 2024 22:19:13 -0700 (PDT)
+Received: from [10.3.80.76] ([103.4.222.252])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ccf7b5c385sm2688785a91.18.2024.07.19.22.19.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Jul 2024 22:19:12 -0700 (PDT)
+Message-ID: <758b3f44-5c8f-46b5-8f02-103601eae278@gmail.com>
+Date: Sat, 20 Jul 2024 10:49:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240719185513.3376321-1-kbusch@meta.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/mipi-dsi: Introduce macros to create mipi_dsi_*_multi
+ functions
+To: Doug Anderson <dianders@chromium.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240716133117.483514-1-tejasvipin76@gmail.com>
+ <p7fahem6egnooi5org4lv3gtz2elafylvlnyily7buvzcpv2qh@vssvpfci3lwn>
+ <a05b4e6e-272a-43be-8202-2b81049a41a4@gmail.com>
+ <CAA8EJpoRd3ooMnH8Z38yNH0M-L_CUd+H4WoYydd2AEmpXGeU8Q@mail.gmail.com>
+ <CAD=FV=XDpEfTjTQbO-fZKKwgHCMUmCrb+FBr=3DMzVfs3on9XQ@mail.gmail.com>
+Content-Language: en-US
+From: Tejas Vipin <tejasvipin76@gmail.com>
+In-Reply-To: <CAD=FV=XDpEfTjTQbO-fZKKwgHCMUmCrb+FBr=3DMzVfs3on9XQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 19, 2024 at 11:55:13AM -0700, Keith Busch wrote:
-> From: Keith Busch <kbusch@kernel.org>
-> 
-> Get a reference to the device's kobject while storing and showing device
-> attributes so that the device is valid for the lifetime of the sysfs access.
-> Without this, the device may be released and use-after-free will occur.
-> 
-> This is an easy problem to recreate with pci switches. Basic topology on a my
-> qemu test machine:
-> 
-> -[0000:00]-+-00.0  Intel Corporation 82G33/G31/P35/P31 Express DRAM Controller
->            +-01.0-[01-04]----00.0-[02-04]--+-00.0-[03]--
->                                            \-01.0-[04]----00.0  Red Hat, Inc. Virtio block device
-> 
-> Simultaneously remove devices 04:00.0 and 01:00.0 and you'll hit it:
-> 
->  # echo 1 > /sys/bus/pci/devices/0000\:04\:00.0/remove &
->  # echo 1 > /sys/bus/pci/devices/0000\:01\:00.0/remove
 
-So you remove the parent before the child and also want to remove the
-child at the same time?  You are going to have bad problems here :)
 
->  Oops: general protection fault, probably for non-canonical address 0x6b6b6b6b6b6b6b9b: 0000 [#1] PREEMPT SMP PTI
->  CPU: 9 PID: 359 Comm: bash Not tainted 6.10.0-rc1-00183-gea4516b2b250 #256
->  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.2-14-g1e1da7a96300-prebuilt.qemu.org 04/01/2014
->  RIP: 0010:pci_stop_bus_device+0x15/0x90
->  Code: 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 41 54 55 48 89 fd 53 4c 8b 67 18 4d 85 e4 74 2d <49> 8b 7c 24 30 49 83 c4 28 4c 39 e7 74 1f 48 8b 5f 08 e8 d4 ff ff
->  RSP: 0018:ffffc90000b67dd0 EFLAGS: 00010202
->  RAX: 0000000000000000 RBX: ffff88800768c0c8 RCX: 0000000000000000
->  RDX: 0000000000000000 RSI: ffffffff8365bc00 RDI: ffff88800768c000
->  RBP: ffff88800768c000 R08: 0000000000000000 R09: 0000000000000000
->  R10: ffffc90000b67df0 R11: 0000000000000003 R12: 6b6b6b6b6b6b6b6b
->  R13: ffffc90000b67e90 R14: ffff8880075bccc8 R15: ffff88801082a620
->  FS:  00007fe0c951e740(0000) GS:ffff88803ea80000(0000) knlGS:0000000000000000
->  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->  CR2: 0000560aaac4b030 CR3: 00000000108ae004 CR4: 0000000000770ef0
->  DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->  DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->  PKRU: 55555554
->  Call Trace:
->   <TASK>
->   ? die_addr+0x37/0x90
->   ? exc_general_protection+0x1e5/0x430
->   ? asm_exc_general_protection+0x26/0x30
->   ? pci_stop_bus_device+0x15/0x90
->   pci_stop_and_remove_bus_device_locked+0x1a/0x30
->   remove_store+0x7d/0x90
->   kernfs_fop_write_iter+0x13c/0x200
->   vfs_write+0x359/0x510
->   ksys_write+0x69/0xf0
->   do_syscall_64+0x68/0x140
->   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+On 7/19/24 10:29 PM, Doug Anderson wrote:
+> Hi,
 > 
-> Signed-off-by: Keith Busch <kbusch@kernel.org>
-> ---
->  drivers/base/core.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+> On Wed, Jul 17, 2024 at 3:07 AM Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+>>
+>>>> However it might be better to go other way arround.
+>>>> Do we want for all the drivers to migrate to _multi()-kind of API? If
+>>>> so, what about renaming the multi and non-multi functions accordingly
+>>>> and making the old API a wrapper around the multi() function?
+>>>>
+>>>
+>>> I think this would be good. For the wrapper to make a multi() function
+>>> non-multi, what do you think about a macro that would just pass a
+>>> default dsi_ctx to the multi() func and return on error? In this case
+>>> it would also be good to let the code fill inline instead of generating
+>>> a whole new function imo.
+>>>
+>>> So in this scenario all the mipi dsi functions would be multi functions,
+>>> and a function could be called non-multi like MACRO_NAME(func) at the
+>>> call site.
+>>
+>> Sounds good to me. I'd suggest to wait for a day or two for further
+>> feedback / comments from other developers.
 > 
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index 131d96c6090be..108f2aa6eaaa9 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -2433,12 +2433,15 @@ static ssize_t dev_attr_show(struct kobject *kobj, struct attribute *attr,
->  	struct device *dev = kobj_to_dev(kobj);
->  	ssize_t ret = -EIO;
->  
-> +	if (!kobject_get_unless_zero(kobj))
-> +		return -ENXIO;
+> I don't totally hate the idea of going full-multi and just having
+> macros to wrap anyone who hasn't converted, but I'd be curious how
+> much driver bloat this will cause for drivers that aren't converted.
+> Would the compiler do a good job optimizing here? Maybe we don't care
+> if we just want everyone to switch over? If nothing else, it might
+> make sense to at least keep both versions for the very generic
+> functions (mipi_dsi_generic_write_multi and
+> mipi_dsi_dcs_write_buffer_multi)
+> 
+> ...oh, but wait. We probably have the non-multi versions wrap the
+> _multi ones. One of the things about the _multi functions is that they
+> are also "chatty" and print errors. They're designed for the use case
+> of a pile of init code where any error is fatal and needs to be
+> printed. I suspect that somewhere along the way someone will want to
+> be able to call these functions and not have them print errors...
+> 
 
-We've been down this path before, and it doesn't end well from what I
-recall.  Attributes that when written to remove themselves need to call
-the correct function to do so (look at how scsi does it).  I think this
-change will now break that functionality.  Look in the email archives a
-long time ago for more details, I can't recall them at the moment,
-sorry.
+I think what would be interesting is if we had "chatty" member as a
+part of mipi_dsi_multi_context as a check for if dev_err should run.
+That way, we could make any function not chatty. If we did this, is
+there any reason for a driver to not switch over to using the multi
+functions? 
 
-thanks,
+> Maybe going with Dmitry's suggested syntax is the best option here?
+> Depending on how others feel, we could potentially even get rid of the
+> special error message and just stringify the function name for the
+> error message?
+> 
+The problem with any macro solution that defines new multi functions is 
+that it creates a lot of bloat. Defining the function through macros
+might be smaller than defining them manually, but there are still twice
+as many function declarations as there would be if we went all multi. 
+The generated code is still just as big as if we manually defined
+everything. I think a macro that defines functions should be more of a 
+last resort if we don't have any other options.
 
-greg k-h
+> -Doug
+
+-- 
+Tejas Vipin
 
