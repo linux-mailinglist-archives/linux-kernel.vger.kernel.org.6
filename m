@@ -1,116 +1,192 @@
-Return-Path: <linux-kernel+bounces-257912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C5AD9380C3
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 12:42:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 442F19380C6
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 12:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32EEC2819C3
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 10:42:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF765B2155C
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 10:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E02384A36;
-	Sat, 20 Jul 2024 10:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A365C85C5E;
+	Sat, 20 Jul 2024 10:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="eWna8qRI"
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JxaPVatu"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718012913;
-	Sat, 20 Jul 2024 10:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208D022F17;
+	Sat, 20 Jul 2024 10:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721472139; cv=none; b=Ks3++8rOaKclsb9w6McJW8l1EqrGOyhbirwE6tZYRFnP7zI80sGFY2t3bBEnZxFcJ77rjYrlATBZ+EWvYThHx+HT4XF8vPsUo1lT/mBjidcl4ttsvurJDc1DTX73NAP9HBJy3QV7pUgVHPSdPWilnNQBJRio9k7I+GkeaGqF8mo=
+	t=1721472151; cv=none; b=UylJqe2WknU/HmI7+eTdUkaD+AfZ+qL5meeiLTso28T1Tofkm75LlKbceq4Uvy0wRyaAORRzgY87wLkicHG8TAA5gIXCZR2w8H9F99cdpSMYK/P618nG0tDQ8DcXD0iA6I89K4Aof2fm9ANpTO/wcRuvcMJla8WXr2vGBA4zK1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721472139; c=relaxed/simple;
-	bh=/4f141tJHvAWF8tQzzk0NAIKIQKehhhpmiX34/KAy0M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YqxuvQFAGx2D967qpcC93FGI8X5Q1CvTCcOIQplJBT+2t/vTUFp/yZ1YgKJ6gVUcyzVKyfOJjT4U8tofGERRcLI3VOcE73D6D0qXH3SIIwD0Ti8dpJuFGX0ARmNMpDoZ0iLfGHAI3SbJsAFjNu+/s9w18YFbdm7RXBFRu07oWOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=eWna8qRI; arc=none smtp.client-ip=80.12.242.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id V7XRsonOi95X4V7XRsgB3j; Sat, 20 Jul 2024 12:42:08 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1721472128;
-	bh=PtZVKDIVPm219rX235hzdcjRMLlI/guwNur3d/5rJXg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=eWna8qRIGRu2hhZOvWtZqgZKzliKcEd6NTg797VGHgizLWszQVvPqrXND33R7H+Ai
-	 zKB9R4EkDjW/wkS7P2wbXqYT5TUsaf2miPcNyg3aVXfyklY1bLMgltK2MFIVpp8u20
-	 yQMK53YAIJab8b76AdpxqEdqYKzyg1Rs8KvWXEjEdZqagGIynvUPCGN5r0qlCrmH3z
-	 owb5RkbzxjaSwO7SDE+4d98lkIBqaN3TYVnw8uNn+qdipyfNvYFk9ZUTFyMKB5ik2m
-	 z+FCpadpTZfBLGG0hBVODGgI+7C20PfzWawAfxZ+kE7bnqbSvyGZBGORiVolHnQEv6
-	 nNqcGjGUl0LFw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 20 Jul 2024 12:42:08 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH] perf: Constify struct bus_type
-Date: Sat, 20 Jul 2024 12:42:02 +0200
-Message-ID: <1f6472a4e9f2ee9e74152c3a3491d015e44137ab.1721472093.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1721472151; c=relaxed/simple;
+	bh=SjXz8Q7cYNANPWdAIE+1LcHU+Sy/cBqo18xnb4k5Ups=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CGBLnjnxcCzYT9Z/kImAlPmme/5S/s5VVq7QJQlybDy/xTVZD1xtc8Eg+tjl3CUW9WsteON0NCHRKngOgVch/Wod0sXO4vv0x+msed7fWwMLzaVmrRJMY9SC50kAhEpmgn5nApLu6A0gGPnWBv55ph0rZEKpVxm2gvfC/RRg3dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JxaPVatu; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4266b1f1b21so19507965e9.1;
+        Sat, 20 Jul 2024 03:42:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721472148; x=1722076948; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=yvVRqveKCbnKGjsii996Z+A1wxik6ho1ZN1Ar+GN1jU=;
+        b=JxaPVatu/aUIga+cJ11HurZUoA2ZL4R1jB8Vs7z65uRRzhSoXXZQf49B8eNjHgXUMx
+         dHJSaZcETi/qgRktynQdOf7iBJj7nC6nbA6Ku8U9KL/+3n7WoXzxMFndfx13tnEnEhgs
+         fWJx8h1FwOGj8jTGi6l1vQfT1bpJz9w8iNBmpO2n1L/4st1qf2LodpFvmP2NEfDEvRf+
+         ZNj50wqwrLoeN/qDIt+MSfvEc/4DsBcESsbw5gc7P0JuyuQwtrfuKfxT5J//V5g4Pa/T
+         7CChXqCCwV6r8YmT74pe6Ys7ScVF/bLbmoFkzybBndxrPPNqrURdvf1ZV+PtTkMoVdxx
+         tfiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721472148; x=1722076948;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yvVRqveKCbnKGjsii996Z+A1wxik6ho1ZN1Ar+GN1jU=;
+        b=aAEm3wtbFOBMLF9W+O5+7lGT8jBy6maXsYIrZ0ZJeidf6RVHVJWfthOKGvgcTElG0K
+         DA6vg3Cr90s8lcGsvsvMJx7p/lDWIp11oyXNgGjEbRR5Y0JRt9ZltWX3O9Wr8ZJ9sr6Q
+         uuSntErdSw8219RAH5JRk00SMN7ZsknDG+RP54ktd8GqBe6hXEV/em8DD3PMBCKj/ZwI
+         FTQq/OhhbmvwUC6tGlWjlS/bFV0sUveeYKuRpqDGCEwnUcNZwcIKbzGShS7f340TLMzO
+         83T6N+QF8zxjtMwvcM4yWC/RLcazI1detQRO+v3mPryuFEB6ik3R5JHLlDnU7lKi1Vez
+         SOLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVN0sR/fJD3xfKwJFs7FrprIHlJ6BS1s5LHchdMbcoO7eiDaVv0JFocmGONy68ZS5GUxCNoCM+7IO99QMdWS+ecgyhm/9l54elYXZ+qIoYu1QQmEqBBJi23uDJoEbvr1ROWIMQBgq1KIFBHlIWfwxmuAo/D1grvF3yqMcb5iSRO+a2z48Or9FE=
+X-Gm-Message-State: AOJu0Yws9UEfXuTxc01a/jXKZ2+GidKcBOk8+6Jp4TCp5Lmd3ss8Lm6q
+	4xKbLqaGn5PW4S6iz32xBokkxq9ln4ZJzun2U2knNyh+HYLej2Uf
+X-Google-Smtp-Source: AGHT+IFtjw6W19sDZIGkdGb3I2QzTdMrxKBtLKtuA6pZllYy+sAObBJu8M1Kqk6cGFm7GvJaZE7/IQ==
+X-Received: by 2002:a05:600c:4ec7:b0:426:6f15:2e4d with SMTP id 5b1f17b1804b1-427dc51cecbmr7415135e9.9.1721472148099;
+        Sat, 20 Jul 2024 03:42:28 -0700 (PDT)
+Received: from f (cst-prg-77-238.cust.vodafone.cz. [46.135.77.238])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d6906c77sm52947855e9.23.2024.07.20.03.42.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 20 Jul 2024 03:42:27 -0700 (PDT)
+Date: Sat, 20 Jul 2024 12:42:15 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Zhihao Cheng <chengzhihao@huaweicloud.com>
+Cc: Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	Christoph Hellwig <hch@infradead.org>, linux-mtd <linux-mtd@lists.infradead.org>, 
+	Richard Weinberger <richard@nod.at>, "zhangyi (F)" <yi.zhang@huawei.com>, 
+	yangerkun <yangerkun@huawei.com>, "wangzhaolong (A)" <wangzhaolong1@huawei.com>
+Subject: Re: [BUG REPORT] potential deadlock in inode evicting under the
+ inode lru traversing context on ext4 and ubifs
+Message-ID: <yakewaqynmapatlh3s45huq6dutkkkcdj26tqpfx6yllsjmyie@rh6xthl5pwkb>
+References: <37c29c42-7685-d1f0-067d-63582ffac405@huaweicloud.com>
+ <20240712143708.GA151742@mit.edu>
+ <20240718134031.sxnwwzzj54jxl3e5@quack3>
+ <0b0a7b95-f6d0-a56e-5492-b48882d9a35d@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <0b0a7b95-f6d0-a56e-5492-b48882d9a35d@huaweicloud.com>
 
-'struct bus_type' is not modified in this driver.
+On Fri, Jul 19, 2024 at 11:21:51AM +0800, Zhihao Cheng wrote:
+> 在 2024/7/18 21:40, Jan Kara 写道:
+> > I'm pondering about the best way to fix this. Maybe we could handle the
+> > need for inode pinning in inode_lru_isolate() in a similar way as in
+> > writeback code so that last iput() cannot happen from inode_lru_isolate().
+> > In writeback we use I_SYNC flag to pin the inode and evict() waits for this
+> > flag to clear. I'll probably sleep to it and if I won't find it too
+> > disgusting to live tomorrow, I can code it.
+> > 
+> 
+> I guess that you may modify like this:
+> diff --git a/fs/inode.c b/fs/inode.c
+> index f356fe2ec2b6..5b1a9b23f53f 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -457,7 +457,7 @@ EXPORT_SYMBOL(ihold);
+> 
+>  static void __inode_add_lru(struct inode *inode, bool rotate)
+>  {
+> -       if (inode->i_state & (I_DIRTY_ALL | I_SYNC | I_FREEING |
+> I_WILL_FREE))
+> +       if (inode->i_state & (I_DIRTY_ALL | I_SYNC | I_FREEING | I_WILL_FREE
+> | I_PINING))
+>                 return;
+>         if (atomic_read(&inode->i_count))
+>                 return;
+> @@ -845,7 +845,7 @@ static enum lru_status inode_lru_isolate(struct
+> list_head *item,
+>          * be under pressure before the cache inside the highmem zone.
+>          */
+>         if (inode_has_buffers(inode) || !mapping_empty(&inode->i_data)) {
+> -               __iget(inode);
+> +               inode->i_state |= I_PINING;
+>                 spin_unlock(&inode->i_lock);
+>                 spin_unlock(lru_lock);
+>                 if (remove_inode_buffers(inode)) {
+> @@ -857,7 +857,10 @@ static enum lru_status inode_lru_isolate(struct
+> list_head *item,
+>                                 __count_vm_events(PGINODESTEAL, reap);
+>                         mm_account_reclaimed_pages(reap);
+>                 }
+> -               iput(inode);
+> +               spin_lock(&inode->i_lock);
+> +               inode->i_state &= ~I_PINING;
+> +               wake_up_bit(&inode->i_state, __I_PINING);
+> +               spin_unlock(&inode->i_lock);
+>                 spin_lock(lru_lock);
+>                 return LRU_RETRY;
+>         }
+> @@ -1772,6 +1775,7 @@ static void iput_final(struct inode *inode)
+>                 return;
+>         }
+> 
+> +       inode_wait_for_pining(inode);
+>         state = inode->i_state;
+>         if (!drop) {
+>                 WRITE_ONCE(inode->i_state, state | I_WILL_FREE);
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index fd34b5755c0b..daf094fff5fe 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2415,6 +2415,8 @@ static inline void kiocb_clone(struct kiocb *kiocb,
+> struct kiocb *kiocb_src,
+>  #define I_DONTCACHE            (1 << 16)
+>  #define I_SYNC_QUEUED          (1 << 17)
+>  #define I_PINNING_NETFS_WB     (1 << 18)
+> +#define __I_PINING             19
+> +#define I_PINING               (1 << __I_PINING)
+> 
+>  #define I_DIRTY_INODE (I_DIRTY_SYNC | I_DIRTY_DATASYNC)
+>  #define I_DIRTY (I_DIRTY_INODE | I_DIRTY_PAGES)
+> 
+> , which means that we will import a new inode state to solve the problem.
+> 
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security, especially when the structure holds some
-function pointers.
+My non-maintainer $0,03 is as follows:
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
- 273314	  16956	    716	 290986	  470aa	kernel/events/core.o
+1. I_PINING is too generic of a name. I_LRU_PINNED or something else
+indicating what this is for would be prudent
+2. while not specific to this patch, the handling of i_state is too
+accidental-breakage friendly. a full blown solution is way out of the
+scope here, but something can be done to future-proof this work anyway.
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
- 273474	  16764	    716	 290954	  4708a	kernel/events/core.o
+To that end I would suggest:
+1. inode_lru_pin() which appart from setting the flag includes:
+	BUG_ON(inode->i_state & (I_LRU_PINNED | I_FREEING | I_WILL_FREE)
+2. inode_lru_unpin() which apart from unsetting the flag + wakeup includes:
+	BUG_ON(!(inode->i_state & I_LRU_PINNED))
+3. inode_lru_wait_for_pinned() 
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only.
----
- kernel/events/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+However, a non-cosmetic remark is that at the spot inode_wait_for_pining
+gets invoked none of the of the pinning-blocking flags may be set (to my
+reading anyway). This is not the end of the world, but it does mean the
+waiting routine will have to check stuff in a loop.
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index af2e3a06b239..ee011a967a33 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -11508,7 +11508,7 @@ static const struct attribute_group *pmu_dev_groups[] = {
- };
- 
- static int pmu_bus_running;
--static struct bus_type pmu_bus = {
-+static const struct bus_type pmu_bus = {
- 	.name		= "event_source",
- 	.dev_groups	= pmu_dev_groups,
- };
--- 
-2.45.2
-
+Names are not that important, the key is to keep the logic and
+dependencies close by code-wise.
 
