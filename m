@@ -1,124 +1,178 @@
-Return-Path: <linux-kernel+bounces-257961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B847393817B
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 15:35:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08C8A93813C
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 14:12:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20303B21543
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 13:35:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92A0D281F56
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 12:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3BE12E1C7;
-	Sat, 20 Jul 2024 13:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7AF12EBE1;
+	Sat, 20 Jul 2024 12:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="sqnSy2ao"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zrgu0SuB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149563209
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 13:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443DE8003F;
+	Sat, 20 Jul 2024 12:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721482511; cv=none; b=JN5SGEhOiV8Y1oXA8Lo4xgrprLZJRk/rcF5Bk8yxQMa3mjAzqw7S1rfUt9IQ0t/HYVbDZzuv+bSfZmO98UTODb1H9h4wPxqNo7N5R0dgegdP0fsJw0eHJ5Lw5XnPQPcs5U5jxIjl92400B+GcL9WorGsMYDCvcWHUOSeAprTMhY=
+	t=1721477558; cv=none; b=rxj8lMCSevGVp9z+b08shslDxfep3FcjExRq6zgU65mU0C6LVvYOmc3R6yeJAySvtu4VLY0ZXbvJneweI+6gJYg5/yDX3afnIjwmAkEuNzOnCuiGPMyxwU+RmLRbuvJ43UOxV0VpyfgdCG75iC/NhwkViWwvdn27PR2p/yC/rIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721482511; c=relaxed/simple;
-	bh=EbCxln+yCG51QiJ7GKCzZDttDTY7cN6Q5urHZxtSm5Q=;
-	h=Subject:Date:Message-ID:MIME-Version:Cc:From:To; b=UA/X7tIqc37uXFbwciVdrexDJ/rYDek0dd9lGSaBC2hTIFWrtKSxnaHpr1iz09/4mWf39sCfpQOjiPkv1N4I2/fSudG7DIlJ6w3xq72Rr8BSWtODHcTwTdAHqni31PcLddxIY5fgjD4oNidY3NIaSLSIlhvIXQ/90uvijQrQHNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=sqnSy2ao; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2cb81c0ecb4so1376990a91.0
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 06:35:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721482508; x=1722087308; darn=vger.kernel.org;
-        h=to:from:cc:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:to:cc:subject:date:message-id:reply-to;
-        bh=okX3z9/O4JxpS7ZY3ssg2VM6MGJ5Gd7HSr4hGICtRaQ=;
-        b=sqnSy2aoSsQkzsyP5vNqeCwNtnv46HO/Ku+1PAGoIgptgBLBc+XlaZa5Etk0b2+WVD
-         myWy48CrMD2KcHbl673+uT/qRUuuz8fStlKs9gIdKrPVuKSyBsHQGIkdqQgpsaHX+7vU
-         hUA2JFMiwsdmmIDGz5DHA/nCFicZoPxxi7+sbRZgZPhEPqDaEGuGUnASdYvtQgP7JMEp
-         Ah/r6c8XZ5GRuruSirKUcEYAJXcdmek9c9jnBNEbC3CB6FMbOujnD3JZDGwMVfi8VKGu
-         n1oT7Spd3OiYCXF+01dD8rNhdEeKCt+53R0ukrql1Yhc/QZrrQ7o/8ceMbFle1fZ6O9Y
-         i/HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721482508; x=1722087308;
-        h=to:from:cc:content-transfer-encoding:mime-version:message-id:date
-         :subject:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=okX3z9/O4JxpS7ZY3ssg2VM6MGJ5Gd7HSr4hGICtRaQ=;
-        b=wAL57yrGDIaAhxCsxZ1fmn6tKmIW+dRWZf3ukbKdz+z1G1E326h9xCOwFJfA1VsAf7
-         udHAgE24IZ5WdZrJ1SZHLktZDVO0kRUM1Gch0E89yu95BWAQkVXo3IbIjiRM9O3IRpmR
-         fzglLOpR7xglPGyZbIy2EFaKU3DcclakX9GwktOWcp45NBeTjNizw5B2mfp1mLwRg6MF
-         WfWwT65pLoKV49oEpDT5vAkonkAv7sRWh7hMe0aUom8HNBWiHufEvjYjeGwd0b7OSLwN
-         kfYOhIOI4dh81cB8/7mRDcLEzJZmVgXYPVBHTKiASjvxEq0lh5f/8lhfsd3zlcnvXK+v
-         AF+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWF07bAPYdkfVYqHu8uHMnVRYb5laQlOy+IPfjfPd+vij16p/pdr9CaV+o9U65t4p0zlgUSB17tgwb8vP8oDOWRKBMHf5i81rVQKo5g
-X-Gm-Message-State: AOJu0YxzuhEUqFFA7wfb9zhHPR6xZ+nD8GHXXN3nkjKm3KWE15CVj/AA
-	NnqM6fO9fk9wCyG7r1m2fL3NHXAeRqK+DdZ+3bLFLLXcCWpKYxQXg3qRMp706dA=
-X-Google-Smtp-Source: AGHT+IEo9zfPWvHmxxSk8ddC7++jG3WjgsugpmTZfOPfhJCYUsON31LAXDkBtajkrFwAOoXVxE4NzQ==
-X-Received: by 2002:a17:90a:e381:b0:2c3:2f5a:17d4 with SMTP id 98e67ed59e1d1-2cd16d1c5f2mr4312138a91.4.1721482508093;
-        Sat, 20 Jul 2024 06:35:08 -0700 (PDT)
-Received: from localhost ([192.184.165.199])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ccf7c72075sm3534264a91.28.2024.07.20.06.35.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Jul 2024 06:35:07 -0700 (PDT)
-Subject: [PATCH] cache: StarFive: Require a 64-bit system
-Date: Fri, 19 Jul 2024 09:38:41 -0700
-Message-ID: <20240719163841.19018-1-palmer@rivosinc.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1721477558; c=relaxed/simple;
+	bh=fwbjiZOl2jVEvkjLoIR5P7+CK/Chy3OdwVeEOh6ZuS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QLlUk3N/RWkq2xMjUbGujV9sW2CIyf52VBV9GpGo38rsDo0NO7p6EwG03AlvYOAk0cuqV3tCkgODRf2wQhm0q/b6i5gtSp3z7AAxGOG4bbK5BD1vyrT03090P5venu1fA/u4wczMOSsCtTROnnKskbhZwXQdVQ1F+m/+nJvHt4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zrgu0SuB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09110C2BD10;
+	Sat, 20 Jul 2024 12:12:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721477557;
+	bh=fwbjiZOl2jVEvkjLoIR5P7+CK/Chy3OdwVeEOh6ZuS0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Zrgu0SuBbpILpJBm8U5PR8XGe87tRutuy1WzG7Fmsz4VozP42z8IfYuFPMEiCO6ez
+	 djid8auGU5SdaEK5v5L5Kcs3yzuWYeCcZtOzcSL3vqkCL7k8A8lfqmCMd/yVXhjtF8
+	 VHhSwiU64gORZkNkAHRI6mECdB/Pr9e9NEqnu9OJaFfY/A4K+TFaCMAZSDIPmjuJXD
+	 m9fyDujPC45QYgAsPUjQDHQ+rAx5rEVo8xTvK67ZSw30TE3zGPomSDzPciI4/ZXvh5
+	 fjlXjrfuFyfqzBaLPEL/6dkuLr5m5vWTRuYPQWlUZ6Y2t6qDf8GDx6tPL5wdYxPr4T
+	 RVe/6SLZl02bQ==
+Date: Sat, 20 Jul 2024 15:09:28 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Zi Yan <ziy@nvidia.com>
+Cc: linux-kernel@vger.kernel.org,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vasily Gorbik <gor@linux.ibm.com>, Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
+	nvdimm@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH 14/17] mm: introduce numa_emulation
+Message-ID: <Zpuo-BWxvdbun5z7@kernel.org>
+References: <20240716111346.3676969-1-rppt@kernel.org>
+ <20240716111346.3676969-15-rppt@kernel.org>
+ <CCB95DEB-6B72-4175-A379-7E60D89114A6@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Cc: Conor Dooley <conor@kernel.org>, linux-riscv@lists.infradead.org,
-  linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>
-From: Palmer Dabbelt <palmer@rivosinc.com>
-To: Conor Dooley <conor@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CCB95DEB-6B72-4175-A379-7E60D89114A6@nvidia.com>
 
-From: Palmer Dabbelt <palmer@rivosinc.com>
+On Fri, Jul 19, 2024 at 12:03:11PM -0400, Zi Yan wrote:
+> On 16 Jul 2024, at 7:13, Mike Rapoport wrote:
+> 
+> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> >
+> > Move numa_emulation codfrom arch/x86 to mm/numa_emulation.c
+> >
+> > This code will be later reused by arch_numa.
+> >
+> > No functional changes.
+> >
+> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> > ---
+> >  arch/x86/Kconfig             |  8 --------
+> >  arch/x86/include/asm/numa.h  | 12 ------------
+> >  arch/x86/mm/Makefile         |  1 -
+> >  arch/x86/mm/numa_internal.h  | 11 -----------
+> >  include/linux/numa_memblks.h | 17 +++++++++++++++++
+> >  mm/Kconfig                   |  8 ++++++++
+> >  mm/Makefile                  |  1 +
+> >  mm/numa_emulation.c          |  4 +---
+> >  8 files changed, 27 insertions(+), 35 deletions(-)
+> 
+> After this code move, the document of numa=fake= should be moved from
+> Documentation/arch/x86/x86_64/boot-options.rst to
+> Documentation/admin-guide/kernel-parameters.txt
+> too.
 
-This has a bunch of {read,write}q() calls, so it won't work on 32-bit
-systems.  I don't think there's any 32-bit StarFive systems, so for now
-just require 64-bit.
-
-Fixes: cabff60ca77d ("cache: Add StarFive StarLink cache management")
-Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
----
- drivers/cache/Kconfig                   | 1 +
- drivers/cache/starfive_starlink_cache.c | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/cache/Kconfig b/drivers/cache/Kconfig
-index 94abd8f632a7..db51386c663a 100644
---- a/drivers/cache/Kconfig
-+++ b/drivers/cache/Kconfig
-@@ -18,6 +18,7 @@ config STARFIVE_STARLINK_CACHE
- 	bool "StarFive StarLink Cache controller"
- 	depends on RISCV
- 	depends on ARCH_STARFIVE
-+	depends on 64BIT
- 	select RISCV_DMA_NONCOHERENT
- 	select RISCV_NONSTANDARD_CACHE_OPS
- 	help
-diff --git a/drivers/cache/starfive_starlink_cache.c b/drivers/cache/starfive_starlink_cache.c
-index 24c7d078ca22..8ee9569771f8 100644
---- a/drivers/cache/starfive_starlink_cache.c
-+++ b/drivers/cache/starfive_starlink_cache.c
-@@ -19,7 +19,7 @@
- #define STARLINK_CACHE_FLUSH_CTL			0x10
- #define STARLINK_CACHE_ALIGN				0x40
+I'll add this as a separate commit.
  
--#define STARLINK_CACHE_ADDRESS_RANGE_MASK		GENMASK(39, 0)
-+#define STARLINK_CACHE_ADDRESS_RANGE_MASK		GENMASK(39ULL, 0)
- #define STARLINK_CACHE_FLUSH_CTL_MODE_MASK		GENMASK(2, 1)
- #define STARLINK_CACHE_FLUSH_CTL_ENABLE_MASK		BIT(0)
- 
+> Something like:
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index bc55fb55cd26..ce3659289b5e 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -4158,6 +4158,18 @@
+>                         Disable NUMA, Only set up a single NUMA node
+>                         spanning all memory.
+> 
+> +       numa=fake=<size>[MG]
+> +                       If given as a memory unit, fills all system RAM with nodes of
+> +                       size interleaved over physical nodes.
+> +
+> +       numa=fake=<N>
+> +                       If given as an integer, fills all system RAM with N fake nodes
+> +                       interleaved over physical nodes.
+> +
+> +       numa=fake=<N>U
+> +                       If given as an integer followed by 'U', it will divide each
+> +                       physical node into N emulated nodes.
+> +
+>         numa_balancing= [KNL,ARM64,PPC,RISCV,S390,X86] Enable or disable automatic
+>                         NUMA balancing.
+>                         Allowed values are enable and disable
+> diff --git a/Documentation/arch/x86/x86_64/boot-options.rst b/Documentation/arch/x86/x86_64/boot-options.rst
+> index 137432d34109..98d4805f0823 100644
+> --- a/Documentation/arch/x86/x86_64/boot-options.rst
+> +++ b/Documentation/arch/x86/x86_64/boot-options.rst
+> @@ -170,18 +170,6 @@ NUMA
+>      Don't parse the HMAT table for NUMA setup, or soft-reserved memory
+>      partitioning.
+> 
+> -  numa=fake=<size>[MG]
+> -    If given as a memory unit, fills all system RAM with nodes of
+> -    size interleaved over physical nodes.
+> -
+> -  numa=fake=<N>
+> -    If given as an integer, fills all system RAM with N fake nodes
+> -    interleaved over physical nodes.
+> -
+> -  numa=fake=<N>U
+> -    If given as an integer followed by 'U', it will divide each
+> -    physical node into N emulated nodes.
+> -
+>  ACPI
+>  ====
+> 
+> Best Regards,
+> Yan, Zi
+
+
+
 -- 
-2.45.2
-
+Sincerely yours,
+Mike.
 
