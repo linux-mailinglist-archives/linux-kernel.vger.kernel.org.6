@@ -1,130 +1,78 @@
-Return-Path: <linux-kernel+bounces-257782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D084D937EE1
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 06:00:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A133937EE3
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 06:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C0BA1F21E75
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 04:00:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB8A51F22072
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 04:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C652FD524;
-	Sat, 20 Jul 2024 04:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611D6C157;
+	Sat, 20 Jul 2024 04:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gAnYkQ+A"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vH8iopwz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D6C322E;
-	Sat, 20 Jul 2024 04:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFFFD50F;
+	Sat, 20 Jul 2024 04:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721448049; cv=none; b=Pi5h0AnnTmiQ6zMXuJLFgw2edZ/n7mdjCbRHBdef7M2WAP/yShtv/v1k1mcOZKT1tCiDucq0NS6Xnn/wR7yMt66LsYK+IkxpJ1wOuuWNBVcjnGvygNBa4oT7ceaG26HEMVj+jJupun42ILDBd5FSBZl47xuHwtugt8yQTb2MXvM=
+	t=1721448113; cv=none; b=Z+Sr2QHcKNDuUMWSlsQF8rWmcsywZZTEOubI6EhFgj7SLvjjOcrE98lpWkjxiM7GVYUnFHHPWinRUmRXtc6ZcJzNDamKkc5s+IdPQdyG4TB9F5gIk/Ng6qihc6pVLP8TVTrGKt3XGw2U84NfpNDdnHFprnoEe/Nq1xjhfMrNZSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721448049; c=relaxed/simple;
-	bh=prxQ+KpZSiOvQZb+H0+x7DBHDL1OLBALXRbUMNR+a5Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e4BNFKQw+rVpX2RRh3Qqt6vJ8bmk2UDdP/3etZb0eVPQMT76uQ4gVVs5L1xXF1LglcakUSwkRS72TteV26Xn+hyhzB1c8+oX9xq0FbCWsvbwzxHCDPxzg08nQ72KE2GxRaWsShjKlIje4WNbCblkgQT/cgJT5ICR1zPoDbNMA44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gAnYkQ+A; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70b07bdbfbcso1132429b3a.0;
-        Fri, 19 Jul 2024 21:00:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721448047; x=1722052847; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4LEaw+AqpH2JFLGxA4n+vH2QKdcct4eQZVeSkv6l4ts=;
-        b=gAnYkQ+AaklJ2R2ot5+g9HWYDrr5A/LSQD2KAtybckKPpaSQEuqdJ9r5Mjh9sn2iap
-         Ib1OyQ9Et4W4BHNMJIWJk16n7QrezJ+emAIj/vUzX7UWUPTZH94Mwfcwb08yGrTF/ndl
-         ESyUFolYXBy8lJguNhQN4NybIXBOl4vKHzecI4x54U/rNcHcvUMuEjHuIDeMrm25z0sP
-         j4aQUghPbW+5YiIyE0aVHjOaA3x+Gif7/fKEJHj+Y6mUvuEp3kiUeE+zgZWwuV5aGC32
-         Ij4vhENMzX9QzwePSt0nocGkrgPZVGIIMgFUD3h02FAHvrZtIBuZAd+iJSIE5K2KSWzC
-         VtBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721448047; x=1722052847;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4LEaw+AqpH2JFLGxA4n+vH2QKdcct4eQZVeSkv6l4ts=;
-        b=tl3ziDn0MX4jlBpMVNODrewKz4fSY/Ph96LppEJJAS8KFN1CzDaY4CXePDbvB2SCUn
-         bRp+tCMATL94gmrrfwvzcMPRyt1HJlRSBQ+0PUYb0WjtHlSVH1+PImlDh1z05r52v07q
-         Z778c04+T/UFLW5i6/1m32EROAmzsttCRNO+rHGT3nH4OVuEvxyjG/3JJa+hYuAWQpWV
-         YauY7RDIPuS9aSWShM3MZ/R2ZzcoM7sMqKtVizeuGQgooYMnZYfcJVio0sCiCoIIlJ4z
-         4jp/IgtCAeSdTT5lwbin6rE7BQWH2ayD3ttcb/LzY6q6oKyea+V+PnCiRSNLOh7jeivH
-         eHLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXv7Rfq20Mem1g9APHCoO3byd3XUqZi34l7bOlj809wz26LY/bdr/lMvgAtRa1QlKfKCZEc7NqOmM1qMW+dHR49nAeGtiqqJDe7irUy/CQG4HQIbaMbVtLQfygxF39UDwQiLoAA
-X-Gm-Message-State: AOJu0YwHgD8fsSEoRoXfxOJaoHmEwOgeUyqeXlS9YTKEZ9aj6entsfv+
-	5bHhMexijkChg3yzfTDewUdWpD4Tv19hZTL2zRLBvzqdR0z4ByYb
-X-Google-Smtp-Source: AGHT+IGjA01k09HWKzmc4ybFCGHr482A/uCJKVK6xKRbZl0Y+RhKZRBXXVtMBlWarDEr2prSOEdXGQ==
-X-Received: by 2002:a05:6a21:320b:b0:1c2:8a69:338f with SMTP id adf61e73a8af0-1c423ac8ca6mr2497856637.12.1721448046768;
-        Fri, 19 Jul 2024 21:00:46 -0700 (PDT)
-Received: from localhost.localdomain (140-211-169-189-openstack.osuosl.org. [140.211.169.189])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70cff55275bsm1901517b3a.128.2024.07.19.21.00.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 21:00:46 -0700 (PDT)
-From: Zhouyi Zhou <zhouzhouyi@gmail.com>
-To: alexandre.torgue@foss.st.com,
-	joabreu@synopsys.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	kuba@kernel.org,
-	mcoquelin.stm32@gmail.com,
-	andrew@lunn.ch,
-	linus.walleij@linaro.org,
-	martin.blumenstingl@googlemail.com,
-	netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: "zhili.liu" <zhili.liu@ucas.com.cn>,
-	Zhouyi Zhou <zhouzhouyi@gmail.com>,
-	wangzhiqiang <zhiqiangwang@ucas.com.cn>
-Subject: [PATCH] net: stmmac: fix the mistake of the device tree property string of reset gpio in stmmac_mdio_reset
-Date: Sat, 20 Jul 2024 04:00:27 +0000
-Message-Id: <20240720040027.734420-1-zhouzhouyi@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1721448113; c=relaxed/simple;
+	bh=O8rs9AUKGCGMRHdgSeel3BwU4fyso7HvNCUBJOKsFbk=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=D4zogzGXV37ors9vYZpp1XoRKAE4gq4Rf6Miu+k0i4lXsBGmwC/u+piLPZ9OR6A1TjKkB22fdoeQ+8CLashJvYdzFTwRQy9/Xb+i/ReYo2VZRLEFJaZmHe2t/9I0X8GiLtAJbKW/RW8xifYrx1uuUgCV9v4s1MD69/Pn+KpU7sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vH8iopwz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 751AFC4AF0B;
+	Sat, 20 Jul 2024 04:01:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721448113;
+	bh=O8rs9AUKGCGMRHdgSeel3BwU4fyso7HvNCUBJOKsFbk=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=vH8iopwzaV8tIXCcj9ddBsNIkb7I3JFkkYT/b24+JZGJYDKjP4wbV3tlQZTBQ5HoI
+	 iz5XvjET0nk3lR/3/nzaWEnoSRACU/+v932GJ8WCB1UHO11hxvoYy0ZbkZ1CSGbHQp
+	 6Kwa+HidrxoTlV33s1FUwTZWxL3QAs2pUoRavXkYatww4bK0RGbAWd0W18wNNNFAh5
+	 LLXObgNCDwe9kjv8yfhfbRRHU5w1mtbQLWGn0w1m2IVJfRjw0XlVhYOq9Dk7yLWffa
+	 8sa8FwE5LUb7d/iOR9hSAoD4mp8YxkiX71WNvoT8VESekRxwOg2cPOSssuZE+ugXRc
+	 qZLY1NgQI8k4g==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 69DFEC43335;
+	Sat, 20 Jul 2024 04:01:53 +0000 (UTC)
+Subject: Re: [GIT PULL] PCI changes for v6.11
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240719224454.GA657774@bhelgaas>
+References: <20240719224454.GA657774@bhelgaas>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240719224454.GA657774@bhelgaas>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.11-changes
+X-PR-Tracked-Commit-Id: 45659274e60864f9acabba844468e405362bdc8c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 3f386cb8ee9f04ff4be164ca7a1d0ef3f81f7374
+Message-Id: <172144811341.25819.5089141357087238880.pr-tracker-bot@kernel.org>
+Date: Sat, 20 Jul 2024 04:01:53 +0000
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: "zhili.liu" <zhili.liu@ucas.com.cn>
+The pull request you sent on Fri, 19 Jul 2024 17:44:54 -0500:
 
-According to Documentation/devicetree/bindings/net/snps,dwmac.yaml,
-the device tree property of PHY Reset GPIO should be "snps,reset-gpio".
+> git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.11-changes
 
-Use string "snps,reset-gpio" instead of "snps,reset" in stmmac_mdio_reset
-when invoking devm_gpiod_get_optional.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/3f386cb8ee9f04ff4be164ca7a1d0ef3f81f7374
 
-Fixes: 7c86f20d15b7 ("net: stmmac: use GPIO descriptors in stmmac_mdio_reset")
+Thank you!
 
-Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
-Signed-off-by: wangzhiqiang <zhiqiangwang@ucas.com.cn>
-Signed-off-by: zhili.liu <zhili.liu@ucas.com.cn>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-index 03f90676b3ad..b052222458b5 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-@@ -462,7 +462,7 @@ int stmmac_mdio_reset(struct mii_bus *bus)
- 		u32 delays[3] = { 0, 0, 0 };
- 
- 		reset_gpio = devm_gpiod_get_optional(priv->device,
--						     "snps,reset",
-+						     "snps,reset-gpio",
- 						     GPIOD_OUT_LOW);
- 		if (IS_ERR(reset_gpio))
- 			return PTR_ERR(reset_gpio);
 -- 
-2.25.1
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
