@@ -1,105 +1,210 @@
-Return-Path: <linux-kernel+bounces-257890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE9A938029
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 11:17:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A5A8938020
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 11:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DF962812DE
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 09:17:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DD061C2178E
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 09:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D752D47F7F;
-	Sat, 20 Jul 2024 09:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="WSPw5Pq8"
-Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9054D10A;
+	Sat, 20 Jul 2024 09:13:47 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E8E22F14
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 09:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E9C282FB;
+	Sat, 20 Jul 2024 09:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721467037; cv=none; b=OgEoYj7x1I8D3MzKjJ8h0E737zaXmZelE4srppYeRZlrDSOQPTt/rNG8gxx2Fw1UifMyYWFklLwh7fA/nKPJTEz2jo0gHGh8qR4HSts90RlCmVDgx/0kJPG9ojhlItFtsFVUQ5bV7X5zSiUO79qsYJsfjGlVInBSHPxBFzu5W3g=
+	t=1721466826; cv=none; b=jBxDTuBjwWh6iquKEYelkSbixSSKF+FMblumVkDPoWNnC8ffNhwf2PnKcmUA8rds5Q+aV9QJxe9Ox/pmaNHZRIJFFaeU7Tm1hkA3wCcXp38e5gywSWjN7gajCI/ijMHovgQBOMdlt4lVqirh3q1zzpwh5o9JNqyw1LVQHndLglg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721467037; c=relaxed/simple;
-	bh=zBlyMiZr5ZJ4NHeCLJ7YGyvosulwqESWN7yt2NzJulE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A9SVBh7uImqlhK1n7otGkU3Y+apGGu4miosKUsmNINkQrirrY0b2IoAFBwuyz6nNROcaNa9rIEBNs9stfWoBGZb/lp8FQoSQ+MMj8V8UUal25AO4oHegVbPZfWkee2GJ5/QXbpb7EU/Yn9+mppEcJKLkOiza7zJWZu9PSENwZ7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=WSPw5Pq8; arc=none smtp.client-ip=83.166.143.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WR11N18v0z5Vh;
-	Sat, 20 Jul 2024 11:08:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721466520;
-	bh=yjXRrqUcVbN8llmZR7ukkPu82dUi4AHWsqh4sofvfA4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=WSPw5Pq8BN7GDzAmfamZNj4VM4tjQdIVs473U2DEYG41a5Tk5nLPhVy88bl4TnJMe
-	 vtvIddwZtE6VTehr79VAVUBsILT6OFqwWHCe9AuLPbjWIkDg675z8eNESLTbHQOP99
-	 jnfuMfwneFBcEuufdLB8z29D+T9hhcLcGKX+6pKg=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WR11M2YRfzBsX;
-	Sat, 20 Jul 2024 11:08:39 +0200 (CEST)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [GIT PULL] Landlock fix for v6.11
-Date: Sat, 20 Jul 2024 11:08:34 +0200
-Message-ID: <20240720090834.267835-1-mic@digikod.net>
+	s=arc-20240116; t=1721466826; c=relaxed/simple;
+	bh=BivXycRRw125upwa9g6ksqc0NDuHvyFSkybyWEBLbPw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jqIZvQkjNXzmYNokvjqmZekxz2t2D9zZDs/kAtN+Li09odrBvLeY4/HvWXZBSl1nGXb/gBBJvuGqpH88C2j7d/27hS3/5fhCowHgWa9wjSpm0eFSkJz6xfqfpvJOGgOvyJJmuF9Fl7SgSXI9mOrwbDYUNAh02b7l9wGzT8WQcZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2581C2BD10;
+	Sat, 20 Jul 2024 09:13:39 +0000 (UTC)
+Message-ID: <b09c8cd9-2e1e-48e1-a5c7-db020fc88808@xs4all.nl>
+Date: Sat, 20 Jul 2024 11:13:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 01/28] v4l2: add restricted memory flags
+To: Yunfei Dong <yunfei.dong@mediatek.com>,
+ Jeffrey Kardatzke <jkardatzke@google.com>,
+ =?UTF-8?Q?N=C3=ADcolas_F_=2E_R_=2E_A_=2E_Prado?= <nfraprado@collabora.com>,
+ Nathan Hebert <nhebert@chromium.org>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,
+ Tomasz Figa <tfiga@chromium.org>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>, Yong Wu <yong.wu@mediatek.com>,
+ Hsin-Yi Wang <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>,
+ Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>,
+ Sumit Semwal <sumit.semwal@linaro.org>, Brian Starkey
+ <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
+ "T . J . Mercier" <tjmercier@google.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20240720071606.27930-1-yunfei.dong@mediatek.com>
+ <20240720071606.27930-2-yunfei.dong@mediatek.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <20240720071606.27930-2-yunfei.dong@mediatek.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+Hi Yunfei,
 
-This PR simplifies code and improves documentation.
+First a high-level comment:
 
-Please pull these changes for v6.11-rc1.  This commit merged cleanly with your
-master branch.  The kernel code has been tested in the latest linux-next
-releases.
+Adding a new V4L2 uAPI also requires patches to v4l-utils, specifically v4l2-ctl
+and v4l2-compliance (i.e. new tests are needed for this flag). This will also help
+you test the driver.
+
+Some more comments below:
+
+On 20/07/2024 09:15, Yunfei Dong wrote:
+> From: Jeffrey Kardatzke <jkardatzke@google.com>
+> 
+> Adds a V4L2 flag which indicates that a queue is using restricted
+> dmabufs and the corresponding capability flag.
+> 
+> Signed-off-by: Jeffrey Kardatzke <jkardatzke@google.com>
+> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
+> [Yunfei: Change reviewer's comments]
+> ---
+>  Documentation/userspace-api/media/v4l/buffer.rst       | 10 +++++++++-
+>  .../userspace-api/media/v4l/vidioc-reqbufs.rst         |  6 ++++++
+>  include/media/videobuf2-core.h                         |  8 +++++++-
+>  include/uapi/linux/videodev2.h                         |  2 ++
+>  4 files changed, 24 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/userspace-api/media/v4l/buffer.rst b/Documentation/userspace-api/media/v4l/buffer.rst
+> index 52bbee81c080..901eb007aae8 100644
+> --- a/Documentation/userspace-api/media/v4l/buffer.rst
+> +++ b/Documentation/userspace-api/media/v4l/buffer.rst
+> @@ -696,7 +696,7 @@ enum v4l2_memory
+>  
+>  .. _memory-flags:
+>  
+> -Memory Consistency Flags
+> +Memory Flags
+>  ------------------------
+>  
+>  .. raw:: latex
+> @@ -728,6 +728,14 @@ Memory Consistency Flags
+>  	only if the buffer is used for :ref:`memory mapping <mmap>` I/O and the
+>  	queue reports the :ref:`V4L2_BUF_CAP_SUPPORTS_MMAP_CACHE_HINTS
+>  	<V4L2-BUF-CAP-SUPPORTS-MMAP-CACHE-HINTS>` capability.
+> +    * .. _`V4L2-MEMORY-FLAG-RESTRICTED`:
+> +
+> +      - ``V4L2_MEMORY_FLAG_RESTRICTED``
+> +      - 0x00000002
+> +      - The queued buffers are expected to be in restricted memory. If not, an
+> +	error will be returned. This flag can only be used with ``V4L2_MEMORY_DMABUF``.
+> +	Typically restricted buffers are allocated using a restricted dma-heap. This flag
+> +	can only be specified if the :ref:`V4L2_BUF_CAP_SUPPORTS_RESTRICTED_MEM` is set.
+>  
+>  .. raw:: latex
+>  
+> diff --git a/Documentation/userspace-api/media/v4l/vidioc-reqbufs.rst b/Documentation/userspace-api/media/v4l/vidioc-reqbufs.rst
+> index bbc22dd76032..8a264ae08db1 100644
+> --- a/Documentation/userspace-api/media/v4l/vidioc-reqbufs.rst
+> +++ b/Documentation/userspace-api/media/v4l/vidioc-reqbufs.rst
+> @@ -122,6 +122,7 @@ aborting or finishing any DMA in progress, an implicit
+>  .. _V4L2-BUF-CAP-SUPPORTS-MMAP-CACHE-HINTS:
+>  .. _V4L2-BUF-CAP-SUPPORTS-MAX-NUM-BUFFERS:
+>  .. _V4L2-BUF-CAP-SUPPORTS-REMOVE-BUFS:
+> +.. _V4L2-BUF-CAP-SUPPORTS-RESTRICTED_MEM:
+>  
+>  .. raw:: latex
+>  
+> @@ -166,6 +167,11 @@ aborting or finishing any DMA in progress, an implicit
+>          :ref:`V4L2_BUF_FLAG_NO_CACHE_INVALIDATE <V4L2-BUF-FLAG-NO-CACHE-INVALIDATE>`,
+>          :ref:`V4L2_BUF_FLAG_NO_CACHE_CLEAN <V4L2-BUF-FLAG-NO-CACHE-CLEAN>` and
+>          :ref:`V4L2_MEMORY_FLAG_NON_COHERENT <V4L2-MEMORY-FLAG-NON-COHERENT>`.
+> +    * - ``V4L2_BUF_CAP_SUPPORTS_RESTRICTED_MEM``
+> +      - 0x00000100
+> +      - This capability is set by the driver to indicate the queue supports
+> +        restricted memory. See
+> +        :ref:`V4L2_MEMORY_FLAG_RESTRICTED <V4L2-MEMORY-FLAG-RESTRICTED>`.
+>  
+>  .. raw:: latex
+>  
+
+What is missing in this documentation is what error to expect if you queue a buffer
+from non-restricted memory to a driver configured for restricted memory. You probably
+want a specific error code for that (EACCES? EPERM?).
 
 Regards,
- Mickaël
 
---
-The following changes since commit 256abd8e550ce977b728be79a74e1729438b4948:
+	Hans
 
-  Linux 6.10-rc7 (2024-07-07 14:23:46 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.11-rc1
-
-for you to fetch changes up to f4b89d8ce5a835afa51404977ee7e3889c2b9722:
-
-  landlock: Various documentation improvements (2024-07-18 08:27:47 +0200)
-
-----------------------------------------------------------------
-Landlock updates for v6.11-rc1
-
-----------------------------------------------------------------
-Günther Noack (3):
-      landlock: Use bit-fields for storing handled layer access masks
-      landlock: Clarify documentation for struct landlock_ruleset_attr
-      landlock: Various documentation improvements
-
- Documentation/userspace-api/landlock.rst |  2 +-
- include/uapi/linux/landlock.h            | 66 ++++++++++++++++++--------------
- security/landlock/limits.h               |  2 -
- security/landlock/ruleset.c              |  4 --
- security/landlock/ruleset.h              | 24 +++++-------
- security/landlock/syscalls.c             | 17 ++++----
- 6 files changed, 56 insertions(+), 59 deletions(-)
+> diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
+> index 955237ac503d..afd497e93a37 100644
+> --- a/include/media/videobuf2-core.h
+> +++ b/include/media/videobuf2-core.h
+> @@ -517,6 +517,9 @@ struct vb2_buf_ops {
+>   *		->finish().
+>   * @non_coherent_mem: when set queue will attempt to allocate buffers using
+>   *		non-coherent memory.
+> + * @allow_restricted_mem: when set user-space can pass the %V4L2_MEMORY_FLAG_RESTRICTED
+> + *		flag to indicate the dma bufs are restricted.
+> + * @restricted_mem: when set queue will verify that the dma bufs are restricted.
+>   * @lock:	pointer to a mutex that protects the &struct vb2_queue. The
+>   *		driver can set this to a mutex to let the v4l2 core serialize
+>   *		the queuing ioctls. If the driver wants to handle locking
+> @@ -621,6 +624,8 @@ struct vb2_queue {
+>  	unsigned int			uses_requests:1;
+>  	unsigned int			allow_cache_hints:1;
+>  	unsigned int			non_coherent_mem:1;
+> +	unsigned int			allow_restricted_mem:1;
+> +	unsigned int			restricted_mem:1;
+>  
+>  	struct mutex			*lock;
+>  	void				*owner;
+> @@ -792,7 +797,8 @@ void vb2_core_querybuf(struct vb2_queue *q, struct vb2_buffer *vb, void *pb);
+>   * @q:		pointer to &struct vb2_queue with videobuf2 queue.
+>   * @memory:	memory type, as defined by &enum vb2_memory.
+>   * @flags:	auxiliary queue/buffer management flags. Currently, the only
+> - *		used flag is %V4L2_MEMORY_FLAG_NON_COHERENT.
+> + *		used flags are %V4L2_MEMORY_FLAG_NON_COHERENT and
+> + *		%V4L2_MEMORY_FLAG_RESTRICTED.
+>   * @count:	requested buffer count.
+>   *
+>   * Videobuf2 core helper to implement VIDIOC_REQBUF() operation. It is called
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index 4e91362da6da..c4b1bc10af4c 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -1060,6 +1060,7 @@ struct v4l2_requestbuffers {
+>  };
+>  
+>  #define V4L2_MEMORY_FLAG_NON_COHERENT			(1 << 0)
+> +#define V4L2_MEMORY_FLAG_RESTRICTED			(1 << 1)
+>  
+>  /* capabilities for struct v4l2_requestbuffers and v4l2_create_buffers */
+>  #define V4L2_BUF_CAP_SUPPORTS_MMAP			(1 << 0)
+> @@ -1071,6 +1072,7 @@ struct v4l2_requestbuffers {
+>  #define V4L2_BUF_CAP_SUPPORTS_MMAP_CACHE_HINTS		(1 << 6)
+>  #define V4L2_BUF_CAP_SUPPORTS_MAX_NUM_BUFFERS		(1 << 7)
+>  #define V4L2_BUF_CAP_SUPPORTS_REMOVE_BUFS		(1 << 8)
+> +#define V4L2_BUF_CAP_SUPPORTS_RESTRICTED_MEM		(1 << 9)
+>  
+>  /**
+>   * struct v4l2_plane - plane info for multi-planar buffers
 
