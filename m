@@ -1,106 +1,111 @@
-Return-Path: <linux-kernel+bounces-257923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC1109380E2
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 13:06:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F33B9380E5
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 13:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75717B20C17
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 11:06:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AE49281F6B
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 11:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95AF84E15;
-	Sat, 20 Jul 2024 11:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7998A12C526;
+	Sat, 20 Jul 2024 11:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Z+fE3p0z"
-Received: from msa.smtpout.orange.fr (msa-210.smtpout.orange.fr [193.252.23.210])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iKUJOHkO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C077FB67D
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 11:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF774129E64;
+	Sat, 20 Jul 2024 11:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721473605; cv=none; b=e+iJM4VivquxiidzKK/Wboe2B1tiDyNzokWmdt+FYM/o4vnGFnyV9oOHoRJynqIC4Y5sGVBBVNQzsWb/udF3MXBkvw/XFogFjL4V3rdzI+m9uqHbeBvZFCXxkgZIsjpUL0GoMq3Mm0Lq6OK4zuylFa8RJ0IMIpTPKhosspf9kY4=
+	t=1721473607; cv=none; b=RyI8nIIrDZgUWLWJoM2V3/xj8Ka45MK4iilctWHu35R7VcP0GILZ6jguML/fXcGt4oat9HqWhvv3q5eC9s8fc30YZ1c6E0JZeHEdGnjReWESmrgTyP0uzZfvQvq/wreAnNLNdhnvpK76zkMEiXur5FYGZdLsXfxogLnep4IAW3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721473605; c=relaxed/simple;
-	bh=4SBmS9evqfYjiWS/SZw+MfSEUXtdnqi2gYqBCz8u3Vw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bLbmmUOhUyfahavR81LFpN4eRxWPnsF7ge33AmAz0Ycwz6AYxJShoTergyh/bm8H4CWi0LF2ni2r6I/uXVntKBB4VehgVtTMDZiCkaDhGR1I1HwNcvH+yFpCitln8oE6munwiQHPjWKClQyUDRTlF/18QIpfBBa+6uGgsgo4B+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Z+fE3p0z; arc=none smtp.client-ip=193.252.23.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id V7v7sCz5IfWRDV7v8s20pG; Sat, 20 Jul 2024 13:06:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1721473595;
-	bh=wFTIT8qzpra09si3kluN1/RyiA4I3T3TkYlaiPe5Ics=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Z+fE3p0zIPbhmkwyKqb8oMAlqUW7wcyoXvWntCXSTP99WhxHLT00vfWj1/PRPWVrl
-	 zzFDo/GON7xZ/5NKDvLx/W4ATsyKK3y6XGyb3TFExuu1z69B4zK3eTUQ9VYiSKIIeP
-	 TaZ7iqAlcDhAUi9MKQNPh51FcKXrbXQZXVHIYDlMTO59DVwgDdc71buxeZwmTyjUFQ
-	 Gujs3S+Hn9LVj3RIHTlv4tugqtmG9+O1YBPMW7LFtPvVRigR0yjvxv8BLqwyKUPNHX
-	 OVabgI+AS6cHGIX80fz6Hbfe92w1UClvVLblmSFszZqtQDjx8BQMtjkFlwADV3PCSr
-	 bS4xe5wpJNCgw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 20 Jul 2024 13:06:35 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] intel_th: Constify struct bus_type
-Date: Sat, 20 Jul 2024 13:06:31 +0200
-Message-ID: <2f08b4003f35f1174a5bd32ef09731910a252d34.1721473575.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1721473607; c=relaxed/simple;
+	bh=3hlsRR2sfEyeeRzqGSxLJFuuwMm4bIUfoz9fGYr9woQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=umwjqJEYyIkavbWo8F6N9iVlZUq2VmW9a2tK6xZTI8xnBZWhNrxXZWTwLqI8nWptapns1l+f6JEFjsHv0W4UzQohNCadJMSazrmZnfRpMZWlGuDfzY1ITuw9r7KQb1kpW+Dq1lU0BfquvRhWmopVjzGIuI5VLBAcAkVL5vvFxmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iKUJOHkO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64A33C2BD10;
+	Sat, 20 Jul 2024 11:06:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721473606;
+	bh=3hlsRR2sfEyeeRzqGSxLJFuuwMm4bIUfoz9fGYr9woQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iKUJOHkOqCMz+mdvjeKy/fQbXv7gATJmmMcfm43TTftn7n62sE+C+CEe7lqV6LByU
+	 YMvINY4iVrKFuX8FdaFVY4dASVGX8U61i5Jf0JGCGbg2AD/tW2IgTbGWAmN9QJ7++a
+	 DwKs+awKCpVsV4Ysl1AkhQyvIbMD7eHclzlGTNSLGBfTeNiOq9zhUfzZOX6r5r22c1
+	 7BRMax39P0z3svFLU2tTRkRD6cgbPp9ALco4z0hsESTLe0vwmJ1eSnllfT7/dCj2wA
+	 837fMuzY+EqMI2GLz6joHYUD3azzt3OLlGDKr/Ag6rx2yDmRAfiFV1r0QLslGAMQYQ
+	 FC3Xk6yyCrczA==
+Date: Sat, 20 Jul 2024 12:06:36 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
+ ang.iglesiasg@gmail.com, linus.walleij@linaro.org,
+ biju.das.jz@bp.renesas.com, javier.carrasco.cruz@gmail.com,
+ semen.protsenko@linaro.org, 579lpy@gmail.com, ak@it-klinger.de,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 02/10] iio: pressure: bmp280: Fix waiting time for
+ BMP3xx configuration
+Message-ID: <20240720120636.38b9cdcb@jic23-huawei>
+In-Reply-To: <20240711211558.106327-3-vassilisamir@gmail.com>
+References: <20240711211558.106327-1-vassilisamir@gmail.com>
+	<20240711211558.106327-3-vassilisamir@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-'struct bus_type' is not modified in this driver.
+On Thu, 11 Jul 2024 23:15:50 +0200
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security, especially when the structure holds some
-function pointers.
+> According to the datasheet, both pressure and temperature can go up to
+> oversampling x32. With this option, the maximum measurement time is not
+> 80ms (this is for press x32 and temp x2), but it is 130ms nominal
+> (calculated from table 3.9.2) and since most of the maximum values
+> are around +15%, it is configured to 150ms.
+> 
+> Fixes: 8d329309184d ("iio: pressure: bmp280: Add support for BMP380 sensor family")
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+Applied to what will be the togreg branch of iio.git and marked for stable.
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  19925	   2493	     16	  22434	   57a2	drivers/hwtracing/intel_th/core.o
+If it needs to move quicker as we have reports of problems from users
+let me know.
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  20101	   2333	     16	  22450	   57b2	drivers/hwtracing/intel_th/core.o
+Jonathan
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only.
----
- drivers/hwtracing/intel_th/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/hwtracing/intel_th/core.c b/drivers/hwtracing/intel_th/core.c
-index d72993355473..4ffefab7ef4b 100644
---- a/drivers/hwtracing/intel_th/core.c
-+++ b/drivers/hwtracing/intel_th/core.c
-@@ -166,7 +166,7 @@ static void intel_th_remove(struct device *dev)
- 	pm_runtime_enable(dev);
- }
- 
--static struct bus_type intel_th_bus = {
-+static const struct bus_type intel_th_bus = {
- 	.name		= "intel_th",
- 	.match		= intel_th_match,
- 	.probe		= intel_th_probe,
--- 
-2.45.2
+> ---
+>  drivers/iio/pressure/bmp280-core.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+> index cc8553177977..3deaa57bb3f5 100644
+> --- a/drivers/iio/pressure/bmp280-core.c
+> +++ b/drivers/iio/pressure/bmp280-core.c
+> @@ -1581,10 +1581,11 @@ static int bmp380_chip_config(struct bmp280_data *data)
+>  		}
+>  		/*
+>  		 * Waits for measurement before checking configuration error
+> -		 * flag. Selected longest measure time indicated in
+> -		 * section 3.9.1 in the datasheet.
+> +		 * flag. Selected longest measurement time, calculated from
+> +		 * formula in datasheet section 3.9.2 with an offset of ~+15%
+> +		 * as it seen as well in table 3.9.1.
+>  		 */
+> -		msleep(80);
+> +		msleep(150);
+>  
+>  		/* Check config error flag */
+>  		ret = regmap_read(data->regmap, BMP380_REG_ERROR, &tmp);
 
 
