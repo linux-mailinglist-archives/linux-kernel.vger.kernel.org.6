@@ -1,192 +1,253 @@
-Return-Path: <linux-kernel+bounces-257913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 442F19380C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 12:42:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0341F9380D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 12:52:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF765B2155C
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 10:42:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74BA91F21732
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 10:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A365C85C5E;
-	Sat, 20 Jul 2024 10:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AEA584DF1;
+	Sat, 20 Jul 2024 10:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JxaPVatu"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yandex.com header.i=@yandex.com header.b="CuQhzWg7"
+Received: from forward501b.mail.yandex.net (forward501b.mail.yandex.net [178.154.239.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208D022F17;
-	Sat, 20 Jul 2024 10:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0912030B;
+	Sat, 20 Jul 2024 10:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721472151; cv=none; b=UylJqe2WknU/HmI7+eTdUkaD+AfZ+qL5meeiLTso28T1Tofkm75LlKbceq4Uvy0wRyaAORRzgY87wLkicHG8TAA5gIXCZR2w8H9F99cdpSMYK/P618nG0tDQ8DcXD0iA6I89K4Aof2fm9ANpTO/wcRuvcMJla8WXr2vGBA4zK1A=
+	t=1721472707; cv=none; b=E7EGf/nzfG4s5i9DEKhKjgdwO3OONe8x5h8it2UBLp2OOytjkA5Fr0vSQFE51Zb4tdiHsiQiDbcVgZFstQiTfajP0ElVNSQn9v126Ma/h5SvLnNjhZES/cVXd4KjNfu+haWie9lHuPCHpmSxKRx3YPT3yigkYZZa1A9O6hBPgxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721472151; c=relaxed/simple;
-	bh=SjXz8Q7cYNANPWdAIE+1LcHU+Sy/cBqo18xnb4k5Ups=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CGBLnjnxcCzYT9Z/kImAlPmme/5S/s5VVq7QJQlybDy/xTVZD1xtc8Eg+tjl3CUW9WsteON0NCHRKngOgVch/Wod0sXO4vv0x+msed7fWwMLzaVmrRJMY9SC50kAhEpmgn5nApLu6A0gGPnWBv55ph0rZEKpVxm2gvfC/RRg3dE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JxaPVatu; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4266b1f1b21so19507965e9.1;
-        Sat, 20 Jul 2024 03:42:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721472148; x=1722076948; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yvVRqveKCbnKGjsii996Z+A1wxik6ho1ZN1Ar+GN1jU=;
-        b=JxaPVatu/aUIga+cJ11HurZUoA2ZL4R1jB8Vs7z65uRRzhSoXXZQf49B8eNjHgXUMx
-         dHJSaZcETi/qgRktynQdOf7iBJj7nC6nbA6Ku8U9KL/+3n7WoXzxMFndfx13tnEnEhgs
-         fWJx8h1FwOGj8jTGi6l1vQfT1bpJz9w8iNBmpO2n1L/4st1qf2LodpFvmP2NEfDEvRf+
-         ZNj50wqwrLoeN/qDIt+MSfvEc/4DsBcESsbw5gc7P0JuyuQwtrfuKfxT5J//V5g4Pa/T
-         7CChXqCCwV6r8YmT74pe6Ys7ScVF/bLbmoFkzybBndxrPPNqrURdvf1ZV+PtTkMoVdxx
-         tfiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721472148; x=1722076948;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yvVRqveKCbnKGjsii996Z+A1wxik6ho1ZN1Ar+GN1jU=;
-        b=aAEm3wtbFOBMLF9W+O5+7lGT8jBy6maXsYIrZ0ZJeidf6RVHVJWfthOKGvgcTElG0K
-         DA6vg3Cr90s8lcGsvsvMJx7p/lDWIp11oyXNgGjEbRR5Y0JRt9ZltWX3O9Wr8ZJ9sr6Q
-         uuSntErdSw8219RAH5JRk00SMN7ZsknDG+RP54ktd8GqBe6hXEV/em8DD3PMBCKj/ZwI
-         FTQq/OhhbmvwUC6tGlWjlS/bFV0sUveeYKuRpqDGCEwnUcNZwcIKbzGShS7f340TLMzO
-         83T6N+QF8zxjtMwvcM4yWC/RLcazI1detQRO+v3mPryuFEB6ik3R5JHLlDnU7lKi1Vez
-         SOLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVN0sR/fJD3xfKwJFs7FrprIHlJ6BS1s5LHchdMbcoO7eiDaVv0JFocmGONy68ZS5GUxCNoCM+7IO99QMdWS+ecgyhm/9l54elYXZ+qIoYu1QQmEqBBJi23uDJoEbvr1ROWIMQBgq1KIFBHlIWfwxmuAo/D1grvF3yqMcb5iSRO+a2z48Or9FE=
-X-Gm-Message-State: AOJu0Yws9UEfXuTxc01a/jXKZ2+GidKcBOk8+6Jp4TCp5Lmd3ss8Lm6q
-	4xKbLqaGn5PW4S6iz32xBokkxq9ln4ZJzun2U2knNyh+HYLej2Uf
-X-Google-Smtp-Source: AGHT+IFtjw6W19sDZIGkdGb3I2QzTdMrxKBtLKtuA6pZllYy+sAObBJu8M1Kqk6cGFm7GvJaZE7/IQ==
-X-Received: by 2002:a05:600c:4ec7:b0:426:6f15:2e4d with SMTP id 5b1f17b1804b1-427dc51cecbmr7415135e9.9.1721472148099;
-        Sat, 20 Jul 2024 03:42:28 -0700 (PDT)
-Received: from f (cst-prg-77-238.cust.vodafone.cz. [46.135.77.238])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d6906c77sm52947855e9.23.2024.07.20.03.42.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Jul 2024 03:42:27 -0700 (PDT)
-Date: Sat, 20 Jul 2024 12:42:15 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Zhihao Cheng <chengzhihao@huaweicloud.com>
-Cc: Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-	Christoph Hellwig <hch@infradead.org>, linux-mtd <linux-mtd@lists.infradead.org>, 
-	Richard Weinberger <richard@nod.at>, "zhangyi (F)" <yi.zhang@huawei.com>, 
-	yangerkun <yangerkun@huawei.com>, "wangzhaolong (A)" <wangzhaolong1@huawei.com>
-Subject: Re: [BUG REPORT] potential deadlock in inode evicting under the
- inode lru traversing context on ext4 and ubifs
-Message-ID: <yakewaqynmapatlh3s45huq6dutkkkcdj26tqpfx6yllsjmyie@rh6xthl5pwkb>
-References: <37c29c42-7685-d1f0-067d-63582ffac405@huaweicloud.com>
- <20240712143708.GA151742@mit.edu>
- <20240718134031.sxnwwzzj54jxl3e5@quack3>
- <0b0a7b95-f6d0-a56e-5492-b48882d9a35d@huaweicloud.com>
+	s=arc-20240116; t=1721472707; c=relaxed/simple;
+	bh=bjMYb4foP2Gd3ezZyUdM3Qw1b32Bs1ieql7ODvDwN+Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ro6CCnCRVBZ+rU82Dll63HR3TmnNYQixZV0fAB9ZIGgYyukxQAySmTGQPS+Dwvkk1bye8IsxLi8piQLSG/4Ge9hL2dnzcR+4h9R+8jg/dTgJbZ7Dv7Oj6odmufWoUvrDjagDmbWRkptBNFZcUto6ewiMZWh630IWDKJDqSRA2cA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.com; spf=pass smtp.mailfrom=yandex.com; dkim=pass (1024-bit key) header.d=yandex.com header.i=@yandex.com header.b=CuQhzWg7; arc=none smtp.client-ip=178.154.239.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.com
+Received: from mail-nwsmtp-smtp-production-main-60.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-60.sas.yp-c.yandex.net [IPv6:2a02:6b8:c11:1115:0:640:1385:0])
+	by forward501b.mail.yandex.net (Yandex) with ESMTPS id 0529D610BD;
+	Sat, 20 Jul 2024 13:44:10 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-60.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 4iIPWxEGkGk0-FfI6ubyd;
+	Sat, 20 Jul 2024 13:44:08 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.com; s=mail;
+	t=1721472249; bh=d+h+UU22HqHfMDmo3Xu6T6q9MntFpOpEsMe8DGuLIhI=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=CuQhzWg7vpYy3l6oKNnNot63qdinAXTBN5weZju2M1Yax4M3Rlw9jz8zku/qyggQh
+	 1AIjT8NdTxfUxtbmiUhaMnAxIxJ18nNcTsfuZqsCtfyS5Nk3FBS0mQeO6yJeJg9lj9
+	 Zsz4IPUhYHrlsog45VQq/iiPrfNkNLuNa7X7b4x4=
+Authentication-Results: mail-nwsmtp-smtp-production-main-60.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.com
+Message-ID: <c926b73e-9ee7-4c4f-9c06-761929425468@yandex.com>
+Date: Sat, 20 Jul 2024 12:44:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0b0a7b95-f6d0-a56e-5492-b48882d9a35d@huaweicloud.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/4] dt-bindings: media: Document bindings for HDMI RX
+ Controller
+To: Shreeya Patel <shreeya.patel@collabora.com>, heiko@sntech.de,
+ mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ p.zabel@pengutronix.de, jose.abreu@synopsys.com, nelson.costa@synopsys.com,
+ shawn.wen@rock-chips.com, nicolas.dufresne@collabora.com,
+ hverkuil@xs4all.nl, hverkuil-cisco@xs4all.nl
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ Dmitry Osipenko <dmitry.osipenko@collabora.com>
+References: <20240719124032.26852-1-shreeya.patel@collabora.com>
+ <20240719124032.26852-3-shreeya.patel@collabora.com>
+Content-Language: en-US
+From: Johan Jonker <jbx6244@yandex.com>
+In-Reply-To: <20240719124032.26852-3-shreeya.patel@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 19, 2024 at 11:21:51AM +0800, Zhihao Cheng wrote:
-> 在 2024/7/18 21:40, Jan Kara 写道:
-> > I'm pondering about the best way to fix this. Maybe we could handle the
-> > need for inode pinning in inode_lru_isolate() in a similar way as in
-> > writeback code so that last iput() cannot happen from inode_lru_isolate().
-> > In writeback we use I_SYNC flag to pin the inode and evict() waits for this
-> > flag to clear. I'll probably sleep to it and if I won't find it too
-> > disgusting to live tomorrow, I can code it.
-> > 
-> 
-> I guess that you may modify like this:
-> diff --git a/fs/inode.c b/fs/inode.c
-> index f356fe2ec2b6..5b1a9b23f53f 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -457,7 +457,7 @@ EXPORT_SYMBOL(ihold);
-> 
->  static void __inode_add_lru(struct inode *inode, bool rotate)
->  {
-> -       if (inode->i_state & (I_DIRTY_ALL | I_SYNC | I_FREEING |
-> I_WILL_FREE))
-> +       if (inode->i_state & (I_DIRTY_ALL | I_SYNC | I_FREEING | I_WILL_FREE
-> | I_PINING))
->                 return;
->         if (atomic_read(&inode->i_count))
->                 return;
-> @@ -845,7 +845,7 @@ static enum lru_status inode_lru_isolate(struct
-> list_head *item,
->          * be under pressure before the cache inside the highmem zone.
->          */
->         if (inode_has_buffers(inode) || !mapping_empty(&inode->i_data)) {
-> -               __iget(inode);
-> +               inode->i_state |= I_PINING;
->                 spin_unlock(&inode->i_lock);
->                 spin_unlock(lru_lock);
->                 if (remove_inode_buffers(inode)) {
-> @@ -857,7 +857,10 @@ static enum lru_status inode_lru_isolate(struct
-> list_head *item,
->                                 __count_vm_events(PGINODESTEAL, reap);
->                         mm_account_reclaimed_pages(reap);
->                 }
-> -               iput(inode);
-> +               spin_lock(&inode->i_lock);
-> +               inode->i_state &= ~I_PINING;
-> +               wake_up_bit(&inode->i_state, __I_PINING);
-> +               spin_unlock(&inode->i_lock);
->                 spin_lock(lru_lock);
->                 return LRU_RETRY;
->         }
-> @@ -1772,6 +1775,7 @@ static void iput_final(struct inode *inode)
->                 return;
->         }
-> 
-> +       inode_wait_for_pining(inode);
->         state = inode->i_state;
->         if (!drop) {
->                 WRITE_ONCE(inode->i_state, state | I_WILL_FREE);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index fd34b5755c0b..daf094fff5fe 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2415,6 +2415,8 @@ static inline void kiocb_clone(struct kiocb *kiocb,
-> struct kiocb *kiocb_src,
->  #define I_DONTCACHE            (1 << 16)
->  #define I_SYNC_QUEUED          (1 << 17)
->  #define I_PINNING_NETFS_WB     (1 << 18)
-> +#define __I_PINING             19
-> +#define I_PINING               (1 << __I_PINING)
-> 
->  #define I_DIRTY_INODE (I_DIRTY_SYNC | I_DIRTY_DATASYNC)
->  #define I_DIRTY (I_DIRTY_INODE | I_DIRTY_PAGES)
-> 
-> , which means that we will import a new inode state to solve the problem.
-> 
 
-My non-maintainer $0,03 is as follows:
 
-1. I_PINING is too generic of a name. I_LRU_PINNED or something else
-indicating what this is for would be prudent
-2. while not specific to this patch, the handling of i_state is too
-accidental-breakage friendly. a full blown solution is way out of the
-scope here, but something can be done to future-proof this work anyway.
+On 7/19/24 14:40, Shreeya Patel wrote:
+> Document bindings for the Synopsys DesignWare HDMI RX Controller.
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+> ---
+> 
+> Changes in v4 :-
+>   - No change
+> 
+> Changes in v3 :-
+>   - Rename hdmirx_cma to hdmi_receiver_cma
+>   - Add a Reviewed-by tag
+> 
+> Changes in v2 :-
+>   - Add a description for the hardware
+>   - Rename resets, vo1 grf and HPD properties
+>   - Add a proper description for grf and vo1-grf phandles
+>   - Rename the HDMI Input node name to hdmi-receiver
+>   - Improve the subject line
+>   - Include gpio header file in example to fix dt_binding_check failure
+> 
+>  .../bindings/media/snps,dw-hdmi-rx.yaml       | 132 ++++++++++++++++++
+>  1 file changed, 132 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml b/Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
+> new file mode 100644
+> index 000000000000..96ae1e2d2816
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
+> @@ -0,0 +1,132 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Device Tree bindings for Synopsys DesignWare HDMI RX Controller
+> +
+> +---
+> +$id: http://devicetree.org/schemas/media/snps,dw-hdmi-rx.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Synopsys DesignWare HDMI RX Controller
+> +
+> +maintainers:
+> +  - Shreeya Patel <shreeya.patel@collabora.com>
+> +
+> +description:
+> +  Synopsys DesignWare HDMI Input Controller preset on RK3588 SoCs
+> +  allowing devices to receive and decode high-resolution video streams
+> +  from external sources like media players, cameras, laptops, etc.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: rockchip,rk3588-hdmirx-ctrler
 
-To that end I would suggest:
-1. inode_lru_pin() which appart from setting the flag includes:
-	BUG_ON(inode->i_state & (I_LRU_PINNED | I_FREEING | I_WILL_FREE)
-2. inode_lru_unpin() which apart from unsetting the flag + wakeup includes:
-	BUG_ON(!(inode->i_state & I_LRU_PINNED))
-3. inode_lru_wait_for_pinned() 
+> +      - const: snps,dw-hdmi-rx
 
-However, a non-cosmetic remark is that at the spot inode_wait_for_pining
-gets invoked none of the of the pinning-blocking flags may be set (to my
-reading anyway). This is not the end of the world, but it does mean the
-waiting routine will have to check stuff in a loop.
+1: Compatible strings must be SoC orientated.
+2: In Linux there's no priority in which string will probed first. 
+What's the point of having a fallback string when there's no common code, but instead only the first string is used?
 
-Names are not that important, the key is to keep the logic and
-dependencies close by code-wise.
++static const struct of_device_id hdmirx_id[] = {
++	{ .compatible = "rockchip,rk3588-hdmirx-ctrler" },
++	{ },
++};
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 3
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: cec
+> +      - const: hdmi
+> +      - const: dma
+> +
+> +  clocks:
+> +    maxItems: 7
+> +
+> +  clock-names:
+> +    items:
+> +      - const: aclk
+> +      - const: audio
+> +      - const: cr_para
+> +      - const: pclk
+> +      - const: ref
+> +      - const: hclk_s_hdmirx
+> +      - const: hclk_vo1
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  resets:
+> +    maxItems: 4
+> +
+> +  reset-names:
+> +    items:
+> +      - const: axi
+> +      - const: apb
+> +      - const: ref
+> +      - const: biu
+> +
+> +  memory-region:
+> +    maxItems: 1
+> +
+> +  hpd-gpios:
+> +    description: GPIO specifier for HPD.
+> +    maxItems: 1
+> +
+> +  rockchip,grf:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      The phandle of the syscon node for the general register file
+> +      containing HDMIRX PHY status bits.
+> +
+> +  rockchip,vo1-grf:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      The phandle of the syscon node for the Video Output GRF register
+> +      to enable EDID transfer through SDAIN and SCLIN.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - interrupt-names
+> +  - clocks
+> +  - clock-names
+> +  - power-domains
+> +  - resets
+> +  - pinctrl-0
+> +  - hpd-gpios
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/rockchip,rk3588-cru.h>
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/power/rk3588-power.h>
+> +    #include <dt-bindings/reset/rockchip,rk3588-cru.h>
+> +    hdmi_receiver: hdmi-receiver@fdee0000 {
+> +      compatible = "rockchip,rk3588-hdmirx-ctrler", "snps,dw-hdmi-rx";
+> +      reg = <0xfdee0000 0x6000>;
+> +      interrupts = <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH 0>,
+> +                   <GIC_SPI 436 IRQ_TYPE_LEVEL_HIGH 0>,
+> +                   <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH 0>;
+> +      interrupt-names = "cec", "hdmi", "dma";
+> +      clocks = <&cru ACLK_HDMIRX>,
+> +               <&cru CLK_HDMIRX_AUD>,
+> +               <&cru CLK_CR_PARA>,
+> +               <&cru PCLK_HDMIRX>,
+> +               <&cru CLK_HDMIRX_REF>,
+> +               <&cru PCLK_S_HDMIRX>,
+> +               <&cru HCLK_VO1>;
+> +      clock-names = "aclk",
+> +                    "audio",
+> +                    "cr_para",
+> +                    "pclk",
+> +                    "ref",
+> +                    "hclk_s_hdmirx",
+> +                    "hclk_vo1";
+> +      power-domains = <&power RK3588_PD_VO1>;
+> +      resets = <&cru SRST_A_HDMIRX>, <&cru SRST_P_HDMIRX>,
+> +               <&cru SRST_HDMIRX_REF>, <&cru SRST_A_HDMIRX_BIU>;
+> +      reset-names = "axi", "apb", "ref", "biu";
+> +      memory-region = <&hdmi_receiver_cma>;
+> +      pinctrl-0 = <&hdmim1_rx_cec &hdmim1_rx_hpdin &hdmim1_rx_scl &hdmim1_rx_sda &hdmirx_5v_detection>;
+> +      pinctrl-names = "default";
+> +      hpd-gpios = <&gpio1 22 GPIO_ACTIVE_LOW>;
+> +    };
 
