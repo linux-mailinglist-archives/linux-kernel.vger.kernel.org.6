@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-258027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF3F938248
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 19:27:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 508F9938249
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 19:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49B12281D41
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 17:27:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE7AEB211CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 17:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CD91494A8;
-	Sat, 20 Jul 2024 17:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC3ED1494DD;
+	Sat, 20 Jul 2024 17:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s/rP/PyG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QihgeSnv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2EF149016
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 17:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECAE1494C1
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 17:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721496417; cv=none; b=mTAQo7NVrPvmgIAdk6S2yHOSFgus68qLOP9CoTPFdgO5OpmVgUMiQOStbKjJjwoY7jyB0dHB1jm9NfVReU8TmA/0/WLZ8u9iwxdl2JS747TslBfKJOgxckdC/z2e9RgogHGsYmiwAiX6q5HbBo23GXmSfFAx5FBnr9AzIkBSPxw=
+	t=1721496419; cv=none; b=Rj3enFeR8Wwc9Uhmub40fzvV+vdTmPPMlfhh0kCqxgAS7LDBqpX7ALOllM1Cl2rR8169AbkqXugD1wBd6lR1MLOvApSclE8tuzPWFqHUi2o96ZQevqK3+FphLY8b97uI6GfnsrDb59e6DCiI3B69jlOmHowFiY6WDh0JKYt7AAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721496417; c=relaxed/simple;
-	bh=PS9GETIFotMXHbuFrtVxV4bYZ42Bdzp9+Zn0gjyOdnE=;
+	s=arc-20240116; t=1721496419; c=relaxed/simple;
+	bh=Xt3rus8MTwutIvQ5H763TfjQNRRFpnqcC5IzkxuWKNs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lYnJTqT8WsT3F+1HwjOX4/Wq83LpgxocaTcu9ZRv6dXZAFLsjOm4EZfvTqJ1/l+wYLDMbX2GXpm4NB5zUPvwvBKDpCbCRwyC1ZgVmdey7p19FM1rpVwNenYDT5XVsCv3aMG1115hHbclkXqsgMFR+u5b89piPPzJVoufPthtJG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s/rP/PyG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EA31C4AF0F;
-	Sat, 20 Jul 2024 17:26:55 +0000 (UTC)
+	 MIME-Version; b=egA7JcufuMqEICg2X9Z/qDCtxD6n7E8VnWdL9Vo6H+4SMs4sR+O1ImNHHrKE0ICvrvqK/pIrV2UIskuyqjobNWlb578TZzZsPOXjlGWIg/NDkdSz0XMwJweI3SIfBu5/nqe7hBmIzMbxDO/bWIMSzRrnBehjdiAbjcmWfSHGhAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QihgeSnv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84504C4AF0A;
+	Sat, 20 Jul 2024 17:26:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721496417;
-	bh=PS9GETIFotMXHbuFrtVxV4bYZ42Bdzp9+Zn0gjyOdnE=;
+	s=k20201202; t=1721496419;
+	bh=Xt3rus8MTwutIvQ5H763TfjQNRRFpnqcC5IzkxuWKNs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=s/rP/PyGYs4PM91YBMl0YbrBayzt4Kt/jSe62G6momR9f39KhwggHvETfJRuFWbjb
-	 lrmjhNUkFw6spRPMkBRpQpY1mSdm04chjCkZcA4Ug5ONjd1NJn+uQUdHQ5TpVNALeL
-	 Ajogh2zDCPgwIxQ0zebSHVrDSUSX7EiFqgsWuNViCda7BwUn+bJOSKOo1ZhEx0Q9Hl
-	 bhMTwUjyww2Y3zktoq7+ABmGksGl/86pifrZvxVYHIDQmxIbHj910AlLeCxyTrlvZc
-	 F/kFUngUxFt+iAZZsOTOuaybDumo7n1kDhed5stC1a5zPZtbKjSSxkYnGB2cEcCK8t
-	 AYdeziyZy0pxA==
+	b=QihgeSnvf2PG6PDvXw42EUn9W2Oi9atxy4Nf7WqIlvZyRTC4qpgDd43bxadaHLI8o
+	 G7TVwBqzG9gC9FOAqBErLA9cR1tph4INUWAYs/GaWoQuthn76MwevRLw+oBVXpxsYw
+	 QI8kpRYJGwRWvkACHfZtzQ5N7F9OMML+EPWNft5t3UUI9MSAaWT9SLH6EcfTXgX2jn
+	 eTqRuMFQtySTtIJP/MeDVsb6yVHCFN6iTkA5CWHMn01XwPx6IA1DAjrZFPRwvVd+ct
+	 gfkP4W7c3SC+BZ+aASXMRVuewUoo2jvRede2Xbp+Q3R2VxVuw8qaED7MjWaDz1pip3
+	 YBG1UIfA5btfQ==
 From: Jisheng Zhang <jszhang@kernel.org>
 To: Paul Walmsley <paul.walmsley@sifive.com>,
 	Palmer Dabbelt <palmer@dabbelt.com>,
@@ -49,9 +49,9 @@ To: Paul Walmsley <paul.walmsley@sifive.com>,
 	Clement Leger <cleger@rivosinc.com>
 Cc: linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/7] riscv: errata: remove ALT_INSN_FAULT and ALT_PAGE_FAULT
-Date: Sun, 21 Jul 2024 01:12:29 +0800
-Message-ID: <20240720171232.1753-5-jszhang@kernel.org>
+Subject: [PATCH v2 5/7] riscv: errata: sifive: remove NOMMU handling
+Date: Sun, 21 Jul 2024 01:12:30 +0800
+Message-ID: <20240720171232.1753-6-jszhang@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240720171232.1753-1-jszhang@kernel.org>
 References: <20240720171232.1753-1-jszhang@kernel.org>
@@ -63,42 +63,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-They are used for SIFIVE_CIP_453 errata, which has been solved by
-replacing the excp_vect_table[] two entries in last commit. So these
-two macros are useless now, remove them.
+Since NOMMU is now properly handling in generic do_traps() which will
+call do_trap_unknown() for instruciton page fault for NOMMU.
 
 Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 ---
- arch/riscv/include/asm/errata_list.h | 16 +---------------
- 1 file changed, 1 insertion(+), 15 deletions(-)
+ arch/riscv/errata/sifive/errata_cip_453.S | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/arch/riscv/include/asm/errata_list.h b/arch/riscv/include/asm/errata_list.h
-index 95b79afc4061..46bf00c4a57a 100644
---- a/arch/riscv/include/asm/errata_list.h
-+++ b/arch/riscv/include/asm/errata_list.h
-@@ -27,21 +27,7 @@
- #define	ERRATA_THEAD_NUMBER 2
- #endif
+diff --git a/arch/riscv/errata/sifive/errata_cip_453.S b/arch/riscv/errata/sifive/errata_cip_453.S
+index b1f7b636fe9a..6f004a1610f6 100644
+--- a/arch/riscv/errata/sifive/errata_cip_453.S
++++ b/arch/riscv/errata/sifive/errata_cip_453.S
+@@ -23,11 +23,7 @@
  
--#ifdef __ASSEMBLY__
--
--#define ALT_INSN_FAULT(x)						\
--ALTERNATIVE(__stringify(RISCV_PTR do_trap_insn_fault),			\
--	    __stringify(RISCV_PTR sifive_cip_453_insn_fault_trp),	\
--	    SIFIVE_VENDOR_ID, ERRATA_SIFIVE_CIP_453,			\
--	    CONFIG_ERRATA_SIFIVE_CIP_453)
--
--#define ALT_PAGE_FAULT(x)						\
--ALTERNATIVE(__stringify(RISCV_PTR do_page_fault),			\
--	    __stringify(RISCV_PTR sifive_cip_453_page_fault_trp),	\
--	    SIFIVE_VENDOR_ID, ERRATA_SIFIVE_CIP_453,			\
--	    CONFIG_ERRATA_SIFIVE_CIP_453)
--#else /* !__ASSEMBLY__ */
--
-+#ifndef __ASSEMBLY__
- #define ALT_SFENCE_VMA_ASID(asid)					\
- asm(ALTERNATIVE("sfence.vma x0, %0", "sfence.vma", SIFIVE_VENDOR_ID,	\
- 		ERRATA_SIFIVE_CIP_1200, CONFIG_ERRATA_SIFIVE_CIP_1200)	\
+ SYM_FUNC_START(sifive_cip_453_page_fault_trp)
+ 	ADD_SIGN_EXT a0, t0, t1
+-#ifdef CONFIG_MMU
+ 	la t0, do_page_fault
+-#else
+-	la t0, do_trap_unknown
+-#endif
+ 	jr t0
+ SYM_FUNC_END(sifive_cip_453_page_fault_trp)
+ 
 -- 
 2.43.0
 
