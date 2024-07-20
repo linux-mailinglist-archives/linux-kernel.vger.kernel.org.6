@@ -1,444 +1,169 @@
-Return-Path: <linux-kernel+bounces-258073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF33F938313
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 00:18:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3717938314
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 00:50:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ACC0281978
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 22:18:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFD701C20B94
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 22:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6E0149018;
-	Sat, 20 Jul 2024 22:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bdonwH1c"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80CC68287D;
+	Sat, 20 Jul 2024 22:50:26 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BC8133987
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 22:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549491E481
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 22:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721513876; cv=none; b=fwpytKsUsqggHO2elov9JV83xJrm1yNZPDUCLTsnsdkKL0VEJJsT1qGfmtnCQbH507xZej5c4X+0Q5cvqzAyO6GcrjE8MAr98Abak0Lb4Ccg8xFMK8qC80KadwxDMWboydjfyhdoH1ILLsXzKraTZodSO3zkLt7aExY/8HA5J4g=
+	t=1721515826; cv=none; b=h7dj+oW5ssdGwQsX2jn1q0cQ02eiy+xvcNYrBj4qW9IKU3mglJLh4q3LLmCbFpcKjmX7XEPl083B6znwv2mR7PHmjo3YDfOZ0+0vCy2jwHvJU3r1eGTVSiv+lJF+zEADLtkzB8iSX02Dzn7Rvcnca857J3Aj1gRMPxs8uGTNtl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721513876; c=relaxed/simple;
-	bh=JXMRxe/aD7ieR6qGC7Li9xN3VCwt4XPKKXCSiscAuRA=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=WmA725j7812Y07KI/VXnAQaISuBd8vZbepwjLGL6wafvAFHTUW4XqlSBxoFd/+7B4tPK+zELd4PfKCt8fi9wQAbnp6PYF54B0os02nEY1UgdJuC6Ou3ksVoikf3eU4AhxNVAVhkqRp5qXOO4hLbXOtVmPjymVQQj+fz9a6Y0Yek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bdonwH1c; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52efdf02d13so479495e87.2
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 15:17:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721513872; x=1722118672; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hOhqbI/Ap4AvLJwLNqNYegobJKpybWaAhudmgd75UFQ=;
-        b=bdonwH1cPyE86BNBcxnErrgra0+jRgXZcrNDxLx1laGKYZebRMKwwxwa3FvHpsRbPE
-         3/HvTs4+ReH4JLTnKqVVK7zrkK6Z6ZAAYKUWuvtztP2PZz0SlLf85qVPqi+5ur6g+0mT
-         xVbNvy1u4Gvqf7fOi8KZ9b1hZZ+K/0Jgf6rIZeD/r7SsljeooFdQd4ugtc0gSc67r/73
-         DKwuJBRoaN0y+A2WViU+Z0nWzYP/KGJ2lgapD4yiXstYN2sOh/Xl0DWLVT1WvJ3Im0pn
-         sNnbyFVGFWfx7d5sE5cjGOnPheRACwsMuB+p6E2JAC2p77U1CG/3skR6TP1ljn7r16DU
-         bzWA==
+	s=arc-20240116; t=1721515826; c=relaxed/simple;
+	bh=6KDEKAZxaaedn3DthDnvLDB9BLKZ5vLPXc3BKVo8Yt0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mcIpY4ifgxsP5HFurJw5Iy19rOIpGL4MB9VIQbHpMP8RgDgORFIzY9t5wmnCJ217xY3vYVkgTmPCdWNB3M4te/1kuar32pSZc73IO7QeILqJ9ap8lvMXg5fsklOWZQcCDfNXmTB4COJOWk04AK3CklZerUSjnR0QOoiWFewzIxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-398ae4327f1so17785265ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 15:50:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721513872; x=1722118672;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hOhqbI/Ap4AvLJwLNqNYegobJKpybWaAhudmgd75UFQ=;
-        b=sJDoThEe4gwquMhckqY04tFkhjzH8TIqJKXuhaGTAczgGiwfiRMcZDUm3Fsmz977qh
-         daCaRR3kgS9TKo9e4oSMMwnOwkAuvN1jMO83sm1MBYvp3XP4YzDbbG0qXP2fykszXCnZ
-         L5CmrfBbnMpM9uwJdEHSS7CHZ1Z0ksvgKyxrS+5KsCuni7Nx/N5fnO55p8Jcq6LV5OmN
-         Eye6GiWZm2fCiJejDq3PCj91kUcOfTabd/0dCT7tmqlwPjmojOPS92FcRw9YDzavn35b
-         QPe7OlgcLsqBNNnazxQGmUde0B8kdGcsuzGDIfA+Dw+EsbMtD0Y05c8mDui8ta2Doij2
-         rExQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXkVgFJFbE0cWkmL8MCcHKu9V1OC+rZ1plFK+scsTLFExt2AAKgu0IQr/hUtYWHbiDahybwn1dafZ7Xl0sQm5Ydvzy1c5QcFkZaCuG7
-X-Gm-Message-State: AOJu0YzwscjrytUyhbmbXukCHDM/OkxgPoH07EKNNULU11h/iJVjHZo5
-	IUjlRjT2YxNEEhP68coUN6zKrV5sEMJkPKt3WcKtkGykjbm47Hmby10mnyyAa7xlsSSsOyBe+Ef
-	ieuF+UEJ7JTp9LHcaQa+n3tkoV0ApRQvVpQUqGK7rK7bPuWXpx+2Lcg==
-X-Google-Smtp-Source: AGHT+IHX/N+jBn4IPd00IpmdhcRMqbSm1tmnFl8SkFFavDVOKIw3uNBsOmEwfIEArDuBLBRwqSPgeeh8RwyZWPTYi0I=
-X-Received: by 2002:ac2:4c55:0:b0:52c:ddef:4eb7 with SMTP id
- 2adb3069b0e04-52efb53b6dbmr2088825e87.20.1721513871673; Sat, 20 Jul 2024
- 15:17:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721515823; x=1722120623;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h1ZlSIo7L/KcAi7yI9hJz8UA/MAu2rn5teJC55aiBZY=;
+        b=g2SrGpKGYtzioNBtbLBNddq+/h6dBzz7GyD0mopcDwhozJKsbiVeppHQYM3AvzpIor
+         vaCsXxgcEXKNmehBko5B7Dc99tPywpqpZ9uhVCvb4McBbo8Lhnfy5e1ErATLSAaJW6wG
+         5p31AgiYRwMz/6jrvRn1DtG8dbFB5tZ2zAO40MxmlKxe16qoKSoabzz5xxF8lxO+7LiV
+         8tt3zS4oFD1J4EiVmR4ItHUQGNMBHVlI8W6y8dqIk4qdkSvkMR7/X7s8NpiJ44vhr7Jy
+         VmyPd1hQxmNuukwbo3pk4FOecM5QXE4t/lh7xoY50DAnHmwOXq7EymWyVRGzotazB1ab
+         2eVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCKFOh1Z3OcidYB5tV3BB8YjMhdBseSETTeUA//Pd9y8ud8+rQzwkHRoEmm4FZFeTVWjeis1iXK6rC9mQwabSqfQVCgGvAfIuxCRAy
+X-Gm-Message-State: AOJu0YzzLM0ydKYVVySm6XiaHujqL+7T+aFWo2E/I5sXu5o8AWVXexXc
+	d9RfjHcKVfyaTZHAC6QWoOy9gkVA2PdnF3qt3r9Av+DjjL20cemUkIhFxovR8/BPCd6YT++mxky
+	qSfMVOKV1P0eFA03ErOlGmMgxxPl1Odd+i7BhvrE51j7RWFh8whjHFAs=
+X-Google-Smtp-Source: AGHT+IEQjRYrMRzq8zPxk5Qeu12+ssGh0qMUNf9TtmGYJMfKR8ZXW6etJmVdJ4zwR9ZSbRyK7tUlPLVEh1hav9QOsX1JtsL8FwZc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sun, 21 Jul 2024 00:17:40 +0200
-Message-ID: <CACRpkdZovNTf+pqdvM6Rx26z7gkmmYyPUWHOBc1Dhu_780fFhg@mail.gmail.com>
-Subject: [GIT PULL] pin control changes for v6.11
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+X-Received: by 2002:a05:6e02:1383:b0:395:fa9a:3187 with SMTP id
+ e9e14a558f8ab-398ee03ea4bmr2572875ab.3.1721515823474; Sat, 20 Jul 2024
+ 15:50:23 -0700 (PDT)
+Date: Sat, 20 Jul 2024 15:50:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000224117061db5a39c@google.com>
+Subject: [syzbot] [bluetooth?] WARNING in hci_send_acl (3)
+From: syzbot <syzbot+f32bdeda1c9146004da8@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Hello,
 
-this is the bulk of pin control changes for the v6.11 kernel cycle.
-Some new drivers is the main part, the rest is cleanups and
-nonurgent fixes. New drivers listed in the signed tag.
-Nothing much special about this, no core changes this time.
+syzbot found the following issue on:
 
-Please pull it in!
+HEAD commit:    c912bf709078 Merge remote-tracking branches 'origin/arm64-..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=171be3a5980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=79a49b0b9ffd6585
+dashboard link: https://syzkaller.appspot.com/bug?extid=f32bdeda1c9146004da8
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
 
-Yours,
-Linus Walleij
+Unfortunately, I don't have any reproducer for this issue yet.
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0=
-:
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/fea69a9d153c/disk-c912bf70.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/be06762a72ef/vmlinux-c912bf70.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6c8e58b4215d/Image-c912bf70.gz.xz
 
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f32bdeda1c9146004da8@syzkaller.appspotmail.com
 
-are available in the Git repository at:
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 7434 at kernel/workqueue.c:2282 current_wq_worker kernel/workqueue_internal.h:69 [inline]
+WARNING: CPU: 1 PID: 7434 at kernel/workqueue.c:2282 is_chained_work kernel/workqueue.c:2224 [inline]
+WARNING: CPU: 1 PID: 7434 at kernel/workqueue.c:2282 __queue_work+0xe0c/0x12ac kernel/workqueue.c:2281
+Modules linked in:
+CPU: 1 PID: 7434 Comm: syz.2.363 Not tainted 6.10.0-rc7-syzkaller-gc912bf709078 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : __queue_work+0xe0c/0x12ac kernel/workqueue_internal.h:69
+lr : current_wq_worker kernel/workqueue_internal.h:69 [inline]
+lr : is_chained_work kernel/workqueue.c:2224 [inline]
+lr : __queue_work+0xe0c/0x12ac kernel/workqueue.c:2281
+sp : ffff8000a0aa7240
+x29: ffff8000a0aa7290 x28: 1fffe000196d0e41 x27: 0000000000000004
+x26: dfff800000000000 x25: ffff0000d17ae800 x24: 0000000000000008
+x23: 1fffe0001af1e3c9 x22: ffff0000d17ae9c0 x21: 0000000000400140
+x20: ffff0000d78f1e40 x19: ffff0000d8678b18 x18: ffff8000a0aa72e0
+x17: ffff80008f0fd000 x16: ffff800082f8f174 x15: 0000000000000001
+x14: 1fffe0001b0cf163 x13: 0000000000000000 x12: 0000000000000000
+x11: 0000000000040000 x10: 000000000003ffff x9 : ffff8000a1f1f000
+x8 : 0000000000040000 x7 : ffff800089145000 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : 0000000000000001 x3 : ffff80008022dbe8
+x2 : ffff0000d8678b18 x1 : 0000000000000000 x0 : 0000000000000000
+Call trace:
+ current_wq_worker kernel/workqueue_internal.h:69 [inline]
+ is_chained_work kernel/workqueue.c:2224 [inline]
+ __queue_work+0xe0c/0x12ac kernel/workqueue.c:2281
+ queue_work_on+0xe0/0x1a0 kernel/workqueue.c:2411
+ queue_work include/linux/workqueue.h:621 [inline]
+ hci_send_acl+0x768/0xa50 net/bluetooth/hci_core.c:3250
+ l2cap_do_send+0x188/0x288 net/bluetooth/l2cap_core.c:996
+ l2cap_chan_send+0x13dc/0x211c net/bluetooth/l2cap_core.c:2577
+ l2cap_sock_sendmsg+0x184/0x2a8 net/bluetooth/l2cap_sock.c:1128
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg net/socket.c:745 [inline]
+ ____sys_sendmsg+0x4d8/0x77c net/socket.c:2585
+ ___sys_sendmsg net/socket.c:2639 [inline]
+ __sys_sendmmsg+0x30c/0x6b0 net/socket.c:2725
+ __do_sys_sendmmsg net/socket.c:2754 [inline]
+ __se_sys_sendmmsg net/socket.c:2751 [inline]
+ __arm64_sys_sendmmsg+0xa0/0xbc net/socket.c:2751
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:131
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:150
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+irq event stamp: 13644
+hardirqs last  enabled at (13643): [<ffff80008afc3e68>] __exit_to_kernel_mode arch/arm64/kernel/entry-common.c:85 [inline]
+hardirqs last  enabled at (13643): [<ffff80008afc3e68>] exit_to_kernel_mode+0xdc/0x10c arch/arm64/kernel/entry-common.c:95
+hardirqs last disabled at (13644): [<ffff80008022dbd4>] queue_work_on+0x50/0x1a0 kernel/workqueue.c:2407
+softirqs last  enabled at (13586): [<ffff800089111350>] spin_unlock_bh include/linux/spinlock.h:396 [inline]
+softirqs last  enabled at (13586): [<ffff800089111350>] release_sock+0x154/0x1b8 net/core/sock.c:3558
+softirqs last disabled at (13584): [<ffff800089111238>] spin_lock_bh include/linux/spinlock.h:356 [inline]
+softirqs last disabled at (13584): [<ffff800089111238>] release_sock+0x3c/0x1b8 net/core/sock.c:3547
+---[ end trace 0000000000000000 ]---
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v6.11-1
 
-for you to fetch changes up to 11eaac6e8e72001c28d2043eb160736187b7977d:
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-  Merge tag 'renesas-pinctrl-for-v6.11-tag3' of
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers
-into devel (2024-07-05 12:08:48 +0200)
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-----------------------------------------------------------------
-Pin control bulk changes for the v6.11 kernel series:
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Core changes: None.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-New drivers:
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-- Renesas RZ/V2H(P) SoC
-
-- NXP Freescale i.MX91 SoC
-
-- Nuvoton MA35D1 SoC
-
-- Qualcomm PMC8380, SM4250, SM4250 LPI
-
-Enhancements:
-
-- A slew of scoped-based simplifications of of_node_put().
-
-----------------------------------------------------------------
-Alexey Klimov (1):
-      pinctrl: qcom: lpass-lpi: increase MAX_NR_GPIO to 32
-
-Andrew Jeffery (3):
-      dt-bindings: pinctrl: aspeed: Use block syntax for function and group=
-s
-      dt-bindings: pinctrl: aspeed,ast2500-pinctrl: Describe SGPM
-      dt-bindings: pinctrl: aspeed,ast2600-pinctrl: Describe I3C, USB
-
-Andy Shevchenko (11):
-      pinctrl: berlin: Make use of struct pinfunction
-      pinctrl: equilibrium: Make use of struct pinfunction
-      pinctrl: ingenic: Provide a helper macro INGENIC_PIN_FUNCTION()
-      pinctrl: mediatek: moore: Provide a helper macro PINCTRL_PIN_FUNCTION=
-()
-      pinctrl: pinmux: Add a convenient define PINCTRL_FUNCTION_DESC()
-      pinctrl: pinmux: Embed struct pinfunction into struct function_desc
-      pinctrl: imx: Convert to use func member
-      pinctrl: ingenic: Convert to use func member
-      pinctrl: keembay: Convert to use func member
-      pinctrl: mediatek: moore: Convert to use func member
-      pinctrl: pinmux: Remove unused members from struct function_desc
-
-Chen Ni (1):
-      pinctrl: mlxbf3: Fix return value check for devm_platform_ioremap_res=
-ource
-
-Claudiu Beznea (1):
-      pinctrl: renesas: rzg2l: Use spin_{lock,unlock}_irq{save,restore}
-
-Dan Carpenter (1):
-      pinctrl: nuvoton: ma35d1: Fix an IS_ERR() vs NULL check
-
-Dmitry Yashin (1):
-      pinctrl: rockchip: update rk3308 iomux routes
-
-Geert Uytterhoeven (13):
-      pinctrl: renesas: rzn1: Use for_each_child_of_node_scoped()
-      pinctrl: renesas: r8a779g0: Fix CANFD5 suffix
-      pinctrl: renesas: r8a779g0: Fix FXR_TXEN[AB] suffixes
-      pinctrl: renesas: r8a779g0: Fix (H)SCIF1 suffixes
-      pinctrl: renesas: r8a779g0: Fix (H)SCIF3 suffixes
-      pinctrl: renesas: r8a779g0: Fix IRQ suffixes
-      pinctrl: renesas: r8a779g0: FIX PWM suffixes
-      pinctrl: renesas: r8a779g0: Fix TCLK suffixes
-      pinctrl: renesas: r8a779g0: Fix TPU suffixes
-      pinctrl: renesas: r8a779h0: Add AVB MII pins and groups
-      pinctrl: renesas: r8a779g0: Remove unneeded separators
-      pinctrl: renesas: r8a779g0: Add INTC-EX pins, groups, and function
-      pinctrl: renesas: r8a779h0: Remove unneeded separators
-
-Inochi Amaoto (1):
-      dt-bindings: pinctrl: pinctrl-single: fix schmitt related properties
-
-Jacky Huang (3):
-      dt-bindings: reset: Add syscon to nuvoton ma35d1 system-management no=
-de
-      dt-bindings: pinctrl: Document nuvoton ma35d1 pin control
-      pinctrl: nuvoton: Add ma35d1 pinctrl and GPIO driver
-
-Jeff Johnson (1):
-      pinctrl: add missing MODULE_DESCRIPTION() macros
-
-Konrad Dybcio (2):
-      dt-bindings: pinctrl: qcom,pmic-gpio: Document PMC8380
-      pinctrl: qcom: spmi: Add PMC8380
-
-Lad Prabhakar (19):
-      dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Remove the check
-from the object
-      pinctrl: renesas: rzg2l: Allow more bits for pin configuration
-      pinctrl: renesas: rzg2l: Drop struct rzg2l_variable_pin_cfg
-      pinctrl: renesas: rzg2l: Enable variable configuration for all
-      pinctrl: renesas: rzg2l: Validate power registers for SD and ETH
-      pinctrl: renesas: rzg2l: Add function pointer for PFC register lockin=
-g
-      pinctrl: renesas: rzg2l: Add function pointer for PMC register write
-      pinctrl: renesas: rzg2l: Add function pointers for OEN register acces=
-s
-      pinctrl: renesas: rzg2l: Add support to configure slew-rate
-      pinctrl: renesas: rzg2l: Add support for pull-up/down
-      pinctrl: renesas: rzg2l: Pass pincontrol device to
-pinconf_generic_parse_dt_config()
-      pinctrl: renesas: rzg2l: Add support for custom parameters
-      pinctrl: renesas: rzg2l: Acquire lock in rzg2l_pinctrl_pm_setup_pfc()
-      dt-bindings: pinctrl: renesas: Document RZ/V2H(P) SoC
-      pinctrl: renesas: rzg2l: Add support for RZ/V2H SoC
-      pinctrl: renesas: rzg2l: Update PIN_CFG_MASK() macro to be 32-bit wid=
-e
-      pinctrl: renesas: rzg2l: Adjust bit masks for PIN_CFG_VARIABLE
-to use BIT(62)
-      pinctrl: renesas: rzg2l: Move RZG2L_SINGLE_PIN definition to top
-of the file
-      pinctrl: renesas: rzg2l: Reorganize variable configuration macro
-
-Linus Walleij (4):
-      Merge tag 'renesas-pinctrl-for-v6.11-tag1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers
-into devel
-      pinctrl: freescale: Select missing features
-      Merge tag 'renesas-pinctrl-for-v6.11-tag2-v2' of
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers
-into devel
-      Merge tag 'renesas-pinctrl-for-v6.11-tag3' of
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers
-into devel
-
-L=C3=A9o DUBOIN (2):
-      pinctrl: core: take into account the pins array in pinctrl_pins_show(=
-)
-      pinctrl: core: reset gpio_device in loop in pinctrl_pins_show()
-
-Micha=C5=82 Miros=C5=82aw (1):
-      pinctrl: renesas: sh73a0: Use rdev_get_drvdata()
-
-Nathan Chancellor (1):
-      pinctrl: keembay: Fix func conversion in keembay_build_functions()
-
-Nirmala Devi Mal Nadar (1):
-      pinctrl: pinctrl-tps6594: make tps65224_muxval_remap and
-tps6594_muxval_remap as static to fix sparse warning
-
-Nishanth Menon (1):
-      dt-bindings: pinctrl: pinctrl-single: Fix
-pinctrl-single,gpio-range description
-
-Patrick Rudolph (5):
-      pinctrl: cy8c95x0: Use single I2C lock
-      pinctrl: cy8c95x0: Use regmap ranges
-      pinctrl: cy8c95x0: Use REGCACHE_MAPLE
-      pinctrl: cy8c95x0: Use cleanup.h
-      pinctrl: cy8c95x0: Update cache modification
-
-Paul Barker (3):
-      pinctrl: renesas: rzg2l: Clarify OEN read/write support
-      pinctrl: renesas: rzg2l: Clean up and refactor OEN read/write functio=
-ns
-      pinctrl: renesas: rzg2l: Support output enable on RZ/G2L
-
-Peng Fan (24):
-      pinctrl: renesas: Use scope based of_node_put() cleanups
-      dt-bindings: pinctrl: imx: Support i.MX91 IOMUXC
-      pinctrl: imx: Add pinctrl driver support for i.MX91
-      pinctrl: stm32: Use scope based of_node_put() cleanups
-      pinctrl: st: Use scope based of_node_put() cleanups
-      dt-bindings: firmware: arm,scmi: Add properties for i.MX95
-Pinctrl OEM extensions
-      pinctrl: scmi: add blocklist
-      pinctrl: imx: support SCMI pinctrl protocol for i.MX95
-      pinctrl: tegra: Use scope based of_node_put() cleanups
-      pinctrl: starfive: Use scope based of_node_put() cleanups
-      pinctrl: sprd: Use scope based of_node_put() cleanups
-      pinctrl: spear: Use scope based of_node_put() cleanups
-      pinctrl: rockchip: Use scope based of_node_put() cleanups
-      pinctrl: at91: Use scope based of_node_put() cleanups
-      pinctrl: s32cc: Use scope based of_node_put() cleanups
-      pinctrl: nomadik: Use scope based of_node_put() cleanups
-      pinctrl: mediatek: Use scope based of_node_put() cleanups
-      pinctrl: bcm: bcm63xx: Use scope based of_node_put() cleanups
-      pinctrl: pinconf-generic: Use scope based of_node_put() cleanups
-      pinctrl: freescale: mxs: Fix refcount of child
-      pinctrl: k210: Use scope based of_node_put() cleanups
-      pinctrl: ti: iodelay: Use scope based of_node_put() cleanups
-      pinctrl: equilibrium: Use scope based of_node_put() cleanups
-      pinctrl: freescale: Use scope based of_node_put() cleanups
-
-Potin Lai (2):
-      dt-bindings: pinctrl: aspeed,ast2600-pinctrl: add NCSI groups
-      pinctrl: aspeed-g6: Add NCSI pin group config
-
-Richard Acayan (1):
-      pinctrl: qcom: sdm670: add pdc wakeirq map
-
-Sean Anderson (2):
-      dt-bindings: pinctrl: xilinx: Add support for function with pins
-      pinctrl: zynqmp: Support muxing individual pins
-
-Srinivas Kandagatla (2):
-      dt-bindings: pinctrl: qcom: Add SM4250 pinctrl
-      pinctrl: qcom: Introduce SM4250 LPI pinctrl driver
-
-Stefan Wahren (1):
-      pinctrl: bcm2835: Use string_choices API instead of ternary operator
-
-Swati Agarwal (1):
-      pinctrl: pinctrl-zynqmp: Use pin numbers stored in pin descriptor
-
-Tomer Maimon (1):
-      dt-bindings: pinctrl: npcm8xx: add missing pin group and mux function
-
-Weihao Li (1):
-      pinctrl: ralink: mt76x8: fix pinmux function
-
-Yang Yingliang (3):
-      pinctrl: core: fix possible memory leak when pinctrl_enable() fails
-      pinctrl: single: fix possible memory leak when pinctrl_enable() fails
-      pinctrl: ti: ti-iodelay: fix possible memory leak when
-pinctrl_enable() fails
-
- .../devicetree/bindings/firmware/arm,scmi.yaml     |    4 +-
- .../bindings/firmware/nxp,imx95-scmi-pinctrl.yaml  |   53 +
- .../bindings/pinctrl/aspeed,ast2400-pinctrl.yaml   |  169 +-
- .../bindings/pinctrl/aspeed,ast2500-pinctrl.yaml   |  188 +-
- .../bindings/pinctrl/aspeed,ast2600-pinctrl.yaml   |  514 +++++-
- ...sl,imx93-pinctrl.yaml =3D> fsl,imx9-pinctrl.yaml} |    8 +-
- .../bindings/pinctrl/nuvoton,ma35d1-pinctrl.yaml   |  178 ++
- .../bindings/pinctrl/nuvoton,npcm845-pinctrl.yaml  |   22 +-
- .../bindings/pinctrl/pinctrl-single.yaml           |   17 +-
- .../bindings/pinctrl/qcom,pmic-gpio.yaml           |    2 +
- .../pinctrl/qcom,sm4250-lpass-lpi-pinctrl.yaml     |  118 ++
- .../bindings/pinctrl/renesas,rzg2l-pinctrl.yaml    |   52 +-
- .../bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml      |  349 ++--
- .../bindings/reset/nuvoton,ma35d1-reset.yaml       |    3 +-
- drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c         |   10 +-
- drivers/pinctrl/bcm/pinctrl-bcm2835.c              |    5 +-
- drivers/pinctrl/bcm/pinctrl-bcm4908.c              |    1 +
- drivers/pinctrl/bcm/pinctrl-bcm63xx.c              |    4 +-
- drivers/pinctrl/berlin/berlin.c                    |   21 +-
- drivers/pinctrl/berlin/berlin.h                    |    6 -
- drivers/pinctrl/core.c                             |   30 +-
- drivers/pinctrl/core.h                             |    2 +-
- drivers/pinctrl/freescale/Kconfig                  |   18 +
- drivers/pinctrl/freescale/Makefile                 |    2 +
- drivers/pinctrl/freescale/pinctrl-imx-scmi.c       |  357 ++++
- drivers/pinctrl/freescale/pinctrl-imx.c            |   39 +-
- drivers/pinctrl/freescale/pinctrl-imx1-core.c      |   16 +-
- drivers/pinctrl/freescale/pinctrl-imx91.c          |  271 +++
- drivers/pinctrl/freescale/pinctrl-mxs.c            |   18 +-
- drivers/pinctrl/mediatek/pinctrl-moore.c           |   10 +-
- drivers/pinctrl/mediatek/pinctrl-moore.h           |    6 +
- drivers/pinctrl/mediatek/pinctrl-mt7622.c          |   32 +-
- drivers/pinctrl/mediatek/pinctrl-mt7623.c          |   42 +-
- drivers/pinctrl/mediatek/pinctrl-mt7629.c          |   20 +-
- drivers/pinctrl/mediatek/pinctrl-mt76x8.c          |   88 +-
- drivers/pinctrl/mediatek/pinctrl-mt7981.c          |   34 +-
- drivers/pinctrl/mediatek/pinctrl-mt7986.c          |   24 +-
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c      |    4 +-
- drivers/pinctrl/mediatek/pinctrl-paris.c           |    4 +-
- drivers/pinctrl/meson/pinctrl-meson-a1.c           |    1 +
- drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c      |    1 +
- drivers/pinctrl/meson/pinctrl-meson-axg.c          |    1 +
- drivers/pinctrl/meson/pinctrl-meson-g12a.c         |    1 +
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c         |    1 +
- drivers/pinctrl/meson/pinctrl-meson-gxl.c          |    1 +
- drivers/pinctrl/meson/pinctrl-meson-s4.c           |    1 +
- drivers/pinctrl/meson/pinctrl-meson.c              |    1 +
- drivers/pinctrl/meson/pinctrl-meson8-pmx.c         |    1 +
- drivers/pinctrl/nomadik/pinctrl-abx500.c           |    4 +-
- drivers/pinctrl/nomadik/pinctrl-nomadik.c          |    4 +-
- drivers/pinctrl/nuvoton/Kconfig                    |   19 +
- drivers/pinctrl/nuvoton/Makefile                   |    2 +
- drivers/pinctrl/nuvoton/pinctrl-ma35.c             | 1187 +++++++++++++
- drivers/pinctrl/nuvoton/pinctrl-ma35.h             |   52 +
- drivers/pinctrl/nuvoton/pinctrl-ma35d1.c           | 1799 ++++++++++++++++=
-++++
- drivers/pinctrl/nxp/pinctrl-s32cc.c                |   31 +-
- drivers/pinctrl/pinconf-generic.c                  |    7 +-
- drivers/pinctrl/pinctrl-at91-pio4.c                |    7 +-
- drivers/pinctrl/pinctrl-at91.c                     |   14 +-
- drivers/pinctrl/pinctrl-cy8c95x0.c                 |  212 +--
- drivers/pinctrl/pinctrl-equilibrium.c              |   45 +-
- drivers/pinctrl/pinctrl-equilibrium.h              |   12 -
- drivers/pinctrl/pinctrl-ingenic.c                  |  707 ++++----
- drivers/pinctrl/pinctrl-k210.c                     |    7 +-
- drivers/pinctrl/pinctrl-keembay.c                  |   24 +-
- drivers/pinctrl/pinctrl-mcp23s08.c                 |    1 +
- drivers/pinctrl/pinctrl-mcp23s08_i2c.c             |    1 +
- drivers/pinctrl/pinctrl-mcp23s08_spi.c             |    1 +
- drivers/pinctrl/pinctrl-mlxbf3.c                   |   12 +-
- drivers/pinctrl/pinctrl-rockchip.c                 |   28 +-
- drivers/pinctrl/pinctrl-scmi.c                     |    9 +
- drivers/pinctrl/pinctrl-single.c                   |    7 +-
- drivers/pinctrl/pinctrl-st.c                       |   37 +-
- drivers/pinctrl/pinctrl-tb10x.c                    |    1 +
- drivers/pinctrl/pinctrl-tps6594.c                  |    4 +-
- drivers/pinctrl/pinctrl-zynqmp.c                   |   85 +-
- drivers/pinctrl/pinmux.c                           |   19 +-
- drivers/pinctrl/pinmux.h                           |   19 +-
- drivers/pinctrl/qcom/Kconfig                       |    9 +
- drivers/pinctrl/qcom/Makefile                      |    1 +
- drivers/pinctrl/qcom/pinctrl-lpass-lpi.c           |    2 +-
- drivers/pinctrl/qcom/pinctrl-sdm670.c              |   19 +
- drivers/pinctrl/qcom/pinctrl-sm4250-lpass-lpi.c    |  236 +++
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c           |    1 +
- drivers/pinctrl/renesas/pfc-r8a779g0.c             |  830 +++++----
- drivers/pinctrl/renesas/pfc-r8a779h0.c             |   82 +-
- drivers/pinctrl/renesas/pfc-sh73a0.c               |    4 +-
- drivers/pinctrl/renesas/pinctrl-rza1.c             |   14 +-
- drivers/pinctrl/renesas/pinctrl-rzg2l.c            |  913 +++++++---
- drivers/pinctrl/renesas/pinctrl-rzn1.c             |   26 +-
- drivers/pinctrl/renesas/pinctrl-rzv2m.c            |    7 +-
- drivers/pinctrl/renesas/pinctrl.c                  |    7 +-
- drivers/pinctrl/spear/pinctrl-spear.c              |   13 +-
- drivers/pinctrl/sprd/pinctrl-sprd.c                |   14 +-
- drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c |   27 +-
- drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c |   18 +-
- drivers/pinctrl/stm32/pinctrl-stm32.c              |    4 +-
- drivers/pinctrl/tegra/pinctrl-tegra-xusb.c         |    7 +-
- drivers/pinctrl/tegra/pinctrl-tegra.c              |    4 +-
- drivers/pinctrl/ti/pinctrl-ti-iodelay.c            |   42 +-
- 100 files changed, 7428 insertions(+), 1959 deletions(-)
- create mode 100644
-Documentation/devicetree/bindings/firmware/nxp,imx95-scmi-pinctrl.yaml
- rename Documentation/devicetree/bindings/pinctrl/{fsl,imx93-pinctrl.yaml
-=3D> fsl,imx9-pinctrl.yaml} (93%)
- create mode 100644
-Documentation/devicetree/bindings/pinctrl/nuvoton,ma35d1-pinctrl.yaml
- create mode 100644
-Documentation/devicetree/bindings/pinctrl/qcom,sm4250-lpass-lpi-pinctrl.yam=
-l
- create mode 100644 drivers/pinctrl/freescale/pinctrl-imx-scmi.c
- create mode 100644 drivers/pinctrl/freescale/pinctrl-imx91.c
- create mode 100644 drivers/pinctrl/nuvoton/pinctrl-ma35.c
- create mode 100644 drivers/pinctrl/nuvoton/pinctrl-ma35.h
- create mode 100644 drivers/pinctrl/nuvoton/pinctrl-ma35d1.c
- create mode 100644 drivers/pinctrl/qcom/pinctrl-sm4250-lpass-lpi.c
+If you want to undo deduplication, reply with:
+#syz undup
 
