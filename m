@@ -1,121 +1,96 @@
-Return-Path: <linux-kernel+bounces-257873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C048F937FFD
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 10:29:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70DA5937FFE
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 10:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49A6CB21397
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 08:29:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E143281D8B
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 08:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2934540847;
-	Sat, 20 Jul 2024 08:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vB7kriMi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54AEE288A4;
+	Sat, 20 Jul 2024 08:30:45 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AB437169;
-	Sat, 20 Jul 2024 08:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802698830
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 08:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721464161; cv=none; b=e5BmVtDH2zbGgY3G+LNL1YKuH3WmSkE+zR4pzwv0/1Muzr1pmxot76H33Kh4G7IyZ7T1PV99+79vK1kWeiQqkPsRlrTYDZ8giSNMXneA850lJblxlHkmx5bJTx/sbm6XeuHGuZvD2VIJ/1hsP09u1c727Ul8cNnc9sYi+6U6U1g=
+	t=1721464244; cv=none; b=BvpUu0Bo0T4AkNL2dIi3qv15ENFOMGpC9A9j0nLavCLCH+Aud4EPPpG/V1Eca+aFxo9Sa29IYM2llKa2JJdc0177eF0oM6gDdfCV9tltPfDCqiyhejqqvTIf9K8JGMmdyzT3Xj3c3S/vHmhB+0x0PlXqjmfQTv8R2Qty5d8DqnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721464161; c=relaxed/simple;
-	bh=aAQEjlXOltc0/pkPeHWr9qyxi8t5CaKmx45v9GG3HA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=lBGIdXGoc0Uvi4eeKaz1j7z6qVs46HAsooP4RndH+Yosqv8MiFQJ27J5C2MMps0coMQq639PBTn3RMFa7InqBmCFVpG8WbUC0nTuwcWbwMXbHQxLTTwY7OnLvf16Q8PUUvvQX2E+1DtIhdAskC/9xESjvY2km9URT6ur+RdH3KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vB7kriMi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55E07C2BD10;
-	Sat, 20 Jul 2024 08:29:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721464161;
-	bh=aAQEjlXOltc0/pkPeHWr9qyxi8t5CaKmx45v9GG3HA0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=vB7kriMio2aSHdArzi+VO5iDl1qlfGPa8ytf0te5H3oRzFDDaZeTKyGrh9y8a4tIE
-	 miinklfO5Cy6Ff8cmLTy84VAv61irBXs4hXeNZB6BtYw26uiZiIvcFSxwrpNfIAfQa
-	 PRWp4suU6tdl1f7CxtuMveXIplZ0Z+XwEEAlXIwwlaGsng9BEA6FPl0nvf4UuaIRgT
-	 tu/Al8HfS/9j+uy840T3N5lBr0ypuUwv/UQsIovrDo+aZZquRz+PjI09pVFghbKr+s
-	 8zXySBfJ48PtZ8eW+p7vgtdykCChiHIDTx72xSiW3MoK5JzaXPlMAXNovpuvomNCda
-	 bDOpntVkNxdRw==
-Date: Sat, 20 Jul 2024 10:29:16 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>, 
-	lkml <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
-Subject: [GIT PULL] i2c-host for v6.11 - part 2
-Message-ID: <csu2tvshcxyz7yib2mrcczxa345m2qu6lavngulzq35b2hi7bz@ao5p3do67q7p>
+	s=arc-20240116; t=1721464244; c=relaxed/simple;
+	bh=rYSMhlcYUfuUJmk7W0A2GRupXQQQxzarnjBcJ2gBuJs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=fJIrI9ivTUEbukBgl1TLy48nSn0MX5QvqoXDjWzM2zZrkdLRCS0SVnKSOKtycTE+GmsHo3WbKh3phRGHKBGum3nfjiful5KWQeavYtDqcD3mQS+c/lpqG8RM2pEkaprQfbU/KLjIpLrquiMCKB71emZAqpdadHd0lwbZOLw99cU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7f682fb3b16so442870539f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 01:30:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721464242; x=1722069042;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N/8XzY4rPxD3nry/QyJLQA7kZA0p4z0MbynfkV9ZB1I=;
+        b=LpGoBYMfjrFg4bxxgJc5JXnwsj9KiCkC1UZhFyldnD4r8HwzwPaPvWA546MRO5aRqO
+         U/3xme15ZjcoZ4AV6Ssh5zOSyMOmzUEZkRZfTf3ck6hMCdQbDNiwWOdb49fgDNmEBkzM
+         hm8996EwBEGk0Z/JWSyoEmzEZPbHsOs6XVrurQ18FfQrIizX2SKyW5H+PsHbmjl3KAvz
+         b0M6ea8G7MUHXOi338fNlo3bfd7MtgySw5QDjuP3JCGfDofpB8bZUNnHPiOUP+Yh8Kz3
+         5sPAjQ+j8XTMt5lcywn2wvvuplQefLofzDNe9G+49Vu2o9v3SBJ84KZ9sWucfFSPT3TM
+         h+xw==
+X-Gm-Message-State: AOJu0Yy31ibF1+2PsrDx57s6QkruiQuKi+9v+Tt+Sp6gMAiRyL49c0Ca
+	+CkkotMO3hi2GckQ3NI0IH81HtC0tc+jFuYscWqt79+hDaXpAqLX8b8BywvLR8x2sMuWJjZDgJ+
+	5c1ACVVFVNAFKjbjBdCRqaVXn32LzsiFqGwww5xF5u0TAxEM58jamWqc=
+X-Google-Smtp-Source: AGHT+IFf0VD/zQW37S2mTPNPUWsT+NA4vqq2N2Q++KYyXyfjoP0usWqfLL0khkBLt/lYTetDnjbJ+fQ8m9bzDUMrpIY4FMVgdy7V
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:22c2:b0:4c0:9a3e:c263 with SMTP id
+ 8926c6da1cb9f-4c23fae6db7mr132849173.0.1721464242742; Sat, 20 Jul 2024
+ 01:30:42 -0700 (PDT)
+Date: Sat, 20 Jul 2024 01:30:42 -0700
+In-Reply-To: <0000000000004a86bf0616571fc7@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000aeb998061da9a010@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [net?] KMSAN: uninit-value in hsr_get_node (3)
+From: syzbot <syzbot+a81f2759d022496b40ab@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Wolfram,
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-here comes the second part of the merge window pull request. I
-waited for Linus to take the first part so that I could send this
-pull request on top of the mainline.
+***
 
-Until now I was on top of your i2c/for-mergewindow branch.
+Subject: Re: [syzbot] [net?] KMSAN: uninit-value in hsr_get_node (3)
+Author: aha310510@gmail.com
 
-Thanks and have a great weekend,
-Andi
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
-The following changes since commit 8e5c0abfa02d85b9cd2419567ad2d73ed8fe4b74:
+---
+ net/hsr/hsr_framereg.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-  Merge tag 'input-for-v6.11-rc0' of git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input (2024-07-19 16:51:39 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-6.11-part-2
-
-for you to fetch changes up to 930e5186862b115953fb560be357f4e0bf496f94:
-
-  i2c: piix4: Register SPDs (2024-07-20 03:07:56 +0200)
-
-----------------------------------------------------------------
-Added descriptions in the DTS for the Qualcomm SM8650 and SM8550
-Camera Control Interface (CCI).
-
-Added support for the "settle-time-us" property, which allows the
-gpio-mux device to switch from one bus to another with a
-configurable delay. The time can be set in the DTS.
-
-The latest change also includes file sorting.
-
-Fixed slot numbering in the SMBus framework to prevent failures
-when more than 8 slots are occupied. It now enforces a a maximum
-of 8 slots to be used. This ensures that the Intel PIIX4 device
-can register the SPDs correctly without failure, even if other
-slots are populated but not used.
-
-----------------------------------------------------------------
-Bastien Curutchet (3):
-      dt-bindings: i2c: mux-gpio: Add 'settle-time-us' property
-      i2c: mux: gpio: Re-order #include to match alphabetic order
-      i2c: mux: gpio: Add support for the 'settle-time-us' property
-
-Thomas Weißschuh (2):
-      i2c: smbus: remove i801 assumptions from SPD probing
-      i2c: piix4: Register SPDs
-
-Vladimir Zapolskiy (2):
-      dt-bindings: i2c: qcom-cci: Document sm8550 compatible
-      dt-bindings: i2c: qcom-cci: Document sm8650 compatible
-
- Documentation/devicetree/bindings/i2c/i2c-mux-gpio.yaml |  3 +++
- Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml | 20 ++++++++++++++++++++
- drivers/i2c/busses/Kconfig                              |  1 +
- drivers/i2c/busses/i2c-piix4.c                          |  9 +++++++++
- drivers/i2c/i2c-smbus.c                                 | 15 ++++-----------
- drivers/i2c/muxes/i2c-mux-gpio.c                        | 14 ++++++++++----
- include/linux/platform_data/i2c-mux-gpio.h              |  2 ++
- 7 files changed, 49 insertions(+), 15 deletions(-)
+diff --git a/net/hsr/hsr_framereg.c b/net/hsr/hsr_framereg.c
+index 73bc6f659812..1c492146594c 100644
+--- a/net/hsr/hsr_framereg.c
++++ b/net/hsr/hsr_framereg.c
+@@ -224,6 +224,9 @@ struct hsr_node *hsr_get_node(struct hsr_port *port, struct list_head *node_db,
+ 	if (!skb_mac_header_was_set(skb))
+ 		return NULL;
+ 
++	if (skb->mac_len < sizeof(struct ethhdr))
++		return NULL;
++
+ 	ethhdr = (struct ethhdr *)skb_mac_header(skb);
+ 
+ 	list_for_each_entry_rcu(node, node_db, mac_list) {
+--
 
