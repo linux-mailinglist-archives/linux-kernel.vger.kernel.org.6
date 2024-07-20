@@ -1,133 +1,114 @@
-Return-Path: <linux-kernel+bounces-257983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1B3A9381B9
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 16:37:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BE2D9381BC
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 16:44:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87862281B93
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 14:37:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B1BD281CC7
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 14:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1259D13B59F;
-	Sat, 20 Jul 2024 14:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E53E13C3F2;
+	Sat, 20 Jul 2024 14:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nxb6BZot"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ilK0ktA6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D85328DB;
-	Sat, 20 Jul 2024 14:37:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC7F12C482;
+	Sat, 20 Jul 2024 14:44:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721486232; cv=none; b=lxkykiWex/U2o6DD3s2ZhOzI5iyUoTehHFtJzJRK24sM4bhEQOj+Ucv4l/2ruy7MEMx7ThirMgn8Uy2xDUc3sUmYnR8QeXBrG32NWb4V4h1hnkiXGi+24Iqfyan5caxk+VfwyqDlCWlKtVDEaLTJAmxcv5tm/prau3AWaPkcwg4=
+	t=1721486654; cv=none; b=aJL0ODyzB5yNLWp1nHG3R6JiyuGP8ovwuKpP7NezUrXGphF9gelzbjzSyAE5hHmLUEPz9zE3i18BqkEkKmhRIq/mAVtfnsIiHPn2UVEUJeVRLc1F4ATvDJ6y3/BzSVaGNmlLL6B95wz3gCxFcXVktDBgYrdfCvDSwRQ/SdViPNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721486232; c=relaxed/simple;
-	bh=5sIkcmDX5LYVDTGFJMDu6mH7R+pN9/g/83qb26ctnf0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ng+JuFwyaWUAkLkOpHQ2BbZqecqR6lBNDQ6+NI+rMw2gw0gqWHtqb4A8r7vNJxKQEdLCP6j7ehGT0CBugfEga6ILXqElNHW2URbsscwPEzM8B5VHrjJepuaF67bsHxYLXQyDKXG0RtzGRAipEonMa5qUI7cgx2Su1XXn3MG/zE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nxb6BZot; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A615EC2BD10;
-	Sat, 20 Jul 2024 14:37:11 +0000 (UTC)
+	s=arc-20240116; t=1721486654; c=relaxed/simple;
+	bh=v+gZG3usO/DmR0rpOJxO7l9Qj/H8jk4lp9ZYHjWpb+0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FUt5C8c88NgHvpCFbwczFJoDWA+WCI6abo9YtZES8yTMiIOkO2YC308QSv0RWmO+tjn3lCreGtc9H/PJSTQ/bRw8+ZDyZElbASWrcQToTRve9tLg38urJ/J28GTp7bqJG7lOqRQuz4GEmcomYNM0Y5WKdf9Ifmz33iVSX1om0DM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ilK0ktA6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24B9BC4AF09;
+	Sat, 20 Jul 2024 14:44:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721486231;
-	bh=5sIkcmDX5LYVDTGFJMDu6mH7R+pN9/g/83qb26ctnf0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Nxb6BZotZJtLGvYqZFlOzeR9UgGEfVrs4fW3okuLrZOEjTrM1HtragxnivFlUMgLy
-	 yU99qb9QXrh8F9zPFWKO8mTZE1a3GUL4CdC2PK0h6wnZIZuJdIGd+Nxzb1WuVQgOiW
-	 WSzzRzPMjgJDBymGSq1SWOoOmzlcVsBcrhv9fujicxj5EOk6ufBExWoLsJXbVFVOHy
-	 xY2gcQbOJ2Wmk3jOL7aqoTtaG5x2JlZz54+8ooXdBroeQRlPEGMvz6xTT/OpeKiDX0
-	 RKBuAeZ2ymJRpL3EJIhTmEsWS6wdg5g0XTXajuNrgoNYoU23OzCxEgLyrYSRk7UTva
-	 SHvQe+aQFBACg==
-Date: Sat, 20 Jul 2024 08:37:08 -0600
-From: Rob Herring <robh@kernel.org>
-To: Harry Austen <hpausten@protonmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 4/7] dt-bindings: clock: xilinx: add description of user
- monitor interrupt
-Message-ID: <20240720143708.GA239850-robh@kernel.org>
-References: <20240720120048.36758-1-hpausten@protonmail.com>
- <20240720120048.36758-5-hpausten@protonmail.com>
+	s=k20201202; t=1721486654;
+	bh=v+gZG3usO/DmR0rpOJxO7l9Qj/H8jk4lp9ZYHjWpb+0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ilK0ktA6ZLAk951396DgdXvFB32Rh+DFSdTgv06i7TDMpfhxScUlXKTtYRUmfS1kj
+	 o2FHq56QT4Qppmh0d688paurRiCVU8r8siJ2KACbzXDTfIwT8qie9ZgABqqQjv220g
+	 mbdgsx+08I1r+CYwD/lSL5Cs1CtzuPS9A9ERAh70Y3UmyTQ+8GLNvbqyCvlHh45Bcy
+	 4zQ1yV/780LKYfbXnGllygLacwzHRE9tozX54rM8Yu6x4DS9Ry91IhjPEJNMujRzEf
+	 VmYuvPvLjcY0T0vp5h545JDTzpPV61qVZocRINiGZ3akw/D2847zlPfhCwVdaefuBy
+	 JAvpbpjsvCaSg==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52ea2f58448so3607893e87.1;
+        Sat, 20 Jul 2024 07:44:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWgwh6bwQSFWmC6KFb5/b3dcl8+sNSAhuVRn25kOwJqQyvy2dHcMjdwV5f0MigvvvCzfoDCBPUXfgyh5qkUZo8JdHt4zZVOCLXsUXyZceWC2YXiwD6ypvE0sFAg4cm2t7Ev2mB3dnfO
+X-Gm-Message-State: AOJu0YxQ0IqtYDN9FXas6OHY3MehSkWl8PhO4Zq4U6bhx5hBsE5P5pxq
+	H78xiUB6auSKEjDSTdQaNlwfZsHsuJ4n7RKuIet2TR24fouLAo6LoTDJptIV0uL+CAPii+ng4j3
+	k/ehi+rBRB/X9pBQW3t5dp2MrDw==
+X-Google-Smtp-Source: AGHT+IEHRjoDY5QJy5Br3QFNZGd5zUKVBUB/oSkuJKKmnHRva2WxJNL8L0zKeGgnUdfMECfbyxJ9iGIG5NAsm/+nz1w=
+X-Received: by 2002:a05:6512:b1d:b0:52e:93d1:57a6 with SMTP id
+ 2adb3069b0e04-52ee539eb45mr8096778e87.6.1721486652481; Sat, 20 Jul 2024
+ 07:44:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240720120048.36758-5-hpausten@protonmail.com>
+References: <20240714193709.543509-1-shreeya.patel@collabora.com> <20240720142236.22f8dbb2@jic23-huawei>
+In-Reply-To: <20240720142236.22f8dbb2@jic23-huawei>
+From: Rob Herring <robh@kernel.org>
+Date: Sat, 20 Jul 2024 08:43:59 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJ=WyTNxoJGm-7ZRDYuKPGDSDFCoThfqv=+6b=MQn=pQw@mail.gmail.com>
+Message-ID: <CAL_JsqJ=WyTNxoJGm-7ZRDYuKPGDSDFCoThfqv=+6b=MQn=pQw@mail.gmail.com>
+Subject: Re: [PATCH] iio: light: ltrf216a: Document the device name
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Shreeya Patel <shreeya.patel@collabora.com>, lars@metafoo.de, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel@collabora.com, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 20, 2024 at 12:01:48PM +0000, Harry Austen wrote:
-> This Xilinx clocking wizard IP core outputs this interrupt signal to
-> indicate when one of the four optional user clock inputs is either
-> stopped, overruns, underruns or glitches.
-> 
-> This functionality was only added from version 6.0 onwards, so restrict
-> it to particular compatible strings.
-> 
-> Signed-off-by: Harry Austen <hpausten@protonmail.com>
-> ---
->  .../bindings/clock/xlnx,clocking-wizard.yaml  | 22 ++++++++++++++++++-
->  1 file changed, 21 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-> index 9d5324dc1027a..4609bb56b06b5 100644
-> --- a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-> +++ b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-> @@ -62,17 +62,37 @@ required:
->    - xlnx,speed-grade
->    - xlnx,nr-outputs
->  
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - xlnx,clocking-wizard-v6.0
-> +            - xlnx,versal-clk-wizard
-> +    then:
-> +      properties:
-> +        interrupts:
-> +          items:
-> +            - description: user clock monitor interrupt
-> +
-> +        interrupt-names:
-> +          items:
-> +            - const: monitor
+On Sat, Jul 20, 2024 at 7:22=E2=80=AFAM Jonathan Cameron <jic23@kernel.org>=
+ wrote:
+>
+> On Mon, 15 Jul 2024 01:07:09 +0530
+> Shreeya Patel <shreeya.patel@collabora.com> wrote:
+>
+> > Compatible 'ltr,ltrf216a' is used by Valve's Steamdeck device
+> > via the ACPI + PRP0001 mechanism.
+> > Document the device name alognside the compatible.
+> >
+> > Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+> Hi Shreeya,
+>
+> I'm guessing you used get_maintainers for this.  Always check that there
+> isn't anyone else who should be added.
+>
+> Given the root of this was the discussion about dropping this undocumente=
+d
+> binding the DT maintainers and list should definitely be CC'd + Marek
+> who was part of the earlier discussion.
+>
+> The fact that this isn't a typical ID from a Windows consumer device does
+> change things a little, but I'd imagine a firmware update for the steamde=
+ck
+> is equally unlikely to happen in order to fix the vendor-id.
+> (I was surprised to discover they provide windows drivers for it but
+> not seeing the light sensor in the list)
+>
+> So my opinion is that we should keep this ID in place with an enhanced
+> description.
+>
+> The other suggestion from the Krzysztof's thread was the risk of this get=
+ting
+> abused.  Perhaps we should specifically fail to probe if that ID is used =
+and
+> it's not an ACPI firmware?
 
-Properties need to be defined at the top-level (outside the if/then 
-schema), then restricted here.
+Use of it can now not pass validation with dtschema. IMO, that's enough.
 
-> +
->  additionalProperties: false
->  
->  examples:
->    - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
->      clock-controller@b0000000  {
-> -        compatible = "xlnx,clocking-wizard";
-> +        compatible = "xlnx,clocking-wizard-v6.0";
->          reg = <0xb0000000 0x10000>;
->          #clock-cells = <1>;
->          xlnx,speed-grade = <1>;
->          xlnx,nr-outputs = <6>;
->          clock-names = "clk_in1", "s_axi_aclk";
->          clocks = <&clkc 15>, <&clkc 15>;
-> +        interrupts-extended = <&intc 52 IRQ_TYPE_EDGE_RISING>;
-> +        interrupt-names = "monitor";
->      };
->  ...
-> -- 
-> 2.45.2
-> 
-> 
+Rob
 
