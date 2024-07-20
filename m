@@ -1,86 +1,70 @@
-Return-Path: <linux-kernel+bounces-257788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15A31937EEE
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 06:42:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B202937EF6
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 06:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 268E4B21A0F
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 04:42:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57AC41C213A1
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 04:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD9F175A1;
-	Sat, 20 Jul 2024 04:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85819D2E6;
+	Sat, 20 Jul 2024 04:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lmq4mDG2"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="HL3SCy5T"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6EC12E61
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 04:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967F51B86DD
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 04:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721450502; cv=none; b=Q9sYxdVHUXs+xl7AubKyp9neodDs2r15fBWFtyMkPMg9hXNLzdj4+iBP4ziOAz0KEX6S6WkFtqujDPXQV4WSrHdetq76d1uqMTRL319JdY28TqTdvI1UORVb493tlzda1SuMAFsUeB/c2hdE98pqqIYzsoMYb4lBSPHPGJo6Zsk=
+	t=1721450882; cv=none; b=F46L7hZcTpCK5wrrAbDOQhSOo/my7UchPLJnWyB1B98czmuz+kcuXHuqsR6i2xKgbI0uSGUcQumSj8EW5a2AMrT38QkSctl/JMfYupPfDdyDoe1y8My9mQThTJRR13KDUlRur5M3damtenp9xRd6pZQhl5epAfApezdSghKE+DI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721450502; c=relaxed/simple;
-	bh=sA3RiZ1oJA7H4jOOExLeQTxHrL4N4UV7cJ2ZeT0u6E0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DjC2FrTsSyPixu2z9pkCZ0fwe1T/KAabGLpjVfjRAoXc/4jCB2RPjeDTGp/9voV+igWoKweOQhOe+bxUekc60cnmCMy3UVhFJIkDyBIexrPGS2PXOrAEhjShJD2bb+psW6EB+v1fSEk4ip9UXhzl2OR7/dlKTMvGOlcCTmAKk2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lmq4mDG2; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70af22a9c19so1182392b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2024 21:41:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721450500; x=1722055300; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vVw0vATACj76JfvzKQY4usxRkR0Oycm1bE+vKC2rk9g=;
-        b=lmq4mDG2bSV1sek1BGh+GwgSv/G3ulo5TBkX4P+b5OPO6Me+iwOzBbZCcSYfoAdC/H
-         vZpHSPPBDxOdonxEsMi7G64QylCddYDgUglXIVtTuYmhwiqUG0swFlayENnpqJYYSpAl
-         DnXeElytmrb2FX5X5QX0ybdlbzeXiQ7JHVOuWNp3+jrjAgYj7CMjVmdt4CB702+X6H97
-         UyU4E3nQjmQeTkf9On9IKa2l5bpASvxdVhYi9qUQMsEvl9oP/s7bHFehKOToqAkov3Wf
-         qcBNBXyQ9IVe5SBqjq4jtBtLgf+ckEF7IOrwMs0XpPY02aFmy5Jq+xUVBJ89X/rGohNo
-         F4aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721450500; x=1722055300;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vVw0vATACj76JfvzKQY4usxRkR0Oycm1bE+vKC2rk9g=;
-        b=Xry+oR8oulLyrCysaEnvEhSCF291K0W91NTrft4ERxWbdByZ+9BAkAqlESyUAsLa4v
-         PsprYCD4cwhmjW2wX+DJvCnLLKfC82VjXzY+fxoDAfGSMpQDNsMOG/+gY6ZvGYZgCQDk
-         LqkZcd5/d+cZ7C2mA6yU//8sYHl+t3eirK7wOVEGNwh8r+vKnSuBNQK5ltQTgUr2U2hb
-         fPtZsi1IqlND+TJgeARKccx2/5ME0eGog/43BihN+5R4M5ejH1796Ge39joPsh0o1BZc
-         5uJ9SwaAE8Cm+QA5c6AzftlDIxbMO2xc4bLqt0Rvsy8VdtheyM3mZy/px1o6B/UPvyFM
-         J2mw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfUybLTUKNkEGTJs7h2dxipM5gPow7gZbhevxzGtBH97x+CPdGeUBnhNVGu8YncGim1f4juQX+md7TRkHyY7/39O62P9YF6iEPVabg
-X-Gm-Message-State: AOJu0YxZJXj9/BZVNcMNIozuaLm3WKxGjgM2skuXVVaKBEw3bHL+H8MB
-	ukuDzzgnxPL3XzTftzfJyGR/w0czDlt36mODDMdSrkSuJ7kfM8T6
-X-Google-Smtp-Source: AGHT+IEBS8Y5Ko/VqlXvrI1x+MdtVUYash+4xiAPzeysJsdDGDKxK2XNTIGZDknK0HVwrl0eHrrHzA==
-X-Received: by 2002:a05:6a21:710a:b0:1c2:92ad:3331 with SMTP id adf61e73a8af0-1c4285b7637mr683649637.2.1721450500245;
-        Fri, 19 Jul 2024 21:41:40 -0700 (PDT)
-Received: from cbuild.incus (h101-111-009-128.hikari.itscom.jp. [101.111.9.128])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f315c11sm13023465ad.125.2024.07.19.21.41.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 21:41:39 -0700 (PDT)
-From: Takero Funaki <flintglass@gmail.com>
-To: Johannes Weiner <hannes@cmpxchg.org>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Takero Funaki <flintglass@gmail.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] mm: zswap: fix global shrinker error handling logic
-Date: Sat, 20 Jul 2024 04:41:25 +0000
-Message-ID: <20240720044127.508042-3-flintglass@gmail.com>
+	s=arc-20240116; t=1721450882; c=relaxed/simple;
+	bh=xFc5G5DHWJcvFdLGvqqOnO0ga0WJdxDdPFWPCT5At7c=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=ZmYJb/4S9swL7lktEm8Nzp4yeDgIomTgu2PuUGjB53oupqFnCrvAyB6tBaXKxF4ebMqVR0J7V5PkAAZbk5q/ntd9lRhCiH9BNU/jpORU3snEVcNWZnSUvkKiZ7ZaMw2+Tc1cMQmo9mvh3PuzkCgj5BjOni/Q/KIqGH8Sei8mNao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=HL3SCy5T; arc=none smtp.client-ip=43.163.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1721450866; bh=bZBzCxeMtS+pZvaPzfBXP4KuQKXINxyV8YiIk/GczWs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=HL3SCy5Tofniq3TNdAUP6x26almUMMB6ZLIA9M+D9+mnZmNXJtb+NGQkf+vsRds4Z
+	 TEPz/ellaLIBrEN9lEIOa0H8fK2sUGZL5GlAPg1xoobMK+GK8+swv0PZfRuBLmPVu0
+	 xolcaWmV0NR91N9Q+J4XHa1r0s2kASDYgRx1SnHk=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id A6AB96F1; Sat, 20 Jul 2024 12:41:42 +0800
+X-QQ-mid: xmsmtpt1721450502t916exui7
+Message-ID: <tencent_F6255BBAE6BB63335F9E6F1B6F4BDC1B1408@qq.com>
+X-QQ-XMAILINFO: M8F5Ju5R+mONjPJw26bM2Djc58XkdNyvOcbLafjemgnxcaPj4WPof/FWc4rsuA
+	 u28kSifS4Vyeqhdbn81rsi0jCZOcx8Qo6+Ag36prPDH8JPDfALrVD75Z4sWxU9HGbzzW/8oV6cF8
+	 ZJXMiR/RpofBM9I0/Dpi5CXjN40DQ5/t5FREJivK0O6Ainv69Ar9Vn1JavwtArPVzK5NlP8/+qmd
+	 3XsBZooKuycZZgOz9yU/EwzSHadu1qhvaDajS3Oz42vJnBWxmEIRHLb2ArougQ93TCLEhV2Y45ZJ
+	 /8p1YwA1veYbqfTNkdry9QrmUiLrRGnKqZn9jdJ0DZ6uOo6eh8MKQhaz3MAAp35tUh2tVS6SPbBh
+	 p3j6dEOnJ0Oq6i6SdbQt93wGfcrQdWYNjTJsVWJeTGc1WYZGvI2LWIoiejHCF79CE9iNZK1JKTOc
+	 S4uBPOgyIoN64UMknq07ew+xgXT77D3hb9IXYxNReHBVkeEWXqADOhlQoR98yQL4kej53Z6ND/jl
+	 YsH93kH5hlOCfdmEC95wUAw5/VQ66rszN4CeHA5T+jYP+aGm7XzHT1LQ9EavjGUmjO7BaUirN4zB
+	 YRGrIIAUPqQ0ssJcJowqgO9ibGET6oj6lLjgath/iFCzJKvEJH+2hL7fOoMKn3gBpVSy71y+4ysp
+	 TAoGXxxyPBOTyUG+dvExQRRf+A7jaGKEimeAmYeUX1XLo97tQe/KlanX8ON8ty1adAjhWnpxekEw
+	 4kieBBsm0/w0PVDlFRTyO6Ec+VMY0Lgg+C1ePnAk0ZLlNGyZspRLC1jUz6zM89YwYe69xhPHrbzU
+	 kQPJqeK9nFq8Zh8mcxYyC0tkB4zPrHjTkr/SmLlaFnVgP6JVJpejF6IGlKjofIu6lTUk7pula5z9
+	 h6sTomhQNIdl/fHolFB//kcMWbDUyvW1BGbjDSBV++TKWjjHE4Wks=
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+0ad4cda8077288e1b15d@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] INFO: rcu detected stall in lapb_t1timer_expiry (2)
+Date: Sat, 20 Jul 2024 12:41:43 +0800
+X-OQ-MSGID: <20240720044142.988929-2-eadavis@qq.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240720044127.508042-1-flintglass@gmail.com>
-References: <20240720044127.508042-1-flintglass@gmail.com>
+In-Reply-To: <0000000000005f49c2061da633f4@google.com>
+References: <0000000000005f49c2061da633f4@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,97 +73,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch fixes zswap global shrinker that did not shrink zpool as
-expected.
+msg storm for EPROTO
 
-The issue it addresses is that `shrink_worker()` did not distinguish
-between unexpected errors and expected error codes that should be
-skipped, such as when there is no stored page in a memcg. This led to
-the shrinking process being aborted on the expected error codes.
+#syz test: upstream 5e0497553643
 
-The shrinker should ignore these cases and skip to the next memcg.
-However,  skipping all memcgs presents another problem. To address this,
-this patch tracks progress while walking the memcg tree and checks for
-progress once the tree walk is completed.
-
-To handle the empty memcg case, the helper function `shrink_memcg()` is
-modified to check if the memcg is empty and then return -ENOENT.
-
-Fixes: a65b0e7607cc ("zswap: make shrinking memcg-aware")
-Signed-off-by: Takero Funaki <flintglass@gmail.com>
----
- mm/zswap.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
-
-diff --git a/mm/zswap.c b/mm/zswap.c
-index 6528668c9af3..053d5be81d9a 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -1310,10 +1310,10 @@ static struct shrinker *zswap_alloc_shrinker(void)
- 
- static int shrink_memcg(struct mem_cgroup *memcg)
- {
--	int nid, shrunk = 0;
-+	int nid, shrunk = 0, scanned = 0;
- 
- 	if (!mem_cgroup_zswap_writeback_enabled(memcg))
--		return -EINVAL;
-+		return -ENOENT;
- 
- 	/*
- 	 * Skip zombies because their LRUs are reparented and we would be
-@@ -1327,14 +1327,19 @@ static int shrink_memcg(struct mem_cgroup *memcg)
- 
- 		shrunk += list_lru_walk_one(&zswap_list_lru, nid, memcg,
- 					    &shrink_memcg_cb, NULL, &nr_to_walk);
-+		scanned += 1 - nr_to_walk;
- 	}
-+
-+	if (!scanned)
-+		return -ENOENT;
-+
- 	return shrunk ? 0 : -EAGAIN;
- }
- 
- static void shrink_worker(struct work_struct *w)
- {
- 	struct mem_cgroup *memcg;
--	int ret, failures = 0;
-+	int ret, failures = 0, progress = 0;
- 	unsigned long thr;
- 
- 	/* Reclaim down to the accept threshold */
-@@ -1379,9 +1384,12 @@ static void shrink_worker(struct work_struct *w)
+diff --git a/drivers/media/usb/gspca/gspca.c b/drivers/media/usb/gspca/gspca.c
+index e8c8bdb9c40b..d3355345c1a3 100644
+--- a/drivers/media/usb/gspca/gspca.c
++++ b/drivers/media/usb/gspca/gspca.c
+@@ -95,6 +95,7 @@ static void int_irq(struct urb *urb)
+ 	case -ECONNRESET:
+ 	case -ENODEV:
+ 	case -ESHUTDOWN:
++	case -EPROTO:
+ 		/* Stop is requested either by software or hardware is gone,
+ 		 * keep the ret value non-zero and don't resubmit later.
  		 */
- 		if (!memcg) {
- 			spin_unlock(&zswap_shrink_lock);
--			if (++failures == MAX_RECLAIM_RETRIES)
-+
-+			/* tree walk completed but no progress */
-+			if (!progress && ++failures == MAX_RECLAIM_RETRIES)
- 				break;
- 
-+			progress = 0;
- 			goto resched;
- 		}
- 
-@@ -1396,10 +1404,13 @@ static void shrink_worker(struct work_struct *w)
- 		/* drop the extra reference */
- 		mem_cgroup_put(memcg);
- 
--		if (ret == -EINVAL)
--			break;
-+		if (ret == -ENOENT)
-+			continue;
-+
- 		if (ret && ++failures == MAX_RECLAIM_RETRIES)
- 			break;
-+
-+		++progress;
- resched:
- 		cond_resched();
- 	} while (zswap_total_pages() > thr);
--- 
-2.43.0
 
 
