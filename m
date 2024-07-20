@@ -1,310 +1,191 @@
-Return-Path: <linux-kernel+bounces-257962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FCF893817C
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 15:35:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03C7B93817F
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 15:36:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E81A11F21997
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 13:35:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B6E2B215E1
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 13:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34AF212FF71;
-	Sat, 20 Jul 2024 13:35:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA5212F37C;
+	Sat, 20 Jul 2024 13:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="zwuK3pi4"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTWgxygu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A09026AF1
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 13:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFAF53209;
+	Sat, 20 Jul 2024 13:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721482512; cv=none; b=RvPbc806hUCUVCghKrP5is1msi2pPr7ns+O5T2QiNoFrHKatsJ9VKisAKpANjg2N9B+k3vZtnTZUoEHOEloJZVK3t3WaW/6HbTudFpK7AZfESAZ/z9rJbt/nNIebKAQaTKtjrxvg/xiWJ98atryhmQaVETl8tHmN7Djk8rtVYG4=
+	t=1721482588; cv=none; b=W7+UUri8Hc3etgerTOOGAgCXXEsxEYtGmh/BZoQ4ISWV5dO5lGpPcRL03oMbyZ+yqk73bUOcI8JdUk1LtfX5lMaJmfu8/N5WFeJa9VmMLzwFTeex1GASMby85HviXKAw5sceuKvZ8wTpGgIE9Z0Vl0XWmoRf0L/2a9WZ9/3BnB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721482512; c=relaxed/simple;
-	bh=IlOteqTRCXOugvoaxkRpnLteH6MMLUAiiRNi/wZ7YH0=;
-	h=Date:Subject:CC:From:To:Message-ID; b=l0QUNX9XLm7ZxGBQZyhKrP24i5T9PAeNd4wbBp56hLRpvxfYnvVs6x2UQ3ckOC1ShqfFCEN1JG1HFRzU4SEtUw4sC3xwl5XNfnKP0+0vhFSRSTm1t7/fLZwfIRf3vfbcfncDX+TUms1/EYgq1DHexfut60RhcfSnHVtok1nUIlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=zwuK3pi4; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70af8062039so1167177b3a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 06:35:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721482509; x=1722087309; darn=vger.kernel.org;
-        h=message-id:to:from:cc:subject:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZT+QWxi2++8QhWnRWs9Zkt59xg1ybIT/ZbG3HIocXw4=;
-        b=zwuK3pi43Kc4KAth+l7esR24Uo/xtfCTYZWaUe7/o5MyORdwQCHFw7XNNqm0B2bEW3
-         nXVHzV1Hnq2S4dFrZhlBmtlcGeWoLzIFMeiD/hxOQFOapR6aP7xKBU5u7AW8Lnv9bPUY
-         ucuxmP9XK8cDgKWXYjuq3Hc26NsbMd7E/zrXnDFNB4ldakN58ogyxCMzoHHE1CpA00gI
-         Cn+Kuq3HSaC2mJAQG9A/SZVX0FCoziUilKB2ytykq5Waa5I5QmkicCFo7euaYs4pxXpq
-         dRkNFVw7nm7fTU+UBFWYCq3ztbgw+B61jl6jZfjmso1QPfVXGJZx0BsYUt+gd/i49zJ+
-         Lg+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721482509; x=1722087309;
-        h=message-id:to:from:cc:subject:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZT+QWxi2++8QhWnRWs9Zkt59xg1ybIT/ZbG3HIocXw4=;
-        b=YEtsrneI+GHjU8J2+luyQLwVM2S8hdLhp+LenZ1N7hQ4lF1xHYnw6gFklLZ7ZPXwzQ
-         IllAJpfOs/ftO00w4g4ICl0ELiR7oGrpI33TQ9d2+cY0uZmDf/XiaEsL2xTY9kpwK/w5
-         5fCQFwj2zAsKNlg7KnXgH8QlkPmCVTyMvTCL3WE8CH3MRyd/Xy+4PelcanlMm9AYZyZm
-         YKgNOG9vlp6wxH0Z5LLRZK6LbM69x0MZTt7BR2HDZ3qZw14T8tEWdzsteAHe2N9FLGl7
-         MdH2EKx93NB6exctkE0StoCnb+o/dBy4lES7Rz9BZOYOBWT3y9eYvYaQ9UkNC8YKbSGk
-         Leig==
-X-Forwarded-Encrypted: i=1; AJvYcCVrRrZndwtMW1ffLRSXin5wyEIPuvSkECABqCF842Ndft49b0g08oGKrwYjVzROX2jKZ50vSCXLG3GnMgVy62rvGrwqhCHVypXSTUlT
-X-Gm-Message-State: AOJu0Yx5V7TFRB6J0F9AmFrM/NcUoA74wO43TvcqBiNQyXLTh+/g5MZx
-	GulLWFRbyPDt0M9C0xHf6bAYIbLoO039J1wzmTEc6ekKLnMkXrGm3IBWrukpQuVNivkcI/vJUn9
-	a
-X-Google-Smtp-Source: AGHT+IEZYav3ruZbtmqQN5iygn2wn2u5CWvjA9Mzf2EU1a7RSL9nnAGmu9IyL/0yEgWFKSw7ivVb+Q==
-X-Received: by 2002:a05:6a20:a12b:b0:1c0:f5fa:d1e9 with SMTP id adf61e73a8af0-1c422896fa0mr3110793637.15.1721482509170;
-        Sat, 20 Jul 2024 06:35:09 -0700 (PDT)
-Received: from localhost ([192.184.165.199])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f25d9e3sm21913895ad.28.2024.07.20.06.35.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Jul 2024 06:35:08 -0700 (PDT)
-Date: Sat, 20 Jul 2024 06:35:08 -0700 (PDT)
-X-Google-Original-Date: Sat, 20 Jul 2024 06:32:45 PDT (-0700)
-Subject: [GIT PULL] RISC-V Patches for the 6.11 Merge Window, Part 1
-CC:         linux-riscv@lists.infradead.org,        linux-kernel@vger.kernel.org
-From: Palmer Dabbelt <palmer@rivosinc.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Message-ID: <mhng-099fa737-a1fc-466d-bf27-9ad62173bb45@palmer-ri-x1c9>
+	s=arc-20240116; t=1721482588; c=relaxed/simple;
+	bh=whTgYov6R0mAL+CB7A04ZKa4p6RRkvC/wvAPBg7DzT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jXNt81rtKlsuqVdgcaE1z+kmyrwkSeE9t5kz6hmlhEHUotHpK27pYkVGtPN5xirvJID/ztVQvlB4dVxk1qYR9P4xbPpin50Kc6Iuwc7be41T3+/axZhNOU//HkkH/47nlQVdGQ35vhRdbSIH++oYvpmXlNVaJagA18wkEWxVmIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZTWgxygu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B4D4C2BD10;
+	Sat, 20 Jul 2024 13:36:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721482588;
+	bh=whTgYov6R0mAL+CB7A04ZKa4p6RRkvC/wvAPBg7DzT0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZTWgxyguzBrhQX5n3cXK3/eqV9EiaIORuxLRQKNSZkfSSJ6BuzFxBMyjh+XRpp5u9
+	 YWDcMUZ0AUQ7b7wk9R4klr7G5xbDPpdRijGIHufe7z0pdGqIr54hA8YOO6ChCxKXnF
+	 tH6NvC1ePRwn9N/rlMIlG7WgjYgZ62EDNQfrhgffdcvvmGW2TZwsDHinhz5lZACY/7
+	 KjfbFuY0nc1/u0hDb1HaLMACGKucV9zSqDboQMRsoA29Wqnrn5fGLKuLbit1YZH4jq
+	 WoJWWuMJIAicgLq3jvv7O8cAYE2BIY4NUktLceM+/svr/clE+4Ei4e7a62qfAr3up0
+	 DZODiwhaShHLw==
+Date: Sat, 20 Jul 2024 14:36:19 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Antoniu Miclaus <antoniu.miclaus@analog.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Dragos Bogdan <dragos.bogdan@analog.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] iio: frequency: adf4377: add adf4378 support
+Message-ID: <20240720143619.3d6a976f@jic23-huawei>
+In-Reply-To: <c26f39fc-94bd-40f2-9c3a-7075eb3e6dba@kernel.org>
+References: <20240717093034.9221-1-antoniu.miclaus@analog.com>
+	<20240717093034.9221-2-antoniu.miclaus@analog.com>
+	<c26f39fc-94bd-40f2-9c3a-7075eb3e6dba@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+On Wed, 17 Jul 2024 11:38:30 +0200
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+> On 17/07/2024 11:30, Antoniu Miclaus wrote:
+> > Add separate handling for adf4378 within the driver.
+> > 
+> > The main difference between adf4377 and adf4378 is that adf4378 has only
+> > one output which is handled by only one gpio.
+> > 
+> > Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
 
-are available in the Git repository at:
+Replying on top of Krzysztof's review as he is raising very similar
+points to those I was going to make.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-linus-6.11-mw1
+> > ---
+> >  drivers/iio/frequency/adf4377.c | 25 ++++++++++++++++++-------
+> >  1 file changed, 18 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/iio/frequency/adf4377.c b/drivers/iio/frequency/adf4377.c
+> > index 9284c13f1abb..e02298a8b47f 100644
+> > --- a/drivers/iio/frequency/adf4377.c
+> > +++ b/drivers/iio/frequency/adf4377.c
+> > @@ -387,6 +387,11 @@
+> >  #define ADF4377_FREQ_PFD_250MHZ			(250 * HZ_PER_MHZ)
+> >  #define ADF4377_FREQ_PFD_320MHZ			(320 * HZ_PER_MHZ)
+> >  
+> > +enum adf4377_dev_type {
+> > +	ADF4377,
+> > +	ADF4378,
+> > +};
+See below - but using an enum for device type is normally a bad sign.
+It means you are adding a bunch of code paths that will need continual
+extension as new chips are added.
 
-for you to fetch changes up to 93b63f68d00a0483b450b446e2ea5386a1b94213:
+Much better to add a description of chip features in a const structure.
+> > +
+> >  enum {
+> >  	ADF4377_FREQ,
+> >  };
+> > @@ -402,6 +407,7 @@ enum muxout_select_mode {
+> >  
+> >  struct adf4377_state {
+> >  	struct spi_device	*spi;
+> > +	enum adf4377_dev_type	type;
+> >  	struct regmap		*regmap;
+> >  	struct clk		*clkin;
+> >  	/* Protect against concurrent accesses to the device and data content */
+> > @@ -687,7 +693,7 @@ static void adf4377_gpio_init(struct adf4377_state *st)
+> >  	if (st->gpio_enclk1)
+> >  		gpiod_set_value(st->gpio_enclk1, 1);
+> >  
+> > -	if (st->gpio_enclk2)
+> > +	if (st->gpio_enclk2 && st->type == ADF4377)  
+> 
+> Why? Isn't everything correct for NULL?
+> 
+> >  		gpiod_set_value(st->gpio_enclk2, 1);
+> >  }
+> >  
+> > @@ -889,11 +895,13 @@ static int adf4377_properties_parse(struct adf4377_state *st)
+> >  		return dev_err_probe(&spi->dev, PTR_ERR(st->gpio_enclk1),
+> >  				     "failed to get the CE GPIO\n");
+> >  
+> > -	st->gpio_enclk2 = devm_gpiod_get_optional(&st->spi->dev, "clk2-enable",
+> > -						  GPIOD_OUT_LOW);
+> > -	if (IS_ERR(st->gpio_enclk2))
+> > -		return dev_err_probe(&spi->dev, PTR_ERR(st->gpio_enclk2),
+> > -				     "failed to get the CE GPIO\n");
+> > +	if (st->type == ADF4377) {  
+> 
+> So the device does not have this pin? Then you should express it in the
+> bindings.
+Agreed: That binding needs to ensure that there isn't a second pin expressed
+for a chip where it makes no sense.
 
-  riscv: lib: relax assembly constraints in hweight (2024-07-15 08:46:46 -0700)
+> 
+> > +		st->gpio_enclk2 = devm_gpiod_get_optional(&st->spi->dev, "clk2-enable",
+> > +							  GPIOD_OUT_LOW);
+> > +		if (IS_ERR(st->gpio_enclk2))
+> > +			return dev_err_probe(&spi->dev, PTR_ERR(st->gpio_enclk2),
+> > +					"failed to get the CE GPIO\n");
+> > +	}
+> >  
+> >  	ret = device_property_match_property_string(&spi->dev, "adi,muxout-select",
+> >  						    adf4377_muxout_modes,
+> > @@ -945,6 +953,7 @@ static int adf4377_probe(struct spi_device *spi)
+> >  
+> >  	st->regmap = regmap;
+> >  	st->spi = spi;
+> > +	st->type = spi_get_device_id(spi)->driver_data;  
+> 
+> 
+> spi_get_device_match_data()
+> 
+> >  	mutex_init(&st->lock);
+> >  
+> >  	ret = adf4377_properties_parse(st);
+> > @@ -964,13 +973,15 @@ static int adf4377_probe(struct spi_device *spi)
+> >  }
+> >  
+> >  static const struct spi_device_id adf4377_id[] = {
+> > -	{ "adf4377", 0 },
+> > +	{ "adf4377", ADF4377 },
+> > +	{ "adf4378", ADF4378 },
+> >  	{}
+> >  };
+> >  MODULE_DEVICE_TABLE(spi, adf4377_id);
+> >  
+> >  static const struct of_device_id adf4377_of_match[] = {
+> >  	{ .compatible = "adi,adf4377" },
+> > +	{ .compatible = "adi,adf4378" },  
+> 
+> Your device ID tables have incoherent match data. Considering that one
+> type is 0, this is error-prone and discouraged.
+Agreed.  Much better to use a pointer to a chip specific structure for these
+thus avoiding the accidental NULL value and turning chip differences into
+data, not code.
 
-----------------------------------------------------------------
-RISC-V Patches for the 6.11 Merge Window, Part 1
+> 
+> Best regards,
+> Krzysztof
+> 
 
-* Support for various new ISA extensions:
-    * The Zve32[xf] and Zve64[xfd] sub-extensios of the vector
-      extension.
-    * Zimop and Zcmop for may-be-operations.
-    * The Zca, Zcf, Zcd and Zcb sub-extensions of the C extension.
-    * Zawrs,
-* riscv,cpu-intc is now dtschema.
-* A handful of performance improvements and cleanups to text patching.
-* Support for memory hot{,un}plug
-* The highest user-allocatable virtual address is now visible in
-  hwprobe.
-
-----------------------------------------------------------------
-Sorry this is a bit late, but I got caught up in a handful of build issues from
-other trees that cropped up during the merge window.  Looks like that's mostly
-settling down, as usual I've got the fixed stacked up locally until things get
-sorted out.  Aside from that everything looks clean on my end.
-
-I have one merge conflict: some of the in-flight text patching
-optimizations/cleanups ended up conflicting with the instruction tearing bugs
-we found during the last release cycle.  As a result the fences are now inside
-the patching functions, which while slow should at least be correct.
-
-Here's my resolution of the actual diff, we could delete the functions but with
-more incoming I figured it was best to avoid sticking extra diff in the merge:
-
-diff --cc arch/riscv/kernel/patch.c
-index ab03732d06c4,5b3f6406e8c4..000000000000
---- a/arch/riscv/kernel/patch.c
-+++ b/arch/riscv/kernel/patch.c
-@@@ -200,12 -186,13 +202,7 @@@ NOKPROBE_SYMBOL(patch_insn_set)
-
-  int patch_text_set_nosync(void *addr, u8 c, size_t len)
-  {
-- 	u32 *tp = addr;
---	int ret;
---
-- 	ret = patch_insn_set(tp, c, len);
- -	ret = patch_insn_set(addr, c, len);
- -	if (!ret)
- -		flush_icache_range((uintptr_t)addr, (uintptr_t)addr + len);
---
---	return ret;
-++	return patch_insn_set(addr, c, len);
-  }
-  NOKPROBE_SYMBOL(patch_text_set_nosync);
-
-@@@ -232,12 -222,13 +232,7 @@@ NOKPROBE_SYMBOL(patch_insn_write)
-
-  int patch_text_nosync(void *addr, const void *insns, size_t len)
-  {
-- 	u32 *tp = addr;
---	int ret;
---
-- 	ret = patch_insn_write(tp, insns, len);
- -	ret = patch_insn_write(addr, insns, len);
- -	if (!ret)
- -		flush_icache_range((uintptr_t)addr, (uintptr_t)addr + len);
---
---	return ret;
-++	return patch_insn_write(addr, insns, len);
-  }
-  NOKPROBE_SYMBOL(patch_text_nosync);
-
-----------------------------------------------------------------
-Alexandre Ghiti (2):
-      riscv: Implement pte_accessible()
-      riscv: Improve sbi_ecall() code generation by reordering arguments
-
-Andrew Jones (5):
-      riscv: Provide a definition for 'pause'
-      dt-bindings: riscv: Add Zawrs ISA extension description
-      riscv: hwprobe: export Zawrs ISA extension
-      KVM: riscv: Support guest wrs.nto
-      KVM: riscv: selftests: Add Zawrs extension to get-reg-list test
-
-Andy Chiu (8):
-      riscv: vector: add a comment when calling riscv_setup_vsize()
-      riscv: smp: fail booting up smp if inconsistent vlen is detected
-      riscv: cpufeature: call match_isa_ext() for single-letter extensions
-      dt-bindings: riscv: add Zve32[xf] Zve64[xfd] ISA extension description
-      riscv: cpufeature: add zve32[xf] and zve64[xfd] isa detection
-      riscv: hwprobe: add zve Vector subextensions into hwprobe interface
-      riscv: vector: adjust minimum Vector requirement to ZVE32X
-      selftest: run vector prctl test for ZVE32X
-
-Björn Töpel (11):
-      riscv: mm: Properly forward vmemmap_populate() altmap parameter
-      riscv: mm: Pre-allocate vmemmap/direct map/kasan PGD entries
-      riscv: mm: Change attribute from __init to __meminit for page functions
-      riscv: mm: Refactor create_linear_mapping_range() for memory hot add
-      riscv: mm: Add pfn_to_kaddr() implementation
-      riscv: mm: Add memory hotplugging support
-      riscv: mm: Take memory hotplug read-lock during kernel page table dump
-      riscv: Enable memory hotplugging for RISC-V
-      virtio-mem: Enable virtio-mem for RISC-V
-      riscv: mm: Add support for ZONE_DEVICE
-      riscv: Enable DAX VMEMMAP optimization
-
-Christoph Müllner (1):
-      riscv: Add Zawrs support for spinlocks
-
-Clément Léger (17):
-      dt-bindings: riscv: add Zimop ISA extension description
-      riscv: add ISA extension parsing for Zimop
-      riscv: hwprobe: export Zimop ISA extension
-      RISC-V: KVM: Allow Zimop extension for Guest/VM
-      KVM: riscv: selftests: Add Zimop extension to get-reg-list test
-      dt-bindings: riscv: add Zca, Zcf, Zcd and Zcb ISA extension description
-      riscv: add ISA extensions validation callback
-      riscv: add ISA parsing for Zca, Zcf, Zcd and Zcb
-      riscv: hwprobe: export Zca, Zcf, Zcd and Zcb ISA extensions
-      RISC-V: KVM: Allow Zca, Zcf, Zcd and Zcb extensions for Guest/VM
-      KVM: riscv: selftests: Add some Zc* extensions to get-reg-list test
-      dt-bindings: riscv: add Zcmop ISA extension description
-      riscv: add ISA extension parsing for Zcmop
-      riscv: hwprobe: export Zcmop ISA extension
-      RISC-V: KVM: Allow Zcmop extension for Guest/VM
-      KVM: riscv: selftests: Add Zcmop extension to get-reg-list test
-      riscv: hwprobe: export highest virtual userspace address
-
-Haibo Xu (1):
-      riscv: dmi: Add SMBIOS/DMI support
-
-Kanak Shilledar (2):
-      dt-bindings: interrupt-controller: riscv,cpu-intc: convert to dtschema
-      dt-bindings: riscv: cpus: add ref to interrupt-controller
-
-Palmer Dabbelt (6):
-      Merge patch series "Support Zve32[xf] and Zve64[xfd] Vector subextensions"
-      Merge patch series "dt-bindings: interrupt-controller: riscv,cpu-intc"
-      Merge patch series "riscv: Various text patching improvements"
-      Merge patch series "Add support for a few Zc* extensions, Zcmop and Zimop"
-      Merge patch series "riscv: Memory Hot(Un)Plug support"
-      Merge patch series "riscv: Apply Zawrs when available"
-
-Qingfang Deng (1):
-      riscv: lib: relax assembly constraints in hweight
-
-Samuel Holland (8):
-      riscv: jump_label: Batch icache maintenance
-      riscv: jump_label: Simplify assembly syntax
-      riscv: kprobes: Use patch_text_nosync() for insn slots
-      riscv: Simplify text patching loops
-      riscv: Pass patch_text() the length in bytes
-      riscv: Use offset_in_page() in text patching functions
-      riscv: Remove extra variable in patch_text_nosync()
-      riscv: Add tracepoints for SBI calls and returns
-
-Xiao Wang (1):
-      riscv: Optimize crc32 with Zbc extension
-
-yang.zhang (1):
-      riscv: set trap vector earlier
-
- Documentation/arch/riscv/hwprobe.rst               |  50 +++
- .../interrupt-controller/riscv,cpu-intc.txt        |  52 ---
- .../interrupt-controller/riscv,cpu-intc.yaml       |  73 +++++
- Documentation/devicetree/bindings/riscv/cpus.yaml  |  21 +-
- .../devicetree/bindings/riscv/extensions.yaml      | 132 ++++++++
- arch/riscv/Kconfig                                 |  59 +++-
- arch/riscv/Makefile                                |   3 -
- arch/riscv/include/asm/arch_hweight.h              |   8 +-
- arch/riscv/include/asm/barrier.h                   |  45 ++-
- arch/riscv/include/asm/cmpxchg.h                   |  58 ++++
- arch/riscv/include/asm/cpufeature.h                |   1 +
- arch/riscv/include/asm/dmi.h                       |  24 ++
- arch/riscv/include/asm/hwcap.h                     |  12 +
- arch/riscv/include/asm/hwprobe.h                   |   2 +-
- arch/riscv/include/asm/insn-def.h                  |   4 +
- arch/riscv/include/asm/jump_label.h                |   4 +-
- arch/riscv/include/asm/kasan.h                     |   4 +-
- arch/riscv/include/asm/kvm_host.h                  |   1 +
- arch/riscv/include/asm/mmu.h                       |   4 +-
- arch/riscv/include/asm/page.h                      |   5 +
- arch/riscv/include/asm/patch.h                     |   2 +-
- arch/riscv/include/asm/pgtable-64.h                |  20 ++
- arch/riscv/include/asm/pgtable-bits.h              |   1 +
- arch/riscv/include/asm/pgtable.h                   |  32 +-
- arch/riscv/include/asm/processor.h                 |   6 +
- arch/riscv/include/asm/sbi.h                       |  10 +-
- arch/riscv/include/asm/trace.h                     |  54 ++++
- arch/riscv/include/asm/vdso/processor.h            |   8 +-
- arch/riscv/include/asm/vector.h                    |  10 +-
- arch/riscv/include/uapi/asm/hwprobe.h              |  13 +
- arch/riscv/include/uapi/asm/kvm.h                  |   7 +
- arch/riscv/kernel/cpufeature.c                     | 328 +++++++++++++------
- arch/riscv/kernel/head.S                           |  22 +-
- arch/riscv/kernel/jump_label.c                     |  16 +-
- arch/riscv/kernel/patch.c                          |  69 ++--
- arch/riscv/kernel/probes/kprobes.c                 |  19 +-
- arch/riscv/kernel/sbi.c                            |  17 +-
- arch/riscv/kernel/smpboot.c                        |  14 +-
- arch/riscv/kernel/sys_hwprobe.c                    |  22 +-
- arch/riscv/kernel/vector.c                         |   5 +-
- arch/riscv/kvm/vcpu.c                              |   1 +
- arch/riscv/kvm/vcpu_insn.c                         |  15 +
- arch/riscv/kvm/vcpu_onereg.c                       |  14 +
- arch/riscv/lib/Makefile                            |   1 +
- arch/riscv/lib/crc32.c                             | 294 +++++++++++++++++
- arch/riscv/lib/uaccess.S                           |   2 +-
- arch/riscv/mm/init.c                               | 347 ++++++++++++++++++---
- arch/riscv/mm/ptdump.c                             |   3 +
- arch/riscv/net/bpf_jit_comp64.c                    |   7 +-
- drivers/firmware/efi/riscv-runtime.c               |  13 +
- drivers/virtio/Kconfig                             |   2 +-
- include/linux/crc32.h                              |   3 +
- tools/testing/selftests/kvm/riscv/get-reg-list.c   |  28 ++
- .../testing/selftests/riscv/vector/vstate_prctl.c  |   6 +-
- 54 files changed, 1644 insertions(+), 329 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.yaml
- create mode 100644 arch/riscv/include/asm/dmi.h
- create mode 100644 arch/riscv/include/asm/trace.h
- create mode 100644 arch/riscv/lib/crc32.c
 
