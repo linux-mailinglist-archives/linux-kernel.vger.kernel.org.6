@@ -1,104 +1,113 @@
-Return-Path: <linux-kernel+bounces-257918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7C609380D7
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 12:53:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9313A9380D9
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 12:54:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61CB6B212FD
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 10:53:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2867FB2130F
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 10:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B28B84A52;
-	Sat, 20 Jul 2024 10:53:27 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5000E84A52;
+	Sat, 20 Jul 2024 10:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="D0zMPaip"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685F13A1C4
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 10:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DD63A1C4
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 10:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721472806; cv=none; b=XrHNBVJOSe/OZoyY5SVxQHNcY8XdI9BEEX7j4A9IOhCjH7JqFz5vUcsl+wu1aLu6QYGQWbp/lKBoo6j3PlsqK5B5c3jENq23H8Ibx1bsGAQmTiWbTAeI+LTCV7T9FnHSY4sjy9Tpp7fODCObitN5+/h6jQyX4uEmdufUZcEcYGo=
+	t=1721472878; cv=none; b=CFIDrPdE8JKEn3X/YcNRuLdRiD1M5flL/14xeWfRvgt8gU/vduGW5dZKiqO7KS8HhPOZksvgePY76g1hvpIBBQOedd0ClkOOb/7rVaJxdXA0c3uX/iZUKeK9XHJKOazy4TBloTb2Kq4oMzY+ML38E/5NE+3jqLYpq94AXuPWs/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721472806; c=relaxed/simple;
-	bh=Og/j0vGQCVeLWmBbzbcmrl6f929LVEsWW4X18yRhg2A=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=NIKfp18keId/M72cxWfFxTU5x1F2eRWbSpMQYPMlxMMAhB1JAJ1UyjSzrgMdDuKVERBd1j+YVLSy5n9ffupdLRvl7/AibepIafDaURuVIoXr2hwDdNHYueBuhg8atiTfRA0piLdw8nXIKsnD0Buq3nuqhrcdMvTeyhKzhbunR9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7f682b4694aso391267839f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 03:53:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721472803; x=1722077603;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t4ixF7J58Z1EAA9WRGdFo8eCLbhgr9+xEe+G3JoCLzQ=;
-        b=CEpww8nX/vkRZXZ8zvZgTRjrKAzsu8SUDisBdsXwzQz+ZYMbNStBeaaI0uo0z+1RBd
-         yEVwt9dEY6CgezGmoN1i7S5C9CeQlGZFIW6/UEfpvAEDiNDc75J1qQWx4YlEZPda5oWM
-         5G/uvcZyePZheDym9MxpEST2Sg9xzwpPb6bof8+lQtR9hTvPyynUnGqLkFzHmI8TV9xG
-         wP6WFL39k40m5Eb2PmS4w/rW1ZgG/k+IQw4lnl0x08dgl1e/FtXshtyCcqNYM3lXYBU4
-         1JByZab3GyIptLpHdcXDujGg4M+0dPj7BJlHI4SQ7GXyZhm+Ctp0MaMigi+cEkb3JKa4
-         sQRQ==
-X-Gm-Message-State: AOJu0YxxLgPc/r06jRuDR0CHTGqWTTGWwtxhUmj6y+uye76d2yR0UG3Z
-	O7v2FgV3EQFsxDIPLHWJcWwzbY9eHjEZo33jbZjnKFQsv9xjyWV0t4IZeUaVgBzPir44HFJ5jpr
-	BmwSgoHImki2qPtsZu7MCCbGL8/tBfDUZN3OoKPSUi8wAMArzmiHt1mc=
-X-Google-Smtp-Source: AGHT+IHHRnIOfgMyotEn2Nt+cFcd439j5GX9LGwTP674weZW+NXiMV+nbPYYiJPVeBJEiP1G2XHzfStSCLPGXUmEyaP7OrBXmMxu
+	s=arc-20240116; t=1721472878; c=relaxed/simple;
+	bh=E8arWo145SuSYBQPemHj6U/99DI7Umv2Yq21Ciuz8PQ=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=GRm+b3Nvs4/rWbX5Z/0tGBhFzzpWTBZvvNuAzoazjUfYhQCg6WroBz4KK/9yXIxe75ECZP1lGN8U40ymwhY8qojEAvLUr4ixU5qeiYeWRwIIhwlgpcVN9FlMK0iQfwOwS4/lk09mRyqYLtzvmKAPE/S9KYmxrsN/znr0p8HgTFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=D0zMPaip; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1721472863; x=1722077663; i=markus.elfring@web.de;
+	bh=LLEhJPZ8SLB0+bsCDNdkC9BeNWaXtWQXE9YFyqU9VuI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=D0zMPaip2szZdTDXMNUvO/IEm1fHWtPNFQmCrYGiTRXpEISKwL5i5XH+BhxAS9hh
+	 OtWUfKsJHkAT8gcIrXS7UiyIRBV/RvrrF37jwko4EWs+MELtBsp863EAf/tZQNOFD
+	 Cjcy7pW4gWH+AUwreeb8nw05jrZ0eccxqGqERRnGABPWeP34Ame1jdHjswo8y6dum
+	 IILMrXMJm2bBgOJ7DhqPPhmBrQ++ce/UbOho4n329mxdKYjp902wWohKrJdm+LyPl
+	 FeShDNd6bSDd03JKuwA/oqbZlHwFEgDkHp1X2Y0POlmlaMovumbIuAupDg9DasD44
+	 yJYjCS+lRwmlUibDwA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M9ZeA-1sRno3238e-007H1y; Sat, 20
+ Jul 2024 12:54:23 +0200
+Message-ID: <d24462fb-b9ed-4212-8008-eefaeed8c04b@web.de>
+Date: Sat, 20 Jul 2024 12:54:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:3044:b0:4b9:6637:4909 with SMTP id
- 8926c6da1cb9f-4c23ffe1519mr145391173.6.1721472803599; Sat, 20 Jul 2024
- 03:53:23 -0700 (PDT)
-Date: Sat, 20 Jul 2024 03:53:23 -0700
-In-Reply-To: <0000000000004a86bf0616571fc7@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f33668061dab9e7b@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [net?] KMSAN: uninit-value in hsr_get_node (3)
-From: syzbot <syzbot+a81f2759d022496b40ab@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: Lizhi Hou <lizhi.hou@amd.com>, Min Ma <min.ma@amd.com>,
+ dri-devel@lists.freedesktop.org, Oded Gabbay <ogabbay@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Max Zhen <max.zhen@amd.com>,
+ Sonal Santan <sonal.santan@amd.com>
+References: <20240719175128.2257677-5-lizhi.hou@amd.com>
+Subject: Re: [PATCH 04/10] accel/amdxdna: Add hardware context
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240719175128.2257677-5-lizhi.hou@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:6Qvu7N9mqbZ+7MOHRKsnrWm6syiCHat32dCp491ZdAcbLPFw71A
+ 5gXjnfaghIMF93PZA04jC0JbrUDxegLfmwzcr7+rlVQa1XA3LfExnBOru5/xzaGwxrPnMxV
+ ZCsanys11yTE3VSBb74IYj6q/ZpSiYqf+ZHJXbET+xHf/aDcH01uelePhb95ND0JHtjE0CB
+ TJdY/2CBnLSIBaX9k0WOA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:2gud571q15A=;VYijdEyoIaP3YQog6sa3FSOQVcA
+ nNIg85vBDZOxhcJtHo/W0u1Drb9lytoxzLpOy8OBmHKCQxn/JvoaDT6HYMKl2W5As3J+hhmcN
+ Cr0tixmHoZ//udx9iobZKYzfWsFO+FaYgz9qy1adJ78Na0BxjUaM8kAUFM5UXucLF8dDZeOP/
+ pG2nMHhy2uy7I2sMUayg8ZAzP7ixaVbPXTA2ZyE3jMlB5oTCYPRevN8/g7OIoWD7fI2gP/GAQ
+ F6y9uF8l/+ewe7fEmsh0wo7YJ9LH0kET+QiiaaKjS1pJec8dH+O4JnfT92E7VWoHYb88I4HEa
+ jDcyZKR1c0X3bsgNazNKn+b/LOqsro8jSynTHrFcTaYJPI6qsoA3BMyeEHCH7yZs8AH7F9YFI
+ qenja7oy/mB2WUU82XoMFGs1VCIwkmCkLD/lC4B0SXESDnfuo1JZT5lwIIeMqrVX/to3u3hX7
+ ILtsLwqhf3NH/z6FksQGBxRRQgia9w+6TdNWSpK6C/yUaykmvvJe1rQE7vrD12d2oDKF19AL5
+ vpRVjIgOVolHENW6eg/wN1B2IybM5072+wj/6C/iwbChj/QipDy5sp3Fjrmc76JhNoEEf9XET
+ NYc8Y5c5rBGfHyActnn7//gPc79MbsbTeMht95FlLjmrMHVsrcqObRAdB7LFKgu7iOX6KL5LR
+ OP6l3Swy/+vkS0BjYey/TqbV4HH/P0yZiuOUvLmPq4ibpNg95BsJg2BW+MTDx2vfaNErlRqPo
+ izZJVbV5lszq64FimqU2jHW/nfQMEmxtRbq99FELwEDgpxqb+zj5g0Kx4tzMRsYN38I2eb6gl
+ eQtSA7qfT9cbIybFUo8FF97Q==
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+>                                         =E2=80=A6 The tile columns belon=
+g to
+=E2=80=A6
+                                                             which =E2=80=
+=A6?
 
-***
 
-Subject: Re: [syzbot] [net?] KMSAN: uninit-value in hsr_get_node (3)
-Author: aha310510@gmail.com
+=E2=80=A6
+> +++ b/drivers/accel/amdxdna/aie2_ctx.c
+> @@ -0,0 +1,181 @@
+=E2=80=A6
+> +void aie2_hwctx_fini(struct amdxdna_hwctx *hwctx)
+> +{
+> +	struct amdxdna_dev *xdna;
+> +
+> +	xdna =3D hwctx->client->xdna;
+=E2=80=A6
+> +}
+=E2=80=A6
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+Please omit such an unused local variable.
 
----
- net/hsr/hsr_framereg.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/hsr/hsr_framereg.c b/net/hsr/hsr_framereg.c
-index 73bc6f659812..ee388739f1f3 100644
---- a/net/hsr/hsr_framereg.c
-+++ b/net/hsr/hsr_framereg.c
-@@ -154,7 +154,7 @@ void prp_handle_san_frame(bool san, enum hsr_port_type port,
- static struct hsr_node *hsr_add_node(struct hsr_priv *hsr,
- 				     struct list_head *node_db,
- 				     unsigned char addr[],
--				     u16 seq_out, bool san,
-+				     int seq_out, bool san,
- 				     enum hsr_port_type rx_port)
- {
- 	struct hsr_node *new_node, *node;
-@@ -219,7 +219,7 @@ struct hsr_node *hsr_get_node(struct hsr_port *port, struct list_head *node_db,
- 	struct ethhdr *ethhdr;
- 	struct prp_rct *rct;
- 	bool san = false;
--	u16 seq_out;
-+	int seq_out;
- 
- 	if (!skb_mac_header_was_set(skb))
- 		return NULL;
---
+Regards,
+Markus
 
