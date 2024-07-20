@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-258040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE24938275
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 20:26:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 628D693827A
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 20:28:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97F40282D8A
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 18:26:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1911E283390
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 18:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6BDB148855;
-	Sat, 20 Jul 2024 18:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF8114884C;
+	Sat, 20 Jul 2024 18:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tNnWUZO5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J+T3jCLe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBEA1487D1;
-	Sat, 20 Jul 2024 18:26:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921403D66;
+	Sat, 20 Jul 2024 18:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721499975; cv=none; b=gCTslrEtaSiMX/48ZZKU/3ny6EcrQX6AqK37bs6aSXGmOxfMIvJU1BzdjxjREYntkOuxwsejPJHD9BZbwmwkRTJJ37u7TPquuCDBHuPNUorqSPjGOezu1jW6UiiS5b9SQ3aCYT4HdpbcDqUe8Y/CEEa1sRpCdl3cYSSsgYSpZj4=
+	t=1721500104; cv=none; b=g1nhoJvjojaGsXO8Qy9jfbEBJER+j86Cr5MLFKzyWyD+FazfGfqXKVVzjEUyDMsci6iSpR1YmIdoFSefPeandUhSWsCcHxU8//tSkmuo+EeYPwgnqu4R//Ink0Y3VTaNyWqfLreotDBiTadi3c0SUJB0JciD6jiZavT9ovDsUvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721499975; c=relaxed/simple;
-	bh=Pr1vn1X/YIKUKHn+Ua9qAMVD/xKOpFnygy+niw1KA0Q=;
+	s=arc-20240116; t=1721500104; c=relaxed/simple;
+	bh=eJZPK+DhW0Tooh4YTbevJlLXSxbgwvrof7wQtGi5H4I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iNWYjMdAG2y1SMcIMBqGhW1EQkogRoFo5IE07nywRyy70thnEfBpnJasxDHGKU/8PX/vg78b4zAfu0achi9kPErFBSqNTQk2LPa+qDexoYU31M+8xBKSQmD49aELNh031XmeaAiYtdRP6WsxzGvs3U84DejxYXNRf2uoCDXkbgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tNnWUZO5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 064D9C2BD10;
-	Sat, 20 Jul 2024 18:26:10 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=iEAWWYu9QNtdk0Y/Ch7pHCO+S9hKGgCLTBI56rr1aiUZgt8Zo/pDqsiBwJiyIjL4LMJfA8wgDiTBPRSiFvhzbvPEcDmEPpG+ZMOWlab32CGWi5h0npxt6crqrEYmqkP8AUgUo+RikNKm/T1npPd/W1HCZrO9J5YtKsdRjgR7tbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J+T3jCLe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA28BC2BD10;
+	Sat, 20 Jul 2024 18:28:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721499974;
-	bh=Pr1vn1X/YIKUKHn+Ua9qAMVD/xKOpFnygy+niw1KA0Q=;
+	s=k20201202; t=1721500104;
+	bh=eJZPK+DhW0Tooh4YTbevJlLXSxbgwvrof7wQtGi5H4I=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tNnWUZO5bJk+fx80BkN/M4hPkz1Dr222fvuIiochEVGEyqxllVXMDGfvr51ykJNjH
-	 xdxPpqa8zy/ge+A+hNUBoZ+6NulDEgsAfExUWgmhmvnODWa0v/2liTHHJDtKNAHdIw
-	 dFpuaXtLfjkFZxdb3gXT6Qq8y4DvvWewSP4SGFQe8oSHMvYhKaGFpzQt02xm2+s+6V
-	 OHVGye5l140FZVSwkBYBEfh5X6WPmvJpwpVEykATeBmnXxJ33hj1TXR+4/RT63YuY/
-	 wIbWYtQZhSNknPzoqOZHJnwUWh0Ek7nDXXxu7EHYnUXs4BXUkNqUVy7cVgD+9Yd+/3
-	 hrsSVuoQAhRNg==
-Message-ID: <2599a8a5-1bbc-41a7-9842-57caec3a3815@kernel.org>
-Date: Sat, 20 Jul 2024 20:26:09 +0200
+	b=J+T3jCLeSE0WoHlvD1yRTiNh5vHbCLMjfB8XvKWDCthwnjdgqF8DShrK2MTi1WAn9
+	 RH/RS1hnA99F9O8ShcdjRei25fzsMwIxOFnEs8Bqvpn7WhhU82t8u0TYPaH8pBh4d6
+	 NBPSm5suOi75wp9wMkliOsElMyX6NTgJcSg1/IGSW1vRXgdaFymK/lGZtVjYl4tCmm
+	 fX2vKF27qL+b8FzOB4jFAJTEkRzeMcn0RKgEgHy5/u5fdab3abSzfTvW/YfJb3/chL
+	 pM588oBLf0pF2IllQMkAw/6lPkGj3GY5QjqT8UpH+XJ3IiQrTbCKnA/Ww9A0B2Ys1c
+	 oyVxUXkJrymzA==
+Message-ID: <0cddd005-6997-4159-8841-beb837957f0c@kernel.org>
+Date: Sat, 20 Jul 2024 20:28:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] ARM: dts: nxp: correct DAC compatible on
- Crystalfontz's CFA10049
-To: Conor Dooley <conor@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Conor Dooley <conor.dooley@microchip.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Mark Brown <broonie@kernel.org>,
- Maxime Ripard <mripard@kernel.org>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-spi@vger.kernel.org
-References: <20240717-impotence-zippy-254b86593069@spud>
- <20240717-ruse-cardinal-c30cf11bbf1e@spud>
+Subject: Re: [PATCH v2 1/2] clk: imx93: Move IMX93_CLK_END macro to clk driver
+To: Pengfei Li <pengfei.li_1@nxp.com>
+Cc: krzk+dt@kernel.org, robh@kernel.org, abelvesa@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, ping.bai@nxp.com,
+ ye.li@nxp.com, peng.fan@nxp.com, aisheng.dong@nxp.com, frank.li@nxp.com,
+ kernel@pengutronix.de, festevam@gmail.com, linux-clk@vger.kernel.org,
+ imx@lists.linux.dev, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240627082426.394937-1-pengfei.li_1@nxp.com>
+ <20240627082426.394937-2-pengfei.li_1@nxp.com>
+ <60f9e733-f5bd-4bfc-9bd5-94ae18bb3901@kernel.org>
+ <Zn92TX9ZsHde7g2f@pengfei-OptiPlex-Tower-Plus-7010>
+ <ZpoCxmvgKNgvx4Kw@pengfei-OptiPlex-Tower-Plus-7010>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,22 +108,57 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240717-ruse-cardinal-c30cf11bbf1e@spud>
+In-Reply-To: <ZpoCxmvgKNgvx4Kw@pengfei-OptiPlex-Tower-Plus-7010>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/07/2024 11:59, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
+On 19/07/2024 08:08, Pengfei Li wrote:
+> On Sat, Jun 29, 2024 at 10:49:49AM +0800, Pengfei Li wrote:
+>> On Fri, Jun 28, 2024 at 09:38:54AM +0200, Krzysztof Kozlowski wrote:
+>>> On 27/06/2024 10:24, Pengfei Li wrote:
+>>>> IMX93_CLK_END was previously defined in imx93-clock.h to indicate
+>>>> the number of clocks, but it is not part of the ABI, so it should
+>>>> be moved to clk driver.
+>>>>
+>>>> Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
+>>>> ---
+>>>>
+>>>> Notes:
+>>>>     Change for v2:
+>>>>     - Use pre-processor define to simplify code.
+>>>>
+>>>>  drivers/clk/imx/clk-imx93.c | 2 ++
+>>>>  1 file changed, 2 insertions(+)
+>>>
+>>> Are you sure this builds fine? If you need to define it here, it means
+>>> some part of that unit file already uses the define. If so, you include
+>>> the header. If you include the header, you should see fat warning.
+>>>
+>>> Really, people, just build your patches...
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>>
+>>>
+>>
+>> Hi Krzysztof,
+>>
+>> Yes, you're right, this macro definition has indeed been used. But
+>> this clk-imx93.c driver file is the only place where this macro is
+>> used. So maybe it would be more appropriate to define this macro in
+>> C rather than in the header file. Meanwhile, I also built my patch,
+>> but no warnings were found.
+>>
+>> BR,
+>> Pengfei Li
+>>
 > 
-> When Maxime originally added the BH2228FV to the kernel, he spelt it
-> incorrectly - the d should have been a b. Correct the compatible used in
-> the devicetree.
+> Hi Krzysztof,
 > 
-> Fixes: db7a8946dc40 ("ARM: dts: cfa10049: Add the DH2228FV DAC to the DTS")
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
+> I've built my patches, but no warnings were found. This C file is the only place where this macro definition is used, so why would I see fat warning?
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I could be wrong, I really thought there should be a warning of
+duplicated define. But if there is none, sure, sounds good.
 
 Best regards,
 Krzysztof
