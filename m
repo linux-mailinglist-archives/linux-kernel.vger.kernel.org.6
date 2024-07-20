@@ -1,118 +1,111 @@
-Return-Path: <linux-kernel+bounces-257966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2280A938188
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 15:44:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE8B793818A
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 15:45:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0BD21F21714
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 13:44:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3506B214F5
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 13:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D7312FF88;
-	Sat, 20 Jul 2024 13:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12CB812F365;
+	Sat, 20 Jul 2024 13:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rx+5z6yS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="TSjblke9"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2C01E49E;
-	Sat, 20 Jul 2024 13:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E30629CF0
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 13:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721483073; cv=none; b=HQwig32Dn041kX1tqqXRi6ASG4mBBXygpajOqkErKDxfv8ZO6zU6k0BrTdWv+qgl72WhdrB7HouFZFbujvP6ht0xCgMiDGwN5eK2LS86W11AcULCaUKt3BL0kDawA5fW5JLs/dpuQ7waejk+Hr57rIB/znlfirLOd34C3VeP0Gg=
+	t=1721483114; cv=none; b=SmOEuk0He151HFSMgoWKteyroQy9eH4Shgp4t/oTaSAwOAcDgTI2hrsuLCo41XZG6cD4kzPZROVr/MtmMweXGpjfJjlrFGtccF8EChWN5+4zoghKvuKHIQYnhQrM8GfzlVg5pX7r+3G7EMifryisZxvQzkN2W9s1BGMfWhADsLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721483073; c=relaxed/simple;
-	bh=0nxBhjhzC0uWC9PKc/Bn7F0qrzMq0kb4Mt0s139r7Aw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=emmCrmA4JnKgjO9untdJOAwHaqiz9yycD6PiYqX3oNt4Ge2w70E3xA7bLhz8deLEBr6CJig26ho98GaNqZumhSlRuNIm7iOQYwleIrvqoazV3thPQWT2dSdBzKksiBufTV0I7f9Ixeg+NqOVqC2MvLVt5pjMSQ4mrL1JXhzMvQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rx+5z6yS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86276C2BD10;
-	Sat, 20 Jul 2024 13:44:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721483073;
-	bh=0nxBhjhzC0uWC9PKc/Bn7F0qrzMq0kb4Mt0s139r7Aw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rx+5z6ySLP6i+RX9XKA1QzRV7SiokyhgspUhKJLu6rDgtGG9AM9JUMAioQFrAc/Fa
-	 /auAnfD/DWqHl/qYZ8hbCxpJuz9dVXo6pbvUNUhzok0tz9JazQUfqriiymLE4iPnv6
-	 Ef1yIBmeHXud4IkDZ1HgBNEFEfNsHLzH7eN/n97ZLPyttD78nbDBgOqilhywr9zJu0
-	 qwxDKLYrIf8DeTQOSXYI7LlljNQxCo7FChAJdWz1lkptgv+aislFHXFppubddY2eUK
-	 hTGpz96R+iJFKPQu2jBOLpGrSbiy2KCaGrcRIlbiUFU9h1jDXl9ANGtkGJYzfQGBsV
-	 lR1jt8i0bBYdA==
-Date: Sat, 20 Jul 2024 14:44:25 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: Alisa-Dariana Roman <alisadariana@gmail.com>, Alisa-Dariana Roman
- <alisa.roman@analog.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Michael Hennerich <michael.hennerich@analog.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v7 4/4] iio: adc: ad7192: Add clock provider
-Message-ID: <20240720144425.0770a412@jic23-huawei>
-In-Reply-To: <5cf5e7d388813fca604b7fc5bdb3bb7296255217.camel@gmail.com>
-References: <20240717212535.8348-1-alisa.roman@analog.com>
-	<20240717212535.8348-5-alisa.roman@analog.com>
-	<5cf5e7d388813fca604b7fc5bdb3bb7296255217.camel@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721483114; c=relaxed/simple;
+	bh=R2gBFB8UlDqHlYeJGvV0sDAvlR9JmWmslHfaWoZkzgE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sah4iUMpMiFCTX44ODkP9vG36q/oMdSkqDnjoppsVIIURhTe9cCPJugr4RmRfyeH2Rqtc3+uXY/iBS2CbX7dohDsl0uMXFx+wy/bPEqjnhdVt/jkUt5blO6edCnJXbxds/77M5YDuUWXLlFApZSuxllSpVC2e1QUi5DKujAIVhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=TSjblke9; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=R2gB
+	FB8UlDqHlYeJGvV0sDAvlR9JmWmslHfaWoZkzgE=; b=TSjblke9vtm4gZGWPEEq
+	dkjp9fvqXkA/po15Y5dyQcpk10wq3AeU8rgtBNMTUK+GnC5mCOmkKQAJ8cNGDULX
+	dauW1GcfUvkYlBsIPMIMh7umdZllbRDyfyWtcA6dclJWTOuO37TItRqSQgPgv1vA
+	toA3BQWyn16DoB9OKNj2EKCBz2tnJVRywoynFhxcdOIfHUFi+bs4jppEWLqCzzFk
+	JpIbIdj1i5k8MuMosg+jJT4xltxqmHC3ASB7eAutzum198GSILuCC8VmPA3J/cMg
+	Ora9K4h64XHEqhNVQCaLHAxg0dsUGJhz5p09pRocAZ2OPvCOugqbUIAPIFRmOZsQ
+	KA==
+Received: (qmail 1473780 invoked from network); 20 Jul 2024 15:45:07 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Jul 2024 15:45:07 +0200
+X-UD-Smtp-Session: l3s3148p1@xiEVBa4dhtsujnsv
+Date: Sat, 20 Jul 2024 15:45:05 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] i2c-host for v6.11 - part 2
+Message-ID: <Zpu_YYAILdHLIKR5@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	linux-i2c <linux-i2c@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+References: <csu2tvshcxyz7yib2mrcczxa345m2qu6lavngulzq35b2hi7bz@ao5p3do67q7p>
+ <ZpudPAKFtrIszTMS@shikoro>
+ <fg2byff6apqkdztjmql4x7eknpxdokjpwne6zwyrrfdpjugcr6@joo4vdlvgb56>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, 18 Jul 2024 16:11:29 +0200
-Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
-
-> On Thu, 2024-07-18 at 00:25 +0300, Alisa-Dariana Roman wrote:
-> > Internal clock of AD719X devices can be made available on MCLK2 pin. Add
-> > clock provider to support this functionality when clock cells property
-> > is present.
-> >=20
-> > Signed-off-by: Alisa-Dariana Roman <alisa.roman@analog.com>
-> > --- =20
->=20
-> minor thing below you may consider if a re-spin is needed...
->=20
-> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
-
-> > +static int ad7192_register_clk_provider(struct ad7192_state *st)
-> > +{
-> > +	struct device *dev =3D &st->sd.spi->dev;
-> > +	struct clk_init_data init =3D {};
-> > +	int ret;
-> > +
-> > +	if (!device_property_present(dev, "#clock-cells"))
-> > +		return 0;
-> > +
-> > +	if (!IS_ENABLED(CONFIG_COMMON_CLK))
-> > +		return 0;
-> >  =20
->=20
-> nit: This could be the first test to do. No point in calling
-> device_property_present() if CONFIG_COMMON_CLK is disabled. FWIW, the com=
-piler should
-> be smart enough to sort things out but it would still be better (for read=
-ability) to
-> have this first.
->=20
-Tweaked whilst applying.
-
-Compiler probably can't figure it out as won't have enough visibility of the
-implementation of device_property_present() to know it doesn't have side ef=
-fects
-deep in one of the indirect function calls that can generate.
-
-Jonathan
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="U5GN6b1BvEv9h6TZ"
+Content-Disposition: inline
+In-Reply-To: <fg2byff6apqkdztjmql4x7eknpxdokjpwne6zwyrrfdpjugcr6@joo4vdlvgb56>
 
 
-> - Nuno S=C3=A1
->=20
->=20
+--U5GN6b1BvEv9h6TZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+
+> Oh, yes, I wanted to separate the Reviewed-and-tested-by, but
+> then I forgot to remove it.
+
+Thanks for separating them. I prefer that as well. Maybe time for a
+script? :)
+
+> Thanks for checking it. I updated the branch and the tag. I'm
+
+Pulled.
+
+Have a nice weekend!
+
+
+--U5GN6b1BvEv9h6TZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmabv10ACgkQFA3kzBSg
+KbYeCxAApDi5FfebnZmQaPY+1KK8iM5zLb+E/7l+d1xvrwSGcXBEy67FC7aQE0+E
+TSd0CKqp00YpZbGBkL6t2QUofE71CtiZYkW5GM4K5GIln4+mUD6KZ2YvpGLTamVu
+iGHj6Tz4oBa5XxHwENd1qMr85tG7DALyoIP9CdJTXcshlHLdmZjRo/aK4cTevQxJ
+vkro298xjL/fsnLhrqjEEJ4WSUAhnUhumGTa+/A3USG/0ncHqmZgCKfTQ4CNYNMy
+11W8pyVolxjTaGxphx+Xk0fjREn5A/vQsQXBiP00CweQFHTD7bJyn/wOhAnJpYpE
+USODKjjDe4g/7Ta4LLsJqC6WWFoxPHRw3U4RT4RhapQTltFabngi8soVWJbTCqHz
+Z/Xsv/v1/cGkW/tANAPFmrfA6WJyt98DfHTXI9QjvDihcAxf99Af8jRwzIAx7ul/
+HTyrYm18dCLgAPDhmW5lh4aC0OHcT8znhJKV28tkiT0zQYeb6QyhAYVCQrtCq8TT
+Tsb3ARQhOZbfcUU3N2wGToAZvRXZHrb2X5EHqlSh6dq3wDfy7z57qfL9x4ZMnmhh
+Ua+tZL8benbB4oXilb09mtXfnCvsFI6ktC8pmZk6bzZHDB6I+iR1z1gnxjB1u70O
+eyjPLNnBHPMZqXOn0rhZWp+d64ES/5oe9YSsaP0JXnG+ivd+fTw=
+=n98G
+-----END PGP SIGNATURE-----
+
+--U5GN6b1BvEv9h6TZ--
 
