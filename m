@@ -1,123 +1,120 @@
-Return-Path: <linux-kernel+bounces-257757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C533937E82
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 02:28:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 188F9937E85
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 02:29:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7CABB21109
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 00:28:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B68701F218AF
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 00:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6677A3D66;
-	Sat, 20 Jul 2024 00:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4B8323D;
+	Sat, 20 Jul 2024 00:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="IEau3GTE"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JL0K0JyZ"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798424404;
-	Sat, 20 Jul 2024 00:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D5A1C14;
+	Sat, 20 Jul 2024 00:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721435314; cv=none; b=DQiA2EVMAiIXU5lJZibg0lDIlIqHcmL0bapiKobObw4cl51jJXTbJ7pKXNh4ykT8ygDND+1rvea0MJ11c34/hTmwyY6wcxowD0EYVvk16QCtj0X2LF0bHXWy5pAv9FRLnTz5W/kUJ/GeKGHvtz2aZ8PXah4EAIu7Yrft8x68E+M=
+	t=1721435383; cv=none; b=FY8WsyToSWy5pCgzb2cXJtMZ/mz4ffbm4v/6VZJhT+j8sQ2v2dqMlLTwgjDlGcnCAVx0i3K4kb15u9aKWEntcjPUAki1v30OMfFf4R+H3g3RSXReABxUE0NzgoRXLDKGM5D5RnNZuZverM0s8GIPL29XWeyk+cTb+1OrwYoJhZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721435314; c=relaxed/simple;
-	bh=Eul2CBV4qWWvrz4hc9g9QRwccvT28YsfWm7eoLJzhCU=;
+	s=arc-20240116; t=1721435383; c=relaxed/simple;
+	bh=JZKaoN2R48aUplgzYNrJUY5WKGW0sOp78A8rRUoCPuM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bMfsjei8jtHDAL8BwvoK7YDTV19vsS76tpep7bpUx2KHSTnTIZCQkyMjKW76sA9l2BNSsbpwyDZ6B+sRilONUt8qo60qf8hTKhzT6+2kSXzH+fPzrcqCgYwsNW3L68JFwxZN38dFcVRT7x8ZP3zSmt11g9BcyHBNW3WynAVpFIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=IEau3GTE; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=VGildi8JKxn7CDz0glPmQSzXJV50SAWGnGDt2jhS1L0=; b=IEau3GTEdY9ViYZz
-	DLYX84kE5Xg3dD7A2fvFcbr7BkqgSa0YTdBx7hyXNWQyo0s1Dj+p94n6RtH0ihDLyeRYoR6jrnyfC
-	fBmJX0qHf+H81kLzUypELPjea5EMO3wAVNPsmSKsC6u2RQl+7bPpMiMiU3/vEgFbQo309f2EkD5QF
-	eaJWaBuaO5qo/DG9kNYnSyc00X1MT/eOSh53zhkYW6uiik/04S0l5AHDMB1+lRNqG+Ofjs+EJ5vMy
-	jO1IlIhRHcqUPwpLdHo2X3zar6N4ncCWA2fP6S7Nit4QtPRtblP1TlYybmSSxs2taO/uIbN4I8gll
-	e/mrVe08G/+RW/iGPw==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sUxxR-00CVvw-0j;
-	Sat, 20 Jul 2024 00:28:17 +0000
-Date: Sat, 20 Jul 2024 00:28:17 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Allison Henderson <allison.henderson@oracle.com>
-Cc: "edumazet@google.com" <edumazet@google.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"rds-devel@oss.oracle.com" <rds-devel@oss.oracle.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] RDMA/rds: remove unused struct 'rds_ib_dereg_odp_mr'
-Message-ID: <ZpsEof3hxKGQBmqF@gallifrey>
-References: <20240531233307.302571-1-linux@treblig.org>
- <2442cae88ee4a5f7ba46bb0158735634fa82a305.camel@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AYl8htLAs22WhfhjIapRn5Lv9Wbp2BIzjJ1fZM2qZbMcaLfWGTY+5R381pYbY7jupZOYympsI2+LMyjfUfR2wMMmvsMnkVpSugeUk4T/22vTQGz+EMPKdI9UyK6hHxvOXaV5CmrhkN5T6NUUIQCNhjR6CiZPkSJr+UL0ama/k8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JL0K0JyZ; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fc52394c92so21705695ad.1;
+        Fri, 19 Jul 2024 17:29:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721435381; x=1722040181; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=L+l14fB0m1Y3ZJneAxMH0hKYuL3D3s2mgWcMY5IoO04=;
+        b=JL0K0JyZ47F9APT+PFbeasrFHiEd2QAfclvZbnqTcOmqQosEzAAp0zezPV0MjOxcHb
+         jDMmJFX05AuLy/yvksTIU2ZO/hn2uSui2sGdMYcj0ZmbdKpphZx9Sy7maYzwQIDMKO4b
+         ncjrcBdCo0POulZYplw+W2nzd4iwK1U33QnSK8aIY4uTGlP3YiaaRQu3kU/T1B288JEA
+         klcgXqfKtlwwvaGbY9fsVJ8tq4UNRlox0KgULtkF7WFz9kyLSWeAKn4fWj/2DpsKM9v6
+         TqiAPS8EZ66KLkpI9FDRTQkdNjxMmRXEWMmTSO5XDugkVesjgKCxJkCFvlF/5nAHFZPU
+         ueJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721435381; x=1722040181;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L+l14fB0m1Y3ZJneAxMH0hKYuL3D3s2mgWcMY5IoO04=;
+        b=HNhODYruejMpvKdjeO3oKtkhq4xYt+9KBwyw7MChRCBwEfB/fbEBahf4lLQVh++yI3
+         /oer2NPiwvF8aX5G4KrSzHWeJY9OyQaPG8jzwNUNE73hHFvbeJbK9a7LY/hHoQHK8rID
+         ZBL1zoHNZ7V/fF/oj/sGxtzZtqw0w7PGE9w6NFrs5gxnBU9Hv0vqRCiXGZpYnrc81RAP
+         61iOsDzCTM561GU15YJRBNl7YsgNacvAkY2I9QjwuSQFf6obZqVJsWDS3QPZ6qp5cGEs
+         1OAsdMo/Ey6HoMrPtgwPC68BHWZZPyuI+XQra1zP5n7TlbHzQZyZoXQHrtGX0cxJ4yoY
+         ZZ8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWDo4ut4H20mkOlBeeXh1mCxvIm0J4qCJ9NtU/POGEeqDEm+uGMS7lyECsi2Vp3elPSi4mxj69xnYkPxlzHXofAFvdLlDY+/E6+GhP3HApTNOH+TFAWwbq6uWUpDz66Gxa54Gk/v41O9rmy2mZhSKjTxCg3QDU+fgQ5YccW0s/3UKhmTaBS
+X-Gm-Message-State: AOJu0YxLKprNToXnsYQtmYnZn9veqLBbmWgsNgnmMA0uIvQQ44P2sRhE
+	Sj5wP/k17w8mb1/V43OR6CXI2gCjTZ3nDDd3ZmQhPpYhT5rA+ZNh
+X-Google-Smtp-Source: AGHT+IGd8MAyO6JtXgeIWbJ2mNFj6RS3jM5FyZ/92MHZZ8C9ZdX8hTn18KJmRv8nSK5RINnneOYH3A==
+X-Received: by 2002:a17:903:32cf:b0:1fc:327a:1f42 with SMTP id d9443c01a7336-1fd7453aaa6mr15656235ad.6.1721435380882;
+        Fri, 19 Jul 2024 17:29:40 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:1cb1:21f9:91f1:d0ad])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f25b37bsm10819835ad.34.2024.07.19.17.29.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 17:29:40 -0700 (PDT)
+Date: Fri, 19 Jul 2024 17:29:38 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Nikita Travkin <nikita@trvn.ru>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Srba <Michael.Srba@seznam.cz>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/2] input: zinitix: Add touchkey support
+Message-ID: <ZpsE8mQpahxBQRE-@google.com>
+References: <20240717-zinitix-tkey-v5-0-52ea4cd4bd50@trvn.ru>
+ <20240717-zinitix-tkey-v5-2-52ea4cd4bd50@trvn.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2442cae88ee4a5f7ba46bb0158735634fa82a305.camel@oracle.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 00:27:42 up 72 days, 11:41,  1 user,  load average: 0.08, 0.02, 0.01
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <20240717-zinitix-tkey-v5-2-52ea4cd4bd50@trvn.ru>
 
-* Allison Henderson (allison.henderson@oracle.com) wrote:
-> On Sat, 2024-06-01 at 00:33 +0100, linux@treblig.org wrote:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> > 'rds_ib_dereg_odp_mr' has been unused since the original
-> > commit 2eafa1746f17 ("net/rds: Handle ODP mr
-> > registration/unregistration").
-> > 
-> > Remove it.
-> > 
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+On Wed, Jul 17, 2024 at 06:55:34PM +0500, Nikita Travkin wrote:
+> Zinitix touch controllers can use some of the sense lines for virtual
+> keys (like those found on many phones). Add support for those keys.
 > 
-> This patch looks fine to me, the struct is indeed unused at this point.
-> Thanks for the clean up!
-> 
-> Reviewed-by: Allison Henderson <allison.henderson@oracle.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
 
-Hi,
-  Does anyone know who might pick this one up - I don't think
-it's in -next yet?
+Applied, thank you. However:
 
-Dave
+> -->  
+> +	if (le16_to_cpu(touch_event.status) & BIT_ICON_EVENT) {
+> +		error = zinitix_read_data(bt541->client, ZINITIX_ICON_STATUS_REG,
+> +					  &icon_events, sizeof(icon_events));
+> +		if (error) {
+> +			dev_err(&client->dev, "Failed to read icon events\n");
+> +			goto out;
+> +		}
 
-> > ---
-> >  net/rds/ib_rdma.c | 4 ----
-> >  1 file changed, 4 deletions(-)
-> > 
-> > diff --git a/net/rds/ib_rdma.c b/net/rds/ib_rdma.c
-> > index 8f070ee7e742..d1cfceeff133 100644
-> > --- a/net/rds/ib_rdma.c
-> > +++ b/net/rds/ib_rdma.c
-> > @@ -40,10 +40,6 @@
-> >  #include "rds.h"
-> >  
-> >  struct workqueue_struct *rds_ib_mr_wq;
-> > -struct rds_ib_dereg_odp_mr {
-> > -       struct work_struct work;
-> > -       struct ib_mr *mr;
-> > -};
-> >  
-> >  static void rds_ib_odp_mr_worker(struct work_struct *work);
-> >  
-> 
+I wonder, would it make sense (and be more efficient) to issue a single
+read of size sizeof(struct touch_event) + sizeof(icon_events) and the
+parse the data based on touch_event.status?
+
+Thanks.
+
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Dmitry
 
