@@ -1,192 +1,121 @@
-Return-Path: <linux-kernel+bounces-257872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7817D937FFB
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 10:22:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C048F937FFD
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 10:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D296AB212D7
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 08:22:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49A6CB21397
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 08:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069622AE66;
-	Sat, 20 Jul 2024 08:22:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2934540847;
+	Sat, 20 Jul 2024 08:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vB7kriMi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6CF1803D
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 08:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AB437169;
+	Sat, 20 Jul 2024 08:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721463724; cv=none; b=tEFp8Ccz5mfZQBHyNNozde3AEcImkJlOSacc9M29mByBsxXl3tdY1gr96Lxlq0BoaqHYIYjJNFpbaOzILKBhCJuUMTCPNllS5yrH1y+vF18Qot+V79sGdymMALAPchA3710rlnvb82b1d3sVrzZLWOkKVNJHlaWFrODIR50/00E=
+	t=1721464161; cv=none; b=e5BmVtDH2zbGgY3G+LNL1YKuH3WmSkE+zR4pzwv0/1Muzr1pmxot76H33Kh4G7IyZ7T1PV99+79vK1kWeiQqkPsRlrTYDZ8giSNMXneA850lJblxlHkmx5bJTx/sbm6XeuHGuZvD2VIJ/1hsP09u1c727Ul8cNnc9sYi+6U6U1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721463724; c=relaxed/simple;
-	bh=bMzdpm4YpAQTEMb0LbhbPtnyVjVZZpXykeyYfWRQ3+0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=rK/HDGZIBJkyNutZMqh8ngpC+6JADpEzx7YTs6sgBOCNvg4/voxKe/x4ecBTSAhz0i+Rt/XO6n/rUXL7HQlDW4v4lC+buqFNGBrNR2LxDUdG2vhGUqxQg1TnjLhPrcWdC/B9pKBR3ThDxrgT8I7mN12X6VIZI0TeD5mL6E2Etoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-803621a51c9so431715439f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 01:22:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721463722; x=1722068522;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ln5JK6ngMG7eu6i28QuNjznzmBJiG29KgB9JMFBQiWU=;
-        b=ATSMDqkR/THfKA00FhfAXM6zZVJCW99S9/yIRRik7eEMBhcJnJyP+mM5AAOrPtT2/q
-         xmN91wmB6ZcOFx0LGZgl63PhRpme2PnunDThGz7kLqSoc3G/VhkiYD93malHzRKa6OLw
-         pK08Cn0AOzXr/KwsuwErHPN7zc6F2uhrlvkNJjPCCpXj5gNMzqgiug7N0HxvoZ9lQJt2
-         RRVuLvlQy6wHZi2d3KZD7W8URE+dFS9Cm013VEsLp7BD36xP1eS/8+oHDkpnAcS4akUG
-         rPwL7iCrVjdHo1IGuYHr/zwKhdODILtMHMeJbEnE0huYLUVTw2JW7jfbBaS4x2yo01M7
-         TeYg==
-X-Forwarded-Encrypted: i=1; AJvYcCWJEKRM4umqn7njJfI5EBdLmWnuTT1p3sVSLcI9ELPLv4cZsT/0gyX5gOmiGdYkrCXY+uJ88PgLUuVQEW6tcCNRXTO/7IVuoKn2/OCX
-X-Gm-Message-State: AOJu0Yy7a9hXdVraogbEgd0/n0KZVbrsLno7LZmhU7qUr5RG3MMwbNNz
-	LYMYJaGIzu8i1a4hwTAigf6GQJyK5XjuX3uGXWe2N6v2BvBKdUKdXWtCsvDlGqveU3MMyiRopno
-	PWSmGzIf/yfoGqdAe+EccWV+8X4vKVldoQRo6rDlpkse31o42boE+lrg=
-X-Google-Smtp-Source: AGHT+IEFSY9SWnmdlrfxbjNCJt0i3m0+qSmwIKYg1SQBiDd2vGy1liGGf6WNvRAsdOPob0vKCoYHJfTYF6UqrEYmah13bUWBgzG7
+	s=arc-20240116; t=1721464161; c=relaxed/simple;
+	bh=aAQEjlXOltc0/pkPeHWr9qyxi8t5CaKmx45v9GG3HA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=lBGIdXGoc0Uvi4eeKaz1j7z6qVs46HAsooP4RndH+Yosqv8MiFQJ27J5C2MMps0coMQq639PBTn3RMFa7InqBmCFVpG8WbUC0nTuwcWbwMXbHQxLTTwY7OnLvf16Q8PUUvvQX2E+1DtIhdAskC/9xESjvY2km9URT6ur+RdH3KU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vB7kriMi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55E07C2BD10;
+	Sat, 20 Jul 2024 08:29:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721464161;
+	bh=aAQEjlXOltc0/pkPeHWr9qyxi8t5CaKmx45v9GG3HA0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=vB7kriMio2aSHdArzi+VO5iDl1qlfGPa8ytf0te5H3oRzFDDaZeTKyGrh9y8a4tIE
+	 miinklfO5Cy6Ff8cmLTy84VAv61irBXs4hXeNZB6BtYw26uiZiIvcFSxwrpNfIAfQa
+	 PRWp4suU6tdl1f7CxtuMveXIplZ0Z+XwEEAlXIwwlaGsng9BEA6FPl0nvf4UuaIRgT
+	 tu/Al8HfS/9j+uy840T3N5lBr0ypuUwv/UQsIovrDo+aZZquRz+PjI09pVFghbKr+s
+	 8zXySBfJ48PtZ8eW+p7vgtdykCChiHIDTx72xSiW3MoK5JzaXPlMAXNovpuvomNCda
+	 bDOpntVkNxdRw==
+Date: Sat, 20 Jul 2024 10:29:16 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>, 
+	lkml <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
+Subject: [GIT PULL] i2c-host for v6.11 - part 2
+Message-ID: <csu2tvshcxyz7yib2mrcczxa345m2qu6lavngulzq35b2hi7bz@ao5p3do67q7p>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8410:b0:4b9:eee6:40d with SMTP id
- 8926c6da1cb9f-4c23fe04aa9mr105112173.4.1721463722078; Sat, 20 Jul 2024
- 01:22:02 -0700 (PDT)
-Date: Sat, 20 Jul 2024 01:22:02 -0700
-In-Reply-To: <bd99516e-8702-4888-abed-fb86d5b9d84a@paragon-software.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a6067e061da9818b@google.com>
-Subject: Re: [syzbot] [ntfs3?] possible deadlock in ntfs_fiemap
-From: syzbot <syzbot+96cee7d33ca3f87eee86@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Hi Wolfram,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-possible deadlock in ntfs_fiemap
+here comes the second part of the merge window pull request. I
+waited for Linus to take the first part so that I could send this
+pull request on top of the mainline.
 
-loop0: detected capacity change from 0 to 4096
-ntfs3: loop0: Different NTFS sector size (4096) and media sector size (512).
-======================================================
-WARNING: possible circular locking dependency detected
-6.10.0-rc1-syzkaller-00035-gd57431c6f511 #0 Not tainted
-------------------------------------------------------
-syz-executor.0/5466 is trying to acquire lock:
-ffff88801bb51e18 (&mm->mmap_lock){++++}-{3:3}, at: __might_fault+0xaa/0x120 mm/memory.c:6233
+Until now I was on top of your i2c/for-mergewindow branch.
 
-but task is already holding lock:
-ffff88807905d220 (&ni->ni_lock/4){+.+.}-{3:3}, at: ni_lock fs/ntfs3/ntfs_fs.h:1107 [inline]
-ffff88807905d220 (&ni->ni_lock/4){+.+.}-{3:3}, at: ntfs_fiemap+0xff/0x180 fs/ntfs3/file.c:1211
+Thanks and have a great weekend,
+Andi
 
-which lock already depends on the new lock.
+The following changes since commit 8e5c0abfa02d85b9cd2419567ad2d73ed8fe4b74:
 
+  Merge tag 'input-for-v6.11-rc0' of git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input (2024-07-19 16:51:39 -0700)
 
-the existing dependency chain (in reverse order) is:
+are available in the Git repository at:
 
--> #1 (&ni->ni_lock/4){+.+.}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       ni_lock fs/ntfs3/ntfs_fs.h:1107 [inline]
-       attr_data_get_block+0x463/0x2ff0 fs/ntfs3/attrib.c:917
-       ntfs_file_mmap+0x50e/0x860 fs/ntfs3/file.c:294
-       call_mmap include/linux/fs.h:2107 [inline]
-       mmap_region+0xe8f/0x2090 mm/mmap.c:2886
-       do_mmap+0x8ad/0xfa0 mm/mmap.c:1397
-       vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:573
-       ksys_mmap_pgoff+0x4f1/0x720 mm/mmap.c:1443
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-6.11-part-2
 
--> #0 (&mm->mmap_lock){++++}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
-       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       __might_fault+0xc6/0x120 mm/memory.c:6233
-       _copy_to_user+0x2a/0xb0 lib/usercopy.c:41
-       copy_to_user include/linux/uaccess.h:191 [inline]
-       fiemap_fill_next_extent+0x235/0x410 fs/ioctl.c:145
-       ni_fiemap+0x4f5/0x1910 fs/ntfs3/frecord.c:1993
-       ntfs_fiemap+0x132/0x180 fs/ntfs3/file.c:1213
-       ioctl_fiemap fs/ioctl.c:220 [inline]
-       do_vfs_ioctl+0x1c07/0x2e50 fs/ioctl.c:841
-       __do_sys_ioctl fs/ioctl.c:905 [inline]
-       __se_sys_ioctl+0x81/0x170 fs/ioctl.c:893
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+for you to fetch changes up to 930e5186862b115953fb560be357f4e0bf496f94:
 
-other info that might help us debug this:
+  i2c: piix4: Register SPDs (2024-07-20 03:07:56 +0200)
 
- Possible unsafe locking scenario:
+----------------------------------------------------------------
+Added descriptions in the DTS for the Qualcomm SM8650 and SM8550
+Camera Control Interface (CCI).
 
-       CPU0                    CPU1
-       ----                    ----
-  lock(&ni->ni_lock/4);
-                               lock(&mm->mmap_lock);
-                               lock(&ni->ni_lock/4);
-  rlock(&mm->mmap_lock);
+Added support for the "settle-time-us" property, which allows the
+gpio-mux device to switch from one bus to another with a
+configurable delay. The time can be set in the DTS.
 
- *** DEADLOCK ***
+The latest change also includes file sorting.
 
-1 lock held by syz-executor.0/5466:
- #0: ffff88807905d220 (&ni->ni_lock/4){+.+.}-{3:3}, at: ni_lock fs/ntfs3/ntfs_fs.h:1107 [inline]
- #0: ffff88807905d220 (&ni->ni_lock/4){+.+.}-{3:3}, at: ntfs_fiemap+0xff/0x180 fs/ntfs3/file.c:1211
+Fixed slot numbering in the SMBus framework to prevent failures
+when more than 8 slots are occupied. It now enforces a a maximum
+of 8 slots to be used. This ensures that the Intel PIIX4 device
+can register the SPDs correctly without failure, even if other
+slots are populated but not used.
 
-stack backtrace:
-CPU: 1 PID: 5466 Comm: syz-executor.0 Not tainted 6.10.0-rc1-syzkaller-00035-gd57431c6f511 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
- __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
- __might_fault+0xc6/0x120 mm/memory.c:6233
- _copy_to_user+0x2a/0xb0 lib/usercopy.c:41
- copy_to_user include/linux/uaccess.h:191 [inline]
- fiemap_fill_next_extent+0x235/0x410 fs/ioctl.c:145
- ni_fiemap+0x4f5/0x1910 fs/ntfs3/frecord.c:1993
- ntfs_fiemap+0x132/0x180 fs/ntfs3/file.c:1213
- ioctl_fiemap fs/ioctl.c:220 [inline]
- do_vfs_ioctl+0x1c07/0x2e50 fs/ioctl.c:841
- __do_sys_ioctl fs/ioctl.c:905 [inline]
- __se_sys_ioctl+0x81/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f26c7a7dea9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f26c889e0c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f26c7babf80 RCX: 00007f26c7a7dea9
-RDX: 0000000020000280 RSI: 00000000c020660b RDI: 0000000000000005
-RBP: 00007f26c7aca4a4 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007f26c7babf80 R15: 00007ffd4e86fce8
- </TASK>
+----------------------------------------------------------------
+Bastien Curutchet (3):
+      dt-bindings: i2c: mux-gpio: Add 'settle-time-us' property
+      i2c: mux: gpio: Re-order #include to match alphabetic order
+      i2c: mux: gpio: Add support for the 'settle-time-us' property
 
+Thomas Weiﬂschuh (2):
+      i2c: smbus: remove i801 assumptions from SPD probing
+      i2c: piix4: Register SPDs
 
-Tested on:
+Vladimir Zapolskiy (2):
+      dt-bindings: i2c: qcom-cci: Document sm8550 compatible
+      dt-bindings: i2c: qcom-cci: Document sm8650 compatible
 
-commit:         d57431c6 fs/ntfs3: Do copy_to_user out of run_lock
-git tree:       https://github.com/Paragon-Software-Group/linux-ntfs3.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=11deb321980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b9016f104992d69c
-dashboard link: https://syzkaller.appspot.com/bug?extid=96cee7d33ca3f87eee86
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
+ Documentation/devicetree/bindings/i2c/i2c-mux-gpio.yaml |  3 +++
+ Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml | 20 ++++++++++++++++++++
+ drivers/i2c/busses/Kconfig                              |  1 +
+ drivers/i2c/busses/i2c-piix4.c                          |  9 +++++++++
+ drivers/i2c/i2c-smbus.c                                 | 15 ++++-----------
+ drivers/i2c/muxes/i2c-mux-gpio.c                        | 14 ++++++++++----
+ include/linux/platform_data/i2c-mux-gpio.h              |  2 ++
+ 7 files changed, 49 insertions(+), 15 deletions(-)
 
