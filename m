@@ -1,135 +1,467 @@
-Return-Path: <linux-kernel+bounces-257931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FFE19380F9
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 13:22:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1CC29380FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 13:28:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48E582820B0
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 11:22:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D91A81F21CB6
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 11:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5509685C5E;
-	Sat, 20 Jul 2024 11:22:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C4D12BF24;
+	Sat, 20 Jul 2024 11:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o8y8cxRu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A335374F5
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 11:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73559374F5;
+	Sat, 20 Jul 2024 11:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721474525; cv=none; b=S8ZZnI9NpFUuTVXITieWRS2SEluIPL5AgmaxwMiG5wGQkxHH1X829XVIVD/t3SRSGvulE+RhK7EI5OjpO6LpQGAOYbha0xbhOuAJ7dJIjl5wOYKQEKCMYzXhkhkI+mfmwBFLGdWIddCk1PN9jbSjXYup2ZwOXQ5Ys9h65wyVvtM=
+	t=1721474891; cv=none; b=Zek3DMr8xXrAiA0+Cbc/GFxc+agSRkP9exLL5hIBHE3Ufe3tqW+FH+LD5ein0W+eNEX0Y6UX6/wRGCdVBCAItbKrT8r7x1e22JHZanzRoOBTMi8a2C9J30wYeONRC7C8zxLde9k731ceQ0DkLSnTgwTKOhgLvfBkTD5Ls9je6Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721474525; c=relaxed/simple;
-	bh=CkqAdFqjPZRymKPHHls0nIYWF054qNfRzWdIalMjMJA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=oPUxtHgsWPOLcSV/L4sIVEBf3MKKGP4RaG2GrPAeE7f5f1ePScor1CAPT6q2G4eQLWboxDeU3BtERxWwr18kbJnJ4+M9tAj5v8JhjtEuPK801HerUBnqDnDFaayi7T7XNSYWfBLRR2oP9Xk8KwDGA+f5h4SIsIb4yF9S0N1Z5+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-397a99d76baso26683795ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 04:22:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721474523; x=1722079323;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=moOwreaGeFaUNhSyZbmgvOvyjE4NceXZyKg5BYVGGTc=;
-        b=tsuxZwrqhCT/G7ekWB9yCWBg/UZqwlhp4BW3gwqESYa8scX7OdGGwRJVMuuEWDDde5
-         IOvjHpju6QciQ7iLMUv4Da675J4kreO1xpH6uusQi81joExZkHbD7WHAMxWyd26UF4cr
-         5+tLvwrzXkMu213ZuYMuMNwAg2b15RCVFW0ocEjb7rYZRiVM3GVY3w8Dtj5IFi5qs0g2
-         2GkrzLFjLHwlKGYrDffFROEh23g2UdVVc+vLT2qugGwL6bgk2scHWvmriHRyfH+3SuYm
-         IB8rYEmzrmvhvee9JJauBF8zT5zACyLqz+89L5HiJN7QaTf8LZxIf3C6sTdXJMmJAZlN
-         /tvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeXVFhCMntdOYhByERaoTA4GndABMH2U58nEOU1XD+kOZoXwJg/exNUaZXiXGB4GwAp30FsOBixmle50K5fahcyXVpDZYwr0O2e6P8
-X-Gm-Message-State: AOJu0YxoyiLygslMP9/fMQKRrzPePY7P36UDFCm2R+qBfaQnB46uqF43
-	w8ns8UN+C+erc4JiWuIbVikMalUW9p+WEq4LJt/NDbQVoknQ3Mey/JNOuhO3y7tutAshfiQcvj2
-	syrEsxXlzpH2dA9cqOQzVC8zZMBnSApgZlOWxwGX7wtdzhJKMjrH9w5M=
-X-Google-Smtp-Source: AGHT+IHqOF1tXLpu16CJLHzgScyu3juSWdtSFN+idekGCpi4c0nOy8NHbjxsdGsUfrvByTcP1QVJPNOhOPiOFUAxfNEq83ivjmWA
+	s=arc-20240116; t=1721474891; c=relaxed/simple;
+	bh=Q8Wlk96IcqBdBUPAG3vf4xnLngj8CZQ3giCzlkXyKa0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QMKZ/L9Siv5CkZ2dKa2lpz3LTCFynRw2zsZk8S25XE2UgqPp2sSGgS/pW/n2GiIYlbdwOm9ArvKMTZcpYuXp5DMp1MbLNhfVPpWFUOZ9/HlNH1lb9WNQJ1yBx5YowUNj1m/SwXuIoCcTmLL07a9/jLL0RdH2EXxHYG9U4McnDDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o8y8cxRu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45A53C2BD10;
+	Sat, 20 Jul 2024 11:28:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721474890;
+	bh=Q8Wlk96IcqBdBUPAG3vf4xnLngj8CZQ3giCzlkXyKa0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=o8y8cxRup41QCy4dL+7t1vml5o+Wop9oQ8jHj4o0tZQLmI5sG09Se/F7fg3Cbfnef
+	 ffDuIYCrR5pljVVYkmzzPU1Jt0nmrC+l/c6Cc/I5DfW56WflPzyLjpXRJKq3PhRfSH
+	 m7c4bZpIQZhRDd6+axYNf2rH6dAAATYd9CYnoXVF4/nlYAWwHdw4HjJKhDlwdBesoa
+	 NRfDjuiXUciDsaIsTyk2UENrpnK2SRIAbRgCLSFkgqXd8uWZSR1Y3qifyP7l5kuc2X
+	 jiYpQWyoW2iRcCiKNU0gqDeLSI/bsktxEi1sx/LaZYxBF2DU+1On7ODJwxqGAy00xA
+	 FU88LUEvgyyRA==
+Date: Sat, 20 Jul 2024 12:28:02 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
+ ang.iglesiasg@gmail.com, linus.walleij@linaro.org,
+ biju.das.jz@bp.renesas.com, javier.carrasco.cruz@gmail.com,
+ semen.protsenko@linaro.org, 579lpy@gmail.com, ak@it-klinger.de,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 07/10] iio: pressure: bmp280: Use sleep and forced
+ mode for oneshot captures
+Message-ID: <20240720122802.2c899ee7@jic23-huawei>
+In-Reply-To: <20240711211558.106327-8-vassilisamir@gmail.com>
+References: <20240711211558.106327-1-vassilisamir@gmail.com>
+	<20240711211558.106327-8-vassilisamir@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8629:b0:4b9:b122:d07d with SMTP id
- 8926c6da1cb9f-4c23fe8a057mr110849173.4.1721474523571; Sat, 20 Jul 2024
- 04:22:03 -0700 (PDT)
-Date: Sat, 20 Jul 2024 04:22:03 -0700
-In-Reply-To: <20240720105318.114879-1-aha310510@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000077b745061dac059c@google.com>
-Subject: Re: [syzbot] [net?] KMSAN: uninit-value in hsr_get_node (3)
-From: syzbot <syzbot+a81f2759d022496b40ab@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Thu, 11 Jul 2024 23:15:55 +0200
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in hsr_get_node
+> This commit adds forced mode support in sensors BMP28x, BME28x, BMP3xx
+> and BMP58x. Sensors BMP18x and BMP085 are old and do not support this
+> feature so their operation is not affected at all.
+> 
+> Essentially, up to now, the rest of the sensors were used in normal mode
+> all the time. This means that they are continuously doing measurements
+> even though these measurements are not used. Even though the sensor does
+> provide PM support, to cover all the possible use cases, the sensor needs
+> to go into sleep mode and wake up whenever necessary.
+> 
+> This commit, adds sleep and forced mode support. Essentially, the sensor
+> sleeps all the time except for when a measurement is requested. When there
+> is a request for a measurement, the sensor is put into forced mode, starts
+> the measurement and after it is done we read the output and we put it again
+> in sleep mode.
+> 
+> For really fast and more deterministic measurements, the triggered buffer
+> interface can be used, since the sensor is still used in normal mode for
+> that use case.
+> 
+> This commit does not add though support for DEEP STANDBY, Low Power NORMAL
+> and CONTINUOUS modes, supported only by the BMP58x version.
+> 
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+Various minor comments inline.
 
-syz_tun: entered promiscuous mode
-batadv_slave_0: entered promiscuous mode
-=====================================================
-BUG: KMSAN: uninit-value in hsr_get_node+0xd1e/0xd40 net/hsr/hsr_framereg.c:275
- hsr_get_node+0xd1e/0xd40 net/hsr/hsr_framereg.c:275
- fill_frame_info net/hsr/hsr_forward.c:678 [inline]
- hsr_forward_skb+0xe9d/0x3b40 net/hsr/hsr_forward.c:715
- hsr_handle_frame+0x914/0xbb0 net/hsr/hsr_slave.c:70
- __netif_receive_skb_core+0x1f19/0x6c90 net/core/dev.c:5554
- __netif_receive_skb_one_core net/core/dev.c:5658 [inline]
- __netif_receive_skb+0xca/0xa00 net/core/dev.c:5774
- netif_receive_skb_internal net/core/dev.c:5860 [inline]
- netif_receive_skb+0x58/0x660 net/core/dev.c:5920
- tun_rx_batched+0x3ee/0x980 drivers/net/tun.c:1549
- tun_get_user+0x5677/0x6b50 drivers/net/tun.c:2006
- tun_chr_write_iter+0x3af/0x5d0 drivers/net/tun.c:2052
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xb2f/0x1550 fs/read_write.c:590
- ksys_write+0x20f/0x4c0 fs/read_write.c:643
- __do_sys_write fs/read_write.c:655 [inline]
- __se_sys_write fs/read_write.c:652 [inline]
- __x64_sys_write+0x93/0xe0 fs/read_write.c:652
- x64_sys_call+0x3490/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:2
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Thanks,
 
-Uninit was created at:
- __alloc_pages_noprof+0x9d6/0xe70 mm/page_alloc.c:4706
- alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
- alloc_pages_noprof+0x1bf/0x1e0 mm/mempolicy.c:2336
- skb_page_frag_refill+0x2bf/0x7c0 net/core/sock.c:2941
- tun_build_skb drivers/net/tun.c:1680 [inline]
- tun_get_user+0x1262/0x6b50 drivers/net/tun.c:1823
- tun_chr_write_iter+0x3af/0x5d0 drivers/net/tun.c:2052
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xb2f/0x1550 fs/read_write.c:590
- ksys_write+0x20f/0x4c0 fs/read_write.c:643
- __do_sys_write fs/read_write.c:655 [inline]
- __se_sys_write fs/read_write.c:652 [inline]
- __x64_sys_write+0x93/0xe0 fs/read_write.c:652
- x64_sys_call+0x3490/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:2
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Jonathan
 
-CPU: 1 PID: 5476 Comm: syz-executor.0 Not tainted 6.10.0-syzkaller-10729-g3c3ff7be9729-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-=====================================================
+> ---
+>  drivers/iio/pressure/bmp280-core.c | 276 +++++++++++++++++++++++++++--
+>  drivers/iio/pressure/bmp280.h      |  12 ++
+>  2 files changed, 269 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+> index 9c99373d66ec..fc8d42880eb8 100644
+> --- a/drivers/iio/pressure/bmp280-core.c
+> +++ b/drivers/iio/pressure/bmp280-core.c
+> @@ -145,6 +145,12 @@ enum bmp280_scan {
+>  	BME280_HUMID,
+>  };
+>  }
+>  
+> +static int bmp280_set_mode(struct bmp280_data *data, u8 mode)
+> +{
+> +	int ret;
+> +
+> +	switch (mode) {
+> +	case BMP280_SLEEP:
+> +		ret = regmap_write_bits(data->regmap, BMP280_REG_CTRL_MEAS,
+> +					BMP280_MODE_MASK, BMP280_MODE_SLEEP);
+
+Use a local variable for the BMP280_MODE_* and then have the regmap_write_bits()
+after the switch statement.
+
+Could even make it a const data look up given you are getting a value
+based on the enum.
+
+> +		break;
+> +	case BMP280_FORCED:
+> +		ret = regmap_write_bits(data->regmap, BMP280_REG_CTRL_MEAS,
+> +					BMP280_MODE_MASK, BMP280_MODE_FORCED);
+> +		break;
+> +	case BMP280_NORMAL:
+> +		ret = regmap_write_bits(data->regmap, BMP280_REG_CTRL_MEAS,
+> +					BMP280_MODE_MASK, BMP280_MODE_NORMAL);
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (ret) {
+> +		dev_err(data->dev, "failed to  write ctrl_meas register\n");
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int bmp280_wait_conv(struct bmp280_data *data)
+> +{
+> +	unsigned int reg;
+> +	int ret, meas_time;
+> +
+> +	meas_time = BMP280_MEAS_OFFSET;
+> +
+> +	if (data->oversampling_humid)
+> +		meas_time += (1 << data->oversampling_humid) * BMP280_MEAS_DUR +
+> +			       BMP280_PRESS_HUMID_MEAS_OFFSET;
+Add a comment on why, if oversampling_humid is not set we end up with
+no time for measuring humidity.  The MEAS_OFFSET is less than one MEAS_DUR
+so not it's not a case of that already incorporating the time.
 
 
-Tested on:
+> +
+> +	/* Pressure measurement time */
+> +	meas_time += (1 << data->oversampling_press) * BMP280_MEAS_DUR +
+> +		      BMP280_PRESS_HUMID_MEAS_OFFSET;
+> +
+> +	/* Temperature measurement time */
+> +	meas_time += (1 << data->oversampling_temp) * BMP280_MEAS_DUR;
+> +
+> +	usleep_range(meas_time, meas_time * 12 / 10);
+> +
+> +	ret = regmap_read(data->regmap, BMP280_REG_STATUS, &reg);
+> +	if (ret) {
+> +		dev_err(data->dev, "failed to read status register\n");
+> +		return ret;
+> +	}
+> +	if (reg & BMP280_REG_STATUS_MEAS_BIT) {
+> +		dev_err(data->dev, "Measurement cycle didn't complete\n");
+> +		return -EBUSY;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int bmp280_chip_config(struct bmp280_data *data)
+>  {
+>  	u8 osrs = FIELD_PREP(BMP280_OSRS_TEMP_MASK, data->oversampling_temp + 1) |
+> @@ -994,7 +1078,7 @@ static int bmp280_chip_config(struct bmp280_data *data)
+>  				BMP280_OSRS_TEMP_MASK |
+>  				BMP280_OSRS_PRESS_MASK |
+>  				BMP280_MODE_MASK,
+> -				osrs | BMP280_MODE_NORMAL);
+> +				osrs | BMP280_MODE_SLEEP);
+>  	if (ret) {
+>  		dev_err(data->dev, "failed to write ctrl_meas register\n");
+>  		return ret;
+> @@ -1100,6 +1184,8 @@ const struct bmp280_chip_info bmp280_chip_info = {
+>  	.read_temp = bmp280_read_temp,
+>  	.read_press = bmp280_read_press,
+>  	.read_calib = bmp280_read_calib,
+> +	.set_mode = bmp280_set_mode,
+> +	.wait_conv = bmp280_wait_conv,
+>  	.preinit = bmp280_preinit,
+>  
+>  	.trigger_handler = bmp280_trigger_handler,
+> @@ -1218,6 +1304,8 @@ const struct bmp280_chip_info bme280_chip_info = {
+>  	.read_press = bmp280_read_press,
+>  	.read_humid = bme280_read_humid,
+>  	.read_calib = bme280_read_calib,
+> +	.set_mode = bmp280_set_mode,
+> +	.wait_conv = bmp280_wait_conv,
+>  	.preinit = bmp280_preinit,
+>  
+>  	.trigger_handler = bme280_trigger_handler,
+> @@ -1505,6 +1593,75 @@ static int bmp380_preinit(struct bmp280_data *data)
+>  	return bmp380_cmd(data, BMP380_CMD_SOFT_RESET);
+>  }
+>  
+> +static int bmp380_set_mode(struct bmp280_data *data, u8 mode)
+> +{
+> +	int ret;
+> +
+> +	switch (mode) {
+> +	case BMP280_SLEEP:
+> +		ret = regmap_write_bits(data->regmap, BMP380_REG_POWER_CONTROL,
+> +					BMP380_MODE_MASK,
+> +					FIELD_PREP(BMP380_MODE_MASK,
+> +						   BMP380_MODE_SLEEP));
+As above. I'd use a local variable to stash the MODE* that you are going
+to write or just look it up in a const array.
 
-commit:         3c3ff7be Merge tag 'powerpc-6.11-1' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13549349980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bf984d38d0f9fb49
-dashboard link: https://syzkaller.appspot.com/bug?extid=a81f2759d022496b40ab
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=150cd8ce980000
+> +		break;
+> +	case BMP280_FORCED:
+> +		ret = regmap_write_bits(data->regmap, BMP380_REG_POWER_CONTROL,
+> +					BMP380_MODE_MASK,
+> +					FIELD_PREP(BMP380_MODE_MASK,
+> +						   BMP380_MODE_FORCED));
+> +		break;
+> +	case BMP280_NORMAL:
+> +		ret = regmap_write_bits(data->regmap, BMP380_REG_POWER_CONTROL,
+> +					BMP380_MODE_MASK,
+> +					FIELD_PREP(BMP380_MODE_MASK,
+> +						   BMP380_MODE_NORMAL));
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (ret) {
+> +		dev_err(data->dev, "failed to  write power control register\n");
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int bmp380_wait_conv(struct bmp280_data *data)
+> +{
+> +	unsigned int reg;
+> +	int ret, meas_time;
+> +
+> +	/* Offset measurement time */
+> +	meas_time = BMP380_MEAS_OFFSET;
+> +
+> +	/* Pressure measurement time */
+> +	meas_time += (1 << data->oversampling_press) * BMP380_MEAS_DUR +
+> +		      BMP380_PRESS_MEAS_OFFSET;
+> +
+> +	/* Temperature measurement time */
+> +	meas_time += (1 << data->oversampling_temp) * BMP380_MEAS_DUR +
+> +		      BMP380_TEMP_MEAS_OFFSET;
+> +
+> +	usleep_range(meas_time, meas_time * 12 / 10);
+> +
+> +	ret = regmap_read(data->regmap, BMP380_REG_STATUS, &reg);
+> +	if (ret) {
+> +		dev_err(data->dev, "failed to read status register\n");
+> +		return ret;
+> +	}
+> +
+> +	if (!(reg & BMP380_STATUS_DRDY_PRESS_MASK) ||
+> +	    !(reg & BMP380_STATUS_DRDY_TEMP_MASK)) {
+> +		pr_info("Meas_time: %d\n", meas_time);
 
+Why as pr_info?  Seems like part of the dev_err.
+
+> +		dev_err(data->dev, "Measurement cycle didn't complete\n");
+> +		return -EBUSY;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int bmp380_chip_config(struct bmp280_data *data)
+>  {
+>  	bool change = false, aux;
+> @@ -1565,17 +1722,15 @@ static int bmp380_chip_config(struct bmp280_data *data)
+>  		 * Resets sensor measurement loop toggling between sleep and
+>  		 * normal operating modes.
+>  		 */
+> -		ret = regmap_write_bits(data->regmap, BMP380_REG_POWER_CONTROL,
+> -					BMP380_MODE_MASK,
+> -					FIELD_PREP(BMP380_MODE_MASK, BMP380_MODE_SLEEP));
+> +		ret = bmp380_set_mode(data, BMP280_SLEEP);
+>  		if (ret) {
+>  			dev_err(data->dev, "failed to set sleep mode\n");
+>  			return ret;
+>  		}
+> -		usleep_range(2000, 2500);
+> -		ret = regmap_write_bits(data->regmap, BMP380_REG_POWER_CONTROL,
+> -					BMP380_MODE_MASK,
+> -					FIELD_PREP(BMP380_MODE_MASK, BMP380_MODE_NORMAL));
+> +
+> +		usleep_range(data->start_up_time, data->start_up_time + 500);
+> +
+> +		ret = bmp380_set_mode(data, BMP280_NORMAL);
+>  		if (ret) {
+>  			dev_err(data->dev, "failed to set normal mode\n");
+>  			return ret;
+> @@ -1601,6 +1756,17 @@ static int bmp380_chip_config(struct bmp280_data *data)
+>  		}
+>  	}
+>  
+> +	/* Dummy read to empty data registers. */
+> +	ret = bmp380_read_press(data, &tmp);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = bmp380_set_mode(data, BMP280_SLEEP);
+> +	if (ret) {
+> +		dev_err(data->dev, "failed to set sleep mode\n");
+> +		return ret;
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> @@ -1693,6 +1859,8 @@ const struct bmp280_chip_info bmp380_chip_info = {
+>  	.read_temp = bmp380_read_temp,
+>  	.read_press = bmp380_read_press,
+>  	.read_calib = bmp380_read_calib,
+> +	.set_mode = bmp380_set_mode,
+> +	.wait_conv = bmp380_wait_conv,
+>  	.preinit = bmp380_preinit,
+>  
+>  	.trigger_handler = bmp380_trigger_handler,
+> @@ -2080,6 +2248,65 @@ static int bmp580_preinit(struct bmp280_data *data)
+>  	return PTR_ERR_OR_ZERO(devm_nvmem_register(config.dev, &config));
+>  }
+>  
+> +static int bmp580_set_mode(struct bmp280_data *data, u8 mode)
+> +{
+> +	int ret;
+> +
+> +	switch (mode) {
+> +	case BMP280_SLEEP:
+> +		ret = regmap_write_bits(data->regmap, BMP580_REG_ODR_CONFIG,
+> +					BMP580_MODE_MASK,
+> +					FIELD_PREP(BMP580_MODE_MASK,
+> +						   BMP580_MODE_SLEEP));
+> +		break;
+> +	case BMP280_FORCED:
+> +		ret = regmap_set_bits(data->regmap, BMP580_REG_DSP_CONFIG,
+> +				      BMP580_DSP_IIR_FORCED_FLUSH);
+> +
+check that ret.
+
+> +		ret = regmap_write_bits(data->regmap, BMP580_REG_ODR_CONFIG,
+> +					BMP580_MODE_MASK,
+> +					FIELD_PREP(BMP580_MODE_MASK,
+> +						   BMP580_MODE_FORCED));
+This one is more complex so a switch statement makes sense here.
+> +		break;
+> +	case BMP280_NORMAL:
+> +		ret = regmap_write_bits(data->regmap, BMP580_REG_ODR_CONFIG,
+> +					BMP580_MODE_MASK,
+> +					FIELD_PREP(BMP580_MODE_MASK,
+> +						   BMP580_MODE_NORMAL));
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (ret) {
+> +		dev_err(data->dev, "failed to  write power control register\n");
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int bmp580_wait_conv(struct bmp280_data *data)
+> +{
+> +	/*
+> +	 * Taken from datasheet, Section 2 "Specification, Table 3 "Electrical
+> +	 * characteristics
+> +	 */
+> +	const int time_conv_press[] = { 0, 1050, 1785, 3045, 5670, 10920, 21420,
+> +					42420, 84420};
+> +	const int time_conv_temp[] = { 0, 1050, 1105, 1575, 2205, 3465, 6090,
+> +				       11340, 21840};
+> +	int meas_time;
+> +
+> +	meas_time = 4000 + time_conv_temp[data->oversampling_temp] +
+> +			   time_conv_press[data->oversampling_press];
+> +
+> +	usleep_range(meas_time, meas_time * 12 / 10);
+> +
+> +	return 0;
+> +}
+> +
+one blank line only.
+> +
+>  static int bmp580_chip_config(struct bmp280_data *data)
+>  {
+>  	bool change = false, aux;
+> @@ -2150,17 +2377,6 @@ static int bmp580_chip_config(struct bmp280_data *data)
+>  		return ret;
+>  	}
+>  
+> -	/* Restore sensor to normal operation mode */
+> -	ret = regmap_write_bits(data->regmap, BMP580_REG_ODR_CONFIG,
+> -				BMP580_MODE_MASK,
+> -				FIELD_PREP(BMP580_MODE_MASK, BMP580_MODE_NORMAL));
+> -	if (ret) {
+> -		dev_err(data->dev, "failed to set normal mode\n");
+> -		return ret;
+> -	}
+> -	/* From datasheet's table 4: electrical characteristics */
+> -	usleep_range(3000, 3500);
+> -
+>  	if (change) {
+>  		/*
+>  		 * Check if ODR and OSR settings are valid or we are
+> @@ -2256,6 +2472,8 @@ const struct bmp280_chip_info bmp580_chip_info = {
+>  	.chip_config = bmp580_chip_config,
+>  	.read_temp = bmp580_read_temp,
+>  	.read_press = bmp580_read_press,
+> +	.set_mode = bmp580_set_mode,
+> +	.wait_conv = bmp580_wait_conv,
+>  	.preinit = bmp580_preinit,
+>  
+>  	.trigger_handler = bmp580_trigger_handler,
+> @@ -2503,6 +2721,16 @@ static int bmp180_read_press(struct bmp280_data *data, u32 *comp_press)
+>  	return 0;
+>  }
+>  
+> +static int bmp180_set_mode(struct bmp280_data *data, u8 mode)
+> +{
+> +	return 0;
+Add a comment on why these are stubs.  It's in the patch description, but
+better to have it recorded in the code.
+
+> +}
+> +
+> +static int bmp180_wait_conv(struct bmp280_data *data)
+> +{
+> +	return 0;
+> +}
+> +
+>
 
