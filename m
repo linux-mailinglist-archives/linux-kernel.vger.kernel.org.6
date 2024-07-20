@@ -1,453 +1,249 @@
-Return-Path: <linux-kernel+bounces-257900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33837938090
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 11:55:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34463938093
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 11:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD8352825E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 09:55:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACC971F21DEB
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 09:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E4A7E58D;
-	Sat, 20 Jul 2024 09:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4227FBBD;
+	Sat, 20 Jul 2024 09:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2YLhcuz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XL+CgaGm"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CEF5474A;
-	Sat, 20 Jul 2024 09:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A7115AE0;
+	Sat, 20 Jul 2024 09:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721469312; cv=none; b=XURfxpXHSNJgHcMZ8HKJxW6QDM3mszabFzN6pE9abomoeK2ocQt2kZ1g1KH3Y8xwLcWtjr4HXluI5AyRg/ymSeYNCat2LHfJNmTYxJJYGH1XIR5hWUN1RdpZRKP6OPiP9oKtj5pW1xydR4Tvs7M46165m3rQfdlToHTFKuDLwFM=
+	t=1721469458; cv=none; b=cwnEiuk14Z8i7ubMNdxowQD7dw3q6ITqtnXRBLRZ7Kj2ltZaLtyyq4/TAmwl+CvIC9076VkEf5pe7MEOUGT33h+PbsEM7gEufMnSIWJuMcuzf9XVW3EPyYE9AlB3+0R7iXJxKQzLh8eTjnwX5DuxzQDBg/y4mvcxOPKs1hheXyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721469312; c=relaxed/simple;
-	bh=Wu5UFeumOWtWcFpQjS3yFFfzrB2TMfTN7C1LyRPLT8M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BTb1yD4xZLL2a5MVwsx3MFEzHdLt/C7LKB4welhjmh5F0w/fBaYnFpiFeLcU3oE6KAj2z5RNdNjwa9ELWZWCY3GQDngG/yURz1+/9w3NHZUV9VEW/jSKcp4SBjpgEKDsuqGpEDynAJvXSBlHor954cAsoPd+8HcRDOyBshEs/Wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m2YLhcuz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E727BC2BD10;
-	Sat, 20 Jul 2024 09:55:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721469312;
-	bh=Wu5UFeumOWtWcFpQjS3yFFfzrB2TMfTN7C1LyRPLT8M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m2YLhcuzuvpG5Gmb6hnvUQYlRuoWmj+rC3ymrDjbv+3Q4d1Yo2kPaG6aisR+jz/Da
-	 HHLfX8Ktt8uGZpZ+nD3NbYKU1jHj4R0UDCFJP0YY3nRlvR2CSRx229Mr0hxKMI5Dcx
-	 N4n8eCznvVhRE9e3eRlui4O9yc6hg12xsrtfHUpAUY6qJd97i5W5O9WxiaYTFbAvc8
-	 jr40fIkjooG0YTr9jqwEG7HZJdACGtfWExO6WQA6Xru6DM0JkKC4UlBPi3FZPtRC7h
-	 7Qnk/cs4MkuCEST2blPWfY5Vix2Vni8RSPke/Mh8q2TCJBra2A5RIXWw8ylqSuDUl7
-	 YzigxlXhQTo2Q==
-Received: by pali.im (Postfix)
-	id 020258A0; Sat, 20 Jul 2024 11:55:07 +0200 (CEST)
-Date: Sat, 20 Jul 2024 11:55:07 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Andres Salomon <dilinger@queued.net>
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-	Matthew Garrett <mjg59@srcf.ucam.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	linux-pm@vger.kernel.org, Dell.Client.Kernel@dell.com,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH] platform/x86:dell-laptop: Add knobs to change battery
- charge settings
-Message-ID: <20240720095507.uyaotkofkyasdgbd@pali>
-References: <20240720012220.26d62a54@5400>
- <20240720084019.hrnd4wgt4muorydp@pali>
- <20240720052419.73b1415a@5400>
+	s=arc-20240116; t=1721469458; c=relaxed/simple;
+	bh=pI6+/cl5fHcJLsP8KNLz1goMLsqIFDPKFvV/bnQaXEY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IC5zat6f6AHklYpLuBiWQ9h2bdcZ1gp9fqR2cPPF72L86rvluWO464K0T6BDejo8LeTglgsbM4deJir7A5/VTDN7t57oo40GTmLe1iYRtKLeDRP89isCBmD6KSVyuILB1vihJiW626W3sb9Z+s+YSJ2pf17IF+5HavLjYob4WdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XL+CgaGm; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70afe18837cso1108957b3a.3;
+        Sat, 20 Jul 2024 02:57:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721469456; x=1722074256; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gUbbx1Otrdel4AFReaWE4AeMjSeZObzKo500myWjxeM=;
+        b=XL+CgaGmSG1BE7vHeYwCPt4tuu0EUnCIQWqEl5+bMmtqw2ac1GstLLAKEhuwjvlNYM
+         3VLjxXpU5LFLJA33muP9tt3S7Ow/9UM92BQMeTNFo1nobYCPy4+cPhEOR7L2z/vM4+uU
+         z6dyaCIsTx14gu3Py2PyykMs4LhIxKzdSe98UZ5vZ01bDCBovctDWihwVtd11EIV7epl
+         chUxXAQS+ytNieSu1OuyhZ+ic/krGscsyzqEsrMBtwN64YPvIb+03Ox036OxIH+8PDvb
+         6VEQUtSLMV03YwiSqtzxKuIu1HkGpClM3tTm82tBR6X/joiCRwaqEkXcGI0yBcyYIf7F
+         zYKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721469456; x=1722074256;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=gUbbx1Otrdel4AFReaWE4AeMjSeZObzKo500myWjxeM=;
+        b=ob1IVx3bF2bLW99M3LKp0/WhlIMY0G0YAkekeuUr9td5r24O6GLoWv73XtY7+2XaC/
+         ZFBl/YHwE8cj/bwYbzJAjiuEMWeEKapEAvdmZzYVZ95BcTHknFDe9HKJEQIzf5pYh5+6
+         69NzWs0D/IZlWuKVlZpCO3ttnZgma0v1GsdEstlpafmWKS6xxmz6qb0+Q+VvL94EfAQP
+         M9yU02aytZaMFX6d8c87HAJB+ipfSigB699ZW0SHyQjeMtQ9LPJtuvbBlHHso46DS7D+
+         m+FOtM+cspUZ9/kdOScZ/bRgVJ60SSN0/1dwS+YnnZPIOh8OPEuNmHQA22Dfs8JlGHAv
+         eScg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4klQBrKvhHDGau7pZZz/s5zmdWAWMThe+crIIkxjTsylmyg24dvIihMWmLIybjGFf093x5Ih44NlRhEDMzthidXBgGa0+2MyVqQNnM0m7VCFPmQjKxO20IE31AkFSXS4v
+X-Gm-Message-State: AOJu0Yz3ZNDdT03Sz+k47UZkBqn0uzOuCwY+iDVfD7pNR7w9n0eUKOh7
+	aK2xjhrGBG4WRgmU+sz8BqczcYxULkvf7WeGFS4155fwUmyPEXmZy43qAA==
+X-Google-Smtp-Source: AGHT+IEdhbg6wqyjAGlvF/AYnW2mOCfWz4H+my6SOl3ig8NMDj16E4ZDLQ/Xf4mNSmqLm1vZ/khZ2Q==
+X-Received: by 2002:a05:6a00:c8f:b0:706:74b7:9d78 with SMTP id d2e1a72fcca58-70d0ee19627mr568476b3a.0.1721469456016;
+        Sat, 20 Jul 2024 02:57:36 -0700 (PDT)
+Received: from [192.168.0.121] ([39.172.10.229])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70d140c024esm424902b3a.12.2024.07.20.02.57.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 20 Jul 2024 02:57:35 -0700 (PDT)
+Message-ID: <77ddcb0e-a7fa-468d-b8bd-c74e9bb1f8c2@gmail.com>
+Date: Sat, 20 Jul 2024 17:57:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2 PATCH bpf-next 2/4] bpftool: add net attach/detach command to
+ tcx prog
+To: Quentin Monnet <qmo@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>
+Cc: Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240717174749.1511366-1-chen.dylane@gmail.com>
+ <fa9bb6d5-7a72-4d77-8862-d8489a759506@kernel.org>
+From: Tao Chen <chen.dylane@gmail.com>
+In-Reply-To: <fa9bb6d5-7a72-4d77-8862-d8489a759506@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240720052419.73b1415a@5400>
-User-Agent: NeoMutt/20180716
 
-On Saturday 20 July 2024 05:24:19 Andres Salomon wrote:
-> Thanks for the quick feedback! Responses below.
-> 
-> On Sat, 20 Jul 2024 10:40:19 +0200
-> Pali Rohár <pali@kernel.org> wrote:
-> 
-> > Hello,
-> > 
-> > I looked at your patch. I wrote some comments below. The main issue is
-> > how to correctly interpret read token values.
-> >
-> [...]
-> 
-> > 
-> > dell_send_request() returns negative value on error. As the read value
-> > seems to be always non-negative number, you can change API of the
-> > dell_battery_read_req() function to have read value in the return value
-> > (instead of in *val pointer). E.g.
-> > 
-> > static int dell_battery_read_req(const int type)
-> > {
-> > 	...
-> > 	err = dell_send_request(&buffer, CLASS_TOKEN_READ, SELECT_TOKEN_STD);
-> > 	if (err)
-> > 		return err;
-> > 
-> > 	return buffer.output[1];
-> > }
-> > 
-> 
-> Good call, I'll change that.
-> 
-> 
-> > > +
-> > > +static int dell_battery_write_req(const int type, int val)
-> > > +{
-> > > +	struct calling_interface_buffer buffer;
-> > > +	struct calling_interface_token *token;
-> > > +
-> > > +	token = dell_smbios_find_token(type);
-> > > +	if (!token)
-> > > +		return -ENODEV;
-> > > +
-> > > +	dell_fill_request(&buffer, token->location, val, 0, 0);
-> > > +	return dell_send_request(&buffer,
-> > > +			CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
-> > > +}
-> > > +
-> > > +/* The rules: the minimum start charging value is 50%. The maximum
-> > > + * start charging value is 95%. The minimum end charging value is
-> > > + * 55%. The maximum end charging value is 100%. And finally, there
-> > > + * has to be at least a 5% difference between start & end values.
-> > > + */
-> > > +#define CHARGE_START_MIN	50
-> > > +#define CHARGE_START_MAX	95
-> > > +#define CHARGE_END_MIN		55
-> > > +#define CHARGE_END_MAX		100
-> > > +#define CHARGE_MIN_DIFF		5
-> > > +
-> > > +static int dell_battery_custom_set(const int type, int val)
-> > > +{
-> > > +	if (type == BAT_CUSTOM_CHARGE_START) {
-> > > +		int end = CHARGE_END_MAX;
-> > > +
-> > > +		if (val < CHARGE_START_MIN)
-> > > +			val = CHARGE_START_MIN;
-> > > +		else if (val > CHARGE_START_MAX)
-> > > +			val = CHARGE_START_MAX;
-> > > +
-> > > +		dell_battery_read_req(BAT_CUSTOM_CHARGE_END, &end);  
-> > 
-> > Missing check for failure of dell_battery_read_req.
-> 
-> This is intentional; it's just a sanity check, we don't need to bail
-> if we hit a failure. I'll change the code to make that explicit
-> though, as it's not currently clear.
+在 2024/7/20 00:17, Quentin Monnet 写道:
+> On 17/07/2024 18:47, Tao Chen wrote:
+>> Now, attach/detach tcx prog supported in libbpf, so we can add new
+>> command 'bpftool attach/detach tcx' to attach tcx prog with bpftool
+>> for user.
+>>
+>>   # bpftool prog load tc_prog.bpf.o /sys/fs/bpf/tc_prog
+>>   # bpftool prog show
+>> 	...
+>> 	192: sched_cls  name tc_prog  tag 187aeb611ad00cfc  gpl
+>> 	loaded_at 2024-07-11T15:58:16+0800  uid 0
+>> 	xlated 152B  jited 97B  memlock 4096B  map_ids 100,99,97
+>> 	btf_id 260
+>>   # bpftool net attach tcx_ingress name tc_prog dev lo
+>>   # bpftool net
+>> 	...
+>> 	tc:
+>> 	lo(1) tcx/ingress tc_prog prog_id 29
+>>
+>>   # bpftool net detach tcx_ingress dev lo
+>>   # bpftool net
+>> 	...
+>> 	tc:
+>>   # bpftool net attach tcx_ingress name tc_prog dev lo
+>>   # bpftool net
+>> 	tc:
+>> 	lo(1) tcx/ingress tc_prog prog_id 29
+>>
+>> Test environment: ubuntu_22_04, 6.7.0-060700-generic
+>>
+>> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+>> ---
+>>   tools/bpf/bpftool/net.c | 43 ++++++++++++++++++++++++++++++++++++++++-
+>>   1 file changed, 42 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/tools/bpf/bpftool/net.c b/tools/bpf/bpftool/net.c
+>> index 1b9f4225b394..60b0af40109a 100644
+>> --- a/tools/bpf/bpftool/net.c
+>> +++ b/tools/bpf/bpftool/net.c
+>> @@ -67,6 +67,8 @@ enum net_attach_type {
+>>   	NET_ATTACH_TYPE_XDP_GENERIC,
+>>   	NET_ATTACH_TYPE_XDP_DRIVER,
+>>   	NET_ATTACH_TYPE_XDP_OFFLOAD,
+>> +	NET_ATTACH_TYPE_TCX_INGRESS,
+>> +	NET_ATTACH_TYPE_TCX_EGRESS,
+>>   };
+>>   
+>>   static const char * const attach_type_strings[] = {
+>> @@ -74,6 +76,8 @@ static const char * const attach_type_strings[] = {
+>>   	[NET_ATTACH_TYPE_XDP_GENERIC]	= "xdpgeneric",
+>>   	[NET_ATTACH_TYPE_XDP_DRIVER]	= "xdpdrv",
+>>   	[NET_ATTACH_TYPE_XDP_OFFLOAD]	= "xdpoffload",
+>> +	[NET_ATTACH_TYPE_TCX_INGRESS]	= "tcx_ingress",
+>> +	[NET_ATTACH_TYPE_TCX_EGRESS]	= "tcx_egress",
+>>   };
+>>   
+>>   static const char * const attach_loc_strings[] = {
+>> @@ -647,6 +651,32 @@ static int do_attach_detach_xdp(int progfd, enum net_attach_type attach_type,
+>>   	return bpf_xdp_attach(ifindex, progfd, flags, NULL);
+>>   }
+>>   
+>> +static int get_tcx_type(enum net_attach_type attach_type)
+>> +{
+>> +	switch (attach_type) {
+>> +	case NET_ATTACH_TYPE_TCX_INGRESS:
+>> +		return BPF_TCX_INGRESS;
+>> +	case NET_ATTACH_TYPE_TCX_EGRESS:
+>> +		return BPF_TCX_EGRESS;
+>> +	default:
+>> +		return __MAX_BPF_ATTACH_TYPE;
 > 
 > 
-> 
-> > 
-> > > +		if ((end - val) < CHARGE_MIN_DIFF)
-> > > +			val = end - CHARGE_MIN_DIFF;
-> > > +	} else if (type == BAT_CUSTOM_CHARGE_END) {
-> > > +		int start = CHARGE_START_MIN;
-> > > +
-> > > +		if (val < CHARGE_END_MIN)
-> > > +			val = CHARGE_END_MIN;
-> > > +		else if (val > CHARGE_END_MAX)
-> > > +			val = CHARGE_END_MAX;
-> > > +
-> > > +		dell_battery_read_req(BAT_CUSTOM_CHARGE_START, &start);  
-> > 
-> > Missing check for failure of dell_battery_read_req.
-> > 
-> 
-> Ditto.
+> Can we return -1 here instead, please? In the current code, we validate
+> the attach_type before entering this function and the "default" case is
+> never reached, it's only here to discard compiler's warning. But if we
+> ever reuse this function elsewhere, this could cause bugs: if the header
+> file used for compiling the bpftool binary is not in sync with the
+> header corresponding to the running kernel, __MAX_BPF_ATTACH_TYPE could
+> correspond to a newly introduced type, and bpftool/libbpf would try to
+> use that to attach the program, instead of detecting an error.
 > 
 > 
-> > > +		if ((val - start) < CHARGE_MIN_DIFF)
-> > > +			val = start + CHARGE_MIN_DIFF;
-> > > +	}
-> > > +
-> > > +	return dell_battery_write_req(type, val);
-> > > +}
-> > > +
-> > > +static int battery_charging_mode_set(enum battery_charging_mode mode)
-> > > +{
-> > > +	int err;
-> > > +
-> > > +	switch (mode) {
-> > > +	case DELL_BAT_MODE_STANDARD:
-> > > +		err = dell_battery_write_req(BAT_STANDARD_MODE_TOKEN, mode);
-> > > +		break;
-> > > +	case DELL_BAT_MODE_EXPRESS:
-> > > +		err = dell_battery_write_req(BAT_EXPRESS_MODE_TOKEN, mode);
-> > > +		break;
-> > > +	case DELL_BAT_MODE_PRIMARILY_AC:
-> > > +		err = dell_battery_write_req(BAT_PRI_AC_MODE_TOKEN, mode);
-> > > +		break;
-> > > +	case DELL_BAT_MODE_ADAPTIVE:
-> > > +		err = dell_battery_write_req(BAT_ADAPTIVE_MODE_TOKEN, mode);
-> > > +		break;
-> > > +	case DELL_BAT_MODE_CUSTOM:
-> > > +		err = dell_battery_write_req(BAT_CUSTOM_MODE_TOKEN, mode);
-> > > +		break;
-> > > +	default:
-> > > +		err = -EINVAL;
-> > > +	}
-> > > +
-> > > +	return err;
-> > > +}  
-> > 
-> > You can make whole function smaller by avoiding err variable:
-> > 
-> > static int battery_charging_mode_set(enum battery_charging_mode mode)
-> > {
-> > 	switch (mode) {
-> > 	case DELL_BAT_MODE_STANDARD:
-> > 		return dell_battery_write_req(BAT_STANDARD_MODE_TOKEN, mode);
-> > 	case DELL_BAT_MODE_EXPRESS:
-> > 		return dell_battery_write_req(BAT_EXPRESS_MODE_TOKEN, mode);
-> > 	case DELL_BAT_MODE_PRIMARILY_AC:
-> > 		return dell_battery_write_req(BAT_PRI_AC_MODE_TOKEN, mode);
-> > 	case DELL_BAT_MODE_ADAPTIVE:
-> > 		return dell_battery_write_req(BAT_ADAPTIVE_MODE_TOKEN, mode);
-> > 	case DELL_BAT_MODE_CUSTOM:
-> > 		return dell_battery_write_req(BAT_CUSTOM_MODE_TOKEN, mode);
-> > 	default:
-> > 		return -EINVAL;
-> > 	}
-> > }
-> >
-> 
-> Okay, I'll change it.
-> 
->  
-> > > +
-> > > +static ssize_t charge_type_show(struct device *dev,
-> > > +		struct device_attribute *attr,
-> > > +		char *buf)
-> > > +{
-> > > +	enum battery_charging_mode mode;
-> > > +	ssize_t count = 0;
-> > > +
-> > > +	for (mode = DELL_BAT_MODE_STANDARD; mode < DELL_BAT_MODE_MAX; mode++) {
-> > > +		if (battery_state[mode]) {
-> > > +			count += sysfs_emit_at(buf, count,
-> > > +				mode == bat_chg_current ? "[%s] " : "%s ",
-> > > +				battery_state[mode]);
-> > > +		}
-> > > +	}
-> > > +
-> > > +	/* convert the last space to a newline */
-> > > +	count--;
-> > > +	count += sysfs_emit_at(buf, count, "\n");  
-> > 
-> > Here is missing protection in the case when number of valid modes is
-> > zero, so count is 0 and buf was untouched.
-> > 
-> 
-> This will never be zero (based on the hardcoded value of DELL_BAT_MODE_MAX),
 
-Now I see. You are iterating over members of constant array battery_state[].
-I overlooked it and I thought that this iteration over mode values.
+Hi, Quentin, i didn’t take the use case you mentioned into account. As 
+you said, -1 looks more reasonable. I will fix it in the next revisions.
 
-What about writing the for- conditions to be visible that you are
-iterating over the array? E.g.
-
-	size_t i;
-	...
-	for (i = 0; i < ARRAY_SIZE(battery_state); i++) {
-		if (!battery_state[i])
-			continue;
-		count += sysfs_emit_at(buf, count, i == bat_chg_current ? "[%s] " : "%s ", battery_state[i]);
-	}
-	...
-
-This has an advantage that you do not depend on DELL_BAT_MODE_MAX value,
-compiler will calculate upper bound automatically.
-
-Or another way. You can define array of tokens, like it is done for
-keyboard backlight. See how the array kbd_tokens[] is used.
-
-With this approach you can completely get rid of the DELL_BAT_MODE_MAX.
-
-> but perhaps a static_assert or BUILD_BUG_ON to verify that the number of
-> modes > 0?
-
-I think it is not needed.
-
->   
-> > > +
-> > > +	return count;
-> > > +}
-> > > +
-> > > +static ssize_t charge_type_store(struct device *dev,
-> > > +		struct device_attribute *attr,
-> > > +		const char *buf, size_t size)
-> > > +{
-> > > +	enum battery_charging_mode mode;
-> > > +	const char *label;
-> > > +	int ret = -EINVAL;
-> > > +
-> > > +	for (mode = DELL_BAT_MODE_STANDARD; mode < DELL_BAT_MODE_MAX; mode++) {
-> > > +		label = battery_state[mode];
-> > > +		if (label && sysfs_streq(label, buf))
-> > > +			break;
-> > > +	}
-> > > +
-> > > +	if (mode > DELL_BAT_MODE_NONE && mode < DELL_BAT_MODE_MAX) {
-> > > +		ret = battery_charging_mode_set(mode);
-> > > +		if (!ret) {
-> > > +			bat_chg_current = mode;
-> > > +			ret = size;
-> > > +		}
-> > > +	}
-> > > +
-> > > +	return ret;
-> > > +}
-> > > +
-> > > +static ssize_t charge_control_start_threshold_show(struct device *dev,
-> > > +		struct device_attribute *attr,
-> > > +		char *buf)
-> > > +{
-> > > +	int ret, start;
-> > > +
-> > > +	ret = dell_battery_read_req(BAT_CUSTOM_CHARGE_START, &start);
-> > > +	if (!ret)
-> > > +		ret = sysfs_emit(buf, "%d\n", start);
-> > > +
-> > > +	return ret;
-> > > +}  
-> > 
-> > This function and also following 3 functions have unusual error
-> > handling. Normally error handling is done by early return, as:
-> > 
-> >     ret = func1();
-> >     if (ret)
-> >         return ret;
-> > 
-> >     ret = func2();
-> >     if (ret)
-> >         return ret;
-> > 
-> >     return 0;
-> > 
-> > You can change it something like:
-> > 
-> > {
-> > 	int ret, start;
-> > 
-> > 	ret = dell_battery_read_req(BAT_CUSTOM_CHARGE_START, &start);
-> > 	if (ret)
-> > 		return ret;
-> > 
-> > 	return sysfs_emit(buf, "%d\n", start);
-> > }
-> > 
+>> +	}
+>> +}
+>> +
+>> +static int do_attach_tcx(int progfd, enum net_attach_type attach_type, int ifindex)
+>> +{
+>> +	int type = get_tcx_type(attach_type);
+>> +
+>> +	return bpf_prog_attach(progfd, ifindex, type, 0);
+>> +}
+>> +
+>> +static int do_detach_tcx(int targetfd, enum net_attach_type attach_type)
+>> +{
+>> +	int type = get_tcx_type(attach_type);
+>> +
+>> +	return bpf_prog_detach(targetfd, type);
+>> +}
+>> +
+>>   static int do_attach(int argc, char **argv)
+>>   {
+>>   	enum net_attach_type attach_type;
+>> @@ -692,6 +722,11 @@ static int do_attach(int argc, char **argv)
+>>   	case NET_ATTACH_TYPE_XDP_OFFLOAD:
+>>   		err = do_attach_detach_xdp(progfd, attach_type, ifindex, overwrite);
+>>   		break;
+>> +	/* attach tcx prog */
+>> +	case NET_ATTACH_TYPE_TCX_INGRESS:
+>> +	case NET_ATTACH_TYPE_TCX_EGRESS:
+>> +		err = do_attach_tcx(progfd, attach_type, ifindex);
+>> +		break;
+>>   	default:
+>>   		break;
+>>   	}
+>> @@ -738,6 +773,11 @@ static int do_detach(int argc, char **argv)
+>>   		progfd = -1;
+>>   		err = do_attach_detach_xdp(progfd, attach_type, ifindex, NULL);
+>>   		break;
+>> +	/* detach tcx prog */
+>> +	case NET_ATTACH_TYPE_TCX_INGRESS:
+>> +	case NET_ATTACH_TYPE_TCX_EGRESS:
+>> +		err = do_detach_tcx(ifindex, attach_type);
+>> +		break;
+>>   	default:
+>>   		break;
+>>   	}
+>> @@ -944,7 +984,8 @@ static int do_help(int argc, char **argv)
+>>   		"       %1$s %2$s help\n"
+>>   		"\n"
+>>   		"       " HELP_SPEC_PROGRAM "\n"
+>> -		"       ATTACH_TYPE := { xdp | xdpgeneric | xdpdrv | xdpoffload }\n"
+>> +		"       ATTACH_TYPE := { xdp | xdpgeneric | xdpdrv | xdpoffload | tcx_ingress\n"
+>> +		"			 | tcx_egress }\n"
 > 
-> Okay.
-> 
-> 
-> > > +static ssize_t charge_control_start_threshold_store(struct device *dev,
-> > > +		struct device_attribute *attr,
-> > > +		const char *buf, size_t size)
-> > > +{
-> [...]
-> 
-> > > +
-> > > +static void __init dell_battery_init(struct device *dev)
-> > > +{
-> > > +	enum battery_charging_mode current_mode = DELL_BAT_MODE_NONE;
-> > > +
-> > > +	dell_battery_read_req(BAT_CUSTOM_MODE_TOKEN, (int *) &current_mode);
-> > > +	if (current_mode != DELL_BAT_MODE_NONE) {  
-> > 
-> > I quite do not understand how is this code suppose to work.
-> > 
-> > Why is there mix of custom kernel enum battery_charging_mode and return
-> > value from Dell's API?
-> 
-> This is from the original patch from Dell; tbh, I'm not sure. It does
-> work, though. That is, current_mode ends up holding the correct value
-> based on what was previously set, even if the charging mode is set from
-> the BIOS.
-> 
-> I just scanned through the libsmbios code to see what it's doing, and
-> it appears to loop through every charging mode to check if its active.
-> I'm not really sure that makes much more sense, so I'll try some more
-> tests.
+>                   ^^^^^^^^^^^^^^^^^^^^^^^
+> This indent space between the quote and the pipe needs to be spaces
+> instead of three tabs, please.
 
-Keyboard backlight code (kbd_get_first_active_token_bit) is doing also
-this type scan. If I remember correctly, for every keyboard backlight
-token we just know the boolean value - if the token is set or not.
-
-It would really nice to see what (raw) value is returned by the
-dell_battery_read_req(token) function for every battery token and for
-every initial state.
-
-Because it is really suspicious if dell_battery_read_req() would return
-value of the enum battery_charging_mode (as this is kernel enum).
-
-
-Also another important thing. In past it was possible to buy from Dell
-special batteries with long warranty (3+ years). I'm not sure if these
-batteries are still available for end-user customers. With this type of
-battery, it was not possible to change charging mode to ExpressCharge
-(bios option was fade-out). I do not have such battery anymore, but I
-would expect that the firmware disabled BAT_EXPRESS_MODE_TOKEN as mark
-it as unavailable.
-
-I think that we should scan list of available tokens, like it is done
-for keyboard backlight in kbd_init_tokens(). And export via sysfs only
-those battery modes for which there is available token.
+My editor problem, i will fix it in the next revisions.
 
 > 
-> > 
-> > My feeling is that dell_battery_read_req(BAT_CUSTOM_MODE_TOKEN) checks
-> > if the token BAT_CUSTOM_MODE_TOKEN is set or not.
-> > 
-> > Could you please check what is stored in every BAT_*_MODE_TOKEN token at
-> > this init stage?
-> > 
-> > I think it should work similarly, like keyboard backlight tokens as
-> > implemented in functions: kbd_set_token_bit, kbd_get_token_bit,
-> > kbd_get_first_active_token_bit.
-> > 
-> > > +		bat_chg_current = current_mode;
-> > > +		battery_hook_register(&dell_battery_hook);
-> > > +	}
-> > > +}
-> > > +
-> [...]
+> The rest of the patches looks good, thank you!
+Thank you for reviewing all the patches. I appreciate your feedback.
+
 > 
-> > >  #define GLOBAL_MUTE_ENABLE	0x058C
-> > >  #define GLOBAL_MUTE_DISABLE	0x058D
-> > >  
-> > > +enum battery_charging_mode {
-> > > +	DELL_BAT_MODE_NONE = 0,
-> > > +	DELL_BAT_MODE_STANDARD,
-> > > +	DELL_BAT_MODE_EXPRESS,
-> > > +	DELL_BAT_MODE_PRIMARILY_AC,
-> > > +	DELL_BAT_MODE_ADAPTIVE,
-> > > +	DELL_BAT_MODE_CUSTOM,
-> > > +	DELL_BAT_MODE_MAX,
-> > > +};
-> > > +  
-> > 
-> > I think that this is just an internal driver enum, not Dell API. So this
-> > enum should be in the dell-laptop.c file.
-> > 
-> 
-> Agreed, I'll change it.
-> 
-> 
-> 
-> 
-> -- 
-> I'm available for contract & employment work, see:
-> https://spindle.queued.net/~dilinger/resume-tech.pdf
+> Quentin
+>
+-- 
+Best Regards
+Dylane Chen
+
 
