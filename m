@@ -1,210 +1,97 @@
-Return-Path: <linux-kernel+bounces-257887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-257888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5A8938020
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 11:13:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F05D9938024
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 11:15:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DD061C2178E
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 09:13:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CF321C217F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2024 09:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9054D10A;
-	Sat, 20 Jul 2024 09:13:47 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4575A4E9;
+	Sat, 20 Jul 2024 09:15:05 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E9C282FB;
-	Sat, 20 Jul 2024 09:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFC74EB55
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 09:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721466826; cv=none; b=jBxDTuBjwWh6iquKEYelkSbixSSKF+FMblumVkDPoWNnC8ffNhwf2PnKcmUA8rds5Q+aV9QJxe9Ox/pmaNHZRIJFFaeU7Tm1hkA3wCcXp38e5gywSWjN7gajCI/ijMHovgQBOMdlt4lVqirh3q1zzpwh5o9JNqyw1LVQHndLglg=
+	t=1721466905; cv=none; b=FWlYAb7RjSaybchvg998Cslg9sM9+yTU8tlAKOCDCL0sasgW5/G+UWHFfrKwGDpJzQ4E6APo9kRWqMat8TM6QfkklS2tJ+B4+jucksJ4YUIH2Bk5Hb2y2XEPaKOAPUaiewyMSPqI+oscdt4Q0SAUPuwJg++NWEM0K5dfxP0MA6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721466826; c=relaxed/simple;
-	bh=BivXycRRw125upwa9g6ksqc0NDuHvyFSkybyWEBLbPw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jqIZvQkjNXzmYNokvjqmZekxz2t2D9zZDs/kAtN+Li09odrBvLeY4/HvWXZBSl1nGXb/gBBJvuGqpH88C2j7d/27hS3/5fhCowHgWa9wjSpm0eFSkJz6xfqfpvJOGgOvyJJmuF9Fl7SgSXI9mOrwbDYUNAh02b7l9wGzT8WQcZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2581C2BD10;
-	Sat, 20 Jul 2024 09:13:39 +0000 (UTC)
-Message-ID: <b09c8cd9-2e1e-48e1-a5c7-db020fc88808@xs4all.nl>
-Date: Sat, 20 Jul 2024 11:13:38 +0200
+	s=arc-20240116; t=1721466905; c=relaxed/simple;
+	bh=ODLI+X9xS97FO4XT1UaElBARAbVdOL/w5b1NhR6HgOA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=c1dryjmW0CkT2g22sMGkXM1MzPqhiWxOZ0EiInYaAKUXokpHyzKWFJbjT/nuQoLfi9ZWBtFR7ap4wqJZ8wH1mfAmQVm1NNQa81vjmR0Npcd5ADyoXgyHzeGHDUgPjfoDYEgqHM1duhPGIqkIbYvmRZ9aMEJj8lf51HqP11CBCcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7fc9fc043eeso410977639f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 02:15:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721466903; x=1722071703;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s/xW/bfcnBDYLDu6G0bKJTsPYwdeU3e7DSeAVPwwSKE=;
+        b=wI5zTfIeYRLFlY1P7YGlB0I2vNE+KY4r+cQfT8W6vIO/yrJTppI6Dzm6YVENUqRhP0
+         Eom9xDOBDc26JJtPr+b4Y6gGdTFwTWidBDr5+fMUZDlSxnNhiTO2zHy/gxFEGgRjOOA1
+         R6/FbM9gVXfHdfq2cttsGI2PEj99jBtTyumYwHauxnpvPY2sT1coKZBQEdlyclUPoy4e
+         415XqdOrX+JbO0MsttkgZp85rCTt9j4U69ReaLvcSyusY3nx9IbnHrdlKXOOchrDpuot
+         XF0RMsywNUDht/DY93msJmW7IYYm54le1naxJ+AtiC5FZsjWa7byUXnOafdxndTF2qIE
+         HdyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVplD3c8VVC7vI7XoXl8xgHBfQynj1NXDdspPSRbh/1nXImAPbca0vQ0U1XRAEtTKAyme7n1Wat6tmgdgwbTHlsmuO3e36rMQmfnM7p
+X-Gm-Message-State: AOJu0Yzd8tnvURjTK4Y3Bfma0jiSwlNmrUl/5k55anD4zZlFhKjCz94I
+	eUYhMlisukEkxMpChNTxvOq6CJ9LfOGI+BomAU253gm3EITUZBpIWVXvU4K+pp3gA8TxF2degV6
+	kCWNlrrnqIBMoywvhXzyQxPeGe7FlqZ+sX6LTctwE4evmEUiDdb+5blk=
+X-Google-Smtp-Source: AGHT+IE/QzbDjURoyGylAbqTzkWRv3Z1WWdorDeizpZ2ulTCu+E5V2jt9Lj2vHun3OTt+jKz10+fNjIh2OqQhl0Y58S8XH5KA8L+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 01/28] v4l2: add restricted memory flags
-To: Yunfei Dong <yunfei.dong@mediatek.com>,
- Jeffrey Kardatzke <jkardatzke@google.com>,
- =?UTF-8?Q?N=C3=ADcolas_F_=2E_R_=2E_A_=2E_Prado?= <nfraprado@collabora.com>,
- Nathan Hebert <nhebert@chromium.org>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- Tomasz Figa <tfiga@chromium.org>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>, Yong Wu <yong.wu@mediatek.com>,
- Hsin-Yi Wang <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>,
- Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>,
- Sumit Semwal <sumit.semwal@linaro.org>, Brian Starkey
- <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
- "T . J . Mercier" <tjmercier@google.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Matthias Brugger <matthias.bgg@gmail.com>, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20240720071606.27930-1-yunfei.dong@mediatek.com>
- <20240720071606.27930-2-yunfei.dong@mediatek.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <20240720071606.27930-2-yunfei.dong@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:2114:b0:4c0:9380:a260 with SMTP id
+ 8926c6da1cb9f-4c23ff457dbmr83224173.3.1721466903216; Sat, 20 Jul 2024
+ 02:15:03 -0700 (PDT)
+Date: Sat, 20 Jul 2024 02:15:03 -0700
+In-Reply-To: <000000000000943e1c061d92bdd6@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004257c7061daa3f20@google.com>
+Subject: Re: [syzbot] [bpf?] [net?] KASAN: slab-use-after-free Read in bq_xmit_all
+From: syzbot <syzbot+707d98c8649695eaf329@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bigeasy@linutronix.de, 
+	bpf@vger.kernel.org, daniel@iogearbox.net, davem@davemloft.net, 
+	eddyz87@gmail.com, edumazet@google.com, haoluo@google.com, hawk@kernel.org, 
+	jasowang@redhat.com, john.fastabend@gmail.com, jolsa@kernel.org, 
+	kpsingh@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	martin.lau@linux.dev, netdev@vger.kernel.org, pabeni@redhat.com, 
+	sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com, 
+	willemdebruijn.kernel@gmail.com, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Yunfei,
+syzbot has bisected this issue to:
 
-First a high-level comment:
+commit fecef4cd42c689a200bdd39e6fffa71475904bc1
+Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Date:   Thu Jul 4 14:48:15 2024 +0000
 
-Adding a new V4L2 uAPI also requires patches to v4l-utils, specifically v4l2-ctl
-and v4l2-compliance (i.e. new tests are needed for this flag). This will also help
-you test the driver.
+    tun: Assign missing bpf_net_context.
 
-Some more comments below:
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12ddc995980000
+start commit:   720261cfc732 Merge tag 'bcachefs-2024-07-18.2' of https://..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=11ddc995980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=16ddc995980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=93ca6cd6f392cb76
+dashboard link: https://syzkaller.appspot.com/bug?extid=707d98c8649695eaf329
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1791eb49980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=118cf7a5980000
 
-On 20/07/2024 09:15, Yunfei Dong wrote:
-> From: Jeffrey Kardatzke <jkardatzke@google.com>
-> 
-> Adds a V4L2 flag which indicates that a queue is using restricted
-> dmabufs and the corresponding capability flag.
-> 
-> Signed-off-by: Jeffrey Kardatzke <jkardatzke@google.com>
-> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
-> [Yunfei: Change reviewer's comments]
-> ---
->  Documentation/userspace-api/media/v4l/buffer.rst       | 10 +++++++++-
->  .../userspace-api/media/v4l/vidioc-reqbufs.rst         |  6 ++++++
->  include/media/videobuf2-core.h                         |  8 +++++++-
->  include/uapi/linux/videodev2.h                         |  2 ++
->  4 files changed, 24 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/userspace-api/media/v4l/buffer.rst b/Documentation/userspace-api/media/v4l/buffer.rst
-> index 52bbee81c080..901eb007aae8 100644
-> --- a/Documentation/userspace-api/media/v4l/buffer.rst
-> +++ b/Documentation/userspace-api/media/v4l/buffer.rst
-> @@ -696,7 +696,7 @@ enum v4l2_memory
->  
->  .. _memory-flags:
->  
-> -Memory Consistency Flags
-> +Memory Flags
->  ------------------------
->  
->  .. raw:: latex
-> @@ -728,6 +728,14 @@ Memory Consistency Flags
->  	only if the buffer is used for :ref:`memory mapping <mmap>` I/O and the
->  	queue reports the :ref:`V4L2_BUF_CAP_SUPPORTS_MMAP_CACHE_HINTS
->  	<V4L2-BUF-CAP-SUPPORTS-MMAP-CACHE-HINTS>` capability.
-> +    * .. _`V4L2-MEMORY-FLAG-RESTRICTED`:
-> +
-> +      - ``V4L2_MEMORY_FLAG_RESTRICTED``
-> +      - 0x00000002
-> +      - The queued buffers are expected to be in restricted memory. If not, an
-> +	error will be returned. This flag can only be used with ``V4L2_MEMORY_DMABUF``.
-> +	Typically restricted buffers are allocated using a restricted dma-heap. This flag
-> +	can only be specified if the :ref:`V4L2_BUF_CAP_SUPPORTS_RESTRICTED_MEM` is set.
->  
->  .. raw:: latex
->  
-> diff --git a/Documentation/userspace-api/media/v4l/vidioc-reqbufs.rst b/Documentation/userspace-api/media/v4l/vidioc-reqbufs.rst
-> index bbc22dd76032..8a264ae08db1 100644
-> --- a/Documentation/userspace-api/media/v4l/vidioc-reqbufs.rst
-> +++ b/Documentation/userspace-api/media/v4l/vidioc-reqbufs.rst
-> @@ -122,6 +122,7 @@ aborting or finishing any DMA in progress, an implicit
->  .. _V4L2-BUF-CAP-SUPPORTS-MMAP-CACHE-HINTS:
->  .. _V4L2-BUF-CAP-SUPPORTS-MAX-NUM-BUFFERS:
->  .. _V4L2-BUF-CAP-SUPPORTS-REMOVE-BUFS:
-> +.. _V4L2-BUF-CAP-SUPPORTS-RESTRICTED_MEM:
->  
->  .. raw:: latex
->  
-> @@ -166,6 +167,11 @@ aborting or finishing any DMA in progress, an implicit
->          :ref:`V4L2_BUF_FLAG_NO_CACHE_INVALIDATE <V4L2-BUF-FLAG-NO-CACHE-INVALIDATE>`,
->          :ref:`V4L2_BUF_FLAG_NO_CACHE_CLEAN <V4L2-BUF-FLAG-NO-CACHE-CLEAN>` and
->          :ref:`V4L2_MEMORY_FLAG_NON_COHERENT <V4L2-MEMORY-FLAG-NON-COHERENT>`.
-> +    * - ``V4L2_BUF_CAP_SUPPORTS_RESTRICTED_MEM``
-> +      - 0x00000100
-> +      - This capability is set by the driver to indicate the queue supports
-> +        restricted memory. See
-> +        :ref:`V4L2_MEMORY_FLAG_RESTRICTED <V4L2-MEMORY-FLAG-RESTRICTED>`.
->  
->  .. raw:: latex
->  
+Reported-by: syzbot+707d98c8649695eaf329@syzkaller.appspotmail.com
+Fixes: fecef4cd42c6 ("tun: Assign missing bpf_net_context.")
 
-What is missing in this documentation is what error to expect if you queue a buffer
-from non-restricted memory to a driver configured for restricted memory. You probably
-want a specific error code for that (EACCES? EPERM?).
-
-Regards,
-
-	Hans
-
-> diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
-> index 955237ac503d..afd497e93a37 100644
-> --- a/include/media/videobuf2-core.h
-> +++ b/include/media/videobuf2-core.h
-> @@ -517,6 +517,9 @@ struct vb2_buf_ops {
->   *		->finish().
->   * @non_coherent_mem: when set queue will attempt to allocate buffers using
->   *		non-coherent memory.
-> + * @allow_restricted_mem: when set user-space can pass the %V4L2_MEMORY_FLAG_RESTRICTED
-> + *		flag to indicate the dma bufs are restricted.
-> + * @restricted_mem: when set queue will verify that the dma bufs are restricted.
->   * @lock:	pointer to a mutex that protects the &struct vb2_queue. The
->   *		driver can set this to a mutex to let the v4l2 core serialize
->   *		the queuing ioctls. If the driver wants to handle locking
-> @@ -621,6 +624,8 @@ struct vb2_queue {
->  	unsigned int			uses_requests:1;
->  	unsigned int			allow_cache_hints:1;
->  	unsigned int			non_coherent_mem:1;
-> +	unsigned int			allow_restricted_mem:1;
-> +	unsigned int			restricted_mem:1;
->  
->  	struct mutex			*lock;
->  	void				*owner;
-> @@ -792,7 +797,8 @@ void vb2_core_querybuf(struct vb2_queue *q, struct vb2_buffer *vb, void *pb);
->   * @q:		pointer to &struct vb2_queue with videobuf2 queue.
->   * @memory:	memory type, as defined by &enum vb2_memory.
->   * @flags:	auxiliary queue/buffer management flags. Currently, the only
-> - *		used flag is %V4L2_MEMORY_FLAG_NON_COHERENT.
-> + *		used flags are %V4L2_MEMORY_FLAG_NON_COHERENT and
-> + *		%V4L2_MEMORY_FLAG_RESTRICTED.
->   * @count:	requested buffer count.
->   *
->   * Videobuf2 core helper to implement VIDIOC_REQBUF() operation. It is called
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index 4e91362da6da..c4b1bc10af4c 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -1060,6 +1060,7 @@ struct v4l2_requestbuffers {
->  };
->  
->  #define V4L2_MEMORY_FLAG_NON_COHERENT			(1 << 0)
-> +#define V4L2_MEMORY_FLAG_RESTRICTED			(1 << 1)
->  
->  /* capabilities for struct v4l2_requestbuffers and v4l2_create_buffers */
->  #define V4L2_BUF_CAP_SUPPORTS_MMAP			(1 << 0)
-> @@ -1071,6 +1072,7 @@ struct v4l2_requestbuffers {
->  #define V4L2_BUF_CAP_SUPPORTS_MMAP_CACHE_HINTS		(1 << 6)
->  #define V4L2_BUF_CAP_SUPPORTS_MAX_NUM_BUFFERS		(1 << 7)
->  #define V4L2_BUF_CAP_SUPPORTS_REMOVE_BUFS		(1 << 8)
-> +#define V4L2_BUF_CAP_SUPPORTS_RESTRICTED_MEM		(1 << 9)
->  
->  /**
->   * struct v4l2_plane - plane info for multi-planar buffers
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
