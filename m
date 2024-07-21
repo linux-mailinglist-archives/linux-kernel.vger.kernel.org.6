@@ -1,108 +1,124 @@
-Return-Path: <linux-kernel+bounces-258292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1023E9385DF
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 21:12:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 978EE9385E2
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 21:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4186C1C20935
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 19:12:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53235281140
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 19:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6D41684A7;
-	Sun, 21 Jul 2024 19:12:15 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6955D16A956;
+	Sun, 21 Jul 2024 19:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IIkAz73h"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A1E5228
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 19:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF1412F365;
+	Sun, 21 Jul 2024 19:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721589134; cv=none; b=ZWQaKg6Rc3QMMmWXKHsTR1pgwOxo9DSUm0vLfsRVzWWqyhG6Te7ebpqSn8IXJBTo5cv+8j6tvjNealwkImhfq7Mujbt1oeSnang/sHL0VsmjWdsQxkhuFIPgZYkTN0IJMvDOOCUYD4P6O00IULJoo+3FT4CKDXp+bhbbCPPtrPk=
+	t=1721589704; cv=none; b=VZRfsWoE6TaDnbBxY4NYxxw2RB9yy7FkiFA28QNpeCAShxjfpDCkJ0LGHA9mGVpzNMOAR9ahqAPlV7nZsblTFBlJoIG83qDM/NtKRqXc+iXOaHDXBcHvVGYs2bocJQx4dMRgaK/kcUcS9P9Gtb9HaKwqhwv3DstG8x48+tthPdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721589134; c=relaxed/simple;
-	bh=4zUgbqdECJ2bZRo0smP6NlkBX6RrisKcWASE6RIpa4M=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=IQROcwz8VlDZEHc4IQcGEEPyGwHMNxtXw6n9nqXjZH+Suu8IhLu58Oy5FJWyGABIn57f9NK4njgMHv7Fbm9TeGH2My6v32o+mWDTlQsIAtk7753hGU1aQtwIeIvpequx8TOJ7DGcwR80SUM4WgpjU3l47QOsaLv7xwNtL/ZTuUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3982257ab28so40928635ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 12:12:13 -0700 (PDT)
+	s=arc-20240116; t=1721589704; c=relaxed/simple;
+	bh=4GELLVQrg4Ntcja5OwSVGHIZH1ApO5eJrOSaSjerjbI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dix1qPaQ5AIBnOmTwkgvr8NC6BaTGRtWj8yt0+aK/ARjbt25POvr4he7/gLIfwyN6zGoiK7EkXSWEVgNA2+h/0B+jo14ZcfJsXVkjeIt1nUxWbY0N6Xtu1WNeb3sUWq76wdz6V/CDoWhgfihHLQpmoSuOM3xFPUb2toY6vP+6ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IIkAz73h; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6b7b28442f9so31097946d6.3;
+        Sun, 21 Jul 2024 12:21:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721589701; x=1722194501; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BW8O7zO4LyicyWVlwS/XaS6Chd2z5rZ+4N2xFS6fnVk=;
+        b=IIkAz73hZXZA2BYKxPJ8/kGjZ4hIYnjj6fhBnjGdr8mLmhHKSewu3R6yr2HBQ5bjON
+         S5h1L/QhzCAVRSoHWcp0PiaEr+yXOthEHZb3Z72cIv3vTKsGidDZDZ3AGvwYH+qAs01w
+         CyOuC7r5/EEwfbtIZPPmgaPGlTIPDXia7bSsoyEADS3w7WRv4s+pQY8IO2LIVb5+vOAP
+         VZqXyvQfODoedYjuQmwmvD5G3qY5Hte//MQ6ZK1Hu0GgljgVCAb1+pFg25Nz16AMBpov
+         9mDfdrabQOfMAqGhdwozY7f5X5ptnVOMpglCZb/Km4XPV2Hf7zNvlRJ7xrmUnaPJlvQn
+         ns0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721589132; x=1722193932;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rktk6/7LzE6MTgTTHhHP5XesAUc8CbD66qviMDJQpig=;
-        b=eZRuByIHyew2L17WB7L8j/OjkTzpJy7wxw985Uuzh6bR+eP+t+kRJ09F2jjhjWGpY1
-         eZfh4xPuiPMh2H0rlqAQyOBMM/jhhDTDt9j6gDRnh+amwAEeAhkezUoFKTVTGM5kClqR
-         NK6i+R/5F1zWbdTKdHsV8+i9ZsR3jzGW6a0Ilj9cALBG8sMBRcnYTTsHB6YjTLub6laT
-         FOTJiafZxzYu8iNEMZ7glX8fXT8TrZ/PlAYIk0g1Ea3Xp5il5LkawrxMHVSfh8+3N7Ls
-         DZUaW13WyYcGyLgs1MbsW3o2Qeghm83oSu8oz0xh9UnGr/5B38F2+uUDtMxSha5tIPkd
-         EcxQ==
-X-Gm-Message-State: AOJu0YxhU2Kld+SnWIjrIq5Q0ns9J8mBL5cXUxL5gMNLZBQWyZESqXiV
-	zXzacCdjexg25/aBhtDN980jkYJMiQ2nuHuivbjsFE03Ctxp80bh44H46op3Na2qvpjVY8xSvV4
-	KfTN6VZORG8YMsITes+tIidQUpPAa6a5ClFYeK8BZF3Yuma2HzvSsC2s=
-X-Google-Smtp-Source: AGHT+IFvTbCpEBzE8ItwoGi0/PlRdjK/6zNCdw+QACFhDziRO6gAP+rWZsGVz5bpNEDNHajCallCTPezYC5Wb5tGuf6F/qm91uqK
+        d=1e100.net; s=20230601; t=1721589701; x=1722194501;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BW8O7zO4LyicyWVlwS/XaS6Chd2z5rZ+4N2xFS6fnVk=;
+        b=UZpaf6HojJ2evgN2P4Nf9HT7sRggUUGrOmhFTWAcb4ICJlqh4YqQyGrkuM5R5jBARm
+         FLc/n2GYnKIQcVwcZ7ZAkiXvy93GSVtyiQbDZUTGNG7hjCy6PMe4kemNIjnS30nzs+tf
+         YVfMUJh0BlsBLXwoQ5d6WjAO40kfO/WKh2bXwgAd+H/DGxG62JtAA/IZS5zo764y7fnf
+         Ko3/HVNB74Q1fpSQ+QK5UGPrJmlOTivytlzNHpCHaPjqI+cIjXvjJiEbVM2Exn68/GE9
+         BhXaftM7alA5pUSHeBRM0Jx7z6KS9DxMZaCo//7LDYqmV0XfodMDEQn/thQLYtKGUiD9
+         daOg==
+X-Forwarded-Encrypted: i=1; AJvYcCXOs+T6RCyucEUrcmybZhoHuVaM016LcP85m0cXBIFOvYx8xtby2ekfyU+j0I8bhCUKnLhPmt7XTQpS2XSdfVtyBe+qtII6hGRphTVVFHtnEiovtOKljTJmNQ7bo5N2QZudTcmQ
+X-Gm-Message-State: AOJu0Yy+ws7pCu00HUMB0wAMl7oGqS0Kf2gtXgaLxHNxBPKDzNqg8f6J
+	g2T0wvfFgaProdczDVBAwTJwdoCcEO/ZLGQsqV22F/iKMxM2A47yAQiDTE+Z
+X-Google-Smtp-Source: AGHT+IF8619f8ML2OMfKABkan+2zHPgb5pYQtDvaO0+bRB/243L3oM3Z75OsPtq+mPZUin5OHZnkRQ==
+X-Received: by 2002:a05:6214:5096:b0:6b1:e371:99d9 with SMTP id 6a1803df08f44-6b96103ac4amr72881226d6.8.1721589701487;
+        Sun, 21 Jul 2024 12:21:41 -0700 (PDT)
+Received: from localhost.localdomain (syn-104-229-042-148.res.spectrum.com. [104.229.42.148])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b7ac9c447dsm28659926d6.87.2024.07.21.12.21.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Jul 2024 12:21:41 -0700 (PDT)
+From: crwulff@gmail.com
+To: linux-usb@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Roy Luo <royluo@google.com>,
+	Krishna Kurapati <quic_kriskura@quicinc.com>,
+	Michael Grzeschik <m.grzeschik@pengutronix.de>,
+	yuan linyu <yuanlinyu@hihonor.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Felipe Balbi <balbi@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Chris Wulff <crwulff@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] usb: gadget: core: Check for unset descriptor
+Date: Sun, 21 Jul 2024 15:20:49 -0400
+Message-ID: <20240721192048.3530097-2-crwulff@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2166:b0:376:417e:c2b2 with SMTP id
- e9e14a558f8ab-398e83b1417mr2389165ab.5.1721589132608; Sun, 21 Jul 2024
- 12:12:12 -0700 (PDT)
-Date: Sun, 21 Jul 2024 12:12:12 -0700
-In-Reply-To: <000000000000660926061ab2a441@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b2d612061dc6b4fd@google.com>
-Subject: Re: [syzbot] [PATCH] btrfs: Change iov_iter_alignment_iovec to check
- iovec count before accesses an iovec
-From: syzbot <syzbot+f2a9c06bfaa027217ebb@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+From: Chris Wulff <crwulff@gmail.com>
 
-***
+Make sure the descriptor has been set before looking at maxpacket.
+This fixes a null pointer panic in this case.
 
-Subject: [PATCH] btrfs: Change iov_iter_alignment_iovec to check iovec count before accesses an iovec
-Author: dennis.lamerice@gmail.com
+This may happen if the gadget doesn't properly set up the endpoint
+for the current speed, or the gadget descriptors are malformed and
+the descriptor for the speed/endpoint are not found.
 
-#syz test
-
-Signed-off-by: Dennis Lam <dennis.lamerice@gmail.com>
+Fixes: 54f83b8c8ea9 ("USB: gadget: Reject endpoints with 0 maxpacket value")
+Cc: stable@vger.kernel.org
+Signed-off-by: Chris Wulff <crwulff@gmail.com>
 ---
- lib/iov_iter.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/gadget/udc/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 4a6a9f419bd7..2d82ecf1b622 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -783,7 +783,7 @@ static unsigned long iov_iter_alignment_iovec(const struct iov_iter *i)
- 	size_t size = i->count;
- 	size_t skip = i->iov_offset;
+diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
+index 2dfae7a17b3f..36a5d5935889 100644
+--- a/drivers/usb/gadget/udc/core.c
++++ b/drivers/usb/gadget/udc/core.c
+@@ -118,7 +118,7 @@ int usb_ep_enable(struct usb_ep *ep)
+ 		goto out;
  
--	do {
-+	while(size) {
- 		size_t len = iov->iov_len - skip;
- 		if (len) {
- 			res |= (unsigned long)iov->iov_base + skip;
-@@ -794,7 +794,7 @@ static unsigned long iov_iter_alignment_iovec(const struct iov_iter *i)
- 		}
- 		iov++;
- 		skip = 0;
--	} while (size);
-+	} 
- 	return res;
- }
- 
+ 	/* UDC drivers can't handle endpoints with maxpacket size 0 */
+-	if (usb_endpoint_maxp(ep->desc) == 0) {
++	if (!ep->desc || usb_endpoint_maxp(ep->desc) == 0) {
+ 		/*
+ 		 * We should log an error message here, but we can't call
+ 		 * dev_err() because there's no way to find the gadget
 -- 
-2.45.2
+2.43.0
 
 
