@@ -1,83 +1,57 @@
-Return-Path: <linux-kernel+bounces-258311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64869938615
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 22:30:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5599D93860D
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 22:21:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF4E2B20F96
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 20:30:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D41F280DFF
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 20:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CBC168C26;
-	Sun, 21 Jul 2024 20:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iPitB1TV"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4C92FB2
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 20:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B37716B38E;
+	Sun, 21 Jul 2024 20:21:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E311A291;
+	Sun, 21 Jul 2024 20:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721593827; cv=none; b=VCkegQiul71F4iMdAyx1xmqbAHUycwfFLssjtcF379xhu7pIeMvG4PX5CjDmOat04KSoBvjlnE+ntPP2RmLy5DB0OCsBdVM8ocnXa3z84nu7VRwIJzHMk94n76T3L3JUaJGWgYM4FBHCMQ26lQN5Xpw0WB32BhMVKzHIjbYKC4g=
+	t=1721593299; cv=none; b=bs1P6EAA+jTaIaUrtR1rjDrpXhVS6qFdjNbtF2MGRuYYqUQWWttyXWAsm6oD/8nv7ZRnHT4x/gs1OX+gLy3oaz9NQdVJJhUN+OVkRXoAaUCRC3xwA6ONd1pzf1oHxZfQS+OoFwe/Q+tL+exzXme/RG+TG823Arx2Sf2LI/jyXLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721593827; c=relaxed/simple;
-	bh=GLrVHx4OHdfP9Ntm7l/dTRCK8M6L8FoBOT4SZsHz50s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ubnFmD7O29CUs5SiJFC9NrfDulLtnoWehjPl99EaYj7nB5uR1EPP571OKGiRsvDiS3+/2TYU2ss9/rhreVFblcA4/PMNNeM+eRHXqZMpaRldiwdM31oVN5Np4Ng/L3GmEOKWsvJgmYKqquG1Hwa3Z/1DSohWRy0XqDu9MgXOwxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iPitB1TV; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-449f23df593so17852611cf.1
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 13:30:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721593824; x=1722198624; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wavXSjGdq18Yt9mO8dwNN9l8YwPcQe7HYiwYYz0FItQ=;
-        b=iPitB1TVv+jWLzq27OW67x6a/q0NQol3nJk7vR3qQMwydINiW9U5zyxmRZetIwwnD6
-         jB6vsZ6gdoQxfZx56IEyQUXjMAAETNR8TJM59tQ02EeXo4u0zvUtRh2HJgzFs6j+4J7k
-         JzNB0R+xoYEgfZDs2CAv4Flmo1QHgOgF2ylVhewqQIK45WmvYeLmqO28auPf0ohQ/y5t
-         96kwUJrA6AjfCASuX7OvPnFtKkuH2/ZEZyCOXycSHdzvg53+7uJ4sWe3+shTV/UXschV
-         YjkA+pELREPqalmyd+lPIAFEKCr6MdFGe3Q9t/ohmZGahkTFLsbbplThV0zuU4GItE3W
-         /dCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721593824; x=1722198624;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wavXSjGdq18Yt9mO8dwNN9l8YwPcQe7HYiwYYz0FItQ=;
-        b=BFxQP8fpxQHoXNkT1Adpk0xdgfgfvmS7C8ihifu+s0/gjwMdrE5f63qIMmd/KP/DUI
-         107l9EXYc+0sQ6C7qDn/oGzLd9nAu237I+Bu8vN/PobwI8BB5jVX9bAq81DiPAlgFO0W
-         JiIGMxjxvPKqxM0AIiJqfFsks4OqOKb4sJz/4M7tJNK/MH5DTa/3a5ZRXnS4jmNOLDGg
-         OLdE01oyjGk5Saz9ywTzSTzIsxZC6tXnEV+BXGKlNPEOQmfR2T+l/YeY4BxFHJirJRZo
-         95tD/9OU+JA5JSE5Wwuc01QLqAeD6/Pd13bQVMJyLUUlSmUDJbcJtjkqzVPiqIuiq6/r
-         /ETA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvrc1i6fxiT3JJ9Ed7OLi3ejJbS3dm5g+KNDq25mp2AudHfQxFFU/iNzwV9fClVkgPKE3C/DbDrcvbdobWbXCEwjPmI9Z6W0iHZCAf
-X-Gm-Message-State: AOJu0YyfEDfbTE0nNhSr90moSEnN+AwpG8XbJROYKpju4rNRBy2rG1XI
-	WaYO16hYiNsmjvon/a/XA9ZyOTQT7Xfs3JbeCEHoinVnxM2hHN0V
-X-Google-Smtp-Source: AGHT+IEBBbUl9G7TsKVlhJY/+zllG8fNc6YP/gM2neV0WPJOic5OmzXVBuGi0984b5Q3ZETq0Qb8Bw==
-X-Received: by 2002:a05:6214:240f:b0:6b5:e202:bd91 with SMTP id 6a1803df08f44-6b94f00e6e9mr117960546d6.1.1721593824518;
-        Sun, 21 Jul 2024 13:30:24 -0700 (PDT)
-Received: from localhost.localdomain (d24-150-189-55.home.cgocable.net. [24.150.189.55])
-        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6b7ac9c3cedsm29137566d6.80.2024.07.21.13.30.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jul 2024 13:30:24 -0700 (PDT)
-From: Dennis Lam <dennis.lamerice@gmail.com>
-To: iro@zeniv.linux.org.uk,
-	viro@zeniv.linux.org.uk
-Cc: Dennis Lam <dennis.lamerice@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	syzbot+f2a9c06bfaa027217ebb@syzkaller.appspotmail.com
-Subject: [PATCH] btrfs: Change iov_iter_alignment_iovec to check iovec count before accesses an iovec
-Date: Sun, 21 Jul 2024 16:19:18 -0400
-Message-ID: <20240721201924.48781-2-dennis.lamerice@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <dennis.lamerice@gmail.com>
-References: <dennis.lamerice@gmail.com>
+	s=arc-20240116; t=1721593299; c=relaxed/simple;
+	bh=YlpVqxBoKtMvshHpmfdBTA6GaVIdCC1wPU9eAji78BI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ADMn2jQLnpePisSWDgutePAo3eB8vQRxXrHg/eJsnF9zDqpqY2qOa2OT0x97U7t7inyrPm8hAVsJSfPyn0DcQmwWptTQ6/Xa/01e8w6Q+s7GobjbefQtd06Ru6CuPVssuUcNPnvoeh5lVP/7TsKL7fEcCiizjSZ+Gx9lsDaUkqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 556EAFEC;
+	Sun, 21 Jul 2024 13:21:55 -0700 (PDT)
+Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 575443F73F;
+	Sun, 21 Jul 2024 13:21:27 -0700 (PDT)
+From: Leo Yan <leo.yan@arm.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	John Garry <john.g.garry@oracle.com>,
+	Will Deacon <will@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Leo Yan <leo.yan@arm.com>
+Subject: [PATCH v1 0/6] perf auxtrace: Support multiple AUX events
+Date: Sun, 21 Jul 2024 21:21:07 +0100
+Message-Id: <20240721202113.380750-1-leo.yan@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,40 +60,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When checking iov_iter_alignment_iovec for valid read and the iovec is empty,
-the function still tries to iterate non-existant values. In this case, the iov
-variable is empty and attempting to use iov->iov_len causes a kernel crash.
+This series is to support multiple events with the *same* type in Perf
+AUX trace. As the first enabled instance, the patch series enables
+multiple Arm SPE events (e.g. arm_spe_0, arm_spe_1, etc) in AUX trace.
 
-This patch fixes this by checking the size of the iovec before iterating.
+The solution for support multiple AUX events with same type is not
+difficult. As the events are same type, the trace data shares the same
+format and can be decoded by the same decoder. Essentially, this patch
+series is to extend the AUX trace flow from support single PMU event to
+multiple events.
 
-Signed-off-by: Dennis Lam <dennis.lamerice@gmail.com>
----
- lib/iov_iter.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Note, this series does not support a more complex case - different types
+of AUX events, (e.g. Arm CoreSight event and Arm SPE events are enabled
+simultaneously).
 
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 4a6a9f419bd7..2d82ecf1b622 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -783,7 +783,7 @@ static unsigned long iov_iter_alignment_iovec(const struct iov_iter *i)
- 	size_t size = i->count;
- 	size_t skip = i->iov_offset;
- 
--	do {
-+	while(size) {
- 		size_t len = iov->iov_len - skip;
- 		if (len) {
- 			res |= (unsigned long)iov->iov_base + skip;
-@@ -794,7 +794,7 @@ static unsigned long iov_iter_alignment_iovec(const struct iov_iter *i)
- 		}
- 		iov++;
- 		skip = 0;
--	} while (size);
-+	} 
- 	return res;
- }
- 
+Patch 01 is a minor refactoring for dereference PMU pointer from evsel
+structure.
+
+Patches 02, 03 and 04 are to use the 'auxtrace' flag for support multiple
+AUX events. Firstly, we need to set the 'auxtrace' flag for Arm and s390
+AUX events (Intel PT and bts have set already it). Afterwards, by using
+the evsel__is_aux_event() function, the core layer iterates the whole
+evlist - which allows the buffer index can be matched to corresponding
+AUX event.
+
+Patches 05 and 06 are to configure multiple SPE event in architecture
+dependent code. The old code is only initialize the first AUX event.
+with this series, it initializes all SPE PMU events.
+
+This patch series has been tested with the normal 'perf record' command
+and 'perf mem record' command.  And verified for the decoding commands
+'perf script' and 'perf mem report'.
+
+I observed one prominent issue is for per-CPU profiling. For example,
+when specifying option '-C 2' for profiling on CPU2, in this case the
+'arm_spe_0' event supports CPU2 but the 'arm_spe_1' event does not
+support the CPU. As a result, 'arm_spe_1' event reports failure. This
+is likely a common issue for support Per-CPU profiling with multiple
+PMU events and every PMU event only support partial CPUs. This issue
+will be addressed later.
+
+
+Leo Yan (6):
+  perf pmu: Directly use evsel's PMU pointer
+  perf auxtrace arm: Set the 'auxtrace' flag for AUX events
+  perf auxtrace s390: Set the 'auxtrace' flag for AUX events
+  perf auxtrace: Iterate all AUX events when finish reading
+  perf arm-spe: Extract evsel setting up
+  perf arm-spe: Support multiple Arm SPE events
+
+ tools/perf/arch/arm/util/pmu.c       |   3 +
+ tools/perf/arch/arm64/util/arm-spe.c | 107 ++++++++++++++++-----------
+ tools/perf/arch/s390/util/auxtrace.c |   1 +
+ tools/perf/util/auxtrace.c           |  15 +++-
+ tools/perf/util/pmu.c                |   2 +-
+ 5 files changed, 78 insertions(+), 50 deletions(-)
+
 -- 
-2.45.2
+2.34.1
 
 
