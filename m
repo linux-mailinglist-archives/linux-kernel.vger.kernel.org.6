@@ -1,122 +1,215 @@
-Return-Path: <linux-kernel+bounces-258147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C80F938464
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 13:00:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C36FF938461
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 13:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2C1E281753
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 11:00:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 873F2B21189
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 11:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8443D2A1DF;
-	Sun, 21 Jul 2024 11:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510D415FCFB;
+	Sun, 21 Jul 2024 11:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="VazwTYJ2"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UwI6M6sz"
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9D785C74;
-	Sun, 21 Jul 2024 11:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43F8EEA9
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 11:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721559605; cv=none; b=kl3YtGwMwGavMAxCbQ8hN+2p++N6sHPVrBTQGf1Mw9UVkjAGt0YVytbjlDM24mx8QLTRX7uxVbxy59QP1a4DVntCEB+nuBwmDe8hzrNauAG69U8bpQ9gCBUCh1aMLDNrTzkZib9dgNlWH1m8ZMAzgTGFu0/rSBFYOoA2q+9hsos=
+	t=1721559603; cv=none; b=iUNiFp1KlNnRZFuni4HktYDUGTsYlikpJ3EKVqKTCi25C+7DNF0RHSLDMvZf9Wiy7+AvGjvjOYdBxpD/H/WO9/Z1Cf1rooHyhgbTFBi7Yi6vXq0x/M/4O4Dh5iisXvFLbuQfO668NtYT05hcnrXIjYxH7K19EfauUXAGXNuPRU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721559605; c=relaxed/simple;
-	bh=VrRkHqvenZT+b6MwBucXy0E0sVFAXGPNz8auvqwcrEM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D1u2CIDUDFG8AZQQJCC+9tfoItgooXALyqsHTYqEBVELP33z7GTRLhTWUPrQ7fVa2JZpI9NZg9pphW888SExlAKpANP38pZbzz3yhyMCFGf7NoXT5a5IYkxi3jNGuxwZMxKaAuhT58+knNslujz+3pFbdLOfU/nXqFabQ/H5284=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=VazwTYJ2; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=nIMopPqJEvT/D1lesENfbHFMsf1K4gytKkpkw2FydhM=; b=VazwTYJ2jBTTXz0D
-	JKwdZJzz+dQq/ChbsQsXDOrCey37kom46McCSpAm25zGdPf8fi8vwBL7XIyMyZ5d8SnOCvDT4iKnr
-	TkrKShoyFqXPn1o6b2yMnIcEWtmyYDm98813Xrq3JV6AesXrKdDV2TQKC/tUbZfU3YtaiQ6qQ4rBH
-	PVpzsAvKOpNVhZqP9nK29PfCuvMtcfDzkGDZZD8rtRE8o4wSl+XYw+BEz/TP2jai3E5tOh5djxhDj
-	wP6CJUCea80BYrkiZ3ytpIPazt5dX5yTE9NcTYSCkiHWrzIc1L+kL6G8ILQL60MH6YfVG/tVJu7UR
-	v2usoK6ud+QIMjIV+Q==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sVUI2-00Cb3Z-0n;
-	Sun, 21 Jul 2024 10:59:42 +0000
-Date: Sun, 21 Jul 2024 10:59:42 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Zhu Yanjun <yanjun.zhu@linux.dev>
-Cc: allison.henderson@oracle.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RDMA/rds: remove unused struct 'rds_ib_dereg_odp_mr'
-Message-ID: <ZpzqHg_idtElXcw3@gallifrey>
-References: <20240531233307.302571-1-linux@treblig.org>
- <8b5fd878-a952-4cca-87af-aa44319a4f86@linux.dev>
+	s=arc-20240116; t=1721559603; c=relaxed/simple;
+	bh=1sbso61l5s5SsRYB5paxTGEGGCttRTzqLdWWUlUV/rk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ezvo+PJsFnJ2fWypCXxmugRTMdOj2mLhXEwMFIagFT/M2I01stpSIzrG3qtia4mzzk1EdLlX6d1leZtlkTm8v4pNwNvlu87Fys+FonaL0/ah939n4hJ9vxkm2CDvmGs2ehgH853Vx4vmIYpNpdlvVGvuiIPiusDBa8f859ac9rA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com; spf=pass smtp.mailfrom=compal.corp-partner.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UwI6M6sz; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=compal.corp-partner.google.com
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5ce74defe43so1788079eaf.2
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 04:00:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721559601; x=1722164401; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F4d9hcKyq7mfsinkWFd6mNdwGA6zkLrtbOX7X7kLTzs=;
+        b=UwI6M6szOkvvb6pPcUabS1tJU/mtYdlNj0tuqwO28P1f6W0mekkj+DlYFp93fKAiBK
+         IeZ7pISK6aP+G08fGZwiZ5jDwlizceBrau2/J+FG8jIg2DqeHByJPSF5WhvCEdqvDrDq
+         qF4A/gQtkZo/pfz7T1BCX232Aksy5FHdx9aCTga6wucKXw5DEfoQRt299a61lKxwIcUc
+         Rj8j0DWlZZAMHPwVUlFIIW3+/6rtHqOWt+DqFIVEAebRDqcRKP/CkFBwAAxt/6nk0uWd
+         1Vb2m+d4RK/II+NgzjhPMondSLixPp6wDQ94xy0vdja0edDD9LXbDF9EwYmtw0QSZSH0
+         hsyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721559601; x=1722164401;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F4d9hcKyq7mfsinkWFd6mNdwGA6zkLrtbOX7X7kLTzs=;
+        b=ZcPGuVt6T1hQT6Hd5XnbfBnAkaNPr/suF+d2SNlB5EMJYYuAwLLzSIMScl2nubT5rH
+         AoAvoT587cPXRCC9WgpRTiNyntg3JdFND9Y+iEhnXVaWJtOq/Ut8VNe6UpUJybo3QlVg
+         A7oHDdgQEZZWjZ4shGWqEMiHPbYFenTMxEB1tc9EXKBz5JN2nKh4wUU+TZq9q6rgxxLq
+         P6HR0LQW8trPlvuN6zBorgtt/sYl+1EMeP8Z2AAb+PcTdPObud2vwNL3a6XdmljZqP+a
+         Cp3cYXmV2dIYc9+t1IePdEBVO6cVBYAt7OfibLCvc9i4Rr6Zumaj9gTCU1+Z+jtWHx2x
+         ucUg==
+X-Gm-Message-State: AOJu0Ywnwk/d5Ct7QbZS9pwguVIUh1L6nIVfhPD6K5IRUWOTNgPxR/JT
+	W8anm3Y4/JJFd6jmMEncqPlFKQsYGt94Zeus1DSvwHXn+qt8YcZMWluqpFxETLxFnCE9vYiQN0h
+	WBakctdifutmXdAfjPvdXupB9kqMo2HfEb8peBw==
+X-Google-Smtp-Source: AGHT+IE4j9WP73i9CWB+IGTcHxkw4R080UwOV/uMJoCT3nUr8mMGASmr4CZyeUGTEVkb/tTv/1AOy0tX12CY2amV0EU=
+X-Received: by 2002:a4a:e901:0:b0:5c4:e8d:58be with SMTP id
+ 006d021491bc7-5d564f6409bmr7562481eaf.3.1721559600858; Sun, 21 Jul 2024
+ 04:00:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8b5fd878-a952-4cca-87af-aa44319a4f86@linux.dev>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 10:58:59 up 73 days, 22:13,  1 user,  load average: 0.00, 0.00, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+References: <20240717093925.3017-1-terry_hsiao@compal.corp-partner.google.com> <CAD=FV=XM7X5J6rzu5gDdmDhJ4Ut8raC92HvcnHmRJmWY7_boSA@mail.gmail.com>
+In-Reply-To: <CAD=FV=XM7X5J6rzu5gDdmDhJ4Ut8raC92HvcnHmRJmWY7_boSA@mail.gmail.com>
+From: Terry Hsiao <terry_hsiao@compal.corp-partner.google.com>
+Date: Sun, 21 Jul 2024 18:59:50 +0800
+Message-ID: <CA+hhT3-77s+jjoBGw_fWWjsvO1kDu_JTDHgj=q-pEXcrkzPkLQ@mail.gmail.com>
+Subject: Re: [PATCH v1] drm/panel-edp: Add panels with conservative timings
+To: Doug Anderson <dianders@chromium.org>
+Cc: linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-* Zhu Yanjun (yanjun.zhu@linux.dev) wrote:
-> 在 2024/6/1 1:33, linux@treblig.org 写道:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> > 'rds_ib_dereg_odp_mr' has been unused since the original
-> > commit 2eafa1746f17 ("net/rds: Handle ODP mr
-> > registration/unregistration").
-> > 
-> > Remove it.
-> > 
-> Need Fixes?
-> 
-> Fixes: 2eafa1746f17 ("net/rds: Handle ODP mr
-> registration/unregistration")
+Hi Doug,
 
-I've not been using Fixes on these, because they
-have no actual consequence - there's no need
-for stable or downstream to pick them up, which is
-what Fixes is often used for.
+Thank you for your reply.
+The patch has been modified and will be sent to you shortly.
 
-> Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
+The timings are set based on the panel datasheets in IssueTracker
+(https://partnerissuetracker.corp.google.com/issues/348109270)
+B116XTN02.3: B116XTN02.3(HW 9A)_HP_ Functional Spec_0617Y24.pdf
+B116XAN06.1: B116XAN06.1_7A_HP_ Final Functional Spec 0617Y24.pdf
+B116XAT04.1: B116XAT04.1 HW 0 A(HH)_ Pre Functional Spec_HP_ 0425Y24.pdf
+NV116WHM-A4D: NV116WHM-A4D V8.0 Teacake  Product Specification-20240416.pdf
+N116BCA-EA2: Approval Specification N116BCA-EA2_C3_20231212.pdf
+N116BCP-EA2: TFT-LCD Tentative N116BCP-EA2 C2 for HP Ver 0.2-240502.pdf
 
-Thanks,
+On page 24 of the N116BCP-EA2
+datasheet(https://partnerissuetracker.corp.google.com/action/issues/3481092=
+70/attachments/57530666?download=3Dfalse),
+the value for t9 as disable is "null".
 
-Dave
+If I have misunderstood what you mean, please correct me.
 
-> Zhu Yanjun
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Thank you,
+
+On Wed, Jul 17, 2024 at 10:58=E2=80=AFPM Doug Anderson <dianders@chromium.o=
+rg> wrote:
+>
+> Hi,
+>
+> On Wed, Jul 17, 2024 at 2:39=E2=80=AFAM Terry Hsiao
+> <terry_hsiao@compal.corp-partner.google.com> wrote:
+> >
+> > The 6 panels are used on Mediatek MT8186 Chromebooks
+> > - B116XAT04.1  (06AF/B4C4)
+> > - NV116WHM-A4D (09E5/FA0C)
+> > - N116BCP-EA2  (0DAE/6111)
+> > - B116XTN02.3  (06AF/AA73)
+> > - B116XAN06.1  (06AF/99A1)
+> > - N116BCA-EA2  (0DAE/5D11)
+> >
+> > Signed-off-by: Terry Hsiao <terry_hsiao@compal.corp-partner.google.com>
 > > ---
-> >   net/rds/ib_rdma.c | 4 ----
-> >   1 file changed, 4 deletions(-)
-> > 
-> > diff --git a/net/rds/ib_rdma.c b/net/rds/ib_rdma.c
-> > index 8f070ee7e742..d1cfceeff133 100644
-> > --- a/net/rds/ib_rdma.c
-> > +++ b/net/rds/ib_rdma.c
-> > @@ -40,10 +40,6 @@
-> >   #include "rds.h"
-> >   struct workqueue_struct *rds_ib_mr_wq;
-> > -struct rds_ib_dereg_odp_mr {
-> > -	struct work_struct work;
-> > -	struct ib_mr *mr;
-> > -};
-> >   static void rds_ib_odp_mr_worker(struct work_struct *work);
-> 
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+> >  drivers/gpu/drm/panel/panel-edp.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+>
+> Please resend with a better patch subject, like "drm/panel-edp: Add 6
+> panels used by MT8186 Chromebooks".
+>
+> Also: are you adding timings based on the datasheets, or are you just
+> guessing here? The previous patches that added "conservative" timings
+> were because the Chromebooks involved were really old and couldn't be
+> tracked down and folks couldn't find the relevant datasheets. In the
+> case of MT8188 I'd expect you to be adding timings based on the
+> datasheets. Please confirm that you are.
+>
+> If possible, it's really nice to have the raw EDIDs for the panels in
+> the commit message in case someone needs it later.
+>
+>
+> > diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/=
+panel-edp.c
+> > index f85a6404ba58..ac280607998f 100644
+> > --- a/drivers/gpu/drm/panel/panel-edp.c
+> > +++ b/drivers/gpu/drm/panel/panel-edp.c
+> > @@ -1845,8 +1845,11 @@ static const struct edp_panel_entry edp_panels[]=
+ =3D {
+> >         EDP_PANEL_ENTRY('A', 'U', 'O', 0x635c, &delay_200_500_e50, "B11=
+6XAN06.3"),
+> >         EDP_PANEL_ENTRY('A', 'U', 'O', 0x639c, &delay_200_500_e50, "B14=
+0HAK02.7"),
+> >         EDP_PANEL_ENTRY('A', 'U', 'O', 0x723c, &delay_200_500_e50, "B14=
+0XTN07.2"),
+> > +       EDP_PANEL_ENTRY('A', 'U', 'O', 0x73aa, &delay_200_500_e50, "B11=
+6XTN02.3"),
+> >         EDP_PANEL_ENTRY('A', 'U', 'O', 0x8594, &delay_200_500_e50, "B13=
+3UAN01.0"),
+> >         EDP_PANEL_ENTRY('A', 'U', 'O', 0xd497, &delay_200_500_e50, "B12=
+0XAN01.0"),
+> > +       EDP_PANEL_ENTRY('A', 'U', 'O', 0xa199, &delay_200_500_e50, "B11=
+6XAN06.1"),
+>
+> Please keep this sorted. For instance, 0xa199 should come _before_
+> 0xd497, right?
+>
+>
+> > +       EDP_PANEL_ENTRY('A', 'U', 'O', 0xc4b4, &delay_200_500_e50, "B11=
+6XAT04.1"),
+> >         EDP_PANEL_ENTRY('A', 'U', 'O', 0xf390, &delay_200_500_e50, "B14=
+0XTN07.7"),
+> >
+> >         EDP_PANEL_ENTRY('B', 'O', 'E', 0x0607, &delay_200_500_e200, "Un=
+known"),
+> > @@ -1901,6 +1904,7 @@ static const struct edp_panel_entry edp_panels[] =
+=3D {
+> >         EDP_PANEL_ENTRY('B', 'O', 'E', 0x0b56, &delay_200_500_e80, "NT1=
+40FHM-N47"),
+> >         EDP_PANEL_ENTRY('B', 'O', 'E', 0x0c20, &delay_200_500_e80, "NT1=
+40FHM-N47"),
+> >         EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cb6, &delay_200_500_e200, "NT=
+116WHM-N44"),
+> > +       EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cfa, &delay_200_500_e50, "NV1=
+16WHM-A4D"),
+> >
+> >         EDP_PANEL_ENTRY('C', 'M', 'N', 0x1130, &delay_200_500_e50, "N11=
+6BGE-EB2"),
+> >         EDP_PANEL_ENTRY('C', 'M', 'N', 0x1132, &delay_200_500_e80_d50, =
+"N116BGE-EA2"),
+> > @@ -1916,8 +1920,10 @@ static const struct edp_panel_entry edp_panels[]=
+ =3D {
+> >         EDP_PANEL_ENTRY('C', 'M', 'N', 0x1156, &delay_200_500_e80_d50, =
+"Unknown"),
+> >         EDP_PANEL_ENTRY('C', 'M', 'N', 0x1157, &delay_200_500_e80_d50, =
+"N116BGE-EA2"),
+> >         EDP_PANEL_ENTRY('C', 'M', 'N', 0x115b, &delay_200_500_e80_d50, =
+"N116BCN-EB1"),
+> > +       EDP_PANEL_ENTRY('C', 'M', 'N', 0x115d, &delay_200_500_e80_d50, =
+"N116BCA-EA2"),
+> >         EDP_PANEL_ENTRY('C', 'M', 'N', 0x115e, &delay_200_500_e80_d50, =
+"N116BCA-EA1"),
+> >         EDP_PANEL_ENTRY('C', 'M', 'N', 0x1160, &delay_200_500_e80_d50, =
+"N116BCJ-EAK"),
+> > +       EDP_PANEL_ENTRY('C', 'M', 'N', 0x1161, &delay_200_500_e80, "N11=
+6BCP-EA2"),
+>
+> It looks suspicious that all the panels around this one need 50 ms for
+> disable but yours doesn't. While it's certainly possible that things
+> changed for this panel, it's worth double-checking.
+>
+> -Doug
 
