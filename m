@@ -1,274 +1,253 @@
-Return-Path: <linux-kernel+bounces-258316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2E1A938626
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 23:11:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50B4893862E
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 23:23:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 226C71C20B05
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 21:11:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5501AB20C54
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 21:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7384516B3A9;
-	Sun, 21 Jul 2024 21:11:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44BF16B3BC;
+	Sun, 21 Jul 2024 21:22:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=aros@gmx.com header.b="H98LFE7i"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F8zhRIQn"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6769A161321;
-	Sun, 21 Jul 2024 21:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426942C95;
+	Sun, 21 Jul 2024 21:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721596270; cv=none; b=m/yY3nUu6keZCDAz8mBu28BVwdgpAm4fTmkdVUE3BF82VoJD9+Z8VeMxcQJJKfDqZxzlFC+z6VnOLehmnGG4OmtjOeSJWBYYakg2ago5u8c6K1beFQ15n2N9RTymCtynCczPA317rWt8DC3wWrytLCYcd5xUY36lu0cdFSiKmMM=
+	t=1721596977; cv=none; b=AiHBD/I/vRuFDGTmuZ/SRjZdeIBMN9qqIArsDkL3s983ADPnkYqeOBPU91wy9N7hab2lnbMiCYEnx7acxg/jPbPSmYhOmKIeYJx+zA/P2v8dxvXbgZfZHtBwvu23PDRM9M06sIj/gvnxFsvFEhhfUgkms407NQUQSvGd3PufzOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721596270; c=relaxed/simple;
-	bh=aOER0KavdduMrSh6sKKrzQF4xuuB9KflIoXEwakApc4=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=RqEovTjR9jRqE8bRrwsKuTIHMuCLhyKQC4ZBMetk2wGcW+MXNc3QBhEXlfAd9qSDTldT6xj4aOuJnlv+0y/zxsmTeDY81Erab+fYx6+56sToGZWog0Mj41Lxm5PE8YIGr2q/sVEPr3yQaGZ7+l/yiE6DQmGx8SIEghQhy2JvPJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=aros@gmx.com header.b=H98LFE7i; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1721596261; x=1722201061; i=aros@gmx.com;
-	bh=xNOyNgAjPPDbf5c6cgjYWAGnKCgXeLcbMtiYlXvkj5k=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:From:Subject:
-	 Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=H98LFE7iXPLfKBy4d9lLvT/7RmxziiwDTcy/JtO5LzbgRDY8MAaCL5zm/COAqC0f
-	 DKn8dgFA0SdbI/xxc6X69at+q/u1SOhl2lMFFGzssTpY6QBztZzPmfViAob7P80Dz
-	 MWasvfn/UIdmde/SZokmqs5mOud7ic3HH4Z8fDX1PDjckFZe/wLDVQzk2NfLy8AuP
-	 9LwgFsXj2YB9OANz2C6xWo8yDZdRbA/YYIWGrBN1R55O4mBFKpXVW5QG3S3bb1xCS
-	 I++Hpw8e5bSLLMJ9n3rA3/ipfoIulTKsQWVYdUjgf4yvZZVqsFg3ZT71astmddGok
-	 i7P1+8axDKt2JWSA9g==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [10.6.110.76] ([194.110.13.8]) by mail.gmx.net (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1M2wGi-1sSKyn1XR6-00HEXP; Sun, 21
- Jul 2024 23:11:01 +0200
-Message-ID: <500f38b2-ad30-4161-8065-a10e53bf1b02@gmx.com>
-Date: Sun, 21 Jul 2024 21:10:59 +0000
+	s=arc-20240116; t=1721596977; c=relaxed/simple;
+	bh=ZJdaTsT2YLbx7Zc/pZgBhaMzwBYx2r9x4H4pWpIHzW0=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GHpcBt9bZugcoW8Z4B1EqCE9qEwYjm071iLNEfj8bmp/5FZUsWXzbirmB9VrvxXtfQ8if5j3OB9dEBxxX5HL+jWi9xnXk/1XaFUgop6cwgWRkAbppHCIkTCHl7QVEOsvm8IGl7vnlNpgMoutuSTBSyHMF3IESS1pfm02VmC5kVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F8zhRIQn; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5a20de39cfbso2693784a12.1;
+        Sun, 21 Jul 2024 14:22:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721596973; x=1722201773; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j9plNulGMzncD5nE7PuX4rG7MzQFhG+CKrlLxYTsJxk=;
+        b=F8zhRIQnH6UlxKrZeS4Ye9d2kGAsPbtSF35UWb8X37PceKkNZRt3R7ZzoI2f8yJFv9
+         gRwjqTxg8MRtCRNxgpRsMkffSidDJzQn7J2HTplZGazu1m89zjm2z7r/LNYdg2FFuRiq
+         uUU3SZd24IbN1kWSF6i8ozaen8Ksvbp5pQG8vSLTqoLHEJUnwNC3oXXghdZRRTFWpwxq
+         YODM+VJ8JDjtmC9hfcI/iTTf9bpbnepVm+8RP6uUncjm2KE7x1k5ElzLF02U8TFMP+Xs
+         aUA00RCj8/n6r1RGGWsm/91jjiJvAX3vaVB3HWgUinfhnVD+hOAf7IVnNZLsHWemcLIO
+         h+gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721596973; x=1722201773;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j9plNulGMzncD5nE7PuX4rG7MzQFhG+CKrlLxYTsJxk=;
+        b=FVqCF0it52HTnt3pHGX2M1osSFykCOZpjEaJrK65hnU0wVX/XhwsY4FP/3iRi4oMK/
+         QRmftRff5tX/wv1dUe1fuaKzWwlb5hezcYjjqkQysHKPEfVy/Xu4TTvYFsJm13/5X4BU
+         gA/1qhLn4U2Z4reY8+E6T8jRTR4VDcev8JdABHtjHrpkWQ5+p9VwkfV9Vc/Ky8QWTs60
+         6+kKhCeh4PK+Qr0fVr5N019IK1Zq1jcUHujR/Afeej8rtyQfqOyCPtsxql7IYh4O5C9O
+         MSZnXbjA0L7OmQ2ITrFKkMyASd2dYK6jB9FkVRuZQlWbmgjkejOdihwG2o4wY++BU5t5
+         TVZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6jtShlF3aCA5mDa3SYkC6PNU9GOrs5TpEDCOhJ1U1VdGtVUG0kKBqTXHN93gKxF5doJCh11oYr+AaIBo1dXZKUFciCeeUd8RYQ4i1Kd/eHZ7zIf3OLRlGLGixOF9iCHVVq+xpIypzRw2XxXqK0ftS4ykFWfs05vO+cPVgIGvl5Tcn4g==
+X-Gm-Message-State: AOJu0YwzKVK2VMUH75k5xM3BTGDLcpJQjlwqJZtavH8yPkhh646ynrpw
+	9C57wzgq8Bm3glouQR2dQRBgxVsQtVeHCg4gkj5ZcJf1Rmc2R0d4
+X-Google-Smtp-Source: AGHT+IGGh2yzdwHyPWJtTKXGyDO5/5MHafJXwtxaO2UAylGnrzUPJA/bIGjobygL7itJC8e40GyJnA==
+X-Received: by 2002:a05:6402:5215:b0:5a1:7570:8914 with SMTP id 4fb4d7f45d1cf-5a3eee8241cmr4490298a12.11.1721596973191;
+        Sun, 21 Jul 2024 14:22:53 -0700 (PDT)
+Received: from vamoiridPC ([2a04:ee41:82:7577:bc21:fb27:f4e6:6867])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a5ef56e2c4sm1508676a12.39.2024.07.21.14.22.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Jul 2024 14:22:52 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
+Date: Sun, 21 Jul 2024 23:22:50 +0200
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, lars@metafoo.de,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	andriy.shevchenko@linux.intel.com, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 04/10] iio: pressure: bmp280: Use bulk read for
+ humidity calibration data
+Message-ID: <20240721212250.GC325365@vamoiridPC>
+References: <20240711211558.106327-1-vassilisamir@gmail.com>
+ <20240711211558.106327-5-vassilisamir@gmail.com>
+ <20240720121604.560d24e0@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-ext4@vger.kernel.org, xcreativ@gmail.com, madeisbaer@arcor.de
-From: "Artem S. Tashkinov" <aros@gmx.com>
-Subject: Linux 6.10 regression resulting in a crash when using an ext4
- filesystem
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:yKOWLUBiagvL1PezUlr62IolUBXm2HQUsu7TsRumoYKLDl7GnCn
- Uc/v80jg97cJT2jm1AzVeFbCuDd8yBLre/2hNDupk+7zl/fLZLEWFfMLEeSXfSEe2vq7kin
- CNLEWboPyDeRV/+FhuzNGco3UEk7NGBXuP5BcrYGHJ7tJH3H58xtEhz5wLv/YexYSn8dl+2
- fRK+rWY8NjdFxf3bh9Jug==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:0YzS8RxRvac=;sxGlQlpWUWZQvcgsTNQwMgxV4YP
- 47Pf6EYf1v/TUEe8XPVMeE4dt/ivt/mNQamiMuHeo6TEACUiCaL4qEeHr8WqyLUOYRwm5yDv8
- rD6XuGM0FD32/RiDVoUbY8gAuYc+f4HbY+8LaQ88PZJssesYzf2m+hiPeGxH7Qgo9mpkvokzs
- A+8LExqdMSU7d9bBTm7FYhvLVwx6bvnZKXZplBS6O3wsai5Bgp2f6up7CyRZR8Og1mgjmTKwq
- zJozwvzlIZkeA609skyEbqK4qZtWiUM3LKq4tG52CrT/ocG6nch2ChiO27NO1Z5umNepabg95
- ZvYB2eu1f0r8RwYuJtDXRpQgDrTTuQGSLszV1EAEvkZBXtVHJBvcdmzc2wsr+/btEWcJzfIP/
- YVE/k0Qhj3hijka1Ydl1RCK8eojY7qpTgOf1IoEN9kkEzJYFw6nEhJ/keeVQT74mubY9PxdbX
- TqN3coqQbPlPl5RXRC/h1wivVsnxMesCO46AsxZD+UI8D4JmUe+DCGHHENF/TQzRP94MT2v71
- Iimsq25DjVU7KNMGIdtHQEYy5o/vJ9wAbJr58L7zEkrv32xeBpbFDci/YE5Drh2CrTofubNss
- sBLtOpWIi+Jfy01ocLI5t9QN3vnnaZ4n796erMDIPR6XJEsddHc5nHRcozU62vHo13n+2kW/n
- xXmDre5VlK1EEK7iZMgteeZqCS7Fdg5v+xM/U7tO08iPjR5NX66wjCjShcytvT6Th22ZFB/lO
- i88jxAvXMdQiPZA8TarxonZcM2vVb8+RCHR9WMt1lpmevjV0TrLnxG+cLsMVFti/Iu1mSNNLW
- pLXbBaVAcGv36Fv63KYibcZ6NsZMTfNX5hfB3STtoQ3S0=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240720121604.560d24e0@jic23-huawei>
 
-Hello,
+On Sat, Jul 20, 2024 at 12:16:04PM +0100, Jonathan Cameron wrote:
+> On Thu, 11 Jul 2024 23:15:52 +0200
+> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+> 
+> > Convert individual reads to a bulk read for the humidity calibration data.
+> > 
+> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> > ---
+> >  drivers/iio/pressure/bmp280-core.c | 57 +++++++++---------------------
+> >  drivers/iio/pressure/bmp280.h      |  5 +++
+> >  2 files changed, 21 insertions(+), 41 deletions(-)
+> > 
+> > diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+> > index 3deaa57bb3f5..9c32266403bd 100644
+> > --- a/drivers/iio/pressure/bmp280-core.c
+> > +++ b/drivers/iio/pressure/bmp280-core.c
+> > @@ -118,6 +118,8 @@ enum bmp580_odr {
+> >   */
+> >  enum { T1, T2, T3, P1, P2, P3, P4, P5, P6, P7, P8, P9 };
+> >  
+> > +enum { H2 = 0, H3 = 2, H4 = 3, H5 = 4, H6 = 6 };
+> Maybe add a comment to this that these are the locations where
+> the field 'starts' and that some overlap such as H5 and H6.
+> 
 
-There are now two bug reports containing very similar if not exactly the
-same backtraces.
+True, thanks!
 
-https://bugzilla.kernel.org/show_bug.cgi?id=3D219072
-https://bugzilla.kernel.org/show_bug.cgi?id=3D219078
+> > +
+> >  enum {
+> >  	/* Temperature calib indexes */
+> >  	BMP380_T1 = 0,
+> > @@ -344,6 +346,7 @@ static int bme280_read_calib(struct bmp280_data *data)
+> >  {
+> >  	struct bmp280_calib *calib = &data->calib.bmp280;
+> >  	struct device *dev = data->dev;
+> > +	s16 h4_upper, h4_lower;
+> >  	unsigned int tmp;
+> >  	int ret;
+> >  
+> > @@ -352,14 +355,6 @@ static int bme280_read_calib(struct bmp280_data *data)
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > -	/*
+> > -	 * Read humidity calibration values.
+> > -	 * Due to some odd register addressing we cannot just
+> > -	 * do a big bulk read. Instead, we have to read each Hx
+> > -	 * value separately and sometimes do some bit shifting...
+> > -	 * Humidity data is only available on BME280.
+> > -	 */
+> > -
+> >  	ret = regmap_read(data->regmap, BME280_REG_COMP_H1, &tmp);
+> >  	if (ret) {
+> >  		dev_err(dev, "failed to read H1 comp value\n");
+> > @@ -368,43 +363,23 @@ static int bme280_read_calib(struct bmp280_data *data)
+> >  	calib->H1 = tmp;
+> >  
+> >  	ret = regmap_bulk_read(data->regmap, BME280_REG_COMP_H2,
+> > -			       &data->le16, sizeof(data->le16));
+> > -	if (ret) {
+> > -		dev_err(dev, "failed to read H2 comp value\n");
+> > -		return ret;
+> > -	}
+> > -	calib->H2 = sign_extend32(le16_to_cpu(data->le16), 15);
+> > -
+> > -	ret = regmap_read(data->regmap, BME280_REG_COMP_H3, &tmp);
+> > -	if (ret) {
+> > -		dev_err(dev, "failed to read H3 comp value\n");
+> > -		return ret;
+> > -	}
+> > -	calib->H3 = tmp;
+> > -
+> > -	ret = regmap_bulk_read(data->regmap, BME280_REG_COMP_H4,
+> > -			       &data->be16, sizeof(data->be16));
+> > -	if (ret) {
+> > -		dev_err(dev, "failed to read H4 comp value\n");
+> > -		return ret;
+> > -	}
+> > -	calib->H4 = sign_extend32(((be16_to_cpu(data->be16) >> 4) & 0xff0) |
+> > -				  (be16_to_cpu(data->be16) & 0xf), 11);
+> > -
+> > -	ret = regmap_bulk_read(data->regmap, BME280_REG_COMP_H5,
+> > -			       &data->le16, sizeof(data->le16));
+> > +			       data->bme280_humid_cal_buf,
+> > +			       sizeof(data->bme280_humid_cal_buf));
+> >  	if (ret) {
+> > -		dev_err(dev, "failed to read H5 comp value\n");
+> > +		dev_err(dev, "failed to read humidity calibration values\n");
+> >  		return ret;
+> >  	}
+> > -	calib->H5 = sign_extend32(FIELD_GET(BME280_COMP_H5_MASK, le16_to_cpu(data->le16)), 11);
+> >  
+> > -	ret = regmap_read(data->regmap, BME280_REG_COMP_H6, &tmp);
+> > -	if (ret) {
+> > -		dev_err(dev, "failed to read H6 comp value\n");
+> > -		return ret;
+> > -	}
+> > -	calib->H6 = sign_extend32(tmp, 7);
+> > +	calib->H2 = get_unaligned_le16(&data->bme280_humid_cal_buf[H2]);
+> > +	calib->H3 = data->bme280_humid_cal_buf[H3];
+> > +	h4_upper = FIELD_GET(BME280_COMP_H4_MASK_UP,
+> > +			     get_unaligned_be16(&data->bme280_humid_cal_buf[H4]));
+> > +	h4_lower = FIELD_GET(BME280_COMP_H4_MASK_LOW,
+> > +			     get_unaligned_be16(&data->bme280_humid_cal_buf[H4]));
+> > +	calib->H4 = sign_extend32((h4_upper & ~BME280_COMP_H4_MASK_LOW) | h4_lower, 11);
+> 
+> This looks unusual.  Why mask with MASK_LOW?  The field_get above already drops the bottom
+> 4 bits an this is dropping more.  Should that H4_MASK_UP actually be GENMASK(15, 8)
+> and then you shift it left 4 to make space for the lower part?
+> 
+> Original code was messing with values inline so there is less need for it
+> to be explicit in how it does the masks.  Here you imply a 12 bit field but only use
+> 8 bits of it which isn't good.
+> 
+> 
 
-Theodore, please take a look.
+You are right it is a bit confusing. This endianness "fun" made me probably
+write much more complex code. Indeed, it doesn't look good what I do even
+though it works.
 
-Might not be necesserily ext4 related but I cannot tell.
+As you said, that H4_MASK_UP should be GENMASK(15,8) and then I should find
+a better way.
 
-=2D-----------[ cut here ]------------
-strnlen: detected buffer overflow: 17 byte read of buffer size 16
-WARNING: CPU: 3 PID: 1622 at lib/string_helpers.c:1029
-__fortify_report+0x43/0x50
-Modules linked in: rfcomm snd_seq_dummy snd_hrtimer snd_seq uhid cmac
-algif_hash algif_skcipher af_alg bnep vfat fat amd_atl intel_rapl_msr
-intel_rapl_common kvm_amd snd_hda_codec_realtek snd_hda_codec_generic
-kvm ip6t_REJECT snd_hda_scodec_component snd_hda_codec_hdmi
-nf_reject_ipv6 crct10dif_pclmul crc32_pclmul xt_hl snd_usb_audio
-polyval_clmulni snd_hda_intel ip6t_rt polyval_generic snd_intel_dspcfg
-gf128mul snd_usbmidi_lib snd_intel_sdw_acpi ghash_clmulni_intel
-sha512_ssse3 snd_ump snd_hda_codec sha256_ssse3 snd_rawmidi sha1_ssse3
-btusb snd_hda_core snd_seq_device aesni_intel btrtl mc snd_hwdep btintel
-crypto_simd btbcm snd_pcm cryptd r8169 btmtk realtek snd_timer
-mdio_devres rapl bluetooth snd wmi_bmof k10temp pcspkr ipt_REJECT ccp
-i2c_piix4 libphy soundcore nf_reject_ipv4 xt_LOG rfkill nf_log_syslog
-joydev mousedev nft_limit gpio_amdpt gpio_generic mac_hid lz4
-lz4_compress xt_limit xt_addrtype xt_tcpudp xt_conntrack nf_conntrack
-nf_defrag_ipv6 nf_defrag_ipv4 nft_compat nf_tables libcrc32c tcp_bbr
-  winesync(OE) pkcs8_key_parser i2c_dev crypto_user dm_mod loop
-nfnetlink zram ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2
-hid_generic usbhid amdgpu video amdxcp i2c_algo_bit drm_ttm_helper ttm
-drm_exec gpu_sched drm_suballoc_helper drm_buddy nvme drm_display_helper
-nvme_core crc32c_intel cec xhci_pci xhci_pci_renesas nvme_auth wmi
-CPU: 3 PID: 1622 Comm: KIO::WorkerThre Tainted: G           OE
-6.10.0-arch1-1 #1 3f70a25b32dbfb369f64430c352117d965bafd6c
-Hardware name: Micro-Star International Co., Ltd MS-7C02/B450 TOMAHAWK
-MAX (MS-7C02), BIOS 3.I0 10/14/2023
-RIP: 0010:__fortify_report+0x43/0x50
-Code: c1 83 e7 01 48 c7 c1 82 1a 45 8f 48 c7 c7 e8 49 4b 8f 48 8b 34 c5
-e0 55 ed 8e 48 c7 c0 3d f7 44 8f 48 0f 44 c8 e8 7d 4b a3 ff <0f> 0b c3
-cc cc cc cc 66 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffb4b09f7b3b68 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffff991a934c6000 RCX: 0000000000000027
-RDX: ffff99219eba19c8 RSI: 0000000000000001 RDI: ffff99219eba19c0
-RBP: ffffb4b09f7b3c38 R08: 0000000000000000 R09: ffffb4b09f7b39e8
-R10: ffffffff8fcb21e8 R11: 0000000000000003 R12: 0000760a5dfff390
-R13: ffff991a8a724af8 R14: ffff991aa4a3d478 R15: ffffffff8fd2a5a0
-FS:  0000760a5e0006c0(0000) GS:ffff99219eb80000(0000) knlGS:00000000000000=
-00
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007609e0013810 CR3: 000000012cb70000 CR4: 0000000000f50ef0
-PKRU: 55555554
-Call Trace:
-  <TASK>
-  ? __fortify_report+0x43/0x50
-  ? __warn.cold+0x8e/0xe8
-  ? __fortify_report+0x43/0x50
-  ? report_bug+0xff/0x140
-  ? console_unlock+0x84/0x130
-  ? handle_bug+0x3c/0x80
-  ? exc_invalid_op+0x17/0x70
-  ? asm_exc_invalid_op+0x1a/0x20
-  ? __fortify_report+0x43/0x50
-  ? __fortify_report+0x43/0x50
-  __fortify_panic+0xd/0xf
-  __ext4_ioctl.cold+0x13/0x59 [ext4
-2a94c00997ffaf4059189da5c3ba69455dc04edb]
-  ? do_filp_open+0xc4/0x170
-  ? __fdget_raw+0xa5/0xc0
-  ? terminate_walk+0x61/0x100
-  __x64_sys_ioctl+0x94/0xd0
-  do_syscall_64+0x82/0x190
-  ? from_kgid_munged+0x12/0x30
-  ? cp_statx+0x19f/0x1e0
-  ? do_statx+0x72/0xa0
-  ? syscall_exit_to_user_mode+0x72/0x200
-  ? do_syscall_64+0x8e/0x190
-  ? do_user_addr_fault+0x36c/0x620
-  ? exc_page_fault+0x81/0x190
-  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-RIP: 0033:0x760ade31f13f
-Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89
-44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d
-00 f0 ff ff 77 18 48 8b 44 24 18 64 48 2b 04 25 28 00 00
-RSP: 002b:0000760a5dfff310 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000760a5dfff560 RCX: 0000760ade31f13f
-RDX: 0000760a5dfff390 RSI: 0000000081009431 RDI: 000000000000003e
-RBP: 0000760a5dfff4b0 R08: 0000760a5dfff580 R09: 00007609e0007ae0
-R10: 0000000000001000 R11: 0000000000000246 R12: 0000760a5dfff390
-R13: 00007609e00135e0 R14: 0000760a5dfff540 R15: 0000000000010308
-  </TASK>
-=2D--[ end trace 0000000000000000 ]---
-=2D-----------[ cut here ]------------
-kernel BUG at lib/string_helpers.c:1037!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
-CPU: 3 PID: 1622 Comm: KIO::WorkerThre Tainted: G        W  OE
-6.10.0-arch1-1 #1 3f70a25b32dbfb369f64430c352117d965bafd6c
-Hardware name: Micro-Star International Co., Ltd MS-7C02/B450 TOMAHAWK
-MAX (MS-7C02), BIOS 3.I0 10/14/2023
-RIP: 0010:__fortify_panic+0xd/0xf
-Code: ff e8 87 03 00 00 e9 08 b8 89 ff 66 90 90 90 90 90 90 90 90 90 90
-90 90 90 90 90 90 90 f3 0f 1e fa 40 0f b6 ff e8 b3 e2 89 ff <0f> 0b 48
-8b 54 24 10 48 8b 74 24 08 4c 89 e9 48 c7 c7 99 27 42 8f
-RSP: 0018:ffffb4b09f7b3b70 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffff991a934c6000 RCX: 0000000000000027
-RDX: ffff99219eba19c8 RSI: 0000000000000001 RDI: ffff99219eba19c0
-RBP: ffffb4b09f7b3c38 R08: 0000000000000000 R09: ffffb4b09f7b39e8
-R10: ffffffff8fcb21e8 R11: 0000000000000003 R12: 0000760a5dfff390
-R13: ffff991a8a724af8 R14: ffff991aa4a3d478 R15: ffffffff8fd2a5a0
-FS:  0000760a5e0006c0(0000) GS:ffff99219eb80000(0000) knlGS:00000000000000=
-00
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007609e0013810 CR3: 000000012cb70000 CR4: 0000000000f50ef0
-PKRU: 55555554
-Call Trace:
-  <TASK>
-  ? __die_body.cold+0x19/0x27
-  ? die+0x2e/0x50
-  ? do_trap+0xca/0x110
-  ? do_error_trap+0x6a/0x90
-  ? __fortify_panic+0xd/0xf
-  ? exc_invalid_op+0x50/0x70
-  ? __fortify_panic+0xd/0xf
-  ? asm_exc_invalid_op+0x1a/0x20
-  ? __fortify_panic+0xd/0xf
-  __ext4_ioctl.cold+0x13/0x59 [ext4
-2a94c00997ffaf4059189da5c3ba69455dc04edb]
-  ? do_filp_open+0xc4/0x170
-  ? __fdget_raw+0xa5/0xc0
-  ? terminate_walk+0x61/0x100
-  __x64_sys_ioctl+0x94/0xd0
-  do_syscall_64+0x82/0x190
-  ? from_kgid_munged+0x12/0x30
-  ? cp_statx+0x19f/0x1e0
-  ? do_statx+0x72/0xa0
-  ? syscall_exit_to_user_mode+0x72/0x200
-  ? do_syscall_64+0x8e/0x190
-  ? do_user_addr_fault+0x36c/0x620
-  ? exc_page_fault+0x81/0x190
-  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-RIP: 0033:0x760ade31f13f
-Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89
-44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d
-00 f0 ff ff 77 18 48 8b 44 24 18 64 48 2b 04 25 28 00 00
-RSP: 002b:0000760a5dfff310 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000760a5dfff560 RCX: 0000760ade31f13f
-RDX: 0000760a5dfff390 RSI: 0000000081009431 RDI: 000000000000003e
-RBP: 0000760a5dfff4b0 R08: 0000760a5dfff580 R09: 00007609e0007ae0
-R10: 0000000000001000 R11: 0000000000000246 R12: 0000760a5dfff390
-R13: 00007609e00135e0 R14: 0000760a5dfff540 R15: 0000000000010308
-  </TASK>
-Modules linked in: rfcomm snd_seq_dummy snd_hrtimer snd_seq uhid cmac
-algif_hash algif_skcipher af_alg bnep vfat fat amd_atl intel_rapl_msr
-intel_rapl_common kvm_amd snd_hda_codec_realtek snd_hda_codec_generic
-kvm ip6t_REJECT snd_hda_scodec_component snd_hda_codec_hdmi
-nf_reject_ipv6 crct10dif_pclmul crc32_pclmul xt_hl snd_usb_audio
-polyval_clmulni snd_hda_intel ip6t_rt polyval_generic snd_intel_dspcfg
-gf128mul snd_usbmidi_lib snd_intel_sdw_acpi ghash_clmulni_intel
-sha512_ssse3 snd_ump snd_hda_codec sha256_ssse3 snd_rawmidi sha1_ssse3
-btusb snd_hda_core snd_seq_device aesni_intel btrtl mc snd_hwdep btintel
-crypto_simd btbcm snd_pcm cryptd r8169 btmtk realtek snd_timer
-mdio_devres rapl bluetooth snd wmi_bmof k10temp pcspkr ipt_REJECT ccp
-i2c_piix4 libphy soundcore nf_reject_ipv4 xt_LOG rfkill nf_log_syslog
-joydev mousedev nft_limit gpio_amdpt gpio_generic mac_hid lz4
-lz4_compress xt_limit xt_addrtype xt_tcpudp xt_conntrack nf_conntrack
-nf_defrag_ipv6 nf_defrag_ipv4 nft_compat nf_tables libcrc32c tcp_bbr
-  winesync(OE) pkcs8_key_parser i2c_dev crypto_user dm_mod loop
-nfnetlink zram ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2
-hid_generic usbhid amdgpu video amdxcp i2c_algo_bit drm_ttm_helper ttm
-drm_exec gpu_sched drm_suballoc_helper drm_buddy nvme drm_display_helper
-nvme_core crc32c_intel cec xhci_pci xhci_pci_renesas nvme_auth wmi
-=2D--[ end trace 0000000000000000 ]---
-RIP: 0010:__fortify_panic+0xd/0xf
-Code: ff e8 87 03 00 00 e9 08 b8 89 ff 66 90 90 90 90 90 90 90 90 90 90
-90 90 90 90 90 90 90 f3 0f 1e fa 40 0f b6 ff e8 b3 e2 89 ff <0f> 0b 48
-8b 54 24 10 48 8b 74 24 08 4c 89 e9 48 c7 c7 99 27 42 8f
-RSP: 0018:ffffb4b09f7b3b70 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffff991a934c6000 RCX: 0000000000000027
-RDX: ffff99219eba19c8 RSI: 0000000000000001 RDI: ffff99219eba19c0
-RBP: ffffb4b09f7b3c38 R08: 0000000000000000 R09: ffffb4b09f7b39e8
-R10: ffffffff8fcb21e8 R11: 0000000000000003 R12: 0000760a5dfff390
-R13: ffff991a8a724af8 R14: ffff991aa4a3d478 R15: ffffffff8fd2a5a0
-FS:  0000760a5e0006c0(0000) GS:ffff99219eb80000(0000) knlGS:00000000000000=
-00
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007609e0013810 CR3: 000000012cb70000 CR4: 0000000000f50ef0
-PKRU: 55555554
+Cheers,
+Vasilis
 
+> > +	calib->H5 = sign_extend32(FIELD_GET(BME280_COMP_H5_MASK,
+> > +				  get_unaligned_le16(&data->bme280_humid_cal_buf[H5])), 11);
+> > +	calib->H6 = data->bme280_humid_cal_buf[H6];
+> >  
+> >  	return 0;
+> >  }
+> > diff --git a/drivers/iio/pressure/bmp280.h b/drivers/iio/pressure/bmp280.h
+> > index ccacc67c1473..56c01f224728 100644
+> > --- a/drivers/iio/pressure/bmp280.h
+> > +++ b/drivers/iio/pressure/bmp280.h
+> > @@ -257,8 +257,12 @@
+> >  #define BME280_REG_COMP_H5		0xE5
+> >  #define BME280_REG_COMP_H6		0xE7
+> >  
+> > +#define BME280_COMP_H4_MASK_UP		GENMASK(15, 4)
+> > +#define BME280_COMP_H4_MASK_LOW		GENMASK(3, 0)
+> >  #define BME280_COMP_H5_MASK		GENMASK(15, 4)
+> >  
+> > +#define BME280_CONTIGUOUS_CALIB_REGS	7
+> > +
+> >  #define BME280_OSRS_HUMIDITY_MASK	GENMASK(2, 0)
+> >  #define BME280_OSRS_HUMIDITY_SKIP	0
+> >  #define BME280_OSRS_HUMIDITY_1X		1
+> > @@ -423,6 +427,7 @@ struct bmp280_data {
+> >  		/* Calibration data buffers */
+> >  		__le16 bmp280_cal_buf[BMP280_CONTIGUOUS_CALIB_REGS / 2];
+> >  		__be16 bmp180_cal_buf[BMP180_REG_CALIB_COUNT / 2];
+> > +		u8 bme280_humid_cal_buf[BME280_CONTIGUOUS_CALIB_REGS];
+> >  		u8 bmp380_cal_buf[BMP380_CALIB_REG_COUNT];
+> >  		/* Miscellaneous, endianness-aware data buffers */
+> >  		__le16 le16;
+> 
 
