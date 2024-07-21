@@ -1,148 +1,199 @@
-Return-Path: <linux-kernel+bounces-258322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F37593865E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 00:08:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41B51938662
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 00:09:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C188EB20B82
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 22:08:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 629DE1C20BB9
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 22:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F035F16B396;
-	Sun, 21 Jul 2024 22:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="aMDEuwvU"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7262B16B74A;
+	Sun, 21 Jul 2024 22:08:46 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4821E2745B
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 22:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE941667FA
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 22:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721599691; cv=none; b=qkUaVz7sDIP+Yoh8Zsi5Us9KXxIkjuWhn8vM5LrNsWNFgQKPDV65h4v3WbJhvMoLxBJjSwPvnIYS8BJ2eH8g9pJvAyBd/lWzmAbz12BeygEKDSXzimLTdBhtCKf/fnEEQJRAVvr9RIbVD1J6/a95SsOiT5A4YNlgeH3gOP+pntk=
+	t=1721599725; cv=none; b=gGa6gs8/eR/4g5Z3/g6E+Bw3RdHNCv7gUsrWNI6jAOZVXGftkgpXZSXkQUw7PU97mmt97MGSgBTuoyGq1M2yPIaJFJ+niQJ5e0JMxJdqSo2XamCn93/1jUk34Q2K31dL8j1ONEbtf7w7oXfmPzPlUVBKjkgz3DZDoDRfuPESUeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721599691; c=relaxed/simple;
-	bh=NvQhgqZ/eJ4eay+hcTekcrXMx75pemCUoA4q7W94dWo=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iyb5BbNjmsq0pSA1o+KVOnemjl4nXsIP2MMoyBRapIQoN/mcGEVgJkQtRXRkQRoMUOGA+ImD2e+mYZgMDPVRr3T1U0/kWJIt/+bIsTEdKFDQiSfP3dk/wBcTzF3Q2Px8UjICAkkaBemJxnXaazs9kb2mP4Y2N3p8VUrgQ0XhM1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=aMDEuwvU; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com [209.85.167.200])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 212F73FE16
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 22:08:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1721599681;
-	bh=y5sr3lEv07by+NAwwOdiyaM6+TTZ7xKpJ82kUwR7sbg=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=aMDEuwvUZG7sOXUNPPo8Tz0sr+ynI3dAbUPWkfahKS6ja9qXBndB3DUdXTq1WlbH4
-	 Xofiypl3b4o9NBiChGEn0+VKZXCFwjgvnficwAvmXTUxbeNmkGokrLgDg8snHZLw+r
-	 1O9cON6vmQV5TSJKV6wEQCQCWLwRhYE0mTS7axMVLcmswxi480fFHvBrhFokaz49vP
-	 kRwy+FUf+SSbovsPmDsNt1uxSgdxb0j4rug2ZPJrueCMog679sMCcIxnFnlDW+iupd
-	 V68AniDTiBVd7Wz4Yrp/4JBnyOfNSY/sSpJkhAiuCQEDA6Nb2MnhzHNUDij1fLw0dT
-	 9zC97k1LWbWpw==
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3d92425ce97so3777303b6e.2
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 15:08:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721599679; x=1722204479;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y5sr3lEv07by+NAwwOdiyaM6+TTZ7xKpJ82kUwR7sbg=;
-        b=Tr/TPLbRcey3x+JOVZYV5oPK564syIGb6PmFrCVzKJ6GD38W2SfwJl7SgaH8TboUwG
-         R0jGrVViPnk/Pwkthc4X5Dw3NivVDkJaRQEuzYKpFyUFV9ZWdXRl+orFOuppIiITTURt
-         d6ewW5eF5rUn5s7hDJ6xyluUffCMFnXZ9SwR6oHpXTTcKqfwUoi0t4lg/K4xCKn3T78q
-         x8bS1PlV6RH61PtD6Nrrpiz4sasSxE1NNl17oGoK2B8mfoUoVRK0Uqxx8ax5Rql+1s8p
-         DJ8mOgkmiwfBkMGPOqSFuMEFfSHbGywQecwC+SJj2DAvwPtgKAvoCzcP9n5EIl/TD6Z5
-         L/fw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxXfCWgiWpsW4+Tb/SInzeA6AZ8ONmBe8Ms/2vj7+UjuDrfCf7wyUa/ZnV90i+su92vIo3brkj/S8It3WZtiz6tw7hvLDzlHr3Bt4f
-X-Gm-Message-State: AOJu0YyGoxPYINgxKLOAt3g4js0yYqOHK61CkL8JRzIQaxkEKB2fpQVr
-	LA4cYsdZTh4rvkUoHDG9JxpN97ABe/4sI13qwixw/pilBoZrVYrudF0rIeTVOW/M7TaHXltRKSa
-	fgmhkwSM0bsSpb3E1fkL/+qjGtj5gE7l4B6yZp3P9V5vgySISfxs6ljjcOqg8eQrgg7sRTQe9d5
-	rpMrWu2uk8uwtvCsSK+l212cO+cGssTY7K1twMCCR3G3R+5saPau+u
-X-Received: by 2002:a05:6808:2384:b0:3d5:2e2f:bf9 with SMTP id 5614622812f47-3dae5fd6b6emr8114729b6e.30.1721599678744;
-        Sun, 21 Jul 2024 15:07:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHKu3rxDjbynntjHH+0+p7b3ltQUv9i7hhvrMnwR7SAjBoMSrD4QUg9VCnWIvxOUrarV5om39CY87FNWsSBz4A=
-X-Received: by 2002:a05:6808:2384:b0:3d5:2e2f:bf9 with SMTP id
- 5614622812f47-3dae5fd6b6emr8114702b6e.30.1721599678304; Sun, 21 Jul 2024
- 15:07:58 -0700 (PDT)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Sun, 21 Jul 2024 17:07:57 -0500
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <20240711-th1520-clk-v3-3-6ff17bb318fb@tenstorrent.com>
-References: <20240711-th1520-clk-v3-0-6ff17bb318fb@tenstorrent.com> <20240711-th1520-clk-v3-3-6ff17bb318fb@tenstorrent.com>
+	s=arc-20240116; t=1721599725; c=relaxed/simple;
+	bh=3cX0kwDU5b8rcZZ955opofqi6LaYdUQoIbhhqN5BgBg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Lh9oZ3Tnn4BLfJyd1k57IUh5vJEKxnK640PQgm3CXz55BQpv5ujYyF6bgC+e2kWzj/JO7YkxVyV7Iv+c2gpj/Zwdj4h6AcvpNIwC3uDBM7SkNGrq+PMsqVnQ7dAhGS1zVgBfUzhryLc+VfaLShVZpMdoVlUPZYPukuoTHkV3Oic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1sVejC-00032t-UZ; Mon, 22 Jul 2024 00:08:26 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1sVej8-001EsY-As; Mon, 22 Jul 2024 00:08:22 +0200
+Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
+	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1sVej8-00FrrZ-0y;
+	Mon, 22 Jul 2024 00:08:22 +0200
+From: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Subject: [PATCH v7 0/3] usb: gadget: 9pfs transport
+Date: Mon, 22 Jul 2024 00:08:16 +0200
+Message-Id: <20240116-ml-topic-u9p-v7-0-3a1eeef77fbe@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Sun, 21 Jul 2024 17:07:57 -0500
-Message-ID: <CAJM55Z8uo-Z_9ruyqygK1pbBCTkCxMBVoF8GD2dajhTKOYrAfA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/7] riscv: dts: thead: Add TH1520 AP_SUBSYS clock controller
-To: Drew Fustini <dfustini@tenstorrent.com>, Jisheng Zhang <jszhang@kernel.org>, 
-	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Yangtao Li <frank.li@vivo.com>, 
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANCGnWYC/33PyW7DIBQF0F+JWJcGHlPoqv9RdcHwiJE8CTtWq
+ sj/XuxtXS8vuu9c8SITlowT+bi8SMElT3noazBvFxIa19+R5lgzAQaSca5p19J5GHOgDzvSm1V
+ gpBIMPSf1xLsJqS+uD8121LVde93b19reCmPBlJ/73td3zU2e5qH87PML317/WVo4ZdTFWxBMJ
+ +skfo7Y3x9zGfr8fI9INm2BMwGq4KUOPikLVsOhIM4EUYWgwQmNIUTHDwV5JsgqGACMcPPMxeN
+ fqDNBVUFhZM5HJTCpQ0GfCboK2iprTDQ6pvRHWNf1Fy3S2EYYAgAA
+To: Eric Van Hensbergen <ericvh@kernel.org>, 
+ Latchesar Ionkov <lucho@ionkov.net>, 
+ Dominique Martinet <asmadeus@codewreck.org>, 
+ Christian Schoenebeck <linux_oss@crudebyte.com>, 
+ Jonathan Corbet <corbet@lwn.net>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andrzej Pietrasiewicz <andrzej.p@collabora.com>, v9fs@lists.linux.dev, 
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-usb@vger.kernel.org, kernel@pengutronix.de, 
+ Michael Grzeschik <m.grzeschik@pengutronix.de>, 
+ Jan Luebbe <jlu@pengutronix.de>
+X-Mailer: b4 0.12.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5135;
+ i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
+ bh=3cX0kwDU5b8rcZZ955opofqi6LaYdUQoIbhhqN5BgBg=;
+ b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBmnYbR3Uh79e1ZCyJnyO/OFLUPnjQIm0qcam8qJ
+ is/9ERDo8qJAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZp2G0QAKCRC/aVhE+XH0
+ q4DCD/96ozjKJyLgTMTB4I6AtbzdKKDqNptoPcCYUSu4kmixGTTeDvSD9tfRH4pCIO7u9A2uCtW
+ DTCJC46AxfLNXs3CIRb+KNz3vtWzpeRdVEY0S4lvMNJ/ONxtCugygfwToBdO3TKNbB7bJqZAzXY
+ fdSUrr4TARcGHsaJSMottN7CzX6TwekEiL+Cm6F2L2ioHWgfpVCVFhLVYlOO1bWtHz3IMUxSE88
+ qJwnlIV70+kbgciH3GKD2stVPKKwZQTAIhHdNaA692Rq05p/kcesTLAYrSVUuOnSDkrbGRbXMdJ
+ +39rhcdULffBrdGsyq2+yKBYUp9/XYZ+z6I6RMqU8g3P94cMUZJAfvhOWFA31RZJY0nD5ERPo1Z
+ 03TEO68mfHD1oBPTuLhZyziEj5AToqDAQ5ys/6AR8BFb0+eNm9pxCaweti6sqd+NkXSwv4RmNXl
+ CI9lCkAs2Ua2kG6osbd8lpXYcS7CmGyjT0DD7cyXfwC6B7PdRKvoVpfqHUuQTHfhFtIa8fJzKVz
+ y0An/ftmzJnKAfykBKOZ+1THeN76Yd2D5VcLna+wWZ0BynBSoQxn+IShNXwgyS914I0JLcpGF0T
+ w9/wd+cGPMqq/2ueaoHQOTD6iEjIlzoGMbQahxVL1wGVIG4a7gMgfKQgcvV7LlGZNoZCWKnelHl
+ kYV54pNBXrNB/9A==
+X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
+ fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Drew Fustini wrote:
-> Add node for the AP_SUBSYS clock controller on the T-Head TH1520 SoC.
->
-> Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf
-> Link: https://git.beagleboard.org/beaglev-ahead/beaglev-ahead/-/tree/main/docs
-> Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
-> ---
->  arch/riscv/boot/dts/thead/th1520.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-> index d2fa25839012..10a38ed55658 100644
-> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
-> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-> @@ -5,6 +5,7 @@
->   */
->
->  #include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/clock/thead,th1520-clk-ap.h>
->
->  / {
->  	compatible = "thead,th1520";
-> @@ -161,6 +162,13 @@ soc {
->  		dma-noncoherent;
->  		ranges;
->
-> +		clk: clock-controller@ffef010000 {
-> +			compatible = "thead,th1520-clk-ap";
-> +			reg = <0xff 0xef010000 0x0 0x1000>;
-> +			clocks = <&osc>;
-> +			#clock-cells = <1>;
-> +		};
+This series is adding support to mount usb hostside exported 9pfs
+filesystems via the usb gadget interface. It also includes a simple tool
+(p9_fwd.py) to translate an tcp 9pfs transport and reuse it via the usb
+interface.
 
-Please add this node so nodes are still sorted by address.
+    +--------------------------+    |    +--------------------------+
+    |  9PFS mounting client    |    |    |  9PFS exporting server   |
+ SW |                          |    |    |                          |
+    |   (this:trans_usbg)      |    |    |(e.g. diod or nfs-ganesha)|
+    +-------------^------------+    |    +-------------^------------+
+                  |                 |                  |
+                  |                 |           +------v------+
+                  |                 |           |  p9_fwd.py  |
+                  |                 |           +------^------+
+                  |                 |                  |
+------------------|------------------------------------|-------------
+                  |                 |                  |
+    +-------------v------------+    |    +-------------v------------+
+    |                          |    |    |                          |
+ HW |   USB Device Controller  <--------->   USB Host Controller    |
+    |                          |    |    |                          |
+    +--------------------------+    |    +--------------------------+
 
-> +
->  		plic: interrupt-controller@ffd8000000 {
->  			compatible = "thead,th1520-plic", "thead,c900-plic";
->  			reg = <0xff 0xd8000000 0x0 0x01000000>;
->
-> --
-> 2.34.1
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+The USB host exports a filesystem, while the gadget on the USB device
+side makes it mountable.
+
+Diod (9pfs server) and the forwarder are on the development host, where
+the root filesystem is actually stored. The gadget is initialized during
+boot (or later) on the embedded board. Then the forwarder will find it
+on the USB bus and start forwarding requests.
+
+In this case the 9p requests come from the device and are handled by the
+host. The reason is that USB device ports are normally not available on
+PCs, so a connection in the other direction would not work.
+
+One use-case is to use it as an alternative to NFS root booting during
+the development of embedded Linux devices.
+
+Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+---
+Changes in v7:
+- added back the req_lock spinlock
+- Link to v6: https://lore.kernel.org/r/20240116-ml-topic-u9p-v6-0-695977d76dff@pengutronix.de
+
+Changes in v6:
+- fixed the python script not to have path set by default
+- improved the lock init
+- fixed usb9pfs status change to connected
+- Link to v5: https://lore.kernel.org/r/20240116-ml-topic-u9p-v5-0-5ed0abd53ef5@pengutronix.de
+
+Changes in v5:
+- fixed lockup in mount -> remount -> monut scenario
+- improved p9_fwd transport script with more options
+- Link to v4: https://lore.kernel.org/r/20240116-ml-topic-u9p-v4-0-722ed28b0ade@pengutronix.de
+
+Changes in v4:
+- reworked the naming scheme to be set by the configfs instance
+- added conn_cancel function to properly stop the transfers
+- ensured that umount -f will work even when the host side has crahed
+- added all the review feedback from Andrzej Pietrasiewicz
+- Link to v3: https://lore.kernel.org/r/20240116-ml-topic-u9p-v3-0-c62a36eccda1@pengutronix.de
+
+Changes in v3:
+- dropped patch "usb: gadget: legacy: add 9pfs multi gadget" as discussed with gregkh
+- Link to v2: https://lore.kernel.org/r/20240116-ml-topic-u9p-v2-0-b46cbf592962@pengutronix.de
+
+Changes in v2:
+- improved the commit messages
+- introduced an patch to move the header u_f.h to include/linux/usb to compile usb gadget functions treewide
+- moved usbg gadget function to net/9p/
+- adderessed several comments in function driver, like the cleanup path and kbuild errors
+- improved the documentation in Documentation/filesystems/9p.rst
+- Link to v1: https://lore.kernel.org/r/20240116-ml-topic-u9p-v1-0-ad8c306f9a4e@pengutronix.de
+
+---
+Michael Grzeschik (3):
+      usb: gadget: function: move u_f.h to include/linux/usb/func_utils.h
+      net/9p/usbg: Add new usb gadget function transport
+      tools: usb: p9_fwd: add usb gadget packet forwarder script
+
+ Documentation/filesystems/9p.rst                   |  58 +-
+ drivers/usb/gadget/configfs.c                      |   2 +-
+ drivers/usb/gadget/function/f_fs.c                 |   2 +-
+ drivers/usb/gadget/function/f_hid.c                |   2 +-
+ drivers/usb/gadget/function/f_loopback.c           |   2 +-
+ drivers/usb/gadget/function/f_midi.c               |   2 +-
+ drivers/usb/gadget/function/f_midi2.c              |   2 +-
+ drivers/usb/gadget/function/f_sourcesink.c         |   2 +-
+ drivers/usb/gadget/u_f.c                           |   2 +-
+ .../gadget/u_f.h => include/linux/usb/func_utils.h |   2 +-
+ net/9p/Kconfig                                     |   6 +
+ net/9p/Makefile                                    |   4 +
+ net/9p/trans_usbg.c                                | 985 +++++++++++++++++++++
+ tools/usb/p9_fwd.py                                | 243 +++++
+ 14 files changed, 1304 insertions(+), 10 deletions(-)
+---
+base-commit: 2c9b3512402ed192d1f43f4531fb5da947e72bd0
+change-id: 20240116-ml-topic-u9p-895274530eb1
+
+Best regards,
+-- 
+Michael Grzeschik <m.grzeschik@pengutronix.de>
+
 
