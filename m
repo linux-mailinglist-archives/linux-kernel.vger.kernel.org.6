@@ -1,153 +1,140 @@
-Return-Path: <linux-kernel+bounces-258186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42EF19384CE
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 15:39:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A6629384C5
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 15:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7533A1C20D2C
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 13:39:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E641E1F212C8
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 13:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA031662E5;
-	Sun, 21 Jul 2024 13:37:26 +0000 (UTC)
-Received: from mailscanner10.zoner.fi (mailscanner10.zoner.fi [5.44.246.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271D21662F2;
+	Sun, 21 Jul 2024 13:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mJwBmgNc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D2A16B3BC
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 13:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.44.246.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4104216132B;
+	Sun, 21 Jul 2024 13:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721569045; cv=none; b=ggZYDsweTGd6VUJeVWbdKPOtmO3pQ7Vd+tU62BkB1veucyJuOIzp4ljrzwS+OEUbpCWXs2FvA5pCiYJn84Wax6Yy1liUJJ1WeIli5Yxox4UON7V7q0gQ/jHyFRQvJ5UTZ562kWzpw/pCEVFd2qFx1sAT2zp1kbG72yW1bHIUGNI=
+	t=1721569028; cv=none; b=li43eO4MRZv5dEekfs5H4TJksTywPuCh0s5U3ttTjQzDF62TFBc5NQnQE3Ftz7QwiGQbtTSvwEBsmcHBVz+N/07r7PQhPSuLs6YUV6u3D9cZ0QY8MpCkyn6KUPKe3vP7dg4ourMkG7YHqJCW1Z6rL0YJXbPzlERbR2w6gJ0i6Eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721569045; c=relaxed/simple;
-	bh=TQFB4eP5J2kKT8PWOjT9n1wQf5OwwyCV9CA/DS4mb0E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qV61La2LFucLPJcZ/N+6vo7bH6nRc6ClfZe0UnY8dVFAMQNzAf9Hd0S+I4PrSXETMjlsAH3s6d7rhxnZV9IeqWyPhAUYU6UbrXcE+u9vVdBeq3qeIfGHqUWX3XyrxTBghq6sMlxx2Du2H0Pa6tCQnJCs0y+B/uRJdooxDLLznN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tukaani.org; spf=pass smtp.mailfrom=tukaani.org; arc=none smtp.client-ip=5.44.246.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tukaani.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tukaani.org
-Received: from www25.zoner.fi (www25.zoner.fi [84.34.147.45])
-	by mailscanner10.zoner.fi (Postfix) with ESMTPS id 611A92131F;
-	Sun, 21 Jul 2024 16:37:22 +0300 (EEST)
-Received: from mail.zoner.fi ([84.34.147.244])
-	by www25.zoner.fi with esmtp (Exim 4.97.1)
-	(envelope-from <lasse.collin@tukaani.org>)
-	id 1sVWkY-00000001SpP-3xpw;
-	Sun, 21 Jul 2024 16:37:22 +0300
-From: Lasse Collin <lasse.collin@tukaani.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Lasse Collin <lasse.collin@tukaani.org>,
-	Sam James <sam@gentoo.org>,
-	linux-kernel@vger.kernel.org,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jules Maselbas <jmaselbas@zdiv.net>,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH v2 16/16] riscv: boot: add Image.xz support
-Date: Sun, 21 Jul 2024 16:36:31 +0300
-Message-ID: <20240721133633.47721-17-lasse.collin@tukaani.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240721133633.47721-1-lasse.collin@tukaani.org>
-References: <20240721133633.47721-1-lasse.collin@tukaani.org>
+	s=arc-20240116; t=1721569028; c=relaxed/simple;
+	bh=WbM+yH7jBU/gy7hkBVSNdb8VjTuK9EahNaYjK7vso+w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b7HmY4ZTs5uvXOIv87NrDiQ09Z8fCrp/k9ueKBIHeVmYaq4PL8ck1A+ipyQFjuVzw3FSsOI/6rxyaW3Aayf7GjQkhwbE4WBlo5TeQAoEtIGcB6h19lhZdGnta6QLO+nbFS2eFXJg4XKgVsjV7Md9Ms46NXqwIOEaWhlJXY5qex4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mJwBmgNc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48EA5C116B1;
+	Sun, 21 Jul 2024 13:37:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721569027;
+	bh=WbM+yH7jBU/gy7hkBVSNdb8VjTuK9EahNaYjK7vso+w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mJwBmgNc8A+A6X6qseLbk5OI51mNkH8b4vO/LPh0ZNp/u199TIXoaCK8uzAi9oQdi
+	 qocDh5wciNtIRT+H2Mf2UZfS/8VDxnAKl3Uiwx1PP5arjZh9dS2ojDjylroZF0WU8o
+	 oTWCt/ddugRBsam4tpqCCCzZHZKzyFqtwYUfI52cpJxUzKplgP5+78KnDs6ps4WzOV
+	 h8nQpVx21VwkgxdpfTN/C2RyIp3B5o299JKptddSMBZwacbXHRPTtmq1EEMvuuEsTP
+	 RqadBfVxJWc5r0vi0nkIUd4e3vunDATbXtjYVJTDHI3dUklxp/DS9iNUbxjiYHFJ7L
+	 q8VnetqaUmlkg==
+Message-ID: <dee6e871-daa3-4886-be57-e4d4b3fa198d@kernel.org>
+Date: Sun, 21 Jul 2024 15:36:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/7] dt-bindings: firmware: add i.MX95 SCMI Extension
+ protocol
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+ Sudeep Holla <sudeep.holla@arm.com>,
+ Cristian Marussi <cristian.marussi@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Peng Fan <peng.fan@nxp.com>, arm-scmi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-rtc@vger.kernel.org, linux-input@vger.kernel.org
+References: <20240718-imx95-bbm-misc-v2-v6-0-18f008e16e9d@nxp.com>
+ <20240718-imx95-bbm-misc-v2-v6-1-18f008e16e9d@nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240718-imx95-bbm-misc-v2-v6-1-18f008e16e9d@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The Image.* targets existed for other compressors already. Bootloader
-support is needed for decompression.
+On 18/07/2024 09:41, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Add i.MX SCMI Extension protocols bindings for:
+> - Battery Backed Module(BBM) Protocol
+>   This contains persistent storage (GPR), an RTC, and the ON/OFF button.
+>   The protocol can also provide access to similar functions implemented via
+>   external board components.
+> - MISC Protocol.
+>   This includes controls that are misc settings/actions that must be exposed
+>   from the SM to agents. They are device specific and are usually define to
+>   access bit fields in various mix block control modules, IOMUX_GPR, and
+>   other GPR/CSR owned by the SM.
+> 
+> Reviewed-by: "Rob Herring (Arm)" <robh@kernel.org>
 
-This is for CONFIG_EFI_ZBOOT=n. With CONFIG_EFI_ZBOOT=y, XZ was already
-available.
+Why quotes? Which tools did you use?
 
-Comparision with Linux 6.10 RV64GC tinyconfig (in KiB):
-
-    1027 Image
-     594 Image.gz
-     541 Image.zst
-     510 Image.lzma
-     474 Image.xz
-
-Cc: Paul Walmsley <paul.walmsley@sifive.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Albert Ou <aou@eecs.berkeley.edu>
-Cc: Jules Maselbas <jmaselbas@zdiv.net>
-Cc: linux-riscv@lists.infradead.org
-Signed-off-by: Lasse Collin <lasse.collin@tukaani.org>
----
- arch/riscv/Kconfig       | 1 +
- arch/riscv/Makefile      | 6 ++++--
- arch/riscv/boot/Makefile | 3 +++
- 3 files changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 736457a5898a..ef6a603b80c5 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -153,6 +153,7 @@ config RISCV
- 	select HAVE_KERNEL_LZO if !XIP_KERNEL && !EFI_ZBOOT
- 	select HAVE_KERNEL_UNCOMPRESSED if !XIP_KERNEL && !EFI_ZBOOT
- 	select HAVE_KERNEL_ZSTD if !XIP_KERNEL && !EFI_ZBOOT
-+	select HAVE_KERNEL_XZ if !XIP_KERNEL && !EFI_ZBOOT
- 	select HAVE_KPROBES if !XIP_KERNEL
- 	select HAVE_KPROBES_ON_FTRACE if !XIP_KERNEL
- 	select HAVE_KRETPROBES if !XIP_KERNEL
-diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-index 6fe682139d2e..d469db9f46f4 100644
---- a/arch/riscv/Makefile
-+++ b/arch/riscv/Makefile
-@@ -159,6 +159,7 @@ boot-image-$(CONFIG_KERNEL_LZ4)		:= Image.lz4
- boot-image-$(CONFIG_KERNEL_LZMA)	:= Image.lzma
- boot-image-$(CONFIG_KERNEL_LZO)		:= Image.lzo
- boot-image-$(CONFIG_KERNEL_ZSTD)	:= Image.zst
-+boot-image-$(CONFIG_KERNEL_XZ)		:= Image.xz
- ifdef CONFIG_RISCV_M_MODE
- boot-image-$(CONFIG_ARCH_CANAAN)	:= loader.bin
- endif
-@@ -183,12 +184,12 @@ endif
- vdso-install-y			+= arch/riscv/kernel/vdso/vdso.so.dbg
- vdso-install-$(CONFIG_COMPAT)	+= arch/riscv/kernel/compat_vdso/compat_vdso.so.dbg
- 
--BOOT_TARGETS := Image Image.gz Image.bz2 Image.lz4 Image.lzma Image.lzo Image.zst loader loader.bin xipImage vmlinuz.efi
-+BOOT_TARGETS := Image Image.gz Image.bz2 Image.lz4 Image.lzma Image.lzo Image.zst Image.xz loader loader.bin xipImage vmlinuz.efi
- 
- all:	$(notdir $(KBUILD_IMAGE))
- 
- loader.bin: loader
--Image.gz Image.bz2 Image.lz4 Image.lzma Image.lzo Image.zst loader xipImage vmlinuz.efi: Image
-+Image.gz Image.bz2 Image.lz4 Image.lzma Image.lzo Image.zst Image.xz loader xipImage vmlinuz.efi: Image
- 
- $(BOOT_TARGETS): vmlinux
- 	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
-@@ -225,6 +226,7 @@ define archhelp
-   echo  '  Image.lzma	- Compressed kernel image (arch/riscv/boot/Image.lzma)'
-   echo  '  Image.lzo	- Compressed kernel image (arch/riscv/boot/Image.lzo)'
-   echo  '  Image.zst	- Compressed kernel image (arch/riscv/boot/Image.zst)'
-+  echo  '  Image.xz	- Compressed kernel image (arch/riscv/boot/Image.xz)'
-   echo  '  vmlinuz.efi	- Compressed EFI kernel image (arch/riscv/boot/vmlinuz.efi)'
-   echo  '		  Default when CONFIG_EFI_ZBOOT=y'
-   echo  '  xipImage	- Execute-in-place kernel image (arch/riscv/boot/xipImage)'
-diff --git a/arch/riscv/boot/Makefile b/arch/riscv/boot/Makefile
-index 869c0345b908..710a5f6caf96 100644
---- a/arch/riscv/boot/Makefile
-+++ b/arch/riscv/boot/Makefile
-@@ -65,6 +65,9 @@ $(obj)/Image.lzo: $(obj)/Image FORCE
- $(obj)/Image.zst: $(obj)/Image FORCE
- 	$(call if_changed,zstd)
- 
-+$(obj)/Image.xz: $(obj)/Image FORCE
-+	$(call if_changed,xzkern)
-+
- $(obj)/loader.bin: $(obj)/loader FORCE
- 	$(call if_changed,objcopy)
- 
--- 
-2.45.2
+Best regards,
+Krzysztof
 
 
