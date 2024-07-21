@@ -1,226 +1,323 @@
-Return-Path: <linux-kernel+bounces-258349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 749129386AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 01:37:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CD1F9386AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 01:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65951B20BE6
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 23:37:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0375DB20C9E
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 23:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0223916419;
-	Sun, 21 Jul 2024 23:37:32 +0000 (UTC)
-Received: from spindle.queued.net (spindle.queued.net [45.33.49.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A8F322E;
-	Sun, 21 Jul 2024 23:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.33.49.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBC3171AF;
+	Sun, 21 Jul 2024 23:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L8PO1Pao"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B4C1078F;
+	Sun, 21 Jul 2024 23:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721605051; cv=none; b=txnIP89QQHH1GiTwZDG2KkqNf48h+B4o3Sauxr9Z+JW+ZsXXHuBzPQE6jTJ7vusWU0p/Ltg8pOOAcFgLoRWB7wzlUTI/xd9/+u6cDgvXkbWK//2/T2hKU/PN9iyI7A0R0rbOkOEy5ZxoKr6gXRUUPJ6dRInFo8gKvu3ELzlauSw=
+	t=1721605233; cv=none; b=OkRE+VHK3lHeRM0vJa9RKdktlx9az5+pCWePEfxTbwo3ZJ0tLIng6Sx9CVdieqIgCBgIWO9L1KtcqbCRArL7OCftIjXGNYcCjiCtM8D/qFF40t2OrAOWkh9x8Yq4NT7Ckamt8pZfQryh4qthNBh/0tHB+bK8e6qMzXdbw7LJgB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721605051; c=relaxed/simple;
-	bh=CMQ+mtQW+Jw4g9rHQuLzw/kLhPmQkkJdm/XnPLTIWR8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UtB8J3MaqgoeD+mqC3lBV0FzMk21wytoa+mYaEtH6Ou2zZW1kbvq++HUEJfjhBCP+aP9nr3U5Ml8Q11GHsHdBCbw85JBB8StGj+X422y2kbfBlB6PWSvZC5fmIZdxRQzutKMAsfbhl0vCDj1u6kAXSZMhDVrRr88R0k1TScuIaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=queued.net; spf=pass smtp.mailfrom=queued.net; arc=none smtp.client-ip=45.33.49.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=queued.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queued.net
-Received: by spindle.queued.net (Postfix, from userid 1001)
-	id 3FE2811595F; Sun, 21 Jul 2024 19:37:23 -0400 (EDT)
-Received: from 5400 (unknown [172.56.164.186])
-	by spindle.queued.net (Postfix) with ESMTPSA id 75C9611593D;
-	Sun, 21 Jul 2024 19:37:21 -0400 (EDT)
-Date: Sun, 21 Jul 2024 19:37:16 -0400
-From: Andres Salomon <dilinger@queued.net>
-To: Pali =?UTF-8?B?Um9ow6Fy?= <pali@kernel.org>
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
- Matthew Garrett <mjg59@srcf.ucam.org>, Sebastian Reichel <sre@kernel.org>,
- Hans de Goede <hdegoede@redhat.com>, Ilpo =?UTF-8?B?SsOkcnZpbmVu?=
- <ilpo.jarvinen@linux.intel.com>, linux-pm@vger.kernel.org,
- Dell.Client.Kernel@dell.com, Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH] platform/x86:dell-laptop: Add knobs to change battery
- charge settings
-Message-ID: <20240721193716.3156050f@5400>
-In-Reply-To: <20240721090238.wrei5nu6y3awujws@pali>
-References: <20240720012220.26d62a54@5400>
-	<20240720084019.hrnd4wgt4muorydp@pali>
-	<20240720052419.73b1415a@5400>
-	<20240720095507.uyaotkofkyasdgbd@pali>
-	<20240720220606.1934df43@5400>
-	<20240721090238.wrei5nu6y3awujws@pali>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721605233; c=relaxed/simple;
+	bh=HdHJNUpQOmnRbk15fzzfe4MbfNKHkUL7EDbJWAx+Moo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=p2wdhwR2SHb7IHDm3ZGUQdtBxM3ATsyGxoPCxc+K1HhrutKEDC/HcCGF2luiRC/QKugXZf+uDH0yHmvlb3MSantQugqkME9zbppP5PLGIbx6ZOcMEnHWBHmwsG4lu5Lj15hAb1hEvIu9C9/CzjsPB3Qv5mUIcZKobtIYmyxZhj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L8PO1Pao; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70d2d7e692eso37535b3a.0;
+        Sun, 21 Jul 2024 16:40:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721605230; x=1722210030; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=9TPH+yub+2uMZPFyaF5DryQZTfPrAnPa0K8uakroCBg=;
+        b=L8PO1PaoTz7XDa2/YAiE+mAtIWFzSEXO5TNCuUH5/EXf8VCok2zOXiWGRw/vWvS4fM
+         lLT6wTnL65UrNhUXmtzRc9rCGEajh9YeXWnqGOwFgM1Woc6SHi/b4Lf7SYA5CkCG9NlK
+         B/g9R2a2uDFkNbEeluznr0FbQLLCDwCtF99XKjXqfJ95xyFmN4K3/kprt9Yr2PNWzQEn
+         13yo7FPSAAx2shYnEFbMWg6N8P96V1qkB9Czr8DbcaR+hklqL9eeb+Sah8DrQT7CjmMV
+         LS7sUt0gf09vxUCbsS3bv8EqOofWowjprk1nG56nNNlXridigUYwrsVDiKxeoitvQvOM
+         a4nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721605230; x=1722210030;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9TPH+yub+2uMZPFyaF5DryQZTfPrAnPa0K8uakroCBg=;
+        b=p4SxGzBfBCZYKxkgnlNNNvxSsOnBc09wyaORzpGxiAORW02bvTt7iEG3SIb/T5x+Jh
+         fy8C0psQtEDTK3G/ZCTk4mSjurcbxIvfFC8x6GSfN85PDbDl5u45lbnJelxUObJst3iQ
+         0AKabg9nbVJjejbhd+b2bzDRAJltaUMSOrYX6ANdC6cSP0Uj/fiySg61Qnv8UVHtYrkJ
+         RKzX7Sw6FtlCXdrtUBx7UYdK1NZS88+6UEhNRhtNWdwRkZhSUDGV01uZQRXiPZJ+OlkO
+         KfPTwWNbhNn0uk8Bkg2aHRxzKhW+fxy8GrivA2ueRS1RYwQal2L7S8AjExcsp7X25D2K
+         7b2w==
+X-Forwarded-Encrypted: i=1; AJvYcCWLYCGzV05RBueS0iAWYZFk42vLMax9p3akOvi37oM2QgPR5sa2ukZhHAMpuoC71WPjS1oAzDRs30sNXZQuekSujNR+rewBErdP5L9I
+X-Gm-Message-State: AOJu0YwQ3CcajtzVnuP8CtTmRSrAK9g2KmCcwCn9QRQks4ogD6A05zBV
+	lKjRKrxM8snndHqtNZjcSmMgC7wdl6FXBnJ8zSMkmXM7VXGs8dY4
+X-Google-Smtp-Source: AGHT+IEF2CF28gw2Bl73BjJI5bksUNp+zlVFz5xnj7AwHNfsCMOxNLVOB1nZG7dZeZpYsi7MqRbQJw==
+X-Received: by 2002:a05:6a00:3cc4:b0:70d:2c8d:bed0 with SMTP id d2e1a72fcca58-70d2c8dc54cmr361287b3a.24.1721605229831;
+        Sun, 21 Jul 2024 16:40:29 -0700 (PDT)
+Received: from ?IPv6:2605:59c8:829:4c00:82ee:73ff:fe41:9a02? ([2605:59c8:829:4c00:82ee:73ff:fe41:9a02])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70d15c36135sm2154095b3a.60.2024.07.21.16.40.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Jul 2024 16:40:29 -0700 (PDT)
+Message-ID: <dbf876b000158aed8380d6ac3a3f6e8dd40ace7b.camel@gmail.com>
+Subject: Re: [RFC v11 08/14] mm: page_frag: some minor refactoring before
+ adding new API
+From: Alexander H Duyck <alexander.duyck@gmail.com>
+To: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net,
+ kuba@kernel.org,  pabeni@redhat.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton
+	 <akpm@linux-foundation.org>, linux-mm@kvack.org
+Date: Sun, 21 Jul 2024 16:40:28 -0700
+In-Reply-To: <20240719093338.55117-9-linyunsheng@huawei.com>
+References: <20240719093338.55117-1-linyunsheng@huawei.com>
+	 <20240719093338.55117-9-linyunsheng@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bogosity: Ham, tests=bogofilter, spamicity=0.000000, version=1.2.5
 
-On Sun, 21 Jul 2024 11:02:38 +0200
-Pali Roh=C3=A1r <pali@kernel.org> wrote:
-
-> On Saturday 20 July 2024 22:06:06 Andres Salomon wrote:
-> > On Sat, 20 Jul 2024 11:55:07 +0200
-> > Pali Roh=C3=A1r <pali@kernel.org> wrote:
-> >  =20
-> > > On Saturday 20 July 2024 05:24:19 Andres Salomon wrote: =20
-> > > > Thanks for the quick feedback! Responses below.
-> > > >=20
-> > > > On Sat, 20 Jul 2024 10:40:19 +0200
-> > > > Pali Roh=C3=A1r <pali@kernel.org> wrote:
-> > > >    =20
-
-[...]
-
-> > > > > > +
-> > > > > > +static void __init dell_battery_init(struct device *dev)
-> > > > > > +{
-> > > > > > +	enum battery_charging_mode current_mode =3D DELL_BAT_MODE_NON=
-E;
-> > > > > > +
-> > > > > > +	dell_battery_read_req(BAT_CUSTOM_MODE_TOKEN, (int *) &current=
-_mode);
-> > > > > > +	if (current_mode !=3D DELL_BAT_MODE_NONE) {     =20
-> > > > >=20
-> > > > > I quite do not understand how is this code suppose to work.
-> > > > >=20
-> > > > > Why is there mix of custom kernel enum battery_charging_mode and =
-return
-> > > > > value from Dell's API?   =20
-> > > >=20
-> > > > This is from the original patch from Dell; tbh, I'm not sure. It do=
-es
-> > > > work, though. That is, current_mode ends up holding the correct val=
-ue
-> > > > based on what was previously set, even if the charging mode is set =
-from
-> > > > the BIOS.
-> > > >=20
-> > > > I just scanned through the libsmbios code to see what it's doing, a=
-nd
-> > > > it appears to loop through every charging mode to check if its acti=
-ve.
-> > > > I'm not really sure that makes much more sense, so I'll try some mo=
-re
-> > > > tests.   =20
-> > >=20
-> > > Keyboard backlight code (kbd_get_first_active_token_bit) is doing also
-> > > this type scan. If I remember correctly, for every keyboard backlight
-> > > token we just know the boolean value - if the token is set or not.
-> > >=20
-> > > It would really nice to see what (raw) value is returned by the
-> > > dell_battery_read_req(token) function for every battery token and for
-> > > every initial state. =20
-> >=20
-> > I checked this. The BIOS sets the mode value in every related token
-> > location. I'm still not really sure what libsmbios is doing, but the
-> > kernel code seems to arbitrarily choose one of the token locations
-> > to read from. This makes sense to me now.
-> >=20
-> > In the BIOS when I set the mode to "ExpressCharge",
-> > this what I pulled for each token location:
-> >=20
-> > [    5.704651] dell-laptop dell-laptop: BAT_CUSTOM_MODE_TOKEN value: 2
-> > [    5.707015] dell-laptop dell-laptop: BAT_PRI_AC_MODE_TOKEN value: 2
-> > [    5.709114] dell-laptop dell-laptop: BAT_ADAPTIVE_MODE_TOKEN value: 2
-> > [    5.711041] dell-laptop dell-laptop: BAT_STANDARD_MODE_TOKEN value: 2
-> > [    5.713705] dell-laptop dell-laptop: BAT_EXPRESS_MODE_TOKEN value: 2
-> >=20
-> > Similar story when I set it to Custom (all were '5'), or Standard ('1').
-> > When I set it from linux as well, it changed all location values. =20
+On Fri, 2024-07-19 at 17:33 +0800, Yunsheng Lin wrote:
+> Refactor common codes from __page_frag_alloc_va_align()
+> to __page_frag_cache_refill(), so that the new API can
+> make use of them.
 >=20
-> Interesting... Anyway, I still think that the API could be similar to
-> what is used in keyboard backlight.
+> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> ---
+>  include/linux/page_frag_cache.h |  2 +-
+>  mm/page_frag_cache.c            | 93 +++++++++++++++++----------------
+>  2 files changed, 49 insertions(+), 46 deletions(-)
 >=20
-> Could you please dump all information about each token? They are in
-> struct calling_interface_token returned by dell_smbios_find_token.
->=20
-> I'm interesting in tokenID, location and value.
->=20
-> Ideally to compare what is in token->value and then in buffer.output[1]
-> (in case dell_send_request does not fail).
+> diff --git a/include/linux/page_frag_cache.h b/include/linux/page_frag_ca=
+che.h
+> index 12a16f8e8ad0..5aa45de7a9a5 100644
+> --- a/include/linux/page_frag_cache.h
+> +++ b/include/linux/page_frag_cache.h
+> @@ -50,7 +50,7 @@ static inline void *encoded_page_address(unsigned long =
+encoded_va)
+> =20
+>  static inline void page_frag_cache_init(struct page_frag_cache *nc)
+>  {
+> -	nc->encoded_va =3D 0;
+> +	memset(nc, 0, sizeof(*nc));
+>  }
+> =20
 
+I do not like requiring the entire structure to be reset as a part of
+init. If encoded_va is 0 then we have reset the page and the flags.
+There shouldn't be anything else we need to reset as remaining and bias
+will be reset when we reallocate.
 
-Alright, here's what I see:
+>  static inline bool page_frag_cache_is_pfmemalloc(struct page_frag_cache =
+*nc)
+> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
+> index 7928e5d50711..d9c9cad17af7 100644
+> --- a/mm/page_frag_cache.c
+> +++ b/mm/page_frag_cache.c
+> @@ -19,6 +19,28 @@
+>  #include <linux/page_frag_cache.h>
+>  #include "internal.h"
+> =20
+> +static struct page *__page_frag_cache_recharge(struct page_frag_cache *n=
+c)
+> +{
+> +	unsigned long encoded_va =3D nc->encoded_va;
+> +	struct page *page;
+> +
+> +	page =3D virt_to_page((void *)encoded_va);
+> +	if (!page_ref_sub_and_test(page, nc->pagecnt_bias))
+> +		return NULL;
+> +
+> +	if (unlikely(encoded_page_pfmemalloc(encoded_va))) {
+> +		VM_BUG_ON(compound_order(page) !=3D
+> +			  encoded_page_order(encoded_va));
+> +		free_unref_page(page, encoded_page_order(encoded_va));
+> +		return NULL;
+> +	}
+> +
+> +	/* OK, page count is 0, we can safely set it */
+> +	set_page_count(page, PAGE_FRAG_CACHE_MAX_SIZE + 1);
+> +
+> +	return page;
+> +}
+> +
+>  static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
+>  					     gfp_t gfp_mask)
+>  {
+> @@ -26,6 +48,14 @@ static struct page *__page_frag_cache_refill(struct pa=
+ge_frag_cache *nc,
+>  	struct page *page =3D NULL;
+>  	gfp_t gfp =3D gfp_mask;
+> =20
+> +	if (likely(nc->encoded_va)) {
+> +		page =3D __page_frag_cache_recharge(nc);
+> +		if (page) {
+> +			order =3D encoded_page_order(nc->encoded_va);
+> +			goto out;
+> +		}
+> +	}
+> +
 
-[    5.904775] dell_laptop: dell_battery_read_req: token requested: 0x343, =
-tokenID=3D0x343, location=3D0x343, value=3D5
-[    5.908675] dell_laptop: dell_battery_read_req: buffer.output[1]=3D3
-[    5.908680] dell_laptop: dell_battery_init: BAT_CUSTOM_MODE_TOKEN value:=
- 3
-[    5.908682] dell_laptop: dell_battery_read_req: token requested: 0x341, =
-tokenID=3D0x341, location=3D0x341, value=3D3
-[    5.910922] dell_laptop: dell_battery_read_req: buffer.output[1]=3D3
-[    5.910926] dell_laptop: dell_battery_init: BAT_PRI_AC_MODE_TOKEN value:=
- 3
-[    5.910928] dell_laptop: dell_battery_read_req: token requested: 0x342, =
-tokenID=3D0x342, location=3D0x342, value=3D4
-[    5.913042] dell_laptop: dell_battery_read_req: buffer.output[1]=3D3
-[    5.913046] dell_laptop: dell_battery_init: BAT_ADAPTIVE_MODE_TOKEN valu=
-e: 3
-[    5.913048] dell_laptop: dell_battery_read_req: token requested: 0x346, =
-tokenID=3D0x346, location=3D0x346, value=3D1
-[    5.914996] dell_laptop: dell_battery_read_req: buffer.output[1]=3D3
-[    5.914999] dell_laptop: dell_battery_init: BAT_STANDARD_MODE_TOKEN valu=
-e: 3
-[    5.915000] dell_laptop: dell_battery_read_req: token requested: 0x347, =
-tokenID=3D0x347, location=3D0x347, value=3D2
-[    5.916723] dell_laptop: dell_battery_read_req: buffer.output[1]=3D3
-[    5.916724] dell_laptop: dell_battery_init: BAT_EXPRESS_MODE_TOKEN value=
-: 3
-[    5.916725] dell_laptop: dell_battery_read_req: token requested: 0x349, =
-tokenID=3D0x349, location=3D0x349, value=3D65535
-[    5.918727] dell_laptop: dell_battery_read_req: buffer.output[1]=3D65
-[    5.918731] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_START valu=
-e: 65
-[    5.918734] dell_laptop: dell_battery_read_req: token requested: 0x34a, =
-tokenID=3D0x34a, location=3D0x34a, value=3D65535
-[    5.920864] dell_laptop: dell_battery_read_req: buffer.output[1]=3D85
-[    5.920867] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_END value:=
- 85
+This code has no business here. This is refill, you just dropped
+recharge in here which will make a complete mess of the ordering and be
+confusing to say the least.
 
+The expectation was that if we are calling this function it is going to
+overwrite the virtual address to NULL on failure so we discard the old
+page if there is one present. This changes that behaviour. What you
+effectively did is made __page_frag_cache_refill into the recharge
+function.
 
+>  #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
+>  	gfp_mask =3D (gfp_mask & ~__GFP_DIRECT_RECLAIM) |  __GFP_COMP |
+>  		   __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC;
+> @@ -35,7 +65,7 @@ static struct page *__page_frag_cache_refill(struct pag=
+e_frag_cache *nc,
+>  	if (unlikely(!page)) {
+>  		page =3D alloc_pages_node(NUMA_NO_NODE, gfp, 0);
+>  		if (unlikely(!page)) {
+> -			nc->encoded_va =3D 0;
+> +			memset(nc, 0, sizeof(*nc));
+>  			return NULL;
+>  		}
+> =20
 
->=20
-> > >=20
-> > > Because it is really suspicious if dell_battery_read_req() would retu=
-rn
-> > > value of the enum battery_charging_mode (as this is kernel enum).
-> > >=20
-> > >=20
-> > > Also another important thing. In past it was possible to buy from Dell
-> > > special batteries with long warranty (3+ years). I'm not sure if these
-> > > batteries are still available for end-user customers. With this type =
-of
-> > > battery, it was not possible to change charging mode to ExpressCharge
-> > > (bios option was fade-out). I do not have such battery anymore, but I
-> > > would expect that the firmware disabled BAT_EXPRESS_MODE_TOKEN as mark
-> > > it as unavailable.
-> > >=20
-> > > I think that we should scan list of available tokens, like it is done
-> > > for keyboard backlight in kbd_init_tokens(). And export via sysfs only
-> > > those battery modes for which there is available token. =20
-> >=20
-> > I agree, but I'm not seeing a way to do that right now given how the
-> > BIOS sets the mode. Maybe libsmbios has some clues... =20
->=20
-> Try to get those dumps and I will try to do something with it.
->=20
-> >=20
-> >=20
-> >=20
-> >=20
-> > --=20
-> > I'm available for contract & employment work, see:
-> > https://spindle.queued.net/~dilinger/resume-tech.pdf =20
+The memset will take a few more instructions than the existing code
+did. I would prefer to keep this as is if at all possible.
 
+> @@ -45,6 +75,16 @@ static struct page *__page_frag_cache_refill(struct pa=
+ge_frag_cache *nc,
+>  	nc->encoded_va =3D encode_aligned_va(page_address(page), order,
+>  					   page_is_pfmemalloc(page));
+> =20
+> +	/* Even if we own the page, we do not use atomic_set().
+> +	 * This would break get_page_unless_zero() users.
+> +	 */
+> +	page_ref_add(page, PAGE_FRAG_CACHE_MAX_SIZE);
+> +
+> +out:
+> +	/* reset page count bias and remaining to start of new frag */
+> +	nc->pagecnt_bias =3D PAGE_FRAG_CACHE_MAX_SIZE + 1;
+> +	nc->remaining =3D PAGE_SIZE << order;
+> +
+>  	return page;
+>  }
+> =20
 
+Why bother returning a page at all? It doesn't seem like you don't use
+it anymore. It looks like the use cases you have for it in patch 11/12
+all appear to be broken from what I can tell as you are adding page as
+a variable when we don't need to be passing internal details to the
+callers of the function when just a simple error return code would do.
 
---=20
-I'm available for contract & employment work, see:
-https://spindle.queued.net/~dilinger/resume-tech.pdf
+> @@ -55,7 +95,7 @@ void page_frag_cache_drain(struct page_frag_cache *nc)
+> =20
+>  	__page_frag_cache_drain(virt_to_head_page((void *)nc->encoded_va),
+>  				nc->pagecnt_bias);
+> -	nc->encoded_va =3D 0;
+> +	memset(nc, 0, sizeof(*nc));
+>  }
+>  EXPORT_SYMBOL(page_frag_cache_drain);
+> =20
+> @@ -72,31 +112,9 @@ void *__page_frag_alloc_va_align(struct page_frag_cac=
+he *nc,
+>  				 unsigned int fragsz, gfp_t gfp_mask,
+>  				 unsigned int align_mask)
+>  {
+> -	unsigned long encoded_va =3D nc->encoded_va;
+> -	unsigned int size, remaining;
+> -	struct page *page;
+> -
+> -	if (unlikely(!encoded_va)) {
+> -refill:
+> -		page =3D __page_frag_cache_refill(nc, gfp_mask);
+> -		if (!page)
+> -			return NULL;
+> -
+> -		encoded_va =3D nc->encoded_va;
+> -		size =3D page_frag_cache_page_size(encoded_va);
+> +	unsigned int size =3D page_frag_cache_page_size(nc->encoded_va);
+> +	unsigned int remaining =3D nc->remaining & align_mask;
+> =20
+> -		/* Even if we own the page, we do not use atomic_set().
+> -		 * This would break get_page_unless_zero() users.
+> -		 */
+> -		page_ref_add(page, PAGE_FRAG_CACHE_MAX_SIZE);
+> -
+> -		/* reset page count bias and remaining to start of new frag */
+> -		nc->pagecnt_bias =3D PAGE_FRAG_CACHE_MAX_SIZE + 1;
+> -		nc->remaining =3D size;
+> -	}
+> -
+> -	size =3D page_frag_cache_page_size(encoded_va);
+> -	remaining =3D nc->remaining & align_mask;
+>  	if (unlikely(remaining < fragsz)) {
+
+I am not a fan of adding a dependency on remaining being set *before*
+encoded_va. The fact is it relies on the size to set it. In addition
+this is creating a big blob of code for the conditional paths to have
+to jump over.
+
+I think it is much better to first validate encoded_va, and then
+validate remaining. Otherwise just checking remaining seems problematic
+and like a recipe for NULL pointer accesses.
+
+>  		if (unlikely(fragsz > PAGE_SIZE)) {
+>  			/*
+> @@ -111,32 +129,17 @@ void *__page_frag_alloc_va_align(struct page_frag_c=
+ache *nc,
+>  			return NULL;
+>  		}
+> =20
+> -		page =3D virt_to_page((void *)encoded_va);
+> -
+> -		if (!page_ref_sub_and_test(page, nc->pagecnt_bias))
+> -			goto refill;
+> -
+> -		if (unlikely(encoded_page_pfmemalloc(encoded_va))) {
+> -			VM_BUG_ON(compound_order(page) !=3D
+> -				  encoded_page_order(encoded_va));
+> -			free_unref_page(page, encoded_page_order(encoded_va));
+> -			goto refill;
+> -		}
+> -
+> -		/* OK, page count is 0, we can safely set it */
+> -		set_page_count(page, PAGE_FRAG_CACHE_MAX_SIZE + 1);
+> -
+> -		/* reset page count bias and remaining to start of new frag */
+> -		nc->pagecnt_bias =3D PAGE_FRAG_CACHE_MAX_SIZE + 1;
+> -		nc->remaining =3D size;
+> +		if (unlikely(!__page_frag_cache_refill(nc, gfp_mask)))
+> +			return NULL;
+> =20
+> +		size =3D page_frag_cache_page_size(nc->encoded_va);
+
+So this is adding yet another setting/reading of size to the recharge
+path now. Previously the recharge path could just reuse the existing
+size.
+
+>  		remaining =3D size;
+>  	}
+> =20
+>  	nc->pagecnt_bias--;
+>  	nc->remaining =3D remaining - fragsz;
+> =20
+> -	return encoded_page_address(encoded_va) + (size - remaining);
+> +	return encoded_page_address(nc->encoded_va) + (size - remaining);
+>  }
+>  EXPORT_SYMBOL(__page_frag_alloc_va_align);
+> =20
+
 
