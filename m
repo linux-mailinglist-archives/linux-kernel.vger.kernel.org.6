@@ -1,494 +1,909 @@
-Return-Path: <linux-kernel+bounces-258129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF26893842A
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 11:07:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91BAD93842C
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 11:13:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E5FB28119C
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 09:07:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECDF71F214C1
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 09:13:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43BFCA6F;
-	Sun, 21 Jul 2024 09:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9413AD272;
+	Sun, 21 Jul 2024 09:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="g7FKH9If"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=hixontech.com header.i=linux-kernel-bugs@hixontech.com header.b="hKkxH5kS"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8068F5B
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 09:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721552817; cv=none; b=uUzYJKGnwDVgHwFMbuDChCzcKiG+5VtCCel2PyOzLa6NsA5Iy0iMc4TAVqc4GmQ/Yg5IWVUfpQdvcFIPQ7Acrjoi6G/9SE7wKl1lmumKQccBtdDsA4IEbv5RmkPh/fj7Nys6LLtIsiRGS7BInsUKAtIVzUBnRaXs4fWQQ9Na/yo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721552817; c=relaxed/simple;
-	bh=7JJZOrfXDdqq80jEa8STfSmCs8AsmNTkVeRlJ1M+m18=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DQ6x/CTSLNyDM0uTeFu1B+0zpmgPari9QpeAQyh7bwHAovbUwkOL5cOXxhJtgVTCeHOHlOCfqEiidVgiAyFbewJK2sxDHv4etXaJNO7F9aiJ/0yS+K+ykgomEgY72YI741NeAjSSr7/cqwd2pWteKdAhCeTHD4EQX7DuCriDDz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=g7FKH9If; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52ea2f58448so4231276e87.1
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 02:06:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1721552813; x=1722157613; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k6gYokjRSWyrNGMR3J1P9KDvWZ1pohzgfwduMDyakus=;
-        b=g7FKH9IfD32z45Sla5WzQUSHbCBXOBko28b8x2GB7itlUDvMB3g1dOf2nLnaVpCmWm
-         LuACV75pbs3cTZJQp9y1B/DCrA3aHU8oC3cE5HwmVQzgDbTQygIqQyDNDNGYu2Mb42CS
-         EzFimCuMpS20ZG6ErEU4ZA1NEdSMbi72Bv6zU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721552813; x=1722157613;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k6gYokjRSWyrNGMR3J1P9KDvWZ1pohzgfwduMDyakus=;
-        b=nHx4kh9oxPNT4s8jDEKah1FQHGbs8cetJF5OHC0Ei0FYOzoaajUmLwSi0iGn7yRK6W
-         yD8/pvBqCGtl01l3oRWazZCJqYZN+QiqVeTeyq4fsp0WAVB44ZR6S3sLvgHEXk5lRwmT
-         GPdnLMg3dySL98iwULxoeOCgpveaBgqMtVYe+JFrCF9sb99P6DitBB+GMSrA5VfLFGac
-         m//q7DV4kewCeXBWDXZLTpvQnPS0bwbW28ffKE8teUBqAfwfhwmg0pdoju1fp+VajFko
-         0Z5vQVRqtjRARAWJy3nEspgpNhgBxIsKwAlMT4dfGyejhrh1yap2V1PqpN+PrZwWIK0w
-         pzMQ==
-X-Gm-Message-State: AOJu0YyfAsc0QiRNoBfdIn1L5jobiDrKo4fIhC+3+Cp9R4vFpkPl/pfe
-	bFo9lzvGQ43RnTQYGhapD3ZZ8j/EnJFCinpLsll5jmLKtD1bHN46mwoyBZF20+YZAkcuBSvwhkd
-	VCMjlde+hqyWvapyI5t5ISkxcpwXr7a915Lk=
-X-Google-Smtp-Source: AGHT+IFqqF14ze8eJiQnLsa6jy6P5mRFw4qxCuKyOXhmyr/g7mK/5hOqfuA6Mw3zy4+1u4v/qZ7NbCSuvMtryzribRk=
-X-Received: by 2002:a05:6512:3d0f:b0:52c:896f:930d with SMTP id
- 2adb3069b0e04-52ee543eb1fmr8601569e87.57.1721552812560; Sun, 21 Jul 2024
- 02:06:52 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4769A9460;
+	Sun, 21 Jul 2024 09:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721553203; cv=pass; b=HkulAHLX3EP1giThCbMHWWjuWDVpQ667/DqmDjDLYvAZ10M1fOym8hQ2XJwbVP7yDBsuxy9vhsIa2tk9SsEVepB53ga831XzxVv8Djk0hhSAcsWSUJRTucdKbtkfakJm13foPKMuL33YaTQbBIDx374THDHaikqV6yQIcoju7E4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721553203; c=relaxed/simple;
+	bh=ln86F7EszCjPNEpqM33jiMnRwlnqAWaUCdwr53KPB7w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cba945M2JhQADcc3PInhx6am6OEes4mk/Glnxa9Vo2J5kPwIvkonM1MgCn5fdwUoOH2R4xZ8nLegIHSpyR7KAH4VIKKfhpqhIWevH+XFU9ubwdyQRcszshZA9K7pmgBGMImPk02TslKdaEqvEZ93xPxOubY5/DRwBwlNJT2eP/4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hixontech.com; spf=pass smtp.mailfrom=hixontech.com; dkim=pass (1024-bit key) header.d=hixontech.com header.i=linux-kernel-bugs@hixontech.com header.b=hKkxH5kS; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hixontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hixontech.com
+ARC-Seal: i=1; a=rsa-sha256; t=1721553187; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=J//PMDQFQSr465+gQn0h5MODqyVGk5pStW0n7luHkyP1Enpgv3UYANy3ND0YxHStBbwt/DX0HkM8DYgs9Cg0OseYDgRBh/W0isM46mIGelKdoE5hK6e9DIZv0EB3lfu6GyufRnWpf/HK4+Hyz07/fuIH33wTbNge3mEwnuaA9i8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1721553187; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:Reply-To:References:Subject:Subject:To:To:Message-Id; 
+	bh=svhPVmEuuAsD4Udugr8va0rxUGLKtmIaQhVkyP5c8Fs=; 
+	b=WNvm90jqie8uKg3aD5MqvqUvzaXOYid/TeGn6woLQMi3fqBYgQBGKzZuKq10ruBCctq29zd0PbVnQJimEkUaaYhMvmUVO1xjYaJfYW43N/ZcVwTqv6x8Q9gS28g5F8qEz0zD3AWV8eCpjbplSXJwxldGCDsGoMxiXEAKsZFbpjY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=hixontech.com;
+	spf=pass  smtp.mailfrom=linux-kernel-bugs@hixontech.com;
+	dmarc=pass header.from=<linux-kernel-bugs@hixontech.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1721553187;
+	s=zoho; d=hixontech.com; i=linux-kernel-bugs@hixontech.com;
+	h=Message-ID:Date:Date:MIME-Version:Reply-To:Reply-To:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id;
+	bh=svhPVmEuuAsD4Udugr8va0rxUGLKtmIaQhVkyP5c8Fs=;
+	b=hKkxH5kSZWk94og+lAwFIXbB93b1gAXMe/Xo+6ycTfq8gCAwb4LIfQZ0E5XP8R9J
+	UhF+PieUyYQIOVkhbIpvgUlAKUH4CnkXkalaoTHy3mdr3/0jcC40YKOzDQ90rRS60BP
+	hdtgU7i9nRpugMjyeIaftZO61NWzGuFnjRE1W7YU=
+Received: by mx.zohomail.com with SMTPS id 1721553186054613.0468153753609;
+	Sun, 21 Jul 2024 02:13:06 -0700 (PDT)
+Message-ID: <f6162b22-c6c6-47d7-9bda-dd702fcc5b4b@hixontech.com>
+Date: Sun, 21 Jul 2024 03:13:03 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240716185806.1572048-1-jim.cromie@gmail.com>
-In-Reply-To: <20240716185806.1572048-1-jim.cromie@gmail.com>
-From: =?UTF-8?Q?=C5=81ukasz_Bartosik?= <ukaszb@chromium.org>
-Date: Sun, 21 Jul 2024 11:06:30 +0200
-Message-ID: <CALwA+NbGf80zX1-CLof7OSpA4dQELuC7Ue7Xy2zQYmGJKgJcBQ@mail.gmail.com>
-Subject: Re: [PATCH v9-resend 00/54] fix CONFIG_DRM_USE_DYNAMIC_DEBUG=y
-To: Jim Cromie <jim.cromie@gmail.com>
-Cc: linux-kernel@vger.kernel.org, jbaron@akamai.com, 
-	gregkh@linuxfoundation.org, daniel.vetter@ffwll.ch, 
-	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com, 
-	ville.syrjala@linux.intel.com, linux@rasmusvillemoes.dk, joe@perches.com, 
-	mcgrof@kernel.org, seanpaul@chromium.org, robdclark@gmail.com, 
-	groeck@google.com, yanivt@google.com, bleung@google.com, 
-	linux-doc@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org, 
-	intel-gfx@lists.freedesktop.org, kernelnewbies@kernelnewbies.org
-Content-Type: text/plain; charset="UTF-8"
+Reply-To: linux-kernel-bugs@hixontech.com
+Subject: Re: [BUG] HID: amd_sfh (drivers/hid/amd-sfh-hid/): memory/page
+ corruption
+To: Basavaraj Natikar <bnatikar@amd.com>,
+ Linux regressions mailing list <regressions@lists.linux.dev>,
+ Jiri Kosina <jkosina@suse.com>, Benjamin Tissoires <bentiss@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Li Ma <li.ma@amd.com>,
+ amd-gfx@lists.freedesktop.org, Alexander.Deucher@amd.com,
+ yifan1.zhang@amd.com, linux-input@vger.kernel.org,
+ Basavaraj Natikar <basavaraj.natikar@amd.com>
+References: <3b129b1f-8636-456a-80b4-0f6cce0eef63@hixontech.com>
+ <ade43b5b-9b93-40a8-acbf-99df944b45f9@leemhuis.info>
+ <11fdf362-8fa5-4d44-904b-c0c9867ebd07@amd.com>
+Content-Language: en-US
+From: Chris Hixon <linux-kernel-bugs@hixontech.com>
+In-Reply-To: <11fdf362-8fa5-4d44-904b-c0c9867ebd07@amd.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 16, 2024 at 8:58=E2=80=AFPM Jim Cromie <jim.cromie@gmail.com> w=
-rote:
->
-> resending to fix double-copies of a dozen patches.
-> added 2 squash-ins to address Ville's designated-initializer comment.
->
-> This fixes dynamic-debug support for DRM.debug, added via classmaps.
-> commit bb2ff6c27bc9 (drm: Disable dynamic debug as broken)
->
-> CONFIG_DRM_USE_DYNAMIC_DEBUG=3Dy was marked broken because drm.debug=3Dva=
-l
-> was applied when drm.ko was modprobed; too early for the yet-to-load
-> drivers, which thus missed the enablement.  My testing with
-> /etc/modprobe.d/ entries and modprobes with dyndbg=3D$querycmd options
-> obscured this omission.
->
-> The fix is to replace invocations of DECLARE_DYNDBG_CLASSMAP with
-> DYNDBG_CLASSMAP_DEFINE for core, and DYNDBG_CLASSMAP_USE for drivers.
-> The distinction allows dyndbg to also handle the users properly.
->
-> DRM is the only current classmaps user, and is not actually using it,
-> so if you think DRM could benefit from zero-off-cost debugs based on
-> static-keys, please test.
->
-> There is also a no-DRM-involved selftest script:
->
->  [root@v6 b0-dd]# V=3D0 ./tools/testing/selftests/dynamic_debug/dyndbg_se=
-lftest.sh
->  # consulting KCONFIG_CONFIG: .config
->  # BASIC_TESTS
->  : 0 matches on =3Dp
->  : 14 matches on =3Dp
->  : 0 matches on =3Dp
->  : 21 matches on =3Dmf
->  : 0 matches on =3Dml
->  : 6 matches on =3Dmfl
->  ...
->  # Done on: Sun Jun 30 10:34:24 PM MDT 2024
->
-> HISTORY
->
-> 9/4/22  - ee879be38bc8..ace7c4bbb240 commited - classmaps-v1 dyndbg parts
-> 9/11/22 - 0406faf25fb1..16deeb8e18ca commited - classmaps-v1 drm parts
->
-> https://lore.kernel.org/lkml/Y3XUrOGAV4I7bB3M@kroah.com/
-> greg k-h says:
-> This should go through the drm tree now.  The rest probably should also
-> go that way and not through my tree as well.
->
-> https://lore.kernel.org/lkml/20221206003424.592078-1-jim.cromie@gmail.com=
-/
-> v1- RFC adds DYNDBG_CLASSMAP_DEFINE + test-submod to recap DRM failure
->
-> https://lore.kernel.org/lkml/20230113193016.749791-1-jim.cromie@gmail.com=
-/
-> v2- w RFC on "tolerate toggled state"
->
-> https://lore.kernel.org/lkml/Y8aNMxHpvZ8qecSc@hirez.programming.kicks-ass=
-.net/
-> - PeterZ - nacks tolerance of insane/uninit static-key state
->
-> https://lore.kernel.org/lkml/8ca08fba-1120-ca86-6129-0b33afb4a1da@akamai.=
-com/
-> - JasonB diagnoses prob - set jump-label b4 init
->
-> 7deabd674988 dyndbg: use the module notifier callbacks
-> - JasonB lands fix for my problem
->   he moves dyndbg to use notifiers to do init, like & after jump-labels
->
-> https://lore.kernel.org/lkml/20230125203743.564009-20-jim.cromie@gmail.co=
-m/
-> v3- probing, workaround-ish
->
-> https://lore.kernel.org/lkml/20230713163626.31338-1-jim.cromie@gmail.com/
-> v4 - 7/13/23
-> - had extra/unused __UNIQUE_ID warnings/errs on lkp-tested arches
->   due to unmatched __used marks
-> - RandyD doc fixes, thx.
->
-> https://lore.kernel.org/lkml/20230801170255.163237-1-jim.cromie@gmail.com=
-/
-> v5 - 8/1/23
-> - lkp-test reported panics-on-boot
->   https://lore.kernel.org/lkml/202308031432.fcb4197-oliver.sang@intel.com=
-/
-> - DRM=3Dy in apply-params
-> - missing align(8) in init-macro, failed only for builtin modules
->
-> https://lore.kernel.org/lkml/20230911230838.14461-1-jim.cromie@gmail.com/
-> v6 - 9/11/23 - no feedback
->
-> v7[a-d] - attempts to get into/thru DRM patchwork CI..
-> - "jenius" struck, I preserved DECLARE_DYNDBG_CLASSMAP til later
->
-> v8[a-i] - added tools/testing/selftests/dynamic_debug/*
-> - now turnkey testable without DRM
->
->
-> CLASSMAPS FROM THE TOP
->
-> dynamic-debug classmap's primary goal was to bring zero-off-cost
-> debugs, via static-keys, to DRM.
->
-> drm.debug:
->
-> is ~5000 invocations of debug-macros across core, drivers, helpers;
-> each in 1 of 10 exclusive categories: DRM_UT_*, kept in an enum/int,
-> and passed in 1st macro-arg, as a builtin-constant.
->
-> The 10 categories are all controlled together, by bits 0..9 in a sysfs
-> knob.
->
->   drm.debug=3D0x1ff  # bootarg
->   echo 0x4 > /sys/module/drm/parameters/debug  # run-time setting
->
-> Keeping all that unchanged was a firm design requirement for classmaps.
->
-> Below the sysfs interface, classmaps are exposed in the >control
-> grammar with a new "class" keyword.  This is mostly like the other
-> selector keywords, differing by:
->
-> a- classnames are client/subsystem/domain defined, not code-name-structur=
-al.
->    the classnames are global, across system
->    IOW: "class DRM_UT_CORE" selects on any module which knows the class
->
-> b- classes are protected from unqualified modification.
->
->    # cannot disable any DRM (or other) classes without saying so
->    echo -p > /proc/dynamic_debug/control
->
-> c- because b, modules must opt-in so dyndbg knows their classnames.
->    without names, dyndbg cannot lookup the classid & change the class.
->
-> d- classes don't have wildcards - add if needed.
->    DRM uses "${SUBSYS}_${CATNAME}"
->    probably more useful with "${TOP}_${MID}_${LOW}" classnames
->    nobody's sure what _UT_ is.
->
-> API in use:
->
-> DYNDBG_CLASSMAP_* macros are all file-scope declarators.
->
-> 1. DYNDBG_CLASSMAP_DEFINE(drm_debug_classes, ...);
-> 2. DYNDBG_CLASSMAP_USE(drm_debug_classes);
->
-> Classmaps get DEFINEd once (in drm.ko for core) and USEd (in drivers
-> and helpers), these declarations 1. define and export a classmap (in
-> core module), and 2. refer to the exported class-struct from the other
-> modules.
->
-> They both tell dynamic-debug that the module has some of these class'd
-> pr_debugs, so dyndbg can use the classmap's names to validate >control
-> inputs and change the callsites.  This is the opt-in.
->
-> The distinction allows USErs to act differently than the DEFINEr; they
-> have to follow the ref back to the DEFINEing module, find the kparam
-> connected to the classmap, and lookup and apply its modprobed value.
-> (this is the bug-fix).
->
-> Dyndbg uses the classnames to validate "class FOO" >control inputs,
-> and apply the changes to each module that has DEFINEd or USEd the
-> classmap.
->
-> This makes classmaps opt-in: modules must _DEFINE or _USE a classmap
-> for their class'd pr_debug()s to be >control'd.
->
-> NOTE: __pr_dbg_class(1, "const-int unreachable class 1"); is legal,
-> but not controllable unless the const 1 has been mapped to a _DEFINE'd
-> classname.
->
-> NB: and __pr_dbg_class(i++, "undeclared class") is illegal.
->
-> In drm_print.c we have: (theres room for better words...)
->
-> /* classnames must match value-symbols of enum drm_debug_category */
-> DRM_CLASSMAP_DEFINE(drm_debug_classes, DD_CLASS_TYPE_DISJOINT_BITS,
->                     DRM_UT_CORE, // _base
->                     /* this effectively names the bits in drm.debug */
->                     "DRM_UT_CORE",
->                     "DRM_UT_DRIVER",
->                     "DRM_UT_KMS",
->                     "DRM_UT_PRIME",
->                     "DRM_UT_ATOMIC",
->                     "DRM_UT_VBL",
->                     "DRM_UT_STATE",
->                     "DRM_UT_LEASE",
->                     "DRM_UT_DP",
->                     "DRM_UT_DRMRES");
->
-> This maps the sequence of "classnames" to ints starting with DRM_UT_CORE.
-> other _bases allow sharing the per-module 0..62 class-id space.
-> (63 is default/unclassed/common prdbg).
->
-> Only complete, linear maps are recommended.  This suits DRM.
->
-> DYNDBG_CLASSMAP_PARAM_REF() creates the sysfs-kparam classbits knob,
-> binding the extern'd long-int/bitvec to the classmap.  The extern
-> insures that old users of __drm_debug can still check its value.
->
-> DRM's categories are independent of each other.  The other possible
-> classmap-type/behavior is "related", ie somehow "ordered": V3>V2.  The
-> relatedness of classes in a classmap is enforced at the kparam, where
-> they are all set together, not at the >control interface.
->
-> THE PATCHSET has 2 halves:
->
-> 1- dynamic-debug fix - API change
->
-> The root cause was DECLARE_DYNDBG_CLASSMAP tried to do too much, and
-> its use in both core and drivers, helpers couldnt sort the difference.
->
-> The fix is to replace it with DYNDBG_CLASSMAP_DEFINE in core, and
-> DYNDBG_CLASSMAP_USE in drivers,helpers. The 1st differs from -v1 by
-> exporting the classmap, allowing 2nd to ref it.  They respectively add
-> records to 2 ELF sections in the module.
->
-> Now, dyndbg's on-modprobe handler follows the _USE/refs to the owning
-> module, finds the controlling kparam: drm.debug, and applies its value
-> thru the classmap, to the module's pr_debugs.
->
-> A selftest script is included:
->   :#> ./tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh
->
-> It recapitulates the DRM regression scenario using the 2 test modules.
-> The test verifies that the dependent module is initialized properly
-> from the parent's classmap kparam, and the classed prdbgs get enabled.
->
-> This latest rev fixes the test for the various CONFIG_DYNAMIC_DEBUG*
-> build combos, by skipping some subtests where the expected counts are
-> wrong. Lukasz Bartosik caught this - thanks.
-> CC: ukaszb@chromium.org
->
-> And 2 tweaks to kdoc & howto, to steer api users away from using
-> designated initializers to _DEFINE the classmap.
->
->
-> 2- DRM fixes - use new api.
->
-> a. update core/drivers to invoke DRM_CLASSMAP_DEFINE/_USE
-> b. wrap DYNDBG_CLASSMAP_* with DRM_CLASSMAP_* - hide ifdef
->
-> c. now with separate +DRM_CLASSMAP_USE patches for each driver/helper:
-> d. and defer dropping DECLARE_DYNDBG_CLASSMAP til later
->
-> Maybe theres a single place to invoke DRM_CLASSMAP_USE just once,
-> perhaps from a client library c-file. I poked a little, didn't find it.
-> It would be a bit obscured for an opt-in style declaration.
->
-> Patches are against v6.10
-> theyre also at:
-> tree/branch: https://github.com/jimc/linux.git dd-fix-9d
-> and lkp-robot told me:
-> [jimc:dd-fix-9d] BUILD SUCCESS 7c38f1d94f9919fec887113b620b83d60061c035
->
->
-> Finally, classmaps are in a meta-stable state right now; some governor
-> might yet walk it over to the gravel pit out back.
->
-> Tested-bys would help greatly, help get it off the fence it straddles.
-> Please specify your test method: selftest or drm.debug=3D0x1ff boot.
->
-> Next Im gonna try to haul this over to the freedesktop DRM-CI river,
-> presuming I can find the way (accts,etc)
->
-> Also entertaining Reviewed-bys :-}
->
-> Jim Cromie (54):
->
-> DYNAMIC-DEBUG parts:
->
-> cleanup:
->   docs/dyndbg: update examples \012 to \n
->   test-dyndbg: fixup CLASSMAP usage error
->   dyndbg: reword "class unknown," to "class:_UNKNOWN_"
->   dyndbg: make ddebug_class_param union members same size
->   dyndbg: replace classmap list with a vector
->
-> prep:
->   dyndbg: ddebug_apply_class_bitmap - add module arg, select on it
->   dyndbg: split param_set_dyndbg_classes to _module & wrapper fns
->   dyndbg: drop NUM_TYPE_ARRAY
->   dyndbg: reduce verbose/debug clutter
->   dyndbg: silence debugs with no-change updates
->   dyndbg: tighten ddebug_class_name() 1st arg type
->   dyndbg: tighten fn-sig of ddebug_apply_class_bitmap
->   dyndbg: reduce verbose=3D3 messages in ddebug_add_module
->
-> API changes & selftest:
->   dyndbg-API: remove DD_CLASS_TYPE_(DISJOINT|LEVEL)_NAMES and code
->   dyndbg-API: fix DECLARE_DYNDBG_CLASSMAP
->   selftests-dyndbg: add tools/testing/selftests/dynamic_debug/*
->   dyndbg-API: promote DYNDBG_CLASSMAP_PARAM to API
->   dyndbg-doc: add classmap info to howto
->   dyndbg: treat comma as a token separator
->   selftests-dyndbg: add comma_terminator_tests
->   dyndbg: split multi-query strings with %
->   selftests-dyndbg: test_percent_splitting
->   docs/dyndbg: explain new delimiters: comma, percent
->   selftests-dyndbg: add test_mod_submod
->   dyndbg-doc: explain flags parse 1st
->   dyndbg: change __dynamic_func_call_cls* macros into expressions
->   selftests-dyndbg: check KCONFIG_CONFIG to avoid silly fails
->   dyndbg-selftest: reduce default verbosity
->
-> DRM-parts:
->
->   drm: use correct ccflags-y spelling
->   drm-dyndbg: adapt drm core to use dyndbg classmaps-v2
->   drm-dyndbg: adapt DRM to invoke DYNDBG_CLASSMAP_PARAM
->   drm-dyndbg: DRM_CLASSMAP_USE in amdgpu driver
->   drm-dyndbg: DRM_CLASSMAP_USE in i915 driver
->   drm-dyndbg: DRM_CLASSMAP_USE in drm_crtc_helper
->   drm-dyndbg: DRM_CLASSMAP_USE in drm_dp_helper
->   drm-dyndbg: DRM_CLASSMAP_USE in nouveau
->   drm-print: workaround unused variable compiler meh
->   drm-dyndbg: add DRM_CLASSMAP_USE to Xe driver
->   drm-dyndbg: add DRM_CLASSMAP_USE to virtio_gpu
->   drm-dyndbg: add DRM_CLASSMAP_USE to simpledrm
->   drm-dyndbg: add DRM_CLASSMAP_USE to bochs
->   drm-dyndbg: add DRM_CLASSMAP_USE to etnaviv
->   drm-dyndbg: add DRM_CLASSMAP_USE to gma500 driver
->   drm-dyndbg: add DRM_CLASSMAP_USE to radeon
->   drm-dyndbg: add DRM_CLASSMAP_USE to vmwgfx driver
->   drm-dyndbg: add DRM_CLASSMAP_USE to vkms driver
->   drm-dyndbg: add DRM_CLASSMAP_USE to udl driver
->   drm-dyndbg: add DRM_CLASSMAP_USE to mgag200 driver
->   drm-dyndbg: add DRM_CLASSMAP_USE to the gud driver
->   drm-dyndbg: add DRM_CLASSMAP_USE to the qxl driver
->   drm-dyndbg: add DRM_CLASSMAP_USE to the drm_gem_shmem_helper driver
->   drm: restore CONFIG_DRM_USE_DYNAMIC_DEBUG un-BROKEN
->
-> added in -resend (will squash back in):
->
->   dyndbg: tighten up kdoc about DYNDBG_CLASSMAP_* macros
->   docs-dyndbg: improve howto classmaps api section
->
->  .../admin-guide/dynamic-debug-howto.rst       | 113 ++++-
->  MAINTAINERS                                   |   3 +-
->  drivers/gpu/drm/Kconfig                       |   3 +-
->  drivers/gpu/drm/Makefile                      |   3 +-
->  drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c       |  12 +-
->  drivers/gpu/drm/display/drm_dp_helper.c       |  12 +-
->  drivers/gpu/drm/drm_crtc_helper.c             |  12 +-
->  drivers/gpu/drm/drm_gem_shmem_helper.c        |   2 +
->  drivers/gpu/drm/drm_print.c                   |  38 +-
->  drivers/gpu/drm/etnaviv/etnaviv_drv.c         |   2 +
->  drivers/gpu/drm/gma500/psb_drv.c              |   2 +
->  drivers/gpu/drm/gud/gud_drv.c                 |   2 +
->  drivers/gpu/drm/i915/i915_params.c            |  12 +-
->  drivers/gpu/drm/mgag200/mgag200_drv.c         |   2 +
->  drivers/gpu/drm/nouveau/nouveau_drm.c         |  12 +-
->  drivers/gpu/drm/qxl/qxl_drv.c                 |   2 +
->  drivers/gpu/drm/radeon/radeon_drv.c           |   2 +
->  drivers/gpu/drm/tiny/bochs.c                  |   2 +
->  drivers/gpu/drm/tiny/simpledrm.c              |   2 +
->  drivers/gpu/drm/udl/udl_main.c                |   2 +
->  drivers/gpu/drm/virtio/virtgpu_drv.c          |   2 +
->  drivers/gpu/drm/vkms/vkms_drv.c               |   2 +
->  drivers/gpu/drm/vmwgfx/vmwgfx_drv.c           |   2 +
->  drivers/gpu/drm/xe/xe_drm_client.c            |   2 +
->  include/asm-generic/vmlinux.lds.h             |   1 +
->  include/drm/drm_print.h                       |  10 +
->  include/linux/dynamic_debug.h                 | 145 ++++--
->  kernel/module/main.c                          |   3 +
->  lib/Kconfig.debug                             |  24 +-
->  lib/Makefile                                  |   3 +
->  lib/dynamic_debug.c                           | 436 +++++++++++-------
->  lib/test_dynamic_debug.c                      | 131 +++---
->  lib/test_dynamic_debug_submod.c               |  17 +
->  tools/testing/selftests/Makefile              |   1 +
->  .../testing/selftests/dynamic_debug/Makefile  |   9 +
->  tools/testing/selftests/dynamic_debug/config  |   2 +
->  .../dynamic_debug/dyndbg_selftest.sh          | 375 +++++++++++++++
->  37 files changed, 1042 insertions(+), 363 deletions(-)
->  create mode 100644 lib/test_dynamic_debug_submod.c
->  create mode 100644 tools/testing/selftests/dynamic_debug/Makefile
->  create mode 100644 tools/testing/selftests/dynamic_debug/config
->  create mode 100755 tools/testing/selftests/dynamic_debug/dyndbg_selftest=
-.sh
->
+On 7/21/24 00:20, Basavaraj Natikar wrote:
+
+> On 7/17/2024 4:51 PM, Linux regression tracking (Thorsten Leemhuis) wro=
+te:
+>> On 15.07.24 06:39, Chris Hixon wrote:
+>>> System: HP ENVY x360 Convertible 15-ds1xxx; AMD Ryzen 7 4700U with
+>>> Radeon Graphics
+>>>
+>>> Problem commits (introduced in v6.9-rc1):
+>>> 6296562f30b1 HID: amd_sfh: Extend MP2 register access to SFH
+>>> 2105e8e00da4 HID: amd_sfh: Improve boot time when SFH is available
+>>>> It appears amd_sfh commits 6296562f30b1 and 2105e8e00da4 correlate w=
+ith
+>>> some form of memory/page corruption.=20
+>> Hi! From a quick search on lore it looks like Basavaraj Natikar who
+>> authored those two commits is inactive since a few days. This is total=
+ly
+>> fine, but given the nature of the problem slightly unfortunate. That's=
+
+>> why I'm trying to raise awareness to this report by adding the
+>> subsystems maintainers, a few lists, and a few people to the list of
+>> recipients that were involved in the submission of those two patches.
+>> With a bit of luck somebody might be able to help out. Ciao, Thorsten
+>>
+>>> On my system, this typically
+>>> presents itself as a page dump followed by BTRFS errors, usually
+>>> involving "corrupt leaf" (see dmesg output below); often the BTRFS
+>>> filesystem becomes read-only afterwards. Note that the underlying NVM=
+E
+>>> disk seems fine, and the BTRFS filesystem does not actually appear to=
+ be
+>>> corrupt when booted/checked from kernels without this bug (no BTRFS
+>>> errors or I/O errors reported on non-problem kernels).
+>>>
+>>> I have no problems when I blacklist the amd_sfh module (any kernel
+>>> version), or revert both commits 6296562f30b1 and 2105e8e00da4 (on
+>>> stable, linux-6.9.y). I have no problems on any recent linux-mainline=
+
+>>> (v6.10{,-rc*}) when reverting these two commits (in addition to
+>>> reverting 7902ec988a9a and 6856f079cd45 to successfully build the
+>>> kernel). I have had no problems with any 6.6.y, v6.7.y, or v6.8.y ver=
+sion.
+>>>
+>>> It is curious BTRFS always seems involved, but problems go away with
+>>> these amd_sfh commits reverted (or amd_afh disabled).
+>>>
+>>> Further notes:
+>>>
+>>> I have not specifically used the amd_sfh module for anything. As far
+>>> I've been able to determine, my system has the "Sensor Fusion Hub" mp=
+2
+>>> chip, but has no supported sensors/sub-devices (or I need to do
+>>> something to enable them), (or there is an error while detecting
+>>> sensors?). All logs I've checked contain something like:
+>>>
+>>> Jul 09 04:14:37 arch kernel: pcie_mp2_amd 0000:04:00.7: enabling devi=
+ce
+>>> (0000 -> 0002)
+>>> Jul 09 04:15:07 arch kernel: pcie_mp2_amd 0000:04:00.7: Failed to
+>>> discover, sensors not enabled is 0
+>>> Jul 09 04:15:07 arch kernel: pcie_mp2_amd 0000:04:00.7:
+>>> amd_sfh_hid_client_init failed err -95
+>>>
+>>> Excerpt from lshw:
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *-generi=
+c:1 UNCLAIMED
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 description: Signal processing controller
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 product: Sensor Fusion Hub
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 vendor: Advanced Micro Devices, Inc. [AMD]
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 physical id: 0.7
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 bus info: pci@0000:04:00.7
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 version: 00
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 width: 32 bits
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 clock: 33MHz
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 capabilities: pm pciexpress msi msix cap_list
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 configuration: latency=3D0
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 resources: memory:fe000000-fe0fffff
+>>> memory:fe4cc000-fe4cdfff
+>=20
+> Could you please check with the latest version, including the patch bel=
+ow?
+>=20
+> https://lore.kernel.org/all/20240718111616.3012155-1-Basavaraj.Natikar@=
+amd.com/
+>=20
+> Thanks,
 > --
-> 2.45.2
->
+> Basavaraj
+>=20
 
-Tested-by: =C5=81ukasz Bartosik <ukaszb@chromium.org>
+Hi,
 
-Here is what I tested in virtme-ng:
-TEST_DYNAMIC_DEBUG=3DM and TEST_DYNAMIC_DEBUG_SUBMOD=3DM
-BASIC_TESTS, COMMA_TERMINATOR_TESTS, TEST_PERCENT_SPLITTING and
-TEST_MOD_SUBMOD selftests passed
+Unfortunately, that patch doesn't fix the issue. I do get different crash=
+es...
 
-TEST_DYNAMIC_DEBUG=3DY and TEST_DYNAMIC_DEBUG_SUBMOD=3DM
-BASIC_TESTS and COMMA_TERMINATOR_TESTS selftests passed,
-TEST_PERCENT_SPLITTING and TEST_PERCENT_SPLITTING selftests were skipped
+Test #1, patch applied to linux-mainline 720261cfc732:
+------------------------------------------------------
 
-TEST_DYNAMIC_DEBUG=3DY and TEST_DYNAMIC_DEBUG_SUBMOD=3DY
-BASIC_TESTS and COMMA_TERMINATOR_TESTS selftests passed,
-TEST_PERCENT_SPLITTING and TEST_PERCENT_SPLITTING selftests were skipped
+Jul 19 03:07:52 arch kernel: pcie_mp2_amd 0000:04:00.7: enabling device (=
+0000 -> 0002)
+=2E..
+Jul 19 03:08:22 arch kernel: pcie_mp2_amd 0000:04:00.7: Failed to discove=
+r, sensors not enabled is 0
+Jul 19 03:08:22 arch kernel: pcie_mp2_amd 0000:04:00.7: amd_sfh_hid_clien=
+t_init failed err -95
+=2E..
+Jul 19 03:08:33 arch kernel: journalctl: Corrupted page table at address =
+7f364f200098
+Jul 19 03:08:33 arch kernel: PGD 12532c067 P4D 12532c067 PUD 1277e7067 PM=
+D 110dd1067 PTE ffffdbdefffffd9f
+Jul 19 03:08:33 arch kernel: Oops: Bad pagetable: 000d [#1] PREEMPT SMP N=
+OPTI
+Jul 19 03:08:33 arch kernel: CPU: 4 PID: 2366 Comm: journalctl Not tainte=
+d 6.10.0-08676-g720261cfc732-dirty #1 323ec4760c6f8b2d83974caae365d400b43=
+e1fa0
+Jul 19 03:08:33 arch kernel: Hardware name: HP HP ENVY x360 Convertible 1=
+5-ds1xxx/87A9, BIOS F.14 10/13/2023
+Jul 19 03:08:33 arch kernel: RIP: 0033:0x7f365b0f22fa
+Jul 19 03:08:33 arch kernel: Code: 45 c0 00 00 00 00 48 c7 45 b8 00 00 00=
+ 00 4d 85 e4 0f 84 81 06 00 00 4c 89 e6 48 89 df e8 ae 51 00 00 49 8b 94 =
+24 d0 00 00 00 <48> 8b 82 98 00 00 00 45 3b 6c 24 1c 0f 84 9c 01 00 00 49=
+ 89 44 24
+Jul 19 03:08:33 arch kernel: RSP: 002b:00007ffe3bed6020 EFLAGS: 00010206
+Jul 19 03:08:33 arch kernel: RAX: 0000000000000000 RBX: 0000560c079673c0 =
+RCX: 0000000000000001
+Jul 19 03:08:33 arch kernel: RDX: 00007f364f200000 RSI: 0000560c0797f040 =
+RDI: 0000560c079673c0
+Jul 19 03:08:33 arch kernel: RBP: 00007ffe3bed60a0 R08: 0000560c07966010 =
+R09: 0000000000000007
+Jul 19 03:08:33 arch kernel: R10: 0000560c07968e40 R11: 0000560c07968ad0 =
+R12: 0000560c0797f040
+Jul 19 03:08:33 arch kernel: R13: 0000000000000001 R14: 0000560c07968858 =
+R15: 0000000000000000
+Jul 19 03:08:33 arch kernel: FS:  00007f365ab69880 GS:  0000000000000000
+Jul 19 03:08:33 arch kernel: Modules linked in: nft_masq nft_chain_nat nf=
+_nat bridge stp llc vhost_vsock vmw_vsock_virtio_transport_common vsock v=
+host vhost_iotlb ccm snd_seq_dummy snd_hrtimer rfcomm snd_seq snd_seq_dev=
+ice uhid cmac algif_hash algif_skcipher af_alg nft_ct nf_conntrack nf_def=
+rag_ipv6 nf_defrag_ipv4 nf_tables bnep snd_ctl_led iwlmvm mac80211 snd_ac=
+p3x_pdm_dma snd_acp3x_rn snd_soc_dmic snd_sof_amd_vangogh snd_sof_amd_rem=
+brandt snd_sof_amd_renoir snd_sof_amd_acp snd_sof_xtensa_dsp snd_sof_pci =
+snd_sof snd_hda_codec_realtek intel_rapl_msr snd_sof_utils intel_rapl_com=
+mon btusb uvcvideo snd_hda_codec_generic btrtl snd_soc_core libarc4 kvm_a=
+md snd_hda_scodec_component btintel videobuf2_vmalloc btbcm snd_hda_codec=
+_hdmi videobuf2_memops btmtk uvc iwlwifi snd_compress snd_hda_intel snd_p=
+ci_ps videobuf2_v4l2 snd_intel_dspcfg kvm snd_rpl_pci_acp6x bluetooth snd=
+_hda_codec videodev snd_acp_pci cfg80211 snd_hwdep snd_hda_core snd_acp_l=
+egacy_common snd_pci_acp6x videobuf2_common mc snd_pcm rapl hp_wmi snd_pc=
+i_acp5x sparse_keymap pcspkr
+Jul 19 03:08:33 arch kernel:  snd_timer ucsi_acpi snd_rn_pci_acp3x wmi_bm=
+of platform_profile acpi_cpufreq snd typec_ucsi snd_acp_config amd_sfh rf=
+kill snd_soc_acpi sp5100_tco k10temp roles soundcore snd_pci_acp3x i2c_pi=
+ix4 typec hp_accel wireless_hotkey lis3lv02d acpi_tad amd_pmc joydev mous=
+edev mac_hid nls_iso8859_1 vfat fat usbip_host usbip_core crypto_user loo=
+p nfnetlink zram ip_tables x_tables btrfs blake2b_generic libcrc32c crc32=
+c_generic xor raid6_pq dm_crypt cbc encrypted_keys trusted asn1_encoder t=
+ee dm_mod amdgpu amdxcp i2c_algo_bit crct10dif_pclmul crc32_pclmul drm_tt=
+m_helper crc32c_intel ttm polyval_clmulni polyval_generic rtsx_pci_sdmmc =
+gf128mul mmc_core ghash_clmulni_intel drm_exec sha512_ssse3 nvme gpu_sche=
+d serio_raw sha256_ssse3 atkbd sha1_ssse3 nvme_core drm_suballoc_helper l=
+ibps2 aesni_intel drm_buddy vivaldi_fmap drm_display_helper crypto_simd c=
+cp cryptd rtsx_pci video xhci_pci i8042 nvme_auth xhci_pci_renesas crc16 =
+wmi serio 9pnet_virtio 9p 9pnet netfs virtio_net net_failover failover vi=
+rtio_blk hid_multitouch
+Jul 19 03:08:33 arch kernel:  i2c_hid_acpi i2c_hid
+Jul 19 03:08:33 arch kernel: ---[ end trace 0000000000000000 ]---
+Jul 19 03:08:33 arch kernel: RIP: 0033:0x7f365b0f22fa
+Jul 19 03:08:33 arch kernel: RSP: 002b:00007ffe3bed6020 EFLAGS: 00010206
+Jul 19 03:08:33 arch kernel: RAX: 0000000000000000 RBX: 0000560c079673c0 =
+RCX: 0000000000000001
+Jul 19 03:08:33 arch kernel: RDX: 00007f364f200000 RSI: 0000560c0797f040 =
+RDI: 0000560c079673c0
+Jul 19 03:08:33 arch kernel: RBP: 00007ffe3bed60a0 R08: 0000560c07966010 =
+R09: 0000000000000007
+Jul 19 03:08:33 arch kernel: R10: 0000560c07968e40 R11: 0000560c07968ad0 =
+R12: 0000560c0797f040
+Jul 19 03:08:33 arch kernel: R13: 0000000000000001 R14: 0000560c07968858 =
+R15: 0000000000000000
+Jul 19 03:08:33 arch kernel: FS:  00007f365ab69880(0000) GS:ffff9641bf600=
+000(0000) knlGS:0000000000000000
+Jul 19 03:08:33 arch kernel: CS:  0033 DS: 0000 ES: 0000 CR0: 00000000800=
+50033
+Jul 19 03:08:33 arch kernel: CR2: 00007f364f200098 CR3: 00000001224c2000 =
+CR4: 0000000000350ef0
+Jul 19 03:08:33 arch kernel: note: journalctl[2366] exited with irqs disa=
+bled
+Jul 19 03:08:33 arch kernel: BUG: Bad page map in process journalctl  pte=
+:ffffdbdefffffd9f pmd:110dd1067
+Jul 19 03:08:33 arch kernel: addr:00007f364f200000 vm_flags:080000d1 anon=
+_vma:0000000000000000 mapping:ffff963ec4ef7be8 index:0
+Jul 19 03:08:33 arch kernel: file:system@4b2ed14e1df74095b272f6fbd1a5cf90=
+-000000000063dc49-000615f60b98c78b.journal fault:filemap_fault mmap:btrfs=
+_file_mmap [btrfs] read_folio:btrfs_read_folio [btrfs]
+Jul 19 03:08:33 arch kernel: CPU: 4 PID: 2366 Comm: journalctl Tainted: G=
+      D            6.10.0-08676-g720261cfc732-dirty #1 323ec4760c6f8b2d83=
+974caae365d400b43e1fa0
+Jul 19 03:08:33 arch kernel: Hardware name: HP HP ENVY x360 Convertible 1=
+5-ds1xxx/87A9, BIOS F.14 10/13/2023
+Jul 19 03:08:33 arch kernel: Call Trace:
+Jul 19 03:08:33 arch kernel:  <TASK>
+Jul 19 03:08:33 arch kernel:  dump_stack_lvl+0x5d/0x80
+Jul 19 03:08:33 arch kernel:  print_bad_pte.cold+0x76/0xd9
+Jul 19 03:08:33 arch kernel:  vm_normal_page+0xd6/0xf0
+Jul 19 03:08:33 arch kernel:  unmap_page_range+0x5d7/0x17f0
+Jul 19 03:08:33 arch kernel:  unmap_vmas+0xbd/0x1a0
+Jul 19 03:08:33 arch kernel:  exit_mmap+0xf6/0x3b0
+Jul 19 03:08:33 arch kernel:  __mmput+0x3e/0x130
+Jul 19 03:08:33 arch kernel:  do_exit+0x2ce/0xad0
+Jul 19 03:08:33 arch kernel:  make_task_dead+0x90/0x90
+Jul 19 03:08:33 arch kernel:  rewind_stack_and_make_dead+0x16/0x20
+Jul 19 03:08:33 arch kernel: RIP: 0033:0x7f365b0f22fa
+Jul 19 03:08:33 arch kernel: Code: Unable to access opcode bytes at 0x7f3=
+65b0f22d0.
+Jul 19 03:08:33 arch kernel: RSP: 002b:00007ffe3bed6020 EFLAGS: 00010206
+Jul 19 03:08:33 arch kernel: RAX: 0000000000000000 RBX: 0000560c079673c0 =
+RCX: 0000000000000001
+Jul 19 03:08:33 arch kernel: RDX: 00007f364f200000 RSI: 0000560c0797f040 =
+RDI: 0000560c079673c0
+Jul 19 03:08:33 arch kernel: RBP: 00007ffe3bed60a0 R08: 0000560c07966010 =
+R09: 0000000000000007
+Jul 19 03:08:33 arch kernel: R10: 0000560c07968e40 R11: 0000560c07968ad0 =
+R12: 0000560c0797f040
+Jul 19 03:08:33 arch kernel: R13: 0000000000000001 R14: 0000560c07968858 =
+R15: 0000000000000000
+Jul 19 03:08:33 arch kernel:  </TASK>
+Jul 19 03:08:33 arch kernel: BUG: Bad page map in process journalctl  pte=
+:200000e1d pmd:110dd1067
+Jul 19 03:08:33 arch kernel: addr:00007f364f201000 vm_flags:080000d1 anon=
+_vma:0000000000000000 mapping:ffff963ec4ef7be8 index:1
+Jul 19 03:08:33 arch kernel: file:system@4b2ed14e1df74095b272f6fbd1a5cf90=
+-000000000063dc49-000615f60b98c78b.journal fault:filemap_fault mmap:btrfs=
+_file_mmap [btrfs] read_folio:btrfs_read_folio [btrfs]
+Jul 19 03:08:33 arch kernel: CPU: 4 PID: 2366 Comm: journalctl Tainted: G=
+    B D            6.10.0-08676-g720261cfc732-dirty #1 323ec4760c6f8b2d83=
+974caae365d400b43e1fa0
+Jul 19 03:08:33 arch kernel: Hardware name: HP HP ENVY x360 Convertible 1=
+5-ds1xxx/87A9, BIOS F.14 10/13/2023
+Jul 19 03:08:33 arch kernel: Call Trace:
+Jul 19 03:08:33 arch kernel:  <TASK>
+Jul 19 03:08:33 arch kernel:  dump_stack_lvl+0x5d/0x80
+Jul 19 03:08:33 arch kernel:  print_bad_pte.cold+0x76/0xd9
+Jul 19 03:08:33 arch kernel:  vm_normal_page+0xd6/0xf0
+Jul 19 03:08:33 arch kernel:  unmap_page_range+0x5d7/0x17f0
+Jul 19 03:08:33 arch kernel:  unmap_vmas+0xbd/0x1a0
+Jul 19 03:08:33 arch kernel:  exit_mmap+0xf6/0x3b0
+Jul 19 03:08:33 arch kernel:  __mmput+0x3e/0x130
+Jul 19 03:08:33 arch kernel:  do_exit+0x2ce/0xad0
+Jul 19 03:08:33 arch kernel:  make_task_dead+0x90/0x90
+Jul 19 03:08:33 arch kernel:  rewind_stack_and_make_dead+0x16/0x20
+Jul 19 03:08:33 arch kernel: RIP: 0033:0x7f365b0f22fa
+Jul 19 03:08:33 arch kernel: Code: Unable to access opcode bytes at 0x7f3=
+65b0f22d0.
+Jul 19 03:08:33 arch kernel: RSP: 002b:00007ffe3bed6020 EFLAGS: 00010206
+Jul 19 03:08:33 arch kernel: RAX: 0000000000000000 RBX: 0000560c079673c0 =
+RCX: 0000000000000001
+Jul 19 03:08:33 arch kernel: RDX: 00007f364f200000 RSI: 0000560c0797f040 =
+RDI: 0000560c079673c0
+Jul 19 03:08:33 arch kernel: RBP: 00007ffe3bed60a0 R08: 0000560c07966010 =
+R09: 0000000000000007
+Jul 19 03:08:33 arch kernel: R10: 0000560c07968e40 R11: 0000560c07968ad0 =
+R12: 0000560c0797f040
+Jul 19 03:08:33 arch kernel: R13: 0000000000000001 R14: 0000560c07968858 =
+R15: 0000000000000000
+Jul 19 03:08:33 arch kernel:  </TASK>
+Jul 19 03:08:33 arch kernel: BUG: Bad page map in process journalctl  pte=
+:30ffffff8f pmd:120674067
+Jul 19 03:08:33 arch kernel: addr:00007f364f600000 vm_flags:080000d1 anon=
+_vma:0000000000000000 mapping:ffff963ec4ef7be8 index:400
+Jul 19 03:08:33 arch kernel: file:system@4b2ed14e1df74095b272f6fbd1a5cf90=
+-000000000063dc49-000615f60b98c78b.journal fault:filemap_fault mmap:btrfs=
+_file_mmap [btrfs] read_folio:btrfs_read_folio [btrfs]
+Jul 19 03:08:33 arch kernel: CPU: 4 PID: 2366 Comm: journalctl Tainted: G=
+    B D            6.10.0-08676-g720261cfc732-dirty #1 323ec4760c6f8b2d83=
+974caae365d400b43e1fa0
+Jul 19 03:08:33 arch kernel: Hardware name: HP HP ENVY x360 Convertible 1=
+5-ds1xxx/87A9, BIOS F.14 10/13/2023
+Jul 19 03:08:33 arch kernel: Call Trace:
+Jul 19 03:08:33 arch kernel:  <TASK>
+Jul 19 03:08:33 arch kernel:  dump_stack_lvl+0x5d/0x80
+Jul 19 03:08:33 arch kernel:  print_bad_pte.cold+0x76/0xd9
+Jul 19 03:08:33 arch kernel:  vm_normal_page+0xd6/0xf0
+Jul 19 03:08:33 arch kernel:  unmap_page_range+0x5d7/0x17f0
+Jul 19 03:08:33 arch kernel:  unmap_vmas+0xbd/0x1a0
+Jul 19 03:08:33 arch kernel:  exit_mmap+0xf6/0x3b0
+Jul 19 03:08:33 arch kernel:  __mmput+0x3e/0x130
+Jul 19 03:08:33 arch kernel:  do_exit+0x2ce/0xad0
+Jul 19 03:08:33 arch kernel:  make_task_dead+0x90/0x90
+Jul 19 03:08:33 arch kernel:  rewind_stack_and_make_dead+0x16/0x20
+Jul 19 03:08:33 arch kernel: RIP: 0033:0x7f365b0f22fa
+Jul 19 03:08:33 arch kernel: Code: Unable to access opcode bytes at 0x7f3=
+65b0f22d0.
+Jul 19 03:08:33 arch kernel: RSP: 002b:00007ffe3bed6020 EFLAGS: 00010206
+Jul 19 03:08:33 arch kernel: RAX: 0000000000000000 RBX: 0000560c079673c0 =
+RCX: 0000000000000001
+Jul 19 03:08:33 arch kernel: RDX: 00007f364f200000 RSI: 0000560c0797f040 =
+RDI: 0000560c079673c0
+Jul 19 03:08:33 arch kernel: RBP: 00007ffe3bed60a0 R08: 0000560c07966010 =
+R09: 0000000000000007
+Jul 19 03:08:33 arch kernel: R10: 0000560c07968e40 R11: 0000560c07968ad0 =
+R12: 0000560c0797f040
+Jul 19 03:08:33 arch kernel: R13: 0000000000000001 R14: 0000560c07968858 =
+R15: 0000000000000000
+Jul 19 03:08:33 arch kernel:  </TASK>
+Jul 19 03:08:33 arch kernel: BUG: Bad page map in process journalctl  pte=
+:ffffffe6 pmd:120674067
+Jul 19 03:08:33 arch kernel: addr:00007f364f601000 vm_flags:080000d1 anon=
+_vma:0000000000000000 mapping:ffff963ec4ef7be8 index:401
+Jul 19 03:08:33 arch kernel: file:system@4b2ed14e1df74095b272f6fbd1a5cf90=
+-000000000063dc49-000615f60b98c78b.journal fault:filemap_fault mmap:btrfs=
+_file_mmap [btrfs] read_folio:btrfs_read_folio [btrfs]
+Jul 19 03:08:33 arch kernel: CPU: 4 PID: 2366 Comm: journalctl Tainted: G=
+    B D            6.10.0-08676-g720261cfc732-dirty #1 323ec4760c6f8b2d83=
+974caae365d400b43e1fa0
+Jul 19 03:08:33 arch kernel: Hardware name: HP HP ENVY x360 Convertible 1=
+5-ds1xxx/87A9, BIOS F.14 10/13/2023
+Jul 19 03:08:33 arch kernel: Call Trace:
+Jul 19 03:08:33 arch kernel:  <TASK>
+Jul 19 03:08:33 arch kernel:  dump_stack_lvl+0x5d/0x80
+Jul 19 03:08:33 arch kernel:  print_bad_pte.cold+0x76/0xd9
+Jul 19 03:08:33 arch kernel:  vm_normal_page+0xd6/0xf0
+Jul 19 03:08:33 arch kernel:  unmap_page_range+0x5d7/0x17f0
+Jul 19 03:08:33 arch kernel:  unmap_vmas+0xbd/0x1a0
+Jul 19 03:08:33 arch kernel:  exit_mmap+0xf6/0x3b0
+Jul 19 03:08:33 arch kernel:  __mmput+0x3e/0x130
+Jul 19 03:08:33 arch kernel:  do_exit+0x2ce/0xad0
+Jul 19 03:08:33 arch kernel:  make_task_dead+0x90/0x90
+Jul 19 03:08:33 arch kernel:  rewind_stack_and_make_dead+0x16/0x20
+Jul 19 03:08:33 arch kernel: RIP: 0033:0x7f365b0f22fa
+Jul 19 03:08:33 arch kernel: Code: Unable to access opcode bytes at 0x7f3=
+65b0f22d0.
+Jul 19 03:08:33 arch kernel: RSP: 002b:00007ffe3bed6020 EFLAGS: 00010206
+Jul 19 03:08:33 arch kernel: RAX: 0000000000000000 RBX: 0000560c079673c0 =
+RCX: 0000000000000001
+Jul 19 03:08:33 arch kernel: RDX: 00007f364f200000 RSI: 0000560c0797f040 =
+RDI: 0000560c079673c0
+Jul 19 03:08:33 arch kernel: RBP: 00007ffe3bed60a0 R08: 0000560c07966010 =
+R09: 0000000000000007
+Jul 19 03:08:33 arch kernel: R10: 0000560c07968e40 R11: 0000560c07968ad0 =
+R12: 0000560c0797f040
+Jul 19 03:08:33 arch kernel: R13: 0000000000000001 R14: 0000560c07968858 =
+R15: 0000000000000000
+Jul 19 03:08:33 arch kernel:  </TASK>
+Jul 19 03:08:33 arch kernel: BUG: Bad rss-counter state mm:0000000043d542=
+9f type:MM_FILEPAGES val:1
 
-I also did manual testing by enabling/disabling different classes from
-the kernel command line with drm.debug param
-and verified they are correctly reflected in cat /proc/dynamic_debug/contro=
-l.
+Test #2, patch applied to linux-mainline 2c9b3512402e:
+------------------------------------------------------
 
-All the above LGTM.
+Jul 21 02:45:19 arch kernel: pcie_mp2_amd 0000:04:00.7: enabling device (=
+0000 -> 0002)
+=2E..
+Jul 21 02:45:49 arch kernel: pcie_mp2_amd 0000:04:00.7: Failed to discove=
+r, sensors not enabled is 0
+Jul 21 02:45:49 arch kernel: pcie_mp2_amd 0000:04:00.7: amd_sfh_hid_clien=
+t_init failed err -95
+Jul 21 02:45:50 arch kernel: BUG: unable to handle page fault for address=
+: 000000b4ffffed39
+Jul 21 02:45:50 arch kernel: #PF: supervisor read access in kernel mode
+Jul 21 02:45:50 arch kernel: #PF: error_code(0x0000) - not-present page
+Jul 21 02:45:50 arch kernel: PGD 0 P4D 0=20
+Jul 21 02:45:50 arch kernel: Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
+Jul 21 02:45:50 arch kernel: CPU: 2 PID: 1648 Comm: gnome-shell Not taint=
+ed 6.10.0-11185-g2c9b3512402e-dirty #1 909b642174274273e9a5ff42844d49a454=
+a06a9d
+Jul 21 02:45:50 arch kernel: Hardware name: HP HP ENVY x360 Convertible 1=
+5-ds1xxx/87A9, BIOS F.14 10/13/2023
+Jul 21 02:45:50 arch kernel: RIP: 0010:poll_freewait+0x58/0xa0
+Jul 21 02:45:50 arch kernel: Code: 83 c3 40 e8 9a c4 ce ff 48 8b 7b b0 e8=
+ 21 33 fe ff 41 39 6d 28 7f de 4d 85 e4 74 40 49 8b 5c 24 08 49 8d 6c 24 =
+10 48 83 eb 40 <48> 8b 7b 38 48 8d 73 10 e8 6b c4 ce ff 48 8b 3b e8 f3 32=
+ fe ff 48
+Jul 21 02:45:50 arch kernel: RSP: 0018:ffffafd196e578e8 EFLAGS: 00010202
+Jul 21 02:45:50 arch kernel: RAX: dead000000000122 RBX: 000000b4ffffed01 =
+RCX: 0000000000000001
+Jul 21 02:45:50 arch kernel: RDX: ffffa09a0bc10590 RSI: 0000000000000292 =
+RDI: ffffa09a00e95700
+Jul 21 02:45:50 arch kernel: RBP: ffffa09a09197010 R08: 0000000000000001 =
+R09: 0000000000000001
+Jul 21 02:45:50 arch kernel: R10: 0000000000000002 R11: 0000000000000001 =
+R12: ffffa09a09197000
+Jul 21 02:45:50 arch kernel: R13: ffffafd196e57a70 R14: 0000000000000011 =
+R15: 0000000000000001
+Jul 21 02:45:50 arch kernel: FS:  00007f90be94ed80(0000) GS:ffffa09cff700=
+000(0000) knlGS:0000000000000000
+Jul 21 02:45:50 arch kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 00000000800=
+50033
+Jul 21 02:45:50 arch kernel: CR2: 000000b4ffffed39 CR3: 000000010dfbc000 =
+CR4: 0000000000350ef0
+Jul 21 02:45:50 arch kernel: Call Trace:
+Jul 21 02:45:50 arch kernel:  <TASK>
+Jul 21 02:45:50 arch kernel:  ? __die_body.cold+0x19/0x27
+Jul 21 02:45:50 arch kernel:  ? page_fault_oops+0x15a/0x2d0
+Jul 21 02:45:50 arch kernel:  ? exc_page_fault+0x81/0x190
+Jul 21 02:45:50 arch kernel:  ? asm_exc_page_fault+0x26/0x30
+Jul 21 02:45:50 arch kernel:  ? poll_freewait+0x58/0xa0
+Jul 21 02:45:50 arch kernel:  ? poll_freewait+0x3f/0xa0
+Jul 21 02:45:50 arch kernel:  do_sys_poll+0x4e4/0x600
+Jul 21 02:45:50 arch kernel:  ? __pfx_pollwake+0x10/0x10
+Jul 21 02:45:50 arch kernel:  ? __pfx_pollwake+0x10/0x10
+Jul 21 02:45:50 arch kernel:  ? __pfx_pollwake+0x10/0x10
+Jul 21 02:45:50 arch kernel:  ? __pfx_pollwake+0x10/0x10
+Jul 21 02:45:50 arch kernel:  ? __pfx_pollwake+0x10/0x10
+Jul 21 02:45:50 arch kernel:  ? __pfx_pollwake+0x10/0x10
+Jul 21 02:45:50 arch kernel:  ? __pfx_pollwake+0x10/0x10
+Jul 21 02:45:50 arch kernel:  ? __pfx_pollwake+0x10/0x10
+Jul 21 02:45:50 arch kernel:  ? __pfx_pollwake+0x10/0x10
+Jul 21 02:45:50 arch kernel:  ? do_syscall_64+0x8e/0x190
+Jul 21 02:45:50 arch kernel:  __x64_sys_poll+0xd0/0x180
+Jul 21 02:45:50 arch kernel:  do_syscall_64+0x82/0x190
+Jul 21 02:45:50 arch kernel:  ? __pfx_read_tsc+0x10/0x10
+Jul 21 02:45:50 arch kernel:  ? __pm_runtime_suspend+0x69/0xc0
+Jul 21 02:45:50 arch kernel:  ? amdgpu_drm_ioctl+0x71/0x90 [amdgpu 706919=
+ea96bf2f5c4d15446a617826d78535f0ff]
+Jul 21 02:45:50 arch kernel:  ? syscall_exit_to_user_mode+0x10/0x200
+Jul 21 02:45:50 arch kernel:  ? do_syscall_64+0x8e/0x190
+Jul 21 02:45:50 arch kernel:  ? syscall_exit_to_user_mode+0x10/0x200
+Jul 21 02:45:50 arch kernel:  ? do_syscall_64+0x8e/0x190
+Jul 21 02:45:50 arch kernel:  ? syscall_exit_to_user_mode+0x10/0x200
+Jul 21 02:45:50 arch kernel:  ? do_syscall_64+0x8e/0x190
+Jul 21 02:45:50 arch kernel:  ? __irq_exit_rcu+0x4a/0xb0
+Jul 21 02:45:50 arch kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+Jul 21 02:45:50 arch kernel: RIP: 0033:0x7f90c2f1c39d
+Jul 21 02:45:50 arch kernel: Code: e5 48 83 ec 20 89 55 ec 48 89 75 f0 48=
+ 89 7d f8 e8 08 6a f8 ff 8b 55 ec 48 8b 75 f0 41 89 c0 48 8b 7d f8 b8 07 =
+00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 2b 44 89 c7 89 45 f8 e8 60 6a f8 ff=
+ 8b 45 f8
+Jul 21 02:45:50 arch kernel: RSP: 002b:00007fffaf5d0530 EFLAGS: 00000293 =
+ORIG_RAX: 0000000000000007
+Jul 21 02:45:50 arch kernel: RAX: ffffffffffffffda RBX: 000000007fffffff =
+RCX: 00007f90c2f1c39d
+Jul 21 02:45:50 arch kernel: RDX: 0000000000000334 RSI: 0000000000000011 =
+RDI: 000055a4c9873340
+Jul 21 02:45:50 arch kernel: RBP: 00007fffaf5d0550 R08: 0000000000000000 =
+R09: 000000007fffffff
+Jul 21 02:45:50 arch kernel: R10: 000055a4c6b95c80 R11: 0000000000000293 =
+R12: 0000000000000334
+Jul 21 02:45:50 arch kernel: R13: 0000000000000011 R14: 000055a4c9873340 =
+R15: 000055a4c6b95c80
+Jul 21 02:45:50 arch kernel:  </TASK>
+Jul 21 02:45:50 arch kernel: Modules linked in: nft_masq nft_chain_nat nf=
+_nat bridge stp llc vhost_vsock vmw_vsock_virtio_transport_common vsock v=
+host vhost_iotlb ccm snd_seq_dummy snd_hrtimer rfcomm snd_seq snd_seq_dev=
+ice uhid cmac algif_hash algif_skcipher af_alg snd_ctl_led nft_ct nf_conn=
+track nf_defrag_ipv6 nf_defrag_ipv4 nf_tables bnep iwlmvm mac80211 snd_ac=
+p3x_pdm_dma snd_acp3x_rn snd_soc_dmic snd_sof_amd_vangogh snd_sof_amd_rem=
+brandt snd_sof_amd_renoir snd_sof_amd_acp snd_sof_xtensa_dsp snd_sof_pci =
+snd_sof intel_rapl_msr intel_rapl_common uvcvideo btusb kvm_amd libarc4 s=
+nd_hda_codec_realtek btrtl snd_sof_utils videobuf2_vmalloc btintel snd_hd=
+a_codec_generic videobuf2_memops uvc snd_soc_core iwlwifi snd_hda_scodec_=
+component snd_hda_codec_hdmi btbcm videobuf2_v4l2 snd_compress btmtk kvm =
+snd_hda_intel snd_pci_ps videodev snd_rpl_pci_acp6x snd_intel_dspcfg snd_=
+acp_pci bluetooth snd_hda_codec videobuf2_common snd_acp_legacy_common cf=
+g80211 snd_hwdep mc snd_pci_acp6x snd_hda_core snd_pci_acp5x rapl snd_pcm=
+ pcspkr snd_rn_pci_acp3x
+Jul 21 02:45:50 arch kernel:  hp_wmi snd_timer snd_acp_config sparse_keym=
+ap ucsi_acpi sp5100_tco snd_soc_acpi platform_profile wmi_bmof acpi_cpufr=
+eq typec_ucsi snd amd_sfh roles soundcore snd_pci_acp3x rfkill typec i2c_=
+piix4 k10temp hp_accel lis3lv02d amd_pmc wireless_hotkey acpi_tad joydev =
+mousedev mac_hid nls_iso8859_1 vfat fat usbip_host usbip_core crypto_user=
+ loop nfnetlink zram ip_tables x_tables btrfs blake2b_generic libcrc32c c=
+rc32c_generic xor raid6_pq dm_crypt cbc encrypted_keys trusted asn1_encod=
+er tee dm_mod amdgpu crct10dif_pclmul crc32_pclmul amdxcp crc32c_intel i2=
+c_algo_bit polyval_clmulni drm_ttm_helper rtsx_pci_sdmmc polyval_generic =
+ttm mmc_core ghash_clmulni_intel nvme drm_exec sha512_ssse3 gpu_sched ser=
+io_raw sha256_ssse3 nvme_core atkbd sha1_ssse3 drm_suballoc_helper libps2=
+ aesni_intel drm_buddy ccp gf128mul vivaldi_fmap drm_display_helper crypt=
+o_simd rtsx_pci cryptd xhci_pci nvme_auth video i8042 xhci_pci_renesas cr=
+c16 serio wmi 9pnet_virtio 9p 9pnet netfs virtio_net net_failover failove=
+r virtio_blk hid_multitouch
+Jul 21 02:45:50 arch kernel:  i2c_hid_acpi i2c_hid
+Jul 21 02:45:50 arch kernel: CR2: 000000b4ffffed39
+Jul 21 02:45:50 arch kernel: ---[ end trace 0000000000000000 ]---
+Jul 21 02:45:50 arch kernel: RIP: 0010:poll_freewait+0x58/0xa0
+Jul 21 02:45:50 arch kernel: Code: 83 c3 40 e8 9a c4 ce ff 48 8b 7b b0 e8=
+ 21 33 fe ff 41 39 6d 28 7f de 4d 85 e4 74 40 49 8b 5c 24 08 49 8d 6c 24 =
+10 48 83 eb 40 <48> 8b 7b 38 48 8d 73 10 e8 6b c4 ce ff 48 8b 3b e8 f3 32=
+ fe ff 48
+Jul 21 02:45:50 arch kernel: RSP: 0018:ffffafd196e578e8 EFLAGS: 00010202
+Jul 21 02:45:50 arch kernel: RAX: dead000000000122 RBX: 000000b4ffffed01 =
+RCX: 0000000000000001
+Jul 21 02:45:50 arch kernel: RDX: ffffa09a0bc10590 RSI: 0000000000000292 =
+RDI: ffffa09a00e95700
+Jul 21 02:45:50 arch kernel: RBP: ffffa09a09197010 R08: 0000000000000001 =
+R09: 0000000000000001
+Jul 21 02:45:50 arch kernel: R10: 0000000000000002 R11: 0000000000000001 =
+R12: ffffa09a09197000
+Jul 21 02:45:50 arch kernel: R13: ffffafd196e57a70 R14: 0000000000000011 =
+R15: 0000000000000001
+Jul 21 02:45:50 arch kernel: FS:  00007f90be94ed80(0000) GS:ffffa09cff700=
+000(0000) knlGS:0000000000000000
+Jul 21 02:45:50 arch kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 00000000800=
+50033
+Jul 21 02:45:50 arch kernel: CR2: 000000b4ffffed39 CR3: 000000010dfbc000 =
+CR4: 0000000000350ef0
+Jul 21 02:45:50 arch kernel: note: gnome-shell[1648] exited with irqs dis=
+abled
+Jul 21 02:45:50 arch systemd-timesyncd[714]: Contacted time server 71.123=
+=2E46.185:123 (2.arch.pool.ntp.org).
+Jul 21 02:45:50 arch systemd-timesyncd[714]: Initial clock synchronizatio=
+n to Sun 2024-07-21 02:45:50.385189 MDT.
+Jul 21 02:45:54 arch kernel: BUG: unable to handle page fault for address=
+: ffffafd196e57a88
+Jul 21 02:45:54 arch kernel: #PF: supervisor read access in kernel mode
+Jul 21 02:45:54 arch kernel: #PF: error_code(0x0000) - not-present page
+Jul 21 02:45:54 arch kernel: PGD 100000067 P4D 100000067 PUD 10020d067 PM=
+D 126169067 PTE 0
+Jul 21 02:45:54 arch kernel: Oops: Oops: 0000 [#2] PREEMPT SMP NOPTI
+Jul 21 02:45:54 arch kernel: CPU: 1 PID: 1656 Comm: gdbus Tainted: G     =
+ D            6.10.0-11185-g2c9b3512402e-dirty #1 909b642174274273e9a5ff4=
+2844d49a454a06a9d
+Jul 21 02:45:54 arch kernel: Hardware name: HP HP ENVY x360 Convertible 1=
+5-ds1xxx/87A9, BIOS F.14 10/13/2023
+Jul 21 02:45:54 arch kernel: RIP: 0010:pollwake+0x57/0xa0
+Jul 21 02:45:54 arch kernel: Code: 04 24 00 00 00 00 48 c7 44 24 08 00 00=
+ 00 00 48 c7 44 24 10 00 00 00 00 48 c7 44 24 18 00 00 00 00 48 c7 44 24 =
+20 00 00 00 00 <48> 8b 78 18 48 c7 44 24 10 80 89 90 94 48 89 7c 24 08 c7=
+ 40 20 01
+Jul 21 02:45:54 arch kernel: RSP: 0018:ffffafd196f6fd58 EFLAGS: 00010002
+Jul 21 02:45:54 arch kernel: RAX: ffffafd196e57a70 RBX: ffffa09a443f7890 =
+RCX: 0000000000000001
+Jul 21 02:45:54 arch kernel: RDX: 0000000000000000 RSI: 0000000000000003 =
+RDI: ffffa09a09197060
+Jul 21 02:45:54 arch kernel: RBP: 0000000000000000 R08: ffffa09a443f7890 =
+R09: 0000000000000000
+Jul 21 02:45:54 arch kernel: R10: 0000000000000000 R11: 0000000000000000 =
+R12: ffffa09a443f7878
+Jul 21 02:45:54 arch kernel: R13: 0000000000000003 R14: 0000000000000000 =
+R15: 0000000000000001
+Jul 21 02:45:54 arch kernel: FS:  00007f90b9e006c0(0000) GS:ffffa09cff680=
+000(0000) knlGS:0000000000000000
+Jul 21 02:45:54 arch kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 00000000800=
+50033
+Jul 21 02:45:54 arch kernel: CR2: ffffafd196e57a88 CR3: 000000010dfbc000 =
+CR4: 0000000000350ef0
+Jul 21 02:45:54 arch kernel: Call Trace:
+Jul 21 02:45:54 arch kernel:  <TASK>
+Jul 21 02:45:54 arch kernel:  ? __die_body.cold+0x19/0x27
+Jul 21 02:45:54 arch kernel:  ? page_fault_oops+0x15a/0x2d0
+Jul 21 02:45:54 arch kernel:  ? search_bpf_extables+0x5f/0x80
+Jul 21 02:45:54 arch kernel:  ? exc_page_fault+0x18a/0x190
+Jul 21 02:45:54 arch kernel:  ? asm_exc_page_fault+0x26/0x30
+Jul 21 02:45:54 arch kernel:  ? pollwake+0x57/0xa0
+Jul 21 02:45:54 arch kernel:  ? __pfx_bpf_lsm_file_permission+0x10/0x10
+Jul 21 02:45:54 arch kernel:  __wake_up_common+0x78/0xa0
+Jul 21 02:45:54 arch kernel:  eventfd_write+0xc9/0x1f0
+Jul 21 02:45:54 arch kernel:  ? __pfx_bpf_lsm_file_permission+0x10/0x10
+Jul 21 02:45:54 arch kernel:  ? security_file_permission+0x36/0x50
+Jul 21 02:45:54 arch kernel:  vfs_write+0xf8/0x460
+Jul 21 02:45:54 arch kernel:  ? syscall_exit_to_user_mode+0x10/0x200
+Jul 21 02:45:54 arch kernel:  ? do_syscall_64+0x8e/0x190
+Jul 21 02:45:54 arch kernel:  ? do_syscall_64+0x8e/0x190
+Jul 21 02:45:54 arch kernel:  ksys_write+0x6d/0xf0
+Jul 21 02:45:54 arch kernel:  do_syscall_64+0x82/0x190
+Jul 21 02:45:54 arch kernel:  ? do_syscall_64+0x8e/0x190
+Jul 21 02:45:54 arch kernel:  ? exc_page_fault+0x81/0x190
+Jul 21 02:45:54 arch kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+Jul 21 02:45:54 arch kernel: RIP: 0033:0x7f90c2f1d53d
+Jul 21 02:45:54 arch kernel: Code: e5 48 83 ec 20 48 89 55 e8 48 89 75 f0=
+ 89 7d f8 e8 68 58 f8 ff 48 8b 55 e8 48 8b 75 f0 41 89 c0 8b 7d f8 b8 01 =
+00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 33 44 89 c7 48 89 45 f8 e8 bf 58 f8=
+ ff 48 8b
+Jul 21 02:45:54 arch kernel: RSP: 002b:00007f90b9dfe3d0 EFLAGS: 00000293 =
+ORIG_RAX: 0000000000000001
+Jul 21 02:45:54 arch kernel: RAX: ffffffffffffffda RBX: 000055a4ca48d790 =
+RCX: 00007f90c2f1d53d
+Jul 21 02:45:54 arch kernel: RDX: 0000000000000008 RSI: 00007f90b9dfe400 =
+RDI: 000000000000003b
+Jul 21 02:45:54 arch kernel: RBP: 00007f90b9dfe3f0 R08: 0000000000000000 =
+R09: 0000000000000001
+Jul 21 02:45:54 arch kernel: R10: 00007f8ff400dda0 R11: 0000000000000293 =
+R12: 00007f90b9dfe400
+Jul 21 02:45:54 arch kernel: R13: 000055a4c6baff70 R14: 0000000000000001 =
+R15: 00007f90a0046b20
+Jul 21 02:45:54 arch kernel:  </TASK>
+Jul 21 02:45:54 arch kernel: Modules linked in: nft_masq nft_chain_nat nf=
+_nat bridge stp llc vhost_vsock vmw_vsock_virtio_transport_common vsock v=
+host vhost_iotlb ccm snd_seq_dummy snd_hrtimer rfcomm snd_seq snd_seq_dev=
+ice uhid cmac algif_hash algif_skcipher af_alg snd_ctl_led nft_ct nf_conn=
+track nf_defrag_ipv6 nf_defrag_ipv4 nf_tables bnep iwlmvm mac80211 snd_ac=
+p3x_pdm_dma snd_acp3x_rn snd_soc_dmic snd_sof_amd_vangogh snd_sof_amd_rem=
+brandt snd_sof_amd_renoir snd_sof_amd_acp snd_sof_xtensa_dsp snd_sof_pci =
+snd_sof intel_rapl_msr intel_rapl_common uvcvideo btusb kvm_amd libarc4 s=
+nd_hda_codec_realtek btrtl snd_sof_utils videobuf2_vmalloc btintel snd_hd=
+a_codec_generic videobuf2_memops uvc snd_soc_core iwlwifi snd_hda_scodec_=
+component snd_hda_codec_hdmi btbcm videobuf2_v4l2 snd_compress btmtk kvm =
+snd_hda_intel snd_pci_ps videodev snd_rpl_pci_acp6x snd_intel_dspcfg snd_=
+acp_pci bluetooth snd_hda_codec videobuf2_common snd_acp_legacy_common cf=
+g80211 snd_hwdep mc snd_pci_acp6x snd_hda_core snd_pci_acp5x rapl snd_pcm=
+ pcspkr snd_rn_pci_acp3x
+Jul 21 02:45:54 arch kernel:  hp_wmi snd_timer snd_acp_config sparse_keym=
+ap ucsi_acpi sp5100_tco snd_soc_acpi platform_profile wmi_bmof acpi_cpufr=
+eq typec_ucsi snd amd_sfh roles soundcore snd_pci_acp3x rfkill typec i2c_=
+piix4 k10temp hp_accel lis3lv02d amd_pmc wireless_hotkey acpi_tad joydev =
+mousedev mac_hid nls_iso8859_1 vfat fat usbip_host usbip_core crypto_user=
+ loop nfnetlink zram ip_tables x_tables btrfs blake2b_generic libcrc32c c=
+rc32c_generic xor raid6_pq dm_crypt cbc encrypted_keys trusted asn1_encod=
+er tee dm_mod amdgpu crct10dif_pclmul crc32_pclmul amdxcp crc32c_intel i2=
+c_algo_bit polyval_clmulni drm_ttm_helper rtsx_pci_sdmmc polyval_generic =
+ttm mmc_core ghash_clmulni_intel nvme drm_exec sha512_ssse3 gpu_sched ser=
+io_raw sha256_ssse3 nvme_core atkbd sha1_ssse3 drm_suballoc_helper libps2=
+ aesni_intel drm_buddy ccp gf128mul vivaldi_fmap drm_display_helper crypt=
+o_simd rtsx_pci cryptd xhci_pci nvme_auth video i8042 xhci_pci_renesas cr=
+c16 serio wmi 9pnet_virtio 9p 9pnet netfs virtio_net net_failover failove=
+r virtio_blk hid_multitouch
+Jul 21 02:45:54 arch kernel:  i2c_hid_acpi i2c_hid
+Jul 21 02:45:54 arch kernel: CR2: ffffafd196e57a88
+Jul 21 02:45:54 arch kernel: ---[ end trace 0000000000000000 ]---
+Jul 21 02:45:54 arch kernel: RIP: 0010:poll_freewait+0x58/0xa0
+Jul 21 02:45:54 arch kernel: Code: 83 c3 40 e8 9a c4 ce ff 48 8b 7b b0 e8=
+ 21 33 fe ff 41 39 6d 28 7f de 4d 85 e4 74 40 49 8b 5c 24 08 49 8d 6c 24 =
+10 48 83 eb 40 <48> 8b 7b 38 48 8d 73 10 e8 6b c4 ce ff 48 8b 3b e8 f3 32=
+ fe ff 48
+Jul 21 02:45:54 arch kernel: RSP: 0018:ffffafd196e578e8 EFLAGS: 00010202
+Jul 21 02:45:54 arch kernel: RAX: dead000000000122 RBX: 000000b4ffffed01 =
+RCX: 0000000000000001
+Jul 21 02:45:54 arch kernel: RDX: ffffa09a0bc10590 RSI: 0000000000000292 =
+RDI: ffffa09a00e95700
+Jul 21 02:45:54 arch kernel: RBP: ffffa09a09197010 R08: 0000000000000001 =
+R09: 0000000000000001
+Jul 21 02:45:54 arch kernel: R10: 0000000000000002 R11: 0000000000000001 =
+R12: ffffa09a09197000
+Jul 21 02:45:54 arch kernel: R13: ffffafd196e57a70 R14: 0000000000000011 =
+R15: 0000000000000001
+Jul 21 02:45:54 arch kernel: FS:  00007f90b9e006c0(0000) GS:ffffa09cff680=
+000(0000) knlGS:0000000000000000
+Jul 21 02:45:54 arch kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 00000000800=
+50033
+Jul 21 02:45:54 arch kernel: CR2: ffffafd196e57a88 CR3: 000000010dfbc000 =
+CR4: 0000000000350ef0
+Jul 21 02:45:54 arch kernel: note: gdbus[1656] exited with irqs disabled
+Jul 21 02:45:54 arch kernel: note: gdbus[1656] exited with preempt_count =
+1
+
+Thanks!
+
+>>>
+>>> How I tracked down the problem commits:
+>>>
+>>> I was not able to successfully "git bisect" this bug - I seemed to ru=
+n
+>>> into a mess of unrelated problems/errors that sent me down a rabbit h=
+ole
+>>> chasing who knows what. I had already manually narrowed down the bug =
+to
+>>> amd_sfh by blacklisting modules, so I reverted each
+>>> drivers/hid/amd-sfh-hid commit on the stable linux-6.9.y branch (v6.9=
+=2E8
+>>> known "bad"), back to v6.6 (known "good"), and then manually bisected=
+
+>>> the revert commits, landing on "HID: amd_sfh: Improve boot time when =
+SFH
+>>> is available" (2105e8e00da4) as the first "bad" commit.
+>>>
+>>> I wanted to be able to test with only the "bad" commit(s) removed; it=
+
+>>> turns out 6296562f30b1 ("HID: amd_sfh: Extend MP2 register access to
+>>> SFH") needs to be reverted to do that. Everything seems fine with the=
+se
+>>> two commits reverted (again, this in on the stable linux-6.9.y branch=
+).
+>>>
+>>> When testing, "bad" commits usually quickly display some variation of=
+
+>>> the page dump/BTRFS errors, similar to the dmesg output below. I
+>>> consider commits "good" if the system survives "stress-ng --all 2
+>>> --vm-bytes 50% --minimize --syslog --status 10 -t 5m" (run as a non-r=
+oot
+>>> user), which was usually followed by building the next test kernel. T=
+he
+>>> "bad" commits often show errors before I even get to the stress test.=
+
+>>>
+>>> Examples of error messages from dmesg:
+>>>
+>>> [=C2=A0 653.364343] page: refcount:4 mapcount:0 mapping:00000000b1592=
+89f
+>>> index:0x585a7cec pfn:0x10b5c1
+>>> [=C2=A0 653.364353] memcg:ffff8f2600918000
+>>> [=C2=A0 653.364354] aops:btree_aops ino:1
+>>> [=C2=A0 653.364358] flags:
+>>> 0x17ffffd000802a(uptodate|lru|private|writeback|node=3D0|zone=3D2|las=
+tcpupid=3D0x1fffff)
+>>> [=C2=A0 653.364361] page_type: 0xffffffff()
+>>> [=C2=A0 653.364363] raw: 0017ffffd000802a fffff1da87ee3288 fffff1da84=
+2d70c8
+>>> ffff8f260c719458
+>>> [=C2=A0 653.364365] raw: 00000000585a7cec ffff8f26cd09e0f0 00000004ff=
+ffffff
+>>> ffff8f2600918000
+>>> [=C2=A0 653.364366] page dumped because: eb page dump
+>>> [=C2=A0 653.364367] BTRFS critical (device dm-0): corrupt leaf: root=3D=
+7
+>>> block=3D6071604133888 slot=3D159, unexpected item end, have 276825401=
+0
+>>> expect 13379
+>>> [=C2=A0 653.364371] BTRFS info (device dm-0): leaf 6071604133888 gen =
+679995
+>>> total ptrs 353 free space 322 owner 7
+>>> [=C2=A0 653.364373]=C2=A0=C2=A0=C2=A0=C2=A0 item 0 key (1844674407370=
+9551606 128 1062871883776)
+>>> itemoff 16271 itemsize 12
+>>> [=C2=A0 653.364375]=C2=A0=C2=A0=C2=A0=C2=A0 item 1 key (1844674407370=
+9551606 128 1062871896064)
+>>> itemoff 16263 itemsize 8
+>>> [=C2=A0 653.364376]=C2=A0=C2=A0=C2=A0=C2=A0 item 2 key (1844674407370=
+9551606 128 1062871904256)
+>>> itemoff 16255 itemsize 8
+>>> ...
+>>> [=C2=A0 653.364762]=C2=A0=C2=A0=C2=A0=C2=A0 item 350 key (18446744073=
+709551606 128 1062879260672)
+>>> itemoff 9227 itemsize 12
+>>> [=C2=A0 653.364763]=C2=A0=C2=A0=C2=A0=C2=A0 item 351 key (18446744073=
+709551606 128 1062879272960)
+>>> itemoff 9223 itemsize 4
+>>> [=C2=A0 653.364764]=C2=A0=C2=A0=C2=A0=C2=A0 item 352 key (18446744073=
+709551606 128 1062879277056)
+>>> itemoff 9147 itemsize 76
+>>> [=C2=A0 653.364766] BTRFS error (device dm-0): block=3D6071604133888 =
+write time
+>>> tree block corruption detected
+>>> [=C2=A0 653.375440] BTRFS: error (device dm-0) in
+>>> btrfs_commit_transaction:2511: errno=3D-5 IO failure (Error while wri=
+ting
+>>> out transaction)
+>>> [=C2=A0 653.375453] BTRFS info (device dm-0 state E): forced readonly=
+
+>>> [=C2=A0 653.375458] BTRFS warning (device dm-0 state E): Skipping com=
+mit of
+>>> aborted transaction.
+>>> [=C2=A0 653.375461] BTRFS error (device dm-0 state EA): Transaction a=
+borted
+>>> (error -5)
+>>> [=C2=A0 653.375465] BTRFS: error (device dm-0 state EA) in
+>>> cleanup_transaction:2005: errno=3D-5 IO failure
+>>> [=C2=A0 653.375582] BTRFS warning (device dm-0 state EA): Skipping co=
+mmit of
+>>> aborted transaction.
+>>> [=C2=A0 653.375586] BTRFS: error (device dm-0 state EA) in
+>>> cleanup_transaction:2005: errno=3D-5 IO failure
+>>>
+>>> Another example:
+>>>
+>>> [ 5478.134046] page: refcount:4 mapcount:0 mapping:0000000010080c01
+>>> index:0x5459ff30 pfn:0x168c7f
+>>> [ 5478.134054] memcg:ffff89c240988000
+>>> [ 5478.134056] aops:btree_aops ino:1
+>>> [ 5478.134061] flags:
+>>> 0x17ffffd800802a(uptodate|lru|private|writeback|node=3D0|zone=3D2|las=
+tcpupid=3D0x1fffff)
+>>> [ 5478.134064] page_type: 0xffffffff()
+>>> [ 5478.134066] raw: 0017ffffd800802a ffffcc5d043e2bc8 ffffcc5d05a08c8=
+8
+>>> ffff89c249968338
+>>> [ 5478.134068] raw: 000000005459ff30 ffff89c246fa22d0 00000004fffffff=
+f
+>>> ffff89c240988000
+>>> [ 5478.134069] page dumped because: eb page dump
+>>> [ 5478.134071] BTRFS critical (device dm-0): corrupt leaf: root=3D216=
+1
+>>> block=3D5796594384896 slot=3D84 ino=3D2434728, invalid inode generati=
+on: has
+>>> 72057594122450740 expect (0, 664473]
+>>> [ 5478.134075] BTRFS info (device dm-0): leaf 5796594384896 gen 66447=
+2
+>>> total ptrs 120 free space 1223 owner 2161
+>>> [ 5478.134077]=C2=A0 item 0 key (2434713 24 3817753667) itemoff 16210=
+
+>>> itemsize 73
+>>> [ 5478.134078]=C2=A0 item 1 key (2434713 108 0) itemoff 15359 itemsiz=
+e 851
+>>> [ 5478.134080]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+inline extent data size 830
+>>> [ 5478.134081]=C2=A0 item 2 key (2434714 1 0) itemoff 15199 itemsize =
+160
+>>> [ 5478.134082]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+inode generation 636724 size 758 mode 100644
+>>> [ 5478.134083]=C2=A0 item 3 key (2434714 12 2348495) itemoff 15181 it=
+emsize 18
+>>> =C2=A0 ...
+>>> [ 5478.134242]=C2=A0 item 117 key (2434733 108 0) itemoff 4398 itemsi=
+ze 329
+>>> [ 5478.134243]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+inline extent data size 308
+>>> [ 5478.134244]=C2=A0 item 118 key (2434734 1 0) itemoff 4238 itemsize=
+ 160
+>>> [ 5478.134245]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+inode generation 636724 size 30 mode 40755
+>>> [ 5478.134245]=C2=A0 item 119 key (2434734 12 2434375) itemoff 4223 i=
+temsize 15
+>>> [ 5478.134247] BTRFS error (device dm-0): block=3D5796594384896 write=
+ time
+>>> tree block corruption detected
+>>> [ 5478.263726] BTRFS: error (device dm-0) in
+>>> btrfs_commit_transaction:2511: errno=3D-5 IO failure (Error while wri=
+ting
+>>> out transaction)
+>>> [ 5478.263733] BTRFS info (device dm-0 state E): forced readonly
+>>> [ 5478.263736] BTRFS warning (device dm-0 state E): Skipping commit o=
+f
+>>> aborted transaction.
+>>> [ 5478.263737] BTRFS error (device dm-0 state EA): Transaction aborte=
+d
+>>> (error -5)
+>>> [ 5478.263739] BTRFS: error (device dm-0 state EA) in
+>>> cleanup_transaction:2005: errno=3D-5 IO failure
+>>> [ 5478.264582] BTRFS warning (device dm-0 state EA): Skipping commit =
+of
+>>> aborted transaction.
+>>> [ 5478.264595] BTRFS: error (device dm-0 state EA) in
+>>> cleanup_transaction:2005: errno=3D-5 IO failure
+>> #regzbot ^introduced: 6296562f30b1
+>> #regzbot summary: hid: amd_sfh: memory/page corruption correlated with=
+
+>> 6296562f30b1 or 2105e8e00da4
+>> #regzbot ignore-activity
+>=20
+>=20
+
 
