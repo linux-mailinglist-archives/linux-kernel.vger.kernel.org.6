@@ -1,90 +1,87 @@
-Return-Path: <linux-kernel+bounces-258118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 032CD938405
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 10:25:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C58B938407
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 10:31:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3024281699
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 08:25:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF9C028142D
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 08:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6E1C153;
-	Sun, 21 Jul 2024 08:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49DA8BE68;
+	Sun, 21 Jul 2024 08:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E7MSQaig"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PAEhPjRS"
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0578F5B
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 08:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF346256E
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 08:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721550347; cv=none; b=SsA3qYecY/7ulF8YSqmNoHXklS0ayKJyyBMBVq9mpun/tFY4fLuywpIyyIkLY42NnPP6kYQKsJG2JeQc+F3nMP4wbNu8rbvk+2XW7H+6OPsj03kEiTKgrJtC6kLwRDOKAcS4wqd+ISkNt/PbFxrxsxvJyxHjaejDdXSej7jLFPw=
+	t=1721550654; cv=none; b=L/V2eF6YZwr5IC89hnP0x1tUPmKqCoQPy8D0b96/7m10svMBwSYsxt7B0hKpc4Es7M90TRxj0d20sCoMcse83204LoO4w2wBH/0e71IGdsopNFJj6IxxwlTj/yzSLDga8fxRiXdeT5+gEvuQFqK1bzQBoa0XDdwOgzm2lzs8hlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721550347; c=relaxed/simple;
-	bh=7mxFT5RPH8uPGTLPA8mWVIBU6Y10+Ss+XorW4DoWPXE=;
+	s=arc-20240116; t=1721550654; c=relaxed/simple;
+	bh=gZiLr53g7emxIq+w6dEC+wbTz7w9qZNQom4zVWb3NeE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ciIOI/EuZpZyFm8MenZZrFm1D60/Opgf6ztPqv6X+PKnNRje4t5JiSd3eQx9K2wmnHJAExVgp90y6TeYBJ8/Mg+tBYPD6sizxPyB+DWAyGT/sMhj27X2Gua0/j9gkiL4sOKYSTgyvWlSDWjro+7wkIzq2kXobOiFlf//JZTjiuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E7MSQaig; arc=none smtp.client-ip=209.85.166.44
+	 Content-Type:Content-Disposition:In-Reply-To; b=uaeQmcGRV9O5hqyBmYLR3/oK1XC9TzXxSLApRDIrvnLYoazXdrOxAhUlo5o489IyOZ5VAmyxKIBvb2JKDTpO9PlSBx/+hKlBGqrt/bM0Yd8Od84bG9sTD2fudiQUcM8wXIXyLHVBfdlA4mdzt91g8/vRI0qz/vHqU0LnfYaGfEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PAEhPjRS; arc=none smtp.client-ip=209.85.167.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-7fd3dbc01deso149919239f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 01:25:44 -0700 (PDT)
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3d9db222782so1981065b6e.3
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 01:30:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721550344; x=1722155144; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1721550652; x=1722155452; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=NRb+ts4NCAeHX8eVfGlmxAo56K5zTcMk9tYd2zxfBD4=;
-        b=E7MSQaigRkHuYFTzfZguchHmWDfl38MTAvzA1bBXWjboL9vM4geV0sBW/0wMDGsPAK
-         7gOu7XGjd+MMClbuRkv1a9BkLZn+E15gFpydxBG66WhpZ39ogUMKe7DjvwNlCCj8qsjE
-         7UX4/IFX4wiSFe/wm7+fJQKuTwFjz7o2zvHk1MJsznkjRkfGDkr8VLakVzDc6EuevZEn
-         3C+0axVDs0TMxJ1BLOhu8CUDlrBhfRTtHbSb3yrhYNzXfnhWqBrjlI5lHdVphAC5I6b4
-         czRjxY/KLPBb0hUMQjs6qLITWUpNuA8g1Ptmr0GctEjFvwtsb0GoHTchIdjXKk6UMYSP
-         NURg==
+        bh=z6SxzaLFMa/0kSdsQV9DLEd0mH2Xc1Dr3ABGtN1DCM4=;
+        b=PAEhPjRSEtEo6kL7vW7PYOQ/KEDAVRlblg4P5kuTY40GVKXxHz+rUaGTYZOY8cbhBl
+         SyuxcTv71GYySoJ/gJT0IoXNUqD0bQDw5hTCMKRPrEY765Rx+1EbzPbmU8eVfp77weEM
+         TP05g6lewgf0dL1aDTa0/MNVWjNGdpy/B/8k9aHhLf/aVGvti9xF8hsdLMSP5AEpCW+y
+         UHtqcr5HOI4mAJ9GqPCvlLfMHZiLh4TyUxvTbKmonU91Yx1XRxUfSKTEzqiGcK/kNkos
+         zaTfiOC4vtlH1ULR22/9LGq+z2prZsv4JLtpbQAJXGeFhmn/hJPagpDf3REvSwgb1AzE
+         3krg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721550344; x=1722155144;
+        d=1e100.net; s=20230601; t=1721550652; x=1722155452;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NRb+ts4NCAeHX8eVfGlmxAo56K5zTcMk9tYd2zxfBD4=;
-        b=aylbTJyYYFuqZHmOTSIXLc4SZBPAwBI0HWjrzPAeH2Rc83+VuVZLPsAfle8wy6G1vd
-         GvD1zF5D7909fFljS+0b3oGnYiRrw/EXKOIOlFpmiQlQivFNpOI/WE/HtKEjb7pxY+HQ
-         aGey+XG13BMFJ3L50wwqABuTiBAKAiiJcAoQ668iLojuWwKjnhGCjDTtr6SxfEhQ8sh8
-         pTfbSHRW15IGhDZ5f/ovQJrXA62G/rx3dOATdpHjs6OcHh45rhLs8dU6Sm0Z/42jWmNq
-         sUQAPAjVrODyPc5/yEKTXfTVqa0FQWPUHLiLdf/MqCLYDGClsCJ54x3/seUII6wgxI/q
-         jilA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCDzMMFZfk1+5uCImMdNQw1mlRWujeRdMoM7TVUCbRVHz3CWm7FsFe2TdSDwJ/8/EPfWoOBMGreETZG+S+Ko8bmsdi447+ORwMoV37
-X-Gm-Message-State: AOJu0YxToVkzWEITKu0LIw4nsqgOVdPuv/jJMdFqUg23EPGcbuKO9vo3
-	JmhPcuTxVr75lG4gRoeYH5q/L0k0hBxLseUqlZ5d9utEQNDgNBO7A3FQkyyAPQ==
-X-Google-Smtp-Source: AGHT+IElTOoJolfiF+bmMtTVVaiVVtUT1Qy014HteDsgb6L5kUnlFT0MfSAqpaqrfJx8vtSHjSru8g==
-X-Received: by 2002:a05:6602:601b:b0:805:e2bf:f303 with SMTP id ca18e2360f4ac-81aa9cc3f73mr572267839f.8.1721550344194;
-        Sun, 21 Jul 2024 01:25:44 -0700 (PDT)
+        bh=z6SxzaLFMa/0kSdsQV9DLEd0mH2Xc1Dr3ABGtN1DCM4=;
+        b=R44M6CGH2YfXdA9n9Dm3TW8z/h1swCKmbkxTIzBNE+uovahyV6mYKZVl3lhVLFneyn
+         iRhuElpLYyYXSGs2kyDF2Uq9xFhHEjVLBh7uIA4n7HIsBSf6q+KBY9LhOlEGoBLcX55V
+         /3L6jkHa++TJVlL1QM8whCs845F784OtYW6XPcbU8Cd5zLaDtumiUTPxFdToytoEEVco
+         ph9kXNfsc0/AT0WloE76BcJvXcDJ/DEJuexwloeC+9tpvbSz+PWYro0MQ5kDxv2vG8XL
+         Ep21DyXWsw892Q7CvCHhg2TYghd5I474JSVywJPOQjSK7/0jVZ6SYM1qWn126Hg66PjC
+         z5/A==
+X-Forwarded-Encrypted: i=1; AJvYcCXpjY2pMK9FbILw2CclkVLWwJvG5iFynGXHWmzTculH2vili0215bm0Bih8ETvs/zr6k1IHChwCEelbjSm5vgiyaNYyAbTAvsln3dtP
+X-Gm-Message-State: AOJu0YywIvIAoS6GnRvjAw2HM/dwJ0Ru25GUI9XHDG/WkeQdj6eYguV1
+	4ilajKAHVwviZ/hsmqohPADX9OaBAUWO7/Pk7ENa2lp3fbY5aWW+YA85qibfZA==
+X-Google-Smtp-Source: AGHT+IFBw5J3+c4AIw9uGdqz5e1NYbaC8oSvh0D3lTfLHD3VRJeTOwwFxU5gvncwQAXr9qZGONLDkQ==
+X-Received: by 2002:a05:6808:1528:b0:3d9:2986:5a3b with SMTP id 5614622812f47-3dae63746e6mr5533085b6e.37.1721550651850;
+        Sun, 21 Jul 2024 01:30:51 -0700 (PDT)
 Received: from thinkpad ([120.56.206.118])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f319789sm32845225ad.137.2024.07.21.01.25.39
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f2591c1sm33199045ad.47.2024.07.21.01.30.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jul 2024 01:25:43 -0700 (PDT)
-Date: Sun, 21 Jul 2024 13:55:38 +0530
+        Sun, 21 Jul 2024 01:30:51 -0700 (PDT)
+Date: Sun, 21 Jul 2024 14:00:46 +0530
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Niklas Cassel <cassel@kernel.org>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Aleksandr Mishin <amishin@t-argos.ru>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] PCI: keystone: Fix && vs || typo
-Message-ID: <20240721082538.GH1908@thinkpad>
-References: <1b762a93-e1b2-4af3-8c04-c8843905c279@stanley.mountain>
+To: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>
+Cc: quic_cang@quicinc.com, quic_nitirawa@quicinc.com, bvanassche@acm.org,
+	avri.altman@wdc.com, peter.wang@mediatek.com, minwoo.im@samsung.com,
+	adrian.hunter@intel.com, martin.petersen@oracle.com,
+	linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
+	"James E.J. Bottomley" <jejb@linux.ibm.com>,
+	Bean Huo <beanhuo@micron.com>,
+	Maramaina Naresh <quic_mnaresh@quicinc.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 1/1] scsi: ufs: core: Support Updating UIC Command
+ Timeout
+Message-ID: <20240721083046.GI1908@thinkpad>
+References: <cover.1721261491.git.quic_nguyenb@quicinc.com>
+ <44dc4790b53e2f8aa92568a9e13785e3bedd617d.1721261491.git.quic_nguyenb@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,38 +91,119 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1b762a93-e1b2-4af3-8c04-c8843905c279@stanley.mountain>
+In-Reply-To: <44dc4790b53e2f8aa92568a9e13785e3bedd617d.1721261491.git.quic_nguyenb@quicinc.com>
 
-On Fri, Jul 19, 2024 at 06:53:26PM -0500, Dan Carpenter wrote:
-> This code accidentally uses && where || was intended.  It potentially
-> results in a NULL dereference.
+On Wed, Jul 17, 2024 at 05:17:34PM -0700, Bao D. Nguyen wrote:
+> The default UIC command timeout still remains 500ms.
+> Allow platform drivers to override the UIC command
+> timeout if desired.
 > 
-> Fixes: 86f271f22bbb ("PCI: keystone: Add workaround for Errata #i2037 (AM65x SR 1.0)")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> In a real product, the 500ms timeout value is probably good enough.
+> However, during the product development where there are a lot of
+> logging and debug messages being printed to the uart console,
+> interrupt starvations happen occasionally because the uart may
+> print long debug messages from different modules in the system.
+> While printing, the uart may have interrupts disabled for more
+> than 500ms, causing UIC command timeout.
+> The UIC command timeout would trigger more printing from
+> the UFS driver, and eventually a watchdog timeout may
+> occur unnecessarily.
+> 
+> Add support for overriding the UIC command timeout value
+> with the newly created uic_cmd_timeout kernel module parameter.
+> Default value is 500ms. Supported values range from 500ms
+> to 2 seconds.
+> 
+> Signed-off-by: Bao D. Nguyen <quic_nguyenb@quicinc.com>
 
 Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
 - Mani
 
+> Suggested-by: Bart Van Assche <bvanassche@acm.org>
+> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 > ---
->  drivers/pci/controller/dwc/pci-keystone.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/ufs/core/ufshcd.c | 37 ++++++++++++++++++++++++++++++++-----
+>  1 file changed, 32 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-> index 52c6420ae200..95a471d6a586 100644
-> --- a/drivers/pci/controller/dwc/pci-keystone.c
-> +++ b/drivers/pci/controller/dwc/pci-keystone.c
-> @@ -577,7 +577,7 @@ static void ks_pcie_quirk(struct pci_dev *dev)
->  	 */
->  	if (pci_match_id(am6_pci_devids, bridge)) {
->  		bridge_dev = pci_get_host_bridge_device(dev);
-> -		if (!bridge_dev && !bridge_dev->parent)
-> +		if (!bridge_dev || !bridge_dev->parent)
->  			return;
+> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+> index 21429ee..d66da13 100644
+> --- a/drivers/ufs/core/ufshcd.c
+> +++ b/drivers/ufs/core/ufshcd.c
+> @@ -51,8 +51,10 @@
 >  
->  		ks_pcie = dev_get_drvdata(bridge_dev->parent);
+>  
+>  /* UIC command timeout, unit: ms */
+> -#define UIC_CMD_TIMEOUT	500
+> -
+> +enum {
+> +	UIC_CMD_TIMEOUT_DEFAULT	= 500,
+> +	UIC_CMD_TIMEOUT_MAX	= 2000,
+> +};
+>  /* NOP OUT retries waiting for NOP IN response */
+>  #define NOP_OUT_RETRIES    10
+>  /* Timeout after 50 msecs if NOP OUT hangs without response */
+> @@ -113,6 +115,31 @@ static bool is_mcq_supported(struct ufs_hba *hba)
+>  module_param(use_mcq_mode, bool, 0644);
+>  MODULE_PARM_DESC(use_mcq_mode, "Control MCQ mode for controllers starting from UFSHCI 4.0. 1 - enable MCQ, 0 - disable MCQ. MCQ is enabled by default");
+>  
+> +static unsigned int uic_cmd_timeout = UIC_CMD_TIMEOUT_DEFAULT;
+> +
+> +static int uic_cmd_timeout_set(const char *val, const struct kernel_param *kp)
+> +{
+> +	unsigned int n;
+> +	int ret;
+> +
+> +	ret = kstrtou32(val, 0, &n);
+> +	if (ret != 0 || n < UIC_CMD_TIMEOUT_DEFAULT || n > UIC_CMD_TIMEOUT_MAX)
+> +		return -EINVAL;
+> +
+> +	uic_cmd_timeout = n;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct kernel_param_ops uic_cmd_timeout_ops = {
+> +	.set = uic_cmd_timeout_set,
+> +	.get = param_get_uint,
+> +};
+> +
+> +module_param_cb(uic_cmd_timeout, &uic_cmd_timeout_ops, &uic_cmd_timeout, 0644);
+> +MODULE_PARM_DESC(uic_cmd_timeout,
+> +		"UFS UIC command timeout in milliseconds. Defaults to 500ms. Supported values range from 500ms to 2 seconds inclusively");
+> +
+>  #define ufshcd_toggle_vreg(_dev, _vreg, _on)				\
+>  	({                                                              \
+>  		int _ret;                                               \
+> @@ -2460,7 +2487,7 @@ static inline bool ufshcd_ready_for_uic_cmd(struct ufs_hba *hba)
+>  {
+>  	u32 val;
+>  	int ret = read_poll_timeout(ufshcd_readl, val, val & UIC_COMMAND_READY,
+> -				    500, UIC_CMD_TIMEOUT * 1000, false, hba,
+> +				    500, uic_cmd_timeout * 1000, false, hba,
+>  				    REG_CONTROLLER_STATUS);
+>  	return ret == 0;
+>  }
+> @@ -2520,7 +2547,7 @@ ufshcd_wait_for_uic_cmd(struct ufs_hba *hba, struct uic_command *uic_cmd)
+>  	lockdep_assert_held(&hba->uic_cmd_mutex);
+>  
+>  	if (wait_for_completion_timeout(&uic_cmd->done,
+> -					msecs_to_jiffies(UIC_CMD_TIMEOUT))) {
+> +					msecs_to_jiffies(uic_cmd_timeout))) {
+>  		ret = uic_cmd->argument2 & MASK_UIC_COMMAND_RESULT;
+>  	} else {
+>  		ret = -ETIMEDOUT;
+> @@ -4298,7 +4325,7 @@ static int ufshcd_uic_pwr_ctrl(struct ufs_hba *hba, struct uic_command *cmd)
+>  	}
+>  
+>  	if (!wait_for_completion_timeout(hba->uic_async_done,
+> -					 msecs_to_jiffies(UIC_CMD_TIMEOUT))) {
+> +					 msecs_to_jiffies(uic_cmd_timeout))) {
+>  		dev_err(hba->dev,
+>  			"pwr ctrl cmd 0x%x with mode 0x%x completion timeout\n",
+>  			cmd->command, cmd->argument3);
 > -- 
-> 2.43.0
+> 2.7.4
 > 
 
 -- 
