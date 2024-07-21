@@ -1,87 +1,82 @@
-Return-Path: <linux-kernel+bounces-258119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C58B938407
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 10:31:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0FEE93840B
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 10:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF9C028142D
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 08:31:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08DA828150D
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 08:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49DA8BE68;
-	Sun, 21 Jul 2024 08:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08231BA50;
+	Sun, 21 Jul 2024 08:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PAEhPjRS"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F73N04yk"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF346256E
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 08:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E692905
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 08:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721550654; cv=none; b=L/V2eF6YZwr5IC89hnP0x1tUPmKqCoQPy8D0b96/7m10svMBwSYsxt7B0hKpc4Es7M90TRxj0d20sCoMcse83204LoO4w2wBH/0e71IGdsopNFJj6IxxwlTj/yzSLDga8fxRiXdeT5+gEvuQFqK1bzQBoa0XDdwOgzm2lzs8hlM=
+	t=1721551839; cv=none; b=SF3WDQJKZ9HGYdUgwereQABJstYGi+wolTiEjVzQEyHBh8IZYDsqNklYanPbW+Z9Lx83KW6oD89AUiiTHaenVEmZ5WBP8/JyolKn9Iy64+QN/7kSzzjZ0zgYEZioTUVQoAGaoxcP/3gqzrS9PrFExR9HocT5X+m0YfztBSikh/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721550654; c=relaxed/simple;
-	bh=gZiLr53g7emxIq+w6dEC+wbTz7w9qZNQom4zVWb3NeE=;
+	s=arc-20240116; t=1721551839; c=relaxed/simple;
+	bh=gLnxwy1QV32PBkEn0Wk5Y5q8ECKk4zdpHdlRZeylk2M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uaeQmcGRV9O5hqyBmYLR3/oK1XC9TzXxSLApRDIrvnLYoazXdrOxAhUlo5o489IyOZ5VAmyxKIBvb2JKDTpO9PlSBx/+hKlBGqrt/bM0Yd8Od84bG9sTD2fudiQUcM8wXIXyLHVBfdlA4mdzt91g8/vRI0qz/vHqU0LnfYaGfEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PAEhPjRS; arc=none smtp.client-ip=209.85.167.181
+	 Content-Type:Content-Disposition:In-Reply-To; b=RLW9liP0Yd7Rkpy1BNGeKIhHhimrbjA8z5R9aueXH6sP6M2W2HetU2nm74KHzahfhrXykwn6mJRnkLAdVOLGNMH5a49rPoEh04kmmSWxIs8nYm0VOxawy3HW0BusFeoFqDlmbht9L+lfVS/unfhHdqfVEOUj7S7ZR8TI1maAW04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F73N04yk; arc=none smtp.client-ip=209.85.216.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3d9db222782so1981065b6e.3
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 01:30:52 -0700 (PDT)
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2cb566d528aso2052391a91.1
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 01:50:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721550652; x=1722155452; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1721551836; x=1722156636; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=z6SxzaLFMa/0kSdsQV9DLEd0mH2Xc1Dr3ABGtN1DCM4=;
-        b=PAEhPjRSEtEo6kL7vW7PYOQ/KEDAVRlblg4P5kuTY40GVKXxHz+rUaGTYZOY8cbhBl
-         SyuxcTv71GYySoJ/gJT0IoXNUqD0bQDw5hTCMKRPrEY765Rx+1EbzPbmU8eVfp77weEM
-         TP05g6lewgf0dL1aDTa0/MNVWjNGdpy/B/8k9aHhLf/aVGvti9xF8hsdLMSP5AEpCW+y
-         UHtqcr5HOI4mAJ9GqPCvlLfMHZiLh4TyUxvTbKmonU91Yx1XRxUfSKTEzqiGcK/kNkos
-         zaTfiOC4vtlH1ULR22/9LGq+z2prZsv4JLtpbQAJXGeFhmn/hJPagpDf3REvSwgb1AzE
-         3krg==
+        bh=blMJ5CUEcmYvSUk3ZYMTYy2ptp/2K3A7omMls3BzyVA=;
+        b=F73N04ykytyjWuWTdvYrQSNcn4ZFUar20uvcD5QHJxPAnwQl1kMBRoB+4ocpmfoIhW
+         902fwr3fb5QylVCLxr6iVeBdET5Zz63BDg5dyOPoxTzYUY5EshEcSl0c5nhKJuaPdEp3
+         W/1ekQ8Whs+g9NQ4GhaI1qKaxUqKjCbgXauRR8cjA2UcWelwqMVF1rkQsQeTEsl1toy9
+         hi2Fda/EpUQtoO2EOTHPr8vzuVacaGqOoaLWnQZKwZKtji7QjHbpsze0XT6vGNVsjGNA
+         CNB+tTbO2wEZCRHGDbstXS7FucKL7iBwTvE1D14j5dJwSXCMHv4EswZOQ65TrFRBsIx6
+         7k6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721550652; x=1722155452;
+        d=1e100.net; s=20230601; t=1721551836; x=1722156636;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z6SxzaLFMa/0kSdsQV9DLEd0mH2Xc1Dr3ABGtN1DCM4=;
-        b=R44M6CGH2YfXdA9n9Dm3TW8z/h1swCKmbkxTIzBNE+uovahyV6mYKZVl3lhVLFneyn
-         iRhuElpLYyYXSGs2kyDF2Uq9xFhHEjVLBh7uIA4n7HIsBSf6q+KBY9LhOlEGoBLcX55V
-         /3L6jkHa++TJVlL1QM8whCs845F784OtYW6XPcbU8Cd5zLaDtumiUTPxFdToytoEEVco
-         ph9kXNfsc0/AT0WloE76BcJvXcDJ/DEJuexwloeC+9tpvbSz+PWYro0MQ5kDxv2vG8XL
-         Ep21DyXWsw892Q7CvCHhg2TYghd5I474JSVywJPOQjSK7/0jVZ6SYM1qWn126Hg66PjC
-         z5/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXpjY2pMK9FbILw2CclkVLWwJvG5iFynGXHWmzTculH2vili0215bm0Bih8ETvs/zr6k1IHChwCEelbjSm5vgiyaNYyAbTAvsln3dtP
-X-Gm-Message-State: AOJu0YywIvIAoS6GnRvjAw2HM/dwJ0Ru25GUI9XHDG/WkeQdj6eYguV1
-	4ilajKAHVwviZ/hsmqohPADX9OaBAUWO7/Pk7ENa2lp3fbY5aWW+YA85qibfZA==
-X-Google-Smtp-Source: AGHT+IFBw5J3+c4AIw9uGdqz5e1NYbaC8oSvh0D3lTfLHD3VRJeTOwwFxU5gvncwQAXr9qZGONLDkQ==
-X-Received: by 2002:a05:6808:1528:b0:3d9:2986:5a3b with SMTP id 5614622812f47-3dae63746e6mr5533085b6e.37.1721550651850;
-        Sun, 21 Jul 2024 01:30:51 -0700 (PDT)
+        bh=blMJ5CUEcmYvSUk3ZYMTYy2ptp/2K3A7omMls3BzyVA=;
+        b=OY6Sh0dCIGp92yg0aCJDTVt36vN5B3Z1MW/+ltbUXZETvidlp2OFfvbPDwZIGI2maF
+         Y8bTSI4CreDNYIj6rbEzClvftICd9CNiIVv0ecORF/lx96S3K9Fz7ewtGK0Y44NS04oW
+         JFHOr4FxQbaVoAdg+6+1fnjYJUn0VGsFiSQPRXE7QjAXbqtYLQkSqyyvCXk2ZgozFc04
+         Bkmq0mDuku5Jur9FBWiT1yzVa+LPbkzzhFGJl87Q75yBnq3AvudCAu4i5Aig2LzNU3cT
+         HUISagj4QmrFVY9QtOHXa/ZXfEVn+4pE55KKC9fu+FtL2ZvU2N8mrBV+VOSWW7D2oWsy
+         0k6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVDcdr3cqOQ/zgUnNUuoxHuDvizhujP5UCYFD7RBNiTDmdBhkJ1JXlPTVbyHgUrFEVHpkZc3F2PvXo5r70uGdr40p/OArXo96YT1gfe
+X-Gm-Message-State: AOJu0Yxh8Ks6a99RsKFeQoc0eQb4SLbIL8RakBoV7uTaMK2yBwK55s3L
+	D58NIroDX1J+/fXdiBiQRHeJ0MXCEF4h5m1t6+LjcpQZ+G2OUjxkil2sYk6YoA==
+X-Google-Smtp-Source: AGHT+IEEDmd00hA3jTB0a6TdvwUfKHPTBRovNKbfh5jFjeaEsgNkvsM6tDX15cW9DGrBUz0GPn7P3g==
+X-Received: by 2002:a17:90a:7307:b0:2c9:81fd:4c27 with SMTP id 98e67ed59e1d1-2cd27415a88mr2731703a91.14.1721551836504;
+        Sun, 21 Jul 2024 01:50:36 -0700 (PDT)
 Received: from thinkpad ([120.56.206.118])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f2591c1sm33199045ad.47.2024.07.21.01.30.47
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ccf7b5c385sm4776539a91.18.2024.07.21.01.50.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jul 2024 01:30:51 -0700 (PDT)
-Date: Sun, 21 Jul 2024 14:00:46 +0530
+        Sun, 21 Jul 2024 01:50:36 -0700 (PDT)
+Date: Sun, 21 Jul 2024 14:20:32 +0530
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>
-Cc: quic_cang@quicinc.com, quic_nitirawa@quicinc.com, bvanassche@acm.org,
-	avri.altman@wdc.com, peter.wang@mediatek.com, minwoo.im@samsung.com,
-	adrian.hunter@intel.com, martin.petersen@oracle.com,
-	linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
-	"James E.J. Bottomley" <jejb@linux.ibm.com>,
-	Bean Huo <beanhuo@micron.com>,
-	Maramaina Naresh <quic_mnaresh@quicinc.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/1] scsi: ufs: core: Support Updating UIC Command
- Timeout
-Message-ID: <20240721083046.GI1908@thinkpad>
-References: <cover.1721261491.git.quic_nguyenb@quicinc.com>
- <44dc4790b53e2f8aa92568a9e13785e3bedd617d.1721261491.git.quic_nguyenb@quicinc.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: tglx@linutronix.de, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: MSIs not freed in GICv3 ITS driver
+Message-ID: <20240721085032.GL1908@thinkpad>
+References: <20240708153933.GC5745@thinkpad>
+ <865xtf4woi.wl-maz@kernel.org>
+ <20240709173708.GA44420@thinkpad>
+ <877cdupdvu.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,120 +86,125 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <44dc4790b53e2f8aa92568a9e13785e3bedd617d.1721261491.git.quic_nguyenb@quicinc.com>
+In-Reply-To: <877cdupdvu.wl-maz@kernel.org>
 
-On Wed, Jul 17, 2024 at 05:17:34PM -0700, Bao D. Nguyen wrote:
-> The default UIC command timeout still remains 500ms.
-> Allow platform drivers to override the UIC command
-> timeout if desired.
+On Tue, Jul 09, 2024 at 08:24:37PM +0100, Marc Zyngier wrote:
+> On Tue, 09 Jul 2024 18:37:08 +0100,
+> Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
+> > 
+> > On Mon, Jul 08, 2024 at 06:31:57PM +0100, Marc Zyngier wrote:
+> > > Mani,
+> > > 
+> > > On Mon, 08 Jul 2024 16:39:33 +0100,
+> > > Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
+> > > > 
+> > > > Hi Marc, Thomas,
+> > > > 
+> > > > I'm seeing a weird behavior with GICv3 ITS driver while allocating MSIs from
+> > > > PCIe devices. When the PCIe driver (I'm using virtio_pci_common.c) tries to
+> > > > allocate non power of 2 MSIs (like 3), then the GICv3 MSI driver always rounds
+> > > > the MSI count to power of 2 to find the order. In this case, the order becomes 2
+> > > > in its_alloc_device_irq().
+> > > 
+> > > That's because we can only allocate EventIDs as a number of ID
+> > > bits. So you can't have *1* MSI, nor 3. You can have 2, 4, 8, or
+> > > 2^24. This is a power-of-two architecture.
+> > > 
+> > 
+> > Ah okay.
+> > 
+> > > > So 4 entries are allocated by bitmap_find_free_region().
+> > > 
+> > > Assuming you're calling about its_alloc_device_irq(), it looks like a
+> > > bug. Or rather, some laziness on my part. The thing is, this bitmap is
+> > > only dealing with sub-allocation in the pool that has been given to
+> > > the endpoint. So the power-of-two crap doesn't really matter unless
+> > > you are dealing with Multi-MSI, which has actual alignment
+> > > requirements.
+> > > 
+> > 
+> > Okay.
+> > 
+> > > >
+> > > > But since the PCIe driver has only requested 3 MSIs, its_irq_domain_alloc()
+> > > > will only allocate 3 MSIs, leaving one bitmap entry unused.
+> > > > 
+> > > > And when the driver frees the MSIs using pci_free_irq_vectors(), only 3
+> > > > allocated MSIs were freed and their bitmap entries were also released. But the
+> > > > entry for the additional bitmap was never released. Due to this,
+> > > > its_free_device() was also never called, resulting in the ITS device not getting
+> > > > freed.
+> > > > 
+> > > > So when the PCIe driver tries to request the MSIs again (PCIe device being
+> > > > removed and inserted back), because the ITS device was not freed previously,
+> > > > MSIs were again requested for the same ITS device. And due to the stale bitmap
+> > > > entry, the ITS driver refuses to allocate 4 MSIs as only 3 bitmap entries were
+> > > > available. This forces the PCIe driver to reduce the MSI count, which is sub
+> > > > optimal.
+> > > > 
+> > > > This behavior might be applicable to other irqchip drivers handling MSI as well.
+> > > > I want to know if this behavior is already known with MSI and irqchip drivers?
+> > > > 
+> > > > For fixing this issue, the PCIe drivers could always request MSIs of power of 2,
+> > > > and use a dummy MSI handler for the extra number of MSIs allocated. This could
+> > > > also be done in the generic MSI driver itself to avoid changes in the PCIe
+> > > > drivers. But I wouldn't say it is the best possible fix.
+> > > 
+> > > No, that's terrible. This is just papering over a design mistake, and
+> > > I refuse to go down that road.
+> > > 
+> > 
+> > Agree. But what about other MSI drivers? And because of the MSI design, they
+> > also round the requested MSI count to power of 2, leading to unused vectors and
+> > those also wouldn't get freed.
 > 
-> In a real product, the 500ms timeout value is probably good enough.
-> However, during the product development where there are a lot of
-> logging and debug messages being printed to the uart console,
-> interrupt starvations happen occasionally because the uart may
-> print long debug messages from different modules in the system.
-> While printing, the uart may have interrupts disabled for more
-> than 500ms, causing UIC command timeout.
-> The UIC command timeout would trigger more printing from
-> the UFS driver, and eventually a watchdog timeout may
-> occur unnecessarily.
+> This has absolutely nothing to do with the "design" of MSIs. It has
+> everything to do with not special-casing Multi-MSI.
 > 
-> Add support for overriding the UIC command timeout value
-> with the newly created uic_cmd_timeout kernel module parameter.
-> Default value is 500ms. Supported values range from 500ms
-> to 2 seconds.
+> > I think this power of 2 limitation should be
+> > imposed at the API level or in the MSI driver instead of silently keeping unused
+> > vectors in irqchip drivers.
 > 
-> Signed-off-by: Bao D. Nguyen <quic_nguyenb@quicinc.com>
+> You really have the wrong end of the stick. The MSi API has *zero*
+> control over the payload allocation. How could it? The whole point of
+> having an MSI driver is to insulate the core code from such stuff.
+> 
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Right, but because of the way most of the MSI drivers (not all?) use bitmap to
+allocate MSIs, this issue is also present in all of them. So I think the fix is
+not just applicable for the gic-its-v3 driver alone.
+
+> >
+> > > > 
+> > > > Is there any other way to address this issue? Or am I missing something
+> > > > completely?
+> > > 
+> > > Well, since each endpoint handled by an ITS has its allocation tracked
+> > > by a bitmap, it makes more sense to precisely track the allocation.
+> > > 
+> > > Here's a quick hack that managed to survive a VM boot. It may even
+> > > work. The only problem with it is that it probably breaks a Multi-MSi
+> > > device sitting behind a non-transparent bridge that would get its MSIs
+> > > allocated after another device. In this case, we wouldn't honor the
+> > > required alignment and things would break.
+> > > 
+> > > So take this as a proof of concept. If that works, I'll think of how
+> > > to deal with this crap in a more suitable way...
+> > > 
+> > 
+> > This works fine. Now the ITS driver allocates requested number of MSIs, thanks!
+> 
+> Well, as I said, this breaks tons of other things so I'm not going to
+> merge this any time soon. Certainly not before Thomas gets his MSI
+> rework upstream. And then I need to work out how to deal with
+> Multi-MSI in the correct way.
+> 
+> So don't hold your breath.
+> 
+
+Sure thing. Thanks for getting it around quickly. I'll wait for a proper fix.
 
 - Mani
-
-> Suggested-by: Bart Van Assche <bvanassche@acm.org>
-> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-> ---
->  drivers/ufs/core/ufshcd.c | 37 ++++++++++++++++++++++++++++++++-----
->  1 file changed, 32 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-> index 21429ee..d66da13 100644
-> --- a/drivers/ufs/core/ufshcd.c
-> +++ b/drivers/ufs/core/ufshcd.c
-> @@ -51,8 +51,10 @@
->  
->  
->  /* UIC command timeout, unit: ms */
-> -#define UIC_CMD_TIMEOUT	500
-> -
-> +enum {
-> +	UIC_CMD_TIMEOUT_DEFAULT	= 500,
-> +	UIC_CMD_TIMEOUT_MAX	= 2000,
-> +};
->  /* NOP OUT retries waiting for NOP IN response */
->  #define NOP_OUT_RETRIES    10
->  /* Timeout after 50 msecs if NOP OUT hangs without response */
-> @@ -113,6 +115,31 @@ static bool is_mcq_supported(struct ufs_hba *hba)
->  module_param(use_mcq_mode, bool, 0644);
->  MODULE_PARM_DESC(use_mcq_mode, "Control MCQ mode for controllers starting from UFSHCI 4.0. 1 - enable MCQ, 0 - disable MCQ. MCQ is enabled by default");
->  
-> +static unsigned int uic_cmd_timeout = UIC_CMD_TIMEOUT_DEFAULT;
-> +
-> +static int uic_cmd_timeout_set(const char *val, const struct kernel_param *kp)
-> +{
-> +	unsigned int n;
-> +	int ret;
-> +
-> +	ret = kstrtou32(val, 0, &n);
-> +	if (ret != 0 || n < UIC_CMD_TIMEOUT_DEFAULT || n > UIC_CMD_TIMEOUT_MAX)
-> +		return -EINVAL;
-> +
-> +	uic_cmd_timeout = n;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct kernel_param_ops uic_cmd_timeout_ops = {
-> +	.set = uic_cmd_timeout_set,
-> +	.get = param_get_uint,
-> +};
-> +
-> +module_param_cb(uic_cmd_timeout, &uic_cmd_timeout_ops, &uic_cmd_timeout, 0644);
-> +MODULE_PARM_DESC(uic_cmd_timeout,
-> +		"UFS UIC command timeout in milliseconds. Defaults to 500ms. Supported values range from 500ms to 2 seconds inclusively");
-> +
->  #define ufshcd_toggle_vreg(_dev, _vreg, _on)				\
->  	({                                                              \
->  		int _ret;                                               \
-> @@ -2460,7 +2487,7 @@ static inline bool ufshcd_ready_for_uic_cmd(struct ufs_hba *hba)
->  {
->  	u32 val;
->  	int ret = read_poll_timeout(ufshcd_readl, val, val & UIC_COMMAND_READY,
-> -				    500, UIC_CMD_TIMEOUT * 1000, false, hba,
-> +				    500, uic_cmd_timeout * 1000, false, hba,
->  				    REG_CONTROLLER_STATUS);
->  	return ret == 0;
->  }
-> @@ -2520,7 +2547,7 @@ ufshcd_wait_for_uic_cmd(struct ufs_hba *hba, struct uic_command *uic_cmd)
->  	lockdep_assert_held(&hba->uic_cmd_mutex);
->  
->  	if (wait_for_completion_timeout(&uic_cmd->done,
-> -					msecs_to_jiffies(UIC_CMD_TIMEOUT))) {
-> +					msecs_to_jiffies(uic_cmd_timeout))) {
->  		ret = uic_cmd->argument2 & MASK_UIC_COMMAND_RESULT;
->  	} else {
->  		ret = -ETIMEDOUT;
-> @@ -4298,7 +4325,7 @@ static int ufshcd_uic_pwr_ctrl(struct ufs_hba *hba, struct uic_command *cmd)
->  	}
->  
->  	if (!wait_for_completion_timeout(hba->uic_async_done,
-> -					 msecs_to_jiffies(UIC_CMD_TIMEOUT))) {
-> +					 msecs_to_jiffies(uic_cmd_timeout))) {
->  		dev_err(hba->dev,
->  			"pwr ctrl cmd 0x%x with mode 0x%x completion timeout\n",
->  			cmd->command, cmd->argument3);
-> -- 
-> 2.7.4
-> 
 
 -- 
 மணிவண்ணன் சதாசிவம்
