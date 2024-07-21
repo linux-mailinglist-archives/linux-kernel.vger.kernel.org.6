@@ -1,156 +1,276 @@
-Return-Path: <linux-kernel+bounces-258124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 307BB938415
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 10:57:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C754938419
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 10:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 547FD1C20AB4
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 08:57:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22CD4B20ECC
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 08:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0F6C153;
-	Sun, 21 Jul 2024 08:57:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17265C8FF;
+	Sun, 21 Jul 2024 08:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EEOgTCar"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DC8sa8JW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680198F40
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 08:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAD933E1;
+	Sun, 21 Jul 2024 08:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721552250; cv=none; b=CrhRi1Br6SvDJyZDRgnN4Qc/CsN/IGAJfAs7kljgyunUjUpASOBKhw8avS62VWqDg7bufQjbEWKo/4i5q4Sgxr1lzSa+YYe/u6gF4SCQ3Qs0DKEMj3lCQo4f6kkuvGNFCwK++TWFun/x/54Z/mGL5Cmvp18ryc6Q17lieiFPaY0=
+	t=1721552359; cv=none; b=KEQVkT2fxmn551YRenz0NztwlWE5MuT4R93HC2cukTdi2A7PAAI6MsYdTiGyCa+mAWi0JUBqMSM0xkWvRzDgzFOZrkeW0ot+WExwzXrhmAoPZVyTAGTdGUVoSp6LDM1hax9eOw1syt7qfWbcXA8fG0ZePMHJBBFsdc2xKU9DueU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721552250; c=relaxed/simple;
-	bh=J3Qm7U9iWW3lCoBGlQA+CYXsXYPYRnz1OB3chKLRchw=;
+	s=arc-20240116; t=1721552359; c=relaxed/simple;
+	bh=ZuuqEi4S2iKFuJKwkxBMs+ZU/Sd67LLMFp02L/gM/5w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DW9Yp9HuNzyxzCHFImmp4LyrK1PoPc3ajESjvOrpWp8D8oKCgewxzm7fBYsojvSchBYNrzJGxurzqBEL+4u8kTV7D5Cy3/flSYkkqlxCiVPZ/ftZS11Fzsq9KFwhZlXOgT/bEA9+g0aa+ZWf8GsYugLZoyWvzgFlj5AvOoEchd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EEOgTCar; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-39641271f2aso12454845ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 01:57:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721552247; x=1722157047; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=FDb31VIAAZnMZQZyGzdpC/AMxekr4nZrMgLoDm9Xh0w=;
-        b=EEOgTCarzsqe22feg34eYLIraoVb5iv+w5NGu3tk/JsgQqZWzJCgeLhZcwTqbakiDJ
-         sLqTT1y7mP4/mm/6TobPO+kHXqOyQ/N35D8BrnCXezrrm9K1K5tx6TXzwUMCLB1UeXYg
-         hy4LcaFPq25G6bYreEmmXKFnwzoBCFKBJ3rQw7BbEot3TFA6SgddrXOriwokhntb1c7D
-         +ZtnAAEnjFAOneYh5tgGAr771m+ySvGc5LAVOHkSmTZbpuXsBgOfhpLdy3oSg91Mx7cV
-         0UDQJ9t75PJbzECuts26j3ZF1oI4f7Xrdekd/OodEqAfbUY18dqE92g5Lk5oCh8KqhCQ
-         IkWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721552247; x=1722157047;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FDb31VIAAZnMZQZyGzdpC/AMxekr4nZrMgLoDm9Xh0w=;
-        b=CL2DgGLhpPVfNAxkY5XRwnbkjqyc1ngj1JPNpa6tyHPWUDtCUBJ+HG8nXazIy9ZjWG
-         XW/4hXaqbgMSQBHliQi0Scj6fkxojicvI9DQ1mGKJPrdLXvQKxDHN4upUNo/dA85X8H4
-         nwvZ4pL+3W8M+k9yYDETTbKDDn/yiD04QjF49cxZalbLgs8lbIr52GhVNQH4Qw/4R0al
-         POPaxHXjxQ1+nkcsZid6DDAj3mgPTlk3EhvcKC9yr40exibJt4g1XcCTZkayX1gv9DuO
-         nQNlo+eIndhzK6fmRXUYMMOtIUK+HTIit/Xm9c1+B94xkPW7DgIveZB/OJzXlTx106y2
-         Cn+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXYQ64mBpaC6SMfik2Ft+SOLH6AVD0xVug56cJk7ECYH9O5gjURhcbkOgqQIL0+SZz7SkxrcuDsx3bdrmMZRYOGC8wRVpUzdNmNP8ek
-X-Gm-Message-State: AOJu0YxbLOpBbgkNI8JRRcnvAqb6yaeZVVJjujkgpZ9EUJmiKBxt18Za
-	iPzB/lP4nONWBg3n0+InoRVEGrFAsho76V+Ev29XEvdmyjfG0xz144cGmVH5FA==
-X-Google-Smtp-Source: AGHT+IFG19OdyHP4d6XceobkYzegzSAkNQp0BCqiwoPMi57fvEKNHMsJRAIJIqrDHCHN1uU0CnaU4A==
-X-Received: by 2002:a05:6e02:1d15:b0:38b:48c9:55be with SMTP id e9e14a558f8ab-3993fdc748bmr48900565ab.0.1721552247590;
-        Sun, 21 Jul 2024 01:57:27 -0700 (PDT)
-Received: from thinkpad ([120.56.206.118])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70d23966e35sm446548b3a.108.2024.07.21.01.57.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jul 2024 01:57:27 -0700 (PDT)
-Date: Sun, 21 Jul 2024 14:27:23 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: dongxiong zheng <zhengdongxiong@gxmicro.cn>
-Cc: dmaengine@vger.kernel.org, fancer.lancer@gmail.com,
-	linux-kernel@vger.kernel.org, vkoul@kernel.org
-Subject: Re: [PATCH RESEND 1/2] dmaengine: dw-edma: Move "Set consumer cycle"
- into first condition in dw_hdma_v0_core_start()
-Message-ID: <20240721085723.GN1908@thinkpad>
-References: <20240705141241.GB57780@thinkpad>
- <20240706084010.2094-1-zhengdongxiong@gxmicro.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=q5GcKJM3opjzMp4twOWgTomaxMjhw+xDwoDW2nZNHJxosGR2GNBBEQLCH4bs5LX1W2E+/DeyBi0Mded8b3GyRdV7HRepMu92oYEilZ1YV19NeV28HoRR3nXEq1gAzKx//6Gm75jh1t00tQ9WNOLkfHmFJybn4pPsEYTbOWmoOqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DC8sa8JW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3661C116B1;
+	Sun, 21 Jul 2024 08:59:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721552358;
+	bh=ZuuqEi4S2iKFuJKwkxBMs+ZU/Sd67LLMFp02L/gM/5w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DC8sa8JW/xfOr2xbyypcs6KARdNf2mwJ0nWHTkrd1Rv0zrwMyGpHu3lqFR2BGvL0a
+	 uxtd0IifDa7kdKSG51qzjAn/bA7BcfdOzLWUiR60M0ijTyF2O0HbYoMxi2I/J5ukBn
+	 FlbRiwW4wQxrOziEa6wzEMpeyKkbQVgxcInKZ2hK76X4C/TjIM8LMIdV/KAKW7arCv
+	 bRIN0c9LRMctfPisVrMiPq4M3tNznh90IsvpKI+tYmuWjqRT2gDzS7ZwDoDdLvYJCw
+	 Bx7ADf0vTPjuk4AVG7qA12YYDkwxepFmpB27Crh4WuCLIhRIfFFvHyYa8TE9krCp/2
+	 OQHVcf/7UcPjw==
+Date: Sun, 21 Jul 2024 09:59:12 +0100
+From: Simon Horman <horms@kernel.org>
+To: Ayush Singh <ayush@beagleboard.org>
+Cc: jkridner@beagleboard.org, robertcnelson@beagleboard.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Johan Hovold <johan@kernel.org>,
+	Alex Elder <elder@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	greybus-dev@lists.linaro.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 3/3] greybus: gb-beagleplay: Add firmware upload API
+Message-ID: <20240721085912.GB715661@kernel.org>
+References: <20240719-beagleplay_fw_upgrade-v1-0-8664d4513252@beagleboard.org>
+ <20240719-beagleplay_fw_upgrade-v1-3-8664d4513252@beagleboard.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240706084010.2094-1-zhengdongxiong@gxmicro.cn>
+In-Reply-To: <20240719-beagleplay_fw_upgrade-v1-3-8664d4513252@beagleboard.org>
 
-On Sat, Jul 06, 2024 at 04:40:10PM +0800, dongxiong zheng wrote:
-> Hi, Manivannan Sadhasivam:
-> 	Thank you for your reply!
+On Fri, Jul 19, 2024 at 03:15:12PM +0530, Ayush Singh wrote:
+> Register with firmware upload API to allow updating firmware on cc1352p7
+> without resorting to overlay for using the userspace flasher.
 > 
-> On Fri, Jul 05, 2024 at 19:42:41 +0530, Manivannan Sadhasivam wrote:
-> > On Fri, Jul 05, 2024 at 06:57:34PM +0800, zheng.dongxiong wrote:
-> > > Two or more chunks are used in a transfer,
-> > > Consumer cycle only needs to be set on the first transfer.
-> > >
-> >
-> > Can you please reference the section of the spec that mentions this behavior?
-> >
-> > - Mani
-> >
+> Communication with the bootloader can be moved out of gb-beagleplay
+> driver if required, but I am keeping it here since there are no
+> immediate plans to use the on-board cc1352p7 for anything other than
+> greybus (BeagleConnect Technology). Additionally, there do not seem to
+> any other devices using cc1352p7 or it's cousins as a co-processor.
 > 
-> Reference:
-> 	Chapter 6.4.9.1 LL Operation Overview:
-> 	"Figure 6-23 Linked List Flow for Producer and Consumer" in
-> 	DesignWare Cores PCI Express Controller Databook (Version 6.00a June 2022)
+> Boot and Reset GPIOs are used to enable cc1352p7 bootloader backdoor for
+> flashing. The delays while starting bootloader are taken from the
+> userspace flasher since the technical specification does not provide
+> sufficient information regarding it.
 > 
-> The CCS must be set when L1 is executed for the first time, After an interruption is
-> triggered, CCS does not need to be configured again when L3 is executed.
+> Flashing is skipped in case we are trying to flash the same
+> image as the one that is currently present. This is determined by CRC32
+> calculation of the supplied firmware and Flash data.
 > 
+> We also do a CRC32 check after flashing to ensure that the firmware was
+> flashed properly.
+> 
+> Link: https://www.ti.com/lit/ug/swcu192/swcu192.pdf Ti CC1352p7 Tecnical Specification
+> Link: https://openbeagle.org/beagleconnect/cc1352-flasher Userspace
+> Flasher
+> 
+> Signed-off-by: Ayush Singh <ayush@beagleboard.org>
 
-Okay, please include this reference in commit message and send v2.
+Hi Ayush,
 
-- Mani
+A few minor points from my side.
 
-> > > Signed-off-by: zheng.dongxiong <zheng.dongxiong@outlook.com>
-> > > ---
-> > >  drivers/dma/dw-edma/dw-hdma-v0-core.c | 6 +++---
-> > >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/drivers/dma/dw-edma/dw-hdma-v0-core.c b/drivers/dma/dw-edma/dw-hdma-v0-core.c
-> > > index 10e8f0715..d77051d1e 100644
-> > > --- a/drivers/dma/dw-edma/dw-hdma-v0-core.c
-> > > +++ b/drivers/dma/dw-edma/dw-hdma-v0-core.c
-> > > @@ -262,10 +262,10 @@ static void dw_hdma_v0_core_start(struct dw_edma_chunk *chunk, bool first)
-> > >  			  lower_32_bits(chunk->ll_region.paddr));
-> > >  		SET_CH_32(dw, chan->dir, chan->id, llp.msb,
-> > >  			  upper_32_bits(chunk->ll_region.paddr));
-> > > +		/* Set consumer cycle */
-> > > +		SET_CH_32(dw, chan->dir, chan->id, cycle_sync,
-> > > +			HDMA_V0_CONSUMER_CYCLE_STAT | HDMA_V0_CONSUMER_CYCLE_BIT);
-> > >  	}
-> > > -	/* Set consumer cycle */
-> > > -	SET_CH_32(dw, chan->dir, chan->id, cycle_sync,
-> > > -		  HDMA_V0_CONSUMER_CYCLE_STAT | HDMA_V0_CONSUMER_CYCLE_BIT);
-> > >
-> > >  	dw_hdma_v0_sync_ll_data(chunk);
-> > >
-> > > --
-> > > 2.34.1
-> > >
-> >
-> 
-> Test brief: hdma set chan->ll_max == 1,
-> then user alloc two or more scatterlist, start transfer.
-> 
-> --
-> Regards,
-> dongxiong zheng
-> 
+...
 
--- 
-மணிவண்ணன் சதாசிவம்
+> diff --git a/drivers/greybus/gb-beagleplay.c b/drivers/greybus/gb-beagleplay.c
+
+...
+
+> +/**
+> + * enum cc1352_bootloader_cmd: CC1352 Bootloader Commands
+
+nit: As this is a kernel doc, it should probably include documentation
+     of the elements of the enum:
+
+    * @COMMAND_DOWNLOAD: ...
+    ...
+
+    Flagged by W=1 allmodconfig builds and ./scripts/kernel-doc -none
+
+> + */
+> +enum cc1352_bootloader_cmd {
+> +	COMMAND_DOWNLOAD = 0x21,
+> +	COMMAND_GET_STATUS = 0x23,
+> +	COMMAND_SEND_DATA = 0x24,
+> +	COMMAND_RESET = 0x25,
+> +	COMMAND_CRC32 = 0x27,
+> +	COMMAND_BANK_ERASE = 0x2c,
+> +};
+> +
+> +/**
+> + * enum cc1352_bootloader_status: CC1352 Bootloader COMMAND_GET_STATUS response
+
+Likewise here.
+
+> + */
+> +enum cc1352_bootloader_status {
+> +	COMMAND_RET_SUCCESS = 0x40,
+> +	COMMAND_RET_UNKNOWN_CMD = 0x41,
+> +	COMMAND_RET_INVALID_CMD = 0x42,
+> +	COMMAND_RET_INVALID_ADR = 0x43,
+> +	COMMAND_RET_FLASH_FAIL = 0x44,
+> +};
+
+...
+
+> +/**
+> + * csum8: Calculate 8-bit checksum on data
+
+Similarly, as this is a kernel doc it should probably include
+documentation of of the function parameters.
+
+> + */
+> +static u8 csum8(const u8 *data, size_t size, u8 base)
+> +{
+> +	size_t i;
+> +	u8 sum = base;
+> +
+> +	for (i = 0; i < size; ++i)
+> +		sum += data[i];
+> +
+> +	return sum;
+> +}
+
+...
+
+> +/**
+> + * cc1352_bootloader_empty_pkt: Calculate the number of empty bytes in the current packet
+
+Likewise here.
+
+> + */
+> +static size_t cc1352_bootloader_empty_pkt(const u8 *data, size_t size)
+> +{
+> +	size_t i;
+> +
+> +	for (i = 0; i < size && data[i] == 0xff; ++i)
+> +		continue;
+> +
+> +	return i;
+> +}
+
+...
+
+> +static int gb_fw_init(struct gb_beagleplay *bg)
+> +{
+> +	int ret;
+> +	struct fw_upload *fwl;
+> +	struct gpio_desc *desc;
+> +
+> +	bg->fwl = NULL;
+> +	bg->boot_gpio = NULL;
+> +	bg->rst_gpio = NULL;
+> +	bg->flashing_mode = false;
+> +	bg->fwl_cmd_response = 0;
+> +	bg->fwl_ack = 0;
+> +	init_completion(&bg->fwl_ack_com);
+> +	init_completion(&bg->fwl_cmd_response_com);
+> +
+> +	desc = devm_gpiod_get(&bg->sd->dev, "boot", GPIOD_IN);
+> +	if (IS_ERR(desc))
+> +		return PTR_ERR(fwl);
+
+fwl is not initialised here, and it is desc that is tested for error.
+Perhaps this should be:
+
+		return PTR_ERR(desc);
+
+Flagged by Smatch and Coccinelle.
+
+> +	bg->boot_gpio = desc;
+> +
+> +	desc = devm_gpiod_get(&bg->sd->dev, "reset", GPIOD_IN);
+> +	if (IS_ERR(desc)) {
+> +		ret = PTR_ERR(desc);
+> +		goto free_boot;
+> +	}
+> +	bg->rst_gpio = desc;
+> +
+> +	fwl = firmware_upload_register(THIS_MODULE, &bg->sd->dev, "cc1352p7",
+> +				       &cc1352_bootloader_ops, bg);
+> +	if (IS_ERR(fwl)) {
+> +		ret = PTR_ERR(fwl);
+> +		goto free_reset;
+> +	}
+> +	bg->fwl = fwl;
+> +
+> +	return 0;
+> +
+> +free_reset:
+> +	devm_gpiod_put(&bg->sd->dev, bg->rst_gpio);
+> +	bg->rst_gpio = NULL;
+> +free_boot:
+> +	devm_gpiod_put(&bg->sd->dev, bg->boot_gpio);
+> +	bg->boot_gpio = NULL;
+> +	return ret;
+> +}
+> +
+> +static void gb_fw_deinit(struct gb_beagleplay *bg)
+> +{
+> +	firmware_upload_unregister(bg->fwl);
+> +}
+> +
+>  static int gb_beagleplay_probe(struct serdev_device *serdev)
+>  {
+>  	int ret = 0;
+> @@ -481,6 +1077,10 @@ static int gb_beagleplay_probe(struct serdev_device *serdev)
+>  	if (ret)
+>  		goto free_serdev;
+>  
+> +	ret = gb_fw_init(bg);
+> +	if (ret)
+> +		goto free_hdlc;
+> +
+>  	ret = gb_greybus_init(bg);
+>  	if (ret)
+>  		goto free_hdlc;
+
+I suspect this error path will leak resources allocated by gb_fw_init().
+
+> @@ -500,6 +1100,7 @@ static void gb_beagleplay_remove(struct serdev_device *serdev)
+>  {
+>  	struct gb_beagleplay *bg = serdev_device_get_drvdata(serdev);
+>  
+> +	gb_fw_deinit(bg);
+>  	gb_greybus_deinit(bg);
+>  	gb_beagleplay_stop_svc(bg);
+>  	hdlc_deinit(bg);
+> 
+> -- 
+> 2.45.2
+> 
+> 
 
