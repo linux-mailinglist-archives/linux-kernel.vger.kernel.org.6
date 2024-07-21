@@ -1,127 +1,160 @@
-Return-Path: <linux-kernel+bounces-258121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F33A93840F
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 10:52:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2654D938412
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 10:52:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BA38281513
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 08:52:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25863B20F7F
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 08:52:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237D2C2F2;
-	Sun, 21 Jul 2024 08:51:52 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7925BC2C8;
+	Sun, 21 Jul 2024 08:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ObkI0JcH"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D86E8F40;
-	Sun, 21 Jul 2024 08:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB60BE4A
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 08:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721551911; cv=none; b=PcBk/uoHCsquocPjgjRguAVNXcXi16UUmvC+Ok6AHxgML0os9Eh/6Np2DifQhiER6tA007YriSQi56m+r4/bbXzOD6sAt/FOJuDxiPYHW4hlTwQ9uoIfUd14xfari4npq/pZPF0xeUmwCNdnWS3wHM7Cc3ZPeg380ai3Nw9dLag=
+	t=1721551932; cv=none; b=Km0rf/TBfUsRLduffm9IeZUs+atCAs5d4/wOdielwy/faW4QiNb+Wo+mPJvH9Dd1ysgIl4N15IuCTZqWDSRnZpxchR/i5lFRZgFVfiNEXkV+0dB0MaEhsqlYXvcvjL9FWpPnloIFqXEbLdYLGNceAJsxr6rQ8iOkzew25jj9tEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721551911; c=relaxed/simple;
-	bh=kQhRqHmogArtkloNT3wk5zUR73sZRcf90mXm2/alFGA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pGD1Xiyh37NGZ3NQw0Qr4DIcIFvNPyrpFfc7JUHIGB9vZRHfooDNL09vS8tUGy/J82tHZDp+sYVUSbvd3ArFKs8pRdzwAX+/O8a+17VPhyrczX/kLaRCZOBKYNrZvNAFjnuE0lU1j3nr60aHGVrTTh0WnMcwncXOj+cLzNqZlHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9180C116B1;
-	Sun, 21 Jul 2024 08:51:46 +0000 (UTC)
-Message-ID: <b8f1c80f-0e5f-41fc-bc20-0807db6c31d5@xs4all.nl>
-Date: Sun, 21 Jul 2024 10:51:45 +0200
+	s=arc-20240116; t=1721551932; c=relaxed/simple;
+	bh=iCQdZOj68/akTNvWefpiYEBVhYawxW0/QS2Pv7LOC/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WOWRlbe3gtxslw/jgSd/JTCz/Oako7E/O/uvDWsxvTtQnbN9hO11hwC/JEnsNNMvYAB0fPPkxhBkvixNrl4Fv10WO0XygO6RNfEd5BurI/QOeBKSHGWA7UZe4NHHS4Pe7+i5VsexENOZRcMkjS3jfyZOYPTRCNJWoGbuwSPVqNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ObkI0JcH; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7044c085338so1898857a34.2
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 01:52:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721551930; x=1722156730; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=X7ZS2uPOUje55mIE52CAqCCri08pD10wNTzXXCn3ihY=;
+        b=ObkI0JcHS09zeI6Rl/r0Yi2B5ERCcSZMGN6lIFnN7BdP/rdLqeHRarBwiwNm+gw4lG
+         30PgHdbxyLbey1iyGsT9JfGY4U+6WwcT/1ODCJ8e7P1hTG4ytd+8Z9p2j2Sv5oLjTvmI
+         RZK0xN+WUv9lHKawRC21zM6rohnmsqGl0tOrKGo6dsKtK3ECYhnOr0CiUfeMywUpA5lT
+         paP04jfG3RbzGnGeo506MyiKweja+vrkjLQ9L7JUGd12AFpa9i7X5cxIzFxmy5GAOgMk
+         vtIQ9ZlugokyziJFteum2SMi9Sbxx+MlivJBTia9n8vewFUnC+sDKy6BYMlIcq2rIWMA
+         v3Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721551930; x=1722156730;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=X7ZS2uPOUje55mIE52CAqCCri08pD10wNTzXXCn3ihY=;
+        b=gjZKMDgoFI/WdSDZGWFTeAWw7AEaRQSG2ZFQwHEDQWeeZJyZ8pGE9id90Dw/UQRFyR
+         abQt8R9hTsAID9igsSxVl56UtdmywT2QzpwNVOiwbFTzDylNPXYbubyFLlvdSImyl4EN
+         MpVQ2U/kCVUKkyoZdigiR2H3Vg1VvkIp+q9c91fKKerKFH7EoEGjN70j2juBK3fjFAm0
+         fYJaA7eUtoxPSo4d0gbIjeEn8VYa7Ra2Sa1zpUNT0ClNCiI4igOdAWaGn0r0la0YgXHw
+         AjCi7RIKbQd+ei7k2tKXvXFJtyqbajyL2EB/lCx03mGSdnzSF0Gl5R0KrZm01Y+plLBm
+         XelA==
+X-Forwarded-Encrypted: i=1; AJvYcCWnjbl22u15x315kZAc7rIoiB2VHc2qXGJWGFLxVQHe13NT4ugtcoXM5/l/fVAIXyik5phUz4FOvtaHYtbTNrLdX2jybLmZ/O1D1pBO
+X-Gm-Message-State: AOJu0YyhJzUXKWyp1S9UTdWadC7FHdvHJ24o1S25zcCEl8OWv0Q23vgK
+	sYb+GiH+4vPz7hlaWxngYqfiPqS0WOuOGwk6qmRFXQ0dFLVH0Bu4S+320681AQ==
+X-Google-Smtp-Source: AGHT+IEc7fqKlPNWS9Lge1u0WJuAaJVMRY75Y8sIwcx5LAC81F2MWI3JcVI2FJjY9FR1mPBL0NCVBg==
+X-Received: by 2002:a05:6870:171e:b0:260:eb3a:1b2 with SMTP id 586e51a60fabf-26121303088mr4811129fac.7.1721551930158;
+        Sun, 21 Jul 2024 01:52:10 -0700 (PDT)
+Received: from thinkpad ([120.56.206.118])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70d24065a1esm415083b3a.120.2024.07.21.01.52.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Jul 2024 01:52:09 -0700 (PDT)
+Date: Sun, 21 Jul 2024 14:22:05 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Tengfei Fan <quic_tengfan@quicinc.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, kernel@quicinc.com,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: mailbox: qcom-ipcc: Document the QCS9100
+ IPCC
+Message-ID: <20240721085205.GM1908@thinkpad>
+References: <20240709-document_qcs9100_ipcc_compatible-v2-1-0fd67000e6b1@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] media: platform: synopsys: Add support for hdmi
- input driver
-To: Shreeya Patel <shreeya.patel@collabora.com>, heiko@sntech.de,
- mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- p.zabel@pengutronix.de, jose.abreu@synopsys.com, nelson.costa@synopsys.com,
- shawn.wen@rock-chips.com, nicolas.dufresne@collabora.com,
- hverkuil-cisco@xs4all.nl
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- Dmitry Osipenko <dmitry.osipenko@collabora.com>
-References: <20240719124032.26852-1-shreeya.patel@collabora.com>
- <20240719124032.26852-5-shreeya.patel@collabora.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <20240719124032.26852-5-shreeya.patel@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240709-document_qcs9100_ipcc_compatible-v2-1-0fd67000e6b1@quicinc.com>
 
-On 19/07/2024 14:40, Shreeya Patel wrote:
-> Add initial support for the Synopsys DesignWare HDMI RX
-> Controller Driver used by Rockchip RK3588. The driver
-> supports:
->  - HDMI 1.4b and 2.0 modes (HDMI 4k@60Hz)
->  - RGB888, YUV422, YUV444 and YCC420 pixel formats
->  - CEC
->  - EDID configuration
+On Tue, Jul 09, 2024 at 10:01:47PM +0800, Tengfei Fan wrote:
+> Document the Inter-Processor Communication Controller on the QCS9100
+> Platform.
+> QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
+> platform use non-SCMI resource. In the future, the SA8775p platform will
+> move to use SCMI resources and it will have new sa8775p-related device
+> tree. Consequently, introduce "qcom,qcs9100-ipcc" to describe non-SCMI
+> based IPCC.
 > 
-> The hardware also has Audio and HDCP capabilities, but these are
-> not yet supported by the driver.
+> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
 
-FYI: if you want to add HDCP support, then please contact me. I have code
-available for that (i.e. the public API part), although it is out of date.
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-But if you want to enable HDCP in this driver, then I would be very happy
-to clean it up and post patches for that. It is something we (i.e. Cisco)
-have been using for several years now in out-of-tree drivers.
+- Mani
 
-I will try to review this patch in the next few days.
+> ---
+> Introduce support for the QCS9100 SoC device tree (DTSI) and the
+> QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
+> While the QCS9100 platform is still in the early design stage, the
+> QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
+> mounts the QCS9100 SoC instead of the SA8775p SoC.
+> 
+> The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
+> all the compatible strings will be updated from "SA8775p" to "QCS9100".
+> The QCS9100 device tree patches will be pushed after all the device tree
+> bindings and device driver patches are reviewed.
+> 
+> The final dtsi will like:
+> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
+> 
+> The detailed cover letter reference:
+> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+> ---
+> Changes in v2:
+>   - Split huge patch series into different patch series according to
+>     subsytems
+>   - Update patch commit message
+> 
+> prevous disscussion here:
+> [1] v1: https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+> ---
+>  Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml b/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml
+> index 05e4e1d51713..916c47fbc238 100644
+> --- a/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml
+> +++ b/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml
+> @@ -24,6 +24,7 @@ properties:
+>    compatible:
+>      items:
+>        - enum:
+> +          - qcom,qcs9100-ipcc
+>            - qcom,qdu1000-ipcc
+>            - qcom,sa8775p-ipcc
+>            - qcom,sc7280-ipcc
+> 
+> ---
+> base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+> change-id: 20240709-document_qcs9100_ipcc_compatible-f5f933d24098
+> 
+> Best regards,
+> -- 
+> Tengfei Fan <quic_tengfan@quicinc.com>
+> 
 
-Regards,
-
-	Hans
+-- 
+மணிவண்ணன் சதாசிவம்
 
