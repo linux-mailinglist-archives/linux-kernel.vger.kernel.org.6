@@ -1,295 +1,292 @@
-Return-Path: <linux-kernel+bounces-258290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 678489385CD
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 20:35:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED769385D2
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 20:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D966B20C82
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 18:35:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F10121F2113A
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 18:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94613168C20;
-	Sun, 21 Jul 2024 18:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCAD11684A7;
+	Sun, 21 Jul 2024 18:42:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XBWWkQrk"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RgJkv7P2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C141CD25;
-	Sun, 21 Jul 2024 18:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB80C29AF;
+	Sun, 21 Jul 2024 18:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721586895; cv=none; b=aT6P/QZ2KGV1faELSfg3OZRsxCIRr5C5utDg6pwfgWN3wz9Ou6eOvmpzlCgD3/+i/yRTE6NYHfrE56gGXo26RaslP1N5YxS9D95vsD7+UttuD+cvmOm2j7pksuxLOq+awr6cc2fWEXoN+NuJlYlcb4OzJFOKNr8CzMYgO+dZ2wk=
+	t=1721587369; cv=none; b=F+QQwposvhskRhFzSxQccu4QwSHfxlHartrhemKFj+fpKz17WIuyeVJKlWRe0rNquBZpbqJNAoKyhRFn2Ev/2DsIPAKzVK5qDY194ORqfpztYfwGOXe00UDssjGa2vn/A/HJR40CjBL1Ir8uL7zJoFhOgeDf/uMGOUjX7ddPTDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721586895; c=relaxed/simple;
-	bh=fE7WKwoI6GWG9CpahW6v9xclHmb3fAHGQny4SgKDw9M=;
+	s=arc-20240116; t=1721587369; c=relaxed/simple;
+	bh=iw66x+IDT8Zn9ZT5/tECn6Fe+lGoPOGUT7BE9NvgAdA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XZAjXL40Npogx4mNpEbuzqD0JTRNqA5ys02HehMqqiH+5cRMHKKOIcJmgMvvLpEsMULPp3bEjOlccHnvD+z6mLvsrO0/HTfJx6cM/YXT+R1z7+urP5flc8slr59GCXO2p1k2Q4cxpFXo8QiwSJh+MMAgDFV60bCpLB/YItWqZKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XBWWkQrk; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3685b9c8998so1312217f8f.0;
-        Sun, 21 Jul 2024 11:34:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721586892; x=1722191692; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jVcm7MOlgwmbqBevnTZqkSl3NS98662fLyAF4DaHdRs=;
-        b=XBWWkQrkhBRddJPbtX6raH1XblxpXYB2+F3eTARB8q+Aj+x6lPIjj8P0jMgi8KbFi7
-         pTzvqqUXoFFkaCdbwDBAafdu6EdRir8NJGJpSXb/tev2KNDURgsSrjjRQW3Jo6dFHNOo
-         jtZqzz3xhkxOSy/s56uAu3FE+ThJmE/G63byaNGeogk8jKV1SpUy52wThOs/b2NK7+dq
-         ccUVwcht3SJ9VMNE5Xq596/V9QRLFON4pzCigdfMlP6E6qjBnCsEKT2KTCXnHCfan52N
-         DAHxgm3kzbp5Ce49872wXtdhAkmXDGMmWYQGvnbCTyt8HwyKEY8quQ+Znt0V1snI1FNR
-         6OsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721586892; x=1722191692;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jVcm7MOlgwmbqBevnTZqkSl3NS98662fLyAF4DaHdRs=;
-        b=DfrHKtKp7cP+b/sh4O6HToMwO1n4xeon0rxyNAatY6vG03ovJUaQNEhdfjhit9McQs
-         K+XIJL5x8IMXtuHl8W0RJEF146IujVblf3+6LjDEeES9BWt/k2HbDZrKzztNyBgK/grx
-         7h6a3zFoRxXbRIFWghadS5A0CPJrGb30takZjjHhh3bBdX/9SKyfK4DtI+rJdYhZAVVO
-         78T3gKMonNdCdTthcRryQELHaH4Fmxmipk+oTlpKRevnNAnTor/M++7ehAszWMQpmSOP
-         DhsoKoPZM/v+cXXDt3Q0cMm+HPHGmEV6aXBY0C9yr1Pf3BM3JTo18LR5TF6vk3oPVT0a
-         EN4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVbzZIqXMY6y6Ikzdez0YGuPBnI8uTPGAtjatuTAIu0EbI4g+cte9zuT4tZ3+KswwXQ4Fy9l0w36V+lN1VNb+mgb8mXyHPcQMSrvMIlwnkPw8ih3vyGaey8vmu1FBsQ9Xf+e1pj
-X-Gm-Message-State: AOJu0Yx6Gm8Ehf5EJUMFSkDfqAFycvkrpJnc7r42EWtF51gZZuYNkIz9
-	l10n5clDa3XE/+MBhq5suiPEUsW9NF9gqdWU+/7NdV7TG4a1nt8QP0RdfPXh1IU7g4K6BhBOOD9
-	Bt0J7KvDpNcML6PcQ860lD2NroBY=
-X-Google-Smtp-Source: AGHT+IEin7bTBSAPIHhzoLfJZGwv/eoxM/axrGVQkbpWmkKK8tg0w9IF2VTu7EV4UlY+LLhQQK6h+SxAwZJs6VnkgQI=
-X-Received: by 2002:a05:6000:144a:b0:367:4dbb:ed4e with SMTP id
- ffacd0b85a97d-369bba4f072mr3121270f8f.0.1721586891893; Sun, 21 Jul 2024
- 11:34:51 -0700 (PDT)
+	 To:Cc:Content-Type; b=Hi2jVzlW9COzpxOeqIzcUbZv4uh+CTaU0z6Ck4kZJwmqWpreEvUDg5SUm0VeLEzfSut8bE1JTEl+XBv82Gf8IRxXFC3XDBLsJHq6UMgZ2DArjcTEBdkjeU14/PE6cQgS7sMOYI9o1Y4uwdNc5I2wZUt3h0mOtyH7zfRk8zM3NA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RgJkv7P2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF38FC4AF0B;
+	Sun, 21 Jul 2024 18:42:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721587368;
+	bh=iw66x+IDT8Zn9ZT5/tECn6Fe+lGoPOGUT7BE9NvgAdA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RgJkv7P2Hf0f53yahj0by23T9g+AeHqocxZ69P4fwbV2BRsDuVNb41LvKeKP7p1eK
+	 bvMuzEfESyxV9Ja8oCWZzZmtoCEOB94MzaUEcHE53LoObejwsjX4wJos3Zze9dbSOk
+	 vJETPziG/uG44qL4gv6FkNrsJ8EC2sWcda8CKFEu3YsTfuODpUzjwEj38/4CDXOWk+
+	 XR+NZXYNYGGKm/dmvjrPS4WN/mA535lecq5Xc1WTsTlStvy2ttBQV29YS8HRd3sd0/
+	 e77h7rhiWiK84inzeDEiDh1VNKLe4mFBX2fWjHi4wCBpE62THGCJjXGyzs2GLPKIxe
+	 rqPWcu9mkSdTA==
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ebe40673d8so45084941fa.3;
+        Sun, 21 Jul 2024 11:42:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXa09q5PeqCNHlJTQNVvdc5rsj4V3rO1TJQPwr+ajKGr4HA/yHJm3k4K6Dg4B8UFt60BChLbH2BA6sqTJhdDoGbQ2EjpdN609NKbKOF4Ei5Vmsq6jidBY3LPn5N8zxNuf8Al7i4Ijkc+IyD
+X-Gm-Message-State: AOJu0YwSZRgRmcZW3WVOzCw4e+sFsZubWqwmBS9fuIpapSXDg+5VfCWJ
+	0H1l/kVVlJM6AiGqjZQ6MxtVJ/jOv2jmJs37c5TTJYv91gL7IWnDzuzkW2/AOLE5Lf2enT+fiQN
+	rLAo/By4qs69SY9Y6+nuC0JkwEWw=
+X-Google-Smtp-Source: AGHT+IHv69qpRuVhSHVcfOxmPAElDhbSkWqJ+rigqftBSZMPb5QnRPCDTpm0Iq2TvRwbVlzLpgsY//OWyqOIUslI9QQ=
+X-Received: by 2002:a05:6512:3984:b0:52d:582e:4117 with SMTP id
+ 2adb3069b0e04-52efb8a0fb6mr2988225e87.54.1721587367278; Sun, 21 Jul 2024
+ 11:42:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719093338.55117-1-linyunsheng@huawei.com> <20240719093338.55117-4-linyunsheng@huawei.com>
-In-Reply-To: <20240719093338.55117-4-linyunsheng@huawei.com>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Sun, 21 Jul 2024 11:34:15 -0700
-Message-ID: <CAKgT0UfMBo2K7c1UZgJOJt23hO+44Er7JwabrGT6ymGjLps+Gg@mail.gmail.com>
-Subject: Re: [RFC v11 03/14] mm: page_frag: use initial zero offset for page_frag_alloc_align()
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+References: <20240720-kbuild-pacman-pkg-v7-1-74a79b4401d2@weissschuh.net>
+ <20240721033209.GA545406@thelio-3990X> <CAK7LNARj9fxm_3h=7g4PLbLDHXNUQrRu8iOQ4sZdx8Ag3YS9sA@mail.gmail.com>
+ <20240721121109.GA3599565@thelio-3990X> <CAK7LNAQyRaMgcgg5urnJU8ePqULAOB6TkFDjRVEwjEZEvT6s-g@mail.gmail.com>
+ <5db8b1e9-894b-4626-b635-420078df10ce@t-8ch.de>
+In-Reply-To: <5db8b1e9-894b-4626-b635-420078df10ce@t-8ch.de>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 22 Jul 2024 03:42:10 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATasJRXa-po8tFatBcnnmnttEWghoARuNpSNd+r0sCBgw@mail.gmail.com>
+Message-ID: <CAK7LNATasJRXa-po8tFatBcnnmnttEWghoARuNpSNd+r0sCBgw@mail.gmail.com>
+Subject: Re: [PATCH v7] kbuild: add script and target to generate pacman package
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	"Jan Alexander Steffens (heftig)" <heftig@archlinux.org>, Christian Heusel <christian@heusel.eu>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 19, 2024 at 2:37=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.co=
-m> wrote:
+On Sun, Jul 21, 2024 at 11:57=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weiss=
+schuh.net> wrote:
 >
-> We are about to use page_frag_alloc_*() API to not just
-> allocate memory for skb->data, but also use them to do
-> the memory allocation for skb frag too. Currently the
-> implementation of page_frag in mm subsystem is running
-> the offset as a countdown rather than count-up value,
-> there may have several advantages to that as mentioned
-> in [1], but it may have some disadvantages, for example,
-> it may disable skb frag coaleasing and more correct cache
-> prefetching
+> On 2024-07-21 22:42:12+0000, Masahiro Yamada wrote:
+> > On Sun, Jul 21, 2024 at 9:11=E2=80=AFPM Nathan Chancellor <nathan@kerne=
+l.org> wrote:
+> > >
+> > > Hi Masahiro,
+> > >
+> > > On Sun, Jul 21, 2024 at 03:58:49PM +0900, Masahiro Yamada wrote:
+> > > > On Sun, Jul 21, 2024 at 12:32=E2=80=AFPM Nathan Chancellor <nathan@=
+kernel.org> wrote:
+> > > > > On Sat, Jul 20, 2024 at 11:18:12AM +0200, Thomas Wei=C3=9Fschuh w=
+rote:
+> > > > > > pacman is the package manager used by Arch Linux and its deriva=
+tes.
+> > > > > > Creating native packages from the kernel tree has multiple adva=
+ntages:
+> > > > > >
+> > > > > > * The package triggers the correct hooks for initramfs generati=
+on and
+> > > > > >   bootloader configuration
+> > > > > > * Uninstallation is complete and also invokes the relevant hook=
+s
+> > > > > > * New UAPI headers can be installed without any manual bookkeep=
+ing
+> > > > > >
+> > > > > > The PKGBUILD file is a modified version of the one used for the
+> > > > > > downstream Arch Linux "linux" package.
+> > > > > > Extra steps that should not be necessary for a development kern=
+el have
+> > > > > > been removed and an UAPI header package has been added.
+> > > > > >
+> > > > > > Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> > > > > > ---
+> > > > >
+> > > > > I think this looks really solid now, thanks again for the PACMAN_=
+PKGBASE
+> > > > > addition.
+> > > > >
+> > > > > I tested building Arch Linux's configuration for x86_64 and booti=
+ng it
+> > > > > in a VM. I built Fedora's configuration for aarch64 just to test =
+the
+> > > > > cross building aspect and making sure the result of various bits =
+that we
+> > > > > added that would not affect x86 (such as the dtb installation) lo=
+oked
+> > > > > reasonable.
+> > > > >
+> > > > > Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+> > > > > Tested-by: Nathan Chancellor <nathan@kernel.org>
+> > > >
+> > > > I believe this is a separate issue, but
+> > > > Debian/Ubuntu provides a 'makepkg' package, which fails
+> > > > with 'User defined signal 1' error.
+> > > >
+> > > > After 'sudo apt install makepkg',
+> > > >
+> > > > masahiro@zoe:~/ref/linux-next((HEAD detached from origin/master))$ =
+cat
+> > > > /etc/os-release
+> > > > PRETTY_NAME=3D"Ubuntu 24.04 LTS"
+> > > > NAME=3D"Ubuntu"
+> > > > VERSION_ID=3D"24.04"
+> > > > VERSION=3D"24.04 LTS (Noble Numbat)"
+> > > > VERSION_CODENAME=3Dnoble
+> > > > ID=3Dubuntu
+> > > > ID_LIKE=3Ddebian
+> > > > HOME_URL=3D"https://www.ubuntu.com/"
+> > > > SUPPORT_URL=3D"https://help.ubuntu.com/"
+> > > > BUG_REPORT_URL=3D"https://bugs.launchpad.net/ubuntu/"
+> > > > PRIVACY_POLICY_URL=3D"https://www.ubuntu.com/legal/terms-and-polici=
+es/privacy-policy"
+> > > > UBUNTU_CODENAME=3Dnoble
+> > > > LOGO=3Dubuntu-logo
+> > > > masahiro@zoe:~/ref/linux-next((HEAD detached from origin/master))$
+> > > > makepkg --version
+> > > > makepkg (pacman) 6.0.2
+> > > > Copyright (c) 2006-2021 Pacman Development Team <pacman-dev@archlin=
+ux.org>.
+> > > > Copyright (C) 2002-2006 Judd Vinet <jvinet@zeroflux.org>.
+> > > >
+> > > > This is free software; see the source for copying conditions.
+> > > > There is NO WARRANTY, to the extent permitted by law.
+> > > > masahiro@zoe:~/ref/linux-next((HEAD detached from origin/master))$ =
+git
+> > > > log --oneline -2
+> > > > 5dcaebb67ad9 (HEAD) kbuild: add script and target to generate pacma=
+n package
+> > > > 41c196e567fb (tag: next-20240719, origin/master, origin/HEAD) Add
+> > > > linux-next specific files for 20240719
+> > > > masahiro@zoe:~/ref/linux-next((HEAD detached from origin/master))$
+> > > > make defconfig  pacman-pkg
+> > > > *** Default configuration is based on 'x86_64_defconfig'
+> > > > #
+> > > > # No change to .config
+> > > > #
+> > > > objtree=3D"/home/masahiro/ref/linux-next" \
+> > > > BUILDDIR=3D"" \
+> > >
+> > > It is not related to this issue but I don't think this should be empt=
+y.
+> > > 'realpath pacman' does not appear to work here, I was able to fix thi=
+s
+> > > with the following diff:
+> > >
+> > > diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+> > > index 94357f47d2fa..b0fd44a40075 100644
+> > > --- a/scripts/Makefile.package
+> > > +++ b/scripts/Makefile.package
+> > > @@ -148,7 +148,7 @@ PHONY +=3D pacman-pkg
+> > >  pacman-pkg:
+> > >         @ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBU=
+ILD
+> > >         +objtree=3D"$(realpath $(objtree))" \
+> > > -               BUILDDIR=3D"$(realpath pacman)" \
+> > > +               BUILDDIR=3D"$(realpath $(objtree))/pacman" \
+> >
+> >
+> > Right.
+> >
+> > $(realpath pacman) expands to empty
+> > if 'pacman' does not exist yet.
+> > Your fix is correct.
+>
+> I'm wondering how it worked for me, as I specifically tested this case.
+> But I'm fine with the proposal.
+>
+> Shouldn't it be "$(realpath ./pacman)" though?
+>
+> >
+> > >                 CARCH=3D"$(UTS_MACHINE)" \
+> > >                 KBUILD_MAKEFLAGS=3D"$(MAKEFLAGS)" \
+> > >                 KBUILD_REVISION=3D"$(shell $(srctree)/scripts/build-v=
+ersion)" \
+> > >
+> > >
+> > > > CARCH=3D"x86_64" \
+> > > > KBUILD_MAKEFLAGS=3D"rR --no-print-directory" \
+> > > > KBUILD_REVISION=3D"4" \
+> > > > makepkg
+> > > >
+> > > > =3D=3D> ERROR: An unknown error has occurred. Exiting...
+> > > > User defined signal 1
+> > > > make[3]: *** [scripts/Makefile.package:150: pacman-pkg] Error 138
+> > > > make[2]: *** [Makefile:1538: pacman-pkg] Error 2
+> > > > make[1]: *** [/home/masahiro/ref/linux-next/Makefile:347:
+> > > > __build_one_by_one] Error 2
+> > > > make: *** [Makefile:224: __sub-make] Error 2
+> > > >
+> > > > Do you know anything?
+> > >
+> > > Adding '-x' to the interpreter line in /usr/bin/makepkg shows that
+> > > pacman is implicitly required for makepkg to function, so you'll need=
+ to
+> > > install pacman-package-manager as well. However, even with it install=
+ed,
+> > > the build will fail because you will be unable to perform the depende=
+ncy
+> > > checking (since pacman won't be managing the packages).
+>
+> It seems very weird that there is no dependency, not even a soft one,
+> from makepkg to pacman.
+>
+> > > I think the traditional solution for this situation (building a
+> > > distribution's package on a distribution other than the one the packa=
+ge
+> > > is being built for) is using an OPTS variable to allow the user to pa=
+ss
+> > > in the dependency checking skip flag (that's what I do for RPM builds=
+ on
+> > > Arch Linux), so perhaps MAKEPKGOPTS so that you can use MAKEPKGOPTS=
+=3D-d?
+> > > With this diff and that variable value, the build starts within makep=
+kg
+> > > for me.
+> > >
+> > > diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+> > > index b0fd44a40075..4a80584ec771 100644
+> > > --- a/scripts/Makefile.package
+> > > +++ b/scripts/Makefile.package
+> > > @@ -152,7 +152,7 @@ pacman-pkg:
+> > >                 CARCH=3D"$(UTS_MACHINE)" \
+> > >                 KBUILD_MAKEFLAGS=3D"$(MAKEFLAGS)" \
+> > >                 KBUILD_REVISION=3D"$(shell $(srctree)/scripts/build-v=
+ersion)" \
+> > > -               makepkg
+> > > +               makepkg $(MAKEPKGOPTS)
+> >
+> >
+> > Thank you for delving into this!
+>
+> Thanks to both of you!
+>
+> > With -d option, I was able to compile it.
+> >
+> > I previously compile-tested it in an Arch Linux Docker container,
+> > but this is more convenient.
+> >
+> >
+> > Thomas, will you send v8 with Nathan's suggestion?
+> >
+> > Or, I can offer to fold the diff if Thomas agrees.
+>
+> If you are fine with folding the diff, please do!
+>
 
-You misspelled "coalescing".
 
-> We have a trade-off to make in order to have a unified
-> implementation and API for page_frag, so use a initial zero
-> offset in this patch, and the following patch will try to
-> make some optimization to avoid the disadvantages as much
-> as possible.
->
-> Rename 'offset' to 'remaining' to retain the 'countdown'
-> behavior as 'remaining countdown' instead of 'offset
-> countdown'. Also, Renaming enable us to do a single
-> 'fragsz > remaining' checking for the case of cache not
-> being enough, which should be the fast path if we ensure
-> 'remaining' is zero when 'va' =3D=3D NULL by memset'ing
-> 'struct page_frag_cache' in page_frag_cache_init() and
-> page_frag_cache_drain().
->
-> 1. https://lore.kernel.org/all/f4abe71b3439b39d17a6fb2d410180f367cadf5c.c=
-amel@gmail.com/
->
-> CC: Alexander Duyck <alexander.duyck@gmail.com>
-> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-> ---
->  include/linux/mm_types_task.h |  4 +-
->  mm/page_frag_cache.c          | 71 +++++++++++++++++++++--------------
->  2 files changed, 44 insertions(+), 31 deletions(-)
->
-> diff --git a/include/linux/mm_types_task.h b/include/linux/mm_types_task.=
-h
-> index cdc1e3696439..b1c54b2b9308 100644
-> --- a/include/linux/mm_types_task.h
-> +++ b/include/linux/mm_types_task.h
-> @@ -52,10 +52,10 @@ struct page_frag {
->  struct page_frag_cache {
->         void *va;
->  #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-> -       __u16 offset;
-> +       __u16 remaining;
->         __u16 size;
->  #else
-> -       __u32 offset;
-> +       __u32 remaining;
->  #endif
->         /* we maintain a pagecount bias, so that we dont dirty cache line
->          * containing page->_refcount every time we allocate a fragment.
-> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
-> index 609a485cd02a..2958fe006fe7 100644
-> --- a/mm/page_frag_cache.c
-> +++ b/mm/page_frag_cache.c
-> @@ -22,6 +22,7 @@
->  static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
->                                              gfp_t gfp_mask)
->  {
-> +       unsigned int page_size =3D PAGE_FRAG_CACHE_MAX_SIZE;
->         struct page *page =3D NULL;
->         gfp_t gfp =3D gfp_mask;
->
-> @@ -30,12 +31,21 @@ static struct page *__page_frag_cache_refill(struct p=
-age_frag_cache *nc,
->                    __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC;
->         page =3D alloc_pages_node(NUMA_NO_NODE, gfp_mask,
->                                 PAGE_FRAG_CACHE_MAX_ORDER);
-> -       nc->size =3D page ? PAGE_FRAG_CACHE_MAX_SIZE : PAGE_SIZE;
->  #endif
-> -       if (unlikely(!page))
-> +       if (unlikely(!page)) {
->                 page =3D alloc_pages_node(NUMA_NO_NODE, gfp, 0);
-> +               if (unlikely(!page)) {
-> +                       nc->va =3D NULL;
-> +                       return NULL;
-> +               }
->
-> -       nc->va =3D page ? page_address(page) : NULL;
-> +               page_size =3D PAGE_SIZE;
-> +       }
-> +
-> +#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-> +       nc->size =3D page_size;
-> +#endif
-> +       nc->va =3D page_address(page);
->
->         return page;
->  }
+Applied with Nathan's diff.
+Thanks!
 
-Not a huge fan of the changes here. If we are changing the direction
-then just do that. I don't see the point of these changes. As far as I
-can tell it is just adding noise to the diff and has no effect on the
-final code as the outcome is mostly the same except for you don't
-update size in the event that you overwrite nc->va to NULL.
 
-> @@ -64,8 +74,8 @@ void *__page_frag_alloc_align(struct page_frag_cache *n=
-c,
->                               unsigned int align_mask)
->  {
->         unsigned int size =3D PAGE_SIZE;
-> +       unsigned int remaining;
->         struct page *page;
-> -       int offset;
->
->         if (unlikely(!nc->va)) {
->  refill:
-> @@ -82,35 +92,20 @@ void *__page_frag_alloc_align(struct page_frag_cache =
-*nc,
->                  */
->                 page_ref_add(page, PAGE_FRAG_CACHE_MAX_SIZE);
->
-> -               /* reset page count bias and offset to start of new frag =
-*/
-> +               /* reset page count bias and remaining to start of new fr=
-ag */
->                 nc->pfmemalloc =3D page_is_pfmemalloc(page);
->                 nc->pagecnt_bias =3D PAGE_FRAG_CACHE_MAX_SIZE + 1;
-> -               nc->offset =3D size;
-> +               nc->remaining =3D size;
->         }
->
-> -       offset =3D nc->offset - fragsz;
-> -       if (unlikely(offset < 0)) {
-> -               page =3D virt_to_page(nc->va);
-> -
-> -               if (!page_ref_sub_and_test(page, nc->pagecnt_bias))
-> -                       goto refill;
-> -
-> -               if (unlikely(nc->pfmemalloc)) {
-> -                       free_unref_page(page, compound_order(page));
-> -                       goto refill;
-> -               }
-> -
->  #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-> -               /* if size can vary use size else just use PAGE_SIZE */
-> -               size =3D nc->size;
-> +       /* if size can vary use size else just use PAGE_SIZE */
-> +       size =3D nc->size;
->  #endif
-
-Rather than pulling this out and placing it here it might make more
-sense at the start of the function. Basically just overwrite size w/
-either PAGE_SIZE or nc->size right at the start. Then if we have to
-reallocate we overwrite it. That way we can avoid some redundancy and
-this will be easier to read.
-
-> -               /* OK, page count is 0, we can safely set it */
-> -               set_page_count(page, PAGE_FRAG_CACHE_MAX_SIZE + 1);
->
-> -               /* reset page count bias and offset to start of new frag =
-*/
-> -               nc->pagecnt_bias =3D PAGE_FRAG_CACHE_MAX_SIZE + 1;
-> -               offset =3D size - fragsz;
-> -               if (unlikely(offset < 0)) {
-> +       remaining =3D nc->remaining & align_mask;
-> +       if (unlikely(remaining < fragsz)) {
-> +               if (unlikely(fragsz > PAGE_SIZE)) {
->                         /*
->                          * The caller is trying to allocate a fragment
->                          * with fragsz > PAGE_SIZE but the cache isn't bi=
-g
-> @@ -122,13 +117,31 @@ void *__page_frag_alloc_align(struct page_frag_cach=
-e *nc,
->                          */
->                         return NULL;
->                 }
-> +
-> +               page =3D virt_to_page(nc->va);
-> +
-> +               if (!page_ref_sub_and_test(page, nc->pagecnt_bias))
-> +                       goto refill;
-> +
-> +               if (unlikely(nc->pfmemalloc)) {
-> +                       free_unref_page(page, compound_order(page));
-> +                       goto refill;
-> +               }
-> +
-> +               /* OK, page count is 0, we can safely set it */
-> +               set_page_count(page, PAGE_FRAG_CACHE_MAX_SIZE + 1);
-> +
-> +               /* reset page count bias and remaining to start of new fr=
-ag */
-> +               nc->pagecnt_bias =3D PAGE_FRAG_CACHE_MAX_SIZE + 1;
-> +               nc->remaining =3D size;
-
-Why are you setting nc->remaining here? You set it a few lines below.
-This is redundant.
-
-> +
-> +               remaining =3D size;
->         }
->
->         nc->pagecnt_bias--;
-> -       offset &=3D align_mask;
-> -       nc->offset =3D offset;
-> +       nc->remaining =3D remaining - fragsz;
->
-> -       return nc->va + offset;
-> +       return nc->va + (size - remaining);
->  }
->  EXPORT_SYMBOL(__page_frag_alloc_align);
+--=20
+Best Regards
+Masahiro Yamada
 
