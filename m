@@ -1,123 +1,87 @@
-Return-Path: <linux-kernel+bounces-258256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2119C93858B
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 18:46:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FECF93859D
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 19:11:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94047B20CF3
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 16:46:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F5A7B20C35
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 17:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F38166317;
-	Sun, 21 Jul 2024 16:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hPXXJJS5"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB0C167D95;
+	Sun, 21 Jul 2024 17:11:04 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905A826AED
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 16:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBA714F9F9
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 17:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721580369; cv=none; b=fW/A8YJd0tD2JdU9lxaEPthnli+wb8uFjlh3xAbXpVDxYEAC6/OGaqyYllWPMqgpgWrfBMWcHztPxXXExVoS0IFoINJyVdEAyTZuUlmhREIrwwUgkDSz+SaHabUk1isUol1k7EiUyqKMGyqKt/fdV6NIptaI2+xoaw/iPz4LKHI=
+	t=1721581864; cv=none; b=Xa9a1kIIzKVzjycfqCaXM/2T4reuqwF5FePbeIfS+rlKLROIcUlxXyfTv0DdKkhx21ueXT0EjCUR88X2VVPeZRA4l1O6q1HusQx7EyYRdwC58F6pjtokDW+GhIPtE+gmMLlI35S3vN9JXdB2W1uR6r6vbGDVfa/5SkGWUmNkWMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721580369; c=relaxed/simple;
-	bh=rAH4Jm9AoRvX4/4HSmDEGIbMl0UA3sgBAgyyr6KPB6U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QvcEnkRrD1KMd4e/SVkAKE8Wl7bUivDIt/i9KHIt/raCVmIcMkUFIxzEwIpuLSX5zeHncMUkI1TOWRkZoyJqsQsRdb0+dWngvfoWoTiAN9wFvB1js6cGDJLwRchnMmRaJtENAP66GipLYE+Z/FCRW3GKTTVnEbR2nqwCJXrksFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hPXXJJS5; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2eeec60a324so46984181fa.2
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 09:46:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721580362; x=1722185162; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tnzMvlF6bfeYxZjSrDfgdjPHin7M8Ak7WmhUUH8l9fU=;
-        b=hPXXJJS5IeLVYSdZTniRZLTox4VKKuZTazLvz/VZsvzPONbwyfeA220ze5tkm0dzQx
-         5zH1f1iWbl6/8qXjCkOixTI9AU6FO07quoTQq/GLADEGkK1fSP4xGh1ew4Z3bhPmvOtu
-         BcAdLEY24ALNabfJUnjwVRUzeUmT0sMzSLp1SGpkI/WMzWE4GF1LIY4Z0FwKrTMDpwU0
-         mi++hh1El4DDUdo8qYXMaN90/sZr3OOLrSFaWtK0qAq15c9rGEv/scv4gVazGXsfa8O9
-         v6dvvXvqdkx4C26gVoY3xe6xyUyYaqZuiSM6dPxaD/rNXtVrhkUGAxGl9/1WQQ7qYPwg
-         xoJw==
+	s=arc-20240116; t=1721581864; c=relaxed/simple;
+	bh=Pzr0k01oUFgnHshjfu8lDpigAiS96d1MbC4X5R0VfB4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qhrwqlKcB0WjHd6TCnd5w8UcaxMynkMeI3vm4ZV02SJcVTBCQ0c2eIn4cl1Zs9AMzZQ2m6i5Gps2P/t8SFJHwIY33LW6t0J1t9Wf0JsCi1RYpLvF04R7NEZZu3Ib2K9P6sQt6EyAstbEYbadFbhy09yCEYIWHiu3Dwvkv4IGx68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7fba8d323f9so602307039f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 10:11:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721580362; x=1722185162;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tnzMvlF6bfeYxZjSrDfgdjPHin7M8Ak7WmhUUH8l9fU=;
-        b=J52rz/05f+jSarZCihnetFB+mwXd3kPUca36DZU/p1BsX97MIUIEghV1618yIa+QZ5
-         FsrrgFtDY6ld88XegFh73IOuk6PFTcr3Ys8w0jYIkq3mrbF20z/gBkSWsXkQ1qaVYD4z
-         P6Cje9s/BNgH3RlC/Jic8+sjd2pQNSobxQqCSyrHwtgJbdC6JnKQw/UAJAgTW6XZDStz
-         ScMUXsrNddRqltc2xV4ID2P+C1+L/0bQg0KE1e6WEhwr+0TbQBOWTJOE4gZnoivBw6rP
-         LTMQeBpVLMF/f5ItRjAhbfl5Hxlwd0Hwn2QwBqG82LoMq4aGv5RJSODPrF33nNb+DLL8
-         V8Dw==
-X-Gm-Message-State: AOJu0YzHRt4X5nnztG1x2u1qMq0QAVPrp2NCyQbFOKvzaInjRjY977zK
-	t1X6D9+s0NeIGk1hALs/OmkI+yoYFFpTdH/KAIlUOIBqlejuKwJTY68lV/+L
-X-Google-Smtp-Source: AGHT+IHPfyYAhzj4ox02oB/1AKZGEh8nbWZBUDGUOuxa8VGJ67ALfy79H2GpYRZVJwXwrV2xcl6d6A==
-X-Received: by 2002:a2e:3504:0:b0:2ef:22a6:d90d with SMTP id 38308e7fff4ca-2ef22a6db66mr29278881fa.47.1721580361940;
-        Sun, 21 Jul 2024 09:46:01 -0700 (PDT)
-Received: from localhost.localdomain ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a709a74169sm1045051a12.95.2024.07.21.09.46.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jul 2024 09:46:01 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Bibo Mao <maobibo@loongson.cn>
-Subject: [PATCH] locking/pvqspinlock: Correct the type of "old" variable in pv_kick_node()
-Date: Sun, 21 Jul 2024 18:45:41 +0200
-Message-ID: <20240721164552.50175-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.42.0
+        d=1e100.net; s=20230601; t=1721581862; x=1722186662;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uyxVEGhIiKJkbfH4z/x0VFCtxcldFdWW6brc8IkPBPM=;
+        b=VW0x+EH06whuRfCOdqdYHIrEBbNL02k79k1z74Gu3H+awXHK+OZhR4Lqro+XDxMWEg
+         sW92+vkHzduxFlLZwSYQqQdE+gyKi9SRnqwtyxvVsSYTrFZTd0xlkKyvAY0H6ELGfzw9
+         ioTT8ctv6HPIdkupRtLlsS+OV2wlz6RL4o/5auHC1iflSRSSkoTFv2xOSk4rTrGxyBIV
+         f+teZwHAvursjH93ewOQpj3O+EB8ncTSKSFt9EE9i+z6Prn/MIDpdXsCVB6wD8fXiu82
+         15szLZaZbXL/MHIxu7mQGmGknrGewoB9ZTzqvGcnFRLHyNDVDEz7hlFnQOYA1gxDVqV7
+         L/Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCVW8C2p09HvLhOlJ+ZlUK2owRx8bXk8kYD5SnTaEGrfc9od5FJ9iynf/eStk+ZmqLd7G8n+k05/dM891k1YRVS/poWA0z0j+UcsGJWO
+X-Gm-Message-State: AOJu0Yxl17N6Rk3+edDMC2N6k+kzK5Edyttsv3fGuz5AviH8gRgSi4Gd
+	UaaJAuVa6kCX2pjc4LQAuV8eBft18pelLIXp7EixE+EbH/TwSw1Fxkm7eEvoC4M2lQKUv/Ugye/
+	JfUva3uFjbt/cR9Zsf41nOOkq4D6on9fjto0njDgONcfF/9ll2/aUpH0=
+X-Google-Smtp-Source: AGHT+IE2etpHPTrxAL02sL1iI1lNIA6NTuzCxiZ9FOvJnnPSwiPz9Jp25Iy3Fktw32lUiQrHTtKqVIKqAla8JSsXY6st68AV8RE9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:3706:b0:4c0:a8a5:81cc with SMTP id
+ 8926c6da1cb9f-4c23fe461f0mr443247173.3.1721581862188; Sun, 21 Jul 2024
+ 10:11:02 -0700 (PDT)
+Date: Sun, 21 Jul 2024 10:11:02 -0700
+In-Reply-To: <20240721163522.2416-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000590db9061dc50359@google.com>
+Subject: Re: [syzbot] [bpf?] [net?] KASAN: slab-use-after-free Read in bq_xmit_all
+From: syzbot <syzbot+707d98c8649695eaf329@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-"enum vcpu_state" is not compatible with "u8" type for all targets,
-resulting in:
+Hello,
 
-error: initialization of 'u8 *' {aka 'unsigned char *'} from incompatible pointer type 'enum vcpu_state *'
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-for LoongArch. Correct the type of "old" variable to "u8".
+Reported-by: syzbot+707d98c8649695eaf329@syzkaller.appspotmail.com
+Tested-by: syzbot+707d98c8649695eaf329@syzkaller.appspotmail.com
 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Will Deacon <will@kernel.org>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Fixes: fea0e1820b51 ("locking/pvqspinlock: Use try_cmpxchg() in qspinlock_paravirt.h")
-Reported-by: Bibo Mao <maobibo@loongson.cn>
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Closes: https://lore.kernel.org/lkml/20240719024010.3296488-1-maobibo@loongson.cn/
----
- kernel/locking/qspinlock_paravirt.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Tested on:
 
-diff --git a/kernel/locking/qspinlock_paravirt.h b/kernel/locking/qspinlock_paravirt.h
-index f5a36e67b593..ac2e22502741 100644
---- a/kernel/locking/qspinlock_paravirt.h
-+++ b/kernel/locking/qspinlock_paravirt.h
-@@ -357,7 +357,7 @@ static void pv_wait_node(struct mcs_spinlock *node, struct mcs_spinlock *prev)
- static void pv_kick_node(struct qspinlock *lock, struct mcs_spinlock *node)
- {
- 	struct pv_node *pn = (struct pv_node *)node;
--	enum vcpu_state old = vcpu_halted;
-+	u8 old = vcpu_halted;
- 	/*
- 	 * If the vCPU is indeed halted, advance its state to match that of
- 	 * pv_wait_node(). If OTOH this fails, the vCPU was running and will
--- 
-2.42.0
+commit:         fd8db077 bpf, devmap: Add .map_alloc_check
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=152f62e6980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=909a84ad1424a029
+dashboard link: https://syzkaller.appspot.com/bug?extid=707d98c8649695eaf329
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
