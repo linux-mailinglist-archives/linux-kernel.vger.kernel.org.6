@@ -1,192 +1,112 @@
-Return-Path: <linux-kernel+bounces-258294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E896E9385E6
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 21:24:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 091979385EA
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 21:25:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19DA11C20942
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 19:24:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2BC11F211AD
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 19:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B777216A959;
-	Sun, 21 Jul 2024 19:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D1816B385;
+	Sun, 21 Jul 2024 19:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LbKSq8RN"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cyT32yN8"
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F103323D;
-	Sun, 21 Jul 2024 19:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA80323D;
+	Sun, 21 Jul 2024 19:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721589861; cv=none; b=Dj+bmTBgF7r+ubkdCj8oUDqgBoxUSvpTvloYvgJaPiJ8XZF/hbZD/6e/NyRud5e6R+P5Gru2KKVPnkMRFLjt1AGWHpLwvvRbCnWhfaCS6ATmvdPyUsWdcQdZi4TOkTGs2KkRXxNgZlnYfvMS+rhkWs6YyIdQ9/GTmweu99nPmbo=
+	t=1721589927; cv=none; b=nom/908AKNCMGbGuUo8ucahXnP4R4xi9ALZQ6X0HYf0Z232qcDGMT41gusTROcId8gUjxUkQDF/0Leukz/LIGD9hK1I4xH+XEX+5iueV7n8q13+yPAmkT+V0/ILoNVKBJhJQIqi9/pmPHI5E5YmGSGq4ip1Ed7z8LyMrD5eMVnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721589861; c=relaxed/simple;
-	bh=AqT35sDXJ0iu6yBNB7r+JGSv/gJJ49DhERq/qxLAwEw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gyETD0FrMyqGwjNaFKvOOLi608sDvQVZRjoS4O3VHIGZM6w9L3Y97xHY1XYPQunkYS1Aj17ZDcLO9r5+UIDuwn1EUtWKcbAidN/W6FEvYwGfNLIwB2mLXi5cxqA/TLBuLiEQPQRqoIhUqH4XPDVm5ufBUhipMFFTZJ2RFsxUOiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LbKSq8RN; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3d9400a1ad9so2077254b6e.1;
-        Sun, 21 Jul 2024 12:24:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721589858; x=1722194658; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tKmyuILTI8ybEcidGG1vAPXbk+2J62QqKdMmKlVKTgo=;
-        b=LbKSq8RNTHkDcUHKuGxf1Yu8NRGI4ZCSpkVQ2Vp1w0hpMjwzomrVrwYXz4Wgsm72oX
-         yB9jY2NeGvIixHuzC+yOs4xIxnZlEka7ID3Ci2sVsTpBvK98yKzJKyVJt/1/OWijjemk
-         tpDkxAPPkzIg/tUarJ8g/oOR3Dft5Meexcvp4j7Bt1M32KTKtTEHG86tRaZWM5dCmuuR
-         EUbF7rz6Ijuqy4k8yG/kMkFrsIEBlXMlUWDkLn+9h6DWRFV2MfMEiYAR7FDNACihkNFv
-         4O+JWxZklQhX9vPUQky7mQ/ZQOWb376PRWI5qIrGRs961hgOlvIoIr7xoHVuuC8jdZN2
-         RQqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721589858; x=1722194658;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tKmyuILTI8ybEcidGG1vAPXbk+2J62QqKdMmKlVKTgo=;
-        b=Vh02Dl0dBTM9E18tP5EI/8Ydoi+Q7hYtSXK04Rb5m5bwIXiZ3i+JqEV8DmM3Qo2Wco
-         HLDKlRNefmhvx32kI1DQ3PC1GmrCnhzMMqvjDN3F4KL0ojG61kbuTXySFtUlir2N1ORh
-         up/1/YCYdKTaa1ZK86kjomNL2VW8BIqcTgHXP8Vm2ESub/WRGsHmrgCZOkSfbe7FXD4V
-         PNJLM7QV2AGmxVrEE4vlBaGLpU+43fUXheOP/mQk3ELVtJacvqsYWSErxWC/+PA/XV3S
-         BziAJdVjJIocOkxhEpBWWBfJ+PZBSzk/1ueQijTXQrS4DMzq7LV43rhh/RUhfjO7t6Gr
-         qLMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVq04wJINDQVJF3bNxCrgNEq39IUJeHXnQsuUfO+1Qrg3qkkaO0FFoKctM1rycmsY3oOwTb+CjvLiqMjqlH35LvRIOFJiXrVTH876ID5U2Xfoi83HyO6e4bCL/TDzdc86ZRiHUX
-X-Gm-Message-State: AOJu0YwN91WmyXSzXD2+JoBIFV4TR/XBDgOGalW60PekxRgjrh9xLo88
-	DwSBll6vu12Vzu9NcPAwSdmQST92NvDxv/yLDqHZM/gn2s6VZfTNE3Nl6Wbu
-X-Google-Smtp-Source: AGHT+IFyEBZY6FF+5xopCKyNITVCA+2JP4WlXSStEt/9clXjNzwlv/2shP7qekz//BAhjmlRhHktow==
-X-Received: by 2002:a05:6808:1483:b0:3d9:2def:21b4 with SMTP id 5614622812f47-3dae5f729f5mr7840495b6e.14.1721589858090;
-        Sun, 21 Jul 2024 12:24:18 -0700 (PDT)
-Received: from localhost.localdomain (syn-104-229-042-148.res.spectrum.com. [104.229.42.148])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44f9cd04062sm27277361cf.40.2024.07.21.12.24.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jul 2024 12:24:17 -0700 (PDT)
-From: crwulff@gmail.com
-To: linux-usb@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Felipe Balbi <felipe.balbi@linux.intel.com>,
-	Ruslan Bilovol <ruslan.bilovol@gmail.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	Chris Wulff <crwulff@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] usb: gadget: u_audio: Check return codes from usb_ep_enable and config_ep_by_speed.
-Date: Sun, 21 Jul 2024 15:23:15 -0400
-Message-ID: <20240721192314.3532697-2-crwulff@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1721589927; c=relaxed/simple;
+	bh=0aMDTS1Q+ke2bybc1XR+ru3LcVw9Wcs/qntj2msfcms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B9b/3hD+3DqtxPMcCkOxeMEQXMvLrjF+y18ZnWBbps3V11PzTaFi+5R86qkYKFxVVQ3hTuNGQe4e66gzoBZVihL37l/R1cxhR6fUSN/oTtu3sqP912IZ56kILHg5rTcCoxWn0Ps25GTZwqmB2GyNeC/Rh9eIWiKgdMKpHyVgWXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cyT32yN8; arc=none smtp.client-ip=217.70.178.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay5-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::225])
+	by mslow1.mail.gandi.net (Postfix) with ESMTP id B78B6C6021;
+	Sun, 21 Jul 2024 19:25:15 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B8C431C0003;
+	Sun, 21 Jul 2024 19:25:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1721589907;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ipOvCn4HjAe9SOCKtKgYOzgGnVV6yEDgzBHQOmIDXk0=;
+	b=cyT32yN8ebkxAJm6p7v0v82pOdPdyhlmgY17uvkuiVg2/4/oGNFI/UWNJC4yN2IY4dbPl6
+	lkUDWzJQEKl7o3REkH6j3kLjdqIS0sFqmM0CK4+Vw1py0jt+2PBT+TxB0f4C8hTGCKh+Ex
+	P2LiqPi4Z4HKsBtyp5f5qnoDJpYAiAjERjJruOw/PZ3JQFjOA4Rm/HJMw0w7j3k47KDdXv
+	0hXc8TzT4hsrGsYmH0c/TmopQ/iJCUzv2+ikeUVO72adumAPYr+vtLESgusAd1QeXsAKUL
+	hSyIdUpQyCqx4tU0zSHAN52PA3b3mCqlKZ6ZBVATiwj/Lswqzx2RwiVfx5fB5Q==
+Message-ID: <a348aa4d-d2c2-48f5-a1ed-4f97ffd093d7@bootlin.com>
+Date: Sun, 21 Jul 2024 21:25:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] selftests/bpf: integrate test_xdp_veth into
+ test_progs
+To: Daniel Borkmann <daniel@iogearbox.net>,
+ Alexei Starovoitov <ast@kernel.org>, "David S. Miller"
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+ Simon Horman <horms@kernel.org>
+Cc: ebpf@linuxfoundation.org, netdev@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20240716-convert_test_xdp_veth-v3-0-7b01389e3cb3@bootlin.com>
+ <20240716-convert_test_xdp_veth-v3-2-7b01389e3cb3@bootlin.com>
+ <3b1949b9-775a-8093-6a14-16dec843a446@iogearbox.net>
+From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <3b1949b9-775a-8093-6a14-16dec843a446@iogearbox.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-GND-Sasl: alexis.lothore@bootlin.com
 
-From: Chris Wulff <crwulff@gmail.com>
+Hello Daniel,
 
-These functions can fail if descriptors are malformed, or missing,
-for the selected USB speed.
+On 7/19/24 17:14, Daniel Borkmann wrote:
+> On 7/16/24 12:13 PM, Alexis Lothoré (eBPF Foundation) wrote:
 
-Fixes: eb9fecb9e69b ("usb: gadget: f_uac2: split out audio core")
-Fixes: 24f779dac8f3 ("usb: gadget: f_uac2/u_audio: add feedback endpoint support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Chris Wulff <crwulff@gmail.com>
----
- drivers/usb/gadget/function/u_audio.c | 42 ++++++++++++++++++++++-----
- 1 file changed, 34 insertions(+), 8 deletions(-)
+[...]
 
-diff --git a/drivers/usb/gadget/function/u_audio.c b/drivers/usb/gadget/function/u_audio.c
-index 89af0feb7512..24299576972f 100644
---- a/drivers/usb/gadget/function/u_audio.c
-+++ b/drivers/usb/gadget/function/u_audio.c
-@@ -592,16 +592,25 @@ int u_audio_start_capture(struct g_audio *audio_dev)
- 	struct usb_ep *ep, *ep_fback;
- 	struct uac_rtd_params *prm;
- 	struct uac_params *params = &audio_dev->params;
--	int req_len, i;
-+	int req_len, i, ret;
- 
- 	prm = &uac->c_prm;
- 	dev_dbg(dev, "start capture with rate %d\n", prm->srate);
- 	ep = audio_dev->out_ep;
--	config_ep_by_speed(gadget, &audio_dev->func, ep);
-+	ret = config_ep_by_speed(gadget, &audio_dev->func, ep);
-+	if (ret < 0) {
-+		dev_err(dev, "config_ep_by_speed for out_ep failed (%d)\n", ret);
-+		return ret;
-+	}
-+
- 	req_len = ep->maxpacket;
- 
- 	prm->ep_enabled = true;
--	usb_ep_enable(ep);
-+	ret = usb_ep_enable(ep);
-+	if (ret < 0) {
-+		dev_err(dev, "usb_ep_enable failed for out_ep (%d)\n", ret);
-+		return ret;
-+	}
- 
- 	for (i = 0; i < params->req_number; i++) {
- 		if (!prm->reqs[i]) {
-@@ -629,9 +638,18 @@ int u_audio_start_capture(struct g_audio *audio_dev)
- 		return 0;
- 
- 	/* Setup feedback endpoint */
--	config_ep_by_speed(gadget, &audio_dev->func, ep_fback);
-+	ret = config_ep_by_speed(gadget, &audio_dev->func, ep_fback);
-+	if (ret < 0) {
-+		dev_err(dev, "config_ep_by_speed in_ep_fback failed (%d)\n", ret);
-+		return ret; // TODO: Clean up out_ep
-+	}
-+
- 	prm->fb_ep_enabled = true;
--	usb_ep_enable(ep_fback);
-+	ret = usb_ep_enable(ep_fback);
-+	if (ret < 0) {
-+		dev_err(dev, "usb_ep_enable failed for in_ep_fback (%d)\n", ret);
-+		return ret; // TODO: Clean up out_ep
-+	}
- 	req_len = ep_fback->maxpacket;
- 
- 	req_fback = usb_ep_alloc_request(ep_fback, GFP_ATOMIC);
-@@ -687,13 +705,17 @@ int u_audio_start_playback(struct g_audio *audio_dev)
- 	struct uac_params *params = &audio_dev->params;
- 	unsigned int factor;
- 	const struct usb_endpoint_descriptor *ep_desc;
--	int req_len, i;
-+	int req_len, i, ret;
- 	unsigned int p_pktsize;
- 
- 	prm = &uac->p_prm;
- 	dev_dbg(dev, "start playback with rate %d\n", prm->srate);
- 	ep = audio_dev->in_ep;
--	config_ep_by_speed(gadget, &audio_dev->func, ep);
-+	ret = config_ep_by_speed(gadget, &audio_dev->func, ep);
-+	if (ret < 0) {
-+		dev_err(dev, "config_ep_by_speed for in_ep failed (%d)\n", ret);
-+		return ret;
-+	}
- 
- 	ep_desc = ep->desc;
- 	/*
-@@ -720,7 +742,11 @@ int u_audio_start_playback(struct g_audio *audio_dev)
- 	uac->p_residue_mil = 0;
- 
- 	prm->ep_enabled = true;
--	usb_ep_enable(ep);
-+	ret = usb_ep_enable(ep);
-+	if (ret < 0) {
-+		dev_err(dev, "usb_ep_enable failed for in_ep (%d)\n", ret);
-+		return ret;
-+	}
- 
- 	for (i = 0; i < params->req_number; i++) {
- 		if (!prm->reqs[i]) {
+>> +    nstoken = open_netns(config[index].namespace);
+>> +    if (!ASSERT_OK_PTR(nstoken, "switch to remote veth namespace"))
+>> +        return -1;
+>> +    interface = if_nametoindex(config[index].remote_veth);
+>> +    if (!ASSERT_NEQ(interface, 0, "non zero interface index"))
+>> +        return -1;
+> 
+> Missing `close_netns(nstoken);` in error path here, otherwise looks reasonable
+> to me.
+Ah yes, good catch, thanks. v4 incoming with the corresponding fix.
+
+Thanks,
+Alexis
+
 -- 
-2.43.0
+Alexis Lothoré, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
