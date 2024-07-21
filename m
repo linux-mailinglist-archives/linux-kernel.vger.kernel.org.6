@@ -1,95 +1,126 @@
-Return-Path: <linux-kernel+bounces-258093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B796938362
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 07:21:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8AB0938365
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 07:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E47828176D
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 05:21:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA98A1C20A32
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 05:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738BC441D;
-	Sun, 21 Jul 2024 05:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A0725256;
+	Sun, 21 Jul 2024 05:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="u/9SFE4o"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jTfLlca5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A1B1FBA
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 05:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45FD3FE4;
+	Sun, 21 Jul 2024 05:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721539263; cv=none; b=U5NG41golKHb5dkY+2yGl7r0reuxWYvWyCWXWMGFbNRWwphp7IVO2XdlPWvzr4uKaKe0U+FxdOJ+f1JKt/DtGFlK5mWLIG3W+AKBIHfFOcWpx+WlG2RMJD7LOREVPH84uoNPEjzxV9Vcz7rreto/L0TMNB9BlizhGoUCbzhxoUU=
+	t=1721539751; cv=none; b=uaX1p1rO84CL8hpNWKkLkZ2EwHYyS6tv/GwE8h9JR6khliJhOuvHMFNgM/cKw/sQmAvxvpbReTQ1AFPdO/d3oPC2wG8ZFROKGwAJBMJY3gH2gkof92qDZcUxkKOECSDxawBy0E8DHBVqAB8B030/e5yjSrHZsbjIgVC5M+aL6ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721539263; c=relaxed/simple;
-	bh=CUvafZm9PXoKuTY9DW0YQJcv9RoCtEwgh79nadQKUfc=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Bxed5Wi0Wn7ImWgfH7GYTrz3On5kovM9KbGcdukwLNQFXIERCfCiyhwdlDeUL5Eaqj6j50QP3QZneYxsQZvYIcMJm5jJ9SoGXtBhSid2T4wH7uvTLy4xh1Wmprqcpzt42OvPRLgKo2Knb85zjav5+bJrs/AaCd9kX+RN40F0ArY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=u/9SFE4o; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1721539250; bh=IfORuzqiJAwlbujaaLkEJbQtvC91r2v267VLRz1/yMk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=u/9SFE4o+5F0J/GpOli3Yu9XWZJJVMiOOC74wt/DPU3pCNxq+j03KJzdfc4pDxdDF
-	 vaIPgsly+twPvB1kiwHq9XuRkKx4KFN3bAmVIfuJvHery/5lC2NnwyT7ZYwgeBEdH+
-	 6TO4PYZLGll2oApBzuzx0ZhAK+vWLlsMjJLuabHA=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 3A78D84A; Sun, 21 Jul 2024 13:14:39 +0800
-X-QQ-mid: xmsmtpt1721538879tuwlwqlqb
-Message-ID: <tencent_864C4BBC74D1772167023D5936EC96683609@qq.com>
-X-QQ-XMAILINFO: MwqrwaLzgdeb9KnR5IMzvuD3N+XD8zO00OWzgrc41M5MHi2ZhwpiTBP4pJ5HDt
-	 PdZHu68oRbd/7kPQFVib+IjzmekFBttBIivEF9XyI0DVY+MkwspnP0lvu/Ie9T3Y7aIGVMj91fWt
-	 W0E/BkjWLniI7ixEjhMjMBGVqx9K7Noxo/X80AIGOJRqLjRYaQO6LqozOlDgb20jl60B1W1bcfy+
-	 yCsEWcwSdQLfVKuOxz0g6wl6xrBMr5BQEDB/16c/wrWikwKBbuFJhqrKb2B5+YBf1Pb2/WTho6XB
-	 p3Qg4uHIz4mUZvkQTQPtnisAweO4QPApCnKk84X59NxamBWkTduGjPph/71C48Kt1+sOv/smm4Cj
-	 8XWLz6k9sWbgPux/U7yuyobEzC82RJIzsW8MWj28R5dOUI+fGvm7r/u3ffTpHbyGyzE5wJzrcIwc
-	 CtjdgARiuNI1bkr66jIqFy/qSiTE2H78mzhv3sJPWOvjrq9mnazYlKPqF+BRohuBt/1R2tbRb2s2
-	 i2k9euB2W36/F2Q+AXuYXNeiUbtroLpJ6p9WtLn18ZMYy0MTNHIOfyERA4YZ4XDBS5BCgCQyx2fz
-	 vy2GB/2teVqypP03NFvNETRDjKVUGzFbo1tCQTG5I9jzu1DclIfdG1u/jtUE3SCiuRSr1iUKkU/+
-	 I6DDl7GMvzZHCjiTQ2vBUyot+ss/juNzzd9/DzkwRb/mydVr6wWMf2iNi1t0GJgfabeBsQyHSujs
-	 dX5n/ol0CmcDpmJklbG7vo99DzOFbp623g+ZOdtcRWYPdiHnOzyeJXfEj8rncUz10p3EAXJXIJIa
-	 Dd5kmuF/a5e7G0ZeHQRSjYu4hO5v5By09prsmcCO/ABLk2J8FuF9lo+jncmPi2yLbqvSpMexpiml
-	 Db3+imKd+h2xLAClWAu1A29TdyWdcprKaWe9y8ETsMkZck5wpxixrIrhFLS1Qy7H4ih1wiM5044+
-	 6TTwo9MJZbG8jNT4XQQrC+BZAc99HO
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+34a0ee986f61f15da35d@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [fs?] BUG: unable to handle kernel NULL pointer dereference in path_from_stashed
-Date: Sun, 21 Jul 2024 13:14:40 +0800
-X-OQ-MSGID: <20240721051439.1606444-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000cf8462061db0699c@google.com>
-References: <000000000000cf8462061db0699c@google.com>
+	s=arc-20240116; t=1721539751; c=relaxed/simple;
+	bh=DsqyEfIisDMSYLziYw0NB5TjXMJqLhfaN1hqRQ20XnM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gY2f3hC4GgPyfz/k00PPW+qlolcJC1cFm4z9anUinTc4Isel3+se8YChPsSLxB9STmIPUKsUIgXjPfpfscXK6A+Sh6Ghlb4qFTFb+Qa3x/wk2cFclwsM0w0LUzOtCVvYUwjigdwrvA1JyyvRx1vLoTu90BKJmYEAttcB2xKJIZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jTfLlca5; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721539749; x=1753075749;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DsqyEfIisDMSYLziYw0NB5TjXMJqLhfaN1hqRQ20XnM=;
+  b=jTfLlca5zDy7CNKn6NiZgxt7IJ1NtNdZID+ETQw/YVbI7n5t7XF/Au6b
+   N1VHGVC0WhCurpl573m3bFvXnVrAc1dToF0GUYbzYBdmybK7HB1DlKOg5
+   gbx4krnWCL1xStCyhsDyZUkHaF3iIfcppqEU+tzD1k2aTeNLJQPErdMNd
+   sEANTiayeP5H5m7GWi3RIIW6EOjOjvpWza1NSmyuVloF0dhQIBpX1b76Y
+   twBjdMbTJDP7GHnvOHSOFGFUbhvb/Mqi6QPDea+olWhzEY+kS2VziQVi7
+   QEjyrwVcA/Tt/MjOwXiekuScNeYGt8XL7/cWuonroTrFB48N7dBmtxl+l
+   w==;
+X-CSE-ConnectionGUID: wS/Jj4nnRYO/OLQuydT4UA==
+X-CSE-MsgGUID: lHaXVgbSToS9pXw/fAZvrA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11139"; a="18995681"
+X-IronPort-AV: E=Sophos;i="6.09,225,1716274800"; 
+   d="scan'208";a="18995681"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2024 22:29:08 -0700
+X-CSE-ConnectionGUID: nOsJWBO+Se6uW4pf31zEpg==
+X-CSE-MsgGUID: w8er+ICMShG6y2/H5bsnkw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,225,1716274800"; 
+   d="scan'208";a="56649120"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 20 Jul 2024 22:29:06 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sVP83-000jxW-26;
+	Sun, 21 Jul 2024 05:29:03 +0000
+Date: Sun, 21 Jul 2024 13:28:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] iio: humidity: Add support for ENS210
+Message-ID: <202407211229.nP7WkSo5-lkp@intel.com>
+References: <20240719-ens21x-v4-2-6044e48a376a@thegoodpenguin.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240719-ens21x-v4-2-6044e48a376a@thegoodpenguin.co.uk>
 
-time_ns is null ?
+Hi Joshua,
 
-#syz test: upstream 51835949dda3
+kernel test robot noticed the following build warnings:
 
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index c9cb14181def..fdae58eb1d98 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -168,6 +168,8 @@ static long pidfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case PIDFD_GET_TIME_NAMESPACE:
- 		get_time_ns(nsp->time_ns);
- 		ns_common = to_ns_common(nsp->time_ns);
-+		if (!nsp->time_ns)
-+			return -EINVAL;
- 		break;
- 	case PIDFD_GET_TIME_FOR_CHILDREN_NAMESPACE:
- 		get_time_ns(nsp->time_ns_for_children);
+[auto build test WARNING on 1ebab783647a9e3bf357002d5c4ff060c8474a0a]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Joshua-Felmeden/dt-bindings-iio-humidity-add-ENS210-sensor-family/20240719-210648
+base:   1ebab783647a9e3bf357002d5c4ff060c8474a0a
+patch link:    https://lore.kernel.org/r/20240719-ens21x-v4-2-6044e48a376a%40thegoodpenguin.co.uk
+patch subject: [PATCH v4 2/2] iio: humidity: Add support for ENS210
+config: x86_64-randconfig-122-20240721 (https://download.01.org/0day-ci/archive/20240721/202407211229.nP7WkSo5-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240721/202407211229.nP7WkSo5-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407211229.nP7WkSo5-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/iio/humidity/ens210.c:88:26: sparse: sparse: restricted __be32 degrades to integer
+>> drivers/iio/humidity/ens210.c:88:53: sparse: sparse: incorrect type in initializer (different base types) @@     expected restricted __be32 [usertype] val_be @@     got unsigned int @@
+   drivers/iio/humidity/ens210.c:88:53: sparse:     expected restricted __be32 [usertype] val_be
+   drivers/iio/humidity/ens210.c:88:53: sparse:     got unsigned int
+
+vim +88 drivers/iio/humidity/ens210.c
+
+    84	
+    85	/* calculate 17-bit crc7 */
+    86	static u8 ens210_crc7(u32 val)
+    87	{
+  > 88		__be32 val_be = (cpu_to_be32(val & 0x1ffff) >> 0x8);
+    89	
+    90		return crc7_be(0xde, (u8 *)&val_be, 3) >> 1;
+    91	}
+    92	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
