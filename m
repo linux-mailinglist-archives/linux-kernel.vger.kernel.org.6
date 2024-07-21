@@ -1,193 +1,604 @@
-Return-Path: <linux-kernel+bounces-258266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A199385A7
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 19:29:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60C3F9385A9
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 19:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFC7C1C20B4D
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 17:29:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B508D1F21101
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 17:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2BEC1684B4;
-	Sun, 21 Jul 2024 17:29:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0490A16A931;
+	Sun, 21 Jul 2024 17:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PeJxNZzA"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2401DFE4
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 17:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F0F1F5FA;
+	Sun, 21 Jul 2024 17:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721582946; cv=none; b=iInSYY0zacZVOvXUtCCoH/TyxuRALU1ZYEoPTjDSIWA0cWBnargoG8Zlxv2NJq6f14GDMX2xpLzsOzyTCH8CluiYyymasN98BdtrlsXLrhj+wLm0PZVYcCq7ypRK8GYCEYEi6XJk77rwQiWbwEhn3fOyCv+cUg4C72eBXJWP+PA=
+	t=1721583337; cv=none; b=KNWDRDtkWlgVGOcHa7XiTGtBWJTkZM3DrJ3SjpZHm3rdfL0jUOjpATVfjKqbdkHueBETBDuTrSyJOj0k0vXvIZsIgz7sWizJYwz2makRK6wIuiWAcguBp2haNTHL0bPUy643i9SN2kw5WUlTFA7GqQnueN7HYTiyeYGwEZqBoAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721582946; c=relaxed/simple;
-	bh=wtI8h/hFP73t1NFwAhgh7k0k94f7mOQVXAgCZM6oVS0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=pO6r4eO9aatmOApnanVxEddYoG9Uol6XEv5EYeSMKiUe0/WVesmZynu4mRnEUHG+2NCJbV8RDrmYqJL1rS4dNng5C0Diqd1xRhNA442tzqFEzl99dELB2FrJTfCUvZTLgT4H+03yREL5p6sFgAqlcWBeAOESZJwTm1SHBb2YFYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39862b50109so33799685ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 10:29:04 -0700 (PDT)
+	s=arc-20240116; t=1721583337; c=relaxed/simple;
+	bh=u0bKMacT8yp9qFHKyTLcKJi5OF03HhMW70P3wZKBGtw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I4sEcc1Ed1XcnW09MMaiFnMSEvrJY7FuG1OW+Tg09Yg+FtPnJjRvfkN0IMffcngxnbFDn3vvi9gLgmKieRzUzkvPrYDFM50nsMkbwetLW3tXsQau/rS0Qtgzd9Mq0QBcGii5OdWBo/GeORhy96FKIUIDRkRSO8aH/M2+NgYpdLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PeJxNZzA; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3687f8fcab5so1377263f8f.3;
+        Sun, 21 Jul 2024 10:35:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721583334; x=1722188134; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M1wRN2geVh1OnVHbu9p6xPlPkrXgHozUglD7BZEKzJI=;
+        b=PeJxNZzABkFxqCcs82fPuHsFOYGc4p366/yzMNlNx0Lqk9/HqlibSEOXGRymCnNXgo
+         5XC5GNB5ERno4/kCSi4dN4sCSlI0UDugjvIbPo5jf3brVPHClX5W9gkPnhalI8js/slS
+         3exazhUCjQX50FKuqb/rqs2ah7bhOxm2p1JkdO6a0IBLhiexP9mO3vaAISfMvBM8l7nB
+         g/tr6ipxNGr1X/+fc7EG5WiPuSUaAruGaHAbho/P9E/sq20pqglCvPnwgPMdvgX3Y5zh
+         ij6Twr+NMsmX9dCDpihcZ9aJZ8kggxVg7mBXIfuJj90azhzkFS294ii+sHVrCxJn/4Cc
+         gaKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721582944; x=1722187744;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LF5iQbbrCfP88oAcOEl5ZzWl38o0V519i/YmILtSMUk=;
-        b=IXzHvCOQov7gM9W1JWpaNXVKV6gr8bkjIfRaDI4SvnBSMG4v1hxVN3dUPlQTRL5bXB
-         7ZsAOSAdA5oM6rJhqi2qLDLSYWOpDOUxU/lTeiFsDK2lq75iNtMF/c6PZGQRiFW5wIGu
-         tVInpJDR2yIKly3SvFmnW0PA0pM5kD+Sc81vAiraTUiB5O+8qhWCCxv8f9PtUDqKQdBw
-         EU/BVDKnrR14axpl0bZQ2qiRnWyFoNJSwe9dXBGk4UCimBhMzIvtwbOdtF62i575w5bu
-         YJn/CbCYjrKLplDZj5q0vexS/dLbRzFcyrDPZu9Iv5xNrRMYjBzmbeoKi3gVWVwCyIGp
-         wI2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVorEst8VG1mVmfwMA1j3Bm1c6F1duJG0nvQrsQriptHm+3sxR8PMgknZyOYB53Njdw9dUtN1uTSYvqv9AN1de6GWeT5dfs5hG5+niv
-X-Gm-Message-State: AOJu0Yzv124OlXTDFaEimrNGgta8LKQIVMwGaoPz7dfSdhmsV3I3BAjK
-	fKnccwbztGcbNPW0fcWzT33RsHrbivWNHWxOgQDROqcA6+cK9FgjRdepRf8hNjKkDYQviSn/fqU
-	VnmeIGyXt+k3EnaapbkxBGJH8r3U7cjNUtyJ9wW/WaOUqkHVyyqJ6ILA=
-X-Google-Smtp-Source: AGHT+IEpvzV5MS5/w6Dx81YPydffwQh8fOpaZuDJm4M51TRji+lAdI+aPpa5NZX9zBWm64nr7z//6Dd5LSbjS7cHgQnRDUJV/X+l
+        d=1e100.net; s=20230601; t=1721583334; x=1722188134;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M1wRN2geVh1OnVHbu9p6xPlPkrXgHozUglD7BZEKzJI=;
+        b=v0m9m6pt8YqFwgYtOkyLmD2CMzSgp4g2/Dx1+diJDw/eM2he7PIaNmU/q3DQOXNYm6
+         uGsMDHSiAyXQjoZxQ53e47nVZ4ZOW9aDpayB3FI64dab5EcHpi5eU+FbpaaJ+3+9SvCg
+         pP4w3xhOHt343SagyY+khAqdivfBd7shcyL6L3abBVpOn4vK03ibYwp4AGGKtfNMcRk9
+         sTGAslt9asxyH6BOU/bApXgleN8tYdLhDiMVddPezvMNFaFlZnKkSnC8RiHwYcXE7CM+
+         2X7lKQw0m+ECD6puZtEFdnrVdPgTvaS+gRtn1rlaiuqwKUk8OwWOzLrFtoSqWQz6ISwU
+         iR3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVGEySxgo6sIbGk4kBk2q+KolKdNuXJYyCkd42FbR2h1D8fK8bwBpbYOvSNW1TTCTE4I6YSvWuaoQIyKz98kif24FnOtZ66RrbaVyp971wkmA6MkG95rXWvb3O95kk/PGI7LBe8
+X-Gm-Message-State: AOJu0YxPxTteJi+ewGrnN5PpztmIHHkWEQ0HloUDgelRdM/em06kvauq
+	s6msboCiJ2pKDvYtrGUu0XTFwlfUE2s0LGzztLJ48od7SyXRB2srp8UWUM1avVsEo7yM4N71tje
+	ud1qsorizWgOyACGTVPUKCpInpc5UOw==
+X-Google-Smtp-Source: AGHT+IFT0z+ALrh1cjd6ka7TygbKMaAUuNH/SrxDViyEpG5pa7L4Q8NZul/aUGoTDbPTPRFPbBVlQbtvk2r1lteSDHI=
+X-Received: by 2002:a5d:522a:0:b0:368:3789:1b6 with SMTP id
+ ffacd0b85a97d-369bb09fe9cmr2679197f8f.47.1721583333607; Sun, 21 Jul 2024
+ 10:35:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:3593:b0:4b9:6c10:36a9 with SMTP id
- 8926c6da1cb9f-4c23fd100b2mr425237173.1.1721582943962; Sun, 21 Jul 2024
- 10:29:03 -0700 (PDT)
-Date: Sun, 21 Jul 2024 10:29:03 -0700
-In-Reply-To: <20240721163635.2486-1-aha310510@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d3a01d061dc54329@google.com>
-Subject: Re: [syzbot] [bpf?] [net?] KASAN: slab-use-after-free Read in bq_xmit_all
-From: syzbot <syzbot+707d98c8649695eaf329@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240719093338.55117-1-linyunsheng@huawei.com> <20240719093338.55117-2-linyunsheng@huawei.com>
+In-Reply-To: <20240719093338.55117-2-linyunsheng@huawei.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Sun, 21 Jul 2024 10:34:56 -0700
+Message-ID: <CAKgT0UcsBGKR+AGU6wDUpXY48FnEA4hdvvti-YC87=8zfGPLdg@mail.gmail.com>
+Subject: Re: [RFC v11 01/14] mm: page_frag: add a test module for page_frag
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, Jul 19, 2024 at 2:36=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.co=
+m> wrote:
+>
+> Basing on the lib/objpool.c, change it to something like a
+> ptrpool, so that we can utilize that to test the correctness
+> and performance of the page_frag.
+>
+> The testing is done by ensuring that the fragment allocated
+> from a frag_frag_cache instance is pushed into a ptrpool
+> instance in a kthread binded to a specified cpu, and a kthread
+> binded to a specified cpu will pop the fragment from the
+> ptrpool and free the fragment.
+>
+> We may refactor out the common part between objpool and ptrpool
+> if this ptrpool thing turns out to be helpful for other place.
+>
+> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> ---
+>  mm/Kconfig.debug    |   8 +
+>  mm/Makefile         |   1 +
+>  mm/page_frag_test.c | 393 ++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 402 insertions(+)
+>  create mode 100644 mm/page_frag_test.c
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-general protection fault in bq_flush_to_queue
+I might have missed it somewhere. Is there any reason why this isn't
+in the selftests/mm/ directory? Seems like that would be a better fit
+for this.
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 1 PID: 6059 Comm: syz.0.51 Not tainted 6.10.0-rc6-syzkaller-01399-g605c96997d89 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-RIP: 0010:bq_flush_to_queue+0x44/0x610 kernel/bpf/cpumap.c:675
-Code: df e8 50 dc d6 ff 49 8d 5e 50 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 a6 b1 39 00 48 8b 2b 48 89 e8 48 c1 e8 03 <42> 0f b6 04 38 84 c0 0f 85 1d 05 00 00 44 8b 65 00 4d 8d 6e 58 4c
-RSP: 0018:ffffc90000a18a80 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8880652a4290 RCX: ffff888073870000
-RDX: 0000000080000101 RSI: 0000000000000010 RDI: ffff8880652a4240
-RBP: 0000000000000000 R08: ffffffff895a503a R09: 1ffffffff1f5969d
-R10: dffffc0000000000 R11: fffffbfff1f5969e R12: 0000000000000002
-R13: ffffc900037d7820 R14: ffff8880652a4240 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b33b5ffff CR3: 000000000e132000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- __cpu_map_flush+0x5d/0xd0 kernel/bpf/cpumap.c:767
- xdp_do_check_flushed+0x136/0x240 net/core/filter.c:4304
- __napi_poll+0xe4/0x490 net/core/dev.c:6774
- napi_poll net/core/dev.c:6840 [inline]
- net_rx_action+0x89b/0x1240 net/core/dev.c:6962
- handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
-RIP: 0010:_raw_spin_unlock_irqrestore+0xd8/0x140 kernel/locking/spinlock.c:194
-Code: 9c 8f 44 24 20 42 80 3c 23 00 74 08 4c 89 f7 e8 1e d9 6c f6 f6 44 24 21 02 75 52 41 f7 c7 00 02 00 00 74 01 fb bf 01 00 00 00 <e8> e3 79 d9 f5 65 8b 05 34 b3 77 74 85 c0 74 43 48 c7 04 24 0e 36
-RSP: 0018:ffffc900037d7580 EFLAGS: 00000206
-RAX: 35c09d964b24e400 RBX: 1ffff920006faeb4 RCX: ffffffff8172d8aa
-RDX: dffffc0000000000 RSI: ffffffff8bcabb40 RDI: 0000000000000001
-RBP: ffffc900037d7610 R08: ffffffff92f875b7 R09: 1ffffffff25f0eb6
-R10: dffffc0000000000 R11: fffffbfff25f0eb7 R12: dffffc0000000000
-R13: 1ffff920006faeb0 R14: ffffc900037d75a0 R15: 0000000000000246
- __debug_check_no_obj_freed lib/debugobjects.c:998 [inline]
- debug_check_no_obj_freed+0x561/0x580 lib/debugobjects.c:1019
- slab_free_hook mm/slub.c:2163 [inline]
- slab_free mm/slub.c:4438 [inline]
- kmem_cache_free+0x10f/0x350 mm/slub.c:4513
- vma_lock_free kernel/fork.c:453 [inline]
- __vm_area_free+0xe0/0x110 kernel/fork.c:509
- remove_vma mm/mmap.c:146 [inline]
- exit_mmap+0x645/0xc80 mm/mmap.c:3365
- __mmput+0x115/0x3c0 kernel/fork.c:1346
- exit_mm+0x220/0x310 kernel/exit.c:567
- do_exit+0x9aa/0x27e0 kernel/exit.c:863
- do_group_exit+0x207/0x2c0 kernel/exit.c:1025
- get_signal+0x16a1/0x1740 kernel/signal.c:2909
- arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:310
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0xc9/0x360 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1530b75b59
-Code: Unable to access opcode bytes at 0x7f1530b75b2f.
-RSP: 002b:00007f153197b0f8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 00007f1530d05f68 RCX: 00007f1530b75b59
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007f1530d05f68
-RBP: 00007f1530d05f60 R08: 00007f153197b6c0 R09: 00007f153197b6c0
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f1530d05f6c
-R13: 000000000000000b R14: 00007ffd94c0c0d0 R15: 00007ffd94c0c1b8
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bq_flush_to_queue+0x44/0x610 kernel/bpf/cpumap.c:675
-Code: df e8 50 dc d6 ff 49 8d 5e 50 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 a6 b1 39 00 48 8b 2b 48 89 e8 48 c1 e8 03 <42> 0f b6 04 38 84 c0 0f 85 1d 05 00 00 44 8b 65 00 4d 8d 6e 58 4c
-RSP: 0018:ffffc90000a18a80 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8880652a4290 RCX: ffff888073870000
-RDX: 0000000080000101 RSI: 0000000000000010 RDI: ffff8880652a4240
-RBP: 0000000000000000 R08: ffffffff895a503a R09: 1ffffffff1f5969d
-R10: dffffc0000000000 R11: fffffbfff1f5969e R12: 0000000000000002
-R13: ffffc900037d7820 R14: ffff8880652a4240 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b33b5ffff CR3: 000000000e132000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess), 1 bytes skipped:
-   0:	e8 50 dc d6 ff       	call   0xffd6dc55
-   5:	49 8d 5e 50          	lea    0x50(%r14),%rbx
-   9:	48 89 d8             	mov    %rbx,%rax
-   c:	48 c1 e8 03          	shr    $0x3,%rax
-  10:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1)
-  15:	74 08                	je     0x1f
-  17:	48 89 df             	mov    %rbx,%rdi
-  1a:	e8 a6 b1 39 00       	call   0x39b1c5
-  1f:	48 8b 2b             	mov    (%rbx),%rbp
-  22:	48 89 e8             	mov    %rbp,%rax
-  25:	48 c1 e8 03          	shr    $0x3,%rax
-* 29:	42 0f b6 04 38       	movzbl (%rax,%r15,1),%eax <-- trapping instruction
-  2e:	84 c0                	test   %al,%al
-  30:	0f 85 1d 05 00 00    	jne    0x553
-  36:	44 8b 65 00          	mov    0x0(%rbp),%r12d
-  3a:	4d 8d 6e 58          	lea    0x58(%r14),%r13
-  3e:	4c                   	rex.WR
+> diff --git a/mm/Kconfig.debug b/mm/Kconfig.debug
+> index afc72fde0f03..1ebcd45f47d4 100644
+> --- a/mm/Kconfig.debug
+> +++ b/mm/Kconfig.debug
+> @@ -142,6 +142,14 @@ config DEBUG_PAGE_REF
+>           kernel code.  However the runtime performance overhead is virtu=
+ally
+>           nil until the tracepoints are actually enabled.
+>
+> +config DEBUG_PAGE_FRAG_TEST
 
+This isn't a "DEBUG" feature. This is a test feature.
 
-Tested on:
+> +       tristate "Test module for page_frag"
+> +       default n
+> +       depends on m && DEBUG_KERNEL
 
-commit:         605c9699 bpf: relax zero fixed offset constraint on KF..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=146d0ae6980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8defeae77515c9b1
-dashboard link: https://syzkaller.appspot.com/bug?extid=707d98c8649695eaf329
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+I am not sure it is valid to have a tristate depend on being built as a mod=
+ule.
 
-Note: no patches were applied.
+I think if you can set it up as a selftest it will have broader use as
+you could compile it against any target kernel going forward and add
+it as a module rather than having to build it as a part of a debug
+kernel.
+
+> +       help
+> +         This builds the "page_frag_test" module that is used to test th=
+e
+> +         correctness and performance of page_frag's implementation.
+> +
+>  config DEBUG_RODATA_TEST
+>      bool "Testcase for the marking rodata read-only"
+>      depends on STRICT_KERNEL_RWX
+> diff --git a/mm/Makefile b/mm/Makefile
+> index 8fb85acda1b1..29d9f7618a33 100644
+> --- a/mm/Makefile
+> +++ b/mm/Makefile
+> @@ -106,6 +106,7 @@ obj-$(CONFIG_MEMORY_FAILURE) +=3D memory-failure.o
+>  obj-$(CONFIG_HWPOISON_INJECT) +=3D hwpoison-inject.o
+>  obj-$(CONFIG_DEBUG_KMEMLEAK) +=3D kmemleak.o
+>  obj-$(CONFIG_DEBUG_RODATA_TEST) +=3D rodata_test.o
+> +obj-$(CONFIG_DEBUG_PAGE_FRAG_TEST) +=3D page_frag_test.o
+>  obj-$(CONFIG_DEBUG_VM_PGTABLE) +=3D debug_vm_pgtable.o
+>  obj-$(CONFIG_PAGE_OWNER) +=3D page_owner.o
+>  obj-$(CONFIG_MEMORY_ISOLATION) +=3D page_isolation.o
+> diff --git a/mm/page_frag_test.c b/mm/page_frag_test.c
+> new file mode 100644
+> index 000000000000..cf2691f60b67
+> --- /dev/null
+> +++ b/mm/page_frag_test.c
+> @@ -0,0 +1,393 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * Test module for page_frag cache
+> + *
+> + * Copyright: linyunsheng@huawei.com
+> + */
+> +
+> +#include <linux/mm.h>
+> +#include <linux/module.h>
+> +#include <linux/slab.h>
+> +#include <linux/vmalloc.h>
+> +#include <linux/atomic.h>
+> +#include <linux/irqflags.h>
+> +#include <linux/cpumask.h>
+> +#include <linux/log2.h>
+> +#include <linux/completion.h>
+> +#include <linux/kthread.h>
+> +
+> +#define OBJPOOL_NR_OBJECT_MAX  BIT(24)
+> +
+> +struct objpool_slot {
+> +       u32 head;
+> +       u32 tail;
+> +       u32 last;
+> +       u32 mask;
+> +       void *entries[];
+> +} __packed;
+> +
+> +struct objpool_head {
+> +       int nr_cpus;
+> +       int capacity;
+> +       struct objpool_slot **cpu_slots;
+> +};
+> +
+> +/* initialize percpu objpool_slot */
+> +static void objpool_init_percpu_slot(struct objpool_head *pool,
+> +                                    struct objpool_slot *slot)
+> +{
+> +       /* initialize elements of percpu objpool_slot */
+> +       slot->mask =3D pool->capacity - 1;
+> +}
+> +
+> +/* allocate and initialize percpu slots */
+> +static int objpool_init_percpu_slots(struct objpool_head *pool,
+> +                                    int nr_objs, gfp_t gfp)
+> +{
+> +       int i;
+> +
+> +       for (i =3D 0; i < pool->nr_cpus; i++) {
+> +               struct objpool_slot *slot;
+> +               int size;
+> +
+> +               /* skip the cpu node which could never be present */
+> +               if (!cpu_possible(i))
+> +                       continue;
+> +
+> +               size =3D struct_size(slot, entries, pool->capacity);
+> +
+> +               /*
+> +                * here we allocate percpu-slot & objs together in a sing=
+le
+> +                * allocation to make it more compact, taking advantage o=
+f
+> +                * warm caches and TLB hits. in default vmalloc is used t=
+o
+> +                * reduce the pressure of kernel slab system. as we know,
+> +                * minimal size of vmalloc is one page since vmalloc woul=
+d
+> +                * always align the requested size to page size
+> +                */
+> +               if (gfp & GFP_ATOMIC)
+> +                       slot =3D kmalloc_node(size, gfp, cpu_to_node(i));
+> +               else
+> +                       slot =3D __vmalloc_node(size, sizeof(void *), gfp=
+,
+> +                                             cpu_to_node(i),
+> +                                             __builtin_return_address(0)=
+);
+
+When would anyone ever call this with atomic? This is just for your
+test isn't it?
+
+> +               if (!slot)
+> +                       return -ENOMEM;
+> +
+> +               memset(slot, 0, size);
+> +               pool->cpu_slots[i] =3D slot;
+> +
+> +               objpool_init_percpu_slot(pool, slot);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +/* cleanup all percpu slots of the object pool */
+> +static void objpool_fini_percpu_slots(struct objpool_head *pool)
+> +{
+> +       int i;
+> +
+> +       if (!pool->cpu_slots)
+> +               return;
+> +
+> +       for (i =3D 0; i < pool->nr_cpus; i++)
+> +               kvfree(pool->cpu_slots[i]);
+> +       kfree(pool->cpu_slots);
+> +}
+> +
+> +/* initialize object pool and pre-allocate objects */
+> +static int objpool_init(struct objpool_head *pool, int nr_objs, gfp_t gf=
+p)
+> +{
+> +       int rc, capacity, slot_size;
+> +
+> +       /* check input parameters */
+> +       if (nr_objs <=3D 0 || nr_objs > OBJPOOL_NR_OBJECT_MAX)
+> +               return -EINVAL;
+> +
+> +       /* calculate capacity of percpu objpool_slot */
+> +       capacity =3D roundup_pow_of_two(nr_objs);
+> +       if (!capacity)
+> +               return -EINVAL;
+> +
+> +       gfp =3D gfp & ~__GFP_ZERO;
+> +
+> +       /* initialize objpool pool */
+> +       memset(pool, 0, sizeof(struct objpool_head));
+> +       pool->nr_cpus =3D nr_cpu_ids;
+> +       pool->capacity =3D capacity;
+> +       slot_size =3D pool->nr_cpus * sizeof(struct objpool_slot *);
+> +       pool->cpu_slots =3D kzalloc(slot_size, gfp);
+> +       if (!pool->cpu_slots)
+> +               return -ENOMEM;
+> +
+> +       /* initialize per-cpu slots */
+> +       rc =3D objpool_init_percpu_slots(pool, nr_objs, gfp);
+> +       if (rc)
+> +               objpool_fini_percpu_slots(pool);
+> +
+> +       return rc;
+> +}
+> +
+> +/* adding object to slot, abort if the slot was already full */
+> +static int objpool_try_add_slot(void *obj, struct objpool_head *pool, in=
+t cpu)
+> +{
+> +       struct objpool_slot *slot =3D pool->cpu_slots[cpu];
+> +       u32 head, tail;
+> +
+> +       /* loading tail and head as a local snapshot, tail first */
+> +       tail =3D READ_ONCE(slot->tail);
+> +
+> +       do {
+> +               head =3D READ_ONCE(slot->head);
+> +               /* fault caught: something must be wrong */
+> +               if (unlikely(tail - head >=3D pool->capacity))
+> +                       return -ENOSPC;
+> +       } while (!try_cmpxchg_acquire(&slot->tail, &tail, tail + 1));
+> +
+> +       /* now the tail position is reserved for the given obj */
+> +       WRITE_ONCE(slot->entries[tail & slot->mask], obj);
+> +       /* update sequence to make this obj available for pop() */
+> +       smp_store_release(&slot->last, tail + 1);
+> +
+> +       return 0;
+> +}
+> +
+> +/* reclaim an object to object pool */
+> +static int objpool_push(void *obj, struct objpool_head *pool)
+> +{
+> +       unsigned long flags;
+> +       int rc;
+> +
+> +       /* disable local irq to avoid preemption & interruption */
+> +       raw_local_irq_save(flags);
+> +       rc =3D objpool_try_add_slot(obj, pool, raw_smp_processor_id());
+> +       raw_local_irq_restore(flags);
+> +
+> +       return rc;
+> +}
+> +
+> +/* try to retrieve object from slot */
+> +static void *objpool_try_get_slot(struct objpool_head *pool, int cpu)
+> +{
+> +       struct objpool_slot *slot =3D pool->cpu_slots[cpu];
+> +       /* load head snapshot, other cpus may change it */
+> +       u32 head =3D smp_load_acquire(&slot->head);
+> +
+> +       while (head !=3D READ_ONCE(slot->last)) {
+> +               void *obj;
+> +
+> +               /*
+> +                * data visibility of 'last' and 'head' could be out of
+> +                * order since memory updating of 'last' and 'head' are
+> +                * performed in push() and pop() independently
+> +                *
+> +                * before any retrieving attempts, pop() must guarantee
+> +                * 'last' is behind 'head', that is to say, there must
+> +                * be available objects in slot, which could be ensured
+> +                * by condition 'last !=3D head && last - head <=3D nr_ob=
+js'
+> +                * that is equivalent to 'last - head - 1 < nr_objs' as
+> +                * 'last' and 'head' are both unsigned int32
+> +                */
+> +               if (READ_ONCE(slot->last) - head - 1 >=3D pool->capacity)=
+ {
+> +                       head =3D READ_ONCE(slot->head);
+> +                       continue;
+> +               }
+> +
+> +               /* obj must be retrieved before moving forward head */
+> +               obj =3D READ_ONCE(slot->entries[head & slot->mask]);
+> +
+> +               /* move head forward to mark it's consumption */
+> +               if (try_cmpxchg_release(&slot->head, &head, head + 1))
+> +                       return obj;
+> +       }
+> +
+> +       return NULL;
+> +}
+> +
+> +/* allocate an object from object pool */
+> +static void *objpool_pop(struct objpool_head *pool)
+> +{
+> +       void *obj =3D NULL;
+> +       unsigned long flags;
+> +       int i, cpu;
+> +
+> +       /* disable local irq to avoid preemption & interruption */
+> +       raw_local_irq_save(flags);
+> +
+> +       cpu =3D raw_smp_processor_id();
+> +       for (i =3D 0; i < num_possible_cpus(); i++) {
+> +               obj =3D objpool_try_get_slot(pool, cpu);
+> +               if (obj)
+> +                       break;
+> +               cpu =3D cpumask_next_wrap(cpu, cpu_possible_mask, -1, 1);
+> +       }
+> +       raw_local_irq_restore(flags);
+> +
+> +       return obj;
+> +}
+> +
+> +/* release whole objpool forcely */
+> +static void objpool_free(struct objpool_head *pool)
+> +{
+> +       if (!pool->cpu_slots)
+> +               return;
+> +
+> +       /* release percpu slots */
+> +       objpool_fini_percpu_slots(pool);
+> +}
+> +
+
+Why add all this extra objpool overhead? This seems like overkill for
+what should be a simple test. Seems like you should just need a simple
+array located on one of your CPUs. I'm not sure what is with all the
+extra overhead being added here.
+
+> +static struct objpool_head ptr_pool;
+> +static int nr_objs =3D 512;
+> +static atomic_t nthreads;
+> +static struct completion wait;
+> +static struct page_frag_cache test_frag;
+> +
+> +static int nr_test =3D 5120000;
+> +module_param(nr_test, int, 0);
+> +MODULE_PARM_DESC(nr_test, "number of iterations to test");
+> +
+> +static bool test_align;
+> +module_param(test_align, bool, 0);
+> +MODULE_PARM_DESC(test_align, "use align API for testing");
+> +
+> +static int test_alloc_len =3D 2048;
+> +module_param(test_alloc_len, int, 0);
+> +MODULE_PARM_DESC(test_alloc_len, "alloc len for testing");
+> +
+> +static int test_push_cpu;
+> +module_param(test_push_cpu, int, 0);
+> +MODULE_PARM_DESC(test_push_cpu, "test cpu for pushing fragment");
+> +
+> +static int test_pop_cpu;
+> +module_param(test_pop_cpu, int, 0);
+> +MODULE_PARM_DESC(test_pop_cpu, "test cpu for popping fragment");
+> +
+> +static int page_frag_pop_thread(void *arg)
+> +{
+> +       struct objpool_head *pool =3D arg;
+> +       int nr =3D nr_test;
+> +
+> +       pr_info("page_frag pop test thread begins on cpu %d\n",
+> +               smp_processor_id());
+> +
+> +       while (nr > 0) {
+> +               void *obj =3D objpool_pop(pool);
+> +
+> +               if (obj) {
+> +                       nr--;
+> +                       page_frag_free(obj);
+> +               } else {
+> +                       cond_resched();
+> +               }
+> +       }
+> +
+> +       if (atomic_dec_and_test(&nthreads))
+> +               complete(&wait);
+> +
+> +       pr_info("page_frag pop test thread exits on cpu %d\n",
+> +               smp_processor_id());
+> +
+> +       return 0;
+> +}
+> +
+> +static int page_frag_push_thread(void *arg)
+> +{
+> +       struct objpool_head *pool =3D arg;
+> +       int nr =3D nr_test;
+> +
+> +       pr_info("page_frag push test thread begins on cpu %d\n",
+> +               smp_processor_id());
+> +
+> +       while (nr > 0) {
+> +               void *va;
+> +               int ret;
+> +
+> +               if (test_align) {
+> +                       va =3D page_frag_alloc_align(&test_frag, test_all=
+oc_len,
+> +                                                  GFP_KERNEL, SMP_CACHE_=
+BYTES);
+> +
+> +                       WARN_ONCE((unsigned long)va & (SMP_CACHE_BYTES - =
+1),
+> +                                 "unaligned va returned\n");
+> +               } else {
+> +                       va =3D page_frag_alloc(&test_frag, test_alloc_len=
+, GFP_KERNEL);
+> +               }
+> +
+> +               if (!va)
+> +                       continue;
+> +
+> +               ret =3D objpool_push(va, pool);
+> +               if (ret) {
+> +                       page_frag_free(va);
+> +                       cond_resched();
+> +               } else {
+> +                       nr--;
+> +               }
+> +       }
+> +
+> +       pr_info("page_frag push test thread exits on cpu %d\n",
+> +               smp_processor_id());
+> +
+> +       if (atomic_dec_and_test(&nthreads))
+> +               complete(&wait);
+> +
+> +       return 0;
+> +}
+> +
+
+So looking over these functions they seem to overlook how the network
+stack works in many cases. One of the main motivations for the page
+frags approach is page recycling. For example with GRO enabled the
+headers allocated to record the frags might be freed for all but the
+first. As such you can end up with 17 fragments being allocated, and
+16 freed within the same thread as NAPI will just be recycling the
+buffers.
+
+With this setup it doesn't seem very likely to be triggered since you
+are operating in two threads. One test you might want to look at
+adding is a test where you are allocating and freeing in the same
+thread at a fairly constant rate to test against the "ideal" scenario.
+
+> +static int __init page_frag_test_init(void)
+> +{
+> +       struct task_struct *tsk_push, *tsk_pop;
+> +       ktime_t start;
+> +       u64 duration;
+> +       int ret;
+> +
+> +       test_frag.va =3D NULL;
+> +       atomic_set(&nthreads, 2);
+> +       init_completion(&wait);
+> +
+> +       if (test_alloc_len > PAGE_SIZE || test_alloc_len <=3D 0)
+> +               return -EINVAL;
+> +
+> +       ret =3D objpool_init(&ptr_pool, nr_objs, GFP_KERNEL);
+> +       if (ret)
+> +               return ret;
+> +
+> +       tsk_push =3D kthread_create_on_cpu(page_frag_push_thread, &ptr_po=
+ol,
+> +                                        test_push_cpu, "page_frag_push")=
+;
+> +       if (IS_ERR(tsk_push))
+> +               return PTR_ERR(tsk_push);
+> +
+> +       tsk_pop =3D kthread_create_on_cpu(page_frag_pop_thread, &ptr_pool=
+,
+> +                                       test_pop_cpu, "page_frag_pop");
+> +       if (IS_ERR(tsk_pop)) {
+> +               kthread_stop(tsk_push);
+> +               return PTR_ERR(tsk_pop);
+> +       }
+> +
+> +       start =3D ktime_get();
+> +       wake_up_process(tsk_push);
+> +       wake_up_process(tsk_pop);
+> +
+> +       pr_info("waiting for test to complete\n");
+> +       wait_for_completion(&wait);
+> +
+> +       duration =3D (u64)ktime_us_delta(ktime_get(), start);
+> +       pr_info("%d of iterations for %s testing took: %lluus\n", nr_test=
+,
+> +               test_align ? "aligned" : "non-aligned", duration);
+> +
+> +       objpool_free(&ptr_pool);
+> +       page_frag_cache_drain(&test_frag);
+> +
+> +       return -EAGAIN;
+> +}
+> +
+> +static void __exit page_frag_test_exit(void)
+> +{
+> +}
+> +
+> +module_init(page_frag_test_init);
+> +module_exit(page_frag_test_exit);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Yunsheng Lin <linyunsheng@huawei.com>");
+> +MODULE_DESCRIPTION("Test module for page_frag");
+> --
+> 2.33.0
+>
 
