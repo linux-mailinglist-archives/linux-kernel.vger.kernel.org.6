@@ -1,74 +1,59 @@
-Return-Path: <linux-kernel+bounces-258159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5818938492
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 14:07:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14B74938495
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 14:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F3031F214C6
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 12:07:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 714F5B20EAC
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 12:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FE716131A;
-	Sun, 21 Jul 2024 12:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB20161304;
+	Sun, 21 Jul 2024 12:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="N0g7IAhM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LsZV31fu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F11726AFF;
-	Sun, 21 Jul 2024 12:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0E9B67A;
+	Sun, 21 Jul 2024 12:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721563652; cv=none; b=j680sO4kUIjaYNXOm+dhrYISyHahgosqwsfRTHCsRyqByJad4gLX/g+LMo3hUO4yV2L2kFIBbj3ykRgFkr/OY5BrJGnpbiSfwx8Sgm/9J550WWJXFjNWDax0tZdYCjXBjoaSCsrJvGhVDFB2FBrI33nHADEM0CSJ3UwFttW7I90=
+	t=1721563872; cv=none; b=nUBuRdHJgDgBgddf2jtohAN4HTBUHktIeo+JQdumQqp9cUEgdZKqnWogeqk5cnaR+1yimyv76kpHotczox8ZTLN8gE3Ua8nbiHsml31xkMBULO/b41rgJd4V5VoDc9rfhJhFpUX/85WF+O+A7bMOM7v3xo/yNhpKJ5DNFf/l+4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721563652; c=relaxed/simple;
-	bh=qlb6WjlAnEKcXc092oqfM8G67zC7IPvZt+7Tiv3Ck9w=;
+	s=arc-20240116; t=1721563872; c=relaxed/simple;
+	bh=KEJLmhZjFCH6rHEguK+PeGYbDore5r3JPmdlAZx+8Rc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IfCU9DdlV5h73bkv3wMcTVZUCpx2gZObxUKMNdUfMZ/XoeD1qWT+pPIwhJEgb+yFb9LJJDZxxo1x4L+V/7NC3ehU2e2g/a4IlUzLK/CF7a2yXquTS7k3xwzcQh53PP1zUvijzkJh2H5OeL417EgCTJwr+9/6xH34Xxdou14W+kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=N0g7IAhM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 090C7C116B1;
-	Sun, 21 Jul 2024 12:07:29 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="N0g7IAhM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1721563647;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9wfLvY3ya2nrHr45pIZikIDrp87iOyHgJfRiGxlFpQg=;
-	b=N0g7IAhMr2y4iqU3m3NWTxzJME/+JeNsyoW0Nmoh9tOd+WcJsf/u13VVA3QbVVg1CHYPBT
-	tthBNmpSyuXXxLJHbYiVlr7CdBXSlL7WgKvoyWKkHG6NnC3ef5ooE3BKlA0wkaVYIUZ3hv
-	NxgAd7PsXLYbYGCILizvOq/YIT4IWKs=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 663834c5 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Sun, 21 Jul 2024 12:07:27 +0000 (UTC)
-Date: Sun, 21 Jul 2024 14:07:23 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Aurelien Jarno <aurelien@aurel32.net>,
-	Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@debian.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Martin Kaiser <martin@kaiser.cx>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 3/3] arm64: dts: rockchip: add DT entry for RNG to
- RK356x
-Message-ID: <Zpz5-2q-C0oQBqoa@zx2c4.com>
-References: <cover.1721522430.git.daniel@makrotopia.org>
- <c28cb9ad04062b6da66d9cac8adefa0edc0046ea.1721522430.git.daniel@makrotopia.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=okUCAHIZC6zBLSUQ1mwkBWnS6yl2lXTd3ZsnIM91642nNq1UmSN41OjWjZiGY8WhzgipsiWKoVLL6X8e9pguFBpnnuT6Db2m2BafFJ/upbBMZ142tc2eEB5LPs35up0ybuxsjGciwMdhJIPqK0B9xHL2ndgPYV/gsZR72MfmYW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LsZV31fu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E99E3C116B1;
+	Sun, 21 Jul 2024 12:11:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721563871;
+	bh=KEJLmhZjFCH6rHEguK+PeGYbDore5r3JPmdlAZx+8Rc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LsZV31fub9MUmhG7L36kXPdneZhZgvNQAqJx4R8CnE/TlMirz5OQSNfWbHIZjrytV
+	 QEUC7v9vZ+zH2C4CgBYH4ZbQRkB9eJVXVG8fm8134OEsjkd5z8Ql1e4BxGVjahs7Cn
+	 JLhLZYRBQj9SqBQh0uOCGqYNgVLXvC8fRtMUiBoUqysOyP6OCPy9mdp2ra5Sb/p9lz
+	 nz8yMlLq/H0IBfskSSw3haqbhhucii3/w204gZDpbwyOZLrlSkqFEAzSKWK7ztIXkO
+	 KvHREOV6lYdUTsTp8tzYYbiDe+8McnMXyd0UxS2N7+AQd2YElW9yHcpXAfrSTkfS7p
+	 jxX+FK/4uesLA==
+Date: Sun, 21 Jul 2024 05:11:09 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	"Jan Alexander Steffens (heftig)" <heftig@archlinux.org>,
+	Christian Heusel <christian@heusel.eu>,
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v7] kbuild: add script and target to generate pacman
+ package
+Message-ID: <20240721121109.GA3599565@thelio-3990X>
+References: <20240720-kbuild-pacman-pkg-v7-1-74a79b4401d2@weissschuh.net>
+ <20240721033209.GA545406@thelio-3990X>
+ <CAK7LNARj9fxm_3h=7g4PLbLDHXNUQrRu8iOQ4sZdx8Ag3YS9sA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,39 +62,147 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <c28cb9ad04062b6da66d9cac8adefa0edc0046ea.1721522430.git.daniel@makrotopia.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNARj9fxm_3h=7g4PLbLDHXNUQrRu8iOQ4sZdx8Ag3YS9sA@mail.gmail.com>
 
-On Sun, Jul 21, 2024 at 01:48:38AM +0100, Daniel Golle wrote:
-> From: Aurelien Jarno <aurelien@aurel32.net>
+Hi Masahiro,
+
+On Sun, Jul 21, 2024 at 03:58:49PM +0900, Masahiro Yamada wrote:
+> On Sun, Jul 21, 2024 at 12:32 PM Nathan Chancellor <nathan@kernel.org> wrote:
+> > On Sat, Jul 20, 2024 at 11:18:12AM +0200, Thomas Weißschuh wrote:
+> > > pacman is the package manager used by Arch Linux and its derivates.
+> > > Creating native packages from the kernel tree has multiple advantages:
+> > >
+> > > * The package triggers the correct hooks for initramfs generation and
+> > >   bootloader configuration
+> > > * Uninstallation is complete and also invokes the relevant hooks
+> > > * New UAPI headers can be installed without any manual bookkeeping
+> > >
+> > > The PKGBUILD file is a modified version of the one used for the
+> > > downstream Arch Linux "linux" package.
+> > > Extra steps that should not be necessary for a development kernel have
+> > > been removed and an UAPI header package has been added.
+> > >
+> > > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > > ---
+> >
+> > I think this looks really solid now, thanks again for the PACMAN_PKGBASE
+> > addition.
+> >
+> > I tested building Arch Linux's configuration for x86_64 and booting it
+> > in a VM. I built Fedora's configuration for aarch64 just to test the
+> > cross building aspect and making sure the result of various bits that we
+> > added that would not affect x86 (such as the dtb installation) looked
+> > reasonable.
+> >
+> > Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+> > Tested-by: Nathan Chancellor <nathan@kernel.org>
 > 
-> Enable the just added Rockchip RNG driver for RK356x SoCs.
+> I believe this is a separate issue, but
+> Debian/Ubuntu provides a 'makepkg' package, which fails
+> with 'User defined signal 1' error.
 > 
-> Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3568.dtsi |  7 +++++++
->  arch/arm64/boot/dts/rockchip/rk356x.dtsi | 10 ++++++++++
->  2 files changed, 17 insertions(+)
+> After 'sudo apt install makepkg',
 > 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3568.dtsi b/arch/arm64/boot/dts/rockchip/rk3568.dtsi
-> index f1be76a54ceb..b9c6b2dc87fa 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3568.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3568.dtsi
-> @@ -257,6 +257,13 @@ power-domain@RK3568_PD_PIPE {
->  	};
->  };
->  
-> +&rng {
-> +	rockchip,sample-count = <1000>;
-> +	quality = <900>;
+> masahiro@zoe:~/ref/linux-next((HEAD detached from origin/master))$ cat
+> /etc/os-release
+> PRETTY_NAME="Ubuntu 24.04 LTS"
+> NAME="Ubuntu"
+> VERSION_ID="24.04"
+> VERSION="24.04 LTS (Noble Numbat)"
+> VERSION_CODENAME=noble
+> ID=ubuntu
+> ID_LIKE=debian
+> HOME_URL="https://www.ubuntu.com/"
+> SUPPORT_URL="https://help.ubuntu.com/"
+> BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+> PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+> UBUNTU_CODENAME=noble
+> LOGO=ubuntu-logo
+> masahiro@zoe:~/ref/linux-next((HEAD detached from origin/master))$
+> makepkg --version
+> makepkg (pacman) 6.0.2
+> Copyright (c) 2006-2021 Pacman Development Team <pacman-dev@archlinux.org>.
+> Copyright (C) 2002-2006 Judd Vinet <jvinet@zeroflux.org>.
+> 
+> This is free software; see the source for copying conditions.
+> There is NO WARRANTY, to the extent permitted by law.
+> masahiro@zoe:~/ref/linux-next((HEAD detached from origin/master))$ git
+> log --oneline -2
+> 5dcaebb67ad9 (HEAD) kbuild: add script and target to generate pacman package
+> 41c196e567fb (tag: next-20240719, origin/master, origin/HEAD) Add
+> linux-next specific files for 20240719
+> masahiro@zoe:~/ref/linux-next((HEAD detached from origin/master))$
+> make defconfig  pacman-pkg
+> *** Default configuration is based on 'x86_64_defconfig'
+> #
+> # No change to .config
+> #
+> objtree="/home/masahiro/ref/linux-next" \
+> BUILDDIR="" \
 
-As I already wrote you for v7, quality is out of 1024, not 1000, so this
-won't hit 90% as you intend.
+It is not related to this issue but I don't think this should be empty.
+'realpath pacman' does not appear to work here, I was able to fix this
+with the following diff:
 
-But also, I think putting this in the DT is a mistake. Other drivers
-don't generally do this, and if the hardware is actually the same piece
-to piece (it is...), then there's not per-manufactured unit tweaking
-needed. So keep this in the actual driver C like other drivers.
+diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+index 94357f47d2fa..b0fd44a40075 100644
+--- a/scripts/Makefile.package
++++ b/scripts/Makefile.package
+@@ -148,7 +148,7 @@ PHONY += pacman-pkg
+ pacman-pkg:
+ 	@ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
+ 	+objtree="$(realpath $(objtree))" \
+-		BUILDDIR="$(realpath pacman)" \
++		BUILDDIR="$(realpath $(objtree))/pacman" \
+ 		CARCH="$(UTS_MACHINE)" \
+ 		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
+ 		KBUILD_REVISION="$(shell $(srctree)/scripts/build-version)" \
 
-Jason
+
+> CARCH="x86_64" \
+> KBUILD_MAKEFLAGS="rR --no-print-directory" \
+> KBUILD_REVISION="4" \
+> makepkg
+> 
+> ==> ERROR: An unknown error has occurred. Exiting...
+> User defined signal 1
+> make[3]: *** [scripts/Makefile.package:150: pacman-pkg] Error 138
+> make[2]: *** [Makefile:1538: pacman-pkg] Error 2
+> make[1]: *** [/home/masahiro/ref/linux-next/Makefile:347:
+> __build_one_by_one] Error 2
+> make: *** [Makefile:224: __sub-make] Error 2
+> 
+> Do you know anything?
+
+Adding '-x' to the interpreter line in /usr/bin/makepkg shows that
+pacman is implicitly required for makepkg to function, so you'll need to
+install pacman-package-manager as well. However, even with it installed,
+the build will fail because you will be unable to perform the dependency
+checking (since pacman won't be managing the packages).
+
+I think the traditional solution for this situation (building a
+distribution's package on a distribution other than the one the package
+is being built for) is using an OPTS variable to allow the user to pass
+in the dependency checking skip flag (that's what I do for RPM builds on
+Arch Linux), so perhaps MAKEPKGOPTS so that you can use MAKEPKGOPTS=-d?
+With this diff and that variable value, the build starts within makepkg
+for me.
+
+diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+index b0fd44a40075..4a80584ec771 100644
+--- a/scripts/Makefile.package
++++ b/scripts/Makefile.package
+@@ -152,7 +152,7 @@ pacman-pkg:
+ 		CARCH="$(UTS_MACHINE)" \
+ 		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
+ 		KBUILD_REVISION="$(shell $(srctree)/scripts/build-version)" \
+-		makepkg
++		makepkg $(MAKEPKGOPTS)
+ 
+ # dir-pkg tar*-pkg - tarball targets
+ # ---------------------------------------------------------------------------
+
+Cheers,
+Nathan
 
