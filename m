@@ -1,262 +1,156 @@
-Return-Path: <linux-kernel+bounces-258231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D0F2938552
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 17:39:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53769938553
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 17:40:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A38B11F211EF
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 15:39:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7AB81F21171
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 15:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4154D16727B;
-	Sun, 21 Jul 2024 15:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8696E16727B;
+	Sun, 21 Jul 2024 15:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/Kfev4o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=free.fr header.i=@free.fr header.b="NkdDUR54"
+Received: from smtp4-g21.free.fr (smtp4-g21.free.fr [212.27.42.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D3F2907;
-	Sun, 21 Jul 2024 15:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3DC2907;
+	Sun, 21 Jul 2024 15:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721576373; cv=none; b=MzVmY++tWLpdRl11V7r3PesMGRVXoNSU06b8FtjGXHMljv84rKFE5NPRSMZktfJNYwjJ+040BYOLVaRgDKpW78NC28X0VRym0a6yJmiej+JQPn1x869isWEVQSYAAoP/My+1Re5qWnc3bA4auYLzkJQEqI3Qk9paDxII6SSK5Wk=
+	t=1721576426; cv=none; b=pEtK+vy0aSiD2f1eiksq7bkv4budoqPeCpzenfN6k9ISZBSa1jswh75ANXDq4KDjuTpN/6y/AtfK8pdYPN9PLB96iX4nvlK74gkpEglSPtMMghRJreA1zOpN3n9i0yWYLC5IwM4msTOUw6jjbUG05kkwmI/tZvnAdBJNV2BIKfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721576373; c=relaxed/simple;
-	bh=ULRJCRJth84NJo7w7o/Xbr8afmTwqxhkSTU1SwAiMRo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g/xiKhx8iruZ2aFm9/c687I45P5fpJ+lt2qNZ5BYG7+JXJq1MleA+3BEwsDvd4088klJajA5SFapcxKeeMZhFP1pKDjkxFfTASSiiAPbyl0teVIpW7qhPaIuQW8r9+2xIgKSj0JPaIhool5SVDibOCKgGXe3LwtW13m1I5rBRGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W/Kfev4o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17017C116B1;
-	Sun, 21 Jul 2024 15:39:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721576372;
-	bh=ULRJCRJth84NJo7w7o/Xbr8afmTwqxhkSTU1SwAiMRo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=W/Kfev4orxdaVTyCb3jYjk61za+iJfS4ZjYlCyn8+mQglPduBHGOFsD4KaijXrebj
-	 mYQkxAzKnm1quapACBmob+Chst/ie3h1B0HD1vvqYflLfkIm5CRNZIY6dZVALt6FHR
-	 aFNvEuDfTijptv/YyCzZ6bM2yJzI2UoMQU+94sft/Ql7DpbTeXFcGNcTdrWTbO5eej
-	 VUFg6zJ147Pm+3+/+ZLz+JNnsIbOSPGQikc0tkaYkNEcfEp0q7YdmXcDRkorfNrskg
-	 XY+6yCjQaHPkFRQ1PYXN7GtNWGezeyflesyWytQhz8GKe+5FqAqeZXCnX3eA+UwGU9
-	 ijiAIvhaW5/EQ==
-Message-ID: <93844c97-46b7-48bd-9397-2bbba9c09510@kernel.org>
-Date: Sun, 21 Jul 2024 17:39:23 +0200
+	s=arc-20240116; t=1721576426; c=relaxed/simple;
+	bh=sCm+3ajUXc1cFZrI0mjG4sX5WmpX3phQ/BWF3fE4vKg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Vug+m2y0JgO4sASMamNfHYwd04AEtY2pdeIKExkcpf/KNjEqNNY6IUhSKz6ZsdDtR834yK8JzRNCi9LDTOuvulekLKIizH9ZK7ufEyyN/ng6ro5bN3UX0DuXnvbJpcmBH2zI6wxXp57GGygMdXum2najSp8NN/o/aperAjgcrdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=free.fr; spf=pass smtp.mailfrom=free.fr; dkim=pass (2048-bit key) header.d=free.fr header.i=@free.fr header.b=NkdDUR54; arc=none smtp.client-ip=212.27.42.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=free.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=free.fr
+Received: from fedora.local (unknown [82.64.9.191])
+	(Authenticated sender: jau@free.fr)
+	by smtp4-g21.free.fr (Postfix) with ESMTPSA id 812E419F745;
+	Sun, 21 Jul 2024 17:40:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
+	s=smtp-20201208; t=1721576421;
+	bh=sCm+3ajUXc1cFZrI0mjG4sX5WmpX3phQ/BWF3fE4vKg=;
+	h=From:Date:Subject:To:Cc:From;
+	b=NkdDUR544zaqnQO6GHvHKE3DOopE7+7pGHOUMS7yiqkwsKmDNqnf5NAi9rvlIYP/9
+	 0/Nn0G/vgkJhRksCSlHpLtyVcx9J8gMtfveX31eG/1lY0gVZlr4FNGQIvCfAOVFd+6
+	 DVelVOsp4PR0xG0jsuuawUwkJfrQbSKirsCj2FJEB62Ado8c1sk5WWzeIzceLUCfOe
+	 +wtgDBf30IoIYD1itFgUiQGI4cwvoSTgtn+cyVSjp5WcLHSe1/WYdf6QC/0NlmxUc1
+	 AToEwh7Pl/k3oMs2jWAr/0MDUHck1Y3kkahmpqTx5pa8voY3ObntD0N2Gpvvjt4aZN
+	 sbm19sHaQGwcQ==
+From: Jerome Audu <jau@free.fr>
+Date: Sun, 21 Jul 2024 17:40:02 +0200
+Subject: [PATCH] ASoC: sti: add missing probe entry for player and reader
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] dt-bindings: display: ti,am65x-dss: Add OLDI
- properties for AM625 DSS
-To: Aradhya Bhatia <a-bhatia1@ti.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Jyri Sarha <jyri.sarha@iki.fi>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: DRI Development List <dri-devel@lists.freedesktop.org>,
- Devicetree List <devicetree@vger.kernel.org>,
- Linux Kernel List <linux-kernel@vger.kernel.org>, Nishanth Menon
- <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
- Francesco Dolcini <francesco@dolcini.it>,
- Alexander Sverdlin <alexander.sverdlin@siemens.com>,
- Randolph Sapp <rs@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
- Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
-References: <20240716084248.1393666-1-a-bhatia1@ti.com>
- <20240716084248.1393666-4-a-bhatia1@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240716084248.1393666-4-a-bhatia1@ti.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240721-sti-audio-fix-v1-1-a8b1ecf61cb4@free.fr>
+X-B4-Tracking: v=1; b=H4sIANErnWYC/x2MQQqAIBAAvyJ7bkFNEPpKdLBcay8aWhGIf086z
+ sBMhUKZqcAkKmR6uHCKHdQgYDtc3AnZdwYttZFWKywXo7s9Jwz8ohqtCSGs2pCF3pyZuv5/89L
+ aByeqMexfAAAA
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jerome Audu <jau@free.fr>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1721576412; l=3557;
+ i=jau@free.fr; s=20240721; h=from:subject:message-id;
+ bh=sCm+3ajUXc1cFZrI0mjG4sX5WmpX3phQ/BWF3fE4vKg=;
+ b=tQSvHV+QaJADU8qlO9HVimwakbjAkY3lV+9+i73x9xk3PistmuEWmIqgAJ/jHIqCp9saca/mY
+ 2bBJYNN6we6CzUDqz41VhIAnmWznGOA/VVAq5uneuL+QrlXDWsEQoKc
+X-Developer-Key: i=jau@free.fr; a=ed25519;
+ pk=CfXLqyNBjY9A4RDoxPChE7qFvTjVyy0rJNTfI4JQ0dI=
 
-On 16/07/2024 10:42, Aradhya Bhatia wrote:
-> The DSS in AM625 SoC has 2 OLDI TXes. Refer the OLDI schema to add the
-> support for the OLDI TXes.
-> 
-> The AM625 DSS VP1 (port@0) can connect and control 2 OLDI TXes, to use
-> them in dual-link or cloned single-link OLDI modes. Add support for an
-> additional endpoint under the port@0 to accurately depict the data flow
-> path.
-> 
-> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
-> ---
->  .../bindings/display/ti/ti,am65x-dss.yaml     | 135 ++++++++++++++++++
->  1 file changed, 135 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
-> index 399d68986326..249597455d34 100644
-> --- a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
-> +++ b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
-> @@ -91,6 +91,24 @@ properties:
->            For AM625 DSS, the internal DPI output port node from video
->            port 1.
->            For AM62A7 DSS, the port is tied off inside the SoC.
-> +        properties:
-> +          endpoint@0:
-> +            $ref: /schemas/graph.yaml#/properties/endpoint
-> +            description:
-> +              For AM625 DSS, VP Connection to OLDI0.
-> +              For AM65X DSS, OLDI output from the SoC.
-> +
-> +          endpoint@1:
-> +            $ref: /schemas/graph.yaml#/properties/endpoint
-> +            description:
-> +              For AM625 DSS, VP Connection to OLDI1.
+Restores the audio functionality that was broken
+since Linux version 6.6.y by adding the missing probe
+functions for the player and reader components.
 
-Eh, that's confusing. Why do you have graph to your children? Isn't this
-entirely pointless?
+Fixes: 9f625f5e6cf9 ("ASoC: sti: merge DAI call back functions into ops")
+Signed-off-by: Jerome Audu <jau@free.fr>
+---
+Specifically, the probe function in `sound/soc/sti/sti_uniperif.c:415` is being replaced by another probe function located at `sound/soc/sti/sti_uniperif.c:453`, which should instead be derived from the player and reader components. My patch correctly reinserts the missing probe entries, restoring the intended functionality.
 
-> +
-> +        anyOf:
-> +          - required:
-> +              - endpoint
-> +          - required:
-> +              - endpoint@0
-> +              - endpoint@1
->  
->        port@1:
->          $ref: /schemas/graph.yaml#/properties/port
-> @@ -112,6 +130,23 @@ properties:
->        Input memory (from main memory to dispc) bandwidth limit in
->        bytes per second
->  
-> +  oldi-txes:
-> +    type: object
-> +    additionalProperties: true
+The patch modifies the following files:
+- `sound/soc/sti/sti_uniperif.c`: Changes the visibility of `sti_uniperiph_dai_probe` to non-static.
+- `sound/soc/sti/uniperif.h`: Adds the declaration of `sti_uniperiph_dai_probe`.
+- `sound/soc/sti/uniperif_player.c`: Adds `probe` function to `uni_player_dai_ops`.
+- `sound/soc/sti/uniperif_reader.c`: Adds `probe` function to `uni_reader_dai_ops`.
 
-Why? This looks wrong.
+This ensures the correct `probe` functions are utilized, thus fixing the audio regression. 
+---
+ sound/soc/sti/sti_uniperif.c    | 2 +-
+ sound/soc/sti/uniperif.h        | 1 +
+ sound/soc/sti/uniperif_player.c | 1 +
+ sound/soc/sti/uniperif_reader.c | 1 +
+ 4 files changed, 4 insertions(+), 1 deletion(-)
 
-> +    properties:
-> +      "#address-cells":
-> +        const: 1
-> +
-> +      "#size-cells":
-> +        const: 0
-> +
-> +    patternProperties:
-> +      '^oldi_tx@[0-1]$':
+diff --git a/sound/soc/sti/sti_uniperif.c b/sound/soc/sti/sti_uniperif.c
+index ba824f14a39c..a7956e5a4ee5 100644
+--- a/sound/soc/sti/sti_uniperif.c
++++ b/sound/soc/sti/sti_uniperif.c
+@@ -352,7 +352,7 @@ static int sti_uniperiph_resume(struct snd_soc_component *component)
+ 	return ret;
+ }
+ 
+-static int sti_uniperiph_dai_probe(struct snd_soc_dai *dai)
++int sti_uniperiph_dai_probe(struct snd_soc_dai *dai)
+ {
+ 	struct sti_uniperiph_data *priv = snd_soc_dai_get_drvdata(dai);
+ 	struct sti_uniperiph_dai *dai_data = &priv->dai_data;
+diff --git a/sound/soc/sti/uniperif.h b/sound/soc/sti/uniperif.h
+index 2a5de328501c..74e51f0ff85c 100644
+--- a/sound/soc/sti/uniperif.h
++++ b/sound/soc/sti/uniperif.h
+@@ -1380,6 +1380,7 @@ int uni_reader_init(struct platform_device *pdev,
+ 		    struct uniperif *reader);
+ 
+ /* common */
++int sti_uniperiph_dai_probe(struct snd_soc_dai *dai);
+ int sti_uniperiph_dai_set_fmt(struct snd_soc_dai *dai,
+ 			      unsigned int fmt);
+ 
+diff --git a/sound/soc/sti/uniperif_player.c b/sound/soc/sti/uniperif_player.c
+index dd9013c47664..6d1ce030963c 100644
+--- a/sound/soc/sti/uniperif_player.c
++++ b/sound/soc/sti/uniperif_player.c
+@@ -1038,6 +1038,7 @@ static const struct snd_soc_dai_ops uni_player_dai_ops = {
+ 		.startup = uni_player_startup,
+ 		.shutdown = uni_player_shutdown,
+ 		.prepare = uni_player_prepare,
++		.probe = sti_uniperiph_dai_probe,
+ 		.trigger = uni_player_trigger,
+ 		.hw_params = sti_uniperiph_dai_hw_params,
+ 		.set_fmt = sti_uniperiph_dai_set_fmt,
+diff --git a/sound/soc/sti/uniperif_reader.c b/sound/soc/sti/uniperif_reader.c
+index 065c5f0d1f5f..05ea2b794eb9 100644
+--- a/sound/soc/sti/uniperif_reader.c
++++ b/sound/soc/sti/uniperif_reader.c
+@@ -401,6 +401,7 @@ static const struct snd_soc_dai_ops uni_reader_dai_ops = {
+ 		.startup = uni_reader_startup,
+ 		.shutdown = uni_reader_shutdown,
+ 		.prepare = uni_reader_prepare,
++		.probe = sti_uniperiph_dai_probe,
+ 		.trigger = uni_reader_trigger,
+ 		.hw_params = sti_uniperiph_dai_hw_params,
+ 		.set_fmt = sti_uniperiph_dai_set_fmt,
 
-Please follow DTS coding style for naming.
-
-> +        type: object
-> +        $ref: ti,am625-oldi.yaml#
-> +        unevaluatedProperties: false
-> +        description: OLDI transmitters connected to the DSS VPs
-> +
->  allOf:
->    - if:
->        properties:
-> @@ -123,6 +158,19 @@ allOf:
->          ports:
->            properties:
->              port@0: false
-> +            oldi_txes: false
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: ti,am65x-dss
-> +    then:
-> +      properties:
-> +        oldi_txes: false
-> +        port@0:
-> +          properties:
-> +            endpoint@1: false
->  
->  required:
->    - compatible
-> @@ -171,3 +219,90 @@ examples:
->              };
->          };
->      };
-> +
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/soc/ti,sci_pm_domain.h>
-> +
-> +    bus {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +        dss1: dss@30200000 {
-> +            compatible = "ti,am625-dss";
-> +            reg = <0x00 0x30200000 0x00 0x1000>, /* common */
-> +                  <0x00 0x30202000 0x00 0x1000>, /* vidl1 */
-> +                  <0x00 0x30206000 0x00 0x1000>, /* vid */
-> +                  <0x00 0x30207000 0x00 0x1000>, /* ovr1 */
-> +                  <0x00 0x30208000 0x00 0x1000>, /* ovr2 */
-> +                  <0x00 0x3020a000 0x00 0x1000>, /* vp1 */
-> +                  <0x00 0x3020b000 0x00 0x1000>, /* vp2 */
-> +                  <0x00 0x30201000 0x00 0x1000>; /* common1 */
-> +            reg-names = "common", "vidl1", "vid",
-> +                        "ovr1", "ovr2", "vp1", "vp2", "common1";
-> +            power-domains = <&k3_pds 186 TI_SCI_PD_EXCLUSIVE>;
-> +            clocks =        <&k3_clks 186 6>,
-> +                            <&vp1_clock>,
-> +                            <&k3_clks 186 2>;
-> +            clock-names = "fck", "vp1", "vp2";
-> +            interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-> +            oldi-txes {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +                oldi0: oldi@0 {
-
-You are duplicating the example from previous schema. No need. Keep
-only, one complete example.
+---
+base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+change-id: 20240721-sti-audio-fix-1374fffb24e7
 
 Best regards,
-Krzysztof
+-- 
+Jerome Audu <jau@free.fr>
 
 
