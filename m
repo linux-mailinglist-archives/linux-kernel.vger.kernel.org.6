@@ -1,77 +1,123 @@
-Return-Path: <linux-kernel+bounces-258216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 480FF938515
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 17:05:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA4AD938518
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 17:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71E531C20B27
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 15:05:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAAB71C20AB8
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 15:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6375216193C;
-	Sun, 21 Jul 2024 15:04:55 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B6D1667D8;
+	Sun, 21 Jul 2024 15:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="srG5umnm"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05E42C95
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 15:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF2D2C95;
+	Sun, 21 Jul 2024 15:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721574295; cv=none; b=UXUM/V2g5tYiGRKe1232T0MA+++KsI69LX7pDK0+wTj4ECLOcVgIN/e/L6eB1HdQo3za36Xng6cTc58Z+FLf3rVBsvAZYeXbPDDunimw0SPFSmYnzK0lGO0c1oj6qDDLdIWMyTOy6/iPqiu+OzPB83lgUlV94/RLU9H2Jvi7o50=
+	t=1721574434; cv=none; b=W+Uqd8E/AWIuz02WIlj4L7TyrG05Vdr2Ko6uQC5U7QUW8NXVjrkrqku1/T75YzlRTBX+m1B09K04AOIVKLxJSx3/ApX7fKpxjB2kNp8s5tj16Ow9hQG4K8cePQwDtz2Xo4XNKeQ4nwAFVtXQv4d2Bpi/ZMil3ib7rWLSCYtHcO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721574295; c=relaxed/simple;
-	bh=1drD+HrjXkXj5AxlqRiVL4UG64Vp5PVqSuIuW641/qc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=dLlJovVn+XljI6jVR/tT05/XVwXr3oB7+uFre36I6ru0o0qEGCohKQV63TakeTNXnc/8aZL5xcNROKNZLAkje2r2N2goduOtORinaHezsu6BFvCxNc9HfDIyI+cFnpMJeGwZ/WQEle0H5TYu3phJG98w9g4+51wIOif7IsaMSJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39858681a32so37102055ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 08:04:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721574293; x=1722179093;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1drD+HrjXkXj5AxlqRiVL4UG64Vp5PVqSuIuW641/qc=;
-        b=OxjVAHpB1ApLMfz2bFHtRlkD2I89c9QOVOZ5ZkH8HdmREzGHSV1suzNmz49cNs4eWG
-         h0NbRdTapgPN5Wf3xF1GI5YVgi3a5SuwwAIBIWFiKDA3VehARXXIhTysJ60vyYEgH/U9
-         KMgiAEnouVQ/Fz0AEjhDGLQE/zduGumwTVjMU/rTszNvaezGia2dMMvbKYxNgOOdM0FA
-         1695d7MhnQKmKZASPqqrujvqNlUZoo+e7oCRtjJcKPlvaZpFLFvkdSS+qrtDFklhvKA6
-         wDo8EmzLv0G7sKYx2+/mntxvki1wcncuXn36ta8LIpHp6bx5YGhFOSNQpGoBvbUg5mLS
-         gfeg==
-X-Gm-Message-State: AOJu0YzpHXiFuBMyiH6L+9Y96qvgiHYiEBqcUhSBWKb40WvHf0KzgfzG
-	aKJ6CBifSh5Jvo/KaElD49xAaCj5vQ5BA0sxsq5OHPJQdeHtcdNhtUhMRqiMGobzxfkG8f/wLVm
-	0rHll4cJJnXb+gSpBDKNXuFEWU2YWSYU5IZxT+VJH15Lf9lUZtoK+I+E=
-X-Google-Smtp-Source: AGHT+IGeAVY/OmHD6bF60z9aJocjeSR3664r54xvO5QqclZsJbxm5wDwB+7bk2Mia7cPOcbKleaiP3Vw4Uj7HhS0Yj4W8e9p/Uxu
+	s=arc-20240116; t=1721574434; c=relaxed/simple;
+	bh=4RDVfMoZnl8W/03Rc62UPisRtfi7MpKvNbVSPt0+tFE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=rDTiijt/7A1d8DQoVQI1CxLfMxtqtkAGxULcsKvmNjRxxvBjeeOSfMGq3h3vvaLHOflAsxJgegSFHkMnv87w0HVVrh9o6iZMjr63eVB7j9mUUjKSRbLoOsO3iPelesPXkd62DX219WHOfcnpKuwXfS2FMiFwfUeZORc+BRmObsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=srG5umnm; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1721574396; x=1722179196; i=markus.elfring@web.de;
+	bh=8e6xngCEuAfhhKLHCqt5i+i2Y9dCoP7b7yRLeyw9pj0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=srG5umnm3ufPiBmYgOoAd7FiLEfhrND+tDIj90O2mEtyfKwgAv9c2Glc3m3l8GRk
+	 yRALk0jJL1+K59/MxDaOdbaxYvwdOc0L0WtQiMkDMtGNKr0wcDeKbTCr/0Jh+G3mJ
+	 +mpQk7uDhycp/sSoL0f8E/ghwzlYR/RBIY3fu/YrWqZfK4WyEkutrDKli6f1NT/hN
+	 EP1HUo/sW1KW3Amk+lHlOXkYVpYEZLARg5jRfYFvRLOEyRMHGZureHfG7Ly4K1rvV
+	 m/dhw9NRqQa9bHcjP8LtbqW4hSq03RQiSKlpzki6PLLnOEXSbAYXbwnJB5bDjRn5/
+	 JKEl32160N+e9+qiqA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N79NA-1sFFfE1RAi-00tMCf; Sun, 21
+ Jul 2024 17:06:36 +0200
+Message-ID: <39542eb6-8616-468b-889e-d9e1db5bcac0@web.de>
+Date: Sun, 21 Jul 2024 17:06:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20c6:b0:398:3831:4337 with SMTP id
- e9e14a558f8ab-398e7633e09mr3362505ab.5.1721574292715; Sun, 21 Jul 2024
- 08:04:52 -0700 (PDT)
-Date: Sun, 21 Jul 2024 08:04:52 -0700
-In-Reply-To: <000000000000943e1c061d92bdd6@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002c0dcd061dc340b9@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [bpf?] [net?] KASAN: slab-use-after-free
- Read in bq_xmit_all
-From: syzbot <syzbot+707d98c8649695eaf329@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: Dingxian Wen <shawn.wen@rock-chips.com>,
+ Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+ Shreeya Patel <shreeya.patel@collabora.com>, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, kernel@collabora.com,
+ Conor Dooley <conor+dt@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
+ =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Jose Abreu <Jose.Abreu@synopsys.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Nelson Costa <Nelson.Costa@synopsys.com>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240719124032.26852-5-shreeya.patel@collabora.com>
+Subject: Re: [PATCH v4 4/4] media: platform: synopsys: Add support for hdmi
+ input driver
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240719124032.26852-5-shreeya.patel@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Ak//860WhkOvUrec+vnPOWHPxhxWYIyxGq482NZFRI1G3Kaz2J3
+ yfLQAIDLAZZoMvfEkQeeZ2UAJh6Ollel5osvUKJXbO8ar7yjmXYqiSwpEIeso5KgG7kUQNS
+ rPGOvXpD2m9ughKG6wgKMN5YMJZx+RMT6oil6VyHb/5xrPiIXTtz0wgD/0JVk1tQM5wAZ2R
+ WeMLhpihX8cZ5MAI5RJ/g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:VxIcW5ieMCU=;AGiTzqtD2DIn/PYq60IPFcVELrj
+ 8zVMOpmg+5xhcleAN8Kr0lQC9AhE+tDegMYdoVvYY1M+FC7bpOoodcfMffkImWpohzXeSgQTd
+ SgL2gxPPEibBmWh7CsHvDidwDIBEXE/imn0/Tglztb5UJxXHDpmsxQLtTRFUIr4MgHIeLW6us
+ kMos34qP9WU1pIsa2J1J/uYYyj4mhQK+kmidKCcseYmdf1dSTVr/mHNPiLh1Absvtm7GMJm1m
+ fl4/0vidzbzROR3/bCvhQlNgnypg5h3h6tCApE0dFslduErkNbZAXwGe20rmTsoqfYUZidiqY
+ YSA0CDYUM6xDDOY6a6uo9g9HxVfSy+Qjn1xT06+veGFQo9NHKk2SHZXVqRfejxeQN7POcWO2I
+ FWnMvUOOOQWe0sCAFwxpZIu3Au47E1f7ERkLd2TVpN4IgRoSeISWH3nM9D8E2XLwRqlv1O4En
+ yHKpuSwpUV3Ie9KWTqDUNE+Rp8kQnAcCElkiLUmyoeTwz8K4SFmMHBrwB25qghWkT9TYh8fVn
+ 2YjDYKcfP2CQzusOJ59kdlQ9AHNmjU3ZKPlTeyt6KfD84Lmc+5svdKCuNcEcO6XcogON3L762
+ UG2bKp6KqSsilhg+i4J8KOviCA6U6oEaafZr05owVzL0TVnvIsfG5Kx3FS4E9D0JuZ9pcrS50
+ NmW0hZjwF540rxeqQIQN0mWYT3aOHXr9a+7gtLmW1xeuQRyr0jExb5WNbjWfr/DnUYJvLQ4Na
+ 6dglV1kM/ZACC/on2wPq9X07iiKM/vvBcm/dZIrZ+wJplkqDjU0SrXfsK4VLlsmMFiFnr5uGo
+ BhHy6kQDu0WHF9JQv6JcfshQ==
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+=E2=80=A6
+> +++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+> @@ -0,0 +1,2763 @@
+=E2=80=A6
+> +static void hdmirx_writel(struct snps_hdmirx_dev *hdmirx_dev, int reg, =
+u32 val)
+> +{
+=E2=80=A6
+> +	spin_lock_irqsave(&hdmirx_dev->rst_lock, lock_flags);
+> +	writel(val, hdmirx_dev->regs + reg);
+> +	spin_unlock_irqrestore(&hdmirx_dev->rst_lock, lock_flags);
+> +}
+=E2=80=A6
 
-***
+Under which circumstances would you become interested to apply a statement
+like =E2=80=9Cguard(spinlock_irqsave)(&hdmirx_dev->rst_lock);=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.10/source/include/linux/spinlock.h#L57=
+4
 
-Subject: Re: [syzbot] [bpf?] [net?] KASAN: slab-use-after-free Read in bq_xmit_all
-Author: aha310510@gmail.com
-
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 3f9fe37d9e16a6cfd5f4d1f536686ea71db3196f
+Regards,
+Markus
 
