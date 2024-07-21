@@ -1,265 +1,128 @@
-Return-Path: <linux-kernel+bounces-258172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 408379384B3
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 15:26:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8838F9384B5
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 15:27:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8C7B280E49
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 13:26:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38B251F212BF
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 13:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F35161914;
-	Sun, 21 Jul 2024 13:26:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0EB163A9B;
+	Sun, 21 Jul 2024 13:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JmTJIvyO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tkqc2lAj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FA48F58;
-	Sun, 21 Jul 2024 13:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1427C15FD15;
+	Sun, 21 Jul 2024 13:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721568400; cv=none; b=K8XZ/9k4/lvTJTZ2VckoH5wRhu7hZt/+ofKtAwZgzBo20Y3c//GUjZVJEVvqK9T+jy88+LsrH1rN9lplgBXooEtEwIT6CBBAcQPFgrjfgtA3BRKyg8mPNb7evzBHw3seJK8mji+t2kwRMCD9X9+7ZXqBcGqO5TMxxKFqhfY5+y8=
+	t=1721568450; cv=none; b=KK16dDczcQq3lqHZrMkqr+41sUssxhsnfBdS1nJpThtZIbMUH/42luO1Ij3fJZs+fKO3dr/g7uDta8WnuVZx94/mpvtnDXP++uyxMqPcqFu9jqUDMXFlN2bFLfs1YXqbz0Ek5SBJEOYMRqsK9NwWMwIE0MIJTa1sbSPV2TwuPgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721568400; c=relaxed/simple;
-	bh=QJzbwuryGyyBsNVOMDgRXv6W5GwkjbWvJhLSlNCYCT8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EGwm39xmGXfkKiuDqDGymiu4DH8ZHN2zdlIsnBoANGOp1d4sdGTAGWAlA8KLyzqoN8J55A2eoz1zH94ADq27saoiHf8P3iUzhMqvGDvMcxof+PzxIO8AScoBlIVyoMiMVLlwF5co+OM+HmaVL0GX2TNdhRq+/S5yc7cLNPmdnLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JmTJIvyO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0031DC4AF0F;
-	Sun, 21 Jul 2024 13:26:39 +0000 (UTC)
+	s=arc-20240116; t=1721568450; c=relaxed/simple;
+	bh=HezH/tvdxDCsu4MOD1Y/U6aKVxvjAus43G7k7Y1xgv8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ejrRfh4K/eNP53M0p7o2TCHGOSAPB4Q8mK8uYtqUh0hZOxKZ1GqC99TbXQ/KZLhCFXUlK3lqCy2A9Vrjl7navJLLH8Go1mFq4NwstIsh98XJgyh3NRjCmURfQRaDWMdPWV0sxK52BE86z3tcrvbknv2CH5jXIvk8QX9XdHw0QF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tkqc2lAj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A678C116B1;
+	Sun, 21 Jul 2024 13:27:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721568400;
-	bh=QJzbwuryGyyBsNVOMDgRXv6W5GwkjbWvJhLSlNCYCT8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=JmTJIvyO1CoAwx+CxTRqmTN/PCFxY7KabzZqnoOrEW0bbp1qRgp9eT/HaYGKv4fFg
-	 Uq/J52emIcIZBvnwM00tqQouak7arHw4RXyxJgJKQQVWT8DMcs4XsVzOryb9TIYllo
-	 GRF6aAL1w3mV4eLMf8hkSqJE9zLrSN9MA2LgGopf1ft4okP66EwsjQwBJKPOv2OhGR
-	 8OdpzDkGos4Ji+qAAJU9s+OTvSV5v1q2LEr5CKN2BjRp4Ml1lO4BoVHctJLcK4UFlR
-	 e6N1TYMojcpWDeXcPz2Rh63JgxDP0Q2Gv3NBWJbCg3h8Ab59X0i0yQ7Tozwh0/DoRD
-	 925Zvfu06qnkw==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ef25511ba9so6472041fa.0;
-        Sun, 21 Jul 2024 06:26:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUq7i8e14WEBa7ytbWohpe+1jcbT6iFcc5m3QXEz4eq34vayneX/rgP9SCFFDOpgsFmxAn0hMAW4hdKBQNfnqefTBE3JyE8NdqzNgxX
-X-Gm-Message-State: AOJu0YxGm/XM89nIIfLwOBmEFkR35xnwnHult7jYFzGe91LrCdamS3kp
-	gq0ZEZ95niWAKRmf+zJnU8gb+gr3NMVb6rhpPGq5UEO74g33wsSfAi5fWq2ndTWClPnabHts94j
-	7rjedMm0VrAPoCCDNcSIhdD3m4Ow=
-X-Google-Smtp-Source: AGHT+IGUEXIkOXd6zMlXfW607ZOVj3rma8Y1IuG8d8DCTXG6wnkMRUeqRLeIrA0f8KNhPinf28ntpjLaxQLuHUji46w=
-X-Received: by 2002:a2e:a7c7:0:b0:2ef:2f8a:52d5 with SMTP id
- 38308e7fff4ca-2ef2f8a55b4mr1234791fa.8.1721568398213; Sun, 21 Jul 2024
- 06:26:38 -0700 (PDT)
+	s=k20201202; t=1721568449;
+	bh=HezH/tvdxDCsu4MOD1Y/U6aKVxvjAus43G7k7Y1xgv8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Tkqc2lAjHO7fUlGQipP4eUFzIAfT2xIeH7tzEPeELVn1WJh7CGuZKEvKfC4SLpiQg
+	 0c6zOZt7G6hMrN5odbaajIv6hhO80TfEaDcbwlPlcy0vLHkGvumkjSBKHmYQvQ1gsN
+	 luBNAQprwbh8Kq4WTFgOZTkwVDikdA40WNocw6vHrFhMt0i7PXrJ4gcWNroVSfnPFr
+	 h9G3M3jMVBegHKSsIgGLr6TIezH1lxXE+R1jwxNXjuYU/3S85zjV0GCYDung3EyhL6
+	 YejTkU34nEfYKmuEBVM9D6GleCIqnJGtjm6VHCuG4xGZ1B+FE1IfHEy8h2ShnX4ZeC
+	 /da28cFZXSc5Q==
+Message-ID: <a65a1668-beec-417f-a278-514ab3a61e7f@kernel.org>
+Date: Sun, 21 Jul 2024 15:27:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <DS7PR19MB570996A580C6F5D2C9CACCE48BA32@DS7PR19MB5709.namprd19.prod.outlook.com>
- <DS7PR19MB5709B2A263E769B461091B0D8BA32@DS7PR19MB5709.namprd19.prod.outlook.com>
- <CAMj1kXHBSNxrzbQoaDea7HFcjN9HHk5==tXg1WLHDzW61aj4cg@mail.gmail.com> <DS7PR19MB5709B39C90153DAA27DA122D8BAE2@DS7PR19MB5709.namprd19.prod.outlook.com>
-In-Reply-To: <DS7PR19MB5709B39C90153DAA27DA122D8BAE2@DS7PR19MB5709.namprd19.prod.outlook.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sun, 21 Jul 2024 15:26:27 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHS0rr9DfKCeD-Zz7y1Bk-3ncn2cEgVmnWE0Jq1B=+Acg@mail.gmail.com>
-Message-ID: <CAMj1kXHS0rr9DfKCeD-Zz7y1Bk-3ncn2cEgVmnWE0Jq1B=+Acg@mail.gmail.com>
-Subject: Re: [Patch] Do not clear BSS region in x86 stub
-To: "Shao, Marshall" <Marshall.Shao@dell.com>
-Cc: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "bp@alien8.de" <bp@alien8.de>, 
-	"mingo@redhat.com" <mingo@redhat.com>, "tglx@linutronix.de" <tglx@linutronix.de>, 
-	"Mishra, Ashish" <Ashish.Mishra4@dell.com>, "Chia, Jia Yuan" <JiaYuan.Chia@dell.com>, 
-	"Dion, Christopher" <Christopher.Dion@dell.com>, "Caisse, Joe" <Joe.Caisse@dell.com>, 
-	"Mukundan, Govind" <Govind.Mukundan@dell.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ASoC: dt-bindings: fsl,imx-audio-es8328: Convert to
+ dtschema
+To: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240720100848.203546-1-animeshagarwal28@gmail.com>
+ <ac09aec1-0c42-4f8a-b4cb-64eb67018d15@kernel.org>
+ <CAE3Oz81jhzAiwJXPiE4rQjD8TzBghugvA9sWV+Tb_kz9CdQyiQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CAE3Oz81jhzAiwJXPiE4rQjD8TzBghugvA9sWV+Tb_kz9CdQyiQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, 20 Jul 2024 at 17:40, Shao, Marshall <Marshall.Shao@dell.com> wrote:
->
-> Hi Ard,
->
-> Thanks for your reply. Here is the problem I encountered, and the problem
-> still exists in the mainline:
->
-> Firmware: UEFI 2.4,
-> EFI loader: systemd-boot
->
-> When I update my kernel from LTS v6.1.x to v6.6.x, the kernel fails to
->  boot when it jumps from the handover protocol. And it fails only on an
-> old Firmware that MemoryOverwriteRequestControl(MOR) bit is set to 1.
->
-> According to the TCG Reset Attack Mitigation Spec, a Memory Clear Method
-> will be loaded in the memory on boot, and this causes the EFI loader
-> and OS memory address to shift. Another important factor is that my
-> BSS region and boot_idt entries are not as clean as those in QEMU and
-> other platforms.
->
-> This means that clearing BSS in the handover function can cause the
-> firmware's IDT/GDT corruption, as you mentioned here commit <7b8439b0369b>
+On 21/07/2024 13:40, Animesh Agarwal wrote:
+> On Sun, Jul 21, 2024 at 3:03 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> That's not a DAI but audio card / complex. Drop.
+> 
+> A reference to sound-card-common.yaml is required instead, if I'm not wrong?
 
-This commit ID does not exist, I take it you mean
-ebf5a79acf9a2970e93d30a9e97b08913ef15711
+Most likely yes, assuming the properties there match properties here.
 
-> (x86/efistub: Drop redundant clearing of BSS).
+Best regards,
+Krzysztof
 
-systemd-boot does not use the handover entrypoint, it uses the native
-PE entrypoint, which no longer clears BSS with the commit above
-applied.
-
-> I noticed that most of
-> variables in BSS will be initialized before accessing, and only a few are
-> not, that's why I removed memset part in handover entry point.
->
-
-It would be better not to rely on special semantics that deviate from
-standard C. That said, it would also be better not to rely on this
-funky EFI handover protocol in the first place, which is only
-implemented by downstream, distro versions of GRUB. Given that GRUB
-now supports the native EFI entrypoint properly, the handover protocol
-is essentially deprecated.
-
-This does not mean, of course, that we should stop supporting it. But
-removing the memset() there may break things in a way that only
-becomes apparent once the changes trickle down to systems running
-those older GRUBs.
-
-> In terms of the BOOT_STACK_SIZE, I found out that the boot_stack region is
-> used in this case (at the beginning of _bss), and 0x4000 is not sufficient
-> to cover this issue since the data in boot_heap will be overwritten during
-> decompression.
-
-EFI boot uses the EFI firmware stack, and never enters the
-decompressor, where the address of boot_stack_end is loaded into
-ESP/RSP.
-
-This means that increasing the boot stack size does not prevent an
-overrun, but is affecting the image layout in a different way,
-avoiding your boot issue.
-
-It would be nice to get to the bottom of this: can you double check
-that the PE image metadata is accurate? llvm-readelf -a can be used to
-dump the PE header of a bzImage.
-
-> Prior to image decompression in EFI stub, it was ok.
->
-> 00000000008fc000 g       .bss   0000000000000000 .hidden _bss
-> 00000000008fc000 l     O .bss   0000000000004000 boot_stack
-> 0000000000900000 g     O .bss   0000000000000004 .hidden spurious_nmi_count
-> 0000000000900000 l     O .bss   0000000000000000 boot_stack_end
-> 0000000000900010 g     O .bss   0000000000000018 .hidden pio_ops
-> 0000000000900028 g     O .bss   0000000000000008 .hidden boot_params_ptr
-> 0000000000900040 l     O .bss   0000000000001000 scratch.0
-> 0000000000901040 l     O .bss   0000000000010000 boot_heap
->
-> My thought was that increasing the size of boot_stack should be harmless.
-
-I'm not bothered by the change itself, I just want to make sure that
-the fix is guaranteed to address the problem rather than paper over
-it.
-
-> As for the memset part, there could be an alternative way, althought it
-> looks a bit ugly.
->
-> memset(_bss+0x10000, 0, _ebss - _bss - 0x10000)
->
-
-So now you are applying the memset only to part of BSS, right? How
-does this help?
-
-
-> However, I've updated the diff, if you think this is more like a
-> workaround, please take this thread as a bug report. Thanks!
->
-> Regards,
->
-> Marshall Shao
->
->
-> Signed-off-by: Marshall Shao <marshall.shao@dell.com>
-> ---
->  arch/x86/boot/compressed/misc.c         | 4 ++--
->  arch/x86/include/asm/boot.h             | 2 +-
->  drivers/firmware/efi/libstub/x86-5lvl.c | 2 +-
->  drivers/firmware/efi/libstub/x86-stub.c | 2 --
->  include/linux/decompress/mm.h           | 2 +-
->  5 files changed, 5 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
-> index 944454306ef4..49b68f57dd18 100644
-> --- a/arch/x86/boot/compressed/misc.c
-> +++ b/arch/x86/boot/compressed/misc.c
-> @@ -50,8 +50,8 @@ struct boot_params *boot_params_ptr;
->
->  struct port_io_ops pio_ops;
->
-> -memptr free_mem_ptr;
-> -memptr free_mem_end_ptr;
-> +memptr free_mem_ptr __section(".data");
-> +memptr free_mem_end_ptr  __section(".data");
->  int spurious_nmi_count;
->
->  static char *vidmem;
-> diff --git a/arch/x86/include/asm/boot.h b/arch/x86/include/asm/boot.h
-> index 3e5b111e619d..312bc87ab027 100644
-> --- a/arch/x86/include/asm/boot.h
-> +++ b/arch/x86/include/asm/boot.h
-> @@ -33,7 +33,7 @@
->  #endif
->
->  #ifdef CONFIG_X86_64
-> -# define BOOT_STACK_SIZE       0x4000
-> +# define BOOT_STACK_SIZE       0x10000
->
->  /*
->   * Used by decompressor's startup_32() to allocate page tables for identity
-> diff --git a/drivers/firmware/efi/libstub/x86-5lvl.c b/drivers/firmware/efi/libstub/x86-5lvl.c
-> index 77359e802181..bebae4fdfb93 100644
-> --- a/drivers/firmware/efi/libstub/x86-5lvl.c
-> +++ b/drivers/firmware/efi/libstub/x86-5lvl.c
-> @@ -10,7 +10,7 @@
->
->  bool efi_no5lvl;
->
-> -static void (*la57_toggle)(void *cr3);
-> +static void (*la57_toggle)(void *cr3) __section(".data");
->
->  static const struct desc_struct gdt[] = {
->         [GDT_ENTRY_KERNEL32_CS] = GDT_ENTRY_INIT(DESC_CODE32, 0, 0xfffff),
-> diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
-> index 078055b054e3..ffc62af50669 100644
-> --- a/drivers/firmware/efi/libstub/x86-stub.c
-> +++ b/drivers/firmware/efi/libstub/x86-stub.c
-> @@ -21,7 +21,6 @@
->  #include "efistub.h"
->  #include "x86-stub.h"
->
-> -extern char _bss[], _ebss[];
->
->  const efi_system_table_t *efi_system_table;
->  const efi_dxe_services_table_t *efi_dxe_table;
-> @@ -1059,7 +1058,6 @@ void __noreturn efi_stub_entry(efi_handle_t handle,
->  void efi_handover_entry(efi_handle_t handle, efi_system_table_t *sys_table_arg,
->                         struct boot_params *boot_params)
->  {
-> -       memset(_bss, 0, _ebss - _bss);
->         efi_stub_entry(handle, sys_table_arg, boot_params);
->  }
->
-> diff --git a/include/linux/decompress/mm.h b/include/linux/decompress/mm.h
-> index ac862422df15..62c04691c898 100644
-> --- a/include/linux/decompress/mm.h
-> +++ b/include/linux/decompress/mm.h
-> @@ -36,7 +36,7 @@
->  /* A trivial malloc implementation, adapted from
->   *  malloc by Hannu Savolainen 1993 and Matthias Urlichs 1994
->   */
-> -STATIC_RW_DATA unsigned long malloc_ptr;
-> +STATIC_RW_DATA unsigned long malloc_ptr  __section(".data");
->  STATIC_RW_DATA int malloc_count;
->
->  MALLOC_VISIBLE void *malloc(int size)
-> --
-> 2.34.1
->
 
