@@ -1,125 +1,123 @@
-Return-Path: <linux-kernel+bounces-258300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 299C2938600
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 21:49:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1796C938602
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 21:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95C67B20C84
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 19:48:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0E191F2117A
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 19:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81EAA16A95B;
-	Sun, 21 Jul 2024 19:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E0E16B396;
+	Sun, 21 Jul 2024 19:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eyHhbUNH"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i4gW2CGO"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F62F168489;
-	Sun, 21 Jul 2024 19:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FA1168489;
+	Sun, 21 Jul 2024 19:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721591331; cv=none; b=cFsXGRPmoUDv/C7EqIyXx4KNdUMQEiGpZ1QKVyfnJ+INvg0SP5AKFcr+sQr6jRLibFXq4s00aHTIglXnpYhuk6NZsW7FovR9hYMqKUYlCJffDZ5UCFmxeRT9n4jx36iEPefBoJ9912gfYVQWatkm/BJFXk3r7LY8m1RtTWsKcTE=
+	t=1721591506; cv=none; b=CRoMMAYcEdDIlnUi3+RkbmcnQQ+EN4WxGDSAs64E56jCL1xWKSKkmPEY7XeILzE2380J0/xEWE1boNA8KFDvR5BiE6jT0BUTuWYrv2fY061fCU+a1kX/d7q8B2lEBT2CSh5PwxcQy/5Ba+3AdLoxPPsaAjg/Rrh8vNCycBNLd9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721591331; c=relaxed/simple;
-	bh=30as8Sz/8gSN5FhacKSRbAJZoo1ohmwxGOzwb3Y7yFI=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=joc2nbD5oAoZOaCM/vr7kBovcHQXCPcxzI3QqWFPg7iEQ2sMCkguTFr7CKA2WWC9xZ166uZpkJPUbRQPJjE97gtD5Acdc5/gkdyNM2HsrOgg/pbqONfh1Jl00I+7K+nkicfY/DpIFO9Clt9cYK/28PoDvDLCgdtmJF0jsmr2kmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eyHhbUNH; arc=none smtp.client-ip=209.85.167.52
+	s=arc-20240116; t=1721591506; c=relaxed/simple;
+	bh=ojnD7l7U4WXhnJ21gEjURp81rgMITCfE9m6Uir1OCRo=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hPD5BmIhehh1NY+pJKP/34V2PowUwrmtdswBaBBQ8n5mu6dAht2L14qdKdjUh26RW3E2iNHt/4CTxiA1N+7LxjgukOYzRV6E7xwN4fdZFzEaH8grRHKYpqcQiedQIuTwRez4ZwOa6w6PlQrMvDDEPAar0jQj8QY7wdYW5sPMnfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i4gW2CGO; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52f008aa351so869370e87.0;
-        Sun, 21 Jul 2024 12:48:50 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a3b866ebc9so1756450a12.3;
+        Sun, 21 Jul 2024 12:51:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721591328; x=1722196128; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=p7n1MTWeeiqkGXdo3+0zlmWH1fQltcN/tXEmUFSC7w0=;
-        b=eyHhbUNHo81L3F1kLujkf4TUeI2/ilrwp5rXk4Yhhny8gA+6Fdd/lNB+U+Nq64ER2f
-         NTs6rcfg5RWaDkIsmDUjG904ao+fEQ7F5mE+PCJSUxyJOIhRzUnOOTMXu051p5dgumaq
-         6kDtb6Ez7CEIUZhK57ulBIC7OIuOolDmSr6iJfjU1/VC+NAYw/Fmixu0ANZbRUFNSdYh
-         ausXONnI5WhJj9qBieh/90+9w4/TiAjPNzE9KyKAhuMgVqPitRjw8OzR5FrAS1V/9iKj
-         uHrg4omumwDEUTbLa9ZW+an7RseAkTFlh3Hbg9ZS1rYcpRkVWZMf1O7ZCmyXfw/TBpN5
-         XWFw==
+        d=gmail.com; s=20230601; t=1721591503; x=1722196303; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OXhJvxTh+FJgkdIwlUcd/DX9E13ffHM6KEgpQ3vYsc4=;
+        b=i4gW2CGOlQLSW4YbeRqaHZGECsat6WKbhtIH21w0aiZdjV29AKJlMOHvKdLzuOZu5C
+         M/RyMo+lBAgt/dN5rAa03gH0/Xa/5VEKuZdrCfCCB3kRLfWVe3jSLJ5FJTRuwjD2sD3x
+         BGZgb3YqKtl9FVlB019v2AbsUl5ajoR71jasJED9vkgSJN7QzpQHwrzwnNqB5z0sIuU+
+         n/FGnudDdNjENU0V14hX5ROijiVtAERAuGZjU+OslLCppocdHGCNi37oq3XU0KE36+9b
+         VYrQbXo/TrSvBNH4lwkDrXJYGcAVbsRhQD+cjzffYNwEz54/JRgL9roQOk+rU44iDvBC
+         JcYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721591328; x=1722196128;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=p7n1MTWeeiqkGXdo3+0zlmWH1fQltcN/tXEmUFSC7w0=;
-        b=qmaR/6fQViM0J/ShAqC+vB5B3pepeoOhbpXkDextOI/ZZWGumYB/Cd1vExYcChrisj
-         UYaGMzv/AWNjjfE9U92vSoFkS0ZKHUzbI6AysovqYx54g2Rv6ChD+m5wlJCW3AnxSZu2
-         qtQp0N1G280n8fwc06AHcSH9qB87qVpbDy9L8sZOl1wX2UobG2emxuOYQmIyKyNQ2M+s
-         KnR+ZgwR9slSAk/KIwWut+WZpOwtiWjsfupzu7oI26i6J6jLJRPLqSnXXJewFhWudzoG
-         9Ae3VHbZYExvvnWGwxg3PWLiSfVgoc5YZvrT3bzmS6CGvsM7Wl5U/m64o+4DMQiL/1Aw
-         /t9g==
-X-Forwarded-Encrypted: i=1; AJvYcCXfHOzss7HXDAi6qj2TLH97iW9YhKEtaSrf+XwbFqjWdc6qyURA1us5dxh37fNMr5K9teM8snG9K0dtBPbr0yDu681F0Y1kvKOjKQ==
-X-Gm-Message-State: AOJu0YxIKIn+qelGdLSE8gM+b7eiqTFlqAWUeW+xfcse+VrgwzdlSBiY
-	/QvgXIshv13NVbevZzV+9Be2qAqR3mfOypLmUTkyOwcTMbQcUDAOfrs3ukqpVw+OVKmMlNHXuzX
-	RcZHuNN4aWnFlDuba+sX846hSzOYjfMZt
-X-Google-Smtp-Source: AGHT+IEqDSItIujOuXcC9pEBhiaaY3A48D84X56rTHa6H4HlbaPPT/Fgxk+CyId2KzBefieWteed28EMY04FR7Wb7N0=
-X-Received: by 2002:a05:6512:1308:b0:52c:9421:2739 with SMTP id
- 2adb3069b0e04-52efb522685mr2567121e87.9.1721591328221; Sun, 21 Jul 2024
- 12:48:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721591503; x=1722196303;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OXhJvxTh+FJgkdIwlUcd/DX9E13ffHM6KEgpQ3vYsc4=;
+        b=GQ+4t2YxQ45YwOPWGE6RFGQlsgFC0mzT5XlFhNp1IgzaJNP84oVYBWerjeyGqnvDc4
+         U9SlszOlNLvMjfX7tusGwlY3A/k63WyQQfvTEC6SwogdIDkYYHUcmnwhuOAqYl0T9yod
+         ullCrURbTrTXJ4sP9wnVMYoPPjSHfGHXcLLDoB6Ieu5JebSjn7kKl5bVbLEKvXUw50a7
+         UZN/fk4m6paaFt5X01Vj7uTuC3OR9QNbNaZzUyUB3xTWu95tIUI4fS8LZXaKbpap6gYX
+         tdwvgEfX76QsF/+wIlU/eOUM7BiO9a55q32611NtDmeBi7hX7zj2xjKDW78MH2fXfloe
+         dXRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXIEggjbNpI0x7Thuw34BmtsQnqZ6ZSWxHTtUTJ3vHxUMi9Pwa2zJ+6nQN4YhMkw+2f9FEpsxhQ7sYUty1Q3zRCIw4a6nNcVlwzrYD5mSoHwWNHFFCNmYdkk3t5qJGwqvWuZRlbgnFl7c4T0YmR7r85RjD2vAjOmGtuEDsHxSAzi5ejwQ==
+X-Gm-Message-State: AOJu0YzymlAf+q51Hzc+iDM2C27Cpj+Axptxi18k7JBkfeLTMs5VCCl+
+	cpOxyEXVVQujmtNuZ3YXoNiGdUl0aep2q3J5IzxtKfX2sVcjFf26
+X-Google-Smtp-Source: AGHT+IHBeqZ9eTSz0bR9gAKqLV6LP7oKJq2WEwJizcoWMFJtTzi9WLC2fIcSpqdgq0NvFVRH+UkYIA==
+X-Received: by 2002:a05:6402:528c:b0:5a2:1693:1a2e with SMTP id 4fb4d7f45d1cf-5a479871105mr3211157a12.18.1721591503002;
+        Sun, 21 Jul 2024 12:51:43 -0700 (PDT)
+Received: from vamoiridPC ([2a04:ee41:82:7577:bc21:fb27:f4e6:6867])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30c2f8645sm4909057a12.72.2024.07.21.12.51.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Jul 2024 12:51:42 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
+Date: Sun, 21 Jul 2024 21:51:40 +0200
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, lars@metafoo.de,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	andriy.shevchenko@linux.intel.com, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 01/10] iio: pressure: bmp280: Fix regmap for BMP280
+ device
+Message-ID: <20240721195140.GA325365@vamoiridPC>
+References: <20240711211558.106327-1-vassilisamir@gmail.com>
+ <20240711211558.106327-2-vassilisamir@gmail.com>
+ <20240720120429.46aea886@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Sun, 21 Jul 2024 14:48:37 -0500
-Message-ID: <CAH2r5msA=eLHHR14qDo8opf13yGiSKp9D=hN2WzY8FuKPhNvog@mail.gmail.com>
-Subject: [GIT PULL] smb3 client fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, 
-	CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240720120429.46aea886@jic23-huawei>
 
-Please pull the following changes since commit
-0c3836482481200ead7b416ca80c68a29cfdaabd:
+On Sat, Jul 20, 2024 at 12:04:29PM +0100, Jonathan Cameron wrote:
+> On Thu, 11 Jul 2024 23:15:49 +0200
+> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+> 
+> > Up to now, the BMP280 device is using the regmap of the BME280 which
+> > has registers that exist only in the BME280 device.
+> > 
+> > Fixes: 14e8015f8569 ("iio: pressure: bmp280: split driver in logical parts")
+> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> This fix is for an ancient issue (2016) so I'm not going to rush it in
+> but will mark it for stable inclusion.  Advantage of taking this through
+> the main tree is we can move faster with the rest of the series.
+> So applied to the testing branch of iio.git which will be rebase on rc1
+> when available and become togreg for this cycle.
+> 
+> Thanks,
+> 
+> Jonathan
+> 
+> 
 
-  Linux 6.10 (2024-07-14 15:43:32 -0700)
+Hi Jonathan,
 
-are available in the Git repository at:
+No problem at all! Yes indeed it's an old fix and I am in no rush at all
+so th simpler the better :)
 
-  git://git.samba.org/sfrench/cifs-2.6.git tags/6.11-rc-part1-smb3-client-fixes
-
-for you to fetch changes up to a07d38afd15281c42613943a9a715c3ba07c21e6:
-
-  cifs: Fix missing fscache invalidation (2024-07-20 13:55:29 -0500)
-
-----------------------------------------------------------------
-six smb3 client fixes, most for stable including important netfs related fixes
-- various netfs related fixes for cifs addressing some regressions in
-6.10 (e.g. generic/708 and some multichannel crediting related issues)
-- fix for a noisy log message on copy_file_range
-- add trace point for read/write credits
-----------------------------------------------------------------
-David Howells (5):
-      cifs: Fix server re-repick on subrequest retry
-      cifs: Fix missing error code set
-      cifs: Fix setting of zero_point after DIO write
-      cifs: Add a tracepoint to track credits involved in R/W requests
-      cifs: Fix missing fscache invalidation
-
-Steve French (1):
-      cifs: fix noisy message on copy_file_range
-
- fs/smb/client/cifsfs.c    |  2 +-
- fs/smb/client/cifsglob.h  | 17 +++++++++-------
- fs/smb/client/file.c      | 53
-++++++++++++++++++++++++++++++++++++++++++++-----
- fs/smb/client/smb1ops.c   |  2 +-
- fs/smb/client/smb2ops.c   | 42 ++++++++++++++++++++++++++++++++++-----
- fs/smb/client/smb2pdu.c   | 43 +++++++++++++++++++++++++++++++++-------
- fs/smb/client/trace.h     | 55
-++++++++++++++++++++++++++++++++++++++++++++++++++-
- fs/smb/client/transport.c |  8 ++++----
- 8 files changed, 191 insertions(+), 31 deletions(-)
-
--- 
-Thanks,
-
-Steve
+Cheers,
+Vasilis
 
