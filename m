@@ -1,158 +1,181 @@
-Return-Path: <linux-kernel+bounces-258101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E9D99383A3
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 08:56:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 213EB9383A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 08:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F9661C20A3E
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 06:56:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 657C8B20DDB
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 06:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB348BE8;
-	Sun, 21 Jul 2024 06:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9BA79E1;
+	Sun, 21 Jul 2024 06:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g6h21fbP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u37xlAGX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF33523A;
-	Sun, 21 Jul 2024 06:56:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E946FB0;
+	Sun, 21 Jul 2024 06:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721544986; cv=none; b=muNUcyEF5JfyqCnRHxG6DMyGZ83NPAf4o0ENxd2f7TWV/zz9r2P0AHFi1RSHD/oBROGQDiSxp8LAiAe48yjCnNuYaac7LlhS7LRRQ5Yj9Sb+QcTrEztdRWWBMJFcIHdc6eeezx6M60LJhVuZr/Eq85JMp6Cy2RMcv2jdIHg1yUU=
+	t=1721545168; cv=none; b=qa0qGmtB3HKBqKvY5aKMQVqlFZXbaAtmSbHpMLjfkdDzfa+wTpAS9qukRsbeoqEFPjT7S/nrzwo2ePLtHnzEIWKBEZK6/ENpiwfBxTPyH0WZZHgkDX3xAWiIJ49EZOplO9XRttZ3NlQMB2nEgTiPLD7UVxxUZq0P5YoKBKb7ls0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721544986; c=relaxed/simple;
-	bh=FSBPbLLcbAde3ZXMgz23oLJDG7kV2kFSHjx5C5Dhrkk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y1PaoBPIOuQBRiewGv6dC0NRjVcPmvos7RSoDQYfowKDcH6yzlu6G1Bpm7URFsXihQ/WQF1oLsAqURRoOeRj79nBE8zxpjxSp47Lfx4a4lr7L7L/XLNA9KDWkjuoGBVOkp46kMSdI+emo7PvPGtERmCnGt+SvJaL9DRim9/dGxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g6h21fbP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DE1AC116B1;
-	Sun, 21 Jul 2024 06:56:24 +0000 (UTC)
+	s=arc-20240116; t=1721545168; c=relaxed/simple;
+	bh=ycCmG3no4pSXFEj8alGwkugIIUxQ6k6PlbR2klzFHeM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JTtTq55Pzh+jzkK1qRh58Ub/mk+XgvZLBOGRXJiYzztV8RMIY27K0VWYpduL1co+rAzmwWnUxbrvob3wQrgTfI5JsUMuSxW4j3R/1wcO8VOhXYjsApMwgW/VMyDQPHlDX+U9QzCMYXjw0dvjawg90yI/nXVk11cuWr1QmLn3h7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u37xlAGX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DE2CC4AF09;
+	Sun, 21 Jul 2024 06:59:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721544985;
-	bh=FSBPbLLcbAde3ZXMgz23oLJDG7kV2kFSHjx5C5Dhrkk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g6h21fbPSKjSk8kQYG8NIpXPDlKS7rB8E1X1qmwOnVAVTKCqAt+wRVfwtQlYvMomg
-	 c8cSeT8F8tL0fUPxGOEJjL/xeRiqAfRdnWrw0oZZC3RUCd57f543RTEKYVyWnaKqWo
-	 aCypL4Kr9AXVJ5iI8eZnLSvV/SU04h6/ZQ51cIvDEFLomIkrwvzypqopjbrzZYw4zT
-	 yyzhMdpjZtLTQiQVYHZhJKGTqhytkhjz8xetANwFUzlWM3Hu0oSj4gfJlybNicM4/e
-	 EZjP/9pFl9xR+XpAyLIPTDuZQFrlnjqK5gGCIMskq/4bxQZ372SF955DqJ7rskoILI
-	 DOHCFgRDoeLMg==
-Date: Sun, 21 Jul 2024 09:56:21 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Konstantin Taranov <kotaranov@microsoft.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>,
-	Konstantin Taranov <kotaranov@linux.microsoft.com>,
-	Wei Hu <weh@microsoft.com>,
-	"sharmaajay@microsoft.com" <sharmaajay@microsoft.com>,
-	Long Li <longli@microsoft.com>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH rdma-next 1/1] RDMA/mana_ib: indicate that inline data is
- not supported
-Message-ID: <20240721065621.GD1265781@unreal>
-References: <PAXPR83MB0559406ED7CCDAFC0CAEC63DB4A22@PAXPR83MB0559.EURPRD83.prod.outlook.com>
- <20240716142223.GC5630@unreal>
- <PAXPR83MB05595BBC92EB695753EB8563B4A22@PAXPR83MB0559.EURPRD83.prod.outlook.com>
- <20240716170608.GD5630@unreal>
- <PAXPR83MB0559D97004241D37765A151DB4A22@PAXPR83MB0559.EURPRD83.prod.outlook.com>
- <20240717062250.GE5630@unreal>
- <20240717163437.GG1482543@nvidia.com>
- <PAXPR83MB05599E93C7F584D34D715E8AB4AC2@PAXPR83MB0559.EURPRD83.prod.outlook.com>
- <20240718164818.GH1482543@nvidia.com>
- <PAXPR83MB0559FD4684B40F51A67D6AC9B4AD2@PAXPR83MB0559.EURPRD83.prod.outlook.com>
+	s=k20201202; t=1721545167;
+	bh=ycCmG3no4pSXFEj8alGwkugIIUxQ6k6PlbR2klzFHeM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=u37xlAGXXTEOhHDGkOSKWUOIASyNLmHqJ6ijxeOaKbHA+y6Cu9hc5C05H5lHg2NN9
+	 gZBFjO27wtCv5BH0ZhIJhn5gS9xChTmDw8oPBp/4xNCW1bc48lmbo73NCAiHn8zmxI
+	 Rqu021N/KbpZ3JnA92gjRalV0wXQTIK1NNxnPCAGLdm/BDVf8eaTubDoo0bNn8Bxvn
+	 BeBWg8XhrLDSk/7TAyiPSbgP2U4A6keEUP1UUraZanofME2+kviCMA1BXa02cj/k7r
+	 AjmLStepFd1xViiB1Y/P54xOdkR47a/WmzixQT1TfJYb8+7VroWC9UwYXsW6s5035P
+	 5y2XNRdHszk+w==
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ee817dac89so28590821fa.1;
+        Sat, 20 Jul 2024 23:59:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWvT1zc9ovUP3OluZDht/R7QvcNGdqghqePTl+hgbTu8KR33Xeds90+2bMKYxMTPeVvM/frK30x8mljP12ASciuWqZQJPk9bvda316Y395tYMkUHlN/Ws1fi8gbkXRk1XYPsVoJMlLPYzye
+X-Gm-Message-State: AOJu0YzntSLQ8FxLzM/0tXyqd9UhzSzC0t0V9Wh0Af6scAVrsMTmcUsx
+	n8zKX+fiI6lzzUlq85/N+JPVCJrnN4iM/zbBz4DucXBuDZwIResDtOWn5edPERRuXgR0zH1Ihwk
+	tXFRWgJ4BmToBbBvPvH4xYzoUZYI=
+X-Google-Smtp-Source: AGHT+IGoCfBxupU/6yRUDF1nAiP6/nAJxO3tl0LZJtxuDUP8k0i6IF8wxW/1X86vy8CJ9dtGDKUtH7Z5XJ5algnQFPc=
+X-Received: by 2002:a05:6512:39c9:b0:52f:25b:b161 with SMTP id
+ 2adb3069b0e04-52f025bb44dmr100323e87.6.1721545166144; Sat, 20 Jul 2024
+ 23:59:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR83MB0559FD4684B40F51A67D6AC9B4AD2@PAXPR83MB0559.EURPRD83.prod.outlook.com>
+References: <20240720-kbuild-pacman-pkg-v7-1-74a79b4401d2@weissschuh.net> <20240721033209.GA545406@thelio-3990X>
+In-Reply-To: <20240721033209.GA545406@thelio-3990X>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sun, 21 Jul 2024 15:58:49 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARj9fxm_3h=7g4PLbLDHXNUQrRu8iOQ4sZdx8Ag3YS9sA@mail.gmail.com>
+Message-ID: <CAK7LNARj9fxm_3h=7g4PLbLDHXNUQrRu8iOQ4sZdx8Ag3YS9sA@mail.gmail.com>
+Subject: Re: [PATCH v7] kbuild: add script and target to generate pacman package
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Nicolas Schier <nicolas@fjasle.eu>, 
+	"Jan Alexander Steffens (heftig)" <heftig@archlinux.org>, Christian Heusel <christian@heusel.eu>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 19, 2024 at 10:51:58AM +0000, Konstantin Taranov wrote:
-> > > > > > > Yes, you are. If user asked for specific functionality
-> > > > > > > (max_inline_data != 0) and your device doesn't support it, you
-> > > > > > > should
-> > > > return an error.
-> > > > > > >
-> > > > > > > pvrdma, mlx4 and rvt are not good examples, they should return
-> > > > > > > an error as well, but because of being legacy code, we won't change
-> > them.
-> > > > > > >
-> > > > > > > Thanks
-> > > > > > >
-> > > > > >
-> > > > > > I see. So I guess we can return a larger value, but not smaller. Right?
-> > > > > > I will send v2 that fails QP creation then.
-> > > > > >
-> > > > > > In this case, may I submit a patch to rdma-core that queries
-> > > > > > device caps before trying to create a qp in rdma_client.c and
-> > > > > > rdma_server.c? As that code violates what you described.
-> > > > >
-> > > > > Let's ask Jason, why is that? Do we allow to ignore max_inline_data?
-> > > > >
-> > > > > librdmacm/examples/rdma_client.c
-> > > > >   63         memset(&attr, 0, sizeof attr);
-> > > > >   64         attr.cap.max_send_wr = attr.cap.max_recv_wr = 1;
-> > > > >   65         attr.cap.max_send_sge = attr.cap.max_recv_sge = 1;
-> > > > >   66         attr.cap.max_inline_data = 16;
-> > > > >   67         attr.qp_context = id;
-> > > > >   68         attr.sq_sig_all = 1;
-> > > > >   69         ret = rdma_create_ep(&id, res, NULL, &attr);
-> > > > >   70         // Check to see if we got inline data allowed or not
-> > > > >   71         if (attr.cap.max_inline_data >= 16)
-> > > > >   72                 send_flags = IBV_SEND_INLINE;
-> > > > >   73         else
-> > > > >   74                 printf("rdma_client: device doesn't support
-> > > > IBV_SEND_INLINE, "
-> > > > >   75                        "using sge sends\n");
-> > > >
-> > > > I think the idea expressed in this code is that if max_inline_data
-> > > > requested too much it would be limited to the device capability.
-> > > >
-> > > > ie qp creation should limit the requests values to what the HW can
-> > > > do, similar to how entries and other work.
-> > > >
-> > > > If the HW has no support it should return - for max_inline_data not
-> > > > an error, I guess?
-> > >
-> > > Yes, this code implies that max_inline_data can be ignored at creation,
-> > while the manual of ibv_create_qp says:
-> > > "The function ibv_create_qp() will update the qp_init_attr->cap struct
-> > > with the actual QP values of the QP that was created; the values will
-> > > be **greater than or equal to** the values requested."
-> > 
-> > Ah, well that seems to be some misunderstandings then, yes.
-> > 
-> > > I see two options:
-> > > 1) Remove code from rdma examples that rely on ignoring max_inline; add
-> > a warning to libibverbs when drivers ignore that value.
-> > > 2) Add to manual that max_inline_data might be ignored by drivers; and
-> > allow my current patch that ignores max_inline_data in mana_ib.
-> > 
-> > I don't know, what do the majority of drivers do? If enough are already doing
-> > 1 then lets force everyone into 1, otherwise we have to document 2.
-> > 
-> > And a pyverbs test should be added to cover this weirdness
-> 
-> I quickly read create_qp code of all providers and it seems that max_inline_data is ignored by hw/pvrdma and sw/rvt.
-> Other providers fail the creation when they cannot satisfy the inline_data cap.
-> Some drivers ignore it for GSI, but I think it is reasonable. 
-> 
-> Then I guess the option 1 is better. Regarding pyverbs, should I add a test for the option 1?
-> If yes, what should it test?
+On Sun, Jul 21, 2024 at 12:32=E2=80=AFPM Nathan Chancellor <nathan@kernel.o=
+rg> wrote:
+>
+> Hi Thomas,
+>
+> On Sat, Jul 20, 2024 at 11:18:12AM +0200, Thomas Wei=C3=9Fschuh wrote:
+> > pacman is the package manager used by Arch Linux and its derivates.
+> > Creating native packages from the kernel tree has multiple advantages:
+> >
+> > * The package triggers the correct hooks for initramfs generation and
+> >   bootloader configuration
+> > * Uninstallation is complete and also invokes the relevant hooks
+> > * New UAPI headers can be installed without any manual bookkeeping
+> >
+> > The PKGBUILD file is a modified version of the one used for the
+> > downstream Arch Linux "linux" package.
+> > Extra steps that should not be necessary for a development kernel have
+> > been removed and an UAPI header package has been added.
+> >
+> > Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> > ---
+>
+> I think this looks really solid now, thanks again for the PACMAN_PKGBASE
+> addition.
+>
+> I tested building Arch Linux's configuration for x86_64 and booting it
+> in a VM. I built Fedora's configuration for aarch64 just to test the
+> cross building aspect and making sure the result of various bits that we
+> added that would not affect x86 (such as the dtb installation) looked
+> reasonable.
+>
+> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+> Tested-by: Nathan Chancellor <nathan@kernel.org>
 
-Probably, the test should check the max_inline_data value returned from device caps and try to create
-QP with higher value. If the QP creation fails, the test should pass. For hw/pvrdma and sw/rvt, the QP
-should be successfully created, despite the requested value.
 
-Thanks
+I believe this is a separate issue, but
+Debian/Ubuntu provides a 'makepkg' package, which fails
+with 'User defined signal 1' error.
 
-> 
-> > 
-> > Jason
+
+After 'sudo apt install makepkg',
+
+
+masahiro@zoe:~/ref/linux-next((HEAD detached from origin/master))$ cat
+/etc/os-release
+PRETTY_NAME=3D"Ubuntu 24.04 LTS"
+NAME=3D"Ubuntu"
+VERSION_ID=3D"24.04"
+VERSION=3D"24.04 LTS (Noble Numbat)"
+VERSION_CODENAME=3Dnoble
+ID=3Dubuntu
+ID_LIKE=3Ddebian
+HOME_URL=3D"https://www.ubuntu.com/"
+SUPPORT_URL=3D"https://help.ubuntu.com/"
+BUG_REPORT_URL=3D"https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL=3D"https://www.ubuntu.com/legal/terms-and-policies/priva=
+cy-policy"
+UBUNTU_CODENAME=3Dnoble
+LOGO=3Dubuntu-logo
+masahiro@zoe:~/ref/linux-next((HEAD detached from origin/master))$
+makepkg --version
+makepkg (pacman) 6.0.2
+Copyright (c) 2006-2021 Pacman Development Team <pacman-dev@archlinux.org>.
+Copyright (C) 2002-2006 Judd Vinet <jvinet@zeroflux.org>.
+
+This is free software; see the source for copying conditions.
+There is NO WARRANTY, to the extent permitted by law.
+masahiro@zoe:~/ref/linux-next((HEAD detached from origin/master))$ git
+log --oneline -2
+5dcaebb67ad9 (HEAD) kbuild: add script and target to generate pacman packag=
+e
+41c196e567fb (tag: next-20240719, origin/master, origin/HEAD) Add
+linux-next specific files for 20240719
+masahiro@zoe:~/ref/linux-next((HEAD detached from origin/master))$
+make defconfig  pacman-pkg
+*** Default configuration is based on 'x86_64_defconfig'
+#
+# No change to .config
+#
+objtree=3D"/home/masahiro/ref/linux-next" \
+BUILDDIR=3D"" \
+CARCH=3D"x86_64" \
+KBUILD_MAKEFLAGS=3D"rR --no-print-directory" \
+KBUILD_REVISION=3D"4" \
+makepkg
+
+=3D=3D> ERROR: An unknown error has occurred. Exiting...
+User defined signal 1
+make[3]: *** [scripts/Makefile.package:150: pacman-pkg] Error 138
+make[2]: *** [Makefile:1538: pacman-pkg] Error 2
+make[1]: *** [/home/masahiro/ref/linux-next/Makefile:347:
+__build_one_by_one] Error 2
+make: *** [Makefile:224: __sub-make] Error 2
+
+
+
+Do you know anything?
+
+
+
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
