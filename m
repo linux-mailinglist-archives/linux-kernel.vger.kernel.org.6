@@ -1,148 +1,130 @@
-Return-Path: <linux-kernel+bounces-258212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A568793850D
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 16:43:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB13893850E
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 16:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D65801C2091E
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 14:43:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 868541F224D8
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 14:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64DE8166319;
-	Sun, 21 Jul 2024 14:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kx/mX6zI"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E8E166308;
+	Sun, 21 Jul 2024 14:44:16 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFF7150980;
-	Sun, 21 Jul 2024 14:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5834C8F66
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 14:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721572981; cv=none; b=Fcbd8x4bIQL0ioHG8OwaoJ8SZ3R6zYNA7lesdSRmJO9PbC+PzkZKQU3HnKvayScl6QTdF/bF/dIlzS7qGIvMLYpsmQkUDAgkskm/r2YuXpb4cfNUzzev9sy4ACp7Yo29iyhG4jzFPhvsw4cFihLNKec2sZPgnmnlOcYZUDBROok=
+	t=1721573055; cv=none; b=o6GU5PjL/SWkTqrtgcFHhIYGaGjpB+jtq3bcmyLafOhbl0Qfs7WUQb2ZBhliV7poPEormCUp802Bm6h6xN3JJXnbL4wAh+QY8D4uxl7lFVGivEcStH3S85qdQW9kbxRCm9VIZJy8vzyQrj4rJQISiTt8Cr1kaPzAHxG2I9n9y7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721572981; c=relaxed/simple;
-	bh=KsRZIIVF2mFFBV6NuuLYyif7cLH41blk3r28EuCSS68=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=myCD7BZaoD6gvH4Zpoxm7UHIXLjae3peJNhVHBGf9+Y2jCRmCbfK+vRoYsJ+H4jVQVJS12IZbIXBxIVEgAa4im6fgBbVbRwoZgVzYXYAahxNPenPecZMePRyW4U8QREVUTn0tWpPnWLValFgo3qLA6qRCvQ2qBMaaE35MQqvTfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kx/mX6zI; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fd66cddd4dso18393275ad.2;
-        Sun, 21 Jul 2024 07:43:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721572980; x=1722177780; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3ZiPga6tr64DZh3sYOPyVgg9p0KRzGrR3EpmGO9QyTA=;
-        b=kx/mX6zIlpO+bPwGrrJaBX3UWGp7H0lkH/31/L+DJQnXzTOOHG716mxJw8LmnMAzhA
-         GrLFwoUAvkEFxF5dWobSIgJQTLkXFl+mylOZXTjPxySgem1KrcniQCWaWF8dZo0W9hLx
-         m6Ihng20ETlPk3JKydBeu1gjzZ+Edt/Qrt7yJzYTQK0hHTQckbwywOjezvkRWoM8tEHQ
-         gzz30hugWMNJvvXQ5LCdq7amlhX6i/9l3g2v9p1XmDK+YPo7bVEcQu7FKqBJhQSK6qco
-         FD09CBmk+tPG96aBT+Xf3hUpvIc7ShUXL9PfyPrWl7SyHmCUDbJMBu3Ye56r8OjPO3Ih
-         RyLw==
+	s=arc-20240116; t=1721573055; c=relaxed/simple;
+	bh=AhgsfNzCNBk5RRiC24hJSXrOYelvEEpJEh3HYO7is1g=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=RtLx1qRs55ytegRTftLj39kbGcBtOzSH2iBllnfSwwahEs2ejI7S3qDo+K4RHolLUCorgx/D7qcnAtRCLALmaRCAREhG8tddaZC1RuUfGVuX29fjqzUyehKBB+8pX2DSp64Mr6NFOAlslYSZNi24cJhg1hADTML2iNNGZO6STMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-8045e14c387so737397439f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 07:44:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721572980; x=1722177780;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3ZiPga6tr64DZh3sYOPyVgg9p0KRzGrR3EpmGO9QyTA=;
-        b=oSV5gulUsTDixMEUUQQdpfWmDgEbgTIJu+rq9nyCoN4083redLmgf2VSTCnLkeYzP/
-         Up23ndi11rEs0VT6L91DNejuLS6O035+ol9hC3kPd6ccov2fGn5aCbT1Gfr66TzbAK/r
-         qtcrETMC+ySSrGiKQRaXqegtnsoY6Mt1ISX3eOY10sEBveEL/IZcVkJd3tRkurVB16gY
-         7GDzyGVdtZ+1BbRk2FpSBeGhO6istfvt0Jup768tuaCtdl8YZAr3gGln9Ha3KLlhC6vq
-         sxdVG491hgFipKohNtWCt7HcxtuhPEdt3yzsnOvJ2BBB3+pC0OTZ7czdsdi0PLiKIMxx
-         qwwA==
-X-Forwarded-Encrypted: i=1; AJvYcCXpdz9brF7PYZgV1/RwTXRnJggcV5Ey+5t+oU1IWt2afDW9L3AC5KUGAQaKgyf4cdWfC2uC6LcPRaV6WO8wZJkxw8n054ihsXJJ+NCNpCmBKzFBwapTdsrv6vACoCAYeaW3
-X-Gm-Message-State: AOJu0YyoqeMXXiW4JCJK5/wvHJmjwfQk5b1RVe/Rt7yArSeNuJ6Hy3Cb
-	C7DYiv8rO9+ZUBIuPJaCSrRlx47hEc5gKhZZNX0cZtymhtJm0qarki5kjldi
-X-Google-Smtp-Source: AGHT+IEY7ZgHgWh0N17tPo6horrpfd4ym2tY+CBJDm1vcSbUVeURBXpoUxBI7ISoaFkTkyckpLhucw==
-X-Received: by 2002:a17:902:ecc5:b0:1fa:221b:a7ef with SMTP id d9443c01a7336-1fd7461f2e1mr57264835ad.41.1721572978145;
-        Sun, 21 Jul 2024 07:42:58 -0700 (PDT)
-Received: from localhost ([117.147.31.23])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f457c6asm37162725ad.242.2024.07.21.07.42.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jul 2024 07:42:57 -0700 (PDT)
-From: Tao Chen <chen.dylane@gmail.com>
-To: Quentin Monnet <qmo@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	chen.dylane@gmail.com
-Cc: Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [v3 PATCH bpf-next 4/4] bpftool: add document for net attach/detach on tcx subcommand
-Date: Sun, 21 Jul 2024 22:42:52 +0800
-Message-Id: <20240721144252.96264-1-chen.dylane@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1721573053; x=1722177853;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9mLe0bdQgM23BiMtq0NAyvfIOzmDsJmXBKYteAwRaKU=;
+        b=T+1E6qhKlZ+dAzqvkgNK0fbW4ntWOHKibKw4R7LCmrJeur8+XgQzVpy01r8tJTHw+g
+         PZe4dtCJqqiH6bPVZbTGuDsFIy+9Wtc9cOvyV/a5PgftvcMwggNkDiEejZUq0awDeRqe
+         gu4FEQxygiMrmw4voHvLAPZlyLG2kESRUK3WBl49mrbJkNrziVLtxgKsY/FKCF7thd1M
+         7Enhz7NE4Hm7zbWL2y1mnia5/9oj647Ua7wpUcdBtuwyYMLD+occYR8yCuUlPIPRr3+H
+         0xCbfF/hCpUzFhmPKInnl/ePt4+SrUJez5rwPsm3SdnTBHbz3aGkhodk3XuDfVOEA58/
+         DHPQ==
+X-Gm-Message-State: AOJu0YwcXYREnyrS0mTspBqEp20gS+W1yIOVWqZ6/AB6rTHFEEYziMr1
+	BlBsmWN//vyZCQrJs8P31l0BHDKYahSr68K77J0cqb4+bDnmFIyFGkSYmDU1I0r0iCoGVMjXZDM
+	lgjjQDa8ZctA4pPNZbjYfu0PdnoiZr3Si7Ho1+/zim4mpSIxmkeZDwF8=
+X-Google-Smtp-Source: AGHT+IE0MDmhkYENCstt90DhxFqtOv1KhVlI1qu8Fv5mWnK3A5qFHlHGWxoOahReh78ZYU2BBFaflYxDF9gGkZ9c8yJ6wKtTOjEF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:850d:b0:4c1:b049:25f with SMTP id
+ 8926c6da1cb9f-4c23fd618eemr396507173.1.1721573053579; Sun, 21 Jul 2024
+ 07:44:13 -0700 (PDT)
+Date: Sun, 21 Jul 2024 07:44:13 -0700
+In-Reply-To: <000000000000943e1c061d92bdd6@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000050517b061dc2f665@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [bpf?] [net?] KASAN: slab-use-after-free
+ Read in bq_xmit_all
+From: syzbot <syzbot+707d98c8649695eaf329@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-This commit adds sample output for net attach/detach on
-tcx subcommand.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Acked-by: Quentin Monnet <qmo@kernel.org>
-Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+***
+
+Subject: Re: [syzbot] [bpf?] [net?] KASAN: slab-use-after-free Read in bq_xmit_all
+Author: aha310510@gmail.com
+
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+
 ---
- .../bpf/bpftool/Documentation/bpftool-net.rst | 22 ++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+ kernel/bpf/cpumap.c | 6 ++----
+ kernel/bpf/devmap.c | 3 +--
+ 2 files changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/tools/bpf/bpftool/Documentation/bpftool-net.rst b/tools/bpf/bpftool/Documentation/bpftool-net.rst
-index 348812881297..4a8cb5e0d94b 100644
---- a/tools/bpf/bpftool/Documentation/bpftool-net.rst
-+++ b/tools/bpf/bpftool/Documentation/bpftool-net.rst
-@@ -29,7 +29,7 @@ NET COMMANDS
- | **bpftool** **net help**
- |
- | *PROG* := { **id** *PROG_ID* | **pinned** *FILE* | **tag** *PROG_TAG* | **name** *PROG_NAME* }
--| *ATTACH_TYPE* := { **xdp** | **xdpgeneric** | **xdpdrv** | **xdpoffload** }
-+| *ATTACH_TYPE* := { **xdp** | **xdpgeneric** | **xdpdrv** | **xdpoffload** | **tcx_ingress** | **tcx_egress** }
+diff --git a/kernel/bpf/cpumap.c b/kernel/bpf/cpumap.c
+index 8fccc311397c..22e1c62fc0f4 100644
+--- a/kernel/bpf/cpumap.c
++++ b/kernel/bpf/cpumap.c
+@@ -708,6 +708,7 @@ static void bq_flush_to_queue(struct xdp_bulk_queue *bq)
+ static void bq_enqueue(struct bpf_cpu_map_entry *rcpu, struct xdp_frame *xdpf)
+ {
+ 	struct xdp_bulk_queue *bq = this_cpu_ptr(rcpu->bulkq);
++	struct list_head *flush_list = bpf_net_ctx_get_cpu_map_flush_list();
  
- DESCRIPTION
- ===========
-@@ -69,6 +69,8 @@ bpftool net attach *ATTACH_TYPE* *PROG* dev *NAME* [ overwrite ]
-     **xdpgeneric** - Generic XDP. runs at generic XDP hook when packet already enters receive path as skb;
-     **xdpdrv** - Native XDP. runs earliest point in driver's receive path;
-     **xdpoffload** - Offload XDP. runs directly on NIC on each packet reception;
-+    **tcx_ingress** - Ingress TCX. runs on ingress net traffic;
-+    **tcx_egress** - Egress TCX. runs on egress net traffic;
+ 	if (unlikely(bq->count == CPU_MAP_BULK_SIZE))
+ 		bq_flush_to_queue(bq);
+@@ -723,11 +724,8 @@ static void bq_enqueue(struct bpf_cpu_map_entry *rcpu, struct xdp_frame *xdpf)
+ 	 */
+ 	bq->q[bq->count++] = xdpf;
  
- bpftool net detach *ATTACH_TYPE* dev *NAME*
-     Detach bpf program attached to network interface *NAME* with type specified
-@@ -178,3 +180,21 @@ EXAMPLES
- ::
+-	if (!bq->flush_node.prev) {
+-		struct list_head *flush_list = bpf_net_ctx_get_cpu_map_flush_list();
+-
++	if (!bq->flush_node.prev)
+ 		list_add(&bq->flush_node, flush_list);
+-	}
+ }
  
-       xdp:
-+
-+|
-+| **# bpftool net attach tcx_ingress name tc_prog dev lo**
-+| **# bpftool net**
-+|
-+
-+::
-+      tc:
-+      lo(1) tcx/ingress tc_prog prog_id 29
-+
-+|
-+| **# bpftool net attach tcx_ingress name tc_prog dev lo**
-+| **# bpftool net detach tcx_ingress dev lo**
-+| **# bpftool net**
-+|
-+
-+::
-+      tc:
--- 
-2.34.1
-
+ int cpu_map_enqueue(struct bpf_cpu_map_entry *rcpu, struct xdp_frame *xdpf,
+diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
+index 4b9203deb711..dfde65014374 100644
+--- a/kernel/bpf/devmap.c
++++ b/kernel/bpf/devmap.c
+@@ -454,6 +454,7 @@ static void bq_enqueue(struct net_device *dev, struct xdp_frame *xdpf,
+ 		       struct net_device *dev_rx, struct bpf_prog *xdp_prog)
+ {
+ 	struct xdp_dev_bulk_queue *bq = this_cpu_ptr(dev->xdp_bulkq);
++	struct list_head *flush_list = bpf_net_ctx_get_cpu_map_flush_list();
+ 
+ 	if (unlikely(bq->count == DEV_MAP_BULK_SIZE))
+ 		bq_xmit_all(bq, 0);
+@@ -466,8 +467,6 @@ static void bq_enqueue(struct net_device *dev, struct xdp_frame *xdpf,
+ 	 * are only ever modified together.
+ 	 */
+ 	if (!bq->dev_rx) {
+-		struct list_head *flush_list = bpf_net_ctx_get_dev_flush_list();
+-
+ 		bq->dev_rx = dev_rx;
+ 		bq->xdp_prog = xdp_prog;
+ 		list_add(&bq->flush_node, flush_list);
+--
 
