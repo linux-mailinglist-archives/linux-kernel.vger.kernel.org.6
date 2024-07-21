@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-258306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0221793860F
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 22:22:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49EB9938611
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 22:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABF3C1F211CB
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 20:22:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A95942810A7
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 20:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C448416C451;
-	Sun, 21 Jul 2024 20:21:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920B216C846;
+	Sun, 21 Jul 2024 20:21:43 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002C5168C20;
-	Sun, 21 Jul 2024 20:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB14C16C453;
+	Sun, 21 Jul 2024 20:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721593301; cv=none; b=feeiBrLbiZ6ThhrFIR4bCfG1AW8AS13QirB04vsvfTsluUGF+a/pP4LfuWZgLwpKeepBqItxlf7IKD+gGAoGQK6GGEeJEkIVpWRO9Z7n4nfDMmNPqXqUBgPR1m9RXmiWs1Mdxhx9yCbWhPtH4T/ogO8XNrlhj08SsCG6Bn1Wfjw=
+	t=1721593303; cv=none; b=X3ewyd+FfpDuQut4SFhwBH/d1rVYsXMXQt0Fknffq5SBOmWyGpoTKH9Ahzl2Jx+JVSJZ5WCGHzt0AkOuj1kMMAq5jc8HhVsRQij+NDA33OiMaenCkHjgaBL8lyujiKNsWee2lfa2t3NI8qTAinBPr/swU33n1SsnDf/ThyxMzDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721593301; c=relaxed/simple;
-	bh=i96Z+mFuJ7vzCKLXbS4G8Xej6yPSF4jk6n1ht4RFpSI=;
+	s=arc-20240116; t=1721593303; c=relaxed/simple;
+	bh=QHcyERAEk4KSVs8CSJ8iH2Ygn7dc/Vx86OXOlKz5+zs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AzWNeo68VWAOS7iWLAFjVM8GGNnB/cPSvPouWt6uc8o1dFUyl+oLfqu4ma61HvY5VW6q/xvRMwwG/4CHFEm6brKT9+c4/Mz3ZkUw0QE3A2Hp/TirWWkpIlvrSx0TXCpMgKnG2GB982zDSKkurY3oSLCmEb94OXRk/lTnjtb1XM0=
+	 MIME-Version; b=C57vczKltDIeftjgG8GaIUEhnsZ/1j7hZEzb4PQY2AA3Tt9YAwQ54SOsa7PtQLetxUr9fcI8mcLN8/CehT4GcxsGtM8HiPzhSe6pdqIkCivQ8sd4rDoGd3/Cc5RTHSr8PRl0ShnNQ7BP4Cw/4yEmZWH9NiVvoU+X8yLsxlK83w0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D3B3A12FC;
-	Sun, 21 Jul 2024 13:22:03 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A51D6FEC;
+	Sun, 21 Jul 2024 13:22:06 -0700 (PDT)
 Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DAE0B3F73F;
-	Sun, 21 Jul 2024 13:21:35 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B51033F73F;
+	Sun, 21 Jul 2024 13:21:38 -0700 (PDT)
 From: Leo Yan <leo.yan@arm.com>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>,
 	Namhyung Kim <namhyung@kernel.org>,
@@ -49,9 +49,9 @@ To: Arnaldo Carvalho de Melo <acme@kernel.org>,
 	linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH v1 3/6] perf auxtrace s390: Set the 'auxtrace' flag for AUX events
-Date: Sun, 21 Jul 2024 21:21:10 +0100
-Message-Id: <20240721202113.380750-4-leo.yan@arm.com>
+Subject: [PATCH v1 4/6] perf auxtrace: Iterate all AUX events when finish reading
+Date: Sun, 21 Jul 2024 21:21:11 +0100
+Message-Id: <20240721202113.380750-5-leo.yan@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240721202113.380750-1-leo.yan@arm.com>
 References: <20240721202113.380750-1-leo.yan@arm.com>
@@ -63,25 +63,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Set the 'auxtrace' flag for AUX events on s390.
+When finished to read AUX trace data from mmaped buffer, based on the
+AUX buffer index the core layer needs to search the corresponding PMU
+event and re-enable it to continue tracing.
+
+However, current code only searches the first AUX event. It misses to
+search other enabled AUX events, thus, it returns failure if the buffer
+index does not belong to the first AUX event.
+
+This patch extends the auxtrace_record__read_finish() function to
+search for every enabled AUX events, so all the mmaped buffer indexes
+can be covered.
 
 Signed-off-by: Leo Yan <leo.yan@arm.com>
 ---
- tools/perf/arch/s390/util/auxtrace.c | 1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/util/auxtrace.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/arch/s390/util/auxtrace.c b/tools/perf/arch/s390/util/auxtrace.c
-index 5068baa3e092..d7e72413b262 100644
---- a/tools/perf/arch/s390/util/auxtrace.c
-+++ b/tools/perf/arch/s390/util/auxtrace.c
-@@ -99,6 +99,7 @@ struct auxtrace_record *auxtrace_record__init(struct evlist *evlist,
- 		if (pos->core.attr.config == PERF_EVENT_CPUM_SF_DIAG) {
- 			diagnose = 1;
- 			pos->needs_auxtrace_mmap = true;
-+			pos->pmu->auxtrace = true;
- 			break;
+diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+index e2f317063eec..95be330d7e10 100644
+--- a/tools/perf/util/auxtrace.c
++++ b/tools/perf/util/auxtrace.c
+@@ -670,18 +670,25 @@ static int evlist__enable_event_idx(struct evlist *evlist, struct evsel *evsel,
+ int auxtrace_record__read_finish(struct auxtrace_record *itr, int idx)
+ {
+ 	struct evsel *evsel;
++	int ret = -EINVAL;
+ 
+ 	if (!itr->evlist || !itr->pmu)
+ 		return -EINVAL;
+ 
+ 	evlist__for_each_entry(itr->evlist, evsel) {
+-		if (evsel->core.attr.type == itr->pmu->type) {
++		if (evsel__is_aux_event(evsel)) {
+ 			if (evsel->disabled)
+-				return 0;
+-			return evlist__enable_event_idx(itr->evlist, evsel, idx);
++				continue;
++			ret = evlist__enable_event_idx(itr->evlist, evsel, idx);
++			if (ret >= 0)
++				return ret;
  		}
  	}
+-	return -EINVAL;
++
++	if (ret < 0)
++		pr_err("Failed to event enable event (idx=%d): %d\n", idx, ret);
++
++	return ret;
+ }
+ 
+ /*
 -- 
 2.34.1
 
