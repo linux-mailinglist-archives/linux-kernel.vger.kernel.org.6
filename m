@@ -1,107 +1,112 @@
-Return-Path: <linux-kernel+bounces-258099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77ABF93839B
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 08:29:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46B2493839E
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 08:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB2DBB20F2B
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 06:29:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF0D32816BF
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 06:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53753749A;
-	Sun, 21 Jul 2024 06:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054998F66;
+	Sun, 21 Jul 2024 06:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ON7OQgcz"
-Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uor6/RuC"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF12C567D;
-	Sun, 21 Jul 2024 06:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93B079CF
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 06:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721543375; cv=none; b=WULjK9Tue5JPOvBJvWiP+4/NmYLO191dTbq0xNA8ZZHuJBP/9MOwO0AP08lmMV6q4R1ugHX036tu9oMFsxWSwqKqiS4890Z9g+w5teCL0nqGRUwaX03xdkAQWDuXAnDWzp8UuDuIU7nHfCdFcFtJ3UXhMg3X0QdIeFQUr+UF25A=
+	t=1721544087; cv=none; b=rG+ug0ukfPlEJ1EJPJx5g7ZscT/Jvhycg9Wjg2feLtKPi+/oTMv/w421XYf475c+obHu4N4gnkm8pjjokrPF3u/ZdKwJu2Bl7Noeim8ZVOjhtqSnASGCsVHhOEJmjNDMvb2himXbrubENadjujuiQUu8DZpY7zJmuzrZFxWFfGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721543375; c=relaxed/simple;
-	bh=/gdBAJiMUTns4D9YraZESwr+JyDyTaIqZ4wvYBlOuTk=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=LKKUv+UxkIgF5GzGF2P5hahrEdBWA7E5U2SqxzIxFXqzIxvvxc6p+1zUI+WC7csuebgQYwlZt1RBy+Z4sf1t7tm6wy0Uxoohh99vGsFnYPoRkA40LxjVtTAZY1OOuE78WHTQtPF0JjGDH+tGlultuTD/pBl9DE++uCAkb+ZQCYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ON7OQgcz; arc=none smtp.client-ip=162.62.58.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1721543367; bh=JVx1yfEQudvZZ2X93CvZ9TFOULgY3PnaLrfa1OgBBh4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ON7OQgczX5kyaygJgi3WRUNBsUi4Aq5GSsMrwGePtHr7/KmjtIKMYDfKMLXR/tzfn
-	 l8hWcXwrKobVi5ItBJaKfHvV92Z9PMEqNCbK41IUCnEj19v6/PY3xWZeZQmqexiy7l
-	 v12a8bLFI672Mocga7FaAXiSC4u13+qylvrMzlpM=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
-	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
-	id 5CBBDC07; Sun, 21 Jul 2024 14:23:11 +0800
-X-QQ-mid: xmsmtpt1721542991tuvhwlcl5
-Message-ID: <tencent_7FAE8DB725EE0DD69236DDABDDDE195E4F07@qq.com>
-X-QQ-XMAILINFO: MgQY1K25Ph0mS5q9poqhnbqhbEzBhyZQXnV+dXEH9R9kGMLNOlMOsuZSZVY7dK
-	 wKJdk3y3myt7/uIxtTYr0SriMArZX4zJvCkcbkJweDgar9ugWv+H+YoQCmdj8gqJECdQ6TewXQ1c
-	 V2JiZFpbDdHVBvkO8XOAgaj8o4yn/+N1gpYwdzq1RpRw5uqe/ptnuCp1fPDcv+cquMlBjW64XMr2
-	 X4ix+T+RUTguhfdb/ThX+ZHfban8Kz7lHQy1zSdQ1PvmXCSXCMiNrxA6JRUCbveS2j2KYftfixe1
-	 BrYqUW4zzHFaoc74l7V8tCNHB7nKqR7q6qzBtZOTpUhx2Ly7AJ121dt0JZk4lhLCg48jiJADB4Ok
-	 +mbkW2hWB1VLWdG+S1U+Y318qDHifT5sipSuXdp/eakVLjdAScuW+6CKho2eNzou1rp66dzEOKoE
-	 3lS1vazmDpIc9oYWfoXRV81ajjx1FEfvSYBJZRCH+Ulh8v5lNf3n0p4xBJ3avylOjJiin+IJJCsG
-	 k8yrwMQFqBQO3WvEGJsSppS+KM33CwvBjjoq/w8WwIb8RWCr9zbbw0xvVcZfxxDkN5353jdcyJ+q
-	 fd2rNJ8GciAvTmCf1fIK+hVp8QNVtzl99oYyO/J4HzRmRBLcvLxALXZ+4ONnoNH2VgceonAWO7Go
-	 +uIiZoZk2wUpnlyZBfnq9q/gUmrktjxcQxFaH3B4/aVQcV+LP5iy4JvFJ5nYZEgrW8HP3WfreWlw
-	 28s0ZPiI1DHW3KA+9+PqgbZQKQIOKgduNa6uttbKZM9kPMsUREZNTewEnag8xYJmRTa3vdpgkjVk
-	 l071Udks/VqRC48uESv0+6Jlff5nYGk0I1KECbSIze8PHXt3CseavDwD+XEAQb8WMlLLwiWO5YBF
-	 AYx7+Gewqfq2Kg6XdmKnQRDlMxTRUTys4EHROq4V6BNQVaq/lW9a0aM0AmeZaVwQ==
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+34a0ee986f61f15da35d@syzkaller.appspotmail.com
-Cc: brauner@kernel.org,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	viro@zeniv.linux.org.uk
-Subject: [PATCH] fs/pidfs: when time ns disabled add check for ioctl
-Date: Sun, 21 Jul 2024 14:23:12 +0800
-X-OQ-MSGID: <20240721062311.1681234-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000cf8462061db0699c@google.com>
-References: <000000000000cf8462061db0699c@google.com>
+	s=arc-20240116; t=1721544087; c=relaxed/simple;
+	bh=h/FKIp9xMFC2FXIsZqzoruSg8zaMec3+Ui8zW18MmKI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ja6cdjussRqgxTuxSF71S7eNPo4fUN8WImG+Nq9XADuJu5bT4OWYdPMJJTESWUk3hpE/bfuRLGgpsoH4ZveVBqNPd+qdh4tg87VvK02QJjNNLuhY+7s0SQRUeIOmar+984h8q5LpsrPWFDTqTIV6P6cIj/eZycvf59YX36nvSgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uor6/RuC; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: linux@treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721544081;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BhzfpEAkMtM1dmk7F6Pxzl6Zv6RGXBbJz8lZCjiaexQ=;
+	b=uor6/RuCwrfZtEtZCy6VtHgqA+hWDOenHgRlRfXTHv5Gle8KjTjI/DKXe4bWNxd2aglWyq
+	d5BsLBAtqD3aN0bXBGKL/KnKkQX2hMSa0Yr6Lqeq8pQ8ytbZ+VN5neXfiDSrTHY45Ay13K
+	BJM2+XA9NCPsxiHaH6Xw0ztPDvekqCs=
+X-Envelope-To: allison.henderson@oracle.com
+X-Envelope-To: davem@davemloft.net
+X-Envelope-To: edumazet@google.com
+X-Envelope-To: kuba@kernel.org
+X-Envelope-To: pabeni@redhat.com
+X-Envelope-To: netdev@vger.kernel.org
+X-Envelope-To: linux-rdma@vger.kernel.org
+X-Envelope-To: rds-devel@oss.oracle.com
+X-Envelope-To: linux-kernel@vger.kernel.org
+Message-ID: <8b5fd878-a952-4cca-87af-aa44319a4f86@linux.dev>
+Date: Sun, 21 Jul 2024 08:41:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH] RDMA/rds: remove unused struct 'rds_ib_dereg_odp_mr'
+To: linux@treblig.org, allison.henderson@oracle.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org
+References: <20240531233307.302571-1-linux@treblig.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <20240531233307.302571-1-linux@treblig.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-syzbot call pidfd_ioctl() with cmd "PIDFD_GET_TIME_NAMESPACE" and disabled
-CONFIG_TIME_NS, since time_ns is NULL, it will make NULL ponter deref in
-open_namespace.
+在 2024/6/1 1:33, linux@treblig.org 写道:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> 'rds_ib_dereg_odp_mr' has been unused since the original
+> commit 2eafa1746f17 ("net/rds: Handle ODP mr
+> registration/unregistration").
+> 
+> Remove it.
+> 
+Need Fixes?
 
-Reported-and-tested-by: syzbot+34a0ee986f61f15da35d@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=34a0ee986f61f15da35d
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/pidfs.c | 2 ++
- 1 file changed, 2 insertions(+)
+Fixes: 2eafa1746f17 ("net/rds: Handle ODP mr
+registration/unregistration")
 
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index c9cb14181def..fe0ddab48f57 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -168,6 +168,8 @@ static long pidfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case PIDFD_GET_TIME_NAMESPACE:
- 		get_time_ns(nsp->time_ns);
- 		ns_common = to_ns_common(nsp->time_ns);
-+		if (!nsp->time_ns)
-+			return -EINVAL;
- 		break;
- 	case PIDFD_GET_TIME_FOR_CHILDREN_NAMESPACE:
- 		get_time_ns(nsp->time_ns_for_children);
--- 
-2.43.0
+Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
+
+Zhu Yanjun
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>   net/rds/ib_rdma.c | 4 ----
+>   1 file changed, 4 deletions(-)
+> 
+> diff --git a/net/rds/ib_rdma.c b/net/rds/ib_rdma.c
+> index 8f070ee7e742..d1cfceeff133 100644
+> --- a/net/rds/ib_rdma.c
+> +++ b/net/rds/ib_rdma.c
+> @@ -40,10 +40,6 @@
+>   #include "rds.h"
+>   
+>   struct workqueue_struct *rds_ib_mr_wq;
+> -struct rds_ib_dereg_odp_mr {
+> -	struct work_struct work;
+> -	struct ib_mr *mr;
+> -};
+>   
+>   static void rds_ib_odp_mr_worker(struct work_struct *work);
+>   
 
 
