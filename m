@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-258182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C22249384CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 15:37:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D39B39384CB
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 15:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E50D71C20A66
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 13:37:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10DF31C204AB
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 13:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2D416848B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFD61684A1;
 	Sun, 21 Jul 2024 13:37:20 +0000 (UTC)
-Received: from mailscanner05.zoner.fi (mailscanner05.zoner.fi [5.44.246.14])
+Received: from mailscanner01.zoner.fi (mailscanner01.zoner.fi [84.34.166.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0231662E2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A071649BF
 	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 13:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.44.246.14
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.34.166.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721569039; cv=none; b=QPx/sSQPrz0/7xixPFww2G7NjkoY+G4m6wFYyhlnPLX7uodNFQt+FOZTmsW1tZLf5HiUE8UfVudBDbyiCGCBP0ESxn+WU8TBI89IhXWLUkUkS5nqRtsFfOPJfyM87W24W93VEwDmG+0jCcGyVMpMJ6KSzcx5lE7fXJIVlDUo0cg=
+	t=1721569039; cv=none; b=FMEd/o3nqLoSfw1TkOixFfSX5385wPZahQvT/yskd4+g8GEHsIvQ1ImnzZBxD1taORJhiVRvhYpChWMLKpRCYJcHLlGry+TkijYDhL894L274wg9eErgNXe89s+Mp+QqGsD4emSJL4/jZKaOK5BKbI78PNLEHNMfTQuvsstqdZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721569039; c=relaxed/simple;
-	bh=3sDSWXkZZ0IOiMfWHnh54tWgDlpd9Qe1o6L9FsPj9Gg=;
+	bh=5uWd4JnlNjHMxFHmrTYl3gRP/nyyCC6uH1TbWEXfKMc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A5jHtwfCO68knBzNWSIlWKxv5s652Mk5R/XRafYnbYGT3mAMZKSyRP2JjJcrhchRDi+vA4od8oEdJVlP3r3h5f6Rs2pKBjSVmBYEWhoa20rmTx3kA40aeYhbkaxYleK7e7x4rAOZgA32+XdgoYugLG2kjRdlSl4nkiZwQHYdszk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tukaani.org; spf=pass smtp.mailfrom=tukaani.org; arc=none smtp.client-ip=5.44.246.14
+	 MIME-Version; b=Hk3sF5qXcMT8R8bSsXvmmV7pB4AsCtHe5k09PdhNBrlM+e1O6YWv7//0CAgb/VRrioD1u7FclSyUpEv8htWHWq5B+KFBuldyjMyoyzH4sTneircj2M3DlsDhl1DaCWhK5MMwF0yJo9/kImx89DjlOyKxeWWvufANp6xkVsgEC/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tukaani.org; spf=pass smtp.mailfrom=tukaani.org; arc=none smtp.client-ip=84.34.166.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tukaani.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tukaani.org
 Received: from www25.zoner.fi (www25.zoner.fi [84.34.147.45])
-	by mailscanner05.zoner.fi (Postfix) with ESMTPS id 3A93921346;
+	by mailscanner01.zoner.fi (Postfix) with ESMTPS id 5227B42E60;
 	Sun, 21 Jul 2024 16:37:15 +0300 (EEST)
 Received: from mail.zoner.fi ([84.34.147.244])
 	by www25.zoner.fi with esmtp (Exim 4.97.1)
 	(envelope-from <lasse.collin@tukaani.org>)
-	id 1sVWkR-00000001SmU-3ITK;
+	id 1sVWkR-00000001SmU-3sDS;
 	Sun, 21 Jul 2024 16:37:15 +0300
 From: Lasse Collin <lasse.collin@tukaani.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Lasse Collin <lasse.collin@tukaani.org>,
 	Sam James <sam@gentoo.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 12/16] xz: Add RISC-V BCJ filter
-Date: Sun, 21 Jul 2024 16:36:27 +0300
-Message-ID: <20240721133633.47721-13-lasse.collin@tukaani.org>
+Subject: [PATCH v2 13/16] xz: Use 128 MiB dictionary and force single-threaded mode
+Date: Sun, 21 Jul 2024 16:36:28 +0300
+Message-ID: <20240721133633.47721-14-lasse.collin@tukaani.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240721133633.47721-1-lasse.collin@tukaani.org>
 References: <20240721133633.47721-1-lasse.collin@tukaani.org>
@@ -55,210 +55,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A later commit updates lib/decompress_unxz.c to enable this filter for
-kernel decompression. lib/decompress_unxz.c is already used if
-CONFIG_EFI_ZBOOT=y && CONFIG_KERNEL_XZ=y.
+This only affects kernel image compression, not any other xz usage.
 
-This filter can be used by Squashfs without modifications to the Squashfs
-kernel code (only needs support in userspace Squashfs-tools).
+Desktop kernels on x86-64 are already around 60 MiB. Using a dictionary
+larger than 32 MiB should have no downsides nowadays as anyone building
+the kernel should have plenty of RAM. 128 MiB dictionary needs 1346 MiB
+of RAM with xz versions 5.0.x - 5.6.x in single-threaded mode. On archs
+that use xz_wrap.sh, kernel decompression is done in single-call mode so
+a larger dictionary doesn't affect boot-time memory requirements.
+
+xz >= 5.6.0 uses multithreaded mode by default which compresses slightly
+worse than single-threaded mode. Kernel compression rarely used more
+than one thread anyway because with 32 MiB dictionary size the default
+block size was 96 MiB in multithreaded mode. So only a single thread
+was used anyway unless the kernel was over 96 MiB.
+
+Comparison to CONFIG_KERNEL_LZMA: It uses "lzma -9" which mapped to
+32 MiB dictionary in LZMA Utils 4.32.7 (the final release in 2008).
+Nowadays the lzma tool on most systems is from XZ Utils where -9 maps
+to 64 MiB dictionary. So using a 32 MiB dictionary with CONFIG_KERNEL_XZ
+may have compressed big kernels slightly worse than the old LZMA option.
+
+Comparison to CONFIG_KERNEL_ZSTD: zstd uses 128 MiB dictionary.
 
 Reviewed-by: Sam James <sam@gentoo.org>
 Signed-off-by: Lasse Collin <lasse.collin@tukaani.org>
 ---
- lib/xz/Kconfig       |   5 +++
- lib/xz/xz_dec_bcj.c  | 104 ++++++++++++++++++++++++++++++++++++++++++-
- lib/xz/xz_dec_syms.c |   2 +-
- lib/xz/xz_private.h  |   6 ++-
- 4 files changed, 114 insertions(+), 3 deletions(-)
+ scripts/xz_wrap.sh | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/lib/xz/Kconfig b/lib/xz/Kconfig
-index 1166627a87dc..20aa459bfb3e 100644
---- a/lib/xz/Kconfig
-+++ b/lib/xz/Kconfig
-@@ -40,6 +40,11 @@ config XZ_DEC_SPARC
- 	default y
- 	select XZ_DEC_BCJ
+diff --git a/scripts/xz_wrap.sh b/scripts/xz_wrap.sh
+index bb760b721b2c..c8c36441ab70 100755
+--- a/scripts/xz_wrap.sh
++++ b/scripts/xz_wrap.sh
+@@ -16,4 +16,15 @@ case $SRCARCH in
+ 	sparc)          BCJ=--sparc ;;
+ esac
  
-+config XZ_DEC_RISCV
-+	bool "RISC-V BCJ filter decoder" if EXPERT
-+	default y
-+	select XZ_DEC_BCJ
-+
- config XZ_DEC_MICROLZMA
- 	bool "MicroLZMA decoder"
- 	default n
-diff --git a/lib/xz/xz_dec_bcj.c b/lib/xz/xz_dec_bcj.c
-index 941198a8a55b..42d7f268726f 100644
---- a/lib/xz/xz_dec_bcj.c
-+++ b/lib/xz/xz_dec_bcj.c
-@@ -24,7 +24,8 @@ struct xz_dec_bcj {
- 		BCJ_ARM = 7,        /* Little endian only */
- 		BCJ_ARMTHUMB = 8,   /* Little endian only */
- 		BCJ_SPARC = 9,      /* Big or little endian */
--		BCJ_ARM64 = 10      /* AArch64 */
-+		BCJ_ARM64 = 10,     /* AArch64 */
-+		BCJ_RISCV = 11      /* RV32GQC_Zfh, RV64GQC_Zfh */
- 	} type;
- 
- 	/*
-@@ -388,6 +389,99 @@ static size_t bcj_arm64(struct xz_dec_bcj *s, uint8_t *buf, size_t size)
- }
- #endif
- 
-+#ifdef XZ_DEC_RISCV
-+static size_t bcj_riscv(struct xz_dec_bcj *s, uint8_t *buf, size_t size)
-+{
-+	size_t i;
-+	uint32_t b1;
-+	uint32_t b2;
-+	uint32_t b3;
-+	uint32_t instr;
-+	uint32_t instr2;
-+	uint32_t instr2_rs1;
-+	uint32_t addr;
-+
-+	if (size < 8)
-+		return 0;
-+
-+	size -= 8;
-+
-+	for (i = 0; i <= size; i += 2) {
-+		instr = buf[i];
-+
-+		if (instr == 0xEF) {
-+			/* JAL */
-+			b1 = buf[i + 1];
-+			if ((b1 & 0x0D) != 0)
-+				continue;
-+
-+			b2 = buf[i + 2];
-+			b3 = buf[i + 3];
-+
-+			addr = ((b1 & 0xF0) << 13) | (b2 << 9) | (b3 << 1);
-+			addr -= s->pos + (uint32_t)i;
-+
-+			buf[i + 1] = (uint8_t)((b1 & 0x0F)
-+					| ((addr >> 8) & 0xF0));
-+
-+			buf[i + 2] = (uint8_t)(((addr >> 16) & 0x0F)
-+					| ((addr >> 7) & 0x10)
-+					| ((addr << 4) & 0xE0));
-+
-+			buf[i + 3] = (uint8_t)(((addr >> 4) & 0x7F)
-+					| ((addr >> 13) & 0x80));
-+
-+			i += 4 - 2;
-+
-+		} else if ((instr & 0x7F) == 0x17) {
-+			/* AUIPC */
-+			instr |= (uint32_t)buf[i + 1] << 8;
-+			instr |= (uint32_t)buf[i + 2] << 16;
-+			instr |= (uint32_t)buf[i + 3] << 24;
-+
-+			if (instr & 0xE80) {
-+				/* AUIPC's rd doesn't equal x0 or x2. */
-+				instr2 = get_unaligned_le32(buf + i + 4);
-+
-+				if (((instr << 8) ^ (instr2 - 3)) & 0xF8003) {
-+					i += 6 - 2;
-+					continue;
-+				}
-+
-+				addr = (instr & 0xFFFFF000) + (instr2 >> 20);
-+
-+				instr = 0x17 | (2 << 7) | (instr2 << 12);
-+				instr2 = addr;
-+			} else {
-+				/* AUIPC's rd equals x0 or x2. */
-+				instr2_rs1 = instr >> 27;
-+
-+				if ((uint32_t)((instr - 0x3117) << 18)
-+						>= (instr2_rs1 & 0x1D)) {
-+					i += 4 - 2;
-+					continue;
-+				}
-+
-+				addr = get_unaligned_be32(buf + i + 4);
-+				addr -= s->pos + (uint32_t)i;
-+
-+				instr2 = (instr >> 12) | (addr << 20);
-+
-+				instr = 0x17 | (instr2_rs1 << 7)
-+					| ((addr + 0x800) & 0xFFFFF000);
-+			}
-+
-+			put_unaligned_le32(instr, buf + i);
-+			put_unaligned_le32(instr2, buf + i + 4);
-+
-+			i += 8 - 2;
-+		}
-+	}
-+
-+	return i;
-+}
-+#endif
-+
- /*
-  * Apply the selected BCJ filter. Update *pos and s->pos to match the amount
-  * of data that got filtered.
-@@ -439,6 +533,11 @@ static void bcj_apply(struct xz_dec_bcj *s,
- 	case BCJ_ARM64:
- 		filtered = bcj_arm64(s, buf, size);
- 		break;
-+#endif
-+#ifdef XZ_DEC_RISCV
-+	case BCJ_RISCV:
-+		filtered = bcj_riscv(s, buf, size);
-+		break;
- #endif
- 	default:
- 		/* Never reached but silence compiler warnings. */
-@@ -615,6 +714,9 @@ XZ_EXTERN enum xz_ret xz_dec_bcj_reset(struct xz_dec_bcj *s, uint8_t id)
- #endif
- #ifdef XZ_DEC_ARM64
- 	case BCJ_ARM64:
-+#endif
-+#ifdef XZ_DEC_RISCV
-+	case BCJ_RISCV:
- #endif
- 		break;
- 
-diff --git a/lib/xz/xz_dec_syms.c b/lib/xz/xz_dec_syms.c
-index 495d2cc2e6e8..f40817d65897 100644
---- a/lib/xz/xz_dec_syms.c
-+++ b/lib/xz/xz_dec_syms.c
-@@ -22,6 +22,6 @@ EXPORT_SYMBOL(xz_dec_microlzma_end);
- #endif
- 
- MODULE_DESCRIPTION("XZ decompressor");
--MODULE_VERSION("1.1");
-+MODULE_VERSION("1.2");
- MODULE_AUTHOR("Lasse Collin <lasse.collin@tukaani.org> and Igor Pavlov");
- MODULE_LICENSE("Dual BSD/GPL");
-diff --git a/lib/xz/xz_private.h b/lib/xz/xz_private.h
-index 307e0de8c260..a8b1cbe8d21d 100644
---- a/lib/xz/xz_private.h
-+++ b/lib/xz/xz_private.h
-@@ -39,6 +39,9 @@
- #		ifdef CONFIG_XZ_DEC_ARM64
- #			define XZ_DEC_ARM64
- #		endif
-+#		ifdef CONFIG_XZ_DEC_RISCV
-+#			define XZ_DEC_RISCV
-+#		endif
- #		ifdef CONFIG_XZ_DEC_MICROLZMA
- #			define XZ_DEC_MICROLZMA
- #		endif
-@@ -102,7 +105,8 @@
- #	if defined(XZ_DEC_X86) || defined(XZ_DEC_POWERPC) \
- 			|| defined(XZ_DEC_IA64) \
- 			|| defined(XZ_DEC_ARM) || defined(XZ_DEC_ARMTHUMB) \
--			|| defined(XZ_DEC_SPARC) || defined(XZ_DEC_ARM64)
-+			|| defined(XZ_DEC_SPARC) || defined(XZ_DEC_ARM64) \
-+			|| defined(XZ_DEC_RISCV)
- #		define XZ_DEC_BCJ
- #	endif
- #endif
+-exec $XZ --check=crc32 $BCJ --lzma2=$LZMA2OPTS,dict=32MiB
++# Use single-threaded mode because it compresses a little better
++# (and uses less RAM) than multithreaded mode.
++#
++# For the best compression, the dictionary size shouldn't be
++# smaller than the uncompressed kernel. 128 MiB dictionary
++# needs less than 1400 MiB of RAM in single-threaded mode.
++#
++# On the archs that use this script to compress the kernel,
++# decompression in the preboot code is done in single-call mode.
++# Thus the dictionary size doesn't affect the memory requirements
++# of the preboot decompressor at all.
++exec $XZ --check=crc32 --threads=1 $BCJ --lzma2=$LZMA2OPTS,dict=128MiB
 -- 
 2.45.2
 
