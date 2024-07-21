@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-258178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A6629384C5
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 15:37:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BBFC9384D1
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 15:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E641E1F212C8
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 13:37:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD5AD1C20CE7
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 13:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271D21662F2;
-	Sun, 21 Jul 2024 13:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91741166314;
+	Sun, 21 Jul 2024 13:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mJwBmgNc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kqCwryRv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4104216132B;
-	Sun, 21 Jul 2024 13:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82391662EA;
+	Sun, 21 Jul 2024 13:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721569028; cv=none; b=li43eO4MRZv5dEekfs5H4TJksTywPuCh0s5U3ttTjQzDF62TFBc5NQnQE3Ftz7QwiGQbtTSvwEBsmcHBVz+N/07r7PQhPSuLs6YUV6u3D9cZ0QY8MpCkyn6KUPKe3vP7dg4ourMkG7YHqJCW1Z6rL0YJXbPzlERbR2w6gJ0i6Eg=
+	t=1721569062; cv=none; b=TbUZlkjmPPVnZYum6mc8+eEgOyVc9ju3OHHbweXrLne2CNNjO9Pgm5k4JZYEGJ+fcYv4RP/nCEZt4hDUcxf+zHyxbJxSEmMMiuavvcxmtsiwX4npJe7DuoTCj2A+A/9URa+kXgS8ZxfiQmPXjBtajuaOq82R3P9C8q3VExmx9sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721569028; c=relaxed/simple;
-	bh=WbM+yH7jBU/gy7hkBVSNdb8VjTuK9EahNaYjK7vso+w=;
+	s=arc-20240116; t=1721569062; c=relaxed/simple;
+	bh=K/xym0/KBdypnuSiPIParBqdNB0Gawr610OSpcLoQgk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b7HmY4ZTs5uvXOIv87NrDiQ09Z8fCrp/k9ueKBIHeVmYaq4PL8ck1A+ipyQFjuVzw3FSsOI/6rxyaW3Aayf7GjQkhwbE4WBlo5TeQAoEtIGcB6h19lhZdGnta6QLO+nbFS2eFXJg4XKgVsjV7Md9Ms46NXqwIOEaWhlJXY5qex4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mJwBmgNc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48EA5C116B1;
-	Sun, 21 Jul 2024 13:37:02 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=MmJiHDZ6XsfduTCldocGkkFRsq8asO5fz2lMaiiwfoAtCgbkLzzVlSrx6uVZqFvDHU+droyVDskcR+OWz2S1ZXk9LiaI3PJbws0FlYI259tB7vEz9zw+/tWek5SRVvjpynscGSKIUvVcAZHZnDxv0h+Fm3RPAcwBy8KDtlmgHBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kqCwryRv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4F26C116B1;
+	Sun, 21 Jul 2024 13:37:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721569027;
-	bh=WbM+yH7jBU/gy7hkBVSNdb8VjTuK9EahNaYjK7vso+w=;
+	s=k20201202; t=1721569062;
+	bh=K/xym0/KBdypnuSiPIParBqdNB0Gawr610OSpcLoQgk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mJwBmgNc8A+A6X6qseLbk5OI51mNkH8b4vO/LPh0ZNp/u199TIXoaCK8uzAi9oQdi
-	 qocDh5wciNtIRT+H2Mf2UZfS/8VDxnAKl3Uiwx1PP5arjZh9dS2ojDjylroZF0WU8o
-	 oTWCt/ddugRBsam4tpqCCCzZHZKzyFqtwYUfI52cpJxUzKplgP5+78KnDs6ps4WzOV
-	 h8nQpVx21VwkgxdpfTN/C2RyIp3B5o299JKptddSMBZwacbXHRPTtmq1EEMvuuEsTP
-	 RqadBfVxJWc5r0vi0nkIUd4e3vunDATbXtjYVJTDHI3dUklxp/DS9iNUbxjiYHFJ7L
-	 q8VnetqaUmlkg==
-Message-ID: <dee6e871-daa3-4886-be57-e4d4b3fa198d@kernel.org>
-Date: Sun, 21 Jul 2024 15:36:59 +0200
+	b=kqCwryRvK2Um3OqBIGRfTA8kSaCnQAbG4Th3g5gnpNwBZRT6VVg/cW/b4iH+qmP5D
+	 38L7w520zx3E/RFk/gTscRhSLO1musy/ObG5T7fqYCyJxVI0vaNuvFEq0aQj6Te6lV
+	 FISv16X03y9ywQwM9+v7Z9IhoE37XfN1ruRMUNjCLJG+UafiN697sEdX4hRTOTquKn
+	 dnkjgp0NnUdyYiBOpQAJu4EUNSHByLeVjLQP0XYoYzq1pV5DqNOcByJFJEOVII56bB
+	 zP6TLp+vz7jY6KVrQ0gNphxvGRkUuevMA1XRMKyvxjcZMNUNciPp7oAxaZHpm/0QOX
+	 ljar5SQBNNyHQ==
+Message-ID: <fab9dfe8-5e5e-48cf-a08d-6625e5e1cc07@kernel.org>
+Date: Sun, 21 Jul 2024 15:37:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,24 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/7] dt-bindings: firmware: add i.MX95 SCMI Extension
- protocol
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
- Sudeep Holla <sudeep.holla@arm.com>,
- Cristian Marussi <cristian.marussi@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Peng Fan <peng.fan@nxp.com>, arm-scmi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-rtc@vger.kernel.org, linux-input@vger.kernel.org
-References: <20240718-imx95-bbm-misc-v2-v6-0-18f008e16e9d@nxp.com>
- <20240718-imx95-bbm-misc-v2-v6-1-18f008e16e9d@nxp.com>
+Subject: Re: [PATCH 1/2] dt-bindings: pincfg-node: Add
+ "input-schmitt-microvolt" property
+To: Inochi Amaoto <inochiama@outlook.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <IA1PR20MB495346246245074234D337A6BBAC2@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <IA1PR20MB4953C71C87FD150D2E64FF41BBAC2@IA1PR20MB4953.namprd20.prod.outlook.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -112,27 +103,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240718-imx95-bbm-misc-v2-v6-1-18f008e16e9d@nxp.com>
+In-Reply-To: <IA1PR20MB4953C71C87FD150D2E64FF41BBAC2@IA1PR20MB4953.namprd20.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 18/07/2024 09:41, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On 18/07/2024 04:23, Inochi Amaoto wrote:
+> On Sophgo CV18XX platform, threshold strength of schmitt trigger can
+> be configured. As this standard property is already supported by the
+> common pinconf code. Add "input-schmitt-microvolt" property in
+> pincfg-node.yaml so that other platforms requiring such feature can
+> make use of this property.
 > 
-> Add i.MX SCMI Extension protocols bindings for:
-> - Battery Backed Module(BBM) Protocol
->   This contains persistent storage (GPR), an RTC, and the ON/OFF button.
->   The protocol can also provide access to similar functions implemented via
->   external board components.
-> - MISC Protocol.
->   This includes controls that are misc settings/actions that must be exposed
->   from the SM to agents. They are device specific and are usually define to
->   access bit fields in various mix block control modules, IOMUX_GPR, and
->   other GPR/CSR owned by the SM.
-> 
-> Reviewed-by: "Rob Herring (Arm)" <robh@kernel.org>
+> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
 
-Why quotes? Which tools did you use?
+
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
 Krzysztof
