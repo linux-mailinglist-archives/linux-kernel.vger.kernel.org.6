@@ -1,402 +1,284 @@
-Return-Path: <linux-kernel+bounces-258229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EED093854A
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 17:36:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1521593854D
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 17:37:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05F4B2810EB
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 15:36:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98472281264
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 15:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382361667D8;
-	Sun, 21 Jul 2024 15:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09799167265;
+	Sun, 21 Jul 2024 15:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AVOKxzAs"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rom1nORo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF74915FA8B;
-	Sun, 21 Jul 2024 15:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073E82907;
+	Sun, 21 Jul 2024 15:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721576155; cv=none; b=IIuYnCTlWa+oiOBC84MYJsp/7F5DKqbPwwWE79jadVrgjTcCE84PrkePFdMT9m0uRHst+9f/cg91p3e3CwfM5xWmtSzO4PnKkUmJoRxSfuBO9NIWaMcaG0Evp05mKqq7WTFBSPMdJuEvu0pcVHlkqJ0PI25Cu6qUhNPEZKRegSQ=
+	t=1721576219; cv=none; b=BfnT+thhk8g4AAtiTXp74poat04coD9LugEDxmNTO9LV8IPOaSYDzMeTWbzaMDu+T/3YECa6+/JB+u4qyAgRZ1OEB3j5nf9qzfM2aC570NKtQhu+Hpv2aVvCVWd0R3h0rzwLwc7gUl9BGg+eJBv7yiAHU/pYeEj3QmG5zW+EhDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721576155; c=relaxed/simple;
-	bh=IW0IuCJ83IqgRVQODnpnxmL0joz6r6VqPz1wclnf6VI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=XadaGHiTYY8FPHjCfl5Mr/RwybEjjcau4LJJYkqac0ogpYyAhVHGxF+NKMmq7ow8+CuEjMJI2ZnWF4yfsakdNhGAez9tEsIRDvY/OwmAHY1dRmfJxA7FdUrOqWrY58BOxklqw1QBM8VPaAyyw+K9kk57aahCC0FSDRTqmvrmsio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AVOKxzAs; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ef2cb7d562so5013041fa.3;
-        Sun, 21 Jul 2024 08:35:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721576151; x=1722180951; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dib4fs9gr0MAjzCmLMyUss3dK8Hy9F2X6IZP1TjTaK4=;
-        b=AVOKxzAshYG3L5ynaBVOmOpVrORk15N7BWKJPzopJAo1CSLNLlTetyDTH7HBxt5Fxg
-         FQVorKDZZwaKzJctvrYkuEPKl6Bx+TJNp88OaVY3xRyOeA37UD8py7BiWy/iLoXBmdPC
-         cUtqEBzcAGgrU+Pn6bINFRs4ij8//Ea4LY8ctpr6jBH5ehZeMqhD8UxIpFfhccyY98Sh
-         JroTwrbIYtHhI1NnpbOFxfzjmNDm7fp+mYnPBychxRIYihg3tgX9fUqtcAVd55oLIzsP
-         FLqVpEBL0Fmw2cNwQWoyNvmvDxYQmSSrl2pFglCxEE7HFNYbRs2YIGoVrNpPNQtg7z3t
-         kJNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721576151; x=1722180951;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dib4fs9gr0MAjzCmLMyUss3dK8Hy9F2X6IZP1TjTaK4=;
-        b=rrdzBUB4f5BUAXFf24H++0lTC9GEYCw3O3QJ06oOh2ZXVgUSHEZN3CZ0CyI38y1NHt
-         3d9R4dupRd6A9PLVyv2qJ7WzFsf5SZdXdmhA7/Le39o+IdmaX8R9i7K9aPSO2l2DM+0F
-         vLeMs4mEDYHrW38Pk0oQ8tAMbwqMgLdp4ywd4e53C/okmjxq5EIJs54YJ4NU7IGdi+ca
-         MMooiuJrwBhIsTj39eHRCSxD5JUcS6NBjyBgsE9kac0X6WjcaR6jmYvnff10Tyfqsea5
-         RBwMhFGEp3ED2bPgDWPhlrA3ca12lV6fUg2b5AJF3f3xI0YK2czOBjUxcgJkuRWFYWxJ
-         c3JA==
-X-Forwarded-Encrypted: i=1; AJvYcCWzC6Lm70mOhohKrpHGo0KFi1Jyef69I2C7owZPDIAhzGJDV+pPfWvPYZtYbRgzR3qHWwCbI/EfV4QV6GMbFAoGNpL0uKpHgzuX2+Vs
-X-Gm-Message-State: AOJu0YwkR6mRki1kWo6STufoxbCns3KjddTwtdtvLD2HZil/gZ3+elPT
-	zpLHGkSHRp/Qt1vS1rpWxy70B3b4XhEfoRsvOAI4wHMkVMB0CKjN
-X-Google-Smtp-Source: AGHT+IEpbqoFB0J1xm4YtQ5snWNNn5dBTeqbwv64Boj61HhPhvt6SXhWD/zTqxZR17ccz8CQuV4/zw==
-X-Received: by 2002:a2e:9590:0:b0:2ee:d8ec:ccd2 with SMTP id 38308e7fff4ca-2ef16849d9bmr39426431fa.33.1721576150608;
-        Sun, 21 Jul 2024 08:35:50 -0700 (PDT)
-Received: from laptop.home (83.50.134.37.dynamic.jazztel.es. [37.134.50.83])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a43034sm123118865e9.3.2024.07.21.08.35.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jul 2024 08:35:50 -0700 (PDT)
-From: =?UTF-8?q?Sergio=20Gonz=C3=A1lez=20Collado?= <sergio.collado@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Sergio=20Gonz=C3=A1lez=20Collado?= <sergio.collado@gmail.com>
-Subject: [PATCH] docs/sp_SP: Add translation for scheduler/sched-bwc.rst
-Date: Sun, 21 Jul 2024 17:35:38 +0200
-Message-Id: <20240721153538.28963-1-sergio.collado@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1721576219; c=relaxed/simple;
+	bh=jRjxpOr1/cYTLelTQNj0KsXY+Cyab7rjwhDPjAk0YX4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GbVkhk7WVU6wtCVprhX5aPvWHucg77TZwK+aYuLVKJKtkFK0Fx4aFMf2PF7EDlFPtfBQTJhLcex1HmD2568My5v8OBPnEx+GPE14LlJkHgFT9HpTGZRERMCu2S6ioOOfgr9C4dRS7h8ye2jGcIbplBjDHcQ4lftrSW4Z4E+Ahb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rom1nORo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D305C116B1;
+	Sun, 21 Jul 2024 15:36:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721576218;
+	bh=jRjxpOr1/cYTLelTQNj0KsXY+Cyab7rjwhDPjAk0YX4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rom1nORowJfpuTFrBg0GAZkjWUfUvVoaHqKZfuYJ3e/v0m6HlMs4M8MY0KLOif+Yl
+	 dfC0z6JxzFVbRzrgPvlDNZZgVDwLgsxS0dZrT5Ym+wfI5R81WaM2ii2xBRt8wRyBYu
+	 /lhBV9NcdB62F3prMeprkBKu/2POTfv372rmW7Dung88+pE7eSJaqFA2DdbnowS6rc
+	 +YmyyoFgYHs3UHDBo7/yOSWNNK255pCkZ6i2hOmn91ZFSyS5wngQARFaS7SDCvDPna
+	 cwYo5k0Bh2IyfGiiRbbajHqO70k49Jj0AfsTskA6KtCXQDwL2mA283Q1K7NjB37Uqq
+	 vuoUq9qTmiQhQ==
+Message-ID: <0144d9b4-e830-44b0-95cd-4d49d5051155@kernel.org>
+Date: Sun, 21 Jul 2024 17:36:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] dt-bindings: display: ti: Add schema for AM625
+ OLDI Transmitter
+To: Aradhya Bhatia <a-bhatia1@ti.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Jyri Sarha <jyri.sarha@iki.fi>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: DRI Development List <dri-devel@lists.freedesktop.org>,
+ Devicetree List <devicetree@vger.kernel.org>,
+ Linux Kernel List <linux-kernel@vger.kernel.org>, Nishanth Menon
+ <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+ Francesco Dolcini <francesco@dolcini.it>,
+ Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+ Randolph Sapp <rs@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
+ Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
+References: <20240716084248.1393666-1-a-bhatia1@ti.com>
+ <20240716084248.1393666-3-a-bhatia1@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240716084248.1393666-3-a-bhatia1@ti.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Translate Documentation/scheduler/sched-bwc.rst into Spanish
+On 16/07/2024 10:42, Aradhya Bhatia wrote:
+> The OLDI (transmitters) TXes do not have registers of their own, and are
+> dependent on the source video-ports from the DSS to provide
+> configuration data. This hardware doesn't directly sit on the internal
+> bus of the SoC, but does so via the DSS. Hence, the OLDI TXes are
+> supposed to be child nodes under the DSS, and not independent devices.
+> 
+> Two of the OLDI TXes can function in tandem to output dual-link OLDI
+> output, or cloned single-link outputs. In these cases, one OLDI will be
+> the primary OLDI, and the other one, a companion.
+> 
+> The OLDI functionality is further supported by a system-control module,
+> which contains a few registers to control OLDI IO power and
+> characteristics.
+> 
+> Add devicetree binding schema for AM625 OLDI TXes.
+> 
+> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+> ---
+>  .../bindings/display/ti/ti,am625-oldi.yaml    | 153 ++++++++++++++++++
+>  MAINTAINERS                                   |   1 +
+>  2 files changed, 154 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml b/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
+> new file mode 100644
+> index 000000000000..0a96e600bc0b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
+> @@ -0,0 +1,153 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/ti/ti,am625-oldi.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Texas Instruments AM625 OLDI Transmitter
+> +
+> +maintainers:
+> +  - Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> +  - Aradhya Bhatia <a-bhatia1@ti.com>
+> +
+> +description: |
 
-Signed-off-by: Sergio González Collado <sergio.collado@gmail.com>
----
- .../translations/sp_SP/scheduler/index.rst    |   1 +
- .../sp_SP/scheduler/sched-bwc.rst             | 288 ++++++++++++++++++
- 2 files changed, 289 insertions(+)
- create mode 100644 Documentation/translations/sp_SP/scheduler/sched-bwc.rst
+Do not need '|' unless you need to preserve formatting.
 
-diff --git a/Documentation/translations/sp_SP/scheduler/index.rst b/Documentation/translations/sp_SP/scheduler/index.rst
-index 768488d6f001..3aef47ca87e0 100644
---- a/Documentation/translations/sp_SP/scheduler/index.rst
-+++ b/Documentation/translations/sp_SP/scheduler/index.rst
-@@ -6,3 +6,4 @@
-     :maxdepth: 1
- 
-     sched-design-CFS
-+    sched-bwc
-diff --git a/Documentation/translations/sp_SP/scheduler/sched-bwc.rst b/Documentation/translations/sp_SP/scheduler/sched-bwc.rst
-new file mode 100644
-index 000000000000..3dc571b354d0
---- /dev/null
-+++ b/Documentation/translations/sp_SP/scheduler/sched-bwc.rst
-@@ -0,0 +1,288 @@
-+.. include:: ../disclaimer-sp.rst
-+
-+:Original: :ref:`Documentation/scheduler/sched-design-CFS.rst <sched_design_CFS>`
-+:Translator: Sergio González Collado <sergio.collado@gmail.com>
-+
-+.. _sp_sched_bwc:
-+
-+=================================
-+CFS con control de ancho de banda
-+=================================
-+
-+.. note::
-+   Este documento únicamente trata el control de ancho de banda de CPUs
-+   para SCHED_NORMAL. El caso de SCHED_RT se trata en Documentation/scheduler/sched-rt-group.rst
-+
-+El control de ancho de banda es una extensión CONFIG_FAIR_GROUP_SCHED que
-+permite especificar el máximo uso disponible de CPU para un grupo o una jerarquía.
-+
-+El ancho de banda permitido para un grupo de tareas se especifica usando una
-+cuota y un periodo. Dentro de un "periodo" (microsegundos), a un grupo
-+de tareas se le asigna hasta su "cuota" de tiempo de uso de CPU en
-+microsegundos. Esa cuota es asignada para cada CPU en colas de ejecución
-+en porciones de tiempo de ejecución en la CPU según los hilos de ejecución
-+del grupo de tareas van siendo candidatos a ejecutarse. Una vez toda la cuota
-+ha sido asignada cualquier petición adicional de cuota resultará en esos hilos
-+de ejecución siendo limitados/estrangulados. Los hilos de ejecución limitados,
-+no serán capaces de ejecutarse de nuevo hasta el siguiente periodo cuando
-+la cuota sea restablecida.
-+
-+La cuota sin asignar de un grupo es monitorizada globalmente, siendo
-+restablecidas cfs_quota unidades al final de cada periodo. Según los
-+hilos de ejecución van consumiendo este ancho de banda, este se
-+transfiere a los "silos" de las cpu-locales en base a la demanda. La
-+cantidad transferida en cada una de esas actualizaciones es ajustable y
-+es descrito como un "slice".
-+
-+Característica de ráfaga
-+--------------------------
-+
-+Esta característica toma prestado tiempo ahora, que en un futuro tendrá que
-+devolver, con el coste de una mayor interferencia hacia los otros usuarios
-+del sistema. Todo acotado perfectamente.
-+
-+El tradicional control de ancho de banda (UP-EDF) es algo como:
-+
-+  (U = \Sum u_i) <= 1
-+
-+Esto garantiza dos cosas: que cada tiempo límite de ejecución es cumplido
-+y que el sistema es estable. De todas formas, si U fuese > 1, entonces
-+por cada segundo de tiempo de reloj de una tarea, tendríamos que
-+ejecutar más de un segundo de tiempo de ejecución de programa, y
-+obviamente no cumpliriamos con el tiempo límite de ejecución de la
-+tarea, pero en el siguiente periodo de ejecución el tiempo límite de
-+la tarea estaría todavía más lejos, y nunca se tendría tiempo de alcanzar
-+la ejecución, cayendo así en un fallo no acotado.
-+
-+La característica de ráfaga implica el trabajo de una tarea no siempre
-+consuma totalmente la cuota; esto permite que se pueda describir u_i
-+como una distribución estadística.
-+
-+Por ejemplo, se tiene u_i = {x,e}_i, donde x es el p(95) y x+e p(100)
-+(el tradicional WCET (WCET:Worst Case Execution Time: son las siglas
-+en inglés para "peor tiempo de ejecución")). Esto efectivamente permite
-+a u ser más pequeño, aumentando la eficiencia (podemos ejecutar más
-+tareas en el sistema), pero al coste de perder el instante límite de
-+finalización deseado de la tarea, cuando coincidan las peores
-+probabilidades. De todas formas, si se mantiene la estabilidad, ya que
-+cada sobre-ejecución se empareja con una infra-ejecución en tanto x esté
-+por encima de la media.
-+
-+Es decir, supóngase que se tienen 2 tareas, ambas específicamente
-+con p(95), entonces tenemos p(95)*p(95) = 90.25% de probabilidad de
-+que ambas tareas se ejecuten dentro de su cuota asignada y todo
-+salga bien. Al mismo tiempo se tiene que p(5)*p(5) = 0.25% de
-+probabilidad que ambas tareas excedan su cuota de ejecución (fallo
-+garantizado de su tiempo final de ejecución). En algún punto por
-+en medio, hay un umbral donde una tarea excede su tiempo límite de
-+ejecución y la otra no, de forma que se compensan; esto depende de la
-+función de probabilidad acumulada específica de la tarea.
-+
-+Al mismo tiempo, se puede decir que el peor caso de sobrepasar el
-+tiempo límite de ejecución será \Sum e_i; esto es una retraso acotado
-+(asumiendo que x+e es de hecho el WCET).
-+
-+La interferencia cuando se usa una ráfaga se evalúa por la posibilidades
-+de fallar en el cumplimiento del tiempo límite y el promedio de WCET.
-+Los resultados the tests han mostrado que cuando hay muchos cgroups o
-+una CPU está infrautilizada, la interferencia es más limitada. Más detalles
-+se aportan en: https://lore.kernel.org/lkml/5371BD36-55AE-4F71-B9D7-B86DC32E3D2B@linux.alibaba.com/
-+
-+Gestión:
-+--------
-+
-+Cuota, periodo y ráfaga se se gestionan dentro del subsistema de cpu por medio
-+de cgroupfs.
-+
-+.. note::
-+   Los archivos cgroupfs descritos en esta sección solo se aplican a el
-+   cgroup v1. Para cgroup v2, ver :ref:`Documentation/admin-guide/cgroup-v2.rst <cgroup-v2-cpu>`.
-+
-+- cpu.cfs_quota_us: tiempo de ejecución que se refresca cada periodo (en microsegundos)
-+- cpu.cfs_period_us: la duración del periodo (en microsegundos)
-+- cpu.stat: exporta las estadísticas de limitación [explicado a continuación]
-+- cpu.cfs_burst_us: el máximo tiempo de ejecución acumulado (en microsegundos)
-+
-+Los valores por defecto son::
-+
-+	cpu.cfs_period_us=100ms
-+	cpu.cfs_quota_us=-1
-+	cpu.cfs_burst_us=0
-+
-+Un valor de -1 para cpu.cfs_quota_us indica que el grupo no tiene ninguna
-+restricción de ancho de banda aplicado, ese grupo se describe como un grupo
-+con ancho de banda sin restringir. Esto representa el comportamiento
-+tradicional para CFS.
-+
-+Asignar cualquier valor (válido) y positivo no menor que cpu.cfs_burst_us
-+definirá el límite del ancho de banda. La cuota mínima permitida para
-+la cuota o periodo es 1ms. Hay también un límite superior en la duración del
-+periodo de 1s. Existen restricciones adicionales cuando los límites de
-+ancho de banda se usan de manera jerárquica, estos se explican en mayor
-+detalle más adelante.
-+
-+Asignar cualquier valor negativo a cpu.cfs_quota_us eliminará el límite de
-+ancho de banda y devolverá de nuevo al grupo a un estado sin restricciones.
-+
-+Un valor de 0 para cpu.cfs_burst_us indica que el grupo no puede acumular
-+ningún ancho de banda sin usar. Esto hace que el control del comportamiento
-+tradicional del ancho de banda para CFS no cambie. Definir cualquier valor
-+(válido) positivo no mayor que cpu.cfs_quota_us en cpu.cgs_burst_us definirá
-+el límite con el ancho de banda acumulado no usado.
-+
-+Cualquier actualización a las especificaciones del ancho de banda usado
-+por un grupo resultará en que se deje de limitar si está en un estado
-+restringido.
-+
-+Ajustes globales del sistema
-+----------------------------
-+
-+Por eficiencia el tiempo de ejecución es transferido en lotes desde una reserva
-+global y el "silo" de una CPU local. Esto reduce en gran medida la presión
-+por la contabilidad en grandes sistemas. La cantidad transferida cada vez
-+que se requiere una actualización se describe como "slice".
-+
-+Esto es ajustable vía procfs::
-+
-+	/proc/sys/kernel/sched_cfs_bandwidth_slice_us (valor por defecto=5ms)
-+
-+Valores de "slice" más grandes reducirán el costo de transferencia, mientras
-+que valores más pequeños permitirán un control más fino del consumo.
-+
-+Estadísticas
-+------------
-+
-+Las estadísticas del ancho de banda de un grupo se exponen en 5 campos en cpu.stat.
-+
-+cpu.stat:
-+
-+- nr_periods: Número de intervalos aplicados que han pasado.
-+- nr_throttled: Número de veces que el grupo ha sido restringido/limitado.
-+- throttled_time: La duración de tiempo total (en nanosegundos) en las
-+  que las entidades del grupo han sido limitadas.
-+- nr_bursts: Número de periodos en que ha ocurrido una ráfaga.
-+- burst_time: Tiempo acumulado (en nanosegundos) en la que una CPU ha
-+  usado más de su cuota en los respectivos periodos.
-+
-+Este interfaz es de solo lectura.
-+
-+Consideraciones jerárquicas
-+---------------------------
-+
-+El interface refuerza que el ancho de banda de una entidad individual
-+sea siempre factible, esto es: max(c_i) <= C. De todas maneras,
-+la sobre-suscripción en el caso agregado está explícitamente permitida
-+para hacer posible semánticas de conservación de trabajo dentro de una
-+jerarquia.
-+
-+  e.g. \Sum (c_i) puede superar C
-+
-+[ Donde C es el ancho de banda de el padre, y c_i el de su hijo ]
-+
-+Hay dos formas en las que un grupo puede ser limitado:
-+
-+        a. este consume totalmente su propia cuota en un periodo.
-+        b. la cuota del padre es consumida totalmente en su periodo.
-+
-+En el caso b) anterior, incluso si el hijo pudiera tener tiempo de
-+ejecución restante, este no le será permitido hasta que el tiempo de
-+ejecución del padre sea actualizado.
-+
-+Advertencias sobre el CFS con control de cuota de ancho de banda
-+----------------------------------------------------------------
-+
-+Una vez una "slice" se asigna a una cpu esta no expira. A pesar de eso todas,
-+excepto las "slices" menos las de 1ms, puede ser devueltas a la reserva global
-+si todos los hilos en esa cpu pasan a ser no ejecutables. Esto se configura
-+en el tiempo de compilación por la variable min_cfs_rq_runtime. Esto es un
-+ajuste en la eficacia que ayuda a prevenir añadir bloqueos en el candado global.
-+
-+El hecho de que las "slices" de una cpu local no expiren tiene como resultado
-+algunos casos extremos interesantes que debieran ser comprendidos.
-+
-+Para una aplicación que es un cgroup y que está limitada en su uso de cpu
-+es un punto discutible ya que de forma natural consumirá toda su parte
-+de cuota así como también la totalidad de su cuota en cpu locales en cada
-+periodo. Como resultado se espera que nr_periods sea aproximadamente igual
-+a nr_throttled, y que cpuacct.usage se incremente aproximadamente igual
-+a cfs_quota_us en cada periodo.
-+
-+Para aplicaciones que tienen un gran número de hilos de ejecución y que no
-+estan ligadas a una cpu, este matiz de la no-expiración permite que las
-+aplicaciones brevemente sobrepasen su cuota límite en la cantidad que
-+no ha sido usada en cada cpu en la que el grupo de tareas se está ejecutando
-+(típicamente como mucho 1ms por cada cpu o lo que se ha definido como
-+min_cfs_rq_runtime). Este pequeño sobreuso únicamente tiene lugar si
-+la cuota que ha sido asignada a una cpu y no ha sido completamente usada
-+o devuelta en periodos anteriores. Esta cantidad de sobreuso no será
-+transferida entre núcleos. Como resultado, este mecanismo todavía cumplira
-+estrictamente los límites de la tarea de grupo en el promedio del uso,
-+pero sobre una ventana de tiempo mayor que un único periodo. Esto
-+también limita la habilidad de un sobreuso a no más de 1ms por cada cpu.
-+Esto provee de una experiencia de uso más predecible para aplicaciones
-+con muchos hilos y con límites de cuota pequeños en máquinas con muchos
-+núcleos. Esto también elimina la propensión a limitar estas
-+aplicaciones mientras que simultáneamente usan menores cuotas
-+de uso por cpu. Otra forma de decir esto es que permitiendo que
-+la parte no usada de una "slice" permanezca válida entre periodos
-+disminuye la posibilidad de malgastare cuota que va a expirar en
-+las reservas de la cpu locales que no necesitan una "slice" completa
-+de tiempo de ejecución de cpu.
-+
-+La interacción entre las aplicaciones ligadas a una CPU y las que no están
-+ligadas a ninguna cpu ha de ser también considerada, especialmente cuando
-+un único núcleo tiene un uso del 100%. Si se da a cada una de esas
-+aplicaciones la mitad de la capacidad de una CPU-núcleo y ambas
-+están gestionadas en la misma CPU es teóricamente posible que la aplicación
-+no ligada a ninguna CPU use su 1ms adicional de cuota en algunos periodos,
-+y por tanto evite que la aplicación ligada a una CPU pueda usar su
-+cuota completa por esa misma cantidad. En esos caso el algoritmo CFS (vea
-+sched-design-CFS.rst) el que decida qué aplicación es la elegida para
-+ejecutarse, ya que ambas serán candidatas a ser ejecutadas y tienen
-+cuota restante. Esta discrepancia en el tiempo de ejecución se compensará
-+en los periodos siguientes cuando el sistema esté inactivo.
-+
-+Ejemplos
-+---------
-+
-+1. Un grupo limitado a 1 CPU de tiempo de ejecución.
-+
-+    Si el periodo son 250ms y la cuota son 250ms el grupo de tareas tendrá el tiempo
-+    de ejecución de 1 CPU cada 250ms::
-+
-+	# echo 250000 > cpu.cfs_quota_us /* cuota = 250ms */
-+	# echo 250000 > cpu.cfs_period_us /* periodo = 250ms */
-+
-+2. Un grupo limitado al tiempo de ejecución de 2 CPUs en una máquina varias CPUs.
-+
-+    Con un periodo de 500ms y una cuota de 1000ms el grupo de tareas tiene el tiempo
-+    de ejecución de 2 CPUs cada 500ms::
-+
-+	# echo 1000000 > cpu.cfs_quota_us /* cuota = 1000ms */
-+	# echo 500000 > cpu.cfs_period_us /* periodo = 500ms */
-+
-+    El periodo más largo aquí permite una capacidad de ráfaga mayor.
-+
-+3. Un grupo limitado a un 20% de 1 CPU.
-+
-+    Con un periodo de 50ms, 10ms de cuota son equivalentes al 20% de 1 CPUs::
-+
-+	# echo 10000 > cpu.cfs_quota_us /* cuota = 10ms */
-+	# echo 50000 > cpu.cfs_period_us /* periodo = 50ms */
-+
-+    Usando un periodo pequeño aquí nos aseguramos una respuesta de
-+    la latencia consistente a expensas de capacidad de ráfaga.
-+
-+4. Un grupo limitado al 40% de 1 CPU, y permite acumular adicionalmente
-+   hasta un 20% de 1 CPU.
-+
-+    Con un periodo de 50ms, 20ms de cuota son equivalentes al 40% de
-+    1 CPU. Y 10ms de ráfaga, son equivalentes a un 20% de 1 CPU::
-+
-+	# echo 20000 > cpu.cfs_quota_us /* cuota = 20ms */
-+	# echo 50000 > cpu.cfs_period_us /* periodo = 50ms */
-+	# echo 10000 > cpu.cfs_burst_us /* ráfaga = 10ms */
-+
-+    Un ajuste mayor en la capacidad de almacenamiento (no mayor que la cuota)
-+    permite una mayor capacidad de ráfaga.
-+
--- 
-2.39.2
+> +  The AM625 TI Keystone OpenLDI transmitter (OLDI TX) supports serialized RGB
+> +  pixel data transmission between host and flat panel display over LVDS (Low
+> +  Voltage Differential Sampling) interface. The OLDI TX consists of 7-to-1 data
+> +  serializers, and 4-data and 1-clock LVDS outputs. It supports the LVDS output
+> +  formats "jeida-18", "jeida-24" and "vesa-18", and can accept 24-bit RGB or
+> +  padded and un-padded 18-bit RGB bus formats as input.
+> +
+> +properties:
+> +  reg:
+> +    maxItems: 1
+> +
+
+How does it even work without compatible? How is this schema selected?
+If by part of your next patch, then this is not a proper split - this
+patch itself is noop. Squash the patches.
+
+> +  clocks:
+> +    maxItems: 1
+> +    description: serial clock input for the OLDI transmitters
+> +
+> +  clock-names:
+> +    const: s_clk
+
+Drop _clk or name it correctly.
+
+> +
+> +  ti,companion-oldi:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      phandle to companion OLDI transmitter. This property is mandatory for the
+> +      primarty OLDI TX if the OLDI TXes are expected to work either in dual-lvds
+> +      mode or in clone mode. This property should point to the secondary OLDI
+> +      TX.
+> +
+> +  ti,secondary-oldi:
+> +    type: boolean
+> +    description: Boolean property to mark an OLDI TX as secondary node.
+
+Why? Lack companion tells it, doesn't it?
+
+> +
+> +  ti,oldi-io-ctrl:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      phandle to syscon device node mapping OLDI IO_CTRL registers found in the
+> +      control MMR region. This property is needed for OLDI interface to work.
+
+"This property is needed for OLDI interface to work." tells nothing.
+Everything is needed for everything to work. Be specific.
+
+
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: Parallel RGB input port
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: LVDS output port
+> +
+> +    required:
+> +      - port@0
+> +      - port@1
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        ti,secondary-oldi: true
+
+This does not work... Test your schema.
+
+> +    then:
+> +      properties:
+> +        ti,companion-oldi: false
+> +        ti,oldi-io-ctrl: false
+> +        clocks: false
+> +        clock-names: false
+> +
+> +    else:
+> +      required:
+> +        - ti,oldi-io-ctrl
+> +        - clocks
+> +        - clock-names
+> +
+> +required:
+> +  - reg
+> +  - ports
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/soc/ti,sci_pm_domain.h>
+> +
+> +    oldi_txes {
+
+No underscores in node names.
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        oldi: oldi@0 {
+What is the "reg" for?
+
+Best regards,
+Krzysztof
 
 
