@@ -1,96 +1,73 @@
-Return-Path: <linux-kernel+bounces-258144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7D0B93845E
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 12:45:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA5AA938460
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 12:59:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8FBB1C2098D
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 10:45:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A54ED1F21205
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 10:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107C55FB9C;
-	Sun, 21 Jul 2024 10:45:19 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8E715FA75;
+	Sun, 21 Jul 2024 10:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UrlCfNs6"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BFFB1429A
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 10:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E53C8F70;
+	Sun, 21 Jul 2024 10:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721558718; cv=none; b=Cr5P5UJb3PyvF33tEbr+l8jXcCWkEtnlUpoobDcOxxSEXVUvLvq4XP0U2Rp1GKWoNRSqDk8GsZGwle6hv1jRe0f8O4cDVrvKH40/em5I+eAwoB4LQ1cKrLqYhnjpN4R7kbLVP532dplnUxmssFU2nAuOuQmQGkAAFbVXtGcRnHM=
+	t=1721559555; cv=none; b=I7iViaMntZyr3ZD77D9Y7Sxj2c/Ktm+qtXb5etQHcob5I0SXK3B3wtYbR8iod8rQ8C8iszbb7+k9Ltc26ew1c4H8dZCG8qfvm5KaWfj/B2kiV//RdduF+wpfpFN8XuMRYKeHLHqMZSn79XZ8nO3OUVzaVtO6piNB3+XVBNbEbgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721558718; c=relaxed/simple;
-	bh=GOEFmI/S8Uj0Ov65Vixl8DR7ws9zddtNmYt/C8uHuVg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=pn0swaizqHLt98Z9N5on4qbmOltKugSlhMYSqtydmHPVfKotI7Pi5aIfln0QkjsGjSR8Pd9YHtkJjxi5r+0VkNCc+LzumGFAZbOQgTQPxhFY1hEEjXQXzLd49J94tzS8PnXyImG4EyLHmYKZ1QVKPeZBR6dC9d0m1N2fJ7uCaV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8041a66f2ebso515421539f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 03:45:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721558716; x=1722163516;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AESplfQUZHCNIC5YyfVm3dVd8eYKKisVDs0MRYDnBZs=;
-        b=mwJI6N0fl35Dztrv2qnKEEBWGnYwHRrQTLrn7HKy6YvzL0IGts8WuVn6nrQNpvpAlx
-         xznb+K8K6If481vEo2KC/P6bXeneFltN87lRIvn68FGWDEJvBf2t3Ro2SBoU/5DRjX8R
-         KMfNy2mGjF1w+qyvzq+T7xV+Dt0lMSOeAP9OGS4WIrd/3abO3Bl2vF3cw/9UDWS8ZN5C
-         O5DfF/ppZg89hItVryI49w+Oz0C3619FMopxPWYtyQeebRimu57VmPd3/mmi4LzBDwWv
-         UY4+YzD7F4ju6HLQzWSWYlBpFXzLkN7tuYAAq3zTwYX9VTQcmLcyROZ313b3RSatsEea
-         nikg==
-X-Gm-Message-State: AOJu0YwyV6+dZ/oJsltinBjoeEwmwE7FYvzsL+77NAhgJZyuE3iRg/Al
-	DTx1NDK80o3mneL/qiPBU9Tmnwd0rPkombq3rpT0l+aTenHtG5jZCbp1A0GB9fM7hFNycjdWe2E
-	7NUX1mWTVdOLOZ8+SAu78EERoucciRkJWdSuZc00AkAe5Kg8o9Y/mgZE=
-X-Google-Smtp-Source: AGHT+IEE10DeKQeW1x4grKxLqfaPNgjO4gKD6qus5Ewudug2GVeNPtOATxiY2nomj2khaAdLlR1cXe2wr0vMM7NJwZ3KGXsCI+0d
+	s=arc-20240116; t=1721559555; c=relaxed/simple;
+	bh=92j5GWWjGInDqkyO616LjPDFfV/SQcIzsD8VEc0YMrQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gHYsNNHqHSny5ANJ84MnmO3aeRfbFaOZapDMBnZV4jmrcTfoJvmpbIgxpcMzJrbMQaOHkx8IvDkovr/8jNuzOvg+602vYYw9GEZztIbukG32wQq51PQOIxYfPrc/e24iYP1q0ViqO2CphLh6jpCGi5jfa3t5f0gD4w2Ov5Vdno8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UrlCfNs6; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=92j5GWWjGInDqkyO616LjPDFfV/SQcIzsD8VEc0YMrQ=; b=UrlCfNs6zL0Dd0FRTysmoov/Bw
+	/wsboegaWfzf/Zebihfv+b1g4sUGQGelgzjEX1vBwQ0WPhoShzhNG01Hk1BYs7pEjv3px6rLpywDv
+	xaKDQ3PjKLMpM3DSinoXfrJYkuLipD2958Z/IAL3E6c9hxzxd6H9OnrGfHawvYhr5uelTsw7MIuew
+	0LBjmAEKvlJnjn0qj9xJrjc2E6RB+j8p/Mr7s8TpuTBNlvfCo9FpJdCWCMp16Yy0QEAgGtmo++uje
+	cm/uTytcLU7SjnZfrO0Zb+KZiQxPzsaf+vyOHpfwjlh/d84SXHA+EMvHqgldUkDYeH9ZHgszAhlmG
+	kxD4d7Mw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sVUHQ-00000004lM7-0vcY;
+	Sun, 21 Jul 2024 10:59:04 +0000
+Date: Sun, 21 Jul 2024 11:59:04 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: syzbot+34a0ee986f61f15da35d@syzkaller.appspotmail.com,
+	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] fs/pidfs: when time ns disabled add check for ioctl
+Message-ID: <Zpzp-NO6dyRhcqmH@casper.infradead.org>
+References: <000000000000cf8462061db0699c@google.com>
+ <tencent_7FAE8DB725EE0DD69236DDABDDDE195E4F07@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:4091:b0:4c1:4388:46bb with SMTP id
- 8926c6da1cb9f-4c23fb56fc9mr343543173.0.1721558716393; Sun, 21 Jul 2024
- 03:45:16 -0700 (PDT)
-Date: Sun, 21 Jul 2024 03:45:16 -0700
-In-Reply-To: <000000000000943e1c061d92bdd6@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c038ee061dbf9f22@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [bpf?] [net?] KASAN: slab-use-after-free
- Read in bq_xmit_all
-From: syzbot <syzbot+707d98c8649695eaf329@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_7FAE8DB725EE0DD69236DDABDDDE195E4F07@qq.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Sun, Jul 21, 2024 at 02:23:12PM +0800, Edward Adam Davis wrote:
+> syzbot call pidfd_ioctl() with cmd "PIDFD_GET_TIME_NAMESPACE" and disabled
+> CONFIG_TIME_NS, since time_ns is NULL, it will make NULL ponter deref in
+> open_namespace.
 
-***
-
-Subject: Re: [syzbot] [bpf?] [net?] KASAN: slab-use-after-free Read in bq_xmit_all
-Author: aha310510@gmail.com
-
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-
----
- kernel/bpf/devmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
-index 9e0e3b0a18e4..bca00badc0f8 100644
---- a/kernel/bpf/devmap.c
-+++ b/kernel/bpf/devmap.c
-@@ -465,7 +465,7 @@ static void bq_enqueue(struct net_device *dev, struct xdp_frame *xdpf,
- 	 * Do the same with xdp_prog and flush_list since these fields
- 	 * are only ever modified together.
- 	 */
--	if (!bq->dev_rx) {
-+	if (!bq->dev_rx && bq->count <= DEV_MAP_BULK_SIZE) {
- 		struct list_head *flush_list = bpf_net_ctx_get_dev_flush_list();
- 
- 		bq->dev_rx = dev_rx;
---
+what about PIDFD_GET_TIME_FOR_CHILDREN_NAMESPACE?
 
