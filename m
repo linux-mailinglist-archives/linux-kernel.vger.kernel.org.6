@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-258084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38286938345
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 04:37:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D8D6938347
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 04:40:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DD7028160B
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 02:37:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C740D1F214AF
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 02:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A3711FAA;
-	Sun, 21 Jul 2024 02:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD3A20E6;
+	Sun, 21 Jul 2024 02:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CZs4/TEb"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HNEvd74m"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B844A28
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 02:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC9B17D2
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 02:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721529469; cv=none; b=pCHnAB1ar6KRz2T9oPb9fJ0ih/hwa2HidwbcKmYaxGqCa0X7RDnQMADQfHPS9yMWruuCzV2GwyiDrrVE2w/TMiKfRvtqCCAVh7DkJHS+qDVLImyGi12f2ZZgzuZ/UED0j04anE62ZvzzHUbhnjyra4QxlJOejPa4FMydFKGMVIw=
+	t=1721529596; cv=none; b=Prq9J0I2CSOplpy0+inaZIkryoViffr0gRv8E0Obo7DVuhaOIv1L/zaUNsVLfMZVYbEUUFJI1oaWObsLnEEH9jE4kjxuPJw44LOsJj3DsWqjPp4XjAKXbx7ZwgCcHJs8W2ibQLGuQA2xTL9Kv2J80nkFZeh+C38ypjyUwDJcT7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721529469; c=relaxed/simple;
-	bh=Hlahyfg1sNue9T1oK7kBAGUyc8e/VFHhPVoCM9ReGRQ=;
+	s=arc-20240116; t=1721529596; c=relaxed/simple;
+	bh=fh8z2AULcINUDvcFHWS/e7WktHIAQaXkIMEEqliuQXQ=;
 	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=a2DZD7f2gW9RBDysa/a7a15Vc/1RucmFWOJcm11j2S82AYUSY4zHCYhssvqrGEposRxq3dzajN5xKO62TrLHm/UUtXsUe2XpGZazLh9AbCi9Jbv29LcO8NiAV8P8ecQ6/vDTUVMD/K2NXulRZ+oF0sHt/Fii+Iuuz/DZaaQoM68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CZs4/TEb; arc=none smtp.client-ip=209.85.166.180
+	 MIME-Version:Content-Type; b=lbufdMMmiPtg2p0voAqNlzIjwCrJZfDxcCtNiiuiQ11eg6ZbXiRvB9V7RFSpaydR8cmqCIb/aZ2Df8NWYxfz7uPDETUOK4zH2ApEJ03vN/B99PBLtK4cgDhSjD6pKAHWdqljBUjkYKlo9HuHrp1KnjL1JfyY8RbcC1UbnfCvv/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HNEvd74m; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-398b599593eso217735ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 19:37:48 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fd7509397bso208265ad.0
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 19:39:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721529467; x=1722134267; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1721529594; x=1722134394; darn=vger.kernel.org;
         h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DZ+1g2auneEOCQAqQ9/NtAVV5iS3it7JtGVNLCLxuxw=;
-        b=CZs4/TEboXXD587daIWkSkDavX+EOTuAx1p6RjtAvNL1afkWimXvXDppTUYr/DXwvA
-         t/VAqErtJXCUiQArH3hDMbL2G+HHKEj4qdkT/xIvAUxoauXCn3FLT/91PAKJBAYpxtZe
-         aAG7JuW5fhvEfi43mRov0L0cx3TMdmQIZIuAqTF6Nd99NzlDD8/FVQyO/G64YOGulu//
-         ChWuzzlXV5w+dl84a8dYrlkiKDJcuCgu2zGBNHzHz5FXXGS9QLkrBixellgf+eac3Q9G
-         WkwqtWkNjwoYlA9B9IrknhDmKo+8Ud68MJ+IauHrKX6+VgulAsLxH0PQtXlstsUVGswT
-         z5xw==
+        bh=pKhYQTKZB+KGFwG7X607Dvbh44/YyIGRnOi+f/Ljx7c=;
+        b=HNEvd74mxxgjkbyKDk6ULbHTVYTzl0hWwBGNi6IgTzpRUgi8KpNgH1+zOS09312XK6
+         pbtUXoO06OK4DW7W8Fz2p462Qp32DaoQPQ3639y20Lf+BbdeX3PpldDc/Pm6opMFYS/H
+         KMqko4By5RLdXoTkByNVFuNX3aZNtEnbfGcS6YYlsKmnKZEk1G6EfwRJfrYONzb2P9Ff
+         Rzo9dnVbOg60hs56+3LimfDNHLSfC/icgiwi+aMRs2dZH3IaW4ozV1U5MSvPV/Y7wKGf
+         KtukXhuFRZ3q7KBAHrnZeznm4I6Xx7vW+9KSUnT3OFDht2y059C5rN3o3/va+nnOj2/h
+         GB6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721529467; x=1722134267;
+        d=1e100.net; s=20230601; t=1721529594; x=1722134394;
         h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DZ+1g2auneEOCQAqQ9/NtAVV5iS3it7JtGVNLCLxuxw=;
-        b=o9MUZz0IchMT74b6n7k3VYm4FbJqoMPjQv/I1RkOxiTe2mhH9CQl2bzQW5VpX8iAu3
-         d7HrYmFuI50Dxp4BC9wFmPgLNWznMg26t9bKK+7IRyW6pa1s7aCEbo3phyPlqXEmlRzr
-         JjnexlK2kD7KiT5wpUg42OPUs8WCeoCPMnI7MOsoGlWTm6Wr53HDha7wzDDTSNDEFG5e
-         EgRBmOwbyC9d4eq+z4rXBzzjVJDgdlyLUStbJyXP5GO0roAwSel+RmonKPaWhH4oqIXM
-         EcwDf3Q0uzduAh+OkUnAyt0DVBueFLT1/dXSmKeJkd0Jmc5C/5+SQkivaIUh2qYjqo7S
-         cWpw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1CuKwCKxqFjBZ9jpSwh3QEIdxPSBgd3XaF9CVHX3ZVDiYHdFKQwDdS0xEMuXADhUingH71v8j0Xu+vvaheXGDQgNODdHe+g3lwqmn
-X-Gm-Message-State: AOJu0YzoR7oyYtFrbW0Zgh17QwURtcBxoyWHYQarGSYDnIrLgrpa0eY7
-	L8UBeG0dlw5ixlpbKE37JT3utkMT2vjjay05B88TLOLTIkJMTXEq5nD4Z4dQ3Q==
-X-Google-Smtp-Source: AGHT+IESi9bh59N1PdJby2XO90Zi2ekjLcdSNwZ/Otr839kvKr/0qJTNsG1H5f8fJxZHfE3H6oVZ4g==
-X-Received: by 2002:a05:6e02:1cad:b0:375:aec4:eaa8 with SMTP id e9e14a558f8ab-3993470816dmr1577235ab.8.1721529467292;
-        Sat, 20 Jul 2024 19:37:47 -0700 (PDT)
+        bh=pKhYQTKZB+KGFwG7X607Dvbh44/YyIGRnOi+f/Ljx7c=;
+        b=QPq6ByalaHf3PpLhsD+Oi8DMX/IJGgc2YFNt48eEpP4V3tpmaRD9b0vARjmAzVUXRa
+         detQewUB7mEGxlMunRJLLEas5RrIC13zyh7xJWTMTHF2gpfBGt/XDQa+EamqJuWFEhZp
+         9W4L6+Kc8ZLbxnvQ3fXOy6KWyUrpvlxB4/2Fb21qj5sEL44kLQ/Rh0AfLbxg/iwOLnvx
+         YapXnpEZEs0fUnNQXnhmuUMnbaWSRffEp1OpFcFC5bBwTkg9eBT1+yZWfMCVZu6ONSTD
+         dCfAq358XvZlWPjOsoceZOENvh2ehtK9KXyYQgX9SVBpkUckDPTxU4mZ4OIS6636hjol
+         cYWg==
+X-Forwarded-Encrypted: i=1; AJvYcCUKZBfG3xi2W22dU7xevJ5gBV7ytl5FmT0l+9rZTFqshQak6kAUH7W0BWQqRUwnZUuwQRdG6JROA3je4H2sSM7DBfSp1JNnDgjEQI3j
+X-Gm-Message-State: AOJu0YzZIub2U++4n4tUO6zsH2d8/9qf0K6ViwV5/7bSd9B6q1THkseg
+	VLcs8qrpHaFtle0FORD6mLHSCLVrpJMk2EhG2RuYj9AAU7HKjOeV72XYb7+g2g==
+X-Google-Smtp-Source: AGHT+IHKuuroDH+lIH+Y4aN8h5NmQDJjCinbxuGocRwWGYbok5fX/mvloo0y4GqthRw+d5nwlHRWKQ==
+X-Received: by 2002:a17:903:2348:b0:1fb:b39:ce4c with SMTP id d9443c01a7336-1fd7961f3e3mr1796205ad.8.1721529593638;
+        Sat, 20 Jul 2024 19:39:53 -0700 (PDT)
 Received: from [2620:0:1008:15:d155:1bfe:11e4:98f4] ([2620:0:1008:15:d155:1bfe:11e4:98f4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ccf80a8870sm4243059a91.50.2024.07.20.19.37.46
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f25ac71sm29087575ad.22.2024.07.20.19.39.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Jul 2024 19:37:46 -0700 (PDT)
-Date: Sat, 20 Jul 2024 19:37:45 -0700 (PDT)
+        Sat, 20 Jul 2024 19:39:53 -0700 (PDT)
+Date: Sat, 20 Jul 2024 19:39:52 -0700 (PDT)
 From: David Rientjes <rientjes@google.com>
 To: Vlastimil Babka <vbabka@suse.cz>
 cc: "Paul E. McKenney" <paulmck@kernel.org>, 
@@ -80,11 +80,11 @@ cc: "Paul E. McKenney" <paulmck@kernel.org>,
     Roman Gushchin <roman.gushchin@linux.dev>, 
     Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
     linux-kernel@vger.kernel.org, rcu@vger.kernel.org
-Subject: Re: [PATCH RFC 2/6] mm, slab: always maintain per-node slab and
- object count
-In-Reply-To: <20240715-b4-slab-kfree_rcu-destroy-v1-2-46b2984c2205@suse.cz>
-Message-ID: <8e2447d1-c0ae-1d25-2447-10bde334a808@google.com>
-References: <20240715-b4-slab-kfree_rcu-destroy-v1-0-46b2984c2205@suse.cz> <20240715-b4-slab-kfree_rcu-destroy-v1-2-46b2984c2205@suse.cz>
+Subject: Re: [PATCH RFC 0/6] mm, slub: handle pending kfree_rcu() in
+ kmem_cache_destroy()
+In-Reply-To: <20240715-b4-slab-kfree_rcu-destroy-v1-0-46b2984c2205@suse.cz>
+Message-ID: <607f42cd-868b-28d0-8e94-819323557c09@google.com>
+References: <20240715-b4-slab-kfree_rcu-destroy-v1-0-46b2984c2205@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,25 +95,18 @@ Content-Type: text/plain; charset=US-ASCII
 
 On Mon, 15 Jul 2024, Vlastimil Babka wrote:
 
-> Currently SLUB counts per-node slabs and total objects only with
-> CONFIG_SLUB_DEBUG, in order to minimize overhead. However, the detection
-> in __kmem_cache_shutdown() whether there are no outstanding object
-> relies on the per-node slab count (node_nr_slabs()) so it may be
-> unreliable without CONFIG_SLUB_DEBUG. Thus we might be failing to warn
-> about such situations, and instead destroy a cache while leaving its
-> slab(s) around (due to a buggy slab user creating such a scenario, not
-> in normal operation).
+> First RFC, feel free to ignore for now if too busy with merge window.
+> Also in git:
+> https://git.kernel.org/vbabka/l/slab-kfree_rcu-destroy-v1r0
 > 
-> We will also need node_nr_slabs() to be reliable in the following work
-> to gracefully handle kmem_cache_destroy() with kfree_rcu() objects in
-> flight. Thus make the counting of per-node slabs and objects
-> unconditional.
+> Based on slab/for-next:
+> https://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git/log/?h=slab/for-next
 > 
-> Note that CONFIG_SLUB_DEBUG is the default anyway, and the counting is
-> done only when allocating or freeing a slab page, so even in
-> !CONFIG_SLUB_DEBUG configs the overhead should be negligible.
-> 
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 
-Acked-by: David Rientjes <rientjes@google.com>
+Thanks Vlastimil, do you see value in testing of this series right now or 
+should we wait for another series to be posted?
+
+I'm happy to run this through testing on a few different architectures, 
+but not sure if you have an update baking in the oven that would supersede 
+it.
 
