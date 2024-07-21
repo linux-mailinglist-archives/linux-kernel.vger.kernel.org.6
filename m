@@ -1,98 +1,97 @@
-Return-Path: <linux-kernel+bounces-258154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80958938474
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 13:37:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45FF2938478
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 13:41:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 310A6281391
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 11:37:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03E7B281544
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 11:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDFC2148FE5;
-	Sun, 21 Jul 2024 11:37:09 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B5315FCEA;
+	Sun, 21 Jul 2024 11:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DWN1tpZp"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BE53FE4
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 11:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B616D2BB13;
+	Sun, 21 Jul 2024 11:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721561829; cv=none; b=OA9/k8LYdgb6QTc4unYXwrUPfEJj9y7jvS/U9O8NcW7AM0DLP3sFp4ZNz0WqBh5kYvHgcsk7k4+actN3pBduFFOt09KDhdOFpOHOCakx2B5UPFpnEQGP6WN1snWMnDSxg4nAKbC7U5DeNcYkFJRAU+ElCNyFdUqP16sp3P76b7M=
+	t=1721562061; cv=none; b=qt9iT4rwg6XAmXSV+aSiYvkFuX+Ea85MYtM4IxW2LSIJWpYRefTOLNeb/HB+hCaaahzvzJoLp0FvguLvzBjrhdb68g33+9h64fET0fK2k1+5m7VLffuCl/4OxBDWh+IMWXPw6MY3LW6Z8Fo9Q0wqwtvZP2umUUUfhQEfZ71INkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721561829; c=relaxed/simple;
-	bh=CaKoYVXrxQ+9JPAcdKGaqOY52AKDN7sVoCePwisbqmg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=pzEKZgjWJgb2zvdXNZz31kWRee6eCCcp12lRb1oxz/byOtIZu6ZBy7CU6BH9mNrHBfaIxreZN6P8n9kdVEry62vq0svyhqOOK30Ber9I25cCjpoBMMBGlpRNB6m6W4CbF0odSi8PQ2XZYc6DUXf3QRNTQle3jDNvYSeApt2t7Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7f92912a614so576690639f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 04:37:07 -0700 (PDT)
+	s=arc-20240116; t=1721562061; c=relaxed/simple;
+	bh=Q+EyK5KSVXoDYojQseP6uaAw9ms6O/Cd9wFUQCgWJuA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LorEiQ/j94cWAAc3LyNiSoYZKcoN5w3M3jidL1mTzJtWbakpYZNFnvIwlIG0Arq+oONJpDh8ww7P0JantxpxxRHPSV12h7JXb+BxZ38ITLUx0DP9V+iSASRkbPDCPP2/QeAdCcG9juOj86FQSca4Ffr8oQl3lt4OI5UQ+NRJp2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DWN1tpZp; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2610623f445so1520018fac.1;
+        Sun, 21 Jul 2024 04:40:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721562059; x=1722166859; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q+EyK5KSVXoDYojQseP6uaAw9ms6O/Cd9wFUQCgWJuA=;
+        b=DWN1tpZpIK7gc31YiVARCXG1ZFnab5aiBkoUiYbzf2LiOb8imw1cmAnA9odnC/PgM3
+         +7QAPXVlb/sr62Z6jOEnKjxn0Kav/l2e2WljEiamkZhGkFZMCep5Q+QXhFF6TKnYeN2S
+         ym7q2DUdR7dxL2QYQAbxcF+I7yCWTq0wbNMryCV6/RioWJsGw2qrWe5hCPE3h9cnmpXj
+         Ja5ido3TWI1LWwYZYv5K//BMfvfOaxlB9QOh0S54vv1kkTTZI1fOzwCZnScALVOSRiXV
+         fZXxkC6hI3vL0+Gb9gq91Y6S+NRo67SUvsBClE1eHlSffi5Fx6r/ub63pjwEtHX/kW/1
+         8B2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721561827; x=1722166627;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fURXluOxv6X6hFtzsft1gPRQ0VYCqvZKzvY0qAYYfYY=;
-        b=Rk/tQKnFqUebRhBXuKqoxT9wFzCAQAZDj+ZWB+mv4AvnM3OV0pS3M7BSQHYGMbdJqH
-         +XsUqHAbEr2zFDGhLWDMBTeKqQgQCNsUPOJ/YN/3NmoZOamCmg9Cnu8h4GGGIXKB9gsm
-         2gxdcKCVB5L58fB3lVu+RoenaB38/VgPh3HuzKgHzc6rvdt8hUHhh49p+/B70Qq03JQz
-         aR1D2m89YGlQj1VP4Rzcw+K9t8WrwSb2DKh/YYNwaQJ7S5kaOGWGSHfcVRTw9yGp1Ltj
-         TfQFdoq6nHJLMKSkS6i8p0jambXI9yT4c19uLNpLP7DHXq+BMqhgEXJpnOz7pCbNas5N
-         x2EA==
-X-Gm-Message-State: AOJu0YwXne3fjxVWh/jJfvVjkdQ7wf5uPkr4mu4Vs8B9lGQnRk4QojQi
-	Kd0xQtCvd4eRtkcKAdw0LyaIP4479qqayZvP11yujYv3Ovp6TrpHYHGRstBQXzlFHf5Xrx7Wl3m
-	8x7BMBRhodU3KPY4clbdBUwkmpfsHq3xR3ka/7qDhNRjtJjQHoakQFEY=
-X-Google-Smtp-Source: AGHT+IGWsGriXBwxljaIWPj7KlMuHarpvfzZrSAHx3ynn2UGjAOBIzebiPRHa0lZHJ2QCRLDpVZqLBlGAFfTLpUVFj07gfXrOG6Q
+        d=1e100.net; s=20230601; t=1721562059; x=1722166859;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q+EyK5KSVXoDYojQseP6uaAw9ms6O/Cd9wFUQCgWJuA=;
+        b=tM/crO/6LOVSHkNLTZvDvYey7a+rUY0wwAybppTz3NXTia2591uQj5WhHriWJA7EVD
+         s32mZz4x2h9pfmQxeWvejy0+PRX+W122bcms1uKUFfVtr2DlS/ZgPQF492rrgOMW2tUH
+         ND7C1guplS4VXk0c7h4IlGrXp8evq0gfLq40NTyAMFsh4Js0FEN7R4z1Wp9aCpaH32hO
+         niW6aKbDM/tV0Du0GixDSg42rCeqUYj/TdL8jY7cuqKY5LaD9zReOi/9Lhl55C3WSXq4
+         Pdz6YuitiG05uPUaJx9wZN3tSAUxUOSPe3e9R92am08Zf8lr5gVia+ME0rdJlI5YsFT/
+         g+EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMB7oxkXq79sDj22CvotcuqvnB936HDyT5LmJjcoV5hKEuWfh5wwETIpRzgUCTyBz6xQPD972ary0Q6pKLZCrQMTM31lXJ5eyCwJ/bHFqNMDS8SYBtITvNhT1O5dxLcs6PYAXb3CegsdwuS21WqIukg/ZwOrpo6OFK/LxtUtKWc2Rk5Ccl
+X-Gm-Message-State: AOJu0Yy81wrr4DInFjuls+bBO22xvDerekskCNnjiNtRnCeTsBeWYtj5
+	RV1ly75VX9MadDVReE9OH1kCOmYS1FX3Ofn004nKJlpYJuc8D07iZ/Eh6zyiTXSm+AOpqAdWMqD
+	wPI2zqtOBk+KIRTjJTgCcziG5nU0=
+X-Google-Smtp-Source: AGHT+IHTBah8cNq3NdWznUVOIfFXR+nEtBvDOnHrlzv0ICb1QiXJ2G+KHa+o03Qbt8HTjzossc9zMGclNbnKTjzzTMw=
+X-Received: by 2002:a05:6870:970f:b0:261:1600:b1eb with SMTP id
+ 586e51a60fabf-261214eac1emr4705877fac.31.1721562058704; Sun, 21 Jul 2024
+ 04:40:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c28:b0:395:fa9a:318e with SMTP id
- e9e14a558f8ab-398e17ab520mr5363425ab.0.1721561827357; Sun, 21 Jul 2024
- 04:37:07 -0700 (PDT)
-Date: Sun, 21 Jul 2024 04:37:07 -0700
-In-Reply-To: <000000000000943e1c061d92bdd6@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002dc731061dc0595d@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [bpf?] [net?] KASAN: slab-use-after-free
- Read in bq_xmit_all
-From: syzbot <syzbot+707d98c8649695eaf329@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
+References: <20240720100848.203546-1-animeshagarwal28@gmail.com> <ac09aec1-0c42-4f8a-b4cb-64eb67018d15@kernel.org>
+In-Reply-To: <ac09aec1-0c42-4f8a-b4cb-64eb67018d15@kernel.org>
+From: Animesh Agarwal <animeshagarwal28@gmail.com>
+Date: Sun, 21 Jul 2024 17:10:47 +0530
+Message-ID: <CAE3Oz81jhzAiwJXPiE4rQjD8TzBghugvA9sWV+Tb_kz9CdQyiQ@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: dt-bindings: fsl,imx-audio-es8328: Convert to dtschema
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-sound@vger.kernel.org, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Sun, Jul 21, 2024 at 3:03=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> That's not a DAI but audio card / complex. Drop.
 
-***
-
-Subject: Re: [syzbot] [bpf?] [net?] KASAN: slab-use-after-free Read in bq_xmit_all
-Author: aha310510@gmail.com
-
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-
----
- kernel/bpf/devmap.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
-index 9e0e3b0a18e4..5e2ee97ad09f 100644
---- a/kernel/bpf/devmap.c
-+++ b/kernel/bpf/devmap.c
-@@ -378,7 +378,9 @@ static void bq_xmit_all(struct xdp_dev_bulk_queue *bq, u32 flags)
- 	int to_send = cnt;
- 	int i;
- 
--	if (unlikely(!cnt))
-+	printk(KERN_INFO "bq->count = %u\n",cnt);
-+
-+	if (unlikely(!cnt) || unlikely(cnt) > DEV_MAP_BULK_SIZE)
- 		return;
- 
- 	for (i = 0; i < cnt; i++) {
---
+A reference to sound-card-common.yaml is required instead, if I'm not wrong=
+?
 
