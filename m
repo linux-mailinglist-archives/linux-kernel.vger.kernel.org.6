@@ -1,85 +1,125 @@
-Return-Path: <linux-kernel+bounces-258356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 974139386BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 01:52:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3942D9386BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 01:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C51E21C20BA2
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 23:52:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 732861C20858
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 23:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732CA17580;
-	Sun, 21 Jul 2024 23:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BEEF17580;
+	Sun, 21 Jul 2024 23:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IFHHVyrB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ck3id8NE"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948A510A3E;
-	Sun, 21 Jul 2024 23:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4510E10A1F;
+	Sun, 21 Jul 2024 23:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721605946; cv=none; b=eQ9lXWitszxjUj90lwIqcoeBC7pk9BzNqAJzXjpaJFzJXay2CTkDgj/+fF3/y3601LydpuAl/AHG5fVcLOyLqxtetL8Z8yEEkpJPSEAOOEOS1Oi1IkK7i3RCfBAQ2Y+IqrhSkiRXU6cWx8k+PaGkOLaFLyFxQgJ1d7Wpv2A0Qzw=
+	t=1721606165; cv=none; b=qOVoP+nZgnu8ZKQ/0H1OapAImvudpdVdX9pqpO24kELnHcr5oba3R2BjSMaZQmdpCDjCkIjRwbe+NXco1wkSB1hRa20ktXHsdVrMBjxAYrfXrHpvJkr4HfreBC6UBB9ZEIj5HkOvw+PpOoPc61OANJ5wVXnu0XkDgNakZmvsxqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721605946; c=relaxed/simple;
-	bh=KxMTnc8TNTJfNow8Y7mDS2xZRZW1V+IfdhJLio4bu5o=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=TmB5MMO8ndu/LU4YFirio5o0BTgRw59bUzSkTJgOP2DusO353RBRnVPdCcTLmWYiQT1lZq06ZC2RO3fMOLuOIuIqyYr2bMU71I6g4StKZmRELX8MZhgthkzAiNjlucLFEpIOiiT3v9qRLjChg4Vxa3kT2bRfI9Z2VvMwSDawahg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IFHHVyrB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 082C3C116B1;
-	Sun, 21 Jul 2024 23:52:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1721605946;
-	bh=KxMTnc8TNTJfNow8Y7mDS2xZRZW1V+IfdhJLio4bu5o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IFHHVyrBZVgf/p621BVefeLQrnQ64RotmK0Nhxzner6OkIaLDr0yQFQu82Fnjr4N+
-	 s7zo5wmscV8l9nU2Fnf8zgNzWUhX5k1ciaC7LHt6iwBacgB1CDaYL5qzHrQxKsLslN
-	 scqGayGbbxI6LSnclAm1Yh1GbCvToDD3Jruzolho=
-Date: Sun, 21 Jul 2024 16:52:25 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] MM updates for 6.11-rc1
-Message-Id: <20240721165225.0c96cdf1a51bcd7630b0afdc@linux-foundation.org>
-In-Reply-To: <CAHk-=wjpx6uTAvjNnD5eipGjNYcwTgG9G6Dct=eLTfyzaaTy_g@mail.gmail.com>
-References: <20240721145415.fbeb01a853962ef91334f3d1@linux-foundation.org>
-	<CAHk-=wjpx6uTAvjNnD5eipGjNYcwTgG9G6Dct=eLTfyzaaTy_g@mail.gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721606165; c=relaxed/simple;
+	bh=SDxfwvN5MYWKJql3tfLQSbljebylLV0cFEboMtlM0oI=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=tqdoAPjmkjsfgojKfA+Ir7mMhgkik7o5CCpKz5PAoqJFvlf2ntyZKMeOW+sQ82lfWlZKKOURxuJLyzlkEJU+HtMX056PjWvNdM2abgL1ZwVJeCojb33zJvPIlkXcOgtFNG507qrQxIn3XNAyeeXJYF52tSGwyHIw14qez6Bvm/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ck3id8NE; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52efd855adbso1487758e87.2;
+        Sun, 21 Jul 2024 16:56:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721606162; x=1722210962; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ho3lNX5DgXmefg8XZbmlAgS8rWeM9YeYeOXFWYM+M6g=;
+        b=ck3id8NEMpR7sCfFLXf5wAgMdY45h3oYrZ++D5ZUMeSvhItGbrbSh/OqFw1SmVNVcr
+         MRRPVbmyr/xw/8tlwssa3ZrOoz4DS/HS2eWOV4hj9q3NghawoegHqBLItVRqpUzcnZgB
+         JfHRso8fGebxh8tCd5DX2Zph624l0ynKV6wFFBXAjfwnKueVbvF6+VStShnW2Q8mQYWu
+         vq9fQ7RADVUUx/dmj1N/gorek9OBMH/3C6Gu6jtUVB74bKNksNrQqFHAlClIEiVgjbaR
+         1q0p7yYID3BiYTZVfAWPNrQn6OjZ9DKpeVhZEOe/OnXUIGaTHJLCh6XcFjCIRFUBS8OW
+         lO/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721606162; x=1722210962;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ho3lNX5DgXmefg8XZbmlAgS8rWeM9YeYeOXFWYM+M6g=;
+        b=OSKH3kzwWKajaiO0m2dj+YwZjNJvae1roj0cqFShJ5UC9ppH+hj1CNTVnHfh4hM6eH
+         yjY+e6DXBAnDuLFriLx699wSN1PnE16rJuFg+HQnqCddTvWiCbxfRp02bMG8X9r51QbH
+         zON1ugt+PpjqxXVu81WFYlK3/l9MuPpw50N8eSwqBYJuPMGKgeH7hidV/7GszOQbWv+6
+         Gv86IsXyc50dA5nUY5mpt9vriBFaAKCR9rzi6QsCGJE4q9Z7EDIRpQpboHlvgAkUx/3f
+         bsdoJ4Nm/lzw7VNze9ancXC9xnjTrQll1M1MITvXLOE0dKUjXkaiZaICLbD3kGw1qtkK
+         JhRw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1SWRzRCLvXNfCgXWbQITYGD9omyKMMr99HAW/2D9cDP6ZVj/cCoS98ZdS/NcWDjNmwXd6KBU9B3//tMXrJK7aUr6+zl8vqxgOpm7D
+X-Gm-Message-State: AOJu0YyoSWvUVRE+QZaDPYeQ2kcZaycbZ/CdLrbvXLouxKDXV6cB+J5x
+	SXkqs2Vo0fGHcwT2xCt72Cr5P+XKvCXZHfB2i7iPpunAsaSCKHNlqDn8ZmzoImruNjt8hfWPjYV
+	tM3MBwOh8kDuE8gOWhA0d4g08zOg+8Xrs
+X-Google-Smtp-Source: AGHT+IGt19agWG9X6vxWlI7KcZy/yXiwUcEbUJ8atPcaMiXwt2ieQ1OwcqQYKP1/wdubHVuUEzNMGHhuyjDq6MP+ELk=
+X-Received: by 2002:a05:6512:3d1a:b0:52e:faf0:40c with SMTP id
+ 2adb3069b0e04-52efb52e9e8mr3165474e87.3.1721606162155; Sun, 21 Jul 2024
+ 16:56:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+From: Steve French <smfrench@gmail.com>
+Date: Sun, 21 Jul 2024 18:55:51 -0500
+Message-ID: <CAH2r5mvap+qkuW-vOa--d+hsqEfhmFcpFWfaL6W1vAWjjR==5g@mail.gmail.com>
+Subject: [GIT PULL] ksmbd server fixes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: CIFS <linux-cifs@vger.kernel.org>, Namjae Jeon <linkinjeon@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 21 Jul 2024 16:19:42 -0700 Linus Torvalds <torvalds@linux-foundation.org> wrote:
+Please pull the following changes since commit
+0c3836482481200ead7b416ca80c68a29cfdaabd:
 
-> On Sun, 21 Jul 2024 at 14:54, Andrew Morton <akpm@linux-foundation.org> wrote:
-> >
-> > - 875fa64577da ("mm/hugetlb_vmemmap: fix race with speculative PFN
-> >   walkers") is known to cause a performance regression
-> >   (https://lore.kernel.org/all/3acefad9-96e5-4681-8014-827d6be71c7a@linux.ibm.com/T/#mfa809800a7862fb5bdf834c6f71a3a5113eb83ff).
-> >   Yu has a fix which I'll send along later via the hotfixes branch.
-> 
-> That commit "875fa64577da" does not exist. I think you are talking
-> about commit bd225530a4c7, which is in 6.10 and came in from your last
-> hotfixes pull.
-> 
-> I'm assuming 875fa64577da was some commit ID it had before getting
-> rebased or something?
-> 
-> I'm also a bit confused about why you mention this, since neither the
-> cause _nor_ the fix are in this pull request and you have the wrong
-> commit ID.
-> 
+  Linux 6.10 (2024-07-14 15:43:32 -0700)
 
-Yes, right, sorry.  "mm/hugetlb_vmemmap: fix race with speculative PFN
-walkers" was promoted into mm-hotfixes after I make this note.
+are available in the Git repository at:
 
-Anyway.  We broke a thing and it's being fixed.
+  git://git.samba.org/ksmbd.git tags/6.11-rc-smb3-server-fixes
+
+for you to fetch changes up to d484d621d40f4a8b8959008802d79bef3609641b:
+
+  ksmbd: add durable scavenger timer (2024-07-14 21:45:40 -0500)
+
+----------------------------------------------------------------
+four ksmbd server fixes
+- two durable handle improvements
+- two small cleanup patches
+----------------------------------------------------------------
+ChenXiaoSong (1):
+      ksmbd: remove duplicate SMB2 Oplock levels definitions
+
+Christophe JAILLET (1):
+      ksmbd: Constify struct ksmbd_transport_ops
+
+Namjae Jeon (2):
+      ksmbd: avoid reclaiming expired durable opens by the client
+      ksmbd: add durable scavenger timer
+
+ fs/smb/server/connection.h        |   4 +-
+ fs/smb/server/mgmt/user_session.c |   2 +
+ fs/smb/server/oplock.h            |   7 ---
+ fs/smb/server/server.c            |   1 +
+ fs/smb/server/server.h            |   1 +
+ fs/smb/server/smb2pdu.c           |   2 +-
+ fs/smb/server/smb2pdu.h           |   2 +
+ fs/smb/server/transport_rdma.c    |   4 +-
+ fs/smb/server/transport_tcp.c     |   4 +-
+ fs/smb/server/vfs_cache.c         | 173
+++++++++++++++++++++++++++++++++++++++++++++++--
+ fs/smb/server/vfs_cache.h         |   3 +
+ 11 files changed, 183 insertions(+), 20 deletions(-)
+
+-- 
+Thanks,
+
+Steve
 
