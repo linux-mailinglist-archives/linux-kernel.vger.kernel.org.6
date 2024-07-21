@@ -1,130 +1,97 @@
-Return-Path: <linux-kernel+bounces-258337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5138E938687
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 00:32:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42CBE938689
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 00:47:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA7BA1F21273
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 22:32:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F111828111E
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 22:47:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A302D517;
-	Sun, 21 Jul 2024 22:32:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2226E10979;
+	Sun, 21 Jul 2024 22:47:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QpIMNm6y"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="gZBiWND3"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C8B1396;
-	Sun, 21 Jul 2024 22:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8931E8F70
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 22:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721601120; cv=none; b=qN5TD4T8lhQ1ihppEr7hY+66ZKuZhYbxPCMHM5E8P3iu0l18NBcIbQLfD9I5QUZ/QFCYeBII4WhK3uYnVkkqbZoMzpgrhcF6TCKEJ3oDBmN6IhQBVNNG9s1q+mkHOFi9e7aaH5Gczto5EWWoY/6bfECPPhlWPp79aHo7gVHHWOM=
+	t=1721602059; cv=none; b=lUOfUq1GJl+IW0tKwR0ijElTafIbN55NuknjQShip2XhPpZu3yn5zqrHVYmwbw3t4mPAHg5zYFws4zi3pxYC2KcPaYuvmy2SE5YqbaBsvTmvFa7/YcA3TnkpuAe+Ca/6uq3KirpnCOcgRynecjn/sX6CQzO2JjCHNhur96HqSFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721601120; c=relaxed/simple;
-	bh=ND8K5aZ81smhrq/oIokEPe7dyVnQOHmgy74xAZJ+V5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=EHb5zcn1rusBp13KoT6VAvAk2TGvmp7XU0d4FSiP5FOpYc6P2ibrUJeA//UaOwq5C9FVOmT/IgxTuA0A1xtaEMDYCNCWPupT92YaDhFer1q1ilAJZqSZ6TiigBJUe1cFEKDgNOty+ASj2IFyaJR10a79b4GPTWw44aa96q4hzCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=QpIMNm6y; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1721601116;
-	bh=PNXawNyiS/c3XgjIXFgyQXDYC+SNEMx07f/TiXPjJW4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=QpIMNm6yX/J5hYcKdqfE1EE7xlhlwc/TOmcmg7jToiv0l/Ik3rCsgbVTZBU2ew2mY
-	 ivHdoGyTDi3HKj6alLCPO1Bar3Ngsj2RBAOc3EnwS9XJft1pRLULgcRoW15xQu1M+T
-	 iTZ8bdBnLIKRFyGVTCliduwJayUL5u4sFAd+nYME5cL2XwCwPIhov+G6HReielS4hn
-	 owD355vW0goNcc/rUprFiiUoAUXCRHGPXWWf6JggH6il8me415a0Ly/w1LkyBjKQM8
-	 jOQDu9sVKkq+5wyiybJouEg63iJK9HwCamdItAt97aQczmGAYd1ylWuDBDTRdYuRHr
-	 JkRa96PEHUwiw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WRynk1j7nz4wc4;
-	Mon, 22 Jul 2024 08:31:53 +1000 (AEST)
-Date: Mon, 22 Jul 2024 08:31:53 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Marc Zyngier <maz@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tags need some work in the tip tree
-Message-ID: <20240722083153.24896521@canb.auug.org.au>
+	s=arc-20240116; t=1721602059; c=relaxed/simple;
+	bh=jQHt9oddEnrbq4RAeZbYiFddt4cRNzfFtmyBd6u6RDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XlPHTpXJoujKNigv7lerw2YM+B21vYH6uqSmjhyAHQyx1FhglcFVHCevb27nemFPNz1LNs/oqow0mn4+7f7TcqLWT+oyDL/1109Pn6DnygzZ0wP6xhH0VLtK7zO+E/BpI/xhpIt5GWZB9nc/Hvq8SVH+MDXgUulEHEjI87AyUp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=gZBiWND3; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=wf1GcxlknvwtSORWOuDI5n4xTrP0+G3GLVBIf0VT1mw=; b=gZBiWND3aypWTmTI
+	h+XQY32WJWiph7fRg/Qy0UzPZYXN7dLP2NuNWRXVNtJ+NQuq0WUlyz7RbSwZPTUGnsZm8/QoMjUMb
+	RUcVelFNQEnQJmqgahb3DywwWhij14i+1aDs+ZXyG0attjR/H4Bqhvk9FHF3eCDW/oOHVbD9O33w1
+	7GwKtn+OPoO45ZfLNWs39Uayjqgzv+ldfAjzMUe0efu0M1DAjaHUXSsTrxVOCmNvCazF1bmVo15Nz
+	AeDYlBOn7Kyk64zaTfewvzwEN6SGh2IxNnnFvBmaWXfZEX7t4z22cBb1pFH01+uvto3AtJgGg2kKZ
+	JorPotgMGNXZ1BBZVA==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1sVfL4-00CdPe-1s;
+	Sun, 21 Jul 2024 22:47:34 +0000
+Date: Sun, 21 Jul 2024 22:47:34 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: "Gupta, Nipun" <nipun.gupta@amd.com>
+Cc: nikhil.agarwal@amd.com, abhijit.gangurde@amd.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cdx: remove unused struct 'cdx_mcdi_copy_buffer'
+Message-ID: <Zp2QBoqAjKjABfJD@gallifrey>
+References: <20240530233436.224461-1-linux@treblig.org>
+ <01c9b471-705c-40f9-bb82-90a6cb651ff7@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/C_QgJ.HpZ6Er+q/16M50guX";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <01c9b471-705c-40f9-bb82-90a6cb651ff7@amd.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 22:46:55 up 74 days, 10:00,  1 user,  load average: 0.01, 0.01, 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
---Sig_/C_QgJ.HpZ6Er+q/16M50guX
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+* Gupta, Nipun (nipun.gupta@amd.com) wrote:
+> 
+> 
+> On 5/31/2024 5:04 AM, linux@treblig.org wrote:
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > 
+> > 'cdx_mcdi_copy_buffer' has been unused since the original
+> > commit eb96b740192b ("cdx: add MCDI protocol interface for firmware
+> > interaction").
+> > 
+> > Looking at lkml,  it was used in the V1 posting but was removed
+> > somewhere before V6.
+> > 
+> > Remove it.
+> > 
+> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> Acked-by: Nipun Gupta <nipun.gupta@amd.com>
 
-Hi all,
+Hi Nipun,
+  Do you know who would pick this one up? I don't think it's made it's
+way into -next yet.
 
-In commit
+Dave
 
-  c9b4f313f6b8 ("irqchip/gic-v3-its: Correctly fish out the DID for platfor=
-m MSI")
-
-Fixes tag
-
-  Fixes: 80b63cc1cc146 ("irqchip/gic-v3-its: Switch platform MSI to MSI par=
-ent")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Maybe you meant
-
-Fixes: 7f2baef05d6a ("irqchip/gic-v3-its: Switch platform MSI to MSI parent=
-")
-
-In commit
-
-  99d7fbf8f813 ("irqchip/gic-v3-its: Correctly honor the RID remapping")
-
-Fixes tag
-
-  Fixes: 6adb35ff43a16 ("irqchip/gic-v3-its: Provide MSI parent for PCI/MSI=
-[-X]")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Maybe you meant
-
-Fixes: b5712bf89b4b ("irqchip/gic-v3-its: Provide MSI parent for PCI/MSI[-X=
-]")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/C_QgJ.HpZ6Er+q/16M50guX
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmadjFkACgkQAVBC80lX
-0GwvuQgAmRbQpBAMoqFQpfQWOTYgUcfGmy2m/sUeMmP8UDmeXVAsQdJ6QuWnB5aK
-/WY6fo5dhtiXCWumJodiRx3VBoFupvZQDR8t4gZf/bnuDwxIpD348G5qaFqUWT/g
-yvRaPVQZyAN08CMTdbD/FzfGrbGOCYHQ4mItXXfU+Tptj1AVj84KmpfB8Vln7G9q
-9GYdJrs4KE3aUZEdoKiCJ9/HYvvCRpy8ck5kyCTefKhdD723SCt1ivvDvvIwxiXp
-ly1PXYoOD8tdj8lnRhe7i2OBbrD/eMlTDDE8zL6KxlnrBPJiiQQFH6JCv5pcFv2i
-d21QfIFWGwYBfI+vrYDFdRzwwfUigQ==
-=huSn
------END PGP SIGNATURE-----
-
---Sig_/C_QgJ.HpZ6Er+q/16M50guX--
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
