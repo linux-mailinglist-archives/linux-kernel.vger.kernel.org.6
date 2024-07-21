@@ -1,122 +1,125 @@
-Return-Path: <linux-kernel+bounces-258303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD238938607
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 21:54:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64869938615
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 22:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 780BE281073
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 19:54:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF4E2B20F96
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 20:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49BA716B399;
-	Sun, 21 Jul 2024 19:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CBC168C26;
+	Sun, 21 Jul 2024 20:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jXPDIser"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iPitB1TV"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E24166313;
-	Sun, 21 Jul 2024 19:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4C92FB2
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 20:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721591633; cv=none; b=Zp6G2+FViIyX+lJEyotJqZ1N4HnZI6+7h/cBNGfNIIFvKRRuJ94qBDCw4wzJNfe4v6C0he6L20bSTyL59iPNjacYS9e5+Nb55G2T6lilHuUFQbyAoYiVSDZ81WU2UJW1HuKfR2txyNzCbBGMDbkLH9VRnYKwaZUh1MnAGvYv3vM=
+	t=1721593827; cv=none; b=VCkegQiul71F4iMdAyx1xmqbAHUycwfFLssjtcF379xhu7pIeMvG4PX5CjDmOat04KSoBvjlnE+ntPP2RmLy5DB0OCsBdVM8ocnXa3z84nu7VRwIJzHMk94n76T3L3JUaJGWgYM4FBHCMQ26lQN5Xpw0WB32BhMVKzHIjbYKC4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721591633; c=relaxed/simple;
-	bh=hir5CtpfC8QUmE/xYzT7unP9yNvoN4ItbaeTmE+oNKE=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dz7l85fLRyLk7wSr/I18QEznNReVrhW9USgUlqYMaWuPqWFgEFKEwwnNfcrvAl88tTd9UO4QML+oFBcO87Qb2k4aN2o5jnnqYWDT3fyr2+LyyOkWbwVyD8RIyzuqqyIuFtRO1vWJNCzoa15pF7iCqTnKHa8OSYjweRufbi1K8HI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jXPDIser; arc=none smtp.client-ip=209.85.208.53
+	s=arc-20240116; t=1721593827; c=relaxed/simple;
+	bh=GLrVHx4OHdfP9Ntm7l/dTRCK8M6L8FoBOT4SZsHz50s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ubnFmD7O29CUs5SiJFC9NrfDulLtnoWehjPl99EaYj7nB5uR1EPP571OKGiRsvDiS3+/2TYU2ss9/rhreVFblcA4/PMNNeM+eRHXqZMpaRldiwdM31oVN5Np4Ng/L3GmEOKWsvJgmYKqquG1Hwa3Z/1DSohWRy0XqDu9MgXOwxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iPitB1TV; arc=none smtp.client-ip=209.85.160.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5a156557026so2756114a12.2;
-        Sun, 21 Jul 2024 12:53:51 -0700 (PDT)
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-449f23df593so17852611cf.1
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 13:30:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721591630; x=1722196430; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iKZZhpboQeXtVa+vYFKGKKS9lBGYWANUraKGcyTycO8=;
-        b=jXPDIserx+Gin92QU5YEX3vYExuX1+8SMzFqb2pyY3QemYPbQQWT/4GqlBQwzNjxdw
-         59fk85hignTrewEt+IWU7eyUC9G5Eo0bu90OomccqeuJtOp4/IlATSed2EppgoR/y4TF
-         s3sM29bxkJ9jF4Wxjil+eENBs5h76ZHljXCpZDxRc+LUXBpy71U7GMtkv/hjfotuBZsQ
-         tidV2+8x3OPvykXCeDB7l6vjdYAz9TcXpEAkig6VfPoZi0bB9hxpDD8qMYsnpfoWlp/b
-         wP6TrW8ap17jxpe0I2XwBoQ1xd5yvxbFrxXiX0xVaCOPsTymOienaOx6SAk7hLEhbJ4o
-         aKtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721591630; x=1722196430;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1721593824; x=1722198624; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iKZZhpboQeXtVa+vYFKGKKS9lBGYWANUraKGcyTycO8=;
-        b=Jm5KhsiGMS2eWGJhxJjx5QNbe2zQuA5DYYt9UrM6DK8g4+3efdSOHntfBMUi4lJngp
-         wtg5KCoPLXgysAzvs5FRf2FhyfcNTVdymCM0TSk9kg05QtULiTCcV20lV3kg2CS31bmE
-         6GS6Q+AyK73xzK4at0rL5wd60Zb9FEE+LrCSyn+PTCrJNClmhBgG7KbzfnGX0mx5zXpG
-         vH6XcLeQfa9bHwDzSLyTULnl3iEBayz1xLdAf5xNs01wSEnGmb0JPhiiHyZwbHuAfOLM
-         XZ9BtENYLYhs8OS5BUnnRTbmfrYnKYsEPrWouWQljCgiQKoPCqd3eTAJs7SJwknKzmAo
-         OvnA==
-X-Forwarded-Encrypted: i=1; AJvYcCWs9iCBnn9VRs3kskTBUlMTmzF8sHkJUjQ/ycLXS2NUmqI4HmNYzSDB0q6HOSeaFiECTwWZCEy0xvjZ0cjVnnwNyVl/x0qnIU+nNcsPFWPsQxtt+o50OZoMAKHkstj3Eo1YIwKVjdsTFElg3qIryTgLQWqqYOO5O2Lnrh+IGGoI4CUHDQ==
-X-Gm-Message-State: AOJu0Yzj0Q4lTb14973P6Fu6fbQIqNLvonBU7NgOv84ylRCTAFa0vLwE
-	hi/4Z35nW1tcFQyodtLUuRJpE8RY0Il5WqHIglY8wNem0q4uo/8T
-X-Google-Smtp-Source: AGHT+IE7VXpNTyNyV/VDDffEUyQ6IiE5yqVhjgkT79+tNvq3qP+S5lOsSwQCqok8yihFRCIK0ZUd8g==
-X-Received: by 2002:a05:6402:1d4c:b0:5a2:22f0:7f52 with SMTP id 4fb4d7f45d1cf-5a479971cf4mr3995153a12.19.1721591630057;
-        Sun, 21 Jul 2024 12:53:50 -0700 (PDT)
-Received: from vamoiridPC ([2a04:ee41:82:7577:bc21:fb27:f4e6:6867])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30aaa3505sm4944896a12.34.2024.07.21.12.53.49
+        bh=wavXSjGdq18Yt9mO8dwNN9l8YwPcQe7HYiwYYz0FItQ=;
+        b=iPitB1TVv+jWLzq27OW67x6a/q0NQol3nJk7vR3qQMwydINiW9U5zyxmRZetIwwnD6
+         jB6vsZ6gdoQxfZx56IEyQUXjMAAETNR8TJM59tQ02EeXo4u0zvUtRh2HJgzFs6j+4J7k
+         JzNB0R+xoYEgfZDs2CAv4Flmo1QHgOgF2ylVhewqQIK45WmvYeLmqO28auPf0ohQ/y5t
+         96kwUJrA6AjfCASuX7OvPnFtKkuH2/ZEZyCOXycSHdzvg53+7uJ4sWe3+shTV/UXschV
+         YjkA+pELREPqalmyd+lPIAFEKCr6MdFGe3Q9t/ohmZGahkTFLsbbplThV0zuU4GItE3W
+         /dCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721593824; x=1722198624;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wavXSjGdq18Yt9mO8dwNN9l8YwPcQe7HYiwYYz0FItQ=;
+        b=BFxQP8fpxQHoXNkT1Adpk0xdgfgfvmS7C8ihifu+s0/gjwMdrE5f63qIMmd/KP/DUI
+         107l9EXYc+0sQ6C7qDn/oGzLd9nAu237I+Bu8vN/PobwI8BB5jVX9bAq81DiPAlgFO0W
+         JiIGMxjxvPKqxM0AIiJqfFsks4OqOKb4sJz/4M7tJNK/MH5DTa/3a5ZRXnS4jmNOLDGg
+         OLdE01oyjGk5Saz9ywTzSTzIsxZC6tXnEV+BXGKlNPEOQmfR2T+l/YeY4BxFHJirJRZo
+         95tD/9OU+JA5JSE5Wwuc01QLqAeD6/Pd13bQVMJyLUUlSmUDJbcJtjkqzVPiqIuiq6/r
+         /ETA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvrc1i6fxiT3JJ9Ed7OLi3ejJbS3dm5g+KNDq25mp2AudHfQxFFU/iNzwV9fClVkgPKE3C/DbDrcvbdobWbXCEwjPmI9Z6W0iHZCAf
+X-Gm-Message-State: AOJu0YyfEDfbTE0nNhSr90moSEnN+AwpG8XbJROYKpju4rNRBy2rG1XI
+	WaYO16hYiNsmjvon/a/XA9ZyOTQT7Xfs3JbeCEHoinVnxM2hHN0V
+X-Google-Smtp-Source: AGHT+IEBBbUl9G7TsKVlhJY/+zllG8fNc6YP/gM2neV0WPJOic5OmzXVBuGi0984b5Q3ZETq0Qb8Bw==
+X-Received: by 2002:a05:6214:240f:b0:6b5:e202:bd91 with SMTP id 6a1803df08f44-6b94f00e6e9mr117960546d6.1.1721593824518;
+        Sun, 21 Jul 2024 13:30:24 -0700 (PDT)
+Received: from localhost.localdomain (d24-150-189-55.home.cgocable.net. [24.150.189.55])
+        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6b7ac9c3cedsm29137566d6.80.2024.07.21.13.30.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jul 2024 12:53:49 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
-Date: Sun, 21 Jul 2024 21:53:47 +0200
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, lars@metafoo.de,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	andriy.shevchenko@linux.intel.com, ang.iglesiasg@gmail.com,
-	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
-	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
-	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 02/10] iio: pressure: bmp280: Fix waiting time for
- BMP3xx configuration
-Message-ID: <20240721195347.GB325365@vamoiridPC>
-References: <20240711211558.106327-1-vassilisamir@gmail.com>
- <20240711211558.106327-3-vassilisamir@gmail.com>
- <20240720120636.38b9cdcb@jic23-huawei>
+        Sun, 21 Jul 2024 13:30:24 -0700 (PDT)
+From: Dennis Lam <dennis.lamerice@gmail.com>
+To: iro@zeniv.linux.org.uk,
+	viro@zeniv.linux.org.uk
+Cc: Dennis Lam <dennis.lamerice@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	syzbot+f2a9c06bfaa027217ebb@syzkaller.appspotmail.com
+Subject: [PATCH] btrfs: Change iov_iter_alignment_iovec to check iovec count before accesses an iovec
+Date: Sun, 21 Jul 2024 16:19:18 -0400
+Message-ID: <20240721201924.48781-2-dennis.lamerice@gmail.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <dennis.lamerice@gmail.com>
+References: <dennis.lamerice@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240720120636.38b9cdcb@jic23-huawei>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jul 20, 2024 at 12:06:36PM +0100, Jonathan Cameron wrote:
-> On Thu, 11 Jul 2024 23:15:50 +0200
-> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> 
-> > According to the datasheet, both pressure and temperature can go up to
-> > oversampling x32. With this option, the maximum measurement time is not
-> > 80ms (this is for press x32 and temp x2), but it is 130ms nominal
-> > (calculated from table 3.9.2) and since most of the maximum values
-> > are around +15%, it is configured to 150ms.
-> > 
-> > Fixes: 8d329309184d ("iio: pressure: bmp280: Add support for BMP380 sensor family")
-> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> Applied to what will be the togreg branch of iio.git and marked for stable.
-> 
-> If it needs to move quicker as we have reports of problems from users
-> let me know.
-> 
-> Jonathan
-> 
+When checking iov_iter_alignment_iovec for valid read and the iovec is empty,
+the function still tries to iterate non-existant values. In this case, the iov
+variable is empty and attempting to use iov->iov_len causes a kernel crash.
 
-Hi Jonathan,
+This patch fixes this by checking the size of the iovec before iterating.
 
-Probably no one had this configuration up to now so I don't think there is a need
-to rush it :)
+Signed-off-by: Dennis Lam <dennis.lamerice@gmail.com>
+---
+ lib/iov_iter.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Cheers,
-Vasilis
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 4a6a9f419bd7..2d82ecf1b622 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -783,7 +783,7 @@ static unsigned long iov_iter_alignment_iovec(const struct iov_iter *i)
+ 	size_t size = i->count;
+ 	size_t skip = i->iov_offset;
+ 
+-	do {
++	while(size) {
+ 		size_t len = iov->iov_len - skip;
+ 		if (len) {
+ 			res |= (unsigned long)iov->iov_base + skip;
+@@ -794,7 +794,7 @@ static unsigned long iov_iter_alignment_iovec(const struct iov_iter *i)
+ 		}
+ 		iov++;
+ 		skip = 0;
+-	} while (size);
++	} 
+ 	return res;
+ }
+ 
+-- 
+2.45.2
+
 
