@@ -1,175 +1,148 @@
-Return-Path: <linux-kernel+bounces-258321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EEAC938641
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 23:58:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F37593865E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 00:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 996F01F21117
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 21:57:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C188EB20B82
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 22:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B428316A949;
-	Sun, 21 Jul 2024 21:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F035F16B396;
+	Sun, 21 Jul 2024 22:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="C85MwJd8"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="aMDEuwvU"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5CE1CF96;
-	Sun, 21 Jul 2024 21:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4821E2745B
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 22:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721599071; cv=none; b=l93IOXz57jUQRptXloLKYBX9UmzULffbvv62lFuv0eaO3EBnOpDJgtv1HV+bwLchen+jYrteC66cJYvN+koLakrVoWWiiXJQTjMiIBz2YppnACBtYSVjVrPa2UMy3by0FSEoS5GPrgbxa+hQ5Q/VJVW/R6o2p97+0iadA80wbns=
+	t=1721599691; cv=none; b=qkUaVz7sDIP+Yoh8Zsi5Us9KXxIkjuWhn8vM5LrNsWNFgQKPDV65h4v3WbJhvMoLxBJjSwPvnIYS8BJ2eH8g9pJvAyBd/lWzmAbz12BeygEKDSXzimLTdBhtCKf/fnEEQJRAVvr9RIbVD1J6/a95SsOiT5A4YNlgeH3gOP+pntk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721599071; c=relaxed/simple;
-	bh=e/UjiOQIam2H+2A729n1P0NfdM9iC/Xca2dOMiWLYPw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pv30yzIyEm8moEhgEmv/Ic9RrXMbR7k0juSPloi7j46H/xIYnn14Z0FnLLruF5DueXN9z+GeFMBp7D7bazPO4pNQLz1NesZjZ6JX2PcSS0UTLHFlwRc4a0J6sJ1PILCiNGvZmk9X3uuO1QAFFqlW62PKTpCBTr4ylIprswpOoJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=C85MwJd8; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 28051240004;
-	Sun, 21 Jul 2024 21:57:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1721599061;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Jrzeia8oxdyyFlAcMGFtS/pH0bBhMavrxrVfg45OkHM=;
-	b=C85MwJd8UkuoDydPKdfJ1sJ880GdP472oqyog+0b4/EiiA75r6/Lyf0HrhanrUUtPDOPKI
-	V8fZ9boiwrBerbSHcPSPTwjFTDKUNg4TQA5pe2auzNgS9juf0MSTew3Qrk235XiILXVCEN
-	mnKbKvay3agsCo6MerDgYPr29clLx2kE1t6Uii6PLdC04nJJ0yk6yR1W0WA26suMh1lyuD
-	nlgGm/P7sH8Lda5e4e0Y382Rt/LAlBPdiv93TtTTjzLWVouUWG9Ae0mMhSyTruLKza06to
-	tleFpDdeHElYOkobbxzMJDz9GXL+3bhUMCWfk0NisIu7TRIG0wllmoG85ihaqA==
-Date: Sun, 21 Jul 2024 23:57:40 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] RTC for 6.11
-Message-ID: <2024072121574018084eea@mail.local>
+	s=arc-20240116; t=1721599691; c=relaxed/simple;
+	bh=NvQhgqZ/eJ4eay+hcTekcrXMx75pemCUoA4q7W94dWo=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iyb5BbNjmsq0pSA1o+KVOnemjl4nXsIP2MMoyBRapIQoN/mcGEVgJkQtRXRkQRoMUOGA+ImD2e+mYZgMDPVRr3T1U0/kWJIt/+bIsTEdKFDQiSfP3dk/wBcTzF3Q2Px8UjICAkkaBemJxnXaazs9kb2mP4Y2N3p8VUrgQ0XhM1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=aMDEuwvU; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com [209.85.167.200])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 212F73FE16
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 22:08:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1721599681;
+	bh=y5sr3lEv07by+NAwwOdiyaM6+TTZ7xKpJ82kUwR7sbg=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=aMDEuwvUZG7sOXUNPPo8Tz0sr+ynI3dAbUPWkfahKS6ja9qXBndB3DUdXTq1WlbH4
+	 Xofiypl3b4o9NBiChGEn0+VKZXCFwjgvnficwAvmXTUxbeNmkGokrLgDg8snHZLw+r
+	 1O9cON6vmQV5TSJKV6wEQCQCWLwRhYE0mTS7axMVLcmswxi480fFHvBrhFokaz49vP
+	 kRwy+FUf+SSbovsPmDsNt1uxSgdxb0j4rug2ZPJrueCMog679sMCcIxnFnlDW+iupd
+	 V68AniDTiBVd7Wz4Yrp/4JBnyOfNSY/sSpJkhAiuCQEDA6Nb2MnhzHNUDij1fLw0dT
+	 9zC97k1LWbWpw==
+Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3d92425ce97so3777303b6e.2
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 15:08:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721599679; x=1722204479;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y5sr3lEv07by+NAwwOdiyaM6+TTZ7xKpJ82kUwR7sbg=;
+        b=Tr/TPLbRcey3x+JOVZYV5oPK564syIGb6PmFrCVzKJ6GD38W2SfwJl7SgaH8TboUwG
+         R0jGrVViPnk/Pwkthc4X5Dw3NivVDkJaRQEuzYKpFyUFV9ZWdXRl+orFOuppIiITTURt
+         d6ewW5eF5rUn5s7hDJ6xyluUffCMFnXZ9SwR6oHpXTTcKqfwUoi0t4lg/K4xCKn3T78q
+         x8bS1PlV6RH61PtD6Nrrpiz4sasSxE1NNl17oGoK2B8mfoUoVRK0Uqxx8ax5Rql+1s8p
+         DJ8mOgkmiwfBkMGPOqSFuMEFfSHbGywQecwC+SJj2DAvwPtgKAvoCzcP9n5EIl/TD6Z5
+         L/fw==
+X-Forwarded-Encrypted: i=1; AJvYcCXxXfCWgiWpsW4+Tb/SInzeA6AZ8ONmBe8Ms/2vj7+UjuDrfCf7wyUa/ZnV90i+su92vIo3brkj/S8It3WZtiz6tw7hvLDzlHr3Bt4f
+X-Gm-Message-State: AOJu0YyGoxPYINgxKLOAt3g4js0yYqOHK61CkL8JRzIQaxkEKB2fpQVr
+	LA4cYsdZTh4rvkUoHDG9JxpN97ABe/4sI13qwixw/pilBoZrVYrudF0rIeTVOW/M7TaHXltRKSa
+	fgmhkwSM0bsSpb3E1fkL/+qjGtj5gE7l4B6yZp3P9V5vgySISfxs6ljjcOqg8eQrgg7sRTQe9d5
+	rpMrWu2uk8uwtvCsSK+l212cO+cGssTY7K1twMCCR3G3R+5saPau+u
+X-Received: by 2002:a05:6808:2384:b0:3d5:2e2f:bf9 with SMTP id 5614622812f47-3dae5fd6b6emr8114729b6e.30.1721599678744;
+        Sun, 21 Jul 2024 15:07:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHKu3rxDjbynntjHH+0+p7b3ltQUv9i7hhvrMnwR7SAjBoMSrD4QUg9VCnWIvxOUrarV5om39CY87FNWsSBz4A=
+X-Received: by 2002:a05:6808:2384:b0:3d5:2e2f:bf9 with SMTP id
+ 5614622812f47-3dae5fd6b6emr8114702b6e.30.1721599678304; Sun, 21 Jul 2024
+ 15:07:58 -0700 (PDT)
+Received: from 348282803490 named unknown by gmailapi.google.com with
+ HTTPREST; Sun, 21 Jul 2024 17:07:57 -0500
+From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+In-Reply-To: <20240711-th1520-clk-v3-3-6ff17bb318fb@tenstorrent.com>
+References: <20240711-th1520-clk-v3-0-6ff17bb318fb@tenstorrent.com> <20240711-th1520-clk-v3-3-6ff17bb318fb@tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Mime-Version: 1.0
+Date: Sun, 21 Jul 2024 17:07:57 -0500
+Message-ID: <CAJM55Z8uo-Z_9ruyqygK1pbBCTkCxMBVoF8GD2dajhTKOYrAfA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/7] riscv: dts: thead: Add TH1520 AP_SUBSYS clock controller
+To: Drew Fustini <dfustini@tenstorrent.com>, Jisheng Zhang <jszhang@kernel.org>, 
+	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Yangtao Li <frank.li@vivo.com>, 
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Linus,
+Drew Fustini wrote:
+> Add node for the AP_SUBSYS clock controller on the T-Head TH1520 SoC.
+>
+> Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf
+> Link: https://git.beagleboard.org/beaglev-ahead/beaglev-ahead/-/tree/main/docs
+> Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
+> ---
+>  arch/riscv/boot/dts/thead/th1520.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+> index d2fa25839012..10a38ed55658 100644
+> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
+> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+> @@ -5,6 +5,7 @@
+>   */
+>
+>  #include <dt-bindings/interrupt-controller/irq.h>
+> +#include <dt-bindings/clock/thead,th1520-clk-ap.h>
+>
+>  / {
+>  	compatible = "thead,th1520";
+> @@ -161,6 +162,13 @@ soc {
+>  		dma-noncoherent;
+>  		ranges;
+>
+> +		clk: clock-controller@ffef010000 {
+> +			compatible = "thead,th1520-clk-ap";
+> +			reg = <0xff 0xef010000 0x0 0x1000>;
+> +			clocks = <&osc>;
+> +			#clock-cells = <1>;
+> +		};
 
-Here is the RTC subsystem pull request for 6.11. There are mstly small
-fixes this cycle. The alarm offset that is getting fixed doesn't affect
-many RTCs as most of them have a complete set of datetime registers.
+Please add this node so nodes are still sorted by address.
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
-
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git tags/rtc-6.11
-
-for you to fetch changes up to efa9c5be2caecae7dfa4f29c6ab3d4a2f341eb15:
-
-  rtc: stm32: add new st,stm32mp25-rtc compatible and check RIF configuration (2024-07-10 17:15:33 +0200)
-
-----------------------------------------------------------------
-RTC for 6.11
-
-Subsystem:
- - add missing MODULE_DESCRIPTION() macro
- - fix offset addition for alarms
-
-Drivers:
- - isl1208: alarm clearing fixes
- - mcp794xx: oscillator failure detection
- - stm32: stm32mp25 support
- - tps6594: power management support
-
-----------------------------------------------------------------
-Biju Das (2):
-      rtc: isl1208: Add a delay for clearing alarm
-      rtc: isl1208: Update correct procedure for clearing alarm
-
-Csókás, Bence (3):
-      rtc: ds1307: Detect oscillator fail on mcp794xx
-      rtc: ds1307: Clamp year to valid BCD (0-99) in `set_time()`
-      rtc: interface: Add RTC offset to alarm after fix-up
-
-Frank Li (1):
-      dt-bindings: rtc: Convert rtc-fsl-ftm-alarm.txt to yaml format
-
-Jeff Johnson (1):
-      rtc: add missing MODULE_DESCRIPTION() macro
-
-Joy Chakraborty (3):
-      rtc: isl1208: Fix return value of nvmem callbacks
-      rtc: cmos: Fix return value of nvmem callbacks
-      rtc: abx80x: Fix return value of nvmem callback on read
-
-Richard Genoud (3):
-      rtc: tps6594: Fix memleak in probe
-      rtc: tps6594: introduce private structure as drvdata
-      rtc: tps6594: Add power management support
-
-Uwe Kleine-König (1):
-      rtc: Drop explicit initialization of struct i2c_device_id::driver_data to 0
-
-Valentin Caron (2):
-      dt-bindings: rtc: stm32: introduce new st,stm32mp25-rtc compatible
-      rtc: stm32: add new st,stm32mp25-rtc compatible and check RIF configuration
-
- .../devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml  | 73 ++++++++++++++++++++
- .../devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt  | 36 ----------
- .../devicetree/bindings/rtc/st,stm32-rtc.yaml      |  5 +-
- drivers/rtc/interface.c                            |  9 +--
- drivers/rtc/lib_test.c                             |  1 +
- drivers/rtc/rtc-ab-b5ze-s3.c                       |  2 +-
- drivers/rtc/rtc-ab-eoz9.c                          |  2 +-
- drivers/rtc/rtc-abx80x.c                           | 12 ++--
- drivers/rtc/rtc-bq32k.c                            |  2 +-
- drivers/rtc/rtc-cmos.c                             | 10 ++-
- drivers/rtc/rtc-ds1307.c                           |  7 +-
- drivers/rtc/rtc-ds1374.c                           |  2 +-
- drivers/rtc/rtc-ds1672.c                           |  2 +-
- drivers/rtc/rtc-ds3232.c                           |  2 +-
- drivers/rtc/rtc-em3027.c                           |  2 +-
- drivers/rtc/rtc-fm3130.c                           |  2 +-
- drivers/rtc/rtc-goldfish.c                         |  1 +
- drivers/rtc/rtc-hym8563.c                          |  4 +-
- drivers/rtc/rtc-isl12022.c                         |  2 +-
- drivers/rtc/rtc-isl1208.c                          | 36 ++++++----
- drivers/rtc/rtc-max31335.c                         |  2 +-
- drivers/rtc/rtc-max6900.c                          |  2 +-
- drivers/rtc/rtc-mpc5121.c                          |  1 +
- drivers/rtc/rtc-nct3018y.c                         |  2 +-
- drivers/rtc/rtc-omap.c                             |  1 +
- drivers/rtc/rtc-pcf8523.c                          |  2 +-
- drivers/rtc/rtc-pcf8563.c                          |  6 +-
- drivers/rtc/rtc-pcf8583.c                          |  2 +-
- drivers/rtc/rtc-rc5t583.c                          |  1 +
- drivers/rtc/rtc-rv3029c2.c                         |  4 +-
- drivers/rtc/rtc-rx6110.c                           |  2 +-
- drivers/rtc/rtc-rx8010.c                           |  2 +-
- drivers/rtc/rtc-rx8581.c                           |  2 +-
- drivers/rtc/rtc-s35390a.c                          |  2 +-
- drivers/rtc/rtc-sd3078.c                           |  2 +-
- drivers/rtc/rtc-stm32.c                            | 78 ++++++++++++++++++++++
- drivers/rtc/rtc-tps65910.c                         |  1 +
- drivers/rtc/rtc-tps6594.c                          | 75 +++++++++++++++++----
- drivers/rtc/rtc-twl.c                              |  1 +
- drivers/rtc/rtc-x1205.c                            |  2 +-
- 40 files changed, 299 insertions(+), 103 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
- delete mode 100644 Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
-
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> +
+>  		plic: interrupt-controller@ffd8000000 {
+>  			compatible = "thead,th1520-plic", "thead,c900-plic";
+>  			reg = <0xff 0xd8000000 0x0 0x01000000>;
+>
+> --
+> 2.34.1
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
