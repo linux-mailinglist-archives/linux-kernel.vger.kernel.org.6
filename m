@@ -1,150 +1,165 @@
-Return-Path: <linux-kernel+bounces-258107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C1349383CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 09:40:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2CDE9383CD
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 09:41:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F20F1F21333
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 07:40:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A3E11F21337
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 07:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA65C9450;
-	Sun, 21 Jul 2024 07:39:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70748F70;
+	Sun, 21 Jul 2024 07:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vTepMrN1"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UEpSI4Sk"
+Received: from msa.smtpout.orange.fr (msa-213.smtpout.orange.fr [193.252.23.213])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF5779DE
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 07:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2715D33E1;
+	Sun, 21 Jul 2024 07:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721547597; cv=none; b=d/ML7h6lkRTbEE7nva1580WKBrpjMwz/gyFDqhpEYiq6WKfMdhOGPhaAPiFVUIVR7bxJxFUsIpSlEHbEMgDQWeCjfIahOolPmWUTKixmm4Eo1Ny9JzXGdtMCwu1XsSaanH9G8odfX4hqsXall3bs0LFgpdXlJJmImuT/vCNilMw=
+	t=1721547669; cv=none; b=A6sOkvdfQzk6TieYo9pBPX6wh8pOAU9iulomkrTY9SY+pT8iP1OcpiwRwuic8oapJVAtdeMTDSJ9x1gp1/dZaLBUo2VaeZNKq0SY8rpZOmM9k63NPaL2UPtSnId+YhmoM1XCKWgPZpg7l5VFybXJ5LQqf8Mm2M+av6uu+8hIl+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721547597; c=relaxed/simple;
-	bh=FKPYtsFtam4QQMK01ANM2dJ9eQL9oofZqTRrOT3jXts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iipTVxzmD9dR3l6TWgXcbQHQ3YXe6D1Xo6vd8OKejx9Muz6E+HDrrM5DPnooNbm69IbIPtNQ8G99NCZRXx817QVxo/xrVn3lE0LIPoGM9Mk08UkVCz8dCHf/QdNGyYUnOiU5J5kY3NLF6RZcUzO/OchBID+hZJ75hIiRAkGf+0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vTepMrN1; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-66a048806e6so15417557b3.3
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 00:39:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721547594; x=1722152394; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=N02rs0beU0+PCjKU6W+pNs3gEfWqOvtg3yl3XFcbS8U=;
-        b=vTepMrN1lhDS8EyTZ8/9FJS4kOinxkHYvL32d7599ZLJL9fFXWRRNNIvGwR5a6KMxa
-         nATLaRuFjtR38d/X0+QB8kciLZTRTO4sUqpcCsBgoOb8mQDwJk6PINVPcsS+mD6rGgRg
-         HeuKTcavw48rMwjYmdNlf5oNuq4z5Qe8W6/oIgdGnxUcLYQhWZZ+/t4qtSAOcE9hsIjA
-         XpJaC6x9cf1dVxrn+etHIOjQkQ16Hj0ijOtLZJHj7LQvCIc57gn/5mmmqNKLy8JngcgQ
-         x25yQnH5VhwqeHenZ/v9/DigVZQjvLBphuLJz5sCWyPIFSBS8AbXGLTD2FzqQBzzivUc
-         DDTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721547594; x=1722152394;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N02rs0beU0+PCjKU6W+pNs3gEfWqOvtg3yl3XFcbS8U=;
-        b=R/0awgCQ4e21WTBO5CnU2iT5OMTX9Imgds447gmbmgJbTUTXbZvZh14yycMDssQ3MP
-         AGaIWR4brjDSkWhR6XeDzcVZCCWPuDSS6x38thKoS6FKQRrQmdEn3bz7wobMz00jmo/6
-         r/Q+32/waJnLETGiSyIe0TL2WXa3JyBoXMuhBSUutwcd0jP/QthBsdPXpjC0CekTBKHx
-         08MmWagz2Wsy+VZ3vKfpZsvjiV6fYm6hF9/8mUWW4gPx8rTOl4+nGxxbUNhTlqTfr9+i
-         vqyS6dGGLuTbLsf+KO0JcMaHJdxUGhwxncp4pvetfvOGNluCWdwv+WPYdabIFPMsAjta
-         XSxw==
-X-Forwarded-Encrypted: i=1; AJvYcCWLYcMCaCz+6th/42F9woo3W+zV6xN5xZsGNoZ3YDWHXTDqZ6iOGeYvMWMkbI1GQhQch3mWPzMFg2uWLcRsTs7o4IU3WS+C89/ousGk
-X-Gm-Message-State: AOJu0Ywm1/faoqaPJBSsC8S1O3z0/4HAXvM9wzlYSa+GHyUJ1rLYEhk+
-	nRgd2kXxYBVAhRprFEItSRKOAacEbTpOi5fkkFprYY+h2Gw2WNmlj9ARndKv0g==
-X-Google-Smtp-Source: AGHT+IFQYY74iAGQY5pOOJPCWv5JUZVONiqWh0swcBRClZ6YAaFDgYxDWJLm9Z5K35Wb0bbXsmVAGg==
-X-Received: by 2002:a05:690c:4441:b0:665:7184:fcd0 with SMTP id 00721157ae682-66ad8dc0d02mr32319017b3.23.1721547594246;
-        Sun, 21 Jul 2024 00:39:54 -0700 (PDT)
-Received: from thinkpad ([120.56.206.118])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70d2243d137sm439633b3a.31.2024.07.21.00.39.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jul 2024 00:39:53 -0700 (PDT)
-Date: Sun, 21 Jul 2024 13:09:46 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	devicetree@vger.kernel.org, Jason Liu <jason.hui.liu@nxp.com>
-Subject: Re: [PATCH v7 02/10] PCI: imx6: Fix i.MX8MP PCIe EP's occasional
- failure to trigger MSI
-Message-ID: <20240721073946.GB1908@thinkpad>
-References: <20240708-pci2_upstream-v7-0-ac00b8174f89@nxp.com>
- <20240708-pci2_upstream-v7-2-ac00b8174f89@nxp.com>
+	s=arc-20240116; t=1721547669; c=relaxed/simple;
+	bh=myooTmdDYWi3w4/BwipOyDPWqNI6T+1/xT+G+yICZtA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=auJ+B1LOMKHcZztwivXT5F2AkT5+TrdfDUCksY7TNWPBvxuxucjz0l6x7CD6se6R8+nXP/iet+08KNQgnRJU/uhusObu+eMP3py9P6f+JgfsFoR8OcPNWrO/Vl96/c3zkh5mDeMiUYDVMvjOhqLPH/YBZnI5ShR+naA/zlMQpwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UEpSI4Sk; arc=none smtp.client-ip=193.252.23.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id VRBmsszGLnYGvVRBms5oUi; Sun, 21 Jul 2024 09:41:02 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1721547662;
+	bh=0P+L+Gugv+wzdGvctc9kSUn+nQDPgO6wIWj+dXDwk3M=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=UEpSI4SkWxFHkRylyVr6QtXi3vte6IoJivFq98RMQvM8JZwomp6PtWnn/Bb2ad/Cb
+	 aU9RPvVRMpAN0yY91hhL3H+DmcHhw+pm/s0D7gEs9tKc5LCZ3sfvTe2PTfgNDe0SZ6
+	 RkymXfA3zeoqpbolNNxytKP9KaUZzRSr5+NME56azOgS2VOT92Hto8Hcta8TSQVZXj
+	 8nmIdcH+6/VBBLW8sHFkKjJYPo9KFaN53q8i/rC1OFSaSjzUaxPfI4cQAkMdxIRsas
+	 NHGCVnblCOiC+wbJhV/F92ywA/edxhfW+xSWPdvexiSPyXPHTJ/JB9QW+755GJt/FJ
+	 4hCfIC9prkVQQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 21 Jul 2024 09:41:02 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Arend van Spriel <arend.vanspriel@broadcom.com>,
+	Kalle Valo <kvalo@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-wireless@vger.kernel.org,
+	brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com
+Subject: [PATCH v2] brcmfmac: fwsignal: Use struct_size() to simplify brcmf_fws_rxreorder()
+Date: Sun, 21 Jul 2024 09:40:19 +0200
+Message-ID: <f4ca6b887ca1290c71e76247218adea4d1c42442.1721547559.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240708-pci2_upstream-v7-2-ac00b8174f89@nxp.com>
 
-On Mon, Jul 08, 2024 at 01:08:06PM -0400, Frank Li wrote:
-> From: Richard Zhu <hongxing.zhu@nxp.com>
-> 
-> Correct occasional MSI triggering failures in i.MX8MP PCIe EP by applying
-> the correct hardware outbound alignment requirement.
-> 
-> The i.MX platform has a restriction about outbound address translation. The
-> pci-epc-mem uses page_size to manage it. Set the correct page_size for i.MX
-> platform to meet the hardware requirement, which is the same as inbound
-> address alignment. Align it with epc_features::align.
-> 
-> Fixes: 1bd0d43dcf3b ("PCI: imx6: Clean up addr_space retrieval code")
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> Acked-by: Jason Liu <jason.hui.liu@nxp.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+In the "struct brcmf_ampdu_rx_reorder", change the 'pktslots' field into
+flexible array.
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+It saves the size of a pointer when the memory is allocated and avoids
+an indirection when the array is used.
+It also removes the usage of a pointer arithmetic and saves a few lines of
+code.
 
-- Mani
+Finally, struct_size() can be used. It is not a must have here, because
+it is easy to see that buf_size can not overflow, but still, it is a good
+practice.
 
-> ---
->  drivers/pci/controller/dwc/pci-imx6.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 9a71b8aa09b3c..ca9a000c9a96d 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -1118,6 +1118,8 @@ static int imx6_add_pcie_ep(struct imx6_pcie *imx6_pcie,
->  	if (imx6_check_flag(imx6_pcie, IMX6_PCIE_FLAG_SUPPORT_64BIT))
->  		dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
->  
-> +	ep->page_size = imx6_pcie->drvdata->epc_features->align;
-> +
->  	ret = dw_pcie_ep_init(ep);
->  	if (ret) {
->  		dev_err(dev, "failed to initialize endpoint\n");
-> 
-> -- 
-> 2.34.1
-> 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+---
+Compile tested only
 
+Changes in v2:
+  - fix description of the 'pktslots' field   [Arend van Spriel]
+  - add A-b tag
+
+v1: https://lore.kernel.org/all/bd3ad239c4d1c49b94c1ba93e48c09df98ef86cb.1720951805.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h   | 4 ++--
+ .../net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c   | 8 ++------
+ 2 files changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h
+index ea76b8d33401..39226b9c0fa8 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h
+@@ -48,20 +48,20 @@
+ /**
+  * struct brcmf_ampdu_rx_reorder - AMPDU receive reorder info
+  *
+- * @pktslots: dynamic allocated array for ordering AMPDU packets.
+  * @flow_id: AMPDU flow identifier.
+  * @cur_idx: last AMPDU index from firmware.
+  * @exp_idx: expected next AMPDU index.
+  * @max_idx: maximum amount of packets per AMPDU.
+  * @pend_pkts: number of packets currently in @pktslots.
++ * @pktslots: array for ordering AMPDU packets.
+  */
+ struct brcmf_ampdu_rx_reorder {
+-	struct sk_buff **pktslots;
+ 	u8 flow_id;
+ 	u8 cur_idx;
+ 	u8 exp_idx;
+ 	u8 max_idx;
+ 	u8 pend_pkts;
++	struct sk_buff *pktslots[];
+ };
+ 
+ /* Forward decls for struct brcmf_pub (see below) */
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
+index 36af81975855..0949e7975ff1 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
+@@ -1673,7 +1673,6 @@ void brcmf_fws_rxreorder(struct brcmf_if *ifp, struct sk_buff *pkt)
+ 	struct sk_buff_head reorder_list;
+ 	struct sk_buff *pnext;
+ 	u8 flags;
+-	u32 buf_size;
+ 
+ 	reorder_data = ((struct brcmf_skb_reorder_data *)pkt->cb)->reorder;
+ 	flow_id = reorder_data[BRCMF_RXREORDER_FLOWID_OFFSET];
+@@ -1708,15 +1707,13 @@ void brcmf_fws_rxreorder(struct brcmf_if *ifp, struct sk_buff *pkt)
+ 	}
+ 	/* from here on we need a flow reorder instance */
+ 	if (rfi == NULL) {
+-		buf_size = sizeof(*rfi);
+ 		max_idx = reorder_data[BRCMF_RXREORDER_MAXIDX_OFFSET];
+ 
+-		buf_size += (max_idx + 1) * sizeof(pkt);
+-
+ 		/* allocate space for flow reorder info */
+ 		brcmf_dbg(INFO, "flow-%d: start, maxidx %d\n",
+ 			  flow_id, max_idx);
+-		rfi = kzalloc(buf_size, GFP_ATOMIC);
++		rfi = kzalloc(struct_size(rfi, pktslots, max_idx + 1),
++			      GFP_ATOMIC);
+ 		if (rfi == NULL) {
+ 			bphy_err(drvr, "failed to alloc buffer\n");
+ 			brcmf_netif_rx(ifp, pkt);
+@@ -1724,7 +1721,6 @@ void brcmf_fws_rxreorder(struct brcmf_if *ifp, struct sk_buff *pkt)
+ 		}
+ 
+ 		ifp->drvr->reorder_flows[flow_id] = rfi;
+-		rfi->pktslots = (struct sk_buff **)(rfi + 1);
+ 		rfi->max_idx = max_idx;
+ 	}
+ 	if (flags & BRCMF_RXREORDER_NEW_HOLE)  {
 -- 
-மணிவண்ணன் சதாசிவம்
+2.45.2
+
 
