@@ -1,131 +1,151 @@
-Return-Path: <linux-kernel+bounces-258167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F15469384A3
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 14:53:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DADE9384A4
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 14:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1420B21215
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 12:53:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFB39281381
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 12:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9C815FA7C;
-	Sun, 21 Jul 2024 12:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="CYk7ll/v"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9EA160883;
+	Sun, 21 Jul 2024 12:53:24 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A9153BE
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 12:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FBC21581E0
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 12:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721566386; cv=none; b=hTC7lYEkTta6UP0apub/h866vn1UfF89PtscELaW0rx2thHebZaxZMwNeElL59b0BYzhg9NSDXcp6fnHN9kvwSeVrKxHt0HH/wBVTjGb9M9IyieuaNJeJoklxFzctiSSy8SM0YJBMm8g42ReWMUbIztfZWgLMV82No0VKKDzuqU=
+	t=1721566403; cv=none; b=PH/vpCyY7ydgEGHLol8uK2MB5IlNY0yk7l5QMFgGjYlKzi07bk+VWBLXXAV+2I5JwnUPjBPV785OnKOYScnu26tyYOSXJr2/DqQ6dIxJtpGHt6gCKyiIrXak7wZjC9rbt3CU9opUj0lh9RjCNSQwIx40PzLcb2OhIIrrHbpBZjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721566386; c=relaxed/simple;
-	bh=rd9yyAOuaPjKVTKfd1c64lmlFO84QaWok+uMlwK7TOc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PTj8Ywg4+hUoP22aDNh8vg3nAM533+Jy7PaGAE1UlzRjVw5a3jFmOUaWXCLhscAimNpTybeGa1ADlVUMdINjEV6vvabZoXB0MyZSS6RykKphTGajicObV8OfKaGqpUVhMii03kZxoV5LnQNMkO1rl01AtIxVYcuJo8rJOv38m7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=CYk7ll/v; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3d9bcb47182so2060932b6e.3
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 05:53:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1721566384; x=1722171184; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i90tat1on8IktACrStM2Flu+kAGDHgBdM6VXZCQtR7U=;
-        b=CYk7ll/vQr8IR+F+K4ffAVQzVFQPB8X14qgI3Gw9KWSwi9NL2meG8gEJRKhwvsEUGx
-         69Sb8+SqdFmOAFebvQSTm1F/HEfK3ez0YFmzdtVBB8980HqjQfc1jdXd2tvc8N3NVxhR
-         hxPpMAgrwHxIqRNOXtvE88lC2yyIEIi3vlzHozs/me433akIV7A+bZ8cty/yy/owdsek
-         rO1WvQu4QFR4P9M8DDVrTCOF09BnozKeIe354XFHps/5e/S9+j0o8D9ZVM7ZC7VYoJdO
-         oAaMK9vU+UgR7CF00aerBtBXSxZAycb0d/wsLtGHieqAB8XrDBpoeyg7LK0+1qgBTS9r
-         BDvg==
+	s=arc-20240116; t=1721566403; c=relaxed/simple;
+	bh=GS9l8wdEmkvBU5bZxN6g+tkipbBCL3zJVDOOR5pn/DY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=oONa++FZiVrGKUBeMDETX1lN+0qBtt1fr4Ma7xqG1LZ2SX26AkevAybsVzsd86qFdSChVXDyGlyNipCOd9XmfgGORVdh10C/+V+FmKN93+91h1odJiS7eAEE+KF3wbv3Lk+FZBwqGSXsik9OZRnwfbrzA+0BA3ibakbB8xR/MUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81ad0e64ff4so278053639f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 05:53:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721566384; x=1722171184;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i90tat1on8IktACrStM2Flu+kAGDHgBdM6VXZCQtR7U=;
-        b=RFiDkKhEs6LxJQ4wcvhS9+6RBVmA5LC0aXR2Ckm9mdX5XHGrPnJuL6m5pKvlUdIcfW
-         6mDFhzCkGBkdKXMeFpoGmLiLkKsr6kAxTXJGO+dGrYkIK0OAqAQYGL4TyDZXzEKYow9J
-         Pqv/4eI1p40fiAiDYUPCOI/rjFEnTKVkYWR9rMR7ozoc25X1kgxE/9y3P5wLn+40luHr
-         BUXJbT2KCPImXDOEfF/HWzz7JST7yEYQLAoDXzXD6f6b1zcSPRFwEj2BGAhoInuRani6
-         JESN2y87ae8iL1gVxni+9+7cvWQvy3D0iFlIe6zs6V6k31ghu4nsaJz0SNw08YrSuNay
-         2Kkw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgjPWpoOjLvDowhK/6+qZiNUJVy9msy/PIt6CeE0bAh6ccAlLGoE7vV/oZPB9gu0zUCTkeGDEh95ecAs1uwpGO99/SisgWbml59DRY
-X-Gm-Message-State: AOJu0Yy4fhjLjze16La1kfwS3aIhFWFa+K84Ndek9gURL94peInNyg7+
-	AiLlUj4W39xRf3c4orPd6yIKdVVRdRz9kDcqCxOoBvbCGQ5lF67j7Fhq1HstBkY=
-X-Google-Smtp-Source: AGHT+IHHPPB5MeTECgKUm/IaTWBdefeqtodW7G8DnMTUGOtt21y6JS6+uY7jp9S0ihTlBFRw1c+OqA==
-X-Received: by 2002:a05:6808:14c7:b0:3da:c428:1c51 with SMTP id 5614622812f47-3dae9723bc7mr4142862b6e.8.1721566354402;
-        Sun, 21 Jul 2024 05:52:34 -0700 (PDT)
-Received: from YGFVJ29LDD.bytedance.net ([139.177.225.235])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f472366sm35871525ad.260.2024.07.21.05.52.29
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 21 Jul 2024 05:52:34 -0700 (PDT)
-From: Chuyi Zhou <zhouchuyi@bytedance.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com
-Cc: chengming.zhou@linux.dev,
-	linux-kernel@vger.kernel.org,
-	joshdon@google.com,
-	Chuyi Zhou <zhouchuyi@bytedance.com>
-Subject: [PATCH 2/2] sched/core: Avoid unnecessary update in tg_set_cfs_bandwidth
-Date: Sun, 21 Jul 2024 20:52:08 +0800
-Message-Id: <20240721125208.5348-3-zhouchuyi@bytedance.com>
-X-Mailer: git-send-email 2.37.0 (Apple Git-136)
-In-Reply-To: <20240721125208.5348-1-zhouchuyi@bytedance.com>
-References: <20240721125208.5348-1-zhouchuyi@bytedance.com>
+        d=1e100.net; s=20230601; t=1721566401; x=1722171201;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Uoyn+M2RwBINIpTWPEWdIvNtlbtkDUozGyW/wCsqI/0=;
+        b=DiuQOpCBH4TWIyuMlw/GV4LIs6lL2Pq3KpfHNRl5zsKkBdEfomt1fdR7t8HgszzM3l
+         6/gJlW7l0wgRMEu2UMvaVKojIGgZtCQ6PCdld1EFlBeuVbTX5zNbHTa96jAOuuUNdeEC
+         UDF9gE7Daq2RvmQiuuuITLwnRzNzn7gq3r9jSyVapcF8s3FhMf2tp/aY3bDI/bvtKfzq
+         pcTQS1VtlYZUnRTY+w/PDjtRQou1xM5/79JhDzPfrOK9x3Tbq4Gl+5jIDt5sDc1TMoV4
+         tuOwm7gC87wpf23KYUXOedQTKo6XqYYUycZLd23ymMekm99rC/j6AHgVfbnmsLP/VhJD
+         1H5w==
+X-Forwarded-Encrypted: i=1; AJvYcCXmNrO99vJk9YQeGPWksqjTFi6TQYRTeewm0YHq8Tc8pWOTj6TxPS+0Ss6dQm7J95VJygG+H1PW9Puukwf1yAtjERGtSOhSGGEj5YFO
+X-Gm-Message-State: AOJu0Yymz5es7GJLlFqPvA3ZMVLvuOkmQCqDaeGiRhybUZbSeJtirziv
+	G0JNXPIG7EBQyZt9I1Ra65010jm9XHaNRgstac4atP91sCdm8z/4VJPexPEJ1A9WJjAsAvIJR6X
+	r4vASQX5WMQUabqdzdSCg+81WTwGlvz+ZHK8WvlLD3e55dK1aZOma2FY=
+X-Google-Smtp-Source: AGHT+IFNhhrIqCAazpjH+ygGa5hhvw5bPOFQTOVE4HQvpcZD4D1w55V0yciYG91bR13COsO61MHovI28d37USB8TiJHCgLBklr2t
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:12cf:b0:396:ec3b:df63 with SMTP id
+ e9e14a558f8ab-398e782180cmr2437225ab.4.1721566401448; Sun, 21 Jul 2024
+ 05:53:21 -0700 (PDT)
+Date: Sun, 21 Jul 2024 05:53:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d0e3b5061dc16993@google.com>
+Subject: [syzbot] [rcu?] WARNING in rcu_note_context_switch (2)
+From: syzbot <syzbot+784d0a1246a539975f05@syzkaller.appspotmail.com>
+To: boqun.feng@gmail.com, frederic@kernel.org, jiangshanlai@gmail.com, 
+	joel@joelfernandes.org, josh@joshtriplett.org, linux-kernel@vger.kernel.org, 
+	mathieu.desnoyers@efficios.com, neeraj.upadhyay@kernel.org, 
+	paulmck@kernel.org, qiang.zhang1211@gmail.com, rcu@vger.kernel.org, 
+	rostedt@goodmis.org, syzkaller-bugs@googlegroups.com, urezki@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-In the kubernetes production environment, we have observed a high
-frequency of writes to cpu.max, approximately every 2~4 seconds for each
-cgroup, with the same value being written each time. This can result in
-unnecessary overhead, especially on machines with a large number of CPUs
-and cgroups.
+Hello,
 
-This is because kubelet and runc attempt to persist resource
-configurations through frequent updates with same value in this manner.
-While optimizations can be made to kubelet and runc to avoid such
-overhead(e.g. check the current value of cpu request/limit before writing
-to cpu.max), it is still worth to bail out from tg_set_cfs_bandwidth() if
-we attempt to update with the same value.
+syzbot found the following issue on:
 
-Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
+HEAD commit:    51835949dda3 Merge tag 'net-next-6.11' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=150e825e980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=28bac69fa31fbb3a
+dashboard link: https://syzkaller.appspot.com/bug?extid=784d0a1246a539975f05
+compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15d4bf4e980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17a3c349980000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/384ffdcca292/non_bootable_disk-51835949.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/7a3a01db5542/vmlinux-51835949.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/14d329019155/Image-51835949.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+784d0a1246a539975f05@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+Voluntary context switch within RCU read-side critical section!
+WARNING: CPU: 0 PID: 3460 at kernel/rcu/tree_plugin.h:330 rcu_note_context_switch+0x354/0x49c kernel/rcu/tree_plugin.h:330
+Modules linked in:
+CPU: 0 PID: 3460 Comm: syz-executor248 Not tainted 6.10.0-syzkaller-04472-g51835949dda3 #0
+Hardware name: linux,dummy-virt (DT)
+pstate: 614000c9 (nZCv daIF +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+pc : rcu_note_context_switch+0x354/0x49c kernel/rcu/tree_plugin.h:330
+lr : rcu_note_context_switch+0x354/0x49c kernel/rcu/tree_plugin.h:330
+sp : ffff800089523d30
+x29: ffff800089523d30 x28: f6f0000005d4a480 x27: 0000000000000000
+x26: 0000000000000000 x25: f6f0000005d4a480 x24: ffff800082643318
+x23: 0000000000000000 x22: f6f0000005d4a480 x21: fff000007f8d6240
+x20: ffff80008261e040 x19: fff000007f8d7040 x18: fffffffffffcb658
+x17: fff07ffffd2b9000 x16: ffff800080000000 x15: 0000000000000048
+x14: fffffffffffcb6a0 x13: ffff80008266b0a8 x12: 000000000000088b
+x11: 00000000000002d9 x10: ffff80008271f500 x9 : ffff80008266b0a8
+x8 : 00000000ffffdfff x7 : ffff80008271b0a8 x6 : 00000000000002d9
+x5 : fff000007f8cbf48 x4 : 40000000ffffe2d9 x3 : fff07ffffd2b9000
+x2 : 0000000000000000 x1 : 0000000000000000 x0 : f6f0000005d4a480
+Call trace:
+ rcu_note_context_switch+0x354/0x49c kernel/rcu/tree_plugin.h:330
+ __schedule+0xb0/0x850 kernel/sched/core.c:6417
+ __schedule_loop kernel/sched/core.c:6606 [inline]
+ schedule+0x34/0x104 kernel/sched/core.c:6621
+ do_notify_resume+0xe4/0x164 arch/arm64/kernel/entry-common.c:136
+ exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:169 [inline]
+ exit_to_user_mode arch/arm64/kernel/entry-common.c:178 [inline]
+ el0_interrupt+0xc4/0xc8 arch/arm64/kernel/entry-common.c:797
+ __el0_irq_handler_common+0x18/0x24 arch/arm64/kernel/entry-common.c:802
+ el0t_64_irq_handler+0x10/0x1c arch/arm64/kernel/entry-common.c:807
+ el0t_64_irq+0x19c/0x1a0 arch/arm64/kernel/entry.S:599
+---[ end trace 0000000000000000 ]---
+
+
 ---
- kernel/sched/core.c | 2 ++
- 1 file changed, 2 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 6d35c48239be..4db3ef2a703b 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -9081,6 +9081,8 @@ static int tg_set_cfs_bandwidth(struct task_group *tg, u64 period, u64 quota,
- 				     burst + quota > max_cfs_runtime))
- 		return -EINVAL;
- 
-+	if (cfs_b->period == ns_to_ktime(period) && cfs_b->quota == quota && cfs_b->burst == burst)
-+		return 0;
- 	/*
- 	 * Prevent race between setting of cfs_rq->runtime_enabled and
- 	 * unthrottle_offline_cfs_rqs().
--- 
-2.20.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
