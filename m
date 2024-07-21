@@ -1,172 +1,123 @@
-Return-Path: <linux-kernel+bounces-258255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF8D093858A
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 18:44:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2119C93858B
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 18:46:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABC81281352
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 16:44:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94047B20CF3
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 16:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8907C1684B4;
-	Sun, 21 Jul 2024 16:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F38166317;
+	Sun, 21 Jul 2024 16:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="opppryD5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hPXXJJS5"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2856944E;
-	Sun, 21 Jul 2024 16:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905A826AED
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 16:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721580280; cv=none; b=kuEf3UH0scCfxDfFZih7Tyefz77D0Ont9AF/79fBeo8+CGhYOFRGXcQEvr2b3D0XUAnAWvdToStDpVYTbUHDaj4Rn15kKo4jVjC29XtwF9ZUo4fqGaCM2zBZzX0oj+As5q7vHEMmSTU39Ry6Mghyg/cFFxX9urs0sxXsE8ApT3s=
+	t=1721580369; cv=none; b=fW/A8YJd0tD2JdU9lxaEPthnli+wb8uFjlh3xAbXpVDxYEAC6/OGaqyYllWPMqgpgWrfBMWcHztPxXXExVoS0IFoINJyVdEAyTZuUlmhREIrwwUgkDSz+SaHabUk1isUol1k7EiUyqKMGyqKt/fdV6NIptaI2+xoaw/iPz4LKHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721580280; c=relaxed/simple;
-	bh=0eTkErHNvsDyf36hNtBQ3p5kyOxI7Jmpu0nuxZlXS+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g19pU5SrHZLwaoMtoDZFPOve0K95X2ZzYy3RUBuTkFfK2/LJrnDgA3onmEX/I8TrksF+hv95BE97zJD9L2SuQWoT0SPeDAdDLRkHX6eSeW5TkpMgOxrN+Z14yz7trT9tSYhslmHQA6jzEDxDnytfSkP4CWmAFyTQNZc7csjiXec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=opppryD5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 466DEC116B1;
-	Sun, 21 Jul 2024 16:44:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721580280;
-	bh=0eTkErHNvsDyf36hNtBQ3p5kyOxI7Jmpu0nuxZlXS+Y=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=opppryD5/I1nfkq/uz3/SC/gVQAxT3a8BrR0e2VvOLIEZE/Wln3hKpLMnOv1nJH3+
-	 0Y70VuK9IlbGE6sM6P9n4qZEVQFJX8nyNE8Tq7FUt14PR04HyhrqEiHljW0SDFEtUS
-	 npwMjP0xFRa7/84BOLH2GXXEL52IdIQF8Qx8YiZt553vzqd9PHOs5CcrQUd/wcD4T3
-	 KOgoFdmGTIedJFEq4PYHUux86p6tnx5st/B+62NVDylR4eyr19+Osze8VqqkMnmh+u
-	 7RzOnd62sLniBbH1uiz75EDWBVYd3iH2wzU6gzLOeK2a7sNxU3yzdN2HFLUP1INfqf
-	 1c+RcNqRNCoRg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id D92F7CE09D8; Sun, 21 Jul 2024 09:44:39 -0700 (PDT)
-Date: Sun, 21 Jul 2024 09:44:39 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
+	s=arc-20240116; t=1721580369; c=relaxed/simple;
+	bh=rAH4Jm9AoRvX4/4HSmDEGIbMl0UA3sgBAgyyr6KPB6U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QvcEnkRrD1KMd4e/SVkAKE8Wl7bUivDIt/i9KHIt/raCVmIcMkUFIxzEwIpuLSX5zeHncMUkI1TOWRkZoyJqsQsRdb0+dWngvfoWoTiAN9wFvB1js6cGDJLwRchnMmRaJtENAP66GipLYE+Z/FCRW3GKTTVnEbR2nqwCJXrksFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hPXXJJS5; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2eeec60a324so46984181fa.2
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 09:46:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721580362; x=1722185162; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tnzMvlF6bfeYxZjSrDfgdjPHin7M8Ak7WmhUUH8l9fU=;
+        b=hPXXJJS5IeLVYSdZTniRZLTox4VKKuZTazLvz/VZsvzPONbwyfeA220ze5tkm0dzQx
+         5zH1f1iWbl6/8qXjCkOixTI9AU6FO07quoTQq/GLADEGkK1fSP4xGh1ew4Z3bhPmvOtu
+         BcAdLEY24ALNabfJUnjwVRUzeUmT0sMzSLp1SGpkI/WMzWE4GF1LIY4Z0FwKrTMDpwU0
+         mi++hh1El4DDUdo8qYXMaN90/sZr3OOLrSFaWtK0qAq15c9rGEv/scv4gVazGXsfa8O9
+         v6dvvXvqdkx4C26gVoY3xe6xyUyYaqZuiSM6dPxaD/rNXtVrhkUGAxGl9/1WQQ7qYPwg
+         xoJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721580362; x=1722185162;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tnzMvlF6bfeYxZjSrDfgdjPHin7M8Ak7WmhUUH8l9fU=;
+        b=J52rz/05f+jSarZCihnetFB+mwXd3kPUca36DZU/p1BsX97MIUIEghV1618yIa+QZ5
+         FsrrgFtDY6ld88XegFh73IOuk6PFTcr3Ys8w0jYIkq3mrbF20z/gBkSWsXkQ1qaVYD4z
+         P6Cje9s/BNgH3RlC/Jic8+sjd2pQNSobxQqCSyrHwtgJbdC6JnKQw/UAJAgTW6XZDStz
+         ScMUXsrNddRqltc2xV4ID2P+C1+L/0bQg0KE1e6WEhwr+0TbQBOWTJOE4gZnoivBw6rP
+         LTMQeBpVLMF/f5ItRjAhbfl5Hxlwd0Hwn2QwBqG82LoMq4aGv5RJSODPrF33nNb+DLL8
+         V8Dw==
+X-Gm-Message-State: AOJu0YzHRt4X5nnztG1x2u1qMq0QAVPrp2NCyQbFOKvzaInjRjY977zK
+	t1X6D9+s0NeIGk1hALs/OmkI+yoYFFpTdH/KAIlUOIBqlejuKwJTY68lV/+L
+X-Google-Smtp-Source: AGHT+IHPfyYAhzj4ox02oB/1AKZGEh8nbWZBUDGUOuxa8VGJ67ALfy79H2GpYRZVJwXwrV2xcl6d6A==
+X-Received: by 2002:a2e:3504:0:b0:2ef:22a6:d90d with SMTP id 38308e7fff4ca-2ef22a6db66mr29278881fa.47.1721580361940;
+        Sun, 21 Jul 2024 09:46:01 -0700 (PDT)
+Received: from localhost.localdomain ([46.248.82.114])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a709a74169sm1045051a12.95.2024.07.21.09.46.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Jul 2024 09:46:01 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
 	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, rcu@vger.kernel.org
-Subject: Re: [PATCH v2] refscale: Optimize process_durations()
-Message-ID: <f66e1272-6462-4314-bcbb-aff150c31ee2@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <77d6d8ee94d7149e6c33b10b78b43daf48ab8c70.1721546569.git.christophe.jaillet@wanadoo.fr>
+	Bibo Mao <maobibo@loongson.cn>
+Subject: [PATCH] locking/pvqspinlock: Correct the type of "old" variable in pv_kick_node()
+Date: Sun, 21 Jul 2024 18:45:41 +0200
+Message-ID: <20240721164552.50175-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <77d6d8ee94d7149e6c33b10b78b43daf48ab8c70.1721546569.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jul 21, 2024 at 09:23:46AM +0200, Christophe JAILLET wrote:
-> process_durations() is not a hot path, but there is no good reason to
-> iterate over and over the data already in 'buf'.
-> 
-> Using a seq_buf saves some useless strcat() and the need of a temp buffer.
-> Data is written directly at the correct place.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch is compile tested only.
-> I introduced a bug in v1 (see 1st item in the changes below), so it should
-> definitively be tested by someone!
-> 
-> v1 was un-usable because seq_buf_putc() was not exported. It is now
-> available since v6.7.
-> 
-> Because of the changes, I don't know if the previous R-b should kept.
-> In case, it was:
-> 	Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> 	Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+"enum vcpu_state" is not compatible with "u8" type for all targets,
+resulting in:
 
-It would be good for them to take another look.  In the meantime:
+error: initialization of 'u8 *' {aka 'unsigned char *'} from incompatible pointer type 'enum vcpu_state *'
 
-Tested-by: Paul E. McKenney <paulmck@kernel.org>
+for LoongArch. Correct the type of "old" variable to "u8".
 
-> Changes in v2:
->   - Use seq_buf_printf() alseo for the first string, otherwise it would
->     get lost
->   - Use seq_buf_str() instead of seq_buf_terminate() because the API has
->     changed
-> 
-> v1: https://lore.kernel.org/all/bbbab32e3e104bdc2238724a6a4a85e539f49ddd.1698512661.git.christophe.jaillet@wanadoo.fr/
-> ---
->  kernel/rcu/refscale.c | 25 ++++++++++++++-----------
->  1 file changed, 14 insertions(+), 11 deletions(-)
-> 
-> diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
-> index f4ea5b1ec068..cfec0648e141 100644
-> --- a/kernel/rcu/refscale.c
-> +++ b/kernel/rcu/refscale.c
-> @@ -28,6 +28,7 @@
->  #include <linux/rcupdate_trace.h>
->  #include <linux/reboot.h>
->  #include <linux/sched.h>
-> +#include <linux/seq_buf.h>
->  #include <linux/spinlock.h>
->  #include <linux/smp.h>
->  #include <linux/stat.h>
-> @@ -891,32 +892,34 @@ static u64 process_durations(int n)
->  {
->  	int i;
->  	struct reader_task *rt;
-> -	char buf1[64];
-> +	struct seq_buf s;
->  	char *buf;
->  	u64 sum = 0;
->  
->  	buf = kmalloc(800 + 64, GFP_KERNEL);
->  	if (!buf)
->  		return 0;
-> -	buf[0] = 0;
-> -	sprintf(buf, "Experiment #%d (Format: <THREAD-NUM>:<Total loop time in ns>)",
-> -		exp_idx);
-> +	seq_buf_init(&s, buf, 800 + 64);
-> +
-> +	seq_buf_printf(&s, "Experiment #%d (Format: <THREAD-NUM>:<Total loop time in ns>)",
-> +		       exp_idx);
->  
->  	for (i = 0; i < n && !torture_must_stop(); i++) {
->  		rt = &(reader_tasks[i]);
-> -		sprintf(buf1, "%d: %llu\t", i, rt->last_duration_ns);
->  
->  		if (i % 5 == 0)
-> -			strcat(buf, "\n");
-> -		if (strlen(buf) >= 800) {
-> -			pr_alert("%s", buf);
-> -			buf[0] = 0;
-> +			seq_buf_putc(&s, '\n');
-> +
-> +		if (seq_buf_used(&s) >= 800) {
-> +			pr_alert("%s", seq_buf_str(&s));
-> +			seq_buf_clear(&s);
->  		}
-> -		strcat(buf, buf1);
-> +
-> +		seq_buf_printf(&s, "%d: %llu\t", i, rt->last_duration_ns);
->  
->  		sum += rt->last_duration_ns;
->  	}
-> -	pr_alert("%s\n", buf);
-> +	pr_alert("%s\n", seq_buf_str(&s));
->  
->  	kfree(buf);
->  	return sum;
-> -- 
-> 2.45.2
-> 
-> 
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Fixes: fea0e1820b51 ("locking/pvqspinlock: Use try_cmpxchg() in qspinlock_paravirt.h")
+Reported-by: Bibo Mao <maobibo@loongson.cn>
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Closes: https://lore.kernel.org/lkml/20240719024010.3296488-1-maobibo@loongson.cn/
+---
+ kernel/locking/qspinlock_paravirt.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/locking/qspinlock_paravirt.h b/kernel/locking/qspinlock_paravirt.h
+index f5a36e67b593..ac2e22502741 100644
+--- a/kernel/locking/qspinlock_paravirt.h
++++ b/kernel/locking/qspinlock_paravirt.h
+@@ -357,7 +357,7 @@ static void pv_wait_node(struct mcs_spinlock *node, struct mcs_spinlock *prev)
+ static void pv_kick_node(struct qspinlock *lock, struct mcs_spinlock *node)
+ {
+ 	struct pv_node *pn = (struct pv_node *)node;
+-	enum vcpu_state old = vcpu_halted;
++	u8 old = vcpu_halted;
+ 	/*
+ 	 * If the vCPU is indeed halted, advance its state to match that of
+ 	 * pv_wait_node(). If OTOH this fails, the vCPU was running and will
+-- 
+2.42.0
+
 
