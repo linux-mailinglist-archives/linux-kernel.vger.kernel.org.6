@@ -1,89 +1,137 @@
-Return-Path: <linux-kernel+bounces-258095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8805F938367
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 07:41:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F9D0938368
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 07:48:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90287B20E4D
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 05:41:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A27A1C20A89
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 05:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55AF2522F;
-	Sun, 21 Jul 2024 05:41:08 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B255539A;
+	Sun, 21 Jul 2024 05:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TJdgjeQI"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAB71396
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 05:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6621B1FBA
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 05:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721540467; cv=none; b=QehoRFUoEWBBfjZ6vZ7x7FIbPBevnb5BqOZsL22xMKfaP6O2henq8em0bPqJIegej+cQ72ro6ww1NP1GePf7pYgT83dGPhXIXjFv+ZJMx7JXHzQjx1UJqCPpdNhKEQoLggisq7rf/gO8cAFWT1AF5e260YCcfq0dHLaeTGa4pkY=
+	t=1721540916; cv=none; b=uHGIPMR/XPuYjsB7ltP1lgfdGDKP95NprRL4VzZJ+BBrFTgHpypRQ7t7XL9/3iLJsVoeTd7CL01a7K7xQaL0/X/La8vRh+3omgC69l+xeC0uwCKa1ztekD19/KE5QbfnE7miVk34I8hF05PVl+sNVweOOuNYZCTYEXl2oK22rcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721540467; c=relaxed/simple;
-	bh=eKkvXIRx9Q0MOXO1EqwH2epjGLn007Hoa8/Kail2N7s=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=SkLqbZTT0839L07UHkfvssO7HJbmRcrMhCgjFpL2lXJ3P5hgvMjJ716a/8kop/ph5iKxcfaH8+sUMdAbVM3Umija7+ZrPPsHsxs1NauyBd4qantr//b6CpkP1L7KVPYbEkgjI9V1+NtHYjCDeuLt98SH0yXPK+vqEmLN4DgUIB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-803621a51c9so540207339f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 22:41:06 -0700 (PDT)
+	s=arc-20240116; t=1721540916; c=relaxed/simple;
+	bh=wFdalM1IV+V68ePkH5l6xm7jvBSylfup4GHRCi1eW9I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jJr6FG5DI1OET8dFdrgXfEbL5ay3183p4KIpY8r/GcDEJrCsMKV5bwFq64pTTpnde6qJedUO1M/lFNFlGQfQxJqSeFMNjlzPPC9fxnbePA9ws+R6GjC0UjaLgMGbMpVkFHQaYa/fAjq+3GeOnSQ8PhVyFePabTNEw55CqtQ/hzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TJdgjeQI; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fd657c9199so355525ad.1
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 22:48:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721540915; x=1722145715; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ySJd/cG6sK7OqUfBjvLXtPhb91jMqVNe4qRHLmppl3Q=;
+        b=TJdgjeQInae6T7UAcGXNISrfLcEPioUKbpo+Q48teDCT9Of51Olja26leAdGrhDOMf
+         eqB7StsHn3Wjae7SAfhbbtiTKcfusnwYGvU0KAYGL2YvdoADfzkMKqgezMObHFVcp8R3
+         YtDGwlojyANYciJRG39YmcRY45JQR29C4Fbo4OfPJ5iMjCTw/sKp0BVAmT+W7oV7N4ce
+         9Hm6mOA/fPl3ZEgY68iP8iQ2DK0qaTTRyygj1LXSpNRN5Xd68iPonXHfpD4ijYIJJi2K
+         tCac0ZB8lGnZK/NkOp4WUipGHbWp07WbHW7zb6SOWQoz5OxZFzENkOCpylDIEUQhhMy3
+         Q6Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721540465; x=1722145265;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7rIkhlFz4AbSJcAJHXko2zOU2GPENzQaBBg8uYQiqVE=;
-        b=eXdNqNZjSsVUPomQ5RgQssqFBUcq7mVlLGE9W5+xHbddbXafAS5e8rMkh3I2iyQPOx
-         ohXBUPkCE2p3o+QZNZNTAlX9dJJEOxtsqcuiqXfB2J88SQJWgXcW8pt5P5ar1gFG3OLJ
-         KVQf5xxWwEm8dMYov6fpirTtGgej5jnxPqMx3lLadcozKff8x7fxSRK7GGpT5D+p+2It
-         kvrHiVxw6FYwEVG23h9fSAX/fJ297NJ5A49sSAwZiEpxAMaB59o7Exm/FcduS8UrxIJw
-         r0iixbskRcOysMeQ8qTa92afBFKvw3ILRjyZ5GCKziDvgdYiIizVgaxjO8AFlRwbUVEl
-         yz0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXZCMEywzvmfmif5avzaZtJY01bFRwqAQrhFw0xxZk8nt4etQdPn1J4wDxwNJkOIWRPkfqrS8mcmX/j2yCMTt0Ee2D9yBF3t7YMOZ99
-X-Gm-Message-State: AOJu0YxB7RFWKUXvl/cwSlqj/T6c0jcCXeLUANqZJQ6jJEQXSfzWuGqy
-	ZdjTpUpNzQSAZN61GA+ouO7nqQ6PvQ95nbcn0AYjtLPpOCRpCEmpM0vLHHc0NMDPKSuqyBJGt13
-	rrQXftCiD0kBCganbU1+6I8Cy/0R1t86FSEJXcZuM9h6M1MPfeI8w50w=
-X-Google-Smtp-Source: AGHT+IGTZ1OJTtKYrLtdyJEFMALVL8RJtP18Pd9h1A5mfwil5lam5766eTKGUntJYEQKdl+gTnzNDl5cBzvP/uRiyGx5bTQLgnF5
+        d=1e100.net; s=20230601; t=1721540915; x=1722145715;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ySJd/cG6sK7OqUfBjvLXtPhb91jMqVNe4qRHLmppl3Q=;
+        b=t6EGi399rnofDSg7q5ZUzu55KiamWiscoj/qtdUaF4zeM45IIDhxPgwzEBNdMnSIap
+         2o27g8JjuoK54MJ0SidLals/47eEwj77OMbUd7j8MSn4f5xVowlwpzFkJlqj1tfmZ7wt
+         eiWTjDSOGW9Z8ceNzPvlgUG+GQVqXpN69htUyNg6vZPpamshD6GFVFbzqUeAcoKwXhJs
+         9lFVAXHHNG/7AtBObDHUb657Vx/5j2tEHGaR1h69/BESHDgNLEhBxCvrKyJjF+WwOtcO
+         Bgb1hEWvApr9mbfLH/Kqjqxfpmxvl+QTjUOc7zDHdO2tstYe6KMFI7US+7S+t7+wosv3
+         c48A==
+X-Forwarded-Encrypted: i=1; AJvYcCX9dd9eGw+PZUaV3hn4rm1aVnkHObPYXXVYCypTDaRsX81tmdIkOZfbXi3dKMRTcZVN8j48cC4tCANm/kKIBXPBYneC/WgiSBXk0d27
+X-Gm-Message-State: AOJu0YyMoa00FStbuS2EkV94r9WsImm/8DMX4sVqsIrk7rI3CZCy/4X3
+	EfPhr0d/Yxy//uEA/y62ivyjyW/LFzv+iUC2L+dk9E/2QHITtxkb9K+dTdSQwAgbNw1PlNlGs+D
+	RNxzLdLa1CFY/SCKAZsIUh5mILBCzkda7Tw6X
+X-Google-Smtp-Source: AGHT+IGNtuEbJ/Qh87DVHX7+xA9C/9m9iAmTyUcWDjvKFcLn+fuyIBeSoS1W49RZ/LAMvDRKtoKrgGk+ueopEO2Fk6U=
+X-Received: by 2002:a17:902:b70e:b0:1fb:2924:5c7e with SMTP id
+ d9443c01a7336-1fd7ff4647fmr1383885ad.11.1721540914235; Sat, 20 Jul 2024
+ 22:48:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:3486:b0:4c0:9a3e:c264 with SMTP id
- 8926c6da1cb9f-4c23fc95e76mr281655173.2.1721540465524; Sat, 20 Jul 2024
- 22:41:05 -0700 (PDT)
-Date: Sat, 20 Jul 2024 22:41:05 -0700
-In-Reply-To: <tencent_864C4BBC74D1772167023D5936EC96683609@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ea1249061dbb5f33@google.com>
-Subject: Re: [syzbot] [fs?] BUG: unable to handle kernel NULL pointer
- dereference in path_from_stashed
-From: syzbot <syzbot+34a0ee986f61f15da35d@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240721031944.62913-1-cachen@purestorage.com>
+In-Reply-To: <20240721031944.62913-1-cachen@purestorage.com>
+From: Ian Rogers <irogers@google.com>
+Date: Sat, 20 Jul 2024 22:48:22 -0700
+Message-ID: <CAP-5=fUjbsv93DKDxaNXzfe3b9H_0MQyjauNxsxM1XTN7T8QAw@mail.gmail.com>
+Subject: Re: [PATCHv3] perf tool: fix dereferencing NULL al->maps
+To: Casey Chen <cachen@purestorage.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	namhyung@kernel.org, yzhong@purestorage.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Sat, Jul 20, 2024 at 8:20=E2=80=AFPM Casey Chen <cachen@purestorage.com>=
+ wrote:
+>
+> With 0dd5041c9a0e ("perf addr_location: Add init/exit/copy functions"),
+> when cpumode is 3 (macro PERF_RECORD_MISC_HYPERVISOR),
+> thread__find_map() could return with al->maps being NULL.
+>
+> The path below could add a callchain_cursor_node with NULL ms.maps.
+>
+> add_callchain_ip()
+>   thread__find_symbol(.., &al)
+>     thread__find_map(.., &al)   // al->maps becomes NULL
+>   ms.maps =3D maps__get(al.maps)
+>   callchain_cursor_append(..., &ms, ...)
+>     node->ms.maps =3D maps__get(ms->maps)
+>
+> Then the path below would dereference NULL maps and get segfault.
+>
+> fill_callchain_info()
+>   maps__machine(node->ms.maps);
+>
+> Fix it by checking if maps is NULL in maps__machine().
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+The intent with the accessors is that maps is like a "this" pointer.
+In C++ a this pointer of NULL would be undefined behavior. As such I'd
+prefer if we could add the NULL test in the caller.
 
-Reported-by: syzbot+34a0ee986f61f15da35d@syzkaller.appspotmail.com
-Tested-by: syzbot+34a0ee986f61f15da35d@syzkaller.appspotmail.com
+Thanks,
+Ian
 
-Tested on:
-
-commit:         51835949 Merge tag 'net-next-6.11' of git://git.kernel..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=1421b72d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c1c1b0a8065e216
-dashboard link: https://syzkaller.appspot.com/bug?extid=34a0ee986f61f15da35d
-compiler:       arm-linux-gnueabi-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=100ea8b1980000
-
-Note: testing is done by a robot and is best-effort only.
+> ---
+>  tools/perf/util/maps.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/perf/util/maps.c b/tools/perf/util/maps.c
+> index 432399cbe5dd..d243cb794a99 100644
+> --- a/tools/perf/util/maps.c
+> +++ b/tools/perf/util/maps.c
+> @@ -169,7 +169,7 @@ static void maps__set_maps_by_name_sorted(struct maps=
+ *maps, bool value)
+>
+>  struct machine *maps__machine(const struct maps *maps)
+>  {
+> -       return RC_CHK_ACCESS(maps)->machine;
+> +       return maps ? RC_CHK_ACCESS(maps)->machine : NULL;
+>  }
+>
+>  unsigned int maps__nr_maps(const struct maps *maps)
+> --
+> 2.45.2
+>
+>
 
