@@ -1,269 +1,118 @@
-Return-Path: <linux-kernel+bounces-258082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D1A9938341
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 04:06:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F1D938344
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 04:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 046C01F214D1
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 02:06:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2112B20F7A
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 02:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFBB23C9;
-	Sun, 21 Jul 2024 02:06:16 +0000 (UTC)
-Received: from spindle.queued.net (spindle.queued.net [45.33.49.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0001396;
-	Sun, 21 Jul 2024 02:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.33.49.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4420D1FAA;
+	Sun, 21 Jul 2024 02:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZI82JKCG"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45CF17D2
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 02:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721527576; cv=none; b=Dmrkjth9YIJ9oyoifjipo5ctWewdltu99yUr3wzITeNF4QDLQrsXONTFFzekz5na+KFnLBGNu4ZjIOGJstqXnawexYPCtwEw4fbbTEbiW5LhlKsz1F+fQQlfHksPy1eM6mxG047kjGlGo8jvvIDNTzoL6zMjc8R4pI8DMRUJPBI=
+	t=1721529416; cv=none; b=JhCjnctdifXAxHKwZMFBztvp2cCSvzIPgoWAvwJn4sNvy4HDi7wjuBFzM9n1ZcsH3x7Ng0/fD3hkC9PNOtkYM7pr+uB5z1eOxX/w1qTd1pAwnFgW1C/2Ap3l96h4jcdFNWHY2CjOVdW3NoVOTdgyQ1qDekUcPqsmyoyH2v68/bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721527576; c=relaxed/simple;
-	bh=j6wDrTm4fG5Noo6HKl4B9hE3bi5WT6wHqEMyqQNgyCI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G2ShFcyBWQpAzNI7tVggt2nHfba/ehDYT+yvF5aEmyV9g+SreeEE/5454XmhppTNabM+7pqK/At9lDfcMf86kRPgUoN9ae+SHXYCFhPdrouEcAUoEwIaMgjzMfytDwQA7ceJ0Q8WUgIoxoh6YdYoIbAheM9AQ9SDuGVDac9pwEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=queued.net; spf=pass smtp.mailfrom=queued.net; arc=none smtp.client-ip=45.33.49.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=queued.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queued.net
-Received: by spindle.queued.net (Postfix, from userid 1001)
-	id E9C1B11594C; Sat, 20 Jul 2024 22:06:13 -0400 (EDT)
-Received: from 5400 (unknown [172.56.164.186])
-	by spindle.queued.net (Postfix) with ESMTPSA id 75D4011593F;
-	Sat, 20 Jul 2024 22:06:10 -0400 (EDT)
-Date: Sat, 20 Jul 2024 22:06:06 -0400
-From: Andres Salomon <dilinger@queued.net>
-To: Pali =?UTF-8?B?Um9ow6Fy?= <pali@kernel.org>
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
- Matthew Garrett <mjg59@srcf.ucam.org>, Sebastian Reichel <sre@kernel.org>,
- Hans de Goede <hdegoede@redhat.com>, Ilpo =?UTF-8?B?SsOkcnZpbmVu?=
- <ilpo.jarvinen@linux.intel.com>, linux-pm@vger.kernel.org,
- Dell.Client.Kernel@dell.com, Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH] platform/x86:dell-laptop: Add knobs to change battery
- charge settings
-Message-ID: <20240720220606.1934df43@5400>
-In-Reply-To: <20240720095507.uyaotkofkyasdgbd@pali>
-References: <20240720012220.26d62a54@5400>
-	<20240720084019.hrnd4wgt4muorydp@pali>
-	<20240720052419.73b1415a@5400>
-	<20240720095507.uyaotkofkyasdgbd@pali>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721529416; c=relaxed/simple;
+	bh=Na4s6px+nYKJhZQCRLM1jeQhAQ5XqonBmmGdRkHLp+8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=rc9FDWPkO8HJKE02WgVzwkiJe0eJbG6eagAO0wi9fnDu38mqkYeKC677gmmI2KzaLUJmnSPoZOkDUE0Nd84M6h6mWLkE9SVFa3fVseCW/baXdMqQBhpyAdwmMESIOxH4By7rHilajTyCCf0CLa4HYV5kHVKhAD0+wwlXizNS9H8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZI82JKCG; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-398b599593eso217635ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 19:36:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721529414; x=1722134214; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=12ync0Lb4d2F1abrlWeB7dvBZQvc4tt3x/Yoqnt4ykM=;
+        b=ZI82JKCGjVRO68rn/3qdX1nDUtsBhxbzPrgcELKIAJy1zSDehFiqsMydtP592CkkH8
+         OHfgxvyjgMK6MpUvjXnT59NCFIr4cgFEZLpYUxRKu38/Fg6DS67MsEHFCT00VXy1Pp2/
+         ph8fdDj5B5GeXdUg1obNBhIuXKERUYVtv07AmYn+OJTg01zFvSPYTzIXCDOU0t8EOyma
+         dcVM20JW3Cmo9Fnk5Nxgu1Oo2yp6weXIhF1ftjz1BDId2enGzu4WIQj32QOZNlolM+1D
+         PJyos8WUNooUf/TBR4Logc7Kgbj+qBUSVAOSNi3NFp1YFlfREBwQ6zMgeE0CMqzljlFT
+         ROCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721529414; x=1722134214;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=12ync0Lb4d2F1abrlWeB7dvBZQvc4tt3x/Yoqnt4ykM=;
+        b=F8vcOT5TVGUksGv0T+ye35b85hnWPD3uYe7Dzag+nqEGTzLA5KSp3BlvygwZ0fnwQ5
+         J2clFr3vfl/vHpBXA8Z2vP3vnOPBIMVh3vJF7R1HHRV/0DMoUBg7X2PMYwjSJ6sRh8r/
+         RgxeVf6fksPjEAzrWBSB3RJ0GwsaBFA9wFGbwXv5iYIh6e9BQt6PmJQCCcuHHtdqOyO9
+         nCQBE5h759fht07LnItHn2aQtm8/ALlLLuyGT6FiCq9Way85/LZ7LQ4559bYW+BocNay
+         qS6GgQHgjGaGninlczE8Z+L98f522KSyAMj07Tqpwkk68oUNGJ3SbymNqa81CJf7kDYD
+         nh0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX/7aYYdc7QtrNMtTCjyni8B0fr8+qdv5X9yr2YCLjCuVbr0oevgWYDJ3P18OCkwllxeqZCxlq5KxubS4m+zdvImiOVzXrwF2294CES
+X-Gm-Message-State: AOJu0YxCyxd6Pyg0/cu1tGIg/WXf0Dl37ETGkzunGXF27nVPuCAGyhFG
+	3VFb+HuKAExznyJG03onAZ6NzEgLY2NKicKicqzOJEa45dZ7X2NbRLiIQvsxZA==
+X-Google-Smtp-Source: AGHT+IHaWyfLHZqQJJ7xwEP3Xb152xsS5cesG8Zsw5YEWHax6vO5+BwIjS72+uA9u8CaVnm9Uou72Q==
+X-Received: by 2002:a05:6e02:1a4b:b0:397:98d7:5175 with SMTP id e9e14a558f8ab-3993470751amr2299655ab.12.1721529413262;
+        Sat, 20 Jul 2024 19:36:53 -0700 (PDT)
+Received: from [2620:0:1008:15:d155:1bfe:11e4:98f4] ([2620:0:1008:15:d155:1bfe:11e4:98f4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70d1370c6a0sm1290154b3a.185.2024.07.20.19.36.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 20 Jul 2024 19:36:52 -0700 (PDT)
+Date: Sat, 20 Jul 2024 19:36:51 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+cc: "Paul E. McKenney" <paulmck@kernel.org>, 
+    Joel Fernandes <joel@joelfernandes.org>, 
+    Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>, 
+    Christoph Lameter <cl@linux.com>, Steven Rostedt <rostedt@goodmis.org>, 
+    Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+    Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, 
+    Julia Lawall <Julia.Lawall@inria.fr>, Jakub Kicinski <kuba@kernel.org>, 
+    "Jason A. Donenfeld" <Jason@zx2c4.com>, 
+    "Uladzislau Rezki (Sony)" <urezki@gmail.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Roman Gushchin <roman.gushchin@linux.dev>, 
+    Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
+    linux-kernel@vger.kernel.org, rcu@vger.kernel.org
+Subject: Re: [PATCH RFC 1/6] mm, slab: make caches with refcount of 0
+ unmergeable
+In-Reply-To: <20240715-b4-slab-kfree_rcu-destroy-v1-1-46b2984c2205@suse.cz>
+Message-ID: <0862b091-d5bd-1492-b12f-19657604eb54@google.com>
+References: <20240715-b4-slab-kfree_rcu-destroy-v1-0-46b2984c2205@suse.cz> <20240715-b4-slab-kfree_rcu-destroy-v1-1-46b2984c2205@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bogosity: Ham, tests=bogofilter, spamicity=0.000000, version=1.2.5
+Content-Type: text/plain; charset=US-ASCII
 
-On Sat, 20 Jul 2024 11:55:07 +0200
-Pali Roh=C3=A1r <pali@kernel.org> wrote:
+On Mon, 15 Jul 2024, Vlastimil Babka wrote:
 
-> On Saturday 20 July 2024 05:24:19 Andres Salomon wrote:
-> > Thanks for the quick feedback! Responses below.
-> >=20
-> > On Sat, 20 Jul 2024 10:40:19 +0200
-> > Pali Roh=C3=A1r <pali@kernel.org> wrote:
-> >  =20
-> > > Hello,
-> > >=20
-> > > I looked at your patch. I wrote some comments below. The main issue is
-> > > how to correctly interpret read token values.
-> > > =20
-[...]
-> > > > +
-> > > > +static ssize_t charge_type_show(struct device *dev,
-> > > > +		struct device_attribute *attr,
-> > > > +		char *buf)
-> > > > +{
-> > > > +	enum battery_charging_mode mode;
-> > > > +	ssize_t count =3D 0;
-> > > > +
-> > > > +	for (mode =3D DELL_BAT_MODE_STANDARD; mode < DELL_BAT_MODE_MAX; m=
-ode++) {
-> > > > +		if (battery_state[mode]) {
-> > > > +			count +=3D sysfs_emit_at(buf, count,
-> > > > +				mode =3D=3D bat_chg_current ? "[%s] " : "%s ",
-> > > > +				battery_state[mode]);
-> > > > +		}
-> > > > +	}
-> > > > +
-> > > > +	/* convert the last space to a newline */
-> > > > +	count--;
-> > > > +	count +=3D sysfs_emit_at(buf, count, "\n");   =20
-> > >=20
-> > > Here is missing protection in the case when number of valid modes is
-> > > zero, so count is 0 and buf was untouched.
-> > >  =20
-> >=20
-> > This will never be zero (based on the hardcoded value of DELL_BAT_MODE_=
-MAX), =20
->=20
-> Now I see. You are iterating over members of constant array battery_state=
-[].
-> I overlooked it and I thought that this iteration over mode values.
->=20
-> What about writing the for- conditions to be visible that you are
-> iterating over the array? E.g.
->=20
-> 	size_t i;
-> 	...
-> 	for (i =3D 0; i < ARRAY_SIZE(battery_state); i++) {
-> 		if (!battery_state[i])
-> 			continue;
-> 		count +=3D sysfs_emit_at(buf, count, i =3D=3D bat_chg_current ? "[%s] "=
- : "%s ", battery_state[i]);
-> 	}
-> 	...
->=20
-> This has an advantage that you do not depend on DELL_BAT_MODE_MAX value,
-> compiler will calculate upper bound automatically.
->=20
-> Or another way. You can define array of tokens, like it is done for
-> keyboard backlight. See how the array kbd_tokens[] is used.
->=20
-> With this approach you can completely get rid of the DELL_BAT_MODE_MAX.
->=20
+> Slab caches with refcount 0 are in the process of being destroyed so
+> it's undesirable for new caches to attempt merging with them. A
+> synchronous destruction happens under slab_mutex thus excluding
+> concurrent cache creation and merging. Full destruction of
+> SLAB_TYPESAFE_BY_RCU caches might be delayed, but the cache is still
+> taken off the slab_caches list immediately, thus unreachable by cache
+> creation.
+> 
+> However a cache where __kmem_cache_shutdown() fails because it contains
+> objects that were not freed (due to a bug in the cache user) will be
+> left on the slab_caches list and might be considered for merging.
+> Also the following patches will introduce a possibility of a cache with
+> refcount 0 being temporarily reachable on the slab_list even in case of
+> no bugs, due to kfree_rcu() in flight.
+> 
+> For these reasons, prevent merging with caches that have zero refcount.
+> 
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 
-See below for a question about charge_type_store() if we get rid of
-DELL_BAT_MODE_MAX.
-
-> > but perhaps a static_assert or BUILD_BUG_ON to verify that the number of
-> > modes > 0? =20
->=20
-> I think it is not needed.
->=20
-> >    =20
-> > > > +
-> > > > +	return count;
-> > > > +}
-> > > > +
-> > > > +static ssize_t charge_type_store(struct device *dev,
-> > > > +		struct device_attribute *attr,
-> > > > +		const char *buf, size_t size)
-> > > > +{
-> > > > +	enum battery_charging_mode mode;
-> > > > +	const char *label;
-> > > > +	int ret =3D -EINVAL;
-> > > > +
-> > > > +	for (mode =3D DELL_BAT_MODE_STANDARD; mode < DELL_BAT_MODE_MAX; m=
-ode++) {
-> > > > +		label =3D battery_state[mode];
-> > > > +		if (label && sysfs_streq(label, buf))
-> > > > +			break;
-> > > > +	}
-> > > > +
-> > > > +	if (mode > DELL_BAT_MODE_NONE && mode < DELL_BAT_MODE_MAX) {
-> > > > +		ret =3D battery_charging_mode_set(mode);
-> > > > +		if (!ret) {
-> > > > +			bat_chg_current =3D mode;
-> > > > +			ret =3D size;
-> > > > +		}
-> > > > +	}
-> > > > +
-> > > > +	return ret;
-> > > > +}
-
-Here we're using DELL_BAT_MODE_MAX to determine if we failed to match
-any mode strings sent from the user. If we get rid of that, we're either
-going to have to use a separate variable (eg, 'bool matched =3D false;' and
-set it to true in case of a match), or iterate backwards (eg,
-for (mode =3D ARRAY_SIZE(battery_state); mode >=3D DELL_BAT_MODE_NONE; mode=
---) {
-	...
-}
-if (mode !=3D DELL_BAT_MODE_NONE) {
-	ret =3D battery_charging_mode_set(mode);
-
-
-Do you have a preference?
-
-
-[...]
-> > > > +static ssize_t charge_control_start_threshold_store(struct device =
-*dev,
-> > > > +		struct device_attribute *attr,
-> > > > +		const char *buf, size_t size)
-> > > > +{ =20
-> > [...]
-> >  =20
-> > > > +
-> > > > +static void __init dell_battery_init(struct device *dev)
-> > > > +{
-> > > > +	enum battery_charging_mode current_mode =3D DELL_BAT_MODE_NONE;
-> > > > +
-> > > > +	dell_battery_read_req(BAT_CUSTOM_MODE_TOKEN, (int *) &current_mod=
-e);
-> > > > +	if (current_mode !=3D DELL_BAT_MODE_NONE) {   =20
-> > >=20
-> > > I quite do not understand how is this code suppose to work.
-> > >=20
-> > > Why is there mix of custom kernel enum battery_charging_mode and retu=
-rn
-> > > value from Dell's API? =20
-> >=20
-> > This is from the original patch from Dell; tbh, I'm not sure. It does
-> > work, though. That is, current_mode ends up holding the correct value
-> > based on what was previously set, even if the charging mode is set from
-> > the BIOS.
-> >=20
-> > I just scanned through the libsmbios code to see what it's doing, and
-> > it appears to loop through every charging mode to check if its active.
-> > I'm not really sure that makes much more sense, so I'll try some more
-> > tests. =20
->=20
-> Keyboard backlight code (kbd_get_first_active_token_bit) is doing also
-> this type scan. If I remember correctly, for every keyboard backlight
-> token we just know the boolean value - if the token is set or not.
->=20
-> It would really nice to see what (raw) value is returned by the
-> dell_battery_read_req(token) function for every battery token and for
-> every initial state.
-
-I checked this. The BIOS sets the mode value in every related token
-location. I'm still not really sure what libsmbios is doing, but the
-kernel code seems to arbitrarily choose one of the token locations
-to read from. This makes sense to me now.
-
-In the BIOS when I set the mode to "ExpressCharge",
-this what I pulled for each token location:
-
-[    5.704651] dell-laptop dell-laptop: BAT_CUSTOM_MODE_TOKEN value: 2
-[    5.707015] dell-laptop dell-laptop: BAT_PRI_AC_MODE_TOKEN value: 2
-[    5.709114] dell-laptop dell-laptop: BAT_ADAPTIVE_MODE_TOKEN value: 2
-[    5.711041] dell-laptop dell-laptop: BAT_STANDARD_MODE_TOKEN value: 2
-[    5.713705] dell-laptop dell-laptop: BAT_EXPRESS_MODE_TOKEN value: 2
-
-Similar story when I set it to Custom (all were '5'), or Standard ('1').
-When I set it from linux as well, it changed all location values.
-
->=20
-> Because it is really suspicious if dell_battery_read_req() would return
-> value of the enum battery_charging_mode (as this is kernel enum).
->=20
->=20
-> Also another important thing. In past it was possible to buy from Dell
-> special batteries with long warranty (3+ years). I'm not sure if these
-> batteries are still available for end-user customers. With this type of
-> battery, it was not possible to change charging mode to ExpressCharge
-> (bios option was fade-out). I do not have such battery anymore, but I
-> would expect that the firmware disabled BAT_EXPRESS_MODE_TOKEN as mark
-> it as unavailable.
->=20
-> I think that we should scan list of available tokens, like it is done
-> for keyboard backlight in kbd_init_tokens(). And export via sysfs only
-> those battery modes for which there is available token.
-
-I agree, but I'm not seeing a way to do that right now given how the
-BIOS sets the mode. Maybe libsmbios has some clues...
-
-
-
-
-
---=20
-I'm available for contract & employment work, see:
-https://spindle.queued.net/~dilinger/resume-tech.pdf
+Acked-by: David Rientjes <rientjes@google.com>
 
