@@ -1,63 +1,58 @@
-Return-Path: <linux-kernel+bounces-258108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2CDE9383CD
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 09:41:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EB519383CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 09:49:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A3E11F21337
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 07:41:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53969B20F55
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 07:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70748F70;
-	Sun, 21 Jul 2024 07:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A218C13;
+	Sun, 21 Jul 2024 07:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UEpSI4Sk"
-Received: from msa.smtpout.orange.fr (msa-213.smtpout.orange.fr [193.252.23.213])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GYeJyCpa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2715D33E1;
-	Sun, 21 Jul 2024 07:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A0C1FBA;
+	Sun, 21 Jul 2024 07:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721547669; cv=none; b=A6sOkvdfQzk6TieYo9pBPX6wh8pOAU9iulomkrTY9SY+pT8iP1OcpiwRwuic8oapJVAtdeMTDSJ9x1gp1/dZaLBUo2VaeZNKq0SY8rpZOmM9k63NPaL2UPtSnId+YhmoM1XCKWgPZpg7l5VFybXJ5LQqf8Mm2M+av6uu+8hIl+I=
+	t=1721548158; cv=none; b=k97FFw/XtprTPzJUwG5yLCywnCXW2oyO/xusqcMKM7Ag46hpjOt7pNNR2LP9XlMGqsoeAQtc/4m28/C7KRkGGkvbSO7bE5y4aUh7iWei/ctnUO4BOpGmgseinXrzSOzn/t9mmbnrg1jplD0ZNXAucewqPgLvIArBwPNF1oOuq5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721547669; c=relaxed/simple;
-	bh=myooTmdDYWi3w4/BwipOyDPWqNI6T+1/xT+G+yICZtA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=auJ+B1LOMKHcZztwivXT5F2AkT5+TrdfDUCksY7TNWPBvxuxucjz0l6x7CD6se6R8+nXP/iet+08KNQgnRJU/uhusObu+eMP3py9P6f+JgfsFoR8OcPNWrO/Vl96/c3zkh5mDeMiUYDVMvjOhqLPH/YBZnI5ShR+naA/zlMQpwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UEpSI4Sk; arc=none smtp.client-ip=193.252.23.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id VRBmsszGLnYGvVRBms5oUi; Sun, 21 Jul 2024 09:41:02 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1721547662;
-	bh=0P+L+Gugv+wzdGvctc9kSUn+nQDPgO6wIWj+dXDwk3M=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=UEpSI4SkWxFHkRylyVr6QtXi3vte6IoJivFq98RMQvM8JZwomp6PtWnn/Bb2ad/Cb
-	 aU9RPvVRMpAN0yY91hhL3H+DmcHhw+pm/s0D7gEs9tKc5LCZ3sfvTe2PTfgNDe0SZ6
-	 RkymXfA3zeoqpbolNNxytKP9KaUZzRSr5+NME56azOgS2VOT92Hto8Hcta8TSQVZXj
-	 8nmIdcH+6/VBBLW8sHFkKjJYPo9KFaN53q8i/rC1OFSaSjzUaxPfI4cQAkMdxIRsas
-	 NHGCVnblCOiC+wbJhV/F92ywA/edxhfW+xSWPdvexiSPyXPHTJ/JB9QW+755GJt/FJ
-	 4hCfIC9prkVQQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 21 Jul 2024 09:41:02 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>,
-	Kalle Valo <kvalo@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-wireless@vger.kernel.org,
-	brcm80211@lists.linux.dev,
-	brcm80211-dev-list.pdl@broadcom.com
-Subject: [PATCH v2] brcmfmac: fwsignal: Use struct_size() to simplify brcmf_fws_rxreorder()
-Date: Sun, 21 Jul 2024 09:40:19 +0200
-Message-ID: <f4ca6b887ca1290c71e76247218adea4d1c42442.1721547559.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1721548158; c=relaxed/simple;
+	bh=Um/A0eAivXBRLHLeq9NT1+jKAkq0WcisRsDCu/nYAY8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tfJEE38gwnDqLG665kKswNw60RY0OQqICe/cuxEXWR8/wl47L0gin8XPgTCtCM259IKWfgP/9kGgWSuFiUy0v9IzLKGcjnyYge3vWBeZoKCj72t7yscjn3FMEVL9dJE+Ic55H3Zzr8LqRIyfq28evEg7gggnwoi9qokacqzYnn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GYeJyCpa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06D08C116B1;
+	Sun, 21 Jul 2024 07:49:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721548157;
+	bh=Um/A0eAivXBRLHLeq9NT1+jKAkq0WcisRsDCu/nYAY8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GYeJyCpazvYSydCJFTLxor4uMzGp3Lfk2DZJlBK3swdo6azutx8FdopcvLaNOXDAA
+	 x989grVY5kTH10SxUXp/ZAG5L/dz9bGecnhJj8IFO6HBVAH5NAsa9idv1aOD33jtmQ
+	 hdbyLqkEu9B/fATLyYxwfIGNsYIM7mrAJ3wrKdjO2yyI9u+yVMJawJHGM4VVaCw2gD
+	 6wJ/N8R22jVxamxroFhlrvEgrrHjMnQjOxXKaBo1gDWm8cdMpnXO9IBF1Q5Ibk2avk
+	 bAKyNsBGniKEjZq98+D7JRPkwzgmfD+T6zREf8q0vtmFOSNklNRKmTarguUMNGZEc+
+	 CdQkbD8uxpAWQ==
+From: Leon Romanovsky <leon@kernel.org>
+To: Christoph Hellwig <hch@lst.de>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Easwar Hariharan <eahariha@linux.microsoft.com>,
+	linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v3 0/2] DMA IOMMU static calls
+Date: Sun, 21 Jul 2024 10:49:09 +0300
+Message-ID: <cover.1721547902.git.leon@kernel.org>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -67,98 +62,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In the "struct brcmf_ampdu_rx_reorder", change the 'pktslots' field into
-flexible array.
+Changelog:
+v3:
+ * Changed coding style as Christoph asked
+ * Moved debug WARN_ON check to dma_set_mask.
+ * Slightly updated commit messages
+ * Added Greg to the CC list
+v2: https://lore.kernel.org/all/cover.1721219730.git.leon@kernel.org/
+ * Ditched dma_ops flag in favor of field in struct device (suggested by
+   Christoph)
+ * Removed CONFIG_DMA_OPS select from dma-iommu.c Kconfig
+ * Removed flags field which exist only in default IOMMU
+v1: https://lore.kernel.org/all/cover.1721041611.git.leon@kernel.org/
+ * Dropped extra layer and called directly to iommu_dma_* functions
+ * Added unmap_page and unmap_sg to dummy ops
+ * Converted all dma-mapping calls to use iommu directly
+ * Updated commit messages
+v0:
+https://lore.kernel.org/all/98d1821780028434ff55b5d2f1feea287409fbc4.1720693745.git.leon@kernel.org/
 
-It saves the size of a pointer when the memory is allocated and avoids
-an indirection when the array is used.
-It also removes the usage of a pointer arithmetic and saves a few lines of
-code.
+Leon Romanovsky (2):
+  dma: call unconditionally to unmap_page and unmap_sg callbacks
+  dma: add IOMMU static calls with clear default ops
 
-Finally, struct_size() can be used. It is not a must have here, because
-it is easy to see that buf_size can not overflow, but still, it is a good
-practice.
+ MAINTAINERS                 |   1 +
+ drivers/iommu/Kconfig       |   1 -
+ drivers/iommu/dma-iommu.c   | 127 +++++++++++----------------
+ include/linux/device.h      |   5 ++
+ include/linux/dma-map-ops.h |  33 ++++---
+ include/linux/iommu-dma.h   | 169 ++++++++++++++++++++++++++++++++++++
+ kernel/dma/dummy.c          |  23 +++++
+ kernel/dma/mapping.c        |  84 +++++++++++++++---
+ 8 files changed, 338 insertions(+), 105 deletions(-)
+ create mode 100644 include/linux/iommu-dma.h
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
----
-Compile tested only
-
-Changes in v2:
-  - fix description of the 'pktslots' field   [Arend van Spriel]
-  - add A-b tag
-
-v1: https://lore.kernel.org/all/bd3ad239c4d1c49b94c1ba93e48c09df98ef86cb.1720951805.git.christophe.jaillet@wanadoo.fr/
----
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h   | 4 ++--
- .../net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c   | 8 ++------
- 2 files changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h
-index ea76b8d33401..39226b9c0fa8 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h
-@@ -48,20 +48,20 @@
- /**
-  * struct brcmf_ampdu_rx_reorder - AMPDU receive reorder info
-  *
-- * @pktslots: dynamic allocated array for ordering AMPDU packets.
-  * @flow_id: AMPDU flow identifier.
-  * @cur_idx: last AMPDU index from firmware.
-  * @exp_idx: expected next AMPDU index.
-  * @max_idx: maximum amount of packets per AMPDU.
-  * @pend_pkts: number of packets currently in @pktslots.
-+ * @pktslots: array for ordering AMPDU packets.
-  */
- struct brcmf_ampdu_rx_reorder {
--	struct sk_buff **pktslots;
- 	u8 flow_id;
- 	u8 cur_idx;
- 	u8 exp_idx;
- 	u8 max_idx;
- 	u8 pend_pkts;
-+	struct sk_buff *pktslots[];
- };
- 
- /* Forward decls for struct brcmf_pub (see below) */
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
-index 36af81975855..0949e7975ff1 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
-@@ -1673,7 +1673,6 @@ void brcmf_fws_rxreorder(struct brcmf_if *ifp, struct sk_buff *pkt)
- 	struct sk_buff_head reorder_list;
- 	struct sk_buff *pnext;
- 	u8 flags;
--	u32 buf_size;
- 
- 	reorder_data = ((struct brcmf_skb_reorder_data *)pkt->cb)->reorder;
- 	flow_id = reorder_data[BRCMF_RXREORDER_FLOWID_OFFSET];
-@@ -1708,15 +1707,13 @@ void brcmf_fws_rxreorder(struct brcmf_if *ifp, struct sk_buff *pkt)
- 	}
- 	/* from here on we need a flow reorder instance */
- 	if (rfi == NULL) {
--		buf_size = sizeof(*rfi);
- 		max_idx = reorder_data[BRCMF_RXREORDER_MAXIDX_OFFSET];
- 
--		buf_size += (max_idx + 1) * sizeof(pkt);
--
- 		/* allocate space for flow reorder info */
- 		brcmf_dbg(INFO, "flow-%d: start, maxidx %d\n",
- 			  flow_id, max_idx);
--		rfi = kzalloc(buf_size, GFP_ATOMIC);
-+		rfi = kzalloc(struct_size(rfi, pktslots, max_idx + 1),
-+			      GFP_ATOMIC);
- 		if (rfi == NULL) {
- 			bphy_err(drvr, "failed to alloc buffer\n");
- 			brcmf_netif_rx(ifp, pkt);
-@@ -1724,7 +1721,6 @@ void brcmf_fws_rxreorder(struct brcmf_if *ifp, struct sk_buff *pkt)
- 		}
- 
- 		ifp->drvr->reorder_flows[flow_id] = rfi;
--		rfi->pktslots = (struct sk_buff **)(rfi + 1);
- 		rfi->max_idx = max_idx;
- 	}
- 	if (flags & BRCMF_RXREORDER_NEW_HOLE)  {
 -- 
 2.45.2
 
