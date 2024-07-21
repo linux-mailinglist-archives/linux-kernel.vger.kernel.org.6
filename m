@@ -1,156 +1,205 @@
-Return-Path: <linux-kernel+bounces-258232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53769938553
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 17:40:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8CF0938556
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 17:45:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7AB81F21171
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 15:40:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 901512810BE
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 15:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8696E16727B;
-	Sun, 21 Jul 2024 15:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095CD167D95;
+	Sun, 21 Jul 2024 15:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=free.fr header.i=@free.fr header.b="NkdDUR54"
-Received: from smtp4-g21.free.fr (smtp4-g21.free.fr [212.27.42.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="APxJwNFb"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3DC2907;
-	Sun, 21 Jul 2024 15:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA46150980
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 15:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721576426; cv=none; b=pEtK+vy0aSiD2f1eiksq7bkv4budoqPeCpzenfN6k9ISZBSa1jswh75ANXDq4KDjuTpN/6y/AtfK8pdYPN9PLB96iX4nvlK74gkpEglSPtMMghRJreA1zOpN3n9i0yWYLC5IwM4msTOUw6jjbUG05kkwmI/tZvnAdBJNV2BIKfk=
+	t=1721576714; cv=none; b=FRdYjS8mX1ALcIXwIP53AiJv6iaxo04KNdDXW6t3ecdFXddTclwaMbQERIVcI7oVlHvp02s5tvRREc1D3IbYLTptN5i8SwGTkDU/K1fT9+C0Co4bL92g1PUhNSWeo4WS84B+nENmUzmwgLiejZj4fmoNUxCrPnSWtw1j3N3wNpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721576426; c=relaxed/simple;
-	bh=sCm+3ajUXc1cFZrI0mjG4sX5WmpX3phQ/BWF3fE4vKg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Vug+m2y0JgO4sASMamNfHYwd04AEtY2pdeIKExkcpf/KNjEqNNY6IUhSKz6ZsdDtR834yK8JzRNCi9LDTOuvulekLKIizH9ZK7ufEyyN/ng6ro5bN3UX0DuXnvbJpcmBH2zI6wxXp57GGygMdXum2najSp8NN/o/aperAjgcrdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=free.fr; spf=pass smtp.mailfrom=free.fr; dkim=pass (2048-bit key) header.d=free.fr header.i=@free.fr header.b=NkdDUR54; arc=none smtp.client-ip=212.27.42.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=free.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=free.fr
-Received: from fedora.local (unknown [82.64.9.191])
-	(Authenticated sender: jau@free.fr)
-	by smtp4-g21.free.fr (Postfix) with ESMTPSA id 812E419F745;
-	Sun, 21 Jul 2024 17:40:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
-	s=smtp-20201208; t=1721576421;
-	bh=sCm+3ajUXc1cFZrI0mjG4sX5WmpX3phQ/BWF3fE4vKg=;
-	h=From:Date:Subject:To:Cc:From;
-	b=NkdDUR544zaqnQO6GHvHKE3DOopE7+7pGHOUMS7yiqkwsKmDNqnf5NAi9rvlIYP/9
-	 0/Nn0G/vgkJhRksCSlHpLtyVcx9J8gMtfveX31eG/1lY0gVZlr4FNGQIvCfAOVFd+6
-	 DVelVOsp4PR0xG0jsuuawUwkJfrQbSKirsCj2FJEB62Ado8c1sk5WWzeIzceLUCfOe
-	 +wtgDBf30IoIYD1itFgUiQGI4cwvoSTgtn+cyVSjp5WcLHSe1/WYdf6QC/0NlmxUc1
-	 AToEwh7Pl/k3oMs2jWAr/0MDUHck1Y3kkahmpqTx5pa8voY3ObntD0N2Gpvvjt4aZN
-	 sbm19sHaQGwcQ==
-From: Jerome Audu <jau@free.fr>
-Date: Sun, 21 Jul 2024 17:40:02 +0200
-Subject: [PATCH] ASoC: sti: add missing probe entry for player and reader
+	s=arc-20240116; t=1721576714; c=relaxed/simple;
+	bh=D3p2QaYgcA3SxkvFQ0hiQVrQarKn3r3ZEkug9rLRc9M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XahXeM3rPN2nbCnyCNIPp4VkR12Vh4pImXi1kl/SLQUiMPWYC9qo8mOnjz0hseJtNg//kjaXs+Ycs4LhcGQDP4Ogj4neM37hmsLkzPxZFzHuJzcv5w/o3Ys2qt9+adSG8EU+yNE1/N/0pqI6q711PJMdxibJQsCbLP2f1o6E1PU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=APxJwNFb; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ee910d6a9eso29016741fa.1
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 08:45:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1721576710; x=1722181510; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6V+rPPxTJkY1lpgNajZBDBI+gSNOjf1tlrmrZu0K21g=;
+        b=APxJwNFb9jOYIW79zxF1+gJrNV2B2GlHFkvUyfSa8WzfiGsG7dsw/BDxW1sLPDTvi4
+         A4hWOv2lBhtCBYxC7dJL8KFx6dKJiGQda6WTvVOl5N4YDxhuSzywpS1GNKfQnAY/sj3t
+         noQjZtqkF/I6O9t3n68yepObtiopdQFtD4oQpURlRtMvP1ZPnQ8sMYwSXoplD3fSK2Pw
+         d20sCTpeRAtRWnKiuUncJ6vbU/0UZzTtfukNPOhRtb0h/VUa3KOqhgj8Ccv/N4Wmtv54
+         eZnl7eExSvHsRIu8pqKB0P/w2HBpNoa3HwOFJiIcED1Ed5a5X4qYXo1WNjs++K0DubCA
+         scmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721576710; x=1722181510;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6V+rPPxTJkY1lpgNajZBDBI+gSNOjf1tlrmrZu0K21g=;
+        b=rFOt9NFo8VOxfBHrkcW3ns9yFV1peLg+agNtsekPN2+QO2tK7gd0vTIpkOBW5Q02/P
+         H1S8FL9nEqxpp8otfNa1Y5LTkH65MIW6SfIgJ5I0TKdGe1CmYMZ9fihcUzXRBn2tIxES
+         n3cmevGzsjPCujhjUFOChqmzuU24H1OOYj/7cM0y3UfXqdK4Wtj3MQrIGPXCrgdiQLX4
+         nLg9feE4XkGPOwaH3nDe1LYelo9VYyhUKIuUfPvNIbTxKSiApgyBC0/+N9QKILkCYWVu
+         B+P+DsJTgCEN6VSIErlnyRhBb1u4IEAEXdbW/+CDiUb/Ti59mS1Jw81ZnPVFwiIxzuqM
+         zxqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXravRI3nUHM0W+w2wZAuCfxMjjc2WJqbxLPxvicn+NZgPJvrbGfcjqSz55JiWoF08iB92VVGVnAKtRG9oNtoqv4fg/XfxF6Ix5z621
+X-Gm-Message-State: AOJu0YzVOQfmV/6MqWrwSkJ4aOgBMbLeTFfUh68YEU3Djpgvm6ssRGul
+	aKF3Opbw2ei6k2gvuTdjnq8mVJWiENkC1MYQVsZk7aJxCsR9lS+eYVrIs3nzWnFhpFSsi7EYk9g
+	bHesZFe4tSZ1tTcsmP133DzGLyb2MbE5AtmGpsg==
+X-Google-Smtp-Source: AGHT+IHJJ78YGiZuqAl+fzdHUOms5HRzmKL23l2X9Zy/P5DZNo7tMea3N8NMNixSrmz96ThXLs/lsMgaRB6wE8WDgMU=
+X-Received: by 2002:a2e:95cd:0:b0:2ef:22a1:7d8b with SMTP id
+ 38308e7fff4ca-2ef22a18602mr9909821fa.4.1721576710231; Sun, 21 Jul 2024
+ 08:45:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240721-sti-audio-fix-v1-1-a8b1ecf61cb4@free.fr>
-X-B4-Tracking: v=1; b=H4sIANErnWYC/x2MQQqAIBAAvyJ7bkFNEPpKdLBcay8aWhGIf086z
- sBMhUKZqcAkKmR6uHCKHdQgYDtc3AnZdwYttZFWKywXo7s9Jwz8ohqtCSGs2pCF3pyZuv5/89L
- aByeqMexfAAAA
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jerome Audu <jau@free.fr>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1721576412; l=3557;
- i=jau@free.fr; s=20240721; h=from:subject:message-id;
- bh=sCm+3ajUXc1cFZrI0mjG4sX5WmpX3phQ/BWF3fE4vKg=;
- b=tQSvHV+QaJADU8qlO9HVimwakbjAkY3lV+9+i73x9xk3PistmuEWmIqgAJ/jHIqCp9saca/mY
- 2bBJYNN6we6CzUDqz41VhIAnmWznGOA/VVAq5uneuL+QrlXDWsEQoKc
-X-Developer-Key: i=jau@free.fr; a=ed25519;
- pk=CfXLqyNBjY9A4RDoxPChE7qFvTjVyy0rJNTfI4JQ0dI=
+References: <20240719081651.24853-1-eric.lin@sifive.com> <2C7FF61F-2165-47D4-83A4-B0230D50844D@linux.vnet.ibm.com>
+In-Reply-To: <2C7FF61F-2165-47D4-83A4-B0230D50844D@linux.vnet.ibm.com>
+From: Eric Lin <eric.lin@sifive.com>
+Date: Sun, 21 Jul 2024 23:44:59 +0800
+Message-ID: <CAPqJEFrkurD9B9smy908Y-z-f6ckv+ZFJzo6ptwXmxD0ru5=CA@mail.gmail.com>
+Subject: Re: [PATCH] perf pmus: Fix duplicate events caused segfault
+To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@arm.com>, 
+	linux-perf-users <linux-perf-users@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	vincent.chen@sifive.com, greentime.hu@sifive.com, 
+	Samuel Holland <samuel.holland@sifive.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Restores the audio functionality that was broken
-since Linux version 6.6.y by adding the missing probe
-functions for the player and reader components.
+Hi Athira,
 
-Fixes: 9f625f5e6cf9 ("ASoC: sti: merge DAI call back functions into ops")
-Signed-off-by: Jerome Audu <jau@free.fr>
----
-Specifically, the probe function in `sound/soc/sti/sti_uniperif.c:415` is being replaced by another probe function located at `sound/soc/sti/sti_uniperif.c:453`, which should instead be derived from the player and reader components. My patch correctly reinserts the missing probe entries, restoring the intended functionality.
+On Sat, Jul 20, 2024 at 4:35=E2=80=AFPM Athira Rajeev
+<atrajeev@linux.vnet.ibm.com> wrote:
+>
+>
+>
+> > On 19 Jul 2024, at 1:46=E2=80=AFPM, Eric Lin <eric.lin@sifive.com> wrot=
+e:
+> >
+> > Currently, if vendor JSON files have two duplicate event names,
+> > the "perf list" command will trigger a segfault.
+> >
+> > In commit e6ff1eed3584 ("perf pmu: Lazily add JSON events"),
+> > pmu_events_table__num_events() gets the number of JSON events
+> > from table_pmu->num_entries, which includes duplicate events
+> > if there are duplicate event names in the JSON files.
+>
+> Hi Eric,
+>
+> Let us consider there are duplicate event names in the JSON files, say :
+>
+> metric.json with: EventName as pmu_cache_miss, EventCode as 0x1
+> cache.json with:  EventName as pmu_cache_miss, EventCode as 0x2
+>
+> If we fix the segfault and proceed, still =E2=80=9Cperf list=E2=80=9D wil=
+l list only one entry for pmu_cache_miss with may be 0x1/0x2 as event code =
+?
+> Can you check the result to confirm what =E2=80=9Cperf list=E2=80=9D will=
+ list in this case ? If it=E2=80=99s going to have only one entry in perf l=
+ist, does it mean there are two event codes for pmu_cache_miss and it can w=
+ork with either of the event code ?
+>
 
-The patch modifies the following files:
-- `sound/soc/sti/sti_uniperif.c`: Changes the visibility of `sti_uniperiph_dai_probe` to non-static.
-- `sound/soc/sti/uniperif.h`: Adds the declaration of `sti_uniperiph_dai_probe`.
-- `sound/soc/sti/uniperif_player.c`: Adds `probe` function to `uni_player_dai_ops`.
-- `sound/soc/sti/uniperif_reader.c`: Adds `probe` function to `uni_reader_dai_ops`.
+Sorry for the late reply.
+Yes, I've checked if there are duplicate pmu_cache_miss events in the
+JSON files, the perf list will have only one entry in perf list.
 
-This ensures the correct `probe` functions are utilized, thus fixing the audio regression. 
----
- sound/soc/sti/sti_uniperif.c    | 2 +-
- sound/soc/sti/uniperif.h        | 1 +
- sound/soc/sti/uniperif_player.c | 1 +
- sound/soc/sti/uniperif_reader.c | 1 +
- 4 files changed, 4 insertions(+), 1 deletion(-)
+> If it happens to be a mistake in json file to have duplicate entry with d=
+ifferent event code (ex: with some broken commit), I am thinking if the bet=
+ter fix is to keep only the valid entry in json file ?
+>
 
-diff --git a/sound/soc/sti/sti_uniperif.c b/sound/soc/sti/sti_uniperif.c
-index ba824f14a39c..a7956e5a4ee5 100644
---- a/sound/soc/sti/sti_uniperif.c
-+++ b/sound/soc/sti/sti_uniperif.c
-@@ -352,7 +352,7 @@ static int sti_uniperiph_resume(struct snd_soc_component *component)
- 	return ret;
- }
- 
--static int sti_uniperiph_dai_probe(struct snd_soc_dai *dai)
-+int sti_uniperiph_dai_probe(struct snd_soc_dai *dai)
- {
- 	struct sti_uniperiph_data *priv = snd_soc_dai_get_drvdata(dai);
- 	struct sti_uniperiph_dai *dai_data = &priv->dai_data;
-diff --git a/sound/soc/sti/uniperif.h b/sound/soc/sti/uniperif.h
-index 2a5de328501c..74e51f0ff85c 100644
---- a/sound/soc/sti/uniperif.h
-+++ b/sound/soc/sti/uniperif.h
-@@ -1380,6 +1380,7 @@ int uni_reader_init(struct platform_device *pdev,
- 		    struct uniperif *reader);
- 
- /* common */
-+int sti_uniperiph_dai_probe(struct snd_soc_dai *dai);
- int sti_uniperiph_dai_set_fmt(struct snd_soc_dai *dai,
- 			      unsigned int fmt);
- 
-diff --git a/sound/soc/sti/uniperif_player.c b/sound/soc/sti/uniperif_player.c
-index dd9013c47664..6d1ce030963c 100644
---- a/sound/soc/sti/uniperif_player.c
-+++ b/sound/soc/sti/uniperif_player.c
-@@ -1038,6 +1038,7 @@ static const struct snd_soc_dai_ops uni_player_dai_ops = {
- 		.startup = uni_player_startup,
- 		.shutdown = uni_player_shutdown,
- 		.prepare = uni_player_prepare,
-+		.probe = sti_uniperiph_dai_probe,
- 		.trigger = uni_player_trigger,
- 		.hw_params = sti_uniperiph_dai_hw_params,
- 		.set_fmt = sti_uniperiph_dai_set_fmt,
-diff --git a/sound/soc/sti/uniperif_reader.c b/sound/soc/sti/uniperif_reader.c
-index 065c5f0d1f5f..05ea2b794eb9 100644
---- a/sound/soc/sti/uniperif_reader.c
-+++ b/sound/soc/sti/uniperif_reader.c
-@@ -401,6 +401,7 @@ static const struct snd_soc_dai_ops uni_reader_dai_ops = {
- 		.startup = uni_reader_startup,
- 		.shutdown = uni_reader_shutdown,
- 		.prepare = uni_reader_prepare,
-+		.probe = sti_uniperiph_dai_probe,
- 		.trigger = uni_reader_trigger,
- 		.hw_params = sti_uniperiph_dai_hw_params,
- 		.set_fmt = sti_uniperiph_dai_set_fmt,
+Yes, I agree we should fix the duplicate events in vendor JSON files.
 
----
-base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
-change-id: 20240721-sti-audio-fix-1374fffb24e7
+According to this code snippet [1], it seems the perf tool originally
+allowed duplicate events to exist and it will skip the duplicate
+events not shown on the perf list.
+However, after this commit e6ff1eed3584 ("perf pmu: Lazily add JSON
+events"),  if there are two duplicate events, it causes a segfault.
 
-Best regards,
--- 
-Jerome Audu <jau@free.fr>
+Can I ask, do you have any suggestions? Thanks.
 
+[1] https://github.com/torvalds/linux/blob/master/tools/perf/util/pmus.c#L4=
+91
+
+Regards,
+Eric Lin
+
+> Thanks
+> Athira
+>
+> >
+> > perf_pmu__for_each_event() adds JSON events to the pmu->alias
+> > list and copies sevent data to the aliases array. However, the
+> > pmu->alias list does not contain duplicate events, as
+> > perf_pmu__new_alias() checks if the name was already created.
+> >
+> > When sorting the alias data, if there are two duplicate events,
+> > it causes a segfault in cmp_sevent() due to invalid aliases in
+> > the aliases array.
+> >
+> > To avoid such segfault caused by duplicate event names in the
+> > JSON files, the len should be updated before sorting the aliases.
+> >
+> > Fixes: e6ff1eed3584 ("perf pmu: Lazily add JSON events")
+> > Signed-off-by: Eric Lin <eric.lin@sifive.com>
+> > ---
+> > tools/perf/util/pmus.c | 5 +++--
+> > 1 file changed, 3 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
+> > index b9b4c5eb5002..e38c3fd4d1ff 100644
+> > --- a/tools/perf/util/pmus.c
+> > +++ b/tools/perf/util/pmus.c
+> > @@ -443,7 +443,7 @@ void perf_pmus__print_pmu_events(const struct print=
+_callbacks *print_cb, void *p
+> > {
+> > struct perf_pmu *pmu;
+> > int printed =3D 0;
+> > - int len;
+> > + size_t len, j;
+> > struct sevent *aliases;
+> > struct events_callback_state state;
+> > bool skip_duplicate_pmus =3D print_cb->skip_duplicate_pmus(print_state)=
+;
+> > @@ -474,8 +474,9 @@ void perf_pmus__print_pmu_events(const struct print=
+_callbacks *print_cb, void *p
+> > perf_pmu__for_each_event(pmu, skip_duplicate_pmus, &state,
+> > perf_pmus__print_pmu_events__callback);
+> > }
+> > + len =3D state.index;
+> > qsort(aliases, len, sizeof(struct sevent), cmp_sevent);
+> > - for (int j =3D 0; j < len; j++) {
+> > + for (j =3D 0; j < len; j++) {
+> > /* Skip duplicates */
+> > if (j > 0 && pmu_alias_is_duplicate(&aliases[j], &aliases[j - 1]))
+> > continue;
+> > --
+> > 2.43.2
+> >
+> >
+>
 
