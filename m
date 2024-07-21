@@ -1,430 +1,444 @@
-Return-Path: <linux-kernel+bounces-258325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84C62938663
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 00:09:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DF0F93866B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 00:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B96A61C2083D
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 22:09:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 665211C20C96
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 22:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D734716C691;
-	Sun, 21 Jul 2024 22:08:47 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2207616B396;
+	Sun, 21 Jul 2024 22:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="xVzRK0cQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE3F16A94A
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 22:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8797C8D1;
+	Sun, 21 Jul 2024 22:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721599726; cv=none; b=PJ7rwHv9k+2YejLq4jHEQpTrh6P0wobIsJ3SHr2iXuqj1OBt4k4yvcc3SKwG40h2+He1zg4hmFCgE7F9l2HsGE9i4kMsqrGfjxnLkEpunp/X+2FR4l9UuqKukvRQd1u94f/PFurIpMLxBrji49VtbIZvcTe9o9u+iUPZ73LC3cc=
+	t=1721599814; cv=none; b=rcYSpHccuOZHJ7rdfIB4+7D2kUkT0UWwvgknijaJXlxbwZGYBoa6+kB7gTCGuMeKkiFJJaN/Wpffy13jkQQWOwVqAqIjU2EB2jfmbzldw/m0mJgynhudVPY1fIdbKKeAIYnr4TcBteycvpysTlYLyUIbVuO+79EqJsmy9FW0sLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721599726; c=relaxed/simple;
-	bh=Gbo23GU2aXZiDHNe+5ZhGXApgZrPZaa+NsChlxWVQkE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lWbsuO4+X8ikhVVfMhUWj/l2RGudilOaHb5nOcfgIBdi+pVlNzDDoykxKJoeFy3Bi2NQ4vYppkPkqCQu+LA5a/fXofUSHUqdQDRfnV1AQ0ho8PKMxqspHAT71RGXJ5rzExgPSoAvxHi5ww0g5Y6MJ3MULgaFLASpGfHBQAef8LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1sVejC-00032v-UZ; Mon, 22 Jul 2024 00:08:26 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1sVej8-001Esa-BP; Mon, 22 Jul 2024 00:08:22 +0200
-Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
-	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1sVej8-00FrrZ-11;
-	Mon, 22 Jul 2024 00:08:22 +0200
-From: Michael Grzeschik <m.grzeschik@pengutronix.de>
-Date: Mon, 22 Jul 2024 00:08:19 +0200
-Subject: [PATCH v7 3/3] tools: usb: p9_fwd: add usb gadget packet forwarder
- script
+	s=arc-20240116; t=1721599814; c=relaxed/simple;
+	bh=rh4gZJla1OqLb5Q9pFch1Wg+OntzQAAQUDG06Z7CApU=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=F6il0PpAlPGWnG0D+9QIDtKkq8YV8gVHMriErJ24rjllyP8n8KfdnJI3h8dp3Ak3T4nXMfIuh85X7ATGFYiL31RHO3bKmwsVx+J8malNfdjqU/1O0rMwNkqtQPYQOIrDBFBiJ0tCQcXhzj7ZuOSTlUvlFhHMj6PGyxd2AlxATB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=xVzRK0cQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BEF7C116B1;
+	Sun, 21 Jul 2024 22:10:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1721599814;
+	bh=rh4gZJla1OqLb5Q9pFch1Wg+OntzQAAQUDG06Z7CApU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=xVzRK0cQk1p7u27TdsFKm6RACQuMvFSeE6iIpRE9tgXYZ28DcUL8LZruXOxGVUCFO
+	 6Ye/CdiRfgtDSErMhC3cF1ZRywnEKO9aBlBD4/cQQeAvuwtZ4I8xImsRu2Ac4m1guc
+	 wTMZ3HzlB/1CbrdzF0jJkGeV5m+/t+VObnORTXsg=
+Date: Sun, 21 Jul 2024 15:10:13 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ mm-commits@vger.kernel.org
+Subject: [GIT PULL] non-MM updates for 6.11-rc1
+Message-Id: <20240721151013.b9b331ce79f5f60c54c69636@linux-foundation.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240116-ml-topic-u9p-v7-3-3a1eeef77fbe@pengutronix.de>
-References: <20240116-ml-topic-u9p-v7-0-3a1eeef77fbe@pengutronix.de>
-In-Reply-To: <20240116-ml-topic-u9p-v7-0-3a1eeef77fbe@pengutronix.de>
-To: Eric Van Hensbergen <ericvh@kernel.org>, 
- Latchesar Ionkov <lucho@ionkov.net>, 
- Dominique Martinet <asmadeus@codewreck.org>, 
- Christian Schoenebeck <linux_oss@crudebyte.com>, 
- Jonathan Corbet <corbet@lwn.net>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andrzej Pietrasiewicz <andrzej.p@collabora.com>, v9fs@lists.linux.dev, 
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-usb@vger.kernel.org, kernel@pengutronix.de, 
- Michael Grzeschik <m.grzeschik@pengutronix.de>, 
- Jan Luebbe <jlu@pengutronix.de>
-X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=12472;
- i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
- bh=Gbo23GU2aXZiDHNe+5ZhGXApgZrPZaa+NsChlxWVQkE=;
- b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBmnYbVQCX9dXQIDLbRuQn4kr8nWejEBSr+exOgC
- Om7Z2fcqQ+JAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZp2G1QAKCRC/aVhE+XH0
- q3xnD/9aemIP0k8bxa+3Q4+X0uIAdb0y3lXMcN05olPqwupNssu4i1jrNyEu4d955hLqX40IzCs
- q60qWevzb1hcFIxAxSSiaVANZ98BOmkBSLd3UgAGm/1kkAc19RBahirS6qMCwBrinC1joz2cRq3
- v7Wo2nn9n3lDJjurSuCj49zoriV8F5TLfvtRLVXPn3Z6nja/IsWU/9wv9YePz14vUgUDqoqj4Kj
- cdfq3x7tSgf/Q9BqkL/z9Dn34ONf1T4+guU37TPftU6xHoo65VlHr4q0XFwfAYyqjosFms7i0PK
- kuvUWuMPezHlZaKk0+u1UL+AiH6DNo4Ky/Vmaw2u5cORovomyoJfARAUaXIMVLMrgl2GsOC/ncR
- nrTVI8TN3y91JDZO8eUgOyV5J0MYHMU/BmbjOmqAWC+jVHU0/cmzRC1MxLBC9Wl4pUxzGByhSne
- btW3y3FKz4TqlL3sMSEkvaBDH7RWrLnuCqWO+a84AKmBvu2zodJsSGSPTAXjLLDooB/jWSpsTHw
- kCaYkc+lL/1RaiqKURMUp3La9sbgLRGNMfv3zmIXKh6B1wa3HiJmYcR4yKQvucQaoZSPlhxllpS
- 2+3xVL3/T3aAvXj88fpsEfWzhFVge4DTO26iI+a+MsV4DgsjHQ7x9jBzWecV4Su2iZwshzRgnPg
- TYTlmdM97lZwXVg==
-X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
- fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-This patch is adding an small python tool to forward 9pfs requests
-from the USB gadget to an existing 9pfs TCP server. Since currently all
-9pfs servers lack support for the usb transport this tool is an useful
-helper to get started.
 
-Refer the Documentation section "USBG Example" in
-Documentation/filesystems/9p.rst on how to use it.
+Linus, please pull this batch of other-than-MM updates for this
+development cycle, thanks.
 
-Signed-off-by: Jan Luebbe <jlu@pengutronix.de>
-Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
 
----
-v6 -> v7: -
-v5 -> v6:
-  - set path parameter to None when unused
-v4 -> v5:
-  - updated documentation for new subcommands list/connect
-  - run ruff format
-  - make vid and pid parameterized
-  - add list as subcommand to scan for devices
-  - move connect to extra subcommand
-v3 -> v4: -
-v2 -> v3: -
-v1 -> v2:
-  - added usbg 9pfs detailed instructions to 9p.rst doc
----
- Documentation/filesystems/9p.rst |  41 +++++++
- tools/usb/p9_fwd.py              | 243 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 284 insertions(+)
+I'm seeing three conflicts during a test merge.  I'd incorrectly
+attributed these to the mm-stble branch but these are actually issues
+in this mm-nonmm-stable pull.  Those, along with their linux-next
+resolutions are:
 
-diff --git a/Documentation/filesystems/9p.rst b/Documentation/filesystems/9p.rst
-index 10cf79dc287f8..2cc85f3e8659f 100644
---- a/Documentation/filesystems/9p.rst
-+++ b/Documentation/filesystems/9p.rst
-@@ -67,6 +67,47 @@ To mount a 9p FS on a USB Host accessible via the gadget as root filesystem::
- where <device> is the tag associated by the usb gadget transport.
- It is defined by the configfs instance name.
- 
-+USBG Example
-+============
-+
-+The USB host exports a filesystem, while the gadget on the USB device
-+side makes it mountable.
-+
-+Diod (9pfs server) and the forwarder are on the development host, where
-+the root filesystem is actually stored. The gadget is initialized during
-+boot (or later) on the embedded board. Then the forwarder will find it
-+on the USB bus and start forwarding requests.
-+
-+In this case the 9p requests come from the device and are handled by the
-+host. The reason is that USB device ports are normally not available on
-+PCs, so a connection in the other direction would not work.
-+
-+When using the usbg transport, for now there is no native usb host
-+service capable to handle the requests from the gadget driver. For
-+this we have to use the extra python tool p9_fwd.py from tools/usb.
-+
-+Just start the 9pfs capable network server like diod/nfs-ganesha e.g.:
-+
-+        $ diod -f -n -d 0 -S -l 0.0.0.0:9999 -e $PWD
-+
-+Optionaly scan your bus if there are more then one usbg gadgets to find their path:
-+
-+        $ python $kernel_dir/tools/usb/p9_fwd.py list
-+
-+        Bus | Addr | Manufacturer     | Product          | ID        | Path
-+        --- | ---- | ---------------- | ---------------- | --------- | ----
-+          2 |   67 | unknown          | unknown          | 1d6b:0109 | 2-1.1.2
-+          2 |   68 | unknown          | unknown          | 1d6b:0109 | 2-1.1.3
-+
-+Then start the python transport:
-+
-+        $ python $kernel_dir/tools/usb/p9_fwd.py --path 2-1.1.2 connect -p 9999
-+
-+After that the gadget driver can be used as described above.
-+
-+One use-case is to use it as an alternative to NFS root booting during
-+the development of embedded Linux devices.
-+
- Options
- =======
- 
-diff --git a/tools/usb/p9_fwd.py b/tools/usb/p9_fwd.py
-new file mode 100755
-index 0000000000000..12c76cbb046b7
---- /dev/null
-+++ b/tools/usb/p9_fwd.py
-@@ -0,0 +1,243 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0
-+
-+import argparse
-+import errno
-+import logging
-+import socket
-+import struct
-+import time
-+
-+import usb.core
-+import usb.util
-+
-+
-+def path_from_usb_dev(dev):
-+    """Takes a pyUSB device as argument and returns a string.
-+    The string is a Path representation of the position of the USB device on the USB bus tree.
-+
-+    This path is used to find a USB device on the bus or all devices connected to a HUB.
-+    The path is made up of the number of the USB controller followed be the ports of the HUB tree."""
-+    if dev.port_numbers:
-+        dev_path = ".".join(str(i) for i in dev.port_numbers)
-+        return f"{dev.bus}-{dev_path}"
-+    return ""
-+
-+
-+HEXDUMP_FILTER = "".join(chr(x).isprintable() and chr(x) or "." for x in range(128)) + "." * 128
-+
-+
-+class Forwarder:
-+    @staticmethod
-+    def _log_hexdump(data):
-+        if not logging.root.isEnabledFor(logging.TRACE):
-+            return
-+        L = 16
-+        for c in range(0, len(data), L):
-+            chars = data[c : c + L]
-+            dump = " ".join(f"{x:02x}" for x in chars)
-+            printable = "".join(HEXDUMP_FILTER[x] for x in chars)
-+            line = f"{c:08x}  {dump:{L*3}s} |{printable:{L}s}|"
-+            logging.root.log(logging.TRACE, "%s", line)
-+
-+    def __init__(self, server, vid, pid, path):
-+        self.stats = {
-+            "c2s packets": 0,
-+            "c2s bytes": 0,
-+            "s2c packets": 0,
-+            "s2c bytes": 0,
-+        }
-+        self.stats_logged = time.monotonic()
-+
-+        def find_filter(dev):
-+            dev_path = path_from_usb_dev(dev)
-+            if path is not None:
-+                return dev_path == path
-+            return True
-+
-+        dev = usb.core.find(idVendor=vid, idProduct=pid, custom_match=find_filter)
-+        if dev is None:
-+            raise ValueError("Device not found")
-+
-+        logging.info(f"found device: {dev.bus}/{dev.address} located at {path_from_usb_dev(dev)}")
-+
-+        # dev.set_configuration() is not necessary since g_multi has only one
-+        usb9pfs = None
-+        # g_multi adds 9pfs as last interface
-+        cfg = dev.get_active_configuration()
-+        for intf in cfg:
-+            # we have to detach the usb-storage driver from multi gadget since
-+            # stall option could be set, which will lead to spontaneous port
-+            # resets and our transfers will run dead
-+            if intf.bInterfaceClass == 0x08:
-+                if dev.is_kernel_driver_active(intf.bInterfaceNumber):
-+                    dev.detach_kernel_driver(intf.bInterfaceNumber)
-+
-+            if intf.bInterfaceClass == 0xFF and intf.bInterfaceSubClass == 0xFF and intf.bInterfaceProtocol == 0x09:
-+                usb9pfs = intf
-+        if usb9pfs is None:
-+            raise ValueError("Interface not found")
-+
-+        logging.info(f"claiming interface:\n{usb9pfs}")
-+        usb.util.claim_interface(dev, usb9pfs.bInterfaceNumber)
-+        ep_out = usb.util.find_descriptor(
-+            usb9pfs,
-+            custom_match=lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_OUT,
-+        )
-+        assert ep_out is not None
-+        ep_in = usb.util.find_descriptor(
-+            usb9pfs,
-+            custom_match=lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_IN,
-+        )
-+        assert ep_in is not None
-+        logging.info("interface claimed")
-+
-+        self.ep_out = ep_out
-+        self.ep_in = ep_in
-+        self.dev = dev
-+
-+        # create and connect socket
-+        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-+        self.s.connect(server)
-+
-+        logging.info("connected to server")
-+
-+    def c2s(self):
-+        """forward a request from the USB client to the TCP server"""
-+        data = None
-+        while data is None:
-+            try:
-+                logging.log(logging.TRACE, "c2s: reading")
-+                data = self.ep_in.read(self.ep_in.wMaxPacketSize)
-+            except usb.core.USBTimeoutError:
-+                logging.log(logging.TRACE, "c2s: reading timed out")
-+                continue
-+            except usb.core.USBError as e:
-+                if e.errno == errno.EIO:
-+                    logging.debug("c2s: reading failed with %s, retrying", repr(e))
-+                    time.sleep(0.5)
-+                    continue
-+                logging.error("c2s: reading failed with %s, aborting", repr(e))
-+                raise
-+        size = struct.unpack("<I", data[:4])[0]
-+        while len(data) < size:
-+            data += self.ep_in.read(size - len(data))
-+        logging.log(logging.TRACE, "c2s: writing")
-+        self._log_hexdump(data)
-+        self.s.send(data)
-+        logging.debug("c2s: forwarded %i bytes", size)
-+        self.stats["c2s packets"] += 1
-+        self.stats["c2s bytes"] += size
-+
-+    def s2c(self):
-+        """forward a response from the TCP server to the USB client"""
-+        logging.log(logging.TRACE, "s2c: reading")
-+        data = self.s.recv(4)
-+        size = struct.unpack("<I", data[:4])[0]
-+        while len(data) < size:
-+            data += self.s.recv(size - len(data))
-+        logging.log(logging.TRACE, "s2c: writing")
-+        self._log_hexdump(data)
-+        while data:
-+            written = self.ep_out.write(data)
-+            assert written > 0
-+            data = data[written:]
-+        if size % self.ep_out.wMaxPacketSize == 0:
-+            logging.log(logging.TRACE, "sending zero length packet")
-+            self.ep_out.write(b"")
-+        logging.debug("s2c: forwarded %i bytes", size)
-+        self.stats["s2c packets"] += 1
-+        self.stats["s2c bytes"] += size
-+
-+    def log_stats(self):
-+        logging.info("statistics:")
-+        for k, v in self.stats.items():
-+            logging.info(f"  {k+':':14s} {v}")
-+
-+    def log_stats_interval(self, interval=5):
-+        if (time.monotonic() - self.stats_logged) < interval:
-+            return
-+
-+        self.log_stats()
-+        self.stats_logged = time.monotonic()
-+
-+
-+def try_get_usb_str(dev, name):
-+    try:
-+        with open(f"/sys/bus/usb/devices/{dev.bus}-{dev.address}/{name}") as f:
-+            return f.read().strip()
-+    except FileNotFoundError:
-+        return None
-+
-+
-+def list_usb(args):
-+    vid, pid = [int(x, 16) for x in args.id.split(":", 1)]
-+
-+    print("Bus | Addr | Manufacturer     | Product          | ID        | Path")
-+    print("--- | ---- | ---------------- | ---------------- | --------- | ----")
-+    for dev in usb.core.find(find_all=True, idVendor=vid, idProduct=pid):
-+        path = path_from_usb_dev(dev) or ""
-+        manufacturer = try_get_usb_str(dev, "manufacturer") or "unknown"
-+        product = try_get_usb_str(dev, "product") or "unknown"
-+        print(
-+            f"{dev.bus:3} | {dev.address:4} | {manufacturer:16} | {product:16} | {dev.idVendor:04x}:{dev.idProduct:04x} | {path:18}"
-+        )
-+
-+
-+def connect(args):
-+    vid, pid = [int(x, 16) for x in args.id.split(":", 1)]
-+
-+    f = Forwarder(server=(args.server, args.port), vid=vid, pid=pid, path=args.path)
-+
-+    try:
-+        while True:
-+            f.c2s()
-+            f.s2c()
-+            f.log_stats_interval()
-+    finally:
-+        f.log_stats()
-+
-+
-+def main():
-+    parser = argparse.ArgumentParser(
-+        description="Forward 9PFS requests from USB to TCP",
-+    )
-+
-+    parser.add_argument("--id", type=str, default="1d6b:0109", help="vid:pid of target device")
-+    parser.add_argument("--path", type=str, required=False, help="path of target device")
-+    parser.add_argument("-v", "--verbose", action="count", default=0)
-+
-+    subparsers = parser.add_subparsers()
-+    subparsers.required = True
-+    subparsers.dest = "command"
-+
-+    parser_list = subparsers.add_parser("list", help="List all connected 9p gadgets")
-+    parser_list.set_defaults(func=list_usb)
-+
-+    parser_connect = subparsers.add_parser(
-+        "connect", help="Forward messages between the usb9pfs gadget and the 9p server"
-+    )
-+    parser_connect.set_defaults(func=connect)
-+    connect_group = parser_connect.add_argument_group()
-+    connect_group.required = True
-+    parser_connect.add_argument("-s", "--server", type=str, default="127.0.0.1", help="server hostname")
-+    parser_connect.add_argument("-p", "--port", type=int, default=564, help="server port")
-+
-+    args = parser.parse_args()
-+
-+    logging.TRACE = logging.DEBUG - 5
-+    logging.addLevelName(logging.TRACE, "TRACE")
-+
-+    if args.verbose >= 2:
-+        level = logging.TRACE
-+    elif args.verbose:
-+        level = logging.DEBUG
-+    else:
-+        level = logging.INFO
-+    logging.basicConfig(level=level, format="%(asctime)-15s %(levelname)-8s %(message)s")
-+
-+    args.func(args)
-+
-+
-+if __name__ == "__main__":
-+    main()
+include/linux/interrupt.h, vs input tree:
+https://lkml.kernel.org/r/20240612103235.5ef64950@canb.auug.org.au
 
--- 
-2.39.2
+include/linux/cacheinfo.h, vs tip tree:
+https://lkml.kernel.org/r/20240612112746.3130d68b@canb.auug.org.au
+
+fs/bcachefs/clock.c, vs bcachefs tree:
+https://lkml.kernel.org/r/20240712105711.6dc900a2@canb.auug.org.au
+
+
+
+
+
+The following changes since commit f2661062f16b2de5d7b6a5c42a9a5c96326b8454:
+
+  Linux 6.10-rc5 (2024-06-23 17:08:54 -0400)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-nonmm-stable-2024-07-21-15-07
+
+for you to fetch changes up to 67856f44da381973caf4eb692ad2cca1de7b2d37:
+
+  ia64: scrub ia64 from poison.h (2024-07-17 21:11:34 -0700)
+
+----------------------------------------------------------------
+- In the series "treewide: Refactor heap related implementation",
+  Kuan-Wei Chiu has significantly reworked the min_heap library code and
+  has taught bcachefs to use the new more generic implementation.
+
+- Yury Norov's series "Cleanup cpumask.h inclusion in core headers"
+  reworks the cpumask and nodemask headers to make things generally more
+  rational.
+
+- Kuan-Wei Chiu has sent along some maintenance work against our sorting
+  library code in the series "lib/sort: Optimizations and cleanups".
+
+- More library maintainance work from Christophe Jaillet in the series
+  "Remove usage of the deprecated ida_simple_xx() API".
+
+- Ryusuke Konishi continues with the nilfs2 fixes and clanups in the
+  series "nilfs2: eliminate the call to inode_attach_wb()".
+
+- Kuan-Ying Lee has some fixes to the gdb scripts in the series "Fix GDB
+  command error".
+
+- Plus the usual shower of singleton patches all over the place.  Please
+  see the relevant changelogs for details.
+
+----------------------------------------------------------------
+Alexey Dobriyan (4):
+      proc: test "Kthread:" field
+      build-id: require program headers to be right after ELF header
+      compiler.h: simplify data_race() macro
+      ia64: scrub ia64 from poison.h
+
+Amer Al Shanawany (1):
+      selftests: proc: remove unreached code and fix build warning
+
+Brian Masney (1):
+      lib/Kconfig.debug: document panic= command line option and procfs entry for PANIC_TIMEOUT
+
+Chen Ni (1):
+      test_bpf: convert comma to semicolon
+
+Christophe JAILLET (6):
+      fsi: occ: remove usage of the deprecated ida_simple_xx() API
+      most: remove usage of the deprecated ida_simple_xx() API
+      proc: remove usage of the deprecated ida_simple_xx() API
+      ocfs2: constify struct ocfs2_lock_res_ops
+      ocfs2: constify struct ocfs2_stack_operations
+      nilfs2: Constify struct kobj_type
+
+Dan Carpenter (1):
+      checkpatch: check for missing Fixes tags
+
+Ferry Meng (2):
+      ocfs2: add bounds checking to ocfs2_xattr_find_entry()
+      ocfs2: strict bound check before memcmp in ocfs2_xattr_find_entry()
+
+Hsin Chang Yu (1):
+      lib/rbtree.c: fix the example typo
+
+I Hsin Cheng (2):
+      lib/plist.c: enforce memory ordering in plist_check_list
+      lib/plist.c: avoid worst case scenario in plist_add
+
+Jani Nikula (4):
+      kernel/panic: return early from print_tainted() when not tainted
+      kernel/panic: convert print_tainted() to use struct seq_buf internally
+      kernel/panic: initialize taint_flags[] using a macro
+      kernel/panic: add verbose logging of kernel taints in backtraces
+
+Jeff Johnson (17):
+      backtracetest: add MODULE_DESCRIPTION()
+      lib/ts: add missing MODULE_DESCRIPTION() macros
+      kunit/fortify: add missing MODULE_DESCRIPTION() macros
+      KUnit: add missing MODULE_DESCRIPTION() macros for lib/*_test.ko
+      lib/asn1_encoder: add missing MODULE_DESCRIPTION() macro
+      kunit: add missing MODULE_DESCRIPTION() macros to lib/*.c
+      uuid: add missing MODULE_DESCRIPTION() macro
+      siphash: add missing MODULE_DESCRIPTION() macro
+      lib/test_kmod: add missing MODULE_DESCRIPTION() macro
+      lib/test_linear_ranges: add missing MODULE_DESCRIPTION() macro
+      KUnit: add missing MODULE_DESCRIPTION() macros for lib/test_*.ko
+      kfifo: add missing MODULE_DESCRIPTION() macros
+      resource: add missing MODULE_DESCRIPTION()
+      selftests/fpu: add missing MODULE_DESCRIPTION() macro
+      fs: ufs: add MODULE_DESCRIPTION()
+      lib/zlib: add missing MODULE_DESCRIPTION() macro
+      math: rational: add missing MODULE_DESCRIPTION() macro
+
+Jesse Brandeburg (1):
+      kernel-wide: fix spelling mistakes like "assocative" -> "associative"
+
+John Hubbard (1):
+      selftests/mqueue: fix 5 warnings about signed/unsigned mismatches
+
+Kees Cook (1):
+      tsacct: replace strncpy() with strscpy()
+
+Kuan-Wei Chiu (21):
+      perf/core: fix several typos
+      bcache: fix typo
+      bcachefs: fix typo
+      lib min_heap: add type safe interface
+      lib min_heap: add min_heap_init()
+      lib min_heap: add min_heap_peek()
+      lib min_heap: add min_heap_full()
+      lib min_heap: add args for min_heap_callbacks
+      lib min_heap: add min_heap_sift_up()
+      lib min_heap: add min_heap_del()
+      lib min_heap: update min_heap_push() and min_heap_pop() to return bool values
+      lib min_heap: rename min_heapify() to min_heap_sift_down()
+      lib min_heap: update min_heap_push() to use min_heap_sift_up()
+      lib/test_min_heap: add test for heap_del()
+      bcache: remove heap-related macros and switch to generic min_heap
+      bcachefs: remove heap-related macros and switch to generic min_heap
+      lib/sort: remove unused pr_fmt macro
+      lib/sort: fix outdated comment regarding glibc qsort()
+      lib/sort: optimize heapsort for handling final 2 or 3 elements
+      lib/test_sort: add a testcase to ensure code coverage
+      tools/lib/list_sort: remove redundant code for cond_resched handling
+
+Kuan-Ying Lee (6):
+      scripts/gdb: redefine MAX_ORDER sanely
+      scripts/gdb: rework module VA range
+      scripts/gdb: change the layout of vmemmap
+      scripts/gdb: set vabits_actual based on TCR_EL1
+      scripts/gdb: change VA_BITS_MIN when we use 16K page
+      scripts/gdb: rename pool_index to pool_index_plus_1
+
+Masahiro Yamada (2):
+      init: remove unused __MEMINIT* macros
+      init/modpost: conditionally check section mismatch to __meminit*
+
+Mateusz Guzik (1):
+      percpu_counter: add a cmpxchg-based _add_batch variant
+
+Oleg Nesterov (1):
+      coredump: simplify zap_process()
+
+Ryusuke Konishi (3):
+      nilfs2: prepare backing device folios for writing after adding checksums
+      nilfs2: do not call inode_attach_wb() directly
+      nilfs2: avoid undefined behavior in nilfs_cnt32_ge macro
+
+Sidhartha Kumar (2):
+      tools/testing/radix-tree: add missing MODULE_DESCRIPTION definition
+      tools/testing/radix-tree/idr-test: add missing MODULE_DESCRIPTION define
+
+Suren Baghdasaryan (1):
+      lib/dump_stack: report process UID in dump_stack_print_info()
+
+Thomas Gleixner (1):
+      watchdog/perf: properly initialize the turbo mode timestamp and rearm counter
+
+Thorsten Blum (1):
+      lib/bch.c: use swap() to improve code
+
+Uros Bizjak (1):
+      fork: use this_cpu_try_cmpxchg() in try_release_thread_stack_to_cache()
+
+Wei-Hsin Yeh (1):
+      include/linux/jhash.h: fix typos
+
+Wen Yang (1):
+      selftests: introduce additional eventfd test coverage
+
+Wenchao Hao (1):
+      crash: remove header files which are included more than once
+
+Wolfram Sang (1):
+      checkpatch: really skip LONG_LINE_* when LONG_LINE is ignored
+
+Xiong Nandi (2):
+      scripts/decode_stacktrace.sh: wrap nm with UTIL_PREFIX and UTIL_SUFFIX
+      scripts/decode_stacktrace.sh: better support to ARM32 module stack trace
+
+Yang Li (1):
+      fs: add kernel-doc comments to ocfs2_prepare_orphan_dir()
+
+Yongliang Gao (1):
+      hung_task: ignore hung_task_warnings when hung_task_panic is enabled
+
+Yury Norov (6):
+      MAINTAINERS: add linux/nodemask_types.h to BITMAP API
+      sched: avoid using ilog2() in sched.h
+      cpumask: split out include/linux/cpumask_types.h
+      sched: drop sched.h dependency on cpumask
+      cpumask: cleanup core headers inclusion
+      cpumask: make core headers including cpumask_types.h where possible
+
+lei lu (1):
+      ocfs2: add bounds checking to ocfs2_check_dir_entry()
+
+ MAINTAINERS                                        |   2 +
+ arch/powerpc/kernel/vmlinux.lds.S                  |   2 -
+ drivers/fsi/fsi-occ.c                              |  17 +-
+ drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c     |   2 +-
+ drivers/md/bcache/alloc.c                          |  64 +++++--
+ drivers/md/bcache/bcache.h                         |   2 +-
+ drivers/md/bcache/bset.c                           | 124 +++++++++-----
+ drivers/md/bcache/bset.h                           |  40 ++---
+ drivers/md/bcache/btree.c                          |  69 ++++----
+ drivers/md/bcache/extents.c                        |  53 +++---
+ drivers/md/bcache/movinggc.c                       |  41 +++--
+ drivers/md/bcache/super.c                          |   3 +-
+ drivers/md/bcache/sysfs.c                          |   4 +-
+ drivers/md/bcache/util.c                           |   2 +-
+ drivers/md/bcache/util.h                           |  67 +-------
+ drivers/md/bcache/writeback.c                      |  13 +-
+ drivers/md/dm-vdo/repair.c                         |  19 ++-
+ drivers/md/dm-vdo/slab-depot.c                     |  14 +-
+ drivers/most/core.c                                |  10 +-
+ drivers/most/most_cdev.c                           |   6 +-
+ drivers/net/wireless/ti/wl1251/acx.h               |   2 +-
+ drivers/scsi/qedf/qedf_main.c                      |   2 +-
+ drivers/staging/rtl8723bs/core/rtw_mlme_ext.c      |   2 +-
+ drivers/staging/rtl8723bs/core/rtw_pwrctrl.c       |   2 +-
+ fs/bcachefs/clock.c                                |  47 ++++--
+ fs/bcachefs/clock_types.h                          |   2 +-
+ fs/bcachefs/ec.c                                   |  76 ++++++---
+ fs/bcachefs/ec_types.h                             |   2 +-
+ fs/bcachefs/util.c                                 |   2 +-
+ fs/bcachefs/util.h                                 | 118 +------------
+ fs/coredump.c                                      |  14 +-
+ fs/nilfs2/segment.c                                |  91 ++++++----
+ fs/nilfs2/sysfs.c                                  |   6 +-
+ fs/ocfs2/dir.c                                     |  46 +++--
+ fs/ocfs2/dlmglue.c                                 |  28 +--
+ fs/ocfs2/namei.c                                   |   2 +
+ fs/ocfs2/ocfs2.h                                   |   2 +-
+ fs/ocfs2/stack_o2cb.c                              |   2 +-
+ fs/ocfs2/stack_user.c                              |   2 +-
+ fs/ocfs2/stackglue.h                               |   2 +-
+ fs/ocfs2/xattr.c                                   |  27 ++-
+ fs/proc/generic.c                                  |   6 +-
+ fs/ufs/super.c                                     |   1 +
+ include/asm-generic/vmlinux.lds.h                  |  18 +-
+ include/linux/cacheinfo.h                          |   2 +-
+ include/linux/cgroup.h                             |   1 -
+ include/linux/clockchips.h                         |   2 +-
+ include/linux/compiler.h                           |   6 +-
+ include/linux/cpu.h                                |   1 -
+ include/linux/cpu_cooling.h                        |   1 -
+ include/linux/cpu_rmap.h                           |   2 +-
+ include/linux/cpumask.h                            |  56 +-----
+ include/linux/cpumask_types.h                      |  66 ++++++++
+ include/linux/init.h                               |  18 +-
+ include/linux/interrupt.h                          |   2 +-
+ include/linux/irqchip/irq-partition-percpu.h       |   2 +-
+ include/linux/jhash.h                              |   6 +-
+ include/linux/kernel_stat.h                        |   1 -
+ include/linux/min_heap.h                           | 188 ++++++++++++++++-----
+ include/linux/msi.h                                |   2 +-
+ include/linux/node.h                               |   1 -
+ include/linux/nvme-fc-driver.h                     |   2 +-
+ include/linux/panic.h                              |   8 +-
+ include/linux/percpu.h                             |   1 -
+ include/linux/pm_domain.h                          |   2 +-
+ include/linux/poison.h                             |   6 -
+ include/linux/profile.h                            |   1 -
+ include/linux/rcupdate.h                           |   1 -
+ include/linux/sched.h                              |   7 +-
+ include/linux/seq_file.h                           |   1 -
+ include/linux/soc/apple/rtkit.h                    |   4 +-
+ include/linux/stop_machine.h                       |   2 +-
+ include/linux/torture.h                            |   2 +-
+ include/linux/tracepoint.h                         |   1 -
+ include/linux/workqueue.h                          |   2 +-
+ kernel/backtracetest.c                             |   1 +
+ kernel/crash_reserve.c                             |   1 -
+ kernel/events/core.c                               |  29 ++--
+ kernel/fork.c                                      |   7 +-
+ kernel/hung_task.c                                 |   2 +-
+ kernel/panic.c                                     | 116 +++++++++----
+ kernel/resource_kunit.c                            |   1 +
+ kernel/tsacct.c                                    |   2 +-
+ kernel/watchdog_perf.c                             |  11 +-
+ lib/Kconfig.debug                                  |   4 +-
+ lib/asn1_encoder.c                                 |   1 +
+ lib/atomic64_test.c                                |   1 +
+ lib/bch.c                                          |  20 +--
+ lib/bitfield_kunit.c                               |   1 +
+ lib/buildid.c                                      |  14 ++
+ lib/checksum_kunit.c                               |   1 +
+ lib/cmdline_kunit.c                                |   1 +
+ lib/dhry_run.c                                     |   1 +
+ lib/dump_stack.c                                   |   9 +-
+ lib/fortify_kunit.c                                |   1 +
+ lib/hashtable_test.c                               |   1 +
+ lib/is_signed_type_kunit.c                         |   1 +
+ lib/math/rational.c                                |   1 +
+ lib/memcpy_kunit.c                                 |   1 +
+ lib/overflow_kunit.c                               |   1 +
+ lib/percpu_counter.c                               |  44 ++++-
+ lib/plist.c                                        |  42 ++++-
+ lib/rbtree.c                                       |   8 +-
+ lib/siphash_kunit.c                                |   1 +
+ lib/sort.c                                         |  14 +-
+ lib/stackinit_kunit.c                              |   1 +
+ lib/test-kstrtox.c                                 |   1 +
+ lib/test_bits.c                                    |   1 +
+ lib/test_blackhole_dev.c                           |   1 +
+ lib/test_bpf.c                                     |   4 +-
+ lib/test_firmware.c                                |   1 +
+ lib/test_fpu_glue.c                                |   1 +
+ lib/test_free_pages.c                              |   1 +
+ lib/test_hash.c                                    |   1 +
+ lib/test_hexdump.c                                 |   1 +
+ lib/test_ida.c                                     |   1 +
+ lib/test_kmod.c                                    |   1 +
+ lib/test_kprobes.c                                 |   3 +-
+ lib/test_linear_ranges.c                           |   1 +
+ lib/test_list_sort.c                               |   1 +
+ lib/test_memcat_p.c                                |   1 +
+ lib/test_meminit.c                                 |   1 +
+ lib/test_min_heap.c                                |  76 ++++++---
+ lib/test_module.c                                  |   1 +
+ lib/test_ref_tracker.c                             |   3 +-
+ lib/test_sort.c                                    |  15 +-
+ lib/test_static_key_base.c                         |   1 +
+ lib/test_static_keys.c                             |   1 +
+ lib/test_sysctl.c                                  |   1 +
+ lib/test_uuid.c                                    |   1 +
+ lib/ts_bm.c                                        |   1 +
+ lib/ts_fsm.c                                       |   1 +
+ lib/ts_kmp.c                                       |   1 +
+ lib/zlib_deflate/deflate_syms.c                    |   1 +
+ net/netfilter/nf_conntrack_core.c                  |   2 +-
+ net/tipc/socket.c                                  |   2 +-
+ samples/kfifo/bytestream-example.c                 |   1 +
+ samples/kfifo/dma-example.c                        |   1 +
+ samples/kfifo/inttype-example.c                    |   1 +
+ samples/kfifo/record-example.c                     |   1 +
+ scripts/checkpatch.pl                              |  26 ++-
+ scripts/decode_stacktrace.sh                       |   6 +-
+ scripts/gdb/linux/mm.py                            |  23 ++-
+ scripts/gdb/linux/stackdepot.py                    |   8 +-
+ scripts/mod/modpost.c                              |  19 +--
+ scripts/spelling.txt                               |   3 +
+ tools/lib/list_sort.c                              |  10 --
+ tools/testing/radix-tree/idr-test.c                |   1 +
+ tools/testing/radix-tree/maple.c                   |   1 +
+ tools/testing/radix-tree/xarray.c                  |   1 +
+ .../selftests/filesystems/eventfd/eventfd_test.c   | 136 ++++++++++++++-
+ tools/testing/selftests/mqueue/mq_perf_tests.c     |   6 +-
+ tools/testing/selftests/proc/.gitignore            |   2 +
+ tools/testing/selftests/proc/Makefile              |   2 +
+ tools/testing/selftests/proc/proc-2-is-kthread.c   |  53 ++++++
+ tools/testing/selftests/proc/proc-empty-vm.c       |   3 -
+ .../selftests/proc/proc-self-isnt-kthread.c        |  37 ++++
+ 157 files changed, 1416 insertions(+), 845 deletions(-)
+ create mode 100644 include/linux/cpumask_types.h
+ create mode 100644 tools/testing/selftests/proc/proc-2-is-kthread.c
+ create mode 100644 tools/testing/selftests/proc/proc-self-isnt-kthread.c
 
 
