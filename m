@@ -1,149 +1,228 @@
-Return-Path: <linux-kernel+bounces-258318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E889D938632
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 23:41:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 502E1938636
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 23:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F3891F211EA
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 21:41:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D19451F21105
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 21:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6D916A955;
-	Sun, 21 Jul 2024 21:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C94916A947;
+	Sun, 21 Jul 2024 21:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f571CSwt"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZKIUzlq6"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2C8322E;
-	Sun, 21 Jul 2024 21:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA956322E;
+	Sun, 21 Jul 2024 21:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721598099; cv=none; b=jBQRJiml9xE124MITein3Mo5aGrR9I/yGCe7sZOl3cExLTlTPONuiXYI1bXyya12I9g1VhSRi15vveDdlIOvYQ0s3rOkS8lwjY9uiweeoKlFXTKnPpNNeKi3R3TySB2ynxQGvLin0uUAvtxCw+McJ/M5SHC454NRijfh92AR3SI=
+	t=1721598201; cv=none; b=agzy2Nb2YGoZhZ2XZJZot/KY/C/3J5JPRgNbIYLGUjB5ChOP637WDF8t1uFKCkmPe1XeT9cjtYIg/P8/Hm8pHhEZ4DmwWmKOgIRYr6l7DZmObpTCYzTM8Vethfka3HgfdvYxvWpfbwuT77qnI21XDLJXbAOTE4Eqw5JU6j6DuK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721598099; c=relaxed/simple;
-	bh=mAHzhjWbek3GgowqFLnchV5N8Qpm9WSixPjR+kltElc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jdoU5L3DNdzn/4AJixnpddvr//qen/2g57RhZIa2MuvtSe2R2Pel+e5ecIuzvZGWZOOQmly0Ms1QOm76aqnca+pPRGQAerZvunT4zGnSXnPUEF+H/ZQaGHEFLBG5u21vTL726OOEiJAGq7MJCG+0Gml7yQ62sX5jeOoUBUgB3Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f571CSwt; arc=none smtp.client-ip=209.85.166.175
+	s=arc-20240116; t=1721598201; c=relaxed/simple;
+	bh=4iaDEe8bEFU4SUANinOIIN8SjYNlk7AC/IOHNcEFw+s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oco9pKtPHz019nrZED6YMjYNWfREF4UfwhbiUOxjBWQx8LoPll4pYmRKQzJPe8OgxMXWtHFGDiiVApx867hxKtMYj2WNGTxglXBcfRRrQ2QzlxAo+ME1EG0HAwRvaRclmjBLjPHJb35RdbBHcxoWreuCwqG2iIr1Vt3eCmC+ZH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZKIUzlq6; arc=none smtp.client-ip=209.85.215.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3992f09efa7so6797425ab.2;
-        Sun, 21 Jul 2024 14:41:37 -0700 (PDT)
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-656d8b346d2so2010989a12.2;
+        Sun, 21 Jul 2024 14:43:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721598097; x=1722202897; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0nJBFOve/nzOSIc3tl9SNeSNgkEB09v1kPl4DmpsSPc=;
-        b=f571CSwtVHJW9RZ0FfVBG67unwU3lp3quhQL1N8V2Qo6pE674AditzhtkSWRP9bupg
-         9IE4umXJcPY8FdtL6TXXrdDVfigiYteZAwQWAcC+aHuZpj6no362vuOPfJDPk6e9S38r
-         hmvXsD7nsXdF9SmWxgFoJZCHHekjKTUWFqEbsJandyAJPGKDIL3yRHZf2CnlBJ7nkfUN
-         4eIzcDXsgEQ/JZCfT3dmV5hoTYVKYLNq1aLXGzOHtPLN3B3YadIsxwbLVN9bsL4I/pyQ
-         9xsBB+0tMNhfxDyJE2mCRJZnuGRQ2ltfCXJwkQ2amoVkF5s3Ubd739I+WrNmrLm1nsqG
-         M5Kg==
+        d=gmail.com; s=20230601; t=1721598199; x=1722202999; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T4GmvoaTuonLMkgxvdyWZq2weTLspPvsGFuIaeqz+wQ=;
+        b=ZKIUzlq6QtAxP9ohLi1EKbmp6uDAmkVrTVyErWsUdaVpVRGUFT7NupHu4EGwgbYZXe
+         T7kIZr+5Pi2ahlNulp+3/YGpfJ/09qqdpyLFIV4dKZqveKCo4vXJ79ZBP8kSqaTqXCdF
+         7XahitNNHgpJ7uE1QMFlsDMr3rfN2zLNhWuKPQVzDRNJ+dF+I+Y22B/lNo7N1USrnwwL
+         pToDKTi0jh3HV7CDtlUro/zEQrUaO9EYQdEC1l3oowtFFMe24ybvnJ4Y959jwhnWZytd
+         NWKsRGbQg3RlygLdduQEROzx0ZzcRB/kzYh8gJctzd6CtCelYwTHDZgyAZHCTDickEcj
+         np3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721598097; x=1722202897;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0nJBFOve/nzOSIc3tl9SNeSNgkEB09v1kPl4DmpsSPc=;
-        b=wYsPVNIaoRSutTnH9yN6WJablr1UNXrvZIZWcQFWFDeX2IHXArpLMpI8Tuo2xtkc6C
-         CXTlx797LDZnzXFtH9kB2cIvoEunQbFNy78FE+N8BxLsJp93MSnwjgjLWtEUU/3rNwKH
-         xbPxsryHH5r1b664NUPB38+XekHE8/igWJXJlww4j+1RN3X1hJyCKTOfz9sFA9a6VbhP
-         ute5ICKPsQjDtRqh28err6sSQrREETchgOhE4m1cJgNPnLm+VVrF/ZrXMCUk0MekitYF
-         CliFZURERdaGjt2jM6Bw/Xuc9Kn3zTDboUacpL21+3qORHD+FeXljdZdybbwT32h/cnO
-         hxMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXCCII98XVLmf6BCzfRqAVmd6vXRz5QOAI7fhlCsqFfCb7e+MKwFnjCBXqJo6oj50KfoKDwLKDFvezT+KFMogB+GVthGPXPHQMM6lUS
-X-Gm-Message-State: AOJu0YyloFyUGq73qXe3nkPAaMdr7+Yw58bb94N3uj/837WAMdY9v1z0
-	eIbpWzZhMZ/L8GmQtS9qr6KYwFXbDMEBL/rurynu1tnAq0wCidTN
-X-Google-Smtp-Source: AGHT+IFPCrRoqgoOPxRC6ckPS8S/2QD5STC1qy8/ICCKYIJOKNY6tmwsfglePPXXZ9/QaoHcg71MmQ==
-X-Received: by 2002:a05:6e02:1a88:b0:374:9916:92 with SMTP id e9e14a558f8ab-399403db700mr59896895ab.22.1721598096853;
-        Sun, 21 Jul 2024 14:41:36 -0700 (PDT)
-Received: from ?IPv6:2605:59c8:829:4c00:82ee:73ff:fe41:9a02? ([2605:59c8:829:4c00:82ee:73ff:fe41:9a02])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1fd6f44e96csm40855585ad.216.2024.07.21.14.41.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jul 2024 14:41:36 -0700 (PDT)
-Message-ID: <e9982acd0eba5d06d178d0157aedfba569d5a09a.camel@gmail.com>
-Subject: Re: [RFC v11 09/14] mm: page_frag: use __alloc_pages() to replace
- alloc_pages_node()
-From: Alexander H Duyck <alexander.duyck@gmail.com>
-To: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net,
- kuba@kernel.org,  pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton
-	 <akpm@linux-foundation.org>, linux-mm@kvack.org
-Date: Sun, 21 Jul 2024 14:41:34 -0700
-In-Reply-To: <20240719093338.55117-10-linyunsheng@huawei.com>
-References: <20240719093338.55117-1-linyunsheng@huawei.com>
-	 <20240719093338.55117-10-linyunsheng@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        d=1e100.net; s=20230601; t=1721598199; x=1722202999;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T4GmvoaTuonLMkgxvdyWZq2weTLspPvsGFuIaeqz+wQ=;
+        b=XFXaZ7WSWPEKnMw/OByLSXthcdKECwXroHRKnnrSnVnFe1MwqjFqmN6RQcZ7IzxoC1
+         FlbHHJegfGu9MDNUDGl6Ltcxk8VGPvESaJ6R9LL/r1ksRPICy/fuARTWHJrlM3OB/EBy
+         GkpB1StL5ghBRLWt+BTENUdLwYhLAc8FpXthmnJf1uQfVM/HEgUoDMxoSgi9X3jzOcXT
+         Woy+UGzmEfjBCg6VzhhHBwG2FXx6SWEX5YimcGqRa3bBRjuEUxhGYljMOrTDIoUtxXFK
+         q3HDEfIlhI/Pq0JEdIG5+pbr4RIZsXCMga4YbqLXcs9Tn0Oc4PKjvlqhYxN8sAt40dMz
+         eClg==
+X-Forwarded-Encrypted: i=1; AJvYcCVeoE0eal99HaifnuYSkOrAHl2zKXEp/c1K2+8c8fqoFc5fB3wwQkSzTmE6IqS3GZOI5fxuh7WnZQMGS7Qg0oERYS57SwIBIOK3vtqjb7hrAeZHGu3yg8b3kWrwCfkpxA7JT1Vua9czwsXPlg==
+X-Gm-Message-State: AOJu0YwM6BRCVSV9tMFFpOmP75C6enB3tIsaNB/wW9tkonSGYf9kjGMJ
+	CJz+h/qLCOZVmnK4899fj4hzE37etgWwB+shgF1JZ1M5WbqgGjIN9x2lL2dyQaMUqgET+dJGdBv
+	DTYaZZ9oSUVw3od6emjMWBd2wrJV0Kpj7/4k=
+X-Google-Smtp-Source: AGHT+IE0m57M0lv0Bov+KnIzcCurDxaQ9o49WC1ffJ0Ecoi1fU8qWPQY8A0Xw5SNXViRinSgbvyIgc4yEGmAh/O9We8=
+X-Received: by 2002:a05:6a20:1aa6:b0:1c0:f274:c54a with SMTP id
+ adf61e73a8af0-1c4228e96d2mr3567560637.28.1721598199171; Sun, 21 Jul 2024
+ 14:43:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240620-a306a-v2-1-0d388e1deebf@gmail.com> <2f10d70a-aed6-4687-8e12-4d649f6a2a5e@linaro.org>
+In-Reply-To: <2f10d70a-aed6-4687-8e12-4d649f6a2a5e@linaro.org>
+From: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>
+Date: Sun, 21 Jul 2024 23:43:07 +0200
+Message-ID: <CAGsSOWUoSkDooRx+QUrucj517pBFxwDMiCwoA6tah5o2=q2oGw@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/msm/adreno: Add A306A support
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+	20240618164303.66615-1-robdclark@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2024-07-19 at 17:33 +0800, Yunsheng Lin wrote:
-> There are more new APIs calling __page_frag_cache_refill() in
-> this patchset, which may cause compiler not being able to inline
-> __page_frag_cache_refill() into __page_frag_alloc_va_align().
->=20
-> Not being able to do the inlining seems to casue some notiable
-> performance degradation in arm64 system with 64K PAGE_SIZE after
-> adding new API calling __page_frag_cache_refill().
->=20
-> It seems there is about 24Bytes binary size increase for
-> __page_frag_cache_refill() and __page_frag_cache_refill() in
-> arm64 system with 64K PAGE_SIZE. By doing the gdb disassembling,
-> It seems we can have more than 100Bytes decrease for the binary
-> size by using __alloc_pages() to replace alloc_pages_node(), as
-> there seems to be some unnecessary checking for nid being
-> NUMA_NO_NODE, especially when page_frag is still part of the mm
-> system.
->=20
-> CC: Alexander Duyck <alexander.duyck@gmail.com>
-> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-> ---
->  mm/page_frag_cache.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
-> index d9c9cad17af7..3f162e9d23ba 100644
-> --- a/mm/page_frag_cache.c
-> +++ b/mm/page_frag_cache.c
-> @@ -59,11 +59,11 @@ static struct page *__page_frag_cache_refill(struct p=
-age_frag_cache *nc,
->  #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
->  	gfp_mask =3D (gfp_mask & ~__GFP_DIRECT_RECLAIM) |  __GFP_COMP |
->  		   __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC;
-> -	page =3D alloc_pages_node(NUMA_NO_NODE, gfp_mask,
-> -				PAGE_FRAG_CACHE_MAX_ORDER);
-> +	page =3D __alloc_pages(gfp_mask, PAGE_FRAG_CACHE_MAX_ORDER,
-> +			     numa_mem_id(), NULL);
->  #endif
->  	if (unlikely(!page)) {
-> -		page =3D alloc_pages_node(NUMA_NO_NODE, gfp, 0);
-> +		page =3D __alloc_pages(gfp, 0, numa_mem_id(), NULL);
->  		if (unlikely(!page)) {
->  			memset(nc, 0, sizeof(*nc));
->  			return NULL;
-
-So if I am understanding correctly this is basically just stripping the
-checks that were being performed since they aren't really needed to
-verify the output of numa_mem_id.
-
-Rather than changing the code here, it might make more sense to update
-alloc_pages_node_noprof to move the lines from
-__alloc_pages_node_noprof into it. Then you could put the VM_BUG_ON and
-warn_if_node_offline into an else statement which would cause them to
-be automatically stripped for this and all other callers. The benefit
-would likely be much more significant and may be worthy of being
-accepted on its own merit without being a part of this patch set as I
-would imagine it would show slight gains in terms of performance and
-binary size by dropping the unnecessary instructions.
+On Sat, Jun 22, 2024 at 1:36=E2=80=AFPM Konrad Dybcio <konrad.dybcio@linaro=
+.org> wrote:
+>
+> On 20.06.2024 11:52 PM, Barnab=C3=A1s Cz=C3=A9m=C3=A1n wrote:
+> > From: Otto Pfl=C3=BCger <otto.pflueger@abscue.de>
+> >
+> > Add support for Adreno 306A GPU what is found in MSM8917 SoC.
+> > This GPU marketing name is Adreno 308.
+> >
+> > Signed-off-by: Otto Pfl=C3=BCger <otto.pflueger@abscue.de>
+> > [use internal name of the GPU, reword the commit message]
+> > Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <trabarni@gmail.com>
+> > ---
+> > Changes in v2:
+> > - Rebase on https://patchwork.freedesktop.org/series/127393/
+> > - Link to v1: https://lore.kernel.org/r/20240528-a306a-v1-1-03a66dacd8c=
+7@gmail.com
+> > ---
+> >  drivers/gpu/drm/msm/adreno/a3xx_catalog.c | 11 +++++++++++
+> >  drivers/gpu/drm/msm/adreno/a3xx_gpu.c     | 14 +++++++++++---
+> >  drivers/gpu/drm/msm/adreno/adreno_gpu.h   |  6 ++++++
+> >  3 files changed, 28 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/msm/adreno/a3xx_catalog.c b/drivers/gpu/dr=
+m/msm/adreno/a3xx_catalog.c
+> > index 0de8465b6cf0..61aeac5054a2 100644
+> > --- a/drivers/gpu/drm/msm/adreno/a3xx_catalog.c
+> > +++ b/drivers/gpu/drm/msm/adreno/a3xx_catalog.c
+> > @@ -41,6 +41,17 @@ static const struct adreno_info a3xx_gpus[] =3D {
+> >               .gmem  =3D SZ_128K,
+> >               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> >               .init  =3D a3xx_gpu_init,
+> > +     }, {
+> > +             .chip_ids =3D ADRENO_CHIP_IDS(0x03000620),
+> > +             .family =3D ADRENO_3XX,
+> > +             .revn  =3D 308,
+>
+> Double space
+It is similar like other blocks.
+>
+> > +             .fw =3D {
+> > +                     [ADRENO_FW_PM4] =3D "a300_pm4.fw",
+> > +                     [ADRENO_FW_PFP] =3D "a300_pfp.fw",
+> > +             },
+> > +             .gmem  =3D SZ_128K,
+> > +             .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> > +             .init  =3D a3xx_gpu_init,
+> >       }, {
+> >               .chip_ids =3D ADRENO_CHIP_IDS(
+> >                       0x03020000,
+> > diff --git a/drivers/gpu/drm/msm/adreno/a3xx_gpu.c b/drivers/gpu/drm/ms=
+m/adreno/a3xx_gpu.c
+> > index 5273dc849838..b46ff49f47cf 100644
+> > --- a/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
+> > +++ b/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
+> > @@ -145,6 +145,10 @@ static int a3xx_hw_init(struct msm_gpu *gpu)
+> >               gpu_write(gpu, REG_A3XX_VBIF_ROUND_ROBIN_QOS_ARB, 0x0003)=
+;
+> >               gpu_write(gpu, REG_A3XX_VBIF_OUT_RD_LIM_CONF0, 0x0000000a=
+);
+> >               gpu_write(gpu, REG_A3XX_VBIF_OUT_WR_LIM_CONF0, 0x0000000a=
+);
+> > +     } else if (adreno_is_a306a(adreno_gpu)) {
+> > +             gpu_write(gpu, REG_A3XX_VBIF_ROUND_ROBIN_QOS_ARB, 0x0003)=
+;
+> > +             gpu_write(gpu, REG_A3XX_VBIF_OUT_RD_LIM_CONF0, 0x00000010=
+);
+> > +             gpu_write(gpu, REG_A3XX_VBIF_OUT_WR_LIM_CONF0, 0x00000010=
+);
+> >       } else if (adreno_is_a320(adreno_gpu)) {
+> >               /* Set up 16 deep read/write request queues: */
+> >               gpu_write(gpu, REG_A3XX_VBIF_IN_RD_LIM_CONF0, 0x10101010)=
+;
+> > @@ -237,7 +241,9 @@ static int a3xx_hw_init(struct msm_gpu *gpu)
+> >       gpu_write(gpu, REG_A3XX_UCHE_CACHE_MODE_CONTROL_REG, 0x00000001);
+> >
+> >       /* Enable Clock gating: */
+> > -     if (adreno_is_a305b(adreno_gpu) || adreno_is_a306(adreno_gpu))
+> > +     if (adreno_is_a305b(adreno_gpu) ||
+> > +         adreno_is_a306(adreno_gpu) ||
+> > +         adreno_is_a306a(adreno_gpu))
+> >               gpu_write(gpu, REG_A3XX_RBBM_CLOCK_CTL, 0xaaaaaaaa);
+> >       else if (adreno_is_a320(adreno_gpu))
+> >               gpu_write(gpu, REG_A3XX_RBBM_CLOCK_CTL, 0xbfffffff);
+> > @@ -334,8 +340,10 @@ static int a3xx_hw_init(struct msm_gpu *gpu)
+> >               gpu_write(gpu, REG_A3XX_CP_PFP_UCODE_DATA, ptr[i]);
+> >
+> >       /* CP ROQ queue sizes (bytes) - RB:16, ST:16, IB1:32, IB2:64 */
+> > -     if (adreno_is_a305(adreno_gpu) || adreno_is_a306(adreno_gpu) ||
+> > -                     adreno_is_a320(adreno_gpu)) {
+> > +     if (adreno_is_a305(adreno_gpu) ||
+> > +         adreno_is_a306(adreno_gpu) ||
+> > +         adreno_is_a306a(adreno_gpu) ||
+> > +         adreno_is_a320(adreno_gpu)) {
+> >               gpu_write(gpu, REG_AXXX_CP_QUEUE_THRESHOLDS,
+> >                               AXXX_CP_QUEUE_THRESHOLDS_CSQ_IB1_START(2)=
+ |
+> >                               AXXX_CP_QUEUE_THRESHOLDS_CSQ_IB2_START(6)=
+ |
+> > diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/=
+msm/adreno/adreno_gpu.h
+> > index b8ee9320a315..3b361a077688 100644
+> > --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> > +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> > @@ -292,6 +292,12 @@ static inline bool adreno_is_a306(const struct adr=
+eno_gpu *gpu)
+> >       return adreno_is_revn(gpu, 307);
+> >  }
+> >
+> > +static inline bool adreno_is_a306a(const struct adreno_gpu *gpu)
+> > +{
+> > +     /* a306a marketing name is a308 */
+>
+> "marketing name is a308" could use a (), but it's me being picky..
+/* a306a (marketing name is a308) */ ?
+>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>
+> > +     return adreno_is_revn(gpu, 308);
+> > +}
+> > +
+> >  static inline bool adreno_is_a320(const struct adreno_gpu *gpu)
+> >  {
+> >       return adreno_is_revn(gpu, 320);
+> >
+> > ---
+> > base-commit: b992b79ca8bc336fa8e2c80990b5af80ed8f36fd
+> > change-id: 20240528-a306a-48e173724d6c
+> > prerequisite-message-id: <20240618164303.66615-1-robdclark@gmail.com>
+> > prerequisite-patch-id: b26cd6e5aa23ea623fec94f938a06d1e3359de55
+> > prerequisite-patch-id: 301e8fe4c2687a4606ee7debce95a5ada732e27f
+> > prerequisite-patch-id: 24a5654d9b52079c010b0594d8599d84af1659c7
+> > prerequisite-patch-id: b09a3d28d04b7ebe968e05835ebf8397c27f8d7d
+> > prerequisite-patch-id: a74556e25862c22f0ec543b8a7c7d92cb2e55099
+>
+> b4 is amazing
+>
+> Konrad
 
