@@ -1,54 +1,55 @@
-Return-Path: <linux-kernel+bounces-258257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01D3393858D
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 18:49:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F372E938578
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 18:24:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6386E1F21182
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 16:49:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F2A1F2127F
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 16:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DED166317;
-	Sun, 21 Jul 2024 16:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46657168499;
+	Sun, 21 Jul 2024 16:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="cYLc4XD4"
-Received: from msa.smtpout.orange.fr (msa-217.smtpout.orange.fr [193.252.23.217])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VFFHL6Mt"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB71026AED
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 16:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589C4944E;
+	Sun, 21 Jul 2024 16:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721580578; cv=none; b=PTjTNdHwrWvPtpktX/74B2nrdrhiH3D9yYel0wrARfpUKqbePaYV+r6YiVu6Cl5dDnWIwZk+m/aWrrcvf5HJ731JY+aXQa2GTVgFVoNZagIb4L1aH+TgU0/Nzw196t6GTmDbqjnJwg+AV65NeJCz9hB1pxDYV44goM20Wa+bGQ8=
+	t=1721579065; cv=none; b=jPWWrBFdYn8t2915+/0Te0s9MSjMYLtHydgUUy4Mki+ddB4DVRlthogEsn5+F6UiXbOhwDGVE5509GuOBcCYC1PQenr4KspnsS5/d459FJT21e4Q9O0P4Gp89n+CFD+OOgmJn1qYR72yeooSBK5AJDsA8OuUOGaqOLHtrS11q6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721580578; c=relaxed/simple;
-	bh=zvRzlREeawXqJKfd4Teyd4qnwsRRHMn9xza2CyRaXNs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MciOV8Y8hNb+4GtvBESkleSfw+XrPc31iznnrzCbM6JaNU+cMMSq5Nl4n6RaBs68FAJbu5FwpVhCUEredIJPCIJVLfeFZCOK6MucFniNWWTnNrUpYKSZ0kGoqGGgFFOHvCYWVz/8mSX1EQ19sJnuAVlD8l7zrnR0YwfLBZd/rlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=cYLc4XD4; arc=none smtp.client-ip=193.252.23.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id VZCLs1rcXnx6kVZCLsRyfl; Sun, 21 Jul 2024 18:14:15 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1721578455;
-	bh=I/piV9JbjlGXoNPHWPRA7QfnTh18wJNUP3H64VZRZmY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=cYLc4XD4eExqEtUxOnEegeUzxFLklbGwdfPVF2ePZdC7M/Mk9HevfL4FUr5gKpMvu
-	 ZDnbGU2+fN/Ttbwbs85vg1sZbedDc5KFJYJYycpuhhbAv2aet9ac/qDnTzLXiEzMCs
-	 wwjQZ7RnaeSLBWv+W5kvSOoP3JQyxv23bwDMROquUZq/Ap1ZUyacQfvP37dlLVT12b
-	 RQrabf9F+uNtbsCAH6qmKu2sX0LDUBZYuFjayPFJdRDFwk84OB+XU6leIVCgrgYY+n
-	 KefcuoyFi6Fu8TgyM2AcuYy5Z5udDhrN6UMQtvZE+xcQRtEekJteRP93VQMXLs0Te+
-	 P34blWYxEXh0w==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sun, 21 Jul 2024 18:14:15 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <8b5a4a19-971a-4573-84ae-fd9d63fab799@wanadoo.fr>
-Date: Sun, 21 Jul 2024 18:14:09 +0200
+	s=arc-20240116; t=1721579065; c=relaxed/simple;
+	bh=6NGWFtrZr4yeMMMsc6nVXHaS2I4EsUB1yGVa66xtEw8=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Cc:Subject:To:
+	 References:From:In-Reply-To; b=dMLEWwFhoRavMtQDP6zGkdX3uvyyxZZsbJe40EPcXvMxJTnQaPYcV29sQoGizZBE9gSAwvmdHdG117fE8r4uMi5xE2gO+/Jg9O6+cNd3KtXk13F8/OSR8jemNES8RGq/6HE/B9H0YSfM61yuCphvx5yvaBbV8i/riHU7kQuzQFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VFFHL6Mt; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721579056;
+	bh=6NGWFtrZr4yeMMMsc6nVXHaS2I4EsUB1yGVa66xtEw8=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=VFFHL6MtSc79lRLfGDeTS0c1Al0fXrsw4nVGsQ+AW10l40ta0o15rZMsSHfnUTtpv
+	 Pae/QojDQdgPKYnlTxIFIkgUEQi38RlRlAFa3MDj1BwJNhn5Hryf1U2hYZWzJjYw7W
+	 +V3odPnsmSDT4Mw3Pxa391dIErlQR/sMFcI4YMjiltQXb2SM34cFighB7cSQcUkHku
+	 9o5SjH75e0CR4t8r6Vsy57Y9DTKawNHDYIbzZqY2AQiZY48LmcP8EacTmginWmmkHU
+	 hJ7cvAmOlBP8YUZ20KdewK+8jD23eSP0Gn2nW4lfJ6gADRx7VPXA0GOHN9zd4EvUrX
+	 n2cr26BaCIXsg==
+Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 544403780627;
+	Sun, 21 Jul 2024 16:24:13 +0000 (UTC)
+Content-Type: multipart/mixed; boundary="------------trJriLgu6faV8PELeO8dX3Bi"
+Message-ID: <77a66e39-7f34-4b3c-ac8d-e48d8c5a2830@collabora.com>
+Date: Sun, 21 Jul 2024 21:24:05 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,481 +57,214 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10] ALSA: hda/tas2781: Add tas2781 hda SPI driver
-To: Baojun Xu <baojun.xu@ti.com>, tiwai@suse.de
-Cc: robh+dt@kernel.org, andriy.shevchenko@linux.intel.com,
- lgirdwood@gmail.com, perex@perex.cz, pierre-louis.bossart@linux.intel.com,
- kevin-lu@ti.com, shenghao-ding@ti.com, navada@ti.com, 13916275206@139.com,
- v-hampiholi@ti.com, v-po@ti.com, niranjan.hy@ti.com,
- alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
- liam.r.girdwood@intel.com, yung-chuan.liao@linux.intel.com,
- broonie@kernel.org, soyer@irl.hu
-References: <20240721142258.504-1-baojun.xu@ti.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240721142258.504-1-baojun.xu@ti.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, kernel@collabora.com,
+ "Chang S . Bae" <chang.seok.bae@intel.com>,
+ Binbin Wu <binbin.wu@linux.intel.com>, Ingo Molnar <mingo@kernel.org>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH 1/2] selftests: x86: vdso_restorer: remove manual counting
+ of pass/fail tests
+To: Shuah Khan <skhan@linuxfoundation.org>
+References: <20240712073045.110014-1-usama.anjum@collabora.com>
+ <9cf7f693-bc6a-415b-99c3-f6c59b871c4f@linuxfoundation.org>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <9cf7f693-bc6a-415b-99c3-f6c59b871c4f@linuxfoundation.org>
+
+This is a multi-part message in MIME format.
+--------------trJriLgu6faV8PELeO8dX3Bi
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Le 21/07/2024 à 16:22, Baojun Xu a écrit :
-> This patch was used to add TAS2781 devices on SPI support in sound/pci/hda.
-> It use ACPI node descript about parameters of TAS2781 on SPI, it like:
->      Scope (_SB.PC00.SPI0)
->      {
->          Device (GSPK)
->          {
->              Name (_HID, "TXNW2781")  // _HID: Hardware ID
->              Method (_CRS, 0, NotSerialized)
->              {
->                  Name (RBUF, ResourceTemplate ()
->                  {
->                      SpiSerialBusV2 (...)
->                      SpiSerialBusV2 (...)
->                  }
->              }
->          }
->      }
+On 7/19/24 9:40 PM, Shuah Khan wrote:
+> On 7/12/24 01:30, Muhammad Usama Anjum wrote:
+>> Use kselftest wrapper to mark tests pass/fail instead of manually
+>> counting.
 > 
-> And in platform/x86/serial-multi-instantiate.c, those spi devices will be
-> added into system as a single SPI device, so TAS2781 SPI driver will
-> probe twice for every single SPI device. And driver will also parser
-> mono DSP firmware binary and RCA binary for itself.
-> The code support Realtek as the primary codec.
-> In patch version-10, add multi devices firmware binary support,
-> to compatble with windows driver, they can share same firmware binary.
+> You care combining two changes in the patch.
 > 
-> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+> This is needed to return correct exit status. This also
+>> improves readability and mainability.
 > 
-> ---
+> Spelling - "mainability" - checkpatch would have helped you
+> catch this.
+Sorry I'll fix it after following discussion. I use checkpatch with
+spelling checker. I may have missed it for this patch.
 
-Hi, a few nitpicks below, should they make sense and a v11 be sent.
+> 
+> The change to return the correct error fine and but not the
+> change thaT ADDS DUPLICATE tap header.
+> 
+>>
+> 
+> 
+>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>> ---
+>>   tools/testing/selftests/x86/vdso_restorer.c | 20 +++++++-------------
+>>   1 file changed, 7 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/tools/testing/selftests/x86/vdso_restorer.c
+>> b/tools/testing/selftests/x86/vdso_restorer.c
+>> index fe99f24341554..8e173d71291f6 100644
+>> --- a/tools/testing/selftests/x86/vdso_restorer.c
+>> +++ b/tools/testing/selftests/x86/vdso_restorer.c
+>> @@ -21,6 +21,7 @@
+>>   #include <unistd.h>
+>>   #include <syscall.h>
+>>   #include <sys/syscall.h>
+>> +#include "../kselftest.h"
+>>     /* Open-code this -- the headers are too messy to easily use them. */
+>>   struct real_sigaction {
+>> @@ -44,9 +45,10 @@ static void handler_without_siginfo(int sig)
+>>     int main()
+>>   {
+>> -    int nerrs = 0;
+>>       struct real_sigaction sa;
+>>   +    ksft_print_header();
+> 
+> The problem with adding this header here is when
+> make kselftest TARGETS=vDSO is run there will be
+> duplicate TAP 13 headers.
+Usually all TAP compliant tests print TAP 13 header at the start. These
+tests when run from make run_tests have duplicate TAP 13 headers. I don't
+think that this is the issue. Why do you think it is wrong?
 
-Only one true question in tasdevice_load_block_kernel() about error 
-handling.
+For example, I've attached the logs of vDSO test suite. TAP header is
+printed at the start. Then it is printed again at the start of the test if
+it is TAP compliant e.g., vdso_test_abi and vdso_test_getrandom. These
+tests are already TAP compliant. Other tests in this suite aren't TAP
+compliant.
 
-CJ
+-- 
+BR,
+Muhammad Usama Anjum
+--------------trJriLgu6faV8PELeO8dX3Bi
+Content-Type: text/x-log; charset=UTF-8; name="selftests-vDSO.log"
+Content-Disposition: attachment; filename="selftests-vDSO.log"
+Content-Transfer-Encoding: base64
 
-...
+bWFrZVsxXTogRW50ZXJpbmcgZGlyZWN0b3J5ICcvaG9tZS91c2FtYS9yZXBvcy9rZXJuZWwv
+bGludXhfbWFpbmxpbmUvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvdkRTTycKbWFrZVsxXTog
+Tm90aGluZyB0byBiZSBkb25lIGZvciAnYWxsJy4KbWFrZVsxXTogTGVhdmluZyBkaXJlY3Rv
+cnkgJy9ob21lL3VzYW1hL3JlcG9zL2tlcm5lbC9saW51eF9tYWlubGluZS90b29scy90ZXN0
+aW5nL3NlbGZ0ZXN0cy92RFNPJwptYWtlWzFdOiBFbnRlcmluZyBkaXJlY3RvcnkgJy9ob21l
+L3VzYW1hL3JlcG9zL2tlcm5lbC9saW51eF9tYWlubGluZS90b29scy90ZXN0aW5nL3NlbGZ0
+ZXN0cy92RFNPJwpUQVAgdmVyc2lvbiAxMwoxLi43CiMgdGltZW91dCBzZXQgdG8gNDUKIyBz
+ZWxmdGVzdHM6IHZEU086IHZkc29fdGVzdF9nZXR0aW1lb2ZkYXkKIyBUaGUgdGltZSBpcyAx
+NzIxNTc4ODQ2Ljk0Njc2MgpvayAxIHNlbGZ0ZXN0czogdkRTTzogdmRzb190ZXN0X2dldHRp
+bWVvZmRheQojIHRpbWVvdXQgc2V0IHRvIDQ1CiMgc2VsZnRlc3RzOiB2RFNPOiB2ZHNvX3Rl
+c3RfZ2V0Y3B1CiMgUnVubmluZyBvbiBDUFUgNCBub2RlIDAKb2sgMiBzZWxmdGVzdHM6IHZE
+U086IHZkc29fdGVzdF9nZXRjcHUKIyB0aW1lb3V0IHNldCB0byA0NQojIHNlbGZ0ZXN0czog
+dkRTTzogdmRzb190ZXN0X2FiaQojIFRBUCB2ZXJzaW9uIDEzCiMgMS4uMTYKIyAjIFt2RFNP
+IGtzZWxmdGVzdF0gVkRTT19WRVJTSU9OOiBMSU5VWF8yLjYKIyAjIFRoZSB0aW1lIGlzIDE3
+MjE1Nzg4NDYuOTc1NzIxCiMgb2sgMSBfX3Zkc29fZ2V0dGltZW9mZGF5CiMgIyBjbG9ja19p
+ZDogQ0xPQ0tfUkVBTFRJTUUKIyAjIFRoZSB0aW1lIGlzIDE3MjE1Nzg4NDYuOTc1NzI2MjU5
+CiMgb2sgMiBfX3Zkc29fY2xvY2tfZ2V0dGltZSBDTE9DS19SRUFMVElNRQojICMgVGhlIHZk
+c28gcmVzb2x1dGlvbiBpcyAwIDEKIyAjIFRoZSBzeXNjYWxsIHJlc29sdXRpb24gaXMgMCAx
+CiMgb2sgMyBfX3Zkc29fY2xvY2tfZ2V0cmVzIENMT0NLX1JFQUxUSU1FCiMgIyBjbG9ja19p
+ZDogQ0xPQ0tfQk9PVFRJTUUKIyAjIFRoZSB0aW1lIGlzIDEwNzcwMDguMTA1MjE0NDI0CiMg
+b2sgNCBfX3Zkc29fY2xvY2tfZ2V0dGltZSBDTE9DS19CT09UVElNRQojICMgVGhlIHZkc28g
+cmVzb2x1dGlvbiBpcyAwIDEKIyAjIFRoZSBzeXNjYWxsIHJlc29sdXRpb24gaXMgMCAxCiMg
+b2sgNSBfX3Zkc29fY2xvY2tfZ2V0cmVzIENMT0NLX0JPT1RUSU1FCiMgIyBjbG9ja19pZDog
+Q0xPQ0tfVEFJCiMgIyBUaGUgdGltZSBpcyAxNzIxNTc4ODgzLjk3NTczNzk5MgojIG9rIDYg
+X192ZHNvX2Nsb2NrX2dldHRpbWUgQ0xPQ0tfVEFJCiMgIyBUaGUgdmRzbyByZXNvbHV0aW9u
+IGlzIDAgMQojICMgVGhlIHN5c2NhbGwgcmVzb2x1dGlvbiBpcyAwIDEKIyBvayA3IF9fdmRz
+b19jbG9ja19nZXRyZXMgQ0xPQ0tfVEFJCiMgIyBjbG9ja19pZDogQ0xPQ0tfUkVBTFRJTUVf
+Q09BUlNFCiMgIyBUaGUgdGltZSBpcyAxNzIxNTc4ODQ2Ljk3MjI3NTczNQojIG9rIDggX192
+ZHNvX2Nsb2NrX2dldHRpbWUgQ0xPQ0tfUkVBTFRJTUVfQ09BUlNFCiMgIyBUaGUgdmRzbyBy
+ZXNvbHV0aW9uIGlzIDAgNDAwMDAwMAojICMgVGhlIHN5c2NhbGwgcmVzb2x1dGlvbiBpcyAw
+IDQwMDAwMDAKIyBvayA5IF9fdmRzb19jbG9ja19nZXRyZXMgQ0xPQ0tfUkVBTFRJTUVfQ09B
+UlNFCiMgIyBjbG9ja19pZDogQ0xPQ0tfTU9OT1RPTklDCiMgIyBUaGUgdGltZSBpcyAzODA5
+NzcuMjI4MTUxNjQ3CiMgb2sgMTAgX192ZHNvX2Nsb2NrX2dldHRpbWUgQ0xPQ0tfTU9OT1RP
+TklDCiMgIyBUaGUgdmRzbyByZXNvbHV0aW9uIGlzIDAgMQojICMgVGhlIHN5c2NhbGwgcmVz
+b2x1dGlvbiBpcyAwIDEKIyBvayAxMSBfX3Zkc29fY2xvY2tfZ2V0cmVzIENMT0NLX01PTk9U
+T05JQwojICMgY2xvY2tfaWQ6IENMT0NLX01PTk9UT05JQ19SQVcKIyAjIFRoZSB0aW1lIGlz
+IDM4MDk3NC43MTQyMDU1ODAKIyBvayAxMiBfX3Zkc29fY2xvY2tfZ2V0dGltZSBDTE9DS19N
+T05PVE9OSUNfUkFXCiMgIyBUaGUgdmRzbyByZXNvbHV0aW9uIGlzIDAgMQojICMgVGhlIHN5
+c2NhbGwgcmVzb2x1dGlvbiBpcyAwIDEKIyBvayAxMyBfX3Zkc29fY2xvY2tfZ2V0cmVzIENM
+T0NLX01PTk9UT05JQ19SQVcKIyAjIGNsb2NrX2lkOiBDTE9DS19NT05PVE9OSUNfQ09BUlNF
+CiMgIyBUaGUgdGltZSBpcyAzODA5NzcuMjI0NjgwNDUwCiMgb2sgMTQgX192ZHNvX2Nsb2Nr
+X2dldHRpbWUgQ0xPQ0tfTU9OT1RPTklDX0NPQVJTRQojICMgVGhlIHZkc28gcmVzb2x1dGlv
+biBpcyAwIDQwMDAwMDAKIyAjIFRoZSBzeXNjYWxsIHJlc29sdXRpb24gaXMgMCA0MDAwMDAw
+CiMgb2sgMTUgX192ZHNvX2Nsb2NrX2dldHJlcyBDTE9DS19NT05PVE9OSUNfQ09BUlNFCiMg
+IyBUaGUgdGltZSBpbiBob3VycyBzaW5jZSBKYW51YXJ5IDEsIDE5NzAgaXMgNDc4MjE2CiMg
+b2sgMTYgX192ZHNvX3RpbWUKIyAjIFRvdGFsczogcGFzczoxNiBmYWlsOjAgeGZhaWw6MCB4
+cGFzczowIHNraXA6MCBlcnJvcjowCm9rIDMgc2VsZnRlc3RzOiB2RFNPOiB2ZHNvX3Rlc3Rf
+YWJpCiMgdGltZW91dCBzZXQgdG8gNDUKIyBzZWxmdGVzdHM6IHZEU086IHZkc29fdGVzdF9j
+bG9ja19nZXRyZXMKIyBjbG9ja19pZDogQ0xPQ0tfUkVBTFRJTUUgW1BBU1NdCiMgY2xvY2tf
+aWQ6IENMT0NLX0JPT1RUSU1FIFtQQVNTXQojIGNsb2NrX2lkOiBDTE9DS19UQUkgW1BBU1Nd
+CiMgY2xvY2tfaWQ6IENMT0NLX1JFQUxUSU1FX0NPQVJTRSBbUEFTU10KIyBjbG9ja19pZDog
+Q0xPQ0tfTU9OT1RPTklDIFtQQVNTXQojIGNsb2NrX2lkOiBDTE9DS19NT05PVE9OSUNfUkFX
+IFtQQVNTXQojIGNsb2NrX2lkOiBDTE9DS19NT05PVE9OSUNfQ09BUlNFIFtQQVNTXQpvayA0
+IHNlbGZ0ZXN0czogdkRTTzogdmRzb190ZXN0X2Nsb2NrX2dldHJlcwojIHRpbWVvdXQgc2V0
+IHRvIDQ1CiMgc2VsZnRlc3RzOiB2RFNPOiB2ZHNvX3N0YW5kYWxvbmVfdGVzdF94ODYKIyBU
+aGUgdGltZSBpcyAgICAgICAgICAgMTcyMTU3ODg0Ny4wMDA4NzUKb2sgNSBzZWxmdGVzdHM6
+IHZEU086IHZkc29fc3RhbmRhbG9uZV90ZXN0X3g4NgojIHRpbWVvdXQgc2V0IHRvIDQ1CiMg
+c2VsZnRlc3RzOiB2RFNPOiB2ZHNvX3Rlc3RfY29ycmVjdG5lc3MKIyBXYXJuaW5nOiBmYWls
+ZWQgdG8gZmluZCB2c3lzY2FsbCBnZXRjcHUKIyBbUlVOXQlUZXN0aW5nIGNsb2NrX2dldHRp
+bWUgZm9yIGNsb2NrIENMT0NLX1JFQUxUSU1FICgwKS4uLgojIAkxNzIxNTc4ODQ3LjAxMjg4
+ODgzMiAxNzIxNTc4ODQ3LjAxMjg5NTg4NiAxNzIxNTc4ODQ3LjAxMjg5NzI4MwojIFtPS10J
+VGVzdCBQYXNzZWQuCiMgW1JVTl0JVGVzdGluZyBjbG9ja19nZXR0aW1lIGZvciBjbG9jayBD
+TE9DS19NT05PVE9OSUMgKDEpLi4uCiMgCTM4MDk3Ny4yNjUzMDczNzYgMzgwOTc3LjI2NTMw
+ODI4NCAzODA5NzcuMjY1MzA5NzUxCiMgW09LXQlUZXN0IFBhc3NlZC4KIyBbUlVOXQlUZXN0
+aW5nIGNsb2NrX2dldHRpbWUgZm9yIGNsb2NrIENMT0NLX1BST0NFU1NfQ1BVVElNRV9JRCAo
+MikuLi4KIyAJMC4wMDExODgyNDAgMC4wMDExODkxMDIgMC4wMDExODk2MjMKIyBbT0tdCVRl
+c3QgUGFzc2VkLgojIFtSVU5dCVRlc3RpbmcgY2xvY2tfZ2V0dGltZSBmb3IgY2xvY2sgQ0xP
+Q0tfVEhSRUFEX0NQVVRJTUVfSUQgKDMpLi4uCiMgCTAuMDAxMTkyNjY4IDAuMDAxMTkzMTY5
+IDAuMDAxMTkzNjEwCiMgW09LXQlUZXN0IFBhc3NlZC4KIyBbUlVOXQlUZXN0aW5nIGNsb2Nr
+X2dldHRpbWUgZm9yIGNsb2NrIENMT0NLX01PTk9UT05JQ19SQVcgKDQpLi4uCiMgCTM4MDk3
+NC43NTEzNzExOTcgMzgwOTc0Ljc1MTM3MjU5NCAzODA5NzQuNzUxMzczNTcyCiMgW09LXQlU
+ZXN0IFBhc3NlZC4KIyBbUlVOXQlUZXN0aW5nIGNsb2NrX2dldHRpbWUgZm9yIGNsb2NrIENM
+T0NLX1JFQUxUSU1FX0NPQVJTRSAoNSkuLi4KIyAJMTcyMTU3ODg0Ny4wMDgyNzYwNzQgMTcy
+MTU3ODg0Ny4wMDgyNzYwNzQgMTcyMTU3ODg0Ny4wMDgyNzYwNzQKIyBbT0tdCVRlc3QgUGFz
+c2VkLgojIFtSVU5dCVRlc3RpbmcgY2xvY2tfZ2V0dGltZSBmb3IgY2xvY2sgQ0xPQ0tfTU9O
+T1RPTklDX0NPQVJTRSAoNikuLi4KIyAJMzgwOTc3LjI2MDY4MDc4OSAzODA5NzcuMjYwNjgw
+Nzg5IDM4MDk3Ny4yNjA2ODA3ODkKIyBbT0tdCVRlc3QgUGFzc2VkLgojIFtSVU5dCVRlc3Rp
+bmcgY2xvY2tfZ2V0dGltZSBmb3IgY2xvY2sgQ0xPQ0tfQk9PVFRJTUUgKDcpLi4uCiMgCTEw
+NzcwMDguMTQyNDExNzA5IDEwNzcwMDguMTQyNDEzMTA2IDEwNzcwMDguMTQyNDE0MDgzCiMg
+W09LXQlUZXN0IFBhc3NlZC4KIyBbUlVOXQlUZXN0aW5nIGNsb2NrX2dldHRpbWUgZm9yIGNs
+b2NrIENMT0NLX1JFQUxUSU1FX0FMQVJNICg4KS4uLgojIAkxNzIxNTc4ODQ3LjAxMjkzNTgz
+NiAxNzIxNTc4ODQ3LjAxMjkzNzMwMyAxNzIxNTc4ODQ3LjAxMjkzODY5OQojIFtPS10JVGVz
+dCBQYXNzZWQuCiMgW1JVTl0JVGVzdGluZyBjbG9ja19nZXR0aW1lIGZvciBjbG9jayBDTE9D
+S19CT09UVElNRV9BTEFSTSAoOSkuLi4KIyAJMTA3NzAwOC4xNDI0MjQxNDEgMTA3NzAwOC4x
+NDI0MjU1MzcgMTA3NzAwOC4xNDI0MjcwMDQKIyBbT0tdCVRlc3QgUGFzc2VkLgojIFtSVU5d
+CVRlc3RpbmcgY2xvY2tfZ2V0dGltZSBmb3IgY2xvY2sgQ0xPQ0tfU0dJX0NZQ0xFICgxMCku
+Li4KIyBbT0tdCU5vIHN1Y2ggY2xvY2suCiMgW1JVTl0JVGVzdGluZyBjbG9ja19nZXR0aW1l
+IGZvciBjbG9jayBDTE9DS19UQUkgKDExKS4uLgojIAkxNzIxNTc4ODg0LjAxMjk1MDY0MiAx
+NzIxNTc4ODg0LjAxMjk1MTYyMCAxNzIxNTc4ODg0LjAxMjk1MzAxNwojIFtPS10JVGVzdCBQ
+YXNzZWQuCiMgW1JVTl0JVGVzdGluZyBjbG9ja19nZXR0aW1lIGZvciBjbG9jayBpbnZhbGlk
+ICgtMSkuLi4KIyBbT0tdCU5vIHN1Y2ggY2xvY2suCiMgW1JVTl0JVGVzdGluZyBjbG9ja19n
+ZXR0aW1lIGZvciBjbG9jayBpbnZhbGlkICgtMjE0NzQ4MzY0OCkuLi4KIyBbT0tdCU5vIHN1
+Y2ggY2xvY2suCiMgW1JVTl0JVGVzdGluZyBjbG9ja19nZXR0aW1lIGZvciBjbG9jayBpbnZh
+bGlkICgyMTQ3NDgzNjQ3KS4uLgojIFtPS10JTm8gc3VjaCBjbG9jay4KIyBbU0tJUF0JTm8g
+dkRTTywgc28gc2tpcHBpbmcgY2xvY2tfZ2V0dGltZTY0KCkgdGVzdHMKIyBbUlVOXQlUZXN0
+aW5nIGdldHRpbWVvZmRheS4uLgojIAkxNzIxNTc4ODQ3LjAxMjk2MiAxNzIxNTc4ODQ3LjAx
+Mjk2NCAxNzIxNTc4ODQ3LjAxMjk2NQojIFtPS10JdGltZXpvbmVzIG1hdGNoOiBtaW51dGVz
+d2VzdD0wLCBkc3R0aW1lPTAKIyBbUlVOXQlUZXN0aW5nIGdldGNwdS4uLgojIFtPS10JQ1BV
+IDA6IHN5c2NhbGw6IGNwdSAwLCBub2RlIDAgdmRzbzogY3B1IDAsIG5vZGUgMAojIFtPS10J
+Q1BVIDE6IHN5c2NhbGw6IGNwdSAxLCBub2RlIDAgdmRzbzogY3B1IDEsIG5vZGUgMAojIFtP
+S10JQ1BVIDI6IHN5c2NhbGw6IGNwdSAyLCBub2RlIDAgdmRzbzogY3B1IDIsIG5vZGUgMAoj
+IFtPS10JQ1BVIDM6IHN5c2NhbGw6IGNwdSAzLCBub2RlIDAgdmRzbzogY3B1IDMsIG5vZGUg
+MAojIFtPS10JQ1BVIDQ6IHN5c2NhbGw6IGNwdSA0LCBub2RlIDAgdmRzbzogY3B1IDQsIG5v
+ZGUgMAojIFtPS10JQ1BVIDU6IHN5c2NhbGw6IGNwdSA1LCBub2RlIDAgdmRzbzogY3B1IDUs
+IG5vZGUgMAojIFtPS10JQ1BVIDY6IHN5c2NhbGw6IGNwdSA2LCBub2RlIDAgdmRzbzogY3B1
+IDYsIG5vZGUgMAojIFtPS10JQ1BVIDc6IHN5c2NhbGw6IGNwdSA3LCBub2RlIDAgdmRzbzog
+Y3B1IDcsIG5vZGUgMAojIFtPS10JQ1BVIDg6IHN5c2NhbGw6IGNwdSA4LCBub2RlIDAgdmRz
+bzogY3B1IDgsIG5vZGUgMAojIFtPS10JQ1BVIDk6IHN5c2NhbGw6IGNwdSA5LCBub2RlIDAg
+dmRzbzogY3B1IDksIG5vZGUgMAojIFtPS10JQ1BVIDEwOiBzeXNjYWxsOiBjcHUgMTAsIG5v
+ZGUgMCB2ZHNvOiBjcHUgMTAsIG5vZGUgMAojIFtPS10JQ1BVIDExOiBzeXNjYWxsOiBjcHUg
+MTEsIG5vZGUgMCB2ZHNvOiBjcHUgMTEsIG5vZGUgMAojIFtPS10JQ1BVIDEyOiBzeXNjYWxs
+OiBjcHUgMTIsIG5vZGUgMCB2ZHNvOiBjcHUgMTIsIG5vZGUgMAojIFtPS10JQ1BVIDEzOiBz
+eXNjYWxsOiBjcHUgMTMsIG5vZGUgMCB2ZHNvOiBjcHUgMTMsIG5vZGUgMAojIFtPS10JQ1BV
+IDE0OiBzeXNjYWxsOiBjcHUgMTQsIG5vZGUgMCB2ZHNvOiBjcHUgMTQsIG5vZGUgMAojIFtP
+S10JQ1BVIDE1OiBzeXNjYWxsOiBjcHUgMTUsIG5vZGUgMCB2ZHNvOiBjcHUgMTUsIG5vZGUg
+MApvayA2IHNlbGZ0ZXN0czogdkRTTzogdmRzb190ZXN0X2NvcnJlY3RuZXNzCiMgdGltZW91
+dCBzZXQgdG8gNDUKIyBzZWxmdGVzdHM6IHZEU086IHZkc29fdGVzdF9nZXRyYW5kb20KIyBU
+QVAgdmVyc2lvbiAxMwojIDEuLjEKIyBfX3Zkc29fZ2V0cmFuZG9tIGlzIG1pc3NpbmchCm5v
+dCBvayA3IHNlbGZ0ZXN0czogdkRTTzogdmRzb190ZXN0X2dldHJhbmRvbSAjIGV4aXQ9MQpt
+YWtlWzFdOiBMZWF2aW5nIGRpcmVjdG9yeSAnL2hvbWUvdXNhbWEvcmVwb3Mva2VybmVsL2xp
+bnV4X21haW5saW5lL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL3ZEU08nCg==
 
-> +struct tasdevice_priv {
-> +	struct tasdevice_fw *cali_data_fmw;
-> +	struct tasdevice_rca rcabin;
-> +	struct tasdevice_fw *fmw;
-> +	struct gpio_desc *reset;
-> +	struct mutex codec_lock;
-> +	struct regmap *regmap;
-> +	struct device *dev;
-> +	struct tm tm;
-> +
-> +	const char *acpi_subsystem_id;
-> +	unsigned char crc8_lkp_tbl[CRC8_TABLE_SIZE];
-> +	unsigned char coef_binaryname[64];
-> +	unsigned char rca_binaryname[64];
-> +	unsigned char dev_name[32];
-> +
-> +	unsigned int err_code;
-> +	bool is_loading;
-> +	bool is_loaderr;
-> +	int cur_book;
-> +	int cur_prog;
-> +	int cur_conf;
-> +	int fw_state;
-> +	int index;
-> +	int irq;
-> +	void *codec;
-> +	bool force_fwload_status;
-> +	bool playback_started;
-
-If these bool were moved with the other ones, it could avoid some holes 
-in the structure.
-
-> +	unsigned int cali_data[CALIB_MAX];
-> +	unsigned int cali_reg_array[CALIB_MAX];
-> +
-> +	int (*fw_parse_variable_header)(struct tasdevice_priv *tas_priv,
-> +					const struct firmware *fmw,
-> +					int offset);
-> +	int (*fw_parse_program_data)(struct tasdevice_priv *tas_priv,
-> +				     struct tasdevice_fw *tas_fmw,
-> +				     const struct firmware *fmw, int offset);
-> +	int (*fw_parse_configuration_data)(struct tasdevice_priv *tas_priv,
-> +					   struct tasdevice_fw *tas_fmw,
-> +					   const struct firmware *fmw,
-> +					   int offset);
-> +	int (*tasdevice_load_block)(struct tasdevice_priv *tas_priv,
-> +				    struct tasdev_blk *block);
-> +
-> +	int (*save_calibration)(struct tasdevice_priv *tas_priv);
-> +	void (*apply_calibration)(struct tasdevice_priv *tas_priv);
-> +};
-
-...
-
-> +struct tasdevice_table {
-> +	int reg;
-> +	unsigned char data[8];
-> +};
-> +
-> +static struct tasdevice_table tas2781_pre_reset_table[] = {
-
-Nitpick: const? (I think that the compiler can guess it by its own)
-
-> +	/* Values setting for pre-reset. */
-
-Nitpick: Given the name of the array, is this comment useful?
-
-> +	{ TASDEVICE_REG(0x00, 0x00, 0x02), {0x01, 0x1a, },},
-> +	{ TASDEVICE_REG(0x00, 0x01, 0x37), {0x01, 0x3a, },},
-> +	{ TASDEVICE_REG(0x00, 0xfd, 0x0d), {0x01, 0x0d, },},
-> +	{ TASDEVICE_REG(0x00, 0xfd, 0x06), {0x01, 0xc1, },},
-> +	{ TASDEVICE_REG(0x00, 0x01, 0x19), {0x01, 0xe0, },},
-> +	{ TASDEVICE_REG(0x00, 0xfd, 0x0d), {0x01, 0x0d, },},
-> +	{ TASDEVICE_REG(0x00, 0xfd, 0x06), {0x01, 0xd5, },},
-> +	{ TASDEVICE_REG(0x00, 0x00, 0x00), {0x01, 0x00, },},
-> +};
-> +
-> +static struct tasdevice_table tas2781_post_reset_table[] = {
-
-Same 2 comemnts
-
-> +	/* Values setting for post-reset. */
-> +	{ TASDEVICE_REG(0x00, 0x01, 0x37), {0x01, 0x3a, },},
-> +	{ TASDEVICE_REG(0x00, 0xfd, 0x0d), {0x01, 0x0d, },},
-> +	{ TASDEVICE_REG(0x00, 0xfd, 0x06), {0x01, 0xc1, },},
-> +	{ TASDEVICE_REG(0x00, 0xfd, 0x06), {0x01, 0xd5, },},
-> +	{ TASDEVICE_REG(0x00, 0xfd, 0x0a), {0x01, 0x01, },},
-> +	{ TASDEVICE_REG(0x00, 0x00, 0x00), {0x01, 0x00, },},
-> +};
-
-...
-
-> +static void tas2781_apply_calib(struct tasdevice_priv *tas_priv)
-> +{
-> +	int j, rc;
-
-Nitpick: i is more usual. (same things apply in some other places)
-
-> +
-> +	/*
-> +	 * If no calibration data exist in tasdevice_priv *tas_priv,
-> +	 * calibration apply will be ignored, and use default values
-> +	 * in firmware binary, which was loaded during firmware download.
-> +	 */
-> +	if (tas_priv->cali_data[0] == 0)
-> +		return;
-> +	/*
-> +	 * Calibration data was saved in tasdevice_priv *tas_priv as:
-> +	 * unsigned int cali_data[CALIB_MAX];
-> +	 * and every data (in 4 bytes) will be saved in register which in
-> +	 * book 0, and page number in page_array[], offset was saved in
-> +	 * rgno_array[].
-> +	 */
-> +	for (j = 0; j < CALIB_MAX; j++) {
-> +		rc = tasdevice_spi_dev_bulk_write(tas_priv,
-> +			tas_priv->cali_reg_array[j],
-> +			(unsigned char *)&tas_priv->cali_data[j], 4);
-> +		if (rc < 0)
-> +			dev_err(tas_priv->dev,
-> +				"chn %d calib %d bulk_wr err = %d\n",
-> +				tas_priv->index, j, rc);
-> +	}
-> +}
-
-...
-
-> +/* Block process function. */
-> +static int tasdevice_load_block_kernel(
-> +	struct tasdevice_priv *tasdevice, struct tasdev_blk *block)
-> +{
-> +	const unsigned int blk_size = block->blk_size;
-> +	unsigned char *data = block->data;
-> +	unsigned int i, length;
-> +
-> +	for (i = 0, length = 0; i < block->nr_subblocks; i++) {
-> +		int rc = tasdevice_process_block(tasdevice, data + length,
-> +			block->dev_idx, blk_size - length);
-> +		if (rc < 0) {
-> +			dev_err(tasdevice->dev,
-> +				"%s: %u %u sublock write error\n",
-> +				__func__, length, blk_size);
-> +			break;
-> +		}
-> +		length += rc;
-> +		if (blk_size < length) {
-> +			dev_err(tasdevice->dev, "%s: %u %u out of boundary\n",
-> +				__func__, length, blk_size);
-> +			break;
-> +		}
-> +	}
-
-Should an error code be returned if we reach one of the break above?
-This error code is checked by the callers, so it looks strange to me to 
-always return 0.
-
-> +
-> +	return 0;
-> +}
-
-...
-
-> +/*
-> + * Return Code:
-> + * true -- the registers are in the inblock yram
-> + * false -- the registers are NOT in the inblock yram
-> + */
-> +static bool check_inblock_yram(struct tas_crc *cd, unsigned char book,
-> +	unsigned char page, unsigned char reg, unsigned char len)
-> +{
-> +	bool in = false;
-> +
-> +	if (book == TAS2781_YRAM_BOOK1 || book == TAS2781_YRAM_BOOK2)
-> +		in = check_inblock_yram_bk(cd, page, reg, len);
-> +
-> +	return in;
-> +}
-
-Nitpick: Add a new line?
-If you agree, several other places above also needs to be updated.
-
-> +/* yram page check. */
-
-...
-
-> +static int dspfw_default_callback(struct tasdevice_priv *tas_priv,
-> +	unsigned int drv_ver, unsigned int ppcver)
-> +{
-> +	int rc = 0;
-> +
-> +	if (drv_ver == 0x100) {
-> +		if (ppcver >= PPC3_VERSION) {
-> +			tas_priv->fw_parse_variable_header =
-> +				fw_parse_variable_header_kernel;
-> +			tas_priv->fw_parse_program_data =
-> +				fw_parse_program_data_kernel;
-> +			tas_priv->fw_parse_configuration_data =
-> +				fw_parse_configuration_data_kernel;
-> +			tas_priv->tasdevice_load_block =
-> +				tasdevice_load_block_kernel;
-> +		} else {
-> +			switch (ppcver) {
-> +			case 0x00:
-
-if it was:
-
-		} else (ppcver == 0x00) {
-			...
-		} else {
-		}
-
-it would save 1 level of tabulation.
-
-> +				tas_priv->fw_parse_variable_header =
-> +					fw_parse_variable_header_git;
-> +				tas_priv->fw_parse_program_data =
-> +					fw_parse_program_data;
-> +				tas_priv->fw_parse_configuration_data =
-> +					fw_parse_configuration_data;
-> +				tas_priv->tasdevice_load_block =
-> +					tasdevice_load_block;
-> +				break;
-> +			default:
-> +				dev_err(tas_priv->dev,
-> +					"%s: PPCVer must be 0x0 or 0x%02x",
-> +					__func__, PPC3_VERSION);
-> +				dev_err(tas_priv->dev, " Current:0x%02x\n",
-> +					ppcver);
-
-Why spliting into 2 dev_err()?
-
-> +				rc = -EINVAL;
-> +				break;
-> +			}
-> +		}
-> +	} else {
-> +		dev_err(tas_priv->dev,
-> +			"DrvVer must be 0x0, 0x230 or above 0x230 ");
-> +		dev_err(tas_priv->dev, "current is 0x%02x\n", drv_ver);
-
-Why spliting into 2 dev_err()?
-
-The comment does not seem to match the test above (if (drv_ver == 0x100)).
-
-> +		rc = -EINVAL;
-> +	}
-> +
-> +	return rc;
-> +}
-
-...
-
-> +/* DSP firmware program load function. */
-> +int tasdevice_spi_select_tuningprm_cfg(void *context, int prm_no,
-> +	int cfg_no, int rca_conf_no)
-> +{
-> +	struct tasdevice_priv *tas_priv = context;
-> +	struct tasdevice_rca *rca = &tas_priv->rcabin;
-> +	struct tasdevice_config_info **cfg_info = rca->cfg_info;
-> +	struct tasdevice_fw *tas_fmw = tas_priv->fmw;
-> +	struct tasdevice_prog *program;
-> +	struct tasdevice_config *conf;
-> +	int prog_status = 0;
-> +	int status;
-> +
-> +	if (!tas_fmw) {
-> +		dev_err(tas_priv->dev, "%s: Firmware is NULL\n", __func__);
-> +		return 0;
-> +	}
-> +
-> +	if (cfg_no >= tas_fmw->nr_configurations) {
-> +		dev_err(tas_priv->dev,
-> +			"%s: cfg(%d) is not in range of conf %u\n",
-> +			__func__, cfg_no, tas_fmw->nr_configurations);
-> +		return 0;
-> +	}
-> +
-> +	if (prm_no >= tas_fmw->nr_programs) {
-> +		dev_err(tas_priv->dev,
-> +			"%s: prm(%d) is not in range of Programs %u\n",
-> +			__func__, prm_no, tas_fmw->nr_programs);
-> +		return 0;
-> +	}
-> +
-> +	if (rca_conf_no >= rca->ncfgs ||
-> +	    rca_conf_no < 0 ||
-> +	    !cfg_info) {
-> +		dev_err(tas_priv->dev,
-> +			"conf_no:%d should be in range from 0 to %u\n",
-> +			rca_conf_no, rca->ncfgs-1);
-> +		return 0;
-> +	}
-> +
-> +	if (prm_no >= 0	&&
-> +	   (tas_priv->cur_prog != prm_no ||
-> +	    tas_priv->force_fwload_status)) {
-> +		tas_priv->cur_conf = -1;
-> +		tas_priv->is_loading = true;
-> +		prog_status++;
-> +	}
-> +
-> +	if (prog_status) {
-> +		program = &tas_fmw->programs[prm_no];
-> +		tasdevice_load_data(tas_priv, &program->dev_data);
-> +		if (tas_priv->is_loaderr == false &&
-> +		    tas_priv->is_loading == true) {
-> +			struct tasdevice_fw *cal_fmw =
-> +				tas_priv->cali_data_fmw;
-> +
-> +			if (cal_fmw) {
-> +				struct tasdevice_calibration
-> +					*cal = cal_fmw->calibrations;
-> +
-> +				if (cal)
-> +					load_calib_data(tas_priv,
-> +						&cal->dev_data);
-> +			}
-> +			tas_priv->cur_prog = prm_no;
-> +		}
-> +
-
-Nitpick: Unneeded extra new line.
-
-> +	}
-> +
-> +	if (cfg_no &&
-> +	   (cfg_no != tas_priv->cur_conf) &&
-> +	   (tas_priv->is_loaderr == false)) {
-> +		status++;
-> +		tas_priv->is_loading = true;
-> +	} else {
-> +		tas_priv->is_loading = false;
-> +	}
-> +	if (status) {
-> +		conf = &tas_fmw->configs[cfg_no];
-> +		status = 0;
-> +		tasdevice_load_data(tas_priv, &conf->dev_data);
-> +		if (tas_priv->is_loaderr == true) {
-> +			status |= 1 << 4;
-> +		} else if (tas_priv->is_loaderr == false &&
-> +			   tas_priv->is_loading == true) {
-> +			tas_priv->cur_conf = cfg_no;
-> +		}
-> +	} else {
-> +		dev_dbg(tas_priv->dev, "%s: Unneeded loading dsp conf %d\n",
-> +			__func__, cfg_no);
-> +	}
-> +
-> +	return prog_status;
-> +}
-> +
-> +/* DSP firmware program load interface function. */
-> +int tasdevice_spi_prmg_load(void *context, int prm_no)
-
-This always called with prm_no = 0 and the returned value is never 
-checked/used.
-
-Does it make sense to simplify things?
-
-> +{
-> +	struct tasdevice_priv *tas_priv = context;
-> +	struct tasdevice_fw *tas_fmw = tas_priv->fmw;
-> +	struct tasdevice_prog *program;
-> +	struct tasdevice_config *conf;
-> +	int prog_status = 0;
-> +
-> +	if (!tas_fmw) {
-> +		dev_err(tas_priv->dev, "%s: Firmware is NULL\n", __func__);
-> +		return 0;
-> +	}
-> +
-> +	if (prm_no >= tas_fmw->nr_programs) {
-> +		dev_err(tas_priv->dev,
-> +			"%s: prm(%d) is not in range of Programs %u\n",
-> +			__func__, prm_no, tas_fmw->nr_programs);
-> +		return 0;
-> +	}
-> +
-> +	if (prm_no >= 0) {
-> +		tas_priv->cur_conf = 0;
-> +		tas_priv->is_loading = true;
-> +		prog_status++;
-> +	}
-> +	if (prog_status) {
-> +		program = &tas_fmw->programs[prm_no];
-> +		tasdevice_load_data(tas_priv, &program->dev_data);
-> +		tas_priv->cur_prog = prm_no;
-> +	}
-> +	if (prog_status) {
-
-Nitpick: Why testing again and not merging with the lines above?
-
-> +		conf = &tas_fmw->configs[tas_priv->cur_conf];
-> +		tasdevice_load_data(tas_priv, &conf->dev_data);
-> +	}
-> +
-> +	return prog_status;
-> +}
-> +
-> +/* DSP firmware program switch interface function. */
-> +void tasdevice_spi_tuning_switch(void *context, int state)
-> +{
-> +	struct tasdevice_priv *tas_priv = context;
-> +	int profile_cfg_id = tas_priv->rcabin.profile_cfg_id;
-> +
-> +	if (tas_priv->fw_state == TASDEVICE_DSP_FW_FAIL) {
-> +		dev_err(tas_priv->dev, "DSP bin file not loaded\n");
-> +		return;
-> +	}
-> +
-> +	if (state == 0) {
-> +		tasdevice_spi_select_cfg_blk(tas_priv, profile_cfg_id,
-> +			TASDEVICE_BIN_BLK_PRE_POWER_UP);
-> +	} else {
-> +		tasdevice_spi_select_cfg_blk(tas_priv, profile_cfg_id,
-> +			TASDEVICE_BIN_BLK_PRE_SHUTDOWN);
-> +	}
-
-Nitpick: { } could be dropped on both branch.
-
-> +}
-
+--------------trJriLgu6faV8PELeO8dX3Bi--
 
