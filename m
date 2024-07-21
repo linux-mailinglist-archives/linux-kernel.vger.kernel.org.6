@@ -1,110 +1,148 @@
-Return-Path: <linux-kernel+bounces-258347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE5669386A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 01:20:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB9679386A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 01:25:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AC66280F6F
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 23:20:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 683BD281060
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 23:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3739213FFC;
-	Sun, 21 Jul 2024 23:20:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 439D714A90;
+	Sun, 21 Jul 2024 23:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Y9hUGw8t"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HLMV2/7t";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="UCJcAuJX";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HLMV2/7t";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="UCJcAuJX"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AE116415
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 23:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63738C8D1;
+	Sun, 21 Jul 2024 23:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721604004; cv=none; b=GWIW/R7Sx22kXq5PA50DEh7yE+6eHyr4GVOTEhKnaUlxV6r6RKUcF06l02eYLlq/ujN3JVphOfdn8dsGvWP1sbCzgV9VeCV7KcI8BjWGRbfrvQA+gkaQlJEN6OmS5PDl01INCZXN4Ro1+J13b111QrstXGw/SZKg2+ZLYwIpNGo=
+	t=1721604334; cv=none; b=a3aHbWpRXuH044C0co2WVZxigOW7nMuHyWosDrGQl15QvXWHE7rq3Q14Ai3fTjnLOTMCs8BoIYd3+/VHJLiRjcTf8ZqlwwpHVNluvaz7ObTipNHQcWaXK+tzXgJhYcqBa3sRwHdahp1uP6Biq/+2Ag+JKujd1VJvdS0RlP6AXkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721604004; c=relaxed/simple;
-	bh=6XfL6zmiG48Bc5+7L2Nvgt2xjns4Mg6TDYVp2oOpnxA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eTgG8YHfxb86Oz1ou/Dm3GTRUuRwVrBbNU/X5RFHvtDTscotvzGLH/n1x/6VI6hFtWXDc2iGB04fhSRVfRKYxX6p8XYQC3JpM1vdsfRqBQslAHrEc1Kd3H4iFYjzLwyzKhTDYoF5shxV53RTTGVgsESMzfEhYE4UpIzuKD3H/sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Y9hUGw8t; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2eeb1ba0468so50115541fa.0
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 16:20:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1721604000; x=1722208800; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=32YuisS0nN9yXPU8HG6FFhSsLCxcgTmmQjMW95eNEt4=;
-        b=Y9hUGw8tgaUF+IIZKmd7mnSYYDP6v5WMcwgFFrcCcelpoGsP+27YFdgDTgSt3tgWtA
-         RVIh4xzEaLSp3oF3MAy45EvL8JpnNCVMJNRjkPqtiEYxfyMt9dZdOBDdYiTP+VQ/A8CB
-         t7qMOzUUK6J6WSSQabmy6vc1UOrcyWrQrA0jc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721604000; x=1722208800;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=32YuisS0nN9yXPU8HG6FFhSsLCxcgTmmQjMW95eNEt4=;
-        b=Jv75T6oaAl/fwavsAIfqi5jz8R7vxthrYc/x+aMsXwj1sFqqQ+EeaqWCKJp0Q3LMZL
-         R9m3W/A+I6qfkq9HeNba1oGpHbzzuQ5G1R/O7lw65/H4iAt4Rz1TthDdvWougjlhoP+Z
-         ZpMQOBJNQnIo3saXy+9mpWv4o7sysd8E1pRqgl68f+hDKVn4SNaVFpzdZqlyGed34kU1
-         axM7/6o/zOSRl15CKXYBNPdEU6njP0bsI4nO2aNftX9CT3auhZqeAMJlyC94jNqzbSqJ
-         0llWFUdWr+qX7MDMlq/XE1EXrDbCMNI2JxUMFMYfIriifirVWmp+2LznFri83OUluCbz
-         s+Nw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXugQBQPQy126wr5TYuqcAiZF70I1yOWfqFeDHusIwZlv7JbUrJvoGu4z3boirJz0DPBN8eQ58MvomjsRpNjzVLvFiW5UzY+BatL1o
-X-Gm-Message-State: AOJu0Ywy9oMqLS+v3lHJv59CImkIqncwDK/POX3JQyscxm7aNzG8A/Yp
-	PdM+a2lM8sfVbz6+C7vpjha3N5nNtwZcVK3jDQ0c3hUMsFN9C6rXid0l0eoNMH65ZUGw8h6mFxg
-	F6Fc=
-X-Google-Smtp-Source: AGHT+IF79O6+ioEgg/fdCOUqI4kYeBdE17PTG4BrMcs9pPEQlxq37IZFyz1yUD2Y3WhX+25yxW9GHg==
-X-Received: by 2002:a2e:92c5:0:b0:2ee:7a3e:4721 with SMTP id 38308e7fff4ca-2ef16826a21mr33363381fa.39.1721604000137;
-        Sun, 21 Jul 2024 16:20:00 -0700 (PDT)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30af846e0sm5173076a12.53.2024.07.21.16.19.59
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 21 Jul 2024 16:19:59 -0700 (PDT)
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5a1c49632deso2887651a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 16:19:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVrvPFu2on9IRBj7ymuiiQFuVeku6r4ZhXnxfuBugAd6RUMuQliCZD35LscF8ePJN5Uc2TtkWLi9rwjh2pVPN7WD7cAWxJ0yciHys9/
-X-Received: by 2002:a50:cc8a:0:b0:5a4:6dec:cd3c with SMTP id
- 4fb4d7f45d1cf-5a479d6470amr2804096a12.37.1721603999287; Sun, 21 Jul 2024
- 16:19:59 -0700 (PDT)
+	s=arc-20240116; t=1721604334; c=relaxed/simple;
+	bh=CbaYzrUD2iMm2wdIHqFl4k72sqXFd+rW/EZyjaakQ+A=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=Gx8rKNV90gDRW1rnckZg7z9Mo1uJ/bZpmNpfLlRmrZrkOvIxlccCW4I25uEp1yAQFQrkPEp8pv8dzkFiAriHyHR7tx1OjXPCVRGTrdNpAE61IFFd9G65RXjkTHxNpf7bAF+TDkD9VS1wEULgwrpldPzBg8JDsqHeKk4sDrJF8GE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HLMV2/7t; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=UCJcAuJX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HLMV2/7t; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=UCJcAuJX; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7778B2189C;
+	Sun, 21 Jul 2024 23:25:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1721604330; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lk1jHAwGkiu6UCef6ZEZVtApSi1BPm7kBs9tfGFJ7rk=;
+	b=HLMV2/7tM9cqZXpRQyjpAFh5lB+OG+Wj19ADR8xdY9ZpAYVe8HCzz8zOP3/pDlZeGflgiu
+	fYBBVrITfbff3irQYEBSzeqSc5XraQ1VPdvb4TtS/uAR4vh+7GNJUMfUw70ee6YPRKDeAa
+	FGyyghTHr2C+JyCPuJsoC827Px8t8D8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1721604330;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lk1jHAwGkiu6UCef6ZEZVtApSi1BPm7kBs9tfGFJ7rk=;
+	b=UCJcAuJXXRo9nEzL+fb885jzBJ0ABf3lYlPXesaj2jAg4ZAp4ueTAGZ2mW5nSfVBtXgttU
+	UxinaAERnUkaVUCg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1721604330; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lk1jHAwGkiu6UCef6ZEZVtApSi1BPm7kBs9tfGFJ7rk=;
+	b=HLMV2/7tM9cqZXpRQyjpAFh5lB+OG+Wj19ADR8xdY9ZpAYVe8HCzz8zOP3/pDlZeGflgiu
+	fYBBVrITfbff3irQYEBSzeqSc5XraQ1VPdvb4TtS/uAR4vh+7GNJUMfUw70ee6YPRKDeAa
+	FGyyghTHr2C+JyCPuJsoC827Px8t8D8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1721604330;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lk1jHAwGkiu6UCef6ZEZVtApSi1BPm7kBs9tfGFJ7rk=;
+	b=UCJcAuJXXRo9nEzL+fb885jzBJ0ABf3lYlPXesaj2jAg4ZAp4ueTAGZ2mW5nSfVBtXgttU
+	UxinaAERnUkaVUCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 67430132CB;
+	Sun, 21 Jul 2024 23:25:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MJNaB+eYnWb9VwAAD6G6ig
+	(envelope-from <neilb@suse.de>); Sun, 21 Jul 2024 23:25:27 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240721145415.fbeb01a853962ef91334f3d1@linux-foundation.org>
-In-Reply-To: <20240721145415.fbeb01a853962ef91334f3d1@linux-foundation.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 21 Jul 2024 16:19:42 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjpx6uTAvjNnD5eipGjNYcwTgG9G6Dct=eLTfyzaaTy_g@mail.gmail.com>
-Message-ID: <CAHk-=wjpx6uTAvjNnD5eipGjNYcwTgG9G6Dct=eLTfyzaaTy_g@mail.gmail.com>
-Subject: Re: [GIT PULL] MM updates for 6.11-rc1
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+From: "NeilBrown" <neilb@suse.de>
+To: "Chuck Lever" <chuck.lever@oracle.com>
+Cc: "Jeff Layton" <jlayton@kernel.org>, "Olga Kornievskaia" <kolga@netapp.com>,
+ "Dai Ngo" <Dai.Ngo@oracle.com>, "Tom Talpey" <tom@talpey.com>,
+ "Lorenzo Bianconi" <lorenzo@kernel.org>, linux-nfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Steve Dickson" <steved@redhat.com>
+Subject:
+ Re: [PATCH] nfsd: don't set SVC_SOCK_ANONYMOUS when creating nfsd sockets
+In-reply-to: <Zpq4Ziq9YVuGqV7b@tissot.1015granger.net>
+References: <20240719-nfsd-next-v1-1-b6a9a899a908@kernel.org>,
+ <Zpq4Ziq9YVuGqV7b@tissot.1015granger.net>
+Date: Mon, 22 Jul 2024 09:25:07 +1000
+Message-id: <172160430713.18529.16870160544594676027@noble.neil.brown.name>
+X-Spam-Score: -4.10
+X-Spamd-Result: default: False [-4.10 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Level: 
+X-Spam-Flag: NO
 
-On Sun, 21 Jul 2024 at 14:54, Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> - 875fa64577da ("mm/hugetlb_vmemmap: fix race with speculative PFN
->   walkers") is known to cause a performance regression
->   (https://lore.kernel.org/all/3acefad9-96e5-4681-8014-827d6be71c7a@linux.ibm.com/T/#mfa809800a7862fb5bdf834c6f71a3a5113eb83ff).
->   Yu has a fix which I'll send along later via the hotfixes branch.
+On Sat, 20 Jul 2024, Chuck Lever wrote:
+> On Fri, Jul 19, 2024 at 02:55:53PM -0400, Jeff Layton wrote:
+> > When creating nfsd sockets via the netlink interface, we do want to
+> > register with the portmapper. Don't set SVC_SOCK_ANONYMOUS.
+> 
+> NFSD's RDMA transports don't register with rpcbind, for example.
 
-That commit "875fa64577da" does not exist. I think you are talking
-about commit bd225530a4c7, which is in 6.10 and came in from your last
-hotfixes pull.
+For RDMA, what does inet->sk_family and in->sk_protocol contain in
+svc_setup_socket()? 
 
-I'm assuming 875fa64577da was some commit ID it had before getting
-rebased or something?
+Could that code detect that it doesn't make sense to register the socket
+with rpcbind?
 
-I'm also a bit confused about why you mention this, since neither the
-cause _nor_ the fix are in this pull request and you have the wrong
-commit ID.
-
-               Linus
+NeilBrown
 
