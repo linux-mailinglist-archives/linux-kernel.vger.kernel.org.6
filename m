@@ -1,361 +1,537 @@
-Return-Path: <linux-kernel+bounces-258088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 772AB93834D
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 05:32:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D9A8938351
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 05:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27891281917
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 03:32:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F92D1F211F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 03:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA61B2564;
-	Sun, 21 Jul 2024 03:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2ABE2F44;
+	Sun, 21 Jul 2024 03:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iujDrJzh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="tsU6lK34"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02A020E6;
-	Sun, 21 Jul 2024 03:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8377E20E6;
+	Sun, 21 Jul 2024 03:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721532731; cv=none; b=F1kW5knv8OAO6bWcnXSGCITNN1OZSD2V75EtMcAreODObTVCrM2yIQzBQMgWx1k3rVYgHkxSYivVICiU0YDuW2HaWLmw+fJpQ4Sz78yPuI/OPtNvTOSA7pbwx6xEdRBqhDXn7OxtSP/Vmra8E6b4Jcs2LXTr+n/6zK33yyRZT6Y=
+	t=1721533534; cv=none; b=nhiRvBL/micUig5qT1FhPzbfy36b8jGJ4v8tr93uUnMe+fag8IMTZzQ61lZBY/gQwKDuaYFP94dQ3qYvCsj8/WGSCXfNd5wr0yy08oD0bESPcPpWZ2CfOmTdzK1wD6gW9HUMAcseSL0PUpm9VBdVWtrpsqLyOx8GFVGEDKwgq/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721532731; c=relaxed/simple;
-	bh=Z9nLLVDEF1f373PdtXdDyeXMYQXiVp6kQPuzD8Y40SE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O3h2d+vn2TSJfN8osquIIkwueK2F7h9G3NZ8Di9EsVu49kJ+1Z5U1unKI4lDNuthXv8ORTDn5P5WcOQKz+kbbRPvx6z2kBzK0iJvpLMPzfib8zXrHNsCY0C5LVpvCwOQziQGvNIvGOcwlE0hZWA+gmcO2NANSj3sk23WX/diGiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iujDrJzh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1949C116B1;
-	Sun, 21 Jul 2024 03:32:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721532731;
-	bh=Z9nLLVDEF1f373PdtXdDyeXMYQXiVp6kQPuzD8Y40SE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iujDrJzhxCTG0FGpVk3kpwWLwKkhjvRBVma1l8W+qfL4TFjz/oSSPAm2vrPWRCR68
-	 84zEmitzp86q3lefsr40LOME9KxTe4DnLVAoXTXb39F2WWtVwJ8OZcLQVYUu3kBO51
-	 PGU7BEkk7H4VWO2DoKgjh7JojB1b4oejzj7TW4UR6oc8Aq2Ol7FODV6xLp2mgMTm8y
-	 LqklhsgsP7e3Ck338vCPYw1u6aR45uVz154onnZbx6DcFijgeiSZ3s+m3Hn54vDfAx
-	 ukr1ce2LnYg9NashefrTriNj6dcaMrQ4tWd5qf/ySTbEvbHW2XmLjqPOE4baMsw/Kh
-	 QKvd3Lei5mTIg==
-Date: Sat, 20 Jul 2024 20:32:09 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	"Jan Alexander Steffens (heftig)" <heftig@archlinux.org>,
-	Christian Heusel <christian@heusel.eu>,
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH v7] kbuild: add script and target to generate pacman
- package
-Message-ID: <20240721033209.GA545406@thelio-3990X>
-References: <20240720-kbuild-pacman-pkg-v7-1-74a79b4401d2@weissschuh.net>
+	s=arc-20240116; t=1721533534; c=relaxed/simple;
+	bh=65oMd9gmdinFhup5VpkZKOgzk27iDMCzB8EIbYM3M6c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F8Z2yIGjCLKdD7BVIKvXWD+/s5tXeoph60Ib5+AhrWCfQ13LZamJhfhl2tIeJfKMDJkaX92Rijn3kjZ/Wkfr5VhdiChJDkooJDgsK/80oIIvQBH+njkOV+1cCqvcKrX+Ujh/joE2g9IRnJQGNe4yXj/g3+Q2i1JquTaxWoTKMyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=tsU6lK34; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+From: Dragan Simic <dsimic@manjaro.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1721533526;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hIeA1N27z3xcXOiVoRMm1GE/f7bvHy+yMPCX/cwB2lQ=;
+	b=tsU6lK34nNI0q9hdzpPZO/yphZWHWsmwIOr1Cd9LrXIHvyL6yvKICamsg1AFIGRHczbVJO
+	Ml+TYMXXe4s12PgawSBeZHmcYZanWKROeetdKGd0tNS9EI82X18nwsurlw77mCFiiCp41j
+	r7heAvpmivDoC2zA6strfG+1RqGyyroYx+NzQsRxL4U49GyH2FfxS+e8VGb85upgFgQ9k8
+	BGFWl14uK1eI0uqSLj8B/WzSBoH5PDms4gecLApWb6hIDBq0dczA4WnEaF9Jyw1uyLO+1F
+	fh9Jmw647QoJFK6WVBSQapcaO/CDk1mCdo/CQ5YBHErRaX+Ip595lIK9IZ6szw==
+To: linux-rockchip@lists.infradead.org
+Cc: heiko@sntech.de,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: rockchip: Move RK3399 OPPs to dtsi files for SoC variants
+Date: Sun, 21 Jul 2024 05:45:16 +0200
+Message-Id: <9417b5c5b64f9aceea64530a85a536169a3e7466.1721532747.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240720-kbuild-pacman-pkg-v7-1-74a79b4401d2@weissschuh.net>
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Hi Thomas,
+Rename the Rockchip RK3399 SoC dtsi files and, consequently, adjust their
+contents and the contents of the affected board dts(i) files appropriately,
+to "encapsulate" the different CPU and GPU OPPs for each of the supported
+RK3399 SoC variants into the respective SoC variant dtsi files.
 
-On Sat, Jul 20, 2024 at 11:18:12AM +0200, Thomas Weiﬂschuh wrote:
-> pacman is the package manager used by Arch Linux and its derivates.
-> Creating native packages from the kernel tree has multiple advantages:
-> 
-> * The package triggers the correct hooks for initramfs generation and
->   bootloader configuration
-> * Uninstallation is complete and also invokes the relevant hooks
-> * New UAPI headers can be installed without any manual bookkeeping
-> 
-> The PKGBUILD file is a modified version of the one used for the
-> downstream Arch Linux "linux" package.
-> Extra steps that should not be necessary for a development kernel have
-> been removed and an UAPI header package has been added.
-> 
-> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
-> ---
+Moving the OPPs to the SoC variant dtsi files, instead of requiring the
+board dts(i) files to include both the SoC variant dtsi file and the right
+OPP variant dtsi file, reduces the possibility for mismatched inclusion and
+improves the overall hierarchical representation of data.
 
-I think this looks really solid now, thanks again for the PACMAN_PKGBASE
-addition.
+These changes follow the approach used for the Rockchip RK3588 SoC variants,
+which was introduced and described further in commit def88eb4d836 ("arm64:
+dts: rockchip: Prepare RK3588 SoC dtsi files for per-variant OPPs").  Please
+see that commit for a more detailed explanation.
 
-I tested building Arch Linux's configuration for x86_64 and booting it
-in a VM. I built Fedora's configuration for aarch64 just to test the
-cross building aspect and making sure the result of various bits that we
-added that would not affect x86 (such as the dtb installation) looked
-reasonable.
+No functional changes are introduced, which was validated by decompiling and
+comparing all affected dtb files before and after these changes.  In more
+detail, all decompiled dtb files remain exactly the same, except the files
+list below, which results from all of them stemming from the same base board
+dtsi file (rk3399-rock-pi-4.dtsi), while all of them include one of the three
+different RK3399 SoC variant dtsi files by themselves:
 
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-Tested-by: Nathan Chancellor <nathan@kernel.org>
+  - rk3399-rock-4se.dtb
+  - rk3399-rock-pi-4a.dtb
+  - rk3399-rock-pi-4a-plus.dtb
+  - rk3399-rock-pi-4b.dtb
+  - rk3399-rock-pi-4b-plus.dtb
+  - rk3399-rock-pi-4c.dtb
 
-> Changes in v7:
-> - Make pkgbase configurable
-> - Add more information to pkgdesc
-> - Drop base-devel from makedepends
-> - Drop now unneeded "chmod"
-> - Make sure KERNELRELEASE and KBUILD_BUILD_VERSION are correct
-> - Add MAINTAINERS entry
-> - Use absolute path to BUILDDIR again, as makepkg doesn't work otherwise
-> - Drop Reviewed-by and Tested-by as a fair amount of changes has been
->   done since
-> - Link to v6: https://lore.kernel.org/r/20240716-kbuild-pacman-pkg-v6-1-d3a04e308013@weissschuh.net
-> 
-> Changes in v6:
-> - Drop reference to srctree/Makefile
-> - Drop $(realpath $(srctree))
-> - Make use of the fact that $(objtree) is always "."
-> - Align coding style to kernel and drop vim config line
-> - Drop indirection through `$MAKE run-command`
-> - Unify shell variable syntax to "${var}"
-> - Add explanations to custom variables
-> - Add makedepends
-> - Link to v5: https://lore.kernel.org/r/20240714-kbuild-pacman-pkg-v5-1-0598460bc918@weissschuh.net
-> 
-> Changes in v5:
-> - Rebase onto kbuild/for-next
-> - Use new path to build-version script (from kbuild/for-next)
-> - Ensure submake jobserver delegation works
-> - Simplify $modulesdir/pkgbase file creation
-> - Add Reviewed-by from Nicolas
-> - Link to v4: https://lore.kernel.org/r/20240710-kbuild-pacman-pkg-v4-1-507bb5b79b2a@weissschuh.net
-> 
-> Changes in v4:
-> - Update MRPROPER_FILES
-> - Unify shell variable syntax
-> - Link to v3: https://lore.kernel.org/r/20240708-kbuild-pacman-pkg-v3-1-885df3cbc740@weissschuh.net
-> 
-> Changes in v3:
-> - Enforce matching architectures for installation
-> - Add Reviewed-by and Tested-by from Nathan
-> - Link to v2: https://lore.kernel.org/r/20240706-kbuild-pacman-pkg-v2-1-613422a03a7a@weissschuh.net
-> 
-> Changes in v2:
-> - Replace ${MAKE} with $MAKE for consistency with other variables
-> - Use $MAKE for "-s image_name"
-> - Avoid permission warnings from build directory
-> - Clarify reason for /build symlink removal
-> - Install System.map and config
-> - Install dtbs where available
-> - Allow cross-build through arch=any
-> - Sort Contributor/Maintainer chronologically
-> - Disable some unneeded makepkg options
-> - Use DEPMOD=true for consistency with rpm-package
-> - Link to v1: https://lore.kernel.org/r/20240704-kbuild-pacman-pkg-v1-1-ac2f63f5fa7b@weissschuh.net
-> ---
->  .gitignore               |   6 +++
->  MAINTAINERS              |   7 +++
->  Makefile                 |   2 +-
->  scripts/Makefile.package |  14 ++++++
->  scripts/package/PKGBUILD | 108 +++++++++++++++++++++++++++++++++++++++++++++++
->  5 files changed, 136 insertions(+), 1 deletion(-)
-> 
-> diff --git a/.gitignore b/.gitignore
-> index c59dc60ba62e..7902adf4f7f1 100644
-> --- a/.gitignore
-> +++ b/.gitignore
-> @@ -92,6 +92,12 @@ modules.order
->  #
->  /tar-install/
->  
-> +#
-> +# pacman files (make pacman-pkg)
-> +#
-> +/PKGBUILD
-> +/pacman/
-> +
->  #
->  # We don't want to ignore the following even if they are dot-files
->  #
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index da5352dbd4f3..16f8e13aa4c6 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11997,6 +11997,13 @@ F:	include/uapi/linux/nfsd/
->  F:	include/uapi/linux/sunrpc/
->  F:	net/sunrpc/
->  
-> +KERNEL PACMAN PACKAGING (in addition to generic KERNEL BUILD)
-> +M:	Thomas Weiﬂschuh <linux@weissschuh.net>
-> +R:	Christian Heusel <christian@heusel.eu>
-> +R:	Nathan Chancellor <nathan@kernel.org>
-> +S:	Maintained
-> +F:	scripts/package/PKGBUILD
-> +
->  KERNEL REGRESSIONS
->  M:	Thorsten Leemhuis <linux@leemhuis.info>
->  L:	regressions@lists.linux.dev
-> diff --git a/Makefile b/Makefile
-> index c97d6404b891..943899656977 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1487,7 +1487,7 @@ CLEAN_FILES += vmlinux.symvers modules-only.symvers \
->  # Directories & files removed with 'make mrproper'
->  MRPROPER_FILES += include/config include/generated          \
->  		  arch/$(SRCARCH)/include/generated .objdiff \
-> -		  debian snap tar-install \
-> +		  debian snap tar-install PKGBUILD pacman \
->  		  .config .config.old .version \
->  		  Module.symvers \
->  		  certs/signing_key.pem \
-> diff --git a/scripts/Makefile.package b/scripts/Makefile.package
-> index bf016af8bf8a..94357f47d2fa 100644
-> --- a/scripts/Makefile.package
-> +++ b/scripts/Makefile.package
-> @@ -141,6 +141,19 @@ snap-pkg:
->  	cd $(objtree)/snap && \
->  	snapcraft --target-arch=$(UTS_MACHINE)
->  
-> +# pacman-pkg
-> +# ---------------------------------------------------------------------------
-> +
-> +PHONY += pacman-pkg
-> +pacman-pkg:
-> +	@ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
-> +	+objtree="$(realpath $(objtree))" \
-> +		BUILDDIR="$(realpath pacman)" \
-> +		CARCH="$(UTS_MACHINE)" \
-> +		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
-> +		KBUILD_REVISION="$(shell $(srctree)/scripts/build-version)" \
-> +		makepkg
-> +
->  # dir-pkg tar*-pkg - tarball targets
->  # ---------------------------------------------------------------------------
->  
-> @@ -221,6 +234,7 @@ help:
->  	@echo '  bindeb-pkg          - Build only the binary kernel deb package'
->  	@echo '  snap-pkg            - Build only the binary kernel snap package'
->  	@echo '                        (will connect to external hosts)'
-> +	@echo '  pacman-pkg          - Build only the binary kernel pacman package'
->  	@echo '  dir-pkg             - Build the kernel as a plain directory structure'
->  	@echo '  tar-pkg             - Build the kernel as an uncompressed tarball'
->  	@echo '  targz-pkg           - Build the kernel as a gzip compressed tarball'
-> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
-> new file mode 100644
-> index 000000000000..663ce300dd06
-> --- /dev/null
-> +++ b/scripts/package/PKGBUILD
-> @@ -0,0 +1,108 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +# Maintainer: Thomas Weiﬂschuh <linux@weissschuh.net>
-> +# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
-> +
-> +pkgbase=${PACMAN_PKGBASE:-linux-upstream}
-> +pkgname=("${pkgbase}" "${pkgbase}-api-headers")
-> +if grep -q CONFIG_MODULES=y include/config/auto.conf; then
-> +	pkgname+=("${pkgbase}-headers")
-> +fi
-> +pkgver="${KERNELRELEASE//-/_}"
-> +# The PKGBUILD is evaluated multiple times.
-> +# Running scripts/build-version from here would introduce inconsistencies.
-> +pkgrel="${KBUILD_REVISION}"
-> +pkgdesc='Upstream Linux'
-> +url='https://www.kernel.org/'
-> +# Enable flexible cross-compilation
-> +arch=(${CARCH})
-> +license=(GPL-2.0-only)
-> +makedepends=(
-> +	bc
-> +	bison
-> +	cpio
-> +	flex
-> +	gettext
-> +	kmod
-> +	libelf
-> +	openssl
-> +	pahole
-> +	perl
-> +	python
-> +	rsync
-> +	tar
-> +)
-> +options=(!debug !strip !buildflags !makeflags)
-> +
-> +build() {
-> +	# MAKEFLAGS from makepkg.conf override the ones inherited from kbuild.
-> +	# Bypass this override with a custom variable.
-> +	export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
-> +	cd "${objtree}"
-> +
-> +	${MAKE} KERNELRELEASE="${KERNELRELEASE}" KBUILD_BUILD_VERSION="${pkgrel}"
-> +}
-> +
-> +_package() {
-> +	pkgdesc="The ${pkgdesc} kernel and modules"
-> +
-> +	export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
-> +	cd "${objtree}"
-> +	local modulesdir="${pkgdir}/usr/${MODLIB}"
-> +
-> +	echo "Installing boot image..."
-> +	# systemd expects to find the kernel here to allow hibernation
-> +	# https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
-> +	install -Dm644 "$(${MAKE} -s image_name)" "${modulesdir}/vmlinuz"
-> +
-> +	# Used by mkinitcpio to name the kernel
-> +	echo "${pkgbase}" > "${modulesdir}/pkgbase"
-> +
-> +	echo "Installing modules..."
-> +	${MAKE} INSTALL_MOD_PATH="${pkgdir}/usr" INSTALL_MOD_STRIP=1 \
-> +		DEPMOD=true modules_install
-> +
-> +	if [ -d "${srctree}/arch/${SRCARCH}/boot/dts" ]; then
-> +		echo "Installing dtbs..."
-> +		${MAKE} INSTALL_DTBS_PATH="${modulesdir}/dtb" dtbs_install
-> +	fi
-> +
-> +	# remove build link, will be part of -headers package
-> +	rm -f "${modulesdir}/build"
-> +}
-> +
-> +_package-headers() {
-> +	pkgdesc="Headers and scripts for building modules for the ${pkgdesc} kernel"
-> +
-> +	export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
-> +	cd "${objtree}"
-> +	local builddir="${pkgdir}/usr/${MODLIB}/build"
-> +
-> +	echo "Installing build files..."
-> +	"${srctree}/scripts/package/install-extmod-build" "${builddir}"
-> +
-> +	echo "Installing System.map and config..."
-> +	cp System.map "${builddir}/System.map"
-> +	cp .config "${builddir}/.config"
-> +
-> +	echo "Adding symlink..."
-> +	mkdir -p "${pkgdir}/usr/src"
-> +	ln -sr "${builddir}" "${pkgdir}/usr/src/${pkgbase}"
-> +}
-> +
-> +_package-api-headers() {
-> +	pkgdesc="Kernel headers sanitized for use in userspace"
-> +	provides=(linux-api-headers)
-> +	conflicts=(linux-api-headers)
-> +
-> +	export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
-> +	cd "${objtree}"
-> +
-> +	${MAKE} headers_install INSTALL_HDR_PATH="${pkgdir}/usr"
-> +}
-> +
-> +for _p in "${pkgname[@]}"; do
-> +	eval "package_$_p() {
-> +		$(declare -f "_package${_p#$pkgbase}")
-> +		_package${_p#$pkgbase}
-> +	}"
-> +done
-> 
-> ---
-> base-commit: 6e6ef2da3a28f3e02fd204b4f8821030b61f8cd4
-> change-id: 20240625-kbuild-pacman-pkg-b4f87e19d036
-> 
-> Best regards,
-> -- 
-> Thomas Weiﬂschuh <linux@weissschuh.net>
-> 
+When compared with the decompiled original dtb files, these dtb files have
+some of their blocks shuffled around a bit and some of their phandles have
+different values, as a result of the changes to the order in which the
+building blocks from the parent dtsi files are included into them, but they
+still effectively remain the same as the originals.
+
+The only exception to the "include only a SoC variant dtsi" is found in
+rk3399-evb.dts, which includes rk3399-base.dtsi instead of rk3399.dtsi.
+This is intentional, because this board dts file doesn't enable the TSADC,
+so including rk3399.dtsi would enable the SoC to go into higher OPPs with
+no thermal throttling in place.  Let's hope that people interested in this
+board will fix this in the future.
+
+As a side note, due to the nature of introduced changes, this commit is best
+viewed using the --break-rewrites option for git-log(1).
+
+Related-to: def88eb4d836 ("arm64: dts: rockchip: Prepare RK3588 SoC dtsi files for per-variant OPPs")
+Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+---
+ arch/arm64/boot/dts/rockchip/{rk3399.dtsi => rk3399-base.dtsi} | 0
+ arch/arm64/boot/dts/rockchip/rk3399-eaidk-610.dts              | 1 -
+ arch/arm64/boot/dts/rockchip/rk3399-evb.dts                    | 2 +-
+ arch/arm64/boot/dts/rockchip/rk3399-firefly.dts                | 1 -
+ arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi                   | 3 +--
+ arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts             | 1 -
+ arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi           | 1 -
+ arch/arm64/boot/dts/rockchip/rk3399-kobol-helios64.dts         | 1 -
+ arch/arm64/boot/dts/rockchip/rk3399-leez-p710.dts              | 1 -
+ arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi               | 1 -
+ .../boot/dts/rockchip/{rk3399-op1-opp.dtsi => rk3399-op1.dtsi} | 2 ++
+ arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts               | 1 -
+ arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts           | 1 -
+ arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts          | 1 -
+ arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi                  | 1 -
+ arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi                | 1 -
+ arch/arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dts           | 3 +--
+ arch/arm64/boot/dts/rockchip/rk3399-rock-4se.dts               | 2 +-
+ arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dtsi             | 2 --
+ arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4a-plus.dts        | 2 +-
+ arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4a.dts             | 2 +-
+ arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4b-plus.dts        | 2 +-
+ arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4b.dts             | 2 +-
+ arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4c.dts             | 2 +-
+ arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi               | 3 +--
+ arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi             | 1 -
+ arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi              | 1 -
+ .../boot/dts/rockchip/{rk3399-t-opp.dtsi => rk3399-t.dtsi}     | 2 ++
+ arch/arm64/boot/dts/rockchip/{rk3399-opp.dtsi => rk3399.dtsi}  | 2 ++
+ arch/arm64/boot/dts/rockchip/rk3399pro-rock-pi-n10.dts         | 1 -
+ 30 files changed, 16 insertions(+), 30 deletions(-)
+ rename arch/arm64/boot/dts/rockchip/{rk3399.dtsi => rk3399-base.dtsi} (100%)
+ rename arch/arm64/boot/dts/rockchip/{rk3399-op1-opp.dtsi => rk3399-op1.dtsi} (99%)
+ rename arch/arm64/boot/dts/rockchip/{rk3399-t-opp.dtsi => rk3399-t.dtsi} (98%)
+ rename arch/arm64/boot/dts/rockchip/{rk3399-opp.dtsi => rk3399.dtsi} (98%)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-base.dtsi
+similarity index 100%
+rename from arch/arm64/boot/dts/rockchip/rk3399.dtsi
+rename to arch/arm64/boot/dts/rockchip/rk3399-base.dtsi
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-eaidk-610.dts b/arch/arm64/boot/dts/rockchip/rk3399-eaidk-610.dts
+index 173da81fc231..1489eb32e266 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-eaidk-610.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-eaidk-610.dts
+@@ -8,7 +8,6 @@
+ #include <dt-bindings/pwm/pwm.h>
+ #include <dt-bindings/usb/pd.h>
+ #include "rk3399.dtsi"
+-#include "rk3399-opp.dtsi"
+ 
+ / {
+ 	model = "OPEN AI LAB EAIDK-610";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-evb.dts b/arch/arm64/boot/dts/rockchip/rk3399-evb.dts
+index 55eca7a50a1f..54e67d2dac09 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-evb.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-evb.dts
+@@ -5,7 +5,7 @@
+ 
+ /dts-v1/;
+ #include <dt-bindings/pwm/pwm.h>
+-#include "rk3399.dtsi"
++#include "rk3399-base.dtsi"
+ 
+ / {
+ 	model = "Rockchip RK3399 Evaluation Board";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts b/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts
+index 260415d99aeb..f4491317a1b0 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts
+@@ -9,7 +9,6 @@
+ #include <dt-bindings/pwm/pwm.h>
+ #include <dt-bindings/usb/pd.h>
+ #include "rk3399.dtsi"
+-#include "rk3399-opp.dtsi"
+ 
+ / {
+ 	model = "Firefly-RK3399 Board";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
+index 3cd63d1e8f15..776c0eec04d7 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
+@@ -6,8 +6,7 @@
+  */
+ 
+ #include <dt-bindings/input/input.h>
+-#include "rk3399.dtsi"
+-#include "rk3399-op1-opp.dtsi"
++#include "rk3399-op1.dtsi"
+ 
+ / {
+ 	aliases {
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts b/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
+index 4a6ab6c2e24c..5a02502d21cd 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
+@@ -4,7 +4,6 @@
+ #include <dt-bindings/input/input.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include "rk3399.dtsi"
+-#include "rk3399-opp.dtsi"
+ 
+ / {
+ 	model = "Hugsun X99 TV BOX";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi
+index 9d9297bc5f04..c772985ae4e5 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi
+@@ -9,7 +9,6 @@
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/pwm/pwm.h>
+ #include "rk3399.dtsi"
+-#include "rk3399-opp.dtsi"
+ 
+ / {
+ 	aliases {
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-kobol-helios64.dts b/arch/arm64/boot/dts/rockchip/rk3399-kobol-helios64.dts
+index 9586bb12a5d8..b0c1fb0b704e 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-kobol-helios64.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-kobol-helios64.dts
+@@ -12,7 +12,6 @@
+ 
+ /dts-v1/;
+ #include "rk3399.dtsi"
+-#include "rk3399-opp.dtsi"
+ 
+ / {
+ 	model = "Kobol Helios64";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-leez-p710.dts b/arch/arm64/boot/dts/rockchip/rk3399-leez-p710.dts
+index cb69e2145fa9..f12b1eb00575 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-leez-p710.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-leez-p710.dts
+@@ -8,7 +8,6 @@
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/pwm/pwm.h>
+ #include "rk3399.dtsi"
+-#include "rk3399-opp.dtsi"
+ 
+ / {
+ 	model = "Leez RK3399 P710";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi
+index b7f1e47978a6..7debc4a1b5fa 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi
+@@ -14,7 +14,6 @@
+ /dts-v1/;
+ #include <dt-bindings/input/linux-event-codes.h>
+ #include "rk3399.dtsi"
+-#include "rk3399-opp.dtsi"
+ 
+ / {
+ 	aliases {
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-op1-opp.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-op1.dtsi
+similarity index 99%
+rename from arch/arm64/boot/dts/rockchip/rk3399-op1-opp.dtsi
+rename to arch/arm64/boot/dts/rockchip/rk3399-op1.dtsi
+index 783120e9cebe..b24bff511513 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-op1-opp.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-op1.dtsi
+@@ -3,6 +3,8 @@
+  * Copyright (c) 2016-2017 Fuzhou Rockchip Electronics Co., Ltd
+  */
+ 
++#include "rk3399.dtsi"
++
+ / {
+ 	cluster0_opp: opp-table-0 {
+ 		compatible = "operating-points-v2";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts b/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
+index e26e2d86279c..07ec33f3f55f 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
+@@ -10,7 +10,6 @@
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include "dt-bindings/usb/pd.h"
+ #include "rk3399.dtsi"
+-#include "rk3399-opp.dtsi"
+ 
+ / {
+ 	model = "Orange Pi RK3399 Board";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts b/arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts
+index 294eb2de263d..292f3fa84442 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts
+@@ -12,7 +12,6 @@
+ #include <dt-bindings/usb/pd.h>
+ #include <dt-bindings/leds/common.h>
+ #include "rk3399.dtsi"
+-#include "rk3399-opp.dtsi"
+ 
+ / {
+ 	model = "Pine64 Pinebook Pro";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+index ef754ea30a94..1a44582a49fb 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+@@ -14,7 +14,6 @@
+ #include <dt-bindings/input/linux-event-codes.h>
+ #include <dt-bindings/leds/common.h>
+ #include "rk3399.dtsi"
+-#include "rk3399-opp.dtsi"
+ 
+ / {
+ 	model = "Pine64 PinePhone Pro";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi
+index ccbe3a7a1d2c..8c16527cd456 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi
+@@ -5,7 +5,6 @@
+ 
+ #include <dt-bindings/pwm/pwm.h>
+ #include "rk3399.dtsi"
+-#include "rk3399-opp.dtsi"
+ 
+ / {
+ 	aliases {
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
+index ca7a446b6568..d95b1cde1fc3 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
+@@ -7,7 +7,6 @@
+ #include <dt-bindings/input/linux-event-codes.h>
+ #include <dt-bindings/pwm/pwm.h>
+ #include "rk3399.dtsi"
+-#include "rk3399-opp.dtsi"
+ 
+ / {
+ 	model = "Firefly ROC-RK3399-PC Board";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dts b/arch/arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dts
+index 972aea843afd..d4b4dced3e39 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dts
+@@ -7,8 +7,7 @@
+ 
+ /dts-v1/;
+ #include <dt-bindings/leds/common.h>
+-#include "rk3399.dtsi"
+-#include "rk3399-t-opp.dtsi"
++#include "rk3399-t.dtsi"
+ 
+ / {
+ 	model = "Radxa ROCK 4C+";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock-4se.dts b/arch/arm64/boot/dts/rockchip/rk3399-rock-4se.dts
+index 7cfc198bbae7..9dd26150c369 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-rock-4se.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rock-4se.dts
+@@ -5,8 +5,8 @@
+  */
+ 
+ /dts-v1/;
++#include "rk3399-t.dtsi"
+ #include "rk3399-rock-pi-4.dtsi"
+-#include "rk3399-t-opp.dtsi"
+ 
+ / {
+ 	model = "Radxa ROCK 4SE";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dtsi
+index b9d6284bb804..9666504cd1c1 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dtsi
+@@ -4,11 +4,9 @@
+  * Copyright (c) 2019 Pragnesh Patel <Pragnesh_Patel@mentor.com>
+  */
+ 
+-/dts-v1/;
+ #include <dt-bindings/input/linux-event-codes.h>
+ #include <dt-bindings/leds/common.h>
+ #include <dt-bindings/pwm/pwm.h>
+-#include "rk3399.dtsi"
+ 
+ / {
+ 	aliases {
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4a-plus.dts b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4a-plus.dts
+index f5a68d8d072d..725ac3c1f6f6 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4a-plus.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4a-plus.dts
+@@ -5,8 +5,8 @@
+  */
+ 
+ /dts-v1/;
++#include "rk3399-op1.dtsi"
+ #include "rk3399-rock-pi-4.dtsi"
+-#include "rk3399-op1-opp.dtsi"
+ 
+ / {
+ 	model = "Radxa ROCK Pi 4A+";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4a.dts b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4a.dts
+index c68f45849c44..32d6bce5e3d4 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4a.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4a.dts
+@@ -5,8 +5,8 @@
+  */
+ 
+ /dts-v1/;
++#include "rk3399.dtsi"
+ #include "rk3399-rock-pi-4.dtsi"
+-#include "rk3399-opp.dtsi"
+ 
+ / {
+ 	model = "Radxa ROCK Pi 4A";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4b-plus.dts b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4b-plus.dts
+index 8a17c1eaae15..682e8b7297c1 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4b-plus.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4b-plus.dts
+@@ -5,8 +5,8 @@
+  */
+ 
+ /dts-v1/;
++#include "rk3399-op1.dtsi"
+ #include "rk3399-rock-pi-4.dtsi"
+-#include "rk3399-op1-opp.dtsi"
+ 
+ / {
+ 	model = "Radxa ROCK Pi 4B+";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4b.dts b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4b.dts
+index 6ea3180e57ca..55285c7c6e54 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4b.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4b.dts
+@@ -5,8 +5,8 @@
+  */
+ 
+ /dts-v1/;
++#include "rk3399.dtsi"
+ #include "rk3399-rock-pi-4.dtsi"
+-#include "rk3399-opp.dtsi"
+ 
+ / {
+ 	model = "Radxa ROCK Pi 4B";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4c.dts b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4c.dts
+index 5274938bf1b8..82ad2ca6b5c2 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4c.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4c.dts
+@@ -6,8 +6,8 @@
+  */
+ 
+ /dts-v1/;
++#include "rk3399.dtsi"
+ #include "rk3399-rock-pi-4.dtsi"
+-#include "rk3399-opp.dtsi"
+ 
+ / {
+ 	model = "Radxa ROCK Pi 4C";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
+index c920ddf44baf..8146f870d2bd 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
+@@ -5,9 +5,8 @@
+  * Copyright (c) 2018 Linaro Ltd.
+  */
+ 
+-#include "rk3399.dtsi"
+-#include "rk3399-opp.dtsi"
+ #include <dt-bindings/interrupt-controller/irq.h>
++#include "rk3399.dtsi"
+ 
+ / {
+ 	aliases {
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi
+index f30b82a10ca3..11d99d8b34a2 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi
+@@ -7,7 +7,6 @@
+ #include <dt-bindings/input/linux-event-codes.h>
+ #include <dt-bindings/pwm/pwm.h>
+ #include "rk3399.dtsi"
+-#include "rk3399-opp.dtsi"
+ 
+ / {
+ 	aliases {
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi
+index b3ef1c85e754..31832aae9ab6 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi
+@@ -6,7 +6,6 @@
+ #include "dt-bindings/pwm/pwm.h"
+ #include "dt-bindings/input/input.h"
+ #include "rk3399.dtsi"
+-#include "rk3399-opp.dtsi"
+ 
+ / {
+ 	compatible = "rockchip,rk3399-sapphire", "rockchip,rk3399";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-t-opp.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-t.dtsi
+similarity index 98%
+rename from arch/arm64/boot/dts/rockchip/rk3399-t-opp.dtsi
+rename to arch/arm64/boot/dts/rockchip/rk3399-t.dtsi
+index 1ababadda9df..72989f03fcb1 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-t-opp.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-t.dtsi
+@@ -4,6 +4,8 @@
+  * Copyright (c) 2022 Radxa Limited
+  */
+ 
++#include "rk3399-base.dtsi"
++
+ / {
+ 	cluster0_opp: opp-table-0 {
+ 		compatible = "operating-points-v2";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-opp.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+similarity index 98%
+rename from arch/arm64/boot/dts/rockchip/rk3399-opp.dtsi
+rename to arch/arm64/boot/dts/rockchip/rk3399.dtsi
+index fee5e7111279..6bc1249d99e6 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-opp.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+@@ -3,6 +3,8 @@
+  * Copyright (c) 2016-2017 Fuzhou Rockchip Electronics Co., Ltd
+  */
+ 
++#include "rk3399-base.dtsi"
++
+ / {
+ 	cluster0_opp: opp-table-0 {
+ 		compatible = "operating-points-v2";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399pro-rock-pi-n10.dts b/arch/arm64/boot/dts/rockchip/rk3399pro-rock-pi-n10.dts
+index c58fb7658d7a..d3c628218ce3 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399pro-rock-pi-n10.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399pro-rock-pi-n10.dts
+@@ -7,7 +7,6 @@
+ 
+ /dts-v1/;
+ #include "rk3399.dtsi"
+-#include "rk3399-opp.dtsi"
+ #include <arm/rockchip/rockchip-radxa-dalang-carrier.dtsi>
+ #include "rk3399pro-vmarc-som.dtsi"
+ 
 
