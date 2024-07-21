@@ -1,157 +1,114 @@
-Return-Path: <linux-kernel+bounces-258264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 954769385A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 19:21:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57C2C9385A6
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 19:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 918A71C20BA8
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 17:21:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 128FC281103
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 17:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2127C1684B9;
-	Sun, 21 Jul 2024 17:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E6F1684B9;
+	Sun, 21 Jul 2024 17:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="YtQh5fMb"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EaUQOpuV"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111F31EA87;
-	Sun, 21 Jul 2024 17:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAAA1667F1;
+	Sun, 21 Jul 2024 17:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721582483; cv=none; b=FFS0t/0DnG5bGPhT72DpmdO+qi1FbaDMMWq1uh0fO0HVgq3n6HXTT5vBBzUhWmhdWnQ9LubGCp/KbSrnETv11MHrUGVk6ETMGXo5wvWR4/0hJG3KymNzP0fGC9PEbRjuNnyWSuvirNcTnyquB1jpl4278JZ0iGk/sT46CxWZhxs=
+	t=1721582610; cv=none; b=TLBjhwV5lrm5IfXGnrPMUiS9AJMeK/MV3NK0Wbl461JkCV0GTgUIxTaNw2are0aCkFNzNVAO0oViS+nNkyDsfm0L6CamndrBEyj5C0Im6LLOR8WqaBnm/AhtNx4B9YndIxJhZpltlUQkUrNCUbFuwWpntLB1pmehr9RKgybucUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721582483; c=relaxed/simple;
-	bh=P7OBUODgIpwQmjQlV7VL1Qda8n7nj+5uuXhMD5/fFLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GR1YFTFlHmAOHH+NtQx05J3RUwURo/RvVd3CpR9vNY8BBdugZNikJXiiL1k47GJyfZEKi+FlZlL2zXAc2i0S0TbewgxZo+3q5L5LrWhap/kw/Choa7YX8szxEpOJSgdUP1lJDBM/SoLIvPNIdOF4Hp51AR/zBA64HAe75L9viBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=YtQh5fMb; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1721582477;
-	bh=P7OBUODgIpwQmjQlV7VL1Qda8n7nj+5uuXhMD5/fFLY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YtQh5fMbr2MdrbYBU4hE37RGw0Pn8ZSSxIxEgv5Dxpv7RYpK0n9G9HB7jGjuZ8YcK
-	 1kc0lPwlVzKiQ3XN2Vyw/GCTSyJ7JKE5bB9+lXpwVF44fYZLLUhbZ9AKNYe25CIw+9
-	 jiJ6g9oEjUyjXFuz09YVxl4pNs5k0WxEHRqAw60s=
-Date: Sun, 21 Jul 2024 19:21:16 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>, 
-	Christian Heusel <christian@heusel.eu>, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH v7] kbuild: add script and target to generate pacman
- package
-Message-ID: <f85f96a0-6ac0-4a44-a450-f23cde5a00c1@t-8ch.de>
-References: <20240720-kbuild-pacman-pkg-v7-1-74a79b4401d2@weissschuh.net>
- <20240721033209.GA545406@thelio-3990X>
- <CAK7LNARj9fxm_3h=7g4PLbLDHXNUQrRu8iOQ4sZdx8Ag3YS9sA@mail.gmail.com>
- <20240721121109.GA3599565@thelio-3990X>
- <CAK7LNAQyRaMgcgg5urnJU8ePqULAOB6TkFDjRVEwjEZEvT6s-g@mail.gmail.com>
- <5db8b1e9-894b-4626-b635-420078df10ce@t-8ch.de>
- <CAK7LNAQ5RhUg=ktGZnfGxNLMckJzKM12r1Q=KpCjvFU=_vaZEw@mail.gmail.com>
+	s=arc-20240116; t=1721582610; c=relaxed/simple;
+	bh=VUZ8A/kARfT+rAtWFJZkkrFOSkZKjYbiOW8tF4J2nqo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=kw1TISa3JzJJNZjXsqMWgvHv6pMJP8nSINwimKGFQklnRdK73NiyYh7RX+Kvhr8LWwIeql+6+k2hXUWswwiWFVQTCQPiS+16rFe/3deLf1Dfas10zlhBq7p40q8WL++i8h3ReUwgw5hi22nfGM/QgABGiaFS2k27Ja+RRJO3Lbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EaUQOpuV; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fc5549788eso27651355ad.1;
+        Sun, 21 Jul 2024 10:23:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721582609; x=1722187409; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2kLcYlZG3l6zH/0/5cJ0EZkJcj402oMLxEGpzLKtlLs=;
+        b=EaUQOpuVWN7fte9wmHxAZa943wxypU7/wtw7p+JuvER/D6cjFnbWl/ih6yfU/g7kyZ
+         R2iwqrFQ0XJ+sB4w258CL50q1KUvSsDwv3lNcUjkzWpxNOjqm7VkbNyjMQ6Q1IgoA84m
+         XXVzStb7pfa554WAfdA99sW8c32nLM3wTDIx2hEB+4kJAEukXRRdHDwpvRPez9D0/Bxw
+         KOF+ParCLiMZ5jtr5Q2DPWMJ78AoMI0poUK4/IfYlmqi+Zuh4s37z1g1NSPHENrPRrBC
+         RqzBLQbtCw+aXyVjBWXhsN1930RLPYzXxj9ykvraYX59acxT3/hpl0U4nKGIOgEtXoSa
+         ow0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721582609; x=1722187409;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2kLcYlZG3l6zH/0/5cJ0EZkJcj402oMLxEGpzLKtlLs=;
+        b=cfOl9knXrxUrYo6f9Ao0Ck2VwrdL6vWEXc17FpRR41cniGiNtpwrY3v30gOmR3lRKh
+         z5EdGjN0MnWOzh/m2SRZszgiNRJLH2PuqkZIImo5lBChoTOND6jn+HXj5RvcgxlYsCqT
+         Hj5OSNRZfHsvTQmPVNdpfUQ1mxVA4Q0Mx0SRFT9jTrOS2nyCy9RA8aONLZTppLDPR0BX
+         xsI3Owg6/K0hR+LY7/TwKn4x+Qerfc4yA0zt8ZCI49ECjcmSXPHncvc1yB8SsApY+dwj
+         tGlxQXLjAD0Tm/TYUs4MJvgNPcfkTl9YNLVtG88nhz8L8RU6PBewUJg5ezlsFogfST0O
+         EWvg==
+X-Gm-Message-State: AOJu0Yz1HG7WDWnu6k1qXpbxNQf48tQYQTsXkBHeltUp/lmNi0zxK+4i
+	rfghYlhmT/JrfJjtvDXUgFAz/BQbZXZ4+gcNCFs0B4c5NFZZ2G0FN5n+UkMq
+X-Google-Smtp-Source: AGHT+IGzV6W4YR/MTqyyjIWevROU3wdAPIVMS8zIIlC7mC6MvRhkbnRLIYPX7fGP3dosTsp37NQRWA==
+X-Received: by 2002:a17:902:e74e:b0:1fc:7309:9125 with SMTP id d9443c01a7336-1fd745875d1mr50549315ad.34.1721582608568;
+        Sun, 21 Jul 2024 10:23:28 -0700 (PDT)
+Received: from [10.0.4.4] ([50.35.97.145])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f4647f5sm38750535ad.252.2024.07.21.10.23.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 21 Jul 2024 10:23:28 -0700 (PDT)
+Message-ID: <51dec0ed-7100-43d5-83c1-e465ec08462f@gmail.com>
+Date: Sun, 21 Jul 2024 10:23:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNAQ5RhUg=ktGZnfGxNLMckJzKM12r1Q=KpCjvFU=_vaZEw@mail.gmail.com>
-
-On 2024-07-22 01:02:43+0000, Masahiro Yamada wrote:
-> On Sun, Jul 21, 2024 at 11:57 PM Thomas Weißschuh <linux@weissschuh.net> wrote:
-> > On 2024-07-21 22:42:12+0000, Masahiro Yamada wrote:
-> > > On Sun, Jul 21, 2024 at 9:11 PM Nathan Chancellor <nathan@kernel.org> wrote:
-> > > > On Sun, Jul 21, 2024 at 03:58:49PM +0900, Masahiro Yamada wrote:
-> > > > > On Sun, Jul 21, 2024 at 12:32 PM Nathan Chancellor <nathan@kernel.org> wrote:
-
-<snip>
-
-> > > > > I believe this is a separate issue, but
-> > > > > Debian/Ubuntu provides a 'makepkg' package, which fails
-> > > > > with 'User defined signal 1' error.
-> > > > >
-> > > > > After 'sudo apt install makepkg',
-> > > > >
-> > > > > masahiro@zoe:~/ref/linux-next((HEAD detached from origin/master))$ cat
-> > > > > /etc/os-release
-> > > > > PRETTY_NAME="Ubuntu 24.04 LTS"
-> > > > > NAME="Ubuntu"
-> > > > > VERSION_ID="24.04"
-> > > > > VERSION="24.04 LTS (Noble Numbat)"
-> > > > > VERSION_CODENAME=noble
-> > > > > ID=ubuntu
-> > > > > ID_LIKE=debian
-> > > > > HOME_URL="https://www.ubuntu.com/"
-> > > > > SUPPORT_URL="https://help.ubuntu.com/"
-> > > > > BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
-> > > > > PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
-> > > > > UBUNTU_CODENAME=noble
-> > > > > LOGO=ubuntu-logo
-> > > > > masahiro@zoe:~/ref/linux-next((HEAD detached from origin/master))$
-> > > > > makepkg --version
-> > > > > makepkg (pacman) 6.0.2
-> > > > > Copyright (c) 2006-2021 Pacman Development Team <pacman-dev@archlinux.org>.
-> > > > > Copyright (C) 2002-2006 Judd Vinet <jvinet@zeroflux.org>.
-> > > > >
-> > > > > This is free software; see the source for copying conditions.
-> > > > > There is NO WARRANTY, to the extent permitted by law.
-> > > > > masahiro@zoe:~/ref/linux-next((HEAD detached from origin/master))$ git
-> > > > > log --oneline -2
-> > > > > 5dcaebb67ad9 (HEAD) kbuild: add script and target to generate pacman package
-> > > > > 41c196e567fb (tag: next-20240719, origin/master, origin/HEAD) Add
-> > > > > linux-next specific files for 20240719
-> > > > > masahiro@zoe:~/ref/linux-next((HEAD detached from origin/master))$
-> > > > > make defconfig  pacman-pkg
-> > > > > *** Default configuration is based on 'x86_64_defconfig'
-> > > > > #
-> > > > > # No change to .config
-> > > > > #
-> > > > > objtree="/home/masahiro/ref/linux-next" \
-> > > > > BUILDDIR="" \
-> > > >
-> > > > It is not related to this issue but I don't think this should be empty.
-> > > > 'realpath pacman' does not appear to work here, I was able to fix this
-> > > > with the following diff:
-> > > >
-> > > > diff --git a/scripts/Makefile.package b/scripts/Makefile.package
-> > > > index 94357f47d2fa..b0fd44a40075 100644
-> > > > --- a/scripts/Makefile.package
-> > > > +++ b/scripts/Makefile.package
-> > > > @@ -148,7 +148,7 @@ PHONY += pacman-pkg
-> > > >  pacman-pkg:
-> > > >         @ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
-> > > >         +objtree="$(realpath $(objtree))" \
-> > > > -               BUILDDIR="$(realpath pacman)" \
-> > > > +               BUILDDIR="$(realpath $(objtree))/pacman" \
-> > >
-> > >
-> > > Right.
-> > >
-> > > $(realpath pacman) expands to empty
-> > > if 'pacman' does not exist yet.
-> > > Your fix is correct.
-> >
-> > I'm wondering how it worked for me, as I specifically tested this case.
-> > But I'm fine with the proposal.
-> >
-> > Shouldn't it be "$(realpath ./pacman)" though?
-> 
-> 
-> No.
-> 
-> Aa I said, $(realpath ./pacman) expands to an empty string
-> if ./pacman does not exist.
-
-My bad, I misread the braces and thought the code was doing
-BUILDDIR="$(realpath $(objtree)/pacman)"
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: linux-kernel@vger.kernel.org
+Cc: netdev@vger.kernel.org
+From: Jay Vosburgh <j.vosburgh@gmail.com>
+Subject: [PATCH] MAINTAINERS: Update bonding entry
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-Thomas
+	Update my email address, clarify support status, and delete the
+web site that hasn't been used in a long time.
+
+Signed-off-by: Jay Vosburgh <j.vosburgh@gmail.com>
+
+---
+  MAINTAINERS | 5 ++---
+  1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e0f28278e504..bad94cfb7e70 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3810,11 +3810,10 @@ F:	include/net/bluetooth/
+  F:	net/bluetooth/
+
+  BONDING DRIVER
+-M:	Jay Vosburgh <j.vosburgh@gmail.com>
++M:	Jay Vosburgh <jv@jvosburgh.net>
+  M:	Andy Gospodarek <andy@greyhouse.net>
+  L:	netdev@vger.kernel.org
+-S:	Supported
+-W:	http://sourceforge.net/projects/bonding/
++S:	Maintained
+  F:	Documentation/networking/bonding.rst
+  F:	drivers/net/bonding/
+  F:	include/net/bond*
+-- 
+2.25.1
 
