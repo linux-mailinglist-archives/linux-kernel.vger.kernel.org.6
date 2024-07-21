@@ -1,119 +1,126 @@
-Return-Path: <linux-kernel+bounces-258162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE6BC93849B
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 14:37:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0170C93849E
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 14:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 699F71F2145D
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 12:37:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4F8A1F214F8
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 12:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7C015FA7E;
-	Sun, 21 Jul 2024 12:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5A7161311;
+	Sun, 21 Jul 2024 12:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VQ9JVZyg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="Aqzh2IEU"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259676FB0
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 12:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40ABE34CDD;
+	Sun, 21 Jul 2024 12:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721565443; cv=none; b=C7K5BF5QLA+UWQSWBBUGknQzAlJ800xyAPuU/jvxBvu9dJ/S+pqr5Vz3DlvEaHwFDDSV8zB1h1qdaqFhlU24OYQuldtiBx3qVcgs92cOcgR3ZaSG6yOAqVvjdOz4Ije5hjTt2cE+xkQAvkjVqpI2dFl8ew3JJIuvPZOMtcHI8po=
+	t=1721565568; cv=none; b=L2RjebqinQwH70BSoSzIjhFK/glCC6cRJMEznUBEz02jw7ir8LIm3eufg8GF3EFkrstfild+URSd9SnHRf2Sr0MeiiWIWjXMsdFbfg0+LN0AkktcJwWo+NjEOfPjap9ThVUOh7MK/FfBaUXs/W+cJg7bqUm7j+fgUMzqperq+1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721565443; c=relaxed/simple;
-	bh=UUCUj3Wit8dtnKf7lJBPBR++wT4Aw+SkWisE5r/mNqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LX2ru4IiizquqeIMbXVZvzohoTanqTmG+ARQzFr9BL3gdblli0NPAr1x7q4isGaxlZbJUAVUC8OHSu8nbJ0ZV0kqqhuQbtZ42SEsNqjlFrgV2CGp6b2RYvXbH1GCzXAaWczPzU2TjSvnjPIoXeWADSp5nwOsXW2seTgygfywP6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VQ9JVZyg; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721565441; x=1753101441;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=UUCUj3Wit8dtnKf7lJBPBR++wT4Aw+SkWisE5r/mNqU=;
-  b=VQ9JVZyg5VO+eO56WnXLpGj6SwaWJghb+ekvvJpWv1azqizsrKraMKT2
-   7FYhj00plTe7B1HTOLxoCCAp6HJ86VE5RJymcG47/5s22y0yh5eUqjbwh
-   pqD8mBmrZ/NZyeqkwIbiTSayveH50dO0uZLX/jjrYkhaAmlzfJY1uA6RN
-   ovNidaE3xEMmiwVPXhIeH5PdKVTbexOQMGxwDtg7oHFq67mb5sJcNmwOF
-   qawgvg+fW8VDLw7txWRemg3L7857HmQidKLtoPuNrgmf40aXQ7ZTWN44a
-   0YGkznXFkBLUlwBzMJF1ysAWSN5HvTqXvzdXDsRAEAKEuuWZWY0n5NjbA
-   w==;
-X-CSE-ConnectionGUID: MWYgsuQ0SbOx2x7uYoJXkg==
-X-CSE-MsgGUID: 4LOLemuJSzqRmRbDkQHvtA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11140"; a="12639452"
-X-IronPort-AV: E=Sophos;i="6.09,225,1716274800"; 
-   d="scan'208";a="12639452"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2024 05:37:20 -0700
-X-CSE-ConnectionGUID: TFO0dtPhRR2WUIMwvkWkNw==
-X-CSE-MsgGUID: 5v6VdCWQTfaamSYRy3ijlg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,225,1716274800"; 
-   d="scan'208";a="51485593"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 21 Jul 2024 05:37:18 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sVVoR-000kGw-1O;
-	Sun, 21 Jul 2024 12:37:15 +0000
-Date: Sun, 21 Jul 2024 20:36:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Steven Price <steven.price@arm.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: powerpc-linux-ld: dw_mipi_dsi-stm.c:undefined reference to
- `clk_hw_unregister'
-Message-ID: <202407212000.rpDH64jP-lkp@intel.com>
+	s=arc-20240116; t=1721565568; c=relaxed/simple;
+	bh=dLpzo+g9QxqIXUqWOmJ49ilN5WyuUFwXoG2IaYfSQwQ=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=bYsmgPj55z5x/anJX2Ja2nUDglDBIqLbaKbXKka4qq5I+38G47qZKL+M/ZhHD/tCQH8sD7zb6ZZiwgnG9OVe2wu2FBYvNoP7JIrECzN2PGM56KBLk3udT2zBmL6IZCPpnN+IrgCjzCXAjRjuOVovsSx7cE+lSCMm35vHg11NO2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=Aqzh2IEU; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1721565556;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Sj5SdsqLshc4Doxk2l9rRTDcIsxeSlUSxAWNQexm/js=;
+	b=Aqzh2IEUbLZelPokueajyNss61XGrhiEx8UMZHAYQEqttTaau3po0oi5hPLT0RcHrfK2a5
+	DYLTQuxz0u8Fbr3TNM/t4f3QyF7cUS2yEmGvUVo3o1eCTCMkgZDJK6udj4MqIPObpSLPl3
+	tGotN5fnfMBlIyXYwMEVQFxKoX8mY4AIFbKitvtUzm3IaiuhnZRbtpnIFFt0o1crmBVN/q
+	MxX2vJGORObyq83tDpYIesoZiTcaHRf5KZJ626JsozN0AyWW5AG/tXimIZ1X6MnDuxgn28
+	B53l4ERZojHT0kwb0j1yb4P3m5D7187NaN0CcVSYmSW4NlEPYxVa+uQo3kv6jg==
+Date: Sun, 21 Jul 2024 14:39:07 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Daniel Golle <daniel@makrotopia.org>,
+ linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
+ devicetree@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>, Sascha Hauer
+ <s.hauer@pengutronix.de>, linux-kernel@vger.kernel.org, Ard Biesheuvel
+ <ardb@kernel.org>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@debian.org>,
+ linux-rockchip@lists.infradead.org, linux-crypto@vger.kernel.org, Philipp
+ Zabel <p.zabel@pengutronix.de>, Olivia Mackall <olivia@selenic.com>,
+ Francesco Dolcini <francesco.dolcini@toradex.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Aurelien Jarno <aurelien@aurel32.net>, Heiko Stuebner
+ <heiko@sntech.de>
+Subject: Re: [PATCH v8 3/3] arm64: dts: rockchip: add DT entry for RNG to
+ RK356x
+In-Reply-To: <Zpz5-2q-C0oQBqoa@zx2c4.com>
+References: <cover.1721522430.git.daniel@makrotopia.org>
+ <c28cb9ad04062b6da66d9cac8adefa0edc0046ea.1721522430.git.daniel@makrotopia.org>
+ <Zpz5-2q-C0oQBqoa@zx2c4.com>
+Message-ID: <bfd6a1608ec5b9e0b4d7a77bd2a56309@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   2c9b3512402ed192d1f43f4531fb5da947e72bd0
-commit: d076e2bd09f22db8a181a081479008524674b5b3 Merge tag 'drm-misc-next-2024-07-04' of https://gitlab.freedesktop.org/drm/misc/kernel into drm-next
-date:   2 weeks ago
-config: powerpc-randconfig-r051-20240721 (https://download.01.org/0day-ci/archive/20240721/202407212000.rpDH64jP-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240721/202407212000.rpDH64jP-lkp@intel.com/reproduce)
+Hello all,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407212000.rpDH64jP-lkp@intel.com/
+On 2024-07-21 14:07, Jason A. Donenfeld wrote:
+> On Sun, Jul 21, 2024 at 01:48:38AM +0100, Daniel Golle wrote:
+>> From: Aurelien Jarno <aurelien@aurel32.net>
+>> 
+>> Enable the just added Rockchip RNG driver for RK356x SoCs.
+>> 
+>> Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+>> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+>> ---
+>>  arch/arm64/boot/dts/rockchip/rk3568.dtsi |  7 +++++++
+>>  arch/arm64/boot/dts/rockchip/rk356x.dtsi | 10 ++++++++++
+>>  2 files changed, 17 insertions(+)
+>> 
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3568.dtsi 
+>> b/arch/arm64/boot/dts/rockchip/rk3568.dtsi
+>> index f1be76a54ceb..b9c6b2dc87fa 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3568.dtsi
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3568.dtsi
+>> @@ -257,6 +257,13 @@ power-domain@RK3568_PD_PIPE {
+>>  	};
+>>  };
+>> 
+>> +&rng {
+>> +	rockchip,sample-count = <1000>;
+>> +	quality = <900>;
+> 
+> As I already wrote you for v7, quality is out of 1024, not 1000, so 
+> this
+> won't hit 90% as you intend.
+> 
+> But also, I think putting this in the DT is a mistake. Other drivers
+> don't generally do this, and if the hardware is actually the same piece
+> to piece (it is...), then there's not per-manufactured unit tweaking
+> needed. So keep this in the actual driver C like other drivers.
 
-All errors (new ones prefixed by >>):
+Actually, if we find out that some samples of RK3568 have HWRNG that
+performs poorly, we'll be able to regrettably conclude that this driver
+cannot be used at all.  As we remember, RK3566 has been already proven
+to have inconsistent HRWNG that may perform poorly, which basically
+disqualifies the RK3566 from using this driver.
 
-   powerpc-linux-ld: drivers/gpu/drm/stm/dw_mipi_dsi-stm.o: in function `dw_mipi_dsi_stm_remove':
-   dw_mipi_dsi-stm.c:(.text+0x664): undefined reference to `of_clk_del_provider'
->> powerpc-linux-ld: dw_mipi_dsi-stm.c:(.text+0x66c): undefined reference to `clk_hw_unregister'
-   powerpc-linux-ld: drivers/gpu/drm/stm/dw_mipi_dsi-stm.o: in function `dw_mipi_dsi_stm_probe':
-   dw_mipi_dsi-stm.c:(.text+0x98c): undefined reference to `clk_hw_register'
->> powerpc-linux-ld: dw_mipi_dsi-stm.c:(.text+0x99a): undefined reference to `of_clk_hw_simple_get'
-   powerpc-linux-ld: dw_mipi_dsi-stm.c:(.text+0x9a2): undefined reference to `of_clk_hw_simple_get'
->> powerpc-linux-ld: dw_mipi_dsi-stm.c:(.text+0x9a8): undefined reference to `of_clk_add_hw_provider'
-   powerpc-linux-ld: dw_mipi_dsi-stm.c:(.text+0x9b8): undefined reference to `clk_hw_unregister'
-   powerpc-linux-ld: drivers/gpu/drm/stm/lvds.o: in function `lvds_remove':
-   lvds.c:(.text+0x300): undefined reference to `of_clk_del_provider'
->> powerpc-linux-ld: lvds.c:(.text+0x308): undefined reference to `clk_hw_unregister'
-   powerpc-linux-ld: drivers/gpu/drm/stm/lvds.o: in function `lvds_probe':
-   lvds.c:(.text+0x14b4): undefined reference to `clk_hw_register'
->> powerpc-linux-ld: lvds.c:(.text+0x14c2): undefined reference to `of_clk_hw_simple_get'
-   powerpc-linux-ld: lvds.c:(.text+0x14ca): undefined reference to `of_clk_hw_simple_get'
->> powerpc-linux-ld: lvds.c:(.text+0x14d0): undefined reference to `of_clk_add_hw_provider'
-   powerpc-linux-ld: lvds.c:(.text+0x1570): undefined reference to `clk_hw_unregister'
-   powerpc-linux-ld: drivers/gpu/drm/stm/lvds.o: in function `lvds_pll_config':
-   lvds.c:(.text+0x178c): undefined reference to `clk_hw_get_rate'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thus, I agree that the per-SoC-variant parameters should be moved
+to the driver code in the final version.  However, this is still
+a development version that has the parameters in the DT specifically
+to allow easier testing of the different parameter values.
 
