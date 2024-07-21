@@ -1,273 +1,287 @@
-Return-Path: <linux-kernel+bounces-258358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D9BC9386C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 01:57:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 816279386C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 01:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AAA4280F86
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 23:57:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A45791C20858
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 23:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97DA017580;
-	Sun, 21 Jul 2024 23:57:24 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F876DF60
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 23:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3D417741;
+	Sun, 21 Jul 2024 23:59:00 +0000 (UTC)
+Received: from spindle.queued.net (spindle.queued.net [45.33.49.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40484171AF;
+	Sun, 21 Jul 2024 23:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.33.49.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721606243; cv=none; b=glPblu6TBhmr21as4c6X7Aav2pweslvIVKT6ykTtyTYYEPmBOirpL1BDrsMNi09qLptmzjvsef354YCYp2ngs4cAj0HZ2BNk2tEPmy2Whcr3JOluodDWj8S49bawJ8BUeQQpJQx/vZbKVRrokk+O7WpU4iQIRFaf5sihL13irow=
+	t=1721606339; cv=none; b=GG0yNtfN2w0fSqOIt3PhcdZFihpfBTrKnOLNaRJ07smJcr+tV3mf4pDpIDHHOMcND2TxPx9tNq00Jwue2H0v6y4uCpqrOjonGNCWEE8GszQtwA7+pLQlm1JFOYc2UwT5BX5Gj/Bd8ttJmaLN+j5KQQjEe34lCQwhSuP2ZedEHp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721606243; c=relaxed/simple;
-	bh=INHtNTzNMzH/2JVhoP4a39XiQc+0TPE56n8FibHeFRo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=o9stgOHkqz3vkZtpmA9SRgclN6DAx9674FLB/2Leig1vEbq5aQuJ1De4IRJ42WdsFIatXpJBBROtQQQ0HfUUjRiSj5E7bMp5sHVu/S2nxVNqjwlCM9ICIGE+BIVR14XdZlEtG8OXGSIk54bpqGBLaqMrRHEDGUIAWgLVWBkwY2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-397e0efded3so52251545ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 16:57:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721606241; x=1722211041;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8XfRfjBg0+bRQqFFfQqkJw4fwE58QxAQkhxaV98l3QQ=;
-        b=J6jw6tcCUBMKqI4iYw/H9lG9TKa1NwlML3xvlQlJShLG1jCzap7d3uaJChUYmdCncI
-         dRvcj3tV8eqO7e7shvTHr7wKtGW2uw41/mjUBGZQXodExdQs4SSlx0VfwRaE0c1LLd+3
-         Mq5LbmJ55GM1eZDPNsImO55agUVpULs4tZCl91cqD6DdxJ40dYFmvbWiv01rvdUEDcCv
-         N9TQhNAfSnZOjHhwV1PissFuRPP2oQAnvtbboWI/GdC/y0c3ilz6xgwpSKq/NqElf4J8
-         HLLtRUb7ap45aCkNNcFMRTh4tU7T5L/znemH5ojx5LM+NZ45Rr4jSoQ7eGaoOAjpYIWD
-         2dSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfE0Aw+YdyoOnkT1RgRRuyKXQ9lojKl9Gkh1vghJEYr/S5+OAmpy8HSE0+2fZ3TZ4tiH+wTiIlDFTEX/0BqJ1WwGoT1IMZkfQY+XOr
-X-Gm-Message-State: AOJu0Yx3rvj51Mvj97vCbMZieaQHVy6NVgcz4TQt3MqVx792A1WPld6k
-	WHbcNvneyAQxyCHZ5YAU+T3/HxkSw+nZAsONc97gXbQNG01Kqv1QyyKAwWb9iN18zUtARcIUqE4
-	OL85ayQouK14635JbcHVoXPalh69vFTBWhgcsjxjdMiRCTF6lTIdGfsQ=
-X-Google-Smtp-Source: AGHT+IGSmeSFQnUw+NrbBPzRahpDTiGiio1NujP6AaeDe/CozQM5OnCuFbpkUdnuTGlK26+eGILHJ6xZJl28cCjA2cXNpSyZLKPW
+	s=arc-20240116; t=1721606339; c=relaxed/simple;
+	bh=P/YKsL5DcPlMNlKEBxIrzIxg+gTcXAx4PrhqairzwRM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DR7tyLPgM4194+yNKn5MuNdEJpxPUn1nt9eZ9u9fj/MRiBBr3WP3eyIHRo0L8piqrf9mEUp98pCgzKO/JG1A3xmsFmjXGIop3lmZSKpSdaGRFG4DeBng5BoRNLWTQFQGyommUWKMguAP4koNbyhgtYKPpsTF3X8dNzX5B/5d9Ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=queued.net; spf=pass smtp.mailfrom=queued.net; arc=none smtp.client-ip=45.33.49.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=queued.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queued.net
+Received: by spindle.queued.net (Postfix, from userid 1001)
+	id C4AE8115963; Sun, 21 Jul 2024 19:58:57 -0400 (EDT)
+Received: from 5400 (unknown [172.56.164.186])
+	by spindle.queued.net (Postfix) with ESMTPSA id 8A240115954;
+	Sun, 21 Jul 2024 19:58:56 -0400 (EDT)
+Date: Sun, 21 Jul 2024 19:58:51 -0400
+From: Andres Salomon <dilinger@queued.net>
+To: Pali =?UTF-8?B?Um9ow6Fy?= <pali@kernel.org>
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ Matthew Garrett <mjg59@srcf.ucam.org>, Sebastian Reichel <sre@kernel.org>,
+ Hans de Goede <hdegoede@redhat.com>, Ilpo =?UTF-8?B?SsOkcnZpbmVu?=
+ <ilpo.jarvinen@linux.intel.com>, linux-pm@vger.kernel.org,
+ Dell.Client.Kernel@dell.com, Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH] platform/x86:dell-laptop: Add knobs to change battery
+ charge settings
+Message-ID: <20240721195851.76e2b220@5400>
+In-Reply-To: <20240721234037.nxthfeqdjl3z74oc@pali>
+References: <20240720012220.26d62a54@5400>
+	<20240720084019.hrnd4wgt4muorydp@pali>
+	<20240720052419.73b1415a@5400>
+	<20240720095507.uyaotkofkyasdgbd@pali>
+	<20240720220606.1934df43@5400>
+	<20240721090238.wrei5nu6y3awujws@pali>
+	<20240721193716.3156050f@5400>
+	<20240721234037.nxthfeqdjl3z74oc@pali>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12cf:b0:396:ec3b:df63 with SMTP id
- e9e14a558f8ab-398e782180cmr3003405ab.4.1721606241363; Sun, 21 Jul 2024
- 16:57:21 -0700 (PDT)
-Date: Sun, 21 Jul 2024 16:57:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000075b674061dcab0d5@google.com>
-Subject: [syzbot] [autofs?] possible deadlock in autofs_notify_daemon
-From: syzbot <syzbot+0d4e0978aa13f9e1db55@syzkaller.appspotmail.com>
-To: autofs@vger.kernel.org, linux-kernel@vger.kernel.org, raven@themaw.net, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bogosity: Ham, tests=bogofilter, spamicity=0.000000, version=1.2.5
 
-Hello,
+On Mon, 22 Jul 2024 01:40:37 +0200
+Pali Roh=C3=A1r <pali@kernel.org> wrote:
 
-syzbot found the following issue on:
+> On Sunday 21 July 2024 19:37:16 Andres Salomon wrote:
+> > On Sun, 21 Jul 2024 11:02:38 +0200
+> > Pali Roh=C3=A1r <pali@kernel.org> wrote:
+> >  =20
+> > > On Saturday 20 July 2024 22:06:06 Andres Salomon wrote: =20
+> > > > On Sat, 20 Jul 2024 11:55:07 +0200
+> > > > Pali Roh=C3=A1r <pali@kernel.org> wrote:
+> > > >    =20
+> > > > > On Saturday 20 July 2024 05:24:19 Andres Salomon wrote:   =20
+> > > > > > Thanks for the quick feedback! Responses below.
+> > > > > >=20
+> > > > > > On Sat, 20 Jul 2024 10:40:19 +0200
+> > > > > > Pali Roh=C3=A1r <pali@kernel.org> wrote:
+> > > > > >      =20
+> >=20
+> > [...]
+> >  =20
+> > > > > > > > +
+> > > > > > > > +static void __init dell_battery_init(struct device *dev)
+> > > > > > > > +{
+> > > > > > > > +	enum battery_charging_mode current_mode =3D DELL_BAT_MODE=
+_NONE;
+> > > > > > > > +
+> > > > > > > > +	dell_battery_read_req(BAT_CUSTOM_MODE_TOKEN, (int *) &cur=
+rent_mode);
+> > > > > > > > +	if (current_mode !=3D DELL_BAT_MODE_NONE) {       =20
+> > > > > > >=20
+> > > > > > > I quite do not understand how is this code suppose to work.
+> > > > > > >=20
+> > > > > > > Why is there mix of custom kernel enum battery_charging_mode =
+and return
+> > > > > > > value from Dell's API?     =20
+> > > > > >=20
+> > > > > > This is from the original patch from Dell; tbh, I'm not sure. I=
+t does
+> > > > > > work, though. That is, current_mode ends up holding the correct=
+ value
+> > > > > > based on what was previously set, even if the charging mode is =
+set from
+> > > > > > the BIOS.
+> > > > > >=20
+> > > > > > I just scanned through the libsmbios code to see what it's doin=
+g, and
+> > > > > > it appears to loop through every charging mode to check if its =
+active.
+> > > > > > I'm not really sure that makes much more sense, so I'll try som=
+e more
+> > > > > > tests.     =20
+> > > > >=20
+> > > > > Keyboard backlight code (kbd_get_first_active_token_bit) is doing=
+ also
+> > > > > this type scan. If I remember correctly, for every keyboard backl=
+ight
+> > > > > token we just know the boolean value - if the token is set or not.
+> > > > >=20
+> > > > > It would really nice to see what (raw) value is returned by the
+> > > > > dell_battery_read_req(token) function for every battery token and=
+ for
+> > > > > every initial state.   =20
+> > > >=20
+> > > > I checked this. The BIOS sets the mode value in every related token
+> > > > location. I'm still not really sure what libsmbios is doing, but the
+> > > > kernel code seems to arbitrarily choose one of the token locations
+> > > > to read from. This makes sense to me now.
+> > > >=20
+> > > > In the BIOS when I set the mode to "ExpressCharge",
+> > > > this what I pulled for each token location:
+> > > >=20
+> > > > [    5.704651] dell-laptop dell-laptop: BAT_CUSTOM_MODE_TOKEN value=
+: 2
+> > > > [    5.707015] dell-laptop dell-laptop: BAT_PRI_AC_MODE_TOKEN value=
+: 2
+> > > > [    5.709114] dell-laptop dell-laptop: BAT_ADAPTIVE_MODE_TOKEN val=
+ue: 2
+> > > > [    5.711041] dell-laptop dell-laptop: BAT_STANDARD_MODE_TOKEN val=
+ue: 2
+> > > > [    5.713705] dell-laptop dell-laptop: BAT_EXPRESS_MODE_TOKEN valu=
+e: 2
+> > > >=20
+> > > > Similar story when I set it to Custom (all were '5'), or Standard (=
+'1').
+> > > > When I set it from linux as well, it changed all location values.  =
+ =20
+> > >=20
+> > > Interesting... Anyway, I still think that the API could be similar to
+> > > what is used in keyboard backlight.
+> > >=20
+> > > Could you please dump all information about each token? They are in
+> > > struct calling_interface_token returned by dell_smbios_find_token.
+> > >=20
+> > > I'm interesting in tokenID, location and value.
+> > >=20
+> > > Ideally to compare what is in token->value and then in buffer.output[=
+1]
+> > > (in case dell_send_request does not fail). =20
+> >=20
+> >=20
+> > Alright, here's what I see:
+> >=20
+> > [    5.904775] dell_laptop: dell_battery_read_req: token requested: 0x3=
+43, tokenID=3D0x343, location=3D0x343, value=3D5
+> > [    5.908675] dell_laptop: dell_battery_read_req: buffer.output[1]=3D3
+> > [    5.908680] dell_laptop: dell_battery_init: BAT_CUSTOM_MODE_TOKEN va=
+lue: 3
+> > [    5.908682] dell_laptop: dell_battery_read_req: token requested: 0x3=
+41, tokenID=3D0x341, location=3D0x341, value=3D3
+> > [    5.910922] dell_laptop: dell_battery_read_req: buffer.output[1]=3D3
+> > [    5.910926] dell_laptop: dell_battery_init: BAT_PRI_AC_MODE_TOKEN va=
+lue: 3
+> > [    5.910928] dell_laptop: dell_battery_read_req: token requested: 0x3=
+42, tokenID=3D0x342, location=3D0x342, value=3D4
+> > [    5.913042] dell_laptop: dell_battery_read_req: buffer.output[1]=3D3
+> > [    5.913046] dell_laptop: dell_battery_init: BAT_ADAPTIVE_MODE_TOKEN =
+value: 3
+> > [    5.913048] dell_laptop: dell_battery_read_req: token requested: 0x3=
+46, tokenID=3D0x346, location=3D0x346, value=3D1
+> > [    5.914996] dell_laptop: dell_battery_read_req: buffer.output[1]=3D3
+> > [    5.914999] dell_laptop: dell_battery_init: BAT_STANDARD_MODE_TOKEN =
+value: 3
+> > [    5.915000] dell_laptop: dell_battery_read_req: token requested: 0x3=
+47, tokenID=3D0x347, location=3D0x347, value=3D2
+> > [    5.916723] dell_laptop: dell_battery_read_req: buffer.output[1]=3D3
+> > [    5.916724] dell_laptop: dell_battery_init: BAT_EXPRESS_MODE_TOKEN v=
+alue: 3
+> > [    5.916725] dell_laptop: dell_battery_read_req: token requested: 0x3=
+49, tokenID=3D0x349, location=3D0x349, value=3D65535
+> > [    5.918727] dell_laptop: dell_battery_read_req: buffer.output[1]=3D65
+> > [    5.918731] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_START =
+value: 65
+> > [    5.918734] dell_laptop: dell_battery_read_req: token requested: 0x3=
+4a, tokenID=3D0x34a, location=3D0x34a, value=3D65535
+> > [    5.920864] dell_laptop: dell_battery_read_req: buffer.output[1]=3D85
+> > [    5.920867] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_END va=
+lue: 85 =20
+>=20
+> Perfect. And can you check dumps when the mode is set to some other than =
+BAT_PRI_AC_MODE_TOKEN?
 
-HEAD commit:    d7e78951a8b8 Merge tag 'net-6.11-rc0' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1642f7a5980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2602dfd9213d734c
-dashboard link: https://syzkaller.appspot.com/bug?extid=0d4e0978aa13f9e1db55
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Here's Express:
 
-Unfortunately, I don't have any reproducer for this issue yet.
+[    5.880090] dell_laptop: dell_battery_read_req: token requested: 0x343, =
+tokenID=3D0x343, location=3D0x343, value=3D5
+[    5.882011] dell_laptop: dell_battery_read_req: buffer.output[1]=3D2
+[    5.882014] dell_laptop: dell_battery_init: BAT_CUSTOM_MODE_TOKEN value:=
+ 2
+[    5.882016] dell_laptop: dell_battery_read_req: token requested: 0x341, =
+tokenID=3D0x341, location=3D0x341, value=3D3
+[    5.894513] dell_laptop: dell_battery_read_req: buffer.output[1]=3D2
+[    5.894518] dell_laptop: dell_battery_init: BAT_PRI_AC_MODE_TOKEN value:=
+ 2
+[    5.894520] dell_laptop: dell_battery_read_req: token requested: 0x342, =
+tokenID=3D0x342, location=3D0x342, value=3D4
+[    5.913870] dell_laptop: dell_battery_read_req: buffer.output[1]=3D2
+[    5.913874] dell_laptop: dell_battery_init: BAT_ADAPTIVE_MODE_TOKEN valu=
+e: 2
+[    5.913875] dell_laptop: dell_battery_read_req: token requested: 0x346, =
+tokenID=3D0x346, location=3D0x346, value=3D1
+[    5.915622] dell_laptop: dell_battery_read_req: buffer.output[1]=3D2
+[    5.915625] dell_laptop: dell_battery_init: BAT_STANDARD_MODE_TOKEN valu=
+e: 2
+[    5.915626] dell_laptop: dell_battery_read_req: token requested: 0x347, =
+tokenID=3D0x347, location=3D0x347, value=3D2
+[    5.917349] dell_laptop: dell_battery_read_req: buffer.output[1]=3D2
+[    5.917351] dell_laptop: dell_battery_init: BAT_EXPRESS_MODE_TOKEN value=
+: 2
+[    5.917352] dell_laptop: dell_battery_read_req: token requested: 0x349, =
+tokenID=3D0x349, location=3D0x349, value=3D65535
+[    5.919068] dell_laptop: dell_battery_read_req: buffer.output[1]=3D65
+[    5.919070] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_START valu=
+e: 65
+[    5.919071] dell_laptop: dell_battery_read_req: token requested: 0x34a, =
+tokenID=3D0x34a, location=3D0x34a, value=3D65535
+[    5.920780] dell_laptop: dell_battery_read_req: buffer.output[1]=3D85
+[    5.920782] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_END value:=
+ 85
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/cdd2c14644df/disk-d7e78951.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7f9c9ab39b87/vmlinux-d7e78951.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1fc3658770e2/bzImage-d7e78951.xz
+And here's Adaptive:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0d4e0978aa13f9e1db55@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.10.0-syzkaller-09703-gd7e78951a8b8 #0 Not tainted
-------------------------------------------------------
-syz.3.4748/19551 is trying to acquire lock:
-ffff888059b0d940 (&sbi->pipe_mutex){+.+.}-{3:3}, at: autofs_write fs/autofs/waitq.c:55 [inline]
-ffff888059b0d940 (&sbi->pipe_mutex){+.+.}-{3:3}, at: autofs_notify_daemon+0x71f/0xf80 fs/autofs/waitq.c:164
-
-but task is already holding lock:
-ffff8880758e7888 (&of->mutex){+.+.}-{3:3}, at: kernfs_fop_write_iter+0x1eb/0x500 fs/kernfs/file.c:325
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (&of->mutex){+.+.}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       kernfs_fop_write_iter+0x1eb/0x500 fs/kernfs/file.c:325
-       iter_file_splice_write+0xbd7/0x14e0 fs/splice.c:743
-       do_splice_from fs/splice.c:941 [inline]
-       do_splice+0xd77/0x1900 fs/splice.c:1354
-       __do_splice fs/splice.c:1436 [inline]
-       __do_sys_splice fs/splice.c:1652 [inline]
-       __se_sys_splice+0x331/0x4a0 fs/splice.c:1634
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&pipe->mutex){+.+.}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       pipe_write+0x1c9/0x1a40 fs/pipe.c:455
-       __kernel_write_iter+0x47e/0x900 fs/read_write.c:523
-       __kernel_write+0x120/0x180 fs/read_write.c:543
-       autofs_write fs/autofs/waitq.c:57 [inline]
-       autofs_notify_daemon+0x732/0xf80 fs/autofs/waitq.c:164
-       autofs_wait+0x10b8/0x1b30 fs/autofs/waitq.c:426
-       autofs_do_expire_multi+0x659/0x950 fs/autofs/expire.c:590
-       autofs_root_ioctl+0x4c/0x60 fs/autofs/root.c:910
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:907 [inline]
-       __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&sbi->pipe_mutex){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3133 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
-       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
-       __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       autofs_write fs/autofs/waitq.c:55 [inline]
-       autofs_notify_daemon+0x71f/0xf80 fs/autofs/waitq.c:164
-       autofs_wait+0x10b8/0x1b30 fs/autofs/waitq.c:426
-       autofs_mount_wait+0x170/0x330 fs/autofs/root.c:255
-       autofs_d_automount+0x555/0x710 fs/autofs/root.c:401
-       follow_automount fs/namei.c:1394 [inline]
-       __traverse_mounts+0x2ba/0x580 fs/namei.c:1439
-       traverse_mounts fs/namei.c:1468 [inline]
-       handle_mounts fs/namei.c:1571 [inline]
-       step_into+0x5e5/0x1080 fs/namei.c:1877
-       lookup_last fs/namei.c:2542 [inline]
-       path_lookupat+0x16f/0x450 fs/namei.c:2566
-       filename_lookup+0x256/0x610 fs/namei.c:2595
-       kern_path+0x35/0x50 fs/namei.c:2703
-       lookup_bdev+0xc5/0x290 block/bdev.c:1157
-       resume_store+0x1a0/0x710 kernel/power/hibernate.c:1235
-       kernfs_fop_write_iter+0x3a1/0x500 fs/kernfs/file.c:334
-       iter_file_splice_write+0xbd7/0x14e0 fs/splice.c:743
-       do_splice_from fs/splice.c:941 [inline]
-       direct_splice_actor+0x11e/0x220 fs/splice.c:1164
-       splice_direct_to_actor+0x58e/0xc90 fs/splice.c:1108
-       do_splice_direct_actor fs/splice.c:1207 [inline]
-       do_splice_direct+0x28c/0x3e0 fs/splice.c:1233
-       do_sendfile+0x56d/0xe20 fs/read_write.c:1295
-       __do_sys_sendfile64 fs/read_write.c:1362 [inline]
-       __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1348
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  &sbi->pipe_mutex --> &pipe->mutex --> &of->mutex
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&of->mutex);
-                               lock(&pipe->mutex);
-                               lock(&of->mutex);
-  lock(&sbi->pipe_mutex);
-
- *** DEADLOCK ***
-
-3 locks held by syz.3.4748/19551:
- #0: ffff88801e524420 (sb_writers#8){.+.+}-{0:0}, at: direct_splice_actor+0x49/0x220 fs/splice.c:1163
- #1: ffff8880758e7888 (&of->mutex){+.+.}-{3:3}, at: kernfs_fop_write_iter+0x1eb/0x500 fs/kernfs/file.c:325
- #2: ffff888017adb4b8 (kn->active#65){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x20f/0x500 fs/kernfs/file.c:326
-
-stack backtrace:
-CPU: 1 PID: 19551 Comm: syz.3.4748 Not tainted 6.10.0-syzkaller-09703-gd7e78951a8b8 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2186
- check_prev_add kernel/locking/lockdep.c:3133 [inline]
- check_prevs_add kernel/locking/lockdep.c:3252 [inline]
- validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
- __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
- autofs_write fs/autofs/waitq.c:55 [inline]
- autofs_notify_daemon+0x71f/0xf80 fs/autofs/waitq.c:164
- autofs_wait+0x10b8/0x1b30 fs/autofs/waitq.c:426
- autofs_mount_wait+0x170/0x330 fs/autofs/root.c:255
- autofs_d_automount+0x555/0x710 fs/autofs/root.c:401
- follow_automount fs/namei.c:1394 [inline]
- __traverse_mounts+0x2ba/0x580 fs/namei.c:1439
- traverse_mounts fs/namei.c:1468 [inline]
- handle_mounts fs/namei.c:1571 [inline]
- step_into+0x5e5/0x1080 fs/namei.c:1877
- lookup_last fs/namei.c:2542 [inline]
- path_lookupat+0x16f/0x450 fs/namei.c:2566
- filename_lookup+0x256/0x610 fs/namei.c:2595
- kern_path+0x35/0x50 fs/namei.c:2703
- lookup_bdev+0xc5/0x290 block/bdev.c:1157
- resume_store+0x1a0/0x710 kernel/power/hibernate.c:1235
- kernfs_fop_write_iter+0x3a1/0x500 fs/kernfs/file.c:334
- iter_file_splice_write+0xbd7/0x14e0 fs/splice.c:743
- do_splice_from fs/splice.c:941 [inline]
- direct_splice_actor+0x11e/0x220 fs/splice.c:1164
- splice_direct_to_actor+0x58e/0xc90 fs/splice.c:1108
- do_splice_direct_actor fs/splice.c:1207 [inline]
- do_splice_direct+0x28c/0x3e0 fs/splice.c:1233
- do_sendfile+0x56d/0xe20 fs/read_write.c:1295
- __do_sys_sendfile64 fs/read_write.c:1362 [inline]
- __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1348
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f75ec575b59
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f75ebfde048 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 00007f75ec706038 RCX: 00007f75ec575b59
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000004
-RBP: 00007f75ec5e4e5d R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000006e R14: 00007f75ec706038 R15: 00007ffef2866ed8
- </TASK>
-PM: Image not found (code -6)
+[    5.945319] dell_laptop: dell_battery_read_req: token requested: 0x343, =
+tokenID=3D0x343, location=3D0x343, value=3D5
+[    5.973685] dell_laptop: dell_battery_read_req: buffer.output[1]=3D4
+[    5.973690] dell_laptop: dell_battery_init: BAT_CUSTOM_MODE_TOKEN value:=
+ 4
+[    5.973692] dell_laptop: dell_battery_read_req: token requested: 0x341, =
+tokenID=3D0x341, location=3D0x341, value=3D3
+[    5.976533] dell_laptop: dell_battery_read_req: buffer.output[1]=3D4
+[    5.976538] dell_laptop: dell_battery_init: BAT_PRI_AC_MODE_TOKEN value:=
+ 4
+[    5.976540] dell_laptop: dell_battery_read_req: token requested: 0x342, =
+tokenID=3D0x342, location=3D0x342, value=3D4
+[    5.981013] dell_laptop: dell_battery_read_req: buffer.output[1]=3D4
+[    5.981018] dell_laptop: dell_battery_init: BAT_ADAPTIVE_MODE_TOKEN valu=
+e: 4
+[    5.981020] dell_laptop: dell_battery_read_req: token requested: 0x346, =
+tokenID=3D0x346, location=3D0x346, value=3D1
+[    5.983474] dell_laptop: dell_battery_read_req: buffer.output[1]=3D4
+[    5.983479] dell_laptop: dell_battery_init: BAT_STANDARD_MODE_TOKEN valu=
+e: 4
+[    5.983481] dell_laptop: dell_battery_read_req: token requested: 0x347, =
+tokenID=3D0x347, location=3D0x347, value=3D2
+[    5.985881] dell_laptop: dell_battery_read_req: buffer.output[1]=3D4
+[    5.985885] dell_laptop: dell_battery_init: BAT_EXPRESS_MODE_TOKEN value=
+: 4
+[    5.985887] dell_laptop: dell_battery_read_req: token requested: 0x349, =
+tokenID=3D0x349, location=3D0x349, value=3D65535
+[    5.988332] dell_laptop: dell_battery_read_req: buffer.output[1]=3D65
+[    5.988337] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_START valu=
+e: 65
+[    5.988339] dell_laptop: dell_battery_read_req: token requested: 0x34a, =
+tokenID=3D0x34a, location=3D0x34a, value=3D65535
+[    5.990769] dell_laptop: dell_battery_read_req: buffer.output[1]=3D85
+[    5.990774] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_END value:=
+ 85
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+--=20
+I'm available for contract & employment work, see:
+https://spindle.queued.net/~dilinger/resume-tech.pdf
 
