@@ -1,94 +1,91 @@
-Return-Path: <linux-kernel+bounces-258091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6D2393835E
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 06:56:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34E5593835F
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 06:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D6D81C20A60
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 04:56:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECDBD2815BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2024 04:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD50B3D71;
-	Sun, 21 Jul 2024 04:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="fHOJYcZl"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C794683;
+	Sun, 21 Jul 2024 04:57:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7791FBA
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 04:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B264400
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 04:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721537792; cv=none; b=tgsXOp0aDEDEYDEnX6G5Y/hrebpp2bkh30ismRLklZNw4gRpsRG5GELNh93YnQ+ley6uA+mPhpwUGJ5IepzYFfu3bPhjDlY3t0ftw0RmD+cPdRT7pZM9FClF/QQo9sLWSJuAodPJjYvfbybWUTMC1BXBr8vjx8HdSjbzkpHBuGI=
+	t=1721537825; cv=none; b=TqDpdBl7HkRsu+YykL/04K/DpB+LLaIhFmxAzNHF8LhSP0TQhMZ8AGqfdfgC0VuzFemUcGmm5/ETRpTlP4Qj1f/grY8dZT5p5JyehbBeVZdjbHySxfAkZCCTa5RnK9m7vEt/WREnS9ozAja+PJZ433aaXIq1t1lG6hNg0KP5lSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721537792; c=relaxed/simple;
-	bh=5SEk/Kdd4/vf2LP7C2oCu8/OqufPctG1C13bcmCFie0=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=PTUolh24wtPUqRwC7RGNnn6fw2QSj8JEa9e/iOXlKtqsgM+2ikpRE3EeiYYikpN6EpxM3dFI6KtUgKOuDZKve4xif7Mzg0O0Aj/a3PTvaKDG0zkUFwdg1kx56FqzVVBLmYza1C+Folp522hExF8TrGPiPOq3PuA6IQTYzc2IZ2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=fHOJYcZl; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1721537785; bh=wj8LB1leJPoTbq2NuDgfi09pA677pBvKP/TSP7gJD3Y=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=fHOJYcZlgLVyKqYvB1RdO4mwQ8a/jJSLQ1UdSOnlHhpwry10g5VDoXI4nth/SXpcl
-	 fV+HXY4GrbPFhujQT135ExUFMGO792T4blLlnVfZXvSHZVlEKH7Wbor4vIEvA1otDm
-	 B+wlj8l6NCHZL96thyE4xgRbxTUweTC3SOfyvwhE=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
-	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
-	id C8F87435; Sun, 21 Jul 2024 12:50:15 +0800
-X-QQ-mid: xmsmtpt1721537415t55iyvuz4
-Message-ID: <tencent_9A6EFE8CB8A7FC86C992CAC6744992EED206@qq.com>
-X-QQ-XMAILINFO: MtZ4zLDUQmWfHhVPAy5cf+mE8HWmuoGD4QGqwQZ9m0+y7sSNli4tnBkxO6/kOJ
-	 siqkZiJVuQlhwKPEa6fuXV/svi0xck4Xi+raOK6hm5mArPx6ABnH4Rj7yotybnyVryFZNal+UlxW
-	 RLoBo64IuFhx24E+bucCp4SqtJPyN0Zn3KPTF6TtCANNhHFOw8cNBHXUWrzCJID0EKUzgtCcfXRC
-	 IWuZj1b2+KFqXkOg+9j/uGBSV4Qz35HESl3eZhrOO4LWQ/Cc+ogJqSF+kimVycSKNBbI5HZW4leP
-	 5PE+n/eprI9rcSOgI8hZ0YDzBCNesWvB421QI/ADtGjF5hjEF4fnvtzZ6E2h3hvQ845lhN7AnMZ5
-	 d01QGaQ7LQjroYEYwY/0mz9qnqtARucFTDa4iSkVGTEjl3xOD4j66bvTuuBMdDHjHkYlU1lfLUTm
-	 k8AwccTSfhN1P4KxoOnFVYwfXI7DD39C5SoLm5buy0W9Yv37XlUF4G+tiTFLcMQNdvn+RWe8Hjz3
-	 772FqI0zMGYUtwLKRgVcJM4hbE00Bg4m7i2LhASbLid59BwaDxDBzi5K0HWNcCuphXdK71+aDXCp
-	 dUTC6hWcJQkW7d1Z+sxSeAutKLvK/xCIgo7v/abBOYvVuquT/LiiuC6aVfIiUnAsizecVASnIsvZ
-	 qm1HrzJ7FyTp2lDUejggrMBMNXQLtaaKjyQkKZTL6z0BRPd8VY3Jdu2NVNJkkRpwOGNw1fyzJbxI
-	 9nmr6bO7y5j0eDUhL+J55x0etCe5Jmdu8+TzQh0lf0DXlImy+ibNjaQkv6eLHALj937Gc7qzsCXN
-	 5gOdhHTUOuSifFAN9uVodg/Zxa+6HHvD0dR0Fir4545ZJu+Dl+Gp70syQa5YtJj/5EUBzbs1fjp2
-	 I6wpErBECa5aAjlYmuSl955OZ4z8vlymdXqMkhljFB
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+34a0ee986f61f15da35d@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [fs?] BUG: unable to handle kernel NULL pointer dereference in path_from_stashed
-Date: Sun, 21 Jul 2024 12:50:16 +0800
-X-OQ-MSGID: <20240721045015.1589206-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000cf8462061db0699c@google.com>
-References: <000000000000cf8462061db0699c@google.com>
+	s=arc-20240116; t=1721537825; c=relaxed/simple;
+	bh=RvCwoxQ0RDwvppOJHLWny72GRZilV/WwvSv/YZN5oDQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=DfS6WFzULBuizz5uXPRF70nnBi23BZvWUyuVIxM1mJqHOd/TBUFek/vyW8bgnsLRQ64SE4ZeZgetvSkIcdayJoQu0wwdmJamUJ6GFGqUCZb51tov/oC3Rn0FYWCO8swO2HCaRown9RzEzXgR4EZos3GYzfxRS8pnrQ4s5RfIxoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39941f4c5a1so15219075ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2024 21:57:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721537823; x=1722142623;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=w6G8K0MfujHk0ZY8Ig4z13lQZ8FAFAZEBtO3Mv0nroc=;
+        b=dQBgMLA3J4rKxSsYfmUHDVZKAOTCynDRjkeGsfBjiC3QyvlOgsHmB0Xo4oGq99baIM
+         AOLCyHuij6ztwev5n4mIeFH6S/+cfg9lwVx7nfSpvsn9MKzojxCoF5AaoZS147RJpSKJ
+         RQIRRVLZXc3zbNGb+F4aSDwyCotj7SSpPZYU6AAdgtAPAs/8x7qQU/UbyHzRFLZje77L
+         NfagUrdPVBUkdbXpha83RkuftJUz60cOsiBsBMY5dS9KPHxQqjxWTAey2QsLcmxEf8K5
+         WAfcswh6SvMeMeyHhG48K4XLGO10Dl4+OlgERAw1Pf1GuF3mDYOfck4dmqTAeq4L157s
+         Nzcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAEulS0F9UvkHjhWyOL7oRxmCgfPcGskLbLIQbCchb9gxAKjUN8AC6FIWZP3ZPeWgfLXklpKfMdGEPdRI6V6HTokavd5knesTaeoS7
+X-Gm-Message-State: AOJu0YyXnMHiui+mR+aceS4AfrZVccYn5X0HqsW5vCno2t9L8kbaJc6X
+	WznouD60jfysKbzq6WXSVxevCAN2ZkREqJjuPD3QQup6BzoeSL4r9OkDNsvJCEQloAfCqUYE7PT
+	5DT4scibCkuq87f+Ol1/4eImyUlekgdBnoIxUK+gM4OldI8ltCitwwf8=
+X-Google-Smtp-Source: AGHT+IG996RctXOnCeEpiTZtyfAzY/miSIhLiSn3H1B3nY0hyAMIwEZ86NEibrKkHALnS7UGrCuYqV2Aroyx26aiAA79c6nFahlP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1d19:b0:380:f12f:30de with SMTP id
+ e9e14a558f8ab-398e4fa725fmr2742945ab.2.1721537823309; Sat, 20 Jul 2024
+ 21:57:03 -0700 (PDT)
+Date: Sat, 20 Jul 2024 21:57:03 -0700
+In-Reply-To: <tencent_9A6EFE8CB8A7FC86C992CAC6744992EED206@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006d14b3061dbac27c@google.com>
+Subject: Re: [syzbot] [fs?] BUG: unable to handle kernel NULL pointer
+ dereference in path_from_stashed
+From: syzbot <syzbot+34a0ee986f61f15da35d@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-time_ns is null ?
+Hello,
 
-#syz test: upstream 5e0497553643
+syzbot tried to test the proposed patch but the build/boot failed:
 
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index c9cb14181def..fdae58eb1d98 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -168,6 +168,8 @@ static long pidfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case PIDFD_GET_TIME_NAMESPACE:
- 		get_time_ns(nsp->time_ns);
- 		ns_common = to_ns_common(nsp->time_ns);
-+		if (!nsp->time_ns)
-+			return -EINVAL;
- 		break;
- 	case PIDFD_GET_TIME_FOR_CHILDREN_NAMESPACE:
- 		get_time_ns(nsp->time_ns_for_children);
+failed to apply patch:
+checking file fs/pidfs.c
+Hunk #1 FAILED at 168.
+1 out of 1 hunk FAILED
+
+
+
+Tested on:
+
+commit:         5e049755 Merge branch 'link_path_walk'
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c1c1b0a8065e216
+dashboard link: https://syzkaller.appspot.com/bug?extid=34a0ee986f61f15da35d
+compiler:       
+userspace arch: arm
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13ea160d980000
 
 
