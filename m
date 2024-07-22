@@ -1,94 +1,105 @@
-Return-Path: <linux-kernel+bounces-258869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE91E938D85
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:30:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A7FB938D87
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA617286BDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:30:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E55E6286C26
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718D716D305;
-	Mon, 22 Jul 2024 10:30:04 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA9E16A94F;
+	Mon, 22 Jul 2024 10:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PdKJyWoA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876D716CD08
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 10:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B82716A399
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 10:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721644204; cv=none; b=kgRE3aK12BikrwCFnG9FbbC8+0/WZHCPQK90hwzdOVXgTYqJD4wTieO1iUNOW0PR3O6EYvEVH2TkjmDve9FvnbWJ2E4FRLioX0fqgOvHYLFnUYs29SteqefbQ7yAR+tbkg2h3Xr8PFaEbmeBmFMmGaOHsy1X69ArowS0XjyDPgg=
+	t=1721644251; cv=none; b=i0DpFvwu0Pz1OJITf2kp8nJM5jLnfNcVPb8w62ge4I/8XsRjO9SjaprPH3PpoYaQZSOy1QdRfs9reGidfi6F6LByqsUuxO13WMlzxkTsDK4FFUqhNjOFulvQF+Z4GSN/JmnQRZp3Z/sEVCngmAMeRZYiCoFlpaFCWnJIy/iJyc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721644204; c=relaxed/simple;
-	bh=Ur1D8QSGjku8Q7G5VKP6kNkgy6I95SWKMk0a7rsRzXw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=FoBrei3kKAz1jX5Zy4b2swscqhw9hrkTHw6ttCdPp1MDJJl5w5AReq44JtgqGikyn9sHKkWO7ADQUTHrNIaDnuAeh4Of/C+lmx1d6/PQVuYnHe7/7T8XX6hajhVjUwA3pcoReyRm0Jz8AqY46J3um6+C2zyITGjdRGFd5MCv7/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39835205d20so51926155ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 03:30:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721644201; x=1722249001;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TVbnRnfiSWMo/y1Phwm1SFR+PjHhye2aSEowClDCq1g=;
-        b=asvIpBNIM7S7S+ywg+C4y2VP+NLXpPn4Uqiy34/O5geB55Z+37oAmP03vQu1A9PJv9
-         mYei5wUFHMFqPNimIl9qD91yBrpASfSMSZHY6eIut8UrF0B3z7g7d6ghLCHDIaTJhSpP
-         Wq7Qot0hhhy6+Q/nG5Egd9osJ994ViXPVIl9jsA1LPj9J9m3ZsboXXkomB3BTGcooaqR
-         UbNRftJYx22JW+mUeHW9Hay4rE08RDqGrhgIn/HuKMr8X/M0wToOQuJoSYxPVkBOqI3I
-         2Ce+2XgXtIuMa8zeyhjID2K58IeWr7MTtNIFwquyVYKfyqm9sWrrh7buCzCfGixyNmls
-         WzAA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6weDjWx7Lplz2MwOA94ZdmsVl2MatCJNhiwxjiL3b+KPfTyjQ5jcm5dQaMpuq1r98GgNO3KUpmj0qNbN+rafj9fOTXanYwKiCu8SZ
-X-Gm-Message-State: AOJu0YyP7+YwgtGgdjVwfbJkEIJ20go3NP9lVmfGWDTAv83IdV2pmd98
-	piaXV+wMh0kxwc21z/WxqUpBgKMZv5VzG43Grqfke9Jnu/zdRRVssR9OXwwc2bNxTgireKZ8Odl
-	hMclZT7deSrSjYFoIU2hJopoZqJspKy209XzXpOl1a4Lndy2K0X++pcQ=
-X-Google-Smtp-Source: AGHT+IHDXXNaDlcJzkclmypCXUcUHVIyEECRhqINQl0i+kJKGtZvlBOKr1PmAhs3nOlyECxZcDg4kI8y5bz3TrJBC4Rs/7iSWww/
+	s=arc-20240116; t=1721644251; c=relaxed/simple;
+	bh=ZQC7Cy6nO2zKAZm9DYf71qtiwTMtWegr7L8JE77iZSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ucuz39igvtMV7iovdh0rU8t7kdd407Wv4pj/e+yoJ5QVzzcim6dybOKJUdlxvueiMRl/ZXweulo055b25F83SP2fKvVeRgGqO/0hB8kkactdsxwNtTaxJgSwMhLI6TTYyoRFZdW5luQi8QAoT7Ch8y69ywPa8GgudMUVZYcSjKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PdKJyWoA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721644248;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=920T09UfGz6bsniIm1Cf50ju0AGe0vceUzq5dRrbSaw=;
+	b=PdKJyWoAf0pGdne+1CKL6NyMuuoKey5RnNqRHnKgI2jF/DuIFJHkOaTakgneEj2NHJp/T5
+	X3uplXMIjICJZljvK4RhAk3Qa+sKzRnLIGsnLrB4vQ0rLeS7u4AqUl3kGBYl4tlM9qwVXh
+	NqUw8mxye1Fx2yPs8ut1Qw0+/9YYeZ0=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-441-QsRzAvh_OJS8UbRmtQQzbQ-1; Mon,
+ 22 Jul 2024 06:30:44 -0400
+X-MC-Unique: QsRzAvh_OJS8UbRmtQQzbQ-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8476A1955F65;
+	Mon, 22 Jul 2024 10:30:43 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.6])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 112031955F40;
+	Mon, 22 Jul 2024 10:30:41 +0000 (UTC)
+Date: Mon, 22 Jul 2024 18:30:36 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: akpm@linux-foundation.org, kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Eric Biederman <ebiederm@xmission.com>
+Subject: Re: [PATCH] kexec: Use atomic_try_cmpxchg_acquire() in
+ kexec_trylock()
+Message-ID: <Zp40zOw+E1Na/Lly@MiWiFi-R3L-srv>
+References: <20240719103937.53742-1-ubizjak@gmail.com>
+ <Zp3NXf9UBCtFKBsa@MiWiFi-R3L-srv>
+ <CAFULd4Y8vhcTWG-eNMSLEJHR_1=LuQzKj7q4JX8Kv7auJKAYDQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aae:b0:397:7dd7:bea5 with SMTP id
- e9e14a558f8ab-398e17ac737mr8390995ab.0.1721644201658; Mon, 22 Jul 2024
- 03:30:01 -0700 (PDT)
-Date: Mon, 22 Jul 2024 03:30:01 -0700
-In-Reply-To: <000000000000fdef8706191a3f7b@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000011de5f061dd387f0@google.com>
-Subject: Re: [syzbot] [wireless?] WARNING in __rate_control_send_low (2)
-From: syzbot <syzbot+8dd98a9e98ee28dc484a@syzkaller.appspotmail.com>
-To: clang-built-linux@googlegroups.com, davem@davemloft.net, 
-	edumazet@google.com, johannes.berg@intel.com, johannes@sipsolutions.net, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	nathan@kernel.org, ndesaulniers@google.com, netdev@vger.kernel.org, 
-	pabeni@redhat.com, pkshih@realtek.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFULd4Y8vhcTWG-eNMSLEJHR_1=LuQzKj7q4JX8Kv7auJKAYDQ@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-syzbot has bisected this issue to:
+On 07/22/24 at 10:53am, Uros Bizjak wrote:
+> On Mon, Jul 22, 2024 at 5:09 AM Baoquan He <bhe@redhat.com> wrote:
+> >
+> > On 07/19/24 at 12:38pm, Uros Bizjak wrote:
+> > > Use atomic_try_cmpxchg_acquire(*ptr, &old, new) instead of
+> > > atomic_cmpxchg_acquire(*ptr, old, new) == old in kexec_trylock().
+> > > x86 CMPXCHG instruction returns success in ZF flag, so
+> > > this change saves a compare after cmpxchg.
+> >
+> > Seems it can simplify code even though on non-x86 arch, should we
+> > replace atomic_try_cmpxchg_acquire() with atomic_try_cmpxchg_acquire()
+> > in all similar places?
+> 
+> Yes, the change is beneficial also for non-x86 architectures, please
+> see analysis at thread [1]. I've been looking through the kernel
+> sources for these places for quite some time, and I believe I have
+> changed most of the places. The change is relatively straightforward,
+> and immediately results in a better code.
+> 
+> [1] https://lore.kernel.org/lkml/871qwgmqws.fsf@mpe.ellerman.id.au/
 
-commit 9df66d5b9f45c39b3925d16e8947cc10009b186d
-Author: Ping-Ke Shih <pkshih@realtek.com>
-Date:   Wed Jun 9 07:59:44 2021 +0000
+Good to know, thanks for telling.
 
-    cfg80211: fix default HE tx bitrate mask in 2G band
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13e233fd980000
-start commit:   51835949dda3 Merge tag 'net-next-6.11' of git://git.kernel..
-git tree:       net-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=101233fd980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=17e233fd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d3bdd09ea2371c89
-dashboard link: https://syzkaller.appspot.com/bug?extid=8dd98a9e98ee28dc484a
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14608749980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=178b9195980000
-
-Reported-by: syzbot+8dd98a9e98ee28dc484a@syzkaller.appspotmail.com
-Fixes: 9df66d5b9f45 ("cfg80211: fix default HE tx bitrate mask in 2G band")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
