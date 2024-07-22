@@ -1,123 +1,173 @@
-Return-Path: <linux-kernel+bounces-258574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8ABF9389F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:21:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A59A938A02
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9AA21C20F4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:21:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D47DA280DB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34661B969;
-	Mon, 22 Jul 2024 07:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD43B1BDC3;
+	Mon, 22 Jul 2024 07:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eYy4Owo4"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cwfZHQCy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128C317BD5
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF471B960
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721632911; cv=none; b=CQS0OQHF3OC6ElW12ztQ+7so6bOLC4TjcT7vh3WoChg2mmDrV8zsFZlgt2MaCMnt0jVj2CiN8BgE9+ugmF9TGT1aF4YGBKz7B9R9uINUsW/gt9+kp2l2uuiTJvYSsuDFfyM3OxJoIwY4EVvpqwuH/VC2nk/lxZCb5hvhzfGi/ss=
+	t=1721633223; cv=none; b=p+Joq7zOPBMHTmnFYY8aUB/uIbCsDdZ6j65NqrejkT4KXVTdTTgdBmeoMFutDWWgJlyQ0YuZw5vufQ+CTl83jSqDWJK7YvxtwV8/uOzS5ZE8Us4qXGeaGLZv+RfFohIIdukTgp+dN+caWXlwqXNeDIvDDVhvwULC9Ui35nz5NBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721632911; c=relaxed/simple;
-	bh=NeoYLjbISoVB5rvhGmXiAVODaKDSfSSTsqsOblb+2EI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I3WeTOPNCEjoNOZvZck2g7ATM8ENNqkiDL0LKBWaaLQ0P8CA+oYpRQkuNOVi5rLiMH0KMgHIqlbdk3yGkLBUl4s+NJoJRu2vZ2vhuJwMWZRHXZAVMbCfB0qfd/jqHMAGi94vy1d2s3C0VqzoqKFjdKGmoDxVDmiSjkjoTgHuj+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eYy4Owo4; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: zhouchuyi@bytedance.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721632907;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VjhkBh80GqT5Qb/LiGqlf+8/MbWYImdrAQ4flsDlkDw=;
-	b=eYy4Owo4gW7yxtUVRTQ0CKPZ2qy1eS3py4Ma1dngNTgVOzCLfqoRki3hJ+dM1pq2jgxeV2
-	wlDGzL37K4eBGE2Eby40k87Z51ZES7U+On2p5A8zP9HU2/Sm9IYw0MYbYQs+O7QpWfK+8q
-	pGYv4VRRUlUHrWXZiN+v1mluM6O7JLA=
-X-Envelope-To: mingo@redhat.com
-X-Envelope-To: peterz@infradead.org
-X-Envelope-To: juri.lelli@redhat.com
-X-Envelope-To: vincent.guittot@linaro.org
-X-Envelope-To: dietmar.eggemann@arm.com
-X-Envelope-To: rostedt@goodmis.org
-X-Envelope-To: bsegall@google.com
-X-Envelope-To: mgorman@suse.de
-X-Envelope-To: vschneid@redhat.com
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: joshdon@google.com
-Message-ID: <c60c07b3-7c97-4c9d-8496-72f3fc65307c@linux.dev>
-Date: Mon, 22 Jul 2024 15:21:40 +0800
+	s=arc-20240116; t=1721633223; c=relaxed/simple;
+	bh=dH+wG+QVFbCksW1/xG4MwjSTXFfGmqsXVVmCulccai4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SGk2LbrNTi4aP8Ey2hhQx33TNA3p3eL5zsITLEdTWCpiyNQm3blsZJbY96P1gNGM/ISKCUSNfzyx/LLcG2grFw5KU3T92V6lauO3FPG0/EXn5hs1lOylfG7ivXj7du0iAexuOQXtkbWU7vcB6Wh3uxvShhlAzQwxJCc4wSbuaoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cwfZHQCy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EACB7C116B1;
+	Mon, 22 Jul 2024 07:26:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721633222;
+	bh=dH+wG+QVFbCksW1/xG4MwjSTXFfGmqsXVVmCulccai4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cwfZHQCyXkx/doLytbGc2a+uUyy/VW2gNvI8YSM5yCJ9jwI5i+3Pgq5CI9zfzBfCA
+	 1N81oll60NfA8OBgFmbn+OyDkbBXWbuBkE1zfVgVPdkBE4nIHUtbLbqjiFTRYkrPEY
+	 1WqM9Z3XQNb1Qu8KTNqbDSqr8v6inJkyiYFey9HQsAs9ko2sgjxlDCbmcYhV/hL+0f
+	 NNIpiSDCVarmxKdtrxTIcOI/5510nKl2/hiuVY9xKUnWeoh3oEsdjvW4CkdZyhJwwg
+	 r41+R3r7J8lbTox7FNqKpvaaUYE4qCyQ1/Yk+5/JMMmJ9fYz5K/OcdwQ3HGJ7Xoc0T
+	 avfZzoMxlNX+g==
+Date: Mon, 22 Jul 2024 10:23:54 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: linux@armlinux.org.uk, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+	arnd@arndb.de, gregkh@linuxfoundation.org, deller@gmx.de,
+	javierm@redhat.com, bhe@redhat.com, robh@kernel.org,
+	alexghiti@rivosinc.com, bjorn@rivosinc.com,
+	akpm@linux-foundation.org, namcao@linutronix.de,
+	dawei.li@shingroup.cn, chenjiahao16@huawei.com,
+	julian.stecklina@cyberus-technology.de, rafael.j.wysocki@intel.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] riscv: kdump: Fix crash memory reserve exceed
+ system memory bug
+Message-ID: <Zp4JCmiZgGZ8jq-b@kernel.org>
+References: <20240722035701.696874-1-ruanjinjie@huawei.com>
+ <20240722035701.696874-4-ruanjinjie@huawei.com>
+ <Zp3-dZHhN7LbMggc@kernel.org>
+ <5816d4d5-e038-c90b-5ac2-1a3b3a8b9e46@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 2/2] sched/core: Avoid unnecessary update in
- tg_set_cfs_bandwidth
-To: Chuyi Zhou <zhouchuyi@bytedance.com>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com
-Cc: linux-kernel@vger.kernel.org, joshdon@google.com
-References: <20240721125208.5348-1-zhouchuyi@bytedance.com>
- <20240721125208.5348-3-zhouchuyi@bytedance.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <20240721125208.5348-3-zhouchuyi@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5816d4d5-e038-c90b-5ac2-1a3b3a8b9e46@huawei.com>
 
-On 2024/7/21 20:52, Chuyi Zhou wrote:
-> In the kubernetes production environment, we have observed a high
-> frequency of writes to cpu.max, approximately every 2~4 seconds for each
-> cgroup, with the same value being written each time. This can result in
-> unnecessary overhead, especially on machines with a large number of CPUs
-> and cgroups.
+On Mon, Jul 22, 2024 at 03:08:29PM +0800, Jinjie Ruan wrote:
 > 
-> This is because kubelet and runc attempt to persist resource
-> configurations through frequent updates with same value in this manner.
-
-Ok.
-
-> While optimizations can be made to kubelet and runc to avoid such
-> overhead(e.g. check the current value of cpu request/limit before writing
-> to cpu.max), it is still worth to bail out from tg_set_cfs_bandwidth() if
-> we attempt to update with the same value.
-
-Yeah, we can optimize this situation with a little of checking code,
-seems worthwhile to do IMHO.
-
 > 
-> Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
-> ---
->   kernel/sched/core.c | 2 ++
->   1 file changed, 2 insertions(+)
+> On 2024/7/22 14:38, Mike Rapoport wrote:
+> > Hi,
+> > 
+> > On Mon, Jul 22, 2024 at 11:57:01AM +0800, Jinjie Ruan wrote:
+> >> Similar with x86_32, on Riscv32 Qemu "virt" machine with 1GB memory, the
+> >> crash kernel "crashkernel=4G" is ok as below:
+> >> 	crashkernel reserved: 0x00000000bf400000 - 0x00000001bf400000 (4096 MB)
+> >>
+> >> The cause is that the crash_size is parsed and printed with "unsigned long
+> >> long" data type which is 8 bytes but allocated used with "phys_addr_t"
+> >> which is 4 bytes in memblock_phys_alloc_range().
+> >>
+> >> Fix it by checking if the crash_size is greater than system RAM size and
+> >> warn out as parse_crashkernel_mem() do it if so.
+> >>
+> >> After this patch, it fails and there is no above confusing reserve
+> >> success info.
+> >>
+> >> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> >> ---
+> >>  arch/riscv/mm/init.c | 5 +++++
+> >>  1 file changed, 5 insertions(+)
+> >>
+> >> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+> >> index bfa2dea95354..5d66a4937fcd 100644
+> >> --- a/arch/riscv/mm/init.c
+> >> +++ b/arch/riscv/mm/init.c
+> >> @@ -1381,6 +1381,11 @@ static void __init arch_reserve_crashkernel(void)
+> >>  	if (ret)
+> >>  		return;
+> >>  
+> >> +	if (crash_size >= memblock_phys_mem_size()) {
+> >> +		pr_warn("Crashkernel: invalid size.");
+> >> +		return;
+> >> +	}
+> >> +
+> > 
+> > What the point of adding three identical checks right after the call to
+> > parse_crashkernel()?
+> > 
+> > This check should be there and parse_crashkernel() should return error in
+> > this case.
 > 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 6d35c48239be..4db3ef2a703b 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -9081,6 +9081,8 @@ static int tg_set_cfs_bandwidth(struct task_group *tg, u64 period, u64 quota,
->   				     burst + quota > max_cfs_runtime))
->   		return -EINVAL;
->   
-> +	if (cfs_b->period == ns_to_ktime(period) && cfs_b->quota == quota && cfs_b->burst == burst)
-> +		return 0;
+> Hi, Mike
+> 
+> How about the folling rough patch?
+> 
+> --- a/kernel/crash_reserve.c
+> +++ b/kernel/crash_reserve.c
+> @@ -313,7 +313,7 @@ int __init parse_crashkernel(char *cmdline,
+>         if (high && ret == -ENOENT) {
+>                 ret = __parse_crashkernel(cmdline, 0, crash_size,
+>                                 crash_base, suffix_tbl[SUFFIX_HIGH]);
+> -               if (ret || !*crash_size)
+> +               if (ret || !*crash_size || crash_size >= system_ram)
+>                         return -EINVAL;
+> 
+>                 /*
+> @@ -332,7 +332,7 @@ int __init parse_crashkernel(char *cmdline,
+>                 *high = true;
+>         }
+>  #endif
+> -       if (!*crash_size)
+> +       if (!*crash_size || crash_size >= system_ram)
+>                 ret = -EINVAL;
+> 
 
-Maybe we'd better do these checkings under the lock protection, right?
+Why no simply
 
-Thanks.
+diff --git a/kernel/crash_reserve.c b/kernel/crash_reserve.c
+index 5b2722a93a48..64312709877d 100644
+--- a/kernel/crash_reserve.c
++++ b/kernel/crash_reserve.c
+@@ -336,6 +336,9 @@ int __init parse_crashkernel(char *cmdline,
+ 	if (!*crash_size)
+ 		ret = -EINVAL;
+ 
++	if (*crash_size >= system_ram)
++		ret = -EINVAL;
++
+ 	return ret;
+ }
+ 
+ 
+> > 
+> >>  	reserve_crashkernel_generic(cmdline, crash_size, crash_base,
+> >>  				    low_size, high);
+> >>  }
+> >> -- 
+> >> 2.34.1
+> >>
+> > 
 
->   	/*
->   	 * Prevent race between setting of cfs_rq->runtime_enabled and
->   	 * unthrottle_offline_cfs_rqs().
+-- 
+Sincerely yours,
+Mike.
 
