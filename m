@@ -1,140 +1,182 @@
-Return-Path: <linux-kernel+bounces-259374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5002F9394F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:49:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E53C9394F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D5B0284904
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:49:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA29E2848D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C8C3770D;
-	Mon, 22 Jul 2024 20:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F731383B1;
+	Mon, 22 Jul 2024 20:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lRayo9gE"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hlqbWYa1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5827C23746
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 20:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8D923746;
+	Mon, 22 Jul 2024 20:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721681370; cv=none; b=TTWJullXqiwPtp4uU1cfxWu7vEWRoU3mS1oExc9F2VWp7o2I+m7fs9P+Q0i7NaQoEvzW2meq0Zt6B9abHFwmUj73MDl5xyytqCrVTv3BCt9tWvR0qJ6ELCA0JLV9dxsNEtoD4w2BpeKQb36JNVONENh1khR7a477jHwrWt5/h6U=
+	t=1721681439; cv=none; b=d10YLB0H1KYrBTdSF4yFX7Ioudp+3H7OVu4ToxNcqpk2iFVWZiu1t2aNN2mzaW50It+O65HS16J7zOo/IxFTRU1zizwBWAG6QjCieWVFP8RyuASOeUN6zZ1LJAeKc5Vi8Vow0R3reAmJJFWj6dQb+pCw+o2zU5sopztQEhb+q74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721681370; c=relaxed/simple;
-	bh=oWbinSVpvH96rA0dOFHzW9AiDM7yXEDd/ImQASJxt2w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KwlDlkp/8wDgqV3dyI4llDC1tdn2p3HlNriNESgezOzmzEtvJdT2Ne3SP3yl7L1i4N9iFK/YEc8vj1zrXhUTbRLUspT91j5wSMlGqftPHr+uZc2F2IvkqB2w7o3MfRZkoRbqE8qo+JYXh0+MptYDhrpXwmAM0jUNTQvoPTINtkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lRayo9gE; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-398b599593eso6985ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 13:49:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721681368; x=1722286168; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=09v1IY2nZsi5Z0EdEgLBJS4oAdkOFd/u7ggcxR6nmTY=;
-        b=lRayo9gEZzOgbU3E8fU71u6eBzJJyQ2TMcDNrJ+Jvcr9kiqWX3j2pPt0LRNJRt0xaq
-         E1Kwx7bsSPsbOwVze83T6lSkNLqL1ZClif+K4GJBsOl8iMifyEqA1eXM2V4U/5MDLKyA
-         TutwaBe5fyrt4vjRjJCHzxofg+wuBrmnZDs+sW7IEBPM+VnBrbMZW6qJW/CpU60vSrD9
-         2EGdrQ8/vxQCdE8310CkPdMKGftRDOb4l6errd/gQGPqTDW+p9p+POLXZZviYarJ78NF
-         V/v60nSfVSBm70Zy1cATEUCvO2Rl8G5gaj9SlsAGjQonDU4tY0OOGboAY56NoL+manAI
-         hBQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721681368; x=1722286168;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=09v1IY2nZsi5Z0EdEgLBJS4oAdkOFd/u7ggcxR6nmTY=;
-        b=shSZCXC+kgj6TwQ7abHuEhHWhOIf1s0WUhiogIhbifHYshqgrUzovqwDZ2aNt7RR9r
-         DRTSU1RLGbAWgpDL1NmZ/9uvhG5NcfaCSKsW14LgcX5nl24KLiAaytUnCZhabgcHc/du
-         XD8PRT5G30GoeQCJpfOqRP5FCpngCcAZ3hm9o+8bj8051XrTDNtGzcHm5V0dJguljzdX
-         OmpetSNNoVWQWFtSoaodmeRRXeRifIUIhg4EhC7/XwId8PHIAD2xmeXH04HliKYuTUSh
-         aER99glbzm4hR0mKO34RhD6WW3AzvnKzXbrSc0JNWpP0DCtX5IaV7VJ2jfNu5RHwrYab
-         f18A==
-X-Forwarded-Encrypted: i=1; AJvYcCXflkyeuwutfb4iQYYEv3q71lf3mKPb8bq4hEy5GPGURj7HoP9Vkq57B8P/uaRxOpa3PnRQhdSLb8hMZfx/m/kMdcMmuvnhh4iJ6Uqa
-X-Gm-Message-State: AOJu0YwS7G34rCTPVN92udeYTSaGnWyFHxkfOjU2RUzkAKgcq/+/+1CD
-	1/T3nIyLpydyjICUizBb/WukHI9LBw5cMi+A1aPro+zPT2a5QugFbDE/UGsoBMvJCsOemOFWxMN
-	A5EXpsRrt8QFszVC9orPq9F5UxAmgHprN66FD
-X-Google-Smtp-Source: AGHT+IE9e02aqAb1xlpxAiF+a1va6IYwxHFS6lF11BEgFQwdQhYbdE3iz1E+dlw5qFVwKjsUSfjMrRPQmCL4LHCgGnM=
-X-Received: by 2002:a05:6e02:170f:b0:379:2baa:4510 with SMTP id
- e9e14a558f8ab-3994217028fmr7157135ab.23.1721681368219; Mon, 22 Jul 2024
- 13:49:28 -0700 (PDT)
+	s=arc-20240116; t=1721681439; c=relaxed/simple;
+	bh=YP5e3fd82tf3LmHJGycUS/ROzaoPMd6vjQXdqMvKjjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fiF8QufHsu6u34IVBUmg+rsYZV4WoSO3bhLXsJlxR/temyZ7r7+srI9qURBy6mAMI+v3degHpoQz/2QEyzApfYY4+DGoIYn6QPFXnLKPpiYogKyAntbtfAKHQUwUQKKJEibattu2prxUIu8zDn34RHR3BLiRtfz2UV3NGj+fJSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hlqbWYa1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E084C116B1;
+	Mon, 22 Jul 2024 20:50:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721681438;
+	bh=YP5e3fd82tf3LmHJGycUS/ROzaoPMd6vjQXdqMvKjjg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hlqbWYa1TdDkV+wXA7PdufLGfGmProbYffrfbTxEWC2cE6Tjsuvroc2SMEmNg6MJy
+	 KCHnT4W9C/sh3ZWrjx+2bn9fKuWv0mnWsjjadWJ32oagQljSOgu3nhC3AUC6KLHXDZ
+	 fWlEtigsBIpeHEQjlN92e5+Eh014f1sMf85LMF9rRbUh/l5xJEVRCMiS1z1fNnbKTZ
+	 Ofn9EyUrTZPro5LeLHaVozCPUxbHEQgZUMuEysJy30KqXesOZdeYwakK2FWhKUG+WS
+	 PkYXPlGhZyEIQwMsO/1zuVzd23pkf/hSZ1qUFiFtlftsyR+hYKbe0KA6OmcUnuCm5i
+	 dMmL4c6wD5GAA==
+Date: Mon, 22 Jul 2024 14:50:30 -0600
+From: Rob Herring <robh@kernel.org>
+To: ysionneau@kalrayinc.com
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Borne <jborne@kalrayinc.com>,
+	Julian Vetter <jvetter@kalrayinc.com>,
+	Jules Maselbas <jmaselbas@zdiv.net>, devicetree@vger.kernel.org
+Subject: Re: [RFC PATCH v3 07/37] dt-bindings: Add binding for
+ kalray,coolidge-ipi-ctrl
+Message-ID: <20240722205030.GA68733-robh@kernel.org>
+References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
+ <20240722094226.21602-8-ysionneau@kalrayinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240722191858.123607-1-cachen@purestorage.com>
-In-Reply-To: <20240722191858.123607-1-cachen@purestorage.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 22 Jul 2024 13:49:16 -0700
-Message-ID: <CAP-5=fXrPR5gq4mz8WaOkBinfR0cAutxjysaynqGj-qUSwa2oA@mail.gmail.com>
-Subject: Re: [PATCHv4] perf tool: fix dereferencing NULL al->maps
-To: Casey Chen <cachen@purestorage.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	namhyung@kernel.org, yzhong@purestorage.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240722094226.21602-8-ysionneau@kalrayinc.com>
 
-On Mon, Jul 22, 2024 at 12:19=E2=80=AFPM Casey Chen <cachen@purestorage.com=
-> wrote:
->
-> With 0dd5041c9a0e ("perf addr_location: Add init/exit/copy functions"),
-> when cpumode is 3 (macro PERF_RECORD_MISC_HYPERVISOR),
-> thread__find_map() could return with al->maps being NULL.
->
-> The path below could add a callchain_cursor_node with NULL ms.maps.
->
-> add_callchain_ip()
->   thread__find_symbol(.., &al)
->     thread__find_map(.., &al)   // al->maps becomes NULL
->   ms.maps =3D maps__get(al.maps)
->   callchain_cursor_append(..., &ms, ...)
->     node->ms.maps =3D maps__get(ms->maps)
->
-> Then the path below would dereference NULL maps and get segfault.
->
-> fill_callchain_info()
->   maps__machine(node->ms.maps);
->
-> Fix it by checking if maps is NULL in fill_callchain_info().
-
-Thanks for doing this. Can:
-Signed-off-by: Casey Chen <cachen@purestorage.com>
-
-be assumed?
-Reviewed-by: Ian Rogers <irogers@google.com>
-
-Thanks,
-Ian
-
+On Mon, Jul 22, 2024 at 11:41:18AM +0200, ysionneau@kalrayinc.com wrote:
+> From: Yann Sionneau <ysionneau@kalrayinc.com>
+> 
+> Add binding for Kalray Coolidge IPI controller.
+> 
+> Co-developed-by: Jules Maselbas <jmaselbas@zdiv.net>
+> Signed-off-by: Jules Maselbas <jmaselbas@zdiv.net>
+> Signed-off-by: Yann Sionneau <ysionneau@kalrayinc.com>
 > ---
->  tools/perf/util/callchain.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
-> index 1730b852a947..6d075648d2cc 100644
-> --- a/tools/perf/util/callchain.c
-> +++ b/tools/perf/util/callchain.c
-> @@ -1141,7 +1141,7 @@ int hist_entry__append_callchain(struct hist_entry =
-*he, struct perf_sample *samp
->  int fill_callchain_info(struct addr_location *al, struct callchain_curso=
-r_node *node,
->                         bool hide_unresolved)
->  {
-> -       struct machine *machine =3D maps__machine(node->ms.maps);
-> +       struct machine *machine =3D node->ms.maps ? maps__machine(node->m=
-s.maps) : NULL;
->
->         maps__put(al->maps);
->         al->maps =3D maps__get(node->ms.maps);
-> --
+> 
+> Notes:
+> 
+> V2 -> V3:
+> - fixed bindings to adhere to dt-schema
+> - moved to interrupt-controller directory, like the related driver
+> ---
+>  .../kalray,coolidge-ipi-ctrl.yaml             | 79 +++++++++++++++++++
+>  1 file changed, 79 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/kalray,coolidge-ipi-ctrl.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/kalray,coolidge-ipi-ctrl.yaml b/Documentation/devicetree/bindings/interrupt-controller/kalray,coolidge-ipi-ctrl.yaml
+> new file mode 100644
+> index 0000000000000..91e3afe4f1ca5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/kalray,coolidge-ipi-ctrl.yaml
+> @@ -0,0 +1,79 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/interrupt-controller/kalray,coolidge-ipi-ctrl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Kalray Coolidge SoC Inter-Processor Interrupt Controller (IPI)
+> +
+> +maintainers:
+> +  - Jonathan Borne <jborne@kalrayinc.com>
+> +  - Julian Vetter <jvetter@kalrayinc.com>
+> +  - Yann Sionneau <ysionneau@kalrayinc.com>
+> +
+> +description: |
+> +  The Inter-Processor Interrupt Controller (IPI) provides a fast synchronization
+> +  mechanism to the software. It exposes eight independent set of registers that
+> +  can be use to notify each processor in the cluster.
+> +  A set of registers contains two 32-bit registers:
+> +    - 17-bit interrupt control, one bit per core, raise an interrupt on write
+> +    - 17-bit mask, one per core, to enable interrupts
+> +
+> +  Bit at offsets 0 to 15 selects cores in the cluster, respectively PE0 to PE15,
+> +  while bit at offset 16 is for the cluster Resource Manager (RM) core.
+> +
+> +  The eight output interrupts are connected to each processor core interrupt
+> +  controller (intc).
+
+It says there are 16 interrupt outputs below...
+
+> +
+> +properties:
+> +  compatible:
+> +    const: kalray,coolidge-ipi-ctrl
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts-extended:
+> +    maxItems: 16
+> +    description: |
+> +      Specifies the interrupt line the IPI controller will raise on the core INTC.
+> +
+> +  interrupt-controller: true
+> +
+> +  '#interrupt-cells':
+> +    const: 0
+> +
+> +additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts-extended
+> +  - interrupt-controller
+> +  - '#interrupt-cells'
+> +
+> +examples:
+> +  - |
+> +    ipi: inter-processor-interrupt@ad0000 {
+> +        compatible = "kalray,coolidge-ipi-ctrl";
+> +        reg = <0x00 0xad0000 0x00 0x1000>;
+> +        #interrupt-cells = <0>;
+> +        interrupt-controller;
+> +        interrupts-extended = <&core_intc0 24>,
+> +                              <&core_intc1 24>,
+> +                              <&core_intc2 24>,
+> +                              <&core_intc3 24>,
+> +                              <&core_intc4 24>,
+> +                              <&core_intc5 24>,
+> +                              <&core_intc6 24>,
+> +                              <&core_intc7 24>,
+> +                              <&core_intc8 24>,
+> +                              <&core_intc9 24>,
+> +                              <&core_intc10 24>,
+> +                              <&core_intc11 24>,
+> +                              <&core_intc12 24>,
+> +                              <&core_intc13 24>,
+> +                              <&core_intc14 24>,
+> +                              <&core_intc15 24>;
+> +    };
+> +
+> +...
+> -- 
 > 2.45.2
->
+> 
+> 
+> 
+> 
+> 
 
