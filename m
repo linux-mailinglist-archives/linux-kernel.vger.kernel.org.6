@@ -1,171 +1,122 @@
-Return-Path: <linux-kernel+bounces-258398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DFEC938779
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:13:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C641A938778
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4124E280CAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 02:13:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 033661C20C38
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 02:12:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2681C8FE;
-	Mon, 22 Jul 2024 02:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575A3DDA8;
+	Mon, 22 Jul 2024 02:12:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="rUugE5tP"
-Received: from esa4.hc1455-7.c3s2.iphmx.com (esa4.hc1455-7.c3s2.iphmx.com [68.232.139.117])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tsEi8vee"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0239D8BFC
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 02:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.139.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9144D12B73;
+	Mon, 22 Jul 2024 02:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721614373; cv=none; b=BpZMfiQMzXnxLPrZJYu5+7PNM6b7jQ25gW/XatH4GMe2F+1xEnfG5LxM3GFsciLizHzVNSZ/4bOlOSDHQ34rb6blkwh9APTv6JiYOHr4Ua49nhPMzY/9m0sZUgBysCzlin6jx4z+wySq/20WFztV7JRz/MGgOwM8vibrpcwSMVY=
+	t=1721614331; cv=none; b=fnyzZ08xwjoWUY/18koGt8xAVqXI+XADkJdM0pDl+jxftABq3fjUStBI/aWhy9flnqIpCqtCTIfKu21baMK6zUH6/JTzpwOM+MPzQEiT1sXQJt9KzeBSlWuaD2H0M7oYRBnXVp6ekr/Ca4jQzDmueFt/nNwjAtU3nuzl8d0yUL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721614373; c=relaxed/simple;
-	bh=I5DMe3EnS7G1j/NeL0/4/YwmynXJRTUqok3lFtFxT7s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=retlI/JX10J7AqKZ5+eEPRwBc8xejrpspyululqnLZosK/5hVCjYeaHrara+PrOnGYxssINxXYfzYGQZs0HHb44qp1ltaMQBP6XntyPB6ywd7rZtngbeDWJG/Ff9cLsbDYs6i/wcnyiJJw95zQdVZ+TOHv2zF8fcI1fIplkZa9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=rUugE5tP; arc=none smtp.client-ip=68.232.139.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1721614369; x=1753150369;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=I5DMe3EnS7G1j/NeL0/4/YwmynXJRTUqok3lFtFxT7s=;
-  b=rUugE5tPPdI7x0RZzx7dwnOgU4cNA+KcHHX3E9iwPRTf8h2eyC2pyxIF
-   H/ECRBk1CdhqnB8HS9PepVj6/LoyhNiwuUwiC+Ic8ZRic9jN9HltLyV5L
-   9t64/iAWThb/r8uqSnONRUFd8xQb8vZ0RNdKUgJLQ94Q63bfkarHVfSSw
-   cWxGWG1Vf4SJMp1+duP/2wo6Q0zAUIRU2UFmPJ/LPaEkZjdxquOs1CKks
-   pneSgGWt8OmPBWthScXv7TVtDdLAA2Xk6DA06QkA1oZN2xrJEILQ252ZS
-   OK9juKICFJPEfDcN5JPAD10lUwFH3DX7853CLOf9raUL5PEqj4dVm5Ejv
-   w==;
-X-IronPort-AV: E=McAfee;i="6700,10204,11140"; a="168168824"
-X-IronPort-AV: E=Sophos;i="6.09,227,1716217200"; 
-   d="scan'208";a="168168824"
-Received: from unknown (HELO oym-r4.gw.nic.fujitsu.com) ([210.162.30.92])
-  by esa4.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 11:11:21 +0900
-Received: from oym-m3.gw.nic.fujitsu.com (oym-nat-oym-m3.gw.nic.fujitsu.com [192.168.87.60])
-	by oym-r4.gw.nic.fujitsu.com (Postfix) with ESMTP id 46DD3D800F
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:11:19 +0900 (JST)
-Received: from kws-ab3.gw.nic.fujitsu.com (kws-ab3.gw.nic.fujitsu.com [192.51.206.21])
-	by oym-m3.gw.nic.fujitsu.com (Postfix) with ESMTP id 8E4C3D7494
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:11:18 +0900 (JST)
-Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
-	by kws-ab3.gw.nic.fujitsu.com (Postfix) with ESMTP id 2F28A2007CAB2
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:11:18 +0900 (JST)
-Received: from localhost.localdomain (unknown [10.167.226.45])
-	by edo.cn.fujitsu.com (Postfix) with ESMTP id 57B821A000B;
-	Mon, 22 Jul 2024 10:11:17 +0800 (CST)
-From: Li Zhijian <lizhijian@fujitsu.com>
-To: linux-mm@kvack.org
-Cc: akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	Yasunori Gotou <y-goto@fujitsu.com>,
-	Li Zhijian <lizhijian@fujitsu.com>,
-	David Hildenbrand <david@redhat.com>,
-	Vlastimil Babka <vbabka@kernel.org>,
-	Yao Xingtao <yaoxt.fnst@fujitsu.com>
-Subject: [PATCH v2] mm/page_alloc: Fix pcp->count race between drain_pages_zone() vs __rmqueue_pcplist()
-Date: Mon, 22 Jul 2024 10:10:59 +0800
-Message-Id: <20240722021059.1076399-1-lizhijian@fujitsu.com>
-X-Mailer: git-send-email 2.31.1
+	s=arc-20240116; t=1721614331; c=relaxed/simple;
+	bh=azGo6m46VBgBM9ZicAuLCQPYP/jnz/425Y1D8wyAsVs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cI9TLb7FgdXLXmlknTQNVu3Lo6T5OAj8MNz8Se2q2l9i6gADDodDHVIFBGj/GPsemiweDlh8pYZpORc4y0ETBT+QrfQX9KZsBvFvYCW3r0efk3SvMak4Pj5mLuiyPXo9+h7zp/ZsMm8igT9ZBbcPayKmIgD4cXAkPIY1Sqswq4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tsEi8vee; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 367CBC4AF10;
+	Mon, 22 Jul 2024 02:12:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721614331;
+	bh=azGo6m46VBgBM9ZicAuLCQPYP/jnz/425Y1D8wyAsVs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=tsEi8veetkfkyxkB9x7XLhxI2FAksP4bmdPcxjHVjWOzbS6wkOnxStTFAKaQEzP2V
+	 g0bxLloMauq9ZiEu9BBq/BST3CiP0t+VN4GHANsJ2LNH7vctGUk+FMvpMXJ6R/g67K
+	 CyM7n7Owu6tWPTDoEHlUPC9jtV76+zGVFBNDXeEXnygONxu4wXF9vhmxTkYihFjmOX
+	 UmZ+184CPjWcKwx8cS0fA+LVoTsL1oBJzQ410k0srnTR/TymT1lHSiOK9ugqGHIjwg
+	 BQtZS7/lT4rNW3pJxa/DctqwDGsvAK/MVmlUFhXUyVkYQQNhYLdt/Ztyr/uXy+f3/a
+	 I2uWO8qkbrBmA==
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4266f3e0df8so26585005e9.2;
+        Sun, 21 Jul 2024 19:12:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXsvZIBRPSEXOHlOJAD54IiMWnsNXQfo6Zu/khk2Io5HDeR4ggQv/FZP63cDsHixVBpevZOWnnwRuS1oat7w8yyaWi25bJEzrGipjGTO78CZyzE437sXTyUm/Ymrp0S5IJggni6129GVdyIqFk+heLVXfFi6IQcOU64jkkyi/I8
+X-Gm-Message-State: AOJu0Yy/JZkA4B+6pjGjNstEJMD6oXReEm7HouSywBWhvTVPqnkKvyxJ
+	qvieR1VBiWwHdlOKUsWZyvg/ZZKBEtUrc0g0U2ZLuZGWuMMIughigwnkPPmZfV27WX93zsWYxKe
+	RG5VGeuXzQdLzf9gueF6keYpNe3k=
+X-Google-Smtp-Source: AGHT+IGT2WyeMDoqlKn1hDkEnwla+7lIh3WrUDuFvKGwxfwhDAI2HdQ/PAipMwCTm53YaP4pWdsbl0fcuJ39F0MwmrE=
+X-Received: by 2002:adf:cc81:0:b0:367:947a:a491 with SMTP id
+ ffacd0b85a97d-369bae6427emr3154183f8f.26.1721614329748; Sun, 21 Jul 2024
+ 19:12:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-28544.004
-X-TM-AS-User-Approved-Sender: Yes
-X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-28544.004
-X-TMASE-Result: 10--5.996900-10.000000
-X-TMASE-MatchedRID: +R0/YEDHEDjoSitJVour/QuB7zdAMUjAl9q75JzWJRMarX6LchMkVuBw
-	lzWEEXt2fatVQLA534yNMkq6FfSn6lnGEjlsas2yFDuTLTe6zcNMkOX0UoduuV7V7de6UnlgmKb
-	hu5KaCkf9F5gpB/8TUo2MogdbmQhJWSEm/dnndoSdVNZaI2n6//SzAdIVxUno2vch1fMqmI8mIm
-	l+ywrqvklEFjVj/aAsbncztPPsTqsv+0FNnM7lDRVqL8+WwS7muhv94WF6cmmm04TWLzKiuBhBv
-	WgZlX+84vM1YF6AJbbCCfuIMF6xLSAHAopEd76vdp8SlsBStysjUE3BmlSs165ZdugdSt2/9b4c
-	9nQDp+sRP1XlvFsUag==
-X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
+References: <20240613074258.4124603-1-zhanghongchen@loongson.cn>
+In-Reply-To: <20240613074258.4124603-1-zhanghongchen@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 22 Jul 2024 10:11:57 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4TSHqRg0F8xKb32g5CO2aQv=ibL2D_jqn8eUF8+yEZag@mail.gmail.com>
+Message-ID: <CAAhV-H4TSHqRg0F8xKb32g5CO2aQv=ibL2D_jqn8eUF8+yEZag@mail.gmail.com>
+Subject: Re: [PATCH v3] PCI: pci_call_probe: call local_pci_probe() when
+ selected cpu is offline
+To: Hongchen Zhang <zhanghongchen@loongson.cn>
+Cc: Markus Elfring <Markus.Elfring@web.de>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Alex Belits <abelits@marvell.com>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, 
+	Nitesh Narayan Lal <nitesh@redhat.com>, Frederic Weisbecker <frederic@kernel.org>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
+	stable@vger.kernel.org, Huacai Chen <chenhuacai@loongson.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-It's expected that no page should be left in pcp_list after calling
-zone_pcp_disable() in offline_pages(). Previously, it's observed that
-offline_pages() gets stuck [1] due to some pages remaining in pcp_list.
+gentle ping?
 
-Cause:
-There is a race condition between drain_pages_zone() and __rmqueue_pcplist()
-involving the pcp->count variable. See below scenario:
+Huacai
 
-         CPU0                              CPU1
-    ----------------                    ---------------
-                                      spin_lock(&pcp->lock);
-                                      __rmqueue_pcplist() {
-zone_pcp_disable() {
-                                        /* list is empty */
-                                        if (list_empty(list)) {
-                                          /* add pages to pcp_list */
-                                          alloced = rmqueue_bulk()
-  mutex_lock(&pcp_batch_high_lock)
-  ...
-  __drain_all_pages() {
-    drain_pages_zone() {
-      /* read pcp->count, it's 0 here */
-      count = READ_ONCE(pcp->count)
-      /* 0 means nothing to drain */
-                                          /* update pcp->count */
-                                          pcp->count += alloced << order;
-      ...
-                                      ...
-                                      spin_unlock(&pcp->lock);
-
-In this case, after calling zone_pcp_disable() though, there are still some
-pages in pcp_list. And these pages in pcp_list are neither movable nor
-isolated, offline_pages() gets stuck as a result.
-
-Solution:
-Expand the scope of the pcp->lock to also protect pcp->count in
-drain_pages_zone(), to ensure no pages are left in the pcp list after
-zone_pcp_disable()
-
-[1] https://lore.kernel.org/linux-mm/6a07125f-e720-404c-b2f9-e55f3f166e85@fujitsu.com/
-
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Vlastimil Babka (SUSE) <vbabka@kernel.org>
-Reported-by: Yao Xingtao <yaoxt.fnst@fujitsu.com>
-Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
----
-V2:
-    - Narrow down the scope of the spin_lock() to limit the draining latency. # Vlastimil and David
-    - In above scenario, it's sufficient to read pcp->count once with lock held, and it fully fixed
-      my issue[1] in thounds runs(It happened in more than 5% before).
-RFC:
-    https://lore.kernel.org/linux-mm/20240716073929.843277-1-lizhijian@fujitsu.com/
----
- mm/page_alloc.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 9ecf99190ea2..5388a35c4e9c 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -2323,8 +2323,11 @@ void drain_zone_pages(struct zone *zone, struct per_cpu_pages *pcp)
- static void drain_pages_zone(unsigned int cpu, struct zone *zone)
- {
- 	struct per_cpu_pages *pcp = per_cpu_ptr(zone->per_cpu_pageset, cpu);
--	int count = READ_ONCE(pcp->count);
-+	int count;
- 
-+	spin_lock(&pcp->lock);
-+	count = pcp->count;
-+	spin_unlock(&pcp->lock);
- 	while (count) {
- 		int to_drain = min(count, pcp->batch << CONFIG_PCP_BATCH_SCALE_MAX);
- 		count -= to_drain;
--- 
-2.29.2
-
+On Thu, Jun 13, 2024 at 3:43=E2=80=AFPM Hongchen Zhang
+<zhanghongchen@loongson.cn> wrote:
+>
+> Call work_on_cpu(cpu, fn, arg) in pci_call_probe() while the argument
+> @cpu is a offline cpu would cause system stuck forever.
+>
+> This can be happen if a node is online while all its CPUs are
+> offline (We can use "maxcpus=3D1" without "nr_cpus=3D1" to reproduce it).
+>
+> So, in the above case, let pci_call_probe() call local_pci_probe()
+> instead of work_on_cpu() when the best selected cpu is offline.
+>
+> Fixes: 69a18b18699b ("PCI: Restrict probe functions to housekeeping CPUs"=
+)
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> Signed-off-by: Hongchen Zhang <zhanghongchen@loongson.cn>
+> ---
+> v2 -> v3: Modify commit message according to Markus's suggestion
+> v1 -> v2: Add a method to reproduce the problem
+> ---
+>  drivers/pci/pci-driver.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+> index af2996d0d17f..32a99828e6a3 100644
+> --- a/drivers/pci/pci-driver.c
+> +++ b/drivers/pci/pci-driver.c
+> @@ -386,7 +386,7 @@ static int pci_call_probe(struct pci_driver *drv, str=
+uct pci_dev *dev,
+>                 free_cpumask_var(wq_domain_mask);
+>         }
+>
+> -       if (cpu < nr_cpu_ids)
+> +       if ((cpu < nr_cpu_ids) && cpu_online(cpu))
+>                 error =3D work_on_cpu(cpu, local_pci_probe, &ddi);
+>         else
+>                 error =3D local_pci_probe(&ddi);
+> --
+> 2.33.0
+>
+>
 
