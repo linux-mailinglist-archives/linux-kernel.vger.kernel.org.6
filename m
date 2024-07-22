@@ -1,137 +1,182 @@
-Return-Path: <linux-kernel+bounces-258614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D412938A83
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:55:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8F85938A8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:57:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEF931C2105C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:55:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23622B216FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F47B1607BC;
-	Mon, 22 Jul 2024 07:55:28 +0000 (UTC)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3F2161326;
+	Mon, 22 Jul 2024 07:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dC9AT6yD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8175A381BA;
-	Mon, 22 Jul 2024 07:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6725D16087B
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721634928; cv=none; b=DgCP4M5enO2DxS7uaj/7VtwmME+lVS7UZ0qYi8vjfX4swjcXbjYJMFEvKoKoCb6LGZ5oCeDJeVeiww+NmBSxq4+ik/6KlkQbc4eZCEWvhas3u3O3BRXTvxdehof+elClEc2vpksZpfPnYmX9F1dgz0UG5+fv2U25jkhWyt/vZWQ=
+	t=1721635045; cv=none; b=U5Ujafoi4/MHwS1UOf7LlVwfh4XSxdolBP9wa+DPgXt2IVHlFfimQeQmdJVMAwRHkRx6a3IqgZILHSOhu3ZECNDbE1CAym51YBKc909Ww8ROknZ31sKxZ2u7VPW0v134Z4DH5W7YjrZuLyfA5SmJAH+Rkcc3a32ZCAE4ieEGH2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721634928; c=relaxed/simple;
-	bh=/GqmcqtTaDbS5cQZIIQi0gOJw88P25ZDGG0pgSEFHqw=;
+	s=arc-20240116; t=1721635045; c=relaxed/simple;
+	bh=HWNPQ/1vUrq7iKlpWAUp1cUMrSt4KvhLV953piOX8g8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KIqwIcFzCvDFtBCO/qjc/pO7pG/4s0oEM/Y17/xA8V04Fegc0glRg0MJnZwRxP60qz33Wuek2xca+MJHKo5LlyYe94Hf2KRFtbiX//RRmAY4qpAI+BWxcGR37Uy+jEJ/QNaZ2tM5gK5CWWkpm2Ly+5h9Ke7WJfZdOSZOEtHI9Mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6519528f44fso37781677b3.1;
-        Mon, 22 Jul 2024 00:55:26 -0700 (PDT)
+	 To:Cc:Content-Type; b=dYBSLhPrXlPwNF08nD4tc+Wpl/Tl98dcuKpCbHYdAU2LD0ZltK1ZrQe52PkB4DaGn5+dBS4KaiJad71V+21PgSXQ40ZzT7YIbCU7ZEsW7/uCNReGB8LPC0xj7n3ahQFRiyQnJTxwnIZiKUtFqVgTGVlrSjKUFdQDFjx97iVXKRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dC9AT6yD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721635042;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YQEopZwHga4C7qzVJPruzVlevn1Kn/ATvarPGUPiBhY=;
+	b=dC9AT6yDbhN12Q1SkXFoLFJogupoRhqRhKyaJHC1yZ3CwgCkInAA4xi0DFyQ3dY2EB3gFW
+	1QQbK1FA6eXg1iaIrbEYFh+MCeKFE/NOIZYLvLLQJwdNbaP2OoRQpRBr0TsqZ97ivjxrs8
+	G8bAma1NcAmaFAeGUD/0l5vpZ0+qjHs=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-607-lbnSZAkROOKOQGGVGd7Ecg-1; Mon, 22 Jul 2024 03:57:17 -0400
+X-MC-Unique: lbnSZAkROOKOQGGVGd7Ecg-1
+Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2ef311ad4bcso4975491fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 00:57:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721634923; x=1722239723;
+        d=1e100.net; s=20230601; t=1721635035; x=1722239835;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LbmEHONiIOsJnXV6cT/utXHZ8eRTc+tn637CN6hGkTg=;
-        b=O4LeuhiYI8Nf5tEbhSlW+YDYkYhY2yOJCRGg/Omg3qDg3zIFtkC3hDOI2sro98veJQ
-         izR1dAnxknNb0Ztds7SuSr9qlYxaeIWGpoPSqQaCYSZppMrdP/VDdlg8Ol08V9B037ig
-         ZkpagmD25ZlWMyn/2YkmpThjBb7o5QdgJ0rEqKcUjU1mq9T7Dr5v/Bea0cigKyyt2rIV
-         bRHIwxZqenmfGIW6dcJzku9n8Xe+P9F1eLfSaloxGgY5CUAurBFCY76H1Cfd4z3t9XtE
-         ifYNaSbPjdznyJucVdbdOkxyratOVWDsWfujD52TD42QmyNVcHAfRfP8HpvfQ6PrOgIl
-         I4pw==
-X-Forwarded-Encrypted: i=1; AJvYcCVT0sEv7tf/AvxLkIeUsbSgV3uwEDOUR6fy1ksbv6iyje2vkwgACocML2YFYK5R2z8CLqiHlgLKQ2AETb3w8Yf7hPohKOgIMuHp0Lt6bXgzK752Q0ll37q3WBEAYolE6QkG
-X-Gm-Message-State: AOJu0YzBfJ0cM/+Pm/yFkl+SGjsLkB8lio/mGJTSyy0GB5g9e2aTPIhk
-	zBtsdVf6kExAzOfEWlvGIDka2Bx+NXzwFpgaQshaC4YQU7BhyqlDScVZnrZr
-X-Google-Smtp-Source: AGHT+IFMy/1NnuQYOnebFEbm8fja/IH1+D4IzHQq5yyejx9BwaaJxhilImZRklgIdEWn8Q8dloupeg==
-X-Received: by 2002:a05:690c:6084:b0:64b:6f7f:bc29 with SMTP id 00721157ae682-66a688a5872mr88425047b3.16.1721634923345;
-        Mon, 22 Jul 2024 00:55:23 -0700 (PDT)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-66951f728bdsm15609107b3.23.2024.07.22.00.55.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jul 2024 00:55:21 -0700 (PDT)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6694b50a937so29589007b3.0;
-        Mon, 22 Jul 2024 00:55:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUKmf0KDbo4b1/QGT/gwrlytSVxxXJBAVskz15Gfye8+SB9HCOG1S5Zi0IWkhOdJhq4olZU7Zf4ZMDl567vqKV0QwGCjxvFfGN7r23m9SkEu2pQO9Pung/NHqp8kaNXEnLL
-X-Received: by 2002:a05:690c:6604:b0:646:5f0b:e54 with SMTP id
- 00721157ae682-66a682cbfa1mr105939367b3.8.1721634921356; Mon, 22 Jul 2024
- 00:55:21 -0700 (PDT)
+        bh=YQEopZwHga4C7qzVJPruzVlevn1Kn/ATvarPGUPiBhY=;
+        b=wN1FaGhBrnJ1LeZwvMqRLvwf2Z204kfglBvDRezSj1psngEvl0w2kvtukVGEPe/GKj
+         lQwCFBnPI8gF8iNhoEIEYziX1OBgtxStUlptlIDxzDXayObA2uzKdh8wMNCY85lq2Xth
+         o+6ORYFCbb141HwLiZZgqTrq6fMFVMJ08N49vdnVeGLuQpgeHcDxN7Njbmd1envrGTRo
+         w31FfORDSGPabQWat2zfZBLWs5MZ6kIZdgI3rICvoSDZLLPZDKM5MGKTj/Z/PdHrHGVl
+         LpJkU1dZrTXO5qX0IEnz58YVnjrA+dw3/ucTcgD1PNW2/KUrOv2UO0W40p3DURIGgAax
+         dMLg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWYiPPpxhg2oaphn9E6wgmBvDlz0m4RGYwMVPOGiUTHtBNy2+teX5yXoqCBlGAPIdsyikCRxONvpGk3xkY97Y9ou4Lp3isFIodxJa0
+X-Gm-Message-State: AOJu0Yz9pYwKl77oz87PJf26q+8oBkfDFEcPyuj5qp3ZEdBGurlQkGdu
+	3Z8hOFrDuZlbT7k9UMZLmbpp4nMOZoV765maTzR9RI+Z5lt7pGzfa4aDdk8sRl10w7vAssP98Iw
+	w9wl+5Wfhj8oNJYRcboBXmco8CNCJcFQUJwmA+qkGYOD+kX+qcZytd3+o/jDXIDSRlLN7+zcCMl
+	bsnqoum7Vl3N7y5MG5qT9brQzCxm5h/X/SDpuG0BXIyG0UaWk=
+X-Received: by 2002:a05:651c:50d:b0:2ef:17ee:62b0 with SMTP id 38308e7fff4ca-2ef17ee6747mr44078041fa.2.1721635035150;
+        Mon, 22 Jul 2024 00:57:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFYfWrHNz6DUflgtw/ZcTjXibd8jwa6+RV9ykMQ9YOOIBFKj5ChXg/RudR/hIBIlgmdHIluX8YxfscwNFeCP2U=
+X-Received: by 2002:a05:651c:50d:b0:2ef:17ee:62b0 with SMTP id
+ 38308e7fff4ca-2ef17ee6747mr44077821fa.2.1721635034786; Mon, 22 Jul 2024
+ 00:57:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240712-asi-rfc-24-v1-0-144b319a40d8@google.com> <20240712-asi-rfc-24-v1-2-144b319a40d8@google.com>
-In-Reply-To: <20240712-asi-rfc-24-v1-2-144b319a40d8@google.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 22 Jul 2024 09:55:09 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX+2SUdvJ7xoJtxtKRi_QkCc-tcL138A2PQffqPH3h5yw@mail.gmail.com>
-Message-ID: <CAMuHMdX+2SUdvJ7xoJtxtKRi_QkCc-tcL138A2PQffqPH3h5yw@mail.gmail.com>
-Subject: Re: [PATCH 02/26] x86: Create CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION
-To: Brendan Jackman <jackmanb@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Alexandre Chartre <alexandre.chartre@oracle.com>, Liran Alon <liran.alon@oracle.com>, 
-	Jan Setje-Eilers <jan.setjeeilers@oracle.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Mel Gorman <mgorman@suse.de>, 
-	Lorenzo Stoakes <lstoakes@gmail.com>, David Hildenbrand <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Michal Hocko <mhocko@kernel.org>, Khalid Aziz <khalid.aziz@oracle.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Valentin Schneider <vschneid@redhat.com>, Paul Turner <pjt@google.com>, Reiji Watanabe <reijiw@google.com>, 
-	Junaid Shahid <junaids@google.com>, Ofir Weisse <oweisse@google.com>, 
-	Yosry Ahmed <yosryahmed@google.com>, Patrick Bellasi <derkling@google.com>, 
-	KP Singh <kpsingh@google.com>, Alexandra Sandulescu <aesa@google.com>, 
-	Matteo Rizzo <matteorizzo@google.com>, Jann Horn <jannh@google.com>, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, kvm@vger.kernel.org
+References: <20240722010625.1016854-1-lulu@redhat.com> <20240722010625.1016854-3-lulu@redhat.com>
+ <CACGkMEtq=2yO=4te+qQxwSzi4G-4E_kdq=tCQq_N94Pk8Ro3Zw@mail.gmail.com>
+In-Reply-To: <CACGkMEtq=2yO=4te+qQxwSzi4G-4E_kdq=tCQq_N94Pk8Ro3Zw@mail.gmail.com>
+From: Cindy Lu <lulu@redhat.com>
+Date: Mon, 22 Jul 2024 15:56:38 +0800
+Message-ID: <CACLfguUaDo3seJZT_yQNp_fa4bELHwwAb8OTbXGwBLw2fGdj+w@mail.gmail.com>
+Subject: Re: [PATH v4 2/3] vdpa_sim_net: Add the support of set mac address
+To: Jason Wang <jasowang@redhat.com>
+Cc: dtatulea@nvidia.com, mst@redhat.com, parav@nvidia.com, sgarzare@redhat.com, 
+	netdev@vger.kernel.org, virtualization@lists.linux-foundation.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Brendan,
-
-On Fri, Jul 12, 2024 at 7:01=E2=80=AFPM Brendan Jackman <jackmanb@google.co=
-m> wrote:
-> Currently a nop config. Keeping as a separate commit for easy review of
-> the boring bits. Later commits will use and enable this new config.
+On Mon, 22 Jul 2024 at 15:48, Jason Wang <jasowang@redhat.com> wrote:
 >
-> This config is only added for non-UML x86_64 as other architectures do
-> not yet have pending implementations. It also has somewhat artificial
-> dependencies on !PARAVIRT and !KASAN which are explained in the Kconfig
-> file.
+> On Mon, Jul 22, 2024 at 9:06=E2=80=AFAM Cindy Lu <lulu@redhat.com> wrote:
+> >
+> > Add the function to support setting the MAC address.
+> > For vdpa_sim_net, the driver will write the MAC address
+> > to the config space, and other devices can implement
+> > their own functions to support this.
+> >
+> > Signed-off-by: Cindy Lu <lulu@redhat.com>
+> > ---
+> >  drivers/vdpa/vdpa_sim/vdpa_sim_net.c | 22 +++++++++++++++++++++-
+> >  1 file changed, 21 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/vdpa/vdpa_sim/vdpa_sim_net.c b/drivers/vdpa/vdpa_s=
+im/vdpa_sim_net.c
+> > index cfe962911804..936e33e5021a 100644
+> > --- a/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
+> > +++ b/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
+> > @@ -414,6 +414,25 @@ static void vdpasim_net_get_config(struct vdpasim =
+*vdpasim, void *config)
+> >         net_config->status =3D cpu_to_vdpasim16(vdpasim, VIRTIO_NET_S_L=
+INK_UP);
+> >  }
+> >
+> > +static int vdpasim_net_set_attr(struct vdpa_mgmt_dev *mdev,
+> > +                               struct vdpa_device *dev,
+> > +                               const struct vdpa_dev_set_config *confi=
+g)
+> > +{
+> > +       struct vdpasim *vdpasim =3D container_of(dev, struct vdpasim, v=
+dpa);
+> > +       struct virtio_net_config *vio_config =3D vdpasim->config;
+> > +
+> > +       mutex_lock(&vdpasim->mutex);
+> > +
+> > +       if (config->mask & (1 << VDPA_ATTR_DEV_NET_CFG_MACADDR)) {
+> > +               memcpy(vio_config->mac, config->net.mac, ETH_ALEN);
+> > +               mutex_unlock(&vdpasim->mutex);
+> > +               return 0;
+> > +       }
+> > +
+> > +       mutex_unlock(&vdpasim->mutex);
 >
-> Co-developed-by: Junaid Shahid <junaids@google.com>
-> Signed-off-by: Brendan Jackman <jackmanb@google.com>
+> Do we need to protect:
+>
+>         case VIRTIO_NET_CTRL_MAC_ADDR_SET:
+> read =3D vringh_iov_pull_iotlb(&cvq->vring, &cvq->in_iov,
+>                                              vio_config->mac, ETH_ALEN);
+>                 if (read =3D=3D ETH_ALEN)
+>                         status =3D VIRTIO_NET_OK;
+>                 break;
+>
+> As both are modifying vio_config?
+>
+> Thanks
+>
+i have added a lock for this; CVQ also needs to take this lock to
+change the MAC address.I thinks maybe this can protect?
+Do you mean I need to compare the mac address from the vdpa_tool and
+mac address in vio_config?
+this vdpa tool should not be used after the guest load, if this is
+different this is also acceptable
+thanks
+Cindy
 
-Thanks for your patch!
+> > +       return -EINVAL;
+> > +}
+> > +
+> >  static void vdpasim_net_setup_config(struct vdpasim *vdpasim,
+> >                                      const struct vdpa_dev_set_config *=
+config)
+> >  {
+> > @@ -510,7 +529,8 @@ static void vdpasim_net_dev_del(struct vdpa_mgmt_de=
+v *mdev,
+> >
+> >  static const struct vdpa_mgmtdev_ops vdpasim_net_mgmtdev_ops =3D {
+> >         .dev_add =3D vdpasim_net_dev_add,
+> > -       .dev_del =3D vdpasim_net_dev_del
+> > +       .dev_del =3D vdpasim_net_dev_del,
+> > +       .dev_set_attr =3D vdpasim_net_set_attr
+> >  };
+> >
+> >  static struct virtio_device_id id_table[] =3D {
+> > --
+> > 2.45.0
+> >
+>
 
-> --- a/arch/csky/include/asm/Kbuild
-> +++ b/arch/csky/include/asm/Kbuild
-> @@ -10,3 +10,4 @@ generic-y +=3D qspinlock.h
->  generic-y +=3D parport.h
->  generic-y +=3D user.h
->  generic-y +=3D vmlinux.lds.h
-> +generic-y +=3D asi.h
-> \ No newline at end of file
-
-Oops...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
