@@ -1,151 +1,110 @@
-Return-Path: <linux-kernel+bounces-258551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC5A19389A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:08:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BF649389AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A36FB21367
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:08:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33703B20B54
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF83817BD5;
-	Mon, 22 Jul 2024 07:08:38 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9BB919478;
+	Mon, 22 Jul 2024 07:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="dNyJ235n"
+Received: from mx1.riseup.net (mx1.riseup.net [198.252.153.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC443DF51
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE05D53F;
+	Mon, 22 Jul 2024 07:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721632118; cv=none; b=uVgjYttU9cbAVeN2TN+qwPp01UDZ/KiBc9femEEQDIjW4S3Js0LnSlbgVXbszK60kFGrvcB4+4Y8Li0zzfaCiGd7WRgUnCmd5g977ahL2mQ821q2exwhQ2He4N3BVtM1fxosFSV1vvlGHyXSsK82/j9yYwXYgC0zD6r9Emd7wjs=
+	t=1721632266; cv=none; b=o8Uz/pfOxEFwnl9m8mqCqj9WhxJ8jZj5MK/MaChAf0miWNwHbCxCoNVjzbkGbCUtZSPLTNUlXA6hW+SqXsJnRGxWayqGF9x4HoyXUkgYQl/Rn3oqOXcJaHOVxrCKZ512lc6+QUT2e34cJfZcX3TE2MlNI0HkbafgXUn+eOnttEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721632118; c=relaxed/simple;
-	bh=zR0fiIg21DFh/exHdAf9KRFt3nu7sGyvhkwqQpW1Zdk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VgyASaQiEVSfijItl0+mdQbHR72tScReIipH5XgodJ18Ml+SOcuC09/eHkfya8RNGt6sJ2Xege9SSm2BW1G7pZ/9jAZaI6J38SssRlfwCCAbuAQnGGGKce2QSYre5PyisyDfRkFwU1kqC2qmmf982XUAMyu/AS9kjTluPIcfqD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WSB860gDrzxTgY;
-	Mon, 22 Jul 2024 15:03:34 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 63AF4140427;
-	Mon, 22 Jul 2024 15:08:32 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 22 Jul 2024 15:08:31 +0800
-Message-ID: <5816d4d5-e038-c90b-5ac2-1a3b3a8b9e46@huawei.com>
-Date: Mon, 22 Jul 2024 15:08:29 +0800
+	s=arc-20240116; t=1721632266; c=relaxed/simple;
+	bh=Nty9qEmvFD3zjctxi60UX8L3t/rMXaATRXBcG6VkeGg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CygV4XI1imI/XcfBbYuxkE5Ybh9lM4mjoND9McO3/cTnZYcV57vtNGbWzrMspun6kixYpAlP51vISR5h/y5HmxNDqe4snzGLZ7x7eHNMx4FF2l7CeTwxPAMwiuYJwws/cl+y0gOh4NPGyuSus0/tVVilRLi8WTqvGblf0o1WUQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=dNyJ235n; arc=none smtp.client-ip=198.252.153.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
+Received: from fews01-sea.riseup.net (fews01-sea-pn.riseup.net [10.0.1.109])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx1.riseup.net (Postfix) with ESMTPS id 4WSBJl2k94zDqX8;
+	Mon, 22 Jul 2024 07:11:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
+	t=1721632263; bh=Nty9qEmvFD3zjctxi60UX8L3t/rMXaATRXBcG6VkeGg=;
+	h=From:Subject:Date:To:Cc:From;
+	b=dNyJ235n4dCKzF2LPgswFnlNAVlgQ1lW8VYI+49l2l2m++vzdxEFBdm4Q+hYBtsfm
+	 /KcsUJ1e0wKboVQY07x1i/mdJpnZh43C+qlTVpnupM5Bz7OEufePV441rgryCInzsj
+	 esojVTDeeIZVxy9en0Nmeeki3JzvQ80OLTx0VbVE=
+X-Riseup-User-ID: 10048D71B9D1C5C1D8B2623470FC11309BFDDC133F94D03C7F3E159DE8C04C92
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	 by fews01-sea.riseup.net (Postfix) with ESMTPSA id 4WSBJT1wFWzJrYb;
+	Mon, 22 Jul 2024 07:10:49 +0000 (UTC)
+From: Dang Huynh <danct12@riseup.net>
+Subject: [PATCH 00/12] F(x)tec Pro1X feature expansion
+Date: Mon, 22 Jul 2024 14:10:10 +0700
+Message-Id: <20240722-qx1050-feature-expansion-v1-0-c4d486435b96@riseup.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v4 3/3] riscv: kdump: Fix crash memory reserve exceed
- system memory bug
-Content-Language: en-US
-To: Mike Rapoport <rppt@kernel.org>
-CC: <linux@armlinux.org.uk>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
-	<aou@eecs.berkeley.edu>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
-	<arnd@arndb.de>, <gregkh@linuxfoundation.org>, <deller@gmx.de>,
-	<javierm@redhat.com>, <bhe@redhat.com>, <robh@kernel.org>,
-	<alexghiti@rivosinc.com>, <bjorn@rivosinc.com>, <akpm@linux-foundation.org>,
-	<namcao@linutronix.de>, <dawei.li@shingroup.cn>, <chenjiahao16@huawei.com>,
-	<julian.stecklina@cyberus-technology.de>, <rafael.j.wysocki@intel.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-riscv@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240722035701.696874-1-ruanjinjie@huawei.com>
- <20240722035701.696874-4-ruanjinjie@huawei.com> <Zp3-dZHhN7LbMggc@kernel.org>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <Zp3-dZHhN7LbMggc@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+X-B4-Tracking: v=1; b=H4sIANIFnmYC/x3MQQqDMBBG4avIrB2IQ9XiVcTF0P5pZ5NqohIQ7
+ 27q8i2+d1BCNCQaqoMidkv2CyWauqLXV8MHbO/SJE4erhfhJTeudeyh6xbByLOGP+LedyrdU7x
+ AqfA5wlu+1+N0nhdLXk0YagAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Dang Huynh <danct12@riseup.net>
 
+This patch series expand F(x)tec Pro1X (QX1050) device tree to support
+various components of the device.
 
+Most notably:
++ SD Card slot
++ Touchscreen
++ MDSS, DRM display panel
++ WLAN (ATH10K)
++ Hall sensor and camera button
 
-On 2024/7/22 14:38, Mike Rapoport wrote:
-> Hi,
-> 
-> On Mon, Jul 22, 2024 at 11:57:01AM +0800, Jinjie Ruan wrote:
->> Similar with x86_32, on Riscv32 Qemu "virt" machine with 1GB memory, the
->> crash kernel "crashkernel=4G" is ok as below:
->> 	crashkernel reserved: 0x00000000bf400000 - 0x00000001bf400000 (4096 MB)
->>
->> The cause is that the crash_size is parsed and printed with "unsigned long
->> long" data type which is 8 bytes but allocated used with "phys_addr_t"
->> which is 4 bytes in memblock_phys_alloc_range().
->>
->> Fix it by checking if the crash_size is greater than system RAM size and
->> warn out as parse_crashkernel_mem() do it if so.
->>
->> After this patch, it fails and there is no above confusing reserve
->> success info.
->>
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> ---
->>  arch/riscv/mm/init.c | 5 +++++
->>  1 file changed, 5 insertions(+)
->>
->> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
->> index bfa2dea95354..5d66a4937fcd 100644
->> --- a/arch/riscv/mm/init.c
->> +++ b/arch/riscv/mm/init.c
->> @@ -1381,6 +1381,11 @@ static void __init arch_reserve_crashkernel(void)
->>  	if (ret)
->>  		return;
->>  
->> +	if (crash_size >= memblock_phys_mem_size()) {
->> +		pr_warn("Crashkernel: invalid size.");
->> +		return;
->> +	}
->> +
-> 
-> What the point of adding three identical checks right after the call to
-> parse_crashkernel()?
-> 
-> This check should be there and parse_crashkernel() should return error in
-> this case.
+This patch series has been tested on Buildroot Linux with TQFTPSERV and
+RMTFS present in userspace.
 
-Hi, Mike
+Signed-off-by: Dang Huynh <danct12@riseup.net>
+---
+Dang Huynh (12):
+      arm64: dts: qcom: sm6115-pro1x: Add Hall Switch and Camera Button
+      arm64: dts: qcom: sm6115-pro1x: Add PCA9534 IO Expander
+      arm64: dts: qcom: sm6115-pro1x: Add Goodix Touchscreen
+      arm64: dts: qcom: sm6115-pro1x: Add Caps Lock LED
+      arm64: dts: qcom: sm6115-pro1x: Enable SD card slot
+      arm64: dts: qcom: sm6115-pro1x: Enable MDSS and GPU
+      arm64: dts: qcom: sm6115-pro1x: Hook up USB3 SS
+      arm64: dts: qcom: sm6115-pro1x: Update copyright year
+      arm64: dts: qcom: sm6115-pro1x: Add PMI632 Type-C property
+      arm64: dts: qcom: sm6115-pro1x: Enable RGB LED
+      arm64: dts: qcom: sm6115-pro1x: Enable remoteprocs
+      arm64: dts: qcom: sm6115-pro1x: Enable ATH10K WLAN
 
-How about the folling rough patch?
+ arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts | 316 +++++++++++++++++++++++-
+ 1 file changed, 306 insertions(+), 10 deletions(-)
+---
+base-commit: 41c196e567fb1ea97f68a2ffb7faab451cd90854
+change-id: 20240722-qx1050-feature-expansion-7f6a2682f2ea
 
---- a/kernel/crash_reserve.c
-+++ b/kernel/crash_reserve.c
-@@ -313,7 +313,7 @@ int __init parse_crashkernel(char *cmdline,
-        if (high && ret == -ENOENT) {
-                ret = __parse_crashkernel(cmdline, 0, crash_size,
-                                crash_base, suffix_tbl[SUFFIX_HIGH]);
--               if (ret || !*crash_size)
-+               if (ret || !*crash_size || crash_size >= system_ram)
-                        return -EINVAL;
+Best regards,
+-- 
+Dang Huynh <danct12@riseup.net>
 
-                /*
-@@ -332,7 +332,7 @@ int __init parse_crashkernel(char *cmdline,
-                *high = true;
-        }
- #endif
--       if (!*crash_size)
-+       if (!*crash_size || crash_size >= system_ram)
-                ret = -EINVAL;
-
-
-> 
->>  	reserve_crashkernel_generic(cmdline, crash_size, crash_base,
->>  				    low_size, high);
->>  }
->> -- 
->> 2.34.1
->>
-> 
 
