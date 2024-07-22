@@ -1,247 +1,299 @@
-Return-Path: <linux-kernel+bounces-258541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75AF293896A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:58:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 066DD93896F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A24E1C21A42
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:58:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B09C22832CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:59:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A095812EBD7;
-	Mon, 22 Jul 2024 06:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C75228DCB;
+	Mon, 22 Jul 2024 06:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="yJ5dKDYi"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CJ3+fgru"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18277E76D
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 06:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8FD2E634
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 06:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721631255; cv=none; b=XFvVTOU/VJyrVOJApmLAcc8NNCkvJb9q3GMADCllO8qLEzC+kpMzV00FbDTJWrXfWO1EkZZES4KlC85y5AC8HM/S9m9dlMymjmqHJDT9UEBoo+DMGoRVRuJWmXSPPEH6bfinALpRDHvKS81Bmyib56bfXO/kYLPD6nX6ftMELZc=
+	t=1721631302; cv=none; b=PuZDga0BTxrRa8qxY+RMwUtvj8GtGIH0HvChk3UkfnzZRBnM56oirspUM0PFficJbBOYs1qQZSdy6EPE6/f1DtxcUORsbSaLyxZtGu3nDOQCyapVb2Hj8bhcSDmxniLhYfA9dG6Drtbs/EarIDwbW+sPnhfjtVCWzp29txxx2XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721631255; c=relaxed/simple;
-	bh=qUIeCtFecA8nmqn0H3dpPJSUWwNz+5gepp/PnumnSJE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tOklusDe/KyaHPfh9n9sORE84WpLOcYnqzXhtVsWjMtHVWieNJTok/W4yOWEmkS51ScrUFFRtm3vNbCK5alF0TFy9+JPmhNZIukIP2Tns8EZpz+tij9LHw+PSXoVN3msfZD5LRwh1XbXvhlRKt04fzCSwIi10eBhnaG2nPA8XD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=yJ5dKDYi; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a156556fb4so2816561a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 23:54:13 -0700 (PDT)
+	s=arc-20240116; t=1721631302; c=relaxed/simple;
+	bh=TadHWprxeqczU1omBo9k71lvvzibr/Y/qG/e6fX2EoI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KV2dfEdVyfmXmfwU1rwBb87BU8vGZUQoIrMwxTZZIyIJAv/z0nU7UuHysmlQtw+hd3tVAVTn+2FENtUc8BHfkG4pwEwSGMOWeC14neX1etMIRoxbsZ40rHeIh4e+y8fH148OPQtTwe2vrIBKs+ylUM5x0BGOrC1hNObJ04YC4AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CJ3+fgru; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52f025ab3a7so1111039e87.2
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 23:54:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721631252; x=1722236052; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dqkMPJOSzbja9rCDv1W+aq1XxPAw4w/o+YYYBlTqJb0=;
-        b=yJ5dKDYiIitvDlIearS+K1B26h6i0OeqpGs9pfQx8UBIMHkMa/JrTakYBziuakYGtj
-         Zo3uscKgTHfUm1TnAF2lg2za5YeMHkfkA/jt58HEKj0EhZ0PmkRKW6PNN1eZz3+6Zicq
-         DVA7rLm6KAdhVYrr+p0slHRhjmFKo1d7F7rXdict0TiC/Uc0QDBu8iTokj4GJJ/PJ1Vr
-         WPSEpq6QRKAWb7f9r12k3hov6DAPn7wOVAukxxluJ19J3ku0dHdKZ6P/qgdBwYYQMXf4
-         7gSfngzRC1GuqGW6sfXO+xjK5NeK6x3M1NWIvkdMWfUUfBxlVOfUoBhBk76jwR08KRYt
-         NH4g==
+        d=gmail.com; s=20230601; t=1721631298; x=1722236098; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FKkrJoqiwDwF/CbmpCh8eKLwjKgRH/Uyc7GjdOmHdxA=;
+        b=CJ3+fgru+BXSOr7Bz1IHmdxp7R23iBqQkRw8b1JoZnfwnbLUQ6EuMRGos/eDa8Rayr
+         U07++P1CjG2qAso/8zzxEwqQoWhAY/YHBke/ptzImKnP1+aGhLWWVavIk8Y30zbTWafQ
+         YTS/w/eCndi5RvBA+ybrEwHLpjgKFmuGDhKw7QeWmpKFsDhAwzWQ7Wyc82YcPwhKNjX8
+         y0dxY0pAvj/n02iB8GJ6wYEcP3KUN6nMTHzFHyqlhJoRiQnUQAiywc/mOd9QGI/DxPax
+         1Dk/eSa5R6pmwzUpZZBfE0+EpbbaXsklgexVLKFIj3vbVN00+YGlOTgVIrCx3IDwRgLN
+         1g5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721631252; x=1722236052;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dqkMPJOSzbja9rCDv1W+aq1XxPAw4w/o+YYYBlTqJb0=;
-        b=B3JhY4MSOKZVlNCeUEDdHGk8ntqFqBKi3WwSKaGLuK9F9wLZxZ+AFl4mZc+bH37zvz
-         mjW8dAgivN9GBEdcrDCIrI2ZZYzTxLg7KPkODU0BiakxNMmeB46UI0rFGMnzBo1DPewv
-         YDL6x7N93SUvOYY0gLlKuTOzuI6VZO+a/iXLgrxvzAwN5EwzkBDID4Uv/wDJW29n/VW3
-         3SeURBOLJDVeQvrcfgfsP8lT1NuVgaQR5aQm8nK1n1Zd4Xxbypc1uhIdODCW8uUKgnGR
-         yfpIIsqtgu23MQEYnfe05xvW2V2736gHs2c7hqM1Lc/DUXQntJ1WvNY9V+ecoECdBi0j
-         577Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWNyBGLvjMW4clmnsmqrGUOx9XA+VIcWf/5d4OM7kpz0+ZE3XCHuq2WL1WpabhhhXtagoIJR7FC3kqWG+kSqXqSirdKEhZZtQ1v7PHb
-X-Gm-Message-State: AOJu0YxqX9doYugX/056HlFx04O+/eiwGH6LPV2KHsVFLpMdrtPQYp2u
-	Il3U+x4tZXohUBfxXlHXXeNmqVdZxIghnhWq/lX5NrZEyzU37sI4W47ptThTULA=
-X-Google-Smtp-Source: AGHT+IHEChH+y+Y9XHfXiJcOJtbcMIXSn76WcXLtLzJTBXBNmK3LPl3PbBmPLI53uuEd/e8+kC1KLw==
-X-Received: by 2002:a05:6402:3482:b0:5a0:f8a2:9cf4 with SMTP id 4fb4d7f45d1cf-5a47bc87334mr3553300a12.25.1721631252131;
-        Sun, 21 Jul 2024 23:54:12 -0700 (PDT)
-Received: from [127.0.1.1] (158.22.5.93.rev.sfr.net. [93.5.22.158])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5a69c1f56a0sm1982126a12.64.2024.07.21.23.54.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jul 2024 23:54:11 -0700 (PDT)
-From: Alexandre Mergnat <amergnat@baylibre.com>
-Date: Mon, 22 Jul 2024 08:53:45 +0200
-Subject: [PATCH v7 16/16] arm64: dts: mediatek: add audio support for
- mt8365-evk
+        d=1e100.net; s=20230601; t=1721631298; x=1722236098;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FKkrJoqiwDwF/CbmpCh8eKLwjKgRH/Uyc7GjdOmHdxA=;
+        b=npHRG2Mc8iLJPiaPDCL/1ReeFR1E3noy/RIaccX/BimV7b+TctAJPxKk97Bkf1Fddc
+         j1WRkW3UWJ5K0cEPTw30YEYsGQjDZnuB/O+170Timr/Ws9/qeD9FAh/isZHXRUDiZNV+
+         db2557AD5fPBsgqRa4oQCpdLgyUbW9rNYTIQo+HSR6cqcJ2rWpwMw7lFuCKbyghL/36+
+         dzM3/l00GdHoHxEl6uaAtKHdp2huldewvoMnp791kwwgxywZcH3vIY7B1mOKmkIgxipA
+         O0FXiZ3VAbqbYdlbGGxr5IZKb6k9/vmgZr4FMbfPYDDi2XG/oFfzZxhKVqs/pxv1YEKQ
+         uc/w==
+X-Forwarded-Encrypted: i=1; AJvYcCW2kb+ur73xHd/uJla0Nt4W1VOXdQ7jjx4FdzIsNpRjhKDGkJp2zmNeyHOPt3qa0oYOJgixGQT7hFRMzdDN20+crVYcPuGnPj6mkTqv
+X-Gm-Message-State: AOJu0Yxf1nLXpQ7rG4feJb01+mxKicNQ0uS5YCRny47k0trP/Cyoa3ZA
+	cKGZizn6qNumLxjSUMoRyDnJDSj+mjofgfEulgM6D8SwoCoC6FHX
+X-Google-Smtp-Source: AGHT+IGi8uLJ/vnTH9E1IJnO6DF3D8fv+A1mIxNCOIDTWYyo4pAbjfrFIDrYGsOkCoUDil7pSQjztQ==
+X-Received: by 2002:a05:6512:2341:b0:52e:8b15:7c55 with SMTP id 2adb3069b0e04-52ef8d9cc74mr3284547e87.27.1721631297812;
+        Sun, 21 Jul 2024 23:54:57 -0700 (PDT)
+Received: from [192.168.0.2] (40.37.82.80.dsl-dynamic.vsi.ru. [80.82.37.40])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52efdf47f0csm639564e87.90.2024.07.21.23.54.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 21 Jul 2024 23:54:57 -0700 (PDT)
+Message-ID: <3d14b0c8-3c25-4a9a-b84a-192f071fa919@gmail.com>
+Date: Mon, 22 Jul 2024 09:54:55 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mtd: spinand: Add support for HeYangTek HYF1GQ4UDACAE
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
+ <vigneshr@ti.com>, Martin Kurbanov <mmkurbanov@salutedevices.com>,
+ Michael Walle <michael@walle.cc>, Mark Brown <broonie@kernel.org>,
+ "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>,
+ linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
+References: <20240624061246.5292-1-maxim.anisimov.ua@gmail.com>
+ <20240701095906.2bc4a0d2@xps-13>
+Content-Language: en-US
+From: Maxim Anisimov <maxim.anisimov.ua@gmail.com>
+In-Reply-To: <20240701095906.2bc4a0d2@xps-13>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240226-audio-i350-v7-16-6518d953a141@baylibre.com>
-References: <20240226-audio-i350-v7-0-6518d953a141@baylibre.com>
-In-Reply-To: <20240226-audio-i350-v7-0-6518d953a141@baylibre.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Lee Jones <lee@kernel.org>, Flora Fu <flora.fu@mediatek.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Sumit Semwal <sumit.semwal@linaro.org>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
- Alexandre Mergnat <amergnat@baylibre.com>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3691; i=amergnat@baylibre.com;
- h=from:subject:message-id; bh=qUIeCtFecA8nmqn0H3dpPJSUWwNz+5gepp/PnumnSJE=;
- b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBmngHxbH6X4/4QzRgM+QgRXmm3F99YLaY9HWnsQS4a
- /UFBkXmJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCZp4B8QAKCRArRkmdfjHURaajD/
- 9qc9SiPZ6f/ido8YKEvVNpxPUjppH67+Y/FT8IyHS4jCG8xQaHbhoIxbK4aao5qYB8VbDyENZ/xeVd
- DaO53tHrc5jaZ4Ys93ylidN7ahgJIAjCE43g/loQSWFuydofSJxoGmj5xHeNoiR25S+6cZO0TzY2F1
- r6dplliF/3H7/PNZJ9yOJpDQKNvVW2doY5alyuS3jKbZjg27V+3WW6jyK1aqCoP4FGP87YcW+46hLN
- U028Og4XEpIwKe+Y+ttGlGr+ytMWKnP+kuEeHrfJlf7H8DooPHvdnTlrW2AUCDy8FN1frDm1F/1xL6
- 1RxeAUEA4orOsS5z3MULiDbAhFiZvHJWk7lu+SnAaC3aRwrzEf1QFe5Me5C2e5eSQeVFSsa7g8X+//
- Y+NWAtVvzuEzwOU88v9c9GVJmhlqSPm6FmoYgqcYohaR3/KlSSNN9ETgMdDJhRUCRW3Vcf33Dp7cLT
- wedVj/reYhgnxQNix2dYCEUo9Caf1fSDDPe5BzxjkgtVb2PP4fQi6KcWfQiUi7BvAWTi3CUSJY/8i/
- 3D9XCIgtpbk/5ayjOEvsnfblaPiWfYj3tc4C1rpvto9zueYprgjJMHFY3wYikBKE8TJyw8YRabNU8J
- ogwDyFATJ2Ehk9X2o5nhFKXc0ZrGGvLgWKo9eiIrLW9iHQlqKWi2lnhz2MCw==
-X-Developer-Key: i=amergnat@baylibre.com; a=openpgp;
- fpr=231B5ED7F3EAAA700E60FE8B2B46499D7E31D445
 
-Add the sound node which is linked to the MT8365 SoC AFE and
-the MT6357 audio codec.
+Hi Miquel,
 
-Update the file header.
+Sorry for late answer. I was on vocation. To be honest, I don't 
+understand very well how this works. One of the OpenWrt developers asked 
+me to send this patch to Linux upstream. Related OpenWrt pull request is 
+here https://github.com/openwrt/openwrt/pull/15551 . Originally this 
+patch code was taken from the device manufacturer's repository 
+https://github.com/keenetic/kernel-49/commit/bacade569fb12bc0ad31ba09bca9b890118fbca7 
+. I pointed to this in the source code. From my side I only adapted the 
+code for successful compilation on the Linux upstream. It's difficult 
+for me to answer your questions because I don't understand how the spi 
+nand framework works. I can make corrections in the patch but with 
+outside help. Thanks!
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
----
- arch/arm64/boot/dts/mediatek/mt8365-evk.dts | 86 +++++++++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
+> Hi Maxim,
+>
+> maxim.anisimov.ua@gmail.com wrote on Mon, 24 Jun 2024 09:12:17 +0300:
+>
+>> Add Support HeYangTek HYF1GQ4UDACAE SPI NAND.
+>>
+>> Datasheet Link:
+>> - https://www.heyangtek.cn/previewfile.jsp?file=ABUIABA9GAAgwsvRnwYo-eDpsgc
+> Thanks for the patch! Few comments below.
+>
+>> Signed-off-by: Maxim Anisimov <maxim.anisimov.ua@gmail.com>
+>> ---
+>>   drivers/mtd/nand/spi/Makefile    |   4 +-
+>>   drivers/mtd/nand/spi/core.c      |   1 +
+>>   drivers/mtd/nand/spi/heyangtek.c | 112 +++++++++++++++++++++++++++++++
+>>   include/linux/mtd/spinand.h      |   1 +
+>>   4 files changed, 116 insertions(+), 2 deletions(-)
+>>   create mode 100644 drivers/mtd/nand/spi/heyangtek.c
+>>
+>> diff --git a/drivers/mtd/nand/spi/Makefile b/drivers/mtd/nand/spi/Makefile
+>> index 19cc77288ebb..69d95fbdd0ce 100644
+>> --- a/drivers/mtd/nand/spi/Makefile
+>> +++ b/drivers/mtd/nand/spi/Makefile
+>> @@ -1,4 +1,4 @@
+>>   # SPDX-License-Identifier: GPL-2.0
+>> -spinand-objs := core.o alliancememory.o ato.o esmt.o foresee.o gigadevice.o macronix.o
+>> -spinand-objs += micron.o paragon.o toshiba.o winbond.o xtx.o
+>> +spinand-objs := core.o alliancememory.o ato.o esmt.o foresee.o gigadevice.o heyangtek.o
+>> +spinand-objs += macronix.o micron.o paragon.o toshiba.o winbond.o xtx.o
+>>   obj-$(CONFIG_MTD_SPI_NAND) += spinand.o
+>> diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
+>> index e0b6715e5dfe..45795e5f1e49 100644
+>> --- a/drivers/mtd/nand/spi/core.c
+>> +++ b/drivers/mtd/nand/spi/core.c
+>> @@ -942,6 +942,7 @@ static const struct spinand_manufacturer *spinand_manufacturers[] = {
+>>   	&esmt_c8_spinand_manufacturer,
+>>   	&foresee_spinand_manufacturer,
+>>   	&gigadevice_spinand_manufacturer,
+>> +	&heyangtek_spinand_manufacturer,
+>>   	&macronix_spinand_manufacturer,
+>>   	&micron_spinand_manufacturer,
+>>   	&paragon_spinand_manufacturer,
+>> diff --git a/drivers/mtd/nand/spi/heyangtek.c b/drivers/mtd/nand/spi/heyangtek.c
+>> new file mode 100644
+>> index 000000000000..d4a5dbca40fb
+>> --- /dev/null
+>> +++ b/drivers/mtd/nand/spi/heyangtek.c
+>> @@ -0,0 +1,112 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Author:
+>> + *      Andrey Zolotarev <andrey.zolotarev@keenetic.com> - the main driver logic
+>> + *      Maxim Anisimov <maxim.anisimov.ua@gmail.com> - adaptation to mainline linux kernel
+>> + *
+>> + * Based on:
+>> + *      https://github.com/keenetic/kernel-49/commit/bacade569fb12bc0ad31ba09bca9b890118fbca7
+>> + */
+>> +
+>> +#include <linux/device.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/mtd/spinand.h>
+>> +
+>> +#define SPINAND_MFR_HEYANGTEK		0xC9
+>> +
+>> +#define STATUS_ECC_LIMIT_BITFLIPS	(3 << 4)
+>> +
+>> +static SPINAND_OP_VARIANTS(read_cache_variants,
+>> +		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 1, NULL, 0),
+>> +		SPINAND_PAGE_READ_FROM_CACHE_X4_OP(0, 1, NULL, 0),
+>> +		SPINAND_PAGE_READ_FROM_CACHE_DUALIO_OP(0, 1, NULL, 0),
+>> +		SPINAND_PAGE_READ_FROM_CACHE_X2_OP(0, 1, NULL, 0),
+>> +		SPINAND_PAGE_READ_FROM_CACHE_OP(true, 0, 1, NULL, 0),
+>> +		SPINAND_PAGE_READ_FROM_CACHE_OP(false, 0, 1, NULL, 0));
+>> +
+>> +static SPINAND_OP_VARIANTS(write_cache_variants,
+>> +		SPINAND_PROG_LOAD_X4(true, 0, NULL, 0),
+>> +		SPINAND_PROG_LOAD(true, 0, NULL, 0));
+>> +
+>> +static SPINAND_OP_VARIANTS(update_cache_variants,
+>> +		SPINAND_PROG_LOAD_X4(false, 0, NULL, 0),
+>> +		SPINAND_PROG_LOAD(false, 0, NULL, 0));
+>> +
+>> +static int hyfxgq4uda_ooblayout_ecc(struct mtd_info *mtd, int section,
+>> +				   struct mtd_oob_region *region)
+>> +{
+>> +	if (section > 3)
+>> +		return -ERANGE;
+>> +
+>> +	region->offset = section * 16 + 8;
+>> +	region->length = 8;
+> This is: 8-15, 24-31, 40-47, 56-62
+>
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int hyfxgq4uda_ooblayout_free(struct mtd_info *mtd, int section,
+>> +				   struct mtd_oob_region *region)
+>> +{
+>> +	if (section > 3)
+>> +		return -ERANGE;
+>> +
+>> +	/* ECC-protected user meta-data */
+>> +	region->offset = section * 16 + 4;
+>> +	region->length = 4;
+> This is: 4-7, 20-23, 32-35, 48-51
+>
+> So what about 2-4, 16-19, 36-39, 52-55, 63-64 ?
+>
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct mtd_ooblayout_ops hyfxgq4uda_ooblayout = {
+>> +	.ecc = hyfxgq4uda_ooblayout_ecc,
+>> +	.free = hyfxgq4uda_ooblayout_free,
+>> +};
+>> +
+>> +static int hyfxgq4uda_ecc_get_status(struct spinand_device *spinand,
+>> +				     u8 status)
+>> +{
+>> +	struct nand_device *nand = spinand_to_nand(spinand);
+>> +
+>> +	switch (status & STATUS_ECC_MASK) {
+>> +	case STATUS_ECC_NO_BITFLIPS:
+>> +		return 0;
+>> +
+>> +	case STATUS_ECC_UNCOR_ERROR:
+>> +		return -EBADMSG;
+>> +
+>> +	case STATUS_ECC_HAS_BITFLIPS:
+>> +		return nanddev_get_ecc_conf(nand)->strength >> 1;
+> Maybe an explanation of this line is needed. Is this just guessing or
+> is this defined in the datasheet?
+>
+> Also please do not use shifts when you want to divide. Just use / 2
+> which is easier to understand. Compilers know how to optimize that.
+>
+>> +
+>> +	case STATUS_ECC_LIMIT_BITFLIPS:
+>> +		return nanddev_get_ecc_conf(nand)->strength;
+>> +
+>> +	default:
+>> +		break;
+>> +	}
+>> +
+>> +	return -EINVAL;
+>> +}
+>> +
+>> +static const struct spinand_info heyangtek_spinand_table[] = {
+>> +	SPINAND_INFO("HYF1GQ4UDACAE",
+>> +		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_ADDR, 0x21),
+>> +		     NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1),
+>> +		     NAND_ECCREQ(4, 512),
+>> +		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
+>> +					      &write_cache_variants,
+>> +					      &update_cache_variants),
+>> +		     SPINAND_HAS_QE_BIT,
+>> +		     SPINAND_ECCINFO(&hyfxgq4uda_ooblayout,
+>> +				     hyfxgq4uda_ecc_get_status)),
+>> +};
+>> +
+>> +static const struct spinand_manufacturer_ops heyangtek_spinand_manuf_ops = {
+>> +};
+>> +
+>> +const struct spinand_manufacturer heyangtek_spinand_manufacturer = {
+>> +	.id = SPINAND_MFR_HEYANGTEK,
+>> +	.name = "HeYangTek",
+>> +	.chips = heyangtek_spinand_table,
+>> +	.nchips = ARRAY_SIZE(heyangtek_spinand_table),
+>> +	.ops = &heyangtek_spinand_manuf_ops,
+>> +};
+>> diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
+>> index 5c19ead60499..06ee35a27e3b 100644
+>> --- a/include/linux/mtd/spinand.h
+>> +++ b/include/linux/mtd/spinand.h
+>> @@ -265,6 +265,7 @@ extern const struct spinand_manufacturer ato_spinand_manufacturer;
+>>   extern const struct spinand_manufacturer esmt_c8_spinand_manufacturer;
+>>   extern const struct spinand_manufacturer foresee_spinand_manufacturer;
+>>   extern const struct spinand_manufacturer gigadevice_spinand_manufacturer;
+>> +extern const struct spinand_manufacturer heyangtek_spinand_manufacturer;
+>>   extern const struct spinand_manufacturer macronix_spinand_manufacturer;
+>>   extern const struct spinand_manufacturer micron_spinand_manufacturer;
+>>   extern const struct spinand_manufacturer paragon_spinand_manufacturer;
+>
+> Thanks,
+> Miquèl
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-index 50cbaefa1a99..6288bcbef241 100644
---- a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-@@ -4,6 +4,7 @@
-  * Authors:
-  * Fabien Parent <fparent@baylibre.com>
-  * Bernhard Rosenkränzer <bero@baylibre.com>
-+ * Alexandre Mergnat <amergnat@baylibre.com>
-  */
- 
- /dts-v1/;
-@@ -86,6 +87,28 @@ optee_reserved: optee@43200000 {
- 			reg = <0 0x43200000 0 0x00c00000>;
- 		};
- 	};
-+
-+	sound: sound {
-+		compatible = "mediatek,mt8365-mt6357";
-+		pinctrl-names = "default",
-+				"dmic",
-+				"miso_off",
-+				"miso_on",
-+				"mosi_off",
-+				"mosi_on";
-+		pinctrl-0 = <&aud_default_pins>;
-+		pinctrl-1 = <&aud_dmic_pins>;
-+		pinctrl-2 = <&aud_miso_off_pins>;
-+		pinctrl-3 = <&aud_miso_on_pins>;
-+		pinctrl-4 = <&aud_mosi_off_pins>;
-+		pinctrl-5 = <&aud_mosi_on_pins>;
-+		mediatek,platform = <&afe>;
-+	};
-+};
-+
-+&afe {
-+	mediatek,dmic-mode = <1>;
-+	status = "okay";
- };
- 
- &cpu0 {
-@@ -178,9 +201,72 @@ &mt6357_pmic {
- 	interrupts-extended = <&pio 145 IRQ_TYPE_LEVEL_HIGH>;
- 	interrupt-controller;
- 	#interrupt-cells = <2>;
-+	mediatek,micbias0-microvolt = <1900000>;
-+	mediatek,micbias1-microvolt = <1700000>;
- };
- 
- &pio {
-+	aud_default_pins: audiodefault-pins {
-+		clk-dat-pins {
-+			pinmux = <MT8365_PIN_72_CMDAT4__FUNC_I2S3_BCK>,
-+				 <MT8365_PIN_73_CMDAT5__FUNC_I2S3_LRCK>,
-+				 <MT8365_PIN_74_CMDAT6__FUNC_I2S3_MCK>,
-+				 <MT8365_PIN_75_CMDAT7__FUNC_I2S3_DO>;
-+		};
-+	};
-+
-+	aud_dmic_pins: audiodmic-pins {
-+		clk-dat-pins {
-+			pinmux = <MT8365_PIN_117_DMIC0_CLK__FUNC_DMIC0_CLK>,
-+				 <MT8365_PIN_118_DMIC0_DAT0__FUNC_DMIC0_DAT0>,
-+				 <MT8365_PIN_119_DMIC0_DAT1__FUNC_DMIC0_DAT1>;
-+		};
-+	};
-+
-+	aud_miso_off_pins: misooff-pins {
-+		clk-dat-pins {
-+			pinmux = <MT8365_PIN_53_AUD_CLK_MISO__FUNC_GPIO53>,
-+				 <MT8365_PIN_54_AUD_SYNC_MISO__FUNC_GPIO54>,
-+				 <MT8365_PIN_55_AUD_DAT_MISO0__FUNC_GPIO55>,
-+				 <MT8365_PIN_56_AUD_DAT_MISO1__FUNC_GPIO56>;
-+			input-enable;
-+			bias-pull-down;
-+			drive-strength = <2>;
-+		};
-+	};
-+
-+	aud_miso_on_pins: misoon-pins {
-+		clk-dat-pins {
-+			pinmux = <MT8365_PIN_53_AUD_CLK_MISO__FUNC_AUD_CLK_MISO>,
-+				 <MT8365_PIN_54_AUD_SYNC_MISO__FUNC_AUD_SYNC_MISO>,
-+				 <MT8365_PIN_55_AUD_DAT_MISO0__FUNC_AUD_DAT_MISO0>,
-+				 <MT8365_PIN_56_AUD_DAT_MISO1__FUNC_AUD_DAT_MISO1>;
-+			drive-strength = <6>;
-+		};
-+	};
-+
-+	aud_mosi_off_pins: mosioff-pins {
-+		clk-dat-pins {
-+			pinmux = <MT8365_PIN_49_AUD_CLK_MOSI__FUNC_GPIO49>,
-+				 <MT8365_PIN_50_AUD_SYNC_MOSI__FUNC_GPIO50>,
-+				 <MT8365_PIN_51_AUD_DAT_MOSI0__FUNC_GPIO51>,
-+				 <MT8365_PIN_52_AUD_DAT_MOSI1__FUNC_GPIO52>;
-+			input-enable;
-+			bias-pull-down;
-+			drive-strength = <2>;
-+		};
-+	};
-+
-+	aud_mosi_on_pins: mosion-pins {
-+		clk-dat-pins {
-+			pinmux = <MT8365_PIN_49_AUD_CLK_MOSI__FUNC_AUD_CLK_MOSI>,
-+				 <MT8365_PIN_50_AUD_SYNC_MOSI__FUNC_AUD_SYNC_MOSI>,
-+				 <MT8365_PIN_51_AUD_DAT_MOSI0__FUNC_AUD_DAT_MOSI0>,
-+				 <MT8365_PIN_52_AUD_DAT_MOSI1__FUNC_AUD_DAT_MOSI1>;
-+			drive-strength = <6>;
-+		};
-+	};
-+
- 	ethernet_pins: ethernet-pins {
- 		phy_reset_pins {
- 			pinmux = <MT8365_PIN_133_TDM_TX_DATA1__FUNC_GPIO133>;
+Thanks,
 
--- 
-2.25.1
+Maxim
 
 
