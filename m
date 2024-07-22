@@ -1,105 +1,105 @@
-Return-Path: <linux-kernel+bounces-258870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A7FB938D87
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:30:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E448938D88
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E55E6286C26
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:30:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB5EF1F21B59
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA9E16A94F;
-	Mon, 22 Jul 2024 10:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PdKJyWoA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2B2D16B39E;
+	Mon, 22 Jul 2024 10:31:17 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B82716A399
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 10:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9093234
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 10:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721644251; cv=none; b=i0DpFvwu0Pz1OJITf2kp8nJM5jLnfNcVPb8w62ge4I/8XsRjO9SjaprPH3PpoYaQZSOy1QdRfs9reGidfi6F6LByqsUuxO13WMlzxkTsDK4FFUqhNjOFulvQF+Z4GSN/JmnQRZp3Z/sEVCngmAMeRZYiCoFlpaFCWnJIy/iJyc4=
+	t=1721644277; cv=none; b=n9Rz4Kue7f7TAqpM/+xorBPi4dWSCuYYNTnXJpFrR4PNjLAYmB9HQsRORUQ2GicYF1JUN1VVVLaB1MgkNRjPRla08kmlQZV/n7O4X4k9GXsI8qtMASHgrp0Y1nfQTL8zcKHbGqMBex8WqNOLipj2252ujkMteV+DPATXAKE2vns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721644251; c=relaxed/simple;
-	bh=ZQC7Cy6nO2zKAZm9DYf71qtiwTMtWegr7L8JE77iZSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ucuz39igvtMV7iovdh0rU8t7kdd407Wv4pj/e+yoJ5QVzzcim6dybOKJUdlxvueiMRl/ZXweulo055b25F83SP2fKvVeRgGqO/0hB8kkactdsxwNtTaxJgSwMhLI6TTYyoRFZdW5luQi8QAoT7Ch8y69ywPa8GgudMUVZYcSjKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PdKJyWoA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721644248;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=920T09UfGz6bsniIm1Cf50ju0AGe0vceUzq5dRrbSaw=;
-	b=PdKJyWoAf0pGdne+1CKL6NyMuuoKey5RnNqRHnKgI2jF/DuIFJHkOaTakgneEj2NHJp/T5
-	X3uplXMIjICJZljvK4RhAk3Qa+sKzRnLIGsnLrB4vQ0rLeS7u4AqUl3kGBYl4tlM9qwVXh
-	NqUw8mxye1Fx2yPs8ut1Qw0+/9YYeZ0=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-441-QsRzAvh_OJS8UbRmtQQzbQ-1; Mon,
- 22 Jul 2024 06:30:44 -0400
-X-MC-Unique: QsRzAvh_OJS8UbRmtQQzbQ-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8476A1955F65;
-	Mon, 22 Jul 2024 10:30:43 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.6])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 112031955F40;
-	Mon, 22 Jul 2024 10:30:41 +0000 (UTC)
-Date: Mon, 22 Jul 2024 18:30:36 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: akpm@linux-foundation.org, kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Eric Biederman <ebiederm@xmission.com>
-Subject: Re: [PATCH] kexec: Use atomic_try_cmpxchg_acquire() in
- kexec_trylock()
-Message-ID: <Zp40zOw+E1Na/Lly@MiWiFi-R3L-srv>
-References: <20240719103937.53742-1-ubizjak@gmail.com>
- <Zp3NXf9UBCtFKBsa@MiWiFi-R3L-srv>
- <CAFULd4Y8vhcTWG-eNMSLEJHR_1=LuQzKj7q4JX8Kv7auJKAYDQ@mail.gmail.com>
+	s=arc-20240116; t=1721644277; c=relaxed/simple;
+	bh=tB9IYwOIvf0KVBikfDFuyKWQ1q4iL92fhsUzCnQ824k=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=il356CLqFIU2uXKyQ4UiigPDKHjUY8n1w8KiQKpQ4E+2l0i2k9wqBnobcnxSEYWsJOLBg9mzQL5RB3tI5y5674qYenuRS+rxigdBzUqLMDDGmaCorFmV4cyQ7Zy+t48Cv7U4AzmIxLwB5wdRE10RKEHn3FbSUV6O7p08bx7pfQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-80ba1cbd94eso737187839f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 03:31:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721644275; x=1722249075;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2rxad1YeeAWbzbQcxPSJ1/CdGoGaEezJkjYOmFEsMKM=;
+        b=IKHapoozooYLNrabmokyjmKXZpxWNAxxz/obot+zPbUB6fLWK4Ing2sqBJFOQ4eCDV
+         TXd7wiJcoz/wtcb1dy/1/s9cI4VXiIBz+v3Vls03K9fK5iRfEyMyYOc9R5RGdhkG/hjO
+         BV0YuDOgPYs5Q/Lr6AGt+UZ90XqZNKvtZR8nddrK0VkU/0IyrVZS2GseZEx2Cg9IOqL4
+         4Dg4nDFodqowF//HyhrIlOtaux3SZlJpJLp+aZdTv7f9BVxCzS+dbhAFXlPFAv9QcVj+
+         BmzWPPI4x/Wmx2kOmdzNJdU1ijYJVkBvyDibEEIrl8W10zLJ/DLxZEPYO1V9lICals3S
+         aeVQ==
+X-Gm-Message-State: AOJu0YwDl2URjPJKYvjj+oaffBYt8c0V+E3/02T03tLZ5iFPNwPixN5P
+	0K9Dv2E4gyuzpJJUi+j7oun6fJrX+MeAZ928cOfk4zpBcexFC6QyRHc90zRa9KyxczMxX/dDPpH
+	vQ5KBRCIkP4j/lZ3XmvUKLONcNZ14pAveTQlXeuZ6u/4JlgJS+LjPrQ8=
+X-Google-Smtp-Source: AGHT+IHxGn5ANRBb3z+jAj2cTC6oxIcRBZUhX4JNkrgp1gQdn3vWRLUTOXHlXgVGgCzwIfiGwjuDcOfzpsB1cGmGpA2gLhxT33c9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFULd4Y8vhcTWG-eNMSLEJHR_1=LuQzKj7q4JX8Kv7auJKAYDQ@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Received: by 2002:a05:6638:8323:b0:4b7:c9b5:675c with SMTP id
+ 8926c6da1cb9f-4c23fe4901bmr515565173.6.1721644275001; Mon, 22 Jul 2024
+ 03:31:15 -0700 (PDT)
+Date: Mon, 22 Jul 2024 03:31:14 -0700
+In-Reply-To: <0000000000009d1d0a061d91b803@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000070ff46061dd38b75@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [net?] [bpf?] general protection fault in __dev_flush
+From: syzbot <syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 07/22/24 at 10:53am, Uros Bizjak wrote:
-> On Mon, Jul 22, 2024 at 5:09 AM Baoquan He <bhe@redhat.com> wrote:
-> >
-> > On 07/19/24 at 12:38pm, Uros Bizjak wrote:
-> > > Use atomic_try_cmpxchg_acquire(*ptr, &old, new) instead of
-> > > atomic_cmpxchg_acquire(*ptr, old, new) == old in kexec_trylock().
-> > > x86 CMPXCHG instruction returns success in ZF flag, so
-> > > this change saves a compare after cmpxchg.
-> >
-> > Seems it can simplify code even though on non-x86 arch, should we
-> > replace atomic_try_cmpxchg_acquire() with atomic_try_cmpxchg_acquire()
-> > in all similar places?
-> 
-> Yes, the change is beneficial also for non-x86 architectures, please
-> see analysis at thread [1]. I've been looking through the kernel
-> sources for these places for quite some time, and I believe I have
-> changed most of the places. The change is relatively straightforward,
-> and immediately results in a better code.
-> 
-> [1] https://lore.kernel.org/lkml/871qwgmqws.fsf@mpe.ellerman.id.au/
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Good to know, thanks for telling.
+***
 
+Subject: Re: [syzbot] [net?] [bpf?] general protection fault in __dev_flush
+Author: aha310510@gmail.com
+
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+
+---
+ include/linux/filter.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/filter.h b/include/linux/filter.h
+index b6672ff61407..22691015d175 100644
+--- a/include/linux/filter.h
++++ b/include/linux/filter.h
+@@ -842,15 +842,15 @@ static inline void bpf_net_ctx_get_all_used_flush_lists(struct list_head **lh_ma
+ 	if (!IS_ENABLED(CONFIG_BPF_SYSCALL))
+ 		return;
+ 
+-	lh = &bpf_net_ctx->dev_map_flush_list;
++	lh = this_cpu_ptr(&bpf_net_ctx->dev_map_flush_list);
+ 	if (kern_flags & BPF_RI_F_DEV_MAP_INIT && !list_empty(lh))
+ 		*lh_dev = lh;
+ 
+-	lh = &bpf_net_ctx->cpu_map_flush_list;
++	lh = this_cpu_ptr(&bpf_net_ctx->cpu_map_flush_list);
+ 	if (kern_flags & BPF_RI_F_CPU_MAP_INIT && !list_empty(lh))
+ 		*lh_map = lh;
+ 
+-	lh = &bpf_net_ctx->xskmap_map_flush_list;
++	lh = this_cpu_ptr(&bpf_net_ctx->xskmap_map_flush_list);
+ 	if (IS_ENABLED(CONFIG_XDP_SOCKETS) &&
+ 	    kern_flags & BPF_RI_F_XSK_MAP_INIT && !list_empty(lh))
+ 		*lh_xsk = lh;
+--
 
