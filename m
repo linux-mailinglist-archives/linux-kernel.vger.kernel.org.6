@@ -1,135 +1,105 @@
-Return-Path: <linux-kernel+bounces-258903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 554BC938E21
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:39:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 902EF938E24
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8D63281D8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:39:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C2CCB214E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D9E16D306;
-	Mon, 22 Jul 2024 11:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qs71tyzI"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D0F16CD31;
+	Mon, 22 Jul 2024 11:40:42 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482F417597;
-	Mon, 22 Jul 2024 11:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C8617597
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:40:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721648337; cv=none; b=Xq9qtBN84NyYDp4FbRBlCm2MDkARSlIWtIlRDrsrkj8TJxanITPlswvmN99ka7TalJ1CCrZhnoW8xAe3P3y7xLODjtAjkLkz+MZJq4cmcIVIpoSA9+hWb1btdYEtdBNP9fxsRQMkX/IZJtMj2ybE3tkHzgKaJTOxXX+ExlpYbc8=
+	t=1721648442; cv=none; b=Ka7m6OGOchAITA7/TPq0eEkfkF4hCC/A++lsRSBcy3l5P16PVKWgQzdMrFU4gsDyv5dllzQ/j9ZJHrrmc4AXh+84oXx8opRqMhEVmW1CXSHpcFPC1ll5QZHyMsDg7O52u36JZEPG3yf8spl+qzpTOMwTkp9Vo3+O/cZ3hM1P2X4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721648337; c=relaxed/simple;
-	bh=jqvt1UZujBOSQlmzz6u3uitNMmyKRMTXZzq8cCC6zVg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gAOFaiWhB/OOnfXUgMuQcwxavsSWhJPbPtF3dgyPF7saawJQ+MKdP340xOLUtCB033sPMcRNahHxtpswMzmFBu8mYD6uOiAGBnsPOWLtNX7P3ZPrbYMkOKLzMcCZL6bxW0a4tkL8ms11Qjii82+KDMZksgyLF7a668v9U3gTQt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qs71tyzI; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 156EB2B3;
-	Mon, 22 Jul 2024 13:38:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1721648293;
-	bh=jqvt1UZujBOSQlmzz6u3uitNMmyKRMTXZzq8cCC6zVg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qs71tyzI/qICBaAcl7lLC+7GQ4Zabt6XokeWi1RhQBFfQO30KWEPrtohPNFI03UOZ
-	 QmwDdZONMeZqLq4/1NtfZ51WLFPrRPUrAhqaOWMsUze+QeWLzfpT5ie6ocNEyRZiSR
-	 zVLVoUXMhcSgboWmtuSfiqznnDnkvS5dta9J06UQ=
-Date: Mon, 22 Jul 2024 14:38:36 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pmenzel@molgen.mpg.de, stable@vger.kernel.org
-Subject: Re: [PATCH] media: uvcvideo: Fix custom control mapping probing
-Message-ID: <20240722113836.GE13497@pendragon.ideasonboard.com>
-References: <20240722-fix-filter-mapping-v1-1-07cc9c6bf4e3@chromium.org>
+	s=arc-20240116; t=1721648442; c=relaxed/simple;
+	bh=XcCS0t/NCepEBg34EMJfxW9WkiOyTn1ocn+BRBvY2FU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=NUcLWY2ZovTAEYjY/02imtPuEaURva5Ksqs0A1Y4sgS+Ud5fR4p/7Btky8J4VckHDaghovMycbxxVSd2uADFq8B52//L1Avx3kq5X2UUSpqu7kD7bjqAqgrIH1Vxe7j0fOz9HW6BdIVbR3zUowy00ZZH9KEU1OfrA12rGpaRhIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-803aad60527so678691539f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 04:40:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721648440; x=1722253240;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J2wxXXiPEQlTRFGH0mSk2E1ShgijLlffjgmbmxdv3qA=;
+        b=lr7rjA1tqBWNLvjX63dRKCuyDpbu7EfE83JaDFx0PswroFuyVhp5GOv+O0C0qSz4nx
+         TXoG1W9gS9mATbSTlLu4dWUlIgMr0NwN+SjCKyVlVJa9rmNffv95lfff/5HiX+LhB9So
+         cam6zEx7srOiUFhHUvsGpwX0oVNptCW9cYOzKUNhnrGKT9frqR09nRt2+JitBbDX47rK
+         i5iIxicclyAnwBLl15k/iBmfFOVMSfLWGuV77MumYZrpXZXMTWxBAV/qbZ/+/a1a/7gO
+         PlozuAx8gaRvq9liTdb85+TV5erVqlOHHdA+ms6ka/5C0dA9qxzo+8+oVNMtcN5oLzv4
+         /fZA==
+X-Gm-Message-State: AOJu0YwJm22WgElRQhAqXFtTUCCbY0buiM/ClPc0GhMCuIsbFuw9TilZ
+	5uG3y7UuicwjOsbLAINkswUhtB3wMJGzjW14Bf+jZOEEz98oga5rGMMjrGYVjjyuLutirhTwLcQ
+	/YbhTHUIYDaicvm/Td8dFkt9bCWsVzTYyR7qMjjwyxRVrThqzknUWIOo=
+X-Google-Smtp-Source: AGHT+IH1DWGx/CFNnr/61RgX9m4b0i7ybFIOl6wHFY0716Ubs6ablDQRl3DZgOkS2mNd7qp41vT4GVUkNXK3RtlXpZSSbFZ3n3Fp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240722-fix-filter-mapping-v1-1-07cc9c6bf4e3@chromium.org>
+X-Received: by 2002:a5e:9812:0:b0:804:bfc0:382e with SMTP id
+ ca18e2360f4ac-81aa7cf6b47mr6529139f.4.1721648440375; Mon, 22 Jul 2024
+ 04:40:40 -0700 (PDT)
+Date: Mon, 22 Jul 2024 04:40:40 -0700
+In-Reply-To: <0000000000009d1d0a061d91b803@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b790b7061dd48352@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [net?] [bpf?] general protection fault in __dev_flush
+From: syzbot <syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Ricardo,
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Thank you for the patch.
+***
 
-On Mon, Jul 22, 2024 at 07:59:43AM +0000, Ricardo Ribalda wrote:
-> Custom control mapping introduced a bug, where the filter function was
-> applied to every single control.
-> 
-> Fix it so it is only applied to the matching controls.
-> 
-> Reported-by: Paul Menzen <pmenzel@molgen.mpg.de>
-> Closes: https://lore.kernel.org/linux-media/518cd6b4-68a8-4895-b8fc-97d4dae1ddc4@molgen.mpg.de/T/#t
-> Cc: stable@vger.kernel.org
-> Fixes: 8f4362a8d42b ("media: uvcvideo: Allow custom control mapping")
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
-> Paul, could you check if this fixes your issue, thanks!
-> ---
->  drivers/media/usb/uvc/uvc_ctrl.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> index 0136df5732ba..06fede57bf36 100644
-> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> @@ -2680,6 +2680,10 @@ static void uvc_ctrl_init_ctrl(struct uvc_video_chain *chain,
->  	for (i = 0; i < ARRAY_SIZE(uvc_ctrl_mappings); ++i) {
->  		const struct uvc_control_mapping *mapping = &uvc_ctrl_mappings[i];
->  
-> +		if (!(uvc_entity_match_guid(ctrl->entity, mapping->entity) &&
-> +		    ctrl->info.selector == mapping->selector))
-> +			continue;
+Subject: Re: [syzbot] [net?] [bpf?] general protection fault in __dev_flush
+Author: aha310510@gmail.com
 
-I have a slight preference for
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 7846b618e0a4c3e08888099d1d4512722b39ca99
 
-		if (!uvc_entity_match_guid(ctrl->entity, mapping->entity) ||
-		    ctrl->info.selector != mapping->selector)
-			continue;
+---
+ include/linux/filter.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-If that's fine with you, I can handle that when applying the patch.
-
-This change means that the entity and selector test will use the
-original mapping, not the mapping returned by the filtering function. I
-think that's fine, both mappings should have the same entity and
-selector, only the menu mask is meant to change.
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> +
->  		/* Let the device provide a custom mapping. */
->  		if (mapping->filter_mapping) {
->  			mapping = mapping->filter_mapping(chain, ctrl);
-> @@ -2687,9 +2691,7 @@ static void uvc_ctrl_init_ctrl(struct uvc_video_chain *chain,
->  				continue;
->  		}
->  
-> -		if (uvc_entity_match_guid(ctrl->entity, mapping->entity) &&
-> -		    ctrl->info.selector == mapping->selector)
-> -			__uvc_ctrl_add_mapping(chain, ctrl, mapping);
-> +		__uvc_ctrl_add_mapping(chain, ctrl, mapping);
->  	}
->  }
->  
-> 
-> ---
-> base-commit: 68a72104cbcf38ad16500216e213fa4eb21c4be2
-> change-id: 20240722-fix-filter-mapping-18477dc69048
-
--- 
-Regards,
-
-Laurent Pinchart
+diff --git a/include/linux/filter.h b/include/linux/filter.h
+index b6672ff61407..22691015d175 100644
+--- a/include/linux/filter.h
++++ b/include/linux/filter.h
+@@ -842,15 +842,15 @@ static inline void bpf_net_ctx_get_all_used_flush_lists(struct list_head **lh_ma
+ 	if (!IS_ENABLED(CONFIG_BPF_SYSCALL))
+ 		return;
+ 
+-	lh = &bpf_net_ctx->dev_map_flush_list;
++	lh = this_cpu_ptr(&bpf_net_ctx->dev_map_flush_list);
+ 	if (kern_flags & BPF_RI_F_DEV_MAP_INIT && !list_empty(lh))
+ 		*lh_dev = lh;
+ 
+-	lh = &bpf_net_ctx->cpu_map_flush_list;
++	lh = this_cpu_ptr(&bpf_net_ctx->cpu_map_flush_list);
+ 	if (kern_flags & BPF_RI_F_CPU_MAP_INIT && !list_empty(lh))
+ 		*lh_map = lh;
+ 
+-	lh = &bpf_net_ctx->xskmap_map_flush_list;
++	lh = this_cpu_ptr(&bpf_net_ctx->xskmap_map_flush_list);
+ 	if (IS_ENABLED(CONFIG_XDP_SOCKETS) &&
+ 	    kern_flags & BPF_RI_F_XSK_MAP_INIT && !list_empty(lh))
+ 		*lh_xsk = lh;
+--
 
