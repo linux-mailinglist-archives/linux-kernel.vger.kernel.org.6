@@ -1,163 +1,118 @@
-Return-Path: <linux-kernel+bounces-259114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D27D93916E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:09:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41F30939175
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:11:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF0131C2171C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:09:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 736FB1C21367
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377C916DEA8;
-	Mon, 22 Jul 2024 15:09:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D271428F1;
-	Mon, 22 Jul 2024 15:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CF216D9A5;
+	Mon, 22 Jul 2024 15:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="pFmbNAqf"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BBC16DC3F;
+	Mon, 22 Jul 2024 15:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721660953; cv=none; b=uVwjLqnDDTMxT0KWyA4vcMRthhY6MHzzY2l5/cdkOgvISkr3+OtjtN4pNCfGTvHSs7fR6bs65SlQZRn5G5UUWzRyV5eIs8noEBgvTk2aY3xibYgv7qk+aFJCaum5AAwTfHRMmJX8dJ+2j8SY0t4lfU457C0a3piv5uGIVsdaSic=
+	t=1721661057; cv=none; b=UWH+lJ8kkQvpJZhG/5IaZRnAKAlUi1SXkWGEbPl0kXJ012q7PRTQxLETX2QiZGxqByA64eqN2hymzWKjem9GP/GMNVijADpXNOdn3mYEDeqJDrkKDpcMIBkXYn9Nhvij9XnjW/AE3v0s84hFFIH7/5CPsk6hzLviChUzBwLqX9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721660953; c=relaxed/simple;
-	bh=Hfv9+kZfD60RQzK59bj8xQyH0gZc0y+O4A+egPOKYkw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Q3qmD0IyDXg19MvtMI3kpSDZY2S8jWFCmQDvOGHJw/jgo66Vn0Qxta/MGbrwcxQF51AKz0VDXW4Lm09ooOzcztw+3OWS77ZAAteVFgkVVKl3YoLvaWKhlmWk8wz7v6EER4BULmAL8PgTlF8O4Ph4xMrQeNTl/gE3jhUu5dX5r28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3EF20FEC;
-	Mon, 22 Jul 2024 08:09:36 -0700 (PDT)
-Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AC4783F5A1;
-	Mon, 22 Jul 2024 08:09:08 -0700 (PDT)
-Message-ID: <9f301b09-e040-456c-9bd3-6d5e96ebc8f4@arm.com>
-Date: Mon, 22 Jul 2024 16:09:07 +0100
+	s=arc-20240116; t=1721661057; c=relaxed/simple;
+	bh=dyxL6DyS/3Rsh17E03qLzwN1Qt1eKMwVSphTPdr/jA8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gj8edimDP6l2bc5kOzAuj/Vi26EE0U00uB+jTvnYQ6+v6F95KIb0JFYahP6YrhRAhVwhOKqLcwPb25mhHrxv+EOggZRq1nfF6Z/WQDV6aTDISh7/a10B2wrSEuQFJ+J8wjNK4jXJMdsapq0ZiDUhv2hSuf2LQYEfhXCUYZdEHZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=pFmbNAqf; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 642412B3;
+	Mon, 22 Jul 2024 17:10:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1721661012;
+	bh=dyxL6DyS/3Rsh17E03qLzwN1Qt1eKMwVSphTPdr/jA8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pFmbNAqfG5sUAp/ndPD4KGsBJ3I19V0FwD4KAU+w3b+tq4ZjSRRB02UXcDlMm69rD
+	 ESm/nWhBZtGL6Y484wmNwDkFNS7GL5DNT7KS0rC/wBVgAWf5CL+QLzEzjShPoJkmpK
+	 AntskOkygaX8aoNc1FP22mpILKngecc8zlajn1Kw=
+Date: Mon, 22 Jul 2024 18:10:35 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 2/6] media: videodev2.h: add visconti viif meta
+ buffer format
+Message-ID: <20240722151035.GA31490@pendragon.ideasonboard.com>
+References: <20240709000848.1108788-1-yuji2.ishikawa@toshiba.co.jp>
+ <20240709000848.1108788-3-yuji2.ishikawa@toshiba.co.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/6] perf auxtrace: Iterate all AUX events when finish
- reading
-To: Adrian Hunter <adrian.hunter@intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- James Clark <james.clark@linaro.org>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, John Garry <john.g.garry@oracle.com>,
- Will Deacon <will@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240721202113.380750-1-leo.yan@arm.com>
- <20240721202113.380750-5-leo.yan@arm.com>
- <9f08c5cb-fb4b-4994-9128-0484aa6c06d7@intel.com>
-Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <9f08c5cb-fb4b-4994-9128-0484aa6c06d7@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240709000848.1108788-3-yuji2.ishikawa@toshiba.co.jp>
 
-On 7/22/24 12:13, Adrian Hunter wrote:
+Hi Ishikawa-san,
 
-[...]
+Thank you for the patch.
 
-> On 21/07/24 23:21, Leo Yan wrote:
->> When finished to read AUX trace data from mmaped buffer, based on the
->> AUX buffer index the core layer needs to search the corresponding PMU
->> event and re-enable it to continue tracing.
->>
->> However, current code only searches the first AUX event. It misses to
->> search other enabled AUX events, thus, it returns failure if the buffer
->> index does not belong to the first AUX event.
->>
->> This patch extends the auxtrace_record__read_finish() function to
->> search for every enabled AUX events, so all the mmaped buffer indexes
->> can be covered.
->>
->> Signed-off-by: Leo Yan <leo.yan@arm.com>
->> ---
->>   tools/perf/util/auxtrace.c | 15 +++++++++++----
->>   1 file changed, 11 insertions(+), 4 deletions(-)
->>
->> diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
->> index e2f317063eec..95be330d7e10 100644
->> --- a/tools/perf/util/auxtrace.c
->> +++ b/tools/perf/util/auxtrace.c
->> @@ -670,18 +670,25 @@ static int evlist__enable_event_idx(struct evlist *evlist, struct evsel *evsel,
->>   int auxtrace_record__read_finish(struct auxtrace_record *itr, int idx)
->>   {
->>        struct evsel *evsel;
->> +     int ret = -EINVAL;
->>
->>        if (!itr->evlist || !itr->pmu)
->>                return -EINVAL;
->>
->>        evlist__for_each_entry(itr->evlist, evsel) {
->> -             if (evsel->core.attr.type == itr->pmu->type) {
->> +             if (evsel__is_aux_event(evsel)) {
+On Tue, Jul 09, 2024 at 09:08:44AM +0900, Yuji Ishikawa wrote:
+> Adds the Toshiba Visconti VIIF specific metadata format
 > 
-> If the type is the same, then there is no need to
-> change the logic here?
-
-No, the type is not same for AUX events. Every event has its own type
-value, this is likely related to recent refactoring.
-
-As a result, 'itr->pmu' only maintains the first registered AUX event,
-comparing to it the tool will find _only_ one AUX event. This is why here
-changes to use the evsel__is_aux_event() to detect AUX event.
-
-> Otherwise, maybe that should be a separate patch
-
-Could you explain what is a separate patch for?
-
-After this change, the field 'itr->pmu' will be redundant (at least this
-is the case for Arm SPE). I am preparing a refactoring patches for cleaning up
-and see if can totally remove the field 'itr->pmu' (if all AUX events
-have no issue.
-
+> - V4L2_META_FMT_VISCONTI_VIIF_PARAMS for ISP parameters
+> - V4L2_META_FMT_VISCONTI_VIIF_STATS for ISP statistics
 > 
->>                        if (evsel->disabled)
->> -                             return 0;
->> -                     return evlist__enable_event_idx(itr->evlist, evsel, idx);
->> +                             continue;
->> +                     ret = evlist__enable_event_idx(itr->evlist, evsel, idx);
->> +                     if (ret >= 0)
-> 
-> Should this be:
-> 
->                          if (ret < 0)
+> Signed-off-by: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
 
-Here the logic is to iterate all AUX events, even if an AUX event fails to
-find the buffer index, it will continue to next AUX event.
+This patch looks fine. Assuming the corresponding documentation patch is
+fine too,
 
-So it directly bails out for success (as we have found the matched AUX
-event and enabled it). For the failure cause, it will continue for checking
-next event - until all events have been checked and no event is matched
-for buffer index, the failure will be handled at the end of the function.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Thanks,
-Leo
+> ---
+> Changelog v10:
+> - add entry for V4L2_META_FMT_VISCONTI_VIIF_PARAMS
+> - add entry for V4L2_META_FMT_VISCONTI_VIIF_STATS
+> 
+> Changelog v11:
+> - no change
+> 
+>  include/uapi/linux/videodev2.h | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index 4e91362da6..562038f144 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -858,6 +858,10 @@ struct v4l2_pix_format {
+>  /* Vendor specific - used for RaspberryPi PiSP */
+>  #define V4L2_META_FMT_RPI_BE_CFG	v4l2_fourcc('R', 'P', 'B', 'C') /* PiSP BE configuration */
+>  
+> +/* Vendor specific - used for Visconti VIIF sub-system */
+> +#define V4L2_META_FMT_VISCONTI_VIIF_PARAMS	v4l2_fourcc('V', 'I', 'F', 'P') /* ISP Params */
+> +#define V4L2_META_FMT_VISCONTI_VIIF_STATS	v4l2_fourcc('V', 'I', 'F', 'S') /* ISP Stats */
+> +
+>  #ifdef __KERNEL__
+>  /*
+>   * Line-based metadata formats. Remember to update v4l_fill_fmtdesc() when
 
-> 
->> +                             return ret;
-> 
-> And will need a common error path for the pr_err() below.
-> 
->>                }
->>        }
->> -     return -EINVAL;
->> +
->> +     if (ret < 0)
->> +             pr_err("Failed to event enable event (idx=%d): %d\n", idx, ret);
->> +
->> +     return ret;
->>   }
->>
->>   /*
-> 
+-- 
+Regards,
+
+Laurent Pinchart
 
