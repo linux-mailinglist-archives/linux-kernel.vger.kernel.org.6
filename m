@@ -1,215 +1,195 @@
-Return-Path: <linux-kernel+bounces-258608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FFB3938A6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:51:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 787E0938A7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AA301F218CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:51:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDAF81F212FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8B91607B7;
-	Mon, 22 Jul 2024 07:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931BB16130D;
+	Mon, 22 Jul 2024 07:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LNhPfXYs"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oG5YJpR0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F6215FA7A
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5B1381BA;
+	Mon, 22 Jul 2024 07:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721634671; cv=none; b=dGmqFl544xvfYwVKKxZVgwrmb1yuaTlA6kgQfeBZFMM1ruUszoeH4GqXH2yP5kA4XCT28aHXN2J+u9E3jZF9lHALET2tslAEOApLB7dWkfJc7JysCucMCiAVHQQSXzPcAoTcwXatLxltactTn6H2B2yZPM3sTDE/QD+M+bW4RBY=
+	t=1721634874; cv=none; b=PWx5w94DjJ+OmYsFyKGi1Dhc/1F2mnsmv03FhZB6bd9bVY8OhZmm5KU+WOPJVEo/xAYcVTkHDeoqKyn5VwlwLBH7KFZq61JIp5/9EPBVELQ3gG/QMQ57ZwTa/R2BPaUo/Dow6zRYoVzqqkIr0iM2gSRq8NB0WyQSbKM2oKK2GS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721634671; c=relaxed/simple;
-	bh=EnH0hjCJsqenVdJIOwLmnk1ZdSWDskungvUxR29H0VE=;
+	s=arc-20240116; t=1721634874; c=relaxed/simple;
+	bh=OYRHdXxfKMdclKQlgCt5VIPfcSGA+/ROfi++yX8letM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DIHdgfY8c5J/6um5I8vzq3Gt0r+3g1JayumL31Mmy6kMAMzMLBiLJ9b8Eb55EO4x8C7bymIC/x+OrT9AzSO2y9q3NknaPJSv2MOJGzGpbNAe1bebnUjgtLS24kBttYYc5bH5BvgCIXZYCUjlbMAHe+VQTjVoQYfV/xTcnKtdIlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LNhPfXYs; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5a15692b6f6so3142050a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 00:51:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721634666; x=1722239466; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EnH0hjCJsqenVdJIOwLmnk1ZdSWDskungvUxR29H0VE=;
-        b=LNhPfXYsPOE2ObCRfUAb+CieFs0aVzwk5AX74GbnwvnvEZu0msTsRuDeJyq4fqPojr
-         2F561P6tlczhQjxUGFrfiMsAik9JravoAP1mhhbDOozG1vxP+c5YvFuKJVDseth3ODTe
-         jZbVhJ2Hw1JAyn/iisNmJU70mhshmI9qD8kXoHHTSLDrZQUN/5OsLeBNmobZFqdm0LPM
-         iY2uvZLs42Xj80/z4PGpVN2DALDKguHpwswWsBj2ZLKwhcJCI4O+uGzt78TO4xzPVW++
-         Amu3vRJO0Y1+v6PBcdvv9hBa0+KF/QWALD2yxcmWprN77uUI2yVvC9agm/UKyjE4v/gD
-         sM5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721634666; x=1722239466;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EnH0hjCJsqenVdJIOwLmnk1ZdSWDskungvUxR29H0VE=;
-        b=gqHbjsCurTFSg1NSRZyukPaueJMJbYzffD96qCnsiQSNlllurHhn4LecRqB4xYaCWZ
-         y+4G2FfzWidq9mKP+LJU78OW2BN98yDRcPOfRtZEzOUU3IGVJvZ2QtvdzuWveea/IZZb
-         WJ9QsyjGl1d5ezssIrwwGyfQDjp7rjuN+/tsmSExF3Pg1+5VhJ9jW7WBNIjEaKu3Fd5N
-         6Yv5HECaTsjvyV3IEZU9AxiqYTBF2ZXlePjrZrYDQ/BkHkBdTCJjmx/0BdHTMQ4kvg/1
-         x/cGaT2+koMgb/A94WXgClDERT1cF/B0ZOfeDfc2ky8Sa2idu4knhUDkK336B6U97fcN
-         rxtg==
-X-Forwarded-Encrypted: i=1; AJvYcCXCn/3jZob4PdgBfsDHAFTH20z1DUekoh2QLWdY2p6FaNq0vziDYDPFbHDNP82SYfmYbvkJp0Zjs0V3EehZ4i/zMcFh16pCock0qLXm
-X-Gm-Message-State: AOJu0YxEdPo7PUEUAyhj8Ni4QXeIMB35NBkX1BPX/jdkqcNVsTEKYxcn
-	jP3hw6VjRXcKQJlYmkfEeXkdYub44K/79nK0IeJoasvEj2WpZW+OXCma1rWbv+Y=
-X-Google-Smtp-Source: AGHT+IERPpuu0WjjXUrxYUbuy6duds0kLH+r0sY8euaPygoIAdU5GkvLdgJpcNxtsiPzvG1YmGPTUA==
-X-Received: by 2002:a50:9b4a:0:b0:5a4:12ea:333f with SMTP id 4fb4d7f45d1cf-5a47ba979acmr3556532a12.37.1721634666398;
-        Mon, 22 Jul 2024 00:51:06 -0700 (PDT)
-Received: from localhost (p50915eb1.dip0.t-ipconnect.de. [80.145.94.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30c2f8808sm5651235a12.78.2024.07.22.00.51.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 00:51:05 -0700 (PDT)
-Date: Mon, 22 Jul 2024 09:51:04 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: Guenter Roeck <linux@roeck-us.net>, jdelvare@suse.com, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-hwmon@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v6 3/3] hwmon: (adt7475) Add support for configuring
- initial PWM state
-Message-ID: <5fnaskzlfybxiddwhm3fdm774ispvuxdmv4jb4wj5sts2btkf2@gmcfdzx3qvjy>
-References: <20240722005825.1800403-1-chris.packham@alliedtelesis.co.nz>
- <20240722005825.1800403-4-chris.packham@alliedtelesis.co.nz>
- <15f4c51c-3f7d-4e93-9c3a-71ac1d626463@roeck-us.net>
- <c261c74f-6829-4888-9836-6f27ba87dc25@alliedtelesis.co.nz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=S5OrWN4lxF8Ys2G+6UO9msJS3gWDmTSgfIkoB2arYHaDMAglXnhb6azaF89O1LtyaRRY46tIkQ8borFUmkThGiK75jVsRS7jJaK0oQ4QKuBj0SLP6wYFME0mxCyt7aUvUWg4lbJEth5PJyi/nKRa3HxF9keA1njAYXWajVOE4vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oG5YJpR0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EDAAC116B1;
+	Mon, 22 Jul 2024 07:54:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721634874;
+	bh=OYRHdXxfKMdclKQlgCt5VIPfcSGA+/ROfi++yX8letM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oG5YJpR0vvG3aK5NTi3fHWDP8/wPCXQEHPpVI03jXrmGjAqE/3ek11pgDez93GupD
+	 MYY5cht8NtUour0LZG0EOmrqfl/+OGAQSwhfArqnV9dkDfvXzt+BYN0GoRqQLdf0w8
+	 YDUR98pajEJ8JNfue+NyDcAaZ9Iwtukzez1OaHeCmGruaLhg9UE9Wgr4pPcIvv5uiw
+	 dIFU4pKtQYikq/zjd4jZhqdwQH73y8o8PB2Iwv4e6pw08hibJoHxG/W9t5i5ZVahkj
+	 dZ6r/bQd4gp9OtjoJH+9/yH+xOhOU700mNl2aycElgfDFiCdhzErMhj4jiW1C3Hzxx
+	 qgTOP+LBC9IQQ==
+Date: Mon, 22 Jul 2024 10:51:25 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: linux-kernel@vger.kernel.org,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vasily Gorbik <gor@linux.ibm.com>, Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
+	nvdimm@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH 06/17] x86/numa: simplify numa_distance allocation
+Message-ID: <Zp4PfVZKAg3djFOu@kernel.org>
+References: <20240716111346.3676969-1-rppt@kernel.org>
+ <20240716111346.3676969-7-rppt@kernel.org>
+ <20240719172849.000019a0@Huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="r4x3fdstgdwascyl"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c261c74f-6829-4888-9836-6f27ba87dc25@alliedtelesis.co.nz>
+In-Reply-To: <20240719172849.000019a0@Huawei.com>
 
+On Fri, Jul 19, 2024 at 05:28:49PM +0100, Jonathan Cameron wrote:
+> On Tue, 16 Jul 2024 14:13:35 +0300
+> Mike Rapoport <rppt@kernel.org> wrote:
+> 
+> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> > 
+> > Allocation of numa_distance uses memblock_phys_alloc_range() to limit
+> > allocation to be below the last mapped page.
+> > 
+> > But NUMA initializaition runs after the direct map is populated and
+> 
+> initialization (one too many 'i's)
 
---r4x3fdstgdwascyl
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks.
+ 
+> > there is also code in setup_arch() that adjusts memblock limit to
+> > reflect how much memory is already mapped in the direct map.
+> > 
+> > Simplify the allocation of numa_distance and use plain memblock_alloc().
+> > This makes the code clearer and ensures that when numa_distance is not
+> > allocated it is always NULL.
+> Doesn't this break the comment in numa_set_distance() kernel-doc?
+> "
+>  * If such table cannot be allocated, a warning is printed and further
+>  * calls are ignored until the distance table is reset with
+>  * numa_reset_distance().
+> "
+> 
+> Superficially that looks to be to avoid repeatedly hitting the
+> singleton bit at the top of numa_set_distance() as SRAT or similar
+> parsing occurs.
 
-On Mon, Jul 22, 2024 at 04:09:46PM +1200, Chris Packham wrote:
->=20
-> On 22/07/24 15:53, Guenter Roeck wrote:
-> > On 7/21/24 17:58, Chris Packham wrote:
-> > > By default the PWM duty cycle in hardware is 100%. On some systems th=
-is
-> > > can cause unwanted fan noise. Add the ability to specify the fan
-> > > connections and initial state of the PWMs via device properties.
-> > >=20
-> > > Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> > > ---
-> > >=20
-> > > Notes:
-> > > =A0=A0=A0=A0 Changes in v6:
-> > > =A0=A0=A0=A0 - Use do_div() instead of plain /
-> > > =A0=A0=A0=A0 - Use a helper function to avoid repetition between the =
-of and
-> > > non-of
-> > > =A0=A0=A0=A0=A0=A0 code paths.
-> > > =A0=A0=A0=A0 Changes in v5:
-> > > =A0=A0=A0=A0 - Deal with PWM frequency and duty cycle being specified=
- in
-> > > nanoseconds
-> > > =A0=A0=A0=A0 Changes in v4:
-> > > =A0=A0=A0=A0 - Support DT and ACPI fwnodes
-> > > =A0=A0=A0=A0 - Put PWM into manual mode
-> > > =A0=A0=A0=A0 Changes in v3:
-> > > =A0=A0=A0=A0 - Use the pwm provider/consumer bindings
-> > > =A0=A0=A0=A0 Changes in v2:
-> > > =A0=A0=A0=A0 - Use correct device property string for frequency
-> > > =A0=A0=A0=A0 - Allow -EINVAL and only warn on error
-> > > =A0=A0=A0=A0 - Use a frequency of 0 to indicate that the hardware sho=
-uld be
-> > > left as-is
-> > >=20
-> > > =A0 drivers/hwmon/adt7475.c | 130 +++++++++++++++++++++++++++++++++++=
-+++++
-> > > =A0 1 file changed, 130 insertions(+)
-> > >=20
-> > > diff --git a/drivers/hwmon/adt7475.c b/drivers/hwmon/adt7475.c
-> > > index 4224ffb30483..fc5605d34f36 100644
-> > > --- a/drivers/hwmon/adt7475.c
-> > > +++ b/drivers/hwmon/adt7475.c
-> > > @@ -21,6 +21,8 @@
-> > > =A0 #include <linux/of.h>
-> > > =A0 #include <linux/util_macros.h>
-> > > =A0 +#include <dt-bindings/pwm/pwm.h>
-> > > +
-> > > =A0 /* Indexes for the sysfs hooks */
-> > > =A0 =A0 #define INPUT=A0=A0=A0=A0=A0=A0=A0 0
-> > > @@ -1662,6 +1664,130 @@ static int adt7475_set_pwm_polarity(struct
-> > > i2c_client *client)
-> > > =A0=A0=A0=A0=A0 return 0;
-> > > =A0 }
-> > > =A0 +struct adt7475_pwm_config {
-> > > +=A0=A0=A0 int index;
-> > > +=A0=A0=A0 int freq;
-> > > +=A0=A0=A0 int flags;
-> > > +=A0=A0=A0 int duty;
-> > > +};
-> > > +
-> > > +static int _adt7475_pwm_properties_parse_args(u32 args[4], struct
-> > > adt7475_pwm_config *cfg)
-> > > +{
-> > > +=A0=A0=A0 unsigned long freq_hz;
-> > > +=A0=A0=A0 unsigned long duty;
-> > > +
-> > > +=A0=A0=A0 if (args[1] =3D=3D 0)
-> > > +=A0=A0=A0=A0=A0=A0=A0 return -EINVAL;
-> > > +
-> > > +=A0=A0=A0 freq_hz =3D 1000000000UL;
-> > > +=A0=A0=A0 do_div(freq_hz, args[1]);
-> > > +=A0=A0=A0 duty =3D 255 * args[3];
-> > > +=A0=A0=A0 do_div(duty, args[1]);
-> > > +
-> >=20
-> > Gues I am a bit at loss here, just as 0-day. Why use do_div ? It is only
-> > needed
-> > for 64-bit divide operations.
->=20
-> Mainly because of Uwe's comment on v5. I think I've avoided the original =
-u64
-> issue now that I'm converting fwnode_reference_args::args to a u32 array.
+I believe it's there to avoid allocation of numa_distance in the middle of
+distance parsing (SLIT or DT numa-distance-map).
 
-My comment was only about the build bot finding a division where the gcc
-stub was missing with is an indication that do_div should be used.=20
+If the allocation fails for the first element in the table, the
+numa_distance and numa_distance_cnt remain zero and node_distance() falls
+back to
 
-Usually for PWMs perdiod and duty_cycle are u64, but here it's only
-about values from the dtb, so they are u32 and a plain / should be fine.
+	return from == to ? LOCAL_DISTANCE : REMOTE_DISTANCE;
 
-> can probably get away with plain division, although 255 * args[3] / args[=
-1]
-> might overflow in theory but shouldn't in practice.
+It's different from arch_numa that always tries to allocate MAX_NUMNODES *
+MAX_NUMNODES for numa_distance and treats the allocation failure as a
+failure to initialize NUMA.
 
-I don't like possible overflows, but I don't care enough for hwmon
-drivers to object. Still a check for args[3] <=3D 0x1010101 would be easy
-enough.
+I like the general approach x86 uses more, i.e. in case distance parsing
+fails in some way NUMA is still initialized with probably suboptimal
+distances between nodes.
 
-Best regards
-Uwe
+I'm going to restore that "singleton" behavior for now and will look into
+making this all less cumbersome later.
+ 
+> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> > ---
+> >  arch/x86/mm/numa.c | 12 +++---------
+> >  1 file changed, 3 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
+> > index 5e1dde26674b..ab2d4ecef786 100644
+> > --- a/arch/x86/mm/numa.c
+> > +++ b/arch/x86/mm/numa.c
+> > @@ -319,8 +319,7 @@ void __init numa_reset_distance(void)
+> >  {
+> >  	size_t size = numa_distance_cnt * numa_distance_cnt * sizeof(numa_distance[0]);
+> >  
+> > -	/* numa_distance could be 1LU marking allocation failure, test cnt */
+> > -	if (numa_distance_cnt)
+> > +	if (numa_distance)
+> >  		memblock_free(numa_distance, size);
+> >  	numa_distance_cnt = 0;
+> >  	numa_distance = NULL;	/* enable table creation */
+> > @@ -331,7 +330,6 @@ static int __init numa_alloc_distance(void)
+> >  	nodemask_t nodes_parsed;
+> >  	size_t size;
+> >  	int i, j, cnt = 0;
+> > -	u64 phys;
+> >  
+> >  	/* size the new table and allocate it */
+> >  	nodes_parsed = numa_nodes_parsed;
+> > @@ -342,16 +340,12 @@ static int __init numa_alloc_distance(void)
+> >  	cnt++;
+> >  	size = cnt * cnt * sizeof(numa_distance[0]);
+> >  
+> > -	phys = memblock_phys_alloc_range(size, PAGE_SIZE, 0,
+> > -					 PFN_PHYS(max_pfn_mapped));
+> > -	if (!phys) {
+> > +	numa_distance = memblock_alloc(size, PAGE_SIZE);
+> > +	if (!numa_distance) {
+> >  		pr_warn("Warning: can't allocate distance table!\n");
+> > -		/* don't retry until explicitly reset */
+> > -		numa_distance = (void *)1LU;
+> >  		return -ENOMEM;
+> >  	}
+> >  
+> > -	numa_distance = __va(phys);
+> >  	numa_distance_cnt = cnt;
+> >  
+> >  	/* fill with the default distances */
+> 
+> 
 
---r4x3fdstgdwascyl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaeD2YACgkQj4D7WH0S
-/k5n5AgAoiOFkhm/1XqNRpW8sFdlsQuirycWjHtM7CNcf9FXDizyShxG1sMeFYq4
-hgfzlOKpzvMGZlrORtwH2cgZpK9baBzm2Z0jjRETdkHg9cFKhXzAlFWClNEnekwC
-dHuQOeE/0a6CNVb2b2kIps+9AVHutvTqLf4BUxuUieWCmiMA33bJp/j11ieYvW80
-9b/vXu5p8zgBACGJt8Jaz0DgKAbTuF/xorEUP+w5CKGS401cjkTQvD0pzCYFk0U8
-HJ/tGE8GaT7xUkuWECmydZ3psWxTwkXJZ2AKtzUqstBREJiDRO9j9ywST8IBgZeD
-glPw1K3wbIWgsueafREfGF/LF6f6+w==
-=/pvZ
------END PGP SIGNATURE-----
-
---r4x3fdstgdwascyl--
+-- 
+Sincerely yours,
+Mike.
 
