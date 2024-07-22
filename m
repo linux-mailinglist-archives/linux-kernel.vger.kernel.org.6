@@ -1,119 +1,152 @@
-Return-Path: <linux-kernel+bounces-258597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B805938A4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:41:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDC42938A54
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D43D1C210EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:41:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B81CB20A9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5C31428F1;
-	Mon, 22 Jul 2024 07:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86A114F11C;
+	Mon, 22 Jul 2024 07:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="GC/XY2OC"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TMF+IQLT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4DC12B63
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0206B14D2B7;
+	Mon, 22 Jul 2024 07:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721634106; cv=none; b=Qagh5vFun8FkYbUOf91O6otK+T4cXbRNGbK+VIBwTjhVzbd1FuIjmA/VyVegmbqKosp/moY7OrZamp1kAoboj5+4K1otqKxjtHFrni/4COJ1vA4GdhtJ/2ulp7XdsHNWLzUVz6sn3KdMdI4HndV/c7nIo6ebGUKtad1hNwkEMCs=
+	t=1721634320; cv=none; b=NANsJnpK1dGUi9dSdmgNYQSly8C2LHfHn87HUQVjhdzCyIeQaJCElhtAYLNaT72ast62zpNjvXwaoGDMir2W/qWDp6zvmFAFPTv/LclxyfsprPItiNuyMzGzUPfWlsUrXQ+3eyOEitniVAgdPePIkuwav4C1rVWb1eXi8Pu/Bqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721634106; c=relaxed/simple;
-	bh=esKhJZYkK5yy370gyJUYX533J8F+lQBS2H7SLPRUTfg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OMWd83EgP4YOoth7y+3QcxUua10d0yQ18tbx6kyY90/7l33OZ+VLE908ZffTUJvTxx2KQArraJCoR9RuGzjHFmbKi/O1lUvvqM8CcYd+pgXNzl7YlZQJ1hH3+zHGvFhO3wW2uHdyznIk8s9dg29EoVEYJutsj188fq8MlbCu7dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=GC/XY2OC; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1721634097;
-	bh=esKhJZYkK5yy370gyJUYX533J8F+lQBS2H7SLPRUTfg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GC/XY2OCmQHDfL9Enw+oCVHxHf8Ul2hbiGs3TC1zU6CcQrsnDe4tqgiHmKauLkqGj
-	 SPqsecScm9mzx4FxiuYhScEZ2N+obgceGqYdJjoHBS4hM0X7EIhyyxgi9lwExpYJN8
-	 AjIxHNt4Rs5m5hdrHdMng2VtLTDkNEZkKMbDC8uA=
-Date: Mon, 22 Jul 2024 09:41:36 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Joel Granados <j.granados@samsung.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] sysctl: treewide: constify the ctl_table argument of
- proc_handlers
-Message-ID: <8a48b4d3-94ca-4a42-bf59-c340d7316603@t-8ch.de>
-References: <CGME20240619100941eucas1p25d522dca3b74c899434b97b0c0dc78a0@eucas1p2.samsung.com>
- <20240619-sysctl-const-handler-v2-1-e36d00707097@weissschuh.net>
- <20240715202319.mccb6jlsa6dkynap@joelS2.panther.com>
- <f7489470-b0da-406b-a8dd-0ae7aaeceec8@t-8ch.de>
- <20240716152705.juet6srejwq5o6je@joelS2.panther.com>
- <cdf0831f-f9af-4aa7-a3a0-970efeec1def@t-8ch.de>
- <20240717195748.fe5ttokbibcsw2ca@joelS2.panther.com>
+	s=arc-20240116; t=1721634320; c=relaxed/simple;
+	bh=+MaJBgjNtkARNpfQULTFjsybhHCcQiUPkH4lCQ3ICrc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V0s2JLnENX0ABfjQo0w5FZ6zLneMXfykO50sfNKf0uM9zoUJVUyJ0eYvhWdhShjqyszgOYFi3b4M1i/7rbXRXI7o2sYWRacT1ICjjgnUXfaSrBxgTcd9tBWSGtqraYNF1jFq8OUKQkoWL5fgQHDTCD3MUSmjiCEAf9ENVrx23/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TMF+IQLT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6301C116B1;
+	Mon, 22 Jul 2024 07:45:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721634319;
+	bh=+MaJBgjNtkARNpfQULTFjsybhHCcQiUPkH4lCQ3ICrc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TMF+IQLTfIOn1GM/iKUWiDlYdlwjQus76rNAFKeGl3C6ZgudWeVxFThu3ulTlkWOF
+	 K6Ad4YZzCvttCJTkzNwIGlTOuXaHYkNtOhllocd+qirET9kMz/fo1JKKgc3c8K0w5r
+	 hEcgkwH9eaYxOHc5yOHZccd4OHUpJAyZLxpR6qZHtgOpsL53UuLBKyEfyEwX+Lo9Cn
+	 TekuTvOebkI2EEHQCXKhPhPvnnBIMQOjrIVI67FlTaaW6Ha9BNm7/6O/iDZJIC8Gee
+	 G+8oxIkm7Mkj515FhXVY6+HYTcDOUSNop0BR5VslQMrOdFDiPQeMCpeLCroyj4XdvI
+	 6A7EcuziLw68Q==
+Message-ID: <bdb3a8fd-2f49-4b97-bedd-4d65ee2a1d79@kernel.org>
+Date: Mon, 22 Jul 2024 09:45:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240717195748.fe5ttokbibcsw2ca@joelS2.panther.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] ASoC: dt-bindings: midas-audio: Declare required
+ properties for GPIO jack det
+To: Artur Weber <aweber.kernel@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+References: <20240716-midas-audio-tab3-v1-0-a53ea075af5a@gmail.com>
+ <20240716-midas-audio-tab3-v1-1-a53ea075af5a@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240716-midas-audio-tab3-v1-1-a53ea075af5a@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Joel,
-
-On 2024-07-17 21:57:48+0000, Joel Granados wrote:
-> On Wed, Jul 17, 2024 at 05:26:44PM +0200, Thomas Weißschuh wrote:
-> > On 2024-07-16 17:27:05+0000, Joel Granados wrote:
-> > > On Mon, Jul 15, 2024 at 10:58:10PM +0200, Thomas Weißschuh wrote:
-> > > > On 2024-07-15 22:23:19+0000, Joel Granados wrote:
-> > > ...
-> > > > > The merge window is now open. I want to send this patch on the Wednesday
-> > > > > of next week (jul 24).
-> > 
-> > <snip>
-> > 
-> > > > > 2. Does it still apply cleanly against the latest master branch?
-> > > > 
-> > > > Not against mainline master, but against next-20240715.
-> > > > To apply cleanly (and compile) on mainline master it still requires the
-> > > > net/ and sysctl trees to be merged.
-> > > > Otherwise some modified functions are missing, leading to (trivial) merge
-> > > > conflicts or the preparation commits are missing, leading to compilation
-> > > > errors.
-> > > 
-> > > Understood. I have just sent Linus the changes for sysctl-next, so those
-> > > should land in master soon (baring any issues with the pull request).
-> > > 
-> > > These [1] and [2] are the two series in net-dev that are the deps for
-> > > the constification treewide patch. Once these two go into mainline, then
-> > > we are good to go. Right?
-> > 
-> > Right, but...
-> > 
-> > It turns out the preparation patch for mm/hugetlb.c [0] is also still
-> > missing. I missed it in all the errors triggered in net/.
-> > But as far as I can see this patch will be part of Andrew's PR for mm.
+On 16/07/2024 21:36, Artur Weber wrote:
+> GPIO jack detection requires an IIO channel and the detection threshold
+> to work. Explicitly declare the requirement in DT schema.
 > 
-> Thx for the heads up, I'll Add that one to my radar of things that need
-> to be in master before we send the PR to Linus. Will check these three
-> dependencies on Wednesday next week and send your V2 [3] if I see that
-> it applies cleanly.
-
-All dependency PRs (sysctl, net, mm) are now merged.
-My compilation tests all succeed now.
-
-> > <snip>
-> > 
-> > [0] https://lore.kernel.org/lkml/20240518-sysctl-const-handler-hugetlb-v1-1-47e34e2871b2@weissschuh.net/
-> > 
-> > > [1] net: constify ctl_table arguments of utility functions
-> > >     https://patchwork.kernel.org/project/netdevbpf/list/?series=856252&state=%2A&archive=both
-> > > [2] bpf: constify member bpf_sysctl_kern::table
-> > >     https://patchwork.kernel.org/project/netdevbpf/list/?series=854191&state=*
+> Fixes: 0a590ecc672a ("ASoC: dt-bindings: samsung,midas-audio: Add GPIO-based headset jack detection")
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> ---
+>  .../bindings/sound/samsung,midas-audio.yaml        | 29 +++++++++++++++++++---
+>  1 file changed, 26 insertions(+), 3 deletions(-)
 > 
-> [3] https://lore.kernel.org/20240619-sysctl-const-handler-v2-1-e36d00707097@weissschuh.net
+> diff --git a/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
+> index 69ddfd4afdcd..e7af3c09de38 100644
+> --- a/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
+> +++ b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
+> @@ -9,9 +9,6 @@ title: Samsung Midas audio complex with WM1811 codec
+>  maintainers:
+>    - Sylwester Nawrocki <s.nawrocki@samsung.com>
+>  
+> -allOf:
+> -  - $ref: sound-card-common.yaml#
+> -
+>  properties:
+>    compatible:
+>      const: samsung,midas-audio
+> @@ -102,6 +99,32 @@ required:
+>    - mic-bias-supply
+>    - submic-bias-supply
+>  
+> +allOf:
+> +  - $ref: sound-card-common.yaml#
+> +
+> +  - if:
+> +      oneOf:
+
+This won't work if you have both detect and key gpios. I think you want
+anyOf here.
+
+
+Best regards,
+Krzysztof
+
 
