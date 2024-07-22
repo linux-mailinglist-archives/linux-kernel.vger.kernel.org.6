@@ -1,177 +1,217 @@
-Return-Path: <linux-kernel+bounces-258588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F664938A26
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:37:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01A8D938A27
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8117B20CCA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:37:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24FEE1C20DB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3D014A4E2;
-	Mon, 22 Jul 2024 07:36:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD91514882E
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03A513CFB0;
+	Mon, 22 Jul 2024 07:37:13 +0000 (UTC)
+Received: from spam.asrmicro.com (asrmicro.com [210.13.118.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F198C125C0
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.13.118.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721633817; cv=none; b=mGGA8MSrxkBN1IMjE8tWHxXeusyWxwCg2VLtG5DsJiP/KR73qcomQLXTWFKLZKrkGZcKsMK1Mz+y8yeblYowzIVmd1M6yMBMgt6PQYMIh0GTHbmJd+9ZgaqgRYbQnGjttCDaHPiV/pMeO2sQKxa53U1uOvH5q0nre5DnuSPSxME=
+	t=1721633833; cv=none; b=jTal6dHPaHCDpxdaRrPivmPyupvpPldnnMX+BOpDaq5YneMnAROo6BEW+PaU8kn69CvA7ePULOQ/C709WAQhVduYWr5Fy8aYnqEFviIsu/11fjUl8iraYFlYihchXg6WdV7FbbNNAoKfoQQHWcy1JrumpwgV836++BC7fHMYRs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721633817; c=relaxed/simple;
-	bh=0ObnZ3Ifl2lPvy5gBjqpXbMsHbxMhXwD+sRFNAJkh/I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E4h4Ds7tUDyCX2/+7YQkaVW922HtCWr7a/zQ33S5bTHfMOc1dZwdkBXLqa8BgiAFG08SOnTwzKcb9MsfXfsgf5xqiVMjUBYWspgLTI1nVm15zcKbmjeGN/JH+2BWd5VLgUXlIoIDSh+aTZH132uGnggtKpW+s6bqKBLGhd8ApdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 64599FEC;
-	Mon, 22 Jul 2024 00:37:19 -0700 (PDT)
-Received: from [10.57.77.243] (unknown [10.57.77.243])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8ADB73F766;
-	Mon, 22 Jul 2024 00:36:52 -0700 (PDT)
-Message-ID: <2109a518-8c5e-41c8-8bd4-9c3499c29fd0@arm.com>
-Date: Mon, 22 Jul 2024 08:36:51 +0100
+	s=arc-20240116; t=1721633833; c=relaxed/simple;
+	bh=by1d1iiS2qk6RckhfKBT1E2JrL4dAdCgHa3L6NaPiZM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Hv3LDKe+eqO0+QcKYDwlydnlnpbryWtLtCwcSJL5g2SiRLltvjsAJx/29rxwqZiNHt9m0SAMajnW5o04JncLA/fFKSnysLRn4EWbJAmgpm7OqAhTfknWGFWJ04/x2ru9Jah5KGj74ougQdkExUuZSlvYnIKbZ9GgpxlASDq+VC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com; spf=pass smtp.mailfrom=asrmicro.com; arc=none smtp.client-ip=210.13.118.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asrmicro.com
+Received: from exch02.asrmicro.com (exch02.asrmicro.com [10.1.24.122])
+	by spam.asrmicro.com with ESMTPS id 46M7arNH096942
+	(version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=FAIL);
+	Mon, 22 Jul 2024 15:36:53 +0800 (GMT-8)
+	(envelope-from zhengyan@asrmicro.com)
+Received: from exch03.asrmicro.com (10.1.24.118) by exch02.asrmicro.com
+ (10.1.24.122) with Microsoft SMTP Server (TLS) id 15.0.847.32; Mon, 22 Jul
+ 2024 15:36:56 +0800
+Received: from exch03.asrmicro.com ([::1]) by exch03.asrmicro.com ([::1]) with
+ mapi id 15.00.0847.030; Mon, 22 Jul 2024 15:36:56 +0800
+From: =?gb2312?B?WWFuIFpoZW5no6jRz9X+o6k=?= <zhengyan@asrmicro.com>
+To: Nam Cao <namcao@linutronix.de>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "maz@kernel.org" <maz@kernel.org>,
+        "paul.walmsley@sifive.com"
+	<paul.walmsley@sifive.com>,
+        =?gb2312?B?WmhvdSBRaWFvKNbcx8gp?=
+	<qiaozhou@asrmicro.com>,
+        "samuel.holland@sifive.com"
+	<samuel.holland@sifive.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "Drew Barbier" <drew@sifive.com>
+Subject: =?gb2312?B?tPC4tDogW1BBVENIIHYyXSBpcnFjaGlwL3NpZml2ZS1wbGljOiBlbnN1cmUg?=
+ =?gb2312?Q?interrupt_is_enable_before_EOI?=
+Thread-Topic: [PATCH v2] irqchip/sifive-plic: ensure interrupt is enable
+ before EOI
+Thread-Index: AQHaxiqeTa4u+1J7Xk6+X8mCqXW5JLHrJCOAgBdizUA=
+Date: Mon, 22 Jul 2024 07:36:55 +0000
+Message-ID: <b91a0f1223a44e2f8f6849585fa15756@exch03.asrmicro.com>
+References: <69174a28eff44ad1b069887aa514971e@exch03.asrmicro.com>
+ <20240624113523.23-1-zhengyan@asrmicro.com>
+ <20240707182715.L_REw7VC@linutronix.de>
+In-Reply-To: <20240707182715.L_REw7VC@linutronix.de>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] mm: mTHP stats for pagecache folio allocations
-Content-Language: en-GB
-To: Baolin Wang <baolin.wang@linux.alibaba.com>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- Jonathan Corbet <corbet@lwn.net>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>,
- Lance Yang <ioworker0@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240711072929.3590000-1-ryan.roberts@arm.com>
- <20240711072929.3590000-3-ryan.roberts@arm.com>
- <9e0d84e5-2319-4425-9760-2c6bb23fc390@linux.alibaba.com>
- <29f0fc5a-c2b7-4925-9bdb-fd2abe5383ae@arm.com>
- <b8d1dc3c-ee05-450e-961e-b13dded06a78@linux.alibaba.com>
- <f21c97ea-426a-46e3-900a-42cc039acc6f@arm.com>
- <26e84b0f-68ed-4e98-925e-5799a2ae1164@linux.alibaba.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <26e84b0f-68ed-4e98-925e-5799a2ae1164@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:spam.asrmicro.com 46M7arNH096942
 
-On 22/07/2024 04:52, Baolin Wang wrote:
-> 
-> 
-> On 2024/7/14 17:05, Ryan Roberts wrote:
->> On 13/07/2024 13:54, Baolin Wang wrote:
->>>
->>>
->>> On 2024/7/13 19:00, Ryan Roberts wrote:
->>>> [...]
->>>>
->>>>>> +static int thpsize_create(int order, struct kobject *parent)
->>>>>>     {
->>>>>>         unsigned long size = (PAGE_SIZE << order) / SZ_1K;
->>>>>> +    struct thpsize_child *stats;
->>>>>>         struct thpsize *thpsize;
->>>>>>         int ret;
->>>>>>     +    /*
->>>>>> +     * Each child object (currently only "stats" directory) holds a
->>>>>> +     * reference to the top-level thpsize object, so we can drop our ref to
->>>>>> +     * the top-level once stats is setup. Then we just need to drop a
->>>>>> +     * reference on any children to clean everything up. We can't just use
->>>>>> +     * the attr group name for the stats subdirectory because there may be
->>>>>> +     * multiple attribute groups to populate inside stats and overlaying
->>>>>> +     * using the name property isn't supported in that way; each attr group
->>>>>> +     * name, if provided, must be unique in the parent directory.
->>>>>> +     */
->>>>>> +
->>>>>>         thpsize = kzalloc(sizeof(*thpsize), GFP_KERNEL);
->>>>>> -    if (!thpsize)
->>>>>> -        return ERR_PTR(-ENOMEM);
->>>>>> +    if (!thpsize) {
->>>>>> +        ret = -ENOMEM;
->>>>>> +        goto err;
->>>>>> +    }
->>>>>> +    thpsize->order = order;
->>>>>>           ret = kobject_init_and_add(&thpsize->kobj, &thpsize_ktype, parent,
->>>>>>                        "hugepages-%lukB", size);
->>>>>>         if (ret) {
->>>>>>             kfree(thpsize);
->>>>>> -        return ERR_PTR(ret);
->>>>>> +        goto err;
->>>>>>         }
->>>>>>     -    ret = sysfs_create_group(&thpsize->kobj, &thpsize_attr_group);
->>>>>> -    if (ret) {
->>>>>> +    stats = kzalloc(sizeof(*stats), GFP_KERNEL);
->>>>>> +    if (!stats) {
->>>>>>             kobject_put(&thpsize->kobj);
->>>>>> -        return ERR_PTR(ret);
->>>>>> +        ret = -ENOMEM;
->>>>>> +        goto err;
->>>>>>         }
->>>>>>     -    ret = sysfs_create_group(&thpsize->kobj, &stats_attr_group);
->>>>>> +    ret = kobject_init_and_add(&stats->kobj, &thpsize_child_ktype,
->>>>>> +                   &thpsize->kobj, "stats");
->>>>>> +    kobject_put(&thpsize->kobj);
->>>>>>         if (ret) {
->>>>>> -        kobject_put(&thpsize->kobj);
->>>>>> -        return ERR_PTR(ret);
->>>>>> +        kfree(stats);
->>>>>> +        goto err;
->>>>>>         }
->>>>>>     -    thpsize->order = order;
->>>>>> -    return thpsize;
->>>>>> +    if (BIT(order) & THP_ORDERS_ALL_ANON) {
->>>>>> +        ret = sysfs_create_group(&thpsize->kobj, &thpsize_attr_group);
->>>>>> +        if (ret)
->>>>>> +            goto err_put;
->>>>>> +
->>>>>> +        ret = sysfs_create_group(&stats->kobj, &stats_attr_group);
->>>>>> +        if (ret)
->>>>>> +            goto err_put;
->>>>>> +    }
->>>>>> +
->>>>>> +    if (BIT(order) & PAGECACHE_LARGE_ORDERS) {
->>>>>> +        ret = sysfs_create_group(&stats->kobj, &file_stats_attr_group);
->>>>>> +        if (ret)
->>>>>> +            goto err_put;
->>>>>> +    }
->>>>>> +
->>>>>> +    list_add(&stats->node, &thpsize_child_list);
->>>>>> +    return 0;
->>>>>> +err_put:
->>>>>
->>>>> IIUC, I think you should call 'sysfs_remove_group' to remove the group before
->>>>> putting the kobject.
->>>>
->>>> Are you sure about that? As I understood it, sysfs_create_group() was
->>>> conceptually modifying the state of the kobj, so when the kobj gets destroyed,
->>>> all its state is tidied up. __kobject_del() (called on the last kobject_put())
->>>> calls sysfs_remove_groups() and tidies up the sysfs state as far as I can see?
->>>
->>> IIUC, __kobject_del() only removes the ktype defaut groups by
->>> 'sysfs_remove_groups(kobj, ktype->default_groups)', but your created groups are
->>> not added into the ktype->default_groups. That means you should mannuly remove
->>> them, or am I miss something?
->>
->> That was also putting doubt in my mind. But the sample at
->> samples/kobject/kobject-example.c does not call sysfs_remove_group(). It just
->> calls sysfs_create_group() in example_init() and calls kobject_put() in
->> example_exit(). So I think that's the correct pattern.
->>
->> Looking at the code more closely, sysfs_create_group() just creates files for
->> each of the attributes in the group. __kobject_del() calls sysfs_remove_dir(),
->> who's comment states "we remove any files in the directory before we remove the
->> directory" so I'm pretty sure sysfs_remove_group() is not required.
-> 
-> Thanks for the explanation, and I think you are right after checking the code
-> again. Sorry for the noise.
-
-No problem, thanks for raising anyway; TBH, I wasn't completely sure when I
-wrote it initially. So good to have clear resolution.
-
+PiBPbiBNb24sIEp1biAyNCwgMjAyNCBhdCAxMTozNToyM0FNICswMDAwLCB6aGVuZ3lhbiB3cm90
+ZToNCj4gPiBSSVNDLVYgUExJQyBjYW5ub3QgImVuZC1vZi1pbnRlcnJ1cHQiIChFT0kpIGRpc2Fi
+bGVkIGludGVycnVwdHMsIGFzDQo+ID4gZXhwbGFpbmVkIGluIHRoZSBkZXNjcmlwdGlvbiBvZiBJ
+bnRlcnJ1cHQgQ29tcGxldGlvbiBpbiB0aGUgUExJQyBzcGVjOg0KPiA+ICJUaGUgUExJQyBzaWdu
+YWxzIGl0IGhhcyBjb21wbGV0ZWQgZXhlY3V0aW5nIGFuIGludGVycnVwdCBoYW5kbGVyIGJ5DQo+
+ID4gd3JpdGluZyB0aGUgaW50ZXJydXB0IElEIGl0IHJlY2VpdmVkIGZyb20gdGhlIGNsYWltIHRv
+IHRoZQ0KPiA+IGNsYWltL2NvbXBsZXRlICByZWdpc3Rlci4gVGhlIFBMSUMgZG9lcyBub3QgY2hl
+Y2sgd2hldGhlciB0aGUNCj4gPiBjb21wbGV0aW9uIElEIGlzIHRoZSBzYW1lICBhcyB0aGUgbGFz
+dCBjbGFpbSBJRCBmb3IgdGhhdCB0YXJnZXQuIElmDQo+ID4gdGhlIGNvbXBsZXRpb24gSUQgZG9l
+cyBub3QgbWF0Y2ggIGFuIGludGVycnVwdCBzb3VyY2UgdGhhdCAqaXMNCj4gPiBjdXJyZW50bHkg
+ZW5hYmxlZCogZm9yIHRoZSB0YXJnZXQsIHRoZSAgY29tcGxldGlvbiBpcyBzaWxlbnRseSBpZ25v
+cmVkLiINCj4gPg0KPiA+ICBDb21taXQgOWM5MjAwNmI4OTZjICgiaXJxY2hpcC9zaWZpdmUtcGxp
+YzogRW5hYmxlIGludGVycnVwdCBpZiBuZWVkZWQNCj4gPiBiZWZvcmUgRU9JIikgIGVuc3VyZWQg
+dGhhdCBFT0kgaXMgZW5hYmxlIHdoZW4gaXJxZCBJUlFEX0lSUV9ESVNBQkxFRA0KPiA+IGlzIHNl
+dCwgYmVmb3JlICBFT0kNCj4gPg0KPiA+ICBDb21taXQgNjllYTQ2MzAyMWJlICgiaXJxY2hpcC9z
+aWZpdmUtcGxpYzogRml4dXAgRU9JIGZhaWxlZCB3aGVuDQo+ID4gbWFza2VkIikgIGVuc3VyZWQg
+dGhhdCBFT0kgaXMgc3VjY2Vzc2Z1bCBieSBlbmFibGluZyBpbnRlcnJ1cHQgZmlyc3QsIGJlZm9y
+ZQ0KPiBFT0kuDQo+ID4NCj4gPiAgQ29tbWl0IGExNzA2YTFjNTA2MiAoImlycWNoaXAvc2lmaXZl
+LXBsaWM6IFNlcGFyYXRlIHRoZSBlbmFibGUgYW5kDQo+ID4gbWFzaw0KPiA+ICBvcGVyYXRpb25z
+IikgcmVtb3ZlZCB0aGUgaW50ZXJydXB0IGVuYWJsaW5nIGNvZGUgZnJvbSB0aGUgcHJldmlvdXMN
+Cj4gPiBjb21taXQsIGJlY2F1c2UgaXQgYXNzdW1lcyB0aGF0IGludGVycnVwdCBzaG91bGQgYWxy
+ZWFkeSBiZSBlbmFibGVkIGF0DQo+ID4gdGhlICBwb2ludCBvZiBFT0kuDQo+ID4NCj4gPiBIb3dl
+dmVyLCBoZXJlIHN0aWxsIG1pc3MgYSBjb3JuZXIgY2FzZSB0aGF0IGlmIFNNUCBpcyBlbmFibGVk
+LiBXaGVuDQo+ID4gc29tZW9uZSBuZWVkcyB0byBzZXQgYWZmaW5pdHkgZnJvbSBhIGNwdSB0byBh
+bm90aGVyIHRoZSBvcmlnaW5hbCBjcHUNCj4gPiB3aGVuIGhhbmRsZSB0aGUgRU9JIG1lYW53aGls
+ZSB0aGUgSUUgaXMgZGlzYWJsZWQgYnkgcGxpY19zZXRfYWZmaW5pdHkNCj4gPg0KPiA+IEZvciBl
+eGFtcGxlLCBicm9hZGNhc3QgdGljayBpcyB3b3JraW5nLA0KPiA+IGNwdTAgaXMgYWJvdXQgdG8g
+cmVzcG9uc2UsIGNwdTEgaXMgdGhlIG5leHQuDQo+ID4gMS4gY3B1MCByZXNwb25zZXMgdGhlIHRp
+bWVyIGlycSwgcmVhZCB0aGUgY2xhaW0gUkVHLCBkbyB0aW1lciBpc3IgZXZlbnQuDQo+ID4gMi4g
+ZHVyaW5nIHRoZSB0aW1lciBpc3IgaXQgd2lsbCBzZXQgbmV4dCBldmVudA0KPiA+IHRpY2tfYnJv
+YWRjYXN0X3NldF9ldmVudCAtPiBpcnFfc2V0X2FmZmluaXR5LT54eHgtPiBwbGljX3NldF9hZmZp
+bml0eQ0KPiA+IC0+IHBsaWNfaXJxX2VuYWJsZSAzLiBpbiBwbGljX3NldF9hZmZpbml0eSBkaXNh
+YmxlIGNwdTAncyBJRSBhbmQNCj4gPiBlbmFibGUgY3B1MSdJRSA0LiBjcHUwIGRvIHRoZSB3cml0
+ZSBjbGFpbSB0byBmaW5pc2ggdGhpcyBpcnEsIHdoaWxlDQo+ID4gY3B1MCdzIElFIGlzIGRpc2Fi
+bGVkLCBsZWZ0IGFuIGFjdGl2ZSBzdGF0ZSBpbiBwbGljLg0KPiA+DQo+ID4gU28gdGhpcyBwYXRj
+aCBlbnN1cmUgdGhhdCB3b24ndCBoYXBwZW5lZA0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogemhl
+bmd5YW4gPHpoZW5neWFuQGFzcm1pY3JvLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9pcnFj
+aGlwL2lycS1zaWZpdmUtcGxpYy5jIHwgNCArKystDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAzIGlu
+c2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L2lycWNoaXAvaXJxLXNpZml2ZS1wbGljLmMNCj4gPiBiL2RyaXZlcnMvaXJxY2hpcC9pcnEtc2lm
+aXZlLXBsaWMuYw0KPiA+IGluZGV4IDllMjJmN2UzNzhmNS4uODE1Y2U4YWEyOGYxIDEwMDY0NA0K
+PiA+IC0tLSBhL2RyaXZlcnMvaXJxY2hpcC9pcnEtc2lmaXZlLXBsaWMuYw0KPiA+ICsrKyBiL2Ry
+aXZlcnMvaXJxY2hpcC9pcnEtc2lmaXZlLXBsaWMuYw0KPiA+IEBAIC0xNDksOCArMTQ5LDEwIEBA
+IHN0YXRpYyB2b2lkIHBsaWNfaXJxX21hc2soc3RydWN0IGlycV9kYXRhICpkKQ0KPiA+IHN0YXRp
+YyB2b2lkIHBsaWNfaXJxX2VvaShzdHJ1Y3QgaXJxX2RhdGEgKmQpICB7DQo+ID4gIAlzdHJ1Y3Qg
+cGxpY19oYW5kbGVyICpoYW5kbGVyID0gdGhpc19jcHVfcHRyKCZwbGljX2hhbmRsZXJzKTsNCj4g
+PiArCXZvaWQgX19pb21lbSAqcmVnID0gaGFuZGxlci0+ZW5hYmxlX2Jhc2UgKyAoZC0+aHdpcnEg
+LyAzMikgKg0KPiBzaXplb2YodTMyKTsNCj4gPiArCXUzMiBod2lycV9tYXNrID0gMSA8PCAoZC0+
+aHdpcnEgJSAzMik7DQo+ID4NCj4gPiAtCWlmICh1bmxpa2VseShpcnFkX2lycV9kaXNhYmxlZChk
+KSkpIHsNCj4gPiArCWlmICh1bmxpa2VseSgocmVhZGwocmVnKSAmIGh3aXJxX21hc2spID09IDAp
+KSB7DQo+ID4gIAkJcGxpY190b2dnbGUoaGFuZGxlciwgZC0+aHdpcnEsIDEpOw0KPiA+ICAJCXdy
+aXRlbChkLT5od2lycSwgaGFuZGxlci0+aGFydF9iYXNlICsgQ09OVEVYVF9DTEFJTSk7DQo+ID4g
+IAkJcGxpY190b2dnbGUoaGFuZGxlciwgZC0+aHdpcnEsIDApOw0KPiANCj4gSSB0aGluayB0aGlz
+IHBhdGNoIGlzIGZpbmUuDQo+IA0KPiBCdXQsIEkgZG9uJ3QgbGlrZSByZWFkaW5nIGhhcmR3YXJl
+IHJlZ2lzdGVycyBpbiB0aGUgaW50ZXJydXB0IGhvdCBwYXRoLiBJdCBtYXkNCj4gc2xvdyB0aGlu
+Z3MgZG93bi4gQWxzbyB0aGlzIHBhdGNoIGRvZXNuJ3QgYWxsb3cgbW92aW5nIHRoZSBpZiBjb25k
+aXRpb24gb3V0IG9mDQo+IHRoaXMgcGxpY19pcnFfZW9pKCkgZnVuY3Rpb24gaW50byB0aGUgZW5h
+YmxpbmcgZnVuY3Rpb24gKEkgaGF2ZSBiZWVuIHRoaW5raW5nDQo+IGFib3V0IGRvaW5nIHRoYXQg
+Zm9yIHNvbWUgdGltZSwgYnV0IHRvbyBsYXp5IHRvIGdldCB0byBpdCkuDQo+IA0KPiBJICptYXkq
+IGhhdmUgc29tZXRoaW5nIGJldHRlci4NCj4gDQo+IEZyb20gdGhlIHNwZWNpZmljYXRpb246DQo+
+ICJUaGUgUExJQyBzaWduYWxzIGl0IGhhcyBjb21wbGV0ZWQgZXhlY3V0aW5nIGFuIGludGVycnVw
+dCBoYW5kbGVyIGJ5IHdyaXRpbmcNCj4gdGhlIGludGVycnVwdCBJRCBpdCByZWNlaXZlZCBmcm9t
+IHRoZSBjbGFpbSB0byB0aGUgY2xhaW0vY29tcGxldGUgcmVnaXN0ZXIuDQo+IFRoZSBQTElDICoq
+ZG9lcyBub3QgY2hlY2sqKiB3aGV0aGVyIHRoZSBjb21wbGV0aW9uIElEIGlzIHRoZSBzYW1lIGFz
+IHRoZQ0KPiBsYXN0IGNsYWltIElEIGZvciB0aGF0IHRhcmdldC4gSWYgdGhlIGNvbXBsZXRpb24g
+SUQgZG9lcyBub3QgbWF0Y2ggYW4gaW50ZXJydXB0DQo+IHNvdXJjZSB0aGF0IGlzIGN1cnJlbnRs
+eSBlbmFibGVkIGZvciB0aGUgdGFyZ2V0LCB0aGUgY29tcGxldGlvbiBpcyBzaWxlbnRseQ0KPiBp
+Z25vcmVkLiINCj4gDQo+IE5vdGUgd2hhdCBJICJoaWdobGlnaGVkIjogdGhlIGlycSBudW1iZXIg
+d3JpdHRlbiBiYWNrIGRvZXMgbm90IGhhdmUgdG8NCj4gbWF0Y2ggdGhlIGlycSBudW1iZXIgbGFz
+dCBjbGFpbWVkIGZvciB0aGUgQ1BVLiBJZiBJIGludGVycHJldCB0aGlzIGNvcnJlY3RseSwNCj4g
+dGhpcyBtZWFucyAqYW55KiBjbGFpbS9jb21wbGV0ZSByZWdpc3RlciBjYW4gYmUgdXNlZCB0byBj
+b21wbGV0ZSB0aGUNCj4gaW50ZXJydXB0Lg0KPiANCj4gU28sIG15IGlkZWE6IHNpbmNlIGlycSBh
+ZmZpbml0eSBzZXR0aW5nIHN0aWxsIGxlYXZlcyBhdCBsZWFzdCAxIENQVSB3aXRoIHRoZQ0KPiBp
+bnRlcnJ1cHQgZW5hYmxlZDsgdGhlIGNsYWltL2NvbXBsZXRlIHJlZ2lzdGVyIGZvciB0aGF0IGVu
+YWJsZWQgQ1BVIGNhbiBiZQ0KPiB1c2VkIGZvciBjb21wbGV0aW5nIGludGVycnVwdCAoaW5zdGVh
+ZCBvZiB0aGUgb3JpZ2luYWwgb25lIHVzZWQgZm9yIGNsYWltaW5nKS4NCj4gVGhpcyB3b3VsZCBh
+dm9pZCBzb21lIGhhcmR3YXJlIHJlZ2lzdGVyIGFjY2VzcyBpbiB0aGUgaG90IHBhdGguDQo+IEFs
+c28gYWxsb3dzIGFub3RoZXIgb3B0aW1pemF0aW9uIG9mIG1vdmluZyB0aGUgaWYgY29uZGl0aW9u
+IG91dCBvZiB0aGUgRU9JDQo+IGZ1bmN0aW9uLg0KPiANCj4gU29tZXRoaW5nIGxpa2UgdGhlIHBh
+dGNoIGJlbG93LiBUbyBhcHBseSB0aGlzIG9uZSBjbGVhbmx5LCBhbm90aGVyIHBhdGNoDQo+IG11
+c3QgYmUgYXBwbGllZCBmaXJzdDoNCj4gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXgtcmlz
+Y3YvMjAyNDA3MDMwNzI2NTkuMTQyNzYxNi0xLQ0KPiBuYW1jYW9AbGludXRyb25peC5kZS8NCj4g
+DQo+IFdoYXQgSSBhbSBzdGlsbCBhIGJpdCB1bnN1cmUgYWJvdXQgaXMgd2hldGhlciBteSBpbnRl
+cnByZXRhdGlvbiBvZiB0aGUNCj4gc3BlY2lmaWNhdGlvbiBpcyBjb3JyZWN0LiBUaGUgcGF0Y2gg
+d29ya3MgZm9yIG15IFZpc2lvbmZpdmUgMiBib2FyZCwgc28gdGhlDQo+IHF1ZXN0aW9uIGlzIHdo
+ZXRoZXIgdGhpcyBwYXRjaCBpcyByZWx5aW5nIG9uICJ1bmRlZmluZWQgYmVoYXZpb3IiLCBvciB0
+aGlzIGlzDQo+IHJlYWxseSB3aGF0IHRoZSBzcGVjIG1lYW5zLiBEcmV3IEJhcmJpZXIgPGRyZXdA
+c2lmaXZlLmNvbT4gc2VlbXMgdG8gYmUNCj4gdGhlIG9uZSB3aG8gd3JvdGUgdGhhdC4gRG8geW91
+IG1pbmQgY29uZmlybWluZyBteSBpbnRlcnByZXRhdGlvbj8NCj4gDQo+IEJlc3QgcmVnYXJkcywN
+Cj4gTmFtDQo+IA0KSSBjb25maXJtIGl0LCBJdCB3b3JrcyBnb29kIG9uIG15IHBsYXRmb3JtIGFz
+IHdlbGwuIA0KTG9va3MgbGlrZSAiICphbnkqIGNsYWltL2NvbXBsZXRlIHJlZ2lzdGVyIGNhbiBi
+ZSB1c2VkIHRvIGNvbXBsZXRlIiBpcyBjb3JyZWN0Lg0KDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L2lycWNoaXAvaXJxLXNpZml2ZS1wbGljLmMgYi9kcml2ZXJzL2lycWNoaXAvaXJxLXNpZml2ZS1w
+bGljLmMNCj4gaW5kZXggZjMwYmRiOTRjZWViLi4xMTdmZjlmMWM5ODIgMTAwNjQ0DQo+IC0tLSBh
+L2RyaXZlcnMvaXJxY2hpcC9pcnEtc2lmaXZlLXBsaWMuYw0KPiArKysgYi9kcml2ZXJzL2lycWNo
+aXAvaXJxLXNpZml2ZS1wbGljLmMNCj4gQEAgLTY5LDYgKzY5LDcgQEAgc3RydWN0IHBsaWNfcHJp
+diB7DQo+ICAJdm9pZCBfX2lvbWVtICpyZWdzOw0KPiAgCXVuc2lnbmVkIGxvbmcgcGxpY19xdWly
+a3M7DQo+ICAJdW5zaWduZWQgaW50IG5yX2lycXM7DQo+ICsJdm9pZCBfX2lvbWVtICoqY29tcGxl
+dGU7DQo+ICAJdW5zaWduZWQgbG9uZyAqcHJpb19zYXZlOw0KPiAgfTsNCj4gDQo+IEBAIC0xNDks
+MTMgKzE1MCwxNCBAQCBzdGF0aWMgdm9pZCBwbGljX2lycV9tYXNrKHN0cnVjdCBpcnFfZGF0YSAq
+ZCkgIHN0YXRpYw0KPiB2b2lkIHBsaWNfaXJxX2VvaShzdHJ1Y3QgaXJxX2RhdGEgKmQpICB7DQo+
+ICAJc3RydWN0IHBsaWNfaGFuZGxlciAqaGFuZGxlciA9IHRoaXNfY3B1X3B0cigmcGxpY19oYW5k
+bGVycyk7DQo+ICsJc3RydWN0IHBsaWNfcHJpdiAqcHJpdiA9IGlycV9kYXRhX2dldF9pcnFfY2hp
+cF9kYXRhKGQpOw0KPiANCj4gIAlpZiAodW5saWtlbHkoaXJxZF9pcnFfZGlzYWJsZWQoZCkpKSB7
+DQo+ICAJCXBsaWNfdG9nZ2xlKGhhbmRsZXIsIGQtPmh3aXJxLCAxKTsNCj4gLQkJd3JpdGVsKGQt
+Pmh3aXJxLCBoYW5kbGVyLT5oYXJ0X2Jhc2UgKyBDT05URVhUX0NMQUlNKTsNCj4gKwkJd3JpdGVs
+KGQtPmh3aXJxLCBwcml2LT5jb21wbGV0ZVtkLT5od2lycV0pOw0KPiAgCQlwbGljX3RvZ2dsZSho
+YW5kbGVyLCBkLT5od2lycSwgMCk7DQo+ICAJfSBlbHNlIHsNCj4gLQkJd3JpdGVsKGQtPmh3aXJx
+LCBoYW5kbGVyLT5oYXJ0X2Jhc2UgKyBDT05URVhUX0NMQUlNKTsNCj4gKwkJd3JpdGVsKGQtPmh3
+aXJxLCBwcml2LT5jb21wbGV0ZVtkLT5od2lycV0pOw0KPiAgCX0NCj4gIH0NCj4gDQo+IEBAIC0x
+NjQsNiArMTY2LDcgQEAgc3RhdGljIGludCBwbGljX3NldF9hZmZpbml0eShzdHJ1Y3QgaXJxX2Rh
+dGEgKmQsDQo+ICAJCQkgICAgIGNvbnN0IHN0cnVjdCBjcHVtYXNrICptYXNrX3ZhbCwgYm9vbCBm
+b3JjZSkgIHsNCj4gIAlzdHJ1Y3QgcGxpY19wcml2ICpwcml2ID0gaXJxX2RhdGFfZ2V0X2lycV9j
+aGlwX2RhdGEoZCk7DQo+ICsJc3RydWN0IHBsaWNfaGFuZGxlciAqaGFuZGxlcjsNCj4gIAlzdHJ1
+Y3QgY3B1bWFzayBuZXdfbWFzazsNCj4gDQo+ICAJY3B1bWFza19hbmQoJm5ld19tYXNrLCBtYXNr
+X3ZhbCwgJnByaXYtPmxtYXNrKTsgQEAgLTE4MCw2DQo+ICsxODMsOSBAQCBzdGF0aWMgaW50IHBs
+aWNfc2V0X2FmZmluaXR5KHN0cnVjdCBpcnFfZGF0YSAqZCwNCj4gIAlpZiAoIWlycWRfaXJxX2Rp
+c2FibGVkKGQpKQ0KPiAgCQlwbGljX2lycV9lbmFibGUoZCk7DQo+IA0KPiArCWhhbmRsZXIgPSBw
+ZXJfY3B1X3B0cigmcGxpY19oYW5kbGVycywNCj4gY3B1bWFza19maXJzdCgmbmV3X21hc2spKTsN
+Cj4gKwlwcml2LT5jb21wbGV0ZVtkLT5od2lycV0gPSBoYW5kbGVyLT5oYXJ0X2Jhc2UgKyBDT05U
+RVhUX0NMQUlNOw0KPiArDQo+ICAJcmV0dXJuIElSUV9TRVRfTUFTS19PS19ET05FOw0KPiAgfQ0K
+PiAgI2VuZGlmDQo+IEBAIC01MTYsNiArNTIyLDEwIEBAIHN0YXRpYyBpbnQgcGxpY19wcm9iZShz
+dHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiAgCXByaXYtPnByaW9fc2F2ZSA9IGRldm1f
+Yml0bWFwX3phbGxvYyhkZXYsIG5yX2lycXMsIEdGUF9LRVJORUwpOw0KPiAgCWlmICghcHJpdi0+
+cHJpb19zYXZlKQ0KPiAgCQlyZXR1cm4gLUVOT01FTTsNCj4gKw0KPiArCXByaXYtPmNvbXBsZXRl
+ID0gZGV2bV9rY2FsbG9jKGRldiwgMSArIG5yX2lycXMsIHNpemVvZigqcHJpdi0NCj4gPmNvbXBs
+ZXRlKSwgR0ZQX0tFUk5FTCk7DQo+ICsJaWYgKCFwcml2LT5jb21wbGV0ZSkNCj4gKwkJcmV0dXJu
+IC1FTk9NRU07DQo+IA0KPiAgCWZvciAoaSA9IDA7IGkgPCBucl9jb250ZXh0czsgaSsrKSB7DQo+
+ICAJCWVycm9yID0gcGxpY19wYXJzZV9jb250ZXh0X3BhcmVudChwZGV2LCBpLCAmcGFyZW50X2h3
+aXJxLA0KPiAmY3B1KTsgQEAgLTU3Nyw2ICs1ODcsMTIgQEAgc3RhdGljIGludCBwbGljX3Byb2Jl
+KHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UNCj4gKnBkZXYpDQo+ICAJCQl3cml0ZWwoMSwgcHJpdi0+
+cmVncyArIFBSSU9SSVRZX0JBU0UgKw0KPiAgCQkJCSAgaHdpcnEgKiBQUklPUklUWV9QRVJfSUQp
+Ow0KPiAgCQl9DQo+ICsNCj4gKwkJaWYgKCFucl9oYW5kbGVycykgew0KPiArCQkJZm9yIChod2ly
+cSA9IDE7IGh3aXJxIDw9IG5yX2lycXM7IGh3aXJxKyspDQo+ICsJCQkJcHJpdi0+Y29tcGxldGVb
+aHdpcnFdID0gaGFuZGxlci0+aGFydF9iYXNlDQo+ICsgQ09OVEVYVF9DTEFJTTsNCj4gKwkJfQ0K
+PiArDQo+ICAJCW5yX2hhbmRsZXJzKys7DQo+ICAJfQ0KPiANCg==
 
