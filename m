@@ -1,467 +1,250 @@
-Return-Path: <linux-kernel+bounces-258993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D46D938FBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:14:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D74D938FBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:15:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82D541C21123
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:14:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A8721F217B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F23416DC07;
-	Mon, 22 Jul 2024 13:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136F016D9A1;
+	Mon, 22 Jul 2024 13:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iUU5iP9V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fchZxxOg";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="DhWZMfmu"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C41816D9D7;
-	Mon, 22 Jul 2024 13:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721654061; cv=none; b=GHlJLmrkDcE6XNaFND6/ZJNpMb+q/EPwCpKsiuZy5H633rurnAIfQj5w3lQdRAjOjQHRiopwX1UbhHGowsmzaTIwSR2rJgoqlpc4lwu4C4TNmVnrPLO0c1p4DUUzKciwvaxcpjfmJ019NZta2xNd4Fnu4p/PRqiuJhxRPDdjwwg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721654061; c=relaxed/simple;
-	bh=dqpLosddG7EtY/vs8NmCcOcC70XcK0ETm1ZsoNbsQ/8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tvPxdMq5UWh1i46iafMZgO4DMv1kRe51PwHaNpWqaPu1/3lVkI4PHpXrv5GLpS7w2DDGD1ky610Ml2QqtzybxKKjDPtPQDsAHBeeu6zirgstvZN8Cx89pXrGuJ0xlvffhq+imEERjpQYvrBh5oK4F0QJhe+kqZBLHu+wSPC7udk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iUU5iP9V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED39FC116B1;
-	Mon, 22 Jul 2024 13:14:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721654060;
-	bh=dqpLosddG7EtY/vs8NmCcOcC70XcK0ETm1ZsoNbsQ/8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iUU5iP9Vcu9HlwT9EQw2Ls3X1MjjYr6LKWiFmgTjjeNdAolKos2W1F/i+fcAk0MV0
-	 hRzn1MCS+qa6WrRzOKZfA0s2I4VJU0aiSPT6atwd19dMR3qoiBZKuzTsWzomLkDDoZ
-	 JnsylhFYRk1/YZ++WZsknchCEtkC9cdzdsGw1BnQQFnt/kgwbZElah1gp/6J9EYgXm
-	 VzCifQYCMZw7PXoSYpTw7JXdNBsqcTixFgxVG0uAJqRbkVkMGO9qKMPdKQIjG2uqJW
-	 vVfvDpamO+7dDkUbOXYXA06Ocmv0N863TMF4NILEsONboBH6Y37ErUFWwGObssxUWU
-	 b6WZXHDZjlNRQ==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: Christian Brauner <brauner@kernel.org>,
-	Edward Adam Davis <eadavis@qq.com>,
-	syzbot+34a0ee986f61f15da35d@syzkaller.appspotmail.com,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	viro@zeniv.linux.org.uk
-Subject: [PATCH 2/2] pidfs: add selftests for new namespace ioctls
-Date: Mon, 22 Jul 2024 15:13:55 +0200
-Message-ID: <20240722-work-pidfs-69dbea91edab@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <tencent_7FAE8DB725EE0DD69236DDABDDDE195E4F07@qq.com>
-References: <tencent_7FAE8DB725EE0DD69236DDABDDDE195E4F07@qq.com> <20240722-work-pidfs-e6a83030f63e@brauner>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA7116938C
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 13:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721654113; cv=fail; b=XcyA5jKN4Su1R3MBYUs9CoYuXUkjFRFbf/0GQss4T5m+MFx9vb6hsGPiGLdH3tGv0oj7iH/1WR96smfmT4pi3Fv4yt+H19IR3zina9f8SladaKnzoGBSB/4zbzLKSc1TAW4KrTrxbRzPfDXiEqxCvPWAA6cnyt7JssLgjtO3vuU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721654113; c=relaxed/simple;
+	bh=VzFMDkScIrunGd12VS1qo1nKP5vfMv15vA8JIDUydc0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=DOCXFUFN0dOb8UQmRghfraPF2jvOX/0H9HbrcBcEv5JXgeVRf6ADQiiY+c/gLWOPM74dWOg/IzX1Q2NRAZfqQBu2n1Zq3BdNYPUW7Cr/dLLJvkchGUEWr9gFupeLyTwL4U9njoTqXHSLc7FtJuD/CBQPFbl3JbIRCiXp/P42k6Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fchZxxOg; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=DhWZMfmu; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46MC1hJ4015775;
+	Mon, 22 Jul 2024 13:14:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=1bOC3lMi6pEsB+9
+	0osW+RfjUn+m3Rwvd0mYNe/+oO0Q=; b=fchZxxOgvYMi+fUi6bPbabWDDKjF4Z1
+	hw1iyepBM1Xu4ZY2ZIhJ+jI2GGa67Y7722Vci2u27s1m5JVvUehISZqkndW2gsZv
+	jXxx+qIiLZkr/6wCR9OZDn//sCbX2b/WeSDsQvcAAFuVbdp4q7k1f5ybBVUXyM/D
+	LAnHzvq0NMkzO6AzTfNFS60Rzv0cN9WGiY6UI2vCJ/L+7r6D3S97CNUaT4872OSZ
+	EiTpKtMTA+KbYtnPowaA+2CrLEZQT7a5HmwHZYhrV+tJgCivqxKyGk3wkAQ1ctBF
+	c8uIRfBJhLA6Sn2cTJ8836/6YgK28aU+nV+i8Vm1rRGcekcB0tLMw1A==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40hgkqsp7h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 22 Jul 2024 13:14:52 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46MCkc5e034532;
+	Mon, 22 Jul 2024 13:14:51 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2169.outbound.protection.outlook.com [104.47.56.169])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 40h27k015c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 22 Jul 2024 13:14:51 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gmX93yQFlN0t/ZunkCMbdXFIIm8XZDkFWkXs7GKCTQDKcaTBSxtSWMCUG8sRsqA014P2xiUUXlizcfK3NBS8l/9WqfgWs1ARMGVYLy08Rx7HyGILnfPAvKIS6dowlQ+tcMC1SrnqdyNW4BSIp+A4uUkMW2i8zxqmPR0mWyQULUzUpLNU2t0L0+O30QDUgb6dWJi2JoFm0NtJT48kFgJbOyDWfZQieRUmORJ4ZPpcDHs1H51VoHzteWod1zsvS9rMlZVo6vp6kMjXaO/3lUCxZFCmR1kFrTPCSbG1FyazUFBTeXHAmxIDuXJmygERbqr2Lv4dAJKgbjl0b4MQD808VQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1bOC3lMi6pEsB+90osW+RfjUn+m3Rwvd0mYNe/+oO0Q=;
+ b=VJS9rxYBZ/h2q7p/wyyzPEgKIPGzvlrIpss9VYw0Rz9/TEfRHB4pqTEBlemqDJjUQL7cV5yAopSZPOaaqjx61ZYnmtPUkwclLWbS/+tBpcjLoExiUcEPFpTxxCBJqLtGOTfTAwkwd3ftU9YI+NveJ77QblXeBzanQK/NOrsAVpgjA/Cz8ZOhDy82i9+ag7R0ZKggdcRTpxa1Tc+tBn2KihDeJ/mM7Ww6WuT7TjgvqQy42R5of79bKXc5gLqhN8qla1mdpvgKiPBRcjFfVpApC9q0SKY3Oi6VE53rYWpng2dMFJjLnSf/jQWzAvGaarusZWy+c8bv0Koxw3dEhQKoaw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1bOC3lMi6pEsB+90osW+RfjUn+m3Rwvd0mYNe/+oO0Q=;
+ b=DhWZMfmusAG8PVolujOgAKQnZS630J9VrF+TdErU+NYF+YqSJN/sP2FXkP0Q0fJMxCy9SYFaST+p+c47fx1JwC0o18/PpHHTPIVdOIOKymkyWf0WURYgh52IoMgAAH62AAhgFKbWLsA22B+QOewxPjF/AK5mstVG7CP+UN2YBqk=
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
+ by MW4PR10MB5678.namprd10.prod.outlook.com (2603:10b6:303:18c::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Mon, 22 Jul
+ 2024 13:14:49 +0000
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e%6]) with mapi id 15.20.7784.016; Mon, 22 Jul 2024
+ 13:14:45 +0000
+Date: Mon, 22 Jul 2024 14:14:41 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>, sidhartha.kumar@oracle.com,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Bert Karwatzki <spasswolf@web.de>, Jiri Olsa <olsajiri@gmail.com>,
+        linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>,
+        Jeff Xu <jeffxu@chromium.org>
+Subject: Re: [PATCH v5 10/21] mm/mmap: Support vma == NULL in
+ init_vma_munmap()
+Message-ID: <9013db95-8a67-4e32-bac0-ce04063f7e70@lucifer.local>
+References: <20240717200709.1552558-1-Liam.Howlett@oracle.com>
+ <20240717200709.1552558-11-Liam.Howlett@oracle.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240717200709.1552558-11-Liam.Howlett@oracle.com>
+X-ClientProxiedBy: LO4P123CA0435.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a9::8) To SJ0PR10MB5613.namprd10.prod.outlook.com
+ (2603:10b6:a03:3d0::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=14601; i=brauner@kernel.org; h=from:subject:message-id; bh=dqpLosddG7EtY/vs8NmCcOcC70XcK0ETm1ZsoNbsQ/8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTNi5bZoLajumfH6+Zbd8sUG91E5V5Yf2jpu2/cVPSrP MmTNeJJRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwESacxkZ1iruepQwa7/bKr25 /17qRlYfe/2iYTfb5fgbCwTSrhYuKmL4Zy99b31tHOvC35ybd895nuVbON2muSqB70t/ff9cVqE DzAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|MW4PR10MB5678:EE_
+X-MS-Office365-Filtering-Correlation-Id: 15b92124-85aa-436b-22ae-08dcaa504179
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?vmEmfMhIcy4/iUJZYrk4Omee+HmVQO2vKOd6y+4aAXZmb7vKylGdQKmbfI+P?=
+ =?us-ascii?Q?5zVSEo1T1lB/nhzXzaNtxJATMIKpme84E+nYMKSRPGb4KMK+lFsUO5W2pbWP?=
+ =?us-ascii?Q?BDPFmTob4e9V266NHfNUsXYV6v3stGrZp2G93+cMTw26ijgbCsdkqRLlWyvn?=
+ =?us-ascii?Q?4zLAW9cPS/JcZ4n6PUNj2lKcQ4e3fdHENixxyZgvUxx15EfhMYzC3RTRE+77?=
+ =?us-ascii?Q?rrxQRcP2i3uLgVv3xGlcBR/6ss6+mYl25A9io6P4V9rOmS/HHMw4zBQE/ZRR?=
+ =?us-ascii?Q?iegZjU2I3OrgeE3E5LzDdosafBOZPQ70KGJVPSiE2xLotzHJhQUbeXT3Ht1F?=
+ =?us-ascii?Q?zfsd/04KChLfDAT2PbQ/SKGF+pT1iyttvkmV0HO4F+eh6iy+P4GzqPuXWeKE?=
+ =?us-ascii?Q?O67qUSDP4699rurSJ3ZUwophCJMkXNPffJAJpd+JiXITqPK99kzBHxn2Ygh2?=
+ =?us-ascii?Q?DPxcPINuiIlWKHBhH3DfM0cd9ITDcmSIaf2poSJ8wqOvnxqEiwejAMPlvT1G?=
+ =?us-ascii?Q?q7TWePuH7VNDbZzc3Ks9gsqYcirkAA6uQclM7x3MuCC4pyjw4Bo2DqXu2oiZ?=
+ =?us-ascii?Q?e+f3JbGSbuO6WLNZaQcsKHhm7/gBmpVddafThy2S3115feIkwGvn+XYxXEiE?=
+ =?us-ascii?Q?vcdi5ygoZx7ZbGjnpqW7BVn0Kl17zMFJsteZNwg6eIC9NxOWKulp66ldMuld?=
+ =?us-ascii?Q?lpO8yTx/ojpfm7z3s+m1eeG/8hqo47n5cvo6ognoTXs8+DwIwLWOmu4MUiSb?=
+ =?us-ascii?Q?APPraiaovy6prl519sBLuQ+gbTCbnlLj1h1H/V3NCbm6TZRhtSFapLqxnkfa?=
+ =?us-ascii?Q?3hgtJ50oSafIhyEkQgiV9z7VMjWs7PTtN93gXpNYhaCaruPv4fbimMPAdnf5?=
+ =?us-ascii?Q?R0XitrXWaT47cbNojsKCmMYZteFsmYEIvOyGvR6dA4+nZ1U1Zv+XgS1W4ZSR?=
+ =?us-ascii?Q?Ipgit8Z/kZgSdPlb3bZgxijBhDJWTDznMqUwijdYJbYMIBPNoXQOepNagY3x?=
+ =?us-ascii?Q?SiUDrfWCL9T/eJX+nU4wrsIjjgcLgdmQNBOTaKrMWCzMjrqQCRFzJ58AOShT?=
+ =?us-ascii?Q?nhVeUqKaaVg1LA3DuaPJcxBIrORVbzlGBNSLSF2rFkAspXEdHEiyfWgYS3bk?=
+ =?us-ascii?Q?ir0QsIER9QfzhFvw95DjDFlRru2Xaa0QguBjuKw+Xcb9JZhscVWIrLxeSjtY?=
+ =?us-ascii?Q?2Rdk5dh4gbURli+m92DZcQG7saKHoPn459NEl3p8k94iylPeNDpEglJ/pdlC?=
+ =?us-ascii?Q?NQynjfDHZhXiXK20FRDJoN5LpnDe6kq6MOTAaAxrdBVhK/EwvNLKnrt3TdZ1?=
+ =?us-ascii?Q?EiRGRU1tofAU9w3zD3Z0mwXF/p+6bLzxhR/I3JHs7E/6EA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?6IC/U1hManRtwKUgYnttwVufW3JfmF8Hhd6Y7Xd73i303hZF+kOBgIVql4hk?=
+ =?us-ascii?Q?r3J5XCWwpAxHF0qK+wSXPZwd01S3yPxGxkdosXFhfq47nMHMPZWxtGPrXHLF?=
+ =?us-ascii?Q?NKfEa+opehO+zHcGx3Sdjhiw0YeucvmBsRxWN5hTcbdSlkLcilcKdwpB9H7M?=
+ =?us-ascii?Q?F4WBa7Z8EhbFRDxc/4ekXzchJZ0vFA0vcCRi9dGX5GlhOB0wo1P8GlD9FGuK?=
+ =?us-ascii?Q?JpORjYZtbirF0OYtDpGoOLjrLEF3naMFTifUGtSCyrh6y1uhjGJSMQBPWRsh?=
+ =?us-ascii?Q?tllVfUSaLsyZEkiensVVk8403Rvm80ecIVzz9+sRxKVUHXoov3MfhMKnll9m?=
+ =?us-ascii?Q?iQIzA9SvOezA3/FzbAq8y/TEyEfYg+R9ECRdMl4MAz9y3CS8EwjdrGJn6q5v?=
+ =?us-ascii?Q?O2+W9aY/SH/RePqoTqH1cu7h/y6D0jMY3JG/coz+9UCoI4fAeIomkjMlJNLb?=
+ =?us-ascii?Q?XapQe7X8JHtnkms3RQumKYUvDgc65LrRgvUqRCLHNMv0H4be4pNEZU853zQG?=
+ =?us-ascii?Q?nK5VUpXSJ7nqTfgKY1QAPIHwyS6yuUUOOnL/xyTvRgiWPDWWPtbTEkofTvrl?=
+ =?us-ascii?Q?0w9hStwyzVPf2nz0hGBfLht4FnU+F+22fQdHx5duqnGPlfvgd7tYjT7pRwxE?=
+ =?us-ascii?Q?7HafcfNNFR/zg2+2F7lZgBTm0YRdBOKVjoqBcCnhFuF0QjsemCZ086AJI7/2?=
+ =?us-ascii?Q?sycBEs5gvE9gdB6zfL8zUkkkxXuTaoEjZGjU0nCX4gaZOEfcq8EGhhPDVIgY?=
+ =?us-ascii?Q?lHhjZqBODp9+umT/RU9mfn/aSr0BRXftkVz9xfnrZ8xibyw6IrRoOYNsz/iM?=
+ =?us-ascii?Q?FYMFOohRqy4FpusQz0WnR6iJUtsXdAcyzCXYmVkArTEl2mXr/bwyrwRFkfbl?=
+ =?us-ascii?Q?FuRATKQSRMemZR8QXIaooDFyJq03ZYiUNPNioEN3NQiavdSMaEu+Q9/GJu4c?=
+ =?us-ascii?Q?jT6E8yj1WHrgc/rsVT+mK85WnnsLsWFZCXnvQ0UidgUy2TU+eGu+olm249UA?=
+ =?us-ascii?Q?pP5r3zgoQFOQdLscNrROiDlHeSD6evYJDGKDMnYGZHHTujZ82nyBHnxnOV7L?=
+ =?us-ascii?Q?BsWyX0pttFCjgxEnhV+X8XSDBtwWouAGgCKekqVcWvswXe1QfONB5H6vVzCG?=
+ =?us-ascii?Q?rR+tEci6ZPSZQHxdJOqCIEYLEgH+Odkz8bEnTKC8FWyxzX635DCXBOyyou0A?=
+ =?us-ascii?Q?4xC4YBXCQohKI1+5QO/Wdpb5DDXzjcA4KcMu8jlSC4Fnav58VCDZZ2A7fXtK?=
+ =?us-ascii?Q?09v31AXyKau+ko22YYHUjHoCH7lyUdWXx17q1IOSPZ1zOflVaDoVtqq6DNKO?=
+ =?us-ascii?Q?f1vMLeSv2ZS4FDpFHPM06YjqDRMdnBMSWiegl2tozgoMWI/dYkepEynpk1LK?=
+ =?us-ascii?Q?2GPG/kxsylx3q0SvRUvD3VvjI3xaDaAu/UEjo54OkxFl+dcvvVv5ZDWn3wYH?=
+ =?us-ascii?Q?a5VlZNiDIYaszeWE998FHYXpG6xpnpbGmbH5vj+sls1nezBqqF37WC8lrU4c?=
+ =?us-ascii?Q?/6S3Z8pmCFngKDjf2QxhztP0/XiAzeYuR7wud2Vrjx8AiM6Bape4oppNmYYu?=
+ =?us-ascii?Q?09BLn3HbVxCnC9OzBsKhQB5k+S2ZOt6z7yJYlUzVz5zvnp+rmjcAyDm4a05C?=
+ =?us-ascii?Q?Gqay0265oppCRel/dWR4++xAuzb20/xO1ylQC2SJxTQ952JYlRkTHipksxWN?=
+ =?us-ascii?Q?QtO90A=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	YwZ9qM43ftn9nzMzHsGU80mcyxFV8r8X0IYAebE+aTT7pDn7d5IrXlheCfSJ8m29AHrBFw35OowIuS6GYQ+n7RhNC1Ltz9Da7gmcVpBH8/QHN6J7QzpVkpy3YHEh/yxI9/awWmIf7jNS2mTkeQGEDR1FAuciocOvjUk7TPjbCrkJz/d75F106SkdL3Oo5UAO7xQ+YoiXvv7o1oxxticaLlkVRV+brkMlZzXIYmxRRfbt6n2Cw2RRH4Yle0QHL5yMrNKADQbEpkrND9/BJ4w704JStLywyfAeb4S3GzXtnfUBUjJ3D3wUnW7F/h17RI39zLABZYrkyD5TvrINZZDwR+DueaUDmOgdr6oIcdc96jOQgYjRsVB0FSzm4CuJOZbIuxWtoc7ZA+b2qvsTUZLAHmXDkKxnW9CYbox0yrY7x5w1UXeg3O3hSUZTE7VqXiFL5c6U7V02XovJ7koe/PDIgVdGxbqPECconnU4LLTrMBaMMiwLXaQ04l5lAF40ekG+Dpvd9H8dHsbyinFx4sgXIg8owdprzz2uuCJ0w/pwDGRAzNHS1S5chCqaZhP2dEkf/CLAT4kHJR8kDmT+VNtPZNBmjh5jy/K89QyLuOZ4RK0=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15b92124-85aa-436b-22ae-08dcaa504179
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2024 13:14:45.3930
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hVHp2DXH9DjrN271ooVK1sDyzfOk9ArRwhO7nm+VCmY8bxU3ViCNr6jG3j/mFNoL6IKeVOxMtrDTPXl3F/1eH3ehenNxwkfaFa8P/9wjwQQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR10MB5678
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-22_09,2024-07-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 phishscore=0
+ suspectscore=0 mlxlogscore=999 malwarescore=0 bulkscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2407220099
+X-Proofpoint-ORIG-GUID: Jcq5ff6y3LVnD5LZeEIye6FPr3X_Nl-K
+X-Proofpoint-GUID: Jcq5ff6y3LVnD5LZeEIye6FPr3X_Nl-K
 
-Add selftests to verify that deriving namespace file descriptors from
-pidfd file descriptors works correctly.
+On Wed, Jul 17, 2024 at 04:06:58PM GMT, Liam R. Howlett wrote:
+> From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+>
+> Adding support for a NULL vma means the init_vma_munmap() can be
+> initialized for a less error-prone process when calling
+> vms_complete_munmap_vmas() later on.
+>
+> Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+> ---
+>  mm/mmap.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+>
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index a1544a68558e..722bcced0499 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -517,9 +517,14 @@ static inline void init_vma_munmap(struct vma_munmap_struct *vms,
+>  {
+>  	vms->vmi = vmi;
+>  	vms->vma = vma;
+> -	vms->mm = vma->vm_mm;
+> -	vms->start = start;
+> -	vms->end = end;
+> +	if (vma) {
+> +		vms->mm = vma->vm_mm;
+> +		vms->start = start;
+> +		vms->end = end;
+> +	} else {
+> +		vms->mm = NULL;
+> +		vms->start = vms->end = 0;
+> +	}
+>  	vms->unlock = unlock;
+>  	vms->uf = uf;
+>  	vms->vma_count = 0;
+> @@ -2950,11 +2955,11 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+>
+>  	/* Find the first overlapping VMA */
+>  	vma = vma_find(&vmi, end);
+> +	init_vma_munmap(&vms, &vmi, vma, addr, end, uf, /* unlock = */ false);
+>  	if (vma) {
+>  		mt_init_flags(&mt_detach, vmi.mas.tree->ma_flags & MT_FLAGS_LOCK_MASK);
+>  		mt_on_stack(mt_detach);
+>  		mas_init(&mas_detach, &mt_detach, /* addr = */ 0);
+> -		init_vma_munmap(&vms, &vmi, vma, addr, end, uf, /* unlock = */ false);
+>  		/* Prepare to unmap any existing mapping in the area */
+>  		if (vms_gather_munmap_vmas(&vms, &mas_detach))
+>  			return -ENOMEM;
+> --
+> 2.43.0
+>
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- .../selftests/pidfd/pidfd_setns_test.c        | 258 +++++++++++++++---
- 1 file changed, 227 insertions(+), 31 deletions(-)
+LGTM,
 
-diff --git a/tools/testing/selftests/pidfd/pidfd_setns_test.c b/tools/testing/selftests/pidfd/pidfd_setns_test.c
-index 47746b0c6acd..7c2a4349170a 100644
---- a/tools/testing/selftests/pidfd/pidfd_setns_test.c
-+++ b/tools/testing/selftests/pidfd/pidfd_setns_test.c
-@@ -16,11 +16,56 @@
- #include <unistd.h>
- #include <sys/socket.h>
- #include <sys/stat.h>
-+#include <linux/ioctl.h>
- 
- #include "pidfd.h"
- #include "../clone3/clone3_selftests.h"
- #include "../kselftest_harness.h"
- 
-+#ifndef PIDFS_IOCTL_MAGIC
-+#define PIDFS_IOCTL_MAGIC 0xFF
-+#endif
-+
-+#ifndef PIDFD_GET_CGROUP_NAMESPACE
-+#define PIDFD_GET_CGROUP_NAMESPACE            _IO(PIDFS_IOCTL_MAGIC, 1)
-+#endif
-+
-+#ifndef PIDFD_GET_IPC_NAMESPACE
-+#define PIDFD_GET_IPC_NAMESPACE               _IO(PIDFS_IOCTL_MAGIC, 2)
-+#endif
-+
-+#ifndef PIDFD_GET_MNT_NAMESPACE
-+#define PIDFD_GET_MNT_NAMESPACE               _IO(PIDFS_IOCTL_MAGIC, 3)
-+#endif
-+
-+#ifndef PIDFD_GET_NET_NAMESPACE
-+#define PIDFD_GET_NET_NAMESPACE               _IO(PIDFS_IOCTL_MAGIC, 4)
-+#endif
-+
-+#ifndef PIDFD_GET_PID_NAMESPACE
-+#define PIDFD_GET_PID_NAMESPACE               _IO(PIDFS_IOCTL_MAGIC, 5)
-+#endif
-+
-+#ifndef PIDFD_GET_PID_FOR_CHILDREN_NAMESPACE
-+#define PIDFD_GET_PID_FOR_CHILDREN_NAMESPACE  _IO(PIDFS_IOCTL_MAGIC, 6)
-+#endif
-+
-+#ifndef PIDFD_GET_TIME_NAMESPACE
-+#define PIDFD_GET_TIME_NAMESPACE              _IO(PIDFS_IOCTL_MAGIC, 7)
-+#endif
-+
-+#ifndef PIDFD_GET_TIME_FOR_CHILDREN_NAMESPACE
-+#define PIDFD_GET_TIME_FOR_CHILDREN_NAMESPACE _IO(PIDFS_IOCTL_MAGIC, 8)
-+#endif
-+
-+#ifndef PIDFD_GET_USER_NAMESPACE
-+#define PIDFD_GET_USER_NAMESPACE              _IO(PIDFS_IOCTL_MAGIC, 9)
-+#endif
-+
-+#ifndef PIDFD_GET_UTS_NAMESPACE
-+#define PIDFD_GET_UTS_NAMESPACE               _IO(PIDFS_IOCTL_MAGIC, 10)
-+#endif
-+
- enum {
- 	PIDFD_NS_USER,
- 	PIDFD_NS_MNT,
-@@ -31,22 +76,25 @@ enum {
- 	PIDFD_NS_CGROUP,
- 	PIDFD_NS_PIDCLD,
- 	PIDFD_NS_TIME,
-+	PIDFD_NS_TIMECLD,
- 	PIDFD_NS_MAX
- };
- 
- const struct ns_info {
- 	const char *name;
- 	int flag;
-+	unsigned int pidfd_ioctl;
- } ns_info[] = {
--	[PIDFD_NS_USER]   = { "user",             CLONE_NEWUSER,   },
--	[PIDFD_NS_MNT]    = { "mnt",              CLONE_NEWNS,     },
--	[PIDFD_NS_PID]    = { "pid",              CLONE_NEWPID,    },
--	[PIDFD_NS_UTS]    = { "uts",              CLONE_NEWUTS,    },
--	[PIDFD_NS_IPC]    = { "ipc",              CLONE_NEWIPC,    },
--	[PIDFD_NS_NET]    = { "net",              CLONE_NEWNET,    },
--	[PIDFD_NS_CGROUP] = { "cgroup",           CLONE_NEWCGROUP, },
--	[PIDFD_NS_PIDCLD] = { "pid_for_children", 0,               },
--	[PIDFD_NS_TIME]	  = { "time",             CLONE_NEWTIME,   },
-+	[PIDFD_NS_USER]    = { "user",              CLONE_NEWUSER,   PIDFD_GET_USER_NAMESPACE,              },
-+	[PIDFD_NS_MNT]     = { "mnt",               CLONE_NEWNS,     PIDFD_GET_MNT_NAMESPACE,               },
-+	[PIDFD_NS_PID]     = { "pid",               CLONE_NEWPID,    PIDFD_GET_PID_NAMESPACE,               },
-+	[PIDFD_NS_UTS]     = { "uts",               CLONE_NEWUTS,    PIDFD_GET_UTS_NAMESPACE,               },
-+	[PIDFD_NS_IPC]     = { "ipc",               CLONE_NEWIPC,    PIDFD_GET_IPC_NAMESPACE,               },
-+	[PIDFD_NS_NET]     = { "net",               CLONE_NEWNET,    PIDFD_GET_NET_NAMESPACE,               },
-+	[PIDFD_NS_CGROUP]  = { "cgroup",            CLONE_NEWCGROUP, PIDFD_GET_CGROUP_NAMESPACE,            },
-+	[PIDFD_NS_TIME]	   = { "time",              CLONE_NEWTIME,   PIDFD_GET_TIME_NAMESPACE,              },
-+	[PIDFD_NS_PIDCLD]  = { "pid_for_children",  0,               PIDFD_GET_PID_FOR_CHILDREN_NAMESPACE,  },
-+	[PIDFD_NS_TIMECLD] = { "time_for_children", 0,               PIDFD_GET_TIME_FOR_CHILDREN_NAMESPACE, },
- };
- 
- FIXTURE(current_nsset)
-@@ -54,6 +102,7 @@ FIXTURE(current_nsset)
- 	pid_t pid;
- 	int pidfd;
- 	int nsfds[PIDFD_NS_MAX];
-+	int child_pidfd_derived_nsfds[PIDFD_NS_MAX];
- 
- 	pid_t child_pid_exited;
- 	int child_pidfd_exited;
-@@ -61,10 +110,12 @@ FIXTURE(current_nsset)
- 	pid_t child_pid1;
- 	int child_pidfd1;
- 	int child_nsfds1[PIDFD_NS_MAX];
-+	int child_pidfd_derived_nsfds1[PIDFD_NS_MAX];
- 
- 	pid_t child_pid2;
- 	int child_pidfd2;
- 	int child_nsfds2[PIDFD_NS_MAX];
-+	int child_pidfd_derived_nsfds2[PIDFD_NS_MAX];
- };
- 
- static int sys_waitid(int which, pid_t pid, int options)
-@@ -128,9 +179,12 @@ FIXTURE_SETUP(current_nsset)
- 	char c;
- 
- 	for (i = 0; i < PIDFD_NS_MAX; i++) {
--		self->nsfds[i]		= -EBADF;
--		self->child_nsfds1[i]	= -EBADF;
--		self->child_nsfds2[i]	= -EBADF;
-+		self->nsfds[i]				= -EBADF;
-+		self->child_nsfds1[i]			= -EBADF;
-+		self->child_nsfds2[i]			= -EBADF;
-+		self->child_pidfd_derived_nsfds[i]	= -EBADF;
-+		self->child_pidfd_derived_nsfds1[i]	= -EBADF;
-+		self->child_pidfd_derived_nsfds2[i]	= -EBADF;
- 	}
- 
- 	proc_fd = open("/proc/self/ns", O_DIRECTORY | O_CLOEXEC);
-@@ -139,6 +193,11 @@ FIXTURE_SETUP(current_nsset)
- 	}
- 
- 	self->pid = getpid();
-+	self->pidfd = sys_pidfd_open(self->pid, 0);
-+	EXPECT_GT(self->pidfd, 0) {
-+		TH_LOG("%m - Failed to open pidfd for process %d", self->pid);
-+	}
-+
- 	for (i = 0; i < PIDFD_NS_MAX; i++) {
- 		const struct ns_info *info = &ns_info[i];
- 		self->nsfds[i] = openat(proc_fd, info->name, O_RDONLY | O_CLOEXEC);
-@@ -148,20 +207,27 @@ FIXTURE_SETUP(current_nsset)
- 				       info->name, self->pid);
- 			}
- 		}
--	}
- 
--	self->pidfd = sys_pidfd_open(self->pid, 0);
--	EXPECT_GT(self->pidfd, 0) {
--		TH_LOG("%m - Failed to open pidfd for process %d", self->pid);
-+		self->child_pidfd_derived_nsfds[i] = ioctl(self->pidfd, info->pidfd_ioctl, 0);
-+		if (self->child_pidfd_derived_nsfds[i] < 0) {
-+			EXPECT_EQ(errno, EOPNOTSUPP) {
-+				TH_LOG("%m - Failed to derive %s namespace from pidfd of process %d",
-+				       info->name, self->pid);
-+			}
-+		}
- 	}
- 
- 	/* Create task that exits right away. */
--	self->child_pid_exited = create_child(&self->child_pidfd_exited,
--					      CLONE_NEWUSER | CLONE_NEWNET);
-+	self->child_pid_exited = create_child(&self->child_pidfd_exited, 0);
- 	EXPECT_GE(self->child_pid_exited, 0);
- 
--	if (self->child_pid_exited == 0)
-+	if (self->child_pid_exited == 0) {
-+		if (self->nsfds[PIDFD_NS_USER] >= 0 && unshare(CLONE_NEWUSER) < 0)
-+			_exit(EXIT_FAILURE);
-+		if (self->nsfds[PIDFD_NS_NET] >= 0 && unshare(CLONE_NEWNET) < 0)
-+			_exit(EXIT_FAILURE);
- 		_exit(EXIT_SUCCESS);
-+	}
- 
- 	ASSERT_EQ(sys_waitid(P_PID, self->child_pid_exited, WEXITED | WNOWAIT), 0);
- 
-@@ -174,18 +240,43 @@ FIXTURE_SETUP(current_nsset)
- 	EXPECT_EQ(ret, 0);
- 
- 	/* Create tasks that will be stopped. */
--	self->child_pid1 = create_child(&self->child_pidfd1,
--					CLONE_NEWUSER | CLONE_NEWNS |
--					CLONE_NEWCGROUP | CLONE_NEWIPC |
--					CLONE_NEWUTS | CLONE_NEWPID |
--					CLONE_NEWNET);
-+	if (self->nsfds[PIDFD_NS_USER] >= 0 && self->nsfds[PIDFD_NS_PID] >= 0)
-+		self->child_pid1 = create_child(&self->child_pidfd1, CLONE_NEWUSER | CLONE_NEWPID);
-+	else if (self->nsfds[PIDFD_NS_PID] >= 0)
-+		self->child_pid1 = create_child(&self->child_pidfd1, CLONE_NEWPID);
-+	else if (self->nsfds[PIDFD_NS_USER] >= 0)
-+		self->child_pid1 = create_child(&self->child_pidfd1, CLONE_NEWUSER);
-+	else
-+		self->child_pid1 = create_child(&self->child_pidfd1, 0);
- 	EXPECT_GE(self->child_pid1, 0);
- 
- 	if (self->child_pid1 == 0) {
- 		close(ipc_sockets[0]);
- 
--		if (!switch_timens())
-+		if (self->nsfds[PIDFD_NS_MNT] >= 0 && unshare(CLONE_NEWNS) < 0) {
-+			TH_LOG("%m - Failed to unshare mount namespace for process %d", self->pid);
- 			_exit(EXIT_FAILURE);
-+		}
-+		if (self->nsfds[PIDFD_NS_CGROUP] >= 0 && unshare(CLONE_NEWCGROUP) < 0) {
-+			TH_LOG("%m - Failed to unshare cgroup namespace for process %d", self->pid);
-+			_exit(EXIT_FAILURE);
-+		}
-+		if (self->nsfds[PIDFD_NS_IPC] >= 0 && unshare(CLONE_NEWIPC) < 0) {
-+			TH_LOG("%m - Failed to unshare ipc namespace for process %d", self->pid);
-+			_exit(EXIT_FAILURE);
-+		}
-+		if (self->nsfds[PIDFD_NS_UTS] >= 0 && unshare(CLONE_NEWUTS) < 0) {
-+			TH_LOG("%m - Failed to unshare uts namespace for process %d", self->pid);
-+			_exit(EXIT_FAILURE);
-+		}
-+		if (self->nsfds[PIDFD_NS_NET] >= 0 && unshare(CLONE_NEWNET) < 0) {
-+			TH_LOG("%m - Failed to unshare net namespace for process %d", self->pid);
-+			_exit(EXIT_FAILURE);
-+		}
-+		if (self->nsfds[PIDFD_NS_TIME] >= 0 && !switch_timens()) {
-+			TH_LOG("%m - Failed to unshare time namespace for process %d", self->pid);
-+			_exit(EXIT_FAILURE);
-+		}
- 
- 		if (write_nointr(ipc_sockets[1], "1", 1) < 0)
- 			_exit(EXIT_FAILURE);
-@@ -203,18 +294,43 @@ FIXTURE_SETUP(current_nsset)
- 	ret = socketpair(AF_LOCAL, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets);
- 	EXPECT_EQ(ret, 0);
- 
--	self->child_pid2 = create_child(&self->child_pidfd2,
--					CLONE_NEWUSER | CLONE_NEWNS |
--					CLONE_NEWCGROUP | CLONE_NEWIPC |
--					CLONE_NEWUTS | CLONE_NEWPID |
--					CLONE_NEWNET);
-+	if (self->nsfds[PIDFD_NS_USER] >= 0 && self->nsfds[PIDFD_NS_PID] >= 0)
-+		self->child_pid2 = create_child(&self->child_pidfd2, CLONE_NEWUSER | CLONE_NEWPID);
-+	else if (self->nsfds[PIDFD_NS_PID] >= 0)
-+		self->child_pid2 = create_child(&self->child_pidfd2, CLONE_NEWPID);
-+	else if (self->nsfds[PIDFD_NS_USER] >= 0)
-+		self->child_pid2 = create_child(&self->child_pidfd2, CLONE_NEWUSER);
-+	else
-+		self->child_pid2 = create_child(&self->child_pidfd2, 0);
- 	EXPECT_GE(self->child_pid2, 0);
- 
- 	if (self->child_pid2 == 0) {
- 		close(ipc_sockets[0]);
- 
--		if (!switch_timens())
-+		if (self->nsfds[PIDFD_NS_MNT] >= 0 && unshare(CLONE_NEWNS) < 0) {
-+			TH_LOG("%m - Failed to unshare mount namespace for process %d", self->pid);
-+			_exit(EXIT_FAILURE);
-+		}
-+		if (self->nsfds[PIDFD_NS_CGROUP] >= 0 && unshare(CLONE_NEWCGROUP) < 0) {
-+			TH_LOG("%m - Failed to unshare cgroup namespace for process %d", self->pid);
- 			_exit(EXIT_FAILURE);
-+		}
-+		if (self->nsfds[PIDFD_NS_IPC] >= 0 && unshare(CLONE_NEWIPC) < 0) {
-+			TH_LOG("%m - Failed to unshare ipc namespace for process %d", self->pid);
-+			_exit(EXIT_FAILURE);
-+		}
-+		if (self->nsfds[PIDFD_NS_UTS] >= 0 && unshare(CLONE_NEWUTS) < 0) {
-+			TH_LOG("%m - Failed to unshare uts namespace for process %d", self->pid);
-+			_exit(EXIT_FAILURE);
-+		}
-+		if (self->nsfds[PIDFD_NS_NET] >= 0 && unshare(CLONE_NEWNET) < 0) {
-+			TH_LOG("%m - Failed to unshare net namespace for process %d", self->pid);
-+			_exit(EXIT_FAILURE);
-+		}
-+		if (self->nsfds[PIDFD_NS_TIME] >= 0 && !switch_timens()) {
-+			TH_LOG("%m - Failed to unshare time namespace for process %d", self->pid);
-+			_exit(EXIT_FAILURE);
-+		}
- 
- 		if (write_nointr(ipc_sockets[1], "1", 1) < 0)
- 			_exit(EXIT_FAILURE);
-@@ -267,6 +383,22 @@ FIXTURE_SETUP(current_nsset)
- 				       info->name, self->child_pid1);
- 			}
- 		}
-+
-+		self->child_pidfd_derived_nsfds1[i] = ioctl(self->child_pidfd1, info->pidfd_ioctl, 0);
-+		if (self->child_pidfd_derived_nsfds1[i] < 0) {
-+			EXPECT_EQ(errno, EOPNOTSUPP) {
-+				TH_LOG("%m - Failed to derive %s namespace from pidfd of process %d",
-+				       info->name, self->child_pid1);
-+			}
-+		}
-+
-+		self->child_pidfd_derived_nsfds2[i] = ioctl(self->child_pidfd2, info->pidfd_ioctl, 0);
-+		if (self->child_pidfd_derived_nsfds2[i] < 0) {
-+			EXPECT_EQ(errno, EOPNOTSUPP) {
-+				TH_LOG("%m - Failed to derive %s namespace from pidfd of process %d",
-+				       info->name, self->child_pid2);
-+			}
-+		}
- 	}
- 
- 	close(proc_fd);
-@@ -288,6 +420,12 @@ FIXTURE_TEARDOWN(current_nsset)
- 			close(self->child_nsfds1[i]);
- 		if (self->child_nsfds2[i] >= 0)
- 			close(self->child_nsfds2[i]);
-+		if (self->child_pidfd_derived_nsfds[i] >= 0)
-+			close(self->child_pidfd_derived_nsfds[i]);
-+		if (self->child_pidfd_derived_nsfds1[i] >= 0)
-+			close(self->child_pidfd_derived_nsfds1[i]);
-+		if (self->child_pidfd_derived_nsfds2[i] >= 0)
-+			close(self->child_pidfd_derived_nsfds2[i]);
- 	}
- 
- 	if (self->child_pidfd1 >= 0)
-@@ -446,6 +584,42 @@ TEST_F(current_nsset, nsfd_incremental_setns)
- 	}
- }
- 
-+TEST_F(current_nsset, pidfd_derived_nsfd_incremental_setns)
-+{
-+	int i;
-+	pid_t pid;
-+
-+	pid = getpid();
-+	for (i = 0; i < PIDFD_NS_MAX; i++) {
-+		const struct ns_info *info = &ns_info[i];
-+		int nsfd;
-+
-+		if (self->child_pidfd_derived_nsfds1[i] < 0)
-+			continue;
-+
-+		if (info->flag) {
-+			ASSERT_EQ(setns(self->child_pidfd_derived_nsfds1[i], info->flag), 0) {
-+				TH_LOG("%m - Failed to setns to %s namespace of %d via nsfd %d",
-+				       info->name, self->child_pid1,
-+				       self->child_pidfd_derived_nsfds1[i]);
-+			}
-+		}
-+
-+		/* Verify that we have changed to the correct namespaces. */
-+		if (info->flag == CLONE_NEWPID)
-+			nsfd = self->child_pidfd_derived_nsfds[i];
-+		else
-+			nsfd = self->child_pidfd_derived_nsfds1[i];
-+		ASSERT_EQ(in_same_namespace(nsfd, pid, info->name), 1) {
-+			TH_LOG("setns failed to place us correctly into %s namespace of %d via nsfd %d",
-+			       info->name, self->child_pid1,
-+			       self->child_pidfd_derived_nsfds1[i]);
-+		}
-+		TH_LOG("Managed to correctly setns to %s namespace of %d via nsfd %d",
-+		       info->name, self->child_pid1, self->child_pidfd_derived_nsfds1[i]);
-+	}
-+}
-+
- TEST_F(current_nsset, pidfd_one_shot_setns)
- {
- 	unsigned flags = 0;
-@@ -542,6 +716,28 @@ TEST_F(current_nsset, no_foul_play)
- 		       info->name, self->child_pid2,
- 		       self->child_nsfds2[i]);
- 	}
-+
-+	/*
-+	 * Can't setns to a user namespace outside of our hierarchy since we
-+	 * don't have caps in there and didn't create it. That means that under
-+	 * no circumstances should we be able to setns to any of the other
-+	 * ones since they aren't owned by our user namespace.
-+	 */
-+	for (i = 0; i < PIDFD_NS_MAX; i++) {
-+		const struct ns_info *info = &ns_info[i];
-+
-+		if (self->child_pidfd_derived_nsfds2[i] < 0 || !info->flag)
-+			continue;
-+
-+		ASSERT_NE(setns(self->child_pidfd_derived_nsfds2[i], info->flag), 0) {
-+			TH_LOG("Managed to setns to %s namespace of %d via nsfd %d",
-+			       info->name, self->child_pid2,
-+			       self->child_pidfd_derived_nsfds2[i]);
-+		}
-+		TH_LOG("%m - Correctly failed to setns to %s namespace of %d via nsfd %d",
-+		       info->name, self->child_pid2,
-+		       self->child_pidfd_derived_nsfds2[i]);
-+	}
- }
- 
- TEST(setns_einval)
--- 
-2.43.0
-
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
