@@ -1,152 +1,141 @@
-Return-Path: <linux-kernel+bounces-258969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C7C938F47
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:47:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA9E938F53
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A2E01C21182
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:47:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 026DD1F21E7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25D616D31F;
-	Mon, 22 Jul 2024 12:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBAB16DC00;
+	Mon, 22 Jul 2024 12:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lbenSxit"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b="5bbPpUJw"
+Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5081116CD1B
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 12:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2330F16A399;
+	Mon, 22 Jul 2024 12:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.87.146.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721652406; cv=none; b=FQLntFEol2TweDFT7gY3tXVFMA0TYG6HeUa4KTqPlR/ZkZhd0E5mGGQEiqskyWFFKiOSlaxKZzvLJA0B+sJqQXFCfHakpoKa012OnGTUzjB0Sb1Rxq+XR8J+Q4OV1waZ6X0FIo2TYhwVrjklQDBOVyKaGIb6oG28s3g5N/Je0gY=
+	t=1721652452; cv=none; b=NxC5AKp1bEqfe/vSL1tO6k3cKLxbXiIF4WNe6sUqOHJEPykTb+M9XANPXxVA0jKOzhFHbMqH3U7pDrL6Lvrpm05Sqo7rMlWaidViEGIxsDiHdfvG9ZRqYLnMaUawExZ0EONNQSheZ5NNnEt42bnSBlhBRMKmhh9/vM1LICvfamI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721652406; c=relaxed/simple;
-	bh=YDEFunlU9thkcObyTwq65bMlk/9oqWEFq6tLdp+finQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MxYdQ6CfdtGtsUUVfyUBYBYYj++I/bVl/OIlT5PMc5+g6lY4cmxIR5QuTWRc/G/rl87LbZRQBVh9MC5TrTSUqg9yK0gAAGiGAHziXrX4sNhj88E3gREc2UtCgPHdWM7qdgox4gSsjuuoF+3Pg7dR2AF+EL41sLeQe7HGT2RFQ7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lbenSxit; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52efd530a4eso2555327e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 05:46:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721652402; x=1722257202; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=fUUAspRsviG+LuFsEgaORaM+7vdly2/qnP2s6lDpnhY=;
-        b=lbenSxitRVQE0GBT3p5d6nhN3JLlYIRTW8owtcojwqCylfsWYarmq0Uf5z8D7Q0hjt
-         s+BGfEvvxM1CNu9+Co605v5INfvJGCnbV+SXAb83QbK3q/4CORL6tb4hcF3WJLxGyKNi
-         +Ohtw9VgaiqJjcfkyyI3XzuwuIGud4uzcxIn3jAi4uh1FILmqLTRBN7DA3JMzwcTmdJj
-         zfRxZUdLV3+6IGiMrBkGJMHjldi4Ylv8kJA7vIvGGK7of1mFOYjhe9guSV4GfvHOGklI
-         HSHADe5oGuQYojNQTnpcXk9aZpNItwyl9fh1G2H+c7J780w/I78BXHeQrz3qTWVDouaY
-         nZsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721652402; x=1722257202;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fUUAspRsviG+LuFsEgaORaM+7vdly2/qnP2s6lDpnhY=;
-        b=W+kPQ4ZhAy0Rc7jWkEHX2rL4dLC+CwHMGNhfGd5wkKSKpeLFbahVrjUddLVhLCldYR
-         CJOmP+30XEOWZsk70Hm1CoZCtqO8zQV5mY0fskWTbx8yIEbnVN+3LLv02WDZdygJQmeY
-         kSBpmaaW+TIQGdjQ+a6WEv7Bh4JDOEAT1ZI/KIl2svP+Xqpjg1cuK8CWuTaT7jHWJH0R
-         gXzKGoqnHdHXiuT9CUJnkgcijZj4KlAQztK5j1qedryVEiU7ngOF4qbDNL65i1CEXB9K
-         5WUXJ9xIgmke1O7/mtjvJEFU5tL+vr65ymkedbXtKv2JNSrJUbmHr3h007iJzkhbjKmx
-         ku7g==
-X-Forwarded-Encrypted: i=1; AJvYcCU5SEjzFDBLdIc/37HP84ROaCWoY1d04WQC71uZxz0zQR5AJB7eW+FUN63BnigwhnxT43NsTSNGXz0wIit5svwidL1qBGmdEYjBf6dw
-X-Gm-Message-State: AOJu0Yz/WIgcXzNJKEcPrPXJecz0+z1AUCoeaPnPTEy+wMGfotfywl7m
-	DwvJShvL/D1CCqgRp4mx6kPS5uzA5Jj0c9qa1YCkSkwMUJH+dP2XcfxSf/kgmh8=
-X-Google-Smtp-Source: AGHT+IG3iR/7RXekZil9nrQHJGjiqJZmiVZR/YKkT7Xt75WedmMbkPBDEpzugmog0/Rjlz1FWCoK4A==
-X-Received: by 2002:a05:6512:ad1:b0:52f:c148:f5e4 with SMTP id 2adb3069b0e04-52fc148f777mr944358e87.21.1721652402086;
-        Mon, 22 Jul 2024 05:46:42 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c94edb4sm418888966b.196.2024.07.22.05.46.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jul 2024 05:46:41 -0700 (PDT)
-Message-ID: <c52b7bf6-734b-49fd-96e3-e4cde406f4e0@linaro.org>
-Date: Mon, 22 Jul 2024 14:46:39 +0200
+	s=arc-20240116; t=1721652452; c=relaxed/simple;
+	bh=TUZwbFWk1ZjONV2XNrh9on6bhdzhyU/JUB+yWkTPIc8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=It5eQVAN/KZYJEN5fRMamncnsTCXYZ6eEWEeB9oE4kbTp03hnYG8b1hSzPH0prLYKv7SxYcHXbiLkmuMNDmWeXm0bk+juBunkh/dcgleQYg8IjO2Dc3U8+4GrJbWWa/GCcLVbNbzAeR6g7E7BkeWGZzmQhPCcuIJtSnGAApGTgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru; spf=pass smtp.mailfrom=trvn.ru; dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b=5bbPpUJw; arc=none smtp.client-ip=194.87.146.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trvn.ru
+Received: from authenticated-user (box.trvn.ru [194.87.146.52])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by box.trvn.ru (Postfix) with ESMTPSA id 658C5401C4;
+	Mon, 22 Jul 2024 17:47:19 +0500 (+05)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
+	t=1721652440; bh=TUZwbFWk1ZjONV2XNrh9on6bhdzhyU/JUB+yWkTPIc8=;
+	h=From:Subject:Date:To:Cc:From;
+	b=5bbPpUJw/jXzWGj3b3DQkgl4e3kDKNGn7iKlHDy5FNlDU5NKX1GmCB4K29BWcCrux
+	 Y/rmkPvWqWZ0i9Oe0x0nvhfGfWj4+oKS8CEmQ7Nr4TfJsABc8+buV84thnvMguy5gR
+	 /WbQ7Ht3D+DNYLdLUFK82o/FPntz6v1NVqt5HlpnMcRKNikzNiTKSXYAz3rvz2Hf+w
+	 N2lA3nZzcQdkNiU2DOkbwUp+HSdE//xxZjOtHG9Wq5/98v4MEb8d2nrBiYsaBTb/CF
+	 goG+T6Rh5TDcsLCXrsArhuPgcIH0MOG8PJmg//0UOnj+xHlq5BMFP6Uc1J+qn+5hfG
+	 VucjJ60MAJ/Dg==
+From: Nikita Travkin <nikita@trvn.ru>
+Subject: [PATCH v2 0/3] Introduce msm8916/39 based Lenovo devices
+Date: Mon, 22 Jul 2024 17:47:11 +0500
+Message-Id: <20240722-msm89xx-wingtech-init-v2-0-0c981bbc5238@trvn.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] HID for 6.11
-To: Benjamin Tissoires <bentiss@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jikos@kernel.org>, linux-kernel@vger.kernel.org,
- Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
- Krzysztof Kozlowski <krzk@kernel.org>
-References: <uirri5bsktq5pk2tu4gs2u22qimjcn7hi66ek6gbj65qyczfex@yjy4brkoixfv>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
- BB/OmIWU6X+LZW6P88ZmHe+KeyABLMP5s1tJNK1j4ntT7mECcWZDzafPWF4F6m4WJOG27kTJ
- HGWdmtO+RvadOVi6CoUDqALsmfS3MUG5Pj2Ne9+0jRg4hEnB92AyF9rW2G3qisFcwPgvatt7
- TXD5E38mLyOPOUyXNj9XpDbt1hNwKQfiidmPh5e7VNAWRnW1iCMMoKqzM1Anzq7e5Afyeifz
- zRcQPLaqrPjnKqZGL2BKQSZDh6NkI5ZLRhhHQf61fkWcUpTp1oDC6jWVfT7hwRVIQLrrNj9G
- MpPzrlN4YuAqKeIer1FMt8cq64ifgTzxHzXsMcUdclzq2LTk2RXaPl6Jg/IXWqUClJHbamSk
- t1bfif3SnmhA6TiNvEpDKPiT3IDs42THU6ygslrBxyROQPWLI9IL1y8S6RtEh8H+NZQWZNzm
- UQ3imZirlPjxZtvz1BtnnBWS06e7x/UEAguj7VHCuymVgpl2Za17d1jj81YN5Rp5L9GXxkV1
- aUEwONM3eCI3qcYm5JNc5X+JthZOWsbIPSC1Rhxz3JmWIwP1udr5E3oNRe9u2LIEq+wH/toH
- kpPDhTeMkvt4KfE5m5ercid9+ZXAqoaYLUL4HCEw+HW0DXcKDwARAQABzShLb25yYWQgRHli
- Y2lvIDxrb25yYWQuZHliY2lvQGxpbmFyby5vcmc+wsGOBBMBCAA4FiEEU24if9oCL2zdAAQV
- R4cBcg5dfFgFAmQ5bqwCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQR4cBcg5dfFjO
- BQ//YQV6fkbqQCceYebGg6TiisWCy8LG77zV7DB0VMIWJv7Km7Sz0QQrHQVzhEr3trNenZrf
- yy+o2tQOF2biICzbLM8oyQPY8B///KJTWI2khoB8IJSJq3kNG68NjPg2vkP6CMltC/X3ohAo
- xL2UgwN5vj74QnlNneOjc0vGbtA7zURNhTz5P/YuTudCqcAbxJkbqZM4WymjQhe0XgwHLkiH
- 5LHSZ31MRKp/+4Kqs4DTXMctc7vFhtUdmatAExDKw8oEz5NbskKbW+qHjW1XUcUIrxRr667V
- GWH6MkVceT9ZBrtLoSzMLYaQXvi3sSAup0qiJiBYszc/VOu3RbIpNLRcXN3KYuxdQAptacTE
- mA+5+4Y4DfC3rUSun+hWLDeac9z9jjHm5rE998OqZnOU9aztbd6zQG5VL6EKgsVXAZD4D3RP
- x1NaAjdA3MD06eyvbOWiA5NSzIcC8UIQvgx09xm7dThCuQYJR4Yxjd+9JPJHI6apzNZpDGvQ
- BBZzvwxV6L1CojUEpnilmMG1ZOTstktWpNzw3G2Gis0XihDUef0MWVsQYJAl0wfiv/0By+XK
- mm2zRR+l/dnzxnlbgJ5pO0imC2w0TVxLkAp0eo0LHw619finad2u6UPQAkZ4oj++iIGrJkt5
- Lkn2XgB+IW8ESflz6nDY3b5KQRF8Z6XLP0+IEdLOOARkOW7yEgorBgEEAZdVAQUBAQdAwmUx
- xrbSCx2ksDxz7rFFGX1KmTkdRtcgC6F3NfuNYkYDAQgHwsF2BBgBCAAgFiEEU24if9oCL2zd
- AAQVR4cBcg5dfFgFAmQ5bvICGwwACgkQR4cBcg5dfFju1Q//Xta1ShwL0MLSC1KL1lXGXeRM
- 8arzfyiB5wJ9tb9U/nZvhhdfilEDLe0jKJY0RJErbdRHsalwQCrtq/1ewQpMpsRxXzAjgfRN
- jc4tgxRWmI+aVTzSRpywNahzZBT695hMz81cVZJoZzaV0KaMTlSnBkrviPz1nIGHYCHJxF9r
- cIu0GSIyUjZ/7xslxdvjpLth16H27JCWDzDqIQMtg61063gNyEyWgt1qRSaK14JIH/DoYRfn
- jfFQSC8bffFjat7BQGFz4ZpRavkMUFuDirn5Tf28oc5ebe2cIHp4/kajTx/7JOxWZ80U70mA
- cBgEeYSrYYnX+UJsSxpzLc/0sT1eRJDEhI4XIQM4ClIzpsCIN5HnVF76UQXh3a9zpwh3dk8i
- bhN/URmCOTH+LHNJYN/MxY8wuukq877DWB7k86pBs5IDLAXmW8v3gIDWyIcgYqb2v8QO2Mqx
- YMqL7UZxVLul4/JbllsQB8F/fNI8AfttmAQL9cwo6C8yDTXKdho920W4WUR9k8NT/OBqWSyk
- bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
- nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
- izWDgYvmBE8=
-In-Reply-To: <uirri5bsktq5pk2tu4gs2u22qimjcn7hi66ek6gbj65qyczfex@yjy4brkoixfv>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAM9UnmYC/3WNQQ6CMBBFr0Jm7ZhpgwKuuIdhAWWAWVBMWyuGc
+ HcriUuX7yX//Q08O2EPt2wDx1G8LDaBPmVgptaOjNInBk06p0IRzn4uq3XFl9gxsJlQrARkKqi
+ 6sO40G0jbh+NB1qN7bxJP4sPi3sdNVF/7K+o/xaiQ8JoPeduqsqCur4OL9uye0Oz7/gGM1qeMu
+ AAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ Nikita Travkin <nikita@trvn.ru>, Anton Bambura <jenneron@postmarketos.org>, 
+ Stephan Gerhold <stephan@gerhold.net>, 
+ =?utf-8?q?Adam_S=C5=82abo=C5=84?= <asaillen@protonmail.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2064; i=nikita@trvn.ru;
+ h=from:subject:message-id; bh=TUZwbFWk1ZjONV2XNrh9on6bhdzhyU/JUB+yWkTPIc8=;
+ b=owEBbQKS/ZANAwAIAUMc7O4oGb91AcsmYgBmnlTTAlCiB/ZhKDbQjhvbfF+bA34AFkC04w3h6
+ UoCmGO7TtOJAjMEAAEIAB0WIQTAhK9UUj+qg34uxUdDHOzuKBm/dQUCZp5U0wAKCRBDHOzuKBm/
+ dVzxD/oDCq5loxGW8xvLAQxsfBOVHeJOmtrx0QvGkjChOh07eJzmjBwJarGwUxRgt0VHJ8fLl85
+ v05b/qR1JhVq5/YmedVH4druxllm3H/VhAkwTZ+Y1zquiUWu9C4HSdOwtLDM6vWZkbFQSlArJST
+ r4Zs42WgHfvq01Kx1QeZkBVZKrAJqpmmvK6tl9420a9tqJUVeIncgoA1toAzCQwJXQeogHcMBpa
+ k8emMDWZUeKWACPTGsHSRE+nyvuGCnhpoAeeLwNkaj2GFC8bMA+LIYiOIzPaE6OrY/Ifnu5GW0z
+ ki7f8KaRdSsFZh/98SzIIJeNw0KUt7fmZj8ddjhCmySCr53qi6LPIjL6gEW3hZTfWBJ88ZB/WD5
+ VW2p2Gphin39M0qVlmlJkCozLBparUlaYhJ3t662QymEZY8KlmWa1tSCwEFvzpaJMmWQ8mN3ezr
+ ijhRj2U/kFrZQ/wpfeCryBbOt+mT7LCNOu+8+k18fFjVDzPWTCP+6YuXFTXt4vNLtHP/mgE/KJY
+ 5cQ/h3McO4HkDw0ZroxWF4JeAyPkZBmKgvHm4VStZgywjZE3/KebvtOkOXQoMJLx/sskPceFmyo
+ ShOaPem0aqiS4wguD2x8NiC7yxf4E+ji3oXpNP1SkfSMLEeLM38qbJbgJNz/vI11UI0MKj3uQXM
+ kwJntRrJunIbneg==
+X-Developer-Key: i=nikita@trvn.ru; a=openpgp;
+ fpr=C084AF54523FAA837E2EC547431CECEE2819BF75
 
+Continuing the work of upstreaming the various msm8916 devices from the
+backlog, this series introduces few 8916 and 8939 Lenovo/Wingtech
+devices (where Wingtech is the ODM for these designs).
 
+Included devices are:
 
-On 16.07.2024 3:34 PM, Benjamin Tissoires wrote:
-> Linus,
-> 
-> please pull from
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/for-linus-2024071601
-> 
-> to receive HID subsystem updates for 6.11 merge window. Highlights:
-> 
+- Lenovo A6000 (Wingtech WT86518)
+- Lenovo A6010 (Wingtech WT86528)
+- Lenovo Vibe K5 (Wingtech WT82918)
+- Lenovo Vibe K5 (HD) (Wingtech WT82918hd)
 
-[...]
+Note that "HD" variant of K5 is based on msm8929 which is a lower bin
+of msm8939 SoC. A simple dtsi is added for this soc along with the new
+devices.
 
->       HID: bpf: Add support for the XP-PEN Deco Mini 4
->       HID: bpf: Add Huion Dial 2 bpf fixup
->       HID: bpf: Thrustmaster TCA Yoke Boeing joystick fix
->       HID: fix for amples in for-6.11/bpf
+Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+---
+Changes in v2:
+- Reorder pinctrl properties (Konrad)
+- Convert msm8929.dtsi to be more in line with other soc dtsi (Krzysztof, Dmitry)
+- Link to v1: https://lore.kernel.org/r/20240712-msm89xx-wingtech-init-v1-0-64f4aa1870bd@trvn.ru
 
-Hi,
+---
+Adam Słaboń (1):
+      arm64: dts: qcom: msm8939-wingtech-wt82918: Add Lenovo Vibe K5 devices
 
-this commit broke b4 for everyone starting next-20240719, as it's
-an empty cover letter with b4 tracking information
+Anton Bambura (1):
+      arm64: dts: qcom: msm8916-wingtech-wt865x8: Add Lenovo A6000/A6010
 
-Konrad
+Nikita Travkin (1):
+      dt-bindings: arm: qcom: Add msm8916/39 based Lenovo devices
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |   9 +
+ arch/arm64/boot/dts/qcom/Makefile                  |   5 +
+ .../boot/dts/qcom/msm8916-wingtech-wt86518.dts     |  89 ++++++++
+ .../boot/dts/qcom/msm8916-wingtech-wt86528.dts     | 160 +++++++++++++
+ .../boot/dts/qcom/msm8916-wingtech-wt865x8.dtsi    | 215 ++++++++++++++++++
+ arch/arm64/boot/dts/qcom/msm8929-pm8916.dtsi       | 162 +++++++++++++
+ .../boot/dts/qcom/msm8929-wingtech-wt82918hd.dts   |  17 ++
+ arch/arm64/boot/dts/qcom/msm8929.dtsi              |   7 +
+ .../boot/dts/qcom/msm8939-wingtech-wt82918.dts     |  17 ++
+ .../boot/dts/qcom/msm8939-wingtech-wt82918.dtsi    | 252 +++++++++++++++++++++
+ .../boot/dts/qcom/msm8939-wingtech-wt82918hd.dts   |  17 ++
+ 11 files changed, 950 insertions(+)
+---
+base-commit: dee7f101b64219f512bb2f842227bd04c14efe30
+change-id: 20240710-msm89xx-wingtech-init-e07095e2b2ec
+
+Best regards,
+-- 
+Nikita Travkin <nikita@trvn.ru>
+
 
