@@ -1,153 +1,87 @@
-Return-Path: <linux-kernel+bounces-259023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48D9493901F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:50:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85AD1939022
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A6C71C21410
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:50:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5FAF1C212D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D036F16D9CC;
-	Mon, 22 Jul 2024 13:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KTYSwIn6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F1E16D9C6;
+	Mon, 22 Jul 2024 13:51:06 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058E91D696;
-	Mon, 22 Jul 2024 13:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8B11D696
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 13:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721656223; cv=none; b=ohYYOMbIlrAT2HaEwo0If2DXdr4wwnYgVZdfTuHanhuq2B3OaHGWZKYxt4dSnu3S5Wq5E5PC6O/LHyY9utWJaipwyhEuFi+KeZlrq1ld0aeSzB0WpibCKhZcGxpdsjG65VVrTvXTW9nWsaPENdYPivht2B00Cz/r6WwrXcOi3Ss=
+	t=1721656266; cv=none; b=rOhI9JCe1hGoSTjXAvnBI8glJ+/joPzYgmUVp+RQQe6QAPCAmuYGpVzYYFuhefPYs0P6pQ8L0HU+M+7HMUQpMeQzCqstvb9TYHCp5YdOw0M8Hc3+ruPaUhfuknFXmVAskQdy9mC9fmULB47GHCZFgPDm3998m6ecjZnOEDB6M1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721656223; c=relaxed/simple;
-	bh=h2to6KNrIJh45Q2eQ9++I4yJfFkb8MNB85SVTV5Z3k0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UOMXkI+StBGqXrbouyTF03+bvou9c4aHIr6BQFtRfY0Gyw/2xuTD6Eyok6RttjUkIRq9dtDfTLuiZgMAyFHalFWnRTGwbNv70+0fR4RMFNNYL3kwM6tkPiTNdUlj9yJ+HC4zxCa9bKWKH3Rf9UPRoH3pU4hy13+wCMxK6TD1w1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KTYSwIn6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9C8AC116B1;
-	Mon, 22 Jul 2024 13:50:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721656222;
-	bh=h2to6KNrIJh45Q2eQ9++I4yJfFkb8MNB85SVTV5Z3k0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KTYSwIn65EpAMHLZJ09/jvA0F5RbBIF8dgBkodig+JusowJ1nqdf8k2myZqHUOUHt
-	 ozHAUsmSPQoAcj4GROTmTUIn5uy0SGKwBe66Lr+yTNkGq3sVsaF/LzJDgyRgDtiS3t
-	 O1yLllqOEg5WGikJHyaaTW/g/v4dQnspo0NdQH4Pbo+dfeIxC8WLDqYfmqdPHi5HY1
-	 WuT//xKLvJnS4VS3fVi4v3ANdZn8QksLrfPfYZyoI/9MovrB0hfJpVH1cmhdqDjlEi
-	 rvNhU+q7BfoEBeiFET6EXRHpP4LEvPX1n43Jgz/AfT0U+pdafQJD7ilT5nto84qyNc
-	 wgIEVLuwmNJYg==
-Message-ID: <2d8ceef8-9d5e-42a9-af2e-f9292728a3bf@kernel.org>
-Date: Mon, 22 Jul 2024 15:50:15 +0200
+	s=arc-20240116; t=1721656266; c=relaxed/simple;
+	bh=jZ6x0KgzWTRvCD9iPhAkhMhg9MYpOAh/VG5dJXPN2ls=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=e7FJQcPSFrRI9Lux9KW2v4Ar+C6q0vNcVAt14r/1NxS19z8+KQ/mapjLjjLuawWJGJrAPrJQTiw6ipHXKbCPEVQHJ8yLY1KORZAOLrr+BJsOKHPFhVR6z7uL8nawWdWOfW33dEJBnW+HfNYVA+m8hgilhrU2omZ9WVdJMphxYxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-80502b81995so705409539f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 06:51:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721656264; x=1722261064;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NFr8EsjLqB7vxZ5AVFnoCXTIs6bQF/YczgGlZ2IHrOQ=;
+        b=ZEHBdpRQsE1IMR1Qp5m6nFlwvM2V8rk3hDdakiLVs1BkbJuvww5pzqH2JRcPBsxSuH
+         05vdrjaSGOa0FP2Hw1TlLggbOy9Sb4D1TtymeZT+YqMAtImLK4AilesNbHORa4zhjP3S
+         gtQk37/s0otGSfMmBLlyzsZT7a36HoRrRGJCZnbIy6IjoTQ3kS/FCTE6kVVXjQ7LdbkS
+         o2UYGqTZGM5W73Bf1pWUwaQKvmNidzFv7n8J9piexeZvtRj5Cp9y29tgNvvH6N8JVuSP
+         /bfthk1y6KvgmTjZlqnL+8kP7j0LavOcHIQYbNUs33RkoFQiR7KKDpB0oHe/vCC5e81J
+         nw7A==
+X-Forwarded-Encrypted: i=1; AJvYcCW/e/oTMwyJaw4Fqq6yzg6trtPB4oWdrawBoAKYAPW0HDHa3lvG8RvrNMbeyFfqsdJaVvOk3hky3IAMp5GNzMQ5w4UUMzvUe0OCpfJg
+X-Gm-Message-State: AOJu0YwkhDKuuXUrKT8VMRf0HPjxkQKaYAW+PtL488R/0uMl2MIywByW
+	7MQmWgnWRgEGTxrWLsOMtbeKa2PWgy7dEUsYxr0CPxqUkPIEc++Z1HFpZv4sE57mik9OHyRw0BM
+	ksK8YQ8J7Bc7qsoE3B4K7Za6GjNBTlj5qf6VQRSss6kg149XXktP2Dds=
+X-Google-Smtp-Source: AGHT+IEZojsOGwbDTOZ6ivnsUuOa2lGZeY/lbsneuxVYDt1Mu3NjdQfo1nNC1XAfquK0Op7Nw7GHQ4CI4k9OocT979TtKu5k9drn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/3] dt-bindings: watchdog: ti,davinci-wdt: convert to
- dtschema
-To: Kousik Sanagavarapu <five231003@gmail.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>,
- Guenter Roeck <linux@roeck-us.net>, Nishanth Menon <nm@ti.com>,
- Santosh Shilimkar <ssantosh@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-watchdog@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240721170840.15569-1-five231003@gmail.com>
- <20240721170840.15569-3-five231003@gmail.com>
- <629a925c-24ef-4a44-832f-a06a60c266a7@kernel.org>
- <Zp5asqhipQHEoviM@five231003>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Zp5asqhipQHEoviM@five231003>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:6c97:b0:4b9:b9a4:848b with SMTP id
+ 8926c6da1cb9f-4c23fe6c055mr482888173.3.1721656263895; Mon, 22 Jul 2024
+ 06:51:03 -0700 (PDT)
+Date: Mon, 22 Jul 2024 06:51:03 -0700
+In-Reply-To: <20240722094345.4089-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000008fb16061dd65695@google.com>
+Subject: Re: [syzbot] [bpf?] [net?] KASAN: slab-use-after-free Read in bq_xmit_all
+From: syzbot <syzbot+707d98c8649695eaf329@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 22/07/2024 15:12, Kousik Sanagavarapu wrote:
-> On Mon, Jul 22, 2024 at 10:15:03AM +0200, Krzysztof Kozlowski wrote:
->> On 21/07/2024 18:28, Kousik Sanagavarapu wrote:
->>> +properties:
->>> +  compatible:
->>> +    enum:
->>> +      - ti,davinci-wdt
->>> +      - ti,keystone-wdt
->>
->> This does not match the original binding and commit msg did not explain
->> why such change is necessary.
-> 
-> I don't understand.  Do you mean both the compatibles are always
-> compulsory?  Meaning
-> 
-> 	compatible:
-> 	  items:
-> 	    - const: ti,davinci-wdt
-> 	    - const: ti,keystone-wdt
+Hello,
 
-Yes, this is what old binding said.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> 
-> It is enum because I intended it to align with the subsequent patch
-> which changes DTS.
-> 
->> This also does not match DTS.
-> 
-> Yes.  I've asked about changing the DTS in the subsequent patch.
-> 
+Reported-by: syzbot+707d98c8649695eaf329@syzkaller.appspotmail.com
+Tested-by: syzbot+707d98c8649695eaf329@syzkaller.appspotmail.com
 
-Changing the DTS cannot be the reason to affect users and DTS... It's
-tautology. You change DTS because you intent to change DTS?
+Tested on:
 
-Best regards,
-Krzysztof
+commit:         3b2aef99 net: ethernet: mediatek: Allow gaps in MAC al..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=1668e595980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8defeae77515c9b1
+dashboard link: https://syzkaller.appspot.com/bug?extid=707d98c8649695eaf329
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
