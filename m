@@ -1,105 +1,86 @@
-Return-Path: <linux-kernel+bounces-258390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A33A6938761
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 03:46:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1184093873F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 03:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 432BE280F8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 01:46:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 514E3B20AD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 01:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E9B8BEA;
-	Mon, 22 Jul 2024 01:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC5B7846F;
+	Mon, 22 Jul 2024 01:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="qQOU12gz"
-Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167043232
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 01:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.220
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hkOOIsmv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF94D610C
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 01:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721612798; cv=none; b=p9mUh0GfU8DKpLako3AcQs5+521Z2QCvwr+iXELmxawKq6v1kR2IXrf499SbxrGyxLqV6yBeMjEOXZ9+SgelsggNzwbawdpl0ph8Dj9qCBhG6aB7Y+t4qaj8+/igJaEE0VKRzCPT3m7Q8JW3fmtGdtThHivvVjXvz02A2eGuexY=
+	t=1721611866; cv=none; b=oVMixx1qjj2vdhgD9qulZizwjFy/fnXdHeM7hCbNJ1fFaVVJ45a9y095UEeukOvWYxH1r0oCba6qXYKEuxZPrQ5f/mhMoRBn67TgGFn3G1puaYueeU/KM5lmPo1BQ1FhMO+/5/QasQN0Ud5PA6V0uIg30Tf66vXUba6AmkdKOWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721612798; c=relaxed/simple;
-	bh=Irjznp9s1xHSOnjL1LRDWbTo0pqFCAdZy/M6HPja0s0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=acUtZ0TR1FCUBODJ33boyISD8dsyEpw3R8b8WVMtNwRrlRZcpzcBdUjJDi8gtf+efua0tRWLmyRr3y9Nx5cFPAcNqp7EZ9OtB0anJsR7sjWJH9xHoHlGsgT7UPZQnsHG6OD51PXZzyusPgLDHRJcXRDSV9QTlxlY6m7xLxbWM1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=qQOU12gz; arc=none smtp.client-ip=45.254.50.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=xWXa+
-	yb0Rmb14pkRECozZYNIRdp7liyu1MZuBlUcxow=; b=qQOU12gz++VWEmMFpSqlh
-	b71LaJCBqda5uJt+avURs9HYpvYr6GUvsRsFoC4MxqHUrKq0rG1ws+jzX2UPaq9S
-	khde5mCbE4n+krvf3qhw0dr+24QLYnGmsvyAazNS385iZB3quN1P17mpLiv/pKYi
-	492Gr2UVcd02FRwaExCluo=
-Received: from localhost.localdomain (unknown [111.48.69.245])
-	by gzga-smtp-mta-g0-2 (Coremail) with SMTP id _____wD3P5Mvtp1md4p1EA--.57896S2;
-	Mon, 22 Jul 2024 09:30:25 +0800 (CST)
-From: wangdicheng <wangdich9700@163.com>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org,
-	wangdicheng <wangdicheng@kylinos.cn>
-Subject: [PATCH v2] ALSA: usb-audio: Add a quirk for Sonix HD USB Camera
-Date: Mon, 22 Jul 2024 09:30:21 +0800
-Message-Id: <20240722013021.10727-1-wangdich9700@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1721611866; c=relaxed/simple;
+	bh=Pgdfoi+plDo5Sv3bTklJaLHXbBK8ZHhX9xR+sbaiMhQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lE7yluMSuc4TueUm1osv0IIeY5o54++usZX22lc2p7h9T5h0BvvomWMl4ngme/s2O9ifxwnC65mPTkkccg8VmmkLU0dj4UCj9QBkGO7BAoJStyYPfUIOfVxiRrGNzZWrfqs69JaxImtBgwhUevllTOl2dnDy5EhJCWHWnQGghtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hkOOIsmv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71E7AC116B1;
+	Mon, 22 Jul 2024 01:31:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721611865;
+	bh=Pgdfoi+plDo5Sv3bTklJaLHXbBK8ZHhX9xR+sbaiMhQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hkOOIsmvpuHAylM3fafNyX9Gn3LhzrBn8erzTFGQ9ZBy02HJXjLFkpkI1EUkGuBV2
+	 aYBm2YapcZDduVx8+HlYNUy6jF/cZ+vpG5qveZroDz55Gidx+7llkY3ubUhYMWL2zH
+	 pV7TFFM0fUNGKXmcoCJjx15/ClYikEIEVm0sHs/KaFxI28g7KHjHjbUmmtBQyewuyQ
+	 3JwMMua7ECXOkI4s6LMJcsOrx2lOMFnnpyso6FnNc76/Y/YJM/zEQIgti7vHk51/dG
+	 j2Kun6/jsqdtrs7heEi1nCDgdO90dKMEdOcvBt1LICZPonsz1Rb7fRvtUo0MtCXtHc
+	 m74JMPb3appVw==
+Message-ID: <e406930d-def7-4e10-91f6-7ff084eac7a2@kernel.org>
+Date: Mon, 22 Jul 2024 09:31:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3P5Mvtp1md4p1EA--.57896S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7KrykJr1kAw4kXw4fXFyfXrb_yoW8Xr18pr
-	4xC395trn8Wr1UXr1UtFWUX3WfWw4kCay5Jry3Wwsxtr13Ka1rJF97A3yI9w42krZ8Caya
-	q3Z0v395KFZakaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jYMKZUUUUU=
-X-CM-SenderInfo: pzdqwv5lfkmliqq6il2tof0z/1tbiNREkT2V4Iu6kVwAAst
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] f2fs:Add write priority option based on zone UFS
+To: Liao Yuanhong <liaoyuanhong@vivo.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: bo.wu@vivo.com, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org
+References: <20240702062952.28859-1-liaoyuanhong@vivo.com>
+ <20240715123451.7918-1-liaoyuanhong@vivo.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20240715123451.7918-1-liaoyuanhong@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: wangdicheng <wangdicheng@kylinos.cn>
+On 2024/7/15 20:34, Liao Yuanhong wrote:
+> Currently, we are using a mix of traditional UFS and zone UFS to support
+> some functionalities that cannot be achieved on zone UFS alone. However,
+> there are some issues with this approach. There exists a significant
+> performance difference between traditional UFS and zone UFS. Under normal
+> usage, we prioritize writes to zone UFS. However, in critical conditions
+> (such as when the entire UFS is almost full), we cannot determine whether
+> data will be written to traditional UFS or zone UFS. This can lead to
+> significant performance fluctuations, which is not conducive to
+> development and testing. To address this, we have added an option
+> zlu_io_enable under sys with the following three modes:
+> 1) zlu_io_enable == 0:Normal mode, prioritize writing to zone UFS;
+> 2) zlu_io_enable == 1:Zone UFS only mode, only allow writing to zone UFS;
+> 3) zlu_io_enable == 2:Traditional UFS priority mode, prioritize writing to
+> traditional UFS.
+> 
+> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+> Signed-off-by: Wu Bo <bo.wu@vivo.com>
 
-Sonix HD USB Camera does not support reading the sample rate which leads
-to many lines of "cannot get freq at ep 0x84".
-This patch adds the USB ID to quirks.c and avoids those error messages.
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-(snip)
-[1.789698] usb 3-3: new high-speed USB device number 2 using xhci_hcd
-[1.984121] usb 3-3: New USB device found, idVendor=0c45, idProduct=6340, bcdDevice= 0.00
-[1.984124] usb 3-3: New USB device strings: Mfr=2, Product=1, SerialNumber=0
-[1.984127] usb 3-3: Product: USB 2.0 Camera
-[1.984128] usb 3-3: Manufacturer: Sonix Technology Co., Ltd.
-[5.440957] usb 3-3: 3:1: cannot get freq at ep 0x84
-[12.130679] usb 3-3: 3:1: cannot get freq at ep 0x84
-[12.175065] usb 3-3: 3:1: cannot get freq at ep 0x84
-
-Signed-off-by: wangdicheng <wangdicheng@kylinos.cn>
----
-v1 -> v2: Arrange the ID in order
----
- sound/usb/quirks.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
-index 58156fbca02c..54b2d2f314ac 100644
---- a/sound/usb/quirks.c
-+++ b/sound/usb/quirks.c
-@@ -2225,6 +2225,8 @@ static const struct usb_audio_quirk_flags_table quirk_flags_table[] = {
- 		   QUIRK_FLAG_ALIGN_TRANSFER),
- 	DEVICE_FLG(0x534d, 0x2109, /* MacroSilicon MS2109 */
- 		   QUIRK_FLAG_ALIGN_TRANSFER),
-+	DEVICE_FLG(0x0c45, 0x6340, /* Sonix HD USB Camera */
-+		   QUIRK_FLAG_GET_SAMPLE_RATE),
- 
- 	/* Vendor matches */
- 	VENDOR_FLG(0x045e, /* MS Lifecam */
--- 
-2.25.1
-
+Thanks,
 
