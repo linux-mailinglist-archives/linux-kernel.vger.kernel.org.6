@@ -1,228 +1,238 @@
-Return-Path: <linux-kernel+bounces-259122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0760939189
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:16:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A9C939187
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:15:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 728A81F210A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:16:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8B1B1F210A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864E116DEBD;
-	Mon, 22 Jul 2024 15:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A472616DEB1;
+	Mon, 22 Jul 2024 15:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="hmLWh2z8"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11021081.outbound.protection.outlook.com [52.101.65.81])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HBpOrc+c"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA681754B;
-	Mon, 22 Jul 2024 15:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721661369; cv=fail; b=kUbg+t7WHM7eiI/5scxRPO6mE7NzQQaqDLnREzU0z4vog5hTbLSIP/49JhOzUbFnMNTMkSVjML//wn1JVOkJjTlkxzkXmNTxQSyhzcgt0wCO7bS6ouANmXDd62xpzHBZF6ohBshHf2y+eEQ6KKPyArldNymFAD0RmTLD9Jp7DMA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721661369; c=relaxed/simple;
-	bh=zf3RPlvlJl00E0nbKOK3T9B2SR86vfoNtYwA9eUiNMo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fy2vUN5LS8I9gQSmAj/Rr7GeQMBBxHGMB6ZOcbCgKFlIe/VXGNXnw0/Lev/VBrn/gnGVd1bP43vmQx3wdFiOqLmSXA+FY7vRk6PGcRTGuYS/xZbLkkBJduztjSs81Ym51PsXxfJIzwi4+1vJKrrxuHAvm2Wk5alw0SHjN57rqlM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com; spf=pass smtp.mailfrom=solid-run.com; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=hmLWh2z8; arc=fail smtp.client-ip=52.101.65.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=solid-run.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W17++WmogfrMNMDFtpZe1xQTxqmUD6iB/cjAQcWJJNxru0byMXvJrb410sQYl+Pok47vRbCZ+Mim1anyTWVxyDkYosvVJTuFAf2P8+kelhTfPqh3Q8MG2fjnrM+vC7hquZc1XNAUkaz9RRkp6dDtH4WbWQ8FYpbM/Q+ztGJFAvOmmVqqHcITiyeUOT4iCjTKVSvW4n8oKbTeYzRhJVXul3Id3DM0QymCgGlU3jvkCGR01pvCdfCXieYr/NFsQ7EM7WJoxyPnMBvf6g1tqxPv6qYThxH54IwTqLlLQpIMX/+ZD+5ZVJIi4/ou8tPLR80ldTq8ltNXc5xPOhytebr+9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zf3RPlvlJl00E0nbKOK3T9B2SR86vfoNtYwA9eUiNMo=;
- b=CboQ9Ny0RJAzHYhBPTRz5QHaSnmmBR3QyZKM73xkBeArR4kYuw+f+Z5O7rPiC4EnsGV9+R3PE6A1TCORWKhueukQTuLqdGzC68iz2+Y65HY3edbkjKz4b7sZnmY+udk6WmUpsUH1Ha7Ytl9VYgeCjy28Cjv68qfh+OL+PGlB0vC7Os3uQb0iJRcz5XkFKApGXVR9oMVP8nbMNsYsdZsXjiU+gyocCXsy8UpFMPBO2fmpW18oPp1jVhE8Fx7SdZSewVRJwI9vyrJdVhcXESPLERL3djkYwRYgui74b6p7b6m9A27Dbu0bLZVfpTaq3N1E0mgNwaa6a0IaUwmwhw/wRA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=solid-run.com; dmarc=pass action=none
- header.from=solid-run.com; dkim=pass header.d=solid-run.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=solidrn.onmicrosoft.com; s=selector1-solidrn-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zf3RPlvlJl00E0nbKOK3T9B2SR86vfoNtYwA9eUiNMo=;
- b=hmLWh2z8L8IJtQuvwTheQNigeseLS2Y4636zZTk5hPdU8ifvjrcNBciZLWWpy+E1OZVCURTlfDr3Z+xJpvthM76nWTnIP0Jp0Tl0CPjpB/41RkbrjCG4fMiJ/KXbtuQ2+KFNxzgXvDnSue0S6Ls6qMCz0eAbWcYyBLsbOTrdSIs=
-Received: from AM9PR04MB7586.eurprd04.prod.outlook.com (2603:10a6:20b:2d5::17)
- by PA4PR04MB7870.eurprd04.prod.outlook.com (2603:10a6:102:b8::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16; Mon, 22 Jul
- 2024 15:14:41 +0000
-Received: from AM9PR04MB7586.eurprd04.prod.outlook.com
- ([fe80::c04e:8a97:516c:5529]) by AM9PR04MB7586.eurprd04.prod.outlook.com
- ([fe80::c04e:8a97:516c:5529%3]) with mapi id 15.20.7762.027; Mon, 22 Jul 2024
- 15:14:40 +0000
-From: Josua Mayer <josua@solid-run.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>, Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Russell
- King <linux@armlinux.org.uk>, Konstantin Porotchkin <kostap@marvell.com>
-CC: Yazan Shhady <yazan.shhady@solid-run.com>, "linux-phy@lists.infradead.org"
-	<linux-phy@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-Subject: Re: [PATCH RFC v3 3/6] dt-bindings: phy: cp110-utmi-phy: add
- compatible string for armada-38x
-Thread-Topic: [PATCH RFC v3 3/6] dt-bindings: phy: cp110-utmi-phy: add
- compatible string for armada-38x
-Thread-Index: AQHa2q/UwdGhmeTzHkyvzzjdx6DlRrIA7BMAgAHvxgCAAAKGAA==
-Date: Mon, 22 Jul 2024 15:14:40 +0000
-Message-ID: <55671e6b-abb3-4773-9f55-41920a3ff8f4@solid-run.com>
-References: <20240720-a38x-utmi-phy-v3-0-4c16f9abdbdc@solid-run.com>
- <20240720-a38x-utmi-phy-v3-3-4c16f9abdbdc@solid-run.com>
- <d48d261f-c428-4b96-9a88-725e29f6648f@kernel.org>
- <14090e3b-e627-4342-91b0-d6d0b769b736@solid-run.com>
-In-Reply-To: <14090e3b-e627-4342-91b0-d6d0b769b736@solid-run.com>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=solid-run.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM9PR04MB7586:EE_|PA4PR04MB7870:EE_
-x-ms-office365-filtering-correlation-id: 78b8f8b3-5c3a-4376-d917-08dcaa610272
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?b3czK1BoMnZFMzh3SnpydmxsZUtja0lhczVDNHFYc3pob0pXNzE1SVJiZytN?=
- =?utf-8?B?dW8xSUV6aEs0MUg1aUFuQjkrR2ZEYVJQS1Nmc3AwZUJCSjJtVmxCaytPeEJU?=
- =?utf-8?B?N1RMYnJ3amhNbFpCQmViYms1QWdSdGR1Y3A5WlpKek8rU0dreEhEVTNReVpK?=
- =?utf-8?B?NFd3WFNjanpIbDlvWnNwZk9YUmRzMFpGMlZ5bFZPVDIvTmVyZzlVQnFjZWVI?=
- =?utf-8?B?aVNwQVc1OUVOaTR3MWZPcjBHOHk0LzFQZGIwb0RqdEN5M203N3pQTEh3akhj?=
- =?utf-8?B?RWJncWNtMzJxVUVzUUZRMXE3bzdRMFVpWmlJUEZ6WkhFcVNWTytYdjZ0eWIw?=
- =?utf-8?B?bjF5KzFidXBkRi9LV0docmRJRWhnUjBWeXl2LzJEemhIVStLeWhhbS9uNnlk?=
- =?utf-8?B?Y3FHWGpZQzd1WmwyNmZhQTNnYnhpcFdOL2tMTXdaVzAzYko2M0o4L2g2L0ty?=
- =?utf-8?B?Z0R5S29YSG1TRmhlaVgrcmtFa05IL3VOZ0NXaFNvUVQvVzczMzkrUXhsMDhY?=
- =?utf-8?B?eCtwVURXWllIRkZYc3BvcFlwV3dOcHFubWVNaGpicXd1NzNFUldqcjN4SWts?=
- =?utf-8?B?bTc5K1EwNG1lUkR0em1zSTROUklpcEhzN0NtUWRHRXhBQzBvZHowOXNaSTJE?=
- =?utf-8?B?Ym04cUlNV2Q3Ymk4M2NWdVlGU2pKa0lyb0l1dUphOEhWejFVQ0ZHT0RTdzEz?=
- =?utf-8?B?clJYa3FkelJsOEZteTJQZ1JlUkJxSFlDMS9halFBajBnV3ZESU1EaWozMnZQ?=
- =?utf-8?B?VGJrcVh4YVJSaCtpRXN5eS82cmlxRUFpaVphQ0F1K2VUbTlmSUk1RkdDa203?=
- =?utf-8?B?OEZRMGhYMUdIZ0JMMHZXM1ZjOTI2QnNUeVQ1Mmpya3djZWkzSGplUTQxcUVG?=
- =?utf-8?B?aW1oS1BNQU5ETjVWcER6bzlUeHJqeStxRUljVUNFMDkzUGZheW9QL1NtZGgx?=
- =?utf-8?B?dFZ5T1o5N3pMTm5pUVN1aS9PZ25CK0hnQXJlUnphTTM1RUNLa3dwRGk3dkd6?=
- =?utf-8?B?Z29iaGlVR3JwV0RJK0E2UlRlczF0QTBWbG1PUkdSZllqZ2hyVllBdnNzRmNo?=
- =?utf-8?B?SUxhelRrbm5hZjF6anNiY0RYQjdOaFZtc0lOUjFRL3FqeHhWMHlFdCs4VTBT?=
- =?utf-8?B?RytNVVNwWktMS2lVUGJ4VTd2YW94TGhDbCsrdkxmQ0N3VEpGbW9NV1B1SlRX?=
- =?utf-8?B?VTJ1WGo0d2FGUmZSczhDaER4MGpQWWl4VXhoUko2ZDFha25uUDQrWVlWaS9i?=
- =?utf-8?B?M1BvVStucEdaTVlHQ0t4dlN1bnlCWnRSbWhCS1FQVDRqL2pwK1lpT3N4a1p1?=
- =?utf-8?B?MGpNM3hjd3lTem8vNE1qN1d5cG5BMVk5L3BJdURWVG1BOEZvdnBId09RMHVE?=
- =?utf-8?B?aEltVk5WRGRDWFdablJUUExaajNVWnRwQlNlOG12ZmNIRk96Q2l0ejA1RkJD?=
- =?utf-8?B?YTdMcnpveXp6dkVHRHN2azlYTkI1T2ZZSy9hN0RMbkgzZmFlZkpoQWQ5c01h?=
- =?utf-8?B?YldjV0VhNkVicUNlR1FZTFJSclprL2k4Uk1HL0t5RkhkYWk4YjVmMGpkK2JM?=
- =?utf-8?B?TnZjS1RmZkpMT1l6TnM5b3lUVFQ5M1ZhWE9QQTdZMkhTcXNqaFNHVEMybXBx?=
- =?utf-8?B?SUhmMXBqUWU3d2hUSlYzK2psRGZoN1EvRnpCSUdOYTdLRTFiUUplSjZkZlg1?=
- =?utf-8?B?UHFXMXRFUDlna1dLQi93Sm80RjVieGVlSVozQkhvSGV1SmdOWkFycHRmdW9v?=
- =?utf-8?B?U1AwTVVFOUZEcDBORmhHY3RuZFAwbTN1dUhnSHk5alpEMk4vdjJYUXNRUlhC?=
- =?utf-8?B?bS80NStreHRNU3pteG1kcXNFdnBkb0Zob0tUMHhBZ2JXUEVPczJaeGI4TTRN?=
- =?utf-8?B?bXQ1VVJYR29CR0I0Z3Qrb0pQTGUrbFBvSE1MYVlNTVplQTlYUVQ3K3VaaDEz?=
- =?utf-8?Q?W0ubnqtOOI8=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB7586.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?MkNEZlRkK0lXcGQ4UGpXczROT01IeDdOSiswSVJoREVXcjBjUVNsdXY0aG5t?=
- =?utf-8?B?anhVSGdFTUw1VkxaNG96TmdLRkIyaGVhcHVkUXZWSHFhR0Y5SDFNaVFacmND?=
- =?utf-8?B?TGtmWTVOWDdzK2FpeEwxeFRPYzJoeHNpaVpEQjVHNHJsZWFiNTZEelR3YVVi?=
- =?utf-8?B?eXZocnFMcmU1K083VGxtbXQ3VjZFWHU2eGNiT2dsdHdEZVRaRTZ3OGt5d0xz?=
- =?utf-8?B?Z1FEdEdPanpMaXFUS1lLSmJ1ZHlFZkVVaUViNnJTT3RlQzcyRUNITkNMT2Vm?=
- =?utf-8?B?VVpnTFVXQ0tsRCsyZ25ibVozZnRTcUJaSlZ2eVVDZVJ6c1ZyajlrVVhEVGxH?=
- =?utf-8?B?MitwekpjS1RGdngyMHVKSEpMZkRlVXhBTG8ycDhKM2N4aXBPaUl5cHp2SkZR?=
- =?utf-8?B?VkNFOWxhZkpwSEp5NDN1ZjFVTm1RMEZKVk1NOXhYc3VDWFdheWpqeFlxTndM?=
- =?utf-8?B?VmJGbXBZSk9mNGVtc3pNVFhYOG9sZWZTMEZKemVDeHZZZVkySDQ0TlArRFZr?=
- =?utf-8?B?SkZSVE84Sm42V3VGVVpUSStaTnM2TWtPMUE1R0thQWJURGtDUGdKbXlLdkVO?=
- =?utf-8?B?dkdna2UydEpRdFczdHFtTEF6VXBkOUNZUEZkN3I3RHVLaDRpa1lTaVVpNmJv?=
- =?utf-8?B?RzFKYmpiaEZTQUZ3ZWlrakJ4WmQ2SGNJOVoxMFJFWmptT0lLSFBvWDZxRlZK?=
- =?utf-8?B?aW9uRnltN2oxaC9uVHBrRFl5alhGM2R5aUt3NGdISElEVEVwenZCM1pETEc2?=
- =?utf-8?B?ZkJUYVF1b3creFJobGJLdnU3VnA3NnRBT09oR1BxTnJHQkt0SFRFa0d6K0lM?=
- =?utf-8?B?dkFWeFFsMWdrSmtZYkkwMzcwV296RW1RampVMm8xTmtLUkV2Rnk3bjhJbzRj?=
- =?utf-8?B?bzdDWUl3Q0VXVW43T2tCYnlDai9nUDYzQVFXRGg2VFFJQk5TaFZtbitwWEJU?=
- =?utf-8?B?ZmtHMFh1clkyN3NsenpiWFdUcUF2M3BhK3BhSWF4WXVyYTM4cE1PWmlkRVp1?=
- =?utf-8?B?WjVJQ1dKT2V3RWJPQzVCK1lpTXFET1NQR0dWUGgvRUc5bHRod05XWVdDNHRD?=
- =?utf-8?B?TzJCdVJRMHBlSGxLMmxIVStVWWVwRVZELzZuTmU2eGMwOW8vNld5UjdhYnVi?=
- =?utf-8?B?TndZK1hwR041cDRncXhVeG4vZjFxcGYzckwxaTJtZVpXTWwrVXlQeHQwYVRx?=
- =?utf-8?B?QTQrODJWZWNsRnFpWk43bWljSlQvSHJOOTNvM0l0OW5BWGRYWUhRL3dpeFpL?=
- =?utf-8?B?U3R4S3Q0dE9DKzMxSjZOMnlFc0YvS1JZSWVLeVpQU1J2MnZiOFE0dXZ0cTNk?=
- =?utf-8?B?NG4zQmRuSXVlNElMOE5NSTJLUDZ2Q2VPSWErM3YveEp3aHZpMmZaYk1PS0dx?=
- =?utf-8?B?d25ad2JYRXlnWlQ5YStYQlBuV3BzRDdKUnRxL01mTVkrVmI4bXhPV25UU0E1?=
- =?utf-8?B?RXBDblJoTDA3cXZRQzQ0a29WRFhyT0YzbTErQk1qbVFYM2s1YjZKc3ZKM2dJ?=
- =?utf-8?B?UXVjSXltUkRHLzY3eU1VOWJjSDFNSTRKczNTRHJ4MG1IbDBRMDhTN3BKQWZU?=
- =?utf-8?B?OTQ2Vzk1ZWtrQkQ4dWhZSUdPUHlOVDZYM3lpRG54ZkRaYlBrc2VpVm1UVE8x?=
- =?utf-8?B?dVRoaGdvQ3FHeU9vdzVScVZwWSs0UkV2ZTk2TzNhaVFaYnkyRFBqR1JUNXEz?=
- =?utf-8?B?R2ErQmo0cVZ0S2hIOEtpK09LcGplbW94QlNjc2Y0M3pMd2dxSFlUM3hOZXpF?=
- =?utf-8?B?YTY0MEQxazNuQkp4REZub2VOMzUxaXdvanNrbi9jUkk0bTQ0MGkyeXVZV2wy?=
- =?utf-8?B?ZnRNYlZUbnJxMjMwL0kvUGRTc3dLKy9aTXNqZ1JDNStrOGpIVDVud2lsQ3dN?=
- =?utf-8?B?eExuNnYweWJjNk1VZzRSbEsrTitILzBVZmJBY1ZQTjZvMGpsN0szV3BOZHQz?=
- =?utf-8?B?L0pNVDY5YkI3MWtONUNFTStOS0syMUpxcVJXV1gzdXhvcHJyNVJCTGlZeHh2?=
- =?utf-8?B?MVF0b2tmRGVuM0VhQnBvaTQ1aGI5eXJ0eWNPWWFqdmhsaEtobFdiZTRQTTFT?=
- =?utf-8?B?d254ckN6VUpJWGI5ekhuUXNBbllCcjhmOUdLTVhGdUozdXU0VUloUk41cG5E?=
- =?utf-8?Q?R26rOTx+eH9iXb8zYGFFEaa18?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B8E2DEFB3ED9514982AED74622FC5F6D@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2308F16C6BC
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 15:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721661319; cv=none; b=SDJqGjQpKkI2xnVvdKuNeDXI0qPHjY04ieiJh9i9DPj+v8iGuO3iKaGnb5qZ0qzMeg0NSiTlfoZ9UXtYSRxEISqHTKE2K8aVv4OKSGup6q6qIBUwNqUYTwOL86EUf2tx/86rnhU6YJg5AXviK7oFZLC7XO1+/AztfiARRh3qSvM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721661319; c=relaxed/simple;
+	bh=UYmeIquhizpn8t7nOrz83qbxhBYzKN30mJ443o0XW/o=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uE/6LCFy4rzDv3J6yr4vPVOdPhBecw8FA9QiMbsPmmA7DcP18hrORHLBEFDvSNKg8+JreZ5X7UbFAHlJrmfyS7Z1OeSxa1P3ZMm+ZUwsWNdobPpArMa578HvCnX0i1yKHlPRMEgz9qgq25gTjDMR73cIfBPVPqw17J+l/2+2sHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HBpOrc+c; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721661317;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IwV4EVwTFVUmCfewLq5KTWokf+/tzGEG2FIyhpLUO5s=;
+	b=HBpOrc+cNoVMEKZ0obyAOEpNI6FWaNgYwRP7dGij82+0cAWVfsPheytzdTA6F4BDIwU8yI
+	PWH2XtPbgVBr5N+ly1pM+XZ4pUbZakouON9OnQgodXtrIFP4UF3QXmua8IW24OZ3q4GTrD
+	LtoPn6CVYxd3/GNFLMTKR2i7f8Ag7q4=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-134-hyazeQDwPU-E7vE-pL9uwQ-1; Mon, 22 Jul 2024 11:15:14 -0400
+X-MC-Unique: hyazeQDwPU-E7vE-pL9uwQ-1
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6b797b6b4aeso14967226d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 08:15:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721661314; x=1722266114;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IwV4EVwTFVUmCfewLq5KTWokf+/tzGEG2FIyhpLUO5s=;
+        b=ku9eV9f2h2NV3PP0JXpjwXZPfbfk83sLP/eSO77vlPrPzGRDVHffcDnYFvZ973NE5P
+         kpTOi3JPIVTMZx/LycG9famDY3KTfjTkpESbmubFessBcNuugtXOnY8+SiT5b4GN9XsC
+         rJZhWeTcX+NM8Bz6vfUAWVaH+VjjlcRIMldA1esVpkqpZikowAvmK4gtlQAVbX4VmFxR
+         F9UtxlQ9ckdcWPkIH5KJ72CfPbWWXmfWAf9LPFtRRuYbYG1CHeYgeAbtX9cPlPfgpN7Z
+         IFmW1rsQrLT4zQiSX/a+zl7L5ix+n7m5xQOxUO8YcVHeYIPF20+d8sSze29S8hgw1YwK
+         ngpw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8Tco4IsmOfCOWd02QruE2+T1y/9EdIswLSFJTq1Q6kacyTBMCN2RqVqR5NzzhiVTs74mRSPapAkkd7cxgtmkIMC8umWtMkyMkr5ox
+X-Gm-Message-State: AOJu0YzwCuf38Dm4MaTUZI9ELboRhxud2wlO4I4JtjW2QHbmSZQ3zU+L
+	5JYiBb2uCAFN/MErXvo0kumt2/wVTZ8TvsvSMHToy2FxpeoyYVqUssHBP3Zr7NNyR1SUCB6sC57
+	lJJEFh//j1Eg8ezoo203P2ANoGvdtxR7dGhc+fjZ4l8lda+tMt0/rVicLxAkHwQ==
+X-Received: by 2002:a05:620a:4686:b0:79f:1556:37c9 with SMTP id af79cd13be357-7a1a122ffa7mr583607985a.0.1721661314102;
+        Mon, 22 Jul 2024 08:15:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFoPhA2XpD7vdd+w+1X6Fpe4UnduSzjJakKLgwmnDYed+val5xuaIYc5nVZBz4YRXeYP8zHSw==
+X-Received: by 2002:a05:620a:4686:b0:79f:1556:37c9 with SMTP id af79cd13be357-7a1a122ffa7mr583605685a.0.1721661313577;
+        Mon, 22 Jul 2024 08:15:13 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44f9cda34c4sm33648931cf.63.2024.07.22.08.15.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jul 2024 08:15:12 -0700 (PDT)
+Date: Mon, 22 Jul 2024 11:15:10 -0400
+From: Peter Xu <peterx@redhat.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Jason Gunthorpe <jgg@nvidia.com>, Al Viro <viro@zeniv.linux.org.uk>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	"Kirill A . Shutemov" <kirill@shutemov.name>, x86@kernel.org,
+	Yan Zhao <yan.y.zhao@intel.com>, Kevin Tian <kevin.tian@intel.com>,
+	Pei Li <peili.dev@gmail.com>, David Hildenbrand <david@redhat.com>,
+	David Wang <00107082@163.com>, Bert Karwatzki <spasswolf@web.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH] mm/x86/pat: Only untrack the pfn range if unmap region
+Message-ID: <Zp53fnlsJGOmWSRQ@x1n>
+References: <20240712144244.3090089-1-peterx@redhat.com>
+ <t7q4s4rktcjkrtmr7l2zffpthxis5bmafhae7aaxxekyyp75ev@x4dshxdx3jpo>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: solid-run.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB7586.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 78b8f8b3-5c3a-4376-d917-08dcaa610272
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jul 2024 15:14:40.8807
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a4a8aaf3-fd27-4e27-add2-604707ce5b82
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 4q7zXDkVQrXqh72EmppX/4hNePxCBW1HPTKD7a6k59yOVW8WaUwKIjegt4MPOleO8j6Z2iBabmMTwC42fruV2g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7870
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <t7q4s4rktcjkrtmr7l2zffpthxis5bmafhae7aaxxekyyp75ev@x4dshxdx3jpo>
 
-DQpBbSAyMi4wNy4yNCB1bSAxNzowNSBzY2hyaWViIEpvc3VhIE1heWVyOg0KPiBBbSAyMS4wNy4y
-NCB1bSAxMTozMSBzY2hyaWViIEtyenlzenRvZiBLb3psb3dza2k6DQo+PiBPbiAyMC8wNy8yMDI0
-IDE2OjE5LCBKb3N1YSBNYXllciB3cm90ZToNCj4+PiBBcm1hZGEgMzh4IFVTQi0yLjAgUEhZcyBh
-cmUgc2ltaWxhciB0byBBcm1hZGEgOEsgKENQMTEwKSBhbmQgY2FuIGJlDQo+Pj4gc3VwcG9ydGVk
-IGJ5IHRoZSBzYW1lIGRyaXZlciB3aXRoIHNtYWxsIGRpZmZlcmVuY2VzLg0KPj4+DQo+Pj4gQWRk
-IG5ldyBjb21wYXRpYmxlIHN0cmluZyBmb3IgYXJtYWRhLTM4eCB2YXJpYW50IG9mIHV0bWkgcGh5
-Lg0KPj4+IFRoZW4gYWRkIGRlc2NyaXB0aW9ucyBhbmQgbmFtZXMgZm9yIHR3byBhZGRpdGlvbmFs
-IHJlZ2lzdGVyIGRlZmluaXRpb25zDQo+Pj4gdGhhdCBtYXkgYmUgc3BlY2lmaWVkIGluc3RlYWQg
-b2YgYSBzeXNjb24gcGhhbmRsZS4NCj4+Pg0KPj4+IFNpZ25lZC1vZmYtYnk6IEpvc3VhIE1heWVy
-IDxqb3N1YUBzb2xpZC1ydW4uY29tPg0KPj4+IC0tLQ0KPj4+ICAuLi4vcGh5L21hcnZlbGwsYXJt
-YWRhLWNwMTEwLXV0bWktcGh5LnlhbWwgICAgICAgICB8IDM0ICsrKysrKysrKysrKysrKysrKy0t
-LS0NCj4+PiAgMSBmaWxlIGNoYW5nZWQsIDI5IGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0p
-DQo+Pj4NCj4+PiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
-L3BoeS9tYXJ2ZWxsLGFybWFkYS1jcDExMC11dG1pLXBoeS55YW1sIGIvRG9jdW1lbnRhdGlvbi9k
-ZXZpY2V0cmVlL2JpbmRpbmdzL3BoeS9tYXJ2ZWxsLGFybWFkYS1jcDExMC11dG1pLXBoeS55YW1s
-DQo+Pj4gaW5kZXggOWNlN2I0YzZkMjA4Li4yNDZlNDhkNTE3NTUgMTAwNjQ0DQo+Pj4gLS0tIGEv
-RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BoeS9tYXJ2ZWxsLGFybWFkYS1jcDEx
-MC11dG1pLXBoeS55YW1sDQo+Pj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
-bmdzL3BoeS9tYXJ2ZWxsLGFybWFkYS1jcDExMC11dG1pLXBoeS55YW1sDQpjdXQNCj4+PiBAQCAt
-NjgsNyArOTMsNiBAQCByZXF1aXJlZDoNCj4+PiAgICAtIHJlZw0KPj4+ICAgIC0gIiNhZGRyZXNz
-LWNlbGxzIg0KPj4+ICAgIC0gIiNzaXplLWNlbGxzIg0KPj4+IC0gIC0gbWFydmVsbCxzeXN0ZW0t
-Y29udHJvbGxlcg0KPj4geW91IG1pc3MgaGVyZSBhbGxPZjppZjp0aGVuOiBuYXJyb3dpbmcgYW5k
-IG1hcnZlbGwsc3lzdGVtLWNvbnRyb2xsZXIgcGVyDQo+PiBlYWNoIHZhcmlhbnQuDQpJIGFtIHN0
-cnVnZ2xpbmcgYSBiaXQgd2l0aCB0aGUgb3B0aW9ucy4NCg0KRmlyc3QgYXR0ZW1wdCBzYXlzOiBp
-ZiBub3QgYm90aCB1c2ItY2ZnIGFuZCB1dG1pLWNmZyByZWctbmFtZXMgYXJlIHNwZWNpZmllZCwN
-CnRoZW4gbWFydmVsbCxzeXN0ZW0tY29udHJvbGxlciBpcyByZXF1aXJlZC4NCg0KYWxsT2Y6DQrC
-oCAtIHJlcXVpcmVkOg0KwqDCoMKgwqDCoCAtIGNvbXBhdGlibGUNCsKgwqDCoMKgwqAgLSByZWcN
-CsKgwqDCoMKgwqAgLSAiI2FkZHJlc3MtY2VsbHMiDQrCoMKgwqDCoMKgIC0gIiNzaXplLWNlbGxz
-Ig0KwqAgLSBpZjoNCsKgwqDCoMKgwqAgbm90Og0KwqDCoMKgwqDCoMKgwqAgcHJvcGVydGllczoN
-CsKgwqDCoMKgwqDCoMKgwqDCoCByZWctbmFtZXM6DQrCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGFs
-bE9mOg0KwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgLSBjb250YWluczoNCsKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY29uc3Q6IHVzYi1jZmcNCsKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgIC0gY29udGFpbnM6DQrCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-IGNvbnN0OiB1dG1pLWNmZw0KwqDCoMKgIHRoZW46DQrCoMKgwqDCoMKgIHJlcXVpcmVkOg0KwqDC
-oMKgwqDCoMKgwqAgLSBtYXJ2ZWxsLHN5c3RlbS1jb250cm9sbGVyDQoNClRoaXMgd29ya3Mgb2th
-eSBmb3IgYW55IGNvbWJpbmF0aW9ucyBvZiByZWctbmFtZXMuDQoNCkhvd2V2ZXIgd2hlbiBkZXZp
-Y2UtdHJlZSBpcyBtaXNzaW5nIHJlZy1uYW1lcyBhbGwgdG9nZXRoZXIsDQptYXJ2ZWxsLHN5c3Rl
-bS1jb250cm9sbGVyIGlzIG5vdCBtYXJrZWQgcmVxdWlyZWQuDQoNCldvdWxkIGl0IGJlIGFjY2Vw
-dGFibGUgdG8gbWFrZSByZWctbmFtZXMgcmVxdWlyZWQ/DQoNCg==
+On Fri, Jul 19, 2024 at 10:18:12PM -0400, Liam R. Howlett wrote:
+> * Peter Xu <peterx@redhat.com> [240712 10:43]:
+> > This patch is one patch of an old series [1] that got reposted standalone
+> > here, with the hope to fix some reported untrack_pfn() issues reported
+> > recently [2,3], where there used to be other fix [4] but unfortunately
+> > which looks like to cause other issues.  The hope is this patch can fix it
+> > the right way.
+> > 
+> > X86 uses pfn tracking to do pfnmaps.  AFAICT, the tracking should normally
+> > start at mmap() of device drivers, then untracked when munmap().  However
+> > in the current code the untrack is done in unmap_single_vma().  This might
+> > be problematic.
+> > 
+> > For example, unmap_single_vma() can be used nowadays even for zapping a
+> > single page rather than the whole vmas.  It's very confusing to do whole
+> > vma untracking in this function even if a caller would like to zap one
+> > page.  It could simply be wrong.
+> > 
+> > Such issue won't be exposed by things like MADV_DONTNEED won't ever work
+> > for pfnmaps and it'll fail the madvise() already before reaching here.
+> > However looks like it can be triggered like what was reported where invoked
+> > from an unmap request from a file vma.
+> > 
+> > There's also work [5] on VFIO (merged now) to allow tearing down MMIO
+> > pgtables before an munmap(), in which case we may not want to untrack the
+> > pfns if we're only tearing down the pgtables.  IOW, we may want to keep the
+> > pfn tracking information as those pfn mappings can be restored later with
+> > the same vma object.  Currently it's not an immediate problem for VFIO, as
+> > VFIO uses UC- by default, but it looks like there's plan to extend that in
+> > the near future.
+> > 
+> > IIUC, this was overlooked when zap_page_range_single() was introduced,
+> > while in the past it was only used in the munmap() path which wants to
+> > always unmap the region completely.  E.g., commit f5cc4eef9987 ("VM: make
+> > zap_page_range() callers that act on a single VMA use separate helper") is
+> > the initial commit that introduced unmap_single_vma(), in which the chunk
+> > of untrack_pfn() was moved over from unmap_vmas().
+> > 
+> > Recover that behavior to untrack pfnmap only when unmap regions.
+> > 
+> > [1] https://lore.kernel.org/r/20240523223745.395337-1-peterx@redhat.com
+> > [2] https://groups.google.com/g/syzkaller-bugs/c/FeQZvSbqWbQ/m/tHFmoZthAAAJ
+> > [3] https://lore.kernel.org/r/20240712131931.20207-1-00107082@163.com
+> > [4] https://lore.kernel.org/all/20240710-bug12-v1-1-0e5440f9b8d3@gmail.com/
+> > [5] https://lore.kernel.org/r/20240523195629.218043-1-alex.williamson@redhat.com
+> > 
+> > Cc: Alex Williamson <alex.williamson@redhat.com>
+> > Cc: Jason Gunthorpe <jgg@nvidia.com>
+> > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> > Cc: Andy Lutomirski <luto@kernel.org>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: Borislav Petkov <bp@alien8.de>
+> > Cc: Kirill A. Shutemov <kirill@shutemov.name>
+> > Cc: x86@kernel.org
+> > Cc: Yan Zhao <yan.y.zhao@intel.com>
+> > Cc: Kevin Tian <kevin.tian@intel.com>
+> > Cc: Pei Li <peili.dev@gmail.com>
+> > Cc: David Hildenbrand <david@redhat.com>
+> > Cc: David Wang <00107082@163.com>
+> > Cc: Bert Karwatzki <spasswolf@web.de>
+> > Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+> > Signed-off-by: Peter Xu <peterx@redhat.com>
+> > ---
+> > 
+> > NOTE: I massaged the commit message comparing to the rfc post [1], the
+> > patch itself is untouched.  Also removed rfc tag, and added more people
+> > into the loop. Please kindly help test this patch if you have a reproducer,
+> > as I can't reproduce it myself even with the syzbot reproducer on top of
+> > mm-unstable.  Instead of further check on the reproducer, I decided to send
+> > this out first as we have a bunch of reproducers on the list now..
+> > ---
+> >  mm/memory.c | 5 ++---
+> >  1 file changed, 2 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index 4bcd79619574..f57cc304b318 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -1827,9 +1827,6 @@ static void unmap_single_vma(struct mmu_gather *tlb,
+> >  	if (vma->vm_file)
+> >  		uprobe_munmap(vma, start, end);
+> >  
+> > -	if (unlikely(vma->vm_flags & VM_PFNMAP))
+> > -		untrack_pfn(vma, 0, 0, mm_wr_locked);
+> > -
+> >  	if (start != end) {
+> >  		if (unlikely(is_vm_hugetlb_page(vma))) {
+> >  			/*
+> > @@ -1894,6 +1891,8 @@ void unmap_vmas(struct mmu_gather *tlb, struct ma_state *mas,
+> >  		unsigned long start = start_addr;
+> >  		unsigned long end = end_addr;
+> >  		hugetlb_zap_begin(vma, &start, &end);
+> > +		if (unlikely(vma->vm_flags & VM_PFNMAP))
+> > +			untrack_pfn(vma, 0, 0, mm_wr_locked);
+> >  		unmap_single_vma(tlb, vma, start, end, &details,
+> >  				 mm_wr_locked);
+> >  		hugetlb_zap_end(vma, &details);
+> > -- 
+> > 2.45.0
+> 
+> 
+> ...Trying to follow this discussion across several threads and bug
+> reports.   I was looped in when syzbot found that the [4] fix was a
+> deadlock.
+> 
+> How are we reaching unmap_vmas() without the mmap lock held in any mode?
+> We must be holding the read or write lock - otherwise the vma pointer is
+> unsafe...?
+
+The report was not calling unmap_vmas() but unmap_single_vma(), and this
+patch proposed to move the untrack operation there.  We should always hold
+write lock for unmap_vmas(), afaiu.
+
+> 
+> In any case, since this will just keep calling unmap_single_vma() it has
+> to be an incomplete fix?
+
+I think there's indeed some issue to settle besides this patch, however I
+didn't quickly get why this patch is incomplete from this specific "untrack
+pfn within unmap_single_vma()" problem.  I thought it was complete from
+that regard, or could you elaborate otherwise?
+
+For example, I think it's pretty common to use unmap_single_vma() in a
+truncation path.
+
+Thanks,
+
+-- 
+Peter Xu
+
 
