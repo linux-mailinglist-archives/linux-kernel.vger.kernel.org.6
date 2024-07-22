@@ -1,190 +1,348 @@
-Return-Path: <linux-kernel+bounces-259290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE4C5939395
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:28:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B87493939D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:34:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9427E28230C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:28:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91C741F21FC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CAA616FF39;
-	Mon, 22 Jul 2024 18:27:55 +0000 (UTC)
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7821216C6B0
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 18:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9662616FF4E;
+	Mon, 22 Jul 2024 18:34:42 +0000 (UTC)
+Received: from spindle.queued.net (spindle.queued.net [45.33.49.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B2A1CF83;
+	Mon, 22 Jul 2024 18:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.33.49.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721672874; cv=none; b=K3RtFbh6HRTD6LYgarWg+3cjgRxvPz3ok0WGo070rEeaTljdoxwd+wLFezJT/zCN9c6QNV9CJNE1+lbsga7iE88xqH45qNSAIp+X0kLNVh+K+YDo1984CJDLNuwSpEeTokfAwWMlhMDly2YClUI0MPjsBR8zJ4Ve/D+QqeEc8Gw=
+	t=1721673281; cv=none; b=XmIFmIbzXxvhF4UlMlEENzzo/gi0iwrnn0KzCiYF7iZfTpoFC3TG/z1LhUHjnxEVDWO0laGNGua4z8V3rGRDwbMXRgyzdHmHvy0l0iDALoxtroxaGMiZ4+uHOhU5RcH41PCPRf+mjtPFNYc/1h/09yJjRhv2zhGorSECUniBr28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721672874; c=relaxed/simple;
-	bh=F6FMXHBav5ZFf53Zg/+oQQCMht4mrSPcADmH22KDITU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BP11hLY0moitGbPbMVe0of3MDevN1k2tvHyrCvshJy0grBuhU/nq+o5LopOCJhwifrbHZG4HWp/BWAZ4K9lgMYdk/fwln8gupGixzq7VMpyWtJnMXcJSpEz53Zf6qko9/+QgNIoyytN6yxOIKKqkzpd4h2ISHla5fQn94155e30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-397ba4f7387so18463455ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:27:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721672872; x=1722277672;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EqG4DjXdh9BThfz/oPKE46CRC77k0JuZ2H1GZ7xS5y4=;
-        b=d9r8sN3nRajiOGs9S9U1cLbCcOCTpCHL1I3/QM5oQ1J9r2r2o1o1EM7o3Znmc6Ez+8
-         vKr5Q3qcf+ItaGC8YnC2Gj23xJWpx1GfflJmERRMlJHbDHs9FGZsAvBOLM+OQ3ijk7rF
-         w2fuZ5QbtFLHDvqCrRPtHxvhUcOnGJ9Mrv4Va3YRSY7iWhNE5wE89tQCzrL23tS4xN3u
-         B4CXPlOwACBTAqLzujjRWBd7oSjrAIj3t3a1LanNqLx1LOmeMZY68/RKz6WiFliMM60D
-         DxWX50IITPEM/i69m3exlCYMwoahNWCgO2ibDzDAdetkJDOarfgdN+cF7LPVdr8N19u2
-         3P5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCViACcTgSgi6bHgGKEUEBxkdX64vUEcEPPVnoaRWS5oXICF5nJYQr4pkAsG+0tEYLUpzxbjrDPMHcLMYlau8Y5rXuCpj1LySqh/O2a8
-X-Gm-Message-State: AOJu0YwnmkAFedO+6pg20sEQNpEbko96TTwdzx8hLq4Sw9LFHc+DbXj+
-	a4ZVGCqFzmHJjw6HKUYGkQ6KSTd+bjUa0FZPEQgdA2qZr3HTjBS7
-X-Google-Smtp-Source: AGHT+IHVX3cSSyhgB58GojLXdK13WAoJHQ6943ZM4PKxyi/C10H5ptjegn1X8lVAliJ9c1/qBW6W/g==
-X-Received: by 2002:a05:6e02:18c9:b0:374:ac3a:e32c with SMTP id e9e14a558f8ab-3993ff9ca1fmr104337235ab.16.1721672872550;
-        Mon, 22 Jul 2024 11:27:52 -0700 (PDT)
-Received: from V92F7Y9K0C.lan ([136.25.84.117])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a224a1fc70sm2036075a12.58.2024.07.22.11.27.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 11:27:52 -0700 (PDT)
-Date: Mon, 22 Jul 2024 11:27:48 -0700
-From: Dennis Zhou <dennis@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>, Tejun Heo <tj@kernel.org>
-Cc: kernel test robot <oliver.sang@intel.com>,
-	Suren Baghdasaryan <surenb@google.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Kees Cook <keescook@chromium.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Christoph Lameter <cl@linux.com>, Dennis Zhou <dennis@kernel.org>,
-	Gary Guo <gary@garyguo.net>, Miguel Ojeda <ojeda@kernel.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>, linux-mm@kvack.org,
-	lkmm@lists.linux.dev
-Subject: Re: [linus:master] [mm]  24e44cc22a:
- BUG:KCSAN:data-race_in_pcpu_alloc_noprof/pcpu_block_update_hint_alloc
-Message-ID: <Zp6kpCcQRPTGk1LK@V92F7Y9K0C.lan>
-References: <202407191651.f24e499d-oliver.sang@intel.com>
- <Zp6bMoDnUMxNrKos@boqun-archlinux>
- <Zp6cVgXJlzF4VOwl@slm.duckdns.org>
- <Zp6e1PWZbz4pkh9Z@boqun-archlinux>
+	s=arc-20240116; t=1721673281; c=relaxed/simple;
+	bh=Da5ZdMzu3RBj1uNW563195I6iH5TXO9tZLuGAIFAfFE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oe6eOINngHUR4lj2eQADw/GV5t8V+Cs5OhRYFPaArqZHONx3KwOhdFqXcAzBen6qW7g8hOGN1SJnreWt8K6yYbBnqSXvkjk8m3/gqVeHRvQrLJPICiwAdlHgYCMswcPfeE64FK5XN1AF16q8sf9XB2Q8q21c8pVY6EozYqdScYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=queued.net; spf=pass smtp.mailfrom=queued.net; arc=none smtp.client-ip=45.33.49.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=queued.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queued.net
+Received: by spindle.queued.net (Postfix, from userid 1001)
+	id 7C17711597D; Mon, 22 Jul 2024 14:34:39 -0400 (EDT)
+Received: from 5400 (unknown [172.56.164.186])
+	by spindle.queued.net (Postfix) with ESMTPSA id 641D8115977;
+	Mon, 22 Jul 2024 14:34:37 -0400 (EDT)
+Date: Mon, 22 Jul 2024 14:34:32 -0400
+From: Andres Salomon <dilinger@queued.net>
+To: Pali =?UTF-8?B?Um9ow6Fy?= <pali@kernel.org>
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ Matthew Garrett <mjg59@srcf.ucam.org>, Sebastian Reichel <sre@kernel.org>,
+ Hans de Goede <hdegoede@redhat.com>, Ilpo =?UTF-8?B?SsOkcnZpbmVu?=
+ <ilpo.jarvinen@linux.intel.com>, linux-pm@vger.kernel.org,
+ Dell.Client.Kernel@dell.com, Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH] platform/x86:dell-laptop: Add knobs to change battery
+ charge settings
+Message-ID: <20240722143432.35c356b1@5400>
+In-Reply-To: <20240722071845.w7v23ixu5wujrpol@pali>
+References: <20240720012220.26d62a54@5400>
+	<20240720084019.hrnd4wgt4muorydp@pali>
+	<20240720052419.73b1415a@5400>
+	<20240720095507.uyaotkofkyasdgbd@pali>
+	<20240720220606.1934df43@5400>
+	<20240721090238.wrei5nu6y3awujws@pali>
+	<20240721193716.3156050f@5400>
+	<20240721234037.nxthfeqdjl3z74oc@pali>
+	<20240721195851.76e2b220@5400>
+	<20240722071845.w7v23ixu5wujrpol@pali>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zp6e1PWZbz4pkh9Z@boqun-archlinux>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bogosity: Ham, tests=bogofilter, spamicity=0.000000, version=1.2.5
 
-Hello,
+On Mon, 22 Jul 2024 09:18:45 +0200
+Pali Roh=C3=A1r <pali@kernel.org> wrote:
 
-On Mon, Jul 22, 2024 at 11:03:00AM -0700, Boqun Feng wrote:
-> On Mon, Jul 22, 2024 at 07:52:22AM -1000, Tejun Heo wrote:
-> > On Mon, Jul 22, 2024 at 10:47:30AM -0700, Boqun Feng wrote:
-> > > This looks like a data race because we read pcpu_nr_empty_pop_pages out
-> > > of the lock for a best effort checking, @Tejun, maybe you could confirm
-> > > on this?
-> > 
-> > That does sound plausible.
-> > 
-> > > -       if (pcpu_nr_empty_pop_pages < PCPU_EMPTY_POP_PAGES_LOW)
-> > > +       /*
-> > > +        * Checks pcpu_nr_empty_pop_pages out of the pcpu_lock, data races may
-> > > +        * occur but this is just a best-effort checking, everything is synced
-> > > +        * in pcpu_balance_work.
-> > > +        */
-> > > +       if (data_race(pcpu_nr_empty_pop_pages) < PCPU_EMPTY_POP_PAGES_LOW)
-> > >                 pcpu_schedule_balance_work();
-> > 
-> > Would it be better to use READ/WRITE_ONCE() for the variable?
-> > 
-> 
-> For READ/WRITE_ONCE(), we will need to replace all write accesses and
-> all out-of-lock read accesses to pcpu_nr_empty_pop_pages, like below.
-> It's better in the sense that it doesn't rely on compiler behaviors on
-> data races, not sure about the performance impact though.
-> 
+> On Sunday 21 July 2024 19:58:51 Andres Salomon wrote:
+> > On Mon, 22 Jul 2024 01:40:37 +0200
+> > Pali Roh=C3=A1r <pali@kernel.org> wrote:
+> >  =20
+> > > On Sunday 21 July 2024 19:37:16 Andres Salomon wrote: =20
+> > > > On Sun, 21 Jul 2024 11:02:38 +0200
+> > > > Pali Roh=C3=A1r <pali@kernel.org> wrote:
+> > > >    =20
+> > > > > On Saturday 20 July 2024 22:06:06 Andres Salomon wrote:   =20
+> > > > > > On Sat, 20 Jul 2024 11:55:07 +0200
+> > > > > > Pali Roh=C3=A1r <pali@kernel.org> wrote:
+> > > > > >      =20
+> > > > > > > On Saturday 20 July 2024 05:24:19 Andres Salomon wrote:     =
+=20
+> > > > > > > > Thanks for the quick feedback! Responses below.
+> > > > > > > >=20
+> > > > > > > > On Sat, 20 Jul 2024 10:40:19 +0200
+> > > > > > > > Pali Roh=C3=A1r <pali@kernel.org> wrote:
+> > > > > > > >        =20
+> > > >=20
+> > > > [...]
+> > > >    =20
+> > > > > > > > > > +
+> > > > > > > > > > +static void __init dell_battery_init(struct device *de=
+v)
+> > > > > > > > > > +{
+> > > > > > > > > > +	enum battery_charging_mode current_mode =3D DELL_BAT_=
+MODE_NONE;
+> > > > > > > > > > +
+> > > > > > > > > > +	dell_battery_read_req(BAT_CUSTOM_MODE_TOKEN, (int *) =
+&current_mode);
+> > > > > > > > > > +	if (current_mode !=3D DELL_BAT_MODE_NONE) {         =
+=20
+> > > > > > > > >=20
+> > > > > > > > > I quite do not understand how is this code suppose to wor=
+k.
+> > > > > > > > >=20
+> > > > > > > > > Why is there mix of custom kernel enum battery_charging_m=
+ode and return
+> > > > > > > > > value from Dell's API?       =20
+> > > > > > > >=20
+> > > > > > > > This is from the original patch from Dell; tbh, I'm not sur=
+e. It does
+> > > > > > > > work, though. That is, current_mode ends up holding the cor=
+rect value
+> > > > > > > > based on what was previously set, even if the charging mode=
+ is set from
+> > > > > > > > the BIOS.
+> > > > > > > >=20
+> > > > > > > > I just scanned through the libsmbios code to see what it's =
+doing, and
+> > > > > > > > it appears to loop through every charging mode to check if =
+its active.
+> > > > > > > > I'm not really sure that makes much more sense, so I'll try=
+ some more
+> > > > > > > > tests.       =20
+> > > > > > >=20
+> > > > > > > Keyboard backlight code (kbd_get_first_active_token_bit) is d=
+oing also
+> > > > > > > this type scan. If I remember correctly, for every keyboard b=
+acklight
+> > > > > > > token we just know the boolean value - if the token is set or=
+ not.
+> > > > > > >=20
+> > > > > > > It would really nice to see what (raw) value is returned by t=
+he
+> > > > > > > dell_battery_read_req(token) function for every battery token=
+ and for
+> > > > > > > every initial state.     =20
+> > > > > >=20
+> > > > > > I checked this. The BIOS sets the mode value in every related t=
+oken
+> > > > > > location. I'm still not really sure what libsmbios is doing, bu=
+t the
+> > > > > > kernel code seems to arbitrarily choose one of the token locati=
+ons
+> > > > > > to read from. This makes sense to me now.
+> > > > > >=20
+> > > > > > In the BIOS when I set the mode to "ExpressCharge",
+> > > > > > this what I pulled for each token location:
+> > > > > >=20
+> > > > > > [    5.704651] dell-laptop dell-laptop: BAT_CUSTOM_MODE_TOKEN v=
+alue: 2
+> > > > > > [    5.707015] dell-laptop dell-laptop: BAT_PRI_AC_MODE_TOKEN v=
+alue: 2
+> > > > > > [    5.709114] dell-laptop dell-laptop: BAT_ADAPTIVE_MODE_TOKEN=
+ value: 2
+> > > > > > [    5.711041] dell-laptop dell-laptop: BAT_STANDARD_MODE_TOKEN=
+ value: 2
+> > > > > > [    5.713705] dell-laptop dell-laptop: BAT_EXPRESS_MODE_TOKEN =
+value: 2
+> > > > > >=20
+> > > > > > Similar story when I set it to Custom (all were '5'), or Standa=
+rd ('1').
+> > > > > > When I set it from linux as well, it changed all location value=
+s.     =20
+> > > > >=20
+> > > > > Interesting... Anyway, I still think that the API could be simila=
+r to
+> > > > > what is used in keyboard backlight.
+> > > > >=20
+> > > > > Could you please dump all information about each token? They are =
+in
+> > > > > struct calling_interface_token returned by dell_smbios_find_token.
+> > > > >=20
+> > > > > I'm interesting in tokenID, location and value.
+> > > > >=20
+> > > > > Ideally to compare what is in token->value and then in buffer.out=
+put[1]
+> > > > > (in case dell_send_request does not fail).   =20
+> > > >=20
+> > > >=20
+> > > > Alright, here's what I see:
+> > > >=20
+> > > > [    5.904775] dell_laptop: dell_battery_read_req: token requested:=
+ 0x343, tokenID=3D0x343, location=3D0x343, value=3D5
+> > > > [    5.908675] dell_laptop: dell_battery_read_req: buffer.output[1]=
+=3D3
+> > > > [    5.908680] dell_laptop: dell_battery_init: BAT_CUSTOM_MODE_TOKE=
+N value: 3
+> > > > [    5.908682] dell_laptop: dell_battery_read_req: token requested:=
+ 0x341, tokenID=3D0x341, location=3D0x341, value=3D3
+> > > > [    5.910922] dell_laptop: dell_battery_read_req: buffer.output[1]=
+=3D3
+> > > > [    5.910926] dell_laptop: dell_battery_init: BAT_PRI_AC_MODE_TOKE=
+N value: 3
+> > > > [    5.910928] dell_laptop: dell_battery_read_req: token requested:=
+ 0x342, tokenID=3D0x342, location=3D0x342, value=3D4
+> > > > [    5.913042] dell_laptop: dell_battery_read_req: buffer.output[1]=
+=3D3
+> > > > [    5.913046] dell_laptop: dell_battery_init: BAT_ADAPTIVE_MODE_TO=
+KEN value: 3
+> > > > [    5.913048] dell_laptop: dell_battery_read_req: token requested:=
+ 0x346, tokenID=3D0x346, location=3D0x346, value=3D1
+> > > > [    5.914996] dell_laptop: dell_battery_read_req: buffer.output[1]=
+=3D3
+> > > > [    5.914999] dell_laptop: dell_battery_init: BAT_STANDARD_MODE_TO=
+KEN value: 3
+> > > > [    5.915000] dell_laptop: dell_battery_read_req: token requested:=
+ 0x347, tokenID=3D0x347, location=3D0x347, value=3D2
+> > > > [    5.916723] dell_laptop: dell_battery_read_req: buffer.output[1]=
+=3D3
+> > > > [    5.916724] dell_laptop: dell_battery_init: BAT_EXPRESS_MODE_TOK=
+EN value: 3
+> > > > [    5.916725] dell_laptop: dell_battery_read_req: token requested:=
+ 0x349, tokenID=3D0x349, location=3D0x349, value=3D65535
+> > > > [    5.918727] dell_laptop: dell_battery_read_req: buffer.output[1]=
+=3D65
+> > > > [    5.918731] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_ST=
+ART value: 65
+> > > > [    5.918734] dell_laptop: dell_battery_read_req: token requested:=
+ 0x34a, tokenID=3D0x34a, location=3D0x34a, value=3D65535
+> > > > [    5.920864] dell_laptop: dell_battery_read_req: buffer.output[1]=
+=3D85
+> > > > [    5.920867] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_EN=
+D value: 85   =20
+> > >=20
+> > > Perfect. And can you check dumps when the mode is set to some other t=
+han BAT_PRI_AC_MODE_TOKEN? =20
+> >=20
+> > Here's Express:
+> >=20
+> > [    5.880090] dell_laptop: dell_battery_read_req: token requested: 0x3=
+43, tokenID=3D0x343, location=3D0x343, value=3D5
+> > [    5.882011] dell_laptop: dell_battery_read_req: buffer.output[1]=3D2
+> > [    5.882014] dell_laptop: dell_battery_init: BAT_CUSTOM_MODE_TOKEN va=
+lue: 2
+> > [    5.882016] dell_laptop: dell_battery_read_req: token requested: 0x3=
+41, tokenID=3D0x341, location=3D0x341, value=3D3
+> > [    5.894513] dell_laptop: dell_battery_read_req: buffer.output[1]=3D2
+> > [    5.894518] dell_laptop: dell_battery_init: BAT_PRI_AC_MODE_TOKEN va=
+lue: 2
+> > [    5.894520] dell_laptop: dell_battery_read_req: token requested: 0x3=
+42, tokenID=3D0x342, location=3D0x342, value=3D4
+> > [    5.913870] dell_laptop: dell_battery_read_req: buffer.output[1]=3D2
+> > [    5.913874] dell_laptop: dell_battery_init: BAT_ADAPTIVE_MODE_TOKEN =
+value: 2
+> > [    5.913875] dell_laptop: dell_battery_read_req: token requested: 0x3=
+46, tokenID=3D0x346, location=3D0x346, value=3D1
+> > [    5.915622] dell_laptop: dell_battery_read_req: buffer.output[1]=3D2
+> > [    5.915625] dell_laptop: dell_battery_init: BAT_STANDARD_MODE_TOKEN =
+value: 2
+> > [    5.915626] dell_laptop: dell_battery_read_req: token requested: 0x3=
+47, tokenID=3D0x347, location=3D0x347, value=3D2
+> > [    5.917349] dell_laptop: dell_battery_read_req: buffer.output[1]=3D2
+> > [    5.917351] dell_laptop: dell_battery_init: BAT_EXPRESS_MODE_TOKEN v=
+alue: 2
+> > [    5.917352] dell_laptop: dell_battery_read_req: token requested: 0x3=
+49, tokenID=3D0x349, location=3D0x349, value=3D65535
+> > [    5.919068] dell_laptop: dell_battery_read_req: buffer.output[1]=3D65
+> > [    5.919070] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_START =
+value: 65
+> > [    5.919071] dell_laptop: dell_battery_read_req: token requested: 0x3=
+4a, tokenID=3D0x34a, location=3D0x34a, value=3D65535
+> > [    5.920780] dell_laptop: dell_battery_read_req: buffer.output[1]=3D85
+> > [    5.920782] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_END va=
+lue: 85
+> >=20
+> > And here's Adaptive:
+> >=20
+> > [    5.945319] dell_laptop: dell_battery_read_req: token requested: 0x3=
+43, tokenID=3D0x343, location=3D0x343, value=3D5
+> > [    5.973685] dell_laptop: dell_battery_read_req: buffer.output[1]=3D4
+> > [    5.973690] dell_laptop: dell_battery_init: BAT_CUSTOM_MODE_TOKEN va=
+lue: 4
+> > [    5.973692] dell_laptop: dell_battery_read_req: token requested: 0x3=
+41, tokenID=3D0x341, location=3D0x341, value=3D3
+> > [    5.976533] dell_laptop: dell_battery_read_req: buffer.output[1]=3D4
+> > [    5.976538] dell_laptop: dell_battery_init: BAT_PRI_AC_MODE_TOKEN va=
+lue: 4
+> > [    5.976540] dell_laptop: dell_battery_read_req: token requested: 0x3=
+42, tokenID=3D0x342, location=3D0x342, value=3D4
+> > [    5.981013] dell_laptop: dell_battery_read_req: buffer.output[1]=3D4
+> > [    5.981018] dell_laptop: dell_battery_init: BAT_ADAPTIVE_MODE_TOKEN =
+value: 4
+> > [    5.981020] dell_laptop: dell_battery_read_req: token requested: 0x3=
+46, tokenID=3D0x346, location=3D0x346, value=3D1
+> > [    5.983474] dell_laptop: dell_battery_read_req: buffer.output[1]=3D4
+> > [    5.983479] dell_laptop: dell_battery_init: BAT_STANDARD_MODE_TOKEN =
+value: 4
+> > [    5.983481] dell_laptop: dell_battery_read_req: token requested: 0x3=
+47, tokenID=3D0x347, location=3D0x347, value=3D2
+> > [    5.985881] dell_laptop: dell_battery_read_req: buffer.output[1]=3D4
+> > [    5.985885] dell_laptop: dell_battery_init: BAT_EXPRESS_MODE_TOKEN v=
+alue: 4
+> > [    5.985887] dell_laptop: dell_battery_read_req: token requested: 0x3=
+49, tokenID=3D0x349, location=3D0x349, value=3D65535
+> > [    5.988332] dell_laptop: dell_battery_read_req: buffer.output[1]=3D65
+> > [    5.988337] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_START =
+value: 65
+> > [    5.988339] dell_laptop: dell_battery_read_req: token requested: 0x3=
+4a, tokenID=3D0x34a, location=3D0x34a, value=3D65535
+> > [    5.990769] dell_laptop: dell_battery_read_req: buffer.output[1]=3D85
+> > [    5.990774] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_END va=
+lue: 85
+> >=20
+> >=20
+> >=20
+> > --=20
+> > I'm available for contract & employment work, see:
+> > https://spindle.queued.net/~dilinger/resume-tech.pdf =20
+>=20
+> Nice! So it is exactly same as API of keyboard backlight tokens. Thanks.
+>=20
+> In dell_battery_write_req function you can drop second "val" argument
+> and replace it by token->value. So the dell_fill_request call in that
+> function would look like:
+>=20
+>     dell_fill_request(&buffer, token->location, token->value, 0, 0);
 
-I think a better alternative is we can move it up into the lock under
-area_found. The value gets updated as part of pcpu_alloc_area() as the
-code above populates percpu memory that is already allocated.
 
-We should probably annotate pcpu_update_empty_pages() with:
-    lockdep_assert_held(&pcpu_lock);
+Well, except that we use dell_battery_write_req for writing the charge
+start/end values as well (in dell_battery_custom_set). Those can't be
+obtained from token->value.
 
-Thanks,
-Dennis
+We could have two separate functions for that, or set 'val' to a
+sentinel value (0) that, if detected, we set val=3Dtoken->value. I'm
+still not really understanding the point, though.
 
-> Regards,
-> Boqun
-> 
-> ----->8
-> diff --git a/mm/percpu.c b/mm/percpu.c
-> index 20d91af8c033..729e8188238b 100644
-> --- a/mm/percpu.c
-> +++ b/mm/percpu.c
-> @@ -570,7 +570,8 @@ static void pcpu_isolate_chunk(struct pcpu_chunk *chunk)
->  
->  	if (!chunk->isolated) {
->  		chunk->isolated = true;
-> -		pcpu_nr_empty_pop_pages -= chunk->nr_empty_pop_pages;
-> +		WRITE_ONCE(pcpu_nr_empty_pop_pages,
-> +			   pcpu_nr_empty_pop_pages - chunk->nr_empty_pop_pages);
->  	}
->  	list_move(&chunk->list, &pcpu_chunk_lists[pcpu_to_depopulate_slot]);
->  }
-> @@ -581,7 +582,8 @@ static void pcpu_reintegrate_chunk(struct pcpu_chunk *chunk)
->  
->  	if (chunk->isolated) {
->  		chunk->isolated = false;
-> -		pcpu_nr_empty_pop_pages += chunk->nr_empty_pop_pages;
-> +		WRITE_ONCE(pcpu_nr_empty_pop_pages,
-> +			   pcpu_nr_empty_pop_pages + chunk->nr_empty_pop_pages);
->  		pcpu_chunk_relocate(chunk, -1);
->  	}
->  }
-> @@ -599,7 +601,8 @@ static inline void pcpu_update_empty_pages(struct pcpu_chunk *chunk, int nr)
->  {
->  	chunk->nr_empty_pop_pages += nr;
->  	if (chunk != pcpu_reserved_chunk && !chunk->isolated)
-> -		pcpu_nr_empty_pop_pages += nr;
-> +		WRITE_ONCE(pcpu_nr_empty_pop_pages,
-> +			   pcpu_nr_empty_pop_pages + nr);
->  }
->  
->  /*
-> @@ -1891,7 +1894,7 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
->  		mutex_unlock(&pcpu_alloc_mutex);
->  	}
->  
-> -	if (pcpu_nr_empty_pop_pages < PCPU_EMPTY_POP_PAGES_LOW)
-> +	if (READ_ONCE(pcpu_nr_empty_pop_pages) < PCPU_EMPTY_POP_PAGES_LOW)
->  		pcpu_schedule_balance_work();
->  
->  	/* clear the areas and return address relative to base address */
-> @@ -2754,7 +2757,7 @@ void __init pcpu_setup_first_chunk(const struct pcpu_alloc_info *ai,
->  	tmp_addr = (unsigned long)base_addr + static_size + ai->reserved_size;
->  	pcpu_first_chunk = pcpu_alloc_first_chunk(tmp_addr, dyn_size);
->  
-> -	pcpu_nr_empty_pop_pages = pcpu_first_chunk->nr_empty_pop_pages;
-> +	WRITE_ONCE(pcpu_nr_empty_pop_pages, pcpu_first_chunk->nr_empty_pop_pages);
->  	pcpu_chunk_relocate(pcpu_first_chunk, -1);
->  
->  	/* include all regions of the first chunk */
-> 
+>=20
+> And then you can mimic the usage as it is done in keyboard backlight
+> functions (kbd_get_first_active_token_bit).
+>=20
+> If you do not know what I mean then later (today or tomorrow) I can
+> write code example of the functionality.
+
+Sorry, I still don't understand what the goal is here. Is the goal to
+not pull from a random location to determine the current charging mode?
+Is the goal to determine what charging modes are currently supported
+(and if so, I don't see how)? Is the goal to avoid having the kernel
+hardcode a list of enums that the BIOS might have different values
+for? Is the goal to merge the keyboard backlight and battery setting
+functions?
+
+
+--=20
+I'm available for contract & employment work, see:
+https://spindle.queued.net/~dilinger/resume-tech.pdf
 
