@@ -1,185 +1,223 @@
-Return-Path: <linux-kernel+bounces-258983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB955938F76
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:56:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E943A938F6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:55:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8185A280D0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:56:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 184B11C211AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E7916D9D4;
-	Mon, 22 Jul 2024 12:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mpq1lENV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDF716D9C9;
+	Mon, 22 Jul 2024 12:55:36 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59AF116D9C9
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 12:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B465C16CD21;
+	Mon, 22 Jul 2024 12:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721652965; cv=none; b=boo3tYprHenJLINhisEizrLCy79/GDKTp9Y6/edciSl2Tus5SewK/OYYPNR+J3N0qhvVschzXATHHoWiors25y+/QXmZ31YU7jFkNgJ134rjGn9HbEyaOcwIVsjwgsBQGhlNNMiQ5EbsMnDtLnxf8AGDajsEE651P2kyt1cgEMI=
+	t=1721652935; cv=none; b=OX6akmx6gEamupZyX0CkgGis+RUipMlBm8rrbeeNEmsblUXwiid7Yw0W/OS+5W2yro9HceRRHLbDJg6+3VkfXbDnX2JFAvWCJQpRJFm8CmuerYnJo1YM0UzZCviH/znrYehTTssNd+I37eEmNG8rOZbWssKTJc3nWpjmINncfrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721652965; c=relaxed/simple;
-	bh=JZLYf0wsystlScoz0eEY4VxzQQcKUBE/9MHVicMM8II=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e5tOhznpxDg+NVXQscV6S3iZJJvcmuBXksC3gM+BoMXPN3iCDEFbwu5xqLa3YyF0at/Et6CedQ/O78xOd/2+Eccbt8UMenWQvRD2zGKELCeY7l1/A04XjN1a2e0SsxHub0PjI7lROJHnt1XW9GZLkpsTf9iWTqLbpL3YFhlnSD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mpq1lENV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721652961;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JJVNq97qnVdAr/18tmluAm4AREjAa0bHQTkX1v3BnY0=;
-	b=Mpq1lENVO3nSuFBnSGv08t4UCv8nKBxobcHHc2HPMS3yxAg7kmbz0zZvQYbO/OGuYKjpNT
-	HY09yf8S09gbhPnZGGSL/fca/IM/Td35r933mNDKXUIA4JtoVQa7xLS6JnImk6jlP1yQbz
-	wehVlZKsRsxZKvqKcmwUBi3+66gP4Nc=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-146-If_i04ulMW23Ysuur3OdnA-1; Mon, 22 Jul 2024 08:56:00 -0400
-X-MC-Unique: If_i04ulMW23Ysuur3OdnA-1
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5a2c84a3bbaso3389138a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 05:56:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721652959; x=1722257759;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JJVNq97qnVdAr/18tmluAm4AREjAa0bHQTkX1v3BnY0=;
-        b=ucuF/ggfWrBPsc7Vaq/98CWdaLMLYoCORbUXA5Q3B1vi1/tIoLF83Q7paYxP8LbIoJ
-         bHXYpmZXirLRVqkdHexR7F6//kD3myhkE4NhvETlBfFkIa3ws1mNkT9vvQEdfSxU3QkX
-         bqys0fdKhbl+TWkaHWj7rduwmIZ/VGVwGPaWw6T/wMGEJKEmYYPb6nfUYR6qX5LQBg54
-         0nCxouqHHfYwFzYWXMgS4CVZboL9KiFojaUZ5aMbdKo4/rVfxxoqRl+ZCpoA5ACPVR9v
-         ee4UJpwWkZOGiOwZ5t57lU51G9yhZi6n37I9MW+qY7K9o7DlOtfMKxOBLk2MW81kDYcw
-         vTbw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6Vu4qPTk0r4yZowz6xXQwtnZ/VwaVXJLqV3VaX43JJoIieWt4lmWZG6cA/qTl4B64SUr69ZBqsr9vz26UPz+u9BbexQP1vW1ttdgk
-X-Gm-Message-State: AOJu0YwN0vL57eXU3G/7HhgkVTN32+XXDcA2K9rOg8XqlhxSb2Qgy9Ee
-	8mExcPTakPsq/CPrd3JdPNBDwqgkN8sMMlXhemn1wP53/kxPOEggrWbM1XRJtp+uPgmiSe3rUuW
-	25lyauxGGHQRPhuC54hrYH+JiQbwfYsnwvGzbMkO6YDCoFk1YuMcjMSuVvhL43anu2IhYFCVQ23
-	EnM1hgncyR/kyp2l5Q0yU5TY5KW1cgxeLHMcOY
-X-Received: by 2002:a05:6402:2710:b0:5a2:69f9:1fe7 with SMTP id 4fb4d7f45d1cf-5a47b5c0b38mr4441760a12.35.1721652959414;
-        Mon, 22 Jul 2024 05:55:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHoczppy1uFSf8Ce5bOr4QQLzSZiqqNznaHB9kc0dNoTPng5nEUdTnupdY6jWQpNPwWvx5HiWx06BR6DpqS8NE=
-X-Received: by 2002:a05:6402:2710:b0:5a2:69f9:1fe7 with SMTP id
- 4fb4d7f45d1cf-5a47b5c0b38mr4441749a12.35.1721652959078; Mon, 22 Jul 2024
- 05:55:59 -0700 (PDT)
+	s=arc-20240116; t=1721652935; c=relaxed/simple;
+	bh=WyrP/fVboN9AgXLU72E/nMZ9X6/qUdNvR7jjtZ387mI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HcuHwVH/PxsOiqCCXpLk/rmIR+c+psluG8p4+LUTdcCHoXMl3WRCIO7FLP3s/O0mr2AZywWB2Bi2GN8T14MRIn5kVZ1H6Kp2udRn4OItBduNf6+mLB/XkMDz8K72VhZfybMKlfydmTXscky9TVKiX3fLmqM1opAMbapdJXyk5J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WSKrP3GLmz1JDSt;
+	Mon, 22 Jul 2024 20:50:29 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id E79E0180064;
+	Mon, 22 Jul 2024 20:55:27 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 22 Jul 2024 20:55:27 +0800
+Message-ID: <fdc778be-907a-49bd-bf10-086f45716181@huawei.com>
+Date: Mon, 22 Jul 2024 20:55:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240722010625.1016854-1-lulu@redhat.com> <20240722010625.1016854-4-lulu@redhat.com>
- <CACGkMEvXk8_sXRtugePAMv8PM0qGU-su0eFUsFZ=-=_TjcGZNg@mail.gmail.com> <7a4d99e0f16cbe91000c3c780334a4c866904182.camel@nvidia.com>
-In-Reply-To: <7a4d99e0f16cbe91000c3c780334a4c866904182.camel@nvidia.com>
-From: Cindy Lu <lulu@redhat.com>
-Date: Mon, 22 Jul 2024 20:55:22 +0800
-Message-ID: <CACLfguUR_hdJGDcjnmYY=qOXFiSnsBsXD5evTDZQi=K0RM4gZQ@mail.gmail.com>
-Subject: Re: [PATH v4 3/3] vdpa/mlx5: Add the support of set mac address
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: "jasowang@redhat.com" <jasowang@redhat.com>, "sgarzare@redhat.com" <sgarzare@redhat.com>, 
-	Parav Pandit <parav@nvidia.com>, "mst@redhat.com" <mst@redhat.com>, 
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v11 08/14] mm: page_frag: some minor refactoring before
+ adding new API
+To: Alexander H Duyck <alexander.duyck@gmail.com>, <davem@davemloft.net>,
+	<kuba@kernel.org>, <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Andrew Morton
+	<akpm@linux-foundation.org>, <linux-mm@kvack.org>
+References: <20240719093338.55117-1-linyunsheng@huawei.com>
+ <20240719093338.55117-9-linyunsheng@huawei.com>
+ <dbf876b000158aed8380d6ac3a3f6e8dd40ace7b.camel@gmail.com>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <dbf876b000158aed8380d6ac3a3f6e8dd40ace7b.camel@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-On Mon, 22 Jul 2024 at 17:45, Dragos Tatulea <dtatulea@nvidia.com> wrote:
->
-> On Mon, 2024-07-22 at 15:48 +0800, Jason Wang wrote:
-> > On Mon, Jul 22, 2024 at 9:06=E2=80=AFAM Cindy Lu <lulu@redhat.com> wrot=
-e:
-> > >
-> > > Add the function to support setting the MAC address.
-> > > For vdpa/mlx5, the function will use mlx5_mpfs_add_mac
-> > > to set the mac address
-> > >
-> > > Tested in ConnectX-6 Dx device
-> > >
-> > > Signed-off-by: Cindy Lu <lulu@redhat.com>
-> > > ---
-> > >  drivers/vdpa/mlx5/net/mlx5_vnet.c | 25 +++++++++++++++++++++++++
-> > >  1 file changed, 25 insertions(+)
-> > >
-> > > diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/ne=
-t/mlx5_vnet.c
-> > > index ecfc16151d61..415b527a9c72 100644
-> > > --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> > > +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> > > @@ -3785,10 +3785,35 @@ static void mlx5_vdpa_dev_del(struct vdpa_mgm=
-t_dev *v_mdev, struct vdpa_device *
-> > >         destroy_workqueue(wq);
-> > >         mgtdev->ndev =3D NULL;
-> > >  }
-> > > +static int mlx5_vdpa_set_attr(struct vdpa_mgmt_dev *v_mdev,
-> > > +                             struct vdpa_device *dev,
-> > > +                             const struct vdpa_dev_set_config *add_c=
-onfig)
-> > > +{
-> > > +       struct mlx5_vdpa_dev *mvdev;
-> > > +       struct mlx5_vdpa_net *ndev;
-> > > +       struct mlx5_core_dev *mdev;
-> > > +       struct virtio_net_config *config;
-> > > +       struct mlx5_core_dev *pfmdev;
-> Reverse xmas tree?
->
-will fix this
-> > > +       int err =3D -EOPNOTSUPP;
-> > > +
-> > > +       mvdev =3D to_mvdev(dev);
-> > > +       ndev =3D to_mlx5_vdpa_ndev(mvdev);
-> > > +       mdev =3D mvdev->mdev;
-> > > +       config =3D &ndev->config;
-> > > +
-> You still need to take the ndev->reslock.
->
-sure, will do
-> > > +       if (add_config->mask & (1 << VDPA_ATTR_DEV_NET_CFG_MACADDR)) =
-{
-> > > +               pfmdev =3D pci_get_drvdata(pci_physfn(mdev->pdev));
-> > > +               err =3D mlx5_mpfs_add_mac(pfmdev, config->mac);
-> > > +               if (!err)
-> > > +                       memcpy(config->mac, add_config->net.mac, ETH_=
-ALEN);
-> What is the expected behaviour when the device is in use?
->
-if the err is 0 then copy the Mac address to config
-will change this code to make it more clear
-Thanks
-Cindy
-> > > +       }
-> > > +       return err;
-> >
-> > Similar to net simulator, how could be serialize the modification to
-> > mac address:
-> >
-> > 1) from vdpa tool
-> > 2) via control virtqueue
-> >
-> > Thanks
-> >
-> > > +}
-> > >
-> > >  static const struct vdpa_mgmtdev_ops mdev_ops =3D {
-> > >         .dev_add =3D mlx5_vdpa_dev_add,
-> > >         .dev_del =3D mlx5_vdpa_dev_del,
-> > > +       .dev_set_attr =3D mlx5_vdpa_set_attr,
-> > >  };
-> > >
-> > >  static struct virtio_device_id id_table[] =3D {
-> > > --
-> > > 2.45.0
-> > >
-> >
-> Thanks,
-> Dragos
+On 2024/7/22 7:40, Alexander H Duyck wrote:
+> On Fri, 2024-07-19 at 17:33 +0800, Yunsheng Lin wrote:
+>> Refactor common codes from __page_frag_alloc_va_align()
+>> to __page_frag_cache_refill(), so that the new API can
+>> make use of them.
+>>
+>> CC: Alexander Duyck <alexander.duyck@gmail.com>
+>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+>> ---
+>>  include/linux/page_frag_cache.h |  2 +-
+>>  mm/page_frag_cache.c            | 93 +++++++++++++++++----------------
+>>  2 files changed, 49 insertions(+), 46 deletions(-)
+>>
+>> diff --git a/include/linux/page_frag_cache.h b/include/linux/page_frag_cache.h
+>> index 12a16f8e8ad0..5aa45de7a9a5 100644
+>> --- a/include/linux/page_frag_cache.h
+>> +++ b/include/linux/page_frag_cache.h
+>> @@ -50,7 +50,7 @@ static inline void *encoded_page_address(unsigned long encoded_va)
+>>  
+>>  static inline void page_frag_cache_init(struct page_frag_cache *nc)
+>>  {
+>> -	nc->encoded_va = 0;
+>> +	memset(nc, 0, sizeof(*nc));
+>>  }
+>>  
+> 
+> I do not like requiring the entire structure to be reset as a part of
+> init. If encoded_va is 0 then we have reset the page and the flags.
+> There shouldn't be anything else we need to reset as remaining and bias
+> will be reset when we reallocate.
 
+The argument is about aoviding one checking for fast path by doing the
+memset in the slow path, which you might already know accroding to your
+comment in previous version.
+
+It is just sometimes hard to understand your preference for maintainability
+over performance here as sometimes your comment seems to perfer performance
+over maintainability, like the LEA trick you mentioned and offset count-down
+before this patchset. It would be good to be more consistent about this,
+otherwise it is sometimes confusing when doing the refactoring.
+
+> 
+>>  static inline bool page_frag_cache_is_pfmemalloc(struct page_frag_cache *nc)
+>> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
+>> index 7928e5d50711..d9c9cad17af7 100644
+>> --- a/mm/page_frag_cache.c
+>> +++ b/mm/page_frag_cache.c
+>> @@ -19,6 +19,28 @@
+>>  #include <linux/page_frag_cache.h>
+>>  #include "internal.h"
+>>  
+>> +static struct page *__page_frag_cache_recharge(struct page_frag_cache *nc)
+>> +{
+>> +	unsigned long encoded_va = nc->encoded_va;
+>> +	struct page *page;
+>> +
+>> +	page = virt_to_page((void *)encoded_va);
+>> +	if (!page_ref_sub_and_test(page, nc->pagecnt_bias))
+>> +		return NULL;
+>> +
+>> +	if (unlikely(encoded_page_pfmemalloc(encoded_va))) {
+>> +		VM_BUG_ON(compound_order(page) !=
+>> +			  encoded_page_order(encoded_va));
+>> +		free_unref_page(page, encoded_page_order(encoded_va));
+>> +		return NULL;
+>> +	}
+>> +
+>> +	/* OK, page count is 0, we can safely set it */
+>> +	set_page_count(page, PAGE_FRAG_CACHE_MAX_SIZE + 1);
+>> +
+>> +	return page;
+>> +}
+>> +
+>>  static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
+>>  					     gfp_t gfp_mask)
+>>  {
+>> @@ -26,6 +48,14 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
+>>  	struct page *page = NULL;
+>>  	gfp_t gfp = gfp_mask;
+>>  
+>> +	if (likely(nc->encoded_va)) {
+>> +		page = __page_frag_cache_recharge(nc);
+>> +		if (page) {
+>> +			order = encoded_page_order(nc->encoded_va);
+>> +			goto out;
+>> +		}
+>> +	}
+>> +
+> 
+> This code has no business here. This is refill, you just dropped
+> recharge in here which will make a complete mess of the ordering and be
+> confusing to say the least.
+> 
+> The expectation was that if we are calling this function it is going to
+> overwrite the virtual address to NULL on failure so we discard the old
+> page if there is one present. This changes that behaviour. What you
+> effectively did is made __page_frag_cache_refill into the recharge
+> function.
+
+The idea is to reuse the below for both __page_frag_cache_refill() and
+__page_frag_cache_recharge(), which seems to be about maintainability
+to not having duplicated code. If there is a better idea to avoid that
+duplicated code while keeping the old behaviour, I am happy to change
+it.
+
+	/* reset page count bias and remaining to start of new frag */
+	nc->pagecnt_bias = PAGE_FRAG_CACHE_MAX_SIZE + 1;
+	nc->remaining = PAGE_SIZE << order;
+
+> 
+>>  #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
+>>  	gfp_mask = (gfp_mask & ~__GFP_DIRECT_RECLAIM) |  __GFP_COMP |
+>>  		   __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC;
+>> @@ -35,7 +65,7 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
+>>  	if (unlikely(!page)) {
+>>  		page = alloc_pages_node(NUMA_NO_NODE, gfp, 0);
+>>  		if (unlikely(!page)) {
+>> -			nc->encoded_va = 0;
+>> +			memset(nc, 0, sizeof(*nc));
+>>  			return NULL;
+>>  		}
+>>  
+> 
+> The memset will take a few more instructions than the existing code
+> did. I would prefer to keep this as is if at all possible.
+
+It will not take more instructions for arm64 as it has 'stp' instruction for
+__HAVE_ARCH_MEMSET is set.
+There is something similar for x64?
+
+> 
+>> @@ -45,6 +75,16 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
+>>  	nc->encoded_va = encode_aligned_va(page_address(page), order,
+>>  					   page_is_pfmemalloc(page));
+>>  
+>> +	/* Even if we own the page, we do not use atomic_set().
+>> +	 * This would break get_page_unless_zero() users.
+>> +	 */
+>> +	page_ref_add(page, PAGE_FRAG_CACHE_MAX_SIZE);
+>> +
+>> +out:
+>> +	/* reset page count bias and remaining to start of new frag */
+>> +	nc->pagecnt_bias = PAGE_FRAG_CACHE_MAX_SIZE + 1;
+>> +	nc->remaining = PAGE_SIZE << order;
+>> +
+>>  	return page;
+>>  }
+>>  
+> 
+> Why bother returning a page at all? It doesn't seem like you don't use
+> it anymore. It looks like the use cases you have for it in patch 11/12
+> all appear to be broken from what I can tell as you are adding page as
+> a variable when we don't need to be passing internal details to the
+> callers of the function when just a simple error return code would do.
+
+It would be good to be more specific about the 'broken' part here.
 
