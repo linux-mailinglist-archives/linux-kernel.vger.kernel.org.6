@@ -1,158 +1,217 @@
-Return-Path: <linux-kernel+bounces-258611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C19C7938A74
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:54:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4888938A7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:55:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 411CE280EE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:54:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03F331C210EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6135F1607B3;
-	Mon, 22 Jul 2024 07:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F050B1662E9;
+	Mon, 22 Jul 2024 07:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jXQrZ9s+"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="T2fCpkk1"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDE6381BA;
-	Mon, 22 Jul 2024 07:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F3E161924
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721634852; cv=none; b=HDIfPuzdAx3zdOtFFBiQg3FANkZJkj4HSGzyyAymiAL4LyigKuzEHW5gwPIdXDvA7XVKMxCdXoe/7ayXEehwYxof5TNVOjkalh3PRZofsVpNha672lwkapMqzmAmXNDgy/4YUaJP6pDw7TSxTu5gOg4SVSUGlufJNZGRO/tFCKs=
+	t=1721634881; cv=none; b=uVNBFZUPqbu/ZAU2IDzHh8o7E5pgOsuoZJdFVlyG9n/SV9pA3ZzQOMotsA8xRBk4UwFxI2HD7sGn47u4l+ha5lJ9hTi3Z6P9P9Ws8WATvUsUTKhEbUx2KQb94ikFGJ4fQBPw2KzjPTHDhA0r1OTdH2kR8Hv15A6n9eATrNaXbR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721634852; c=relaxed/simple;
-	bh=1mDGEshSD9xdwzjbdcUp/z7NJrr4zCePNe23QqIgNxA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OZ+1dwM/s1+tDQcPQezBFkmiycrPZB145e4sqsNzGssuppcn45RwMO1k3GgxcCdhb0wfGlYtgzK3O5tlHZfS/TeuXvl0QJytKGRTwzJ+oNAb0Ct3yE3kIuVI8XNLvu0P0vOFzevTBMePGxGiPFEdwb4UDDodJdznVP3UQ7egtsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jXQrZ9s+; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46LNeO1u022587;
-	Mon, 22 Jul 2024 07:54:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	a56rZKm8C/m55xUFMXSQgb2iVdlO+WEYhbq0R07Sjqc=; b=jXQrZ9s+NLQF9xcw
-	868KAt5ojnmuHZCfuF0/p+0N4GalnzkzR9lAErldwwSdulDSxYmCNsSCQVQX/riD
-	IOfR3WDG9wErUe3+flMHAxnQ2n8ydZaYVhuhboZ2lafccjw2jPG14EARA9U3Bdev
-	iv0fdGrxAncmgoabt5NTFc/Rcuqzh4DgQdjriUFSbzEgQWIwG2JMa8zsTtJ2IMeU
-	51kT4j555mFBzaaEcTDBgsxxQOiL3pZt5UlDqJPE/ygLvmSscXTB/WcSD8AY163b
-	XDJsAVaXw9hWWpurDMhR9GoIxqQBxsyFpUmoRmUyAtjDB05P6Pg0DlcP4BFvLd1V
-	pgofwg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g6h8tvxh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jul 2024 07:54:03 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46M7s2tx027808
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jul 2024 07:54:02 GMT
-Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 22 Jul
- 2024 00:53:59 -0700
-Message-ID: <0d29ff01-9d8c-48b9-b845-3370222c4ff4@quicinc.com>
-Date: Mon, 22 Jul 2024 13:23:56 +0530
+	s=arc-20240116; t=1721634881; c=relaxed/simple;
+	bh=PGOClZLn/BsGLIXMz3KFQ1ZgsPxvjnXNUX+dIqif7Ww=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=jqTBu1pjbU6lRsSIyFMgUlvi7ya8bi6IM9GfNUcR0B3A2CRSyIAhDZCQSvVbUYCf1BF5wdLD057HA69Kt3+Tbrkb40TBfwRLp/zpESDRV9ovMZY+PQc8i5wY+qDLlg0MqnCKxWxiPSFuA9ffxnSNa3Fdd2/7irc379ncFly9uPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=T2fCpkk1; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: chengming.zhou@linux.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721634877;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vv6YSv7sgoYsC82DCWX0dpCMhAkkJP3/WhxIR4lZbC4=;
+	b=T2fCpkk1j4FP2yq5WJCBo0k3j5rCbkl6drvNgvl+8viZJIcKX2HAxXJHMRZyt+DXRWa71I
+	6oZqvvMzDMsRq6sOndjrHm20hdtZAo5z8i7jBvdIcYgHfwXCcc48QIizJCg+dckry8Dm7f
+	L+ZMYiKiAVoAJpmydLk++QwoT9wtuic=
+X-Envelope-To: songmuchun@bytedance.com
+X-Envelope-To: hannes@cmpxchg.org
+X-Envelope-To: mhocko@kernel.org
+X-Envelope-To: roman.gushchin@linux.dev
+X-Envelope-To: shakeel.butt@linux.dev
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: cgroups@vger.kernel.org
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] misc: fastrpc: Define a new initmem size for user
- PD
-Content-Language: en-US
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_bkumar@quicinc.com>, <linux-kernel@vger.kernel.org>,
-        <quic_chennak@quicinc.com>, <dri-devel@lists.freedesktop.org>,
-        <arnd@arndb.de>, stable <stable@kernel.org>
-References: <20240722055437.3467900-1-quic_ekangupt@quicinc.com>
- <20240722055437.3467900-2-quic_ekangupt@quicinc.com>
- <2024072234-slug-payer-2dec@gregkh>
- <607362f2-8ae5-46bd-a3a4-2d78da98b12a@quicinc.com>
- <2024072227-purposely-swinger-86ad@gregkh>
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-In-Reply-To: <2024072227-purposely-swinger-86ad@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: R1w4Kxb8iSEHZcRfbH52GGldrcl6uP4Q
-X-Proofpoint-GUID: R1w4Kxb8iSEHZcRfbH52GGldrcl6uP4Q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-22_04,2024-07-18_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 mlxscore=0 malwarescore=0 phishscore=0 bulkscore=0
- mlxlogscore=999 suspectscore=0 lowpriorityscore=0 clxscore=1015
- impostorscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2407220060
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH] mm: kmem: add lockdep assertion to obj_cgroup_memcg
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <d30c7de3-65b5-4b5c-9046-4eed2c7d0b57@linux.dev>
+Date: Mon, 22 Jul 2024 15:53:57 +0800
+Cc: Muchun Song <songmuchun@bytedance.com>,
+ Johannes Weiner <hannes@cmpxchg.org>,
+ Michal Hocko <mhocko@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ shakeel.butt@linux.dev,
+ Andrew Morton <akpm@linux-foundation.org>,
+ cgroups@vger.kernel.org,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <20859F67-A80C-4FD0-990C-40C70905E55B@linux.dev>
+References: <20240722070810.46016-1-songmuchun@bytedance.com>
+ <d30c7de3-65b5-4b5c-9046-4eed2c7d0b57@linux.dev>
+To: Chengming Zhou <chengming.zhou@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
 
 
-On 7/22/2024 1:09 PM, Greg KH wrote:
-> On Mon, Jul 22, 2024 at 11:42:52AM +0530, Ekansh Gupta wrote:
->>
->> On 7/22/2024 11:28 AM, Greg KH wrote:
->>> On Mon, Jul 22, 2024 at 11:24:36AM +0530, Ekansh Gupta wrote:
->>>> For user PD initialization, initmem is allocated and sent to DSP for
->>>> initial memory requirements like shell loading. The size of this memory
->>>> is decided based on the shell size that is passed by the user space.
->>>> With the current implementation, a minimum of 2MB is always allocated
->>>> for initmem even if the size passed by user is less than that. For this
->>>> a MACRO is being used which is intended for shell size bound check.
->>>> This minimum size of 2MB is not recommended as the PD will have very
->>>> less memory for heap and will have to request HLOS again for memory.
->>>> Define a new macro for initmem minimum length of 3MB.
->>>>
->>>> Fixes: d73f71c7c6ee ("misc: fastrpc: Add support for create remote init process")
->>>> Cc: stable <stable@kernel.org>
->>>> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
->>>> ---
->>>>  drivers/misc/fastrpc.c | 3 ++-
->>>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
->>>> index a7a2bcedb37e..a3a5b745936e 100644
->>>> --- a/drivers/misc/fastrpc.c
->>>> +++ b/drivers/misc/fastrpc.c
->>>> @@ -39,6 +39,7 @@
->>>>  #define FASTRPC_DSP_UTILITIES_HANDLE	2
->>>>  #define FASTRPC_CTXID_MASK (0xFF0)
->>>>  #define INIT_FILELEN_MAX (2 * 1024 * 1024)
->>>> +#define FASTRPC_INITLEN_MIN (3 * 1024 * 1024)
->>> Meta-comment, for a future change, why not tabs to line things up?
->> Sure, I'll add a comment.
-> I didn't say anything about comments :(
-Oops, sorry.
->
->> Should I line up all the MACRO definitions? If yes, should I send it as a separate patch?
-> As I said, yes, for a future change.
-Noted, thanks.
->>> How was this tested?
->> This is tested with fastrpc use cases available in hexagon SDK:
->> https://developer.qualcomm.com/software/hexagon-dsp-sdk/sample-apps
-> Do you have regression tests that attempt to check the boundry
-> conditions and alignment here?
-For most of the test cases, I used the fastrpc lib:
-https://github.com/quic/fastrpc
+> On Jul 22, 2024, at 15:46, Chengming Zhou <chengming.zhou@linux.dev> =
+wrote:
+>=20
+> On 2024/7/22 15:08, Muchun Song wrote:
+>> The obj_cgroup_memcg() is supposed to safe to prevent the returned
+>> memory cgroup from being freed only when the caller is holding the
+>> rcu read lock or objcg_lock or cgroup_mutex. It is very easy to
+>> ignore thoes conditions when users call some upper APIs which call
+>> obj_cgroup_memcg() internally like mem_cgroup_from_slab_obj() (See
+>> the link below). So it is better to add lockdep assertion to
+>> obj_cgroup_memcg() to find those issues ASAP.
+>=20
+> Yeah, some users care about the lifetime of returned memcg, while
+> some other users maybe not.
+>=20
+> Maybe a dumb question, can we just make objcg hold the refcount of
+> its pointed memcg? So the users of that objcg don't need to care
+> about the refcount of memcg? (We could switch the refcount from
+> old memcg to the new memcg when objcg switch memcg pointer, right?)
 
-This library is taking care of passing proper shell size which is within the boundary for
-all the platform that I've tried.
-I'll try creating and running some regression tests for this change.
+You mean the memcg is pinned if objcg is pinned, right? If yes, in
+which case, reparenting of memcg cannot make memcg being freed ASAP.
 
---Ekansh
->
-> thanks,
->
-> greg k-h
+>=20
+> Thanks.
+>=20
+>> Because there is no user of obj_cgroup_memcg() holding objcg_lock
+>> to make the returned memory cgroup safe, do not add objcg_lock
+>> assertion (We should export objcg_lock if we really want to do)
+>> and leave a comment to indicate it is intentional.
+>> Some users like __mem_cgroup_uncharge() do not care the lifetime
+>> of the returned memory cgroup, which just want to know if the
+>> folio is charged to a memory cgroup, therefore, they do not need
+>> to hold the needed locks. In which case, introduce a new helper
+>> folio_memcg_charged() to do this. Compare it to folio_memcg(), it
+>> could eliminate a memory access of objcg->memcg for kmem, actually,
+>> a really small gain.
+>> Link: =
+https://lore.kernel.org/all/20240718083607.42068-1-songmuchun@bytedance.co=
+m/
+>> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+>> ---
+>>  include/linux/memcontrol.h | 22 +++++++++++++++++++---
+>>  mm/memcontrol.c            |  6 +++---
+>>  2 files changed, 22 insertions(+), 6 deletions(-)
+>> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+>> index fc94879db4dff..d616c50025098 100644
+>> --- a/include/linux/memcontrol.h
+>> +++ b/include/linux/memcontrol.h
+>> @@ -360,11 +360,13 @@ static inline bool folio_memcg_kmem(struct =
+folio *folio);
+>>   * After the initialization objcg->memcg is always pointing at
+>>   * a valid memcg, but can be atomically swapped to the parent memcg.
+>>   *
+>> - * The caller must ensure that the returned memcg won't be released:
+>> - * e.g. acquire the rcu_read_lock or css_set_lock.
+>> + * The caller must ensure that the returned memcg won't be released.
+>>   */
+>>  static inline struct mem_cgroup *obj_cgroup_memcg(struct obj_cgroup =
+*objcg)
+>>  {
+>> + WARN_ON_ONCE(!rcu_read_lock_held() &&
+>> +  /* !lockdep_is_held(&objcg_lock) && */
+>> +     !lockdep_is_held(&cgroup_mutex));
+>>   return READ_ONCE(objcg->memcg);
+>>  }
+>>  @@ -438,6 +440,19 @@ static inline struct mem_cgroup =
+*folio_memcg(struct folio *folio)
+>>   return __folio_memcg(folio);
+>>  }
+>>  +/*
+>> + * folio_memcg_charged - If a folio is charged to a memory cgroup.
+>> + * @folio: Pointer to the folio.
+>> + *
+>> + * Returns true if folio is charged to a memory cgroup, otherwise =
+returns false.
+>> + */
+>> +static inline bool folio_memcg_charged(struct folio *folio)
+>> +{
+>> + if (folio_memcg_kmem(folio))
+>> + return __folio_objcg(folio) !=3D NULL;
+>> + return __folio_memcg(folio) !=3D NULL;
+>> +}
+>> +
+>>  /**
+>>   * folio_memcg_rcu - Locklessly get the memory cgroup associated =
+with a folio.
+>>   * @folio: Pointer to the folio.
+>> @@ -454,7 +469,6 @@ static inline struct mem_cgroup =
+*folio_memcg_rcu(struct folio *folio)
+>>   unsigned long memcg_data =3D READ_ONCE(folio->memcg_data);
+>>     VM_BUG_ON_FOLIO(folio_test_slab(folio), folio);
+>> - WARN_ON_ONCE(!rcu_read_lock_held());
+>>     if (memcg_data & MEMCG_DATA_KMEM) {
+>>   struct obj_cgroup *objcg;
+>> @@ -463,6 +477,8 @@ static inline struct mem_cgroup =
+*folio_memcg_rcu(struct folio *folio)
+>>   return obj_cgroup_memcg(objcg);
+>>   }
+>>  + WARN_ON_ONCE(!rcu_read_lock_held());
+>> +
+>>   return (struct mem_cgroup *)(memcg_data & ~OBJEXTS_FLAGS_MASK);
+>>  }
+>>  diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>> index 622d4544edd24..3da0284573857 100644
+>> --- a/mm/memcontrol.c
+>> +++ b/mm/memcontrol.c
+>> @@ -2366,7 +2366,7 @@ void mem_cgroup_cancel_charge(struct mem_cgroup =
+*memcg, unsigned int nr_pages)
+>>    static void commit_charge(struct folio *folio, struct mem_cgroup =
+*memcg)
+>>  {
+>> - VM_BUG_ON_FOLIO(folio_memcg(folio), folio);
+>> + VM_BUG_ON_FOLIO(folio_memcg_charged(folio), folio);
+>>   /*
+>>   * Any of the following ensures page's memcg stability:
+>>   *
+>> @@ -4617,7 +4617,7 @@ void __mem_cgroup_uncharge(struct folio *folio)
+>>   struct uncharge_gather ug;
+>>     /* Don't touch folio->lru of any random page, pre-check: */
+>> - if (!folio_memcg(folio))
+>> + if (!folio_memcg_charged(folio))
+>>   return;
+>>     uncharge_gather_clear(&ug);
+>> @@ -4662,7 +4662,7 @@ void mem_cgroup_replace_folio(struct folio =
+*old, struct folio *new)
+>>   return;
+>>     /* Page cache replacement: new folio already charged? */
+>> - if (folio_memcg(new))
+>> + if (folio_memcg_charged(new))
+>>   return;
+>>     memcg =3D folio_memcg(old);
 
 
