@@ -1,115 +1,144 @@
-Return-Path: <linux-kernel+bounces-259200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7160939288
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:30:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D3A893928F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C9B21F231D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:30:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC5361F2330B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4DE16EB6A;
-	Mon, 22 Jul 2024 16:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B090816EB63;
+	Mon, 22 Jul 2024 16:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E1nz/Oay"
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QhrdBaZI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C8E2907;
-	Mon, 22 Jul 2024 16:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F378526ACD;
+	Mon, 22 Jul 2024 16:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721665801; cv=none; b=rILABqq56lxfMRmOTJ3HVmhiIGMDyI6J7gRgemSxPj0DljBMKksMahO/2gQS/AEvpeOTNQjE49C6MnTT6wJdICk5MpuH23s01csH5qkSowALJi1dzE1VqXjG1LXcxrSe93Vi6+W0+V1gDrGjOe7D9kNt0zcxO10TVDzWugyWNss=
+	t=1721665903; cv=none; b=rGVTo/e7y9xbAHxtJQrNlfYow3tyT6xbPnPuY6YdI376ZpoBQsKh5NA6myQIQuwmNV5KvrpCFmoE1/ElHb/5yk9fNCJBLe9X0BfapKJ+JggnF3gnTk+RARS8LXqA1AqpjKgtSHuL4FoDgk8q5p61LOE39QsAk+jtVkC6/J6imGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721665801; c=relaxed/simple;
-	bh=TQMIdHBDqbQcpRzi7MPTAmUdhL2eie6DOnXyNiLx8MI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nm66W9mlSiWuHJBYr6+KLoTbfVFbFFGuONHRY8APyDVFsksXrSRKDcSVQZDeidxPsumX/oo9ZxntPrGV2+xc4js4ykfyYASDQjjoH7QWcXRS9BJVYr0boS/x5jROtemb+NctmCGQtBsmE7wAH8PZOdvDfiFbOu3dFzhi9JkIzSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E1nz/Oay; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4f51e80f894so570192e0c.1;
-        Mon, 22 Jul 2024 09:29:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721665799; x=1722270599; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EMpK173jqbhGBQkIhTiO0UNUwU5v1AxINxh19kaGO8Q=;
-        b=E1nz/OayAeE6c+q7P/sYhEAwpvBcX2q/XxfSX5dfYESN6Yv7Ss9TcMLI5qzfQF3stS
-         LSxcyq+os5G3QJqxk4mvy/EHM0Vs+tGmlC9jkw7fxuHZlSMuepu5ry3mczawPAxDsdAv
-         9ZcXFdR5piwPyuqS1yEuYXqcaTum+sGHpV5D4WdjaVdrhT3SdYpIOE3Ali4AyKxFyUH5
-         2cEupYTU/odUPjDMqIPIyAG9G63fcUmppRkbqNDg5fiBeY1V0vVi1aFfTjRI2De0knQC
-         bA6CtgfgJ9nHulhJLSvwczoD6E2QPx+JluXRdg5Aehgp1XEIwCUdu9Pz5QQUWPpH0l/h
-         /EtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721665799; x=1722270599;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EMpK173jqbhGBQkIhTiO0UNUwU5v1AxINxh19kaGO8Q=;
-        b=nRWA07A5zZCPdQjuO1/AeGH17q/Unxrm2fyPpGQxrYY7bVatEeF1qDmwYh5Tavn2fo
-         qVfdScdw3n4BR7GmGizUtV8KJjPCJ4uCBidaLYBKF67OdiBxBgVoYJan/nPXaN3KoKJh
-         YsHiDtmD6oFeI6XpRuCCdHbIOXoJM/cDUeLpecq+npEOaugQr0Okr7xRYGRVq2GUMvhG
-         tt1U8Pw9siV/nTwl6+NNgYHGfjlULsx0Db6LEN3NyHy4nl3tKCyQj/ROIslULDLzEZQX
-         tZb7Wnna4KGslwnmGOsNHJOhF1jMpvPjtroTfuFwzmwfaHRqQt8VFUmlHJvWB/GNZg95
-         uYyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLl5xWS07QPCHRd4Mukz+ewxF7oNEExpawsAdcoK1HXSULq+7W9Q4DGd2P/ovFvlKlyxe4KrNtKyEAz/D+rGiGKkdhLqLq0wh09J8UjWMF01AP+FKIQ+jKew7Tb0+q5uuaNFWFna8FpkcZscgvrFJUMaCiooURqz9X
-X-Gm-Message-State: AOJu0YyyRYeU7cwz+L42EWzoFiKLJC3Z37MlSdksK8tyAPe11VHEglyz
-	c1UU2zr1kQD8Qoy0ERDEuAuyu78qvLQ+Ob7pST1GMNuDEo+xDYlbXB0aQ8dxv9aJnZdXVxsDYvn
-	KkeBNhJKDTHiSGa4UqlKMycBsZmo=
-X-Google-Smtp-Source: AGHT+IEXABDa6VN4CsqLj7xeSwXNGQVxnM0LfKN1zcSnE8JaHi67IhpiyP8Bt8mxjlog677gjmHuMOW0jZXrvPri2Mw=
-X-Received: by 2002:a05:6122:169d:b0:4e4:ed90:27e6 with SMTP id
- 71dfb90a1353d-4f506668452mr8406989e0c.5.1721665798870; Mon, 22 Jul 2024
- 09:29:58 -0700 (PDT)
+	s=arc-20240116; t=1721665903; c=relaxed/simple;
+	bh=CkDc4sr4ZxAi/U/UIXbOEimKRnQn1vJDruoUwJilY5E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mXf3KxT9L4cjpI5bQAkLUN0AQmiwG/+wpv9vVon+iyd3dNmGbX6PtDFNTn0fdzGvpL8OmlH6sVs/23Rg2IH9YcHZIuxtOcqbnSw/Y1EKGiQE8hmjtntKT9Gtb4PvFAyHHD0wWWgC+DJHZb8mRRAeXi2Eepybd+X9KoxbvAqiVKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QhrdBaZI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C6ECC116B1;
+	Mon, 22 Jul 2024 16:31:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721665902;
+	bh=CkDc4sr4ZxAi/U/UIXbOEimKRnQn1vJDruoUwJilY5E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QhrdBaZIfTLINR2GFGCAUAZHlmj3VghRtvcAZr6ak8+xjsLM9/4WV8cW7lKrhI3Iu
+	 +hZ4dQkGdUKt251MhyyuQQBPOcEBF8FZHkIs4luk1CdYg4fuaNTyOsSD2DUO/2vqyZ
+	 FKiMpdfd/sW5ltp3BCjcZiDzhNyfHB0f1mgK0WYk5AuKhn+Pywnc7BCaZyi4NQ3V3x
+	 5qqqtr1/3/Uz5mQNWdNvfT20OdRyhiAqUaSD5hTPCK6NlbTM6L1J1l1gc7GgsUnk4s
+	 u51wSKTLz6pp90GldWhJSFEM8k+Ut4eg+nhEKtXssCAbzWFTpAmVMTXT82IwFO0wr4
+	 Es6ICwRpaQI3w==
+From: Danilo Krummrich <dakr@kernel.org>
+To: cl@linux.com,
+	penberg@kernel.org,
+	rientjes@google.com,
+	iamjoonsoo.kim@lge.com,
+	akpm@linux-foundation.org,
+	vbabka@suse.cz,
+	roman.gushchin@linux.dev,
+	42.hyeyoo@gmail.com,
+	urezki@gmail.com,
+	hch@infradead.org,
+	kees@kernel.org,
+	ojeda@kernel.org,
+	wedsonaf@gmail.com,
+	mhocko@kernel.org,
+	mpe@ellerman.id.au,
+	chandan.babu@oracle.com,
+	christian.koenig@amd.com,
+	maz@kernel.org,
+	oliver.upton@linux.dev
+Cc: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	rust-for-linux@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH v2 0/2] Align kvrealloc() with krealloc()
+Date: Mon, 22 Jul 2024 18:29:22 +0200
+Message-ID: <20240722163111.4766-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6689541517901_12869e29412@willemb.c.googlers.com.notmuch> <20240722030841.93759-1-dracodingfly@gmail.com>
-In-Reply-To: <20240722030841.93759-1-dracodingfly@gmail.com>
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date: Mon, 22 Jul 2024 09:29:21 -0700
-Message-ID: <CAF=yD-+Hx9Tg-Fj+7hutPJ7inL_GpgiY4WAXXdhN-tzj5Q1caQ@mail.gmail.com>
-Subject: Re: [PATCH bpf v5] bpf: Fixed segment issue when downgrade gso_size
-To: Fred Li <dracodingfly@gmail.com>
-Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, herbert@gondor.apana.org.au, john.fastabend@gmail.com, 
-	kpsingh@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, song@kernel.org, yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jul 21, 2024 at 8:08=E2=80=AFPM Fred Li <dracodingfly@gmail.com> wr=
-ote:
->
-> Linearize skb when downgrad gso_size to prevent triggering
-> the BUG_ON during segment skb as described in [1].
->
-> v5 changes:
->  - add bpf subject prefix.
->  - adjust message to imperative mood.
->
-> v4 changes:
->  - add fixed tag.
->
-> v3 changes:
->  - linearize skb if having frag_list as Willem de Bruijn suggested [2].
->
-> [1] https://lore.kernel.org/all/20240626065555.35460-2-dracodingfly@gmail=
-.com/
-> [2] https://lore.kernel.org/all/668d5cf1ec330_1c18c32947@willemb.c.google=
-rs.com.notmuch/
->
-> Fixes: 2be7e212d541 ("bpf: add bpf_skb_adjust_room helper")
-> Signed-off-by: Fred Li <dracodingfly@gmail.com>
+Hi,
 
-Reviewed-by: Willem de Bruijn <willemb@google.com>
+Besides the obvious (and desired) difference between krealloc() and kvrealloc(),
+there is some inconsistency in their function signatures and behavior:
 
-My comments were informational, for a next patch if any, really. v4
-was fine. v5 is too.
+ - krealloc() frees the memory when the requested size is zero, whereas
+   kvrealloc() simply returns a pointer to the existing allocation.
+
+ - krealloc() behaves like kmalloc() if a NULL pointer is passed, whereas
+   kvrealloc() does not accept a NULL pointer at all and, if passed, would fault
+   instead.
+
+ - krealloc() is self-contained, whereas kvrealloc() relies on the caller to
+   provide the size of the previous allocation.
+
+Inconsistent behavior throughout allocation APIs is error prone, hence make
+kvrealloc() behave like krealloc(), which seems superior in all mentioned
+aspects.
+
+In order to be able to get rid of kvrealloc()'s oldsize parameter, introduce
+vrealloc() and make use of it in kvrealloc().
+
+Making use of vrealloc() in kvrealloc() also provides oppertunities to grow (and
+shrink) allocations more efficiently. For instance, vrealloc() can be optimized
+to allocate and map additional pages to grow the allocation or unmap and free
+unused pages to shrink the allocation.
+
+Besides the above, those functions are required by Rust's allocator abstractons
+[1] (rework based on this series in [2]). With `Vec` or `KVec` respectively,
+potentially growing (and shrinking) data structures are rather common.
+
+The patches of this series can also be found in [3].
+
+[1] https://lore.kernel.org/lkml/20240704170738.3621-1-dakr@redhat.com/
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/mm
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=mm/krealloc
+
+Changes in v2:
+ - remove unnecessary extern and move __realloc_size to a new line for
+   vrealloc_noprof() and kvrealloc_noprof()
+ - drop EXPORT_SYMBOL for vrealloc_noprof()
+ - rename to_kmalloc_flags() to kmalloc_gfp_adjust()
+ - fix missing NULL check in vrealloc_noprof()
+ - rephrase TODO comments in vrealloc_noprof()
+
+Danilo Krummrich (2):
+  mm: vmalloc: implement vrealloc()
+  mm: kvmalloc: align kvrealloc() with krealloc()
+
+ arch/arm64/kvm/nested.c                   |  1 -
+ arch/powerpc/platforms/pseries/papr-vpd.c |  5 +-
+ drivers/gpu/drm/drm_exec.c                |  3 +-
+ fs/xfs/xfs_log_recover.c                  |  2 +-
+ include/linux/slab.h                      |  4 +-
+ include/linux/vmalloc.h                   |  4 +
+ kernel/resource.c                         |  3 +-
+ lib/fortify_kunit.c                       |  3 +-
+ mm/util.c                                 | 89 +++++++++++++++--------
+ mm/vmalloc.c                              | 59 +++++++++++++++
+ 10 files changed, 129 insertions(+), 44 deletions(-)
+
+
+base-commit: 933069701c1b507825b514317d4edd5d3fd9d417
+-- 
+2.45.2
+
 
