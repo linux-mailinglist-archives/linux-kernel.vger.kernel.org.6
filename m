@@ -1,122 +1,215 @@
-Return-Path: <linux-kernel+bounces-258393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A5A593876B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 03:55:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C99D993876C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 03:58:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 321ADB20B42
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 01:55:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E701E1C20C0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 01:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3FAC8CE;
-	Mon, 22 Jul 2024 01:55:19 +0000 (UTC)
-Received: from wangsu.com (unknown [180.101.34.75])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A383232;
-	Mon, 22 Jul 2024 01:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.101.34.75
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721613319; cv=none; b=J+0ZzTfrScDkHUZ/GUEkbS6qOj1VJw80xBLHtlD5arfTbbsr9pBCwQUF7xWnpNLDRgK3X5HNsO/tDTC+D3Hb+wJvEVeN0ozXl7qosmZPfKqhYDLbdWz1O1Ztt8TeOeibScSPjuLuqZsoKpAHYP9Ta6Xa2X/BF1JYp70W77pdZow=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721613319; c=relaxed/simple;
-	bh=Y9MNL0qAliz7qWJwGy7gY8YYjqtvvGqbP0jX8rCmrOQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fSBWHC14J7Cqq42zCmHtSyuUo9Kcpw3nsliJaDKvm7XGcLHIasaBepNIDj7J6rBYM4pHLm0oCBiUeAtBHvt3UGes1rRw+ZBTNX7CZ1fZopBjBHGV01RiJwGZyBkgfdmJfNAqI8h4JuOiEiuYm4TjN0v3wjEE55uwgPO2rMOlc7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wangsu.com; spf=pass smtp.mailfrom=wangsu.com; arc=none smtp.client-ip=180.101.34.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wangsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wangsu.com
-Received: from [10.8.148.37] (unknown [59.61.78.234])
-	by app2 (Coremail) with SMTP id SyJltADHeHHeu51md2nYAA--.29882S2;
-	Mon, 22 Jul 2024 09:54:40 +0800 (CST)
-Message-ID: <6a8b1a57-c7b6-81c6-5e77-759cb041a77b@wangsu.com>
-Date: Mon, 22 Jul 2024 09:54:38 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A4638C1A;
+	Mon, 22 Jul 2024 01:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="kCTgr3o4"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2040.outbound.protection.outlook.com [40.107.215.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FBD611E
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 01:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721613508; cv=fail; b=dppdNewrn5OUyoF1KQreiir8e2kxvLTWDXFJOYOFWL8wboTN/goZGENtjeaMzHshDPdFBvFqZtLCzU9pWppdtwnO3jkdONO7WPYJlECJpiLKVl/ybetDko6Knm1BYk9jQ976xmIMlympm79zXZZN9xbkZchcahfmJaHUQZ9qD98=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721613508; c=relaxed/simple;
+	bh=M0zJVpcqmVLI59XCddrsoTrNEYF6DQwck8N9McKqg+M=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZcrKN+Es5geA93U6IbwTiyP20lcaFrwGI6jxL8di0QRT3MsqwWFmD84SWh9zWTeVF/lzfhG3SAa7ZXVykq+CnVpMkAKzTSNaRq13meSjkpd/Z9r3TKDQTtxFHvxIDkPNaoRpf2EoA6e2IPM4A+YwFP4+mUIUsXUDDOuHpwlLcGM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=kCTgr3o4; arc=fail smtp.client-ip=40.107.215.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Q2fbS+2xPjWQxEnwNt6jgOIeV7Q+jelA8Hqm66mxSB3Ehmy0Db5N39Mt78rbVR+vwQfIbhfcmUUZLw0/0OMFc8ao25HKpPdPHfY35SM0f9yF8OF/0oFZObhDkfXrhQMosvnNgTwDsAAr2ualmguK4n9tvAJ9dTsCJs/4b/0l6x5/jv3BWeUP8xdRzVuu7hPK8maUVWvkJl2ijph0e8/iGdAvjrzC/JWWHLF2EpwUYNOEdunqj/spnziLGDBgWo8iMARNtRtiTKGbaY2lM2qnJHbl76bGIAEBDVWh/z9hMR2fnxYgcrtrDwtkwaV6t1R551apWzXkbWqs8pIg7HbzDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=70n1E8ay0Px7upQc9m8BgcttAiguu4BA8OOPXnx7ivE=;
+ b=eoG92LxoK9QoTjn8P4MBOb0kocSJppp++piLGZe+RUMB+9VRzAO2nHS+zNV/epKGvS4dJGAhYS/7HwV7oGGVxcopiX3A6RPL7UoKeTS2vVBgX4/8Rc3fuvNN1lqDX6QhgJxEW+5DyHUWTqfQrExxVAI4QC2z2gycwSdyFi3PuxJo6ih7/epGNanjVbAh/3zuNZQtFX6A60CxSe/9K9Nmjkwi5elfOuLh7FbwiD2fIJ1AsfKXUXLexcc9nv+1R8TZEPznOsab13/W2oLazccrhQ3KdNMOTRC96fzOMekcWruPullXhOc98lAC5XL+5+bfU5q/eyZV+NLSdVYaFbORFQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
+ dkim=pass header.d=oppo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=70n1E8ay0Px7upQc9m8BgcttAiguu4BA8OOPXnx7ivE=;
+ b=kCTgr3o4JAtIO7vHMM4GaAEfgGJ3T/NSRirIUFwPkh3GfO/t+aUN/w1BbmvaO/hDry9CS0wt0vCgeGqmvIdin3kTF4ta5m1N/5kucVFaDPGwLAwtOFBvjsdtTs0r7rqFxigb3ry5S3pdRvMcHu4HPfxXFbH7yIhL4viu5uVt6oA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oppo.com;
+Received: from PSAPR02MB4727.apcprd02.prod.outlook.com (2603:1096:301:90::7)
+ by TYZPR02MB6246.apcprd02.prod.outlook.com (2603:1096:400:338::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16; Mon, 22 Jul
+ 2024 01:58:21 +0000
+Received: from PSAPR02MB4727.apcprd02.prod.outlook.com
+ ([fe80::a138:e48f:965e:36f9]) by PSAPR02MB4727.apcprd02.prod.outlook.com
+ ([fe80::a138:e48f:965e:36f9%7]) with mapi id 15.20.7784.016; Mon, 22 Jul 2024
+ 01:58:21 +0000
+Message-ID: <b8504f76-40fc-4f93-b496-138bf2fcfc30@oppo.com>
+Date: Mon, 22 Jul 2024 09:58:16 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] f2fs: free victim_secmap when pinned_secmap allocation
+ fails
+To: Chao Yu <chao@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+References: <20240720103349.3347764-1-yangyongpeng1@oppo.com>
+ <c81af94d-3b56-4169-b2eb-5d82623ab0af@kernel.org>
+Content-Language: en-US
+From: Yongpeng Yang <yangyongpeng1@oppo.com>
+In-Reply-To: <c81af94d-3b56-4169-b2eb-5d82623ab0af@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI2PR04CA0001.apcprd04.prod.outlook.com
+ (2603:1096:4:197::12) To PSAPR02MB4727.apcprd02.prod.outlook.com
+ (2603:1096:301:90::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] bpf: fix excessively checking for elem_flags in batch
- update mode
-Content-Language: en-US
-To: Daniel Borkmann <daniel@iogearbox.net>, ast@kernel.org
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- yonghong.song@linux.dev, Hou Tao <houtao1@huawei.com>,
- Brian Vazquez <brianvv@google.com>
-References: <cde62a6c-384a-5bdd-fe64-3f3d999c3825@wangsu.com>
- <7d351341-fefe-a40f-f62a-d9505432d056@iogearbox.net>
-From: Lin Feng <linf@wangsu.com>
-In-Reply-To: <7d351341-fefe-a40f-f62a-d9505432d056@iogearbox.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:SyJltADHeHHeu51md2nYAA--.29882S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ar4DKFyxGrykJFyDuF13XFb_yoW8AryUpF
-	Z5JFW3Kay0gF1Uuw47Ww1Igr40yw4rtr15KF93tryYqr17GryFkr10qF13ZF13Kr1rtryj
-	vFW2qFWFqa4xZFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvKb7Iv0xC_Zr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-	v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4UJVW0owA2z4x0Y4vE
-	x4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzx
-	vE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VACjcxG62k0Y48FwI0_
-	Jr0_Gr1lYx0E74AGY7Cv6cx26r48McIj6xkF7I0En7xvr7AKxVW8Jr0_Cr1UMcvjeVCFs4
-	IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxkIecxEwVAF
-	wVWkMxAIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_Gr4l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
-	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxh
-	VjvjDU0xZFpf9x07UJGYLUUUUU=
-X-CM-SenderInfo: holqwq5zdqw23xof0z/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PSAPR02MB4727:EE_|TYZPR02MB6246:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4d4610c8-e431-4e44-1c84-08dca9f1c358
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cUsvY0wxejJMWE5ETnFCQTJBeTY3cGFXZTRXbklOdzdZbmhDOFVZcE9ldjFN?=
+ =?utf-8?B?NldBMi81MjBaSi9Tb1lkbU1ZYk5tellYWlNHenk0VWI1cFYvQVdvb0R6MDN4?=
+ =?utf-8?B?MTlSSXJTVzRSTU1lODR0blJGRmpwcEhvVUtuOGFLdzVsYUF5RmpNSTRjOWZ5?=
+ =?utf-8?B?ZksrMEFPemJjSHdWSXFJNlBpcWNVQWcyMS9sekFHWHY5SXFmOXpGMm9yVjd5?=
+ =?utf-8?B?Y0RQRkhTaDNxeW5pUDQrTGJoNjh1YW1qbnpSZTcwaGRTbXhmbTNLcUE1ekJR?=
+ =?utf-8?B?dndKNzlERXFwRUxjVmh0UW9IWVc1NnFaQWtoL21aVDN4TWhDUGtkTVM5U0lT?=
+ =?utf-8?B?K1BVM0YwQU5palBFektpdzNNQktzL1F4ZHcyM1BVbFlXU2pUWWEyVWJHMmh5?=
+ =?utf-8?B?S0VOeVBSRnhLajFWem5ZRTAycGc2T1Y0RkRQZE9hMjJiS0t5WUREYXNYeHNL?=
+ =?utf-8?B?VXoxSEFqYzFKN2xYNlRxYjlnTUh0TnQ2R1hOM3pkVGFvYXJmTGRaVXN3ejhL?=
+ =?utf-8?B?SWJ1NEFaVUVITGQ5OUdmRFJzRm1SaVQ3bFFiU2hITk9aWHVaQmdqRDhjaGxl?=
+ =?utf-8?B?TVpGOFRJYndkdW8wZkZjVFozbWs0bkxSK1Q5cWg0Tjk5M2lNMXVSOWZxcC9H?=
+ =?utf-8?B?dEJPc3pBMVZQaHNZNGZuZmdyWndvQk56N2tkNkx4YmxEYlcvUDBIdnBWcTVi?=
+ =?utf-8?B?TlBsdURadnUyZ09mY0JBUkJSZ09zNXdxM1F4enV4aHZpbWZqWGhjQnJPcUQ0?=
+ =?utf-8?B?bjNIRDRxZ0JhdkNaRUlzdVM5ZURhTGFvK2RBSURVbVBmSW5Jc2RuOUo3RDV0?=
+ =?utf-8?B?NWk2UURIc0ZoR0RueVNJVnRGZHBQc2pVcm5YYTQvWnVIWEJFWjRqVkhNUnlD?=
+ =?utf-8?B?UU5VUWUzbFovQ2hudkZvL2x2ZXFCT25QNC8zVVVaZFRZTGdoUGlSVUx6Wkxz?=
+ =?utf-8?B?aVlVSU9TUnVqZmNhdVp6VzdaYkhuUU0rcmVnb0l3MVRuYnlxWmF6VXpKdGZy?=
+ =?utf-8?B?MERBeXREOUhGRUxDNGVsQnhOVSszU09hZCtkLzBLYkgyVmprZUdxVC9QZEdP?=
+ =?utf-8?B?cFpWK1ZKOHgwWFNHY3UrVFRxangrUFlGbVdYQVFPT0tOSmlOek9mVkI4TEcw?=
+ =?utf-8?B?dVRUaEVtMWc1cFhPU2Nac00yeERhVjFZUXcxT3NUbmRPbVNQcm0yS25ST3Ji?=
+ =?utf-8?B?a2VyeXpwMVhDU2FrYkE4NjIrd3JBRU0zLytHNFBDU2Q1dDJ6dm5oaGlvTDJR?=
+ =?utf-8?B?K1pmeDU0MXBSVnBNOXp0V0pkWGpMcGgxUHFUdlhoSmFCQ2c0TkFFcFJMNjNO?=
+ =?utf-8?B?VWhGMlVTU1pza0o1S1VYbzJIVDZNU0dDWlBiYkswRVR3aklaQnZINjZyMjlt?=
+ =?utf-8?B?MXBSeXkwNkx3RW5zSU40ZVQxVTZXRE52TDJYVk1RQzZtRjYrbEh6bTRnNmFD?=
+ =?utf-8?B?NTJVSmkvY1VWZE5vb0NiM0lpQm82RFgzVTBsOFQ4MnVqYm9YMnhxQ21zOGlO?=
+ =?utf-8?B?K1FnQ2VvWm8xaTZrMllrRDgrTVJhUnZUWTZhTVlGTTBxeHJyWmgvK25tK0th?=
+ =?utf-8?B?OFlBZG1mT1cya3krTW1ld0lMblRFZFR4MmZ3UllhS283RlJGVWtiMGJxS0V4?=
+ =?utf-8?B?QTUwV2JYZEE3NGE4TWtLNmFWMmRrUUQvd3JxbkVxOXM0QTQyTVR3TnB2U2RZ?=
+ =?utf-8?B?MitwNmJrcjNqOTN2T3VDenJ6NEh4R3hsNk1lSjdmWkw1TDRSc29JcysxYlBV?=
+ =?utf-8?B?ZXFuMUR4ZDlteHlJOEdrRWk3V1NmaUcyanRXWk50QUd1cldscWJvdlNSaGU1?=
+ =?utf-8?B?cVVjcjc2bWRrcnlVNWdCUT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR02MB4727.apcprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?S05yenZlN1hjTGlQMERUZXMzaUNOMXdEb0xMdnZVQ1NiSDJ5S0hTYWNPQjBw?=
+ =?utf-8?B?dWtCekVuRlVPMU85a0dXL3Q2YWlreTMvYkRuS0szU3FhU2hxTXhhSmVvTnFD?=
+ =?utf-8?B?RDVLOGZmVjdNM2ZZUDJiczFTSlBhWi9iVmxIcFFLQ25UM2tPbGtOU2JQYWQy?=
+ =?utf-8?B?WEhjQWk2Q2plL3I1SStFMjhkOTBBbFRubFNuSmlHU3lzQUFXam5MWFVnait2?=
+ =?utf-8?B?UVVUY0FqTkFuWXFQUE5ZdGhIRmN6Vk5Pd2VGNEdjM0ZqemFmRVQ1Ynh2R2Zn?=
+ =?utf-8?B?UjN2VC9NMWtmMHdGNUJHK0dvbDMrczZ4S1hHQkRPWlZMNVJ2NnN2eEZrUkJ5?=
+ =?utf-8?B?Zlp3U25jY3BEMzRNOWNueG5nNk1SZWhpUHFNdnNpVmJqY0FXZXV3VkRaMUJx?=
+ =?utf-8?B?OE02MWtDV0hLNFF3Ni81Z0NqNFhFbVREMlJhQjd6cGZwMGtDdFZ3cW80ME83?=
+ =?utf-8?B?U3NZWE5VdUVST0tVNTVDcnZaNVd5SHA5ekRoUGxKWm03MlJxRDJkVyszVFZJ?=
+ =?utf-8?B?VTZVL2dic2diVDZESVhEMEJoN0gwWk04U1FWcXlZYW9qMUF6MGx6ZjV2akVQ?=
+ =?utf-8?B?TzhIcFJzWFhHMU9kRGNXTVhRWTM4OTdockd1L3JNR3hJRDI4QXpEWEZoWVZY?=
+ =?utf-8?B?NUFZZmUzdWdsNEhTSHdMZXFtNWRtcEd1RkQ2WEJiM01MaXFzV2QwVXh4TW9z?=
+ =?utf-8?B?RkJlQmlScXVBeWFhaTZ4anVrZi82NEpURWx5VVk2ekRYeG1wVXUvdmYzbE55?=
+ =?utf-8?B?QVVnZVI0RlNPY2NIUGR1T2tEMVNKN2dIQW9EbFc5c3EyL2RaeGU5WE9JUERi?=
+ =?utf-8?B?Zm1jV093S00rZmlXdGdDRGdFaThrdC9BTDFvK3RNTkVROGZ6dEFBblRGWmZk?=
+ =?utf-8?B?emMwU0ZXRWt0MEhUWFE0OXZzbEJ2N21wc1JGcVhDaFBjY2V3T0paT1gwN0s4?=
+ =?utf-8?B?YzVsZU5PRWs4ZVVtMzJVaXk1U3NNc0ZoMkZFQTRvWk9iWXVwNXRvN1lMWnJm?=
+ =?utf-8?B?ZHI2WTBPa0l3TDViazNwUkp5T2MvdVowQ3VuRkxiKzNWa2xwZ3B4eGZ1a0xJ?=
+ =?utf-8?B?KytScVdIcGtXRU1XVnZDNCt4cXluRFRDM3JvMHJoZ3pETzVvOUlpK3Y0eDI5?=
+ =?utf-8?B?dVhKL1JBY0lveFlwMTlxTmpYclB2dzlwbE8xN2J1V1A5RkZQaUtkUU15bVNm?=
+ =?utf-8?B?L2Y1ZEJPZ3VDRkEzUTlablFVQm9YUDVXb0ZDV2k4NUdkemsvWGNzVE9kYzRj?=
+ =?utf-8?B?TzNpUXlkNDUzSHNLV2NtYUNGdVp1TFFsRzFvUXBTdy9rVXBlQ3VNZDVKZWpI?=
+ =?utf-8?B?VUlqNEtDZEY4QjJONFBKSytWRUNEYkxTdDVrM3hzc2RxUHR2ZWxZeFlacnUr?=
+ =?utf-8?B?WkIwNEhwQTBSVWE4YUtzMmhoWEZpWGZPbE11SjVTbjI3RER0MGF3MVVCR0pZ?=
+ =?utf-8?B?ZldOSFFBZGpKRmJENVd6amNNeCt3K0ZYUW5uYnJNZldGb0N3U2Z5eTZCTXhN?=
+ =?utf-8?B?NlZvU1Q4R3ZOSVJqbWZSNTI0MEQ1bVFrL0FjRjhtWjNpbEppMjhseXlwenZ6?=
+ =?utf-8?B?a0NTK1RKbWYvd1RaVVZ3aW9QRUVFNy9ZWGxEL1VIRkphNDR5TGtacS82YjF6?=
+ =?utf-8?B?VmlMVk5YMmVHeFVhYjd2OUNybGtOWVBteHBsaEI1U2R6cjRtWGMyTHhVNFdz?=
+ =?utf-8?B?VHphWHI5NEQ0OHcrd3VWYjlZWUFhSWtiQkx1N09ucnV4Y0k3K0F1aGtJMU1y?=
+ =?utf-8?B?Um8wNVpkZGUwVTQxUTI0eElTMHFlV0t4VGxlWFRwbjhtN1ZpWHMvcVVKQUJr?=
+ =?utf-8?B?MnZ2REppOUc5bW14dWh5SjlNUjcvVUQxQUYxR0lHSGkvMFptOWxuajJLRDdj?=
+ =?utf-8?B?MTJrS2F5MW9jV3NYeFE1cnhlQkJSejJzV3p5bVI0VEh0ZEd0V2Q1VlI3UUho?=
+ =?utf-8?B?eW9vVitxeExFazA4WENQcHJuZkY0UmZ5eGZBUWN6aUxxYmhvcE5IUXhidzBI?=
+ =?utf-8?B?bFRHQ2JmVS9lZ2p3VHgzNHhGVXdnMDZhZWZSbkFwQmJBVDVtV0VHQnRFYjNC?=
+ =?utf-8?B?SlZmSUhEQkNTckg4SDV6QVJuajA3NmVvaXFCTXpPaVQ2OFJ2NWlDaVRZMk1Z?=
+ =?utf-8?B?cGxaRnRyWVR6bldNdHVrNnlKWTI2Qi9SU0RBQW0wSE5wTTljWERYZisyZHcy?=
+ =?utf-8?B?d3c9PQ==?=
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4d4610c8-e431-4e44-1c84-08dca9f1c358
+X-MS-Exchange-CrossTenant-AuthSource: PSAPR02MB4727.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2024 01:58:21.1451
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uqiGR/5TbZfmprDdbIiVaqNGd2AAJZ5Hz321VbEmDr1SJ5zeG2TRNnu428yvrhXIn/7T3CJuSDKzEsOdt+bYTA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR02MB6246
 
-Hi Daniel,
 
-Thanks for your reply! Without basic knowledge of rules of thumb for patch in
-bpf, I didn't expect a single line change need that many more considerations,
-and will do some more work on it following your sugguestion!
 
-Thanks,
-linfeng
-
-On 7/20/24 00:22, Daniel Borkmann wrote:
-> On 7/17/24 1:15 PM, Lin Feng wrote:
->> Currently generic_map_update_batch will reject all valid command flags for
->> BPF_MAP_UPDATE_ELEM other than BPF_F_LOCK, which is overkill, map updating
->> semantic does allow specify BPF_NOEXIST or BPF_EXIST even for batching
->> update.
+On 7/22/2024 9:28 AM, Chao Yu wrote:
+> On 2024/7/20 18:33, Yongpeng Yang wrote:
+>> In the init_victim_secmap function, if the allocation of
+>> dirty_i->pinned_secmap fails, dirty_i->victim_secmap is not
+>> freed, which can cause a memory leak.
 >>
->> Signed-off-by: Lin Feng <linf@wangsu.com>
-> 
-> [ +Hou/Brian ]
-> 
-> Please also add a BPF selftest along with this extension which exercises the
-> batch update and validates the behavior for the various flags which are now enabled.
-> 
-> Also, please discuss the semantics in the commit msg.. errors due to BPF_EXIST and
-> BPF_NOEXIST will cause bpf_map_update_value() to fail and then break the loop. It's
-> probably fine given batch.count (cp) will be propagated back to user space to tell
-> how many elements could actually get updated.
-> 
+>> Signed-off-by: Yongpeng Yang <yangyongpeng1@oppo.com>
 >> ---
->>   kernel/bpf/syscall.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>   fs/f2fs/segment.c | 4 +++-
+>>   1 file changed, 3 insertions(+), 1 deletion(-)
 >>
->> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
->> index 869265852d51..d85361f9a9b8 100644
->> --- a/kernel/bpf/syscall.c
->> +++ b/kernel/bpf/syscall.c
->> @@ -1852,7 +1852,7 @@ int generic_map_update_batch(struct bpf_map *map, struct file *map_file,
->>   	void *key, *value;
->>   	int err = 0;
->>   
->> -	if (attr->batch.elem_flags & ~BPF_F_LOCK)
->> +	if ((attr->batch.elem_flags & ~BPF_F_LOCK) > BPF_EXIST)
->>   		return -EINVAL;
->>   
->>   	if ((attr->batch.elem_flags & BPF_F_LOCK) &&
->>
+>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>> index 78c3198a6308..1e784ea3dbb4 100644
+>> --- a/fs/f2fs/segment.c
+>> +++ b/fs/f2fs/segment.c
+>> @@ -4971,8 +4971,10 @@ static int init_victim_secmap(struct 
+>> f2fs_sb_info *sbi)
+>>           return -ENOMEM;
+>>       dirty_i->pinned_secmap = f2fs_kvzalloc(sbi, bitmap_size, 
+>> GFP_KERNEL);
+>> -    if (!dirty_i->pinned_secmap)
+>> +    if (!dirty_i->pinned_secmap) {
+>> +        kvfree(dirty_i->victim_secmap);
 > 
-
+> Yongpeng,
+> 
+> In below path, it will release pinned_secmap/victim_secmap?
+> 
+> - f2fs_destroy_segment_manager
+>   - destroy_victim_secmap
+>    : kvfree(dirty_i->pinned_secmap);
+>    : kvfree(dirty_i->victim_secmap);
+> 
+> Thanks,
+Oh, I missed the error handler of f2fs_build_segment_manager, which will 
+free valid pointer and ignore NULL pointer. Just get rid of this patch.
+> 
+>>           return -ENOMEM;
+>> +    }
+>>       dirty_i->pinned_secmap_cnt = 0;
+>>       dirty_i->enable_pin_section = true;
 
