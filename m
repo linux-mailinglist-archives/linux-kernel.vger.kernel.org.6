@@ -1,62 +1,46 @@
-Return-Path: <linux-kernel+bounces-258493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788209388CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:13:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26CEF9388CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C45DB20EF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:13:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A48C1C20DAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DB917BBF;
-	Mon, 22 Jul 2024 06:13:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056CE17BA7;
+	Mon, 22 Jul 2024 06:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gK7rLvMl"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ZRcWX3Ox"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF70175BF;
-	Mon, 22 Jul 2024 06:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D33175BF
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 06:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721628787; cv=none; b=G3hnrhNRU9HkdR9fm4XmF01QGp1fYvSteru9+FRj5h1ITtFk8yORWiWJtIgiArD5jzX8y/p/pA56GrBghRzydb0aU15EBsdcA0SmJhqzzrcTICi4pyaXYWTHVajYVMVlpCAA4857fskF5dAHQDcDOluKuFQ2zZhm+3Qi2Yh7vWY=
+	t=1721628847; cv=none; b=Q8wxFZuY3Yo/uasMVls5d5ROiRn401+axcqCL2WMsRVaI+6VkLTjLb/hp7D1dMWidaOXYDYHzGwTsAugvN1pxLhPAdpq+/JEkVD8ZMNzfGOChxX72CJcHp2RXwCU862uchIxsxHahz+eYOccfJlI02nQMPJHrthpRe1nQKG8YGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721628787; c=relaxed/simple;
-	bh=7JtgglTKEAtn4yfbCf2V2klco71MxBGIsDxCjCeltsE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Ar2BI8Furzrf16g6nL1sR3YsMRWXm4YESqvPfx0TeB50BT0Yg1Vrwy6wKDNVN6y1UXN4G9K/A0ND7vM/PlLAkesxYrPNZLT1XFwrBNR+q3wHCPD292DqkVpQofJ8NiIs6Jl8I74zUyKAS14iDTMjH1luO3Z0MPNEHJ10aTlThRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gK7rLvMl; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46LNeOpb022587;
-	Mon, 22 Jul 2024 06:12:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	aGogO1Jxb0LDYElt/HcVnCtW7pF4zZaS4RBUROUZ1wY=; b=gK7rLvMlhKB/bMZV
-	evIrc9dJzQ+/6ZgDid2jH93zTQpzXExzTkl4N/VIMY8c1ZT/QuI/XUdnaNHPO391
-	YU5PXXePZ8/h7HhtZWbQ5Q/d73mv5RNzj0VhRFcWge5nBAF0lXlC7Px4Do8NeHfr
-	hLkh6cYjt1LoRzWb+XB5LffiAXfgTRO4HEOL2hLweQAJre4+4o4IV4p7UpfHOEZT
-	xkI/DnnUfG1/6UcOqnIcimbhTxxwL8QRTQsADBAm5wIeRlBc4WjkazkIurlwODhI
-	vTCHxMupj4S3eWm0+q7Ql2JbZoscYrkVKyOOGUHD5JL6oYAobhNJ0Q/2XRxXBCE+
-	WWEQgw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g6h8tnhv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jul 2024 06:12:59 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46M6Cwp1028560
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jul 2024 06:12:58 GMT
-Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 21 Jul
- 2024 23:12:55 -0700
-Message-ID: <607362f2-8ae5-46bd-a3a4-2d78da98b12a@quicinc.com>
-Date: Mon, 22 Jul 2024 11:42:52 +0530
+	s=arc-20240116; t=1721628847; c=relaxed/simple;
+	bh=e5PdcQQLSegQIN/YKPGsF7+oL60zEbjv5y9SEACNH7Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qF4rvosTwQCOpwOGbhmHPHamMT2OYss+Q1YPlqQQ78HtIfawvHYEh5AzZoUa87Lt+YrhL6Ji/7tGK0JdiOuSA25AMU6kL3MjYpP0qIhlgOROQlmuFFTul3k8c6VjqYw1kAfKJgHWC071A8Z0NmGhwHutygCA5pUpXAhKn+uPlsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ZRcWX3Ox; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1721628842; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=psWoa8gs4DgPKMVzS4Tt55VRNtl5XNEvd7BQaoJFa24=;
+	b=ZRcWX3OxgCEQ3E1kOJmjk5ElORKjmS6oOEW9GXSiX3q573+n0267FrUzG52fnsKjFE4s91WJZPxA1IJmkkoLfBYE0Flny/49X7Bnq6Q0yN1ON7YRlB8e6Sljm2aB+nq0D8ram8tgjRGHhjwiZtHlz6jxVCktNhnLAmJggm6XiV8=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R801e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0WAzT8Iy_1721628840;
+Received: from 30.97.56.74(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WAzT8Iy_1721628840)
+          by smtp.aliyun-inc.com;
+          Mon, 22 Jul 2024 14:14:01 +0800
+Message-ID: <9a7c863d-b64e-4278-bb5b-db777736ab6e@linux.alibaba.com>
+Date: Mon, 22 Jul 2024 14:14:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,92 +48,149 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] misc: fastrpc: Define a new initmem size for user
- PD
-Content-Language: en-US
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_bkumar@quicinc.com>, <linux-kernel@vger.kernel.org>,
-        <quic_chennak@quicinc.com>, <dri-devel@lists.freedesktop.org>,
-        <arnd@arndb.de>, stable <stable@kernel.org>
-References: <20240722055437.3467900-1-quic_ekangupt@quicinc.com>
- <20240722055437.3467900-2-quic_ekangupt@quicinc.com>
- <2024072234-slug-payer-2dec@gregkh>
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-In-Reply-To: <2024072234-slug-payer-2dec@gregkh>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2 2/3] mm: Tidy up shmem mTHP controls and stats
+To: Ryan Roberts <ryan.roberts@arm.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>,
+ Lance Yang <ioworker0@gmail.com>, Gavin Shan <gshan@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20240716135907.4047689-1-ryan.roberts@arm.com>
+ <20240716135907.4047689-3-ryan.roberts@arm.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20240716135907.4047689-3-ryan.roberts@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: -4qDP_L_7BjtmN3sxXoQ4XOcMiIH0ioL
-X-Proofpoint-GUID: -4qDP_L_7BjtmN3sxXoQ4XOcMiIH0ioL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-22_02,2024-07-18_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 mlxscore=0 malwarescore=0 phishscore=0 bulkscore=0
- mlxlogscore=999 suspectscore=0 lowpriorityscore=0 clxscore=1015
- impostorscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2407220047
 
 
 
-On 7/22/2024 11:28 AM, Greg KH wrote:
-> On Mon, Jul 22, 2024 at 11:24:36AM +0530, Ekansh Gupta wrote:
->> For user PD initialization, initmem is allocated and sent to DSP for
->> initial memory requirements like shell loading. The size of this memory
->> is decided based on the shell size that is passed by the user space.
->> With the current implementation, a minimum of 2MB is always allocated
->> for initmem even if the size passed by user is less than that. For this
->> a MACRO is being used which is intended for shell size bound check.
->> This minimum size of 2MB is not recommended as the PD will have very
->> less memory for heap and will have to request HLOS again for memory.
->> Define a new macro for initmem minimum length of 3MB.
->>
->> Fixes: d73f71c7c6ee ("misc: fastrpc: Add support for create remote init process")
->> Cc: stable <stable@kernel.org>
->> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
->> ---
->>  drivers/misc/fastrpc.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
->> index a7a2bcedb37e..a3a5b745936e 100644
->> --- a/drivers/misc/fastrpc.c
->> +++ b/drivers/misc/fastrpc.c
->> @@ -39,6 +39,7 @@
->>  #define FASTRPC_DSP_UTILITIES_HANDLE	2
->>  #define FASTRPC_CTXID_MASK (0xFF0)
->>  #define INIT_FILELEN_MAX (2 * 1024 * 1024)
->> +#define FASTRPC_INITLEN_MIN (3 * 1024 * 1024)
-> Meta-comment, for a future change, why not tabs to line things up?
-Sure, I'll add a comment.
-Should I line up all the MACRO definitions? If yes, should I send it as a separate patch?
->
->>  #define INIT_FILE_NAMELEN_MAX (128)
->>  #define FASTRPC_DEVICE_NAME	"fastrpc"
->>  
->> @@ -1410,7 +1411,7 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
->>  			goto err;
->>  	}
->>  
->> -	memlen = ALIGN(max(INIT_FILELEN_MAX, (int)init.filelen * 4),
->> +	memlen = ALIGN(max(FASTRPC_INITLEN_MIN, (int)init.filelen * 4),
-> You are aligning it this way, but still checking the file size for
-> INIT_FILELEN_MAX, so that's not really going to change anything here.
-File size is for the fastrpc shell that is to be loaded. This is the size of buffer allocated by user and passed
-to the driver. The driver will map this buffer to SMMU before passing it to DSP. Therefore the bound
-check on this size is necessary. As for initmem size for remote process on DSP, this size is also inclusive of
-initial requirements of DSP size user process(user PD), hence separating it from file size macro.
-> How was this tested?
-This is tested with fastrpc use cases available in hexagon SDK:
-https://developer.qualcomm.com/software/hexagon-dsp-sdk/sample-apps
+On 2024/7/16 21:59, Ryan Roberts wrote:
+> Previously we had a situation where shmem mTHP controls and stats were
+> not exposed for some supported sizes and were exposed for some
+> unsupported sizes. So let's clean that up.
+> 
+> Anon mTHP can support all large orders (2, PMD_ORDER). But shmem can
+> support all large orders (1, MAX_PAGECACHE_ORDER). However, per-size
+> shmem controls and stats were previously being exposed for all the anon
+> mTHP orders, meaning order-1 was not present, and for arm64 64K base
+> pages, orders 12 and 13 were exposed but were not supported internally.
+> 
+> Tidy this all up by defining ctrl and stats attribute groups for anon
+> and file separately. Anon ctrl and stats groups are populated for all
+> orders in THP_ORDERS_ALL_ANON and file ctrl and stats groups are
+> populated for all orders in THP_ORDERS_ALL_FILE_DEFAULT.
 
---Ekansh
-> thanks,
->
-> greg k-h
+Make sense.
 
+> 
+> The side-effect of all this is that different hugepage-*kB directories
+> contain different sets of controls and stats, depending on which memory
+> types support that size. This approach is preferred over the
+> alternative, which is to populate dummy controls and stats for memory
+> types that do not support a given size.
+
+OK.
+
+> 
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> ---
+>   mm/huge_memory.c | 110 ++++++++++++++++++++++++++++++++++-------------
+>   1 file changed, 80 insertions(+), 30 deletions(-)
+> 
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index f4be468e06a4..578ac212c172 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -463,8 +463,8 @@ static void thpsize_release(struct kobject *kobj);
+>   static DEFINE_SPINLOCK(huge_anon_orders_lock);
+>   static LIST_HEAD(thpsize_list);
+>   
+> -static ssize_t thpsize_enabled_show(struct kobject *kobj,
+> -				    struct kobj_attribute *attr, char *buf)
+> +static ssize_t anon_enabled_show(struct kobject *kobj,
+> +				 struct kobj_attribute *attr, char *buf)
+>   {
+>   	int order = to_thpsize(kobj)->order;
+>   	const char *output;
+> @@ -481,9 +481,9 @@ static ssize_t thpsize_enabled_show(struct kobject *kobj,
+>   	return sysfs_emit(buf, "%s\n", output);
+>   }
+>   
+> -static ssize_t thpsize_enabled_store(struct kobject *kobj,
+> -				     struct kobj_attribute *attr,
+> -				     const char *buf, size_t count)
+> +static ssize_t anon_enabled_store(struct kobject *kobj,
+> +				  struct kobj_attribute *attr,
+> +				  const char *buf, size_t count)
+>   {
+>   	int order = to_thpsize(kobj)->order;
+>   	ssize_t ret = count;
+> @@ -525,19 +525,27 @@ static ssize_t thpsize_enabled_store(struct kobject *kobj,
+>   	return ret;
+>   }
+>   
+> -static struct kobj_attribute thpsize_enabled_attr =
+> -	__ATTR(enabled, 0644, thpsize_enabled_show, thpsize_enabled_store);
+> +static struct kobj_attribute anon_enabled_attr =
+> +	__ATTR(enabled, 0644, anon_enabled_show, anon_enabled_store);
+>   
+> -static struct attribute *thpsize_attrs[] = {
+> -	&thpsize_enabled_attr.attr,
+> +static struct attribute *anon_ctrl_attrs[] = {
+> +	&anon_enabled_attr.attr,
+> +	NULL,
+> +};
+> +
+> +static const struct attribute_group anon_ctrl_attr_grp = {
+> +	.attrs = anon_ctrl_attrs,
+> +};
+> +
+> +static struct attribute *file_ctrl_attrs[] = {
+>   #ifdef CONFIG_SHMEM
+>   	&thpsize_shmem_enabled_attr.attr,
+>   #endif
+>   	NULL,
+>   };
+>   
+> -static const struct attribute_group thpsize_attr_group = {
+> -	.attrs = thpsize_attrs,
+> +static const struct attribute_group file_ctrl_attr_grp = {
+> +	.attrs = file_ctrl_attrs,
+>   };
+>   
+>   static const struct kobj_type thpsize_ktype = {
+> @@ -583,57 +591,99 @@ DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
+>   DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
+>   DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
+>   
+> -static struct attribute *stats_attrs[] = {
+> +static struct attribute *anon_stats_attrs[] = {
+>   	&anon_fault_alloc_attr.attr,
+>   	&anon_fault_fallback_attr.attr,
+>   	&anon_fault_fallback_charge_attr.attr,
+>   	&swpout_attr.attr,
+>   	&swpout_fallback_attr.attr,
+> -	&shmem_alloc_attr.attr,
+> -	&shmem_fallback_attr.attr,
+> -	&shmem_fallback_charge_attr.attr,
+>   	&split_attr.attr,
+>   	&split_failed_attr.attr,
+>   	&split_deferred_attr.attr,
+>   	NULL,
+>   };
+>   
+> -static struct attribute_group stats_attr_group = {
+> +static struct attribute_group anon_stats_attr_grp = {
+> +	.name = "stats",
+> +	.attrs = anon_stats_attrs,
+> +};
+> +
+> +static struct attribute *file_stats_attrs[] = {
+> +#ifdef CONFIG_SHMEM
+> +	&shmem_alloc_attr.attr,
+> +	&shmem_fallback_attr.attr,
+> +	&shmem_fallback_charge_attr.attr,
+
+Shmem should also support swpout_* counters.
 
