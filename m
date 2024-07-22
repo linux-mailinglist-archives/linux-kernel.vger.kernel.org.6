@@ -1,138 +1,108 @@
-Return-Path: <linux-kernel+bounces-259472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94B119396BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 00:53:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F519396BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 00:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A0DE1F220EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:53:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CD8CB21647
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D9B44C68;
-	Mon, 22 Jul 2024 22:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970124438B;
+	Mon, 22 Jul 2024 22:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="q+ryCMk2"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S+BhV9Kt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9351401B
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 22:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDB61401B
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 22:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721688822; cv=none; b=km6QIAe6B4ay/wmZiBUrvV9FBM3Ff3W65TQP9t//mSbKnSIgYNENdqYm2z7uParMV7toM9uSFxdn3C0TKVRTBPiTX+v9zYhUVoo0sc3pY3JDxcOr6yR9hETIoKE2tcU0qyWKpDK2wueOot34h7dN9jpvDOgJ9yZmiiag0Jh4kKY=
+	t=1721689028; cv=none; b=EKqtIH9UHAhgnC9vHxzh6LGL46gearW2BOdDgUv64DItXDdFW52fpd0BdQlzU6c21vYK1OKIYugK6+4jceTh9HSI3MYqBpOw60K2yW56T5ZWAqpUjaFiUTNb9VWzhBzLzdm0GNcQ53F+Aga2almZMI5hhY0BnDNw+ehLnzk0fl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721688822; c=relaxed/simple;
-	bh=l8AwgpZnG+79Ae4e/d4yVGhPw1Lu69/PXeEjRRTKius=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J4z5IrD84OUiL6dDFYxdXFTs9WNAyLxfWvmJ4LYOifNM33bjOlkfuZyvYQKXoBlDcnkLNwesQMv6E0PhqAcZr5uTKtjqzgsBQgb0bdn1zuHjO1gkU0Ezv+gpAQFoSyVVrFkxuyk8qYRwaTtky1GjhXQfspMOrZEVpFCD0UiDJ4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=q+ryCMk2; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: akpm@linux-foundation.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721688818;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=8sJwcAqpBiYi821c2Fxl1tovp9YkMU1/UiqUIEtndtA=;
-	b=q+ryCMk283FwBMLX6O+k0tRZUIoK+vY1U7KunrRpvdrBVkgIxujDh6a8hTFNIj2sT6z3cE
-	luiDeDDF0TYV+axoK/nYChqYM1tPD8pDQJc8JKY+8eX1qdW/S3eTom2gzZvzjii2IQbnL4
-	TloVih+CMWIcFja7lo9M9FnIjBw0BCA=
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: mhocko@kernel.org
-X-Envelope-To: roman.gushchin@linux.dev
-X-Envelope-To: muchun.song@linux.dev
-X-Envelope-To: gthelen@google.com
-X-Envelope-To: kernel-team@meta.com
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>
-Cc: Greg Thelen <gthelen@google.com>,
-	Facebook Kernel Team <kernel-team@meta.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] memcg: expose children memory usage for root
-Date: Mon, 22 Jul 2024 15:53:06 -0700
-Message-ID: <20240722225306.1494878-1-shakeel.butt@linux.dev>
+	s=arc-20240116; t=1721689028; c=relaxed/simple;
+	bh=hTZaaadCNgRsiyJJkgcyhjuh3rbYlwXIOezqyckecDI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=obHMUf77sbyQ12r1BE6dyGr/lCxTMLWYaU5yjLfR2I8GHOMhZehvfw7/C3nP9Yl0+B7T4A5l4yi7BkJZz/Mq8Oy50RC8pUE6rsD0Nne8YKs2nTiF2oXXcAAXbEuinE85p3k1g4GE0v1CSXDu7twOdVUzzqXKVcU3hv+CA3+6d9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S+BhV9Kt; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721689027; x=1753225027;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=hTZaaadCNgRsiyJJkgcyhjuh3rbYlwXIOezqyckecDI=;
+  b=S+BhV9KtKle4TkO+KbsffzZxd2nwebw1qGNgmFwOp6l5JboZw4p6eaU7
+   wfbFkwEZwTEbvGd5UBuPjcIdSAksDicvSLPmL24WcBjHVfyAoJoCeL6lZ
+   C9Our3p5nOfPZ33ut4XA5bGSjNxWR+bBgfRSYCfd2xdN4KE97NNNKXr6I
+   SSLHj9wYgCLIFxmewwrv2czAGWs//ehV52sD4Smyjlv+SDJLyt3GdYpcq
+   gBsYaGfkyIHRYoEy3niF8gBy/Pv+YmKhGuExeDFm9oi8EgDTKscyWchFb
+   Q3SmpbhXnirdg1WVw1pbJKEornd8xciTJ49RpHIV86lbHlTOKre7BKhme
+   Q==;
+X-CSE-ConnectionGUID: MSvw+EUIQ1m1+f/HPkS+Mg==
+X-CSE-MsgGUID: gWLEN/FGT+SR1sqXTPy+nA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11141"; a="41812790"
+X-IronPort-AV: E=Sophos;i="6.09,229,1716274800"; 
+   d="scan'208";a="41812790"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 15:57:06 -0700
+X-CSE-ConnectionGUID: 47gvh1UARmiDFyPrsb9Iow==
+X-CSE-MsgGUID: PhmC24vTSkych6ZcxH22Tw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,229,1716274800"; 
+   d="scan'208";a="56581503"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 22 Jul 2024 15:57:05 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sW1xm-000lSm-37;
+	Mon, 22 Jul 2024 22:57:02 +0000
+Date: Tue, 23 Jul 2024 06:56:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>
+Subject: mm/gup.o: warning: objtool: faultin_page_range+0x100: unreachable
+ instruction
+Message-ID: <202407230630.3vGhnlFB-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Linux kernel does not expose memory.current on the root memcg and there
-are applications which have to traverse all the top level memcgs to
-calculate the total memory charged in the system. This is more expensive
-(directory traversal and multiple open and reads) and is racy on a busy
-machine. As the kernel already have the needed information i.e. root's
-memory.current, why not expose that?
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   933069701c1b507825b514317d4edd5d3fd9d417
+commit: 631426ba1d45a8672b177ee85ad4cabe760dd131 mm/madvise: make MADV_POPULATE_(READ|WRITE) handle VM_FAULT_RETRY properly
+date:   3 months ago
+config: loongarch-randconfig-001-20240722 (https://download.01.org/0day-ci/archive/20240723/202407230630.3vGhnlFB-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240723/202407230630.3vGhnlFB-lkp@intel.com/reproduce)
 
-However root's memory.current will have a different semantics than the
-non-root's memory.current as the kernel skips the charging for root, so
-maybe it is better to have a different named interface for the root.
-Something like memory.children_usage only for root memcg.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407230630.3vGhnlFB-lkp@intel.com/
 
-Now there is still a question that why the kernel does not expose
-memory.current for the root. The historical reason was that the memcg
-charging was expensice and to provide the users to bypass the memcg
-charging by letting them run in the root. However do we still want to
-have this exception today? What is stopping us to start charging the
-root memcg as well. Of course the root will not have limits but the
-allocations will go through memcg charging and then the memory.current
-of root and non-root will have the same semantics.
+All warnings (new ones prefixed by >>):
 
-This is an RFC to start a discussion on memcg charging for root.
+   mm/gup.o: warning: objtool: get_user_pages_remote+0x160: unreachable instruction
+   mm/gup.o: warning: objtool: get_user_pages+0x12c: unreachable instruction
+   mm/gup.o: warning: objtool: get_user_pages_unlocked+0x138: unreachable instruction
+   mm/gup.o: warning: objtool: __gup_longterm_locked+0x3d8: unreachable instruction
+>> mm/gup.o: warning: objtool: faultin_page_range+0x100: unreachable instruction
 
-Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
----
- Documentation/admin-guide/cgroup-v2.rst | 6 ++++++
- mm/memcontrol.c                         | 5 +++++
- 2 files changed, 11 insertions(+)
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 6c6075ed4aa5..e4afc05fd8ea 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1220,6 +1220,12 @@ PAGE_SIZE multiple when read back.
- 	The total amount of memory currently being used by the cgroup
- 	and its descendants.
- 
-+  memory.children_usage
-+	A read-only single value file which exists only on root cgroup.
-+
-+	The total amount of memory currently being used by the
-+        descendants of the root cgroup.
-+
-   memory.min
- 	A read-write single value file which exists on non-root
- 	cgroups.  The default is "0".
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 960371788687..eba8cf76d3d3 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -4304,6 +4304,11 @@ static struct cftype memory_files[] = {
- 		.flags = CFTYPE_NOT_ON_ROOT,
- 		.read_u64 = memory_current_read,
- 	},
-+	{
-+		.name = "children_usage",
-+		.flags = CFTYPE_ONLY_ON_ROOT,
-+		.read_u64 = memory_current_read,
-+	},
- 	{
- 		.name = "peak",
- 		.flags = CFTYPE_NOT_ON_ROOT,
+objdump-func vmlinux.o faultin_page_range:
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
