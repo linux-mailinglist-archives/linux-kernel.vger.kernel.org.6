@@ -1,121 +1,236 @@
-Return-Path: <linux-kernel+bounces-258837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AC4C938D44
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:10:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B24B938D48
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF1E3B23F57
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:10:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93B24B23026
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447C016C873;
-	Mon, 22 Jul 2024 10:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEE416A945;
+	Mon, 22 Jul 2024 10:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fNcTvEEN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UGqexBZY"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E5216C6BA;
-	Mon, 22 Jul 2024 10:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717E78BFC
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 10:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721642936; cv=none; b=FPTo9/1KexsFYXc+TrSQOJlwXGfjP+DXJ8lg/MirdFuH2KYz137PTTgw/9SxvdZimaf5OUstFUituCK5JBHBq77EUxTuTMUu4ieH30FnuW4yFQZnipPtae5c3EgjRZI1ogVwyP+5UJ8m5dP6nnEapTtnHhTGjfFvCDhJzpT8Dfo=
+	t=1721643152; cv=none; b=uWXXz+urqVSbEcwb1nj0wB49cO4XaKDvKu3YmaTi9OCj7XcIkFZV5RnHJ78uhr5hyCqczky4cn04k8QD66h9J094mBss8nR5aN3LLgwemZqaFipBJq1DetX8nCFn4Am2W+7dM5PxYKtxl/kW0iW25nTsIKZl2qwRTLo00A48LRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721642936; c=relaxed/simple;
-	bh=7h5Kr+YpdYtQ4+7prp0Efe9cyc7VuT34aSYyd6+RWOc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r6vwXO+f8gQ7NSk+gLWCQ3o2/dqtA/1lLHeXbTv2u0Jv3kPGmzlMHmGirrEL1723weDjPVDTu/srCzpaTV540l/5pShx7tRjwZq/HOHMG20votxa9fGLgkHpmv8PgeUs5afxWeDe1wMMh8GnBoL4Dr9wvb/qU1xzH5EFlc251YQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fNcTvEEN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 921B0C116B1;
-	Mon, 22 Jul 2024 10:08:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721642935;
-	bh=7h5Kr+YpdYtQ4+7prp0Efe9cyc7VuT34aSYyd6+RWOc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fNcTvEENz+fFubHxaCVUTSqYq1ITDfo0ptFNNyhZiJtkY03TadBS1i+ZhqHLfVGJh
-	 wejLfRGO7/MXoIRjPmgVOznu/m8as04rC7MuUcV6ZUI86ATnFB/wd9trpSHBjpMIJe
-	 1zP6D6J4UnP/C2ivTwawSleVhDsGeYcY8f3s+xp8ATTVohoch6BbiYzMzCYthbAZSo
-	 Ju4lBHrZm7WycGEE++o52rHSPjU2WPyxwG9PV6SYXLz5E6v92bSrMIBCRBl79m4ZZz
-	 UbOhxWSEIT/Q1c55byiM2Jo3LnSq0IoSgxoIde6Xxp0OyfH8W75BVC3lhxcNX8Kqeg
-	 0Slz4wCmQVXnA==
-Date: Mon, 22 Jul 2024 11:08:46 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v9 38/39] kselftest/arm64: Add a GCS stress test
-Message-ID: <53c98e88-b12a-40e4-8b01-d7a4394c2471@sirena.org.uk>
-References: <20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org>
- <20240625-arm64-gcs-v9-38-0f634469b8f0@kernel.org>
- <875xt2xojp.fsf@linaro.org>
- <871q3qxnx6.fsf@linaro.org>
+	s=arc-20240116; t=1721643152; c=relaxed/simple;
+	bh=vMvZXZT1M5wLPCdrPFvsVuR1bsem/aXlwZguHGKZAgg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SvBfyV3SLkdbn6ddTjYKrd6OJ7lwTZf/YtOimM14s/IvVYG04twQiq/Z77y3Q1B8n/3YL/zuVbsrkJwaSFbEHxCw+O+OHhCfKp9s39lL2cCyjE4N9Hw3AdysgPl5jPEyxdG4szcJUKdAV7ifZUCzOoz8LUjUJzGte0pb8bC76us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UGqexBZY; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4266f3e0df8so29131095e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 03:12:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721643149; x=1722247949; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tvIqnYuZYV2/+xYtsXtoYvUIcyIYgJiQLbfJZw43cls=;
+        b=UGqexBZYwtAJdIytLHRgWKC/3UoEbewd4uV99x2Zr8qXBHlTFZloohnbw5TEX4ly60
+         Te62XjZAgDNa6Bn0DCR+VlGf+tZKo54Ga0IxcEY0/HLQG1pCHAQWY6wg/DEuMpeCQzly
+         WEjb05Ob5fW5JqLou8AAf2L/GaiszbCvuJbvb9BKOxcAJmDYliaQYm/yj/5kQyxhnj4R
+         2i6eq0LfYFuOmoD0/gyCxuofh0xl3gktUVMvtKVfe/ClQu3WLc5qcXXeSs5KpdDl8dlr
+         C4xRAAwHltAh9PqkVSsO1J6rna4oSdkp1iusXLH+C5/0QplouCnCZg6TFAhL0GRmwdnJ
+         FgCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721643149; x=1722247949;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tvIqnYuZYV2/+xYtsXtoYvUIcyIYgJiQLbfJZw43cls=;
+        b=iMuA4Q8CXT0ya9/+R7r2oZnunOy31ip0MPZzJkJrbGbMgWh7kKQHUXOJ4J1qmHN/JS
+         CDj04IDe+M4i6Ut2/ZqM5qCYoS0q5UCVp8DoZKPxBqJbXzEkrs0J++VHo9zQ4g3OIOkq
+         BpPMLUW75UyduOR0FcSVLlRZLZwoSkyI3LFSn9vwx3o3oKWjpIdFFohg3IQr+C/iVNic
+         LNCmCkkLuoJEZtN0AcFBVkJDXL3v2HjhGk4s38QACHMPFdMziLB9PVxdr+0vJzO6+vc9
+         BiqHgapAJ69WXw6X0Ua5rv2Bay8s7JfYmAJu7S8TsexPK4EoSHHEDAfsTx4hcfMvbmaM
+         eqTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUmQGW0dhLcnN2yvKWY61bTXiwMLHDeRkxX/w61R+LrDczj41UeIn7DART3XKW6VMgapT1Wtu7aTNGJuYOiehc1NmgJpIC0ihGPTNo/
+X-Gm-Message-State: AOJu0YxcgcYpeIQDhl2fnf0Yq85TX0OYBHpAy0FOGpP/lRGwKHouCqaA
+	S45804Xby+cBGPf9HHo7x6LpAmUkEDjFCmZF6rPV0cBo7OBdoo4T3B461pFINc0=
+X-Google-Smtp-Source: AGHT+IEuuQIrmzIO0zM11jr+yM94YwQ2ufkKLq0ZEfsaM9EANBUdXgXQ01+M4sPvdg9zpdfL46GD+g==
+X-Received: by 2002:a05:600c:5103:b0:426:63b8:2cce with SMTP id 5b1f17b1804b1-427dc52063amr39592745e9.7.1721643148703;
+        Mon, 22 Jul 2024 03:12:28 -0700 (PDT)
+Received: from localhost.localdomain ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a8e436sm147993865e9.33.2024.07.22.03.12.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jul 2024 03:12:28 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+To: coresight@lists.linaro.org,
+	suzuki.poulose@arm.com,
+	gankulkarni@os.amperecomputing.com,
+	mike.leach@linaro.org,
+	leo.yan@linux.dev,
+	anshuman.khandual@arm.com
+Cc: James Clark <james.clark@linaro.org>,
+	James Clark <james.clark@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	John Garry <john.g.garry@oracle.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH v6 00/17] coresight: Use per-sink trace ID maps for Perf sessions
+Date: Mon, 22 Jul 2024 11:11:42 +0100
+Message-Id: <20240722101202.26915-1-james.clark@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="d44XRLGyLTUTZna7"
-Content-Disposition: inline
-In-Reply-To: <871q3qxnx6.fsf@linaro.org>
-X-Cookie: Everything you know is wrong!
+Content-Transfer-Encoding: 8bit
+
+This will allow sessions with more than CORESIGHT_TRACE_IDS_MAX ETMs
+as long as there are fewer than that many ETMs connected to each sink.
+
+Each sink owns its own trace ID map, and any Perf session connecting to
+that sink will allocate from it, even if the sink is currently in use by
+other users. This is similar to the existing behavior where the dynamic
+trace IDs are constant as long as there is any concurrent Perf session
+active. It's not completely optimal because slightly more IDs will be
+used than necessary, but the optimal solution involves tracking the PIDs
+of each session and allocating ID maps based on the session owner. This
+is difficult to do with the combination of per-thread and per-cpu modes
+and some scheduling issues. The complexity of this isn't likely to worth
+it because even with multiple users they'd just see a difference in the
+ordering of ID allocations rather than hitting any limits (unless the
+hardware does have too many ETMs connected to one sink).
+
+Per-thread mode works but only until there are any overlapping IDs, at
+which point Perf will error out. Both per-thread mode and sysfs mode are
+left to future changes, but both can be added on top of this initial
+implementation and only sysfs mode requires further driver changes.
+
+The HW_ID version field hasn't been bumped in order to not break Perf
+which already has an error condition for other values of that field.
+Instead a new minor version has been added which signifies that there
+are new fields but the old fields are backwards compatible.
+
+Changes since v5:
+  
+  * Hide queue number printout behind -v option
+  * Style change in cs_etm__process_aux_output_hw_id()
+  * Move new format enum to an earlier commit to reduce churn
+
+Changes since v4:
+
+  * Fix compilation failure when TRACE_ID_DEBUG is set
+  * Expand comment about not freeing individual trace IDs in
+    free_event_data()
+
+Changes since v3:
+
+  * Fix issue where trace IDs were overwritten by possibly invalid ones
+    by Perf in unformatted mode. Now the HW_IDs are also used for
+    unformatted mode unless the kernel didn't emit any.
+  * Add a commit to check the OpenCSD version.
+  * Add a commit to not save invalid IDs in the Perf header.
+  * Replace cs_etm_queue's formatted and formatted_set members with a
+    single enum which is easier to use.
+  * Drop CORESIGHT_TRACE_ID_UNUSED_FLAG as it's no longer needed.
+  * Add a commit to print the queue number in the raw dump.
+  * Don't assert on the number of unformatted decoders if decoders == 0.
 
 
---d44XRLGyLTUTZna7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Changes since v2:
 
-On Thu, Jul 18, 2024 at 08:47:49PM -0300, Thiago Jung Bauermann wrote:
-> Thiago Jung Bauermann <thiago.bauermann@linaro.org> writes:
+  * Rebase on coresight-next 6.10-rc2 (b9b25c8496).
+  * Fix double free of csdev if device registration fails.
+  * Fix leak of coresight_trace_id_perf_start() if trace ID allocation
+    fails.
+  * Don't resend HW_ID for sink changes in per-thread mode. The existing
+    CPU field on AUX records can be used to track this instead.
+  * Tidy function doc for coresight_trace_id_release_all()
+  * Drop first two commits now that they are in coresight-next
+  * Add a commit to make the trace ID spinlock local to the map
 
-> > # # Totals: pass:0 fail:9 xfail:0 xpass:0 skip:0 error:0
-> > ok 1 selftests: arm64: gcs-stress
+Changes since V1:
 
-> Also, Shouldn't the test report "not ok" at the end considering that
-> there were fails?
+ * Rename coresight_device.perf_id_map to perf_sink_id_map.
+ * Instead of outputting a HW_ID for each reachable ETM, output
+   the sink ID and continue to output only the HW_ID once for
+   each mapping.
+ * Keep the first two Perf patches so that it applies cleanly
+   on coresight-next, although they have been applied on perf-tools-next
+ * Add new *_map() functions to the trace ID public API instead of
+   modifying existing ones.
+ * Collapse "coresight: Pass trace ID map into source enable" into
+   "coresight: Use per-sink trace ID maps for Perf sessions" because the
+   first commit relied on the default map being accessible which is no
+   longer necessary due to the previous bullet point.
 
-It doesn't really matter either way, the per test results are captured.
 
---d44XRLGyLTUTZna7
-Content-Type: application/pgp-signature; name="signature.asc"
+James Clark (17):
+  perf: cs-etm: Create decoders after both AUX and HW_ID search passes
+  perf: cs-etm: Allocate queues for all CPUs
+  perf: cs-etm: Move traceid_list to each queue
+  perf: cs-etm: Create decoders based on the trace ID mappings
+  perf: cs-etm: Only save valid trace IDs into files
+  perf: cs-etm: Support version 0.1 of HW_ID packets
+  perf: cs-etm: Print queue number in raw trace dump
+  perf: cs-etm: Add runtime version check for OpenCSD
+  coresight: Remove unused ETM Perf stubs
+  coresight: Clarify comments around the PID of the sink owner
+  coresight: Move struct coresight_trace_id_map to common header
+  coresight: Expose map arguments in trace ID API
+  coresight: Make CPU id map a property of a trace ID map
+  coresight: Use per-sink trace ID maps for Perf sessions
+  coresight: Remove pending trace ID release mechanism
+  coresight: Emit sink ID in the HW_ID packets
+  coresight: Make trace ID map spinlock local to the map
 
------BEGIN PGP SIGNATURE-----
+ drivers/hwtracing/coresight/coresight-core.c  |  37 +-
+ drivers/hwtracing/coresight/coresight-dummy.c |   3 +-
+ .../hwtracing/coresight/coresight-etm-perf.c  |  43 +-
+ .../hwtracing/coresight/coresight-etm-perf.h  |  18 -
+ .../coresight/coresight-etm3x-core.c          |   9 +-
+ .../coresight/coresight-etm4x-core.c          |   9 +-
+ drivers/hwtracing/coresight/coresight-priv.h  |   1 +
+ drivers/hwtracing/coresight/coresight-stm.c   |   3 +-
+ drivers/hwtracing/coresight/coresight-sysfs.c |   3 +-
+ .../hwtracing/coresight/coresight-tmc-etr.c   |   5 +-
+ drivers/hwtracing/coresight/coresight-tmc.h   |   5 +-
+ drivers/hwtracing/coresight/coresight-tpdm.c  |   3 +-
+ .../hwtracing/coresight/coresight-trace-id.c  | 138 ++--
+ .../hwtracing/coresight/coresight-trace-id.h  |  70 +-
+ include/linux/coresight-pmu.h                 |  17 +-
+ include/linux/coresight.h                     |  21 +-
+ tools/build/feature/test-libopencsd.c         |   4 +-
+ tools/include/linux/coresight-pmu.h           |  17 +-
+ tools/perf/Makefile.config                    |   2 +-
+ tools/perf/arch/arm/util/cs-etm.c             |  11 +-
+ .../perf/util/cs-etm-decoder/cs-etm-decoder.c |  49 +-
+ .../perf/util/cs-etm-decoder/cs-etm-decoder.h |   3 +-
+ .../util/cs-etm-decoder/cs-etm-min-version.h  |  13 +
+ tools/perf/util/cs-etm.c                      | 629 +++++++++++-------
+ tools/perf/util/cs-etm.h                      |  12 +-
+ 25 files changed, 650 insertions(+), 475 deletions(-)
+ create mode 100644 tools/perf/util/cs-etm-decoder/cs-etm-min-version.h
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaeL64ACgkQJNaLcl1U
-h9DdSwf+OKUfn8laXp+yxRv2lSbOzqFMeeL5M5MmJtaH4D5q5G9SwlMCVx3e+7BW
-utABRB30/1ASkvtYLdYwvPw6y+Jn9P2xtdttvx7+U/aggTBaWWW0fa6cB9YTKO+a
-aRyNaxotBkWFmPUl7qa4kpMWb5FDtxX3iLlCw0GicotYaWJKGHEUQ6AFxGjmQaM5
-O1eXLhARUQ8l2+k8A6a0WXVZvZJdhyLouFkswNGmAKdnfd6mYvY9DIBejxtsBJlH
-M7xvo9iPSz/18Y/x4HdPAjjwGHYNRkuhYT8QMhZG5TzTpNMXwEXpKbkkKETAklkz
-289HaQ9+gTL4ZnRsy1VMxkkxoqQ83g==
-=SALv
------END PGP SIGNATURE-----
+-- 
+2.34.1
 
---d44XRLGyLTUTZna7--
 
