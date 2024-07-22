@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-258947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F0E938F0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:28:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6009F938F0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 401561C21162
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:28:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BD9D281A82
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04CCD16D4E5;
-	Mon, 22 Jul 2024 12:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F64E16D4DF;
+	Mon, 22 Jul 2024 12:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qaaD+vOu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ONKf1LGm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9831754B;
-	Mon, 22 Jul 2024 12:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0B216D4C2
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 12:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721651288; cv=none; b=s9Uro7Kh+eBYkbbYOEsYtOWSdsHztmkUoeO83ejCkGkkvcfHoAqub1AGlW6GRJiWnJzDQiiPyHd9kesCZK+j2PDzJ+C1bGTzpXy8VEmS0vR2c8Tkq0I3O0OSB80CveO62OOho4cJ6to/YdZCwDSxoxm9XUE4tDFCAOxW+fhSDxE=
+	t=1721651339; cv=none; b=tf3GPhxB/ai3RwW1u5pThH92lcjU/wQOsL2zE3ZqdSAC9ffPeoBVBLjy7Ozz0MsTf2VmW0Cmdk/k6A4lkys2G+HQPSh0p+sL6SzSsh+13gjK3MViZYMLdk3ynXfViKIdu0LJsBY7PDl4hOWYU2RkfmU5MMnrNYSxXW7b73qY9bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721651288; c=relaxed/simple;
-	bh=1wHVWXdwDpPXbRdLNkJ+1cBk9V/oWHav1DfuBfI2DU0=;
+	s=arc-20240116; t=1721651339; c=relaxed/simple;
+	bh=vUmJEIPNcAUgKw0gUp/Kks3eFEwaCv4NME+2NBukUpw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r43jZcW1wZT1UZP66uwXvlK2gsHICikSMJKKm1b0VmsE+imVrwdpjbNjWtek8a+4tbmgpoibrv0Sx0CIrtTKNdlb/NQKsgdSGJcQhZ4bqQ/ufL9sNyJNnc0HhOhmyj8C5m1/v9VjzRBBqpZK41ifa4BlxUNR185+7XHdHxwAuzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qaaD+vOu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 512E3C4AF0A;
-	Mon, 22 Jul 2024 12:28:03 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=QjoJI2wcUPsKOU4oqGgXW0y4VSxI5VkCEXvEXCSoMXUhVNwSj1Wdx1PpAZs5ImAtHqGldowhfGzj/aP2CldrF8QmB7jgJ+HPg352l4LvmWLCFqgCjZIgk/leVgW9rZ/Yg0btHJWNYsqvvphthbVq/i4gd4+WXadAgKRoqMpqmzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ONKf1LGm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2FA8C116B1;
+	Mon, 22 Jul 2024 12:28:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721651287;
-	bh=1wHVWXdwDpPXbRdLNkJ+1cBk9V/oWHav1DfuBfI2DU0=;
+	s=k20201202; t=1721651339;
+	bh=vUmJEIPNcAUgKw0gUp/Kks3eFEwaCv4NME+2NBukUpw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qaaD+vOuS55OkCK49tMhg7IkjyjEz7lyTKp4gQ7wPXFkLebkAnJcXA60oaAX1TeSP
-	 liW3qKZ0pWcao0+2ItIgibEW6dz2vkLKZ9WmTmgi+pmxhfEs7GMTVCF558adcxawgx
-	 OXIxaqf71/TDPYdF5KxBdUx3R24zwLd/a+dMM1bIJ0DBteedSIQyBI1ru1TpVdPjiL
-	 moqc6lu88KActxvo3q69heozZ3rNJGqRgn/+HqGiEWcVX2vdcHFCs2i1LxnSoZP+ap
-	 eE6En9BX98heKsXsr4Mk6Noeswdq/IA/ezGoeVl05gfny2HHRMBKLIru3Ny5BTvMCa
-	 cFeyuA6qRT0Dg==
-Message-ID: <e12b91ef-ca0c-4b77-840b-dcfb2c76a984@kernel.org>
-Date: Mon, 22 Jul 2024 14:28:00 +0200
+	b=ONKf1LGmLBfPe4CmtDi9tiAQgL6X9Yw9Dd8GQ+MauuE2DelRp8jihZ9x32ENiNe/Q
+	 aLcyQvC8Zyfaj/wfgzP3rMyjh30flE8eVPeNC2sRBHwDx8F1ZLiClLA58pY3/BfKJO
+	 JldawqgysISIRqACQKEETB/8JAjHt0ZO3DLTmogv9hEun9uxHlLyzWGhWpJnDjvGCA
+	 OdxRmWOrpS4uHT3IdFoHLbVGA7bfH4c8wRofZTLbe/PnKuKiHSK5xbRZQ6lM39Cnnx
+	 ToaMi13JQZTp/4qSmFLK6NJShrS9HKh6JPXVSE03sEWUR3UrTS1ccxoqgOKUqBCHV0
+	 Sb/QAFAt35jFw==
+Message-ID: <19587631-3da7-4378-910a-9c3075b96995@kernel.org>
+Date: Mon, 22 Jul 2024 14:28:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,180 +49,119 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/8] Unmapping guest_memfd from Direct Map
+Subject: Re: [RFC PATCH v3 19/37] irqchip: Add irq-kvx-apic-gic driver
+To: ysionneau@kalrayinc.com, linux-kernel@vger.kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: Jonathan Borne <jborne@kalrayinc.com>,
+ Julian Vetter <jvetter@kalrayinc.com>,
+ Clement Leger <clement@clement-leger.fr>,
+ Vincent Chardon <vincent.chardon@elsys-design.com>
+References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
+ <20240722094226.21602-20-ysionneau@kalrayinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-To: Patrick Roy <roypat@amazon.co.uk>, seanjc@google.com,
- pbonzini@redhat.com, akpm@linux-foundation.org, dwmw@amazon.co.uk,
- rppt@kernel.org, david@redhat.com
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- willy@infradead.org, graf@amazon.com, derekmn@amazon.com,
- kalyazin@amazon.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, dmatlack@google.com, tabba@google.com,
- chao.p.peng@linux.intel.com, xmarcalx@amazon.co.uk
-References: <20240709132041.3625501-1-roypat@amazon.co.uk>
-From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
-In-Reply-To: <20240709132041.3625501-1-roypat@amazon.co.uk>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240722094226.21602-20-ysionneau@kalrayinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 7/9/24 3:20 PM, Patrick Roy wrote:
-> Hey all,
+On 22/07/2024 11:41, ysionneau@kalrayinc.com wrote:
+> From: Yann Sionneau <ysionneau@kalrayinc.com>
 > 
-> This RFC series is a rough draft adding support for running
-> non-confidential compute VMs in guest_memfd, based on prior discussions
-> with Sean [1]. Our specific usecase for this is the ability to unmap
-> guest memory from the host kernel's direct map, as a mitigation against
-> a large class of speculative execution issues.
-> 
-> === Implementation ===
-> 
-> This patch series introduces a new flag to the `KVM_CREATE_GUEST_MEMFD`
-> to remove its pages from the direct map when they are allocated. When
-> trying to run a guest from such a VM, we now face the problem that
-> without either userspace or kernelspace mappings of guest_memfd, KVM
-> cannot access guest memory to, for example, do MMIO emulation of access
-> memory used to guest/host communication. We have multiple options for
-> solving this when running non-CoCo VMs: (1) implement a TDX-light
-> solution, where the guest shares memory that KVM needs to access, and
-> relies on paravirtual solutions where this is not possible (e.g. MMIO),
-> (2) have KVM use userspace mappings of guest_memfd (e.g. a
-> memfd_secret-style solution), or (3) dynamically reinsert pages into the
-> direct map whenever KVM wants to access them.
-> 
-> This RFC goes for option (3). Option (1) is a lot of overhead for very
-> little gain, since we are not actually constrained by a physical
-> inability to access guest memory (e.g. we are not in a TDX context where
-> accesses to guest memory cause a #MC). Option (2) has previously been
-> rejected [1].
 
-Do the pages have to have the same address when they are temporarily mapped?
-Wouldn't it be easier to do something similar to kmap_local_page() used for
-HIMEM? I.e. you get a temporary kernel mapping to do what's needed, but it
-doesn't have to alter the shared directmap.
+...
 
-Maybe that was already discussed somewhere as unsuitable but didn't spot it
-here.
+> +
+> +static int __init kvx_init_apic_gic(struct device_node *node,
+> +				    struct device_node *parent)
+> +{
+> +	struct kvx_apic_gic *gic;
+> +	int ret;
+> +	unsigned int irq;
+> +
+> +	if (!parent) {
+> +		pr_err("kvx apic gic does not have parent\n");
 
-> In this patch series, we make sufficient parts of KVM gmem-aware to be
-> able to boot a Linux initrd from private memory on x86. These include
-> KVM's MMIO emulation (including guest page table walking) and kvm-clock.
-> For VM types which do not allow accessing gmem, we return -EFAULT and
-> attempt to prepare a KVM_EXIT_MEMORY_FAULT.
-> 
-> Additionally, this patch series adds support for "restricted" userspace
-> mappings of guest_memfd, which work similar to memfd_secret (e.g.
-> disallow get_user_pages), which allows handling I/O and loading the
-> guest kernel in a simple way. Support for this is completely independent
-> of the rest of the functionality introduced in this patch series.
-> However, it is required to build a minimal hypervisor PoC that actually
-> allows booting a VM from a disk.
-> 
-> === Performance ===
-> 
-> We have run some preliminary performance benchmarks to assess the impact
-> of on-the-fly direct map manipulations. We were mainly interested in the
-> impact of manipulating the direct map for MMIO emulation on virtio-mmio.
-> Particularly, we were worried about the impact of the TLB and L1/2/3
-> Cache flushes that set_memory_[n]p entails.
-> 
-> In our setup, we have taken a modified Firecracker VMM, spawned a Linux
-> guest with 1 vCPU, and used fio to stress a virtio_blk device. We found
-> that the cache flushes caused throughput to drop from around 600MB/s to
-> ~50MB/s (~90%) for both reads and writes (on a Intel(R) Xeon(R) Platinum
-> 8375C CPU with 64 cores). We then converted our prototype to use
-> set_direct_map_{invalid,default}_noflush instead of set_memory_[n]p and
-> found that without cache flushes the pure impact of the direct map
-> manipulation is indistinguishable from noise. This is why we use
-> set_direct_map_{invalid,default}_noflush instead of set_memory_[n]p in
-> this RFC.
-> 
-> Note that in this comparison, both the baseline, as well as the
-> guest_memfd-supporting version of Firecracker were made to bounce I/O
-> buffers in VMM userspace. As GUP is disabled for the guest_memfd VMAs,
-> the virtio stack cannot directly pass guest buffers to read/write
-> syscalls.
-> 
-> === Security ===
-> 
-> We want to use unmapping guest memory from the host kernel as a security
-> mitigation against transient execution attacks. Temporarily restoring
-> direct map entries whenever KVM requires access to guest memory leaves a
-> gap in this mitigation. We believe this to be acceptable for the above
-> cases, since pages used for paravirtual guest/host communication (e.g.
-> kvm-clock) and guest page tables do not contain sensitive data. MMIO
-> emulation will only end up reading pages containing privileged
-> instructions (e.g. guest kernel code).
-> 
-> === Summary ===
-> 
-> Patches 1-4 are about hot-patching various points inside of KVM that
-> access guest memory to correctly handle the case where memory happens to
-> be guest-private. This means either handling the access as a memory
-> error, or simply accessing the memslot's guest_memfd instead of looking
-> at the userspace provided VMA if the VM type allows these kind of
-> accesses. Patches 5-6 add a flag to KVM_CREATE_GUEST_MEMFD that will
-> make it remove its pages from the kernel's direct map. Whenever KVM
-> wants to access guest-private memory, it will temporarily re-insert the
-> relevant pages. Patches 7-8 allow for restricted userspace mappings
-> (e.g. get_user_pages paths are disabled like for memfd_secret) of
-> guest_memfd, so that userspace has an easy path for loading the guest
-> kernel and handling I/O-buffers.
-> 
-> === ToDos / Limitations ===
-> 
-> There are still a few rough edges that need to be addressed before
-> dropping the "RFC" tag, e.g.
-> 
-> * Handle errors of set_direct_map_default_not_flush in
->   kvm_gmem_invalidate_folio instead of calling BUG_ON
-> * Lift the limitation of "at most one gfn_to_pfn_cache for each
->   gfn/pfn" in e1c61f0a7963 ("kvm: gmem: Temporarily restore direct map
->   entries when needed"). It currently means that guests with more than 1
->   vcpu fail to boot, because multiple vcpus can put their kvm-clock PV
->   structures into the same page (gfn)
-> * Write selftests, particularly around hole punching, direct map removal,
->   and mmap.
-> 
-> Lastly, there's the question of nested virtualization which Sean brought
-> up in previous discussions, which runs into similar problems as MMIO. I
-> have looked at it very briefly. On Intel, KVM uses various gfn->uhva
-> caches, which run in similar problems as the gfn_to_hva_caches dealt
-> with in 200834b15dda ("kvm: use slowpath in gfn_to_hva_cache if memory
-> is private"). However, previous attempts at just converting this to
-> gfn_to_pfn_cache (which would make them work with guest_memfd) proved
-> complicated [2]. I suppose initially, we should probably disallow nested
-> virtualization in VMs that have their memory removed from the direct
-> map.
-> 
-> Best,
-> Patrick
-> 
-> [1]: https://lore.kernel.org/linux-mm/cc1bb8e9bc3e1ab637700a4d3defeec95b55060a.camel@amazon.com/
-> [2]: https://lore.kernel.org/kvm/ZBEEQtmtNPaEqU1i@google.com/
-> 
-> Patrick Roy (8):
->   kvm: Allow reading/writing gmem using kvm_{read,write}_guest
->   kvm: use slowpath in gfn_to_hva_cache if memory is private
->   kvm: pfncache: enlighten about gmem
->   kvm: x86: support walking guest page tables in gmem
->   kvm: gmem: add option to remove guest private memory from direct map
->   kvm: gmem: Temporarily restore direct map entries when needed
->   mm: secretmem: use AS_INACCESSIBLE to prohibit GUP
->   kvm: gmem: Allow restricted userspace mappings
-> 
->  arch/x86/kvm/mmu/paging_tmpl.h |  94 +++++++++++++++++++-----
->  include/linux/kvm_host.h       |   5 ++
->  include/linux/kvm_types.h      |   1 +
->  include/linux/secretmem.h      |  13 +++-
->  include/uapi/linux/kvm.h       |   2 +
->  mm/secretmem.c                 |   6 +-
->  virt/kvm/guest_memfd.c         |  83 +++++++++++++++++++--
->  virt/kvm/kvm_main.c            | 112 +++++++++++++++++++++++++++-
->  virt/kvm/pfncache.c            | 130 +++++++++++++++++++++++++++++----
->  9 files changed, 399 insertions(+), 47 deletions(-)
-> 
-> 
-> base-commit: 890a64810d59b1a58ed26efc28cfd821fc068e84
+How is this possible? Aren't you controlling the code being executed?
+
+> +		return -EINVAL;
+> +	}
+> +
+> +	gic = kzalloc(sizeof(*gic), GFP_KERNEL);
+> +	if (!gic)
+> +		return -ENOMEM;
+> +
+> +	if (of_property_read_u32(node, "kalray,intc-nr-irqs",
+> +						&gic->input_nr_irqs))
+
+There is no such property. Also, there shouldn't be anyway...
+
+> +		gic->input_nr_irqs = KVX_GIC_INPUT_IT_COUNT;
+> +
+> +	if (WARN_ON(gic->input_nr_irqs > KVX_GIC_INPUT_IT_COUNT)) {
+
+Why? Please, drop all these WARN_ON from here and other patches. WARN_ON
+is for cases which cannot happen, as it might panic entire system.
+
+Instead, handle the case properly.
+
+> +		ret = -EINVAL;
+> +		goto err_kfree;
+> +	}
+> +
+> +	gic->base = of_io_request_and_map(node, 0, node->name);
+> +	if (!gic->base) {
+> +		ret = -EINVAL;
+> +		goto err_kfree;
+> +	}
+> +
+> +	raw_spin_lock_init(&gic->lock);
+> +	apic_gic_init(gic);
+
+
+Best regards,
+Krzysztof
 
 
