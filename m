@@ -1,169 +1,131 @@
-Return-Path: <linux-kernel+bounces-258935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2453938EDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:09:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AE34938EE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 668BE28195D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:09:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8A951F2258C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13E016D4D2;
-	Mon, 22 Jul 2024 12:09:07 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08C716D4E3;
+	Mon, 22 Jul 2024 12:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Rni74CVy"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D827816D336;
-	Mon, 22 Jul 2024 12:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8F116CD3B;
+	Mon, 22 Jul 2024 12:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721650147; cv=none; b=pnt3GVmBVUnezQZusk6AdYTf3set79/m5TyPGUeqVPDu9wZJ0s0M+a/+wgq9m0xxaE+wYIDhY62aoMYjbOHfkOerDe+RbZ0PGlYUtUzbakTxcWGwZGTHwxYPtNXB2ZesUyJ20Oc+GSt5TSFzlbb7hK/el5hu/CVW4r1GEbHrbyE=
+	t=1721650282; cv=none; b=sRM3FtgGFItRJcrz2xcYGouVW1dwnxALE9k0AHuqsZWh2rqEYrsJqpXSsc8O1rZoQo+GYkOLLqKffYdUWKVRYJP7XS3ug1r/9NWbSEfslsNrxFADIksA8ZigNI3nQlh2lVSdLA4A3glpfqS4OB1q94BbLY/wJWhfFx+GNAEYCJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721650147; c=relaxed/simple;
-	bh=LXnCzmOjYMB37HZSlUUm9tzqDt9wBbA2/7OB+RddjMc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=YQNhQTYNnjKL2PEFlXZbMFhdEsZRQ46x/NEdLOEjhz/OdS+CDbz1I55K9/U/QxFMHR2LvrLs8L0FuM9mKc311AOK/ES+1VLpNbvdGSQP6oPCFy5HKAR03dRgthGmSUhr7v4bMM9DgnUH0zc8aNG7TyMnjcomVQJ1tawE9dqP7dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WSJvZ6GPyznbxL;
-	Mon, 22 Jul 2024 20:08:10 +0800 (CST)
-Received: from kwepemd500010.china.huawei.com (unknown [7.221.188.84])
-	by mail.maildlp.com (Postfix) with ESMTPS id B09E2140414;
-	Mon, 22 Jul 2024 20:08:56 +0800 (CST)
-Received: from kwepemd100011.china.huawei.com (7.221.188.204) by
- kwepemd500010.china.huawei.com (7.221.188.84) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 22 Jul 2024 20:08:56 +0800
-Received: from kwepemd100011.china.huawei.com ([7.221.188.204]) by
- kwepemd100011.china.huawei.com ([7.221.188.204]) with mapi id 15.02.1258.034;
- Mon, 22 Jul 2024 20:08:56 +0800
-From: duchangbin <changbin.du@huawei.com>
-To: Adrian Hunter <adrian.hunter@intel.com>
-CC: duchangbin <changbin.du@huawei.com>, Peter Zijlstra
-	<peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, "Arnaldo Carvalho de
- Melo" <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Nathan
- Chancellor <nathan@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
-	<jolsa@kernel.org>, "Ian Rogers" <irogers@google.com>, "Liang, Kan"
-	<kan.liang@linux.intel.com>, "Nick Desaulniers" <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>, "Wanghui (OS Kernel Lab,
- Beijing)" <hw.huiwang@huawei.com>
-Subject: Re: [PATCH v5 4/8] perf: build-id: name debugging vdso as "debug"
-Thread-Topic: [PATCH v5 4/8] perf: build-id: name debugging vdso as "debug"
-Thread-Index: AQHazDb2iq3pHVuvbEa2f6W9l9N6m7H8Si6AgAZ9IIA=
-Date: Mon, 22 Jul 2024 12:08:56 +0000
-Message-ID: <8a7156281b45450ebf0511373f65afa7@huawei.com>
-References: <20240702041837.5306-1-changbin.du@huawei.com>
- <20240702041837.5306-5-changbin.du@huawei.com>
- <14afba8e-cb85-4d7d-96e4-d65fd8ebc2d5@intel.com>
-In-Reply-To: <14afba8e-cb85-4d7d-96e4-d65fd8ebc2d5@intel.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-imapappendstamp: kwepemd100011.china.huawei.com (15.02.1258.034)
-x-ms-exchange-messagesentrepresentingtype: 1
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <DB9B27207C06D249AD9D380A36DF03CD@huawei.com>
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1721650282; c=relaxed/simple;
+	bh=6JjbiKt2EElXXn2fNVQlEfWX5/tSPM44Ms3XEhpuj8M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XcvmADDXXwXfgT9wSZDfaeiD1vW3BC/41UxoIylcLNc1zCWtGq4p43D+fopi7UzuB19mHLDG+bOr7GaPCwu8rM9Rv317YWgTnArjJxUdiP1g9Xj2YDRo8s+VSm5HZkx6Gy7ySxpQMkdbRi06FlDGm6KAYIX5TV95OQZNjNWfmLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Rni74CVy; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 96F6045B;
+	Mon, 22 Jul 2024 14:10:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1721650236;
+	bh=6JjbiKt2EElXXn2fNVQlEfWX5/tSPM44Ms3XEhpuj8M=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Rni74CVyXlkmVgMETNF+exKeTdfWksbyXBjEdToaRRX1iU0r58+V5tA/r8gu66Nuj
+	 eOXN/tTxs6bR9cGYs/ETyxpVzyr9lhgdr+y/WQqcAIuarpnB93VSAsZzc2GTWI3JKu
+	 s8IQRhZeaiXsQC3LcZUApFtKCZBqIR/mtUM1lo2k=
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-pwm@vger.kernel.org
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Haibo Chen <haibo.chen@nxp.com>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	Frank Li <Frank.li@nxp.com>
+Subject: [PATCH v7 0/4] ADP5585 GPIO expander, PWM and keypad controller support
+Date: Mon, 22 Jul 2024 15:10:56 +0300
+Message-ID: <20240722121100.2855-1-laurent.pinchart@ideasonboard.com>
+X-Mailer: git-send-email 2.44.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 18, 2024 at 08:03:07PM +0300, Adrian Hunter wrote:
-> On 2/07/24 07:18, Changbin Du wrote:
-> > As normal objects, we will add debugging vdso elf to build-id cache lat=
-er.
-> > Here we name the debugging one as "debug".
-> >=20
-> > Signed-off-by: Changbin Du <changbin.du@huawei.com>
-> > ---
-> >  tools/perf/util/build-id.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
-> > index 83a1581e8cf1..15530af2bad9 100644
-> > --- a/tools/perf/util/build-id.c
-> > +++ b/tools/perf/util/build-id.c
-> > @@ -259,8 +259,8 @@ static bool build_id_cache__valid_id(char *sbuild_i=
-d)
-> >  static const char *build_id_cache__basename(bool is_kallsyms, bool is_=
-vdso,
-> >  					    bool is_debug)
-> >  {
-> > -	return is_kallsyms ? "kallsyms" : (is_vdso ? "vdso" : (is_debug ?
-> > -	    "debug" : "elf"));
-> > +	return is_kallsyms ? "kallsyms" : (is_debug ? "debug" : (is_vdso ?
-> > +		"vdso" : "elf"));
-> >  }
-> > =20
-> >  char *__dso__build_id_filename(const struct dso *dso, char *bf, size_t=
- size,
->=20
-> To actually add "debug", this also needs:
->=20
-> diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
-> index 15530af2bad9..b5bd02a1ad0f 100644
-> --- a/tools/perf/util/build-id.c
-> +++ b/tools/perf/util/build-id.c
-> @@ -701,7 +701,7 @@ build_id_cache__add(const char *sbuild_id, const char=
- *name, const char *realnam
->  	 * file itself may not be very useful to users of our tools without a
->  	 * symtab.
->  	 */
-> -	if (!is_kallsyms && !is_vdso &&
-> +	if (!is_kallsyms &&
->  	    strncmp(".ko", name + strlen(name) - 3, 3)) {
->  		debugfile =3D build_id_cache__find_debug(sbuild_id, nsi, root_dir);
->  		if (debugfile) {
->=20
->=20
->=20
-This is done by later patch named "perf: build-id: try to search debugging =
-vdso
-and add to cache". I split the changes into two patches.
+Hello,
 
-> With that perf will populated the "debug" entry in the build-id cache.
-> Currently, when adding to the build-id cache, perf only looks in
-> /usr/lib/debug/.build-id (refer build_id_cache__find_debug()), for
-> example:
->=20
->=20
-> $ sudo ln -s /lib/modules/6.9.2-local/build/arch/x86/entry/vdso/vdso64.so=
-.dbg /usr/lib/debug/.build-id/cf/702469f4637840fd6ba1a8d8a628ff83253d04.deb=
-ug
-> $ ls -l ~/.debug/\[vdso\]/cf702469f4637840fd6ba1a8d8a628ff83253d04/
-> total 8
-> -rw-r--r-- 1 ahunter ahunter    0 Jul 18 13:33 probes
-> -rw------- 1 ahunter ahunter 8192 Jul 18 13:33 vdso
-> $ perf record uname
-> Linux
-> [ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 0.010 MB perf.data (2 samples) ]
-> $ ls -l ~/.debug/\[vdso\]/cf702469f4637840fd6ba1a8d8a628ff83253d04/
-> total 40
-> -rwxrwxr-x 2 ahunter ahunter 32760 May 27 17:42 debug
-> -rw-r--r-- 1 ahunter ahunter     0 Jul 18 13:33 probes
-> -rw------- 1 ahunter ahunter  8192 Jul 18 13:33 vdso
->=20
->=20
-> Note, perf will anyway find the debug object in /usr/lib/debug/.build-id
-> so the benefit is if perf-archive is used to copy from the buildid-cache
-> to take to another machine.
->=20
->=20
+This patch series introduces support for the Analog Devices ADP5585, a
+GPIO expander, PWM and keyboard controller. It models the chip as an MFD
+device, and includes DT bindings (1/4), an MFD driver (2/4) and drivers
+for the GPIO (3/4) and PWM (4/4) functions.
 
---=20
-Cheers,
-Changbin Du
+Support for the keypad controller is left out, as I have no means to
+test it at the moment. The chip also includes a tiny reset controller,
+as well as a 3-bit input programmable logic block, which I haven't tried
+to support (and also have no means to test).
+
+The driver is based on an initial version from the NXP BSP kernel, then
+extensively and nearly completely rewritten, with added DT bindings. I
+have nonetheless retained original authorship. Clark, Haibo, if you
+would prefer not being credited and/or listed as authors, please let me
+know.
+
+Compared to v6, this version addresses small review comments. I believe
+it is ready to go, as the PWM and GPIO drivers have been acked by the
+respective subsystem maintainers, and I have addressed Lee's comments on
+the MFD side. Lee, if there's no more issue, could you apply this to
+your tree for v6.12 ?
+
+Clark Wang (1):
+  pwm: adp5585: Add Analog Devices ADP5585 support
+
+Haibo Chen (2):
+  mfd: adp5585: Add Analog Devices ADP5585 core support
+  gpio: adp5585: Add Analog Devices ADP5585 support
+
+Laurent Pinchart (1):
+  dt-bindings: mfd: Add Analog Devices ADP5585
+
+ .../devicetree/bindings/mfd/adi,adp5585.yaml  |  92 +++++++
+ .../devicetree/bindings/trivial-devices.yaml  |   4 -
+ MAINTAINERS                                   |  11 +
+ drivers/gpio/Kconfig                          |   7 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-adp5585.c                   | 229 ++++++++++++++++++
+ drivers/mfd/Kconfig                           |  12 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/adp5585.c                         | 205 ++++++++++++++++
+ drivers/pwm/Kconfig                           |   7 +
+ drivers/pwm/Makefile                          |   1 +
+ drivers/pwm/pwm-adp5585.c                     | 184 ++++++++++++++
+ include/linux/mfd/adp5585.h                   | 126 ++++++++++
+ 13 files changed, 876 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
+ create mode 100644 drivers/gpio/gpio-adp5585.c
+ create mode 100644 drivers/mfd/adp5585.c
+ create mode 100644 drivers/pwm/pwm-adp5585.c
+ create mode 100644 include/linux/mfd/adp5585.h
+
+
+base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+-- 
+Regards,
+
+Laurent Pinchart
+
 
