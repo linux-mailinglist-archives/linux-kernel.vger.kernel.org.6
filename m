@@ -1,242 +1,155 @@
-Return-Path: <linux-kernel+bounces-259311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E54279393ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:58:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB6EB9393F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02957B212DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:58:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 792F5281E3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABCC171098;
-	Mon, 22 Jul 2024 18:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08ED5182D8;
+	Mon, 22 Jul 2024 19:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="aHuY+Qr4"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kPUhrxC8"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB11417106B
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 18:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A6E18030
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 19:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721674710; cv=none; b=cwe/Xc+WB9QCVhWIKoNS72uq/PSEA2sgDvFIWEUI41LCDUXkosfdH0/aR2shRblbFHxxrAoYvIJLvcxT66C2X4eIkY9AR9EiWB8m15PsLJxcIllyos12eo6txOOLaF+TlPhse/IsyWvhm0hBhsmL+8nYjvlDptBwrTOtEl+4Y84=
+	t=1721675040; cv=none; b=fwTlvyU6HU8vRRwdh4F66IQxpB8GIR1jntA7Qm+2h+R3BM9DGCVscZ0tX5+mTM+TW8W7sGJjkFN0UVG9jXwDKdHIGLiEmOnTZz7dTjC+klx5/97q3gtZ3FkYzOHj0YLFreDKQG3Te9sMpPnQ1H9LiT0I78OQZAU1/fbFksMO50I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721674710; c=relaxed/simple;
-	bh=bZnZyVjgC/n7IxgvXCwJgq0MpSi5iqn+Ydo69uBqjEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uFVoM+iDxG+zrOVAxQAChi+cgxh5Da/7BOFdEJhlyGuA5sSqe7/Rrb25cxx4pDpKWVAZMM1zpfr6ReAAmvwxCHiDIwLmATk55NA/crumOO7nuBrlKcRSncV3OlDueuT4QzsuSjpjhen1+zZn2uGMsnv3JoKovj+ygnXAI5tBFjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=aHuY+Qr4; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4267300145eso40311125e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:58:28 -0700 (PDT)
+	s=arc-20240116; t=1721675040; c=relaxed/simple;
+	bh=ZuCr8Q3MXq7FKFxOumVO8h9QuyBPSWk2YAWb6LR+p3Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AXat20Qi0ftFOg4HwFOQ1bI52HOoIlvIguF410352X4j3WJFvGRlLtYAOJymXMgAemYPrJHvUs3JGvXtdc1xE4M8LKuA3DUwXSIiLTNSOZiEbOvpjfZcHwAXUXWo4y1x01y8HKkgRJfGPmRt6djWxqq+l2jo5ATw9jOd8KSVK4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kPUhrxC8; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-66a1842b452so28959467b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 12:03:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721674707; x=1722279507; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oSZY3a5sCrRsG7FKZtKUzWBxPQy6Q3D03lPoiirtlDM=;
-        b=aHuY+Qr49nXXG9PW/F/ebfeDdoTDKpyS7EZLSQuaKeJ6kRMoBN9Frn46kzYPxUUBvX
-         HA6srX4lHAAw+l3C7Plj4ceyMR+iC2Ssm9u7YLHFqz0BmrevZ81XrgzPLJnWX9BxNXlp
-         ZYY2eU0at4eDrx9W8vh5uvdE8u+iJLtoQLdUrsdhWeTnBsk0AIkU0aJln4MOeabXCBtq
-         TNl1T/5b1LRX0pjVhO1CUlw69Gsmo2g+A6Dimuy+eWsS0VsPdo2qedbjIqtEYNpgPnjB
-         u4k45+l+bp8dtGQewC+1XBCrj3VFGBoEBUZApPV1zugJ/skqwVUawZStxNHH5/xWuavr
-         U8PQ==
+        d=linaro.org; s=google; t=1721675038; x=1722279838; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/aLyzQjs5NsslSdkV31IgEOcyf1Zm6WnIlOUy4KlEfU=;
+        b=kPUhrxC8xyaF3BDUKcpVMnk2VRmTGpT821t17waaW6alcXTbrOJHPFo0dS4+yXc+EK
+         TTXmS5vQrZVTX13UcMRsicJ4OxFunlpf8JzDQBkzYMcTOhF7ZED4dwrku4IHA9mq3QCN
+         6Bb4DzQl5Ly8WmMjGc1UFojn7V26Mo0WBLWlRNrhs8tyImvCu91933/qQfXLVfH4BiUy
+         PSfqv/BY80igoKBG7+L3vDZxAM9SgTlJUSYIJcJrVBQE9XzsLxWarET5IsdX4Hkw25Rh
+         8pOXnvxyLYl0Ej/iwoH7FteMkgQOemdhf5rICcOsOIPXWdV8A1T03H+T1GTNAgjAiUoA
+         Wnug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721674707; x=1722279507;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oSZY3a5sCrRsG7FKZtKUzWBxPQy6Q3D03lPoiirtlDM=;
-        b=GAqGbOTBA8kY5AmqD5bGrr6ZJ5FCO/nz4QXXNe7qTL84V1UxVw5vgggH7be6DyNnP3
-         dvN+pun6sa1hgjYX2Vp3lYCmNaI8wRz6ESu1gDaLYF/heidNTuxR0FMWxHXptvPg/GaW
-         R6YbY6vynx2CVi2/lme1ec7l0cl+cPRkjLzzg1PCSTruh+EfKsMh5DEyKb6nTKYAm2l2
-         AMYNYMKdwTARSArNLfSFUM1zEzF+neLURDUH3exLqQAXlewBWVyQFZF/xcDlDpmpZYX7
-         sQLJICgbcH+Io/gm0EeU8nNzq/YLopW8xBNmE0Ewlo2NKNFx33t25O3PbsWnEWNglA3B
-         0oIw==
-X-Forwarded-Encrypted: i=1; AJvYcCVKHwWgpCp0hHu6JewU2GnOoXb4bwNlLbQ19Q/gCHHPfllqEO84yIpLSaHczGQ8bO6FzAMSs6OYfSsNh2wPBGuR9rx7EoEOrzjeTbre
-X-Gm-Message-State: AOJu0YyA7ki6oGYCSiFvVPQBQuZ2g4ouo+4VsmPHWxPLK8dOCJ1NWYIA
-	nyJBslcK48S1QDIo50LhB0LYMuOE68lSgQcqC5bstjaElczXAzzUvwNZfWUj9yU=
-X-Google-Smtp-Source: AGHT+IFKnwma/l8XcIBVJ1AahKfE1nABxV76uuc7X6Caa2pMFz7G3OrOEZawNYjRK/7BL3NpyBzrqA==
-X-Received: by 2002:a05:600c:3109:b0:426:6857:3156 with SMTP id 5b1f17b1804b1-427dc55bc49mr65497715e9.27.1721674706943;
-        Mon, 22 Jul 2024 11:58:26 -0700 (PDT)
-Received: from blmsp ([2001:4091:a245:8609:c1c4:a4f8:94c8:31f2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d7263687sm136561655e9.4.2024.07.22.11.58.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 11:58:26 -0700 (PDT)
-Date: Mon, 22 Jul 2024 20:58:25 +0200
-From: Markus Schneider-Pargmann <msp@baylibre.com>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, 
-	Chandrasekar Ramakrishnan <rcsekar@samsung.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Tony Lindgren <tony@atomide.com>, Judith Mendez <jm@ti.com>, linux-can@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux@ew.tq-group.com, 
-	Linux regressions mailing list <regressions@lists.linux.dev>
-Subject: Re: Kernel hang caused by commit "can: m_can: Start/Cancel polling
- timer together with interrupts"
-Message-ID: <4zzmw4ijqxn4jkycteaz3wv5qcvi5gqdcrsdytk2jhe2f2tb7r@k5hesykr3gmz>
-References: <e72771c75988a2460fa8b557b0e2d32e6894f75d.camel@ew.tq-group.com>
- <c93ab2cc-d8e9-41ba-9f56-51acb331ae38@leemhuis.info>
- <h7lmtmqizoipzlazl36fz37w2f5ow7nbghvya3wu766la5hx6d@3jdesa3ltmuz>
- <08aabeaf-6a81-48a9-9c5b-82a69b071faa@leemhuis.info>
- <734a29a87613b9052fc795d56a30690833e4aba9.camel@ew.tq-group.com>
- <76faeb323353b584b310f2f1b53e9b2745d2f12c.camel@ew.tq-group.com>
+        d=1e100.net; s=20230601; t=1721675038; x=1722279838;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/aLyzQjs5NsslSdkV31IgEOcyf1Zm6WnIlOUy4KlEfU=;
+        b=rh+/lUHkyjpebdddvBu+GIcX/0mN0YszSFvcDOLxKbkBLX7eHn+ZWAEnd9YIG3AUml
+         q6IG4swQlnuGA6B0ZMErjT36TETV+k5murwEnwDxAwGoyoctFFWaTjdbAhlX7MdOZjav
+         5VzEYPspvlL20pixiUv1DJEUStzG8q4w45Xf8gvPtLfPlRxVceRhJ//h/rObhu4CEc6P
+         MeVKKDPEaBz26vTO+RKJZUXj7e/1JoGmUV7ESYU3W5UwbXr+bVyIolq8pCEaY36RLnIn
+         eO8E6GkT5D2aJpL1YJICDaO/o58HWSlKm2VF4tk55qffLBo/q62JYMbm356v/FrvvKbX
+         M3PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWD2hZtLAS96sWIq9sj7u1FuNOYeC16KsvqT2aptwrUdgnGHHl/t5+SzQJCQUF0nGewFsAHAgwA29eZ5bM6oMOJMtwdQcZWzRMK6Tv6
+X-Gm-Message-State: AOJu0YxeQzGeHBZtPAFomIsCBKWlj2F+/trc1mnSG9kDlwaqo5Am9vf6
+	oAuEmbxoOPjBqNh7GR92PcB10S8N3OjFWuA6yhpKndDQ7INrVC1IcyICSOThvg/KAhVF3LuaT7S
+	itFsZvTm5LWeYmRskajAo2ahFrUQE0/VqV1rw3A==
+X-Google-Smtp-Source: AGHT+IGHHSAltb/w1lzf5cIkIkQspIiU9P8A/vUbkhLHt8k+PzD8zXZ+mZuEGvyPGNY8yUTQbEDWGpCcg1+oltHu7YU=
+X-Received: by 2002:a05:690c:5717:b0:615:1ad2:1102 with SMTP id
+ 00721157ae682-66a688a5612mr79225097b3.11.1721675037800; Mon, 22 Jul 2024
+ 12:03:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <76faeb323353b584b310f2f1b53e9b2745d2f12c.camel@ew.tq-group.com>
+References: <CGME20240719120945eucas1p16058905c95c92840679831ae3383a67a@eucas1p1.samsung.com>
+ <20240719120853.1924771-1-m.majewski2@samsung.com> <20240719120853.1924771-3-m.majewski2@samsung.com>
+In-Reply-To: <20240719120853.1924771-3-m.majewski2@samsung.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Mon, 22 Jul 2024 14:03:46 -0500
+Message-ID: <CAPLW+4kP25-LWArZGxQ2yy-pc1RDCVng+5Z667cCbb+h_V6A8Q@mail.gmail.com>
+Subject: Re: [PATCH 2/6] drivers/thermal/exynos: use tmu_temp_mask consistently
+To: Mateusz Majewski <m.majewski2@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 03, 2024 at 02:50:04PM GMT, Matthias Schiffer wrote:
-> On Tue, 2024-07-02 at 12:03 +0200, Matthias Schiffer wrote:
-> > On Tue, 2024-07-02 at 07:37 +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
-> > > 
-> > > 
-> > > On 01.07.24 16:34, Markus Schneider-Pargmann wrote:
-> > > > On Mon, Jul 01, 2024 at 02:12:55PM GMT, Linux regression tracking (Thorsten Leemhuis) wrote:
-> > > > > [CCing the regression list, as it should be in the loop for regressions:
-> > > > > https://docs.kernel.org/admin-guide/reporting-regressions.html]
-> > > > > 
-> > > > > Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
-> > > > > for once, to make this easily accessible to everyone.
-> > > > > 
-> > > > > Hmm, looks like there was not even a single reply to below regression
-> > > > > report. But also seens Markus hasn't posted anything archived on Lore
-> > > > > since about three weeks now, so he might be on vacation.
-> > > > > 
-> > > > > Marc, do you might have an idea what's wrong with the culprit? Or do we
-> > > > > expected Markus to be back in action soon?
-> > > > 
-> > > > Great, ping here.
-> > > 
-> > > Thx for replying!
-> > > 
-> > > > @Matthias: Thanks for debugging and sorry for breaking it. If you have a
-> > > > fix for this, let me know. I have a lot of work right now, so I am not
-> > > > sure when I will have a proper fix ready. But it is on my todo list.
-> > > 
-> > > Thx. This made me wonder: is "revert the culprit to resolve this quickly
-> > > and reapply it later together with a fix" something that we should
-> > > consider if a proper fix takes some time? Or is this not worth it in
-> > > this case or extremely hard? Or would it cause a regression on it's own
-> > > for users of 6.9?
-> > > 
-> > > Ciao, Thorsten
-> > 
-> > Hi,
-> > 
-> > I think on 6.9 a revert is not easily possible (without reverting several other commits adding new
-> > features), but it should be considered for 6.6.
-> > 
-> > I don't think further regressions are possible by reverting, as on 6.6 the timer is only used for
-> > platforms without an m_can IRQ, and on these platforms the current behavior is "the kernel
-> > reproducibly deadlocks in atomic context", so there is not much room for making it worse.
-> > 
-> > Like Markus, I have writing a proper fix for this on my TODO list, but I'm not sure when I can get
-> > to it - hopefully next week.
-> > 
-> > Best regards,
-> > Matthias
-> 
-> A small update from my side:
-> 
-> I had a short look into the issue today, but I've found that I don't quite grasp the (lack of)
-> locking in the m_can driver. The m_can_classdev fields active_interrupts and irqstatus are accessed
-> from a number of different contexts:
+On Fri, Jul 19, 2024 at 7:10=E2=80=AFAM Mateusz Majewski
+<m.majewski2@samsung.com> wrote:
+>
+> Some of the usages in sanitize_temp_error were missed, probably because
+> the boards being used never actually exceeded 255 in their trimming
+> information. This is needed for Exynos 850 support, which uses 9-bit
+> temperature codes.
+>
 
-After looking into the code as well and trying to fix as much as
-possible:
+That looks like an actual fix to me, so maybe also add the
+corresponding "Fixes:" tag here?
 
-> - active_interrupts is *mostly* read and written from the ISR/hrtimer callback, but also from
-> m_can_start()/m_can_stop() and (in error paths) indirectly from m_can_poll() (NAPI callback). It is
-> not clear to me whether start/stop/poll could race with the ISR on a different CPU. Besides being
-> used for ndo_open/stop, m_can_start/stop also happen from PM callbacks.
+> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
+> ---
+>  drivers/thermal/samsung/exynos_tmu.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsu=
+ng/exynos_tmu.c
+> index 9b7ca93a72f1..61606a9b9a00 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -237,17 +237,17 @@ static void sanitize_temp_error(struct exynos_tmu_d=
+ata *data, u32 trim_info)
+>
+>         data->temp_error1 =3D trim_info & tmu_temp_mask;
+>         data->temp_error2 =3D ((trim_info >> EXYNOS_TRIMINFO_85_SHIFT) &
 
-I think m_can_start() can't race with any of these. The interrupts
-(incl. active_interrupts) are set before the interrupts in general are
-enabled. So neither normal interrupts or hrtimer should be able to
-interfere as they are started/enabled afterwards.
+EXYNOS_TRIMINFO_85_SHIFT=3D8 in the driver. Is that value actually
+correct in case of Exynos850? I just checked the TRM and it says the
+layout for TRIMINFO0 register is as follows:
 
-m_can_poll() shouldn't be able to race with the interrupt handler
-either. The interrupt handler disable interrupts and schedules
-m_can_poll() afterwards. Coalescing is not active when m_can_poll is
-being used. So the option to set coalescing should be removed, but it
-wasn't yet.
+  - RSVD: Bit [31:24]
+  - CALIB_SEL: Bit [23]
+  - T_BUF_VREF_SEL: Bit [22:18]
+  - TRIMINFO_85_P0: Bit [17:9]
+  - TRIMINFO_25_P0: Bit [8:0]
 
-Maybe m_can_stop() may be able to interfere with the interrupt handler,
-I am not sure right now. I *think* if there is any interference it
-should be able to recover as m_can_start() basically resets the
-interrupts. I may add a reset of active_interrupts here to make sure.
+So maybe that shift value should be 9 instead of 8 for Exynos850? Not
+sure about other platforms though, this might be also the case for
+Exynos7 SoCs too (SOC_ARCH_EXYNOS7 in the driver).
 
-> - irqstatus is written from the ISR (or hrtimer callback) and read from m_can_poll() (NAPI callback)
-
-Yes, also interrupts are disabled in ISR before napi is scheduled and
-the interrupts are enabled by m_can_poll afterwards. So while m_can_poll
-is running, I think it shouldn't be possible to have another write to
-irqstatus.
-
-
-Also I fixed the hrtimer issues by removing any hrtimer cancellations
-for instances without IRQ. For coalescing hrtimer cancellations are safe
-as the hrtimer for coalescing only triggers the irq thread.
-
-Also found a few other bugs I fixed. I will send a series with fixes
-soon.
-
-Best,
-Markus
-
-> 
-> Is this correct without explicit sychronization, or should there be some locking or atomic for these
-> accesses?
-> 
-> Best regards,
-> Matthias
-> 
-> 
-> 
-> > 
-> > 
-> > 
-> > > 
-> > > > > On 18.06.24 18:12, Matthias Schiffer wrote:
-> > > > > > Hi Markus,
-> > > > > > 
-> > > > > > we've found that recent kernels hang on the TI AM62x SoC (where no m_can interrupt is available and
-> > > > > > thus the polling timer is used), always a few seconds after the CAN interfaces are set up.
-> > > > > > 
-> > > > > > I have bisected the issue to commit a163c5761019b ("can: m_can: Start/Cancel polling timer together
-> > > > > > with interrupts"). Both master and 6.6 stable (which received a backport of the commit) are
-> > > > > > affected. On 6.6 the commit is easy to revert, but on master a lot has happened on top of that
-> > > > > > change.
-> > > > > > 
-> > > > > > As far as I can tell, the reason is that hrtimer_cancel() tries to cancel the timer synchronously,
-> > > > > > which will deadlock when called from the hrtimer callback itself (hrtimer_callback -> m_can_isr ->
-> > > > > > m_can_disable_all_interrupts -> hrtimer_cancel).
-> > > > > > 
-> > > > > > I can try to come up with a fix, but I think you are much more familiar with the driver code. Please
-> > > > > > let me know if you need any more information.
-> > > > > > 
-> > > > > > Best regards,
-> > > > > > Matthias
-> > > > > > 
-> > > > > > 
-> > > > 
-> > > > 
-> > 
-> 
-> -- 
-> TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-> Amtsgericht München, HRB 105018
-> Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-> https://www.tq-group.com/
+> -                               EXYNOS_TMU_TEMP_MASK);
+> +                               tmu_temp_mask);
+>
+>         if (!data->temp_error1 ||
+>             (data->min_efuse_value > data->temp_error1) ||
+>             (data->temp_error1 > data->max_efuse_value))
+> -               data->temp_error1 =3D data->efuse_value & EXYNOS_TMU_TEMP=
+_MASK;
+> +               data->temp_error1 =3D data->efuse_value & tmu_temp_mask;
+>
+>         if (!data->temp_error2)
+>                 data->temp_error2 =3D
+>                         (data->efuse_value >> EXYNOS_TRIMINFO_85_SHIFT) &
+> -                       EXYNOS_TMU_TEMP_MASK;
+> +                       tmu_temp_mask;
+>  }
+>
+>  static int exynos_tmu_initialize(struct platform_device *pdev)
+> --
+> 2.45.1
+>
+>
 
