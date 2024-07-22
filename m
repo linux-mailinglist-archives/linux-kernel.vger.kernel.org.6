@@ -1,331 +1,215 @@
-Return-Path: <linux-kernel+bounces-258653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD21E938B3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:27:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8038A938B3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B9981F21944
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:27:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E342CB215AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC5F16630A;
-	Mon, 22 Jul 2024 08:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E2216630A;
+	Mon, 22 Jul 2024 08:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="iMpycTI6"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2082.outbound.protection.outlook.com [40.107.215.82])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gF1qUUwL"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A770182BD;
-	Mon, 22 Jul 2024 08:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721636827; cv=fail; b=rCsNJCT0IpQlrHUdshchrYyvkPJnx830UFfbil7eob94TMlwoKS3k6Ptvn/VKvn3wGsvSaTNfJVYJ+uudd5O36OzClDAGqLJ4Krai04hIqFkrxZLOQc40dAmzD9wyErMmIlyAki5S08Xl4Q9tubclXVx6IlSfQClZ+gkYoqk4Dw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721636827; c=relaxed/simple;
-	bh=+8hqQTUdnW0+VeQyRtRiloraMd8X1icguoQw+tzhpKg=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=NDbkRPQUkbDnROzlh8p2BtvYGpRfxlj/kzI01llyFIuSpMwne5G0p/PX7qRjXX2XRjfgeX9+I+VfkshTogJr1hb0lXibAgDNKS5VPxgw2J9HWCFJRxx1v2RrrYqMsCGn4YSRSC7TY91q64VU6MNP4R4tAo1xdm7/b4AjIw0fFvg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=iMpycTI6; arc=fail smtp.client-ip=40.107.215.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BRhabF3b10Ml+N7DlF/DBL52phI7wq5e+R5T3wGRhr1Ru/MD9jA8Ei459qVBSrGSjZhYt+K2TgLKpOvMPUzfLHM9KYkPTM1MpHzgnYpLa24zVGywIobRXRQarf/O5rVKxFL6kexaER8gKkqRp1CgHPnc/EHjbhNUf05BjKuDmOUOG6b1L+m6WcBXMLTyACuLOutbEubDO60f+KAFr+tnoqk0onCsVU0hfEhnuI4i11pdbJMHc2RdjYQigY4h5f6Z81gyLcDGKElE9tgm4u5XR7+sGnok5+sHEgOUaRZ4REP/VdYCgHEnvMN+XhXaSMrWOXZe6BsuCc/QWk98mciJSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JfnrcfN968K5NEVDFg5gs7r/zJYbOxpFFZN/rkKpkP4=;
- b=IzcV+RVoaORIytn/Sg2KxBowh7woEfax2hkhIhoIPshS7UI13wnYrjfNLKwb8x/GBqhzHOQ9QNZhJLT8KxbvPj+ifD51Vmiqj8s3aE8AIB3UTwrMB5TYkrtwCxlpCE3zXh3Nd4xXZYrgIijqumOYKy3m/Pg006Lwl5fQhQQUefZZa7ktJzouARbVMR8Ng4R6ZJIFMNhFyBtpIft/4tZKlKi9jemjwtAcr7Ybj5/OWnzRADaiwUcY/l3JLCg40/j6bBdeEV9UQBT2zO85Xg/G0Gf2Y7gmT7NqdZ0+60zhNlPRlpyrqpPcKshw8LeTWIWGN40D1nxEDchkamvMsHZZnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
- dkim=pass header.d=oppo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JfnrcfN968K5NEVDFg5gs7r/zJYbOxpFFZN/rkKpkP4=;
- b=iMpycTI6yyaBUFF23DlH/UfmafriK/K5CK5ZTd8Th00+hXG4xOmFjzspi3lcP9Aaoo5NiXr22+kIIihn3A9mhx02HKVT7DxYwqxUvQ7aYiWehaXfgD+OAeXjV/HyC855NARRTpoxgLsva/dyJRh8GzfLRpBjmipCttAqHpGuKDM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oppo.com;
-Received: from SEYPR02MB8152.apcprd02.prod.outlook.com (2603:1096:101:206::6)
- by SEYPR02MB7460.apcprd02.prod.outlook.com (2603:1096:101:1dd::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Mon, 22 Jul
- 2024 08:27:01 +0000
-Received: from SEYPR02MB8152.apcprd02.prod.outlook.com
- ([fe80::6bae:c194:2032:70d7]) by SEYPR02MB8152.apcprd02.prod.outlook.com
- ([fe80::6bae:c194:2032:70d7%4]) with mapi id 15.20.7762.027; Mon, 22 Jul 2024
- 08:27:01 +0000
-Message-ID: <6c643297-fe13-42c9-820c-2f95db5a63b9@oppo.com>
-Date: Mon, 22 Jul 2024 16:26:56 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cpufreq: queue policy->update work to rt thread to reduce
- its schedule latency
-From: Gaowei Pu <pugaowei@oppo.com>
-To: Tim Chen <tim.c.chen@linux.intel.com>, rafael@kernel.org,
- viresh.kumar@linaro.org
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240717063321.629-1-pugaowei@oppo.com>
- <b07c39fab5ac0e32e7768ed3e8a799c8eb68802a.camel@linux.intel.com>
- <06ce2143-cc74-41e5-b39f-15053133b232@oppo.com>
-In-Reply-To: <06ce2143-cc74-41e5-b39f-15053133b232@oppo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2PR06CA0003.apcprd06.prod.outlook.com
- (2603:1096:4:186::14) To SEYPR02MB8152.apcprd02.prod.outlook.com
- (2603:1096:101:206::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993E143169;
+	Mon, 22 Jul 2024 08:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721636958; cv=none; b=AkdO34L2TTAZaobkHv35dwOKGB5o/7we1fU6WOdbYSTZA7eHAJ9247qGOPme9npaoX1DXYfTh4Kov6lIBIlvdiYBXAIjOsG3CUOFSqYpdVLjCh1dNthjJ2jl2Juw+AHGOQFEts1vCMvPjc5EXHpW0xGkw3iLRFDk/bk7X5PaoY4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721636958; c=relaxed/simple;
+	bh=WVUiUZZrhSyC5ogpqbKGLX1PHFwhFxJSq6enD4jXS94=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gKaDTS98jTLE4pKbxYKp4/tm+3cWQ4idCFNFIW5bNdfl3fa0v2XINKsMJfF9CyqTede5adzyEWPhoBjKdD3Z/xNBvV63v9lwChJPIWsA86p2RC1MOLM2zaQyrp1QKbwevLrnwbxzFxru/shyGKoleIY2mHC8fNATMjY8+EQiXXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gF1qUUwL; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721636957; x=1753172957;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=WVUiUZZrhSyC5ogpqbKGLX1PHFwhFxJSq6enD4jXS94=;
+  b=gF1qUUwLnbOm2uUHJkbMfaYe/im94HMrNaGN7OD1DjOHb5hN4nhmv+M9
+   KBQ3hKGQhDpEPZUoQxRM7j1yTBCWnF+2c2QzeWwQaUr9INSi2iVjnj9Fq
+   FXX9MF6OvB33lyptZZ/RSoYlUYa3Vut9ejpPoEkuTLyRrGwpf2T52AGMO
+   HWw7ppp6bCHvWO8a+GK08qVpXJza6vgf43/ateBQi60g9WXOlleUMiWlT
+   fZFntsUYj+Ty5ElZxUVMNWB39QVprPfuVYvmTxcGM+ROx+yxiH2vpSXmi
+   v0DyvoeWQXv5xTFyKXdzqKkP0DggwZO4pMCg8zR56OOmFTY3BwprZfAYc
+   w==;
+X-CSE-ConnectionGUID: y/WIla70TNOjP6CxxIlNLw==
+X-CSE-MsgGUID: hWBXZLeXRHCMyye3ayOrOQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11140"; a="44618478"
+X-IronPort-AV: E=Sophos;i="6.09,227,1716274800"; 
+   d="scan'208";a="44618478"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 01:28:55 -0700
+X-CSE-ConnectionGUID: qxVdrlWkQOOjlTuJ3O6rdQ==
+X-CSE-MsgGUID: RxoZp5BWT42LIo+ODeZ7iQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,227,1716274800"; 
+   d="scan'208";a="56092103"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.41.28])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 01:28:48 -0700
+Message-ID: <05fa0449-4fd4-41ed-93e8-db825e48268f@intel.com>
+Date: Mon, 22 Jul 2024 11:28:44 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEYPR02MB8152:EE_|SEYPR02MB7460:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1dd1f046-f188-4ab8-6bcf-08dcaa280f09
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TEljUTFRVXNGRjFCcGZIQi91YURxaFNITWRuTmFLL3lvRTFGWnBwZmx5YXdZ?=
- =?utf-8?B?Szl4aG51bUlYTWo3TnI3dFcxY1JrT1FQSE1GT1hUbENrN2Y4ZG50T3RwOCth?=
- =?utf-8?B?NCtZS2oyVzk2VUhkMDEvYnNYRzBvRENzbVcrQ3lnbUZncFA5UENRYVp5alhR?=
- =?utf-8?B?Q3FINTZzcGxERG1YYVM1cGZYZ0F3SHZRQjNRU1VkR2tTMFdLamtGeC9OZUJM?=
- =?utf-8?B?b2p5bUFGWElJMlFsKzU1OVZ2Mkh4TzVrV0JDNDljOVJxT1JmTnpyaHZYQitR?=
- =?utf-8?B?dzZlalAzT2FXVjhmcWI2a0RQalk3b2NSL3hEMmpCZHZBRkd0QVhjQlB4WG5K?=
- =?utf-8?B?UkljdWxGNU9zL3h2WlFHcVhoRSs0U1MxRmF0NXppclhIZFU5dEpyZ2dFZFNz?=
- =?utf-8?B?VVZtRXl0NXgwNEQzWEphQVhwZWhUMVgwc3lyU3NUK0hwN1VSWWt0c0gyQTR3?=
- =?utf-8?B?T3ZZL24xVlRFRmIzMHgvQ2Y0WFNza2s2eVFZOWFhMkp6dC9mOWhuQlVUelFr?=
- =?utf-8?B?N2h2R08yRnRwVjRmZk9ZNmpMV3VYRnpacjVHdXFMZnU3UWo4ZnZYYU1mTEp4?=
- =?utf-8?B?QVhocGZwckdIeGtuU01jVlRwSVdvUWJTdi80QWttbGJBUE1ORXlSaDdLOG5F?=
- =?utf-8?B?US9sZkNIVzMzY1pmSHBBTkp3N05SUFVEVVVaQzFkQUNrUGI3aHM1RmlrRVE2?=
- =?utf-8?B?eWZ5N3hKamlSOVdZNXdVZTJFT1pjMldUdE5YRW5rWUJCTzlhMmJTYXFhYkk3?=
- =?utf-8?B?R2ZSUmpNcFlxYVUwRXl5NmJEUW1rSXdoUVBSdTd6UzZjWGNtdlN6K0dRQ000?=
- =?utf-8?B?UTNjNVZOTUZiZlRwYW1RZm5xQklGTVJRN29tQS96enBtVHVMV1lmcEpSS0dp?=
- =?utf-8?B?czcwRjBnOGMzQW9VR1FtMVBCcU5FV3RIN0JiOWZITTdKTmpuQUZqQk5DbTB5?=
- =?utf-8?B?WFdzVmhIQkpucm1nNnIwVXlBeUF6azNUTEtZWVVUMkxJemxxc1RNV2phV0lw?=
- =?utf-8?B?c2VVYXlMWTdzaGdPcGVoY3lLWE9hQmorVUYwSTh5NTAyakkwaXhXZk9xL2Fp?=
- =?utf-8?B?Z0FncVNqS0pWZzd1bHVDRElwRkx3M2V5ajFocFFVd2NXRVUzc2RudkhwdVJV?=
- =?utf-8?B?U3ZrTHBjNEJ0TWhEdVFYWjF4bzBEd1BlSjdEallmSVlJcU9xdE5QMmcvNDFL?=
- =?utf-8?B?S2hscmQ1d01XVFBzVlJheDlqZmRpYzNuVk9mNGtVbS9meFFLTXBIckNuUlow?=
- =?utf-8?B?V1YwVUo2cGFlaXJIS3pEMTVPUlkxKzNFYnlTVGxXSElFTWhMT2twbGU3bERq?=
- =?utf-8?B?Q2krdHMyRDVPaWNia1pPTkpRUUkya0Nrd24zazhkaHAySjAvU1l2T1A3QkJI?=
- =?utf-8?B?SGtyNnA2NlBmNkJ5QXpreXpjZzMwb215anRKRm5YbkFHWTI2S3N4QWNsalBZ?=
- =?utf-8?B?cTFNUDFydFlJaFFDSUl1RTVQS0FHdk0wR1N6TG52MHBBWXBzZnArcXA3bmJw?=
- =?utf-8?B?ekFRUGNTZ3FTbXc1aVQxaTU0d08yck5QNnladXpYVDdsMUhxWS9ZZ2hKaEg0?=
- =?utf-8?B?NFlrclR4UXRQMStHeTNSbW1HNzBQc2V3c2dreWJITXlTRGpjYjNjQ2E3MzBG?=
- =?utf-8?B?N25FK0JJdDlMOHVLMVhnQ2lpRHdOMEFwYlFlQTRMeGRXYy8rakd1cmY0M3J6?=
- =?utf-8?B?Vk1XUW1WQk9CYVdxdy96VE1oRkNyRmJORWVuT205dVNFTVQ4eUNRVGJXRll2?=
- =?utf-8?B?aXovcUw5T0NDZFV3Vm9JVG1tZXlLZzJYb3A2aUI1RWZsZWFRVlYydXZJOTkw?=
- =?utf-8?B?ckVoaHFjRlRBMWxBVXlmUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR02MB8152.apcprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?U3pBSEdUUG1KS3ZRYkllN2lsaUJndmY1OFFjY0dtSkdMMG9yRzRoYS9JaC92?=
- =?utf-8?B?VDBwSlZySGFXNlNaT3M0THZULzNlRElvQ01JUUlNYy8xTm9YYlNPVnVESEYx?=
- =?utf-8?B?QzE3ekgyZDN6ZjJHWVNrcG1DZUpSWS83TWhGaU1wTnVKd25sZmxlQ2VtTWdS?=
- =?utf-8?B?eXllbGY5elZZMlVFL3I5YXhzL2VCU2N3Wmt0NWw1T2NlRERlL3Z6WXdjVmx2?=
- =?utf-8?B?QVlYYmhpenRKU0FTbXErcTFsS3pHNlZqUW56R3Y3K3JiM3lHRWtGRURaR1o0?=
- =?utf-8?B?czBBclY2Q042KzY5Z21rWEhFZlR5SWJNZ2kzUXdSZ1VCZmtjYmFpYm5sTG1z?=
- =?utf-8?B?Q0MrVzR0SXR6UDkyd0E0RjdWLzhFOURBZWw3eUJXWC9zQjB3RnZRMXh1eFBV?=
- =?utf-8?B?ZmZxRXh5QTNhYitrczhSK3JnaENJamxNOTJveGdhdmhPQTcycG43eUhIak1n?=
- =?utf-8?B?UGRZejU0Zmhudm5pYUVLNkZmVmVhYjNQcFR6RTQ0Z2dnUmhXcEtSY3ZpM1BJ?=
- =?utf-8?B?RTRCODlkODFGOW5nS0JGWDRRenUzREQxdkdOcnZhSkpVaG8vNTljTDRBQWFX?=
- =?utf-8?B?UlUxQ0x6ckZpb3h1aVBDdGhCZVV3QTJuQ3h0d0Y0allnaW1ycjIzdk1NRUlm?=
- =?utf-8?B?aXpzTXZoMFRRRjR3TDcwU2hrUGhuZ1g3aGsxTmlzdlh3RVAxNzlhbVlsQ2Nt?=
- =?utf-8?B?NmR2WmlNZHUwMzRXSk0zUjM5M0hhYUxaS296cnhTQTl4eXprMGFmTGVZb25G?=
- =?utf-8?B?ZzA4ZTNsM2poRVpvREQ3SFRPYlRaV0haYjBMaUFSZ1JNK0ZXM2xDZkRzOUgv?=
- =?utf-8?B?aG9UVUNmRnBwd0Y4bC96QUQ2Q3JQMmJuaEVTMEJiS1pwOTFHbGtVMGI3NTRQ?=
- =?utf-8?B?RlFoNXhpakpIY2lleUpBUHR0M0RJRzRrMmlLeVdiTnZwekdiSGNlY2tMVXVD?=
- =?utf-8?B?a2svVUk5d2p2djhRQmc3eTMwVVRJQnljZStpaDJ0SGQ1TzJMUXNySmlVS2Rr?=
- =?utf-8?B?RGkyUmxrZWUxeGw2UVdtc0VDUjd5RGpjVHF4ejJvcGxkRHpxK1B2UURPQ2cx?=
- =?utf-8?B?WmM5dVVPTXp5eGk3VlVLTnZrWkJ2U1pHaVN6eklFbGNicmo2VjkwTzVBb1lC?=
- =?utf-8?B?YXplT0pIdWd2L3FUM2plZHRBT1ltUWtFdXAwV1RIRkg2VUE4ZWpIWUJKZ2R3?=
- =?utf-8?B?WlZNYXJYakY3aEoxS3VlQUFpSE1DcDdYRzZuRUVMZWtha3k1ZXo5VzEwUXFX?=
- =?utf-8?B?Q1lubVZkT3NpQWI4YnRRN245eXFHMG90Ujd6L21QL3BYOHdkdy9lVEV3K3pv?=
- =?utf-8?B?WFR1VnVhOTVDbHdKR2FHeGkxT3RCK1QyUHlST2pnM0lyRG93MzM5MHdmVUhY?=
- =?utf-8?B?bHYyZWI3cHNydGUvaTV0SDMvQUJzWWRuZmhURUNTN0hNMHZqRXR2MUw0MW10?=
- =?utf-8?B?bnFIYUdka3lmTzhuL3FlZ1UxTG02UEx0R2RidDBHMTc1cUFsNkVOcGUwM2g3?=
- =?utf-8?B?cTc0MU13WWVNV2lpdFlqNmk1UkxPMVgrMmFUaDAyak9uYzRtVmhvbDBwNTRt?=
- =?utf-8?B?TVR1SE9EcDVqb1JMeUNPRGJkME9NVDJzRmRPcnF0elZrRmlrenI4Nnd5S0F4?=
- =?utf-8?B?aWtyd2ErNEZsS0xleDlFRFV0enBmTEszZ3lacFN6aG9XT3FpZlBkZVMxRy9m?=
- =?utf-8?B?ZnVSMUQvRHlxMnE5WXpUVmE2S0xSeEhKNnJKbHJyd2RaMTNSbDBURmdJTW5k?=
- =?utf-8?B?VFI5OExBU0ZrZDBuZWpkcFA3THhuQThjOG9ZMXhoeU1BOG54Uy9RdktFVkt3?=
- =?utf-8?B?MXVYTS9makNyTmdRZWVjUGFzY2EyUFZFemV2aDEyanBWU0szeVNKeER4Z29N?=
- =?utf-8?B?ZzJaRUZKOEVwY3JaMzU3azFDdndZTkdQR29iZ0txRnc0YWNsR0pCb1RqVFRt?=
- =?utf-8?B?ZStFZ0FmdlhYMXQ4bG01N2lSb1d6SnRWVDJkWnJUaE0va1oxMGlESjJVZGxp?=
- =?utf-8?B?ZWlMNmtKdjcvalBHRFZGaUFhOVp0U2lDRWhLT3kxSzN5QWtWbHE4M2xKYWlQ?=
- =?utf-8?B?VU9HTjZTRnNhUW00RENpKzNGTVUzdEFTelRRcGVIbTFwcDY3SFZmcGh5dzRJ?=
- =?utf-8?Q?aHdf/7YHB1Ownp/P/uz4H8xw9?=
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1dd1f046-f188-4ab8-6bcf-08dcaa280f09
-X-MS-Exchange-CrossTenant-AuthSource: SEYPR02MB8152.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2024 08:27:01.1452
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: M5IAt6yAL3N37spBu3c/p+4qRd8qOg0ZIydDZq/SLhG4LIm+cEeKo+FKhzXkF6MW/vzpPj1+YZicoZxU0E140w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR02MB7460
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 00/27] Constify tool pointers
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+ John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ James Clark <james.clark@arm.com>, Mike Leach <mike.leach@linaro.org>,
+ Leo Yan <leo.yan@linux.dev>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Yicong Yang <yangyicong@hisilicon.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Nick Terrell <terrelln@fb.com>, Nick Desaulniers <ndesaulniers@google.com>,
+ Oliver Upton <oliver.upton@linux.dev>,
+ Anshuman Khandual <anshuman.khandual@arm.com>, Song Liu <song@kernel.org>,
+ Ilkka Koskinen <ilkka@os.amperecomputing.com>,
+ Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+ Huacai Chen <chenhuacai@kernel.org>, Yanteng Si <siyanteng@loongson.cn>,
+ Sun Haiyong <sunhaiyong@loongson.cn>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20240718010023.1495687-1-irogers@google.com>
+ <738b5c89-acb2-46a5-92a1-c36bd90abc30@intel.com>
+ <CAP-5=fU=5LxF0SKuAqVP+xtmdERCCgxh_mdpw5okMi1fmvpE+Q@mail.gmail.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <CAP-5=fU=5LxF0SKuAqVP+xtmdERCCgxh_mdpw5okMi1fmvpE+Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-
-
-On 2024/7/22 10:30, Gaowei Pu wrote:
-> Hi Tim,
-> 
-> On 2024/7/19 6:03, Tim Chen wrote:
->> On Wed, 2024-07-17 at 14:33 +0800, Gaowei Pu wrote:
->>> Currently we encountered a problem that the cpufreq boost latency
->>> is about 10 milliseconds or worse when we boost through cpufreq QOS request
->>> under high workload scenarios, while the boost latency mainly consumed by
->>> schedule latency of policy->update work.
+On 19/07/24 19:26, Ian Rogers wrote:
+> On Fri, Jul 19, 2024 at 1:51 AM Adrian Hunter <adrian.hunter@intel.com> wrote:
 >>
->> What is the tail latency now after your change?
-
-sorry missed this.
-the tail latency now is about within 50 microseconds after my change.
-
->>
+>> On 18/07/24 03:59, Ian Rogers wrote:
+>>> struct perf_tool provides a set of function pointers that are called
+>>> through when processing perf data. To make filling the pointers less
+>>> cumbersome, if they are NULL perf_tools__fill_defaults will add
+>>> default do nothing implementations.
 >>>
->>> We should ensure the low schedule latency of cpu frequency limits work
->>> to meet performance and power demands. so queue the policy->update work
->>> to rt thread to reduce its schedule latency.
+>>> This change refactors struct perf_tool to have an init function that
+>>> provides the default implementation. The special use of NULL and
+>>> perf_tools__fill_defaults are removed. As a consequence the tool
+>>> pointers can then all be made const, which better reflects the
+>>> behavior a particular perf command would expect of the tool and to
+>>> some extent can reduce the cognitive load on someone working on a
+>>> command.
+>>>
+>>> v6: Rebase adding Adrian's reviewed-by/tested-by and Leo's tested-by.
 >>
->> If my understanding is correct, kthread has a default nice
->> value of 0 and is not a rt thread. 
+>> The tags were really meant only for patch 1, the email that was replied to.
 >>
->> I think the gain you see is
->> your patch created a dedicated kthread work queue on CPU 0.
->> The work from policy change no longer have to compete time with other
->> requests coming from schedule_work(). 
-> It's not just other requests coming from schedule_work(), also some normal
-> cfs tasks running on the same cpu.
+>> But now for patches 2 and 3:
+>>
+>> Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
 > 
-> In order to not competing time with the above threads, i change the thread
-> policy to rt and prio set to 98 to reduce the schedule latency.
+> Sorry for that, you'd mentioned that pt and bts testing which is
+> impacted by more than just patch 1.
+> 
+>> Looking at patches 4 to 25, they do not seem to offer any benefit.
 >>
->> If the policy change really needs to get ahead
->> of other tasks, I think you need a dedicated
->> workqueue with alloc_workqueue() using WQ_HIGHPRI flag.
+>> Instead of patch 26, presumably perf_tool__fill_defaults() could
+>> be moved to __perf_session__new(), which perhaps would allow
+>> patch 27 as it is.
+> 
+> What I'm trying to do in the series is make it so that the tool isn't
+> mutated during its use by session. Ideally we'd be passing a const
+> tool to session_new, that's not possible because there's a hack to fix
+> ordered events and pipe mode in session__new:
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/session.c?h=perf-tools-next#n275
+> Imo, it isn't great to pass a tool to session__new where you say you
+> want ordered events and then session just goes to change that for you.
+> Altering that behavior was beyond the scope of this clean up, so tool
+> is only const after session__new.
 
-> I think the cpufreq boost or limit action should be trigger in time to meet
-> performance and power demands. An dedicated workqueue with highpri will be
-> better but maybe not good enough because cfs pick or preempt policy is not
-> purely based on thread nice value. So i think the final solution is rt thread
-> and the policy change work deserves it :)
-> thanks.
->>
->> Tim
->>
->>>
->>> Signed-off-by: Gaowei Pu <pugaowei@oppo.com>
->>> ---
->>>  drivers/cpufreq/cpufreq.c | 24 ++++++++++++++++++------
->>>  include/linux/cpufreq.h   |  4 +++-
->>>  2 files changed, 21 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
->>> index a45aac17c20f..e6e42a3ba9ab 100644
->>> --- a/drivers/cpufreq/cpufreq.c
->>> +++ b/drivers/cpufreq/cpufreq.c
->>> @@ -1193,7 +1193,7 @@ void refresh_frequency_limits(struct cpufreq_policy *policy)
->>>  }
->>>  EXPORT_SYMBOL(refresh_frequency_limits);
->>>  
->>> -static void handle_update(struct work_struct *work)
->>> +static void handle_update(struct kthread_work *work)
->>>  {
->>>  	struct cpufreq_policy *policy =
->>>  		container_of(work, struct cpufreq_policy, update);
->>> @@ -1209,7 +1209,7 @@ static int cpufreq_notifier_min(struct notifier_block *nb, unsigned long freq,
->>>  {
->>>  	struct cpufreq_policy *policy = container_of(nb, struct cpufreq_policy, nb_min);
->>>  
->>> -	schedule_work(&policy->update);
->>> +	kthread_queue_work(policy->worker, &policy->update);
->>>  	return 0;
->>>  }
->>>  
->>> @@ -1218,7 +1218,7 @@ static int cpufreq_notifier_max(struct notifier_block *nb, unsigned long freq,
->>>  {
->>>  	struct cpufreq_policy *policy = container_of(nb, struct cpufreq_policy, nb_max);
->>>  
->>> -	schedule_work(&policy->update);
->>> +	kthread_queue_work(policy->worker, &policy->update);
->>>  	return 0;
->>>  }
->>>  
->>> @@ -1301,15 +1301,25 @@ static struct cpufreq_policy *cpufreq_policy_alloc(unsigned int cpu)
->>>  		goto err_min_qos_notifier;
->>>  	}
->>>  
->>> +	policy->worker = kthread_create_worker_on_cpu(cpu, 0, "policy_worker%d", cpu);
->>> +	if (IS_ERR(policy->worker)) {
->>> +		dev_err(dev, "Failed to create policy_worker%d\n", cpu);
->>> +		goto err_max_qos_notifier;
->>> +	}
->>> +
->>> +	sched_set_fifo_low(policy->worker->task);
->>>  	INIT_LIST_HEAD(&policy->policy_list);
->>>  	init_rwsem(&policy->rwsem);
->>>  	spin_lock_init(&policy->transition_lock);
->>>  	init_waitqueue_head(&policy->transition_wait);
->>> -	INIT_WORK(&policy->update, handle_update);
->>> +	kthread_init_work(&policy->update, handle_update);
->>>  
->>>  	policy->cpu = cpu;
->>>  	return policy;
->>>  
->>> +err_max_qos_notifier:
->>> +	freq_qos_remove_notifier(&policy->constraints, FREQ_QOS_MAX,
->>> +				 &policy->nb_max);
->>>  err_min_qos_notifier:
->>>  	freq_qos_remove_notifier(&policy->constraints, FREQ_QOS_MIN,
->>>  				 &policy->nb_min);
->>> @@ -1353,7 +1363,9 @@ static void cpufreq_policy_free(struct cpufreq_policy *policy)
->>>  				 &policy->nb_min);
->>>  
->>>  	/* Cancel any pending policy->update work before freeing the policy. */
->>> -	cancel_work_sync(&policy->update);
->>> +	kthread_cancel_work_sync(&policy->update);
->>> +	if (policy->worker)
->>> +		kthread_destroy_worker(policy->worker);
->>>  
->>>  	if (policy->max_freq_req) {
->>>  		/*
->>> @@ -1802,7 +1814,7 @@ static unsigned int cpufreq_verify_current_freq(struct cpufreq_policy *policy, b
->>>  
->>>  		cpufreq_out_of_sync(policy, new_freq);
->>>  		if (update)
->>> -			schedule_work(&policy->update);
->>> +			kthread_queue_work(policy->worker, &policy->update);
->>>  	}
->>>  
->>>  	return new_freq;
->>> diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
->>> index 20f7e98ee8af..73029daddfc5 100644
->>> --- a/include/linux/cpufreq.h
->>> +++ b/include/linux/cpufreq.h
->>> @@ -20,6 +20,7 @@
->>>  #include <linux/spinlock.h>
->>>  #include <linux/sysfs.h>
->>>  #include <linux/minmax.h>
->>> +#include <linux/kthread.h>
->>>  
->>>  /*********************************************************************
->>>   *                        CPUFREQ INTERFACE                          *
->>> @@ -77,8 +78,9 @@ struct cpufreq_policy {
->>>  	void			*governor_data;
->>>  	char			last_governor[CPUFREQ_NAME_LEN]; /* last governor used */
->>>  
->>> -	struct work_struct	update; /* if update_policy() needs to be
->>> +	struct kthread_work	update; /* if update_policy() needs to be
->>>  					 * called, but you're in IRQ context */
->>> +	struct kthread_worker *worker;
->>>  
->>>  	struct freq_constraints	constraints;
->>>  	struct freq_qos_request	*min_freq_req;
->>
+Seems like a separate issue.  Since the session is created
+by __perf_session__new(), session->tool will always be a pointer
+to a const tool once there is:
+
+diff --git a/tools/perf/util/session.h b/tools/perf/util/session.h
+index 7f69baeae7fb..7c8dd6956330 100644
+--- a/tools/perf/util/session.h
++++ b/tools/perf/util/session.h
+@@ -43,7 +43,7 @@ struct perf_session {
+ 	u64			one_mmap_offset;
+ 	struct ordered_events	ordered_events;
+ 	struct perf_data	*data;
+-	struct perf_tool	*tool;
++	const struct perf_tool	*tool;
+ 	u64			bytes_transferred;
+ 	u64			bytes_compressed;
+ 	struct zstd_data	zstd_data;
+
 > 
+> The reason for doing this is to make it so that when I have a tool I
+> can reason that nobody is doing things to change it under my feet.
+
+It still can be changed by the caller of __perf_session__new(), since
+the tool itself is not const.
+
+Anything using container_of() like:
+
+static int process_sample_event(const struct perf_tool *tool,
+				union perf_event *event,
+				struct perf_sample *sample,
+				struct evsel *evsel,
+				struct machine *machine)
+{
+	struct perf_script *scr = container_of(tool, struct perf_script, tool);
+
+can then change scr->tool without even having to cast away const.
+
+Really, 'tool' needs to be defined as const in the first place.
+
+> My
+> builtin_cmd is in charge of what the tool is rather than some code
+> buried in util that thought it was going to do me a favor. The code is
+> a refactor and so the benefit is intended to be for the developer and
+> how they reason about the use of tool.
+
+It creates another question though: since there is a lot of code
+before perf_tool__init() is called, does the caller mistakenly
+change tool before calling perf_tool__init()
+
+> how they reason about the use of tool. We generally use _init
+> functions rather than having _fill_defaults, so there is a consistency
+> argument.
+
+The caller does not need the "defaults", so why would it set them up.
+The session could just as easily do:
+
+	if (tool->cb)
+		tool->cb(...);
+	else
+		cb_stub(...);
+
+> I don't expect any impact in terms of performance... Moving
+> perf_tool__fill_defaults to __perf_session__new had issues with the
+> existing code where NULL would be written over a function pointer
+> expecting the later fill_defaults to fix it up, doesn't address coding
+> consistency where _init is the norm, and adds another reason the tool
+> passed to session__new can't be const.
+
+perf_tool__init() is not a steeping stone to making 'tool' a
+const in the first place.
+
 
